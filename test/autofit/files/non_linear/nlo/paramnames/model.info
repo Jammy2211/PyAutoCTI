@@ -1,0 +1,6 @@
+MockClassNLOx4
+
+one: UniformPrior, lower_limit = 0.0, upper_limit = 1.0
+two: UniformPrior, lower_limit = 0.0, upper_limit = 1.0
+four: UniformPrior, lower_limit = 0.0, upper_limit = 1.0
+

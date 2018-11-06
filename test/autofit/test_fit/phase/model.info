@@ -1,0 +1,6 @@
+MockClassNLOx4
+
+mock_class_one                                              UniformPrior, lower_limit = 0.0, upper_limit = 1.0
+mock_class_two                                              UniformPrior, lower_limit = 0.0, upper_limit = 1.0
+mock_class_three                                            UniformPrior, lower_limit = 0.0, upper_limit = 1.0
+mock_class_four                                             UniformPrior, lower_limit = 0.0, upper_limit = 1.0
