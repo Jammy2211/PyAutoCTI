@@ -735,10 +735,8 @@ class ChInj(np.ndarray):
                         trails_arrays))
 
     def parallel_serial_calibration_section_from_frame(self):
-        # return self.__class__(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern,
-         #                      array=self[0:self.shape[0], self.frame_geometry.serial_prescan.x1:self.shape[1]])
         return self.__class__(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern,
-                              array=self[0:self.shape[0], 0:self.shape[1]])
+                              array=self[0:self.shape[0], self.frame_geometry.serial_prescan.x1:self.shape[1]])
 
     def mask_containing_only_serial_trails(self):
 
@@ -917,8 +915,7 @@ class CIQuadGeometryEuclidBL(cti_image.QuadGeometryEuclidBL, CIQuadGeometry):
         return cti_image.Region((region.y0, region.y1, region.x1 + columns[0], region.x1 + columns[1]))
 
     def serial_ci_region_and_trails(self, region, image_shape, from_column):
-    #    return ci_image.Region((region.y0, region.y1, from_column+region.x0, image_shape[1]))
-        return cti_image.Region((region.y0, region.y1, from_column, image_shape[1]))
+        return cti_image.Region((region.y0, region.y1, from_column+region.x0, image_shape[1]))
 
 
 class CIQuadGeometryEuclidBR(cti_image.QuadGeometryEuclidBR, CIQuadGeometry):
