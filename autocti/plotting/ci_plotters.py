@@ -157,24 +157,24 @@ def plot_parallel_trails_of_ci_frame(ci_frame, path, filename, file_format='.png
 #     plt.savefig(path + filename + file_format, bbox_inches='tight')
 #     plt.close()
 #     stop
-#
-# def plot_2d_image(image, path, filename, file_format='.png', new_figure=True):
-#
-#     imageio.make_path_if_does_not_exist(path)
-#
-#     plt.imshow(image)
-#     plt.colorbar()
-# #    axis = colorbar.ax
-# #    axis.tick_params(labelsize=ticksize)
-# #    text = axis.yaxis.label
-# #    font = matplotlib.font_manager.FontProperties(size=fontsize)
-# #    text.set_font_properties(font)
-#
-#     if new_figure is True:
-#         plt.savefig(path + filename + file_format, bbox_inches='tight')
-#         plt.close()
-#
-#
+
+def plot_2d_image(image, path, filename, file_format='.png', new_figure=True):
+
+    imageio.make_path_if_does_not_exist(path)
+
+    plt.imshow(image)
+    plt.colorbar()
+#    axis = colorbar.ax
+#    axis.tick_params(labelsize=ticksize)
+#    text = axis.yaxis.label
+#    font = matplotlib.font_manager.FontProperties(size=fontsize)
+#    text.set_font_properties(font)
+
+    if new_figure is True:
+        plt.savefig(path + filename + file_format, bbox_inches='tight')
+        plt.close()
+
+
 # # def sub_plot_shape(total):
 # #
 # #     if total == 1:
