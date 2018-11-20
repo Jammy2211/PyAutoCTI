@@ -1729,7 +1729,7 @@ class TestCIFrame(object):
             mask = frame.mask_containing_only_serial_trails()
 
             assert type(mask) == ci_data.CIMask
-            assert mask.pattern == pattern
+            assert mask.ci_pattern == pattern
             assert mask.frame_geometry == frame.frame_geometry
             assert (mask == np.array([[True, True, True, True, False, False, False, False, False, False],
                                       [True, True, True, True, False, False, False, False, False, False],
@@ -1751,11 +1751,12 @@ class TestCIFrame(object):
             mask = frame.mask_containing_only_serial_trails()
 
             assert type(mask) == ci_data.CIMask
-            assert mask.pattern == pattern
+            assert mask.ci_pattern == pattern
             assert mask.frame_geometry == frame.frame_geometry
             assert (mask == np.array([[True, True, True, True, False, False, False, False, False, False],
                                       [True, True, True, True,  True,  True,  True,  True,  True,  True],
                                       [True, True, True, True, False, False, False, False, False, False]])).all()
+
 
     class TestCheckQuadrantGeometry:
 
