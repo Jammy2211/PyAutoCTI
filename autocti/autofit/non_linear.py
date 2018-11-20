@@ -365,12 +365,8 @@ class MultiNest(NonLinearOptimizer):
     def open_summary_file(self):
 
         summary = open(self.file_summary)
-
-        expected_parameters = (len(summary.readline()) - 113) / 112
-
-        if expected_parameters != self.variable.prior_count:
-            raise exc.MultiNestException(
-                'The file_summary file has a different number of parameters than the input model')
+        summary.seek(1)
+        expected_parameters = (len(summary.readline()) - 56) / 112
 
         return summary
 
@@ -378,7 +374,7 @@ class MultiNest(NonLinearOptimizer):
 
         summary = self.open_summary_file()
 
-        summary.seek(0)
+        summary.seek(1)
         summary.read(2 + offset * self.variable.prior_count)
         vector = []
         for param in range(number_entries):
@@ -435,8 +431,8 @@ class MultiNest(NonLinearOptimizer):
         """
 
         means = self.most_probable_from_summary()
-        uppers = self.model_at_upper_sigma_limit(sigma_limit)
-        lowers = self.model_at_lower_sigma_limit(sigma_limit)
+        uppers = self.model_at_upper_sigma_limit(sigma_limit=sigma_limit)
+        lowers = self.model_at_lower_sigma_limit(sigma_limit=sigma_limit)
 
         # noinspection PyArgumentList
         sigmas = list(map(lambda mean, upper, lower: max([upper - mean, mean - lower]), means, uppers, lowers))
@@ -475,6 +471,11 @@ class MultiNest(NonLinearOptimizer):
             PDF).
         """
         return list(map(lambda param: param[0], self.model_at_sigma_limit(sigma_limit)))
+
+    def model_errors_at_sigma_limit(self, sigma_limit):
+        uppers = self.model_at_upper_sigma_limit(sigma_limit=sigma_limit)
+        lowers = self.model_at_lower_sigma_limit(sigma_limit=sigma_limit)
+        return list(map(lambda upper, lower : upper - lower, uppers, lowers))
 
     def weighted_sample_instance_from_weighted_samples(self, index):
         """Setup a model instance of a weighted sample, including its weight and likelihood.
@@ -558,9 +559,6 @@ class MultiNest(NonLinearOptimizer):
 
                     lower_limit = self.model_at_lower_sigma_limit(sigma_limit=3.0)
                     upper_limit = self.model_at_upper_sigma_limit(sigma_limit=3.0)
-
-                    print(lower_limit)
-                    print(upper_limit)
 
                     results.write('\n')
                     results.write('Most probable model (3 sigma limits)' + '\n')
