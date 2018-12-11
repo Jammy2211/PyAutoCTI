@@ -189,7 +189,7 @@ class CIPatternNonUniform(CIPattern):
         -----------
         normalization : float
             The normalization of the charge injection region.
-        regions : [(int, int, int, int)]
+        regions : [(int,)]
             A list of the integer coordinates specifying the corners of each charge injection region \
             (top-row, bottom-row, lelf-column, right-column).
         row_slope : float
