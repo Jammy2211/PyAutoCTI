@@ -34,9 +34,9 @@ def test_pipeline_parallel_serial_1_species():
 
     cti_params = arctic_params.ArcticParams(parallel=parallel_params, serial=serial_params)
 
-    cti_settings = arctic_settings.setup(p=True, p_well_depth=84700, p_niter=1, p_express=1, p_n_levels=2000,
+    cti_settings = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=1, p_express=1, p_n_levels=2000,
                                          p_charge_injection_mode=True, p_readout_offset=0,
-                                         s=True, s_well_depth=84700, s_niter=1, s_express=1, s_n_levels=2000,
+                                         include_serial=True, s_well_depth=84700, s_niter=1, s_express=1, s_n_levels=2000,
                                          s_charge_injection_mode=False, s_readout_offset=0)
 
     tools.simulate_integration_quadrant(data_name, cti_params, cti_settings)

@@ -69,7 +69,7 @@ class TestFactories:
 
         def test__1_species_in__sets_up_correct_class_instance(self):
 
-            parameters = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
+            parameters = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
             p_well_notch_depth=0.01, p_well_fill_alpha=0.1, p_well_fill_beta=0.8, p_well_fill_gamma=0.5)
 
             assert type(parameters) == arctic_params.ArcticParams
@@ -84,7 +84,7 @@ class TestFactories:
 
         def test__2_species_in__sets_up_correct_class_instance(self):
 
-            parameters = arctic_params.setup(p=True, p_trap_densities=(0.1, 0.3), p_trap_lifetimes=(1.0, 10.0),
+            parameters = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1, 0.3), p_trap_lifetimes=(1.0, 10.0),
                                             p_well_notch_depth=0.01, p_well_fill_alpha=0.1, p_well_fill_beta=0.8,
                                             p_well_fill_gamma=0.5)
 
@@ -100,7 +100,7 @@ class TestFactories:
 
         def test__3_species_in__sets_up_correct_class_instance(self):
 
-            parameters = arctic_params.setup(p=True, p_trap_densities=(0.1, 0.3, 0.5), p_trap_lifetimes=(1.0, 10.0, 100.0),
+            parameters = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1, 0.3, 0.5), p_trap_lifetimes=(1.0, 10.0, 100.0),
                                             p_well_notch_depth=0.01, p_well_fill_alpha=0.1, p_well_fill_beta=0.8,
                                             p_well_fill_gamma=0.5)
 
@@ -117,7 +117,7 @@ class TestFactories:
         def test__different_number_of_trap_densities_and_lifetimes__raises_error(self):
 
             with pytest.raises(AttributeError):
-                parameters = arctic_params.setup(p=True, p_trap_densities=(0.2,), p_trap_lifetimes=(2.0, 4.0),
+                parameters = arctic_params.setup(include_parallel=True, p_trap_densities=(0.2,), p_trap_lifetimes=(2.0, 4.0),
                                                 p_well_notch_depth=0.02, p_well_fill_beta=0.4)
 
 
@@ -125,7 +125,7 @@ class TestFactories:
 
         def test__1_species_in__sets_up_correct_class_instance(self):
 
-            parameters = arctic_params.setup(s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
+            parameters = arctic_params.setup(include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
             s_well_notch_depth=0.01, s_well_fill_alpha=0.6, s_well_fill_beta=0.8, s_well_fill_gamma=-0.1)
 
             assert type(parameters) == arctic_params.ArcticParams
@@ -140,7 +140,7 @@ class TestFactories:
 
         def test__2_species_in__sets_up_correct_class_instance(self):
             
-            parameters = arctic_params.setup(s=True, s_trap_densities=(0.1, 0.3), s_trap_lifetimes=(1.0, 10.0),
+            parameters = arctic_params.setup(include_serial=True, s_trap_densities=(0.1, 0.3), s_trap_lifetimes=(1.0, 10.0),
                                             s_well_notch_depth=0.01, s_well_fill_alpha=0.6, s_well_fill_beta=0.8,
                                             s_well_fill_gamma=-0.1)
 
@@ -156,7 +156,7 @@ class TestFactories:
 
         def test__3_species_in__sets_up_correct_class_instance(self):
 
-            parameters = arctic_params.setup(s=True, s_trap_densities=(0.1, 0.3, 0.5), s_trap_lifetimes=(1.0, 10.0, 100.0),
+            parameters = arctic_params.setup(include_serial=True, s_trap_densities=(0.1, 0.3, 0.5), s_trap_lifetimes=(1.0, 10.0, 100.0),
                                             s_well_notch_depth=0.01, s_well_fill_alpha=0.6, s_well_fill_beta=0.8,
                                             s_well_fill_gamma=-0.1)
 
@@ -173,7 +173,7 @@ class TestFactories:
         def test__different_number_of_trap_densities_and_lifetimes__raises_error(self):
 
             with pytest.raises(AttributeError):
-                parameters = arctic_params.setup(s=True, s_trap_densities=(0.2,), s_trap_lifetimes=(2.0, 4.0),
+                parameters = arctic_params.setup(include_serial=True, s_trap_densities=(0.2,), s_trap_lifetimes=(2.0, 4.0),
                                                 s_well_notch_depth=0.02, s_well_fill_beta=0.4)
 
 
@@ -181,10 +181,10 @@ class TestFactories:
         
         def test__1_parallel_1_serial__sets_up_class_instance_correctly(self):
 
-            parameters = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
+            parameters = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                             p_well_notch_depth=0.01, p_well_fill_alpha=0.1, p_well_fill_beta=0.8,
                                             p_well_fill_gamma=0.5,
-                                            s=True, s_trap_densities=(0.2,), s_trap_lifetimes=(2.0,),
+                                            include_serial=True, s_trap_densities=(0.2,), s_trap_lifetimes=(2.0,),
                                             s_well_notch_depth=0.02, s_well_fill_alpha=0.6, s_well_fill_beta=0.8,
                                             s_well_fill_gamma=-0.1)
 
@@ -211,10 +211,10 @@ class TestFactories:
 
         def test__2_parallel_1_serial__sets_up_class_instance_correctly(self):
 
-            parameters = arctic_params.setup(p=True, p_trap_densities=(0.1, 0.3), p_trap_lifetimes=(1.0, 3.0),
+            parameters = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1, 0.3), p_trap_lifetimes=(1.0, 3.0),
                                             p_well_notch_depth=0.01, p_well_fill_alpha=0.1, p_well_fill_beta=0.8,
                                             p_well_fill_gamma=0.5,
-                                            s=True, s_trap_densities=(0.2,), s_trap_lifetimes=(2.0,),
+                                            include_serial=True, s_trap_densities=(0.2,), s_trap_lifetimes=(2.0,),
                                             s_well_notch_depth=0.02, s_well_fill_alpha=0.6, s_well_fill_beta=0.8,
                                             s_well_fill_gamma=-0.1)
 
@@ -241,10 +241,10 @@ class TestFactories:
 
         def test__3_parallel_3_serial__sets_up_class_instance_correctly(self):
 
-            parameters = arctic_params.setup(p=True, p_trap_densities=(0.1, 0.3, 0.5), p_trap_lifetimes=(1.0, 3.0, 5.0),
+            parameters = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1, 0.3, 0.5), p_trap_lifetimes=(1.0, 3.0, 5.0),
                                             p_well_notch_depth=0.01, p_well_fill_alpha=0.1, p_well_fill_beta=0.8,
                                             p_well_fill_gamma=0.5,
-                                            s=True, s_trap_densities=(0.2, 0.4, 0.6), s_trap_lifetimes=(2.0, 4.0, 6.0),
+                                            include_serial=True, s_trap_densities=(0.2, 0.4, 0.6), s_trap_lifetimes=(2.0, 4.0, 6.0),
                                             s_well_notch_depth=0.02, s_well_fill_alpha=0.6, s_well_fill_beta=0.8,
                                             s_well_fill_gamma=-0.1)
 
@@ -272,17 +272,17 @@ class TestFactories:
         def test__different_number_of_parallel_trap_densities_and_lifetimes__raises_error(self):
 
             with pytest.raises(AttributeError):
-                parameters = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0, 2.0),
+                parameters = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0, 2.0),
                                                 p_well_notch_depth=0.01, p_well_fill_beta=0.8,
-                                                s=True, s_trap_densities=(0.2,), s_trap_lifetimes=(2.0,),
+                                                include_serial=True, s_trap_densities=(0.2,), s_trap_lifetimes=(2.0,),
                                                 s_well_notch_depth=0.02, s_well_fill_beta=0.4)
 
         def test__different_number_of_s_trap_densities_and_lifetimes__raises_error(self):
 
             with pytest.raises(AttributeError):
-                parameters = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
+                parameters = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                                 p_well_notch_depth=0.01, p_well_fill_beta=0.8,
-                                                s=True, s_trap_densities=(0.2,), s_trap_lifetimes=(2.0, 4.0),
+                                                include_serial=True, s_trap_densities=(0.2,), s_trap_lifetimes=(2.0, 4.0),
                                                 s_well_notch_depth=0.02, s_well_fill_beta=0.4)
 
 

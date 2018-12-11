@@ -25,24 +25,20 @@ Author: user
 
 from __future__ import division, print_function
 
-import sys
-
-if sys.version_info[0] < 3:
-    from future_builtins import *
-
-import pytest
 import numpy as np
+import pytest
 
-from autocti.data.charge_injection import ci_frame, ci_pattern
-from autocti.data.charge_injection import ci_data
-from autocti.model import arctic_settings
-from autocti.model import arctic_params
 from autocti import exc
+from autocti.data.charge_injection import ci_data
+from autocti.data.charge_injection import ci_frame, ci_pattern
+from autocti.model import arctic_params
+from autocti.model import arctic_settings
+
 
 @pytest.fixture(scope='class')
 def empty_mask():
     parallel_settings = arctic_settings.ParallelSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
-                                                        readout_offset=0)
+                                                         readout_offset=0)
     arctic_parallel = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings)
 
     return arctic_parallel
@@ -51,7 +47,7 @@ def empty_mask():
 @pytest.fixture(scope='class')
 def arctic_parallel():
     parallel_settings = arctic_settings.ParallelSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
-                                                        readout_offset=0)
+                                                         readout_offset=0)
     arctic_parallel = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings)
 
     return arctic_parallel
@@ -60,7 +56,7 @@ def arctic_parallel():
 @pytest.fixture(scope='class')
 def arctic_serial():
     serial_settings = arctic_settings.SerialSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
-                                                    readout_offset=0)
+                                                     readout_offset=0)
 
     arctic_serial = arctic_settings.ArcticSettings(neomode='NEO', serial=serial_settings)
 
@@ -70,13 +66,13 @@ def arctic_serial():
 @pytest.fixture(scope='class')
 def arctic_both():
     parallel_settings = arctic_settings.ParallelSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
-                                                        readout_offset=0)
+                                                         readout_offset=0)
 
     serial_settings = arctic_settings.SerialSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
-                                                    readout_offset=0)
+                                                     readout_offset=0)
 
     arctic_both = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings,
-                                                serial=serial_settings)
+                                                 serial=serial_settings)
 
     return arctic_both
 
@@ -84,7 +80,7 @@ def arctic_both():
 @pytest.fixture(scope='class')
 def params_parallel():
     params_parallel = arctic_params.ParallelOneSpecies(trap_densities=(0.1,), trap_lifetimes=(1.0,),
-                                                          well_notch_depth=0.000001, well_fill_beta=0.8)
+                                                       well_notch_depth=0.000001, well_fill_beta=0.8)
 
     params_parallel = arctic_params.ArcticParams(parallel=params_parallel)
 
@@ -94,7 +90,7 @@ def params_parallel():
 @pytest.fixture(scope='class')
 def params_serial():
     params_serial = arctic_params.SerialOneSpecies(trap_densities=(0.2,), trap_lifetimes=(2.0,),
-                                                      well_notch_depth=0.000001, well_fill_beta=0.4)
+                                                   well_notch_depth=0.000001, well_fill_beta=0.4)
 
     params_serial = arctic_params.ArcticParams(serial=params_serial)
 
@@ -104,13 +100,13 @@ def params_serial():
 @pytest.fixture(scope='class')
 def params_both():
     params_parallel = arctic_params.ParallelOneSpecies(trap_densities=(0.4,), trap_lifetimes=(1.0,),
-                                                          well_notch_depth=0.000001, well_fill_beta=0.8)
+                                                       well_notch_depth=0.000001, well_fill_beta=0.8)
 
     params_serial = arctic_params.SerialOneSpecies(trap_densities=(0.2,), trap_lifetimes=(2.0,),
-                                                      well_notch_depth=0.000001, well_fill_beta=0.4)
+                                                   well_notch_depth=0.000001, well_fill_beta=0.4)
 
     params_both = arctic_params.ArcticParams(parallel=params_parallel,
-                                                serial=params_serial)
+                                             serial=params_serial)
 
     return params_both
 
@@ -130,19 +126,18 @@ class MockGeometry(ci_frame.CIQuadGeometry):
 class TestCIData(object):
 
     def test__constructor(self):
-
         data = ci_data.CIData(images=[np.ones((2, 2)), 5.0 * np.ones((2, 2))],
                               masks=[2.0 * np.ones((2, 2)), 6.0 * np.ones((2, 2))],
-                              noises=[3.0 * np.ones((2, 2)), 7.0*np.ones((2,2))],
-                              ci_pre_ctis=[4.0 * np.ones((2, 2)), 8.0*np.ones((2,2))])
+                              noises=[3.0 * np.ones((2, 2)), 7.0 * np.ones((2, 2))],
+                              ci_pre_ctis=[4.0 * np.ones((2, 2)), 8.0 * np.ones((2, 2))])
 
-        assert (data[0].image == np.ones((2,2))).all()
-        assert (data[0].mask == 2.0*np.ones((2,2))).all()
+        assert (data[0].image == np.ones((2, 2))).all()
+        assert (data[0].mask == 2.0 * np.ones((2, 2))).all()
         assert (data[0].noise == 3.0 * np.ones((2, 2))).all()
         assert (data[0].ci_pre_cti == 4.0 * np.ones((2, 2))).all()
 
-        assert (data[1].image == 5.0 * np.ones((2,2))).all()
-        assert (data[1].mask == 6.0 * np.ones((2,2))).all()
+        assert (data[1].image == 5.0 * np.ones((2, 2))).all()
+        assert (data[1].mask == 6.0 * np.ones((2, 2))).all()
         assert (data[1].noise == 7.0 * np.ones((2, 2))).all()
         assert (data[1].ci_pre_cti == 8.0 * np.ones((2, 2))).all()
 
@@ -150,60 +145,57 @@ class TestCIData(object):
 class TestCIDataAnalysis(object):
 
     def test__constructor__no_scaled_noise(self):
-
         data = ci_data.CIDataAnalysis(images=[np.ones((2, 2)), 5.0 * np.ones((2, 2))],
                                       masks=[2.0 * np.ones((2, 2)), 6.0 * np.ones((2, 2))],
-                                      noises=[3.0 * np.ones((2, 2)), 7.0*np.ones((2,2))],
-                                      ci_pre_ctis=[4.0 * np.ones((2, 2)), 8.0*np.ones((2,2))])
+                                      noises=[3.0 * np.ones((2, 2)), 7.0 * np.ones((2, 2))],
+                                      ci_pre_ctis=[4.0 * np.ones((2, 2)), 8.0 * np.ones((2, 2))])
 
-        assert (data[0].image == np.ones((2,2))).all()
-        assert (data[0].mask == 2.0*np.ones((2,2))).all()
+        assert (data[0].image == np.ones((2, 2))).all()
+        assert (data[0].mask == 2.0 * np.ones((2, 2))).all()
         assert (data[0].noise == 3.0 * np.ones((2, 2))).all()
         assert (data[0].ci_pre_cti == 4.0 * np.ones((2, 2))).all()
 
-        assert (data[1].image == 5.0 * np.ones((2,2))).all()
-        assert (data[1].mask == 6.0 * np.ones((2,2))).all()
+        assert (data[1].image == 5.0 * np.ones((2, 2))).all()
+        assert (data[1].mask == 6.0 * np.ones((2, 2))).all()
         assert (data[1].noise == 7.0 * np.ones((2, 2))).all()
         assert (data[1].ci_pre_cti == 8.0 * np.ones((2, 2))).all()
 
     def test__constructor__include_scaled_noise__x1_scaled_noise_per_image(self):
-
         data = ci_data.CIDataAnalysis(images=[np.ones((2, 2)), 5.0 * np.ones((2, 2))],
                                       masks=[2.0 * np.ones((2, 2)), 6.0 * np.ones((2, 2))],
-                                      noises=[3.0 * np.ones((2, 2)), 7.0*np.ones((2,2))],
-                                      ci_pre_ctis=[4.0 * np.ones((2, 2)), 8.0*np.ones((2,2))],
-                                      noise_scalings=[[9.0 * np.ones((2, 2))], [10.0*np.ones((2,2))]])
+                                      noises=[3.0 * np.ones((2, 2)), 7.0 * np.ones((2, 2))],
+                                      ci_pre_ctis=[4.0 * np.ones((2, 2)), 8.0 * np.ones((2, 2))],
+                                      noise_scalings=[[9.0 * np.ones((2, 2))], [10.0 * np.ones((2, 2))]])
 
-        assert (data[0].image == np.ones((2,2))).all()
-        assert (data[0].mask == 2.0*np.ones((2,2))).all()
+        assert (data[0].image == np.ones((2, 2))).all()
+        assert (data[0].mask == 2.0 * np.ones((2, 2))).all()
         assert (data[0].noise == 3.0 * np.ones((2, 2))).all()
         assert (data[0].ci_pre_cti == 4.0 * np.ones((2, 2))).all()
         assert (data[0].noise_scalings[0] == 9.0 * np.ones((2, 2))).all()
 
-        assert (data[1].image == 5.0 * np.ones((2,2))).all()
-        assert (data[1].mask == 6.0 * np.ones((2,2))).all()
+        assert (data[1].image == 5.0 * np.ones((2, 2))).all()
+        assert (data[1].mask == 6.0 * np.ones((2, 2))).all()
         assert (data[1].noise == 7.0 * np.ones((2, 2))).all()
         assert (data[1].ci_pre_cti == 8.0 * np.ones((2, 2))).all()
         assert (data[1].noise_scalings[0] == 10.0 * np.ones((2, 2))).all()
 
     def test__constructor__include_scaled_noise__x2_scaled_noise_per_image(self):
-
         data = ci_data.CIDataAnalysis(images=[np.ones((2, 2)), 5.0 * np.ones((2, 2))],
                                       masks=[2.0 * np.ones((2, 2)), 6.0 * np.ones((2, 2))],
-                                      noises=[3.0 * np.ones((2, 2)), 7.0*np.ones((2,2))],
-                                      ci_pre_ctis=[4.0 * np.ones((2, 2)), 8.0*np.ones((2,2))],
-                                      noise_scalings=[[9.0 * np.ones((2, 2)), 11.0 * np.ones((2,2))],
-                                                        [10.0*np.ones((2,2)), 12.0*np.ones((2,2))]])
+                                      noises=[3.0 * np.ones((2, 2)), 7.0 * np.ones((2, 2))],
+                                      ci_pre_ctis=[4.0 * np.ones((2, 2)), 8.0 * np.ones((2, 2))],
+                                      noise_scalings=[[9.0 * np.ones((2, 2)), 11.0 * np.ones((2, 2))],
+                                                      [10.0 * np.ones((2, 2)), 12.0 * np.ones((2, 2))]])
 
-        assert (data[0].image == np.ones((2,2))).all()
-        assert (data[0].mask == 2.0*np.ones((2,2))).all()
+        assert (data[0].image == np.ones((2, 2))).all()
+        assert (data[0].mask == 2.0 * np.ones((2, 2))).all()
         assert (data[0].noise == 3.0 * np.ones((2, 2))).all()
         assert (data[0].ci_pre_cti == 4.0 * np.ones((2, 2))).all()
         assert (data[0].noise_scalings[0] == 9.0 * np.ones((2, 2))).all()
         assert (data[0].noise_scalings[1] == 11.0 * np.ones((2, 2))).all()
 
-        assert (data[1].image == 5.0 * np.ones((2,2))).all()
-        assert (data[1].mask == 6.0 * np.ones((2,2))).all()
+        assert (data[1].image == 5.0 * np.ones((2, 2))).all()
+        assert (data[1].mask == 6.0 * np.ones((2, 2))).all()
         assert (data[1].noise == 7.0 * np.ones((2, 2))).all()
         assert (data[1].ci_pre_cti == 8.0 * np.ones((2, 2))).all()
         assert (data[1].noise_scalings[0] == 10.0 * np.ones((2, 2))).all()
@@ -211,7 +203,6 @@ class TestCIDataAnalysis(object):
 
 
 class TestCIImage(object):
-    
     class TestConstructor:
 
         def test__setup_all_attributes_correctly__noise_is_generated_by_read_noise(self):
@@ -228,8 +219,8 @@ class TestCIImage(object):
             assert type(data.ci_pattern) == ci_pattern.CIPattern
             assert data.shape == (3, 3)
             assert (data == np.array([[10.0, 10.0, 10.0],
-                                         [2.0, 2.0, 2.0],
-                                         [8.0, 12.0, 10.0]])).all()
+                                      [2.0, 2.0, 2.0],
+                                      [8.0, 12.0, 10.0]])).all()
 
     class TestSetupCIPreCTI:
 
@@ -344,10 +335,9 @@ class TestCIImage(object):
                                                                             [1.74, -0.76, 0.32]]), 1e-2))
 
         def test__include_cosmics__is_added_to_image_and_trailed(self, arctic_parallel, params_parallel):
-
             pattern = ci_pattern.CIPatternUniformSimulate(normalization=10.0, regions=[(0, 1, 0, 5)])
 
-            cosmics = np.zeros((5,5))
+            cosmics = np.zeros((5, 5))
             cosmics[1, 1] = 100.0
 
             ci_simulate = ci_data.CIImage.simulate(shape=(5, 5), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
@@ -355,9 +345,8 @@ class TestCIImage(object):
                                                    cti_params=params_parallel)
 
             assert ci_simulate[0, 0:5] == pytest.approx(np.array([10.0, 10.0, 10.0, 10.0, 10.0]), 1e-2)
-            assert 0.0 < ci_simulate[1,1] < 100.0
+            assert 0.0 < ci_simulate[1, 1] < 100.0
             assert (ci_simulate[1, 1:4] > 0.0).all()
-
 
     class TestCreateReadNoiseMap(object):
 
@@ -377,11 +366,9 @@ class TestCIImage(object):
 
 
 class TestCIMask(object):
-
     class TestMaskRemoveRegions:
 
         def test__remove_one_region(self):
-
             mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
                                          ci_pattern=MockPattern(), regions=[(0, 3, 2, 3)])
 
@@ -451,7 +438,6 @@ class TestCIMask(object):
                                       [False, True, False]])).all()
 
         def test__mask_one_cosmic_ray_with_serial_mask(self):
-
             cosmic_rays = np.array([[False, False, False],
                                     [False, True, False],
                                     [False, False, False]])
@@ -476,7 +462,6 @@ class TestCIMask(object):
                                       [False, False, False]])).all()
 
         def test__mask_one_cosmic_ray_with_diagonal_mask(self):
-
             cosmic_rays = np.array([[False, False, False],
                                     [False, True, False],
                                     [False, False, False]])
@@ -489,7 +474,6 @@ class TestCIMask(object):
                                       [False, True, True]])).all()
 
         def test__mask_one_cosmic_ray_with_bigger_diagonal_mask(self):
-
             cosmic_rays = np.array([[False, False, False, False],
                                     [False, True, False, False],
                                     [False, False, False, False],
@@ -502,7 +486,6 @@ class TestCIMask(object):
                                       [False, True, True, True],
                                       [False, True, True, True],
                                       [False, True, True, True]])).all()
-
 
     class TestMaskCosmicsBottomRightGeometry:
 
@@ -555,7 +538,6 @@ class TestCIMask(object):
                                       [False, False, False]])).all()
 
         def test__mask_one_cosmic_ray_with_diagonal_mask(self):
-
             cosmic_rays = np.array([[False, False, False],
                                     [False, True, False],
                                     [False, False, False]])
@@ -568,7 +550,6 @@ class TestCIMask(object):
                                       [True, True, False]])).all()
 
         def test__mask_one_cosmic_ray_with_bigger_diagonal_mask(self):
-
             cosmic_rays = np.array([[False, False, False, False],
                                     [False, False, False, True],
                                     [False, False, False, False],
@@ -581,7 +562,6 @@ class TestCIMask(object):
                                       [False, True, True, True],
                                       [False, True, True, True],
                                       [False, True, True, True]])).all()
-
 
     class TestMaskCosmicsTopLeftGeometry:
 
@@ -634,7 +614,6 @@ class TestCIMask(object):
                                       [False, False, False]])).all()
 
         def test__mask_one_cosmic_ray_with_diagonal_mask(self):
-
             cosmic_rays = np.array([[False, False, False],
                                     [False, True, False],
                                     [False, False, False]])
@@ -647,7 +626,6 @@ class TestCIMask(object):
                                       [False, False, False]])).all()
 
         def test__mask_one_cosmic_ray_with_bigger_diagonal_mask(self):
-
             cosmic_rays = np.array([[False, False, False, False],
                                     [False, False, False, False],
                                     [False, False, False, False],
@@ -661,11 +639,9 @@ class TestCIMask(object):
                                       [False, True, True, True],
                                       [False, True, True, True]])).all()
 
-
     class TestMaskCosmicsTopRightGeometry:
 
         def test__mask_one_cosmic_ray_with_parallel_mask(self):
-
             cosmic_rays = np.array([[False, False, False],
                                     [False, True, False],
                                     [False, False, False]])
@@ -689,7 +665,6 @@ class TestCIMask(object):
                                       [False, True, False]])).all()
 
         def test__mask_one_cosmic_ray_with_serial_mask(self):
-
             cosmic_rays = np.array([[False, False, False],
                                     [False, True, False],
                                     [False, False, False]])
@@ -714,7 +689,6 @@ class TestCIMask(object):
                                       [False, False, False]])).all()
 
         def test__mask_one_cosmic_ray_with_diagonal_mask(self):
-
             cosmic_rays = np.array([[False, False, False],
                                     [False, True, False],
                                     [False, False, False]])
@@ -727,7 +701,6 @@ class TestCIMask(object):
                                       [False, False, False]])).all()
 
         def test__mask_one_cosmic_ray_with_bigger_diagonal_mask(self):
-
             cosmic_rays = np.array([[False, False, False, False],
                                     [False, False, False, False],
                                     [False, False, False, False],
@@ -741,12 +714,11 @@ class TestCIMask(object):
                                       [False, True, True, True],
                                       [False, True, True, True]])).all()
 
-class TestCIPreCTI(object):
 
+class TestCIPreCTI(object):
     class TestConstructor:
 
         def test__simple_case__sets_up_correctly(self):
-
             ci_pre_cti = np.array([[10.0, 10.0, 10.0],
                                    [2.0, 2.0, 2.0],
                                    [8.0, 12.0, 10.0]])
@@ -783,11 +755,9 @@ class TestCIPreCTI(object):
 
 
 class TestCIPreCTIFast(object):
-
     class TestConstructor:
 
         def test__simple_case__sets_up_correctly(self):
-
             ci_pre_cti = np.array([[10.0, 10.0, 10.0],
                                    [2.0, 2.0, 2.0],
                                    [8.0, 12.0, 10.0]])
@@ -818,7 +788,6 @@ class TestCIPreCTIFast(object):
                                                                 [0.0]])).all()
 
         def test__2_ci_regions_with_one_pixel_each(self):
-
             pattern = ci_pattern.CIPatternUniformFast(normalization=10.0, regions=[(0, 1, 0, 3), (2, 3, 0, 3)])
 
             ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
@@ -829,7 +798,6 @@ class TestCIPreCTIFast(object):
                                                                 [10.0]])).all()
 
         def test__top_half_geometry_so_must_include_a_rotation(self):
-
             pattern = ci_pattern.CIPatternUniformFast(normalization=10.0, regions=[(0, 1, 0, 3)])
 
             ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
