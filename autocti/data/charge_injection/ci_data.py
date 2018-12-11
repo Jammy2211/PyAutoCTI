@@ -218,7 +218,7 @@ class CIMask(ci_frame.CIFrame):
         if cosmic_rays is not None:
             for y in range(mask.shape[0]):
                 for x in range(mask.shape[1]):
-                    if cosmic_rays[y, x] == True:
+                    if cosmic_rays[y, x]:
                         y0, y1 = mask.frame_geometry.parallel_trail_from_y(y, cr_parallel)
                         mask[y0:y1, x] = True
                         x0, x1 = mask.frame_geometry.serial_trail_from_x(x, cr_serial)

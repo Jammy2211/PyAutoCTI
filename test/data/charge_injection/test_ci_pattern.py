@@ -319,7 +319,7 @@ class TestCIPatternNonUniform(object):
             column = np.array([11.0, 8.0, 15.0, 10])
             column_mask = np.array([True, True, True, True])
 
-            assert pattern.mean_charge_in_column(column, column_mask) == None
+            assert pattern.mean_charge_in_column(column, column_mask) is None
 
         def test__column_values_all_different__no_row_non_uniformity__measures_mean_correctly(self):
             pattern = ci_pattern.CIPatternNonUniform(normalization=10.0, regions=[(0, 1, 0, 1)], row_slope=0.0)

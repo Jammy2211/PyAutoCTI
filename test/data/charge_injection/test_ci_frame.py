@@ -1763,10 +1763,10 @@ class TestCIFrame(object):
 
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
 
-            with pytest.raises(exc.CIFrameExpection):
+            with pytest.raises(exc.CIFrameException):
                 ci_frame.CIFrame(frame_geometry=MockGeometry(), ci_pattern=pattern, array=np.ones((1, 1)))
 
-            with pytest.raises(exc.CIFrameExpection):
+            with pytest.raises(exc.CIFrameException):
                 ci_frame.CIFrameCTI(frame_geometry=MockGeometry(), ci_pattern=pattern, array=np.ones((1, 1)))
 
 

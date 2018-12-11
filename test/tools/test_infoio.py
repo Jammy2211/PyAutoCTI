@@ -132,7 +132,7 @@ class TestGenerateClassInfo:
 
         info = infoio.generate_class_info(cls, prefix='', include_types=[])
 
-        assert info == None
+        assert info is None
 
     def test__no_prefix__interger_and_float__include_just_float__only_float_info_generated(self):
 
@@ -198,11 +198,11 @@ class TestAllAreNone:
 
     def test__all_none__returns_true(self):
 
-        assert infoio.are_all_inputs_none(None, None, None) == True
+        assert infoio.are_all_inputs_none(None, None, None) is True
 
     def test__one_is_not_none__returns_false(self):
 
-        assert infoio.are_all_inputs_none(None, 1.0, None) == False
+        assert infoio.are_all_inputs_none(None, 1.0, None) is False
 
 
 class TestCheckAllTuples:

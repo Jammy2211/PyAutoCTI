@@ -1,6 +1,6 @@
-from autocti import conf
-from autocti.autofit import non_linear as nl
-from autocti.autofit import model_mapper as mm
+from autofit import conf
+from autofit.core import non_linear as nl
+from autofit.core import model_mapper as mm
 from autocti.pipeline import pipeline as pl
 from autocti.pipeline import phase as ph
 from autocti.pyarctic import arctic_params
@@ -31,7 +31,7 @@ def test_pipeline_parallel_1_species():
 
     cti_params = arctic_params.ArcticParams(parallel=parallel_params)
 
-    cti_settings = arctic_settings.setup(p=True, p_well_depth=84700, p_niter=1, p_express=1, p_n_levels=2000,
+    cti_settings = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=1, p_express=1, p_n_levels=2000,
                                   p_charge_injection_mode=True, p_readout_offset=0)
 
     tools.simulate_integration_quadrant(data_name, cti_params, cti_settings)
