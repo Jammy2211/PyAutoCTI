@@ -117,3 +117,11 @@ def scaled_noise_maps_from_noise_maps_and_noise_scalings(noise_maps, noise_scali
 
     return list(map(lambda noise_map, scaled_noise_map : np.add(noise_maps, scaled_noise_map),
                 noise_maps, scaled_noise_maps))
+
+def scaled_noise_map_from_noise_map_and_noise_scalings(noise_map, noise_scalings, hyper_ci_noises):
+
+    scaled_noise_maps = sum(list(map(lambda hyper, noise_scaling :
+                                   hyper.compute_scaled_noise(noise_scaling),
+                                   hyper_ci_noises, noise_scalings)))
+
+    return np.add(noise_map + sum(scaled_noise_maps))
