@@ -114,8 +114,7 @@ class ArcticParams(object):
 
 class CCD(object):
 
-    def __init__(self, well_notch_depth, well_fill_alpha, well_fill_beta,
-                 well_fill_gamma):
+    def __init__(self, well_notch_depth=1e-9, well_fill_alpha=1.0, well_fill_beta=0.58, well_fill_gamma=0.0):
         """Abstract base class of the cti model parameters. Parameters associated with the traps are set via a child \
         class.
 
@@ -144,7 +143,7 @@ class CCD(object):
 
 class Species(object):
 
-    def __init__(self, trap_density, trap_lifetime):
+    def __init__(self, trap_density=0.13, trap_lifetime=0.25):
         """The CTI model parameters used for parallel clocking, using one species of trap.
 
         Parameters
