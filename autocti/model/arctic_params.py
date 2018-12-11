@@ -21,7 +21,7 @@ File: python/SHE_ArCTIC/ArcticParams.pyeated on: 02/13/18
 Author: James Nightingale
 """
 
-from __future__ import division, print_function
+
 
 import numpy as np
 

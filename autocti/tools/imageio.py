@@ -23,7 +23,7 @@ Created on: 04/23/18
 Author: James Nightingale
 """
 
-from __future__ import division, print_function
+
 from astropy.io import fits
 import sys
 import os
