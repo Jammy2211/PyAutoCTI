@@ -1,11 +1,11 @@
 from autocti import conf
 from autocti.autofit import non_linear as nl
 from autocti.autofit import model_mapper as mm
-from autocti.fitting import fitting
-from autocti.charge_injection import ci_hyper
-from autocti.charge_injection import ci_data
-from autocti.plotting import ci_plotters
-from autocti.pyarctic import arctic_params
+from autocti.data.fitting import fitting
+from autocti.data.charge_injection import ci_hyper
+from autocti.data.charge_injection import ci_data
+from autocti.data.charge_injection.plotters import ci_plotters
+from autocti.model import arctic_params
 from autocti.tools import imageio
 import os
 from astropy.io import fits
@@ -574,13 +574,13 @@ class ParallelPhase(Phase):
 
             for i in range(len(images)):
                 ci_plotters.ci_regions_binned_across_serial(images[i], masks[i], path=self.output_image_path,
-                                                           filename=filename + str(i), line0=False)
+                                                            filename=filename + str(i), line0=False)
 
         def output_parallel_trails_binned_across_serial(self, images, masks, filename):
 
             for i in range(len(images)):
                 ci_plotters.parallel_trails_binned_across_serial(images[i], masks[i], path=self.output_image_path,
-                                                                filename=filename + str(i), line0=False)
+                                                                 filename=filename + str(i), line0=False)
 
         @classmethod
         def log(cls, instance):
@@ -874,13 +874,13 @@ class SerialPhase(Phase):
 
             for i in range(len(images)):
                 ci_plotters.ci_regions_binned_across_parallel(images[i], masks[i], path=self.output_image_path,
-                                                             filename=filename + str(i), line0=False)
+                                                              filename=filename + str(i), line0=False)
 
         def output_serial_trails_binned_across_parallel(self, images, masks, filename):
 
             for i in range(len(images)):
                 ci_plotters.serial_trails_binned_across_parallel(images[i], masks[i], path=self.output_image_path,
-                                                                filename=filename + str(i), line0=False)
+                                                                 filename=filename + str(i), line0=False)
 
         @classmethod
         def log(cls, instance):
