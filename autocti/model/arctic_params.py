@@ -26,114 +26,27 @@ import numpy as np
 from autocti.tools import infoio
 
 
-def setup(include_serial=False, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,), p_well_notch_depth=0.0001,
-          p_well_fill_alpha=1.0, p_well_fill_beta=0.8, p_well_fill_gamma=0.0,
-          include_parallel=False, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,), s_well_notch_depth=0.0001,
-          s_well_fill_alpha=1.0, s_well_fill_beta=0.8, s_well_fill_gamma=0.0):
-    """Factory to set up a *ParallelParams* and / or *SerialParams* sub-class as an *ArcticParams*
-    instance using any number of trap species in both directions.
-
-    Parameters
-    ----------
-    include_parallel: Bool
-        If True parallel parameters will be included in the ArcticParams object
-    include_serial: Bool
-        If True serial parameters will be included in the ArcticParams object
-    p_trap_densities : (float,)
-        The trap density of the parallel species
-    p_trap_lifetimes : (float,)
-        The trap lifetimes of the parallel species
-    p_well_notch_depth : float
-        The CCD notch depth for parallel clocking
-    p_well_fill_alpha : float
-        The volume-filling coefficient (alpha) of how an electron cloud fills the volume of a pixel for parallel
-        clocking.
-    p_well_fill_beta : float
-        The volume-filling power (beta) of how an electron cloud fills the volume of a pixel for parallel clocking
-    p_well_fill_gamma : float
-        The volume-filling constant (gamma) of how an electron cloud fills the volume of a pixel for parallel clocking
-    s_trap_densities : (float,)
-        The trap density of the serial species
-    s_trap_lifetimes : (float,)
-        The trap lifetimes of the serial species
-    s_well_notch_depth : float
-        The CCD notch depth for serial clocking
-    s_well_fill_alpha : float
-        The volume-filling coefficient (alpha) of how an electron cloud fills the volume of a pixel for serial clocking.
-    s_well_fill_beta : float
-        The volume-filling power (beta) of how an electron cloud fills the volume of a pixel for serial clocking
-    s_well_fill_gamma : float
-        The volume-filling constant (gamma) of how an electron cloud fills the volume of a pixel for serial clocking
-    """
-
-    parallel_parameters = _setup_parallel(p_trap_densities, p_trap_lifetimes, p_well_notch_depth,
-                                          p_well_fill_alpha, p_well_fill_beta,
-                                          p_well_fill_gamma) if include_parallel else None
-
-    serial_parameters = _setup_serial(s_trap_densities, s_trap_lifetimes, s_well_notch_depth,
-                                      s_well_fill_alpha, s_well_fill_beta,
-                                      s_well_fill_gamma) if include_serial else None
-
-    return ArcticParams(parallel=parallel_parameters, serial=serial_parameters)
-
-
-def _setup_parallel(trap_densities, trap_lifetimes, well_notch_depth, well_fill_alpha, well_fill_beta,
-                    well_fill_gamma):
-    """Setup the parallel parameters for the factory above"""
-
-    infoio.check_all_tuples_and_equal_length(trap_densities, trap_lifetimes)
-
-    parallel_no_species = len(trap_densities)
-
-    if parallel_no_species == 1:
-        return ParallelOneSpecies(trap_densities, trap_lifetimes, well_notch_depth,
-                                  well_fill_alpha, well_fill_beta, well_fill_gamma)
-    elif parallel_no_species == 2:
-        return ParallelTwoSpecies(trap_densities, trap_lifetimes, well_notch_depth,
-                                  well_fill_alpha, well_fill_beta, well_fill_gamma)
-    elif parallel_no_species == 3:
-        return ParallelThreeSpecies(trap_densities, trap_lifetimes, well_notch_depth,
-                                    well_fill_alpha, well_fill_beta, well_fill_gamma)
-    else:
-        raise AttributeError('The number of parallel trap species must be > 0 and < 3')
-
-
-def _setup_serial(trap_densities, trap_lifetimes, well_notch_depth, well_fill_alpha, well_fill_beta,
-                  well_fill_gamma):
-    """Setup the serial parameters for the factory above"""
-
-    infoio.check_all_tuples_and_equal_length(trap_densities, trap_lifetimes)
-
-    serial_no_species = len(trap_densities)
-
-    if serial_no_species == 1:
-        return SerialOneSpecies(trap_densities, trap_lifetimes, well_notch_depth,
-                                well_fill_alpha, well_fill_beta, well_fill_gamma)
-    elif serial_no_species == 2:
-        return SerialTwoSpecies(trap_densities, trap_lifetimes, well_notch_depth,
-                                well_fill_alpha, well_fill_beta, well_fill_gamma)
-    elif serial_no_species == 3:
-        return SerialThreeSpecies(trap_densities, trap_lifetimes, well_notch_depth,
-                                  well_fill_alpha, well_fill_beta, well_fill_gamma)
-    else:
-        raise AttributeError('The number of serial trap species must be > 0 and < 3')
-
-
 class ArcticParams(object):
 
-    def __init__(self, parallel=None, serial=None):
+    def __init__(self, parallel_ccd, serial_ccd, parallel=None, serial=None):
         """Sets up the arctic CTI model using parallel and serial parameters specified using a child of the
         ArcticParams.ParallelParams and ArcticParams.SerialParams abstract base classes.
 
         Parameters
         ----------
+        parallel_ccd: CCD
+            Class describing the state of the CCD in the parallel direction
+        serial_ccd: CCD
+            Class describing the state of the CCD in the serial direction
         parallel : ArcticParams.ParallelParams
            The parallel parameters for the arctic CTI model
         serial : ArcticParams.SerialParams
            The serial parameters for the arctic CTI model
         """
-        self.parallel = parallel
-        self.serial = serial
+        self.parallel_ccd = parallel_ccd
+        self.serial_ccd = serial_ccd
+        self.parallel = parallel or []
+        self.serial = serial or []
 
     def output_info_file(self, path, filename='ArcticParams'):
         """Output information on the the parameters to a text file.
@@ -150,31 +63,22 @@ class ArcticParams(object):
     def generate_info(self):
         """Generate string containing information on the the arctic parameters."""
 
-        info = ''
+        info_list = []
 
-        if self.parallel is not None:
-            info += self.parallel.generate_info()
+        def add_species(name, species_list):
+            info_list.extend(
+                map(lambda species: infoio.generate_class_info(cls=species, prefix='{}_'.format(name.lower()),
+                                                               include_types=[int, float, tuple]), species_list))
 
-        if self.serial is not None:
-            info += self.serial.generate_info()
+        add_species("parallel", self.parallel)
+        add_species("serial", self.serial)
 
-        return info
+        info_list.append(
+            infoio.generate_class_info(self.parallel_ccd, prefix="parallel_", include_types=[int, float, tuple]))
+        info_list.append(
+            infoio.generate_class_info(self.serial_ccd, prefix="serial_", include_types=[int, float, tuple]))
 
-    def get_object_tag(self, tag=''):
-
-        object_tag = ''
-
-        if self.parallel is not None:
-            object_tag += self.parallel.object_tag
-
-        if self.serial is not None:
-
-            if self.parallel is not None:
-                object_tag += '_'
-
-            object_tag += self.serial.object_tag
-
-        return object_tag + tag
+        return "\n".join(info_list)
 
     def update_fits_header_info(self, ext_header):
         """Output the CTI model parameters into the fits header of a fits image.
@@ -184,17 +88,29 @@ class ArcticParams(object):
         ext_header : astropy.io.hdulist
             The opened header of the astropy fits header.
         """
-        if self.parallel is not None:
-            self.parallel.update_fits_header_info(ext_header)
-        if self.serial is not None:
-            self.serial.update_fits_header_info(ext_header)
+
+        def add_species(name, species_list):
+            for i, species in species_list:
+                ext_header.set('cte_pt{}d'.format(i), species.trap_density,
+                               'Trap species {} density ({})'.format(i, name))
+                ext_header.set('cte_pt{}t'.format(i), species.trap_lifetime,
+                               'Trap species {} lifetime ({})'.format(i, name))
+
+        add_species("Parallel", self.parallel)
+        add_species("Serial", self.serial)
+
+        ext_header.set('cte_swln', self.serial_ccd.well_notch_depth, 'CCD Well notch depth (Serial)')
+        ext_header.set('cte_swlp', self.serial_ccd.well_fill_beta, 'CCD Well filling power (Serial)')
+
+        ext_header.set('cte_pwln', self.parallel_ccd.well_notch_depth, 'CCD Well notch depth (Parallel)')
+        ext_header.set('cte_pwlp', self.parallel_ccd.well_fill_beta, 'CCD Well filling power (Parallel)')
 
         return ext_header
 
 
-class Params(object):
+class CCD(object):
 
-    def __init__(self, trap_densities, trap_lifetimes, well_notch_depth, well_fill_alpha, well_fill_beta,
+    def __init__(self, well_notch_depth, well_fill_alpha, well_fill_beta,
                  well_fill_gamma):
         """Abstract base class of the cti model parameters. Parameters associated with the traps are set via a child \
         class.
@@ -210,202 +126,39 @@ class Params(object):
         well_fill_gamma : float
             The volume-filling constant (gamma) of how an electron cloud fills the volume of a pixel.
         """
-
-        self.trap_densities = trap_densities
-        self.trap_lifetimes = trap_lifetimes
         self.well_notch_depth = well_notch_depth
         self.well_fill_alpha = well_fill_alpha
         self.well_fill_beta = well_fill_beta
         self.well_fill_gamma = well_fill_gamma
 
     def __repr__(self):
-        string = "Number Species: {}".format(len(self.trap_lifetimes)) + '\n'
-        string += 'Trap Densities: {}'.format(self.trap_densities) + '\n'
-        string += 'Trap Lifetimes: {}'.format(self.trap_lifetimes) + '\n'
-        string += 'Well Notch Depth: {}'.format(self.well_notch_depth) + '\n'
-        string += 'Well Fill Alpha: {}'.format(self.well_fill_alpha) + '\n'
-        string += 'Well Fill Beta: {}'.format(self.well_fill_beta) + '\n'
-        string += 'Well Fill Gamma: {}'.format(self.well_fill_gamma) + '\n'
-        return string
+        return '\n'.join(('Well Notch Depth: {}'.format(self.well_notch_depth),
+                          'Well Fill Alpha: {}'.format(self.well_fill_alpha),
+                          'Well Fill Beta: {}'.format(self.well_fill_beta),
+                          'Well Fill Gamma: {}'.format(self.well_fill_gamma)))
 
 
-class ParallelParams(Params):
+class Species(object):
 
-    def __init__(self, trap_densities, trap_lifetimes, well_notch_depth, well_fill_alpha, well_fill_beta,
-                 well_fill_gamma):
-        """Abstract base class of the cti model parameters for parallel clocking. Params associated with the traps \
-         are set via a child class.
-
-        Parameters
-        ----------
-        trap_densities : tuple
-            The trap density of the species
-        trap_lifetimes : tuple
-            The trap lifetimes of the species            
-        well_notch_depth : float
-            The CCD notch depth
-        well_fill_alpha : float
-            The volume-filling coefficient (alpha) of how an electron cloud fills the volume of a pixel.
-        well_fill_beta : float
-            The volume-filling power (beta) of how an electron cloud fills the volume of a pixel.
-        well_fill_gamma : float
-            The volume-filling constant (gamma) of how an electron cloud fills the volume of a pixel.
-        """
-
-        super(ParallelParams, self).__init__(trap_densities, trap_lifetimes, well_notch_depth,
-                                             well_fill_alpha, well_fill_beta, well_fill_gamma)
-
-    def update_fits_header_info(self, ext_header):
-        """Update a fits header to include the parallel CTI model parameters.
-
-        Params
-        -----------
-        ext_header : astropy.io.hdulist
-            The opened header of the astropy fits header.
-        """
-        ext_header.set('cte_pt1d', self.trap_densities[0], 'First trap species density (Parallel)')
-        ext_header.set('cte_pt1t', self.trap_lifetimes[0], 'First trap species lifetime (Parallel)')
-
-        no_species = len(self.trap_densities)
-
-        if no_species > 1:
-            ext_header.set('cte_pt2d', self.trap_densities[1], 'Second trap species density (Parallel)')
-            ext_header.set('cte_pt2t', self.trap_lifetimes[1], 'Second trap species lifetime (Parallel)')
-
-        if no_species > 2:
-            ext_header.set('cte_pt3d', self.trap_densities[2], 'Third trap species density (Parallel)')
-            ext_header.set('cte_pt3t', self.trap_lifetimes[2], 'Third trap species lifetime (Parallel)')
-
-        ext_header.set('cte_pwln', self.well_notch_depth, 'CCD Well notch depth (Parallel)')
-        ext_header.set('cte_pwlp', self.well_fill_beta, 'CCD Well filling power (Parallel)')
-
-        return ext_header
-
-    def generate_info(self):
-        """Generate string containing information on the parallel parameters."""
-        info = ''
-        info += infoio.generate_class_info(cls=self, prefix='parallel_', include_types=[int, float, tuple])
-        info += '\n'
-        return info
-
-
-class ParallelOneSpecies(ParallelParams):
-
-    def __init__(self, trap_densities=(0.13,), trap_lifetimes=(0.25,), well_notch_depth=1e-9, well_fill_alpha=1.0,
-                 well_fill_beta=0.58, well_fill_gamma=0.0):
+    def __init__(self, trap_density, trap_lifetime):
         """The CTI model parameters used for parallel clocking, using one species of trap.
 
         Parameters
         ----------
-        trap_densities : (float,)
+        trap_density : float
             The trap density of the species.
-        trap_lifetimes : (float,)
+        trap_lifetime : float
             The trap lifetimes of the species.
-        well_notch_depth : float
-            The CCD notch depth.
-        well_fill_alpha : float
-            The volume-filling coefficient (alpha) of how an electron cloud fills the volume of a pixel.
-        well_fill_beta : float
-            The volume-filling power (beta) of how an electron cloud fills the volume of a pixel.
-        well_fill_gamma : float
-            The volume-filling constant (gamma) of how an electron cloud fills the volume of a pixel.
-
-        Examples
-        --------
-        parallel_two_species = ParallelTwoSpecies(trap_densities=(0.1,), trap_lifetimes=(1.0,),
-                                             trap_lifetimes=10.0, well_notch_depth=0.01, well_fill_beta=0.8)
-
         """
+        self.trap_density = trap_density
+        self.trap_lifetime = trap_lifetime
 
-        super(ParallelOneSpecies, self).__init__(trap_densities, trap_lifetimes, well_notch_depth, well_fill_alpha,
-                                                 well_fill_beta, well_fill_gamma)
-
-    @property
-    def object_tag(self):
-        return 'p1_d' + str(self.trap_densities) + '_t' + str(self.trap_lifetimes) + '_a' + str(
-            self.well_fill_alpha) + '_b' + \
-               str(self.well_fill_beta) + '_g' + str(self.well_fill_gamma)
+    def __repr__(self):
+        return "\n".join(('Trap Density: {}'.format(self.trap_density),
+                          'Trap Lifetime: {}'.format(self.trap_lifetime)))
 
 
-class ParallelTwoSpecies(ParallelParams):
-
-    def __init__(self, trap_densities=(0.13, 0.25), trap_lifetimes=(0.25, 4.4), well_notch_depth=1e-9,
-                 well_fill_alpha=1.0, well_fill_beta=0.58, well_fill_gamma=0.0):
-        """The CTI model parameters used for parallel clocking, using two species of traps.
-
-        Parameters
-        ----------
-        trap_densities : (float, float)
-            The trap density of the two trap species
-        trap_lifetimes : (float, float)
-            The trap lifetimes of the two trap species
-        well_notch_depth : float
-            The CCD notch depth
-        well_fill_beta : float
-            The volume-filling power (beta) of an electron cloud
-        well_fill_alpha : float
-            The volume-filling coefficient (alpha) of how an electron cloud fills the volume of a pixel.
-        well_fill_beta : float
-            The volume-filling power (beta) of how an electron cloud fills the volume of a pixel.
-        well_fill_gamma : float
-            The volume-filling constant (gamma) of how an electron cloud fills the volume of a pixel.
-
-        Examples
-        --------
-        parallel_two_species = ParallelTwoSpecies(trap_densities=(0.1, 0.2), trap_lifetimes=(1.0, 2.0),
-                                             trap_lifetimes=10.0, well_notch_depth=0.01, well_fill_beta=0.8)
-
-        """
-
-        super(ParallelTwoSpecies, self).__init__(trap_densities, trap_lifetimes, well_notch_depth, well_fill_alpha,
-                                                 well_fill_beta, well_fill_gamma)
-
-    @property
-    def object_tag(self):
-        return 'p2_d' + str(self.trap_densities) + '_t' + str(self.trap_lifetimes) + '_a' + str(
-            self.well_fill_alpha) + '_b' + \
-               str(self.well_fill_beta) + '_g' + str(self.well_fill_gamma)
-
-
-class ParallelThreeSpecies(ParallelParams):
-
-    def __init__(self, trap_densities=(0.13, 0.25, 0.01), trap_lifetimes=(0.25, 4.4, 10.0), well_notch_depth=1e-9,
-                 well_fill_alpha=1.0, well_fill_beta=0.58, well_fill_gamma=0.0):
-        """The CTI model parameters used for parallel clocking, using three species of traps.
-
-        Parameters
-        ----------
-        trap_densities : (float,)
-            The trap density of the three trap species
-        trap_lifetimes : (float,)
-            The trap lifetimes of the three trap species
-        well_notch_depth : float
-            The CCD notch depth
-        well_fill_alpha : float
-            The volume-filling coefficient (alpha) of how an electron cloud fills the volume of a pixel.
-        well_fill_beta : float
-            The volume-filling power (beta) of how an electron cloud fills the volume of a pixel.
-        well_fill_gamma : float
-            The volume-filling constant (gamma) of how an electron cloud fills the volume of a pixel.
-
-        Examples
-        --------
-        parallel_three_species = ParallelThreeSpecies(trap_densities=(0.1, 0.2, 0.3), trap_lifetimes=(1.0, 2.0, 3.0),
-                                                      well_notch_depth=0.01, well_fill_beta=0.8)
-
-        """
-
-        super(ParallelThreeSpecies, self).__init__(trap_densities, trap_lifetimes, well_notch_depth,
-                                                   well_fill_alpha, well_fill_beta, well_fill_gamma)
-
-    @property
-    def object_tag(self):
-        return 'p3_d' + str(self.trap_densities) + '_t' + str(self.trap_lifetimes) + '_a' + str(
-            self.well_fill_alpha) + '_b' + \
-               str(self.well_fill_beta) + '_g' + str(self.well_fill_gamma)
-
-
-class ParallelDensityVary(ParallelParams):
+class ParallelDensityVary(object):
 
     def __init__(self, trap_densities, trap_lifetimes, well_notch_depth=1e-9, well_fill_alpha=1.0, well_fill_beta=0.58,
                  well_fill_gamma=0.0):
@@ -428,8 +181,12 @@ class ParallelDensityVary(ParallelParams):
             The volume-filling constant (gamma) of how an electron cloud fills the volume of a pixel.
         """
 
-        super(ParallelDensityVary, self).__init__(trap_densities, trap_lifetimes, well_notch_depth,
-                                                  well_fill_alpha, well_fill_beta, well_fill_gamma)
+        self.trap_densities = trap_densities
+        self.trap_lifetimes = trap_lifetimes
+        self.well_notch_depth = well_notch_depth
+        self.well_fill_alpha = well_fill_alpha
+        self.well_fill_beta = well_fill_beta
+        self.well_fill_gamma = well_fill_gamma
 
     @classmethod
     def poisson_densities(cls, trap_densities, trap_lifetimes, well_notch_depth, well_fill_alpha, well_fill_beta,
@@ -441,7 +198,7 @@ class ParallelDensityVary(ParallelParams):
 
         This is used to model the random distribution of traps on a CCD, which changes the number of traps in each \
         column.
-        
+
         Parameters
         -----------
         trap_densities : tuple
@@ -466,178 +223,3 @@ class ParallelDensityVary(ParallelParams):
         poisson_densities = [tuple(np.random.poisson(total_traps) / shape[0]) for _ in range(shape[1])]
         return ParallelDensityVary(poisson_densities, trap_lifetimes, well_notch_depth, well_fill_alpha,
                                    well_fill_beta, well_fill_gamma)
-
-
-class SerialParams(Params):
-
-    def __init__(self, trap_densities, trap_lifetimes, well_notch_depth, well_fill_alpha, well_fill_beta,
-                 well_fill_gamma):
-        """Abstract base class of the cti model parameters for serial clocking. Parameters associated with the traps \
-         are set via a child class.
-
-        Params
-        ----------
-        trap_densities : tuple
-            The trap density(ies) of the species
-        trap_lifetimes : tuple
-            The trap lifetime(s) of the species
-        well_notch_depth : float
-            The CCD notch depth
-        well_fill_alpha : float
-            The volume-filling coefficient (alpha) of how an electron cloud fills the volume of a pixel.
-        well_fill_beta : float
-            The volume-filling power (beta) of how an electron cloud fills the volume of a pixel.
-        well_fill_gamma : float
-            The volume-filling constant (gamma) of how an electron cloud fills the volume of a pixel.
-        """
-
-        super(SerialParams, self).__init__(trap_densities, trap_lifetimes, well_notch_depth, well_fill_alpha,
-                                           well_fill_beta, well_fill_gamma)
-
-    def generate_info(self):
-        """Generate string containing information on the parallel parameters."""
-
-        info = ''
-        info += infoio.generate_class_info(cls=self, prefix='serial_', include_types=[int, float, tuple])
-        info += '\n'
-        return info
-
-    def update_fits_header_info(self, ext_header):
-        """Update a fits header to include the serial CTI model parameters.
-
-        Params
-        -----------
-        ext_header : astropy.io.hdulist
-            The opened header of the astropy fits header.
-        """
-
-        no_species = len(self.trap_densities)
-
-        ext_header.set('cte_st1d', self.trap_densities[0], 'First trap species density (Serial)')
-        ext_header.set('cte_st1t', self.trap_lifetimes[0], 'First trap species lifetime (Serial)')
-
-        if no_species > 1:
-            ext_header.set('cte_st2d', self.trap_densities[1], 'Second trap species density (Serial)')
-            ext_header.set('cte_st2t', self.trap_lifetimes[1], 'Second trap species lifetime (Serial)')
-
-        if no_species > 2:
-            ext_header.set('cte_st3d', self.trap_densities[2], 'Third trap species density (Serial)')
-            ext_header.set('cte_st3t', self.trap_lifetimes[2], 'Third trap species lifetime (Serial)')
-
-        ext_header.set('cte_swln', self.well_notch_depth, 'CCD Well notch depth (Serial)')
-        ext_header.set('cte_swlp', self.well_fill_beta, 'CCD Well filling power (Serial)')
-
-        return ext_header
-
-
-class SerialOneSpecies(SerialParams):
-
-    def __init__(self, trap_densities=(0.01,), trap_lifetimes=(0.8,), well_notch_depth=1e-9, well_fill_alpha=1.0,
-                 well_fill_beta=0.58, well_fill_gamma=0.0):
-        """The CTI model parameters used for serial clocking, using one species of trap.
-
-        Params
-        ----------
-        trap_densities : (float,)
-            The trap density of the species
-        trap_lifetimes : (float,)
-            The trap lifetimes of the species
-        well_notch_depth : float
-            The CCD notch depth
-        well_fill_alpha : float
-            The volume-filling coefficient (alpha) of how an electron cloud fills the volume of a pixel.
-        well_fill_beta : float
-            The volume-filling power (beta) of how an electron cloud fills the volume of a pixel.
-        well_fill_gamma : float
-            The volume-filling constant (gamma) of how an electron cloud fills the volume of a pixel.
-
-        Examples
-        --------
-        serial_one_species = SerialOneSpecies(trap_densities=(0.1,), trap_lifetimes=1.0, well_notch_depth=0.01,
-                                              well_fill_beta=0.8)
-
-        """
-
-        super(SerialOneSpecies, self).__init__(trap_densities, trap_lifetimes, well_notch_depth, well_fill_alpha,
-                                               well_fill_beta, well_fill_gamma)
-
-    @property
-    def object_tag(self):
-        return 's1_d' + str(self.trap_densities) + '_t' + str(self.trap_lifetimes) + '_a' + \
-               str(self.well_fill_alpha) + '_b' + str(self.well_fill_beta) + '_g' + str(self.well_fill_gamma)
-
-
-class SerialTwoSpecies(SerialParams):
-
-    def __init__(self, trap_densities=(0.01, 0.03), trap_lifetimes=(0.8, 3.5), well_notch_depth=1e-9,
-                 well_fill_alpha=1.0, well_fill_beta=0.65, well_fill_gamma=0.0):
-        """The CTI model parameters used for serial clocking, using two species of traps.
-
-        Params
-        ----------
-        trap_densities : (float, float)
-            The trap density of the two trap species
-        trap_lifetimes : (float, float)
-            The trap lifetimes of the two trap species
-        well_notch_depth : float
-            The CCD notch depth
-        well_fill_alpha : float
-            The volume-filling coefficient (alpha) of how an electron cloud fills the volume of a pixel.
-        well_fill_beta : float
-            The volume-filling power (beta) of how an electron cloud fills the volume of a pixel.
-        well_fill_gamma : float
-            The volume-filling constant (gamma) of how an electron cloud fills the volume of a pixel.
-
-        Examples
-        --------
-        serial_two_species = SerialTwoSpecies(trap_densities=(0.1, 0.2), trap_lifetimes=(1.0, 2.0),
-                                              well_notch_depth=0.01, well_fill_beta=0.8)
-
-        """
-
-        super(SerialTwoSpecies, self).__init__(trap_densities, trap_lifetimes, well_notch_depth, well_fill_alpha,
-                                               well_fill_beta, well_fill_gamma)
-
-    @property
-    def object_tag(self):
-        return 'p3_d' + str(self.trap_densities) + '_t' + str(self.trap_lifetimes) + '_a' + str(
-            self.well_fill_alpha) + '_b' + \
-               str(self.well_fill_beta) + '_g' + str(self.well_fill_gamma)
-
-
-class SerialThreeSpecies(SerialParams):
-
-    def __init__(self, trap_densities=(0.01, 0.03, 0.9), trap_lifetimes=(0.8, 3.5, 20.0), well_notch_depth=1e-9,
-                 well_fill_alpha=1.0, well_fill_beta=0.58, well_fill_gamma=0.0):
-        """The CTI model parameters used for serial clocking, using three species of traps.
-
-        Params
-        ----------
-        trap_densities : (float, float, float)
-            The trap density of the three trap species
-        trap_lifetimes : (float, float, float)
-            The trap lifetimes of the three trap species
-        well_notch_depth : float
-            The CCD notch depth
-        well_fill_alpha : float
-            The volume-filling coefficient (alpha) of how an electron cloud fills the volume of a pixel.
-        well_fill_beta : float
-            The volume-filling power (beta) of how an electron cloud fills the volume of a pixel.
-        well_fill_gamma : float
-            The volume-filling constant (gamma) of how an electron cloud fills the volume of a pixel.
-
-        Examples
-        --------
-        serial_three_species = SerialThreeSpecies(trap_densities=(0.1, 0.2, 0.3),, trap_lifetimes=(1.0, 2.0, 3.0),
-                                                  well_notch_depth=0.01, well_fill_beta=0.8)
-
-        """
-
-        super(SerialThreeSpecies, self).__init__(trap_densities, trap_lifetimes, well_notch_depth, well_fill_alpha,
-                                                 well_fill_beta, well_fill_gamma)
-
-    @property
-    def object_tag(self):
-        return 'p3_d' + str(self.trap_densities) + '_t' + str(self.trap_lifetimes) + '_a' + str(
-            self.well_fill_alpha) + '_b' + \
-               str(self.well_fill_beta) + '_g' + str(self.well_fill_gamma)
