@@ -34,7 +34,8 @@ import pytest
 import numpy as np
 
 from autocti import exc
-from autocti.image import cti_image
+from autocti.data import cti_image
+
 
 @pytest.fixture(scope='function')
 def quadrant_data():
