@@ -6,12 +6,13 @@
 
 __author__ = 'hudelot'
 
-import numpy as np
-import astropy.io.fits as pyfits
 import sys
+
+import astropy.io.fits as pyfits
+import numpy as np
+from VIS_CTI_Image import fitslib
 # import scipy
 from scipy.interpolate import InterpolatedUnivariateSpline, interp1d
-from VIS_CTI_Image import fitslib
 
 
 class CosmicRays():
@@ -280,7 +281,7 @@ class CosmicRays():
 
             cr_tot += cr_n
             text = 'The cosmic ray covering factor is %i pixels i.e. %.3f per cent (total number of cr : %i)' % (
-            area_cr, covering, cr_tot)
+                area_cr, covering, cr_tot)
             self.log.info(text)
 
         return CCD_cr

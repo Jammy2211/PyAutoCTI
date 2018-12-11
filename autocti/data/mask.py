@@ -24,10 +24,11 @@ Author: James Nightingale
 """
 
 from __future__ import division, print_function
+
 import numpy as np
-import sys
 
 from autocti.data import cti_image
+
 
 class Mask(np.ndarray):
 
