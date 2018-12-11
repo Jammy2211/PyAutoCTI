@@ -30,7 +30,7 @@ import numpy as np
 from autocti import exc
 from autocti.data import cti_image
 from autocti.data.charge_injection import ci_frame
-from autocti.data.charge_injection import ci_pattern
+from autocti.data.charge_injection import ci_pattern as pattern
 from autocti.model import pyarctic
 from autocti.tools import infoio
 
@@ -89,6 +89,7 @@ class CIImage(ci_frame.CIFrameCTI):
 
         Parameters
         -----------
+        cosmics
         shape : (int, int)
             The dimensions of the output simulated charge injection image.
         frame_geometry : ci_frame.CIQuadGeometry
@@ -131,17 +132,17 @@ class CIImage(ci_frame.CIFrameCTI):
         'fast' (see ChargeInjectPattern).
         """
 
-        if type(self.ci_pattern) == ci_pattern.CIPatternUniform:
+        if type(self.ci_pattern) == pattern.CIPatternUniform:
 
             ci_pre_cti = self.ci_pattern.compute_ci_pre_cti(self.shape)
             return CIPreCTI(frame_geometry=self.frame_geometry, array=ci_pre_cti, ci_pattern=self.ci_pattern)
 
-        elif type(self.ci_pattern) == ci_pattern.CIPatternNonUniform:
+        elif type(self.ci_pattern) == pattern.CIPatternNonUniform:
 
             ci_pre_cti = self.ci_pattern.compute_ci_pre_cti(self, mask)
             return CIPreCTI(frame_geometry=self.frame_geometry, array=ci_pre_cti, ci_pattern=self.ci_pattern)
 
-        elif type(self.ci_pattern) == ci_pattern.CIPatternUniformFast:
+        elif type(self.ci_pattern) == pattern.CIPatternUniformFast:
 
             ci_pre_cti = self.ci_pattern.compute_ci_pre_cti(self.shape)
             return CIPreCTIFast(frame_geometry=self.frame_geometry, array=ci_pre_cti, ci_pattern=self.ci_pattern)
@@ -165,7 +166,8 @@ class CIMask(ci_frame.CIFrame):
 
         Parameters
         ----------
-        image_shape : (int, int)
+        ci_pattern
+        shape : (int, int)
             The dimensions of the 2D mask.
         frame_geometry : ci_frame.CIQuadGeometry
             The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
@@ -181,12 +183,14 @@ class CIMask(ci_frame.CIFrame):
 
         Parameters
         ----------
-        image_shape : (int, int)
+        ci_pattern
+        cr_diagonal
+        shape : (int, int)
             The dimensions of the 2D mask.
         frame_geometry : ci_frame.CIQuadGeometry
             The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
             therefore the direction of clocking and rotations before input into the cti algorithm.
-        regionss : [(int, int, int, int)]
+        regions: [int]
             A list of the regions on the image to mask.
         cosmic_rays : ndarray.ma
             2D array flagging where cosmic rays on the image.
@@ -200,7 +204,7 @@ class CIMask(ci_frame.CIFrame):
         mask = CIMask.empty_for_shape(shape, frame_geometry, ci_pattern)
 
         if regions is not None:
-            mask.regions = list(map(lambda region: cti_image.Region(region), regions))
+            mask.regions = list(map(lambda r: cti_image.Region(r), regions))
             for region in mask.regions:
                 mask[region.y0:region.y1, region.x0:region.x1] = True
         elif regions is None:
@@ -263,7 +267,7 @@ class CIPreCTIFast(CIPreCTI):
         """A fast pre-cti image of a charge injection dataset, used for CTI calibration modeling.
 
         A fast pre-cti image serves the same purpose as a *CIPreCTI* image, but it exploits the fact that for a \
-        uniform charge injection image one can add cti to just one column / row of ci_data and copy it across the entire \
+        uniform charge injection image one can add cti to just one column / row of ci_data and copy it across the entire
         image, thus skipping the majority of clocking calls.
 
         The fast column / row of the pre-cti image setup in the constructor represent the 1 column / row of the \
@@ -406,7 +410,7 @@ def setup_random_seed(seed):
         The seed of the random number generator, used for the random noises maps.
     """
     if seed == -1:
-        seed = np.random.randint(0, 1e9)  # Use one seed, so all regions have identical column non-uniformity.
+        seed = np.random.randint(0, int(1e9))  # Use one seed, so all regions have identical column non-uniformity.
     np.random.seed(seed)
 
 
