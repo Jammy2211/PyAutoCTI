@@ -27,6 +27,7 @@ import numpy as np
 import pytest
 
 from autocti import exc
+from autocti.data import mask as msk
 from autocti.data.charge_injection import ci_data
 from autocti.data.charge_injection import ci_frame, ci_pattern
 from autocti.model import arctic_params
@@ -263,7 +264,7 @@ class TestCIImage(object):
             image = np.array([[10.0, 10.0, 10.0],
                               [2.0, 2.0, 2.0],
                               [8.0, 12.0, 10.0]])
-            mask = ci_data.CIMask.empty_for_shape(shape=(3, 3), frame_geometry=frame_geometry, ci_pattern=MockPattern())
+            mask = msk.Mask.empty_for_shape(shape=(3, 3), frame_geometry=frame_geometry, ci_pattern=MockPattern())
 
             data = ci_data.CIImage(frame_geometry=frame_geometry, ci_pattern=pattern, array=image)
 
@@ -282,6 +283,7 @@ class TestCIImage(object):
             pattern = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 2, 0, 2)])
             image = 10.0 * np.ones((3, 3))
+            mask = msk.Mask.empty_for_shape(shape=(3, 3), frame_geometry=frame_geometry, ci_pattern=MockPattern())
 
             data = ci_data.CIImage(frame_geometry=frame_geometry, ci_pattern=pattern, array=image)
 
