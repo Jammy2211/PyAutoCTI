@@ -8,10 +8,6 @@ class HyperCINoise(object):
         """Compute the scaled noises map, by multiplying the noises-scaling image by the ci_hyper-parameter factor."""
         return self.scale_factor * ci_noise_scaling
 
-    @property
-    def parameter_labels(self):
-        return [r'\lambda']
-
     def __repr__(self):
         string = "Noise Scale Factor: {}".format(self.scale_factor) + '\n'
         return string

@@ -1,6 +1,7 @@
 from autofit.core import non_linear as nl
 from autofit.core import model_mapper as mm
 from autocti.pipeline import phase as ph
+from autocti.data import mask as msk
 from autocti.data.charge_injection import ci_frame
 from autocti.data.charge_injection import ci_data
 from autocti.model import arctic_params
@@ -105,7 +106,7 @@ def make_ci_pattern():
 @pytest.fixture(name="ci_datas")
 def make_ci_datas(ci_geometry, ci_pattern):
     images = [ci_data.CIImage(frame_geometry=ci_geometry, ci_pattern=ci_pattern, array=np.ones((3, 3)))]
-    masks = [ci_data.CIMask.empty_for_shape(shape=(3, 3), frame_geometry=ci_geometry, ci_pattern=ci_pattern)]
+    masks = [msk.Mask.empty_for_shape(shape=(3, 3), frame_geometry=ci_geometry, ci_pattern=ci_pattern)]
     noises = [np.ones((3,3))]
     ci_pre_ctis = [ci_data.CIPreCTI(frame_geometry=ci_geometry, ci_pattern=ci_pattern, array=np.ones((3, 3)))]
     return ci_data.CIData(images, masks, noises, ci_pre_ctis)
@@ -236,7 +237,7 @@ class TestPhase(object):
 #         ci_images = [ci_data.CIImage(frame_geometry=ci_geometry, ci_pattern=ci_pattern, array=10.0 * np.ones((2, 2)))]
 #         ci_noises = [ci_frame.ci_frame.from_single_value(value=2.0, shape=(2, 2), frame_geometry=ci_geometry,
 #                                                        ci_pattern=ci_pattern)]
-#         ci_masks = [ci_data.CIMask.empty_for_shape(frame_geometry=ci_geometry, shape=(2, 2), ci_pattern=ci_pattern)]
+#         ci_masks = [msk.Mask.empty_for_shape(frame_geometry=ci_geometry, shape=(2, 2), ci_pattern=ci_pattern)]
 #         ci_pre_ctis = [ci_data.CIPreCTI(frame_geometry=ci_geometry, ci_pattern=ci_pattern, array=10.0 * np.ones((2, 2)))]
 #         ci_datas = ci_data.CIData(images=ci_images, masks=ci_masks, noises=ci_noises, ci_pre_ctis=ci_pre_ctis)
 #
@@ -258,7 +259,7 @@ class TestPhase(object):
 #         ci_pattern = pattern.CIPatternUniform(normalization=1000.0, regions=[(0, 1, 0, 2)])
 #
 #         ci_images = [ci_data.CIImage(frame_geometry=ci_geometry, ci_pattern=ci_pattern, array=9.0*np.ones((2,2)))]
-#         ci_masks = [ci_data.CIMask.empty_for_shape(frame_geometry=ci_geometry, shape=(2, 2), ci_pattern=ci_pattern)]
+#         ci_masks = [msk.Mask.empty_for_shape(frame_geometry=ci_geometry, shape=(2, 2), ci_pattern=ci_pattern)]
 #         ci_noises = [ci_frame.ci_frame.from_single_value(value=2.0, shape=(2, 2), frame_geometry=ci_geometry,
 #                                                ci_pattern=ci_pattern)]
 #         ci_pre_ctis = [ci_data.CIPreCTI(frame_geometry=ci_geometry, ci_pattern=ci_pattern, array=10.0 * np.ones((2, 2)))]
@@ -280,7 +281,7 @@ class TestPhase(object):
 #
 #         ci_pattern = pattern.CIPatternUniform(normalization=1000.0, regions=[(0, 1, 0, 2)])
 #         ci_images = [ci_data.CIImage(frame_geometry=ci_geometry, ci_pattern=ci_pattern, array=10.0 * np.ones((2, 2)))]
-#         ci_masks = [ci_data.CIMask.empty_for_shape(frame_geometry=ci_geometry, shape=(2, 2), ci_pattern=ci_pattern)]
+#         ci_masks = [msk.Mask.empty_for_shape(frame_geometry=ci_geometry, shape=(2, 2), ci_pattern=ci_pattern)]
 #         ci_noises = [ci_frame.ci_frame.from_single_value(value=2.0, shape=(2, 2), frame_geometry=ci_geometry,
 #                                                        ci_pattern=ci_pattern)]
 #         ci_pre_ctis = [ci_data.CIPreCTI(frame_geometry=ci_geometry, ci_pattern=ci_pattern, array=10.0 * np.ones((2, 2)))]

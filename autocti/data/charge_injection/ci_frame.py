@@ -740,7 +740,7 @@ class ChInj(np.ndarray):
 
     def mask_containing_only_serial_trails(self):
 
-        from autocti.data.charge_injection.ci_data import CIMask
+        from autocti.data import mask as msk
 
         mask = np.full(self.shape, True)
         trails_regions = list(map(lambda ci_region : self.frame_geometry.serial_trails_region(ci_region,
@@ -749,7 +749,7 @@ class ChInj(np.ndarray):
         for region in trails_regions:
             mask[region.y0:region.y1, region.x0:region.x1] = False
 
-        return CIMask(array=mask, frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern)
+        return msk.Mask(array=mask, frame_geometry=self.frame_geometry)
 
     def check_frame_geometry(self):
         if not isinstance(self.frame_geometry, CIQuadGeometry):
