@@ -1,4 +1,4 @@
-from autocti import conf
+from autofit import conf
 from autocti.data.charge_injection import ci_frame, ci_pattern
 from autocti.data.charge_injection import ci_data
 from autocti.data import cti_image

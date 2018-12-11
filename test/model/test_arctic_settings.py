@@ -66,7 +66,7 @@ class TestFactory:
 
     def test__sets_up_settings_parallel__with_correct_values(self):
 
-        arctic_parallel = arctic_settings.setup(p=True, p_well_depth=84700, p_niter=1, p_express=5, p_n_levels=2000,
+        arctic_parallel = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=1, p_express=5, p_n_levels=2000,
                                            p_charge_injection_mode=True, p_readout_offset=0)
 
         assert arctic_parallel.neomode == 'NEO'
@@ -75,32 +75,32 @@ class TestFactory:
         assert arctic_parallel.parallel.niter == 1
         assert arctic_parallel.parallel.express == 5
         assert arctic_parallel.parallel.n_levels == 2000
-        assert arctic_parallel.parallel.charge_injection_mode == True
+        assert arctic_parallel.parallel.charge_injection_mode is True
         assert arctic_parallel.parallel.readout_offset == 0
 
-        assert arctic_parallel.serial == None
+        assert arctic_parallel.serial is None
 
     def test__sets_up_settings_serial__with_correct_values(self):
 
-        arctic_serial = arctic_settings.setup(s=True, s_well_depth= 84700, s_niter=1, s_express=5, s_n_levels=2000,
+        arctic_serial = arctic_settings.setup(include_serial=True, s_well_depth= 84700, s_niter=1, s_express=5, s_n_levels=2000,
                                            s_charge_injection_mode=False, s_readout_offset=0)
 
         assert arctic_serial.neomode == 'NEO'
 
-        assert arctic_serial.parallel == None
+        assert arctic_serial.parallel is None
 
         assert arctic_serial.serial.well_depth == 84700
         assert arctic_serial.serial.niter == 1
         assert arctic_serial.serial.express == 5
         assert arctic_serial.serial.n_levels == 2000
-        assert arctic_serial.serial.charge_injection_mode == False
+        assert arctic_serial.serial.charge_injection_mode is False
         assert arctic_serial.serial.readout_offset == 0
 
     def test__sets_up_parameters_both_directions__with_correct_values(self):
 
-        arctic_both = arctic_settings.setup(p=True, p_well_depth=84700, p_niter=1, p_express=5, p_n_levels=2000,
+        arctic_both = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=1, p_express=5, p_n_levels=2000,
                             p_charge_injection_mode=True, p_readout_offset=0,
-                                           s=True, s_well_depth= 84700, s_niter=1, s_express=5, s_n_levels=2000,
+                                           include_serial=True, s_well_depth= 84700, s_niter=1, s_express=5, s_n_levels=2000,
                             s_charge_injection_mode=False, s_readout_offset=0)
 
         assert arctic_both.neomode == 'NEO'
@@ -109,14 +109,14 @@ class TestFactory:
         assert arctic_both.parallel.niter == 1
         assert arctic_both.parallel.express == 5
         assert arctic_both.parallel.n_levels == 2000
-        assert arctic_both.parallel.charge_injection_mode == True
+        assert arctic_both.parallel.charge_injection_mode is True
         assert arctic_both.parallel.readout_offset == 0
 
         assert arctic_both.serial.well_depth == 84700
         assert arctic_both.serial.niter == 1
         assert arctic_both.serial.express == 5
         assert arctic_both.serial.n_levels == 2000
-        assert arctic_both.serial.charge_injection_mode == False
+        assert arctic_both.serial.charge_injection_mode is False
         assert arctic_both.serial.readout_offset == 0
 
 
@@ -142,14 +142,14 @@ class TestArcticSettings:
             assert arctic_both.parallel.niter == 1
             assert arctic_both.parallel.express == 5
             assert arctic_both.parallel.n_levels == 2000
-            assert arctic_both.parallel.charge_injection_mode == True
+            assert arctic_both.parallel.charge_injection_mode is True
             assert arctic_both.parallel.readout_offset == 0
     
             assert arctic_both.serial.well_depth == 84700
             assert arctic_both.serial.niter == 1
             assert arctic_both.serial.express == 5
             assert arctic_both.serial.n_levels == 2000
-            assert arctic_both.serial.charge_injection_mode == False
+            assert arctic_both.serial.charge_injection_mode is False
             assert arctic_both.serial.readout_offset == 0
 
 

@@ -24,23 +24,27 @@ Author: James Nightingale
 """
 
 from __future__ import division, print_function
-import sys
-
-if sys.version_info[0] < 3:
-    from future_builtins import *
 
 from autocti.tools import infoio
 
 
-def setup(p=False, p_well_depth=84700, p_niter=1, p_express=5, p_n_levels=2000, p_charge_injection_mode=False,
+def setup(include_parallel=False, p_well_depth=84700, p_niter=1, p_express=5, p_n_levels=2000,
+          p_charge_injection_mode=False,
           p_readout_offset=0,
-          s=False, s_well_depth=84700, s_niter=1, s_express=5, s_n_levels=2000, s_charge_injection_mode=False,
+          include_serial=False, s_well_depth=84700, s_niter=1, s_express=5, s_n_levels=2000,
+          s_charge_injection_mode=False,
           s_readout_offset=0):
     """Factory to set up a *ParallelParams* and / or *SerialParams* sub-class as an *ArcticParams*
     instance using any number of trap species in both directions.
 
     Parameters
     ----------
+    s_readout_offset
+    s_charge_injection_mode
+    include_parallel: Bool
+        If True parallel parameters will be included in the ArcticParams object
+    include_serial: Bool
+        If True serial parameters will be included in the ArcticParams object
     p_well_depth : int
         The full well depth of the CCD.
     p_niter : int
@@ -57,31 +61,25 @@ def setup(p=False, p_well_depth=84700, p_niter=1, p_express=5, p_n_levels=2000, 
         Introduces an offset which increases the number of transfers each pixel takes in the parallel direction.
     """
 
-    parallel_settings = _setup_parallel(p, p_well_depth, p_niter, p_express, p_n_levels,
-                                        p_charge_injection_mode, p_readout_offset)
+    parallel_settings = _setup_parallel(p_well_depth, p_niter, p_express, p_n_levels,
+                                        p_charge_injection_mode, p_readout_offset) if include_parallel else None
 
-    serial_settings = _setup_serial(s, s_well_depth, s_niter, s_express, s_n_levels,
-                                    s_charge_injection_mode, s_readout_offset)
+    serial_settings = _setup_serial(s_well_depth, s_niter, s_express, s_n_levels,
+                                    s_charge_injection_mode, s_readout_offset) if include_serial else None
 
     return ArcticSettings(neomode='NEO', parallel=parallel_settings, serial=serial_settings)
 
-def _setup_parallel(parallel, well_depth, niter, express, n_levels, charge_injection_mode,
+
+def _setup_parallel(well_depth, niter, express, n_levels, charge_injection_mode,
                     readout_offset):
+    return ParallelSettings(well_depth, niter, express, n_levels, charge_injection_mode,
+                            readout_offset)
 
-    if parallel == False:
-        return None
-    else:
-        return ParallelSettings(well_depth, niter, express, n_levels, charge_injection_mode,
-                                readout_offset)
 
-def _setup_serial(serial, well_depth, niter, express, n_levels, charge_injection_mode,
+def _setup_serial(well_depth, niter, express, n_levels, charge_injection_mode,
                   readout_offset):
-
-    if serial == False:
-        return None
-    else:
-        return ParallelSettings(well_depth, niter, express, n_levels, charge_injection_mode,
-                                readout_offset)
+    return ParallelSettings(well_depth, niter, express, n_levels, charge_injection_mode,
+                            readout_offset)
 
 
 class ArcticSettings(object):
@@ -122,10 +120,10 @@ class ArcticSettings(object):
 
         info = ''
 
-        if self.parallel != None:
+        if self.parallel is not None:
             info += self.parallel.generate_info()
 
-        if self.serial != None:
+        if self.serial is not None:
             info += self.serial.generate_info()
 
         return info
@@ -139,10 +137,10 @@ class ArcticSettings(object):
             The opened header of the astropy fits header.
         """
 
-        if self.parallel != None:
+        if self.parallel is not None:
             self.parallel.update_fits_header_info(ext_header)
 
-        if self.serial != None:
+        if self.serial is not None:
             self.serial.update_fits_header_info(ext_header)
 
         return ext_header

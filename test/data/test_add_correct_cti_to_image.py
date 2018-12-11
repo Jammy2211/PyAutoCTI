@@ -215,16 +215,16 @@ class TestQuadrantGeometryEuclidBottomLeft:
 
                 im = cti_image.CTIImage(frame_geometry=cti_image.QuadGeometryEuclidBL(), array=image_pre_cti)
 
-                params_0 = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
+                params_0 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
-                                                  s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
+                                                  include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.8)
 
                 image_post_cti_0 = im.add_cti_to_image(cti_params=params_0, cti_settings=arctic_both)
 
-                params_1 = arctic_params.setup(p=True, p_trap_densities=(0.2,), p_trap_lifetimes=(1.0,),
+                params_1 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.2,), p_trap_lifetimes=(1.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
-                                                  s=True, s_trap_densities=(0.2,), s_trap_lifetimes=(1.0,),
+                                                  include_serial=True, s_trap_densities=(0.2,), s_trap_lifetimes=(1.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.8)
 
                 image_post_cti_1 = im.add_cti_to_image(cti_params=params_1, cti_settings=arctic_both)
@@ -247,16 +247,16 @@ class TestQuadrantGeometryEuclidBottomLeft:
 
                 im = cti_image.CTIImage(frame_geometry=cti_image.QuadGeometryEuclidBL(), array=image_pre_cti)
 
-                params_0 = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
+                params_0 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
-                                                  s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
+                                                  include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.8)
 
                 image_post_cti_0 = im.add_cti_to_image(cti_params=params_0, cti_settings=arctic_both)
 
-                params_1 = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(20.0,),
+                params_1 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(20.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
-                                                  s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(20.0,),
+                                                  include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(20.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.8)
 
                 image_post_cti_1 = im.add_cti_to_image(cti_params=params_1, cti_settings=arctic_both)
@@ -279,16 +279,16 @@ class TestQuadrantGeometryEuclidBottomLeft:
 
                 im = cti_image.CTIImage(frame_geometry=cti_image.QuadGeometryEuclidBL(), array=image_pre_cti)
 
-                params_0 = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
+                params_0 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
-                                                  s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
+                                                  include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.8)
 
                 image_post_cti_0 = im.add_cti_to_image(cti_params=params_0, cti_settings=arctic_both)
 
-                params_1 = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
+                params_1 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.9,
-                                                  s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
+                                                  include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.9)
 
                 image_post_cti_1 = im.add_cti_to_image(cti_params=params_1, cti_settings=arctic_both)
@@ -528,16 +528,16 @@ class TestQuadrantGeometryEuclidBottomRight:
                 im = cti_image.CTIImage(frame_geometry=cti_image.QuadGeometryEuclidBR(),
                                         array=image_pre_cti)
 
-                params_0 = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
+                params_0 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
-                                                  s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
+                                                  include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.8)
 
                 image_post_cti_0 = im.add_cti_to_image(cti_params=params_0, cti_settings=arctic_both)
 
-                params_1 = arctic_params.setup(p=True, p_trap_densities=(0.2,), p_trap_lifetimes=(1.0,),
+                params_1 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.2,), p_trap_lifetimes=(1.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
-                                                  s=True, s_trap_densities=(0.2,), s_trap_lifetimes=(1.0,),
+                                                  include_serial=True, s_trap_densities=(0.2,), s_trap_lifetimes=(1.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.8)
 
                 image_post_cti_1 = im.add_cti_to_image(cti_params=params_1, cti_settings=arctic_both)
@@ -561,16 +561,16 @@ class TestQuadrantGeometryEuclidBottomRight:
                 im = cti_image.CTIImage(frame_geometry=cti_image.QuadGeometryEuclidBR(),
                                         array=image_pre_cti)
 
-                params_0 = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
+                params_0 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
-                                                  s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
+                                                  include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.8)
 
                 image_post_cti_0 = im.add_cti_to_image(cti_params=params_0, cti_settings=arctic_both)
 
-                params_1 = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(20.0,),
+                params_1 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(20.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
-                                                  s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(20.0,),
+                                                  include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(20.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.8)
 
                 image_post_cti_1 = im.add_cti_to_image(cti_params=params_1, cti_settings=arctic_both)
@@ -593,16 +593,16 @@ class TestQuadrantGeometryEuclidBottomRight:
                 im = cti_image.CTIImage(frame_geometry=cti_image.QuadGeometryEuclidBR(),
                                         array=image_pre_cti)
 
-                params_0 = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
+                params_0 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
-                                                  s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
+                                                  include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.8)
 
                 image_post_cti_0 = im.add_cti_to_image(cti_params=params_0, cti_settings=arctic_both)
 
-                params_1 = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
+                params_1 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.9,
-                                                  s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
+                                                  include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.9)
 
                 image_post_cti_1 = im.add_cti_to_image(cti_params=params_1, cti_settings=arctic_both)
@@ -834,16 +834,16 @@ class TestQuadrantGeometryEuclidTopLeft:
 
                 im = cti_image.CTIImage(frame_geometry=cti_image.QuadGeometryEuclidTL(), array=image_pre_cti)
 
-                params_0 = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
+                params_0 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
-                                                  s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
+                                                  include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.8)
 
                 image_post_cti_0 = im.add_cti_to_image(cti_params=params_0, cti_settings=arctic_both)
 
-                params_1 = arctic_params.setup(p=True, p_trap_densities=(0.2,), p_trap_lifetimes=(1.0,),
+                params_1 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.2,), p_trap_lifetimes=(1.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
-                                                  s=True, s_trap_densities=(0.2,), s_trap_lifetimes=(1.0,),
+                                                  include_serial=True, s_trap_densities=(0.2,), s_trap_lifetimes=(1.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.8)
 
                 image_post_cti_1 = im.add_cti_to_image(cti_params=params_1, cti_settings=arctic_both)
@@ -866,16 +866,16 @@ class TestQuadrantGeometryEuclidTopLeft:
 
                 im = cti_image.CTIImage(frame_geometry=cti_image.QuadGeometryEuclidTL(), array=image_pre_cti)
 
-                params_0 = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
+                params_0 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
-                                                  s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
+                                                  include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.8)
 
                 image_post_cti_0 = im.add_cti_to_image(cti_params=params_0, cti_settings=arctic_both)
 
-                params_1 = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(20.0,),
+                params_1 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(20.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
-                                                  s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(20.0,),
+                                                  include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(20.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.8)
 
                 image_post_cti_1 = im.add_cti_to_image(cti_params=params_1, cti_settings=arctic_both)
@@ -897,16 +897,16 @@ class TestQuadrantGeometryEuclidTopLeft:
 
                 im = cti_image.CTIImage(frame_geometry=cti_image.QuadGeometryEuclidTL(), array=image_pre_cti)
 
-                params_0 = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
+                params_0 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
-                                                  s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
+                                                  include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.8)
 
                 image_post_cti_0 = im.add_cti_to_image(cti_params=params_0, cti_settings=arctic_both)
 
-                params_1 = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
+                params_1 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.9,
-                                                  s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
+                                                  include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.9)
 
                 image_post_cti_1 = im.add_cti_to_image(cti_params=params_1, cti_settings=arctic_both)
@@ -1137,16 +1137,16 @@ class TestQuadrantGeometryEuclidTopRight:
 
                 im = cti_image.CTIImage(frame_geometry=cti_image.QuadGeometryEuclidTR(), array=image_pre_cti)
 
-                params_0 = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
+                params_0 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
-                                                  s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
+                                                  include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.8)
 
                 image_post_cti_0 = im.add_cti_to_image(cti_params=params_0, cti_settings=arctic_both)
 
-                params_1 = arctic_params.setup(p=True, p_trap_densities=(0.2,), p_trap_lifetimes=(1.0,),
+                params_1 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.2,), p_trap_lifetimes=(1.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
-                                                  s=True, s_trap_densities=(0.2,), s_trap_lifetimes=(1.0,),
+                                                  include_serial=True, s_trap_densities=(0.2,), s_trap_lifetimes=(1.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.8)
 
                 image_post_cti_1 = im.add_cti_to_image(cti_params=params_1, cti_settings=arctic_both)
@@ -1169,16 +1169,16 @@ class TestQuadrantGeometryEuclidTopRight:
 
                 im = cti_image.CTIImage(frame_geometry=cti_image.QuadGeometryEuclidTR(), array=image_pre_cti)
 
-                params_0 = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
+                params_0 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
-                                                  s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
+                                                  include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.8)
 
                 image_post_cti_0 = im.add_cti_to_image(cti_params=params_0, cti_settings=arctic_both)
 
-                params_1 = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(20.0,),
+                params_1 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(20.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
-                                                  s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(20.0,),
+                                                  include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(20.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.8)
 
                 image_post_cti_1 = im.add_cti_to_image(cti_params=params_1, cti_settings=arctic_both)
@@ -1200,16 +1200,16 @@ class TestQuadrantGeometryEuclidTopRight:
 
                 im = cti_image.CTIImage(frame_geometry=cti_image.QuadGeometryEuclidTR(), array=image_pre_cti)
 
-                params_0 = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
+                params_0 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
-                                                  s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
+                                                  include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.8)
 
                 image_post_cti_0 = im.add_cti_to_image(cti_params=params_0, cti_settings=arctic_both)
 
-                params_1 = arctic_params.setup(p=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
+                params_1 = arctic_params.setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                                   p_well_notch_depth=0.0000001, p_well_fill_beta=0.9,
-                                                  s=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
+                                                  include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
                                                   s_well_notch_depth=0.0000001, s_well_fill_beta=0.9)
 
                 image_post_cti_1 = im.add_cti_to_image(cti_params=params_1, cti_settings=arctic_both)

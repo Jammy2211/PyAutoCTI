@@ -32,7 +32,7 @@ if sys.version_info[0] < 3:
     from future_builtins import *
 
 def make_path_if_does_not_exist(path):
-    if os.path.exists(path) == False:
+    if os.path.exists(path) is False:
         os.makedirs(path)
 
 def output_class_via_pickle(cls, path, filename):
@@ -48,9 +48,9 @@ def load_class_via_pickle(path, filename, cls_check=None):
     with open(path + filename + '.pkl', 'rb') as f:
         cls = pickle.load(f)
 
-    if cls_check != None:
+    if cls_check is not None:
 
-        if isinstance(cls, cls_check) == False:
+        if isinstance(cls, cls_check) is False:
 
             raise IOError('Tools.load_class_via_pickle - the class being loaded is not the same type as the class '
                           'check')
