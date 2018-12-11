@@ -296,17 +296,17 @@ class TestParallelParams:
             parallel_1_species = arctic_params.ParallelOneSpecies(trap_densities=(0.1,), trap_lifetimes=(1.0,),
             well_notch_depth=0.01, well_fill_alpha=0.1, well_fill_beta=0.8, well_fill_gamma=-0.1)
 
-            parameters = arctic_params.ArcticParams(parallel=parallel_1_species)
+            parameters = arctic_params.ArcticParams(parallel_species=parallel_1_species)
 
             assert type(parameters) == arctic_params.ArcticParams
-            assert type(parameters.parallel) == arctic_params.ParallelOneSpecies
+            assert type(parameters.parallel_species) == arctic_params.ParallelOneSpecies
 
-            assert parameters.parallel.trap_densities[0] == (0.1)
-            assert parameters.parallel.trap_lifetimes[0] == (1.0)
-            assert parameters.parallel.well_notch_depth == 0.01
-            assert parameters.parallel.well_fill_alpha == 0.1
-            assert parameters.parallel.well_fill_beta == 0.8
-            assert parameters.parallel.well_fill_gamma == -0.1
+            assert parameters.parallel_species.trap_densities[0] == (0.1)
+            assert parameters.parallel_species.trap_lifetimes[0] == (1.0)
+            assert parameters.parallel_species.well_notch_depth == 0.01
+            assert parameters.parallel_species.well_fill_alpha == 0.1
+            assert parameters.parallel_species.well_fill_beta == 0.8
+            assert parameters.parallel_species.well_fill_gamma == -0.1
 
         def test__2_species__sets_values_correctly(self):
 
@@ -315,17 +315,17 @@ class TestParallelParams:
                                                                  well_notch_depth=0.01, well_fill_alpha=0.1,
                                                                  well_fill_beta=0.8, well_fill_gamma=-0.1)
 
-            parameters = arctic_params.ArcticParams(parallel=parallel_2_species)
+            parameters = arctic_params.ArcticParams(parallel_species=parallel_2_species)
 
             assert type(parameters) == arctic_params.ArcticParams
-            assert type(parameters.parallel) == arctic_params.ParallelTwoSpecies
+            assert type(parameters.parallel_species) == arctic_params.ParallelTwoSpecies
 
-            assert parameters.parallel.trap_densities == (0.1, 0.3)
-            assert parameters.parallel.trap_lifetimes == (1.0, 10.0)
-            assert parameters.parallel.well_notch_depth == 0.01
-            assert parameters.parallel.well_fill_alpha == 0.1
-            assert parameters.parallel.well_fill_beta == 0.8
-            assert parameters.parallel.well_fill_gamma == -0.1
+            assert parameters.parallel_species.trap_densities == (0.1, 0.3)
+            assert parameters.parallel_species.trap_lifetimes == (1.0, 10.0)
+            assert parameters.parallel_species.well_notch_depth == 0.01
+            assert parameters.parallel_species.well_fill_alpha == 0.1
+            assert parameters.parallel_species.well_fill_beta == 0.8
+            assert parameters.parallel_species.well_fill_gamma == -0.1
 
         def test__3_species__sets_values_correctly(self):
 
@@ -334,17 +334,17 @@ class TestParallelParams:
                                                                    well_notch_depth=0.01, well_fill_alpha=0.1,
                                                                    well_fill_beta=0.8, well_fill_gamma=-0.1)
 
-            parameters = arctic_params.ArcticParams(parallel=parallel_3_species)
+            parameters = arctic_params.ArcticParams(parallel_species=parallel_3_species)
 
             assert type(parameters) == arctic_params.ArcticParams
-            assert type(parameters.parallel) == arctic_params.ParallelThreeSpecies
+            assert type(parameters.parallel_species) == arctic_params.ParallelThreeSpecies
 
-            assert parameters.parallel.trap_densities == (0.1, 0.3, 0.5)
-            assert parameters.parallel.trap_lifetimes == (1.0, 10.0, 100.0)
-            assert parameters.parallel.well_notch_depth == 0.01
-            assert parameters.parallel.well_fill_alpha == 0.1
-            assert parameters.parallel.well_fill_beta == 0.8
-            assert parameters.parallel.well_fill_gamma == -0.1
+            assert parameters.parallel_species.trap_densities == (0.1, 0.3, 0.5)
+            assert parameters.parallel_species.trap_lifetimes == (1.0, 10.0, 100.0)
+            assert parameters.parallel_species.well_notch_depth == 0.01
+            assert parameters.parallel_species.well_fill_alpha == 0.1
+            assert parameters.parallel_species.well_fill_beta == 0.8
+            assert parameters.parallel_species.well_fill_gamma == -0.1
 
 
     class TestInfoFile:
@@ -354,7 +354,7 @@ class TestParallelParams:
             parallel_1_species = arctic_params.ParallelOneSpecies(trap_densities=(0.1,), trap_lifetimes=(1.0,),
                             well_notch_depth=0.01, well_fill_alpha=0.2, well_fill_beta=0.8, well_fill_gamma=2.0)
 
-            parameters = arctic_params.ArcticParams(parallel=parallel_1_species)
+            parameters = arctic_params.ArcticParams(parallel_species=parallel_1_species)
 
             parameters.output_info_file(path=info_path)
 
@@ -376,7 +376,7 @@ class TestParallelParams:
                                                                    well_notch_depth=0.01, well_fill_alpha=0.2,
                                                                    well_fill_beta=0.8, well_fill_gamma=2.0)
 
-            parameters = arctic_params.ArcticParams(parallel=parallel_3_species)
+            parameters = arctic_params.ArcticParams(parallel_species=parallel_3_species)
 
             parameters.output_info_file(path=info_path)
 
@@ -399,7 +399,7 @@ class TestParallelParams:
             parallel_1_species = arctic_params.ParallelOneSpecies(trap_densities=(0.1,), trap_lifetimes=(1.0,),
                                                                  well_notch_depth=0.01, well_fill_beta=0.8)
 
-            parameters = arctic_params.ArcticParams(parallel=parallel_1_species)
+            parameters = arctic_params.ArcticParams(parallel_species=parallel_1_species)
 
             hdu = fits.PrimaryHDU(np.ones((1,1)), fits.Header())
             hdu.header = parameters.update_fits_header_info(ext_header=hdu.header)
@@ -419,7 +419,7 @@ class TestParallelParams:
                                                                    trap_lifetimes=(1.0, 10.0, 100.0),
                                                                    well_notch_depth=0.01, well_fill_beta=0.8)
 
-            parameters = arctic_params.ArcticParams(parallel=parallel_3_species)
+            parameters = arctic_params.ArcticParams(parallel_species=parallel_3_species)
 
             hdu = fits.PrimaryHDU(np.ones((1,1)), fits.Header())
             hdu.header = parameters.update_fits_header_info(ext_header=hdu.header)
@@ -448,17 +448,17 @@ class TestSerialParams:
             serial_1_species = arctic_params.SerialOneSpecies(trap_densities=(0.2,), trap_lifetimes=(2.0,),
             well_notch_depth=0.02, well_fill_alpha=1.0, well_fill_beta=0.4, well_fill_gamma=0.5)
 
-            parameters = arctic_params.ArcticParams(serial=serial_1_species)
+            parameters = arctic_params.ArcticParams(serial_species=serial_1_species)
 
             assert type(parameters) == arctic_params.ArcticParams
-            assert type(parameters.serial) == arctic_params.SerialOneSpecies
+            assert type(parameters.serial_species) == arctic_params.SerialOneSpecies
     
-            assert parameters.serial.trap_densities == (0.2,)
-            assert parameters.serial.trap_lifetimes == (2.0,)
-            assert parameters.serial.well_notch_depth == 0.02
-            assert parameters.serial.well_fill_alpha == 1.0
-            assert parameters.serial.well_fill_beta == 0.4
-            assert parameters.serial.well_fill_gamma == 0.5
+            assert parameters.serial_species.trap_densities == (0.2,)
+            assert parameters.serial_species.trap_lifetimes == (2.0,)
+            assert parameters.serial_species.well_notch_depth == 0.02
+            assert parameters.serial_species.well_fill_alpha == 1.0
+            assert parameters.serial_species.well_fill_beta == 0.4
+            assert parameters.serial_species.well_fill_gamma == 0.5
     
         def test__2_species__sets_values_correctly(self):
 
@@ -467,17 +467,17 @@ class TestSerialParams:
                                                              well_notch_depth=0.02, well_fill_alpha=1.0,
                                                              well_fill_beta=0.4, well_fill_gamma=0.5)
 
-            parameters = arctic_params.ArcticParams(serial=serial_2_species)
+            parameters = arctic_params.ArcticParams(serial_species=serial_2_species)
 
             assert type(parameters) == arctic_params.ArcticParams
-            assert type(parameters.serial) == arctic_params.SerialTwoSpecies
+            assert type(parameters.serial_species) == arctic_params.SerialTwoSpecies
     
-            assert parameters.serial.trap_densities == (0.2, 0.6)
-            assert parameters.serial.trap_lifetimes == (2.0, 20.0)
-            assert parameters.serial.well_notch_depth == 0.02
-            assert parameters.serial.well_fill_alpha == 1.0
-            assert parameters.serial.well_fill_beta == 0.4
-            assert parameters.serial.well_fill_gamma == 0.5
+            assert parameters.serial_species.trap_densities == (0.2, 0.6)
+            assert parameters.serial_species.trap_lifetimes == (2.0, 20.0)
+            assert parameters.serial_species.well_notch_depth == 0.02
+            assert parameters.serial_species.well_fill_alpha == 1.0
+            assert parameters.serial_species.well_fill_beta == 0.4
+            assert parameters.serial_species.well_fill_gamma == 0.5
     
         def test__3_species__sets_values_correctly(self):
 
@@ -486,17 +486,17 @@ class TestSerialParams:
                                                                well_notch_depth=0.02, well_fill_alpha=1.0,
                                                                well_fill_beta=0.4, well_fill_gamma=0.5)
 
-            parameters = arctic_params.ArcticParams(serial=serial_3_species)
+            parameters = arctic_params.ArcticParams(serial_species=serial_3_species)
 
             assert type(parameters) == arctic_params.ArcticParams
-            assert type(parameters.serial) == arctic_params.SerialThreeSpecies
+            assert type(parameters.serial_species) == arctic_params.SerialThreeSpecies
 
-            assert parameters.serial.trap_densities == (0.2, 0.6, 1.0)
-            assert parameters.serial.trap_lifetimes == (2.0, 20.0, 200.0)
-            assert parameters.serial.well_notch_depth == 0.02
-            assert parameters.serial.well_fill_alpha == 1.0
-            assert parameters.serial.well_fill_beta == 0.4
-            assert parameters.serial.well_fill_gamma == 0.5
+            assert parameters.serial_species.trap_densities == (0.2, 0.6, 1.0)
+            assert parameters.serial_species.trap_lifetimes == (2.0, 20.0, 200.0)
+            assert parameters.serial_species.well_notch_depth == 0.02
+            assert parameters.serial_species.well_fill_alpha == 1.0
+            assert parameters.serial_species.well_fill_beta == 0.4
+            assert parameters.serial_species.well_fill_gamma == 0.5
 
 
     class TestInfoFile:
@@ -506,7 +506,7 @@ class TestSerialParams:
             serial_1_species = arctic_params.SerialOneSpecies(trap_densities=(0.2,), trap_lifetimes=(2.0,),
                              well_notch_depth=0.02, well_fill_alpha=0.1, well_fill_beta=0.4, well_fill_gamma=0.6)
 
-            parameters = arctic_params.ArcticParams(serial=serial_1_species)
+            parameters = arctic_params.ArcticParams(serial_species=serial_1_species)
 
             parameters.output_info_file(path=info_path)
 
@@ -528,7 +528,7 @@ class TestSerialParams:
                                                                well_notch_depth=0.02, well_fill_alpha=0.1,
                                                                well_fill_beta=0.4, well_fill_gamma=0.6)
 
-            parameters = arctic_params.ArcticParams(serial=serial_3_species)
+            parameters = arctic_params.ArcticParams(serial_species=serial_3_species)
 
             parameters.output_info_file(path=info_path)
 
@@ -551,7 +551,7 @@ class TestSerialParams:
             serial_1_species = arctic_params.SerialOneSpecies(trap_densities=(0.2,), trap_lifetimes=(2.0,),
                                                              well_notch_depth=0.02, well_fill_beta=0.4)
 
-            parameters = arctic_params.ArcticParams(serial=serial_1_species)
+            parameters = arctic_params.ArcticParams(serial_species=serial_1_species)
 
             hdu = fits.PrimaryHDU(np.ones((1,1)), fits.Header())
             hdu.header = parameters.update_fits_header_info(ext_header=hdu.header)
@@ -571,7 +571,7 @@ class TestSerialParams:
                                                                trap_lifetimes=(2.0, 20.0, 200.0),
                                                                well_notch_depth=0.02, well_fill_beta=0.4)
 
-            parameters = arctic_params.ArcticParams(serial=serial_3_species)
+            parameters = arctic_params.ArcticParams(serial_species=serial_3_species)
 
             hdu = fits.PrimaryHDU(np.ones((1,1)), fits.Header())
             hdu.header = parameters.update_fits_header_info(ext_header=hdu.header)
@@ -606,28 +606,28 @@ class TestParallelAndSerialParams:
                                                              well_notch_depth=0.02, well_fill_alpha=1.0,
                                                              well_fill_beta=0.4, well_fill_gamma=0.5)
 
-            parameters = arctic_params.ArcticParams(parallel=parallel_1_species,
-                                                   serial=serial_1_species)
+            parameters = arctic_params.ArcticParams(parallel_species=parallel_1_species,
+                                                    serial_species=serial_1_species)
 
             assert type(parameters) == arctic_params.ArcticParams
 
-            assert type(parameters.parallel) == arctic_params.ParallelOneSpecies
+            assert type(parameters.parallel_species) == arctic_params.ParallelOneSpecies
 
-            assert parameters.parallel.trap_densities == (0.1,)
-            assert parameters.parallel.trap_lifetimes == (1.0,)
-            assert parameters.parallel.well_notch_depth == 0.01
-            assert parameters.parallel.well_fill_alpha == 0.1
-            assert parameters.parallel.well_fill_beta == 0.8
-            assert parameters.parallel.well_fill_gamma == -0.1
+            assert parameters.parallel_species.trap_densities == (0.1,)
+            assert parameters.parallel_species.trap_lifetimes == (1.0,)
+            assert parameters.parallel_species.well_notch_depth == 0.01
+            assert parameters.parallel_species.well_fill_alpha == 0.1
+            assert parameters.parallel_species.well_fill_beta == 0.8
+            assert parameters.parallel_species.well_fill_gamma == -0.1
 
-            assert type(parameters.serial) == arctic_params.SerialOneSpecies
+            assert type(parameters.serial_species) == arctic_params.SerialOneSpecies
 
-            assert parameters.serial.trap_densities == (0.2,)
-            assert parameters.serial.trap_lifetimes == (2.0,)
-            assert parameters.serial.well_notch_depth == 0.02
-            assert parameters.serial.well_fill_alpha == 1.0
-            assert parameters.serial.well_fill_beta == 0.4
-            assert parameters.serial.well_fill_gamma == 0.5
+            assert parameters.serial_species.trap_densities == (0.2,)
+            assert parameters.serial_species.trap_lifetimes == (2.0,)
+            assert parameters.serial_species.well_notch_depth == 0.02
+            assert parameters.serial_species.well_fill_alpha == 1.0
+            assert parameters.serial_species.well_fill_beta == 0.4
+            assert parameters.serial_species.well_fill_gamma == 0.5
 
         def test__3_parallel_2_serial__sets_values_correctly(self):
 
@@ -641,27 +641,27 @@ class TestParallelAndSerialParams:
                                                              well_notch_depth=0.02, well_fill_alpha=1.0,
                                                              well_fill_beta=0.4, well_fill_gamma=0.5)
 
-            parameters = arctic_params.ArcticParams(parallel=parallel_3_species, serial=serial_2_species)
+            parameters = arctic_params.ArcticParams(parallel_species=parallel_3_species, serial_species=serial_2_species)
 
             assert type(parameters) == arctic_params.ArcticParams
 
-            assert type(parameters.parallel) == arctic_params.ParallelThreeSpecies
+            assert type(parameters.parallel_species) == arctic_params.ParallelThreeSpecies
 
-            assert parameters.parallel.trap_densities == (0.1, 0.3, 0.5)
-            assert parameters.parallel.trap_lifetimes == (1.0, 10.0, 100.0)
-            assert parameters.parallel.well_notch_depth == 0.01
-            assert parameters.parallel.well_fill_alpha == 0.1
-            assert parameters.parallel.well_fill_beta == 0.8
-            assert parameters.parallel.well_fill_gamma == -0.1
+            assert parameters.parallel_species.trap_densities == (0.1, 0.3, 0.5)
+            assert parameters.parallel_species.trap_lifetimes == (1.0, 10.0, 100.0)
+            assert parameters.parallel_species.well_notch_depth == 0.01
+            assert parameters.parallel_species.well_fill_alpha == 0.1
+            assert parameters.parallel_species.well_fill_beta == 0.8
+            assert parameters.parallel_species.well_fill_gamma == -0.1
 
-            assert type(parameters.serial) == arctic_params.SerialTwoSpecies
+            assert type(parameters.serial_species) == arctic_params.SerialTwoSpecies
 
-            assert parameters.serial.trap_densities == (0.2, 0.6)
-            assert parameters.serial.trap_lifetimes == (2.0, 20.0)
-            assert parameters.serial.well_notch_depth == 0.02
-            assert parameters.serial.well_fill_alpha == 1.0
-            assert parameters.serial.well_fill_beta == 0.4
-            assert parameters.serial.well_fill_gamma == 0.5
+            assert parameters.serial_species.trap_densities == (0.2, 0.6)
+            assert parameters.serial_species.trap_lifetimes == (2.0, 20.0)
+            assert parameters.serial_species.well_notch_depth == 0.02
+            assert parameters.serial_species.well_fill_alpha == 1.0
+            assert parameters.serial_species.well_fill_beta == 0.4
+            assert parameters.serial_species.well_fill_gamma == 0.5
 
 
     class TestInfoFile:
@@ -676,8 +676,8 @@ class TestParallelAndSerialParams:
                                                              well_notch_depth=0.02, well_fill_alpha=0.1,
                                                              well_fill_beta=0.4, well_fill_gamma=0.6)
 
-            parameters = arctic_params.ArcticParams(parallel=parallel_1_species,
-                                                   serial=serial_1_species)
+            parameters = arctic_params.ArcticParams(parallel_species=parallel_1_species,
+                                                    serial_species=serial_1_species)
 
             parameters.output_info_file(path=info_path)
 
@@ -711,8 +711,8 @@ class TestParallelAndSerialParams:
                                                                well_notch_depth=0.02, well_fill_alpha=0.1,
                                                                well_fill_beta=0.4, well_fill_gamma=0.6)
 
-            parameters = arctic_params.ArcticParams(parallel=parallel_3_species,
-                                                   serial=serial_3_species)
+            parameters = arctic_params.ArcticParams(parallel_species=parallel_3_species,
+                                                    serial_species=serial_3_species)
 
             parameters.output_info_file(path=info_path)
 
@@ -745,8 +745,8 @@ class TestParallelAndSerialParams:
             serial_1_species = arctic_params.SerialOneSpecies(trap_densities=(0.2,), trap_lifetimes=(2.0,),
                                                              well_notch_depth=0.02, well_fill_beta=0.4)
 
-            parameters = arctic_params.ArcticParams(parallel=parallel_1_species,
-                                                   serial=serial_1_species)
+            parameters = arctic_params.ArcticParams(parallel_species=parallel_1_species,
+                                                    serial_species=serial_1_species)
 
             hdu = fits.PrimaryHDU(np.ones((1,1)), fits.Header())
             hdu.header = parameters.update_fits_header_info(ext_header=hdu.header)
@@ -775,8 +775,8 @@ class TestParallelAndSerialParams:
                                                                trap_lifetimes=(2.0, 20.0, 200.0),
                                                                well_notch_depth=0.02, well_fill_beta=0.4)
 
-            parameters = arctic_params.ArcticParams(parallel=parallel_3_species,
-                                                   serial=serial_3_species)
+            parameters = arctic_params.ArcticParams(parallel_species=parallel_3_species,
+                                                    serial_species=serial_3_species)
 
             hdu = fits.PrimaryHDU(np.ones((1,1)), fits.Header())
             hdu.header = parameters.update_fits_header_info(ext_header=hdu.header)
