@@ -10,7 +10,7 @@ def ci_regions_binned_across_serial(ci_frame, mask, path, filename, file_format=
     ci_region_rows = ci_frame.ci_pattern.regions[0].total_rows
     ci_regions = ci_frame.parallel_front_edge_arrays_from_frame(rows=(0, ci_region_rows))
     ci_regions_masks = mask.parallel_front_edge_arrays_from_frame(rows=(0, ci_region_rows))
-    ci_regions_binned_arrays = list(map(lambda region, mask: ci_frame.bin_array_across_serial(region, mask),
+    ci_regions_binned_arrays = list(map(lambda region, m: ci_frame.bin_array_across_serial(region, m),
                                         ci_regions, ci_regions_masks))
 
     plot_mean_of_all_binned_arrays(ci_regions_binned_arrays, path, filename, file_format, line0)
@@ -25,7 +25,7 @@ def parallel_trails_binned_across_serial(ci_frame, mask, path, filename, file_fo
     parallel_trails_rows = ci_frame.ci_pattern.regions[1].y0 - ci_frame.ci_pattern.regions[0].y1
     parallel_trails = ci_frame.parallel_trails_arrays_from_frame(rows=(0, parallel_trails_rows))
     parallel_trails_masks = mask.parallel_trails_arrays_from_frame(rows=(0, parallel_trails_rows))
-    parallel_trails_binned_arrays = list(map(lambda region, mask: ci_frame.bin_array_across_serial(region, mask),
+    parallel_trails_binned_arrays = list(map(lambda region, m: ci_frame.bin_array_across_serial(region, m),
                                              parallel_trails, parallel_trails_masks))
 
     plot_mean_of_all_binned_arrays(parallel_trails_binned_arrays, path, filename, file_format, line0)
@@ -39,7 +39,7 @@ def ci_regions_binned_across_parallel(ci_frame, mask, path, filename, file_forma
     ci_region_columns = ci_frame.ci_pattern.regions[0].total_columns
     ci_regions = ci_frame.serial_front_edge_arrays_from_frame(columns=(0, ci_region_columns))
     ci_regions_masks = mask.serial_front_edge_arrays_from_frame(columns=(0, ci_region_columns))
-    ci_regions_binned_arrays = list(map(lambda region, mask: ci_frame.bin_array_across_parallel(region, mask),
+    ci_regions_binned_arrays = list(map(lambda region, m: ci_frame.bin_array_across_parallel(region, m),
                                         ci_regions, ci_regions_masks))
 
     plot_mean_of_all_binned_arrays(ci_regions_binned_arrays, path, filename, file_format, line0)
@@ -54,7 +54,7 @@ def serial_trails_binned_across_parallel(ci_frame, mask, path, filename, file_fo
     serial_trails_columns = ci_frame.cti_geometry.serial_overscan.total_columns
     serial_trails = ci_frame.serial_trails_arrays_from_frame(columns=(0, serial_trails_columns))
     serial_trails_masks = mask.serial_trails_arrays_from_frame(columns=(0, serial_trails_columns))
-    serial_trails_binned_arrays = list(map(lambda region, mask: ci_frame.bin_array_across_parallel(region, mask),
+    serial_trails_binned_arrays = list(map(lambda region, m: ci_frame.bin_array_across_parallel(region, m),
                                            serial_trails, serial_trails_masks))
 
     plot_mean_of_all_binned_arrays(serial_trails_binned_arrays, path, filename, file_format, line0)
@@ -71,10 +71,11 @@ def plot_mean_of_all_binned_arrays(arrays, path, filename, file_format, line0):
     plt.figure(figsize=(36, 20))
     plt.plot(binned)
     plt.tick_params(axis='both', which='major', labelsize=30)
-    plt.xlabel('pixels', fontsize=36);
+    plt.xlabel('pixels', fontsize=36)
     plt.ylabel('value', fontsize=36)
     plt.xlim([0, xmax])
-    if line0: plt.hlines(y=0.0, xmin=0, xmax=xmax, linestyles='dashed')
+    if line0:
+        plt.hlines(y=0.0, xmin=0, xmax=xmax, linestyles='dashed')
     plt.savefig(path + filename + '_binned' + file_format)
     plt.close()
 
@@ -93,7 +94,8 @@ def sub_plots_of_each_binned_array(arrays, path, filename, file_format, line0):
         ax.plot(arrays[i])
         ax.tick_params(axis='both', which='major', labelsize=18)
         ax.set_xlim([0, xmax])
-        if line0: ax.hlines(y=0.0, xmin=0, xmax=xmax, linestyles='dashed')
+        if line0:
+            ax.hlines(y=0.0, xmin=0, xmax=xmax, linestyles='dashed')
         ax.set_aspect('auto')
 
     plt.savefig(path + filename + file_format, bbox_inches='tight')
@@ -105,6 +107,7 @@ def plot_ci_regions_of_ci_frame(ci_frame, path, filename, file_format='.png'):
 
     Parameters
     -----------
+    file_format
     ci_frame : VIS_CTI_ChargeInjection.ci_frame.CIFrame
         The charge injection ci_frame.
     path : str
@@ -135,6 +138,7 @@ def plot_parallel_trails_of_ci_frame(ci_frame, path, filename, file_format='.png
 
     Parameters
     -----------
+    file_format
     ci_frame : VIS_CTI_ChargeInjection.ci_frame.CIFrame
         The charge injection ci_frame.
     path : str
