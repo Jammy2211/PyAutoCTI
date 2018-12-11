@@ -1,11 +1,5 @@
 class FittingImage(object):
 
-    def __new__(cls, image, noise_map, mask):
-        fitting_image = image
-        fitting_image.noise_map = noise_map
-        fitting_image.mask = mask
-        return fitting_image
-
     def __init__(self, image, noise_map, mask):
         """A fitting image is the collection of data components (e.g. the image, noise-maps, PSF, etc.) which are used \
         to generate and fit it with a model image.
@@ -46,14 +40,7 @@ class FittingImage(object):
 
 class FittingHyperImage(FittingImage):
 
-    def __new__(cls, image, noise_map, mask, hyper_noises):
-        fitting_image = image
-        fitting_image.noise_map = noise_map
-        fitting_image.mask = mask
-        fitting_image.hyper_noises = hyper_noises
-        return fitting_image
-
-    def __init__(self, image, noise_map, mask, hyper_noises):
+    def __init__(self, image, noise_map, mask, noise_scalings):
         """A fitting hyper image is a fitting_image (see *FittingImage) which additionally includes a set of \
         'hyper_data'. This hyper-data is the best-fit model images of the observed data from a previous analysis, \
         and it is used to scale the noise in the image, so as to avoid over-fitting localized regions of the image \
@@ -79,14 +66,12 @@ class FittingHyperImage(FittingImage):
         mask: msk.Mask
             The 2D mask that is applied to image data.
         """
-        self.image = image
-        self.noise_map = noise_map
-        self.mask = mask
-        self.hyper_noises = hyper_noises
+        super(FittingHyperImage, self).__init__(image=image, noise_map=noise_map, mask=mask)
+        self.noise_scalings = noise_scalings
 
     def __array_finalize__(self, obj):
         if isinstance(obj, FittingHyperImage):
             self.image = obj.image
             self.noise_map = obj.noise_map
             self.mask = obj.mask
-            self.hyper_noises = obj.hyper_noises
+            self.noise_scalings = obj.noise_scalings

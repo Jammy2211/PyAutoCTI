@@ -115,18 +115,43 @@ def likelihood_from_chi_squared_and_noise_terms(chi_squared_terms, noise_terms):
                     chi_squared_terms, noise_terms))
 
 
-def scaled_noise_maps_from_noise_maps_and_noise_scalings(noise_maps, noise_scalings, hyper_ci_noises):
-    scaled_noise_maps = sum(list(map(lambda hyper, noise_scaling:
-                                     hyper.compute_scaled_noise(noise_scaling),
-                                     hyper_ci_noises, noise_scalings)))
+def scaled_noise_maps_from_fitting_hyper_images_and_noise_scalings(fitting_hyper_images, hyper_noises):
+    """For a list of fitting hyper-images (which includes the image's noise-scaling maps) and model hyper noises,
+    compute their scaled noise-maps.
 
-    return list(map(lambda noise_map, scaled_noise_map: np.add(noise_maps, scaled_noise_map),
-                    noise_maps, scaled_noise_maps))
+    This is performed by using each hyper-noise's *noise_factor* and *noise_power* parameter in conjunction with the \
+    unscaled noise-map and noise-scaling map.
 
+    Parameters
+    ----------
+    fitting_hyper_images : [fitting.fitting_data.FittingHyperImage]
+        List of the fitting hyper-images.
+    hyper_noises : [galaxy.Galaxy]
+        The hyper-noises which represent the model components used to scale the noise, generated from the chi-squared \
+        image of a previous phase's fit.
+    """
+    return list(map(lambda fitting_hyper_image  :
+                    scaled_noise_map_from_noise_map_and_noise_scalings(noise_scalings=fitting_hyper_image.noise_scalings,
+                                                                       hyper_noises=hyper_noises,
+                                                                       noise_map=fitting_hyper_image.noise_map),
+                    fitting_hyper_images))
 
-def scaled_noise_map_from_noise_map_and_noise_scalings(noise_map, noise_scalings, hyper_ci_noises):
-    scaled_noise_maps = sum(list(map(lambda hyper, noise_scaling:
-                                     hyper.compute_scaled_noise(noise_scaling),
-                                     hyper_ci_noises, noise_scalings)))
+def scaled_noise_map_from_noise_map_and_noise_scalings(noise_scalings, hyper_noises, noise_map):
+    """For a noise-map, use the model hyper noise and noise-scaling maps to compute a scaled noise-map.
 
-    return np.add(noise_map + sum(scaled_noise_maps))
+    Parameters
+    -----------
+    contributions_ : ndarray
+        The regular's list of 1D masked contribution maps (e.g. one for each hyper-galaxy)
+    hyper_galaxies : [galaxy.Galaxy]
+        The hyper-galaxies which represent the model components used to scale the noise, which correspond to
+        individual galaxies in the regular.
+    noise_map : imaging.NoiseMap or ndarray
+        An array describing the RMS standard deviation error in each pixel, preferably in units of electrons per
+        second.
+    """
+    scaled_noise_maps = list(map(lambda hyper_noise, noise_scaling:
+                                     hyper_noise.scaled_noise_map_from_noise_scaling(noise_scaling),
+                                     hyper_noises, noise_scalings))
+
+    return np.add(noise_map, sum(scaled_noise_maps))
