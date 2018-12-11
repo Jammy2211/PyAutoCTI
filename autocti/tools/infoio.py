@@ -23,17 +23,14 @@ Created on: 04/23/18
 Author: user
 """
 
-
-import sys
 import os
 import pickle
-
-
 
 
 def make_path_if_does_not_exist(path):
     if os.path.exists(path) is False:
         os.makedirs(path)
+
 
 def output_class_via_pickle(cls, path, filename):
     """ Pickle the instance of a class at a specified path and in a specified in_file"""
@@ -43,19 +40,19 @@ def output_class_via_pickle(cls, path, filename):
     with open(path + filename + '.pkl', 'wb') as f:
         pickle.dump(cls, f)
 
-def load_class_via_pickle(path, filename, cls_check=None):
 
+def load_class_via_pickle(path, filename, cls_check=None):
     with open(path + filename + '.pkl', 'rb') as f:
         cls = pickle.load(f)
 
     if cls_check is not None:
 
         if isinstance(cls, cls_check) is False:
-
             raise IOError('Tools.load_class_via_pickle - the class being loaded is not the same type as the class '
                           'check')
 
     return cls
+
 
 def generate_class_info(cls, prefix='', include_types=None):
     """Generate the information of a class, filtering for certain ci_data types.
@@ -80,6 +77,7 @@ def generate_class_info(cls, prefix='', include_types=None):
 
     return info
 
+
 def output_class_info(cls, path, filename):
     """Output information on an instance of a class to a .header_info file in text format.
 
@@ -94,7 +92,7 @@ def output_class_info(cls, path, filename):
 
     cls_name = type(cls).__name__
 
-    try :
+    try:
         info = cls.generate_info()
     except AttributeError:
         raise IOError('The class ' + cls_name + ' input into the function IOTools.output_class_info has no '
@@ -106,22 +104,22 @@ def output_class_info(cls, path, filename):
         info_file.write(info)
     info_file.close()
 
-def are_all_inputs_none(*values):
 
+def are_all_inputs_none(*values):
     if all(x is None for x in (values)):
         return True
     else:
         return False
 
-def check_all_tuples(*values):
 
+def check_all_tuples(*values):
     if all(type(x) == tuple for x in values):
         return
     else:
         raise AttributeError('A trap density or lifetime was not input as a tuple.')
 
-def check_all_tuples_and_equal_length(*values):
 
+def check_all_tuples_and_equal_length(*values):
     check_all_tuples(*values)
 
     n = len(values[0])
@@ -131,8 +129,8 @@ def check_all_tuples_and_equal_length(*values):
     else:
         raise AttributeError('The number of trap densities and trap lifetimes are not equal.')
 
-def check_all_not_none(*values):
 
+def check_all_not_none(*values):
     if None not in values or all(x is None for x in (values)):
         return
     else:

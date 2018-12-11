@@ -1,6 +1,8 @@
-from autocti.tools import imageio
 import matplotlib.pyplot as plt
 import numpy as np
+
+from autocti.tools import imageio
+
 
 def ci_regions_binned_across_serial(ci_frame, mask, path, filename, file_format='.png', line0=False):
     """Make a plot of the charge injection regions, binned across the serial direction of the CCD."""
@@ -8,11 +10,13 @@ def ci_regions_binned_across_serial(ci_frame, mask, path, filename, file_format=
     ci_region_rows = ci_frame.ci_pattern.regions[0].total_rows
     ci_regions = ci_frame.parallel_front_edge_arrays_from_frame(rows=(0, ci_region_rows))
     ci_regions_masks = mask.parallel_front_edge_arrays_from_frame(rows=(0, ci_region_rows))
-    ci_regions_binned_arrays = list(map(lambda region, mask : ci_frame.bin_array_across_serial(region, mask),
+    ci_regions_binned_arrays = list(map(lambda region, mask: ci_frame.bin_array_across_serial(region, mask),
                                         ci_regions, ci_regions_masks))
 
     plot_mean_of_all_binned_arrays(ci_regions_binned_arrays, path, filename, file_format, line0)
- #   sub_plots_of_each_binned_array(ci_regions_binned_arrays, path, filename, file_format, line0)
+
+
+#   sub_plots_of_each_binned_array(ci_regions_binned_arrays, path, filename, file_format, line0)
 
 def parallel_trails_binned_across_serial(ci_frame, mask, path, filename, file_format='.png', line0=False):
     """Make a plot of the parallel trails following a charge injection region, binned across the serial direction of \
@@ -25,7 +29,9 @@ def parallel_trails_binned_across_serial(ci_frame, mask, path, filename, file_fo
                                              parallel_trails, parallel_trails_masks))
 
     plot_mean_of_all_binned_arrays(parallel_trails_binned_arrays, path, filename, file_format, line0)
- #   sub_plots_of_each_binned_array(parallel_trails_binned_arrays, path, filename, file_format, line0)
+
+
+#   sub_plots_of_each_binned_array(parallel_trails_binned_arrays, path, filename, file_format, line0)
 
 def ci_regions_binned_across_parallel(ci_frame, mask, path, filename, file_format='.png', line0=False):
     """Make a plot of the charge injection regions, binned across the serial direction of the CCD."""
@@ -33,11 +39,13 @@ def ci_regions_binned_across_parallel(ci_frame, mask, path, filename, file_forma
     ci_region_columns = ci_frame.ci_pattern.regions[0].total_columns
     ci_regions = ci_frame.serial_front_edge_arrays_from_frame(columns=(0, ci_region_columns))
     ci_regions_masks = mask.serial_front_edge_arrays_from_frame(columns=(0, ci_region_columns))
-    ci_regions_binned_arrays = list(map(lambda region, mask : ci_frame.bin_array_across_parallel(region, mask),
+    ci_regions_binned_arrays = list(map(lambda region, mask: ci_frame.bin_array_across_parallel(region, mask),
                                         ci_regions, ci_regions_masks))
 
     plot_mean_of_all_binned_arrays(ci_regions_binned_arrays, path, filename, file_format, line0)
- #   sub_plots_of_each_binned_array(ci_regions_binned_arrays, path, filename, file_format, line0)
+
+
+#   sub_plots_of_each_binned_array(ci_regions_binned_arrays, path, filename, file_format, line0)
 
 def serial_trails_binned_across_parallel(ci_frame, mask, path, filename, file_format='.png', line0=False):
     """Make a plot of the parallel trails following a charge injection region, binned across the serial direction of \
@@ -50,23 +58,26 @@ def serial_trails_binned_across_parallel(ci_frame, mask, path, filename, file_fo
                                            serial_trails, serial_trails_masks))
 
     plot_mean_of_all_binned_arrays(serial_trails_binned_arrays, path, filename, file_format, line0)
- #   sub_plots_of_each_binned_array(parallel_trails_binned_arrays, path, filename, file_format, line0)
+
+
+#   sub_plots_of_each_binned_array(parallel_trails_binned_arrays, path, filename, file_format, line0)
 
 def plot_mean_of_all_binned_arrays(arrays, path, filename, file_format, line0):
-
     imageio.make_path_if_does_not_exist(path)
 
     binned = np.mean(arrays, axis=0)
-    xmax = binned.shape[0]-1
+    xmax = binned.shape[0] - 1
 
     plt.figure(figsize=(36, 20))
     plt.plot(binned)
     plt.tick_params(axis='both', which='major', labelsize=30)
-    plt.xlabel('pixels', fontsize=36); plt.ylabel('value', fontsize=36)
+    plt.xlabel('pixels', fontsize=36);
+    plt.ylabel('value', fontsize=36)
     plt.xlim([0, xmax])
     if line0: plt.hlines(y=0.0, xmin=0, xmax=xmax, linestyles='dashed')
     plt.savefig(path + filename + '_binned' + file_format)
     plt.close()
+
 
 def sub_plots_of_each_binned_array(arrays, path, filename, file_format, line0):
     """Make a sub-plot of each set of binned arrays."""
@@ -74,9 +85,9 @@ def sub_plots_of_each_binned_array(arrays, path, filename, file_format, line0):
     imageio.make_path_if_does_not_exist(path)
 
     sub_plot_shape = (len(arrays), 1)
-    fig, axes = plt.subplots(sub_plot_shape[0], sub_plot_shape[1], figsize=(36,20))
+    fig, axes = plt.subplots(sub_plot_shape[0], sub_plot_shape[1], figsize=(36, 20))
 
-    xmax = arrays[0].shape[0]-1
+    xmax = arrays[0].shape[0] - 1
 
     for i, ax in enumerate(axes.flatten()):  # flatten in case you have a second row at some point
         ax.plot(arrays[i])
@@ -87,6 +98,7 @@ def sub_plots_of_each_binned_array(arrays, path, filename, file_format, line0):
 
     plt.savefig(path + filename + file_format, bbox_inches='tight')
     plt.close()
+
 
 def plot_ci_regions_of_ci_frame(ci_frame, path, filename, file_format='.png'):
     """Plot the charge injection regions of a CIFrame
@@ -107,7 +119,7 @@ def plot_ci_regions_of_ci_frame(ci_frame, path, filename, file_format='.png'):
     ci_regions = ci_frame.parallel_front_edge_arrays_from_frame(rows=(0, ci_region_rows))
     sub_plot_shape = (len(ci_regions), 1)
 
-    fig, axes = plt.subplots(sub_plot_shape[0], sub_plot_shape[1], figsize=(36,20))
+    fig, axes = plt.subplots(sub_plot_shape[0], sub_plot_shape[1], figsize=(36, 20))
 
     for i, ax in enumerate(axes.flatten()):  # flatten in case you have a second row at some point
         img = ax.imshow(ci_regions[i], interpolation='nearest')
@@ -116,6 +128,7 @@ def plot_ci_regions_of_ci_frame(ci_frame, path, filename, file_format='.png'):
 
     plt.savefig(path + filename + file_format, bbox_inches='tight')
     plt.close()
+
 
 def plot_parallel_trails_of_ci_frame(ci_frame, path, filename, file_format='.png'):
     """Plot the charge injection regions of a CIFrame
@@ -136,7 +149,7 @@ def plot_parallel_trails_of_ci_frame(ci_frame, path, filename, file_format='.png
     ci_regions = ci_frame.parallel_trails_arrays_from_frame(rows=(0, parallel_trails_rows // 2))
     sub_plot_shape = (len(ci_regions), 1)
 
-    fig, axes = plt.subplots(sub_plot_shape[0], sub_plot_shape[1], figsize=(36,20))
+    fig, axes = plt.subplots(sub_plot_shape[0], sub_plot_shape[1], figsize=(36, 20))
 
     for i, ax in enumerate(axes.flatten()):  # flatten in case you have a second row at some point
         img = ax.imshow(ci_regions[i], interpolation='nearest')
@@ -146,7 +159,8 @@ def plot_parallel_trails_of_ci_frame(ci_frame, path, filename, file_format='.png
     plt.savefig(path + filename + file_format, bbox_inches='tight')
     plt.close()
 
-  #  plot_2d_images_array(images=ci_regions, path=path, filename=filename, sub_plot_shape=sub_plot_shape)
+
+#  plot_2d_images_array(images=ci_regions, path=path, filename=filename, sub_plot_shape=sub_plot_shape)
 #
 # def plot_2d_images_array(images, path, filename, sub_plot_shape, file_format='.png'):
 #
@@ -158,21 +172,19 @@ def plot_parallel_trails_of_ci_frame(ci_frame, path, filename, file_format='.png
 #     stop
 
 def plot_2d_image(image, path, filename, file_format='.png', new_figure=True):
-
     imageio.make_path_if_does_not_exist(path)
 
     plt.imshow(image)
     plt.colorbar()
-#    axis = colorbar.ax
-#    axis.tick_params(labelsize=ticksize)
-#    text = axis.yaxis.label
-#    font = matplotlib.font_manager.FontProperties(size=fontsize)
-#    text.set_font_properties(font)
+    #    axis = colorbar.ax
+    #    axis.tick_params(labelsize=ticksize)
+    #    text = axis.yaxis.label
+    #    font = matplotlib.font_manager.FontProperties(size=fontsize)
+    #    text.set_font_properties(font)
 
     if new_figure is True:
         plt.savefig(path + filename + file_format, bbox_inches='tight')
         plt.close()
-
 
 # # def sub_plot_shape(total):
 # #

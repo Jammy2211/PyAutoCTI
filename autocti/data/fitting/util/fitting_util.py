@@ -18,6 +18,7 @@
 
 import numpy as np
 
+
 def residuals_from_datas_masks_and_model_datas(datas, masks, model_datas):
     """Compute the residuals between an observed charge injection image and post-cti model image.
 
@@ -34,8 +35,9 @@ def residuals_from_datas_masks_and_model_datas(datas, masks, model_datas):
     model_datas_ : [np.ndarray]
         List of the model data-sets.
     """
-    residuals = list(map(lambda data, model_data : np.subtract(data, model_data), datas, model_datas))
-    return list(map(lambda residual, mask : residual - residual * mask, residuals, masks))
+    residuals = list(map(lambda data, model_data: np.subtract(data, model_data), datas, model_datas))
+    return list(map(lambda residual, mask: residual - residual * mask, residuals, masks))
+
 
 def chi_squareds_from_residuals_and_noise(residuals, noise_maps):
     """Computes a chi-squared image, by calculating the squared residuals between an observed charge injection \
@@ -52,7 +54,8 @@ def chi_squareds_from_residuals_and_noise(residuals, noise_maps):
     noise_maps : [np.ndarray]
         List of the noise-maps of the observed datas.
     """
-    return list(map(lambda residual, noise_map : np.square(np.divide(residual, noise_map)), residuals, noise_maps))
+    return list(map(lambda residual, noise_map: np.square(np.divide(residual, noise_map)), residuals, noise_maps))
+
 
 def chi_squared_term_from_chi_squareds(chi_squareds):
     """Compute the chi-squared of a model image's fit to the weighted_data, by taking the difference between the
@@ -65,7 +68,8 @@ def chi_squared_term_from_chi_squareds(chi_squareds):
     chi_squareds : [np.ndarray]
         List of the chi-squareds values of the model-datas fit to the observed data.
     """
-    return list(map(lambda chi_squared : np.sum(chi_squared), chi_squareds))
+    return list(map(lambda chi_squared: np.sum(chi_squared), chi_squareds))
+
 
 def noise_term_from_mask_and_noise(masks, noise_maps):
     """Compute the noise normalization term of an image, which is computed by summing the noise in every pixel:
@@ -79,8 +83,9 @@ def noise_term_from_mask_and_noise(masks, noise_maps):
     noise_maps : [np.ndarray]
         List of the noise-maps of the observed datas.
     """
-    masked_noise_maps = list(map(lambda noise_map, mask : np.ma.masked_array(noise_map, mask), noise_maps, masks))
-    return list(map(lambda masked_noise_map : np.sum(np.log(2 * np.pi * masked_noise_map ** 2.0)), masked_noise_maps))
+    masked_noise_maps = list(map(lambda noise_map, mask: np.ma.masked_array(noise_map, mask), noise_maps, masks))
+    return list(map(lambda masked_noise_map: np.sum(np.log(2 * np.pi * masked_noise_map ** 2.0)), masked_noise_maps))
+
 
 def likelihood_from_chi_squared_and_noise_terms(chi_squared_terms, noise_terms):
     """Computes the likelihood of a charge injection line image, by taking the difference between an observed \
@@ -106,22 +111,22 @@ def likelihood_from_chi_squared_and_noise_terms(chi_squared_terms, noise_terms):
     noise_terms : [float]
         List of the normalization noise-terms for each observed data's noise-map.
     """
-    return list(map(lambda chi_squared_term, noise_term : -0.5 * (chi_squared_term + noise_term),
+    return list(map(lambda chi_squared_term, noise_term: -0.5 * (chi_squared_term + noise_term),
                     chi_squared_terms, noise_terms))
 
+
 def scaled_noise_maps_from_noise_maps_and_noise_scalings(noise_maps, noise_scalings, hyper_ci_noises):
+    scaled_noise_maps = sum(list(map(lambda hyper, noise_scaling:
+                                     hyper.compute_scaled_noise(noise_scaling),
+                                     hyper_ci_noises, noise_scalings)))
 
-    scaled_noise_maps = sum(list(map(lambda hyper, noise_scaling :
-                                   hyper.compute_scaled_noise(noise_scaling),
-                                   hyper_ci_noises, noise_scalings)))
+    return list(map(lambda noise_map, scaled_noise_map: np.add(noise_maps, scaled_noise_map),
+                    noise_maps, scaled_noise_maps))
 
-    return list(map(lambda noise_map, scaled_noise_map : np.add(noise_maps, scaled_noise_map),
-                noise_maps, scaled_noise_maps))
 
 def scaled_noise_map_from_noise_map_and_noise_scalings(noise_map, noise_scalings, hyper_ci_noises):
-
-    scaled_noise_maps = sum(list(map(lambda hyper, noise_scaling :
-                                   hyper.compute_scaled_noise(noise_scaling),
-                                   hyper_ci_noises, noise_scalings)))
+    scaled_noise_maps = sum(list(map(lambda hyper, noise_scaling:
+                                     hyper.compute_scaled_noise(noise_scaling),
+                                     hyper_ci_noises, noise_scalings)))
 
     return np.add(noise_map + sum(scaled_noise_maps))

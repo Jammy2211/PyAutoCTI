@@ -1,5 +1,3 @@
-import numpy as np
-
 class FittingImage(object):
 
     def __new__(cls, image, noise_map, mask):

@@ -1,8 +1,9 @@
-from autocti.pipeline import phase as ph
-
 import logging
 
+from autocti.pipeline import phase as ph
+
 logger = logging.getLogger(__name__)
+
 
 class Pipeline(object):
 

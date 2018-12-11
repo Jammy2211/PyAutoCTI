@@ -23,15 +23,10 @@ Created on: 02/13/18
 Author: James Nightingale
 """
 
-
-
-import sys
-
-
+import numpy as np
 
 from autocti.model import arctic_params
 
-import numpy as np
 
 def add_parallel_cti_to_image(image, params, settings):
     """ Add parallel cti to an image using arctic, given the CTI settings and CTI model parameters.
@@ -75,6 +70,7 @@ def add_parallel_cti_to_image(image, params, settings):
     unclock = False
 
     return call_arctic(image, unclock, params.parallel, settings.parallel)
+
 
 def add_serial_cti_to_image(image, params, settings):
     """
@@ -121,6 +117,7 @@ def add_serial_cti_to_image(image, params, settings):
 
     return call_arctic(image, unclock, params.serial, settings.serial)
 
+
 def correct_parallel_cti_from_image(image, params, settings):
     """Correct parallel cti from an image, given the CTI settings and CTI model parameters.
 
@@ -165,6 +162,7 @@ def correct_parallel_cti_from_image(image, params, settings):
 
     return call_arctic(image, unclock, params.parallel, settings.parallel)
 
+
 def correct_serial_cti_from_image(image, params, settings):
     """Correct serial cti from an image, given the CTI settings and CTI model parameters.
 
@@ -208,6 +206,7 @@ def correct_serial_cti_from_image(image, params, settings):
 
     return call_arctic(image, unclock, params.serial, settings.serial)
 
+
 def call_arctic(image_pre_clocking, unclock, params, settings):
     """
     Perform image clocking via an arctic call (via swig wrapping), either adding or correcting cti to an image in \
@@ -246,10 +245,10 @@ def call_arctic(image_pre_clocking, unclock, params, settings):
 
     import pySHE_ArCTIC as arctic
 
-    settings.unclock = unclock # Include unclock in parameters to pass to different routines easily
+    settings.unclock = unclock  # Include unclock in parameters to pass to different routines easily
     clock_routine = arctic.cte_image_neo()  # Setup instance of arctic charge clocking routine
-    
-    clock_params = clock_routine.parameters # Initiate the parameters which the arctic clocking routine uses
+
+    clock_params = clock_routine.parameters  # Initiate the parameters which the arctic clocking routine uses
 
     set_arctic_settings(clock_params=clock_params, settings=settings)
 
@@ -259,9 +258,10 @@ def call_arctic(image_pre_clocking, unclock, params, settings):
                            image=image_pre_clocking, params=params)
 
     elif isinstance(params, arctic_params.ParallelDensityVary):
-        
+
         return clock_image_variable_density(clock_routine=clock_routine, clock_params=clock_params,
                                             image=image_pre_clocking, params=params)
+
 
 def clock_image(clock_routine, clock_params, image, params):
     """Clock the image using arctic."""
@@ -274,9 +274,10 @@ def clock_image(clock_routine, clock_params, image, params):
                       well_notch_depth=params.well_notch_depth, well_fill_alpha=params.well_fill_alpha,
                       well_fill_beta=params.well_fill_beta, well_fill_gamma=params.well_fill_gamma)
 
-    image = image.astype(np.float64) # Have to convert type to avoid c++ memory issues
+    image = image.astype(np.float64)  # Have to convert type to avoid c++ memory issues
     clock_routine.clock_charge(image)
     return image
+
 
 def clock_image_variable_density(clock_routine, clock_params, image, params):
     """Clock the image via arctic, inputing one column at a time. This is done so that the Poisson density feature \
@@ -294,9 +295,8 @@ def clock_image_variable_density(clock_routine, clock_params, image, params):
     # Setup the arctic image such that it knows to expect one column from every call
     set_arctic_image_dimensions(clock_routine=clock_routine, clock_params=clock_params,
                                 dimensions=(image.shape[0], 1))
-    
-    for column_no in range(image.shape[1]):
 
+    for column_no in range(image.shape[1]):
         set_arctic_params(clock_params=clock_params, no_species=len(params.trap_lifetimes),
                           trap_densities=params.trap_densities[column_no],
                           trap_lifetimes=params.trap_lifetimes, well_notch_depth=params.well_notch_depth,
@@ -304,11 +304,12 @@ def clock_image_variable_density(clock_routine, clock_params, image, params):
                           well_fill_gamma=params.well_fill_gamma)
 
         column_pre_clocking[:, 0] = image[:, column_no]
-        column_post_clocking = column_pre_clocking.astype(np.float64) # Have to convert type to avoid c++ memory issues
+        column_post_clocking = column_pre_clocking.astype(np.float64)  # Have to convert type to avoid c++ memory issues
         clock_routine.clock_charge(column_post_clocking)
         image_post_clocking[:, column_no] = column_post_clocking[:, 0]
 
     return image_post_clocking
+
 
 def set_arctic_settings(clock_params, settings):
     """Set the settings for the arctic clocking routine"""
@@ -321,6 +322,7 @@ def set_arctic_settings(clock_params, settings):
     clock_params.n_levels = settings.n_levels
     clock_params.charge_injection = settings.charge_injection_mode
     clock_params.readout_offset = settings.readout_offset
+
 
 def set_arctic_params(clock_params, no_species, trap_densities, trap_lifetimes, well_notch_depth,
                       well_fill_alpha, well_fill_beta, well_fill_gamma):
@@ -339,7 +341,7 @@ def set_arctic_params(clock_params, no_species, trap_densities, trap_lifetimes, 
         clock_params.set_traps([trap_densities[0], trap_densities[1],
                                 trap_densities[2]],
                                [trap_lifetimes[0], trap_lifetimes[1],
-                                    trap_lifetimes[2]])
+                                trap_lifetimes[2]])
 
     else:
 
@@ -352,7 +354,6 @@ def set_arctic_params(clock_params, no_species, trap_densities, trap_lifetimes, 
 
 
 def set_arctic_image_dimensions(clock_routine, clock_params, dimensions):
-
     clock_params.start_x = 0
     clock_params.start_y = 0
 

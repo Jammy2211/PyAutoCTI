@@ -1,18 +1,20 @@
-from autofit import conf
-from autofit.core import non_linear as nl
-from autofit.core import model_mapper as mm
-from autocti.data.fitting import fitting
-from autocti.data.charge_injection import ci_hyper
-from autocti.data.charge_injection import ci_data
-from autocti.data.charge_injection.plotters import ci_plotters
-from autocti.model import arctic_params
-from autocti.tools import imageio
-import os
-from astropy.io import fits
-from functools import partial
-import numpy as np
 import inspect
 import logging
+import os
+from functools import partial
+
+import numpy as np
+from astropy.io import fits
+from autofit import conf
+from autofit.core import model_mapper as mm
+from autofit.core import non_linear as nl
+
+from autocti.data.charge_injection import ci_data
+from autocti.data.charge_injection import ci_hyper
+from autocti.data.charge_injection.plotters import ci_plotters
+from autocti.data.fitting import fitting
+from autocti.model import arctic_params
+from autocti.tools import imageio
 
 logger = logging.getLogger(__name__)
 logger.level = logging.DEBUG
@@ -59,7 +61,7 @@ def parallel_extractor(ci_datas, mask_function, columns=None, rows=None, noise_s
             new_noise_scalings.append(list(map(lambda noise_scaling:
                                                noise_scaling.parallel_calibration_section_from_frame(
                                                    columns=(0, columns)
-                                                   ),
+                                               ),
                                                noise_scalings[i])))
 
     return ci_data.CIDataAnalysis(images, masks, noises, ci_pre_ctis, new_noise_scalings)
@@ -1380,14 +1382,16 @@ class ParallelSerialHyperOnlyPhase(ParallelSerialHyperPhase, HyperOnly):
 
 
 def pipe_cti(ci_pipe_data, cti_params, cti_settings):
-    ci_datas_analysis = ci_data.CIDataAnalysis(images=[ci_pipe_data[0]], masks=[ci_pipe_data[1]], noises=[ci_pipe_data[2]],
+    ci_datas_analysis = ci_data.CIDataAnalysis(images=[ci_pipe_data[0]], masks=[ci_pipe_data[1]],
+                                               noises=[ci_pipe_data[2]],
                                                ci_pre_ctis=[ci_pipe_data[3]])
     fitter = fitting.CIFitter(ci_datas_analysis, cti_params=cti_params, cti_settings=cti_settings)
     return fitter.likelihood
 
 
 def pipe_cti_hyper(ci_pipe_data, cti_params, cti_settings, hyper_noises):
-    ci_datas_analysis = ci_data.CIDataAnalysis(images=[ci_pipe_data[0]], masks=[ci_pipe_data[1]], noises=[ci_pipe_data[2]],
+    ci_datas_analysis = ci_data.CIDataAnalysis(images=[ci_pipe_data[0]], masks=[ci_pipe_data[1]],
+                                               noises=[ci_pipe_data[2]],
                                                ci_pre_ctis=[ci_pipe_data[3]], noise_scalings=[ci_pipe_data[4]])
     fitter = fitting.HyperCIFitter(ci_datas_analysis, cti_params=cti_params, cti_settings=cti_settings,
                                    hyper_noises=hyper_noises)

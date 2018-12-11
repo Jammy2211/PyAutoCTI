@@ -23,23 +23,19 @@ Created on: 04/23/18
 Author: James Nightingale
 """
 
-
-from astropy.io import fits
-import sys
 import os
+
 import numpy as np
-
-
+from astropy.io import fits
 
 
 def make_path_if_does_not_exist(path):
     if os.path.exists(path) is False:
         os.makedirs(path)
 
+
 def output_cr_masks(data_path, cr_masks):
-
     for i, cr_mask in enumerate(cr_masks):
-
         cr_mask_filename = data_path + 'ci_cr_mask_' + str(i) + '.fits'
 
         new_hdr = fits.Header()
@@ -49,8 +45,8 @@ def output_cr_masks(data_path, cr_masks):
         hdu = fits.PrimaryHDU(cr_mask, new_hdr)
         hdu.writeto(cr_mask_filename)
 
-def numpy_array_to_fits(array, path, filename):
 
+def numpy_array_to_fits(array, path, filename):
     make_path_if_does_not_exist(path)
 
     try:
@@ -61,6 +57,7 @@ def numpy_array_to_fits(array, path, filename):
     new_hdr = fits.Header()
     hdu = fits.PrimaryHDU(array, new_hdr)
     hdu.writeto(path + filename + '.fits')
+
 
 def numpy_array_from_fits(path, filename, hdu):
     hdu_list = fits.open(path + filename + '.fits')
