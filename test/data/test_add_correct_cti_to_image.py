@@ -1,9 +1,9 @@
 import pytest
 import numpy as np
 
-from autocti.image import cti_image 
-from autocti.pyarctic import arctic_settings
-from autocti.pyarctic import arctic_params
+from autocti.data import cti_image
+from autocti.model import arctic_settings
+from autocti.model import arctic_params
 
 @pytest.fixture(scope='class')
 def arctic_parallel():
