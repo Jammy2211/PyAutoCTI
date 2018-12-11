@@ -24,12 +24,12 @@ Author: James Nightingale
 """
 
 
-from __future__ import division, print_function
+
 import sys
 sys.path.append("./python")
 
-if sys.version_info[0] < 3:
-    from future_builtins import *
+
+
 
 import pytest
 import numpy as np

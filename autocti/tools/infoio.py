@@ -23,13 +23,13 @@ Created on: 04/23/18
 Author: user
 """
 
-from __future__ import division, print_function
+
 import sys
 import os
 import pickle
 
-if sys.version_info[0] < 3:
-    from future_builtins import *
+
+
 
 def make_path_if_does_not_exist(path):
     if os.path.exists(path) is False:

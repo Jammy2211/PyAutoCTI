@@ -12,7 +12,7 @@
 # details.
 #
 # You should have received a copy of the GNU Lesser General Public License
-# along with this library; if not, write to the Free Software Foundation, Inexc.k,
+# along with this library; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 
@@ -22,8 +22,6 @@ File: tests/python/CTICIData_test.py
 Created on: 02/14/18
 Author: user
 """
-
-from __future__ import division, print_function
 
 import numpy as np
 import pytest
@@ -36,80 +34,80 @@ from autocti.model import arctic_params
 from autocti.model import arctic_settings
 
 
-@pytest.fixture(scope='class')
-def empty_mask():
+@pytest.fixture(scope='class', name='empty_mask')
+def make_empty_mask():
     parallel_settings = arctic_settings.ParallelSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
                                                          readout_offset=0)
-    arctic_parallel = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings)
+    parallel = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings)
 
-    return arctic_parallel
+    return parallel
 
 
-@pytest.fixture(scope='class')
-def arctic_parallel():
+@pytest.fixture(scope='class', name='arctic_parallel')
+def make_arctic_parallel():
     parallel_settings = arctic_settings.ParallelSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
                                                          readout_offset=0)
-    arctic_parallel = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings)
+    parallel = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings)
 
-    return arctic_parallel
+    return parallel
 
 
-@pytest.fixture(scope='class')
-def arctic_serial():
+@pytest.fixture(scope='class', name='arctic_serial')
+def make_arctic_serial():
     serial_settings = arctic_settings.SerialSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
                                                      readout_offset=0)
 
-    arctic_serial = arctic_settings.ArcticSettings(neomode='NEO', serial=serial_settings)
+    serial = arctic_settings.ArcticSettings(neomode='NEO', serial=serial_settings)
 
-    return arctic_serial
+    return serial
 
 
-@pytest.fixture(scope='class')
-def arctic_both():
+@pytest.fixture(scope='class', name='arctic_both')
+def make_arctic_both():
     parallel_settings = arctic_settings.ParallelSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
                                                          readout_offset=0)
 
     serial_settings = arctic_settings.SerialSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
                                                      readout_offset=0)
 
-    arctic_both = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings,
-                                                 serial=serial_settings)
+    both = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings,
+                                          serial=serial_settings)
 
-    return arctic_both
-
-
-@pytest.fixture(scope='class')
-def params_parallel():
-    params_parallel = arctic_params.ParallelOneSpecies(trap_densities=(0.1,), trap_lifetimes=(1.0,),
-                                                       well_notch_depth=0.000001, well_fill_beta=0.8)
-
-    params_parallel = arctic_params.ArcticParams(parallel=params_parallel)
-
-    return params_parallel
+    return both
 
 
-@pytest.fixture(scope='class')
-def params_serial():
-    params_serial = arctic_params.SerialOneSpecies(trap_densities=(0.2,), trap_lifetimes=(2.0,),
-                                                   well_notch_depth=0.000001, well_fill_beta=0.4)
+@pytest.fixture(scope='class', name='params_parallel')
+def make_params_parallel():
+    parallel = arctic_params.ParallelOneSpecies(trap_densities=(0.1,), trap_lifetimes=(1.0,),
+                                                well_notch_depth=0.000001, well_fill_beta=0.8)
 
-    params_serial = arctic_params.ArcticParams(serial=params_serial)
+    parallel = arctic_params.ArcticParams(parallel=parallel)
 
-    return params_serial
+    return parallel
 
 
-@pytest.fixture(scope='class')
-def params_both():
-    params_parallel = arctic_params.ParallelOneSpecies(trap_densities=(0.4,), trap_lifetimes=(1.0,),
-                                                       well_notch_depth=0.000001, well_fill_beta=0.8)
+@pytest.fixture(scope='class', name='params_serial')
+def make_params_serial():
+    serial = arctic_params.SerialOneSpecies(trap_densities=(0.2,), trap_lifetimes=(2.0,),
+                                            well_notch_depth=0.000001, well_fill_beta=0.4)
 
-    params_serial = arctic_params.SerialOneSpecies(trap_densities=(0.2,), trap_lifetimes=(2.0,),
-                                                   well_notch_depth=0.000001, well_fill_beta=0.4)
+    serial = arctic_params.ArcticParams(serial=serial)
 
-    params_both = arctic_params.ArcticParams(parallel=params_parallel,
-                                             serial=params_serial)
+    return serial
 
-    return params_both
+
+@pytest.fixture(scope='class', name='params_both')
+def make_params_both():
+    parallel = arctic_params.ParallelOneSpecies(trap_densities=(0.4,), trap_lifetimes=(1.0,),
+                                                well_notch_depth=0.000001, well_fill_beta=0.8)
+
+    serial = arctic_params.SerialOneSpecies(trap_densities=(0.2,), trap_lifetimes=(2.0,),
+                                            well_notch_depth=0.000001, well_fill_beta=0.4)
+
+    both = arctic_params.ArcticParams(parallel=parallel,
+                                      serial=serial)
+
+    return both
 
 
 class MockPattern(object):
@@ -275,6 +273,7 @@ class TestCIImage(object):
             pattern_ci_pre_cti = pattern.compute_ci_pre_cti(image, mask)
 
             assert type(ci_pre_cti.frame_geometry) == ci_frame.CIQuadGeometryEuclidBL
+            # noinspection PyUnresolvedReferences
             assert (ci_pre_cti == pattern_ci_pre_cti).all()
             assert (ci_pre_cti.ci_pattern.normalization == pattern.normalization == 100.0)
             assert (ci_pre_cti.ci_pattern.regions == pattern.regions == [(0, 2, 0, 2), (2, 3, 0, 3)])
@@ -364,6 +363,356 @@ class TestCIImage(object):
             assert simulate_read_noise == pytest.approx(np.array([[1.62, -0.61, -0.53],
                                                                   [-1.07, 0.87, -2.30],
                                                                   [1.74, -0.76, 0.32]]), 1e-2)
+
+
+class TestCIMask(object):
+    class TestMaskRemoveRegions:
+
+        def test__remove_one_region(self):
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+                                         ci_pattern=MockPattern(), regions=[(0, 3, 2, 3)])
+
+            assert (mask == np.array([[False, False, True],
+                                      [False, False, True],
+                                      [False, False, True]])).all()
+
+        def test__remove_two_regions(self):
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+                                         ci_pattern=MockPattern(), regions=[(0, 3, 2, 3), (0, 2, 0, 2)])
+
+            assert (mask == np.array([[True, True, True],
+                                      [True, True, True],
+                                      [False, False, True]])).all()
+
+    class TestCosmicRayMask:
+
+        def test__cosmic_ray_mask_included_in_total_mask(self):
+            cosmic_rays = np.array([[False, False, False],
+                                    [False, True, False],
+                                    [False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays)
+
+            assert (mask == np.array([[False, False, False],
+                                      [False, True, False],
+                                      [False, False, False]])).all()
+
+        def test__cosmic_ray_includes_trail_regions__and_a_mask_region(self):
+            cosmic_rays = np.array([[False, False, False],
+                                    [False, True, False],
+                                    [False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+                                         ci_pattern=MockPattern(), regions=[(0, 1, 0, 1)], cosmic_rays=cosmic_rays,
+                                         cr_parallel=1, cr_serial=1)
+
+            assert (mask == np.array([[True, False, False],
+                                      [False, True, True],
+                                      [False, True, False]])).all()
+
+    class TestMaskCosmicsBottomLeftGeometry:
+
+        def test__mask_one_cosmic_ray_with_parallel_mask(self):
+            cosmic_rays = np.array([[False, False, False],
+                                    [False, True, False],
+                                    [False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=1)
+
+            assert (mask == np.array([[False, False, False],
+                                      [False, True, False],
+                                      [False, True, False]])).all()
+
+        def test__mask_one_cosmic_ray_with_longer_parallel_mask(self):
+            cosmic_rays = np.array([[False, True, False],
+                                    [False, False, False],
+                                    [False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=2)
+
+            assert (mask == np.array([[False, True, False],
+                                      [False, True, False],
+                                      [False, True, False]])).all()
+
+        def test__mask_one_cosmic_ray_with_serial_mask(self):
+            cosmic_rays = np.array([[False, False, False],
+                                    [False, True, False],
+                                    [False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=1)
+
+            assert (mask == np.array([[False, False, False],
+                                      [False, True, True],
+                                      [False, False, False]])).all()
+
+        def test__mask_one_cosmic_ray_with_longer_serial_mask(self):
+            cosmic_rays = np.array([[False, False, False],
+                                    [True, False, False],
+                                    [False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=2)
+
+            assert (mask == np.array([[False, False, False],
+                                      [True, True, True],
+                                      [False, False, False]])).all()
+
+        def test__mask_one_cosmic_ray_with_diagonal_mask(self):
+            cosmic_rays = np.array([[False, False, False],
+                                    [False, True, False],
+                                    [False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=1)
+
+            assert (mask == np.array([[False, False, False],
+                                      [False, True, True],
+                                      [False, True, True]])).all()
+
+        def test__mask_one_cosmic_ray_with_bigger_diagonal_mask(self):
+            cosmic_rays = np.array([[False, False, False, False],
+                                    [False, True, False, False],
+                                    [False, False, False, False],
+                                    [False, False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(4, 4), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=2)
+
+            assert (mask == np.array([[False, False, False, False],
+                                      [False, True, True, True],
+                                      [False, True, True, True],
+                                      [False, True, True, True]])).all()
+
+    class TestMaskCosmicsBottomRightGeometry:
+
+        def test__mask_one_cosmic_ray_with_parallel_mask(self):
+            cosmic_rays = np.array([[False, False, False],
+                                    [False, True, False],
+                                    [False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=1)
+
+            assert (mask == np.array([[False, False, False],
+                                      [False, True, False],
+                                      [False, True, False]])).all()
+
+        def test__mask_one_cosmic_ray_with_longer_parallel_mask(self):
+            cosmic_rays = np.array([[False, True, False],
+                                    [False, False, False],
+                                    [False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=2)
+
+            assert (mask == np.array([[False, True, False],
+                                      [False, True, False],
+                                      [False, True, False]])).all()
+
+        def test__mask_one_cosmic_ray_with_serial_mask(self):
+            cosmic_rays = np.array([[False, False, False],
+                                    [False, True, False],
+                                    [False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=1)
+
+            assert (mask == np.array([[False, False, False],
+                                      [True, True, False],
+                                      [False, False, False]])).all()
+
+        def test__mask_one_cosmic_ray_with_longer_serial_mask(self):
+            cosmic_rays = np.array([[False, False, False],
+                                    [False, False, True],
+                                    [False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=2)
+
+            assert (mask == np.array([[False, False, False],
+                                      [True, True, True],
+                                      [False, False, False]])).all()
+
+        def test__mask_one_cosmic_ray_with_diagonal_mask(self):
+            cosmic_rays = np.array([[False, False, False],
+                                    [False, True, False],
+                                    [False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=1)
+
+            assert (mask == np.array([[False, False, False],
+                                      [True, True, False],
+                                      [True, True, False]])).all()
+
+        def test__mask_one_cosmic_ray_with_bigger_diagonal_mask(self):
+            cosmic_rays = np.array([[False, False, False, False],
+                                    [False, False, False, True],
+                                    [False, False, False, False],
+                                    [False, False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(4, 4), frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=2)
+
+            assert (mask == np.array([[False, False, False, False],
+                                      [False, True, True, True],
+                                      [False, True, True, True],
+                                      [False, True, True, True]])).all()
+
+    class TestMaskCosmicsTopLeftGeometry:
+
+        def test__mask_one_cosmic_ray_with_parallel_mask(self):
+            cosmic_rays = np.array([[False, False, False],
+                                    [False, True, False],
+                                    [False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=1)
+
+            assert (mask == np.array([[False, True, False],
+                                      [False, True, False],
+                                      [False, False, False]])).all()
+
+        def test__mask_one_cosmic_ray_with_longer_parallel_mask(self):
+            cosmic_rays = np.array([[False, False, False],
+                                    [False, False, False],
+                                    [False, True, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=2)
+
+            assert (mask == np.array([[False, True, False],
+                                      [False, True, False],
+                                      [False, True, False]])).all()
+
+        def test__mask_one_cosmic_ray_with_serial_mask(self):
+            cosmic_rays = np.array([[False, False, False],
+                                    [False, True, False],
+                                    [False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=1)
+
+            assert (mask == np.array([[False, False, False],
+                                      [False, True, True],
+                                      [False, False, False]])).all()
+
+        def test__mask_one_cosmic_ray_with_longer_serial_mask(self):
+            cosmic_rays = np.array([[False, False, False],
+                                    [True, False, False],
+                                    [False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=2)
+
+            assert (mask == np.array([[False, False, False],
+                                      [True, True, True],
+                                      [False, False, False]])).all()
+
+        def test__mask_one_cosmic_ray_with_diagonal_mask(self):
+            cosmic_rays = np.array([[False, False, False],
+                                    [False, True, False],
+                                    [False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=1)
+
+            assert (mask == np.array([[False, True, True],
+                                      [False, True, True],
+                                      [False, False, False]])).all()
+
+        def test__mask_one_cosmic_ray_with_bigger_diagonal_mask(self):
+            cosmic_rays = np.array([[False, False, False, False],
+                                    [False, False, False, False],
+                                    [False, False, False, False],
+                                    [False, True, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(4, 4), frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=2)
+
+            assert (mask == np.array([[False, False, False, False],
+                                      [False, True, True, True],
+                                      [False, True, True, True],
+                                      [False, True, True, True]])).all()
+
+    class TestMaskCosmicsTopRightGeometry:
+
+        def test__mask_one_cosmic_ray_with_parallel_mask(self):
+            cosmic_rays = np.array([[False, False, False],
+                                    [False, True, False],
+                                    [False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTR(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=1)
+
+            assert (mask == np.array([[False, True, False],
+                                      [False, True, False],
+                                      [False, False, False]])).all()
+
+        def test__mask_one_cosmic_ray_with_longer_parallel_mask(self):
+            cosmic_rays = np.array([[False, False, False],
+                                    [False, False, False],
+                                    [False, True, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTR(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=2)
+            assert (mask == np.array([[False, True, False],
+                                      [False, True, False],
+                                      [False, True, False]])).all()
+
+        def test__mask_one_cosmic_ray_with_serial_mask(self):
+            cosmic_rays = np.array([[False, False, False],
+                                    [False, True, False],
+                                    [False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTR(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=1)
+
+            assert (mask == np.array([[False, False, False],
+                                      [True, True, False],
+                                      [False, False, False]])).all()
+
+        def test__mask_one_cosmic_ray_with_longer_serial_mask(self):
+            cosmic_rays = np.array([[False, False, False],
+                                    [False, False, True],
+                                    [False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTR(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=2)
+
+            assert (mask == np.array([[False, False, False],
+                                      [True, True, True],
+                                      [False, False, False]])).all()
+
+        def test__mask_one_cosmic_ray_with_diagonal_mask(self):
+            cosmic_rays = np.array([[False, False, False],
+                                    [False, True, False],
+                                    [False, False, False]])
+
+            mask = ci_data.CIMask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTR(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=1)
+
+            assert (mask == np.array([[True, True, False],
+                                      [True, True, False],
+                                      [False, False, False]])).all()
+
+        def test__mask_one_cosmic_ray_with_bigger_diagonal_mask(self):
+            cosmic_rays = np.array([[False, False, False, False],
+                                    [False, False, False, False],
+                                    [False, False, False, False],
+                                    [False, False, False, True]])
+
+            mask = ci_data.CIMask.create(shape=(4, 4), frame_geometry=ci_frame.CIQuadGeometryEuclidTR(),
+                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=2)
+
+            assert (mask == np.array([[False, False, False, False],
+                                      [False, True, True, True],
+                                      [False, True, True, True],
+                                      [False, True, True, True]])).all()
 
 
 class TestCIPreCTI(object):
@@ -807,6 +1156,7 @@ class TestCIPreCTIFast(object):
                                                    array=ci_pre_cti, ci_pattern=pattern_fast)
             ci_post_cti_fast = ci_pre_cti_fast.create_ci_post_cti(params_parallel, arctic_parallel)
 
+            # noinspection PyUnresolvedReferences
             assert (ci_post_cti_normal == ci_post_cti_fast).all()
 
         def test__serial_only__compare_to_non_fast_image(self, arctic_serial, params_serial):
@@ -825,6 +1175,7 @@ class TestCIPreCTIFast(object):
                                                    array=ci_pre_cti, ci_pattern=pattern_fast)
             ci_post_cti_fast = ci_pre_cti_fast.create_ci_post_cti(params_serial, arctic_serial)
 
+            # noinspection PyUnresolvedReferences
             assert (ci_post_cti_normal == ci_post_cti_fast).all()
 
         def test__parallel_and_serial__raises_error(self, arctic_both, params_both):
@@ -841,7 +1192,7 @@ class TestCIPreCTIFast(object):
     class TestCompareFastAndNormal:
 
         def test__parallel__3x4_1_ci_region(self, arctic_parallel, params_parallel):
-            ### SETUP FAST PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES ###
+            # SETUP FAST PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
 
             pattern_fast = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(2, 3, 0, 4)])
@@ -852,7 +1203,7 @@ class TestCIPreCTIFast(object):
             ci_pre_cti_fast = data_fast.create_ci_pre_cti()
             ci_post_cti_fast = ci_pre_cti_fast.create_ci_post_cti(params_parallel, arctic_parallel)
 
-            ### SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES ###
+            # SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
 
             pattern_normal = ci_pattern.CIPatternUniform(normalization=10.0,
                                                          regions=[(2, 3, 0, 4)])
@@ -863,12 +1214,12 @@ class TestCIPreCTIFast(object):
             ci_pre_cti_normal = data_normal.create_ci_pre_cti()
             ci_post_cti_normal = ci_pre_cti_normal.create_ci_post_cti(params_parallel, arctic_parallel)
 
-            ### COMPARE THE TWO ###
-
+            # COMPARE THE TWO #
+            # noinspection PyUnresolvedReferences
             assert (ci_post_cti_fast == ci_post_cti_normal).all()
 
         def test__parallel__4x3_1_ci_region(self, arctic_parallel, params_parallel):
-            ### SETUP FAST PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES ###
+            # SETUP FAST PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
 
             pattern_fast = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(2, 3, 0, 3)])
@@ -879,7 +1230,7 @@ class TestCIPreCTIFast(object):
             ci_pre_cti_fast = data_fast.create_ci_pre_cti()
             ci_post_cti_fast = ci_pre_cti_fast.create_ci_post_cti(params_parallel, arctic_parallel)
 
-            ### SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES ###
+            # SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
 
             pattern_normal = ci_pattern.CIPatternUniform(normalization=10.0,
                                                          regions=[(2, 3, 0, 3)])
@@ -890,12 +1241,12 @@ class TestCIPreCTIFast(object):
             ci_pre_cti_normal = data_normal.create_ci_pre_cti()
             ci_post_cti_normal = ci_pre_cti_normal.create_ci_post_cti(params_parallel, arctic_parallel)
 
-            ### COMPARE THE TWO ###
-
+            # COMPARE THE TWO #
+            # noinspection PyUnresolvedReferences
             assert (ci_post_cti_fast == ci_post_cti_normal).all()
 
         def test__serial__3x4_1_ci_region(self, arctic_serial, params_serial):
-            ### SETUP FAST PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES ###
+            # SETUP FAST PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
 
             pattern_fast = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 3, 0, 3)])
@@ -906,7 +1257,7 @@ class TestCIPreCTIFast(object):
             ci_pre_cti_fast = data_fast.create_ci_pre_cti()
             ci_post_cti_fast = ci_pre_cti_fast.create_ci_post_cti(params_serial, arctic_serial)
 
-            ### SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES ###
+            # SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
 
             pattern_normal = ci_pattern.CIPatternUniform(normalization=10.0,
                                                          regions=[(0, 3, 0, 3)])
@@ -917,12 +1268,13 @@ class TestCIPreCTIFast(object):
             ci_pre_cti_normal = data_normal.create_ci_pre_cti()
             ci_post_cti_normal = ci_pre_cti_normal.create_ci_post_cti(params_serial, arctic_serial)
 
-            ### COMPARE THE TWO ###
+            # COMPARE THE TWO #
 
+            # noinspection PyUnresolvedReferences
             assert (ci_post_cti_fast == ci_post_cti_normal).all()
 
         def test__serial__4x3_1_ci_region(self, arctic_serial, params_serial):
-            ### SETUP FAST PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES ###
+            # SETUP FAST PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
 
             pattern_fast = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 4, 0, 2)])
@@ -933,7 +1285,7 @@ class TestCIPreCTIFast(object):
             ci_pre_cti_fast = data_fast.create_ci_pre_cti()
             ci_post_cti_fast = ci_pre_cti_fast.create_ci_post_cti(params_serial, arctic_serial)
 
-            ### SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES ###
+            # SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
 
             pattern_normal = ci_pattern.CIPatternUniform(normalization=10.0,
                                                          regions=[(0, 4, 0, 2)])
@@ -944,6 +1296,7 @@ class TestCIPreCTIFast(object):
             ci_pre_cti_normal = data_normal.create_ci_pre_cti()
             ci_post_cti_normal = ci_pre_cti_normal.create_ci_post_cti(params_serial, arctic_serial)
 
-            ### COMPARE THE TWO ###
+            # COMPARE THE TWO #
 
+            # noinspection PyUnresolvedReferences
             assert (ci_post_cti_fast == ci_post_cti_normal).all()
