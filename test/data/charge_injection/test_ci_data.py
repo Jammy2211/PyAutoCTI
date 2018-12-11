@@ -397,6 +397,7 @@ class TestCIMask(object):
                                       [True, True, True],
                                       [False, False, True]])).all()
 
+
     class TestCosmicRayMask:
 
         def test__cosmic_ray_mask_included_in_total_mask(self):
@@ -423,6 +424,7 @@ class TestCIMask(object):
             assert (mask == np.array([[True, False, False],
                                       [False, True, True],
                                       [False, True, False]])).all()
+
 
     class TestMaskCosmicsBottomLeftGeometry:
 
@@ -740,6 +742,7 @@ class TestCIMask(object):
                                       [False, True, True, True],
                                       [False, True, True, True],
                                       [False, True, True, True]])).all()
+
 
 class TestCIPreCTI(object):
 

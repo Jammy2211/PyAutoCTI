@@ -71,7 +71,7 @@ class CIDataAnalysis(CIData):
 
 class CIImage(ci_frame.CIFrameCTI):
 
-    def __init__(self, frame_geometry, ci_pattern, array):
+    def __init__(self, frame_geometry, ci_pattern, array, noise_map):
         """The observed charge injection imaging ci_data.
 
         Parameters
@@ -83,9 +83,13 @@ class CIImage(ci_frame.CIFrameCTI):
             The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
         array : ndarray
             2D Array of array charge injection image ci_data.
+        noise_map : NoiseMap
+            An array describing the RMS standard deviation error in each pixel, preferably in units of electrons per
+            second.
         """
 
         super(CIImage, self).__init__(frame_geometry, ci_pattern, array=array)
+        self.noise_map = noise_map
 
     @classmethod
     def simulate(cls, shape, frame_geometry, ci_pattern, cti_params, cti_settings, read_noise=None, cosmics=None,
