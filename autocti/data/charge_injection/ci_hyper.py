@@ -9,5 +9,4 @@ class HyperCINoise(object):
         return self.scale_factor * ci_noise_scaling
 
     def __repr__(self):
-        string = "Noise Scale Factor: {}".format(self.scale_factor) + '\n'
-        return string
+        return "Noise Scale Factor: {}".format(self.scale_factor) + '\n'
