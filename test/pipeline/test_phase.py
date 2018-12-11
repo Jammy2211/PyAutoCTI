@@ -131,14 +131,14 @@ class TestPhase(object):
     def test__set_constants(self, phase):
         parallel_species = arctic_params.Species()
         phase.parallel_species = [parallel_species]
-        assert phase.optimizer.constant.parallel_species == parallel_species
-        assert not hasattr(phase.optimizer.variable, "parallel_species")
+        assert phase.optimizer.constant.parallel_species == [parallel_species]
+        assert phase.optimizer.variable.parallel_species != [parallel_species]
 
     def test__set_variables(self, phase):
         parallel = [mm.PriorModel(arctic_params.Species)]
         phase.parallel_species = parallel
         assert phase.optimizer.variable.parallel_species == phase.parallel_species
-        assert not hasattr(phase.optimizer.constant, "parallel_species")
+        assert phase.optimizer.constant.parallel_species != [parallel]
 
     def test__mask_analysis(self, phase, ci_datas, cti_settings):
         analysis = phase.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings)
