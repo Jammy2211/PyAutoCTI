@@ -314,7 +314,7 @@ class Phase(object):
             except OSError as e:
                 logger.exception(e)
 
-        def fit_pool(self, **kwargs):
+        def fit(self, **kwargs):
             """
             Determine the fitness of a particular model
 
@@ -458,24 +458,6 @@ class ParallelPhase(Phase):
 
             Params
             ----------
-            instance
-                A model instance
-
-            Returns
-            -------
-            result: Result
-                An object comprising the final cti_params instances generated and a corresponding likelihood
-            """
-            cti_params = self.cti_params_for_instance(instance)
-            fitter = fitting.CIFitter(self.ci_datas_analysis, cti_params=cti_params, cti_settings=self.cti_settings)
-            return fitter.likelihood
-
-        def fit_pool(self, instance):
-            """
-            Runs the analysis. Determine how well the supplied cti_params fits the image.
-
-            Params
-            ----------
             parallel : arctic_params.ParallelParams
                 A class describing the parallel cti model and parameters.
             parallel : arctic_params.SerialParams
@@ -581,27 +563,6 @@ class ParallelHyperPhase(ParallelPhase):
             super().__init__(ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results, pool)
 
         def fit(self, instance):
-            """
-            Runs the analysis. Determine how well the supplied cti_params fits the image.
-
-            Params
-            ----------
-            parallel : arctic_params.ParallelParams
-                A class describing the parallel cti model and parameters.
-            parallel : arctic_params.SerialParams
-                A class describing the serial cti model and parameters.
-            hyp : ci_hyper.HyperCINoise
-                A class describing the noises scaling ci_hyper-parameters.
-
-            Returns
-            -------
-            result: Result
-                An object comprising the final cti_params instances generated and a corresponding likelihood
-            """
-            hyper_fitter = self.fitter_analysis_for_instance(instance)
-            return hyper_fitter.scaled_likelihood
-
-        def fit_pool(self, instance):
             """
             Runs the analysis. Determine how well the supplied cti_params fits the image.
 
@@ -728,28 +689,6 @@ class SerialPhase(Phase):
                 An object comprising the final cti_params instances generated and a corresponding likelihood
             """
             cti_params = self.cti_params_for_instance(instance)
-            fitter = fitting.CIFitter(self.ci_datas_analysis, cti_params=cti_params, cti_settings=self.cti_settings)
-            return fitter.likelihood
-
-        def fit_pool(self, instance):
-            """
-            Runs the analysis. Determine how well the supplied cti_params fits the image.
-
-            Params
-            ----------
-            serial : arctic_params.SerialParams
-                A class describing the serial cti model and parameters.
-            serial : arctic_params.SerialParams
-                A class describing the serial cti model and parameters.
-            hyp : ci_hyper.HyperCINoise
-                A class describing the noises scaling ci_hyper-parameters.
-
-            Returns
-            -------
-            result: Result
-                An object comprising the final cti_params instances generated and a corresponding likelihood
-            """
-            cti_params = self.cti_params_for_instance(instance)
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
             return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_pipe_data)))
 
@@ -805,17 +744,6 @@ class SerialHyperPhase(SerialPhase):
                  phase_name="serial_hyper_phase"):
         """
         A phase with a simple source/CTI model
-
-        Parameters
-        ----------
-        CTI_galaxy: g.Galaxy | gp.GalaxyPrior
-            A galaxy that acts as a gravitational CTI
-        source_galaxy: g.Galaxy | gp.GalaxyPrior
-            A galaxy that is being CTIed
-        optimizer_class: class
-            The class of a non-linear optimizer
-        sub_grid_size: int
-            The side length of the subgrid
         """
         super().__init__(serial=serial, optimizer_class=optimizer_class, ci_datas_extractor=ci_datas_extractor,
                          columns=columns, rows=rows, mask_function=mask_function, phase_name=phase_name)
@@ -827,8 +755,8 @@ class SerialHyperPhase(SerialPhase):
 
         def __init__(self, ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results=None, pool=None):
             """
-            An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a set of \
-            objects describing a model and determines how well they fit the image.
+            An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \
+            set of objects describing a model and determines how well they fit the image.
 
             Params
             ----------
@@ -838,28 +766,6 @@ class SerialHyperPhase(SerialPhase):
             super().__init__(ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results, pool)
 
         def fit(self, instance):
-            """
-            Runs the analysis. Determine how well the supplied cti_params fits the image.
-
-            Params
-            ----------
-            serial : arctic_params.SerialParams
-                A class describing the serial cti model and parameters.
-            serial : arctic_params.SerialParams
-                A class describing the serial cti model and parameters.
-            hyp : ci_hyper.HyperCINoise
-                A class describing the noises scaling ci_hyper-parameters.
-
-            Returns
-            -------
-            result: Result
-                An object comprising the final cti_params instances generated and a corresponding likelihood
-            """
-            self.try_log(instance)
-            hyper_fitter = self.hyper_fitter_analysis_for_instance(instance)
-            return hyper_fitter.scaled_likelihood
-
-        def fit_pool(self, instance):
             """
             Runs the analysis. Determine how well the supplied cti_params fits the image.
 
@@ -909,20 +815,6 @@ class SerialHyperPhase(SerialPhase):
                                          cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
                                                                                        instance.hyp_serial_trails])
 
-    class Result(SerialPhase.Result):
-
-        def __init__(self, constant, likelihood, variable, analysis):
-            """
-            The result of a phase
-
-            Parameters
-            ----------
-
-            galaxy_images: [ndarray]
-                A collection of images created by each individual galaxy which taken together form the full model image
-            """
-            super().__init__(constant, likelihood, variable, analysis)
-
 
 class SerialHyperOnlyPhase(SerialHyperPhase, HyperOnly):
     """
@@ -939,6 +831,7 @@ class SerialHyperOnlyPhase(SerialHyperPhase, HyperOnly):
 
     def run(self, ci_datas, cti_settings, previous_results=None, pool=None):
         class SerialHyper(SerialHyperPhase):
+            # noinspection PyShadowingNames
             def pass_priors(self, previous_results):
                 self.serial = previous_results.last.constant.serial
 
@@ -970,14 +863,8 @@ class ParallelSerialPhase(Phase):
 
         Parameters
         ----------
-        CTI_galaxy: g.Galaxy | gp.GalaxyPrior
-            A galaxy that acts as a gravitational CTI
-        source_galaxy: g.Galaxy | gp.GalaxyPrior
-            A galaxy that is being CTIed
         optimizer_class: class
             The class of a non-linear optimizer
-        sub_grid_size: int
-            The side length of the subgrid
         """
         super().__init__(optimizer_class=optimizer_class, ci_datas_extractor=ci_datas_extractor, columns=None,
                          rows=None, mask_function=mask_function, phase_name=phase_name)
@@ -988,8 +875,8 @@ class ParallelSerialPhase(Phase):
 
         def __init__(self, ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results=None, pool=None):
             """
-            An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a set of \
-            objects describing a model and determines how well they fit the image.
+            An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \
+            set of objects describing a model and determines how well they fit the image.
 
             Params
             ----------
@@ -999,25 +886,6 @@ class ParallelSerialPhase(Phase):
             super().__init__(ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results, pool)
 
         def fit(self, instance):
-            """
-            Runs the analysis. Determine how well the supplied cti_params fits the image.
-
-            Params
-            ----------
-            instance
-                A model instance
-
-            Returns
-            -------
-            result: Result
-                An object comprising the final cti_params instances generated and a corresponding likelihood
-            """
-            self.try_log(instance)
-            cti_params = self.cti_params_for_instance(instance)
-            fitter = fitting.CIFitter(self.ci_datas_analysis, cti_params=cti_params, cti_settings=self.cti_settings)
-            return fitter.likelihood
-
-        def fit_pool(self, instance):
             """
             Runs the analysis. Determine how well the supplied cti_params fits the image.
 
@@ -1049,8 +917,7 @@ class ParallelSerialPhase(Phase):
             logger.debug(
                 "\nRunning CTI analysis for... "
                 "\n\nParallel CTI::\n{}"
-                "\n\nSerial CTI::\n{}\n\n"
-                    .format(instance.parallel, instance.serial))
+                "\n\nSerial CTI::\n{}\n\n".format(instance.parallel, instance.serial))
 
         def cti_params_for_instance(self, instance):
             return arctic_params.ArcticParams(parallel=instance.parallel, serial=instance.serial)
@@ -1093,14 +960,8 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
 
         Parameters
         ----------
-        CTI_galaxy: g.Galaxy | gp.GalaxyPrior
-            A galaxy that acts as a gravitational CTI
-        source_galaxy: g.Galaxy | gp.GalaxyPrior
-            A galaxy that is being CTIed
         optimizer_class: class
             The class of a non-linear optimizer
-        sub_grid_size: int
-            The side length of the subgrid
         """
         super().__init__(parallel=parallel, serial=serial, optimizer_class=optimizer_class,
                          ci_datas_extractor=ci_datas_extractor, mask_function=mask_function, phase_name=phase_name)
@@ -1111,42 +972,7 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
         self.has_noise_scalings = True
 
     class Analysis(ParallelPhase.Analysis):
-
-        def __init__(self, ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results=None, pool=None):
-            """
-            An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a set of \
-            objects describing a model and determines how well they fit the image.
-
-            Params
-            ----------
-            ci_data : [CIImage.CIImage]
-                The charge injection ci_data-sets.
-            """
-            super().__init__(ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results, pool)
-
         def fit(self, instance):
-            """
-            Runs the analysis. Determine how well the supplied cti_params fits the image.
-
-            Params
-            ----------
-            parallel : arctic_params.ParallelParams
-                A class describing the parallel cti model and parameters.
-            parallel : arctic_params.SerialParams
-                A class describing the serial cti model and parameters.
-            hyp : ci_hyper.HyperCINoise
-                A class describing the noises scaling ci_hyper-parameters.
-
-            Returns
-            -------
-            result: Result
-                An object comprising the final cti_params instances generated and a corresponding likelihood
-            """
-            self.try_log(instance)
-            hyper_fitter = self.fitter_analysis_for_instance(instance)
-            return hyper_fitter.scaled_likelihood
-
-        def fit_pool(self, instance):
             """
             Runs the analysis. Determine how well the supplied cti_params fits the image.
 
@@ -1174,13 +1000,6 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
         def visualize(self, instance, suffix, during_analysis):
             pass
 
-            # for i in range(len(self.ci_datas)):
-            #
-            #     self.output_array_as_fits(self.ci_datas[i].noise_scaling_map[0], "noise_scaling_" + str(i) + '_0')
-            #     self.output_array_as_fits(self.ci_datas[i].noise_scaling_map[1], "noise_scaling_" + str(i) + '_1')
-            #     self.output_array_as_fits(self.ci_datas[i].noise_scaling_map[2], "noise_scaling_" + str(i) + '_2')
-            #     self.output_array_as_fits(self.ci_datas[i].noise_scaling_map[3], "noise_scaling_" + str(i) + '_3')
-
         @classmethod
         def log(cls, instance):
             logger.debug(
@@ -1207,20 +1026,6 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
                                                        instance.hyp_serial_trails,
                                                        instance.hyp_parallel_serial_trails])
 
-    class Result(Phase.Result):
-
-        def __init__(self, constant, likelihood, variable, analysis):
-            """
-            The result of a phase
-
-            Parameters
-            ----------
-
-            galaxy_images: [ndarray]
-                A collection of images created by each individual galaxy which taken together form the full model image
-            """
-            super().__init__(constant, likelihood, variable, analysis)
-
 
 class ParallelSerialHyperOnlyPhase(ParallelSerialHyperPhase, HyperOnly):
     """
@@ -1243,6 +1048,7 @@ class ParallelSerialHyperOnlyPhase(ParallelSerialHyperPhase, HyperOnly):
 
     def run(self, ci_datas, cti_settings, previous_results=None, pool=None):
         class ParallelSerialHyper(ParallelSerialHyperPhase):
+            # noinspection PyShadowingNames
             def pass_priors(self, previous_results):
                 self.serial = previous_results[-1].constant.serial
                 self.parallel = previous_results[-1].constant.parallel
