@@ -104,10 +104,6 @@ def output_class_info(cls, path, filename):
     info_file.close()
 
 
-def are_all_inputs_none(*values):
-    return all(x is None for x in values)
-
-
 def check_all_tuples(*values):
     if not all(type(x) == tuple for x in values):
         raise AttributeError('A trap density or lifetime was not input as a tuple.')
@@ -120,8 +116,3 @@ def check_all_tuples_and_equal_length(*values):
 
     if not all(len(x) == n for x in values):
         raise AttributeError('The number of trap densities and trap lifetimes are not equal.')
-
-
-def check_all_not_none(*values):
-    if None in values and not all(x is None for x in values):
-        raise AttributeError('One or more parameter input into setup functions is missing.')
