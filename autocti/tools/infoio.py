@@ -28,8 +28,10 @@ import pickle
 
 
 def make_path_if_does_not_exist(path):
-    if os.path.exists(path) is False:
+    try:
         os.makedirs(path)
+    except FileExistsError:
+        pass
 
 
 def output_class_via_pickle(cls, path, filename):
@@ -45,11 +47,9 @@ def load_class_via_pickle(path, filename, cls_check=None):
     with open(path + filename + '.pkl', 'rb') as f:
         cls = pickle.load(f)
 
-    if cls_check is not None:
-
-        if isinstance(cls, cls_check) is False:
-            raise IOError('Tools.load_class_via_pickle - the class being loaded is not the same type as the class '
-                          'check')
+    if cls_check is not None and isinstance(cls, cls_check) is False:
+        raise IOError('Tools.load_class_via_pickle - the class being loaded is not the same type as the class '
+                      'check')
 
     return cls
 
@@ -69,8 +69,7 @@ def generate_class_info(cls, prefix='', include_types=None):
     info = ''
     for key, value in vars(cls).items():
         if type(value) in include_types:
-            info += prefix + str(key) + ' = ' + str(value) + '\n'
-            info += ''
+            info += '{}{} = {}\n'.format(prefix, key, value)
 
     if info == '':
         return None
@@ -106,16 +105,11 @@ def output_class_info(cls, path, filename):
 
 
 def are_all_inputs_none(*values):
-    if all(x is None for x in (values)):
-        return True
-    else:
-        return False
+    return all(x is None for x in values)
 
 
 def check_all_tuples(*values):
-    if all(type(x) == tuple for x in values):
-        return
-    else:
+    if not all(type(x) == tuple for x in values):
         raise AttributeError('A trap density or lifetime was not input as a tuple.')
 
 
@@ -124,14 +118,10 @@ def check_all_tuples_and_equal_length(*values):
 
     n = len(values[0])
 
-    if all(len(x) == n for x in values):
-        return
-    else:
+    if not all(len(x) == n for x in values):
         raise AttributeError('The number of trap densities and trap lifetimes are not equal.')
 
 
 def check_all_not_none(*values):
-    if None not in values or all(x is None for x in (values)):
-        return
-    else:
+    if None in values and not all(x is None for x in values):
         raise AttributeError('One or more parameter input into setup functions is missing.')
