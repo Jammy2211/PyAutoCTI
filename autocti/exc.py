@@ -9,23 +9,16 @@ class CIPatternException(Exception):
 class CIPreCTIException(Exception):
     pass
 
+
 class CIPlotterException(Exception):
     pass
 
 
-class CIFrameExpection(Exception):
+class CIFrameException(Exception):
     pass
 
 
 class CIDataException(Exception):
-    pass
-
-
-class PriorException(Exception):
-    pass
-
-
-class MultiNestException(Exception):
     pass
 
 

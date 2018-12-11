@@ -753,7 +753,7 @@ class ChInj(np.ndarray):
 
     def check_frame_geometry(self):
         if not isinstance(self.frame_geometry, CIQuadGeometry):
-            raise exc.CIFrameExpection('You must supply the CI Frame with a CIQuadGeometry (Not a ci_image.Geometry)')
+            raise exc.CIFrameException('You must supply the CI Frame with a CIQuadGeometry (Not a ci_image.Geometry)')
 
 
 class CIFrame(cti_image.ImageFrame, ChInj):

@@ -1,7 +1,7 @@
 # import pytest
 #
-# from autocti.autofit import model_mapper as mm
-# from autocti.autofit import non_linear
+# from autofit.core import model_mapper as mm
+# from autofit.core import non_linear
 # from autocti.pipeline import phase as ph
 # from autocti.pipeline import phase_property
 #
