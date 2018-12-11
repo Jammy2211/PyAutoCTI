@@ -1,6 +1,6 @@
-from autocti import conf
-from autocti.autofit import non_linear as nl
-from autocti.autofit import model_mapper as mm
+from autofit import conf
+from autofit.core import non_linear as nl
+from autofit.core import model_mapper as mm
 from autocti.pipeline import pipeline as pl
 from autocti.pipeline import phase as ph
 from autocti.pyarctic import arctic_params
