@@ -4,3 +4,5 @@
 *.pyc
 CTI/
 workspace/cosma
+.env
+.idea
