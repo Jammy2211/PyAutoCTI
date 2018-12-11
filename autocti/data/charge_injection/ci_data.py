@@ -71,7 +71,7 @@ class CIDataAnalysis(CIData):
 
 class CIImage(ci_frame.CIFrameCTI):
 
-    def __init__(self, frame_geometry, ci_pattern, array, noise_map):
+    def __init__(self, frame_geometry, ci_pattern, array):
         """The observed charge injection imaging ci_data.
 
         Parameters
@@ -89,7 +89,6 @@ class CIImage(ci_frame.CIFrameCTI):
         """
 
         super(CIImage, self).__init__(frame_geometry, ci_pattern, array=array)
-        self.noise_map = noise_map
 
     @classmethod
     def simulate(cls, shape, frame_geometry, ci_pattern, cti_params, cti_settings, read_noise=None, cosmics=None,
@@ -163,74 +162,6 @@ class CIImage(ci_frame.CIFrameCTI):
         """Generate string containing information on the charge injection image (and its ci_pattern)."""
         info = infoio.generate_class_info(self, prefix='ci_data_', include_types=[float])
         return info
-
-
-class CIMask(ci_frame.CIFrame):
-
-    @classmethod
-    def empty_for_shape(cls, shape, frame_geometry, ci_pattern):
-        """
-        Create the mask used for CTI Calibration as all False's (e.g. no masking).
-
-        Parameters
-        ----------
-        image_shape : (int, int)
-            The dimensions of the 2D mask.
-        frame_geometry : ci_frame.CIQuadGeometry
-            The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
-            therefore the direction of clocking and rotations before input into the cti algorithm.
-        """
-        return cls(frame_geometry=frame_geometry, ci_pattern=ci_pattern, array=np.full(shape, False))
-
-    @classmethod
-    def create(cls, shape, frame_geometry, ci_pattern, regions=None, cosmic_rays=None, cr_parallel=0, cr_serial=0,
-               cr_diagonal=0):
-        """
-        Create the mask used for CTI Calibration, which is all False unless spsecific regions are input for masking.
-
-        Parameters
-        ----------
-        image_shape : (int, int)
-            The dimensions of the 2D mask.
-        frame_geometry : ci_frame.CIQuadGeometry
-            The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
-            therefore the direction of clocking and rotations before input into the cti algorithm.
-        regionss : [(int, int, int, int)]
-            A list of the regions on the image to mask.
-        cosmic_rays : ndarray.ma
-            2D array flagging where cosmic rays on the image.
-        cr_parallel : int
-            If a cosmic-ray mask is supplied, the number of pixels from each ray pixels are masked in the parallel \
-            direction.
-        cr_serial : int
-            If a cosmic-ray mask is supplied, the number of pixels from each ray pixels are masked in the serial \
-            direction.
-        """
-        mask = CIMask.empty_for_shape(shape, frame_geometry, ci_pattern)
-        
-        if regions is not None:
-            mask.regions = list(map(lambda region: cti_image.Region(region), regions))
-            for region in mask.regions:
-                mask[region.y0:region.y1, region.x0:region.x1] = True
-        elif regions is None:
-            mask.regions = None
-
-        if cosmic_rays is not None:
-            for y in range(mask.shape[0]):
-                for x in range(mask.shape[1]):
-                    if cosmic_rays[y, x]:
-                        y0, y1 = mask.frame_geometry.parallel_trail_from_y(y, cr_parallel)
-                        mask[y0:y1, x] = True
-                        x0, x1 = mask.frame_geometry.serial_trail_from_x(x, cr_serial)
-                        mask[y, x0:x1] = True
-                        y0, y1 = mask.frame_geometry.parallel_trail_from_y(y, cr_diagonal)
-                        x0, x1 = mask.frame_geometry.serial_trail_from_x(x, cr_diagonal)
-                        mask[y0:y1, x0:x1] = True
-
-        elif cosmic_rays is None:
-            mask.cosmic_rays = None
-
-        return mask
 
 
 class CIPreCTI(ci_frame.CIFrameCTI):
