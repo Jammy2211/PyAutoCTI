@@ -23,8 +23,6 @@ Created on: 02/13/18
 Author: James Nightingale
 """
 
-
-
 from autocti.tools import infoio
 
 
@@ -39,6 +37,10 @@ def setup(include_parallel=False, p_well_depth=84700, p_niter=1, p_express=5, p_
 
     Parameters
     ----------
+    s_n_levels
+    s_express
+    s_niter
+    s_well_depth
     s_readout_offset
     s_charge_injection_mode
     include_parallel: Bool
