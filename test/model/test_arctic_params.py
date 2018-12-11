@@ -27,8 +27,8 @@ from __future__ import division, print_function
 import sys
 import os
 
-if sys.version_info[0] < 3:
-    from future_builtins import *
+
+
 
 import pytest
 import shutil
