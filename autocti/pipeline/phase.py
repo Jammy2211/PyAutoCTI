@@ -15,9 +15,17 @@ from autocti.data.charge_injection.plotters import ci_plotters
 from autocti.data.fitting import fitting
 from autocti.model import arctic_params
 from autocti.tools import imageio
+from autocti.pipeline.phase_property import PhaseProperty
+
+import re
 
 logger = logging.getLogger(__name__)
 logger.level = logging.DEBUG
+
+
+def make_name(cls):
+    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', cls.__name__)
+    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
 
 # noinspection PyUnusedLocal
@@ -163,7 +171,7 @@ class Phase(object):
         self.columns = columns
         self.rows = rows
         self.mask_function = mask_function
-        self.phase_name = phase_name
+        self.phase_name = phase_name or make_name(self.__class__)
         self.has_noise_scalings = False
 
     @property
@@ -370,62 +378,6 @@ def is_prior(value):
     return inspect.isclass(value) or isinstance(value, mm.AbstractPriorModel)
 
 
-class PhaseProperty(object):
-    def __init__(self, name):
-        self.name = name
-
-    def fget(self, obj):
-        if hasattr(obj.optimizer.constant, self.name):
-            return getattr(obj.optimizer.constant, self.name)
-        elif hasattr(obj.optimizer.variable, self.name):
-            return getattr(obj.optimizer.variable, self.name)
-
-    def fset(self, obj, value):
-        if is_prior(value):
-            setattr(obj.optimizer.variable, self.name, value)
-            try:
-                delattr(obj.optimizer.constant, self.name)
-            except AttributeError:
-                pass
-        else:
-            setattr(obj.optimizer.constant, self.name, value)
-            try:
-                delattr(obj.optimizer.variable, self.name)
-            except AttributeError:
-                pass
-
-    def fdel(self, obj):
-        try:
-            delattr(obj.optimizer.constant, self.name)
-        except AttributeError:
-            pass
-
-        try:
-            delattr(obj.optimizer.variable, self.name)
-        except AttributeError:
-            pass
-
-    def __get__(self, obj, objtype=None):
-        if obj is None:
-            return self
-        return self.fget(obj)
-
-    def __set__(self, obj, value):
-        self.fset(obj, value)
-
-    def __delete__(self, obj):
-        return self.fdel(obj)
-
-    def getter(self, fget):
-        return type(self)(fget, self.fset, self.fdel, self.__doc__)
-
-    def setter(self, fset):
-        return type(self)(self.fget, fset, self.fdel, self.__doc__)
-
-    def deleter(self, fdel):
-        return type(self)(self.fget, self.fset, fdel, self.__doc__)
-
-
 class ParallelPhase(Phase):
     parallel = PhaseProperty("parallel")
 
@@ -439,19 +391,6 @@ class ParallelPhase(Phase):
         self.parallel = parallel
 
     class Analysis(Phase.Analysis):
-
-        def __init__(self, ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results=None, pool=None):
-            """
-            An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \
-            set of objects describing a model and determines how well they fit the image.
-
-            Params
-            ----------
-            ci_data : [CIImage.CIImage]
-                The charge injection ci_data-sets.
-            """
-            super().__init__(ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results, pool)
-
         def fit(self, instance):
             """
             Runs the analysis. Determine how well the supplied cti_params fits the image.
@@ -478,14 +417,6 @@ class ParallelPhase(Phase):
 
             fitter, ci_post_ctis, residuals, chi_squareds = super().visualize(instance, suffix, during_analysis)
 
-            # self.output_ci_regions_binned_across_serial(ci_post_ctis, masks, '/ci_post_cti_')
-            # self.output_ci_regions_binned_across_serial(residuals, masks, '/residuals_')
-            # self.output_ci_regions_binned_across_serial(chi_squareds, masks, '/chi_squareds_')
-            #
-            # self.output_parallel_trails_binned_across_serial(ci_post_ctis, masks, '/ci_post_cti_')
-            # self.output_parallel_trails_binned_across_serial(residuals, masks, '/residuals_')
-            # self.output_parallel_trails_binned_across_serial(chi_squareds, masks, '/chi_squareds_')
-
             return fitter, ci_post_ctis, residuals, chi_squareds
 
         def output_ci_regions_binned_across_serial(self, images, masks, filename):
@@ -510,7 +441,6 @@ class ParallelPhase(Phase):
 
         def noise_scalings_for_instance(self, instance):
             """
-
             First noises scaling images are of the charge injection regions.
             Second noises scaling images are of the non-charge injection regions in the parallel calibration ci_frame"""
             fitter = self.fitter_for_instance(instance)
@@ -549,19 +479,6 @@ class ParallelHyperPhase(ParallelPhase):
         self.has_noise_scalings = True
 
     class Analysis(ParallelPhase.Analysis):
-
-        def __init__(self, ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results=None, pool=None):
-            """
-            An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \
-            set of objects describing a model and determines how well they fit the image.
-
-            Params
-            ----------
-            ci_data : [CIImage.CIImage]
-                The charge injection ci_data-sets.
-            """
-            super().__init__(ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results, pool)
-
         def fit(self, instance):
             """
             Runs the analysis. Determine how well the supplied cti_params fits the image.
@@ -613,15 +530,6 @@ class ParallelHyperOnlyPhase(ParallelHyperPhase, HyperOnly):
     """
     Fit only the CTI galaxy light.
     """
-
-    def __init__(self, parallel=None, hyp_ci_regions=None, hyp_parallel_trails=None,
-                 optimizer_class=nl.MultiNest, ci_datas_extractor=default_extractor, columns=None,
-                 mask_function=default_mask_function, phase_name="parallel_hyper_only_phase"):
-        super().__init__(parallel=parallel, hyp_ci_regions=hyp_ci_regions,
-                         hyp_parallel_trails=hyp_parallel_trails, optimizer_class=optimizer_class,
-                         ci_datas_extractor=ci_datas_extractor, columns=columns, mask_function=mask_function,
-                         phase_name=phase_name)
-
     def run(self, ci_datas, cti_settings, previous_results=None, pool=None):
         class ParallelHyper(ParallelHyperPhase):
             # noinspection PyShadowingNames
@@ -657,19 +565,6 @@ class SerialPhase(Phase):
         self.serial = serial
 
     class Analysis(Phase.Analysis):
-
-        def __init__(self, ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results=None, pool=None):
-            """
-            An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \
-            set of objects describing a model and determines how well they fit the image.
-
-            Params
-            ----------
-            ci_data : [CIImage.CIImage]
-                The charge injection ci_data-sets.
-            """
-            super().__init__(ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results, pool)
-
         def fit(self, instance):
             """
             Runs the analysis. Determine how well the supplied cti_params fits the image.
@@ -697,13 +592,11 @@ class SerialPhase(Phase):
             return fitter, ci_post_ctis, residuals, chi_squareds
 
         def output_ci_regions_binned_across_parallel(self, images, masks, filename):
-
             for i in range(len(images)):
                 ci_plotters.ci_regions_binned_across_parallel(images[i], masks[i], path=self.output_image_path,
                                                               filename=filename + str(i), line0=False)
 
         def output_serial_trails_binned_across_parallel(self, images, masks, filename):
-
             for i in range(len(images)):
                 ci_plotters.serial_trails_binned_across_parallel(images[i], masks[i], path=self.output_image_path,
                                                                  filename=filename + str(i), line0=False)
@@ -718,9 +611,9 @@ class SerialPhase(Phase):
 
         def noise_scalings_for_instance(self, instance):
             """
-
             First noises scaling images are of the charge injection regions.
-            Second noises scaling images are of the non-charge injection regions in the serial calibration ci_frame"""
+            Second noises scaling images are of the non-charge injection regions in the serial calibration ci_frame
+            """
             fitter = self.fitter_for_instance(instance)
             return list(map(lambda chi_squared:
                             [chi_squared.ci_regions_frame_from_frame(),
@@ -753,18 +646,6 @@ class SerialHyperPhase(SerialPhase):
 
     class Analysis(SerialPhase.Analysis):
 
-        def __init__(self, ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results=None, pool=None):
-            """
-            An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \
-            set of objects describing a model and determines how well they fit the image.
-
-            Params
-            ----------
-            ci_data : [CIImage.CIImage]
-                The charge injection ci_data-sets.
-            """
-            super().__init__(ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results, pool)
-
         def fit(self, instance):
             """
             Runs the analysis. Determine how well the supplied cti_params fits the image.
@@ -791,10 +672,6 @@ class SerialHyperPhase(SerialPhase):
         def visualize(self, instance, suffix, during_analysis):
             pass
 
-            # fitter = self.fitter_analysis_for_instance(instance)
-            # scaled_chi_squares = fitter.scaled_chi_squareds
-            # masks = list(map(lambda ci_data: ci_data.mask, self.ci_datas))
-
         @classmethod
         def log(cls, instance):
             logger.debug(
@@ -820,15 +697,6 @@ class SerialHyperOnlyPhase(SerialHyperPhase, HyperOnly):
     """
     Fit only the CTI galaxy light.
     """
-
-    def __init__(self, serial=None, hyp_ci_regions=None, hyp_serial_trails=None,
-                 optimizer_class=nl.MultiNest, ci_datas_extractor=default_extractor, columns=None, rows=None,
-                 mask_function=default_mask_function, phase_name="serial_hyper_only_phase"):
-        super().__init__(serial=serial, hyp_ci_regions=hyp_ci_regions,
-                         hyp_serial_trails=hyp_serial_trails, optimizer_class=optimizer_class,
-                         ci_datas_extractor=ci_datas_extractor, columns=columns, rows=rows, mask_function=mask_function,
-                         phase_name=phase_name)
-
     def run(self, ci_datas, cti_settings, previous_results=None, pool=None):
         class SerialHyper(SerialHyperPhase):
             # noinspection PyShadowingNames
@@ -872,19 +740,6 @@ class ParallelSerialPhase(Phase):
         self.serial = serial
 
     class Analysis(Phase.Analysis):
-
-        def __init__(self, ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results=None, pool=None):
-            """
-            An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \
-            set of objects describing a model and determines how well they fit the image.
-
-            Params
-            ----------
-            ci_data : [CIImage.CIImage]
-                The charge injection ci_data-sets.
-            """
-            super().__init__(ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results, pool)
-
         def fit(self, instance):
             """
             Runs the analysis. Determine how well the supplied cti_params fits the image.
@@ -1031,21 +886,6 @@ class ParallelSerialHyperOnlyPhase(ParallelSerialHyperPhase, HyperOnly):
     """
     Fit only the CTI galaxy light.
     """
-
-    def __init__(self, parallel=None, serial=None,
-                 hyp_ci_regions=None, hyp_parallel_trails=None,
-                 hyp_serial_trails=None, hyp_parallel_serial_trails=None,
-                 optimizer_class=nl.MultiNest, ci_datas_extractor=parallel_serial_extractor,
-                 mask_function=default_mask_function,
-                 phase_name="parallel_serial_hyper_only_phase"):
-        super().__init__(parallel=parallel, serial=serial,
-                         hyp_ci_regions=hyp_ci_regions,
-                         hyp_parallel_trails=hyp_parallel_trails,
-                         hyp_serial_trails=hyp_serial_trails,
-                         hyp_parallel_serial_trails=hyp_parallel_serial_trails,
-                         optimizer_class=optimizer_class, ci_datas_extractor=ci_datas_extractor,
-                         mask_function=mask_function, phase_name=phase_name)
-
     def run(self, ci_datas, cti_settings, previous_results=None, pool=None):
         class ParallelSerialHyper(ParallelSerialHyperPhase):
             # noinspection PyShadowingNames
