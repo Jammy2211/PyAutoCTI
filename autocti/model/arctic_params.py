@@ -21,26 +21,26 @@ File: python/SHE_ArCTIC/ArcticParams.pyeated on: 02/13/18
 Author: James Nightingale
 """
 
-
 from __future__ import division, print_function
-import sys
-import numpy as np
 
-if sys.version_info[0] < 3:
-    from future_builtins import *
+import numpy as np
 
 from autocti.tools import infoio
 
 
-def setup(p=False, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,), p_well_notch_depth=0.0001,
+def setup(include_serial=False, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,), p_well_notch_depth=0.0001,
           p_well_fill_alpha=1.0, p_well_fill_beta=0.8, p_well_fill_gamma=0.0,
-          s=False, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,), s_well_notch_depth=0.0001,
+          include_parallel=False, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,), s_well_notch_depth=0.0001,
           s_well_fill_alpha=1.0, s_well_fill_beta=0.8, s_well_fill_gamma=0.0):
     """Factory to set up a *ParallelParams* and / or *SerialParams* sub-class as an *ArcticParams*
     instance using any number of trap species in both directions.
 
     Parameters
     ----------
+    include_parallel: Bool
+        If True parallel parameters will be included in the ArcticParams object
+    include_serial: Bool
+        If True serial parameters will be included in the ArcticParams object
     p_trap_densities : (float,)
         The trap density of the parallel species
     p_trap_lifetimes : (float,)
@@ -67,68 +67,64 @@ def setup(p=False, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,), p_well_notc
     s_well_fill_gamma : float
         The volume-filling constant (gamma) of how an electron cloud fills the volume of a pixel for serial clocking
     """
-    
-    parallel_parameters = _setup_parallel(p, p_trap_densities, p_trap_lifetimes, p_well_notch_depth,
-                                          p_well_fill_alpha, p_well_fill_beta, p_well_fill_gamma)
 
-    serial_parameters = _setup_serial(s, s_trap_densities, s_trap_lifetimes, s_well_notch_depth,
-                                      s_well_fill_alpha, s_well_fill_beta, s_well_fill_gamma)
-    
+    parallel_parameters = _setup_parallel(p_trap_densities, p_trap_lifetimes, p_well_notch_depth,
+                                          p_well_fill_alpha, p_well_fill_beta,
+                                          p_well_fill_gamma) if include_parallel else None
+
+    serial_parameters = _setup_serial(s_trap_densities, s_trap_lifetimes, s_well_notch_depth,
+                                      s_well_fill_alpha, s_well_fill_beta,
+                                      s_well_fill_gamma) if include_serial else None
+
     return ArcticParams(parallel=parallel_parameters, serial=serial_parameters)
 
-def _setup_parallel(parallel, trap_densities, trap_lifetimes, well_notch_depth, well_fill_alpha, well_fill_beta,
+
+def _setup_parallel(trap_densities, trap_lifetimes, well_notch_depth, well_fill_alpha, well_fill_beta,
                     well_fill_gamma):
     """Setup the parallel parameters for the factory above"""
 
-    if parallel == False:
-        return None
+    infoio.check_all_tuples_and_equal_length(trap_densities, trap_lifetimes)
+
+    parallel_no_species = len(trap_densities)
+
+    if parallel_no_species == 1:
+        return ParallelOneSpecies(trap_densities, trap_lifetimes, well_notch_depth,
+                                  well_fill_alpha, well_fill_beta, well_fill_gamma)
+    elif parallel_no_species == 2:
+        return ParallelTwoSpecies(trap_densities, trap_lifetimes, well_notch_depth,
+                                  well_fill_alpha, well_fill_beta, well_fill_gamma)
+    elif parallel_no_species == 3:
+        return ParallelThreeSpecies(trap_densities, trap_lifetimes, well_notch_depth,
+                                    well_fill_alpha, well_fill_beta, well_fill_gamma)
     else:
+        raise AttributeError('The number of parallel trap species must be > 0 and < 3')
 
-        infoio.check_all_tuples_and_equal_length(trap_densities, trap_lifetimes)
 
-        parallel_no_species = len(trap_densities)
-
-        if parallel_no_species == 1:
-            return ParallelOneSpecies(trap_densities, trap_lifetimes, well_notch_depth,
-                                      well_fill_alpha, well_fill_beta, well_fill_gamma)
-        elif parallel_no_species == 2:
-            return ParallelTwoSpecies(trap_densities, trap_lifetimes, well_notch_depth,
-                                      well_fill_alpha, well_fill_beta, well_fill_gamma)
-        elif parallel_no_species == 3:
-            return ParallelThreeSpecies(trap_densities, trap_lifetimes, well_notch_depth,
-                                        well_fill_alpha, well_fill_beta, well_fill_gamma)
-        else:
-            raise AttributeError('The number of parallel trap species must be > 0 and < 3')
-        
-def _setup_serial(serial, trap_densities, trap_lifetimes, well_notch_depth, well_fill_alpha, well_fill_beta,
+def _setup_serial(trap_densities, trap_lifetimes, well_notch_depth, well_fill_alpha, well_fill_beta,
                   well_fill_gamma):
     """Setup the serial parameters for the factory above"""
 
-    if serial == False:
-        return None
+    infoio.check_all_tuples_and_equal_length(trap_densities, trap_lifetimes)
+
+    serial_no_species = len(trap_densities)
+
+    if serial_no_species == 1:
+        return SerialOneSpecies(trap_densities, trap_lifetimes, well_notch_depth,
+                                well_fill_alpha, well_fill_beta, well_fill_gamma)
+    elif serial_no_species == 2:
+        return SerialTwoSpecies(trap_densities, trap_lifetimes, well_notch_depth,
+                                well_fill_alpha, well_fill_beta, well_fill_gamma)
+    elif serial_no_species == 3:
+        return SerialThreeSpecies(trap_densities, trap_lifetimes, well_notch_depth,
+                                  well_fill_alpha, well_fill_beta, well_fill_gamma)
     else:
-
-        infoio.check_all_tuples_and_equal_length(trap_densities, trap_lifetimes)
-
-        serial_no_species = len(trap_densities)
-
-        if serial_no_species == 1:
-            return SerialOneSpecies(trap_densities, trap_lifetimes, well_notch_depth,
-                                    well_fill_alpha, well_fill_beta, well_fill_gamma)
-        elif serial_no_species == 2:
-            return SerialTwoSpecies(trap_densities, trap_lifetimes, well_notch_depth,
-                                    well_fill_alpha, well_fill_beta, well_fill_gamma)
-        elif serial_no_species == 3:
-            return SerialThreeSpecies(trap_densities, trap_lifetimes, well_notch_depth,
-                                      well_fill_alpha, well_fill_beta, well_fill_gamma)
-        else:
-            raise AttributeError('The number of serial trap species must be > 0 and < 3')
+        raise AttributeError('The number of serial trap species must be > 0 and < 3')
 
 
 class ArcticParams(object):
 
     def __init__(self, parallel=None, serial=None):
-        """Sets up the arctic CTI model using parallel and serial parameters specified using a child of the \
+        """Sets up the arctic CTI model using parallel and serial parameters specified using a child of the
         ArcticParams.ParallelParams and ArcticParams.SerialParams abstract base classes.
 
         Parameters
@@ -146,6 +142,8 @@ class ArcticParams(object):
 
         Parameters
         ----------
+        filename: str
+            The output filename
         path : str
             The output directory path of the ci_data
         """
@@ -156,10 +154,10 @@ class ArcticParams(object):
 
         info = ''
 
-        if self.parallel != None:
+        if self.parallel is not None:
             info += self.parallel.generate_info()
 
-        if self.serial != None: 
+        if self.serial is not None:
             info += self.serial.generate_info()
 
         return info
@@ -168,14 +166,14 @@ class ArcticParams(object):
 
         object_tag = ''
 
-        if self.parallel != None:
+        if self.parallel is not None:
             object_tag += self.parallel.object_tag
 
-        if self.serial != None:
+        if self.serial is not None:
 
-            if self.parallel != None:
+            if self.parallel is not None:
                 object_tag += '_'
-            
+
             object_tag += self.serial.object_tag
 
         return object_tag + tag
@@ -188,9 +186,9 @@ class ArcticParams(object):
         ext_header : astropy.io.hdulist
             The opened header of the astropy fits header.
         """
-        if self.parallel != None:
+        if self.parallel is not None:
             self.parallel.update_fits_header_info(ext_header)
-        if self.serial != None:
+        if self.serial is not None:
             self.serial.update_fits_header_info(ext_header)
 
         return ext_header
@@ -231,6 +229,7 @@ class Params(object):
         string += 'Well Fill Beta: {}'.format(self.well_fill_beta) + '\n'
         string += 'Well Fill Gamma: {}'.format(self.well_fill_gamma) + '\n'
         return string
+
 
 class ParallelParams(Params):
 
@@ -325,8 +324,9 @@ class ParallelOneSpecies(ParallelParams):
 
     @property
     def object_tag(self):
-        return 'p1_d'+str(self.trap_densities)+'_t'+str(self.trap_lifetimes)+'_a'+str(self.well_fill_alpha)+'_b'+\
-               str(self.well_fill_beta)+'_g'+str(self.well_fill_gamma)
+        return 'p1_d' + str(self.trap_densities) + '_t' + str(self.trap_lifetimes) + '_a' + str(
+            self.well_fill_alpha) + '_b' + \
+               str(self.well_fill_beta) + '_g' + str(self.well_fill_gamma)
 
 
 class ParallelTwoSpecies(ParallelParams):
@@ -364,8 +364,9 @@ class ParallelTwoSpecies(ParallelParams):
 
     @property
     def object_tag(self):
-        return 'p2_d'+str(self.trap_densities)+'_t'+str(self.trap_lifetimes)+'_a'+str(self.well_fill_alpha)+'_b'+\
-               str(self.well_fill_beta)+'_g'+str(self.well_fill_gamma)
+        return 'p2_d' + str(self.trap_densities) + '_t' + str(self.trap_lifetimes) + '_a' + str(
+            self.well_fill_alpha) + '_b' + \
+               str(self.well_fill_beta) + '_g' + str(self.well_fill_gamma)
 
 
 class ParallelThreeSpecies(ParallelParams):
@@ -401,8 +402,9 @@ class ParallelThreeSpecies(ParallelParams):
 
     @property
     def object_tag(self):
-        return 'p3_d'+str(self.trap_densities)+'_t'+str(self.trap_lifetimes)+'_a'+str(self.well_fill_alpha)+'_b'+\
-               str(self.well_fill_beta)+'_g'+str(self.well_fill_gamma)
+        return 'p3_d' + str(self.trap_densities) + '_t' + str(self.trap_lifetimes) + '_a' + str(
+            self.well_fill_alpha) + '_b' + \
+               str(self.well_fill_beta) + '_g' + str(self.well_fill_gamma)
 
 
 class ParallelDensityVary(ParallelParams):
@@ -501,7 +503,7 @@ class SerialParams(Params):
         info += infoio.generate_class_info(cls=self, prefix='serial_', include_types=[int, float, tuple])
         info += '\n'
         return info
-    
+
     def update_fits_header_info(self, ext_header):
         """Update a fits header to include the serial CTI model parameters.
 
@@ -528,7 +530,7 @@ class SerialParams(Params):
         ext_header.set('cte_swlp', self.well_fill_beta, 'CCD Well filling power (Serial)')
 
         return ext_header
-    
+
 
 class SerialOneSpecies(SerialParams):
 
@@ -563,8 +565,8 @@ class SerialOneSpecies(SerialParams):
 
     @property
     def object_tag(self):
-        return 's1_d'+str(self.trap_densities)+'_t'+str(self.trap_lifetimes)+'_a'+str(self.well_fill_alpha)+\
-               '_b'+str(self.well_fill_beta)+'_g'+str(self.well_fill_gamma)
+        return 's1_d' + str(self.trap_densities) + '_t' + str(self.trap_lifetimes) + '_a' + str(self.well_fill_alpha) + \
+               '_b' + str(self.well_fill_beta) + '_g' + str(self.well_fill_gamma)
 
 
 class SerialTwoSpecies(SerialParams):
@@ -600,9 +602,9 @@ class SerialTwoSpecies(SerialParams):
 
     @property
     def object_tag(self):
-        return 'p3_d'+str(self.trap_densities)+'_t'+str(self.trap_lifetimes)+'_a'+str(self.well_fill_alpha)+'_b'+\
-               str(self.well_fill_beta)+'_g'+str(self.well_fill_gamma)
-
+        return 'p3_d' + str(self.trap_densities) + '_t' + str(self.trap_lifetimes) + '_a' + str(
+            self.well_fill_alpha) + '_b' + \
+               str(self.well_fill_beta) + '_g' + str(self.well_fill_gamma)
 
 
 class SerialThreeSpecies(SerialParams):
@@ -638,10 +640,6 @@ class SerialThreeSpecies(SerialParams):
 
     @property
     def object_tag(self):
-        return 'p3_d'+str(self.trap_densities)+'_t'+str(self.trap_lifetimes)+'_a'+str(self.well_fill_alpha)+'_b'+\
-               str(self.well_fill_beta)+'_g'+str(self.well_fill_gamma)
-
-
-
-
-
+        return 'p3_d' + str(self.trap_densities) + '_t' + str(self.trap_lifetimes) + '_a' + str(
+            self.well_fill_alpha) + '_b' + \
+               str(self.well_fill_beta) + '_g' + str(self.well_fill_gamma)

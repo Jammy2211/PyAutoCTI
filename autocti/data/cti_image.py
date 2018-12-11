@@ -231,14 +231,14 @@ class FrameGeometry(object):
             The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
         """
 
-        if cti_settings.serial != None:
+        if cti_settings.serial is not None:
             
             image_pre_serial_clocking = self.rotate_before_serial_cti(image_pre_clocking=image)
             image_post_serial_clocking = pyarctic.correct_serial_cti_from_image(image_pre_serial_clocking, cti_params,
                                                                                 cti_settings)
             image = self.rotate_after_serial_cti(image_post_serial_clocking)
 
-        if cti_settings.parallel != None:
+        if cti_settings.parallel is not None:
             
             image_pre_parallel_clocking = self.rotate_before_parallel_cti(image_pre_clocking=image)
             image_post_parallel_clocking = pyarctic.correct_parallel_cti_from_image(image_pre_parallel_clocking,

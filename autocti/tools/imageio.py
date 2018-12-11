@@ -33,7 +33,7 @@ if sys.version_info[0] < 3:
     from future_builtins import *
 
 def make_path_if_does_not_exist(path):
-    if os.path.exists(path) == False:
+    if os.path.exists(path) is False:
         os.makedirs(path)
 
 def output_cr_masks(data_path, cr_masks):
