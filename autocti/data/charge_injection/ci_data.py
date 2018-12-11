@@ -24,30 +24,25 @@ Author: James Nightingale
 """
 
 from __future__ import division, print_function
-import sys
-
-if sys.version_info[0] < 3:
-    from future_builtins import *
 
 import numpy as np
 
+from autocti import exc
+from autocti.data import cti_image
 from autocti.data.charge_injection import ci_frame
 from autocti.data.charge_injection import ci_pattern
-from autocti.data import cti_image
 from autocti.model import pyarctic
 from autocti.tools import infoio
-from autocti import exc
+
 
 class CIData(list):
 
     def __init__(self, images, masks, noises, ci_pre_ctis):
-
         super(CIData, self).__init__()
 
         class DataSet(object):
 
             def __init__(self, image, mask, noise, ci_pre_cti):
-
                 self.image = image
                 self.mask = mask
                 self.noise = noise
@@ -153,7 +148,7 @@ class CIImage(ci_frame.CIFrameCTI):
 
         else:
             raise exc.CIPatternException('the CIPattern of the CIImage is not an instance of '
-                                                  'a known ci_pattern class')
+                                         'a known ci_pattern class')
 
     def generate_info(self):
         """Generate string containing information on the charge injection image (and its ci_pattern)."""
@@ -203,7 +198,7 @@ class CIMask(ci_frame.CIFrame):
             direction.
         """
         mask = CIMask.empty_for_shape(shape, frame_geometry, ci_pattern)
-        
+
         if regions is not None:
             mask.regions = list(map(lambda region: cti_image.Region(region), regions))
             for region in mask.regions:
@@ -383,6 +378,7 @@ def create_baseline_noise(shape, read_noise):
     """
     return np.ones(shape) * read_noise
 
+
 def create_read_noise_map(shape, read_noise, noise_seed=-1):
     """Generate a two-dimensional read noises-map, generating values from a Gaussian distribution with mean 0.0.
 
@@ -399,6 +395,7 @@ def create_read_noise_map(shape, read_noise, noise_seed=-1):
     read_noise_map = np.random.normal(loc=0.0, scale=read_noise, size=shape)
     return read_noise_map
 
+
 def setup_random_seed(seed):
     """Setup the random seed. If the input seed is -1, the code will use a random seed for every run. If it is positive,
     that seed is used for all runs, thereby giving reproducible results
@@ -411,6 +408,7 @@ def setup_random_seed(seed):
     if seed == -1:
         seed = np.random.randint(0, 1e9)  # Use one seed, so all regions have identical column non-uniformity.
     np.random.seed(seed)
+
 
 def compute_variances_from_noise(noise):
     """The variances are the noises (standard deviations) squared."""

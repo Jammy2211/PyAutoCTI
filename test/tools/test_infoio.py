@@ -25,8 +25,8 @@ Author: user
 
 from __future__ import division, print_function
 import sys
-if sys.version_info[0] < 3:
-    from future_builtins import *
+
+
 
 from autocti.tools import infoio
 
