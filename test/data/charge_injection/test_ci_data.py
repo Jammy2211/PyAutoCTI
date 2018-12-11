@@ -81,7 +81,7 @@ def make_params_parallel():
     parallel = arctic_params.ParallelOneSpecies(trap_densities=(0.1,), trap_lifetimes=(1.0,),
                                                 well_notch_depth=0.000001, well_fill_beta=0.8)
 
-    parallel = arctic_params.ArcticParams(parallel=parallel)
+    parallel = arctic_params.ArcticParams(parallel_species=parallel)
 
     return parallel
 
@@ -91,7 +91,7 @@ def make_params_serial():
     serial = arctic_params.SerialOneSpecies(trap_densities=(0.2,), trap_lifetimes=(2.0,),
                                             well_notch_depth=0.000001, well_fill_beta=0.4)
 
-    serial = arctic_params.ArcticParams(serial=serial)
+    serial = arctic_params.ArcticParams(serial_species=serial)
 
     return serial
 
@@ -104,8 +104,8 @@ def make_params_both():
     serial = arctic_params.SerialOneSpecies(trap_densities=(0.2,), trap_lifetimes=(2.0,),
                                             well_notch_depth=0.000001, well_fill_beta=0.4)
 
-    both = arctic_params.ArcticParams(parallel=parallel,
-                                      serial=serial)
+    both = arctic_params.ArcticParams(parallel_species=parallel,
+                                      serial_species=serial)
 
     return both
 

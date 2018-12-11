@@ -28,7 +28,7 @@ from autocti.tools import infoio
 
 class ArcticParams(object):
 
-    def __init__(self, parallel_ccd, serial_ccd, parallel=None, serial=None):
+    def __init__(self, parallel_ccd=None, serial_ccd=None, parallel_species=None, serial_species=None):
         """Sets up the arctic CTI model using parallel and serial parameters specified using a child of the
         ArcticParams.ParallelParams and ArcticParams.SerialParams abstract base classes.
 
@@ -38,15 +38,15 @@ class ArcticParams(object):
             Class describing the state of the CCD in the parallel direction
         serial_ccd: CCD
             Class describing the state of the CCD in the serial direction
-        parallel : ArcticParams.ParallelParams
+        parallel_species : [ArcticParams.ParallelParams]
            The parallel parameters for the arctic CTI model
-        serial : ArcticParams.SerialParams
+        serial_species : [ArcticParams.SerialParams]
            The serial parameters for the arctic CTI model
         """
         self.parallel_ccd = parallel_ccd
         self.serial_ccd = serial_ccd
-        self.parallel = parallel or []
-        self.serial = serial or []
+        self.parallel_species = parallel_species or []
+        self.serial_species = serial_species or []
 
     def output_info_file(self, path, filename='ArcticParams'):
         """Output information on the the parameters to a text file.
@@ -70,13 +70,15 @@ class ArcticParams(object):
                 map(lambda species: infoio.generate_class_info(cls=species, prefix='{}_'.format(name.lower()),
                                                                include_types=[int, float, tuple]), species_list))
 
-        add_species("parallel", self.parallel)
-        add_species("serial", self.serial)
+        add_species("parallel", self.parallel_species)
+        add_species("serial", self.serial_species)
 
-        info_list.append(
-            infoio.generate_class_info(self.parallel_ccd, prefix="parallel_", include_types=[int, float, tuple]))
-        info_list.append(
-            infoio.generate_class_info(self.serial_ccd, prefix="serial_", include_types=[int, float, tuple]))
+        if self.parallel_ccd is not None:
+            info_list.append(
+                infoio.generate_class_info(self.parallel_ccd, prefix="parallel_", include_types=[int, float, tuple]))
+        if self.serial_ccd is not None:
+            info_list.append(
+                infoio.generate_class_info(self.serial_ccd, prefix="serial_", include_types=[int, float, tuple]))
 
         return "\n".join(info_list)
 
@@ -96,14 +98,16 @@ class ArcticParams(object):
                 ext_header.set('cte_pt{}t'.format(i), species.trap_lifetime,
                                'Trap species {} lifetime ({})'.format(i, name))
 
-        add_species("Parallel", self.parallel)
-        add_species("Serial", self.serial)
+        add_species("Parallel", self.parallel_species)
+        add_species("Serial", self.serial_species)
 
-        ext_header.set('cte_swln', self.serial_ccd.well_notch_depth, 'CCD Well notch depth (Serial)')
-        ext_header.set('cte_swlp', self.serial_ccd.well_fill_beta, 'CCD Well filling power (Serial)')
+        if self.serial_ccd is not None:
+            ext_header.set('cte_swln', self.serial_ccd.well_notch_depth, 'CCD Well notch depth (Serial)')
+            ext_header.set('cte_swlp', self.serial_ccd.well_fill_beta, 'CCD Well filling power (Serial)')
 
-        ext_header.set('cte_pwln', self.parallel_ccd.well_notch_depth, 'CCD Well notch depth (Parallel)')
-        ext_header.set('cte_pwlp', self.parallel_ccd.well_fill_beta, 'CCD Well filling power (Parallel)')
+        if self.parallel_ccd is not None:
+            ext_header.set('cte_pwln', self.parallel_ccd.well_notch_depth, 'CCD Well notch depth (Parallel)')
+            ext_header.set('cte_pwlp', self.parallel_ccd.well_fill_beta, 'CCD Well filling power (Parallel)')
 
         return ext_header
 

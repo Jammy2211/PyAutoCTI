@@ -891,7 +891,7 @@ class TestArcticAddCTI:
             parallel_vary = arctic_params.ParallelDensityVary(trap_densities=[(10.0,), (20.0,), (30.0,), (40.0,), (50.0,)],
                                                              trap_lifetimes=(1.0,), well_fill_beta=0.8, well_notch_depth=0.01)
 
-            parameters = arctic_params.ArcticParams(parallel=parallel_vary)
+            parameters = arctic_params.ArcticParams(parallel_species=parallel_vary)
 
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
