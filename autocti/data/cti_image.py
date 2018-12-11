@@ -23,16 +23,11 @@ Created on: 02/13/18
 Author: James Nightingale
 """
 
-
-import sys
-
-
-
-
 import numpy as np
+
 from autocti import exc
-from autocti.tools import imageio
 from autocti.model import pyarctic
+from autocti.tools import imageio
 
 
 class ImageFrame(np.ndarray):
@@ -75,10 +70,11 @@ class ImageFrame(np.ndarray):
         class_dict = {}
         for key, value in self.__dict__.items():
             class_dict[key] = value
-        new_state = pickled_state[2] + (class_dict, )
+        new_state = pickled_state[2] + (class_dict,)
         # Return a tuple that replaces the parent's __setstate__ tuple with our own
-        return (pickled_state[0], pickled_state[1], new_state)
+        return pickled_state[0], pickled_state[1], new_state
 
+    # noinspection PyMethodOverriding
     def __setstate__(self, state):
 
         for key, value in state[-1].items():
@@ -203,14 +199,12 @@ class FrameGeometry(object):
         """
 
         if cti_params.parallel is not None:
-
             image_pre_parallel_clocking = self.rotate_before_parallel_cti(image_pre_clocking=image)
             image_post_parallel_clocking = pyarctic.add_parallel_cti_to_image(image_pre_parallel_clocking, cti_params,
                                                                               cti_settings)
             image = self.rotate_after_parallel_cti(image_post_parallel_clocking)
 
         if cti_params.serial is not None:
-
             image_pre_serial_clocking = self.rotate_before_serial_cti(image_pre_clocking=image)
             image_post_serial_clocking = pyarctic.add_serial_cti_to_image(image_pre_serial_clocking, cti_params,
                                                                           cti_settings)
@@ -232,14 +226,12 @@ class FrameGeometry(object):
         """
 
         if cti_settings.serial is not None:
-            
             image_pre_serial_clocking = self.rotate_before_serial_cti(image_pre_clocking=image)
             image_post_serial_clocking = pyarctic.correct_serial_cti_from_image(image_pre_serial_clocking, cti_params,
                                                                                 cti_settings)
             image = self.rotate_after_serial_cti(image_post_serial_clocking)
 
         if cti_settings.parallel is not None:
-            
             image_pre_parallel_clocking = self.rotate_before_parallel_cti(image_pre_clocking=image)
             image_post_parallel_clocking = pyarctic.correct_parallel_cti_from_image(image_pre_parallel_clocking,
                                                                                     cti_params, cti_settings)
@@ -660,7 +652,6 @@ class QuadGeometryEuclidTR(QuadGeometryEuclid):
                                                    serial_prescan=Region((0, 2086, 2068, 2119)),
                                                    serial_overscan=Region((0, 2086, 0, 20)))
 
-
     @staticmethod
     def rotate_before_parallel_cti(image_pre_clocking):
         """ Rotate the quadrant image ci_data before clocking via arctic in the parallel direction.
@@ -734,7 +725,7 @@ class QuadGeometryEuclidTR(QuadGeometryEuclid):
 
 class Region(tuple):
 
-    def __new__ (cls, region):
+    def __new__(cls, region):
         """Setup a region of an image, which could be where the parallel overscan, serial overscan, etc. are.
 
         This is defined as a tuple (y0, y1, x0, x1).
@@ -761,8 +752,8 @@ class Region(tuple):
         region.x0 = region[2]
         region.x1 = region[3]
 
-        region.total_rows = region.y1-region.y0
-        region.total_columns = region.x1-region.x0
+        region.total_rows = region.y1 - region.y0
+        region.total_columns = region.x1 - region.x0
 
         return region
 
@@ -776,7 +767,6 @@ class Region(tuple):
     def set_region_on_array_to_zeros(self, array):
         array[self.y0:self.y1, self.x0:self.x1] = 0.0
         return array
-
 
 
 def check_dimensions_are_euclid(dimensions):

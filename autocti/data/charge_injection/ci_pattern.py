@@ -5,17 +5,11 @@ Created on: 02/14/18
 Author: James Nightingale
 """
 
-
-import sys
-
-
-
-
 import numpy as np
 
+from autocti import exc
 from autocti.data import cti_image
 from autocti.tools import infoio
-from autocti import exc
 
 
 def create_uniform_via_lists(normalizations, regions):
@@ -29,6 +23,7 @@ def create_uniform_via_lists(normalizations, regions):
         The regions each charge injection ci_pattern appears. This is identical across all images.
     """
     return list(map(lambda n: CIPatternUniform(n, regions), normalizations))
+
 
 def create_non_uniform_via_lists(normalizations, regions, row_slopes):
     """Setup the collection of patterns from lists of non-uniform ci_pattern properties
@@ -44,6 +39,7 @@ def create_non_uniform_via_lists(normalizations, regions, row_slopes):
     """
     return list(map(lambda n, s: CIPatternNonUniform(n, regions, s), normalizations, row_slopes))
 
+
 def create_uniform_fast_via_lists(normalizations, regions):
     """Setup the collection of fast patterns from lists of uniform ci_pattern properties
 
@@ -55,6 +51,7 @@ def create_uniform_fast_via_lists(normalizations, regions):
         The regions each charge injection ci_pattern appears. This is identical across all images.
     """
     return list(map(lambda n: CIPatternUniformFast(n, regions), normalizations))
+
 
 def create_uniform_simulate_via_lists(normalizations, regions):
     """Setup the collection of simulation patterns from lists of uniform ci_pattern properties
@@ -68,15 +65,16 @@ def create_uniform_simulate_via_lists(normalizations, regions):
     """
     return list(map(lambda n: CIPatternUniformSimulate(n, regions), normalizations))
 
+
 def create_non_uniform_simulate_via_lists(normalizations, regions, column_deviations, row_slopes,
                                           maximum_normalization):
     """Setup the collection of simulation patterns from lists of non-uniform ci_pattern properties
 
     Params
     -----------
-    normalizations : list
+    normalizations : [float]
         The normalization in each charge injection ci_pattern.
-    regions : [(int, int, int, int)]
+    regions : [(int,)]
         The regions each charge injection ci_pattern appears. This is identical across all images.
     column_deviation : [float]
         The level of charge deviation across the columns of the region e.g. the standard deviation of the \
@@ -86,6 +84,7 @@ def create_non_uniform_simulate_via_lists(normalizations, regions, column_deviat
     maximum_normalization : float
         The maximum normalization of a charge injection column (e.g. the full well capacity)
     """
+    # noinspection PyArgumentList
     return list(map(lambda n, c, s: CIPatternNonUniformSimulate(n, regions, c, s, maximum_normalization),
                     normalizations, column_deviations, row_slopes))
 
@@ -100,12 +99,12 @@ class CIPattern(object):
         -----------
         normalization : float
             The normalization of the charge injection lines.
-        ci_regions : [(int, int, int, int)]
+        regions: [(int,)]
             A list of the integer coordinates specifying the corners of each charge injection region \
-            (top-row, bottom-row, lelf-column, right-column).
+            (top-row, bottom-row, left-column, right-column).
         """
         self.normalization = normalization
-        self.regions = list(map(lambda region : cti_image.Region(region), regions))
+        self.regions = list(map(cti_image.Region, regions))
 
     def generate_info(self):
         """Generate string containing information on the charge injection ci_pattern."""
@@ -129,7 +128,8 @@ class CIPattern(object):
         for region in self.regions:
 
             if region.y1 > dimensions[0] or region.x1 > dimensions[1]:
-                raise exc.CIPatternException('The charge injection ci_pattern regions are bigger than the image image_shape')
+                raise exc.CIPatternException(
+                    'The charge injection ci_pattern regions are bigger than the image image_shape')
 
 
 class CIPatternUniform(CIPattern):
@@ -142,7 +142,7 @@ class CIPatternUniform(CIPattern):
         -----------
         normalization : float
             The normalization of the uniform charge injection region.
-        ci_regions : [(int, int, int, int)]
+        regions : [(int,)]
             A list of the integer coordinates specifying the corners of each charge injection region. This is \
             defined as in a NumPy array, e.g. (top-row, bottom-row, lelf-column, right-column).
         """
@@ -155,7 +155,7 @@ class CIPatternUniform(CIPattern):
 
         Parameters
         -----------
-        image_shape : (int, int)
+        shape : (int,)
             The image_shape of the ci_pre_ctis to be created.
         """
 
@@ -164,7 +164,6 @@ class CIPatternUniform(CIPattern):
         ci_pre_cti = np.zeros(shape)
 
         for region in self.regions:
-
             ci_pre_cti[region.y0:region.y1, region.x0:region.x1] += self.normalization
 
         return ci_pre_cti
@@ -173,16 +172,16 @@ class CIPatternUniform(CIPattern):
 class CIPatternNonUniform(CIPattern):
 
     def __init__(self, normalization, regions, row_slope):
-        """ A non-uniform charge injection ci_pattern, which is defined by the regions it appears on a charge injection \
+        """ A non-uniform charge injection ci_pattern, which is defined by the regions it appears on a charge injection
         ci_frame and its average normalization.
 
-        Non-uniformity across the columns of a charge injection ci_pattern is due to spikes / drops in the current that \
-        injects the charge. This is a noisy process, leading to non-uniformity with no regularity / smoothness. Thus, \
-        it cannot be modeled with an analytic profile, and must be assumed as prior-knowledge about the charge \
+        Non-uniformity across the columns of a charge injection ci_pattern is due to spikes / drops in the current that
+        injects the charge. This is a noisy process, leading to non-uniformity with no regularity / smoothness. Thus,
+        it cannot be modeled with an analytic profile, and must be assumed as prior-knowledge about the charge
         injection electronics or estimated from the observed charge injection ci_data.
 
-        Non-uniformity across the rows of a charge injection ci_pattern is due to a drop-off in voltage in the current. \
-        Therefore, it appears smooth and be modeled as an analytic function, which this code assumes is a  \
+        Non-uniformity across the rows of a charge injection ci_pattern is due to a drop-off in voltage in the current.
+        Therefore, it appears smooth and be modeled as an analytic function, which this code assumes is a
         power-law with slope row_slope.
 
         Parameters
@@ -190,8 +189,8 @@ class CIPatternNonUniform(CIPattern):
         normalization : float
             The normalization of the charge injection region.
         regions : [(int,)]
-            A list of the integer coordinates specifying the corners of each charge injection region \
-            (top-row, bottom-row, lelf-column, right-column).
+            A list of the integer coordinates specifying the corners of each charge injection region
+            (top-row, bottom-row, left-column, right-column).
         row_slope : float
             The power-law slope of non-uniformity in the row charge injection profile.
         """
@@ -226,7 +225,7 @@ class CIPatternNonUniform(CIPattern):
 
             if None in means_of_columns:
                 means_of_columns.remove(None)
-                if means_of_columns == []:
+                if len(means_of_columns) == 0:
                     raise exc.CIPatternException(
                         'All Pixels in a charge injection region were flagged as masked - code does'
                         'not currently handle such a circumstance')
@@ -253,7 +252,6 @@ class CIPatternNonUniform(CIPattern):
         means_of_columns = []
 
         for region in self.regions:
-
             means_of_columns.append(self.mean_charge_in_column(column[region.y0:region.y1].flatten(),
                                                                column_mask[region.y0:region.y1].flatten()))
 
@@ -291,14 +289,14 @@ class CIPatternNonUniform(CIPattern):
             The input normalization of the column's charge e.g. the level of charge injected.
 
         """
-        return normalization * (np.arange(1, size+1))**self.row_slope
+        return normalization * (np.arange(1, size + 1)) ** self.row_slope
 
 
 class CIPatternUniformFast(CIPatternUniform):
 
     def __init__(self, normalization, regions):
-        """ A fast uniform charge injection ci_pattern, which is defined by the regions it appears on a charge injection \
-         ci_frame and its normalization.
+        """ A fast uniform charge injection ci_pattern, which is defined by the regions it appears on a charge \
+         injection ci_frame and its normalization.
          
          This is used for performing fast CTI addition in CTI calibration (see *CIPreCTIFast*).
 
@@ -306,14 +304,14 @@ class CIPatternUniformFast(CIPatternUniform):
         -----------
         normalization : float
             The normalization of the charge injection region.
-        ci_regions : [(int, int, int, int)]
+        regions : [(int,)]
             A list of the integer coordinates specifying the corners of each charge injection region. This is \
-            defined as in a NumPy array, e.g. (top-row, bottom-row, lelf-column, right-column).
+            defined as in a NumPy array, e.g. (top-row, bottom-row, left-column, right-column).
         """
         super(CIPatternUniformFast, self).__init__(normalization, regions)
 
     def compute_fast_column(self, number_rows):
-        """Compute a uniform fast column, which represents one column of charge in a uniform charge injection immage \
+        """Compute a uniform fast column, which represents one column of charge in a uniform charge injection image \
         (and therefore every column of charge in that pre-cti image).
 
         This is performed by using the charge injection ci_pattern's regions to determine the rows which contain \
@@ -331,7 +329,6 @@ class CIPatternUniformFast(CIPatternUniform):
         fast_column = np.zeros((number_rows, 1))
 
         for region in self.regions:
-
             fast_column[region.y0:region.y1, 0] += self.normalization
 
         return fast_column
@@ -372,19 +369,19 @@ class CIPatternUniformSimulate(CIPatternUniform):
         -----------
         normalization : float
             The normalization of the charge injection region.
-        ci_regions : [(int, int, int, int)]
+        regions : [(int,)]
             A list of the integer coordinates specifying the corners of each charge injection region. This is \
-            defined as in a NumPy array, e.g. (top-row, bottom-row, lelf-column, right-column).
+            defined as in a NumPy array, e.g. (top-row, bottom-row, left-column, right-column).
         """
         super(CIPatternUniformSimulate, self).__init__(normalization, regions)
 
-    def simulate_ci_pre_cti(self, dimensions, *values):
-        """Use this charge injection ci_pattern to generate a pre-cti charge injection image. This is performed by going \
-        to its charge injection regions and adding the charge injection normalization value.
+    def simulate_ci_pre_cti(self, dimensions):
+        """Use this charge injection ci_pattern to generate a pre-cti charge injection image. This is performed by \
+        going to its charge injection regions and adding the charge injection normalization value.
 
         Parameters
         -----------
-        image_shape : (int, int)
+        dimensions : (int, int)
             The image_shape of the ci_pre_ctis to be created.
         """
 
@@ -414,9 +411,9 @@ class CIPatternNonUniformSimulate(CIPatternNonUniform):
         -----------
         normalization : float
             The normalization of the charge injection region.
-        ci_regions : [(int, int, int, int)]
-            A list of the integer coordinates specifying the corners of each charge injection region. This is defined as \
-            in a NumPy array, e.g. (top-row, bottom-row, lelf-column, right-column).
+        regions : [(int,)]
+            A list of the integer coordinates specifying the corners of each charge injection region. This is defined \
+            as in a NumPy array, e.g. (top-row, bottom-row, left-column, right-column).
         column_deviation : float
             The level of charge deviation across the columns of the region e.g. the standard deviation of the \
              Gaussian distribution each charge level is drawn from.
@@ -452,7 +449,7 @@ class CIPatternNonUniformSimulate(CIPatternNonUniform):
         ci_pre_cti = np.zeros(dimensions)
 
         if ci_seed == -1:
-            ci_seed = np.random.randint(0, 1e9) # Use one ci_seed, so all regions have identical column non-uniformity.
+            ci_seed = np.random.randint(0, 1e9)  # Use one ci_seed, so all regions have identical column non-uniformity.
 
         for region in self.regions:
             ci_pre_cti[region.y0:region.y1, region.x0:region.x1] += \
@@ -521,6 +518,3 @@ class CIPatternNonUniformSimulate(CIPatternNonUniform):
 
     def create_pattern(self):
         return CIPatternNonUniform(normalization=self.normalization, regions=self.regions, row_slope=self.row_slope)
-
-
-
