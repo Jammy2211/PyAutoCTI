@@ -23,8 +23,6 @@ Created on: 02/14/18
 Author: James Nightingale
 """
 
-from __future__ import division, print_function
-
 import numpy as np
 
 from autocti.data import cti_image
@@ -44,12 +42,14 @@ class Mask(np.ndarray):
 
         Parameters
         ----------
-        image_shape : (int, int)
+        ci_pattern
+        shape : (int, int)
             The dimensions of the 2D mask.
         frame_geometry : ci_frame.CIQuadGeometry
             The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
             therefore the direction of clocking and rotations before input into the cti algorithm.
         """
+        # noinspection PyArgumentList
         return cls(frame_geometry=frame_geometry, ci_pattern=ci_pattern, array=np.full(shape, False))
 
     @classmethod
@@ -60,12 +60,14 @@ class Mask(np.ndarray):
 
         Parameters
         ----------
-        image_shape : (int, int)
+        ci_pattern
+        cr_diagonal
+        shape : (int, int)
             The dimensions of the 2D mask.
         frame_geometry : ci_frame.CIQuadGeometry
             The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
             therefore the direction of clocking and rotations before input into the cti algorithm.
-        regionss : [(int, int, int, int)]
+        regions : [(int,)]
             A list of the regions on the image to mask.
         cosmic_rays : ndarray.ma
             2D array flagging where cosmic rays on the image.
@@ -79,7 +81,7 @@ class Mask(np.ndarray):
         mask = Mask.empty_for_shape(shape, frame_geometry, ci_pattern)
 
         if regions is not None:
-            mask.regions = list(map(lambda region: cti_image.Region(region), regions))
+            mask.regions = list(map(lambda r: cti_image.Region(r), regions))
             for region in mask.regions:
                 mask[region.y0:region.y1, region.x0:region.x1] = True
         elif regions is None:
@@ -88,7 +90,7 @@ class Mask(np.ndarray):
         if cosmic_rays is not None:
             for y in range(mask.shape[0]):
                 for x in range(mask.shape[1]):
-                    if cosmic_rays[y, x] == True:
+                    if cosmic_rays[y, x]:
                         y0, y1 = mask.frame_geometry.parallel_trail_from_y(y, cr_parallel)
                         mask[y0:y1, x] = True
                         x0, x1 = mask.frame_geometry.serial_trail_from_x(x, cr_serial)

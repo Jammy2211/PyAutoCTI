@@ -36,7 +36,7 @@ def add_parallel_cti_to_image(image, params, settings):
     image : ndarray
         The two-dimensional image passed to arctic for CTI addition, assuming the direction of parallel clocking is \
         upwards relative to a ndarray (e.g towards image[0, :]).
-     parameters : ArcticParams
+    params : ArcticParams
         The CTI parameters (trap density, lifetimes etc.). This may include both sets of model parameters in the \
         parallel and serial direction (e.g. ParallelParams and SerialParams).
     settings : ArcticSettings
@@ -243,6 +243,7 @@ def call_arctic(image_pre_clocking, unclock, params, settings):
 
     """
 
+    # noinspection PyUnresolvedReferences,PyPep8Naming
     import pySHE_ArCTIC as arctic
 
     settings.unclock = unclock  # Include unclock in parameters to pass to different routines easily
