@@ -387,7 +387,7 @@ class ParallelPhase(Phase):
     parallel_species = phase_property.PhasePropertyCollection("parallel_species")
     parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
 
-    def __init__(self, parallel_species=None, parallel_ccd=None, optimizer_class=nl.MultiNest,
+    def __init__(self, parallel_species=(), parallel_ccd=None, optimizer_class=nl.MultiNest,
                  ci_datas_extractor=parallel_extractor, columns=None,
                  mask_function=default_mask_function, phase_name="parallel_phase"):
         """
@@ -395,8 +395,7 @@ class ParallelPhase(Phase):
         """
         super().__init__(optimizer_class=optimizer_class, ci_datas_extractor=ci_datas_extractor, columns=columns,
                          rows=None, mask_function=mask_function, phase_name=phase_name)
-        if parallel_species is not None:
-            self.parallel_species = parallel_species
+        self.parallel_species = parallel_species
         self.parallel_ccd = parallel_ccd
 
     class Analysis(Phase.Analysis):
@@ -466,7 +465,7 @@ class ParallelHyperPhase(ParallelPhase):
     hyp_ci_regions = phase_property.PhaseProperty("hyp_ci_regions")
     hyp_parallel_trails = phase_property.PhaseProperty("hyp_parallel_trails")
 
-    def __init__(self, parallel_species=None, parallel_ccd=None, hyp_ci_regions=None, hyp_parallel_trails=None,
+    def __init__(self, parallel_species=(), parallel_ccd=None, hyp_ci_regions=None, hyp_parallel_trails=None,
                  optimizer_class=nl.MultiNest, ci_datas_extractor=parallel_extractor, columns=None,
                  mask_function=default_mask_function, phase_name="parallel_hyper_phase"):
         """
