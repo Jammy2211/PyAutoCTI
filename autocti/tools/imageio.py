@@ -34,18 +34,6 @@ def make_path_if_does_not_exist(path):
         os.makedirs(path)
 
 
-def output_cr_masks(data_path, cr_masks):
-    for i, cr_mask in enumerate(cr_masks):
-        cr_mask_filename = data_path + 'ci_cr_mask_' + str(i) + '.fits'
-
-        new_hdr = fits.Header()
-        new_hdr['DATE'] = 0.0
-        new_hdr['BUNIT'] = 'ELECTRONS'
-
-        hdu = fits.PrimaryHDU(cr_mask, new_hdr)
-        hdu.writeto(cr_mask_filename)
-
-
 def numpy_array_to_fits(array, path, filename):
     make_path_if_does_not_exist(path)
 
