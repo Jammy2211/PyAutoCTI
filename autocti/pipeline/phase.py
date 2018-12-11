@@ -385,7 +385,7 @@ def is_prior(value):
 
 class ParallelPhase(Phase):
     parallel_species = phase_property.PhasePropertyCollection("parallel_species")
-    parallel_ccd = phase_property.PhasePropertyCollection("parallel_ccd")
+    parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
 
     def __init__(self, parallel_species=None, parallel_ccd=None, optimizer_class=nl.MultiNest,
                  ci_datas_extractor=parallel_extractor, columns=None,
@@ -395,7 +395,8 @@ class ParallelPhase(Phase):
         """
         super().__init__(optimizer_class=optimizer_class, ci_datas_extractor=ci_datas_extractor, columns=columns,
                          rows=None, mask_function=mask_function, phase_name=phase_name)
-        self.parallel_species = parallel_species
+        if parallel_species is not None:
+            self.parallel_species = parallel_species
         self.parallel_ccd = parallel_ccd
 
     class Analysis(Phase.Analysis):
