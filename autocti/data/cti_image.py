@@ -741,7 +741,7 @@ class Region(tuple):
 
         Parameters
         -----------
-        region : (int, int, int, int)
+        region : (int,)
             The coordinates on the image of the region (y0, y1, x0, y1).
         """
 
