@@ -1,10 +1,10 @@
 from autocti.autofit import non_linear as nl
 from autocti.autofit import model_mapper as mm
 from autocti.pipeline import phase as ph
-from autocti.charge_injection import ci_frame
-from autocti.charge_injection import ci_data
-from autocti.pyarctic import arctic_params
-from autocti.pyarctic import arctic_settings
+from autocti.data.charge_injection import ci_frame
+from autocti.data.charge_injection import ci_data
+from autocti.model import arctic_params
+from autocti.model import arctic_settings
 from autocti import conf
 
 import numpy as np

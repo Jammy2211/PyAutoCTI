@@ -1,11 +1,9 @@
 from autocti import conf
-from autocti.charge_injection import ci_frame
-from autocti.charge_injection import ci_data
-from autocti.charge_injection import ci_pattern
-from autocti.image import cti_image
+from autocti.data.charge_injection import ci_frame, ci_pattern
+from autocti.data.charge_injection import ci_data
+from autocti.data import cti_image
 from autocti.tools import infoio
 import shutil
-import numpy as np
 import os
 
 dirpath = "/gpfs/data/pdtw24/CTI".format(os.path.dirname(os.path.realpath(__file__)))
@@ -18,7 +16,7 @@ class QuadGeometryIntegration(cti_image.FrameGeometry):
 
         super(QuadGeometryIntegration, self).__init__(parallel_overscan=cti_image.Region((1, 30, 33, 36)),
                                                       serial_prescan=cti_image.Region((0, 33, 0, 1)),
-                                                     serial_overscan=cti_image.Region((0, 33, 30, 36)))
+                                                      serial_overscan=cti_image.Region((0, 33, 30, 36)))
 
     @staticmethod
     def rotate_before_parallel_cti(image_pre_clocking):
@@ -107,7 +105,7 @@ class CIQuadGeometryIntegration(QuadGeometryIntegration, ci_frame.CIQuadGeometry
         return cti_image.Region((region.y1 + rows[0], region.y1 + rows[1], region.x0, region.x1))
 
     def parallel_side_nearest_read_out_region(self, region, image_shape, columns=(0, 1)):
-        return cti_image.Region((0, image_shape[0], region.x0+columns[0], region.x0+columns[1]))
+        return cti_image.Region((0, image_shape[0], region.x0 + columns[0], region.x0 + columns[1]))
 
     def serial_front_edge_region(self, region, columns=(0, 1)):
         ci_frame.check_serial_front_edge_size(region, columns)
@@ -117,7 +115,7 @@ class CIQuadGeometryIntegration(QuadGeometryIntegration, ci_frame.CIQuadGeometry
         return cti_image.Region((region.y0, region.y1, region.x1 + columns[0], region.x1 + columns[1]))
 
     def serial_ci_region_and_trails(self, region, image_shape, from_column):
-        return cti_image.Region((region.y0, region.y1, from_column+region.x0, image_shape[1]))
+        return cti_image.Region((region.y0, region.y1, from_column + region.x0, image_shape[1]))
 
 
 
@@ -135,8 +133,8 @@ def simulate_integration_quadrant(data_name, cti_params, cti_settings):
 
     sim_ci_datas = list(map(lambda ci_pattern:
                             ci_data.CIImage.simulate(shape=shape, frame_geometry=frame_geometry,
-                                                    ci_pattern=ci_pattern, cti_settings=cti_settings, cti_params=cti_params,
-                                                    read_noise=None),
+                                                     ci_pattern=ci_pattern, cti_settings=cti_settings, cti_params=cti_params,
+                                                     read_noise=None),
                             sim_ci_patterns))
 
     list(map(lambda sim_ci_data, index: sim_ci_data.output_as_fits(path=data_path, filename='/ci_data_' + str(index)),
@@ -151,12 +149,12 @@ def load_ci_datas(data_name):
 
     images = list(map(lambda ci_pattern, index:
                       ci_data.CIImage.from_fits(path=data_path, filename='/ci_data_' + str(index), hdu=0,
-                                               frame_geometry=frame_geometry, ci_pattern=ci_pattern),
+                                                frame_geometry=frame_geometry, ci_pattern=ci_pattern),
                       ci_patterns, range(len(ci_patterns))))
 
     noises = list(map(lambda ci_pattern:
                       ci_frame.CIFrame.from_single_value(value=1.0, shape=shape, frame_geometry=frame_geometry,
-                                                        ci_pattern=ci_pattern), ci_patterns))
+                                                         ci_pattern=ci_pattern), ci_patterns))
 
     masks = list(map(lambda ci_pattern:
                      ci_data.CIMask.create(frame_geometry=frame_geometry, ci_pattern=ci_pattern, shape=shape), ci_patterns))

@@ -8,8 +8,8 @@ import pytest
 from autocti import conf
 from autocti.autofit import model_mapper
 from autocti.autofit import non_linear
-from autocti.pyarctic import arctic_params
-from autocti.charge_injection import ci_hyper
+from autocti.model import arctic_params
+from autocti.data.charge_injection import ci_hyper
 
 pytestmark = pytest.mark.filterwarnings('ignore::FutureWarning')
 
