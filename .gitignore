@@ -1,0 +1,6 @@
+.idea
+.cache
+.pytest_cache
+*.pyc
+CTI/
+workspace/cosma
