@@ -6,3 +6,6 @@ CTI/
 workspace/cosma
 .env
 .idea
+__pycache__
+.pytest_cache
+test/autofit/test_fit/parallel_phase/
