@@ -27,7 +27,7 @@ class TestScaledNoise:
                                       [0.0, 0.0]])
 
         hyper = ci_hyper.HyperCINoise(scale_factor=10.0)
-        scaled_noise_map = hyper.compute_scaled_noise(noise_scaling_map)
+        scaled_noise_map = hyper.scaled_noise_map_from_noise_scaling(noise_scaling_map)
 
         assert (scaled_noise_map == np.array([[0.0, 0.0],
                                               [0.0, 0.0]])).all()
@@ -38,7 +38,7 @@ class TestScaledNoise:
                                       [5.0, 3.0]])
 
         hyper = ci_hyper.HyperCINoise(scale_factor=10.0)
-        scaled_noise_map = hyper.compute_scaled_noise(noise_scaling_map)
+        scaled_noise_map = hyper.scaled_noise_map_from_noise_scaling(noise_scaling_map)
 
         assert (scaled_noise_map == np.array([[10.0, 20.0],
                                               [50.0, 30.0]])).all()

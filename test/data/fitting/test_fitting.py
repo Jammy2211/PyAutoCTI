@@ -153,7 +153,7 @@ def make_ci_datas():
 #                                               noise_scalings=noise_scalings)
 #
 #             fitter = fitting.HyperCIFitter(ci_datas, cti_params=MockParams(), cti_settings=MockSettings(),
-#                                            hyper_noises=hyper_noise)
+#                                            noise_scalings=hyper_noise)
 #
 #             chi_sq_term = 0
 #             noise_term = 4.0 * np.log(2 * np.pi * 4.0)
@@ -176,7 +176,7 @@ def make_ci_datas():
 #                                               noise_scalings=noise_scalings)
 #
 #             fitter = fitting.HyperCIFitter(ci_datas, cti_params=MockParams(), cti_settings=MockSettings(),
-#                                            hyper_noises=hyper_noise)
+#                                            noise_scalings=hyper_noise)
 #
 #             chi_sq_term = 4.0 * ((1.0 / 2.0) ** 2.0)
 #             noise_term = 4.0 * np.log(2 * np.pi * 4.0)
@@ -199,7 +199,7 @@ def make_ci_datas():
 #                                               noise_scalings=noise_scalings)
 #
 #             fitter = fitting.HyperCIFitter(ci_datas, cti_params=MockParams(), cti_settings=MockSettings(),
-#                                            hyper_noises=hyper_noise)
+#                                            noise_scalings=hyper_noise)
 #
 #             chi_sq_term = 0
 #             noise_term = np.log(2 * np.pi * (2.0 + 1.0) ** 2.0) + np.log(2 * np.pi * (2.0 + 2.0) ** 2.0) + \
@@ -226,7 +226,7 @@ def make_ci_datas():
 #                                               noise_scalings=noise_scalings)
 #
 #             fitter = fitting.HyperCIFitter(ci_datas, cti_params=MockParams(), cti_settings=MockSettings(),
-#                                            hyper_noises=hyper_noise)
+#                                            noise_scalings=hyper_noise)
 #
 #             chi_sq_term = 0
 #             noise_term = np.log(2 * np.pi * (3.0 + 1.0 + 10.0) ** 2.0) + np.log(2 * np.pi * (3.0 + 2.0 + 12.0) ** 2.0) + \
@@ -245,7 +245,7 @@ def make_ci_datas():
 #                                                                                 ci_datas[1].noise_scalings, hyper_noise)
 #
 #             fitter = fitting.HyperCIFitter(ci_datas, cti_params=MockParams(), cti_settings=MockSettings(),
-#                                            hyper_noises=hyper_noise)
+#                                            noise_scalings=hyper_noise)
 #
 #             assert (scaled_noises0 == fitter.scaled_noises[0]).all()
 #             assert (scaled_noises1 == fitter.scaled_noises[1]).all()
@@ -270,7 +270,7 @@ def make_ci_datas():
 #             scaled_chi_squareds1 = fitting.chi_squareds_from_residuals_and_noise(residuals1, scaled_noise)
 #
 #             fitter = fitting.HyperCIFitter(ci_datas, cti_params=MockParams(), cti_settings=MockSettings(),
-#                                            hyper_noises=hyper_noise)
+#                                            noise_scalings=hyper_noise)
 #
 #             assert (scaled_chi_squareds0 == fitter.scaled_chi_squareds[0]).all()
 #             assert (scaled_chi_squareds1 == fitter.scaled_chi_squareds[1]).all()
@@ -304,7 +304,7 @@ def make_ci_datas():
 #                                                                                      scaled_noise_term1)
 #
 #             fitter = fitting.HyperCIFitter(ci_datas, cti_params=MockParams(), cti_settings=MockSettings(),
-#                                            hyper_noises=hyper_noise)
+#                                            noise_scalings=hyper_noise)
 #
 #             assert (scaled_likelihood0 + scaled_likelihood1 == fitter.scaled_likelihood).all()
 

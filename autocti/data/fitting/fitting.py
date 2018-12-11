@@ -119,7 +119,7 @@ class HyperCIFitter(CIFitter):
             The post-cti model image of the charge injection ci_data.
         noise_scalings : CIHyper.CINoiseScaling
             The images used to scale the noises in certain regions of the image.
-        hyper_noises:
+        noise_scalings:
             The ci_hyper-parameter(s) which the noise_scalings is multiplied by to scale the noises.
         """
         super(HyperCIFitter, self).__init__(ci_datas, cti_params, cti_settings)
