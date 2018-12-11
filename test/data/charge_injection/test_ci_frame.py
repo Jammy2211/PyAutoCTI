@@ -1,5 +1,5 @@
+from autocti.data import mask as msk
 from autocti.data.charge_injection import ci_frame, ci_pattern
-from autocti.data.charge_injection import ci_data
 from autocti.data import cti_image
 from autocti import exc
 
@@ -1727,8 +1727,7 @@ class TestCIFrame(object):
 
             mask = frame.mask_containing_only_serial_trails()
 
-            assert type(mask) == ci_data.CIMask
-            assert mask.ci_pattern == pattern
+            assert type(mask) == msk.Mask
             assert mask.frame_geometry == frame.frame_geometry
             assert (mask == np.array([[True, True, True, True, False, False, False, False, False, False],
                                       [True, True, True, True, False, False, False, False, False, False],
@@ -1749,8 +1748,7 @@ class TestCIFrame(object):
 
             mask = frame.mask_containing_only_serial_trails()
 
-            assert type(mask) == ci_data.CIMask
-            assert mask.ci_pattern == pattern
+            assert type(mask) == msk.Mask
             assert mask.frame_geometry == frame.frame_geometry
             assert (mask == np.array([[True, True, True, True, False, False, False, False, False, False],
                                       [True, True, True, True,  True,  True,  True,  True,  True,  True],
