@@ -20,11 +20,12 @@ logger = logging.getLogger(__name__)
 logger.level = logging.DEBUG
 
 
+# noinspection PyUnusedLocal
 def default_extractor(ci_datas, mask_function, columns=None, rows=None, noise_scalings=None):
-    images = list(map(lambda ci_data: ci_data.image, ci_datas))
-    masks = list(map(lambda ci_data: mask_function(ci_data.mask), ci_datas))
-    noises = list(map(lambda ci_data: ci_data.noise, ci_datas))
-    ci_pre_ctis = list(map(lambda ci_data: ci_data.ci_pre_cti, ci_datas))
+    images = list(map(lambda d: d.image, ci_datas))
+    masks = list(map(lambda d: mask_function(d.mask), ci_datas))
+    noises = list(map(lambda d: d.noise, ci_datas))
+    ci_pre_ctis = list(map(lambda d: d.ci_pre_cti, ci_datas))
 
     new_noise_scalings = []
 
@@ -36,59 +37,47 @@ def default_extractor(ci_datas, mask_function, columns=None, rows=None, noise_sc
     return ci_data.CIDataAnalysis(images, masks, noises, ci_pre_ctis, new_noise_scalings)
 
 
+# noinspection PyUnusedLocal
 def parallel_extractor(ci_datas, mask_function, columns=None, rows=None, noise_scalings=None):
     if columns is None:
         columns = ci_datas[0].image.cti_geometry.parallel_overscan.total_columns
 
-    images = list(map(lambda ci_data:
-                      ci_data.image.parallel_calibration_section_from_frame(columns=(0, columns)), ci_datas))
+    images = list(map(lambda d:
+                      d.image.parallel_calibration_section_from_frame(columns=(0, columns)), ci_datas))
 
-    masks_modify = list(map(lambda ci_data: mask_function(ci_data.mask), ci_datas))
+    masks_modify = list(map(lambda d: mask_function(d.mask), ci_datas))
     masks = list(map(lambda mask:
                      mask.parallel_calibration_section_from_frame(columns=(0, columns)), masks_modify))
 
-    noises = list(map(lambda ci_data:
-                      ci_data.noise.parallel_calibration_section_from_frame(columns=(0, columns)), ci_datas))
+    noises = list(map(lambda d:
+                      d.noise.parallel_calibration_section_from_frame(columns=(0, columns)), ci_datas))
 
-    ci_pre_ctis = list(map(lambda ci_data:
-                           ci_data.ci_pre_cti.parallel_calibration_section_from_frame(columns=(0, columns)), ci_datas))
+    ci_pre_ctis = list(map(lambda d:
+                           d.ci_pre_cti.parallel_calibration_section_from_frame(columns=(0, columns)), ci_datas))
 
-    new_noise_scalings = []
-
-    if noise_scalings is not None:
-
-        for i in range(len(noise_scalings)):
-            new_noise_scalings.append(list(map(lambda noise_scaling:
-                                               noise_scaling.parallel_calibration_section_from_frame(
-                                                   columns=(0, columns)
-                                               ),
-                                               noise_scalings[i])))
+    new_noise_scalings = [noise_scaling.parallel_calibration_section_from_frame(columns=(0, columns)) for noise_scaling
+                          in noise_scalings or []]
 
     return ci_data.CIDataAnalysis(images, masks, noises, ci_pre_ctis, new_noise_scalings)
 
 
 def serial_extractor(ci_datas, mask_function, columns=None, rows=None, noise_scalings=None):
-    if columns is None:
-        columns = ci_datas[0].image.cti_geometry.serial_prescan.x1
+    columns = columns or 0
 
-    columns = 0
+    rows = rows or (0, ci_datas[0].image.ci_pattern.regions[0].total_rows)
 
-    if rows is None:
-        rows = (0, ci_datas[0].image.ci_pattern.regions[0].total_rows)
-        rows = (0, 3)
+    images = list(map(lambda d:
+                      d.image.serial_calibration_array_from_frame(from_column=columns, rows=rows), ci_datas))
 
-    images = list(map(lambda ci_data:
-                      ci_data.image.serial_calibration_array_from_frame(from_column=columns, rows=rows), ci_datas))
+    masks_modify = list(map(lambda d: mask_function(d.mask), ci_datas))
+    masks = list(map(lambda m:
+                     m.serial_calibration_array_from_frame(from_column=columns, rows=rows), masks_modify))
 
-    masks_modify = list(map(lambda ci_data: mask_function(ci_data.mask), ci_datas))
-    masks = list(map(lambda mask:
-                     mask.serial_calibration_array_from_frame(from_column=columns, rows=rows), masks_modify))
+    noises = list(map(lambda d:
+                      d.noise.serial_calibration_array_from_frame(from_column=columns, rows=rows), ci_datas))
 
-    noises = list(map(lambda ci_data:
-                      ci_data.noise.serial_calibration_array_from_frame(from_column=columns, rows=rows), ci_datas))
-
-    ci_pre_ctis = list(map(lambda ci_data:
-                           ci_data.ci_pre_cti.serial_calibration_array_from_frame(from_column=columns, rows=rows),
+    ci_pre_ctis = list(map(lambda d:
+                           d.ci_pre_cti.serial_calibration_array_from_frame(from_column=columns, rows=rows),
                            ci_datas))
 
     new_noise_scalings = []
@@ -104,19 +93,20 @@ def serial_extractor(ci_datas, mask_function, columns=None, rows=None, noise_sca
     return ci_data.CIDataAnalysis(images, masks, noises, ci_pre_ctis, new_noise_scalings)
 
 
+# noinspection PyUnusedLocal
 def parallel_serial_extractor(ci_datas, mask_function, columns=None, rows=None, noise_scalings=None):
-    images = list(map(lambda ci_data:
-                      ci_data.image.parallel_serial_calibration_section_from_frame(), ci_datas))
+    images = list(map(lambda d:
+                      d.image.parallel_serial_calibration_section_from_frame(), ci_datas))
 
-    masks_modify = list(map(lambda ci_data: mask_function(ci_data.mask), ci_datas))
+    masks_modify = list(map(lambda d: mask_function(d.mask), ci_datas))
     masks = list(map(lambda mask:
                      mask.parallel_serial_calibration_section_from_frame(), masks_modify))
 
-    noises = list(map(lambda ci_data:
-                      ci_data.noise.parallel_serial_calibration_section_from_frame(), ci_datas))
+    noises = list(map(lambda d:
+                      d.noise.parallel_serial_calibration_section_from_frame(), ci_datas))
 
-    ci_pre_ctis = list(map(lambda ci_data:
-                           ci_data.ci_pre_cti.parallel_serial_calibration_section_from_frame(), ci_datas))
+    ci_pre_ctis = list(map(lambda d:
+                           d.ci_pre_cti.parallel_serial_calibration_section_from_frame(), ci_datas))
 
     new_noise_scalings = []
 
@@ -151,16 +141,6 @@ class ResultsCollection(list):
         return None
 
 
-class IntervalCounter(object):
-    def __init__(self, interval):
-        self.count = 0
-        self.interval = interval
-
-    def __call__(self):
-        self.count += 1
-        return self.count % self.interval == 0
-
-
 class HyperOnly(object):
     pass
 
@@ -177,7 +157,6 @@ class Phase(object):
         optimizer_class: class
             The class of a NonLinear optimizer
             The side length of the subgrid
-        sub_grid_size: int
         """
         self.optimizer = optimizer_class(name=phase_name)
         self.ci_datas_extractor = ci_datas_extractor
@@ -222,10 +201,11 @@ class Phase(object):
 
         Parameters
         ----------
+        pool
+        cti_settings
+        ci_datas
         previous_results: ResultsCollection
             An object describing the results of the last phase or None if no phase has been executed
-        image: img.Image
-            An image that has been masked
 
         Returns
         -------
@@ -248,8 +228,9 @@ class Phase(object):
 
         Parameters
         ----------
-        image: im.Image
-            An image that has been masked
+        cti_settings
+        ci_datas
+        pool
         previous_results: ResultsCollection
             The result from the previous phase
 
@@ -258,11 +239,7 @@ class Phase(object):
         analysis: Analysis
             An analysis object that the non-linear optimizer calls to determine the fit of a set of values
         """
-
-        if not self.has_noise_scalings:
-            noise_scalings = None
-        elif self.has_noise_scalings:
-            noise_scalings = previous_results.last.noise_scalings
+        noise_scalings = previous_results.last.noise_scalings if self.has_noise_scalings else None
 
         ci_datas_analysis = self.ci_datas_extractor(ci_datas, mask_function=self.mask_function, columns=self.columns,
                                                     rows=self.rows, noise_scalings=noise_scalings)
@@ -272,12 +249,12 @@ class Phase(object):
                                            previous_results=previous_results, pool=pool)
         return analysis
 
-    class Analysis(object):
-
+    # noinspection PyAbstractClass
+    class Analysis(nl.Analysis):
         def __init__(self, ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results=None, pool=None):
             """
-            An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a set of \
-            objects describing a model and determines how well they fit the image.
+            An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \
+            set of objects describing a model and determines how well they fit the image.
 
             Params
             ----------
@@ -296,17 +273,12 @@ class Phase(object):
             self.phase_name = phase_name
             self.pool = pool
             self.previous_results = previous_results
-            log_interval = conf.instance.general.get('output', 'log_interval', int)
+
             self.visualize_results = conf.instance.general.get('output', 'visualize_results', bool)
 
-            self.__should_log = IntervalCounter(log_interval)
             self.plot_count = 0
             self.output_image_path = "{}/".format(conf.instance.output_path) + '/' + self.phase_name + '/images/'
             imageio.make_path_if_does_not_exist(self.output_image_path)
-
-        @property
-        def should_log(self):
-            return self.__should_log()
 
         @property
         def last_results(self):
@@ -342,24 +314,6 @@ class Phase(object):
             except OSError as e:
                 logger.exception(e)
 
-        def try_log(self, instance):
-            """
-            Determine the fitness of a particular model
-
-            Parameters
-            ----------
-            instance
-                A model instance
-
-            Returns
-            -------
-            fit: fitting.Fit
-                How fit the model is and the model
-            """
-            if self.should_log:
-                self.log(instance)
-            return None
-
         def fit_pool(self, **kwargs):
             """
             Determine the fitness of a particular model
@@ -393,15 +347,9 @@ class Phase(object):
 
     class Result(nl.Result):
 
-        def __init__(self, constant, likelihood, variable, analysis):
+        def __init__(self, constant, likelihood, variable, *args):
             """
             The result of a phase
-
-            Parameters
-            ----------
-
-            galaxy_images: [ndarray]
-                A collection of images created by each individual galaxy which taken together form the full model image
             """
             super(Phase.Result, self).__init__(constant, likelihood, variable)
 
@@ -485,17 +433,6 @@ class ParallelPhase(Phase):
                  mask_function=default_mask_function, phase_name="parallel_phase"):
         """
         A phase with a simple source/CTI model
-
-        Parameters
-        ----------
-        CTI_galaxy: g.Galaxy | gp.GalaxyPrior
-            A galaxy that acts as a gravitational CTI
-        source_galaxy: g.Galaxy | gp.GalaxyPrior
-            A galaxy that is being CTIed
-        optimizer_class: class
-            The class of a non-linear optimizer
-        sub_grid_size: int
-            The side length of the subgrid
         """
         super().__init__(optimizer_class=optimizer_class, ci_datas_extractor=ci_datas_extractor, columns=columns,
                          rows=None, mask_function=mask_function, phase_name=phase_name)
@@ -505,8 +442,8 @@ class ParallelPhase(Phase):
 
         def __init__(self, ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results=None, pool=None):
             """
-            An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a set of \
-            objects describing a model and determines how well they fit the image.
+            An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \
+            set of objects describing a model and determines how well they fit the image.
 
             Params
             ----------
@@ -529,7 +466,6 @@ class ParallelPhase(Phase):
             result: Result
                 An object comprising the final cti_params instances generated and a corresponding likelihood
             """
-            self.try_log(instance)
             cti_params = self.cti_params_for_instance(instance)
             fitter = fitting.CIFitter(self.ci_datas_analysis, cti_params=cti_params, cti_settings=self.cti_settings)
             return fitter.likelihood
@@ -559,8 +495,6 @@ class ParallelPhase(Phase):
         def visualize(self, instance, suffix, during_analysis):
 
             fitter, ci_post_ctis, residuals, chi_squareds = super().visualize(instance, suffix, during_analysis)
-
-            masks = list(map(lambda ci_data: ci_data.mask, self.ci_datas))
 
             # self.output_ci_regions_binned_across_serial(ci_post_ctis, masks, '/ci_post_cti_')
             # self.output_ci_regions_binned_across_serial(residuals, masks, '/residuals_')
@@ -623,14 +557,8 @@ class ParallelHyperPhase(ParallelPhase):
 
         Parameters
         ----------
-        CTI_galaxy: g.Galaxy | gp.GalaxyPrior
-            A galaxy that acts as a gravitational CTI
-        source_galaxy: g.Galaxy | gp.GalaxyPrior
-            A galaxy that is being CTIed
         optimizer_class: class
             The class of a non-linear optimizer
-        sub_grid_size: int
-            The side length of the subgrid
         """
         super().__init__(parallel=parallel, optimizer_class=optimizer_class, ci_datas_extractor=ci_datas_extractor,
                          columns=columns, mask_function=mask_function, phase_name=phase_name)
@@ -642,8 +570,8 @@ class ParallelHyperPhase(ParallelPhase):
 
         def __init__(self, ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results=None, pool=None):
             """
-            An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a set of \
-            objects describing a model and determines how well they fit the image.
+            An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \
+            set of objects describing a model and determines how well they fit the image.
 
             Params
             ----------
@@ -670,7 +598,6 @@ class ParallelHyperPhase(ParallelPhase):
             result: Result
                 An object comprising the final cti_params instances generated and a corresponding likelihood
             """
-            self.try_log(instance)
             hyper_fitter = self.fitter_analysis_for_instance(instance)
             return hyper_fitter.scaled_likelihood
 
@@ -700,10 +627,6 @@ class ParallelHyperPhase(ParallelPhase):
         def visualize(self, instance, suffix, during_analysis):
             pass
 
-            # fitter = self.fitter_analysis_for_instance(instance)
-            # scaled_chi_squares = fitter.scaled_chi_squareds
-            # masks = list(map(lambda ci_data: ci_data.mask, self.ci_datas))
-
         @classmethod
         def log(cls, instance):
             logger.debug(
@@ -723,20 +646,6 @@ class ParallelHyperPhase(ParallelPhase):
             return fitting.HyperCIFitter(self.ci_datas_analysis, cti_params=cti_params,
                                          cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
                                                                                        instance.hyp_parallel_trails])
-
-    class Result(Phase.Result):
-
-        def __init__(self, constant, likelihood, variable, analysis):
-            """
-            The result of a phase
-
-            Parameters
-            ----------
-
-            galaxy_images: [ndarray]
-                A collection of images created by each individual galaxy which taken together form the full model image
-            """
-            super().__init__(constant, likelihood, variable, analysis)
 
 
 class ParallelHyperOnlyPhase(ParallelHyperPhase, HyperOnly):
