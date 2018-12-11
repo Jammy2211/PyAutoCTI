@@ -230,51 +230,51 @@ class TestLikelihood:
         assert likelihoods[1] == pytest.approx(-0.5 * (chi_sq_term + noise_term), 1e-4)
 
 
-class TestScaledNoises:
-
-    def test__image_and_pre_cti_not_identical__noise_scalings_are_0s__no_noise_scaling(self):
-
-        noise = [2.0 * np.ones((2, 2))]
-        noise_scalings = [np.array([[0.0, 0.0], [0.0, 0.0]])]
-        hyper_noise = [ci_hyper.HyperCINoise(scale_factor=1.0)]
-
-        scaled_noise = fitting_util.scaled_noise_maps_from_noise_maps_and_noise_scalings(noise, noise_scalings,
-                                                                                         hyper_noise)
-
-        assert (scaled_noise == (np.array([[2.0, 2.0],
-                                           [2.0, 2.0]]))).all()
-
-    def test__image_and_pre_cti_not_identical__scaled_factor_is_0__no_noise_scaling(self):
-
-        noise = [2.0 * np.ones((2, 2))]
-        noise_scalings = [np.array([[1.0, 2.0], [3.0, 4.0]])]
-        hyper_noise = [ci_hyper.HyperCINoise(scale_factor=0.0)]
-
-        scaled_noise = fitting_util.scaled_noise_maps_from_noise_maps_and_noise_scalings(noise, noise_scalings,
-                                                                                         hyper_noise)
-
-        assert (scaled_noise == (np.array([[2.0, 2.0],
-                                           [2.0, 2.0]]))).all()
-
-    def test__image_and_pre_cti_not_identical__chi_sq_is_scaled_by_noise(self):
-
-        noise = [2.0 * np.ones((2, 2))]
-        noise_scalings = [np.array([[1.0, 2.0], [3.0, 4.0]])]
-        hyper_noise = [ci_hyper.HyperCINoise(scale_factor=1.0)]
-
-        scaled_noise = fitting_util.scaled_noise_maps_from_noise_maps_and_noise_scalings(noise, noise_scalings,
-                                                                                         hyper_noise)
-
-        assert (scaled_noise == (np.array([[3.0, 4.0],
-                                           [5.0, 6.0]]))).all()
-
-    def test__x2_noise_scaling_and_hyper_params__noise_term_comes_out_correct(self):
-
-        noise = [2.0 * np.ones((2, 2))]
-        noise_scalings = [np.array([[1.0, 2.0], [3.0, 4.0]]), np.array([[1.0, 2.0], [3.0, 4.0]])]
-        hyper_noise = [ci_hyper.HyperCINoise(scale_factor=1.0), ci_hyper.HyperCINoise(scale_factor=2.0)]
-
-        scaled_noise = fitting_util.scaled_noise_maps_from_noise_maps_and_noise_scalings(noise, noise_scalings, hyper_noise)
-
-        assert (scaled_noise == (np.array([[5.0, 8.0],
-                                           [11.0, 14.0]]))).all()
+# class TestScaledNoises:
+#
+#     def test__image_and_pre_cti_not_identical__noise_scalings_are_0s__no_noise_scaling(self):
+#
+#         noise = [2.0 * np.ones((2, 2))]
+#         noise_scalings = [np.array([[0.0, 0.0], [0.0, 0.0]])]
+#         hyper_noise = [ci_hyper.HyperCINoise(scale_factor=1.0)]
+#
+#         scaled_noise = fitting_util.scaled_noise_maps_from_noise_maps_and_noise_scalings(noise, noise_scalings,
+#                                                                                          hyper_noise)
+#
+#         assert (scaled_noise == (np.array([[2.0, 2.0],
+#                                            [2.0, 2.0]]))).all()
+#
+#     def test__image_and_pre_cti_not_identical__scaled_factor_is_0__no_noise_scaling(self):
+#
+#         noise = [2.0 * np.ones((2, 2))]
+#         noise_scalings = [np.array([[1.0, 2.0], [3.0, 4.0]])]
+#         hyper_noise = [ci_hyper.HyperCINoise(scale_factor=0.0)]
+#
+#         scaled_noise = fitting_util.scaled_noise_maps_from_noise_maps_and_noise_scalings(noise, noise_scalings,
+#                                                                                          hyper_noise)
+#
+#         assert (scaled_noise == (np.array([[2.0, 2.0],
+#                                            [2.0, 2.0]]))).all()
+#
+#     def test__image_and_pre_cti_not_identical__chi_sq_is_scaled_by_noise(self):
+#
+#         noise = [2.0 * np.ones((2, 2))]
+#         noise_scalings = [np.array([[1.0, 2.0], [3.0, 4.0]])]
+#         hyper_noise = [ci_hyper.HyperCINoise(scale_factor=1.0)]
+#
+#         scaled_noise = fitting_util.scaled_noise_maps_from_noise_maps_and_noise_scalings(noise, noise_scalings,
+#                                                                                          hyper_noise)
+#
+#         assert (scaled_noise == (np.array([[3.0, 4.0],
+#                                            [5.0, 6.0]]))).all()
+#
+#     def test__x2_noise_scaling_and_hyper_params__noise_term_comes_out_correct(self):
+#
+#         noise = [2.0 * np.ones((2, 2))]
+#         noise_scalings = [np.array([[1.0, 2.0], [3.0, 4.0]]), np.array([[1.0, 2.0], [3.0, 4.0]])]
+#         hyper_noise = [ci_hyper.HyperCINoise(scale_factor=1.0), ci_hyper.HyperCINoise(scale_factor=2.0)]
+#
+#         scaled_noise = fitting_util.scaled_noise_maps_from_noise_maps_and_noise_scalings(noise, noise_scalings, hyper_noise)
+#
+#         assert (scaled_noise == (np.array([[5.0, 8.0],
+#                                            [11.0, 14.0]]))).all()

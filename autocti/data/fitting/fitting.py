@@ -26,6 +26,7 @@ Author: James Nightingale
 from __future__ import division, print_function
 import sys
 
+from autocti.data.fitting.util import fitting_util
 from autocti.data.charge_injection import ci_frame
 
 import numpy as np
@@ -56,7 +57,7 @@ class CIFitter(object):
 
     @property
     def noise_term(self):
-        return np.sum(list(map(lambda ci_data : noise_term_from_mask_and_noise(ci_data.mask, ci_data.noise),
+        return np.sum(list(map(lambda ci_data : fitting_util.noise_term_from_mask_and_noise(ci_data.mask, ci_data.noise),
                                self.ci_datas)))
 
     @property
@@ -71,7 +72,7 @@ class CIFitter(object):
             The post-cti model image of the charge injection ci_data.
         """
         residuals = list(map(lambda ci_data, ci_post_cti:
-                         residuals_from_image_mask_and_model(ci_data.image, ci_data.mask, ci_post_cti),
+                             fitting_util.residuals_from_image_mask_and_model(ci_data.image, ci_data.mask, ci_post_cti),
                              self.ci_datas, self.ci_post_ctis))
 
         return self.as_ci_frames(residuals)
@@ -88,13 +89,14 @@ class CIFitter(object):
             The post-cti model image of the charge injection ci_data.
         """
         chi_squareds = list(map(lambda ci_data, residuals :
-                        chi_squareds_from_residuals_and_noise(residuals, ci_data.noise), self.ci_datas, self.residuals))
+                                fitting_util.chi_squareds_from_residuals_and_noise(residuals, ci_data.noise),
+                                self.ci_datas, self.residuals))
 
         return self.as_ci_frames(chi_squareds)
 
     @property
     def chi_squared_term(self):
-        return chi_squared_term_from_chi_squareds(self.chi_squareds)
+        return fitting_util.chi_squared_term_from_chi_squareds(self.chi_squareds)
 
     @property
     def likelihood(self):
@@ -107,7 +109,7 @@ class CIFitter(object):
         ci_post_cti : ChInj.CIPreCTI
             The post-cti model image of the charge injection ci_data.
         """
-        return likelihood_from_chi_squared_and_noise_terms(self.chi_squared_term, self.noise_term)
+        return fitting_util.likelihood_from_chi_squared_and_noise_terms(self.chi_squared_term, self.noise_term)
 
 
 class HyperCIFitter(CIFitter):

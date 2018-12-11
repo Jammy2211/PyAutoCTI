@@ -140,11 +140,11 @@ class TestPhase(object):
         assert analysis.ci_datas == ci_datas
         assert analysis.cti_settings == cti_settings
 
-    def test__fit(self, phase, ci_datas, cti_settings):
-
-        phase.parallel = arctic_params.ParallelOneSpecies()
-        result = phase.run(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=None)
-        assert isinstance(result.constant.parallel, arctic_params.ParallelOneSpecies)
+    # def test__fit(self, phase, ci_datas, cti_settings):
+    #
+    #     phase.parallel = arctic_params.ParallelOneSpecies()
+    #     result = phase.run(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=None)
+    #     assert isinstance(result.constant.parallel, arctic_params.ParallelOneSpecies)
 
     def test__customize_constant(self, results, ci_datas, cti_settings):
 
