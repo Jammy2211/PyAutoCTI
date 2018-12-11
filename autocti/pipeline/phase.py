@@ -663,6 +663,7 @@ class ParallelHyperOnlyPhase(ParallelHyperPhase, HyperOnly):
 
     def run(self, ci_datas, cti_settings, previous_results=None, pool=None):
         class ParallelHyper(ParallelHyperPhase):
+            # noinspection PyShadowingNames
             def pass_priors(self, previous_results):
                 self.parallel = previous_results.last.constant.parallel
 
@@ -689,17 +690,6 @@ class SerialPhase(Phase):
                  rows=None, mask_function=default_mask_function, phase_name="serial_phase"):
         """
         A phase with a simple source/CTI model
-
-        Parameters
-        ----------
-        CTI_galaxy: g.Galaxy | gp.GalaxyPrior
-            A galaxy that acts as a gravitational CTI
-        source_galaxy: g.Galaxy | gp.GalaxyPrior
-            A galaxy that is being CTIed
-        optimizer_class: class
-            The class of a non-linear optimizer
-        sub_grid_size: int
-            The side length of the subgrid
         """
         super().__init__(optimizer_class=optimizer_class, ci_datas_extractor=ci_datas_extractor, columns=columns,
                          rows=rows, mask_function=mask_function, phase_name=phase_name)
@@ -709,8 +699,8 @@ class SerialPhase(Phase):
 
         def __init__(self, ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results=None, pool=None):
             """
-            An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a set of \
-            objects describing a model and determines how well they fit the image.
+            An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \
+            set of objects describing a model and determines how well they fit the image.
 
             Params
             ----------
@@ -737,7 +727,6 @@ class SerialPhase(Phase):
             result: Result
                 An object comprising the final cti_params instances generated and a corresponding likelihood
             """
-            self.try_log(instance)
             cti_params = self.cti_params_for_instance(instance)
             fitter = fitting.CIFitter(self.ci_datas_analysis, cti_params=cti_params, cti_settings=self.cti_settings)
             return fitter.likelihood
@@ -760,25 +749,12 @@ class SerialPhase(Phase):
             result: Result
                 An object comprising the final cti_params instances generated and a corresponding likelihood
             """
-            #    logger.debug("\nRunning analysis for... \n\ncti_model:\n{}\n\n".format( "\n\n".join(map(str, cti_params))))
             cti_params = self.cti_params_for_instance(instance)
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
             return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_pipe_data)))
 
         def visualize(self, instance, suffix, during_analysis):
-
             fitter, ci_post_ctis, residuals, chi_squareds = super().visualize(instance, suffix, during_analysis)
-
-            masks = list(map(lambda ci_data: ci_data.mask, self.ci_datas))
-
-            # self.output_ci_regions_binned_across_parallel(ci_post_ctis, masks, '/ci_post_cti_')
-            # self.output_ci_regions_binned_across_parallel(residuals, masks, '/residuals_')
-            # self.output_ci_regions_binned_across_parallel(chi_squareds, masks, '/chi_squareds_')
-            #
-            # self.output_serial_trails_binned_across_parallel(ci_post_ctis, masks, '/ci_post_cti_')
-            # self.output_serial_trails_binned_across_parallel(residuals, masks, '/residuals_')
-            # self.output_serial_trails_binned_across_parallel(chi_squareds, masks, '/chi_squareds_')
-
             return fitter, ci_post_ctis, residuals, chi_squareds
 
         def output_ci_regions_binned_across_parallel(self, images, masks, filename):
