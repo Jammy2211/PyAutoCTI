@@ -5,11 +5,11 @@ Created on: 02/14/18
 Author: James Nightingale
 """
 
-from __future__ import division, print_function
+
 import sys
 
-if sys.version_info[0] < 3:
-    from future_builtins import *
+
+
 
 import numpy as np
 
@@ -189,7 +189,7 @@ class CIPatternNonUniform(CIPattern):
         -----------
         normalization : float
             The normalization of the charge injection region.
-        regions : [(int, int, int, int)]
+        regions : [(int,)]
             A list of the integer coordinates specifying the corners of each charge injection region \
             (top-row, bottom-row, lelf-column, right-column).
         row_slope : float

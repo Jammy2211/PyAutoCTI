@@ -21,8 +21,6 @@ File: python/SHE_ArCTIC/ArcticParams.pyeated on: 02/13/18
 Author: James Nightingale
 """
 
-from __future__ import division, print_function
-
 import numpy as np
 
 from autocti.tools import infoio
@@ -377,9 +375,9 @@ class ParallelThreeSpecies(ParallelParams):
 
         Parameters
         ----------
-        trap_densities : (float, float, float)
+        trap_densities : (float,)
             The trap density of the three trap species
-        trap_lifetimes : (float, float, float)
+        trap_lifetimes : (float,)
             The trap lifetimes of the three trap species
         well_notch_depth : float
             The CCD notch depth
@@ -416,9 +414,9 @@ class ParallelDensityVary(ParallelParams):
 
         Parameters
         ----------
-        trap_densities : [(float, float, float)]
+        trap_densities : [(float,)]
             Each set of densities for each trap species.
-        trap_lifetimes : (float, float, float)
+        trap_lifetimes : (float,)
             The trap lifetimes of the three trap species.
         well_notch_depth : float
             The CCD notch depth.
@@ -465,7 +463,7 @@ class ParallelDensityVary(ParallelParams):
         """
         np.random.seed(seed)
         total_traps = tuple(map(lambda density: density * shape[0], trap_densities))
-        poisson_densities = [tuple(np.random.poisson(total_traps) / shape[0]) for row in range(shape[1])]
+        poisson_densities = [tuple(np.random.poisson(total_traps) / shape[0]) for _ in range(shape[1])]
         return ParallelDensityVary(poisson_densities, trap_lifetimes, well_notch_depth, well_fill_alpha,
                                    well_fill_beta, well_fill_gamma)
 
@@ -565,8 +563,8 @@ class SerialOneSpecies(SerialParams):
 
     @property
     def object_tag(self):
-        return 's1_d' + str(self.trap_densities) + '_t' + str(self.trap_lifetimes) + '_a' + str(self.well_fill_alpha) + \
-               '_b' + str(self.well_fill_beta) + '_g' + str(self.well_fill_gamma)
+        return 's1_d' + str(self.trap_densities) + '_t' + str(self.trap_lifetimes) + '_a' + \
+               str(self.well_fill_alpha) + '_b' + str(self.well_fill_beta) + '_g' + str(self.well_fill_gamma)
 
 
 class SerialTwoSpecies(SerialParams):

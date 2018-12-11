@@ -23,12 +23,12 @@ Created on: 02/13/18
 Author: James Nightingale
 """
 
-from __future__ import division, print_function
+
 import sys
 import os
 
-if sys.version_info[0] < 3:
-    from future_builtins import *
+
+
 
 import pytest
 import os

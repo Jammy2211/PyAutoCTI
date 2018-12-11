@@ -23,16 +23,13 @@ Created on: 04/23/18
 Author: user
 """
 
-from __future__ import division, print_function
-import sys
-if sys.version_info[0] < 3:
-    from future_builtins import *
+
+
+import os
+
+import numpy as np
 
 from autocti.tools import imageio
-
-import pytest
-import os
-import numpy as np
 
 path = "{}/".format(os.path.dirname(os.path.realpath(__file__)))
 
@@ -40,21 +37,18 @@ path = "{}/".format(os.path.dirname(os.path.realpath(__file__)))
 class TestFits:
 
     def test__numpy_array_from_fits__3x3_all_ones(self):
-
         array = imageio.numpy_array_from_fits(path=path + 'files/fits/', filename='3x3_ones', hdu=0)
 
-        assert (array == np.ones((3,3))).all()
+        assert (array == np.ones((3, 3))).all()
 
     def test__numpy_array_from_fits__4x3_all_ones(self):
-
         array = imageio.numpy_array_from_fits(path=path + 'files/fits/', filename='4x3_ones', hdu=0)
 
-        assert (array == np.ones((4,3))).all()
+        assert (array == np.ones((4, 3))).all()
 
     def test__numpy_array_to_fits__output_and_load(self):
-
-        if os.path.exists(path+'files/fits/test.fits'):
-            os.remove(path+'files/fits/test.fits')
+        if os.path.exists(path + 'files/fits/test.fits'):
+            os.remove(path + 'files/fits/test.fits')
 
         array = np.array([[10., 30., 40.],
                           [92., 19., 20.]])

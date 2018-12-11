@@ -23,31 +23,24 @@ Created on: 02/14/18
 Author: James Nightingale
 """
 
-from __future__ import division, print_function
-import sys
-
-if sys.version_info[0] < 3:
-    from future_builtins import *
-
 import numpy as np
 
-from autocti.data.charge_injection import ci_frame
-from autocti.data.charge_injection import ci_pattern
+from autocti import exc
 from autocti.data import cti_image
+from autocti.data.charge_injection import ci_frame
+from autocti.data.charge_injection import ci_pattern as pattern
 from autocti.model import pyarctic
 from autocti.tools import infoio
-from autocti import exc
+
 
 class CIData(list):
 
     def __init__(self, images, masks, noises, ci_pre_ctis):
-
         super(CIData, self).__init__()
 
         class DataSet(object):
 
             def __init__(self, image, mask, noise, ci_pre_cti):
-
                 self.image = image
                 self.mask = mask
                 self.noise = noise
@@ -83,9 +76,6 @@ class CIImage(ci_frame.CIFrameCTI):
             The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
         array : ndarray
             2D Array of array charge injection image ci_data.
-        noise_map : NoiseMap
-            An array describing the RMS standard deviation error in each pixel, preferably in units of electrons per
-            second.
         """
 
         super(CIImage, self).__init__(frame_geometry, ci_pattern, array=array)
@@ -139,24 +129,24 @@ class CIImage(ci_frame.CIFrameCTI):
         'fast' (see ChargeInjectPattern).
         """
 
-        if type(self.ci_pattern) == ci_pattern.CIPatternUniform:
+        if type(self.ci_pattern) == pattern.CIPatternUniform:
 
             ci_pre_cti = self.ci_pattern.compute_ci_pre_cti(self.shape)
             return CIPreCTI(frame_geometry=self.frame_geometry, array=ci_pre_cti, ci_pattern=self.ci_pattern)
 
-        elif type(self.ci_pattern) == ci_pattern.CIPatternNonUniform:
+        elif type(self.ci_pattern) == pattern.CIPatternNonUniform:
 
             ci_pre_cti = self.ci_pattern.compute_ci_pre_cti(self, mask)
             return CIPreCTI(frame_geometry=self.frame_geometry, array=ci_pre_cti, ci_pattern=self.ci_pattern)
 
-        elif type(self.ci_pattern) == ci_pattern.CIPatternUniformFast:
+        elif type(self.ci_pattern) == pattern.CIPatternUniformFast:
 
             ci_pre_cti = self.ci_pattern.compute_ci_pre_cti(self.shape)
             return CIPreCTIFast(frame_geometry=self.frame_geometry, array=ci_pre_cti, ci_pattern=self.ci_pattern)
 
         else:
             raise exc.CIPatternException('the CIPattern of the CIImage is not an instance of '
-                                                  'a known ci_pattern class')
+                                         'a known ci_pattern class')
 
     def generate_info(self):
         """Generate string containing information on the charge injection image (and its ci_pattern)."""
@@ -203,7 +193,7 @@ class CIPreCTIFast(CIPreCTI):
         """A fast pre-cti image of a charge injection dataset, used for CTI calibration modeling.
 
         A fast pre-cti image serves the same purpose as a *CIPreCTI* image, but it exploits the fact that for a \
-        uniform charge injection image one can add cti to just one column / row of ci_data and copy it across the entire \
+        uniform charge injection image one can add cti to just one column / row of ci_data and copy it across the entire
         image, thus skipping the majority of clocking calls.
 
         The fast column / row of the pre-cti image setup in the constructor represent the 1 column / row of the \
@@ -318,6 +308,7 @@ def create_baseline_noise(shape, read_noise):
     """
     return np.ones(shape) * read_noise
 
+
 def create_read_noise_map(shape, read_noise, noise_seed=-1):
     """Generate a two-dimensional read noises-map, generating values from a Gaussian distribution with mean 0.0.
 
@@ -334,6 +325,7 @@ def create_read_noise_map(shape, read_noise, noise_seed=-1):
     read_noise_map = np.random.normal(loc=0.0, scale=read_noise, size=shape)
     return read_noise_map
 
+
 def setup_random_seed(seed):
     """Setup the random seed. If the input seed is -1, the code will use a random seed for every run. If it is positive,
     that seed is used for all runs, thereby giving reproducible results
@@ -344,8 +336,9 @@ def setup_random_seed(seed):
         The seed of the random number generator, used for the random noises maps.
     """
     if seed == -1:
-        seed = np.random.randint(0, 1e9)  # Use one seed, so all regions have identical column non-uniformity.
+        seed = np.random.randint(0, int(1e9))  # Use one seed, so all regions have identical column non-uniformity.
     np.random.seed(seed)
+
 
 def compute_variances_from_noise(noise):
     """The variances are the noises (standard deviations) squared."""

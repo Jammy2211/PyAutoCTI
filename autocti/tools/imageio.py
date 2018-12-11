@@ -23,14 +23,14 @@ Created on: 04/23/18
 Author: James Nightingale
 """
 
-from __future__ import division, print_function
+
 from astropy.io import fits
 import sys
 import os
 import numpy as np
 
-if sys.version_info[0] < 3:
-    from future_builtins import *
+
+
 
 def make_path_if_does_not_exist(path):
     if os.path.exists(path) is False:
