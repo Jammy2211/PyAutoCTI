@@ -23,8 +23,6 @@ Created on: 02/14/18
 Author: user
 """
 
-
-
 import numpy as np
 import pytest
 
@@ -35,80 +33,80 @@ from autocti.model import arctic_params
 from autocti.model import arctic_settings
 
 
-@pytest.fixture(scope='class')
-def empty_mask():
+@pytest.fixture(scope='class', name='empty_mask')
+def make_empty_mask():
     parallel_settings = arctic_settings.ParallelSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
                                                          readout_offset=0)
-    arctic_parallel = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings)
+    parallel = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings)
 
-    return arctic_parallel
+    return parallel
 
 
-@pytest.fixture(scope='class')
-def arctic_parallel():
+@pytest.fixture(scope='class', name='arctic_parallel')
+def make_arctic_parallel():
     parallel_settings = arctic_settings.ParallelSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
                                                          readout_offset=0)
-    arctic_parallel = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings)
+    parallel = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings)
 
-    return arctic_parallel
+    return parallel
 
 
-@pytest.fixture(scope='class')
-def arctic_serial():
+@pytest.fixture(scope='class', name='arctic_serial')
+def make_arctic_serial():
     serial_settings = arctic_settings.SerialSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
                                                      readout_offset=0)
 
-    arctic_serial = arctic_settings.ArcticSettings(neomode='NEO', serial=serial_settings)
+    serial = arctic_settings.ArcticSettings(neomode='NEO', serial=serial_settings)
 
-    return arctic_serial
+    return serial
 
 
-@pytest.fixture(scope='class')
-def arctic_both():
+@pytest.fixture(scope='class', name='arctic_both')
+def make_arctic_both():
     parallel_settings = arctic_settings.ParallelSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
                                                          readout_offset=0)
 
     serial_settings = arctic_settings.SerialSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
                                                      readout_offset=0)
 
-    arctic_both = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings,
-                                                 serial=serial_settings)
+    both = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings,
+                                          serial=serial_settings)
 
-    return arctic_both
-
-
-@pytest.fixture(scope='class')
-def params_parallel():
-    params_parallel = arctic_params.ParallelOneSpecies(trap_densities=(0.1,), trap_lifetimes=(1.0,),
-                                                       well_notch_depth=0.000001, well_fill_beta=0.8)
-
-    params_parallel = arctic_params.ArcticParams(parallel=params_parallel)
-
-    return params_parallel
+    return both
 
 
-@pytest.fixture(scope='class')
-def params_serial():
-    params_serial = arctic_params.SerialOneSpecies(trap_densities=(0.2,), trap_lifetimes=(2.0,),
-                                                   well_notch_depth=0.000001, well_fill_beta=0.4)
+@pytest.fixture(scope='class', name='params_parallel')
+def make_params_parallel():
+    parallel = arctic_params.ParallelOneSpecies(trap_densities=(0.1,), trap_lifetimes=(1.0,),
+                                                well_notch_depth=0.000001, well_fill_beta=0.8)
 
-    params_serial = arctic_params.ArcticParams(serial=params_serial)
+    parallel = arctic_params.ArcticParams(parallel=parallel)
 
-    return params_serial
+    return parallel
 
 
-@pytest.fixture(scope='class')
-def params_both():
-    params_parallel = arctic_params.ParallelOneSpecies(trap_densities=(0.4,), trap_lifetimes=(1.0,),
-                                                       well_notch_depth=0.000001, well_fill_beta=0.8)
+@pytest.fixture(scope='class', name='params_serial')
+def make_params_serial():
+    serial = arctic_params.SerialOneSpecies(trap_densities=(0.2,), trap_lifetimes=(2.0,),
+                                            well_notch_depth=0.000001, well_fill_beta=0.4)
 
-    params_serial = arctic_params.SerialOneSpecies(trap_densities=(0.2,), trap_lifetimes=(2.0,),
-                                                   well_notch_depth=0.000001, well_fill_beta=0.4)
+    serial = arctic_params.ArcticParams(serial=serial)
 
-    params_both = arctic_params.ArcticParams(parallel=params_parallel,
-                                             serial=params_serial)
+    return serial
 
-    return params_both
+
+@pytest.fixture(scope='class', name='params_both')
+def make_params_both():
+    parallel = arctic_params.ParallelOneSpecies(trap_densities=(0.4,), trap_lifetimes=(1.0,),
+                                                well_notch_depth=0.000001, well_fill_beta=0.8)
+
+    serial = arctic_params.SerialOneSpecies(trap_densities=(0.2,), trap_lifetimes=(2.0,),
+                                            well_notch_depth=0.000001, well_fill_beta=0.4)
+
+    both = arctic_params.ArcticParams(parallel=parallel,
+                                      serial=serial)
+
+    return both
 
 
 class MockPattern(object):
@@ -274,6 +272,7 @@ class TestCIImage(object):
             pattern_ci_pre_cti = pattern.compute_ci_pre_cti(image, mask)
 
             assert type(ci_pre_cti.frame_geometry) == ci_frame.CIQuadGeometryEuclidBL
+            # noinspection PyUnresolvedReferences
             assert (ci_pre_cti == pattern_ci_pre_cti).all()
             assert (ci_pre_cti.ci_pattern.normalization == pattern.normalization == 100.0)
             assert (ci_pre_cti.ci_pattern.regions == pattern.regions == [(0, 2, 0, 2), (2, 3, 0, 3)])
@@ -283,7 +282,6 @@ class TestCIImage(object):
             pattern = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 2, 0, 2)])
             image = 10.0 * np.ones((3, 3))
-            mask = ci_data.CIMask.empty_for_shape(shape=(3, 3), frame_geometry=frame_geometry, ci_pattern=MockPattern())
 
             data = ci_data.CIImage(frame_geometry=frame_geometry, ci_pattern=pattern, array=image)
 
@@ -1156,6 +1154,7 @@ class TestCIPreCTIFast(object):
                                                    array=ci_pre_cti, ci_pattern=pattern_fast)
             ci_post_cti_fast = ci_pre_cti_fast.create_ci_post_cti(params_parallel, arctic_parallel)
 
+            # noinspection PyUnresolvedReferences
             assert (ci_post_cti_normal == ci_post_cti_fast).all()
 
         def test__serial_only__compare_to_non_fast_image(self, arctic_serial, params_serial):
@@ -1174,6 +1173,7 @@ class TestCIPreCTIFast(object):
                                                    array=ci_pre_cti, ci_pattern=pattern_fast)
             ci_post_cti_fast = ci_pre_cti_fast.create_ci_post_cti(params_serial, arctic_serial)
 
+            # noinspection PyUnresolvedReferences
             assert (ci_post_cti_normal == ci_post_cti_fast).all()
 
         def test__parallel_and_serial__raises_error(self, arctic_both, params_both):
@@ -1190,7 +1190,7 @@ class TestCIPreCTIFast(object):
     class TestCompareFastAndNormal:
 
         def test__parallel__3x4_1_ci_region(self, arctic_parallel, params_parallel):
-            ### SETUP FAST PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES ###
+            # SETUP FAST PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
 
             pattern_fast = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(2, 3, 0, 4)])
@@ -1201,7 +1201,7 @@ class TestCIPreCTIFast(object):
             ci_pre_cti_fast = data_fast.create_ci_pre_cti()
             ci_post_cti_fast = ci_pre_cti_fast.create_ci_post_cti(params_parallel, arctic_parallel)
 
-            ### SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES ###
+            # SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
 
             pattern_normal = ci_pattern.CIPatternUniform(normalization=10.0,
                                                          regions=[(2, 3, 0, 4)])
@@ -1212,12 +1212,12 @@ class TestCIPreCTIFast(object):
             ci_pre_cti_normal = data_normal.create_ci_pre_cti()
             ci_post_cti_normal = ci_pre_cti_normal.create_ci_post_cti(params_parallel, arctic_parallel)
 
-            ### COMPARE THE TWO ###
-
+            # COMPARE THE TWO #
+            # noinspection PyUnresolvedReferences
             assert (ci_post_cti_fast == ci_post_cti_normal).all()
 
         def test__parallel__4x3_1_ci_region(self, arctic_parallel, params_parallel):
-            ### SETUP FAST PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES ###
+            # SETUP FAST PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
 
             pattern_fast = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(2, 3, 0, 3)])
@@ -1228,7 +1228,7 @@ class TestCIPreCTIFast(object):
             ci_pre_cti_fast = data_fast.create_ci_pre_cti()
             ci_post_cti_fast = ci_pre_cti_fast.create_ci_post_cti(params_parallel, arctic_parallel)
 
-            ### SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES ###
+            # SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
 
             pattern_normal = ci_pattern.CIPatternUniform(normalization=10.0,
                                                          regions=[(2, 3, 0, 3)])
@@ -1239,12 +1239,12 @@ class TestCIPreCTIFast(object):
             ci_pre_cti_normal = data_normal.create_ci_pre_cti()
             ci_post_cti_normal = ci_pre_cti_normal.create_ci_post_cti(params_parallel, arctic_parallel)
 
-            ### COMPARE THE TWO ###
-
+            # COMPARE THE TWO #
+            # noinspection PyUnresolvedReferences
             assert (ci_post_cti_fast == ci_post_cti_normal).all()
 
         def test__serial__3x4_1_ci_region(self, arctic_serial, params_serial):
-            ### SETUP FAST PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES ###
+            # SETUP FAST PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
 
             pattern_fast = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 3, 0, 3)])
@@ -1255,7 +1255,7 @@ class TestCIPreCTIFast(object):
             ci_pre_cti_fast = data_fast.create_ci_pre_cti()
             ci_post_cti_fast = ci_pre_cti_fast.create_ci_post_cti(params_serial, arctic_serial)
 
-            ### SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES ###
+            # SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
 
             pattern_normal = ci_pattern.CIPatternUniform(normalization=10.0,
                                                          regions=[(0, 3, 0, 3)])
@@ -1266,12 +1266,13 @@ class TestCIPreCTIFast(object):
             ci_pre_cti_normal = data_normal.create_ci_pre_cti()
             ci_post_cti_normal = ci_pre_cti_normal.create_ci_post_cti(params_serial, arctic_serial)
 
-            ### COMPARE THE TWO ###
+            # COMPARE THE TWO #
 
+            # noinspection PyUnresolvedReferences
             assert (ci_post_cti_fast == ci_post_cti_normal).all()
 
         def test__serial__4x3_1_ci_region(self, arctic_serial, params_serial):
-            ### SETUP FAST PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES ###
+            # SETUP FAST PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
 
             pattern_fast = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 4, 0, 2)])
@@ -1282,7 +1283,7 @@ class TestCIPreCTIFast(object):
             ci_pre_cti_fast = data_fast.create_ci_pre_cti()
             ci_post_cti_fast = ci_pre_cti_fast.create_ci_post_cti(params_serial, arctic_serial)
 
-            ### SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES ###
+            # SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
 
             pattern_normal = ci_pattern.CIPatternUniform(normalization=10.0,
                                                          regions=[(0, 4, 0, 2)])
@@ -1293,6 +1294,7 @@ class TestCIPreCTIFast(object):
             ci_pre_cti_normal = data_normal.create_ci_pre_cti()
             ci_post_cti_normal = ci_pre_cti_normal.create_ci_post_cti(params_serial, arctic_serial)
 
-            ### COMPARE THE TWO ###
+            # COMPARE THE TWO #
 
+            # noinspection PyUnresolvedReferences
             assert (ci_post_cti_fast == ci_post_cti_normal).all()
