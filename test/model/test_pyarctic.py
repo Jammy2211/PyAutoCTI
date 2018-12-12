@@ -58,6 +58,23 @@ def setup(include_parallel=False, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0
                                       parallel_species=parallel_species)
 
 
+def add_parallel_cti_to_image(image, params, settings):
+    return pyarctic.call_arctic(image, params.parallel_species, params.parallel_ccd, settings.parallel)
+
+
+def add_serial_cti_to_image(image, params, settings):
+    return pyarctic.call_arctic(image, params.serial_species, params.serial_ccd, settings.serial)
+
+
+def correct_parallel_cti_from_image(image, params, settings):
+    return pyarctic.call_arctic(image, params.parallel_species, params.parallel_ccd, settings.parallel,
+                                correct_cti=True)
+
+
+def correct_serial_cti_from_image(image, params, settings):
+    return pyarctic.call_arctic(image, params.serial_species, params.serial_ccd, settings.serial, correct_cti=True)
+
+
 @pytest.fixture(scope='class', name='arctic_parallel')
 def make_arctic_parallel():
     parallel_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=5, n_levels=2000,
@@ -82,23 +99,6 @@ def make_arctic_both():
                                                readout_offset=0)
     return arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings,
                                           serial=serial_settings)
-
-
-def add_parallel_cti_to_image(image, params, settings):
-    return pyarctic.call_arctic(image, params.parallel_species, params.parallel_ccd, settings.parallel)
-
-
-def add_serial_cti_to_image(image, params, settings):
-    return pyarctic.call_arctic(image, params.serial_species, params.serial_ccd, settings.serial)
-
-
-def correct_parallel_cti_from_image(image, params, settings):
-    return pyarctic.call_arctic(image, params.parallel_species, params.parallel_ccd, settings.parallel,
-                                correct_cti=True)
-
-
-def correct_serial_cti_from_image(image, params, settings):
-    return pyarctic.call_arctic(image, params.serial_species, params.serial_ccd, settings.serial, correct_cti=True)
 
 
 class TestArcticAddCTI:
@@ -135,7 +135,7 @@ class TestArcticAddCTI:
 
             image_difference = image_post_cti - image_pre_cti
 
-            assert (image_difference[:, 0:2] == 0.0).all()  # Most pixels unchaged
+            assert (image_difference[:, 0:2] == 0.0).all()  # Most pixels unchanged
             assert (image_difference[:, 3:-1] == 0.0).all()
             assert (image_difference[:, 2] < 0.0).all()  # charge line still loses charge
 
@@ -143,7 +143,7 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            ### SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED ###
+            # SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED #
 
             parameters_0 = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                  p_well_notch_depth=0.01, p_well_fill_alpha=1.0, p_well_fill_beta=0.8,
@@ -153,7 +153,7 @@ class TestArcticAddCTI:
                                  p_well_notch_depth=0.01, p_well_fill_alpha=1.0, p_well_fill_beta=0.8,
                                  p_well_fill_gamma=0.0)
 
-            ### NOW GENERATE THE IMAGE POST CTI OF EACH SET
+            # NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
             image_post_cti_0 = add_parallel_cti_to_image(image=image_pre_cti, params=parameters_0,
                                                          settings=arctic_parallel)
@@ -165,14 +165,14 @@ class TestArcticAddCTI:
             # noinspection PyUnresolvedReferences
             assert (image_post_cti_0[2, :] > image_post_cti_1[4, :]).all()  # charge line loses less charge in image 1
             # noinspection PyUnresolvedReferences
-            assert (image_post_cti_0[3:-1, :] < image_post_cti_1[5:-1,
-                                                :]).all()  # fewer pixels trailed behind in image 2
+            assert (image_post_cti_0[3:-1, :] < image_post_cti_1[5:-1, :]).all()
+            # fewer pixels trailed behind in image 2
 
         def test__double_trap_lifetime__longer_release_so_fainter_trails(self, arctic_parallel):
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            ### SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED ###
+            # SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED #
 
             parameters_0 = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                  p_well_notch_depth=0.01, p_well_fill_alpha=1.0, p_well_fill_beta=0.8,
@@ -181,7 +181,7 @@ class TestArcticAddCTI:
             parameters_1 = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(2.0,),
                                  p_well_notch_depth=0.01, p_well_fill_alpha=1.0, p_well_fill_beta=0.8,
                                  p_well_fill_gamma=0.0)
-            ### NOW GENERATE THE IMAGE POST CTI OF EACH SET
+            # NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
             image_post_cti_0 = add_parallel_cti_to_image(image=image_pre_cti, params=parameters_0,
                                                          settings=arctic_parallel)
@@ -193,14 +193,14 @@ class TestArcticAddCTI:
             # noinspection PyUnresolvedReferences
             assert (image_post_cti_0[2, :] == image_post_cti_1[2, :]).all()  # charge line loses equal amount of charge
             # noinspection PyUnresolvedReferences
-            assert (image_post_cti_0[3:-1, :] > image_post_cti_1[3:-1,
-                                                :]).all()  # each trail in pixel 2 is 'longer' so fainter
+            assert (image_post_cti_0[3:-1, :] > image_post_cti_1[3:-1, :]).all()
+            # each trail in pixel 2 is 'longer' so fainter
 
         def test__increase_beta__fewer_captures_fainter_trail(self, arctic_parallel):
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            ### SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED ###
+            # SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED #
 
             parameters_0 = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                  p_well_notch_depth=0.01, p_well_fill_beta=0.8)
@@ -208,7 +208,7 @@ class TestArcticAddCTI:
             parameters_1 = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                  p_well_notch_depth=0.01, p_well_fill_beta=0.9)
 
-            ### NOW GENERATE THE IMAGE POST CTI OF EACH SET
+            # NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
             image_post_cti_0 = add_parallel_cti_to_image(image=image_pre_cti, params=parameters_0,
                                                          settings=arctic_parallel)
@@ -218,8 +218,8 @@ class TestArcticAddCTI:
             assert (image_post_cti_0[0:2, :] == 0.0).all()  # First four rows should all remain zero
             assert (image_post_cti_1[0:2, :] == 0.0).all()  # First four rows should all remain zero
             # noinspection PyUnresolvedReferences
-            assert (image_post_cti_0[2, :] < image_post_cti_1[2,
-                                             :]).all()  # charge line loses less charge with higher beta
+            assert (image_post_cti_0[2, :] < image_post_cti_1[2, :]).all()
+            # charge line loses less charge with higher beta
             # noinspection PyUnresolvedReferences
             assert (image_post_cti_0[3:-1, :] > image_post_cti_1[3:-1, :]).all()  # so less electrons trailed into image
 
@@ -227,7 +227,7 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            ### SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED ###
+            # SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED #
 
             parameters_0 = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                  p_well_notch_depth=0.01, p_well_fill_beta=0.8)
@@ -236,7 +236,7 @@ class TestArcticAddCTI:
                                  p_trap_lifetimes=(1.0, 1.0),
                                  p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            ### NOW GENERATE THE IMAGE POST CTI OF EACH SET
+            # NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
             image_post_cti_0 = add_parallel_cti_to_image(image=image_pre_cti, params=parameters_0,
                                                          settings=arctic_parallel)
@@ -249,7 +249,7 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            ### SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED ###
+            # SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED #
 
             parameters_0 = setup(include_parallel=True, p_trap_densities=(0.15,), p_trap_lifetimes=(1.0,),
                                  p_well_notch_depth=0.01, p_well_fill_beta=0.8)
@@ -258,7 +258,7 @@ class TestArcticAddCTI:
                                  p_trap_lifetimes=(1.0, 1.0, 1.0),
                                  p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            ### NOW GENERATE THE IMAGE POST CTI OF EACH SET
+            # NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
             image_post_cti_0 = add_parallel_cti_to_image(image=image_pre_cti, params=parameters_0,
                                                          settings=arctic_parallel)
@@ -339,7 +339,7 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            ### SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED ###
+            # SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED #
 
             parameters_0 = setup(include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
                                  s_well_notch_depth=0.01, s_well_fill_alpha=1.0, s_well_fill_beta=0.8,
@@ -349,7 +349,7 @@ class TestArcticAddCTI:
                                  s_well_notch_depth=0.01, s_well_fill_alpha=1.0, s_well_fill_beta=0.8,
                                  s_well_fill_gamma=0.0)
 
-            ### NOW GENERATE THE IMAGE POST CTI OF EACH SET
+            # NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
             image_post_cti_0 = add_serial_cti_to_image(image=image_pre_cti, params=parameters_0,
                                                        settings=arctic_serial)
@@ -361,14 +361,14 @@ class TestArcticAddCTI:
             # noinspection PyUnresolvedReferences
             assert (image_post_cti_0[2, :] > image_post_cti_1[4, :]).all()  # charge line loses less charge in image 1
             # noinspection PyUnresolvedReferences
-            assert (image_post_cti_0[3:-1, :] < image_post_cti_1[5:-1,
-                                                :]).all()  # fewer pixels trailed behind in image 2
+            assert (image_post_cti_0[3:-1, :] < image_post_cti_1[5:-1, :]).all()
+            # fewer pixels trailed behind in image 2
 
         def test__double_trap_lifetime__longer_release_so_fainter_trails(self, arctic_serial):
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            ### SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED ###
+            # SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED #
 
             parameters_0 = setup(include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
                                  s_well_notch_depth=0.01, s_well_fill_alpha=1.0, s_well_fill_beta=0.8,
@@ -378,7 +378,7 @@ class TestArcticAddCTI:
                                  s_well_notch_depth=0.01, s_well_fill_alpha=1.0, s_well_fill_beta=0.8,
                                  s_well_fill_gamma=0.0)
 
-            ### NOW GENERATE THE IMAGE POST CTI OF EACH SET
+            # NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
             image_post_cti_0 = add_serial_cti_to_image(image=image_pre_cti, params=parameters_0,
                                                        settings=arctic_serial)
@@ -390,14 +390,14 @@ class TestArcticAddCTI:
             # noinspection PyUnresolvedReferences
             assert (image_post_cti_0[2, :] == image_post_cti_1[2, :]).all()  # charge line loses equal amount of charge
             # noinspection PyUnresolvedReferences
-            assert (image_post_cti_0[3:-1, :] > image_post_cti_1[3:-1,
-                                                :]).all()  # each trail in pixel 2 is 'longer' so fainter
+            assert (image_post_cti_0[3:-1, :] > image_post_cti_1[3:-1, :]).all()
+            # each trail in pixel 2 is 'longer' so fainter
 
         def test__increase_beta__fewer_captures_fainter_trail(self, arctic_serial):
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            ### SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED ###
+            # SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED #
 
             parameters_0 = setup(include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
                                  s_well_notch_depth=0.01, s_well_fill_alpha=1.0, s_well_fill_beta=0.8,
@@ -407,7 +407,7 @@ class TestArcticAddCTI:
                                  s_well_notch_depth=0.01, s_well_fill_alpha=1.0, s_well_fill_beta=0.9,
                                  s_well_fill_gamma=0.0)
 
-            ### NOW GENERATE THE IMAGE POST CTI OF EACH SET
+            # NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
             image_post_cti_0 = add_serial_cti_to_image(image=image_pre_cti, params=parameters_0,
                                                        settings=arctic_serial)
@@ -417,8 +417,8 @@ class TestArcticAddCTI:
             assert (image_post_cti_0[0:2, :] == 0.0).all()  # First four rows should all remain zero
             assert (image_post_cti_1[0:2, :] == 0.0).all()  # First four rows should all remain zero
             # noinspection PyUnresolvedReferences
-            assert (image_post_cti_0[2, :] < image_post_cti_1[2,
-                                             :]).all()  # charge line loses less charge with higher beta
+            assert (image_post_cti_0[2, :] < image_post_cti_1[2, :]).all()
+            # charge line loses less charge with higher beta
             # noinspection PyUnresolvedReferences
             assert (image_post_cti_0[3:-1, :] > image_post_cti_1[3:-1, :]).all()  # so less electrons trailed into image
 
@@ -426,7 +426,7 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            ### SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED ###
+            # SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED #
 
             parameters_0 = setup(include_serial=True, s_trap_densities=(0.1,), s_trap_lifetimes=(1.0,),
                                  s_well_notch_depth=0.01, s_well_fill_alpha=1.0, s_well_fill_beta=0.8,
@@ -437,7 +437,7 @@ class TestArcticAddCTI:
                                  s_well_notch_depth=0.01, s_well_fill_alpha=1.0, s_well_fill_beta=0.8,
                                  s_well_fill_gamma=0.0)
 
-            ### NOW GENERATE THE IMAGE POST CTI OF EACH SET
+            # NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
             image_post_cti_0 = add_serial_cti_to_image(image=image_pre_cti, params=parameters_0,
                                                        settings=arctic_serial)
@@ -450,7 +450,7 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            ### SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED ###
+            # SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED #
 
             parameters_0 = setup(include_serial=True, s_trap_densities=(0.15,), s_trap_lifetimes=(1.0,),
                                  s_well_notch_depth=0.01, s_well_fill_alpha=1.0, s_well_fill_beta=0.8,
@@ -461,7 +461,7 @@ class TestArcticAddCTI:
                                  s_well_notch_depth=0.01, s_well_fill_alpha=1.0, s_well_fill_beta=0.8,
                                  s_well_fill_gamma=0.0)
 
-            ### NOW GENERATE THE IMAGE POST CTI OF EACH SET
+            # NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
             image_post_cti_0 = add_serial_cti_to_image(image=image_pre_cti, params=parameters_0,
                                                        settings=arctic_serial)
