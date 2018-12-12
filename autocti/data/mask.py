@@ -78,7 +78,7 @@ class Mask(np.ndarray):
             If a cosmic-ray mask is supplied, the number of pixels from each ray pixels are masked in the serial \
             direction.
         """
-        mask = Mask.empty_for_shape(shape, frame_geometry, ci_pattern)
+        mask = cls.empty_for_shape(shape, frame_geometry, ci_pattern)
 
         if regions is not None:
             mask.regions = list(map(lambda r: cti_image.Region(r), regions))
