@@ -31,30 +31,74 @@ from autocti.model import arctic_settings
 from autocti.model import pyarctic
 
 
+def setup(include_parallel=False, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
+          p_well_notch_depth=0.01, p_well_fill_alpha=1.0, p_well_fill_beta=0.8,
+          p_well_fill_gamma=0.0, include_serial=False, s_trap_densities=(0.05, 0.05,),
+          s_trap_lifetimes=(1.0, 1.0),
+          s_well_notch_depth=0.01, s_well_fill_alpha=1.0, s_well_fill_beta=0.8,
+          s_well_fill_gamma=0.0):
+    serial_species = []
+    parallel_species = []
+    serial_ccd = None
+    parallel_ccd = None
+
+    if include_serial:
+        serial_ccd = arctic_params.CCD(well_notch_depth=s_well_notch_depth, well_fill_alpha=s_well_fill_alpha,
+                                       well_fill_beta=s_well_fill_beta, well_fill_gamma=s_well_fill_gamma)
+        serial_species = [arctic_params.Species(trap_density=s_trap_densities[i], trap_lifetime=s_trap_lifetimes[i]) for
+                          i in range(len(s_trap_densities))]
+    if include_parallel:
+        parallel_ccd = arctic_params.CCD(well_notch_depth=p_well_notch_depth, well_fill_alpha=p_well_fill_alpha,
+                                         well_fill_beta=p_well_fill_beta, well_fill_gamma=p_well_fill_gamma)
+        parallel_species = [arctic_params.Species(trap_density=p_trap_densities[i], trap_lifetime=p_trap_lifetimes[i])
+                            for
+                            i in range(len(p_trap_densities))]
+
+    return arctic_params.ArcticParams(parallel_ccd=parallel_ccd, serial_ccd=serial_ccd, serial_species=serial_species,
+                                      parallel_species=parallel_species)
+
+
 @pytest.fixture(scope='class', name='arctic_parallel')
 def make_arctic_parallel():
-    parallel_settings = arctic_settings.ParallelSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
-                                                         charge_injection_mode=True, readout_offset=0)
+    parallel_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=5, n_levels=2000,
+                                                 charge_injection_mode=True, readout_offset=0)
 
     return arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings)
 
 
 @pytest.fixture(scope='class', name='arctic_serial')
 def make_arctic_serial():
-    serial_settings = arctic_settings.SerialSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
-                                                     readout_offset=0)
+    serial_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=5, n_levels=2000,
+                                               readout_offset=0)
     return arctic_settings.ArcticSettings(neomode='NEO', serial=serial_settings)
 
 
 @pytest.fixture(scope='class', name='arctic_both')
 def make_arctic_both():
-    parallel_settings = arctic_settings.ParallelSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
-                                                         readout_offset=0)
+    parallel_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=5, n_levels=2000,
+                                                 readout_offset=0)
 
-    serial_settings = arctic_settings.SerialSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
-                                                     readout_offset=0)
+    serial_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=5, n_levels=2000,
+                                               readout_offset=0)
     return arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings,
                                           serial=serial_settings)
+
+
+def add_parallel_cti_to_image(image, params, settings):
+    return pyarctic.call_arctic(image, params.parallel_species, params.parallel_ccd, settings.parallel)
+
+
+def add_serial_cti_to_image(image, params, settings):
+    return pyarctic.call_arctic(image, params.serial_species, params.serial_ccd, settings.serial)
+
+
+def correct_parallel_cti_from_image(image, params, settings):
+    return pyarctic.call_arctic(image, params.parallel_species, params.parallel_ccd, settings.parallel,
+                                correct_cti=True)
+
+
+def correct_serial_cti_from_image(image, params, settings):
+    return pyarctic.call_arctic(image, params.serial_species, params.serial_ccd, settings.serial, correct_cti=True)
 
 
 class TestArcticAddCTI:
@@ -68,8 +112,8 @@ class TestArcticAddCTI:
                                p_well_notch_depth=0.01, p_well_fill_alpha=1.0, p_well_fill_beta=0.8,
                                p_well_fill_gamma=0.0)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference = image_post_cti - image_pre_cti
 
@@ -86,8 +130,8 @@ class TestArcticAddCTI:
                                p_well_notch_depth=0.01, p_well_fill_alpha=1.0, p_well_fill_beta=0.8,
                                p_well_fill_gamma=0.0)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference = image_post_cti - image_pre_cti
 
@@ -111,10 +155,10 @@ class TestArcticAddCTI:
 
             ### NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
-            image_post_cti_0 = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters_0,
-                                                                  settings=arctic_parallel)
-            image_post_cti_1 = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters_1,
-                                                                  settings=arctic_parallel)
+            image_post_cti_0 = add_parallel_cti_to_image(image=image_pre_cti, params=parameters_0,
+                                                         settings=arctic_parallel)
+            image_post_cti_1 = add_parallel_cti_to_image(image=image_pre_cti, params=parameters_1,
+                                                         settings=arctic_parallel)
 
             assert (image_post_cti_0[0:2, :] == 0.0).all()  # First four rows should all remain zero
             assert (image_post_cti_1[0:2, :] == 0.0).all()  # First four rows should all remain zero
@@ -139,10 +183,10 @@ class TestArcticAddCTI:
                                  p_well_fill_gamma=0.0)
             ### NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
-            image_post_cti_0 = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters_0,
-                                                                  settings=arctic_parallel)
-            image_post_cti_1 = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters_1,
-                                                                  settings=arctic_parallel)
+            image_post_cti_0 = add_parallel_cti_to_image(image=image_pre_cti, params=parameters_0,
+                                                         settings=arctic_parallel)
+            image_post_cti_1 = add_parallel_cti_to_image(image=image_pre_cti, params=parameters_1,
+                                                         settings=arctic_parallel)
 
             assert (image_post_cti_0[0:2, :] == 0.0).all()  # First four rows should all remain zero
             assert (image_post_cti_1[0:2, :] == 0.0).all()  # First four rows should all remain zero
@@ -166,10 +210,10 @@ class TestArcticAddCTI:
 
             ### NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
-            image_post_cti_0 = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters_0,
-                                                                  settings=arctic_parallel)
-            image_post_cti_1 = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters_1,
-                                                                  settings=arctic_parallel)
+            image_post_cti_0 = add_parallel_cti_to_image(image=image_pre_cti, params=parameters_0,
+                                                         settings=arctic_parallel)
+            image_post_cti_1 = add_parallel_cti_to_image(image=image_pre_cti, params=parameters_1,
+                                                         settings=arctic_parallel)
 
             assert (image_post_cti_0[0:2, :] == 0.0).all()  # First four rows should all remain zero
             assert (image_post_cti_1[0:2, :] == 0.0).all()  # First four rows should all remain zero
@@ -194,10 +238,10 @@ class TestArcticAddCTI:
 
             ### NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
-            image_post_cti_0 = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters_0,
-                                                                  settings=arctic_parallel)
-            image_post_cti_1 = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters_1,
-                                                                  settings=arctic_parallel)
+            image_post_cti_0 = add_parallel_cti_to_image(image=image_pre_cti, params=parameters_0,
+                                                         settings=arctic_parallel)
+            image_post_cti_1 = add_parallel_cti_to_image(image=image_pre_cti, params=parameters_1,
+                                                         settings=arctic_parallel)
             # noinspection PyUnresolvedReferences
             assert (image_post_cti_0 == image_post_cti_1).all()
 
@@ -216,10 +260,10 @@ class TestArcticAddCTI:
 
             ### NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
-            image_post_cti_0 = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters_0,
-                                                                  settings=arctic_parallel)
-            image_post_cti_1 = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters_1,
-                                                                  settings=arctic_parallel)
+            image_post_cti_0 = add_parallel_cti_to_image(image=image_pre_cti, params=parameters_0,
+                                                         settings=arctic_parallel)
+            image_post_cti_1 = add_parallel_cti_to_image(image=image_pre_cti, params=parameters_1,
+                                                         settings=arctic_parallel)
             image_difference = abs(image_post_cti_0 - image_post_cti_1)
 
             assert (image_difference < 1e-9).all()
@@ -233,8 +277,8 @@ class TestArcticAddCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference = image_post_cti - image_pre_cti
 
@@ -264,8 +308,8 @@ class TestArcticAddCTI:
                                s_well_notch_depth=0.01, s_well_fill_alpha=1.0, s_well_fill_beta=0.8,
                                s_well_fill_gamma=0.0)
 
-            image_post_cti = pyarctic.add_serial_cti_to_image(image=image_pre_cti, params=parameters,
-                                                              settings=arctic_serial)
+            image_post_cti = add_serial_cti_to_image(image=image_pre_cti, params=parameters,
+                                                     settings=arctic_serial)
 
             image_difference = image_post_cti - image_pre_cti
 
@@ -282,8 +326,8 @@ class TestArcticAddCTI:
                                s_well_notch_depth=0.01, s_well_fill_alpha=1.0, s_well_fill_beta=0.8,
                                s_well_fill_gamma=0.0)
 
-            image_post_cti = pyarctic.add_serial_cti_to_image(image=image_pre_cti, params=parameters,
-                                                              settings=arctic_serial)
+            image_post_cti = add_serial_cti_to_image(image=image_pre_cti, params=parameters,
+                                                     settings=arctic_serial)
 
             image_difference = image_post_cti - image_pre_cti
 
@@ -307,10 +351,10 @@ class TestArcticAddCTI:
 
             ### NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
-            image_post_cti_0 = pyarctic.add_serial_cti_to_image(image=image_pre_cti, params=parameters_0,
-                                                                settings=arctic_serial)
-            image_post_cti_1 = pyarctic.add_serial_cti_to_image(image=image_pre_cti, params=parameters_1,
-                                                                settings=arctic_serial)
+            image_post_cti_0 = add_serial_cti_to_image(image=image_pre_cti, params=parameters_0,
+                                                       settings=arctic_serial)
+            image_post_cti_1 = add_serial_cti_to_image(image=image_pre_cti, params=parameters_1,
+                                                       settings=arctic_serial)
 
             assert (image_post_cti_0[0:2, :] == 0.0).all()  # First four rows should all remain zero
             assert (image_post_cti_1[0:2, :] == 0.0).all()  # First four rows should all remain zero
@@ -336,10 +380,10 @@ class TestArcticAddCTI:
 
             ### NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
-            image_post_cti_0 = pyarctic.add_serial_cti_to_image(image=image_pre_cti, params=parameters_0,
-                                                                settings=arctic_serial)
-            image_post_cti_1 = pyarctic.add_serial_cti_to_image(image=image_pre_cti, params=parameters_1,
-                                                                settings=arctic_serial)
+            image_post_cti_0 = add_serial_cti_to_image(image=image_pre_cti, params=parameters_0,
+                                                       settings=arctic_serial)
+            image_post_cti_1 = add_serial_cti_to_image(image=image_pre_cti, params=parameters_1,
+                                                       settings=arctic_serial)
 
             assert (image_post_cti_0[0:2, :] == 0.0).all()  # First four rows should all remain zero
             assert (image_post_cti_1[0:2, :] == 0.0).all()  # First four rows should all remain zero
@@ -365,10 +409,10 @@ class TestArcticAddCTI:
 
             ### NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
-            image_post_cti_0 = pyarctic.add_serial_cti_to_image(image=image_pre_cti, params=parameters_0,
-                                                                settings=arctic_serial)
-            image_post_cti_1 = pyarctic.add_serial_cti_to_image(image=image_pre_cti, params=parameters_1,
-                                                                settings=arctic_serial)
+            image_post_cti_0 = add_serial_cti_to_image(image=image_pre_cti, params=parameters_0,
+                                                       settings=arctic_serial)
+            image_post_cti_1 = add_serial_cti_to_image(image=image_pre_cti, params=parameters_1,
+                                                       settings=arctic_serial)
 
             assert (image_post_cti_0[0:2, :] == 0.0).all()  # First four rows should all remain zero
             assert (image_post_cti_1[0:2, :] == 0.0).all()  # First four rows should all remain zero
@@ -395,10 +439,10 @@ class TestArcticAddCTI:
 
             ### NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
-            image_post_cti_0 = pyarctic.add_serial_cti_to_image(image=image_pre_cti, params=parameters_0,
-                                                                settings=arctic_serial)
-            image_post_cti_1 = pyarctic.add_serial_cti_to_image(image=image_pre_cti, params=parameters_1,
-                                                                settings=arctic_serial)
+            image_post_cti_0 = add_serial_cti_to_image(image=image_pre_cti, params=parameters_0,
+                                                       settings=arctic_serial)
+            image_post_cti_1 = add_serial_cti_to_image(image=image_pre_cti, params=parameters_1,
+                                                       settings=arctic_serial)
             # noinspection PyUnresolvedReferences
             assert (image_post_cti_0 == image_post_cti_1).all()
 
@@ -419,10 +463,10 @@ class TestArcticAddCTI:
 
             ### NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
-            image_post_cti_0 = pyarctic.add_serial_cti_to_image(image=image_pre_cti, params=parameters_0,
-                                                                settings=arctic_serial)
-            image_post_cti_1 = pyarctic.add_serial_cti_to_image(image=image_pre_cti, params=parameters_1,
-                                                                settings=arctic_serial)
+            image_post_cti_0 = add_serial_cti_to_image(image=image_pre_cti, params=parameters_0,
+                                                       settings=arctic_serial)
+            image_post_cti_1 = add_serial_cti_to_image(image=image_pre_cti, params=parameters_1,
+                                                       settings=arctic_serial)
 
             image_difference = abs(image_post_cti_0 - image_post_cti_1)
 
@@ -438,8 +482,8 @@ class TestArcticAddCTI:
                                s_well_notch_depth=0.01, s_well_fill_alpha=1.0, s_well_fill_beta=0.8,
                                s_well_fill_gamma=0.0)
 
-            image_post_cti = pyarctic.add_serial_cti_to_image(image=image_pre_cti, params=parameters,
-                                                              settings=arctic_serial)
+            image_post_cti = add_serial_cti_to_image(image=image_pre_cti, params=parameters,
+                                                     settings=arctic_serial)
 
             image_difference = image_post_cti - image_pre_cti
 
@@ -468,8 +512,8 @@ class TestArcticAddCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference = image_post_cti - image_pre_cti
 
@@ -484,8 +528,8 @@ class TestArcticAddCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference = image_post_cti - image_pre_cti
 
@@ -500,8 +544,8 @@ class TestArcticAddCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference = image_post_cti - image_pre_cti
 
@@ -516,8 +560,8 @@ class TestArcticAddCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference = image_post_cti - image_pre_cti
 
@@ -532,8 +576,8 @@ class TestArcticAddCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference = image_post_cti - image_pre_cti
 
@@ -548,8 +592,8 @@ class TestArcticAddCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference = image_post_cti - image_pre_cti
 
@@ -564,8 +608,8 @@ class TestArcticAddCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference = image_post_cti - image_pre_cti
 
@@ -580,8 +624,8 @@ class TestArcticAddCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference = image_post_cti - image_pre_cti
 
@@ -598,8 +642,8 @@ class TestArcticAddCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference = image_post_cti - image_pre_cti
 
@@ -631,8 +675,8 @@ class TestArcticAddCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference = image_post_cti - image_pre_cti
 
@@ -665,8 +709,8 @@ class TestArcticAddCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference = image_post_cti - image_pre_cti
 
@@ -699,8 +743,8 @@ class TestArcticAddCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference = image_post_cti - image_pre_cti
 
@@ -735,15 +779,15 @@ class TestArcticAddCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=settings)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=settings)
 
             settings_charge_inj = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=1,
                                                         p_express=5, p_n_levels=2000,
                                                         p_charge_injection_mode=True, p_readout_offset=0)
 
-            image_post_cti_charge_inj = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                           settings=settings_charge_inj)
+            image_post_cti_charge_inj = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                                  settings=settings_charge_inj)
 
             image_difference = image_post_cti_charge_inj - image_post_cti
 
@@ -759,17 +803,18 @@ class TestArcticAddCTI:
                                              p_n_levels=2000,
                                              p_charge_injection_mode=False, p_readout_offset=0)
 
-            parallel_vary = arctic_params.ParallelDensityVary(
-                trap_densities=[(10.0,), (20.0,), (30.0,), (40.0,), (50.0,)],
-                trap_lifetimes=(1.0,), well_fill_beta=0.8, well_notch_depth=0.01)
-
-            parameters = arctic_params.ArcticParams(parallel_species=parallel_vary)
+            ccd = arctic_params.CCD(well_fill_beta=0.8, well_notch_depth=0.01)
+            species = [arctic_params.Species(trap_density=10., trap_lifetime=1.),
+                       arctic_params.Species(trap_density=20., trap_lifetime=1.),
+                       arctic_params.Species(trap_density=30., trap_lifetime=1.),
+                       arctic_params.Species(trap_density=40., trap_lifetime=1.),
+                       arctic_params.Species(trap_density=50., trap_lifetime=1.), ]
 
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=settings)
+            image_post_cti = pyarctic.call_arctic_parallel_density_vary(image=image_pre_cti, species=species, ccd=ccd,
+                                                                        settings=settings.parallel)
 
             # noinspection PyUnresolvedReferences
             assert (image_post_cti[2:5, 0] != image_post_cti[2:5, 1]).all()
@@ -779,33 +824,6 @@ class TestArcticAddCTI:
             assert (image_post_cti[2:5, 2] != image_post_cti[2:5, 3]).all()
             # noinspection PyUnresolvedReferences
             assert (image_post_cti[2:5, 3] != image_post_cti[2:5, 4]).all()
-
-
-def setup(include_parallel=False, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
-          p_well_notch_depth=0.01, p_well_fill_alpha=1.0, p_well_fill_beta=0.8,
-          p_well_fill_gamma=0.0, include_serial=False, s_trap_densities=(0.05, 0.05,),
-          s_trap_lifetimes=(1.0, 1.0),
-          s_well_notch_depth=0.01, s_well_fill_alpha=1.0, s_well_fill_beta=0.8,
-          s_well_fill_gamma=0.0):
-    serial_species = []
-    parallel_species = []
-    serial_ccd = None
-    parallel_ccd = None
-
-    if include_serial:
-        serial_ccd = arctic_params.CCD(well_notch_depth=s_well_notch_depth, well_fill_alpha=s_well_fill_alpha,
-                                       well_fill_beta=s_well_fill_beta, well_fill_gamma=s_well_fill_gamma)
-        serial_species = [arctic_params.Species(trap_density=s_trap_densities[i], trap_lifetime=s_trap_lifetimes[i]) for
-                          i in range(len(s_trap_densities))]
-    if include_parallel:
-        parallel_ccd = arctic_params.CCD(well_notch_depth=p_well_notch_depth, well_fill_alpha=p_well_fill_alpha,
-                                         well_fill_beta=p_well_fill_beta, well_fill_gamma=p_well_fill_gamma)
-        parallel_species = [arctic_params.Species(trap_density=p_trap_densities[i], trap_lifetime=p_trap_lifetimes[i])
-                            for
-                            i in range(len(p_trap_densities))]
-
-    return arctic_params.ArcticParams(parallel_ccd=parallel_ccd, serial_ccd=serial_ccd, serial_species=serial_species,
-                                      parallel_species=parallel_species)
 
 
 class TestArcticCorrectCTI:
@@ -818,13 +836,13 @@ class TestArcticCorrectCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_parallel)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_parallel)
 
             image_difference_2 = image_correct_cti - image_pre_cti
 
@@ -837,13 +855,13 @@ class TestArcticCorrectCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_parallel)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_parallel)
 
             image_difference_2 = image_correct_cti - image_pre_cti
 
@@ -858,13 +876,13 @@ class TestArcticCorrectCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_parallel)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_parallel)
 
             image_difference_2 = image_correct_cti - image_pre_cti
 
@@ -877,15 +895,15 @@ class TestArcticCorrectCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             arctic_niter_5 = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=5, p_express=5,
                                                    p_n_levels=2000,
                                                    p_charge_injection_mode=False, p_readout_offset=0)
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_niter_5)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_niter_5)
 
             image_difference_niter_5 = image_correct_cti - image_pre_cti
 
@@ -893,8 +911,8 @@ class TestArcticCorrectCTI:
                                                    p_n_levels=2000,
                                                    p_charge_injection_mode=False, p_readout_offset=0)
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_niter_3)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_niter_3)
 
             image_difference_niter_3 = image_correct_cti - image_pre_cti
 
@@ -911,13 +929,13 @@ class TestArcticCorrectCTI:
             parameters = setup(include_serial=True, s_trap_densities=(0.2,), s_trap_lifetimes=(2.0,),
                                s_well_notch_depth=0.02, s_well_fill_beta=0.4)
 
-            image_post_cti = pyarctic.add_serial_cti_to_image(image=image_pre_cti, params=parameters,
-                                                              settings=arctic_serial)
+            image_post_cti = add_serial_cti_to_image(image=image_pre_cti, params=parameters,
+                                                     settings=arctic_serial)
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.correct_serial_cti_from_image(image=image_post_cti, params=parameters,
-                                                                       settings=arctic_serial)
+            image_correct_cti = correct_serial_cti_from_image(image=image_post_cti, params=parameters,
+                                                              settings=arctic_serial)
 
             image_difference_2 = image_correct_cti - image_pre_cti
 
@@ -930,13 +948,13 @@ class TestArcticCorrectCTI:
             parameters = setup(include_serial=True, s_trap_densities=(0.2,), s_trap_lifetimes=(2.0,),
                                s_well_notch_depth=0.02, s_well_fill_beta=0.4)
 
-            image_post_cti = pyarctic.add_serial_cti_to_image(image=image_pre_cti, params=parameters,
-                                                              settings=arctic_serial)
+            image_post_cti = add_serial_cti_to_image(image=image_pre_cti, params=parameters,
+                                                     settings=arctic_serial)
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.correct_serial_cti_from_image(image=image_post_cti, params=parameters,
-                                                                       settings=arctic_serial)
+            image_correct_cti = correct_serial_cti_from_image(image=image_post_cti, params=parameters,
+                                                              settings=arctic_serial)
 
             image_difference_2 = image_correct_cti - image_pre_cti
 
@@ -951,13 +969,13 @@ class TestArcticCorrectCTI:
             parameters = setup(include_serial=True, s_trap_densities=(0.2,), s_trap_lifetimes=(2.0,),
                                s_well_notch_depth=0.02, s_well_fill_beta=0.4)
 
-            image_post_cti = pyarctic.add_serial_cti_to_image(image=image_pre_cti, params=parameters,
-                                                              settings=arctic_serial)
+            image_post_cti = add_serial_cti_to_image(image=image_pre_cti, params=parameters,
+                                                     settings=arctic_serial)
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.correct_serial_cti_from_image(image=image_post_cti, params=parameters,
-                                                                       settings=arctic_serial)
+            image_correct_cti = correct_serial_cti_from_image(image=image_post_cti, params=parameters,
+                                                              settings=arctic_serial)
 
             image_difference_2 = image_correct_cti - image_pre_cti
 
@@ -970,15 +988,15 @@ class TestArcticCorrectCTI:
             parameters = setup(include_serial=True, s_trap_densities=(0.2,), s_trap_lifetimes=(2.0,),
                                s_well_notch_depth=0.02, s_well_fill_beta=0.4)
 
-            image_post_cti = pyarctic.add_serial_cti_to_image(image=image_pre_cti, params=parameters,
-                                                              settings=arctic_serial)
+            image_post_cti = add_serial_cti_to_image(image=image_pre_cti, params=parameters,
+                                                     settings=arctic_serial)
 
             arctic_niter_5 = arctic_settings.setup(include_serial=True, s_well_depth=84700, s_niter=5, s_express=5,
                                                    s_n_levels=2000,
                                                    s_charge_injection_mode=False, s_readout_offset=0)
 
-            image_correct_cti = pyarctic.correct_serial_cti_from_image(image=image_post_cti, params=parameters,
-                                                                       settings=arctic_niter_5)
+            image_correct_cti = correct_serial_cti_from_image(image=image_post_cti, params=parameters,
+                                                              settings=arctic_niter_5)
 
             image_difference_niter_5 = image_correct_cti - image_pre_cti
 
@@ -986,8 +1004,8 @@ class TestArcticCorrectCTI:
                                                    s_n_levels=2000,
                                                    s_charge_injection_mode=False, s_readout_offset=0)
 
-            image_correct_cti = pyarctic.correct_serial_cti_from_image(image=image_post_cti, params=parameters,
-                                                                       settings=arctic_niter_3)
+            image_correct_cti = correct_serial_cti_from_image(image=image_post_cti, params=parameters,
+                                                              settings=arctic_niter_3)
 
             image_difference_niter_3 = image_correct_cti - image_pre_cti
 
@@ -1004,13 +1022,13 @@ class TestArcticCorrectCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_parallel)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_parallel)
 
             image_difference_2 = image_correct_cti - image_pre_cti
 
@@ -1023,13 +1041,13 @@ class TestArcticCorrectCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_parallel)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_parallel)
 
             image_difference_2 = image_correct_cti - image_pre_cti
 
@@ -1042,13 +1060,13 @@ class TestArcticCorrectCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_parallel)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_parallel)
 
             image_difference_2 = image_correct_cti - image_pre_cti
 
@@ -1061,13 +1079,13 @@ class TestArcticCorrectCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_parallel)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_parallel)
 
             image_difference_2 = image_correct_cti - image_pre_cti
 
@@ -1080,13 +1098,13 @@ class TestArcticCorrectCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_parallel)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_parallel)
 
             image_difference_2 = image_correct_cti - image_pre_cti
 
@@ -1099,13 +1117,13 @@ class TestArcticCorrectCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_parallel)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_parallel)
 
             image_difference_2 = image_correct_cti - image_pre_cti
 
@@ -1118,13 +1136,13 @@ class TestArcticCorrectCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_parallel)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_parallel)
 
             image_difference_2 = image_correct_cti - image_pre_cti
 
@@ -1137,13 +1155,13 @@ class TestArcticCorrectCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_parallel)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_parallel)
 
             image_difference_2 = image_correct_cti - image_pre_cti
 
@@ -1158,13 +1176,13 @@ class TestArcticCorrectCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_parallel)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_parallel)
 
             image_difference_2 = image_correct_cti - image_pre_cti
 
@@ -1179,13 +1197,13 @@ class TestArcticCorrectCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_parallel)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_parallel)
 
             image_difference_2 = image_correct_cti - image_pre_cti
 
@@ -1200,13 +1218,13 @@ class TestArcticCorrectCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_parallel)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_parallel)
 
             image_difference_2 = image_correct_cti - image_pre_cti
 
@@ -1221,13 +1239,13 @@ class TestArcticCorrectCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_parallel)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_parallel)
 
             image_difference_2 = image_correct_cti - image_pre_cti
 
@@ -1240,15 +1258,15 @@ class TestArcticCorrectCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             arctic_niter_5 = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=5, p_express=5,
                                                    p_n_levels=2000,
                                                    p_charge_injection_mode=False, p_readout_offset=0)
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_niter_5)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_niter_5)
 
             image_difference_niter_5 = image_correct_cti - image_pre_cti
 
@@ -1256,8 +1274,8 @@ class TestArcticCorrectCTI:
                                                    p_n_levels=2000,
                                                    p_charge_injection_mode=False, p_readout_offset=0)
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_niter_3)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_niter_3)
 
             image_difference_niter_3 = image_correct_cti - image_pre_cti
 
@@ -1272,15 +1290,15 @@ class TestArcticCorrectCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             arctic_niter_5 = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=5, p_express=5,
                                                    p_n_levels=2000,
                                                    p_charge_injection_mode=False, p_readout_offset=0)
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_niter_5)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_niter_5)
 
             image_difference_niter_5 = image_correct_cti - image_pre_cti
 
@@ -1288,8 +1306,8 @@ class TestArcticCorrectCTI:
                                                    p_n_levels=2000,
                                                    p_charge_injection_mode=False, p_readout_offset=0)
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_niter_3)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_niter_3)
 
             image_difference_niter_3 = image_correct_cti - image_pre_cti
 
@@ -1304,15 +1322,15 @@ class TestArcticCorrectCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             arctic_niter_5 = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=5, p_express=5,
                                                    p_n_levels=2000,
                                                    p_charge_injection_mode=False, p_readout_offset=0)
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_niter_5)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_niter_5)
 
             image_difference_niter_5 = image_correct_cti - image_pre_cti
 
@@ -1320,8 +1338,8 @@ class TestArcticCorrectCTI:
                                                    p_n_levels=2000,
                                                    p_charge_injection_mode=False, p_readout_offset=0)
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_niter_3)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_niter_3)
 
             image_difference_niter_3 = image_correct_cti - image_pre_cti
 
@@ -1336,15 +1354,15 @@ class TestArcticCorrectCTI:
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
 
-            image_post_cti = pyarctic.add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
-                                                                settings=arctic_parallel)
+            image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
+                                                       settings=arctic_parallel)
 
             arctic_niter_5 = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=5, p_express=5,
                                                    p_n_levels=2000,
                                                    p_charge_injection_mode=False, p_readout_offset=0)
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_niter_5)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_niter_5)
 
             image_difference_niter_5 = image_correct_cti - image_pre_cti
 
@@ -1352,8 +1370,8 @@ class TestArcticCorrectCTI:
                                                    p_n_levels=2000,
                                                    p_charge_injection_mode=False, p_readout_offset=0)
 
-            image_correct_cti = pyarctic.correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
-                                                                         settings=arctic_niter_3)
+            image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
+                                                                settings=arctic_niter_3)
 
             image_difference_niter_3 = image_correct_cti - image_pre_cti
 

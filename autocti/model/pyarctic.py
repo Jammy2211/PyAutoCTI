@@ -28,17 +28,17 @@ import numpy as np
 from autocti.model import arctic_params
 
 
-def call_arctic(image_pre_clocking, unclock, species, ccd, settings):
+def call_arctic(image, species, ccd, settings, correct_cti=False):
     """
     Perform image clocking via an arctic call (via swig wrapping), either adding or correcting cti to an image in \
     either the parallel or serial direction
 
     Parameters
     ----------
-    image_pre_clocking : ndarray
+    image : ndarray
         The two-dimensional image passed to arctic for CTI correction, assuming the direction of clocking is \
         upwards relative to a ndarray (e.g towards image[0, :]).
-    unclock : bool
+    correct_cti : bool
         Determines whether arctic is correcting CTI (unclock=True) or adding CTI (unclock=False).
     settings : ArcticSettings
         The settings that control arctic (e.g. ccd well_depth express option). This is the settings in one specific \
@@ -66,15 +66,14 @@ def call_arctic(image_pre_clocking, unclock, species, ccd, settings):
     # noinspection PyUnresolvedReferences,PyPep8Naming
     import pySHE_ArCTIC as arctic
 
-    settings.unclock = unclock  # Include unclock in parameters to pass to different routines easily
+    settings.unclock = correct_cti  # Include unclock in parameters to pass to different routines easily
     clock_routine = arctic.cte_image_neo()  # Setup instance of arctic charge clocking routine
 
     clock_params = clock_routine.parameters  # Initiate the parameters which the arctic clocking routine uses
 
     set_arctic_settings(clock_params=clock_params, settings=settings)
 
-    return clock_image(clock_routine=clock_routine, clock_params=clock_params,
-                       image=image_pre_clocking, species=species, ccd=ccd)
+    return clock_image(clock_routine=clock_routine, clock_params=clock_params, image=image, species=species, ccd=ccd)
 
 
 def clock_image(clock_routine, clock_params, image, species, ccd):
@@ -90,19 +89,18 @@ def clock_image(clock_routine, clock_params, image, species, ccd):
     return image
 
 
-def call_arctic_parallel_density_vary(image_pre_clocking, unclock, species, ccd, settings):
+def call_arctic_parallel_density_vary(image, species, ccd, settings):
     # noinspection PyUnresolvedReferences,PyPep8Naming
     import pySHE_ArCTIC as arctic
 
-    settings.unclock = unclock  # Include unclock in parameters to pass to different routines easily
+    settings.unclock = False  # Include unclock in parameters to pass to different routines easily
     clock_routine = arctic.cte_image_neo()  # Setup instance of arctic charge clocking routine
 
     clock_params = clock_routine.parameters  # Initiate the parameters which the arctic clocking routine uses
 
     set_arctic_settings(clock_params=clock_params, settings=settings)
 
-    return clock_image_variable_density(clock_routine=clock_routine, clock_params=clock_params,
-                                        image=image_pre_clocking,
+    return clock_image_variable_density(clock_routine=clock_routine, clock_params=clock_params, image=image,
                                         species=species, ccd=ccd)
 
 
@@ -169,7 +167,3 @@ def set_arctic_image_dimensions(clock_routine, clock_params, dimensions):
     clock_params.end_y = dimensions[0]
 
     clock_routine.setup(dimensions[1], dimensions[0])
-
-
-class ArcticException(Exception):
-    pass
