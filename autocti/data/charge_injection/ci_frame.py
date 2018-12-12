@@ -475,7 +475,7 @@ class ChInj(np.ndarray):
     def serial_calibration_array_from_frame(self, from_column, rows):
         """Extract a serial calibration array from a charge injection ci_frame, where this array is a sub-set of the
         ci_frame which can be used for serial-only calibration. Specifically, this ci_frame is all charge injection
-        regions and their serial over-scan trails, specified from a certain column from the read-out electrnics.
+        regions and their serial over-scan trails, specified from a certain column from the read-out electronics.
 
         The diagram below illustrates the array that is extracted from a ci_frame with from_column=5:
 
