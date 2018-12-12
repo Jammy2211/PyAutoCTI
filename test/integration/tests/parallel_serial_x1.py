@@ -3,6 +3,7 @@ import shutil
 from os import path
 
 from autofit import conf
+from autofit.core import model_mapper as mm
 from autofit.core import non_linear as nl
 
 from autocti.model import arctic_params
@@ -65,10 +66,11 @@ def test_pipeline_parallel_serial_1_species():
 def make_parallel_serial_x1s_pipeline(pipeline_name):
     class ParallelPhase(ph.ParallelPhase):
         def pass_priors(self, previous_results):
-            self.parallel_species.well_fill_alpha = 1.0
-            self.parallel_species.well_fill_gamma = 0.0
+            self.parallel_ccd.well_fill_alpha = 1.0
+            self.parallel_ccd.well_fill_gamma = 0.0
 
-    phase1 = ParallelPhase(optimizer_class=nl.MultiNest, parallel_species=arctic_params.Species,
+    phase1 = ParallelPhase(optimizer_class=nl.MultiNest, parallel_species=[mm.PriorModel(arctic_params.Species)],
+                           parallel_ccd=arctic_params.CCD,
                            columns=3, phase_name="{}/phase1".format(pipeline_name))
 
     phase1.optimizer.n_live_points = 60
@@ -77,11 +79,14 @@ def make_parallel_serial_x1s_pipeline(pipeline_name):
 
     class SerialParallelFixedPhase(ph.ParallelSerialPhase):
         def pass_priors(self, previous_results):
-            self.parallel = previous_results[-1].constant.parallel
-            self.serial.well_fill_alpha = 1.0
-            self.serial.well_fill_gamma = 0.0
+            self.parallel_species = previous_results[-1].constant.parallel_species
+            self.parallel_ccd = previous_results[-1].constant.parallel_ccd
+            self.serial_ccd.well_fill_alpha = 1.0
+            self.serial_ccd.well_fill_gamma = 0.0
 
-    phase2 = SerialParallelFixedPhase(optimizer_class=nl.MultiNest, serial=arctic_params.Species,
+    phase2 = SerialParallelFixedPhase(optimizer_class=nl.MultiNest,
+                                      serial_species=[mm.PriorModel(arctic_params.Species)],
+                                      serial_ccd=arctic_params.CCD,
                                       phase_name="{}/phase2".format(pipeline_name))
 
     phase2.optimizer.n_live_points = 60
@@ -90,12 +95,14 @@ def make_parallel_serial_x1s_pipeline(pipeline_name):
 
     class ParallelSerialPhase(ph.ParallelSerialPhase):
         def pass_priors(self, previous_results):
-            self.parallel = previous_results[0].variable.parallel
-            self.serial = previous_results[1].variable.serial
-            self.parallel.well_fill_alpha = 1.0
-            self.parallel.well_fill_gamma = 0.0
-            self.serial.well_fill_alpha = 1.0
-            self.serial.well_fill_gamma = 0.0
+            self.parallel_species = previous_results[0].variable.parallel_species
+            self.parallel_ccd = previous_results[0].variable.parallel_ccd
+            self.serial_species = previous_results[1].variable.serial_species
+            self.serial_ccd = previous_results[1].variable.serial_ccd
+            self.parallel_ccd.well_fill_alpha = 1.0
+            self.parallel_ccd.well_fill_gamma = 0.0
+            self.serial_ccd.well_fill_alpha = 1.0
+            self.serial_ccd.well_fill_gamma = 0.0
 
     phase3 = ParallelSerialPhase(optimizer_class=nl.MultiNest, phase_name="{}/phase3".format(pipeline_name))
 
@@ -108,16 +115,18 @@ def make_parallel_serial_x1s_pipeline(pipeline_name):
 
     class ParallelSerialHyperFixedPhase(ph.ParallelSerialHyperPhase):
         def pass_priors(self, previous_results):
-            self.parallel = previous_results[-1].variable.parallel
-            self.serial = previous_results[-1].variable.serial
+            self.parallel_species = previous_results[-1].variable.parallel_species
+            self.serial_species = previous_results[-1].variable.serial_species
+            self.parallel_ccd = previous_results[-1].variable.parallel_ccd
+            self.serial_ccd = previous_results[-1].variable.serial_ccd
             self.hyp_ci_regions = previous_results[-1].hyper.constant.hyp_ci_regions
             self.hyp_parallel_trails = previous_results[-1].hyper.constant.hyp_parallel_trails
             self.hyp_serial_trails = previous_results[-1].hyper.constant.hyp_serial_trails
             self.hyp_parallel_serial_trails = previous_results[-1].hyper.constant.hyp_parallel_serial_trails
-            self.parallel.well_fill_alpha = 1.0
-            self.parallel.well_fill_gamma = 0.0
-            self.serial.well_fill_alpha = 1.0
-            self.serial.well_fill_gamma = 0.0
+            self.parallel_ccd.well_fill_alpha = 1.0
+            self.parallel_ccd.well_fill_gamma = 0.0
+            self.serial_ccd.well_fill_alpha = 1.0
+            self.serial_ccd.well_fill_gamma = 0.0
 
     phase4 = ParallelSerialHyperFixedPhase(optimizer_class=nl.MultiNest, phase_name="{}/phase4".format(pipeline_name))
 
