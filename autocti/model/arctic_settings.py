@@ -63,25 +63,13 @@ def setup(include_parallel=False, p_well_depth=84700, p_niter=1, p_express=5, p_
         Introduces an offset which increases the number of transfers each pixel takes in the parallel direction.
     """
 
-    parallel_settings = _setup_parallel(p_well_depth, p_niter, p_express, p_n_levels,
-                                        p_charge_injection_mode, p_readout_offset) if include_parallel else None
+    parallel_settings = Settings(p_well_depth, p_niter, p_express, p_n_levels,
+                                 p_charge_injection_mode, p_readout_offset) if include_parallel else None
 
-    serial_settings = _setup_serial(s_well_depth, s_niter, s_express, s_n_levels,
-                                    s_charge_injection_mode, s_readout_offset) if include_serial else None
+    serial_settings = Settings(s_well_depth, s_niter, s_express, s_n_levels,
+                               s_charge_injection_mode, s_readout_offset) if include_serial else None
 
     return ArcticSettings(neomode='NEO', parallel=parallel_settings, serial=serial_settings)
-
-
-def _setup_parallel(well_depth, niter, express, n_levels, charge_injection_mode,
-                    readout_offset):
-    return ParallelSettings(well_depth, niter, express, n_levels, charge_injection_mode,
-                            readout_offset)
-
-
-def _setup_serial(well_depth, niter, express, n_levels, charge_injection_mode,
-                  readout_offset):
-    return ParallelSettings(well_depth, niter, express, n_levels, charge_injection_mode,
-                            readout_offset)
 
 
 class ArcticSettings(object):
@@ -123,10 +111,15 @@ class ArcticSettings(object):
         info = ''
 
         if self.parallel is not None:
-            info += self.parallel.generate_info()
+            info = 'parallel_mode = True\n\n'
+            info += infoio.generate_class_info(cls=self, prefix='parallel_', include_types=[int, float, list, bool])
+            info += '\n'
 
         if self.serial is not None:
-            info += self.serial.generate_info()
+            info = 'serial_mode = True\n\n'
+            info += infoio.generate_class_info(cls=self, prefix='serial_', include_types=[int, float, list, bool])
+            info += '\n'
+            return info
 
         return info
 
@@ -140,15 +133,19 @@ class ArcticSettings(object):
         """
 
         if self.parallel is not None:
-            self.parallel.update_fits_header_info(ext_header)
+            ext_header.set('cte_pite', self.parallel.niter, 'Iterations Used In Correction (Parallel)')
+            ext_header.set('cte_pwld', self.parallel.well_depth, 'CCD Well Depth (Parallel)')
+            ext_header.set('cte_pnts', self.parallel.n_levels, 'Number of levels (Parallel)')
 
         if self.serial is not None:
-            self.serial.update_fits_header_info(ext_header)
+            ext_header.set('cte_site', self.serial.niter, 'Iterations Used In Correction (Serial)')
+            ext_header.set('cte_swld', self.serial.well_depth, 'CCD Well Depth (Serial)')
+            ext_header.set('cte_snts', self.serial.n_levels, 'Number of levels (Serial)')
 
         return ext_header
 
 
-class ParallelSettings(object):
+class Settings(object):
 
     def __init__(self, well_depth, niter, express, n_levels, charge_injection_mode=False, readout_offset=0):
         """
@@ -195,56 +192,5 @@ class ParallelSettings(object):
         """Generate string containing information on the parallel arctic settings."""
         info = 'parallel_mode = True\n\n'
         info += infoio.generate_class_info(cls=self, prefix='parallel_', include_types=[int, float, list, bool])
-        info += '\n'
-        return info
-
-
-class SerialSettings(object):
-
-    def __init__(self, well_depth, niter, express, n_levels, charge_injection_mode=False, readout_offset=0):
-        """The CTI settings for serial clocking.
-
-        Returns
-        --------
-        well_depth : int
-            The full well depth of the CCD.
-        niter : int
-            If CTI is being corrected, niter determines the number of times clocking is run to perform the \
-            correction via forward modeling. For adding CTI only one run is required and niter is ignored.
-        express : int
-            The factor by which pixel-to-pixel transfers are combined for efficiency.
-        n_levels : int
-            Relic of old arctic code, not used anymore and will be removed in future.
-        charge_injection_mode : bool
-            If True, clocking is performed in charge injection line mode, whereby each pixel is clocked and therefore \
-             trailed by traps over the entire CCD (as opposed to its distance from the CCD register).
-        readout_offset : int
-            Introduces an offset which increases the number of transfers each pixel takes in the serial direction.
-        """
-        self.well_depth = well_depth
-        self.niter = niter
-        self.express = express
-        self.n_levels = n_levels
-        self.charge_injection_mode = charge_injection_mode
-        self.readout_offset = readout_offset
-
-    def update_fits_header_info(self, ext_header):
-        """Update a fits header to include the serial CTI settings.
-
-        Params
-        -----------
-        ext_header : astropy.io.hdulist
-            The opened header of the astropy fits header.
-        """
-        ext_header.set('cte_site', self.niter, 'Iterations Used In Correction (Serial)')
-        ext_header.set('cte_swld', self.well_depth, 'CCD Well Depth (Serial)')
-        ext_header.set('cte_snts', self.n_levels, 'Number of levels (Serial)')
-        return ext_header
-
-    def generate_info(self):
-        """Generate string containing information on the parallel arctic settings."""
-
-        info = 'serial_mode = True\n\n'
-        info += infoio.generate_class_info(cls=self, prefix='serial_', include_types=[int, float, list, bool])
         info += '\n'
         return info
