@@ -6,6 +6,7 @@ from autofit import conf
 from autofit.core import model_mapper as mm
 from autofit.core import non_linear as nl
 from autofit.core import phase_property
+from autofit.core.phase import ResultsCollection
 
 from autocti.data import mask as msk
 from autocti.data.charge_injection import ci_data
@@ -93,7 +94,7 @@ def make_phase():
 
 @pytest.fixture(name="cti_settings")
 def make_cti_settings():
-    parallel_settings = arctic_settings.ParallelSettings(well_depth=0, niter=1, express=1, n_levels=2000)
+    parallel_settings = arctic_settings.Settings(well_depth=0, niter=1, express=1, n_levels=2000)
     return arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings)
 
 
@@ -123,7 +124,7 @@ def make_results():
 
 @pytest.fixture(name="results_collection")
 def make_results_collection(results):
-    return ph.ResultsCollection([results])
+    return ResultsCollection([results])
 
 
 class TestPhase(object):
@@ -156,7 +157,7 @@ class TestPhase(object):
         setattr(results.constant, "parallel_species", [parallel])
 
         phase = MyPhase(optimizer_class=NLO, parallel_species=[parallel], ci_datas_extractor=ph.default_extractor)
-        phase.make_analysis(ci_datas, cti_settings, previous_results=ph.ResultsCollection([results]))
+        phase.make_analysis(ci_datas, cti_settings, previous_results=ResultsCollection([results]))
 
         assert phase.parallel_species == [parallel]
 
@@ -210,7 +211,7 @@ class TestPhase(object):
 class TestResult(object):
 
     def test_results(self):
-        results = ph.ResultsCollection([1, 2, 3])
+        results = ResultsCollection([1, 2, 3])
         assert results == [1, 2, 3]
         assert results.last == 3
         assert results.first == 1
