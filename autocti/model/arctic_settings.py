@@ -26,55 +26,9 @@ Author: James Nightingale
 from autocti.tools import infoio
 
 
-def setup(include_parallel=False, p_well_depth=84700, p_niter=1, p_express=5, p_n_levels=2000,
-          p_charge_injection_mode=False,
-          p_readout_offset=0,
-          include_serial=False, s_well_depth=84700, s_niter=1, s_express=5, s_n_levels=2000,
-          s_charge_injection_mode=False,
-          s_readout_offset=0):
-    """Factory to set up a *ParallelParams* and / or *SerialParams* sub-class as an *ArcticParams*
-    instance using any number of trap species in both directions.
-
-    Parameters
-    ----------
-    s_n_levels
-    s_express
-    s_niter
-    s_well_depth
-    s_readout_offset
-    s_charge_injection_mode
-    include_parallel: Bool
-        If True parallel parameters will be included in the ArcticParams object
-    include_serial: Bool
-        If True serial parameters will be included in the ArcticParams object
-    p_well_depth : int
-        The full well depth of the CCD.
-    p_niter : int
-        If CTI is being corrected, niter determines the number of times clocking is run to erform the \
-        correction via forward modeling. For adding CTI only one run is required and niter is ignored.
-    p_express : int
-        The factor by which pixel-to-pixel transfers are combined for efficiency.
-    p_n_levels : int
-        Relic of old arctic code, not used anymore and will be removed in future.
-    p_charge_injection_mode : bool
-        If True, clocking is performed in charge injection line mode, whereby each pixel is clocked and therefore \
-         trailed by traps over the entire CCD (as opposed to its distance from the CCD register).
-    p_readout_offset : int
-        Introduces an offset which increases the number of transfers each pixel takes in the parallel direction.
-    """
-
-    parallel_settings = Settings(p_well_depth, p_niter, p_express, p_n_levels,
-                                 p_charge_injection_mode, p_readout_offset) if include_parallel else None
-
-    serial_settings = Settings(s_well_depth, s_niter, s_express, s_n_levels,
-                               s_charge_injection_mode, s_readout_offset) if include_serial else None
-
-    return ArcticSettings(neomode='NEO', parallel=parallel_settings, serial=serial_settings)
-
-
 class ArcticSettings(object):
 
-    def __init__(self, neomode, parallel=None, serial=None):
+    def __init__(self, neomode='NEO', parallel=None, serial=None):
         """Sets up the CTI settings for parallel and serial clocking, specified using the \
         ArcticSettings.Settings and ArcticSettings.Settings classes.
         

@@ -58,6 +58,53 @@ def setup(include_parallel=False, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0
                                       parallel_species=parallel_species)
 
 
+def setup_settings(include_parallel=False, p_well_depth=84700, p_niter=1, p_express=5, p_n_levels=2000,
+                   p_charge_injection_mode=False,
+                   p_readout_offset=0,
+                   include_serial=False, s_well_depth=84700, s_niter=1, s_express=5, s_n_levels=2000,
+                   s_charge_injection_mode=False,
+                   s_readout_offset=0):
+    """Factory to set up a *ParallelParams* and / or *SerialParams* sub-class as an *ArcticParams*
+    instance using any number of trap species in both directions.
+
+    Parameters
+    ----------
+    s_n_levels
+    s_express
+    s_niter
+    s_well_depth
+    s_readout_offset
+    s_charge_injection_mode
+    include_parallel: Bool
+        If True parallel parameters will be included in the ArcticParams object
+    include_serial: Bool
+        If True serial parameters will be included in the ArcticParams object
+    p_well_depth : int
+        The full well depth of the CCD.
+    p_niter : int
+        If CTI is being corrected, niter determines the number of times clocking is run to erform the \
+        correction via forward modeling. For adding CTI only one run is required and niter is ignored.
+    p_express : int
+        The factor by which pixel-to-pixel transfers are combined for efficiency.
+    p_n_levels : int
+        Relic of old arctic code, not used anymore and will be removed in future.
+    p_charge_injection_mode : bool
+        If True, clocking is performed in charge injection line mode, whereby each pixel is clocked and therefore \
+         trailed by traps over the entire CCD (as opposed to its distance from the CCD register).
+    p_readout_offset : int
+        Introduces an offset which increases the number of transfers each pixel takes in the parallel direction.
+    """
+
+    parallel_settings = arctic_settings.Settings(p_well_depth, p_niter, p_express, p_n_levels,
+                                                 p_charge_injection_mode,
+                                                 p_readout_offset) if include_parallel else None
+
+    serial_settings = arctic_settings.Settings(s_well_depth, s_niter, s_express, s_n_levels,
+                                               s_charge_injection_mode, s_readout_offset) if include_serial else None
+
+    return arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings, serial=serial_settings)
+
+
 def add_parallel_cti_to_image(image, params, settings):
     return pyarctic.call_arctic(image, params.parallel_species, params.parallel_ccd, settings.parallel)
 
@@ -772,9 +819,9 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            settings = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=1, p_express=5,
-                                             p_n_levels=2000,
-                                             p_charge_injection_mode=False, p_readout_offset=0)
+            settings = setup_settings(include_parallel=True, p_well_depth=84700, p_niter=1, p_express=5,
+                                      p_n_levels=2000,
+                                      p_charge_injection_mode=False, p_readout_offset=0)
 
             parameters = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                p_well_notch_depth=0.01, p_well_fill_beta=0.8)
@@ -782,9 +829,9 @@ class TestArcticAddCTI:
             image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
                                                        settings=settings)
 
-            settings_charge_inj = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=1,
-                                                        p_express=5, p_n_levels=2000,
-                                                        p_charge_injection_mode=True, p_readout_offset=0)
+            settings_charge_inj = setup_settings(include_parallel=True, p_well_depth=84700, p_niter=1,
+                                                 p_express=5, p_n_levels=2000,
+                                                 p_charge_injection_mode=True, p_readout_offset=0)
 
             image_post_cti_charge_inj = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
                                                                   settings=settings_charge_inj)
@@ -799,9 +846,9 @@ class TestArcticAddCTI:
     class TestDensityVary:
 
         def test__horizontal_line__different_density_in_each_column(self):
-            settings = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=1, p_express=5,
-                                             p_n_levels=2000,
-                                             p_charge_injection_mode=False, p_readout_offset=0)
+            settings = setup_settings(include_parallel=True, p_well_depth=84700, p_niter=1, p_express=5,
+                                      p_n_levels=2000,
+                                      p_charge_injection_mode=False, p_readout_offset=0)
 
             ccd = arctic_params.CCD(well_fill_beta=0.8, well_notch_depth=0.01)
             species = [arctic_params.Species(trap_density=10., trap_lifetime=1.),
@@ -898,18 +945,18 @@ class TestArcticCorrectCTI:
             image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
                                                        settings=arctic_parallel)
 
-            arctic_niter_5 = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=5, p_express=5,
-                                                   p_n_levels=2000,
-                                                   p_charge_injection_mode=False, p_readout_offset=0)
+            arctic_niter_5 = setup_settings(include_parallel=True, p_well_depth=84700, p_niter=5, p_express=5,
+                                            p_n_levels=2000,
+                                            p_charge_injection_mode=False, p_readout_offset=0)
 
             image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
                                                                 settings=arctic_niter_5)
 
             image_difference_niter_5 = image_correct_cti - image_pre_cti
 
-            arctic_niter_3 = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=3, p_express=5,
-                                                   p_n_levels=2000,
-                                                   p_charge_injection_mode=False, p_readout_offset=0)
+            arctic_niter_3 = setup_settings(include_parallel=True, p_well_depth=84700, p_niter=3, p_express=5,
+                                            p_n_levels=2000,
+                                            p_charge_injection_mode=False, p_readout_offset=0)
 
             image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
                                                                 settings=arctic_niter_3)
@@ -991,18 +1038,18 @@ class TestArcticCorrectCTI:
             image_post_cti = add_serial_cti_to_image(image=image_pre_cti, params=parameters,
                                                      settings=arctic_serial)
 
-            arctic_niter_5 = arctic_settings.setup(include_serial=True, s_well_depth=84700, s_niter=5, s_express=5,
-                                                   s_n_levels=2000,
-                                                   s_charge_injection_mode=False, s_readout_offset=0)
+            arctic_niter_5 = setup_settings(include_serial=True, s_well_depth=84700, s_niter=5, s_express=5,
+                                            s_n_levels=2000,
+                                            s_charge_injection_mode=False, s_readout_offset=0)
 
             image_correct_cti = correct_serial_cti_from_image(image=image_post_cti, params=parameters,
                                                               settings=arctic_niter_5)
 
             image_difference_niter_5 = image_correct_cti - image_pre_cti
 
-            arctic_niter_3 = arctic_settings.setup(include_serial=True, s_well_depth=84700, s_niter=3, s_express=5,
-                                                   s_n_levels=2000,
-                                                   s_charge_injection_mode=False, s_readout_offset=0)
+            arctic_niter_3 = setup_settings(include_serial=True, s_well_depth=84700, s_niter=3, s_express=5,
+                                            s_n_levels=2000,
+                                            s_charge_injection_mode=False, s_readout_offset=0)
 
             image_correct_cti = correct_serial_cti_from_image(image=image_post_cti, params=parameters,
                                                               settings=arctic_niter_3)
@@ -1261,18 +1308,18 @@ class TestArcticCorrectCTI:
             image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
                                                        settings=arctic_parallel)
 
-            arctic_niter_5 = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=5, p_express=5,
-                                                   p_n_levels=2000,
-                                                   p_charge_injection_mode=False, p_readout_offset=0)
+            arctic_niter_5 = setup_settings(include_parallel=True, p_well_depth=84700, p_niter=5, p_express=5,
+                                            p_n_levels=2000,
+                                            p_charge_injection_mode=False, p_readout_offset=0)
 
             image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
                                                                 settings=arctic_niter_5)
 
             image_difference_niter_5 = image_correct_cti - image_pre_cti
 
-            arctic_niter_3 = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=3, p_express=5,
-                                                   p_n_levels=2000,
-                                                   p_charge_injection_mode=False, p_readout_offset=0)
+            arctic_niter_3 = setup_settings(include_parallel=True, p_well_depth=84700, p_niter=3, p_express=5,
+                                            p_n_levels=2000,
+                                            p_charge_injection_mode=False, p_readout_offset=0)
 
             image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
                                                                 settings=arctic_niter_3)
@@ -1293,18 +1340,18 @@ class TestArcticCorrectCTI:
             image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
                                                        settings=arctic_parallel)
 
-            arctic_niter_5 = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=5, p_express=5,
-                                                   p_n_levels=2000,
-                                                   p_charge_injection_mode=False, p_readout_offset=0)
+            arctic_niter_5 = setup_settings(include_parallel=True, p_well_depth=84700, p_niter=5, p_express=5,
+                                            p_n_levels=2000,
+                                            p_charge_injection_mode=False, p_readout_offset=0)
 
             image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
                                                                 settings=arctic_niter_5)
 
             image_difference_niter_5 = image_correct_cti - image_pre_cti
 
-            arctic_niter_3 = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=3, p_express=5,
-                                                   p_n_levels=2000,
-                                                   p_charge_injection_mode=False, p_readout_offset=0)
+            arctic_niter_3 = setup_settings(include_parallel=True, p_well_depth=84700, p_niter=3, p_express=5,
+                                            p_n_levels=2000,
+                                            p_charge_injection_mode=False, p_readout_offset=0)
 
             image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
                                                                 settings=arctic_niter_3)
@@ -1325,18 +1372,18 @@ class TestArcticCorrectCTI:
             image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
                                                        settings=arctic_parallel)
 
-            arctic_niter_5 = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=5, p_express=5,
-                                                   p_n_levels=2000,
-                                                   p_charge_injection_mode=False, p_readout_offset=0)
+            arctic_niter_5 = setup_settings(include_parallel=True, p_well_depth=84700, p_niter=5, p_express=5,
+                                            p_n_levels=2000,
+                                            p_charge_injection_mode=False, p_readout_offset=0)
 
             image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
                                                                 settings=arctic_niter_5)
 
             image_difference_niter_5 = image_correct_cti - image_pre_cti
 
-            arctic_niter_3 = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=3, p_express=5,
-                                                   p_n_levels=2000,
-                                                   p_charge_injection_mode=False, p_readout_offset=0)
+            arctic_niter_3 = setup_settings(include_parallel=True, p_well_depth=84700, p_niter=3, p_express=5,
+                                            p_n_levels=2000,
+                                            p_charge_injection_mode=False, p_readout_offset=0)
 
             image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
                                                                 settings=arctic_niter_3)
@@ -1357,18 +1404,18 @@ class TestArcticCorrectCTI:
             image_post_cti = add_parallel_cti_to_image(image=image_pre_cti, params=parameters,
                                                        settings=arctic_parallel)
 
-            arctic_niter_5 = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=5, p_express=5,
-                                                   p_n_levels=2000,
-                                                   p_charge_injection_mode=False, p_readout_offset=0)
+            arctic_niter_5 = setup_settings(include_parallel=True, p_well_depth=84700, p_niter=5, p_express=5,
+                                            p_n_levels=2000,
+                                            p_charge_injection_mode=False, p_readout_offset=0)
 
             image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
                                                                 settings=arctic_niter_5)
 
             image_difference_niter_5 = image_correct_cti - image_pre_cti
 
-            arctic_niter_3 = arctic_settings.setup(include_parallel=True, p_well_depth=84700, p_niter=3, p_express=5,
-                                                   p_n_levels=2000,
-                                                   p_charge_injection_mode=False, p_readout_offset=0)
+            arctic_niter_3 = setup_settings(include_parallel=True, p_well_depth=84700, p_niter=3, p_express=5,
+                                            p_n_levels=2000,
+                                            p_charge_injection_mode=False, p_readout_offset=0)
 
             image_correct_cti = correct_parallel_cti_from_image(image=image_post_cti, params=parameters,
                                                                 settings=arctic_niter_3)
