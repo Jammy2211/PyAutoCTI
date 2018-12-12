@@ -1,12 +1,18 @@
-from autofit import conf
-from autocti.data.charge_injection import ci_frame, ci_pattern
-from autocti.data.charge_injection import ci_data
-from autocti.data import cti_image
-from autocti.tools import infoio
 import shutil
-import os
+from os import path
 
-dirpath = "/gpfs/data/pdtw24/CTI".format(os.path.dirname(os.path.realpath(__file__)))
+from autofit import conf
+
+from autocti.data import cti_image
+from autocti.data import mask
+from autocti.data.charge_injection import ci_data
+from autocti.data.charge_injection import ci_frame, ci_pattern
+from autocti.tools import infoio
+
+directory = path.dirname(path.realpath(__file__))
+
+dirpath = "{}".format(directory)
+
 
 class QuadGeometryIntegration(cti_image.FrameGeometry):
 
@@ -97,26 +103,31 @@ class CIQuadGeometryIntegration(QuadGeometryIntegration, ci_frame.CIQuadGeometry
         """This class represents the quadrant geometry of an integration quadrant."""
         super(CIQuadGeometryIntegration, self).__init__()
 
-    def parallel_front_edge_region(self, region, rows=(0, 1)):
+    @staticmethod
+    def parallel_front_edge_region(region, rows=(0, 1)):
         ci_frame.check_parallel_front_edge_size(region, rows)
         return cti_image.Region((region.y0 + rows[0], region.y0 + rows[1], region.x0, region.x1))
 
-    def parallel_trails_region(self, region, rows=(0, 1)):
+    @staticmethod
+    def parallel_trails_region(region, rows=(0, 1)):
         return cti_image.Region((region.y1 + rows[0], region.y1 + rows[1], region.x0, region.x1))
 
-    def parallel_side_nearest_read_out_region(self, region, image_shape, columns=(0, 1)):
+    @staticmethod
+    def parallel_side_nearest_read_out_region(region, image_shape, columns=(0, 1)):
         return cti_image.Region((0, image_shape[0], region.x0 + columns[0], region.x0 + columns[1]))
 
-    def serial_front_edge_region(self, region, columns=(0, 1)):
+    @staticmethod
+    def serial_front_edge_region(region, columns=(0, 1)):
         ci_frame.check_serial_front_edge_size(region, columns)
         return cti_image.Region((region.y0, region.y1, region.x0 + columns[0], region.x0 + columns[1]))
 
-    def serial_trails_region(self, region, columns=(0, 1)):
+    @staticmethod
+    def serial_trails_region(region, columns=(0, 1)):
         return cti_image.Region((region.y0, region.y1, region.x1 + columns[0], region.x1 + columns[1]))
 
-    def serial_ci_region_and_trails(self, region, image_shape, from_column):
+    @staticmethod
+    def serial_ci_region_and_trails(region, image_shape, from_column):
         return cti_image.Region((region.y0, region.y1, from_column + region.x0, image_shape[1]))
-
 
 
 shape = (36, 36)
@@ -124,16 +135,17 @@ ci_regions = [(1, 7, 1, 30), (17, 23, 1, 30)]
 normalizations = [84700.0]
 frame_geometry = CIQuadGeometryIntegration()
 
-def simulate_integration_quadrant(data_name, cti_params, cti_settings):
 
+def simulate_integration_quadrant(data_name, cti_params, cti_settings):
     data_path = "{}/data/integration/{}".format(dirpath, data_name)
     infoio.make_path_if_does_not_exist(data_path)
 
     sim_ci_patterns = ci_pattern.create_uniform_simulate_via_lists(normalizations=normalizations, regions=ci_regions)
 
-    sim_ci_datas = list(map(lambda ci_pattern:
+    sim_ci_datas = list(map(lambda pattern:
                             ci_data.CIImage.simulate(shape=shape, frame_geometry=frame_geometry,
-                                                     ci_pattern=ci_pattern, cti_settings=cti_settings, cti_params=cti_params,
+                                                     ci_pattern=pattern, cti_settings=cti_settings,
+                                                     cti_params=cti_params,
                                                      read_noise=None),
                             sim_ci_patterns))
 
@@ -142,22 +154,22 @@ def simulate_integration_quadrant(data_name, cti_params, cti_settings):
 
 
 def load_ci_datas(data_name):
-
     data_path = "{}/data/integration/{}".format(dirpath, data_name)
 
     ci_patterns = ci_pattern.create_uniform_via_lists(normalizations=normalizations, regions=ci_regions)
 
-    images = list(map(lambda ci_pattern, index:
-                      ci_data.CIImage.from_fits(path=data_path, filename='/ci_data_' + str(index), hdu=0,
-                                                frame_geometry=frame_geometry, ci_pattern=ci_pattern),
+    images = list(map(lambda pattern, index:
+                      ci_data.CIImage.from_fits_and_ci_pattern(path=data_path, filename='/ci_data_' + str(index), hdu=0,
+                                                               frame_geometry=frame_geometry, ci_pattern=pattern),
                       ci_patterns, range(len(ci_patterns))))
 
-    noises = list(map(lambda ci_pattern:
+    noises = list(map(lambda pattern:
                       ci_frame.CIFrame.from_single_value(value=1.0, shape=shape, frame_geometry=frame_geometry,
-                                                         ci_pattern=ci_pattern), ci_patterns))
+                                                         ci_pattern=pattern), ci_patterns))
 
-    masks = list(map(lambda ci_pattern:
-                     ci_data.CIMask.create(frame_geometry=frame_geometry, ci_pattern=ci_pattern, shape=shape), ci_patterns))
+    masks = list(map(lambda pattern:
+                     mask.Mask.create(frame_geometry=frame_geometry, ci_pattern=pattern, shape=shape),
+                     ci_patterns))
 
     ci_pre_ctis = list(map(lambda ci_image: ci_image.create_ci_pre_cti(), images))
 
@@ -165,7 +177,6 @@ def load_ci_datas(data_name):
 
 
 def reset_paths(data_name, pipeline_name, output_path):
-
     conf.instance.output_path = output_path
 
     try:
