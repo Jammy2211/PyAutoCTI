@@ -4,7 +4,6 @@ from os import path
 from autofit import conf
 
 from autocti.data import cti_image
-from autocti.data import mask
 from autocti.data.charge_injection import ci_data
 from autocti.data.charge_injection import ci_frame, ci_pattern
 from autocti.tools import infoio
@@ -168,7 +167,7 @@ def load_ci_datas(data_name):
                                                          ci_pattern=pattern), ci_patterns))
 
     masks = list(map(lambda pattern:
-                     mask.Mask.create(frame_geometry=frame_geometry, ci_pattern=pattern, shape=shape),
+                     ci_data.CIMask.create(frame_geometry=frame_geometry, ci_pattern=pattern, shape=shape),
                      ci_patterns))
 
     ci_pre_ctis = list(map(lambda ci_image: ci_image.create_ci_pre_cti(), images))

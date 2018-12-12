@@ -27,10 +27,15 @@ import numpy as np
 
 from autocti import exc
 from autocti.data import cti_image
+from autocti.data import mask
 from autocti.data.charge_injection import ci_frame
 from autocti.data.charge_injection import ci_pattern as pattern
 from autocti.model import pyarctic
 from autocti.tools import infoio
+
+
+class CIMask(ci_frame.CIFrame, mask.Mask):
+    pass
 
 
 class CIData(list):
