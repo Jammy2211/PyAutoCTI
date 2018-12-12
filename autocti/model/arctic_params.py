@@ -111,35 +111,6 @@ class ArcticParams(object):
 
         return ext_header
 
-    @classmethod
-    def poisson_densities(cls, species, ccd, shape, seed=0):
-        """For a set of traps with a given set of densities (which are in traps per pixel), compute a new set of \
-        trap densities by drawing new values for from a Poisson distribution.
-
-        This requires us to first convert each trap density to the total number of traps in the column.
-
-        This is used to model the random distribution of traps on a CCD, which changes the number of traps in each \
-        column.
-
-        Parameters
-        -----------
-        ccd
-        species
-        shape : (int, int)
-            The shape of the image, so that the correct number of trap densities are computed.
-        seed : int
-            The seed of the Poisson random number generator.
-        """
-        np.random.seed(seed)
-        total_traps = tuple(map(lambda s: s.trap_density * shape[0], species))
-        poisson_densities = [np.random.poisson(total_traps) / shape[0] for _ in range(shape[1])]
-        poisson_species = []
-        for densities in poisson_densities:
-            for i, s in enumerate(species):
-                poisson_species.append(Species(trap_density=densities[i], trap_lifetime=s.trap_lifetime))
-
-        return ArcticParams(parallel_ccd=ccd, parallel_species=poisson_species)
-
 
 class CCD(object):
 
@@ -188,3 +159,31 @@ class Species(object):
     def __repr__(self):
         return "\n".join(('Trap Density: {}'.format(self.trap_density),
                           'Trap Lifetime: {}'.format(self.trap_lifetime)))
+
+    @classmethod
+    def poisson_species(cls, species, shape, seed=0):
+        """For a set of traps with a given set of densities (which are in traps per pixel), compute a new set of \
+        trap densities by drawing new values for from a Poisson distribution.
+
+        This requires us to first convert each trap density to the total number of traps in the column.
+
+        This is used to model the random distribution of traps on a CCD, which changes the number of traps in each \
+        column.
+
+        Parameters
+        -----------
+        species
+        shape : (int, int)
+            The shape of the image, so that the correct number of trap densities are computed.
+        seed : int
+            The seed of the Poisson random number generator.
+        """
+        np.random.seed(seed)
+        total_traps = tuple(map(lambda s: s.trap_density * shape[0], species))
+        poisson_densities = [np.random.poisson(total_traps) / shape[0] for _ in range(shape[1])]
+        poisson_species = []
+        for densities in poisson_densities:
+            for i, s in enumerate(species):
+                poisson_species.append(Species(trap_density=densities[i], trap_lifetime=s.trap_lifetime))
+
+        return poisson_species
