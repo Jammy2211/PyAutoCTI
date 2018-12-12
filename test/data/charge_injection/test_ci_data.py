@@ -36,8 +36,8 @@ from autocti.model import arctic_settings
 
 @pytest.fixture(scope='class', name='empty_mask')
 def make_empty_mask():
-    parallel_settings = arctic_settings.ParallelSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
-                                                         readout_offset=0)
+    parallel_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=5, n_levels=2000,
+                                                 readout_offset=0)
     parallel = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings)
 
     return parallel
@@ -45,8 +45,8 @@ def make_empty_mask():
 
 @pytest.fixture(scope='class', name='arctic_parallel')
 def make_arctic_parallel():
-    parallel_settings = arctic_settings.ParallelSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
-                                                         readout_offset=0)
+    parallel_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=5, n_levels=2000,
+                                                 readout_offset=0)
     parallel = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings)
 
     return parallel
@@ -54,8 +54,8 @@ def make_arctic_parallel():
 
 @pytest.fixture(scope='class', name='arctic_serial')
 def make_arctic_serial():
-    serial_settings = arctic_settings.SerialSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
-                                                     readout_offset=0)
+    serial_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=5, n_levels=2000,
+                                               readout_offset=0)
 
     serial = arctic_settings.ArcticSettings(neomode='NEO', serial=serial_settings)
 
@@ -64,11 +64,11 @@ def make_arctic_serial():
 
 @pytest.fixture(scope='class', name='arctic_both')
 def make_arctic_both():
-    parallel_settings = arctic_settings.ParallelSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
-                                                         readout_offset=0)
+    parallel_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=5, n_levels=2000,
+                                                 readout_offset=0)
 
-    serial_settings = arctic_settings.SerialSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
-                                                     readout_offset=0)
+    serial_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=5, n_levels=2000,
+                                               readout_offset=0)
 
     both = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings,
                                           serial=serial_settings)
@@ -78,34 +78,40 @@ def make_arctic_both():
 
 @pytest.fixture(scope='class', name='params_parallel')
 def make_params_parallel():
-    parallel = arctic_params.ParallelOneSpecies(trap_densities=(0.1,), trap_lifetimes=(1.0,),
-                                                well_notch_depth=0.000001, well_fill_beta=0.8)
+    parallel = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
 
-    parallel = arctic_params.ArcticParams(parallel=parallel)
+    ccd = arctic_params.CCD(well_notch_depth=0.000001, well_fill_beta=0.8)
+
+    parallel = arctic_params.ArcticParams(parallel_species=[parallel], parallel_ccd=ccd)
 
     return parallel
 
 
 @pytest.fixture(scope='class', name='params_serial')
 def make_params_serial():
-    serial = arctic_params.SerialOneSpecies(trap_densities=(0.2,), trap_lifetimes=(2.0,),
-                                            well_notch_depth=0.000001, well_fill_beta=0.4)
+    serial = arctic_params.Species(trap_density=0.2, trap_lifetime=2.0)
 
-    serial = arctic_params.ArcticParams(serial=serial)
+    ccd = arctic_params.CCD(well_notch_depth=0.000001, well_fill_beta=0.4)
+
+    serial = arctic_params.ArcticParams(serial_species=[serial], serial_ccd=ccd)
 
     return serial
 
 
 @pytest.fixture(scope='class', name='params_both')
 def make_params_both():
-    parallel = arctic_params.ParallelOneSpecies(trap_densities=(0.4,), trap_lifetimes=(1.0,),
-                                                well_notch_depth=0.000001, well_fill_beta=0.8)
+    parallel = arctic_params.Species(trap_density=0.4, trap_lifetime=1.0)
 
-    serial = arctic_params.SerialOneSpecies(trap_densities=(0.2,), trap_lifetimes=(2.0,),
-                                            well_notch_depth=0.000001, well_fill_beta=0.4)
+    parallel_ccd = arctic_params.CCD(well_notch_depth=0.000001, well_fill_beta=0.8)
 
-    both = arctic_params.ArcticParams(parallel=parallel,
-                                      serial=serial)
+    serial = arctic_params.Species(trap_density=0.2, trap_lifetime=2.0)
+
+    serial_ccd = arctic_params.CCD(well_notch_depth=0.000001, well_fill_beta=0.4)
+
+    both = arctic_params.ArcticParams(parallel_species=[parallel],
+                                      serial_species=[serial],
+                                      parallel_ccd=parallel_ccd,
+                                      serial_ccd=serial_ccd)
 
     return both
 
@@ -370,7 +376,7 @@ class TestCIMask(object):
 
         def test__remove_one_region(self):
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
-                                         ci_pattern=MockPattern(), regions=[(0, 3, 2, 3)])
+                                   ci_pattern=MockPattern(), regions=[(0, 3, 2, 3)])
 
             assert (mask == np.array([[False, False, True],
                                       [False, False, True],
@@ -378,7 +384,7 @@ class TestCIMask(object):
 
         def test__remove_two_regions(self):
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
-                                         ci_pattern=MockPattern(), regions=[(0, 3, 2, 3), (0, 2, 0, 2)])
+                                   ci_pattern=MockPattern(), regions=[(0, 3, 2, 3), (0, 2, 0, 2)])
 
             assert (mask == np.array([[True, True, True],
                                       [True, True, True],
@@ -392,7 +398,7 @@ class TestCIMask(object):
                                     [False, False, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays)
 
             assert (mask == np.array([[False, False, False],
                                       [False, True, False],
@@ -404,8 +410,8 @@ class TestCIMask(object):
                                     [False, False, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
-                                         ci_pattern=MockPattern(), regions=[(0, 1, 0, 1)], cosmic_rays=cosmic_rays,
-                                         cr_parallel=1, cr_serial=1)
+                                   ci_pattern=MockPattern(), regions=[(0, 1, 0, 1)], cosmic_rays=cosmic_rays,
+                                   cr_parallel=1, cr_serial=1)
 
             assert (mask == np.array([[True, False, False],
                                       [False, True, True],
@@ -419,7 +425,7 @@ class TestCIMask(object):
                                     [False, False, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=1)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=1)
 
             assert (mask == np.array([[False, False, False],
                                       [False, True, False],
@@ -431,7 +437,7 @@ class TestCIMask(object):
                                     [False, False, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=2)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=2)
 
             assert (mask == np.array([[False, True, False],
                                       [False, True, False],
@@ -443,7 +449,7 @@ class TestCIMask(object):
                                     [False, False, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=1)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=1)
 
             assert (mask == np.array([[False, False, False],
                                       [False, True, True],
@@ -455,7 +461,7 @@ class TestCIMask(object):
                                     [False, False, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=2)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=2)
 
             assert (mask == np.array([[False, False, False],
                                       [True, True, True],
@@ -467,7 +473,7 @@ class TestCIMask(object):
                                     [False, False, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=1)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=1)
 
             assert (mask == np.array([[False, False, False],
                                       [False, True, True],
@@ -480,7 +486,7 @@ class TestCIMask(object):
                                     [False, False, False, False]])
 
             mask = msk.Mask.create(shape=(4, 4), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=2)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=2)
 
             assert (mask == np.array([[False, False, False, False],
                                       [False, True, True, True],
@@ -495,7 +501,7 @@ class TestCIMask(object):
                                     [False, False, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=1)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=1)
 
             assert (mask == np.array([[False, False, False],
                                       [False, True, False],
@@ -507,7 +513,7 @@ class TestCIMask(object):
                                     [False, False, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=2)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=2)
 
             assert (mask == np.array([[False, True, False],
                                       [False, True, False],
@@ -519,7 +525,7 @@ class TestCIMask(object):
                                     [False, False, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=1)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=1)
 
             assert (mask == np.array([[False, False, False],
                                       [True, True, False],
@@ -531,7 +537,7 @@ class TestCIMask(object):
                                     [False, False, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=2)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=2)
 
             assert (mask == np.array([[False, False, False],
                                       [True, True, True],
@@ -543,7 +549,7 @@ class TestCIMask(object):
                                     [False, False, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=1)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=1)
 
             assert (mask == np.array([[False, False, False],
                                       [True, True, False],
@@ -556,7 +562,7 @@ class TestCIMask(object):
                                     [False, False, False, False]])
 
             mask = msk.Mask.create(shape=(4, 4), frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=2)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=2)
 
             assert (mask == np.array([[False, False, False, False],
                                       [False, True, True, True],
@@ -571,7 +577,7 @@ class TestCIMask(object):
                                     [False, False, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=1)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=1)
 
             assert (mask == np.array([[False, True, False],
                                       [False, True, False],
@@ -583,7 +589,7 @@ class TestCIMask(object):
                                     [False, True, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=2)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=2)
 
             assert (mask == np.array([[False, True, False],
                                       [False, True, False],
@@ -595,7 +601,7 @@ class TestCIMask(object):
                                     [False, False, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=1)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=1)
 
             assert (mask == np.array([[False, False, False],
                                       [False, True, True],
@@ -607,7 +613,7 @@ class TestCIMask(object):
                                     [False, False, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=2)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=2)
 
             assert (mask == np.array([[False, False, False],
                                       [True, True, True],
@@ -619,7 +625,7 @@ class TestCIMask(object):
                                     [False, False, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=1)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=1)
 
             assert (mask == np.array([[False, True, True],
                                       [False, True, True],
@@ -632,7 +638,7 @@ class TestCIMask(object):
                                     [False, True, False, False]])
 
             mask = msk.Mask.create(shape=(4, 4), frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=2)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=2)
 
             assert (mask == np.array([[False, False, False, False],
                                       [False, True, True, True],
@@ -647,7 +653,7 @@ class TestCIMask(object):
                                     [False, False, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTR(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=1)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=1)
 
             assert (mask == np.array([[False, True, False],
                                       [False, True, False],
@@ -659,7 +665,7 @@ class TestCIMask(object):
                                     [False, True, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTR(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=2)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=2)
             assert (mask == np.array([[False, True, False],
                                       [False, True, False],
                                       [False, True, False]])).all()
@@ -670,7 +676,7 @@ class TestCIMask(object):
                                     [False, False, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTR(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=1)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=1)
 
             assert (mask == np.array([[False, False, False],
                                       [True, True, False],
@@ -682,7 +688,7 @@ class TestCIMask(object):
                                     [False, False, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTR(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=2)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=2)
 
             assert (mask == np.array([[False, False, False],
                                       [True, True, True],
@@ -694,7 +700,7 @@ class TestCIMask(object):
                                     [False, False, False]])
 
             mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTR(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=1)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=1)
 
             assert (mask == np.array([[True, True, False],
                                       [True, True, False],
@@ -707,7 +713,7 @@ class TestCIMask(object):
                                     [False, False, False, True]])
 
             mask = msk.Mask.create(shape=(4, 4), frame_geometry=ci_frame.CIQuadGeometryEuclidTR(),
-                                         ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=2)
+                                   ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=2)
 
             assert (mask == np.array([[False, False, False, False],
                                       [False, True, True, True],

@@ -25,7 +25,7 @@ def test_pipeline_parallel_3_species():
     if os.path.exists("{}/data/{}".format(output_path, data_name)):
         shutil.rmtree("{}/data/{}".format(output_path, data_name))
 
-    parallel_params = arctic_params.ParallelThreeSpecies(trap_densities=(0.5, 1.5, 2.5), trap_lifetimes=(2.0, 5.0, 20.0),
+    parallel_params = arctic_params.Species(trap_densities=(0.5, 1.5, 2.5), trap_lifetimes=(2.0, 5.0, 20.0),
                              well_notch_depth=1e-4, well_fill_alpha=1.0, well_fill_beta=0.5, well_fill_gamma=0.0)
 
     cti_params = arctic_params.ArcticParams(parallel=parallel_params)
@@ -54,7 +54,7 @@ def make_parallel_x3s_pipeline(pipeline_name):
             self.parallel.well_fill_alpha = 1.0
             self.parallel.well_fill_gamma = 0.0
 
-    phase1 = ParallelPhase(optimizer_class=nl.MultiNest, parallel=arctic_params.ParallelOneSpecies,
+    phase1 = ParallelPhase(optimizer_class=nl.MultiNest, parallel=arctic_params.Species,
                            columns=3, phase_name="{}/phase1".format(pipeline_name))
 
     phase1.optimizer.n_live_points = 60
@@ -75,7 +75,7 @@ def make_parallel_x3s_pipeline(pipeline_name):
             self.parallel.well_fill_alpha = 1.0
             self.parallel.well_fill_gamma = 0.0
 
-    phase2 = ParallelPhase(optimizer_class=nl.MultiNest, parallel=arctic_params.ParallelThreeSpecies,
+    phase2 = ParallelPhase(optimizer_class=nl.MultiNest, parallel=arctic_params.Species,
                            phase_name="{}/phase2".format(pipeline_name))
 
     phase2.optimizer.n_live_points = 60

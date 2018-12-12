@@ -12,3 +12,4 @@ test/autofit/test_fit/parallel_phase/
 arctic/
 test/autofit/test_fit/phase/model.results
 test/autofit/test_fit/phase/optimizer
+pySHE_ArCTIC.py
