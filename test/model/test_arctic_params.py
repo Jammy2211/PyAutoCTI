@@ -43,18 +43,6 @@ def test_info():
     return info_path
 
 
-@pytest.fixture(name='hdr_path')
-def test_header_info():
-    hdr_path = "{}/files/cti_params/header_info/".format(os.path.dirname(os.path.realpath(__file__)))
-
-    if os.path.exists(hdr_path):
-        shutil.rmtree(hdr_path)
-
-    os.mkdir(hdr_path)
-
-    return hdr_path
-
-
 class TestParallelParams:
     class TestConstructor:
 
