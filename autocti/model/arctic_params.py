@@ -204,9 +204,9 @@ class ParallelDensityVary(object):
 
         Parameters
         -----------
-        trap_densities : tuple
+        trap_densities : (float,)
             The average trap density of each species.
-        trap_lifetimes : (float, float, float)
+        trap_lifetimes : (float,)
             The trap lifetimes of the three trap species.
         well_notch_depth : float
             The CCD notch depth.
