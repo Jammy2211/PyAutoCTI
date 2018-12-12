@@ -25,7 +25,7 @@ def test_pipeline_serial_1_species():
     if os.path.exists("{}/data/{}".format(output_path, data_name)):
         shutil.rmtree("{}/data/{}".format(output_path, data_name))
 
-    serial_params = arctic_params.SerialOneSpecies(trap_densities=(1.0,), trap_lifetimes=(1.5,), well_notch_depth=1e-4,
+    serial_params = arctic_params.Species(trap_densities=(1.0,), trap_lifetimes=(1.5,), well_notch_depth=1e-4,
                                                  well_fill_alpha=1.0, well_fill_beta=0.5, well_fill_gamma=0.0)
 
     cti_params = arctic_params.ArcticParams(serial=serial_params)
@@ -54,7 +54,7 @@ def make_serial_x1s_pipeline(pipeline_name):
             self.serial.well_fill_alpha = 1.0
             self.serial.well_fill_gamma = 0.0
 
-    phase1 = SerialPhase(optimizer_class=nl.MultiNest, serial=arctic_params.SerialOneSpecies,
+    phase1 = SerialPhase(optimizer_class=nl.MultiNest, serial=arctic_params.Species,
                          phase_name="{}/phase1".format(pipeline_name))
 
     phase1.optimizer.n_live_points = 60

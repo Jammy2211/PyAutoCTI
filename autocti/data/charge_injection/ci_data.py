@@ -227,7 +227,8 @@ class CIPreCTIFast(CIPreCTI):
         cti_settings : ArcticSettings.ArcticSettings
             The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
         """
-        return pyarctic.add_parallel_cti_to_image(self.fast_column_pre_cti, cti_params, cti_settings)
+        return pyarctic.call_arctic(self.fast_column_pre_cti, cti_params.parallel_species, cti_params.parallel_ccd,
+                                    cti_settings.parallel)
 
     def map_fast_column_post_cti_to_image(self, fast_column_post_cti):
         """Map the post-cti fast column to the image, thus making the complete post-cti image after parallel clocking.
@@ -251,7 +252,8 @@ class CIPreCTIFast(CIPreCTI):
         cti_settings : ArcticSettings.ArcticSettings
             The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
         """
-        return pyarctic.add_serial_cti_to_image(self.fast_row_pre_cti, cti_params, cti_settings)
+        return pyarctic.call_arctic(self.fast_row_pre_cti, cti_params.serial_species, cti_params.serial_ccd,
+                                    cti_settings.serial)
 
     def map_fast_row_post_cti_to_image(self, fast_row_post_cti):
         """Map the post-cti fast row to the image, thus making the complete post-cti image after serial clocking.

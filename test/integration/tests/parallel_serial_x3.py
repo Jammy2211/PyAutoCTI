@@ -26,10 +26,10 @@ def test_pipeline_parallel_serial_1_species():
     if os.path.exists("{}/data/{}".format(output_path, data_name)):
         shutil.rmtree("{}/data/{}".format(output_path, data_name))
 
-    parallel_params = arctic_params.ParallelOneSpecies(trap_densities=(1.0,), trap_lifetimes=(1.5,), well_notch_depth=1e-4,
+    parallel_params = arctic_params.Species(trap_densities=(1.0,), trap_lifetimes=(1.5,), well_notch_depth=1e-4,
                                                  well_fill_alpha=1.0, well_fill_beta=0.5, well_fill_gamma=0.0)
 
-    serial_params = arctic_params.SerialOneSpecies(trap_densities=(1.0,), trap_lifetimes=(1.5,), well_notch_depth=1e-4,
+    serial_params = arctic_params.Species(trap_densities=(1.0,), trap_lifetimes=(1.5,), well_notch_depth=1e-4,
                                                  well_fill_alpha=1.0, well_fill_beta=0.5, well_fill_gamma=0.0)
 
     cti_params = arctic_params.ArcticParams(parallel=parallel_params, serial=serial_params)
@@ -60,7 +60,7 @@ def make_parallel_serial_x1s_pipeline(pipeline_name):
             self.parallel.well_fill_alpha = 1.0
             self.parallel.well_fill_gamma = 0.0
 
-    phase1 = ParallelPhase(optimizer_class=nl.MultiNest, parallel=arctic_params.ParallelOneSpecies,
+    phase1 = ParallelPhase(optimizer_class=nl.MultiNest, parallel=arctic_params.Species,
                            columns=3, phase_name="{}/phase1".format(pipeline_name))
 
     phase1.optimizer.n_live_points = 60
@@ -81,7 +81,7 @@ def make_parallel_serial_x1s_pipeline(pipeline_name):
             self.parallel.well_fill_alpha = 1.0
             self.parallel.well_fill_gamma = 0.0
 
-    phase2 = ParallelPhase(optimizer_class=nl.MultiNest, parallel=arctic_params.ParallelThreeSpecies,
+    phase2 = ParallelPhase(optimizer_class=nl.MultiNest, parallel=arctic_params.Species,
                             columns=3, phase_name="{}/phase2".format(pipeline_name))
 
     phase2.optimizer.n_live_points = 60
@@ -94,7 +94,7 @@ def make_parallel_serial_x1s_pipeline(pipeline_name):
             self.serial.well_fill_alpha = 1.0
             self.serial.well_fill_gamma = 0.0
 
-    phase3 = SerialParallelFixedPhase(optimizer_class=nl.MultiNest, serial=arctic_params.SerialOneSpecies,
+    phase3 = SerialParallelFixedPhase(optimizer_class=nl.MultiNest, serial=arctic_params.Species,
                          phase_name="{}/phase3".format(pipeline_name))
 
     phase3.optimizer.n_live_points = 60
@@ -116,7 +116,7 @@ def make_parallel_serial_x1s_pipeline(pipeline_name):
             self.serial.well_fill_alpha = 1.0
             self.serial.well_fill_gamma = 0.0
 
-    phase4 = SerialParallelFixedPhase(optimizer_class=nl.MultiNest, serial=arctic_params.SerialThreeSpecies,
+    phase4 = SerialParallelFixedPhase(optimizer_class=nl.MultiNest, serial=arctic_params.Species,
                          phase_name="{}/phase4".format(pipeline_name))
 
     phase4.optimizer.n_live_points = 60
