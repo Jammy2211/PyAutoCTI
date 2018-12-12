@@ -8,7 +8,7 @@ from autocti.model import arctic_params
 @pytest.fixture(scope='class')
 def arctic_parallel():
 
-    parallel_settings = arctic_settings.ParallelSettings(well_depth=84700, niter=1, express=5,n_levels=2000,
+    parallel_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=5,n_levels=2000,
                                                         readout_offset=0)
     arctic_parallel = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings)
 
@@ -17,7 +17,7 @@ def arctic_parallel():
 @pytest.fixture(scope='class')
 def arctic_serial():
 
-    serial_settings = arctic_settings.SerialSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
+    serial_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=5, n_levels=2000,
                                                     readout_offset=0)
 
     arctic_serial = arctic_settings.ArcticSettings(neomode='NEO', serial=serial_settings)
@@ -27,10 +27,10 @@ def arctic_serial():
 @pytest.fixture(scope='class')
 def arctic_both():
 
-    parallel_settings = arctic_settings.ParallelSettings(well_depth=84700, niter=1, express=5,n_levels=2000,
+    parallel_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=5,n_levels=2000,
                                                         readout_offset=0)
 
-    serial_settings = arctic_settings.SerialSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
+    serial_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=5, n_levels=2000,
                                                     readout_offset=0)
 
     arctic_both = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings,

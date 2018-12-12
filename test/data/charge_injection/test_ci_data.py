@@ -36,7 +36,7 @@ from autocti.model import arctic_settings
 
 @pytest.fixture(scope='class', name='empty_mask')
 def make_empty_mask():
-    parallel_settings = arctic_settings.ParallelSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
+    parallel_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=5, n_levels=2000,
                                                          readout_offset=0)
     parallel = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings)
 
@@ -45,7 +45,7 @@ def make_empty_mask():
 
 @pytest.fixture(scope='class', name='arctic_parallel')
 def make_arctic_parallel():
-    parallel_settings = arctic_settings.ParallelSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
+    parallel_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=5, n_levels=2000,
                                                          readout_offset=0)
     parallel = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings)
 
@@ -54,7 +54,7 @@ def make_arctic_parallel():
 
 @pytest.fixture(scope='class', name='arctic_serial')
 def make_arctic_serial():
-    serial_settings = arctic_settings.SerialSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
+    serial_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=5, n_levels=2000,
                                                      readout_offset=0)
 
     serial = arctic_settings.ArcticSettings(neomode='NEO', serial=serial_settings)
@@ -64,10 +64,10 @@ def make_arctic_serial():
 
 @pytest.fixture(scope='class', name='arctic_both')
 def make_arctic_both():
-    parallel_settings = arctic_settings.ParallelSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
+    parallel_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=5, n_levels=2000,
                                                          readout_offset=0)
 
-    serial_settings = arctic_settings.SerialSettings(well_depth=84700, niter=1, express=5, n_levels=2000,
+    serial_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=5, n_levels=2000,
                                                      readout_offset=0)
 
     both = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings,
