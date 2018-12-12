@@ -132,61 +132,50 @@ class TestParallelAndSerialParams:
 class TestParallelDensityVary:
 
     def test_1_species__density_01__1000_column_pixels__1_row_pixel_so_100_traps__posison_density_near_01(self):
-        parallel_vary = arctic_params.ParallelDensityVary.poisson_densities(trap_densities=(0.1,),
-                                                                            trap_lifetimes=(1.0,),
-                                                                            well_notch_depth=0.01, well_fill_alpha=1.0,
-                                                                            well_fill_beta=0.8, well_fill_gamma=0.0,
-                                                                            shape=(1000, 1),
-                                                                            seed=1)
+        parallel_vary = arctic_params.Species.poisson_species(
+            species=list(map(lambda density: arctic_params.Species(trap_density=density, trap_lifetime=1.), (0.1,))),
+            shape=(1000, 1),
+            seed=1)
 
-        assert parallel_vary.trap_densities == [(0.098,)]
+        assert [species.trap_density for species in parallel_vary] == [0.098]
 
     def test__1_species__density_1__1000_column_pixels_so_1000_traps__1_row_pixel__posison_value_is_near_1(self):
-        parallel_vary = arctic_params.ParallelDensityVary.poisson_densities(trap_densities=(1.0,),
-                                                                            trap_lifetimes=(1.0,),
-                                                                            well_notch_depth=0.01, well_fill_alpha=1.0,
-                                                                            well_fill_beta=0.8,
-                                                                            well_fill_gamma=0.0, shape=(1000, 1),
-                                                                            seed=1)
+        parallel_vary = arctic_params.Species.poisson_species(
+            species=list(map(lambda density: arctic_params.Species(trap_density=density, trap_lifetime=1.), (1.0,))),
+            shape=(1000, 1),
+            seed=1)
 
-        assert parallel_vary.trap_densities == [(0.992,)]
+        assert [species.trap_density for species in parallel_vary] == [0.992]
 
     def test__1_species__density_1___2_row_pixels__posison_value_is_near_1(self):
-        parallel_vary = arctic_params.ParallelDensityVary.poisson_densities(trap_densities=(1.0,),
-                                                                            trap_lifetimes=(1.0,),
-                                                                            well_notch_depth=0.01, well_fill_alpha=1.0,
-                                                                            well_fill_beta=0.8,
-                                                                            well_fill_gamma=0.0, shape=(1000, 2),
-                                                                            seed=1)
+        parallel_vary = arctic_params.Species.poisson_species(
+            species=list(map(lambda density: arctic_params.Species(trap_density=density, trap_lifetime=1.), (1.0,))),
+            shape=(1000, 2),
+            seed=1)
 
-        assert parallel_vary.trap_densities == [(0.992,), (0.962,)]
+        assert [species.trap_density for species in parallel_vary] == [0.992, 0.962]
 
     def test__2_species__1_row_pixel__poisson_for_each_species_drawn(self):
-        parallel_vary = arctic_params.ParallelDensityVary.poisson_densities(trap_densities=(1.0, 2.0),
-                                                                            trap_lifetimes=(1.0, 2.0),
-                                                                            well_notch_depth=0.01, well_fill_alpha=1.0,
-                                                                            well_fill_beta=0.8,
-                                                                            well_fill_gamma=0.0, shape=(1000, 1),
-                                                                            seed=1)
+        parallel_vary = arctic_params.Species.poisson_species(species=list(
+            map(lambda density: arctic_params.Species(trap_density=density, trap_lifetime=1.), (1.0, 2.0))),
+            shape=(1000, 1),
+            seed=1)
 
-        assert parallel_vary.trap_densities == [(0.992, 1.946)]
+        assert [species.trap_density for species in parallel_vary] == [0.992, 1.946]
 
     def test__2_species__2_row_pixel__poisson_for_each_species_drawn(self):
-        parallel_vary = arctic_params.ParallelDensityVary.poisson_densities(trap_densities=(1.0, 2.0),
-                                                                            trap_lifetimes=(1.0, 2.0),
-                                                                            well_notch_depth=0.01, well_fill_alpha=1.0,
-                                                                            well_fill_beta=0.8,
-                                                                            well_fill_gamma=0.0, shape=(1000, 2),
-                                                                            seed=1)
+        parallel_vary = arctic_params.Species.poisson_species(species=list(
+            map(lambda density: arctic_params.Species(trap_density=density, trap_lifetime=1.), (1.0, 2.0))),
+            shape=(1000, 2),
+            seed=1)
 
-        assert parallel_vary.trap_densities == [(0.992, 1.946), (0.968, 1.987)]
+        assert [species.trap_density for species in parallel_vary] == [0.992, 1.946, 0.968, 1.987]
 
     def test__same_as_above_but_3_species_and_new_values(self):
-        parallel_vary = arctic_params.ParallelDensityVary.poisson_densities(trap_densities=(1.0, 2.0, 0.1),
-                                                                            trap_lifetimes=(1.0, 2.0, 3.0),
-                                                                            well_fill_alpha=1.0, well_fill_beta=0.8,
-                                                                            well_fill_gamma=0.0,
-                                                                            well_notch_depth=0.01, shape=(1000, 3),
-                                                                            seed=1)
+        parallel_vary = arctic_params.Species.poisson_species(species=list(
+            map(lambda density: arctic_params.Species(trap_density=density, trap_lifetime=1.), (1.0, 2.0, 0.1))),
+            shape=(1000, 3),
+            seed=1)
 
-        assert parallel_vary.trap_densities == [(0.992, 1.946, 0.09), (0.991, 1.99, 0.098), (0.961, 1.975, 0.113)]
+        assert [species.trap_density for species in parallel_vary] == [0.992, 1.946, 0.09, 0.991, 1.99, 0.098, 0.961,
+                                                                       1.975, 0.113]
