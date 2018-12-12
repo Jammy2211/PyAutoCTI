@@ -518,6 +518,7 @@ class ParallelHyperOnlyPhase(ParallelHyperPhase, HyperOnly):
             # noinspection PyShadowingNames
             def pass_priors(self, previous_results):
                 self.parallel_species = previous_results.last.constant.parallel_species
+                self.parallel_ccd = previous_results.last.constant.parallel_ccd
 
         phase = ParallelHyper(optimizer_class=nl.MultiNest, hyp_ci_regions=ci_hyper.HyperCINoise,
                               hyp_parallel_trails=ci_hyper.HyperCINoise,
@@ -539,14 +540,16 @@ class SerialPhase(Phase):
     serial_species = phase_property.PhasePropertyCollection("serial_species")
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 
-    def __init__(self, serial=None, optimizer_class=nl.MultiNest, ci_datas_extractor=serial_extractor, columns=None,
+    def __init__(self, serial_species=(), serial_ccd=None, optimizer_class=nl.MultiNest,
+                 ci_datas_extractor=serial_extractor, columns=None,
                  rows=None, mask_function=default_mask_function, phase_name="serial_phase"):
         """
         A phase with a simple source/CTI model
         """
         super().__init__(optimizer_class=optimizer_class, ci_datas_extractor=ci_datas_extractor, columns=columns,
                          rows=rows, mask_function=mask_function, phase_name=phase_name)
-        self.serial = serial
+        self.serial_species = serial_species
+        self.serial_ccd = serial_ccd
 
     class Analysis(Phase.Analysis):
         def fit(self, instance):
@@ -612,13 +615,15 @@ class SerialHyperPhase(SerialPhase):
     hyp_ci_regions = phase_property.PhaseProperty("hyp_ci_regions")
     hyp_serial_trails = phase_property.PhaseProperty("hyp_serial_trails")
 
-    def __init__(self, serial=None, hyp_ci_regions=None, hyp_serial_trails=None, optimizer_class=nl.MultiNest,
+    def __init__(self, serial_species=(), serial_ccd=None, hyp_ci_regions=None, hyp_serial_trails=None,
+                 optimizer_class=nl.MultiNest,
                  ci_datas_extractor=serial_extractor, columns=None, rows=None, mask_function=default_mask_function,
                  phase_name="serial_hyper_phase"):
         """
         A phase with a simple source/CTI model
         """
-        super().__init__(serial=serial, optimizer_class=optimizer_class, ci_datas_extractor=ci_datas_extractor,
+        super().__init__(serial_species=serial_species, serial_ccd=serial_ccd, optimizer_class=optimizer_class,
+                         ci_datas_extractor=ci_datas_extractor,
                          columns=columns, rows=rows, mask_function=mask_function, phase_name=phase_name)
         self.hyp_ci_regions = hyp_ci_regions
         self.hyp_serial_trails = hyp_serial_trails
@@ -682,7 +687,8 @@ class SerialHyperOnlyPhase(SerialHyperPhase, HyperOnly):
         class SerialHyper(SerialHyperPhase):
             # noinspection PyShadowingNames
             def pass_priors(self, previous_results):
-                self.serial = previous_results.last.constant.serial
+                self.serial_species = previous_results.last.constant.serial_species
+                self.serial_ccd = previous_results.last.constant.serial_ccd
 
         phase = SerialHyper(optimizer_class=nl.MultiNest, hyp_ci_regions=ci_hyper.HyperCINoise,
                             hyp_serial_trails=ci_hyper.HyperCINoise,
@@ -706,7 +712,8 @@ class ParallelSerialPhase(Phase):
     parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 
-    def __init__(self, parallel=None, serial=None, optimizer_class=nl.MultiNest,
+    def __init__(self, parallel_species=(), serial_species=(), parallel_ccd=None, serial_ccd=None,
+                 optimizer_class=nl.MultiNest,
                  ci_datas_extractor=parallel_serial_extractor, mask_function=default_mask_function,
                  phase_name="parallel_serial_phase"):
         """
@@ -719,8 +726,10 @@ class ParallelSerialPhase(Phase):
         """
         super().__init__(optimizer_class=optimizer_class, ci_datas_extractor=ci_datas_extractor, columns=None,
                          rows=None, mask_function=mask_function, phase_name=phase_name)
-        self.parallel = parallel
-        self.serial = serial
+        self.parallel_species = parallel_species
+        self.serial_species = serial_species
+        self.parallel_ccd = parallel_ccd
+        self.serial_ccd = serial_ccd
 
     class Analysis(Phase.Analysis):
         def fit(self, instance):
@@ -784,7 +793,8 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
     hyp_serial_trails = phase_property.PhaseProperty("hyp_serial_trails")
     hyp_parallel_serial_trails = phase_property.PhaseProperty("hyp_parallel_serial_trails")
 
-    def __init__(self, parallel=None, serial=None, hyp_ci_regions=None, hyp_parallel_trails=None,
+    def __init__(self, parallel_species=(), serial_species=(), parallel_ccd=None, serial_ccd=None, hyp_ci_regions=None,
+                 hyp_parallel_trails=None,
                  hyp_serial_trails=None, hyp_parallel_serial_trails=None, optimizer_class=nl.MultiNest,
                  ci_datas_extractor=parallel_serial_extractor, mask_function=default_mask_function,
                  phase_name="parallel_serial_hyper_phase"):
@@ -796,7 +806,8 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
         optimizer_class: class
             The class of a non-linear optimizer
         """
-        super().__init__(parallel=parallel, serial=serial, optimizer_class=optimizer_class,
+        super().__init__(parallel_species=parallel_species, serial_species=serial_species, parallel_ccd=parallel_ccd,
+                         serial_ccd=serial_ccd, optimizer_class=optimizer_class,
                          ci_datas_extractor=ci_datas_extractor, mask_function=mask_function, phase_name=phase_name)
         self.hyp_ci_regions = hyp_ci_regions
         self.hyp_parallel_trails = hyp_parallel_trails
@@ -869,8 +880,10 @@ class ParallelSerialHyperOnlyPhase(ParallelSerialHyperPhase, HyperOnly):
         class ParallelSerialHyper(ParallelSerialHyperPhase):
             # noinspection PyShadowingNames
             def pass_priors(self, previous_results):
-                self.serial = previous_results[-1].constant.serial
-                self.parallel = previous_results[-1].constant.parallel
+                self.serial_species = previous_results[-1].constant.serial_species
+                self.serial_ccd = previous_results[-1].constant.serial_ccd
+                self.parallel_species = previous_results[-1].constant.parallel_species
+                self.parallel_ccd = previous_results[-1].constant.parallel_ccd
 
         phase = ParallelSerialHyper(optimizer_class=nl.MultiNest,
                                     hyp_ci_regions=ci_hyper.HyperCINoise,
