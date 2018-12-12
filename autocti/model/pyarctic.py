@@ -66,23 +66,23 @@ def call_arctic(image, species, ccd, settings, correct_cti=False):
     # noinspection PyUnresolvedReferences,PyPep8Naming
     import pySHE_ArCTIC as arctic
 
-    settings.unclock = correct_cti  # Include unclock in parameters to pass to different routines easily
     clock_routine = arctic.cte_image_neo()  # Setup instance of arctic charge clocking routine
 
     clock_params = clock_routine.parameters  # Initiate the parameters which the arctic clocking routine uses
+    clock_params.unclock = settings.unclock = correct_cti  # Include unclock in parameters to pass to different
+    # routines easily
 
     set_arctic_settings(clock_params=clock_params, settings=settings)
+    set_arctic_params(clock_params=clock_params, species=species, ccd=ccd)
 
-    return clock_image(clock_routine=clock_routine, clock_params=clock_params, image=image, species=species, ccd=ccd)
+    return clock_image(clock_routine=clock_routine, clock_params=clock_params, image=image)
 
 
-def clock_image(clock_routine, clock_params, image, species, ccd):
+def clock_image(clock_routine, clock_params, image):
     """Clock the image using arctic."""
 
     set_arctic_image_dimensions(clock_routine=clock_routine, clock_params=clock_params,
                                 dimensions=image.shape)
-
-    set_arctic_params(clock_params=clock_params, species=species, ccd=ccd)
 
     image = image.astype(np.float64)  # Have to convert type to avoid c++ memory issues
     clock_routine.clock_charge(image)
@@ -138,8 +138,6 @@ def clock_image_variable_density(clock_routine, clock_params, image, species, cc
 
 def set_arctic_settings(clock_params, settings):
     """Set the settings for the arctic clocking routine"""
-
-    clock_params.unclock = settings.unclock
 
     clock_params.well_depth = settings.well_depth
     clock_params.n_iterations = settings.niter
