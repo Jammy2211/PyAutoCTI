@@ -111,15 +111,16 @@ class ArcticSettings(object):
         info = ''
 
         if self.parallel is not None:
-            info = 'parallel_mode = True\n\n'
-            info += infoio.generate_class_info(cls=self, prefix='parallel_', include_types=[int, float, list, bool])
+            info += 'parallel_mode = True\n\n'
+            info += infoio.generate_class_info(cls=self.parallel, prefix='parallel_',
+                                               include_types=[int, float, list, bool])
             info += '\n'
 
         if self.serial is not None:
-            info = 'serial_mode = True\n\n'
-            info += infoio.generate_class_info(cls=self, prefix='serial_', include_types=[int, float, list, bool])
+            info += 'serial_mode = True\n\n'
+            info += infoio.generate_class_info(cls=self.serial, prefix='serial_',
+                                               include_types=[int, float, list, bool])
             info += '\n'
-            return info
 
         return info
 
