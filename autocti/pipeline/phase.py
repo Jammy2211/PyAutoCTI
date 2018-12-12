@@ -396,7 +396,10 @@ class ParallelPhase(Phase):
             """
             cti_params = cti_params_for_instance(instance)
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
-            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_pipe_data)))
+            if self.pool is not None:
+                return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_pipe_data)))
+            fitter = fitting.CIFitter(self.ci_datas_analysis, cti_params=cti_params, cti_settings=self.cti_settings)
+            return fitter.likelihood
 
         def visualize(self, instance, suffix, during_analysis):
 
