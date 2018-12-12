@@ -107,7 +107,7 @@ class TestParallelParams:
 class TestParallelAndSerialParams:
     class TestInfoFile:
 
-        def test__1_species__output_info_file_follows_the_correct_format(self, info_path):
+        def test__1_species__output_info_file_follows_the_correct_format(self):
             parallel_1_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
 
             parallel_ccd = arctic_params.CCD(well_notch_depth=0.01, well_fill_alpha=0.2,
