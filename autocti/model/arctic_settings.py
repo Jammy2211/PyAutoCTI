@@ -76,7 +76,7 @@ class ArcticSettings(object):
 
     def __init__(self, neomode, parallel=None, serial=None):
         """Sets up the CTI settings for parallel and serial clocking, specified using the \
-        ArcticSettings.ParallelSettings and ArcticSettings.SerialSettings classes.
+        ArcticSettings.Settings and ArcticSettings.Settings classes.
         
         Params
         ----------
@@ -85,9 +85,9 @@ class ArcticSettings(object):
             numerically equivalent. The 'NEO' algorithm is currently (25/09/17) recommended.
             *Classic* - clocks charge using Massey et al 2014 algorithim without efficiency tricks.
             *NEO* - clocks charge using a trap accounting scheme to speed up code (~50x)
-        parallel : ArcticSetup.ParallelSettings
+        parallel : ArcticSetup.Settings
             The arctic settings used for clocking in the parallel direction.
-        serial : :ArcticSetup.SerialSettings
+        serial : :ArcticSetup.Settings
             The arctic settings used for clocking in the serial direction.
         """
         self.neomode = neomode

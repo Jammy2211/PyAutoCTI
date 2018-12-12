@@ -42,7 +42,7 @@ def call_arctic(image, species, ccd, settings, correct_cti=False):
         Determines whether arctic is correcting CTI (unclock=True) or adding CTI (unclock=False).
     settings : ArcticSettings
         The settings that control arctic (e.g. ccd well_depth express option). This is the settings in one specific \
-        direction of clocking (e.g. ArcticSettings.ParallelSettings or ArcticSettings.SerialSettings)
+        direction of clocking (e.g. ArcticSettings.Settings or ArcticSettings.Settings)
     species: [arctic_params.Species]
     ccd: arctic_params.CCD
 
@@ -53,7 +53,7 @@ def call_arctic(image, species, ccd, settings, correct_cti=False):
 
     Examples
     --------
-    settings = ArcticSettings(neomode='NEO',serial_settings=SerialSettings(well_depth=84700, niter=1,
+    settings = ArcticSettings(neomode='NEO',serial_settings=Settings(well_depth=84700, niter=1,
                                                                         express=5, n_levels=2000, readout_offset=0))
 
     model = ArcticParams(serial_parameters=SerialOneSpecies(trap_densities=(0.1,), trap_lifetimes=(1.0,)
