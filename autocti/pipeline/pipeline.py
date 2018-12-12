@@ -1,5 +1,7 @@
 import logging
 
+from autofit.core.phase import ResultsCollection
+
 from autocti.pipeline import phase as ph
 
 logger = logging.getLogger(__name__)
@@ -23,10 +25,10 @@ class Pipeline(object):
             logger.info("Running Phase {} (Number {})".format(phase.phase_name, i))
             if not isinstance(phase, ph.HyperOnly):
                 results.append(phase.run(ci_datas=ci_datas, cti_settings=cti_settings,
-                                         previous_results=ph.ResultsCollection(results), pool=pool))
+                                         previous_results=ResultsCollection(results), pool=pool))
             elif isinstance(phase, ph.HyperOnly):
                 results[-1].hyper = phase.run(ci_datas=ci_datas, cti_settings=cti_settings,
-                                              previous_results=ph.ResultsCollection(results), pool=pool)
+                                              previous_results=ResultsCollection(results), pool=pool)
         return results
 
     def __add__(self, other):

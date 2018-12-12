@@ -1,7 +1,6 @@
 import inspect
 import logging
 import os
-import re
 from functools import partial
 
 import numpy as np
@@ -9,6 +8,7 @@ from astropy.io import fits
 from autofit import conf
 from autofit.core import model_mapper as mm
 from autofit.core import non_linear as nl
+from autofit.core import phase as ph
 from autofit.core import phase_property
 
 from autocti.data.charge_injection import ci_data
@@ -20,11 +20,6 @@ from autocti.tools import imageio
 
 logger = logging.getLogger(__name__)
 logger.level = logging.DEBUG
-
-
-def make_name(cls):
-    s1 = re.sub('(.)([A-Z][a-z]+)', r'\1_\2', cls.__name__)
-    return re.sub('([a-z0-9])([A-Z])', r'\1_\2', s1).lower()
 
 
 # noinspection PyUnusedLocal
@@ -131,23 +126,6 @@ def default_mask_function(mask):
     return mask
 
 
-class ResultsCollection(list):
-    def __init__(self, results):
-        super().__init__(results)
-
-    @property
-    def last(self):
-        if len(self) > 0:
-            return self[-1]
-        return None
-
-    @property
-    def first(self):
-        if len(self) > 0:
-            return self[0]
-        return None
-
-
 class HyperOnly(object):
     pass
 
@@ -161,10 +139,10 @@ def cti_params_for_instance(instance):
     )
 
 
-class Phase(object):
+class Phase(ph.AbstractPhase):
 
-    def __init__(self, optimizer_class=nl.DownhillSimplex, ci_datas_extractor=default_extractor,
-                 columns=None, rows=None, mask_function=default_mask_function, phase_name=None):
+    def __init__(self, optimizer_class=nl.DownhillSimplex, ci_datas_extractor=default_extractor, columns=None,
+                 rows=None, mask_function=default_mask_function, phase_name=None):
         """
         A phase in an analysis pipeline. Uses the set NonLinear optimizer to try to fit models and images passed to it.
 
@@ -174,12 +152,11 @@ class Phase(object):
             The class of a NonLinear optimizer
             The side length of the subgrid
         """
-        self.optimizer = optimizer_class(name=phase_name)
+        super().__init__(optimizer_class, phase_name)
         self.ci_datas_extractor = ci_datas_extractor
         self.columns = columns
         self.rows = rows
         self.mask_function = mask_function
-        self.phase_name = phase_name or make_name(self.__class__)
         self.has_noise_scalings = False
 
     @property
