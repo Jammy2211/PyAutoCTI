@@ -67,7 +67,7 @@ class CIFitter(object):
             The post-cti model image of the charge injection ci_data.
         """
         residuals = list(map(lambda ci_data, ci_post_cti:
-                             util.residuals_from_image_mask_and_model(ci_data.image, ci_data.mask, ci_post_cti),
+                             util.residuals_from_datas_masks_and_model_datas(ci_data.image, ci_data.mask, ci_post_cti),
                              self.ci_datas, self.ci_post_ctis))
 
         return self.as_ci_frames(residuals)
