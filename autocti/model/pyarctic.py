@@ -201,10 +201,7 @@ def correct_serial_cti_from_image(image, params, settings):
 
     image_with_cti_corrected = PyArctic.correct_serial_cti_from_image(image=image_data, settings=settings, model=model)
     """
-
-    unclock = True
-
-    return call_arctic(image, unclock, params.serial, settings.serial)
+    return call_arctic(image, True, params.serial, settings.serial)
 
 
 def call_arctic(image_pre_clocking, unclock, params, settings):
@@ -253,15 +250,12 @@ def call_arctic(image_pre_clocking, unclock, params, settings):
 
     set_arctic_settings(clock_params=clock_params, settings=settings)
 
-    if not isinstance(params, arctic_params.ParallelDensityVary):
-
-        return clock_image(clock_routine=clock_routine, clock_params=clock_params,
-                           image=image_pre_clocking, params=params)
-
-    elif isinstance(params, arctic_params.ParallelDensityVary):
-
+    if isinstance(params, arctic_params.ParallelDensityVary):
         return clock_image_variable_density(clock_routine=clock_routine, clock_params=clock_params,
                                             image=image_pre_clocking, params=params)
+    else:
+        return clock_image(clock_routine=clock_routine, clock_params=clock_params,
+                           image=image_pre_clocking, params=params)
 
 
 def clock_image(clock_routine, clock_params, image, params):
