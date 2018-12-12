@@ -198,16 +198,20 @@ class FrameGeometry(object):
             The settings that control the cti clocking algorithm (e.g. the ccd well_depth express option).
         """
 
-        if cti_params.parallel is not None:
+        if cti_params.parallel_ccd is not None:
             image_pre_parallel_clocking = self.rotate_before_parallel_cti(image_pre_clocking=image)
-            image_post_parallel_clocking = pyarctic.add_parallel_cti_to_image(image_pre_parallel_clocking, cti_params,
-                                                                              cti_settings)
+            image_post_parallel_clocking = pyarctic.call_arctic(image_pre_parallel_clocking,
+                                                                cti_params.parallel_species,
+                                                                cti_params.parallel_ccd,
+                                                                cti_settings.parallel)
             image = self.rotate_after_parallel_cti(image_post_parallel_clocking)
 
-        if cti_params.serial is not None:
+        if cti_params.serial_ccd is not None:
             image_pre_serial_clocking = self.rotate_before_serial_cti(image_pre_clocking=image)
-            image_post_serial_clocking = pyarctic.add_serial_cti_to_image(image_pre_serial_clocking, cti_params,
-                                                                          cti_settings)
+            image_post_serial_clocking = pyarctic.call_arctic(image_pre_serial_clocking,
+                                                              cti_params.serial_species,
+                                                              cti_params.serial_ccd,
+                                                              cti_settings.serial)
             image = self.rotate_after_serial_cti(image_post_serial_clocking)
 
         return image
@@ -227,14 +231,20 @@ class FrameGeometry(object):
 
         if cti_settings.serial is not None:
             image_pre_serial_clocking = self.rotate_before_serial_cti(image_pre_clocking=image)
-            image_post_serial_clocking = pyarctic.correct_serial_cti_from_image(image_pre_serial_clocking, cti_params,
-                                                                                cti_settings)
+            image_post_serial_clocking = pyarctic.call_arctic(image_pre_serial_clocking,
+                                                              cti_params.serial_species,
+                                                              cti_params.serial_ccd,
+                                                              cti_settings.serial,
+                                                              correct_cti=True)
             image = self.rotate_after_serial_cti(image_post_serial_clocking)
 
         if cti_settings.parallel is not None:
             image_pre_parallel_clocking = self.rotate_before_parallel_cti(image_pre_clocking=image)
-            image_post_parallel_clocking = pyarctic.correct_parallel_cti_from_image(image_pre_parallel_clocking,
-                                                                                    cti_params, cti_settings)
+            image_post_parallel_clocking = pyarctic.call_arctic(image_pre_parallel_clocking,
+                                                                cti_params.parallel_species,
+                                                                cti_params.parallel_ccd,
+                                                                cti_settings.parallel,
+                                                                correct_cti=True)
             image = self.rotate_after_parallel_cti(image_post_parallel_clocking)
 
         return image
