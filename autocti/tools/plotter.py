@@ -5,9 +5,6 @@ from matplotlib.colors import LogNorm
 from autocti.tools import imageio
 
 
-# import getdist.plots
-
-
 def plot_2d_images_array(images, new_figure=True, figsize=(12, 10), cmap='gray', log_norm=False,
                          cb_plot=True, cb_label='', cb_ticksize=20, cb_labelsize=20,
                          xlabel='', ylabel='', labelsize=16, ticksize=16,

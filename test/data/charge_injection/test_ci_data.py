@@ -122,7 +122,7 @@ class MockPattern(object):
         pass
 
 
-class MockGeometry(ci_frame.CIQuadGeometry):
+class MockGeometry(object):
 
     def __init__(self):
         super(MockGeometry, self).__init__()
@@ -223,7 +223,6 @@ class TestCIImage(object):
             pattern = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 2, 0, 2)])
             image = 10.0 * np.ones((3, 3))
-            mask = msk.Mask.empty_for_shape(shape=(3, 3), frame_geometry=frame_geometry, ci_pattern=MockPattern())
 
             data = ci_data.CIImage(frame_geometry=frame_geometry, ci_pattern=pattern, array=image)
 

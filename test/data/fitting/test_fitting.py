@@ -1,12 +1,10 @@
-from autocti.data.fitting import fitting
-from autocti.data.charge_injection import ci_frame, ci_hyper
-from autocti.data.charge_injection import ci_data
-
 import numpy as np
 import pytest
 
+from autocti.data.charge_injection import ci_data
 
-class MockGeometry(ci_frame.CIQuadGeometry):
+
+class MockGeometry(object):
 
     def __init__(self):
         super(MockGeometry, self).__init__()
@@ -76,8 +74,7 @@ def make_ci_datas():
                                  value=6.0)]
 
     return ci_data.CIData(images=ci_images, masks=ci_masks, noises=ci_noises,
-                                  ci_pre_ctis=ci_pre_ctis, noise_scalings=ci_noise_scalings)
-
+                          ci_pre_ctis=ci_pre_ctis, noise_scalings=ci_noise_scalings)
 
 # class TestFitter:
 #
@@ -307,4 +304,3 @@ def make_ci_datas():
 #                                            noise_scalings=hyper_noise)
 #
 #             assert (scaled_likelihood0 + scaled_likelihood1 == fitter.scaled_likelihood).all()
-
