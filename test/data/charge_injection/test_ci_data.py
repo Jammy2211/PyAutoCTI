@@ -150,7 +150,7 @@ class TestCIImage(object):
                               [2.0, 2.0, 2.0],
                               [8.0, 12.0, 10.0]])
 
-            data = ci_data.CIImage(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern, array=image)
+            data = ci_data.CIImage(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern, array=image)
 
             assert data.frame_geometry.parallel_overscan == (2066, 2086, 51, 2099)
             assert data.frame_geometry.serial_prescan == (0, 2086, 0, 51)
@@ -167,12 +167,12 @@ class TestCIImage(object):
             pattern = ci_pattern.CIPatternUniform(normalization=10.0, regions=[(0, 2, 0, 2)])
             image = 10.0 * np.ones((3, 3))
 
-            data = ci_data.CIImage(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern,
+            data = ci_data.CIImage(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
                                    array=image)
 
             ci_pre_cti = data.create_ci_pre_cti()
 
-            assert type(ci_pre_cti.frame_geometry) == ci_frame.CIQuadGeometryEuclidBL
+            assert type(ci_pre_cti.frame_geometry) == ci_frame.QuadGeometryEuclidBL
             assert (ci_pre_cti == np.array([[10.0, 10.0, 0.0],
                                             [10.0, 10.0, 0.0],
                                             [00.0, 00.0, 0.0]])).all()
@@ -180,7 +180,7 @@ class TestCIImage(object):
             assert (ci_pre_cti.ci_pattern.regions == pattern.regions == [(0, 2, 0, 2)])
 
         def test__same_as_above_but_different_normalization_and_regions(self):
-            frame_geometry = ci_frame.CIQuadGeometryEuclidBL()
+            frame_geometry = ci_frame.QuadGeometryEuclidBL()
             pattern = ci_pattern.CIPatternUniform(normalization=20.0,
                                                   regions=[(0, 2, 0, 1), (2, 3, 2, 3)])
             image = 10.0 * np.ones((3, 3))
@@ -189,7 +189,7 @@ class TestCIImage(object):
 
             ci_pre_cti = data.create_ci_pre_cti()
 
-            assert type(ci_pre_cti.frame_geometry) == ci_frame.CIQuadGeometryEuclidBL
+            assert type(ci_pre_cti.frame_geometry) == ci_frame.QuadGeometryEuclidBL
             assert (ci_pre_cti == np.array([[20.0, 0.0, 0.0],
                                             [20.0, 0.0, 0.0],
                                             [0.0, 0.0, 20.0]])).all()
@@ -197,7 +197,7 @@ class TestCIImage(object):
             assert (ci_pre_cti.ci_pattern.regions == pattern.regions == [(0, 2, 0, 1), (2, 3, 2, 3)])
 
         def test__non_uniform_pattern__image_is_same_as_computed_image(self):
-            frame_geometry = ci_frame.CIQuadGeometryEuclidBL()
+            frame_geometry = ci_frame.QuadGeometryEuclidBL()
             pattern = ci_pattern.CIPatternNonUniform(
                 normalization=100.0, regions=[(0, 2, 0, 2), (2, 3, 0, 3)],
                 row_slope=-1.0)
@@ -212,14 +212,14 @@ class TestCIImage(object):
 
             pattern_ci_pre_cti = pattern.compute_ci_pre_cti(image, mask)
 
-            assert type(ci_pre_cti.frame_geometry) == ci_frame.CIQuadGeometryEuclidBL
+            assert type(ci_pre_cti.frame_geometry) == ci_frame.QuadGeometryEuclidBL
             # noinspection PyUnresolvedReferences
             assert (ci_pre_cti == pattern_ci_pre_cti).all()
             assert (ci_pre_cti.ci_pattern.normalization == pattern.normalization == 100.0)
             assert (ci_pre_cti.ci_pattern.regions == pattern.regions == [(0, 2, 0, 2), (2, 3, 0, 3)])
 
         def test__fast_uniform_pattern__fast_ci_pre_cti(self):
-            frame_geometry = ci_frame.CIQuadGeometryEuclidBL()
+            frame_geometry = ci_frame.QuadGeometryEuclidBL()
             pattern = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 2, 0, 2)])
             image = 10.0 * np.ones((3, 3))
@@ -236,7 +236,7 @@ class TestCIImage(object):
                                                              [10.0],
                                                              [0.0]])).all()
 
-            assert type(ci_pre_cti.frame_geometry) == ci_frame.CIQuadGeometryEuclidBL
+            assert type(ci_pre_cti.frame_geometry) == ci_frame.QuadGeometryEuclidBL
             assert (ci_pre_cti == np.array([[10.0, 10.0, 0.0],
                                             [10.0, 10.0, 0.0],
                                             [00.0, 00.0, 0.0]])).all()
@@ -248,7 +248,7 @@ class TestCIImage(object):
         def test__no_instrumental_effects_input__only_cti_simulated(self, arctic_parallel, params_parallel):
             pattern = ci_pattern.CIPatternUniformSimulate(normalization=10.0, regions=[(0, 1, 0, 5)])
 
-            ci_simulate = ci_data.CIImage.simulate(shape=(5, 5), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_simulate = ci_data.CIImage.simulate(shape=(5, 5), frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                                    ci_pattern=pattern, cti_settings=arctic_parallel,
                                                    cti_params=params_parallel)
 
@@ -261,7 +261,7 @@ class TestCIImage(object):
         def test__include_read_noise__is_added_after_cti(self, arctic_parallel, params_parallel):
             pattern = ci_pattern.CIPatternUniformSimulate(normalization=10.0, regions=[(0, 1, 0, 3)])
 
-            ci_simulate = ci_data.CIImage.simulate(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_simulate = ci_data.CIImage.simulate(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                                    ci_pattern=pattern, cti_settings=arctic_parallel,
                                                    cti_params=params_parallel, read_noise=1.0, noise_seed=1)
 
@@ -279,7 +279,7 @@ class TestCIImage(object):
             cosmics = np.zeros((5, 5))
             cosmics[1, 1] = 100.0
 
-            ci_simulate = ci_data.CIImage.simulate(shape=(5, 5), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_simulate = ci_data.CIImage.simulate(shape=(5, 5), frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                                    ci_pattern=pattern, cti_settings=arctic_parallel,
                                                    cti_params=params_parallel)
 
@@ -308,7 +308,7 @@ class TestCIMask(object):
     class TestMaskRemoveRegions:
 
         def test__remove_one_region(self):
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                    ci_pattern=MockPattern(), regions=[(0, 3, 2, 3)])
 
             assert (mask == np.array([[False, False, True],
@@ -316,7 +316,7 @@ class TestCIMask(object):
                                       [False, False, True]])).all()
 
         def test__remove_two_regions(self):
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                    ci_pattern=MockPattern(), regions=[(0, 3, 2, 3), (0, 2, 0, 2)])
 
             assert (mask == np.array([[True, True, True],
@@ -330,7 +330,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays)
 
             assert (mask == np.array([[False, False, False],
@@ -342,7 +342,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                    ci_pattern=MockPattern(), regions=[(0, 1, 0, 1)], cosmic_rays=cosmic_rays,
                                    cr_parallel=1, cr_serial=1)
 
@@ -357,7 +357,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=1)
 
             assert (mask == np.array([[False, False, False],
@@ -369,7 +369,7 @@ class TestCIMask(object):
                                     [False, False, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=2)
 
             assert (mask == np.array([[False, True, False],
@@ -381,7 +381,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=1)
 
             assert (mask == np.array([[False, False, False],
@@ -393,7 +393,7 @@ class TestCIMask(object):
                                     [True, False, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=2)
 
             assert (mask == np.array([[False, False, False],
@@ -405,7 +405,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=1)
 
             assert (mask == np.array([[False, False, False],
@@ -418,7 +418,7 @@ class TestCIMask(object):
                                     [False, False, False, False],
                                     [False, False, False, False]])
 
-            mask = msk.Mask.create(shape=(4, 4), frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            mask = msk.Mask.create(shape=(4, 4), frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=2)
 
             assert (mask == np.array([[False, False, False, False],
@@ -433,7 +433,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidBR(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=1)
 
             assert (mask == np.array([[False, False, False],
@@ -445,7 +445,7 @@ class TestCIMask(object):
                                     [False, False, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidBR(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=2)
 
             assert (mask == np.array([[False, True, False],
@@ -457,7 +457,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidBR(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=1)
 
             assert (mask == np.array([[False, False, False],
@@ -469,7 +469,7 @@ class TestCIMask(object):
                                     [False, False, True],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidBR(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=2)
 
             assert (mask == np.array([[False, False, False],
@@ -481,7 +481,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidBR(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=1)
 
             assert (mask == np.array([[False, False, False],
@@ -494,7 +494,7 @@ class TestCIMask(object):
                                     [False, False, False, False],
                                     [False, False, False, False]])
 
-            mask = msk.Mask.create(shape=(4, 4), frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
+            mask = msk.Mask.create(shape=(4, 4), frame_geometry=ci_frame.QuadGeometryEuclidBR(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=2)
 
             assert (mask == np.array([[False, False, False, False],
@@ -509,7 +509,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidTL(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=1)
 
             assert (mask == np.array([[False, True, False],
@@ -521,7 +521,7 @@ class TestCIMask(object):
                                     [False, False, False],
                                     [False, True, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidTL(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=2)
 
             assert (mask == np.array([[False, True, False],
@@ -533,7 +533,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidTL(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=1)
 
             assert (mask == np.array([[False, False, False],
@@ -545,7 +545,7 @@ class TestCIMask(object):
                                     [True, False, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidTL(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=2)
 
             assert (mask == np.array([[False, False, False],
@@ -557,7 +557,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidTL(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=1)
 
             assert (mask == np.array([[False, True, True],
@@ -570,7 +570,7 @@ class TestCIMask(object):
                                     [False, False, False, False],
                                     [False, True, False, False]])
 
-            mask = msk.Mask.create(shape=(4, 4), frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
+            mask = msk.Mask.create(shape=(4, 4), frame_geometry=ci_frame.QuadGeometryEuclidTL(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=2)
 
             assert (mask == np.array([[False, False, False, False],
@@ -585,7 +585,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTR(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidTR(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=1)
 
             assert (mask == np.array([[False, True, False],
@@ -597,7 +597,7 @@ class TestCIMask(object):
                                     [False, False, False],
                                     [False, True, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTR(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidTR(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_parallel=2)
             assert (mask == np.array([[False, True, False],
                                       [False, True, False],
@@ -608,7 +608,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTR(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidTR(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=1)
 
             assert (mask == np.array([[False, False, False],
@@ -620,7 +620,7 @@ class TestCIMask(object):
                                     [False, False, True],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTR(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidTR(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_serial=2)
 
             assert (mask == np.array([[False, False, False],
@@ -632,7 +632,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.CIQuadGeometryEuclidTR(),
+            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidTR(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=1)
 
             assert (mask == np.array([[True, True, False],
@@ -645,7 +645,7 @@ class TestCIMask(object):
                                     [False, False, False, False],
                                     [False, False, False, True]])
 
-            mask = msk.Mask.create(shape=(4, 4), frame_geometry=ci_frame.CIQuadGeometryEuclidTR(),
+            mask = msk.Mask.create(shape=(4, 4), frame_geometry=ci_frame.QuadGeometryEuclidTR(),
                                    ci_pattern=MockPattern(), cosmic_rays=cosmic_rays, cr_diagonal=2)
 
             assert (mask == np.array([[False, False, False, False],
@@ -664,10 +664,10 @@ class TestCIPreCTI(object):
             pattern = ci_pattern.CIPatternUniform(normalization=1.0,
                                                   regions=[(0, 1, 0, 1)])
 
-            ci_pre_cti = ci_data.CIPreCTI(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti = ci_data.CIPreCTI(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                           array=ci_pre_cti, ci_pattern=pattern)
 
-            assert type(ci_pre_cti.frame_geometry) == ci_frame.CIQuadGeometryEuclidBL
+            assert type(ci_pre_cti.frame_geometry) == ci_frame.QuadGeometryEuclidBL
             assert (ci_pre_cti == np.array([[10.0, 10.0, 10.0],
                                             [2.0, 2.0, 2.0],
                                             [8.0, 12.0, 10.0]])).all()
@@ -681,7 +681,7 @@ class TestCIPreCTI(object):
 
             ci_pre_cti = np.zeros((5, 5))
             ci_pre_cti[2, 2] = 10.0
-            ci_pre_cti = ci_data.CIPreCTI(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti = ci_data.CIPreCTI(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                           array=ci_pre_cti, ci_pattern=pattern)
 
             ci_post_cti = ci_pre_cti.create_ci_post_cti(params_both, arctic_both)
@@ -704,10 +704,10 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(normalization=1.0,
                                                       regions=[(0, 1, 0, 1)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                               array=ci_pre_cti, ci_pattern=pattern)
 
-            assert type(ci_pre_cti.frame_geometry) == ci_frame.CIQuadGeometryEuclidBL
+            assert type(ci_pre_cti.frame_geometry) == ci_frame.QuadGeometryEuclidBL
             assert (ci_pre_cti == np.array([[10.0, 10.0, 10.0],
                                             [2.0, 2.0, 2.0],
                                             [8.0, 12.0, 10.0]])).all()
@@ -719,7 +719,7 @@ class TestCIPreCTIFast(object):
         def test__1_ci_region_with_two_pixels(self):
             pattern = ci_pattern.CIPatternUniformFast(normalization=10.0, regions=[(0, 2, 0, 1)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                               array=np.ones((3, 3)), ci_pattern=pattern)
 
             assert (ci_pre_cti.fast_column_pre_cti == np.array([[10.0],
@@ -729,7 +729,7 @@ class TestCIPreCTIFast(object):
         def test__2_ci_regions_with_one_pixel_each(self):
             pattern = ci_pattern.CIPatternUniformFast(normalization=10.0, regions=[(0, 1, 0, 3), (2, 3, 0, 3)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                               array=np.ones((3, 3)), ci_pattern=pattern)
 
             assert (ci_pre_cti.fast_column_pre_cti == np.array([[10.0],
@@ -739,7 +739,7 @@ class TestCIPreCTIFast(object):
         def test__top_half_geometry_so_must_include_a_rotation(self):
             pattern = ci_pattern.CIPatternUniformFast(normalization=10.0, regions=[(0, 1, 0, 3)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidTL(),
                                               array=np.ones((3, 3)), ci_pattern=pattern)
 
             assert (ci_pre_cti.fast_column_pre_cti == np.array([[0.0],
@@ -750,7 +750,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 2, 0, 3)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                               array=np.ones((5, 3)), ci_pattern=pattern)
 
             assert (ci_pre_cti.fast_column_pre_cti == np.array([[10.0],
@@ -763,7 +763,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 2, 0, 3)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                               array=np.ones((3, 3)), ci_pattern=pattern)
 
             assert (ci_pre_cti.fast_column_pre_cti == np.array([[10.0],
@@ -776,7 +776,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 1, 0, 3)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                               array=np.ones((3, 3)), ci_pattern=pattern)
 
             fast_column_post_cti = ci_pre_cti.compute_fast_column_post_cti(params_parallel, arctic_parallel)
@@ -792,7 +792,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(normalization=1.0,
                                                       regions=[(0, 2, 0, 2)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                               array=np.ones((3, 3)), ci_pattern=pattern)
 
             fast_column_post_cti = np.array([[10.0],
@@ -809,7 +809,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(normalization=1.0,
                                                       regions=[(0, 2, 0, 2)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                               array=np.ones((3, 4)), ci_pattern=pattern)
 
             fast_column_post_cti = np.array([[10.0],
@@ -826,7 +826,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(normalization=1.0,
                                                       regions=[(0, 2, 0, 2)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                               array=np.ones((4, 3)), ci_pattern=pattern)
 
             fast_column_post_cti = np.array([[10.0],
@@ -845,7 +845,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(normalization=1.0,
                                                       regions=[(0, 2, 0, 2)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidTL(),
                                               array=np.ones((3, 3)), ci_pattern=pattern)
 
             fast_column_post_cti = np.array([[10.0],
@@ -862,7 +862,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(normalization=1.0,
                                                       regions=[(0, 2, 0, 2)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidTL(),
                                               array=np.ones((3, 4)), ci_pattern=pattern)
 
             fast_column_post_cti = np.array([[10.0],
@@ -879,7 +879,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(normalization=1.0,
                                                       regions=[(0, 2, 0, 2)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidTL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidTL(),
                                               array=np.ones((4, 3)), ci_pattern=pattern)
 
             fast_column_post_cti = np.array([[10.0],
@@ -900,7 +900,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 3, 0, 3)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                               array=np.ones((3, 3)), ci_pattern=pattern)
 
             assert (ci_pre_cti.fast_row_pre_cti == np.array([[10.0],
@@ -911,7 +911,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 3, 0, 2)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                               array=np.ones((3, 3)), ci_pattern=pattern)
 
             assert (ci_pre_cti.fast_row_pre_cti == np.array([[10.0],
@@ -922,7 +922,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 3, 0, 1)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidTR(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidTR(),
                                               array=np.ones((3, 3)), ci_pattern=pattern)
 
             assert (ci_pre_cti.fast_row_pre_cti == np.array([[0.0],
@@ -933,7 +933,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 5, 0, 2)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                               array=np.ones((4, 3)), ci_pattern=pattern)
 
             assert (ci_pre_cti.fast_row_pre_cti == np.array([[10.0],
@@ -944,7 +944,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 3, 0, 2)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                               array=np.ones((3, 5)), ci_pattern=pattern)
 
             assert (ci_pre_cti.fast_row_pre_cti == np.array([[10.0],
@@ -959,7 +959,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 3, 0, 1)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                               array=np.ones((3, 3)), ci_pattern=pattern)
 
             fast_row_post_cti = ci_pre_cti.compute_fast_row_post_cti(params_serial, arctic_serial)
@@ -975,7 +975,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(normalization=1.0,
                                                       regions=[(0, 2, 0, 2)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                               array=np.ones((3, 3)), ci_pattern=pattern)
 
             fast_row_post_cti = np.array([[10.0],
@@ -992,7 +992,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(normalization=1.0,
                                                       regions=[(0, 2, 0, 2)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                               array=np.ones((3, 4)), ci_pattern=pattern)
 
             fast_row_post_cti = np.array([[10.0],
@@ -1010,7 +1010,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(normalization=1.0,
                                                       regions=[(0, 2, 0, 2)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                               array=np.ones((4, 3)), ci_pattern=pattern)
 
             fast_row_post_cti = np.array([[10.0],
@@ -1028,7 +1028,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(normalization=1.0,
                                                       regions=[(0, 2, 0, 2)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBR(),
                                               array=np.ones((3, 3)), ci_pattern=pattern)
 
             fast_row_post_cti = np.array([[10.0],
@@ -1045,7 +1045,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(normalization=1.0,
                                                       regions=[(0, 2, 0, 2)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBR(),
                                               array=np.ones((3, 4)), ci_pattern=pattern)
 
             fast_row_post_cti = np.array([[10.0],
@@ -1063,7 +1063,7 @@ class TestCIPreCTIFast(object):
             pattern = ci_pattern.CIPatternUniformFast(normalization=1.0,
                                                       regions=[(0, 2, 0, 2)])
 
-            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBR(),
+            ci_pre_cti = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBR(),
                                               array=np.ones((4, 3)), ci_pattern=pattern)
 
             fast_row_post_cti = np.array([[10.0],
@@ -1087,11 +1087,11 @@ class TestCIPreCTIFast(object):
 
             ci_pre_cti = np.zeros((5, 5))
             ci_pre_cti[2, :] = 10.0
-            ci_pre_cti_normal = ci_data.CIPreCTI(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti_normal = ci_data.CIPreCTI(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                                  array=ci_pre_cti, ci_pattern=pattern)
             ci_post_cti_normal = ci_pre_cti_normal.add_cti_to_image(params_parallel, arctic_parallel)
 
-            ci_pre_cti_fast = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti_fast = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                                    array=ci_pre_cti, ci_pattern=pattern_fast)
             ci_post_cti_fast = ci_pre_cti_fast.create_ci_post_cti(params_parallel, arctic_parallel)
 
@@ -1106,11 +1106,11 @@ class TestCIPreCTIFast(object):
 
             ci_pre_cti = np.zeros((5, 5))
             ci_pre_cti[:, 2] = 10.0
-            ci_pre_cti_normal = ci_data.CIPreCTI(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti_normal = ci_data.CIPreCTI(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                                  array=ci_pre_cti, ci_pattern=pattern)
             ci_post_cti_normal = ci_pre_cti_normal.add_cti_to_image(params_serial, arctic_serial)
 
-            ci_pre_cti_fast = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti_fast = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                                    array=ci_pre_cti, ci_pattern=pattern_fast)
             ci_post_cti_fast = ci_pre_cti_fast.create_ci_post_cti(params_serial, arctic_serial)
 
@@ -1123,7 +1123,7 @@ class TestCIPreCTIFast(object):
 
             ci_pre_cti = np.zeros((5, 5))
             ci_pre_cti[:, 2] = 10.0
-            ci_pre_cti_fast = ci_data.CIPreCTIFast(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(),
+            ci_pre_cti_fast = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                                    array=ci_pre_cti, ci_pattern=pattern_fast)
             with pytest.raises(exc.CIPreCTIException):
                 ci_pre_cti_fast.create_ci_post_cti(params_both, arctic_both)
@@ -1136,7 +1136,7 @@ class TestCIPreCTIFast(object):
             pattern_fast = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(2, 3, 0, 4)])
 
-            data_fast = ci_data.CIImage(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern_fast,
+            data_fast = ci_data.CIImage(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern_fast,
                                         array=10.0 * np.ones((3, 4)))
 
             ci_pre_cti_fast = data_fast.create_ci_pre_cti()
@@ -1147,7 +1147,7 @@ class TestCIPreCTIFast(object):
             pattern_normal = ci_pattern.CIPatternUniform(normalization=10.0,
                                                          regions=[(2, 3, 0, 4)])
 
-            data_normal = ci_data.CIImage(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern_normal,
+            data_normal = ci_data.CIImage(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern_normal,
                                           array=10.0 * np.ones((3, 4)))
 
             ci_pre_cti_normal = data_normal.create_ci_pre_cti()
@@ -1163,7 +1163,7 @@ class TestCIPreCTIFast(object):
             pattern_fast = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(2, 3, 0, 3)])
 
-            data_fast = ci_data.CIImage(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern_fast,
+            data_fast = ci_data.CIImage(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern_fast,
                                         array=10.0 * np.ones((4, 3)))
 
             ci_pre_cti_fast = data_fast.create_ci_pre_cti()
@@ -1174,7 +1174,7 @@ class TestCIPreCTIFast(object):
             pattern_normal = ci_pattern.CIPatternUniform(normalization=10.0,
                                                          regions=[(2, 3, 0, 3)])
 
-            data_normal = ci_data.CIImage(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern_normal,
+            data_normal = ci_data.CIImage(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern_normal,
                                           array=10.0 * np.ones((4, 3)))
 
             ci_pre_cti_normal = data_normal.create_ci_pre_cti()
@@ -1190,7 +1190,7 @@ class TestCIPreCTIFast(object):
             pattern_fast = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 3, 0, 3)])
 
-            data_fast = ci_data.CIImage(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern_fast,
+            data_fast = ci_data.CIImage(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern_fast,
                                         array=10.0 * np.ones((3, 4)))
 
             ci_pre_cti_fast = data_fast.create_ci_pre_cti()
@@ -1201,7 +1201,7 @@ class TestCIPreCTIFast(object):
             pattern_normal = ci_pattern.CIPatternUniform(normalization=10.0,
                                                          regions=[(0, 3, 0, 3)])
 
-            data_normal = ci_data.CIImage(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern_normal,
+            data_normal = ci_data.CIImage(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern_normal,
                                           array=10.0 * np.ones((3, 4)))
 
             ci_pre_cti_normal = data_normal.create_ci_pre_cti()
@@ -1218,7 +1218,7 @@ class TestCIPreCTIFast(object):
             pattern_fast = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 4, 0, 2)])
 
-            data_fast = ci_data.CIImage(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern_fast,
+            data_fast = ci_data.CIImage(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern_fast,
                                         array=10.0 * np.ones((4, 3)))
 
             ci_pre_cti_fast = data_fast.create_ci_pre_cti()
@@ -1229,7 +1229,7 @@ class TestCIPreCTIFast(object):
             pattern_normal = ci_pattern.CIPatternUniform(normalization=10.0,
                                                          regions=[(0, 4, 0, 2)])
 
-            data_normal = ci_data.CIImage(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern_normal,
+            data_normal = ci_data.CIImage(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern_normal,
                                           array=10.0 * np.ones((4, 3)))
 
             ci_pre_cti_normal = data_normal.create_ci_pre_cti()

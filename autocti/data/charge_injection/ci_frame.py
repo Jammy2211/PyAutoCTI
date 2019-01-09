@@ -1305,38 +1305,6 @@ def flip(image):
     return image[::-1, :]
 
 
-class CIQuadGeometryEuclidBL(QuadGeometryEuclidBL):
-
-    def __init__(self):
-        """This class represents the quadrant geometry of a Euclid charge injection image in the bottom-left of a   
-        CCD (see **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
-        super(CIQuadGeometryEuclidBL, self).__init__()
-
-
-class CIQuadGeometryEuclidBR(QuadGeometryEuclidBR):
-
-    def __init__(self):
-        """This class represents the quadrant geometry of a Euclid charge injection image in the bottom-right of a   
-        CCD (see **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
-        super(CIQuadGeometryEuclidBR, self).__init__()
-
-
-class CIQuadGeometryEuclidTL(QuadGeometryEuclidTL):
-
-    def __init__(self):
-        """This class represents the quadrant geometry of a Euclid charge injection image in the top-left of a   
-        CCD (see **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
-        super(CIQuadGeometryEuclidTL, self).__init__()
-
-
-class CIQuadGeometryEuclidTR(QuadGeometryEuclidTR):
-
-    def __init__(self):
-        """This class represents the quadrant geometry of a Euclid charge injection image in the top-right of a   
-        CCD (see **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
-        super(CIQuadGeometryEuclidTR, self).__init__()
-
-
 def check_parallel_front_edge_size(region, rows):
     # TODO: are these checks important?
     if rows[0] < 0 or rows[1] < 1 or rows[1] > region.y1 - region.y0 or rows[0] >= rows[1]:
