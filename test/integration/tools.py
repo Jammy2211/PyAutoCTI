@@ -3,8 +3,6 @@ from os import path
 
 from autofit import conf
 
-from autocti.data.charge_injection import ci_frame
-from autocti.data import cti_image
 from autocti.data.charge_injection import ci_data
 from autocti.data.charge_injection import ci_frame, ci_pattern
 from autocti.tools import infoio

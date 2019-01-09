@@ -1,8 +1,8 @@
 import numpy as np
 import pytest
 
-from autocti.data.charge_injection import ci_frame
 from autocti.data import cti_image
+from autocti.data.charge_injection import ci_frame
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
 

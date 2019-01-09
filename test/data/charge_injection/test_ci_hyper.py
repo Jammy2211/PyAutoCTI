@@ -1,12 +1,11 @@
-from autocti.data.charge_injection import ci_hyper
-
 import numpy as np
+
+from autocti.data.charge_injection import ci_hyper
 
 
 class MockChInj(np.ndarray):
 
     def __new__(cls, array, geometry=None, ci_pattern=None, *args, **kwargs):
-
         ci = np.array(array).view(cls)
         ci.frame_geometry = geometry
         ci.ci_pattern = ci_pattern
@@ -22,7 +21,6 @@ class MockPattern(object):
 class TestScaledNoise:
 
     def test__noise_scaling_map_all_0s__scaled_noise_is_0s(self):
-
         noise_scaling_map = np.array([[0.0, 0.0],
                                       [0.0, 0.0]])
 
@@ -33,7 +31,6 @@ class TestScaledNoise:
                                               [0.0, 0.0]])).all()
 
     def test__noise_scaling_map_has_values__scaled_noise_is_baseline_noise_plus_values_times_noise_factor(self):
-
         noise_scaling_map = np.array([[1.0, 2.0],
                                       [5.0, 3.0]])
 

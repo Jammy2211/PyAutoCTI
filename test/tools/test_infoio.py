@@ -23,20 +23,16 @@ Created on: 04/23/18
 Author: user
 """
 
+import os
+import shutil
 
-import sys
-
-
+import pytest
 
 from autocti.tools import infoio
 
-import pytest
-import shutil
-import os
 
 @pytest.fixture(name='info_path')
 def test_info():
-
     info_path = "{}/files/cti_params/info/".format(os.path.dirname(os.path.realpath(__file__)))
 
     if os.path.exists(info_path):
@@ -46,9 +42,9 @@ def test_info():
 
     return info_path
 
+
 @pytest.fixture(name='class_info_path')
 def test_class_info():
-
     class_info_path = "{}/files/cti_params/info/".format(os.path.dirname(os.path.realpath(__file__)))
 
     if not os.path.exists("{}/files/cti_params/".format(os.path.dirname(os.path.realpath(__file__)))):
@@ -61,9 +57,9 @@ def test_class_info():
 
     return class_info_path
 
+
 @pytest.fixture(name='pickle_path')
 def test_pickle():
-
     pickle_path = "{}/files/cti_params/pickle/".format(os.path.dirname(os.path.realpath(__file__)))
 
     if os.path.exists(pickle_path):
@@ -73,10 +69,10 @@ def test_pickle():
 
     return pickle_path
 
+
 class MockClass(object):
 
     def __init__(self, param1, param2):
-
         self.param1 = param1
         self.param2 = param2
 
@@ -88,7 +84,6 @@ class MockClass(object):
 class MockClassNoInfo(object):
 
     def __init__(self, param1, param2):
-
         self.param1 = param1
         self.param2 = param2
 
@@ -96,8 +91,7 @@ class MockClassNoInfo(object):
 class TestPickle:
 
     def test__reading_info_file_sets_up_correct_settings(self, pickle_path):
-
-        test_class = MockClass(1,2)
+        test_class = MockClass(1, 2)
 
         infoio.output_class_via_pickle(test_class, path=pickle_path, filename='test')
 
@@ -107,8 +101,7 @@ class TestPickle:
         assert test_class.param2 == test_class_pickle.param2
 
     def test__class_check(self, pickle_path):
-
-        test_class = MockClass(1,2)
+        test_class = MockClass(1, 2)
 
         infoio.output_class_via_pickle(test_class, path=pickle_path, filename='test')
 
@@ -119,7 +112,6 @@ class TestPickle:
 class TestGenerateClassInfo:
 
     def test__no_prefix__integers_only(self):
-
         cls = MockClass(param1=1, param2=2)
 
         info = infoio.generate_class_info(cls, prefix='', include_types=[int])
@@ -127,7 +119,6 @@ class TestGenerateClassInfo:
         assert info == r'param1 = 1' + '\n' + 'param2 = 2' + '\n'
 
     def test__no_prefix__integers_only_but_not_in_include_list__returns_none(self):
-
         cls = MockClass(param1=1, param2=2)
 
         info = infoio.generate_class_info(cls, prefix='', include_types=[])
@@ -135,7 +126,6 @@ class TestGenerateClassInfo:
         assert info is None
 
     def test__no_prefix__interger_and_float__include_just_float__only_float_info_generated(self):
-
         cls = MockClass(param1=1, param2=2.0)
 
         info = infoio.generate_class_info(cls, prefix='', include_types=[float])
@@ -143,7 +133,6 @@ class TestGenerateClassInfo:
         assert info == r'param2 = 2.0' + '\n'
 
     def test__no_prefix__same_as_above_but_with_list(self):
-
         cls = MockClass(param1=1, param2=[1.0, 2.0, 3.0])
 
         info = infoio.generate_class_info(cls, prefix='', include_types=[list])
@@ -151,7 +140,6 @@ class TestGenerateClassInfo:
         assert info == r'param2 = [1.0, 2.0, 3.0]' + '\n'
 
     def test__prefix_included(self):
-
         cls = MockClass(param1=1, param2=[1.0, 2.0, 3.0])
 
         info = infoio.generate_class_info(cls, prefix='pre_', include_types=[list])
@@ -162,7 +150,6 @@ class TestGenerateClassInfo:
 class TestOutputClassInfo:
 
     def test__mock_class__input_integers__outputs_file_with_correct_name_and_all_attributes(self, class_info_path):
-
         test_class = MockClass(1, 2)
 
         infoio.output_class_info(cls=test_class, path=class_info_path, filename='MockClassNLOx4')
@@ -173,8 +160,8 @@ class TestOutputClassInfo:
 
         assert info[0] == r'param1 = 1' + '\n'
 
-    def test__mock_class__input_float_and_list__outputs_file_with_correct_name_and_all_attributes(self, class_info_path):
-
+    def test__mock_class__input_float_and_list__outputs_file_with_correct_name_and_all_attributes(self,
+                                                                                                  class_info_path):
         test_class = MockClass(1.0, [1, 2])
 
         infoio.output_class_info(cls=test_class, path=class_info_path, filename='MockClassNLOx4')
@@ -187,7 +174,6 @@ class TestOutputClassInfo:
         assert info[1] == r'param2 = [1, 2]' + '\n'
 
     def test__mock_class__has_no_generate_info_function__raises_error(self, class_info_path):
-
         test_class = MockClassNoInfo(1, 2)
 
         with pytest.raises(IOError):
@@ -197,16 +183,13 @@ class TestOutputClassInfo:
 class TestCheckAllTuples:
 
     def test__all_are_tuples__no_error(self):
-
         infoio.check_all_tuples((1.0,), (2.0,))
 
     def test__one_is_not_tuple__raises_error(self):
-
         with pytest.raises(AttributeError):
             infoio.check_all_tuples(1.0, (2.0,))
 
     def test__another_is_not_tuple__raises_error(self):
-
         with pytest.raises(AttributeError):
             infoio.check_all_tuples(1.0)
 
@@ -214,10 +197,8 @@ class TestCheckAllTuples:
 class TestCheckAllEqualLength:
 
     def test__all_are_same_length__does_not_raise_error(self):
-
         infoio.check_all_tuples_and_equal_length((1, 2), (3, 4))
 
     def test__not_same_length__raises_error(self):
-
         with pytest.raises(AttributeError):
             infoio.check_all_tuples_and_equal_length((1), (3, 4))

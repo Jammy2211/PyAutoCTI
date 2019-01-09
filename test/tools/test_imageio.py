@@ -23,8 +23,6 @@ Created on: 04/23/18
 Author: user
 """
 
-
-
 import os
 
 import numpy as np

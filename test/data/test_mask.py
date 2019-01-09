@@ -23,14 +23,11 @@ Created on: 02/14/18
 Author: user
 """
 
-
-
 import numpy as np
-import pytest
 
-from autocti.data.charge_injection import ci_frame
-from autocti.data import cti_image
 from autocti.data import mask as msk
+from autocti.data.charge_injection import ci_frame
+
 
 class MockPattern(object):
 
@@ -41,7 +38,6 @@ class MockPattern(object):
 class TestMaskRemoveRegions:
 
     def test__remove_one_region(self):
-
         mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclidBL(),
                                ci_pattern=MockPattern(), regions=[(0, 3, 2, 3)])
 
