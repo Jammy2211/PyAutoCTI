@@ -853,7 +853,7 @@ class CIFrameCTI(cti_image.CTIImage, ChInj):
             2D Array of array charge injection image ci_data.
         """
         ci_inj = super(CIFrameCTI, cls).__new__(cls, frame_geometry, array)
-        ()
+        
         ci_inj.ci_pattern = ci_pattern
         return ci_inj
 
