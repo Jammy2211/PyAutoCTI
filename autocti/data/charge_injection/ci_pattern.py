@@ -7,6 +7,7 @@ Author: James Nightingale
 
 import numpy as np
 
+from autocti.data.charge_injection import ci_frame
 from autocti import exc
 from autocti.data import cti_image
 from autocti.tools import infoio
@@ -104,7 +105,7 @@ class CIPattern(object):
             (top-row, bottom-row, left-column, right-column).
         """
         self.normalization = normalization
-        self.regions = list(map(cti_image.Region, regions))
+        self.regions = list(map(ci_frame.Region, regions))
 
     def generate_info(self):
         """Generate string containing information on the charge injection ci_pattern."""

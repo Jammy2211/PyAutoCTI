@@ -3,6 +3,7 @@ from os import path
 
 from autofit import conf
 
+from autocti.data.charge_injection import ci_frame
 from autocti.data import cti_image
 from autocti.data.charge_injection import ci_data
 from autocti.data.charge_injection import ci_frame, ci_pattern
@@ -13,15 +14,15 @@ directory = path.dirname(path.realpath(__file__))
 dirpath = "{}".format(directory)
 
 
-class QuadGeometryIntegration(cti_image.FrameGeometry):
+class QuadGeometryIntegration(ci_frame.FrameGeometry):
 
     def __init__(self):
         """This class represents the frame_geometry of a Euclid quadrant in the bottom-left of a CCD (see \
         **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
 
-        super(QuadGeometryIntegration, self).__init__(parallel_overscan=cti_image.Region((1, 30, 33, 36)),
-                                                      serial_prescan=cti_image.Region((0, 33, 0, 1)),
-                                                      serial_overscan=cti_image.Region((0, 33, 30, 36)))
+        super(QuadGeometryIntegration, self).__init__(parallel_overscan=ci_frame.Region((1, 30, 33, 36)),
+                                                      serial_prescan=ci_frame.Region((0, 33, 0, 1)),
+                                                      serial_overscan=ci_frame.Region((0, 33, 30, 36)))
 
     @staticmethod
     def rotate_for_parallel_cti(image_pre_clocking):
@@ -105,28 +106,28 @@ class CIQuadGeometryIntegration(QuadGeometryIntegration, ci_frame.CIQuadGeometry
     @staticmethod
     def parallel_front_edge_region(region, rows=(0, 1)):
         ci_frame.check_parallel_front_edge_size(region, rows)
-        return cti_image.Region((region.y0 + rows[0], region.y0 + rows[1], region.x0, region.x1))
+        return ci_frame.Region((region.y0 + rows[0], region.y0 + rows[1], region.x0, region.x1))
 
     @staticmethod
     def parallel_trails_region(region, rows=(0, 1)):
-        return cti_image.Region((region.y1 + rows[0], region.y1 + rows[1], region.x0, region.x1))
+        return ci_frame.Region((region.y1 + rows[0], region.y1 + rows[1], region.x0, region.x1))
 
     @staticmethod
     def parallel_side_nearest_read_out_region(region, image_shape, columns=(0, 1)):
-        return cti_image.Region((0, image_shape[0], region.x0 + columns[0], region.x0 + columns[1]))
+        return ci_frame.Region((0, image_shape[0], region.x0 + columns[0], region.x0 + columns[1]))
 
     @staticmethod
     def serial_front_edge_region(region, columns=(0, 1)):
         ci_frame.check_serial_front_edge_size(region, columns)
-        return cti_image.Region((region.y0, region.y1, region.x0 + columns[0], region.x0 + columns[1]))
+        return ci_frame.Region((region.y0, region.y1, region.x0 + columns[0], region.x0 + columns[1]))
 
     @staticmethod
     def serial_trails_region(region, columns=(0, 1)):
-        return cti_image.Region((region.y0, region.y1, region.x1 + columns[0], region.x1 + columns[1]))
+        return ci_frame.Region((region.y0, region.y1, region.x1 + columns[0], region.x1 + columns[1]))
 
     @staticmethod
     def serial_ci_region_and_trails(region, image_shape, from_column):
-        return cti_image.Region((region.y0, region.y1, from_column + region.x0, image_shape[1]))
+        return ci_frame.Region((region.y0, region.y1, from_column + region.x0, image_shape[1]))
 
 
 shape = (36, 36)

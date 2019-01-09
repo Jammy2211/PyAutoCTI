@@ -1,5 +1,6 @@
 import numpy as np
 
+from autocti.data.charge_injection import ci_frame
 from autocti.data import cti_image
 from autocti.data import mask as msk
 from autocti.data.charge_injection import ci_frame, ci_pattern
@@ -9,8 +10,8 @@ class MockCIGeometry(object):
 
     def __init__(self, serial_prescan=(0, 1, 0, 1), serial_overscan=(0, 1, 0, 1)):
         super(MockCIGeometry, self).__init__()
-        self.serial_prescan = cti_image.Region(serial_prescan)
-        self.serial_overscan = cti_image.Region(serial_overscan)
+        self.serial_prescan = ci_frame.Region(serial_prescan)
+        self.serial_overscan = ci_frame.Region(serial_overscan)
 
 
 class MockGeometry(object):
@@ -622,7 +623,7 @@ class TestCIFrame(object):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 4, 0, 2)])
 
             frame_geometry = ci_frame.CIQuadGeometryEuclidBL()
-            frame_geometry.serial_overscan = cti_image.Region((0, 4, 2, 3))
+            frame_geometry.serial_overscan = ci_frame.Region((0, 4, 2, 3))
 
             frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
@@ -641,7 +642,7 @@ class TestCIFrame(object):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 4, 0, 2)])
 
             frame_geometry = ci_frame.CIQuadGeometryEuclidBL()
-            frame_geometry.serial_overscan = cti_image.Region((0, 4, 2, 4))
+            frame_geometry.serial_overscan = ci_frame.Region((0, 4, 2, 4))
 
             frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0, 0.5],
@@ -660,7 +661,7 @@ class TestCIFrame(object):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 1, 0, 2), (2, 3, 0, 2)])
 
             frame_geometry = ci_frame.CIQuadGeometryEuclidBL()
-            frame_geometry.serial_overscan = cti_image.Region((0, 4, 2, 4))
+            frame_geometry.serial_overscan = ci_frame.Region((0, 4, 2, 4))
 
             frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0, 0.5],
@@ -679,7 +680,7 @@ class TestCIFrame(object):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 1, 2, 4), (2, 3, 2, 4)])
 
             frame_geometry = ci_frame.CIQuadGeometryEuclidBR()
-            frame_geometry.serial_overscan = cti_image.Region((0, 4, 0, 2))
+            frame_geometry.serial_overscan = ci_frame.Region((0, 4, 0, 2))
 
             frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0, 0.5],
@@ -700,8 +701,8 @@ class TestCIFrame(object):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(1, 3, 1, 2)])
 
             frame_geometry = ci_frame.CIQuadGeometryEuclidBL()
-            frame_geometry.serial_prescan = cti_image.Region((0, 3, 0, 1))
-            frame_geometry.serial_overscan = cti_image.Region((0, 3, 2, 4))
+            frame_geometry.serial_prescan = ci_frame.Region((0, 3, 0, 1))
+            frame_geometry.serial_overscan = ci_frame.Region((0, 3, 2, 4))
 
             frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0, 3.0],
@@ -718,8 +719,8 @@ class TestCIFrame(object):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(1, 3, 1, 3)])
 
             frame_geometry = ci_frame.CIQuadGeometryEuclidBL()
-            frame_geometry.serial_prescan = cti_image.Region((0, 3, 0, 1))
-            frame_geometry.serial_overscan = cti_image.Region((0, 3, 3, 4))
+            frame_geometry.serial_prescan = ci_frame.Region((0, 3, 0, 1))
+            frame_geometry.serial_overscan = ci_frame.Region((0, 3, 3, 4))
 
             frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0, 3.0],
@@ -736,8 +737,8 @@ class TestCIFrame(object):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(1, 2, 1, 3), (3, 4, 1, 3)])
 
             frame_geometry = ci_frame.CIQuadGeometryEuclidBL()
-            frame_geometry.serial_prescan = cti_image.Region((0, 5, 0, 1))
-            frame_geometry.serial_overscan = cti_image.Region((0, 5, 3, 4))
+            frame_geometry.serial_prescan = ci_frame.Region((0, 5, 0, 1))
+            frame_geometry.serial_overscan = ci_frame.Region((0, 5, 3, 4))
 
             frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0, 3.0],
@@ -759,8 +760,8 @@ class TestCIFrame(object):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(1, 2, 1, 3), (3, 4, 1, 3)])
 
             frame_geometry = ci_frame.CIQuadGeometryEuclidBR()
-            frame_geometry.serial_prescan = cti_image.Region((0, 5, 3, 4))
-            frame_geometry.serial_overscan = cti_image.Region((0, 5, 0, 1))
+            frame_geometry.serial_prescan = ci_frame.Region((0, 5, 3, 4))
+            frame_geometry.serial_overscan = ci_frame.Region((0, 5, 0, 1))
 
             frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
                                      ci_pattern=pattern, array=np.array([[0.5, 1.0, 2.0, 3.0],
@@ -1591,7 +1592,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern,
                                      array=image)
 
-            frame.frame_geometry.serial_prescan = cti_image.Region(region=(0, 4, 0, 1))
+            frame.frame_geometry.serial_prescan = ci_frame.Region(region=(0, 4, 0, 1))
 
             extracted_array = frame.parallel_serial_calibration_section()
 
@@ -1613,7 +1614,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern,
                                      array=image)
 
-            frame.frame_geometry.serial_prescan = cti_image.Region(region=(0, 4, 0, 2))
+            frame.frame_geometry.serial_prescan = ci_frame.Region(region=(0, 4, 0, 2))
 
             extracted_array = frame.parallel_serial_calibration_section()
 
