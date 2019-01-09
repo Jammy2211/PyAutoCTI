@@ -215,7 +215,7 @@ class TestCIFrame(object):
             assert new_frame.frame_geometry == frame.frame_geometry
             assert new_frame.ci_pattern == frame.ci_pattern
 
-            new_frame = frame.serial_calibration_section_for_column_and_rows(from_column=0, rows=(0, 3))
+            new_frame = frame.serial_calibration_section_for_column_and_rows(column=0, rows=(0, 3))
 
             assert type(new_frame) == ci_frame.CIFrame
             assert new_frame.frame_geometry == frame.frame_geometry
@@ -778,7 +778,7 @@ class TestCIFrame(object):
 
     class TestSerialCalibrationArrayFromFrame:
 
-        def test__geometry_left__ci_region_across_all_image__from_column_0__extracts_all_columns(self):
+        def test__geometry_left__ci_region_across_all_image__column_0__extracts_all_columns(self):
             pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 0, 5)])
 
             image = np.array([[0.0, 1.0, 2.0, 3.0, 4.0],
@@ -788,7 +788,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern,
                                      array=image)
 
-            serial_frame = frame.serial_calibration_section_for_column_and_rows(from_column=0, rows=(0, 3))
+            serial_frame = frame.serial_calibration_section_for_column_and_rows(column=0, rows=(0, 3))
 
             assert (serial_frame[0] == np.array([[0.0, 1.0, 2.0, 3.0, 4.0],
                                                  [0.0, 1.0, 2.0, 3.0, 4.0],
@@ -804,7 +804,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern,
                                      array=image)
 
-            serial_frame = frame.serial_calibration_section_for_column_and_rows(from_column=1, rows=(0, 1))
+            serial_frame = frame.serial_calibration_section_for_column_and_rows(column=1, rows=(0, 1))
 
             assert (serial_frame == np.array([[2.0, 2.0, 2.0],
                                               [4.0, 4.0, 4.0]])).all()
@@ -819,7 +819,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBR(), ci_pattern=pattern,
                                      array=image)
 
-            serial_frame = frame.serial_calibration_section_for_column_and_rows(from_column=1, rows=(0, 1))
+            serial_frame = frame.serial_calibration_section_for_column_and_rows(column=1, rows=(0, 1))
 
             assert (serial_frame == np.array([[0.0, 1.0, 2.0],
                                               [0.0, 1.0, 4.0]])).all()
@@ -834,7 +834,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern,
                                      array=image)
 
-            serial_frame = frame.serial_calibration_section_for_column_and_rows(from_column=0, rows=(0, 2))
+            serial_frame = frame.serial_calibration_section_for_column_and_rows(column=0, rows=(0, 2))
 
             assert (serial_frame == np.array([[0.0, 1.0, 2.0, 3.0, 4.0],
                                               [0.0, 1.0, 2.0, 3.0, 4.0]])).all()
@@ -851,7 +851,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBR(), ci_pattern=pattern,
                                      array=image)
 
-            serial_frame = frame.serial_calibration_section_for_column_and_rows(from_column=1, rows=(0, 1))
+            serial_frame = frame.serial_calibration_section_for_column_and_rows(column=1, rows=(0, 1))
 
             assert (serial_frame == np.array([[0.0, 1.0, 2.0],
                                               [0.0, 1.0, 5.0]])).all()
@@ -868,14 +868,14 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBR(), ci_pattern=pattern,
                                      array=image)
 
-            serial_frame = frame.serial_calibration_section_for_column_and_rows(from_column=1, rows=(1, 2))
+            serial_frame = frame.serial_calibration_section_for_column_and_rows(column=1, rows=(1, 2))
 
             assert (serial_frame == np.array([[0.0, 1.0, 3.0],
                                               [0.0, 1.0, 6.0]])).all()
 
     class TestSerialCalibrationSubArrays:
 
-        def test__geometry_left__ci_region_across_all_image__from_column_0__extracts_all_columns(self):
+        def test__geometry_left__ci_region_across_all_image__column_0__extracts_all_columns(self):
             pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 0, 5)])
 
             image = np.array([[0.0, 1.0, 2.0, 3.0, 4.0],
@@ -885,13 +885,13 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern,
                                      array=image)
 
-            serial_region = frame.serial_calibration_sub_arrays_from_frame(from_column=0)
+            serial_region = frame.serial_calibration_sub_arrays_from_frame(column=0)
 
             assert (serial_region[0] == np.array([[0.0, 1.0, 2.0, 3.0, 4.0],
                                                   [0.0, 1.0, 2.0, 3.0, 4.0],
                                                   [0.0, 1.0, 2.0, 3.0, 4.0]])).all()
 
-        def test__geometry_left__ci_region_misses_serial_overscan__from_column_0__extracts_all_columns(self):
+        def test__geometry_left__ci_region_misses_serial_overscan__column_0__extracts_all_columns(self):
             pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 0, 4)])
 
             image = np.array([[0.0, 1.0, 2.0, 3.0, 4.0],
@@ -901,7 +901,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern,
                                      array=image)
 
-            serial_region = frame.serial_calibration_sub_arrays_from_frame(from_column=0)
+            serial_region = frame.serial_calibration_sub_arrays_from_frame(column=0)
 
             assert (serial_region[0] == np.array([[0.0, 1.0, 2.0, 3.0, 4.0],
                                                   [0.0, 1.0, 2.0, 3.0, 4.0],
@@ -917,13 +917,13 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern,
                                      array=image)
 
-            serial_region = frame.serial_calibration_sub_arrays_from_frame(from_column=0)
+            serial_region = frame.serial_calibration_sub_arrays_from_frame(column=0)
 
             assert (serial_region[0] == np.array([[1.0, 2.0, 3.0, 4.0],
                                                   [1.0, 2.0, 3.0, 4.0],
                                                   [1.0, 2.0, 3.0, 4.0]])).all()
 
-        def test__geometry_left__same_as_above_but_from_column_2(self):
+        def test__geometry_left__same_as_above_but_column_2(self):
             pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
             image = np.array([[0.0, 1.0, 2.0, 3.0, 4.0],
@@ -933,7 +933,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern,
                                      array=image)
 
-            serial_region = frame.serial_calibration_sub_arrays_from_frame(from_column=1)
+            serial_region = frame.serial_calibration_sub_arrays_from_frame(column=1)
 
             assert (serial_region[0] == np.array([[2.0, 3.0, 4.0],
                                                   [2.0, 3.0, 4.0],
@@ -949,13 +949,13 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBR(), ci_pattern=pattern,
                                      array=image)
 
-            serial_region = frame.serial_calibration_sub_arrays_from_frame(from_column=0)
+            serial_region = frame.serial_calibration_sub_arrays_from_frame(column=0)
 
             assert (serial_region[0] == np.array([[0.0, 1.0, 2.0, 3.0],
                                                   [0.0, 1.0, 2.0, 3.0],
                                                   [0.0, 1.0, 2.0, 3.0]])).all()
 
-        def test__geometry_right__also_include_from_column(self):
+        def test__geometry_right__also_include_column(self):
             pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
             image = np.array([[0.0, 1.0, 2.0, 3.0, 4.0],
@@ -965,7 +965,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBR(), ci_pattern=pattern,
                                      array=image)
 
-            serial_region = frame.serial_calibration_sub_arrays_from_frame(from_column=1)
+            serial_region = frame.serial_calibration_sub_arrays_from_frame(column=1)
 
             assert (serial_region[0] == np.array([[0.0, 1.0, 2.0],
                                                   [0.0, 1.0, 2.0],
@@ -981,7 +981,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern,
                                      array=image)
 
-            serial_region = frame.serial_calibration_sub_arrays_from_frame(from_column=1)
+            serial_region = frame.serial_calibration_sub_arrays_from_frame(column=1)
 
             assert (serial_region[0] == np.array([[2.0, 2.0, 2.0]])).all()
             assert (serial_region[1] == np.array([[4.0, 4.0, 4.0]])).all()
@@ -1823,30 +1823,30 @@ class TestCIQuadGeometryEuclidBL(object):
 
     class TestSerialChargeInjectionAndTrails:
 
-        def test__from_column_0_of_front_edge__region_is_left_hand_side__no_overscan_beyond_ci_region(self):
+        def test__column_0_of_front_edge__region_is_left_hand_side__no_overscan_beyond_ci_region(self):
             ci_geometry = ci_frame.CIQuadGeometryEuclidBL()
             ci_region = MockRegion(region=(1, 3, 0, 5))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 5),
-                                                                       from_column=0)
+                                                                       column=0)
 
             assert ci_serial_region == (1, 3, 0, 5)
 
-        def test__from_column_0_of_front_edge__region_is_left_hand_side__overscan_beyond_ci_region(self):
+        def test__column_0_of_front_edge__region_is_left_hand_side__overscan_beyond_ci_region(self):
             ci_geometry = ci_frame.CIQuadGeometryEuclidBL()
             ci_region = MockRegion(region=(1, 3, 0, 5))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
-                                                                       from_column=0)
+                                                                       column=0)
 
             assert ci_serial_region == (1, 3, 0, 25)
 
-        def test__from_column_2__region_is_left_hand_side__overscan_beyond_ci_region(self):
+        def test__column_2__region_is_left_hand_side__overscan_beyond_ci_region(self):
             ci_geometry = ci_frame.CIQuadGeometryEuclidBL()
             ci_region = MockRegion(region=(1, 3, 0, 5))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
-                                                                       from_column=2)
+                                                                       column=2)
 
             assert ci_serial_region == (1, 3, 2, 25)
 
@@ -1855,16 +1855,16 @@ class TestCIQuadGeometryEuclidBL(object):
             ci_region = MockRegion(region=(1, 3, 10, 20))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
-                                                                       from_column=0)
+                                                                       column=0)
 
             assert ci_serial_region == (1, 3, 10, 25)
 
-        def test__ci_region_has_overscan_and_prescan_either_side__include_from_column(self):
+        def test__ci_region_has_overscan_and_prescan_either_side__include_column(self):
             ci_geometry = ci_frame.CIQuadGeometryEuclidBL()
             ci_region = MockRegion(region=(1, 3, 10, 20))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
-                                                                       from_column=2)
+                                                                       column=2)
 
             assert ci_serial_region == (1, 3, 12, 25)
 
@@ -1873,7 +1873,7 @@ class TestCIQuadGeometryEuclidBL(object):
             ci_region = MockRegion(region=(3, 5, 5, 30))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(8, 55),
-                                                                       from_column=2)
+                                                                       column=2)
 
             assert ci_serial_region == (3, 5, 7, 55)
 
@@ -1999,30 +1999,30 @@ class TestCIQuadGeometryEuclidBR(object):
 
     class TestSerialChargeInjectionAndTrails:
 
-        def test__from_column_0_of_front_edge__region_is_left_hand_side__no_overscan_beyond_ci_region(self):
+        def test__column_0_of_front_edge__region_is_left_hand_side__no_overscan_beyond_ci_region(self):
             ci_geometry = ci_frame.CIQuadGeometryEuclidBR()
             ci_region = MockRegion(region=(1, 3, 0, 5))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 5),
-                                                                       from_column=0)
+                                                                       column=0)
 
             assert ci_serial_region == (1, 3, 0, 5)
 
-        def test__from_column_0_of_front_edge__region_is_left_hand_side__overscan_beyond_ci_region(self):
+        def test__column_0_of_front_edge__region_is_left_hand_side__overscan_beyond_ci_region(self):
             ci_geometry = ci_frame.CIQuadGeometryEuclidBR()
             ci_region = MockRegion(region=(1, 3, 20, 25))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
-                                                                       from_column=0)
+                                                                       column=0)
 
             assert ci_serial_region == (1, 3, 0, 25)
 
-        def test__from_column_2__region_is_left_hand_side__overscan_beyond_ci_region(self):
+        def test__column_2__region_is_left_hand_side__overscan_beyond_ci_region(self):
             ci_geometry = ci_frame.CIQuadGeometryEuclidBR()
             ci_region = MockRegion(region=(1, 3, 20, 25))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
-                                                                       from_column=2)
+                                                                       column=2)
 
             assert ci_serial_region == (1, 3, 0, 23)
 
@@ -2031,16 +2031,16 @@ class TestCIQuadGeometryEuclidBR(object):
             ci_region = MockRegion(region=(1, 3, 10, 20))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
-                                                                       from_column=0)
+                                                                       column=0)
 
             assert ci_serial_region == (1, 3, 0, 20)
 
-        def test__ci_region_has_overscan_and_prescan_either_side__include_from_column(self):
+        def test__ci_region_has_overscan_and_prescan_either_side__include_column(self):
             ci_geometry = ci_frame.CIQuadGeometryEuclidBR()
             ci_region = MockRegion(region=(1, 3, 10, 20))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
-                                                                       from_column=2)
+                                                                       column=2)
 
             assert ci_serial_region == (1, 3, 0, 18)
 
@@ -2049,7 +2049,7 @@ class TestCIQuadGeometryEuclidBR(object):
             ci_region = MockRegion(region=(3, 5, 5, 30))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(8, 55),
-                                                                       from_column=2)
+                                                                       column=2)
 
             assert ci_serial_region == (3, 5, 0, 28)
 
@@ -2159,7 +2159,7 @@ class TestCIQuadGeometryEuclidTL(object):
             ci_region = MockRegion(region=(3, 5, 5, 30))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(8, 55),
-                                                                       from_column=2)
+                                                                       column=2)
 
             assert ci_serial_region == (3, 5, 7, 55)
 
@@ -2229,6 +2229,6 @@ class TestCIQuadGeometryEuclidTR(object):
             ci_region = MockRegion(region=(3, 5, 5, 30))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(8, 55),
-                                                                       from_column=2)
+                                                                       column=2)
 
             assert ci_serial_region == (3, 5, 0, 28)
