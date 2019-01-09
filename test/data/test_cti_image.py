@@ -280,7 +280,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
 
             quadrant = cti_image.QuadGeometryEuclidBL()
 
-            quadrant_rotated = quadrant.rotate_before_parallel_cti(image_pre_clocking=quadrant_data)
+            quadrant_rotated = quadrant.rotate_for_parallel_cti(image=quadrant_data)
             assert (quadrant_rotated == quadrant_data).all()
 
         def test__rotate_for_parallel_clocking_and_back_again__returns_to_original_orientation(self, quadrant_data):
@@ -288,8 +288,8 @@ class TestQuadrantGeometryEuclidBottomLeft:
             # Quadrant 0 - Bottom left panel of Euclid CCD - input ci_pre_ctis should not be rotated for parallel cti.
 
             quadrant = cti_image.QuadGeometryEuclidBL()
-            quadrant_rotated = quadrant.rotate_before_parallel_cti(image_pre_clocking=quadrant_data)
-            quadrant_rotated_back = quadrant.rotate_after_parallel_cti(image_post_clocking=quadrant_rotated)
+            quadrant_rotated = quadrant.rotate_for_parallel_cti(image=quadrant_data)
+            quadrant_rotated_back = quadrant.rotate_for_parallel_cti(image=quadrant_rotated)
 
             assert (quadrant_rotated_back == quadrant_data).all()
 
@@ -338,15 +338,15 @@ class TestQuadrantGeometryEuclidBottomRight:
 
             quadrant = cti_image.QuadGeometryEuclidBR()
 
-            quadrant_rotated = quadrant.rotate_before_parallel_cti(image_pre_clocking=quadrant_data)
+            quadrant_rotated = quadrant.rotate_for_parallel_cti(image=quadrant_data)
             assert (quadrant_rotated == quadrant_data).all()
 
         def test__rotate_for_parallel_clocking_and_back_again__returns_to_original_orientation(self, quadrant_data):
             # Quadrant 1 - Bottom right panel of Euclid CCD - input ci_pre_ctis should not be rotateped for parallel cti.
 
             quadrant = cti_image.QuadGeometryEuclidBR()
-            quadrant_rotated = quadrant.rotate_before_parallel_cti(image_pre_clocking=quadrant_data)
-            quadrant_rotated_back = quadrant.rotate_after_parallel_cti(image_post_clocking=quadrant_rotated)
+            quadrant_rotated = quadrant.rotate_for_parallel_cti(image=quadrant_data)
+            quadrant_rotated_back = quadrant.rotate_for_parallel_cti(image=quadrant_rotated)
 
             assert (quadrant_rotated_back == quadrant_data).all()
 
@@ -389,7 +389,7 @@ class TestQuadrantGeometryEuclidTopLeft:
 
             quadrant = cti_image.QuadGeometryEuclidTL()
 
-            quadrant_rotated = quadrant.rotate_before_parallel_cti(image_pre_clocking=quadrant_data)
+            quadrant_rotated = quadrant.rotate_for_parallel_cti(image=quadrant_data)
             assert (quadrant_rotated == np.flipud(quadrant_data)).all()
 
         def test__rotate_for_parallel_clocking_and_back_again__returns_to_original_orientation(self, quadrant_data):
@@ -398,8 +398,8 @@ class TestQuadrantGeometryEuclidTopLeft:
 
             quadrant = cti_image.QuadGeometryEuclidTL()
 
-            quadrant_rotated = quadrant.rotate_before_parallel_cti(image_pre_clocking=quadrant_data)
-            quadrant_rotated_back = quadrant.rotate_after_parallel_cti(image_post_clocking=quadrant_rotated)
+            quadrant_rotated = quadrant.rotate_for_parallel_cti(image=quadrant_data)
+            quadrant_rotated_back = quadrant.rotate_for_parallel_cti(image=quadrant_rotated)
 
             assert (quadrant_rotated_back == quadrant_data).all()
 
@@ -443,7 +443,7 @@ class TestQuadrantGeometryEuclidTopRight:
 
             quadrant = cti_image.QuadGeometryEuclidTR()
 
-            quadrant_rotated = quadrant.rotate_before_parallel_cti(image_pre_clocking=quadrant_data)
+            quadrant_rotated = quadrant.rotate_for_parallel_cti(image=quadrant_data)
             assert (quadrant_rotated == np.flipud(quadrant_data)).all()
 
         def test__rotate_for_parallel_clocking_and_back_again__returns_to_original_orientation(self, quadrant_data):
@@ -452,8 +452,8 @@ class TestQuadrantGeometryEuclidTopRight:
 
             quadrant = cti_image.QuadGeometryEuclidTR()
 
-            quadrant_rotated = quadrant.rotate_before_parallel_cti(image_pre_clocking=quadrant_data)
-            quadrant_rotated_back = quadrant.rotate_after_parallel_cti(image_post_clocking=quadrant_rotated)
+            quadrant_rotated = quadrant.rotate_for_parallel_cti(image=quadrant_data)
+            quadrant_rotated_back = quadrant.rotate_for_parallel_cti(image=quadrant_rotated)
             assert (quadrant_rotated_back == quadrant_data).all()
 
         def test__rotate_for_serial_clocking__oriented_as_described_in_documentation(self, quadrant_data):

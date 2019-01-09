@@ -24,7 +24,7 @@ class QuadGeometryIntegration(cti_image.FrameGeometry):
                                                       serial_overscan=cti_image.Region((0, 33, 30, 36)))
 
     @staticmethod
-    def rotate_before_parallel_cti(image_pre_clocking):
+    def rotate_for_parallel_cti(image_pre_clocking):
         """ Rotate the quadrant image data before clocking via cti_settings in the parallel direction.
 
         For the integration quadrant, no rotation is required for parallel clocking
@@ -37,7 +37,7 @@ class QuadGeometryIntegration(cti_image.FrameGeometry):
         return image_pre_clocking
 
     @staticmethod
-    def rotate_after_parallel_cti(image_post_clocking):
+    def rotate_for_parallel_cti(image_post_clocking):
         """ Re-rotate the quadrant image data after clocking via cti_settings in the parallel direction.
 
         For the integration quadrant, no re-rotation is required for parallel clocking.

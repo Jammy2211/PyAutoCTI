@@ -22,7 +22,6 @@ logger = logging.getLogger(__name__)
 logger.level = logging.DEBUG
 
 
-# noinspection PyUnusedLocal
 def default_extractor(ci_datas, mask_function, columns=None, rows=None, noise_scalings=None):
     images = list(map(lambda d: d.image, ci_datas))
     masks = list(map(lambda d: mask_function(d.mask), ci_datas))
@@ -39,7 +38,6 @@ def default_extractor(ci_datas, mask_function, columns=None, rows=None, noise_sc
     return ci_data.CIDataAnalysis(images, masks, noises, ci_pre_ctis, new_noise_scalings)
 
 
-# noinspection PyUnusedLocal
 def parallel_extractor(ci_datas, mask_function, columns=None, rows=None, noise_scalings=None):
     if columns is None:
         columns = ci_datas[0].image.cti_geometry.parallel_overscan.total_columns
@@ -95,7 +93,6 @@ def serial_extractor(ci_datas, mask_function, columns=None, rows=None, noise_sca
     return ci_data.CIDataAnalysis(images, masks, noises, ci_pre_ctis, new_noise_scalings)
 
 
-# noinspection PyUnusedLocal
 def parallel_serial_extractor(ci_datas, mask_function, columns=None, rows=None, noise_scalings=None):
     images = list(map(lambda d:
                       d.image.parallel_serial_calibration_section_from_frame(), ci_datas))
