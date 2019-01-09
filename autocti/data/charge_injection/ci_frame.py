@@ -1069,34 +1069,6 @@ class FrameGeometry(object):
             x_max = x_coord - columns[0]
         return Region((region.y0, region.y1, x_min, x_max))
 
-    @staticmethod
-    def serial_front_edge_region_bl(region, columns=(0, 1)):
-        """Extract the leading edge of a charge injection region which is located in the bottom-left quadrant of a \
-        Euclid CCD (see *CIPatternGeometry*)."""
-        check_serial_front_edge_size(region, columns)
-        return Region((region.y0, region.y1, region.x0 + columns[0], region.x0 + columns[1]))
-
-    @staticmethod
-    def serial_front_edge_region_br(region, columns=(0, 1)):
-        """Extract the leading edge of a charge injection region which is located in the bottom-left quadrant of a \
-        Euclid CCD (see *CIPatternGeometry*)."""
-        check_serial_front_edge_size(region, columns)
-        return Region((region.y0, region.y1, region.x1 - columns[1], region.x1 - columns[0]))
-
-    @staticmethod
-    def serial_front_edge_region_tl(region, columns=(0, 1)):
-        """Extract the leading edge of a charge injection region which is located in the bottom-left quadrant of a \
-        Euclid CCD (see *CIPatternGeometry*)."""
-        check_serial_front_edge_size(region, columns)
-        return Region((region.y0, region.y1, region.x0 + columns[0], region.x0 + columns[1]))
-
-    @staticmethod
-    def serial_front_edge_region_tr(region, columns=(0, 1)):
-        """Extract the leading edge of a charge injection region which is located in the bottom-left quadrant of a \
-        Euclid CCD (see *CIPatternGeometry*)."""
-        check_serial_front_edge_size(region, columns)
-        return Region((region.y0, region.y1, region.x1 - columns[1], region.x1 - columns[0]))
-
 
 class QuadGeometryEuclid(FrameGeometry):
 
