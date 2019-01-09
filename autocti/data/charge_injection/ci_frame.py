@@ -15,11 +15,11 @@ def bin_array_across_parallel(array, mask=None):
 
 
 class ChInj(np.ndarray):
-    """Class which represents the CCD quadrant of a charge injection image (e.g. the location of the parallel and \
+    """Class which represents the CCD quadrant of a charge injection image (e.g. the location of the parallel and   
     serial front edge, trails).
 
     frame_geometry : CIFrame.CIQuadGeometry
-        The quadrant geometry of the image, defining where the parallel / serial overscans are and \
+        The quadrant geometry of the image, defining where the parallel / serial overscans are and   
         therefore the direction of clocking and rotations before input into the cti algorithm.
     ci_pattern : CIPattern.CIPattern
         The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
@@ -52,8 +52,8 @@ class ChInj(np.ndarray):
         | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
         P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
         | [...][ccccccccccccccccccccc][sss]    | clocking
-        \/[...][ccccccccccccccccccccc][sss]    |
-                                               \/
+          [...][ccccccccccccccccccccc][sss]    |
+                                                 
         []     [=====================]
                <---------S----------
 
@@ -67,8 +67,8 @@ class ChInj(np.ndarray):
         | [000][000000000000000000000][000]    | Direction
         P [000][000000000000000000000][000]    | of
         | [000][ccccccccccccccccccccc][000]    | clocking
-        \/[000][ccccccccccccccccccccc][000]    |
-                                               \/
+          [000][ccccccccccccccccccccc][000]    |
+                                                 
         []     [=====================]
                <---------S----------
 
@@ -84,7 +84,7 @@ class ChInj(np.ndarray):
         return self.__class__(self.frame_geometry, self.ci_pattern, array)
 
     def parallel_non_ci_regions_frame_from_frame(self):
-        """Extract an array of all of the parallel trails following the charge-injection regions from a charge \
+        """Extract an array of all of the parallel trails following the charge-injection regions from a charge   
         injection ci_frame.
 
         The diagram below illustrates the array that is extracted from a ci_frame:
@@ -108,8 +108,8 @@ class ChInj(np.ndarray):
         | [...][ttttttttttttttttttttt][sss]    | Direction
         P [...][ttttttttttttttttttttt][sss]    | of
         | [...][ccccccccccccccccccccc][sss]    | clocking
-        \/[...][ccccccccccccccccccccc][sss]    |
-                                               \/
+          [...][ccccccccccccccccccccc][sss]    |
+                                                 
         []     [=====================]
                <---------S----------
 
@@ -124,8 +124,8 @@ class ChInj(np.ndarray):
         | [000][ttttttttttttttttttttt][000]    | Direction
         P [000][ttttttttttttttttttttt][000]    | of
         | [000][000000000000000000000][000]    | clocking
-        \/[000][000000000000000000000][000]    |
-                                               \/
+          [000][000000000000000000000][000]    |
+                                                 
         []     [=====================]
                <---------S----------
         """
@@ -141,7 +141,7 @@ class ChInj(np.ndarray):
         return self.__class__(self.frame_geometry, self.ci_pattern, array)
 
     def parallel_edges_and_trails_frame_from_frame(self, front_edge_rows=None, trails_rows=None):
-        """Extract an array of all of the parallel front edges and trails of each the charge-injection regions from \
+        """Extract an array of all of the parallel front edges and trails of each the charge-injection regions from   
         a charge injection ci_frame.
 
         One can specify the range of rows that are extracted, for example:
@@ -150,7 +150,7 @@ class ChInj(np.ndarray):
         front_edge_rows = (0, 2) will extract the leading two front edge rows.
         trails_rows = (0, 1) will extract the first row of trails closest to the charge injection region.
 
-        The diagram below illustrates the array that is extracted from a ci_frame for front_edge_rows=(0,1) and \
+        The diagram below illustrates the array that is extracted from a ci_frame for front_edge_rows=(0,1) and   
         trails_rows=(0,1):
 
         ---KEY---
@@ -172,12 +172,12 @@ class ChInj(np.ndarray):
         | [...][ttttttttttttttttttttt][sss]    | Direction
         P [...][ttttttttttttttttttttt][sss]    | of
         | [...][ccccccccccccccccccccc][sss]    | clocking
-        \/[...][ccccccccccccccccccccc][sss]    |
-                                               \/
+          [...][ccccccccccccccccccccc][sss]    |
+                                                 
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the leading edges and trails following all charge injection regions and \
+        The extracted ci_frame keeps just the leading edges and trails following all charge injection regions and   
         replaces all other values with 0s:
 
                [000000000000000000000]
@@ -188,8 +188,8 @@ class ChInj(np.ndarray):
         | [000][000000000000000000000][000]    | Direction
         P [000][ttttttttttttttttttttt][000]    | of
         | [000][000000000000000000000][000]    | clocking
-        \/[000][ccccccccccccccccccccc][000]    |
-                                               \/
+          [000][ccccccccccccccccccccc][000]    |
+                                                 
         []     [=====================]
                <---------S----------
 
@@ -252,8 +252,8 @@ class ChInj(np.ndarray):
         | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
         P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
         | [...][ccccccccccccccccccccc][sss]    | clocking
-        \/[...][ccccccccccccccccccccc][sss]    |
-                                               \/
+          [...][ccccccccccccccccccccc][sss]    |
+                                                 
         []     [=====================]
                <---------S----------
 
@@ -268,8 +268,8 @@ class ChInj(np.ndarray):
         |      [xxx]                           | Direction
         P      [xxx]                           | of
         |      [ccc]                           | clocking
-        \/     [ccc]                           |
-                                               \/
+               [ccc]                           |
+                                                 
         []     [=====================]
                <---------S----------
         """
@@ -303,8 +303,8 @@ class ChInj(np.ndarray):
         | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
         P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
         | [...][ccccccccccccccccccccc][tst]    | clocking
-        \/[...][ccccccccccccccccccccc][sts]    |
-                                               \/
+          [...][ccccccccccccccccccccc][sts]    |
+                                                 
         []     [=====================]
                <---------S----------
 
@@ -319,8 +319,8 @@ class ChInj(np.ndarray):
         | [000][000000000000000000000][000]    | Direction
         P [000][000000000000000000000][000]    | of
         | [000][000000000000000000000][tst]    | clocking
-        \/[000][000000000000000000000][sts]    |
-                                               \/
+          [000][000000000000000000000][sts]    |
+                                                 
         []     [=====================]
                <---------S----------
         """
@@ -329,7 +329,7 @@ class ChInj(np.ndarray):
         return self.__class__(self.frame_geometry, self.ci_pattern, array)
 
     def serial_overscan_non_trails_frame_from_frame(self):
-        """Extract an array of all of the regions of the serial overscan that don't contain trails from a \
+        """Extract an array of all of the regions of the serial overscan that don't contain trails from a   
         charge injection region (i.e. are not to the side of one).
 
         The diagram below illustrates the array that is extracted from a ci_frame:
@@ -353,8 +353,8 @@ class ChInj(np.ndarray):
         | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
         P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
         | [...][ccccccccccccccccccccc][tst]    | clocking
-        \/[...][ccccccccccccccccccccc][sts]    |
-                                               \/
+          [...][ccccccccccccccccccccc][sts]    |
+                                                 
         []     [=====================]
                <---------S----------
 
@@ -369,8 +369,8 @@ class ChInj(np.ndarray):
         | [000][000000000000000000000][sss]    | Direction
         P [000][000000000000000000000][sss]    | of
         | [000][000000000000000000000][000]    | clocking
-        \/[000][000000000000000000000][000]    |
-                                               \/
+          [000][000000000000000000000][000]    |
+                                                 
         []     [=====================]
                <---------S----------
         """
@@ -388,7 +388,7 @@ class ChInj(np.ndarray):
         return self.__class__(self.frame_geometry, self.ci_pattern, array)
 
     def serial_edges_and_trails_frame_from_frame(self, front_edge_columns=None, trails_columns=None):
-        """Extract an array of all of the serial front edges and trails of each the charge-injection regions from \
+        """Extract an array of all of the serial front edges and trails of each the charge-injection regions from   
         a charge injection ci_frame.
 
         One can specify the range of columns that are extracted, for example:
@@ -397,7 +397,7 @@ class ChInj(np.ndarray):
         front_edge_columns = (0, 2) will extract the leading two front edge columns.
         trails_columns = (0, 1) will extract the first column of trails closest to the charge injection region.
 
-        The diagram below illustrates the array that is extracted from a ci_frame for front_edge_columns=(0,2) and \
+        The diagram below illustrates the array that is extracted from a ci_frame for front_edge_columns=(0,2) and   
         trails_columns=(0,2):
 
         ---KEY---
@@ -419,8 +419,8 @@ class ChInj(np.ndarray):
         | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
         P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
         | [...][ccccccccccccccccccccc][sts]    | clocking
-        \/[...][ccccccccccccccccccccc][tst]    |
-                                               \/
+          [...][ccccccccccccccccccccc][tst]    |
+                                                 
         []     [=====================]
                <---------S----------
 
@@ -435,8 +435,8 @@ class ChInj(np.ndarray):
         | [000][000000000000000000000][000]    | Direction
         P [000][000000000000000000000][000]    | of
         | [000][cc0000000000000000000][st0]    | clocking
-        \/[000][cc0000000000000000000][st0]    |
-                                               \/
+          [000][cc0000000000000000000][st0]    |
+                                                 
         []     [=====================]
                <---------S----------
 
@@ -499,8 +499,8 @@ class ChInj(np.ndarray):
         | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
         P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
         | [...][ccccccccccccccccccccc][tst]    | clocking
-        \/[...][ccccccccccccccccccccc][sts]    |
-                                               \/
+          [...][ccccccccccccccccccccc][sts]    |
+                                                 
         []     [=====================]
                <---------S----------
 
@@ -511,8 +511,8 @@ class ChInj(np.ndarray):
         |      [cccccccccccccccc][tst]         | Direction
         P      [cccccccccccccccc][tst]         | of
         |      [cccccccccccccccc][tst]         | clocking
-        \/     [cccccccccccccccc][tst]         |
-                                               \/
+               [cccccccccccccccc][tst]         |
+                                                 
         []     [=====================]
                <---------S----------
         """
@@ -555,8 +555,8 @@ class ChInj(np.ndarray):
         | [...][ttttttttttttttttttttt][sss]    | Direction
         P [...][ttttttttttttttttttttt][sss]    | of
         | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
-        \/[...][cc0ccc0cccc0cccc0cccc][sss]    |
-                                               \/
+          [...][cc0ccc0cccc0cccc0cccc][sss]    |
+                                                 
         []     [=====================]
                <---------S----------
 
@@ -610,8 +610,8 @@ class ChInj(np.ndarray):
         | [...][t0t0t0t0t0t0t0t0t0t0t][sss]    | Direction
         P [...][0t0t0t0t0t0t0t0t0t0t0][sss]    | of
         | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
-        \/[...][cc0ccc0cccc0cccc0cccc][sss]    |
-                                               \/
+          [...][cc0ccc0cccc0cccc0cccc][sss]    |
+                                                 
         []     [=====================]
                <---------S----------
 
@@ -664,8 +664,8 @@ class ChInj(np.ndarray):
         | [...][ttttttttttttttttttttt][sss]    | Direction
         P [...][ttttttttttttttttttttt][sss]    | of
         | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
-        \/[...][cc0ccc0cccc0cccc0cccc][sss]    |
-                                               \/
+          [...][cc0ccc0cccc0cccc0cccc][sss]    |
+                                                 
         []     [=====================]
                <---------S----------
 
@@ -719,8 +719,8 @@ class ChInj(np.ndarray):
         | [...][ttttttttttttttttttttt][sss]    | Direction
         P [...][ttttttttttttttttttttt][sss]    | of
         | [...][0ccc0cccc0cccc0cccc0c][st1]    | clocking
-        \/[...][cc0ccc0cccc0cccc0cccc][ts0]    |
-                                               \/
+          [...][cc0ccc0cccc0cccc0cccc][ts0]    |
+                                                 
         []     [=====================]
                <---------S----------
 
@@ -803,7 +803,7 @@ class CIFrame(cti_image.ImageFrame, ChInj):
         hdu : int
             The HDU number in the fits file containing the image ci_data.
         frame_geometry : CIFrame.CIQuadGeometry
-            The quadrant geometry of the image, defining where the parallel / serial overscans are and \
+            The quadrant geometry of the image, defining where the parallel / serial overscans are and   
             therefore the direction of clocking and rotations before input into the cti algorithm.
         ci_pattern : CIPattern.CIPattern
             The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
@@ -823,7 +823,7 @@ class CIFrame(cti_image.ImageFrame, ChInj):
         shape: (int, int)
             The image_shape of the array
         frame_geometry : CIFrame.CIQuadGeometry
-            The quadrant geometry of the image, defining where the parallel / serial overscans are and \
+            The quadrant geometry of the image, defining where the parallel / serial overscans are and   
             therefore the direction of clocking and rotations before input into the cti algorithm.
         ci_pattern : CIPattern.CIPattern
             The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
@@ -840,13 +840,13 @@ class CIFrame(cti_image.ImageFrame, ChInj):
 class CIFrameCTI(cti_image.CTIImage, ChInj):
 
     def __new__(cls, frame_geometry, ci_pattern, array, **kwargs):
-        """Class which represents the CCD quadrant of a charge injection image (e.g. the location of the parallel and \
+        """Class which represents the CCD quadrant of a charge injection image (e.g. the location of the parallel and   
         serial front edge, trails), including routes to add cti to or correct cti from the image.
 
         Parameters
         ----------
         frame_geometry : CIFrame.CIQuadGeometry
-            The quadrant geometry of the image, defining where the parallel / serial overscans are and \
+            The quadrant geometry of the image, defining where the parallel / serial overscans are and   
             therefore the direction of clocking and rotations before input into the cti algorithm.
         ci_pattern : CIPattern.CIPattern
             The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
@@ -875,7 +875,7 @@ class CIFrameCTI(cti_image.CTIImage, ChInj):
         hdu : int
             The HDU number in the fits file containing the image ci_data.
         frame_geometry : CIFrame.CIQuadGeometry
-            The quadrant geometry of the image, defining where the parallel / serial overscans are and \
+            The quadrant geometry of the image, defining where the parallel / serial overscans are and   
             therefore the direction of clocking and rotations before input into the cti algorithm.
         ci_pattern : CIPattern.CIPattern
             The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
@@ -935,16 +935,16 @@ class FrameGeometry(object):
     def __init__(self, corner, parallel_overscan, serial_prescan, serial_overscan):
         """Abstract class for the geometry of a CTI Image.
 
-        A CTIImage is stored as a 2D NumPy array. When this immage is passed to arctic, clocking goes towards \
-        the 'top' of the NumPy array (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the array \
+        A CTIImage is stored as a 2D NumPy array. When this immage is passed to arctic, clocking goes towards   
+        the 'top' of the NumPy array (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the array   
         (e.g. the final row).
 
-        Arctic has no in-built functionality for changing the direction of clocking depending on the input \
-        configuration file. Therefore, image rotations are handled before arctic is called, using the functions \
-        defined in this class (and its children). These routines define how an image is rotated before parallel \
+        Arctic has no in-built functionality for changing the direction of clocking depending on the input   
+        configuration file. Therefore, image rotations are handled before arctic is called, using the functions   
+        defined in this class (and its children). These routines define how an image is rotated before parallel   
         and serial clocking and how to reorient the image back to its original orientation after clocking is performed.
 
-        Currently, only four geometries are available, which are specific to Euclid (and documented in the \
+        Currently, only four geometries are available, which are specific to Euclid (and documented in the   
         *QuadGeometryEuclid* class).
 
         Parameters
@@ -1080,21 +1080,32 @@ class FrameGeometry(object):
             x_max = x_coord - columns[0]
         return Region((region.y0, region.y1, x_min, x_max))
 
+    def serial_trails_region(self, region, columns=(0, 1)):
+        if self.corner[1] == 0:
+            x_coord = region.x1
+            x_min = x_coord + columns[0]
+            x_max = x_coord + columns[1]
+        else:
+            x_coord = region.x0
+            x_min = x_coord - columns[1]
+            x_max = x_coord - columns[0]
+        return Region((region.y0, region.y1, x_min, x_max))
+
 
 class QuadGeometryEuclid(FrameGeometry):
 
     def __init__(self, corner, parallel_overscan, serial_prescan, serial_overscan):
-        """Abstract class for the ci_frame geometry of Euclid quadrants. CTI uses a bias corrected raw VIS ci_frame, which \
+        """Abstract class for the ci_frame geometry of Euclid quadrants. CTI uses a bias corrected raw VIS ci_frame, which   
          is  described at http://euclid.esac.esa.int/dm/dpdd/latest/le1dpd/dpcards/le1_visrawframe.html
 
-        A CTIImage is stored as a 2D NumPy array. When an image is passed to arctic, clocking goes towards the 'top' \
-        of the NumPy array (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the array (e.g. the \
+        A CTIImage is stored as a 2D NumPy array. When an image is passed to arctic, clocking goes towards the 'top'   
+        of the NumPy array (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the array (e.g. the   
         final row).
 
-        Arctic has no in-built functionality for changing the direction of clocking depending on the input \
-        configuration file. Therefore, image rotations are handled before arctic is called, using the functions \
-        defined in this class (and its children). These routines define how an image is rotated before parallel \
-        and serial clocking with arctic. They also define how to reorient the image to its original orientation after \
+        Arctic has no in-built functionality for changing the direction of clocking depending on the input   
+        configuration file. Therefore, image rotations are handled before arctic is called, using the functions   
+        defined in this class (and its children). These routines define how an image is rotated before parallel   
+        and serial clocking with arctic. They also define how to reorient the image to its original orientation after   
         clocking with arctic is performed.
 
         A Euclid CCD is defined as below:
@@ -1115,7 +1126,7 @@ class QuadGeometryEuclid(FrameGeometry):
 
              <--------S-----------   ---------S----------->
         [] [========= 2 =========] [========= 3 =========] []          |
-        /\  [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  /\        |
+        /    [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  /          |
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | Direction arctic
         P   [xxxxxxxxx 2 xxxxxxxxx] [xxxxxxxxx 3 xxxxxxxxx]  P         | clocks an image
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | without any rotation
@@ -1125,12 +1136,12 @@ class QuadGeometryEuclid(FrameGeometry):
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
         P   [xxxxxxxxx 0 xxxxxxxxx] [xxxxxxxxx 1 xxxxxxxxx] P          |
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-        \/  [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] \/         |
-                                                                      \/
+            [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]            |
+                                                                        
         [] [========= 0 =========] [========= 1 =========] []
             <---------S----------   ----------S----------->
 
-        Note that the arrow on the right defines the direction of clocking by arctic without any rotation. Therefore, \
+        Note that the arrow on the right defines the direction of clocking by arctic without any rotation. Therefore,   
         there are 8 circumstances of how arctic requires an image to be rotated before clocking:
 
         - Quadrant 0 - QuadGeometryEuclidBL  - Parallel Clocking - No rotation.
@@ -1142,7 +1153,7 @@ class QuadGeometryEuclid(FrameGeometry):
         - Quadrant 3 - QuadGeometryEuclidTR    - Parallel Clocking - Rotation 180 degrees.
         - Quadrant 3 - QuadGeometryEuclidTR    - Serial Clocking   - Rotation 270 degrees clockwise
 
-        After clocking has been performed with arctic (and CTI is added / corrected), it must be re-rotated back to \
+        After clocking has been performed with arctic (and CTI is added / corrected), it must be re-rotated back to   
         its original orientation. This rotation is the reverse of what is specified above.
 
         Rotations are performed using flipup / fliplr routines, but will ultimately use the Euclid Image Tools library.
@@ -1154,7 +1165,7 @@ class QuadGeometryEuclid(FrameGeometry):
     def from_ccd_and_quadrant_id(cls, ccd_id, quad_id):
         """Before reading this docstring, read the docstring for the __init__function above.
 
-        In the Euclid FPA, the quadrant id ('E', 'F', 'G', 'H') depends on whether the CCD is located \
+        In the Euclid FPA, the quadrant id ('E', 'F', 'G', 'H') depends on whether the CCD is located   
         on the left side (rows 1-3) or right side (rows 4-6) of the FPA:
 
         LEFT SIDE ROWS 1-2-3
@@ -1162,7 +1173,7 @@ class QuadGeometryEuclid(FrameGeometry):
 
          <--------S-----------   ---------S----------->
         [] [========= 2 =========] [========= 3 =========] []          |
-        /\  [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  /\        |
+        /    [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  /          |
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | Direction arctic
         P   [xxxxxxxxx H xxxxxxxxx] [xxxxxxxxx G xxxxxxxxx]  P         | clocks an image
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | without any rotation
@@ -1172,8 +1183,8 @@ class QuadGeometryEuclid(FrameGeometry):
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
         P   [xxxxxxxxx E xxxxxxxxx] [xxxxxxxxx F xxxxxxxxx] P          |
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-        \/  [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] \/         |
-                                                                      \/
+            [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]            |
+                                                                        
         [] [========= 0 =========] [========= 1 =========] []
             <---------S----------   ----------S----------->
 
@@ -1183,7 +1194,7 @@ class QuadGeometryEuclid(FrameGeometry):
 
          <--------S-----------   ---------S----------->
         [] [========= 2 =========] [========= 3 =========] []          |
-        /\  [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  /\        |
+        /    [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  /          |
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | Direction arctic
         P   [xxxxxxxxx F xxxxxxxxx] [xxxxxxxxx E xxxxxxxxx]  P         | clocks an image
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | without any rotation
@@ -1193,13 +1204,13 @@ class QuadGeometryEuclid(FrameGeometry):
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
         P   [xxxxxxxxx G xxxxxxxxx] [xxxxxxxxx H xxxxxxxxx] P          |
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-        \/  [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] \/         |
-                                                                      \/
+            [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]            |
+                                                                        
         [] [========= 0 =========] [========= 1 =========] []
             <---------S----------   ----------S----------->
 
-        Therefore, to setup a quadrant image with the correct frame_geometry using its CCD id (from which \
-        we can extract its row number) and quadrant id, we need to first determine if the CCD is on the left / right \
+        Therefore, to setup a quadrant image with the correct frame_geometry using its CCD id (from which   
+        we can extract its row number) and quadrant id, we need to first determine if the CCD is on the left / right   
         side and then use its quadrant id ('E', 'F', 'G' or 'H') to pick the correct quadrant.
         """
 
@@ -1226,7 +1237,7 @@ class QuadGeometryEuclid(FrameGeometry):
 class QuadGeometryEuclidBL(QuadGeometryEuclid):
 
     def __init__(self):
-        """This class represents the frame_geometry of a Euclid quadrant in the bottom-left of a CCD (see \
+        """This class represents the frame_geometry of a Euclid quadrant in the bottom-left of a CCD (see   
         **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
 
         super(QuadGeometryEuclidBL, self).__init__(corner=(0, 0),
@@ -1238,7 +1249,7 @@ class QuadGeometryEuclidBL(QuadGeometryEuclid):
 class QuadGeometryEuclidBR(QuadGeometryEuclid):
 
     def __init__(self):
-        """This class represents the frame_geometry of a Euclid quadrant in the bottom-right of a CCD (see \
+        """This class represents the frame_geometry of a Euclid quadrant in the bottom-right of a CCD (see   
         **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
 
         super(QuadGeometryEuclidBR, self).__init__(corner=(0, 1),
@@ -1250,7 +1261,7 @@ class QuadGeometryEuclidBR(QuadGeometryEuclid):
 class QuadGeometryEuclidTL(QuadGeometryEuclid):
 
     def __init__(self):
-        """This class represents the frame_geometry of a Euclid quadrant in the top-left of a CCD (see \
+        """This class represents the frame_geometry of a Euclid quadrant in the top-left of a CCD (see   
         **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
 
         super(QuadGeometryEuclidTL, self).__init__(corner=(1, 0),
@@ -1262,7 +1273,7 @@ class QuadGeometryEuclidTL(QuadGeometryEuclid):
 class QuadGeometryEuclidTR(QuadGeometryEuclid):
 
     def __init__(self):
-        """This class represents the frame_geometry of a Euclid quadrant in the top-right of a CCD (see \
+        """This class represents the frame_geometry of a Euclid quadrant in the top-right of a CCD (see   
         **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
 
         super(QuadGeometryEuclidTR, self).__init__(corner=(1, 1),
@@ -1278,19 +1289,13 @@ def flip(image):
 class CIQuadGeometryEuclidBL(QuadGeometryEuclidBL):
 
     def __init__(self):
-        """This class represents the quadrant geometry of a Euclid charge injection image in the bottom-left of a \
+        """This class represents the quadrant geometry of a Euclid charge injection image in the bottom-left of a   
         CCD (see **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
         super(CIQuadGeometryEuclidBL, self).__init__()
 
     @staticmethod
     def parallel_side_nearest_read_out_region(region, image_shape, columns=(0, 1)):
         return Region((0, image_shape[0], region.x0 + columns[0], region.x0 + columns[1]))
-
-    @staticmethod
-    def serial_trails_region(region, columns=(0, 1)):
-        """Extract the trails after a charge injection region which is located in the bottom-left quadrant of a \
-        Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
-        return Region((region.y0, region.y1, region.x1 + columns[0], region.x1 + columns[1]))
 
     @staticmethod
     def serial_ci_region_and_trails(region, image_shape, from_column):
@@ -1300,19 +1305,13 @@ class CIQuadGeometryEuclidBL(QuadGeometryEuclidBL):
 class CIQuadGeometryEuclidBR(QuadGeometryEuclidBR):
 
     def __init__(self):
-        """This class represents the quadrant geometry of a Euclid charge injection image in the bottom-right of a \
+        """This class represents the quadrant geometry of a Euclid charge injection image in the bottom-right of a   
         CCD (see **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
         super(CIQuadGeometryEuclidBR, self).__init__()
 
     @staticmethod
     def parallel_side_nearest_read_out_region(region, image_shape, columns=(0, 1)):
         return Region((0, image_shape[0], region.x1 - columns[1], region.x1 - columns[0]))
-
-    @staticmethod
-    def serial_trails_region(region, columns=(0, 1)):
-        """Extract the trails after a charge injection region which is located in the bottom-left quadrant of a \
-        Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
-        return Region((region.y0, region.y1, region.x0 - columns[1], region.x0 - columns[0]))
 
     @staticmethod
     def serial_ci_region_and_trails(region, image_shape, from_column):
@@ -1322,19 +1321,13 @@ class CIQuadGeometryEuclidBR(QuadGeometryEuclidBR):
 class CIQuadGeometryEuclidTL(QuadGeometryEuclidTL):
 
     def __init__(self):
-        """This class represents the quadrant geometry of a Euclid charge injection image in the top-left of a \
+        """This class represents the quadrant geometry of a Euclid charge injection image in the top-left of a   
         CCD (see **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
         super(CIQuadGeometryEuclidTL, self).__init__()
 
     @staticmethod
     def parallel_side_nearest_read_out_region(region, image_shape, columns=(0, 1)):
         return Region((0, image_shape[0], region.x0 + columns[0], region.x0 + columns[1]))
-
-    @staticmethod
-    def serial_trails_region(region, columns=(0, 1)):
-        """Extract the trails after a charge injection region which is located in the bottom-left quadrant of a \
-        Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
-        return Region((region.y0, region.y1, region.x1 + columns[0], region.x1 + columns[1]))
 
     @staticmethod
     def serial_ci_region_and_trails(region, image_shape, from_column):
@@ -1344,19 +1337,13 @@ class CIQuadGeometryEuclidTL(QuadGeometryEuclidTL):
 class CIQuadGeometryEuclidTR(QuadGeometryEuclidTR):
 
     def __init__(self):
-        """This class represents the quadrant geometry of a Euclid charge injection image in the top-right of a \
+        """This class represents the quadrant geometry of a Euclid charge injection image in the top-right of a   
         CCD (see **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
         super(CIQuadGeometryEuclidTR, self).__init__()
 
     @staticmethod
     def parallel_side_nearest_read_out_region(region, image_shape, columns=(0, 1)):
         return Region((0, image_shape[0], region.x1 - columns[1], region.x1 - columns[0]))
-
-    @staticmethod
-    def serial_trails_region(region, columns=(0, 1)):
-        """Extract the trails after a charge injection region which is located in the bottom-left quadrant of a \
-        Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
-        return Region((region.y0, region.y1, region.x0 - columns[1], region.x0 - columns[0]))
 
     @staticmethod
     def serial_ci_region_and_trails(region, image_shape, from_column):
