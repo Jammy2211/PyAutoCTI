@@ -1,6 +1,7 @@
 import numpy as np
 import pytest
 
+from autocti.data.charge_injection import ci_frame
 from autocti.data import mask as msk
 from autocti.data import cti_image
 from autocti.data.fitting import fitting_data as fit_data
@@ -8,14 +9,14 @@ from autocti.data.fitting import fitting_data as fit_data
 
 @pytest.fixture(name='image')
 def make_image():
-    return cti_image.CTIImage(array=np.ones((3,3)), frame_geometry=cti_image.QuadGeometryEuclidBL())
+    return cti_image.CTIImage(array=np.ones((3,3)), frame_geometry=ci_frame.QuadGeometryEuclidBL())
 
 @pytest.fixture(name="mask")
 def make_mask():
     return msk.Mask(array=np.array([[True, True, True, True],
                                     [True, False, False, True],
                                     [True, False, False, True],
-                                    [True, True, True, True]]), frame_geometry=cti_image.QuadGeometryEuclidBL())
+                                    [True, True, True, True]]), frame_geometry=ci_frame.QuadGeometryEuclidBL())
 
 @pytest.fixture(name="fitting_image")
 def make_fitting_image(image, mask):

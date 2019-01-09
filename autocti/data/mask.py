@@ -25,7 +25,7 @@ Author: James Nightingale
 
 import numpy as np
 
-from autocti.data import cti_image
+from autocti.data.charge_injection import ci_frame
 
 
 class Mask(np.ndarray):
@@ -81,7 +81,7 @@ class Mask(np.ndarray):
         mask = cls.empty_for_shape(shape, frame_geometry, ci_pattern)
 
         if regions is not None:
-            mask.regions = list(map(lambda r: cti_image.Region(r), regions))
+            mask.regions = list(map(lambda r: ci_frame.Region(r), regions))
             for region in mask.regions:
                 mask[region.y0:region.y1, region.x0:region.x1] = True
         elif regions is None:

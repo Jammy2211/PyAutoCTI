@@ -1,6 +1,5 @@
 import numpy as np
 
-from autocti import exc
 from autocti.data import cti_image
 from autocti.tools import imageio
 
@@ -853,7 +852,7 @@ class CIFrameCTI(cti_image.CTIImage, ChInj):
             2D Array of array charge injection image ci_data.
         """
         ci_inj = super(CIFrameCTI, cls).__new__(cls, frame_geometry, array)
-        
+
         ci_inj.ci_pattern = ci_pattern
         return ci_inj
 
@@ -883,7 +882,367 @@ class CIFrameCTI(cti_image.CTIImage, ChInj):
                    array=imageio.numpy_array_from_fits(path, filename, hdu))
 
 
-class CIQuadGeometryEuclidBL(cti_image.QuadGeometryEuclidBL):
+from autocti import exc
+from autocti.model import pyarctic
+
+
+class FrameGeometry(object):
+
+    def __init__(self, corner, parallel_overscan, serial_prescan, serial_overscan):
+        """Abstract class for the geometry of a CTI Image.
+
+        A CTIImage is stored as a 2D NumPy array. When this immage is passed to arctic, clocking goes towards \
+        the 'top' of the NumPy array (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the array \
+        (e.g. the final row).
+
+        Arctic has no in-built functionality for changing the direction of clocking depending on the input \
+        configuration file. Therefore, image rotations are handled before arctic is called, using the functions \
+        defined in this class (and its children). These routines define how an image is rotated before parallel \
+        and serial clocking and how to reorient the image back to its original orientation after clocking is performed.
+
+        Currently, only four geometries are available, which are specific to Euclid (and documented in the \
+        *QuadGeometryEuclid* class).
+
+        Parameters
+        -----------
+        parallel_overscan : ci_frame.Region
+            The parallel overscan region of the ci_frame.
+        serial_prescan : ci_frame.Region
+            The serial prescan region of the ci_frame.
+        serial_overscan : ci_frame.Region
+            The serial overscan region of the ci_frame.
+        """
+
+        self.parallel_overscan = parallel_overscan
+        self.serial_prescan = serial_prescan
+        self.serial_overscan = serial_overscan
+        self.corner = corner
+
+    def add_cti(self, image, cti_params, cti_settings):
+        """add cti to an image.
+
+        Parameters
+        ----------
+        image : ndarray
+            The image cti is added too.
+        cti_params : ArcticParams.ArcticParams
+            The CTI model parameters (trap density, trap lifetimes etc.).
+        cti_settings : ArcticSettings.ArcticSettings
+            The settings that control the cti clocking algorithm (e.g. the ccd well_depth express option).
+        """
+
+        if cti_params.parallel_ccd is not None:
+            image_pre_parallel_clocking = self.rotate_for_parallel_cti(image=image)
+            image_post_parallel_clocking = pyarctic.call_arctic(image_pre_parallel_clocking,
+                                                                cti_params.parallel_species,
+                                                                cti_params.parallel_ccd,
+                                                                cti_settings.parallel)
+            image = self.rotate_for_parallel_cti(image_post_parallel_clocking)
+
+        if cti_params.serial_ccd is not None:
+            image_pre_serial_clocking = self.rotate_before_serial_cti(image_pre_clocking=image)
+            image_post_serial_clocking = pyarctic.call_arctic(image_pre_serial_clocking,
+                                                              cti_params.serial_species,
+                                                              cti_params.serial_ccd,
+                                                              cti_settings.serial)
+            image = self.rotate_after_serial_cti(image_post_serial_clocking)
+
+        return image
+
+    def correct_cti(self, image, cti_params, cti_settings):
+        """Correct cti from an image.
+
+        Parameters
+        ----------
+        image : ndarray
+            The image cti is corrected from.
+        cti_params : ArcticParams.ArcticParams
+            The CTI model parameters (trap density, trap lifetimes etc.).
+        cti_settings : ArcticSettings.ArcticSettings
+            The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
+        """
+
+        if cti_settings.serial is not None:
+            image_pre_serial_clocking = self.rotate_before_serial_cti(image_pre_clocking=image)
+            image_post_serial_clocking = pyarctic.call_arctic(image_pre_serial_clocking,
+                                                              cti_params.serial_species,
+                                                              cti_params.serial_ccd,
+                                                              cti_settings.serial,
+                                                              correct_cti=True)
+            image = self.rotate_after_serial_cti(image_post_serial_clocking)
+
+        if cti_settings.parallel is not None:
+            image_pre_parallel_clocking = self.rotate_for_parallel_cti(image=image)
+            image_post_parallel_clocking = pyarctic.call_arctic(image_pre_parallel_clocking,
+                                                                cti_params.parallel_species,
+                                                                cti_params.parallel_ccd,
+                                                                cti_settings.parallel,
+                                                                correct_cti=True)
+            image = self.rotate_for_parallel_cti(image_post_parallel_clocking)
+
+        return image
+
+    def rotate_for_parallel_cti(self, image):
+        return flip(image) if self.corner[0] == 1 else image
+
+    def rotate_before_serial_cti(self, image_pre_clocking):
+        transposed = image_pre_clocking.T.copy()
+        return flip(transposed) if self.corner[1] == 1 else transposed
+
+    def rotate_after_serial_cti(self, image_post_clocking):
+        flipped = flip(image_post_clocking) if self.corner[1] == 1 else image_post_clocking
+        return flipped.T.copy()
+
+    def parallel_trail_from_y(self, y, dy):
+        """Coordinates of a parallel trail of size dy from coordinate y"""
+        return y - dy * self.corner[0], y + 1 + dy * (1 - self.corner[0])
+
+    def serial_trail_from_x(self, x, dx):
+        """Coordinates of a serial trail of size dx from coordinate x"""
+        return x - dx * self.corner[1], x + 1 + dx * (1 - self.corner[1])
+
+
+class QuadGeometryEuclid(FrameGeometry):
+
+    def __init__(self, corner, parallel_overscan, serial_prescan, serial_overscan):
+        """Abstract class for the ci_frame geometry of Euclid quadrants. CTI uses a bias corrected raw VIS ci_frame, which \
+         is  described at http://euclid.esac.esa.int/dm/dpdd/latest/le1dpd/dpcards/le1_visrawframe.html
+
+        A CTIImage is stored as a 2D NumPy array. When an image is passed to arctic, clocking goes towards the 'top' \
+        of the NumPy array (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the array (e.g. the \
+        final row).
+
+        Arctic has no in-built functionality for changing the direction of clocking depending on the input \
+        configuration file. Therefore, image rotations are handled before arctic is called, using the functions \
+        defined in this class (and its children). These routines define how an image is rotated before parallel \
+        and serial clocking with arctic. They also define how to reorient the image to its original orientation after \
+        clocking with arctic is performed.
+
+        A Euclid CCD is defined as below:
+
+        ---KEY---
+        ---------
+
+        [] = read-out electronics
+
+        [==========] = read-out register
+
+        [xxxxxxxxxx]
+        [xxxxxxxxxx] = CCD panel
+        [xxxxxxxxxx]
+
+        P = Parallel Direction
+        S = Serial Direction
+
+             <--------S-----------   ---------S----------->
+        [] [========= 2 =========] [========= 3 =========] []          |
+        /\  [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  /\        |
+        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | Direction arctic
+        P   [xxxxxxxxx 2 xxxxxxxxx] [xxxxxxxxx 3 xxxxxxxxx]  P         | clocks an image
+        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | without any rotation
+        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | (e.g. towards row 0
+                                                                       | of the NumPy array)
+        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
+        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
+        P   [xxxxxxxxx 0 xxxxxxxxx] [xxxxxxxxx 1 xxxxxxxxx] P          |
+        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
+        \/  [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] \/         |
+                                                                      \/
+        [] [========= 0 =========] [========= 1 =========] []
+            <---------S----------   ----------S----------->
+
+        Note that the arrow on the right defines the direction of clocking by arctic without any rotation. Therefore, \
+        there are 8 circumstances of how arctic requires an image to be rotated before clocking:
+
+        - Quadrant 0 - QuadGeometryEuclidBL  - Parallel Clocking - No rotation.
+        - Quadrant 0 - QuadGeometryEuclidBL  - Serial Clocking   - Rotation 90 degrees clockwise.
+        - Quadrant 1 - QuadGeometryEuclidBR - Parallel Clocking - No rotation.
+        - Quadrant 1 - QuadGeometryEuclidBR - Serial Clocking   - Rotation 270 degrees clockwise.
+        - Quadrant 2 - QuadGeometryEuclidTL     - Parallel Clocking - Rotation 180 degrees.
+        - Quadrant 2 - QuadGeometryEuclidTL     - Serial Clocking   - Rotation 90 degrees clockwise.
+        - Quadrant 3 - QuadGeometryEuclidTR    - Parallel Clocking - Rotation 180 degrees.
+        - Quadrant 3 - QuadGeometryEuclidTR    - Serial Clocking   - Rotation 270 degrees clockwise
+
+        After clocking has been performed with arctic (and CTI is added / corrected), it must be re-rotated back to \
+        its original orientation. This rotation is the reverse of what is specified above.
+
+        Rotations are performed using flipup / fliplr routines, but will ultimately use the Euclid Image Tools library.
+
+        """
+        super(QuadGeometryEuclid, self).__init__(corner, parallel_overscan, serial_prescan, serial_overscan)
+
+    @classmethod
+    def from_ccd_and_quadrant_id(cls, ccd_id, quad_id):
+        """Before reading this docstring, read the docstring for the __init__function above.
+
+        In the Euclid FPA, the quadrant id ('E', 'F', 'G', 'H') depends on whether the CCD is located \
+        on the left side (rows 1-3) or right side (rows 4-6) of the FPA:
+
+        LEFT SIDE ROWS 1-2-3
+        --------------------
+
+         <--------S-----------   ---------S----------->
+        [] [========= 2 =========] [========= 3 =========] []          |
+        /\  [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  /\        |
+        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | Direction arctic
+        P   [xxxxxxxxx H xxxxxxxxx] [xxxxxxxxx G xxxxxxxxx]  P         | clocks an image
+        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | without any rotation
+        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | (e.g. towards row 0
+                                                                       | of the NumPy array)
+        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
+        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
+        P   [xxxxxxxxx E xxxxxxxxx] [xxxxxxxxx F xxxxxxxxx] P          |
+        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
+        \/  [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] \/         |
+                                                                      \/
+        [] [========= 0 =========] [========= 1 =========] []
+            <---------S----------   ----------S----------->
+
+
+        RIGHT SIDE ROWS 4-5-6
+        ---------------------
+
+         <--------S-----------   ---------S----------->
+        [] [========= 2 =========] [========= 3 =========] []          |
+        /\  [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  /\        |
+        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | Direction arctic
+        P   [xxxxxxxxx F xxxxxxxxx] [xxxxxxxxx E xxxxxxxxx]  P         | clocks an image
+        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | without any rotation
+        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | (e.g. towards row 0
+                                                                       | of the NumPy array)
+        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
+        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
+        P   [xxxxxxxxx G xxxxxxxxx] [xxxxxxxxx H xxxxxxxxx] P          |
+        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
+        \/  [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] \/         |
+                                                                      \/
+        [] [========= 0 =========] [========= 1 =========] []
+            <---------S----------   ----------S----------->
+
+        Therefore, to setup a quadrant image with the correct frame_geometry using its CCD id (from which \
+        we can extract its row number) and quadrant id, we need to first determine if the CCD is on the left / right \
+        side and then use its quadrant id ('E', 'F', 'G' or 'H') to pick the correct quadrant.
+        """
+
+        row_index = ccd_id[-1]
+
+        if (row_index in '123') and (quad_id == 'E'):
+            return QuadGeometryEuclidBL()
+        elif (row_index in '123') and (quad_id == 'F'):
+            return QuadGeometryEuclidBR()
+        elif (row_index in '123') and (quad_id == 'G'):
+            return QuadGeometryEuclidTR()
+        elif (row_index in '123') and (quad_id == 'H'):
+            return QuadGeometryEuclidTL()
+        elif (row_index in '456') and (quad_id == 'E'):
+            return QuadGeometryEuclidTR()
+        elif (row_index in '456') and (quad_id == 'F'):
+            return QuadGeometryEuclidTL()
+        elif (row_index in '456') and (quad_id == 'G'):
+            return QuadGeometryEuclidBL()
+        elif (row_index in '456') and (quad_id == 'H'):
+            return QuadGeometryEuclidBR()
+
+
+class QuadGeometryEuclidTR(QuadGeometryEuclid):
+
+    def __init__(self):
+        """This class represents the frame_geometry of a Euclid quadrant in the top-right of a CCD (see \
+        **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
+
+        super(QuadGeometryEuclidTR, self).__init__(corner=(1, 1),
+                                                   parallel_overscan=Region((0, 20, 20, 2068)),
+                                                   serial_prescan=Region((0, 2086, 2068, 2119)),
+                                                   serial_overscan=Region((0, 2086, 0, 20)))
+
+
+class Region(tuple):
+
+    def __new__(cls, region):
+        """Setup a region of an image, which could be where the parallel overscan, serial overscan, etc. are.
+
+        This is defined as a tuple (y0, y1, x0, x1).
+
+        Parameters
+        -----------
+        region : (int,)
+            The coordinates on the image of the region (y0, y1, x0, y1).
+        """
+
+        if region[0] < 0 or region[1] < 0 or region[2] < 0 or region[3] < 0:
+            raise exc.RegionException('A coordinate of the Region was specified as negative.')
+
+        if region[0] >= region[1]:
+            raise exc.RegionException('The first row in the Region was equal to or greater than the second row.')
+
+        if region[2] >= region[3]:
+            raise exc.RegionException('The first column in the Region was equal to greater than the second column.')
+
+        region = super(Region, cls).__new__(cls, region)
+
+        region.y0 = region[0]
+        region.y1 = region[1]
+        region.x0 = region[2]
+        region.x1 = region[3]
+
+        region.total_rows = region.y1 - region.y0
+        region.total_columns = region.x1 - region.x0
+
+        return region
+
+    def extract_region_from_array(self, array):
+        return array[self.y0:self.y1, self.x0:self.x1]
+
+    def add_region_from_image_to_array(self, image, array):
+        array[self.y0:self.y1, self.x0:self.x1] += image[self.y0:self.y1, self.x0:self.x1]
+        return array
+
+    def set_region_on_array_to_zeros(self, array):
+        array[self.y0:self.y1, self.x0:self.x1] = 0.0
+        return array
+
+
+class QuadGeometryEuclidTL(QuadGeometryEuclid):
+
+    def __init__(self):
+        """This class represents the frame_geometry of a Euclid quadrant in the top-left of a CCD (see \
+        **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
+
+        super(QuadGeometryEuclidTL, self).__init__(corner=(1, 0),
+                                                   parallel_overscan=Region((0, 20, 51, 2099)),
+                                                   serial_prescan=Region((0, 2086, 0, 51)),
+                                                   serial_overscan=Region((0, 2086, 2099, 2119)))
+
+
+class QuadGeometryEuclidBR(QuadGeometryEuclid):
+
+    def __init__(self):
+        """This class represents the frame_geometry of a Euclid quadrant in the bottom-right of a CCD (see \
+        **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
+
+        super(QuadGeometryEuclidBR, self).__init__(corner=(0, 1),
+                                                   parallel_overscan=Region((2066, 2086, 20, 2068)),
+                                                   serial_prescan=Region((0, 2086, 2068, 2119)),
+                                                   serial_overscan=Region((0, 2086, 0, 20)))
+
+
+class QuadGeometryEuclidBL(QuadGeometryEuclid):
+
+    def __init__(self):
+        """This class represents the frame_geometry of a Euclid quadrant in the bottom-left of a CCD (see \
+        **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
+
+        super(QuadGeometryEuclidBL, self).__init__(corner=(0, 0),
+                                                   parallel_overscan=Region((2066, 2086, 51, 2099)),
+                                                   serial_prescan=Region((0, 2086, 0, 51)),
+                                                   serial_overscan=Region((0, 2086, 2099, 2119)))
+
+
+def flip(image):
+    return image[::-1, :]
+
+
+class CIQuadGeometryEuclidBL(QuadGeometryEuclidBL):
 
     def __init__(self):
         """This class represents the quadrant geometry of a Euclid charge injection image in the bottom-left of a \
@@ -895,37 +1254,37 @@ class CIQuadGeometryEuclidBL(cti_image.QuadGeometryEuclidBL):
         """Extract the leading edge of a charge injection region which is located in the bottom-left quadrant of a \
         Euclid CCD (see *CIPatternGeometry*)."""
         check_parallel_front_edge_size(region, rows)
-        return cti_image.Region((region.y0 + rows[0], region.y0 + rows[1], region.x0, region.x1))
+        return Region((region.y0 + rows[0], region.y0 + rows[1], region.x0, region.x1))
 
     @staticmethod
     def parallel_trails_region(region, rows=(0, 1)):
         """Extract the trails after a charge injection region which is located in the bottom-left quadrant of a \
         Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
-        return cti_image.Region((region.y1 + rows[0], region.y1 + rows[1], region.x0, region.x1))
+        return Region((region.y1 + rows[0], region.y1 + rows[1], region.x0, region.x1))
 
     @staticmethod
     def parallel_side_nearest_read_out_region(region, image_shape, columns=(0, 1)):
-        return cti_image.Region((0, image_shape[0], region.x0 + columns[0], region.x0 + columns[1]))
+        return Region((0, image_shape[0], region.x0 + columns[0], region.x0 + columns[1]))
 
     @staticmethod
     def serial_front_edge_region(region, columns=(0, 1)):
         """Extract the leading edge of a charge injection region which is located in the bottom-left quadrant of a \
         Euclid CCD (see *CIPatternGeometry*)."""
         check_serial_front_edge_size(region, columns)
-        return cti_image.Region((region.y0, region.y1, region.x0 + columns[0], region.x0 + columns[1]))
+        return Region((region.y0, region.y1, region.x0 + columns[0], region.x0 + columns[1]))
 
     @staticmethod
     def serial_trails_region(region, columns=(0, 1)):
         """Extract the trails after a charge injection region which is located in the bottom-left quadrant of a \
         Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
-        return cti_image.Region((region.y0, region.y1, region.x1 + columns[0], region.x1 + columns[1]))
+        return Region((region.y0, region.y1, region.x1 + columns[0], region.x1 + columns[1]))
 
     @staticmethod
     def serial_ci_region_and_trails(region, image_shape, from_column):
-        return cti_image.Region((region.y0, region.y1, from_column + region.x0, image_shape[1]))
+        return Region((region.y0, region.y1, from_column + region.x0, image_shape[1]))
 
 
-class CIQuadGeometryEuclidBR(cti_image.QuadGeometryEuclidBR):
+class CIQuadGeometryEuclidBR(QuadGeometryEuclidBR):
 
     def __init__(self):
         """This class represents the quadrant geometry of a Euclid charge injection image in the bottom-right of a \
@@ -937,37 +1296,37 @@ class CIQuadGeometryEuclidBR(cti_image.QuadGeometryEuclidBR):
         """Extract the leading edge of a charge injection region which is located in the bottom-left quadrant of a \
         Euclid CCD (see *CIPatternGeometry*)."""
         check_parallel_front_edge_size(region, rows)
-        return cti_image.Region((region.y0 + rows[0], region.y0 + rows[1], region.x0, region.x1))
+        return Region((region.y0 + rows[0], region.y0 + rows[1], region.x0, region.x1))
 
     @staticmethod
     def parallel_trails_region(region, rows=(0, 1)):
         """Extract the trails after a charge injection region which is located in the bottom-left quadrant of a \
         Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
-        return cti_image.Region((region.y1 + rows[0], region.y1 + rows[1], region.x0, region.x1))
+        return Region((region.y1 + rows[0], region.y1 + rows[1], region.x0, region.x1))
 
     @staticmethod
     def parallel_side_nearest_read_out_region(region, image_shape, columns=(0, 1)):
-        return cti_image.Region((0, image_shape[0], region.x1 - columns[1], region.x1 - columns[0]))
+        return Region((0, image_shape[0], region.x1 - columns[1], region.x1 - columns[0]))
 
     @staticmethod
     def serial_front_edge_region(region, columns=(0, 1)):
         """Extract the leading edge of a charge injection region which is located in the bottom-left quadrant of a \
         Euclid CCD (see *CIPatternGeometry*)."""
         check_serial_front_edge_size(region, columns)
-        return cti_image.Region((region.y0, region.y1, region.x1 - columns[1], region.x1 - columns[0]))
+        return Region((region.y0, region.y1, region.x1 - columns[1], region.x1 - columns[0]))
 
     @staticmethod
     def serial_trails_region(region, columns=(0, 1)):
         """Extract the trails after a charge injection region which is located in the bottom-left quadrant of a \
         Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
-        return cti_image.Region((region.y0, region.y1, region.x0 - columns[1], region.x0 - columns[0]))
+        return Region((region.y0, region.y1, region.x0 - columns[1], region.x0 - columns[0]))
 
     @staticmethod
     def serial_ci_region_and_trails(region, image_shape, from_column):
-        return cti_image.Region((region.y0, region.y1, 0, region.x1 - from_column))
+        return Region((region.y0, region.y1, 0, region.x1 - from_column))
 
 
-class CIQuadGeometryEuclidTL(cti_image.QuadGeometryEuclidTL):
+class CIQuadGeometryEuclidTL(QuadGeometryEuclidTL):
 
     def __init__(self):
         """This class represents the quadrant geometry of a Euclid charge injection image in the top-left of a \
@@ -979,37 +1338,37 @@ class CIQuadGeometryEuclidTL(cti_image.QuadGeometryEuclidTL):
         """Extract the leading edge of a charge injection region which is located in the top-left quadrant of a \
         Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
         check_parallel_front_edge_size(region, rows)
-        return cti_image.Region((region.y1 - rows[1], region.y1 - rows[0], region.x0, region.x1))
+        return Region((region.y1 - rows[1], region.y1 - rows[0], region.x0, region.x1))
 
     @staticmethod
     def parallel_trails_region(region, rows=(0, 1)):
         """Extract the trails after a charge injection region which is located in the top_left quadrant of a \
         Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
-        return cti_image.Region((region.y0 - rows[1], region.y0 - rows[0], region.x0, region.x1))
+        return Region((region.y0 - rows[1], region.y0 - rows[0], region.x0, region.x1))
 
     @staticmethod
     def parallel_side_nearest_read_out_region(region, image_shape, columns=(0, 1)):
-        return cti_image.Region((0, image_shape[0], region.x0 + columns[0], region.x0 + columns[1]))
+        return Region((0, image_shape[0], region.x0 + columns[0], region.x0 + columns[1]))
 
     @staticmethod
     def serial_front_edge_region(region, columns=(0, 1)):
         """Extract the leading edge of a charge injection region which is located in the bottom-left quadrant of a \
         Euclid CCD (see *CIPatternGeometry*)."""
         check_serial_front_edge_size(region, columns)
-        return cti_image.Region((region.y0, region.y1, region.x0 + columns[0], region.x0 + columns[1]))
+        return Region((region.y0, region.y1, region.x0 + columns[0], region.x0 + columns[1]))
 
     @staticmethod
     def serial_trails_region(region, columns=(0, 1)):
         """Extract the trails after a charge injection region which is located in the bottom-left quadrant of a \
         Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
-        return cti_image.Region((region.y0, region.y1, region.x1 + columns[0], region.x1 + columns[1]))
+        return Region((region.y0, region.y1, region.x1 + columns[0], region.x1 + columns[1]))
 
     @staticmethod
     def serial_ci_region_and_trails(region, image_shape, from_column):
-        return cti_image.Region((region.y0, region.y1, from_column + region.x0, image_shape[1]))
+        return Region((region.y0, region.y1, from_column + region.x0, image_shape[1]))
 
 
-class CIQuadGeometryEuclidTR(cti_image.QuadGeometryEuclidTR):
+class CIQuadGeometryEuclidTR(QuadGeometryEuclidTR):
 
     def __init__(self):
         """This class represents the quadrant geometry of a Euclid charge injection image in the top-right of a \
@@ -1021,34 +1380,34 @@ class CIQuadGeometryEuclidTR(cti_image.QuadGeometryEuclidTR):
         """Extract the leading edge of a charge injection region which is located in the top-left quadrant of a \
         Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
         check_parallel_front_edge_size(region, rows)
-        return cti_image.Region((region.y1 - rows[1], region.y1 - rows[0], region.x0, region.x1))
+        return Region((region.y1 - rows[1], region.y1 - rows[0], region.x0, region.x1))
 
     @staticmethod
     def parallel_trails_region(region, rows=(0, 1)):
         """Extract the trails after a charge injection region which is located in the top_left quadrant of a \
         Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
-        return cti_image.Region((region.y0 - rows[1], region.y0 - rows[0], region.x0, region.x1))
+        return Region((region.y0 - rows[1], region.y0 - rows[0], region.x0, region.x1))
 
     @staticmethod
     def parallel_side_nearest_read_out_region(region, image_shape, columns=(0, 1)):
-        return cti_image.Region((0, image_shape[0], region.x1 - columns[1], region.x1 - columns[0]))
+        return Region((0, image_shape[0], region.x1 - columns[1], region.x1 - columns[0]))
 
     @staticmethod
     def serial_front_edge_region(region, columns=(0, 1)):
         """Extract the leading edge of a charge injection region which is located in the bottom-left quadrant of a \
         Euclid CCD (see *CIPatternGeometry*)."""
         check_serial_front_edge_size(region, columns)
-        return cti_image.Region((region.y0, region.y1, region.x1 - columns[1], region.x1 - columns[0]))
+        return Region((region.y0, region.y1, region.x1 - columns[1], region.x1 - columns[0]))
 
     @staticmethod
     def serial_trails_region(region, columns=(0, 1)):
         """Extract the trails after a charge injection region which is located in the bottom-left quadrant of a \
         Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
-        return cti_image.Region((region.y0, region.y1, region.x0 - columns[1], region.x0 - columns[0]))
+        return Region((region.y0, region.y1, region.x0 - columns[1], region.x0 - columns[0]))
 
     @staticmethod
     def serial_ci_region_and_trails(region, image_shape, from_column):
-        return cti_image.Region((region.y0, region.y1, 0, region.x1 - from_column))
+        return Region((region.y0, region.y1, 0, region.x1 - from_column))
 
 
 def check_parallel_front_edge_size(region, rows):
