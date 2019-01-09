@@ -173,7 +173,7 @@ class TestCIFrame(object):
         def test__frame_in_frame_out(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
                                                                          [3.0, 4.0, 5.0],
                                                                          [6.0, 7.0, 8.0],
@@ -250,7 +250,7 @@ class TestCIFrame(object):
         def test__1_ci_region__extracted_correctly(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
                                                                          [3.0, 4.0, 5.0],
                                                                          [6.0, 7.0, 8.0],
@@ -266,7 +266,7 @@ class TestCIFrame(object):
         def test__2_ci_regions__extracted_correctly(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 1, 1, 2), (2, 3, 1, 3)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
                                                                          [3.0, 4.0, 5.0],
                                                                          [6.0, 7.0, 8.0],
@@ -360,7 +360,7 @@ class TestCIFrame(object):
         def test__front_edge_only__1_row__new_frame_is_just_that_edge(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
                                                                          [3.0, 4.0, 5.0],
                                                                          [6.0, 7.0, 8.0],
@@ -376,7 +376,7 @@ class TestCIFrame(object):
         def test__front_edge_only__2_rows__new_frame_is_just_that_edge(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
                                                                          [3.0, 4.0, 5.0],
                                                                          [6.0, 7.0, 8.0],
@@ -392,7 +392,7 @@ class TestCIFrame(object):
         def test__trails_only__1_row__new_frame_is_just_that_trail(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 4, 0, 3)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
                                                                          [3.0, 4.0, 5.0],
                                                                          [6.0, 7.0, 8.0],
@@ -410,7 +410,7 @@ class TestCIFrame(object):
         def test__trails_only__2_rows__new_frame_is_the_trails(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 4, 0, 3)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
                                                                          [3.0, 4.0, 5.0],
                                                                          [6.0, 7.0, 8.0],
@@ -430,7 +430,7 @@ class TestCIFrame(object):
         def test__front_edge_and_trails__2_rows_of_each__new_frame_is_edge_and_trail(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 4, 0, 3)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
                                                                          [3.0, 4.0, 5.0],
                                                                          [6.0, 7.0, 8.0],
@@ -450,7 +450,7 @@ class TestCIFrame(object):
         def test__front_edge_and_trails__2_regions__1_row_of_each__new_frame_is_edge_and_trail(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 1, 0, 3), (3, 4, 0, 3)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
                                                                          [3.0, 4.0, 5.0],
                                                                          [6.0, 7.0, 8.0],
@@ -478,7 +478,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0],
                               [0.0, 1.0, 2.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             extracted_side = frame.parallel_calibration_section_for_columns(columns=(0, 1))
@@ -498,7 +498,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0],
                               [0.0, 1.0, 2.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             extracted_side = frame.parallel_calibration_section_for_columns(columns=(1, 3))
@@ -518,7 +518,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0],
                               [0.0, 1.0, 2.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBR(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
                                      array=image)
 
             extracted_side = frame.parallel_calibration_section_for_columns(columns=(1, 3))
@@ -534,7 +534,7 @@ class TestCIFrame(object):
         def test__front_edge_only__1_column__new_frame_is_just_that_edge(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0, 3.0],
                                                                          [4.0, 5.0, 6.0, 7.0],
                                                                          [8.0, 9.0, 10.0, 11.0]]))
@@ -548,7 +548,7 @@ class TestCIFrame(object):
         def test__front_edge_only__2_columns__new_frame_is_just_that_edge(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0, 3.0],
                                                                          [4.0, 5.0, 6.0, 7.0],
                                                                          [8.0, 9.0, 10.0, 11.0]]))
@@ -562,7 +562,7 @@ class TestCIFrame(object):
         def test__trails_only__1_column__new_frame_is_just_that_trail(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 2)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0, 3.0],
                                                                          [4.0, 5.0, 6.0, 7.0],
                                                                          [8.0, 9.0, 10.0, 11.0]]))
@@ -576,7 +576,7 @@ class TestCIFrame(object):
         def test__trails_only__2_columns__new_frame_is_the_trails(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 2)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0, 3.0],
                                                                          [4.0, 5.0, 6.0, 7.0],
                                                                          [8.0, 9.0, 10.0, 11.0]]))
@@ -590,7 +590,7 @@ class TestCIFrame(object):
         def test__front_edge_and_trails__2_columns_of_each__new_frame_is_edge_and_trail(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 2)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 1.1, 2.0, 3.0],
                                                                          [4.0, 5.0, 1.1, 6.0, 7.0],
                                                                          [8.0, 9.0, 1.1, 10.0, 11.0]]))
@@ -604,7 +604,7 @@ class TestCIFrame(object):
         def test__front_edge_and_trails__2_regions_1_column_of_each__new_frame_is_edge_and_trail(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 1), (0, 3, 3, 4)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(),
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                      ci_pattern=pattern, array=np.array([[0.0, 1.0, 1.1, 2.0, 3.0],
                                                                          [4.0, 5.0, 1.1, 6.0, 7.0],
                                                                          [8.0, 9.0, 1.1, 10.0, 11.0]]))
@@ -620,7 +620,7 @@ class TestCIFrame(object):
         def test__left_quadrant__1_ci_region__1_serial_trail__extracts_all_trails(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 4, 0, 2)])
 
-            frame_geometry = ci_frame.QuadGeometryEuclidBL()
+            frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             frame_geometry.serial_overscan = ci_frame.Region((0, 4, 2, 3))
 
             frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
@@ -639,7 +639,7 @@ class TestCIFrame(object):
         def test__left_quadrant__1_ci_region__2_serial_trail__extracts_all_trails(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 4, 0, 2)])
 
-            frame_geometry = ci_frame.QuadGeometryEuclidBL()
+            frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             frame_geometry.serial_overscan = ci_frame.Region((0, 4, 2, 4))
 
             frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
@@ -658,7 +658,7 @@ class TestCIFrame(object):
         def test__left_quadrant__2_ci_regions__2_serial_trail__extracts_all_trails(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 1, 0, 2), (2, 3, 0, 2)])
 
-            frame_geometry = ci_frame.QuadGeometryEuclidBL()
+            frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             frame_geometry.serial_overscan = ci_frame.Region((0, 4, 2, 4))
 
             frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
@@ -677,7 +677,7 @@ class TestCIFrame(object):
         def test__same_as_above_but_right_quadrant__flips_trails_side(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 1, 2, 4), (2, 3, 2, 4)])
 
-            frame_geometry = ci_frame.QuadGeometryEuclidBR()
+            frame_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
             frame_geometry.serial_overscan = ci_frame.Region((0, 4, 0, 2))
 
             frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
@@ -698,7 +698,7 @@ class TestCIFrame(object):
         def test__left_quadrant__1_ci_region__serial_trails_go_over_2_right_hand_columns__2_pixels_above_kept(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(1, 3, 1, 2)])
 
-            frame_geometry = ci_frame.QuadGeometryEuclidBL()
+            frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             frame_geometry.serial_prescan = ci_frame.Region((0, 3, 0, 1))
             frame_geometry.serial_overscan = ci_frame.Region((0, 3, 2, 4))
 
@@ -716,7 +716,7 @@ class TestCIFrame(object):
         def test__left_quadrant__1_ci_region__serial_trails_go_over_1_right_hand_column__1_pixel_above_kept(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(1, 3, 1, 3)])
 
-            frame_geometry = ci_frame.QuadGeometryEuclidBL()
+            frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             frame_geometry.serial_prescan = ci_frame.Region((0, 3, 0, 1))
             frame_geometry.serial_overscan = ci_frame.Region((0, 3, 3, 4))
 
@@ -734,7 +734,7 @@ class TestCIFrame(object):
         def test__left_quadrant__2_ci_regions__serial_trails_go_over_1_right_hand_column__1_pixel_above_each_kept(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(1, 2, 1, 3), (3, 4, 1, 3)])
 
-            frame_geometry = ci_frame.QuadGeometryEuclidBL()
+            frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             frame_geometry.serial_prescan = ci_frame.Region((0, 5, 0, 1))
             frame_geometry.serial_overscan = ci_frame.Region((0, 5, 3, 4))
 
@@ -757,7 +757,7 @@ class TestCIFrame(object):
                 self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(1, 2, 1, 3), (3, 4, 1, 3)])
 
-            frame_geometry = ci_frame.QuadGeometryEuclidBR()
+            frame_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
             frame_geometry.serial_prescan = ci_frame.Region((0, 5, 3, 4))
             frame_geometry.serial_overscan = ci_frame.Region((0, 5, 0, 1))
 
@@ -785,7 +785,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0, 3.0, 4.0],
                               [0.0, 1.0, 2.0, 3.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             serial_frame = frame.serial_calibration_section_for_column_and_rows(column=0, rows=(0, 3))
@@ -801,7 +801,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 3.0, 3.0, 3.0],
                               [0.0, 1.0, 4.0, 4.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             serial_frame = frame.serial_calibration_section_for_column_and_rows(column=1, rows=(0, 1))
@@ -816,7 +816,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 3.0, 3.0, 3.0],
                               [0.0, 1.0, 4.0, 4.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBR(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
                                      array=image)
 
             serial_frame = frame.serial_calibration_section_for_column_and_rows(column=1, rows=(0, 1))
@@ -831,7 +831,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0, 3.0, 4.0],
                               [0.0, 1.0, 2.0, 3.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             serial_frame = frame.serial_calibration_section_for_column_and_rows(column=0, rows=(0, 2))
@@ -848,7 +848,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 5.0, 5.0, 5.0],
                               [0.0, 1.0, 6.0, 6.0, 6.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBR(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
                                      array=image)
 
             serial_frame = frame.serial_calibration_section_for_column_and_rows(column=1, rows=(0, 1))
@@ -865,7 +865,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 5.0, 5.0, 5.0],
                               [0.0, 1.0, 6.0, 6.0, 6.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBR(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
                                      array=image)
 
             serial_frame = frame.serial_calibration_section_for_column_and_rows(column=1, rows=(1, 2))
@@ -882,7 +882,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0, 3.0, 4.0],
                               [0.0, 1.0, 2.0, 3.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             serial_region = frame.serial_calibration_sub_arrays_from_frame(column=0)
@@ -898,7 +898,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0, 3.0, 4.0],
                               [0.0, 1.0, 2.0, 3.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             serial_region = frame.serial_calibration_sub_arrays_from_frame(column=0)
@@ -914,7 +914,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0, 3.0, 4.0],
                               [0.0, 1.0, 2.0, 3.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             serial_region = frame.serial_calibration_sub_arrays_from_frame(column=0)
@@ -930,7 +930,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0, 3.0, 4.0],
                               [0.0, 1.0, 2.0, 3.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             serial_region = frame.serial_calibration_sub_arrays_from_frame(column=1)
@@ -946,7 +946,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0, 3.0, 4.0],
                               [0.0, 1.0, 2.0, 3.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBR(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
                                      array=image)
 
             serial_region = frame.serial_calibration_sub_arrays_from_frame(column=0)
@@ -962,7 +962,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0, 3.0, 4.0],
                               [0.0, 1.0, 2.0, 3.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBR(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
                                      array=image)
 
             serial_region = frame.serial_calibration_sub_arrays_from_frame(column=1)
@@ -978,7 +978,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 3.0, 3.0, 3.0],
                               [0.0, 1.0, 4.0, 4.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             serial_region = frame.serial_calibration_sub_arrays_from_frame(column=1)
@@ -1002,7 +1002,7 @@ class TestCIFrame(object):
                               [8.0, 8.0, 8.0],
                               [9.0, 9.0, 9.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             front_edge = frame.parallel_front_edge_arrays_from_frame(rows=(0, 1))
@@ -1031,7 +1031,7 @@ class TestCIFrame(object):
                               [8.0, 8.0, 8.0],
                               [9.0, 9.0, 9.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             front_edge = frame.parallel_front_edge_arrays_from_frame(rows=(0, 2))
@@ -1059,7 +1059,7 @@ class TestCIFrame(object):
                               [8.0, 8.0, 8.0],
                               [9.0, 9.0, 9.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             front_edges = frame.parallel_front_edge_arrays_from_frame(rows=(0, 1))
@@ -1099,7 +1099,7 @@ class TestCIFrame(object):
                               [8.0, 8.0, 8.0],  # <- 2nd Front edge according to region and this frame_geometry
                               [9.0, 9.0, 9.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidTL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), ci_pattern=pattern,
                                      array=image)
 
             front_edges = frame.parallel_front_edge_arrays_from_frame(rows=(0, 1))
@@ -1142,7 +1142,7 @@ class TestCIFrame(object):
                               [8.0, 8.0, 8.0],
                               [9.0, 9.0, 9.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             trails = frame.parallel_trails_arrays_from_frame(rows=(0, 1))
@@ -1171,7 +1171,7 @@ class TestCIFrame(object):
                               [7.0, 7.0, 7.0],
                               [8.0, 8.0, 8.0],
                               [9.0, 9.0, 9.0]])
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             trails = frame.parallel_trails_arrays_from_frame(rows=(0, 2))
@@ -1206,7 +1206,7 @@ class TestCIFrame(object):
                               [8.0, 8.0, 8.0],
                               [9.0, 9.0, 9.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             trails = frame.parallel_trails_arrays_from_frame(rows=(0, 1))
@@ -1246,7 +1246,7 @@ class TestCIFrame(object):
                               # <- 2nd Trails form here onwards according to region and this frame_geometry
                               [9.0, 9.0, 9.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidTL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), ci_pattern=pattern,
                                      array=image)
 
             trails = frame.parallel_trails_arrays_from_frame(rows=(0, 1))
@@ -1279,7 +1279,7 @@ class TestCIFrame(object):
 
             #       /| Front Edge
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             front_edge = frame.serial_front_edge_arrays_from_frame(columns=(0, 1))
@@ -1309,7 +1309,7 @@ class TestCIFrame(object):
 
             #                    /| Front Edge
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             front_edge = frame.serial_front_edge_arrays_from_frame(columns=(0, 2))
@@ -1333,7 +1333,7 @@ class TestCIFrame(object):
 
             #                    /| FE 1        /\ FE 2
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             front_edges = frame.serial_front_edge_arrays_from_frame(columns=(0, 1))
@@ -1382,7 +1382,7 @@ class TestCIFrame(object):
 
             #                               /| FE 1            /\ FE 2
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBR(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
                                      array=image)
 
             front_edges = frame.serial_front_edge_arrays_from_frame(columns=(0, 1))
@@ -1433,7 +1433,7 @@ class TestCIFrame(object):
 
             #                                    /| Trails Begin          
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             trails = frame.serial_trails_arrays_from_frame(columns=(0, 1))
@@ -1463,7 +1463,7 @@ class TestCIFrame(object):
 
             #                                   /| Trails Begin
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             trails = frame.serial_trails_arrays_from_frame(columns=(0, 2))
@@ -1487,7 +1487,7 @@ class TestCIFrame(object):
 
             #                                   /| Trails1           /\ Trails2
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             trails = frame.serial_trails_arrays_from_frame(columns=(0, 1))
@@ -1536,7 +1536,7 @@ class TestCIFrame(object):
 
             #               Trails1   /|                Trails2 /\
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBR(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
                                      array=image)
 
             trails = frame.serial_trails_arrays_from_frame(columns=(0, 1))
@@ -1587,7 +1587,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0, 3.0],
                               [0.0, 1.0, 2.0, 3.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             frame.frame_geometry.serial_prescan = ci_frame.Region(region=(0, 4, 0, 1))
@@ -1609,7 +1609,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0, 3.0],
                               [0.0, 1.0, 2.0, 3.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             frame.frame_geometry.serial_prescan = ci_frame.Region(region=(0, 4, 0, 2))
@@ -1633,7 +1633,7 @@ class TestCIFrame(object):
 
             #                                    /| Trails Begin
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             mask = frame.mask_containing_only_serial_trails()
@@ -1653,7 +1653,7 @@ class TestCIFrame(object):
 
             #                                   /| Trails1           /\ Trails2
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclidBL(), ci_pattern=pattern,
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
             mask = frame.mask_containing_only_serial_trails()
@@ -1665,11 +1665,11 @@ class TestCIFrame(object):
                                       [True, True, True, True, False, False, False, False, False, False]])).all()
 
 
-class TestQuadGeometryEuclidBL(object):
+class TestQuadGeometryEuclid_bottom_left(object):
     class TestParallelFrontEdgeRegion:
 
         def test__extract_one_row__takes_coordinates_from_top_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
             ci_region = MockRegion(region=(0, 3, 0, 3))  # Front edge is row 0, so for 1 row we extract 0 -> 1
 
@@ -1678,7 +1678,7 @@ class TestQuadGeometryEuclidBL(object):
             assert ci_front_edge == (0, 1, 0, 3)
 
         def test__extract_two_rows__first_and_second__takes_coordinates_from_top_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
             ci_region = MockRegion(region=(0, 3, 0, 3))  # Front edge is row 0, so for 2 rows we extract 0 -> 2
 
@@ -1687,7 +1687,7 @@ class TestQuadGeometryEuclidBL(object):
             assert ci_front_edge == (0, 2, 0, 3)
 
         def test__extract_two_rows__second_and_third__takes_coordinates_from_top_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
             ci_region = MockRegion(region=(0, 3, 0, 3))  # Front edge is row 0, so for these 2 rows we extract 1 ->2
 
@@ -1698,7 +1698,7 @@ class TestQuadGeometryEuclidBL(object):
     class TestParallelTrailsRegion:
 
         def test__extract_one_row__takes_coordinates_after_bottom_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
             ci_region = MockRegion(region=(0, 3, 0, 3))  # The trails are row 3 and above, so extract 3 -> 4
 
@@ -1707,7 +1707,7 @@ class TestQuadGeometryEuclidBL(object):
             assert ci_trails == (3, 4, 0, 3)
 
         def test__extract_two_rows__first_and_second__takes_coordinates_after_bottom_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
             ci_region = MockRegion((0, 3, 0, 3))  # The trails are row 3 and above, so extract 3 -> 5
 
@@ -1716,7 +1716,7 @@ class TestQuadGeometryEuclidBL(object):
             assert ci_trails == (3, 5, 0, 3)
 
         def test__extract_two_rows__second_and_third__takes_coordinates_after_bottom_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
             ci_region = MockRegion((0, 3, 0, 3))  # The trails are row 3 and above, so extract 4 -> 6
 
@@ -1727,7 +1727,7 @@ class TestQuadGeometryEuclidBL(object):
     class TestParallelSideNearestReadOut:
 
         def test__columns_0_to_1__region_is_left_hand_side(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             ci_region = MockRegion(region=(1, 3, 0, 5))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(region=ci_region, image_shape=(5, 5),
@@ -1736,7 +1736,7 @@ class TestQuadGeometryEuclidBL(object):
             assert ci_parallel_region == (0, 5, 0, 1)
 
         def test__columns_1_to_3__region_is_left_hand_side(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             ci_region = MockRegion(region=(1, 3, 0, 5))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(region=ci_region,
@@ -1745,7 +1745,7 @@ class TestQuadGeometryEuclidBL(object):
             assert ci_parallel_region == (0, 4, 1, 3)
 
         def test__columns_1_to_3__different_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             ci_region = MockRegion(region=(1, 3, 2, 5))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(region=ci_region,
@@ -1754,7 +1754,7 @@ class TestQuadGeometryEuclidBL(object):
             assert ci_parallel_region == (0, 4, 3, 5)
 
         def test__columns_0_to_1__asymetric_image(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             ci_region = MockRegion(region=(1, 3, 0, 5))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(region=ci_region,
@@ -1765,7 +1765,7 @@ class TestQuadGeometryEuclidBL(object):
     class TestSerialFrontEdgeRegion:
 
         def test__extract_one_column__takes_coordinates_from_left_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
             ci_region = MockRegion(region=(0, 3, 0, 3))  # Front edge is column 0, so for 1 column we extract 0 -> 1
 
@@ -1774,7 +1774,7 @@ class TestQuadGeometryEuclidBL(object):
             assert ci_front_edge == (0, 3, 0, 1)
 
         def test__extract_two_columns__first_and_second__takes_coordinates_from_left_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
             ci_region = MockRegion(region=(0, 3, 0, 3))  # Front edge is column 0, so for 2 columns we extract 0 -> 2
 
@@ -1783,7 +1783,7 @@ class TestQuadGeometryEuclidBL(object):
             assert ci_front_edge == (0, 3, 0, 2)
 
         def test__extract_two_columns__second_and_third__takes_coordinates_from_left_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
             ci_region = MockRegion(
                 region=(0, 3, 0, 3))  # Front edge is column 0, so for these 2 columns we extract 1 ->2
@@ -1795,7 +1795,7 @@ class TestQuadGeometryEuclidBL(object):
     class TestSerialTrailsRegion:
 
         def test__extract_one_row__takes_coordinates_after_right_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
             ci_region = MockRegion(region=(0, 3, 0, 3))  # The trails are column 3 and above, so extract 3 -> 4
 
@@ -1804,7 +1804,7 @@ class TestQuadGeometryEuclidBL(object):
             assert ci_trails == (0, 3, 3, 4)
 
         def test__extract_two_columns__first_and_second__takes_coordinates_after_right_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
             ci_region = MockRegion((0, 3, 0, 3))  # The trails are column 3 and above, so extract 3 -> 5
 
@@ -1813,7 +1813,7 @@ class TestQuadGeometryEuclidBL(object):
             assert ci_trails == (0, 3, 3, 5)
 
         def test__extract_two_columns__second_and_third__takes_coordinates_after_right_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
             ci_region = MockRegion((0, 3, 0, 3))  # The trails are column 3 and above, so extract 4 -> 6
 
@@ -1824,7 +1824,7 @@ class TestQuadGeometryEuclidBL(object):
     class TestSerialChargeInjectionAndTrails:
 
         def test__column_0_of_front_edge__region_is_left_hand_side__no_overscan_beyond_ci_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             ci_region = MockRegion(region=(1, 3, 0, 5))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 5),
@@ -1833,7 +1833,7 @@ class TestQuadGeometryEuclidBL(object):
             assert ci_serial_region == (1, 3, 0, 5)
 
         def test__column_0_of_front_edge__region_is_left_hand_side__overscan_beyond_ci_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             ci_region = MockRegion(region=(1, 3, 0, 5))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
@@ -1842,7 +1842,7 @@ class TestQuadGeometryEuclidBL(object):
             assert ci_serial_region == (1, 3, 0, 25)
 
         def test__column_2__region_is_left_hand_side__overscan_beyond_ci_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             ci_region = MockRegion(region=(1, 3, 0, 5))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
@@ -1851,7 +1851,7 @@ class TestQuadGeometryEuclidBL(object):
             assert ci_serial_region == (1, 3, 2, 25)
 
         def test__ci_region_has_overscan_and_prescan_either_side__prescan_ignored(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             ci_region = MockRegion(region=(1, 3, 10, 20))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
@@ -1860,7 +1860,7 @@ class TestQuadGeometryEuclidBL(object):
             assert ci_serial_region == (1, 3, 10, 25)
 
         def test__ci_region_has_overscan_and_prescan_either_side__include_column(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             ci_region = MockRegion(region=(1, 3, 10, 20))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
@@ -1869,7 +1869,7 @@ class TestQuadGeometryEuclidBL(object):
             assert ci_serial_region == (1, 3, 12, 25)
 
         def test__different_ci_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             ci_region = MockRegion(region=(3, 5, 5, 30))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(8, 55),
@@ -1878,11 +1878,11 @@ class TestQuadGeometryEuclidBL(object):
             assert ci_serial_region == (3, 5, 7, 55)
 
 
-class TestQuadGeometryEuclidBR(object):
+class TestQuadGeometryEuclid_bottom_right(object):
     class TestParallelFrontEdgeOfRegion:
 
         def test__extract_two_rows__second_and_third__takes_coordinates_from_top_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
 
             ci_region = MockRegion(region=(0, 3, 0, 3))  # Front edge is row 0, so for these 2 rows we extract 1 ->2
 
@@ -1893,7 +1893,7 @@ class TestQuadGeometryEuclidBR(object):
     class TestParallelTrailsRegion:
 
         def test__extract_two_rows__second_and_third__takes_coordinates_after_bottom_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
 
             ci_region = MockRegion((0, 3, 0, 3))  # The trails are row 3 and above, so extract 4 -> 6
 
@@ -1904,7 +1904,7 @@ class TestQuadGeometryEuclidBR(object):
     class TestParallelSideNearestReadOut:
 
         def test__columns_0_to_1__region_is_right_hand_side(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
             ci_region = MockRegion(region=(1, 3, 0, 5))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(region=ci_region,
@@ -1913,7 +1913,7 @@ class TestQuadGeometryEuclidBR(object):
             assert ci_parallel_region == (0, 5, 4, 5)
 
         def test__columns_1_to_3__region_is_right_hand_side(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
             ci_region = MockRegion(region=(1, 3, 0, 4))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(region=ci_region,
@@ -1922,7 +1922,7 @@ class TestQuadGeometryEuclidBR(object):
             assert ci_parallel_region == (0, 4, 1, 3)
 
         def test__columns_1_to_3__different_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
             ci_region = MockRegion(region=(1, 3, 2, 4))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(region=ci_region,
@@ -1931,7 +1931,7 @@ class TestQuadGeometryEuclidBR(object):
             assert ci_parallel_region == (0, 4, 1, 3)
 
         def test__columns_0_to_1__asymetric_image(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
             ci_region = MockRegion(region=(0, 1, 0, 5))
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(region=ci_region,
                                                                                    image_shape=(2, 5), columns=(0, 1))
@@ -1941,7 +1941,7 @@ class TestQuadGeometryEuclidBR(object):
     class TestSerialFrontEdgeRegion:
 
         def test__extract_one_column__takes_coordinates_from_right_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
 
             ci_region = MockRegion(region=(0, 3, 0, 3))  # Front edge is column 0, so for 1 column we extract 0 -> 1
 
@@ -1950,7 +1950,7 @@ class TestQuadGeometryEuclidBR(object):
             assert ci_front_edge == (0, 3, 2, 3)
 
         def test__extract_two_columns__first_and_second__takes_coordinates_from_right_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
 
             ci_region = MockRegion(region=(0, 3, 0, 3))  # Front edge is column 0, so for 2 columns we extract 0 -> 2
 
@@ -1959,7 +1959,7 @@ class TestQuadGeometryEuclidBR(object):
             assert ci_front_edge == (0, 3, 1, 3)
 
         def test__extract_two_columns__second_and_third__takes_coordinates_from_right_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
 
             ci_region = MockRegion(
                 region=(0, 3, 0, 3))  # Front edge is column 0, so for these 2 columns we extract 1 ->2
@@ -1971,7 +1971,7 @@ class TestQuadGeometryEuclidBR(object):
     class TestSerialTrailsRegion:
 
         def test__extract_one_row__takes_coordinates_after_left_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
 
             ci_region = MockRegion(region=(0, 3, 3, 6))  # The trails are column 3 and above, so extract 3 -> 4
 
@@ -1980,7 +1980,7 @@ class TestQuadGeometryEuclidBR(object):
             assert ci_trails == (0, 3, 2, 3)
 
         def test__extract_two_columns__first_and_second__takes_coordinates_after_left_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
 
             ci_region = MockRegion((0, 3, 3, 6))  # The trails are column 3 and above, so extract 3 -> 5
 
@@ -1989,7 +1989,7 @@ class TestQuadGeometryEuclidBR(object):
             assert ci_trails == (0, 3, 1, 3)
 
         def test__extract_two_columns__second_and_third__takes_coordinates_after_left_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
 
             ci_region = MockRegion((0, 3, 3, 6))  # The trails are column 3 and above, so extract 4 -> 6
 
@@ -2000,7 +2000,7 @@ class TestQuadGeometryEuclidBR(object):
     class TestSerialChargeInjectionAndTrails:
 
         def test__column_0_of_front_edge__region_is_left_hand_side__no_overscan_beyond_ci_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
             ci_region = MockRegion(region=(1, 3, 0, 5))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 5),
@@ -2009,7 +2009,7 @@ class TestQuadGeometryEuclidBR(object):
             assert ci_serial_region == (1, 3, 0, 5)
 
         def test__column_0_of_front_edge__region_is_left_hand_side__overscan_beyond_ci_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
             ci_region = MockRegion(region=(1, 3, 20, 25))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
@@ -2018,7 +2018,7 @@ class TestQuadGeometryEuclidBR(object):
             assert ci_serial_region == (1, 3, 0, 25)
 
         def test__column_2__region_is_left_hand_side__overscan_beyond_ci_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
             ci_region = MockRegion(region=(1, 3, 20, 25))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
@@ -2027,7 +2027,7 @@ class TestQuadGeometryEuclidBR(object):
             assert ci_serial_region == (1, 3, 0, 23)
 
         def test__ci_region_has_overscan_and_prescan_either_side__prescan_ignored(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
             ci_region = MockRegion(region=(1, 3, 10, 20))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
@@ -2036,7 +2036,7 @@ class TestQuadGeometryEuclidBR(object):
             assert ci_serial_region == (1, 3, 0, 20)
 
         def test__ci_region_has_overscan_and_prescan_either_side__include_column(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
             ci_region = MockRegion(region=(1, 3, 10, 20))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
@@ -2045,7 +2045,7 @@ class TestQuadGeometryEuclidBR(object):
             assert ci_serial_region == (1, 3, 0, 18)
 
         def test__different_ci_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
             ci_region = MockRegion(region=(3, 5, 5, 30))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(8, 55),
@@ -2054,11 +2054,11 @@ class TestQuadGeometryEuclidBR(object):
             assert ci_serial_region == (3, 5, 0, 28)
 
 
-class TestQuadGeometryEuclidTL(object):
+class TestQuadGeometryEuclid_top_left(object):
     class TestParallelFrontEdgeOfRegion:
 
         def test__extract_one_row__takes_coordinates_from_top_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidTL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.top_left()
 
             ci_region = MockRegion((0, 3, 0, 3))  # The front edge is closest to 3, so for 1 edge we extract row 3-> 4
 
@@ -2067,7 +2067,7 @@ class TestQuadGeometryEuclidTL(object):
             assert ci_front_edge == (2, 3, 0, 3)
 
         def test__extract_two_rows__first_and_second__takes_coordinates_from_top_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidTL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.top_left()
 
             ci_region = MockRegion(
                 (0, 3, 0, 3))  # The front edge is closest to 3, so for these 2 rows we extract 2 & 3
@@ -2077,7 +2077,7 @@ class TestQuadGeometryEuclidTL(object):
             assert ci_front_edge == (1, 3, 0, 3)
 
         def test__extract_two_rows__second_and_third__takes_coordinates_from_top_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidTL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.top_left()
 
             ci_region = MockRegion(
                 (0, 3, 0, 3))  # The front edge is closest to 3, so for these 2 rows we extract 1 & 2
@@ -2089,7 +2089,7 @@ class TestQuadGeometryEuclidTL(object):
     class TestParallelTrailsRegion:
 
         def test__extract_one_row__takes_coordinates_after_bottom_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidTL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.top_left()
 
             ci_region = MockRegion(
                 (3, 5, 0, 3))  # The trails are the rows after row 3, so for 1 edge we should extract just row 2
@@ -2099,7 +2099,7 @@ class TestQuadGeometryEuclidTL(object):
             assert ci_trails == (2, 3, 0, 3)
 
         def test__extract_two_rows__first_and_second__takes_coordinates_after_bottom_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidTL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.top_left()
 
             ci_region = MockRegion(
                 (3, 5, 0, 3))  # The trails are the row after row 3, so for these 2 edges we extract rows 1->3
@@ -2109,7 +2109,7 @@ class TestQuadGeometryEuclidTL(object):
             assert ci_trails == (1, 3, 0, 3)
 
         def test__extract_two_rows__second_and_third__takes_coordinates_after_bottom_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidTL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.top_left()
 
             ci_region = MockRegion(
                 (3, 5, 0, 3))  # The trails are the row after row 3, so for these 2 edges we extract rows 0 & 2
@@ -2121,7 +2121,7 @@ class TestQuadGeometryEuclidTL(object):
     class TestParallelSideNearestReadOut:
 
         def test__columns_0_to_1__asymetric_image(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             ci_region = MockRegion(region=(1, 3, 0, 5))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(region=ci_region,
@@ -2132,7 +2132,7 @@ class TestQuadGeometryEuclidTL(object):
     class TestSerialFrontEdgeRegion:
 
         def test__extract_two_columns__second_and_third__takes_coordinates_from_top_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidTL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.top_left()
 
             ci_region = MockRegion(
                 region=(0, 3, 0, 3))  # Front edge is column 0, so for these 2 columns we extract 1 ->2
@@ -2144,7 +2144,7 @@ class TestQuadGeometryEuclidTL(object):
     class TestSerialTrailsRegion:
 
         def test__extract_two_columns__second_and_third__takes_coordinates_after_bottom_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidTL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.top_left()
 
             ci_region = MockRegion((0, 3, 0, 3))  # The trails are column 3 and above, so extract 4 -> 6
 
@@ -2155,7 +2155,7 @@ class TestQuadGeometryEuclidTL(object):
     class TestSerialChargeInjectionAndTrails:
 
         def test__different_ci_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidTL()
+            ci_geometry = ci_frame.QuadGeometryEuclid.top_left()
             ci_region = MockRegion(region=(3, 5, 5, 30))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(8, 55),
@@ -2164,11 +2164,11 @@ class TestQuadGeometryEuclidTL(object):
             assert ci_serial_region == (3, 5, 7, 55)
 
 
-class TestQuadGeometryEuclidTR(object):
+class TestQuadGeometryEuclid_top_right(object):
     class TestParallelFrontEdgeOfRegion:
 
         def test__extract_two_rows__second_and_third__takes_coordinates_from_top_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidTR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.top_right()
 
             ci_region = MockRegion(
                 (0, 3, 0, 3))  # The front edge is closest to 3, so for these 2 rows we extract 1 & 2
@@ -2180,7 +2180,7 @@ class TestQuadGeometryEuclidTR(object):
     class TestParallelTrailsRegion:
 
         def test__extract_two_rows__second_and_third__takes_coordinates_after_bottom_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidTR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.top_right()
 
             ci_region = MockRegion(
                 (3, 5, 0, 3))  # The trails are the row after row 3, so for these 2 edges we extract rows 0 & 2
@@ -2192,7 +2192,7 @@ class TestQuadGeometryEuclidTR(object):
     class TestParallelSideNearestReadOut:
 
         def test__columns_0_to_1__asymetric_image(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidTR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.top_right()
             ci_region = MockRegion(region=(0, 1, 0, 5))
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(region=ci_region,
                                                                                    image_shape=(2, 5), columns=(0, 1))
@@ -2202,7 +2202,7 @@ class TestQuadGeometryEuclidTR(object):
     class TestSerialFrontEdgeRegion:
 
         def test__extract_two_columns__second_and_third__takes_coordinates_from_right_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
 
             ci_region = MockRegion(
                 region=(0, 3, 0, 3))  # Front edge is column 0, so for these 2 columns we extract 1 ->2
@@ -2214,7 +2214,7 @@ class TestQuadGeometryEuclidTR(object):
     class TestSerialTrailsRegion:
 
         def test__extract_two_columns__second_and_third__takes_coordinates_after_left_of_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidBR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
 
             ci_region = MockRegion((0, 3, 3, 6))  # The trails are column 3 and above, so extract 4 -> 6
 
@@ -2225,7 +2225,7 @@ class TestQuadGeometryEuclidTR(object):
     class TestSerialChargeInjectionAndTrails:
 
         def test__different_ci_region(self):
-            ci_geometry = ci_frame.QuadGeometryEuclidTR()
+            ci_geometry = ci_frame.QuadGeometryEuclid.top_right()
             ci_region = MockRegion(region=(3, 5, 5, 30))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(8, 55),
