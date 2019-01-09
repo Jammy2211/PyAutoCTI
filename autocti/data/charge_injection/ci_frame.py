@@ -1102,6 +1102,15 @@ class FrameGeometry(object):
             x_max = x_coord - columns[0]
         return Region((region.y0, region.y1, x_min, x_max))
 
+    def serial_ci_region_and_trails(self, region, image_shape, column):
+        if self.corner[1] == 0:
+            x_coord = region.x1
+            x_min = x_coord + column
+        else:
+            x_coord = region.x0
+            x_min = x_coord - column
+        return Region((region.y0, region.y1, x_min, image_shape[1]))
+
 
 class QuadGeometryEuclid(FrameGeometry):
 
