@@ -1057,6 +1057,17 @@ class FrameGeometry(object):
             y_max = y_coord - rows[0]
         return Region((y_min, y_max, region.x0, region.x1))
 
+    def parallel_trails_region(self, region, rows=(0, 1)):
+        if self.corner[0] == 0:
+            y_coord = region.y1
+            y_min = y_coord + rows[0]
+            y_max = y_coord + rows[1]
+        else:
+            y_coord = region.y0
+            y_min = y_coord - rows[1]
+            y_max = y_coord - rows[0]
+        return Region((y_min, y_max, region.x0, region.x1))
+
     def serial_front_edge_region(self, region, columns=(0, 1)):
         check_serial_front_edge_size(region, columns)
         if self.corner[1] == 0:
@@ -1272,12 +1283,6 @@ class CIQuadGeometryEuclidBL(QuadGeometryEuclidBL):
         super(CIQuadGeometryEuclidBL, self).__init__()
 
     @staticmethod
-    def parallel_trails_region(region, rows=(0, 1)):
-        """Extract the trails after a charge injection region which is located in the bottom-left quadrant of a \
-        Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
-        return Region((region.y1 + rows[0], region.y1 + rows[1], region.x0, region.x1))
-
-    @staticmethod
     def parallel_side_nearest_read_out_region(region, image_shape, columns=(0, 1)):
         return Region((0, image_shape[0], region.x0 + columns[0], region.x0 + columns[1]))
 
@@ -1298,12 +1303,6 @@ class CIQuadGeometryEuclidBR(QuadGeometryEuclidBR):
         """This class represents the quadrant geometry of a Euclid charge injection image in the bottom-right of a \
         CCD (see **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
         super(CIQuadGeometryEuclidBR, self).__init__()
-
-    @staticmethod
-    def parallel_trails_region(region, rows=(0, 1)):
-        """Extract the trails after a charge injection region which is located in the bottom-left quadrant of a \
-        Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
-        return Region((region.y1 + rows[0], region.y1 + rows[1], region.x0, region.x1))
 
     @staticmethod
     def parallel_side_nearest_read_out_region(region, image_shape, columns=(0, 1)):
@@ -1328,12 +1327,6 @@ class CIQuadGeometryEuclidTL(QuadGeometryEuclidTL):
         super(CIQuadGeometryEuclidTL, self).__init__()
 
     @staticmethod
-    def parallel_trails_region(region, rows=(0, 1)):
-        """Extract the trails after a charge injection region which is located in the top_left quadrant of a \
-        Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
-        return Region((region.y0 - rows[1], region.y0 - rows[0], region.x0, region.x1))
-
-    @staticmethod
     def parallel_side_nearest_read_out_region(region, image_shape, columns=(0, 1)):
         return Region((0, image_shape[0], region.x0 + columns[0], region.x0 + columns[1]))
 
@@ -1354,12 +1347,6 @@ class CIQuadGeometryEuclidTR(QuadGeometryEuclidTR):
         """This class represents the quadrant geometry of a Euclid charge injection image in the top-right of a \
         CCD (see **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
         super(CIQuadGeometryEuclidTR, self).__init__()
-
-    @staticmethod
-    def parallel_trails_region(region, rows=(0, 1)):
-        """Extract the trails after a charge injection region which is located in the top_left quadrant of a \
-        Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
-        return Region((region.y0 - rows[1], region.y0 - rows[0], region.x0, region.x1))
 
     @staticmethod
     def parallel_side_nearest_read_out_region(region, image_shape, columns=(0, 1)):
