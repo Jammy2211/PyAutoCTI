@@ -1080,6 +1080,17 @@ class FrameGeometry(object):
             x_max = x_coord - columns[0]
         return Region((region.y0, region.y1, x_min, x_max))
 
+    def parallel_side_nearest_read_out_region(self, region, image_shape, columns=(0, 1)):
+        if self.corner[1] == 0:
+            x_coord = region.x0
+            x_min = x_coord + columns[0]
+            x_max = x_coord + columns[1]
+        else:
+            x_coord = region.x1
+            x_min = x_coord - columns[1]
+            x_max = x_coord - columns[0]
+        return Region((0, image_shape[0], x_min, x_max))
+
     def serial_trails_region(self, region, columns=(0, 1)):
         if self.corner[1] == 0:
             x_coord = region.x1
@@ -1294,10 +1305,6 @@ class CIQuadGeometryEuclidBL(QuadGeometryEuclidBL):
         super(CIQuadGeometryEuclidBL, self).__init__()
 
     @staticmethod
-    def parallel_side_nearest_read_out_region(region, image_shape, columns=(0, 1)):
-        return Region((0, image_shape[0], region.x0 + columns[0], region.x0 + columns[1]))
-
-    @staticmethod
     def serial_ci_region_and_trails(region, image_shape, from_column):
         return Region((region.y0, region.y1, from_column + region.x0, image_shape[1]))
 
@@ -1308,10 +1315,6 @@ class CIQuadGeometryEuclidBR(QuadGeometryEuclidBR):
         """This class represents the quadrant geometry of a Euclid charge injection image in the bottom-right of a   
         CCD (see **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
         super(CIQuadGeometryEuclidBR, self).__init__()
-
-    @staticmethod
-    def parallel_side_nearest_read_out_region(region, image_shape, columns=(0, 1)):
-        return Region((0, image_shape[0], region.x1 - columns[1], region.x1 - columns[0]))
 
     @staticmethod
     def serial_ci_region_and_trails(region, image_shape, from_column):
@@ -1326,10 +1329,6 @@ class CIQuadGeometryEuclidTL(QuadGeometryEuclidTL):
         super(CIQuadGeometryEuclidTL, self).__init__()
 
     @staticmethod
-    def parallel_side_nearest_read_out_region(region, image_shape, columns=(0, 1)):
-        return Region((0, image_shape[0], region.x0 + columns[0], region.x0 + columns[1]))
-
-    @staticmethod
     def serial_ci_region_and_trails(region, image_shape, from_column):
         return Region((region.y0, region.y1, from_column + region.x0, image_shape[1]))
 
@@ -1342,15 +1341,12 @@ class CIQuadGeometryEuclidTR(QuadGeometryEuclidTR):
         super(CIQuadGeometryEuclidTR, self).__init__()
 
     @staticmethod
-    def parallel_side_nearest_read_out_region(region, image_shape, columns=(0, 1)):
-        return Region((0, image_shape[0], region.x1 - columns[1], region.x1 - columns[0]))
-
-    @staticmethod
     def serial_ci_region_and_trails(region, image_shape, from_column):
         return Region((region.y0, region.y1, 0, region.x1 - from_column))
 
 
 def check_parallel_front_edge_size(region, rows):
+    # TODO: are these checks important?
     if rows[0] < 0 or rows[1] < 1 or rows[1] > region.y1 - region.y0 or rows[0] >= rows[1]:
         raise exc.CIPatternException('The number of rows to extract from the leading edge is bigger than the entire'
                                      'ci ci_region')
