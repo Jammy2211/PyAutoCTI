@@ -1,6 +1,8 @@
 import numpy as np
 
+from autocti import exc
 from autocti.data import cti_image
+from autocti.model import pyarctic
 from autocti.tools import imageio
 
 
@@ -882,8 +884,50 @@ class CIFrameCTI(cti_image.CTIImage, ChInj):
                    array=imageio.numpy_array_from_fits(path, filename, hdu))
 
 
-from autocti import exc
-from autocti.model import pyarctic
+class Region(tuple):
+
+    def __new__(cls, region):
+        """Setup a region of an image, which could be where the parallel overscan, serial overscan, etc. are.
+
+        This is defined as a tuple (y0, y1, x0, x1).
+
+        Parameters
+        -----------
+        region : (int,)
+            The coordinates on the image of the region (y0, y1, x0, y1).
+        """
+
+        if region[0] < 0 or region[1] < 0 or region[2] < 0 or region[3] < 0:
+            raise exc.RegionException('A coordinate of the Region was specified as negative.')
+
+        if region[0] >= region[1]:
+            raise exc.RegionException('The first row in the Region was equal to or greater than the second row.')
+
+        if region[2] >= region[3]:
+            raise exc.RegionException('The first column in the Region was equal to greater than the second column.')
+
+        region = super(Region, cls).__new__(cls, region)
+
+        region.y0 = region[0]
+        region.y1 = region[1]
+        region.x0 = region[2]
+        region.x1 = region[3]
+
+        region.total_rows = region.y1 - region.y0
+        region.total_columns = region.x1 - region.x0
+
+        return region
+
+    def extract_region_from_array(self, array):
+        return array[self.y0:self.y1, self.x0:self.x1]
+
+    def add_region_from_image_to_array(self, image, array):
+        array[self.y0:self.y1, self.x0:self.x1] += image[self.y0:self.y1, self.x0:self.x1]
+        return array
+
+    def set_region_on_array_to_zeros(self, array):
+        array[self.y0:self.y1, self.x0:self.x1] = 0.0
+        return array
 
 
 class FrameGeometry(object):
@@ -1000,6 +1044,18 @@ class FrameGeometry(object):
     def serial_trail_from_x(self, x, dx):
         """Coordinates of a serial trail of size dx from coordinate x"""
         return x - dx * self.corner[1], x + 1 + dx * (1 - self.corner[1])
+
+    def parallel_front_edge_region(self, region, rows=(0, 1)):
+        check_parallel_front_edge_size(region, rows)
+        if self.corner[0] == 0:
+            y_coord = region.y0
+            y_min = y_coord + rows[0]
+            y_max = y_coord + rows[1]
+        else:
+            y_coord = region.y1
+            y_min = y_coord - rows[1]
+            y_max = y_coord - rows[0]
+        return Region((y_min, y_max, region.x0, region.x1))
 
 
 class QuadGeometryEuclid(FrameGeometry):
@@ -1144,72 +1200,14 @@ class QuadGeometryEuclid(FrameGeometry):
             return QuadGeometryEuclidBR()
 
 
-class QuadGeometryEuclidTR(QuadGeometryEuclid):
+class QuadGeometryEuclidBL(QuadGeometryEuclid):
 
     def __init__(self):
-        """This class represents the frame_geometry of a Euclid quadrant in the top-right of a CCD (see \
+        """This class represents the frame_geometry of a Euclid quadrant in the bottom-left of a CCD (see \
         **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
 
-        super(QuadGeometryEuclidTR, self).__init__(corner=(1, 1),
-                                                   parallel_overscan=Region((0, 20, 20, 2068)),
-                                                   serial_prescan=Region((0, 2086, 2068, 2119)),
-                                                   serial_overscan=Region((0, 2086, 0, 20)))
-
-
-class Region(tuple):
-
-    def __new__(cls, region):
-        """Setup a region of an image, which could be where the parallel overscan, serial overscan, etc. are.
-
-        This is defined as a tuple (y0, y1, x0, x1).
-
-        Parameters
-        -----------
-        region : (int,)
-            The coordinates on the image of the region (y0, y1, x0, y1).
-        """
-
-        if region[0] < 0 or region[1] < 0 or region[2] < 0 or region[3] < 0:
-            raise exc.RegionException('A coordinate of the Region was specified as negative.')
-
-        if region[0] >= region[1]:
-            raise exc.RegionException('The first row in the Region was equal to or greater than the second row.')
-
-        if region[2] >= region[3]:
-            raise exc.RegionException('The first column in the Region was equal to greater than the second column.')
-
-        region = super(Region, cls).__new__(cls, region)
-
-        region.y0 = region[0]
-        region.y1 = region[1]
-        region.x0 = region[2]
-        region.x1 = region[3]
-
-        region.total_rows = region.y1 - region.y0
-        region.total_columns = region.x1 - region.x0
-
-        return region
-
-    def extract_region_from_array(self, array):
-        return array[self.y0:self.y1, self.x0:self.x1]
-
-    def add_region_from_image_to_array(self, image, array):
-        array[self.y0:self.y1, self.x0:self.x1] += image[self.y0:self.y1, self.x0:self.x1]
-        return array
-
-    def set_region_on_array_to_zeros(self, array):
-        array[self.y0:self.y1, self.x0:self.x1] = 0.0
-        return array
-
-
-class QuadGeometryEuclidTL(QuadGeometryEuclid):
-
-    def __init__(self):
-        """This class represents the frame_geometry of a Euclid quadrant in the top-left of a CCD (see \
-        **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
-
-        super(QuadGeometryEuclidTL, self).__init__(corner=(1, 0),
-                                                   parallel_overscan=Region((0, 20, 51, 2099)),
+        super(QuadGeometryEuclidBL, self).__init__(corner=(0, 0),
+                                                   parallel_overscan=Region((2066, 2086, 51, 2099)),
                                                    serial_prescan=Region((0, 2086, 0, 51)),
                                                    serial_overscan=Region((0, 2086, 2099, 2119)))
 
@@ -1226,16 +1224,28 @@ class QuadGeometryEuclidBR(QuadGeometryEuclid):
                                                    serial_overscan=Region((0, 2086, 0, 20)))
 
 
-class QuadGeometryEuclidBL(QuadGeometryEuclid):
+class QuadGeometryEuclidTL(QuadGeometryEuclid):
 
     def __init__(self):
-        """This class represents the frame_geometry of a Euclid quadrant in the bottom-left of a CCD (see \
+        """This class represents the frame_geometry of a Euclid quadrant in the top-left of a CCD (see \
         **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
 
-        super(QuadGeometryEuclidBL, self).__init__(corner=(0, 0),
-                                                   parallel_overscan=Region((2066, 2086, 51, 2099)),
+        super(QuadGeometryEuclidTL, self).__init__(corner=(1, 0),
+                                                   parallel_overscan=Region((0, 20, 51, 2099)),
                                                    serial_prescan=Region((0, 2086, 0, 51)),
                                                    serial_overscan=Region((0, 2086, 2099, 2119)))
+
+
+class QuadGeometryEuclidTR(QuadGeometryEuclid):
+
+    def __init__(self):
+        """This class represents the frame_geometry of a Euclid quadrant in the top-right of a CCD (see \
+        **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
+
+        super(QuadGeometryEuclidTR, self).__init__(corner=(1, 1),
+                                                   parallel_overscan=Region((0, 20, 20, 2068)),
+                                                   serial_prescan=Region((0, 2086, 2068, 2119)),
+                                                   serial_overscan=Region((0, 2086, 0, 20)))
 
 
 def flip(image):
@@ -1248,13 +1258,6 @@ class CIQuadGeometryEuclidBL(QuadGeometryEuclidBL):
         """This class represents the quadrant geometry of a Euclid charge injection image in the bottom-left of a \
         CCD (see **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
         super(CIQuadGeometryEuclidBL, self).__init__()
-
-    @staticmethod
-    def parallel_front_edge_region(region, rows=(0, 1)):
-        """Extract the leading edge of a charge injection region which is located in the bottom-left quadrant of a \
-        Euclid CCD (see *CIPatternGeometry*)."""
-        check_parallel_front_edge_size(region, rows)
-        return Region((region.y0 + rows[0], region.y0 + rows[1], region.x0, region.x1))
 
     @staticmethod
     def parallel_trails_region(region, rows=(0, 1)):
@@ -1292,13 +1295,6 @@ class CIQuadGeometryEuclidBR(QuadGeometryEuclidBR):
         super(CIQuadGeometryEuclidBR, self).__init__()
 
     @staticmethod
-    def parallel_front_edge_region(region, rows=(0, 1)):
-        """Extract the leading edge of a charge injection region which is located in the bottom-left quadrant of a \
-        Euclid CCD (see *CIPatternGeometry*)."""
-        check_parallel_front_edge_size(region, rows)
-        return Region((region.y0 + rows[0], region.y0 + rows[1], region.x0, region.x1))
-
-    @staticmethod
     def parallel_trails_region(region, rows=(0, 1)):
         """Extract the trails after a charge injection region which is located in the bottom-left quadrant of a \
         Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
@@ -1334,13 +1330,6 @@ class CIQuadGeometryEuclidTL(QuadGeometryEuclidTL):
         super(CIQuadGeometryEuclidTL, self).__init__()
 
     @staticmethod
-    def parallel_front_edge_region(region, rows=(0, 1)):
-        """Extract the leading edge of a charge injection region which is located in the top-left quadrant of a \
-        Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
-        check_parallel_front_edge_size(region, rows)
-        return Region((region.y1 - rows[1], region.y1 - rows[0], region.x0, region.x1))
-
-    @staticmethod
     def parallel_trails_region(region, rows=(0, 1)):
         """Extract the trails after a charge injection region which is located in the top_left quadrant of a \
         Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
@@ -1374,13 +1363,6 @@ class CIQuadGeometryEuclidTR(QuadGeometryEuclidTR):
         """This class represents the quadrant geometry of a Euclid charge injection image in the top-right of a \
         CCD (see **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
         super(CIQuadGeometryEuclidTR, self).__init__()
-
-    @staticmethod
-    def parallel_front_edge_region(region, rows=(0, 1)):
-        """Extract the leading edge of a charge injection region which is located in the top-left quadrant of a \
-        Euclid CCD (see *CIPatternGeometry* for a description of where this is extracted)."""
-        check_parallel_front_edge_size(region, rows)
-        return Region((region.y1 - rows[1], region.y1 - rows[0], region.x0, region.x1))
 
     @staticmethod
     def parallel_trails_region(region, rows=(0, 1)):
