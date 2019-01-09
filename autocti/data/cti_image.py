@@ -156,7 +156,7 @@ class CTIImage(ImageFrame):
 
 class FrameGeometry(object):
 
-    def __init__(self, parallel_overscan, serial_prescan, serial_overscan):
+    def __init__(self, corner, parallel_overscan, serial_prescan, serial_overscan):
         """Abstract class for the geometry of a CTI Image.
 
         A CTIImage is stored as a 2D NumPy array. When this immage is passed to arctic, clocking goes towards \
@@ -184,6 +184,7 @@ class FrameGeometry(object):
         self.parallel_overscan = parallel_overscan
         self.serial_prescan = serial_prescan
         self.serial_overscan = serial_overscan
+        self.corner = corner
 
     def add_cti(self, image, cti_params, cti_settings):
         """add cti to an image.
@@ -199,12 +200,12 @@ class FrameGeometry(object):
         """
 
         if cti_params.parallel_ccd is not None:
-            image_pre_parallel_clocking = self.rotate_before_parallel_cti(image_pre_clocking=image)
+            image_pre_parallel_clocking = self.rotate_for_parallel_cti(image=image)
             image_post_parallel_clocking = pyarctic.call_arctic(image_pre_parallel_clocking,
                                                                 cti_params.parallel_species,
                                                                 cti_params.parallel_ccd,
                                                                 cti_settings.parallel)
-            image = self.rotate_after_parallel_cti(image_post_parallel_clocking)
+            image = self.rotate_for_parallel_cti(image_post_parallel_clocking)
 
         if cti_params.serial_ccd is not None:
             image_pre_serial_clocking = self.rotate_before_serial_cti(image_pre_clocking=image)
@@ -239,36 +240,35 @@ class FrameGeometry(object):
             image = self.rotate_after_serial_cti(image_post_serial_clocking)
 
         if cti_settings.parallel is not None:
-            image_pre_parallel_clocking = self.rotate_before_parallel_cti(image_pre_clocking=image)
+            image_pre_parallel_clocking = self.rotate_for_parallel_cti(image=image)
             image_post_parallel_clocking = pyarctic.call_arctic(image_pre_parallel_clocking,
                                                                 cti_params.parallel_species,
                                                                 cti_params.parallel_ccd,
                                                                 cti_settings.parallel,
                                                                 correct_cti=True)
-            image = self.rotate_after_parallel_cti(image_post_parallel_clocking)
+            image = self.rotate_for_parallel_cti(image_post_parallel_clocking)
 
         return image
 
-    @staticmethod
-    def rotate_before_parallel_cti(image_pre_clocking):
-        raise AssertionError("rotate_before_parallel_cti should be overridden")
+    def rotate_for_parallel_cti(self, image):
+        return flip(image) if self.corner[0] == 1 else image
 
-    @staticmethod
-    def rotate_before_serial_cti(image_pre_clocking):
-        raise AssertionError("rotate_before_serial_cti should be overridden")
+    def rotate_before_serial_cti(self, image_pre_clocking):
+        transposed = image_pre_clocking.T.copy()
+        return flip(transposed) if self.corner[1] == 1 else transposed
 
-    @staticmethod
-    def rotate_after_parallel_cti(image_post_clocking):
-        raise AssertionError("rotate_after_parallel_cti should be overridden")
+    def rotate_after_serial_cti(self, image_post_clocking):
+        flipped = flip(image_post_clocking) if self.corner[1] == 1 else image_post_clocking
+        return flipped.T.copy()
 
-    @staticmethod
-    def rotate_after_serial_cti(image_post_clocking):
-        raise AssertionError("rotate_after_serial_cti should be overridden")
+
+def flip(image):
+    return image[::-1, :]
 
 
 class QuadGeometryEuclid(FrameGeometry):
 
-    def __init__(self, parallel_overscan, serial_prescan, serial_overscan):
+    def __init__(self, corner, parallel_overscan, serial_prescan, serial_overscan):
         """Abstract class for the ci_frame geometry of Euclid quadrants. CTI uses a bias corrected raw VIS ci_frame, which \
          is  described at http://euclid.esac.esa.int/dm/dpdd/latest/le1dpd/dpcards/le1_visrawframe.html
 
@@ -333,7 +333,7 @@ class QuadGeometryEuclid(FrameGeometry):
         Rotations are performed using flipup / fliplr routines, but will ultimately use the Euclid Image Tools library.
 
         """
-        super(QuadGeometryEuclid, self).__init__(parallel_overscan, serial_prescan, serial_overscan)
+        super(QuadGeometryEuclid, self).__init__(corner, parallel_overscan, serial_prescan, serial_overscan)
 
     @classmethod
     def from_ccd_and_quadrant_id(cls, ccd_id, quad_id):
@@ -414,71 +414,10 @@ class QuadGeometryEuclidBL(QuadGeometryEuclid):
         """This class represents the frame_geometry of a Euclid quadrant in the bottom-left of a CCD (see \
         **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
 
-        super(QuadGeometryEuclidBL, self).__init__(parallel_overscan=Region((2066, 2086, 51, 2099)),
+        super(QuadGeometryEuclidBL, self).__init__(corner=(0, 0),
+                                                   parallel_overscan=Region((2066, 2086, 51, 2099)),
                                                    serial_prescan=Region((0, 2086, 0, 51)),
                                                    serial_overscan=Region((0, 2086, 2099, 2119)))
-
-    @staticmethod
-    def rotate_before_parallel_cti(image_pre_clocking):
-        """ Rotate the quadrant image ci_data before clocking via arctic in the parallel direction.
-
-        For the bottom-left quadrant, no rotation is required for parallel clocking
-
-        Params
-        ----------
-        image_pre_clocking : ndarray
-            The image before parallel clocking, therefore before it has been reoriented for clocking.
-        """
-        return image_pre_clocking
-
-    @staticmethod
-    def rotate_after_parallel_cti(image_post_clocking):
-        """ Re-rotate the quadrant image ci_data after clocking via arctic in the parallel direction.
-
-        For the bottom-left quadrant, no re-rotation is required for parallel clocking.
-
-        Params
-        ----------
-        image_post_clocking : ndarray
-            The image after clocking, therefore with parallel cti added or corrected.
-
-        """
-        return image_post_clocking
-
-    @staticmethod
-    def rotate_before_serial_cti(image_pre_clocking):
-        """ Rotate the quadrant image ci_data before clocking via arctic in the serial direction.
-
-        For the bottom-left quadrant, the image is rotated 180 degrees for serial clocking
-
-        NOTE : The NumPy transpose routine does not reorder the array's memory, making it non-contiguous. This is not \
-        a useable ci_data-type for C++ (and therefore arctic), so we use .copy() to force a memory re-ordering.
-
-        Params
-        ----------
-        image_pre_clocking : ndarray
-            The image before serial clocking, therefore before it has been reoriented for clocking.
-        """
-
-        return image_pre_clocking.T.copy()
-
-    @staticmethod
-    def rotate_after_serial_cti(image_post_clocking):
-        """ Re-rotate the quadrant image ci_data after clocking via arctic in the serial direction.
-
-        For the bottom-left quadrant, the image is re-rotated 180 degrees after serial clocking.
-
-
-        NOTE : The NumPy transpose routine does not reorder the array's memory, making it non-contiguous. This is not \
-        a useable ci_data-type for C++ (and therefore arctic), so we use .copy() to force a memory re-ordering.
-
-        Params
-        ----------
-        image_post_clocking : ndarray
-            The image after clocking, therefore with serial cti added or corrected.
-
-        """
-        return image_post_clocking.T.copy()
 
     @staticmethod
     def parallel_trail_from_y(y, dy):
@@ -497,69 +436,10 @@ class QuadGeometryEuclidBR(QuadGeometryEuclid):
         """This class represents the frame_geometry of a Euclid quadrant in the bottom-right of a CCD (see \
         **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
 
-        super(QuadGeometryEuclidBR, self).__init__(parallel_overscan=Region((2066, 2086, 20, 2068)),
+        super(QuadGeometryEuclidBR, self).__init__(corner=(0, 1),
+                                                   parallel_overscan=Region((2066, 2086, 20, 2068)),
                                                    serial_prescan=Region((0, 2086, 2068, 2119)),
                                                    serial_overscan=Region((0, 2086, 0, 20)))
-
-    @staticmethod
-    def rotate_before_parallel_cti(image_pre_clocking):
-        """ Rotate the quadrant image ci_data before clocking via arctic in the parallel direction.
-
-        For the bottom-right quadrant, no rotation is required for parallel clocking
-
-        Params
-        ----------
-        image_pre_clocking : ndarray
-            The image before parallel clocking, therefore before it has been reoriented for clocking.
-            """
-        return image_pre_clocking
-
-    @staticmethod
-    def rotate_after_parallel_cti(image_post_clocking):
-        """ Re-rotate the quadrant image ci_data after clocking via arctic in the parallel direction.
-
-        For the bottom-right quadrant, no re-rotation is required for parallel clocking.
-
-        Params
-        ----------
-        image_post_clocking : ndarray
-            The image after clocking, therefore with parallel cti added or corrected.
-
-        """
-        return image_post_clocking
-
-    @staticmethod
-    def rotate_before_serial_cti(image_pre_clocking):
-        """ Rotate the quadrant image ci_data before clocking via arctic in the serial direction.
-
-        For the bottom-right quadrant, the image is rotated 180 degrees and then flipped across the central x-axis \
-        before serial clocking
-
-        NOTE : The NumPy transpose routine does not reorder the array's memory, making it non-contiguous. This is not \
-        a useable ci_data-type for C++ (and therefore arctic), so we use .copy() to force a memory re-ordering.
-
-
-        Params
-        ----------
-        image_pre_clocking : ndarray
-            The image before serial clocking, therefore before it has been reoriented for clocking.
-        """
-        return image_pre_clocking.T.copy()[::-1, :]
-
-    @staticmethod
-    def rotate_after_serial_cti(image_post_clocking):
-        """ Re-rotate the quadrant image ci_data after clocking via arctic in the serial direction.
-
-        For the bottom-right quadrant, the image is flipped back across the central-y axis and re-rotated 180 degrees \
-        after serial clocking.
-
-        Params
-        ----------
-        image_post_clocking : ndarray
-            The image after clocking, therefore with serial cti added or corrected.
-
-        """
-        return image_post_clocking[::-1, :].T.copy()
 
     @staticmethod
     def parallel_trail_from_y(y, dy):
@@ -578,68 +458,10 @@ class QuadGeometryEuclidTL(QuadGeometryEuclid):
         """This class represents the frame_geometry of a Euclid quadrant in the top-left of a CCD (see \
         **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
 
-        super(QuadGeometryEuclidTL, self).__init__(parallel_overscan=Region((0, 20, 51, 2099)),
+        super(QuadGeometryEuclidTL, self).__init__(corner=(1, 0),
+                                                   parallel_overscan=Region((0, 20, 51, 2099)),
                                                    serial_prescan=Region((0, 2086, 0, 51)),
                                                    serial_overscan=Region((0, 2086, 2099, 2119)))
-
-    @staticmethod
-    def rotate_before_parallel_cti(image_pre_clocking):
-        """ Rotate the quadrant image ci_data before clocking via arctic in the parallel direction.
-
-        For the top-left quadrant, the image is rotated 180 degrees for parallel clocking
-
-
-        Params
-        ----------
-        image_pre_clocking : ndarray
-            The image before parallel clocking, therefore before it has been reoriented for clocking.
-            """
-        return image_pre_clocking[::-1, :]
-
-    @staticmethod
-    def rotate_after_parallel_cti(image_post_clocking):
-        """ Re-rotate the quadrant image ci_data after clocking via arctic in the parallel direction.
-
-        For the top-left quadrant, the image is rerotated 180 degrees after parallel clocking.
-
-        Params
-        ----------
-        image_post_clocking : ndarray
-            The image after clocking, therefore with parallel cti added or corrected.
-
-        """
-        return image_post_clocking[::-1, :]
-
-    @staticmethod
-    def rotate_before_serial_cti(image_pre_clocking):
-        """ Rotate the quadrant image ci_data before clocking via arctic in the serial direction.
-
-        For the top-left quadrant, the image is rotated 180 degrees before serial clocking
-
-        NOTE : The NumPy transpose routine does not reorder the array's memory, making it non-contiguous. This is not \
-        a useable ci_data-type for C++ (and therefore arctic), so we use .copy() to force a memory re-ordering.
-
-
-        Params
-        ----------
-        image_pre_clocking : ndarray
-            The image before serial clocking, therefore before it has been reoriented for clocking.
-        """
-        return image_pre_clocking.T.copy()
-
-    @staticmethod
-    def rotate_after_serial_cti(image_post_clocking):
-        """ Re-rotate the quadrant image ci_data after clocking via arctic in the serial direction.
-
-        For the top-left quadrant, the image is re-rotated 180 degrees after serial clocking.
-
-        Params
-        ----------
-        image_post_clocking : ndarray
-            The image after clocking, therefore with serial cti added or corrected.
-
-        """
-        return image_post_clocking.T.copy()
 
     @staticmethod
     def parallel_trail_from_y(y, dy):
@@ -658,69 +480,10 @@ class QuadGeometryEuclidTR(QuadGeometryEuclid):
         """This class represents the frame_geometry of a Euclid quadrant in the top-right of a CCD (see \
         **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
 
-        super(QuadGeometryEuclidTR, self).__init__(parallel_overscan=Region((0, 20, 20, 2068)),
+        super(QuadGeometryEuclidTR, self).__init__(corner=(1, 1),
+                                                   parallel_overscan=Region((0, 20, 20, 2068)),
                                                    serial_prescan=Region((0, 2086, 2068, 2119)),
                                                    serial_overscan=Region((0, 2086, 0, 20)))
-
-    @staticmethod
-    def rotate_before_parallel_cti(image_pre_clocking):
-        """ Rotate the quadrant image ci_data before clocking via arctic in the parallel direction.
-
-        For the top-right quadrant, the image is rotated 180 degrees before parallel clocking
-
-
-        Params
-        ----------
-        image_pre_clocking : ndarray
-            The image before parallel clocking, therefore before it has been reoriented for clocking.
-        """
-        return image_pre_clocking[::-1, :]
-
-    @staticmethod
-    def rotate_after_parallel_cti(image_post_clocking):
-        """ Re-rotate the quadrant image ci_data after clocking via arctic in the parallel direction.
-
-        For the top-right quadrant, the image is rerotated 180 degrees after parallel clocking.
-
-        Params
-        ----------
-        image_post_clocking : ndarray
-            The image after clocking, therefore with parallel cti added or corrected.
-
-        """
-        return image_post_clocking[::-1, :]
-
-    @staticmethod
-    def rotate_before_serial_cti(image_pre_clocking):
-        """ Rotate the quadrant image ci_data before clocking via arctic in the serial direction.
-
-        For the top-right quadrant, the image is rotated 180 degrees and flipped across the x-axis before \
-        serial clocking
-
-        NOTE : The NumPy transpose routine does not reorder the array's memory, making it non-contiguous. This is not \
-        a useable ci_data-type for C++ (and therefore arctic), so we use .copy() to force a memory re-ordering.
-
-        Params
-        ----------
-        image_pre_clocking : ndarray
-            The image before serial clocking, therefore before it has been reoriented for clocking.
-        """
-        return image_pre_clocking.T.copy()[::-1, :]
-
-    @staticmethod
-    def rotate_after_serial_cti(image_post_clocking):
-        """ Re-rotate the quadrant image ci_data after clocking via arctic in the serial direction.
-
-        For the top-right quadrant, the image is re-rotated 180 degrees and flipped back across the x-axis \
-        after serial clocking.
-
-        Params
-        ----------
-        image_post_clocking : ndarray
-            The image after clocking, therefore with serial cti added or corrected.
-
-        """
-        return image_post_clocking[::-1, :].T.copy()
 
     @staticmethod
     def parallel_trail_from_y(y, dy):

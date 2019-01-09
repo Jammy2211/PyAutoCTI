@@ -218,7 +218,7 @@ class CIPreCTIFast(CIPreCTI):
         """
         super(CIPreCTIFast, self).__init__(frame_geometry, array, ci_pattern)
         fast_column_pre_cti = self.ci_pattern.compute_fast_column(self.shape[0])
-        self.fast_column_pre_cti = self.frame_geometry.rotate_before_parallel_cti(fast_column_pre_cti)
+        self.fast_column_pre_cti = self.frame_geometry.rotate_for_parallel_cti(fast_column_pre_cti)
         fast_row_pre_cti = self.ci_pattern.compute_fast_row(self.shape[1])
         self.fast_row_pre_cti = self.frame_geometry.rotate_before_serial_cti(fast_row_pre_cti)
 
@@ -245,7 +245,7 @@ class CIPreCTIFast(CIPreCTI):
 
         ci_post_cti += fast_column_post_cti
 
-        return self.frame_geometry.rotate_after_parallel_cti(ci_post_cti)
+        return self.frame_geometry.rotate_for_parallel_cti(ci_post_cti)
 
     def compute_fast_row_post_cti(self, cti_params, cti_settings):
         """Add cti to the fast-row, using cti_settings.
