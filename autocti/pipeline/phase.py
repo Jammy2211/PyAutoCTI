@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 logger.level = logging.DEBUG
 
 
-class HyperOnly(object):
+class HyperOnly(ph.AbstractPhase):
     pass
 
 
