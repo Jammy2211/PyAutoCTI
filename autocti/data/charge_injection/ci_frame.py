@@ -1068,8 +1068,7 @@ class FrameGeometry(object):
             y_max = y_coord - rows[0]
         return Region((y_min, y_max, region.x0, region.x1))
 
-    def serial_front_edge_region(self, region, columns=(0, 1)):
-        check_serial_front_edge_size(region, columns)
+    def x_limits(self, region, columns):
         if self.corner[1] == 0:
             x_coord = region.x0
             x_min = x_coord + columns[0]
@@ -1078,17 +1077,15 @@ class FrameGeometry(object):
             x_coord = region.x1
             x_min = x_coord - columns[1]
             x_max = x_coord - columns[0]
+        return x_min, x_max
+
+    def serial_front_edge_region(self, region, columns=(0, 1)):
+        check_serial_front_edge_size(region, columns)
+        x_min, x_max = self.x_limits(region, columns)
         return Region((region.y0, region.y1, x_min, x_max))
 
     def parallel_side_nearest_read_out_region(self, region, image_shape, columns=(0, 1)):
-        if self.corner[1] == 0:
-            x_coord = region.x0
-            x_min = x_coord + columns[0]
-            x_max = x_coord + columns[1]
-        else:
-            x_coord = region.x1
-            x_min = x_coord - columns[1]
-            x_max = x_coord - columns[0]
+        x_min, x_max = self.x_limits(region, columns)
         return Region((0, image_shape[0], x_min, x_max))
 
     def serial_trails_region(self, region, columns=(0, 1)):
