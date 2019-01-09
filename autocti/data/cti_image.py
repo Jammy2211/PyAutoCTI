@@ -261,6 +261,14 @@ class FrameGeometry(object):
         flipped = flip(image_post_clocking) if self.corner[1] == 1 else image_post_clocking
         return flipped.T.copy()
 
+    def parallel_trail_from_y(self, y, dy):
+        """Coordinates of a parallel trail of size dy from coordinate y"""
+        return y - dy * self.corner[0], y + 1 + dy * (1 - self.corner[0])
+
+    def serial_trail_from_x(self, x, dx):
+        """Coordinates of a serial trail of size dx from coordinate x"""
+        return x - dx * self.corner[1], x + 1 + dx * (1 - self.corner[1])
+
 
 def flip(image):
     return image[::-1, :]
@@ -419,16 +427,6 @@ class QuadGeometryEuclidBL(QuadGeometryEuclid):
                                                    serial_prescan=Region((0, 2086, 0, 51)),
                                                    serial_overscan=Region((0, 2086, 2099, 2119)))
 
-    @staticmethod
-    def parallel_trail_from_y(y, dy):
-        """Coordinates of a parallel trail of size dy from coordinate y"""
-        return y, y + dy + 1
-
-    @staticmethod
-    def serial_trail_from_x(x, dx):
-        """Coordinates of a serial trail of size dx from coordinate x"""
-        return x, x + dx + 1
-
 
 class QuadGeometryEuclidBR(QuadGeometryEuclid):
 
@@ -440,16 +438,6 @@ class QuadGeometryEuclidBR(QuadGeometryEuclid):
                                                    parallel_overscan=Region((2066, 2086, 20, 2068)),
                                                    serial_prescan=Region((0, 2086, 2068, 2119)),
                                                    serial_overscan=Region((0, 2086, 0, 20)))
-
-    @staticmethod
-    def parallel_trail_from_y(y, dy):
-        """Coordinates of a parallel trail of size dy from coordinate y"""
-        return y, y + dy + 1
-
-    @staticmethod
-    def serial_trail_from_x(x, dx):
-        """Coordinates of a serial trail of size dx from coordinate x"""
-        return x - dx, x + 1
 
 
 class QuadGeometryEuclidTL(QuadGeometryEuclid):
@@ -463,16 +451,6 @@ class QuadGeometryEuclidTL(QuadGeometryEuclid):
                                                    serial_prescan=Region((0, 2086, 0, 51)),
                                                    serial_overscan=Region((0, 2086, 2099, 2119)))
 
-    @staticmethod
-    def parallel_trail_from_y(y, dy):
-        """Coordinates of a parallel trail of size dy from coordinate y"""
-        return y - dy, y + 1
-
-    @staticmethod
-    def serial_trail_from_x(x, dx):
-        """Coordinates of a serial trail of size dx from coordinate x"""
-        return x, x + dx + 1
-
 
 class QuadGeometryEuclidTR(QuadGeometryEuclid):
 
@@ -484,16 +462,6 @@ class QuadGeometryEuclidTR(QuadGeometryEuclid):
                                                    parallel_overscan=Region((0, 20, 20, 2068)),
                                                    serial_prescan=Region((0, 2086, 2068, 2119)),
                                                    serial_overscan=Region((0, 2086, 0, 20)))
-
-    @staticmethod
-    def parallel_trail_from_y(y, dy):
-        """Coordinates of a parallel trail of size dy from coordinate y"""
-        return y - dy, y + 1
-
-    @staticmethod
-    def serial_trail_from_x(x, dx):
-        """Coordinates of a serial trail of size dx from coordinate x"""
-        return x - dx, x + 1
 
 
 class Region(tuple):
