@@ -237,7 +237,7 @@ class TestCIFrame(object):
             assert new_frame.frame_geometry == frame.frame_geometry
             assert new_frame.ci_pattern == frame.ci_pattern
 
-            new_frame = frame.serial_calibration_array_from_frame(from_column=0, rows=(0,3))
+            new_frame = frame.serial_calibration_section_for_column_and_rows(from_column=0, rows=(0, 3))
 
             assert type(new_frame) == ci_frame.CIFrame
             assert new_frame.frame_geometry == frame.frame_geometry
@@ -518,7 +518,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern,
                                      array=image)
 
-            extracted_side = frame.parallel_calibration_section_from_frame(columns=(0, 1))
+            extracted_side = frame.parallel_calibration_section_for_columns(columns=(0, 1))
 
             assert (extracted_side == np.array([[0.0],
                                                 [0.0],
@@ -539,7 +539,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern,
                                      array=image)
 
-            extracted_side = frame.parallel_calibration_section_from_frame(columns=(1, 3))
+            extracted_side = frame.parallel_calibration_section_for_columns(columns=(1, 3))
 
             assert (extracted_side == np.array([[1.0, 2.0],
                                                 [1.0, 2.0],
@@ -560,7 +560,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBR(), ci_pattern=pattern,
                                      array=image)
 
-            extracted_side = frame.parallel_calibration_section_from_frame(columns=(1, 3))
+            extracted_side = frame.parallel_calibration_section_for_columns(columns=(1, 3))
 
             assert (extracted_side == np.array([[0.0, 1.0],
                                                 [0.0, 1.0],
@@ -845,7 +845,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern,
                                      array=image)
 
-            serial_frame = frame.serial_calibration_array_from_frame(from_column=0, rows=(0, 3))
+            serial_frame = frame.serial_calibration_section_for_column_and_rows(from_column=0, rows=(0, 3))
 
             assert (serial_frame[0] == np.array([[0.0, 1.0, 2.0, 3.0, 4.0],
                                                  [0.0, 1.0, 2.0, 3.0, 4.0],
@@ -862,7 +862,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern,
                                      array=image)
 
-            serial_frame = frame.serial_calibration_array_from_frame(from_column=1, rows=(0, 1))
+            serial_frame = frame.serial_calibration_section_for_column_and_rows(from_column=1, rows=(0, 1))
 
             assert (serial_frame == np.array([[2.0, 2.0, 2.0],
                                               [4.0, 4.0, 4.0]])).all()
@@ -878,7 +878,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBR(), ci_pattern=pattern,
                                      array=image)
 
-            serial_frame = frame.serial_calibration_array_from_frame(from_column=1, rows=(0,1))
+            serial_frame = frame.serial_calibration_section_for_column_and_rows(from_column=1, rows=(0, 1))
 
             assert (serial_frame == np.array([[0.0, 1.0, 2.0],
                                               [0.0, 1.0, 4.0]])).all()
@@ -894,7 +894,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBL(), ci_pattern=pattern,
                                      array=image)
 
-            serial_frame = frame.serial_calibration_array_from_frame(from_column=0, rows=(0,2))
+            serial_frame = frame.serial_calibration_section_for_column_and_rows(from_column=0, rows=(0, 2))
 
             assert (serial_frame == np.array([[0.0, 1.0, 2.0, 3.0, 4.0],
                                               [0.0, 1.0, 2.0, 3.0, 4.0]])).all()
@@ -912,7 +912,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBR(), ci_pattern=pattern,
                                      array=image)
 
-            serial_frame = frame.serial_calibration_array_from_frame(from_column=1, rows=(0, 1))
+            serial_frame = frame.serial_calibration_section_for_column_and_rows(from_column=1, rows=(0, 1))
 
             assert (serial_frame == np.array([[0.0, 1.0, 2.0],
                                               [0.0, 1.0, 5.0]])).all()
@@ -930,7 +930,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.CIQuadGeometryEuclidBR(), ci_pattern=pattern,
                                      array=image)
 
-            serial_frame = frame.serial_calibration_array_from_frame(from_column=1, rows=(1, 2))
+            serial_frame = frame.serial_calibration_section_for_column_and_rows(from_column=1, rows=(1, 2))
 
             assert (serial_frame == np.array([[0.0, 1.0, 3.0],
                                               [0.0, 1.0, 6.0]])).all()
@@ -1678,7 +1678,7 @@ class TestCIFrame(object):
             
             frame.frame_geometry.serial_prescan = cti_image.Region(region=(0, 4, 0, 1))
 
-            extracted_array = frame.parallel_serial_calibration_section_from_frame()
+            extracted_array = frame.parallel_serial_calibration_section()
 
             assert (extracted_array == np.array([[1.0, 2.0, 3.0],
                                                 [1.0, 2.0, 3.0],
@@ -1701,7 +1701,7 @@ class TestCIFrame(object):
 
             frame.frame_geometry.serial_prescan = cti_image.Region(region=(0, 4, 0, 2))
 
-            extracted_array = frame.parallel_serial_calibration_section_from_frame()
+            extracted_array = frame.parallel_serial_calibration_section()
 
             assert (extracted_array == np.array([[2.0, 3.0],
                                                  [2.0, 3.0],

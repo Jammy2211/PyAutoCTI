@@ -225,7 +225,7 @@ class ChInj(np.ndarray):
 
         return self.__class__(self.frame_geometry, self.ci_pattern, array)
 
-    def parallel_calibration_section_from_frame(self, columns):
+    def parallel_calibration_section_for_columns(self, columns):
         """Extract an parallel calibration array from a charge injection ci_frame, where this array is a sub-set of
         the ci_frame which be used for just parallel calibration. Specifically, this ci_frame is a specified number
         of columns closest to the read-out electronics.
@@ -472,7 +472,7 @@ class ChInj(np.ndarray):
 
         return self.__class__(self.frame_geometry, self.ci_pattern, array)
 
-    def serial_calibration_array_from_frame(self, from_column, rows):
+    def serial_calibration_section_for_column_and_rows(self, from_column, rows):
         """Extract a serial calibration array from a charge injection ci_frame, where this array is a sub-set of the
         ci_frame which can be used for serial-only calibration. Specifically, this ci_frame is all charge injection
         regions and their serial over-scan trails, specified from a certain column from the read-out electronics.
@@ -746,7 +746,7 @@ class ChInj(np.ndarray):
                                        array=front_array),
                         trails_arrays))
 
-    def parallel_serial_calibration_section_from_frame(self):
+    def parallel_serial_calibration_section(self):
         return self.__class__(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern,
                               array=self[0:self.shape[0], self.frame_geometry.serial_prescan.x1:self.shape[1]])
 

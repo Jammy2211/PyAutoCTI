@@ -22,9 +22,9 @@ logger = logging.getLogger(__name__)
 logger.level = logging.DEBUG
 
 
-def default_extractor(ci_datas, mask_function, columns=None, rows=None, noise_scalings=None):
+def default_extractor(ci_datas, columns=None, rows=None, noise_scalings=None):
     images = list(map(lambda d: d.image, ci_datas))
-    masks = list(map(lambda d: mask_function(d.mask), ci_datas))
+    masks = list(map(lambda d: d.mask, ci_datas))
     noises = list(map(lambda d: d.noise, ci_datas))
     ci_pre_ctis = list(map(lambda d: d.ci_pre_cti, ci_datas))
 
@@ -35,7 +35,7 @@ def default_extractor(ci_datas, mask_function, columns=None, rows=None, noise_sc
         for i in range(len(noise_scalings)):
             new_noise_scalings.append(list(map(lambda noise_scaling: noise_scaling, noise_scalings[i])))
 
-    return ci_data.CIDataAnalysis(images, masks, noises, ci_pre_ctis, new_noise_scalings)
+    return ci_data.CIData(images, masks, noises, ci_pre_ctis, new_noise_scalings)
 
 
 def parallel_extractor(ci_datas, mask_function, columns=None, rows=None, noise_scalings=None):
@@ -43,22 +43,22 @@ def parallel_extractor(ci_datas, mask_function, columns=None, rows=None, noise_s
         columns = ci_datas[0].image.cti_geometry.parallel_overscan.total_columns
 
     images = list(map(lambda d:
-                      d.image.parallel_calibration_section_from_frame(columns=(0, columns)), ci_datas))
+                      d.image.parallel_calibration_section_for_columns(columns=(0, columns)), ci_datas))
 
     masks_modify = list(map(lambda d: mask_function(d.mask), ci_datas))
     masks = list(map(lambda mask:
-                     mask.parallel_calibration_section_from_frame(columns=(0, columns)), masks_modify))
+                     mask.parallel_calibration_section_for_columns(columns=(0, columns)), masks_modify))
 
     noises = list(map(lambda d:
-                      d.noise.parallel_calibration_section_from_frame(columns=(0, columns)), ci_datas))
+                      d.noise.parallel_calibration_section_for_columns(columns=(0, columns)), ci_datas))
 
     ci_pre_ctis = list(map(lambda d:
-                           d.ci_pre_cti.parallel_calibration_section_from_frame(columns=(0, columns)), ci_datas))
+                           d.ci_pre_cti.parallel_calibration_section_for_columns(columns=(0, columns)), ci_datas))
 
-    new_noise_scalings = [noise_scaling.parallel_calibration_section_from_frame(columns=(0, columns)) for noise_scaling
+    new_noise_scalings = [noise_scaling.parallel_calibration_section_for_columns(columns=(0, columns)) for noise_scaling
                           in noise_scalings or []]
 
-    return ci_data.CIDataAnalysis(images, masks, noises, ci_pre_ctis, new_noise_scalings)
+    return ci_data.CIData(images, masks, noises, ci_pre_ctis, new_noise_scalings)
 
 
 def serial_extractor(ci_datas, mask_function, columns=None, rows=None, noise_scalings=None):
@@ -67,17 +67,17 @@ def serial_extractor(ci_datas, mask_function, columns=None, rows=None, noise_sca
     rows = rows or (0, ci_datas[0].image.ci_pattern.regions[0].total_rows)
 
     images = list(map(lambda d:
-                      d.image.serial_calibration_array_from_frame(from_column=columns, rows=rows), ci_datas))
+                      d.image.serial_calibration_section_for_column_and_rows(from_column=columns, rows=rows), ci_datas))
 
     masks_modify = list(map(lambda d: mask_function(d.mask), ci_datas))
     masks = list(map(lambda m:
-                     m.serial_calibration_array_from_frame(from_column=columns, rows=rows), masks_modify))
+                     m.serial_calibration_section_for_column_and_rows(from_column=columns, rows=rows), masks_modify))
 
     noises = list(map(lambda d:
-                      d.noise.serial_calibration_array_from_frame(from_column=columns, rows=rows), ci_datas))
+                      d.noise.serial_calibration_section_for_column_and_rows(from_column=columns, rows=rows), ci_datas))
 
     ci_pre_ctis = list(map(lambda d:
-                           d.ci_pre_cti.serial_calibration_array_from_frame(from_column=columns, rows=rows),
+                           d.ci_pre_cti.serial_calibration_section_for_column_and_rows(from_column=columns, rows=rows),
                            ci_datas))
 
     new_noise_scalings = []
@@ -86,26 +86,27 @@ def serial_extractor(ci_datas, mask_function, columns=None, rows=None, noise_sca
 
         for i in range(len(noise_scalings)):
             new_noise_scalings.append(list(map(lambda noise_scaling:
-                                               noise_scaling.serial_calibration_array_from_frame(from_column=columns,
-                                                                                                 rows=rows),
+                                               noise_scaling.serial_calibration_section_for_column_and_rows(
+                                                   from_column=columns,
+                                                   rows=rows),
                                                noise_scalings[i])))
 
-    return ci_data.CIDataAnalysis(images, masks, noises, ci_pre_ctis, new_noise_scalings)
+    return ci_data.CIData(images, masks, noises, ci_pre_ctis, new_noise_scalings)
 
 
-def parallel_serial_extractor(ci_datas, mask_function, columns=None, rows=None, noise_scalings=None):
+def parallel_serial_extractor(ci_datas: [ci_data.CIData], mask_function, columns=None, rows=None, noise_scalings=None):
     images = list(map(lambda d:
-                      d.image.parallel_serial_calibration_section_from_frame(), ci_datas))
+                      d.image.parallel_serial_calibration_section(), ci_datas))
 
     masks_modify = list(map(lambda d: mask_function(d.mask), ci_datas))
     masks = list(map(lambda mask:
-                     mask.parallel_serial_calibration_section_from_frame(), masks_modify))
+                     mask.parallel_serial_calibration_section(), masks_modify))
 
     noises = list(map(lambda d:
-                      d.noise.parallel_serial_calibration_section_from_frame(), ci_datas))
+                      d.noise.parallel_serial_calibration_section(), ci_datas))
 
     ci_pre_ctis = list(map(lambda d:
-                           d.ci_pre_cti.parallel_serial_calibration_section_from_frame(), ci_datas))
+                           d.ci_pre_cti.parallel_serial_calibration_section(), ci_datas))
 
     new_noise_scalings = []
 
@@ -113,10 +114,10 @@ def parallel_serial_extractor(ci_datas, mask_function, columns=None, rows=None, 
 
         for i in range(len(noise_scalings)):
             new_noise_scalings.append(list(map(lambda noise_scaling:
-                                               noise_scaling.parallel_serial_calibration_section_from_frame(),
+                                               noise_scaling.parallel_serial_calibration_section(),
                                                noise_scalings[i])))
 
-    return ci_data.CIDataAnalysis(images, masks, noises, ci_pre_ctis, new_noise_scalings)
+    return ci_data.CIData(images, masks, noises, ci_pre_ctis, new_noise_scalings)
 
 
 def default_mask_function(mask):
@@ -138,8 +139,7 @@ def cti_params_for_instance(instance):
 
 class Phase(ph.AbstractPhase):
 
-    def __init__(self, optimizer_class=nl.DownhillSimplex, ci_datas_extractor=default_extractor, columns=None,
-                 rows=None, mask_function=default_mask_function, phase_name=None):
+    def __init__(self, optimizer_class=nl.DownhillSimplex, columns=None, rows=None, phase_name=None):
         """
         A phase in an analysis pipeline. Uses the set NonLinear optimizer to try to fit models and images passed to it.
 
@@ -150,11 +150,8 @@ class Phase(ph.AbstractPhase):
             The side length of the subgrid
         """
         super().__init__(optimizer_class, phase_name)
-        self.ci_datas_extractor = ci_datas_extractor
         self.columns = columns
         self.rows = rows
-        self.mask_function = mask_function
-        self.has_noise_scalings = False
 
     @property
     def constant(self):
@@ -179,11 +176,6 @@ class Phase(ph.AbstractPhase):
             A model mapper comprising all the variable (prior) objects in this analysis
         """
         return self.optimizer.variable
-
-    @property
-    def doc(self):
-        if self.__doc__ is not None:
-            return self.__doc__.replace("  ", "").replace("\n", " ")
 
     def run(self, ci_datas, cti_settings, previous_results=None, pool=None):
         """
@@ -211,6 +203,10 @@ class Phase(ph.AbstractPhase):
             analysis.visualize(instance=result.constant, suffix=None, during_analysis=False)
         return self.__class__.Result(result.constant, result.likelihood, result.variable, analysis)
 
+    # noinspection PyMethodMayBeStatic
+    def extract_ci_data(self, ci_datas):
+        return ci_datas
+
     def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
         """
         Create an analysis object. Also calls the prior passing and image modifying functions to allow child classes to
@@ -229,10 +225,8 @@ class Phase(ph.AbstractPhase):
         analysis: Analysis
             An analysis object that the non-linear optimizer calls to determine the fit of a set of values
         """
-        noise_scalings = previous_results.last.noise_scalings if self.has_noise_scalings else None
 
-        ci_datas_analysis = self.ci_datas_extractor(ci_datas, mask_function=self.mask_function, columns=self.columns,
-                                                    rows=self.rows, noise_scalings=noise_scalings)
+        ci_datas_analysis = self.extract_ci_data(ci_datas)
         self.pass_priors(previous_results)
         analysis = self.__class__.Analysis(ci_datas=ci_datas, ci_datas_analysis=ci_datas_analysis,
                                            cti_settings=cti_settings, phase_name=self.phase_name,
@@ -362,15 +356,18 @@ class ParallelPhase(Phase):
     parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
 
     def __init__(self, parallel_species=(), parallel_ccd=None, optimizer_class=nl.MultiNest,
-                 ci_datas_extractor=parallel_extractor, columns=None,
-                 mask_function=default_mask_function, phase_name="parallel_phase"):
+                 columns=None,
+                 phase_name="parallel_phase"):
         """
         A phase with a simple source/CTI model
         """
-        super().__init__(optimizer_class=optimizer_class, ci_datas_extractor=ci_datas_extractor, columns=columns,
-                         rows=None, mask_function=mask_function, phase_name=phase_name)
+        super().__init__(optimizer_class=optimizer_class, columns=columns, rows=None, phase_name=phase_name)
         self.parallel_species = parallel_species
         self.parallel_ccd = parallel_ccd
+
+    def extract_ci_data(self, ci_datas):
+        return [data.parallel_calibration_data(
+            (0, self.columns or data.image.frame_geometry.parallel_overscan.total_columns)) for data in ci_datas]
 
     class Analysis(Phase.Analysis):
         def fit(self, instance):
@@ -443,8 +440,8 @@ class ParallelHyperPhase(ParallelPhase):
     hyp_parallel_trails = phase_property.PhaseProperty("hyp_parallel_trails")
 
     def __init__(self, parallel_species=(), parallel_ccd=None, hyp_ci_regions=None, hyp_parallel_trails=None,
-                 optimizer_class=nl.MultiNest, ci_datas_extractor=parallel_extractor, columns=None,
-                 mask_function=default_mask_function, phase_name="parallel_hyper_phase"):
+                 optimizer_class=nl.MultiNest, columns=None,
+                 phase_name="parallel_hyper_phase"):
         """
         A phase with a simple source/CTI model
 
@@ -454,8 +451,7 @@ class ParallelHyperPhase(ParallelPhase):
             The class of a non-linear optimizer
         """
         super().__init__(parallel_species=parallel_species, parallel_ccd=parallel_ccd, optimizer_class=optimizer_class,
-                         ci_datas_extractor=ci_datas_extractor,
-                         columns=columns, mask_function=mask_function, phase_name=phase_name)
+                         columns=columns, phase_name=phase_name)
         self.hyp_ci_regions = hyp_ci_regions
         self.hyp_parallel_trails = hyp_parallel_trails
         self.has_noise_scalings = True
@@ -522,7 +518,7 @@ class ParallelHyperOnlyPhase(ParallelHyperPhase, HyperOnly):
 
         phase = ParallelHyper(optimizer_class=nl.MultiNest, hyp_ci_regions=ci_hyper.HyperCINoise,
                               hyp_parallel_trails=ci_hyper.HyperCINoise,
-                              ci_datas_extractor=self.ci_datas_extractor, phase_name=self.phase_name)
+                              phase_name=self.phase_name)
 
         phase.optimizer.n_live_points = 20
         phase.optimizer.sampling_efficiency = 0.8
@@ -541,15 +537,20 @@ class SerialPhase(Phase):
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 
     def __init__(self, serial_species=(), serial_ccd=None, optimizer_class=nl.MultiNest,
-                 ci_datas_extractor=serial_extractor, columns=None,
-                 rows=None, mask_function=default_mask_function, phase_name="serial_phase"):
+                 columns=None,
+                 rows=None, phase_name="serial_phase"):
         """
         A phase with a simple source/CTI model
         """
-        super().__init__(optimizer_class=optimizer_class, ci_datas_extractor=ci_datas_extractor, columns=columns,
-                         rows=rows, mask_function=mask_function, phase_name=phase_name)
+        super().__init__(optimizer_class=optimizer_class, columns=columns,
+                         rows=rows, phase_name=phase_name)
         self.serial_species = serial_species
         self.serial_ccd = serial_ccd
+
+    def extract_ci_data(self, ci_datas):
+        columns = self.columns or 0
+        return [data.serial_calibration_data(
+            columns or 0, self.rows or (0, data.image.ci_pattern.regions[0].total_rows)) for data in ci_datas]
 
     class Analysis(Phase.Analysis):
         def fit(self, instance):
@@ -617,14 +618,13 @@ class SerialHyperPhase(SerialPhase):
 
     def __init__(self, serial_species=(), serial_ccd=None, hyp_ci_regions=None, hyp_serial_trails=None,
                  optimizer_class=nl.MultiNest,
-                 ci_datas_extractor=serial_extractor, columns=None, rows=None, mask_function=default_mask_function,
+                 columns=None, rows=None,
                  phase_name="serial_hyper_phase"):
         """
         A phase with a simple source/CTI model
         """
         super().__init__(serial_species=serial_species, serial_ccd=serial_ccd, optimizer_class=optimizer_class,
-                         ci_datas_extractor=ci_datas_extractor,
-                         columns=columns, rows=rows, mask_function=mask_function, phase_name=phase_name)
+                         columns=columns, rows=rows, phase_name=phase_name)
         self.hyp_ci_regions = hyp_ci_regions
         self.hyp_serial_trails = hyp_serial_trails
         self.has_noise_scalings = True
@@ -692,7 +692,7 @@ class SerialHyperOnlyPhase(SerialHyperPhase, HyperOnly):
 
         phase = SerialHyper(optimizer_class=nl.MultiNest, hyp_ci_regions=ci_hyper.HyperCINoise,
                             hyp_serial_trails=ci_hyper.HyperCINoise,
-                            ci_datas_extractor=self.ci_datas_extractor, phase_name=self.phase_name)
+                            phase_name=self.phase_name)
 
         phase.optimizer.n_live_points = 20
         phase.optimizer.sampling_efficiency = 0.8
@@ -714,7 +714,6 @@ class ParallelSerialPhase(Phase):
 
     def __init__(self, parallel_species=(), serial_species=(), parallel_ccd=None, serial_ccd=None,
                  optimizer_class=nl.MultiNest,
-                 ci_datas_extractor=parallel_serial_extractor, mask_function=default_mask_function,
                  phase_name="parallel_serial_phase"):
         """
         A phase with a simple source/CTI model
@@ -724,12 +723,15 @@ class ParallelSerialPhase(Phase):
         optimizer_class: class
             The class of a non-linear optimizer
         """
-        super().__init__(optimizer_class=optimizer_class, ci_datas_extractor=ci_datas_extractor, columns=None,
-                         rows=None, mask_function=mask_function, phase_name=phase_name)
+        super().__init__(optimizer_class=optimizer_class, columns=None,
+                         rows=None, phase_name=phase_name)
         self.parallel_species = parallel_species
         self.serial_species = serial_species
         self.parallel_ccd = parallel_ccd
         self.serial_ccd = serial_ccd
+
+    def extract_ci_data(self, ci_datas):
+        return [data.parallel_serial_calibration_data() for data in ci_datas]
 
     class Analysis(Phase.Analysis):
         def fit(self, instance):
@@ -796,7 +798,6 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
     def __init__(self, parallel_species=(), serial_species=(), parallel_ccd=None, serial_ccd=None, hyp_ci_regions=None,
                  hyp_parallel_trails=None,
                  hyp_serial_trails=None, hyp_parallel_serial_trails=None, optimizer_class=nl.MultiNest,
-                 ci_datas_extractor=parallel_serial_extractor, mask_function=default_mask_function,
                  phase_name="parallel_serial_hyper_phase"):
         """
         A phase with a simple source/CTI model
@@ -808,7 +809,7 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
         """
         super().__init__(parallel_species=parallel_species, serial_species=serial_species, parallel_ccd=parallel_ccd,
                          serial_ccd=serial_ccd, optimizer_class=optimizer_class,
-                         ci_datas_extractor=ci_datas_extractor, mask_function=mask_function, phase_name=phase_name)
+                         phase_name=phase_name)
         self.hyp_ci_regions = hyp_ci_regions
         self.hyp_parallel_trails = hyp_parallel_trails
         self.hyp_serial_trails = hyp_serial_trails
@@ -905,17 +906,20 @@ class ParallelSerialHyperOnlyPhase(ParallelSerialHyperPhase, HyperOnly):
 
 
 def pipe_cti(ci_pipe_data, cti_params, cti_settings):
-    ci_datas_analysis = ci_data.CIDataAnalysis(images=[ci_pipe_data[0]], masks=[ci_pipe_data[1]],
-                                               noises=[ci_pipe_data[2]],
-                                               ci_pre_ctis=[ci_pipe_data[3]])
+    ci_datas_analysis = ci_data.CIData(image=ci_pipe_data[0],
+                                       mask=ci_pipe_data[1],
+                                       noise=ci_pipe_data[2],
+                                       ci_pre_cti=ci_pipe_data[3])
     fitter = fitting.CIFitter(ci_datas_analysis, cti_params=cti_params, cti_settings=cti_settings)
     return fitter.likelihood
 
 
 def pipe_cti_hyper(ci_pipe_data, cti_params, cti_settings, hyper_noises):
-    ci_datas_analysis = ci_data.CIDataAnalysis(images=[ci_pipe_data[0]], masks=[ci_pipe_data[1]],
-                                               noises=[ci_pipe_data[2]],
-                                               ci_pre_ctis=[ci_pipe_data[3]], noise_scalings=[ci_pipe_data[4]])
+    ci_datas_analysis = ci_data.CIData(image=ci_pipe_data[0],
+                                       mask=ci_pipe_data[1],
+                                       noise=ci_pipe_data[2],
+                                       ci_pre_cti=ci_pipe_data[3],
+                                       noise_scaling=ci_pipe_data[4])
     fitter = fitting.HyperCIFitter(ci_datas_analysis, cti_params=cti_params, cti_settings=cti_settings,
                                    hyper_noises=hyper_noises)
     return fitter.scaled_likelihood

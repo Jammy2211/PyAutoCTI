@@ -27,44 +27,41 @@ import numpy as np
 
 from autocti import exc
 from autocti.data import cti_image
-from autocti.data import mask
+from autocti.data import mask as msk
 from autocti.data.charge_injection import ci_frame
 from autocti.data.charge_injection import ci_pattern as pattern
 from autocti.model import pyarctic
 from autocti.tools import infoio
 
 
-class CIMask(ci_frame.CIFrame, mask.Mask):
+class CIMask(ci_frame.CIFrame, msk.Mask):
     pass
 
 
-class CIData(list):
+class CIData(object):
 
-    def __init__(self, images, masks, noises, ci_pre_ctis):
-        super(CIData, self).__init__()
+    def __init__(self, image, mask, noise, ci_pre_cti, noise_scaling=None):
+        self.image = image
+        self.mask = mask
+        self.noise = noise
+        self.ci_pre_cti = ci_pre_cti
+        self.noise_scaling = noise_scaling
 
-        class DataSet(object):
+    def map(self, func):
+        return CIData(image=func(self.image),
+                      mask=func(self.mask),
+                      noise=func(self.noise),
+                      ci_pre_cti=func(self.ci_pre_cti),
+                      noise_scaling=func(self.noise_scaling) if self.noise_scaling is not None else self.noise_scaling)
 
-            def __init__(self, image, mask, noise, ci_pre_cti):
-                self.image = image
-                self.mask = mask
-                self.noise = noise
-                self.ci_pre_cti = ci_pre_cti
-                self.noise_scalings = None
+    def parallel_calibration_data(self, columns):
+        return self.map(lambda obj: obj.parallel_calibration_section_for_columns(columns))
 
-        for i in range(len(images)):
-            self.append(DataSet(images[i], masks[i], noises[i], ci_pre_ctis[i]))
+    def serial_calibration_data(self, column, rows):
+        return self.map(lambda obj: obj.serial_calibration_section_for_column_and_rows(column, rows))
 
-
-class CIDataAnalysis(CIData):
-
-    def __init__(self, images, masks, noises, ci_pre_ctis, noise_scalings=None):
-
-        super(CIDataAnalysis, self).__init__(images, masks, noises, ci_pre_ctis)
-
-        if noise_scalings is not None:
-            for i in range(len(noise_scalings)):
-                self[i].noise_scalings = noise_scalings[i]
+    def parallel_serial_calibration_data(self):
+        return self.map(lambda obj: obj.parallel_serial_calibration_section())
 
 
 class CIImage(ci_frame.CIFrameCTI):
@@ -92,6 +89,7 @@ class CIImage(ci_frame.CIFrameCTI):
 
         Parameters
         -----------
+        cosmics
         shape : (int, int)
             The dimensions of the output simulated charge injection image.
         frame_geometry : ci_frame.CIQuadGeometry
