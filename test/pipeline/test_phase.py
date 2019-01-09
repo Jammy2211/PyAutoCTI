@@ -99,7 +99,7 @@ def make_cti_settings():
 
 @pytest.fixture(name="ci_geometry")
 def make_ci_geometry():
-    return ci_frame.CIQuadGeometryEuclidBL()
+    return ci_frame.QuadGeometryEuclidBL()
 
 
 @pytest.fixture(name="ci_pattern")
