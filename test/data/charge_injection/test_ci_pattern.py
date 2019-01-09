@@ -23,20 +23,15 @@ Created on: 02/14/18
 Author: James Nightingale
 """
 
-
-
 import os
-import sys
-
-
-
-
-from autocti.data.charge_injection import ci_pattern
-from autocti import exc
-
-import pytest
 import shutil
+
 import numpy as np
+import pytest
+
+from autocti import exc
+from autocti.data.charge_injection import ci_pattern
+
 
 @pytest.fixture(name='info_path')
 def test_info():
@@ -115,7 +110,6 @@ class TestCIPatternViaList(object):
         assert pattern_collection[1].regions == [(1, 2, 3, 4)]
 
     def test__2_non_uniform_simulate_patterns__sets_up_collection(self):
-
         pattern_collection = ci_pattern.create_non_uniform_simulate_via_lists(normalizations=[1.0, 3.0],
                                                                               regions=[(1, 2, 3, 4)],
                                                                               column_deviations=[1.0, 2.0],
@@ -138,7 +132,6 @@ class TestCIPatternViaList(object):
 
 
 class TestCIPattern(object):
-
     class TestConstructor:
 
         def test__setup_all_attributes_correctly(self):
@@ -210,7 +203,6 @@ class TestCIPattern(object):
 
 
 class TestCIPatternUniform(object):
-
     class TestConstructor:
 
         def test__setup_all_attributes_correctly(self):
@@ -945,7 +937,6 @@ class TestCIPatternSimulateUniform(object):
 
 
 class TestCIPatternSimulateNonUniform(object):
-
     class TestSimulateRegion:
 
         def test__uniform_column_and_uniform_row__returns_uniform_charge_region(self):
@@ -1098,7 +1089,8 @@ class TestCIPatternSimulateNonUniform(object):
             image1 = sim_pattern_uni.simulate_ci_pre_cti(dimensions=(5, 5))
 
             sim_pattern_non_uni = ci_pattern.CIPatternNonUniformSimulate(normalization=100.0,
-                                                                         regions=[(0, 2, 0, 2), (2, 3, 0, 5)], column_deviation=0.0, row_slope=0.0)
+                                                                         regions=[(0, 2, 0, 2), (2, 3, 0, 5)],
+                                                                         column_deviation=0.0, row_slope=0.0)
             image2 = sim_pattern_non_uni.simulate_ci_pre_cti(dimensions=(5, 5))
 
             assert (image1 == image2).all()
@@ -1133,7 +1125,8 @@ class TestCIPatternSimulateNonUniform(object):
 
         def test__non_uniformity_in_columns_only__two_ci_regions__image_is_correct(self):
             sim_pattern_non_uni = ci_pattern.CIPatternNonUniformSimulate(normalization=100.0,
-                                                                         regions=[(1, 4, 1, 3), (1, 4, 4, 5)], column_deviation=1.0, row_slope=0.0)
+                                                                         regions=[(1, 4, 1, 3), (1, 4, 4, 5)],
+                                                                         column_deviation=1.0, row_slope=0.0)
 
             image = sim_pattern_non_uni.simulate_ci_pre_cti(dimensions=(5, 5), ci_seed=1)
 
@@ -1146,9 +1139,9 @@ class TestCIPatternSimulateNonUniform(object):
                                        [0.0, 0.0, 0.0, 0.0, 0.0]])).all()
 
         def test__non_uniformity_in_columns_only__maximum_normalization_input__does_not_simulate_above(self):
-
             sim_pattern_non_uni = ci_pattern.CIPatternNonUniformSimulate(normalization=100.0, regions=[(0, 5, 0, 5)],
-                                                                         column_deviation=100.0, row_slope=0.0, maximum_normalization=100.0)
+                                                                         column_deviation=100.0, row_slope=0.0,
+                                                                         maximum_normalization=100.0)
 
             image = sim_pattern_non_uni.simulate_ci_pre_cti(dimensions=(5, 5), ci_seed=1)
 
@@ -1159,7 +1152,8 @@ class TestCIPatternSimulateNonUniform(object):
 
         def test__non_uniformity_in_rows_only__one_ci_region__image_is_correct(self):
             sim_pattern_non_uni = ci_pattern.CIPatternNonUniformSimulate(normalization=100.0,
-                                                                         regions=[(0, 3, 0, 3)], column_deviation=0.0, row_slope=-0.01)
+                                                                         regions=[(0, 3, 0, 3)], column_deviation=0.0,
+                                                                         row_slope=-0.01)
 
             image = sim_pattern_non_uni.simulate_ci_pre_cti(dimensions=(5, 5))
 
@@ -1173,7 +1167,8 @@ class TestCIPatternSimulateNonUniform(object):
 
         def test__non_uniformity_in_rows_only__two_ci_regions__image_is_correct(self):
             sim_pattern_non_uni = ci_pattern.CIPatternNonUniformSimulate(normalization=100.0,
-                                                                         regions=[(1, 5, 1, 4), (0, 5, 4, 5)], column_deviation=0.0, row_slope=-0.01)
+                                                                         regions=[(1, 5, 1, 4), (0, 5, 4, 5)],
+                                                                         column_deviation=0.0, row_slope=-0.01)
 
             image = sim_pattern_non_uni.simulate_ci_pre_cti(dimensions=(5, 5))
 
@@ -1187,7 +1182,8 @@ class TestCIPatternSimulateNonUniform(object):
 
         def test__non_uniformity_in_rows_and_columns__two_ci_regions__image_is_correct(self):
             sim_pattern_non_uni = ci_pattern.CIPatternNonUniformSimulate(normalization=100.0,
-                                                                         regions=[(1, 5, 1, 4), (0, 5, 4, 5)], column_deviation=1.0, row_slope=-0.01)
+                                                                         regions=[(1, 5, 1, 4), (0, 5, 4, 5)],
+                                                                         column_deviation=1.0, row_slope=-0.01)
 
             image = sim_pattern_non_uni.simulate_ci_pre_cti(dimensions=(5, 5), ci_seed=1)
 
@@ -1201,7 +1197,8 @@ class TestCIPatternSimulateNonUniform(object):
 
         def test__non_uniformity_in_rows_and_columns__no_random_seed__two_ci_regions_are_identical(self):
             sim_pattern_non_uni = ci_pattern.CIPatternNonUniformSimulate(normalization=100.0,
-                                                                         regions=[(0, 2, 0, 5), (3, 5, 0, 5)], column_deviation=1.0, row_slope=-0.01)
+                                                                         regions=[(0, 2, 0, 5), (3, 5, 0, 5)],
+                                                                         column_deviation=1.0, row_slope=-0.01)
 
             image = sim_pattern_non_uni.simulate_ci_pre_cti(dimensions=(5, 5))
 
@@ -1219,7 +1216,6 @@ class TestCIPatternSimulateNonUniform(object):
     class TestCreatePattern:
 
         def test__simulate_pattern_creates_normal_pattern(self):
-
             sim_pattern_uni = ci_pattern.CIPatternNonUniformSimulate(normalization=10.0, regions=[(0, 2, 0, 2)],
                                                                      row_slope=1.0)
             pattern = sim_pattern_uni.create_pattern()

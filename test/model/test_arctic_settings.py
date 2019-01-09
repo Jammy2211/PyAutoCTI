@@ -108,8 +108,8 @@ class TestFactory:
 
     def test__sets_up_settings_parallel__with_correct_values(self):
         arctic_parallel = setup(include_parallel=True, p_well_depth=84700, p_niter=1, p_express=5,
-                                                p_n_levels=2000,
-                                                p_charge_injection_mode=True, p_readout_offset=0)
+                                p_n_levels=2000,
+                                p_charge_injection_mode=True, p_readout_offset=0)
 
         assert arctic_parallel.neomode == 'NEO'
 
@@ -124,8 +124,8 @@ class TestFactory:
 
     def test__sets_up_settings_serial__with_correct_values(self):
         arctic_serial = setup(include_serial=True, s_well_depth=84700, s_niter=1, s_express=5,
-                                              s_n_levels=2000,
-                                              s_charge_injection_mode=False, s_readout_offset=0)
+                              s_n_levels=2000,
+                              s_charge_injection_mode=False, s_readout_offset=0)
 
         assert arctic_serial.neomode == 'NEO'
 
@@ -140,11 +140,11 @@ class TestFactory:
 
     def test__sets_up_parameters_both_directions__with_correct_values(self):
         arctic_both = setup(include_parallel=True, p_well_depth=84700, p_niter=1, p_express=5,
-                                            p_n_levels=2000,
-                                            p_charge_injection_mode=True, p_readout_offset=0,
-                                            include_serial=True, s_well_depth=84700, s_niter=1, s_express=5,
-                                            s_n_levels=2000,
-                                            s_charge_injection_mode=False, s_readout_offset=0)
+                            p_n_levels=2000,
+                            p_charge_injection_mode=True, p_readout_offset=0,
+                            include_serial=True, s_well_depth=84700, s_niter=1, s_express=5,
+                            s_n_levels=2000,
+                            s_charge_injection_mode=False, s_readout_offset=0)
 
         assert arctic_both.neomode == 'NEO'
 

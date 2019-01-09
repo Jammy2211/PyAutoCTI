@@ -130,11 +130,13 @@ def scaled_noise_maps_from_fitting_hyper_images_and_noise_scalings(fitting_hyper
         The hyper-noises which represent the model components used to scale the noise, generated from the chi-squared \
         image of a previous phase's fit.
     """
-    return list(map(lambda fitting_hyper_image  :
-                    scaled_noise_map_from_noise_map_and_noise_scalings(noise_scalings=fitting_hyper_image.noise_scalings,
-                                                                       hyper_noises=hyper_noises,
-                                                                       noise_map=fitting_hyper_image.noise_map),
+    return list(map(lambda fitting_hyper_image:
+                    scaled_noise_map_from_noise_map_and_noise_scalings(
+                        noise_scalings=fitting_hyper_image.noise_scalings,
+                        hyper_noises=hyper_noises,
+                        noise_map=fitting_hyper_image.noise_map),
                     fitting_hyper_images))
+
 
 def scaled_noise_map_from_noise_map_and_noise_scalings(noise_scalings, hyper_noises, noise_map):
     """For a noise-map, use the model hyper noise and noise-scaling maps to compute a scaled noise-map.
@@ -151,7 +153,7 @@ def scaled_noise_map_from_noise_map_and_noise_scalings(noise_scalings, hyper_noi
         second.
     """
     scaled_noise_maps = list(map(lambda hyper_noise, noise_scaling:
-                                     hyper_noise.scaled_noise_map_from_noise_scaling(noise_scaling),
-                                     hyper_noises, noise_scalings))
+                                 hyper_noise.scaled_noise_map_from_noise_scaling(noise_scaling),
+                                 hyper_noises, noise_scalings))
 
     return np.add(noise_map, sum(scaled_noise_maps))
