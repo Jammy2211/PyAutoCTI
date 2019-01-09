@@ -75,7 +75,7 @@ def make_ci_datas():
                    MockCIPreCTIs(frame_geometry=MockGeometry(), ci_pattern=MockPattern(), array=6.0 * np.ones((2, 2)),
                                  value=6.0)]
 
-    return ci_data.CIDataAnalysis(images=ci_images, masks=ci_masks, noises=ci_noises,
+    return ci_data.CIData(images=ci_images, masks=ci_masks, noises=ci_noises,
                                   ci_pre_ctis=ci_pre_ctis, noise_scalings=ci_noise_scalings)
 
 
@@ -149,7 +149,7 @@ def make_ci_datas():
 #             ci_pre_ctis = [MockCIPreCTIs(array=np.zeros((2, 2)), frame_geometry=MockGeometry(), ci_pattern=MockPattern(),
 #                                          value=10.0)]
 #
-#             ci_datas = ci_data.CIDataAnalysis(images=images, masks=masks, noises=noises, ci_pre_ctis=ci_pre_ctis,
+#             ci_datas = ci_data.CIData(images=images, masks=masks, noises=noises, ci_pre_ctis=ci_pre_ctis,
 #                                               noise_scalings=noise_scalings)
 #
 #             fitter = fitting.HyperCIFitter(ci_datas, cti_params=MockParams(), cti_settings=MockSettings(),
@@ -172,7 +172,7 @@ def make_ci_datas():
 #             ci_pre_ctis = [MockCIPreCTIs(array=np.zeros((2, 2)), frame_geometry=MockGeometry(), ci_pattern=MockPattern(),
 #                                          value=10.0)]
 #
-#             ci_datas = ci_data.CIDataAnalysis(images=images, masks=masks, noises=noises, ci_pre_ctis=ci_pre_ctis,
+#             ci_datas = ci_data.CIData(images=images, masks=masks, noises=noises, ci_pre_ctis=ci_pre_ctis,
 #                                               noise_scalings=noise_scalings)
 #
 #             fitter = fitting.HyperCIFitter(ci_datas, cti_params=MockParams(), cti_settings=MockSettings(),
@@ -195,7 +195,7 @@ def make_ci_datas():
 #             ci_pre_ctis = [MockCIPreCTIs(array=np.zeros((2, 2)), frame_geometry=MockGeometry(), ci_pattern=MockPattern(),
 #                                          value=10.0)]
 #
-#             ci_datas = ci_data.CIDataAnalysis(images=images, masks=masks, noises=noises, ci_pre_ctis=ci_pre_ctis,
+#             ci_datas = ci_data.CIData(images=images, masks=masks, noises=noises, ci_pre_ctis=ci_pre_ctis,
 #                                               noise_scalings=noise_scalings)
 #
 #             fitter = fitting.HyperCIFitter(ci_datas, cti_params=MockParams(), cti_settings=MockSettings(),
@@ -222,7 +222,7 @@ def make_ci_datas():
 #             ci_pre_ctis = [MockCIPreCTIs(array=np.zeros((2, 2)), frame_geometry=MockGeometry(), ci_pattern=MockPattern(),
 #                                          value=10.0)]
 #
-#             ci_datas = ci_data.CIDataAnalysis(images=images, masks=masks, noises=noises, ci_pre_ctis=ci_pre_ctis,
+#             ci_datas = ci_data.CIData(images=images, masks=masks, noises=noises, ci_pre_ctis=ci_pre_ctis,
 #                                               noise_scalings=noise_scalings)
 #
 #             fitter = fitting.HyperCIFitter(ci_datas, cti_params=MockParams(), cti_settings=MockSettings(),

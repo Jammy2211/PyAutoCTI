@@ -130,81 +130,15 @@ class MockGeometry(ci_frame.CIQuadGeometry):
 
 class TestCIData(object):
 
-    def test__constructor(self):
-        data = ci_data.CIData(images=[np.ones((2, 2)), 5.0 * np.ones((2, 2))],
-                              masks=[2.0 * np.ones((2, 2)), 6.0 * np.ones((2, 2))],
-                              noises=[3.0 * np.ones((2, 2)), 7.0 * np.ones((2, 2))],
-                              ci_pre_ctis=[4.0 * np.ones((2, 2)), 8.0 * np.ones((2, 2))])
-
-        assert (data[0].image == np.ones((2, 2))).all()
-        assert (data[0].mask == 2.0 * np.ones((2, 2))).all()
-        assert (data[0].noise == 3.0 * np.ones((2, 2))).all()
-        assert (data[0].ci_pre_cti == 4.0 * np.ones((2, 2))).all()
-
-        assert (data[1].image == 5.0 * np.ones((2, 2))).all()
-        assert (data[1].mask == 6.0 * np.ones((2, 2))).all()
-        assert (data[1].noise == 7.0 * np.ones((2, 2))).all()
-        assert (data[1].ci_pre_cti == 8.0 * np.ones((2, 2))).all()
-
-
-class TestCIDataAnalysis(object):
-
-    def test__constructor__no_scaled_noise(self):
-        data = ci_data.CIDataAnalysis(images=[np.ones((2, 2)), 5.0 * np.ones((2, 2))],
-                                      masks=[2.0 * np.ones((2, 2)), 6.0 * np.ones((2, 2))],
-                                      noises=[3.0 * np.ones((2, 2)), 7.0 * np.ones((2, 2))],
-                                      ci_pre_ctis=[4.0 * np.ones((2, 2)), 8.0 * np.ones((2, 2))])
-
-        assert (data[0].image == np.ones((2, 2))).all()
-        assert (data[0].mask == 2.0 * np.ones((2, 2))).all()
-        assert (data[0].noise == 3.0 * np.ones((2, 2))).all()
-        assert (data[0].ci_pre_cti == 4.0 * np.ones((2, 2))).all()
-
-        assert (data[1].image == 5.0 * np.ones((2, 2))).all()
-        assert (data[1].mask == 6.0 * np.ones((2, 2))).all()
-        assert (data[1].noise == 7.0 * np.ones((2, 2))).all()
-        assert (data[1].ci_pre_cti == 8.0 * np.ones((2, 2))).all()
-
-    def test__constructor__include_scaled_noise__x1_scaled_noise_per_image(self):
-        data = ci_data.CIDataAnalysis(images=[np.ones((2, 2)), 5.0 * np.ones((2, 2))],
-                                      masks=[2.0 * np.ones((2, 2)), 6.0 * np.ones((2, 2))],
-                                      noises=[3.0 * np.ones((2, 2)), 7.0 * np.ones((2, 2))],
-                                      ci_pre_ctis=[4.0 * np.ones((2, 2)), 8.0 * np.ones((2, 2))],
-                                      noise_scalings=[[9.0 * np.ones((2, 2))], [10.0 * np.ones((2, 2))]])
-
-        assert (data[0].image == np.ones((2, 2))).all()
-        assert (data[0].mask == 2.0 * np.ones((2, 2))).all()
-        assert (data[0].noise == 3.0 * np.ones((2, 2))).all()
-        assert (data[0].ci_pre_cti == 4.0 * np.ones((2, 2))).all()
-        assert (data[0].noise_scalings[0] == 9.0 * np.ones((2, 2))).all()
-
-        assert (data[1].image == 5.0 * np.ones((2, 2))).all()
-        assert (data[1].mask == 6.0 * np.ones((2, 2))).all()
-        assert (data[1].noise == 7.0 * np.ones((2, 2))).all()
-        assert (data[1].ci_pre_cti == 8.0 * np.ones((2, 2))).all()
-        assert (data[1].noise_scalings[0] == 10.0 * np.ones((2, 2))).all()
-
-    def test__constructor__include_scaled_noise__x2_scaled_noise_per_image(self):
-        data = ci_data.CIDataAnalysis(images=[np.ones((2, 2)), 5.0 * np.ones((2, 2))],
-                                      masks=[2.0 * np.ones((2, 2)), 6.0 * np.ones((2, 2))],
-                                      noises=[3.0 * np.ones((2, 2)), 7.0 * np.ones((2, 2))],
-                                      ci_pre_ctis=[4.0 * np.ones((2, 2)), 8.0 * np.ones((2, 2))],
-                                      noise_scalings=[[9.0 * np.ones((2, 2)), 11.0 * np.ones((2, 2))],
-                                                      [10.0 * np.ones((2, 2)), 12.0 * np.ones((2, 2))]])
-
-        assert (data[0].image == np.ones((2, 2))).all()
-        assert (data[0].mask == 2.0 * np.ones((2, 2))).all()
-        assert (data[0].noise == 3.0 * np.ones((2, 2))).all()
-        assert (data[0].ci_pre_cti == 4.0 * np.ones((2, 2))).all()
-        assert (data[0].noise_scalings[0] == 9.0 * np.ones((2, 2))).all()
-        assert (data[0].noise_scalings[1] == 11.0 * np.ones((2, 2))).all()
-
-        assert (data[1].image == 5.0 * np.ones((2, 2))).all()
-        assert (data[1].mask == 6.0 * np.ones((2, 2))).all()
-        assert (data[1].noise == 7.0 * np.ones((2, 2))).all()
-        assert (data[1].ci_pre_cti == 8.0 * np.ones((2, 2))).all()
-        assert (data[1].noise_scalings[0] == 10.0 * np.ones((2, 2))).all()
-        assert (data[1].noise_scalings[1] == 12.0 * np.ones((2, 2))).all()
+    def test_map(self):
+        data = ci_data.CIData(1, 2, 3, 4)
+        result = data.map(lambda x: 2 * x)
+        assert isinstance(result, ci_data.CIData)
+        assert result.image == 2
+        assert result.mask == 4
+        assert result.noise == 6
+        assert result.ci_pre_cti == 8
+        assert result.noise_scaling is None
 
 
 class TestCIImage(object):
