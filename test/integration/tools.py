@@ -124,8 +124,8 @@ class CIQuadGeometryIntegration(QuadGeometryIntegration, ci_frame.CIQuadGeometry
         return ci_frame.Region((region.y0, region.y1, region.x1 + columns[0], region.x1 + columns[1]))
 
     @staticmethod
-    def serial_ci_region_and_trails(region, image_shape, from_column):
-        return ci_frame.Region((region.y0, region.y1, from_column + region.x0, image_shape[1]))
+    def serial_ci_region_and_trails(region, image_shape, column):
+        return ci_frame.Region((region.y0, region.y1, column + region.x0, image_shape[1]))
 
 
 shape = (36, 36)

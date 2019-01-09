@@ -473,12 +473,12 @@ class ChInj(np.ndarray):
 
         return self.__class__(self.frame_geometry, self.ci_pattern, array)
 
-    def serial_calibration_section_for_column_and_rows(self, from_column, rows):
+    def serial_calibration_section_for_column_and_rows(self, column, rows):
         """Extract a serial calibration array from a charge injection ci_frame, where this array is a sub-set of the
         ci_frame which can be used for serial-only calibration. Specifically, this ci_frame is all charge injection
         regions and their serial over-scan trails, specified from a certain column from the read-out electronics.
 
-        The diagram below illustrates the array that is extracted from a ci_frame with from_column=5:
+        The diagram below illustrates the array that is extracted from a ci_frame with column=5:
 
         ---KEY---
         ---------
@@ -516,17 +516,17 @@ class ChInj(np.ndarray):
         []     [=====================]
                <---------S----------
         """
-        calibration_images = self.serial_calibration_sub_arrays_from_frame(from_column)
+        calibration_images = self.serial_calibration_sub_arrays_from_frame(column)
         calibration_images = list(map(lambda image: image[rows[0]:rows[1], :], calibration_images))
         array = np.concatenate(calibration_images, axis=0)
         return self.__class__(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern, array=array)
 
-    def serial_calibration_sub_arrays_from_frame(self, from_column):
+    def serial_calibration_sub_arrays_from_frame(self, column):
         """Extract each charge injection region image for the serial calibration array above."""
 
         calibration_regions = list(map(lambda ci_region:
                                        self.frame_geometry.serial_ci_region_and_trails(ci_region, self.shape,
-                                                                                       from_column),
+                                                                                       column),
                                        self.ci_pattern.regions))
         return list(map(lambda region: region.extract_region_from_array(self), calibration_regions))
 
@@ -1313,10 +1313,6 @@ class CIQuadGeometryEuclidBL(QuadGeometryEuclidBL):
         CCD (see **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
         super(CIQuadGeometryEuclidBL, self).__init__()
 
-    @staticmethod
-    def serial_ci_region_and_trails(region, image_shape, from_column):
-        return Region((region.y0, region.y1, from_column + region.x0, image_shape[1]))
-
 
 class CIQuadGeometryEuclidBR(QuadGeometryEuclidBR):
 
@@ -1324,10 +1320,6 @@ class CIQuadGeometryEuclidBR(QuadGeometryEuclidBR):
         """This class represents the quadrant geometry of a Euclid charge injection image in the bottom-right of a   
         CCD (see **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
         super(CIQuadGeometryEuclidBR, self).__init__()
-
-    @staticmethod
-    def serial_ci_region_and_trails(region, image_shape, from_column):
-        return Region((region.y0, region.y1, 0, region.x1 - from_column))
 
 
 class CIQuadGeometryEuclidTL(QuadGeometryEuclidTL):
@@ -1337,10 +1329,6 @@ class CIQuadGeometryEuclidTL(QuadGeometryEuclidTL):
         CCD (see **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
         super(CIQuadGeometryEuclidTL, self).__init__()
 
-    @staticmethod
-    def serial_ci_region_and_trails(region, image_shape, from_column):
-        return Region((region.y0, region.y1, from_column + region.x0, image_shape[1]))
-
 
 class CIQuadGeometryEuclidTR(QuadGeometryEuclidTR):
 
@@ -1348,10 +1336,6 @@ class CIQuadGeometryEuclidTR(QuadGeometryEuclidTR):
         """This class represents the quadrant geometry of a Euclid charge injection image in the top-right of a   
         CCD (see **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
         super(CIQuadGeometryEuclidTR, self).__init__()
-
-    @staticmethod
-    def serial_ci_region_and_trails(region, image_shape, from_column):
-        return Region((region.y0, region.y1, 0, region.x1 - from_column))
 
 
 def check_parallel_front_edge_size(region, rows):
