@@ -9,7 +9,7 @@ from autocti.data.fitting import fitting_data as fit_data
 
 @pytest.fixture(name='image')
 def make_image():
-    return cti_image.CTIImage(array=np.ones((3, 3)), frame_geometry=ci_frame.QuadGeometryEuclidBL())
+    return cti_image.CTIImage(array=np.ones((3, 3)), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left())
 
 
 @pytest.fixture(name="mask")
@@ -17,7 +17,7 @@ def make_mask():
     return msk.Mask(array=np.array([[True, True, True, True],
                                     [True, False, False, True],
                                     [True, False, False, True],
-                                    [True, True, True, True]]), frame_geometry=ci_frame.QuadGeometryEuclidBL())
+                                    [True, True, True, True]]), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left())
 
 
 @pytest.fixture(name="fitting_image")

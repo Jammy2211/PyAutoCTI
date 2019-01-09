@@ -1163,14 +1163,14 @@ class QuadGeometryEuclid(FrameGeometry):
         Note that the arrow on the right defines the direction of clocking by arctic without any rotation. Therefore,   
         there are 8 circumstances of how arctic requires an image to be rotated before clocking:
 
-        - Quadrant 0 - QuadGeometryEuclidBL  - Parallel Clocking - No rotation.
-        - Quadrant 0 - QuadGeometryEuclidBL  - Serial Clocking   - Rotation 90 degrees clockwise.
-        - Quadrant 1 - QuadGeometryEuclidBR - Parallel Clocking - No rotation.
-        - Quadrant 1 - QuadGeometryEuclidBR - Serial Clocking   - Rotation 270 degrees clockwise.
-        - Quadrant 2 - QuadGeometryEuclidTL     - Parallel Clocking - Rotation 180 degrees.
-        - Quadrant 2 - QuadGeometryEuclidTL     - Serial Clocking   - Rotation 90 degrees clockwise.
-        - Quadrant 3 - QuadGeometryEuclidTR    - Parallel Clocking - Rotation 180 degrees.
-        - Quadrant 3 - QuadGeometryEuclidTR    - Serial Clocking   - Rotation 270 degrees clockwise
+        - Quadrant 0 - QuadGeometryEuclid.bottom_left()  - Parallel Clocking - No rotation.
+        - Quadrant 0 - QuadGeometryEuclid.bottom_left()  - Serial Clocking   - Rotation 90 degrees clockwise.
+        - Quadrant 1 - QuadGeometryEuclid.bottom_right() - Parallel Clocking - No rotation.
+        - Quadrant 1 - QuadGeometryEuclid.bottom_right() - Serial Clocking   - Rotation 270 degrees clockwise.
+        - Quadrant 2 - QuadGeometryEuclid.top_left()     - Parallel Clocking - Rotation 180 degrees.
+        - Quadrant 2 - QuadGeometryEuclid.top_left()     - Serial Clocking   - Rotation 90 degrees clockwise.
+        - Quadrant 3 - QuadGeometryEuclid.top_right()    - Parallel Clocking - Rotation 180 degrees.
+        - Quadrant 3 - QuadGeometryEuclid.top_right()    - Serial Clocking   - Rotation 270 degrees clockwise
 
         After clocking has been performed with arctic (and CTI is added / corrected), it must be re-rotated back to   
         its original orientation. This rotation is the reverse of what is specified above.
@@ -1236,69 +1236,49 @@ class QuadGeometryEuclid(FrameGeometry):
         row_index = ccd_id[-1]
 
         if (row_index in '123') and (quad_id == 'E'):
-            return QuadGeometryEuclidBL()
+            return QuadGeometryEuclid.bottom_left()
         elif (row_index in '123') and (quad_id == 'F'):
-            return QuadGeometryEuclidBR()
+            return QuadGeometryEuclid.bottom_right()
         elif (row_index in '123') and (quad_id == 'G'):
-            return QuadGeometryEuclidTR()
+            return QuadGeometryEuclid.top_right()
         elif (row_index in '123') and (quad_id == 'H'):
-            return QuadGeometryEuclidTL()
+            return QuadGeometryEuclid.top_left()
         elif (row_index in '456') and (quad_id == 'E'):
-            return QuadGeometryEuclidTR()
+            return QuadGeometryEuclid.top_right()
         elif (row_index in '456') and (quad_id == 'F'):
-            return QuadGeometryEuclidTL()
+            return QuadGeometryEuclid.top_left()
         elif (row_index in '456') and (quad_id == 'G'):
-            return QuadGeometryEuclidBL()
+            return QuadGeometryEuclid.bottom_left()
         elif (row_index in '456') and (quad_id == 'H'):
-            return QuadGeometryEuclidBR()
+            return QuadGeometryEuclid.bottom_right()
 
+    @classmethod
+    def bottom_left(cls):
+        return QuadGeometryEuclid(corner=(0, 0),
+                                  parallel_overscan=Region((2066, 2086, 51, 2099)),
+                                  serial_prescan=Region((0, 2086, 0, 51)),
+                                  serial_overscan=Region((0, 2086, 2099, 2119)))
 
-class QuadGeometryEuclidBL(QuadGeometryEuclid):
+    @classmethod
+    def bottom_right(cls):
+        return QuadGeometryEuclid(corner=(0, 1),
+                                  parallel_overscan=Region((2066, 2086, 20, 2068)),
+                                  serial_prescan=Region((0, 2086, 2068, 2119)),
+                                  serial_overscan=Region((0, 2086, 0, 20)))
 
-    def __init__(self):
-        """This class represents the frame_geometry of a Euclid quadrant in the bottom-left of a CCD (see   
-        **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
+    @classmethod
+    def top_left(cls):
+        return QuadGeometryEuclid(corner=(1, 0),
+                                  parallel_overscan=Region((0, 20, 51, 2099)),
+                                  serial_prescan=Region((0, 2086, 0, 51)),
+                                  serial_overscan=Region((0, 2086, 2099, 2119)))
 
-        super(QuadGeometryEuclidBL, self).__init__(corner=(0, 0),
-                                                   parallel_overscan=Region((2066, 2086, 51, 2099)),
-                                                   serial_prescan=Region((0, 2086, 0, 51)),
-                                                   serial_overscan=Region((0, 2086, 2099, 2119)))
-
-
-class QuadGeometryEuclidBR(QuadGeometryEuclid):
-
-    def __init__(self):
-        """This class represents the frame_geometry of a Euclid quadrant in the bottom-right of a CCD (see   
-        **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
-
-        super(QuadGeometryEuclidBR, self).__init__(corner=(0, 1),
-                                                   parallel_overscan=Region((2066, 2086, 20, 2068)),
-                                                   serial_prescan=Region((0, 2086, 2068, 2119)),
-                                                   serial_overscan=Region((0, 2086, 0, 20)))
-
-
-class QuadGeometryEuclidTL(QuadGeometryEuclid):
-
-    def __init__(self):
-        """This class represents the frame_geometry of a Euclid quadrant in the top-left of a CCD (see   
-        **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
-
-        super(QuadGeometryEuclidTL, self).__init__(corner=(1, 0),
-                                                   parallel_overscan=Region((0, 20, 51, 2099)),
-                                                   serial_prescan=Region((0, 2086, 0, 51)),
-                                                   serial_overscan=Region((0, 2086, 2099, 2119)))
-
-
-class QuadGeometryEuclidTR(QuadGeometryEuclid):
-
-    def __init__(self):
-        """This class represents the frame_geometry of a Euclid quadrant in the top-right of a CCD (see   
-        **QuadGeometryEuclid** for a description of the Euclid CCD / FPA)"""
-
-        super(QuadGeometryEuclidTR, self).__init__(corner=(1, 1),
-                                                   parallel_overscan=Region((0, 20, 20, 2068)),
-                                                   serial_prescan=Region((0, 2086, 2068, 2119)),
-                                                   serial_overscan=Region((0, 2086, 0, 20)))
+    @classmethod
+    def top_right(cls):
+        return QuadGeometryEuclid(corner=(1, 1),
+                                  parallel_overscan=Region((0, 20, 20, 2068)),
+                                  serial_prescan=Region((0, 2086, 2068, 2119)),
+                                  serial_overscan=Region((0, 2086, 0, 20)))
 
 
 def flip(image):
