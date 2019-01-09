@@ -764,10 +764,6 @@ class ChInj(np.ndarray):
 
         return msk.Mask(array=mask, frame_geometry=self.frame_geometry)
 
-    def check_frame_geometry(self):
-        if not isinstance(self.frame_geometry, CIQuadGeometry):
-            raise exc.CIFrameException('You must supply the CI Frame with a CIQuadGeometry (Not a ci_image.Geometry)')
-
 
 class CIFrame(cti_image.ImageFrame, ChInj):
 
@@ -786,13 +782,11 @@ class CIFrame(cti_image.ImageFrame, ChInj):
             2D Array of array charge injection image ci_data.
         """
         ci_inj = super(CIFrame, cls).__new__(cls, frame_geometry, array)
-        ci_inj.check_frame_geometry()
         ci_inj.ci_pattern = ci_pattern
         return ci_inj
 
     def __init__(self, frame_geometry, ci_pattern, array):
         super(CIFrame, self).__init__(frame_geometry, array)
-        self.check_frame_geometry()
         self.ci_pattern = ci_pattern
 
     @classmethod
@@ -859,13 +853,12 @@ class CIFrameCTI(cti_image.CTIImage, ChInj):
             2D Array of array charge injection image ci_data.
         """
         ci_inj = super(CIFrameCTI, cls).__new__(cls, frame_geometry, array)
-        ci_inj.check_frame_geometry()
+        ()
         ci_inj.ci_pattern = ci_pattern
         return ci_inj
 
     def __init__(self, frame_geometry, ci_pattern, array):
         super(CIFrameCTI, self).__init__(frame_geometry, array)
-        self.check_frame_geometry()
         self.ci_pattern = ci_pattern
 
     @classmethod
@@ -890,11 +883,7 @@ class CIFrameCTI(cti_image.CTIImage, ChInj):
                    array=imageio.numpy_array_from_fits(path, filename, hdu))
 
 
-class CIQuadGeometry(object):
-    pass
-
-
-class CIQuadGeometryEuclidBL(cti_image.QuadGeometryEuclidBL, CIQuadGeometry):
+class CIQuadGeometryEuclidBL(cti_image.QuadGeometryEuclidBL):
 
     def __init__(self):
         """This class represents the quadrant geometry of a Euclid charge injection image in the bottom-left of a \
@@ -936,7 +925,7 @@ class CIQuadGeometryEuclidBL(cti_image.QuadGeometryEuclidBL, CIQuadGeometry):
         return cti_image.Region((region.y0, region.y1, from_column + region.x0, image_shape[1]))
 
 
-class CIQuadGeometryEuclidBR(cti_image.QuadGeometryEuclidBR, CIQuadGeometry):
+class CIQuadGeometryEuclidBR(cti_image.QuadGeometryEuclidBR):
 
     def __init__(self):
         """This class represents the quadrant geometry of a Euclid charge injection image in the bottom-right of a \
@@ -978,7 +967,7 @@ class CIQuadGeometryEuclidBR(cti_image.QuadGeometryEuclidBR, CIQuadGeometry):
         return cti_image.Region((region.y0, region.y1, 0, region.x1 - from_column))
 
 
-class CIQuadGeometryEuclidTL(cti_image.QuadGeometryEuclidTL, CIQuadGeometry):
+class CIQuadGeometryEuclidTL(cti_image.QuadGeometryEuclidTL):
 
     def __init__(self):
         """This class represents the quadrant geometry of a Euclid charge injection image in the top-left of a \
@@ -1020,7 +1009,7 @@ class CIQuadGeometryEuclidTL(cti_image.QuadGeometryEuclidTL, CIQuadGeometry):
         return cti_image.Region((region.y0, region.y1, from_column + region.x0, image_shape[1]))
 
 
-class CIQuadGeometryEuclidTR(cti_image.QuadGeometryEuclidTR, CIQuadGeometry):
+class CIQuadGeometryEuclidTR(cti_image.QuadGeometryEuclidTR):
 
     def __init__(self):
         """This class represents the quadrant geometry of a Euclid charge injection image in the top-right of a \
