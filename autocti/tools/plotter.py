@@ -1,7 +1,8 @@
 import matplotlib.font_manager
 import matplotlib.pyplot as plt
-from VIS_CTI_Tools import ImageIO
 from matplotlib.colors import LogNorm
+
+from autocti.tools import imageio
 
 
 # import getdist.plots
@@ -63,7 +64,7 @@ def setup_tickers(ticksize):
 
 def output_plot(path, filename, file_format):
     if path is not None and filename is not None:
-        ImageIO.make_path_if_does_not_exist(path)
+        imageio.make_path_if_does_not_exist(path)
         plt.savefig(path + filename + file_format, bbox_inches='tight')
     else:
         plt.show()
@@ -72,20 +73,3 @@ def output_plot(path, filename, file_format):
 def close_figure(new_figure):
     if new_figure is True:
         plt.close()
-#
-# class MultiNestPlotter(getdist.plots.GetDistPlotter):
-#
-#     def __init__(self, results):
-#
-#         paths = list(map(lambda r : r.pipeline_path, results))
-#         pdf = list(map(lambda r : r.pdf, results))
-#
-#         super(MultiNestPlotter, self).__init__(chain_dir=paths)
-#
-#         self.plots_1d = partial(self.plots_1d, roots=pdf)
-#         self.plots_2d = partial(self.plots_2d, roots=pdf)
-#         self.plots_2d_triplets = partial(self.plots_2d_triplets, roots=pdf)
-#         self.plots_3d = partial(self.plots_3d, roots=pdf)
-#         self.plots_3d_z = partial(self.plots_3d, roots=pdf)
-#         self.rectangle_plot = partial(self.rectangle_plot, roots=pdf)
-#         self.triangle_plot = partial(self.triangle_plot, roots=pdf)
