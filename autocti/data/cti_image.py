@@ -25,7 +25,7 @@ Author: James Nightingale
 
 import numpy as np
 
-from autocti.tools import imageio
+from autocti.data import util
 
 
 class ImageFrame(np.ndarray):
@@ -95,7 +95,7 @@ class ImageFrame(np.ndarray):
             The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
             locations of different regions of the CCD (overscans, prescan, etc.)
         """
-        return cls(frame_geometry=frame_geometry, array=imageio.numpy_array_from_fits(path, filename, hdu))
+        return cls(frame_geometry=frame_geometry, array=util.numpy_array_from_fits(path, filename, hdu))
 
     def output_as_fits(self, path, filename):
         """Output the image ci_data as a fits file.
@@ -107,7 +107,7 @@ class ImageFrame(np.ndarray):
         filename : str
             The file phase_name of the output image.
         """
-        imageio.numpy_array_to_fits(self, path, filename)
+        util.numpy_array_to_fits(self, path, filename)
 
 
 class CTIImage(ImageFrame):

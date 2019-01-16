@@ -139,7 +139,7 @@ def load_ci_datas(test_name):
     ci_patterns = ci_pattern.create_uniform_via_lists(normalizations=normalizations, regions=ci_regions)
 
     images = list(map(lambda pattern, index:
-                      ci_data.CIImage.from_fits_and_ci_pattern(path=data_path, filename='/ci_data_' + str(index), hdu=0,
+                      ci_data.CIImage.from_fits_and_ci_pattern(file_path=data_path, filename='/ci_data_' + str(index), hdu=0,
                                                                frame_geometry=frame_geometry, ci_pattern=pattern),
                       ci_patterns, range(len(ci_patterns))))
 
@@ -151,6 +151,6 @@ def load_ci_datas(test_name):
                      ci_data.CIMask.create(frame_geometry=frame_geometry, ci_pattern=pattern, shape=shape),
                      ci_patterns))
 
-    ci_pre_ctis = list(map(lambda ci_image: ci_image.create_ci_pre_cti(), images))
+    ci_pre_ctis = list(map(lambda ci_image: ci_image.ci_pre_cti_from_ci_pattern_and_mask(), images))
 
     return ci_data.CIData(images, masks, noises, ci_pre_ctis)

@@ -17,7 +17,7 @@
 #
 
 """
-File: tests/python/imageio_test.py
+File: tests/python/util_test.py
 
 Created on: 04/23/18
 Author: user
@@ -26,33 +26,36 @@ Author: user
 import os
 
 import numpy as np
+import pytest
 
-from autocti.tools import imageio
+from autocti.data import util
 
 path = "{}/".format(os.path.dirname(os.path.realpath(__file__)))
+
+test_data_dir = "{}/../test_files/array/".format(os.path.dirname(os.path.realpath(__file__)))
 
 
 class TestFits:
 
     def test__numpy_array_from_fits__3x3_all_ones(self):
-        array = imageio.numpy_array_from_fits(path=path + 'files/fits/', filename='3x3_ones', hdu=0)
+        arr = util.numpy_array_from_fits(file_path=test_data_dir + '3x3_ones.fits', hdu=0)
 
-        assert (array == np.ones((3, 3))).all()
+        assert (arr == np.ones((3, 3))).all()
 
     def test__numpy_array_from_fits__4x3_all_ones(self):
-        array = imageio.numpy_array_from_fits(path=path + 'files/fits/', filename='4x3_ones', hdu=0)
+        arr = util.numpy_array_from_fits(file_path=test_data_dir + '4x3_ones.fits', hdu=0)
 
-        assert (array == np.ones((4, 3))).all()
+        assert (arr == np.ones((4, 3))).all()
 
     def test__numpy_array_to_fits__output_and_load(self):
-        if os.path.exists(path + 'files/fits/test.fits'):
-            os.remove(path + 'files/fits/test.fits')
+        if os.path.exists(test_data_dir + 'test.fits'):
+            os.remove(test_data_dir + 'test.fits')
 
-        array = np.array([[10., 30., 40.],
-                          [92., 19., 20.]])
+        arr = np.array([[10., 30., 40.],
+                        [92., 19., 20.]])
 
-        imageio.numpy_array_to_fits(array, path=path + 'files/fits/', filename='test')
+        util.numpy_array_to_fits(arr, file_path=test_data_dir + 'test.fits')
 
-        array_load = imageio.numpy_array_from_fits(path=path + 'files/fits/', filename='test', hdu=0)
+        array_load = util.numpy_array_from_fits(file_path=test_data_dir + 'test.fits', hdu=0)
 
-        assert (array == array_load).all()
+        assert arr == pytest.approx(array_load, 1.0e-4)

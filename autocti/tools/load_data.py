@@ -29,7 +29,7 @@ def load_ci_datas(data_name, shape, cti_geometry, normalizations, ci_regions, cr
 
 def load_images(data_path, cti_geometry, ci_patterns):
     return list(map(lambda ci_pattern, index:
-                    data.CIImage.from_fits_and_ci_pattern(path=data_path, filename='/ci_data_' + str(index), hdu=0,
+                    data.CIImage.from_fits_and_ci_pattern(file_path=data_path, filename='/ci_data_' + str(index), hdu=0,
                                                           frame_geometry=cti_geometry, ci_pattern=ci_pattern),
                     ci_patterns, range(len(ci_patterns))))
 
@@ -44,7 +44,7 @@ def load_cosmic_ray_masks(data_path, cti_geometry, ci_patterns):
     try:
 
         return list(map(lambda ci_pattern, index:
-                        data.CIPreCTI.from_fits_and_ci_pattern(path=data_path,
+                        data.CIPreCTI.from_fits_and_ci_pattern(file_path=data_path,
                                                                filename='/cosmic_ray_mask_' + str(index), hdu=0,
                                                                frame_geometry=cti_geometry, ci_pattern=ci_pattern),
                         ci_patterns, range(len(ci_patterns))))
@@ -71,10 +71,10 @@ def setup_masks(shape, cti_geometry, ci_patterns, cosmic_ray_masks, cr_parallel,
 def load_ci_pre_ctis(data_path, images, cti_geometry, ci_patterns):
     try:
         return list(map(lambda ci_pattern, index:
-                        data.CIPreCTI.from_fits_and_ci_pattern(path=data_path, filename='/ci_pre_cti_' + str(index),
+                        data.CIPreCTI.from_fits_and_ci_pattern(file_path=data_path, filename='/ci_pre_cti_' + str(index),
                                                                hdu=0,
                                                                frame_geometry=cti_geometry, ci_pattern=ci_pattern),
                         ci_patterns, range(len(ci_patterns))))
 
     except FileNotFoundError:
-        return list(map(lambda ci_image: ci_image.create_ci_pre_cti(), images))
+        return list(map(lambda ci_image: ci_image.ci_pre_cti_from_ci_pattern_and_mask(), images))
