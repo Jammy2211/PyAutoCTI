@@ -40,17 +40,16 @@ class CIMask(ci_frame.CIFrame, msk.Mask):
 
 class CIData(object):
 
-    def __init__(self, image, mask, noise, ci_pre_cti, noise_scaling=None):
+    def __init__(self, image, noise_map, ci_pre_cti, noise_scaling=None):
+
         self.image = image
-        self.mask = mask
-        self.noise = noise
+        self.noise_map = noise_map
         self.ci_pre_cti = ci_pre_cti
         self.noise_scaling = noise_scaling
 
     def map(self, func):
         return CIData(image=func(self.image),
-                      mask=func(self.mask),
-                      noise=func(self.noise),
+                      noise_map=func(self.noise_map),
                       ci_pre_cti=func(self.ci_pre_cti),
                       noise_scaling=func(self.noise_scaling) if self.noise_scaling is not None else self.noise_scaling)
 
@@ -186,7 +185,7 @@ class CIPreCTI(ci_frame.CIFrameCTI):
         cti_settings : ArcticSettings.ArcticSettings
             The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
         """
-        ci_post_cti = self.add_cti_to_image(cti_params, cti_settings)
+        ci_post_cti = self.add_cti_to_image(cti_params=cti_params, cti_settings=cti_settings)
         return ci_frame.CIFrame(frame_geometry=self.frame_geometry, array=ci_post_cti, ci_pattern=self.ci_pattern)
 
 
@@ -295,6 +294,7 @@ class CIPreCTIFast(CIPreCTI):
             raise exc.CIPreCTIException(' Cannot use CIPostCTIFast in both parallel and serial directions')
 
         return post_cti_image
+
 
 
 def create_baseline_noise(shape, read_noise):

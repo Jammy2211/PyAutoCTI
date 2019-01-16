@@ -131,12 +131,11 @@ class MockGeometry(object):
 class TestCIData(object):
 
     def test_map(self):
-        data = ci_data.CIData(1, 2, 3, 4)
+        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4)
         result = data.map(lambda x: 2 * x)
         assert isinstance(result, ci_data.CIData)
         assert result.image == 2
-        assert result.mask == 4
-        assert result.noise == 6
+        assert result.noise_map == 6
         assert result.ci_pre_cti == 8
         assert result.noise_scaling is None
 
@@ -1239,3 +1238,5 @@ class TestCIPreCTIFast(object):
 
             # noinspection PyUnresolvedReferences
             assert (ci_post_cti_fast == ci_post_cti_normal).all()
+
+
