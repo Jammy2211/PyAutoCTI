@@ -166,8 +166,7 @@ class TestPhase(object):
 
         assert type(ci_data_analysis[0]) == data.CIData
         assert (ci_data.image == ci_data_analysis[0].image).all()
-        assert (ci_data.mask == ci_data_analysis[0].mask).all()
-        assert (ci_data.noise == ci_data_analysis[0].noise).all()
+        assert (ci_data.noise_map == ci_data_analysis[0].noise_map).all()
         assert (ci_data.ci_pre_cti == ci_data_analysis[0].ci_pre_cti).all()
 
     def test__phase_property(self):
