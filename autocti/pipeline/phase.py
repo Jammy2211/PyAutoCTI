@@ -650,7 +650,7 @@ class ParallelSerialPhase(Phase):
             result: Result
                 An object comprising the final cti_params instances generated and a corresponding likelihood
             """
-            cti_params = cti_params_for_instance(instance)
+            cti_params = cti_params_for_instance(instance=instance)
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
             return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_pipe_data)))
 

@@ -15,3 +15,4 @@ test/autofit/test_fit/phase/optimizer
 pySHE_ArCTIC.py
 test/integration/data/
 test/integration/tests/output/
+test/output/
