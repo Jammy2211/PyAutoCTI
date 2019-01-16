@@ -3,7 +3,7 @@ import numpy as np
 from autocti import exc
 from autocti.data import cti_image
 from autocti.model import pyarctic
-from autocti.tools import imageio
+from autocti.data import util
 
 
 def bin_array_across_serial(array, mask=None):
@@ -791,7 +791,7 @@ class CIFrame(cti_image.ImageFrame, ChInj):
         self.ci_pattern = ci_pattern
 
     @classmethod
-    def from_fits_and_ci_pattern(cls, path, filename, hdu, frame_geometry, ci_pattern):
+    def from_fits_and_ci_pattern(cls, file_path, hdu, frame_geometry, ci_pattern):
         """Load the image ci_data from a fits file.
 
         Params
@@ -809,7 +809,7 @@ class CIFrame(cti_image.ImageFrame, ChInj):
             The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
         """
         return cls(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
-                   array=imageio.numpy_array_from_fits(path, filename, hdu))
+                   array=util.numpy_array_from_fits(file_path=file_path, hdu=hdu))
 
     @classmethod
     def from_single_value(cls, value, shape, frame_geometry, ci_pattern):
@@ -863,7 +863,7 @@ class CIFrameCTI(cti_image.CTIImage, ChInj):
         self.ci_pattern = ci_pattern
 
     @classmethod
-    def from_fits_and_ci_pattern(cls, path, filename, hdu, frame_geometry, ci_pattern):
+    def from_fits_and_ci_pattern(cls, file_path, hdu, frame_geometry, ci_pattern):
         """Load the image ci_data from a fits file.
 
         Params
@@ -881,7 +881,7 @@ class CIFrameCTI(cti_image.CTIImage, ChInj):
             The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
         """
         return cls(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
-                   array=imageio.numpy_array_from_fits(path, filename, hdu))
+                   array=util.numpy_array_from_fits(file_path=file_path, hdu=hdu))
 
 
 class Region(tuple):

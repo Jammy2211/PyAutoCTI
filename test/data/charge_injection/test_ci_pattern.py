@@ -216,7 +216,7 @@ class TestCIPatternUniform(object):
         def test__uniform_pattern_1_region_normalization_10__correct_ci_pre_cti(self):
             pattern = ci_pattern.CIPatternUniform(normalization=10.0, regions=[(0, 2, 0, 2)])
 
-            ci_pre_cti = pattern.compute_ci_pre_cti(shape=(3, 3))
+            ci_pre_cti = pattern.ci_pre_cti_from_shape(shape=(3, 3))
 
             assert (ci_pre_cti == np.array([[10.0, 10.0, 0.0],
                                             [10.0, 10.0, 0.0],
@@ -226,7 +226,7 @@ class TestCIPatternUniform(object):
             pattern = ci_pattern.CIPatternUniform(normalization=10.0, regions=[(0, 2, 0, 1)])
 
             with pytest.raises(exc.CIPatternException):
-                pattern.compute_ci_pre_cti(shape=(1, 1))
+                pattern.ci_pre_cti_from_shape(shape=(1, 1))
 
     class TestGenerateInfo:
 
@@ -620,7 +620,7 @@ class TestCIPatternNonUniform(object):
                                                      regions=[(0, 3, 0, 3)],
                                                      row_slope=0.0)
 
-            mock_image = pattern.compute_ci_pre_cti(image=ci_image, mask=mask)
+            mock_image = pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=ci_image, mask=mask)
 
             assert (mock_image == ci_image).all()
 
@@ -637,7 +637,7 @@ class TestCIPatternNonUniform(object):
                                                      regions=[(0, 3, 0, 3)],
                                                      row_slope=0.0)
 
-            mock_image = pattern.compute_ci_pre_cti(image=ci_image, mask=mask)
+            mock_image = pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=ci_image, mask=mask)
 
             assert (mock_image == ci_image).all()
 
@@ -654,7 +654,7 @@ class TestCIPatternNonUniform(object):
                                                      regions=[(0, 3, 0, 3)],
                                                      row_slope=0.0)
 
-            mock_image = pattern.compute_ci_pre_cti(image=ci_image, mask=mask)
+            mock_image = pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=ci_image, mask=mask)
 
             assert (mock_image == np.array([[13.0, 8.0, 18.0],
                                             [13.0, 8.0, 18.0],
@@ -673,7 +673,7 @@ class TestCIPatternNonUniform(object):
                                                      regions=[(0, 3, 0, 3)],
                                                      row_slope=0.0)
 
-            mock_image = pattern.compute_ci_pre_cti(image=ci_image, mask=mask)
+            mock_image = pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=ci_image, mask=mask)
 
             assert (mock_image == np.array([[14.5, 6.5, 18.0],
                                             [14.5, 6.5, 18.0],
@@ -693,7 +693,7 @@ class TestCIPatternNonUniform(object):
                                                      row_slope=0.0)
 
             with pytest.raises(exc.CIPatternException):
-                mock_image = pattern.compute_ci_pre_cti(image=ci_image, mask=mask)
+                mock_image = pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=ci_image, mask=mask)
 
         def test__one_ci_region__includes_row_non_uniformity__set_up_as_means(self):
             pattern_sim = ci_pattern.CIPatternNonUniformSimulate(normalization=500.0, regions=[(0, 1, 0, 1)],
@@ -714,7 +714,7 @@ class TestCIPatternNonUniform(object):
             pattern = ci_pattern.CIPatternNonUniform(normalization=500.0, regions=[(0, 3, 0, 3)],
                                                      row_slope=1.0)
 
-            mock_image = pattern.compute_ci_pre_cti(image=ci_image, mask=mask)
+            mock_image = pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=ci_image, mask=mask)
 
             assert (mock_image == np.array([[500.0, 500.0, 500.0],
                                             [500.0, 500.0, 500.0],
@@ -740,7 +740,7 @@ class TestCIPatternNonUniform(object):
             pattern = ci_pattern.CIPatternNonUniform(normalization=10.0,
                                                      regions=[(0, 3, 0, 3), (4, 7, 0, 3)], row_slope=0.0)
 
-            mock_image = pattern.compute_ci_pre_cti(image=ci_image, mask=mask)
+            mock_image = pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=ci_image, mask=mask)
 
             assert (mock_image == np.array([[5.0, 6.0, 7.0],
                                             [5.0, 6.0, 7.0],
@@ -770,7 +770,7 @@ class TestCIPatternNonUniform(object):
             pattern = ci_pattern.CIPatternNonUniform(normalization=10.0,
                                                      regions=[(0, 3, 0, 3), (4, 7, 0, 3)], row_slope=0.0)
 
-            mock_image = pattern.compute_ci_pre_cti(image=ci_image, mask=mask)
+            mock_image = pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=ci_image, mask=mask)
 
             assert (mock_image == np.array([[6.0, 8.0, 8.0],
                                             [6.0, 8.0, 8.0],
@@ -808,7 +808,7 @@ class TestCIPatternNonUniform(object):
             pattern = ci_pattern.CIPatternNonUniform(normalization=500.0,
                                                      regions=[(0, 3, 0, 3), (4, 7, 0, 3)], row_slope=1.0)
 
-            mock_image = pattern.compute_ci_pre_cti(image=ci_image, mask=mask)
+            mock_image = pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=ci_image, mask=mask)
 
             assert (mock_image == np.array([[500.0, 500.0, 500.0],
                                             [500.0, 500.0, 500.0],
@@ -822,7 +822,7 @@ class TestCIPatternNonUniform(object):
             pattern = ci_pattern.CIPatternNonUniform(normalization=10.0, regions=[(0, 2, 0, 2)], row_slope=0.0)
 
             with pytest.raises(exc.CIPatternException):
-                pattern.compute_ci_pre_cti(image=np.ones((1, 1)), mask=np.ma.ones((1, 1)))
+                pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=np.ones((1, 1)), mask=np.ma.ones((1, 1)))
 
 
 class TestCIPatternUniformFast(object):
@@ -923,7 +923,7 @@ class TestCIPatternSimulateUniform(object):
             pattern = ci_pattern.CIPatternUniformSimulate(normalization=10.0, regions=[(0, 2, 0, 2)])
 
             with pytest.raises(exc.CIPatternException):
-                pattern.compute_ci_pre_cti(shape=(1, 1))
+                pattern.ci_pre_cti_from_shape(shape=(1, 1))
 
     class TestCreatePattern:
 
@@ -1211,7 +1211,7 @@ class TestCIPatternSimulateNonUniform(object):
                                                              row_slope=0.0)
 
             with pytest.raises(exc.CIPatternException):
-                pattern.compute_ci_pre_cti(image=np.ones((1, 1)), mask=np.ma.ones((1, 1)))
+                pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=np.ones((1, 1)), mask=np.ma.ones((1, 1)))
 
     class TestCreatePattern:
 
