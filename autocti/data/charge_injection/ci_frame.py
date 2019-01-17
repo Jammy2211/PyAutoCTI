@@ -1178,7 +1178,8 @@ class QuadGeometryEuclid(FrameGeometry):
         Rotations are performed using flipup / fliplr routines, but will ultimately use the Euclid Image Tools library.
 
         """
-        super(QuadGeometryEuclid, self).__init__(corner, parallel_overscan, serial_prescan, serial_overscan)
+        super(QuadGeometryEuclid, self).__init__(corner=corner, parallel_overscan=parallel_overscan,
+                                                 serial_prescan=serial_prescan, serial_overscan=serial_overscan)
 
     @classmethod
     def from_ccd_and_quadrant_id(cls, ccd_id, quad_id):
