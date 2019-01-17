@@ -35,6 +35,8 @@ from autocti.model import pyarctic
 from autocti.tools import infoio
 
 
+## TODO : Add mask to the calibration data routines.
+
 class CIData(object):
 
     def __init__(self, image, noise_map, ci_pre_cti, noise_scaling=None):
@@ -293,21 +295,65 @@ class CIPreCTIFast(CIPreCTI):
         return post_cti_image
 
 
+
+
+def load_ci_data_list(frame_geometries, ci_patterns,
+                      ci_image_paths, ci_image_hdus=None,
+                      ci_noise_map_paths=None, ci_noise_map_hdus=None,
+                      ci_pre_cti_paths=None, ci_pre_cti_hdus=None, ci_pre_cti_from_image=False,
+                      masks=None):
+
+    list_size = len(ci_image_paths)
+
+    ci_datas = []
+
+    if ci_pre_cti_paths is None:
+        ci_pre_cti_paths = list_size*[None]
+
+    if masks is None:
+        masks = list_size*[None]
+
+    if ci_image_hdus is None:
+        ci_image_hdus = list_size*[0]
+
+    if ci_noise_map_hdus is None:
+        ci_noise_map_hdus = list_size*[0]
+
+    if ci_pre_cti_hdus is None:
+        ci_pre_cti_hdus = list_size*[0]
+
+    for data_index in range(list_size):
+
+        ci_data = load_ci_data(frame_geometry=frame_geometries[data_index], ci_pattern=ci_patterns[data_index],
+                               ci_image_path=ci_image_paths[data_index], ci_image_hdu=ci_image_hdus[data_index],
+                               ci_noise_map_path=ci_noise_map_paths[data_index],
+                               ci_noise_map_hdu=ci_noise_map_hdus[data_index],
+                               ci_pre_cti_path=ci_pre_cti_paths[data_index],
+                               ci_pre_cti_hdu=ci_pre_cti_hdus[data_index],
+                               ci_pre_cti_from_image=ci_pre_cti_from_image, mask=masks[data_index])
+
+        ci_datas.append(ci_data)
+
+    return ci_datas
+
 def load_ci_data(frame_geometry, ci_pattern,
                  ci_image_path, ci_image_hdu=0,
                  ci_noise_map_path=None, ci_noise_map_hdu=0,
+                 ci_noise_map_from_single_value=None,
                  ci_pre_cti_path=None, ci_pre_cti_hdu=0, ci_pre_cti_from_image=False,
-                 ci_mask=None):
+                 mask=None):
 
     ci_image = load_ci_image(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
                              ci_image_path=ci_image_path, ci_image_hdu=ci_image_hdu)
 
     ci_noise_map = load_ci_noise_map(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
-                                 ci_noise_map_path=ci_noise_map_path, ci_noise_map_hdu=ci_noise_map_hdu)
+                                     ci_noise_map_path=ci_noise_map_path, ci_noise_map_hdu=ci_noise_map_hdu,
+                                     ci_noise_map_from_single_value=ci_noise_map_from_single_value,
+                                     shape=ci_image.shape)
 
     ci_pre_cti = load_ci_pre_cti(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
                                  ci_pre_cti_path=ci_pre_cti_path, ci_pre_cti_hdu=ci_pre_cti_hdu,
-                                 ci_image=ci_image, ci_pre_cti_from_image=ci_pre_cti_from_image, mask=ci_mask)
+                                 ci_image=ci_image, ci_pre_cti_from_image=ci_pre_cti_from_image, mask=mask)
 
     return CIData(image=ci_image, noise_map=ci_noise_map, ci_pre_cti=ci_pre_cti)
 
@@ -315,9 +361,19 @@ def load_ci_image(frame_geometry, ci_pattern, ci_image_path, ci_image_hdu):
     return CIImage(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
                    array=util.numpy_array_from_fits(file_path=ci_image_path, hdu=ci_image_hdu))
 
-def load_ci_noise_map(frame_geometry, ci_pattern, ci_noise_map_path, ci_noise_map_hdu):
-    return ci_frame.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
+def load_ci_noise_map(frame_geometry, ci_pattern, ci_noise_map_path, ci_noise_map_hdu, ci_noise_map_from_single_value,
+                      shape):
+
+    if ci_noise_map_path is not None and ci_noise_map_from_single_value is None:
+        return ci_frame.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
                             array=util.numpy_array_from_fits(file_path=ci_noise_map_path, hdu=ci_noise_map_hdu))
+    elif ci_noise_map_path is None and ci_noise_map_from_single_value is not None:
+        return ci_frame.CIFrame.from_single_value(value=ci_noise_map_from_single_value, shape=shape,
+                                                  frame_geometry=frame_geometry, ci_pattern=ci_pattern)
+    else:
+        raise exc.CIDataException(
+            'You have supplied both a ci_noise_map_path and a ci_noise_map_from_single_value value. Only one quantity '
+            'may be supplied.')
 
 def load_ci_pre_cti(frame_geometry, ci_pattern, ci_pre_cti_path, ci_pre_cti_hdu,
                     ci_image=None, ci_pre_cti_from_image=False, mask=None):

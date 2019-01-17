@@ -1,11 +1,9 @@
 import shutil
 from os import path
 
-from autofit import conf
-
 from autocti.data.charge_injection import ci_data
-from autocti.data.charge_injection import ci_frame, ci_pattern
-from autocti.tools import infoio
+from autocti.data.charge_injection import ci_frame
+from autocti.data.charge_injection import ci_pattern
 
 import os
 
@@ -28,9 +26,9 @@ class CIQuadGeometryIntegration(ci_frame.FrameGeometry):
 
     def __init__(self):
         """This class represents the quadrant geometry of an integration quadrant."""
-        super(CIQuadGeometryIntegration, self).__init__(parallel_overscan=(33, 36, 1, 30),
-                                                        serial_overscan=(0, 33, 31, 36),
-                                                        serial_prescan=(0, 36, 0, 1), corner=(0,0))
+        super(CIQuadGeometryIntegration, self).__init__(parallel_overscan=ci_frame.Region((33, 36, 1, 30)),
+                                                        serial_overscan=ci_frame.Region((0, 33, 31, 36)),
+                                                        serial_prescan=ci_frame.Region((0, 36, 0, 1)), corner=(0,0))
 
     def rotate_for_parallel_cti(self, image):
         """ Rotate the quadrant image data before clocking via cti_settings in the parallel direction.
@@ -128,29 +126,6 @@ def simulate_integration_quadrant(test_name, cti_params, cti_settings):
                                                      read_noise=None),
                             sim_ci_patterns))
 
-    list(map(lambda sim_ci_data, index: sim_ci_data.output_as_fits(path=output_path, filename='/ci_data_' + str(index)),
+    list(map(lambda sim_ci_data, index:
+             sim_ci_data.output_as_fits(file_path=output_path+'/ci_data_' + str(index) + '.fits'),
              sim_ci_datas, range(len(sim_ci_datas))))
-
-
-def load_ci_datas(test_name):
-
-    data_path = "{}/data/{}".format(dirpath, test_name)
-
-    ci_patterns = ci_pattern.create_uniform_via_lists(normalizations=normalizations, regions=ci_regions)
-
-    images = list(map(lambda pattern, index:
-                      ci_data.CIImage.from_fits_and_ci_pattern(file_path=data_path, filename='/ci_data_' + str(index), hdu=0,
-                                                               frame_geometry=frame_geometry, ci_pattern=pattern),
-                      ci_patterns, range(len(ci_patterns))))
-
-    noises = list(map(lambda pattern:
-                      ci_frame.CIFrame.from_single_value(value=1.0, shape=shape, frame_geometry=frame_geometry,
-                                                         ci_pattern=pattern), ci_patterns))
-
-    masks = list(map(lambda pattern:
-                     ci_data.CIMask.create(frame_geometry=frame_geometry, ci_pattern=pattern, shape=shape),
-                     ci_patterns))
-
-    ci_pre_ctis = list(map(lambda ci_image: ci_image.ci_pre_cti_from_ci_pattern_and_mask(), images))
-
-    return ci_data.CIData(images, masks, noises, ci_pre_ctis)

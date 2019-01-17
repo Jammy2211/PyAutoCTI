@@ -11,12 +11,12 @@ from autofit.core import non_linear as nl
 from autofit.core import phase as ph
 from autofit.core import phase_property
 
+from autocti.data import util
 from autocti.data.charge_injection import ci_data
 from autocti.data.charge_injection import ci_hyper
 from autocti.data.charge_injection.plotters import ci_plotters
 from autocti.data.fitting import fitting
 from autocti.model import arctic_params
-from autocti.tools import imageio
 
 logger = logging.getLogger(__name__)
 logger.level = logging.DEBUG
@@ -160,7 +160,7 @@ class Phase(ph.AbstractPhase):
 
             self.plot_count = 0
             self.output_image_path = "{}/".format(conf.instance.output_path) + '/' + self.phase_name + '/images/'
-            imageio.make_path_if_does_not_exist(self.output_image_path)
+            util.make_path_if_does_not_exist(self.output_image_path)
 
         @property
         def last_results(self):

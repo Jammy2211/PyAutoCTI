@@ -110,10 +110,9 @@ def make_ci_pattern():
 @pytest.fixture(name="ci_data")
 def make_ci_data(ci_geometry, ci_pattern):
     image = data.CIImage(frame_geometry=ci_geometry, ci_pattern=ci_pattern, array=np.ones((3, 3)))
-    mask = data.CIMask.empty_for_shape(shape=(3, 3), frame_geometry=ci_geometry, ci_pattern=ci_pattern)
     noise = ci_frame.CIFrame(ci_geometry, ci_pattern, np.ones((3, 3)))
     ci_pre_cti = data.CIPreCTI(frame_geometry=ci_geometry, ci_pattern=ci_pattern, array=np.ones((3, 3)))
-    return data.CIData(image, mask, noise, ci_pre_cti)
+    return data.CIData(image=image, noise_map=noise, ci_pre_cti=ci_pre_cti)
 
 
 @pytest.fixture(name="results")
