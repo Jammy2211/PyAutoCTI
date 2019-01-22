@@ -11,7 +11,6 @@ from autofit.core import phase_property
 from autofit.mapper import model_mapper as mm
 from autofit.optimize import non_linear as nl
 
-from autocti.data.charge_injection import ci_data
 from autocti.data.charge_injection import ci_hyper
 from autocti.data.charge_injection.plotters import ci_plotters
 from autocti.data.fitting import fitting
@@ -804,20 +803,11 @@ class ParallelSerialHyperOnlyPhase(ParallelSerialHyperPhase, HyperOnly):
 
 
 def pipe_cti(ci_pipe_data, cti_params, cti_settings):
-    ci_datas_analysis = ci_data.CIData(image=ci_pipe_data[0],
-                                       mask=ci_pipe_data[1],
-                                       noise_map=ci_pipe_data[2],
-                                       ci_pre_cti=ci_pipe_data[3])
-    fitter = fitting.CIFitter(ci_datas_analysis, cti_params=cti_params, cti_settings=cti_settings)
+    fitter = fitting.CIFitter(ci_pipe_data, cti_params=cti_params, cti_settings=cti_settings)
     return fitter.likelihood
 
 
 def pipe_cti_hyper(ci_pipe_data, cti_params, cti_settings, hyper_noises):
-    ci_datas_analysis = ci_data.CIData(image=ci_pipe_data[0],
-                                       mask=ci_pipe_data[1],
-                                       noise_map=ci_pipe_data[2],
-                                       ci_pre_cti=ci_pipe_data[3],
-                                       noise_scaling=ci_pipe_data[4])
-    fitter = fitting.HyperCIFitter(ci_datas_analysis, cti_params=cti_params, cti_settings=cti_settings,
+    fitter = fitting.HyperCIFitter(ci_pipe_data, cti_params=cti_params, cti_settings=cti_settings,
                                    hyper_noises=hyper_noises)
     return fitter.scaled_likelihood
