@@ -47,7 +47,7 @@ def pipeline():
     ci_datas = tools.load_ci_datas(test_name=test_name)
 
     pipeline = make_pipeline(test_name=test_name)
-    pipeline.run(ci_datas=[ci_datas], cti_settings=cti_settings)
+    pipeline.run(ci_datas=ci_datas, cti_settings=cti_settings)
 
 
 def make_pipeline(test_name):

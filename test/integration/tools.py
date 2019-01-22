@@ -1,19 +1,13 @@
+import os
 import shutil
-from os import path
-
-from autofit import conf
 
 from autocti.data.charge_injection import ci_data
 from autocti.data.charge_injection import ci_frame, ci_pattern
-from autocti.tools import infoio
-
-import os
 
 dirpath = os.path.dirname(os.path.realpath(__file__))
 
 
 def reset_paths(test_name, output_path):
-
     try:
         shutil.rmtree(dirpath + '/data/' + test_name)
     except FileNotFoundError:
@@ -24,13 +18,14 @@ def reset_paths(test_name, output_path):
     except FileNotFoundError:
         pass
 
+
 class CIQuadGeometryIntegration(ci_frame.FrameGeometry):
 
     def __init__(self):
         """This class represents the quadrant geometry of an integration quadrant."""
         super(CIQuadGeometryIntegration, self).__init__(parallel_overscan=(33, 36, 1, 30),
                                                         serial_overscan=(0, 33, 31, 36),
-                                                        serial_prescan=(0, 36, 0, 1), corner=(0,0))
+                                                        serial_prescan=(0, 36, 0, 1), corner=(0, 0))
 
     def rotate_for_parallel_cti(self, image):
         """ Rotate the quadrant image data before clocking via cti_settings in the parallel direction.
@@ -113,7 +108,6 @@ frame_geometry = CIQuadGeometryIntegration()
 
 
 def simulate_integration_quadrant(test_name, cti_params, cti_settings):
-
     output_path = "{}/data/".format(os.path.dirname(os.path.realpath(__file__))) + test_name + '/'
 
     if os.path.exists(output_path) == False:
@@ -133,7 +127,6 @@ def simulate_integration_quadrant(test_name, cti_params, cti_settings):
 
 
 def load_ci_datas(test_name):
-
     data_path = "{}/data/{}".format(dirpath, test_name)
 
     ci_patterns = ci_pattern.create_uniform_via_lists(normalizations=normalizations, regions=ci_regions)
@@ -153,4 +146,5 @@ def load_ci_datas(test_name):
 
     ci_pre_ctis = list(map(lambda ci_image: ci_image.create_ci_pre_cti(), images))
 
-    return ci_data.CIData(images, masks, noises, ci_pre_ctis)
+    return [ci_data.CIData(image, mask, noise, ci_pre_cti) for image, mask, noise, ci_pre_cti in
+            zip(images, noises, masks, ci_pre_ctis)]
