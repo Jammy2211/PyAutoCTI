@@ -6,10 +6,10 @@ from functools import partial
 import numpy as np
 from astropy.io import fits
 from autofit import conf
-from autofit.mapper import model_mapper as mm
-from autofit.optimize import non_linear as nl
 from autofit.core import phase as ph
 from autofit.core import phase_property
+from autofit.mapper import model_mapper as mm
+from autofit.optimize import non_linear as nl
 
 from autocti.data.charge_injection import ci_data
 from autocti.data.charge_injection import ci_hyper
@@ -33,6 +33,12 @@ def cti_params_for_instance(instance):
         serial_ccd=instance.serial_ccd if hasattr(instance, "serial_ccd") else None,
         serial_species=instance.serial_species if hasattr(instance, "serial_species") else None
     )
+
+
+class ConsecutivePool(object):
+    @staticmethod
+    def map(func, ls):
+        return map(func, ls)
 
 
 class Phase(ph.AbstractPhase):
@@ -145,15 +151,9 @@ class Phase(ph.AbstractPhase):
             """
             self.ci_datas = ci_datas
             self.ci_datas_analysis = ci_datas_analysis
-            if pool is not None:
-                self.ci_pipe_data = [[self.ci_datas_analysis[i].image, self.ci_datas_analysis[i].mask,
-                                      self.ci_datas_analysis[i].noise, self.ci_datas_analysis[i].ci_pre_cti,
-                                      self.ci_datas_analysis[i].noise_scalings]
-                                     for i in range(len(self.ci_datas_analysis))]
-
             self.cti_settings = cti_settings
             self.phase_name = phase_name
-            self.pool = pool
+            self.pool = pool or ConsecutivePool
             self.previous_results = previous_results
 
             self.visualize_results = conf.instance.general.get('output', 'visualize_results', bool)
@@ -289,7 +289,7 @@ class ParallelPhase(Phase):
             cti_params = cti_params_for_instance(instance)
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
             if self.pool is not None:
-                return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_pipe_data)))
+                return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_analysis)))
             fitter = fitting.CIFitter(self.ci_datas_analysis, cti_params=cti_params, cti_settings=self.cti_settings)
             return fitter.likelihood
 
@@ -471,7 +471,7 @@ class SerialPhase(Phase):
             """
             cti_params = cti_params_for_instance(instance)
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
-            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_pipe_data)))
+            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_analysis)))
 
         def visualize(self, instance, suffix, during_analysis):
             fitter, ci_post_ctis, residuals, chi_squareds = super().visualize(instance, suffix, during_analysis)
@@ -550,7 +550,7 @@ class SerialHyperPhase(SerialPhase):
             cti_params = cti_params_for_instance(instance)
             pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
                                     hyper_noises=[instance.hyp_ci_regions, instance.hyp_serial_trails])
-            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_pipe_data)))
+            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_analysis)))
 
         def visualize(self, instance, suffix, during_analysis):
             pass
@@ -652,7 +652,7 @@ class ParallelSerialPhase(Phase):
             """
             cti_params = cti_params_for_instance(instance=instance)
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
-            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_pipe_data)))
+            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_analysis)))
 
         def visualize(self, instance, suffix, during_analysis):
             fitter, ci_post_ctis, residuals, chi_squareds = super().visualize(instance, suffix, during_analysis)
