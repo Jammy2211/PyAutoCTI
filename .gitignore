@@ -16,3 +16,4 @@ pySHE_ArCTIC.py
 test/integration/data/
 test/integration/tests/output/
 test/output/
+test/integration/output/
