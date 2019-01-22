@@ -6,8 +6,8 @@ from functools import partial
 import numpy as np
 from astropy.io import fits
 from autofit import conf
-from autofit.core import model_mapper as mm
-from autofit.core import non_linear as nl
+from autofit.mapper import model_mapper as mm
+from autofit.optimize import non_linear as nl
 from autofit.core import phase as ph
 from autofit.core import phase_property
 

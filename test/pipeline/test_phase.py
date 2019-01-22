@@ -3,8 +3,8 @@ from os import path
 import numpy as np
 import pytest
 from autofit import conf
-from autofit.core import model_mapper as mm
-from autofit.core import non_linear as nl
+from autofit.mapper import model_mapper as mm
+from autofit.optimize import non_linear as nl
 from autofit.core import phase_property
 from autofit.core.phase import ResultsCollection
 
