@@ -23,9 +23,9 @@ class CIQuadGeometryIntegration(ci_frame.FrameGeometry):
 
     def __init__(self):
         """This class represents the quadrant geometry of an integration quadrant."""
-        super(CIQuadGeometryIntegration, self).__init__(parallel_overscan=(33, 36, 1, 30),
-                                                        serial_overscan=(0, 33, 31, 36),
-                                                        serial_prescan=(0, 36, 0, 1), corner=(0, 0))
+        super(CIQuadGeometryIntegration, self).__init__(parallel_overscan=ci_frame.Region((33, 36, 1, 30)),
+                                                        serial_overscan=ci_frame.Region((0, 33, 31, 36)),
+                                                        serial_prescan=ci_frame.Region((0, 36, 0, 1)), corner=(0, 0))
 
     def rotate_for_parallel_cti(self, image):
         """ Rotate the quadrant image data before clocking via cti_settings in the parallel direction.
