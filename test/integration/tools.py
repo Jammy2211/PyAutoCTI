@@ -130,5 +130,6 @@ def simulate_integration_quadrant(test_name, cti_params, cti_settings):
                                                      read_noise=None),
                             sim_ci_patterns))
 
-    list(map(lambda sim_ci_data, index: sim_ci_data.output_as_fits(path=output_path, filename='/ci_data_' + str(index)),
+    list(map(lambda sim_ci_data, index:
+             sim_ci_data.output_as_fits(file_path=output_path + '/ci_data_' + str(index) + '.fits'),
              sim_ci_datas, range(len(sim_ci_datas))))

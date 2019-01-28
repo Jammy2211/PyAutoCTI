@@ -12,6 +12,7 @@ from autofit.mapper import model_mapper as mm
 from autofit.optimize import non_linear as nl
 
 from autocti.data import util
+from autocti.data import mask as msk
 from autocti.data.charge_injection import ci_data
 from autocti.data.charge_injection import ci_hyper
 from autocti.data.charge_injection.plotters import ci_plotters
@@ -21,6 +22,8 @@ from autocti.model import arctic_params
 logger = logging.getLogger(__name__)
 logger.level = logging.DEBUG
 
+def default_mask_function(image):
+    return msk.Mask.empty_for_shape(shape=image.shape, frame_geometry=image.frame_geometry, ci_pattern=image.ci_pattern)
 
 class HyperOnly(ph.AbstractPhase):
     pass
@@ -43,7 +46,8 @@ class ConsecutivePool(object):
 
 class Phase(ph.AbstractPhase):
 
-    def __init__(self, optimizer_class=nl.DownhillSimplex, columns=None, rows=None, phase_name=None):
+    def __init__(self, optimizer_class=nl.DownhillSimplex, mask_function=default_mask_function, columns=None, rows=None,
+                 phase_name=None):
         """
         A phase in an analysis pipeline. Uses the set NonLinear optimizer to try to fit models and images passed to it.
 
@@ -54,6 +58,7 @@ class Phase(ph.AbstractPhase):
             The side length of the subgrid
         """
         super().__init__(optimizer_class, phase_name)
+        self.mask_function = mask_function
         self.columns = columns
         self.rows = rows
 
@@ -111,7 +116,7 @@ class Phase(ph.AbstractPhase):
     def extract_ci_data(self, ci_datas):
         return ci_datas
 
-    def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
+    def make_analysis(self, ci_datas, cti_settings, masks=None, previous_results=None, pool=None):
         """
         Create an analysis object. Also calls the prior passing and image modifying functions to allow child classes to
         change the behaviour of the phase.
@@ -130,9 +135,18 @@ class Phase(ph.AbstractPhase):
             An analysis object that the non-linear optimizer calls to determine the fit of a set of values
         """
 
-        ci_datas_analysis = self.extract_ci_data(ci_datas)
+        if masks is None:
+            masks = list(map(lambda ci_data : self.mask_function(image=ci_data.image), ci_datas))
+
+        # TODO : Make mask an input of extract_ci_data and use the class method to edit in the mask.
+        # TODO : ci_datas_fit should include the mask as an attrbiute.
+
+        ci_datas_fit = self.extract_ci_data(ci_datas=ci_datas)
+
+        ci_datas_fit[0].mask = masks[0]
+
         self.pass_priors(previous_results)
-        analysis = self.__class__.Analysis(ci_datas=ci_datas, ci_datas_analysis=ci_datas_analysis,
+        analysis = self.__class__.Analysis(ci_datas_fit=ci_datas_fit,
                                            cti_settings=cti_settings, phase_name=self.phase_name,
                                            previous_results=previous_results, pool=pool)
         return analysis
@@ -140,7 +154,7 @@ class Phase(ph.AbstractPhase):
     # noinspection PyAbstractClass
     class Analysis(nl.Analysis):
 
-        def __init__(self, ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results=None, pool=None):
+        def __init__(self, ci_datas_fit, cti_settings, phase_name, previous_results=None, pool=None):
             """
             An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \
             set of objects describing a model and determines how well they fit the image.
@@ -150,8 +164,8 @@ class Phase(ph.AbstractPhase):
             ci_data : [CIImage.CIImage]
                 The charge injection ci_data-sets.
             """
-            self.ci_datas = ci_datas
-            self.ci_datas_analysis = ci_datas_analysis
+
+            self.ci_datas_fit = ci_datas_fit
             self.cti_settings = cti_settings
             self.phase_name = phase_name
             self.pool = pool or ConsecutivePool
@@ -170,7 +184,7 @@ class Phase(ph.AbstractPhase):
 
         def visualize(self, instance, suffix, during_analysis):
 
-            fitter = self.fitter_analysis_for_instance(instance)
+            fitter = self.fit_for_instance(instance)
             ci_post_ctis = fitter.ci_post_ctis
             residuals = fitter.residuals
             chi_squareds = fitter.chi_squareds
@@ -221,9 +235,9 @@ class Phase(ph.AbstractPhase):
             cti_params = cti_params_for_instance(instance)
             return fitting.CIFitter(self.ci_datas, cti_params=cti_params, cti_settings=self.cti_settings)
 
-        def fitter_analysis_for_instance(self, instance):
+        def fit_for_instance(self, instance):
             cti_params = cti_params_for_instance(instance)
-            return fitting.CIFitter(self.ci_datas_analysis, cti_params=cti_params, cti_settings=self.cti_settings)
+            return fitting.CIFitter(self.ci_datas_fit, cti_params=cti_params, cti_settings=self.cti_settings)
 
     class Result(nl.Result):
 
@@ -251,16 +265,18 @@ def is_prior(value):
 
 
 class ParallelPhase(Phase):
+
     parallel_species = phase_property.PhasePropertyCollection("parallel_species")
     parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
 
     def __init__(self, parallel_species=(), parallel_ccd=None, optimizer_class=nl.MultiNest,
-                 columns=None,
+                 mask_function=default_mask_function, columns=None,
                  phase_name="parallel_phase"):
         """
         A phase with a simple source/CTI model
         """
-        super().__init__(optimizer_class=optimizer_class, columns=columns, rows=None, phase_name=phase_name)
+        super().__init__(optimizer_class=optimizer_class, mask_function=mask_function, columns=columns, rows=None,
+                         phase_name=phase_name)
         self.parallel_species = parallel_species
         self.parallel_ccd = parallel_ccd
 
@@ -269,6 +285,7 @@ class ParallelPhase(Phase):
             (0, self.columns or data.image.frame_geometry.parallel_overscan.total_columns)) for data in ci_datas]
 
     class Analysis(Phase.Analysis):
+
         def fit(self, instance):
             """
             Runs the analysis. Determine how well the supplied cti_params fits the image.
@@ -290,8 +307,8 @@ class ParallelPhase(Phase):
             cti_params = cti_params_for_instance(instance)
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
             if self.pool is not None:
-                return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_analysis)))
-            fitter = fitting.CIFitter(self.ci_datas_analysis, cti_params=cti_params, cti_settings=self.cti_settings)
+                return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
+            fitter = fitting.CIFitter(self.ci_datas_fit, cti_params=cti_params, cti_settings=self.cti_settings)
             return fitter.likelihood
 
         def visualize(self, instance, suffix, during_analysis):
@@ -335,11 +352,12 @@ class ParallelPhase(Phase):
 
 
 class ParallelHyperPhase(ParallelPhase):
+
     hyp_ci_regions = phase_property.PhaseProperty("hyp_ci_regions")
     hyp_parallel_trails = phase_property.PhaseProperty("hyp_parallel_trails")
 
     def __init__(self, parallel_species=(), parallel_ccd=None, hyp_ci_regions=None, hyp_parallel_trails=None,
-                 optimizer_class=nl.MultiNest, columns=None,
+                 optimizer_class=nl.MultiNest, mask_function=default_mask_function, columns=None,
                  phase_name="parallel_hyper_phase"):
         """
         A phase with a simple source/CTI model
@@ -350,7 +368,7 @@ class ParallelHyperPhase(ParallelPhase):
             The class of a non-linear optimizer
         """
         super().__init__(parallel_species=parallel_species, parallel_ccd=parallel_ccd, optimizer_class=optimizer_class,
-                         columns=columns, phase_name=phase_name)
+                         mask_function=mask_function, columns=columns, phase_name=phase_name)
         self.hyp_ci_regions = hyp_ci_regions
         self.hyp_parallel_trails = hyp_parallel_trails
         self.has_noise_scalings = True
@@ -396,9 +414,9 @@ class ParallelHyperPhase(ParallelPhase):
                                          hyper_noises=[instance.hyp_ci_regions,
                                                        instance.hyp_parallel_trails])
 
-        def fitter_analysis_for_instance(self, instance):
+        def fit_for_instance(self, instance):
             cti_params = cti_params_for_instance(instance)
-            return fitting.HyperCIFitter(self.ci_datas_analysis, cti_params=cti_params,
+            return fitting.HyperCIFitter(self.ci_datas_fit, cti_params=cti_params,
                                          cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
                                                                                        instance.hyp_parallel_trails])
 
@@ -427,7 +445,7 @@ class ParallelHyperOnlyPhase(ParallelHyperPhase, HyperOnly):
         analysis = self.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results,
                                       pool=pool)
 
-        return self.__class__.Result(hyper_result.constant, hyper_result.likelihood, hyper_result.variable,
+        return self.__class__.Result(hyper_result.constant, hyper_result.figure_of_merit, hyper_result.variable,
                                      analysis)
 
 
@@ -436,12 +454,11 @@ class SerialPhase(Phase):
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 
     def __init__(self, serial_species=(), serial_ccd=None, optimizer_class=nl.MultiNest,
-                 columns=None,
-                 rows=None, phase_name="serial_phase"):
+                 mask_function=default_mask_function, columns=None, rows=None, phase_name="serial_phase"):
         """
         A phase with a simple source/CTI model
         """
-        super().__init__(optimizer_class=optimizer_class, columns=columns,
+        super().__init__(optimizer_class=optimizer_class, mask_function=mask_function, columns=columns,
                          rows=rows, phase_name=phase_name)
         self.serial_species = serial_species
         self.serial_ccd = serial_ccd
@@ -472,7 +489,7 @@ class SerialPhase(Phase):
             """
             cti_params = cti_params_for_instance(instance)
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
-            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_analysis)))
+            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
 
         def visualize(self, instance, suffix, during_analysis):
             fitter, ci_post_ctis, residuals, chi_squareds = super().visualize(instance, suffix, during_analysis)
@@ -516,14 +533,13 @@ class SerialHyperPhase(SerialPhase):
     hyp_serial_trails = phase_property.PhaseProperty("hyp_serial_trails")
 
     def __init__(self, serial_species=(), serial_ccd=None, hyp_ci_regions=None, hyp_serial_trails=None,
-                 optimizer_class=nl.MultiNest,
-                 columns=None, rows=None,
+                 optimizer_class=nl.MultiNest, mask_function=default_mask_function, columns=None, rows=None,
                  phase_name="serial_hyper_phase"):
         """
         A phase with a simple source/CTI model
         """
         super().__init__(serial_species=serial_species, serial_ccd=serial_ccd, optimizer_class=optimizer_class,
-                         columns=columns, rows=rows, phase_name=phase_name)
+                         mask_function=mask_function, columns=columns, rows=rows, phase_name=phase_name)
         self.hyp_ci_regions = hyp_ci_regions
         self.hyp_serial_trails = hyp_serial_trails
         self.has_noise_scalings = True
@@ -551,7 +567,7 @@ class SerialHyperPhase(SerialPhase):
             cti_params = cti_params_for_instance(instance)
             pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
                                     hyper_noises=[instance.hyp_ci_regions, instance.hyp_serial_trails])
-            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_analysis)))
+            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
 
         def visualize(self, instance, suffix, during_analysis):
             pass
@@ -564,15 +580,9 @@ class SerialHyperPhase(SerialPhase):
                 "Hyper Parameters:\n{}\n{}\n".format(instance.serial, instance.hyp_ci_regions,
                                                      instance.hyp_serial_trails))
 
-        def hyper_fitter_for_instance(self, instance):
+        def hyper_fit_for_instance(self, instance):
             cti_params = cti_params_for_instance(instance)
-            return fitting.HyperCIFitter(self.ci_datas, cti_params=cti_params,
-                                         cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
-                                                                                       instance.hyp_serial_trails])
-
-        def hyper_fitter_analysis_for_instance(self, instance):
-            cti_params = cti_params_for_instance(instance)
-            return fitting.HyperCIFitter(self.ci_datas_analysis, cti_params=cti_params,
+            return fitting.HyperCIFitter(self.ci_datas_fit, cti_params=cti_params,
                                          cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
                                                                                        instance.hyp_serial_trails])
 
@@ -596,12 +606,13 @@ class SerialHyperOnlyPhase(SerialHyperPhase, HyperOnly):
         phase.optimizer.n_live_points = 20
         phase.optimizer.sampling_efficiency = 0.8
 
-        hyper_result = phase.run(ci_datas, cti_settings, previous_results, pool)
+        hyper_result = phase.run(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results,
+                                 pool=pool)
 
         analysis = self.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results,
                                       pool=pool)
 
-        return self.__class__.Result(hyper_result.constant, hyper_result.likelihood, hyper_result.variable,
+        return self.__class__.Result(hyper_result.constant, hyper_result.figure_of_merit, hyper_result.variable,
                                      analysis)
 
 
@@ -612,7 +623,7 @@ class ParallelSerialPhase(Phase):
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 
     def __init__(self, parallel_species=(), serial_species=(), parallel_ccd=None, serial_ccd=None,
-                 optimizer_class=nl.MultiNest,
+                 optimizer_class=nl.MultiNest, mask_function=default_mask_function,
                  phase_name="parallel_serial_phase"):
         """
         A phase with a simple source/CTI model
@@ -622,7 +633,7 @@ class ParallelSerialPhase(Phase):
         optimizer_class: class
             The class of a non-linear optimizer
         """
-        super().__init__(optimizer_class=optimizer_class, columns=None,
+        super().__init__(optimizer_class=optimizer_class, mask_function=mask_function, columns=None,
                          rows=None, phase_name=phase_name)
         self.parallel_species = parallel_species
         self.serial_species = serial_species
@@ -653,7 +664,7 @@ class ParallelSerialPhase(Phase):
             """
             cti_params = cti_params_for_instance(instance=instance)
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
-            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_analysis)))
+            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
 
         def visualize(self, instance, suffix, during_analysis):
             fitter, ci_post_ctis, residuals, chi_squareds = super().visualize(instance, suffix, during_analysis)
@@ -673,7 +684,7 @@ class ParallelSerialPhase(Phase):
             First noises scaling images are of the charge injection regions.
             Second noises scaling images are of the non-charge injection regions in the parallel calibration ci_frame"""
             cti_params = cti_params_for_instance(instance)
-            fitter = fitting.CIFitter(self.ci_datas_analysis, cti_params=cti_params, cti_settings=self.cti_settings)
+            fitter = fitting.CIFitter(self.ci_datas_fit, cti_params=cti_params, cti_settings=self.cti_settings)
             return list(map(lambda chi_squared:
                             [chi_squared.ci_regions_frame_from_frame(),
                              chi_squared.parallel_non_ci_regions_frame_from_frame(),
@@ -695,8 +706,8 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
     hyp_parallel_serial_trails = phase_property.PhaseProperty("hyp_parallel_serial_trails")
 
     def __init__(self, parallel_species=(), serial_species=(), parallel_ccd=None, serial_ccd=None, hyp_ci_regions=None,
-                 hyp_parallel_trails=None,
-                 hyp_serial_trails=None, hyp_parallel_serial_trails=None, optimizer_class=nl.MultiNest,
+                 hyp_parallel_trails=None, hyp_serial_trails=None, hyp_parallel_serial_trails=None,
+                 optimizer_class=nl.MultiNest, mask_function=default_mask_function,
                  phase_name="parallel_serial_hyper_phase"):
         """
         A phase with a simple source/CTI model
@@ -707,7 +718,7 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
             The class of a non-linear optimizer
         """
         super().__init__(parallel_species=parallel_species, serial_species=serial_species, parallel_ccd=parallel_ccd,
-                         serial_ccd=serial_ccd, optimizer_class=optimizer_class,
+                         serial_ccd=serial_ccd, optimizer_class=optimizer_class, mask_function=mask_function,
                          phase_name=phase_name)
         self.hyp_ci_regions = hyp_ci_regions
         self.hyp_parallel_trails = hyp_parallel_trails
@@ -755,17 +766,10 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
                                                              instance.hyp_serial_trails,
                                                              instance.hyp_parallel_serial_trails))
 
-        def fitter_for_instance(self, instance):
+        def fit_for_instance(self, instance):
             cti_params = cti_params_for_instance(instance)
-            return fitting.HyperCIFitter(self.ci_datas, cti_params=cti_params, cti_settings=self.cti_settings,
-                                         hyper_noises=[instance.hyp_ci_regions, instance.hyp_parallel_trails,
-                                                       instance.hyp_serial_trails,
-                                                       instance.hyp_parallel_serial_trails])
-
-        def fitter_analysis_for_instance(self, instance):
-            cti_params = cti_params_for_instance(instance)
-            return fitting.HyperCIFitter(self.ci_datas_analysis, cti_params=cti_params, cti_settings=self.cti_settings,
-                                         hyper_noises=[instance.hyp_ci_regions,
+            return fitting.HyperCIFitter(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params,
+                                         cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
                                                        instance.hyp_parallel_trails,
                                                        instance.hyp_serial_trails,
                                                        instance.hyp_parallel_serial_trails])
@@ -795,21 +799,22 @@ class ParallelSerialHyperOnlyPhase(ParallelSerialHyperPhase, HyperOnly):
         phase.optimizer.n_live_points = 50
         phase.optimizer.sampling_efficiency = 0.5
 
-        hyper_result = phase.run(ci_datas, cti_settings, previous_results, pool)
+        hyper_result = phase.run(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results,
+                                 pool=pool)
 
         analysis = self.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results,
                                       pool=pool)
 
-        return self.__class__.Result(hyper_result.constant, hyper_result.likelihood, hyper_result.variable,
+        return self.__class__.Result(hyper_result.constant, hyper_result.figure_of_merit, hyper_result.variable,
                                      analysis)
 
 
 def pipe_cti(ci_pipe_data, cti_params, cti_settings):
-    fitter = fitting.CIFitter(ci_pipe_data, cti_params=cti_params, cti_settings=cti_settings)
+    fitter = fitting.CIFitter(ci_datas_fit=[ci_pipe_data], cti_params=cti_params, cti_settings=cti_settings)
     return fitter.likelihood
 
 
 def pipe_cti_hyper(ci_pipe_data, cti_params, cti_settings, hyper_noises):
-    fitter = fitting.HyperCIFitter(ci_pipe_data, cti_params=cti_params, cti_settings=cti_settings,
+    fitter = fitting.HyperCIFitter(ci_datas_fit=[ci_pipe_data], cti_params=cti_params, cti_settings=cti_settings,
                                    hyper_noises=hyper_noises)
     return fitter.scaled_likelihood
