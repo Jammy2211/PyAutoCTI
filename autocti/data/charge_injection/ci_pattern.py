@@ -120,9 +120,6 @@ class CIPattern(object):
         """
         infoio.output_class_info(self, path, filename)
 
-    def compute_ci_pre_cti(self, *values):
-        raise AssertionError("CIPattern - compute_ci_pre_cti should be overriden by child class")
-
     def check_pattern_is_within_image_dimensions(self, dimensions):
 
         for region in self.regions:
@@ -148,7 +145,7 @@ class CIPatternUniform(CIPattern):
         """
         super(CIPatternUniform, self).__init__(normalization, regions)
 
-    def compute_ci_pre_cti(self, shape):
+    def ci_pre_cti_from_shape(self, shape):
         """Compute the pre-cti image of the uniform charge injection ci_pattern.
 
         This is performed by going to each charge injection region and adding the charge injection normalization value.
@@ -197,7 +194,7 @@ class CIPatternNonUniform(CIPattern):
         super(CIPatternNonUniform, self).__init__(normalization, regions)
         self.row_slope = row_slope
 
-    def compute_ci_pre_cti(self, image, mask):
+    def ci_pre_cti_from_ci_image_and_mask(self, ci_image, mask):
         """Compute the pre-cti image of this non-uniform charge injection ci_pattern.
 
         This is performed by estimating the charge injection of each column, by taking the average value of all charge \
@@ -206,13 +203,13 @@ class CIPatternNonUniform(CIPattern):
 
         Parameters
         -----------
-        image : ndarray
+        ci_image : ndarray
             2D array of ci_pre_ctis ci_data the column non-uniformity is estimated from.
         mask : ndarray
             2D array of masked ci_pre_ctis pixels, used to mask cosmic rays.
         """
 
-        dimensions = image.shape
+        dimensions = ci_image.shape
 
         self.check_pattern_is_within_image_dimensions(dimensions)
 
@@ -220,7 +217,7 @@ class CIPatternNonUniform(CIPattern):
 
         for column_number in range(dimensions[1]):
 
-            means_of_columns = self.mean_charge_in_all_image_columns(column=image[:, column_number],
+            means_of_columns = self.mean_charge_in_all_image_columns(column=ci_image[:, column_number],
                                                                      column_mask=mask[:, column_number])
 
             if None in means_of_columns:

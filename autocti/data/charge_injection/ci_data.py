@@ -26,6 +26,7 @@ Author: James Nightingale
 import numpy as np
 
 from autocti import exc
+from autocti.data import util
 from autocti.data import cti_image
 from autocti.data import mask as msk
 from autocti.data.charge_injection import ci_frame
@@ -34,9 +35,7 @@ from autocti.model import pyarctic
 from autocti.tools import infoio
 
 
-class CIMask(ci_frame.CIFrame, msk.Mask):
-    pass
-
+## TODO : Add mask to the calibration data routines.
 
 class CIData(object):
 
@@ -116,14 +115,14 @@ class CIImage(ci_frame.CIFrameCTI):
         ci_post_cti = ci_pre_cti.add_cti_to_image(cti_params, cti_settings)
 
         if read_noise is not None:
-            ci_post_cti += create_read_noise_map(shape=shape, read_noise=read_noise, noise_seed=noise_seed)
+            ci_post_cti += read_noise_map_from_shape_and_sigma(shape=shape, sigma=read_noise, noise_seed=noise_seed)
 
         # TODO : This is ugly... fix in future
         sim_image = CIImage(frame_geometry=frame_geometry, ci_pattern=ci_pattern, array=ci_post_cti[:, :])
         sim_image.ci_pre_cti = ci_pre_cti
         return sim_image
 
-    def create_ci_pre_cti(self, mask=None):
+    def ci_pre_cti_from_ci_pattern_and_mask(self, mask=None):
         """Setup a pre-cti image from this charge injection ci_data, using the charge injection ci_pattern.
 
         The pre-cti image is computed depending on whether the charge injection ci_pattern is uniform, non-uniform or \
@@ -132,17 +131,17 @@ class CIImage(ci_frame.CIFrameCTI):
 
         if type(self.ci_pattern) == pattern.CIPatternUniform:
 
-            ci_pre_cti = self.ci_pattern.compute_ci_pre_cti(self.shape)
+            ci_pre_cti = self.ci_pattern.ci_pre_cti_from_shape(shape=self.shape)
             return CIPreCTI(frame_geometry=self.frame_geometry, array=ci_pre_cti, ci_pattern=self.ci_pattern)
 
         elif type(self.ci_pattern) == pattern.CIPatternNonUniform:
 
-            ci_pre_cti = self.ci_pattern.compute_ci_pre_cti(self, mask)
+            ci_pre_cti = self.ci_pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=self, mask=mask)
             return CIPreCTI(frame_geometry=self.frame_geometry, array=ci_pre_cti, ci_pattern=self.ci_pattern)
 
         elif type(self.ci_pattern) == pattern.CIPatternUniformFast:
 
-            ci_pre_cti = self.ci_pattern.compute_ci_pre_cti(self.shape)
+            ci_pre_cti = self.ci_pattern.ci_pre_cti_from_shape(shape=self.shape)
             return CIPreCTIFast(frame_geometry=self.frame_geometry, array=ci_pre_cti, ci_pattern=self.ci_pattern)
 
         else:
@@ -296,7 +295,94 @@ class CIPreCTIFast(CIPreCTI):
 
 
 
-def create_baseline_noise(shape, read_noise):
+
+def load_ci_data_list(frame_geometries, ci_patterns,
+                      ci_image_paths, ci_image_hdus=None,
+                      ci_noise_map_paths=None, ci_noise_map_hdus=None,
+                      ci_pre_cti_paths=None, ci_pre_cti_hdus=None, ci_pre_cti_from_image=False,
+                      masks=None):
+
+    list_size = len(ci_image_paths)
+
+    ci_datas = []
+
+    if ci_pre_cti_paths is None:
+        ci_pre_cti_paths = list_size*[None]
+
+    if masks is None:
+        masks = list_size*[None]
+
+    if ci_image_hdus is None:
+        ci_image_hdus = list_size*[0]
+
+    if ci_noise_map_hdus is None:
+        ci_noise_map_hdus = list_size*[0]
+
+    if ci_pre_cti_hdus is None:
+        ci_pre_cti_hdus = list_size*[0]
+
+    for data_index in range(list_size):
+
+        ci_data = load_ci_data(frame_geometry=frame_geometries[data_index], ci_pattern=ci_patterns[data_index],
+                               ci_image_path=ci_image_paths[data_index], ci_image_hdu=ci_image_hdus[data_index],
+                               ci_noise_map_path=ci_noise_map_paths[data_index],
+                               ci_noise_map_hdu=ci_noise_map_hdus[data_index],
+                               ci_pre_cti_path=ci_pre_cti_paths[data_index],
+                               ci_pre_cti_hdu=ci_pre_cti_hdus[data_index],
+                               ci_pre_cti_from_image=ci_pre_cti_from_image, mask=masks[data_index])
+
+        ci_datas.append(ci_data)
+
+    return ci_datas
+
+def load_ci_data(frame_geometry, ci_pattern,
+                 ci_image_path, ci_image_hdu=0,
+                 ci_noise_map_path=None, ci_noise_map_hdu=0,
+                 ci_noise_map_from_single_value=None,
+                 ci_pre_cti_path=None, ci_pre_cti_hdu=0, ci_pre_cti_from_image=False,
+                 mask=None):
+
+    ci_image = load_ci_image(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
+                             ci_image_path=ci_image_path, ci_image_hdu=ci_image_hdu)
+
+    ci_noise_map = load_ci_noise_map(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
+                                     ci_noise_map_path=ci_noise_map_path, ci_noise_map_hdu=ci_noise_map_hdu,
+                                     ci_noise_map_from_single_value=ci_noise_map_from_single_value,
+                                     shape=ci_image.shape)
+
+    ci_pre_cti = load_ci_pre_cti(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
+                                 ci_pre_cti_path=ci_pre_cti_path, ci_pre_cti_hdu=ci_pre_cti_hdu,
+                                 ci_image=ci_image, ci_pre_cti_from_image=ci_pre_cti_from_image, mask=mask)
+
+    return CIData(image=ci_image, noise_map=ci_noise_map, ci_pre_cti=ci_pre_cti)
+
+def load_ci_image(frame_geometry, ci_pattern, ci_image_path, ci_image_hdu):
+    return CIImage(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
+                   array=util.numpy_array_from_fits(file_path=ci_image_path, hdu=ci_image_hdu))
+
+def load_ci_noise_map(frame_geometry, ci_pattern, ci_noise_map_path, ci_noise_map_hdu, ci_noise_map_from_single_value,
+                      shape):
+
+    if ci_noise_map_path is not None and ci_noise_map_from_single_value is None:
+        return ci_frame.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
+                            array=util.numpy_array_from_fits(file_path=ci_noise_map_path, hdu=ci_noise_map_hdu))
+    elif ci_noise_map_path is None and ci_noise_map_from_single_value is not None:
+        return ci_frame.CIFrame.from_single_value(value=ci_noise_map_from_single_value, shape=shape,
+                                                  frame_geometry=frame_geometry, ci_pattern=ci_pattern)
+    else:
+        raise exc.CIDataException(
+            'You have supplied both a ci_noise_map_path and a ci_noise_map_from_single_value value. Only one quantity '
+            'may be supplied.')
+
+def load_ci_pre_cti(frame_geometry, ci_pattern, ci_pre_cti_path, ci_pre_cti_hdu,
+                    ci_image=None, ci_pre_cti_from_image=False, mask=None):
+    if not ci_pre_cti_from_image:
+        return CIPreCTI(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
+                       array=util.numpy_array_from_fits(file_path=ci_pre_cti_path, hdu=ci_pre_cti_hdu))
+    elif ci_pre_cti_from_image:
+        return ci_image.ci_pre_cti_from_ci_pattern_and_mask(mask=mask)
+
+def baseline_noise_map_from_shape_and_sigma(shape, sigma):
     """
     Create the noises used for CTI Calibration, where each value represents the standard deviation of the \
     pixel's assumed Gaussian noises.
@@ -310,10 +396,10 @@ def create_baseline_noise(shape, read_noise):
     read_noise : float
         The read-noises level, defined as the standard deviation of a Gaussian with mean 0.0.
     """
-    return np.ones(shape) * read_noise
+    return np.ones(shape) * sigma
 
 
-def create_read_noise_map(shape, read_noise, noise_seed=-1):
+def read_noise_map_from_shape_and_sigma(shape, sigma, noise_seed=-1):
     """Generate a two-dimensional read noises-map, generating values from a Gaussian distribution with mean 0.0.
 
     Params
@@ -326,7 +412,7 @@ def create_read_noise_map(shape, read_noise, noise_seed=-1):
         The seed of the random number generator, used for the random noises maps.
     """
     setup_random_seed(noise_seed)
-    read_noise_map = np.random.normal(loc=0.0, scale=read_noise, size=shape)
+    read_noise_map = np.random.normal(loc=0.0, scale=sigma, size=shape)
     return read_noise_map
 
 

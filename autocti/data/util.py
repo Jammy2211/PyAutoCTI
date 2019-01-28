@@ -34,19 +34,16 @@ def make_path_if_does_not_exist(path):
         os.makedirs(path)
 
 
-def numpy_array_to_fits(array, path, filename):
-    make_path_if_does_not_exist(path)
+def numpy_array_to_fits(array, file_path, overwrite=False):
 
-    try:
-        os.remove(path + filename + '.fits')
-    except OSError:
-        pass
+    if overwrite and os.path.exists(file_path):
+        os.remove(file_path)
 
     new_hdr = fits.Header()
     hdu = fits.PrimaryHDU(array, new_hdr)
-    hdu.writeto(path + filename + '.fits')
+    hdu.writeto(file_path)
 
 
-def numpy_array_from_fits(path, filename, hdu):
-    hdu_list = fits.open(path + filename + '.fits')
+def numpy_array_from_fits(file_path, hdu):
+    hdu_list = fits.open(file_path)
     return np.array(hdu_list[hdu].data)
