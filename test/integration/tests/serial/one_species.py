@@ -3,6 +3,8 @@ import os
 from autofit import conf
 from autofit.optimize import non_linear as nl
 from autofit.mapper import model_mapper as mm
+from autocti.data.charge_injection import ci_data
+from autocti.data.charge_injection import ci_pattern
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
 
@@ -36,10 +38,16 @@ def pipeline():
 
     tools.reset_paths(test_name=test_name, output_path=output_path)
     tools.simulate_integration_quadrant(test_name=test_name, cti_params=cti_params, cti_settings=cti_settings)
-    ci_datas = tools.load_ci_datas(test_name=test_name)
+
+    pattern = ci_pattern.CIPatternUniform(normalization=normalizations[0], regions=ci_regions)
+
+    data = ci_data.load_ci_data(frame_geometry=frame_geometry, ci_pattern=pattern,
+                                    ci_image_path=path+'/data/'+test_name+'/ci_data_0.fits',
+                                    ci_noise_map_from_single_value=1.0,
+                                    ci_pre_cti_from_image=True)
 
     pipeline = make_pipeline(test_name=test_name)
-    pipeline.run(ci_datas=[ci_datas], cti_settings=cti_settings)
+    pipeline.run(ci_datas=[data], cti_settings=cti_settings)
 
 
 def make_pipeline(test_name):

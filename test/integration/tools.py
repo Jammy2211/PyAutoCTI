@@ -1,13 +1,20 @@
 import os
 import shutil
+from os import path
+
+from autofit import conf
 
 from autocti.data.charge_injection import ci_data
-from autocti.data.charge_injection import ci_frame, ci_pattern
+from autocti.data.charge_injection import ci_frame
+from autocti.data.charge_injection import ci_pattern
+
+import os
 
 dirpath = os.path.dirname(os.path.realpath(__file__))
 
 
 def reset_paths(test_name, output_path):
+
     try:
         shutil.rmtree(dirpath + '/data/' + test_name)
     except FileNotFoundError:
@@ -108,6 +115,7 @@ frame_geometry = CIQuadGeometryIntegration()
 
 
 def simulate_integration_quadrant(test_name, cti_params, cti_settings):
+
     output_path = "{}/data/".format(os.path.dirname(os.path.realpath(__file__))) + test_name + '/'
 
     if os.path.exists(output_path) == False:
@@ -124,27 +132,3 @@ def simulate_integration_quadrant(test_name, cti_params, cti_settings):
 
     list(map(lambda sim_ci_data, index: sim_ci_data.output_as_fits(path=output_path, filename='/ci_data_' + str(index)),
              sim_ci_datas, range(len(sim_ci_datas))))
-
-
-def load_ci_datas(test_name):
-    data_path = "{}/data/{}".format(dirpath, test_name)
-
-    ci_patterns = ci_pattern.create_uniform_via_lists(normalizations=normalizations, regions=ci_regions)
-
-    images = list(map(lambda pattern, index:
-                      ci_data.CIImage.from_fits_and_ci_pattern(path=data_path, filename='/ci_data_' + str(index), hdu=0,
-                                                               frame_geometry=frame_geometry, ci_pattern=pattern),
-                      ci_patterns, range(len(ci_patterns))))
-
-    noises = list(map(lambda pattern:
-                      ci_frame.CIFrame.from_single_value(value=1.0, shape=shape, frame_geometry=frame_geometry,
-                                                         ci_pattern=pattern), ci_patterns))
-
-    masks = list(map(lambda pattern:
-                     ci_data.CIMask.create(frame_geometry=frame_geometry, ci_pattern=pattern, shape=shape),
-                     ci_patterns))
-
-    ci_pre_ctis = list(map(lambda ci_image: ci_image.create_ci_pre_cti(), images))
-
-    return [ci_data.CIData(image, mask, noise, ci_pre_cti) for image, mask, noise, ci_pre_cti in
-            zip(images, noises, masks, ci_pre_ctis)]
