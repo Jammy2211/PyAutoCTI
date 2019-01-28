@@ -2,7 +2,8 @@ import os
 
 from autofit import conf
 from autofit.optimize import non_linear as nl
-from autofit.mapper import model_mapper as mm
+from autofit.mapper import prior
+from autofit.mapper import prior_model
 from autocti.data.charge_injection import ci_data
 from autocti.data.charge_injection import ci_pattern
 from autocti.model import arctic_params
@@ -39,7 +40,7 @@ def pipeline():
     tools.reset_paths(test_name=test_name, output_path=output_path)
     tools.simulate_integration_quadrant(test_name=test_name, cti_params=cti_params, cti_settings=cti_settings)
 
-    pattern = ci_pattern.CIPatternUniform(normalization=normalization, regions=ci_regions)
+    pattern = ci_pattern.CIPatternUniform(normalization=normalizations[0], regions=ci_regions)
 
     data = ci_data.load_ci_data(frame_geometry=frame_geometry, ci_pattern=pattern,
                                  ci_image_path=path+'/data/'+test_name+'/ci_data_0.fits',
@@ -59,7 +60,7 @@ def make_pipeline(test_name):
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
-    phase1 = ParallelPhase(optimizer_class=nl.MultiNest, parallel_species=[mm.PriorModel(arctic_params.Species)],
+    phase1 = ParallelPhase(optimizer_class=nl.MultiNest, parallel_species=[prior_model.PriorModel(arctic_params.Species)],
                            parallel_ccd=arctic_params.CCD, phase_name="{}/phase1".format(test_name))
 
     phase1.optimizer.n_live_points = 60

@@ -31,8 +31,8 @@ from autocti.data.fitting import util
 
 class CIFitter(object):
 
-    def __init__(self, ci_datas, cti_params, cti_settings):
-        self.ci_datas = ci_datas
+    def __init__(self, ci_datas_fit, cti_params, cti_settings):
+        self.ci_datas_fit = ci_datas_fit
         self.cti_params = cti_params
         self.cti_settings = cti_settings
 
@@ -41,19 +41,19 @@ class CIFitter(object):
                         ci_frame.CIFrame(frame_geometry=ci_data.image.frame_geometry,
                                          ci_pattern=ci_data.image.ci_pattern,
                                          array=array),
-                        arrays, self.ci_datas))
+                        arrays, self.ci_datas_fit))
 
     @property
     def ci_post_ctis(self):
         ci_post_ctis = list(map(lambda ci_data:
                                 ci_data.ci_pre_cti.create_ci_post_cti(cti_params=self.cti_params,
-                                                                      cti_settings=self.cti_settings), self.ci_datas))
+                                                                      cti_settings=self.cti_settings), self.ci_datas_fit))
         return self.as_ci_frames(ci_post_ctis)
 
     @property
     def noise_term(self):
         return np.sum(list(map(lambda ci_data: util.noise_term_from_mask_and_noise(ci_data.mask, ci_data.noise),
-                               self.ci_datas)))
+                               self.ci_datas_fit)))
 
     @property
     def residuals(self):
@@ -68,7 +68,7 @@ class CIFitter(object):
         """
         residuals = list(map(lambda ci_data, ci_post_cti:
                              util.residuals_from_datas_masks_and_model_datas(ci_data.image, ci_data.mask, ci_post_cti),
-                             self.ci_datas, self.ci_post_ctis))
+                             self.ci_datas_fit, self.ci_post_ctis))
 
         return self.as_ci_frames(residuals)
 
@@ -85,7 +85,7 @@ class CIFitter(object):
         """
         chi_squareds = list(map(lambda ci_data, residuals:
                                 util.chi_squareds_from_residuals_and_noise(residuals, ci_data.noise),
-                                self.ci_datas, self.residuals))
+                                self.ci_datas_fit, self.residuals))
 
         return self.as_ci_frames(chi_squareds)
 
@@ -109,7 +109,7 @@ class CIFitter(object):
 
 class HyperCIFitter(CIFitter):
 
-    def __init__(self, ci_datas, cti_params, cti_settings, hyper_noises):
+    def __init__(self, ci_datas_fit, cti_params, cti_settings, hyper_noises):
         """Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian framework.
         Params
         -----------
@@ -122,20 +122,20 @@ class HyperCIFitter(CIFitter):
         noise_scalings:
             The ci_hyper-parameter(s) which the noise_scalings is multiplied by to scale the noises.
         """
-        super(HyperCIFitter, self).__init__(ci_datas, cti_params, cti_settings)
+        super(HyperCIFitter, self).__init__(ci_datas_fit, cti_params, cti_settings)
         self.hyper_noises = hyper_noises
 
     @property
     def scaled_noises(self):
         scaled_noises = list(map(lambda ci_data:
                                  scaled_noise_from_noise_and_noise_scalings(ci_data.noise, ci_data.noise_scalings,
-                                                                            self.hyper_noises), self.ci_datas))
+                                                                            self.hyper_noises), self.ci_datas_fit))
         return self.as_ci_frames(scaled_noises)
 
     @property
     def scaled_noise_term(self):
         return np.sum(list(map(lambda ci_data, scaled_noise: noise_term_from_mask_and_noise(ci_data.mask, scaled_noise),
-                               self.ci_datas, self.scaled_noises)))
+                               self.ci_datas_fit, self.scaled_noises)))
 
     @property
     def scaled_chi_squareds(self):

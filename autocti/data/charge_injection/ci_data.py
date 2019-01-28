@@ -40,10 +40,15 @@ from autocti.tools import infoio
 class CIData(object):
 
     def __init__(self, image, noise_map, ci_pre_cti, noise_scaling=None):
+
         self.image = image
         self.noise_map = noise_map
         self.ci_pre_cti = ci_pre_cti
         self.noise_scaling = noise_scaling
+
+    @property
+    def shape(self):
+        return self.image.shape
 
     def map(self, func):
         return CIData(image=func(self.image),

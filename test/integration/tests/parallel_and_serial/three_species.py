@@ -2,7 +2,8 @@ import os
 
 from autofit import conf
 from autofit.optimize import non_linear as nl
-from autofit.mapper import model_mapper as mm
+from autofit.mapper import prior
+from autofit.mapper import prior_model
 from autocti.data.charge_injection import ci_data
 from autocti.data.charge_injection import ci_pattern
 from autocti.model import arctic_params
@@ -76,13 +77,13 @@ def make_pipeline(test_name):
             self.serial_ccd.well_fill_gamma = 0.0
 
     phase1 = ParallelSerialPhase(optimizer_class=nl.MultiNest,
-                                 parallel_species=[mm.PriorModel(arctic_params.Species),
-                                                   mm.PriorModel(arctic_params.Species),
-                                                   mm.PriorModel(arctic_params.Species)],
+                                 parallel_species=[prior_model.PriorModel(arctic_params.Species),
+                                                   prior_model.PriorModel(arctic_params.Species),
+                                                   prior_model.PriorModel(arctic_params.Species)],
                                  parallel_ccd=arctic_params.CCD,
-                                 serial_species=[mm.PriorModel(arctic_params.Species),
-                                                 mm.PriorModel(arctic_params.Species),
-                                                 mm.PriorModel(arctic_params.Species)],
+                                 serial_species=[prior_model.PriorModel(arctic_params.Species),
+                                                 prior_model.PriorModel(arctic_params.Species),
+                                                 prior_model.PriorModel(arctic_params.Species)],
                                  serial_ccd=arctic_params.CCD, phase_name="{}/phase1".format(test_name))
 
     phase1.optimizer.n_live_points = 60
