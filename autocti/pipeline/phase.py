@@ -6,8 +6,8 @@ from functools import partial
 import numpy as np
 from astropy.io import fits
 from autofit import conf
-from autofit.core import phase as ph
-from autofit.core import phase_property
+from autofit.tools import phase as ph
+from autofit.tools import phase_property
 from autofit.mapper import model_mapper as mm
 from autofit.optimize import non_linear as nl
 
@@ -139,6 +139,7 @@ class Phase(ph.AbstractPhase):
 
     # noinspection PyAbstractClass
     class Analysis(nl.Analysis):
+
         def __init__(self, ci_datas, ci_datas_analysis, cti_settings, phase_name, previous_results=None, pool=None):
             """
             An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \

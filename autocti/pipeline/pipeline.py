@@ -1,6 +1,6 @@
 import logging
 
-from autofit.core.phase import ResultsCollection
+from autofit.tools.phase import ResultsCollection
 
 from autocti.pipeline import phase as ph
 
