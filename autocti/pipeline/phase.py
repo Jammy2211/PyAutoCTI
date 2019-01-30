@@ -16,7 +16,7 @@ from autocti.data import mask as msk
 from autocti.data.charge_injection import ci_data
 from autocti.data.charge_injection import ci_hyper
 from autocti.data.charge_injection.plotters import ci_plotters
-from autocti.data.fitting import fitting
+from autocti.data.charge_injection import ci_fit
 from autocti.model import arctic_params
 
 logger = logging.getLogger(__name__)
@@ -222,7 +222,7 @@ class Phase(ph.AbstractPhase):
 
             Returns
             -------
-            fit: fitting.Fit
+            fit: ci_fit.Fit
                 How fit the model is and the model
             """
             raise NotImplementedError()
@@ -231,13 +231,9 @@ class Phase(ph.AbstractPhase):
         def log(cls, instance):
             raise NotImplementedError()
 
-        def fitter_for_instance(self, instance):
-            cti_params = cti_params_for_instance(instance)
-            return fitting.CIFitter(self.ci_datas, cti_params=cti_params, cti_settings=self.cti_settings)
-
         def fit_for_instance(self, instance):
             cti_params = cti_params_for_instance(instance)
-            return fitting.CIFitter(self.ci_datas_fit, cti_params=cti_params, cti_settings=self.cti_settings)
+            return ci_fit.CIFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params, cti_settings=self.cti_settings)
 
     class Result(nl.Result):
 
@@ -308,8 +304,8 @@ class ParallelPhase(Phase):
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
             if self.pool is not None:
                 return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
-            fitter = fitting.CIFitter(self.ci_datas_fit, cti_params=cti_params, cti_settings=self.cti_settings)
-            return fitter.likelihood
+            fit = ci_fit.CIFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params, cti_settings=self.cti_settings)
+            return fit.likelihood
 
         def visualize(self, instance, suffix, during_analysis):
 
@@ -338,7 +334,7 @@ class ParallelPhase(Phase):
             """
             First noises scaling images are of the charge injection regions.
             Second noises scaling images are of the non-charge injection regions in the parallel calibration ci_frame"""
-            fitter = self.fitter_for_instance(instance)
+            fitter = self.fit_for_instance(instance)
             return list(map(lambda chi_squared:
                             [chi_squared.ci_regions_frame_from_frame(),
                              chi_squared.parallel_non_ci_regions_frame_from_frame()],
@@ -408,15 +404,9 @@ class ParallelHyperPhase(ParallelPhase):
                 "Hyper Parameters:\n{}\n{}\n".format(instance.parallel, instance.hyp_ci_regions,
                                                      instance.hyp_parallel_trails))
 
-        def fitter_for_instance(self, instance):
-            cti_params = cti_params_for_instance(instance)
-            return fitting.HyperCIFitter(self.ci_datas, cti_params=cti_params, cti_settings=self.cti_settings,
-                                         hyper_noises=[instance.hyp_ci_regions,
-                                                       instance.hyp_parallel_trails])
-
         def fit_for_instance(self, instance):
             cti_params = cti_params_for_instance(instance)
-            return fitting.HyperCIFitter(self.ci_datas_fit, cti_params=cti_params,
+            return ci_fit.CIHyperFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params,
                                          cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
                                                                                        instance.hyp_parallel_trails])
 
@@ -515,7 +505,7 @@ class SerialPhase(Phase):
             First noises scaling images are of the charge injection regions.
             Second noises scaling images are of the non-charge injection regions in the serial calibration ci_frame
             """
-            fitter = self.fitter_for_instance(instance)
+            fitter = self.fit_for_instance(instance)
             return list(map(lambda chi_squared:
                             [chi_squared.ci_regions_frame_from_frame(),
                              chi_squared.serial_all_trails_frame_from_frame()],
@@ -582,7 +572,7 @@ class SerialHyperPhase(SerialPhase):
 
         def hyper_fit_for_instance(self, instance):
             cti_params = cti_params_for_instance(instance)
-            return fitting.HyperCIFitter(self.ci_datas_fit, cti_params=cti_params,
+            return ci_fit.CIHyperFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params,
                                          cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
                                                                                        instance.hyp_serial_trails])
 
@@ -684,13 +674,13 @@ class ParallelSerialPhase(Phase):
             First noises scaling images are of the charge injection regions.
             Second noises scaling images are of the non-charge injection regions in the parallel calibration ci_frame"""
             cti_params = cti_params_for_instance(instance)
-            fitter = fitting.CIFitter(self.ci_datas_fit, cti_params=cti_params, cti_settings=self.cti_settings)
+            fit = ci_fit.CIFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params, cti_settings=self.cti_settings)
             return list(map(lambda chi_squared:
                             [chi_squared.ci_regions_frame_from_frame(),
                              chi_squared.parallel_non_ci_regions_frame_from_frame(),
                              chi_squared.serial_all_trails_frame_from_frame(),
                              chi_squared.serial_overscan_non_trails_frame_from_frame()],
-                            fitter.chi_squareds))
+                            fit.chi_squareds))
 
     class Result(Phase.Result):
 
@@ -768,7 +758,7 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
 
         def fit_for_instance(self, instance):
             cti_params = cti_params_for_instance(instance)
-            return fitting.HyperCIFitter(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params,
+            return ci_fit.CIHyperFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params,
                                          cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
                                                        instance.hyp_parallel_trails,
                                                        instance.hyp_serial_trails,
@@ -810,11 +800,11 @@ class ParallelSerialHyperOnlyPhase(ParallelSerialHyperPhase, HyperOnly):
 
 
 def pipe_cti(ci_pipe_data, cti_params, cti_settings):
-    fitter = fitting.CIFitter(ci_datas_fit=[ci_pipe_data], cti_params=cti_params, cti_settings=cti_settings)
+    fitter = ci_fit.CIFit(ci_datas_fit=[ci_pipe_data], cti_params=cti_params, cti_settings=cti_settings)
     return fitter.likelihood
 
 
 def pipe_cti_hyper(ci_pipe_data, cti_params, cti_settings, hyper_noises):
-    fitter = fitting.HyperCIFitter(ci_datas_fit=[ci_pipe_data], cti_params=cti_params, cti_settings=cti_settings,
+    fitter = ci_fit.CIHyperFit(ci_datas_fit=[ci_pipe_data], cti_params=cti_params, cti_settings=cti_settings,
                                    hyper_noises=hyper_noises)
-    return fitter.scaled_likelihood
+    return fitter.likelihood

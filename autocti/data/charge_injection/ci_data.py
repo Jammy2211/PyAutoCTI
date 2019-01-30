@@ -39,12 +39,12 @@ from autocti.tools import infoio
 
 class CIData(object):
 
-    def __init__(self, image, noise_map, ci_pre_cti, noise_scaling=None):
+    def __init__(self, image, noise_map, ci_pre_cti, noise_scalings=None):
 
         self.image = image
         self.noise_map = noise_map
         self.ci_pre_cti = ci_pre_cti
-        self.noise_scaling = noise_scaling
+        self.noise_scalings = noise_scalings
 
     @property
     def shape(self):
@@ -54,7 +54,7 @@ class CIData(object):
         return CIData(image=func(self.image),
                       noise_map=func(self.noise_map),
                       ci_pre_cti=func(self.ci_pre_cti),
-                      noise_scaling=func(self.noise_scaling) if self.noise_scaling is not None else self.noise_scaling)
+                      noise_scalings=func(self.noise_scalings) if self.noise_scalings is not None else self.noise_scalings)
 
     def parallel_calibration_data(self, columns):
         return self.map(lambda obj: obj.parallel_calibration_section_for_columns(columns))
@@ -64,6 +64,49 @@ class CIData(object):
 
     def parallel_serial_calibration_data(self):
         return self.map(lambda obj: obj.parallel_serial_calibration_section())
+
+
+class CIDataFit(object):
+
+    def __init__(self, image, noise_map, ci_pre_cti, mask, noise_scalings=None):
+        """A fitting image is the collection of data components (e.g. the image, noise-maps, PSF, etc.) which are used \
+        to generate and fit it with a model image.
+
+        The fitting image is in 2D and masked, primarily to removoe cosmic rays.
+
+        The fitting image also includes a number of attributes which are used to performt the fit, including (y,x) \
+        grids of coordinates, convolvers and other utilities.
+
+        Parameters
+        ----------
+        image : im.Image
+            The 2D observed image and other observed quantities (noise-map, PSF, exposure-time map, etc.)
+        mask: msk.Mask
+            The 2D mask that is applied to image data.
+
+        Attributes
+        ----------
+        image : ScaledSquarePixelArray
+            The 2D observed image data (not an instance of im.Image, so does not include the other data attributes,
+            which are explicitly made as new attributes of the fitting image).
+        noise_map : NoiseMap
+            An array describing the RMS standard deviation error in each pixel, preferably in units of electrons per
+            second.
+        mask: msk.Mask
+            The 2D mask that is applied to image data.
+        """
+        self.image = image
+        self.noise_map = noise_map
+        self.ci_pre_cti = ci_pre_cti
+        self.mask = mask
+        self.noise_scalings = noise_scalings
+
+    def __array_finalize__(self, obj):
+        if isinstance(obj, CIDataFit):
+            self.image = obj.image
+            self.noise_map = obj.noise_map
+            self.mask = obj.mask
+            self.noise_scalings = obj.noise_scalings
 
 
 class CIImage(ci_frame.CIFrameCTI):
