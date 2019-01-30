@@ -139,7 +139,7 @@ class TestCIData(object):
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
-        assert result.noise_scaling is None
+        assert result.noise_scalings is None
 
 
 class TestCIImage(object):
@@ -677,6 +677,21 @@ class TestCIPreCTI(object):
             assert ci_pre_cti.ci_pattern.regions == pattern.regions == [(0, 1, 0, 1)]
 
     class TestSetupCIPostCTI:
+
+        def test__attributes_of_pre_ci_image_are_passed(self, arctic_both, params_both):
+
+            frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
+            pattern = ci_pattern.CIPatternUniform(normalization=10.0, regions=[(2, 3, 2, 3)])
+
+            ci_pre_cti = np.zeros((5, 5))
+            ci_pre_cti[2, 2] = 10.0
+
+            ci_pre_cti = ci_data.CIPreCTI(frame_geometry=frame_geometry, array=ci_pre_cti, ci_pattern=pattern)
+
+            ci_post_cti = ci_pre_cti.create_ci_post_cti(params_both, arctic_both)
+
+            assert ci_post_cti.frame_geometry == frame_geometry
+            assert ci_post_cti.ci_pattern == pattern
 
         def test__simple_case__sets_up_post_cti_correctly(self, arctic_both, params_both):
             pattern = ci_pattern.CIPatternUniform(normalization=10.0, regions=[(2, 3, 2, 3)])
