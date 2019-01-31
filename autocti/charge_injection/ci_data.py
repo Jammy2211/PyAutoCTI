@@ -32,7 +32,6 @@ from autocti.data import mask as msk
 from autocti.charge_injection import ci_frame
 from autocti.charge_injection import ci_pattern as pattern
 from autocti.model import pyarctic
-from autocti.tools import infoio
 
 
 ## TODO : Add mask to the calibration data routines.
@@ -196,11 +195,6 @@ class CIImage(ci_frame.CIFrameCTI):
             raise exc.CIPatternException('the CIPattern of the CIImage is not an instance of '
                                          'a known ci_pattern class')
 
-    def generate_info(self):
-        """Generate string containing information on the charge injection image (and its ci_pattern)."""
-        info = infoio.generate_class_info(self, prefix='ci_data_', include_types=[float])
-        return info
-
 
 class CIPreCTI(ci_frame.CIFrameCTI):
 
@@ -220,7 +214,7 @@ class CIPreCTI(ci_frame.CIFrameCTI):
         """
         super(CIPreCTI, self).__init__(frame_geometry, ci_pattern, array)
 
-    def create_ci_post_cti(self, cti_params, cti_settings):
+    def ci_post_cti_from_cti_params_and_settings(self, cti_params, cti_settings):
         """Setup a post-cti image from this pre-cti image, by passing the pre-cti image through a cti clocking \
         algorithm.
 
@@ -232,7 +226,7 @@ class CIPreCTI(ci_frame.CIFrameCTI):
             The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
         """
         ci_post_cti = self.add_cti_to_image(cti_params=cti_params, cti_settings=cti_settings)
-        return ci_frame.CIFrame(frame_geometry=self.frame_geometry, array=ci_post_cti, ci_pattern=self.ci_pattern)
+        return ci_frame.CIFrame(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern, array=ci_post_cti)
 
 
 class CIPreCTIFast(CIPreCTI):
@@ -265,7 +259,7 @@ class CIPreCTIFast(CIPreCTI):
         fast_row_pre_cti = self.ci_pattern.compute_fast_row(self.shape[1])
         self.fast_row_pre_cti = self.frame_geometry.rotate_before_serial_cti(fast_row_pre_cti)
 
-    def compute_fast_column_post_cti(self, cti_params, cti_settings):
+    def fast_column_post_cti_from_cti_params_and_settings(self, cti_params, cti_settings):
         """Add cti to the fast-column, using cti_settings.
 
         Parameters
@@ -290,7 +284,7 @@ class CIPreCTIFast(CIPreCTI):
 
         return self.frame_geometry.rotate_for_parallel_cti(ci_post_cti)
 
-    def compute_fast_row_post_cti(self, cti_params, cti_settings):
+    def fast_row_post_cti_from_cti_params_and_settings(self, cti_params, cti_settings):
         """Add cti to the fast-row, using cti_settings.
 
         Parameters
@@ -327,12 +321,12 @@ class CIPreCTIFast(CIPreCTI):
 
         if cti_settings.parallel is not None and cti_settings.serial is None:
 
-            fast_column_post_cti = self.compute_fast_column_post_cti(cti_params, cti_settings)
+            fast_column_post_cti = self.fast_column_post_cti_from_cti_params_and_settings(cti_params, cti_settings)
             post_cti_image = self.map_fast_column_post_cti_to_image(fast_column_post_cti)
 
         elif cti_settings.serial is not None and cti_settings.parallel is None:
 
-            fast_row_post_cti = self.compute_fast_row_post_cti(cti_params, cti_settings)
+            fast_row_post_cti = self.fast_row_post_cti_from_cti_params_and_settings(cti_params, cti_settings)
             post_cti_image = self.map_fast_row_post_cti_to_image(fast_row_post_cti)
 
         else:

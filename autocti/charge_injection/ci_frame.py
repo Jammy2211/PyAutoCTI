@@ -76,12 +76,12 @@ class ChInj(np.ndarray):
 
         """
 
-        array = np.zeros(self.shape)
+        array = np.zeros(shape=self.shape)
 
         for region in self.ci_pattern.regions:
             array = region.add_region_from_image_to_array(image=self, array=array)
 
-        return self.__class__(self.frame_geometry, self.ci_pattern, array)
+        return CIFrame(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern, array=array)
 
     def parallel_non_ci_regions_frame_from_frame(self):
         """Extract an array of all of the parallel trails following the charge-injection regions from a charge   

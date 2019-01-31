@@ -29,8 +29,8 @@ class AbstractCIFit(object):
         self.cti_settings = cti_settings
 
         self.ci_post_ctis = list(map(lambda ci_data_fit :
-                                            ci_data_fit.ci_pre_cti.create_ci_post_cti(cti_params=self.cti_params,
-                                                                                      cti_settings=self.cti_settings),
+                                            ci_data_fit.ci_pre_cti.ci_post_cti_from_cti_params_and_settings(cti_params=self.cti_params,
+                                                                                                            cti_settings=self.cti_settings),
                                      self.ci_datas_fit))
 
 class CIDataFit(fit.DataFitStack):
