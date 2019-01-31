@@ -40,6 +40,14 @@ class CIDataFit(fit.DataFitStack):
 
         super(CIDataFit, self).__init__(datas=images, noise_maps=noise_maps, masks=masks, model_datas=ci_post_ctis)
 
+    @property
+    def images(self):
+        return self.datas
+
+    @property
+    def model_images(self):
+        return self.model_datas
+
 
 class CIFit(CIDataFit, AbstractCIFit):
 
