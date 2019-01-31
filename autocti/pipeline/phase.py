@@ -14,7 +14,6 @@ from autofit.optimize import non_linear as nl
 from autocti.data import util
 from autocti.data import mask as msk
 from autocti.charge_injection import ci_hyper, ci_fit
-from autocti.charge_injection.plotters import ci_plotters
 from autocti.model import arctic_params
 
 logger = logging.getLogger(__name__)
@@ -191,6 +190,7 @@ class Phase(ph.AbstractPhase):
             chi_squareds = fitter.chi_squareds
 
             for i in range(len(ci_post_ctis)):
+
                 self.output_array_as_fits(ci_post_ctis[i], "ci_post_ctis_" + str(i))
                 self.output_array_as_fits(residuals[i], "residuals_" + str(i))
                 self.output_array_as_fits(chi_squareds[i], "chi_squareds_" + str(i))
@@ -308,12 +308,6 @@ class ParallelPhase(Phase):
             fit = ci_fit.CIFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params, cti_settings=self.cti_settings)
             return fit.likelihood
 
-        def visualize(self, instance, suffix, during_analysis):
-
-            fitter, ci_post_ctis, residuals, chi_squareds = super().visualize(instance, suffix, during_analysis)
-
-            return fitter, ci_post_ctis, residuals, chi_squareds
-
         def output_ci_regions_binned_across_serial(self, images, masks, filename):
 
             for i in range(len(images)):
@@ -373,6 +367,7 @@ class ParallelHyperPhase(ParallelPhase):
         self.has_noise_scalings = True
 
     class Analysis(ParallelPhase.Analysis):
+
         def fit(self, instance):
             """
             Runs the analysis. Determine how well the supplied cti_params fits the image.
@@ -395,9 +390,6 @@ class ParallelHyperPhase(ParallelPhase):
             pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
                                     hyper_noises=[instance.hyp_ci_regions, instance.hyp_parallel_trails])
             return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_pipe_data)))
-
-        def visualize(self, instance, suffix, during_analysis):
-            pass
 
         @classmethod
         def log(cls, instance):
@@ -462,6 +454,7 @@ class SerialPhase(Phase):
             columns or 0, self.rows or (0, data.image.ci_pattern.regions[0].total_rows)) for data in ci_datas]
 
     class Analysis(Phase.Analysis):
+
         def fit(self, instance):
             """
             Runs the analysis. Determine how well the supplied cti_params fits the image.
@@ -483,10 +476,6 @@ class SerialPhase(Phase):
             cti_params = cti_params_for_instance(instance)
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
             return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
-
-        def visualize(self, instance, suffix, during_analysis):
-            fitter, ci_post_ctis, residuals, chi_squareds = super().visualize(instance, suffix, during_analysis)
-            return fitter, ci_post_ctis, residuals, chi_squareds
 
         def output_ci_regions_binned_across_parallel(self, images, masks, filename):
             for i in range(len(images)):
