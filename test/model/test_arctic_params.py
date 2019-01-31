@@ -31,18 +31,6 @@ import pytest
 from autocti.model import arctic_params
 
 
-@pytest.fixture(name='info_path')
-def test_info():
-    info_path = "{}/files/cti_params/info/".format(os.path.dirname(os.path.realpath(__file__)))
-
-    if os.path.exists(info_path):
-        shutil.rmtree(info_path)
-
-    os.mkdir(info_path)
-
-    return info_path
-
-
 class TestParams:
     
     def test__1_species__sets_values_correctly(self):
