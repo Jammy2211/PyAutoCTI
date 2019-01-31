@@ -49,7 +49,7 @@ class MockRegion(tuple):
 class TestCIPatternViaList(object):
 
     def test__2_uniform_patterns__sets_up_collection(self):
-        pattern_collection = ci_pattern.create_uniform_via_lists(normalizations=[1.0, 3.0], regions=[(1, 2, 3, 4)])
+        pattern_collection = ci_pattern.uniform_from_lists(normalizations=[1.0, 3.0], regions=[(1, 2, 3, 4)])
 
         assert type(pattern_collection[0]) == ci_pattern.CIPatternUniform
         assert pattern_collection[0].normalization == 1.0
@@ -60,8 +60,8 @@ class TestCIPatternViaList(object):
         assert pattern_collection[1].regions == [(1, 2, 3, 4)]
 
     def test__2_non_uniform_patterns__sets_up_collection(self):
-        pattern_collection = ci_pattern.create_non_uniform_via_lists(normalizations=[1.0, 3.0], regions=[(1, 2, 3, 4)],
-                                                                     row_slopes=[1.0, 2.0])
+        pattern_collection = ci_pattern.non_uniform_from_lists(normalizations=[1.0, 3.0], regions=[(1, 2, 3, 4)],
+                                                               row_slopes=[1.0, 2.0])
 
         assert type(pattern_collection[0]) == ci_pattern.CIPatternNonUniform
         assert pattern_collection[0].normalization == 1.0
@@ -74,8 +74,8 @@ class TestCIPatternViaList(object):
         assert pattern_collection[1].row_slope == 2.0
 
     def test__2_fast_uniform_patterns__sets_up_collection(self):
-        pattern_collection = ci_pattern.create_uniform_fast_via_lists(normalizations=[1.0, 3.0],
-                                                                      regions=[(1, 2, 3, 4)])
+        pattern_collection = ci_pattern.uniform_fast_from_lists(normalizations=[1.0, 3.0],
+                                                                regions=[(1, 2, 3, 4)])
 
         assert type(pattern_collection[0]) == ci_pattern.CIPatternUniformFast
         assert pattern_collection[0].normalization == 1.0
@@ -86,8 +86,8 @@ class TestCIPatternViaList(object):
         assert pattern_collection[1].regions == [(1, 2, 3, 4)]
 
     def test__2_uniform_simulate_patterns__sets_up_collection(self):
-        pattern_collection = ci_pattern.create_uniform_simulate_via_lists(normalizations=[1.0, 3.0],
-                                                                          regions=[(1, 2, 3, 4)])
+        pattern_collection = ci_pattern.uniform_simulate_from_lists(normalizations=[1.0, 3.0],
+                                                                    regions=[(1, 2, 3, 4)])
 
         assert type(pattern_collection[0]) == ci_pattern.CIPatternUniformSimulate
         assert pattern_collection[0].normalization == 1.0
@@ -98,11 +98,11 @@ class TestCIPatternViaList(object):
         assert pattern_collection[1].regions == [(1, 2, 3, 4)]
 
     def test__2_non_uniform_simulate_patterns__sets_up_collection(self):
-        pattern_collection = ci_pattern.create_non_uniform_simulate_via_lists(normalizations=[1.0, 3.0],
-                                                                              regions=[(1, 2, 3, 4)],
-                                                                              column_deviations=[1.0, 2.0],
-                                                                              row_slopes=[3.0, 4.0],
-                                                                              maximum_normalization=10000.0)
+        pattern_collection = ci_pattern.non_uniform_simulate_from_lists(normalizations=[1.0, 3.0],
+                                                                        regions=[(1, 2, 3, 4)],
+                                                                        column_deviations=[1.0, 2.0],
+                                                                        row_slopes=[3.0, 4.0],
+                                                                        maximum_normalization=10000.0)
 
         assert type(pattern_collection[0]) == ci_pattern.CIPatternNonUniformSimulate
         assert pattern_collection[0].normalization == 1.0

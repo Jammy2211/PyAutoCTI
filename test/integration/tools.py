@@ -104,18 +104,17 @@ class CIQuadGeometryIntegration(ci_frame.FrameGeometry):
 
 shape = (36, 36)
 ci_regions = [(1, 7, 1, 30), (17, 23, 1, 30)]
-normalizations = [84700.0]
 frame_geometry = CIQuadGeometryIntegration()
 
 
-def simulate_integration_quadrant(test_name, cti_params, cti_settings):
+def simulate_integration_quadrant(test_name, normalizations, cti_params, cti_settings):
 
     output_path = "{}/data/".format(os.path.dirname(os.path.realpath(__file__))) + test_name + '/'
 
     if os.path.exists(output_path) == False:
         os.makedirs(output_path)
 
-    sim_ci_patterns = ci_pattern.create_uniform_simulate_via_lists(normalizations=normalizations, regions=ci_regions)
+    sim_ci_patterns = ci_pattern.uniform_simulate_from_lists(normalizations=normalizations, regions=ci_regions)
 
     sim_ci_datas = list(map(lambda pattern:
                             ci_data.CIImage.simulate(shape=shape, frame_geometry=frame_geometry,

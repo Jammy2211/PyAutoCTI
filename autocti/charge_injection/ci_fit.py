@@ -33,6 +33,7 @@ class AbstractCIFit(object):
                                                                                                             cti_settings=self.cti_settings),
                                      self.ci_datas_fit))
 
+
 class CIDataFit(fit.DataFitStack):
 
     def __init__(self, images, noise_maps, masks, ci_post_ctis):

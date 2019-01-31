@@ -143,6 +143,8 @@ class Phase(ph.AbstractPhase):
         ci_datas_fit = self.extract_ci_data(ci_datas=ci_datas)
 
         ci_datas_fit[0].mask = masks[0][0:36, 0:35]
+        if len(ci_datas_fit) == 2:
+            ci_datas_fit[1].mask = masks[1][0:36, 0:35]
 
         self.pass_priors(previous_results)
         analysis = self.__class__.Analysis(ci_datas_fit=ci_datas_fit,
@@ -424,8 +426,8 @@ class ParallelHyperOnlyPhase(ParallelHyperPhase, HyperOnly):
                 self.parallel_species = previous_results.last.constant.parallel_species
                 self.parallel_ccd = previous_results.last.constant.parallel_ccd
 
-        phase = ParallelHyper(optimizer_class=nl.MultiNest, hyp_ci_regions=ci_hyper.HyperCINoise,
-                              hyp_parallel_trails=ci_hyper.HyperCINoise,
+        phase = ParallelHyper(optimizer_class=nl.MultiNest, hyp_ci_regions=ci_hyper.CIHyperNoise,
+                              hyp_parallel_trails=ci_hyper.CIHyperNoise,
                               phase_name=self.phase_name)
 
         phase.optimizer.n_live_points = 20
@@ -590,8 +592,8 @@ class SerialHyperOnlyPhase(SerialHyperPhase, HyperOnly):
                 self.serial_species = previous_results.last.constant.serial_species
                 self.serial_ccd = previous_results.last.constant.serial_ccd
 
-        phase = SerialHyper(optimizer_class=nl.MultiNest, hyp_ci_regions=ci_hyper.HyperCINoise,
-                            hyp_serial_trails=ci_hyper.HyperCINoise,
+        phase = SerialHyper(optimizer_class=nl.MultiNest, hyp_ci_regions=ci_hyper.CIHyperNoise,
+                            hyp_serial_trails=ci_hyper.CIHyperNoise,
                             phase_name=self.phase_name)
 
         phase.optimizer.n_live_points = 20
@@ -781,10 +783,10 @@ class ParallelSerialHyperOnlyPhase(ParallelSerialHyperPhase, HyperOnly):
                 self.parallel_ccd = previous_results[-1].constant.parallel_ccd
 
         phase = ParallelSerialHyper(optimizer_class=nl.MultiNest,
-                                    hyp_ci_regions=ci_hyper.HyperCINoise,
-                                    hyp_parallel_trails=ci_hyper.HyperCINoise,
-                                    hyp_serial_trails=ci_hyper.HyperCINoise,
-                                    hyp_parallel_serial_trails=ci_hyper.HyperCINoise,
+                                    hyp_ci_regions=ci_hyper.CIHyperNoise,
+                                    hyp_parallel_trails=ci_hyper.CIHyperNoise,
+                                    hyp_serial_trails=ci_hyper.CIHyperNoise,
+                                    hyp_parallel_serial_trails=ci_hyper.CIHyperNoise,
                                     phase_name=self.phase_name)
 
         phase.optimizer.n_live_points = 50
@@ -800,12 +802,12 @@ class ParallelSerialHyperOnlyPhase(ParallelSerialHyperPhase, HyperOnly):
                                      analysis)
 
 
-def pipe_cti(ci_pipe_data, cti_params, cti_settings):
-    fitter = ci_fit.CIFit(ci_datas_fit=[ci_pipe_data], cti_params=cti_params, cti_settings=cti_settings)
+def pipe_cti(ci_data_fit, cti_params, cti_settings):
+    fitter = ci_fit.CIFit(ci_datas_fit=[ci_data_fit], cti_params=cti_params, cti_settings=cti_settings)
     return fitter.likelihood
 
 
-def pipe_cti_hyper(ci_pipe_data, cti_params, cti_settings, hyper_noises):
-    fitter = ci_fit.CIHyperFit(ci_datas_fit=[ci_pipe_data], cti_params=cti_params, cti_settings=cti_settings,
+def pipe_cti_hyper(ci_data_fit, cti_params, cti_settings, hyper_noises):
+    fitter = ci_fit.CIHyperFit(ci_datas_fit=[ci_data_fit], cti_params=cti_params, cti_settings=cti_settings,
                                hyper_noises=hyper_noises)
     return fitter.likelihood

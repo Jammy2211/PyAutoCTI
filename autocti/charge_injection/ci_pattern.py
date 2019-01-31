@@ -11,7 +11,7 @@ from autocti import exc
 from autocti.charge_injection import ci_frame
 
 
-def create_uniform_via_lists(normalizations, regions):
+def uniform_from_lists(normalizations, regions):
     """Setup the collection of patterns from lists of uniform ci_pattern properties
 
     Params
@@ -24,7 +24,7 @@ def create_uniform_via_lists(normalizations, regions):
     return list(map(lambda n: CIPatternUniform(n, regions), normalizations))
 
 
-def create_non_uniform_via_lists(normalizations, regions, row_slopes):
+def non_uniform_from_lists(normalizations, regions, row_slopes):
     """Setup the collection of patterns from lists of non-uniform ci_pattern properties
 
     Params
@@ -39,7 +39,7 @@ def create_non_uniform_via_lists(normalizations, regions, row_slopes):
     return list(map(lambda n, s: CIPatternNonUniform(n, regions, s), normalizations, row_slopes))
 
 
-def create_uniform_fast_via_lists(normalizations, regions):
+def uniform_fast_from_lists(normalizations, regions):
     """Setup the collection of fast patterns from lists of uniform ci_pattern properties
 
     Params
@@ -52,7 +52,7 @@ def create_uniform_fast_via_lists(normalizations, regions):
     return list(map(lambda n: CIPatternUniformFast(n, regions), normalizations))
 
 
-def create_uniform_simulate_via_lists(normalizations, regions):
+def uniform_simulate_from_lists(normalizations, regions):
     """Setup the collection of simulation patterns from lists of uniform ci_pattern properties
 
     Params
@@ -65,8 +65,8 @@ def create_uniform_simulate_via_lists(normalizations, regions):
     return list(map(lambda n: CIPatternUniformSimulate(n, regions), normalizations))
 
 
-def create_non_uniform_simulate_via_lists(normalizations, regions, column_deviations, row_slopes,
-                                          maximum_normalization):
+def non_uniform_simulate_from_lists(normalizations, regions, column_deviations, row_slopes,
+                                    maximum_normalization):
     """Setup the collection of simulation patterns from lists of non-uniform ci_pattern properties
 
     Params
