@@ -130,6 +130,18 @@ class TestCIData(object):
         assert result.ci_pre_cti == 8
         assert result.noise_scalings is None
 
+    def test__signal_to_noise_map_and_max(self):
+
+        image = np.ones((2, 2))
+        image[0,0] = 6.0
+
+        data = ci_data.CIData(image=image, noise_map=2.0*np.ones((2,2)), ci_pre_cti=None)
+
+        assert (data.signal_to_noise_map == np.array([[3.0, 0.5],
+                                                      [0.5, 0.5]])).all()
+
+        assert data.signal_to_noise_max == 3.0
+
 
 class TestCIImage(object):
     class TestConstructor:
