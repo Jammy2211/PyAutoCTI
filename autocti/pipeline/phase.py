@@ -25,6 +25,7 @@ logger.level = logging.DEBUG
 def default_mask_function(image):
     return msk.Mask.empty_for_shape(shape=image.shape, frame_geometry=image.frame_geometry, ci_pattern=image.ci_pattern)
 
+
 class HyperOnly(ph.AbstractPhase):
     pass
 
@@ -143,7 +144,7 @@ class Phase(ph.AbstractPhase):
 
         ci_datas_fit = self.extract_ci_data(ci_datas=ci_datas)
 
-        ci_datas_fit[0].mask = masks[0]
+        ci_datas_fit[0].mask = masks[0][0:36, 0:35]
 
         self.pass_priors(previous_results)
         analysis = self.__class__.Analysis(ci_datas_fit=ci_datas_fit,
@@ -328,7 +329,9 @@ class ParallelPhase(Phase):
         @classmethod
         def log(cls, instance):
             logger.debug(
-                "\nRunning CTI analysis for... \n\nParallel CTI::\n{}\n\n".format(instance.parallel))
+                "\nRunning CTI analysis for... \n\nParallel CTI: "
+                "Parallel Species:\n{}\n\n "
+                "Parallel CCD\n{}\n\n".format(instance.parallel_species, instance.parallel_ccd))
 
         def noise_scalings_for_instance(self, instance):
             """

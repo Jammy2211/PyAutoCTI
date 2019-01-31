@@ -29,8 +29,8 @@ conf.instance = conf.Config(config_path=config_path, output_path=output_path)
 def pipeline():
 
     parallel_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.5)
-    parallel_ccd = arctic_params.CCD(well_notch_depth=0.01, well_fill_alpha=0.2,
-                                     well_fill_beta=0.8, well_fill_gamma=2.0)
+    parallel_ccd = arctic_params.CCD(well_notch_depth=0.01, well_fill_alpha=1.0,
+                                     well_fill_beta=0.8, well_fill_gamma=0.0)
     cti_params = arctic_params.ArcticParams(parallel_ccd=parallel_ccd, parallel_species=[parallel_species])
 
     parallel_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=1, n_levels=2000,
@@ -61,7 +61,7 @@ def make_pipeline(test_name):
             self.parallel_ccd.well_fill_gamma = 0.0
 
     phase1 = ParallelPhase(optimizer_class=nl.MultiNest, parallel_species=[prior_model.PriorModel(arctic_params.Species)],
-                           parallel_ccd=arctic_params.CCD, phase_name="{}/phase1".format(test_name))
+                           parallel_ccd=arctic_params.CCD, columns=40, phase_name="{}/phase1".format(test_name))
 
     phase1.optimizer.n_live_points = 60
     phase1.optimizer.const_efficiency_mode = True

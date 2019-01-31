@@ -57,10 +57,10 @@ class CIData(object):
                       noise_scalings=func(self.noise_scalings) if self.noise_scalings is not None else self.noise_scalings)
 
     def parallel_calibration_data(self, columns):
-        return self.map(lambda obj: obj.parallel_calibration_section_for_columns(columns))
+        return self.map(lambda obj: obj.parallel_calibration_section_for_columns(columns=columns))
 
     def serial_calibration_data(self, column, rows):
-        return self.map(lambda obj: obj.serial_calibration_section_for_column_and_rows(column, rows))
+        return self.map(lambda obj: obj.serial_calibration_section_for_column_and_rows(column=column, rows=rows))
 
     def parallel_serial_calibration_data(self):
         return self.map(lambda obj: obj.parallel_serial_calibration_section())
