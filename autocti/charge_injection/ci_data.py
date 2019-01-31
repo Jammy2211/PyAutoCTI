@@ -29,8 +29,8 @@ from autocti import exc
 from autocti.data import util
 from autocti.data import cti_image
 from autocti.data import mask as msk
-from autocti.data.charge_injection import ci_frame
-from autocti.data.charge_injection import ci_pattern as pattern
+from autocti.charge_injection import ci_frame
+from autocti.charge_injection import ci_pattern as pattern
 from autocti.model import pyarctic
 from autocti.tools import infoio
 
@@ -413,7 +413,7 @@ def load_ci_noise_map(frame_geometry, ci_pattern, ci_noise_map_path, ci_noise_ma
 
     if ci_noise_map_path is not None and ci_noise_map_from_single_value is None:
         return ci_frame.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
-                            array=util.numpy_array_from_fits(file_path=ci_noise_map_path, hdu=ci_noise_map_hdu))
+                                array=util.numpy_array_from_fits(file_path=ci_noise_map_path, hdu=ci_noise_map_hdu))
     elif ci_noise_map_path is None and ci_noise_map_from_single_value is not None:
         return ci_frame.CIFrame.from_single_value(value=ci_noise_map_from_single_value, shape=shape,
                                                   frame_geometry=frame_geometry, ci_pattern=ci_pattern)

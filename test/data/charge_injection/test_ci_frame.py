@@ -1,7 +1,7 @@
 import numpy as np
 
 from autocti.data import mask as msk
-from autocti.data.charge_injection import ci_frame, ci_pattern
+from autocti.charge_injection import ci_frame, ci_pattern
 
 
 class MockCIGeometry(object):

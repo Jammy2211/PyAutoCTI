@@ -1,6 +1,6 @@
 import numpy as np
 
-from autocti.data.charge_injection import ci_hyper
+from autocti.charge_injection import ci_hyper
 
 
 class MockChInj(np.ndarray):

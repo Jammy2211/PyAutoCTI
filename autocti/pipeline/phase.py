@@ -13,10 +13,8 @@ from autofit.optimize import non_linear as nl
 
 from autocti.data import util
 from autocti.data import mask as msk
-from autocti.data.charge_injection import ci_data
-from autocti.data.charge_injection import ci_hyper
-from autocti.data.charge_injection.plotters import ci_plotters
-from autocti.data.charge_injection import ci_fit
+from autocti.charge_injection import ci_hyper, ci_fit
+from autocti.charge_injection.plotters import ci_plotters
 from autocti.model import arctic_params
 
 logger = logging.getLogger(__name__)
@@ -410,7 +408,7 @@ class ParallelHyperPhase(ParallelPhase):
         def fit_for_instance(self, instance):
             cti_params = cti_params_for_instance(instance)
             return ci_fit.CIHyperFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params,
-                                         cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
+                                     cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
                                                                                        instance.hyp_parallel_trails])
 
 
@@ -576,7 +574,7 @@ class SerialHyperPhase(SerialPhase):
         def hyper_fit_for_instance(self, instance):
             cti_params = cti_params_for_instance(instance)
             return ci_fit.CIHyperFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params,
-                                         cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
+                                     cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
                                                                                        instance.hyp_serial_trails])
 
 
@@ -762,7 +760,7 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
         def fit_for_instance(self, instance):
             cti_params = cti_params_for_instance(instance)
             return ci_fit.CIHyperFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params,
-                                         cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
+                                     cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
                                                        instance.hyp_parallel_trails,
                                                        instance.hyp_serial_trails,
                                                        instance.hyp_parallel_serial_trails])
@@ -809,5 +807,5 @@ def pipe_cti(ci_pipe_data, cti_params, cti_settings):
 
 def pipe_cti_hyper(ci_pipe_data, cti_params, cti_settings, hyper_noises):
     fitter = ci_fit.CIHyperFit(ci_datas_fit=[ci_pipe_data], cti_params=cti_params, cti_settings=cti_settings,
-                                   hyper_noises=hyper_noises)
+                               hyper_noises=hyper_noises)
     return fitter.likelihood

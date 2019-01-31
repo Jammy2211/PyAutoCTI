@@ -1,8 +1,6 @@
 import os
 
-from autocti.data.charge_injection import ci_data as data
-from autocti.data.charge_injection import ci_frame as frame
-from autocti.data.charge_injection import ci_pattern as pattern
+from autocti.charge_injection import ci_data as data, ci_frame as frame, ci_pattern as pattern
 
 path = "/gpfs/ci_data/pdtw24/CTI".format(os.path.dirname(os.path.realpath(__file__)))
 
