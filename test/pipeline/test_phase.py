@@ -9,8 +9,7 @@ from autofit.tools import phase_property
 from autofit.tools.phase import ResultsCollection
 
 from autocti.data import mask as msk
-from autocti.data.charge_injection import ci_data as data
-from autocti.data.charge_injection import ci_frame
+from autocti.charge_injection import ci_data as data, ci_frame
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
 from autocti.pipeline import phase as ph

@@ -2,10 +2,8 @@ import numpy as np
 import pytest
 
 from autofit.tools import fit_util
-from autocti.data.charge_injection import ci_frame
-from autocti.data.charge_injection import ci_data
-from autocti.data.charge_injection import ci_fit
-from autocti.data.charge_injection import ci_hyper
+from autocti.charge_injection import ci_frame, ci_fit
+from autocti.charge_injection import ci_hyper, ci_data
 
 
 class MockGeometry(object):
@@ -58,7 +56,7 @@ def make_ci_datas():
     ci_mask_0 = np.ma.zeros((2, 2))
     ci_noise_scalings_0 = [np.array([[1.0, 2.0], [3.0, 4.0]]), np.array([[1.0, 2.0], [3.0, 4.0]])]
 
-    ci_datas_fit.append(ci_data.CIDataFit(image=ci_image_0, noise_map=ci_noise_map_0, ci_pre_cti=ci_pre_cti_0, 
+    ci_datas_fit.append(ci_data.CIDataFit(image=ci_image_0, noise_map=ci_noise_map_0, ci_pre_cti=ci_pre_cti_0,
                                           mask=ci_mask_0, noise_scalings=ci_noise_scalings_0))
 
     ci_image_1 =  ci_frame.CIFrame(frame_geometry=MockGeometry(), ci_pattern=MockPattern(), array=4.0 * np.ones((2, 2)))
@@ -68,7 +66,7 @@ def make_ci_datas():
     ci_mask_1 = np.ma.array([[True, False], [False, True]])
     ci_noise_scalings_1 = [np.array([[4.0, 3.0], [2.0, 1.0]]), np.array([[4.0, 3.0], [2.0, 1.0]])]
 
-    ci_datas_fit.append(ci_data.CIDataFit(image=ci_image_1, noise_map=ci_noise_map_1, ci_pre_cti=ci_pre_cti_1, 
+    ci_datas_fit.append(ci_data.CIDataFit(image=ci_image_1, noise_map=ci_noise_map_1, ci_pre_cti=ci_pre_cti_1,
                                           mask=ci_mask_1, noise_scalings=ci_noise_scalings_1))
 
     return ci_datas_fit
@@ -166,15 +164,15 @@ class TestCIHyperFit:
     def test__image_and_ci_post_cti_the_same__noise_scaling_all_0s__likelihood_is_noise_normalization(self):
         
         ci_image_0 = ci_frame.CIFrame(array=10.0 * np.ones((2, 2)), frame_geometry=MockGeometry(),
-                                   ci_pattern=MockPattern())
+                                      ci_pattern=MockPattern())
         ci_noise_map_0 = ci_frame.CIFrame(array=2.0 * np.ones((2, 2)), frame_geometry=MockGeometry(),
-                                        ci_pattern=MockPattern())
+                                          ci_pattern=MockPattern())
         ci_mask_0 = ci_frame.CIFrame(array=np.ma.zeros((2, 2)), frame_geometry=MockGeometry(),
-                                   ci_pattern=MockPattern())
+                                     ci_pattern=MockPattern())
         ci_pre_cti_0 = MockCIPreCTI(frame_geometry=MockGeometry(), ci_pattern=MockPattern(), array=10.0 * np.ones((2, 2)),
                                 value=10.0)
         ci_noise_scalings_0 = [ci_frame.CIFrame(array=np.array([[0.0, 0.0], [0.0, 0.0]]), frame_geometry=MockGeometry(),
-                                ci_pattern=MockPattern())]
+                                                ci_pattern=MockPattern())]
 
         ci_datas_fit = []
         ci_datas_fit.append(ci_data.CIDataFit(image=ci_image_0, noise_map=ci_noise_map_0, ci_pre_cti=ci_pre_cti_0,
@@ -193,15 +191,15 @@ class TestCIHyperFit:
     def test__image_and_post_cti_different__noise_scaling_all_0s__likelihood_chi_squared_and_noise_normalization(self):
 
         ci_image_0 = ci_frame.CIFrame(array=9.0 * np.ones((2, 2)), frame_geometry=MockGeometry(),
-                                   ci_pattern=MockPattern())
+                                      ci_pattern=MockPattern())
         ci_noise_map_0 = ci_frame.CIFrame(array=2.0 * np.ones((2, 2)), frame_geometry=MockGeometry(),
-                                        ci_pattern=MockPattern())
+                                          ci_pattern=MockPattern())
         ci_mask_0 = ci_frame.CIFrame(array=np.ma.zeros((2, 2)), frame_geometry=MockGeometry(),
-                                   ci_pattern=MockPattern())
+                                     ci_pattern=MockPattern())
         ci_pre_cti_0 = MockCIPreCTI(frame_geometry=MockGeometry(), ci_pattern=MockPattern(), array=10.0 * np.ones((2, 2)),
                                 value=10.0)
         ci_noise_scalings_0 = [ci_frame.CIFrame(array=np.array([[0.0, 0.0], [0.0, 0.0]]), frame_geometry=MockGeometry(),
-                                ci_pattern=MockPattern())]
+                                                ci_pattern=MockPattern())]
 
         ci_datas_fit = []
         ci_datas_fit.append(ci_data.CIDataFit(image=ci_image_0, noise_map=ci_noise_map_0, ci_pre_cti=ci_pre_cti_0,
@@ -220,18 +218,18 @@ class TestCIHyperFit:
     def test__image_and_ci_post_cti_the_same__noise_scaling_non_0s__likelihood_is_noise_normalization(self):
         
         ci_image_0 = ci_frame.CIFrame(array=10.0 * np.ones((2, 2)), frame_geometry=MockGeometry(),
-                                   ci_pattern=MockPattern())
+                                      ci_pattern=MockPattern())
         ci_noise_map_0 = ci_frame.CIFrame(array=2.0 * np.ones((2, 2)), frame_geometry=MockGeometry(),
-                                        ci_pattern=MockPattern())
+                                          ci_pattern=MockPattern())
         ci_mask_0 = ci_frame.CIFrame(array=np.ma.zeros((2, 2)), frame_geometry=MockGeometry(),
-                                   ci_pattern=MockPattern())
+                                     ci_pattern=MockPattern())
         ci_pre_cti_0 = MockCIPreCTI(frame_geometry=MockGeometry(), ci_pattern=MockPattern(), array=10.0 * np.ones((2, 2)),
                                 value=10.0)
 
         ci_noise_scalings_0 = [ci_frame.CIFrame(array=np.array([[1.0, 2.0], [3.0, 4.0]]), frame_geometry=MockGeometry(),
-                                     ci_pattern=MockPattern()),
-                           ci_frame.CIFrame(array=np.array([[5.0, 6.0], [7.0, 8.0]]), frame_geometry=MockGeometry(),
-                                     ci_pattern=MockPattern())]
+                                                ci_pattern=MockPattern()),
+                               ci_frame.CIFrame(array=np.array([[5.0, 6.0], [7.0, 8.0]]), frame_geometry=MockGeometry(),
+                                                ci_pattern=MockPattern())]
 
         ci_datas_fit = []
         ci_datas_fit.append(ci_data.CIDataFit(image=ci_image_0, noise_map=ci_noise_map_0, ci_pre_cti=ci_pre_cti_0,
@@ -251,18 +249,18 @@ class TestCIHyperFit:
     def test__x2_noise_map_scaling_and_hyper_params__noise_map_term_comes_out_correct(self):
 
         ci_image_0 = ci_frame.CIFrame(array=10.0 * np.ones((2, 2)), frame_geometry=MockGeometry(),
-                                   ci_pattern=MockPattern())
+                                      ci_pattern=MockPattern())
         ci_noise_map_0 = ci_frame.CIFrame(array=3.0 * np.ones((2, 2)), frame_geometry=MockGeometry(),
-                                        ci_pattern=MockPattern())
+                                          ci_pattern=MockPattern())
         ci_mask_0 = ci_frame.CIFrame(array=np.ma.zeros((2, 2)), frame_geometry=MockGeometry(),
-                                   ci_pattern=MockPattern())
+                                     ci_pattern=MockPattern())
         ci_pre_cti_0 = MockCIPreCTI(frame_geometry=MockGeometry(), ci_pattern=MockPattern(), array=10.0 * np.ones((2, 2)),
                                 value=10.0)
 
         ci_noise_scalings_0 = [ci_frame.CIFrame(array=np.array([[1.0, 2.0], [3.0, 4.0]]), frame_geometry=MockGeometry(),
-                                     ci_pattern=MockPattern()),
-                           ci_frame.CIFrame(array=np.array([[5.0, 6.0], [7.0, 8.0]]), frame_geometry=MockGeometry(),
-                                     ci_pattern=MockPattern())]
+                                                ci_pattern=MockPattern()),
+                               ci_frame.CIFrame(array=np.array([[5.0, 6.0], [7.0, 8.0]]), frame_geometry=MockGeometry(),
+                                                ci_pattern=MockPattern())]
 
         ci_datas_fit = []
         ci_datas_fit.append(ci_data.CIDataFit(image=ci_image_0, noise_map=ci_noise_map_0, ci_pre_cti=ci_pre_cti_0,
@@ -372,8 +370,8 @@ class TestScaledNoiseMap:
         hyper_noises = [ci_hyper.HyperCINoise(scale_factor=0.0)]
 
         noise_map = ci_fit.hyper_noise_map_from_noise_map_and_noise_scalings(noise_map=noise_map,
-                                                                                   noise_scalings=noise_scalings,
-                                                                                   hyper_noises=hyper_noises)
+                                                                             noise_scalings=noise_scalings,
+                                                                             hyper_noises=hyper_noises)
 
         assert (noise_map == (np.array([[2.0, 2.0],
                                                [2.0, 2.0]]))).all()
@@ -384,8 +382,8 @@ class TestScaledNoiseMap:
         hyper_noises = [ci_hyper.HyperCINoise(scale_factor=1.0)]
 
         noise_map = ci_fit.hyper_noise_map_from_noise_map_and_noise_scalings(noise_map=noise_map,
-                                                                                   noise_scalings=noise_scalings,
-                                                                                   hyper_noises=hyper_noises)
+                                                                             noise_scalings=noise_scalings,
+                                                                             hyper_noises=hyper_noises)
 
         assert (noise_map == (np.array([[3.0, 4.0],
                                                [5.0, 6.0]]))).all()
@@ -396,8 +394,8 @@ class TestScaledNoiseMap:
         hyper_noises = [ci_hyper.HyperCINoise(scale_factor=1.0), ci_hyper.HyperCINoise(scale_factor=2.0)]
 
         noise_map = ci_fit.hyper_noise_map_from_noise_map_and_noise_scalings(noise_map=noise_map,
-                                                                                   noise_scalings=noise_scalings,
-                                                                                   hyper_noises=hyper_noises)
+                                                                             noise_scalings=noise_scalings,
+                                                                             hyper_noises=hyper_noises)
 
         assert (noise_map == (np.array([[5.0, 8.0],
                                                [11.0, 14.0]]))).all()
@@ -405,7 +403,7 @@ class TestScaledNoiseMap:
     def test__same_as_above__use_ci_datas_fit(self):
 
         ci_datas_fit = [ci_data.CIDataFit(image=None, noise_map=2.0 * np.ones((2, 2)), ci_pre_cti=None, mask=None,
-                                              noise_scalings=[np.array([[1.0, 2.0], [3.0, 4.0]]),
+                                          noise_scalings=[np.array([[1.0, 2.0], [3.0, 4.0]]),
                                                               np.array([[1.0, 2.0], [3.0, 4.0]])])]
 
         hyper_noises = [ci_hyper.HyperCINoise(scale_factor=1.0), ci_hyper.HyperCINoise(scale_factor=2.0)]
@@ -419,10 +417,10 @@ class TestScaledNoiseMap:
     def test__same_as_above__but_use_x2__ci_datas_fit(self):
 
         ci_datas_fit = [ci_data.CIDataFit(image=None, noise_map=2.0 * np.ones((2, 2)), ci_pre_cti=None, mask=None,
-                                               noise_scalings=[np.array([[1.0, 2.0], [3.0, 4.0]]),
+                                          noise_scalings=[np.array([[1.0, 2.0], [3.0, 4.0]]),
                                                                np.array([[1.0, 2.0], [3.0, 4.0]])]),
-                                ci_data.CIDataFit(image=None, noise_map=2.0 * np.ones((2, 2)), ci_pre_cti=None, mask=None,
-                                              noise_scalings=[np.array([[2.0, 2.0], [3.0, 4.0]]),
+                        ci_data.CIDataFit(image=None, noise_map=2.0 * np.ones((2, 2)), ci_pre_cti=None, mask=None,
+                                          noise_scalings=[np.array([[2.0, 2.0], [3.0, 4.0]]),
                                                               np.array([[2.0, 2.0], [3.0, 4.0]])])]
 
         hyper_noises = [ci_hyper.HyperCINoise(scale_factor=1.0), ci_hyper.HyperCINoise(scale_factor=2.0)]

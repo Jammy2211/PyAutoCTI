@@ -30,7 +30,7 @@ import numpy as np
 import pytest
 
 from autocti import exc
-from autocti.data.charge_injection import ci_pattern
+from autocti.charge_injection import ci_pattern
 
 
 @pytest.fixture(name='info_path')

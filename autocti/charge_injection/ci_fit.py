@@ -18,7 +18,6 @@
 import numpy as np
 
 from autofit.tools import fit
-from autocti.data.charge_injection import ci_frame
 
 
 class AbstractCIFit(object):
