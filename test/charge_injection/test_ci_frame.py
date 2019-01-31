@@ -3,33 +3,7 @@ import numpy as np
 from autocti.data import mask as msk
 from autocti.charge_injection import ci_frame, ci_pattern
 
-
-class MockCIGeometry(object):
-
-    def __init__(self, serial_prescan=(0, 1, 0, 1), serial_overscan=(0, 1, 0, 1)):
-        super(MockCIGeometry, self).__init__()
-        self.serial_prescan = ci_frame.Region(serial_prescan)
-        self.serial_overscan = ci_frame.Region(serial_overscan)
-
-
-class MockGeometry(object):
-
-    def __init__(self):
-        super(MockGeometry, self).__init__()
-
-
-class MockRegion(tuple):
-
-    def __new__(cls, region):
-        region = super(MockRegion, cls).__new__(cls, region)
-
-        region.y0 = region[0]
-        region.y1 = region[1]
-        region.x0 = region[2]
-        region.x1 = region[3]
-
-        return region
-
+from test.mock.mock import MockCIGeometry, MockRegion
 
 class TestBinArrayAcrossSerial:
 

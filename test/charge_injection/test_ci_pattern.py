@@ -33,19 +33,6 @@ from autocti import exc
 from autocti.charge_injection import ci_pattern
 
 
-class MockRegion(tuple):
-
-    def __new__(cls, region):
-        region = super(MockRegion, cls).__new__(cls, region)
-
-        region.y0 = region[0]
-        region.y1 = region[1]
-        region.x0 = region[2]
-        region.x1 = region[3]
-
-        return region
-
-
 class TestCIPatternViaList(object):
 
     def test__2_uniform_patterns__sets_up_collection(self):

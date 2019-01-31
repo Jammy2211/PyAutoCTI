@@ -24,3 +24,7 @@ class CIDataException(Exception):
 
 class RegionException(Exception):
     pass
+
+
+class PlottingException(Exception):
+    pass

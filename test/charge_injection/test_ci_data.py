@@ -33,6 +33,8 @@ from autocti.charge_injection import ci_data, ci_frame, ci_pattern
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
 
+from test.mock.mock import MockGeometry, MockPattern
+
 test_data_dir = "{}/../test_files/array/".format(os.path.dirname(os.path.realpath(__file__)))
 
 @pytest.fixture(scope='class', name='empty_mask')
@@ -115,18 +117,6 @@ def make_params_both():
                                       serial_ccd=serial_ccd)
 
     return both
-
-
-class MockPattern(object):
-
-    def __init__(self):
-        pass
-
-
-class MockGeometry(object):
-
-    def __init__(self):
-        super(MockGeometry, self).__init__()
 
 
 class TestCIData(object):
