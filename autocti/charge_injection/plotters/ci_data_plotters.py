@@ -1,11 +1,43 @@
+from autofit import conf
 from autocti.charge_injection.plotters import data_plotters
+
+def plot_ci_data_individual(ci_data, mask=None, output_path=None, output_format='png'):
+    """Plot each attribute of the ccd data as individual figures one by one (e.g. the data, noise_map-map, PSF, \
+     Signal-to_noise-map, etc).
+
+    Set *autolens.data.array.plotters.array_plotters* for a description of all innput parameters not described below.
+
+    Parameters
+    -----------
+    ci_data : data.CCDData
+        The ccd data, which includes the observed data, noise_map-map, PSF, signal-to-noise_map-map, etc.
+    plot_origin : True
+        If true, the origin of the data's coordinate system is plotted as a 'x'.
+    """
+
+    plot_data_image = conf.instance.general.get('output', 'plot_data_image', bool)
+    plot_data_noise_map = conf.instance.general.get('output', 'plot_data_noise_map', bool)
+    plot_data_ci_pre_cti = conf.instance.general.get('output', 'plot_data_ci_pre_cti', bool)
+    plot_data_signal_to_noise_map = conf.instance.general.get('output', 'plot_data_signal_to_noise_map', bool)
+
+    if plot_data_image:
+        plot_image(ci_data=ci_data, mask=mask, output_path=output_path, output_format=output_format)
+
+    if plot_data_noise_map:
+        plot_noise_map(ci_data=ci_data, mask=mask, output_path=output_path, output_format=output_format)
+
+    if plot_data_ci_pre_cti:
+        plot_ci_pre_cti(ci_data=ci_data, output_path=output_path, output_format=output_format)
+
+    if plot_data_signal_to_noise_map:
+        plot_signal_to_noise_map(ci_data=ci_data, mask=mask, output_path=output_path, output_format=output_format)
 
 def plot_image(ci_data, mask=None, as_subplot=False,
                figsize=(7, 7), aspect='equal',
                cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
                cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
                title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
-               output_path=None, output_format='show', output_filename='image'):
+               output_path=None, output_format='show', output_filename='ci_image'):
     """Plot the observed image of the ccd data.
 
     Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
@@ -29,7 +61,7 @@ def plot_noise_map(ci_data, mask=None, as_subplot=False,
                    cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
                    cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
                    title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
-                   output_path=None, output_format='show', output_filename='noise_map'):
+                   output_path=None, output_format='show', output_filename='ci_noise_map'):
     """Plot the observed noise_map of the ccd data.
 
     Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
@@ -78,7 +110,7 @@ def plot_signal_to_noise_map(ci_data, mask=None, as_subplot=False,
                              cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
                              cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
                              title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
-                             output_path=None, output_format='show', output_filename='signal_to_noise_map'):
+                             output_path=None, output_format='show', output_filename='ci_signal_to_noise_map'):
     """Plot the observed signal_to_noise_map of the ccd data.
 
     Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
