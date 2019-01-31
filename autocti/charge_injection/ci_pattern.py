@@ -9,7 +9,6 @@ import numpy as np
 
 from autocti import exc
 from autocti.charge_injection import ci_frame
-from autocti.tools import infoio
 
 
 def create_uniform_via_lists(normalizations, regions):
@@ -105,20 +104,6 @@ class CIPattern(object):
         """
         self.normalization = normalization
         self.regions = list(map(ci_frame.Region, regions))
-
-    def generate_info(self):
-        """Generate string containing information on the charge injection ci_pattern."""
-        return infoio.generate_class_info(self, prefix='ci_pattern_', include_types=[int, float, list])
-
-    def output_info_file(self, path, filename='CIPattern'):
-        """Output information on the charge injection ci_pattern to a text file.
-
-        Params
-        ----------
-        path : str
-            The output nlo path of the ci_data
-        """
-        infoio.output_class_info(self, path, filename)
 
     def check_pattern_is_within_image_dimensions(self, dimensions):
 
