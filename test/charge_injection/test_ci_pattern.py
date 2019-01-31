@@ -33,18 +33,6 @@ from autocti import exc
 from autocti.charge_injection import ci_pattern
 
 
-@pytest.fixture(name='info_path')
-def test_info():
-    info_path = "{}/files/pattern/info/".format(os.path.dirname(os.path.realpath(__file__)))
-
-    if os.path.exists(info_path):
-        shutil.rmtree(info_path)
-
-    os.mkdir(info_path)
-
-    return info_path
-
-
 class MockRegion(tuple):
 
     def __new__(cls, region):
@@ -132,6 +120,7 @@ class TestCIPatternViaList(object):
 
 
 class TestCIPattern(object):
+
     class TestConstructor:
 
         def test__setup_all_attributes_correctly(self):
@@ -139,29 +128,6 @@ class TestCIPattern(object):
 
             assert pattern.normalization == 1.0
             assert pattern.regions == [(1, 2, 3, 4)]
-
-    class TestGenerateInfo:
-
-        def test__info_is_generated_correctly(self):
-            pattern = ci_pattern.CIPattern(normalization=1.0, regions=[(1, 2, 3, 4)])
-
-            info = pattern.generate_info()
-
-            assert info == 'ci_pattern_normalization = 1.0' + '\n' + 'ci_pattern_regions = [(1, 2, 3, 4)]' + '\n'
-
-    class TestOutputInfo:
-
-        def test__info_is_output_correctly(self, info_path):
-            pattern = ci_pattern.CIPattern(normalization=1.0, regions=[(1, 2, 3, 4)])
-
-            pattern.output_info_file(path=info_path)
-
-            info_file = open(info_path + 'CIPattern.info')
-
-            info = info_file.readlines()
-
-            assert info[0] == r'ci_pattern_normalization = 1.0' + '\n'
-            assert info[1] == r'ci_pattern_regions = [(1, 2, 3, 4)]' + '\n'
 
     class TestCheckImageDimensions:
 
@@ -203,6 +169,7 @@ class TestCIPattern(object):
 
 
 class TestCIPatternUniform(object):
+
     class TestConstructor:
 
         def test__setup_all_attributes_correctly(self):
@@ -228,31 +195,9 @@ class TestCIPatternUniform(object):
             with pytest.raises(exc.CIPatternException):
                 pattern.ci_pre_cti_from_shape(shape=(1, 1))
 
-    class TestGenerateInfo:
-
-        def test__info_is_generated_correctly(self):
-            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 2, 3, 4)])
-
-            info = pattern.generate_info()
-
-            assert info == 'ci_pattern_normalization = 1.0' + '\n' + 'ci_pattern_regions = [(1, 2, 3, 4)]' + '\n'
-
-    class TestOutputInfo:
-
-        def test__info_is_output_correctly(self, info_path):
-            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 2, 3, 4)])
-
-            pattern.output_info_file(path=info_path)
-
-            info_file = open(info_path + '/CIPattern.info')
-
-            info = info_file.readlines()
-
-            assert info[0] == r'ci_pattern_normalization = 1.0' + '\n'
-            assert info[1] == r'ci_pattern_regions = [(1, 2, 3, 4)]' + '\n'
-
 
 class TestCIPatternNonUniform(object):
+
     class TestConstructor:
 
         def test__setup_all_attributes_correctly(self):
@@ -261,31 +206,6 @@ class TestCIPatternNonUniform(object):
             assert pattern.normalization == 5.0
             assert pattern.regions == [(2, 3, 3, 4)]
             assert pattern.row_slope == 0.1
-
-    class TestGenerateInfo:
-
-        def test__info_is_generated_correctly(self):
-            pattern = ci_pattern.CIPatternNonUniform(normalization=1.0, regions=[(1, 2, 3, 4)], row_slope=1.0)
-
-            info = pattern.generate_info()
-
-            assert info == 'ci_pattern_normalization = 1.0' + '\n' + 'ci_pattern_regions = [(1, 2, 3, 4)]' + '\n' + \
-                   'ci_pattern_row_slope = 1.0' + '\n'
-
-    class TestOutputInfo:
-
-        def test__info_is_output_correctly(self, info_path):
-            pattern = ci_pattern.CIPatternNonUniform(normalization=1.0, regions=[(1, 2, 3, 4)], row_slope=1.0)
-
-            pattern.output_info_file(path=info_path)
-
-            info_file = open(info_path + 'CIPattern.info')
-
-            info = info_file.readlines()
-
-            assert info[0] == r'ci_pattern_normalization = 1.0' + '\n'
-            assert info[1] == r'ci_pattern_regions = [(1, 2, 3, 4)]' + '\n'
-            assert info[2] == r'ci_pattern_row_slope = 1.0' + '\n'
 
     class TestMeanChargeInColumn:
 

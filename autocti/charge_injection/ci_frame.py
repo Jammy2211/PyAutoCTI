@@ -138,7 +138,7 @@ class ChInj(np.ndarray):
         self.frame_geometry.serial_overscan.set_region_on_array_to_zeros(array=array)
         self.frame_geometry.serial_prescan.set_region_on_array_to_zeros(array=array)
 
-        return self.__class__(self.frame_geometry, self.ci_pattern, array)
+        return CIFrame(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern, array=array)
 
     def parallel_edges_and_trails_frame_from_frame(self, front_edge_rows=None, trails_rows=None):
         """Extract an array of all of the parallel front edges and trails of each the charge-injection regions from   
@@ -224,7 +224,7 @@ class ChInj(np.ndarray):
             for i, region in enumerate(trails_regions):
                 array[region.y0:region.y1, region.x0:region.x1] += trails[i]
 
-        return self.__class__(self.frame_geometry, self.ci_pattern, array)
+        return CIFrame(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern, array=array)
 
     def parallel_calibration_section_for_columns(self, columns):
         """Extract an parallel calibration array from a charge injection ci_frame, where this array is a sub-set of
@@ -326,7 +326,7 @@ class ChInj(np.ndarray):
         """
         array = self.serial_edges_and_trails_frame_from_frame(
             trails_columns=(0, self.frame_geometry.serial_overscan.total_columns))
-        return self.__class__(self.frame_geometry, self.ci_pattern, array)
+        return CIFrame(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern, array=array)
 
     def serial_overscan_non_trails_frame_from_frame(self):
         """Extract an array of all of the regions of the serial overscan that don't contain trails from a   
@@ -385,7 +385,7 @@ class ChInj(np.ndarray):
         for i, region in enumerate(trails_regions):
             array = region.set_region_on_array_to_zeros(array)
 
-        return self.__class__(self.frame_geometry, self.ci_pattern, array)
+        return CIFrame(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern, array=array)
 
     def serial_edges_and_trails_frame_from_frame(self, front_edge_columns=None, trails_columns=None):
         """Extract an array of all of the serial front edges and trails of each the charge-injection regions from   
@@ -471,7 +471,7 @@ class ChInj(np.ndarray):
             for i, region in enumerate(trails_regions):
                 array[region.y0:region.y1, region.x0:region.x1] += trails[i]
 
-        return self.__class__(self.frame_geometry, self.ci_pattern, array)
+        return CIFrame(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern, array=array)
 
     def serial_calibration_section_for_column_and_rows(self, column, rows):
         """Extract a serial calibration array from a charge injection ci_frame, where this array is a sub-set of the
