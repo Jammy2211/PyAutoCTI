@@ -33,7 +33,7 @@ from autocti.charge_injection import ci_data, ci_frame, ci_pattern
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
 
-test_data_dir = "{}/../../test_files/array/".format(os.path.dirname(os.path.realpath(__file__)))
+test_data_dir = "{}/../test_files/array/".format(os.path.dirname(os.path.realpath(__file__)))
 
 @pytest.fixture(scope='class', name='empty_mask')
 def make_empty_mask():
