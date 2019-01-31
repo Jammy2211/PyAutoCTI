@@ -49,6 +49,13 @@ def make_ci_pre_cti():
 def make_ci_data(image, noise_map, ci_pre_cti):
     return ci_data.CIData(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti, noise_scalings=None)
 
+def test__ci_sub_plot_output_dependent_on_config(ci_data, general_config, ci_data_plotter_path):
+
+    ci_data_plotters.plot_ci_subplot(ci_data=ci_data, output_path=ci_data_plotter_path, output_format='png')
+
+    assert os.path.isfile(path=ci_data_plotter_path+'ci_data.png')
+    os.remove(path=ci_data_plotter_path+'ci_data.png')
+
 def test__ci_individuals__output_dependent_on_config(ci_data, general_config, ci_data_plotter_path):
 
     ci_data_plotters.plot_ci_data_individual(ci_data=ci_data, output_path=ci_data_plotter_path, output_format='png')
