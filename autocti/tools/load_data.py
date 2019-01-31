@@ -9,7 +9,7 @@ def load_ci_datas(data_name, shape, cti_geometry, normalizations, ci_regions, cr
                   cr_diagonal=0):
     data_path = "{}/ci_data/{}".format(path, data_name)
 
-    ci_patterns = pattern.create_uniform_via_lists(normalizations=normalizations, regions=ci_regions)
+    ci_patterns = pattern.uniform_from_lists(normalizations=normalizations, regions=ci_regions)
 
     images = load_images(data_path, cti_geometry, ci_patterns)
 

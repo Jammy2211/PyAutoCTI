@@ -17,7 +17,7 @@ normalizations = [84700.0]
 frame_geometry = tools.CIQuadGeometryIntegration()
 
 test_type = 'parallel'
-test_name = 'one_species'
+test_name = 'one_species_x1_image_no_pool'
 
 path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
 output_path = path+'output/'+test_type
@@ -36,7 +36,8 @@ def pipeline():
     cti_settings = arctic_settings.ArcticSettings(parallel=parallel_settings)
 
     tools.reset_paths(test_name=test_name, output_path=output_path)
-    tools.simulate_integration_quadrant(test_name=test_name, cti_params=cti_params, cti_settings=cti_settings)
+    tools.simulate_integration_quadrant(test_name=test_name, normalizations=normalizations, cti_params=cti_params,
+                                        cti_settings=cti_settings)
 
     pattern = ci_pattern.CIPatternUniform(normalization=normalizations[0], regions=ci_regions)
 
