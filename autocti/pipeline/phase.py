@@ -443,11 +443,10 @@ class SerialPhase(Phase):
         self.serial_species = serial_species
         self.serial_ccd = serial_ccd
 
-    def extract_ci_data(self, ci_datas, masks):
+    def extract_ci_data(self, data, mask):
         columns = self.columns or 0
-        return [data.serial_calibration_data(
-            columns or 0, self.rows or (0, data.image.ci_pattern.regions[0].total_rows), mask) for data, mask in
-            zip(ci_datas, masks)]
+        return data.serial_calibration_data(columns or 0, self.rows or (0, data.image.ci_pattern.regions[0].total_rows),
+                                            mask)
 
     class Analysis(Phase.Analysis):
 
@@ -619,8 +618,8 @@ class ParallelSerialPhase(Phase):
         self.parallel_ccd = parallel_ccd
         self.serial_ccd = serial_ccd
 
-    def extract_ci_data(self, ci_datas, masks):
-        return [data.parallel_serial_calibration_data(mask) for data, mask in zip(ci_datas, masks)]
+    def extract_ci_data(self, data, mask):
+        return data.parallel_serial_calibration_data(mask)
 
     class Analysis(Phase.Analysis):
         def fit(self, instance):
