@@ -20,10 +20,21 @@ import numpy as np
 from autofit.tools import fit
 
 
-class CIDataFit(fit.DataFit):
+class CIFit(fit.DataFit):
 
-    def __init__(self, image, noise_map, mask, ci_post_cti):
-        super(CIDataFit, self).__init__(data=image, noise_map=noise_map, mask=mask, model_data=ci_post_cti)
+    def __init__(self, ci_data_fit, cti_params, cti_settings):
+        self.ci_data_fit = ci_data_fit
+        self.cti_params = cti_params
+        self.cti_settings = cti_settings
+
+        self.ci_post_cti = ci_data_fit.ci_pre_cti.ci_post_cti_from_cti_params_and_settings(
+            cti_params=self.cti_params,
+            cti_settings=self.cti_settings)
+
+        super(CIFit, self).__init__(data=ci_data_fit.image,
+                                    noise_map=ci_data_fit.noise_map,
+                                    mask=ci_data_fit.mask,
+                                    model_data=self.ci_post_cti)
 
     @property
     def image(self):
@@ -36,23 +47,6 @@ class CIDataFit(fit.DataFit):
     @property
     def figure_of_merit(self):
         return self.likelihood
-
-
-class CIFit(CIDataFit):
-
-    def __init__(self, ci_data_fit, cti_params, cti_settings):
-        self.ci_data_fit = ci_data_fit
-        self.cti_params = cti_params
-        self.cti_settings = cti_settings
-
-        self.ci_post_cti = ci_data_fit.ci_pre_cti.ci_post_cti_from_cti_params_and_settings(
-            cti_params=self.cti_params,
-            cti_settings=self.cti_settings)
-
-        super(CIFit, self).__init__(image=ci_data_fit.image,
-                                    noise_map=ci_data_fit.noise_map,
-                                    mask=ci_data_fit.mask,
-                                    ci_post_cti=self.ci_post_cti)
 
 
 class CIHyperFit(CIFit):
