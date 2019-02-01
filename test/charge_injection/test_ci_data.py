@@ -129,7 +129,7 @@ class TestCIData(object):
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
-        assert result.noise_scalings is None
+        assert result.noise_scaling is None
 
     def test__signal_to_noise_map_and_max(self):
         image = np.ones((2, 2))

@@ -517,11 +517,15 @@ class ParallelSerialHyperOnlyPhase(ParallelSerialHyperPhase, HyperOnly):
 
 
 def pipe_cti(ci_data_fit, cti_params, cti_settings):
-    fitter = ci_fit.CIFit(ci_datas_fit=[ci_data_fit], cti_params=cti_params, cti_settings=cti_settings)
+    fitter = ci_fit.CIFit(ci_datas_fit=[ci_data_fit],
+                          cti_params=cti_params,
+                          cti_settings=cti_settings)
     return fitter.likelihood
 
 
 def pipe_cti_hyper(ci_data_fit, cti_params, cti_settings, hyper_noises):
-    fitter = ci_fit.CIHyperFit(ci_datas_fit=[ci_data_fit], cti_params=cti_params, cti_settings=cti_settings,
+    fitter = ci_fit.CIHyperFit(ci_datas_fit=[ci_data_fit],
+                               cti_params=cti_params,
+                               cti_settings=cti_settings,
                                hyper_noises=hyper_noises)
     return fitter.likelihood
