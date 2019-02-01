@@ -20,18 +20,6 @@ import numpy as np
 from autofit.tools import fit
 
 
-class AbstractCIFit(object):
-
-    def __init__(self, ci_data_fit, cti_params, cti_settings):
-        self.ci_data_fit = ci_data_fit
-        self.cti_params = cti_params
-        self.cti_settings = cti_settings
-
-        self.ci_post_cti = ci_data_fit.ci_pre_cti.ci_post_cti_from_cti_params_and_settings(
-            cti_params=self.cti_params,
-            cti_settings=self.cti_settings)
-
-
 class CIDataFit(fit.DataFit):
 
     def __init__(self, image, noise_map, mask, ci_post_cti):
@@ -50,10 +38,16 @@ class CIDataFit(fit.DataFit):
         return self.likelihood
 
 
-class CIFit(CIDataFit, AbstractCIFit):
+class CIFit(CIDataFit):
 
     def __init__(self, ci_data_fit, cti_params, cti_settings):
-        AbstractCIFit.__init__(self=self, ci_data_fit=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings)
+        self.ci_data_fit = ci_data_fit
+        self.cti_params = cti_params
+        self.cti_settings = cti_settings
+
+        self.ci_post_cti = ci_data_fit.ci_pre_cti.ci_post_cti_from_cti_params_and_settings(
+            cti_params=self.cti_params,
+            cti_settings=self.cti_settings)
 
         super(CIFit, self).__init__(image=ci_data_fit.image,
                                     noise_map=ci_data_fit.noise_map,
@@ -61,7 +55,7 @@ class CIFit(CIDataFit, AbstractCIFit):
                                     ci_post_cti=self.ci_post_cti)
 
 
-class CIHyperFit(CIDataFit, AbstractCIFit):
+class CIHyperFit(CIFit):
 
     def __init__(self, ci_data_fit, cti_params, cti_settings, hyper_noises):
         """Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian framework.
@@ -80,12 +74,7 @@ class CIHyperFit(CIDataFit, AbstractCIFit):
         self.hyper_noise_map = hyper_noise_map_from_ci_data_fit_and_hyper_noise(ci_data_fit=ci_data_fit,
                                                                                 hyper_noises=hyper_noises)
 
-        AbstractCIFit.__init__(self=self, ci_data_fit=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings)
-
-        super(CIHyperFit, self).__init__(image=ci_data_fit.image,
-                                         noise_map=self.hyper_noise_map,
-                                         mask=ci_data_fit.mask,
-                                         ci_post_cti=self.ci_post_cti)
+        super().__init__(ci_data_fit, cti_params, cti_settings)
 
 
 def hyper_noise_map_from_ci_data_fit_and_hyper_noise(ci_data_fit, hyper_noises):
