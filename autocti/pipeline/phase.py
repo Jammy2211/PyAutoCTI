@@ -11,7 +11,7 @@ from autofit.optimize import non_linear as nl
 from autofit.tools import phase as ph
 from autofit.tools import phase_property
 
-from autocti.charge_injection import ci_hyper, ci_fit
+from autocti.charge_injection import ci_hyper, ci_fit, ci_data
 from autocti.charge_injection.plotters import ci_plotters_old as ci_plotters
 from autocti.data import mask as msk
 from autocti.data import util
@@ -114,10 +114,11 @@ class Phase(ph.AbstractPhase):
         return self.__class__.Result(result.constant, result.figure_of_merit, result.variable, analysis)
 
     # noinspection PyMethodMayBeStatic
-    def extract_ci_data(self, ci_datas):
-        return ci_datas
+    def extract_ci_data(self, ci_datas, masks):
+        return [ci_data.CIDataFit(data.image, data.noise_map, data.ci_pre_cti, mask, data.noise_scaling) for data, mask
+                in zip(ci_datas, masks)]
 
-    def make_analysis(self, ci_datas, cti_settings, masks=None, previous_results=None, pool=None):
+    def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
         """
         Create an analysis object. Also calls the prior passing and image modifying functions to allow child classes to
         change the behaviour of the phase.
@@ -135,14 +136,11 @@ class Phase(ph.AbstractPhase):
         analysis: Analysis
             An analysis object that the non-linear optimizer calls to determine the fit of a set of values
         """
-
-        if masks is None:
-            masks = list(map(lambda ci_data: self.mask_function(image=ci_data.image), ci_datas))
-
         # TODO : Make mask an input of extract_ci_data and use the class method to edit in the mask.
         # TODO : ci_datas_fit should include the mask as an attrbiute.
 
-        ci_datas_fit = self.extract_ci_data(ci_datas=ci_datas)
+        masks = list(map(lambda ci_data: self.mask_function(ci_data.image), ci_datas))
+        ci_datas_fit = self.extract_ci_data(ci_datas=ci_datas, masks=masks)
 
         ci_datas_fit[0].mask = masks[0][0:36, 0:35]
         if len(ci_datas_fit) == 2:
@@ -280,9 +278,10 @@ class ParallelPhase(Phase):
         self.parallel_species = parallel_species
         self.parallel_ccd = parallel_ccd
 
-    def extract_ci_data(self, ci_datas):
+    def extract_ci_data(self, ci_datas, masks):
         return [data.parallel_calibration_data(
-            (0, self.columns or data.image.frame_geometry.parallel_overscan.total_columns)) for data in ci_datas]
+            (0, self.columns or data.image.frame_geometry.parallel_overscan.total_columns), mask) for data, mask in
+            zip(ci_datas, masks)]
 
     class Analysis(Phase.Analysis):
 
@@ -343,7 +342,6 @@ class ParallelPhase(Phase):
     class Result(Phase.Result):
 
         def __init__(self, constant, likelihood, variable, analysis):
-
             super().__init__(constant, likelihood, variable, analysis)
 
             # self.noise_scalings = analysis.noise_scalings_for_instance(constant)
@@ -452,10 +450,11 @@ class SerialPhase(Phase):
         self.serial_species = serial_species
         self.serial_ccd = serial_ccd
 
-    def extract_ci_data(self, ci_datas):
+    def extract_ci_data(self, ci_datas, masks):
         columns = self.columns or 0
         return [data.serial_calibration_data(
-            columns or 0, self.rows or (0, data.image.ci_pattern.regions[0].total_rows)) for data in ci_datas]
+            columns or 0, self.rows or (0, data.image.ci_pattern.regions[0].total_rows), mask) for data, mask in
+            zip(ci_datas, masks)]
 
     class Analysis(Phase.Analysis):
 
@@ -510,7 +509,6 @@ class SerialPhase(Phase):
     class Result(Phase.Result):
 
         def __init__(self, constant, likelihood, variable, analysis):
-
             super().__init__(constant, likelihood, variable, analysis)
 
             # self.noise_scalings = analysis.noise_scalings_for_instance(constant)
@@ -628,8 +626,8 @@ class ParallelSerialPhase(Phase):
         self.parallel_ccd = parallel_ccd
         self.serial_ccd = serial_ccd
 
-    def extract_ci_data(self, ci_datas):
-        return [data.parallel_serial_calibration_data() for data in ci_datas]
+    def extract_ci_data(self, ci_datas, masks):
+        return [data.parallel_serial_calibration_data(mask) for data, mask in zip(ci_datas, masks)]
 
     class Analysis(Phase.Analysis):
         def fit(self, instance):
@@ -683,7 +681,6 @@ class ParallelSerialPhase(Phase):
     class Result(Phase.Result):
 
         def __init__(self, constant, likelihood, variable, analysis):
-
             super().__init__(constant, likelihood, variable, analysis)
 
             # self.noise_scalings = analysis.noise_scalings_for_instance(constant)

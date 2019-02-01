@@ -26,11 +26,11 @@ Author: James Nightingale
 import numpy as np
 
 from autocti import exc
-from autocti.data import util
-from autocti.data import cti_image
-from autocti.data import mask as msk
 from autocti.charge_injection import ci_frame
 from autocti.charge_injection import ci_pattern as pattern
+from autocti.data import cti_image
+from autocti.data import mask as msk
+from autocti.data import util
 from autocti.model import pyarctic
 
 
@@ -39,7 +39,6 @@ from autocti.model import pyarctic
 class CIData(object):
 
     def __init__(self, image, noise_map, ci_pre_cti, noise_scalings=None):
-
         self.image = image
         self.noise_map = noise_map
         self.ci_pre_cti = ci_pre_cti
@@ -49,20 +48,22 @@ class CIData(object):
     def shape(self):
         return self.image.shape
 
-    def map(self, func):
-        return CIData(image=func(self.image),
-                      noise_map=func(self.noise_map),
-                      ci_pre_cti=func(self.ci_pre_cti),
-                      noise_scalings=func(self.noise_scalings) if self.noise_scalings is not None else self.noise_scalings)
+    def map(self, func, mask):
+        return CIDataFit(image=func(self.image),
+                         noise_map=func(self.noise_map),
+                         ci_pre_cti=func(self.ci_pre_cti),
+                         mask=func(mask),
+                         noise_scalings=func(
+                             self.noise_scalings) if self.noise_scalings is not None else self.noise_scalings)
 
-    def parallel_calibration_data(self, columns):
-        return self.map(lambda obj: obj.parallel_calibration_section_for_columns(columns=columns))
+    def parallel_calibration_data(self, columns, mask):
+        return self.map(lambda obj: obj.parallel_calibration_section_for_columns(columns=columns), mask)
 
-    def serial_calibration_data(self, column, rows):
-        return self.map(lambda obj: obj.serial_calibration_section_for_column_and_rows(column=column, rows=rows))
+    def serial_calibration_data(self, column, rows, mask):
+        return self.map(lambda obj: obj.serial_calibration_section_for_column_and_rows(column=column, rows=rows), mask)
 
-    def parallel_serial_calibration_data(self):
-        return self.map(lambda obj: obj.parallel_serial_calibration_section())
+    def parallel_serial_calibration_data(self, mask):
+        return self.map(lambda obj: obj.parallel_serial_calibration_section(), mask)
 
     @property
     def signal_to_noise_map(self):
@@ -348,35 +349,31 @@ class CIPreCTIFast(CIPreCTI):
         return post_cti_image
 
 
-
-
 def load_ci_data_list(frame_geometries, ci_patterns,
                       ci_image_paths, ci_image_hdus=None,
                       ci_noise_map_paths=None, ci_noise_map_hdus=None,
                       ci_pre_cti_paths=None, ci_pre_cti_hdus=None, ci_pre_cti_from_image=False,
                       masks=None):
-
     list_size = len(ci_image_paths)
 
     ci_datas = []
 
     if ci_pre_cti_paths is None:
-        ci_pre_cti_paths = list_size*[None]
+        ci_pre_cti_paths = list_size * [None]
 
     if masks is None:
-        masks = list_size*[None]
+        masks = list_size * [None]
 
     if ci_image_hdus is None:
-        ci_image_hdus = list_size*[0]
+        ci_image_hdus = list_size * [0]
 
     if ci_noise_map_hdus is None:
-        ci_noise_map_hdus = list_size*[0]
+        ci_noise_map_hdus = list_size * [0]
 
     if ci_pre_cti_hdus is None:
-        ci_pre_cti_hdus = list_size*[0]
+        ci_pre_cti_hdus = list_size * [0]
 
     for data_index in range(list_size):
-
         ci_data = load_ci_data(frame_geometry=frame_geometries[data_index], ci_pattern=ci_patterns[data_index],
                                ci_image_path=ci_image_paths[data_index], ci_image_hdu=ci_image_hdus[data_index],
                                ci_noise_map_path=ci_noise_map_paths[data_index],
@@ -389,13 +386,13 @@ def load_ci_data_list(frame_geometries, ci_patterns,
 
     return ci_datas
 
+
 def load_ci_data(frame_geometry, ci_pattern,
                  ci_image_path, ci_image_hdu=0,
                  ci_noise_map_path=None, ci_noise_map_hdu=0,
                  ci_noise_map_from_single_value=None,
                  ci_pre_cti_path=None, ci_pre_cti_hdu=0, ci_pre_cti_from_image=False,
                  mask=None):
-
     ci_image = load_ci_image(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
                              ci_image_path=ci_image_path, ci_image_hdu=ci_image_hdu)
 
@@ -410,13 +407,14 @@ def load_ci_data(frame_geometry, ci_pattern,
 
     return CIData(image=ci_image, noise_map=ci_noise_map, ci_pre_cti=ci_pre_cti)
 
+
 def load_ci_image(frame_geometry, ci_pattern, ci_image_path, ci_image_hdu):
     return CIImage(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
                    array=util.numpy_array_from_fits(file_path=ci_image_path, hdu=ci_image_hdu))
 
+
 def load_ci_noise_map(frame_geometry, ci_pattern, ci_noise_map_path, ci_noise_map_hdu, ci_noise_map_from_single_value,
                       shape):
-
     if ci_noise_map_path is not None and ci_noise_map_from_single_value is None:
         return ci_frame.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
                                 array=util.numpy_array_from_fits(file_path=ci_noise_map_path, hdu=ci_noise_map_hdu))
@@ -428,13 +426,15 @@ def load_ci_noise_map(frame_geometry, ci_pattern, ci_noise_map_path, ci_noise_ma
             'You have supplied both a ci_noise_map_path and a ci_noise_map_from_single_value value. Only one quantity '
             'may be supplied.')
 
+
 def load_ci_pre_cti(frame_geometry, ci_pattern, ci_pre_cti_path, ci_pre_cti_hdu,
                     ci_image=None, ci_pre_cti_from_image=False, mask=None):
     if not ci_pre_cti_from_image:
         return CIPreCTI(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
-                       array=util.numpy_array_from_fits(file_path=ci_pre_cti_path, hdu=ci_pre_cti_hdu))
+                        array=util.numpy_array_from_fits(file_path=ci_pre_cti_path, hdu=ci_pre_cti_hdu))
     elif ci_pre_cti_from_image:
         return ci_image.ci_pre_cti_from_ci_pattern_and_mask(mask=mask)
+
 
 def baseline_noise_map_from_shape_and_sigma(shape, sigma):
     """

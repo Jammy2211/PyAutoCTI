@@ -213,12 +213,12 @@ class TestPhase(object):
         mask_input = msk.Mask.empty_for_shape(shape=ci_data.shape, frame_geometry=ci_geometry, ci_pattern=ci_pattern)
         mask_input[1,1] = True
 
-        analysis = phase.make_analysis(ci_datas=[ci_data], masks=[mask_input], cti_settings=None)
-        assert (analysis.ci_datas_fit[0].mask == mask_input).all()
+        # analysis = phase.make_analysis(ci_datas=[ci_data], masks=[mask_input], cti_settings=None)
+        # assert (analysis.ci_datas_fit[0].mask == mask_input).all()
 
         mask_default = ph.default_mask_function(image=ci_data.image)
 
-        analysis = phase.make_analysis(ci_datas=[ci_data], masks=None, cti_settings=None)
+        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=None)
         assert (analysis.ci_datas_fit[0].mask == mask_default).all()
 
 
