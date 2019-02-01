@@ -1,5 +1,4 @@
 import os
-import shutil
 
 import numpy as np
 import pytest
@@ -21,14 +20,7 @@ def make_general_config():
 
 @pytest.fixture(name='data_plotter_path')
 def make_ci_data_plotter_setup():
-    ci_data_plotter_path = "{}/../../test_files/plotting/ci_data/".format(os.path.dirname(os.path.realpath(__file__)))
-
-    if os.path.exists(ci_data_plotter_path):
-        shutil.rmtree(ci_data_plotter_path)
-
-    os.mkdir(ci_data_plotter_path)
-
-    return ci_data_plotter_path
+    return "{}/../../test_files/plotting/ci_data/".format(os.path.dirname(os.path.realpath(__file__)))
 
 
 @pytest.fixture(name='mask')
@@ -77,40 +69,34 @@ def test__ci_sub_plot_output_dependent_on_config(data, data_plotter_path, plot_p
     assert data_plotter_path + 'ci_data.png' in plot_patch.paths
 
 
-def test__ci_individuals__output_dependent_on_config(data, data_plotter_path):
+def test__ci_individuals__output_dependent_on_config(data, data_plotter_path, plot_patch):
     ci_data_plotters.plot_ci_data_individual(ci_data=data, output_path=data_plotter_path, output_format='png')
 
-    assert os.path.isfile(path=data_plotter_path + 'ci_image.png')
-    os.remove(path=data_plotter_path + 'ci_image.png')
+    assert data_plotter_path + 'ci_image.png' in plot_patch.paths
 
-    assert not os.path.isfile(path=data_plotter_path + 'ci_noise_map.png')
+    assert data_plotter_path + 'ci_noise_map.png' not in plot_patch.paths
 
-    assert os.path.isfile(path=data_plotter_path + 'ci_pre_cti.png')
-    os.remove(path=data_plotter_path + 'ci_pre_cti.png')
+    assert data_plotter_path + 'ci_pre_cti.png' in plot_patch.paths
 
-    assert not os.path.isfile(path=data_plotter_path + 'ci_signal_to_noise_map.png')
+    assert data_plotter_path + 'ci_signal_to_noise_map.png' not in plot_patch.paths
 
 
-def test__image_is_output(data, mask, data_plotter_path):
+def test__image_is_output(data, mask, data_plotter_path, plot_patch):
     ci_data_plotters.plot_image(ci_data=data, mask=mask, output_path=data_plotter_path, output_format='png')
-    assert os.path.isfile(path=data_plotter_path + 'ci_image.png')
-    os.remove(path=data_plotter_path + 'ci_image.png')
+    assert data_plotter_path + 'ci_image.png' in plot_patch.paths
 
 
-def test__noise_map_is_output(data, mask, data_plotter_path):
+def test__noise_map_is_output(data, mask, data_plotter_path, plot_patch):
     ci_data_plotters.plot_noise_map(ci_data=data, mask=mask, output_path=data_plotter_path, output_format='png')
-    assert os.path.isfile(path=data_plotter_path + 'ci_noise_map.png')
-    os.remove(path=data_plotter_path + 'ci_noise_map.png')
+    assert data_plotter_path + 'ci_noise_map.png' in plot_patch.paths
 
 
-def test__ci_pre_cti_is_output(data, mask, data_plotter_path):
+def test__ci_pre_cti_is_output(data, mask, data_plotter_path, plot_patch):
     ci_data_plotters.plot_ci_pre_cti(ci_data=data, mask=mask, output_path=data_plotter_path, output_format='png')
-    assert os.path.isfile(path=data_plotter_path + 'ci_pre_cti.png')
-    os.remove(path=data_plotter_path + 'ci_pre_cti.png')
+    assert data_plotter_path + 'ci_pre_cti.png' in plot_patch.paths
 
 
-def test__signal_to_noise_map_is_output(data, mask, data_plotter_path):
+def test__signal_to_noise_map_is_output(data, mask, data_plotter_path, plot_patch):
     ci_data_plotters.plot_signal_to_noise_map(ci_data=data, mask=mask, output_path=data_plotter_path,
                                               output_format='png')
-    assert os.path.isfile(path=data_plotter_path + 'ci_signal_to_noise_map.png')
-    os.remove(path=data_plotter_path + 'ci_signal_to_noise_map.png')
+    assert data_plotter_path + 'ci_signal_to_noise_map.png' in plot_patch.paths
