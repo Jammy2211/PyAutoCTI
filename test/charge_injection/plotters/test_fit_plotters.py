@@ -1,9 +1,4 @@
-import os
-import pathlib
-import shutil
-
 import numpy as np
-import pytest
 
 from autocti.charge_injection import ci_data
 from autocti.charge_injection import ci_fit
@@ -12,19 +7,13 @@ from autocti.charge_injection.plotters import fit_plotters
 from autocti.data import mask as msk
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
+from test.charge_injection.plotters.fixtures import *
 from test.mock.mock import MockGeometry, MockPattern
 
 
 @pytest.fixture(name='fit_path')
 def make_fit_setup():
-    fit_path = "{}/../../test_files/plotting/fit/".format(os.path.dirname(os.path.realpath(__file__)))
-
-    if os.path.exists(fit_path):
-        shutil.rmtree(fit_path)
-
-    pathlib.Path(fit_path).mkdir(parents=True, exist_ok=True)
-
-    return fit_path
+    return "{}/../../test_files/plotting/fit/".format(os.path.dirname(os.path.realpath(__file__)))
 
 
 @pytest.fixture(name='mask')
@@ -84,7 +73,6 @@ def make_ci_fit(ci_datas_fit, cti_params, cti_settings):
     return ci_fit.CIFit(ci_datas_fit=ci_datas_fit, cti_params=cti_params, cti_settings=cti_settings)
 
 
-def test__image_is_output(ci_fit, fit_path):
+def test__image_is_output(ci_fit, fit_path, plot_patch):
     fit_plotters.plot_image(fit=ci_fit, fit_index=0, output_path=fit_path, output_format='png')
-    assert os.path.isfile(path=fit_path + 'fit_image.png')
-    os.remove(path=fit_path + 'fit_image.png')
+    assert fit_path + 'fit_image.png' in plot_patch.paths
