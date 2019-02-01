@@ -56,7 +56,7 @@ class Mask(np.ndarray):
     def create(cls, shape, frame_geometry, ci_pattern, regions=None, cosmic_rays=None, cr_parallel=0, cr_serial=0,
                cr_diagonal=0):
         """
-        Create the mask used for CTI Calibration, which is all False unless spsecific regions are input for masking.
+        Create the mask used for CTI Calibration, which is all False unless specific regions are input for masking.
 
         Parameters
         ----------
