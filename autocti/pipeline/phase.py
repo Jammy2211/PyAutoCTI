@@ -13,16 +13,11 @@ from autofit.tools import phase_property
 
 from autocti.charge_injection import ci_hyper, ci_fit, ci_data
 from autocti.charge_injection.plotters import ci_plotters_old as ci_plotters
-from autocti.data import mask as msk
 from autocti.data import util
 from autocti.model import arctic_params
 
 logger = logging.getLogger(__name__)
 logger.level = logging.DEBUG
-
-
-def default_mask_function(image):
-    return msk.Mask.empty_for_shape(shape=image.shape, frame_geometry=image.frame_geometry, ci_pattern=image.ci_pattern)
 
 
 # noinspection PyAbstractClass
@@ -47,8 +42,8 @@ class ConsecutivePool(object):
 
 class Phase(ph.AbstractPhase):
 
-    def __init__(self, optimizer_class=nl.DownhillSimplex, mask_function=default_mask_function, columns=None, rows=None,
-                 phase_name=None):
+    def __init__(self, optimizer_class=nl.DownhillSimplex, mask_function=ci_data.CIMask.empty_for_image, columns=None,
+                 rows=None, phase_name=None):
         """
         A phase in an analysis pipeline. Uses the set NonLinear optimizer to try to fit models and images passed to it.
 
@@ -268,7 +263,7 @@ class ParallelPhase(Phase):
     parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
 
     def __init__(self, parallel_species=(), parallel_ccd=None, optimizer_class=nl.MultiNest,
-                 mask_function=default_mask_function, columns=None,
+                 mask_function=ci_data.CIMask.empty_for_image, columns=None,
                  phase_name="parallel_phase"):
         """
         A phase with a simple source/CTI model
@@ -352,7 +347,7 @@ class ParallelHyperPhase(ParallelPhase):
     hyp_parallel_trails = phase_property.PhaseProperty("hyp_parallel_trails")
 
     def __init__(self, parallel_species=(), parallel_ccd=None, hyp_ci_regions=None, hyp_parallel_trails=None,
-                 optimizer_class=nl.MultiNest, mask_function=default_mask_function, columns=None,
+                 optimizer_class=nl.MultiNest, mask_function=ci_data.CIMask.empty_for_image, columns=None,
                  phase_name="parallel_hyper_phase"):
         """
         A phase with a simple source/CTI model
@@ -441,7 +436,7 @@ class SerialPhase(Phase):
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 
     def __init__(self, serial_species=(), serial_ccd=None, optimizer_class=nl.MultiNest,
-                 mask_function=default_mask_function, columns=None, rows=None, phase_name="serial_phase"):
+                 mask_function=ci_data.CIMask.empty_for_image, columns=None, rows=None, phase_name="serial_phase"):
         """
         A phase with a simple source/CTI model
         """
@@ -519,7 +514,7 @@ class SerialHyperPhase(SerialPhase):
     hyp_serial_trails = phase_property.PhaseProperty("hyp_serial_trails")
 
     def __init__(self, serial_species=(), serial_ccd=None, hyp_ci_regions=None, hyp_serial_trails=None,
-                 optimizer_class=nl.MultiNest, mask_function=default_mask_function, columns=None, rows=None,
+                 optimizer_class=nl.MultiNest, mask_function=ci_data.CIMask.empty_for_image, columns=None, rows=None,
                  phase_name="serial_hyper_phase"):
         """
         A phase with a simple source/CTI model
@@ -609,7 +604,7 @@ class ParallelSerialPhase(Phase):
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 
     def __init__(self, parallel_species=(), serial_species=(), parallel_ccd=None, serial_ccd=None,
-                 optimizer_class=nl.MultiNest, mask_function=default_mask_function,
+                 optimizer_class=nl.MultiNest, mask_function=ci_data.CIMask.empty_for_image,
                  phase_name="parallel_serial_phase"):
         """
         A phase with a simple source/CTI model
@@ -694,7 +689,7 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
 
     def __init__(self, parallel_species=(), serial_species=(), parallel_ccd=None, serial_ccd=None, hyp_ci_regions=None,
                  hyp_parallel_trails=None, hyp_serial_trails=None, hyp_parallel_serial_trails=None,
-                 optimizer_class=nl.MultiNest, mask_function=default_mask_function,
+                 optimizer_class=nl.MultiNest, mask_function=ci_data.CIMask.empty_for_image,
                  phase_name="parallel_serial_hyper_phase"):
         """
         A phase with a simple source/CTI model
