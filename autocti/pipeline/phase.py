@@ -1,10 +1,8 @@
-import inspect
 import logging
 from functools import partial
 
 import numpy as np
 from autofit import conf
-from autofit.mapper import model_mapper as mm
 from autofit.optimize import non_linear as nl
 from autofit.tools import phase as ph
 from autofit.tools import phase_property
@@ -209,10 +207,6 @@ class Phase(ph.AbstractPhase):
             The result of a phase
             """
             super(Phase.Result, self).__init__(constant, likelihood, variable)
-
-
-def is_prior(value):
-    return inspect.isclass(value) or isinstance(value, mm.AbstractPriorModel)
 
 
 class ParallelPhase(Phase):
