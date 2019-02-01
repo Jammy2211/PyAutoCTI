@@ -1,10 +1,8 @@
 import inspect
 import logging
-import os
 from functools import partial
 
 import numpy as np
-from astropy.io import fits
 from autofit import conf
 from autofit.mapper import model_mapper as mm
 from autofit.optimize import non_linear as nl
@@ -12,7 +10,6 @@ from autofit.tools import phase as ph
 from autofit.tools import phase_property
 
 from autocti.charge_injection import ci_hyper, ci_fit, ci_data
-from autocti.charge_injection.plotters import ci_plotters_old as ci_plotters
 from autocti.data import util
 from autocti.model import arctic_params
 
@@ -178,7 +175,6 @@ class Phase(ph.AbstractPhase):
                 return self.previous_results.last
 
         def visualize(self, instance, suffix, during_analysis):
-
             pass
 
             # fitter = self.fit_for_instance(instance)
@@ -192,21 +188,6 @@ class Phase(ph.AbstractPhase):
             #     self.output_array_as_fits(chi_squareds[i], "chi_squareds_" + str(i))
             #
             # return fitter, ci_post_ctis, residuals, chi_squareds
-
-        def output_array_as_fits(self, array, filename):
-
-            file = self.output_image_path + filename + '.fits'
-
-            if os.path.isfile(file):
-                os.remove(file)
-
-            try:
-                if array is not None:
-                    hdu = fits.PrimaryHDU()
-                    hdu.data = array
-                    hdu.writeto(file)
-            except OSError as e:
-                logger.exception(e)
 
         def fit(self, **kwargs):
             """
@@ -302,18 +283,6 @@ class ParallelPhase(Phase):
                 return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
             fit = ci_fit.CIFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params, cti_settings=self.cti_settings)
             return fit.likelihood
-
-        def output_ci_regions_binned_across_serial(self, images, masks, filename):
-
-            for i in range(len(images)):
-                ci_plotters.ci_regions_binned_across_serial(images[i], masks[i], path=self.output_image_path,
-                                                            filename=filename + str(i), line0=False)
-
-        def output_parallel_trails_binned_across_serial(self, images, masks, filename):
-
-            for i in range(len(images)):
-                ci_plotters.parallel_trails_binned_across_serial(images[i], masks[i], path=self.output_image_path,
-                                                                 filename=filename + str(i), line0=False)
 
         @classmethod
         def log(cls, instance):
@@ -471,16 +440,6 @@ class SerialPhase(Phase):
             cti_params = cti_params_for_instance(instance)
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
             return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
-
-        def output_ci_regions_binned_across_parallel(self, images, masks, filename):
-            for i in range(len(images)):
-                ci_plotters.ci_regions_binned_across_parallel(images[i], masks[i], path=self.output_image_path,
-                                                              filename=filename + str(i), line0=False)
-
-        def output_serial_trails_binned_across_parallel(self, images, masks, filename):
-            for i in range(len(images)):
-                ci_plotters.serial_trails_binned_across_parallel(images[i], masks[i], path=self.output_image_path,
-                                                                 filename=filename + str(i), line0=False)
 
         @classmethod
         def log(cls, instance):
