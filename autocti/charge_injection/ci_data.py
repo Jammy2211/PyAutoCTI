@@ -117,14 +117,6 @@ class CIDataFit(object):
         self.mask = mask
         self.noise_scaling = noise_scaling
 
-    # TODO: pretty sure this can't be doing anything
-    def __array_finalize__(self, obj):
-        if isinstance(obj, CIDataFit):
-            self.image = obj.image
-            self.noise_map = obj.noise_map
-            self.mask = obj.mask
-            self.noise_scaling = obj.noise_scaling
-
 
 class CIImage(ci_frame.CIFrameCTI):
 
