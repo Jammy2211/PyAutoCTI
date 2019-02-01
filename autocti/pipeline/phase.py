@@ -269,6 +269,93 @@ class ParallelPhase(Phase):
                             fitter.chi_squareds))
 
 
+class SerialPhase(Phase):
+    serial_species = phase_property.PhasePropertyCollection("serial_species")
+    serial_ccd = phase_property.PhaseProperty("serial_ccd")
+
+    def __init__(self, serial_species=(), serial_ccd=None, optimizer_class=nl.MultiNest,
+                 mask_function=ci_data.CIMask.empty_for_image, columns=None, rows=None, phase_name="serial_phase"):
+        """
+        A phase with a simple source/CTI model
+        """
+        super().__init__(optimizer_class=optimizer_class, mask_function=mask_function, columns=columns,
+                         rows=rows, phase_name=phase_name)
+        self.serial_species = serial_species
+        self.serial_ccd = serial_ccd
+
+    def extract_ci_data(self, data, mask):
+        columns = self.columns or 0
+        return data.serial_calibration_data(columns or 0, self.rows or (0, data.image.ci_pattern.regions[0].total_rows),
+                                            mask)
+
+    class Analysis(Phase.Analysis):
+        @classmethod
+        def log(cls, instance):
+            logger.debug(
+                "\nRunning CTI analysis for... \n\nSerial CTI::\n{}\n\n".format(instance.serial))
+
+        def noise_scalings_for_instance(self, instance):
+            """
+            First noises scaling images are of the charge injection regions.
+            Second noises scaling images are of the non-charge injection regions in the serial calibration ci_frame
+            """
+            fitter = self.fit_for_instance(instance)
+            return list(map(lambda chi_squared:
+                            [chi_squared.ci_regions_frame_from_frame(),
+                             chi_squared.serial_all_trails_frame_from_frame()],
+                            fitter.chi_squareds))
+
+
+class ParallelSerialPhase(Phase):
+    parallel_species = phase_property.PhasePropertyCollection("parallel_species")
+    serial_species = phase_property.PhasePropertyCollection("serial_species")
+    parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
+    serial_ccd = phase_property.PhaseProperty("serial_ccd")
+
+    def __init__(self, parallel_species=(), serial_species=(), parallel_ccd=None, serial_ccd=None,
+                 optimizer_class=nl.MultiNest, mask_function=ci_data.CIMask.empty_for_image,
+                 phase_name="parallel_serial_phase"):
+        """
+        A phase with a simple source/CTI model
+
+        Parameters
+        ----------
+        optimizer_class: class
+            The class of a non-linear optimizer
+        """
+        super().__init__(optimizer_class=optimizer_class, mask_function=mask_function, columns=None,
+                         rows=None, phase_name=phase_name)
+        self.parallel_species = parallel_species
+        self.serial_species = serial_species
+        self.parallel_ccd = parallel_ccd
+        self.serial_ccd = serial_ccd
+
+    def extract_ci_data(self, data, mask):
+        return data.parallel_serial_calibration_data(mask)
+
+    class Analysis(Phase.Analysis):
+        @classmethod
+        def log(cls, instance):
+            logger.debug(
+                "\nRunning CTI analysis for... "
+                "\n\nParallel CTI::\n{}"
+                "\n\nSerial CTI::\n{}\n\n".format(instance.parallel, instance.serial))
+
+        def noise_scalings_for_instance(self, instance):
+            """
+
+            First noises scaling images are of the charge injection regions.
+            Second noises scaling images are of the non-charge injection regions in the parallel calibration ci_frame"""
+            cti_params = cti_params_for_instance(instance)
+            fit = ci_fit.CIFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params, cti_settings=self.cti_settings)
+            return list(map(lambda chi_squared:
+                            [chi_squared.ci_regions_frame_from_frame(),
+                             chi_squared.parallel_non_ci_regions_frame_from_frame(),
+                             chi_squared.serial_all_trails_frame_from_frame(),
+                             chi_squared.serial_overscan_non_trails_frame_from_frame()],
+                            fit.chi_squareds))
+
+
 class ParallelHyperPhase(ParallelPhase):
     hyp_ci_regions = phase_property.PhaseProperty("hyp_ci_regions")
     hyp_parallel_trails = phase_property.PhaseProperty("hyp_parallel_trails")
@@ -358,50 +445,6 @@ class ParallelHyperOnlyPhase(ParallelHyperPhase, HyperOnly):
                                      analysis)
 
 
-class SerialPhase(Phase):
-    serial_species = phase_property.PhasePropertyCollection("serial_species")
-    serial_ccd = phase_property.PhaseProperty("serial_ccd")
-
-    def __init__(self, serial_species=(), serial_ccd=None, optimizer_class=nl.MultiNest,
-                 mask_function=ci_data.CIMask.empty_for_image, columns=None, rows=None, phase_name="serial_phase"):
-        """
-        A phase with a simple source/CTI model
-        """
-        super().__init__(optimizer_class=optimizer_class, mask_function=mask_function, columns=columns,
-                         rows=rows, phase_name=phase_name)
-        self.serial_species = serial_species
-        self.serial_ccd = serial_ccd
-
-    def extract_ci_data(self, data, mask):
-        columns = self.columns or 0
-        return data.serial_calibration_data(columns or 0, self.rows or (0, data.image.ci_pattern.regions[0].total_rows),
-                                            mask)
-
-    class Analysis(Phase.Analysis):
-        @classmethod
-        def log(cls, instance):
-            logger.debug(
-                "\nRunning CTI analysis for... \n\nSerial CTI::\n{}\n\n".format(instance.serial))
-
-        def noise_scalings_for_instance(self, instance):
-            """
-            First noises scaling images are of the charge injection regions.
-            Second noises scaling images are of the non-charge injection regions in the serial calibration ci_frame
-            """
-            fitter = self.fit_for_instance(instance)
-            return list(map(lambda chi_squared:
-                            [chi_squared.ci_regions_frame_from_frame(),
-                             chi_squared.serial_all_trails_frame_from_frame()],
-                            fitter.chi_squareds))
-
-    class Result(Phase.Result):
-
-        def __init__(self, constant, likelihood, variable, analysis):
-            super().__init__(constant, likelihood, variable, analysis)
-
-            # self.noise_scalings = analysis.noise_scalings_for_instance(constant)
-
-
 class SerialHyperPhase(SerialPhase):
     hyp_ci_regions = phase_property.PhaseProperty("hyp_ci_regions")
     hyp_serial_trails = phase_property.PhaseProperty("hyp_serial_trails")
@@ -488,56 +531,6 @@ class SerialHyperOnlyPhase(SerialHyperPhase, HyperOnly):
 
         return self.__class__.Result(hyper_result.constant, hyper_result.figure_of_merit, hyper_result.variable,
                                      analysis)
-
-
-class ParallelSerialPhase(Phase):
-    parallel_species = phase_property.PhasePropertyCollection("parallel_species")
-    serial_species = phase_property.PhasePropertyCollection("serial_species")
-    parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
-    serial_ccd = phase_property.PhaseProperty("serial_ccd")
-
-    def __init__(self, parallel_species=(), serial_species=(), parallel_ccd=None, serial_ccd=None,
-                 optimizer_class=nl.MultiNest, mask_function=ci_data.CIMask.empty_for_image,
-                 phase_name="parallel_serial_phase"):
-        """
-        A phase with a simple source/CTI model
-
-        Parameters
-        ----------
-        optimizer_class: class
-            The class of a non-linear optimizer
-        """
-        super().__init__(optimizer_class=optimizer_class, mask_function=mask_function, columns=None,
-                         rows=None, phase_name=phase_name)
-        self.parallel_species = parallel_species
-        self.serial_species = serial_species
-        self.parallel_ccd = parallel_ccd
-        self.serial_ccd = serial_ccd
-
-    def extract_ci_data(self, data, mask):
-        return data.parallel_serial_calibration_data(mask)
-
-    class Analysis(Phase.Analysis):
-        @classmethod
-        def log(cls, instance):
-            logger.debug(
-                "\nRunning CTI analysis for... "
-                "\n\nParallel CTI::\n{}"
-                "\n\nSerial CTI::\n{}\n\n".format(instance.parallel, instance.serial))
-
-        def noise_scalings_for_instance(self, instance):
-            """
-
-            First noises scaling images are of the charge injection regions.
-            Second noises scaling images are of the non-charge injection regions in the parallel calibration ci_frame"""
-            cti_params = cti_params_for_instance(instance)
-            fit = ci_fit.CIFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params, cti_settings=self.cti_settings)
-            return list(map(lambda chi_squared:
-                            [chi_squared.ci_regions_frame_from_frame(),
-                             chi_squared.parallel_non_ci_regions_frame_from_frame(),
-                             chi_squared.serial_all_trails_frame_from_frame(),
-                             chi_squared.serial_overscan_non_trails_frame_from_frame()],
-                            fit.chi_squareds))
 
 
 class ParallelSerialHyperPhase(ParallelSerialPhase):
