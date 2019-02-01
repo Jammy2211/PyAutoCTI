@@ -208,23 +208,12 @@ class Phase(ph.AbstractPhase):
 
     class Result(nl.Result):
 
+        # noinspection PyUnusedLocal
         def __init__(self, constant, likelihood, variable, *args):
             """
             The result of a phase
             """
             super(Phase.Result, self).__init__(constant, likelihood, variable)
-
-    def pass_priors(self, previous_results):
-        """
-        Perform any prior or constant passing. This could involve setting model attributes equal to priors or constants
-        from a previous phase.
-
-        Parameters
-        ----------
-        previous_results: ResultsCollection
-            The result of the previous phase
-        """
-        pass
 
 
 def is_prior(value):
@@ -356,6 +345,49 @@ class ParallelSerialPhase(Phase):
                             fit.chi_squareds))
 
 
+class HyperAnalysis(Phase.Analysis):
+    def fit(self, instance):
+        """
+        Runs the analysis. Determine how well the supplied cti_params fits the image.
+
+        Params
+        ----------
+        parallel : arctic_params.ParallelParams
+            A class describing the parallel cti model and parameters.
+        parallel : arctic_params.SerialParams
+            A class describing the serial cti model and parameters.
+        hyp : ci_hyper.HyperCINoise
+            A class describing the noises scaling ci_hyper-parameters.
+
+        Returns
+        -------
+        result: Result
+            An object comprising the final cti_params instances generated and a corresponding likelihood
+        """
+        cti_params = cti_params_for_instance(instance)
+        pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
+                                hyper_noises=self.noises_from_instance(instance))
+        return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
+
+    @classmethod
+    def log(cls, instance):
+        logger.debug(
+            "\nRunning CTI analysis for... \n\n"
+            "Parallel CTI::\n{}\n\n "
+            "Hyper Parameters:\n{}".format(instance.parallel, " ".join(cls.noises_from_instance(instance))))
+
+    def fit_for_instance(self, instance):
+        cti_params = cti_params_for_instance(instance)
+        return ci_fit.CIHyperFit(ci_datas_fit=self.ci_datas_fit,
+                                 cti_params=cti_params,
+                                 cti_settings=self.cti_settings,
+                                 hyper_noises=self.noises_from_instance(instance))
+
+    @classmethod
+    def noises_from_instance(cls, instance):
+        raise NotImplementedError()
+
+
 class ParallelHyperPhase(ParallelPhase):
     hyp_ci_regions = phase_property.PhaseProperty("hyp_ci_regions")
     hyp_parallel_trails = phase_property.PhaseProperty("hyp_parallel_trails")
@@ -377,44 +409,10 @@ class ParallelHyperPhase(ParallelPhase):
         self.hyp_parallel_trails = hyp_parallel_trails
         self.has_noise_scalings = True
 
-    class Analysis(ParallelPhase.Analysis):
-
-        def fit(self, instance):
-            """
-            Runs the analysis. Determine how well the supplied cti_params fits the image.
-
-            Params
-            ----------
-            parallel : arctic_params.ParallelParams
-                A class describing the parallel cti model and parameters.
-            parallel : arctic_params.SerialParams
-                A class describing the serial cti model and parameters.
-            hyp : ci_hyper.HyperCINoise
-                A class describing the noises scaling ci_hyper-parameters.
-
-            Returns
-            -------
-            result: Result
-                An object comprising the final cti_params instances generated and a corresponding likelihood
-            """
-            cti_params = cti_params_for_instance(instance)
-            pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
-                                    hyper_noises=[instance.hyp_ci_regions, instance.hyp_parallel_trails])
-            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
-
+    class Analysis(HyperAnalysis, ParallelPhase.Analysis):
         @classmethod
-        def log(cls, instance):
-            logger.debug(
-                "\nRunning CTI analysis for... \n\n"
-                "Parallel CTI::\n{}\n\n "
-                "Hyper Parameters:\n{}\n{}\n".format(instance.parallel, instance.hyp_ci_regions,
-                                                     instance.hyp_parallel_trails))
-
-        def fit_for_instance(self, instance):
-            cti_params = cti_params_for_instance(instance)
-            return ci_fit.CIHyperFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params,
-                                     cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
-                                                                                   instance.hyp_parallel_trails])
+        def noises_from_instance(cls, instance):
+            return [instance.hyp_ci_regions, instance.hyp_parallel_trails]
 
 
 class SerialHyperPhase(SerialPhase):
@@ -433,44 +431,10 @@ class SerialHyperPhase(SerialPhase):
         self.hyp_serial_trails = hyp_serial_trails
         self.has_noise_scalings = True
 
-    class Analysis(SerialPhase.Analysis):
-
-        def fit(self, instance):
-            """
-            Runs the analysis. Determine how well the supplied cti_params fits the image.
-
-            Params
-            ----------
-            serial : arctic_params.SerialParams
-                A class describing the serial cti model and parameters.
-            serial : arctic_params.SerialParams
-                A class describing the serial cti model and parameters.
-            hyp : ci_hyper.HyperCINoise
-                A class describing the noises scaling ci_hyper-parameters.
-
-            Returns
-            -------
-            result: Result
-                An object comprising the final cti_params instances generated and a corresponding likelihood
-            """
-            cti_params = cti_params_for_instance(instance)
-            pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
-                                    hyper_noises=[instance.hyp_ci_regions, instance.hyp_serial_trails])
-            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
-
+    class Analysis(HyperAnalysis, SerialPhase.Analysis):
         @classmethod
-        def log(cls, instance):
-            logger.debug(
-                "\nRunning CTI analysis for... \n\n"
-                "Serial CTI::\n{}\n\n "
-                "Hyper Parameters:\n{}\n{}\n".format(instance.serial, instance.hyp_ci_regions,
-                                                     instance.hyp_serial_trails))
-
-        def hyper_fit_for_instance(self, instance):
-            cti_params = cti_params_for_instance(instance)
-            return ci_fit.CIHyperFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params,
-                                     cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
-                                                                                   instance.hyp_serial_trails])
+        def noises_from_instance(cls, instance):
+            return [instance.hyp_ci_regions, instance.hyp_serial_trails]
 
 
 class ParallelSerialHyperPhase(ParallelSerialPhase):
@@ -500,50 +464,13 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
         self.hyp_parallel_serial_trails = hyp_parallel_serial_trails
         self.has_noise_scalings = True
 
-    class Analysis(ParallelPhase.Analysis):
-        def fit(self, instance):
-            """
-            Runs the analysis. Determine how well the supplied cti_params fits the image.
-
-            Params
-            ----------
-            parallel : arctic_params.ParallelParams
-                A class describing the parallel cti model and parameters.
-            parallel : arctic_params.SerialParams
-                A class describing the serial cti model and parameters.
-            hyp : ci_hyper.HyperCINoise
-                A class describing the noises scaling ci_hyper-parameters.
-
-            Returns
-            -------
-            result: Result
-                An object comprising the final cti_params instances generated and a corresponding likelihood
-            """
-            cti_params = cti_params_for_instance(instance)
-            pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
-                                    hyper_noises=[instance.hyp_ci_regions, instance.hyp_parallel_trails,
-                                                  instance.hyp_serial_trails,
-                                                  instance.hyp_parallel_serial_trails])
-            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
-
+    class Analysis(HyperAnalysis, ParallelPhase.Analysis):
         @classmethod
-        def log(cls, instance):
-            logger.debug(
-                "\nRunning CTI analysis for... \n\n"
-                "Parallel CTI::\n{}\n\n "
-                "Serial CTI::\n{}\n\n "
-                "Hyper Parameters:\n{}\n{}\n{}\n{}\n".format(instance.parallel, instance.serial,
-                                                             instance.hyp_ci_regions, instance.hyp_parallel_trails,
-                                                             instance.hyp_serial_trails,
-                                                             instance.hyp_parallel_serial_trails))
-
-        def fit_for_instance(self, instance):
-            cti_params = cti_params_for_instance(instance)
-            return ci_fit.CIHyperFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params,
-                                     cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
-                                                                                   instance.hyp_parallel_trails,
-                                                                                   instance.hyp_serial_trails,
-                                                                                   instance.hyp_parallel_serial_trails])
+        def noises_from_instance(cls, instance):
+            return [instance.hyp_ci_regions,
+                    instance.hyp_parallel_trails,
+                    instance.hyp_serial_trails,
+                    instance.hyp_parallel_serial_trails]
 
 
 class ParallelHyperOnlyPhase(ParallelHyperPhase, HyperOnly):
@@ -570,8 +497,7 @@ class ParallelHyperOnlyPhase(ParallelHyperPhase, HyperOnly):
         analysis = self.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results,
                                       pool=pool)
 
-        return self.__class__.Result(hyper_result.constant, hyper_result.figure_of_merit, hyper_result.variable,
-                                     analysis)
+        return self.make_result(hyper_result, analysis)
 
 
 class SerialHyperOnlyPhase(SerialHyperPhase, HyperOnly):
@@ -599,8 +525,7 @@ class SerialHyperOnlyPhase(SerialHyperPhase, HyperOnly):
         analysis = self.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results,
                                       pool=pool)
 
-        return self.__class__.Result(hyper_result.constant, hyper_result.figure_of_merit, hyper_result.variable,
-                                     analysis)
+        return self.make_result(hyper_result, analysis)
 
 
 class ParallelSerialHyperOnlyPhase(ParallelSerialHyperPhase, HyperOnly):
@@ -633,8 +558,7 @@ class ParallelSerialHyperOnlyPhase(ParallelSerialHyperPhase, HyperOnly):
         analysis = self.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results,
                                       pool=pool)
 
-        return self.__class__.Result(hyper_result.constant, hyper_result.figure_of_merit, hyper_result.variable,
-                                     analysis)
+        return self.make_result(hyper_result, analysis)
 
 
 def pipe_cti(ci_data_fit, cti_params, cti_settings):
