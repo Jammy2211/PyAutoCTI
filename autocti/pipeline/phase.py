@@ -130,10 +130,6 @@ class Phase(ph.AbstractPhase):
         masks = list(map(lambda data: self.mask_function(data.image), ci_datas))
         ci_datas_fit = [self.extract_ci_data(data=data, mask=mask) for data, mask in zip(ci_datas, masks)]
 
-        ci_datas_fit[0].mask = masks[0][0:36, 0:35]
-        if len(ci_datas_fit) == 2:
-            ci_datas_fit[1].mask = masks[1][0:36, 0:35]
-
         self.pass_priors(previous_results)
         analysis = self.__class__.Analysis(ci_datas_fit=ci_datas_fit,
                                            cti_settings=cti_settings, phase_name=self.phase_name,
