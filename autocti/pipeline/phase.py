@@ -17,11 +17,6 @@ logger = logging.getLogger(__name__)
 logger.level = logging.DEBUG
 
 
-# noinspection PyAbstractClass
-class HyperOnly(ph.AbstractPhase):
-    pass
-
-
 def cti_params_for_instance(instance):
     return arctic_params.ArcticParams(
         parallel_ccd=instance.parallel_ccd if hasattr(instance, "parallel_ccd") else None,
@@ -471,6 +466,11 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
                     instance.hyp_parallel_trails,
                     instance.hyp_serial_trails,
                     instance.hyp_parallel_serial_trails]
+
+
+# noinspection PyAbstractClass
+class HyperOnly(ph.AbstractPhase):
+    pass
 
 
 class ParallelHyperOnlyPhase(ParallelHyperPhase, HyperOnly):
