@@ -34,7 +34,11 @@ from autocti.data import util
 from autocti.model import pyarctic
 
 
-## TODO : Add mask to the calibration data routines.
+class CIMask(ci_frame.CIFrame, msk.Mask):
+    @classmethod
+    def empty_for_image(cls, image):
+        return CIMask.empty_for_shape(image.shape, image.frame_geometry, image.ci_pattern)
+
 
 class CIData(object):
 

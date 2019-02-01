@@ -8,7 +8,6 @@ from autofit.optimize import non_linear as nl
 from autofit.tools import phase_property
 from autofit.tools.phase import ResultsCollection
 
-from autocti.data import mask as msk
 from autocti.charge_injection import ci_data as data, ci_frame
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
@@ -140,7 +139,6 @@ class TestPhase(object):
         assert phase.optimizer.constant.parallel_species != [parallel]
 
     def test__mask_analysis(self, phase, ci_data, cti_settings):
-
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
         assert analysis.last_results is None
         assert (analysis.ci_datas_fit[0].image == ci_data.image).all()
@@ -163,10 +161,9 @@ class TestPhase(object):
 
     # noinspection PyUnresolvedReferences
     def test__default_data_extractor(self, ci_data, phase):
+        ci_datas_fit = phase.extract_ci_data([ci_data], [data.CIMask.empty_for_image(ci_data.image)])
 
-        ci_datas_fit = phase.extract_ci_data([ci_data])
-
-        assert type(ci_datas_fit[0]) == data.CIData
+        assert isinstance(ci_datas_fit[0], data.CIDataFit)
         assert (ci_data.image == ci_datas_fit[0].image).all()
         assert (ci_data.noise_map == ci_datas_fit[0].noise_map).all()
         assert (ci_data.ci_pre_cti == ci_datas_fit[0].ci_pre_cti).all()
@@ -206,20 +203,6 @@ class TestPhase(object):
         cti_params = ph.cti_params_for_instance(instance)
 
         assert cti_params.parallel_species == instance.parallel_species
-
-    def test_make_analysis__mask_input_uses_mask__no_mask_uses_mask_function(self, ci_data, phase, ci_geometry,
-                                                                             ci_pattern):
-
-        mask_input = msk.Mask.empty_for_shape(shape=ci_data.shape, frame_geometry=ci_geometry, ci_pattern=ci_pattern)
-        mask_input[1,1] = True
-
-        # analysis = phase.make_analysis(ci_datas=[ci_data], masks=[mask_input], cti_settings=None)
-        # assert (analysis.ci_datas_fit[0].mask == mask_input).all()
-
-        mask_default = ph.default_mask_function(image=ci_data.image)
-
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=None)
-        assert (analysis.ci_datas_fit[0].mask == mask_default).all()
 
 
 class TestResult(object):
