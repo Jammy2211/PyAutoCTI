@@ -4,6 +4,7 @@ import shutil
 import numpy as np
 import pytest
 from autofit import conf
+from matplotlib import pyplot
 
 from autocti.charge_injection import ci_data
 from autocti.charge_injection import ci_frame
@@ -55,11 +56,25 @@ def make_ci_data(image, noise_map, ci_pre_cti):
     return ci_data.CIData(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti, noise_scalings=None)
 
 
-def test__ci_sub_plot_output_dependent_on_config(data, data_plotter_path):
+class PlotPatch(object):
+    def __init__(self):
+        self.paths = []
+
+    def __call__(self, path, *args, **kwargs):
+        self.paths.append(path)
+
+
+@pytest.fixture(name="plot_patch")
+def make_plot_patch(monkeypatch):
+    plot_patch = PlotPatch()
+    monkeypatch.setattr(pyplot, 'savefig', plot_patch)
+    return plot_patch
+
+
+def test__ci_sub_plot_output_dependent_on_config(data, data_plotter_path, plot_patch):
     ci_data_plotters.plot_ci_subplot(ci_data=data, output_path=data_plotter_path, output_format='png')
 
-    assert os.path.isfile(path=data_plotter_path + 'ci_data.png')
-    os.remove(path=data_plotter_path + 'ci_data.png')
+    assert data_plotter_path + 'ci_data.png' in plot_patch.paths
 
 
 def test__ci_individuals__output_dependent_on_config(data, data_plotter_path):
