@@ -63,7 +63,7 @@ class CIFit(CIDataFit, AbstractCIFit):
 
 class CIHyperFit(CIDataFit, AbstractCIFit):
 
-    def __init__(self, ci_data_fit, cti_params, cti_settings, hyper_noise):
+    def __init__(self, ci_data_fit, cti_params, cti_settings, hyper_noises):
         """Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian framework.
         Params
         -----------
@@ -75,10 +75,10 @@ class CIHyperFit(CIDataFit, AbstractCIFit):
             The ci_hyper-parameter(s) which the noise_scalings is multiplied by to scale the noises.
         """
 
-        self.hyper_noises = hyper_noise
+        self.hyper_noises = hyper_noises
 
         self.hyper_noise_map = hyper_noise_map_from_ci_data_fit_and_hyper_noise(ci_data_fit=ci_data_fit,
-                                                                                hyper_noise=hyper_noise)
+                                                                                hyper_noises=hyper_noises)
 
         AbstractCIFit.__init__(self=self, ci_data_fit=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings)
 
@@ -88,7 +88,7 @@ class CIHyperFit(CIDataFit, AbstractCIFit):
                                          ci_post_cti=self.ci_post_cti)
 
 
-def hyper_noise_map_from_ci_data_fit_and_hyper_noise(ci_data_fit, hyper_noise):
+def hyper_noise_map_from_ci_data_fit_and_hyper_noise(ci_data_fit, hyper_noises):
     """For a list of fitting hyper-images (which includes the image's noise-scaling maps) and model hyper noises,
     compute their scaled noise-maps.
 
@@ -99,26 +99,26 @@ def hyper_noise_map_from_ci_data_fit_and_hyper_noise(ci_data_fit, hyper_noise):
     ----------
     ci_data_fit : fitting.fitting_data.FittingHyperImage
        The fitting hyper-image.
-    hyper_noise : galaxy.Galaxy
+    hyper_noises : galaxy.Galaxy
         The hyper-noises which represent the model components used to scale the noise, generated from the chi-squared \
         image of a previous phase's fit.
     """
     return hyper_noise_map_from_noise_map_and_noise_scaling(
         noise_scaling=ci_data_fit.noise_scaling,
-        hyper_noise=hyper_noise,
+        hyper_noises=hyper_noises,
         noise_map=ci_data_fit.noise_map)
 
 
-def hyper_noise_map_from_noise_map_and_noise_scaling(noise_scaling, hyper_noise, noise_map):
+def hyper_noise_map_from_noise_map_and_noise_scaling(noise_scaling, hyper_noises, noise_map):
     """For a noise-map, use the model hyper noise and noise-scaling maps to compute a scaled noise-map.
 
     Parameters
     -----------
-    hyper_noise
+    hyper_noises
     noise_scaling
     noise_map : imaging.NoiseMap or ndarray
         An array describing the RMS standard deviation error in each pixel, preferably in units of electrons per
         second.
     """
-    scaled_noise_map = hyper_noise.scaled_noise_map_from_noise_scaling(noise_scaling)
-    return np.add(noise_map, scaled_noise_map)
+    scaled_noise_maps = [hyper_noise.scaled_noise_map_from_noise_scaling(noise_scaling) for hyper_noise in hyper_noises]
+    return np.add(noise_map, sum(scaled_noise_maps))

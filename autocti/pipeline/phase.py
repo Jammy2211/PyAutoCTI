@@ -328,7 +328,7 @@ class HyperAnalysis(Phase.Analysis):
 
     def fit_for_instance(self, instance):
         cti_params = cti_params_for_instance(instance)
-        return ci_fit.CIHyperFit(ci_datas_fit=self.ci_datas_fit,
+        return ci_fit.CIHyperFit(ci_data_fit=self.ci_datas_fit,
                                  cti_params=cti_params,
                                  cti_settings=self.cti_settings,
                                  hyper_noises=self.noises_from_instance(instance))
@@ -517,14 +517,14 @@ class ParallelSerialHyperOnlyPhase(ParallelSerialHyperPhase, HyperOnly):
 
 
 def pipe_cti(ci_data_fit, cti_params, cti_settings):
-    fitter = ci_fit.CIFit(ci_datas_fit=[ci_data_fit],
+    fitter = ci_fit.CIFit(ci_data_fit=ci_data_fit,
                           cti_params=cti_params,
                           cti_settings=cti_settings)
     return fitter.likelihood
 
 
 def pipe_cti_hyper(ci_data_fit, cti_params, cti_settings, hyper_noises):
-    fitter = ci_fit.CIHyperFit(ci_datas_fit=[ci_data_fit],
+    fitter = ci_fit.CIHyperFit(ci_data_fit=ci_data_fit,
                                cti_params=cti_params,
                                cti_settings=cti_settings,
                                hyper_noises=hyper_noises)
