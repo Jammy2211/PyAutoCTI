@@ -236,16 +236,6 @@ class ParallelPhase(Phase):
                 "Parallel Species:\n{}\n\n "
                 "Parallel CCD\n{}\n\n".format(instance.parallel_species, instance.parallel_ccd))
 
-        def noise_scalings_for_instance(self, instance):
-            """
-            First noises scaling images are of the charge injection regions.
-            Second noises scaling images are of the non-charge injection regions in the parallel calibration ci_frame"""
-            fitter = self.fit_for_instance(instance)
-            return list(map(lambda chi_squared:
-                            [chi_squared.ci_regions_frame_from_frame(),
-                             chi_squared.parallel_non_ci_regions_frame_from_frame()],
-                            fitter.chi_squareds))
-
 
 class SerialPhase(Phase):
     serial_species = phase_property.PhasePropertyCollection("serial_species")
@@ -271,17 +261,6 @@ class SerialPhase(Phase):
         def log(cls, instance):
             logger.debug(
                 "\nRunning CTI analysis for... \n\nSerial CTI::\n{}\n\n".format(instance.serial))
-
-        def noise_scalings_for_instance(self, instance):
-            """
-            First noises scaling images are of the charge injection regions.
-            Second noises scaling images are of the non-charge injection regions in the serial calibration ci_frame
-            """
-            fitter = self.fit_for_instance(instance)
-            return list(map(lambda chi_squared:
-                            [chi_squared.ci_regions_frame_from_frame(),
-                             chi_squared.serial_all_trails_frame_from_frame()],
-                            fitter.chi_squareds))
 
 
 class ParallelSerialPhase(Phase):
@@ -318,20 +297,6 @@ class ParallelSerialPhase(Phase):
                 "\nRunning CTI analysis for... "
                 "\n\nParallel CTI::\n{}"
                 "\n\nSerial CTI::\n{}\n\n".format(instance.parallel, instance.serial))
-
-        def noise_scalings_for_instance(self, instance):
-            """
-
-            First noises scaling images are of the charge injection regions.
-            Second noises scaling images are of the non-charge injection regions in the parallel calibration ci_frame"""
-            cti_params = cti_params_for_instance(instance)
-            fit = ci_fit.CIFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params, cti_settings=self.cti_settings)
-            return list(map(lambda chi_squared:
-                            [chi_squared.ci_regions_frame_from_frame(),
-                             chi_squared.parallel_non_ci_regions_frame_from_frame(),
-                             chi_squared.serial_all_trails_frame_from_frame(),
-                             chi_squared.serial_overscan_non_trails_frame_from_frame()],
-                            fit.chi_squareds))
 
 
 class HyperAnalysis(Phase.Analysis):
