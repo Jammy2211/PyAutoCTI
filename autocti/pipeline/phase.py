@@ -193,7 +193,7 @@ class Phase(ph.AbstractPhase):
 
         def fit_for_instance(self, instance):
             cti_params = cti_params_for_instance(instance)
-            return ci_fit.CIFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params, cti_settings=self.cti_settings)
+            return ci_fit.CIFit(ci_data_fit=self.ci_datas_fit, cti_params=cti_params, cti_settings=self.cti_settings)
 
     class Result(nl.Result):
 
