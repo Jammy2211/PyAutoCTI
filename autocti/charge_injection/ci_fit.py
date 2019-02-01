@@ -65,31 +65,11 @@ class CIHyperFit(CIFit):
 
         self.hyper_noises = hyper_noises
 
-        self.hyper_noise_map = hyper_noise_map_from_ci_data_fit_and_hyper_noise(ci_data_fit=ci_data_fit,
-                                                                                hyper_noises=hyper_noises)
+        self.hyper_noise_map = hyper_noise_map_from_noise_map_and_noise_scaling(noise_scaling=ci_data_fit.noise_scaling,
+                                                                                hyper_noises=hyper_noises,
+                                                                                noise_map=ci_data_fit.noise_map)
 
         super().__init__(ci_data_fit, cti_params, cti_settings)
-
-
-def hyper_noise_map_from_ci_data_fit_and_hyper_noise(ci_data_fit, hyper_noises):
-    """For a list of fitting hyper-images (which includes the image's noise-scaling maps) and model hyper noises,
-    compute their scaled noise-maps.
-
-    This is performed by using each hyper-noise's *noise_factor* and *noise_power* parameter in conjunction with the \
-    unscaled noise-map and noise-scaling map.
-
-    Parameters
-    ----------
-    ci_data_fit : fitting.fitting_data.FittingHyperImage
-       The fitting hyper-image.
-    hyper_noises : galaxy.Galaxy
-        The hyper-noises which represent the model components used to scale the noise, generated from the chi-squared \
-        image of a previous phase's fit.
-    """
-    return hyper_noise_map_from_noise_map_and_noise_scaling(
-        noise_scaling=ci_data_fit.noise_scaling,
-        hyper_noises=hyper_noises,
-        noise_map=ci_data_fit.noise_map)
 
 
 def hyper_noise_map_from_noise_map_and_noise_scaling(noise_scaling, hyper_noises, noise_map):
