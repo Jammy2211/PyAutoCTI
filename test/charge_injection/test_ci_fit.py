@@ -121,6 +121,7 @@ class TestCIFit:
         fit = ci_fit.CIFit(ci_datas_fit, cti_params=MockParams(), cti_settings=MockSettings())
 
         assert likelihood_0 + likelihood_1 == fit.likelihood
+        assert fit.likelihood == fit.figure_of_merit
 
 
 class TestCIHyperFit:

@@ -48,6 +48,9 @@ class CIDataFit(fit.DataFitStack):
     def model_images(self):
         return self.model_datas
 
+    @property
+    def figure_of_merit(self):
+        return self.likelihood
 
 class CIFit(CIDataFit, AbstractCIFit):
 

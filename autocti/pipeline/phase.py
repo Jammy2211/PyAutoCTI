@@ -111,7 +111,7 @@ class Phase(ph.AbstractPhase):
         result = self.optimizer.fit(analysis)
         if analysis.visualize_results:
             analysis.visualize(instance=result.constant, suffix=None, during_analysis=False)
-        return self.__class__.Result(result.constant, result.likelihood, result.variable, analysis)
+        return self.__class__.Result(result.constant, result.figure_of_merit, result.variable, analysis)
 
     # noinspection PyMethodMayBeStatic
     def extract_ci_data(self, ci_datas):
@@ -187,17 +187,19 @@ class Phase(ph.AbstractPhase):
 
         def visualize(self, instance, suffix, during_analysis):
 
-            fitter = self.fit_for_instance(instance)
-            ci_post_ctis = fitter.ci_post_ctis
-            residuals = fitter.residuals
-            chi_squareds = fitter.chi_squareds
+            pass
 
-            for i in range(len(ci_post_ctis)):
-                self.output_array_as_fits(ci_post_ctis[i], "ci_post_ctis_" + str(i))
-                self.output_array_as_fits(residuals[i], "residuals_" + str(i))
-                self.output_array_as_fits(chi_squareds[i], "chi_squareds_" + str(i))
-
-            return fitter, ci_post_ctis, residuals, chi_squareds
+            # fitter = self.fit_for_instance(instance)
+            # ci_post_ctis = fitter.ci_post_ctis
+            # residuals = fitter.residuals
+            # chi_squareds = fitter.chi_squareds
+            #
+            # for i in range(len(ci_post_ctis)):
+            #     self.output_array_as_fits(ci_post_ctis[i], "ci_post_ctis_" + str(i))
+            #     self.output_array_as_fits(residuals[i], "residuals_" + str(i))
+            #     self.output_array_as_fits(chi_squareds[i], "chi_squareds_" + str(i))
+            #
+            # return fitter, ci_post_ctis, residuals, chi_squareds
 
         def output_array_as_fits(self, array, filename):
 
@@ -341,8 +343,10 @@ class ParallelPhase(Phase):
     class Result(Phase.Result):
 
         def __init__(self, constant, likelihood, variable, analysis):
+
             super().__init__(constant, likelihood, variable, analysis)
-            self.noise_scalings = analysis.noise_scalings_for_instance(constant)
+
+            # self.noise_scalings = analysis.noise_scalings_for_instance(constant)
 
 
 class ParallelHyperPhase(ParallelPhase):
@@ -506,8 +510,10 @@ class SerialPhase(Phase):
     class Result(Phase.Result):
 
         def __init__(self, constant, likelihood, variable, analysis):
+
             super().__init__(constant, likelihood, variable, analysis)
-            self.noise_scalings = analysis.noise_scalings_for_instance(constant)
+
+            # self.noise_scalings = analysis.noise_scalings_for_instance(constant)
 
 
 class SerialHyperPhase(SerialPhase):
@@ -677,8 +683,10 @@ class ParallelSerialPhase(Phase):
     class Result(Phase.Result):
 
         def __init__(self, constant, likelihood, variable, analysis):
+
             super().__init__(constant, likelihood, variable, analysis)
-            self.noise_scalings = analysis.noise_scalings_for_instance(constant)
+
+            # self.noise_scalings = analysis.noise_scalings_for_instance(constant)
 
 
 class ParallelSerialHyperPhase(ParallelSerialPhase):
