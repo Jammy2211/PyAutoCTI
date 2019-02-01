@@ -109,9 +109,8 @@ class Phase(ph.AbstractPhase):
         return self.__class__.Result(result.constant, result.figure_of_merit, result.variable, analysis)
 
     # noinspection PyMethodMayBeStatic
-    def extract_ci_data(self, ci_datas, masks):
-        return [ci_data.CIDataFit(data.image, data.noise_map, data.ci_pre_cti, mask, data.noise_scaling) for data, mask
-                in zip(ci_datas, masks)]
+    def extract_ci_data(self, data, mask):
+        return ci_data.CIDataFit(data.image, data.noise_map, data.ci_pre_cti, mask, data.noise_scaling)
 
     def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
         """
@@ -135,7 +134,7 @@ class Phase(ph.AbstractPhase):
         # TODO : ci_datas_fit should include the mask as an attrbiute.
 
         masks = list(map(lambda ci_data: self.mask_function(ci_data.image), ci_datas))
-        ci_datas_fit = self.extract_ci_data(ci_datas=ci_datas, masks=masks)
+        ci_datas_fit = [self.extract_ci_data(data=data, mask=mask) for data, mask in zip(ci_datas, masks)]
 
         ci_datas_fit[0].mask = masks[0][0:36, 0:35]
         if len(ci_datas_fit) == 2:
@@ -273,10 +272,9 @@ class ParallelPhase(Phase):
         self.parallel_species = parallel_species
         self.parallel_ccd = parallel_ccd
 
-    def extract_ci_data(self, ci_datas, masks):
-        return [data.parallel_calibration_data(
-            (0, self.columns or data.image.frame_geometry.parallel_overscan.total_columns), mask) for data, mask in
-            zip(ci_datas, masks)]
+    def extract_ci_data(self, data, mask):
+        return data.parallel_calibration_data(
+            (0, self.columns or data.image.frame_geometry.parallel_overscan.total_columns), mask)
 
     class Analysis(Phase.Analysis):
 

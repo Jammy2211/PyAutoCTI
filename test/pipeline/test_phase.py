@@ -161,12 +161,12 @@ class TestPhase(object):
 
     # noinspection PyUnresolvedReferences
     def test__default_data_extractor(self, ci_data, phase):
-        ci_datas_fit = phase.extract_ci_data([ci_data], [data.CIMask.empty_for_image(ci_data.image)])
+        ci_datas_fit = phase.extract_ci_data(ci_data, data.CIMask.empty_for_image(ci_data.image))
 
-        assert isinstance(ci_datas_fit[0], data.CIDataFit)
-        assert (ci_data.image == ci_datas_fit[0].image).all()
-        assert (ci_data.noise_map == ci_datas_fit[0].noise_map).all()
-        assert (ci_data.ci_pre_cti == ci_datas_fit[0].ci_pre_cti).all()
+        assert isinstance(ci_datas_fit, data.CIDataFit)
+        assert (ci_data.image == ci_datas_fit.image).all()
+        assert (ci_data.noise_map == ci_datas_fit.noise_map).all()
+        assert (ci_data.ci_pre_cti == ci_datas_fit.ci_pre_cti).all()
 
     def test__phase_property(self):
         class MyPhase(ph.ParallelPhase):
