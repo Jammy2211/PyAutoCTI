@@ -4,7 +4,6 @@ import shutil
 
 import numpy as np
 import pytest
-from autofit import conf
 
 from autocti.charge_injection import ci_data
 from autocti.charge_injection import ci_fit
@@ -14,12 +13,6 @@ from autocti.data import mask as msk
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
 from test.mock.mock import MockGeometry, MockPattern
-
-
-@pytest.fixture(name='general_config')
-def make_general_config():
-    general_config_path = "{}/../../test_files/configs/plotting/".format(os.path.dirname(os.path.realpath(__file__)))
-    conf.instance.general = conf.NamedConfig(general_config_path + "general.ini")
 
 
 @pytest.fixture(name='fit_path')
