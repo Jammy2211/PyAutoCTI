@@ -35,7 +35,7 @@ def make_ci_pre_cti():
 
 @pytest.fixture(name='data')
 def make_ci_data(image, noise_map, ci_pre_cti):
-    return ci_data.CIData(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti, noise_scalings=None)
+    return ci_data.CIData(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti, noise_scaling=None)
 
 
 def test__ci_sub_plot_output_dependent_on_config(data, data_plotter_path, plot_patch):

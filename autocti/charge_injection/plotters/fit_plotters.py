@@ -1,8 +1,7 @@
-from matplotlib import pyplot as plt
+import numpy as np
 
 from autocti.data.plotters import array_plotters
 
-import numpy as np
 
 def plot_image(fit, fit_index, mask=None, as_subplot=False,
                figsize=(7, 7), aspect='equal',
@@ -20,8 +19,8 @@ def plot_image(fit, fit_index, mask=None, as_subplot=False,
         The image of the data.
     """
 
-    masked_image = np.add(fit.images[fit_index], 0.0, out=np.zeros_like(fit.images[fit_index]),
-                          where=np.asarray(fit.masks[fit_index]) == 0)
+    masked_image = np.add(fit.image, 0.0, out=np.zeros_like(fit.image),
+                          where=np.asarray(fit.mask) == 0)
 
     array_plotters.plot_array(array=masked_image, mask=mask, as_subplot=as_subplot,
                               figsize=figsize, aspect=aspect,
@@ -31,6 +30,7 @@ def plot_image(fit, fit_index, mask=None, as_subplot=False,
                               title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize,
                               xyticksize=xyticksize,
                               output_path=output_path, output_format=output_format, output_filename=output_filename)
+
 
 def get_mask(fit, should_plot_mask):
     """Get the masks of the fit if the masks should be plotted on the fit.

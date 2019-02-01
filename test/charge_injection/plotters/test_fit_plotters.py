@@ -39,15 +39,13 @@ def make_ci_pre_cti():
 
 @pytest.fixture(name='ci_data')
 def make_ci_data(image, noise_map, ci_pre_cti):
-    return ci_data.CIData(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti, noise_scalings=None)
+    return ci_data.CIData(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti, noise_scaling=None)
 
 
 @pytest.fixture(name='ci_datas_fit')
 def make_ci_datas_fit(ci_data, mask):
-    ci_datas_fit = []
-    ci_datas_fit.append(ci_data)
-    ci_datas_fit[0].mask = mask
-    return ci_datas_fit
+    ci_data.mask = mask
+    return ci_data
 
 
 @pytest.fixture(name='cti_params')
@@ -70,7 +68,7 @@ def make_cti_settings():
 
 @pytest.fixture(name='ci_fit')
 def make_ci_fit(ci_datas_fit, cti_params, cti_settings):
-    return ci_fit.CIFit(ci_datas_fit=ci_datas_fit, cti_params=cti_params, cti_settings=cti_settings)
+    return ci_fit.CIFit(ci_data_fit=ci_datas_fit, cti_params=cti_params, cti_settings=cti_settings)
 
 
 def test__image_is_output(ci_fit, fit_path, plot_patch):

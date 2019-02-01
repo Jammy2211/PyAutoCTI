@@ -42,11 +42,11 @@ class CIMask(ci_frame.CIFrame, msk.Mask):
 
 class CIData(object):
 
-    def __init__(self, image, noise_map, ci_pre_cti, noise_scalings=None):
+    def __init__(self, image, noise_map, ci_pre_cti, noise_scaling=None):
         self.image = image
         self.noise_map = noise_map
         self.ci_pre_cti = ci_pre_cti
-        self.noise_scalings = noise_scalings
+        self.noise_scaling = noise_scaling
 
     @property
     def shape(self):
@@ -57,8 +57,8 @@ class CIData(object):
                          noise_map=func(self.noise_map),
                          ci_pre_cti=func(self.ci_pre_cti),
                          mask=func(mask),
-                         noise_scalings=func(
-                             self.noise_scalings) if self.noise_scalings is not None else self.noise_scalings)
+                         noise_scaling=func(
+                             self.noise_scaling) if self.noise_scaling is not None else self.noise_scaling)
 
     def parallel_calibration_data(self, columns, mask):
         return self.map(lambda obj: obj.parallel_calibration_section_for_columns(columns=columns), mask)
@@ -84,7 +84,7 @@ class CIData(object):
 
 class CIDataFit(object):
 
-    def __init__(self, image, noise_map, ci_pre_cti, mask, noise_scalings=None):
+    def __init__(self, image, noise_map, ci_pre_cti, mask, noise_scaling=None):
         """A fitting image is the collection of data components (e.g. the image, noise-maps, PSF, etc.) which are used \
         to generate and fit it with a model image.
 
@@ -97,7 +97,7 @@ class CIDataFit(object):
         ----------
         image : im.Image
             The 2D observed image and other observed quantities (noise-map, PSF, exposure-time map, etc.)
-        mask: msk.Mask
+        mask: msk.Mask | None
             The 2D mask that is applied to image data.
 
         Attributes
@@ -115,14 +115,15 @@ class CIDataFit(object):
         self.noise_map = noise_map
         self.ci_pre_cti = ci_pre_cti
         self.mask = mask
-        self.noise_scalings = noise_scalings
+        self.noise_scaling = noise_scaling
 
+    # TODO: pretty sure this can't be doing anything
     def __array_finalize__(self, obj):
         if isinstance(obj, CIDataFit):
             self.image = obj.image
             self.noise_map = obj.noise_map
             self.mask = obj.mask
-            self.noise_scalings = obj.noise_scalings
+            self.noise_scaling = obj.noise_scaling
 
 
 class CIImage(ci_frame.CIFrameCTI):
