@@ -39,6 +39,9 @@ class ConsecutivePool(object):
 
 class Phase(ph.AbstractPhase):
 
+    def make_result(self, result, analysis):
+        return self.__class__.Result(result.constant, result.figure_of_merit, result.variable, analysis)
+
     def __init__(self, optimizer_class=nl.DownhillSimplex, mask_function=ci_data.CIMask.empty_for_image, columns=None,
                  rows=None, phase_name=None):
         """
@@ -103,7 +106,7 @@ class Phase(ph.AbstractPhase):
         result = self.optimizer.fit(analysis)
         if analysis.visualize_results:
             analysis.visualize(instance=result.constant, suffix=None, during_analysis=False)
-        return self.__class__.Result(result.constant, result.figure_of_merit, result.variable, analysis)
+        return self.make_result(result, analysis)
 
     # noinspection PyMethodMayBeStatic
     def extract_ci_data(self, data, mask):
@@ -127,10 +130,7 @@ class Phase(ph.AbstractPhase):
         analysis: Analysis
             An analysis object that the non-linear optimizer calls to determine the fit of a set of values
         """
-        # TODO : Make mask an input of extract_ci_data and use the class method to edit in the mask.
-        # TODO : ci_datas_fit should include the mask as an attrbiute.
-
-        masks = list(map(lambda ci_data: self.mask_function(ci_data.image), ci_datas))
+        masks = list(map(lambda data: self.mask_function(data.image), ci_datas))
         ci_datas_fit = [self.extract_ci_data(data=data, mask=mask) for data, mask in zip(ci_datas, masks)]
 
         ci_datas_fit[0].mask = masks[0][0:36, 0:35]
@@ -353,7 +353,7 @@ class ParallelHyperPhase(ParallelPhase):
             cti_params = cti_params_for_instance(instance)
             pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
                                     hyper_noises=[instance.hyp_ci_regions, instance.hyp_parallel_trails])
-            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_pipe_data)))
+            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
 
         @classmethod
         def log(cls, instance):
@@ -603,11 +603,6 @@ class ParallelSerialPhase(Phase):
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
             return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
 
-        def visualize(self, instance, suffix, during_analysis):
-            fitter, ci_post_ctis, residuals, chi_squareds = super().visualize(instance, suffix, during_analysis)
-
-            return fitter, ci_post_ctis, residuals, chi_squareds
-
         @classmethod
         def log(cls, instance):
             logger.debug(
@@ -688,7 +683,7 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
                                     hyper_noises=[instance.hyp_ci_regions, instance.hyp_parallel_trails,
                                                   instance.hyp_serial_trails,
                                                   instance.hyp_parallel_serial_trails])
-            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_pipe_data)))
+            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
 
         def visualize(self, instance, suffix, during_analysis):
             pass
