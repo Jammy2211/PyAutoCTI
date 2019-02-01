@@ -417,34 +417,6 @@ class ParallelHyperPhase(ParallelPhase):
                                                                                    instance.hyp_parallel_trails])
 
 
-class ParallelHyperOnlyPhase(ParallelHyperPhase, HyperOnly):
-    """
-    Fit only the CTI galaxy light.
-    """
-
-    def run(self, ci_datas, cti_settings, previous_results=None, pool=None):
-        class ParallelHyper(ParallelHyperPhase):
-            # noinspection PyShadowingNames
-            def pass_priors(self, previous_results):
-                self.parallel_species = previous_results.last.constant.parallel_species
-                self.parallel_ccd = previous_results.last.constant.parallel_ccd
-
-        phase = ParallelHyper(optimizer_class=nl.MultiNest, hyp_ci_regions=ci_hyper.CIHyperNoise,
-                              hyp_parallel_trails=ci_hyper.CIHyperNoise,
-                              phase_name=self.phase_name)
-
-        phase.optimizer.n_live_points = 20
-        phase.optimizer.sampling_efficiency = 0.8
-
-        hyper_result = phase.run(ci_datas, cti_settings, previous_results, pool)
-
-        analysis = self.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results,
-                                      pool=pool)
-
-        return self.__class__.Result(hyper_result.constant, hyper_result.figure_of_merit, hyper_result.variable,
-                                     analysis)
-
-
 class SerialHyperPhase(SerialPhase):
     hyp_ci_regions = phase_property.PhaseProperty("hyp_ci_regions")
     hyp_serial_trails = phase_property.PhaseProperty("hyp_serial_trails")
@@ -486,9 +458,6 @@ class SerialHyperPhase(SerialPhase):
                                     hyper_noises=[instance.hyp_ci_regions, instance.hyp_serial_trails])
             return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
 
-        def visualize(self, instance, suffix, during_analysis):
-            pass
-
         @classmethod
         def log(cls, instance):
             logger.debug(
@@ -502,35 +471,6 @@ class SerialHyperPhase(SerialPhase):
             return ci_fit.CIHyperFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params,
                                      cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
                                                                                    instance.hyp_serial_trails])
-
-
-class SerialHyperOnlyPhase(SerialHyperPhase, HyperOnly):
-    """
-    Fit only the CTI galaxy light.
-    """
-
-    def run(self, ci_datas, cti_settings, previous_results=None, pool=None):
-        class SerialHyper(SerialHyperPhase):
-            # noinspection PyShadowingNames
-            def pass_priors(self, previous_results):
-                self.serial_species = previous_results.last.constant.serial_species
-                self.serial_ccd = previous_results.last.constant.serial_ccd
-
-        phase = SerialHyper(optimizer_class=nl.MultiNest, hyp_ci_regions=ci_hyper.CIHyperNoise,
-                            hyp_serial_trails=ci_hyper.CIHyperNoise,
-                            phase_name=self.phase_name)
-
-        phase.optimizer.n_live_points = 20
-        phase.optimizer.sampling_efficiency = 0.8
-
-        hyper_result = phase.run(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results,
-                                 pool=pool)
-
-        analysis = self.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results,
-                                      pool=pool)
-
-        return self.__class__.Result(hyper_result.constant, hyper_result.figure_of_merit, hyper_result.variable,
-                                     analysis)
 
 
 class ParallelSerialHyperPhase(ParallelSerialPhase):
@@ -586,9 +526,6 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
                                                   instance.hyp_parallel_serial_trails])
             return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
 
-        def visualize(self, instance, suffix, during_analysis):
-            pass
-
         @classmethod
         def log(cls, instance):
             logger.debug(
@@ -607,6 +544,63 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
                                                                                    instance.hyp_parallel_trails,
                                                                                    instance.hyp_serial_trails,
                                                                                    instance.hyp_parallel_serial_trails])
+
+
+class ParallelHyperOnlyPhase(ParallelHyperPhase, HyperOnly):
+    """
+    Fit only the CTI galaxy light.
+    """
+
+    def run(self, ci_datas, cti_settings, previous_results=None, pool=None):
+        class ParallelHyper(ParallelHyperPhase):
+            # noinspection PyShadowingNames
+            def pass_priors(self, previous_results):
+                self.parallel_species = previous_results.last.constant.parallel_species
+                self.parallel_ccd = previous_results.last.constant.parallel_ccd
+
+        phase = ParallelHyper(optimizer_class=nl.MultiNest, hyp_ci_regions=ci_hyper.CIHyperNoise,
+                              hyp_parallel_trails=ci_hyper.CIHyperNoise,
+                              phase_name=self.phase_name)
+
+        phase.optimizer.n_live_points = 20
+        phase.optimizer.sampling_efficiency = 0.8
+
+        hyper_result = phase.run(ci_datas, cti_settings, previous_results, pool)
+
+        analysis = self.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results,
+                                      pool=pool)
+
+        return self.__class__.Result(hyper_result.constant, hyper_result.figure_of_merit, hyper_result.variable,
+                                     analysis)
+
+
+class SerialHyperOnlyPhase(SerialHyperPhase, HyperOnly):
+    """
+    Fit only the CTI galaxy light.
+    """
+
+    def run(self, ci_datas, cti_settings, previous_results=None, pool=None):
+        class SerialHyper(SerialHyperPhase):
+            # noinspection PyShadowingNames
+            def pass_priors(self, previous_results):
+                self.serial_species = previous_results.last.constant.serial_species
+                self.serial_ccd = previous_results.last.constant.serial_ccd
+
+        phase = SerialHyper(optimizer_class=nl.MultiNest, hyp_ci_regions=ci_hyper.CIHyperNoise,
+                            hyp_serial_trails=ci_hyper.CIHyperNoise,
+                            phase_name=self.phase_name)
+
+        phase.optimizer.n_live_points = 20
+        phase.optimizer.sampling_efficiency = 0.8
+
+        hyper_result = phase.run(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results,
+                                 pool=pool)
+
+        analysis = self.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results,
+                                      pool=pool)
+
+        return self.__class__.Result(hyper_result.constant, hyper_result.figure_of_merit, hyper_result.variable,
+                                     analysis)
 
 
 class ParallelSerialHyperOnlyPhase(ParallelSerialHyperPhase, HyperOnly):
