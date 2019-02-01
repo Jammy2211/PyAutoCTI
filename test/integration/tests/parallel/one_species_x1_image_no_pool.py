@@ -1,12 +1,12 @@
 import os
 
 from autofit import conf
-from autofit.optimize import non_linear as nl
 from autofit.mapper import prior_model
+from autofit.optimize import non_linear as nl
+
 from autocti.charge_injection import ci_data, ci_pattern
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
-
 from autocti.pipeline import phase as ph
 from autocti.pipeline import pipeline as pl
 from test.integration import tools
@@ -20,12 +20,12 @@ test_type = 'parallel'
 test_name = 'one_species_x1_image_no_pool'
 
 path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
-output_path = path+'output/'+test_type
-config_path = path+'config'
+output_path = path + 'output/' + test_type
+config_path = path + 'config'
 conf.instance = conf.Config(config_path=config_path, output_path=output_path)
 
-def pipeline():
 
+def pipeline():
     parallel_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.5)
     parallel_ccd = arctic_params.CCD(well_notch_depth=0.01, well_fill_alpha=1.0,
                                      well_fill_beta=0.8, well_fill_gamma=0.0)
@@ -42,7 +42,7 @@ def pipeline():
     pattern = ci_pattern.CIPatternUniform(normalization=normalizations[0], regions=ci_regions)
 
     data = ci_data.load_ci_data(frame_geometry=frame_geometry, ci_pattern=pattern,
-                                ci_image_path=path+'/data/'+test_name+'/ci_data_0.fits',
+                                ci_image_path=path + '/data/' + test_name + '/ci_data_0.fits',
                                 ci_noise_map_from_single_value=1.0,
                                 ci_pre_cti_from_image=True)
 
@@ -51,15 +51,14 @@ def pipeline():
 
 
 def make_pipeline(test_name):
-
     class ParallelPhase(ph.ParallelPhase):
 
         def pass_priors(self, previous_results):
-
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
-    phase1 = ParallelPhase(optimizer_class=nl.MultiNest, parallel_species=[prior_model.PriorModel(arctic_params.Species)],
+    phase1 = ParallelPhase(optimizer_class=nl.MultiNest,
+                           parallel_species=[prior_model.PriorModel(arctic_params.Species)],
                            parallel_ccd=arctic_params.CCD, columns=40, phase_name="{}/phase1".format(test_name))
 
     phase1.optimizer.n_live_points = 60
