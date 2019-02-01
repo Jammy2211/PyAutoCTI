@@ -6,18 +6,20 @@ from functools import partial
 import numpy as np
 from astropy.io import fits
 from autofit import conf
-from autofit.tools import phase as ph
-from autofit.tools import phase_property
 from autofit.mapper import model_mapper as mm
 from autofit.optimize import non_linear as nl
+from autofit.tools import phase as ph
+from autofit.tools import phase_property
 
-from autocti.data import util
-from autocti.data import mask as msk
 from autocti.charge_injection import ci_hyper, ci_fit
+from autocti.charge_injection.plotters import ci_plotters_old as ci_plotters
+from autocti.data import mask as msk
+from autocti.data import util
 from autocti.model import arctic_params
 
 logger = logging.getLogger(__name__)
 logger.level = logging.DEBUG
+
 
 def default_mask_function(image):
     return msk.Mask.empty_for_shape(shape=image.shape, frame_geometry=image.frame_geometry, ci_pattern=image.ci_pattern)
@@ -134,7 +136,7 @@ class Phase(ph.AbstractPhase):
         """
 
         if masks is None:
-            masks = list(map(lambda ci_data : self.mask_function(image=ci_data.image), ci_datas))
+            masks = list(map(lambda ci_data: self.mask_function(image=ci_data.image), ci_datas))
 
         # TODO : Make mask an input of extract_ci_data and use the class method to edit in the mask.
         # TODO : ci_datas_fit should include the mask as an attrbiute.
@@ -190,7 +192,6 @@ class Phase(ph.AbstractPhase):
             chi_squareds = fitter.chi_squareds
 
             for i in range(len(ci_post_ctis)):
-
                 self.output_array_as_fits(ci_post_ctis[i], "ci_post_ctis_" + str(i))
                 self.output_array_as_fits(residuals[i], "residuals_" + str(i))
                 self.output_array_as_fits(chi_squareds[i], "chi_squareds_" + str(i))
@@ -262,7 +263,6 @@ def is_prior(value):
 
 
 class ParallelPhase(Phase):
-
     parallel_species = phase_property.PhasePropertyCollection("parallel_species")
     parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
 
@@ -345,7 +345,6 @@ class ParallelPhase(Phase):
 
 
 class ParallelHyperPhase(ParallelPhase):
-
     hyp_ci_regions = phase_property.PhaseProperty("hyp_ci_regions")
     hyp_parallel_trails = phase_property.PhaseProperty("hyp_parallel_trails")
 
@@ -403,7 +402,7 @@ class ParallelHyperPhase(ParallelPhase):
             cti_params = cti_params_for_instance(instance)
             return ci_fit.CIHyperFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params,
                                      cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
-                                                                                       instance.hyp_parallel_trails])
+                                                                                   instance.hyp_parallel_trails])
 
 
 class ParallelHyperOnlyPhase(ParallelHyperPhase, HyperOnly):
@@ -566,7 +565,7 @@ class SerialHyperPhase(SerialPhase):
             cti_params = cti_params_for_instance(instance)
             return ci_fit.CIHyperFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params,
                                      cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
-                                                                                       instance.hyp_serial_trails])
+                                                                                   instance.hyp_serial_trails])
 
 
 class SerialHyperOnlyPhase(SerialHyperPhase, HyperOnly):
@@ -752,9 +751,9 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
             cti_params = cti_params_for_instance(instance)
             return ci_fit.CIHyperFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params,
                                      cti_settings=self.cti_settings, hyper_noises=[instance.hyp_ci_regions,
-                                                       instance.hyp_parallel_trails,
-                                                       instance.hyp_serial_trails,
-                                                       instance.hyp_parallel_serial_trails])
+                                                                                   instance.hyp_parallel_trails,
+                                                                                   instance.hyp_serial_trails,
+                                                                                   instance.hyp_parallel_serial_trails])
 
 
 class ParallelSerialHyperOnlyPhase(ParallelSerialHyperPhase, HyperOnly):
