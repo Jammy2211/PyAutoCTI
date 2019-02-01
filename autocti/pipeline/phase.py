@@ -32,6 +32,10 @@ def cti_params_for_instance(instance):
 
 
 class ConsecutivePool(object):
+    """
+    Replicates the interface of a multithread pool but performs computations consecutively
+    """
+
     @staticmethod
     def map(func, ls):
         return map(func, ls)
@@ -263,13 +267,6 @@ class ParallelPhase(Phase):
                             [chi_squared.ci_regions_frame_from_frame(),
                              chi_squared.parallel_non_ci_regions_frame_from_frame()],
                             fitter.chi_squareds))
-
-    class Result(Phase.Result):
-
-        def __init__(self, constant, likelihood, variable, analysis):
-            super().__init__(constant, likelihood, variable, analysis)
-
-            # self.noise_scalings = analysis.noise_scalings_for_instance(constant)
 
 
 class ParallelHyperPhase(ParallelPhase):
