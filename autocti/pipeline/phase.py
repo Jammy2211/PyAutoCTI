@@ -25,6 +25,7 @@ def default_mask_function(image):
     return msk.Mask.empty_for_shape(shape=image.shape, frame_geometry=image.frame_geometry, ci_pattern=image.ci_pattern)
 
 
+# noinspection PyAbstractClass
 class HyperOnly(ph.AbstractPhase):
     pass
 
