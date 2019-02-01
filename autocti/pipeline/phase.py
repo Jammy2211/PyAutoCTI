@@ -177,33 +177,22 @@ class Phase(ph.AbstractPhase):
         def visualize(self, instance, suffix, during_analysis):
             pass
 
-            # fitter = self.fit_for_instance(instance)
-            # ci_post_ctis = fitter.ci_post_ctis
-            # residuals = fitter.residuals
-            # chi_squareds = fitter.chi_squareds
-            #
-            # for i in range(len(ci_post_ctis)):
-            #     self.output_array_as_fits(ci_post_ctis[i], "ci_post_ctis_" + str(i))
-            #     self.output_array_as_fits(residuals[i], "residuals_" + str(i))
-            #     self.output_array_as_fits(chi_squareds[i], "chi_squareds_" + str(i))
-            #
-            # return fitter, ci_post_ctis, residuals, chi_squareds
-
-        def fit(self, **kwargs):
+        def fit(self, instance):
             """
             Determine the fitness of a particular model
 
             Parameters
             ----------
-            kwargs: dict
-                Dictionary of objects describing the model
+            instance
 
             Returns
             -------
             fit: ci_fit.Fit
                 How fit the model is and the model
             """
-            raise NotImplementedError()
+            cti_params = cti_params_for_instance(instance)
+            pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
+            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
 
         @classmethod
         def log(cls, instance):
@@ -258,32 +247,6 @@ class ParallelPhase(Phase):
             (0, self.columns or data.image.frame_geometry.parallel_overscan.total_columns), mask)
 
     class Analysis(Phase.Analysis):
-
-        def fit(self, instance):
-            """
-            Runs the analysis. Determine how well the supplied cti_params fits the image.
-
-            Params
-            ----------
-            parallel : arctic_params.ParallelParams
-                A class describing the parallel cti model and parameters.
-            parallel : arctic_params.SerialParams
-                A class describing the serial cti model and parameters.
-            hyp : ci_hyper.HyperCINoise
-                A class describing the noises scaling ci_hyper-parameters.
-
-            Returns
-            -------
-            result: Result
-                An object comprising the final cti_params instances generated and a corresponding likelihood
-            """
-            cti_params = cti_params_for_instance(instance)
-            pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
-            if self.pool is not None:
-                return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
-            fit = ci_fit.CIFit(ci_datas_fit=self.ci_datas_fit, cti_params=cti_params, cti_settings=self.cti_settings)
-            return fit.likelihood
-
         @classmethod
         def log(cls, instance):
             logger.debug(
@@ -418,29 +381,6 @@ class SerialPhase(Phase):
                                             mask)
 
     class Analysis(Phase.Analysis):
-
-        def fit(self, instance):
-            """
-            Runs the analysis. Determine how well the supplied cti_params fits the image.
-
-            Params
-            ----------
-            serial : arctic_params.SerialParams
-                A class describing the serial cti model and parameters.
-            serial : arctic_params.SerialParams
-                A class describing the serial cti model and parameters.
-            hyp : ci_hyper.HyperCINoise
-                A class describing the noises scaling ci_hyper-parameters.
-
-            Returns
-            -------
-            result: Result
-                An object comprising the final cti_params instances generated and a corresponding likelihood
-            """
-            cti_params = cti_params_for_instance(instance)
-            pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
-            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
-
         @classmethod
         def log(cls, instance):
             logger.debug(
@@ -581,28 +521,6 @@ class ParallelSerialPhase(Phase):
         return data.parallel_serial_calibration_data(mask)
 
     class Analysis(Phase.Analysis):
-        def fit(self, instance):
-            """
-            Runs the analysis. Determine how well the supplied cti_params fits the image.
-
-            Params
-            ----------
-            parallel : arctic_params.ParallelParams
-                A class describing the parallel cti model and parameters.
-            parallel : arctic_params.SerialParams
-                A class describing the serial cti model and parameters.
-            hyp : ci_hyper.HyperCINoise
-                A class describing the noises scaling ci_hyper-parameters.
-
-            Returns
-            -------
-            result: Result
-                An object comprising the final cti_params instances generated and a corresponding likelihood
-            """
-            cti_params = cti_params_for_instance(instance=instance)
-            pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
-            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
-
         @classmethod
         def log(cls, instance):
             logger.debug(
@@ -623,13 +541,6 @@ class ParallelSerialPhase(Phase):
                              chi_squared.serial_all_trails_frame_from_frame(),
                              chi_squared.serial_overscan_non_trails_frame_from_frame()],
                             fit.chi_squareds))
-
-    class Result(Phase.Result):
-
-        def __init__(self, constant, likelihood, variable, analysis):
-            super().__init__(constant, likelihood, variable, analysis)
-
-            # self.noise_scalings = analysis.noise_scalings_for_instance(constant)
 
 
 class ParallelSerialHyperPhase(ParallelSerialPhase):
