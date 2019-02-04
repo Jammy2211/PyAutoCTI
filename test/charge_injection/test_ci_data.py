@@ -157,8 +157,6 @@ class TestCIImage(object):
             assert (ci_pre_cti == np.array([[10.0, 10.0, 0.0],
                                             [10.0, 10.0, 0.0],
                                             [00.0, 00.0, 0.0]])).all()
-            assert (ci_pre_cti.ci_pattern.normalization == pattern.normalization == 10.0)
-            assert (ci_pre_cti.ci_pattern.regions == pattern.regions == [(0, 2, 0, 2)])
 
         def test__same_as_above_but_different_normalization_and_regions(self):
             frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
@@ -173,8 +171,6 @@ class TestCIImage(object):
             assert (ci_pre_cti == np.array([[20.0, 0.0, 0.0],
                                             [20.0, 0.0, 0.0],
                                             [0.0, 0.0, 20.0]])).all()
-            assert (ci_pre_cti.ci_pattern.normalization == pattern.normalization == 20.0)
-            assert (ci_pre_cti.ci_pattern.regions == pattern.regions == [(0, 2, 0, 1), (2, 3, 2, 3)])
 
         def test__non_uniform_pattern__image_is_same_as_computed_image(self):
             frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
@@ -195,8 +191,6 @@ class TestCIImage(object):
             assert type(ci_pre_cti.frame_geometry) == ci_frame.QuadGeometryEuclid
             # noinspection PyUnresolvedReferences
             assert (ci_pre_cti == pattern_ci_pre_cti).all()
-            assert (ci_pre_cti.ci_pattern.normalization == pattern.normalization == 100.0)
-            assert (ci_pre_cti.ci_pattern.regions == pattern.regions == [(0, 2, 0, 2), (2, 3, 0, 3)])
 
         def test__fast_uniform_pattern__fast_ci_pre_cti(self):
             frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
@@ -1087,6 +1081,130 @@ class TestLoadCIDataList(object):
         assert (datas[1].image == 4.0 * np.ones((3, 3))).all()
         assert (datas[1].noise_map == 5.0 * np.ones((3, 3))).all()
         assert (datas[1].ci_pre_cti == 11.0 * np.ones((3, 3))).all()
+
+
+class TestCompareFastAndNormal:
+
+    # def test__parallel__3x4_1_ci_region(self, arctic_parallel, params_parallel):
+    #     # SETUP FAST PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
+    #
+    #     pattern_fast = ci_pattern.CIPatternUniformFast(
+    #         normalization=10.0, regions=[(2, 3, 0, 4)])
+    #
+    #     data_fast = ci_data.CIImage(array=10.0 * np.ones((3, 4)))
+    #
+    #     ci_pre_cti_fast = ci_data.ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
+    #         ci_pattern=pattern_fast,
+    #         frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+    #         image=data_fast)
+    #     ci_post_cti_fast = ci_pre_cti_fast.ci_post_cti_from_cti_params_and_settings(params_parallel,
+    #                                                                                 arctic_parallel)
+    #
+    #     # SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
+    #
+    #     data_normal = ci_data.CIImage(array=10.0 * np.ones((3, 4)))
+    #
+    #     ci_pre_cti_normal = ci_data.ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
+    #         ci_pattern=pattern_fast,
+    #         frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+    #         image=data_normal)
+    #     ci_post_cti_normal = ci_pre_cti_normal.ci_post_cti_from_cti_params_and_settings(params_parallel,
+    #                                                                                     arctic_parallel)
+    #
+    #     # COMPARE THE TWO #
+    #     # noinspection PyUnresolvedReferences
+    #     assert (ci_post_cti_fast == ci_post_cti_normal).all()
+
+    def test__parallel__4x3_1_ci_region(self, arctic_parallel, params_parallel):
+        # SETUP FAST PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
+
+        pattern_fast = ci_pattern.CIPatternUniformFast(
+            normalization=10.0, regions=[(2, 3, 0, 3)])
+
+        data_fast = 10.0 * np.ones((4, 3))
+
+        ci_pre_cti_fast = ci_data.ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
+            ci_pattern=pattern_fast,
+            frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+            image=data_fast)
+        ci_post_cti_fast = ci_pre_cti_fast.add_cti_to_image(params_parallel,
+                                                                                    arctic_parallel)
+
+        # SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
+
+        data_normal = 10.0 * np.ones((4, 3))
+
+        ci_pre_cti_normal = ci_data.ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
+            ci_pattern=pattern_fast,
+            frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+            image=data_normal)
+        ci_post_cti_normal = ci_pre_cti_normal.add_cti_to_image(params_parallel,
+                                                                                        arctic_parallel)
+
+        # COMPARE THE TWO #
+        # noinspection PyUnresolvedReferences
+        assert (ci_post_cti_fast == ci_post_cti_normal).all()
+
+    def test__serial__3x4_1_ci_region(self, arctic_serial, params_serial):
+        # SETUP FAST PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
+
+        pattern_fast = ci_pattern.CIPatternUniformFast(
+            normalization=10.0, regions=[(0, 3, 0, 3)])
+
+        data_fast = 10.0 * np.ones((3, 4))
+
+        ci_pre_cti_fast = ci_data.ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
+            ci_pattern=pattern_fast,
+            frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+            image=data_fast)
+        ci_post_cti_fast = ci_pre_cti_fast.add_cti_to_image(params_serial, arctic_serial)
+
+        # SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
+
+        data_normal = 10.0 * np.ones((3, 4))
+
+        ci_pre_cti_normal = ci_data.ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
+            ci_pattern=pattern_fast,
+            frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+            image=data_normal)
+        ci_post_cti_normal = ci_pre_cti_normal.add_cti_to_image(params_serial,
+                                                                                        arctic_serial)
+
+        # COMPARE THE TWO #
+
+        # noinspection PyUnresolvedReferences
+        assert (ci_post_cti_fast == ci_post_cti_normal).all()
+
+    def test__serial__4x3_1_ci_region(self, arctic_serial, params_serial):
+        # SETUP FAST PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
+
+        pattern_fast = ci_pattern.CIPatternUniformFast(
+            normalization=10.0, regions=[(0, 4, 0, 2)])
+
+        data_fast = 10.0 * np.ones((4, 3))
+
+        frame = ci_frame.QuadGeometryEuclid.bottom_left()
+
+        ci_pre_cti_fast = ci_data.ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
+            ci_pattern=pattern_fast,
+            frame_geometry=frame,
+            image=data_fast)
+        ci_post_cti_fast = frame.add_cti(ci_pre_cti_fast, params_serial, arctic_serial)
+
+        # SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
+
+        data_normal = 10.0 * np.ones((4, 3))
+
+        ci_pre_cti_normal = ci_data.ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
+            ci_pattern=pattern_fast,
+            frame_geometry=frame,
+            image=data_normal)
+        ci_post_cti_normal = frame.add_cti(ci_pre_cti_normal, params_serial, arctic_serial)
+
+        # COMPARE THE TWO #
+
+        # noinspection PyUnresolvedReferences
+        assert (ci_post_cti_fast == ci_post_cti_normal).all()
 
 
 class TestLoadCIData(object):

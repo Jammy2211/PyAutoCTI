@@ -171,12 +171,12 @@ def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, frame_geometr
     if type(ci_pattern) == pattern.CIPatternUniform:
 
         ci_pre_cti = ci_pattern.ci_pre_cti_from_shape(shape=image.shape)
-        return frame.CIFrame(frame_geometry=frame_geometry, array=ci_pre_cti, ci_pattern=ci_pattern)
+        return CIPreCTI(frame_geometry=frame_geometry, array=ci_pre_cti)
 
     elif type(ci_pattern) == pattern.CIPatternNonUniform:
 
         ci_pre_cti = ci_pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=image, mask=mask)
-        return frame.CIFrame(frame_geometry=frame_geometry, array=ci_pre_cti, ci_pattern=ci_pattern)
+        return CIPreCTI(frame_geometry=frame_geometry, array=ci_pre_cti)
 
     elif type(ci_pattern) == pattern.CIPatternUniformFast:
 
@@ -188,12 +188,19 @@ def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, frame_geometr
                                      'a known ci_pattern class')
 
 
-class CIPreCTIFast(np.ndarray):
+class CIPreCTI(np.ndarray):
+    # noinspection PyMissingConstructor,PyUnusedLocal
+    def __init__(self, frame_geometry, array):
+        self.frame_geometry = frame_geometry
 
-    def __new__(cls, frame_geometry, array, ci_pattern):
+    def __new__(cls, frame_geometry, array, *args, **kwargs):
         return array.view(cls)
 
-    # noinspection PyMissingConstructor,PyUnusedLocal
+    def add_cti_to_image(self, cti_params, cti_settings):
+        self.frame_geometry.add_cti(self, cti_params, cti_settings)
+
+
+class CIPreCTIFast(CIPreCTI):
     def __init__(self, frame_geometry, array, ci_pattern):
         """A fast pre-cti image of a charge injection dataset, used for CTI calibration modeling.
 
@@ -216,11 +223,11 @@ class CIPreCTIFast(np.ndarray):
         ci_pattern : ci_pattern.CIPattern
             The charge injection ci_pattern (regions, normalization, etc.) of the pre-cti image.
         """
+        super().__init__(frame_geometry, array)
         fast_column_pre_cti = ci_pattern.compute_fast_column(self.shape[0])
         self.fast_column_pre_cti = frame_geometry.rotate_for_parallel_cti(fast_column_pre_cti)
         fast_row_pre_cti = ci_pattern.compute_fast_row(self.shape[1])
         self.fast_row_pre_cti = frame_geometry.rotate_before_serial_cti(fast_row_pre_cti)
-        self.frame_geometry = frame_geometry
 
     def fast_column_post_cti_from_cti_params_and_settings(self, cti_params, cti_settings):
         """Add cti to the fast-column, using cti_settings.
@@ -293,7 +300,6 @@ class CIPreCTIFast(np.ndarray):
             post_cti_image = self.map_fast_row_post_cti_to_image(fast_row_post_cti)
 
         else:
-
             raise exc.CIPreCTIException(' Cannot use CIPostCTIFast in both parallel and serial directions')
 
         return post_cti_image
