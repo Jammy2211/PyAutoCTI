@@ -72,12 +72,12 @@ class ChInj(object):
 
         """
 
-        array = np.zeros(shape=array.shape)
+        new_array = np.zeros(shape=array.shape)
 
         for region in self.ci_pattern.regions:
-            array[region.slice] += array[region.slice]
+            new_array[region.slice] += array[region.slice]
 
-        return array
+        return new_array
 
     def parallel_non_ci_regions_frame_from_frame(self, array):
         """Extract an array of all of the parallel trails following the charge-injection regions from a charge   
@@ -196,7 +196,7 @@ class ChInj(object):
         trails_rows : (int, int)
             The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
-        array = np.zeros(array.shape)
+        new_array = np.zeros(array.shape)
 
         if front_edge_rows is not None:
 
@@ -207,7 +207,7 @@ class ChInj(object):
             front_edges = self.parallel_front_edge_arrays_from_frame(array, front_edge_rows)
 
             for i, region in enumerate(front_regions):
-                array[region.y0:region.y1, region.x0:region.x1] += front_edges[i]
+                new_array[region.y0:region.y1, region.x0:region.x1] += front_edges[i]
 
         if trails_rows is not None:
 
@@ -218,9 +218,9 @@ class ChInj(object):
             trails = self.parallel_trails_arrays_from_frame(array, trails_rows)
 
             for i, region in enumerate(trails_regions):
-                array[region.y0:region.y1, region.x0:region.x1] += trails[i]
+                new_array[region.y0:region.y1, region.x0:region.x1] += trails[i]
 
-        return array
+        return new_array
 
     def parallel_calibration_section_for_columns(self, array, columns):
         """Extract an parallel calibration array from a charge injection ci_frame, where this array is a sub-set of
@@ -371,17 +371,18 @@ class ChInj(object):
         []     [=====================]
                <---------S----------
         """
-        array = np.zeros(array.shape)
+        new_array = np.zeros(array.shape)
         overscan_slice = self.frame_geometry.serial_overscan.slice
-        array[overscan_slice] = array[overscan_slice]
+
+        new_array[overscan_slice] = array[overscan_slice]
 
         trails_regions = list(map(lambda ci_region:
                                   self.frame_geometry.serial_trails_region(ci_region, (
                                       0, self.frame_geometry.serial_overscan.total_columns)),
                                   self.ci_pattern.regions))
 
-        for i, region in enumerate(trails_regions):
-            array[region.slice] = 0
+        for region in trails_regions:
+            new_array[region.slice] = 0
 
         return array
 
@@ -445,7 +446,7 @@ class ChInj(object):
         trails_columns : (int, int)
             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
-        array = np.zeros(array.shape)
+        new_array = np.zeros(array.shape)
 
         if front_edge_columns is not None:
 
@@ -456,7 +457,7 @@ class ChInj(object):
             front_edges = self.serial_front_edge_arrays_from_frame(array, front_edge_columns)
 
             for i, region in enumerate(front_regions):
-                array[region.y0:region.y1, region.x0:region.x1] += front_edges[i]
+                new_array[region.y0:region.y1, region.x0:region.x1] += front_edges[i]
 
         if trails_columns is not None:
 
@@ -467,9 +468,9 @@ class ChInj(object):
             trails = self.serial_trails_arrays_from_frame(array, trails_columns)
 
             for i, region in enumerate(trails_regions):
-                array[region.y0:region.y1, region.x0:region.x1] += trails[i]
+                new_array[region.y0:region.y1, region.x0:region.x1] += trails[i]
 
-        return array
+        return new_array
 
     def serial_calibration_section_for_column_and_rows(self, array, column, rows):
         """Extract a serial calibration array from a charge injection ci_frame, where this array is a sub-set of the
