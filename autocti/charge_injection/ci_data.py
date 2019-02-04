@@ -410,7 +410,7 @@ def load_ci_noise_map(frame_geometry, ci_pattern, ci_noise_map_path, ci_noise_ma
 
 def load_ci_pre_cti(frame_geometry, ci_pattern, ci_pre_cti_path, ci_pre_cti_hdu,
                     ci_image=None, ci_pre_cti_from_image=False, mask=None):
-    if ci_pre_cti_from_image is None:
+    if not ci_pre_cti_from_image:
         return CIPreCTI(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
                         array=util.numpy_array_from_fits(file_path=ci_pre_cti_path, hdu=ci_pre_cti_hdu))
 
