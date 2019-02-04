@@ -29,8 +29,8 @@ import numpy as np
 import pytest
 
 from autocti import exc
-from autocti.data import cti_image
 from autocti.charge_injection import ci_frame
+from autocti.data import cti_image
 
 
 @pytest.fixture(scope='function')
@@ -461,7 +461,7 @@ class TestRegion(object):
 
             region = ci_frame.Region(region=(0, 2, 0, 2))
 
-            new_array = region.extract_region_from_array(array)
+            new_array = array[region.slice]
 
             assert (new_array == np.array([[1.0, 2.0],
                                            [4.0, 5.0]])).all()
@@ -473,7 +473,7 @@ class TestRegion(object):
 
             region = ci_frame.Region(region=(1, 3, 0, 3))
 
-            new_array = region.extract_region_from_array(array)
+            new_array = array[region.slice]
 
             assert (new_array == np.array([[4.0, 5.0, 6.0],
                                            [7.0, 8.0, 9.0]])).all()
