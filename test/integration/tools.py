@@ -1,14 +1,13 @@
+import os
 import shutil
 
 from autocti.charge_injection import ci_data, ci_frame, ci_pattern
-
-import os
+from autocti.data import util
 
 dirpath = os.path.dirname(os.path.realpath(__file__))
 
 
 def reset_paths(test_name, output_path):
-
     try:
         shutil.rmtree(dirpath + '/data/' + test_name)
     except FileNotFoundError:
@@ -108,10 +107,9 @@ frame_geometry = CIQuadGeometryIntegration()
 
 
 def simulate_integration_quadrant(test_name, normalizations, cti_params, cti_settings):
-
     output_path = "{}/data/".format(os.path.dirname(os.path.realpath(__file__))) + test_name + '/'
 
-    if os.path.exists(output_path) == False:
+    if not os.path.exists(output_path):
         os.makedirs(output_path)
 
     sim_ci_patterns = ci_pattern.uniform_simulate_from_lists(normalizations=normalizations, regions=ci_regions)
@@ -124,5 +122,5 @@ def simulate_integration_quadrant(test_name, normalizations, cti_params, cti_set
                             sim_ci_patterns))
 
     list(map(lambda sim_ci_data, index:
-             sim_ci_data.output_as_fits(file_path=output_path + '/ci_data_' + str(index) + '.fits'),
+             util.numpy_array_to_fits(array=sim_ci_data, file_path=output_path + '/ci_data_' + str(index) + '.fits'),
              sim_ci_datas, range(len(sim_ci_datas))))

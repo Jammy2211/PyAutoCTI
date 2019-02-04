@@ -57,6 +57,8 @@ class CIData(object):
                          noise_map=func(self.noise_map),
                          ci_pre_cti=func(self.ci_pre_cti),
                          mask=func(mask),
+                         ci_pattern=self.ci_pattern,
+                         ci_frame=self.ci_frame,
                          noise_scaling=func(
                              self.noise_scaling) if self.noise_scaling is not None else self.noise_scaling)
 
@@ -85,7 +87,7 @@ class CIData(object):
 
 class CIDataFit(object):
 
-    def __init__(self, image, noise_map, ci_pre_cti, mask, noise_scaling=None):
+    def __init__(self, image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame, noise_scaling=None):
         """A fitting image is the collection of data components (e.g. the image, noise-maps, PSF, etc.) which are used \
         to generate and fit it with a model image.
 
@@ -117,6 +119,8 @@ class CIDataFit(object):
         self.ci_pre_cti = ci_pre_cti
         self.mask = mask
         self.noise_scaling = noise_scaling
+        self.ci_pattern = ci_pattern
+        self.ci_frame = ci_frame
 
 
 class CIImage(np.ndarray):
