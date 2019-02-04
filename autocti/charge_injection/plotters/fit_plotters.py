@@ -3,7 +3,7 @@ import numpy as np
 from autocti.data.plotters import array_plotters
 
 
-def plot_image(fit, fit_index, mask=None, as_subplot=False,
+def plot_image(fit, mask=None, as_subplot=False,
                figsize=(7, 7), aspect='equal',
                cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
                cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
