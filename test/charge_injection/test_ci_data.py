@@ -123,7 +123,7 @@ def make_params_both():
 class TestCIData(object):
 
     def test_map(self):
-        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4)
+        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None)
         result = data.map(lambda x: 2 * x, 1)
         assert isinstance(result, ci_data.CIDataFit)
         assert result.image == 2
@@ -135,7 +135,8 @@ class TestCIData(object):
         image = np.ones((2, 2))
         image[0, 0] = 6.0
 
-        data = ci_data.CIData(image=image, noise_map=2.0 * np.ones((2, 2)), ci_pre_cti=None)
+        data = ci_data.CIData(image=image, noise_map=2.0 * np.ones((2, 2)), ci_pre_cti=None, ci_pattern=None,
+                              ci_frame=None)
 
         assert (data.signal_to_noise_map == np.array([[3.0, 0.5],
                                                       [0.5, 0.5]])).all()

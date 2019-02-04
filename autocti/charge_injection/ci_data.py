@@ -26,7 +26,7 @@ Author: James Nightingale
 import numpy as np
 
 from autocti import exc
-from autocti.charge_injection import ci_frame
+from autocti.charge_injection import ci_frame as frame
 from autocti.charge_injection import ci_pattern as pattern
 from autocti.data import cti_image
 from autocti.data import mask as msk
@@ -34,7 +34,7 @@ from autocti.data import util
 from autocti.model import pyarctic
 
 
-class CIMask(ci_frame.CIFrame, msk.Mask):
+class CIMask(frame.CIFrame, msk.Mask):
     @classmethod
     def empty_for_image(cls, image):
         return CIMask.empty_for_shape(image.shape, image.frame_geometry, image.ci_pattern)
@@ -42,7 +42,7 @@ class CIMask(ci_frame.CIFrame, msk.Mask):
 
 class CIData(object):
 
-    def __init__(self, image, noise_map, ci_pre_cti, noise_scaling=None):
+    def __init__(self, image, noise_map, ci_pre_cti, ci_pattern, ci_frame, noise_scaling=None):
         self.image = image
         self.noise_map = noise_map
         self.ci_pre_cti = ci_pre_cti
@@ -118,7 +118,7 @@ class CIDataFit(object):
         self.noise_scaling = noise_scaling
 
 
-class CIImage(ci_frame.CIFrame):
+class CIImage(frame.CIFrame):
 
     def __init__(self, frame_geometry, ci_pattern, array):
         """The observed charge injection imaging ci_data.
@@ -206,7 +206,7 @@ class CIImage(ci_frame.CIFrame):
                                          'a known ci_pattern class')
 
 
-class CIPreCTI(ci_frame.CIFrame):
+class CIPreCTI(frame.CIFrame):
 
     def __init__(self, frame_geometry, array, ci_pattern):
         """The pre-cti image of a charge injection dataset. This image has a corresponding *ChargeInjectPattern*, \
@@ -236,7 +236,7 @@ class CIPreCTI(ci_frame.CIFrame):
             The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
         """
         ci_post_cti = self.add_cti_to_image(cti_params=cti_params, cti_settings=cti_settings)
-        return ci_frame.CIFrame(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern, array=ci_post_cti)
+        return frame.CIFrame(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern, array=ci_post_cti)
 
 
 class CIPreCTIFast(CIPreCTI):
@@ -402,7 +402,8 @@ def load_ci_data(frame_geometry, ci_pattern,
                                  ci_pre_cti_path=ci_pre_cti_path, ci_pre_cti_hdu=ci_pre_cti_hdu,
                                  ci_image=ci_image, ci_pre_cti_from_image=ci_pre_cti_from_image, mask=mask)
 
-    return CIData(image=ci_image, noise_map=ci_noise_map, ci_pre_cti=ci_pre_cti)
+    return CIData(image=ci_image, noise_map=ci_noise_map, ci_pre_cti=ci_pre_cti, ci_pattern=ci_pattern,
+                  ci_frame=frame_geometry)
 
 
 def load_ci_image(frame_geometry, ci_pattern, ci_image_path, ci_image_hdu):
@@ -413,11 +414,11 @@ def load_ci_image(frame_geometry, ci_pattern, ci_image_path, ci_image_hdu):
 def load_ci_noise_map(frame_geometry, ci_pattern, ci_noise_map_path, ci_noise_map_hdu, ci_noise_map_from_single_value,
                       shape):
     if ci_noise_map_path is not None and ci_noise_map_from_single_value is None:
-        return ci_frame.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
-                                array=util.numpy_array_from_fits(file_path=ci_noise_map_path, hdu=ci_noise_map_hdu))
+        return frame.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
+                             array=util.numpy_array_from_fits(file_path=ci_noise_map_path, hdu=ci_noise_map_hdu))
     elif ci_noise_map_path is None and ci_noise_map_from_single_value is not None:
-        return ci_frame.CIFrame.from_single_value(value=ci_noise_map_from_single_value, shape=shape,
-                                                  frame_geometry=frame_geometry, ci_pattern=ci_pattern)
+        return frame.CIFrame.from_single_value(value=ci_noise_map_from_single_value, shape=shape,
+                                               frame_geometry=frame_geometry, ci_pattern=ci_pattern)
     else:
         raise exc.CIDataException(
             'You have supplied both a ci_noise_map_path and a ci_noise_map_from_single_value value. Only one quantity '
