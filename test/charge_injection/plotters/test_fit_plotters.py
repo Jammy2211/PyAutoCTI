@@ -72,5 +72,5 @@ def make_ci_fit(ci_datas_fit, cti_params, cti_settings):
 
 
 def test__image_is_output(ci_fit, fit_path, plot_patch):
-    fit_plotters.plot_image(fit=ci_fit, fit_index=0, output_path=fit_path, output_format='png')
+    fit_plotters.plot_image(fit=ci_fit, output_path=fit_path, output_format='png')
     assert fit_path + 'fit_image.png' in plot_patch.paths
