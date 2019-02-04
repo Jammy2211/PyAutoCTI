@@ -195,7 +195,10 @@ class CIImage(np.ndarray):
                                          'a known ci_pattern class')
 
 
-class CIPreCTIFast(frame.CIFrame):
+class CIPreCTIFast(np.ndarray):
+
+    def __new__(cls, frame_geometry, array, ci_pattern):
+        return array.view(cls)
 
     def __init__(self, frame_geometry, array, ci_pattern):
         """A fast pre-cti image of a charge injection dataset, used for CTI calibration modeling.
@@ -219,11 +222,11 @@ class CIPreCTIFast(frame.CIFrame):
         ci_pattern : ci_pattern.CIPattern
             The charge injection ci_pattern (regions, normalization, etc.) of the pre-cti image.
         """
-        super(CIPreCTIFast, self).__init__(frame_geometry, ci_pattern, array)
-        fast_column_pre_cti = self.ci_pattern.compute_fast_column(self.shape[0])
-        self.fast_column_pre_cti = self.frame_geometry.rotate_for_parallel_cti(fast_column_pre_cti)
-        fast_row_pre_cti = self.ci_pattern.compute_fast_row(self.shape[1])
-        self.fast_row_pre_cti = self.frame_geometry.rotate_before_serial_cti(fast_row_pre_cti)
+        fast_column_pre_cti = ci_pattern.compute_fast_column(self.shape[0])
+        self.fast_column_pre_cti = frame_geometry.rotate_for_parallel_cti(fast_column_pre_cti)
+        fast_row_pre_cti = ci_pattern.compute_fast_row(self.shape[1])
+        self.fast_row_pre_cti = frame_geometry.rotate_before_serial_cti(fast_row_pre_cti)
+        self.frame_geometry = frame_geometry
 
     def fast_column_post_cti_from_cti_params_and_settings(self, cti_params, cti_settings):
         """Add cti to the fast-column, using cti_settings.

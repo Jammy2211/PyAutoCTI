@@ -239,8 +239,6 @@ class TestCIImage(object):
             assert (ci_pre_cti == np.array([[10.0, 10.0, 0.0],
                                             [10.0, 10.0, 0.0],
                                             [00.0, 00.0, 0.0]])).all()
-            assert (ci_pre_cti.ci_pattern.normalization == pattern.normalization == 10.0)
-            assert (ci_pre_cti.ci_pattern.regions == pattern.regions == [(0, 2, 0, 2)])
 
     class TestCISimulate(object):
 
@@ -687,8 +685,6 @@ class TestCIPreCTIFast(object):
             assert (ci_pre_cti == np.array([[10.0, 10.0, 10.0],
                                             [2.0, 2.0, 2.0],
                                             [8.0, 12.0, 10.0]])).all()
-            assert ci_pre_cti.ci_pattern.normalization == pattern.normalization == 1.0
-            assert ci_pre_cti.ci_pattern.regions == pattern.regions == [(0, 1, 0, 1)]
 
     class TestSetupFastColumn:
 
