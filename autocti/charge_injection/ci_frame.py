@@ -2,8 +2,8 @@ import numpy as np
 
 from autocti import exc
 from autocti.data import cti_image
-from autocti.model import pyarctic
 from autocti.data import util
+from autocti.model import pyarctic
 
 
 def bin_array_across_serial(array, mask=None):
@@ -791,7 +791,6 @@ class CIFrame(cti_image.ImageFrame, ChInj):
         self.ci_pattern = ci_pattern
 
     def __array_finalize__(self, obj):
-
         if isinstance(obj, CIFrame):
             self.frame_geometry = obj.frame_geometry
             self.ci_pattern = obj.ci_pattern
@@ -890,18 +889,18 @@ class CIFrameCTI(cti_image.ImageFrame, ChInj):
                    array=util.numpy_array_from_fits(file_path=file_path, hdu=hdu))
 
 
-class Region(tuple):
+class Region(object):
 
-    def __new__(cls, region):
+    def __init__(self, region):
         """Setup a region of an image, which could be where the parallel overscan, serial overscan, etc. are.
 
-        This is defined as a tuple (y0, y1, x0, x1).
+                This is defined as a tuple (y0, y1, x0, x1).
 
-        Parameters
-        -----------
-        region : (int,)
-            The coordinates on the image of the region (y0, y1, x0, y1).
-        """
+                Parameters
+                -----------
+                region : (int,)
+                    The coordinates on the image of the region (y0, y1, x0, y1).
+                """
 
         if region[0] < 0 or region[1] < 0 or region[2] < 0 or region[3] < 0:
             raise exc.RegionException('A coordinate of the Region was specified as negative.')
@@ -911,18 +910,39 @@ class Region(tuple):
 
         if region[2] >= region[3]:
             raise exc.RegionException('The first column in the Region was equal to greater than the second column.')
+        self.region = region
 
-        region = super(Region, cls).__new__(cls, region)
+    @property
+    def total_rows(self):
+        return self.y1 - self.y0
 
-        region.y0 = region[0]
-        region.y1 = region[1]
-        region.x0 = region[2]
-        region.x1 = region[3]
+    @property
+    def total_columns(self):
+        return self.x1 - self.x0
 
-        region.total_rows = region.y1 - region.y0
-        region.total_columns = region.x1 - region.x0
+    @property
+    def y0(self):
+        return self[0]
 
-        return region
+    @property
+    def y1(self):
+        return self[1]
+
+    @property
+    def x0(self):
+        return self[2]
+
+    @property
+    def x1(self):
+        return self[3]
+
+    def __getitem__(self, item):
+        return self.region[item]
+
+    def __eq__(self, other):
+        if self.region == other:
+            return True
+        return super().__eq__(other)
 
     def extract_region_from_array(self, array):
         return array[self.y0:self.y1, self.x0:self.x1]
