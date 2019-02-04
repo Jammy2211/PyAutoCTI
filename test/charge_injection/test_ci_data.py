@@ -148,18 +148,12 @@ class TestCIImage(object):
     class TestConstructor:
 
         def test__setup_all_attributes_correctly__noise_is_generated_by_read_noise(self):
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 1, 0, 1)])
             image = np.array([[10.0, 10.0, 10.0],
                               [2.0, 2.0, 2.0],
                               [8.0, 12.0, 10.0]])
 
-            data = ci_data.CIImage(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                   array=image)
+            data = ci_data.CIImage(array=image)
 
-            assert data.frame_geometry.parallel_overscan == (2066, 2086, 51, 2099)
-            assert data.frame_geometry.serial_prescan == (0, 2086, 0, 51)
-            assert data.frame_geometry.serial_overscan == (0, 2086, 2099, 2119)
-            assert type(data.ci_pattern) == ci_pattern.CIPattern
             assert data.shape == (3, 3)
             assert (data == np.array([[10.0, 10.0, 10.0],
                                       [2.0, 2.0, 2.0],

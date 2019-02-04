@@ -115,6 +115,10 @@ class CIDataFit(object):
 
 
 class CIImage(np.ndarray):
+    def __new__(cls, array, *args, **kwargs):
+        array.view(cls)
+        return array
+
     @classmethod
     def simulate(cls, shape, frame_geometry, ci_pattern, cti_params, cti_settings, read_noise=None, cosmics=None,
                  noise_seed=-1):
