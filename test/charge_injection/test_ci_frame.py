@@ -1662,7 +1662,7 @@ class TestCIFrame(object):
             mask = frame.mask_containing_only_serial_trails(image, )
 
             assert type(mask) == msk.Mask
-            assert mask.frame_geometry == frame.frame_geometry
+
             assert (mask == np.array([[True, True, True, True, False, False, False, False, False, False],
                                       [True, True, True, True, False, False, False, False, False, False],
                                       [True, True, True, True, False, False, False, False, False, False]])).all()
@@ -1682,7 +1682,6 @@ class TestCIFrame(object):
             mask = frame.mask_containing_only_serial_trails(image, )
 
             assert type(mask) == msk.Mask
-            assert mask.frame_geometry == frame.frame_geometry
             assert (mask == np.array([[True, True, True, True, False, False, False, False, False, False],
                                       [True, True, True, True, True, True, True, True, True, True],
                                       [True, True, True, True, False, False, False, False, False, False]])).all()
