@@ -115,10 +115,10 @@ def simulate_integration_quadrant(test_name, normalizations, cti_params, cti_set
     sim_ci_patterns = ci_pattern.uniform_simulate_from_lists(normalizations=normalizations, regions=ci_regions)
 
     sim_ci_datas = list(map(lambda pattern:
-                            ci_data.CIImage.simulate(shape=shape, frame_geometry=frame_geometry,
-                                                     ci_pattern=pattern, cti_settings=cti_settings,
-                                                     cti_params=cti_params,
-                                                     read_noise=None),
+                            ci_data.simulate(shape=shape, frame_geometry=frame_geometry,
+                                             ci_pattern=pattern, cti_settings=cti_settings,
+                                             cti_params=cti_params,
+                                             read_noise=None),
                             sim_ci_patterns))
 
     list(map(lambda sim_ci_data, index:

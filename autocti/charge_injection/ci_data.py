@@ -359,19 +359,6 @@ def load_ci_data(frame_geometry, ci_pattern,
                   ci_frame=frame_geometry)
 
 
-def load_ci_image(ci_image_path, ci_image_hdu):
-    return CIImage(array=util.numpy_array_from_fits(file_path=ci_image_path, hdu=ci_image_hdu))
-
-
-def load_ci_pre_cti(frame_geometry, ci_pattern, ci_pre_cti_path, ci_pre_cti_hdu,
-                    ci_image=None, ci_pre_cti_from_image=False, mask=None):
-    if not ci_pre_cti_from_image:
-        return frame.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
-                             array=util.numpy_array_from_fits(file_path=ci_pre_cti_path, hdu=ci_pre_cti_hdu))
-
-    return ci_image.ci_pre_cti_from_ci_pattern_and_mask(ci_pattern, frame_geometry, mask=mask)
-
-
 def read_noise_map_from_shape_and_sigma(shape, sigma, noise_seed=-1):
     """Generate a two-dimensional read noises-map, generating values from a Gaussian distribution with mean 0.0.
 
