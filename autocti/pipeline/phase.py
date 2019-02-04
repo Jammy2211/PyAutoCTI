@@ -127,7 +127,7 @@ class Phase(ph.AbstractPhase):
         analysis: Analysis
             An analysis object that the non-linear optimizer calls to determine the fit of a set of values
         """
-        masks = list(map(lambda data: self.mask_function(data.image), ci_datas))
+        masks = list(map(lambda data: self.mask_function(data.image.shape), ci_datas))
         ci_datas_fit = [self.extract_ci_data(data=data, mask=mask) for data, mask in zip(ci_datas, masks)]
 
         self.pass_priors(previous_results)

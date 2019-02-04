@@ -1483,11 +1483,3 @@ class TestLoadCIData(object):
         assert type(data.image) == ci_data.CIImage
         assert type(data.noise_map) == ci_frame.CIFrame
         assert type(data.ci_pre_cti) == ci_data.CIPreCTI
-
-        assert type(data.image.frame_geometry) == MockGeometry
-        assert type(data.noise_map.frame_geometry) == MockGeometry
-        assert type(data.ci_pre_cti.frame_geometry) == MockGeometry
-
-        assert type(data.image.ci_pattern) == ci_pattern.CIPatternUniform
-        assert type(data.noise_map.ci_pattern) == ci_pattern.CIPatternUniform
-        assert type(data.ci_pre_cti.ci_pattern) == ci_pattern.CIPatternUniform
