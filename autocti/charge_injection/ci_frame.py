@@ -79,7 +79,7 @@ class ChInj(np.ndarray):
         array = np.zeros(shape=self.shape)
 
         for region in self.ci_pattern.regions:
-            array = region.add_region_from_image_to_array(image=self, array=array)
+            array[region.slice] += self[region.slice]
 
         return CIFrame(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern, array=array)
 
@@ -275,7 +275,7 @@ class ChInj(np.ndarray):
         """
         calibration_region = self.frame_geometry.parallel_side_nearest_read_out_region(self.ci_pattern.regions[0],
                                                                                        self.shape, columns)
-        array = calibration_region.extract_region_from_array(self)
+        array = self[calibration_region.slice]
         return self.__class__(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern, array=array)
 
     def serial_all_trails_frame_from_frame(self):
@@ -528,7 +528,7 @@ class ChInj(np.ndarray):
                                        self.frame_geometry.serial_ci_region_and_trails(ci_region, self.shape,
                                                                                        column),
                                        self.ci_pattern.regions))
-        return list(map(lambda region: region.extract_region_from_array(self), calibration_regions))
+        return list(map(lambda region: self[region.slice], calibration_regions))
 
     def parallel_front_edge_arrays_from_frame(self, rows):
         """Extract a list of the parallel front edge regions of a charge injection ci_frame.
@@ -577,7 +577,7 @@ class ChInj(np.ndarray):
         """
         front_regions = list(map(lambda ci_region: self.frame_geometry.parallel_front_edge_region(ci_region, rows),
                                  self.ci_pattern.regions))
-        front_arrays = np.array(list(map(lambda region: region.extract_region_from_array(self), front_regions)))
+        front_arrays = np.array(list(map(lambda region: self[region.slice], front_regions)))
         return list(map(lambda front_array:
                         self.__class__(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern,
                                        array=front_array),
@@ -632,7 +632,7 @@ class ChInj(np.ndarray):
         """
         trails_regions = list(map(lambda ci_region: self.frame_geometry.parallel_trails_region(ci_region, rows),
                                   self.ci_pattern.regions))
-        trails_arrays = np.array(list(map(lambda region: region.extract_region_from_array(self), trails_regions)))
+        trails_arrays = np.array(list(map(lambda region: self[region.slice], trails_regions)))
         return list(map(lambda front_array:
                         self.__class__(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern,
                                        array=front_array),
@@ -687,7 +687,7 @@ class ChInj(np.ndarray):
         """
         front_regions = list(map(lambda ci_region: self.frame_geometry.serial_front_edge_region(ci_region, columns),
                                  self.ci_pattern.regions))
-        front_arrays = np.array(list(map(lambda region: region.extract_region_from_array(self), front_regions)))
+        front_arrays = np.array(list(map(lambda region: self[region.slice], front_regions)))
         return list(map(lambda front_array:
                         self.__class__(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern,
                                        array=front_array),
@@ -741,7 +741,7 @@ class ChInj(np.ndarray):
         """
         trails_regions = list(map(lambda ci_region: self.frame_geometry.serial_trails_region(ci_region, columns),
                                   self.ci_pattern.regions))
-        trails_arrays = np.array(list(map(lambda region: region.extract_region_from_array(self), trails_regions)))
+        trails_arrays = np.array(list(map(lambda region: self[region.slice], trails_regions)))
         return list(map(lambda front_array:
                         self.__class__(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern,
                                        array=front_array),
@@ -947,9 +947,6 @@ class Region(object):
     @property
     def slice(self):
         return np.s_[self.y0:self.y1, self.x0:self.x1]
-
-    def extract_region_from_array(self, array):
-        return array[self.slice]
 
     def add_region_from_image_to_array(self, image, array):
         array[self.slice] += image[self.slice]
