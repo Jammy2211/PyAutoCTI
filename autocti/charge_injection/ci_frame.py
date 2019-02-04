@@ -384,7 +384,7 @@ class ChInj(object):
         for region in trails_regions:
             new_array[region.slice] = 0
 
-        return array
+        return new_array
 
     def serial_edges_and_trails_frame_from_frame(self, array, front_edge_columns=None, trails_columns=None):
         """Extract an array of all of the serial front edges and trails of each the charge-injection regions from   
@@ -865,6 +865,9 @@ class Region(object):
         if self.region == other:
             return True
         return super().__eq__(other)
+
+    def __repr__(self):
+        return "<Region {} {} {} {}>".format(*self)
 
     @property
     def slice(self):

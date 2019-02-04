@@ -142,84 +142,6 @@ class TestChInj(object):
 
 
 class TestCIFrame(object):
-    class TestAllFunctionsReturnClassType:
-
-        def test__frame_in_frame_out(self):
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
-            image = np.array([[0.0, 1.0, 2.0],
-                              [3.0, 4.0, 5.0],
-                              [6.0, 7.0, 8.0],
-                              [9.0, 10.0, 11.0]])
-
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=image)
-
-            new_frame = frame.ci_regions_from_array(image, )
-
-            assert type(new_frame) == ci_frame.CIFrame
-            assert new_frame.frame_geometry == frame.frame_geometry
-            assert new_frame.ci_pattern == frame.ci_pattern
-
-            new_frame = frame.parallel_non_ci_regions_frame_from_frame(image, )
-
-            assert type(new_frame) == ci_frame.CIFrame
-            assert new_frame.frame_geometry == frame.frame_geometry
-            assert new_frame.ci_pattern == frame.ci_pattern
-
-            new_frame = frame.parallel_edges_and_trails_frame_from_frame(image, )
-
-            assert type(new_frame) == ci_frame.CIFrame
-            assert new_frame.frame_geometry == frame.frame_geometry
-            assert new_frame.ci_pattern == frame.ci_pattern
-
-            new_frame = frame.serial_all_trails_frame_from_frame(image, )
-
-            assert type(new_frame) == ci_frame.CIFrame
-            assert new_frame.frame_geometry == frame.frame_geometry
-            assert new_frame.ci_pattern == frame.ci_pattern
-
-            new_frame = frame.serial_overscan_non_trails_frame_from_frame(image, )
-
-            assert type(new_frame) == ci_frame.CIFrame
-            assert new_frame.frame_geometry == frame.frame_geometry
-            assert new_frame.ci_pattern == frame.ci_pattern
-
-            new_frame = frame.serial_edges_and_trails_frame_from_frame(image, )
-
-            assert type(new_frame) == ci_frame.CIFrame
-            assert new_frame.frame_geometry == frame.frame_geometry
-            assert new_frame.ci_pattern == frame.ci_pattern
-
-            new_frame = frame.serial_calibration_section_for_column_and_rows(image, column=0, rows=(0, 3))
-
-            assert type(new_frame) == ci_frame.CIFrame
-            assert new_frame.frame_geometry == frame.frame_geometry
-            assert new_frame.ci_pattern == frame.ci_pattern
-
-            new_frame = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 1))
-
-            assert type(new_frame[0]) == ci_frame.CIFrame
-            assert new_frame[0].frame_geometry == frame.frame_geometry
-            assert new_frame[0].ci_pattern == frame.ci_pattern
-
-            new_frame = frame.parallel_trails_arrays_from_frame(image, rows=(0, 1))
-
-            assert type(new_frame[0]) == ci_frame.CIFrame
-            assert new_frame[0].frame_geometry == frame.frame_geometry
-            assert new_frame[0].ci_pattern == frame.ci_pattern
-
-            new_frame = frame.serial_front_edge_arrays_from_frame(image, columns=(0, 1))
-
-            assert type(new_frame[0]) == ci_frame.CIFrame
-            assert new_frame[0].frame_geometry == frame.frame_geometry
-            assert new_frame[0].ci_pattern == frame.ci_pattern
-
-            new_frame = frame.serial_trails_arrays_from_frame(image, columns=(0, 1))
-
-            assert type(new_frame[0]) == ci_frame.CIFrame
-            assert new_frame[0].frame_geometry == frame.frame_geometry
-            assert new_frame[0].ci_pattern == frame.ci_pattern
-
     class TestCiRegionArrayFromFrame:
 
         def test__1_ci_region__extracted_correctly(self):
@@ -792,6 +714,8 @@ class TestCIFrame(object):
                                      ci_pattern=pattern, array=image)
 
             new_frame = frame.serial_overscan_non_trails_frame_from_frame(image, )
+
+            print(new_frame)
 
             assert (new_frame == np.array([[0.5, 0.0, 0.0, 0.0],
                                            [0.0, 0.0, 0.0, 0.0],
