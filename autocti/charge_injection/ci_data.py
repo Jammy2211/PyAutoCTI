@@ -121,8 +121,7 @@ class CIDataFit(object):
 
 class CIImage(np.ndarray):
     def __new__(cls, array, *args, **kwargs):
-        array.view(cls)
-        return array
+        return array.view(CIImage)
 
     @classmethod
     def simulate(cls, shape, frame_geometry, ci_pattern, cti_params, cti_settings, read_noise=None, cosmics=None,
@@ -152,8 +151,6 @@ class CIImage(np.ndarray):
         ci_pre_cti = ci_pattern.simulate_ci_pre_cti(shape)
         if cosmics is not None:
             ci_pre_cti += cosmics
-
-        ci_pattern = ci_pattern.create_pattern()
 
         ci_pre_cti = cti_image.ImageFrame(frame_geometry=frame_geometry, array=ci_pre_cti)
 
@@ -378,25 +375,23 @@ def load_ci_data(frame_geometry, ci_pattern,
                  ci_noise_map_from_single_value=None,
                  ci_pre_cti_path=None, ci_pre_cti_hdu=0, ci_pre_cti_from_image=False,
                  mask=None):
-    ci_image = load_ci_image(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
-                             ci_image_path=ci_image_path, ci_image_hdu=ci_image_hdu)
+    ci_image = load_ci_image(ci_image_path=ci_image_path, ci_image_hdu=ci_image_hdu)
 
     ci_noise_map = load_ci_noise_map(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
                                      ci_noise_map_path=ci_noise_map_path, ci_noise_map_hdu=ci_noise_map_hdu,
                                      ci_noise_map_from_single_value=ci_noise_map_from_single_value,
                                      shape=ci_image.shape)
 
-    ci_pre_cti = load_ci_pre_cti(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
-                                 ci_pre_cti_path=ci_pre_cti_path, ci_pre_cti_hdu=ci_pre_cti_hdu,
+    ci_pre_cti = load_ci_pre_cti(frame_geometry, ci_pattern, ci_pre_cti_path=ci_pre_cti_path,
+                                 ci_pre_cti_hdu=ci_pre_cti_hdu,
                                  ci_image=ci_image, ci_pre_cti_from_image=ci_pre_cti_from_image, mask=mask)
 
     return CIData(image=ci_image, noise_map=ci_noise_map, ci_pre_cti=ci_pre_cti, ci_pattern=ci_pattern,
                   ci_frame=frame_geometry)
 
 
-def load_ci_image(frame_geometry, ci_pattern, ci_image_path, ci_image_hdu):
-    return CIImage(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
-                   array=util.numpy_array_from_fits(file_path=ci_image_path, hdu=ci_image_hdu))
+def load_ci_image(ci_image_path, ci_image_hdu):
+    return CIImage(array=util.numpy_array_from_fits(file_path=ci_image_path, hdu=ci_image_hdu))
 
 
 def load_ci_noise_map(frame_geometry, ci_pattern, ci_noise_map_path, ci_noise_map_hdu, ci_noise_map_from_single_value,
@@ -415,11 +410,11 @@ def load_ci_noise_map(frame_geometry, ci_pattern, ci_noise_map_path, ci_noise_ma
 
 def load_ci_pre_cti(frame_geometry, ci_pattern, ci_pre_cti_path, ci_pre_cti_hdu,
                     ci_image=None, ci_pre_cti_from_image=False, mask=None):
-    if not ci_pre_cti_from_image:
+    if ci_pre_cti_from_image is None:
         return CIPreCTI(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
                         array=util.numpy_array_from_fits(file_path=ci_pre_cti_path, hdu=ci_pre_cti_hdu))
-    elif ci_pre_cti_from_image:
-        return ci_image.ci_pre_cti_from_ci_pattern_and_mask(mask=mask)
+
+    return ci_image.ci_pre_cti_from_ci_pattern_and_mask(ci_pattern, frame_geometry, mask=mask)
 
 
 def baseline_noise_map_from_shape_and_sigma(shape, sigma):

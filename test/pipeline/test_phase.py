@@ -9,6 +9,7 @@ from autofit.tools import phase_property
 from autofit.tools.phase import ResultsCollection
 
 from autocti.charge_injection import ci_data as data, ci_frame
+from autocti.data import mask
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
 from autocti.pipeline import phase as ph
@@ -161,7 +162,7 @@ class TestPhase(object):
 
     # noinspection PyUnresolvedReferences
     def test__default_data_extractor(self, ci_data, phase):
-        ci_datas_fit = phase.extract_ci_data(ci_data, data.CIMask.empty_for_image(ci_data.image))
+        ci_datas_fit = phase.extract_ci_data(ci_data, mask.Mask.empty_for_image(ci_data.image))
 
         assert isinstance(ci_datas_fit, data.CIDataFit)
         assert (ci_data.image == ci_datas_fit.image).all()

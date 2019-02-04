@@ -759,7 +759,7 @@ class ChInj(object):
 class CIFrame(ChInj, np.ndarray):
     def __new__(cls, frame_geometry, ci_pattern, array, *args, **kwargs):
 
-        return array.view(CIFrame)
+        return array.view(cls)
 
     def __init__(self, frame_geometry, ci_pattern, array):
         super().__init__(frame_geometry, ci_pattern)
