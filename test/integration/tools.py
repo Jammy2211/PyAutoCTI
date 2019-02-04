@@ -80,26 +80,6 @@ class CIQuadGeometryIntegration(ci_frame.FrameGeometry):
         """Coordinates of a serial trail of size dx from coordinate x"""
         return x, x + dx + 1
 
-    # def parallel_front_edge_region(self, region, rows=(0, 1)):
-    #     ci_frame.check_parallel_front_edge_size(region, rows)
-    #     return ci_frame.Region((region.y0 + rows[0], region.y0 + rows[1], region.x0, region.x1))
-    #
-    # def parallel_trails_region(self, region, rows=(0, 1)):
-    #     return ci_frame.Region((region.y1 + rows[0], region.y1 + rows[1], region.x0, region.x1))
-    #
-    # def parallel_side_nearest_read_out_region(self, region, image_shape, columns=(0, 1)):
-    #     return ci_frame.Region((0, image_shape[0], region.x0 + columns[0], region.x0 + columns[1]))
-    #
-    # def serial_front_edge_region(self, region, columns=(0, 1)):
-    #     ci_frame.check_serial_front_edge_size(region, columns)
-    #     return ci_frame.Region((region.y0, region.y1, region.x0 + columns[0], region.x0 + columns[1]))
-    #
-    # def serial_trails_region(self, region, columns=(0, 1)):
-    #     return ci_frame.Region((region.y0, region.y1, region.x1 + columns[0], region.x1 + columns[1]))
-    #
-    # def serial_ci_region_and_trails(self, region, image_shape, column):
-    #     return ci_frame.Region((region.y0, region.y1, column + region.x0, image_shape[1]))
-
 
 shape = (36, 36)
 ci_regions = [(1, 7, 1, 30), (17, 23, 1, 30)]
