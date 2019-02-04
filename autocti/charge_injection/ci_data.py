@@ -388,23 +388,6 @@ def load_ci_pre_cti(frame_geometry, ci_pattern, ci_pre_cti_path, ci_pre_cti_hdu,
     return ci_image.ci_pre_cti_from_ci_pattern_and_mask(ci_pattern, frame_geometry, mask=mask)
 
 
-def baseline_noise_map_from_shape_and_sigma(shape, sigma):
-    """
-    Create the noises used for CTI Calibration, where each value represents the standard deviation of the \
-    pixel's assumed Gaussian noises.
-
-    The only source of noises considered for charge injection imaging is read-noises.
-
-    Params
-    ----------
-    image_shape : (int, int)
-        The pixel image_shape of the 2D mask.
-    read_noise : float
-        The read-noises level, defined as the standard deviation of a Gaussian with mean 0.0.
-    """
-    return np.ones(shape) * sigma
-
-
 def read_noise_map_from_shape_and_sigma(shape, sigma, noise_seed=-1):
     """Generate a two-dimensional read noises-map, generating values from a Gaussian distribution with mean 0.0.
 
@@ -434,8 +417,3 @@ def setup_random_seed(seed):
     if seed == -1:
         seed = np.random.randint(0, int(1e9))  # Use one seed, so all regions have identical column non-uniformity.
     np.random.seed(seed)
-
-
-def compute_variances_from_noise(noise):
-    """The variances are the noises (standard deviations) squared."""
-    return np.square(noise)
