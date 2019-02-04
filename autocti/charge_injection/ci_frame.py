@@ -944,15 +944,19 @@ class Region(object):
             return True
         return super().__eq__(other)
 
+    @property
+    def slice(self):
+        return np.s_[self.y0:self.y1, self.x0:self.x1]
+
     def extract_region_from_array(self, array):
-        return array[self.y0:self.y1, self.x0:self.x1]
+        return array[self.slice]
 
     def add_region_from_image_to_array(self, image, array):
-        array[self.y0:self.y1, self.x0:self.x1] += image[self.y0:self.y1, self.x0:self.x1]
+        array[self.slice] += image[self.slice]
         return array
 
     def set_region_on_array_to_zeros(self, array):
-        array[self.y0:self.y1, self.x0:self.x1] = 0.0
+        array[self.slice] = 0.0
         return array
 
 
