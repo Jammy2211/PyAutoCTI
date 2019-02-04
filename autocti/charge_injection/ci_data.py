@@ -34,12 +34,6 @@ from autocti.data import util
 from autocti.model import pyarctic
 
 
-class CIMask(frame.CIFrame, msk.Mask):
-    @classmethod
-    def empty_for_image(cls, image):
-        return CIMask.empty_for_shape(image.shape, image.frame_geometry, image.ci_pattern)
-
-
 class CIData(object):
 
     def __init__(self, image, noise_map, ci_pre_cti, ci_pattern, ci_frame, noise_scaling=None):
@@ -47,6 +41,8 @@ class CIData(object):
         self.noise_map = noise_map
         self.ci_pre_cti = ci_pre_cti
         self.noise_scaling = noise_scaling
+        self.ci_pattern = ci_pattern
+        self.ci_frame = ci_frame
 
     @property
     def shape(self):
@@ -118,24 +114,7 @@ class CIDataFit(object):
         self.noise_scaling = noise_scaling
 
 
-class CIImage(frame.CIFrame):
-
-    def __init__(self, frame_geometry, ci_pattern, array):
-        """The observed charge injection imaging ci_data.
-
-        Parameters
-        ----------
-        frame_geometry : ci_frame.CIQuadGeometry
-            The quadrant geometry of the image, defining where the parallel / serial overscans are and \
-            therefore the direction of clocking and rotations before input into the cti algorithm.
-        ci_pattern : ci_pattern.CIPattern
-            The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
-        array : ndarray
-            2D Array of array charge injection image ci_data.
-        """
-
-        super(CIImage, self).__init__(frame_geometry, ci_pattern, array=array)
-
+class CIImage(np.ndarray):
     @classmethod
     def simulate(cls, shape, frame_geometry, ci_pattern, cti_params, cti_settings, read_noise=None, cosmics=None,
                  noise_seed=-1):
@@ -175,31 +154,31 @@ class CIImage(frame.CIFrame):
             ci_post_cti += read_noise_map_from_shape_and_sigma(shape=shape, sigma=read_noise, noise_seed=noise_seed)
 
         # TODO : This is ugly... fix in future
-        sim_image = CIImage(frame_geometry=frame_geometry, ci_pattern=ci_pattern, array=ci_post_cti[:, :])
+        sim_image = CIImage(ci_post_cti[:, :])
         sim_image.ci_pre_cti = ci_pre_cti
         return sim_image
 
-    def ci_pre_cti_from_ci_pattern_and_mask(self, mask=None):
+    def ci_pre_cti_from_ci_pattern_and_mask(self, ci_pattern, frame_geometry, mask=None):
         """Setup a pre-cti image from this charge injection ci_data, using the charge injection ci_pattern.
 
         The pre-cti image is computed depending on whether the charge injection ci_pattern is uniform, non-uniform or \
         'fast' (see ChargeInjectPattern).
         """
 
-        if type(self.ci_pattern) == pattern.CIPatternUniform:
+        if type(ci_pattern) == pattern.CIPatternUniform:
 
-            ci_pre_cti = self.ci_pattern.ci_pre_cti_from_shape(shape=self.shape)
-            return CIPreCTI(frame_geometry=self.frame_geometry, array=ci_pre_cti, ci_pattern=self.ci_pattern)
+            ci_pre_cti = ci_pattern.ci_pre_cti_from_shape(shape=self.shape)
+            return CIPreCTI(frame_geometry=frame_geometry, array=ci_pre_cti, ci_pattern=ci_pattern)
 
-        elif type(self.ci_pattern) == pattern.CIPatternNonUniform:
+        elif type(ci_pattern) == pattern.CIPatternNonUniform:
 
-            ci_pre_cti = self.ci_pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=self, mask=mask)
-            return CIPreCTI(frame_geometry=self.frame_geometry, array=ci_pre_cti, ci_pattern=self.ci_pattern)
+            ci_pre_cti = ci_pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=self, mask=mask)
+            return CIPreCTI(frame_geometry=frame_geometry, array=ci_pre_cti, ci_pattern=ci_pattern)
 
-        elif type(self.ci_pattern) == pattern.CIPatternUniformFast:
+        elif type(ci_pattern) == pattern.CIPatternUniformFast:
 
-            ci_pre_cti = self.ci_pattern.ci_pre_cti_from_shape(shape=self.shape)
-            return CIPreCTIFast(frame_geometry=self.frame_geometry, array=ci_pre_cti, ci_pattern=self.ci_pattern)
+            ci_pre_cti = ci_pattern.ci_pre_cti_from_shape(shape=self.shape)
+            return CIPreCTIFast(frame_geometry=frame_geometry, array=ci_pre_cti, ci_pattern=ci_pattern)
 
         else:
             raise exc.CIPatternException('the CIPattern of the CIImage is not an instance of '
