@@ -755,7 +755,11 @@ class ChInj(object):
         self.ci_pattern = ci_pattern
 
 
-class CIFrame(np.ndarray, ChInj):
+class CIFrame(ChInj, np.ndarray):
+    def __new__(cls, frame_geometry, ci_pattern, array, *args, **kwargs):
+
+        return array.view(CIFrame)
+
     def __init__(self, frame_geometry, ci_pattern, array):
         super().__init__(frame_geometry, ci_pattern)
 
