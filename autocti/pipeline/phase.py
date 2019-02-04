@@ -8,7 +8,7 @@ from autofit.tools import phase as ph
 from autofit.tools import phase_property
 
 from autocti.charge_injection import ci_hyper, ci_fit, ci_data
-from autocti.data import util
+from autocti.data import util, mask
 from autocti.model import arctic_params
 
 logger = logging.getLogger(__name__)
@@ -39,7 +39,7 @@ class Phase(ph.AbstractPhase):
     def make_result(self, result, analysis):
         return self.__class__.Result(result.constant, result.figure_of_merit, result.variable, analysis)
 
-    def __init__(self, optimizer_class=nl.DownhillSimplex, mask_function=ci_data.CIMask.empty_for_image, columns=None,
+    def __init__(self, optimizer_class=nl.DownhillSimplex, mask_function=mask.Mask.empty_for_shape, columns=None,
                  rows=None, phase_name=None):
         """
         A phase in an analysis pipeline. Uses the set NonLinear optimizer to try to fit models and images passed to it.
@@ -210,7 +210,7 @@ class ParallelPhase(Phase):
     parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
 
     def __init__(self, parallel_species=(), parallel_ccd=None, optimizer_class=nl.MultiNest,
-                 mask_function=ci_data.CIMask.empty_for_image, columns=None,
+                 mask_function=mask.Mask.empty_for_shape, columns=None,
                  phase_name="parallel_phase"):
         """
         A phase with a simple source/CTI model
@@ -238,7 +238,7 @@ class SerialPhase(Phase):
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 
     def __init__(self, serial_species=(), serial_ccd=None, optimizer_class=nl.MultiNest,
-                 mask_function=ci_data.CIMask.empty_for_image, columns=None, rows=None, phase_name="serial_phase"):
+                 mask_function=mask.Mask.empty_for_shape, columns=None, rows=None, phase_name="serial_phase"):
         """
         A phase with a simple source/CTI model
         """
@@ -266,7 +266,7 @@ class ParallelSerialPhase(Phase):
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 
     def __init__(self, parallel_species=(), serial_species=(), parallel_ccd=None, serial_ccd=None,
-                 optimizer_class=nl.MultiNest, mask_function=ci_data.CIMask.empty_for_image,
+                 optimizer_class=nl.MultiNest, mask_function=mask.Mask.empty_for_shape,
                  phase_name="parallel_serial_phase"):
         """
         A phase with a simple source/CTI model
@@ -343,7 +343,7 @@ class ParallelHyperPhase(ParallelPhase):
     hyp_parallel_trails = phase_property.PhaseProperty("hyp_parallel_trails")
 
     def __init__(self, parallel_species=(), parallel_ccd=None, hyp_ci_regions=None, hyp_parallel_trails=None,
-                 optimizer_class=nl.MultiNest, mask_function=ci_data.CIMask.empty_for_image, columns=None,
+                 optimizer_class=nl.MultiNest, mask_function=mask.Mask.empty_for_shape, columns=None,
                  phase_name="parallel_hyper_phase"):
         """
         A phase with a simple source/CTI model
@@ -370,7 +370,7 @@ class SerialHyperPhase(SerialPhase):
     hyp_serial_trails = phase_property.PhaseProperty("hyp_serial_trails")
 
     def __init__(self, serial_species=(), serial_ccd=None, hyp_ci_regions=None, hyp_serial_trails=None,
-                 optimizer_class=nl.MultiNest, mask_function=ci_data.CIMask.empty_for_image, columns=None, rows=None,
+                 optimizer_class=nl.MultiNest, mask_function=mask.Mask.empty_for_shape, columns=None, rows=None,
                  phase_name="serial_hyper_phase"):
         """
         A phase with a simple source/CTI model
@@ -395,7 +395,7 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
 
     def __init__(self, parallel_species=(), serial_species=(), parallel_ccd=None, serial_ccd=None, hyp_ci_regions=None,
                  hyp_parallel_trails=None, hyp_serial_trails=None, hyp_parallel_serial_trails=None,
-                 optimizer_class=nl.MultiNest, mask_function=ci_data.CIMask.empty_for_image,
+                 optimizer_class=nl.MultiNest, mask_function=mask.Mask.empty_for_shape,
                  phase_name="parallel_serial_hyper_phase"):
         """
         A phase with a simple source/CTI model

@@ -30,13 +30,12 @@ from autocti.charge_injection import ci_frame
 
 class Mask(np.ndarray):
 
-    def __new__(cls, array, frame_geometry, *args, **kwargs):
+    def __new__(cls, array, *args, **kwargs):
         mask = np.array(array, dtype='float64').view(cls)
-        mask.frame_geometry = frame_geometry
         return mask
 
     @classmethod
-    def empty_for_shape(cls, shape, frame_geometry, ci_pattern):
+    def empty_for_shape(cls, shape):
         """
         Create the mask used for CTI Calibration as all False's (e.g. no masking).
 
@@ -50,17 +49,16 @@ class Mask(np.ndarray):
             therefore the direction of clocking and rotations before input into the cti algorithm.
         """
         # noinspection PyArgumentList
-        return cls(frame_geometry=frame_geometry, ci_pattern=ci_pattern, array=np.full(shape, False))
+        return cls(array=np.full(shape, False))
 
     @classmethod
-    def create(cls, shape, frame_geometry, ci_pattern, regions=None, cosmic_rays=None, cr_parallel=0, cr_serial=0,
+    def create(cls, shape, frame_geometry, regions=None, cosmic_rays=None, cr_parallel=0, cr_serial=0,
                cr_diagonal=0):
         """
         Create the mask used for CTI Calibration, which is all False unless specific regions are input for masking.
 
         Parameters
         ----------
-        ci_pattern
         cr_diagonal
         shape : (int, int)
             The dimensions of the 2D mask.
@@ -78,7 +76,7 @@ class Mask(np.ndarray):
             If a cosmic-ray mask is supplied, the number of pixels from each ray pixels are masked in the serial \
             direction.
         """
-        mask = cls.empty_for_shape(shape, frame_geometry, ci_pattern)
+        mask = cls.empty_for_shape(shape)
 
         if regions is not None:
             mask.regions = list(map(lambda r: ci_frame.Region(r), regions))
@@ -91,12 +89,12 @@ class Mask(np.ndarray):
             for y in range(mask.shape[0]):
                 for x in range(mask.shape[1]):
                     if cosmic_rays[y, x]:
-                        y0, y1 = mask.frame_geometry.parallel_trail_from_y(y, cr_parallel)
+                        y0, y1 = frame_geometry.parallel_trail_from_y(y, cr_parallel)
                         mask[y0:y1, x] = True
-                        x0, x1 = mask.frame_geometry.serial_trail_from_x(x, cr_serial)
+                        x0, x1 = frame_geometry.serial_trail_from_x(x, cr_serial)
                         mask[y, x0:x1] = True
-                        y0, y1 = mask.frame_geometry.parallel_trail_from_y(y, cr_diagonal)
-                        x0, x1 = mask.frame_geometry.serial_trail_from_x(x, cr_diagonal)
+                        y0, y1 = frame_geometry.parallel_trail_from_y(y, cr_diagonal)
+                        x0, x1 = frame_geometry.serial_trail_from_x(x, cr_diagonal)
                         mask[y0:y1, x0:x1] = True
 
         elif cosmic_rays is None:

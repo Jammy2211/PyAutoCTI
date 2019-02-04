@@ -45,6 +45,10 @@ class CIData(object):
         self.ci_frame = ci_frame
 
     @property
+    def chinj(self):
+        return frame.ChInj(self.ci_frame, self.ci_pattern)
+
+    @property
     def shape(self):
         return self.image.shape
 
@@ -57,13 +61,14 @@ class CIData(object):
                              self.noise_scaling) if self.noise_scaling is not None else self.noise_scaling)
 
     def parallel_calibration_data(self, columns, mask):
-        return self.map(lambda obj: obj.parallel_calibration_section_for_columns(columns=columns), mask)
+        return self.map(lambda obj: self.chinj.parallel_calibration_section_for_columns(obj, columns), mask)
 
     def serial_calibration_data(self, column, rows, mask):
-        return self.map(lambda obj: obj.serial_calibration_section_for_column_and_rows(column=column, rows=rows), mask)
+        return self.map(
+            lambda obj: self.chinj.serial_calibration_section_for_column_and_rows(obj, column=column, rows=rows), mask)
 
     def parallel_serial_calibration_data(self, mask):
-        return self.map(lambda obj: obj.parallel_serial_calibration_section(), mask)
+        return self.map(lambda obj: self.chinj.parallel_serial_calibration_section(obj, ), mask)
 
     @property
     def signal_to_noise_map(self):
