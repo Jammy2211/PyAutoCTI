@@ -167,7 +167,7 @@ class CIImage(ci_frame.CIFrameCTI):
 
         ci_pattern = ci_pattern.create_pattern()
 
-        ci_pre_cti = cti_image.CTIImage(frame_geometry=frame_geometry, array=ci_pre_cti)
+        ci_pre_cti = cti_image.ImageFrame(frame_geometry=frame_geometry, array=ci_pre_cti)
 
         ci_post_cti = ci_pre_cti.add_cti_to_image(cti_params, cti_settings)
 

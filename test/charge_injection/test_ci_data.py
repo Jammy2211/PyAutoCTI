@@ -807,7 +807,7 @@ class TestCIPreCTIFast(object):
             assert image_difference[0, 0] < 0.0  # Charge was here, loses due to captures
             assert image_difference[1:-1, 0] > 0.0  # Was empty before, trails go here
 
-    class TestMapFastColumnToPostCTIImage:
+    class TestMapFastColumnToPostImageFrame:
 
         def test__image_3x3__no_rotation__one_fast_column(self):
             pattern = ci_pattern.CIPatternUniformFast(normalization=1.0,
@@ -990,7 +990,7 @@ class TestCIPreCTIFast(object):
             assert image_difference[0, 0] < 0.0  # Charge was here, loses due to captures
             assert image_difference[1:-1, 0] > 0.0  # Was empty before, trails go here
 
-    class TestMapFastRowToPostCTIImage:
+    class TestMapFastRowToPostImageFrame:
 
         def test__image_3x3__no_rotation(self):
             pattern = ci_pattern.CIPatternUniformFast(normalization=1.0,
@@ -1098,7 +1098,7 @@ class TestCIPreCTIFast(object):
                                              [0.0, 10.0, 10.0],
                                              [0.0, 10.0, 10.0]])).all()
 
-    class TestComputePostCTIImage:
+    class TestComputePostImageFrame:
 
         def test__parallel_only__compare_to_non_fast_image(self, arctic_parallel, params_parallel):
             pattern = ci_pattern.CIPatternUniform(normalization=10.0,

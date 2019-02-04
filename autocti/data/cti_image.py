@@ -17,7 +17,7 @@
 #
 
 """
-File: python/VIS_CTI_Image/CTIImage.py
+File: python/VIS_CTI_Image/ImageFrame.py
 
 Created on: 02/13/18
 Author: James Nightingale
@@ -36,7 +36,7 @@ class ImageFrame(np.ndarray):
 
         Parameters
         ----------
-        frame_geometry : CTIImage.FrameGeometry
+        frame_geometry : ImageFrame.FrameGeometry
             The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
             locations of different regions of the CCD (overscans, prescan, etc.)
         array : ndarray
@@ -51,7 +51,7 @@ class ImageFrame(np.ndarray):
         """
         Params
         ----------
-        frame_geometry : CTIImage.FrameGeometry
+        frame_geometry : ImageFrame.FrameGeometry
             The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
             locations of different regions of the CCD (overscans, prescan, etc.)
         array : ndarray
@@ -91,7 +91,7 @@ class ImageFrame(np.ndarray):
             The file phase_name of the fits image ci_data.
         hdu : int
             The HDU number in the fits file containing the image ci_data.
-        frame_geometry : CTIImage.FrameGeometry
+        frame_geometry : ImageFrame.FrameGeometry
             The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
             locations of different regions of the CCD (overscans, prescan, etc.)
         """
@@ -108,24 +108,6 @@ class ImageFrame(np.ndarray):
             The file phase_name of the output image.
         """
         util.numpy_array_to_fits(array=self, file_path=file_path, overwrite=overwrite)
-
-
-class CTIImage(ImageFrame):
-
-    def __init__(self, frame_geometry, array):
-        """The *CTIImage* class stores an image which cti can be added to or corrected from. It includes the ci_frame
-        geometry and therefore direction of parallel / serial clocking.
-
-        Params
-        ----------
-        frame_geometry : CTIImage.FrameGeometry
-            The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
-            locations of different regions of the CCD (overscans, prescan, etc.)
-        array : ndarray
-            The 2D array of the ci_data of this ci_frame.
-        """
-
-        super(CTIImage, self).__init__(frame_geometry, array)
 
     def add_cti_to_image(self, cti_params, cti_settings):
         """Add cti to the image.

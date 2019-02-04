@@ -843,7 +843,7 @@ class CIFrame(cti_image.ImageFrame, ChInj):
         return cls(frame_geometry=frame_geometry, ci_pattern=ci_pattern, array=array)
 
 
-class CIFrameCTI(cti_image.CTIImage, ChInj):
+class CIFrameCTI(cti_image.ImageFrame, ChInj):
 
     def __new__(cls, frame_geometry, ci_pattern, array, **kwargs):
         """Class which represents the CCD quadrant of a charge injection image (e.g. the location of the parallel and   
@@ -941,7 +941,7 @@ class FrameGeometry(object):
     def __init__(self, corner, parallel_overscan, serial_prescan, serial_overscan):
         """Abstract class for the geometry of a CTI Image.
 
-        A CTIImage is stored as a 2D NumPy array. When this immage is passed to arctic, clocking goes towards   
+        A ImageFrame is stored as a 2D NumPy array. When this immage is passed to arctic, clocking goes towards
         the 'top' of the NumPy array (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the array   
         (e.g. the final row).
 
@@ -1123,7 +1123,7 @@ class QuadGeometryEuclid(FrameGeometry):
         """Abstract class for the ci_frame geometry of Euclid quadrants. CTI uses a bias corrected raw VIS ci_frame, which   
          is  described at http://euclid.esac.esa.int/dm/dpdd/latest/le1dpd/dpcards/le1_visrawframe.html
 
-        A CTIImage is stored as a 2D NumPy array. When an image is passed to arctic, clocking goes towards the 'top'   
+        A ImageFrame is stored as a 2D NumPy array. When an image is passed to arctic, clocking goes towards the 'top'
         of the NumPy array (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the array (e.g. the   
         final row).
 
