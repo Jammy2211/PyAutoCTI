@@ -123,76 +123,69 @@ class CIDataFit(object):
         self.ci_frame = ci_frame
 
 
-class CIImage(np.ndarray):
-    def __new__(cls, array):
-        return array.view(CIImage)
+def simulate(shape, frame_geometry, ci_pattern, cti_params, cti_settings, read_noise=None, cosmics=None,
+             noise_seed=-1):
+    """Simulate a charge injection image, including effects like noises.
 
-    @classmethod
-    def simulate(cls, shape, frame_geometry, ci_pattern, cti_params, cti_settings, read_noise=None, cosmics=None,
-                 noise_seed=-1):
-        """Simulate a charge injection image, including effects like noises.
+    Parameters
+    -----------
+    cosmics
+    shape : (int, int)
+        The dimensions of the output simulated charge injection image.
+    frame_geometry : ci_frame.CIQuadGeometry
+        The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
+        therefore the direction of clocking and rotations before input into the cti algorithm.
+    ci_pattern : ci_pattern.CIPatternSimulate
+        The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
+    cti_params : ArcticParams.ArcticParams
+        The CTI model parameters (trap density, trap lifetimes etc.).
+    cti_settings : ArcticSettings.ArcticSettings
+        The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
+    read_noise : None or float
+        The FWHM of the Gaussian read-noises added to the image.
+    noise_seed : int
+        Seed for the read-noises added to the image.
+    """
 
-        Parameters
-        -----------
-        cosmics
-        shape : (int, int)
-            The dimensions of the output simulated charge injection image.
-        frame_geometry : ci_frame.CIQuadGeometry
-            The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
-            therefore the direction of clocking and rotations before input into the cti algorithm.
-        ci_pattern : ci_pattern.CIPatternSimulate
-            The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
-        cti_params : ArcticParams.ArcticParams
-            The CTI model parameters (trap density, trap lifetimes etc.).
-        cti_settings : ArcticSettings.ArcticSettings
-            The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
-        read_noise : None or float
-            The FWHM of the Gaussian read-noises added to the image.
-        noise_seed : int
-            Seed for the read-noises added to the image.
-        """
+    ci_pre_cti = ci_pattern.simulate_ci_pre_cti(shape)
+    if cosmics is not None:
+        ci_pre_cti += cosmics
 
-        ci_pre_cti = ci_pattern.simulate_ci_pre_cti(shape)
-        if cosmics is not None:
-            ci_pre_cti += cosmics
+    ci_pre_cti = cti_image.ImageFrame(frame_geometry=frame_geometry, array=ci_pre_cti)
 
-        ci_pre_cti = cti_image.ImageFrame(frame_geometry=frame_geometry, array=ci_pre_cti)
+    ci_post_cti = ci_pre_cti.add_cti_to_image(cti_params, cti_settings)
 
-        ci_post_cti = ci_pre_cti.add_cti_to_image(cti_params, cti_settings)
+    if read_noise is not None:
+        ci_post_cti += read_noise_map_from_shape_and_sigma(shape=shape, sigma=read_noise, noise_seed=noise_seed)
 
-        if read_noise is not None:
-            ci_post_cti += read_noise_map_from_shape_and_sigma(shape=shape, sigma=read_noise, noise_seed=noise_seed)
+    return ci_post_cti[:, :]
 
-        # TODO : This is ugly... fix in future
-        sim_image = CIImage(ci_post_cti[:, :])
-        sim_image.ci_pre_cti = ci_pre_cti
-        return sim_image
 
-    def ci_pre_cti_from_ci_pattern_and_mask(self, ci_pattern, frame_geometry, mask=None):
-        """Setup a pre-cti image from this charge injection ci_data, using the charge injection ci_pattern.
+def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, frame_geometry, image, mask=None):
+    """Setup a pre-cti image from this charge injection ci_data, using the charge injection ci_pattern.
 
-        The pre-cti image is computed depending on whether the charge injection ci_pattern is uniform, non-uniform or \
-        'fast' (see ChargeInjectPattern).
-        """
+    The pre-cti image is computed depending on whether the charge injection ci_pattern is uniform, non-uniform or \
+    'fast' (see ChargeInjectPattern).
+    """
 
-        if type(ci_pattern) == pattern.CIPatternUniform:
+    if type(ci_pattern) == pattern.CIPatternUniform:
 
-            ci_pre_cti = ci_pattern.ci_pre_cti_from_shape(shape=self.shape)
-            return frame.CIFrame(frame_geometry=frame_geometry, array=ci_pre_cti, ci_pattern=ci_pattern)
+        ci_pre_cti = ci_pattern.ci_pre_cti_from_shape(shape=image.shape)
+        return frame.CIFrame(frame_geometry=frame_geometry, array=ci_pre_cti, ci_pattern=ci_pattern)
 
-        elif type(ci_pattern) == pattern.CIPatternNonUniform:
+    elif type(ci_pattern) == pattern.CIPatternNonUniform:
 
-            ci_pre_cti = ci_pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=self, mask=mask)
-            return frame.CIFrame(frame_geometry=frame_geometry, array=ci_pre_cti, ci_pattern=ci_pattern)
+        ci_pre_cti = ci_pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=image, mask=mask)
+        return frame.CIFrame(frame_geometry=frame_geometry, array=ci_pre_cti, ci_pattern=ci_pattern)
 
-        elif type(ci_pattern) == pattern.CIPatternUniformFast:
+    elif type(ci_pattern) == pattern.CIPatternUniformFast:
 
-            ci_pre_cti = ci_pattern.ci_pre_cti_from_shape(shape=self.shape)
-            return CIPreCTIFast(frame_geometry=frame_geometry, array=ci_pre_cti, ci_pattern=ci_pattern)
+        ci_pre_cti = ci_pattern.ci_pre_cti_from_shape(shape=image.shape)
+        return CIPreCTIFast(frame_geometry=frame_geometry, array=ci_pre_cti, ci_pattern=ci_pattern)
 
-        else:
-            raise exc.CIPatternException('the CIPattern of the CIImage is not an instance of '
-                                         'a known ci_pattern class')
+    else:
+        raise exc.CIPatternException('the CIPattern of the CIImage is not an instance of '
+                                     'a known ci_pattern class')
 
 
 class CIPreCTIFast(np.ndarray):
@@ -200,6 +193,7 @@ class CIPreCTIFast(np.ndarray):
     def __new__(cls, frame_geometry, array, ci_pattern):
         return array.view(cls)
 
+    # noinspection PyMissingConstructor,PyUnusedLocal
     def __init__(self, frame_geometry, array, ci_pattern):
         """A fast pre-cti image of a charge injection dataset, used for CTI calibration modeling.
 
@@ -349,16 +343,17 @@ def load_ci_data(frame_geometry, ci_pattern,
                  ci_noise_map_from_single_value=None,
                  ci_pre_cti_path=None, ci_pre_cti_hdu=0, ci_pre_cti_from_image=False,
                  mask=None):
-    ci_image = load_ci_image(ci_image_path=ci_image_path, ci_image_hdu=ci_image_hdu)
+    ci_image = util.numpy_array_from_fits(file_path=ci_image_path, hdu=ci_image_hdu)
 
-    ci_noise_map = load_ci_noise_map(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
-                                     ci_noise_map_path=ci_noise_map_path, ci_noise_map_hdu=ci_noise_map_hdu,
-                                     ci_noise_map_from_single_value=ci_noise_map_from_single_value,
-                                     shape=ci_image.shape)
+    if ci_noise_map_path is not None:
+        ci_noise_map = util.numpy_array_from_fits(file_path=ci_noise_map_path, hdu=ci_noise_map_hdu)
+    else:
+        ci_noise_map = np.ones(ci_image.shape) * ci_noise_map_from_single_value
 
-    ci_pre_cti = load_ci_pre_cti(frame_geometry, ci_pattern, ci_pre_cti_path=ci_pre_cti_path,
-                                 ci_pre_cti_hdu=ci_pre_cti_hdu,
-                                 ci_image=ci_image, ci_pre_cti_from_image=ci_pre_cti_from_image, mask=mask)
+    if ci_pre_cti_path is not None:
+        ci_pre_cti = util.numpy_array_from_fits(file_path=ci_pre_cti_path, hdu=ci_pre_cti_hdu)
+    else:
+        ci_pre_cti = ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, frame_geometry, ci_image, mask=mask)
 
     return CIData(image=ci_image, noise_map=ci_noise_map, ci_pre_cti=ci_pre_cti, ci_pattern=ci_pattern,
                   ci_frame=frame_geometry)
@@ -366,20 +361,6 @@ def load_ci_data(frame_geometry, ci_pattern,
 
 def load_ci_image(ci_image_path, ci_image_hdu):
     return CIImage(array=util.numpy_array_from_fits(file_path=ci_image_path, hdu=ci_image_hdu))
-
-
-def load_ci_noise_map(frame_geometry, ci_pattern, ci_noise_map_path, ci_noise_map_hdu, ci_noise_map_from_single_value,
-                      shape):
-    if ci_noise_map_path is not None and ci_noise_map_from_single_value is None:
-        return frame.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
-                             array=util.numpy_array_from_fits(file_path=ci_noise_map_path, hdu=ci_noise_map_hdu))
-    elif ci_noise_map_path is None and ci_noise_map_from_single_value is not None:
-        return frame.CIFrame.from_single_value(value=ci_noise_map_from_single_value, shape=shape,
-                                               frame_geometry=frame_geometry, ci_pattern=ci_pattern)
-    else:
-        raise exc.CIDataException(
-            'You have supplied both a ci_noise_map_path and a ci_noise_map_from_single_value value. Only one quantity '
-            'may be supplied.')
 
 
 def load_ci_pre_cti(frame_geometry, ci_pattern, ci_pre_cti_path, ci_pre_cti_hdu,
