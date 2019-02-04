@@ -843,53 +843,6 @@ class CIFrame(cti_image.ImageFrame, ChInj):
         return cls(frame_geometry=frame_geometry, ci_pattern=ci_pattern, array=array)
 
 
-class CIFrameCTI(cti_image.ImageFrame, ChInj):
-
-    def __new__(cls, frame_geometry, ci_pattern, array, **kwargs):
-        """Class which represents the CCD quadrant of a charge injection image (e.g. the location of the parallel and   
-        serial front edge, trails), including routes to add cti to or correct cti from the image.
-
-        Parameters
-        ----------
-        frame_geometry : CIFrame.CIQuadGeometry
-            The quadrant geometry of the image, defining where the parallel / serial overscans are and   
-            therefore the direction of clocking and rotations before input into the cti algorithm.
-        ci_pattern : CIPattern.CIPattern
-            The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
-        array : ndarray
-            2D Array of array charge injection image ci_data.
-        """
-        ci_inj = super(CIFrameCTI, cls).__new__(cls, frame_geometry, array)
-
-        ci_inj.ci_pattern = ci_pattern
-        return ci_inj
-
-    def __init__(self, frame_geometry, ci_pattern, array):
-        super(CIFrameCTI, self).__init__(frame_geometry, array)
-        self.ci_pattern = ci_pattern
-
-    @classmethod
-    def from_fits_and_ci_pattern(cls, file_path, hdu, frame_geometry, ci_pattern):
-        """Load the image ci_data from a fits file.
-
-        Params
-        ----------
-        path : str
-            The path to the ci_data
-        filename : str
-            The file phase_name of the fits image ci_data.
-        hdu : int
-            The HDU number in the fits file containing the image ci_data.
-        frame_geometry : CIFrame.CIQuadGeometry
-            The quadrant geometry of the image, defining where the parallel / serial overscans are and   
-            therefore the direction of clocking and rotations before input into the cti algorithm.
-        ci_pattern : CIPattern.CIPattern
-            The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
-        """
-        return cls(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
-                   array=util.numpy_array_from_fits(file_path=file_path, hdu=hdu))
-
-
 class Region(object):
 
     def __init__(self, region):

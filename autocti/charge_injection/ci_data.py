@@ -118,7 +118,7 @@ class CIDataFit(object):
         self.noise_scaling = noise_scaling
 
 
-class CIImage(ci_frame.CIFrameCTI):
+class CIImage(ci_frame.CIFrame):
 
     def __init__(self, frame_geometry, ci_pattern, array):
         """The observed charge injection imaging ci_data.
@@ -206,7 +206,7 @@ class CIImage(ci_frame.CIFrameCTI):
                                          'a known ci_pattern class')
 
 
-class CIPreCTI(ci_frame.CIFrameCTI):
+class CIPreCTI(ci_frame.CIFrame):
 
     def __init__(self, frame_geometry, array, ci_pattern):
         """The pre-cti image of a charge injection dataset. This image has a corresponding *ChargeInjectPattern*, \
