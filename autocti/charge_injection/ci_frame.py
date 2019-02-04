@@ -374,8 +374,9 @@ class ChInj(np.ndarray):
         []     [=====================]
                <---------S----------
         """
-        array = self.frame_geometry.serial_overscan.add_region_from_image_to_array(image=self,
-                                                                                   array=np.zeros(self.shape))
+        array = np.zeros(self.shape)
+        overscan_slice = self.frame_geometry.serial_overscan.slice
+        array[overscan_slice] = self[overscan_slice]
 
         trails_regions = list(map(lambda ci_region:
                                   self.frame_geometry.serial_trails_region(ci_region, (
@@ -947,10 +948,6 @@ class Region(object):
     @property
     def slice(self):
         return np.s_[self.y0:self.y1, self.x0:self.x1]
-
-    def add_region_from_image_to_array(self, image, array):
-        array[self.slice] += image[self.slice]
-        return array
 
     def set_region_on_array_to_zeros(self, array):
         array[self.slice] = 0.0

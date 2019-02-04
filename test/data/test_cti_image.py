@@ -485,31 +485,31 @@ class TestRegion(object):
             image = np.ones((2, 2))
             region = ci_frame.Region(region=(0, 1, 0, 1))
 
-            new_array = region.add_region_from_image_to_array(image=image, array=array)
+            array[region.slice] += image[region.slice]
 
-            assert (new_array == np.array([[1.0, 0.0],
-                                           [0.0, 0.0]])).all()
+            assert (array == np.array([[1.0, 0.0],
+                                       [0.0, 0.0]])).all()
 
         def test__array_is_all_1s__image_goes_into_correct_region_of_array_and_adds_to_it(self):
             array = np.ones((2, 2))
             image = np.ones((2, 2))
             region = ci_frame.Region(region=(0, 1, 0, 1))
 
-            new_array = region.add_region_from_image_to_array(image=image, array=array)
+            array[region.slice] += image[region.slice]
 
-            assert (new_array == np.array([[2.0, 1.0],
-                                           [1.0, 1.0]])).all()
+            assert (array == np.array([[2.0, 1.0],
+                                       [1.0, 1.0]])).all()
 
         def test__different_region(self):
             array = np.ones((3, 3))
             image = np.ones((3, 3))
             region = ci_frame.Region(region=(1, 3, 2, 3))
 
-            new_array = region.add_region_from_image_to_array(image=image, array=array)
+            array[region.slice] += image[region.slice]
 
-            assert (new_array == np.array([[1.0, 1.0, 1.0],
-                                           [1.0, 1.0, 2.0],
-                                           [1.0, 1.0, 2.0]])).all()
+            assert (array == np.array([[1.0, 1.0, 1.0],
+                                       [1.0, 1.0, 2.0],
+                                       [1.0, 1.0, 2.0]])).all()
 
     class TestSetRegionToZeros:
 
