@@ -17,7 +17,7 @@
 #
 
 """
-File: tests/python/CTIImage_test.py
+File: tests/python/ImageFrame_test.py
 
 Created on: 02/13/18
 Author: James Nightingale
@@ -60,32 +60,32 @@ def euclid_data():
 path = '{}/'.format(os.path.dirname(os.path.realpath(__file__)))
 
 
-class TestCTIImage:
+class TestImageFrame:
     class TestConstructor:
 
         def test__geometry_is_bottom_left__loads_data_and_dimensions(self, euclid_data):
-            image = cti_image.CTIImage(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=euclid_data)
+            image = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=euclid_data)
 
             assert type(image.frame_geometry) == ci_frame.QuadGeometryEuclid
             assert image.shape == (2048, 2066)
             assert (image == np.zeros((2048, 2066))).all()
 
         def test__geometry_is_bottom_right__loads_data_and_dimensions(self, euclid_data):
-            image = cti_image.CTIImage(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), array=euclid_data)
+            image = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), array=euclid_data)
 
             assert type(image.frame_geometry) == ci_frame.QuadGeometryEuclid
             assert image.shape == (2048, 2066)
             assert (image == np.zeros((2048, 2066))).all()
 
         def test__geometry_is_top_left__loads_data_and_dimensions(self, euclid_data):
-            image = cti_image.CTIImage(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), array=euclid_data)
+            image = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), array=euclid_data)
 
             assert type(image.frame_geometry) == ci_frame.QuadGeometryEuclid
             assert image.shape == (2048, 2066)
             assert (image == np.zeros((2048, 2066))).all()
 
         def test__geometry_is_top_right__loads_data_and_dimensions(self, euclid_data):
-            image = cti_image.CTIImage(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(), array=euclid_data)
+            image = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(), array=euclid_data)
 
             assert type(image.frame_geometry) == ci_frame.QuadGeometryEuclid
             assert image.shape == (2048, 2066)
