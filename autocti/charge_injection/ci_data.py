@@ -124,7 +124,7 @@ class CIDataFit(object):
 
 
 class CIImage(np.ndarray):
-    def __new__(cls, array, *args, **kwargs):
+    def __new__(cls, array):
         return array.view(CIImage)
 
     @classmethod
@@ -178,12 +178,12 @@ class CIImage(np.ndarray):
         if type(ci_pattern) == pattern.CIPatternUniform:
 
             ci_pre_cti = ci_pattern.ci_pre_cti_from_shape(shape=self.shape)
-            return CIPreCTI(frame_geometry=frame_geometry, array=ci_pre_cti, ci_pattern=ci_pattern)
+            return frame.CIFrame(frame_geometry=frame_geometry, array=ci_pre_cti, ci_pattern=ci_pattern)
 
         elif type(ci_pattern) == pattern.CIPatternNonUniform:
 
             ci_pre_cti = ci_pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=self, mask=mask)
-            return CIPreCTI(frame_geometry=frame_geometry, array=ci_pre_cti, ci_pattern=ci_pattern)
+            return frame.CIFrame(frame_geometry=frame_geometry, array=ci_pre_cti, ci_pattern=ci_pattern)
 
         elif type(ci_pattern) == pattern.CIPatternUniformFast:
 
@@ -195,40 +195,7 @@ class CIImage(np.ndarray):
                                          'a known ci_pattern class')
 
 
-class CIPreCTI(frame.CIFrame):
-
-    def __init__(self, frame_geometry, array, ci_pattern):
-        """The pre-cti image of a charge injection dataset. This image has a corresponding *ChargeInjectPattern*, \
-        which describes whether the pre-cti image is uniform or non-uniform injection ci_pattern.
-
-        Params
-        ----------
-        frame_geometry : ci_frame.CIQuadGeometry
-            The quadrant geometry of the image, defining where the parallel / serial overscans are and \
-            therefore the direction of clocking and rotations before input into the cti algorithm.
-        array : ndarray
-            2D Array of pre-cti image ci_data.
-        ci_pattern : ci_pattern.CIPattern
-            The charge injection ci_pattern (regions, normalization, etc.) of the pre-cti image.
-        """
-        super(CIPreCTI, self).__init__(frame_geometry, ci_pattern, array)
-
-    def ci_post_cti_from_cti_params_and_settings(self, cti_params, cti_settings):
-        """Setup a post-cti image from this pre-cti image, by passing the pre-cti image through a cti clocking \
-        algorithm.
-
-        Params
-        -----------
-        cti_params : ArcticParams.ArcticParams
-            The CTI model parameters (trap density, trap lifetimes etc.).
-        cti_settings : ArcticSettings.ArcticSettings
-            The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
-        """
-        ci_post_cti = self.frame_geometry.add_cti(self, cti_params=cti_params, cti_settings=cti_settings)
-        return frame.CIFrame(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern, array=ci_post_cti)
-
-
-class CIPreCTIFast(CIPreCTI):
+class CIPreCTIFast(frame.CIFrame):
 
     def __init__(self, frame_geometry, array, ci_pattern):
         """A fast pre-cti image of a charge injection dataset, used for CTI calibration modeling.
@@ -252,7 +219,7 @@ class CIPreCTIFast(CIPreCTI):
         ci_pattern : ci_pattern.CIPattern
             The charge injection ci_pattern (regions, normalization, etc.) of the pre-cti image.
         """
-        super(CIPreCTIFast, self).__init__(frame_geometry, array, ci_pattern)
+        super(CIPreCTIFast, self).__init__(frame_geometry, ci_pattern, array)
         fast_column_pre_cti = self.ci_pattern.compute_fast_column(self.shape[0])
         self.fast_column_pre_cti = self.frame_geometry.rotate_for_parallel_cti(fast_column_pre_cti)
         fast_row_pre_cti = self.ci_pattern.compute_fast_row(self.shape[1])
@@ -415,8 +382,8 @@ def load_ci_noise_map(frame_geometry, ci_pattern, ci_noise_map_path, ci_noise_ma
 def load_ci_pre_cti(frame_geometry, ci_pattern, ci_pre_cti_path, ci_pre_cti_hdu,
                     ci_image=None, ci_pre_cti_from_image=False, mask=None):
     if not ci_pre_cti_from_image:
-        return CIPreCTI(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
-                        array=util.numpy_array_from_fits(file_path=ci_pre_cti_path, hdu=ci_pre_cti_hdu))
+        return frame.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
+                             array=util.numpy_array_from_fits(file_path=ci_pre_cti_path, hdu=ci_pre_cti_hdu))
 
     return ci_image.ci_pre_cti_from_ci_pattern_and_mask(ci_pattern, frame_geometry, mask=mask)
 

@@ -165,8 +165,7 @@ class TestCIImage(object):
             pattern = ci_pattern.CIPatternUniform(normalization=10.0, regions=[(0, 2, 0, 2)])
             image = 10.0 * np.ones((3, 3))
 
-            data = ci_data.CIImage(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                   array=image)
+            data = ci_data.CIImage(array=image)
 
             ci_pre_cti = data.ci_pre_cti_from_ci_pattern_and_mask(
                 frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
@@ -184,7 +183,7 @@ class TestCIImage(object):
                                                   regions=[(0, 2, 0, 1), (2, 3, 2, 3)])
             image = 10.0 * np.ones((3, 3))
 
-            data = ci_data.CIImage(frame_geometry=frame_geometry, ci_pattern=pattern, array=image)
+            data = ci_data.CIImage(array=image)
 
             ci_pre_cti = data.ci_pre_cti_from_ci_pattern_and_mask(frame_geometry=frame_geometry, ci_pattern=pattern)
 
@@ -205,7 +204,7 @@ class TestCIImage(object):
                               [8.0, 12.0, 10.0]])
             mask = msk.Mask.empty_for_shape(shape=(3, 3))
 
-            data = ci_data.CIImage(frame_geometry=frame_geometry, ci_pattern=pattern, array=image)
+            data = ci_data.CIImage(array=image)
 
             ci_pre_cti = data.ci_pre_cti_from_ci_pattern_and_mask(mask=mask, frame_geometry=frame_geometry,
                                                                   ci_pattern=pattern)
@@ -224,7 +223,7 @@ class TestCIImage(object):
                 normalization=10.0, regions=[(0, 2, 0, 2)])
             image = 10.0 * np.ones((3, 3))
 
-            data = ci_data.CIImage(frame_geometry=frame_geometry, ci_pattern=pattern, array=image)
+            data = ci_data.CIImage(array=image)
 
             ci_pre_cti = data.ci_pre_cti_from_ci_pattern_and_mask(frame_geometry=frame_geometry, ci_pattern=pattern)
 
@@ -254,10 +253,6 @@ class TestCIImage(object):
                                                    cti_params=params_parallel)
 
             assert ci_simulate[0, 0:5] == pytest.approx(np.array([10.0, 10.0, 10.0, 10.0, 10.0]), 1e-2)
-            # assert ci_simulate[1:5, 0:5] == pytest.approx(np.array([[0.0, 0.0, 0.0, 0.0, 0.0],
-            #                                                         [0.0, 0.0, 0.0, 0.0, 0.0],
-            #                                                         [0.0, 0.0, 0.0, 0.0, 0.0],
-            #                                                         [0.0, 0.0, 0.0, 0.0, 0.0]]), 1e-2)
 
         def test__include_read_noise__is_added_after_cti(self, arctic_parallel, params_parallel):
             pattern = ci_pattern.CIPatternUniformSimulate(normalization=10.0, regions=[(0, 1, 0, 3)])
@@ -658,25 +653,6 @@ class TestCIMask(object):
 
 
 class TestCIPreCTI(object):
-    class TestConstructor:
-
-        def test__simple_case__sets_up_correctly(self):
-            ci_pre_cti = np.array([[10.0, 10.0, 10.0],
-                                   [2.0, 2.0, 2.0],
-                                   [8.0, 12.0, 10.0]])
-            pattern = ci_pattern.CIPatternUniform(normalization=1.0,
-                                                  regions=[(0, 1, 0, 1)])
-
-            ci_pre_cti = ci_data.CIPreCTI(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                          array=ci_pre_cti, ci_pattern=pattern)
-
-            assert type(ci_pre_cti.frame_geometry) == ci_frame.QuadGeometryEuclid
-            assert (ci_pre_cti == np.array([[10.0, 10.0, 10.0],
-                                            [2.0, 2.0, 2.0],
-                                            [8.0, 12.0, 10.0]])).all()
-            assert ci_pre_cti.ci_pattern.normalization == pattern.normalization == 1.0
-            assert ci_pre_cti.ci_pattern.regions == pattern.regions == [(0, 1, 0, 1)]
-
     class TestSetupCIPostCTI:
 
         def test__attributes_of_pre_ci_image_are_passed(self, arctic_both, params_both):
@@ -686,22 +662,18 @@ class TestCIPreCTI(object):
             ci_pre_cti = np.zeros((5, 5))
             ci_pre_cti[2, 2] = 10.0
 
-            ci_pre_cti = ci_data.CIPreCTI(frame_geometry=frame_geometry, array=ci_pre_cti, ci_pattern=pattern)
-
-            ci_post_cti = ci_pre_cti.ci_post_cti_from_cti_params_and_settings(params_both, arctic_both)
+            ci_post_cti = frame_geometry.add_cti(ci_pre_cti, params_both, arctic_both)
 
             assert ci_post_cti.frame_geometry == frame_geometry
             assert ci_post_cti.ci_pattern == pattern
 
         def test__simple_case__sets_up_post_cti_correctly(self, arctic_both, params_both):
-            pattern = ci_pattern.CIPatternUniform(normalization=10.0, regions=[(2, 3, 2, 3)])
+            frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
             ci_pre_cti = np.zeros((5, 5))
             ci_pre_cti[2, 2] = 10.0
-            ci_pre_cti = ci_data.CIPreCTI(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                          array=ci_pre_cti, ci_pattern=pattern)
 
-            ci_post_cti = ci_pre_cti.ci_post_cti_from_cti_params_and_settings(params_both, arctic_both)
+            ci_post_cti = frame_geometry.add_cti(ci_pre_cti, params_both, arctic_both)
 
             image_difference = ci_post_cti - ci_pre_cti
 
@@ -1095,50 +1067,6 @@ class TestCIPreCTIFast(object):
                                              [0.0, 10.0, 10.0],
                                              [0.0, 10.0, 10.0]])).all()
 
-    class TestComputePostImageFrame:
-
-        def test__parallel_only__compare_to_non_fast_image(self, arctic_parallel, params_parallel):
-            pattern = ci_pattern.CIPatternUniform(normalization=10.0,
-                                                  regions=[(2, 3, 0, 5)])
-            pattern_fast = ci_pattern.CIPatternUniformFast(
-                normalization=10.0, regions=[(2, 3, 0, 5)])
-
-            ci_pre_cti = np.zeros((5, 5))
-            ci_pre_cti[2, :] = 10.0
-            frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
-            ci_pre_cti_normal = ci_data.CIPreCTI(frame_geometry=frame_geometry,
-                                                 array=ci_pre_cti, ci_pattern=pattern)
-            ci_post_cti_normal = frame_geometry.add_cti(ci_pre_cti_normal, params_parallel, arctic_parallel)
-
-            ci_pre_cti_fast = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                                   array=ci_pre_cti, ci_pattern=pattern_fast)
-            ci_post_cti_fast = ci_pre_cti_fast.ci_post_cti_from_cti_params_and_settings(params_parallel,
-                                                                                        arctic_parallel)
-
-            # noinspection PyUnresolvedReferences
-            assert (ci_post_cti_normal == ci_post_cti_fast).all()
-
-        def test__serial_only__compare_to_non_fast_image(self, arctic_serial, params_serial):
-            pattern = ci_pattern.CIPatternUniform(normalization=10.0,
-                                                  regions=[(1, 5, 2, 3)])
-            pattern_fast = ci_pattern.CIPatternUniformFast(
-                normalization=10.0, regions=[(1, 5, 2, 3)])
-
-            ci_pre_cti = np.zeros((5, 5))
-            ci_pre_cti[:, 2] = 10.0
-            frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
-
-            ci_pre_cti_normal = ci_data.CIPreCTI(frame_geometry=frame_geometry,
-                                                 array=ci_pre_cti, ci_pattern=pattern)
-            ci_post_cti_normal = frame_geometry.add_cti(ci_pre_cti_normal, params_serial, arctic_serial)
-
-            ci_pre_cti_fast = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                                   array=ci_pre_cti, ci_pattern=pattern_fast)
-            ci_post_cti_fast = ci_pre_cti_fast.ci_post_cti_from_cti_params_and_settings(params_serial, arctic_serial)
-
-            # noinspection PyUnresolvedReferences
-            assert (ci_post_cti_normal == ci_post_cti_fast).all()
-
     class TestCompareFastAndNormal:
 
         def test__parallel__3x4_1_ci_region(self, arctic_parallel, params_parallel):
@@ -1147,9 +1075,7 @@ class TestCIPreCTIFast(object):
             pattern_fast = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(2, 3, 0, 4)])
 
-            data_fast = ci_data.CIImage(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                        ci_pattern=pattern_fast,
-                                        array=10.0 * np.ones((3, 4)))
+            data_fast = ci_data.CIImage(array=10.0 * np.ones((3, 4)))
 
             ci_pre_cti_fast = data_fast.ci_pre_cti_from_ci_pattern_and_mask(
                 ci_pattern=pattern_fast,
@@ -1162,9 +1088,7 @@ class TestCIPreCTIFast(object):
             pattern_normal = ci_pattern.CIPatternUniform(normalization=10.0,
                                                          regions=[(2, 3, 0, 4)])
 
-            data_normal = ci_data.CIImage(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                          ci_pattern=pattern_normal,
-                                          array=10.0 * np.ones((3, 4)))
+            data_normal = ci_data.CIImage(array=10.0 * np.ones((3, 4)))
 
             ci_pre_cti_normal = data_normal.ci_pre_cti_from_ci_pattern_and_mask(
                 ci_pattern=pattern_fast,
@@ -1182,9 +1106,7 @@ class TestCIPreCTIFast(object):
             pattern_fast = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(2, 3, 0, 3)])
 
-            data_fast = ci_data.CIImage(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                        ci_pattern=pattern_fast,
-                                        array=10.0 * np.ones((4, 3)))
+            data_fast = ci_data.CIImage(array=10.0 * np.ones((4, 3)))
 
             ci_pre_cti_fast = data_fast.ci_pre_cti_from_ci_pattern_and_mask(
                 ci_pattern=pattern_fast,
@@ -1197,9 +1119,7 @@ class TestCIPreCTIFast(object):
             pattern_normal = ci_pattern.CIPatternUniform(normalization=10.0,
                                                          regions=[(2, 3, 0, 3)])
 
-            data_normal = ci_data.CIImage(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                          ci_pattern=pattern_normal,
-                                          array=10.0 * np.ones((4, 3)))
+            data_normal = ci_data.CIImage(array=10.0 * np.ones((4, 3)))
 
             ci_pre_cti_normal = data_normal.ci_pre_cti_from_ci_pattern_and_mask(
                 ci_pattern=pattern_fast,
@@ -1217,9 +1137,7 @@ class TestCIPreCTIFast(object):
             pattern_fast = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 3, 0, 3)])
 
-            data_fast = ci_data.CIImage(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                        ci_pattern=pattern_fast,
-                                        array=10.0 * np.ones((3, 4)))
+            data_fast = ci_data.CIImage(array=10.0 * np.ones((3, 4)))
 
             ci_pre_cti_fast = data_fast.ci_pre_cti_from_ci_pattern_and_mask(
                 ci_pattern=pattern_fast,
@@ -1231,9 +1149,7 @@ class TestCIPreCTIFast(object):
             pattern_normal = ci_pattern.CIPatternUniform(normalization=10.0,
                                                          regions=[(0, 3, 0, 3)])
 
-            data_normal = ci_data.CIImage(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                          ci_pattern=pattern_normal,
-                                          array=10.0 * np.ones((3, 4)))
+            data_normal = ci_data.CIImage(array=10.0 * np.ones((3, 4)))
 
             ci_pre_cti_normal = data_normal.ci_pre_cti_from_ci_pattern_and_mask(
                 ci_pattern=pattern_fast,
@@ -1252,29 +1168,26 @@ class TestCIPreCTIFast(object):
             pattern_fast = ci_pattern.CIPatternUniformFast(
                 normalization=10.0, regions=[(0, 4, 0, 2)])
 
-            data_fast = ci_data.CIImage(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                        ci_pattern=pattern_fast,
-                                        array=10.0 * np.ones((4, 3)))
+            data_fast = ci_data.CIImage(array=10.0 * np.ones((4, 3)))
+
+            frame = ci_frame.QuadGeometryEuclid.bottom_left()
 
             ci_pre_cti_fast = data_fast.ci_pre_cti_from_ci_pattern_and_mask(
                 ci_pattern=pattern_fast,
-                frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left())
-            ci_post_cti_fast = ci_pre_cti_fast.ci_post_cti_from_cti_params_and_settings(params_serial, arctic_serial)
+                frame_geometry=frame)
+            ci_post_cti_fast = frame.add_cti(ci_pre_cti_fast, params_serial, arctic_serial)
 
             # SETUP NORMAL PATTERNS, IMAGES AND PRE CTI IMAGES, AND COMPUTE POST CTI IMAGES #
 
             pattern_normal = ci_pattern.CIPatternUniform(normalization=10.0,
                                                          regions=[(0, 4, 0, 2)])
 
-            data_normal = ci_data.CIImage(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                          ci_pattern=pattern_normal,
-                                          array=10.0 * np.ones((4, 3)))
+            data_normal = ci_data.CIImage(array=10.0 * np.ones((4, 3)))
 
             ci_pre_cti_normal = data_normal.ci_pre_cti_from_ci_pattern_and_mask(
                 ci_pattern=pattern_fast,
-                frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left())
-            ci_post_cti_normal = ci_pre_cti_normal.ci_post_cti_from_cti_params_and_settings(params_serial,
-                                                                                            arctic_serial)
+                frame_geometry=frame)
+            ci_post_cti_normal = frame.add_cti(ci_pre_cti_normal, params_serial, arctic_serial)
 
             # COMPARE THE TWO #
 
@@ -1303,10 +1216,8 @@ class TestLoadCIDataList(object):
 
         assert type(datas[0].image) == ci_data.CIImage
         assert type(datas[0].noise_map) == ci_frame.CIFrame
-        assert type(datas[0].ci_pre_cti) == ci_data.CIPreCTI
         assert type(datas[1].image) == ci_data.CIImage
         assert type(datas[1].noise_map) == ci_frame.CIFrame
-        assert type(datas[1].ci_pre_cti) == ci_data.CIPreCTI
 
     def test__load_all_data_components_as_list__use_multi_hdu_image(self):
         datas = ci_data.load_ci_data_list(frame_geometries=[MockGeometry(), MockGeometry()],
@@ -1330,10 +1241,8 @@ class TestLoadCIDataList(object):
 
         assert type(datas[0].image) == ci_data.CIImage
         assert type(datas[0].noise_map) == ci_frame.CIFrame
-        assert type(datas[0].ci_pre_cti) == ci_data.CIPreCTI
         assert type(datas[1].image) == ci_data.CIImage
         assert type(datas[1].noise_map) == ci_frame.CIFrame
-        assert type(datas[1].ci_pre_cti) == ci_data.CIPreCTI
 
     def test__lload_ci_pre_cti_image_from_the_pattern_and_image(self):
         datas = ci_data.load_ci_data_list(frame_geometries=[MockGeometry(), MockGeometry()],
@@ -1355,10 +1264,8 @@ class TestLoadCIDataList(object):
 
         assert type(datas[0].image) == ci_data.CIImage
         assert type(datas[0].noise_map) == ci_frame.CIFrame
-        assert type(datas[0].ci_pre_cti) == ci_data.CIPreCTI
         assert type(datas[1].image) == ci_data.CIImage
         assert type(datas[1].noise_map) == ci_frame.CIFrame
-        assert type(datas[1].ci_pre_cti) == ci_data.CIPreCTI
 
 
 class TestLoadCIData(object):
@@ -1375,7 +1282,6 @@ class TestLoadCIData(object):
 
         assert type(data.image) == ci_data.CIImage
         assert type(data.noise_map) == ci_frame.CIFrame
-        assert type(data.ci_pre_cti) == ci_data.CIPreCTI
 
     def test__load_all_image_components__load_from_multi_hdu_fits(self):
         data = ci_data.load_ci_data(frame_geometry=MockGeometry(), ci_pattern=MockPattern(),
@@ -1389,7 +1295,6 @@ class TestLoadCIData(object):
 
         assert type(data.image) == ci_data.CIImage
         assert type(data.noise_map) == ci_frame.CIFrame
-        assert type(data.ci_pre_cti) == ci_data.CIPreCTI
 
     def test__load_noise_map_from_single_value(self):
         data = ci_data.load_ci_data(frame_geometry=MockGeometry(), ci_pattern=MockPattern(),
@@ -1403,7 +1308,6 @@ class TestLoadCIData(object):
 
         assert type(data.image) == ci_data.CIImage
         assert type(data.noise_map) == ci_frame.CIFrame
-        assert type(data.ci_pre_cti) == ci_data.CIPreCTI
 
     def test__pass_noise_map_path_and_noise_map_single_value__raises_error(self):
         with pytest.raises(exc.CIDataException):
@@ -1426,4 +1330,3 @@ class TestLoadCIData(object):
 
         assert type(data.image) == ci_data.CIImage
         assert type(data.noise_map) == ci_frame.CIFrame
-        assert type(data.ci_pre_cti) == ci_data.CIPreCTI
