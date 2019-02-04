@@ -133,10 +133,10 @@ class ChInj(np.ndarray):
         array = self[:, :]
 
         for region in self.ci_pattern.regions:
-            region.set_region_on_array_to_zeros(array=array)
+            array[region.slice] = 0
 
-        self.frame_geometry.serial_overscan.set_region_on_array_to_zeros(array=array)
-        self.frame_geometry.serial_prescan.set_region_on_array_to_zeros(array=array)
+        array[self.frame_geometry.serial_overscan.slice] = 0
+        array[self.frame_geometry.serial_prescan.slice] = 0
 
         return CIFrame(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern, array=array)
 
@@ -384,7 +384,7 @@ class ChInj(np.ndarray):
                                   self.ci_pattern.regions))
 
         for i, region in enumerate(trails_regions):
-            array = region.set_region_on_array_to_zeros(array)
+            array[region.slice] = 0
 
         return CIFrame(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern, array=array)
 
@@ -948,10 +948,6 @@ class Region(object):
     @property
     def slice(self):
         return np.s_[self.y0:self.y1, self.x0:self.x1]
-
-    def set_region_on_array_to_zeros(self, array):
-        array[self.slice] = 0.0
-        return array
 
 
 class FrameGeometry(object):

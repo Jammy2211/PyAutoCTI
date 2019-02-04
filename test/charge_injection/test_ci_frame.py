@@ -1,9 +1,9 @@
 import numpy as np
 
-from autocti.data import mask as msk
 from autocti.charge_injection import ci_frame, ci_pattern
+from autocti.data import mask as msk
+from test.mock.mock import MockCIGeometry
 
-from test.mock.mock import MockCIGeometry, MockRegion
 
 class TestBinArrayAcrossSerial:
 
@@ -1645,7 +1645,7 @@ class TestQuadGeometryEuclid_bottom_left(object):
         def test__extract_one_row__takes_coordinates_from_top_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
-            ci_region = MockRegion(region=(0, 3, 0, 3))  # Front edge is row 0, so for 1 row we extract 0 -> 1
+            ci_region = ci_frame.Region(region=(0, 3, 0, 3))  # Front edge is row 0, so for 1 row we extract 0 -> 1
 
             ci_front_edge = ci_geometry.parallel_front_edge_region(region=ci_region, rows=(0, 1))
 
@@ -1654,7 +1654,7 @@ class TestQuadGeometryEuclid_bottom_left(object):
         def test__extract_two_rows__first_and_second__takes_coordinates_from_top_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
-            ci_region = MockRegion(region=(0, 3, 0, 3))  # Front edge is row 0, so for 2 rows we extract 0 -> 2
+            ci_region = ci_frame.Region(region=(0, 3, 0, 3))  # Front edge is row 0, so for 2 rows we extract 0 -> 2
 
             ci_front_edge = ci_geometry.parallel_front_edge_region(region=ci_region, rows=(0, 2))
 
@@ -1663,7 +1663,8 @@ class TestQuadGeometryEuclid_bottom_left(object):
         def test__extract_two_rows__second_and_third__takes_coordinates_from_top_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
-            ci_region = MockRegion(region=(0, 3, 0, 3))  # Front edge is row 0, so for these 2 rows we extract 1 ->2
+            ci_region = ci_frame.Region(
+                region=(0, 3, 0, 3))  # Front edge is row 0, so for these 2 rows we extract 1 ->2
 
             ci_front_edge = ci_geometry.parallel_front_edge_region(region=ci_region, rows=(1, 3))
 
@@ -1674,7 +1675,7 @@ class TestQuadGeometryEuclid_bottom_left(object):
         def test__extract_one_row__takes_coordinates_after_bottom_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
-            ci_region = MockRegion(region=(0, 3, 0, 3))  # The trails are row 3 and above, so extract 3 -> 4
+            ci_region = ci_frame.Region(region=(0, 3, 0, 3))  # The trails are row 3 and above, so extract 3 -> 4
 
             ci_trails = ci_geometry.parallel_trails_region(region=ci_region, rows=(0, 1))
 
@@ -1683,7 +1684,7 @@ class TestQuadGeometryEuclid_bottom_left(object):
         def test__extract_two_rows__first_and_second__takes_coordinates_after_bottom_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
-            ci_region = MockRegion((0, 3, 0, 3))  # The trails are row 3 and above, so extract 3 -> 5
+            ci_region = ci_frame.Region((0, 3, 0, 3))  # The trails are row 3 and above, so extract 3 -> 5
 
             ci_trails = ci_geometry.parallel_trails_region(region=ci_region, rows=(0, 2))
 
@@ -1692,7 +1693,7 @@ class TestQuadGeometryEuclid_bottom_left(object):
         def test__extract_two_rows__second_and_third__takes_coordinates_after_bottom_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
-            ci_region = MockRegion((0, 3, 0, 3))  # The trails are row 3 and above, so extract 4 -> 6
+            ci_region = ci_frame.Region((0, 3, 0, 3))  # The trails are row 3 and above, so extract 4 -> 6
 
             ci_trails = ci_geometry.parallel_trails_region(region=ci_region, rows=(1, 3))
 
@@ -1702,7 +1703,7 @@ class TestQuadGeometryEuclid_bottom_left(object):
 
         def test__columns_0_to_1__region_is_left_hand_side(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
-            ci_region = MockRegion(region=(1, 3, 0, 5))
+            ci_region = ci_frame.Region(region=(1, 3, 0, 5))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(region=ci_region, image_shape=(5, 5),
                                                                                    columns=(0, 1))
@@ -1711,7 +1712,7 @@ class TestQuadGeometryEuclid_bottom_left(object):
 
         def test__columns_1_to_3__region_is_left_hand_side(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
-            ci_region = MockRegion(region=(1, 3, 0, 5))
+            ci_region = ci_frame.Region(region=(1, 3, 0, 5))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(region=ci_region,
                                                                                    image_shape=(4, 4), columns=(1, 3))
@@ -1720,7 +1721,7 @@ class TestQuadGeometryEuclid_bottom_left(object):
 
         def test__columns_1_to_3__different_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
-            ci_region = MockRegion(region=(1, 3, 2, 5))
+            ci_region = ci_frame.Region(region=(1, 3, 2, 5))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(region=ci_region,
                                                                                    image_shape=(4, 4), columns=(1, 3))
@@ -1729,7 +1730,7 @@ class TestQuadGeometryEuclid_bottom_left(object):
 
         def test__columns_0_to_1__asymetric_image(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
-            ci_region = MockRegion(region=(1, 3, 0, 5))
+            ci_region = ci_frame.Region(region=(1, 3, 0, 5))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(region=ci_region,
                                                                                    image_shape=(2, 5), columns=(0, 1))
@@ -1741,7 +1742,8 @@ class TestQuadGeometryEuclid_bottom_left(object):
         def test__extract_one_column__takes_coordinates_from_left_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
-            ci_region = MockRegion(region=(0, 3, 0, 3))  # Front edge is column 0, so for 1 column we extract 0 -> 1
+            ci_region = ci_frame.Region(
+                region=(0, 3, 0, 3))  # Front edge is column 0, so for 1 column we extract 0 -> 1
 
             ci_front_edge = ci_geometry.serial_front_edge_region(region=ci_region, columns=(0, 1))
 
@@ -1750,7 +1752,8 @@ class TestQuadGeometryEuclid_bottom_left(object):
         def test__extract_two_columns__first_and_second__takes_coordinates_from_left_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
-            ci_region = MockRegion(region=(0, 3, 0, 3))  # Front edge is column 0, so for 2 columns we extract 0 -> 2
+            ci_region = ci_frame.Region(
+                region=(0, 3, 0, 3))  # Front edge is column 0, so for 2 columns we extract 0 -> 2
 
             ci_front_edge = ci_geometry.serial_front_edge_region(region=ci_region, columns=(0, 2))
 
@@ -1759,7 +1762,7 @@ class TestQuadGeometryEuclid_bottom_left(object):
         def test__extract_two_columns__second_and_third__takes_coordinates_from_left_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
-            ci_region = MockRegion(
+            ci_region = ci_frame.Region(
                 region=(0, 3, 0, 3))  # Front edge is column 0, so for these 2 columns we extract 1 ->2
 
             ci_front_edge = ci_geometry.serial_front_edge_region(region=ci_region, columns=(1, 3))
@@ -1771,7 +1774,7 @@ class TestQuadGeometryEuclid_bottom_left(object):
         def test__extract_one_row__takes_coordinates_after_right_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
-            ci_region = MockRegion(region=(0, 3, 0, 3))  # The trails are column 3 and above, so extract 3 -> 4
+            ci_region = ci_frame.Region(region=(0, 3, 0, 3))  # The trails are column 3 and above, so extract 3 -> 4
 
             ci_trails = ci_geometry.serial_trails_region(region=ci_region, columns=(0, 1))
 
@@ -1780,7 +1783,7 @@ class TestQuadGeometryEuclid_bottom_left(object):
         def test__extract_two_columns__first_and_second__takes_coordinates_after_right_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
-            ci_region = MockRegion((0, 3, 0, 3))  # The trails are column 3 and above, so extract 3 -> 5
+            ci_region = ci_frame.Region((0, 3, 0, 3))  # The trails are column 3 and above, so extract 3 -> 5
 
             ci_trails = ci_geometry.serial_trails_region(region=ci_region, columns=(0, 2))
 
@@ -1789,7 +1792,7 @@ class TestQuadGeometryEuclid_bottom_left(object):
         def test__extract_two_columns__second_and_third__takes_coordinates_after_right_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
-            ci_region = MockRegion((0, 3, 0, 3))  # The trails are column 3 and above, so extract 4 -> 6
+            ci_region = ci_frame.Region((0, 3, 0, 3))  # The trails are column 3 and above, so extract 4 -> 6
 
             ci_trails = ci_geometry.serial_trails_region(region=ci_region, columns=(1, 3))
 
@@ -1799,7 +1802,7 @@ class TestQuadGeometryEuclid_bottom_left(object):
 
         def test__column_0_of_front_edge__region_is_left_hand_side__no_overscan_beyond_ci_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
-            ci_region = MockRegion(region=(1, 3, 0, 5))
+            ci_region = ci_frame.Region(region=(1, 3, 0, 5))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 5),
                                                                        column=0)
@@ -1808,7 +1811,7 @@ class TestQuadGeometryEuclid_bottom_left(object):
 
         def test__column_0_of_front_edge__region_is_left_hand_side__overscan_beyond_ci_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
-            ci_region = MockRegion(region=(1, 3, 0, 5))
+            ci_region = ci_frame.Region(region=(1, 3, 0, 5))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
                                                                        column=0)
@@ -1817,7 +1820,7 @@ class TestQuadGeometryEuclid_bottom_left(object):
 
         def test__column_2__region_is_left_hand_side__overscan_beyond_ci_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
-            ci_region = MockRegion(region=(1, 3, 0, 5))
+            ci_region = ci_frame.Region(region=(1, 3, 0, 5))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
                                                                        column=2)
@@ -1826,7 +1829,7 @@ class TestQuadGeometryEuclid_bottom_left(object):
 
         def test__ci_region_has_overscan_and_prescan_either_side__prescan_ignored(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
-            ci_region = MockRegion(region=(1, 3, 10, 20))
+            ci_region = ci_frame.Region(region=(1, 3, 10, 20))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
                                                                        column=0)
@@ -1835,7 +1838,7 @@ class TestQuadGeometryEuclid_bottom_left(object):
 
         def test__ci_region_has_overscan_and_prescan_either_side__include_column(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
-            ci_region = MockRegion(region=(1, 3, 10, 20))
+            ci_region = ci_frame.Region(region=(1, 3, 10, 20))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
                                                                        column=2)
@@ -1844,7 +1847,7 @@ class TestQuadGeometryEuclid_bottom_left(object):
 
         def test__different_ci_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
-            ci_region = MockRegion(region=(3, 5, 5, 30))
+            ci_region = ci_frame.Region(region=(3, 5, 5, 30))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(8, 55),
                                                                        column=2)
@@ -1858,7 +1861,8 @@ class TestQuadGeometryEuclid_bottom_right(object):
         def test__extract_two_rows__second_and_third__takes_coordinates_from_top_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
 
-            ci_region = MockRegion(region=(0, 3, 0, 3))  # Front edge is row 0, so for these 2 rows we extract 1 ->2
+            ci_region = ci_frame.Region(
+                region=(0, 3, 0, 3))  # Front edge is row 0, so for these 2 rows we extract 1 ->2
 
             ci_front_edge = ci_geometry.parallel_front_edge_region(region=ci_region, rows=(1, 3))
 
@@ -1869,7 +1873,7 @@ class TestQuadGeometryEuclid_bottom_right(object):
         def test__extract_two_rows__second_and_third__takes_coordinates_after_bottom_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
 
-            ci_region = MockRegion((0, 3, 0, 3))  # The trails are row 3 and above, so extract 4 -> 6
+            ci_region = ci_frame.Region((0, 3, 0, 3))  # The trails are row 3 and above, so extract 4 -> 6
 
             ci_trails = ci_geometry.parallel_trails_region(region=ci_region, rows=(1, 3))
 
@@ -1879,7 +1883,7 @@ class TestQuadGeometryEuclid_bottom_right(object):
 
         def test__columns_0_to_1__region_is_right_hand_side(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
-            ci_region = MockRegion(region=(1, 3, 0, 5))
+            ci_region = ci_frame.Region(region=(1, 3, 0, 5))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(region=ci_region,
                                                                                    image_shape=(5, 5), columns=(0, 1))
@@ -1888,7 +1892,7 @@ class TestQuadGeometryEuclid_bottom_right(object):
 
         def test__columns_1_to_3__region_is_right_hand_side(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
-            ci_region = MockRegion(region=(1, 3, 0, 4))
+            ci_region = ci_frame.Region(region=(1, 3, 0, 4))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(region=ci_region,
                                                                                    image_shape=(4, 4), columns=(1, 3))
@@ -1897,7 +1901,7 @@ class TestQuadGeometryEuclid_bottom_right(object):
 
         def test__columns_1_to_3__different_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
-            ci_region = MockRegion(region=(1, 3, 2, 4))
+            ci_region = ci_frame.Region(region=(1, 3, 2, 4))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(region=ci_region,
                                                                                    image_shape=(4, 4), columns=(1, 3))
@@ -1906,7 +1910,7 @@ class TestQuadGeometryEuclid_bottom_right(object):
 
         def test__columns_0_to_1__asymetric_image(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
-            ci_region = MockRegion(region=(0, 1, 0, 5))
+            ci_region = ci_frame.Region(region=(0, 1, 0, 5))
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(region=ci_region,
                                                                                    image_shape=(2, 5), columns=(0, 1))
 
@@ -1917,7 +1921,8 @@ class TestQuadGeometryEuclid_bottom_right(object):
         def test__extract_one_column__takes_coordinates_from_right_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
 
-            ci_region = MockRegion(region=(0, 3, 0, 3))  # Front edge is column 0, so for 1 column we extract 0 -> 1
+            ci_region = ci_frame.Region(
+                region=(0, 3, 0, 3))  # Front edge is column 0, so for 1 column we extract 0 -> 1
 
             ci_front_edge = ci_geometry.serial_front_edge_region(region=ci_region, columns=(0, 1))
 
@@ -1926,7 +1931,8 @@ class TestQuadGeometryEuclid_bottom_right(object):
         def test__extract_two_columns__first_and_second__takes_coordinates_from_right_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
 
-            ci_region = MockRegion(region=(0, 3, 0, 3))  # Front edge is column 0, so for 2 columns we extract 0 -> 2
+            ci_region = ci_frame.Region(
+                region=(0, 3, 0, 3))  # Front edge is column 0, so for 2 columns we extract 0 -> 2
 
             ci_front_edge = ci_geometry.serial_front_edge_region(region=ci_region, columns=(0, 2))
 
@@ -1935,7 +1941,7 @@ class TestQuadGeometryEuclid_bottom_right(object):
         def test__extract_two_columns__second_and_third__takes_coordinates_from_right_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
 
-            ci_region = MockRegion(
+            ci_region = ci_frame.Region(
                 region=(0, 3, 0, 3))  # Front edge is column 0, so for these 2 columns we extract 1 ->2
 
             ci_front_edge = ci_geometry.serial_front_edge_region(region=ci_region, columns=(1, 3))
@@ -1947,7 +1953,7 @@ class TestQuadGeometryEuclid_bottom_right(object):
         def test__extract_one_row__takes_coordinates_after_left_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
 
-            ci_region = MockRegion(region=(0, 3, 3, 6))  # The trails are column 3 and above, so extract 3 -> 4
+            ci_region = ci_frame.Region(region=(0, 3, 3, 6))  # The trails are column 3 and above, so extract 3 -> 4
 
             ci_trails = ci_geometry.serial_trails_region(region=ci_region, columns=(0, 1))
 
@@ -1956,7 +1962,7 @@ class TestQuadGeometryEuclid_bottom_right(object):
         def test__extract_two_columns__first_and_second__takes_coordinates_after_left_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
 
-            ci_region = MockRegion((0, 3, 3, 6))  # The trails are column 3 and above, so extract 3 -> 5
+            ci_region = ci_frame.Region((0, 3, 3, 6))  # The trails are column 3 and above, so extract 3 -> 5
 
             ci_trails = ci_geometry.serial_trails_region(region=ci_region, columns=(0, 2))
 
@@ -1965,7 +1971,7 @@ class TestQuadGeometryEuclid_bottom_right(object):
         def test__extract_two_columns__second_and_third__takes_coordinates_after_left_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
 
-            ci_region = MockRegion((0, 3, 3, 6))  # The trails are column 3 and above, so extract 4 -> 6
+            ci_region = ci_frame.Region((0, 3, 3, 6))  # The trails are column 3 and above, so extract 4 -> 6
 
             ci_trails = ci_geometry.serial_trails_region(region=ci_region, columns=(1, 3))
 
@@ -1975,7 +1981,7 @@ class TestQuadGeometryEuclid_bottom_right(object):
 
         def test__column_0_of_front_edge__region_is_left_hand_side__no_overscan_beyond_ci_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
-            ci_region = MockRegion(region=(1, 3, 0, 5))
+            ci_region = ci_frame.Region(region=(1, 3, 0, 5))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 5),
                                                                        column=0)
@@ -1984,7 +1990,7 @@ class TestQuadGeometryEuclid_bottom_right(object):
 
         def test__column_0_of_front_edge__region_is_left_hand_side__overscan_beyond_ci_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
-            ci_region = MockRegion(region=(1, 3, 20, 25))
+            ci_region = ci_frame.Region(region=(1, 3, 20, 25))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
                                                                        column=0)
@@ -1993,7 +1999,7 @@ class TestQuadGeometryEuclid_bottom_right(object):
 
         def test__column_2__region_is_left_hand_side__overscan_beyond_ci_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
-            ci_region = MockRegion(region=(1, 3, 20, 25))
+            ci_region = ci_frame.Region(region=(1, 3, 20, 25))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
                                                                        column=2)
@@ -2002,7 +2008,7 @@ class TestQuadGeometryEuclid_bottom_right(object):
 
         def test__ci_region_has_overscan_and_prescan_either_side__prescan_ignored(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
-            ci_region = MockRegion(region=(1, 3, 10, 20))
+            ci_region = ci_frame.Region(region=(1, 3, 10, 20))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
                                                                        column=0)
@@ -2011,7 +2017,7 @@ class TestQuadGeometryEuclid_bottom_right(object):
 
         def test__ci_region_has_overscan_and_prescan_either_side__include_column(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
-            ci_region = MockRegion(region=(1, 3, 10, 20))
+            ci_region = ci_frame.Region(region=(1, 3, 10, 20))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(5, 25),
                                                                        column=2)
@@ -2020,7 +2026,7 @@ class TestQuadGeometryEuclid_bottom_right(object):
 
         def test__different_ci_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
-            ci_region = MockRegion(region=(3, 5, 5, 30))
+            ci_region = ci_frame.Region(region=(3, 5, 5, 30))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(8, 55),
                                                                        column=2)
@@ -2034,7 +2040,8 @@ class TestQuadGeometryEuclid_top_left(object):
         def test__extract_one_row__takes_coordinates_from_top_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.top_left()
 
-            ci_region = MockRegion((0, 3, 0, 3))  # The front edge is closest to 3, so for 1 edge we extract row 3-> 4
+            ci_region = ci_frame.Region(
+                (0, 3, 0, 3))  # The front edge is closest to 3, so for 1 edge we extract row 3-> 4
 
             ci_front_edge = ci_geometry.parallel_front_edge_region(region=ci_region, rows=(0, 1))
 
@@ -2043,7 +2050,7 @@ class TestQuadGeometryEuclid_top_left(object):
         def test__extract_two_rows__first_and_second__takes_coordinates_from_top_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.top_left()
 
-            ci_region = MockRegion(
+            ci_region = ci_frame.Region(
                 (0, 3, 0, 3))  # The front edge is closest to 3, so for these 2 rows we extract 2 & 3
 
             ci_front_edge = ci_geometry.parallel_front_edge_region(region=ci_region, rows=(0, 2))
@@ -2053,7 +2060,7 @@ class TestQuadGeometryEuclid_top_left(object):
         def test__extract_two_rows__second_and_third__takes_coordinates_from_top_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.top_left()
 
-            ci_region = MockRegion(
+            ci_region = ci_frame.Region(
                 (0, 3, 0, 3))  # The front edge is closest to 3, so for these 2 rows we extract 1 & 2
 
             ci_front_edge = ci_geometry.parallel_front_edge_region(region=ci_region, rows=(1, 3))
@@ -2065,7 +2072,7 @@ class TestQuadGeometryEuclid_top_left(object):
         def test__extract_one_row__takes_coordinates_after_bottom_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.top_left()
 
-            ci_region = MockRegion(
+            ci_region = ci_frame.Region(
                 (3, 5, 0, 3))  # The trails are the rows after row 3, so for 1 edge we should extract just row 2
 
             ci_trails = ci_geometry.parallel_trails_region(region=ci_region, rows=(0, 1))
@@ -2075,7 +2082,7 @@ class TestQuadGeometryEuclid_top_left(object):
         def test__extract_two_rows__first_and_second__takes_coordinates_after_bottom_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.top_left()
 
-            ci_region = MockRegion(
+            ci_region = ci_frame.Region(
                 (3, 5, 0, 3))  # The trails are the row after row 3, so for these 2 edges we extract rows 1->3
 
             ci_trails = ci_geometry.parallel_trails_region(region=ci_region, rows=(0, 2))
@@ -2085,7 +2092,7 @@ class TestQuadGeometryEuclid_top_left(object):
         def test__extract_two_rows__second_and_third__takes_coordinates_after_bottom_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.top_left()
 
-            ci_region = MockRegion(
+            ci_region = ci_frame.Region(
                 (3, 5, 0, 3))  # The trails are the row after row 3, so for these 2 edges we extract rows 0 & 2
 
             ci_trails = ci_geometry.parallel_trails_region(region=ci_region, rows=(1, 3))
@@ -2096,7 +2103,7 @@ class TestQuadGeometryEuclid_top_left(object):
 
         def test__columns_0_to_1__asymetric_image(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
-            ci_region = MockRegion(region=(1, 3, 0, 5))
+            ci_region = ci_frame.Region(region=(1, 3, 0, 5))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(region=ci_region,
                                                                                    image_shape=(2, 5), columns=(0, 1))
@@ -2108,7 +2115,7 @@ class TestQuadGeometryEuclid_top_left(object):
         def test__extract_two_columns__second_and_third__takes_coordinates_from_top_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.top_left()
 
-            ci_region = MockRegion(
+            ci_region = ci_frame.Region(
                 region=(0, 3, 0, 3))  # Front edge is column 0, so for these 2 columns we extract 1 ->2
 
             ci_front_edge = ci_geometry.serial_front_edge_region(region=ci_region, columns=(1, 3))
@@ -2120,7 +2127,7 @@ class TestQuadGeometryEuclid_top_left(object):
         def test__extract_two_columns__second_and_third__takes_coordinates_after_bottom_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.top_left()
 
-            ci_region = MockRegion((0, 3, 0, 3))  # The trails are column 3 and above, so extract 4 -> 6
+            ci_region = ci_frame.Region((0, 3, 0, 3))  # The trails are column 3 and above, so extract 4 -> 6
 
             ci_trails = ci_geometry.serial_trails_region(region=ci_region, columns=(1, 3))
 
@@ -2130,7 +2137,7 @@ class TestQuadGeometryEuclid_top_left(object):
 
         def test__different_ci_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.top_left()
-            ci_region = MockRegion(region=(3, 5, 5, 30))
+            ci_region = ci_frame.Region(region=(3, 5, 5, 30))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(8, 55),
                                                                        column=2)
@@ -2144,7 +2151,7 @@ class TestQuadGeometryEuclid_top_right(object):
         def test__extract_two_rows__second_and_third__takes_coordinates_from_top_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.top_right()
 
-            ci_region = MockRegion(
+            ci_region = ci_frame.Region(
                 (0, 3, 0, 3))  # The front edge is closest to 3, so for these 2 rows we extract 1 & 2
 
             ci_front_edge = ci_geometry.parallel_front_edge_region(region=ci_region, rows=(1, 3))
@@ -2156,7 +2163,7 @@ class TestQuadGeometryEuclid_top_right(object):
         def test__extract_two_rows__second_and_third__takes_coordinates_after_bottom_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.top_right()
 
-            ci_region = MockRegion(
+            ci_region = ci_frame.Region(
                 (3, 5, 0, 3))  # The trails are the row after row 3, so for these 2 edges we extract rows 0 & 2
 
             ci_trails = ci_geometry.parallel_trails_region(region=ci_region, rows=(1, 3))
@@ -2167,7 +2174,7 @@ class TestQuadGeometryEuclid_top_right(object):
 
         def test__columns_0_to_1__asymetric_image(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.top_right()
-            ci_region = MockRegion(region=(0, 1, 0, 5))
+            ci_region = ci_frame.Region(region=(0, 1, 0, 5))
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(region=ci_region,
                                                                                    image_shape=(2, 5), columns=(0, 1))
 
@@ -2178,7 +2185,7 @@ class TestQuadGeometryEuclid_top_right(object):
         def test__extract_two_columns__second_and_third__takes_coordinates_from_right_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
 
-            ci_region = MockRegion(
+            ci_region = ci_frame.Region(
                 region=(0, 3, 0, 3))  # Front edge is column 0, so for these 2 columns we extract 1 ->2
 
             ci_front_edge = ci_geometry.serial_front_edge_region(region=ci_region, columns=(1, 3))
@@ -2190,7 +2197,7 @@ class TestQuadGeometryEuclid_top_right(object):
         def test__extract_two_columns__second_and_third__takes_coordinates_after_left_of_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
 
-            ci_region = MockRegion((0, 3, 3, 6))  # The trails are column 3 and above, so extract 4 -> 6
+            ci_region = ci_frame.Region((0, 3, 3, 6))  # The trails are column 3 and above, so extract 4 -> 6
 
             ci_trails = ci_geometry.serial_trails_region(region=ci_region, columns=(1, 3))
 
@@ -2200,7 +2207,7 @@ class TestQuadGeometryEuclid_top_right(object):
 
         def test__different_ci_region(self):
             ci_geometry = ci_frame.QuadGeometryEuclid.top_right()
-            ci_region = MockRegion(region=(3, 5, 5, 30))
+            ci_region = ci_frame.Region(region=(3, 5, 5, 30))
 
             ci_serial_region = ci_geometry.serial_ci_region_and_trails(region=ci_region, image_shape=(8, 55),
                                                                        column=2)

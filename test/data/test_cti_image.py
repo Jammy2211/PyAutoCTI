@@ -518,18 +518,18 @@ class TestRegion(object):
 
             region = ci_frame.Region(region=(0, 1, 0, 1))
 
-            new_array = region.set_region_on_array_to_zeros(array=array)
+            array[region.slice] = 0
 
-            assert (new_array == np.array([[0.0, 1.0],
-                                           [1.0, 1.0]])).all()
+            assert (array == np.array([[0.0, 1.0],
+                                       [1.0, 1.0]])).all()
 
         def test__different_region___sets_to_0(self):
             array = np.ones((3, 3))
 
             region = ci_frame.Region(region=(1, 3, 2, 3))
 
-            new_array = region.set_region_on_array_to_zeros(array=array)
+            array[region.slice] = 0
 
-            assert (new_array == np.array([[1.0, 1.0, 1.0],
-                                           [1.0, 1.0, 0.0],
-                                           [1.0, 1.0, 0.0]])).all()
+            assert (array == np.array([[1.0, 1.0, 1.0],
+                                       [1.0, 1.0, 0.0],
+                                       [1.0, 1.0, 0.0]])).all()
