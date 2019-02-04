@@ -3,6 +3,7 @@ import pytest
 
 from autocti.charge_injection import ci_frame, ci_fit
 from autocti.charge_injection import ci_hyper, ci_data
+from autocti.data import mask
 from test.mock.mock import MockGeometry, MockPattern, MockCIPreCTI, MockParams, MockSettings
 
 
@@ -13,8 +14,8 @@ class TestCIHyperFit:
                                       ci_pattern=MockPattern())
         ci_noise_map_0 = ci_frame.CIFrame(array=2.0 * np.ones((2, 2)), frame_geometry=MockGeometry(),
                                           ci_pattern=MockPattern())
-        ci_mask_0 = ci_data.CIMask(array=np.ma.zeros((2, 2)), frame_geometry=MockGeometry(),
-                                   ci_pattern=MockPattern())
+        ci_mask_0 = mask.Mask(array=np.ma.zeros((2, 2)), frame_geometry=MockGeometry(),
+                              ci_pattern=MockPattern())
         ci_pre_cti_0 = MockCIPreCTI(frame_geometry=MockGeometry(), ci_pattern=MockPattern(),
                                     array=10.0 * np.ones((2, 2)),
                                     value=10.0)
@@ -39,8 +40,8 @@ class TestCIHyperFit:
                                       ci_pattern=MockPattern())
         ci_noise_map_0 = ci_frame.CIFrame(array=2.0 * np.ones((2, 2)), frame_geometry=MockGeometry(),
                                           ci_pattern=MockPattern())
-        ci_mask_0 = ci_data.CIMask(array=np.ma.zeros((2, 2)), frame_geometry=MockGeometry(),
-                                   ci_pattern=MockPattern())
+        ci_mask_0 = mask.Mask(array=np.ma.zeros((2, 2)), frame_geometry=MockGeometry(),
+                              ci_pattern=MockPattern())
         ci_pre_cti_0 = MockCIPreCTI(frame_geometry=MockGeometry(), ci_pattern=MockPattern(),
                                     array=10.0 * np.ones((2, 2)),
                                     value=10.0)

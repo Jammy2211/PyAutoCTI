@@ -220,7 +220,7 @@ class CIPreCTI(frame.CIFrame):
         cti_settings : ArcticSettings.ArcticSettings
             The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
         """
-        ci_post_cti = self.add_cti_to_image(cti_params=cti_params, cti_settings=cti_settings)
+        ci_post_cti = self.frame_geometry.add_cti(self, cti_params=cti_params, cti_settings=cti_settings)
         return frame.CIFrame(frame_geometry=self.frame_geometry, ci_pattern=self.ci_pattern, array=ci_post_cti)
 
 

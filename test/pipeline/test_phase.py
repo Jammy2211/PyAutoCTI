@@ -162,7 +162,7 @@ class TestPhase(object):
 
     # noinspection PyUnresolvedReferences
     def test__default_data_extractor(self, ci_data, phase):
-        ci_datas_fit = phase.extract_ci_data(ci_data, mask.Mask.empty_for_image(ci_data.image))
+        ci_datas_fit = phase.extract_ci_data(ci_data, mask.Mask.empty_for_shape(ci_data.image.shape))
 
         assert isinstance(ci_datas_fit, data.CIDataFit)
         assert (ci_data.image == ci_datas_fit.image).all()

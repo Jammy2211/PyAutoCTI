@@ -208,7 +208,7 @@ class TestCIImage(object):
             data = ci_data.CIImage(frame_geometry=frame_geometry, ci_pattern=pattern, array=image)
 
             ci_pre_cti = data.ci_pre_cti_from_ci_pattern_and_mask(mask=mask, frame_geometry=frame_geometry,
-                                                                  ci_pattern=MockPattern())
+                                                                  ci_pattern=pattern)
 
             pattern_ci_pre_cti = pattern.ci_pre_cti_from_ci_image_and_mask(image, mask)
 
@@ -1105,9 +1105,10 @@ class TestCIPreCTIFast(object):
 
             ci_pre_cti = np.zeros((5, 5))
             ci_pre_cti[2, :] = 10.0
-            ci_pre_cti_normal = ci_data.CIPreCTI(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+            frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
+            ci_pre_cti_normal = ci_data.CIPreCTI(frame_geometry=frame_geometry,
                                                  array=ci_pre_cti, ci_pattern=pattern)
-            ci_post_cti_normal = ci_pre_cti_normal.add_cti_to_image(params_parallel, arctic_parallel)
+            ci_post_cti_normal = frame_geometry.add_cti(ci_pre_cti_normal, params_parallel, arctic_parallel)
 
             ci_pre_cti_fast = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                                    array=ci_pre_cti, ci_pattern=pattern_fast)
@@ -1125,9 +1126,11 @@ class TestCIPreCTIFast(object):
 
             ci_pre_cti = np.zeros((5, 5))
             ci_pre_cti[:, 2] = 10.0
-            ci_pre_cti_normal = ci_data.CIPreCTI(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+            frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
+
+            ci_pre_cti_normal = ci_data.CIPreCTI(frame_geometry=frame_geometry,
                                                  array=ci_pre_cti, ci_pattern=pattern)
-            ci_post_cti_normal = ci_pre_cti_normal.add_cti_to_image(params_serial, arctic_serial)
+            ci_post_cti_normal = frame_geometry.add_cti(ci_pre_cti_normal, params_serial, arctic_serial)
 
             ci_pre_cti_fast = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                                    array=ci_pre_cti, ci_pattern=pattern_fast)
@@ -1135,17 +1138,6 @@ class TestCIPreCTIFast(object):
 
             # noinspection PyUnresolvedReferences
             assert (ci_post_cti_normal == ci_post_cti_fast).all()
-
-        def test__parallel_and_serial__raises_error(self, arctic_both, params_both):
-            pattern_fast = ci_pattern.CIPatternUniformFast(
-                normalization=10.0, regions=[(1, 5, 2, 3)])
-
-            ci_pre_cti = np.zeros((5, 5))
-            ci_pre_cti[:, 2] = 10.0
-            ci_pre_cti_fast = ci_data.CIPreCTIFast(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                                   array=ci_pre_cti, ci_pattern=pattern_fast)
-            with pytest.raises(exc.CIPreCTIException):
-                ci_pre_cti_fast.ci_post_cti_from_cti_params_and_settings(params_both, arctic_both)
 
     class TestCompareFastAndNormal:
 

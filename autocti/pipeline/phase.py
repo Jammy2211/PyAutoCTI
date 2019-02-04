@@ -222,7 +222,7 @@ class ParallelPhase(Phase):
 
     def extract_ci_data(self, data, mask):
         return data.parallel_calibration_data(
-            (0, self.columns or data.image.frame_geometry.parallel_overscan.total_columns), mask)
+            (0, self.columns or data.ci_frame.parallel_overscan.total_columns), mask)
 
     class Analysis(Phase.Analysis):
         @classmethod
@@ -249,7 +249,7 @@ class SerialPhase(Phase):
 
     def extract_ci_data(self, data, mask):
         columns = self.columns or 0
-        return data.serial_calibration_data(columns or 0, self.rows or (0, data.image.ci_pattern.regions[0].total_rows),
+        return data.serial_calibration_data(columns or 0, self.rows or (0, data.ci_pattern.regions[0].total_rows),
                                             mask)
 
     class Analysis(Phase.Analysis):
