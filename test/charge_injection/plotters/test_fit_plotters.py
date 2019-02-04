@@ -39,7 +39,8 @@ def make_ci_pre_cti():
 
 @pytest.fixture(name='ci_data')
 def make_ci_data(image, noise_map, ci_pre_cti):
-    return ci_data.CIData(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti, noise_scaling=None)
+    return ci_data.CIData(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti, noise_scaling=None,
+                          ci_pattern=MockPattern(), ci_frame=MockGeometry())
 
 
 @pytest.fixture(name='ci_datas_fit')

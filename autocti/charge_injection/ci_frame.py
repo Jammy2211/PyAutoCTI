@@ -848,13 +848,13 @@ class Region(object):
     def __init__(self, region):
         """Setup a region of an image, which could be where the parallel overscan, serial overscan, etc. are.
 
-                This is defined as a tuple (y0, y1, x0, x1).
+        This is defined as a tuple (y0, y1, x0, x1).
 
-                Parameters
-                -----------
-                region : (int,)
-                    The coordinates on the image of the region (y0, y1, x0, y1).
-                """
+        Parameters
+        -----------
+        region : (int,)
+            The coordinates on the image of the region (y0, y1, x0, y1).
+        """
 
         if region[0] < 0 or region[1] < 0 or region[2] < 0 or region[3] < 0:
             raise exc.RegionException('A coordinate of the Region was specified as negative.')
