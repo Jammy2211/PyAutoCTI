@@ -46,7 +46,7 @@ class CIData(object):
 
     @property
     def chinj(self):
-        return frame.ChInj(self.ci_frame, self.ci_pattern)
+        return frame.ChInj(frame_geometry=self.ci_frame, ci_pattern=self.ci_pattern)
 
     @property
     def shape(self):

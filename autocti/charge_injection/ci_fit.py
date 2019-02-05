@@ -23,11 +23,13 @@ from autofit.tools import fit
 class CIFit(fit.DataFit):
 
     def __init__(self, ci_data_fit, cti_params, cti_settings):
+
         self.ci_data_fit = ci_data_fit
         self.cti_params = cti_params
         self.cti_settings = cti_settings
 
-        self.ci_post_cti = self.ci_data_fit.ci_frame.add_cti(self.ci_data_fit.ci_pre_cti, cti_params=self.cti_params,
+        self.ci_post_cti = self.ci_data_fit.ci_frame.add_cti(image=self.ci_data_fit.ci_pre_cti,
+                                                             cti_params=self.cti_params,
                                                              cti_settings=self.cti_settings)
 
         super(CIFit, self).__init__(data=ci_data_fit.image,

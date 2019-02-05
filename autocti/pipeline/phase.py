@@ -108,8 +108,8 @@ class Phase(ph.AbstractPhase):
 
     # noinspection PyMethodMayBeStatic
     def extract_ci_data(self, data, mask):
-        return ci_data.CIDataFit(data.image, data.noise_map, data.ci_pre_cti, mask, data.ci_pattern, data.ci_frame,
-                                 data.noise_scaling)
+        return ci_data.CIDataFit(image=data.image, noise_map=data.noise_map, ci_pre_cti=data.ci_pre_cti, mask=mask,
+                                 ci_pattern=data.ci_pattern, ci_frame=data.ci_frame,noise_scaling=data.noise_scaling)
 
     def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
         """
@@ -129,7 +129,7 @@ class Phase(ph.AbstractPhase):
         analysis: Analysis
             An analysis object that the non-linear optimizer calls to determine the fit of a set of values
         """
-        masks = list(map(lambda data: self.mask_function(data.image.shape), ci_datas))
+        masks = list(map(lambda data: self.mask_function(shape=data.image.shape), ci_datas))
         ci_datas_fit = [self.extract_ci_data(data=data, mask=mask) for data, mask in zip(ci_datas, masks)]
 
         self.pass_priors(previous_results)
@@ -226,11 +226,14 @@ class ParallelPhase(Phase):
         return data.parallel_calibration_data(
             (0, self.columns or data.ci_frame.parallel_overscan.total_columns), mask)
 
+
     class Analysis(Phase.Analysis):
+        
         @classmethod
         def log(cls, instance):
             logger.debug(
-                "\nRunning CTI analysis for... \n\nParallel CTI: "
+                "\nRunning CTI analysis for... \n\n"
+                "Parallel CTI: \n"
                 "Parallel Species:\n{}\n\n "
                 "Parallel CCD\n{}\n\n".format(instance.parallel_species, instance.parallel_ccd))
 
@@ -255,13 +258,18 @@ class SerialPhase(Phase):
                                             mask)
 
     class Analysis(Phase.Analysis):
+        
         @classmethod
         def log(cls, instance):
             logger.debug(
-                "\nRunning CTI analysis for... \n\nSerial CTI::\n{}\n\n".format(instance.serial))
+                "\nRunning CTI analysis for... "
+                "\n\nSerial CTI: \n"
+                "Serial Species:\n{}\n\n "
+                "Serial CCD\n{}\n\n".format(instance.serial_species, instance.serial_ccd))
 
 
 class ParallelSerialPhase(Phase):
+
     parallel_species = phase_property.PhasePropertyCollection("parallel_species")
     serial_species = phase_property.PhasePropertyCollection("serial_species")
     parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
@@ -289,12 +297,18 @@ class ParallelSerialPhase(Phase):
         return data.parallel_serial_calibration_data(mask)
 
     class Analysis(Phase.Analysis):
+
         @classmethod
         def log(cls, instance):
             logger.debug(
-                "\nRunning CTI analysis for... "
-                "\n\nParallel CTI::\n{}"
-                "\n\nSerial CTI::\n{}\n\n".format(instance.parallel, instance.serial))
+                "\nRunning CTI analysis for... \n\n"
+                "Parallel CTI: \n"
+                "Parallel Species:\n{}\n\n "
+                "Parallel CCD\n{}\n\n"
+                "Serial CTI: \n"
+                "Serial Species:\n{}\n\n "
+                "Serial CCD\n{}\n\n".format(instance.parallel_species, instance.parallel_ccd,
+                                              instance.serial_species, instance.serial_ccd))
 
 
 class HyperAnalysis(Phase.Analysis):
