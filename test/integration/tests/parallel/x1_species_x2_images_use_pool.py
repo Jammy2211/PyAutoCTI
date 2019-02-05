@@ -43,15 +43,15 @@ def pipeline():
 
     patterns = ci_pattern.uniform_from_lists(normalizations=normalizations, regions=ci_regions)
 
-    data_0 = ci_data.load_ci_data(frame_geometry=frame_geometry, ci_pattern=patterns[0],
-                                  ci_image_path=path+'/data/'+test_name+'/ci_data_0.fits',
-                                  ci_noise_map_from_single_value=1.0,
-                                  ci_pre_cti_from_image=True)
+    data_0 = ci_data.load_ci_data_from_fits(frame_geometry=frame_geometry, ci_pattern=patterns[0],
+                                            ci_image_path=path+'/data/'+test_name+'/ci_data_0.fits',
+                                            ci_noise_map_from_single_value=1.0,
+                                            ci_pre_cti_from_image=True)
 
-    data_1 = ci_data.load_ci_data(frame_geometry=frame_geometry, ci_pattern=patterns[1],
-                                  ci_image_path=path+'/data/'+test_name+'/ci_data_1.fits',
-                                  ci_noise_map_from_single_value=1.0,
-                                  ci_pre_cti_from_image=True)
+    data_1 = ci_data.load_ci_data_from_fits(frame_geometry=frame_geometry, ci_pattern=patterns[1],
+                                            ci_image_path=path+'/data/'+test_name+'/ci_data_1.fits',
+                                            ci_noise_map_from_single_value=1.0,
+                                            ci_pre_cti_from_image=True)
 
     pipeline = make_pipeline(test_name=test_name)
     pipeline.run(ci_datas=[data_0, data_1], cti_settings=cti_settings, pool=Pool(processes=2))
@@ -69,8 +69,8 @@ def make_pipeline(test_name):
     phase1 = ParallelPhase(optimizer_class=nl.MultiNest, parallel_species=[prior_model.PriorModel(arctic_params.Species)],
                            parallel_ccd=arctic_params.CCD, columns=40, phase_name="{}/phase1".format(test_name))
 
-    phase1.optimizer.n_live_points = 60
     phase1.optimizer.const_efficiency_mode = True
+    phase1.optimizer.n_live_points = 60
     phase1.optimizer.sampling_efficiency = 0.2
 
     return pl.Pipeline(phase1)

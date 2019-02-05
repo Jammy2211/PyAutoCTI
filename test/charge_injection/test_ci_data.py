@@ -1028,13 +1028,13 @@ class TestCIPreCTIFast(object):
 class TestLoadCIDataList(object):
 
     def test__load_all_data_components_as_list__gives_correct_components(self):
-        datas = ci_data.load_ci_data_list(frame_geometries=[MockGeometry(), MockGeometry()],
-                                          ci_patterns=[MockPattern(), MockPattern()],
-                                          ci_image_paths=[test_data_dir + '3x3_ones.fits',
+        datas = ci_data.load_ci_data_list_from_fits(frame_geometries=[MockGeometry(), MockGeometry()],
+                                                    ci_patterns=[MockPattern(), MockPattern()],
+                                                    ci_image_paths=[test_data_dir + '3x3_ones.fits',
                                                           test_data_dir + '3x3_fours.fits'],
-                                          ci_noise_map_paths=[test_data_dir + '3x3_twos.fits',
+                                                    ci_noise_map_paths=[test_data_dir + '3x3_twos.fits',
                                                               test_data_dir + '3x3_fives.fits'],
-                                          ci_pre_cti_paths=[test_data_dir + '3x3_threes.fits',
+                                                    ci_pre_cti_paths=[test_data_dir + '3x3_threes.fits',
                                                             test_data_dir + '3x3_sixes.fits'])
 
         assert (datas[0].image == np.ones((3, 3))).all()
@@ -1045,17 +1045,17 @@ class TestLoadCIDataList(object):
         assert (datas[1].ci_pre_cti == 6.0 * np.ones((3, 3))).all()
 
     def test__load_all_data_components_as_list__use_multi_hdu_image(self):
-        datas = ci_data.load_ci_data_list(frame_geometries=[MockGeometry(), MockGeometry()],
-                                          ci_patterns=[MockPattern(), MockPattern()],
-                                          ci_image_paths=[test_data_dir + '3x3_multiple_hdu.fits',
+        datas = ci_data.load_ci_data_list_from_fits(frame_geometries=[MockGeometry(), MockGeometry()],
+                                                    ci_patterns=[MockPattern(), MockPattern()],
+                                                    ci_image_paths=[test_data_dir + '3x3_multiple_hdu.fits',
                                                           test_data_dir + '3x3_multiple_hdu.fits'],
-                                          ci_image_hdus=[0, 3],
-                                          ci_noise_map_paths=[test_data_dir + '3x3_multiple_hdu.fits',
+                                                    ci_image_hdus=[0, 3],
+                                                    ci_noise_map_paths=[test_data_dir + '3x3_multiple_hdu.fits',
                                                               test_data_dir + '3x3_multiple_hdu.fits'],
-                                          ci_noise_map_hdus=[1, 4],
-                                          ci_pre_cti_paths=[test_data_dir + '3x3_multiple_hdu.fits',
+                                                    ci_noise_map_hdus=[1, 4],
+                                                    ci_pre_cti_paths=[test_data_dir + '3x3_multiple_hdu.fits',
                                                             test_data_dir + '3x3_multiple_hdu.fits'],
-                                          ci_pre_cti_hdus=[2, 5])
+                                                    ci_pre_cti_hdus=[2, 5])
 
         assert (datas[0].image == np.ones((3, 3))).all()
         assert (datas[0].noise_map == 2.0 * np.ones((3, 3))).all()
@@ -1065,15 +1065,15 @@ class TestLoadCIDataList(object):
         assert (datas[1].ci_pre_cti == 6.0 * np.ones((3, 3))).all()
 
     def test__lload_ci_pre_cti_image_from_the_pattern_and_image(self):
-        datas = ci_data.load_ci_data_list(frame_geometries=[MockGeometry(), MockGeometry()],
-                                          ci_patterns=[
+        datas = ci_data.load_ci_data_list_from_fits(frame_geometries=[MockGeometry(), MockGeometry()],
+                                                    ci_patterns=[
                                               ci_pattern.CIPatternUniform(regions=[(0, 3, 0, 3)], normalization=10.0),
                                               ci_pattern.CIPatternUniform(regions=[(0, 3, 0, 3)], normalization=11.0)],
-                                          ci_image_paths=[test_data_dir + '3x3_ones.fits',
+                                                    ci_image_paths=[test_data_dir + '3x3_ones.fits',
                                                           test_data_dir + '3x3_fours.fits'],
-                                          ci_noise_map_paths=[test_data_dir + '3x3_twos.fits',
+                                                    ci_noise_map_paths=[test_data_dir + '3x3_twos.fits',
                                                               test_data_dir + '3x3_fives.fits'],
-                                          ci_pre_cti_from_image=True)
+                                                    ci_pre_cti_from_image=True)
 
         assert (datas[0].image == np.ones((3, 3))).all()
         assert (datas[0].noise_map == 2.0 * np.ones((3, 3))).all()
@@ -1210,41 +1210,41 @@ class TestCompareFastAndNormal:
 class TestLoadCIData(object):
 
     def test__load_all_data_components__has_correct_attributes(self):
-        data = ci_data.load_ci_data(frame_geometry=MockGeometry(), ci_pattern=MockPattern(),
-                                    ci_image_path=test_data_dir + '3x3_ones.fits', ci_image_hdu=0,
-                                    ci_noise_map_path=test_data_dir + '3x3_twos.fits', ci_noise_map_hdu=0,
-                                    ci_pre_cti_path=test_data_dir + '3x3_threes.fits', ci_pre_cti_hdu=0)
+        data = ci_data.load_ci_data_from_fits(frame_geometry=MockGeometry(), ci_pattern=MockPattern(),
+                                              ci_image_path=test_data_dir + '3x3_ones.fits', ci_image_hdu=0,
+                                              ci_noise_map_path=test_data_dir + '3x3_twos.fits', ci_noise_map_hdu=0,
+                                              ci_pre_cti_path=test_data_dir + '3x3_threes.fits', ci_pre_cti_hdu=0)
 
         assert (data.image == np.ones((3, 3))).all()
         assert (data.noise_map == 2.0 * np.ones((3, 3))).all()
         assert (data.ci_pre_cti == 3.0 * np.ones((3, 3))).all()
 
     def test__load_all_image_components__load_from_multi_hdu_fits(self):
-        data = ci_data.load_ci_data(frame_geometry=MockGeometry(), ci_pattern=MockPattern(),
-                                    ci_image_path=test_data_dir + '3x3_multiple_hdu.fits', ci_image_hdu=0,
-                                    ci_noise_map_path=test_data_dir + '3x3_multiple_hdu.fits', ci_noise_map_hdu=1,
-                                    ci_pre_cti_path=test_data_dir + '3x3_multiple_hdu.fits', ci_pre_cti_hdu=2)
+        data = ci_data.load_ci_data_from_fits(frame_geometry=MockGeometry(), ci_pattern=MockPattern(),
+                                              ci_image_path=test_data_dir + '3x3_multiple_hdu.fits', ci_image_hdu=0,
+                                              ci_noise_map_path=test_data_dir + '3x3_multiple_hdu.fits', ci_noise_map_hdu=1,
+                                              ci_pre_cti_path=test_data_dir + '3x3_multiple_hdu.fits', ci_pre_cti_hdu=2)
 
         assert (data.image == np.ones((3, 3))).all()
         assert (data.noise_map == 2.0 * np.ones((3, 3))).all()
         assert (data.ci_pre_cti == 3.0 * np.ones((3, 3))).all()
 
     def test__load_noise_map_from_single_value(self):
-        data = ci_data.load_ci_data(frame_geometry=MockGeometry(), ci_pattern=MockPattern(),
-                                    ci_image_path=test_data_dir + '3x3_ones.fits', ci_image_hdu=0,
-                                    ci_noise_map_from_single_value=10.0,
-                                    ci_pre_cti_path=test_data_dir + '3x3_threes.fits', ci_pre_cti_hdu=0)
+        data = ci_data.load_ci_data_from_fits(frame_geometry=MockGeometry(), ci_pattern=MockPattern(),
+                                              ci_image_path=test_data_dir + '3x3_ones.fits', ci_image_hdu=0,
+                                              ci_noise_map_from_single_value=10.0,
+                                              ci_pre_cti_path=test_data_dir + '3x3_threes.fits', ci_pre_cti_hdu=0)
 
         assert (data.image == np.ones((3, 3))).all()
         assert (data.noise_map == 10.0 * np.ones((3, 3))).all()
         assert (data.ci_pre_cti == 3.0 * np.ones((3, 3))).all()
 
     def test__load_ci_pre_cti_image_from_the_pattern_and_image(self):
-        data = ci_data.load_ci_data(frame_geometry=MockGeometry(),
-                                    ci_pattern=ci_pattern.CIPatternUniform(regions=[(0, 3, 0, 3)], normalization=10.0),
-                                    ci_image_path=test_data_dir + '3x3_ones.fits', ci_image_hdu=0,
-                                    ci_noise_map_path=test_data_dir + '3x3_twos.fits', ci_noise_map_hdu=0,
-                                    ci_pre_cti_from_image=True)
+        data = ci_data.load_ci_data_from_fits(frame_geometry=MockGeometry(),
+                                              ci_pattern=ci_pattern.CIPatternUniform(regions=[(0, 3, 0, 3)], normalization=10.0),
+                                              ci_image_path=test_data_dir + '3x3_ones.fits', ci_image_hdu=0,
+                                              ci_noise_map_path=test_data_dir + '3x3_twos.fits', ci_noise_map_hdu=0,
+                                              ci_pre_cti_from_image=True)
 
         assert (data.image == np.ones((3, 3))).all()
         assert (data.noise_map == 2.0 * np.ones((3, 3))).all()
