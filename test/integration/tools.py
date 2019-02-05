@@ -1,14 +1,13 @@
+import os
 import shutil
 
 from autocti.charge_injection import ci_data, ci_frame, ci_pattern
-
-import os
+from autocti.data import util
 
 dirpath = os.path.dirname(os.path.realpath(__file__))
 
 
 def reset_paths(test_name, output_path):
-
     try:
         shutil.rmtree(dirpath + '/data/' + test_name)
     except FileNotFoundError:
@@ -81,26 +80,6 @@ class CIQuadGeometryIntegration(ci_frame.FrameGeometry):
         """Coordinates of a serial trail of size dx from coordinate x"""
         return x, x + dx + 1
 
-    # def parallel_front_edge_region(self, region, rows=(0, 1)):
-    #     ci_frame.check_parallel_front_edge_size(region, rows)
-    #     return ci_frame.Region((region.y0 + rows[0], region.y0 + rows[1], region.x0, region.x1))
-    #
-    # def parallel_trails_region(self, region, rows=(0, 1)):
-    #     return ci_frame.Region((region.y1 + rows[0], region.y1 + rows[1], region.x0, region.x1))
-    #
-    # def parallel_side_nearest_read_out_region(self, region, image_shape, columns=(0, 1)):
-    #     return ci_frame.Region((0, image_shape[0], region.x0 + columns[0], region.x0 + columns[1]))
-    #
-    # def serial_front_edge_region(self, region, columns=(0, 1)):
-    #     ci_frame.check_serial_front_edge_size(region, columns)
-    #     return ci_frame.Region((region.y0, region.y1, region.x0 + columns[0], region.x0 + columns[1]))
-    #
-    # def serial_trails_region(self, region, columns=(0, 1)):
-    #     return ci_frame.Region((region.y0, region.y1, region.x1 + columns[0], region.x1 + columns[1]))
-    #
-    # def serial_ci_region_and_trails(self, region, image_shape, column):
-    #     return ci_frame.Region((region.y0, region.y1, column + region.x0, image_shape[1]))
-
 
 shape = (36, 36)
 ci_regions = [(1, 7, 1, 30), (17, 23, 1, 30)]
@@ -108,21 +87,20 @@ frame_geometry = CIQuadGeometryIntegration()
 
 
 def simulate_integration_quadrant(test_name, normalizations, cti_params, cti_settings):
-
     output_path = "{}/data/".format(os.path.dirname(os.path.realpath(__file__))) + test_name + '/'
 
-    if os.path.exists(output_path) == False:
+    if not os.path.exists(output_path):
         os.makedirs(output_path)
 
     sim_ci_patterns = ci_pattern.uniform_simulate_from_lists(normalizations=normalizations, regions=ci_regions)
 
     sim_ci_datas = list(map(lambda pattern:
-                            ci_data.CIImage.simulate(shape=shape, frame_geometry=frame_geometry,
-                                                     ci_pattern=pattern, cti_settings=cti_settings,
-                                                     cti_params=cti_params,
-                                                     read_noise=None),
+                            ci_data.simulate(shape=shape, frame_geometry=frame_geometry,
+                                             ci_pattern=pattern, cti_settings=cti_settings,
+                                             cti_params=cti_params,
+                                             read_noise=None),
                             sim_ci_patterns))
 
     list(map(lambda sim_ci_data, index:
-             sim_ci_data.output_as_fits(file_path=output_path + '/ci_data_' + str(index) + '.fits'),
+             util.numpy_array_to_fits(array=sim_ci_data, file_path=output_path + '/ci_data_' + str(index) + '.fits'),
              sim_ci_datas, range(len(sim_ci_datas))))

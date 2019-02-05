@@ -9,6 +9,7 @@ from autofit.tools import phase_property
 from autofit.tools.phase import ResultsCollection
 
 from autocti.charge_injection import ci_data as data, ci_frame
+from autocti.data import mask
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
 from autocti.pipeline import phase as ph
@@ -108,10 +109,10 @@ def make_ci_pattern():
 
 @pytest.fixture(name="ci_data")
 def make_ci_data(ci_geometry, ci_pattern):
-    image = data.CIImage(frame_geometry=ci_geometry, ci_pattern=ci_pattern, array=np.ones((3, 3)))
-    noise = ci_frame.CIFrame(ci_geometry, ci_pattern, np.ones((3, 3)))
-    ci_pre_cti = data.CIPreCTI(frame_geometry=ci_geometry, ci_pattern=ci_pattern, array=np.ones((3, 3)))
-    return data.CIData(image=image, noise_map=noise, ci_pre_cti=ci_pre_cti)
+    image = np.ones((3, 3))
+    noise = np.ones((3, 3))
+    ci_pre_cti = np.ones((3, 3))
+    return data.CIData(image=image, noise_map=noise, ci_pre_cti=ci_pre_cti, ci_pattern=ci_pattern, ci_frame=ci_geometry)
 
 
 @pytest.fixture(name="results")
@@ -161,7 +162,7 @@ class TestPhase(object):
 
     # noinspection PyUnresolvedReferences
     def test__default_data_extractor(self, ci_data, phase):
-        ci_datas_fit = phase.extract_ci_data(ci_data, data.CIMask.empty_for_image(ci_data.image))
+        ci_datas_fit = phase.extract_ci_data(ci_data, mask.Mask.empty_for_shape(ci_data.image.shape))
 
         assert isinstance(ci_datas_fit, data.CIDataFit)
         assert (ci_data.image == ci_datas_fit.image).all()
