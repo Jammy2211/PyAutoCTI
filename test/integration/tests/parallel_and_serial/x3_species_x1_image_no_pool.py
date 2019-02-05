@@ -57,10 +57,10 @@ def pipeline():
 
     pattern = ci_pattern.CIPatternUniform(normalization=normalizations[0], regions=ci_regions)
 
-    data = ci_data.load_ci_data(frame_geometry=frame_geometry, ci_pattern=pattern,
-                                ci_image_path=path + '/data/' + test_name + '/ci_data_0.fits',
-                                ci_noise_map_from_single_value=1.0,
-                                ci_pre_cti_from_image=True)
+    data = ci_data.load_ci_data_from_fits(frame_geometry=frame_geometry, ci_pattern=pattern,
+                                          ci_image_path=path + '/data/' + test_name + '/ci_data_0.fits',
+                                          ci_noise_map_from_single_value=1.0,
+                                          ci_pre_cti_from_image=True)
 
     pipeline = make_pipeline(test_name=test_name)
     pipeline.run(ci_datas=[data], cti_settings=cti_settings)

@@ -147,7 +147,7 @@ def simulate(shape, frame_geometry, ci_pattern, cti_params, cti_settings, read_n
         Seed for the read-noises added to the image.
     """
 
-    ci_pre_cti = ci_pattern.simulate_ci_pre_cti(shape)
+    ci_pre_cti = ci_pattern.simulate_ci_pre_cti(frame_geometry=frame_geometry, shape=shape)
     if cosmics is not None:
         ci_pre_cti += cosmics
 
@@ -195,6 +195,18 @@ class CIPreCTI(np.ndarray):
 
     def __new__(cls, frame_geometry, array, *args, **kwargs):
         return array.view(cls)
+
+    def output_as_fits(self, file_path, overwrite=False):
+        """Output the image ci_data as a fits file.
+
+        Params
+        ----------
+        path : str
+            The output nlo path of the ci_data
+        filename : str
+            The file phase_name of the output image.
+        """
+        util.numpy_array_to_fits(array=self, file_path=file_path, overwrite=overwrite)
 
     def add_cti_to_image(self, cti_params, cti_settings):
         self.frame_geometry.add_cti(self, cti_params, cti_settings)
@@ -305,11 +317,11 @@ class CIPreCTIFast(CIPreCTI):
         return post_cti_image
 
 
-def load_ci_data_list(frame_geometries, ci_patterns,
-                      ci_image_paths, ci_image_hdus=None,
-                      ci_noise_map_paths=None, ci_noise_map_hdus=None,
-                      ci_pre_cti_paths=None, ci_pre_cti_hdus=None, ci_pre_cti_from_image=False,
-                      masks=None):
+def load_ci_data_list_from_fits(frame_geometries, ci_patterns,
+                                ci_image_paths, ci_image_hdus=None,
+                                ci_noise_map_paths=None, ci_noise_map_hdus=None,
+                                ci_pre_cti_paths=None, ci_pre_cti_hdus=None, ci_pre_cti_from_image=False,
+                                masks=None):
     list_size = len(ci_image_paths)
 
     ci_datas = []
@@ -330,25 +342,25 @@ def load_ci_data_list(frame_geometries, ci_patterns,
         ci_pre_cti_hdus = list_size * [0]
 
     for data_index in range(list_size):
-        ci_data = load_ci_data(frame_geometry=frame_geometries[data_index], ci_pattern=ci_patterns[data_index],
-                               ci_image_path=ci_image_paths[data_index], ci_image_hdu=ci_image_hdus[data_index],
-                               ci_noise_map_path=ci_noise_map_paths[data_index],
-                               ci_noise_map_hdu=ci_noise_map_hdus[data_index],
-                               ci_pre_cti_path=ci_pre_cti_paths[data_index],
-                               ci_pre_cti_hdu=ci_pre_cti_hdus[data_index],
-                               ci_pre_cti_from_image=ci_pre_cti_from_image, mask=masks[data_index])
+        ci_data = load_ci_data_from_fits(frame_geometry=frame_geometries[data_index], ci_pattern=ci_patterns[data_index],
+                                         ci_image_path=ci_image_paths[data_index], ci_image_hdu=ci_image_hdus[data_index],
+                                         ci_noise_map_path=ci_noise_map_paths[data_index],
+                                         ci_noise_map_hdu=ci_noise_map_hdus[data_index],
+                                         ci_pre_cti_path=ci_pre_cti_paths[data_index],
+                                         ci_pre_cti_hdu=ci_pre_cti_hdus[data_index],
+                                         ci_pre_cti_from_image=ci_pre_cti_from_image, mask=masks[data_index])
 
         ci_datas.append(ci_data)
 
     return ci_datas
 
 
-def load_ci_data(frame_geometry, ci_pattern,
-                 ci_image_path, ci_image_hdu=0,
-                 ci_noise_map_path=None, ci_noise_map_hdu=0,
-                 ci_noise_map_from_single_value=None,
-                 ci_pre_cti_path=None, ci_pre_cti_hdu=0, ci_pre_cti_from_image=False,
-                 mask=None):
+def load_ci_data_from_fits(frame_geometry, ci_pattern,
+                           ci_image_path, ci_image_hdu=0,
+                           ci_noise_map_path=None, ci_noise_map_hdu=0,
+                           ci_noise_map_from_single_value=None,
+                           ci_pre_cti_path=None, ci_pre_cti_hdu=0, ci_pre_cti_from_image=False,
+                           mask=None):
     ci_image = util.numpy_array_from_fits(file_path=ci_image_path, hdu=ci_image_hdu)
 
     if ci_noise_map_path is not None:
