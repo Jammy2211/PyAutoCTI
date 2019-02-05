@@ -14,7 +14,7 @@ def make_data_plotter_setup():
 
 @pytest.fixture(name='mask')
 def make_mask():
-    return msk.Mask.empty_for_shape(shape=(6, 6), frame_geometry=MockGeometry(), ci_pattern=MockPattern())
+    return msk.Mask.empty_for_shape(shape=(6, 6))
 
 
 @pytest.fixture(name='image')

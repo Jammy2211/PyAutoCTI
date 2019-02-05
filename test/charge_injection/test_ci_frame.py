@@ -142,95 +142,19 @@ class TestChInj(object):
 
 
 class TestCIFrame(object):
-    class TestAllFunctionsReturnClassType:
-
-        def test__frame_in_frame_out(self):
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
-
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
-                                                                         [3.0, 4.0, 5.0],
-                                                                         [6.0, 7.0, 8.0],
-                                                                         [9.0, 10.0, 11.0]]))
-
-            new_frame = frame.ci_regions_frame_from_frame()
-
-            assert type(new_frame) == ci_frame.CIFrame
-            assert new_frame.frame_geometry == frame.frame_geometry
-            assert new_frame.ci_pattern == frame.ci_pattern
-
-            new_frame = frame.parallel_non_ci_regions_frame_from_frame()
-
-            assert type(new_frame) == ci_frame.CIFrame
-            assert new_frame.frame_geometry == frame.frame_geometry
-            assert new_frame.ci_pattern == frame.ci_pattern
-
-            new_frame = frame.parallel_edges_and_trails_frame_from_frame()
-
-            assert type(new_frame) == ci_frame.CIFrame
-            assert new_frame.frame_geometry == frame.frame_geometry
-            assert new_frame.ci_pattern == frame.ci_pattern
-
-            new_frame = frame.serial_all_trails_frame_from_frame()
-
-            assert type(new_frame) == ci_frame.CIFrame
-            assert new_frame.frame_geometry == frame.frame_geometry
-            assert new_frame.ci_pattern == frame.ci_pattern
-
-            new_frame = frame.serial_overscan_non_trails_frame_from_frame()
-
-            assert type(new_frame) == ci_frame.CIFrame
-            assert new_frame.frame_geometry == frame.frame_geometry
-            assert new_frame.ci_pattern == frame.ci_pattern
-
-            new_frame = frame.serial_edges_and_trails_frame_from_frame()
-
-            assert type(new_frame) == ci_frame.CIFrame
-            assert new_frame.frame_geometry == frame.frame_geometry
-            assert new_frame.ci_pattern == frame.ci_pattern
-
-            new_frame = frame.serial_calibration_section_for_column_and_rows(column=0, rows=(0, 3))
-
-            assert type(new_frame) == ci_frame.CIFrame
-            assert new_frame.frame_geometry == frame.frame_geometry
-            assert new_frame.ci_pattern == frame.ci_pattern
-
-            new_frame = frame.parallel_front_edge_arrays_from_frame(rows=(0, 1))
-
-            assert type(new_frame[0]) == ci_frame.CIFrame
-            assert new_frame[0].frame_geometry == frame.frame_geometry
-            assert new_frame[0].ci_pattern == frame.ci_pattern
-
-            new_frame = frame.parallel_trails_arrays_from_frame(rows=(0, 1))
-
-            assert type(new_frame[0]) == ci_frame.CIFrame
-            assert new_frame[0].frame_geometry == frame.frame_geometry
-            assert new_frame[0].ci_pattern == frame.ci_pattern
-
-            new_frame = frame.serial_front_edge_arrays_from_frame(columns=(0, 1))
-
-            assert type(new_frame[0]) == ci_frame.CIFrame
-            assert new_frame[0].frame_geometry == frame.frame_geometry
-            assert new_frame[0].ci_pattern == frame.ci_pattern
-
-            new_frame = frame.serial_trails_arrays_from_frame(columns=(0, 1))
-
-            assert type(new_frame[0]) == ci_frame.CIFrame
-            assert new_frame[0].frame_geometry == frame.frame_geometry
-            assert new_frame[0].ci_pattern == frame.ci_pattern
-
     class TestCiRegionArrayFromFrame:
 
         def test__1_ci_region__extracted_correctly(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
+            image = np.array([[0.0, 1.0, 2.0],
+                              [3.0, 4.0, 5.0],
+                              [6.0, 7.0, 8.0],
+                              [9.0, 10.0, 11.0]])
 
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
-                                                                         [3.0, 4.0, 5.0],
-                                                                         [6.0, 7.0, 8.0],
-                                                                         [9.0, 10.0, 11.0]]))
+                                     ci_pattern=pattern, array=image)
 
-            new_frame = frame.ci_regions_frame_from_frame()
+            new_frame = frame.ci_regions_from_array(image, )
 
             assert (new_frame == np.array([[0.0, 1.0, 2.0],
                                            [3.0, 4.0, 5.0],
@@ -239,14 +163,15 @@ class TestCIFrame(object):
 
         def test__2_ci_regions__extracted_correctly(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 1, 1, 2), (2, 3, 1, 3)])
+            image = np.array([[0.0, 1.0, 2.0],
+                              [3.0, 4.0, 5.0],
+                              [6.0, 7.0, 8.0],
+                              [9.0, 10.0, 11.0]])
 
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
-                                                                         [3.0, 4.0, 5.0],
-                                                                         [6.0, 7.0, 8.0],
-                                                                         [9.0, 10.0, 11.0]]))
+                                     ci_pattern=pattern, array=image)
 
-            new_frame = frame.ci_regions_frame_from_frame()
+            new_frame = frame.ci_regions_from_array(image, )
 
             assert (new_frame == np.array([[0.0, 1.0, 0.0],
                                            [0.0, 0.0, 0.0],
@@ -258,14 +183,16 @@ class TestCIFrame(object):
         def test__1_ci_region__pre_scan_and_overscan_in_corner__extracts_everything_outside_region_correctly(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
 
+            image = np.array([[0.0, 1.0, 2.0],
+                              [3.0, 4.0, 5.0],
+                              [6.0, 7.0, 8.0],
+                              [9.0, 10.0, 11.0]])
+
             frame = ci_frame.CIFrame(
                 frame_geometry=MockCIGeometry(serial_prescan=(0, 1, 0, 1), serial_overscan=(0, 1, 0, 1)),
-                ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
-                                                    [3.0, 4.0, 5.0],
-                                                    [6.0, 7.0, 8.0],
-                                                    [9.0, 10.0, 11.0]]))
+                ci_pattern=pattern, array=image)
 
-            new_frame = frame.parallel_non_ci_regions_frame_from_frame()
+            new_frame = frame.parallel_non_ci_regions_frame_from_frame(image, )
 
             assert (new_frame == np.array([[0.0, 0.0, 0.0],
                                            [0.0, 0.0, 0.0],
@@ -275,15 +202,17 @@ class TestCIFrame(object):
         def test__2_ci_regions__pre_scan_and_overscan_in_corner__extracts_everything_outside_region_correctly(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 1, 0, 3), (3, 4, 0, 3)])
 
+            image = np.array([[0.0, 1.0, 2.0],
+                              [3.0, 4.0, 5.0],
+                              [6.0, 7.0, 8.0],
+                              [9.0, 10.0, 11.0],
+                              [12.0, 13.0, 14.0]])
+
             frame = ci_frame.CIFrame(
                 frame_geometry=MockCIGeometry(serial_prescan=(0, 1, 0, 1), serial_overscan=(0, 1, 0, 1)),
-                ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
-                                                    [3.0, 4.0, 5.0],
-                                                    [6.0, 7.0, 8.0],
-                                                    [9.0, 10.0, 11.0],
-                                                    [12.0, 13.0, 14.0]]))
+                ci_pattern=pattern, array=image)
 
-            new_frame = frame.parallel_non_ci_regions_frame_from_frame()
+            new_frame = frame.parallel_non_ci_regions_frame_from_frame(image, )
 
             assert (new_frame == np.array([[0.0, 0.0, 0.0],
                                            [3.0, 4.0, 5.0],
@@ -294,15 +223,17 @@ class TestCIFrame(object):
         def test__2_ci_regions__serial_prescan_overlaps_an_extraction__extraction_goes_to_0(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 1, 0, 3), (3, 4, 0, 3)])
 
+            image = np.array([[0.0, 1.0, 2.0],
+                              [3.0, 4.0, 5.0],
+                              [6.0, 7.0, 8.0],
+                              [9.0, 10.0, 11.0],
+                              [12.0, 13.0, 14.0]])
+
             frame = ci_frame.CIFrame(frame_geometry=MockCIGeometry(serial_prescan=(1, 2, 0, 2),
                                                                    serial_overscan=(0, 1, 0, 1)),
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
-                                                                         [3.0, 4.0, 5.0],
-                                                                         [6.0, 7.0, 8.0],
-                                                                         [9.0, 10.0, 11.0],
-                                                                         [12.0, 13.0, 14.0]]))
+                                     ci_pattern=pattern, array=image)
 
-            new_frame = frame.parallel_non_ci_regions_frame_from_frame()
+            new_frame = frame.parallel_non_ci_regions_frame_from_frame(image, )
 
             assert (new_frame == np.array([[0.0, 0.0, 0.0],
                                            [0.0, 0.0, 5.0],
@@ -313,15 +244,17 @@ class TestCIFrame(object):
         def test__2_ci_regions__serial_overscan_overlaps_an_extraction__extraction_goes_to_0(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 1, 0, 3), (3, 4, 0, 3)])
 
+            image = np.array([[0.0, 1.0, 2.0],
+                              [3.0, 4.0, 5.0],
+                              [6.0, 7.0, 8.0],
+                              [9.0, 10.0, 11.0],
+                              [12.0, 13.0, 14.0]])
+
             frame = ci_frame.CIFrame(frame_geometry=MockCIGeometry(serial_prescan=(0, 1, 0, 1),
                                                                    serial_overscan=(1, 2, 1, 3)),
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
-                                                                         [3.0, 4.0, 5.0],
-                                                                         [6.0, 7.0, 8.0],
-                                                                         [9.0, 10.0, 11.0],
-                                                                         [12.0, 13.0, 14.0]]))
+                                     ci_pattern=pattern, array=image)
 
-            new_frame = frame.parallel_non_ci_regions_frame_from_frame()
+            new_frame = frame.parallel_non_ci_regions_frame_from_frame(image, )
 
             assert (new_frame == np.array([[0.0, 0.0, 0.0],
                                            [3.0, 0.0, 0.0],
@@ -334,13 +267,15 @@ class TestCIFrame(object):
         def test__front_edge_only__1_row__new_frame_is_just_that_edge(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
-                                                                         [3.0, 4.0, 5.0],
-                                                                         [6.0, 7.0, 8.0],
-                                                                         [9.0, 10.0, 11.0]]))
+            image = np.array([[0.0, 1.0, 2.0],
+                              [3.0, 4.0, 5.0],
+                              [6.0, 7.0, 8.0],
+                              [9.0, 10.0, 11.0]])
 
-            new_frame = frame.parallel_edges_and_trails_frame_from_frame(front_edge_rows=(0, 1))
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                     ci_pattern=pattern, array=image)
+
+            new_frame = frame.parallel_edges_and_trails_frame_from_frame(image, front_edge_rows=(0, 1))
 
             assert (new_frame == np.array([[0.0, 1.0, 2.0],
                                            [0.0, 0.0, 0.0],
@@ -350,13 +285,15 @@ class TestCIFrame(object):
         def test__front_edge_only__2_rows__new_frame_is_just_that_edge(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
-                                                                         [3.0, 4.0, 5.0],
-                                                                         [6.0, 7.0, 8.0],
-                                                                         [9.0, 10.0, 11.0]]))
+            image = np.array([[0.0, 1.0, 2.0],
+                              [3.0, 4.0, 5.0],
+                              [6.0, 7.0, 8.0],
+                              [9.0, 10.0, 11.0]])
 
-            new_frame = frame.parallel_edges_and_trails_frame_from_frame(front_edge_rows=(0, 2))
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                     ci_pattern=pattern, array=image)
+
+            new_frame = frame.parallel_edges_and_trails_frame_from_frame(image, front_edge_rows=(0, 2))
 
             assert (new_frame == np.array([[0.0, 1.0, 2.0],
                                            [3.0, 4.0, 5.0],
@@ -366,14 +303,16 @@ class TestCIFrame(object):
         def test__trails_only__1_row__new_frame_is_just_that_trail(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 4, 0, 3)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
-                                                                         [3.0, 4.0, 5.0],
-                                                                         [6.0, 7.0, 8.0],
-                                                                         [9.0, 10.0, 11.0],
-                                                                         [12.0, 13.0, 14.0]]))
+            image = np.array([[0.0, 1.0, 2.0],
+                              [3.0, 4.0, 5.0],
+                              [6.0, 7.0, 8.0],
+                              [9.0, 10.0, 11.0],
+                              [12.0, 13.0, 14.0]])
 
-            new_frame = frame.parallel_edges_and_trails_frame_from_frame(trails_rows=(0, 1))
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                     ci_pattern=pattern, array=image)
+
+            new_frame = frame.parallel_edges_and_trails_frame_from_frame(image, trails_rows=(0, 1))
 
             assert (new_frame == np.array([[0.0, 0.0, 0.0],
                                            [0.0, 0.0, 0.0],
@@ -384,15 +323,17 @@ class TestCIFrame(object):
         def test__trails_only__2_rows__new_frame_is_the_trails(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 4, 0, 3)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
-                                                                         [3.0, 4.0, 5.0],
-                                                                         [6.0, 7.0, 8.0],
-                                                                         [9.0, 10.0, 11.0],
-                                                                         [12.0, 13.0, 14.0],
-                                                                         [15.0, 16.0, 17.0]]))
+            image = np.array([[0.0, 1.0, 2.0],
+                              [3.0, 4.0, 5.0],
+                              [6.0, 7.0, 8.0],
+                              [9.0, 10.0, 11.0],
+                              [12.0, 13.0, 14.0],
+                              [15.0, 16.0, 17.0]])
 
-            new_frame = frame.parallel_edges_and_trails_frame_from_frame(trails_rows=(0, 2))
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                     ci_pattern=pattern, array=image)
+
+            new_frame = frame.parallel_edges_and_trails_frame_from_frame(image, trails_rows=(0, 2))
 
             assert (new_frame == np.array([[0.0, 0.0, 0.0],
                                            [0.0, 0.0, 0.0],
@@ -404,15 +345,18 @@ class TestCIFrame(object):
         def test__front_edge_and_trails__2_rows_of_each__new_frame_is_edge_and_trail(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 4, 0, 3)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
-                                                                         [3.0, 4.0, 5.0],
-                                                                         [6.0, 7.0, 8.0],
-                                                                         [9.0, 10.0, 11.0],
-                                                                         [12.0, 13.0, 14.0],
-                                                                         [15.0, 16.0, 17.0]]))
+            image = np.array([[0.0, 1.0, 2.0],
+                              [3.0, 4.0, 5.0],
+                              [6.0, 7.0, 8.0],
+                              [9.0, 10.0, 11.0],
+                              [12.0, 13.0, 14.0],
+                              [15.0, 16.0, 17.0]])
 
-            new_frame = frame.parallel_edges_and_trails_frame_from_frame(front_edge_rows=(0, 2), trails_rows=(0, 2))
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                     ci_pattern=pattern, array=image)
+
+            new_frame = frame.parallel_edges_and_trails_frame_from_frame(image, front_edge_rows=(0, 2),
+                                                                         trails_rows=(0, 2))
 
             assert (new_frame == np.array([[0.0, 1.0, 2.0],
                                            [3.0, 4.0, 5.0],
@@ -424,15 +368,18 @@ class TestCIFrame(object):
         def test__front_edge_and_trails__2_regions__1_row_of_each__new_frame_is_edge_and_trail(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 1, 0, 3), (3, 4, 0, 3)])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
-                                                                         [3.0, 4.0, 5.0],
-                                                                         [6.0, 7.0, 8.0],
-                                                                         [9.0, 10.0, 11.0],
-                                                                         [12.0, 13.0, 14.0],
-                                                                         [15.0, 16.0, 17.0]]))
+            image = np.array([[0.0, 1.0, 2.0],
+                              [3.0, 4.0, 5.0],
+                              [6.0, 7.0, 8.0],
+                              [9.0, 10.0, 11.0],
+                              [12.0, 13.0, 14.0],
+                              [15.0, 16.0, 17.0]])
 
-            new_frame = frame.parallel_edges_and_trails_frame_from_frame(front_edge_rows=(0, 1), trails_rows=(0, 1))
+            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                     ci_pattern=pattern, array=image)
+
+            new_frame = frame.parallel_edges_and_trails_frame_from_frame(image, front_edge_rows=(0, 1),
+                                                                         trails_rows=(0, 1))
 
             assert (new_frame == np.array([[0.0, 1.0, 2.0],
                                            [3.0, 4.0, 5.0],
@@ -455,7 +402,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            extracted_side = frame.parallel_calibration_section_for_columns(columns=(0, 1))
+            extracted_side = frame.parallel_calibration_section_for_columns(image, columns=(0, 1))
 
             assert (extracted_side == np.array([[0.0],
                                                 [0.0],
@@ -475,7 +422,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            extracted_side = frame.parallel_calibration_section_for_columns(columns=(1, 3))
+            extracted_side = frame.parallel_calibration_section_for_columns(image, columns=(1, 3))
 
             assert (extracted_side == np.array([[1.0, 2.0],
                                                 [1.0, 2.0],
@@ -495,7 +442,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
                                      array=image)
 
-            extracted_side = frame.parallel_calibration_section_for_columns(columns=(1, 3))
+            extracted_side = frame.parallel_calibration_section_for_columns(image, columns=(1, 3))
 
             assert (extracted_side == np.array([[0.0, 1.0],
                                                 [0.0, 1.0],
@@ -508,12 +455,13 @@ class TestCIFrame(object):
         def test__front_edge_only__1_column__new_frame_is_just_that_edge(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
 
+            image = np.array([[0.0, 1.0, 2.0, 3.0],
+                              [4.0, 5.0, 6.0, 7.0],
+                              [8.0, 9.0, 10.0, 11.0]])
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0, 3.0],
-                                                                         [4.0, 5.0, 6.0, 7.0],
-                                                                         [8.0, 9.0, 10.0, 11.0]]))
+                                     ci_pattern=pattern, array=image)
 
-            new_frame = frame.serial_edges_and_trails_frame_from_frame(front_edge_columns=(0, 1))
+            new_frame = frame.serial_edges_and_trails_frame_from_frame(image, front_edge_columns=(0, 1))
 
             assert (new_frame == np.array([[0.0, 0.0, 0.0, 0.0],
                                            [4.0, 0.0, 0.0, 0.0],
@@ -522,12 +470,13 @@ class TestCIFrame(object):
         def test__front_edge_only__2_columns__new_frame_is_just_that_edge(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
 
+            image = np.array([[0.0, 1.0, 2.0, 3.0],
+                              [4.0, 5.0, 6.0, 7.0],
+                              [8.0, 9.0, 10.0, 11.0]])
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0, 3.0],
-                                                                         [4.0, 5.0, 6.0, 7.0],
-                                                                         [8.0, 9.0, 10.0, 11.0]]))
+                                     ci_pattern=pattern, array=image)
 
-            new_frame = frame.serial_edges_and_trails_frame_from_frame(front_edge_columns=(0, 2))
+            new_frame = frame.serial_edges_and_trails_frame_from_frame(image, front_edge_columns=(0, 2))
 
             assert (new_frame == np.array([[0.0, 1.0, 0.0, 0.0],
                                            [4.0, 5.0, 0.0, 0.0],
@@ -536,12 +485,13 @@ class TestCIFrame(object):
         def test__trails_only__1_column__new_frame_is_just_that_trail(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 2)])
 
+            image = np.array([[0.0, 1.0, 2.0, 3.0],
+                              [4.0, 5.0, 6.0, 7.0],
+                              [8.0, 9.0, 10.0, 11.0]])
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0, 3.0],
-                                                                         [4.0, 5.0, 6.0, 7.0],
-                                                                         [8.0, 9.0, 10.0, 11.0]]))
+                                     ci_pattern=pattern, array=image)
 
-            new_frame = frame.serial_edges_and_trails_frame_from_frame(trails_columns=(0, 1))
+            new_frame = frame.serial_edges_and_trails_frame_from_frame(image, trails_columns=(0, 1))
 
             assert (new_frame == np.array([[0.0, 0.0, 2.0, 0.0],
                                            [0.0, 0.0, 6.0, 0.0],
@@ -550,12 +500,13 @@ class TestCIFrame(object):
         def test__trails_only__2_columns__new_frame_is_the_trails(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 2)])
 
+            image = np.array([[0.0, 1.0, 2.0, 3.0],
+                              [4.0, 5.0, 6.0, 7.0],
+                              [8.0, 9.0, 10.0, 11.0]])
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0, 3.0],
-                                                                         [4.0, 5.0, 6.0, 7.0],
-                                                                         [8.0, 9.0, 10.0, 11.0]]))
+                                     ci_pattern=pattern, array=image)
 
-            new_frame = frame.serial_edges_and_trails_frame_from_frame(trails_columns=(0, 2))
+            new_frame = frame.serial_edges_and_trails_frame_from_frame(image, trails_columns=(0, 2))
 
             assert (new_frame == np.array([[0.0, 0.0, 2.0, 3.0],
                                            [0.0, 0.0, 6.0, 7.0],
@@ -564,12 +515,14 @@ class TestCIFrame(object):
         def test__front_edge_and_trails__2_columns_of_each__new_frame_is_edge_and_trail(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 2)])
 
+            image = np.array([[0.0, 1.0, 1.1, 2.0, 3.0],
+                              [4.0, 5.0, 1.1, 6.0, 7.0],
+                              [8.0, 9.0, 1.1, 10.0, 11.0]])
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 1.1, 2.0, 3.0],
-                                                                         [4.0, 5.0, 1.1, 6.0, 7.0],
-                                                                         [8.0, 9.0, 1.1, 10.0, 11.0]]))
+                                     ci_pattern=pattern, array=image)
 
-            new_frame = frame.serial_edges_and_trails_frame_from_frame(front_edge_columns=(0, 1), trails_columns=(0, 2))
+            new_frame = frame.serial_edges_and_trails_frame_from_frame(image, front_edge_columns=(0, 1),
+                                                                       trails_columns=(0, 2))
 
             assert (new_frame == np.array([[0.0, 0.0, 1.1, 2.0, 0.0],
                                            [4.0, 0.0, 1.1, 6.0, 0.0],
@@ -578,12 +531,14 @@ class TestCIFrame(object):
         def test__front_edge_and_trails__2_regions_1_column_of_each__new_frame_is_edge_and_trail(self):
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 1), (0, 3, 3, 4)])
 
+            image = np.array([[0.0, 1.0, 1.1, 2.0, 3.0],
+                              [4.0, 5.0, 1.1, 6.0, 7.0],
+                              [8.0, 9.0, 1.1, 10.0, 11.0]])
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 1.1, 2.0, 3.0],
-                                                                         [4.0, 5.0, 1.1, 6.0, 7.0],
-                                                                         [8.0, 9.0, 1.1, 10.0, 11.0]]))
+                                     ci_pattern=pattern, array=image)
 
-            new_frame = frame.serial_edges_and_trails_frame_from_frame(front_edge_columns=(0, 1), trails_columns=(0, 1))
+            new_frame = frame.serial_edges_and_trails_frame_from_frame(image, front_edge_columns=(0, 1),
+                                                                       trails_columns=(0, 1))
 
             assert (new_frame == np.array([[0.0, 1.0, 0.0, 2.0, 3.0],
                                            [4.0, 5.0, 0.0, 6.0, 7.0],
@@ -597,13 +552,15 @@ class TestCIFrame(object):
             frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             frame_geometry.serial_overscan = ci_frame.Region((0, 4, 2, 3))
 
-            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0],
-                                                                         [3.0, 4.0, 5.0],
-                                                                         [6.0, 7.0, 8.0],
-                                                                         [9.0, 10.0, 11.0]]))
+            image = np.array([[0.0, 1.0, 2.0],
+                              [3.0, 4.0, 5.0],
+                              [6.0, 7.0, 8.0],
+                              [9.0, 10.0, 11.0]])
 
-            new_frame = frame.serial_all_trails_frame_from_frame()
+            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
+                                     ci_pattern=pattern, array=image)
+
+            new_frame = frame.serial_all_trails_frame_from_frame(image, )
 
             assert (new_frame == np.array([[0.0, 0.0, 2.0],
                                            [0.0, 0.0, 5.0],
@@ -616,13 +573,15 @@ class TestCIFrame(object):
             frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             frame_geometry.serial_overscan = ci_frame.Region((0, 4, 2, 4))
 
-            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0, 0.5],
-                                                                         [3.0, 4.0, 5.0, 0.5],
-                                                                         [6.0, 7.0, 8.0, 0.5],
-                                                                         [9.0, 10.0, 11.0, 0.5]]))
+            image = np.array([[0.0, 1.0, 2.0, 0.5],
+                              [3.0, 4.0, 5.0, 0.5],
+                              [6.0, 7.0, 8.0, 0.5],
+                              [9.0, 10.0, 11.0, 0.5]])
 
-            new_frame = frame.serial_all_trails_frame_from_frame()
+            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
+                                     ci_pattern=pattern, array=image)
+
+            new_frame = frame.serial_all_trails_frame_from_frame(image, )
 
             assert (new_frame == np.array([[0.0, 0.0, 2.0, 0.5],
                                            [0.0, 0.0, 5.0, 0.5],
@@ -635,13 +594,15 @@ class TestCIFrame(object):
             frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             frame_geometry.serial_overscan = ci_frame.Region((0, 4, 2, 4))
 
-            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0, 0.5],
-                                                                         [3.0, 4.0, 5.0, 0.5],
-                                                                         [6.0, 7.0, 8.0, 0.5],
-                                                                         [9.0, 10.0, 11.0, 0.5]]))
+            image = np.array([[0.0, 1.0, 2.0, 0.5],
+                              [3.0, 4.0, 5.0, 0.5],
+                              [6.0, 7.0, 8.0, 0.5],
+                              [9.0, 10.0, 11.0, 0.5]])
 
-            new_frame = frame.serial_all_trails_frame_from_frame()
+            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
+                                     ci_pattern=pattern, array=image)
+
+            new_frame = frame.serial_all_trails_frame_from_frame(image, )
 
             assert (new_frame == np.array([[0.0, 0.0, 2.0, 0.5],
                                            [0.0, 0.0, 0.0, 0.0],
@@ -654,13 +615,15 @@ class TestCIFrame(object):
             frame_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
             frame_geometry.serial_overscan = ci_frame.Region((0, 4, 0, 2))
 
-            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0, 0.5],
-                                                                         [3.0, 4.0, 5.0, 0.5],
-                                                                         [6.0, 7.0, 8.0, 0.5],
-                                                                         [9.0, 10.0, 11.0, 0.5]]))
+            image = np.array([[0.0, 1.0, 2.0, 0.5],
+                              [3.0, 4.0, 5.0, 0.5],
+                              [6.0, 7.0, 8.0, 0.5],
+                              [9.0, 10.0, 11.0, 0.5]])
 
-            new_frame = frame.serial_all_trails_frame_from_frame()
+            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
+                                     ci_pattern=pattern, array=image)
+
+            new_frame = frame.serial_all_trails_frame_from_frame(image, )
 
             assert (new_frame == np.array([[0.0, 1.0, 0.0, 0.0],
                                            [0.0, 0.0, 0.0, 0.0],
@@ -676,12 +639,14 @@ class TestCIFrame(object):
             frame_geometry.serial_prescan = ci_frame.Region((0, 3, 0, 1))
             frame_geometry.serial_overscan = ci_frame.Region((0, 3, 2, 4))
 
-            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0, 3.0],
-                                                                         [4.0, 5.0, 6.0, 7.0],
-                                                                         [8.0, 9.0, 10.0, 11.0]]))
+            image = np.array([[0.0, 1.0, 2.0, 3.0],
+                              [4.0, 5.0, 6.0, 7.0],
+                              [8.0, 9.0, 10.0, 11.0]])
 
-            new_frame = frame.serial_overscan_non_trails_frame_from_frame()
+            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
+                                     ci_pattern=pattern, array=image)
+
+            new_frame = frame.serial_overscan_non_trails_frame_from_frame(image, )
 
             assert (new_frame == np.array([[0.0, 0.0, 2.0, 3.0],
                                            [0.0, 0.0, 0.0, 0.0],
@@ -694,12 +659,14 @@ class TestCIFrame(object):
             frame_geometry.serial_prescan = ci_frame.Region((0, 3, 0, 1))
             frame_geometry.serial_overscan = ci_frame.Region((0, 3, 3, 4))
 
-            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0, 3.0],
-                                                                         [4.0, 5.0, 6.0, 7.0],
-                                                                         [8.0, 9.0, 10.0, 11.0]]))
+            image = np.array([[0.0, 1.0, 2.0, 3.0],
+                              [4.0, 5.0, 6.0, 7.0],
+                              [8.0, 9.0, 10.0, 11.0]])
 
-            new_frame = frame.serial_overscan_non_trails_frame_from_frame()
+            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
+                                     ci_pattern=pattern, array=image)
+
+            new_frame = frame.serial_overscan_non_trails_frame_from_frame(image, )
 
             assert (new_frame == np.array([[0.0, 0.0, 0.0, 3.0],
                                            [0.0, 0.0, 0.0, 0.0],
@@ -712,14 +679,16 @@ class TestCIFrame(object):
             frame_geometry.serial_prescan = ci_frame.Region((0, 5, 0, 1))
             frame_geometry.serial_overscan = ci_frame.Region((0, 5, 3, 4))
 
-            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
-                                     ci_pattern=pattern, array=np.array([[0.0, 1.0, 2.0, 3.0],
-                                                                         [4.0, 5.0, 6.0, 7.0],
-                                                                         [8.0, 9.0, 10.0, 11.0],
-                                                                         [12.0, 13.0, 14.0, 15.0],
-                                                                         [16.0, 17.0, 18.0, 19.0]]))
+            image = np.array([[0.0, 1.0, 2.0, 3.0],
+                              [4.0, 5.0, 6.0, 7.0],
+                              [8.0, 9.0, 10.0, 11.0],
+                              [12.0, 13.0, 14.0, 15.0],
+                              [16.0, 17.0, 18.0, 19.0]])
 
-            new_frame = frame.serial_overscan_non_trails_frame_from_frame()
+            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
+                                     ci_pattern=pattern, array=image)
+
+            new_frame = frame.serial_overscan_non_trails_frame_from_frame(image, )
 
             assert (new_frame == np.array([[0.0, 0.0, 0.0, 3.0],
                                            [0.0, 0.0, 0.0, 0.0],
@@ -735,14 +704,18 @@ class TestCIFrame(object):
             frame_geometry.serial_prescan = ci_frame.Region((0, 5, 3, 4))
             frame_geometry.serial_overscan = ci_frame.Region((0, 5, 0, 1))
 
-            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
-                                     ci_pattern=pattern, array=np.array([[0.5, 1.0, 2.0, 3.0],
-                                                                         [4.0, 5.0, 6.0, 7.0],
-                                                                         [8.0, 9.0, 10.0, 11.0],
-                                                                         [12.0, 13.0, 14.0, 15.0],
-                                                                         [16.0, 17.0, 18.0, 19.0]]))
+            image = np.array([[0.5, 1.0, 2.0, 3.0],
+                              [4.0, 5.0, 6.0, 7.0],
+                              [8.0, 9.0, 10.0, 11.0],
+                              [12.0, 13.0, 14.0, 15.0],
+                              [16.0, 17.0, 18.0, 19.0]])
 
-            new_frame = frame.serial_overscan_non_trails_frame_from_frame()
+            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
+                                     ci_pattern=pattern, array=image)
+
+            new_frame = frame.serial_overscan_non_trails_frame_from_frame(image, )
+
+            print(new_frame)
 
             assert (new_frame == np.array([[0.5, 0.0, 0.0, 0.0],
                                            [0.0, 0.0, 0.0, 0.0],
@@ -762,7 +735,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            serial_frame = frame.serial_calibration_section_for_column_and_rows(column=0, rows=(0, 3))
+            serial_frame = frame.serial_calibration_section_for_column_and_rows(image, column=0, rows=(0, 3))
 
             assert (serial_frame[0] == np.array([[0.0, 1.0, 2.0, 3.0, 4.0],
                                                  [0.0, 1.0, 2.0, 3.0, 4.0],
@@ -778,7 +751,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            serial_frame = frame.serial_calibration_section_for_column_and_rows(column=1, rows=(0, 1))
+            serial_frame = frame.serial_calibration_section_for_column_and_rows(image, column=1, rows=(0, 1))
 
             assert (serial_frame == np.array([[2.0, 2.0, 2.0],
                                               [4.0, 4.0, 4.0]])).all()
@@ -793,7 +766,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
                                      array=image)
 
-            serial_frame = frame.serial_calibration_section_for_column_and_rows(column=1, rows=(0, 1))
+            serial_frame = frame.serial_calibration_section_for_column_and_rows(image, column=1, rows=(0, 1))
 
             assert (serial_frame == np.array([[0.0, 1.0, 2.0],
                                               [0.0, 1.0, 4.0]])).all()
@@ -808,7 +781,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            serial_frame = frame.serial_calibration_section_for_column_and_rows(column=0, rows=(0, 2))
+            serial_frame = frame.serial_calibration_section_for_column_and_rows(image, column=0, rows=(0, 2))
 
             assert (serial_frame == np.array([[0.0, 1.0, 2.0, 3.0, 4.0],
                                               [0.0, 1.0, 2.0, 3.0, 4.0]])).all()
@@ -825,7 +798,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
                                      array=image)
 
-            serial_frame = frame.serial_calibration_section_for_column_and_rows(column=1, rows=(0, 1))
+            serial_frame = frame.serial_calibration_section_for_column_and_rows(image, column=1, rows=(0, 1))
 
             assert (serial_frame == np.array([[0.0, 1.0, 2.0],
                                               [0.0, 1.0, 5.0]])).all()
@@ -842,7 +815,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
                                      array=image)
 
-            serial_frame = frame.serial_calibration_section_for_column_and_rows(column=1, rows=(1, 2))
+            serial_frame = frame.serial_calibration_section_for_column_and_rows(image, column=1, rows=(1, 2))
 
             assert (serial_frame == np.array([[0.0, 1.0, 3.0],
                                               [0.0, 1.0, 6.0]])).all()
@@ -859,7 +832,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            serial_region = frame.serial_calibration_sub_arrays_from_frame(column=0)
+            serial_region = frame.serial_calibration_sub_arrays_from_frame(image, column=0)
 
             assert (serial_region[0] == np.array([[0.0, 1.0, 2.0, 3.0, 4.0],
                                                   [0.0, 1.0, 2.0, 3.0, 4.0],
@@ -875,7 +848,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            serial_region = frame.serial_calibration_sub_arrays_from_frame(column=0)
+            serial_region = frame.serial_calibration_sub_arrays_from_frame(image, column=0)
 
             assert (serial_region[0] == np.array([[0.0, 1.0, 2.0, 3.0, 4.0],
                                                   [0.0, 1.0, 2.0, 3.0, 4.0],
@@ -891,7 +864,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            serial_region = frame.serial_calibration_sub_arrays_from_frame(column=0)
+            serial_region = frame.serial_calibration_sub_arrays_from_frame(image, column=0)
 
             assert (serial_region[0] == np.array([[1.0, 2.0, 3.0, 4.0],
                                                   [1.0, 2.0, 3.0, 4.0],
@@ -907,7 +880,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            serial_region = frame.serial_calibration_sub_arrays_from_frame(column=1)
+            serial_region = frame.serial_calibration_sub_arrays_from_frame(image, column=1)
 
             assert (serial_region[0] == np.array([[2.0, 3.0, 4.0],
                                                   [2.0, 3.0, 4.0],
@@ -923,7 +896,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
                                      array=image)
 
-            serial_region = frame.serial_calibration_sub_arrays_from_frame(column=0)
+            serial_region = frame.serial_calibration_sub_arrays_from_frame(image, column=0)
 
             assert (serial_region[0] == np.array([[0.0, 1.0, 2.0, 3.0],
                                                   [0.0, 1.0, 2.0, 3.0],
@@ -939,7 +912,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
                                      array=image)
 
-            serial_region = frame.serial_calibration_sub_arrays_from_frame(column=1)
+            serial_region = frame.serial_calibration_sub_arrays_from_frame(image, column=1)
 
             assert (serial_region[0] == np.array([[0.0, 1.0, 2.0],
                                                   [0.0, 1.0, 2.0],
@@ -955,7 +928,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            serial_region = frame.serial_calibration_sub_arrays_from_frame(column=1)
+            serial_region = frame.serial_calibration_sub_arrays_from_frame(image, column=1)
 
             assert (serial_region[0] == np.array([[2.0, 2.0, 2.0]])).all()
             assert (serial_region[1] == np.array([[4.0, 4.0, 4.0]])).all()
@@ -979,15 +952,15 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            front_edge = frame.parallel_front_edge_arrays_from_frame(rows=(0, 1))
+            front_edge = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 1))
 
             assert (front_edge == np.array([[1.0, 1.0, 1.0]])).all()
 
-            front_edge = frame.parallel_front_edge_arrays_from_frame(rows=(1, 2))
+            front_edge = frame.parallel_front_edge_arrays_from_frame(image, rows=(1, 2))
 
             assert (front_edge == np.array([[2.0, 2.0, 2.0]])).all()
 
-            front_edge = frame.parallel_front_edge_arrays_from_frame(rows=(2, 3))
+            front_edge = frame.parallel_front_edge_arrays_from_frame(image, rows=(2, 3))
 
             assert (front_edge == np.array([[3.0, 3.0, 3.0]])).all()
 
@@ -1008,12 +981,12 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            front_edge = frame.parallel_front_edge_arrays_from_frame(rows=(0, 2))
+            front_edge = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 2))
 
             assert (front_edge == np.array([[1.0, 1.0, 1.0],
                                             [2.0, 2.0, 2.0]])).all()
 
-            front_edge = frame.parallel_front_edge_arrays_from_frame(rows=(1, 4))
+            front_edge = frame.parallel_front_edge_arrays_from_frame(image, rows=(1, 4))
 
             assert (front_edge == np.array([[2.0, 2.0, 2.0],
                                             [3.0, 3.0, 3.0],
@@ -1036,22 +1009,22 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            front_edges = frame.parallel_front_edge_arrays_from_frame(rows=(0, 1))
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 1))
 
             assert (front_edges[0] == np.array([[1.0, 1.0, 1.0]])).all()
             assert (front_edges[1] == np.array([[5.0, 5.0, 5.0]])).all()
 
-            front_edges = frame.parallel_front_edge_arrays_from_frame(rows=(1, 2))
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(1, 2))
 
             assert (front_edges[0] == np.array([[2.0, 2.0, 2.0]])).all()
             assert (front_edges[1] == np.array([[6.0, 6.0, 6.0]])).all()
 
-            front_edges = frame.parallel_front_edge_arrays_from_frame(rows=(2, 3))
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(2, 3))
 
             assert (front_edges[0] == np.array([[3.0, 3.0, 3.0]])).all()
             assert (front_edges[1] == np.array([[7.0, 7.0, 7.0]])).all()
 
-            front_edges = frame.parallel_front_edge_arrays_from_frame(rows=(0, 3))
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 3))
             assert (front_edges[0] == np.array([[1.0, 1.0, 1.0],
                                                 [2.0, 2.0, 2.0],
                                                 [3.0, 3.0, 3.0]])).all()
@@ -1076,22 +1049,22 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), ci_pattern=pattern,
                                      array=image)
 
-            front_edges = frame.parallel_front_edge_arrays_from_frame(rows=(0, 1))
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 1))
 
             assert (front_edges[0] == np.array([[4.0, 4.0, 4.0]])).all()
             assert (front_edges[1] == np.array([[8.0, 8.0, 8.0]])).all()
 
-            front_edges = frame.parallel_front_edge_arrays_from_frame(rows=(1, 2))
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(1, 2))
 
             assert (front_edges[0] == np.array([[3.0, 3.0, 3.0]])).all()
             assert (front_edges[1] == np.array([[7.0, 7.0, 7.0]])).all()
 
-            front_edges = frame.parallel_front_edge_arrays_from_frame(rows=(2, 3))
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(2, 3))
 
             assert (front_edges[0] == np.array([[2.0, 2.0, 2.0]])).all()
             assert (front_edges[1] == np.array([[6.0, 6.0, 6.0]])).all()
 
-            front_edges = frame.parallel_front_edge_arrays_from_frame(rows=(0, 3))
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 3))
             assert (front_edges[0] == np.array([[2.0, 2.0, 2.0],
                                                 [3.0, 3.0, 3.0],
                                                 [4.0, 4.0, 4.0]])).all()
@@ -1119,15 +1092,15 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            trails = frame.parallel_trails_arrays_from_frame(rows=(0, 1))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 1))
 
             assert (trails == np.array([[3.0, 3.0, 3.0]])).all()
 
-            trails = frame.parallel_trails_arrays_from_frame(rows=(1, 2))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(1, 2))
 
             assert (trails == np.array([[4.0, 4.0, 4.0]])).all()
 
-            trails = frame.parallel_trails_arrays_from_frame(rows=(2, 3))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(2, 3))
 
             assert (trails == np.array([[5.0, 5.0, 5.0]])).all()
 
@@ -1148,17 +1121,17 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            trails = frame.parallel_trails_arrays_from_frame(rows=(0, 2))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 2))
 
             assert (trails == np.array([[3.0, 3.0, 3.0],
                                         [4.0, 4.0, 4.0]])).all()
 
-            trails = frame.parallel_trails_arrays_from_frame(rows=(1, 3))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(1, 3))
 
             assert (trails == np.array([[4.0, 4.0, 4.0],
                                         [5.0, 5.0, 5.0]])).all()
 
-            trails = frame.parallel_trails_arrays_from_frame(rows=(1, 4))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(1, 4))
 
             assert (trails == np.array([[4.0, 4.0, 4.0],
                                         [5.0, 5.0, 5.0],
@@ -1183,19 +1156,19 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            trails = frame.parallel_trails_arrays_from_frame(rows=(0, 1))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 1))
 
             assert (trails[0] == np.array([[3.0, 3.0, 3.0]])).all()
             assert (trails[1] == np.array([[6.0, 6.0, 6.0]])).all()
 
-            trails = frame.parallel_trails_arrays_from_frame(rows=(0, 2))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 2))
 
             assert (trails[0] == np.array([[3.0, 3.0, 3.0],
                                            [4.0, 4.0, 4.0]])).all()
             assert (trails[1] == np.array([[6.0, 6.0, 6.0],
                                            [7.0, 7.0, 7.0]])).all()
 
-            trails = frame.parallel_trails_arrays_from_frame(rows=(1, 4))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(1, 4))
 
             assert (trails[0] == np.array([[4.0, 4.0, 4.0],
                                            [5.0, 5.0, 5.0],
@@ -1223,19 +1196,19 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), ci_pattern=pattern,
                                      array=image)
 
-            trails = frame.parallel_trails_arrays_from_frame(rows=(0, 1))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 1))
 
             assert (trails[0] == np.array([[2.0, 2.0, 2.0]])).all()
             assert (trails[1] == np.array([[8.0, 8.0, 8.0]])).all()
 
-            trails = frame.parallel_trails_arrays_from_frame(rows=(0, 2))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 2))
 
             assert (trails[0] == np.array([[1.0, 1.0, 1.0],
                                            [2.0, 2.0, 2.0]])).all()
             assert (trails[1] == np.array([[7.0, 7.0, 7.0],
                                            [8.0, 8.0, 8.0]])).all()
 
-            trails = frame.parallel_trails_arrays_from_frame(rows=(1, 3))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(1, 3))
 
             assert (trails[0] == np.array([[0.0, 0.0, 0.0],
                                            [1.0, 1.0, 1.0]])).all()
@@ -1256,19 +1229,19 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            front_edge = frame.serial_front_edge_arrays_from_frame(columns=(0, 1))
+            front_edge = frame.serial_front_edge_arrays_from_frame(image, columns=(0, 1))
 
             assert (front_edge == np.array([[1.0],
                                             [1.0],
                                             [1.0]])).all()
 
-            front_edge = frame.serial_front_edge_arrays_from_frame(columns=(1, 2))
+            front_edge = frame.serial_front_edge_arrays_from_frame(image, columns=(1, 2))
 
             assert (front_edge == np.array([[2.0],
                                             [2.0],
                                             [2.0]])).all()
 
-            front_edge = frame.serial_front_edge_arrays_from_frame(columns=(2, 3))
+            front_edge = frame.serial_front_edge_arrays_from_frame(image, columns=(2, 3))
 
             assert (front_edge == np.array([[3.0],
                                             [3.0],
@@ -1286,13 +1259,13 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            front_edge = frame.serial_front_edge_arrays_from_frame(columns=(0, 2))
+            front_edge = frame.serial_front_edge_arrays_from_frame(image, columns=(0, 2))
 
             assert (front_edge == np.array([[1.0, 2.0],
                                             [1.0, 2.0],
                                             [1.0, 2.0]])).all()
 
-            front_edge = frame.serial_front_edge_arrays_from_frame(columns=(1, 4))
+            front_edge = frame.serial_front_edge_arrays_from_frame(image, columns=(1, 4))
 
             assert (front_edge == np.array([[2.0, 3.0, 4.0],
                                             [2.0, 3.0, 4.0],
@@ -1310,7 +1283,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            front_edges = frame.serial_front_edge_arrays_from_frame(columns=(0, 1))
+            front_edges = frame.serial_front_edge_arrays_from_frame(image, columns=(0, 1))
 
             assert (front_edges[0] == np.array([[1.0],
                                                 [1.0],
@@ -1319,7 +1292,7 @@ class TestCIFrame(object):
                                                 [5.0],
                                                 [5.0]])).all()
 
-            front_edges = frame.serial_front_edge_arrays_from_frame(columns=(1, 2))
+            front_edges = frame.serial_front_edge_arrays_from_frame(image, columns=(1, 2))
 
             assert (front_edges[0] == np.array([[2.0],
                                                 [2.0],
@@ -1328,7 +1301,7 @@ class TestCIFrame(object):
                                                 [6.0],
                                                 [6.0]])).all()
 
-            front_edges = frame.serial_front_edge_arrays_from_frame(columns=(2, 3))
+            front_edges = frame.serial_front_edge_arrays_from_frame(image, columns=(2, 3))
 
             assert (front_edges[0] == np.array([[3.0],
                                                 [3.0],
@@ -1337,7 +1310,7 @@ class TestCIFrame(object):
                                                 [7.0],
                                                 [7.0]])).all()
 
-            front_edges = frame.serial_front_edge_arrays_from_frame(columns=(0, 3))
+            front_edges = frame.serial_front_edge_arrays_from_frame(image, columns=(0, 3))
 
             assert (front_edges[0] == np.array([[1.0, 2.0, 3.0],
                                                 [1.0, 2.0, 3.0],
@@ -1359,7 +1332,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
                                      array=image)
 
-            front_edges = frame.serial_front_edge_arrays_from_frame(columns=(0, 1))
+            front_edges = frame.serial_front_edge_arrays_from_frame(image, columns=(0, 1))
 
             assert (front_edges[0] == np.array([[3.0],
                                                 [3.0],
@@ -1368,7 +1341,7 @@ class TestCIFrame(object):
                                                 [7.0],
                                                 [7.0]])).all()
 
-            front_edges = frame.serial_front_edge_arrays_from_frame(columns=(1, 2))
+            front_edges = frame.serial_front_edge_arrays_from_frame(image, columns=(1, 2))
 
             assert (front_edges[0] == np.array([[2.0],
                                                 [2.0],
@@ -1377,7 +1350,7 @@ class TestCIFrame(object):
                                                 [6.0],
                                                 [6.0]])).all()
 
-            front_edges = frame.serial_front_edge_arrays_from_frame(columns=(2, 3))
+            front_edges = frame.serial_front_edge_arrays_from_frame(image, columns=(2, 3))
 
             assert (front_edges[0] == np.array([[1.0],
                                                 [1.0],
@@ -1386,7 +1359,7 @@ class TestCIFrame(object):
                                                 [5.0],
                                                 [5.0]])).all()
 
-            front_edges = frame.serial_front_edge_arrays_from_frame(columns=(0, 3))
+            front_edges = frame.serial_front_edge_arrays_from_frame(image, columns=(0, 3))
 
             assert (front_edges[0] == np.array([[1.0, 2.0, 3.0],
                                                 [1.0, 2.0, 3.0],
@@ -1410,19 +1383,19 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            trails = frame.serial_trails_arrays_from_frame(columns=(0, 1))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 1))
 
             assert (trails == np.array([[4.0],
                                         [4.0],
                                         [4.0]])).all()
 
-            trails = frame.serial_trails_arrays_from_frame(columns=(1, 2))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(1, 2))
 
             assert (trails == np.array([[5.0],
                                         [5.0],
                                         [5.0]])).all()
 
-            trails = frame.serial_trails_arrays_from_frame(columns=(2, 3))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(2, 3))
 
             assert (trails == np.array([[6.0],
                                         [6.0],
@@ -1440,13 +1413,13 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            trails = frame.serial_trails_arrays_from_frame(columns=(0, 2))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 2))
 
             assert (trails == np.array([[4.0, 5.0],
                                         [4.0, 5.0],
                                         [4.0, 5.0]])).all()
 
-            trails = frame.serial_trails_arrays_from_frame(columns=(1, 4))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(1, 4))
 
             assert (trails == np.array([[5.0, 6.0, 7.0],
                                         [5.0, 6.0, 7.0],
@@ -1464,7 +1437,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            trails = frame.serial_trails_arrays_from_frame(columns=(0, 1))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 1))
 
             assert (trails[0] == np.array([[4.0],
                                            [4.0],
@@ -1473,7 +1446,7 @@ class TestCIFrame(object):
                                            [8.0],
                                            [8.0]])).all()
 
-            trails = frame.serial_trails_arrays_from_frame(columns=(1, 2))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(1, 2))
 
             assert (trails[0] == np.array([[5.0],
                                            [5.0],
@@ -1482,7 +1455,7 @@ class TestCIFrame(object):
                                            [9.0],
                                            [9.0]])).all()
 
-            trails = frame.serial_trails_arrays_from_frame(columns=(2, 3))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(2, 3))
 
             assert (trails[0] == np.array([[6.0],
                                            [6.0],
@@ -1491,7 +1464,7 @@ class TestCIFrame(object):
                                            [10.0],
                                            [10.0]])).all()
 
-            trails = frame.serial_trails_arrays_from_frame(columns=(0, 3))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 3))
 
             assert (trails[0] == np.array([[4.0, 5.0, 6.0],
                                            [4.0, 5.0, 6.0],
@@ -1513,7 +1486,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
                                      array=image)
 
-            trails = frame.serial_trails_arrays_from_frame(columns=(0, 1))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 1))
 
             assert (trails[0] == np.array([[2.0],
                                            [2.0],
@@ -1522,7 +1495,7 @@ class TestCIFrame(object):
                                            [7.0],
                                            [7.0]])).all()
 
-            trails = frame.serial_trails_arrays_from_frame(columns=(1, 2))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(1, 2))
 
             assert (trails[0] == np.array([[1.0],
                                            [1.0],
@@ -1531,7 +1504,7 @@ class TestCIFrame(object):
                                            [6.0],
                                            [6.0]])).all()
 
-            trails = frame.serial_trails_arrays_from_frame(columns=(2, 3))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(2, 3))
 
             assert (trails[0] == np.array([[0.0],
                                            [0.0],
@@ -1540,7 +1513,7 @@ class TestCIFrame(object):
                                            [5.0],
                                            [5.0]])).all()
 
-            trails = frame.serial_trails_arrays_from_frame(columns=(0, 3))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 3))
 
             assert (trails[0] == np.array([[0.0, 1.0, 2.0],
                                            [0.0, 1.0, 2.0],
@@ -1566,7 +1539,7 @@ class TestCIFrame(object):
 
             frame.frame_geometry.serial_prescan = ci_frame.Region(region=(0, 4, 0, 1))
 
-            extracted_array = frame.parallel_serial_calibration_section()
+            extracted_array = frame.parallel_serial_calibration_section(image)
 
             assert (extracted_array == np.array([[1.0, 2.0, 3.0],
                                                  [1.0, 2.0, 3.0],
@@ -1588,7 +1561,7 @@ class TestCIFrame(object):
 
             frame.frame_geometry.serial_prescan = ci_frame.Region(region=(0, 4, 0, 2))
 
-            extracted_array = frame.parallel_serial_calibration_section()
+            extracted_array = frame.parallel_serial_calibration_section(image)
 
             assert (extracted_array == np.array([[2.0, 3.0],
                                                  [2.0, 3.0],
@@ -1610,10 +1583,10 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            mask = frame.mask_containing_only_serial_trails()
+            mask = frame.mask_containing_only_serial_trails(image, )
 
             assert type(mask) == msk.Mask
-            assert mask.frame_geometry == frame.frame_geometry
+
             assert (mask == np.array([[True, True, True, True, False, False, False, False, False, False],
                                       [True, True, True, True, False, False, False, False, False, False],
                                       [True, True, True, True, False, False, False, False, False, False]])).all()
@@ -1630,10 +1603,9 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
                                      array=image)
 
-            mask = frame.mask_containing_only_serial_trails()
+            mask = frame.mask_containing_only_serial_trails(image, )
 
             assert type(mask) == msk.Mask
-            assert mask.frame_geometry == frame.frame_geometry
             assert (mask == np.array([[True, True, True, True, False, False, False, False, False, False],
                                       [True, True, True, True, True, True, True, True, True, True],
                                       [True, True, True, True, False, False, False, False, False, False]])).all()

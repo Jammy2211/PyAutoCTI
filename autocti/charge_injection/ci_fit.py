@@ -27,9 +27,8 @@ class CIFit(fit.DataFit):
         self.cti_params = cti_params
         self.cti_settings = cti_settings
 
-        self.ci_post_cti = ci_data_fit.ci_pre_cti.ci_post_cti_from_cti_params_and_settings(
-            cti_params=self.cti_params,
-            cti_settings=self.cti_settings)
+        self.ci_post_cti = self.ci_data_fit.ci_frame.add_cti(self.ci_data_fit.ci_pre_cti, cti_params=self.cti_params,
+                                                             cti_settings=self.cti_settings)
 
         super(CIFit, self).__init__(data=ci_data_fit.image,
                                     noise_map=ci_data_fit.noise_map,
