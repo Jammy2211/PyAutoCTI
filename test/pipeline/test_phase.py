@@ -139,7 +139,8 @@ class TestPhase(object):
         assert phase.optimizer.variable.parallel_species == phase.parallel_species
         assert phase.optimizer.constant.parallel_species != [parallel]
 
-    def test__mask_analysis(self, phase, ci_data, cti_settings):
+    def test__make_analysis(self, phase, ci_data, cti_settings):
+
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
         assert analysis.last_results is None
         assert (analysis.ci_datas_fit[0].image == ci_data.image).all()
@@ -162,6 +163,7 @@ class TestPhase(object):
 
     # noinspection PyUnresolvedReferences
     def test__default_data_extractor(self, ci_data, phase):
+
         ci_datas_fit = phase.extract_ci_data(ci_data, mask.Mask.empty_for_shape(ci_data.image.shape))
 
         assert isinstance(ci_datas_fit, data.CIDataFit)

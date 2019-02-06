@@ -109,7 +109,7 @@ class Phase(ph.AbstractPhase):
     # noinspection PyMethodMayBeStatic
     def extract_ci_data(self, data, mask):
         return ci_data.CIDataFit(image=data.image, noise_map=data.noise_map, ci_pre_cti=data.ci_pre_cti, mask=mask,
-                                 ci_pattern=data.ci_pattern, ci_frame=data.ci_frame,noise_scaling=data.noise_scaling)
+                                 ci_pattern=data.ci_pattern, ci_frame=data.ci_frame)
 
     def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
         """
