@@ -763,6 +763,12 @@ class CIFrame(ChInj, np.ndarray):
     def __init__(self, frame_geometry, ci_pattern, array):
         super().__init__(frame_geometry, ci_pattern)
 
+    def __array_finalize__(self, obj):
+
+        if isinstance(obj, CIFrame):
+            self.frame_geometry = obj.frame_geometry
+            self.ci_pattern = obj.ci_pattern
+
     @classmethod
     def from_fits_and_ci_pattern(cls, file_path, hdu, frame_geometry, ci_pattern):
         """Load the image ci_data from a fits file.
