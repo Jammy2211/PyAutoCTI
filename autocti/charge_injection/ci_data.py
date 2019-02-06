@@ -60,14 +60,14 @@ class CIData(object):
                          ci_pattern=self.ci_pattern,
                          ci_frame=self.ci_frame)
 
-    def map_to_ci_data_hyper_fit(self, func, mask, noise_scaling=None):
+    def map_to_ci_data_hyper_fit(self, func, mask, noise_scaling_maps=None):
         return CIDataHyperFit(image=func(self.image),
                               noise_map=func(self.noise_map),
                               ci_pre_cti=func(self.ci_pre_cti),
                               mask=func(mask),
                               ci_pattern=self.ci_pattern,
                               ci_frame=self.ci_frame,
-                              noise_scaling=func(noise_scaling) if noise_scaling is not None else noise_scaling)
+                noise_scaling_maps=func(noise_scaling_maps) if noise_scaling_maps is not None else noise_scaling_maps)
 
     def parallel_calibration_data(self, columns, mask):
         return self.map_to_ci_data_fit(lambda obj: self.chinj.parallel_calibration_section_for_columns(obj, columns), mask)
@@ -95,6 +95,7 @@ class CIData(object):
 class CIDataFit(object):
 
     def __init__(self, image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame):
+
         """A fitting image is the collection of data components (e.g. the image, noise-maps, PSF, etc.) which are used \
         to generate and fit it with a model image.
 
@@ -127,11 +128,12 @@ class CIDataFit(object):
         self.mask = mask
         self.ci_pattern = ci_pattern
         self.ci_frame = ci_frame
+        self.is_hyper_data = False
 
 
 class CIDataHyperFit(CIDataFit):
 
-    def __init__(self, image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame, noise_scaling=None):
+    def __init__(self, image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame, noise_scaling_maps=None):
         """A fitting image is the collection of data components (e.g. the image, noise-maps, PSF, etc.) which are used \
         to generate and fit it with a model image.
 
@@ -161,7 +163,8 @@ class CIDataHyperFit(CIDataFit):
         super().__init__(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti, mask=mask, ci_pattern=ci_pattern,
                          ci_frame=ci_frame)
 
-        self.noise_scaling = noise_scaling
+        self.noise_scaling_maps = noise_scaling_maps
+        self.is_hyper_data = True
 
 
 def simulate(shape, frame_geometry, ci_pattern, cti_params, cti_settings, read_noise=None, cosmics=None,

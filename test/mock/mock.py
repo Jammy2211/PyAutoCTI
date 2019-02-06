@@ -14,6 +14,15 @@ class MockGeometry(object):
         super(MockGeometry, self).__init__()
 
 
+class MockCIFrame(object):
+
+    def __init__(self, value=1.0):
+
+        self.value = value
+
+    def add_cti(self, image, cti_params, cti_settings):
+        return self.value * np.ones((2, 2))
+
 class MockCIGeometry(object):
 
     def __init__(self, serial_prescan=(0, 1, 0, 1), serial_overscan=(0, 1, 0, 1)):

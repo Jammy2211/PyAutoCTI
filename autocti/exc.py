@@ -28,3 +28,7 @@ class RegionException(Exception):
 
 class PlottingException(Exception):
     pass
+
+
+class FittingException(Exception):
+    pass

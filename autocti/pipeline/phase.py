@@ -38,7 +38,8 @@ class ConsecutivePool(object):
 class Phase(ph.AbstractPhase):
 
     def make_result(self, result, analysis):
-        return self.__class__.Result(result.constant, result.figure_of_merit, result.variable, analysis)
+        return self.__class__.Result(constant=result.constant, figure_of_merit=result.figure_of_merit,
+                                     variable=result.variable, analysis=analysis, optimizer=self.optimizer)
 
     def __init__(self, optimizer_class=nl.DownhillSimplex, mask_function=msk.Mask.empty_for_shape, columns=None,
                  rows=None, phase_name=None):
@@ -104,7 +105,7 @@ class Phase(ph.AbstractPhase):
         result = self.optimizer.fit(analysis)
         if analysis.visualize_results:
             analysis.visualize(instance=result.constant, suffix=None, during_analysis=False)
-        return self.make_result(result, analysis)
+        return self.make_result(result=result, analysis=analysis)
 
     # noinspection PyMethodMayBeStatic
     def extract_ci_data(self, data, mask):
@@ -193,18 +194,29 @@ class Phase(ph.AbstractPhase):
         def log(cls, instance):
             raise NotImplementedError()
 
-        def fit_for_instance(self, instance):
-            cti_params = cti_params_for_instance(instance)
-            return ci_fit.CIFit(ci_data_fit=self.ci_datas_fit, cti_params=cti_params, cti_settings=self.cti_settings)
+        def fits_for_instance(self, instance):
+            cti_params = cti_params_for_instance(instance=instance)
+            return list(map(lambda ci_data_fit :
+                            ci_fit.fit_ci_data_fit_with_cti_params_and_settings(
+                            ci_data_fit=ci_data_fit, cti_params=cti_params, cti_settings=self.cti_settings),
+                            self.ci_datas_fit))
 
     class Result(nl.Result):
 
         # noinspection PyUnusedLocal
-        def __init__(self, constant, figure_of_merit, variable, *args):
+        def __init__(self, constant, figure_of_merit, variable, analysis, optimizer):
             """
             The result of a phase
             """
+
             super(Phase.Result, self).__init__(constant=constant, figure_of_merit=figure_of_merit, variable=variable)
+
+            self.analysis = analysis
+            self.optimizer = optimizer
+
+        @property
+        def most_likely_fits(self):
+            return self.analysis.fits_for_instance(instance=self.constant)
 
 
 class ParallelPhase(Phase):
@@ -343,12 +355,12 @@ class HyperAnalysis(Phase.Analysis):
             "Parallel CTI::\n{}\n\n "
             "Hyper Parameters:\n{}".format(instance.parallel, " ".join(cls.noises_from_instance(instance))))
 
-    def fit_for_instance(self, instance):
+    def fits_for_instance(self, instance):
         cti_params = cti_params_for_instance(instance)
-        return ci_fit.CIHyperFit(ci_data_fit=self.ci_datas_fit,
+        return ci_fit.CIHyperFit(ci_data_hyper_fit=self.ci_datas_fit,
                                  cti_params=cti_params,
                                  cti_settings=self.cti_settings,
-                                 hyper_noises=self.noises_from_instance(instance))
+                                 hyper_noise_scalers=self.noises_from_instance(instance))
 
     @classmethod
     def noises_from_instance(cls, instance):
@@ -453,8 +465,8 @@ def pipe_cti(ci_data_fit, cti_params, cti_settings):
 
 
 def pipe_cti_hyper(ci_data_fit, cti_params, cti_settings, hyper_noises):
-    fitter = ci_fit.CIHyperFit(ci_data_fit=ci_data_fit,
+    fitter = ci_fit.CIHyperFit(ci_data_hyper_fit=ci_data_fit,
                                cti_params=cti_params,
                                cti_settings=cti_settings,
-                               hyper_noises=hyper_noises)
+                               hyper_noise_scalers=hyper_noises)
     return fitter.figure_of_merit

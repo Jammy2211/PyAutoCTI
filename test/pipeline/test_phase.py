@@ -5,6 +5,7 @@ import pytest
 from autofit import conf
 from autofit.mapper import model_mapper as mm
 from autofit.optimize import non_linear as nl
+from autofit.mapper import prior_model
 from autofit.tools import phase_property
 from autofit.tools.phase import ResultsCollection
 
@@ -211,7 +212,21 @@ class TestPhase(object):
 class TestResult(object):
 
     def test_results(self):
+
         results = ResultsCollection([1, 2, 3])
         assert results == [1, 2, 3]
         assert results.last == 3
         assert results.first == 1
+
+    def test__results_of_phase_are_available_as_properties(self, ci_data, cti_settings):
+
+        phase = ph.ParallelPhase(optimizer_class=NLO,
+                                 parallel_species=[prior_model.PriorModel(arctic_params.Species)],
+                                 parallel_ccd=arctic_params.CCD, phase_name='test_phase')
+
+        result = phase.run(ci_datas=[ci_data], cti_settings=cti_settings)
+
+        print(dir(result))
+        print(result.most_likely_fits)
+
+        assert hasattr(result, 'most_likely_fits')
