@@ -200,14 +200,15 @@ class Phase(ph.AbstractPhase):
     class Result(nl.Result):
 
         # noinspection PyUnusedLocal
-        def __init__(self, constant, likelihood, variable, *args):
+        def __init__(self, constant, figure_of_merit, variable, *args):
             """
             The result of a phase
             """
-            super(Phase.Result, self).__init__(constant, likelihood, variable)
+            super(Phase.Result, self).__init__(constant=constant, figure_of_merit=figure_of_merit, variable=variable)
 
 
 class ParallelPhase(Phase):
+
     parallel_species = phase_property.PhasePropertyCollection("parallel_species")
     parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
 
@@ -243,12 +244,11 @@ class SerialPhase(Phase):
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 
     def __init__(self, serial_species=(), serial_ccd=None, optimizer_class=nl.MultiNest,
-                 mask_function=msk.Mask.empty_for_shape, columns=None, rows=None, phase_name="serial_phase"):
+                 mask_function=msk.Mask.empty_for_shape, rows=None, phase_name="serial_phase"):
         """
         A phase with a simple source/CTI model
         """
-        super().__init__(optimizer_class=optimizer_class, mask_function=mask_function, columns=columns,
-                         rows=rows, phase_name=phase_name)
+        super().__init__(optimizer_class=optimizer_class, mask_function=mask_function, rows=rows, phase_name=phase_name)
         self.serial_species = serial_species
         self.serial_ccd = serial_ccd
 
@@ -312,6 +312,7 @@ class ParallelSerialPhase(Phase):
 
 
 class HyperAnalysis(Phase.Analysis):
+
     def fit(self, instance):
         """
         Runs the analysis. Determine how well the supplied cti_params fits the image.
@@ -328,7 +329,7 @@ class HyperAnalysis(Phase.Analysis):
         Returns
         -------
         result: Result
-            An object comprising the final cti_params instances generated and a corresponding likelihood
+            An object comprising the final cti_params instances generated and a corresponding figure_of_merit
         """
         cti_params = cti_params_for_instance(instance)
         pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
@@ -355,6 +356,7 @@ class HyperAnalysis(Phase.Analysis):
 
 
 class ParallelHyperPhase(ParallelPhase):
+
     hyp_ci_regions = phase_property.PhaseProperty("hyp_ci_regions")
     hyp_parallel_trails = phase_property.PhaseProperty("hyp_parallel_trails")
 
@@ -369,24 +371,28 @@ class ParallelHyperPhase(ParallelPhase):
         optimizer_class: class
             The class of a non-linear optimizer
         """
+
         super().__init__(parallel_species=parallel_species, parallel_ccd=parallel_ccd, optimizer_class=optimizer_class,
                          mask_function=mask_function, columns=columns, phase_name=phase_name)
+
         self.hyp_ci_regions = hyp_ci_regions
         self.hyp_parallel_trails = hyp_parallel_trails
         self.has_noise_scalings = True
 
     class Analysis(HyperAnalysis, ParallelPhase.Analysis):
+
         @classmethod
         def noises_from_instance(cls, instance):
             return [instance.hyp_ci_regions, instance.hyp_parallel_trails]
 
 
 class SerialHyperPhase(SerialPhase):
+
     hyp_ci_regions = phase_property.PhaseProperty("hyp_ci_regions")
     hyp_serial_trails = phase_property.PhaseProperty("hyp_serial_trails")
 
     def __init__(self, serial_species=(), serial_ccd=None, hyp_ci_regions=None, hyp_serial_trails=None,
-                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, columns=None, rows=None,
+                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, rows=None,
                  phase_name="serial_hyper_phase"):
         """
         A phase with a simple source/CTI model
@@ -439,104 +445,11 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
                     instance.hyp_parallel_serial_trails]
 
 
-# noinspection PyAbstractClass
-class HyperOnly(ph.AbstractPhase):
-    pass
-
-
-class ParallelHyperOnlyPhase(ParallelHyperPhase, HyperOnly):
-    """
-    Fit only the CTI galaxy light.
-    """
-
-    def run(self, ci_datas, cti_settings, previous_results=None, pool=None):
-        class ParallelHyper(ParallelHyperPhase):
-            # noinspection PyShadowingNames
-            def pass_priors(self, previous_results):
-                self.parallel_species = previous_results.last.constant.parallel_species
-                self.parallel_ccd = previous_results.last.constant.parallel_ccd
-
-        phase = ParallelHyper(optimizer_class=nl.MultiNest, hyp_ci_regions=ci_hyper.CIHyperNoise,
-                              hyp_parallel_trails=ci_hyper.CIHyperNoise,
-                              phase_name=self.phase_name)
-
-        phase.optimizer.n_live_points = 20
-        phase.optimizer.sampling_efficiency = 0.8
-
-        hyper_result = phase.run(ci_datas, cti_settings, previous_results, pool)
-
-        analysis = self.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results,
-                                      pool=pool)
-
-        return self.make_result(hyper_result, analysis)
-
-
-class SerialHyperOnlyPhase(SerialHyperPhase, HyperOnly):
-    """
-    Fit only the CTI galaxy light.
-    """
-
-    def run(self, ci_datas, cti_settings, previous_results=None, pool=None):
-        class SerialHyper(SerialHyperPhase):
-            # noinspection PyShadowingNames
-            def pass_priors(self, previous_results):
-                self.serial_species = previous_results.last.constant.serial_species
-                self.serial_ccd = previous_results.last.constant.serial_ccd
-
-        phase = SerialHyper(optimizer_class=nl.MultiNest, hyp_ci_regions=ci_hyper.CIHyperNoise,
-                            hyp_serial_trails=ci_hyper.CIHyperNoise,
-                            phase_name=self.phase_name)
-
-        phase.optimizer.n_live_points = 20
-        phase.optimizer.sampling_efficiency = 0.8
-
-        hyper_result = phase.run(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results,
-                                 pool=pool)
-
-        analysis = self.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results,
-                                      pool=pool)
-
-        return self.make_result(hyper_result, analysis)
-
-
-class ParallelSerialHyperOnlyPhase(ParallelSerialHyperPhase, HyperOnly):
-    """
-    Fit only the CTI galaxy light.
-    """
-
-    def run(self, ci_datas, cti_settings, previous_results=None, pool=None):
-        class ParallelSerialHyper(ParallelSerialHyperPhase):
-            # noinspection PyShadowingNames
-            def pass_priors(self, previous_results):
-                self.serial_species = previous_results[-1].constant.serial_species
-                self.serial_ccd = previous_results[-1].constant.serial_ccd
-                self.parallel_species = previous_results[-1].constant.parallel_species
-                self.parallel_ccd = previous_results[-1].constant.parallel_ccd
-
-        phase = ParallelSerialHyper(optimizer_class=nl.MultiNest,
-                                    hyp_ci_regions=ci_hyper.CIHyperNoise,
-                                    hyp_parallel_trails=ci_hyper.CIHyperNoise,
-                                    hyp_serial_trails=ci_hyper.CIHyperNoise,
-                                    hyp_parallel_serial_trails=ci_hyper.CIHyperNoise,
-                                    phase_name=self.phase_name)
-
-        phase.optimizer.n_live_points = 50
-        phase.optimizer.sampling_efficiency = 0.5
-
-        hyper_result = phase.run(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results,
-                                 pool=pool)
-
-        analysis = self.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results,
-                                      pool=pool)
-
-        return self.make_result(hyper_result, analysis)
-
-
 def pipe_cti(ci_data_fit, cti_params, cti_settings):
     fitter = ci_fit.CIFit(ci_data_fit=ci_data_fit,
                           cti_params=cti_params,
                           cti_settings=cti_settings)
-    return fitter.likelihood
+    return fitter.figure_of_merit
 
 
 def pipe_cti_hyper(ci_data_fit, cti_params, cti_settings, hyper_noises):
@@ -544,4 +457,4 @@ def pipe_cti_hyper(ci_data_fit, cti_params, cti_settings, hyper_noises):
                                cti_params=cti_params,
                                cti_settings=cti_settings,
                                hyper_noises=hyper_noises)
-    return fitter.likelihood
+    return fitter.figure_of_merit
