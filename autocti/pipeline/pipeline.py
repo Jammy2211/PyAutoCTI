@@ -23,12 +23,8 @@ class Pipeline(object):
         results = []
         for i, phase in enumerate(self.phases):
             logger.info("Running Phase {} (Number {})".format(phase.phase_name, i))
-            if not isinstance(phase, ph.HyperOnly):
-                results.append(phase.run(ci_datas=ci_datas, cti_settings=cti_settings,
-                                         previous_results=ResultsCollection(results), pool=pool))
-            elif isinstance(phase, ph.HyperOnly):
-                results[-1].hyper = phase.run(ci_datas=ci_datas, cti_settings=cti_settings,
-                                              previous_results=ResultsCollection(results), pool=pool)
+            results.append(phase.run(ci_datas=ci_datas, cti_settings=cti_settings,
+                                     previous_results=ResultsCollection(results), pool=pool))
         return results
 
     def __add__(self, other):
