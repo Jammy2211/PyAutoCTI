@@ -263,10 +263,21 @@ class ParallelPhase(Phase):
                                                        variable=variable, analysis=analysis, optimizer=optimizer)
 
         @property
-        def noise_scaling_maps_of_images(self):
-            return list(map(lambda most_likely_fit : most_likely_fit.chi_squared_map , self.most_likely_fits))
+        def noise_scaling_maps(self):
+
+            noise_scaling_maps_of_ci_regions = list(map(lambda most_likely_fit :
+                                                        most_likely_fit.noise_scaling_map_of_ci_regions ,
+                                                        self.most_likely_fits))
+
+            noise_scaling_maps_of_parallel_trails = list(map(lambda most_likely_fit :
+                                                        most_likely_fit.noise_scaling_map_of_parallel_trails ,
+                                                        self.most_likely_fits))
+
+            return [noise_scaling_maps_of_ci_regions, noise_scaling_maps_of_parallel_trails]
+
 
 class SerialPhase(Phase):
+
     serial_species = phase_property.PhasePropertyCollection("serial_species")
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 

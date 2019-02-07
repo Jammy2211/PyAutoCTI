@@ -139,6 +139,21 @@ class CIFit(CIDataFit, AbstractCIFit):
         super(CIFit, self).__init__(image=ci_data_fit.image, noise_map=ci_data_fit.noise_map,
                                     mask=ci_data_fit.mask, ci_post_cti=self.ci_post_cti)
 
+    @property
+    def noise_scaling_map_of_ci_regions(self):
+        return self.ci_data_fit.ci_frame.ci_regions_from_array(array=self.chi_squared_map)
+
+    @property
+    def noise_scaling_map_of_parallel_trails(self):
+        return self.ci_data_fit.ci_frame.parallel_non_ci_regions_frame_from_frame(array=self.chi_squared_map)
+
+    @property
+    def noise_scaling_map_of_serial_trails(self):
+        return self.ci_data_fit.ci_frame.serial_all_trails_frame_from_frame(array=self.chi_squared_map)
+
+    @property
+    def noise_scaling_map_of_serial_overscan_above_trails(self):
+        return self.ci_data_fit.ci_frame.serial_overscan_above_trails_frame_from_frame(array=self.chi_squared_map)
 
 class CIHyperFit(CIDataFit, AbstractCIFit):
 
@@ -167,6 +182,7 @@ class CIHyperFit(CIDataFit, AbstractCIFit):
 
         super(CIHyperFit, self).__init__(image=ci_data_hyper_fit.image, noise_map=self.hyper_noise_map,
                                          mask=ci_data_hyper_fit.mask, ci_post_cti=self.ci_post_cti)
+
 
 def hyper_noise_map_from_noise_map_and_noise_scalings(noise_scaling_maps, hyper_noise_scalers, noise_map):
     """For a noise-map, use the model hyper noise and noise-scaling maps to compute a scaled noise-map.

@@ -646,7 +646,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
                                      ci_pattern=pattern, array=image)
 
-            new_frame = frame.serial_overscan_non_trails_frame_from_frame(image, )
+            new_frame = frame.serial_overscan_above_trails_frame_from_frame(image, )
 
             assert (new_frame == np.array([[0.0, 0.0, 2.0, 3.0],
                                            [0.0, 0.0, 0.0, 0.0],
@@ -666,7 +666,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
                                      ci_pattern=pattern, array=image)
 
-            new_frame = frame.serial_overscan_non_trails_frame_from_frame(image, )
+            new_frame = frame.serial_overscan_above_trails_frame_from_frame(image, )
 
             assert (new_frame == np.array([[0.0, 0.0, 0.0, 3.0],
                                            [0.0, 0.0, 0.0, 0.0],
@@ -688,7 +688,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
                                      ci_pattern=pattern, array=image)
 
-            new_frame = frame.serial_overscan_non_trails_frame_from_frame(image, )
+            new_frame = frame.serial_overscan_above_trails_frame_from_frame(image, )
 
             assert (new_frame == np.array([[0.0, 0.0, 0.0, 3.0],
                                            [0.0, 0.0, 0.0, 0.0],
@@ -713,7 +713,7 @@ class TestCIFrame(object):
             frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
                                      ci_pattern=pattern, array=image)
 
-            new_frame = frame.serial_overscan_non_trails_frame_from_frame(image, )
+            new_frame = frame.serial_overscan_above_trails_frame_from_frame(image, )
 
             print(new_frame)
 
