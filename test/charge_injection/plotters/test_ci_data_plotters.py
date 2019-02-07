@@ -39,8 +39,10 @@ def make_ci_data(image, noise_map, ci_pre_cti):
                           ci_frame=MockGeometry())
 
 
-def test__ci_sub_plot_output_dependent_on_config(data, data_plotter_path, plot_patch):
-    ci_data_plotters.plot_ci_subplot(ci_data=data, extract_array_from_mask=True, output_path=data_plotter_path, output_format='png')
+def test__ci_sub_plot_output(data, data_plotter_path, plot_patch):
+
+    ci_data_plotters.plot_ci_subplot(ci_data=data, extract_array_from_mask=True,
+                                     output_path=data_plotter_path, output_format='png')
 
     assert data_plotter_path + 'ci_data.png' in plot_patch.paths
 

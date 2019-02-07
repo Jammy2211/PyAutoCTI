@@ -88,6 +88,10 @@ class AbstractCIFit(object):
                                                              cti_params=self.cti_params,
                                                              cti_settings=self.cti_settings)
 
+    @property
+    def ci_pre_cti(self):
+        return self.ci_data_fit.ci_pre_cti
+
 
 class CIDataFit(fit.DataFit):
 
