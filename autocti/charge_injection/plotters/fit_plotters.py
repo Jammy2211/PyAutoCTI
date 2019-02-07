@@ -54,6 +54,32 @@ def plot_noise_map(
         output_path=output_path, output_format=output_format, output_filename=output_filename)
 
 
+def plot_signal_to_noise_map(
+        fit, mask=None, extract_array_from_mask=False, as_subplot=False,
+        figsize=(7, 7), aspect='equal',
+        cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
+        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
+        title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        output_path=None, output_format='show', output_filename='fit_signal_to_noise_map'):
+    """Plot the observed signal_to_noise_map of the ccd data.
+
+    Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    signal_to_noise_map : CIFrame
+        The signal_to_noise_map of the data.
+    """
+
+    array_plotters.plot_array(
+        array=fit.signal_to_noise_map, mask=mask, extract_array_from_mask=extract_array_from_mask, as_subplot=as_subplot,
+        figsize=figsize, aspect=aspect,
+        cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
+        cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
+        output_path=output_path, output_format=output_format, output_filename=output_filename)
+
+
 def plot_ci_pre_cti(
         fit, mask=None, extract_array_from_mask=False, as_subplot=False,
         figsize=(7, 7), aspect='equal',
@@ -156,21 +182,3 @@ def plot_chi_squared_map(
         cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
         title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
         output_path=output_path, output_format=output_format, output_filename=output_filename)
-
-
-
-
-def get_mask(fit, should_plot_mask):
-    """Get the masks of the fit if the masks should be plotted on the fit.
-
-    Parameters
-    -----------
-    fit : datas.fitting.fitting.AbstractLensHyperFit
-        The fit to the datas, which includes a list of every model image, residual_map, chi-squareds, etc.
-    should_plot_mask : bool
-        If *True*, the masks is plotted on the fit's datas.
-    """
-    if should_plot_mask:
-        return fit.mask
-    else:
-        return None
