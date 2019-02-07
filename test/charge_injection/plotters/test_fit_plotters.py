@@ -11,9 +11,9 @@ from test.charge_injection.plotters.fixtures import *
 from test.mock.mock import MockGeometry, MockPattern, MockCIFrame
 
 
-@pytest.fixture(name='data_plotter_path')
+@pytest.fixture(name='fit_plotter_path')
 def make_ci_data_plotter_setup():
-    return "{}/../../test_files/plotting/ci_data/".format(os.path.dirname(os.path.realpath(__file__)))
+    return "{}/../../test_files/plotting/fit/".format(os.path.dirname(os.path.realpath(__file__)))
 
 
 @pytest.fixture(name='mask')
@@ -56,32 +56,37 @@ def make_fit(ci_data_fit, cti_params, cti_settings):
     return ci_fit.fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit=ci_data_fit, cti_params=cti_params,
                                                                cti_settings=cti_settings)
 
-def test__image_is_output(fit, mask, data_plotter_path, plot_patch):
+def test__image_is_output(fit, mask, fit_plotter_path, plot_patch):
     fit_plotters.plot_image(fit=fit, mask=mask, extract_array_from_mask=True,
-                                output_path=data_plotter_path, output_format='png')
-    assert data_plotter_path + 'fit_image.png' in plot_patch.paths
+                                output_path=fit_plotter_path, output_format='png')
+    assert fit_plotter_path + 'fit_image.png' in plot_patch.paths
 
-def test__noise_map_is_output(fit, mask, data_plotter_path, plot_patch):
+def test__noise_map_is_output(fit, mask, fit_plotter_path, plot_patch):
     fit_plotters.plot_noise_map(fit=fit, mask=mask, extract_array_from_mask=True,
-                                output_path=data_plotter_path, output_format='png')
-    assert data_plotter_path + 'fit_noise_map.png' in plot_patch.paths
+                                output_path=fit_plotter_path, output_format='png')
+    assert fit_plotter_path + 'fit_noise_map.png' in plot_patch.paths
+
+def test__signal_to_noise_map_is_output(fit, mask, fit_plotter_path, plot_patch):
+    fit_plotters.plot_signal_to_noise_map(fit=fit, mask=mask, extract_array_from_mask=True,
+                                output_path=fit_plotter_path, output_format='png')
+    assert fit_plotter_path + 'fit_signal_to_noise_map.png' in plot_patch.paths
     
-def test__ci_pre_cti_is_output(fit, mask, data_plotter_path, plot_patch):
+def test__ci_pre_cti_is_output(fit, mask, fit_plotter_path, plot_patch):
     fit_plotters.plot_ci_pre_cti(fit=fit, mask=mask, extract_array_from_mask=True,
-                                output_path=data_plotter_path, output_format='png')
-    assert data_plotter_path + 'fit_ci_pre_cti.png' in plot_patch.paths
+                                output_path=fit_plotter_path, output_format='png')
+    assert fit_plotter_path + 'fit_ci_pre_cti.png' in plot_patch.paths
     
-def test__ci_post_cti_is_output(fit, mask, data_plotter_path, plot_patch):
+def test__ci_post_cti_is_output(fit, mask, fit_plotter_path, plot_patch):
     fit_plotters.plot_ci_post_cti(fit=fit, mask=mask, extract_array_from_mask=True,
-                                output_path=data_plotter_path, output_format='png')
-    assert data_plotter_path + 'fit_ci_post_cti.png' in plot_patch.paths
+                                output_path=fit_plotter_path, output_format='png')
+    assert fit_plotter_path + 'fit_ci_post_cti.png' in plot_patch.paths
     
-def test__residual_map_is_output(fit, mask, data_plotter_path, plot_patch):
+def test__residual_map_is_output(fit, mask, fit_plotter_path, plot_patch):
     fit_plotters.plot_residual_map(fit=fit, mask=mask, extract_array_from_mask=True,
-                                output_path=data_plotter_path, output_format='png')
-    assert data_plotter_path + 'fit_residual_map.png' in plot_patch.paths
+                                output_path=fit_plotter_path, output_format='png')
+    assert fit_plotter_path + 'fit_residual_map.png' in plot_patch.paths
     
-def test__chi_squared_map_is_output(fit, mask, data_plotter_path, plot_patch):
+def test__chi_squared_map_is_output(fit, mask, fit_plotter_path, plot_patch):
     fit_plotters.plot_chi_squared_map(fit=fit, mask=mask, extract_array_from_mask=True,
-                                output_path=data_plotter_path, output_format='png')
-    assert data_plotter_path + 'fit_chi_squared_map.png' in plot_patch.paths
+                                output_path=fit_plotter_path, output_format='png')
+    assert fit_plotter_path + 'fit_chi_squared_map.png' in plot_patch.paths
