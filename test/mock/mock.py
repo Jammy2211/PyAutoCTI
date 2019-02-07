@@ -23,6 +23,19 @@ class MockCIFrame(object):
     def add_cti(self, image, cti_params, cti_settings):
         return self.value * np.ones((2, 2))
 
+    def ci_regions_from_array(self, array):
+        return array[0:2, 0]
+
+    def parallel_non_ci_regions_frame_from_frame(self, array):
+        return array[0:2, 1]
+
+    def serial_all_trails_frame_from_frame(self, array):
+        return array[0, 0:2]
+
+    def serial_overscan_above_trails_frame_from_frame(self, array):
+        return array[1, 0:2]
+
+
 class MockCIGeometry(object):
 
     def __init__(self, serial_prescan=(0, 1, 0, 1), serial_overscan=(0, 1, 0, 1)):
