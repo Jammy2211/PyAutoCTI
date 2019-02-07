@@ -394,6 +394,7 @@ class HyperAnalysis(Phase.Analysis):
     def hyper_noise_scalers_from_instance(cls, instance):
         raise NotImplementedError()
 
+
 class ParallelHyperPhase(ParallelPhase):
 
     hyper_noise_scaler_ci_regions = phase_property.PhaseProperty("hyper_noise_scaler_ci_regions")
