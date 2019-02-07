@@ -209,6 +209,18 @@ class TestPhase(object):
         assert cti_params.parallel_species == instance.parallel_species
 
 
+class TestHyperPhase(object):
+
+    def test__make_analysis(self, phase, ci_data, cti_settings):
+
+        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        assert analysis.last_results is None
+        assert (analysis.ci_datas_fit[0].image == ci_data.image).all()
+        assert (analysis.ci_datas_fit[0].noise_map == ci_data.noise_map).all()
+        assert analysis.cti_settings == cti_settings
+
+
+
 class TestResult(object):
 
     def test_results(self):
