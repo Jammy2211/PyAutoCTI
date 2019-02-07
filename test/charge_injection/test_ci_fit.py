@@ -112,7 +112,7 @@ class TestCIHyperFit:
 
         hyper_noise_scaler = ci_hyper.CIHyperNoiseScaler(scale_factor=1.0)
 
-        fit = ci_fit.fit_ci_data_fit_with_cti_params_and_settings(
+        fit = ci_fit.hyper_fit_ci_data_fit_with_cti_params_and_settings(
             ci_data_fit=ci_data_hyper_fit, cti_params=MockParams(), cti_settings=MockSettings(),
             hyper_noise_scalers=[hyper_noise_scaler])
 
@@ -140,7 +140,7 @@ class TestCIHyperFit:
 
         hyper_noise_scaler = ci_hyper.CIHyperNoiseScaler(scale_factor=1.0)
 
-        fit = ci_fit.fit_ci_data_fit_with_cti_params_and_settings(
+        fit = ci_fit.hyper_fit_ci_data_fit_with_cti_params_and_settings(
             ci_data_fit=ci_data_hyper_fit, cti_params=MockParams(), cti_settings=MockSettings(),
             hyper_noise_scalers=[hyper_noise_scaler])
 
@@ -171,7 +171,7 @@ class TestCIHyperFit:
 
         hyper_noise_scaler = ci_hyper.CIHyperNoiseScaler(scale_factor=1.0)
 
-        fit = ci_fit.fit_ci_data_fit_with_cti_params_and_settings(
+        fit = ci_fit.hyper_fit_ci_data_fit_with_cti_params_and_settings(
             ci_data_fit=ci_data_hyper_fit, cti_params=MockParams(), cti_settings=MockSettings(),
             hyper_noise_scalers=[hyper_noise_scaler])
 
@@ -204,7 +204,7 @@ class TestCIHyperFit:
         hyper_noise_scaler_0 = ci_hyper.CIHyperNoiseScaler(scale_factor=1.0)
         hyper_noise_scaler_1 = ci_hyper.CIHyperNoiseScaler(scale_factor=2.0)
 
-        fit = ci_fit.fit_ci_data_fit_with_cti_params_and_settings(
+        fit = ci_fit.hyper_fit_ci_data_fit_with_cti_params_and_settings(
             ci_data_fit=ci_data_hyper_fit, cti_params=MockParams(), cti_settings=MockSettings(),
             hyper_noise_scalers=[hyper_noise_scaler_0, hyper_noise_scaler_1])
 
@@ -219,7 +219,7 @@ class TestCIHyperFit:
         hyper_noise_scaler_0 = ci_hyper.CIHyperNoiseScaler(scale_factor=1.0)
         hyper_noise_scaler_1 = ci_hyper.CIHyperNoiseScaler(scale_factor=2.0)
 
-        fit = ci_fit.fit_ci_data_fit_with_cti_params_and_settings(
+        fit = ci_fit.hyper_fit_ci_data_fit_with_cti_params_and_settings(
             ci_data_fit=ci_data_hyper_fit, cti_params=MockParams(), cti_settings=MockSettings(),
             hyper_noise_scalers=[hyper_noise_scaler_0, hyper_noise_scaler_1])
 

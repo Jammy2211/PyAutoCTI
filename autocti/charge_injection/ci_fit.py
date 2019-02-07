@@ -20,7 +20,7 @@ import numpy as np
 from autocti import exc
 from autofit.tools import fit
 
-def fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit, cti_params, cti_settings, hyper_noise_scalers=None):
+def fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit, cti_params, cti_settings):
     """Fit ci data with a model of cti, using the cti params and settings, automatically determining the type of fit
     based on the properties of the data.
 
@@ -38,7 +38,27 @@ def fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit, cti_params, cti_se
 
     if not ci_data_fit.is_hyper_data:
         return CIFit(ci_data_fit=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings)
-    elif ci_data_fit.is_hyper_data:
+    else:
+        raise exc.FittingException('The fit routine did not call a Fit class - check the '
+                                   'properties of the tracer')
+
+def hyper_fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit, cti_params, cti_settings, hyper_noise_scalers):
+    """Fit ci data with a model of cti, using the cti params and settings, automatically determining the type of fit
+    based on the properties of the data.
+
+    Parameters
+    -----------
+    ci_data_fit : ci_data.CIDataFit or ci_data.CIDataHyperFit
+        The charge injection image that is fitted.
+    cti_params : arctic_params.ArcticParams
+        The cti model parameters which describe how CTI during clocking.
+    cti_settings : arctic_settings.ArcticSettings
+        The settings that control how arctic models CTI.
+    hyper_noise_scalers :
+        The ci_hyper-parameter(s) which the noise_scaling_maps is multiplied by to scale the noise-map.
+    """
+
+    if ci_data_fit.is_hyper_data:
         return CIHyperFit(ci_data_hyper_fit=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings,
                           hyper_noise_scalers=hyper_noise_scalers)
     else:
@@ -88,11 +108,11 @@ class CIDataFit(fit.DataFit):
         super(CIDataFit, self).__init__(data=image, noise_map=noise_map, mask=mask, model_data=ci_post_cti)
 
     @property
-    def images(self):
+    def image(self):
         return self.data
 
     @property
-    def model_images(self):
+    def model_image(self):
         return self.model_data
 
     @property

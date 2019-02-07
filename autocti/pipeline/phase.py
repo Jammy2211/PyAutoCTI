@@ -251,6 +251,21 @@ class ParallelPhase(Phase):
                 "Parallel CCD\n{}\n\n".format(instance.parallel_species, instance.parallel_ccd))
 
 
+    class Result(Phase.Result):
+
+        # noinspection PyUnusedLocal
+        def __init__(self, constant, figure_of_merit, variable, analysis, optimizer):
+            """
+            The result of a phase
+            """
+
+            super(ParallelPhase.Result, self).__init__(constant=constant, figure_of_merit=figure_of_merit,
+                                                       variable=variable, analysis=analysis, optimizer=optimizer)
+
+        @property
+        def noise_scaling_maps_of_images(self):
+            return list(map(lambda most_likely_fit : most_likely_fit.chi_squared_map , self.most_likely_fits))
+
 class SerialPhase(Phase):
     serial_species = phase_property.PhasePropertyCollection("serial_species")
     serial_ccd = phase_property.PhaseProperty("serial_ccd")

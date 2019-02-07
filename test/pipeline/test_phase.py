@@ -226,7 +226,16 @@ class TestResult(object):
 
         result = phase.run(ci_datas=[ci_data], cti_settings=cti_settings)
 
-        print(dir(result))
-        print(result.most_likely_fits)
+        assert hasattr(result, 'most_likely_fits')
+        assert hasattr(result, 'noise_scaling_maps_of_images')
+
+    def test__noise_scaling_maps_of_images_are_available_as_properties__and_are_correct(self, ci_data, cti_settings):
+
+        phase = ph.ParallelPhase(optimizer_class=NLO,
+                                 parallel_species=[prior_model.PriorModel(arctic_params.Species)],
+                                 parallel_ccd=arctic_params.CCD, phase_name='test_phase')
+
+        result = phase.run(ci_datas=[ci_data], cti_settings=cti_settings)
 
         assert hasattr(result, 'most_likely_fits')
+        assert hasattr(result, 'noise_scaling_maps_of_images')
