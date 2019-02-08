@@ -145,7 +145,7 @@ class CIFit(CIDataFit, AbstractCIFit):
 
     @property
     def noise_scaling_map_of_ci_regions(self):
-        return self.ci_data_fit.image.ci_regions_from_array(array=self.chi_squared_map)
+        return self.ci_data_fit.ci_frame.ci_regions_from_array(array=self.chi_squared_map)
 
     @property
     def noise_scaling_map_of_parallel_trails(self):
