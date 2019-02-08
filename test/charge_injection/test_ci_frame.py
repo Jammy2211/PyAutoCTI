@@ -127,20 +127,6 @@ class TestBinArrayAcrossParallel:
         assert (binned_array == np.array([1.5, np.inf, 9.0])).all()
 
 
-class TestChInj(object):
-
-    def test__init__input_ci_data_grid_single_value__all_attributes_correct_including_ci_data_inheritance(self):
-        pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
-
-        frame = ci_frame.CIFrame.from_single_value(value=5.0, shape=(3, 3), frame_geometry=MockCIGeometry(),
-                                                   ci_pattern=pattern)
-
-        assert (frame == 5.0 * np.ones((3, 3))).all()
-        assert frame.shape == (3, 3)
-        assert type(frame.frame_geometry) == MockCIGeometry
-        assert type(frame.ci_pattern) == ci_pattern.CIPattern
-
-
 class TestCIFrame(object):
     class TestCiRegionArrayFromFrame:
 
