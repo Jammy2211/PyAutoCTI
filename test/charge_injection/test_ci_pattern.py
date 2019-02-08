@@ -28,7 +28,6 @@ import pytest
 
 from autocti import exc
 from autocti.charge_injection import ci_pattern
-from test.mock.mock import MockGeometry
 
 
 class TestCIPatternViaList(object):

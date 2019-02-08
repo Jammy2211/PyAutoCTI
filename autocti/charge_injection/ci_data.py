@@ -216,30 +216,6 @@ def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, frame_geometr
         return ci_pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=image, mask=mask)
 
 
-class CIPreCTI(np.ndarray):
-    # noinspection PyMissingConstructor,PyUnusedLocal
-    def __init__(self, frame_geometry, array):
-        self.frame_geometry = frame_geometry
-
-    def __new__(cls, frame_geometry, array, *args, **kwargs):
-        return array.view(cls)
-
-    def output_as_fits(self, file_path, overwrite=False):
-        """Output the image ci_data as a fits file.
-
-        Params
-        ----------
-        path : str
-            The output nlo path of the ci_data
-        filename : str
-            The file phase_name of the output image.
-        """
-        util.numpy_array_to_fits(array=self, file_path=file_path, overwrite=overwrite)
-
-    def add_cti_to_image(self, cti_params, cti_settings):
-        self.frame_geometry.add_cti(self, cti_params, cti_settings)
-
-
 def load_ci_data_from_fits(frame_geometry, ci_pattern,
                            ci_image_path, ci_image_hdu=0,
                            ci_noise_map_path=None, ci_noise_map_hdu=0,
