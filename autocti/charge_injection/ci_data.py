@@ -189,7 +189,7 @@ def simulate(shape, frame_geometry, ci_pattern, cti_params, cti_settings, read_n
         Seed for the read-noises added to the image.
     """
 
-    ci_pre_cti = ci_pattern.simulate_ci_pre_cti(frame_geometry=frame_geometry, shape=shape)
+    ci_pre_cti = ci_pattern.simulate_ci_pre_cti(shape=shape)
     if cosmics is not None:
         ci_pre_cti += cosmics
 
