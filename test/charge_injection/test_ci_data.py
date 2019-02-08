@@ -150,8 +150,7 @@ class TestCIImage(object):
             pattern = ci_pattern.CIPatternUniform(normalization=10.0, regions=[(0, 2, 0, 2)])
             image = 10.0 * np.ones((3, 3))
 
-            ci_pre_cti = ci_data.ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
-                frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern, image=image)
+            ci_pre_cti = ci_data.ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern=pattern, image=image)
 
             assert (ci_pre_cti == np.array([[10.0, 10.0, 0.0],
                                             [10.0, 10.0, 0.0],
@@ -163,8 +162,7 @@ class TestCIImage(object):
                                                   regions=[(0, 2, 0, 1), (2, 3, 2, 3)])
             image = 10.0 * np.ones((3, 3))
 
-            ci_pre_cti = ci_data.ci_pre_cti_from_ci_pattern_geometry_image_and_mask(frame_geometry=frame_geometry,
-                                                                                    ci_pattern=pattern, image=image)
+            ci_pre_cti = ci_data.ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern=pattern, image=image)
 
             assert (ci_pre_cti == np.array([[20.0, 0.0, 0.0],
                                             [20.0, 0.0, 0.0],
@@ -181,7 +179,6 @@ class TestCIImage(object):
             mask = msk.Mask.empty_for_shape(shape=(3, 3))
 
             ci_pre_cti = ci_data.ci_pre_cti_from_ci_pattern_geometry_image_and_mask(mask=mask,
-                                                                                    frame_geometry=frame_geometry,
                                                                                     ci_pattern=pattern, image=image)
 
             pattern_ci_pre_cti = pattern.ci_pre_cti_from_ci_image_and_mask(image, mask)
