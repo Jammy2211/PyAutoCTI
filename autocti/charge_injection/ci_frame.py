@@ -1,7 +1,6 @@
 import numpy as np
 
 from autocti import exc
-from autocti.data import util
 from autocti.model import pyarctic
 
 
@@ -14,15 +13,20 @@ def bin_array_across_parallel(array, mask=None):
 
 
 class ChInj(object):
-    """Class which represents the CCD quadrant of a charge injection image (e.g. the location of the parallel and   
-    serial front edge, trails).
 
-    frame_geometry : CIFrame.CIQuadGeometry
-        The quadrant geometry of the image, defining where the parallel / serial overscans are and   
-        therefore the direction of clocking and rotations before input into the cti algorithm.
-    ci_pattern : CIPattern.CIPattern
-        The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
-    """
+    def __init__(self, frame_geometry, ci_pattern):
+        """
+        Class which represents the CCD quadrant of a charge injection image (e.g. the location of the parallel and
+        serial front edge, trails).
+
+        frame_geometry : CIFrame.CIQuadGeometry
+            The quadrant geometry of the image, defining where the parallel / serial overscans are and
+            therefore the direction of clocking and rotations before input into the cti algorithm.
+        ci_pattern : CIPattern.CIPattern
+            The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
+        """
+        self.frame_geometry = frame_geometry
+        self.ci_pattern = ci_pattern
 
     def ci_regions_from_array(self, array):
         """Extract an array of all of the charge-injection regions from a charge injection ci_frame.
@@ -191,6 +195,7 @@ class ChInj(object):
 
         Parameters
         ------------
+        array
         front_edge_rows : (int, int)
             The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows).
         trails_rows : (int, int)
@@ -441,6 +446,7 @@ class ChInj(object):
 
         Parameters
         ------------
+        array
         front_edge_columns : (int, int)
             The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd rows)
         trails_columns : (int, int)
@@ -571,6 +577,7 @@ class ChInj(object):
 
         Parameters
         ------------
+        array
         rows : (int, int)
             The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
@@ -623,6 +630,7 @@ class ChInj(object):
 
         Parameters
         ------------
+        array
         rows : (int, int)
             The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
@@ -674,6 +682,7 @@ class ChInj(object):
 
         Parameters
         ------------
+        array
         columns : (int, int)
             The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
             columns)
@@ -726,6 +735,7 @@ class ChInj(object):
 
         Parameters
         ------------
+        array
         columns : (int, int)
             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd columns)
         """
@@ -750,65 +760,6 @@ class ChInj(object):
             mask[region.y0:region.y1, region.x0:region.x1] = False
 
         return msk.Mask(array=mask, frame_geometry=self.frame_geometry)
-
-    def __init__(self, frame_geometry, ci_pattern):
-        self.frame_geometry = frame_geometry
-        self.ci_pattern = ci_pattern
-
-
-class CIFrame(ChInj, np.ndarray):
-
-    def __new__(cls, frame_geometry, ci_pattern, array, *args, **kwargs):
-        return array.view(cls)
-
-    def __init__(self, frame_geometry, ci_pattern, array):
-        super().__init__(frame_geometry, ci_pattern)
-
-    @classmethod
-    def from_fits_and_ci_pattern(cls, file_path, hdu, frame_geometry, ci_pattern):
-        """Load the image ci_data from a fits file.
-
-        Params
-        ----------
-        path : str
-            The path to the ci_data
-        filename : str
-            The file phase_name of the fits image ci_data.
-        hdu : int
-            The HDU number in the fits file containing the image ci_data.
-        frame_geometry : CIFrame.CIQuadGeometry
-            The quadrant geometry of the image, defining where the parallel / serial overscans are and
-            therefore the direction of clocking and rotations before input into the cti algorithm.
-        ci_pattern : CIPattern.CIPattern
-            The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
-        """
-        return cls(frame_geometry=frame_geometry, ci_pattern=ci_pattern,
-                   array=util.numpy_array_from_fits(file_path=file_path, hdu=hdu))
-
-    @classmethod
-    def from_single_value(cls, value, shape, frame_geometry, ci_pattern):
-        """
-        Creates an instance of Array and fills it with a single value
-
-        Params
-        ----------
-        value: float
-            The value with which the array should be filled
-        shape: (int, int)
-            The image_shape of the array
-        frame_geometry : CIFrame.CIQuadGeometry
-            The quadrant geometry of the image, defining where the parallel / serial overscans are and
-            therefore the direction of clocking and rotations before input into the cti algorithm.
-        ci_pattern : CIPattern.CIPattern
-            The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
-
-        Returns
-        -------
-        array: ScaledArray
-            An array filled with a single value
-        """
-        array = np.ones(shape) * value
-        return cls(frame_geometry=frame_geometry, ci_pattern=ci_pattern, array=array)
 
 
 class Region(object):

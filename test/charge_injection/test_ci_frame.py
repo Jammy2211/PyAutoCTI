@@ -128,20 +128,6 @@ class TestBinArrayAcrossParallel:
 
 
 class TestChInj(object):
-
-    def test__init__input_ci_data_grid_single_value__all_attributes_correct_including_ci_data_inheritance(self):
-        pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
-
-        frame = ci_frame.CIFrame.from_single_value(value=5.0, shape=(3, 3), frame_geometry=MockCIGeometry(),
-                                                   ci_pattern=pattern)
-
-        assert (frame == 5.0 * np.ones((3, 3))).all()
-        assert frame.shape == (3, 3)
-        assert type(frame.frame_geometry) == MockCIGeometry
-        assert type(frame.ci_pattern) == ci_pattern.CIPattern
-
-
-class TestCIFrame(object):
     class TestCiRegionArrayFromFrame:
 
         def test__1_ci_region__extracted_correctly(self):
@@ -151,8 +137,8 @@ class TestCIFrame(object):
                               [6.0, 7.0, 8.0],
                               [9.0, 10.0, 11.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                   ci_pattern=pattern)
 
             new_frame = frame.ci_regions_from_array(image, )
 
@@ -168,8 +154,8 @@ class TestCIFrame(object):
                               [6.0, 7.0, 8.0],
                               [9.0, 10.0, 11.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                   ci_pattern=pattern)
 
             new_frame = frame.ci_regions_from_array(image, )
 
@@ -188,9 +174,9 @@ class TestCIFrame(object):
                               [6.0, 7.0, 8.0],
                               [9.0, 10.0, 11.0]])
 
-            frame = ci_frame.CIFrame(
+            frame = ci_frame.ChInj(
                 frame_geometry=MockCIGeometry(serial_prescan=(0, 1, 0, 1), serial_overscan=(0, 1, 0, 1)),
-                ci_pattern=pattern, array=image)
+                ci_pattern=pattern)
 
             new_frame = frame.parallel_non_ci_regions_frame_from_frame(image, )
 
@@ -208,9 +194,9 @@ class TestCIFrame(object):
                               [9.0, 10.0, 11.0],
                               [12.0, 13.0, 14.0]])
 
-            frame = ci_frame.CIFrame(
+            frame = ci_frame.ChInj(
                 frame_geometry=MockCIGeometry(serial_prescan=(0, 1, 0, 1), serial_overscan=(0, 1, 0, 1)),
-                ci_pattern=pattern, array=image)
+                ci_pattern=pattern)
 
             new_frame = frame.parallel_non_ci_regions_frame_from_frame(image, )
 
@@ -229,9 +215,9 @@ class TestCIFrame(object):
                               [9.0, 10.0, 11.0],
                               [12.0, 13.0, 14.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=MockCIGeometry(serial_prescan=(1, 2, 0, 2),
+            frame = ci_frame.ChInj(frame_geometry=MockCIGeometry(serial_prescan=(1, 2, 0, 2),
                                                                    serial_overscan=(0, 1, 0, 1)),
-                                     ci_pattern=pattern, array=image)
+                                     ci_pattern=pattern)
 
             new_frame = frame.parallel_non_ci_regions_frame_from_frame(image, )
 
@@ -250,9 +236,9 @@ class TestCIFrame(object):
                               [9.0, 10.0, 11.0],
                               [12.0, 13.0, 14.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=MockCIGeometry(serial_prescan=(0, 1, 0, 1),
+            frame = ci_frame.ChInj(frame_geometry=MockCIGeometry(serial_prescan=(0, 1, 0, 1),
                                                                    serial_overscan=(1, 2, 1, 3)),
-                                     ci_pattern=pattern, array=image)
+                                     ci_pattern=pattern)
 
             new_frame = frame.parallel_non_ci_regions_frame_from_frame(image, )
 
@@ -272,8 +258,8 @@ class TestCIFrame(object):
                               [6.0, 7.0, 8.0],
                               [9.0, 10.0, 11.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                   ci_pattern=pattern)
 
             new_frame = frame.parallel_edges_and_trails_frame_from_frame(image, front_edge_rows=(0, 1))
 
@@ -290,8 +276,8 @@ class TestCIFrame(object):
                               [6.0, 7.0, 8.0],
                               [9.0, 10.0, 11.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                   ci_pattern=pattern)
 
             new_frame = frame.parallel_edges_and_trails_frame_from_frame(image, front_edge_rows=(0, 2))
 
@@ -309,8 +295,8 @@ class TestCIFrame(object):
                               [9.0, 10.0, 11.0],
                               [12.0, 13.0, 14.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                   ci_pattern=pattern)
 
             new_frame = frame.parallel_edges_and_trails_frame_from_frame(image, trails_rows=(0, 1))
 
@@ -330,8 +316,8 @@ class TestCIFrame(object):
                               [12.0, 13.0, 14.0],
                               [15.0, 16.0, 17.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                   ci_pattern=pattern)
 
             new_frame = frame.parallel_edges_and_trails_frame_from_frame(image, trails_rows=(0, 2))
 
@@ -352,8 +338,8 @@ class TestCIFrame(object):
                               [12.0, 13.0, 14.0],
                               [15.0, 16.0, 17.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                   ci_pattern=pattern)
 
             new_frame = frame.parallel_edges_and_trails_frame_from_frame(image, front_edge_rows=(0, 2),
                                                                          trails_rows=(0, 2))
@@ -375,8 +361,8 @@ class TestCIFrame(object):
                               [12.0, 13.0, 14.0],
                               [15.0, 16.0, 17.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                   ci_pattern=pattern)
 
             new_frame = frame.parallel_edges_and_trails_frame_from_frame(image, front_edge_rows=(0, 1),
                                                                          trails_rows=(0, 1))
@@ -399,8 +385,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0],
                               [0.0, 1.0, 2.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             extracted_side = frame.parallel_calibration_section_for_columns(image, columns=(0, 1))
 
@@ -419,8 +404,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0],
                               [0.0, 1.0, 2.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             extracted_side = frame.parallel_calibration_section_for_columns(image, columns=(1, 3))
 
@@ -439,8 +423,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0],
                               [0.0, 1.0, 2.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern)
 
             extracted_side = frame.parallel_calibration_section_for_columns(image, columns=(1, 3))
 
@@ -458,8 +441,8 @@ class TestCIFrame(object):
             image = np.array([[0.0, 1.0, 2.0, 3.0],
                               [4.0, 5.0, 6.0, 7.0],
                               [8.0, 9.0, 10.0, 11.0]])
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                   ci_pattern=pattern)
 
             new_frame = frame.serial_edges_and_trails_frame_from_frame(image, front_edge_columns=(0, 1))
 
@@ -473,8 +456,8 @@ class TestCIFrame(object):
             image = np.array([[0.0, 1.0, 2.0, 3.0],
                               [4.0, 5.0, 6.0, 7.0],
                               [8.0, 9.0, 10.0, 11.0]])
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                   ci_pattern=pattern)
 
             new_frame = frame.serial_edges_and_trails_frame_from_frame(image, front_edge_columns=(0, 2))
 
@@ -488,8 +471,8 @@ class TestCIFrame(object):
             image = np.array([[0.0, 1.0, 2.0, 3.0],
                               [4.0, 5.0, 6.0, 7.0],
                               [8.0, 9.0, 10.0, 11.0]])
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                   ci_pattern=pattern)
 
             new_frame = frame.serial_edges_and_trails_frame_from_frame(image, trails_columns=(0, 1))
 
@@ -503,8 +486,8 @@ class TestCIFrame(object):
             image = np.array([[0.0, 1.0, 2.0, 3.0],
                               [4.0, 5.0, 6.0, 7.0],
                               [8.0, 9.0, 10.0, 11.0]])
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                   ci_pattern=pattern)
 
             new_frame = frame.serial_edges_and_trails_frame_from_frame(image, trails_columns=(0, 2))
 
@@ -518,8 +501,8 @@ class TestCIFrame(object):
             image = np.array([[0.0, 1.0, 1.1, 2.0, 3.0],
                               [4.0, 5.0, 1.1, 6.0, 7.0],
                               [8.0, 9.0, 1.1, 10.0, 11.0]])
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                   ci_pattern=pattern)
 
             new_frame = frame.serial_edges_and_trails_frame_from_frame(image, front_edge_columns=(0, 1),
                                                                        trails_columns=(0, 2))
@@ -534,8 +517,8 @@ class TestCIFrame(object):
             image = np.array([[0.0, 1.0, 1.1, 2.0, 3.0],
                               [4.0, 5.0, 1.1, 6.0, 7.0],
                               [8.0, 9.0, 1.1, 10.0, 11.0]])
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                   ci_pattern=pattern)
 
             new_frame = frame.serial_edges_and_trails_frame_from_frame(image, front_edge_columns=(0, 1),
                                                                        trails_columns=(0, 1))
@@ -557,8 +540,8 @@ class TestCIFrame(object):
                               [6.0, 7.0, 8.0],
                               [9.0, 10.0, 11.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=frame_geometry,
+                                     ci_pattern=pattern)
 
             new_frame = frame.serial_all_trails_frame_from_frame(image, )
 
@@ -578,8 +561,8 @@ class TestCIFrame(object):
                               [6.0, 7.0, 8.0, 0.5],
                               [9.0, 10.0, 11.0, 0.5]])
 
-            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=frame_geometry,
+                                     ci_pattern=pattern)
 
             new_frame = frame.serial_all_trails_frame_from_frame(image, )
 
@@ -599,8 +582,8 @@ class TestCIFrame(object):
                               [6.0, 7.0, 8.0, 0.5],
                               [9.0, 10.0, 11.0, 0.5]])
 
-            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=frame_geometry,
+                                     ci_pattern=pattern)
 
             new_frame = frame.serial_all_trails_frame_from_frame(image, )
 
@@ -620,8 +603,8 @@ class TestCIFrame(object):
                               [6.0, 7.0, 8.0, 0.5],
                               [9.0, 10.0, 11.0, 0.5]])
 
-            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=frame_geometry,
+                                     ci_pattern=pattern)
 
             new_frame = frame.serial_all_trails_frame_from_frame(image, )
 
@@ -643,8 +626,8 @@ class TestCIFrame(object):
                               [4.0, 5.0, 6.0, 7.0],
                               [8.0, 9.0, 10.0, 11.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=frame_geometry,
+                                     ci_pattern=pattern)
 
             new_frame = frame.serial_overscan_above_trails_frame_from_frame(image, )
 
@@ -663,8 +646,8 @@ class TestCIFrame(object):
                               [4.0, 5.0, 6.0, 7.0],
                               [8.0, 9.0, 10.0, 11.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=frame_geometry,
+                                     ci_pattern=pattern)
 
             new_frame = frame.serial_overscan_above_trails_frame_from_frame(image, )
 
@@ -685,8 +668,8 @@ class TestCIFrame(object):
                               [12.0, 13.0, 14.0, 15.0],
                               [16.0, 17.0, 18.0, 19.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=frame_geometry,
+                                     ci_pattern=pattern)
 
             new_frame = frame.serial_overscan_above_trails_frame_from_frame(image, )
 
@@ -710,8 +693,8 @@ class TestCIFrame(object):
                               [12.0, 13.0, 14.0, 15.0],
                               [16.0, 17.0, 18.0, 19.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=frame_geometry,
-                                     ci_pattern=pattern, array=image)
+            frame = ci_frame.ChInj(frame_geometry=frame_geometry,
+                                     ci_pattern=pattern)
 
             new_frame = frame.serial_overscan_above_trails_frame_from_frame(image, )
 
@@ -732,8 +715,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0, 3.0, 4.0],
                               [0.0, 1.0, 2.0, 3.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             serial_frame = frame.serial_calibration_section_for_column_and_rows(image, column=0, rows=(0, 3))
 
@@ -748,8 +730,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 3.0, 3.0, 3.0],
                               [0.0, 1.0, 4.0, 4.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             serial_frame = frame.serial_calibration_section_for_column_and_rows(image, column=1, rows=(0, 1))
 
@@ -763,8 +744,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 3.0, 3.0, 3.0],
                               [0.0, 1.0, 4.0, 4.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern)
 
             serial_frame = frame.serial_calibration_section_for_column_and_rows(image, column=1, rows=(0, 1))
 
@@ -778,8 +758,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0, 3.0, 4.0],
                               [0.0, 1.0, 2.0, 3.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             serial_frame = frame.serial_calibration_section_for_column_and_rows(image, column=0, rows=(0, 2))
 
@@ -795,8 +774,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 5.0, 5.0, 5.0],
                               [0.0, 1.0, 6.0, 6.0, 6.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern)
 
             serial_frame = frame.serial_calibration_section_for_column_and_rows(image, column=1, rows=(0, 1))
 
@@ -812,8 +790,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 5.0, 5.0, 5.0],
                               [0.0, 1.0, 6.0, 6.0, 6.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern)
 
             serial_frame = frame.serial_calibration_section_for_column_and_rows(image, column=1, rows=(1, 2))
 
@@ -829,8 +806,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0, 3.0, 4.0],
                               [0.0, 1.0, 2.0, 3.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             serial_region = frame.serial_calibration_sub_arrays_from_frame(image, column=0)
 
@@ -845,8 +821,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0, 3.0, 4.0],
                               [0.0, 1.0, 2.0, 3.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             serial_region = frame.serial_calibration_sub_arrays_from_frame(image, column=0)
 
@@ -861,8 +836,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0, 3.0, 4.0],
                               [0.0, 1.0, 2.0, 3.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             serial_region = frame.serial_calibration_sub_arrays_from_frame(image, column=0)
 
@@ -877,8 +851,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0, 3.0, 4.0],
                               [0.0, 1.0, 2.0, 3.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             serial_region = frame.serial_calibration_sub_arrays_from_frame(image, column=1)
 
@@ -893,8 +866,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0, 3.0, 4.0],
                               [0.0, 1.0, 2.0, 3.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern)
 
             serial_region = frame.serial_calibration_sub_arrays_from_frame(image, column=0)
 
@@ -909,8 +881,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0, 3.0, 4.0],
                               [0.0, 1.0, 2.0, 3.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern)
 
             serial_region = frame.serial_calibration_sub_arrays_from_frame(image, column=1)
 
@@ -925,8 +896,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 3.0, 3.0, 3.0],
                               [0.0, 1.0, 4.0, 4.0, 4.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             serial_region = frame.serial_calibration_sub_arrays_from_frame(image, column=1)
 
@@ -949,8 +919,7 @@ class TestCIFrame(object):
                               [8.0, 8.0, 8.0],
                               [9.0, 9.0, 9.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             front_edge = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 1))
 
@@ -978,8 +947,7 @@ class TestCIFrame(object):
                               [8.0, 8.0, 8.0],
                               [9.0, 9.0, 9.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             front_edge = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 2))
 
@@ -1006,8 +974,7 @@ class TestCIFrame(object):
                               [8.0, 8.0, 8.0],
                               [9.0, 9.0, 9.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 1))
 
@@ -1046,8 +1013,7 @@ class TestCIFrame(object):
                               [8.0, 8.0, 8.0],  # <- 2nd Front edge according to region and this frame_geometry
                               [9.0, 9.0, 9.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), ci_pattern=pattern)
 
             front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 1))
 
@@ -1089,8 +1055,7 @@ class TestCIFrame(object):
                               [8.0, 8.0, 8.0],
                               [9.0, 9.0, 9.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 1))
 
@@ -1118,8 +1083,7 @@ class TestCIFrame(object):
                               [7.0, 7.0, 7.0],
                               [8.0, 8.0, 8.0],
                               [9.0, 9.0, 9.0]])
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 2))
 
@@ -1153,8 +1117,7 @@ class TestCIFrame(object):
                               [8.0, 8.0, 8.0],
                               [9.0, 9.0, 9.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 1))
 
@@ -1193,8 +1156,7 @@ class TestCIFrame(object):
                               # <- 2nd Trails form here onwards according to region and this frame_geometry
                               [9.0, 9.0, 9.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), ci_pattern=pattern)
 
             trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 1))
 
@@ -1226,8 +1188,7 @@ class TestCIFrame(object):
 
             #       /| Front Edge
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             front_edge = frame.serial_front_edge_arrays_from_frame(image, columns=(0, 1))
 
@@ -1256,8 +1217,7 @@ class TestCIFrame(object):
 
             #                    /| Front Edge
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             front_edge = frame.serial_front_edge_arrays_from_frame(image, columns=(0, 2))
 
@@ -1280,8 +1240,7 @@ class TestCIFrame(object):
 
             #                    /| FE 1        /\ FE 2
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             front_edges = frame.serial_front_edge_arrays_from_frame(image, columns=(0, 1))
 
@@ -1329,8 +1288,7 @@ class TestCIFrame(object):
 
             #                               /| FE 1            /\ FE 2
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern)
 
             front_edges = frame.serial_front_edge_arrays_from_frame(image, columns=(0, 1))
 
@@ -1380,8 +1338,7 @@ class TestCIFrame(object):
 
             #                                    /| Trails Begin          
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 1))
 
@@ -1410,8 +1367,7 @@ class TestCIFrame(object):
 
             #                                   /| Trails Begin
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 2))
 
@@ -1434,8 +1390,7 @@ class TestCIFrame(object):
 
             #                                   /| Trails1           /\ Trails2
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 1))
 
@@ -1483,8 +1438,7 @@ class TestCIFrame(object):
 
             #               Trails1   /|                Trails2 /\
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern)
 
             trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 1))
 
@@ -1534,8 +1488,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0, 3.0],
                               [0.0, 1.0, 2.0, 3.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             frame.frame_geometry.serial_prescan = ci_frame.Region(region=(0, 4, 0, 1))
 
@@ -1556,8 +1509,7 @@ class TestCIFrame(object):
                               [0.0, 1.0, 2.0, 3.0],
                               [0.0, 1.0, 2.0, 3.0]])
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             frame.frame_geometry.serial_prescan = ci_frame.Region(region=(0, 4, 0, 2))
 
@@ -1580,8 +1532,7 @@ class TestCIFrame(object):
 
             #                                    /| Trails Begin
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             mask = frame.mask_containing_only_serial_trails(image, )
 
@@ -1600,8 +1551,7 @@ class TestCIFrame(object):
 
             #                                   /| Trails1           /\ Trails2
 
-            frame = ci_frame.CIFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern,
-                                     array=image)
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
             mask = frame.mask_containing_only_serial_trails(image, )
 
