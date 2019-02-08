@@ -110,7 +110,7 @@ def make_ci_pattern():
 
 @pytest.fixture(name="ci_data")
 def make_ci_data(ci_geometry, ci_pattern):
-    image = np.ones((3, 3))
+    image = ci_frame.CIFrame(array=np.ones((3, 3)), frame_geometry=ci_geometry, ci_pattern=ci_pattern)
     noise = np.ones((3, 3))
     ci_pre_cti = np.ones((3, 3))
     return data.CIData(image=image, noise_map=noise, ci_pre_cti=ci_pre_cti, ci_pattern=ci_pattern, ci_frame=ci_geometry)
@@ -220,7 +220,6 @@ class TestHyperPhase(object):
         assert analysis.cti_settings == cti_settings
 
 
-
 class TestResult(object):
 
     def test_results(self):
@@ -239,6 +238,9 @@ class TestResult(object):
         result = phase.run(ci_datas=[ci_data], cti_settings=cti_settings)
 
         assert hasattr(result, 'most_likely_fits')
+
+    #    print(type(result))
+    #    print(result.noise_scaling_maps)
     #    assert hasattr(result, 'noise_scaling_maps')
 
     # def test__parallel_phase__noise_scaling_maps_of_images_are_correct(self, ci_data, cti_settings):
