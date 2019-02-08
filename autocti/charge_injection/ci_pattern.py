@@ -8,8 +8,9 @@ Author: James Nightingale
 import numpy as np
 
 from autocti import exc
-from autocti.charge_injection import ci_frame
 from autocti.charge_injection import ci_data
+from autocti.charge_injection import ci_frame
+
 
 def uniform_from_lists(normalizations, regions):
     """Setup the collection of patterns from lists of uniform ci_pattern properties
@@ -115,21 +116,10 @@ class CIPattern(object):
 
 
 class CIPatternUniform(CIPattern):
-
-    def __init__(self, normalization, regions):
-        """ A uniform charge injection ci_pattern, which is defined by the regions it appears on the charge injection \
+    """ A uniform charge injection ci_pattern, which is defined by the regions it appears on the charge injection \
         ci_frame and its normalization.
 
-        Parameters
-        -----------
-        normalization : float
-            The normalization of the uniform charge injection region.
-        regions : [(int,)]
-            A list of the integer coordinates specifying the corners of each charge injection region. This is \
-            defined as in a NumPy array, e.g. (top-row, bottom-row, lelf-column, right-column).
-        """
-        super(CIPatternUniform, self).__init__(normalization, regions)
-
+    """
     def ci_pre_cti_from_shape(self, shape):
         """Compute the pre-cti image of the uniform charge injection ci_pattern.
 
@@ -146,7 +136,7 @@ class CIPatternUniform(CIPattern):
         ci_pre_cti = np.zeros(shape)
 
         for region in self.regions:
-            ci_pre_cti[region.y0:region.y1, region.x0:region.x1] += self.normalization
+            ci_pre_cti[region.slice] += self.normalization
 
         return ci_pre_cti
 
@@ -205,14 +195,13 @@ class CIPatternNonUniform(CIPattern):
             means_of_columns = self.mean_charge_in_all_image_columns(column=ci_image[:, column_number],
                                                                      column_mask=mask[:, column_number])
 
-            if None in means_of_columns:
-                means_of_columns.remove(None)
-                if len(means_of_columns) == 0:
-                    raise exc.CIPatternException(
-                        'All Pixels in a charge injection region were flagged as masked - code does'
-                        'not currently handle such a circumstance')
+            filtered = list(filter(None, means_of_columns))
+            if len(filtered) == 0:
+                raise exc.CIPatternException(
+                    'All Pixels in a charge injection region were flagged as masked - code does'
+                    'not currently handle such a circumstance')
 
-            overall_mean = np.mean(means_of_columns)
+            overall_mean = np.mean(filtered)
 
             for region in self.regions:
                 ci_pre_cti[region.y0:region.y1, column_number] = overall_mean
@@ -275,22 +264,11 @@ class CIPatternNonUniform(CIPattern):
 
 
 class CIPatternUniformFast(CIPatternUniform):
+    """ A fast uniform charge injection ci_pattern, which is defined by the regions it appears on a charge \
+        injection ci_frame and its normalization.
 
-    def __init__(self, normalization, regions):
-        """ A fast uniform charge injection ci_pattern, which is defined by the regions it appears on a charge \
-         injection ci_frame and its normalization.
-         
-         This is used for performing fast CTI addition in CTI calibration (see *CIPreCTIFast*).
-
-        Parameters
-        -----------
-        normalization : float
-            The normalization of the charge injection region.
-        regions : [(int,)]
-            A list of the integer coordinates specifying the corners of each charge injection region. This is \
-            defined as in a NumPy array, e.g. (top-row, bottom-row, left-column, right-column).
-        """
-        super(CIPatternUniformFast, self).__init__(normalization, regions)
+        This is used for performing fast CTI addition in CTI calibration (see *CIPreCTIFast*).
+    """
 
     def compute_fast_column(self, number_rows):
         """Compute a uniform fast column, which represents one column of charge in a uniform charge injection image \
