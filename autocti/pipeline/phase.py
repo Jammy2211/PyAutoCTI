@@ -243,7 +243,7 @@ class Phase(ph.AbstractPhase):
                 should_plot_signal_to_noise_map=self.plot_ci_data_signal_to_noise_map,
                 output_path=self.output_image_path, output_format='png')
 
-            fits = self.fits_for_instance(instance=instance)
+            fits = self.fits_of_ci_data_extracted_for_instance(instance=instance)
 
             ci_fit_index = 0
 
