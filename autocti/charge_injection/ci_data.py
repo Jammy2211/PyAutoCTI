@@ -249,46 +249,6 @@ class CIPreCTI(np.ndarray):
         self.frame_geometry.add_cti(self, cti_params, cti_settings)
 
 
-def load_ci_data_list_from_fits(frame_geometries, ci_patterns,
-                                ci_image_paths, ci_image_hdus=None,
-                                ci_noise_map_paths=None, ci_noise_map_hdus=None,
-                                ci_pre_cti_paths=None, ci_pre_cti_hdus=None,
-                                masks=None):
-    list_size = len(ci_image_paths)
-
-    ci_datas = []
-
-    if ci_pre_cti_paths is None:
-        ci_pre_cti_paths = list_size * [None]
-
-    if masks is None:
-        masks = list_size * [None]
-
-    if ci_image_hdus is None:
-        ci_image_hdus = list_size * [0]
-
-    if ci_noise_map_hdus is None:
-        ci_noise_map_hdus = list_size * [0]
-
-    if ci_pre_cti_hdus is None:
-        ci_pre_cti_hdus = list_size * [0]
-
-    for data_index in range(list_size):
-        ci_data = load_ci_data_from_fits(frame_geometry=frame_geometries[data_index],
-                                         ci_pattern=ci_patterns[data_index],
-                                         ci_image_path=ci_image_paths[data_index],
-                                         ci_image_hdu=ci_image_hdus[data_index],
-                                         ci_noise_map_path=ci_noise_map_paths[data_index],
-                                         ci_noise_map_hdu=ci_noise_map_hdus[data_index],
-                                         ci_pre_cti_path=ci_pre_cti_paths[data_index],
-                                         ci_pre_cti_hdu=ci_pre_cti_hdus[data_index],
-                                         mask=masks[data_index])
-
-        ci_datas.append(ci_data)
-
-    return ci_datas
-
-
 def load_ci_data_from_fits(frame_geometry, ci_pattern,
                            ci_image_path, ci_image_hdu=0,
                            ci_noise_map_path=None, ci_noise_map_hdu=0,
