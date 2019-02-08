@@ -54,13 +54,11 @@ def pipeline():
 
     data_0 = ci_data.load_ci_data_from_fits(frame_geometry=frame_geometry, ci_pattern=patterns[0],
                                             ci_image_path=path+'/data/'+test_name+'/ci_data_0.fits',
-                                            ci_noise_map_from_single_value=1.0,
-                                            ci_pre_cti_from_image=True)
+                                            ci_noise_map_from_single_value=1.0)
 
     data_1 = ci_data.load_ci_data_from_fits(frame_geometry=frame_geometry, ci_pattern=patterns[1],
                                             ci_image_path=path+'/data/'+test_name+'/ci_data_1.fits',
-                                            ci_noise_map_from_single_value=1.0,
-                                            ci_pre_cti_from_image=True)
+                                            ci_noise_map_from_single_value=1.0)
 
     pipeline = make_pipeline(test_name=test_name)
     pipeline.run(ci_datas=[data_0, data_1], cti_settings=cti_settings, pool=Pool(processes=2))

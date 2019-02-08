@@ -26,7 +26,6 @@ conf.instance = conf.Config(config_path=config_path, output_path=output_path)
 
 
 def pipeline():
-
     tools.reset_paths(test_name=test_name, output_path=output_path)
 
     parallel_species_0 = arctic_params.Species(trap_density=0.5, trap_lifetime=2.0)
@@ -39,17 +38,18 @@ def pipeline():
     serial_species_1 = arctic_params.Species(trap_density=1.5, trap_lifetime=5.0)
     serial_species_2 = arctic_params.Species(trap_density=2.5, trap_lifetime=20.0)
     serial_ccd = arctic_params.CCD(well_notch_depth=0.01, well_fill_alpha=0.2,
-                                     well_fill_beta=0.8, well_fill_gamma=2.0)
+                                   well_fill_beta=0.8, well_fill_gamma=2.0)
 
     cti_params = arctic_params.ArcticParams(parallel_ccd=parallel_ccd,
-                                            parallel_species=[parallel_species_0, parallel_species_1, parallel_species_2],
+                                            parallel_species=[parallel_species_0, parallel_species_1,
+                                                              parallel_species_2],
                                             serial_ccd=serial_ccd,
                                             serial_species=[serial_species_0, serial_species_1, serial_species_2])
 
     parallel_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=1, n_levels=2000,
                                                  charge_injection_mode=True, readout_offset=0)
     serial_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=1, n_levels=2000,
-                                                 charge_injection_mode=False, readout_offset=0)
+                                               charge_injection_mode=False, readout_offset=0)
     cti_settings = arctic_settings.ArcticSettings(parallel=parallel_settings, serial=serial_settings)
 
     tools.simulate_integration_quadrant(test_name=test_name, normalizations=normalizations, cti_params=cti_params,
@@ -59,19 +59,16 @@ def pipeline():
 
     data = ci_data.load_ci_data_from_fits(frame_geometry=frame_geometry, ci_pattern=pattern,
                                           ci_image_path=path + '/data/' + test_name + '/ci_data_0.fits',
-                                          ci_noise_map_from_single_value=1.0,
-                                          ci_pre_cti_from_image=True)
+                                          ci_noise_map_from_single_value=1.0)
 
     pipeline = make_pipeline(test_name=test_name)
     pipeline.run(ci_datas=[data], cti_settings=cti_settings)
 
 
 def make_pipeline(test_name):
-
     class ParallelSerialPhase(ph.ParallelSerialPhase):
 
         def pass_priors(self, previous_results):
-
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
             self.serial_ccd.well_fill_alpha = 1.0

@@ -44,8 +44,7 @@ def pipeline():
 
     data = ci_data.load_ci_data_from_fits(frame_geometry=frame_geometry, ci_pattern=pattern,
                                           ci_image_path=path + '/data/' + test_name + '/ci_data_0.fits',
-                                          ci_noise_map_from_single_value=1.0,
-                                          ci_pre_cti_from_image=True)
+                                          ci_noise_map_from_single_value=1.0)
 
     pipeline = make_pipeline(test_name=test_name)
     pipeline.run(ci_datas=[data], cti_settings=cti_settings)
@@ -62,7 +61,7 @@ def make_pipeline(test_name):
 
     phase1 = SerialPhase(optimizer_class=nl.MultiNest,
                          serial_species=[prior_model.PriorModel(arctic_params.Species)],
-                         serial_ccd=arctic_params.CCD, columns=None, phase_name="{}/phase1".format(test_name))
+                         serial_ccd=arctic_params.CCD, phase_name="{}/phase1".format(test_name))
 
     phase1.optimizer.n_live_points = 60
     phase1.optimizer.const_efficiency_mode = True
