@@ -764,7 +764,6 @@ class CIFrame(ChInj, np.ndarray):
         super().__init__(frame_geometry, ci_pattern)
 
     def __array_finalize__(self, obj):
-
         if isinstance(obj, CIFrame):
             self.frame_geometry = obj.frame_geometry
             self.ci_pattern = obj.ci_pattern
@@ -877,6 +876,18 @@ class Region(object):
     @property
     def slice(self):
         return np.s_[self.y0:self.y1, self.x0:self.x1]
+
+    @property
+    def y_slice(self):
+        return np.s_[self.y0:self.y1]
+
+    @property
+    def x_slice(self):
+        return np.s_[self.x0:self.x1]
+
+    @property
+    def shape(self):
+        return self.y1 - self.y0, self.x1 - self.x0
 
 
 class FrameGeometry(object):
