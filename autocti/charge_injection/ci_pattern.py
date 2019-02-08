@@ -66,8 +66,7 @@ def uniform_simulate_from_lists(normalizations, regions):
     return list(map(lambda n: CIPatternUniformSimulate(n, regions), normalizations))
 
 
-def non_uniform_simulate_from_lists(normalizations, regions, column_deviations, row_slopes,
-                                    maximum_normalization):
+def non_uniform_simulate_from_lists(normalizations, regions, row_slopes):
     """Setup the collection of simulation patterns from lists of non-uniform ci_pattern properties
 
     Params
@@ -85,8 +84,8 @@ def non_uniform_simulate_from_lists(normalizations, regions, column_deviations, 
         The maximum normalization of a charge injection column (e.g. the full well capacity)
     """
     # noinspection PyArgumentList
-    return list(map(lambda n, c, s: CIPatternNonUniformSimulate(n, regions, c, s, maximum_normalization),
-                    normalizations, column_deviations, row_slopes))
+    return list(map(lambda n, c: CIPatternNonUniformSimulate(n, regions, c),
+                    normalizations, row_slopes))
 
 
 class CIPattern(object):
@@ -345,34 +344,8 @@ class CIPatternUniformSimulate(CIPatternUniform):
 
 
 class CIPatternNonUniformSimulate(CIPatternNonUniform):
-
-    def __init__(self, normalization, regions, column_deviation=0.0, row_slope=0.0, maximum_normalization=np.inf):
-        """ Class to simulate a charge injection image with a non-uniform charge injection ci_pattern.
-
-        Non-uniformity across columns is simulated by drawing each normalization value from a Gaussian with \
-        standard deviation *column_deviation*. Non-uniformity across rows is simulated by drawing their normalization \
-        as a function of pixel distance from a power-law. See *CIPatternNonUniform* for more details.
-
-        Parameters
-        -----------
-        normalization : float
-            The normalization of the charge injection region.
-        regions : [(int,)]
-            A list of the integer coordinates specifying the corners of each charge injection region. This is defined \
-            as in a NumPy array, e.g. (top-row, bottom-row, left-column, right-column).
-        column_deviation : float
-            The level of charge deviation across the columns of the region e.g. the standard deviation of the \
-             Gaussian distribution each charge level is drawn from.
-        row_slope : float
-            The power-law slope of non-uniformity in the rows of the charge injection profile.
-        maximum_normalization : float
-            The maximum normalization of a charge injection column (e.g. the full well capacity)
-        """
-        super(CIPatternNonUniformSimulate, self).__init__(normalization, regions, row_slope)
-        self.column_deviation = column_deviation
-        self.maximum_normalization = maximum_normalization
-
-    def simulate_ci_pre_cti(self, frame_geometry, shape, ci_seed=-1):
+    def simulate_ci_pre_cti(self, frame_geometry, shape, ci_seed=-1, column_deviation=0.0,
+                            maximum_normalization=np.inf):
         """Use this charge injection ci_pattern to generate a pre-cti charge injection image. This is performed by going \
         to its charge injection regions and adding its non-uniform charge distribution.
 
@@ -383,6 +356,9 @@ class CIPatternNonUniformSimulate(CIPatternNonUniform):
 
         Parameters
         -----------
+        column_deviation
+        shape
+        maximum_normalization
         frame_geometry
         image_shape : (int, int)
             The image_shape of the ci_pre_ctis to be created.
@@ -401,11 +377,12 @@ class CIPatternNonUniformSimulate(CIPatternNonUniform):
 
         for region in self.regions:
             ci_pre_cti[region.slice] += \
-                self.simulate_region(region_dimensions=region.shape, ci_seed=ci_seed)
+                self.simulate_region(region_dimensions=region.shape, ci_seed=ci_seed, column_deviation=column_deviation,
+                                     maximum_normalization=maximum_normalization)
 
         return ci_data.CIPreCTI(frame_geometry=frame_geometry, array=ci_pre_cti)
 
-    def simulate_region(self, region_dimensions, ci_seed):
+    def simulate_region(self, region_dimensions, ci_seed, column_deviation=0.0, maximum_normalization=np.inf):
         """Generate the non-uniform charge distribution of a charge injection region. This includes non-uniformity \
         across both the rows and columns of the charge injection region.
 
@@ -442,8 +419,8 @@ class CIPatternNonUniformSimulate(CIPatternNonUniform):
         for column_number in range(ci_columns):
 
             column_normalization = 0
-            while column_normalization <= 0 or column_normalization >= self.maximum_normalization:
-                column_normalization = np.random.normal(self.normalization, self.column_deviation)
+            while column_normalization <= 0 or column_normalization >= maximum_normalization:
+                column_normalization = np.random.normal(self.normalization, column_deviation)
 
             ci_region[0:ci_rows, column_number] = self.generate_column(size=ci_rows, normalization=column_normalization)
 
