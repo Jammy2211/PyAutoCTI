@@ -31,13 +31,11 @@ from autocti.charge_injection import ci_pattern as pattern
 from autocti.data import cti_image
 from autocti.data import mask as msk
 from autocti.data import util
-from autocti.model import pyarctic
 
 
 class CIData(object):
 
     def __init__(self, image, noise_map, ci_pre_cti, ci_pattern, ci_frame):
-
         self.image = image
         self.noise_map = noise_map
         self.ci_pre_cti = ci_pre_cti
@@ -67,10 +65,12 @@ class CIData(object):
                               mask=func(mask),
                               ci_pattern=self.ci_pattern,
                               ci_frame=self.ci_frame,
-                noise_scaling_maps=func(noise_scaling_maps) if noise_scaling_maps is not None else noise_scaling_maps)
+                              noise_scaling_maps=func(
+                                  noise_scaling_maps) if noise_scaling_maps is not None else noise_scaling_maps)
 
     def parallel_calibration_data(self, columns, mask):
-        return self.map_to_ci_data_fit(lambda obj: self.chinj.parallel_calibration_section_for_columns(obj, columns), mask)
+        return self.map_to_ci_data_fit(lambda obj: self.chinj.parallel_calibration_section_for_columns(obj, columns),
+                                       mask)
 
     def serial_calibration_data(self, column, rows, mask):
         return self.map_to_ci_data_fit(
@@ -95,7 +95,6 @@ class CIData(object):
 class CIDataFit(object):
 
     def __init__(self, image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame):
-
         """A fitting image is the collection of data components (e.g. the image, noise-maps, PSF, etc.) which are used \
         to generate and fit it with a model image.
 
@@ -221,12 +220,6 @@ def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, frame_geometr
 
         ci_pre_cti = ci_pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=image, mask=mask)
         return CIPreCTI(frame_geometry=frame_geometry, array=ci_pre_cti)
-
-    elif type(ci_pattern) == pattern.CIPatternUniformFast:
-
-        ci_pre_cti = ci_pattern.ci_pre_cti_from_shape(shape=image.shape)
-        return CIPreCTIFast(frame_geometry=frame_geometry, array=ci_pre_cti, ci_pattern=ci_pattern)
-
     else:
         raise exc.CIPatternException('the CIPattern of the CIImage is not an instance of '
                                      'a known ci_pattern class')
@@ -256,115 +249,10 @@ class CIPreCTI(np.ndarray):
         self.frame_geometry.add_cti(self, cti_params, cti_settings)
 
 
-class CIPreCTIFast(CIPreCTI):
-    def __init__(self, frame_geometry, array, ci_pattern):
-        """A fast pre-cti image of a charge injection dataset, used for CTI calibration modeling.
-
-        A fast pre-cti image serves the same purpose as a *CIPreCTI* image, but it exploits the fact that for a \
-        uniform charge injection image one can add cti to just one column / row of ci_data and copy it across the entire
-        image, thus skipping the majority of clocking calls.
-
-        The fast column / row of the pre-cti image setup in the constructor represent the 1 column / row of the \
-        uniform charge injection image that is passed to the clocking algorithm.
-
-        See https://euclid.roe.ac.uk/issues/7058
-
-        Parameters
-        ----------
-        frame_geometry : ci_frame.CIQuadGeometry
-            The quadrant geometry of the image, defining where the parallel / serial overscans are and \
-            therefore the direction of clocking and rotations before input into the cti algorithm.
-        array : ndarray
-            2D Array of pre-cti image ci_data.
-        ci_pattern : ci_pattern.CIPattern
-            The charge injection ci_pattern (regions, normalization, etc.) of the pre-cti image.
-        """
-        super().__init__(frame_geometry, array)
-        fast_column_pre_cti = ci_pattern.compute_fast_column(self.shape[0])
-        self.fast_column_pre_cti = frame_geometry.rotate_for_parallel_cti(fast_column_pre_cti)
-        fast_row_pre_cti = ci_pattern.compute_fast_row(self.shape[1])
-        self.fast_row_pre_cti = frame_geometry.rotate_before_serial_cti(fast_row_pre_cti)
-
-    def fast_column_post_cti_from_cti_params_and_settings(self, cti_params, cti_settings):
-        """Add cti to the fast-column, using cti_settings.
-
-        Parameters
-        ----------
-        cti_params : ArcticParams.ArcticParams
-            The CTI model parameters (trap density, trap lifetimes etc.).
-        cti_settings : ArcticSettings.ArcticSettings
-            The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
-        """
-        return pyarctic.call_arctic(self.fast_column_pre_cti, cti_params.parallel_species, cti_params.parallel_ccd,
-                                    cti_settings.parallel)
-
-    def map_fast_column_post_cti_to_image(self, fast_column_post_cti):
-        """Map the post-cti fast column to the image, thus making the complete post-cti image after parallel clocking.
-        """
-
-        ci_post_cti = np.zeros(self.shape)
-
-        fast_column_post_cti = fast_column_post_cti[:, 0][:, np.newaxis]
-
-        ci_post_cti += fast_column_post_cti
-
-        return self.frame_geometry.rotate_for_parallel_cti(ci_post_cti)
-
-    def fast_row_post_cti_from_cti_params_and_settings(self, cti_params, cti_settings):
-        """Add cti to the fast-row, using cti_settings.
-
-        Parameters
-        ----------
-        cti_params : ArcticParams.ArcticParams
-            The CTI model parameters (trap density, trap lifetimes etc.).
-        cti_settings : ArcticSettings.ArcticSettings
-            The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
-        """
-        return pyarctic.call_arctic(self.fast_row_pre_cti, cti_params.serial_species, cti_params.serial_ccd,
-                                    cti_settings.serial)
-
-    def map_fast_row_post_cti_to_image(self, fast_row_post_cti):
-        """Map the post-cti fast row to the image, thus making the complete post-cti image after serial clocking.
-        """
-        ci_post_cti = np.zeros(self.shape).T
-
-        fast_row_post_cti = fast_row_post_cti[:, 0][:, np.newaxis]
-
-        ci_post_cti += fast_row_post_cti
-
-        return self.frame_geometry.rotate_after_serial_cti(ci_post_cti)
-
-    def add_cti_to_image(self, cti_params, cti_settings):
-        """Create the post-cti image of this fast pre-cti image, using the speed up described in the constructor.
-
-        Parameters
-        -----------
-        cti_params : ArcticParams.ArcticParams
-            The CTI model parameters (trap density, trap lifetimes etc.).
-        cti_settings : ArcticSettings.ArcticSettings
-            The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
-        """
-
-        if cti_settings.parallel is not None and cti_settings.serial is None:
-
-            fast_column_post_cti = self.fast_column_post_cti_from_cti_params_and_settings(cti_params, cti_settings)
-            post_cti_image = self.map_fast_column_post_cti_to_image(fast_column_post_cti)
-
-        elif cti_settings.serial is not None and cti_settings.parallel is None:
-
-            fast_row_post_cti = self.fast_row_post_cti_from_cti_params_and_settings(cti_params, cti_settings)
-            post_cti_image = self.map_fast_row_post_cti_to_image(fast_row_post_cti)
-
-        else:
-            raise exc.CIPreCTIException(' Cannot use CIPostCTIFast in both parallel and serial directions')
-
-        return post_cti_image
-
-
 def load_ci_data_list_from_fits(frame_geometries, ci_patterns,
                                 ci_image_paths, ci_image_hdus=None,
                                 ci_noise_map_paths=None, ci_noise_map_hdus=None,
-                                ci_pre_cti_paths=None, ci_pre_cti_hdus=None, ci_pre_cti_from_image=False,
+                                ci_pre_cti_paths=None, ci_pre_cti_hdus=None,
                                 masks=None):
     list_size = len(ci_image_paths)
 
@@ -386,13 +274,15 @@ def load_ci_data_list_from_fits(frame_geometries, ci_patterns,
         ci_pre_cti_hdus = list_size * [0]
 
     for data_index in range(list_size):
-        ci_data = load_ci_data_from_fits(frame_geometry=frame_geometries[data_index], ci_pattern=ci_patterns[data_index],
-                                         ci_image_path=ci_image_paths[data_index], ci_image_hdu=ci_image_hdus[data_index],
+        ci_data = load_ci_data_from_fits(frame_geometry=frame_geometries[data_index],
+                                         ci_pattern=ci_patterns[data_index],
+                                         ci_image_path=ci_image_paths[data_index],
+                                         ci_image_hdu=ci_image_hdus[data_index],
                                          ci_noise_map_path=ci_noise_map_paths[data_index],
                                          ci_noise_map_hdu=ci_noise_map_hdus[data_index],
                                          ci_pre_cti_path=ci_pre_cti_paths[data_index],
                                          ci_pre_cti_hdu=ci_pre_cti_hdus[data_index],
-                                         ci_pre_cti_from_image=ci_pre_cti_from_image, mask=masks[data_index])
+                                         mask=masks[data_index])
 
         ci_datas.append(ci_data)
 
@@ -403,7 +293,7 @@ def load_ci_data_from_fits(frame_geometry, ci_pattern,
                            ci_image_path, ci_image_hdu=0,
                            ci_noise_map_path=None, ci_noise_map_hdu=0,
                            ci_noise_map_from_single_value=None,
-                           ci_pre_cti_path=None, ci_pre_cti_hdu=0, ci_pre_cti_from_image=False,
+                           ci_pre_cti_path=None, ci_pre_cti_hdu=0,
                            mask=None):
     ci_image = util.numpy_array_from_fits(file_path=ci_image_path, hdu=ci_image_hdu)
 
