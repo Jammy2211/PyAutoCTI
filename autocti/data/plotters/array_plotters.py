@@ -7,7 +7,7 @@ from autocti import exc
 from autocti.data.plotters import plotter_util
 
 
-def plot_array(array, mask=None, as_subplot=False,
+def plot_array(array, mask=None, extract_array_from_mask=False, as_subplot=False,
                figsize=(7, 7), aspect='equal',
                cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
                cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
@@ -21,6 +21,9 @@ def plot_array(array, mask=None, as_subplot=False,
         The 2D array of hyper which is plotted.
     mask : ndarray of data.mask.Mask
         The masks applied to the hyper, the edge of which is plotted as a set of points over the plotted array.
+    extract_array_from_mask : bool
+        The plotter array is extracted using the mask, such that masked values are plotted as zeros. This ensures \
+        bright features outside the mask do not impact the color map of the plot.
     as_subplot : bool
         Whether the array is plotted as part of a subplot, in which case the grid figure is not opened / closed.
     figsize : (int, int)
@@ -68,6 +71,9 @@ def plot_array(array, mask=None, as_subplot=False,
 
     if array is None:
         return
+
+    if extract_array_from_mask and mask is not None:
+        array = np.add(array, 0.0, out=np.zeros_like(array), where=np.asarray(mask) == 0)
 
     plot_figure(array=array, as_subplot=as_subplot,
                 figsize=figsize, aspect=aspect, cmap=cmap, norm=norm,

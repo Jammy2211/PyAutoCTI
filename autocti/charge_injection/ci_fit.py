@@ -20,7 +20,7 @@ import numpy as np
 from autocti import exc
 from autofit.tools import fit
 
-def fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit, cti_params, cti_settings, hyper_noise_scalers=None):
+def fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit, cti_params, cti_settings):
     """Fit ci data with a model of cti, using the cti params and settings, automatically determining the type of fit
     based on the properties of the data.
 
@@ -38,7 +38,27 @@ def fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit, cti_params, cti_se
 
     if not ci_data_fit.is_hyper_data:
         return CIFit(ci_data_fit=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings)
-    elif ci_data_fit.is_hyper_data:
+    else:
+        raise exc.FittingException('The fit routine did not call a Fit class - check the '
+                                   'properties of the tracer')
+
+def hyper_fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit, cti_params, cti_settings, hyper_noise_scalers):
+    """Fit ci data with a model of cti, using the cti params and settings, automatically determining the type of fit
+    based on the properties of the data.
+
+    Parameters
+    -----------
+    ci_data_fit : ci_data.CIDataFit or ci_data.CIDataHyperFit
+        The charge injection image that is fitted.
+    cti_params : arctic_params.ArcticParams
+        The cti model parameters which describe how CTI during clocking.
+    cti_settings : arctic_settings.ArcticSettings
+        The settings that control how arctic models CTI.
+    hyper_noise_scalers :
+        The ci_hyper-parameter(s) which the noise_scaling_maps is multiplied by to scale the noise-map.
+    """
+
+    if ci_data_fit.is_hyper_data:
         return CIHyperFit(ci_data_hyper_fit=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings,
                           hyper_noise_scalers=hyper_noise_scalers)
     else:
@@ -68,6 +88,10 @@ class AbstractCIFit(object):
                                                              cti_params=self.cti_params,
                                                              cti_settings=self.cti_settings)
 
+    @property
+    def ci_pre_cti(self):
+        return self.ci_data_fit.ci_pre_cti
+
 
 class CIDataFit(fit.DataFit):
 
@@ -88,11 +112,11 @@ class CIDataFit(fit.DataFit):
         super(CIDataFit, self).__init__(data=image, noise_map=noise_map, mask=mask, model_data=ci_post_cti)
 
     @property
-    def images(self):
+    def image(self):
         return self.data
 
     @property
-    def model_images(self):
+    def model_image(self):
         return self.model_data
 
     @property
@@ -119,6 +143,21 @@ class CIFit(CIDataFit, AbstractCIFit):
         super(CIFit, self).__init__(image=ci_data_fit.image, noise_map=ci_data_fit.noise_map,
                                     mask=ci_data_fit.mask, ci_post_cti=self.ci_post_cti)
 
+    @property
+    def noise_scaling_map_of_ci_regions(self):
+        return self.ci_data_fit.ci_frame.ci_regions_from_array(array=self.chi_squared_map)
+
+    @property
+    def noise_scaling_map_of_parallel_trails(self):
+        return self.ci_data_fit.ci_frame.parallel_non_ci_regions_frame_from_frame(array=self.chi_squared_map)
+
+    @property
+    def noise_scaling_map_of_serial_trails(self):
+        return self.ci_data_fit.ci_frame.serial_all_trails_frame_from_frame(array=self.chi_squared_map)
+
+    @property
+    def noise_scaling_map_of_serial_overscan_above_trails(self):
+        return self.ci_data_fit.ci_frame.serial_overscan_above_trails_frame_from_frame(array=self.chi_squared_map)
 
 class CIHyperFit(CIDataFit, AbstractCIFit):
 
@@ -147,6 +186,7 @@ class CIHyperFit(CIDataFit, AbstractCIFit):
 
         super(CIHyperFit, self).__init__(image=ci_data_hyper_fit.image, noise_map=self.hyper_noise_map,
                                          mask=ci_data_hyper_fit.mask, ci_post_cti=self.ci_post_cti)
+
 
 def hyper_noise_map_from_noise_map_and_noise_scalings(noise_scaling_maps, hyper_noise_scalers, noise_map):
     """For a noise-map, use the model hyper noise and noise-scaling maps to compute a scaled noise-map.

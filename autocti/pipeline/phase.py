@@ -2,15 +2,19 @@ import logging
 from functools import partial
 
 import numpy as np
+import os
+
 from autofit import conf
 from autofit.optimize import non_linear as nl
 from autofit.tools import phase as ph
 from autofit.tools import phase_property
 
-from autocti.charge_injection import ci_hyper, ci_fit, ci_data
+from autocti.charge_injection import ci_fit, ci_data
 from autocti.data import mask as msk
-from autocti.data import util
 from autocti.model import arctic_params
+
+from autocti.charge_injection.plotters import ci_data_plotters
+from autocti.charge_injection.plotters import ci_fit_plotters
 
 logger = logging.getLogger(__name__)
 logger.level = logging.DEBUG
@@ -103,8 +107,7 @@ class Phase(ph.AbstractPhase):
                                       pool=pool)
 
         result = self.optimizer.fit(analysis)
-        if analysis.visualize_results:
-            analysis.visualize(instance=result.constant, suffix=None, during_analysis=False)
+
         return self.make_result(result=result, analysis=analysis)
 
     # noinspection PyMethodMayBeStatic
@@ -156,14 +159,58 @@ class Phase(ph.AbstractPhase):
             self.ci_datas_fit = ci_datas_fit
             self.cti_settings = cti_settings
             self.phase_name = phase_name
+            self.phase_output_path = "{}/{}".format(conf.instance.output_path, self.phase_name)
+
             self.pool = pool or ConsecutivePool
             self.previous_results = previous_results
 
-            self.visualize_results = conf.instance.general.get('output', 'visualize_results', bool)
-
+            log_file = conf.instance.general.get('output', 'log_file', str)
+            if not len(log_file.replace(" ", "")) == 0:
+                log_path = "{}/{}".format(self.phase_output_path, log_file)
+                logger.handlers = [logging.FileHandler(log_path)]
+                logger.propagate = False
+                
             self.plot_count = 0
-            self.output_image_path = "{}/".format(conf.instance.output_path) + '/' + self.phase_name + '/images/'
-            util.make_path_if_does_not_exist(self.output_image_path)
+            self.output_image_path = "{}/image/".format(self.phase_output_path)
+            make_path_if_does_not_exist(path=self.output_image_path)
+            self.output_fits_path = "{}/image/fits/".format(self.phase_output_path)
+            make_path_if_does_not_exist(path=self.output_fits_path)
+
+            self.extract_array_from_mask = \
+                conf.instance.general.get('output', 'extract_images_from_mask', bool)
+
+            self.plot_ci_data_as_subplot =\
+                conf.instance.general.get('output', 'plot_ci_data_as_subplot', bool)
+            self.plot_ci_data_image = \
+                conf.instance.general.get('output', 'plot_ci_data_image', bool)
+            self.plot_ci_data_noise_map = \
+                conf.instance.general.get('output', 'plot_ci_data_noise_map', bool)
+            self.plot_ci_data_ci_pre_cti = \
+                conf.instance.general.get('output', 'plot_ci_data_ci_pre_cti', bool)
+            self.plot_ci_data_signal_to_noise_map = \
+                conf.instance.general.get('output', 'plot_ci_data_signal_to_noise_map', bool)
+
+            self.plot_ci_fit_all_at_end_png = \
+                conf.instance.general.get('output', 'plot_ci_fit_all_at_end_png', bool)
+            self.plot_ci_fit_all_at_end_fits = \
+                conf.instance.general.get('output', 'plot_ci_fit_all_at_end_fits', bool)
+
+            self.plot_ci_fit_as_subplot = \
+                conf.instance.general.get('output', 'plot_ci_fit_as_subplot', bool)
+            self.plot_ci_fit_image = \
+                conf.instance.general.get('output', 'plot_ci_fit_image', bool)
+            self.plot_ci_fit_noise_map = \
+                conf.instance.general.get('output', 'plot_ci_fit_noise_map', bool)
+            self.plot_ci_fit_signal_to_noise_map = \
+                conf.instance.general.get('output', 'plot_ci_fit_signal_to_noise_map', bool)
+            self.plot_ci_fit_ci_pre_cti = \
+                conf.instance.general.get('output', 'plot_ci_fit_ci_pre_cti', bool)
+            self.plot_ci_fit_ci_post_cti = \
+                conf.instance.general.get('output', 'plot_ci_fit_ci_post_cti', bool)
+            self.plot_ci_fit_residual_map = \
+                conf.instance.general.get('output', 'plot_ci_fit_residual_map', bool)
+            self.plot_ci_fit_chi_squared_map = \
+                conf.instance.general.get('output', 'plot_ci_fit_chi_squared_map', bool)
 
         @property
         def last_results(self):
@@ -171,7 +218,80 @@ class Phase(ph.AbstractPhase):
                 return self.previous_results.last
 
         def visualize(self, instance, suffix, during_analysis):
-            pass
+
+            self.plot_count += 1
+
+            ci_data_index = 0
+
+            if self.plot_ci_data_as_subplot:
+
+                ci_data_plotters.plot_ci_subplot(
+                    ci_data=self.ci_datas_fit[ci_data_index], extract_array_from_mask=self.extract_array_from_mask,
+                    output_path=self.output_image_path, output_format='png')
+
+            ci_data_plotters.plot_ci_data_individual(
+                ci_data=self.ci_datas_fit[ci_data_index], extract_array_from_mask=self.extract_array_from_mask,
+                should_plot_image=self.plot_ci_data_image,
+                should_plot_noise_map=self.plot_ci_data_noise_map,
+                should_plot_ci_pre_cti=self.plot_ci_data_ci_pre_cti,
+                should_plot_signal_to_noise_map=self.plot_ci_data_signal_to_noise_map,
+                output_path=self.output_image_path, output_format='png')
+
+            fits = self.fits_for_instance(instance=instance)
+
+            ci_fit_index = 0
+
+            if self.plot_ci_fit_as_subplot:
+
+                ci_fit_plotters.plot_fit_subplot(
+                    fit=fits[ci_fit_index], extract_array_from_mask=self.extract_array_from_mask,
+                    output_path=self.output_image_path, output_format='png')
+
+            if during_analysis:
+                ci_fit_plotters.plot_fit_individuals(
+                    fit=fits[ci_fit_index],                    
+                    extract_array_from_mask=self.extract_array_from_mask,
+                    should_plot_image=self.plot_ci_fit_image,
+                    should_plot_noise_map=self.plot_ci_fit_noise_map,
+                    should_plot_signal_to_noise_map=self.plot_ci_fit_signal_to_noise_map,
+                    should_plot_ci_pre_cti=self.plot_ci_data_ci_pre_cti,
+                    should_plot_ci_post_cti=self.plot_ci_fit_ci_post_cti,
+                    should_plot_residual_map=self.plot_ci_fit_residual_map,
+                    should_plot_chi_squared_map=self.plot_ci_fit_chi_squared_map,
+                    output_path=self.output_image_path, output_format='png')
+
+            elif not during_analysis:
+
+                if self.plot_ci_fit_all_at_end_png:
+
+                    ci_fit_plotters.plot_fit_individuals(
+                        fit=fits[ci_fit_index],
+                        extract_array_from_mask=self.extract_array_from_mask,
+                        should_plot_image=True,
+                        should_plot_noise_map=True,
+                        should_plot_signal_to_noise_map=True,
+                        should_plot_ci_pre_cti=True,
+                        should_plot_ci_post_cti=True,
+                        should_plot_residual_map=True,
+                        should_plot_chi_squared_map=True,
+                        output_path=self.output_image_path, output_format='png')
+
+                if self.plot_ci_fit_all_at_end_fits:
+
+                    ci_fit_plotters.plot_fit_individuals(
+                        fit=fits[ci_fit_index],
+                        extract_array_from_mask=self.extract_array_from_mask,
+                        should_plot_image=True,
+                        should_plot_noise_map=True,
+                        should_plot_signal_to_noise_map=True,
+                        should_plot_ci_pre_cti=True,
+                        should_plot_ci_post_cti=True,
+                        should_plot_residual_map=True,
+                        should_plot_chi_squared_map=True,
+                        output_path=self.output_fits_path, output_format='fits')
+
+            return fits
+
 
         def fit(self, instance):
             """
@@ -186,7 +306,7 @@ class Phase(ph.AbstractPhase):
             fit: ci_fit.Fit
                 How fit the model is and the model
             """
-            cti_params = cti_params_for_instance(instance)
+            cti_params = cti_params_for_instance(instance=instance)
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
             return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
 
@@ -251,7 +371,33 @@ class ParallelPhase(Phase):
                 "Parallel CCD\n{}\n\n".format(instance.parallel_species, instance.parallel_ccd))
 
 
+    class Result(Phase.Result):
+
+        # noinspection PyUnusedLocal
+        def __init__(self, constant, figure_of_merit, variable, analysis, optimizer):
+            """
+            The result of a phase
+            """
+
+            super(ParallelPhase.Result, self).__init__(constant=constant, figure_of_merit=figure_of_merit,
+                                                       variable=variable, analysis=analysis, optimizer=optimizer)
+
+        @property
+        def noise_scaling_maps(self):
+
+            noise_scaling_maps_of_ci_regions = list(map(lambda most_likely_fit :
+                                                        most_likely_fit.noise_scaling_map_of_ci_regions ,
+                                                        self.most_likely_fits))
+
+            noise_scaling_maps_of_parallel_trails = list(map(lambda most_likely_fit :
+                                                        most_likely_fit.noise_scaling_map_of_parallel_trails ,
+                                                        self.most_likely_fits))
+
+            return [noise_scaling_maps_of_ci_regions, noise_scaling_maps_of_parallel_trails]
+
+
 class SerialPhase(Phase):
+
     serial_species = phase_property.PhasePropertyCollection("serial_species")
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 
@@ -343,9 +489,9 @@ class HyperAnalysis(Phase.Analysis):
         result: Result
             An object comprising the final cti_params instances generated and a corresponding figure_of_merit
         """
-        cti_params = cti_params_for_instance(instance)
+        cti_params = cti_params_for_instance(instance=instance)
         pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
-                                hyper_noises=self.noises_from_instance(instance))
+                                hyper_noise_scalers=self.hyper_noise_scalers_from_instance(instance))
         return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
 
     @classmethod
@@ -353,26 +499,29 @@ class HyperAnalysis(Phase.Analysis):
         logger.debug(
             "\nRunning CTI analysis for... \n\n"
             "Parallel CTI::\n{}\n\n "
-            "Hyper Parameters:\n{}".format(instance.parallel, " ".join(cls.noises_from_instance(instance))))
+            "Hyper Parameters:\n{}".format(instance.parallel, " ".join(cls.noise_scaling_maps_from_instance(instance))))
 
-    def fits_for_instance(self, instance):
-        cti_params = cti_params_for_instance(instance)
-        return ci_fit.CIHyperFit(ci_data_hyper_fit=self.ci_datas_fit,
-                                 cti_params=cti_params,
-                                 cti_settings=self.cti_settings,
-                                 hyper_noise_scalers=self.noises_from_instance(instance))
+    def hyper_fits_for_instance(self, instance):
+        cti_params = cti_params_for_instance(instance=instance)
+        hyper_noise_scalers = self.hyper_noise_scalers_from_instance(instance=instance)
+        return list(map(lambda ci_data_fit:
+                        ci_fit.hyper_fit_ci_data_fit_with_cti_params_and_settings(
+                            ci_data_fit=ci_data_fit, cti_params=cti_params, cti_settings=self.cti_settings,
+                            hyper_noise_scalers=hyper_noise_scalers),
+                        self.ci_datas_fit))
 
     @classmethod
-    def noises_from_instance(cls, instance):
+    def hyper_noise_scalers_from_instance(cls, instance):
         raise NotImplementedError()
 
 
 class ParallelHyperPhase(ParallelPhase):
 
-    hyp_ci_regions = phase_property.PhaseProperty("hyp_ci_regions")
-    hyp_parallel_trails = phase_property.PhaseProperty("hyp_parallel_trails")
+    hyper_noise_scaler_ci_regions = phase_property.PhaseProperty("hyper_noise_scaler_ci_regions")
+    hyper_noise_scaler_parallel_trails = phase_property.PhaseProperty("hyper_noise_scaler_parallel_trails")
 
-    def __init__(self, parallel_species=(), parallel_ccd=None, hyp_ci_regions=None, hyp_parallel_trails=None,
+    def __init__(self, parallel_species=(), parallel_ccd=None, hyper_noise_scaler_ci_regions=None,
+                 hyper_noise_scaler_parallel_trails=None,
                  optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, columns=None,
                  phase_name="parallel_hyper_phase"):
         """
@@ -387,48 +536,48 @@ class ParallelHyperPhase(ParallelPhase):
         super().__init__(parallel_species=parallel_species, parallel_ccd=parallel_ccd, optimizer_class=optimizer_class,
                          mask_function=mask_function, columns=columns, phase_name=phase_name)
 
-        self.hyp_ci_regions = hyp_ci_regions
-        self.hyp_parallel_trails = hyp_parallel_trails
-        self.has_noise_scalings = True
+        self.hyper_noise_scaler_ci_regions = hyper_noise_scaler_ci_regions
+        self.hyper_noise_scaler_parallel_trails = hyper_noise_scaler_parallel_trails
 
     class Analysis(HyperAnalysis, ParallelPhase.Analysis):
 
-        @classmethod
-        def noises_from_instance(cls, instance):
-            return [instance.hyp_ci_regions, instance.hyp_parallel_trails]
+        def hyper_noise_scalers_from_instance(self, instance):
+            return [instance.hyper_noise_scaler_ci_regions, instance.hyper_noise_scaler_parallel_trails]
 
 
 class SerialHyperPhase(SerialPhase):
 
-    hyp_ci_regions = phase_property.PhaseProperty("hyp_ci_regions")
-    hyp_serial_trails = phase_property.PhaseProperty("hyp_serial_trails")
+    hyper_noise_scaler_ci_regions = phase_property.PhaseProperty("hyper_noise_scaler_ci_regions")
+    hyper_noise_scaler_serial_trails = phase_property.PhaseProperty("hyper_noise_scaler_serial_trails")
 
-    def __init__(self, serial_species=(), serial_ccd=None, hyp_ci_regions=None, hyp_serial_trails=None,
+    def __init__(self, serial_species=(), serial_ccd=None,
+                 hyper_noise_scaler_ci_regions=None, hyper_noise_scaler_serial_trails=None,
                  optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, rows=None,
                  phase_name="serial_hyper_phase"):
         """
         A phase with a simple source/CTI model
         """
         super().__init__(serial_species=serial_species, serial_ccd=serial_ccd, optimizer_class=optimizer_class,
-                         mask_function=mask_function, columns=columns, rows=rows, phase_name=phase_name)
-        self.hyp_ci_regions = hyp_ci_regions
-        self.hyp_serial_trails = hyp_serial_trails
-        self.has_noise_scalings = True
+                         mask_function=mask_function, rows=rows, phase_name=phase_name)
+        self.hyper_noise_scaler_ci_regions = hyper_noise_scaler_ci_regions
+        self.hyper_noise_scaler_serial_trails = hyper_noise_scaler_serial_trails
 
     class Analysis(HyperAnalysis, SerialPhase.Analysis):
-        @classmethod
-        def noises_from_instance(cls, instance):
-            return [instance.hyp_ci_regions, instance.hyp_serial_trails]
+
+        def hyper_noise_scalers_from_instance(self, instance):
+            return [instance.hyper_noise_scaler_ci_regions, instance.hyper_noise_scaler_serial_trails]
 
 
 class ParallelSerialHyperPhase(ParallelSerialPhase):
-    hyp_ci_regions = phase_property.PhaseProperty("hyp_ci_regions")
-    hyp_parallel_trails = phase_property.PhaseProperty("hyp_parallel_trails")
-    hyp_serial_trails = phase_property.PhaseProperty("hyp_serial_trails")
-    hyp_parallel_serial_trails = phase_property.PhaseProperty("hyp_parallel_serial_trails")
 
-    def __init__(self, parallel_species=(), serial_species=(), parallel_ccd=None, serial_ccd=None, hyp_ci_regions=None,
-                 hyp_parallel_trails=None, hyp_serial_trails=None, hyp_parallel_serial_trails=None,
+    hyper_noise_scaler_ci_regions = phase_property.PhaseProperty("hyper_noise_scaler_ci_regions")
+    hyper_noise_scaler_parallel_trails = phase_property.PhaseProperty("hyper_noise_scaler_parallel_trails")
+    hyper_noise_scaler_serial_trails = phase_property.PhaseProperty("hyper_noise_scaler_serial_trails")
+    hyper_noise_scaler_parallel_serial_trails = phase_property.PhaseProperty("hyper_noise_scaler_parallel_serial_trails")
+
+    def __init__(self, parallel_species=(), serial_species=(), parallel_ccd=None, serial_ccd=None,
+                 hyper_noise_scaler_ci_regions=None, hyper_noise_scaler_parallel_trails=None,
+                 hyper_noise_scaler_serial_trails=None, hyper_noise_scaler_parallel_serial_trails=None,
                  optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape,
                  phase_name="parallel_serial_hyper_phase"):
         """
@@ -442,31 +591,30 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
         super().__init__(parallel_species=parallel_species, serial_species=serial_species, parallel_ccd=parallel_ccd,
                          serial_ccd=serial_ccd, optimizer_class=optimizer_class, mask_function=mask_function,
                          phase_name=phase_name)
-        self.hyp_ci_regions = hyp_ci_regions
-        self.hyp_parallel_trails = hyp_parallel_trails
-        self.hyp_serial_trails = hyp_serial_trails
-        self.hyp_parallel_serial_trails = hyp_parallel_serial_trails
+        self.hyper_noise_scaler_ci_regions = hyper_noise_scaler_ci_regions
+        self.hyper_noise_scaler_parallel_trails = hyper_noise_scaler_parallel_trails
+        self.hyper_noise_scaler_serial_trails = hyper_noise_scaler_serial_trails
+        self.hyper_noise_scaler_parallel_serial_trails = hyper_noise_scaler_parallel_serial_trails
         self.has_noise_scalings = True
 
     class Analysis(HyperAnalysis, ParallelPhase.Analysis):
-        @classmethod
-        def noises_from_instance(cls, instance):
-            return [instance.hyp_ci_regions,
-                    instance.hyp_parallel_trails,
-                    instance.hyp_serial_trails,
-                    instance.hyp_parallel_serial_trails]
+
+        def hyper_noise_scalers_from_instance(self, instance):
+            return [instance.hyper_noise_scaler_ci_regions, instance.hyper_noise_scaler_parallel_trails,
+                    instance.hyper_noise_scaler_serial_trails, instance.hyper_noise_scaler_parallel_serial_trails]
 
 
 def pipe_cti(ci_data_fit, cti_params, cti_settings):
-    fitter = ci_fit.CIFit(ci_data_fit=ci_data_fit,
-                          cti_params=cti_params,
-                          cti_settings=cti_settings)
+    fitter = ci_fit.CIFit(ci_data_fit=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings)
     return fitter.figure_of_merit
 
 
-def pipe_cti_hyper(ci_data_fit, cti_params, cti_settings, hyper_noises):
-    fitter = ci_fit.CIHyperFit(ci_data_hyper_fit=ci_data_fit,
-                               cti_params=cti_params,
-                               cti_settings=cti_settings,
-                               hyper_noise_scalers=hyper_noises)
+def pipe_cti_hyper(ci_data_fit, cti_params, cti_settings, hyper_noise_scalers):
+    fitter = ci_fit.CIHyperFit(ci_data_hyper_fit=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings,
+                               hyper_noise_scalers=hyper_noise_scalers)
     return fitter.figure_of_merit
+
+
+def make_path_if_does_not_exist(path):
+    if not os.path.exists(path):
+        os.makedirs(path)

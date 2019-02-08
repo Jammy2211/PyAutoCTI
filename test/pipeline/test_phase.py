@@ -209,6 +209,18 @@ class TestPhase(object):
         assert cti_params.parallel_species == instance.parallel_species
 
 
+class TestHyperPhase(object):
+
+    def test__make_analysis(self, phase, ci_data, cti_settings):
+
+        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        assert analysis.last_results is None
+        assert (analysis.ci_datas_fit[0].image == ci_data.image).all()
+        assert (analysis.ci_datas_fit[0].noise_map == ci_data.noise_map).all()
+        assert analysis.cti_settings == cti_settings
+
+
+
 class TestResult(object):
 
     def test_results(self):
@@ -226,7 +238,13 @@ class TestResult(object):
 
         result = phase.run(ci_datas=[ci_data], cti_settings=cti_settings)
 
-        print(dir(result))
-        print(result.most_likely_fits)
-
         assert hasattr(result, 'most_likely_fits')
+    #    assert hasattr(result, 'noise_scaling_maps')
+
+    # def test__parallel_phase__noise_scaling_maps_of_images_are_correct(self, ci_data, cti_settings):
+    #
+    #     phase = ph.ParallelPhase(optimizer_class=NLO,
+    #                              parallel_species=[prior_model.PriorModel(arctic_params.Species)],
+    #                              parallel_ccd=arctic_params.CCD, phase_name='test_phase')
+    #
+    #     result = phase.run(ci_datas=[ci_data], cti_settings=cti_settings)

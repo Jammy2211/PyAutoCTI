@@ -39,14 +39,20 @@ def make_ci_data(image, noise_map, ci_pre_cti):
                           ci_frame=MockGeometry())
 
 
-def test__ci_sub_plot_output_dependent_on_config(data, data_plotter_path, plot_patch):
-    ci_data_plotters.plot_ci_subplot(ci_data=data, output_path=data_plotter_path, output_format='png')
+def test__ci_sub_plot_output(data, data_plotter_path, plot_patch):
+
+    ci_data_plotters.plot_ci_subplot(ci_data=data, extract_array_from_mask=True,
+                                     output_path=data_plotter_path, output_format='png')
 
     assert data_plotter_path + 'ci_data.png' in plot_patch.paths
 
 
-def test__ci_individuals__output_dependent_on_config(data, data_plotter_path, plot_patch):
-    ci_data_plotters.plot_ci_data_individual(ci_data=data, output_path=data_plotter_path, output_format='png')
+def test__ci_individuals__output_dependent_on_inputs(data, data_plotter_path, plot_patch):
+
+    ci_data_plotters.plot_ci_data_individual(ci_data=data, extract_array_from_mask=True,
+                                             should_plot_image=True,
+                                             should_plot_ci_pre_cti=True,
+                                             output_path=data_plotter_path, output_format='png')
 
     assert data_plotter_path + 'ci_image.png' in plot_patch.paths
 
@@ -58,21 +64,24 @@ def test__ci_individuals__output_dependent_on_config(data, data_plotter_path, pl
 
 
 def test__image_is_output(data, mask, data_plotter_path, plot_patch):
-    ci_data_plotters.plot_image(ci_data=data, mask=mask, output_path=data_plotter_path, output_format='png')
+    ci_data_plotters.plot_image(ci_data=data, mask=mask, extract_array_from_mask=True,
+                                output_path=data_plotter_path, output_format='png')
     assert data_plotter_path + 'ci_image.png' in plot_patch.paths
 
 
 def test__noise_map_is_output(data, mask, data_plotter_path, plot_patch):
-    ci_data_plotters.plot_noise_map(ci_data=data, mask=mask, output_path=data_plotter_path, output_format='png')
+    ci_data_plotters.plot_noise_map(ci_data=data, mask=mask, extract_array_from_mask=True,
+                                    output_path=data_plotter_path, output_format='png')
     assert data_plotter_path + 'ci_noise_map.png' in plot_patch.paths
 
 
 def test__ci_pre_cti_is_output(data, mask, data_plotter_path, plot_patch):
-    ci_data_plotters.plot_ci_pre_cti(ci_data=data, mask=mask, output_path=data_plotter_path, output_format='png')
+    ci_data_plotters.plot_ci_pre_cti(ci_data=data, mask=mask, extract_array_from_mask=True,
+                                     output_path=data_plotter_path, output_format='png')
     assert data_plotter_path + 'ci_pre_cti.png' in plot_patch.paths
 
 
 def test__signal_to_noise_map_is_output(data, mask, data_plotter_path, plot_patch):
-    ci_data_plotters.plot_signal_to_noise_map(ci_data=data, mask=mask, output_path=data_plotter_path,
-                                              output_format='png')
+    ci_data_plotters.plot_signal_to_noise_map(ci_data=data, mask=mask, extract_array_from_mask=True,
+                                              output_path=data_plotter_path, output_format='png')
     assert data_plotter_path + 'ci_signal_to_noise_map.png' in plot_patch.paths

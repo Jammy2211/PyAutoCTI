@@ -24,7 +24,6 @@ output_path = path + 'output/' + test_type
 config_path = path + 'config'
 conf.instance = conf.Config(config_path=config_path, output_path=output_path)
 
-
 def pipeline():
 
     tools.reset_paths(test_name=test_name, output_path=output_path)

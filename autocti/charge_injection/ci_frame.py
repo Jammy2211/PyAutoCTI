@@ -325,7 +325,7 @@ class ChInj(object):
                                                                   0, self.frame_geometry.serial_overscan.total_columns))
         return array
 
-    def serial_overscan_non_trails_frame_from_frame(self, array):
+    def serial_overscan_above_trails_frame_from_frame(self, array):
         """Extract an array of all of the regions of the serial overscan that don't contain trails from a   
         charge injection region (i.e. are not to the side of one).
 
@@ -757,16 +757,12 @@ class ChInj(object):
 
 
 class CIFrame(ChInj, np.ndarray):
+
     def __new__(cls, frame_geometry, ci_pattern, array, *args, **kwargs):
         return array.view(cls)
 
     def __init__(self, frame_geometry, ci_pattern, array):
         super().__init__(frame_geometry, ci_pattern)
-
-    def __array_finalize__(self, obj):
-        if isinstance(obj, CIFrame):
-            self.frame_geometry = obj.frame_geometry
-            self.ci_pattern = obj.ci_pattern
 
     @classmethod
     def from_fits_and_ci_pattern(cls, file_path, hdu, frame_geometry, ci_pattern):
