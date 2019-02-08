@@ -2,13 +2,12 @@ import numpy as np
 
 from autocti.charge_injection import ci_data
 from autocti.charge_injection import ci_fit
-from autocti.charge_injection import ci_frame
 from autocti.charge_injection.plotters import fit_plotters
 from autocti.data import mask as msk
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
 from test.charge_injection.plotters.fixtures import *
-from test.mock.mock import MockGeometry, MockPattern, MockCIFrame
+from test.mock.mock import MockPattern, MockCIFrame
 
 
 @pytest.fixture(name='fit_plotter_path')
