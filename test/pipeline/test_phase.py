@@ -112,7 +112,7 @@ def make_ci_pattern():
 
 @pytest.fixture(name="ci_data")
 def make_ci_data(ci_geometry, ci_pattern):
-    image = ci_frame.CIFrame(array=np.ones((3, 3)), frame_geometry=ci_geometry, ci_pattern=ci_pattern)
+    image = np.ones((3, 3))
     noise = np.ones((3, 3))
     ci_pre_cti = np.ones((3, 3))
     return data.CIData(image=image, noise_map=noise, ci_pre_cti=ci_pre_cti, ci_pattern=ci_pattern, ci_frame=ci_geometry)
