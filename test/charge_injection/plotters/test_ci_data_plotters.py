@@ -20,17 +20,17 @@ def make_mask():
 
 @pytest.fixture(name='image')
 def make_image():
-    return ci_frame.CIFrame(frame_geometry=MockGeometry(), ci_pattern=MockPattern(), array=np.ones((6, 6)))
+    return np.ones((6, 6))
 
 
 @pytest.fixture(name='noise_map')
 def make_noise_map():
-    return ci_frame.CIFrame(frame_geometry=MockGeometry(), ci_pattern=MockPattern(), array=2.0 * np.ones((6, 6)))
+    return 2.0 * np.ones((6, 6))
 
 
 @pytest.fixture(name='ci_pre_cti')
 def make_ci_pre_cti():
-    return ci_frame.CIFrame(frame_geometry=MockGeometry(), ci_pattern=MockPattern(), array=3.0 * np.ones((6, 6)))
+    return 3.0 * np.ones((6, 6))
 
 
 @pytest.fixture(name='data')
