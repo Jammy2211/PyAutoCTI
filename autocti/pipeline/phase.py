@@ -135,9 +135,14 @@ class Phase(ph.AbstractPhase):
         """
         masks = list(map(lambda data: self.mask_function(shape=data.image.shape), ci_datas))
         ci_datas_fit = [self.extract_ci_data(data=data, mask=mask) for data, mask in zip(ci_datas, masks)]
+        ci_datas_full = list(map(lambda data, mask :
+                                 ci_data.CIDataFit(image=data.image, noise_map=data.noise_map,
+                                                   ci_pre_cti=data.ci_pre_cti, mask=mask,
+                                                   ci_pattern=data.ci_pattern, ci_frame=data.ci_frame),
+                                 ci_datas, masks))
 
         self.pass_priors(previous_results)
-        analysis = self.__class__.Analysis(ci_datas_fit=ci_datas_fit,
+        analysis = self.__class__.Analysis(ci_datas_extracted=ci_datas_fit, ci_datas_full=ci_datas_full,
                                            cti_settings=cti_settings, phase_name=self.phase_name,
                                            previous_results=previous_results, pool=pool)
         return analysis
@@ -145,7 +150,7 @@ class Phase(ph.AbstractPhase):
     # noinspection PyAbstractClass
     class Analysis(nl.Analysis):
 
-        def __init__(self, ci_datas_fit, cti_settings, phase_name, previous_results=None, pool=None):
+        def __init__(self, ci_datas_extracted, ci_datas_full, cti_settings, phase_name, previous_results=None, pool=None):
             """
             An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \
             set of objects describing a model and determines how well they fit the image.
@@ -156,7 +161,8 @@ class Phase(ph.AbstractPhase):
                 The charge injection ci_data-sets.
             """
 
-            self.ci_datas_fit = ci_datas_fit
+            self.ci_datas_extracted = ci_datas_extracted
+            self.ci_datas_full = ci_datas_full
             self.cti_settings = cti_settings
             self.phase_name = phase_name
             self.phase_output_path = "{}/{}".format(conf.instance.output_path, self.phase_name)
@@ -226,11 +232,11 @@ class Phase(ph.AbstractPhase):
             if self.plot_ci_data_as_subplot:
 
                 ci_data_plotters.plot_ci_subplot(
-                    ci_data=self.ci_datas_fit[ci_data_index], extract_array_from_mask=self.extract_array_from_mask,
+                    ci_data=self.ci_datas_extracted[ci_data_index], extract_array_from_mask=self.extract_array_from_mask,
                     output_path=self.output_image_path, output_format='png')
 
             ci_data_plotters.plot_ci_data_individual(
-                ci_data=self.ci_datas_fit[ci_data_index], extract_array_from_mask=self.extract_array_from_mask,
+                ci_data=self.ci_datas_extracted[ci_data_index], extract_array_from_mask=self.extract_array_from_mask,
                 should_plot_image=self.plot_ci_data_image,
                 should_plot_noise_map=self.plot_ci_data_noise_map,
                 should_plot_ci_pre_cti=self.plot_ci_data_ci_pre_cti,
@@ -292,7 +298,6 @@ class Phase(ph.AbstractPhase):
 
             return fits
 
-
         def fit(self, instance):
             """
             Determine the fitness of a particular model
@@ -308,18 +313,25 @@ class Phase(ph.AbstractPhase):
             """
             cti_params = cti_params_for_instance(instance=instance)
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
-            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
+            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
 
         @classmethod
         def log(cls, instance):
             raise NotImplementedError()
 
-        def fits_for_instance(self, instance):
+        def fits_of_ci_data_extracted_for_instance(self, instance):
             cti_params = cti_params_for_instance(instance=instance)
             return list(map(lambda ci_data_fit :
                             ci_fit.fit_ci_data_fit_with_cti_params_and_settings(
                             ci_data_fit=ci_data_fit, cti_params=cti_params, cti_settings=self.cti_settings),
-                            self.ci_datas_fit))
+                            self.ci_datas_extracted))
+
+        def fits_of_ci_data_full_for_instance(self, instance):
+            cti_params = cti_params_for_instance(instance=instance)
+            return list(map(lambda ci_data :
+                            ci_fit.fit_ci_data_fit_with_cti_params_and_settings(
+                            ci_data_fit=ci_data, cti_params=cti_params, cti_settings=self.cti_settings),
+                            self.ci_datas_full))
 
     class Result(nl.Result):
 
@@ -335,8 +347,12 @@ class Phase(ph.AbstractPhase):
             self.optimizer = optimizer
 
         @property
-        def most_likely_fits(self):
-            return self.analysis.fits_for_instance(instance=self.constant)
+        def most_likely_extracted_fits(self):
+            return self.analysis.fits_of_ci_data_extracted_for_instance(instance=self.constant)
+
+        @property
+        def most_likely_full_fits(self):
+            return self.analysis.fits_of_ci_data_full_for_instance(instance=self.constant)
 
 
 class ParallelPhase(Phase):
@@ -386,12 +402,12 @@ class ParallelPhase(Phase):
         def noise_scaling_maps(self):
 
             noise_scaling_maps_of_ci_regions = list(map(lambda most_likely_fit :
-                                                        most_likely_fit.noise_scaling_map_of_ci_regions ,
-                                                        self.most_likely_fits))
+                                                        most_likely_fit.noise_scaling_map_of_ci_regions,
+                                                        self.most_likely_extracted_fits))
 
             noise_scaling_maps_of_parallel_trails = list(map(lambda most_likely_fit :
-                                                        most_likely_fit.noise_scaling_map_of_parallel_trails ,
-                                                        self.most_likely_fits))
+                                                        most_likely_fit.noise_scaling_map_of_parallel_trails,
+                                                             self.most_likely_extracted_fits))
 
             return [noise_scaling_maps_of_ci_regions, noise_scaling_maps_of_parallel_trails]
 
@@ -492,7 +508,7 @@ class HyperAnalysis(Phase.Analysis):
         cti_params = cti_params_for_instance(instance=instance)
         pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
                                 hyper_noise_scalers=self.hyper_noise_scalers_from_instance(instance))
-        return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_fit)))
+        return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
 
     @classmethod
     def log(cls, instance):
@@ -508,7 +524,7 @@ class HyperAnalysis(Phase.Analysis):
                         ci_fit.hyper_fit_ci_data_fit_with_cti_params_and_settings(
                             ci_data_fit=ci_data_fit, cti_params=cti_params, cti_settings=self.cti_settings,
                             hyper_noise_scalers=hyper_noise_scalers),
-                        self.ci_datas_fit))
+                        self.ci_datas_extracted))
 
     @classmethod
     def hyper_noise_scalers_from_instance(cls, instance):
