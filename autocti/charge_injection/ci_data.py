@@ -203,7 +203,7 @@ def simulate(shape, frame_geometry, ci_pattern, cti_params, cti_settings, read_n
     return ci_post_cti[:, :]
 
 
-def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, frame_geometry, image, mask=None):
+def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, image, mask=None):
     """Setup a pre-cti image from this charge injection ci_data, using the charge injection ci_pattern.
 
     The pre-cti image is computed depending on whether the charge injection ci_pattern is uniform, non-uniform or \
@@ -232,7 +232,7 @@ def load_ci_data_from_fits(frame_geometry, ci_pattern,
     if ci_pre_cti_path is not None:
         ci_pre_cti = util.numpy_array_from_fits(file_path=ci_pre_cti_path, hdu=ci_pre_cti_hdu)
     else:
-        ci_pre_cti = ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, frame_geometry, ci_image, mask=mask)
+        ci_pre_cti = ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, ci_image, mask=mask)
 
     return CIData(image=ci_image, noise_map=ci_noise_map, ci_pre_cti=ci_pre_cti, ci_pattern=ci_pattern,
                   ci_frame=frame_geometry)
