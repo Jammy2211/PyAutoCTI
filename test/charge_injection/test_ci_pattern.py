@@ -58,18 +58,6 @@ class TestCIPatternViaList(object):
         assert pattern_collection[1].regions == [(1, 2, 3, 4)]
         assert pattern_collection[1].row_slope == 2.0
 
-    def test__2_fast_uniform_patterns__sets_up_collection(self):
-        pattern_collection = ci_pattern.uniform_fast_from_lists(normalizations=[1.0, 3.0],
-                                                                regions=[(1, 2, 3, 4)])
-
-        assert type(pattern_collection[0]) == ci_pattern.CIPatternUniformFast
-        assert pattern_collection[0].normalization == 1.0
-        assert pattern_collection[0].regions == [(1, 2, 3, 4)]
-
-        assert type(pattern_collection[1]) == ci_pattern.CIPatternUniformFast
-        assert pattern_collection[1].normalization == 3.0
-        assert pattern_collection[1].regions == [(1, 2, 3, 4)]
-
 
 class TestCIPattern(object):
     class TestConstructor:
@@ -446,7 +434,7 @@ class TestCIPatternNonUniform(object):
 
             column = pattern_sim.generate_column(size=3, normalization=500.0)
 
-            ci_column = np.zeros((11))
+            ci_column = np.zeros((11,))
 
             ci_column[0:3] = column
             ci_column[4:7] = column
@@ -560,7 +548,7 @@ class TestCIPatternNonUniform(object):
                                                      row_slope=0.0)
 
             with pytest.raises(exc.CIPatternException):
-                mock_image = pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=ci_image, mask=mask)
+                pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=ci_image, mask=mask)
 
         def test__one_ci_region__includes_row_non_uniformity__set_up_as_means(self):
             pattern_sim = ci_pattern.CIPatternNonUniform(normalization=500.0, regions=[(0, 1, 0, 1)],
@@ -690,61 +678,6 @@ class TestCIPatternNonUniform(object):
 
             with pytest.raises(exc.CIPatternException):
                 pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=np.ones((1, 1)), mask=np.ma.ones((1, 1)))
-
-
-class TestCIPatternUniformFast(object):
-    class TestConstructor:
-
-        def test__setup_all_attributes_correctly(self):
-            pattern = ci_pattern.CIPatternUniformFast(normalization=1.0, regions=[(1, 3, 3, 5)])
-
-            assert pattern.normalization == 1.0
-            assert pattern.regions == [(1, 3, 3, 5)]
-
-    class TestComputeFastColumn:
-
-        def test__1_region_normalization_10__column_height_3__computes_fast_column(self):
-            pattern = ci_pattern.CIPatternUniformFast(normalization=1.0, regions=[(0, 2, 0, 1)])
-
-            fast_column = pattern.compute_fast_column(number_rows=3)
-
-            assert (fast_column == np.array([[1.0],
-                                             [1.0],
-                                             [0.0]])).all()
-
-        def test__same_as_above_but_different_parameters(self):
-            pattern = ci_pattern.CIPatternUniformFast(normalization=10.0,
-                                                      regions=[(0, 3, 0, 1), (4, 5, 1, 2)])
-
-            fast_column = pattern.compute_fast_column(number_rows=6)
-
-            assert (fast_column == np.array([[10.0],
-                                             [10.0],
-                                             [10.0],
-                                             [0.0],
-                                             [10.0],
-                                             [0.0]])).all()
-
-    class TestComputeFastRows:
-
-        def test__1_region_normalization_10__column_height_3__computes_fast_column(self):
-            pattern = ci_pattern.CIPatternUniformFast(normalization=1.0,
-                                                      regions=[(0, 1, 0, 2)])
-
-            fast_row = pattern.compute_fast_row(number_columns=3)
-
-            assert (fast_row == np.array([[1.0, 1.0, 0.0]])).all()
-
-        def test__same_as_above_but_different_parameters(self):
-            # Note that all regions other than region[0] are ignored, see function docstring for why.
-
-            pattern = ci_pattern.CIPatternUniformFast(
-                normalization=10.0,
-                regions=[(0, 1, 0, 3), (4, 5, 1, 2)])
-
-            fast_row = pattern.compute_fast_row(number_columns=6)
-
-            assert (fast_row == np.array([[10.0, 10.0, 10.0, 0.0, 0.0, 0.0]])).all()
 
 
 class TestCIPatternSimulateUniform(object):

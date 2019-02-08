@@ -40,19 +40,6 @@ def non_uniform_from_lists(normalizations, regions, row_slopes):
     return list(map(lambda n, s: CIPatternNonUniform(n, regions, s), normalizations, row_slopes))
 
 
-def uniform_fast_from_lists(normalizations, regions):
-    """Setup the collection of fast patterns from lists of uniform ci_pattern properties
-
-    Params
-    -----------
-    normalizations : list
-        The normalization in each charge injection ci_pattern.
-    regions : [(int, int, int, int)]
-        The regions each charge injection ci_pattern appears. This is identical across all images.
-    """
-    return list(map(lambda n: CIPatternUniformFast(n, regions), normalizations))
-
-
 class CIPattern(object):
 
     def __init__(self, normalization, regions):
@@ -329,60 +316,3 @@ class CIPatternNonUniform(CIPattern):
             ci_region[0:ci_rows, column_number] = self.generate_column(size=ci_rows, normalization=column_normalization)
 
         return ci_region
-
-
-class CIPatternUniformFast(CIPatternUniform):
-    """ A fast uniform charge injection ci_pattern, which is defined by the regions it appears on a charge \
-        injection ci_frame and its normalization.
-
-        This is used for performing fast CTI addition in CTI calibration (see *CIPreCTIFast*).
-    """
-
-    def compute_fast_column(self, number_rows):
-        """Compute a uniform fast column, which represents one column of charge in a uniform charge injection image \
-        (and therefore every column of charge in that pre-cti image).
-
-        This is performed by using the charge injection ci_pattern's regions to determine the rows which contain \
-        charge and adding its normalization to those rows.
-
-        The fast columns is output as a 2D NumPy array where the second dimension is of size 1. This is performed \
-        so that the *ci_image.FrameGeometry* routines can be applied to the output fast_column.
-
-        Parameters
-        -----------
-        number_rows : int
-            The number of rows in the fast column, thus defining its size and image_shape.
-        """
-
-        fast_column = np.zeros((number_rows, 1))
-
-        for region in self.regions:
-            fast_column[region.y_slice, 0] += self.normalization
-
-        return fast_column
-
-    def compute_fast_row(self, number_columns):
-        """Compute a uniform fast row, which represents one row of charge in a uniform charge injection image \
-        (and therefore every row of charge in that ci_pre_ctis).
-
-        This is performed by using the charge injection ci_pattern's regions to determine the rows which contain \
-        charge and adding its normalization to those rows.
-
-        Unlike the fast column above, which assumes there may be multiple regions corresponing to the charge injection \
-        going on and off, all rows are assumed to be identical. This is consistent with the charge injection occuring \
-        perpendicular to serial clocking.
-
-        The fast rows is output as a 2D NumPy array where the second dimension is of size 1. This is performed \
-        so that the *ci_image.FrameGeometry* routines can be applied to the output fast_row.
-
-        Parameters
-        -----------
-        number_columns : int
-            The number of columns in the fast row, thus defining its size and image_shape.
-        """
-
-        fast_row = np.zeros((1, number_columns))
-
-        fast_row[0, self.regions[0].x_slice] += self.normalization
-
-        return fast_row
