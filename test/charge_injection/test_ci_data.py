@@ -157,7 +157,6 @@ class TestCIImage(object):
                                             [00.0, 00.0, 0.0]])).all()
 
         def test__same_as_above_but_different_normalization_and_regions(self):
-            frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             pattern = ci_pattern.CIPatternUniform(normalization=20.0,
                                                   regions=[(0, 2, 0, 1), (2, 3, 2, 3)])
             image = 10.0 * np.ones((3, 3))
@@ -169,7 +168,6 @@ class TestCIImage(object):
                                             [0.0, 0.0, 20.0]])).all()
 
         def test__non_uniform_pattern__image_is_same_as_computed_image(self):
-            frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
             pattern = ci_pattern.CIPatternNonUniform(
                 normalization=100.0, regions=[(0, 2, 0, 2), (2, 3, 0, 3)],
                 row_slope=-1.0)
@@ -742,16 +740,16 @@ def load_ci_data_list_from_fits(frame_geometries, ci_patterns,
         ci_pre_cti_hdus = list_size * [0]
 
     for data_index in range(list_size):
-        ci_data = load_ci_data_from_fits(frame_geometry=frame_geometries[data_index],
-                                         ci_pattern=ci_patterns[data_index],
-                                         ci_image_path=ci_image_paths[data_index],
-                                         ci_image_hdu=ci_image_hdus[data_index],
-                                         ci_noise_map_path=ci_noise_map_paths[data_index],
-                                         ci_noise_map_hdu=ci_noise_map_hdus[data_index],
-                                         ci_pre_cti_path=ci_pre_cti_paths[data_index],
-                                         ci_pre_cti_hdu=ci_pre_cti_hdus[data_index],
-                                         mask=masks[data_index])
+        cid = load_ci_data_from_fits(frame_geometry=frame_geometries[data_index],
+                                     ci_pattern=ci_patterns[data_index],
+                                     ci_image_path=ci_image_paths[data_index],
+                                     ci_image_hdu=ci_image_hdus[data_index],
+                                     ci_noise_map_path=ci_noise_map_paths[data_index],
+                                     ci_noise_map_hdu=ci_noise_map_hdus[data_index],
+                                     ci_pre_cti_path=ci_pre_cti_paths[data_index],
+                                     ci_pre_cti_hdu=ci_pre_cti_hdus[data_index],
+                                     mask=masks[data_index])
 
-        ci_datas.append(ci_data)
+        ci_datas.append(cid)
 
     return ci_datas
