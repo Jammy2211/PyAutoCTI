@@ -92,7 +92,7 @@ def simulate_integration_quadrant(test_name, normalizations, cti_params, cti_set
     if not os.path.exists(output_path):
         os.makedirs(output_path)
 
-    sim_ci_patterns = ci_pattern.uniform_simulate_from_lists(normalizations=normalizations, regions=ci_regions)
+    sim_ci_patterns = ci_pattern.uniform_from_lists(normalizations=normalizations, regions=ci_regions)
 
     sim_ci_datas = list(map(lambda pattern:
                             ci_data.simulate(shape=shape, frame_geometry=frame_geometry,
