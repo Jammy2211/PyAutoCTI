@@ -25,7 +25,6 @@ Author: James Nightingale
 
 import numpy as np
 
-from autocti import exc
 from autocti.charge_injection import ci_frame as frame
 from autocti.charge_injection import ci_pattern as pattern
 from autocti.data import cti_image
@@ -203,7 +202,7 @@ def simulate(shape, frame_geometry, ci_pattern, cti_params, cti_settings, read_n
         Seed for the read-noises added to the image.
     """
 
-    ci_pre_cti = ci_pattern.simulate_ci_pre_cti(frame_geometry=frame_geometry, shape=shape)
+    ci_pre_cti = ci_pattern.simulate_ci_pre_cti(shape=shape)
     if cosmics is not None:
         ci_pre_cti += cosmics
 
@@ -217,7 +216,7 @@ def simulate(shape, frame_geometry, ci_pattern, cti_params, cti_settings, read_n
     return ci_post_cti[:, :]
 
 
-def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, frame_geometry, image, mask=None):
+def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, image, mask=None):
     """Setup a pre-cti image from this charge injection ci_data, using the charge injection ci_pattern.
 
     The pre-cti image is computed depending on whether the charge injection ci_pattern is uniform, non-uniform or \
@@ -225,81 +224,9 @@ def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, frame_geometr
     """
 
     if type(ci_pattern) == pattern.CIPatternUniform:
-
-        ci_pre_cti = ci_pattern.ci_pre_cti_from_shape(shape=image.shape)
-        return CIPreCTI(frame_geometry=frame_geometry, array=ci_pre_cti)
-
+        return ci_pattern.ci_pre_cti_from_shape(shape=image.shape)
     elif type(ci_pattern) == pattern.CIPatternNonUniform:
-
-        ci_pre_cti = ci_pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=image, mask=mask)
-        return CIPreCTI(frame_geometry=frame_geometry, array=ci_pre_cti)
-    else:
-        raise exc.CIPatternException('the CIPattern of the CIImage is not an instance of '
-                                     'a known ci_pattern class')
-
-
-class CIPreCTI(np.ndarray):
-    # noinspection PyMissingConstructor,PyUnusedLocal
-    def __init__(self, frame_geometry, array):
-        self.frame_geometry = frame_geometry
-
-    def __new__(cls, frame_geometry, array, *args, **kwargs):
-        return array.view(cls)
-
-    def output_as_fits(self, file_path, overwrite=False):
-        """Output the image ci_data as a fits file.
-
-        Params
-        ----------
-        path : str
-            The output nlo path of the ci_data
-        filename : str
-            The file phase_name of the output image.
-        """
-        util.numpy_array_to_fits(array=self, file_path=file_path, overwrite=overwrite)
-
-    def add_cti_to_image(self, cti_params, cti_settings):
-        self.frame_geometry.add_cti(self, cti_params, cti_settings)
-
-
-def load_ci_data_list_from_fits(frame_geometries, ci_patterns,
-                                ci_image_paths, ci_image_hdus=None,
-                                ci_noise_map_paths=None, ci_noise_map_hdus=None,
-                                ci_pre_cti_paths=None, ci_pre_cti_hdus=None,
-                                masks=None):
-    list_size = len(ci_image_paths)
-
-    ci_datas = []
-
-    if ci_pre_cti_paths is None:
-        ci_pre_cti_paths = list_size * [None]
-
-    if masks is None:
-        masks = list_size * [None]
-
-    if ci_image_hdus is None:
-        ci_image_hdus = list_size * [0]
-
-    if ci_noise_map_hdus is None:
-        ci_noise_map_hdus = list_size * [0]
-
-    if ci_pre_cti_hdus is None:
-        ci_pre_cti_hdus = list_size * [0]
-
-    for data_index in range(list_size):
-        ci_data = load_ci_data_from_fits(frame_geometry=frame_geometries[data_index],
-                                         ci_pattern=ci_patterns[data_index],
-                                         ci_image_path=ci_image_paths[data_index],
-                                         ci_image_hdu=ci_image_hdus[data_index],
-                                         ci_noise_map_path=ci_noise_map_paths[data_index],
-                                         ci_noise_map_hdu=ci_noise_map_hdus[data_index],
-                                         ci_pre_cti_path=ci_pre_cti_paths[data_index],
-                                         ci_pre_cti_hdu=ci_pre_cti_hdus[data_index],
-                                         mask=masks[data_index])
-
-        ci_datas.append(ci_data)
-
-    return ci_datas
+        return ci_pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=image, mask=mask)
 
 
 def load_ci_data_from_fits(frame_geometry, ci_pattern,
@@ -318,7 +245,7 @@ def load_ci_data_from_fits(frame_geometry, ci_pattern,
     if ci_pre_cti_path is not None:
         ci_pre_cti = util.numpy_array_from_fits(file_path=ci_pre_cti_path, hdu=ci_pre_cti_hdu)
     else:
-        ci_pre_cti = ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, frame_geometry, ci_image, mask=mask)
+        ci_pre_cti = ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, ci_image, mask=mask)
 
     return CIData(image=ci_image, noise_map=ci_noise_map, ci_pre_cti=ci_pre_cti, ci_pattern=ci_pattern,
                   ci_frame=frame_geometry)
@@ -336,20 +263,9 @@ def read_noise_map_from_shape_and_sigma(shape, sigma, noise_seed=-1):
     seed : int
         The seed of the random number generator, used for the random noises maps.
     """
-    setup_random_seed(noise_seed)
+    if noise_seed == -1:
+        noise_seed = np.random.randint(0,
+                                       int(1e9))  # Use one seed, so all regions have identical column non-uniformity.
+    np.random.seed(noise_seed)
     read_noise_map = np.random.normal(loc=0.0, scale=sigma, size=shape)
     return read_noise_map
-
-
-def setup_random_seed(seed):
-    """Setup the random seed. If the input seed is -1, the code will use a random seed for every run. If it is positive,
-    that seed is used for all runs, thereby giving reproducible results
-
-    Params
-    ----------
-    seed : int
-        The seed of the random number generator, used for the random noises maps.
-    """
-    if seed == -1:
-        seed = np.random.randint(0, int(1e9))  # Use one seed, so all regions have identical column non-uniformity.
-    np.random.seed(seed)
