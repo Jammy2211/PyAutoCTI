@@ -209,11 +209,9 @@ def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, image, mask=N
     The pre-cti image is computed depending on whether the charge injection ci_pattern is uniform, non-uniform or \
     'fast' (see ChargeInjectPattern).
     """
-
-    if type(ci_pattern) == pattern.CIPatternUniform:
-        return ci_pattern.ci_pre_cti_from_shape(shape=image.shape)
-    elif type(ci_pattern) == pattern.CIPatternNonUniform:
-        return ci_pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=image, mask=mask)
+    if isinstance(ci_pattern, pattern.CIPatternUniform):
+        return ci_pattern.ci_pre_cti_from_shape(image.shape)
+    return ci_pattern.ci_pre_cti_from_ci_image_and_mask(image, mask)
 
 
 def load_ci_data_from_fits(frame_geometry, ci_pattern,
