@@ -216,7 +216,7 @@ class TestCIImage(object):
     class TestCISimulate(object):
 
         def test__no_instrumental_effects_input__only_cti_simulated(self, arctic_parallel, params_parallel):
-            pattern = ci_pattern.CIPatternUniformSimulate(normalization=10.0, regions=[(0, 1, 0, 5)])
+            pattern = ci_pattern.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
 
             ci_simulate = ci_data.simulate(shape=(5, 5),
                                            frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
@@ -226,7 +226,7 @@ class TestCIImage(object):
             assert ci_simulate[0, 0:5] == pytest.approx(np.array([10.0, 10.0, 10.0, 10.0, 10.0]), 1e-2)
 
         def test__include_read_noise__is_added_after_cti(self, arctic_parallel, params_parallel):
-            pattern = ci_pattern.CIPatternUniformSimulate(normalization=10.0, regions=[(0, 1, 0, 3)])
+            pattern = ci_pattern.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 3)])
 
             ci_simulate = ci_data.simulate(shape=(3, 3),
                                            frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
@@ -242,7 +242,7 @@ class TestCIImage(object):
                                                                             [1.74, -0.76, 0.32]]), 1e-2))
 
         def test__include_cosmics__is_added_to_image_and_trailed(self, arctic_parallel, params_parallel):
-            pattern = ci_pattern.CIPatternUniformSimulate(normalization=10.0, regions=[(0, 1, 0, 5)])
+            pattern = ci_pattern.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
 
             cosmics = np.zeros((5, 5))
             cosmics[1, 1] = 100.0
