@@ -26,17 +26,16 @@ conf.instance = conf.Config(config_path=config_path, output_path=output_path)
 
 
 def pipeline():
-
     serial_species_0 = arctic_params.Species(trap_density=0.5, trap_lifetime=2.0)
     serial_species_1 = arctic_params.Species(trap_density=1.5, trap_lifetime=5.0)
     serial_species_2 = arctic_params.Species(trap_density=2.5, trap_lifetime=20.0)
     serial_ccd = arctic_params.CCD(well_notch_depth=0.01, well_fill_alpha=0.2,
-                                     well_fill_beta=0.8, well_fill_gamma=2.0)
+                                   well_fill_beta=0.8, well_fill_gamma=2.0)
     cti_params = arctic_params.ArcticParams(serial_ccd=serial_ccd,
-                                serial_species=[serial_species_0, serial_species_1, serial_species_2])
+                                            serial_species=[serial_species_0, serial_species_1, serial_species_2])
 
     serial_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=1, n_levels=2000,
-                                                 charge_injection_mode=True, readout_offset=0)
+                                               charge_injection_mode=True, readout_offset=0)
     cti_settings = arctic_settings.ArcticSettings(serial=serial_settings)
 
     tools.reset_paths(test_name=test_name, output_path=output_path)
@@ -47,15 +46,13 @@ def pipeline():
 
     data = ci_data.load_ci_data_from_fits(frame_geometry=frame_geometry, ci_pattern=pattern,
                                           ci_image_path=path + '/data/' + test_name + '/ci_data_0.fits',
-                                          ci_noise_map_from_single_value=1.0,
-                                          ci_pre_cti_from_image=True)
+                                          ci_noise_map_from_single_value=1.0)
 
     pipeline = make_pipeline(test_name=test_name)
     pipeline.run(ci_datas=[data], cti_settings=cti_settings)
 
 
 def make_pipeline(test_name):
-
     class SerialPhase(ph.SerialPhase):
 
         def pass_priors(self, previous_results):
@@ -63,10 +60,10 @@ def make_pipeline(test_name):
             self.serial_ccd.well_fill_gamma = 0.0
 
     phase1 = SerialPhase(optimizer_class=nl.MultiNest, serial_species=[prior_model.PriorModel(arctic_params.Species),
-                                                                           prior_model.PriorModel(arctic_params.Species),
-                                                                           prior_model.PriorModel(arctic_params.Species)],
-                           serial_ccd=arctic_params.CCD,
-                           columns=None, phase_name="{}/phase1".format(test_name))
+                                                                       prior_model.PriorModel(arctic_params.Species),
+                                                                       prior_model.PriorModel(arctic_params.Species)],
+                         serial_ccd=arctic_params.CCD,
+                         phase_name="{}/phase1".format(test_name))
 
     phase1.optimizer.n_live_points = 60
     phase1.optimizer.const_efficiency_mode = True
