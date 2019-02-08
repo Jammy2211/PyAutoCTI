@@ -130,6 +130,17 @@ class CIDataFit(object):
         self.ci_frame = ci_frame
         self.is_hyper_data = False
 
+    @property
+    def signal_to_noise_map(self):
+        """The estimated signal-to-noise_maps mappers of the image."""
+        signal_to_noise_map = np.divide(self.image, self.noise_map)
+        signal_to_noise_map[signal_to_noise_map < 0] = 0
+        return signal_to_noise_map
+
+    @property
+    def signal_to_noise_max(self):
+        """The maximum value of signal-to-noise_maps in an image pixel in the image's signal-to-noise_maps mappers"""
+        return np.max(self.signal_to_noise_map)
 
 class CIDataHyperFit(CIDataFit):
 

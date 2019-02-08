@@ -4,7 +4,9 @@ from autofit import conf
 from autofit.mapper import prior_model
 from autofit.optimize import non_linear as nl
 
-from autocti.charge_injection import ci_data, ci_pattern
+from autocti.charge_injection import ci_data
+from autocti.charge_injection import ci_pattern
+from autocti.charge_injection import ci_hyper
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
 from autocti.pipeline import phase as ph
@@ -61,36 +63,41 @@ def make_pipeline(test_name):
 
     phase1 = ParallelPhase(optimizer_class=nl.MultiNest,
                            parallel_species=[prior_model.PriorModel(arctic_params.Species)],
-                           parallel_ccd=arctic_params.CCD, columns=None, phase_name="{}/phase1".format(test_name))
+                           parallel_ccd=arctic_params.CCD, columns=40, phase_name="{}/phase1".format(test_name))
 
     phase1.optimizer.n_live_points = 60
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.sampling_efficiency = 0.2
 
-    phase1h = ph.ParallelHyperOnlyPhase(optimizer_class=nl.MultiNest, columns=None,
-                                        phase_name="{}/phase1h".format(test_name))
+    phase2 = ph.ParallelHyperPhase(parallel_species=[prior_model.PriorModel(arctic_params.Species)],
+                                    parallel_ccd=arctic_params.CCD,
+                                    hyper_noise_scaler_ci_regions=ci_hyper.CIHyperNoiseScaler,
+                                    hyper_noise_scaler_parallel_trails=ci_hyper.CIHyperNoiseScaler,
+                                    optimizer_class=nl.MultiNest, columns=None,
+                                    phase_name="{}/phase2".format(test_name))
 
     class ParallelHyperFixedPhase(ph.ParallelHyperPhase):
 
         def pass_priors(self, previous_results):
 
-            self.parallel = previous_results[-1].variable.parallel
-            self.hyp_ci_regions = previous_results[-1].hyper.constant.hyp_ci_regions
-            self.hyp_parallel_trails = previous_results[-1].hyper.constant.hyp_parallel_trails
-            self.parallel.well_fill_alpha = 1.0
-            self.parallel.well_fill_gamma = 0.0
+            self.hyp_ci_regions = previous_results[1].hyper.constant.hyp_ci_regions
+            self.hyp_parallel_trails = previous_results[1].hyper.constant.hyp_parallel_trails
+            self.parallel_species = previous_results[0].variable.parallel_species
+            self.parallel_ccd = previous_results[0].variable.parallel_ccd
+            self.parallel_ccd.well_fill_alpha = 1.0
+            self.parallel_ccd.well_fill_gamma = 0.0
 
-    phase2 = ParallelHyperFixedPhase(optimizer_class=nl.MultiNest, columns=None,
-                                     phase_name="{}/phase2".format(test_name))
+    phase3 = ParallelHyperFixedPhase(optimizer_class=nl.MultiNest, columns=None,
+                                     phase_name="{}/phase3".format(test_name))
 
     # For the final CTI model, constant efficiency mode has a tendancy to sample parameter space too fast and infer an
     # inaccurate model. Thus, we turn it off for phase 2.
 
-    phase2.optimizer.const_efficiency_mode = False
-    phase2.optimizer.n_live_points = 50
-    phase2.optimizer.sampling_efficiency = 0.3
+    phase3.optimizer.const_efficiency_mode = False
+    phase3.optimizer.n_live_points = 50
+    phase3.optimizer.sampling_efficiency = 0.3
 
-    return pl.Pipeline(phase1, phase1h, phase2)
+    return pl.Pipeline(phase1, phase2, phase3)
 
 
 if __name__ == "__main__":
