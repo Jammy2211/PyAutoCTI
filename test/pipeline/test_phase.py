@@ -146,8 +146,10 @@ class TestPhase(object):
 
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
         assert analysis.last_results is None
-        assert (analysis.ci_datas_fit[0].image == ci_data.image).all()
-        assert (analysis.ci_datas_fit[0].noise_map == ci_data.noise_map).all()
+        assert (analysis.ci_datas_extracted[0].image == ci_data.image).all()
+        assert (analysis.ci_datas_extracted[0].noise_map == ci_data.noise_map).all()
+        assert (analysis.ci_datas_full[0].image == ci_data.image).all()
+        assert (analysis.ci_datas_full[0].noise_map == ci_data.noise_map).all()
         assert analysis.cti_settings == cti_settings
 
     def test__customize_constant(self, results, ci_data, cti_settings):
@@ -217,8 +219,10 @@ class TestHyperPhase(object):
 
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
         assert analysis.last_results is None
-        assert (analysis.ci_datas_fit[0].image == ci_data.image).all()
-        assert (analysis.ci_datas_fit[0].noise_map == ci_data.noise_map).all()
+        assert (analysis.ci_datas_extracted[0].image == ci_data.image).all()
+        assert (analysis.ci_datas_extracted[0].noise_map == ci_data.noise_map).all()
+        assert (analysis.ci_datas_full[0].image == ci_data.image).all()
+        assert (analysis.ci_datas_full[0].noise_map == ci_data.noise_map).all()
         assert analysis.cti_settings == cti_settings
 
 
