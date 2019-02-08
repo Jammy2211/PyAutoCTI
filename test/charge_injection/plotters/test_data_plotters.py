@@ -1,10 +1,8 @@
 import numpy as np
 
-from autocti.charge_injection import ci_frame
 from autocti.charge_injection.plotters import data_plotters
 from autocti.data import mask as msk
 from test.charge_injection.plotters.fixtures import *
-from test.mock.mock import MockGeometry, MockPattern
 
 
 @pytest.fixture(name='data_plotter_path')
@@ -19,17 +17,17 @@ def make_mask():
 
 @pytest.fixture(name='image')
 def make_image():
-    return ci_frame.CIFrame(frame_geometry=MockGeometry(), ci_pattern=MockPattern(), array=np.ones((6, 6)))
+    return np.ones((6, 6))
 
 
 @pytest.fixture(name='noise_map')
 def make_noise_map():
-    return ci_frame.CIFrame(frame_geometry=MockGeometry(), ci_pattern=MockPattern(), array=2.0 * np.ones((6, 6)))
+    return 2.0 * np.ones((6, 6))
 
 
 @pytest.fixture(name='ci_pre_cti')
 def make_ci_pre_cti():
-    return ci_frame.CIFrame(frame_geometry=MockGeometry(), ci_pattern=MockPattern(), array=3.0 * np.ones((6, 6)))
+    return 3.0 * np.ones((6, 6))
 
 
 def test__image_is_output(image, mask, data_plotter_path, plot_patch):

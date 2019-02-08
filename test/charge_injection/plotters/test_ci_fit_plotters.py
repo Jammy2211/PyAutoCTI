@@ -1,14 +1,13 @@
 import numpy as np
 
 from autocti.charge_injection import ci_data
-from autocti.charge_injection import ci_frame
 from autocti.charge_injection import ci_fit
 from autocti.charge_injection.plotters import ci_fit_plotters
-from autocti.model import arctic_settings
-from autocti.model import arctic_params
 from autocti.data import mask as msk
+from autocti.model import arctic_params
+from autocti.model import arctic_settings
 from test.charge_injection.plotters.fixtures import *
-from test.mock.mock import MockGeometry, MockPattern, MockCIFrame
+from test.mock.mock import MockPattern, MockCIFrame
 
 
 @pytest.fixture(name='ci_fit_plotter_path')
@@ -23,17 +22,17 @@ def make_mask():
 
 @pytest.fixture(name='image')
 def make_image():
-    return ci_frame.CIFrame(frame_geometry=MockGeometry(), ci_pattern=MockPattern(), array=np.ones((2, 2)))
+    return np.ones((2, 2))
 
 
 @pytest.fixture(name='noise_map')
 def make_noise_map():
-    return ci_frame.CIFrame(frame_geometry=MockGeometry(), ci_pattern=MockPattern(), array=2.0 * np.ones((2, 2)))
+    return 2.0 * np.ones((2, 2))
 
 
 @pytest.fixture(name='ci_pre_cti')
 def make_ci_pre_cti():
-    return ci_frame.CIFrame(frame_geometry=MockGeometry(), ci_pattern=MockPattern(), array=3.0 * np.ones((2, 2)))
+    return 3.0 * np.ones((2, 2))
 
 
 @pytest.fixture(name='ci_data_fit')
@@ -41,23 +40,26 @@ def make_ci_data_fit(image, noise_map, mask, ci_pre_cti):
     return ci_data.CIDataFit(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti, mask=mask,
                              ci_pattern=MockPattern(), ci_frame=MockCIFrame(value=3.0))
 
+
 @pytest.fixture(name="cti_settings")
 def make_cti_settings():
     parallel_settings = arctic_settings.Settings(well_depth=0, niter=1, express=1, n_levels=2000)
     return arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings)
+
 
 @pytest.fixture(name="cti_params")
 def make_cti_params():
     parallel_1_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
     return arctic_params.ArcticParams(parallel_species=parallel_1_species)
 
+
 @pytest.fixture(name="fit")
 def make_fit(ci_data_fit, cti_params, cti_settings):
     return ci_fit.fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit=ci_data_fit, cti_params=cti_params,
                                                                cti_settings=cti_settings)
 
-def test__fit_individuals__depedent_on_input(fit, ci_fit_plotter_path, plot_patch):
 
+def test__fit_individuals__depedent_on_input(fit, ci_fit_plotter_path, plot_patch):
     ci_fit_plotters.plot_fit_individuals(
         fit=fit,
         should_plot_image=True,

@@ -41,12 +41,8 @@ class Mask(np.ndarray):
 
         Parameters
         ----------
-        ci_pattern
         shape : (int, int)
             The dimensions of the 2D mask.
-        frame_geometry : ci_frame.CIQuadGeometry
-            The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
-            therefore the direction of clocking and rotations before input into the cti algorithm.
         """
         # noinspection PyArgumentList
         return cls(array=np.full(shape, False))
