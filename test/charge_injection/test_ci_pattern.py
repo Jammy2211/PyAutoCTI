@@ -23,17 +23,13 @@ Created on: 02/14/18
 Author: James Nightingale
 """
 
-import os
-import shutil
-
 import numpy as np
 import pytest
 
 from autocti import exc
 from autocti.charge_injection import ci_pattern
-
-
 from test.mock.mock import MockGeometry
+
 
 class TestCIPatternViaList(object):
 
@@ -109,7 +105,6 @@ class TestCIPatternViaList(object):
 
 
 class TestCIPattern(object):
-
     class TestConstructor:
 
         def test__setup_all_attributes_correctly(self):
@@ -158,7 +153,6 @@ class TestCIPattern(object):
 
 
 class TestCIPatternUniform(object):
-
     class TestConstructor:
 
         def test__setup_all_attributes_correctly(self):
@@ -186,7 +180,6 @@ class TestCIPatternUniform(object):
 
 
 class TestCIPatternNonUniform(object):
-
     class TestConstructor:
 
         def test__setup_all_attributes_correctly(self):
@@ -790,11 +783,9 @@ class TestCIPatternUniformFast(object):
 
 
 class TestCIPatternSimulateUniform(object):
-
     class TestSimulateCIPreCTI:
 
         def test__image_3x3__1_ci_region(self):
-
             sim_pattern_uni = ci_pattern.CIPatternUniformSimulate(normalization=10.0, regions=[(0, 2, 0, 2)])
             image1 = sim_pattern_uni.simulate_ci_pre_cti(frame_geometry=MockGeometry(), shape=(3, 3))
 
@@ -831,25 +822,13 @@ class TestCIPatternSimulateUniform(object):
                                         [0.0, 0.0, 0.0]])).all()
 
         def test__pattern_bigger_than_image_dimensions__raises_error(self):
-
             pattern = ci_pattern.CIPatternUniformSimulate(normalization=10.0, regions=[(0, 2, 0, 2)])
 
             with pytest.raises(exc.CIPatternException):
                 pattern.ci_pre_cti_from_shape(shape=(1, 1))
 
-    class TestCreatePattern:
-
-        def test__simulate_pattern_creates_normal_pattern(self):
-            sim_pattern_uni = ci_pattern.CIPatternUniformSimulate(normalization=10.0, regions=[(0, 2, 0, 2)])
-            pattern = sim_pattern_uni.create_pattern()
-
-            assert type(pattern) == ci_pattern.CIPatternUniformFast
-            assert pattern.normalization == 10.0
-            assert pattern.regions == [(0, 2, 0, 2)]
-
 
 class TestCIPatternSimulateNonUniform(object):
-    
     class TestSimulateRegion:
 
         def test__uniform_column_and_uniform_row__returns_uniform_charge_region(self):
@@ -1125,15 +1104,3 @@ class TestCIPatternSimulateNonUniform(object):
 
             with pytest.raises(exc.CIPatternException):
                 pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=np.ones((1, 1)), mask=np.ma.ones((1, 1)))
-
-    class TestCreatePattern:
-
-        def test__simulate_pattern_creates_normal_pattern(self):
-            sim_pattern_uni = ci_pattern.CIPatternNonUniformSimulate(normalization=10.0, regions=[(0, 2, 0, 2)],
-                                                                     row_slope=1.0)
-            pattern = sim_pattern_uni.create_pattern()
-
-            assert type(pattern) == ci_pattern.CIPatternNonUniform
-            assert pattern.normalization == 10.0
-            assert pattern.regions == [(0, 2, 0, 2)]
-            assert pattern.row_slope == 1.0
