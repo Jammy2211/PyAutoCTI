@@ -2,8 +2,6 @@ import logging
 
 from autofit.tools.phase import ResultsCollection
 
-from autocti.pipeline import phase as ph
-
 logger = logging.getLogger(__name__)
 
 

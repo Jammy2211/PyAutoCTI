@@ -111,10 +111,3 @@ class Settings(object):
         ext_header.set('cte_pwld', self.well_depth, 'CCD Well Depth (Parallel)')
         ext_header.set('cte_pnts', self.n_levels, 'Number of levels (Parallel)')
         return ext_header
-
-    def generate_info(self):
-        """Generate string containing information on the parallel arctic settings."""
-        info = 'parallel_mode = True\n\n'
-        info += infoio.generate_class_info(cls=self, prefix='parallel_', include_types=[int, float, list, bool])
-        info += '\n'
-        return info

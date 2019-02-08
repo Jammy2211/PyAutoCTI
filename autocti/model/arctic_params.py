@@ -143,7 +143,7 @@ class Species(object):
             The seed of the Poisson random number generator.
         """
         np.random.seed(seed)
-        total_traps = tuple(map(lambda s: s.trap_density * shape[0], species))
+        total_traps = tuple(map(lambda sp: sp.trap_density * shape[0], species))
         poisson_densities = [np.random.poisson(total_traps) / shape[0] for _ in range(shape[1])]
         poisson_species = []
         for densities in poisson_densities:
