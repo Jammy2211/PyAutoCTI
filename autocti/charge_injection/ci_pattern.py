@@ -343,9 +343,6 @@ class CIPatternUniformSimulate(CIPatternUniform):
 
         return ci_data.CIPreCTI(frame_geometry=frame_geometry, array=ci_pre_cti)
 
-    def create_pattern(self):
-        return CIPatternUniformFast(normalization=self.normalization, regions=self.regions)
-
 
 class CIPatternNonUniformSimulate(CIPatternNonUniform):
 
@@ -451,6 +448,3 @@ class CIPatternNonUniformSimulate(CIPatternNonUniform):
             ci_region[0:ci_rows, column_number] = self.generate_column(size=ci_rows, normalization=column_normalization)
 
         return ci_region
-
-    def create_pattern(self):
-        return CIPatternNonUniform(normalization=self.normalization, regions=self.regions, row_slope=self.row_slope)
