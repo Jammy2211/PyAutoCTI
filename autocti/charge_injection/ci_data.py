@@ -25,7 +25,6 @@ Author: James Nightingale
 
 import numpy as np
 
-from autocti import exc
 from autocti.charge_injection import ci_frame as frame
 from autocti.charge_injection import ci_pattern as pattern
 from autocti.data import cti_image
@@ -212,17 +211,9 @@ def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, frame_geometr
     """
 
     if type(ci_pattern) == pattern.CIPatternUniform:
-
-        ci_pre_cti = ci_pattern.ci_pre_cti_from_shape(shape=image.shape)
-        return CIPreCTI(frame_geometry=frame_geometry, array=ci_pre_cti)
-
+        return ci_pattern.ci_pre_cti_from_shape(shape=image.shape)
     elif type(ci_pattern) == pattern.CIPatternNonUniform:
-
-        ci_pre_cti = ci_pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=image, mask=mask)
-        return CIPreCTI(frame_geometry=frame_geometry, array=ci_pre_cti)
-    else:
-        raise exc.CIPatternException('the CIPattern of the CIImage is not an instance of '
-                                     'a known ci_pattern class')
+        return ci_pattern.ci_pre_cti_from_ci_image_and_mask(ci_image=image, mask=mask)
 
 
 class CIPreCTI(np.ndarray):
