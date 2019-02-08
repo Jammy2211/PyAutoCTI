@@ -1,10 +1,8 @@
 import numpy as np
 
-from autocti.charge_injection import ci_frame
 from autocti.charge_injection.plotters import data_plotters
 from autocti.data import mask as msk
 from test.charge_injection.plotters.fixtures import *
-from test.mock.mock import MockGeometry, MockPattern
 
 
 @pytest.fixture(name='data_plotter_path')
