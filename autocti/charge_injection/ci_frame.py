@@ -13,15 +13,20 @@ def bin_array_across_parallel(array, mask=None):
 
 
 class ChInj(object):
-    """Class which represents the CCD quadrant of a charge injection image (e.g. the location of the parallel and   
-    serial front edge, trails).
 
-    frame_geometry : CIFrame.CIQuadGeometry
-        The quadrant geometry of the image, defining where the parallel / serial overscans are and   
-        therefore the direction of clocking and rotations before input into the cti algorithm.
-    ci_pattern : CIPattern.CIPattern
-        The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
-    """
+    def __init__(self, frame_geometry, ci_pattern):
+        """
+        Class which represents the CCD quadrant of a charge injection image (e.g. the location of the parallel and
+        serial front edge, trails).
+
+        frame_geometry : CIFrame.CIQuadGeometry
+            The quadrant geometry of the image, defining where the parallel / serial overscans are and
+            therefore the direction of clocking and rotations before input into the cti algorithm.
+        ci_pattern : CIPattern.CIPattern
+            The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
+        """
+        self.frame_geometry = frame_geometry
+        self.ci_pattern = ci_pattern
 
     def ci_regions_from_array(self, array):
         """Extract an array of all of the charge-injection regions from a charge injection ci_frame.
@@ -190,6 +195,7 @@ class ChInj(object):
 
         Parameters
         ------------
+        array
         front_edge_rows : (int, int)
             The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows).
         trails_rows : (int, int)
@@ -440,6 +446,7 @@ class ChInj(object):
 
         Parameters
         ------------
+        array
         front_edge_columns : (int, int)
             The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd rows)
         trails_columns : (int, int)
@@ -570,6 +577,7 @@ class ChInj(object):
 
         Parameters
         ------------
+        array
         rows : (int, int)
             The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
@@ -622,6 +630,7 @@ class ChInj(object):
 
         Parameters
         ------------
+        array
         rows : (int, int)
             The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
@@ -673,6 +682,7 @@ class ChInj(object):
 
         Parameters
         ------------
+        array
         columns : (int, int)
             The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
             columns)
@@ -725,6 +735,7 @@ class ChInj(object):
 
         Parameters
         ------------
+        array
         columns : (int, int)
             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd columns)
         """
@@ -749,10 +760,6 @@ class ChInj(object):
             mask[region.y0:region.y1, region.x0:region.x1] = False
 
         return msk.Mask(array=mask, frame_geometry=self.frame_geometry)
-
-    def __init__(self, frame_geometry, ci_pattern):
-        self.frame_geometry = frame_geometry
-        self.ci_pattern = ci_pattern
 
 
 class Region(object):
