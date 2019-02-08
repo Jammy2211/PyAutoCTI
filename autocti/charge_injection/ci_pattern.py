@@ -8,7 +8,6 @@ Author: James Nightingale
 import numpy as np
 
 from autocti import exc
-from autocti.charge_injection import ci_data
 from autocti.charge_injection import ci_frame
 
 
@@ -94,7 +93,7 @@ class CIPatternUniform(CIPattern):
 
     """ Class to simulate a charge injection image with a uniform charge injection ci_pattern."""
 
-    def simulate_ci_pre_cti(self, frame_geometry, shape):
+    def simulate_ci_pre_cti(self, shape):
         """Use this charge injection ci_pattern to generate a pre-cti charge injection image. This is performed by \
         going to its charge injection regions and adding the charge injection normalization value.
 
@@ -111,7 +110,7 @@ class CIPatternUniform(CIPattern):
         for region in self.regions:
             ci_pre_cti[region.slice] += self.normalization
 
-        return ci_data.CIPreCTI(frame_geometry=frame_geometry, array=ci_pre_cti)
+        return ci_pre_cti
 
 
 class CIPatternNonUniform(CIPattern):
@@ -235,7 +234,7 @@ class CIPatternNonUniform(CIPattern):
         """
         return normalization * (np.arange(1, size + 1)) ** self.row_slope
 
-    def simulate_ci_pre_cti(self, frame_geometry, shape, ci_seed=-1, column_deviation=0.0,
+    def simulate_ci_pre_cti(self, shape, ci_seed=-1, column_deviation=0.0,
                             maximum_normalization=np.inf):
         """Use this charge injection ci_pattern to generate a pre-cti charge injection image. This is performed by going \
         to its charge injection regions and adding its non-uniform charge distribution.
@@ -251,7 +250,6 @@ class CIPatternNonUniform(CIPattern):
         shape
             The image_shape of the ci_pre_ctis to be created.
         maximum_normalization
-        frame_geometry
 
         ci_seed : int
             Input ci_seed for the random number generator to give reproducible results. A new ci_seed is always used for each \
@@ -271,7 +269,7 @@ class CIPatternNonUniform(CIPattern):
                 self.simulate_region(region_dimensions=region.shape, ci_seed=ci_seed, column_deviation=column_deviation,
                                      maximum_normalization=maximum_normalization)
 
-        return ci_data.CIPreCTI(frame_geometry=frame_geometry, array=ci_pre_cti)
+        return ci_pre_cti
 
     def simulate_region(self, region_dimensions, ci_seed, column_deviation=0.0, maximum_normalization=np.inf):
         """Generate the non-uniform charge distribution of a charge injection region. This includes non-uniformity \
@@ -295,6 +293,8 @@ class CIPatternNonUniform(CIPattern):
 
         Parameters
         -----------
+        maximum_normalization
+        column_deviation
         region_dimensions : (int, int)
             The size of the non-uniform charge injection region.
         ci_seed : int

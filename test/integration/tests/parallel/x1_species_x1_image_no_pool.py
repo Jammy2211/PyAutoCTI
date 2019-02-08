@@ -26,7 +26,6 @@ conf.instance = conf.Config(config_path=config_path, output_path=output_path)
 
 
 def pipeline():
-
     parallel_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.5)
     parallel_ccd = arctic_params.CCD(well_notch_depth=0.01, well_fill_alpha=1.0,
                                      well_fill_beta=0.8, well_fill_gamma=0.0)
@@ -44,8 +43,7 @@ def pipeline():
 
     data = ci_data.load_ci_data_from_fits(frame_geometry=frame_geometry, ci_pattern=pattern,
                                           ci_image_path=path + '/data/' + test_name + '/ci_data_0.fits',
-                                          ci_noise_map_from_single_value=1.0,
-                                          ci_pre_cti_from_image=True)
+                                          ci_noise_map_from_single_value=1.0)
 
     pipeline = make_pipeline(test_name=test_name)
     pipeline.run(ci_datas=[data], cti_settings=cti_settings)
