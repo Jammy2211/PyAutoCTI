@@ -251,7 +251,7 @@ class TestCIPatternNonUniform(object):
         def test__same_as_above_but_normalization_is_500(self):
             pattern_sim = ci_pattern.CIPatternNonUniformSimulate(normalization=500.0, regions=[(0, 1, 0, 1)],
                                                                  column_deviation=0.0, row_slope=1.0)
-            column = pattern_sim.simulate_column(size=10, normalization=500.0)
+            column = pattern_sim.generate_column(size=10, normalization=500.0)
 
             pattern = ci_pattern.CIPatternNonUniform(normalization=500.0, regions=[(0, 1, 0, 1)], row_slope=1.0)
 
@@ -263,7 +263,7 @@ class TestCIPatternNonUniform(object):
             pattern_sim = ci_pattern.CIPatternNonUniformSimulate(normalization=500.0, regions=[(0, 1, 0, 1)],
                                                                  column_deviation=0.0, row_slope=0.0)
 
-            column = pattern_sim.simulate_column(size=10, normalization=500.0)
+            column = pattern_sim.generate_column(size=10, normalization=500.0)
 
             pattern = ci_pattern.CIPatternNonUniform(normalization=500.0, regions=[(0, 1, 0, 1)], row_slope=0.0)
 
@@ -486,7 +486,7 @@ class TestCIPatternNonUniform(object):
                                                                  regions=[(0, 1, 0, 1)],
                                                                  column_deviation=0.0, row_slope=1.0)
 
-            column = pattern_sim.simulate_column(size=3, normalization=500.0)
+            column = pattern_sim.generate_column(size=3, normalization=500.0)
 
             ci_column = np.zeros((11))
 
@@ -608,7 +608,7 @@ class TestCIPatternNonUniform(object):
             pattern_sim = ci_pattern.CIPatternNonUniformSimulate(normalization=500.0, regions=[(0, 1, 0, 1)],
                                                                  column_deviation=0.0, row_slope=1.0)
 
-            column = pattern_sim.simulate_column(size=3, normalization=500.0)
+            column = pattern_sim.generate_column(size=3, normalization=500.0)
 
             ci_image = np.zeros((3, 3))
 
@@ -694,7 +694,7 @@ class TestCIPatternNonUniform(object):
                                                                  regions=[(0, 1, 0, 1)],
                                                                  column_deviation=0.0, row_slope=1.0)
 
-            column = pattern_sim.simulate_column(size=3, normalization=500.0)
+            column = pattern_sim.generate_column(size=3, normalization=500.0)
 
             ci_image = np.zeros((7, 3))
 

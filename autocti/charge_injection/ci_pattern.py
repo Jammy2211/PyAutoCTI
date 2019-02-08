@@ -448,24 +448,9 @@ class CIPatternNonUniformSimulate(CIPatternNonUniform):
             while column_normalization <= 0 or column_normalization >= self.maximum_normalization:
                 column_normalization = np.random.normal(self.normalization, self.column_deviation)
 
-            ci_region[0:ci_rows, column_number] = self.simulate_column(size=ci_rows, normalization=column_normalization)
+            ci_region[0:ci_rows, column_number] = self.generate_column(size=ci_rows, normalization=column_normalization)
 
         return ci_region
-
-    def simulate_column(self, size, normalization):
-        """Simulate a column of non-uniform charge, including row non-uniformity.
-
-        The pixel-numbering used to generate non-uniformity across the charge injection rows runs from 1 -> size
-
-        Parameters
-        -----------
-        size : int
-            The size of the non-uniform column of charge
-        normalization : float
-            The input normalization of the column's charge e.g. the level of charge injected.
-
-        """
-        return self.generate_column(size, normalization)
 
     def create_pattern(self):
         return CIPatternNonUniform(normalization=self.normalization, regions=self.regions, row_slope=self.row_slope)
