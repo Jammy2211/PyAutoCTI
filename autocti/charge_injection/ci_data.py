@@ -283,20 +283,9 @@ def read_noise_map_from_shape_and_sigma(shape, sigma, noise_seed=-1):
     seed : int
         The seed of the random number generator, used for the random noises maps.
     """
-    setup_random_seed(noise_seed)
+    if noise_seed == -1:
+        noise_seed = np.random.randint(0,
+                                       int(1e9))  # Use one seed, so all regions have identical column non-uniformity.
+    np.random.seed(noise_seed)
     read_noise_map = np.random.normal(loc=0.0, scale=sigma, size=shape)
     return read_noise_map
-
-
-def setup_random_seed(seed):
-    """Setup the random seed. If the input seed is -1, the code will use a random seed for every run. If it is positive,
-    that seed is used for all runs, thereby giving reproducible results
-
-    Params
-    ----------
-    seed : int
-        The seed of the random number generator, used for the random noises maps.
-    """
-    if seed == -1:
-        seed = np.random.randint(0, int(1e9))  # Use one seed, so all regions have identical column non-uniformity.
-    np.random.seed(seed)
