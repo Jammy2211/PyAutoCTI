@@ -36,11 +36,13 @@ from autocti.data import util
 class CIData(object):
 
     def __init__(self, image, noise_map, ci_pre_cti, ci_pattern, ci_frame):
+
         self.image = image
         self.noise_map = noise_map
         self.ci_pre_cti = ci_pre_cti
         self.ci_pattern = ci_pattern
         self.ci_frame = ci_frame
+        self.is_hyper_data = False
 
     @property
     def chinj(self):

@@ -9,8 +9,10 @@ from autofit.mapper import prior_model
 from autofit.tools import phase_property
 from autofit.tools.phase import ResultsCollection
 
-from autocti.charge_injection import ci_data as data, ci_frame
-from autocti.data import mask
+from autocti.charge_injection import ci_data as data
+from autocti.charge_injection import ci_frame
+from autocti.charge_injection import ci_fit
+from autocti.data import mask as msk
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
 from autocti.pipeline import phase as ph
@@ -165,7 +167,7 @@ class TestPhase(object):
     # noinspection PyUnresolvedReferences
     def test__default_data_extractor(self, ci_data, phase):
 
-        ci_datas_fit = phase.extract_ci_data(ci_data, mask.Mask.empty_for_shape(ci_data.image.shape))
+        ci_datas_fit = phase.extract_ci_data(ci_data, msk.Mask.empty_for_shape(ci_data.image.shape))
 
         assert isinstance(ci_datas_fit, data.CIDataFit)
         assert (ci_data.image == ci_datas_fit.image).all()
@@ -229,6 +231,44 @@ class TestResult(object):
         assert results.last == 3
         assert results.first == 1
 
+    def test__fits_for_instance__uses_ci_data_fit(self, ci_data, cti_settings):
+
+        parallel_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
+        parallel_ccd = arctic_params.CCD(well_notch_depth=0.1, well_fill_alpha=0.5, well_fill_beta=0.5,
+                                         well_fill_gamma=0.5)
+
+        phase = ph.ParallelPhase(parallel_species=[parallel_species], parallel_ccd=parallel_ccd, columns=1,
+                                 phase_name='test_phase')
+
+        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        instance = phase.constant
+
+        fits = analysis.fits_of_ci_data_extracted_for_instance(instance=instance)
+        assert fits[0].ci_pre_cti.shape == (3,1)
+
+        full_fits = analysis.fits_of_ci_data_full_for_instance(instance=instance)
+        assert full_fits[0].ci_pre_cti.shape == (3,3)
+
+    def test__fit_figure_of_merit__matches_correct_fit_given_galaxy_profiles(self, ci_data, cti_settings):
+
+        parallel_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
+        parallel_ccd = arctic_params.CCD(well_notch_depth=0.1, well_fill_alpha=0.5, well_fill_beta=0.5,
+                                         well_fill_gamma=0.5)
+
+        phase = ph.ParallelPhase(parallel_species=[parallel_species], parallel_ccd=parallel_ccd,
+                                 phase_name='test_phase')
+
+        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        instance = phase.constant
+        cti_params = ph.cti_params_for_instance(instance=instance)
+        fit_figure_of_merit = analysis.fit(instance=instance)
+
+        mask = phase.mask_function(shape=ci_data.image.shape)
+        ci_datas_fit = [phase.extract_ci_data(data=data, mask=mask) for data, mask in zip([ci_data], [mask])]
+        fit = ci_fit.CIFit(ci_data_fit=ci_datas_fit[0], cti_params=cti_params, cti_settings=cti_settings)
+
+        assert fit.likelihood == fit_figure_of_merit
+
     def test__results_of_phase_are_available_as_properties(self, ci_data, cti_settings):
 
         phase = ph.ParallelPhase(optimizer_class=NLO,
@@ -237,7 +277,8 @@ class TestResult(object):
 
         result = phase.run(ci_datas=[ci_data], cti_settings=cti_settings)
 
-        assert hasattr(result, 'most_likely_fits')
+        assert hasattr(result, 'most_likely_extracted_fits')
+        assert hasattr(result, 'most_likely_full_fits')
 
     #    print(type(result))
     #    print(result.noise_scaling_maps)
