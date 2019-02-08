@@ -68,7 +68,7 @@ def plot_ci_pre_cti(
         The ci_pre_cti of the data.
     """
     array_plotters.plot_array(
-        array=ci_pre_cti, mask=mask, as_subplot=as_subplot,
+        array=ci_pre_cti, mask=mask, extract_array_from_mask=extract_array_from_mask, as_subplot=as_subplot,
         figsize=figsize, aspect=aspect,
         cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
         cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
