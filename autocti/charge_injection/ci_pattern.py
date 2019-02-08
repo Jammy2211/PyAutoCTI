@@ -120,6 +120,7 @@ class CIPatternUniform(CIPattern):
         ci_frame and its normalization.
 
     """
+
     def ci_pre_cti_from_shape(self, shape):
         """Compute the pre-cti image of the uniform charge injection ci_pattern.
 
@@ -204,7 +205,7 @@ class CIPatternNonUniform(CIPattern):
             overall_mean = np.mean(filtered)
 
             for region in self.regions:
-                ci_pre_cti[region.y0:region.y1, column_number] = overall_mean
+                ci_pre_cti[region.y_slice, column_number] = overall_mean
 
         return ci_pre_cti
 
@@ -223,8 +224,8 @@ class CIPatternNonUniform(CIPattern):
         means_of_columns = []
 
         for region in self.regions:
-            means_of_columns.append(self.mean_charge_in_column(column[region.y0:region.y1].flatten(),
-                                                               column_mask[region.y0:region.y1].flatten()))
+            means_of_columns.append(self.mean_charge_in_column(column[region.y_slice].flatten(),
+                                                               column_mask[region.y_slice].flatten()))
 
         return means_of_columns
 
@@ -289,7 +290,7 @@ class CIPatternUniformFast(CIPatternUniform):
         fast_column = np.zeros((number_rows, 1))
 
         for region in self.regions:
-            fast_column[region.y0:region.y1, 0] += self.normalization
+            fast_column[region.y_slice, 0] += self.normalization
 
         return fast_column
 
@@ -315,25 +316,13 @@ class CIPatternUniformFast(CIPatternUniform):
 
         fast_row = np.zeros((1, number_columns))
 
-        fast_row[0, self.regions[0].x0:self.regions[0].x1] += self.normalization
+        fast_row[0, self.regions[0].x_slice] += self.normalization
 
         return fast_row
 
 
 class CIPatternUniformSimulate(CIPatternUniform):
-
-    def __init__(self, normalization, regions):
-        """ Class to simulate a charge injection image with a uniform charge injection ci_pattern.
-
-        Parameters
-        -----------
-        normalization : float
-            The normalization of the charge injection region.
-        regions : [(int,)]
-            A list of the integer coordinates specifying the corners of each charge injection region. This is \
-            defined as in a NumPy array, e.g. (top-row, bottom-row, left-column, right-column).
-        """
-        super(CIPatternUniformSimulate, self).__init__(normalization, regions)
+    """ Class to simulate a charge injection image with a uniform charge injection ci_pattern."""
 
     def simulate_ci_pre_cti(self, frame_geometry, shape):
         """Use this charge injection ci_pattern to generate a pre-cti charge injection image. This is performed by \
@@ -350,7 +339,7 @@ class CIPatternUniformSimulate(CIPatternUniform):
         ci_pre_cti = np.zeros(shape)
 
         for region in self.regions:
-            ci_pre_cti[region.y0:region.y1, region.x0:region.x1] += self.normalization
+            ci_pre_cti[region.slice] += self.normalization
 
         return ci_data.CIPreCTI(frame_geometry=frame_geometry, array=ci_pre_cti)
 
@@ -397,6 +386,7 @@ class CIPatternNonUniformSimulate(CIPatternNonUniform):
 
         Parameters
         -----------
+        frame_geometry
         image_shape : (int, int)
             The image_shape of the ci_pre_ctis to be created.
         ci_seed : int
@@ -409,11 +399,12 @@ class CIPatternNonUniformSimulate(CIPatternNonUniform):
         ci_pre_cti = np.zeros(shape)
 
         if ci_seed == -1:
-            ci_seed = np.random.randint(0, 1e9)  # Use one ci_seed, so all regions have identical column non-uniformity.
+            ci_seed = np.random.randint(0, int(1e9))  # Use one ci_seed, so all regions have identical column
+            # non-uniformity.
 
         for region in self.regions:
-            ci_pre_cti[region.y0:region.y1, region.x0:region.x1] += \
-                self.simulate_region(region_dimensions=(region.y1 - region.y0, region.x1 - region.x0), ci_seed=ci_seed)
+            ci_pre_cti[region.slice] += \
+                self.simulate_region(region_dimensions=region.shape, ci_seed=ci_seed)
 
         return ci_data.CIPreCTI(frame_geometry=frame_geometry, array=ci_pre_cti)
 
