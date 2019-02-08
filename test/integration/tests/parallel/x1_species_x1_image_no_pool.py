@@ -26,6 +26,7 @@ conf.instance = conf.Config(config_path=config_path, output_path=output_path)
 
 
 def pipeline():
+
     parallel_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.5)
     parallel_ccd = arctic_params.CCD(well_notch_depth=0.01, well_fill_alpha=1.0,
                                      well_fill_beta=0.8, well_fill_gamma=0.0)

@@ -2,15 +2,19 @@ import logging
 from functools import partial
 
 import numpy as np
+import os
+
 from autofit import conf
 from autofit.optimize import non_linear as nl
 from autofit.tools import phase as ph
 from autofit.tools import phase_property
 
-from autocti.charge_injection import ci_hyper, ci_fit, ci_data
+from autocti.charge_injection import ci_fit, ci_data
 from autocti.data import mask as msk
-from autocti.data import util
 from autocti.model import arctic_params
+
+from autocti.charge_injection.plotters import ci_data_plotters
+from autocti.charge_injection.plotters import ci_fit_plotters
 
 logger = logging.getLogger(__name__)
 logger.level = logging.DEBUG
@@ -103,8 +107,7 @@ class Phase(ph.AbstractPhase):
                                       pool=pool)
 
         result = self.optimizer.fit(analysis)
-        if analysis.visualize_results:
-            analysis.visualize(instance=result.constant, suffix=None, during_analysis=False)
+
         return self.make_result(result=result, analysis=analysis)
 
     # noinspection PyMethodMayBeStatic
@@ -156,14 +159,58 @@ class Phase(ph.AbstractPhase):
             self.ci_datas_fit = ci_datas_fit
             self.cti_settings = cti_settings
             self.phase_name = phase_name
+            self.phase_output_path = "{}/{}".format(conf.instance.output_path, self.phase_name)
+
             self.pool = pool or ConsecutivePool
             self.previous_results = previous_results
 
-            self.visualize_results = conf.instance.general.get('output', 'visualize_results', bool)
-
+            log_file = conf.instance.general.get('output', 'log_file', str)
+            if not len(log_file.replace(" ", "")) == 0:
+                log_path = "{}/{}".format(self.phase_output_path, log_file)
+                logger.handlers = [logging.FileHandler(log_path)]
+                logger.propagate = False
+                
             self.plot_count = 0
-            self.output_image_path = "{}/".format(conf.instance.output_path) + '/' + self.phase_name + '/images/'
-            util.make_path_if_does_not_exist(self.output_image_path)
+            self.output_image_path = "{}/image/".format(self.phase_output_path)
+            make_path_if_does_not_exist(path=self.output_image_path)
+            self.output_fits_path = "{}/image/fits/".format(self.phase_output_path)
+            make_path_if_does_not_exist(path=self.output_fits_path)
+
+            self.extract_array_from_mask = \
+                conf.instance.general.get('output', 'extract_images_from_mask', bool)
+
+            self.plot_ci_data_as_subplot =\
+                conf.instance.general.get('output', 'plot_ci_data_as_subplot', bool)
+            self.plot_ci_data_image = \
+                conf.instance.general.get('output', 'plot_ci_data_image', bool)
+            self.plot_ci_data_noise_map = \
+                conf.instance.general.get('output', 'plot_ci_data_noise_map', bool)
+            self.plot_ci_data_ci_pre_cti = \
+                conf.instance.general.get('output', 'plot_ci_data_ci_pre_cti', bool)
+            self.plot_ci_data_signal_to_noise_map = \
+                conf.instance.general.get('output', 'plot_ci_data_signal_to_noise_map', bool)
+
+            self.plot_ci_fit_all_at_end_png = \
+                conf.instance.general.get('output', 'plot_ci_fit_all_at_end_png', bool)
+            self.plot_ci_fit_all_at_end_fits = \
+                conf.instance.general.get('output', 'plot_ci_fit_all_at_end_fits', bool)
+
+            self.plot_ci_fit_as_subplot = \
+                conf.instance.general.get('output', 'plot_ci_fit_as_subplot', bool)
+            self.plot_ci_fit_image = \
+                conf.instance.general.get('output', 'plot_ci_fit_image', bool)
+            self.plot_ci_fit_noise_map = \
+                conf.instance.general.get('output', 'plot_ci_fit_noise_map', bool)
+            self.plot_ci_fit_signal_to_noise_map = \
+                conf.instance.general.get('output', 'plot_ci_fit_signal_to_noise_map', bool)
+            self.plot_ci_fit_ci_pre_cti = \
+                conf.instance.general.get('output', 'plot_ci_fit_ci_pre_cti', bool)
+            self.plot_ci_fit_ci_post_cti = \
+                conf.instance.general.get('output', 'plot_ci_fit_ci_post_cti', bool)
+            self.plot_ci_fit_residual_map = \
+                conf.instance.general.get('output', 'plot_ci_fit_residual_map', bool)
+            self.plot_ci_fit_chi_squared_map = \
+                conf.instance.general.get('output', 'plot_ci_fit_chi_squared_map', bool)
 
         @property
         def last_results(self):
@@ -171,7 +218,80 @@ class Phase(ph.AbstractPhase):
                 return self.previous_results.last
 
         def visualize(self, instance, suffix, during_analysis):
-            pass
+
+            self.plot_count += 1
+
+            ci_data_index = 0
+
+            if self.plot_ci_data_as_subplot:
+
+                ci_data_plotters.plot_ci_subplot(
+                    ci_data=self.ci_datas_fit[ci_data_index], extract_array_from_mask=self.extract_array_from_mask,
+                    output_path=self.output_image_path, output_format='png')
+
+            ci_data_plotters.plot_ci_data_individual(
+                ci_data=self.ci_datas_fit[ci_data_index], extract_array_from_mask=self.extract_array_from_mask,
+                should_plot_image=self.plot_ci_data_image,
+                should_plot_noise_map=self.plot_ci_data_noise_map,
+                should_plot_ci_pre_cti=self.plot_ci_data_ci_pre_cti,
+                should_plot_signal_to_noise_map=self.plot_ci_data_signal_to_noise_map,
+                output_path=self.output_image_path, output_format='png')
+
+            fits = self.fits_for_instance(instance=instance)
+
+            ci_fit_index = 0
+
+            if self.plot_ci_fit_as_subplot:
+
+                ci_fit_plotters.plot_fit_subplot(
+                    fit=fits[ci_fit_index], extract_array_from_mask=self.extract_array_from_mask,
+                    output_path=self.output_image_path, output_format='png')
+
+            if during_analysis:
+                ci_fit_plotters.plot_fit_individuals(
+                    fit=fits[ci_fit_index],                    
+                    extract_array_from_mask=self.extract_array_from_mask,
+                    should_plot_image=self.plot_ci_fit_image,
+                    should_plot_noise_map=self.plot_ci_fit_noise_map,
+                    should_plot_signal_to_noise_map=self.plot_ci_fit_signal_to_noise_map,
+                    should_plot_ci_pre_cti=self.plot_ci_data_ci_pre_cti,
+                    should_plot_ci_post_cti=self.plot_ci_fit_ci_post_cti,
+                    should_plot_residual_map=self.plot_ci_fit_residual_map,
+                    should_plot_chi_squared_map=self.plot_ci_fit_chi_squared_map,
+                    output_path=self.output_image_path, output_format='png')
+
+            elif not during_analysis:
+
+                if self.plot_ci_fit_all_at_end_png:
+
+                    ci_fit_plotters.plot_fit_individuals(
+                        fit=fits[ci_fit_index],
+                        extract_array_from_mask=self.extract_array_from_mask,
+                        should_plot_image=True,
+                        should_plot_noise_map=True,
+                        should_plot_signal_to_noise_map=True,
+                        should_plot_ci_pre_cti=True,
+                        should_plot_ci_post_cti=True,
+                        should_plot_residual_map=True,
+                        should_plot_chi_squared_map=True,
+                        output_path=self.output_image_path, output_format='png')
+
+                if self.plot_ci_fit_all_at_end_fits:
+
+                    ci_fit_plotters.plot_fit_individuals(
+                        fit=fits[ci_fit_index],
+                        extract_array_from_mask=self.extract_array_from_mask,
+                        should_plot_image=True,
+                        should_plot_noise_map=True,
+                        should_plot_signal_to_noise_map=True,
+                        should_plot_ci_pre_cti=True,
+                        should_plot_ci_post_cti=True,
+                        should_plot_residual_map=True,
+                        should_plot_chi_squared_map=True,
+                        output_path=self.output_fits_path, output_format='fits')
+
+            return fits
+
 
         def fit(self, instance):
             """
@@ -493,3 +613,8 @@ def pipe_cti_hyper(ci_data_fit, cti_params, cti_settings, hyper_noise_scalers):
     fitter = ci_fit.CIHyperFit(ci_data_hyper_fit=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings,
                                hyper_noise_scalers=hyper_noise_scalers)
     return fitter.figure_of_merit
+
+
+def make_path_if_does_not_exist(path):
+    if not os.path.exists(path):
+        os.makedirs(path)
