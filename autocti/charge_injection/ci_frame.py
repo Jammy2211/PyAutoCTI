@@ -478,10 +478,10 @@ class ChInj(object):
 
         return new_array
 
-    def serial_calibration_section_for_column_and_rows(self, array, column, rows):
+    def serial_calibration_section_for_rows(self, array, rows):
         """Extract a serial calibration array from a charge injection ci_frame, where this array is a sub-set of the
         ci_frame which can be used for serial-only calibration. Specifically, this ci_frame is all charge injection
-        regions and their serial over-scan trails, specified from a certain column from the read-out electronics.
+        regions and their serial over-scan trails.
 
         The diagram below illustrates the array that is extracted from a ci_frame with column=5:
 
@@ -521,17 +521,17 @@ class ChInj(object):
         []     [=====================]
                <---------S----------
         """
-        calibration_images = self.serial_calibration_sub_arrays_from_frame(array, column)
+        calibration_images = self.serial_calibration_sub_arrays_from_frame(array=array)
         calibration_images = list(map(lambda image: image[rows[0]:rows[1], :], calibration_images))
         array = np.concatenate(calibration_images, axis=0)
         return array
 
-    def serial_calibration_sub_arrays_from_frame(self, array, column):
+    def serial_calibration_sub_arrays_from_frame(self, array):
         """Extract each charge injection region image for the serial calibration array above."""
 
         calibration_regions = list(map(lambda ci_region:
-                                       self.frame_geometry.serial_ci_region_and_trails(ci_region, array.shape,
-                                                                                       column),
+                                       self.frame_geometry.serial_prescan_ci_region_and_trails(ci_region=ci_region,
+                                                                                               image_shape=array.shape),
                                        self.ci_pattern.regions))
         return list(map(lambda region: array[region.slice], calibration_regions))
 
@@ -952,28 +952,28 @@ class FrameGeometry(object):
         """Coordinates of a serial trail of size dx from coordinate x"""
         return x - dx * self.corner[1], x + 1 + dx * (1 - self.corner[1])
 
-    def parallel_front_edge_region(self, region, rows=(0, 1)):
-        check_parallel_front_edge_size(region, rows)
+    def parallel_front_edge_region(self, ci_region, rows=(0, 1)):
+        check_parallel_front_edge_size(region=ci_region, rows=rows)
         if self.corner[0] == 0:
-            y_coord = region.y0
+            y_coord = ci_region.y0
             y_min = y_coord + rows[0]
             y_max = y_coord + rows[1]
         else:
-            y_coord = region.y1
+            y_coord = ci_region.y1
             y_min = y_coord - rows[1]
             y_max = y_coord - rows[0]
-        return Region((y_min, y_max, region.x0, region.x1))
+        return Region((y_min, y_max, ci_region.x0, ci_region.x1))
 
-    def parallel_trails_region(self, region, rows=(0, 1)):
+    def parallel_trails_region(self, ci_region, rows=(0, 1)):
         if self.corner[0] == 0:
-            y_coord = region.y1
+            y_coord = ci_region.y1
             y_min = y_coord + rows[0]
             y_max = y_coord + rows[1]
         else:
-            y_coord = region.y0
+            y_coord = ci_region.y0
             y_min = y_coord - rows[1]
             y_max = y_coord - rows[0]
-        return Region((y_min, y_max, region.x0, region.x1))
+        return Region((y_min, y_max, ci_region.x0, ci_region.x1))
 
     def x_limits(self, region, columns):
         if self.corner[1] == 0:
@@ -986,36 +986,34 @@ class FrameGeometry(object):
             x_max = x_coord - columns[0]
         return x_min, x_max
 
-    def serial_front_edge_region(self, region, columns=(0, 1)):
-        check_serial_front_edge_size(region, columns)
-        x_min, x_max = self.x_limits(region, columns)
-        return Region((region.y0, region.y1, x_min, x_max))
+    def serial_front_edge_region(self, ci_region, columns=(0, 1)):
+        check_serial_front_edge_size(ci_region, columns)
+        x_min, x_max = self.x_limits(ci_region, columns)
+        return Region((ci_region.y0, ci_region.y1, x_min, x_max))
 
-    def parallel_side_nearest_read_out_region(self, region, image_shape, columns=(0, 1)):
-        x_min, x_max = self.x_limits(region, columns)
+    def parallel_side_nearest_read_out_region(self, ci_region, image_shape, columns=(0, 1)):
+        x_min, x_max = self.x_limits(ci_region, columns)
         return Region((0, image_shape[0], x_min, x_max))
 
-    def serial_trails_region(self, region, columns=(0, 1)):
+    def serial_trails_region(self, ci_region, columns=(0, 1)):
         if self.corner[1] == 0:
-            x_coord = region.x1
+            x_coord = ci_region.x1
             x_min = x_coord + columns[0]
             x_max = x_coord + columns[1]
         else:
-            x_coord = region.x0
+            x_coord = ci_region.x0
             x_min = x_coord - columns[1]
             x_max = x_coord - columns[0]
-        return Region((region.y0, region.y1, x_min, x_max))
+        return Region((ci_region.y0, ci_region.y1, x_min, x_max))
 
-    def serial_ci_region_and_trails(self, region, image_shape, column):
+    def serial_prescan_ci_region_and_trails(self, ci_region, image_shape):
         if self.corner[1] == 0:
-            x_coord = region.x0
-            x_min = x_coord + column
+            x_min = 0
             x_max = image_shape[1]
         else:
-            x_coord = region.x1
             x_min = 0
-            x_max = x_coord - column
-        return Region((region.y0, region.y1, x_min, x_max))
+            x_max = image_shape[1]
+        return Region((ci_region.y0, ci_region.y1, x_min, x_max))
 
 
 class QuadGeometryEuclid(FrameGeometry):

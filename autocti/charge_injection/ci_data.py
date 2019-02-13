@@ -70,12 +70,13 @@ class CIData(object):
                                   noise_scaling_maps) if noise_scaling_maps is not None else noise_scaling_maps)
 
     def parallel_calibration_data(self, columns, mask):
-        return self.map_to_ci_data_fit(lambda obj: self.chinj.parallel_calibration_section_for_columns(obj, columns),
+        return self.map_to_ci_data_fit(lambda obj: self.chinj.parallel_calibration_section_for_columns(array=obj,
+                                                                                                       columns=columns),
                                        mask)
 
-    def serial_calibration_data(self, column, rows, mask):
+    def serial_calibration_data(self, rows, mask):
         return self.map_to_ci_data_fit(
-            lambda obj: self.chinj.serial_calibration_section_for_column_and_rows(obj, column=column, rows=rows), mask)
+            lambda obj: self.chinj.serial_calibration_section_for_rows(array=obj, rows=rows), mask)
 
     def parallel_serial_calibration_data(self, mask):
         return self.map_to_ci_data_fit(lambda obj: self.chinj.parallel_serial_calibration_section(obj, ), mask)

@@ -82,7 +82,7 @@ class CIQuadGeometryIntegration(ci_frame.FrameGeometry):
 
 
 shape = (36, 36)
-ci_regions = [(1, 7, 1, 30), (17, 23, 1, 30)]
+ci_regions = [(1, 7, 3, 30), (17, 23, 3, 30)]
 frame_geometry = CIQuadGeometryIntegration()
 
 
