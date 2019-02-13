@@ -53,6 +53,7 @@ def pipeline():
 
 
 def make_pipeline(test_name):
+
     class SerialPhase(ph.SerialPhase):
 
         def pass_priors(self, previous_results):

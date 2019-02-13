@@ -61,7 +61,8 @@ def make_pipeline(test_name):
 
     phase1 = SerialPhase(optimizer_class=nl.MultiNest,
                          serial_species=[prior_model.PriorModel(arctic_params.Species)],
-                         serial_ccd=arctic_params.CCD, phase_name="{}/phase1".format(test_name))
+                         serial_ccd=arctic_params.CCD,
+                         rows=(0,3), phase_name="{}/phase1".format(test_name))
 
     phase1.optimizer.n_live_points = 60
     phase1.optimizer.const_efficiency_mode = True
