@@ -102,5 +102,5 @@ def simulate_integration_quadrant(test_name, normalizations, cti_params, cti_set
                             sim_ci_patterns))
 
     list(map(lambda sim_ci_data, index:
-             util.numpy_array_to_fits(array=sim_ci_data, file_path=output_path + '/ci_data_' + str(index) + '.fits'),
+             util.numpy_array_to_fits(array=sim_ci_data, file_path=output_path + '/ci_image_' + str(index) + '.fits'),
              sim_ci_datas, range(len(sim_ci_datas))))
