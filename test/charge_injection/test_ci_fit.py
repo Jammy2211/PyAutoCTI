@@ -2,10 +2,10 @@ import numpy as np
 import pytest
 from autofit.tools import fit_util
 
+from autocti.charge_injection import ci_frame
 from autocti.charge_injection import ci_fit
 from autocti.charge_injection import ci_hyper, ci_data
 from test.mock.mock import MockGeometry, MockPattern, MockCIFrame, MockCIPreCTI, MockParams, MockSettings
-
 
 @pytest.fixture(name='ci_data_fit')
 def make_ci_data_fit():
@@ -30,21 +30,11 @@ def make_ci_datas_hyper_fit(ci_data_fit):
         noise_scaling_maps=ci_noise_scalings)
 
 
-@pytest.fixture(name='ci_data_fit_1')
-def make_ci_data_fit_1():
-    ci_image = np.array([[np.sqrt(1.0), np.sqrt(2.0)],
-                         [np.sqrt(3.0), np.sqrt(4.0)]])
-    ci_noise_map = array = 1.0 * np.ones((2, 2))
 
-    ci_pre_cti = MockCIPreCTI(frame_geometry=MockGeometry(), ci_pattern=MockPattern(),
-                              array=0.0 * np.ones((2, 2)), value=0.0)
-    ci_mask = np.ma.zeros((2, 2))
-
-    return ci_data.CIDataFit(ci_frame=MockCIFrame(value=0.0), ci_pattern=MockPattern(), image=ci_image,
-                             noise_map=ci_noise_map, ci_pre_cti=ci_pre_cti, mask=ci_mask)
 
 
 class TestCIFit:
+
     class TestFits:
 
         def test__residual_map_same_as_calculated_individually(self, ci_data_fit):
@@ -92,51 +82,6 @@ class TestCIFit:
 
             assert fit.likelihood == likelihood
             assert fit.figure_of_merit == fit.likelihood
-
-    class TestNoiseScalingMaps:
-
-        def test__noise_scaling_map_of_ci_regions__extracts_correctly_from_chi_squard_map(self, ci_data_fit_1):
-            # For the mock object MockCIFrame, the ci_regions_from_array function extracts the array entries
-            # [0:2,0]
-
-            fit = ci_fit.fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit=ci_data_fit_1,
-                                                                      cti_params=MockParams(),
-                                                                      cti_settings=MockSettings())
-
-            assert (fit.noise_scaling_map_of_ci_regions == fit.chi_squared_map[0:2, 0]).all()
-
-        def test__noise_scaling_map_of_parallel_non_ci_regions__extracts_correctly_from_chi_squard_map(self,
-                                                                                                       ci_data_fit_1):
-            # For the mock object MockCIFrame, the parallel_non_ci_regions_frame_from_frame function extracts the array
-            # entries [0:2,1]
-
-            fit = ci_fit.fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit=ci_data_fit_1,
-                                                                      cti_params=MockParams(),
-                                                                      cti_settings=MockSettings())
-
-            assert (fit.noise_scaling_map_of_parallel_trails == fit.chi_squared_map[0:2, 1]).all()
-
-        def test__noise_scaling_map_of_serial_trails__extracts_correctly_from_chi_squard_map(self,
-                                                                                             ci_data_fit_1):
-            # For the mock object MockCIFrame, the parallel_non_ci_regions_frame_from_frame function extracts the array
-            # entries [0, 0:2]
-
-            fit = ci_fit.fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit=ci_data_fit_1,
-                                                                      cti_params=MockParams(),
-                                                                      cti_settings=MockSettings())
-
-            assert (fit.noise_scaling_map_of_serial_trails == fit.chi_squared_map[0, 0:2]).all()
-
-        def test__noise_scaling_map_of_overscan_above_serial_trails__extracts_correctly_from_chi_squard_map(self,
-                                                                                                            ci_data_fit_1):
-            # For the mock object MockCIFrame, the parallel_non_ci_regions_frame_from_frame function extracts the array
-            # entries [0, 0:2]
-
-            fit = ci_fit.fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit=ci_data_fit_1,
-                                                                      cti_params=MockParams(),
-                                                                      cti_settings=MockSettings())
-
-            assert (fit.noise_scaling_map_of_serial_overscan_above_trails == fit.chi_squared_map[1, 0:2]).all()
 
 
 class TestCIHyperFit:
@@ -326,3 +271,82 @@ class TestScaledNoiseMap:
 
         assert (noise_map == (np.array([[5.0, 8.0],
                                         [11.0, 14.0]]))).all()
+
+
+
+class MockCIDataFit(object):
+
+    def __init__(self, image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame):
+        self.image = image
+        self.noise_map = noise_map
+        self.ci_pre_cti = ci_pre_cti
+        self.mask = mask
+        self.ci_pattern = ci_pattern
+        self.ci_frame = ci_frame
+        self.is_hyper_data = False
+
+    @property
+    def chinj(self):
+        return MockCIFrame(value=1.0)
+
+
+@pytest.fixture(name='ci_data_fit_1')
+def make_ci_data_fit_1():
+
+    ci_image = np.array([[np.sqrt(1.0), np.sqrt(2.0)],
+                         [np.sqrt(3.0), np.sqrt(4.0)]])
+    ci_noise_map = 1.0 * np.ones((2, 2))
+    ci_pattern = MockPattern(regions=[ci_frame.Region(region=[0, 1, 0, 1])])
+
+    ci_pre_cti = MockCIPreCTI(frame_geometry=MockGeometry(),
+                              ci_pattern=ci_pattern,
+                              array=0.0 * np.ones((2, 2)), value=0.0)
+    ci_mask = np.ma.zeros((2, 2))
+
+    return MockCIDataFit(ci_frame=MockCIFrame(value=0.0), ci_pattern=ci_pattern, image=ci_image,
+                             noise_map=ci_noise_map, ci_pre_cti=ci_pre_cti, mask=ci_mask)
+
+class TestNoiseScalingMaps:
+
+    def test__noise_scaling_map_of_ci_regions__extracts_correctly_from_chi_squard_map(self, ci_data_fit_1):
+        # For the mock object MockCIFrame, the ci_regions_from_array function extracts the array entries
+        # [0:2,0]
+
+        fit = ci_fit.fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit=ci_data_fit_1,
+                                                                  cti_params=MockParams(),
+                                                                  cti_settings=MockSettings())
+
+        assert (fit.noise_scaling_map_of_ci_regions == fit.chi_squared_map[0:2, 0]).all()
+
+    def test__noise_scaling_map_of_parallel_non_ci_regions__extracts_correctly_from_chi_squard_map(self,
+                                                                                                   ci_data_fit_1):
+        # For the mock object MockCIFrame, the parallel_non_ci_regions_frame_from_frame function extracts the array
+        # entries [0:2,1]
+
+        fit = ci_fit.fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit=ci_data_fit_1,
+                                                                  cti_params=MockParams(),
+                                                                  cti_settings=MockSettings())
+
+        assert (fit.noise_scaling_map_of_parallel_trails == fit.chi_squared_map[0:2, 1]).all()
+
+    def test__noise_scaling_map_of_serial_trails__extracts_correctly_from_chi_squard_map(self,
+                                                                                         ci_data_fit_1):
+        # For the mock object MockCIFrame, the parallel_non_ci_regions_frame_from_frame function extracts the array
+        # entries [0, 0:2]
+
+        fit = ci_fit.fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit=ci_data_fit_1,
+                                                                  cti_params=MockParams(),
+                                                                  cti_settings=MockSettings())
+
+        assert (fit.noise_scaling_map_of_serial_trails == fit.chi_squared_map[0, 0:2]).all()
+
+    def test__noise_scaling_map_of_overscan_above_serial_trails__extracts_correctly_from_chi_squard_map(self,
+                                                                                                        ci_data_fit_1):
+        # For the mock object MockCIFrame, the parallel_non_ci_regions_frame_from_frame function extracts the array
+        # entries [0, 0:2]
+
+        fit = ci_fit.fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit=ci_data_fit_1,
+                                                                  cti_params=MockParams(),
+                                                                  cti_settings=MockSettings())
+
+        assert (fit.noise_scaling_map_of_serial_overscan_above_trails == fit.chi_squared_map[1, 0:2]).all()

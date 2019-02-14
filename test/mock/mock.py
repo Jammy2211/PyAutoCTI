@@ -4,8 +4,9 @@ from autocti.charge_injection.ci_frame import Region
 
 class MockPattern(object):
 
-    def __init__(self):
-        pass
+    def __init__(self, regions=None):
+
+        self.regions = regions
 
 
 class MockGeometry(object):

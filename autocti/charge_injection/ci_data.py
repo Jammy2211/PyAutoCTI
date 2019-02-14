@@ -132,6 +132,10 @@ class CIDataFit(object):
         self.is_hyper_data = False
 
     @property
+    def chinj(self):
+        return frame.ChInj(frame_geometry=self.ci_frame, ci_pattern=self.ci_pattern)
+
+    @property
     def signal_to_noise_map(self):
         """The estimated signal-to-noise_maps mappers of the image."""
         signal_to_noise_map = np.divide(self.image, self.noise_map)

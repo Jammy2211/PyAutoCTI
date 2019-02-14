@@ -65,28 +65,8 @@ class NLO(nl.NonLinearOptimizer):
 class MockPattern(object):
 
     def __init__(self):
-        self.regions = [MockRegion()]
+        self.regions = [ci_frame.Region(region=[0, 1, 0, 1])]
 
-
-class MockRegion(object):
-
-    def __init__(self):
-        self.x0 = 0
-        self.x1 = 1
-        self.y0 = 0
-        self.y1 = 1
-
-    def ci_regions_frame_from_frame(self):
-        pass
-
-    def non_ci_regions_frame_from_frame(self):
-        pass
-
-    def add_region_from_image_to_array(self, image, array):
-        pass
-
-    def set_region_on_array_to_zeros(self, array):
-        pass
 
 
 @pytest.fixture(name="phase")
@@ -100,8 +80,8 @@ def make_cti_settings():
     return arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings)
 
 
-@pytest.fixture(name="ci_geometry")
-def make_ci_geometry():
+@pytest.fixture(name="frame_geometry")
+def make_frame_geometry():
     return ci_frame.QuadGeometryEuclid.bottom_left()
 
 
@@ -111,11 +91,12 @@ def make_ci_pattern():
 
 
 @pytest.fixture(name="ci_data")
-def make_ci_data(ci_geometry, ci_pattern):
+def make_ci_data(frame_geometry, ci_pattern):
     image = np.ones((3, 3))
     noise = np.ones((3, 3))
     ci_pre_cti = np.ones((3, 3))
-    return data.CIData(image=image, noise_map=noise, ci_pre_cti=ci_pre_cti, ci_pattern=ci_pattern, ci_frame=ci_geometry)
+    return data.CIData(image=image, noise_map=noise, ci_pre_cti=ci_pre_cti, ci_pattern=ci_pattern, 
+                       ci_frame=frame_geometry)
 
 
 @pytest.fixture(name="results")
@@ -283,15 +264,30 @@ class TestResult(object):
 
         assert hasattr(result, 'most_likely_extracted_fits')
         assert hasattr(result, 'most_likely_full_fits')
+        assert hasattr(result, 'noise_scaling_maps_of_ci_regions')
+        assert hasattr(result, 'noise_scaling_maps_of_parallel_trails')
+        assert hasattr(result, 'noise_scaling_maps_of_serial_trails')
+        assert hasattr(result, 'noise_scaling_maps_of_serial_overscan_above_trails')
 
-    #    print(type(result))
-    #    print(result.noise_scaling_maps)
-    #    assert hasattr(result, 'noise_scaling_maps')
+    def test__parallel_phase__noise_scaling_maps_of_images_are_correct(self, ci_data, cti_settings):
 
-    # def test__parallel_phase__noise_scaling_maps_of_images_are_correct(self, ci_data, cti_settings):
-    #
-    #     phase = ph.ParallelPhase(optimizer_class=NLO,
-    #                              parallel_species=[prior_model.PriorModel(arctic_params.Species)],
-    #                              parallel_ccd=arctic_params.CCD, phase_name='test_phase')
-    #
-    #     result = phase.run(ci_datas=[ci_data], cti_settings=cti_settings)
+        phase = ph.ParallelPhase(optimizer_class=NLO,
+                                 parallel_species=[prior_model.PriorModel(arctic_params.Species)],
+                                 parallel_ccd=arctic_params.CCD, phase_name='test_phase')
+
+        # The ci_region is [0, 1, 0, 1], therefore by changing the image at 0,0 to 2.0 there will be a residual of 1.0,
+        # which for a noise_map entry of 2.0 gives a chi squared of 0.25..
+
+
+        ci_data.image[0,0] = 2.0
+        ci_data.noise_map[0,0] = 2.0
+
+        result = phase.run(ci_datas=[ci_data], cti_settings=cti_settings)
+
+        assert (result.noise_scaling_maps_of_ci_regions[0] == np.array([[0.25, 0.0, 0.0],
+                                                                        [0.0, 0.0, 0.0],
+                                                                        [0.0, 0.0, 0.0]])).all()
+
+        assert (result.noise_scaling_maps_of_parallel_trails[0] == np.zeros((3,3))).all()
+        assert (result.noise_scaling_maps_of_serial_trails[0] == np.zeros((3,3))).all()
+        assert (result.noise_scaling_maps_of_serial_overscan_above_trails[0] == np.zeros((3,3))).all()
