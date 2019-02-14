@@ -132,7 +132,7 @@ def plot_image(
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
         cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
-        title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        title='Charge Injection Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='ci_image'):
     """Plot the observed image of the ci data.
 
@@ -158,7 +158,7 @@ def plot_noise_map(
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
         cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
-        title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        title='Charge Injection Noise-Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='ci_noise_map'):
     """Plot the observed noise_map of the ci data.
 
@@ -185,7 +185,7 @@ def plot_ci_pre_cti(
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
         cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
-        title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        title='Charge Injection Pre-CTI Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='ci_pre_cti'):
     """Plot the observed ci_pre_cti of the ci data.
 
@@ -212,7 +212,7 @@ def plot_signal_to_noise_map(
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
         cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
-        title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        title='Charge Injection Signal-to-Noise Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='ci_signal_to_noise_map'):
     """Plot the observed signal_to_noise_map of the ci data.
 

@@ -73,8 +73,6 @@ def make_pipeline(test_name):
 
         def pass_priors(self, previous_results):
 
-            self.parallel_species = previous_results[0].constant.parallel_species
-            self.parallel_ccd = previous_results[0].constant.parallel_ccd
             self.serial_species = previous_results[0].constant.serial_species
             self.serial_ccd = previous_results[0].constant.serial_ccd
 

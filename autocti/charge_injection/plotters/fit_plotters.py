@@ -8,7 +8,7 @@ def plot_image(
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
         cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
-        title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        title='Fit Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='fit_image'):
     """Plot the observed image of the ccd data.
 
@@ -33,7 +33,7 @@ def plot_noise_map(
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
         cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
-        title='Noise-Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        title='Fit Noise-Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='fit_noise_map'):
     """Plot the observed noise_map of the ccd data.
 
@@ -59,7 +59,7 @@ def plot_signal_to_noise_map(
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
         cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
-        title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        title='Fit Signal-to-Noise Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='fit_signal_to_noise_map'):
     """Plot the observed signal_to_noise_map of the ccd data.
 
@@ -85,7 +85,7 @@ def plot_ci_pre_cti(
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
         cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
-        title='Pre-CTI CI Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        title='Fit Pre-CTI CI Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='fit_ci_pre_cti'):
     """Plot the observed ci_pre_cti of the ccd data.
 
@@ -111,7 +111,7 @@ def plot_ci_post_cti(
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
         cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
-        title='Post-CTI CI Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        title='Fit Post-CTI CI Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='fit_ci_post_cti'):
     """Plot the observed ci_post_cti of the ccd data.
 
@@ -137,7 +137,7 @@ def plot_residual_map(
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
         cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
-        title='Residual Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        title='Fit Residual Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='fit_residual_map'):
     """Plot the observed residual_map of the ccd data.
 
@@ -163,7 +163,7 @@ def plot_chi_squared_map(
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
         cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
-        title='Chi-Squared Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        title='Fit Chi-Squared Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='fit_chi_squared_map'):
     """Plot the observed chi_squared_map of the ccd data.
 

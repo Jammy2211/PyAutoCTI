@@ -19,7 +19,7 @@ normalizations = [84700.0]
 frame_geometry = tools.CIQuadGeometryIntegration()
 
 test_type = 'parallel_and_serial'
-test_name = 'one_species_x1_image_no_pool'
+test_name = 'x1_species_x1_image_no_pool'
 
 path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
 output_path = path + 'output/' + test_type
