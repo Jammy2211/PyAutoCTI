@@ -145,19 +145,19 @@ class CIFit(CIDataFit, AbstractCIFit):
 
     @property
     def noise_scaling_map_of_ci_regions(self):
-        return self.ci_data_fit.ci_frame.ci_regions_from_array(array=self.chi_squared_map)
+        return self.ci_data_fit.chinj.ci_regions_from_array(array=self.chi_squared_map)
 
     @property
     def noise_scaling_map_of_parallel_trails(self):
-        return self.ci_data_fit.ci_frame.parallel_non_ci_regions_frame_from_frame(array=self.chi_squared_map)
+        return self.ci_data_fit.chinj.parallel_non_ci_regions_frame_from_frame(array=self.chi_squared_map)
 
     @property
     def noise_scaling_map_of_serial_trails(self):
-        return self.ci_data_fit.ci_frame.serial_all_trails_frame_from_frame(array=self.chi_squared_map)
+        return self.ci_data_fit.chinj.serial_all_trails_frame_from_frame(array=self.chi_squared_map)
 
     @property
     def noise_scaling_map_of_serial_overscan_above_trails(self):
-        return self.ci_data_fit.ci_frame.serial_overscan_above_trails_frame_from_frame(array=self.chi_squared_map)
+        return self.ci_data_fit.chinj.serial_overscan_above_trails_frame_from_frame(array=self.chi_squared_map)
 
 
 class CIHyperFit(CIDataFit, AbstractCIFit):

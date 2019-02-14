@@ -354,6 +354,30 @@ class Phase(ph.AbstractPhase):
         def most_likely_full_fits(self):
             return self.analysis.fits_of_ci_data_full_for_instance(instance=self.constant)
 
+        @property
+        def noise_scaling_maps_of_ci_regions(self):
+            return list(map(lambda most_likely_full_fit :
+                            most_likely_full_fit.noise_scaling_map_of_ci_regions,
+                            self.most_likely_full_fits))
+
+        @property
+        def noise_scaling_maps_of_parallel_trails(self):
+            return list(map(lambda most_likely_full_fit :
+                            most_likely_full_fit.noise_scaling_map_of_parallel_trails,
+                            self.most_likely_full_fits))
+
+        @property
+        def noise_scaling_maps_of_serial_trails(self):
+            return list(map(lambda most_likely_full_fit :
+                            most_likely_full_fit.noise_scaling_map_of_serial_trails,
+                            self.most_likely_full_fits))
+
+        @property
+        def noise_scaling_maps_of_serial_overscan_above_trails(self):
+            return list(map(lambda most_likely_full_fit :
+                            most_likely_full_fit.noise_scaling_map_of_serial_overscan_above_trails,
+                            self.most_likely_full_fits))
+
 
 class ParallelPhase(Phase):
 
