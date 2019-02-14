@@ -36,7 +36,7 @@ def fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit, cti_params, cti_se
         The ci_hyper-parameter(s) which the noise_scaling_maps is multiplied by to scale the noise-map.
     """
 
-    if not ci_data_fit.is_hyper_data:
+    if ci_data_fit:
         return CIFit(ci_data_fit=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings)
     else:
         raise exc.FittingException('The fit routine did not call a Fit class - check the '

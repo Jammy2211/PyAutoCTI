@@ -60,13 +60,13 @@ class CIData(object):
                          ci_frame=self.ci_frame)
 
     def map_to_ci_data_hyper_fit(self, func, mask, noise_scaling_maps=None):
-        return CIDataHyperFit(image=func(self.image),
-                              noise_map=func(self.noise_map),
-                              ci_pre_cti=func(self.ci_pre_cti),
-                              mask=func(mask),
-                              ci_pattern=self.ci_pattern,
-                              ci_frame=self.ci_frame,
-                              noise_scaling_maps=func(
+        return CIDataFit(image=func(self.image),
+                         noise_map=func(self.noise_map),
+                         ci_pre_cti=func(self.ci_pre_cti),
+                         mask=func(mask),
+                         ci_pattern=self.ci_pattern,
+                         ci_frame=self.ci_frame,
+                         noise_scaling_maps=func(
                                   noise_scaling_maps) if noise_scaling_maps is not None else noise_scaling_maps)
 
     def parallel_calibration_data(self, columns, mask):
@@ -96,7 +96,7 @@ class CIData(object):
 
 class CIDataFit(object):
 
-    def __init__(self, image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame):
+    def __init__(self, image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame, noise_scaling_maps=None):
         """A fitting image is the collection of data components (e.g. the image, noise-maps, PSF, etc.) which are used \
         to generate and fit it with a model image.
 
@@ -129,7 +129,14 @@ class CIDataFit(object):
         self.mask = mask
         self.ci_pattern = ci_pattern
         self.ci_frame = ci_frame
-        self.is_hyper_data = False
+        self.noise_scaling_maps = noise_scaling_maps
+
+    @property
+    def is_hyper_data(self):
+        if hasattr(self, 'noise_scaling_maps'):
+            return True
+        else:
+            return False
 
     @property
     def chinj(self):
@@ -146,42 +153,6 @@ class CIDataFit(object):
     def signal_to_noise_max(self):
         """The maximum value of signal-to-noise_maps in an image pixel in the image's signal-to-noise_maps mappers"""
         return np.max(self.signal_to_noise_map)
-
-
-class CIDataHyperFit(CIDataFit):
-
-    def __init__(self, image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame, noise_scaling_maps=None):
-        """A fitting image is the collection of data components (e.g. the image, noise-maps, PSF, etc.) which are used \
-        to generate and fit it with a model image.
-
-        The fitting image is in 2D and masked, primarily to removoe cosmic rays.
-
-        The fitting image also includes a number of attributes which are used to performt the fit, including (y,x) \
-        grids of coordinates, convolvers and other utilities.
-
-        Parameters
-        ----------
-        image : im.Image
-            The 2D observed image and other observed quantities (noise-map, PSF, exposure-time map, etc.)
-        mask: msk.Mask | None
-            The 2D mask that is applied to image data.
-
-        Attributes
-        ----------
-        image : ScaledSquarePixelArray
-            The 2D observed image data (not an instance of im.Image, so does not include the other data attributes,
-            which are explicitly made as new attributes of the fitting image).
-        noise_map : NoiseMap
-            An array describing the RMS standard deviation error in each pixel, preferably in units of electrons per
-            second.
-        mask: msk.Mask
-            The 2D mask that is applied to image data.
-        """
-        super().__init__(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti, mask=mask, ci_pattern=ci_pattern,
-                         ci_frame=ci_frame)
-
-        self.noise_scaling_maps = noise_scaling_maps
-        self.is_hyper_data = True
 
 
 def simulate(ci_pre_cti, frame_geometry, ci_pattern, cti_params, cti_settings, read_noise=None, cosmics=None,
