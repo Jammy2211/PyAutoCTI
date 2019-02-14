@@ -143,6 +143,7 @@ class CIDataFit(object):
         """The maximum value of signal-to-noise_maps in an image pixel in the image's signal-to-noise_maps mappers"""
         return np.max(self.signal_to_noise_map)
 
+
 class CIDataHyperFit(CIDataFit):
 
     def __init__(self, image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame, noise_scaling_maps=None):
@@ -179,7 +180,7 @@ class CIDataHyperFit(CIDataFit):
         self.is_hyper_data = True
 
 
-def simulate(shape, frame_geometry, ci_pattern, cti_params, cti_settings, read_noise=None, cosmics=None,
+def simulate(ci_pre_cti, frame_geometry, ci_pattern, cti_params, cti_settings, read_noise=None, cosmics=None,
              noise_seed=-1):
     """Simulate a charge injection image, including effects like noises.
 
@@ -203,7 +204,8 @@ def simulate(shape, frame_geometry, ci_pattern, cti_params, cti_settings, read_n
         Seed for the read-noises added to the image.
     """
 
-    ci_pre_cti = ci_pattern.simulate_ci_pre_cti(shape=shape)
+    ci_frame = frame.ChInj(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
+
     if cosmics is not None:
         ci_pre_cti += cosmics
 
@@ -212,9 +214,14 @@ def simulate(shape, frame_geometry, ci_pattern, cti_params, cti_settings, read_n
     ci_post_cti = ci_pre_cti.add_cti_to_image(cti_params, cti_settings)
 
     if read_noise is not None:
-        ci_post_cti += read_noise_map_from_shape_and_sigma(shape=shape, sigma=read_noise, noise_seed=noise_seed)
+        ci_image = ci_post_cti + read_noise_map_from_shape_and_sigma(shape=ci_post_cti.shape, sigma=read_noise,
+                                                                     noise_seed=noise_seed)
+        ci_noise_map = read_noise*np.ones(ci_post_cti.shape)
+    else:
+        ci_image = ci_post_cti
+        ci_noise_map = None
 
-    return ci_post_cti[:, :]
+    return CIData(ci_frame=ci_frame, image=ci_image, noise_map=ci_noise_map, ci_pre_cti=ci_pre_cti, ci_pattern=ci_pattern)
 
 
 def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, image, mask=None):

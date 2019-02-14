@@ -144,6 +144,7 @@ class TestCIData(object):
 
 
 class TestCIImage(object):
+
     class TestSetupCIPreCTI:
 
         def test__uniform_pattern_1_region_normalization_10__correct_pre_clock_image(self):
@@ -187,19 +188,25 @@ class TestCIImage(object):
     class TestCISimulate(object):
 
         def test__no_instrumental_effects_input__only_cti_simulated(self, arctic_parallel, params_parallel):
+
             pattern = ci_pattern.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
 
-            ci_simulate = ci_data.simulate(shape=(5, 5),
+            ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(5,5))
+
+            ci_data_simulate = ci_data.simulate(ci_pre_cti=ci_pre_cti,
                                            frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                            ci_pattern=pattern, cti_settings=arctic_parallel,
                                            cti_params=params_parallel)
 
-            assert ci_simulate[0, 0:5] == pytest.approx(np.array([10.0, 10.0, 10.0, 10.0, 10.0]), 1e-2)
+            assert ci_data_simulate.image[0, 0:5] == pytest.approx(np.array([10.0, 10.0, 10.0, 10.0, 10.0]), 1e-2)
 
         def test__include_read_noise__is_added_after_cti(self, arctic_parallel, params_parallel):
+
             pattern = ci_pattern.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 3)])
 
-            ci_simulate = ci_data.simulate(shape=(3, 3),
+            ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(3,3))
+
+            ci_data_simulate = ci_data.simulate(ci_pre_cti=ci_pre_cti,
                                            frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                            ci_pattern=pattern, cti_settings=arctic_parallel,
                                            cti_params=params_parallel, read_noise=1.0, noise_seed=1)
@@ -208,24 +215,27 @@ class TestCIImage(object):
 
             # Use seed to give us a known read noises map we'll test for
 
-            assert (ci_simulate - image_no_noise == pytest.approx(np.array([[1.62, -0.61, -0.53],
+            assert (ci_data_simulate.image - image_no_noise == pytest.approx(np.array([[1.62, -0.61, -0.53],
                                                                             [-1.07, 0.87, -2.30],
                                                                             [1.74, -0.76, 0.32]]), 1e-2))
 
         def test__include_cosmics__is_added_to_image_and_trailed(self, arctic_parallel, params_parallel):
+
             pattern = ci_pattern.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
+
+            ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(5,5))
 
             cosmics = np.zeros((5, 5))
             cosmics[1, 1] = 100.0
 
-            ci_simulate = ci_data.simulate(shape=(5, 5),
+            ci_data_simulate = ci_data.simulate(ci_pre_cti=ci_pre_cti,
                                            frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                            ci_pattern=pattern, cti_settings=arctic_parallel,
                                            cti_params=params_parallel)
 
-            assert ci_simulate[0, 0:5] == pytest.approx(np.array([10.0, 10.0, 10.0, 10.0, 10.0]), 1e-2)
-            assert 0.0 < ci_simulate[1, 1] < 100.0
-            assert (ci_simulate[1, 1:4] > 0.0).all()
+            assert ci_data_simulate.image[0, 0:5] == pytest.approx(np.array([10.0, 10.0, 10.0, 10.0, 10.0]), 1e-2)
+            assert 0.0 < ci_data_simulate.image[1, 1] < 100.0
+            assert (ci_data_simulate.image[1, 1:4] > 0.0).all()
 
     class TestCreateReadNoiseMap(object):
 
