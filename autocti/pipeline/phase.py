@@ -578,6 +578,38 @@ class ParallelHyperPhase(ParallelPhase):
         self.hyper_noise_scaler_ci_regions = hyper_noise_scaler_ci_regions
         self.hyper_noise_scaler_parallel_trails = hyper_noise_scaler_parallel_trails
 
+    def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
+        """
+        Create an analysis object. Also calls the prior passing and image modifying functions to allow child classes to
+        change the behaviour of the phase.
+
+        Parameters
+        ----------
+        cti_settings
+        ci_datas
+        pool
+        previous_results: ResultsCollection
+            The result from the previous phase
+
+        Returns
+        -------
+        analysis: Analysis
+            An analysis object that the non-linear optimizer calls to determine the fit of a set of values
+        """
+        masks = list(map(lambda data: self.mask_function(shape=data.image.shape), ci_datas))
+        ci_datas_fit = [self.extract_ci_data(data=data, mask=mask) for data, mask in zip(ci_datas, masks)]
+        ci_datas_full = list(map(lambda data, mask :
+                                 ci_data.CIDataFit(image=data.image, noise_map=data.noise_map,
+                                                   ci_pre_cti=data.ci_pre_cti, mask=mask,
+                                                   ci_pattern=data.ci_pattern, ci_frame=data.ci_frame),
+                                 ci_datas, masks))
+
+        self.pass_priors(previous_results)
+        analysis = self.__class__.Analysis(ci_datas_extracted=ci_datas_fit, ci_datas_full=ci_datas_full,
+                                           cti_settings=cti_settings, phase_name=self.phase_name,
+                                           previous_results=previous_results, pool=pool)
+        return analysis
+
     class Analysis(HyperAnalysis, ParallelPhase.Analysis):
 
         def hyper_noise_scalers_from_instance(self, instance):

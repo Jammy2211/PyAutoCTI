@@ -24,7 +24,7 @@ def make_ci_data_fit():
 def make_ci_datas_hyper_fit(ci_data_fit):
     ci_noise_scalings = [np.array([[1.0, 2.0], [3.0, 4.0]]), np.array([[1.0, 2.0], [3.0, 4.0]])]
 
-    return ci_data.CIDataHyperFit(
+    return ci_data.CIDataFit(
         ci_frame=MockCIFrame(value=3.0), ci_pattern=MockPattern(), image=ci_data_fit.image,
         noise_map=ci_data_fit.noise_map, ci_pre_cti=ci_data_fit.ci_pre_cti, mask=ci_data_fit.mask,
         noise_scaling_maps=ci_noise_scalings)
@@ -93,7 +93,7 @@ class TestCIHyperFit:
         ci_pre_cti = 10.0 * np.ones((2, 2))
         ci_noise_scalings = [np.array([[0.0, 0.0], [0.0, 0.0]])]
 
-        ci_data_hyper_fit = ci_data.CIDataHyperFit(
+        ci_data_hyper_fit = ci_data.CIDataFit(
             ci_frame=MockCIFrame(value=10.0), ci_pattern=MockPattern(), image=ci_image, noise_map=ci_noise_map,
             ci_pre_cti=ci_pre_cti, mask=ci_mask, noise_scaling_maps=ci_noise_scalings)
 
@@ -115,7 +115,7 @@ class TestCIHyperFit:
         ci_pre_cti = 10.0 * np.ones((2, 2))
         ci_noise_scalings = [np.array([[0.0, 0.0], [0.0, 0.0]])]
 
-        ci_data_hyper_fit = ci_data.CIDataHyperFit(
+        ci_data_hyper_fit = ci_data.CIDataFit(
             ci_frame=MockCIFrame(value=10.0), ci_pattern=MockPattern(), image=ci_image, noise_map=ci_noise_map,
             ci_pre_cti=ci_pre_cti, mask=ci_mask, noise_scaling_maps=ci_noise_scalings)
 
@@ -140,7 +140,7 @@ class TestCIHyperFit:
         ci_noise_scalings = [np.array([[1.0, 2.0], [3.0, 4.0]]),
                              np.array([[5.0, 6.0], [7.0, 8.0]])]
 
-        ci_data_hyper_fit = ci_data.CIDataHyperFit(
+        ci_data_hyper_fit = ci_data.CIDataFit(
             ci_frame=MockCIFrame(value=10.0), ci_pattern=MockPattern(), image=ci_image, noise_map=ci_noise_map,
             ci_pre_cti=ci_pre_cti, mask=ci_mask, noise_scaling_maps=ci_noise_scalings)
 
@@ -166,7 +166,7 @@ class TestCIHyperFit:
         ci_noise_scalings = [np.array([[1.0, 2.0], [3.0, 4.0]]),
                              np.array([[5.0, 6.0], [7.0, 8.0]])]
 
-        ci_data_hyper_fit = ci_data.CIDataHyperFit(
+        ci_data_hyper_fit = ci_data.CIDataFit(
             ci_frame=MockCIFrame(value=10.0), ci_pattern=MockPattern(), image=ci_image, noise_map=ci_noise_map,
             ci_pre_cti=ci_pre_cti, mask=ci_mask, noise_scaling_maps=ci_noise_scalings)
 
