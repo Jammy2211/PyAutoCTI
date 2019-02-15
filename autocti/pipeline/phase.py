@@ -644,14 +644,14 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
 
 
 def pipe_cti(ci_data_fit, cti_params, cti_settings):
-    fitter = ci_fit.CIFit(ci_data_fit=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings)
-    return fitter.figure_of_merit
+    fit = ci_fit.CIFit(ci_data_fit=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings)
+    return fit.figure_of_merit
 
 
 def pipe_cti_hyper(ci_data_fit, cti_params, cti_settings, hyper_noise_scalers):
-    fitter = ci_fit.CIHyperFit(ci_data_hyper_fit=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings,
+    fit = ci_fit.CIHyperFit(ci_data_hyper_fit=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings,
                                hyper_noise_scalers=hyper_noise_scalers)
-    return fitter.figure_of_merit
+    return fit.figure_of_merit
 
 
 def make_path_if_does_not_exist(path):
