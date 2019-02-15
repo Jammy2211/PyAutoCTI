@@ -1,15 +1,21 @@
-from autocti.autofit import non_linear as nl
-from autocti.autofit import model_mapper as mm
-from autocti.pipeline import phase as ph
-from autocti.data.charge_injection import ci_frame
-from autocti.data.charge_injection import ci_data
-from autocti.model import arctic_params
-from autocti.model import arctic_settings
-from autocti import conf
+from os import path
 
 import numpy as np
 import pytest
-from os import path
+from autofit import conf
+from autofit.mapper import model_mapper as mm
+from autofit.optimize import non_linear as nl
+from autofit.mapper import prior_model
+from autofit.tools import phase_property
+from autofit.tools.phase import ResultsCollection
+
+from autocti.charge_injection import ci_data as data
+from autocti.charge_injection import ci_frame
+from autocti.charge_injection import ci_fit
+from autocti.data import mask as msk
+from autocti.model import arctic_params
+from autocti.model import arctic_settings
+from autocti.pipeline import phase as ph
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of "
@@ -21,6 +27,7 @@ directory = path.dirname(path.realpath(__file__))
 general_conf = '{}/../test_files/configs/phase'.format(directory)
 conf.instance.general = conf.NamedConfig("{}/general.ini".format(general_conf))
 
+
 class MockResults(object):
     def __init__(self, ci_post_ctis):
         self.ci_post_ctis = ci_post_ctis
@@ -31,7 +38,6 @@ class MockResults(object):
 class NLO(nl.NonLinearOptimizer):
 
     def fit(self, analysis):
-
         class Fitness(object):
 
             def __init__(self, instance_from_physical_vector, constant):
@@ -59,258 +65,229 @@ class NLO(nl.NonLinearOptimizer):
 class MockPattern(object):
 
     def __init__(self):
+        self.regions = [ci_frame.Region(region=[0, 1, 0, 1])]
 
-        self.regions = [MockRegion()]
-
-
-class MockRegion(object):
-
-    def __init__(self):
-        self.x0 = 0
-        self.x1 = 1
-        self.y0 = 0
-        self.y1 = 1
-
-    def ci_regions_frame_from_frame(self):
-        pass
-
-    def non_ci_regions_frame_from_frame(self):
-        pass
-
-    def add_region_from_image_to_array(self, image, array):
-        pass
-
-    def set_region_on_array_to_zeros(self, array):
-        pass
 
 
 @pytest.fixture(name="phase")
 def make_phase():
-    return ph.ParallelPhase(optimizer_class=NLO, parallel=arctic_params.ParallelOneSpecies,
-                            ci_datas_extractor=ph.default_extractor)
+    return ph.ParallelPhase(optimizer_class=NLO)
+
 
 @pytest.fixture(name="cti_settings")
 def make_cti_settings():
-    parallel_settings = arctic_settings.ParallelSettings(well_depth=0, niter=1, express=1, n_levels=2000)
+    parallel_settings = arctic_settings.Settings(well_depth=0, niter=1, express=1, n_levels=2000)
     return arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings)
 
-@pytest.fixture(name="ci_geometry")
-def make_ci_geometry():
-    return ci_frame.CIQuadGeometryEuclidBL()
+
+@pytest.fixture(name="frame_geometry")
+def make_frame_geometry():
+    return ci_frame.QuadGeometryEuclid.bottom_left()
+
 
 @pytest.fixture(name="ci_pattern")
 def make_ci_pattern():
     return MockPattern()
 
-@pytest.fixture(name="ci_datas")
-def make_ci_datas(ci_geometry, ci_pattern):
-    images = [ci_data.CIImage(frame_geometry=ci_geometry, ci_pattern=ci_pattern, array=np.ones((3, 3)))]
-    masks = [ci_data.CIMask.empty_for_shape(shape=(3, 3), frame_geometry=ci_geometry, ci_pattern=ci_pattern)]
-    noises = [np.ones((3,3))]
-    ci_pre_ctis = [ci_data.CIPreCTI(frame_geometry=ci_geometry, ci_pattern=ci_pattern, array=np.ones((3, 3)))]
-    return ci_data.CIData(images, masks, noises, ci_pre_ctis)
+
+@pytest.fixture(name="ci_data")
+def make_ci_data(frame_geometry, ci_pattern):
+    image = np.ones((3, 3))
+    noise = np.ones((3, 3))
+    ci_pre_cti = np.ones((3, 3))
+    return data.CIData(image=image, noise_map=noise, ci_pre_cti=ci_pre_cti, ci_pattern=ci_pattern, 
+                       ci_frame=frame_geometry)
+
 
 @pytest.fixture(name="results")
 def make_results():
     return MockResults(ci_post_ctis=[np.ones((10, 10)), np.ones((10, 10))])
 
+
 @pytest.fixture(name="results_collection")
 def make_results_collection(results):
-    return ph.ResultsCollection([results])
+    return ResultsCollection([results])
 
 
 class TestPhase(object):
 
     def test__set_constants(self, phase):
-        parallel = arctic_params.ParallelOneSpecies()
-        phase.parallel = parallel
-        assert phase.optimizer.constant.parallel == parallel
-        assert not hasattr(phase.optimizer.variable, "parallel")
+        parallel_species = arctic_params.Species()
+        phase.parallel_species = [parallel_species]
+        assert phase.optimizer.constant.parallel_species == [parallel_species]
+        assert phase.optimizer.variable.parallel_species != [parallel_species]
 
     def test__set_variables(self, phase):
-        parallel = arctic_params.ParallelOneSpecies
-        phase.parallel = parallel
-        assert phase.optimizer.variable.parallel == phase.parallel
-        assert not hasattr(phase.optimizer.constant, "parallel")
+        parallel = [mm.PriorModel(arctic_params.Species)]
+        phase.parallel_species = parallel
+        assert phase.optimizer.variable.parallel_species == phase.parallel_species
+        assert phase.optimizer.constant.parallel_species != [parallel]
 
-    def test__mask_analysis(self, phase, ci_datas, cti_settings):
+    def test__make_analysis(self, phase, ci_data, cti_settings):
 
-        analysis = phase.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings)
+        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
         assert analysis.last_results is None
-        assert analysis.ci_datas == ci_datas
+        assert (analysis.ci_datas_extracted[0].image == ci_data.image).all()
+        assert (analysis.ci_datas_extracted[0].noise_map == ci_data.noise_map).all()
+        assert (analysis.ci_datas_full[0].image == ci_data.image).all()
+        assert (analysis.ci_datas_full[0].noise_map == ci_data.noise_map).all()
         assert analysis.cti_settings == cti_settings
 
-    def test__fit(self, phase, ci_datas, cti_settings):
-
-        phase.parallel = arctic_params.ParallelOneSpecies()
-        result = phase.run(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=None)
-        assert isinstance(result.constant.parallel, arctic_params.ParallelOneSpecies)
-
-    def test__customize_constant(self, results, ci_datas, cti_settings):
-
+    def test__customize_constant(self, results, ci_data, cti_settings):
         class MyPhase(ph.ParallelPhase):
             def pass_priors(self, previous_results):
-                self.parallel = previous_results.last.constant.parallel
+                self.parallel_species = previous_results.last.constant.parallel_species
 
-        parallel = arctic_params.ParallelOneSpecies()
+        parallel = arctic_params.Species()
 
-        setattr(results.constant, "parallel", parallel)
+        setattr(results.constant, "parallel_species", [parallel])
 
-        phase = MyPhase(optimizer_class=NLO, parallel=parallel, ci_datas_extractor=ph.default_extractor)
-        phase.make_analysis(ci_datas, cti_settings, previous_results=ph.ResultsCollection([results]))
+        phase = MyPhase(optimizer_class=NLO, parallel_species=[parallel])
+        phase.make_analysis([ci_data], cti_settings, previous_results=ResultsCollection([results]))
 
-        assert phase.parallel == parallel
+        assert phase.parallel_species == [parallel]
 
-    def test__customize_variable(self, results, ci_datas, cti_settings):
+    # noinspection PyUnresolvedReferences
+    def test__default_data_extractor(self, ci_data, phase):
 
-        class MyPhase(ph.ParallelPhase):
-            def pass_priors(self, previous_results):
-                self.parallel = previous_results.last.variable.parallel
+        ci_datas_fit = phase.extract_ci_data(ci_data, msk.Mask.empty_for_shape(ci_data.image.shape))
 
-        parallel_prior = arctic_params.ParallelOneSpecies
-
-        setattr(results.variable, "parallel", parallel_prior)
-
-        phase = MyPhase(optimizer_class=NLO, parallel=results, ci_datas_extractor=ph.default_extractor)
-        phase.make_analysis(ci_datas, cti_settings, previous_results=ph.ResultsCollection([results]))
-
-        assert phase.parallel == results.variable.parallel
-
-    def test__default_data_extractor(self, ci_datas, phase):
-
-        ci_data_analysis = phase.ci_datas_extractor(ci_datas, mask_function=ph.default_mask_function)
-
-        assert type(ci_data_analysis) == ci_data.CIDataAnalysis
-        assert (ci_datas[0].image == ci_data_analysis[0].image).all()
-        assert (ci_datas[0].mask == ci_data_analysis[0].mask).all()
-        assert (ci_datas[0].noise == ci_data_analysis[0].noise).all()
-        assert (ci_datas[0].ci_pre_cti == ci_data_analysis[0].ci_pre_cti).all()
+        assert isinstance(ci_datas_fit, data.CIDataFit)
+        assert (ci_data.image == ci_datas_fit.image).all()
+        assert (ci_data.noise_map == ci_datas_fit.noise_map).all()
+        assert (ci_data.ci_pre_cti == ci_datas_fit.ci_pre_cti).all()
 
     def test__phase_property(self):
-
         class MyPhase(ph.ParallelPhase):
-            prop = ph.PhaseProperty("prop")
+            prop = phase_property.PhaseProperty("prop")
 
-        parallel = arctic_params.ParallelOneSpecies()
+        parallel = arctic_params.Species()
 
-        phase = MyPhase(optimizer_class=NLO, parallel=parallel, ci_datas_extractor=ph.default_extractor)
+        phase = MyPhase(optimizer_class=NLO, parallel_species=[parallel])
 
-        phase.prop = arctic_params.ParallelOneSpecies
+        phase.prop = arctic_params.Species
 
         assert phase.variable.prop == phase.prop
 
-        phase.prop = parallel
+        phase.prop = [parallel]
 
-        assert phase.constant.prop == parallel
+        assert phase.constant.prop == [parallel]
         assert not hasattr(phase.variable, "prop")
 
-        phase.prop = arctic_params.ParallelOneSpecies
+        phase.prop = arctic_params.Species
         assert not hasattr(phase.constant, "prop")
 
     def test__duplication(self):
+        parallel = arctic_params.Species()
 
-        parallel = arctic_params.ParallelOneSpecies()
+        phase = ph.ParallelPhase(parallel_species=[parallel])
 
-        phase = ph.ParallelPhase(parallel=parallel)
+        ph.ParallelPhase(parallel_species=[])
 
-        ph.ParallelPhase(parallel=None)
+        assert phase.parallel_species is not None
 
-        assert phase.parallel is not None
-
-    def test__cti_params_for_instance(self, ci_datas, cti_settings):
-
-        phase = ph.ParallelPhase(ci_datas_extractor=ph.default_extractor)
-        analysis = phase.make_analysis(ci_datas, cti_settings)
+    def test__cti_params_for_instance(self):
         instance = mm.ModelInstance()
-        instance.parallel = arctic_params.ParallelOneSpecies(trap_densities=(0.0,))
-        cti_params = analysis.cti_params_for_instance(instance)
+        instance.parallel_species = [arctic_params.Species(trap_density=0.0)]
+        cti_params = ph.cti_params_for_instance(instance)
 
-        assert cti_params.parallel == instance.parallel
-
-#
-# class TestParallelPhase(object):
-#
-#     def test__analysis__image_and_model_identical__likelihood_is_noise_term(self, cti_settings, ci_geometry):
-#
-#         ci_pattern = pattern.CIPatternUniform(normalization=1000.0, regions=[(0, 1, 0, 2)])
-#         ci_images = [ci_data.CIImage(frame_geometry=ci_geometry, ci_pattern=ci_pattern, array=10.0 * np.ones((2, 2)))]
-#         ci_noises = [ci_frame.ci_frame.from_single_value(value=2.0, shape=(2, 2), frame_geometry=ci_geometry,
-#                                                        ci_pattern=ci_pattern)]
-#         ci_masks = [ci_data.CIMask.empty_for_shape(frame_geometry=ci_geometry, shape=(2, 2), ci_pattern=ci_pattern)]
-#         ci_pre_ctis = [ci_data.CIPreCTI(frame_geometry=ci_geometry, ci_pattern=ci_pattern, array=10.0 * np.ones((2, 2)))]
-#         ci_datas = ci_data.CIData(images=ci_images, masks=ci_masks, noises=ci_noises, ci_pre_ctis=ci_pre_ctis)
-#
-#         phase = ph.ParallelPhase(parallel=arctic_params.ParallelOneSpecies, optimizer_class=NLO)
-#
-#         analysis = ph.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings)
-#
-#         likelihood = analysis.fit(parallel=arctic_params.ParallelOneSpecies(trap_densities=(0.0,)))
-#
-#         chi_sq_term = 0
-#         noise_term = 4.0 * np.log(2 * np.pi * 4.0)
-#
-#         assert likelihood == -0.5 * (chi_sq_term + noise_term)
-#
-#     def test__image_and_pre_cti_not_identical__likelihood_is_chi_sq_plus_noise_term(self, ci_geometry, cti_settings):
-#
-#         phase = ph.ParallelPhase(parallel=arctic_params.ParallelOneSpecies, optimizer_class=NLO)
-#
-#         ci_pattern = pattern.CIPatternUniform(normalization=1000.0, regions=[(0, 1, 0, 2)])
-#
-#         ci_images = [ci_data.CIImage(frame_geometry=ci_geometry, ci_pattern=ci_pattern, array=9.0*np.ones((2,2)))]
-#         ci_masks = [ci_data.CIMask.empty_for_shape(frame_geometry=ci_geometry, shape=(2, 2), ci_pattern=ci_pattern)]
-#         ci_noises = [ci_frame.ci_frame.from_single_value(value=2.0, shape=(2, 2), frame_geometry=ci_geometry,
-#                                                ci_pattern=ci_pattern)]
-#         ci_pre_ctis = [ci_data.CIPreCTI(frame_geometry=ci_geometry, ci_pattern=ci_pattern, array=10.0 * np.ones((2, 2)))]
-#         ci_datas = ci_data.CIData(images=ci_images, masks=ci_masks, noises=ci_noises, ci_pre_ctis=ci_pre_ctis)
-#
-#         analysis = ph.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings)
-#
-#         likelihood = analysis.fit(parallel=arctic_params.ParallelOneSpecies(trap_densities=(0.0,)))
-#
-#         chi_sq_term = 4.0 * ((1.0 / 2.0) ** 2.0)
-#         noise_term = 4.0 * np.log(2 * np.pi * 4.0)
-#
-#         assert likelihood == pytest.approx(-0.5 * (chi_sq_term + noise_term), 1e-4)
+        assert cti_params.parallel_species == instance.parallel_species
 
 
-# class TestParallelHyperPhase(object):
-#
-#     def test__analysis_scales_noise(self, ci_geometry, cti_settings):
-#
-#         ci_pattern = pattern.CIPatternUniform(normalization=1000.0, regions=[(0, 1, 0, 2)])
-#         ci_images = [ci_data.CIImage(frame_geometry=ci_geometry, ci_pattern=ci_pattern, array=10.0 * np.ones((2, 2)))]
-#         ci_masks = [ci_data.CIMask.empty_for_shape(frame_geometry=ci_geometry, shape=(2, 2), ci_pattern=ci_pattern)]
-#         ci_noises = [ci_frame.ci_frame.from_single_value(value=2.0, shape=(2, 2), frame_geometry=ci_geometry,
-#                                                        ci_pattern=ci_pattern)]
-#         ci_pre_ctis = [ci_data.CIPreCTI(frame_geometry=ci_geometry, ci_pattern=ci_pattern, array=10.0 * np.ones((2, 2)))]
-#         ci_datas = ci_data.CIData(images=ci_images, masks=ci_masks, noises=ci_noises, ci_pre_ctis=ci_pre_ctis)
-#
-#         noise_scalings = [[np.array([[1.0, 2.0], [3.0, 4.0]])]]
-#         previous_results.noise_scalings = noise_scalings
-#
-#         phase = ph.ParallelHyperPhase(parallel=arctic_params.ParallelOneSpecies,
-#                                          hyper_noise_ci_regions=CIHyper.HyperCINoise,
-#                                          hyper_noise_parallel_non_ci_regions=CIHyper.HyperCINoise,
-#                                          optimizer_class=NLO)
-#
-#         analysis = ph.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results)
-#
-#         likelihood = analysis.fit(parallel=arctic_params.ParallelOneSpecies(trap_densities=(0.0,)),
-#                                   hyper_noise_ci_regions=CIHyper.HyperCINoise(scale_factor=1.0),
-#                                   hyper_noise_parallel_non_ci_regions=CIHyper.HyperCINoise(scale_factor=0.0))
-#
-#         chi_sq_term = 0
-#         noise_term = np.log(2 * np.pi * (2.0 + 1.0) ** 2.0) + np.log(2 * np.pi * (2.0 + 2.0) ** 2.0) + \
-#                      np.log(2 * np.pi * (2.0 + 3.0) ** 2.0) + np.log(2 * np.pi * (2.0 + 4.0) ** 2.0)
-#
-#         assert likelihood == -0.5 * (chi_sq_term + noise_term)
+class TestHyperPhase(object):
+
+    def test__make_analysis(self, phase, ci_data, cti_settings):
+
+        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        assert analysis.last_results is None
+        assert (analysis.ci_datas_extracted[0].image == ci_data.image).all()
+        assert (analysis.ci_datas_extracted[0].noise_map == ci_data.noise_map).all()
+        assert (analysis.ci_datas_full[0].image == ci_data.image).all()
+        assert (analysis.ci_datas_full[0].noise_map == ci_data.noise_map).all()
+        assert analysis.cti_settings == cti_settings
+
 
 class TestResult(object):
 
     def test_results(self):
 
-        results = ph.ResultsCollection([1, 2, 3])
+        results = ResultsCollection([1, 2, 3])
         assert results == [1, 2, 3]
         assert results.last == 3
         assert results.first == 1
+
+    def test__fits_for_instance__uses_ci_data_fit(self, ci_data, cti_settings):
+
+        parallel_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
+        parallel_ccd = arctic_params.CCD(well_notch_depth=0.1, well_fill_alpha=0.5, well_fill_beta=0.5,
+                                         well_fill_gamma=0.5)
+
+        phase = ph.ParallelPhase(parallel_species=[parallel_species], parallel_ccd=parallel_ccd, columns=1,
+                                 phase_name='test_phase')
+
+        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        instance = phase.constant
+
+        fits = analysis.fits_of_ci_data_extracted_for_instance(instance=instance)
+        assert fits[0].ci_pre_cti.shape == (3,1)
+
+        full_fits = analysis.fits_of_ci_data_full_for_instance(instance=instance)
+        assert full_fits[0].ci_pre_cti.shape == (3,3)
+
+    def test__fit_figure_of_merit__matches_correct_fit_given_galaxy_profiles(self, ci_data, cti_settings):
+
+        parallel_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
+        parallel_ccd = arctic_params.CCD(well_notch_depth=0.1, well_fill_alpha=0.5, well_fill_beta=0.5,
+                                         well_fill_gamma=0.5)
+
+        phase = ph.ParallelPhase(parallel_species=[parallel_species], parallel_ccd=parallel_ccd,
+                                 phase_name='test_phase')
+
+        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        instance = phase.constant
+        cti_params = ph.cti_params_for_instance(instance=instance)
+        fit_figure_of_merit = analysis.fit(instance=instance)
+
+        mask = phase.mask_function(shape=ci_data.image.shape)
+        ci_datas_fit = [phase.extract_ci_data(data=data, mask=mask) for data, mask in zip([ci_data], [mask])]
+        fit = ci_fit.CIFit(ci_data_fit=ci_datas_fit[0], cti_params=cti_params, cti_settings=cti_settings)
+
+        assert fit.likelihood == fit_figure_of_merit
+
+    def test__results_of_phase_are_available_as_properties(self, ci_data, cti_settings):
+
+        phase = ph.ParallelPhase(optimizer_class=NLO,
+                                 parallel_species=[prior_model.PriorModel(arctic_params.Species)],
+                                 parallel_ccd=arctic_params.CCD, phase_name='test_phase')
+
+        result = phase.run(ci_datas=[ci_data], cti_settings=cti_settings)
+
+        assert hasattr(result, 'most_likely_extracted_fits')
+        assert hasattr(result, 'most_likely_full_fits')
+        assert hasattr(result, 'noise_scaling_maps_of_ci_regions')
+        assert hasattr(result, 'noise_scaling_maps_of_parallel_trails')
+        assert hasattr(result, 'noise_scaling_maps_of_serial_trails')
+        assert hasattr(result, 'noise_scaling_maps_of_serial_overscan_above_trails')
+
+    def test__parallel_phase__noise_scaling_maps_of_images_are_correct(self, ci_data, cti_settings):
+
+        phase = ph.ParallelPhase(optimizer_class=NLO,
+                                 parallel_species=[prior_model.PriorModel(arctic_params.Species)],
+                                 parallel_ccd=arctic_params.CCD, phase_name='test_phase')
+
+        # The ci_region is [0, 1, 0, 1], therefore by changing the image at 0,0 to 2.0 there will be a residual of 1.0,
+        # which for a noise_map entry of 2.0 gives a chi squared of 0.25..
+
+
+        ci_data.image[0,0] = 2.0
+        ci_data.noise_map[0,0] = 2.0
+
+        result = phase.run(ci_datas=[ci_data], cti_settings=cti_settings)
+
+        assert (result.noise_scaling_maps_of_ci_regions[0] == np.array([[0.25, 0.0, 0.0],
+                                                                        [0.0, 0.0, 0.0],
+                                                                        [0.0, 0.0, 0.0]])).all()
+
+        assert (result.noise_scaling_maps_of_parallel_trails[0] == np.zeros((3,3))).all()
+        assert (result.noise_scaling_maps_of_serial_trails[0] == np.zeros((3,3))).all()
+        assert (result.noise_scaling_maps_of_serial_overscan_above_trails[0] == np.zeros((3,3))).all()
