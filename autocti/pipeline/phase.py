@@ -572,7 +572,8 @@ class HyperAnalysis(Phase.Analysis):
         logger.debug(
             "\nRunning CTI analysis for... \n\n"
             "Parallel CTI::\n{}\n\n "
-            "Hyper Parameters:\n{}".format(instance.parallel, " ".join(cls.noise_scaling_maps_from_instance(instance))))
+            "Hyper Parameters:\n{}".format(instance.parallel,
+                                           " ".join(cls.hyper_noise_scalers_from_instance(instance))))
 
     def hyper_fits_for_instance(self, instance):
         cti_params = cti_params_for_instance(instance=instance)
