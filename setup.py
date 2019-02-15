@@ -55,17 +55,13 @@ setup(
     ],
     keywords='cli',
     packages=find_packages(exclude=['docs', 'tests*']),
-    install_requires=['docopt',
-                      'numpy',
-                      'astropy',
+    install_requires=['numpy',
                       'scipy',
-                      'GetDist',
-                      'pymultinest',
-                      'scikit-learn',
-                      'numba',
+                      'astropy',
                       'matplotlib',
-                      'colorama',
-		      'autofit==0.8.10'
+                      'pymultinest',
+                      'getDist',
+                      'autofit==0.8.10'
                       ],
     extras_require={
         'test': ['coverage', 'pytest', 'pytest-cov'],
