@@ -1,3 +1,5 @@
+from autofit import exc
+
 class CIPatternException(Exception):
     pass
 
@@ -11,4 +13,8 @@ class PlottingException(Exception):
 
 
 class FittingException(Exception):
+    pass
+
+
+class PriorException(exc.FitException):
     pass
