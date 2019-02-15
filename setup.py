@@ -4,7 +4,7 @@ from subprocess import call
 
 from setuptools import Command, find_packages, setup
 
-from autolens import __version__
+from autocti import __version__
 
 this_dir = abspath(dirname(__file__))
 with open(join(this_dir, 'README.md'), encoding='utf-8') as file:
@@ -24,17 +24,17 @@ class RunTests(Command):
 
     def run(self):
         """Run all tests!"""
-        errno = call(['py.test', '--cov=autolens', '--cov-report=term-missing'])
+        errno = call(['py.test', '--cov=autocti', '--cov-report=term-missing'])
         raise SystemExit(errno)
 
 
 setup(
-    name='autolens',
+    name='autocti',
     version=__version__,
-    description='Strong Gravitational Lensing for the masses',
+    description='Automated Charge Transfer Inefficiency Modeling',
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/Jammy2211/PyAutoLens',
+    url='https://github.com/Jammy2211/PyAutoCTI',
     author='James Nightingale and Richard Hayes',
     author_email='james.w.nightingale@durham.ac.uk',
     include_package_data=True,
@@ -69,11 +69,6 @@ setup(
                       ],
     extras_require={
         'test': ['coverage', 'pytest', 'pytest-cov'],
-    },
-    entry_points={
-        'console_scripts': [
-            'autolens=autolens.cli:main',
-        ],
     },
     cmdclass={'test': RunTests},
 )
