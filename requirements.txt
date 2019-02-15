@@ -4,4 +4,4 @@ astropy
 matplotlib
 pymultinest
 getDist
-autofit==0.8.10
+autofit==0.10.1
