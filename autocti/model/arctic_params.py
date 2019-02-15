@@ -23,8 +23,6 @@ Author: James Nightingale
 
 import numpy as np
 
-from autocti.tools import infoio
-
 
 class ArcticParams(object):
 
@@ -47,40 +45,6 @@ class ArcticParams(object):
         self.serial_ccd = serial_ccd
         self.parallel_species = parallel_species or []
         self.serial_species = serial_species or []
-
-    def output_info_file(self, path, filename='ArcticParams'):
-        """Output information on the the parameters to a text file.
-
-        Parameters
-        ----------
-        filename: str
-            The output filename
-        path : str
-            The output directory path of the ci_data
-        """
-        infoio.output_class_info(self, path, filename)
-
-    def generate_info(self):
-        """Generate string containing information on the the arctic parameters."""
-
-        info_list = []
-
-        def add_species(name, species_list):
-            info_list.extend(
-                map(lambda species: infoio.generate_class_info(cls=species, prefix='{}_'.format(name.lower()),
-                                                               include_types=[int, float, tuple]), species_list))
-
-        add_species("parallel", self.parallel_species)
-        add_species("serial", self.serial_species)
-
-        if self.parallel_ccd is not None:
-            info_list.append(
-                infoio.generate_class_info(self.parallel_ccd, prefix="parallel_", include_types=[int, float, tuple]))
-        if self.serial_ccd is not None:
-            info_list.append(
-                infoio.generate_class_info(self.serial_ccd, prefix="serial_", include_types=[int, float, tuple]))
-
-        return "\n".join(info_list)
 
     def update_fits_header_info(self, ext_header):
         """Output the CTI model parameters into the fits header of a fits image.
@@ -179,7 +143,7 @@ class Species(object):
             The seed of the Poisson random number generator.
         """
         np.random.seed(seed)
-        total_traps = tuple(map(lambda s: s.trap_density * shape[0], species))
+        total_traps = tuple(map(lambda sp: sp.trap_density * shape[0], species))
         poisson_densities = [np.random.poisson(total_traps) / shape[0] for _ in range(shape[1])]
         poisson_species = []
         for densities in poisson_densities:

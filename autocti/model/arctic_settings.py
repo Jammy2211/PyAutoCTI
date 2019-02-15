@@ -23,8 +23,6 @@ Created on: 02/13/18
 Author: James Nightingale
 """
 
-from autocti.tools import infoio
-
 
 class ArcticSettings(object):
 
@@ -48,35 +46,6 @@ class ArcticSettings(object):
 
         self.parallel = parallel
         self.serial = serial
-
-    def output_info_file(self, path, filename='ArcticSettings'):
-        """Output information on the cti settings settings to a text file.
-
-        Params
-        ----------
-        path : str
-            The output directory path of the ci_data
-        """
-        infoio.output_class_info(self, path, filename)
-
-    def generate_info(self):
-        """Generate string containing information on the cti settings parameters."""
-
-        info = ''
-
-        if self.parallel is not None:
-            info += 'parallel_mode = True\n\n'
-            info += infoio.generate_class_info(cls=self.parallel, prefix='parallel_',
-                                               include_types=[int, float, list, bool])
-            info += '\n'
-
-        if self.serial is not None:
-            info += 'serial_mode = True\n\n'
-            info += infoio.generate_class_info(cls=self.serial, prefix='serial_',
-                                               include_types=[int, float, list, bool])
-            info += '\n'
-
-        return info
 
     def update_fits_header_info(self, ext_header):
         """Output the Arctic Settings into the fits header of a fits image.
@@ -142,10 +111,3 @@ class Settings(object):
         ext_header.set('cte_pwld', self.well_depth, 'CCD Well Depth (Parallel)')
         ext_header.set('cte_pnts', self.n_levels, 'Number of levels (Parallel)')
         return ext_header
-
-    def generate_info(self):
-        """Generate string containing information on the parallel arctic settings."""
-        info = 'parallel_mode = True\n\n'
-        info += infoio.generate_class_info(cls=self, prefix='parallel_', include_types=[int, float, list, bool])
-        info += '\n'
-        return info
