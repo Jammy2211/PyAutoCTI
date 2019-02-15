@@ -26,6 +26,6 @@ git flow release finish $VERSION
 
 git checkout master
 git push
-git checkout development
+git checkout develop
 git push
 
