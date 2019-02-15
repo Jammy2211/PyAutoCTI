@@ -17,7 +17,7 @@
 #
 
 """
-File: tests/python/CTIImage_test.py
+File: tests/python/ImageFrame_test.py
 
 Created on: 02/13/18
 Author: James Nightingale
@@ -29,8 +29,8 @@ import numpy as np
 import pytest
 
 from autocti import exc
+from autocti.charge_injection import ci_frame
 from autocti.data import cti_image
-from autocti.data.charge_injection import ci_frame
 
 
 @pytest.fixture(scope='function')
@@ -60,32 +60,32 @@ def euclid_data():
 path = '{}/'.format(os.path.dirname(os.path.realpath(__file__)))
 
 
-class TestCTIImage:
+class TestImageFrame:
     class TestConstructor:
 
         def test__geometry_is_bottom_left__loads_data_and_dimensions(self, euclid_data):
-            image = cti_image.CTIImage(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=euclid_data)
+            image = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=euclid_data)
 
             assert type(image.frame_geometry) == ci_frame.QuadGeometryEuclid
             assert image.shape == (2048, 2066)
             assert (image == np.zeros((2048, 2066))).all()
 
         def test__geometry_is_bottom_right__loads_data_and_dimensions(self, euclid_data):
-            image = cti_image.CTIImage(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), array=euclid_data)
+            image = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), array=euclid_data)
 
             assert type(image.frame_geometry) == ci_frame.QuadGeometryEuclid
             assert image.shape == (2048, 2066)
             assert (image == np.zeros((2048, 2066))).all()
 
         def test__geometry_is_top_left__loads_data_and_dimensions(self, euclid_data):
-            image = cti_image.CTIImage(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), array=euclid_data)
+            image = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), array=euclid_data)
 
             assert type(image.frame_geometry) == ci_frame.QuadGeometryEuclid
             assert image.shape == (2048, 2066)
             assert (image == np.zeros((2048, 2066))).all()
 
         def test__geometry_is_top_right__loads_data_and_dimensions(self, euclid_data):
-            image = cti_image.CTIImage(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(), array=euclid_data)
+            image = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(), array=euclid_data)
 
             assert type(image.frame_geometry) == ci_frame.QuadGeometryEuclid
             assert image.shape == (2048, 2066)
@@ -461,7 +461,7 @@ class TestRegion(object):
 
             region = ci_frame.Region(region=(0, 2, 0, 2))
 
-            new_array = region.extract_region_from_array(array)
+            new_array = array[region.slice]
 
             assert (new_array == np.array([[1.0, 2.0],
                                            [4.0, 5.0]])).all()
@@ -473,7 +473,7 @@ class TestRegion(object):
 
             region = ci_frame.Region(region=(1, 3, 0, 3))
 
-            new_array = region.extract_region_from_array(array)
+            new_array = array[region.slice]
 
             assert (new_array == np.array([[4.0, 5.0, 6.0],
                                            [7.0, 8.0, 9.0]])).all()
@@ -485,31 +485,31 @@ class TestRegion(object):
             image = np.ones((2, 2))
             region = ci_frame.Region(region=(0, 1, 0, 1))
 
-            new_array = region.add_region_from_image_to_array(image=image, array=array)
+            array[region.slice] += image[region.slice]
 
-            assert (new_array == np.array([[1.0, 0.0],
-                                           [0.0, 0.0]])).all()
+            assert (array == np.array([[1.0, 0.0],
+                                       [0.0, 0.0]])).all()
 
         def test__array_is_all_1s__image_goes_into_correct_region_of_array_and_adds_to_it(self):
             array = np.ones((2, 2))
             image = np.ones((2, 2))
             region = ci_frame.Region(region=(0, 1, 0, 1))
 
-            new_array = region.add_region_from_image_to_array(image=image, array=array)
+            array[region.slice] += image[region.slice]
 
-            assert (new_array == np.array([[2.0, 1.0],
-                                           [1.0, 1.0]])).all()
+            assert (array == np.array([[2.0, 1.0],
+                                       [1.0, 1.0]])).all()
 
         def test__different_region(self):
             array = np.ones((3, 3))
             image = np.ones((3, 3))
             region = ci_frame.Region(region=(1, 3, 2, 3))
 
-            new_array = region.add_region_from_image_to_array(image=image, array=array)
+            array[region.slice] += image[region.slice]
 
-            assert (new_array == np.array([[1.0, 1.0, 1.0],
-                                           [1.0, 1.0, 2.0],
-                                           [1.0, 1.0, 2.0]])).all()
+            assert (array == np.array([[1.0, 1.0, 1.0],
+                                       [1.0, 1.0, 2.0],
+                                       [1.0, 1.0, 2.0]])).all()
 
     class TestSetRegionToZeros:
 
@@ -518,18 +518,18 @@ class TestRegion(object):
 
             region = ci_frame.Region(region=(0, 1, 0, 1))
 
-            new_array = region.set_region_on_array_to_zeros(array=array)
+            array[region.slice] = 0
 
-            assert (new_array == np.array([[0.0, 1.0],
-                                           [1.0, 1.0]])).all()
+            assert (array == np.array([[0.0, 1.0],
+                                       [1.0, 1.0]])).all()
 
         def test__different_region___sets_to_0(self):
             array = np.ones((3, 3))
 
             region = ci_frame.Region(region=(1, 3, 2, 3))
 
-            new_array = region.set_region_on_array_to_zeros(array=array)
+            array[region.slice] = 0
 
-            assert (new_array == np.array([[1.0, 1.0, 1.0],
-                                           [1.0, 1.0, 0.0],
-                                           [1.0, 1.0, 0.0]])).all()
+            assert (array == np.array([[1.0, 1.0, 1.0],
+                                       [1.0, 1.0, 0.0],
+                                       [1.0, 1.0, 0.0]])).all()

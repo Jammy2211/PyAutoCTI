@@ -1,17 +1,13 @@
-import shutil
-from os import path
-
-from autocti.data.charge_injection import ci_data
-from autocti.data.charge_injection import ci_frame
-from autocti.data.charge_injection import ci_pattern
-
 import os
+import shutil
+
+from autocti.charge_injection import ci_data, ci_frame, ci_pattern
+from autocti.data import util
 
 dirpath = os.path.dirname(os.path.realpath(__file__))
 
 
 def reset_paths(test_name, output_path):
-
     try:
         shutil.rmtree(dirpath + '/data/' + test_name)
     except FileNotFoundError:
@@ -22,13 +18,14 @@ def reset_paths(test_name, output_path):
     except FileNotFoundError:
         pass
 
+
 class CIQuadGeometryIntegration(ci_frame.FrameGeometry):
 
     def __init__(self):
         """This class represents the quadrant geometry of an integration quadrant."""
         super(CIQuadGeometryIntegration, self).__init__(parallel_overscan=ci_frame.Region((33, 36, 1, 30)),
                                                         serial_overscan=ci_frame.Region((0, 33, 31, 36)),
-                                                        serial_prescan=ci_frame.Region((0, 36, 0, 1)), corner=(0,0))
+                                                        serial_prescan=ci_frame.Region((0, 36, 0, 1)), corner=(0, 0))
 
     def rotate_for_parallel_cti(self, image):
         """ Rotate the quadrant image data before clocking via cti_settings in the parallel direction.
@@ -83,49 +80,29 @@ class CIQuadGeometryIntegration(ci_frame.FrameGeometry):
         """Coordinates of a serial trail of size dx from coordinate x"""
         return x, x + dx + 1
 
-    # def parallel_front_edge_region(self, region, rows=(0, 1)):
-    #     ci_frame.check_parallel_front_edge_size(region, rows)
-    #     return ci_frame.Region((region.y0 + rows[0], region.y0 + rows[1], region.x0, region.x1))
-    #
-    # def parallel_trails_region(self, region, rows=(0, 1)):
-    #     return ci_frame.Region((region.y1 + rows[0], region.y1 + rows[1], region.x0, region.x1))
-    #
-    # def parallel_side_nearest_read_out_region(self, region, image_shape, columns=(0, 1)):
-    #     return ci_frame.Region((0, image_shape[0], region.x0 + columns[0], region.x0 + columns[1]))
-    #
-    # def serial_front_edge_region(self, region, columns=(0, 1)):
-    #     ci_frame.check_serial_front_edge_size(region, columns)
-    #     return ci_frame.Region((region.y0, region.y1, region.x0 + columns[0], region.x0 + columns[1]))
-    #
-    # def serial_trails_region(self, region, columns=(0, 1)):
-    #     return ci_frame.Region((region.y0, region.y1, region.x1 + columns[0], region.x1 + columns[1]))
-    #
-    # def serial_ci_region_and_trails(self, region, image_shape, column):
-    #     return ci_frame.Region((region.y0, region.y1, column + region.x0, image_shape[1]))
-
 
 shape = (36, 36)
-ci_regions = [(1, 7, 1, 30), (17, 23, 1, 30)]
-normalizations = [84700.0]
+ci_regions = [(1, 7, 3, 30), (17, 23, 3, 30)]
 frame_geometry = CIQuadGeometryIntegration()
 
 
-def simulate_integration_quadrant(test_name, cti_params, cti_settings):
-
+def simulate_integration_quadrant(test_name, normalizations, cti_params, cti_settings):
     output_path = "{}/data/".format(os.path.dirname(os.path.realpath(__file__))) + test_name + '/'
 
-    if os.path.exists(output_path) == False:
+    if not os.path.exists(output_path):
         os.makedirs(output_path)
 
-    sim_ci_patterns = ci_pattern.create_uniform_simulate_via_lists(normalizations=normalizations, regions=ci_regions)
+    sim_ci_patterns = ci_pattern.uniform_from_lists(normalizations=normalizations, regions=ci_regions)
 
-    sim_ci_datas = list(map(lambda pattern:
-                            ci_data.CIImage.simulate(shape=shape, frame_geometry=frame_geometry,
-                                                     ci_pattern=pattern, cti_settings=cti_settings,
-                                                     cti_params=cti_params,
-                                                     read_noise=None),
-                            sim_ci_patterns))
+    sim_ci_pre_ctis = list(map(lambda ci_pattern : ci_pattern.simulate_ci_pre_cti(shape=shape), sim_ci_patterns))
+
+    sim_ci_datas = list(map(lambda ci_pre_cti, pattern:
+                            ci_data.simulate(ci_pre_cti=ci_pre_cti, frame_geometry=frame_geometry,
+                                             ci_pattern=pattern, cti_settings=cti_settings,
+                                             cti_params=cti_params,
+                                             read_noise=None),
+                            sim_ci_pre_ctis, sim_ci_patterns))
 
     list(map(lambda sim_ci_data, index:
-             sim_ci_data.output_as_fits(file_path=output_path+'/ci_data_' + str(index) + '.fits'),
+             util.numpy_array_to_fits(array=sim_ci_data.image, file_path=output_path + '/ci_image_' + str(index) + '.fits'),
              sim_ci_datas, range(len(sim_ci_datas))))

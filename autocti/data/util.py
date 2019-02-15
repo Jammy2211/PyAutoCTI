@@ -35,7 +35,6 @@ def make_path_if_does_not_exist(path):
 
 
 def numpy_array_to_fits(array, file_path, overwrite=False):
-
     if overwrite and os.path.exists(file_path):
         os.remove(file_path)
 

@@ -1,5 +1,5 @@
-from autofit.core import model_mapper as mm
-from autofit.core import non_linear as nl
+from autofit.mapper import model_mapper as mm
+from autofit.optimize import non_linear as nl
 
 from autocti.pipeline import pipeline as pl
 

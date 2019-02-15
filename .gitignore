@@ -16,3 +16,12 @@ pySHE_ArCTIC.py
 test/integration/data/
 test/integration/tests/output/
 test/output/
+test/integration/output/
+test/test_files/plotting/
+prof/
+workspace_jam/
+.coverage
+
+autocti.egg-info/
+build/
+dist/
