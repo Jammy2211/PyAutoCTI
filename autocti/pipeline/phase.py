@@ -9,6 +9,8 @@ from autofit.optimize import non_linear as nl
 from autofit.tools import phase as ph
 from autofit.tools import phase_property
 
+from autocti import exc
+
 from autocti.charge_injection import ci_fit, ci_data
 from autocti.data import mask as msk
 from autocti.model import arctic_params
@@ -312,8 +314,26 @@ class Phase(ph.AbstractPhase):
                 How fit the model is and the model
             """
             cti_params = cti_params_for_instance(instance=instance)
+            self.check_trap_lifetimes_are_ascending(cti_params=cti_params)
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
             return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
+
+        def check_trap_lifetimes_are_ascending(self, cti_params):
+
+            if hasattr(cti_params, 'serial'):
+
+                if len(cti_params.serial) == 2:
+
+                    if cti_params.serial_species[0].trap_lifetime > cti_params.serial_species[1].trap_lifetime:
+                        raise exc.PriorException
+
+                elif len(cti_params.serial) == 3:
+
+                    if cti_params.serial_species[0].trap_lifetime > cti_params.serial_species[1].trap_lifetime or \
+                            cti_params.serial_species[0].trap_lifetime > cti_params.serial_species[2].trap_lifetime or \
+                            cti_params.serial_species[1].trap_lifetime > cti_params.serial_species[2].trap_lifetime:
+
+                        raise exc.PriorException
 
         @classmethod
         def log(cls, instance):
@@ -401,7 +421,14 @@ class ParallelPhase(Phase):
 
 
     class Analysis(Phase.Analysis):
-        
+
+        def check_trap_lifetimes_are_ascending(self, cti_params):
+
+            trap_lifetimes = [parallel_species.trap_lifetime for parallel_species in cti_params.parallel_species]
+
+            if not sorted(trap_lifetimes) == trap_lifetimes:
+                raise exc.PriorException
+
         @classmethod
         def log(cls, instance):
             logger.debug(
@@ -456,6 +483,13 @@ class SerialPhase(Phase):
 
     class Analysis(Phase.Analysis):
         
+        def check_trap_lifetimes_are_ascending(self, cti_params):
+
+            trap_lifetimes = [serial_species.trap_lifetime for serial_species in cti_params.serial_species]
+
+            if not sorted(trap_lifetimes) == trap_lifetimes:
+                raise exc.PriorException
+        
         @classmethod
         def log(cls, instance):
             logger.debug(
@@ -495,6 +529,18 @@ class ParallelSerialPhase(Phase):
 
     class Analysis(Phase.Analysis):
 
+        def check_trap_lifetimes_are_ascending(self, cti_params):
+
+            trap_lifetimes = [parallel_species.trap_lifetime for parallel_species in cti_params.parallel_species]
+
+            if not sorted(trap_lifetimes) == trap_lifetimes:
+                raise exc.PriorException
+
+            trap_lifetimes = [serial_species.trap_lifetime for serial_species in cti_params.serial_species]
+
+            if not sorted(trap_lifetimes) == trap_lifetimes:
+                raise exc.PriorException
+
         @classmethod
         def log(cls, instance):
             logger.debug(
@@ -529,6 +575,7 @@ class HyperAnalysis(Phase.Analysis):
             An object comprising the final cti_params instances generated and a corresponding figure_of_merit
         """
         cti_params = cti_params_for_instance(instance=instance)
+        self.check_trap_lifetimes_are_ascending(cti_params=cti_params)
         pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
                                 hyper_noise_scalers=self.hyper_noise_scalers_from_instance(instance))
         return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
