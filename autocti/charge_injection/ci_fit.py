@@ -16,9 +16,10 @@
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA
 #
 import numpy as np
+from autofit.tools import fit
 
 from autocti import exc
-from autofit.tools import fit
+
 
 def fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit, cti_params, cti_settings):
     """Fit ci data with a model of cti, using the cti params and settings, automatically determining the type of fit
@@ -41,6 +42,7 @@ def fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit, cti_params, cti_se
     else:
         raise exc.FittingException('The fit routine did not call a Fit class - check the '
                                    'properties of the tracer')
+
 
 def hyper_fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit, cti_params, cti_settings, hyper_noise_scalers):
     """Fit ci data with a model of cti, using the cti params and settings, automatically determining the type of fit
@@ -201,7 +203,7 @@ def hyper_noise_map_from_noise_map_and_noise_scalings(noise_scaling_maps, hyper_
         second.
     """
     hyper_noise_maps = list(map(lambda hyper_noise_scaler, noise_scaling_map:
-                                 hyper_noise_scaler.scaled_noise_map_from_noise_scaling(noise_scaling_map),
+                                hyper_noise_scaler.scaled_noise_map_from_noise_scaling(noise_scaling_map),
                                 hyper_noise_scalers, noise_scaling_maps))
 
     return np.add(noise_map, sum(hyper_noise_maps))
