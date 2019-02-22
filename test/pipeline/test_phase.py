@@ -13,6 +13,7 @@ from autocti import exc
 from autocti.charge_injection import ci_data as data
 from autocti.charge_injection import ci_fit
 from autocti.charge_injection import ci_frame
+from autocti.charge_injection import ci_hyper
 from autocti.data import mask as msk
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
@@ -363,6 +364,13 @@ class TestHyperPhase(object):
     def test_hyper_phase(self):
         phase = ph.ParallelHyperPhase()
         assert len(phase.variable.priors) == 0
+
+        phase.hyper_noise_scalar_ci_regions = ci_hyper.CIHyperNoiseScalar
+
+        instance = phase.variable.instance_from_unit_vector([0.5])
+
+        assert isinstance(instance.hyper_noise_scalar_ci_regions, float)
+        # assert instance.hyper_noise_scalar_ci_regions == 0.5
 
 
 class TestResult(object):
