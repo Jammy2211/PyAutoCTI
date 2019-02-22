@@ -107,8 +107,8 @@ class Phase(ph.AbstractPhase):
 
     # noinspection PyMethodMayBeStatic
     def extract_ci_data(self, data, mask):
-        return ci_data.CIDataFit(image=data.image, noise_map=data.noise_map, ci_pre_cti=data.ci_pre_cti, mask=mask,
-                                 ci_pattern=data.ci_pattern, ci_frame=data.ci_frame)
+        return ci_data.MaskedCIData(image=data.image, noise_map=data.noise_map, ci_pre_cti=data.ci_pre_cti, mask=mask,
+                                    ci_pattern=data.ci_pattern, ci_frame=data.ci_frame)
 
     def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
         """
@@ -131,9 +131,9 @@ class Phase(ph.AbstractPhase):
         masks = list(map(lambda data: self.mask_function(shape=data.image.shape), ci_datas))
         ci_datas_fit = [self.extract_ci_data(data=data, mask=mask) for data, mask in zip(ci_datas, masks)]
         ci_datas_full = list(map(lambda data, mask:
-                                 ci_data.CIDataFit(image=data.image, noise_map=data.noise_map,
-                                                   ci_pre_cti=data.ci_pre_cti, mask=mask,
-                                                   ci_pattern=data.ci_pattern, ci_frame=data.ci_frame),
+                                 ci_data.MaskedCIData(image=data.image, noise_map=data.noise_map,
+                                                      ci_pre_cti=data.ci_pre_cti, mask=mask,
+                                                      ci_pattern=data.ci_pattern, ci_frame=data.ci_frame),
                                  ci_datas, masks))
 
         self.pass_priors(previous_results)
