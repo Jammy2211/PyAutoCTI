@@ -17,6 +17,7 @@
 #
 import numpy as np
 from autofit.tools import fit
+from autocti.charge_injection import ci_data
 
 from autocti import exc
 
@@ -36,7 +37,7 @@ def fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit, cti_params, cti_se
     """
 
     if ci_data_fit:
-        return CIFit(ci_data_fit=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings)
+        return CIFit(masked_ci_data=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings)
     else:
         raise exc.FittingException('The fit routine did not call a Fit class - check the '
                                    'properties of the tracer')
@@ -68,25 +69,25 @@ def hyper_fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit, cti_params, 
 
 class AbstractCIFit(fit.DataFit):
 
-    def __init__(self, ci_data_fit, noise_map, cti_params, cti_settings):
+    def __init__(self, masked_ci_data: ci_data.MaskedCIData, noise_map, cti_params, cti_settings):
         """Abstract fit of a charge injection dataset with a model cti image.
 
         Parameters
         -----------
-        ci_data_fit : ci_data.CIDataFit
+        masked_ci_data : ci_data.CIDataFit
             The charge injection image that is fitted.
         cti_params : arctic_params.ArcticParams
             The cti model parameters which describe how CTI during clocking.
         cti_settings : arctic_settings.ArcticSettings
             The settings that control how arctic models CTI.
         """
-        model_data = ci_data_fit.ci_frame.add_cti(image=ci_data_fit.ci_pre_cti,
-                                                  cti_params=cti_params,
-                                                  cti_settings=cti_settings)
+        model_data = masked_ci_data.ci_frame.add_cti(image=masked_ci_data.ci_pre_cti,
+                                                     cti_params=cti_params,
+                                                     cti_settings=cti_settings)
 
-        super().__init__(data=ci_data_fit.image, noise_map=noise_map,
-                         mask=ci_data_fit.mask, model_data=model_data)
-        self.ci_data_fit = ci_data_fit
+        super().__init__(data=masked_ci_data.image, noise_map=noise_map,
+                         mask=masked_ci_data.mask, model_data=model_data)
+        self.ci_data_fit = masked_ci_data
         self.cti_params = cti_params
         self.cti_settings = cti_settings
 
@@ -112,8 +113,8 @@ class AbstractCIFit(fit.DataFit):
 
 
 class CIFit(AbstractCIFit):
-    def __init__(self, ci_data_fit, cti_params, cti_settings):
-        super().__init__(ci_data_fit, ci_data_fit.noise_map, cti_params, cti_settings)
+    def __init__(self, masked_ci_data: ci_data.MaskedCIData, cti_params, cti_settings):
+        super().__init__(masked_ci_data, masked_ci_data.noise_map, cti_params, cti_settings)
 
     @property
     def noise_scaling_map_of_ci_regions(self):
@@ -152,7 +153,7 @@ class CIHyperFit(AbstractCIFit):
         self.hyper_noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
             noise_scaling_maps=ci_data_hyper_fit.noise_scaling_maps, hyper_noise_scalers=hyper_noise_scalers,
             noise_map=ci_data_hyper_fit.noise_map)
-        super().__init__(ci_data_fit=ci_data_hyper_fit, noise_map=self.hyper_noise_map, cti_params=cti_params,
+        super().__init__(masked_ci_data=ci_data_hyper_fit, noise_map=self.hyper_noise_map, cti_params=cti_params,
                          cti_settings=cti_settings)
 
 

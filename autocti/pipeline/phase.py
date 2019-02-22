@@ -636,7 +636,7 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
 
 
 def pipe_cti(ci_data_fit, cti_params, cti_settings):
-    fit = ci_fit.CIFit(ci_data_fit=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings)
+    fit = ci_fit.CIFit(masked_ci_data=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings)
     return fit.figure_of_merit
 
 
