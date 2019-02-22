@@ -1,4 +1,3 @@
-import logging
 import os
 from functools import partial
 
@@ -14,9 +13,6 @@ from autocti.charge_injection.plotters import ci_data_plotters
 from autocti.charge_injection.plotters import ci_fit_plotters
 from autocti.data import mask as msk
 from autocti.model import arctic_params
-
-logger = logging.getLogger(__name__)
-logger.level = logging.DEBUG
 
 
 def cti_params_for_instance(instance):
@@ -170,17 +166,7 @@ class Phase(ph.AbstractPhase):
             self.pool = pool or ConsecutivePool
             self.previous_results = previous_results
 
-            log_file = conf.instance.general.get('output', 'log_file', str)
-            if not len(log_file.replace(" ", "")) == 0:
-                log_path = "{}/{}".format(self.phase_output_path, log_file)
-                logger.handlers = [logging.FileHandler(log_path)]
-                logger.propagate = False
-
             self.plot_count = 0
-            self.output_image_path = "{}/image/".format(self.phase_output_path)
-            make_path_if_does_not_exist(path=self.output_image_path)
-            self.output_fits_path = "{}/image/fits/".format(self.phase_output_path)
-            make_path_if_does_not_exist(path=self.output_fits_path)
 
             self.extract_array_from_mask = \
                 conf.instance.general.get('output', 'extract_images_from_mask', bool)
@@ -223,7 +209,7 @@ class Phase(ph.AbstractPhase):
             if self.previous_results is not None:
                 return self.previous_results.last
 
-        def visualize(self, instance, suffix, during_analysis):
+        def visualize(self, instance, image_path, during_analysis):
 
             self.plot_count += 1
 
@@ -233,7 +219,7 @@ class Phase(ph.AbstractPhase):
                 ci_data_plotters.plot_ci_subplot(
                     ci_data=self.ci_datas_extracted[ci_data_index],
                     extract_array_from_mask=self.extract_array_from_mask,
-                    output_path=self.output_image_path, output_format='png')
+                    output_path=image_path, output_format='png')
 
             ci_data_plotters.plot_ci_data_individual(
                 ci_data=self.ci_datas_extracted[ci_data_index], extract_array_from_mask=self.extract_array_from_mask,
@@ -241,7 +227,7 @@ class Phase(ph.AbstractPhase):
                 should_plot_noise_map=self.plot_ci_data_noise_map,
                 should_plot_ci_pre_cti=self.plot_ci_data_ci_pre_cti,
                 should_plot_signal_to_noise_map=self.plot_ci_data_signal_to_noise_map,
-                output_path=self.output_image_path, output_format='png')
+                output_path=image_path, output_format='png')
 
             fits = self.fits_of_ci_data_extracted_for_instance(instance=instance)
 
@@ -250,7 +236,7 @@ class Phase(ph.AbstractPhase):
             if self.plot_ci_fit_as_subplot:
                 ci_fit_plotters.plot_fit_subplot(
                     fit=fits[ci_fit_index], extract_array_from_mask=self.extract_array_from_mask,
-                    output_path=self.output_image_path, output_format='png')
+                    output_path=image_path, output_format='png')
 
             if during_analysis:
                 ci_fit_plotters.plot_fit_individuals(
@@ -263,7 +249,7 @@ class Phase(ph.AbstractPhase):
                     should_plot_ci_post_cti=self.plot_ci_fit_ci_post_cti,
                     should_plot_residual_map=self.plot_ci_fit_residual_map,
                     should_plot_chi_squared_map=self.plot_ci_fit_chi_squared_map,
-                    output_path=self.output_image_path, output_format='png')
+                    output_path=image_path, output_format='png')
 
             elif not during_analysis:
 
@@ -278,7 +264,7 @@ class Phase(ph.AbstractPhase):
                         should_plot_ci_post_cti=True,
                         should_plot_residual_map=True,
                         should_plot_chi_squared_map=True,
-                        output_path=self.output_image_path, output_format='png')
+                        output_path=image_path, output_format='png')
 
                 if self.plot_ci_fit_all_at_end_fits:
                     ci_fit_plotters.plot_fit_individuals(
@@ -291,7 +277,7 @@ class Phase(ph.AbstractPhase):
                         should_plot_ci_post_cti=True,
                         should_plot_residual_map=True,
                         should_plot_chi_squared_map=True,
-                        output_path=self.output_fits_path, output_format='fits')
+                        output_path="{}/fits".format(image_path), output_format='fits')
 
             return fits
 
@@ -328,10 +314,6 @@ class Phase(ph.AbstractPhase):
                             cti_params.serial_species[0].trap_lifetime > cti_params.serial_species[2].trap_lifetime or \
                             cti_params.serial_species[1].trap_lifetime > cti_params.serial_species[2].trap_lifetime:
                         raise exc.PriorException
-
-        @classmethod
-        def log(cls, instance):
-            raise NotImplementedError()
 
         def fits_of_ci_data_extracted_for_instance(self, instance):
             cti_params = cti_params_for_instance(instance=instance)
@@ -422,35 +404,25 @@ class ParallelPhase(Phase):
                 raise exc.PriorException
 
         @classmethod
-        def log(cls, instance):
-            logger.debug(
-                "\nRunning CTI analysis for... \n\n"
-                "Parallel CTI: \n"
-                "Parallel Species:\n{}\n\n "
-                "Parallel CCD\n{}\n\n".format(instance.parallel_species, instance.parallel_ccd))
+        def describe(cls, instance):
+            return ("\nRunning CTI analysis for... \n\n"
+                    "Parallel CTI: \n"
+                    "Parallel Species:\n{}\n\n "
+                    "Parallel CCD\n{}\n\n".format(instance.parallel_species, instance.parallel_ccd))
 
-    class Result(Phase.Result):
 
-        # noinspection PyUnusedLocal
-        def __init__(self, constant, figure_of_merit, variable, analysis, optimizer):
-            """
-            The result of a phase
-            """
+class Result(Phase.Result):
+    @property
+    def noise_scaling_maps(self):
+        noise_scaling_maps_of_ci_regions = list(map(lambda most_likely_fit:
+                                                    most_likely_fit.noise_scaling_map_of_ci_regions,
+                                                    self.most_likely_extracted_fits))
 
-            super(ParallelPhase.Result, self).__init__(constant=constant, figure_of_merit=figure_of_merit,
-                                                       variable=variable, analysis=analysis, optimizer=optimizer)
+        noise_scaling_maps_of_parallel_trails = list(map(lambda most_likely_fit:
+                                                         most_likely_fit.noise_scaling_map_of_parallel_trails,
+                                                         self.most_likely_extracted_fits))
 
-        @property
-        def noise_scaling_maps(self):
-            noise_scaling_maps_of_ci_regions = list(map(lambda most_likely_fit:
-                                                        most_likely_fit.noise_scaling_map_of_ci_regions,
-                                                        self.most_likely_extracted_fits))
-
-            noise_scaling_maps_of_parallel_trails = list(map(lambda most_likely_fit:
-                                                             most_likely_fit.noise_scaling_map_of_parallel_trails,
-                                                             self.most_likely_extracted_fits))
-
-            return [noise_scaling_maps_of_ci_regions, noise_scaling_maps_of_parallel_trails]
+        return [noise_scaling_maps_of_ci_regions, noise_scaling_maps_of_parallel_trails]
 
 
 class SerialPhase(Phase):
@@ -479,8 +451,8 @@ class SerialPhase(Phase):
                 raise exc.PriorException
 
         @classmethod
-        def log(cls, instance):
-            logger.debug(
+        def describe(cls, instance):
+            return (
                 "\nRunning CTI analysis for... "
                 "\n\nSerial CTI: \n"
                 "Serial Species:\n{}\n\n "
@@ -529,8 +501,8 @@ class ParallelSerialPhase(Phase):
                 raise exc.PriorException
 
         @classmethod
-        def log(cls, instance):
-            logger.debug(
+        def describe(cls, instance):
+            return (
                 "\nRunning CTI analysis for... \n\n"
                 "Parallel CTI: \n"
                 "Parallel Species:\n{}\n\n "
@@ -568,8 +540,8 @@ class HyperAnalysis(Phase.Analysis):
         return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
 
     @classmethod
-    def log(cls, instance):
-        logger.debug(
+    def describe(cls, instance):
+        return (
             "\nRunning CTI analysis for... \n\n"
             "Parallel CTI::\n{}\n\n "
             "Hyper Parameters:\n{}".format(instance.parallel,
