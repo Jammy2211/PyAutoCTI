@@ -57,7 +57,7 @@ class CIData(object):
                             ci_pattern=self.ci_pattern,
                             ci_frame=self.ci_frame)
 
-    def map_to_ci_data_hyper_fit(self, func, mask, noise_scaling_maps):
+    def map_to_ci_hyper_data_fit(self, func, mask, noise_scaling_maps):
         return MaskedCIHyperData(image=func(self.image),
                                  noise_map=func(self.noise_map),
                                  ci_pre_cti=func(self.ci_pre_cti),
@@ -75,11 +75,13 @@ class CIData(object):
     def serial_extractor(self, rows):
         def extractor(obj):
             return self.chinj.serial_calibration_section_for_rows(array=obj, rows=rows)
+
         return extractor
 
     def parallel_serial_extractor(self):
         def extractor(obj):
             return self.chinj.parallel_serial_calibration_section(obj)
+
         return extractor
 
     def parallel_calibration_data(self, columns, mask):
@@ -88,8 +90,17 @@ class CIData(object):
     def serial_calibration_data(self, rows, mask):
         return self.map_to_ci_data_fit(self.serial_extractor(rows), mask)
 
+    def parallel_hyper_calibration_data(self, columns, mask, noise_scaling_maps):
+        return self.map_to_ci_hyper_data_fit(self.parallel_extractor(columns), mask, noise_scaling_maps)
+
+    def serial_hyper_calibration_data(self, rows, mask, noise_scaling_maps):
+        return self.map_to_ci_hyper_data_fit(self.serial_extractor(rows), mask, noise_scaling_maps)
+
     def parallel_serial_calibration_data(self, mask):
         return self.map_to_ci_data_fit(self.parallel_serial_extractor(), mask)
+
+    def parallel_serial_hyper_calibration_data(self, mask, noise_scaling_maps):
+        return self.map_to_ci_hyper_data_fit(self.parallel_serial_extractor(), mask, noise_scaling_maps)
 
     @property
     def signal_to_noise_map(self):

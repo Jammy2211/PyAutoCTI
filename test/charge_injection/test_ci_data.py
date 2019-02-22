@@ -132,7 +132,7 @@ class TestCIData(object):
 
     def test_map_to_hyper_fits(self):
         data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None)
-        result = data.map_to_ci_data_hyper_fit(lambda x: 2 * x, 1, [1, 2, 3])
+        result = data.map_to_ci_hyper_data_fit(lambda x: 2 * x, 1, [1, 2, 3])
         assert isinstance(result, ci_data.MaskedCIHyperData)
         assert result.image == 2
         assert result.noise_map == 6
@@ -155,6 +155,24 @@ class TestCIData(object):
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
+
+    def test_parallel_serial_hyper_calibration_data(self):
+        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None)
+
+        def parallel_serial_extractor():
+            def extractor(obj):
+                return 2 * obj
+
+            return extractor
+
+        data.parallel_serial_extractor = parallel_serial_extractor
+        result = data.parallel_serial_hyper_calibration_data(1, [2, 3])
+
+        assert isinstance(result, ci_data.MaskedCIHyperData)
+        assert result.image == 2
+        assert result.noise_map == 6
+        assert result.ci_pre_cti == 8
+        assert result.noise_scaling_maps == [4, 6]
 
     def test__signal_to_noise_map_and_max(self):
         image = np.ones((2, 2))
