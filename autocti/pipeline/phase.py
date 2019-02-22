@@ -534,21 +534,45 @@ class HyperAnalysis(Phase.Analysis):
             "Hyper Parameters:\n{}".format(instance.parallel,
                                            " ".join(cls.hyper_noise_scalars_from_instance(instance))))
 
-    def hyper_fits_for_instance(self, instance):
-        cti_params = cti_params_for_instance(instance=instance)
-        hyper_noise_scalars = self.hyper_noise_scalars_from_instance(instance=instance)
-        return list(map(lambda ci_data_fit:
-                        ci_fit.CIHyperFit(
-                            masked_hyper_ci_data=ci_data_fit, cti_params=cti_params, cti_settings=self.cti_settings,
-                            hyper_noise_scalars=hyper_noise_scalars),
-                        self.ci_datas_extracted))
-
     @classmethod
     def hyper_noise_scalars_from_instance(cls, instance):
         raise NotImplementedError()
 
 
-class ParallelHyperPhase(ParallelPhase):
+class HyperPhase(Phase):
+    def extract_ci_hyper_data(self, data, mask, previous_results):
+        raise NotImplementedError()
+
+    def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
+        """
+        Create an analysis object. Also calls the prior passing and image modifying functions to allow child classes to
+        change the behaviour of the phase.
+
+        Parameters
+        ----------
+        cti_settings
+        ci_datas
+        pool
+        previous_results: ResultsCollection
+            The result from the previous phase
+
+        Returns
+        -------
+        analysis: Analysis
+            An analysis object that the non-linear optimizer calls to determine the fit of a set of values
+        """
+        masks = list(map(lambda data: self.mask_function(shape=data.image.shape), ci_datas))
+        ci_datas_fit = [self.extract_ci_hyper_data(data=data, mask=mask, previous_results=previous_results) for
+                        data, mask in zip(ci_datas, masks)]
+
+        self.pass_priors(previous_results)
+        analysis = self.__class__.Analysis(ci_datas_extracted=ci_datas_fit, ci_datas_full=ci_datas_fit,
+                                           cti_settings=cti_settings, phase_name=self.phase_name,
+                                           previous_results=previous_results, pool=pool)
+        return analysis
+
+
+class ParallelHyperPhase(ParallelPhase, HyperPhase):
     hyper_noise_scalar_ci_regions = phase_property.PhaseProperty("hyper_noise_scalar_ci_regions")
     hyper_noise_scalar_parallel_trails = phase_property.PhaseProperty("hyper_noise_scalar_parallel_trails")
 
@@ -576,8 +600,11 @@ class ParallelHyperPhase(ParallelPhase):
         def hyper_noise_scalars_from_instance(cls, instance):
             return [instance.hyper_noise_scalar_ci_regions, instance.hyper_noise_scalar_parallel_trails]
 
+    def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
+        super(HyperPhase, self).make_analysis(ci_datas, cti_settings, previous_results, pool)
 
-class SerialHyperPhase(SerialPhase):
+
+class SerialHyperPhase(SerialPhase, HyperPhase):
     hyper_noise_scalar_ci_regions = phase_property.PhaseProperty("hyper_noise_scalar_ci_regions")
     hyper_noise_scalar_serial_trails = phase_property.PhaseProperty("hyper_noise_scalar_serial_trails")
 
@@ -598,8 +625,11 @@ class SerialHyperPhase(SerialPhase):
         def hyper_noise_scalars_from_instance(cls, instance):
             return [instance.hyper_noise_scalar_ci_regions, instance.hyper_noise_scalar_serial_trails]
 
+    def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
+        super(HyperPhase, self).make_analysis(ci_datas, cti_settings, previous_results, pool)
 
-class ParallelSerialHyperPhase(ParallelSerialPhase):
+
+class ParallelSerialHyperPhase(ParallelSerialPhase, HyperPhase):
     hyper_noise_scalar_ci_regions = phase_property.PhaseProperty("hyper_noise_scalar_ci_regions")
     hyper_noise_scalar_parallel_trails = phase_property.PhaseProperty("hyper_noise_scalar_parallel_trails")
     hyper_noise_scalar_serial_trails = phase_property.PhaseProperty("hyper_noise_scalar_serial_trails")
@@ -633,6 +663,9 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
         def hyper_noise_scalars_from_instance(cls, instance):
             return [instance.hyper_noise_scalar_ci_regions, instance.hyper_noise_scalar_parallel_trails,
                     instance.hyper_noise_scalar_serial_trails, instance.hyper_noise_scalar_parallel_serial_trails]
+
+    def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
+        super(HyperPhase, self).make_analysis(ci_datas, cti_settings, previous_results, pool)
 
 
 def pipe_cti(ci_data_fit, cti_params, cti_settings):
