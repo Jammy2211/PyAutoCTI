@@ -93,7 +93,7 @@ class Phase(ph.AbstractPhase):
 
         Returns
         -------
-        result: nl.Result
+        result: Phase.Result
             A result object comprising the best fit model and other ci_data.
         """
 
