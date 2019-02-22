@@ -363,14 +363,12 @@ class TestHyperPhase(object):
 
     def test_hyper_phase(self):
         phase = ph.ParallelHyperPhase()
-        assert len(phase.variable.priors) == 0
+        assert len(phase.hyper_noise_scalars) == 2
+        assert len(phase.variable.priors) == 2
 
-        phase.hyper_noise_scalar_ci_regions = ci_hyper.CIHyperNoiseScalar
+        instance = phase.variable.instance_from_unit_vector([0.5, 0.5])
 
-        instance = phase.variable.instance_from_unit_vector([0.5])
-
-        assert isinstance(instance.hyper_noise_scalar_ci_regions, float)
-        # assert instance.hyper_noise_scalar_ci_regions == 0.5
+        assert instance.hyper_noise_scalars == [5.0, 5.0]
 
 
 class TestResult(object):
