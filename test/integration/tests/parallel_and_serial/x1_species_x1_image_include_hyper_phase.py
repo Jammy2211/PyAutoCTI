@@ -95,10 +95,10 @@ def make_pipeline(test_name):
                                                 parallel_ccd=arctic_params.CCD,
                                                 serial_species=[prior_model.PriorModel(arctic_params.Species)],
                                                 serial_ccd=arctic_params.CCD,
-                                                hyper_noise_scalar_ci_regions=ci_hyper.CIHyperNoiseScaler,
-                                                hyper_noise_scalar_parallel_trails=ci_hyper.CIHyperNoiseScaler,
-                                                hyper_noise_scalar_serial_trails=ci_hyper.CIHyperNoiseScaler,
-                                                hyper_noise_scalar_parallel_serial_trails=ci_hyper.CIHyperNoiseScaler,
+                                                hyper_noise_scalar_ci_regions=ci_hyper.CIHyperNoiseScalar,
+                                                hyper_noise_scalar_parallel_trails=ci_hyper.CIHyperNoiseScalar,
+                                                hyper_noise_scalar_serial_trails=ci_hyper.CIHyperNoiseScalar,
+                                                hyper_noise_scalar_parallel_serial_trails=ci_hyper.CIHyperNoiseScalar,
                                                 optimizer_class=nl.MultiNest,
                                                 phase_name="{}/phase2".format(test_name))
 

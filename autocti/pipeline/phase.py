@@ -555,14 +555,14 @@ class HyperPhase(Phase):
         """
         masks = list(map(lambda data: self.mask_function(shape=data.image.shape), ci_datas))
         noise_scaling_maps = self.noise_scaling_maps_from_result(previous_results[-1])
-        ci_datas_fit = [self.extract_ci_hyper_data(data=data, mask=mask, noise_scaling_maps=noise_scaling_maps) for
-                        data, mask in zip(ci_datas, masks)]
-        ci_datas_full = list(map(lambda data, mask:
+        ci_datas_fit = [self.extract_ci_hyper_data(data=data, mask=mask, noise_scaling_maps=maps) for
+                        data, mask, maps in zip(ci_datas, masks, noise_scaling_maps)]
+        ci_datas_full = list(map(lambda data, mask, maps:
                                  ci_data.MaskedCIHyperData(image=data.image, noise_map=data.noise_map,
                                                            ci_pre_cti=data.ci_pre_cti, mask=mask,
                                                            ci_pattern=data.ci_pattern, ci_frame=data.ci_frame,
-                                                           noise_scaling_maps=noise_scaling_maps),
-                                 ci_datas, masks))
+                                                           noise_scaling_maps=maps),
+                                 zip(ci_datas, masks, noise_scaling_maps)))
 
         self.pass_priors(previous_results)
         analysis = self.__class__.Analysis(ci_datas_extracted=ci_datas_fit, ci_datas_full=ci_datas_full,
