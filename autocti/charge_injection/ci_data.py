@@ -40,7 +40,6 @@ class CIData(object):
         self.ci_pre_cti = ci_pre_cti
         self.ci_pattern = ci_pattern
         self.ci_frame = ci_frame
-        self.is_hyper_data = False
 
     @property
     def chinj(self):

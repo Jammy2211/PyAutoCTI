@@ -55,7 +55,7 @@ def make_cti_params():
 
 @pytest.fixture(name="fit")
 def make_fit(ci_data_fit, cti_params, cti_settings):
-    return ci_fit.fit_ci_data_fit_with_cti_params_and_settings(ci_data_fit=ci_data_fit, cti_params=cti_params,
+    return ci_fit.CIFit(masked_ci_data=ci_data_fit, cti_params=cti_params,
                                                                cti_settings=cti_settings)
 
 
