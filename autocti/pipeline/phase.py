@@ -168,41 +168,28 @@ class Phase(ph.AbstractPhase):
 
             self.plot_count = 0
 
-            self.extract_array_from_mask = \
-                conf.instance.general.get('output', 'extract_images_from_mask', bool)
+            def output_bool(name):
+                return conf.instance.general.get('output', name, bool)
 
-            self.plot_ci_data_as_subplot = \
-                conf.instance.general.get('output', 'plot_ci_data_as_subplot', bool)
-            self.plot_ci_data_image = \
-                conf.instance.general.get('output', 'plot_ci_data_image', bool)
-            self.plot_ci_data_noise_map = \
-                conf.instance.general.get('output', 'plot_ci_data_noise_map', bool)
-            self.plot_ci_data_ci_pre_cti = \
-                conf.instance.general.get('output', 'plot_ci_data_ci_pre_cti', bool)
-            self.plot_ci_data_signal_to_noise_map = \
-                conf.instance.general.get('output', 'plot_ci_data_signal_to_noise_map', bool)
+            self.extract_array_from_mask = output_bool('extract_images_from_mask')
 
-            self.plot_ci_fit_all_at_end_png = \
-                conf.instance.general.get('output', 'plot_ci_fit_all_at_end_png', bool)
-            self.plot_ci_fit_all_at_end_fits = \
-                conf.instance.general.get('output', 'plot_ci_fit_all_at_end_fits', bool)
+            self.plot_ci_data_as_subplot = output_bool('plot_ci_data_as_subplot')
+            self.plot_ci_data_image = output_bool('plot_ci_data_image')
+            self.plot_ci_data_noise_map = output_bool('plot_ci_data_noise_map')
+            self.plot_ci_data_ci_pre_cti = output_bool('plot_ci_data_ci_pre_cti')
+            self.plot_ci_data_signal_to_noise_map = output_bool('plot_ci_data_signal_to_noise_map')
 
-            self.plot_ci_fit_as_subplot = \
-                conf.instance.general.get('output', 'plot_ci_fit_as_subplot', bool)
-            self.plot_ci_fit_image = \
-                conf.instance.general.get('output', 'plot_ci_fit_image', bool)
-            self.plot_ci_fit_noise_map = \
-                conf.instance.general.get('output', 'plot_ci_fit_noise_map', bool)
-            self.plot_ci_fit_signal_to_noise_map = \
-                conf.instance.general.get('output', 'plot_ci_fit_signal_to_noise_map', bool)
-            self.plot_ci_fit_ci_pre_cti = \
-                conf.instance.general.get('output', 'plot_ci_fit_ci_pre_cti', bool)
-            self.plot_ci_fit_ci_post_cti = \
-                conf.instance.general.get('output', 'plot_ci_fit_ci_post_cti', bool)
-            self.plot_ci_fit_residual_map = \
-                conf.instance.general.get('output', 'plot_ci_fit_residual_map', bool)
-            self.plot_ci_fit_chi_squared_map = \
-                conf.instance.general.get('output', 'plot_ci_fit_chi_squared_map', bool)
+            self.plot_ci_fit_all_at_end_png = output_bool('plot_ci_fit_all_at_end_png')
+            self.plot_ci_fit_all_at_end_fits = output_bool('plot_ci_fit_all_at_end_fits')
+
+            self.plot_ci_fit_as_subplot = output_bool('plot_ci_fit_as_subplot')
+            self.plot_ci_fit_image = output_bool('plot_ci_fit_image')
+            self.plot_ci_fit_noise_map = output_bool('plot_ci_fit_noise_map')
+            self.plot_ci_fit_signal_to_noise_map = output_bool('plot_ci_fit_signal_to_noise_map')
+            self.plot_ci_fit_ci_pre_cti = output_bool('plot_ci_fit_ci_pre_cti')
+            self.plot_ci_fit_ci_post_cti = output_bool('plot_ci_fit_ci_post_cti')
+            self.plot_ci_fit_residual_map = output_bool('plot_ci_fit_residual_map')
+            self.plot_ci_fit_chi_squared_map = output_bool('plot_ci_fit_chi_squared_map')
 
         @property
         def last_results(self):
