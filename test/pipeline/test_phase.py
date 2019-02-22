@@ -344,7 +344,7 @@ class TestHyperPhase(object):
         assert (analysis.ci_datas_full[0].noise_map == ci_data.noise_map).all()
         assert analysis.cti_settings == cti_settings
 
-    def test_hyper_phase(self):
+    def test_noise_scaling_map_extraction(self):
         class MockResult:
             noise_scaling_maps_of_ci_regions = 1
             noise_scaling_maps_of_parallel_trails = 2
@@ -359,6 +359,10 @@ class TestHyperPhase(object):
 
         noise_scaling_maps = ph.ParallelSerialHyperPhase().noise_scaling_maps_from_result(MockResult)
         assert noise_scaling_maps == [1, 2, 3, 4]
+
+    def test_hyper_phase(self):
+        phase = ph.ParallelHyperPhase()
+        assert len(phase.variable.priors) == 0
 
 
 class TestResult(object):

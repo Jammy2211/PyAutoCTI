@@ -1,4 +1,4 @@
-class CIHyperNoiseScaler(object):
+class CIHyperNoiseScalar(object):
 
     def __init__(self, scale_factor=0.0):
         """The ci_hyper-parameter factor by which the noises is scaled when included in the model-fitting process"""
