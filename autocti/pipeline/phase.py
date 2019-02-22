@@ -1,25 +1,18 @@
-import logging
+import os
 from functools import partial
 
 import numpy as np
-import os
-
 from autofit import conf
 from autofit.optimize import non_linear as nl
 from autofit.tools import phase as ph
 from autofit.tools import phase_property
 
 from autocti import exc
-
 from autocti.charge_injection import ci_fit, ci_data
-from autocti.data import mask as msk
-from autocti.model import arctic_params
-
 from autocti.charge_injection.plotters import ci_data_plotters
 from autocti.charge_injection.plotters import ci_fit_plotters
-
-logger = logging.getLogger(__name__)
-logger.level = logging.DEBUG
+from autocti.data import mask as msk
+from autocti.model import arctic_params
 
 
 def cti_params_for_instance(instance):
@@ -114,8 +107,8 @@ class Phase(ph.AbstractPhase):
 
     # noinspection PyMethodMayBeStatic
     def extract_ci_data(self, data, mask):
-        return ci_data.CIDataFit(image=data.image, noise_map=data.noise_map, ci_pre_cti=data.ci_pre_cti, mask=mask,
-                                 ci_pattern=data.ci_pattern, ci_frame=data.ci_frame)
+        return ci_data.MaskedCIData(image=data.image, noise_map=data.noise_map, ci_pre_cti=data.ci_pre_cti, mask=mask,
+                                    ci_pattern=data.ci_pattern, ci_frame=data.ci_frame)
 
     def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
         """
@@ -137,10 +130,10 @@ class Phase(ph.AbstractPhase):
         """
         masks = list(map(lambda data: self.mask_function(shape=data.image.shape), ci_datas))
         ci_datas_fit = [self.extract_ci_data(data=data, mask=mask) for data, mask in zip(ci_datas, masks)]
-        ci_datas_full = list(map(lambda data, mask :
-                                 ci_data.CIDataFit(image=data.image, noise_map=data.noise_map,
-                                                   ci_pre_cti=data.ci_pre_cti, mask=mask,
-                                                   ci_pattern=data.ci_pattern, ci_frame=data.ci_frame),
+        ci_datas_full = list(map(lambda data, mask:
+                                 ci_data.MaskedCIData(image=data.image, noise_map=data.noise_map,
+                                                      ci_pre_cti=data.ci_pre_cti, mask=mask,
+                                                      ci_pattern=data.ci_pattern, ci_frame=data.ci_frame),
                                  ci_datas, masks))
 
         self.pass_priors(previous_results)
@@ -152,7 +145,8 @@ class Phase(ph.AbstractPhase):
     # noinspection PyAbstractClass
     class Analysis(nl.Analysis):
 
-        def __init__(self, ci_datas_extracted, ci_datas_full, cti_settings, phase_name, previous_results=None, pool=None):
+        def __init__(self, ci_datas_extracted, ci_datas_full, cti_settings, phase_name, previous_results=None,
+                     pool=None):
             """
             An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \
             set of objects describing a model and determines how well they fit the image.
@@ -172,70 +166,47 @@ class Phase(ph.AbstractPhase):
             self.pool = pool or ConsecutivePool
             self.previous_results = previous_results
 
-            log_file = conf.instance.general.get('output', 'log_file', str)
-            if not len(log_file.replace(" ", "")) == 0:
-                log_path = "{}/{}".format(self.phase_output_path, log_file)
-                logger.handlers = [logging.FileHandler(log_path)]
-                logger.propagate = False
-                
             self.plot_count = 0
-            self.output_image_path = "{}/image/".format(self.phase_output_path)
-            make_path_if_does_not_exist(path=self.output_image_path)
-            self.output_fits_path = "{}/image/fits/".format(self.phase_output_path)
-            make_path_if_does_not_exist(path=self.output_fits_path)
 
-            self.extract_array_from_mask = \
-                conf.instance.general.get('output', 'extract_images_from_mask', bool)
+            def output_bool(name):
+                return conf.instance.general.get('output', name, bool)
 
-            self.plot_ci_data_as_subplot =\
-                conf.instance.general.get('output', 'plot_ci_data_as_subplot', bool)
-            self.plot_ci_data_image = \
-                conf.instance.general.get('output', 'plot_ci_data_image', bool)
-            self.plot_ci_data_noise_map = \
-                conf.instance.general.get('output', 'plot_ci_data_noise_map', bool)
-            self.plot_ci_data_ci_pre_cti = \
-                conf.instance.general.get('output', 'plot_ci_data_ci_pre_cti', bool)
-            self.plot_ci_data_signal_to_noise_map = \
-                conf.instance.general.get('output', 'plot_ci_data_signal_to_noise_map', bool)
+            self.extract_array_from_mask = output_bool('extract_images_from_mask')
 
-            self.plot_ci_fit_all_at_end_png = \
-                conf.instance.general.get('output', 'plot_ci_fit_all_at_end_png', bool)
-            self.plot_ci_fit_all_at_end_fits = \
-                conf.instance.general.get('output', 'plot_ci_fit_all_at_end_fits', bool)
+            self.plot_ci_data_as_subplot = output_bool('plot_ci_data_as_subplot')
+            self.plot_ci_data_image = output_bool('plot_ci_data_image')
+            self.plot_ci_data_noise_map = output_bool('plot_ci_data_noise_map')
+            self.plot_ci_data_ci_pre_cti = output_bool('plot_ci_data_ci_pre_cti')
+            self.plot_ci_data_signal_to_noise_map = output_bool('plot_ci_data_signal_to_noise_map')
 
-            self.plot_ci_fit_as_subplot = \
-                conf.instance.general.get('output', 'plot_ci_fit_as_subplot', bool)
-            self.plot_ci_fit_image = \
-                conf.instance.general.get('output', 'plot_ci_fit_image', bool)
-            self.plot_ci_fit_noise_map = \
-                conf.instance.general.get('output', 'plot_ci_fit_noise_map', bool)
-            self.plot_ci_fit_signal_to_noise_map = \
-                conf.instance.general.get('output', 'plot_ci_fit_signal_to_noise_map', bool)
-            self.plot_ci_fit_ci_pre_cti = \
-                conf.instance.general.get('output', 'plot_ci_fit_ci_pre_cti', bool)
-            self.plot_ci_fit_ci_post_cti = \
-                conf.instance.general.get('output', 'plot_ci_fit_ci_post_cti', bool)
-            self.plot_ci_fit_residual_map = \
-                conf.instance.general.get('output', 'plot_ci_fit_residual_map', bool)
-            self.plot_ci_fit_chi_squared_map = \
-                conf.instance.general.get('output', 'plot_ci_fit_chi_squared_map', bool)
+            self.plot_ci_fit_all_at_end_png = output_bool('plot_ci_fit_all_at_end_png')
+            self.plot_ci_fit_all_at_end_fits = output_bool('plot_ci_fit_all_at_end_fits')
+
+            self.plot_ci_fit_as_subplot = output_bool('plot_ci_fit_as_subplot')
+            self.plot_ci_fit_image = output_bool('plot_ci_fit_image')
+            self.plot_ci_fit_noise_map = output_bool('plot_ci_fit_noise_map')
+            self.plot_ci_fit_signal_to_noise_map = output_bool('plot_ci_fit_signal_to_noise_map')
+            self.plot_ci_fit_ci_pre_cti = output_bool('plot_ci_fit_ci_pre_cti')
+            self.plot_ci_fit_ci_post_cti = output_bool('plot_ci_fit_ci_post_cti')
+            self.plot_ci_fit_residual_map = output_bool('plot_ci_fit_residual_map')
+            self.plot_ci_fit_chi_squared_map = output_bool('plot_ci_fit_chi_squared_map')
 
         @property
         def last_results(self):
             if self.previous_results is not None:
                 return self.previous_results.last
 
-        def visualize(self, instance, suffix, during_analysis):
+        def visualize(self, instance, image_path, during_analysis):
 
             self.plot_count += 1
 
             ci_data_index = 0
 
             if self.plot_ci_data_as_subplot:
-
                 ci_data_plotters.plot_ci_subplot(
-                    ci_data=self.ci_datas_extracted[ci_data_index], extract_array_from_mask=self.extract_array_from_mask,
-                    output_path=self.output_image_path, output_format='png')
+                    ci_data=self.ci_datas_extracted[ci_data_index],
+                    extract_array_from_mask=self.extract_array_from_mask,
+                    output_path=image_path, output_format='png')
 
             ci_data_plotters.plot_ci_data_individual(
                 ci_data=self.ci_datas_extracted[ci_data_index], extract_array_from_mask=self.extract_array_from_mask,
@@ -243,21 +214,20 @@ class Phase(ph.AbstractPhase):
                 should_plot_noise_map=self.plot_ci_data_noise_map,
                 should_plot_ci_pre_cti=self.plot_ci_data_ci_pre_cti,
                 should_plot_signal_to_noise_map=self.plot_ci_data_signal_to_noise_map,
-                output_path=self.output_image_path, output_format='png')
+                output_path=image_path, output_format='png')
 
             fits = self.fits_of_ci_data_extracted_for_instance(instance=instance)
 
             ci_fit_index = 0
 
             if self.plot_ci_fit_as_subplot:
-
                 ci_fit_plotters.plot_fit_subplot(
                     fit=fits[ci_fit_index], extract_array_from_mask=self.extract_array_from_mask,
-                    output_path=self.output_image_path, output_format='png')
+                    output_path=image_path, output_format='png')
 
             if during_analysis:
                 ci_fit_plotters.plot_fit_individuals(
-                    fit=fits[ci_fit_index],                    
+                    fit=fits[ci_fit_index],
                     extract_array_from_mask=self.extract_array_from_mask,
                     should_plot_image=self.plot_ci_fit_image,
                     should_plot_noise_map=self.plot_ci_fit_noise_map,
@@ -266,12 +236,11 @@ class Phase(ph.AbstractPhase):
                     should_plot_ci_post_cti=self.plot_ci_fit_ci_post_cti,
                     should_plot_residual_map=self.plot_ci_fit_residual_map,
                     should_plot_chi_squared_map=self.plot_ci_fit_chi_squared_map,
-                    output_path=self.output_image_path, output_format='png')
+                    output_path=image_path, output_format='png')
 
             elif not during_analysis:
 
                 if self.plot_ci_fit_all_at_end_png:
-
                     ci_fit_plotters.plot_fit_individuals(
                         fit=fits[ci_fit_index],
                         extract_array_from_mask=self.extract_array_from_mask,
@@ -282,10 +251,9 @@ class Phase(ph.AbstractPhase):
                         should_plot_ci_post_cti=True,
                         should_plot_residual_map=True,
                         should_plot_chi_squared_map=True,
-                        output_path=self.output_image_path, output_format='png')
+                        output_path=image_path, output_format='png')
 
                 if self.plot_ci_fit_all_at_end_fits:
-
                     ci_fit_plotters.plot_fit_individuals(
                         fit=fits[ci_fit_index],
                         extract_array_from_mask=self.extract_array_from_mask,
@@ -296,7 +264,7 @@ class Phase(ph.AbstractPhase):
                         should_plot_ci_post_cti=True,
                         should_plot_residual_map=True,
                         should_plot_chi_squared_map=True,
-                        output_path=self.output_fits_path, output_format='fits')
+                        output_path="{}/fits".format(image_path), output_format='fits')
 
             return fits
 
@@ -332,25 +300,20 @@ class Phase(ph.AbstractPhase):
                     if cti_params.serial_species[0].trap_lifetime > cti_params.serial_species[1].trap_lifetime or \
                             cti_params.serial_species[0].trap_lifetime > cti_params.serial_species[2].trap_lifetime or \
                             cti_params.serial_species[1].trap_lifetime > cti_params.serial_species[2].trap_lifetime:
-
                         raise exc.PriorException
-
-        @classmethod
-        def log(cls, instance):
-            raise NotImplementedError()
 
         def fits_of_ci_data_extracted_for_instance(self, instance):
             cti_params = cti_params_for_instance(instance=instance)
-            return list(map(lambda ci_data_fit :
-                            ci_fit.fit_ci_data_fit_with_cti_params_and_settings(
-                            ci_data_fit=ci_data_fit, cti_params=cti_params, cti_settings=self.cti_settings),
+            return list(map(lambda ci_data_fit:
+                            ci_fit.CIFit(
+                                masked_ci_data=ci_data_fit, cti_params=cti_params, cti_settings=self.cti_settings),
                             self.ci_datas_extracted))
 
         def fits_of_ci_data_full_for_instance(self, instance):
             cti_params = cti_params_for_instance(instance=instance)
-            return list(map(lambda ci_data :
-                            ci_fit.fit_ci_data_fit_with_cti_params_and_settings(
-                            ci_data_fit=ci_data, cti_params=cti_params, cti_settings=self.cti_settings),
+            return list(map(lambda data:
+                            ci_fit.CIFit(
+                                masked_ci_data=data, cti_params=cti_params, cti_settings=self.cti_settings),
                             self.ci_datas_full))
 
     class Result(nl.Result):
@@ -376,31 +339,30 @@ class Phase(ph.AbstractPhase):
 
         @property
         def noise_scaling_maps_of_ci_regions(self):
-            return list(map(lambda most_likely_full_fit :
+            return list(map(lambda most_likely_full_fit:
                             most_likely_full_fit.noise_scaling_map_of_ci_regions,
                             self.most_likely_full_fits))
 
         @property
         def noise_scaling_maps_of_parallel_trails(self):
-            return list(map(lambda most_likely_full_fit :
+            return list(map(lambda most_likely_full_fit:
                             most_likely_full_fit.noise_scaling_map_of_parallel_trails,
                             self.most_likely_full_fits))
 
         @property
         def noise_scaling_maps_of_serial_trails(self):
-            return list(map(lambda most_likely_full_fit :
+            return list(map(lambda most_likely_full_fit:
                             most_likely_full_fit.noise_scaling_map_of_serial_trails,
                             self.most_likely_full_fits))
 
         @property
         def noise_scaling_maps_of_serial_overscan_above_trails(self):
-            return list(map(lambda most_likely_full_fit :
+            return list(map(lambda most_likely_full_fit:
                             most_likely_full_fit.noise_scaling_map_of_serial_overscan_above_trails,
                             self.most_likely_full_fits))
 
 
 class ParallelPhase(Phase):
-
     parallel_species = phase_property.PhasePropertyCollection("parallel_species")
     parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
 
@@ -416,55 +378,41 @@ class ParallelPhase(Phase):
         self.parallel_ccd = parallel_ccd
 
     def extract_ci_data(self, data, mask):
-        return data.parallel_calibration_data(columns=(0, self.columns or data.ci_frame.parallel_overscan.total_columns),
-                                              mask=mask)
-
+        return data.parallel_calibration_data(
+            columns=(0, self.columns or data.ci_frame.parallel_overscan.total_columns),
+            mask=mask)
 
     class Analysis(Phase.Analysis):
 
         def check_trap_lifetimes_are_ascending(self, cti_params):
-
             trap_lifetimes = [parallel_species.trap_lifetime for parallel_species in cti_params.parallel_species]
 
             if not sorted(trap_lifetimes) == trap_lifetimes:
                 raise exc.PriorException
 
         @classmethod
-        def log(cls, instance):
-            logger.debug(
-                "\nRunning CTI analysis for... \n\n"
-                "Parallel CTI: \n"
-                "Parallel Species:\n{}\n\n "
-                "Parallel CCD\n{}\n\n".format(instance.parallel_species, instance.parallel_ccd))
+        def describe(cls, instance):
+            return ("\nRunning CTI analysis for... \n\n"
+                    "Parallel CTI: \n"
+                    "Parallel Species:\n{}\n\n "
+                    "Parallel CCD\n{}\n\n".format(instance.parallel_species, instance.parallel_ccd))
 
 
-    class Result(Phase.Result):
+class Result(Phase.Result):
+    @property
+    def noise_scaling_maps(self):
+        noise_scaling_maps_of_ci_regions = list(map(lambda most_likely_fit:
+                                                    most_likely_fit.noise_scaling_map_of_ci_regions,
+                                                    self.most_likely_extracted_fits))
 
-        # noinspection PyUnusedLocal
-        def __init__(self, constant, figure_of_merit, variable, analysis, optimizer):
-            """
-            The result of a phase
-            """
+        noise_scaling_maps_of_parallel_trails = list(map(lambda most_likely_fit:
+                                                         most_likely_fit.noise_scaling_map_of_parallel_trails,
+                                                         self.most_likely_extracted_fits))
 
-            super(ParallelPhase.Result, self).__init__(constant=constant, figure_of_merit=figure_of_merit,
-                                                       variable=variable, analysis=analysis, optimizer=optimizer)
-
-        @property
-        def noise_scaling_maps(self):
-
-            noise_scaling_maps_of_ci_regions = list(map(lambda most_likely_fit :
-                                                        most_likely_fit.noise_scaling_map_of_ci_regions,
-                                                        self.most_likely_extracted_fits))
-
-            noise_scaling_maps_of_parallel_trails = list(map(lambda most_likely_fit :
-                                                        most_likely_fit.noise_scaling_map_of_parallel_trails,
-                                                             self.most_likely_extracted_fits))
-
-            return [noise_scaling_maps_of_ci_regions, noise_scaling_maps_of_parallel_trails]
+        return [noise_scaling_maps_of_ci_regions, noise_scaling_maps_of_parallel_trails]
 
 
 class SerialPhase(Phase):
-
     serial_species = phase_property.PhasePropertyCollection("serial_species")
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 
@@ -482,17 +430,17 @@ class SerialPhase(Phase):
                                             mask=mask)
 
     class Analysis(Phase.Analysis):
-        
+
         def check_trap_lifetimes_are_ascending(self, cti_params):
 
             trap_lifetimes = [serial_species.trap_lifetime for serial_species in cti_params.serial_species]
 
             if not sorted(trap_lifetimes) == trap_lifetimes:
                 raise exc.PriorException
-        
+
         @classmethod
-        def log(cls, instance):
-            logger.debug(
+        def describe(cls, instance):
+            return (
                 "\nRunning CTI analysis for... "
                 "\n\nSerial CTI: \n"
                 "Serial Species:\n{}\n\n "
@@ -500,7 +448,6 @@ class SerialPhase(Phase):
 
 
 class ParallelSerialPhase(Phase):
-
     parallel_species = phase_property.PhasePropertyCollection("parallel_species")
     serial_species = phase_property.PhasePropertyCollection("serial_species")
     parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
@@ -542,8 +489,8 @@ class ParallelSerialPhase(Phase):
                 raise exc.PriorException
 
         @classmethod
-        def log(cls, instance):
-            logger.debug(
+        def describe(cls, instance):
+            return (
                 "\nRunning CTI analysis for... \n\n"
                 "Parallel CTI: \n"
                 "Parallel Species:\n{}\n\n "
@@ -551,7 +498,7 @@ class ParallelSerialPhase(Phase):
                 "Serial CTI: \n"
                 "Serial Species:\n{}\n\n "
                 "Serial CCD\n{}\n\n".format(instance.parallel_species, instance.parallel_ccd,
-                                              instance.serial_species, instance.serial_ccd))
+                                            instance.serial_species, instance.serial_ccd))
 
 
 class HyperAnalysis(Phase.Analysis):
@@ -577,37 +524,37 @@ class HyperAnalysis(Phase.Analysis):
         cti_params = cti_params_for_instance(instance=instance)
         self.check_trap_lifetimes_are_ascending(cti_params=cti_params)
         pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
-                                hyper_noise_scalers=self.hyper_noise_scalers_from_instance(instance))
+                                hyper_noise_scalars=self.hyper_noise_scalars_from_instance(instance))
         return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
 
     @classmethod
-    def log(cls, instance):
-        logger.debug(
+    def describe(cls, instance):
+        return (
             "\nRunning CTI analysis for... \n\n"
             "Parallel CTI::\n{}\n\n "
-            "Hyper Parameters:\n{}".format(instance.parallel, " ".join(cls.noise_scaling_maps_from_instance(instance))))
+            "Hyper Parameters:\n{}".format(instance.parallel,
+                                           " ".join(cls.hyper_noise_scalars_from_instance(instance))))
 
     def hyper_fits_for_instance(self, instance):
         cti_params = cti_params_for_instance(instance=instance)
-        hyper_noise_scalers = self.hyper_noise_scalers_from_instance(instance=instance)
+        hyper_noise_scalars = self.hyper_noise_scalars_from_instance(instance=instance)
         return list(map(lambda ci_data_fit:
-                        ci_fit.hyper_fit_ci_data_fit_with_cti_params_and_settings(
-                            ci_data_fit=ci_data_fit, cti_params=cti_params, cti_settings=self.cti_settings,
-                            hyper_noise_scalers=hyper_noise_scalers),
+                        ci_fit.CIHyperFit(
+                            masked_hyper_ci_data=ci_data_fit, cti_params=cti_params, cti_settings=self.cti_settings,
+                            hyper_noise_scalars=hyper_noise_scalars),
                         self.ci_datas_extracted))
 
     @classmethod
-    def hyper_noise_scalers_from_instance(cls, instance):
+    def hyper_noise_scalars_from_instance(cls, instance):
         raise NotImplementedError()
 
 
 class ParallelHyperPhase(ParallelPhase):
+    hyper_noise_scalar_ci_regions = phase_property.PhaseProperty("hyper_noise_scalar_ci_regions")
+    hyper_noise_scalar_parallel_trails = phase_property.PhaseProperty("hyper_noise_scalar_parallel_trails")
 
-    hyper_noise_scaler_ci_regions = phase_property.PhaseProperty("hyper_noise_scaler_ci_regions")
-    hyper_noise_scaler_parallel_trails = phase_property.PhaseProperty("hyper_noise_scaler_parallel_trails")
-
-    def __init__(self, parallel_species=(), parallel_ccd=None, hyper_noise_scaler_ci_regions=None,
-                 hyper_noise_scaler_parallel_trails=None,
+    def __init__(self, parallel_species=(), parallel_ccd=None, hyper_noise_scalar_ci_regions=None,
+                 hyper_noise_scalar_parallel_trails=None,
                  optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, columns=None,
                  phase_name="parallel_hyper_phase"):
         """
@@ -622,22 +569,21 @@ class ParallelHyperPhase(ParallelPhase):
         super().__init__(parallel_species=parallel_species, parallel_ccd=parallel_ccd, optimizer_class=optimizer_class,
                          mask_function=mask_function, columns=columns, phase_name=phase_name)
 
-        self.hyper_noise_scaler_ci_regions = hyper_noise_scaler_ci_regions
-        self.hyper_noise_scaler_parallel_trails = hyper_noise_scaler_parallel_trails
+        self.hyper_noise_scalar_ci_regions = hyper_noise_scalar_ci_regions
+        self.hyper_noise_scalar_parallel_trails = hyper_noise_scalar_parallel_trails
 
     class Analysis(HyperAnalysis, ParallelPhase.Analysis):
-
-        def hyper_noise_scalers_from_instance(self, instance):
-            return [instance.hyper_noise_scaler_ci_regions, instance.hyper_noise_scaler_parallel_trails]
+        @classmethod
+        def hyper_noise_scalars_from_instance(cls, instance):
+            return [instance.hyper_noise_scalar_ci_regions, instance.hyper_noise_scalar_parallel_trails]
 
 
 class SerialHyperPhase(SerialPhase):
-
-    hyper_noise_scaler_ci_regions = phase_property.PhaseProperty("hyper_noise_scaler_ci_regions")
-    hyper_noise_scaler_serial_trails = phase_property.PhaseProperty("hyper_noise_scaler_serial_trails")
+    hyper_noise_scalar_ci_regions = phase_property.PhaseProperty("hyper_noise_scalar_ci_regions")
+    hyper_noise_scalar_serial_trails = phase_property.PhaseProperty("hyper_noise_scalar_serial_trails")
 
     def __init__(self, serial_species=(), serial_ccd=None,
-                 hyper_noise_scaler_ci_regions=None, hyper_noise_scaler_serial_trails=None,
+                 hyper_noise_scalar_ci_regions=None, hyper_noise_scalar_serial_trails=None,
                  optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, rows=None,
                  phase_name="serial_hyper_phase"):
         """
@@ -645,25 +591,25 @@ class SerialHyperPhase(SerialPhase):
         """
         super().__init__(serial_species=serial_species, serial_ccd=serial_ccd, optimizer_class=optimizer_class,
                          mask_function=mask_function, rows=rows, phase_name=phase_name)
-        self.hyper_noise_scaler_ci_regions = hyper_noise_scaler_ci_regions
-        self.hyper_noise_scaler_serial_trails = hyper_noise_scaler_serial_trails
+        self.hyper_noise_scalar_ci_regions = hyper_noise_scalar_ci_regions
+        self.hyper_noise_scalar_serial_trails = hyper_noise_scalar_serial_trails
 
     class Analysis(HyperAnalysis, SerialPhase.Analysis):
-
-        def hyper_noise_scalers_from_instance(self, instance):
-            return [instance.hyper_noise_scaler_ci_regions, instance.hyper_noise_scaler_serial_trails]
+        @classmethod
+        def hyper_noise_scalars_from_instance(cls, instance):
+            return [instance.hyper_noise_scalar_ci_regions, instance.hyper_noise_scalar_serial_trails]
 
 
 class ParallelSerialHyperPhase(ParallelSerialPhase):
-
-    hyper_noise_scaler_ci_regions = phase_property.PhaseProperty("hyper_noise_scaler_ci_regions")
-    hyper_noise_scaler_parallel_trails = phase_property.PhaseProperty("hyper_noise_scaler_parallel_trails")
-    hyper_noise_scaler_serial_trails = phase_property.PhaseProperty("hyper_noise_scaler_serial_trails")
-    hyper_noise_scaler_parallel_serial_trails = phase_property.PhaseProperty("hyper_noise_scaler_parallel_serial_trails")
+    hyper_noise_scalar_ci_regions = phase_property.PhaseProperty("hyper_noise_scalar_ci_regions")
+    hyper_noise_scalar_parallel_trails = phase_property.PhaseProperty("hyper_noise_scalar_parallel_trails")
+    hyper_noise_scalar_serial_trails = phase_property.PhaseProperty("hyper_noise_scalar_serial_trails")
+    hyper_noise_scalar_parallel_serial_trails = phase_property.PhaseProperty(
+        "hyper_noise_scalar_parallel_serial_trails")
 
     def __init__(self, parallel_species=(), serial_species=(), parallel_ccd=None, serial_ccd=None,
-                 hyper_noise_scaler_ci_regions=None, hyper_noise_scaler_parallel_trails=None,
-                 hyper_noise_scaler_serial_trails=None, hyper_noise_scaler_parallel_serial_trails=None,
+                 hyper_noise_scalar_ci_regions=None, hyper_noise_scalar_parallel_trails=None,
+                 hyper_noise_scalar_serial_trails=None, hyper_noise_scalar_parallel_serial_trails=None,
                  optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape,
                  phase_name="parallel_serial_hyper_phase"):
         """
@@ -677,27 +623,27 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
         super().__init__(parallel_species=parallel_species, serial_species=serial_species, parallel_ccd=parallel_ccd,
                          serial_ccd=serial_ccd, optimizer_class=optimizer_class, mask_function=mask_function,
                          phase_name=phase_name)
-        self.hyper_noise_scaler_ci_regions = hyper_noise_scaler_ci_regions
-        self.hyper_noise_scaler_parallel_trails = hyper_noise_scaler_parallel_trails
-        self.hyper_noise_scaler_serial_trails = hyper_noise_scaler_serial_trails
-        self.hyper_noise_scaler_parallel_serial_trails = hyper_noise_scaler_parallel_serial_trails
+        self.hyper_noise_scalar_ci_regions = hyper_noise_scalar_ci_regions
+        self.hyper_noise_scalar_parallel_trails = hyper_noise_scalar_parallel_trails
+        self.hyper_noise_scalar_serial_trails = hyper_noise_scalar_serial_trails
+        self.hyper_noise_scalar_parallel_serial_trails = hyper_noise_scalar_parallel_serial_trails
         self.has_noise_scalings = True
 
     class Analysis(HyperAnalysis, ParallelPhase.Analysis):
-
-        def hyper_noise_scalers_from_instance(self, instance):
-            return [instance.hyper_noise_scaler_ci_regions, instance.hyper_noise_scaler_parallel_trails,
-                    instance.hyper_noise_scaler_serial_trails, instance.hyper_noise_scaler_parallel_serial_trails]
+        @classmethod
+        def hyper_noise_scalars_from_instance(cls, instance):
+            return [instance.hyper_noise_scalar_ci_regions, instance.hyper_noise_scalar_parallel_trails,
+                    instance.hyper_noise_scalar_serial_trails, instance.hyper_noise_scalar_parallel_serial_trails]
 
 
 def pipe_cti(ci_data_fit, cti_params, cti_settings):
-    fit = ci_fit.CIFit(ci_data_fit=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings)
+    fit = ci_fit.CIFit(masked_ci_data=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings)
     return fit.figure_of_merit
 
 
-def pipe_cti_hyper(ci_data_fit, cti_params, cti_settings, hyper_noise_scalers):
-    fit = ci_fit.CIHyperFit(ci_data_hyper_fit=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings,
-                               hyper_noise_scalers=hyper_noise_scalers)
+def pipe_cti_hyper(ci_data_fit, cti_params, cti_settings, hyper_noise_scalars):
+    fit = ci_fit.CIHyperFit(masked_hyper_ci_data=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings,
+                            hyper_noise_scalars=hyper_noise_scalars)
     return fit.figure_of_merit
 
 

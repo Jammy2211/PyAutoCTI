@@ -35,13 +35,11 @@ from autocti.data import util
 class CIData(object):
 
     def __init__(self, image, noise_map, ci_pre_cti, ci_pattern, ci_frame):
-
         self.image = image
         self.noise_map = noise_map
         self.ci_pre_cti = ci_pre_cti
         self.ci_pattern = ci_pattern
         self.ci_frame = ci_frame
-        self.is_hyper_data = False
 
     @property
     def chinj(self):
@@ -52,22 +50,21 @@ class CIData(object):
         return self.image.shape
 
     def map_to_ci_data_fit(self, func, mask):
-        return CIDataFit(image=func(self.image),
-                         noise_map=func(self.noise_map),
-                         ci_pre_cti=func(self.ci_pre_cti),
-                         mask=func(mask),
-                         ci_pattern=self.ci_pattern,
-                         ci_frame=self.ci_frame)
+        return MaskedCIData(image=func(self.image),
+                            noise_map=func(self.noise_map),
+                            ci_pre_cti=func(self.ci_pre_cti),
+                            mask=func(mask),
+                            ci_pattern=self.ci_pattern,
+                            ci_frame=self.ci_frame)
 
-    def map_to_ci_data_hyper_fit(self, func, mask, noise_scaling_maps=None):
-        return CIDataFit(image=func(self.image),
-                         noise_map=func(self.noise_map),
-                         ci_pre_cti=func(self.ci_pre_cti),
-                         mask=func(mask),
-                         ci_pattern=self.ci_pattern,
-                         ci_frame=self.ci_frame,
-                         noise_scaling_maps=func(
-                                  noise_scaling_maps) if noise_scaling_maps is not None else noise_scaling_maps)
+    def map_to_ci_data_hyper_fit(self, func, mask, noise_scaling_maps):
+        return MaskedCIHyperData(image=func(self.image),
+                                 noise_map=func(self.noise_map),
+                                 ci_pre_cti=func(self.ci_pre_cti),
+                                 mask=func(mask),
+                                 ci_pattern=self.ci_pattern,
+                                 ci_frame=self.ci_frame,
+                                 noise_scaling_maps=func(noise_scaling_maps))
 
     def parallel_calibration_data(self, columns, mask):
         return self.map_to_ci_data_fit(lambda obj: self.chinj.parallel_calibration_section_for_columns(array=obj,
@@ -94,9 +91,9 @@ class CIData(object):
         return np.max(self.signal_to_noise_map)
 
 
-class CIDataFit(object):
+class MaskedCIData(object):
 
-    def __init__(self, image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame, noise_scaling_maps=None):
+    def __init__(self, image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame):
         """A fitting image is the collection of data components (e.g. the image, noise-maps, PSF, etc.) which are used \
         to generate and fit it with a model image.
 
@@ -129,14 +126,6 @@ class CIDataFit(object):
         self.mask = mask
         self.ci_pattern = ci_pattern
         self.ci_frame = ci_frame
-        self.noise_scaling_maps = noise_scaling_maps
-
-    @property
-    def is_hyper_data(self):
-        if hasattr(self, 'noise_scaling_maps'):
-            return True
-        else:
-            return False
 
     @property
     def chinj(self):
@@ -155,14 +144,20 @@ class CIDataFit(object):
         return np.max(self.signal_to_noise_map)
 
 
+class MaskedCIHyperData(MaskedCIData):
+    def __init__(self, image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame, noise_scaling_maps):
+        super().__init__(image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame)
+        self.noise_scaling_maps = noise_scaling_maps
+
+
 def simulate(ci_pre_cti, frame_geometry, ci_pattern, cti_params, cti_settings, read_noise=None, cosmics=None,
              noise_seed=-1):
     """Simulate a charge injection image, including effects like noises.
 
     Parameters
     -----------
+    ci_pre_cti
     cosmics
-    shape : (int, int)
         The dimensions of the output simulated charge injection image.
     frame_geometry : ci_frame.CIQuadGeometry
         The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
@@ -191,12 +186,13 @@ def simulate(ci_pre_cti, frame_geometry, ci_pattern, cti_params, cti_settings, r
     if read_noise is not None:
         ci_image = ci_post_cti + read_noise_map_from_shape_and_sigma(shape=ci_post_cti.shape, sigma=read_noise,
                                                                      noise_seed=noise_seed)
-        ci_noise_map = read_noise*np.ones(ci_post_cti.shape)
+        ci_noise_map = read_noise * np.ones(ci_post_cti.shape)
     else:
         ci_image = ci_post_cti
         ci_noise_map = None
 
-    return CIData(ci_frame=ci_frame, image=ci_image, noise_map=ci_noise_map, ci_pre_cti=ci_pre_cti, ci_pattern=ci_pattern)
+    return CIData(ci_frame=ci_frame, image=ci_image, noise_map=ci_noise_map, ci_pre_cti=ci_pre_cti,
+                  ci_pattern=ci_pattern)
 
 
 def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, image, mask=None):
@@ -245,8 +241,8 @@ def read_noise_map_from_shape_and_sigma(shape, sigma, noise_seed=-1):
         The seed of the random number generator, used for the random noises maps.
     """
     if noise_seed == -1:
-        noise_seed = np.random.randint(0,
-                                       int(1e9))  # Use one seed, so all regions have identical column non-uniformity.
+        # Use one seed, so all regions have identical column non-uniformity.
+        noise_seed = np.random.randint(0, int(1e9))
     np.random.seed(noise_seed)
     read_noise_map = np.random.normal(loc=0.0, scale=sigma, size=shape)
     return read_noise_map
