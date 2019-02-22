@@ -89,7 +89,7 @@ class CIFit(AbstractCIFit):
 
 class CIHyperFit(AbstractCIFit):
 
-    def __init__(self, masked_hyper_ci_data: ci_data.MaskedCIHyperData, cti_params, cti_settings, hyper_noise_scalers):
+    def __init__(self, masked_hyper_ci_data: ci_data.MaskedCIHyperData, cti_params, cti_settings, hyper_noise_scalars):
         """Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian
         framework.
 
@@ -101,30 +101,30 @@ class CIHyperFit(AbstractCIFit):
             The cti model parameters which describe how CTI during clocking.
         cti_settings : arctic_settings.ArcticSettings
             The settings that control how arctic models CTI.
-        hyper_noise_scalers :
+        hyper_noise_scalars :
             The ci_hyper-parameter(s) which the noise_scaling_maps is multiplied by to scale the noise-map.
         """
-        self.hyper_noises = hyper_noise_scalers
+        self.hyper_noises = hyper_noise_scalars
         self.hyper_noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
-            noise_scaling_maps=masked_hyper_ci_data.noise_scaling_maps, hyper_noise_scalers=hyper_noise_scalers,
+            noise_scaling_maps=masked_hyper_ci_data.noise_scaling_maps, hyper_noise_scalars=hyper_noise_scalars,
             noise_map=masked_hyper_ci_data.noise_map)
         super().__init__(masked_ci_data=masked_hyper_ci_data, noise_map=self.hyper_noise_map, cti_params=cti_params,
                          cti_settings=cti_settings)
 
 
-def hyper_noise_map_from_noise_map_and_noise_scalings(noise_scaling_maps, hyper_noise_scalers, noise_map):
+def hyper_noise_map_from_noise_map_and_noise_scalings(noise_scaling_maps, hyper_noise_scalars, noise_map):
     """For a noise-map, use the model hyper noise and noise-scaling maps to compute a scaled noise-map.
 
     Parameters
     -----------
-    hyper_noise_scalers
+    hyper_noise_scalars
     noise_scaling_maps
     noise_map : imaging.NoiseMap or ndarray
         An array describing the RMS standard deviation error in each pixel, preferably in units of electrons per
         second.
     """
-    hyper_noise_maps = list(map(lambda hyper_noise_scaler, noise_scaling_map:
-                                hyper_noise_scaler.scaled_noise_map_from_noise_scaling(noise_scaling_map),
-                                hyper_noise_scalers, noise_scaling_maps))
+    hyper_noise_maps = list(map(lambda hyper_noise_scalar, noise_scaling_map:
+                                hyper_noise_scalar.scaled_noise_map_from_noise_scaling(noise_scaling_map),
+                                hyper_noise_scalars, noise_scaling_maps))
 
     return np.add(noise_map, sum(hyper_noise_maps))
