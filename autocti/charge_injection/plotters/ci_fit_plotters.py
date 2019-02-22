@@ -1,6 +1,8 @@
 from matplotlib import pyplot as plt
-from autocti.data.plotters import plotter_util
+
 from autocti.charge_injection.plotters import fit_plotters
+from autocti.data.plotters import plotter_util
+
 
 def plot_fit_subplot(
         fit, extract_array_from_mask=False,
@@ -15,6 +17,24 @@ def plot_fit_subplot(
 
     Parameters
     -----------
+    xyticksize
+    ylabelsize
+    xlabelsize
+    titlesize
+    cb_tick_labels
+    cb_tick_values
+    cb_pad
+    cb_fraction
+    cb_ticksize
+    linscale
+    linthresh
+    norm_max
+    norm_min
+    norm
+    cmap
+    aspect
+    figsize
+    extract_array_from_mask
     fit : autolens.lens.fitting.Fitter
         Class containing fit between the model datas_ and observed lens datas_ (including residual_map, chi_squared_map etc.)
     output_path : str
@@ -104,7 +124,8 @@ def plot_fit_subplot(
         fit=fit, mask=fit.mask, extract_array_from_mask=extract_array_from_mask, as_subplot=True,
         figsize=figsize, aspect=aspect,
         cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
-        cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad, cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
+        cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad, cb_tick_values=cb_tick_values,
+        cb_tick_labels=cb_tick_labels,
         titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
         output_path=output_path, output_format=output_format, output_filename=output_filename)
 
@@ -112,6 +133,7 @@ def plot_fit_subplot(
                                       output_format=output_format)
 
     plt.close()
+
 
 def plot_fit_individuals(
         fit, extract_array_from_mask=False,
@@ -123,45 +145,37 @@ def plot_fit_individuals(
         should_plot_residual_map=False,
         should_plot_chi_squared_map=False,
         output_path=None, output_format='show'):
-    
     if should_plot_image:
-
         fit_plotters.plot_image(
             fit=fit, mask=fit.mask, extract_array_from_mask=extract_array_from_mask,
             output_path=output_path, output_format=output_format)
-        
-    if should_plot_noise_map:
 
+    if should_plot_noise_map:
         fit_plotters.plot_noise_map(
             fit=fit, mask=fit.mask, extract_array_from_mask=extract_array_from_mask,
             output_path=output_path, output_format=output_format)
-        
-    if should_plot_signal_to_noise_map:
 
+    if should_plot_signal_to_noise_map:
         fit_plotters.plot_signal_to_noise_map(
             fit=fit, mask=fit.mask, extract_array_from_mask=extract_array_from_mask,
             output_path=output_path, output_format=output_format)
-        
-    if should_plot_ci_pre_cti:
 
+    if should_plot_ci_pre_cti:
         fit_plotters.plot_ci_pre_cti(
             fit=fit, mask=fit.mask, extract_array_from_mask=extract_array_from_mask,
             output_path=output_path, output_format=output_format)
-        
-    if should_plot_ci_post_cti:
 
+    if should_plot_ci_post_cti:
         fit_plotters.plot_ci_post_cti(
             fit=fit, mask=fit.mask, extract_array_from_mask=extract_array_from_mask,
             output_path=output_path, output_format=output_format)
-        
-    if should_plot_residual_map:
 
+    if should_plot_residual_map:
         fit_plotters.plot_residual_map(
             fit=fit, mask=fit.mask, extract_array_from_mask=extract_array_from_mask,
             output_path=output_path, output_format=output_format)
-        
-    if should_plot_chi_squared_map:
 
+    if should_plot_chi_squared_map:
         fit_plotters.plot_chi_squared_map(
             fit=fit, mask=fit.mask, extract_array_from_mask=extract_array_from_mask,
             output_path=output_path, output_format=output_format)

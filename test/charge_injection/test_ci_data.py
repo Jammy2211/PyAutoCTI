@@ -125,7 +125,7 @@ class TestCIData(object):
     def test_map(self):
         data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None)
         result = data.map_to_ci_data_fit(lambda x: 2 * x, 1)
-        assert isinstance(result, ci_data.CIDataFit)
+        assert isinstance(result, ci_data.MaskedCIData)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
