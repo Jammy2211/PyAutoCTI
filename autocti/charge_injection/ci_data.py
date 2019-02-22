@@ -57,15 +57,14 @@ class CIData(object):
                             ci_pattern=self.ci_pattern,
                             ci_frame=self.ci_frame)
 
-    def map_to_ci_data_hyper_fit(self, func, mask, noise_scaling_maps=None):
-        return MaskedCIData(image=func(self.image),
-                            noise_map=func(self.noise_map),
-                            ci_pre_cti=func(self.ci_pre_cti),
-                            mask=func(mask),
-                            ci_pattern=self.ci_pattern,
-                            ci_frame=self.ci_frame,
-                            noise_scaling_maps=func(
-                                noise_scaling_maps) if noise_scaling_maps is not None else noise_scaling_maps)
+    def map_to_ci_data_hyper_fit(self, func, mask, noise_scaling_maps):
+        return MaskedCIHyperData(image=func(self.image),
+                                 noise_map=func(self.noise_map),
+                                 ci_pre_cti=func(self.ci_pre_cti),
+                                 mask=func(mask),
+                                 ci_pattern=self.ci_pattern,
+                                 ci_frame=self.ci_frame,
+                                 noise_scaling_maps=func(noise_scaling_maps))
 
     def parallel_calibration_data(self, columns, mask):
         return self.map_to_ci_data_fit(lambda obj: self.chinj.parallel_calibration_section_for_columns(array=obj,
@@ -94,7 +93,7 @@ class CIData(object):
 
 class MaskedCIData(object):
 
-    def __init__(self, image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame, noise_scaling_maps=None):
+    def __init__(self, image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame):
         """A fitting image is the collection of data components (e.g. the image, noise-maps, PSF, etc.) which are used \
         to generate and fit it with a model image.
 
@@ -127,14 +126,6 @@ class MaskedCIData(object):
         self.mask = mask
         self.ci_pattern = ci_pattern
         self.ci_frame = ci_frame
-        self.noise_scaling_maps = noise_scaling_maps
-
-    @property
-    def is_hyper_data(self):
-        if hasattr(self, 'noise_scaling_maps'):
-            return True
-        else:
-            return False
 
     @property
     def chinj(self):
@@ -151,6 +142,12 @@ class MaskedCIData(object):
     def signal_to_noise_max(self):
         """The maximum value of signal-to-noise_maps in an image pixel in the image's signal-to-noise_maps mappers"""
         return np.max(self.signal_to_noise_map)
+
+
+class MaskedCIHyperData(MaskedCIData):
+    def __init__(self, image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame, noise_scaling_maps):
+        super().__init__(image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame)
+        self.noise_scaling_maps = noise_scaling_maps
 
 
 def simulate(ci_pre_cti, frame_geometry, ci_pattern, cti_params, cti_settings, read_noise=None, cosmics=None,
