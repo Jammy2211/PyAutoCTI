@@ -150,14 +150,14 @@ class MaskedCIHyperData(MaskedCIData):
         self.noise_scaling_maps = noise_scaling_maps
 
 
-def simulate(ci_pre_cti, frame_geometry, ci_pattern, cti_params, cti_settings, read_noise=None, cosmics=None,
+def simulate(ci_pre_cti, frame_geometry, ci_pattern, cti_params, cti_settings, read_noise=None, cosmic_ray_image=None,
              noise_seed=-1):
     """Simulate a charge injection image, including effects like noises.
 
     Parameters
     -----------
     ci_pre_cti
-    cosmics
+    cosmic_ray_image
         The dimensions of the output simulated charge injection image.
     frame_geometry : ci_frame.CIQuadGeometry
         The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
@@ -176,8 +176,8 @@ def simulate(ci_pre_cti, frame_geometry, ci_pattern, cti_params, cti_settings, r
 
     ci_frame = frame.ChInj(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
 
-    if cosmics is not None:
-        ci_pre_cti += cosmics
+    if cosmic_ray_image is not None:
+        ci_pre_cti += cosmic_ray_image
 
     ci_pre_cti = cti_image.ImageFrame(frame_geometry=frame_geometry, array=ci_pre_cti)
 
