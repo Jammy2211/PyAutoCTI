@@ -1,4 +1,3 @@
-import os
 from functools import partial
 
 import numpy as np
@@ -540,7 +539,14 @@ class HyperAnalysis(Phase.Analysis):
 
 
 class HyperPhase(Phase):
-    def extract_ci_hyper_data(self, data, mask, previous_results):
+    """
+    Mixin for hyper phases. Extracts noise scaling maps and creates MaskedCIHyperData objects for analysis.
+    """
+
+    def extract_ci_hyper_data(self, data, mask, noise_scaling_maps):
+        raise NotImplementedError()
+
+    def noise_scaling_maps_from_result(self, result):
         raise NotImplementedError()
 
     def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
@@ -562,11 +568,18 @@ class HyperPhase(Phase):
             An analysis object that the non-linear optimizer calls to determine the fit of a set of values
         """
         masks = list(map(lambda data: self.mask_function(shape=data.image.shape), ci_datas))
-        ci_datas_fit = [self.extract_ci_hyper_data(data=data, mask=mask, previous_results=previous_results) for
+        noise_scaling_maps = self.noise_scaling_maps_from_result(previous_results[-1])
+        ci_datas_fit = [self.extract_ci_hyper_data(data=data, mask=mask, noise_scaling_maps=noise_scaling_maps) for
                         data, mask in zip(ci_datas, masks)]
+        ci_datas_full = list(map(lambda data, mask:
+                                 ci_data.MaskedCIHyperData(image=data.image, noise_map=data.noise_map,
+                                                           ci_pre_cti=data.ci_pre_cti, mask=mask,
+                                                           ci_pattern=data.ci_pattern, ci_frame=data.ci_frame,
+                                                           noise_scaling_maps=noise_scaling_maps),
+                                 ci_datas, masks))
 
         self.pass_priors(previous_results)
-        analysis = self.__class__.Analysis(ci_datas_extracted=ci_datas_fit, ci_datas_full=ci_datas_fit,
+        analysis = self.__class__.Analysis(ci_datas_extracted=ci_datas_fit, ci_datas_full=ci_datas_full,
                                            cti_settings=cti_settings, phase_name=self.phase_name,
                                            previous_results=previous_results, pool=pool)
         return analysis
@@ -603,6 +616,17 @@ class ParallelHyperPhase(ParallelPhase, HyperPhase):
     def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
         super(HyperPhase, self).make_analysis(ci_datas, cti_settings, previous_results, pool)
 
+    def noise_scaling_maps_from_result(self, result):
+        """
+        Extract relevant noise scalings maps from the previous result.
+        """
+        return [result.noise_scaling_maps_of_ci_regions, result.noise_scaling_maps_of_parallel_trails]
+
+    def extract_ci_hyper_data(self, data, mask, noise_scaling_maps):
+        return data.parallel_hyper_calibration_data(
+            columns=(0, self.columns or data.ci_frame.parallel_overscan.total_columns),
+            mask=mask, noise_scaling_maps=noise_scaling_maps)
+
 
 class SerialHyperPhase(SerialPhase, HyperPhase):
     hyper_noise_scalar_ci_regions = phase_property.PhaseProperty("hyper_noise_scalar_ci_regions")
@@ -624,6 +648,16 @@ class SerialHyperPhase(SerialPhase, HyperPhase):
         @classmethod
         def hyper_noise_scalars_from_instance(cls, instance):
             return [instance.hyper_noise_scalar_ci_regions, instance.hyper_noise_scalar_serial_trails]
+
+    def noise_scaling_maps_from_result(self, result):
+        """
+        Extract relevant noise scalings maps from the previous result.
+        """
+        return [result.noise_scaling_maps_of_ci_regions, result.noise_scaling_maps_of_serial_trails]
+
+    def extract_ci_hyper_data(self, data, mask, noise_scaling_maps):
+        return data.serial_hyper_calibration_data(rows=self.rows or (0, data.ci_pattern.regions[0].total_rows),
+                                                  mask=mask, noise_scaling_maps=noise_scaling_maps)
 
     def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
         super(HyperPhase, self).make_analysis(ci_datas, cti_settings, previous_results, pool)
@@ -664,6 +698,18 @@ class ParallelSerialHyperPhase(ParallelSerialPhase, HyperPhase):
             return [instance.hyper_noise_scalar_ci_regions, instance.hyper_noise_scalar_parallel_trails,
                     instance.hyper_noise_scalar_serial_trails, instance.hyper_noise_scalar_parallel_serial_trails]
 
+    def noise_scaling_maps_from_result(self, result):
+        """
+        Extract relevant noise scalings maps from the previous result.
+        """
+        return [result.noise_scaling_maps_of_ci_regions,
+                result.noise_scaling_maps_of_parallel_trails,
+                result.noise_scaling_maps_of_serial_trails,
+                result.noise_scaling_maps_of_serial_overscan_above_trails]
+
+    def extract_ci_hyper_data(self, data, mask, noise_scaling_maps):
+        return data.parallel_serial_hyper_calibration_data(mask, noise_scaling_maps=noise_scaling_maps)
+
     def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
         super(HyperPhase, self).make_analysis(ci_datas, cti_settings, previous_results, pool)
 
@@ -677,8 +723,3 @@ def pipe_cti_hyper(ci_data_fit, cti_params, cti_settings, hyper_noise_scalars):
     fit = ci_fit.CIHyperFit(masked_hyper_ci_data=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings,
                             hyper_noise_scalars=hyper_noise_scalars)
     return fit.figure_of_merit
-
-
-def make_path_if_does_not_exist(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
