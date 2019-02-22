@@ -305,15 +305,15 @@ class Phase(ph.AbstractPhase):
         def fits_of_ci_data_extracted_for_instance(self, instance):
             cti_params = cti_params_for_instance(instance=instance)
             return list(map(lambda ci_data_fit:
-                            ci_fit.fit_ci_data_fit_with_cti_params_and_settings(
-                                ci_data_fit=ci_data_fit, cti_params=cti_params, cti_settings=self.cti_settings),
+                            ci_fit.CIFit(
+                                masked_ci_data=ci_data_fit, cti_params=cti_params, cti_settings=self.cti_settings),
                             self.ci_datas_extracted))
 
         def fits_of_ci_data_full_for_instance(self, instance):
             cti_params = cti_params_for_instance(instance=instance)
             return list(map(lambda data:
-                            ci_fit.fit_ci_data_fit_with_cti_params_and_settings(
-                                ci_data_fit=data, cti_params=cti_params, cti_settings=self.cti_settings),
+                            ci_fit.CIFit(
+                                masked_ci_data=data, cti_params=cti_params, cti_settings=self.cti_settings),
                             self.ci_datas_full))
 
     class Result(nl.Result):
@@ -538,8 +538,8 @@ class HyperAnalysis(Phase.Analysis):
         cti_params = cti_params_for_instance(instance=instance)
         hyper_noise_scalers = self.hyper_noise_scalers_from_instance(instance=instance)
         return list(map(lambda ci_data_fit:
-                        ci_fit.hyper_fit_ci_data_fit_with_cti_params_and_settings(
-                            ci_data_fit=ci_data_fit, cti_params=cti_params, cti_settings=self.cti_settings,
+                        ci_fit.CIHyperFit(
+                            ci_data_hyper_fit=ci_data_fit, cti_params=cti_params, cti_settings=self.cti_settings,
                             hyper_noise_scalers=hyper_noise_scalers),
                         self.ci_datas_extracted))
 
