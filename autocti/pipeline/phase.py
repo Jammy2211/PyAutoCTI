@@ -539,7 +539,7 @@ class HyperAnalysis(Phase.Analysis):
         hyper_noise_scalers = self.hyper_noise_scalers_from_instance(instance=instance)
         return list(map(lambda ci_data_fit:
                         ci_fit.CIHyperFit(
-                            ci_data_hyper_fit=ci_data_fit, cti_params=cti_params, cti_settings=self.cti_settings,
+                            masked_hyper_ci_data=ci_data_fit, cti_params=cti_params, cti_settings=self.cti_settings,
                             hyper_noise_scalers=hyper_noise_scalers),
                         self.ci_datas_extracted))
 
@@ -641,7 +641,7 @@ def pipe_cti(ci_data_fit, cti_params, cti_settings):
 
 
 def pipe_cti_hyper(ci_data_fit, cti_params, cti_settings, hyper_noise_scalers):
-    fit = ci_fit.CIHyperFit(ci_data_hyper_fit=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings,
+    fit = ci_fit.CIHyperFit(masked_hyper_ci_data=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings,
                             hyper_noise_scalers=hyper_noise_scalers)
     return fit.figure_of_merit
 
