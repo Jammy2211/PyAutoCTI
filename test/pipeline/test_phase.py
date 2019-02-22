@@ -395,7 +395,7 @@ class TestResult(object):
 
         mask = phase.mask_function(shape=ci_data.image.shape)
         ci_datas_fit = [phase.extract_ci_data(data=data, mask=mask) for data, mask in zip([ci_data], [mask])]
-        fit = ci_fit.CIFit(ci_data_fit=ci_datas_fit[0], cti_params=cti_params, cti_settings=cti_settings)
+        fit = ci_fit.CIFit(masked_ci_data=ci_datas_fit[0], cti_params=cti_params, cti_settings=cti_settings)
 
         assert fit.likelihood == fit_figure_of_merit
 
