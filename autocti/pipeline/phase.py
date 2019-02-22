@@ -572,8 +572,8 @@ class ParallelHyperPhase(ParallelPhase):
         self.hyper_noise_scalar_parallel_trails = hyper_noise_scalar_parallel_trails
 
     class Analysis(HyperAnalysis, ParallelPhase.Analysis):
-
-        def hyper_noise_scalars_from_instance(self, instance):
+        @classmethod
+        def hyper_noise_scalars_from_instance(cls, instance):
             return [instance.hyper_noise_scalar_ci_regions, instance.hyper_noise_scalar_parallel_trails]
 
 
@@ -594,8 +594,8 @@ class SerialHyperPhase(SerialPhase):
         self.hyper_noise_scalar_serial_trails = hyper_noise_scalar_serial_trails
 
     class Analysis(HyperAnalysis, SerialPhase.Analysis):
-
-        def hyper_noise_scalars_from_instance(self, instance):
+        @classmethod
+        def hyper_noise_scalars_from_instance(cls, instance):
             return [instance.hyper_noise_scalar_ci_regions, instance.hyper_noise_scalar_serial_trails]
 
 
@@ -629,8 +629,8 @@ class ParallelSerialHyperPhase(ParallelSerialPhase):
         self.has_noise_scalings = True
 
     class Analysis(HyperAnalysis, ParallelPhase.Analysis):
-
-        def hyper_noise_scalars_from_instance(self, instance):
+        @classmethod
+        def hyper_noise_scalars_from_instance(cls, instance):
             return [instance.hyper_noise_scalar_ci_regions, instance.hyper_noise_scalar_parallel_trails,
                     instance.hyper_noise_scalar_serial_trails, instance.hyper_noise_scalar_parallel_serial_trails]
 
