@@ -64,19 +64,32 @@ class CIData(object):
                                  mask=func(mask),
                                  ci_pattern=self.ci_pattern,
                                  ci_frame=self.ci_frame,
-                                 noise_scaling_maps=func(noise_scaling_maps))
+                                 noise_scaling_maps=list(map(func, noise_scaling_maps)))
+
+    def parallel_extractor(self, columns):
+        def extractor(obj):
+            return self.chinj.parallel_calibration_section_for_columns(array=obj, columns=columns)
+
+        return extractor
+
+    def serial_extractor(self, rows):
+        def extractor(obj):
+            return self.chinj.serial_calibration_section_for_rows(array=obj, rows=rows)
+        return extractor
+
+    def parallel_serial_extractor(self):
+        def extractor(obj):
+            return self.chinj.parallel_serial_calibration_section(obj)
+        return extractor
 
     def parallel_calibration_data(self, columns, mask):
-        return self.map_to_ci_data_fit(lambda obj: self.chinj.parallel_calibration_section_for_columns(array=obj,
-                                                                                                       columns=columns),
-                                       mask)
+        return self.map_to_ci_data_fit(self.parallel_extractor(columns), mask)
 
     def serial_calibration_data(self, rows, mask):
-        return self.map_to_ci_data_fit(
-            lambda obj: self.chinj.serial_calibration_section_for_rows(array=obj, rows=rows), mask)
+        return self.map_to_ci_data_fit(self.serial_extractor(rows), mask)
 
     def parallel_serial_calibration_data(self, mask):
-        return self.map_to_ci_data_fit(lambda obj: self.chinj.parallel_serial_calibration_section(obj, ), mask)
+        return self.map_to_ci_data_fit(lambda obj: self.parallel_serial_extractor(), mask)
 
     @property
     def signal_to_noise_map(self):
@@ -97,7 +110,7 @@ class MaskedCIData(object):
         """A fitting image is the collection of data components (e.g. the image, noise-maps, PSF, etc.) which are used \
         to generate and fit it with a model image.
 
-        The fitting image is in 2D and masked, primarily to removoe cosmic rays.
+        The fitting image is in 2D and masked, primarily to remove cosmic rays.
 
         The fitting image also includes a number of attributes which are used to performt the fit, including (y,x) \
         grids of coordinates, convolvers and other utilities.
