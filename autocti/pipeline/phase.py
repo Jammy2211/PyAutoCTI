@@ -2,12 +2,13 @@ from functools import partial
 
 import numpy as np
 from autofit import conf
+from autofit.mapper import prior_model as pm
 from autofit.optimize import non_linear as nl
 from autofit.tools import phase as ph
 from autofit.tools import phase_property
 
 from autocti import exc
-from autocti.charge_injection import ci_fit, ci_data
+from autocti.charge_injection import ci_fit, ci_data, ci_hyper
 from autocti.charge_injection.plotters import ci_data_plotters
 from autocti.charge_injection.plotters import ci_fit_plotters
 from autocti.data import mask as msk
@@ -485,49 +486,11 @@ class ParallelSerialPhase(Phase):
                                             instance.serial_species, instance.serial_ccd))
 
 
-class HyperAnalysis(Phase.Analysis):
-
-    def fit(self, instance):
-        """
-        Runs the analysis. Determine how well the supplied cti_params fits the image.
-
-        Params
-        ----------
-        parallel : arctic_params.ParallelParams
-            A class describing the parallel cti model and parameters.
-        parallel : arctic_params.SerialParams
-            A class describing the serial cti model and parameters.
-        hyp : ci_hyper.HyperCINoise
-            A class describing the noises scaling ci_hyper-parameters.
-
-        Returns
-        -------
-        result: Result
-            An object comprising the final cti_params instances generated and a corresponding figure_of_merit
-        """
-        cti_params = cti_params_for_instance(instance=instance)
-        self.check_trap_lifetimes_are_ascending(cti_params=cti_params)
-        pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
-                                hyper_noise_scalars=self.hyper_noise_scalars_from_instance(instance))
-        return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
-
-    @classmethod
-    def describe(cls, instance):
-        return (
-            "\nRunning CTI analysis for... \n\n"
-            "Parallel CTI::\n{}\n\n "
-            "Hyper Parameters:\n{}".format(instance.parallel,
-                                           " ".join(cls.hyper_noise_scalars_from_instance(instance))))
-
-    @classmethod
-    def hyper_noise_scalars_from_instance(cls, instance):
-        raise NotImplementedError()
-
-
 class HyperPhase(Phase):
     """
     Mixin for hyper phases. Extracts noise scaling maps and creates MaskedCIHyperData objects for analysis.
     """
+    hyper_noise_scalars = phase_property.PhasePropertyCollection("hyper_noise_scalars")
 
     def extract_ci_hyper_data(self, data, mask, noise_scaling_maps):
         raise NotImplementedError()
@@ -570,13 +533,51 @@ class HyperPhase(Phase):
                                            previous_results=previous_results, pool=pool)
         return analysis
 
+    class Analysis(Phase.Analysis):
+
+        def fit(self, instance):
+            """
+            Runs the analysis. Determine how well the supplied cti_params fits the image.
+
+            Params
+            ----------
+            parallel : arctic_params.ParallelParams
+                A class describing the parallel cti model and parameters.
+            parallel : arctic_params.SerialParams
+                A class describing the serial cti model and parameters.
+            hyp : ci_hyper.HyperCINoise
+                A class describing the noises scaling ci_hyper-parameters.
+
+            Returns
+            -------
+            result: Result
+                An object comprising the final cti_params instances generated and a corresponding figure_of_merit
+            """
+            cti_params = cti_params_for_instance(instance=instance)
+            self.check_trap_lifetimes_are_ascending(cti_params=cti_params)
+            pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
+                                    hyper_noise_scalars=instance.hyper_noise_scalars)
+            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
+
+        @classmethod
+        def describe(cls, instance):
+            return (
+                "\nRunning CTI analysis for... \n\n"
+                "Parallel CTI::\n{}\n\n "
+                "Hyper Parameters:\n{}".format(instance.parallel,
+                                               " ".join(instance.hyper_noise_scalars)))
+
+    @property
+    def number_of_noise_scalars(self):
+        return len(self.hyper_noise_scalars)
+
+    @number_of_noise_scalars.setter
+    def number_of_noise_scalars(self, number):
+        self.hyper_noise_scalars = [pm.PriorModel(ci_hyper.CIHyperNoiseScalar) for _ in range(number)]
+
 
 class ParallelHyperPhase(ParallelPhase, HyperPhase):
-    hyper_noise_scalar_ci_regions = phase_property.PhaseProperty("hyper_noise_scalar_ci_regions")
-    hyper_noise_scalar_parallel_trails = phase_property.PhaseProperty("hyper_noise_scalar_parallel_trails")
-
-    def __init__(self, parallel_species=(), parallel_ccd=None, hyper_noise_scalar_ci_regions=None,
-                 hyper_noise_scalar_parallel_trails=None,
+    def __init__(self, parallel_species=(), parallel_ccd=None,
                  optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, columns=None,
                  phase_name="parallel_hyper_phase"):
         """
@@ -587,17 +588,9 @@ class ParallelHyperPhase(ParallelPhase, HyperPhase):
         optimizer_class: class
             The class of a non-linear optimizer
         """
-
         super().__init__(parallel_species=parallel_species, parallel_ccd=parallel_ccd, optimizer_class=optimizer_class,
                          mask_function=mask_function, columns=columns, phase_name=phase_name)
-
-        self.hyper_noise_scalar_ci_regions = hyper_noise_scalar_ci_regions
-        self.hyper_noise_scalar_parallel_trails = hyper_noise_scalar_parallel_trails
-
-    class Analysis(HyperAnalysis, ParallelPhase.Analysis):
-        @classmethod
-        def hyper_noise_scalars_from_instance(cls, instance):
-            return [instance.hyper_noise_scalar_ci_regions, instance.hyper_noise_scalar_parallel_trails]
+        self.number_of_noise_scalars = 2
 
     def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
         super(HyperPhase, self).make_analysis(ci_datas, cti_settings, previous_results, pool)
@@ -615,11 +608,7 @@ class ParallelHyperPhase(ParallelPhase, HyperPhase):
 
 
 class SerialHyperPhase(SerialPhase, HyperPhase):
-    hyper_noise_scalar_ci_regions = phase_property.PhaseProperty("hyper_noise_scalar_ci_regions")
-    hyper_noise_scalar_serial_trails = phase_property.PhaseProperty("hyper_noise_scalar_serial_trails")
-
     def __init__(self, serial_species=(), serial_ccd=None,
-                 hyper_noise_scalar_ci_regions=None, hyper_noise_scalar_serial_trails=None,
                  optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, rows=None,
                  phase_name="serial_hyper_phase"):
         """
@@ -627,13 +616,7 @@ class SerialHyperPhase(SerialPhase, HyperPhase):
         """
         super().__init__(serial_species=serial_species, serial_ccd=serial_ccd, optimizer_class=optimizer_class,
                          mask_function=mask_function, rows=rows, phase_name=phase_name)
-        self.hyper_noise_scalar_ci_regions = hyper_noise_scalar_ci_regions
-        self.hyper_noise_scalar_serial_trails = hyper_noise_scalar_serial_trails
-
-    class Analysis(HyperAnalysis, SerialPhase.Analysis):
-        @classmethod
-        def hyper_noise_scalars_from_instance(cls, instance):
-            return [instance.hyper_noise_scalar_ci_regions, instance.hyper_noise_scalar_serial_trails]
+        self.number_of_noise_scalars = 2
 
     def noise_scaling_maps_from_result(self, result):
         """
@@ -650,15 +633,7 @@ class SerialHyperPhase(SerialPhase, HyperPhase):
 
 
 class ParallelSerialHyperPhase(ParallelSerialPhase, HyperPhase):
-    hyper_noise_scalar_ci_regions = phase_property.PhaseProperty("hyper_noise_scalar_ci_regions")
-    hyper_noise_scalar_parallel_trails = phase_property.PhaseProperty("hyper_noise_scalar_parallel_trails")
-    hyper_noise_scalar_serial_trails = phase_property.PhaseProperty("hyper_noise_scalar_serial_trails")
-    hyper_noise_scalar_parallel_serial_trails = phase_property.PhaseProperty(
-        "hyper_noise_scalar_parallel_serial_trails")
-
     def __init__(self, parallel_species=(), serial_species=(), parallel_ccd=None, serial_ccd=None,
-                 hyper_noise_scalar_ci_regions=None, hyper_noise_scalar_parallel_trails=None,
-                 hyper_noise_scalar_serial_trails=None, hyper_noise_scalar_parallel_serial_trails=None,
                  optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape,
                  phase_name="parallel_serial_hyper_phase"):
         """
@@ -672,17 +647,7 @@ class ParallelSerialHyperPhase(ParallelSerialPhase, HyperPhase):
         super().__init__(parallel_species=parallel_species, serial_species=serial_species, parallel_ccd=parallel_ccd,
                          serial_ccd=serial_ccd, optimizer_class=optimizer_class, mask_function=mask_function,
                          phase_name=phase_name)
-        self.hyper_noise_scalar_ci_regions = hyper_noise_scalar_ci_regions
-        self.hyper_noise_scalar_parallel_trails = hyper_noise_scalar_parallel_trails
-        self.hyper_noise_scalar_serial_trails = hyper_noise_scalar_serial_trails
-        self.hyper_noise_scalar_parallel_serial_trails = hyper_noise_scalar_parallel_serial_trails
-        self.has_noise_scalings = True
-
-    class Analysis(HyperAnalysis, ParallelPhase.Analysis):
-        @classmethod
-        def hyper_noise_scalars_from_instance(cls, instance):
-            return [instance.hyper_noise_scalar_ci_regions, instance.hyper_noise_scalar_parallel_trails,
-                    instance.hyper_noise_scalar_serial_trails, instance.hyper_noise_scalar_parallel_serial_trails]
+        self.number_of_noise_scalars = 4
 
     def noise_scaling_maps_from_result(self, result):
         """
