@@ -89,7 +89,7 @@ class CIData(object):
         return self.map_to_ci_data_fit(self.serial_extractor(rows), mask)
 
     def parallel_serial_calibration_data(self, mask):
-        return self.map_to_ci_data_fit(lambda obj: self.parallel_serial_extractor(), mask)
+        return self.map_to_ci_data_fit(self.parallel_serial_extractor(), mask)
 
     @property
     def signal_to_noise_map(self):
