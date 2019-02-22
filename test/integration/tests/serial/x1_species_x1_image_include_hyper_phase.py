@@ -78,8 +78,8 @@ def make_pipeline(test_name):
 
     phase2 = SerialHyperModelFixedPhase(serial_species=[prior_model.PriorModel(arctic_params.Species)],
                                         serial_ccd=arctic_params.CCD,
-                                        hyper_noise_scaler_ci_regions=ci_hyper.CIHyperNoiseScaler,
-                                        hyper_noise_scaler_serial_trails=ci_hyper.CIHyperNoiseScaler,
+                                        hyper_noise_scalar_ci_regions=ci_hyper.CIHyperNoiseScaler,
+                                        hyper_noise_scalar_serial_trails=ci_hyper.CIHyperNoiseScaler,
                                         optimizer_class=nl.MultiNest, rows=None,
                                         phase_name="{}/phase2".format(test_name))
 
@@ -87,8 +87,8 @@ def make_pipeline(test_name):
 
         def pass_priors(self, previous_results):
 
-            self.hyper_noise_scaler_ci_regions = previous_results[1].constant.hyper_noise_scaler_ci_regions
-            self.hyper_noise_scaler_serial_trails = previous_results[1].constant.hyper_noise_scaler_serial_trails
+            self.hyper_noise_scalar_ci_regions = previous_results[1].constant.hyper_noise_scalar_ci_regions
+            self.hyper_noise_scalar_serial_trails = previous_results[1].constant.hyper_noise_scalar_serial_trails
             self.serial_species = previous_results[0].variable.serial_species
             self.serial_ccd = previous_results[0].variable.serial_ccd
             self.serial_ccd.well_fill_alpha = 1.0
