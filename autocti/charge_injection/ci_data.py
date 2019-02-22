@@ -49,7 +49,21 @@ class CIData(object):
     def shape(self):
         return self.image.shape
 
-    def map_to_ci_data_fit(self, func, mask):
+    def map_to_ci_data_fit(self, func, mask: msk.Mask):
+        """
+        Maps an extraction function onto the arrays in this object and a mask.
+
+        Parameters
+        ----------
+        func
+            The extraction function
+        mask
+            A mask
+
+        Returns
+        -------
+        masked_ci_data: MaskedCIData
+        """
         return MaskedCIData(image=func(self.image),
                             noise_map=func(self.noise_map),
                             ci_pre_cti=func(self.ci_pre_cti),
@@ -57,26 +71,159 @@ class CIData(object):
                             ci_pattern=self.ci_pattern,
                             ci_frame=self.ci_frame)
 
-    def map_to_ci_data_hyper_fit(self, func, mask, noise_scaling_maps):
+    def map_to_ci_hyper_data_fit(self, func, mask, noise_scaling_maps):
+        """
+        Maps an extraction function onto the arrays in this object, a mask and noise scaling maps.
+
+        Parameters
+        ----------
+        func
+            The extraction function
+        mask
+            A mask
+        noise_scaling_maps
+            A list of noise maps used for scaling noise in poorly fit regions
+
+        Returns
+        -------
+        masked_ci_data: MaskedCIData
+        """
         return MaskedCIHyperData(image=func(self.image),
                                  noise_map=func(self.noise_map),
                                  ci_pre_cti=func(self.ci_pre_cti),
                                  mask=func(mask),
                                  ci_pattern=self.ci_pattern,
                                  ci_frame=self.ci_frame,
-                                 noise_scaling_maps=func(noise_scaling_maps))
+                                 noise_scaling_maps=list(map(func, noise_scaling_maps)))
 
-    def parallel_calibration_data(self, columns, mask):
-        return self.map_to_ci_data_fit(lambda obj: self.chinj.parallel_calibration_section_for_columns(array=obj,
-                                                                                                       columns=columns),
-                                       mask)
+    def parallel_extractor(self, columns):
+        """
+        Creates a function to extract a parallel section for given columns
+        """
 
-    def serial_calibration_data(self, rows, mask):
-        return self.map_to_ci_data_fit(
-            lambda obj: self.chinj.serial_calibration_section_for_rows(array=obj, rows=rows), mask)
+        def extractor(obj):
+            return self.chinj.parallel_calibration_section_for_columns(array=obj, columns=columns)
 
-    def parallel_serial_calibration_data(self, mask):
-        return self.map_to_ci_data_fit(lambda obj: self.chinj.parallel_serial_calibration_section(obj, ), mask)
+        return extractor
+
+    def serial_extractor(self, rows):
+        """
+        Creates a function to extract a serial section for given rows
+        """
+
+        def extractor(obj):
+            return self.chinj.serial_calibration_section_for_rows(array=obj, rows=rows)
+
+        return extractor
+
+    def parallel_serial_extractor(self):
+        """
+        Creates a function to extract a parallel and serial calibration section
+        """
+
+        def extractor(obj):
+            return self.chinj.parallel_serial_calibration_section(obj)
+
+        return extractor
+
+    def parallel_calibration_data(self, columns: (int,), mask: msk.Mask):
+        """
+        Creates a MaskedCIData object for a parallel section of the CCD
+
+        Parameters
+        ----------
+        columns
+            Columns to be extracted
+        mask
+            A mask
+
+        Returns
+        -------
+        MaskedCIData
+        """
+        return self.map_to_ci_data_fit(self.parallel_extractor(columns), mask)
+
+    def serial_calibration_data(self, rows: (int,), mask: msk.Mask):
+        """
+        Creates a MaskedCIData object for a serial section of the CCD
+
+        Parameters
+        ----------
+        rows
+            Rows to be extracted
+        mask
+            A mask
+        Returns
+        -------
+        MaskedCIData
+        """
+        return self.map_to_ci_data_fit(self.serial_extractor(rows), mask)
+
+    def parallel_serial_calibration_data(self, mask: msk.Mask):
+        """
+        Creates a MaskedCIData object for a section of the CCD
+
+        Parameters
+        ----------
+        mask
+            A mask
+        Returns
+        -------
+        MaskedCIData
+        """
+        return self.map_to_ci_data_fit(self.parallel_serial_extractor(), mask)
+
+    def parallel_hyper_calibration_data(self, columns: (int,), mask: msk.Mask, noise_scaling_maps: (np.ndarray,)):
+        """
+        Creates a MaskedCIData object for a parallel section of the CCD
+
+        Parameters
+        ----------
+        noise_scaling_maps
+            A list of maps that are used to scale noise
+        columns
+            Columns to be extracted
+        mask
+            A mask
+        Returns
+        -------
+        MaskedCIHyperData
+        """
+        return self.map_to_ci_hyper_data_fit(self.parallel_extractor(columns), mask, noise_scaling_maps)
+
+    def serial_hyper_calibration_data(self, rows: (int,), mask: msk.Mask, noise_scaling_maps: (np.ndarray,)):
+        """
+        Creates a MaskedCIData object for a serial section of the CCD
+
+        Parameters
+        ----------
+        noise_scaling_maps
+            A list of maps that are used to scale noise
+        rows
+            Rows to be extracted
+        mask
+            A mask
+        Returns
+        -------
+        MaskedCIHyperData
+        """
+        return self.map_to_ci_hyper_data_fit(self.serial_extractor(rows), mask, noise_scaling_maps)
+
+    def parallel_serial_hyper_calibration_data(self, mask: msk.Mask, noise_scaling_maps: (np.ndarray,)):
+        """
+        Creates a MaskedCIData object for a section of the CCD
+
+        Parameters
+        ----------
+        noise_scaling_maps
+            A list of maps that are used to scale noise
+        mask
+            A mask
+        Returns
+        -------
+        MaskedCIHyperData
+        """
+        return self.map_to_ci_hyper_data_fit(self.parallel_serial_extractor(), mask, noise_scaling_maps)
 
     @property
     def signal_to_noise_map(self):
@@ -97,7 +244,7 @@ class MaskedCIData(object):
         """A fitting image is the collection of data components (e.g. the image, noise-maps, PSF, etc.) which are used \
         to generate and fit it with a model image.
 
-        The fitting image is in 2D and masked, primarily to removoe cosmic rays.
+        The fitting image is in 2D and masked, primarily to remove cosmic rays.
 
         The fitting image also includes a number of attributes which are used to performt the fit, including (y,x) \
         grids of coordinates, convolvers and other utilities.
