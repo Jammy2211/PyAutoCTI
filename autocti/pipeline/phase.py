@@ -473,6 +473,7 @@ class SerialPhase(Phase):
     class Analysis(Phase.Analysis):
 
         def check_trap_lifetimes_are_ascending(self, cti_params):
+
             trap_lifetimes = [serial_species.trap_lifetime for serial_species in cti_params.serial_species]
 
             if not sorted(trap_lifetimes) == trap_lifetimes:
