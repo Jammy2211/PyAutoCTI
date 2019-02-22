@@ -284,7 +284,11 @@ class Phase(ph.AbstractPhase):
             cti_params = cti_params_for_instance(instance=instance)
             self.check_trap_lifetimes_are_ascending(cti_params=cti_params)
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
-            return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
+            likelihood = np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
+            if likelihood > 1.0e-16 or likelihood < -1.0e-16:
+                return likelihood
+            else:
+                raise exc.PriorException
 
         def check_trap_lifetimes_are_ascending(self, cti_params):
 
@@ -362,6 +366,21 @@ class Phase(ph.AbstractPhase):
                             self.most_likely_full_fits))
 
 
+class Result(Phase.Result):
+
+    @property
+    def noise_scaling_maps(self):
+        noise_scaling_maps_of_ci_regions = list(map(lambda most_likely_fit:
+                                                    most_likely_fit.noise_scaling_map_of_ci_regions,
+                                                    self.most_likely_extracted_fits))
+
+        noise_scaling_maps_of_parallel_trails = list(map(lambda most_likely_fit:
+                                                         most_likely_fit.noise_scaling_map_of_parallel_trails,
+                                                         self.most_likely_extracted_fits))
+
+        return [noise_scaling_maps_of_ci_regions, noise_scaling_maps_of_parallel_trails]
+
+
 class ParallelPhase(Phase):
     parallel_species = phase_property.PhasePropertyCollection("parallel_species")
     parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
@@ -396,20 +415,6 @@ class ParallelPhase(Phase):
                     "Parallel CTI: \n"
                     "Parallel Species:\n{}\n\n "
                     "Parallel CCD\n{}\n\n".format(instance.parallel_species, instance.parallel_ccd))
-
-
-class Result(Phase.Result):
-    @property
-    def noise_scaling_maps(self):
-        noise_scaling_maps_of_ci_regions = list(map(lambda most_likely_fit:
-                                                    most_likely_fit.noise_scaling_map_of_ci_regions,
-                                                    self.most_likely_extracted_fits))
-
-        noise_scaling_maps_of_parallel_trails = list(map(lambda most_likely_fit:
-                                                         most_likely_fit.noise_scaling_map_of_parallel_trails,
-                                                         self.most_likely_extracted_fits))
-
-        return [noise_scaling_maps_of_ci_regions, noise_scaling_maps_of_parallel_trails]
 
 
 class SerialPhase(Phase):
@@ -525,7 +530,11 @@ class HyperAnalysis(Phase.Analysis):
         self.check_trap_lifetimes_are_ascending(cti_params=cti_params)
         pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
                                 hyper_noise_scalars=self.hyper_noise_scalars_from_instance(instance))
-        return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
+        likelihood = np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
+        if likelihood > 1.0e-16 or likelihood < -1.0e-16:
+            return likelihood
+        else:
+            raise exc.PriorException
 
     @classmethod
     def describe(cls, instance):
@@ -550,6 +559,7 @@ class HyperAnalysis(Phase.Analysis):
 
 
 class ParallelHyperPhase(ParallelPhase):
+
     hyper_noise_scalar_ci_regions = phase_property.PhaseProperty("hyper_noise_scalar_ci_regions")
     hyper_noise_scalar_parallel_trails = phase_property.PhaseProperty("hyper_noise_scalar_parallel_trails")
 
