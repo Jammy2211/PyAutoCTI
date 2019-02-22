@@ -397,20 +397,6 @@ class ParallelPhase(Phase):
                     "Parallel CCD\n{}\n\n".format(instance.parallel_species, instance.parallel_ccd))
 
 
-class Result(Phase.Result):
-    @property
-    def noise_scaling_maps(self):
-        noise_scaling_maps_of_ci_regions = list(map(lambda most_likely_fit:
-                                                    most_likely_fit.noise_scaling_map_of_ci_regions,
-                                                    self.most_likely_extracted_fits))
-
-        noise_scaling_maps_of_parallel_trails = list(map(lambda most_likely_fit:
-                                                         most_likely_fit.noise_scaling_map_of_parallel_trails,
-                                                         self.most_likely_extracted_fits))
-
-        return [noise_scaling_maps_of_ci_regions, noise_scaling_maps_of_parallel_trails]
-
-
 class SerialPhase(Phase):
     serial_species = phase_property.PhasePropertyCollection("serial_species")
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
@@ -431,7 +417,6 @@ class SerialPhase(Phase):
     class Analysis(Phase.Analysis):
 
         def check_trap_lifetimes_are_ascending(self, cti_params):
-
             trap_lifetimes = [serial_species.trap_lifetime for serial_species in cti_params.serial_species]
 
             if not sorted(trap_lifetimes) == trap_lifetimes:
