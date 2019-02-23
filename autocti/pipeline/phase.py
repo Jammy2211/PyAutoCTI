@@ -285,7 +285,7 @@ class Phase(ph.AbstractPhase):
             self.check_trap_lifetimes_are_ascending(cti_params=cti_params)
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
             likelihood = np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
-            if likelihood > -1.0e-18 or likelihood < 1.0e-18:
+            if likelihood < -1.0e-18 or likelihood > 1.0e-18:
                 return likelihood
             else:
                 raise exc.PriorException
@@ -562,7 +562,7 @@ class HyperPhase(Phase):
             pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
                                     hyper_noise_scalars=instance.hyper_noise_scalars)
             likelihood = np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
-            if likelihood > -1.0e-18 or likelihood < 1.0e-18:
+            if likelihood < -1.0e-18 or likelihood > 1.0e-18:
                 return likelihood
             else:
                 raise exc.PriorException
