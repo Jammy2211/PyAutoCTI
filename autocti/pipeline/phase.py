@@ -285,10 +285,7 @@ class Phase(ph.AbstractPhase):
             self.check_trap_lifetimes_are_ascending(cti_params=cti_params)
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
             likelihood = np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
-            if likelihood < -1.0e-18 or likelihood > 1.0e-18:
-                return likelihood
-            else:
-                raise exc.PriorException
+            return likelihood
 
         def check_trap_lifetimes_are_ascending(self, cti_params):
 
@@ -430,10 +427,11 @@ class SerialPhase(Phase):
         @classmethod
         def describe(cls, instance):
             return (
-                "\nRunning CTI analysis for... "
-                "\n\nSerial CTI: \n"
+                "\nRunning CTI analysis for... \n\n"
                 "Serial Species:\n{}\n\n "
-                "Serial CCD\n{}\n\n".format(instance.serial_species, instance.serial_ccd))
+                "Serial CCD\n{}\n\n"
+                "Hyper Parameters:\n{}".format(instance.serial_species, instance.serial_ccd,
+                                               " ".join(instance.hyper_noise_scalars)))
 
 
 class ParallelSerialPhase(Phase):
@@ -490,11 +488,14 @@ class ParallelSerialPhase(Phase):
                                             instance.serial_species, instance.serial_ccd))
 
 
-class HyperPhase(Phase):
+class HyperPhase(object):
     """
     Mixin for hyper phases. Extracts noise scaling maps and creates MaskedCIHyperData objects for analysis.
     """
     hyper_noise_scalars = phase_property.PhasePropertyCollection("hyper_noise_scalars")
+
+    def __init__(self):
+        pass
 
     def extract_ci_hyper_data(self, data, mask, noise_scaling_maps):
         raise NotImplementedError()
@@ -562,17 +563,15 @@ class HyperPhase(Phase):
             pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
                                     hyper_noise_scalars=instance.hyper_noise_scalars)
             likelihood = np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
-            if likelihood < -1.0e-18 or likelihood > 1.0e-18:
-                return likelihood
-            else:
-                raise exc.PriorException
+            return likelihood
 
         @classmethod
         def describe(cls, instance):
             return (
                 "\nRunning CTI analysis for... \n\n"
-                "Parallel CTI::\n{}\n\n "
-                "Hyper Parameters:\n{}".format(instance.parallel,
+                "Serial Species:\n{}\n\n "
+                "Serial CCD\n{}\n\n"
+                "Hyper Parameters:\n{}".format(instance.serial_species, instance.serial_ccd,
                                                " ".join(instance.hyper_noise_scalars)))
 
     @property
@@ -616,15 +615,59 @@ class ParallelHyperPhase(ParallelPhase, HyperPhase):
 
 
 class SerialHyperPhase(SerialPhase, HyperPhase):
+
     def __init__(self, serial_species=(), serial_ccd=None,
                  optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, rows=None,
                  phase_name="serial_hyper_phase"):
         """
         A phase with a simple source/CTI model
         """
+        HyperPhase.__init__(self=self)
         super().__init__(serial_species=serial_species, serial_ccd=serial_ccd, optimizer_class=optimizer_class,
                          mask_function=mask_function, rows=rows, phase_name=phase_name)
         self.number_of_noise_scalars = 2
+
+    def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
+        """
+        Create an analysis object. Also calls the prior passing and image modifying functions to allow child classes to
+        change the behaviour of the phase.
+
+        Parameters
+        ----------
+        cti_settings
+        ci_datas
+        pool
+        previous_results: ResultsCollection
+            The result from the previous phase
+
+        Returns
+        -------
+        analysis: Analysis
+            An analysis object that the non-linear optimizer calls to determine the fit of a set of values
+        """
+        print('1111111111111')
+        print('1111111111111')
+        print('1111111111111')
+        print('1111111111111')
+        print('1111111111111')
+        print('1111111111111')
+        print('1111111111111')
+        masks = list(map(lambda data: self.mask_function(shape=data.image.shape), ci_datas))
+        noise_scaling_maps = self.noise_scaling_maps_from_result(previous_results[-1])
+        ci_datas_fit = [self.extract_ci_hyper_data(data=data, mask=mask, noise_scaling_maps=maps) for
+                        data, mask, maps in zip(ci_datas, masks, noise_scaling_maps)]
+        ci_datas_full = list(map(lambda data, mask, maps:
+                                 ci_data.MaskedCIHyperData(image=data.image, noise_map=data.noise_map,
+                                                           ci_pre_cti=data.ci_pre_cti, mask=mask,
+                                                           ci_pattern=data.ci_pattern, ci_frame=data.ci_frame,
+                                                           noise_scaling_maps=maps),
+                                 ci_datas, masks, noise_scaling_maps))
+
+        self.pass_priors(previous_results)
+        analysis = self.Analysis(ci_datas_extracted=ci_datas_fit, ci_datas_full=ci_datas_full,
+                                           cti_settings=cti_settings, phase_name=self.phase_name,
+                                           previous_results=previous_results, pool=pool)
+        return analysis
 
     def noise_scaling_maps_from_result(self, result):
         """
@@ -636,8 +679,45 @@ class SerialHyperPhase(SerialPhase, HyperPhase):
         return data.serial_hyper_calibration_data(rows=self.rows or (0, data.ci_pattern.regions[0].total_rows),
                                                   mask=mask, noise_scaling_maps=noise_scaling_maps)
 
-    def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
-        super(HyperPhase, self).make_analysis(ci_datas, cti_settings, previous_results, pool)
+    # def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
+    #     super(HyperPhase, self).make_analysis(ci_datas, cti_settings, previous_results, pool)
+
+    class Analysis(Phase.Analysis):
+
+        def fit(self, instance):
+            """
+            Runs the analysis. Determine how well the supplied cti_params fits the image.
+
+            Params
+            ----------
+            parallel : arctic_params.ParallelParams
+                A class describing the parallel cti model and parameters.
+            parallel : arctic_params.SerialParams
+                A class describing the serial cti model and parameters.
+            hyp : ci_hyper.HyperCINoise
+                A class describing the noises scaling ci_hyper-parameters.
+
+            Returns
+            -------
+            result: Result
+                An object comprising the final cti_params instances generated and a corresponding figure_of_merit
+            """
+            cti_params = cti_params_for_instance(instance=instance)
+            self.check_trap_lifetimes_are_ascending(cti_params=cti_params)
+            pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
+                                    hyper_noise_scalars=instance.hyper_noise_scalars)
+            likelihood = np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
+            print(likelihood)
+            return likelihood
+
+        @classmethod
+        def describe(cls, instance):
+            return (
+                "\nRunning CTI analysis for... \n\n"
+                "Serial Species:\n{}\n\n "
+                "Serial CCD\n{}\n\n"
+                "Hyper Parameters".format(instance.serial_species, instance.serial_ccd))
+                                        #       " ".join(instance.hyper_noise_scalars)))
 
 
 class ParallelSerialHyperPhase(ParallelSerialPhase, HyperPhase):

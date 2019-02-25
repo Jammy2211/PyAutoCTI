@@ -109,7 +109,7 @@ class ImageFrame(np.ndarray):
         """
         util.numpy_array_to_fits(array=self, file_path=file_path, overwrite=overwrite)
 
-    def add_cti_to_image(self, cti_params, cti_settings):
+    def add_cti_to_image(self, cti_params, cti_settings, use_parallel_poisson_densities=False):
         """Add cti to the image.
 
         Parameters
@@ -119,7 +119,8 @@ class ImageFrame(np.ndarray):
         cti_settings : ArcticSettings.ArcticSettings
             The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
         """
-        return self.frame_geometry.add_cti(image=self, cti_params=cti_params, cti_settings=cti_settings)
+        return self.frame_geometry.add_cti(image=self, cti_params=cti_params, cti_settings=cti_settings,
+                                           use_parallel_poisson_densities=use_parallel_poisson_densities)
 
     def correct_cti_from_image(self, cti_params, cti_settings):
         """Correct cti from the image.

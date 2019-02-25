@@ -298,7 +298,7 @@ class MaskedCIHyperData(MaskedCIData):
 
 
 def simulate(ci_pre_cti, frame_geometry, ci_pattern, cti_params, cti_settings, read_noise=None, cosmic_ray_image=None,
-             noise_seed=-1):
+             use_parallel_poisson_densities=False, noise_seed=-1):
     """Simulate a charge injection image, including effects like noises.
 
     Parameters
@@ -328,7 +328,8 @@ def simulate(ci_pre_cti, frame_geometry, ci_pattern, cti_params, cti_settings, r
 
     ci_pre_cti = cti_image.ImageFrame(frame_geometry=frame_geometry, array=ci_pre_cti)
 
-    ci_post_cti = ci_pre_cti.add_cti_to_image(cti_params, cti_settings)
+    ci_post_cti = ci_pre_cti.add_cti_to_image(cti_params=cti_params, cti_settings=cti_settings,
+                                              use_parallel_poisson_densities=use_parallel_poisson_densities)
 
     if read_noise is not None:
         ci_image = ci_post_cti + read_noise_map_from_shape_and_sigma(shape=ci_post_cti.shape, sigma=read_noise,
