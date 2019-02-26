@@ -373,7 +373,14 @@ class TestHyperPhase(object):
     def test_hyper_phase_make_analysis(self):
         phase = ph.ParallelHyperPhase()
         analysis = phase.make_analysis([], [], previous_results=[MockResult])
+        assert isinstance(analysis, ph.HyperPhase.Analysis)
 
+        phase = ph.SerialHyperPhase()
+        analysis = phase.make_analysis([], [], previous_results=[MockResult])
+        assert isinstance(analysis, ph.HyperPhase.Analysis)
+
+        phase = ph.ParallelSerialHyperPhase()
+        analysis = phase.make_analysis([], [], previous_results=[MockResult])
         assert isinstance(analysis, ph.HyperPhase.Analysis)
 
 

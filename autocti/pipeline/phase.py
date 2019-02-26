@@ -488,7 +488,7 @@ class ParallelSerialPhase(Phase):
                                             instance.serial_species, instance.serial_ccd))
 
 
-class HyperPhase(object):
+class HyperPhase(Phase):
     """
     Mixin for hyper phases. Extracts noise scaling maps and creates MaskedCIHyperData objects for analysis.
     """
@@ -599,9 +599,6 @@ class ParallelHyperPhase(HyperPhase, ParallelPhase):
                          mask_function=mask_function, columns=columns, phase_name=phase_name)
         self.number_of_noise_scalars = 2
 
-    def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
-        return super(ParallelHyperPhase, self).make_analysis(ci_datas, cti_settings, previous_results, pool)
-
     def noise_scaling_maps_from_result(self, result):
         """
         Extract relevant noise scalings maps from the previous result.
@@ -627,48 +624,6 @@ class SerialHyperPhase(SerialPhase, HyperPhase):
                          mask_function=mask_function, rows=rows, phase_name=phase_name)
         self.number_of_noise_scalars = 2
 
-    def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
-        """
-        Create an analysis object. Also calls the prior passing and image modifying functions to allow child classes to
-        change the behaviour of the phase.
-
-        Parameters
-        ----------
-        cti_settings
-        ci_datas
-        pool
-        previous_results: ResultsCollection
-            The result from the previous phase
-
-        Returns
-        -------
-        analysis: Analysis
-            An analysis object that the non-linear optimizer calls to determine the fit of a set of values
-        """
-        print('1111111111111')
-        print('1111111111111')
-        print('1111111111111')
-        print('1111111111111')
-        print('1111111111111')
-        print('1111111111111')
-        print('1111111111111')
-        masks = list(map(lambda data: self.mask_function(shape=data.image.shape), ci_datas))
-        noise_scaling_maps = self.noise_scaling_maps_from_result(previous_results[-1])
-        ci_datas_fit = [self.extract_ci_hyper_data(data=data, mask=mask, noise_scaling_maps=maps) for
-                        data, mask, maps in zip(ci_datas, masks, noise_scaling_maps)]
-        ci_datas_full = list(map(lambda data, mask, maps:
-                                 ci_data.MaskedCIHyperData(image=data.image, noise_map=data.noise_map,
-                                                           ci_pre_cti=data.ci_pre_cti, mask=mask,
-                                                           ci_pattern=data.ci_pattern, ci_frame=data.ci_frame,
-                                                           noise_scaling_maps=maps),
-                                 zip(ci_datas, masks, noise_scaling_maps)))
-
-        self.pass_priors(previous_results)
-        analysis = self.Analysis(ci_datas_extracted=ci_datas_fit, ci_datas_full=ci_datas_full,
-                                 cti_settings=cti_settings, phase_name=self.phase_name,
-                                 previous_results=previous_results, pool=pool)
-        return analysis
-
     def noise_scaling_maps_from_result(self, result):
         """
         Extract relevant noise scalings maps from the previous result.
@@ -678,46 +633,6 @@ class SerialHyperPhase(SerialPhase, HyperPhase):
     def extract_ci_hyper_data(self, data, mask, noise_scaling_maps):
         return data.serial_hyper_calibration_data(rows=self.rows or (0, data.ci_pattern.regions[0].total_rows),
                                                   mask=mask, noise_scaling_maps=noise_scaling_maps)
-
-    # def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
-    #     super(HyperPhase, self).make_analysis(ci_datas, cti_settings, previous_results, pool)
-
-    class Analysis(Phase.Analysis):
-
-        def fit(self, instance):
-            """
-            Runs the analysis. Determine how well the supplied cti_params fits the image.
-
-            Params
-            ----------
-            parallel : arctic_params.ParallelParams
-                A class describing the parallel cti model and parameters.
-            parallel : arctic_params.SerialParams
-                A class describing the serial cti model and parameters.
-            hyp : ci_hyper.HyperCINoise
-                A class describing the noises scaling ci_hyper-parameters.
-
-            Returns
-            -------
-            result: Result
-                An object comprising the final cti_params instances generated and a corresponding figure_of_merit
-            """
-            cti_params = cti_params_for_instance(instance=instance)
-            self.check_trap_lifetimes_are_ascending(cti_params=cti_params)
-            pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
-                                    hyper_noise_scalars=instance.hyper_noise_scalars)
-            likelihood = np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
-            print(likelihood)
-            return likelihood
-
-        @classmethod
-        def describe(cls, instance):
-            return (
-                "\nRunning CTI analysis for... \n\n"
-                "Serial Species:\n{}\n\n "
-                "Serial CCD\n{}\n\n"
-                "Hyper Parameters".format(instance.serial_species, instance.serial_ccd))
-            #       " ".join(instance.hyper_noise_scalars)))
 
 
 class ParallelSerialHyperPhase(ParallelSerialPhase, HyperPhase):
@@ -748,9 +663,6 @@ class ParallelSerialHyperPhase(ParallelSerialPhase, HyperPhase):
 
     def extract_ci_hyper_data(self, data, mask, noise_scaling_maps):
         return data.parallel_serial_hyper_calibration_data(mask, noise_scaling_maps=noise_scaling_maps)
-
-    def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
-        super(HyperPhase, self).make_analysis(ci_datas, cti_settings, previous_results, pool)
 
 
 def pipe_cti(ci_data_fit, cti_params, cti_settings):
