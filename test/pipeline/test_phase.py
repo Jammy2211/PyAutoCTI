@@ -4,14 +4,15 @@ import numpy as np
 import pytest
 from autofit import conf
 from autofit.mapper import model_mapper as mm
-from autofit.optimize import non_linear as nl
 from autofit.mapper import prior_model
+from autofit.optimize import non_linear as nl
 from autofit.tools import phase_property
 from autofit.tools.phase import ResultsCollection
 
+from autocti import exc
 from autocti.charge_injection import ci_data as data
-from autocti.charge_injection import ci_frame
 from autocti.charge_injection import ci_fit
+from autocti.charge_injection import ci_frame
 from autocti.data import mask as msk
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
@@ -68,7 +69,6 @@ class MockPattern(object):
         self.regions = [ci_frame.Region(region=[0, 1, 0, 1])]
 
 
-
 @pytest.fixture(name="phase")
 def make_phase():
     return ph.ParallelPhase(optimizer_class=NLO)
@@ -95,7 +95,7 @@ def make_ci_data(frame_geometry, ci_pattern):
     image = np.ones((3, 3))
     noise = np.ones((3, 3))
     ci_pre_cti = np.ones((3, 3))
-    return data.CIData(image=image, noise_map=noise, ci_pre_cti=ci_pre_cti, ci_pattern=ci_pattern, 
+    return data.CIData(image=image, noise_map=noise, ci_pre_cti=ci_pre_cti, ci_pattern=ci_pattern,
                        ci_frame=frame_geometry)
 
 
@@ -124,7 +124,6 @@ class TestPhase(object):
         assert phase.optimizer.constant.parallel_species != [parallel]
 
     def test__make_analysis(self, phase, ci_data, cti_settings):
-
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
         assert analysis.last_results is None
         assert (analysis.ci_datas_extracted[0].image == ci_data.image).all()
@@ -132,6 +131,147 @@ class TestPhase(object):
         assert (analysis.ci_datas_full[0].image == ci_data.image).all()
         assert (analysis.ci_datas_full[0].noise_map == ci_data.noise_map).all()
         assert analysis.cti_settings == cti_settings
+
+    def test__parallel_phase__if_trap_lifetime_not_ascending__raises_exception(self, phase, ci_data, cti_settings):
+        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+
+        species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=1.0)
+        species_1 = arctic_params.Species(trap_density=0.0, trap_lifetime=2.0)
+        cti_params = arctic_params.ArcticParams(parallel_species=[species_0, species_1])
+
+        analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
+
+        species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=1.0)
+        species_1 = arctic_params.Species(trap_density=0.0, trap_lifetime=2.0)
+        species_2 = arctic_params.Species(trap_density=0.0, trap_lifetime=3.0)
+        cti_params = arctic_params.ArcticParams(parallel_species=[species_0, species_1, species_2])
+
+        analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
+
+        species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=2.0)
+        species_1 = arctic_params.Species(trap_density=0.0, trap_lifetime=1.0)
+        cti_params = arctic_params.ArcticParams(parallel_species=[species_0, species_1])
+
+        with pytest.raises(exc.PriorException):
+            analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
+
+        species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=1.0)
+        species_1 = arctic_params.Species(trap_density=0.0, trap_lifetime=2.0)
+        species_2 = arctic_params.Species(trap_density=0.0, trap_lifetime=1.0)
+        cti_params = arctic_params.ArcticParams(parallel_species=[species_0, species_1, species_2])
+
+        with pytest.raises(exc.PriorException):
+            analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
+
+        species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=4.0)
+        species_1 = arctic_params.Species(trap_density=0.0, trap_lifetime=2.0)
+        species_2 = arctic_params.Species(trap_density=0.0, trap_lifetime=3.0)
+        cti_params = arctic_params.ArcticParams(parallel_species=[species_0, species_1, species_2])
+
+        with pytest.raises(exc.PriorException):
+            analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
+
+        species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=5.0)
+        species_1 = arctic_params.Species(trap_density=0.0, trap_lifetime=4.0)
+        species_2 = arctic_params.Species(trap_density=0.0, trap_lifetime=3.0)
+        cti_params = arctic_params.ArcticParams(parallel_species=[species_0, species_1, species_2])
+
+        with pytest.raises(exc.PriorException):
+            analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
+
+    def test__serial_phase__if_trap_lifetime_not_ascending__raises_exception(self, ci_data, cti_settings):
+        phase = ph.SerialPhase(optimizer_class=NLO)
+
+        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+
+        species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=1.0)
+        species_1 = arctic_params.Species(trap_density=0.0, trap_lifetime=2.0)
+        cti_params = arctic_params.ArcticParams(serial_species=[species_0, species_1])
+
+        analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
+
+        species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=1.0)
+        species_1 = arctic_params.Species(trap_density=0.0, trap_lifetime=2.0)
+        species_2 = arctic_params.Species(trap_density=0.0, trap_lifetime=3.0)
+        cti_params = arctic_params.ArcticParams(serial_species=[species_0, species_1, species_2])
+
+        analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
+
+        species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=2.0)
+        species_1 = arctic_params.Species(trap_density=0.0, trap_lifetime=1.0)
+        cti_params = arctic_params.ArcticParams(serial_species=[species_0, species_1])
+
+        with pytest.raises(exc.PriorException):
+            analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
+
+        species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=1.0)
+        species_1 = arctic_params.Species(trap_density=0.0, trap_lifetime=2.0)
+        species_2 = arctic_params.Species(trap_density=0.0, trap_lifetime=1.0)
+        cti_params = arctic_params.ArcticParams(serial_species=[species_0, species_1, species_2])
+
+        with pytest.raises(exc.PriorException):
+            analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
+
+        species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=4.0)
+        species_1 = arctic_params.Species(trap_density=0.0, trap_lifetime=2.0)
+        species_2 = arctic_params.Species(trap_density=0.0, trap_lifetime=3.0)
+        cti_params = arctic_params.ArcticParams(serial_species=[species_0, species_1, species_2])
+
+        with pytest.raises(exc.PriorException):
+            analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
+
+        species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=5.0)
+        species_1 = arctic_params.Species(trap_density=0.0, trap_lifetime=4.0)
+        species_2 = arctic_params.Species(trap_density=0.0, trap_lifetime=3.0)
+        cti_params = arctic_params.ArcticParams(serial_species=[species_0, species_1, species_2])
+
+        with pytest.raises(exc.PriorException):
+            analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
+
+    def test__parallel_serial_phase__if_trap_lifetime_not_ascending__raises_exception(self, ci_data, cti_settings):
+        phase = ph.ParallelSerialPhase(optimizer_class=NLO)
+
+        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+
+        parallel_species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=1.0)
+        parallel_species_1 = arctic_params.Species(trap_density=0.0, trap_lifetime=2.0)
+        serial_species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=1.0)
+        serial_species_1 = arctic_params.Species(trap_density=0.0, trap_lifetime=2.0)
+        cti_params = arctic_params.ArcticParams(parallel_species=[parallel_species_0, parallel_species_1],
+                                                serial_species=[serial_species_0, serial_species_1])
+
+        analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
+
+        parallel_species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=1.0)
+        parallel_species_1 = arctic_params.Species(trap_density=0.0, trap_lifetime=2.0)
+        parallel_species_2 = arctic_params.Species(trap_density=0.0, trap_lifetime=3.0)
+        serial_species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=1.0)
+        serial_species_1 = arctic_params.Species(trap_density=0.0, trap_lifetime=2.0)
+        serial_species_2 = arctic_params.Species(trap_density=0.0, trap_lifetime=3.0)
+        cti_params = arctic_params.ArcticParams(
+            parallel_species=[parallel_species_0, parallel_species_1, parallel_species_2],
+            serial_species=[serial_species_0, serial_species_1, serial_species_2])
+
+        analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
+
+        parallel_species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=2.0)
+        parallel_species_1 = arctic_params.Species(trap_density=0.0, trap_lifetime=1.0)
+        serial_species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=1.0)
+        serial_species_1 = arctic_params.Species(trap_density=0.0, trap_lifetime=2.0)
+        cti_params = arctic_params.ArcticParams(parallel_species=[parallel_species_0, parallel_species_1],
+                                                serial_species=[serial_species_0, serial_species_1])
+
+        with pytest.raises(exc.PriorException):
+            analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
+
+        parallel_species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=1.0)
+        parallel_species_1 = arctic_params.Species(trap_density=0.0, trap_lifetime=2.0)
+        serial_species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=2.0)
+        serial_species_1 = arctic_params.Species(trap_density=0.0, trap_lifetime=1.0)
+        cti_params = arctic_params.ArcticParams(parallel_species=[parallel_species_0, parallel_species_1],
+                                                serial_species=[serial_species_0, serial_species_1])
+        with pytest.raises(exc.PriorException):
+            analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
 
     def test__customize_constant(self, results, ci_data, cti_settings):
         class MyPhase(ph.ParallelPhase):
@@ -149,10 +289,9 @@ class TestPhase(object):
 
     # noinspection PyUnresolvedReferences
     def test__default_data_extractor(self, ci_data, phase):
-
         ci_datas_fit = phase.extract_ci_data(ci_data, msk.Mask.empty_for_shape(ci_data.image.shape))
 
-        assert isinstance(ci_datas_fit, data.CIDataFit)
+        assert isinstance(ci_datas_fit, data.MaskedCIData)
         assert (ci_data.image == ci_datas_fit.image).all()
         assert (ci_data.noise_map == ci_datas_fit.noise_map).all()
         assert (ci_data.ci_pre_cti == ci_datas_fit.ci_pre_cti).all()
@@ -194,10 +333,117 @@ class TestPhase(object):
         assert cti_params.parallel_species == instance.parallel_species
 
 
+class MockResult:
+    noise_scaling_maps_of_ci_regions = 1
+    noise_scaling_maps_of_parallel_trails = 2
+    noise_scaling_maps_of_serial_trails = 3
+    noise_scaling_maps_of_serial_overscan_above_trails = 4
+
+
+class MockInstance:
+    parallel_species = 1
+    parallel_ccd = 2
+    serial_species = 3
+    serial_ccd = 4
+    hyper_noise_scalars = [5]
+
+
+@pytest.fixture(name="parallel_hyper_analysis")
+def make_parallel_hyper_analysis():
+    phase = ph.ParallelHyperPhase()
+    return phase.make_analysis([], [], previous_results=[MockResult])
+
+
+@pytest.fixture(name="serial_hyper_analysis")
+def make_serial_hyper_analysis():
+    phase = ph.SerialHyperPhase()
+    return phase.make_analysis([], [], previous_results=[MockResult])
+
+
+@pytest.fixture(name="parallel_serial_hyper_analysis")
+def make_parallel_serial_hyper_analysis():
+    phase = ph.ParallelSerialHyperPhase()
+    return phase.make_analysis([], [], previous_results=[MockResult])
+
+
 class TestHyperPhase(object):
+    def test_types(self):
+        parallel_phase = ph.ParallelHyperPhase()
+        serial_phase = ph.SerialHyperPhase()
+        parallel_serial_phase = ph.ParallelSerialHyperPhase()
+
+        assert isinstance(parallel_phase, ph.ParallelPhase)
+        assert isinstance(parallel_phase, ph.HyperPhase)
+
+        assert isinstance(serial_phase, ph.SerialPhase)
+        assert isinstance(serial_phase, ph.HyperPhase)
+
+        assert isinstance(parallel_serial_phase, ph.ParallelSerialPhase)
+        assert isinstance(parallel_serial_phase, ph.HyperPhase)
+
+    def test_hyper_phase_make_analysis(self, parallel_hyper_analysis,
+                                       serial_hyper_analysis,
+                                       parallel_serial_hyper_analysis):
+        assert isinstance(parallel_hyper_analysis, ph.HyperPhase.Analysis)
+        assert isinstance(serial_hyper_analysis, ph.HyperPhase.Analysis)
+        assert isinstance(parallel_serial_hyper_analysis, ph.HyperPhase.Analysis)
+
+    def test_describe(self, parallel_hyper_analysis,
+                      serial_hyper_analysis,
+                      parallel_serial_hyper_analysis):
+        assert """
+Running CTI analysis for... 
+
+Parallel CTI: 
+Parallel Species:
+1
+
+Parallel CCD
+2
+
+Hyper Parameters:
+5
+
+""" == parallel_hyper_analysis.describe(MockInstance)
+
+        assert """
+Running CTI analysis for... 
+
+Serial CTI: 
+Serial Species:
+3
+
+Serial CCD
+4
+
+Hyper Parameters:
+5
+
+""" == serial_hyper_analysis.describe(MockInstance)
+
+        assert """
+Running CTI analysis for... 
+
+Parallel CTI: 
+Parallel Species:
+1
+
+Parallel CCD
+2
+
+Serial CTI: 
+Serial Species:
+3
+
+Serial CCD
+4
+
+Hyper Parameters:
+5
+
+""" == parallel_serial_hyper_analysis.describe(MockInstance)
 
     def test__make_analysis(self, phase, ci_data, cti_settings):
-
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
         assert analysis.last_results is None
         assert (analysis.ci_datas_extracted[0].image == ci_data.image).all()
@@ -206,18 +452,35 @@ class TestHyperPhase(object):
         assert (analysis.ci_datas_full[0].noise_map == ci_data.noise_map).all()
         assert analysis.cti_settings == cti_settings
 
+    def test_noise_scaling_map_extraction(self):
+        noise_scaling_maps = ph.ParallelHyperPhase().noise_scaling_maps_from_result(MockResult)
+        assert noise_scaling_maps == [1, 2]
+
+        noise_scaling_maps = ph.SerialHyperPhase().noise_scaling_maps_from_result(MockResult)
+        assert noise_scaling_maps == [1, 3]
+
+        noise_scaling_maps = ph.ParallelSerialHyperPhase().noise_scaling_maps_from_result(MockResult)
+        assert noise_scaling_maps == [1, 2, 3, 4]
+
+    def test_hyper_phase(self):
+        phase = ph.ParallelHyperPhase()
+        assert len(phase.hyper_noise_scalars) == 2
+        assert len(phase.variable.priors) == 2
+
+        instance = phase.variable.instance_from_unit_vector([0.5, 0.5])
+
+        assert instance.hyper_noise_scalars == [5.0, 5.0]
+
 
 class TestResult(object):
 
     def test_results(self):
-
         results = ResultsCollection([1, 2, 3])
         assert results == [1, 2, 3]
         assert results.last == 3
         assert results.first == 1
 
     def test__fits_for_instance__uses_ci_data_fit(self, ci_data, cti_settings):
-
         parallel_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
         parallel_ccd = arctic_params.CCD(well_notch_depth=0.1, well_fill_alpha=0.5, well_fill_beta=0.5,
                                          well_fill_gamma=0.5)
@@ -229,13 +492,12 @@ class TestResult(object):
         instance = phase.constant
 
         fits = analysis.fits_of_ci_data_extracted_for_instance(instance=instance)
-        assert fits[0].ci_pre_cti.shape == (3,1)
+        assert fits[0].ci_pre_cti.shape == (3, 1)
 
         full_fits = analysis.fits_of_ci_data_full_for_instance(instance=instance)
-        assert full_fits[0].ci_pre_cti.shape == (3,3)
+        assert full_fits[0].ci_pre_cti.shape == (3, 3)
 
     def test__fit_figure_of_merit__matches_correct_fit_given_galaxy_profiles(self, ci_data, cti_settings):
-
         parallel_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
         parallel_ccd = arctic_params.CCD(well_notch_depth=0.1, well_fill_alpha=0.5, well_fill_beta=0.5,
                                          well_fill_gamma=0.5)
@@ -249,13 +511,12 @@ class TestResult(object):
         fit_figure_of_merit = analysis.fit(instance=instance)
 
         mask = phase.mask_function(shape=ci_data.image.shape)
-        ci_datas_fit = [phase.extract_ci_data(data=data, mask=mask) for data, mask in zip([ci_data], [mask])]
-        fit = ci_fit.CIFit(ci_data_fit=ci_datas_fit[0], cti_params=cti_params, cti_settings=cti_settings)
+        ci_datas_fit = [phase.extract_ci_data(data=d, mask=mask) for d, mask in zip([ci_data], [mask])]
+        fit = ci_fit.CIFit(masked_ci_data=ci_datas_fit[0], cti_params=cti_params, cti_settings=cti_settings)
 
         assert fit.likelihood == fit_figure_of_merit
 
     def test__results_of_phase_are_available_as_properties(self, ci_data, cti_settings):
-
         phase = ph.ParallelPhase(optimizer_class=NLO,
                                  parallel_species=[prior_model.PriorModel(arctic_params.Species)],
                                  parallel_ccd=arctic_params.CCD, phase_name='test_phase')
@@ -270,7 +531,6 @@ class TestResult(object):
         assert hasattr(result, 'noise_scaling_maps_of_serial_overscan_above_trails')
 
     def test__parallel_phase__noise_scaling_maps_of_images_are_correct(self, ci_data, cti_settings):
-
         phase = ph.ParallelPhase(optimizer_class=NLO,
                                  parallel_species=[prior_model.PriorModel(arctic_params.Species)],
                                  parallel_ccd=arctic_params.CCD, phase_name='test_phase')
@@ -278,9 +538,8 @@ class TestResult(object):
         # The ci_region is [0, 1, 0, 1], therefore by changing the image at 0,0 to 2.0 there will be a residual of 1.0,
         # which for a noise_map entry of 2.0 gives a chi squared of 0.25..
 
-
-        ci_data.image[0,0] = 2.0
-        ci_data.noise_map[0,0] = 2.0
+        ci_data.image[0, 0] = 2.0
+        ci_data.noise_map[0, 0] = 2.0
 
         result = phase.run(ci_datas=[ci_data], cti_settings=cti_settings)
 
@@ -288,6 +547,6 @@ class TestResult(object):
                                                                         [0.0, 0.0, 0.0],
                                                                         [0.0, 0.0, 0.0]])).all()
 
-        assert (result.noise_scaling_maps_of_parallel_trails[0] == np.zeros((3,3))).all()
-        assert (result.noise_scaling_maps_of_serial_trails[0] == np.zeros((3,3))).all()
-        assert (result.noise_scaling_maps_of_serial_overscan_above_trails[0] == np.zeros((3,3))).all()
+        assert (result.noise_scaling_maps_of_parallel_trails[0] == np.zeros((3, 3))).all()
+        assert (result.noise_scaling_maps_of_serial_trails[0] == np.zeros((3, 3))).all()
+        assert (result.noise_scaling_maps_of_serial_overscan_above_trails[0] == np.zeros((3, 3))).all()

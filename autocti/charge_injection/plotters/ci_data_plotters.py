@@ -9,7 +9,7 @@ def plot_ci_subplot(
         ci_data, mask=None, extract_array_from_mask=False,
         figsize=None, aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
-        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
+        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01, cb_tick_values=None, cb_tick_labels=None,
         titlesize=10, xlabelsize=10, ylabelsize=10, xyticksize=10,
         output_path=None, output_filename='ci_data', output_format='show', ignore_config=True):
     """Plot the ci data as a sub-plot of all its quantites (e.g. the data, noise_map-map, PSF, Signal-to_noise-map, \
@@ -51,6 +51,7 @@ def plot_ci_subplot(
             figsize=figsize, aspect=aspect,
             cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
             cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+            cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
             titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
             output_path=output_path, output_format=output_format)
 
@@ -61,6 +62,7 @@ def plot_ci_subplot(
             figsize=figsize, aspect=aspect,
             cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
             cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+            cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
             titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
             output_path=output_path, output_format=output_format)
 
@@ -71,6 +73,7 @@ def plot_ci_subplot(
             figsize=figsize, aspect=aspect,
             cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
             cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+            cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
             titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
             output_path=output_path, output_format=output_format)
 
@@ -81,8 +84,8 @@ def plot_ci_subplot(
             figsize=figsize, aspect=aspect,
             cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
             cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
-            titlesize=titlesize, xlabelsize=xlabelsize,
-            ylabelsize=ylabelsize, xyticksize=xyticksize,
+            cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
+            titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
             output_path=output_path, output_format=output_format)
 
         plotter_util.output_subplot_array(output_path=output_path, output_filename=output_filename,
@@ -131,7 +134,7 @@ def plot_image(
         ci_data, mask=None, extract_array_from_mask=False, as_subplot=False,
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
-        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
+        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01, cb_tick_values=None, cb_tick_labels=None,
         title='Charge Injection Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='ci_image'):
     """Plot the observed image of the ci data.
@@ -149,6 +152,7 @@ def plot_image(
         cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max,
         linthresh=linthresh, linscale=linscale,
         cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+        cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
         title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
         output_path=output_path, output_format=output_format, output_filename=output_filename)
 
@@ -157,7 +161,7 @@ def plot_noise_map(
         ci_data, mask=None, extract_array_from_mask=False, as_subplot=False,
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
-        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
+        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01, cb_tick_values=None, cb_tick_labels=None,
         title='Charge Injection Noise-Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='ci_noise_map'):
     """Plot the observed noise_map of the ci data.
@@ -175,6 +179,7 @@ def plot_noise_map(
         cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max,
         linthresh=linthresh, linscale=linscale,
         cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+        cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
         title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize,
         xyticksize=xyticksize,
         output_path=output_path, output_format=output_format, output_filename=output_filename)
@@ -184,7 +189,7 @@ def plot_ci_pre_cti(
         ci_data, mask=None, extract_array_from_mask=False, as_subplot=False,
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
-        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
+        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01, cb_tick_values=None, cb_tick_labels=None,
         title='Charge Injection Pre-CTI Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='ci_pre_cti'):
     """Plot the observed ci_pre_cti of the ci data.
@@ -203,6 +208,7 @@ def plot_ci_pre_cti(
         cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max,
         linthresh=linthresh, linscale=linscale,
         cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+        cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
         title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
         output_path=output_path, output_format=output_format, output_filename=output_filename)
 
@@ -211,7 +217,7 @@ def plot_signal_to_noise_map(
         ci_data, mask=None, extract_array_from_mask=False, as_subplot=False,
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
-        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
+        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01, cb_tick_values=None, cb_tick_labels=None,
         title='Charge Injection Signal-to-Noise Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='ci_signal_to_noise_map'):
     """Plot the observed signal_to_noise_map of the ci data.
@@ -230,5 +236,6 @@ def plot_signal_to_noise_map(
         cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max,
         linthresh=linthresh, linscale=linscale,
         cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+        cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
         title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
         output_path=output_path, output_format=output_format, output_filename=output_filename)

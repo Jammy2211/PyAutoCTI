@@ -27,8 +27,17 @@ import numpy as np
 
 from autocti.model import arctic_params
 
+def call_arctic(image, species, ccd, settings, correct_cti=False, use_poisson_densities=False):
 
-def call_arctic(image, species, ccd, settings, correct_cti=False):
+    if not use_poisson_densities:
+        return call_arctic_constant_density(image=image, species=species, ccd=ccd, settings=settings,
+                                            correct_cti=correct_cti)
+    elif use_poisson_densities:
+        return call_arctic_parallel_poisson_density(image=image, species=species, ccd=ccd, settings=settings,
+                                                    correct_cti=correct_cti)
+
+
+def call_arctic_constant_density(image, species, ccd, settings, correct_cti):
     """
     Perform image clocking via an arctic call (via swig wrapping), either adding or correcting cti to an image in \
     either the parallel or serial direction
@@ -69,7 +78,7 @@ def call_arctic(image, species, ccd, settings, correct_cti=False):
     clock_routine = arctic.cte_image_neo()  # Setup instance of arctic charge clocking routine
 
     clock_params = clock_routine.parameters  # Initiate the parameters which the arctic clocking routine uses
-    clock_params.unclock = settings.unclock = correct_cti  # Include unclock in parameters to pass to different
+    clock_params.unclock = correct_cti  # Include unclock in parameters to pass to different
     # routines easily
 
     set_arctic_settings(clock_params=clock_params, settings=settings)
@@ -89,14 +98,14 @@ def clock_image(clock_routine, clock_params, image):
     return image
 
 
-def call_arctic_parallel_density_vary(image, species, ccd, settings):
+def call_arctic_parallel_poisson_density(image, species, ccd, settings, correct_cti):
     # noinspection PyUnresolvedReferences,PyPep8Naming
     import pySHE_ArCTIC as arctic
 
-    settings.unclock = False  # Include unclock in parameters to pass to different routines easily
     clock_routine = arctic.cte_image_neo()  # Setup instance of arctic charge clocking routine
 
     clock_params = clock_routine.parameters  # Initiate the parameters which the arctic clocking routine uses
+    clock_params.unclock = correct_cti # Include unclock in parameters to pass to different
 
     set_arctic_settings(clock_params=clock_params, settings=settings)
 
@@ -124,6 +133,7 @@ def clock_image_variable_density(clock_routine, clock_params, image, species, cc
     species_per_column = int(len(species) / image.shape[1])
 
     for column_no in range(image.shape[1]):
+
         set_arctic_params(clock_params=clock_params,
                           species=species[column_no * species_per_column: (column_no + 1) * species_per_column],
                           ccd=ccd)
