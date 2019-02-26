@@ -343,6 +343,8 @@ class MockResult:
 class MockInstance:
     parallel_species = 1
     parallel_ccd = 2
+    serial_species = 3
+    serial_ccd = 4
     hyper_noise_scalars = ["h"]
 
 
@@ -389,7 +391,6 @@ class TestHyperPhase(object):
     def test_describe(self, parallel_hyper_analysis,
                       serial_hyper_analysis,
                       parallel_serial_hyper_analysis):
-        print(parallel_hyper_analysis.describe(MockInstance))
         assert """
 Running CTI analysis for... 
 
@@ -397,13 +398,50 @@ Parallel CTI:
 Parallel Species:
 1
 
- Parallel CCD
+Parallel CCD
 2
 
 Hyper Parameters:
 h
 
 """ == parallel_hyper_analysis.describe(MockInstance)
+
+        assert """
+Running CTI analysis for... 
+
+Serial CTI: 
+Serial Species:
+3
+
+Serial CCD
+4
+
+Hyper Parameters:
+h
+
+""" == serial_hyper_analysis.describe(MockInstance)
+
+        assert """
+Running CTI analysis for... 
+
+Parallel CTI: 
+Parallel Species:
+1
+
+Parallel CCD
+2
+
+Serial CTI: 
+Serial Species:
+3
+
+Serial CCD
+4
+
+Hyper Parameters:
+h
+
+""" == parallel_serial_hyper_analysis.describe(MockInstance)
 
     def test__make_analysis(self, phase, ci_data, cti_settings):
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
