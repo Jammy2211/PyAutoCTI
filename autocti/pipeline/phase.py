@@ -561,7 +561,7 @@ class HyperPhase(Phase):
                 return (
                     "{}"
                     "Hyper Parameters:\n{}\n\n".format(super().describe(instance),
-                                                   " ".join(instance.hyper_noise_scalars)))
+                                                       " ".join(map(str, instance.hyper_noise_scalars))))
 
         analysis = HyperAnalysis(ci_datas_extracted=ci_datas_fit, ci_datas_full=ci_datas_full,
                                  cti_settings=cti_settings, phase_name=self.phase_name,
