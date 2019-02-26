@@ -102,7 +102,9 @@ def make_params_both():
 
 
 class TestQuadrantGeometryEuclidBottomLeft:
+
     class TestAddCTI:
+
         class TestParallelCTI:
 
             def test__horizontal_charge_line__loses_charge_and_trails_form_below_line(self, arctic_parallel,
@@ -1249,3 +1251,114 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_difference_2 = image_correct_cti - image_pre_cti
 
                 assert (abs(image_difference_2) <= abs(image_difference_1)).all()
+
+
+class TestParallelPoissonDensities:
+
+    def test__horizontal_charge_line__clock_variable_densities_with_same_densities__identical_to_normal_clocking(self,
+                                                                                                     arctic_parallel):
+
+        image_pre_cti = np.zeros((5, 5))
+        image_pre_cti[2, :] = + 100
+
+        im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=image_pre_cti)
+
+        parallel_species = arctic_params.Species(trap_density=10.0, trap_lifetime=1.0)
+        parallel_ccd = arctic_params.CCD(well_notch_depth=1.0e-4, well_fill_beta=0.58, well_fill_gamma=0.0,
+                                         well_fill_alpha=1.0)
+        params_parallel = arctic_params.ArcticParams(parallel_species=[parallel_species], parallel_ccd=parallel_ccd)
+        image_post_cti_const = im.add_cti_to_image(cti_params=params_parallel, cti_settings=arctic_parallel,
+                                             use_parallel_poisson_densities=False)
+
+        parallel_species = arctic_params.Species(trap_density=10.0, trap_lifetime=1.0)
+        parallel_species = arctic_params.Species.poisson_species(species=[parallel_species], shape=im.shape, seed=1)
+        parallel_species[0].trap_density = 10.0
+        parallel_species[1].trap_density = 10.0
+        parallel_species[2].trap_density = 10.0
+        parallel_species[3].trap_density = 10.0
+        parallel_species[4].trap_density = 10.0
+        parallel_ccd = arctic_params.CCD(well_notch_depth=1.0e-4, well_fill_beta=0.58, well_fill_gamma=0.0,
+                                         well_fill_alpha=1.0)
+
+        params_parallel = arctic_params.ArcticParams(parallel_species=parallel_species, parallel_ccd=parallel_ccd)
+
+        image_post_cti_poisson = im.add_cti_to_image(cti_params=params_parallel, cti_settings=arctic_parallel,
+                                             use_parallel_poisson_densities=True)
+
+        assert (image_post_cti_const == image_post_cti_poisson).all()
+
+    def test__same_as_above__include_serial_cti__serial_cti_trails_to_the_right(self, arctic_parallel, arctic_serial):
+
+        serial_species = arctic_params.Species(trap_density=0.2, trap_lifetime=2.0)
+        serial_ccd = arctic_params.CCD(well_notch_depth=0.000001, well_fill_beta=0.4)
+
+        image_pre_cti = np.zeros((5, 5))
+        image_pre_cti[2, 0:4] = + 100
+
+        im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=image_pre_cti)
+
+        parallel_species = arctic_params.Species(trap_density=10.0, trap_lifetime=1.0)
+        parallel_ccd = arctic_params.CCD(well_notch_depth=1.0e-4, well_fill_beta=0.58, well_fill_gamma=0.0,
+                                         well_fill_alpha=1.0)
+        params_both = arctic_params.ArcticParams(parallel_species=[parallel_species], parallel_ccd=parallel_ccd,
+                                                 serial_species=[serial_species], serial_ccd=serial_ccd)
+
+        arctic_both = arctic_settings.ArcticSettings(neomode='NEO', parallel=arctic_parallel.parallel,
+                                                       serial=arctic_serial.serial)
+
+        image_post_cti_const = im.add_cti_to_image(cti_params=params_both, cti_settings=arctic_both,
+                                                   use_parallel_poisson_densities=False)
+
+        parallel_species = arctic_params.Species(trap_density=10.0, trap_lifetime=1.0)
+        parallel_species = arctic_params.Species.poisson_species(species=[parallel_species], shape=im.shape, seed=1)
+        parallel_species[0].trap_density = 10.0
+        parallel_species[1].trap_density = 10.0
+        parallel_species[2].trap_density = 10.0
+        parallel_species[3].trap_density = 10.0
+        parallel_species[4].trap_density = 10.0
+        parallel_ccd = arctic_params.CCD(well_notch_depth=1.0e-4, well_fill_beta=0.58, well_fill_gamma=0.0,
+                                         well_fill_alpha=1.0)
+
+        params_both = arctic_params.ArcticParams(parallel_species=parallel_species, parallel_ccd=parallel_ccd,
+                                                 serial_species=[serial_species], serial_ccd=serial_ccd)
+
+        image_post_cti_poisson = im.add_cti_to_image(cti_params=params_both, cti_settings=arctic_both,
+                                                     use_parallel_poisson_densities=True)
+
+        assert (image_post_cti_const == image_post_cti_poisson).all()
+        assert image_post_cti_poisson[2, 4] > 0
+
+    def test__horizontal_charge_line__captures_reflect_poisson_densities(self, arctic_parallel):
+
+        image_pre_cti = np.zeros((5, 5))
+        image_pre_cti[2, :] = + 100
+
+        im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=image_pre_cti)
+
+        # Densities for this seed are [9.6, 8.2, 8.6, 9.6, 9.6]
+
+        parallel_species = arctic_params.Species(trap_density=10.0, trap_lifetime=1.0)
+        parallel_species = arctic_params.Species.poisson_species(species=[parallel_species], shape=im.shape, seed=1)
+        parallel_ccd = arctic_params.CCD(well_notch_depth=1.0e-4, well_fill_beta=0.58, well_fill_gamma=0.0,
+                                         well_fill_alpha=1.0)
+
+        params_parallel = arctic_params.ArcticParams(parallel_species=parallel_species, parallel_ccd=parallel_ccd)
+
+        image_post_cti = im.add_cti_to_image(cti_params=params_parallel, cti_settings=arctic_parallel,
+                                             use_parallel_poisson_densities=True)
+
+        # Leading edge captures are same for pixels with same density, lower for pixels with lower density
+
+        assert image_post_cti[2, 0] == image_post_cti[2, 3]
+        assert image_post_cti[2, 0] == image_post_cti[2, 4]
+        assert image_post_cti[2, 0] < image_post_cti[2, 1]
+        assert image_post_cti[2, 0] < image_post_cti[2, 2]
+        assert image_post_cti[2, 1] > image_post_cti[2, 2]
+
+        # brightest trails in higher density columns
+
+        assert image_post_cti[3, 0] == image_post_cti[3, 3]
+        assert image_post_cti[3, 0] == image_post_cti[3, 4]
+        assert image_post_cti[3, 0] > image_post_cti[3, 1]
+        assert image_post_cti[3, 0] > image_post_cti[3, 2]
+        assert image_post_cti[3, 1] < image_post_cti[3, 2]

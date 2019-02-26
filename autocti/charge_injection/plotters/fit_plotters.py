@@ -7,7 +7,7 @@ def plot_image(
         fit, mask=None, extract_array_from_mask=False, as_subplot=False,
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
-        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
+        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01, cb_tick_values=None, cb_tick_labels=None,
         title='Fit Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='fit_image'):
     """Plot the observed image of the ccd data.
@@ -25,6 +25,7 @@ def plot_image(
         figsize=figsize, aspect=aspect,
         cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
         cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+        cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
         title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
         output_path=output_path, output_format=output_format, output_filename=output_filename)
 
@@ -32,7 +33,7 @@ def plot_noise_map(
         fit, mask=None, extract_array_from_mask=False, as_subplot=False,
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
-        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
+        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01, cb_tick_values=None, cb_tick_labels=None,
         title='Fit Noise-Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='fit_noise_map'):
     """Plot the observed noise_map of the ccd data.
@@ -50,6 +51,7 @@ def plot_noise_map(
         figsize=figsize, aspect=aspect,
         cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
         cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+        cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
         title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
         output_path=output_path, output_format=output_format, output_filename=output_filename)
 
@@ -58,7 +60,7 @@ def plot_signal_to_noise_map(
         fit, mask=None, extract_array_from_mask=False, as_subplot=False,
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
-        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
+        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01, cb_tick_values=None, cb_tick_labels=None,
         title='Fit Signal-to-Noise Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='fit_signal_to_noise_map'):
     """Plot the observed signal_to_noise_map of the ccd data.
@@ -76,6 +78,7 @@ def plot_signal_to_noise_map(
         figsize=figsize, aspect=aspect,
         cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
         cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+        cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
         title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
         output_path=output_path, output_format=output_format, output_filename=output_filename)
 
@@ -84,7 +87,7 @@ def plot_ci_pre_cti(
         fit, mask=None, extract_array_from_mask=False, as_subplot=False,
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
-        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
+        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01, cb_tick_values=None, cb_tick_labels=None,
         title='Fit Pre-CTI CI Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='fit_ci_pre_cti'):
     """Plot the observed ci_pre_cti of the ccd data.
@@ -102,6 +105,7 @@ def plot_ci_pre_cti(
         figsize=figsize, aspect=aspect,
         cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
         cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+        cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
         title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
         output_path=output_path, output_format=output_format, output_filename=output_filename)
 
@@ -110,7 +114,7 @@ def plot_ci_post_cti(
         fit, mask=None, extract_array_from_mask=False, as_subplot=False,
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
-        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
+        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01, cb_tick_values=None, cb_tick_labels=None,
         title='Fit Post-CTI CI Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='fit_ci_post_cti'):
     """Plot the observed ci_post_cti of the ccd data.
@@ -128,6 +132,7 @@ def plot_ci_post_cti(
         figsize=figsize, aspect=aspect,
         cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
         cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+        cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
         title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
         output_path=output_path, output_format=output_format, output_filename=output_filename)
 
@@ -136,7 +141,7 @@ def plot_residual_map(
         fit, mask=None, extract_array_from_mask=False, as_subplot=False,
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
-        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
+        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01, cb_tick_values=None, cb_tick_labels=None,
         title='Fit Residual Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='fit_residual_map'):
     """Plot the observed residual_map of the ccd data.
@@ -154,6 +159,7 @@ def plot_residual_map(
         figsize=figsize, aspect=aspect,
         cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
         cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+        cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
         title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
         output_path=output_path, output_format=output_format, output_filename=output_filename)
 
@@ -162,7 +168,7 @@ def plot_chi_squared_map(
         fit, mask=None, extract_array_from_mask=False, as_subplot=False,
         figsize=(7, 7), aspect='equal',
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
-        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
+        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01, cb_tick_values=None, cb_tick_labels=None,
         title='Fit Chi-Squared Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='fit_chi_squared_map'):
     """Plot the observed chi_squared_map of the ccd data.
@@ -180,5 +186,6 @@ def plot_chi_squared_map(
         figsize=figsize, aspect=aspect,
         cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
         cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+        cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
         title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
         output_path=output_path, output_format=output_format, output_filename=output_filename)

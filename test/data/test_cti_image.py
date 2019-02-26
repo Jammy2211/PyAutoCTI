@@ -220,6 +220,7 @@ class TestQuadrantEuclidGeometry:
 
 
 class TestQuadrantGeometryEuclidBottomLeft:
+
     class TestConstrutor:
 
         def test__sets_up_quadrant__including_correct_scans(self):

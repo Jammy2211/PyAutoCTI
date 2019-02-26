@@ -10,7 +10,7 @@ from autocti.data.plotters import plotter_util
 def plot_array(array, mask=None, extract_array_from_mask=False, as_subplot=False,
                figsize=(7, 7), aspect='equal',
                cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
-               cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01,
+               cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01, cb_tick_values=None, cb_tick_labels=None,
                title='Array', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
                output_path=None, output_format='show', output_filename='array'):
     """Plot an array of hyper as a figure.
@@ -82,7 +82,8 @@ def plot_array(array, mask=None, extract_array_from_mask=False, as_subplot=False
     plotter_util.set_title(title=title, titlesize=titlesize)
     set_xy_labels_and_ticksize(xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize)
 
-    set_colorbar(cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad)
+    set_colorbar(cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+                 cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels)
     plotter_util.output_figure(array, as_subplot=as_subplot, output_path=output_path, output_filename=output_filename,
                                output_format=output_format)
     plotter_util.close_figure(as_subplot=as_subplot)
@@ -243,7 +244,7 @@ def set_xy_labels_and_ticksize(xlabelsize, ylabelsize, xyticksize):
     plt.tick_params(labelsize=xyticksize)
 
 
-def set_colorbar(cb_ticksize, cb_fraction, cb_pad):
+def set_colorbar(cb_ticksize, cb_fraction, cb_pad, cb_tick_values, cb_tick_labels):
     """Setup the colorbar of the figure, specifically its ticksize and the size is appears relative to the figure.
 
     Parameters
@@ -254,8 +255,21 @@ def set_colorbar(cb_ticksize, cb_fraction, cb_pad):
         The fraction of the figure that the colorbar takes up, which resizes the colorbar relative to the figure.
     cb_pad : float
         Pads the color bar in the figure, which resizes the colorbar relative to the figure.
+    cb_tick_values : [float]
+        Manually specified values of where the colorbar tick labels appear on the colorbar.
+    cb_tick_labels : [float]
+        Manually specified labels of the color bar tick labels, which appear where specified by cb_tick_values.
     """
-    cb = plt.colorbar(fraction=cb_fraction, pad=cb_pad)
+
+    if cb_tick_values is None and cb_tick_labels is None:
+        cb = plt.colorbar(fraction=cb_fraction, pad=cb_pad)
+    elif cb_tick_values is not None and cb_tick_labels is not None:
+        cb = plt.colorbar(fraction=cb_fraction, pad=cb_pad, ticks=cb_tick_values)
+        cb.ax.set_yticklabels(cb_tick_labels)
+    else:
+        raise exc.PlottingException('Only 1 entry of cb_tick_values or cb_tick_labels was input. You must either supply'
+                                    'both the values and labels, or neither.')
+
     cb.ax.tick_params(labelsize=cb_ticksize)
 
 
