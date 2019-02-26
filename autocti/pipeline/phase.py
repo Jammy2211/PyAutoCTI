@@ -394,7 +394,7 @@ class ParallelPhase(Phase):
         def describe(self, instance):
             return ("\nRunning CTI analysis for... \n\n"
                     "Parallel CTI: \n"
-                    "Parallel Species:\n{}\n\n "
+                    "Parallel Species:\n{}\n\n"
                     "Parallel CCD\n{}\n\n".format(instance.parallel_species, instance.parallel_ccd))
 
 
@@ -426,10 +426,9 @@ class SerialPhase(Phase):
         def describe(self, instance):
             return (
                 "\nRunning CTI analysis for... \n\n"
-                "Serial Species:\n{}\n\n "
-                "Serial CCD\n{}\n\n"
-                "Hyper Parameters:\n{}".format(instance.serial_species, instance.serial_ccd,
-                                               " ".join(instance.hyper_noise_scalars)))
+                "Serial CTI: \n"
+                "Serial Species:\n{}\n\n"
+                "Serial CCD\n{}\n\n".format(instance.serial_species, instance.serial_ccd))
 
 
 class ParallelSerialPhase(Phase):
@@ -477,10 +476,10 @@ class ParallelSerialPhase(Phase):
             return (
                 "\nRunning CTI analysis for... \n\n"
                 "Parallel CTI: \n"
-                "Parallel Species:\n{}\n\n "
+                "Parallel Species:\n{}\n\n"
                 "Parallel CCD\n{}\n\n"
                 "Serial CTI: \n"
-                "Serial Species:\n{}\n\n "
+                "Serial Species:\n{}\n\n"
                 "Serial CCD\n{}\n\n".format(instance.parallel_species, instance.parallel_ccd,
                                             instance.serial_species, instance.serial_ccd))
 
