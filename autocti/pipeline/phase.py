@@ -391,8 +391,7 @@ class ParallelPhase(Phase):
             if not sorted(trap_lifetimes) == trap_lifetimes:
                 raise exc.PriorException
 
-        @classmethod
-        def describe(cls, instance):
+        def describe(self, instance):
             return ("\nRunning CTI analysis for... \n\n"
                     "Parallel CTI: \n"
                     "Parallel Species:\n{}\n\n "
@@ -424,8 +423,7 @@ class SerialPhase(Phase):
             if not sorted(trap_lifetimes) == trap_lifetimes:
                 raise exc.PriorException
 
-        @classmethod
-        def describe(cls, instance):
+        def describe(self, instance):
             return (
                 "\nRunning CTI analysis for... \n\n"
                 "Serial Species:\n{}\n\n "
@@ -475,8 +473,7 @@ class ParallelSerialPhase(Phase):
             if not sorted(trap_lifetimes) == trap_lifetimes:
                 raise exc.PriorException
 
-        @classmethod
-        def describe(cls, instance):
+        def describe(self, instance):
             return (
                 "\nRunning CTI analysis for... \n\n"
                 "Parallel CTI: \n"
@@ -533,46 +530,44 @@ class HyperPhase(Phase):
                                  zip(ci_datas, masks, noise_scaling_maps)))
 
         self.pass_priors(previous_results)
-        analysis = HyperPhase.Analysis(ci_datas_extracted=ci_datas_fit, ci_datas_full=ci_datas_full,
-                                       cti_settings=cti_settings, phase_name=self.phase_name,
-                                       previous_results=previous_results, pool=pool)
+
+        class HyperAnalysis(self.__class__.Analysis):
+
+            def fit(self, instance):
+                """
+                Runs the analysis. Determine how well the supplied cti_params fits the image.
+
+                Params
+                ----------
+                parallel : arctic_params.ParallelParams
+                    A class describing the parallel cti model and parameters.
+                parallel : arctic_params.SerialParams
+                    A class describing the serial cti model and parameters.
+                hyp : ci_hyper.HyperCINoise
+                    A class describing the noises scaling ci_hyper-parameters.
+
+                Returns
+                -------
+                result: Result
+                    An object comprising the final cti_params instances generated and a corresponding figure_of_merit
+                """
+                cti_params = cti_params_for_instance(instance=instance)
+                self.check_trap_lifetimes_are_ascending(cti_params=cti_params)
+                pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
+                                        hyper_noise_scalars=instance.hyper_noise_scalars)
+                likelihood = np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
+                return likelihood
+
+            def describe(self, instance):
+                return (
+                    "{}"
+                    "Hyper Parameters:\n{}\n\n".format(super().describe(instance),
+                                                   " ".join(instance.hyper_noise_scalars)))
+
+        analysis = HyperAnalysis(ci_datas_extracted=ci_datas_fit, ci_datas_full=ci_datas_full,
+                                 cti_settings=cti_settings, phase_name=self.phase_name,
+                                 previous_results=previous_results, pool=pool)
         return analysis
-
-    class Analysis(Phase.Analysis):
-
-        def fit(self, instance):
-            """
-            Runs the analysis. Determine how well the supplied cti_params fits the image.
-
-            Params
-            ----------
-            parallel : arctic_params.ParallelParams
-                A class describing the parallel cti model and parameters.
-            parallel : arctic_params.SerialParams
-                A class describing the serial cti model and parameters.
-            hyp : ci_hyper.HyperCINoise
-                A class describing the noises scaling ci_hyper-parameters.
-
-            Returns
-            -------
-            result: Result
-                An object comprising the final cti_params instances generated and a corresponding figure_of_merit
-            """
-            cti_params = cti_params_for_instance(instance=instance)
-            self.check_trap_lifetimes_are_ascending(cti_params=cti_params)
-            pipe_cti_pass = partial(pipe_cti_hyper, cti_params=cti_params, cti_settings=self.cti_settings,
-                                    hyper_noise_scalars=instance.hyper_noise_scalars)
-            likelihood = np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
-            return likelihood
-
-        @classmethod
-        def describe(cls, instance):
-            return (
-                "\nRunning CTI analysis for... \n\n"
-                "Serial Species:\n{}\n\n "
-                "Serial CCD\n{}\n\n"
-                "Hyper Parameters:\n{}".format(instance.serial_species, instance.serial_ccd,
-                                               " ".join(instance.hyper_noise_scalars)))
 
     @property
     def number_of_noise_scalars(self):
@@ -583,7 +578,7 @@ class HyperPhase(Phase):
         self.hyper_noise_scalars = [pm.PriorModel(ci_hyper.CIHyperNoiseScalar) for _ in range(number)]
 
 
-class ParallelHyperPhase(HyperPhase, ParallelPhase):
+class ParallelHyperPhase(ParallelPhase, HyperPhase):
     def __init__(self, parallel_species=(), parallel_ccd=None,
                  optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, columns=None,
                  phase_name="parallel_hyper_phase"):

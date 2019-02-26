@@ -340,7 +340,70 @@ class MockResult:
     noise_scaling_maps_of_serial_overscan_above_trails = 4
 
 
+class MockInstance:
+    parallel_species = 1
+    parallel_ccd = 2
+    hyper_noise_scalars = ["h"]
+
+
+@pytest.fixture(name="parallel_hyper_analysis")
+def make_parallel_hyper_analysis():
+    phase = ph.ParallelHyperPhase()
+    return phase.make_analysis([], [], previous_results=[MockResult])
+
+
+@pytest.fixture(name="serial_hyper_analysis")
+def make_serial_hyper_analysis():
+    phase = ph.SerialHyperPhase()
+    return phase.make_analysis([], [], previous_results=[MockResult])
+
+
+@pytest.fixture(name="parallel_serial_hyper_analysis")
+def make_parallel_serial_hyper_analysis():
+    phase = ph.ParallelSerialHyperPhase()
+    return phase.make_analysis([], [], previous_results=[MockResult])
+
+
 class TestHyperPhase(object):
+    def test_types(self):
+        parallel_phase = ph.ParallelHyperPhase()
+        serial_phase = ph.SerialHyperPhase()
+        parallel_serial_phase = ph.ParallelSerialHyperPhase()
+
+        assert isinstance(parallel_phase, ph.ParallelPhase)
+        assert isinstance(parallel_phase, ph.HyperPhase)
+
+        assert isinstance(serial_phase, ph.SerialPhase)
+        assert isinstance(serial_phase, ph.HyperPhase)
+
+        assert isinstance(parallel_serial_phase, ph.ParallelSerialPhase)
+        assert isinstance(parallel_serial_phase, ph.HyperPhase)
+
+    def test_hyper_phase_make_analysis(self, parallel_hyper_analysis,
+                                       serial_hyper_analysis,
+                                       parallel_serial_hyper_analysis):
+        assert isinstance(parallel_hyper_analysis, ph.HyperPhase.Analysis)
+        assert isinstance(serial_hyper_analysis, ph.HyperPhase.Analysis)
+        assert isinstance(parallel_serial_hyper_analysis, ph.HyperPhase.Analysis)
+
+    def test_describe(self, parallel_hyper_analysis,
+                      serial_hyper_analysis,
+                      parallel_serial_hyper_analysis):
+        print(parallel_hyper_analysis.describe(MockInstance))
+        assert """
+Running CTI analysis for... 
+
+Parallel CTI: 
+Parallel Species:
+1
+
+ Parallel CCD
+2
+
+Hyper Parameters:
+h
+
+""" == parallel_hyper_analysis.describe(MockInstance)
 
     def test__make_analysis(self, phase, ci_data, cti_settings):
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
@@ -369,19 +432,6 @@ class TestHyperPhase(object):
         instance = phase.variable.instance_from_unit_vector([0.5, 0.5])
 
         assert instance.hyper_noise_scalars == [5.0, 5.0]
-
-    def test_hyper_phase_make_analysis(self):
-        phase = ph.ParallelHyperPhase()
-        analysis = phase.make_analysis([], [], previous_results=[MockResult])
-        assert isinstance(analysis, ph.HyperPhase.Analysis)
-
-        phase = ph.SerialHyperPhase()
-        analysis = phase.make_analysis([], [], previous_results=[MockResult])
-        assert isinstance(analysis, ph.HyperPhase.Analysis)
-
-        phase = ph.ParallelSerialHyperPhase()
-        analysis = phase.make_analysis([], [], previous_results=[MockResult])
-        assert isinstance(analysis, ph.HyperPhase.Analysis)
 
 
 class TestResult(object):
