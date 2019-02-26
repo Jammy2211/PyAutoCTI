@@ -661,7 +661,7 @@ class SerialHyperPhase(SerialPhase, HyperPhase):
                                                            ci_pre_cti=data.ci_pre_cti, mask=mask,
                                                            ci_pattern=data.ci_pattern, ci_frame=data.ci_frame,
                                                            noise_scaling_maps=maps),
-                                 ci_datas, masks, noise_scaling_maps))
+                                 zip(ci_datas, masks, noise_scaling_maps)))
 
         self.pass_priors(previous_results)
         analysis = self.Analysis(ci_datas_extracted=ci_datas_fit, ci_datas_full=ci_datas_full,
