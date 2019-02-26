@@ -13,7 +13,6 @@ from autocti import exc
 from autocti.charge_injection import ci_data as data
 from autocti.charge_injection import ci_fit
 from autocti.charge_injection import ci_frame
-from autocti.charge_injection import ci_hyper
 from autocti.data import mask as msk
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
@@ -334,6 +333,13 @@ class TestPhase(object):
         assert cti_params.parallel_species == instance.parallel_species
 
 
+class MockResult:
+    noise_scaling_maps_of_ci_regions = 1
+    noise_scaling_maps_of_parallel_trails = 2
+    noise_scaling_maps_of_serial_trails = 3
+    noise_scaling_maps_of_serial_overscan_above_trails = 4
+
+
 class TestHyperPhase(object):
 
     def test__make_analysis(self, phase, ci_data, cti_settings):
@@ -346,12 +352,6 @@ class TestHyperPhase(object):
         assert analysis.cti_settings == cti_settings
 
     def test_noise_scaling_map_extraction(self):
-        class MockResult:
-            noise_scaling_maps_of_ci_regions = 1
-            noise_scaling_maps_of_parallel_trails = 2
-            noise_scaling_maps_of_serial_trails = 3
-            noise_scaling_maps_of_serial_overscan_above_trails = 4
-
         noise_scaling_maps = ph.ParallelHyperPhase().noise_scaling_maps_from_result(MockResult)
         assert noise_scaling_maps == [1, 2]
 
@@ -369,6 +369,12 @@ class TestHyperPhase(object):
         instance = phase.variable.instance_from_unit_vector([0.5, 0.5])
 
         assert instance.hyper_noise_scalars == [5.0, 5.0]
+
+    def test_hyper_phase_make_analysis(self):
+        phase = ph.ParallelHyperPhase()
+        analysis = phase.make_analysis([], [], previous_results=[MockResult])
+
+        assert isinstance(analysis, ph.HyperPhase.Analysis)
 
 
 class TestResult(object):
