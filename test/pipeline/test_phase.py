@@ -345,7 +345,7 @@ class MockInstance:
     parallel_ccd = 2
     serial_species = 3
     serial_ccd = 4
-    hyper_noise_scalars = ["h"]
+    hyper_noise_scalars = [5]
 
 
 @pytest.fixture(name="parallel_hyper_analysis")
@@ -402,7 +402,7 @@ Parallel CCD
 2
 
 Hyper Parameters:
-h
+5
 
 """ == parallel_hyper_analysis.describe(MockInstance)
 
@@ -417,7 +417,7 @@ Serial CCD
 4
 
 Hyper Parameters:
-h
+5
 
 """ == serial_hyper_analysis.describe(MockInstance)
 
@@ -439,7 +439,7 @@ Serial CCD
 4
 
 Hyper Parameters:
-h
+5
 
 """ == parallel_serial_hyper_analysis.describe(MockInstance)
 
