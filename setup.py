@@ -61,7 +61,7 @@ setup(
                       'matplotlib',
                       'pymultinest',
                       'getDist',
-                      'autofit==0.8.10'
+                      'autofit==0.13.0'
                       ],
     extras_require={
         'test': ['coverage', 'pytest', 'pytest-cov'],
