@@ -9,12 +9,12 @@ from autocti.model import arctic_params
 from autocti.model import arctic_settings
 from autocti.pipeline import phase as ph
 from autocti.pipeline import pipeline as pl
-from test.integration import tools
+from test.integration import integration_util
 
 shape = (36, 36)
 ci_regions = [(1, 7, 1, 30), (17, 23, 1, 30)]
 normalizations = [84700.0]
-frame_geometry = tools.CIQuadGeometryIntegration()
+frame_geometry = integration_util.CIQuadGeometryIntegration()
 
 test_type = 'parallel_and_serial'
 test_name = 'x3_species_x1_image_no_pool'
@@ -26,7 +26,7 @@ conf.instance = conf.Config(config_path=config_path, output_path=output_path)
 
 
 def pipeline():
-    tools.reset_paths(test_name=test_name, output_path=output_path)
+    integration_util.reset_paths(test_name=test_name, output_path=output_path)
 
     parallel_species_0 = arctic_params.Species(trap_density=0.5, trap_lifetime=2.0)
     parallel_species_1 = arctic_params.Species(trap_density=1.5, trap_lifetime=5.0)
@@ -52,14 +52,14 @@ def pipeline():
                                                charge_injection_mode=False, readout_offset=0)
     cti_settings = arctic_settings.ArcticSettings(parallel=parallel_settings, serial=serial_settings)
 
-    tools.simulate_integration_quadrant(test_name=test_name, normalizations=normalizations, cti_params=cti_params,
-                                        cti_settings=cti_settings)
+    integration_util.simulate_integration_quadrant(test_name=test_name, normalizations=normalizations, cti_params=cti_params,
+                                                   cti_settings=cti_settings)
 
     pattern = ci_pattern.CIPatternUniform(normalization=normalizations[0], regions=ci_regions)
 
     data = ci_data.load_ci_data_from_fits(frame_geometry=frame_geometry, ci_pattern=pattern,
-                                          ci_image_path=path + '/data/' + test_name + '/ci_image_0.fits',
-                                          ci_noise_map_from_single_value=1.0)
+                                          image_path=path + '/data/' + test_name + '/ci_image_0.fits',
+                                          noise_map_from_single_value=1.0)
 
     pipeline = make_pipeline(test_name=test_name)
     pipeline.run(ci_datas=[data], cti_settings=cti_settings)

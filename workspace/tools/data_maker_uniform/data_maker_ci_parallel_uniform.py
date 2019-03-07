@@ -96,13 +96,13 @@ if not os.path.exists(ci_data_path):
 
 # Now, output every image to the data folder as the filename 'ci_data_#.fits'
 list(map(lambda ci_data, index:
-         util.numpy_array_to_fits(array=ci_data.image,
-                                  file_path=ci_data_path + '/ci_image_' + str(index) + '.fits', overwrite=True),
+         util.numpy_array_2d_to_fits(array_2d=ci_data.image,
+                                     file_path=ci_data_path + '/ci_image_' + str(index) + '.fits', overwrite=True),
          ci_datas, range(len(ci_datas))))
 
 # Output every pre-cti image to the data folder as the filename 'ci_pre_cti_#.fits'. This allows the calibration
 # pipeline to load these images as the model pre-cti images, which is necessary for non-uniform ci patterns.
 list(map(lambda ci_data, index :
-         util.numpy_array_to_fits(array=ci_data.ci_pre_cti,
-                                  file_path=ci_data_path + '/ci_pre_cti_' + str(index) + '.fits', overwrite=True),
+         util.numpy_array_2d_to_fits(array_2d=ci_data.ci_pre_cti,
+                                     file_path=ci_data_path + '/ci_pre_cti_' + str(index) + '.fits', overwrite=True),
          ci_datas, range(len(ci_datas))))
