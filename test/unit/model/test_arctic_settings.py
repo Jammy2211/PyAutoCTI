@@ -32,22 +32,9 @@ from astropy.io import fits
 
 from autocti.model import arctic_settings
 
-
-@pytest.fixture(name='info_path')
-def test_info():
-    info_path = "{}/files/settings/info/".format(os.path.dirname(os.path.realpath(__file__)))
-
-    if os.path.exists(info_path):
-        shutil.rmtree(info_path)
-
-    os.mkdir(info_path)
-
-    return info_path
-
-
 @pytest.fixture(name='hdr_path')
 def test_header_info():
-    hdr_path = "{}/files/settings/header_info/".format(os.path.dirname(os.path.realpath(__file__)))
+    hdr_path = "{}/../test_files/cti_settings/header_info/".format(os.path.dirname(os.path.realpath(__file__)))
 
     if os.path.exists(hdr_path):
         shutil.rmtree(hdr_path)

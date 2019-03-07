@@ -29,7 +29,6 @@ import pytest
 from autocti import exc
 from autocti.charge_injection import ci_pattern
 
-
 class TestCIPatternViaList(object):
 
     def test__2_uniform_patterns__sets_up_collection(self):

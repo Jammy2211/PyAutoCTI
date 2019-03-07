@@ -6,9 +6,11 @@ from autocti.charge_injection.plotters import fit_plotters
 from autocti.data import mask as msk
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
-from test.charge_injection.plotters.fixtures import *
-from test.mock.mock import MockPattern, MockCIFrame
+from test.unit.mock.mock import MockPattern, MockCIFrame
 
+from test.fixtures import make_plot_patch
+import os
+import pytest
 
 @pytest.fixture(name='fit_plotter_path')
 def make_ci_data_plotter_setup():

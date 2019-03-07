@@ -33,7 +33,7 @@ from autocti.charge_injection.ci_data import load_ci_data_from_fits
 from autocti.data import mask as msk
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
-from test.mock.mock import MockGeometry, MockPattern
+from test.unit.mock.mock import MockGeometry, MockPattern
 
 test_data_dir = "{}/../test_files/array/".format(os.path.dirname(os.path.realpath(__file__)))
 

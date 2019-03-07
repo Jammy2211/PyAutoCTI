@@ -2,8 +2,10 @@ import numpy as np
 
 from autocti.charge_injection.plotters import data_plotters
 from autocti.data import mask as msk
-from test.charge_injection.plotters.fixtures import *
 
+from test.fixtures import make_plot_patch
+import os
+import pytest
 
 @pytest.fixture(name='data_plotter_path')
 def make_data_plotter_setup():
