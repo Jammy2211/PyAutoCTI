@@ -526,7 +526,7 @@ class HyperPhase(Phase):
                                                            ci_pre_cti=data.ci_pre_cti, mask=mask,
                                                            ci_pattern=data.ci_pattern, ci_frame=data.ci_frame,
                                                            noise_scaling_maps=maps),
-                                 zip(ci_datas, masks, noise_scaling_maps)))
+                                 ci_datas, masks, noise_scaling_maps))
 
         self.pass_priors(previous_results)
 
