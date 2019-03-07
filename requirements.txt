@@ -1,7 +1,7 @@
-numpy
-scipy
+numpy==1.16.1
+scipy==1.2.0
 astropy
-matplotlib
+matplotlib==3.0.3
 pymultinest
 getDist
 autofit==0.14.0
