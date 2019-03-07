@@ -2,7 +2,7 @@ import numpy as np
 
 from autocti.charge_injection import ci_frame, ci_pattern
 from autocti.data import mask as msk
-from test.mock.mock import MockCIGeometry
+from test.unit.mock.mock import MockCIGeometry
 
 
 class TestBinArrayAcrossSerial:

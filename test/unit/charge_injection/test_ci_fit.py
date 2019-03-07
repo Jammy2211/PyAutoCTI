@@ -5,7 +5,7 @@ from autofit.tools import fit_util
 from autocti.charge_injection import ci_fit
 from autocti.charge_injection import ci_frame
 from autocti.charge_injection import ci_hyper, ci_data
-from test.mock.mock import MockGeometry, MockPattern, MockCIFrame, MockCIPreCTI, MockParams, MockSettings
+from test.unit.mock.mock import MockGeometry, MockPattern, MockCIFrame, MockCIPreCTI, MockParams, MockSettings
 
 
 @pytest.fixture(name='ci_data_fit')
