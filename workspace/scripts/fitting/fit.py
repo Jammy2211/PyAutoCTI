@@ -66,9 +66,9 @@ for image_index in range(len(normalizations)):
 
     datas.append(ci_data.load_ci_data_from_fits(
                  frame_geometry=frame_geometry, ci_pattern=patterns[image_index],
-                 ci_image_path=data_path+'/ci_image_' + str(image_index) + '.fits',
+                 image_path=data_path + '/ci_image_' + str(image_index) + '.fits',
                  ci_pre_cti_path=data_path+'/ci_pre_cti_' + str(image_index) + '.fits',
-                 ci_noise_map_from_single_value=4.0))
+                 noise_map_from_single_value=4.0))
 
 # The CTI settings of arCTIc, which models the CCD read-out including CTI. For serial ci data, we include 'charge
 # injection mode' which accounts for the fact that every pixel is transferred over the full CCD.
