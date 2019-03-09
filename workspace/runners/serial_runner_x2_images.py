@@ -64,7 +64,7 @@ datas = []
 
 for image_index in range(len(normalizations)):
 
-    datas.append(ci_data.load_ci_data_from_fits(
+    datas.append(ci_data.ci_data_from_fits(
                  frame_geometry=frame_geometry, ci_pattern=patterns[image_index],
                  image_path=data_path + '/ci_image_' + str(image_index) + '.fits',
                  ci_pre_cti_path=data_path+'/ci_pre_cti_' + str(image_index) + '.fits',

@@ -354,12 +354,12 @@ def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, image, mask=N
     return ci_pattern.ci_pre_cti_from_ci_image_and_mask(image, mask)
 
 
-def load_ci_data_from_fits(frame_geometry, ci_pattern,
-                           image_path, image_hdu=0,
-                           noise_map_path=None, noise_map_hdu=0,
-                           noise_map_from_single_value=None,
-                           ci_pre_cti_path=None, ci_pre_cti_hdu=0,
-                           mask=None):
+def ci_data_from_fits(frame_geometry, ci_pattern,
+                      image_path, image_hdu=0,
+                      noise_map_path=None, noise_map_hdu=0,
+                      noise_map_from_single_value=None,
+                      ci_pre_cti_path=None, ci_pre_cti_hdu=0,
+                      mask=None):
     ci_image = util.numpy_array_2d_from_fits(file_path=image_path, hdu=image_hdu)
 
     if noise_map_path is not None:
