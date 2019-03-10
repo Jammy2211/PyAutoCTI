@@ -23,11 +23,11 @@ from multiprocessing import Pool
 #  workspace/pipelines/examples/ folder - they come with detailed descriptions of what they do. I hope that you'll
 # expand on them for your own personal scientific needs
 
-# Get the relative path to the config files and output folder in our workspace.
-path = '{}/../'.format(os.path.dirname(os.path.realpath(__file__)))
+# Setup the path to the workspace, using a relative directory name.
+workspace_path = '{}/../'.format(os.path.dirname(os.path.realpath(__file__)))
 
 # Use this path to explicitly set the config path and output path.
-conf.instance = conf.Config(config_path=path+'config', output_path=path+'output')
+conf.instance = conf.Config(config_path=workspace_path + 'config', output_path=workspace_path + 'output')
 
 # It is convenient to specify the image type and model used to simulate that image as strings, so that if the
 # pipeline is applied to multiple images we don't have to change all of the path entries in the
@@ -39,8 +39,8 @@ ci_data_resolution = 'high_res' # The resolution of the image.
 
 # Create the path where the data will be loaded from, which in this case is
 # '/workspace/data/ci_images_uniform/serial_x3_species/high_res/'
-ci_data_path = util.make_and_return_path(path=path, folder_names=['data', ci_data_type, ci_data_model,
-                                                                  ci_data_resolution])
+ci_data_path = util.make_and_return_path(path=workspace_path, folder_names=['data', ci_data_type, ci_data_model,
+                                                                            ci_data_resolution])
 
 # The shape of the charge injection images, which is required to set up their charge injection regions
 if ci_data_resolution is 'high_res':
