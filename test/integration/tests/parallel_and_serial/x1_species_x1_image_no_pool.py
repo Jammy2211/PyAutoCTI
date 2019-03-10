@@ -29,8 +29,8 @@ def pipeline():
     serial_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=2, n_levels=2000,
                                                  charge_injection_mode=False, readout_offset=0)
     cti_settings = arctic_settings.ArcticSettings(parallel=parallel_settings, serial=serial_settings)
-    data = simulation_util.load_test_ci_data(data_name='ci_uniform_parallel_and_serial_x1_species',
-                                             data_resolution='patch', normalization=84700.0)
+    data = simulation_util.load_test_ci_data(ci_data_type='ci_uniform', ci_data_model='parallel_and_serial_x1_species',
+                                             ci_data_resolution='patch',normalization=84700.0)
     pipeline = make_pipeline(test_name=test_name)
     pipeline.run(ci_datas=[data], cti_settings=cti_settings)
 

@@ -102,7 +102,7 @@ class CIData(object):
         """
 
         def extractor(obj):
-            return self.chinj.parallel_calibration_section_for_columns(array=obj, columns=columns)
+            return self.chinj.frame_geometry.parallel_calibration_section_for_columns(array=obj, columns=columns)
 
         return extractor
 
@@ -112,7 +112,7 @@ class CIData(object):
         """
 
         def extractor(obj):
-            return self.chinj.serial_calibration_section_for_rows(array=obj, rows=rows)
+            return self.chinj.frame_geometry.serial_calibration_section_for_rows(array=obj, rows=rows)
 
         return extractor
 
@@ -122,7 +122,7 @@ class CIData(object):
         """
 
         def extractor(obj):
-            return self.chinj.parallel_serial_calibration_section(obj)
+            return self.chinj.frame_geometry.parallel_serial_calibration_section(obj)
 
         return extractor
 
@@ -276,7 +276,7 @@ class MaskedCIData(object):
 
     @property
     def chinj(self):
-        return frame.ChInj(frame_geometry=self.ci_frame, ci_pattern=self.ci_pattern)
+        return frame.ChInj(frame_geometry=self.ci_frame.frame_geometry, ci_pattern=self.ci_pattern)
 
     @property
     def signal_to_noise_map(self):
@@ -360,6 +360,9 @@ def ci_data_from_fits(frame_geometry, ci_pattern,
                       noise_map_from_single_value=None,
                       ci_pre_cti_path=None, ci_pre_cti_hdu=0,
                       mask=None):
+
+    ci_frame = frame.ChInj(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
+
     ci_image = util.numpy_array_2d_from_fits(file_path=image_path, hdu=image_hdu)
 
     if noise_map_path is not None:
@@ -373,7 +376,7 @@ def ci_data_from_fits(frame_geometry, ci_pattern,
         ci_pre_cti = ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, ci_image, mask=mask)
 
     return CIData(image=ci_image, noise_map=ci_noise_map, ci_pre_cti=ci_pre_cti, ci_pattern=ci_pattern,
-                  ci_frame=frame_geometry)
+                  ci_frame=ci_frame)
 
 def output_ci_data_to_fits(ci_data, image_path, noise_map_path=None, ci_pre_cti_path=None, overwrite=False):
 

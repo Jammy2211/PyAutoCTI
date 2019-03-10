@@ -35,9 +35,9 @@ class AbstractCIFit(fit.DataFit):
         cti_settings : arctic_settings.ArcticSettings
             The settings that control how arctic models CTI.
         """
-        model_data = masked_ci_data.ci_frame.add_cti(image=masked_ci_data.ci_pre_cti,
-                                                     cti_params=cti_params,
-                                                     cti_settings=cti_settings)
+        model_data = masked_ci_data.ci_frame.frame_geometry.add_cti(image=masked_ci_data.ci_pre_cti,
+                                                                    cti_params=cti_params,
+                                                                    cti_settings=cti_settings)
 
         super().__init__(data=masked_ci_data.image, noise_map=noise_map,
                          mask=masked_ci_data.mask, model_data=model_data)
@@ -67,6 +67,7 @@ class AbstractCIFit(fit.DataFit):
 
 
 class CIFit(AbstractCIFit):
+
     def __init__(self, masked_ci_data: ci_data.MaskedCIData, cti_params, cti_settings):
         super().__init__(masked_ci_data, masked_ci_data.noise_map, cti_params, cti_settings)
 
@@ -76,6 +77,8 @@ class CIFit(AbstractCIFit):
 
     @property
     def noise_scaling_map_of_parallel_trails(self):
+        print(self.ci_data_fit.chinj)
+        print(self.ci_data_fit.chinj.frame_geometry)
         return self.ci_data_fit.chinj.parallel_non_ci_regions_frame_from_frame(array=self.chi_squared_map)
 
     @property

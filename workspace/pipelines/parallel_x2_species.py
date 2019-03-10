@@ -1,7 +1,7 @@
+from autofit.tools import path_util
 from autofit.optimize import non_linear as nl
 from autofit.mapper import prior
 from autofit.mapper import prior_model
-from autocti.charge_injection import ci_hyper
 from autocti.pipeline import pipeline as pl
 from autocti.pipeline import phase as ph
 from autocti.model import arctic_params
@@ -23,10 +23,13 @@ from autocti.model import arctic_params
 # Phase 4) Refit the phase 2 model, using priors initialized from the results of phase 2 and the scaled noise-map
 #          computed in phase 3.
 
-def make_pipeline(pipeline_path=''):
+def make_pipeline(phase_folders=None):
 
     pipeline_name = 'pipeline_parallel_x2_species'
-    pipeline_path = pipeline_path + pipeline_name
+
+    # This function combines the phase folders to the pipeline name to set up the output directory structure
+    phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
+                                                                                pipeline_name=pipeline_name)
 
     ### PHASE 1 ###
 
@@ -42,10 +45,10 @@ def make_pipeline(pipeline_path=''):
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
-    phase1 = ParallelPhase(optimizer_class=nl.MultiNest,
+    phase1 = ParallelPhase(phase_name='phase_1_x1_species', phase_folders=phase_folders,
+                           optimizer_class=nl.MultiNest,
                            parallel_species=[prior_model.PriorModel(arctic_params.Species)],
-                           parallel_ccd=arctic_params.CCD, columns=60,
-                           phase_name=pipeline_path + '/phase_1_x1_species')
+                           parallel_ccd=arctic_params.CCD, columns=60)
 
     # You'll see these lines throughout all of the example pipelines. They are used to make MultiNest sample the \
     # non-linear parameter space faster.
@@ -81,10 +84,10 @@ def make_pipeline(pipeline_path=''):
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
-    phase2 = ParallelPhase(parallel_species=[prior_model.PriorModel(arctic_params.Species),
-                                         prior_model.PriorModel(arctic_params.Species)],
-                         parallel_ccd=arctic_params.CCD, columns=60, optimizer_class=nl.MultiNest,
-                         phase_name=pipeline_path + '/phase_2_x3_species_initialize')
+    phase2 = ParallelPhase(phase_name='phase_2_x3_species_initialize', phase_folders=phase_folders,
+                           parallel_species=[prior_model.PriorModel(arctic_params.Species),
+                                             prior_model.PriorModel(arctic_params.Species)],
+                           parallel_ccd=arctic_params.CCD, columns=60, optimizer_class=nl.MultiNest)
 
     phase2.optimizer.const_efficiency_mode = True
     phase2.optimizer.n_live_points = 30
@@ -103,11 +106,11 @@ def make_pipeline(pipeline_path=''):
             self.parallel_species = previous_results[1].constant.parallel_species
             self.parallel_ccd = previous_results[1].constant.parallel_ccd
 
-    phase3 = ParallelHyperModelFixedPhase(parallel_species=[prior_model.PriorModel(arctic_params.Species),
+    phase3 = ParallelHyperModelFixedPhase(phase_name='phase_3_noise_scaling', phase_folders=phase_folders,
+                                          parallel_species=[prior_model.PriorModel(arctic_params.Species),
                                                         prior_model.PriorModel(arctic_params.Species)],
-                                        parallel_ccd=arctic_params.CCD,
-                                        optimizer_class=nl.MultiNest, columns=None,
-                                        phase_name=pipeline_path + '/phase_3_noise_scaling')
+                                          parallel_ccd=arctic_params.CCD,
+                                          optimizer_class=nl.MultiNest, columns=None)
 
     ### PHASE 4 ###
 
@@ -128,11 +131,11 @@ def make_pipeline(pipeline_path=''):
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
-    phase4 = ParallelHyperFixedPhase(parallel_species=[prior_model.PriorModel(arctic_params.Species),
-                                                   prior_model.PriorModel(arctic_params.Species)],
-                                   parallel_ccd=arctic_params.CCD,
-                                   optimizer_class=nl.MultiNest, columns=None,
-                                   phase_name=pipeline_path + '/phase_4_final')
+    phase4 = ParallelHyperFixedPhase(phase_name='phase_4_final', phase_folders=phase_folders,
+                                     parallel_species=[prior_model.PriorModel(arctic_params.Species),
+                                                       prior_model.PriorModel(arctic_params.Species)],
+                                     parallel_ccd=arctic_params.CCD,
+                                     optimizer_class=nl.MultiNest, columns=None)
 
     # For the final CTI model, constant efficiency mode has a tendency to sample parameter space too fast and infer an
     # inaccurate model. Thus, we turn it off for phase 2.
