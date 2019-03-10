@@ -95,7 +95,7 @@ class ImageFrame(np.ndarray):
             The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
             locations of different regions of the CCD (overscans, prescan, etc.)
         """
-        return cls(frame_geometry=frame_geometry, array=util.numpy_array_from_fits(file_path=file_path, hdu=hdu))
+        return cls(frame_geometry=frame_geometry, array=util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu))
 
     def output_as_fits(self, file_path, overwrite=False):
         """Output the image ci_data as a fits file.
@@ -107,7 +107,7 @@ class ImageFrame(np.ndarray):
         filename : str
             The file phase_name of the output image.
         """
-        util.numpy_array_to_fits(array=self, file_path=file_path, overwrite=overwrite)
+        util.numpy_array_2d_to_fits(array_2d=self, file_path=file_path, overwrite=overwrite)
 
     def add_cti_to_image(self, cti_params, cti_settings, use_parallel_poisson_densities=False):
         """Add cti to the image.

@@ -354,27 +354,37 @@ def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, image, mask=N
     return ci_pattern.ci_pre_cti_from_ci_image_and_mask(image, mask)
 
 
-def load_ci_data_from_fits(frame_geometry, ci_pattern,
-                           ci_image_path, ci_image_hdu=0,
-                           ci_noise_map_path=None, ci_noise_map_hdu=0,
-                           ci_noise_map_from_single_value=None,
-                           ci_pre_cti_path=None, ci_pre_cti_hdu=0,
-                           mask=None):
-    ci_image = util.numpy_array_from_fits(file_path=ci_image_path, hdu=ci_image_hdu)
+def ci_data_from_fits(frame_geometry, ci_pattern,
+                      image_path, image_hdu=0,
+                      noise_map_path=None, noise_map_hdu=0,
+                      noise_map_from_single_value=None,
+                      ci_pre_cti_path=None, ci_pre_cti_hdu=0,
+                      mask=None):
+    ci_image = util.numpy_array_2d_from_fits(file_path=image_path, hdu=image_hdu)
 
-    if ci_noise_map_path is not None:
-        ci_noise_map = util.numpy_array_from_fits(file_path=ci_noise_map_path, hdu=ci_noise_map_hdu)
+    if noise_map_path is not None:
+        ci_noise_map = util.numpy_array_2d_from_fits(file_path=noise_map_path, hdu=noise_map_hdu)
     else:
-        ci_noise_map = np.ones(ci_image.shape) * ci_noise_map_from_single_value
+        ci_noise_map = np.ones(ci_image.shape) * noise_map_from_single_value
 
     if ci_pre_cti_path is not None:
-        ci_pre_cti = util.numpy_array_from_fits(file_path=ci_pre_cti_path, hdu=ci_pre_cti_hdu)
+        ci_pre_cti = util.numpy_array_2d_from_fits(file_path=ci_pre_cti_path, hdu=ci_pre_cti_hdu)
     else:
         ci_pre_cti = ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, ci_image, mask=mask)
 
     return CIData(image=ci_image, noise_map=ci_noise_map, ci_pre_cti=ci_pre_cti, ci_pattern=ci_pattern,
                   ci_frame=frame_geometry)
 
+def output_ci_data_to_fits(ci_data, image_path, noise_map_path=None, ci_pre_cti_path=None, overwrite=False):
+
+    util.numpy_array_2d_to_fits(array_2d=ci_data.image, file_path=image_path, overwrite=overwrite)
+
+    if ci_data.noise_map is not None and noise_map_path is not None:
+        util.numpy_array_2d_to_fits(array_2d=ci_data.noise_map, file_path=noise_map_path, overwrite=overwrite)
+
+    if ci_data.ci_pre_cti is not None and ci_pre_cti_path is not None:
+        util.numpy_array_2d_to_fits(array_2d=ci_data.ci_pre_cti, file_path=ci_pre_cti_path,
+                                          overwrite=overwrite)
 
 def read_noise_map_from_shape_and_sigma(shape, sigma, noise_seed=-1):
     """Generate a two-dimensional read noises-map, generating values from a Gaussian distribution with mean 0.0.
