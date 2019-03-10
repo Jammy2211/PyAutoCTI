@@ -14,9 +14,9 @@ from test.integration import integration_util
 test_type = 'parallel_and_serial'
 test_name = 'x1_species_x1_image_no_pool'
 
-path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
-output_path = path + 'output/' + test_type
-config_path = path + 'config'
+test_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
+output_path = test_path + 'output/' + test_type
+config_path = test_path + 'config'
 conf.instance = conf.Config(config_path=config_path, output_path=output_path)
 
 
@@ -46,11 +46,12 @@ def make_pipeline(test_name):
             self.serial_ccd.well_fill_alpha = 1.0
             self.serial_ccd.well_fill_gamma = 0.0
 
-    phase1 = ParallelSerialPhase(optimizer_class=nl.MultiNest,
+    phase1 = ParallelSerialPhase(phase_name='phase1', phase_folders=[test_name],
+                                 optimizer_class=nl.MultiNest,
                                  parallel_species=[prior_model.PriorModel(arctic_params.Species)],
                                  parallel_ccd=arctic_params.CCD,
                                  serial_species=[prior_model.PriorModel(arctic_params.Species)],
-                                 serial_ccd=arctic_params.CCD, phase_name="{}/phase1".format(test_name))
+                                 serial_ccd=arctic_params.CCD)
 
     phase1.optimizer.n_live_points = 60
     phase1.optimizer.const_efficiency_mode = True
@@ -65,12 +66,12 @@ def make_pipeline(test_name):
             self.serial_species = previous_results[0].constant.serial_species
             self.serial_ccd = previous_results[0].constant.serial_ccd
 
-    phase2 = ParallelSerialHyperModelFixedPhase(parallel_species=[prior_model.PriorModel(arctic_params.Species)],
+    phase2 = ParallelSerialHyperModelFixedPhase(phase_name='phase2', phase_folders=[test_name],
+                                                parallel_species=[prior_model.PriorModel(arctic_params.Species)],
                                                 parallel_ccd=arctic_params.CCD,
                                                 serial_species=[prior_model.PriorModel(arctic_params.Species)],
                                                 serial_ccd=arctic_params.CCD,
-                                                optimizer_class=nl.MultiNest,
-                                                phase_name="{}/phase2".format(test_name))
+                                                optimizer_class=nl.MultiNest)
 
     class SerialHyperFixedPhase(ph.SerialHyperPhase):
 
@@ -86,7 +87,8 @@ def make_pipeline(test_name):
             self.serial_ccd.well_fill_alpha = 1.0
             self.serial_ccd.well_fill_gamma = 0.0
 
-    phase3 = SerialHyperFixedPhase(optimizer_class=nl.MultiNest, rows=None, phase_name="{}/phase3".format(test_name))
+    phase3 = SerialHyperFixedPhase(phase_name='phase3', phase_folders=[test_name],
+                                   optimizer_class=nl.MultiNest, rows=None)
 
     # For the final CTI model, constant efficiency mode has a tendancy to sample parameter space too fast and infer an
     # inaccurate model. Thus, we turn it off for phase 2.

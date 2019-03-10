@@ -15,9 +15,9 @@ from test.integration import integration_util
 test_type = 'parallel'
 test_name = 'x1_species_x1_image_hyper_phase'
 
-path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
-output_path = path + 'output/' + test_type
-config_path = path + 'config'
+test_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
+output_path = test_path + 'output/' + test_type
+config_path = test_path + 'config'
 conf.instance = conf.Config(config_path=config_path, output_path=output_path)
 
 def pipeline():
@@ -41,9 +41,10 @@ def make_pipeline(test_name):
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
-    phase1 = ParallelPhase(optimizer_class=nl.MultiNest,
+    phase1 = ParallelPhase(phase_name='phase1', phase_folders=[test_name],
+                           optimizer_class=nl.MultiNest,
                            parallel_species=[prior_model.PriorModel(arctic_params.Species)],
-                           parallel_ccd=arctic_params.CCD, columns=40, phase_name="{}/phase1".format(test_name))
+                           parallel_ccd=arctic_params.CCD, columns=40)
 
     phase1.optimizer.n_live_points = 60
     phase1.optimizer.const_efficiency_mode = True
@@ -56,10 +57,10 @@ def make_pipeline(test_name):
             self.parallel_species = previous_results[0].constant.parallel_species
             self.parallel_ccd = previous_results[0].constant.parallel_ccd
 
-    phase2 = ParallelHyperModelFixedPhase(parallel_species=[prior_model.PriorModel(arctic_params.Species)],
+    phase2 = ParallelHyperModelFixedPhase(phase_name='phase2', phase_folders=[test_name],
+                                          parallel_species=[prior_model.PriorModel(arctic_params.Species)],
                                           parallel_ccd=arctic_params.CCD,
-                                          optimizer_class=nl.MultiNest, columns=None,
-                                          phase_name="{}/phase2".format(test_name))
+                                          optimizer_class=nl.MultiNest, columns=None)
 
     class ParallelHyperFixedPhase(ph.ParallelHyperPhase):
 
@@ -71,8 +72,8 @@ def make_pipeline(test_name):
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
-    phase3 = ParallelHyperFixedPhase(optimizer_class=nl.MultiNest, columns=None,
-                                     phase_name="{}/phase3".format(test_name))
+    phase3 = ParallelHyperFixedPhase(phase_name='phase3', phase_folders=[test_name],
+                                     optimizer_class=nl.MultiNest, columns=None)
 
     # For the final CTI model, constant efficiency mode has a tendancy to sample parameter space too fast and infer an
     # inaccurate model. Thus, we turn it off for phase 2.

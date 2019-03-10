@@ -15,9 +15,9 @@ from test.integration import integration_util
 test_type = 'parallel'
 test_name = 'x1_species_x1_image_no_pool'
 
-path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
-output_path = path + 'output/' + test_type
-config_path = path + 'config'
+test_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
+output_path = test_path + 'output/' + test_type
+config_path = test_path + 'config'
 conf.instance = conf.Config(config_path=config_path, output_path=output_path)
 
 
@@ -42,9 +42,10 @@ def make_pipeline(test_name):
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
-    phase1 = ParallelPhase(optimizer_class=nl.MultiNest,
+    phase1 = ParallelPhase(phase_name='phase1', phase_folders=[test_name],
+                           optimizer_class=nl.MultiNest,
                            parallel_species=[prior_model.PriorModel(arctic_params.Species)],
-                           parallel_ccd=arctic_params.CCD, columns=None, phase_name="{}/phase1".format(test_name))
+                           parallel_ccd=arctic_params.CCD, columns=None)
 
     phase1.optimizer.n_live_points = 60
     phase1.optimizer.const_efficiency_mode = True
