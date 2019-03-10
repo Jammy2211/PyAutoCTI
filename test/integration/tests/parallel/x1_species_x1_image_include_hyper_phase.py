@@ -4,7 +4,6 @@ from autofit import conf
 from autofit.mapper import prior_model
 from autofit.optimize import non_linear as nl
 
-from autocti.charge_injection import ci_hyper
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
 from autocti.pipeline import phase as ph

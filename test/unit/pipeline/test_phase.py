@@ -71,7 +71,7 @@ class MockPattern(object):
 
 @pytest.fixture(name="phase")
 def make_phase():
-    return ph.ParallelPhase(optimizer_class=NLO)
+    return ph.ParallelPhase(phase_name='test_phase', optimizer_class=NLO)
 
 
 @pytest.fixture(name="cti_settings")
@@ -181,7 +181,7 @@ class TestPhase(object):
             analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
 
     def test__serial_phase__if_trap_lifetime_not_ascending__raises_exception(self, ci_data, cti_settings):
-        phase = ph.SerialPhase(optimizer_class=NLO)
+        phase = ph.SerialPhase(phase_name='test_phase', optimizer_class=NLO)
 
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
 
@@ -230,7 +230,7 @@ class TestPhase(object):
             analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
 
     def test__parallel_serial_phase__if_trap_lifetime_not_ascending__raises_exception(self, ci_data, cti_settings):
-        phase = ph.ParallelSerialPhase(optimizer_class=NLO)
+        phase = ph.ParallelSerialPhase(phase_name='test_phase', optimizer_class=NLO)
 
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
 
@@ -283,7 +283,7 @@ class TestPhase(object):
 
         setattr(results.constant, "parallel_species", [parallel])
 
-        phase = MyPhase(optimizer_class=NLO, parallel_species=[parallel])
+        phase = MyPhase(phase_name='test_phase', optimizer_class=NLO, parallel_species=[parallel])
         phase.make_analysis([ci_data], cti_settings, previous_results=ResultsCollection([results]))
 
         assert phase.parallel_species == [parallel]
@@ -303,7 +303,7 @@ class TestPhase(object):
 
         parallel = arctic_params.Species()
 
-        phase = MyPhase(optimizer_class=NLO, parallel_species=[parallel])
+        phase = MyPhase(phase_name='test_phase', optimizer_class=NLO, parallel_species=[parallel])
 
         phase.prop = arctic_params.Species
 
@@ -320,9 +320,9 @@ class TestPhase(object):
     def test__duplication(self):
         parallel = arctic_params.Species()
 
-        phase = ph.ParallelPhase(parallel_species=[parallel])
+        phase = ph.ParallelPhase(phase_name='test_phase', parallel_species=[parallel])
 
-        ph.ParallelPhase(parallel_species=[])
+        ph.ParallelPhase(phase_name='test_phase', parallel_species=[])
 
         assert phase.parallel_species is not None
 
@@ -351,27 +351,27 @@ class MockInstance:
 
 @pytest.fixture(name="parallel_hyper_analysis")
 def make_parallel_hyper_analysis():
-    phase = ph.ParallelHyperPhase()
+    phase = ph.ParallelHyperPhase(phase_name='test_phase')
     return phase.make_analysis([], [], previous_results=[MockResult])
 
 
 @pytest.fixture(name="serial_hyper_analysis")
 def make_serial_hyper_analysis():
-    phase = ph.SerialHyperPhase()
+    phase = ph.SerialHyperPhase(phase_name='test_phase')
     return phase.make_analysis([], [], previous_results=[MockResult])
 
 
 @pytest.fixture(name="parallel_serial_hyper_analysis")
 def make_parallel_serial_hyper_analysis():
-    phase = ph.ParallelSerialHyperPhase()
+    phase = ph.ParallelSerialHyperPhase(phase_name='test_phase')
     return phase.make_analysis([], [], previous_results=[MockResult])
 
 
 class TestHyperPhase(object):
     def test_types(self):
-        parallel_phase = ph.ParallelHyperPhase()
-        serial_phase = ph.SerialHyperPhase()
-        parallel_serial_phase = ph.ParallelSerialHyperPhase()
+        parallel_phase = ph.ParallelHyperPhase(phase_name='test_phase')
+        serial_phase = ph.SerialHyperPhase(phase_name='test_phase')
+        parallel_serial_phase = ph.ParallelSerialHyperPhase(phase_name='test_phase')
 
         assert isinstance(parallel_phase, ph.ParallelPhase)
         assert isinstance(parallel_phase, ph.HyperPhase)
@@ -454,17 +454,17 @@ Hyper Parameters:
         assert analysis.cti_settings == cti_settings
 
     def test_noise_scaling_map_extraction(self):
-        noise_scaling_maps = ph.ParallelHyperPhase().noise_scaling_maps_from_result(MockResult)
+        noise_scaling_maps = ph.ParallelHyperPhase(phase_name='test_phase').noise_scaling_maps_from_result(MockResult)
         assert noise_scaling_maps == [1, 2]
 
-        noise_scaling_maps = ph.SerialHyperPhase().noise_scaling_maps_from_result(MockResult)
+        noise_scaling_maps = ph.SerialHyperPhase(phase_name='test_phase').noise_scaling_maps_from_result(MockResult)
         assert noise_scaling_maps == [1, 3]
 
-        noise_scaling_maps = ph.ParallelSerialHyperPhase().noise_scaling_maps_from_result(MockResult)
+        noise_scaling_maps = ph.ParallelSerialHyperPhase(phase_name='test_phase').noise_scaling_maps_from_result(MockResult)
         assert noise_scaling_maps == [1, 2, 3, 4]
 
     def test_hyper_phase(self):
-        phase = ph.ParallelHyperPhase()
+        phase = ph.ParallelHyperPhase(phase_name='test_phase')
         assert len(phase.hyper_noise_scalars) == 2
         assert len(phase.variable.priors) == 2
 

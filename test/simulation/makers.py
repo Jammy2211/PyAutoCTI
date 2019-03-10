@@ -1,4 +1,4 @@
-from autocti.data import util
+from autofit.tools import path_util
 from autocti.charge_injection import ci_data
 from autocti.charge_injection import ci_pattern
 from autocti.model import arctic_params
@@ -22,8 +22,8 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(ci_data_type, ci
     # Now, lets output this simulated ccd-data to the test/data folder.
     test_path = '{}/../'.format(os.path.dirname(os.path.realpath(__file__)))
 
-    ci_data_path = util.make_and_return_path(path=test_path, folder_names=['data', ci_data_type, ci_data_model,
-                                                                            ci_data_resolution])
+    ci_data_path = path_util.make_and_return_path_from_path_and_folder_names(
+        path=test_path, folder_names=['data', ci_data_type, ci_data_model, ci_data_resolution])
 
     normalization = str(int(pattern.normalization))
 
