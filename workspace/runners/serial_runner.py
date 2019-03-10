@@ -1,6 +1,7 @@
 import os
 
 from autofit import conf
+from autocti.data import util
 from autocti.charge_injection import ci_frame
 from autocti.charge_injection import ci_pattern
 from autocti.charge_injection import ci_data
@@ -32,9 +33,14 @@ conf.instance = conf.Config(config_path=path+'config', output_path=path+'output'
 # pipeline is applied to multiple images we don't have to change all of the path entries in the
 # load_ci_data_from_fits function below.
 
-ci_data_name = 'ci_x8_images_uniform' # Charge injection data consisting of 2 images with uniform injections.
-ci_data_resolution = 'low_res' # The resolution of the image.
+ci_data_type = 'ci_images_uniform' # Charge injection data consisting of 2 images with uniform injections.
 ci_data_model = 'serial_x3_species' # Shows the data was creating using a serial CTI model with one species.
+ci_data_resolution = 'high_res' # The resolution of the image.
+
+# Create the path where the data will be loaded from, which in this case is
+# '/workspace/data/ci_images_uniform/serial_x3_species/high_res/'
+ci_data_path = util.make_and_return_path(path=path, folder_names=['data', ci_data_type, ci_data_model,
+                                                                  ci_data_resolution])
 
 # The shape of the charge injection images, which is required to set up their charge injection regions
 if ci_data_resolution is 'high_res':
@@ -60,17 +66,14 @@ frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 # 'data' list and then iterate over a for loop, to append each set of data to the list of data we pass to the pipeline
 # when we run it.
 
-# We create the path to the data itself inside this folder, based on the data name and model.
-data_path = path +'/data/' + ci_data_name + '/' + ci_data_resolution + '/' + ci_data_model
-
 datas = []
 
 for image_index in range(len(normalizations)):
 
     datas.append(ci_data.ci_data_from_fits(
                  frame_geometry=frame_geometry, ci_pattern=patterns[image_index],
-                 image_path=data_path + '/ci_image_' + str(image_index) + '.fits',
-                 ci_pre_cti_path=data_path+'/ci_pre_cti_' + str(image_index) + '.fits',
+                 image_path=ci_data_path + '/ci_image_' + str(image_index) + '.fits',
+                 ci_pre_cti_path=ci_data_path+'/ci_pre_cti_' + str(image_index) + '.fits',
                  noise_map_from_single_value=4.0))
 
 # The CTI settings of arCTIc, which models the CCD read-out including CTI. For serial ci data, we include 'charge
@@ -87,5 +90,5 @@ cti_settings = arctic_settings.ArcticSettings(serial=serial_cti_settings)
 # injection image
 
 from workspace_jam.pipelines import serial_x3_species
-pipeline = serial_x3_species.make_pipeline(pipeline_path=ci_data_name + '/' + ci_data_resolution + '/')
+pipeline = serial_x3_species.make_pipeline(pipeline_path=ci_data_type + '/' + ci_data_resolution + '/')
 pipeline.run(ci_datas=datas, cti_settings=cti_settings, pool=Pool(processes=2))
