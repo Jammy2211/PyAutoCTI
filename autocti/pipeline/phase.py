@@ -380,7 +380,7 @@ class ParallelPhase(Phase):
 
     def extract_ci_data(self, data, mask):
         return data.parallel_calibration_data(
-            columns=(0, self.columns or data.ci_frame.parallel_overscan.total_columns),
+            columns=(0, self.columns or data.ci_frame.frame_geometry.parallel_overscan.total_columns),
             mask=mask)
 
     class Analysis(Phase.Analysis):
@@ -601,7 +601,7 @@ class ParallelHyperPhase(ParallelPhase, HyperPhase):
 
     def extract_ci_hyper_data(self, data, mask, noise_scaling_maps):
         return data.parallel_hyper_calibration_data(
-            columns=(0, self.columns or data.ci_frame.parallel_overscan.total_columns),
+            columns=(0, self.columns or data.ci_frame.frame_geometry.parallel_overscan.total_columns),
             mask=mask, noise_scaling_maps=noise_scaling_maps)
 
 

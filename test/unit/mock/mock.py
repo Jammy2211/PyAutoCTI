@@ -15,14 +15,20 @@ class MockGeometry(object):
         super(MockGeometry, self).__init__()
 
 
-class MockCIFrame(object):
+class MockFrameGeometry(object):
 
     def __init__(self, value=1.0):
-
         self.value = value
 
     def add_cti(self, image, cti_params, cti_settings):
         return self.value * np.ones((2, 2))
+
+class MockCIFrame(object):
+
+    def __init__(self, value=1.0):
+
+        self.frame_geometry = MockFrameGeometry(value=value)
+        self.value = value
 
     def ci_regions_from_array(self, array):
         return array[0:2, 0]
