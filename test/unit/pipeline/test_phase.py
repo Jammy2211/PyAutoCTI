@@ -95,8 +95,9 @@ def make_ci_data(frame_geometry, ci_pattern):
     image = np.ones((3, 3))
     noise = np.ones((3, 3))
     ci_pre_cti = np.ones((3, 3))
+    frame = ci_frame.ChInj(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
     return data.CIData(image=image, noise_map=noise, ci_pre_cti=ci_pre_cti, ci_pattern=ci_pattern,
-                       ci_frame=frame_geometry)
+                       ci_frame=frame)
 
 
 @pytest.fixture(name="results")
@@ -517,6 +518,7 @@ class TestResult(object):
         assert fit.likelihood == fit_figure_of_merit
 
     def test__results_of_phase_are_available_as_properties(self, ci_data, cti_settings):
+
         phase = ph.ParallelPhase(optimizer_class=NLO,
                                  parallel_species=[prior_model.PriorModel(arctic_params.Species)],
                                  parallel_ccd=arctic_params.CCD, phase_name='test_phase')

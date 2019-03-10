@@ -30,8 +30,9 @@ def pipeline():
                                                  charge_injection_mode=False, readout_offset=0)
     cti_settings = arctic_settings.ArcticSettings(parallel=parallel_settings, serial=serial_settings)
     data = list(map(lambda normalization :
-                    simulation_util.load_test_ci_data(data_name='ci_uniform_parallel_and_serial_x3_species',
-                                                      data_resolution='patch', normalization=normalization),
+                    simulation_util.load_test_ci_data(ci_data_type='ci_uniform',
+                                                      ci_data_model='parallel_and_serial_x3_species',
+                                                      ci_data_resolution='patch', normalization=normalization),
                     [1000.0, 84700.0]))
     pipeline = make_pipeline(test_name=test_name)
     pipeline.run(ci_datas=data, cti_settings=cti_settings, pool=Pool(processes=2))

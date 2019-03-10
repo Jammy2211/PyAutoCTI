@@ -8,9 +8,9 @@ from test.simulation import makers
 # Each image is generated at 4 resolutions, 36x36 (Patch), 120x120 (Low_Res), 300x300 (Mid_Res), 600x600 (High_Res).
 
 # To simulate each lens, we pass it a name and call its maker. In the makers.py file, you'll see these functions.
-makers.make_uniform_ci_parallel_x1_species(data_resolutions=['patch'], normalizations=[1000.0, 84700.0])
-makers.make_uniform_ci_serial_x1_species(data_resolutions=['patch'], normalizations=[1000.0, 84700.0])
-makers.make_uniform_ci_parallel_and_serial_x1_species(data_resolutions=['patch'], normalizations=[1000.0, 84700.0])
-makers.make_uniform_ci_parallel_x3_species(data_resolutions=['patch'], normalizations=[1000.0, 84700.0])
-makers.make_uniform_ci_serial_x3_species(data_resolutions=['patch'], normalizations=[1000.0, 84700.0])
-makers.make_uniform_ci_parallel_and_serial_x3_species(data_resolutions=['patch'], normalizations=[1000.0, 84700.0])
+makers.make_ci_uniform_parallel_x1_species(data_resolutions=['patch'], normalizations=[1000.0, 84700.0])
+makers.make_ci_uniform_serial_x1_species(data_resolutions=['patch'], normalizations=[1000.0, 84700.0])
+makers.make_ci_uniform_parallel_and_serial_x1_species(data_resolutions=['patch'], normalizations=[1000.0, 84700.0])
+makers.make_ci_uniform_parallel_x3_species(data_resolutions=['patch'], normalizations=[1000.0, 84700.0])
+makers.make_ci_uniform_serial_x3_species(data_resolutions=['patch'], normalizations=[1000.0, 84700.0])
+makers.make_ci_uniform_parallel_and_serial_x3_species(data_resolutions=['patch'], normalizations=[1000.0, 84700.0])

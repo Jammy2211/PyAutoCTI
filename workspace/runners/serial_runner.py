@@ -35,7 +35,7 @@ conf.instance = conf.Config(config_path=workspace_path + 'config', output_path=w
 
 ci_data_type = 'ci_images_uniform' # Charge injection data consisting of 2 images with uniform injections.
 ci_data_model = 'serial_x3_species' # Shows the data was creating using a serial CTI model with one species.
-ci_data_resolution = 'high_res' # The resolution of the image.
+ci_data_resolution = 'low_res' # The resolution of the image.
 
 # Create the path where the data will be loaded from, which in this case is
 # '/workspace/data/ci_images_uniform/serial_x3_species/high_res/'
