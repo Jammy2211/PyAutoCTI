@@ -9,12 +9,8 @@ from autocti.model import arctic_params
 from autocti.model import arctic_settings
 from autocti.pipeline import phase as ph
 from autocti.pipeline import pipeline as pl
-from test.integration import tools
-
-shape = (36, 36)
-ci_regions = [(1, 7, 1, 30), (17, 23, 1, 30)]
-normalizations = [84700.0]
-frame_geometry = tools.CIQuadGeometryIntegration()
+from test.simulation import simulation_util
+from test.integration import integration_util
 
 test_type = 'serial'
 test_name = 'x3_species_x1_image_no_pool'
@@ -26,28 +22,14 @@ conf.instance = conf.Config(config_path=config_path, output_path=output_path)
 
 
 def pipeline():
-    serial_species_0 = arctic_params.Species(trap_density=0.5, trap_lifetime=2.0)
-    serial_species_1 = arctic_params.Species(trap_density=1.5, trap_lifetime=5.0)
-    serial_species_2 = arctic_params.Species(trap_density=2.5, trap_lifetime=20.0)
-    serial_ccd = arctic_params.CCD(well_notch_depth=0.01, well_fill_alpha=0.2,
-                                   well_fill_beta=0.8, well_fill_gamma=2.0)
-    cti_params = arctic_params.ArcticParams(serial_ccd=serial_ccd,
-                                            serial_species=[serial_species_0, serial_species_1, serial_species_2])
+    
+    integration_util.reset_paths(test_name=test_name, output_path=output_path)
 
-    serial_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=1, n_levels=2000,
-                                               charge_injection_mode=True, readout_offset=0)
+    serial_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=2, n_levels=2000,
+                                                 charge_injection_mode=False, readout_offset=0)
     cti_settings = arctic_settings.ArcticSettings(serial=serial_settings)
-
-    tools.reset_paths(test_name=test_name, output_path=output_path)
-    tools.simulate_integration_quadrant(test_name=test_name, normalizations=normalizations, cti_params=cti_params,
-                                        cti_settings=cti_settings)
-
-    pattern = ci_pattern.CIPatternUniform(normalization=normalizations[0], regions=ci_regions)
-
-    data = ci_data.load_ci_data_from_fits(frame_geometry=frame_geometry, ci_pattern=pattern,
-                                          ci_image_path=path + '/data/' + test_name + '/ci_image_0.fits',
-                                          ci_noise_map_from_single_value=1.0)
-
+    data = simulation_util.load_test_ci_data(data_name='ci_uniform_serial_x3_species', data_resolution='patch',
+                                             normalization=84700.0)
     pipeline = make_pipeline(test_name=test_name)
     pipeline.run(ci_datas=[data], cti_settings=cti_settings)
 
@@ -63,7 +45,7 @@ def make_pipeline(test_name):
     phase1 = SerialPhase(optimizer_class=nl.MultiNest, serial_species=[prior_model.PriorModel(arctic_params.Species),
                                                                        prior_model.PriorModel(arctic_params.Species),
                                                                        prior_model.PriorModel(arctic_params.Species)],
-                         serial_ccd=arctic_params.CCD,
+                         serial_ccd=arctic_params.CCD, rows=None,
                          phase_name="{}/phase1".format(test_name))
 
     phase1.optimizer.n_live_points = 60

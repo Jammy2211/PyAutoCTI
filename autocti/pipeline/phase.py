@@ -264,7 +264,7 @@ class Phase(ph.AbstractPhase):
                         should_plot_ci_post_cti=True,
                         should_plot_residual_map=True,
                         should_plot_chi_squared_map=True,
-                        output_path="{}/fits".format(image_path), output_format='fits')
+                        output_path="{}/fits/".format(image_path), output_format='fits')
 
             return fits
 
