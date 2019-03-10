@@ -51,7 +51,7 @@ class Phase(ph.AbstractPhase):
             The class of a NonLinear optimizer
             The side length of the subgrid
         """
-        super().__init__(optimizer_class=optimizer_class, phase_name=phase_name, phase_folders=phase_folders)
+        super().__init__(phase_name=phase_name, phase_folders=phase_folders, optimizer_class=optimizer_class)
         self.mask_function = mask_function
         self.columns = columns
         self.rows = rows

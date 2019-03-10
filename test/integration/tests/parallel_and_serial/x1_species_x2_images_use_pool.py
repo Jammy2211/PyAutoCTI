@@ -16,9 +16,9 @@ from multiprocessing import Pool
 test_type = 'parallel_and_serial'
 test_name = 'x1_species_x2_images_use_pool'
 
-path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
-output_path = path+'output/'+test_type
-config_path = path+'config'
+test_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
+output_path = test_path + 'output/' + test_type
+config_path = test_path + 'config'
 conf.instance = conf.Config(config_path=config_path, output_path=output_path)
 
 def pipeline():
@@ -49,11 +49,12 @@ def make_pipeline(test_name):
             self.serial_ccd.well_fill_alpha = 1.0
             self.serial_ccd.well_fill_gamma = 0.0
 
-    phase1 = ParallelSerialPhase(optimizer_class=nl.MultiNest,
+    phase1 = ParallelSerialPhase(phase_name='phase1', phase_folders=[test_name],
+                                 optimizer_class=nl.MultiNest,
                                  parallel_species=[prior_model.PriorModel(arctic_params.Species)],
                                  parallel_ccd=arctic_params.CCD,
                                  serial_species=[prior_model.PriorModel(arctic_params.Species)],
-                                 serial_ccd=arctic_params.CCD, phase_name="{}/phase1".format(test_name))
+                                 serial_ccd=arctic_params.CCD)
     phase1.optimizer.n_live_points = 60
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.sampling_efficiency = 0.2
