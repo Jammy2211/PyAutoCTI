@@ -1,7 +1,7 @@
 import os
 
 from autofit import conf
-from autocti.data import util
+from autofit.tools import path_util
 from autocti.charge_injection import ci_frame
 from autocti.charge_injection import ci_pattern
 from autocti.charge_injection import ci_data
@@ -35,12 +35,12 @@ conf.instance = conf.Config(config_path=workspace_path + 'config', output_path=w
 
 ci_data_type = 'ci_images_uniform' # Charge injection data consisting of 2 images with uniform injections.
 ci_data_model = 'serial_x3_species' # Shows the data was creating using a serial CTI model with one species.
-ci_data_resolution = 'high_res' # The resolution of the image.
+ci_data_resolution = 'low_res' # The resolution of the image.
 
 # Create the path where the data will be loaded from, which in this case is
 # '/workspace/data/ci_images_uniform/serial_x3_species/high_res/'
-ci_data_path = util.make_and_return_path(path=workspace_path, folder_names=['data', ci_data_type, ci_data_model,
-                                                                            ci_data_resolution])
+ci_data_path = path_util.make_and_return_path_from_path_and_folder_names(
+    path=workspace_path, folder_names=['data', ci_data_type, ci_data_model, ci_data_resolution])
 
 # The shape of the charge injection images, which is required to set up their charge injection regions
 if ci_data_resolution is 'high_res':
@@ -89,6 +89,6 @@ cti_settings = arctic_settings.ArcticSettings(serial=serial_cti_settings)
 # The pool command tells our code to serialize the analysis over 2 CPU's, where each CPU fits a different charge
 # injection image
 
-from workspace_jam.pipelines import serial_x3_species
-pipeline = serial_x3_species.make_pipeline(pipeline_path=ci_data_type + '/' + ci_data_resolution + '/')
+from workspace.pipelines import serial_x3_species
+pipeline = serial_x3_species.make_pipeline(phase_folders=ci_data_type + '/' + ci_data_resolution + '/')
 pipeline.run(ci_datas=datas, cti_settings=cti_settings, pool=Pool(processes=2))
