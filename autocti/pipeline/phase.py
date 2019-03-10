@@ -40,8 +40,8 @@ class Phase(ph.AbstractPhase):
         return self.__class__.Result(constant=result.constant, figure_of_merit=result.figure_of_merit,
                                      variable=result.variable, analysis=analysis, optimizer=self.optimizer)
 
-    def __init__(self, optimizer_class=nl.DownhillSimplex, mask_function=msk.Mask.empty_for_shape, columns=None,
-                 rows=None, phase_name=None):
+    def __init__(self, phase_name, phase_folders=None, optimizer_class=nl.DownhillSimplex,
+                 mask_function=msk.Mask.empty_for_shape, columns=None, rows=None):
         """
         A phase in an analysis pipeline. Uses the set NonLinear optimizer to try to fit models and images passed to it.
 
@@ -51,7 +51,7 @@ class Phase(ph.AbstractPhase):
             The class of a NonLinear optimizer
             The side length of the subgrid
         """
-        super().__init__(optimizer_class, phase_name)
+        super().__init__(optimizer_class=optimizer_class, phase_name=phase_name, phase_folders=phase_folders)
         self.mask_function = mask_function
         self.columns = columns
         self.rows = rows
@@ -364,17 +364,17 @@ class Phase(ph.AbstractPhase):
 
 
 class ParallelPhase(Phase):
+
     parallel_species = phase_property.PhasePropertyCollection("parallel_species")
     parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
 
-    def __init__(self, parallel_species=(), parallel_ccd=None, optimizer_class=nl.MultiNest,
-                 mask_function=msk.Mask.empty_for_shape, columns=None,
-                 phase_name="parallel_phase"):
+    def __init__(self, phase_name, phase_folders=None, parallel_species=(), parallel_ccd=None, optimizer_class=nl.MultiNest,
+                 mask_function=msk.Mask.empty_for_shape, columns=None):
         """
         A phase with a simple source/CTI model
         """
-        super().__init__(optimizer_class=optimizer_class, mask_function=mask_function, columns=columns, rows=None,
-                         phase_name=phase_name)
+        super().__init__(phase_name=phase_name, phase_folders=phase_folders, optimizer_class=optimizer_class,
+                         mask_function=mask_function, columns=columns, rows=None)
         self.parallel_species = parallel_species
         self.parallel_ccd = parallel_ccd
 
@@ -402,12 +402,13 @@ class SerialPhase(Phase):
     serial_species = phase_property.PhasePropertyCollection("serial_species")
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 
-    def __init__(self, serial_species=(), serial_ccd=None, optimizer_class=nl.MultiNest,
-                 mask_function=msk.Mask.empty_for_shape, rows=None, phase_name="serial_phase"):
+    def __init__(self, phase_name, phase_folders=None, serial_species=(), serial_ccd=None, optimizer_class=nl.MultiNest,
+                 mask_function=msk.Mask.empty_for_shape, rows=None):
         """
         A phase with a simple source/CTI model
         """
-        super().__init__(optimizer_class=optimizer_class, mask_function=mask_function, rows=rows, phase_name=phase_name)
+        super().__init__(phase_name=phase_name, phase_folders=phase_folders, optimizer_class=optimizer_class,
+                         mask_function=mask_function, rows=rows)
         self.serial_species = serial_species
         self.serial_ccd = serial_ccd
 
@@ -437,9 +438,8 @@ class ParallelSerialPhase(Phase):
     parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 
-    def __init__(self, parallel_species=(), serial_species=(), parallel_ccd=None, serial_ccd=None,
-                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape,
-                 phase_name="parallel_serial_phase"):
+    def __init__(self, phase_name, phase_folders=None, parallel_species=(), serial_species=(), parallel_ccd=None, serial_ccd=None,
+                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape):
         """
         A phase with a simple source/CTI model
 
@@ -448,8 +448,8 @@ class ParallelSerialPhase(Phase):
         optimizer_class: class
             The class of a non-linear optimizer
         """
-        super().__init__(optimizer_class=optimizer_class, mask_function=mask_function, columns=None,
-                         rows=None, phase_name=phase_name)
+        super().__init__(phase_name=phase_name, phase_folders=phase_folders, optimizer_class=optimizer_class,
+                         mask_function=mask_function, columns=None, rows=None)
         self.parallel_species = parallel_species
         self.serial_species = serial_species
         self.parallel_ccd = parallel_ccd
@@ -490,8 +490,8 @@ class HyperPhase(Phase):
     """
     hyper_noise_scalars = phase_property.PhasePropertyCollection("hyper_noise_scalars")
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, phase_name, phase_folders, *args, **kwargs):
+        super().__init__(phase_name=phase_name, phase_folders=phase_folders, *args, **kwargs)
 
     def extract_ci_hyper_data(self, data, mask, noise_scaling_maps):
         raise NotImplementedError()
@@ -578,9 +578,8 @@ class HyperPhase(Phase):
 
 
 class ParallelHyperPhase(ParallelPhase, HyperPhase):
-    def __init__(self, parallel_species=(), parallel_ccd=None,
-                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, columns=None,
-                 phase_name="parallel_hyper_phase"):
+    def __init__(self, phase_name, phase_folders=None, parallel_species=(), parallel_ccd=None,
+                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, columns=None):
         """
         A phase with a simple source/CTI model
 
@@ -589,8 +588,9 @@ class ParallelHyperPhase(ParallelPhase, HyperPhase):
         optimizer_class: class
             The class of a non-linear optimizer
         """
-        super().__init__(parallel_species=parallel_species, parallel_ccd=parallel_ccd, optimizer_class=optimizer_class,
-                         mask_function=mask_function, columns=columns, phase_name=phase_name)
+        super().__init__(phase_name=phase_name, phase_folders=phase_folders, parallel_species=parallel_species,
+                         parallel_ccd=parallel_ccd, optimizer_class=optimizer_class, mask_function=mask_function,
+                         columns=columns)
         self.number_of_noise_scalars = 2
 
     def noise_scaling_maps_from_result(self, result):
@@ -607,15 +607,14 @@ class ParallelHyperPhase(ParallelPhase, HyperPhase):
 
 class SerialHyperPhase(SerialPhase, HyperPhase):
 
-    def __init__(self, serial_species=(), serial_ccd=None,
-                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, rows=None,
-                 phase_name="serial_hyper_phase"):
+    def __init__(self, phase_name, phase_folders=None, serial_species=(), serial_ccd=None,
+                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, rows=None):
         """
         A phase with a simple source/CTI model
         """
-        HyperPhase.__init__(self=self)
-        super().__init__(serial_species=serial_species, serial_ccd=serial_ccd, optimizer_class=optimizer_class,
-                         mask_function=mask_function, rows=rows, phase_name=phase_name)
+        HyperPhase.__init__(self=self, phase_name=phase_name, phase_folders=phase_folders)
+        super().__init__(phase_name=phase_name, phase_folders=phase_folders, serial_species=serial_species,
+                         serial_ccd=serial_ccd, optimizer_class=optimizer_class, mask_function=mask_function, rows=rows)
         self.number_of_noise_scalars = 2
 
     def noise_scaling_maps_from_result(self, result):
@@ -630,9 +629,8 @@ class SerialHyperPhase(SerialPhase, HyperPhase):
 
 
 class ParallelSerialHyperPhase(ParallelSerialPhase, HyperPhase):
-    def __init__(self, parallel_species=(), serial_species=(), parallel_ccd=None, serial_ccd=None,
-                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape,
-                 phase_name="parallel_serial_hyper_phase"):
+    def __init__(self, phase_name, phase_folders=None, parallel_species=(), serial_species=(), parallel_ccd=None,
+                 serial_ccd=None, optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape):
         """
         A phase with a simple source/CTI model
 
@@ -641,9 +639,9 @@ class ParallelSerialHyperPhase(ParallelSerialPhase, HyperPhase):
         optimizer_class: class
             The class of a non-linear optimizer
         """
-        super().__init__(parallel_species=parallel_species, serial_species=serial_species, parallel_ccd=parallel_ccd,
-                         serial_ccd=serial_ccd, optimizer_class=optimizer_class, mask_function=mask_function,
-                         phase_name=phase_name)
+        super().__init__(phase_name=phase_name, phase_folders=phase_folders, parallel_species=parallel_species,
+                         serial_species=serial_species, parallel_ccd=parallel_ccd,
+                         serial_ccd=serial_ccd, optimizer_class=optimizer_class, mask_function=mask_function)
         self.number_of_noise_scalars = 4
 
     def noise_scaling_maps_from_result(self, result):
