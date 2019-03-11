@@ -284,7 +284,7 @@ class TestPhase(object):
         setattr(results.constant, "parallel_species", [parallel])
 
         phase = MyPhase(phase_name='test_phase', optimizer_class=NLO, parallel_species=[parallel])
-        phase.make_analysis([ci_data], cti_settings, previous_results=ResultsCollection([results]))
+        phase.make_analysis([ci_data], cti_settings, results=ResultsCollection([results]))
 
         assert phase.parallel_species == [parallel]
 
@@ -352,19 +352,19 @@ class MockInstance:
 @pytest.fixture(name="parallel_hyper_analysis")
 def make_parallel_hyper_analysis():
     phase = ph.ParallelHyperPhase(phase_name='test_phase')
-    return phase.make_analysis([], [], previous_results=[MockResult])
+    return phase.make_analysis([], [], results=[MockResult])
 
 
 @pytest.fixture(name="serial_hyper_analysis")
 def make_serial_hyper_analysis():
     phase = ph.SerialHyperPhase(phase_name='test_phase')
-    return phase.make_analysis([], [], previous_results=[MockResult])
+    return phase.make_analysis([], [], results=[MockResult])
 
 
 @pytest.fixture(name="parallel_serial_hyper_analysis")
 def make_parallel_serial_hyper_analysis():
     phase = ph.ParallelSerialHyperPhase(phase_name='test_phase')
-    return phase.make_analysis([], [], previous_results=[MockResult])
+    return phase.make_analysis([], [], results=[MockResult])
 
 
 class TestHyperPhase(object):

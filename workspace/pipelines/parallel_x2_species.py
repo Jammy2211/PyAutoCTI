@@ -42,7 +42,7 @@ def make_pipeline(phase_folders=None):
 
     class ParallelPhase(ph.ParallelPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
@@ -69,9 +69,9 @@ def make_pipeline(phase_folders=None):
 
     class ParallelPhase(ph.ParallelPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
 
-            previous_total_density = previous_results[-1].constant.parallel_species[0].trap_density
+            previous_total_density = results[-1].constant.parallel_species[0].trap_density
 
             self.parallel_species[0].trap_density = prior.UniformPrior(lower_limit=0.0,
                                                                        upper_limit=previous_total_density)
@@ -80,8 +80,8 @@ def make_pipeline(phase_folders=None):
             self.parallel_species[0].trap_lifetime = prior.UniformPrior(lower_limit=0.0, upper_limit=30.0)
             self.parallel_species[1].trap_lifetime = prior.UniformPrior(lower_limit=0.0, upper_limit=30.0)
 
-            self.parallel_ccd.well_notch_depth = previous_results[0].variable.parallel_ccd.well_notch_depth
-            self.parallel_ccd.well_fill_beta = previous_results[0].variable.parallel_ccd.well_fill_beta
+            self.parallel_ccd.well_notch_depth = results.from_phase('phase_1_x1_species').variable.parallel_ccd.well_notch_depth
+            self.parallel_ccd.well_fill_beta = results.from_phase('phase_1_x1_species').variable.parallel_ccd.well_fill_beta
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
@@ -102,10 +102,10 @@ def make_pipeline(phase_folders=None):
 
     class ParallelHyperModelFixedPhase(ph.ParallelHyperPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
 
-            self.parallel_species = previous_results[1].constant.parallel_species
-            self.parallel_ccd = previous_results[1].constant.parallel_ccd
+            self.parallel_species = results.from_phase('phase_2_x3_species').constant.parallel_species
+            self.parallel_ccd = results.from_phase('phase_2_x3_species').constant.parallel_ccd
 
     phase3 = ParallelHyperModelFixedPhase(phase_name='phase_3_noise_scaling', phase_folders=phase_folders,
                                           parallel_species=[prior_model.PriorModel(arctic_params.Species),
@@ -124,11 +124,11 @@ def make_pipeline(phase_folders=None):
 
     class ParallelHyperFixedPhase(ph.ParallelHyperPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
 
-            self.hyper_noise_scalars = previous_results[2].constant.hyper_noise_scalars
-            self.parallel_species = previous_results[1].variable.parallel_species
-            self.parallel_ccd = previous_results[1].variable.parallel_ccd
+            self.hyper_noise_scalars = results.from_phase('phase_3_noise_scaling').constant.hyper_noise_scalars
+            self.parallel_species = results.from_phase('phase_2_x3_species').variable.parallel_species
+            self.parallel_ccd = results.from_phase('phase_2_x3_species').variable.parallel_ccd
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 

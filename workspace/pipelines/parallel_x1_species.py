@@ -37,7 +37,7 @@ def make_pipeline(phase_folders=None):
 
     class ParallelPhase(ph.ParallelPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
 
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
@@ -64,10 +64,10 @@ def make_pipeline(phase_folders=None):
 
     class ParallelHyperModelFixedPhase(ph.ParallelHyperPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
 
-            self.parallel_species = previous_results[0].constant.parallel_species
-            self.parallel_ccd = previous_results[0].constant.parallel_ccd
+            self.parallel_species = results.from_phase('phase_1_initialize').constant.parallel_species
+            self.parallel_ccd = results.from_phase('phase_1_initialize').constant.parallel_ccd
 
     phase2 = ParallelHyperModelFixedPhase(phase_name='phase_2_noise_scaling', phase_folders=phase_folders,
                                           parallel_species=[prior_model.PriorModel(arctic_params.Species)],
@@ -85,11 +85,11 @@ def make_pipeline(phase_folders=None):
 
     class ParallelHyperFixedPhase(ph.ParallelHyperPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
 
-            self.hyper_noise_scalars = previous_results[1].constant.hyper_noise_scalars
-            self.parallel_species = previous_results[0].variable.parallel_species
-            self.parallel_ccd = previous_results[0].variable.parallel_ccd
+            self.hyper_noise_scalars = results.from_phase('phase_2_noise_scaling').constant.hyper_noise_scalars
+            self.parallel_species = results.from_phase('phase_1_initialize').variable.parallel_species
+            self.parallel_ccd = results.from_phase('phase_1_initialize').variable.parallel_ccd
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 

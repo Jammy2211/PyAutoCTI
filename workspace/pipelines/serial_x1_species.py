@@ -38,7 +38,7 @@ def make_pipeline(phase_folders=None):
 
     class SerialPhase(ph.SerialPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
             self.serial_ccd.well_fill_alpha = 1.0
             self.serial_ccd.well_fill_gamma = 0.0
 
@@ -65,9 +65,9 @@ def make_pipeline(phase_folders=None):
 
     class SerialHyperModelFixedPhase(ph.SerialHyperPhase):
 
-        def pass_priors(self, previous_results):
-            self.serial_species = previous_results[0].constant.serial_species
-            self.serial_ccd = previous_results[0].constant.serial_ccd
+        def pass_priors(self, results):
+            self.serial_species = results.from_phase('phase_1_initialize').constant.serial_species
+            self.serial_ccd = results.from_phase('phase_1_initialize').constant.serial_ccd
 
     phase2 = SerialHyperModelFixedPhase(phase_name='phase_2_noise_scaling', phase_folders=phase_folders,
                                         serial_species=[prior_model.PriorModel(arctic_params.Species)],
@@ -85,11 +85,11 @@ def make_pipeline(phase_folders=None):
 
     class SerialHyperFixedPhase(ph.SerialHyperPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
 
-            self.hyper_noise_scalars = previous_results[1].constant.hyper_noise_scalars
-            self.serial_species = previous_results[0].variable.serial_species
-            self.serial_ccd = previous_results[0].variable.serial_ccd
+            self.hyper_noise_scalars = results.from_phase('phase_2_noise_scaling').constant.hyper_noise_scalars
+            self.serial_species = results.from_phase('phase_1_initialize').variable.serial_species
+            self.serial_ccd = results.from_phase('phase_1_initialize').variable.serial_ccd
             self.serial_ccd.well_fill_alpha = 1.0
             self.serial_ccd.well_fill_gamma = 0.0
 
