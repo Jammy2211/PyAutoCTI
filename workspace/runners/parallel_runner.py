@@ -76,8 +76,8 @@ for image_index in range(len(normalizations)):
 
     ci_datas.append(ci_data.ci_data_from_fits(
                  frame_geometry=frame_geometry, ci_pattern=patterns[image_index],
-                 image_path=ci_data_path + '/ci_image_' + str(image_index) + '.fits',
-                 ci_pre_cti_path=ci_data_path +'/ci_pre_cti_' + str(image_index) + '.fits',
+                 image_path=ci_data_path + 'ci_image_' + str(image_index) + '.fits',
+                 ci_pre_cti_path=ci_data_path +'ci_pre_cti_' + str(image_index) + '.fits',
                  noise_map_from_single_value=4.0))
 
 # The CTI settings of arCTIc, which models the CCD read-out including CTI. For parallel ci data, we include 'charge

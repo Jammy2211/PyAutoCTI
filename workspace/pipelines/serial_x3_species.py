@@ -23,11 +23,12 @@ from autocti.model import arctic_params
 # Phase 4) Refit the phase 2 model, using priors initialized from the results of phase 2 and the scaled noise-map
 #          computed in phase 3.
 
-def make_pipeline(phase_folders=''):
+def make_pipeline(phase_folders=None):
 
     pipeline_name = 'pipeline_serial_x3_species'
     
-    # This function combines the phase folders to the pipeline name to set up the output directory structure
+    # This function uses the phase folders and pipeline name to set up the output directory structure,
+    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
 
@@ -147,4 +148,4 @@ def make_pipeline(phase_folders=''):
     phase4.optimizer.n_live_points = 50
     phase4.optimizer.sampling_efficiency = 0.3
 
-    return pl.Pipeline(phase1, phase2, phase3, phase4)
+    return pl.Pipeline(pipeline_name, phase1, phase2, phase3, phase4)
