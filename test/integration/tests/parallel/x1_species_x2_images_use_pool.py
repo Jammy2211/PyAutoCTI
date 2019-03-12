@@ -40,12 +40,12 @@ def make_pipeline(test_name):
 
     class ParallelPhase(ph.ParallelPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
 
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
-    phase1 = ParallelPhase(phase_name='phase1', phase_folders=[test_name],
+    phase1 = ParallelPhase(phase_name='phase_1', phase_folders=[test_name],
                            optimizer_class=nl.MultiNest, parallel_species=[prior_model.PriorModel(arctic_params.Species)],
                            parallel_ccd=arctic_params.CCD, columns=40)
 
@@ -53,7 +53,7 @@ def make_pipeline(test_name):
     phase1.optimizer.n_live_points = 60
     phase1.optimizer.sampling_efficiency = 0.2
 
-    return pl.Pipeline(phase1)
+    return pl.Pipeline(test_type, phase1)
 
 
 if __name__ == "__main__":

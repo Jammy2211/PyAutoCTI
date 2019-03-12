@@ -89,7 +89,7 @@ class Phase(ph.AbstractPhase):
         pool
         cti_settings
         ci_datas
-        results: ResultsCollection
+        results: [Result]
             An object describing the results of the last phase or None if no phase has been executed
 
         Returns
@@ -120,7 +120,7 @@ class Phase(ph.AbstractPhase):
         cti_settings
         ci_datas
         pool
-        results: ResultsCollection
+        results: [Results]
             The result from the previous phase
 
         Returns
@@ -509,7 +509,7 @@ class HyperPhase(Phase):
         cti_settings
         ci_datas
         pool
-        results: ResultsCollection
+        results: [Result]
             The result from the previous phase
 
         Returns
