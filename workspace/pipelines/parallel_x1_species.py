@@ -1,6 +1,7 @@
 from autofit.tools import path_util
 from autofit.optimize import non_linear as nl
 from autofit.mapper import prior_model
+from autocti.data import mask as msk
 from autocti.pipeline import pipeline as pl
 from autocti.pipeline import phase as ph
 from autocti.model import arctic_params
@@ -18,7 +19,7 @@ from autocti.model import arctic_params
 # Phase 2) Refit the phase 1 model, using priors initialized from the results of phase 1 and the scaled noise-map
 #          computed in phase 2.
 
-def make_pipeline(phase_folders=None):
+def make_pipeline(phase_folders=None, mask_function=msk.Mask.empty_for_shape):
 
     pipeline_name = 'pipeline_parallel_x1_species'
 
@@ -42,7 +43,8 @@ def make_pipeline(phase_folders=None):
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
-    phase1 = ParallelPhase(phase_name='phase_1_initialize', phase_folders=phase_folders, optimizer_class=nl.MultiNest,
+    phase1 = ParallelPhase(phase_name='phase_1_initialize', phase_folders=phase_folders,
+                           optimizer_class=nl.MultiNest, mask_function=mask_function,
                            parallel_species=[prior_model.PriorModel(arctic_params.Species)],
                            parallel_ccd=arctic_params.CCD, columns=60)
 
@@ -93,7 +95,7 @@ def make_pipeline(phase_folders=None):
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
-    phase3 = ParallelHyperFixedPhase(phase_name='/phase_3_final', phase_folders=phase_folders,
+    phase3 = ParallelHyperFixedPhase(phase_name='phase_3_final', phase_folders=phase_folders,
                                      optimizer_class=nl.MultiNest)
 
     # For the final CTI model, constant efficiency mode has a tendancy to sample parameter space too fast and infer an

@@ -35,7 +35,7 @@ class Mask(np.ndarray):
         return mask
 
     @classmethod
-    def empty_for_shape(cls, shape):
+    def empty_for_shape(cls, shape, **kwargs):
         """
         Create the mask used for CTI Calibration as all False's (e.g. no masking).
 
