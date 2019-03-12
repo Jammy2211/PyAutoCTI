@@ -4,7 +4,6 @@ from autofit import conf
 from autofit.mapper import prior_model
 from autofit.optimize import non_linear as nl
 
-from autocti.charge_injection import ci_data, ci_pattern
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
 from autocti.pipeline import phase as ph
@@ -38,11 +37,11 @@ def make_pipeline(test_name):
 
     class ParallelPhase(ph.ParallelPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
-    phase1 = ParallelPhase(phase_name='phase1', phase_folders=[test_name],
+    phase1 = ParallelPhase(phase_name='phase_1', phase_folders=[test_name],
                            optimizer_class=nl.MultiNest, parallel_species=[prior_model.PriorModel(arctic_params.Species),
                                                                            prior_model.PriorModel(arctic_params.Species),
                                                                            prior_model.PriorModel(arctic_params.Species)],
@@ -53,7 +52,7 @@ def make_pipeline(test_name):
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.sampling_efficiency = 0.2
 
-    return pl.Pipeline(phase1)
+    return pl.Pipeline(test_type, phase1)
 
 
 if __name__ == "__main__":

@@ -37,11 +37,11 @@ def make_pipeline(test_name):
 
     class ParallelPhase(ph.ParallelPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
-    phase1 = ParallelPhase(phase_name='phase1', phase_folders=[test_name],
+    phase1 = ParallelPhase(phase_name='phase_1', phase_folders=[test_name],
                            optimizer_class=nl.MultiNest,
                            parallel_species=[prior_model.PriorModel(arctic_params.Species)],
                            parallel_ccd=arctic_params.CCD, columns=40)
@@ -52,27 +52,27 @@ def make_pipeline(test_name):
 
     class ParallelHyperModelFixedPhase(ph.ParallelHyperPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
 
-            self.parallel_species = previous_results[0].constant.parallel_species
-            self.parallel_ccd = previous_results[0].constant.parallel_ccd
+            self.parallel_species = results.from_phase('phase_1').constant.parallel_species
+            self.parallel_ccd = results.from_phase('phase_1').constant.parallel_ccd
 
-    phase2 = ParallelHyperModelFixedPhase(phase_name='phase2', phase_folders=[test_name],
+    phase2 = ParallelHyperModelFixedPhase(phase_name='phase_2', phase_folders=[test_name],
                                           parallel_species=[prior_model.PriorModel(arctic_params.Species)],
                                           parallel_ccd=arctic_params.CCD,
                                           optimizer_class=nl.MultiNest, columns=None)
 
     class ParallelHyperFixedPhase(ph.ParallelHyperPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
 
-            self.hyper_noise_scalars = previous_results[1].constant.hyper_noise_scalars
-            self.parallel_species = previous_results[0].variable.parallel_species
-            self.parallel_ccd = previous_results[0].variable.parallel_ccd
+            self.hyper_noise_scalars = results.from_phase('phase_2').constant.hyper_noise_scalars
+            self.parallel_species = results.from_phase('phase_1').variable.parallel_species
+            self.parallel_ccd = results.from_phase('phase_1').variable.parallel_ccd
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
-    phase3 = ParallelHyperFixedPhase(phase_name='phase3', phase_folders=[test_name],
+    phase3 = ParallelHyperFixedPhase(phase_name='phase_3', phase_folders=[test_name],
                                      optimizer_class=nl.MultiNest, columns=None)
 
     # For the final CTI model, constant efficiency mode has a tendancy to sample parameter space too fast and infer an
@@ -82,7 +82,7 @@ def make_pipeline(test_name):
     phase3.optimizer.n_live_points = 50
     phase3.optimizer.sampling_efficiency = 0.3
 
-    return pl.Pipeline(phase1, phase2, phase3)
+    return pl.Pipeline(test_type, phase1, phase2, phase3)
 
 
 if __name__ == "__main__":
