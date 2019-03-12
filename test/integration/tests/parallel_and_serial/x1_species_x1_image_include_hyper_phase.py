@@ -15,7 +15,7 @@ test_type = 'parallel_and_serial'
 test_name = 'x1_species_x1_image_no_pool'
 
 test_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
-output_path = test_path + 'output/' + test_type
+output_path = test_path + 'output/'
 config_path = test_path + 'config'
 conf.instance = conf.Config(config_path=config_path, output_path=output_path)
 
@@ -46,7 +46,7 @@ def make_pipeline(test_name):
             self.serial_ccd.well_fill_alpha = 1.0
             self.serial_ccd.well_fill_gamma = 0.0
 
-    phase1 = ParallelSerialPhase(phase_name='phase_1', phase_folders=[test_name],
+    phase1 = ParallelSerialPhase(phase_name='phase_1', phase_folders=[test_name, test_type],
                                  optimizer_class=nl.MultiNest,
                                  parallel_species=[prior_model.PriorModel(arctic_params.Species)],
                                  parallel_ccd=arctic_params.CCD,
@@ -66,7 +66,7 @@ def make_pipeline(test_name):
             self.serial_species = results.from_phase('phase_1').constant.serial_species
             self.serial_ccd = results.from_phase('phase_1').constant.serial_ccd
 
-    phase2 = ParallelSerialHyperModelFixedPhase(phase_name='phase_2', phase_folders=[test_name],
+    phase2 = ParallelSerialHyperModelFixedPhase(phase_name='phase_2', phase_folders=[test_name, test_type],
                                                 parallel_species=[prior_model.PriorModel(arctic_params.Species)],
                                                 parallel_ccd=arctic_params.CCD,
                                                 serial_species=[prior_model.PriorModel(arctic_params.Species)],
@@ -87,7 +87,7 @@ def make_pipeline(test_name):
             self.serial_ccd.well_fill_alpha = 1.0
             self.serial_ccd.well_fill_gamma = 0.0
 
-    phase3 = SerialHyperFixedPhase(phase_name='phase_3', phase_folders=[test_name],
+    phase3 = SerialHyperFixedPhase(phase_name='phase_3', phase_folders=[test_name, test_type],
                                    optimizer_class=nl.MultiNest, rows=None)
 
     # For the final CTI model, constant efficiency mode has a tendancy to sample parameter space too fast and infer an
