@@ -51,7 +51,7 @@ class Phase(ph.AbstractPhase):
             The class of a NonLinear optimizer
             The side length of the subgrid
         """
-        super().__init__(optimizer_class=optimizer_class, phase_name=phase_name, phase_folders=phase_folders)
+        super().__init__(phase_name=phase_name, phase_folders=phase_folders, optimizer_class=optimizer_class)
         self.mask_function = mask_function
         self.columns = columns
         self.rows = rows
@@ -80,7 +80,7 @@ class Phase(ph.AbstractPhase):
         """
         return self.optimizer.variable
 
-    def run(self, ci_datas, cti_settings, previous_results=None, pool=None):
+    def run(self, ci_datas, cti_settings, results=None, pool=None):
         """
         Run this phase.
 
@@ -89,7 +89,7 @@ class Phase(ph.AbstractPhase):
         pool
         cti_settings
         ci_datas
-        previous_results: ResultsCollection
+        results: [Result]
             An object describing the results of the last phase or None if no phase has been executed
 
         Returns
@@ -98,7 +98,7 @@ class Phase(ph.AbstractPhase):
             A result object comprising the best fit model and other ci_data.
         """
 
-        analysis = self.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings, previous_results=previous_results,
+        analysis = self.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings, results=results,
                                       pool=pool)
 
         result = self.optimizer.fit(analysis)
@@ -110,7 +110,7 @@ class Phase(ph.AbstractPhase):
         return ci_data.MaskedCIData(image=data.image, noise_map=data.noise_map, ci_pre_cti=data.ci_pre_cti, mask=mask,
                                     ci_pattern=data.ci_pattern, ci_frame=data.ci_frame)
 
-    def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
+    def make_analysis(self, ci_datas, cti_settings, results=None, pool=None):
         """
         Create an analysis object. Also calls the prior passing and image modifying functions to allow child classes to
         change the behaviour of the phase.
@@ -120,7 +120,7 @@ class Phase(ph.AbstractPhase):
         cti_settings
         ci_datas
         pool
-        previous_results: ResultsCollection
+        results: [Results]
             The result from the previous phase
 
         Returns
@@ -128,7 +128,8 @@ class Phase(ph.AbstractPhase):
         analysis: Analysis
             An analysis object that the non-linear optimizer calls to determine the fit of a set of values
         """
-        masks = list(map(lambda data: self.mask_function(shape=data.image.shape), ci_datas))
+        masks = list(map(lambda data: self.mask_function(shape=data.image.shape,
+                                                         frame_geometry=data.ci_frame.frame_geometry), ci_datas))
         ci_datas_fit = [self.extract_ci_data(data=data, mask=mask) for data, mask in zip(ci_datas, masks)]
         ci_datas_full = list(map(lambda data, mask:
                                  ci_data.MaskedCIData(image=data.image, noise_map=data.noise_map,
@@ -136,16 +137,16 @@ class Phase(ph.AbstractPhase):
                                                       ci_pattern=data.ci_pattern, ci_frame=data.ci_frame),
                                  ci_datas, masks))
 
-        self.pass_priors(previous_results)
+        self.pass_priors(results)
         analysis = self.__class__.Analysis(ci_datas_extracted=ci_datas_fit, ci_datas_full=ci_datas_full,
                                            cti_settings=cti_settings, phase_name=self.phase_name,
-                                           previous_results=previous_results, pool=pool)
+                                           results=results, pool=pool)
         return analysis
 
     # noinspection PyAbstractClass
     class Analysis(nl.Analysis):
 
-        def __init__(self, ci_datas_extracted, ci_datas_full, cti_settings, phase_name, previous_results=None,
+        def __init__(self, ci_datas_extracted, ci_datas_full, cti_settings, phase_name, results=None,
                      pool=None):
             """
             An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \
@@ -164,7 +165,7 @@ class Phase(ph.AbstractPhase):
             self.phase_output_path = "{}/{}".format(conf.instance.output_path, self.phase_name)
 
             self.pool = pool or ConsecutivePool
-            self.previous_results = previous_results
+            self.results = results
 
             self.plot_count = 0
 
@@ -193,8 +194,8 @@ class Phase(ph.AbstractPhase):
 
         @property
         def last_results(self):
-            if self.previous_results is not None:
-                return self.previous_results.last
+            if self.results is not None:
+                return self.results.last
 
         def visualize(self, instance, image_path, during_analysis):
 
@@ -499,7 +500,7 @@ class HyperPhase(Phase):
     def noise_scaling_maps_from_result(self, result):
         raise NotImplementedError()
 
-    def make_analysis(self, ci_datas, cti_settings, previous_results=None, pool=None):
+    def make_analysis(self, ci_datas, cti_settings, results=None, pool=None):
         """
         Create an analysis object. Also calls the prior passing and image modifying functions to allow child classes to
         change the behaviour of the phase.
@@ -509,7 +510,7 @@ class HyperPhase(Phase):
         cti_settings
         ci_datas
         pool
-        previous_results: ResultsCollection
+        results: [Result]
             The result from the previous phase
 
         Returns
@@ -518,7 +519,7 @@ class HyperPhase(Phase):
             An analysis object that the non-linear optimizer calls to determine the fit of a set of values
         """
         masks = list(map(lambda data: self.mask_function(shape=data.image.shape), ci_datas))
-        noise_scaling_maps = self.noise_scaling_maps_from_result(previous_results[-1])
+        noise_scaling_maps = self.noise_scaling_maps_from_result(results[-1])
         ci_datas_fit = [self.extract_ci_hyper_data(data=data, mask=mask, noise_scaling_maps=maps) for
                         data, mask, maps in zip(ci_datas, masks, noise_scaling_maps)]
         ci_datas_full = list(map(lambda data, mask, maps:
@@ -528,7 +529,7 @@ class HyperPhase(Phase):
                                                            noise_scaling_maps=maps),
                                  ci_datas, masks, noise_scaling_maps))
 
-        self.pass_priors(previous_results)
+        self.pass_priors(results)
 
         class HyperAnalysis(self.__class__.Analysis):
 
@@ -565,7 +566,7 @@ class HyperPhase(Phase):
 
         analysis = HyperAnalysis(ci_datas_extracted=ci_datas_fit, ci_datas_full=ci_datas_full,
                                  cti_settings=cti_settings, phase_name=self.phase_name,
-                                 previous_results=previous_results, pool=pool)
+                                 results=results, pool=pool)
         return analysis
 
     @property

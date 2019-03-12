@@ -7,7 +7,7 @@ from autofit.mapper import model_mapper as mm
 from autofit.mapper import prior_model
 from autofit.optimize import non_linear as nl
 from autofit.tools import phase_property
-from autofit.tools.phase import ResultsCollection
+from autofit.tools.pipeline import ResultsCollection
 
 from autocti import exc
 from autocti.charge_injection import ci_data as data
@@ -106,11 +106,28 @@ def make_results():
 
 
 @pytest.fixture(name="results_collection")
-def make_results_collection(results):
-    return ResultsCollection([results])
+def make_results_collection():
+    return ResultsCollection()
 
 
 class TestPhase(object):
+
+    def test_param_names(self, phase):
+        phase.parallel_species = [mm.PriorModel(arctic_params.Species), mm.PriorModel(arctic_params.Species)]
+
+        assert phase.optimizer.variable.param_names == ['parallel_species_0_trap_density',
+                                                        'parallel_species_0_trap_lifetime',
+                                                        'parallel_species_1_trap_density',
+                                                        'parallel_species_1_trap_lifetime']
+
+        phase = ph.ParallelPhase(phase_name='test_phase', parallel_species=[mm.PriorModel(arctic_params.Species),
+                                                                            mm.PriorModel(arctic_params.Species)],
+                                 optimizer_class=NLO)
+
+        assert phase.optimizer.variable.param_names == ['parallel_species_0_trap_density',
+                                                        'parallel_species_0_trap_lifetime',
+                                                        'parallel_species_1_trap_density',
+                                                        'parallel_species_1_trap_lifetime']
 
     def test__set_constants(self, phase):
         parallel_species = arctic_params.Species()
@@ -283,8 +300,11 @@ class TestPhase(object):
 
         setattr(results.constant, "parallel_species", [parallel])
 
+        results_collection = ResultsCollection()
+        results_collection.add("first_phase", results)
+
         phase = MyPhase(phase_name='test_phase', optimizer_class=NLO, parallel_species=[parallel])
-        phase.make_analysis([ci_data], cti_settings, previous_results=ResultsCollection([results]))
+        phase.make_analysis([ci_data], cti_settings, results=results_collection)
 
         assert phase.parallel_species == [parallel]
 
@@ -352,19 +372,19 @@ class MockInstance:
 @pytest.fixture(name="parallel_hyper_analysis")
 def make_parallel_hyper_analysis():
     phase = ph.ParallelHyperPhase(phase_name='test_phase')
-    return phase.make_analysis([], [], previous_results=[MockResult])
+    return phase.make_analysis([], [], results=[MockResult])
 
 
 @pytest.fixture(name="serial_hyper_analysis")
 def make_serial_hyper_analysis():
     phase = ph.SerialHyperPhase(phase_name='test_phase')
-    return phase.make_analysis([], [], previous_results=[MockResult])
+    return phase.make_analysis([], [], results=[MockResult])
 
 
 @pytest.fixture(name="parallel_serial_hyper_analysis")
 def make_parallel_serial_hyper_analysis():
     phase = ph.ParallelSerialHyperPhase(phase_name='test_phase')
-    return phase.make_analysis([], [], previous_results=[MockResult])
+    return phase.make_analysis([], [], results=[MockResult])
 
 
 class TestHyperPhase(object):
@@ -460,7 +480,8 @@ Hyper Parameters:
         noise_scaling_maps = ph.SerialHyperPhase(phase_name='test_phase').noise_scaling_maps_from_result(MockResult)
         assert noise_scaling_maps == [1, 3]
 
-        noise_scaling_maps = ph.ParallelSerialHyperPhase(phase_name='test_phase').noise_scaling_maps_from_result(MockResult)
+        noise_scaling_maps = ph.ParallelSerialHyperPhase(phase_name='test_phase').noise_scaling_maps_from_result(
+            MockResult)
         assert noise_scaling_maps == [1, 2, 3, 4]
 
     def test_hyper_phase(self):
@@ -474,13 +495,6 @@ Hyper Parameters:
 
 
 class TestResult(object):
-
-    def test_results(self):
-        results = ResultsCollection([1, 2, 3])
-        assert results == [1, 2, 3]
-        assert results.last == 3
-        assert results.first == 1
-
     def test__fits_for_instance__uses_ci_data_fit(self, ci_data, cti_settings):
         parallel_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
         parallel_ccd = arctic_params.CCD(well_notch_depth=0.1, well_fill_alpha=0.5, well_fill_beta=0.5,
@@ -518,7 +532,6 @@ class TestResult(object):
         assert fit.likelihood == fit_figure_of_merit
 
     def test__results_of_phase_are_available_as_properties(self, ci_data, cti_settings):
-
         phase = ph.ParallelPhase(optimizer_class=NLO,
                                  parallel_species=[prior_model.PriorModel(arctic_params.Species)],
                                  parallel_ccd=arctic_params.CCD, phase_name='test_phase')

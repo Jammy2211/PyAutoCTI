@@ -33,10 +33,22 @@ ci_data_path = path_util.make_and_return_path_from_path_and_folder_names(
 
 if ci_data_resolution is 'high_res':
     shape = (2316, 2119)
+    frame_geometry = ci_frame.FrameGeometry(corner=(0.0, 0.0),
+                                            parallel_overscan=ci_frame.Region((2296, 2316, 51, 2099)),
+                                            serial_prescan=ci_frame.Region((0, 2316, 0, 51)),
+                                            serial_overscan=ci_frame.Region((0, 2296, 2099, 2119)))
 elif ci_data_resolution is 'mid_res':
     shape = (2316, 1034)
+    frame_geometry = ci_frame.FrameGeometry(corner=(0.0, 0.0),
+                                            parallel_overscan=ci_frame.Region((2296, 2316, 51, 1014)),
+                                            serial_prescan=ci_frame.Region((0, 2316, 0, 51)),
+                                            serial_overscan=ci_frame.Region((0, 2296, 1014, 1034)))
 elif ci_data_resolution is 'low_res':
     shape = (2316, 517)
+    frame_geometry = ci_frame.FrameGeometry(corner=(0.0, 0.0),
+                                            parallel_overscan=ci_frame.Region((2296, 2316, 51, 497)),
+                                            serial_prescan=ci_frame.Region((0, 2316, 0, 51)),
+                                            serial_overscan=ci_frame.Region((0, 2296, 497, 517)))
 
 # Specify the charge injection regions on the CCD, which in this case is 7 equally spaced rectangular blocks.
 ci_regions = [(0, 30, 51, shape[1]-20), (330, 360, 51, shape[1]-20),
@@ -46,12 +58,6 @@ ci_regions = [(0, 30, 51, shape[1]-20), (330, 360, 51, shape[1]-20),
 
 # The normalization of every ci image - this size of this list thus determines how many images are simulated.
 normalizations=[100.0, 500.0, 1000.0, 5000.0, 10000.0, 25000.0, 50000.0, 84700.0]
-
-# The frame geometry of the image being simuated.
-frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
-# frame_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
-# frame_geometry = ci_frame.QuadGeometryEuclid.top_left()
-# frame_geometry = ci_frame.QuadGeometryEuclid.top_right()
 
 # The CTI settings of arCTIc, which models the CCD read-out including CTI. For parallel ci data, we include 'charge
 # injection mode' which accounts for the fact that every pixel is transferred over the full CCD.
@@ -85,12 +91,12 @@ ci_datas = list(map(lambda ci_pre_cti, ci_pattern:
 # Now, output every image to the data folder as the filename 'ci_data_#.fits'
 list(map(lambda ci_data, index:
          util.numpy_array_2d_to_fits(array_2d=ci_data.image,
-                                     file_path=ci_data_path + '/ci_image_' + str(index) + '.fits', overwrite=True),
+                                     file_path=ci_data_path + 'image_' + str(index) + '.fits', overwrite=True),
          ci_datas, range(len(ci_datas))))
 
 # Output every pre-cti image to the data folder as the filename 'ci_pre_cti_#.fits'. This allows the calibration
 # pipeline to load these images as the model pre-cti images, which is necessary for non-uniform ci patterns.
 list(map(lambda ci_data, index :
          util.numpy_array_2d_to_fits(array_2d=ci_data.ci_pre_cti,
-                                     file_path=ci_data_path + '/ci_pre_cti_' + str(index) + '.fits', overwrite=True),
+                                     file_path=ci_data_path + 'ci_pre_cti_' + str(index) + '.fits', overwrite=True),
          ci_datas, range(len(ci_datas))))
