@@ -10,6 +10,13 @@ class DummyPhase(object):
         self.results = None
         self.phase_name = phase_name
 
+        class Optimizer(object):
+            @property
+            def phase_name(self):
+                return phase_name
+
+        self.optimizer = Optimizer()
+
     def run(self, ci_datas, cti_settings, results, pool):
         self.ci_datas = ci_datas
         self.cti_settings = cti_settings
@@ -26,8 +33,8 @@ class TestPipeline(object):
 
         pipeline.run(ci_datas=None, cti_settings=None, pool=None)
 
-        assert len(phase_1.results) == 0
-        assert len(phase_2.results) == 1
+        assert len(phase_1.results) == 2
+        assert len(phase_2.results) == 2
 
     def test_addition(self):
         phase_1 = DummyPhase(phase_name='dummy1')
