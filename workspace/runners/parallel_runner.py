@@ -2,6 +2,7 @@ import os
 
 from autofit import conf
 from autofit.tools import path_util
+from autocti.data import mask as msk
 from autocti.charge_injection import ci_frame
 from autocti.charge_injection import ci_pattern
 from autocti.charge_injection import ci_data
@@ -42,13 +43,24 @@ ci_data_resolution = 'high_res' # The resolution of the image.
 ci_data_path = path_util.make_and_return_path_from_path_and_folder_names(
     path=workspace_path, folder_names=['data', ci_data_type, ci_data_model, ci_data_resolution])
 
-# The shape of the charge injection images, which is required to set up their charge injection regions
 if ci_data_resolution is 'high_res':
     shape = (2316, 2119)
+    frame_geometry = ci_frame.FrameGeometry(corner=(0.0, 0.0),
+                                            parallel_overscan=ci_frame.Region((2296, 2316, 51, 2099)),
+                                            serial_prescan=ci_frame.Region((0, 2316, 0, 51)),
+                                            serial_overscan=ci_frame.Region((0, 2296, 2099, 2119)))
 elif ci_data_resolution is 'mid_res':
     shape = (2316, 1034)
+    frame_geometry = ci_frame.FrameGeometry(corner=(0.0, 0.0),
+                                            parallel_overscan=ci_frame.Region((2296, 2316, 51, 1014)),
+                                            serial_prescan=ci_frame.Region((0, 2316, 0, 51)),
+                                            serial_overscan=ci_frame.Region((0, 2296, 1014, 1034)))
 elif ci_data_resolution is 'low_res':
     shape = (2316, 517)
+    frame_geometry = ci_frame.FrameGeometry(corner=(0.0, 0.0),
+                                            parallel_overscan=ci_frame.Region((2296, 2316, 51, 497)),
+                                            serial_prescan=ci_frame.Region((0, 2316, 0, 51)),
+                                            serial_overscan=ci_frame.Region((0, 2296, 497, 517)))
 
 # The charge injection regions on the CCD, which in this case is 7 equally spaced rectangular blocks.
 ci_regions = [(0, 30, 51, shape[1]-20), (330, 360, 51, shape[1]-20),
@@ -62,9 +74,6 @@ normalizations=[100.0, 500.0, 1000.0, 5000.0, 10000.0, 25000.0, 50000.0, 84700.0
 # Create the charge injection pattern objects used for this pipeline.
 patterns = ci_pattern.uniform_from_lists(normalizations=normalizations, regions=ci_regions)
 
-# The frame geometry of the charge injection images we are fitting.
-frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
-
 # There are 8 images to load, which is what the normalizations list tells us. To load them, its easiest to create a
 # 'data' list and then iterate over a for loop, to append each set of data to the list of data we pass to the pipeline
 # when we run it.
@@ -76,8 +85,8 @@ for image_index in range(len(normalizations)):
 
     ci_datas.append(ci_data.ci_data_from_fits(
                  frame_geometry=frame_geometry, ci_pattern=patterns[image_index],
-                 image_path=ci_data_path + '/ci_image_' + str(image_index) + '.fits',
-                 ci_pre_cti_path=ci_data_path +'/ci_pre_cti_' + str(image_index) + '.fits',
+                 image_path=ci_data_path + 'image_' + str(image_index) + '.fits',
+                 ci_pre_cti_path=ci_data_path +'ci_pre_cti_' + str(image_index) + '.fits',
                  noise_map_from_single_value=4.0))
 
 # The CTI settings of arCTIc, which models the CCD read-out including CTI. For parallel ci data, we include 'charge
@@ -90,9 +99,13 @@ cti_settings = arctic_settings.ArcticSettings(parallel=parallel_cti_settings)
 # Below, we'll' use a 2 phase example pipeline to fit the data with a one species parallel CTI model.
 # Checkout workspace/pipelines/examples/parallel_x1_species.py' for a full description of the pipeline.
 
+def mask_function_for_bug(shape, frame_geometry):
+    return msk.Mask.create(shape=shape, frame_geometry=frame_geometry, regions=[(0, 330, 0, shape[1])])
+
 # The pool command tells our code to parallelize the analysis over 2 CPU's, where each CPU fits a different charge
 # injection image
 
 from workspace.pipelines import parallel_x2_species
-pipeline = parallel_x2_species.make_pipeline(phase_folders=[ci_data_type, ci_data_resolution])
+pipeline = parallel_x2_species.make_pipeline(phase_folders=[ci_data_type, ci_data_model, ci_data_resolution],
+                                             mask_function=mask_function_for_bug)
 pipeline.run(ci_datas=ci_datas, cti_settings=cti_settings, pool=Pool(processes=2))

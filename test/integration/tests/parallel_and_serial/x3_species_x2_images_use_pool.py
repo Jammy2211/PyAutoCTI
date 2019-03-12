@@ -15,9 +15,9 @@ from test.integration import integration_util
 test_type = 'parallel_and_serial'
 test_name = 'x3_species_x2_images_use_pool'
 
-path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
-output_path = path + 'output/' + test_type
-config_path = path + 'config'
+test_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
+output_path = test_path + 'output/'
+config_path = test_path + 'config'
 conf.instance = conf.Config(config_path=config_path, output_path=output_path)
 
 
@@ -41,13 +41,14 @@ def pipeline():
 def make_pipeline(test_name):
     class ParallelSerialPhase(ph.ParallelSerialPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
             self.serial_ccd.well_fill_alpha = 1.0
             self.serial_ccd.well_fill_gamma = 0.0
 
-    phase1 = ParallelSerialPhase(optimizer_class=nl.MultiNest,
+    phase1 = ParallelSerialPhase(phase_name='phase_1', phase_folders=[test_name, test_type],
+                                 optimizer_class=nl.MultiNest,
                                  parallel_species=[prior_model.PriorModel(arctic_params.Species),
                                                    prior_model.PriorModel(arctic_params.Species),
                                                    prior_model.PriorModel(arctic_params.Species)],
@@ -55,13 +56,13 @@ def make_pipeline(test_name):
                                  serial_species=[prior_model.PriorModel(arctic_params.Species),
                                                  prior_model.PriorModel(arctic_params.Species),
                                                  prior_model.PriorModel(arctic_params.Species)],
-                                 serial_ccd=arctic_params.CCD, phase_name="{}/phase1".format(test_name))
+                                 serial_ccd=arctic_params.CCD)
 
     phase1.optimizer.n_live_points = 60
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.sampling_efficiency = 0.2
 
-    return pl.Pipeline(phase1)
+    return pl.Pipeline(test_type, phase1)
 
 
 if __name__ == "__main__":

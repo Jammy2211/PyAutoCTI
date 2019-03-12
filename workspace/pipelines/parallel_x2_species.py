@@ -2,6 +2,7 @@ from autofit.tools import path_util
 from autofit.optimize import non_linear as nl
 from autofit.mapper import prior
 from autofit.mapper import prior_model
+from autocti.data import mask as msk
 from autocti.pipeline import pipeline as pl
 from autocti.pipeline import phase as ph
 from autocti.model import arctic_params
@@ -23,11 +24,12 @@ from autocti.model import arctic_params
 # Phase 4) Refit the phase 2 model, using priors initialized from the results of phase 2 and the scaled noise-map
 #          computed in phase 3.
 
-def make_pipeline(phase_folders=None):
+def make_pipeline(phase_folders=None, mask_function=msk.Mask.empty_for_shape):
 
     pipeline_name = 'pipeline_parallel_x2_species'
 
-    # This function combines the phase folders to the pipeline name to set up the output directory structure
+    # This function uses the phase folders and pipeline name to set up the output directory structure,
+    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
 
@@ -41,7 +43,7 @@ def make_pipeline(phase_folders=None):
 
     class ParallelPhase(ph.ParallelPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
@@ -68,9 +70,9 @@ def make_pipeline(phase_folders=None):
 
     class ParallelPhase(ph.ParallelPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
 
-            previous_total_density = previous_results[-1].constant.parallel_species[0].trap_density
+            previous_total_density = results[-1].constant.parallel_species[0].trap_density
 
             self.parallel_species[0].trap_density = prior.UniformPrior(lower_limit=0.0,
                                                                        upper_limit=previous_total_density)
@@ -79,8 +81,8 @@ def make_pipeline(phase_folders=None):
             self.parallel_species[0].trap_lifetime = prior.UniformPrior(lower_limit=0.0, upper_limit=30.0)
             self.parallel_species[1].trap_lifetime = prior.UniformPrior(lower_limit=0.0, upper_limit=30.0)
 
-            self.parallel_ccd.well_notch_depth = previous_results[0].variable.parallel_ccd.well_notch_depth
-            self.parallel_ccd.well_fill_beta = previous_results[0].variable.parallel_ccd.well_fill_beta
+            self.parallel_ccd.well_notch_depth = results.from_phase('phase_1_x1_species').variable.parallel_ccd.well_notch_depth
+            self.parallel_ccd.well_fill_beta = results.from_phase('phase_1_x1_species').variable.parallel_ccd.well_fill_beta
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
@@ -101,10 +103,10 @@ def make_pipeline(phase_folders=None):
 
     class ParallelHyperModelFixedPhase(ph.ParallelHyperPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
 
-            self.parallel_species = previous_results[1].constant.parallel_species
-            self.parallel_ccd = previous_results[1].constant.parallel_ccd
+            self.parallel_species = results.from_phase('phase_2_x3_species').constant.parallel_species
+            self.parallel_ccd = results.from_phase('phase_2_x3_species').constant.parallel_ccd
 
     phase3 = ParallelHyperModelFixedPhase(phase_name='phase_3_noise_scaling', phase_folders=phase_folders,
                                           parallel_species=[prior_model.PriorModel(arctic_params.Species),
@@ -123,11 +125,11 @@ def make_pipeline(phase_folders=None):
 
     class ParallelHyperFixedPhase(ph.ParallelHyperPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
 
-            self.hyper_noise_scalars = previous_results[2].constant.hyper_noise_scalars
-            self.parallel_species = previous_results[1].variable.parallel_species
-            self.parallel_ccd = previous_results[1].variable.parallel_ccd
+            self.hyper_noise_scalars = results.from_phase('phase_3_noise_scaling').constant.hyper_noise_scalars
+            self.parallel_species = results.from_phase('phase_2_x3_species').variable.parallel_species
+            self.parallel_ccd = results.from_phase('phase_2_x3_species').variable.parallel_ccd
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
@@ -144,4 +146,4 @@ def make_pipeline(phase_folders=None):
     phase4.optimizer.n_live_points = 50
     phase4.optimizer.sampling_efficiency = 0.3
 
-    return pl.Pipeline(phase1, phase2, phase3, phase4)
+    return pl.Pipeline(pipeline_name, phase1, phase2, phase3, phase4)

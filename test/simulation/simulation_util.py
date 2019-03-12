@@ -25,11 +25,12 @@ def ci_regions_from_ci_data_resolution(ci_data_resolution):
     if ci_data_resolution == 'patch':
         return [(1, 7, 3, 30), (17, 23, 3, 30)]
     elif ci_data_resolution == 'lowres':
-        return 0.1
+        return [(10, 30, 10, 80), (60, 80, 10, 80)]
     elif ci_data_resolution == 'midres':
-        return 0.05
+        return [(10, 40, 10, 280), (110, 140, 10, 280), (210, 240, 10, 280)]
     elif ci_data_resolution == 'highres':
-        return 0.03
+        return [(10, 40, 10, 580), (110, 140, 10, 580), (210, 240, 10, 580),
+                (310, 340, 10, 580), (410, 440, 10, 580), (510, 540, 10, 580)]
     else:
         raise ValueError('An invalid data resolution was entered - ', ci_data_resolution)
 
@@ -71,9 +72,9 @@ def load_test_ci_data(ci_data_type, ci_data_model, ci_data_resolution, normaliza
     normalization = str(int(pattern.normalization))
 
     return ci_data.ci_data_from_fits(frame_geometry=frame_geometry, ci_pattern=pattern,
-                                     image_path=data_path + '/ci_image_' + normalization + '.fits',
-                                     noise_map_path=data_path + '/ci_noise_map_' + normalization + '.fits',
-                                     ci_pre_cti_path=data_path + '/ci_pre_cti_' + normalization + '.fits')
+                                     image_path=data_path + 'image_' + normalization + '.fits',
+                                     noise_map_path=data_path + 'noise_map_' + normalization + '.fits',
+                                     ci_pre_cti_path=data_path + 'ci_pre_cti_' + normalization + '.fits')
 
 class CIFrameGeometryIntegration(ci_frame.FrameGeometry):
 
@@ -92,16 +93,16 @@ class CIFrameGeometryIntegration(ci_frame.FrameGeometry):
     @classmethod
     def low_res(cls):
         """This class represents the quadrant geometry of an integration quadrant."""
-        return CIFrameGeometryIntegration(corner=(0, 0), parallel_overscan=ci_frame.Region((90, 100, 5, 110)),
-                                          serial_overscan=ci_frame.Region((0, 90, 90, 100)),
-                                          serial_prescan=ci_frame.Region((0, 100, 0, 5)))
+        return CIFrameGeometryIntegration(corner=(0, 0), parallel_overscan=ci_frame.Region((90, 100, 10, 80)),
+                                          serial_overscan=ci_frame.Region((0, 90, 80, 100)),
+                                          serial_prescan=ci_frame.Region((0, 100, 0, 10)))
 
     @classmethod
     def mid_res(cls):
         """This class represents the quadrant geometry of an integration quadrant."""
         return CIFrameGeometryIntegration(corner=(0, 0), parallel_overscan=ci_frame.Region((280, 300, 10, 280)),
                                           serial_overscan=ci_frame.Region((0, 280, 280, 300)),
-                                          serial_prescan=ci_frame.Region((0, 300, 10, 1)))
+                                          serial_prescan=ci_frame.Region((0, 300, 0, 10)))
 
     @classmethod
     def high_res(cls):

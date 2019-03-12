@@ -19,11 +19,12 @@ from autocti.model import arctic_params
 # Phase 3) Refit the phase 1 model, using priors initialized from the results of phase 1 and the scaled noise-map
 #          computed in phase 2.
 
-def make_pipeline(phase_folders=''):
+def make_pipeline(phase_folders=None):
 
     pipeline_name = 'pipeline_serial_x1_species'
 
-    # This function combines the phase folders to the pipeline name to set up the output directory structure
+    # This function uses the phase folders and pipeline name to set up the output directory structure,
+    # e.g. 'autolens_workspace/output/phase_folder_1/phase_folder_2/pipeline_name/phase_name/'
     phase_folders = path_util.phase_folders_from_phase_folders_and_pipeline_name(phase_folders=phase_folders,
                                                                                 pipeline_name=pipeline_name)
 
@@ -37,7 +38,7 @@ def make_pipeline(phase_folders=''):
 
     class SerialPhase(ph.SerialPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
             self.serial_ccd.well_fill_alpha = 1.0
             self.serial_ccd.well_fill_gamma = 0.0
 
@@ -64,9 +65,9 @@ def make_pipeline(phase_folders=''):
 
     class SerialHyperModelFixedPhase(ph.SerialHyperPhase):
 
-        def pass_priors(self, previous_results):
-            self.serial_species = previous_results[0].constant.serial_species
-            self.serial_ccd = previous_results[0].constant.serial_ccd
+        def pass_priors(self, results):
+            self.serial_species = results.from_phase('phase_1_initialize').constant.serial_species
+            self.serial_ccd = results.from_phase('phase_1_initialize').constant.serial_ccd
 
     phase2 = SerialHyperModelFixedPhase(phase_name='phase_2_noise_scaling', phase_folders=phase_folders,
                                         serial_species=[prior_model.PriorModel(arctic_params.Species)],
@@ -84,11 +85,11 @@ def make_pipeline(phase_folders=''):
 
     class SerialHyperFixedPhase(ph.SerialHyperPhase):
 
-        def pass_priors(self, previous_results):
+        def pass_priors(self, results):
 
-            self.hyper_noise_scalars = previous_results[1].constant.hyper_noise_scalars
-            self.serial_species = previous_results[0].variable.serial_species
-            self.serial_ccd = previous_results[0].variable.serial_ccd
+            self.hyper_noise_scalars = results.from_phase('phase_2_noise_scaling').constant.hyper_noise_scalars
+            self.serial_species = results.from_phase('phase_1_initialize').variable.serial_species
+            self.serial_ccd = results.from_phase('phase_1_initialize').variable.serial_ccd
             self.serial_ccd.well_fill_alpha = 1.0
             self.serial_ccd.well_fill_gamma = 0.0
 
@@ -102,4 +103,4 @@ def make_pipeline(phase_folders=''):
     phase3.optimizer.n_live_points = 50
     phase3.optimizer.sampling_efficiency = 0.3
 
-    return pl.Pipeline(phase1, phase2, phase3)
+    return pl.Pipeline(pipeline_name, phase1, phase2, phase3)
