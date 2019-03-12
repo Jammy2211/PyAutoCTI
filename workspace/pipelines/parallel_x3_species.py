@@ -2,6 +2,7 @@ from autofit.tools import path_util
 from autofit.optimize import non_linear as nl
 from autofit.mapper import prior
 from autofit.mapper import prior_model
+from autocti.data import mask as msk
 from autocti.pipeline import pipeline as pl
 from autocti.pipeline import phase as ph
 from autocti.model import arctic_params
@@ -23,7 +24,7 @@ from autocti.model import arctic_params
 # Phase 4) Refit the phase 2 model, using priors initialized from the results of phase 2 and the scaled noise-map
 #          computed in phase 3.
 
-def make_pipeline(phase_folders=None):
+def make_pipeline(phase_folders=None, mask_function=msk.Mask.empty_for_shape):
 
     pipeline_name = 'pipeline_parallel_x3_species'
 
