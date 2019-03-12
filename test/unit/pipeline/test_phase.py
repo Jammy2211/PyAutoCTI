@@ -112,6 +112,14 @@ def make_results_collection(results):
 
 class TestPhase(object):
 
+    def test_param_names(self, phase):
+        phase.parallel_species = [mm.PriorModel(arctic_params.Species), mm.PriorModel(arctic_params.Species)]
+
+        assert phase.optimizer.variable.param_names == ['parallel_species_0_trap_density',
+                                                        'parallel_species_0_trap_lifetime',
+                                                        'parallel_species_1_trap_density',
+                                                        'parallel_species_1_trap_lifetime']
+
     def test__set_constants(self, phase):
         parallel_species = arctic_params.Species()
         phase.parallel_species = [parallel_species]
@@ -460,7 +468,8 @@ Hyper Parameters:
         noise_scaling_maps = ph.SerialHyperPhase(phase_name='test_phase').noise_scaling_maps_from_result(MockResult)
         assert noise_scaling_maps == [1, 3]
 
-        noise_scaling_maps = ph.ParallelSerialHyperPhase(phase_name='test_phase').noise_scaling_maps_from_result(MockResult)
+        noise_scaling_maps = ph.ParallelSerialHyperPhase(phase_name='test_phase').noise_scaling_maps_from_result(
+            MockResult)
         assert noise_scaling_maps == [1, 2, 3, 4]
 
     def test_hyper_phase(self):
@@ -518,7 +527,6 @@ class TestResult(object):
         assert fit.likelihood == fit_figure_of_merit
 
     def test__results_of_phase_are_available_as_properties(self, ci_data, cti_settings):
-
         phase = ph.ParallelPhase(optimizer_class=NLO,
                                  parallel_species=[prior_model.PriorModel(arctic_params.Species)],
                                  parallel_ccd=arctic_params.CCD, phase_name='test_phase')
