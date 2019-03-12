@@ -7,7 +7,7 @@ from autofit.mapper import model_mapper as mm
 from autofit.mapper import prior_model
 from autofit.optimize import non_linear as nl
 from autofit.tools import phase_property
-from autofit.tools.phase import ResultsCollection
+from autofit.tools.pipeline import ResultsCollection
 
 from autocti import exc
 from autocti.charge_injection import ci_data as data
@@ -107,7 +107,7 @@ def make_results():
 
 @pytest.fixture(name="results_collection")
 def make_results_collection(results):
-    return ResultsCollection([results])
+    return ResultsCollection()
 
 
 class TestPhase(object):
@@ -291,8 +291,11 @@ class TestPhase(object):
 
         setattr(results.constant, "parallel_species", [parallel])
 
+        results_collection = ResultsCollection()
+        results_collection.add("first_phase", results)
+
         phase = MyPhase(phase_name='test_phase', optimizer_class=NLO, parallel_species=[parallel])
-        phase.make_analysis([ci_data], cti_settings, results=ResultsCollection([results]))
+        phase.make_analysis([ci_data], cti_settings, results=results_collection)
 
         assert phase.parallel_species == [parallel]
 
@@ -483,13 +486,6 @@ Hyper Parameters:
 
 
 class TestResult(object):
-
-    def test_results(self):
-        results = ResultsCollection([1, 2, 3])
-        assert results == [1, 2, 3]
-        assert results.last == 3
-        assert results.first == 1
-
     def test__fits_for_instance__uses_ci_data_fit(self, ci_data, cti_settings):
         parallel_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
         parallel_ccd = arctic_params.CCD(well_notch_depth=0.1, well_fill_alpha=0.5, well_fill_beta=0.5,
