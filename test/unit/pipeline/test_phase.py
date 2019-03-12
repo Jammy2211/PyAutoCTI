@@ -106,7 +106,7 @@ def make_results():
 
 
 @pytest.fixture(name="results_collection")
-def make_results_collection(results):
+def make_results_collection():
     return ResultsCollection()
 
 
@@ -114,6 +114,15 @@ class TestPhase(object):
 
     def test_param_names(self, phase):
         phase.parallel_species = [mm.PriorModel(arctic_params.Species), mm.PriorModel(arctic_params.Species)]
+
+        assert phase.optimizer.variable.param_names == ['parallel_species_0_trap_density',
+                                                        'parallel_species_0_trap_lifetime',
+                                                        'parallel_species_1_trap_density',
+                                                        'parallel_species_1_trap_lifetime']
+
+        phase = ph.ParallelPhase(phase_name='test_phase', parallel_species=[mm.PriorModel(arctic_params.Species),
+                                                                            mm.PriorModel(arctic_params.Species)],
+                                 optimizer_class=NLO)
 
         assert phase.optimizer.variable.param_names == ['parallel_species_0_trap_density',
                                                         'parallel_species_0_trap_lifetime',
