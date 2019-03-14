@@ -3,7 +3,6 @@
 .pytest_cache
 *.pyc
 CTI/
-workspace/cosma
 .env
 .idea
 __pycache__
@@ -19,6 +18,7 @@ test/output/
 test/integration/output/
 test/test_files/plotting/
 prof/
+workspace/
 workspace_jam/
 .coverage
 
