@@ -20,8 +20,7 @@ def cti_params_for_instance(instance):
         parallel_ccd=instance.parallel_ccd if hasattr(instance, "parallel_ccd") else None,
         parallel_species=instance.parallel_species if hasattr(instance, "parallel_species") else None,
         serial_ccd=instance.serial_ccd if hasattr(instance, "serial_ccd") else None,
-        serial_species=instance.serial_species if hasattr(instance, "serial_species") else None
-    )
+        serial_species=instance.serial_species if hasattr(instance, "serial_species") else None)
 
 
 class ConsecutivePool(object):
@@ -204,6 +203,7 @@ class Phase(ph.AbstractPhase):
             ci_data_index = 0
 
             if self.plot_ci_data_as_subplot:
+
                 ci_data_plotters.plot_ci_subplot(
                     ci_data=self.ci_datas_extracted[ci_data_index],
                     extract_array_from_mask=self.extract_array_from_mask,
