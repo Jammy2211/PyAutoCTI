@@ -11,7 +11,7 @@ def plot_ci_subplot(
         cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
         cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01, cb_tick_values=None, cb_tick_labels=None,
         titlesize=10, xlabelsize=10, ylabelsize=10, xyticksize=10,
-        output_path=None, output_filename='ci_data', output_format='show', ignore_config=True):
+        output_path=None, output_filename='ci_data', output_format='show'):
     """Plot the ci data as a sub-plot of all its quantites (e.g. the data, noise_map-map, PSF, Signal-to_noise-map, \
      etc).
 
@@ -31,67 +31,60 @@ def plot_ci_subplot(
         config file is ignored.
     """
 
-    if not ignore_config:
-        plot_data_as_subplot = conf.instance.general.get('output', 'plot_data_as_subplot', bool)
-    else:
-        plot_data_as_subplot = True
+    rows, columns, figsize_tool = plotter_util.get_subplot_rows_columns_figsize(number_subplots=4)
 
-    if plot_data_as_subplot or ignore_config:
+    if figsize is None:
+        figsize = figsize_tool
 
-        rows, columns, figsize_tool = plotter_util.get_subplot_rows_columns_figsize(number_subplots=4)
+    plt.figure(figsize=figsize)
+    plt.subplot(rows, columns, 1)
 
-        if figsize is None:
-            figsize = figsize_tool
+    plot_image(
+        ci_data=ci_data, mask=mask, extract_array_from_mask=extract_array_from_mask, as_subplot=True,
+        figsize=figsize, aspect=aspect,
+        cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
+        cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+        cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
+        titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
+        output_path=output_path, output_format=output_format)
 
-        plt.figure(figsize=figsize)
-        plt.subplot(rows, columns, 1)
+    plt.subplot(rows, columns, 2)
 
-        plot_image(
-            ci_data=ci_data, mask=mask, extract_array_from_mask=extract_array_from_mask, as_subplot=True,
-            figsize=figsize, aspect=aspect,
-            cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
-            cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
-            cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
-            titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
-            output_path=output_path, output_format=output_format)
+    plot_noise_map(
+        ci_data=ci_data, mask=mask, extract_array_from_mask=extract_array_from_mask, as_subplot=True,
+        figsize=figsize, aspect=aspect,
+        cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
+        cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+        cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
+        titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
+        output_path=output_path, output_format=output_format)
 
-        plt.subplot(rows, columns, 2)
+    plt.subplot(rows, columns, 3)
 
-        plot_noise_map(
-            ci_data=ci_data, mask=mask, extract_array_from_mask=extract_array_from_mask, as_subplot=True,
-            figsize=figsize, aspect=aspect,
-            cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
-            cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
-            cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
-            titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
-            output_path=output_path, output_format=output_format)
+    plot_ci_pre_cti(
+        ci_data=ci_data, mask=mask, extract_array_from_mask=extract_array_from_mask, as_subplot=True,
+        figsize=figsize, aspect=aspect,
+        cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
+        cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+        cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
+        titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
+        output_path=output_path, output_format=output_format)
 
-        plt.subplot(rows, columns, 3)
+    plt.subplot(rows, columns, 4)
 
-        plot_ci_pre_cti(
-            ci_data=ci_data, mask=mask, extract_array_from_mask=extract_array_from_mask, as_subplot=True,
-            figsize=figsize, aspect=aspect,
-            cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
-            cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
-            cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
-            titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
-            output_path=output_path, output_format=output_format)
+    plot_signal_to_noise_map(
+        ci_data=ci_data, mask=mask, extract_array_from_mask=extract_array_from_mask, as_subplot=True,
+        figsize=figsize, aspect=aspect,
+        cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
+        cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+        cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
+        titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
+        output_path=output_path, output_format=output_format)
 
-        plt.subplot(rows, columns, 4)
+    plotter_util.output_subplot_array(output_path=output_path, output_filename=output_filename,
+                                      output_format=output_format)
 
-        plot_signal_to_noise_map(
-            ci_data=ci_data, mask=mask, extract_array_from_mask=extract_array_from_mask, as_subplot=True,
-            figsize=figsize, aspect=aspect,
-            cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
-            cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
-            cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
-            titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
-            output_path=output_path, output_format=output_format)
-
-        plotter_util.output_subplot_array(output_path=output_path, output_filename=output_filename,
-                                          output_format=output_format)
-
-        plt.close()
+    plt.close()
 
 
 def plot_ci_data_individual(ci_data, mask=None, extract_array_from_mask=False,
