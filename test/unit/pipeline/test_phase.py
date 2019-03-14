@@ -25,8 +25,9 @@ pytestmark = pytest.mark.filterwarnings(
 
 directory = path.dirname(path.realpath(__file__))
 
-general_conf = '{}/../test_files/configs/phase'.format(directory)
-conf.instance.general = conf.NamedConfig("{}/general.ini".format(general_conf))
+@pytest.fixture(scope="session", autouse=True)
+def do_something():
+    conf.instance = conf.Config('{}/../test_files/configs/phase'.format(directory))
 
 
 class MockResults(object):
