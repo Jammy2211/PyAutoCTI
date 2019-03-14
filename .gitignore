@@ -3,13 +3,14 @@
 .pytest_cache
 *.pyc
 CTI/
-workspace/cosma
 .env
 .idea
 __pycache__
 .pytest_cache
 test/autofit/test_fit/parallel_phase/
 arctic/
+output/
+test/unit/pipeline/output
 test/autofit/test_fit/phase/model.results
 test/autofit/test_fit/phase/optimizer
 pySHE_ArCTIC.py
@@ -19,6 +20,7 @@ test/output/
 test/integration/output/
 test/test_files/plotting/
 prof/
+workspace/
 workspace_jam/
 .coverage
 
