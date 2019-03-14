@@ -9,6 +9,8 @@ __pycache__
 .pytest_cache
 test/autofit/test_fit/parallel_phase/
 arctic/
+output/
+test/unit/pipeline/output
 test/autofit/test_fit/phase/model.results
 test/autofit/test_fit/phase/optimizer
 pySHE_ArCTIC.py
