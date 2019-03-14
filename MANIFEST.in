@@ -12,6 +12,8 @@ exclude .coverage
 exclude .travis.yml
 include README.rst
 include setup.cfg
+exclude workspace
+exclude workspace_jam
 prune .cache
 prune .git
 prune build
