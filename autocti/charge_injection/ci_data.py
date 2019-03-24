@@ -34,12 +34,13 @@ from autocti.data import util
 
 class CIData(object):
 
-    def __init__(self, image, noise_map, ci_pre_cti, ci_pattern, ci_frame):
+    def __init__(self, image, noise_map, ci_pre_cti, ci_pattern, ci_frame, cosmic_ray_image=None):
         self.image = image
         self.noise_map = noise_map
         self.ci_pre_cti = ci_pre_cti
         self.ci_pattern = ci_pattern
         self.ci_frame = ci_frame
+        self.cosmic_ray_image = cosmic_ray_image
 
     @property
     def chinj(self):
@@ -359,6 +360,7 @@ def ci_data_from_fits(frame_geometry, ci_pattern,
                       noise_map_path=None, noise_map_hdu=0,
                       noise_map_from_single_value=None,
                       ci_pre_cti_path=None, ci_pre_cti_hdu=0,
+                      cosmic_ray_image_path=None, cosmic_ray_image_hdu=0,
                       mask=None):
 
     ci_frame = frame.ChInj(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
@@ -375,10 +377,16 @@ def ci_data_from_fits(frame_geometry, ci_pattern,
     else:
         ci_pre_cti = ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, ci_image, mask=mask)
 
-    return CIData(image=ci_image, noise_map=ci_noise_map, ci_pre_cti=ci_pre_cti, ci_pattern=ci_pattern,
-                  ci_frame=ci_frame)
+    if cosmic_ray_image_path is not None:
+        cosmic_ray_image = util.numpy_array_2d_from_fits(file_path=cosmic_ray_image_path, hdu=cosmic_ray_image_hdu)
+    else:
+        cosmic_ray_image = None
 
-def output_ci_data_to_fits(ci_data, image_path, noise_map_path=None, ci_pre_cti_path=None, overwrite=False):
+    return CIData(image=ci_image, noise_map=ci_noise_map, ci_pre_cti=ci_pre_cti, ci_pattern=ci_pattern,
+                  ci_frame=ci_frame, cosmic_ray_image=cosmic_ray_image)
+
+def output_ci_data_to_fits(ci_data, image_path, noise_map_path=None, ci_pre_cti_path=None, cosmic_ray_image_path=None,
+                           overwrite=False):
 
     util.numpy_array_2d_to_fits(array_2d=ci_data.image, file_path=image_path, overwrite=overwrite)
 
@@ -386,8 +394,11 @@ def output_ci_data_to_fits(ci_data, image_path, noise_map_path=None, ci_pre_cti_
         util.numpy_array_2d_to_fits(array_2d=ci_data.noise_map, file_path=noise_map_path, overwrite=overwrite)
 
     if ci_data.ci_pre_cti is not None and ci_pre_cti_path is not None:
-        util.numpy_array_2d_to_fits(array_2d=ci_data.ci_pre_cti, file_path=ci_pre_cti_path,
-                                          overwrite=overwrite)
+        util.numpy_array_2d_to_fits(array_2d=ci_data.ci_pre_cti, file_path=ci_pre_cti_path, overwrite=overwrite)
+
+    if ci_data.cosmic_ray_image is not None and cosmic_ray_image_path is not None:
+        util.numpy_array_2d_to_fits(array_2d=ci_data.cosmic_ray_image, file_path=cosmic_ray_image_path,
+                                    overwrite=overwrite)
 
 def read_noise_map_from_shape_and_sigma(shape, sigma, noise_seed=-1):
     """Generate a two-dimensional read noises-map, generating values from a Gaussian distribution with mean 0.0.
