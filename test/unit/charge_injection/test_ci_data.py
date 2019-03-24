@@ -124,24 +124,46 @@ def make_params_both():
 class TestCIData(object):
 
     def test_map(self):
-        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None)
+
+        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None, cosmic_ray_image=None)
         result = data.map_to_ci_data_fit(lambda x: 2 * x, 1)
         assert isinstance(result, ci_data.MaskedCIData)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
+        assert result.cosmic_ray_image == None
+
+        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None, cosmic_ray_image=10)
+        result = data.map_to_ci_data_fit(lambda x: 2 * x, 1)
+        assert isinstance(result, ci_data.MaskedCIData)
+        assert result.image == 2
+        assert result.noise_map == 6
+        assert result.ci_pre_cti == 8
+        assert result.cosmic_ray_image == 10
 
     def test_map_to_hyper_fits(self):
-        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None)
+
+        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None, cosmic_ray_image=None)
         result = data.map_to_ci_hyper_data_fit(lambda x: 2 * x, 1, [1, 2, 3])
         assert isinstance(result, ci_data.MaskedCIHyperData)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
         assert result.noise_scaling_maps == [2, 4, 6]
+        assert result.cosmic_ray_image == None
+
+        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None, cosmic_ray_image=10)
+        result = data.map_to_ci_hyper_data_fit(lambda x: 2 * x, 1, [1, 2, 3])
+        assert isinstance(result, ci_data.MaskedCIHyperData)
+        assert result.image == 2
+        assert result.noise_map == 6
+        assert result.ci_pre_cti == 8
+        assert result.noise_scaling_maps == [2, 4, 6]
+        assert result.cosmic_ray_image == 10
 
     def test_parallel_serial_calibration_data(self):
-        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None)
+
+        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None, cosmic_ray_image=10)
 
         def parallel_serial_extractor():
             def extractor(obj):
@@ -156,9 +178,10 @@ class TestCIData(object):
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
+        assert result.cosmic_ray_image == 10
 
     def test_parallel_serial_hyper_calibration_data(self):
-        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None)
+        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None, cosmic_ray_image=10)
 
         def parallel_serial_extractor():
             def extractor(obj):
@@ -174,6 +197,7 @@ class TestCIData(object):
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
         assert result.noise_scaling_maps == [4, 6]
+        assert result.cosmic_ray_image == 10
 
     def test__signal_to_noise_map_and_max(self):
         image = np.ones((2, 2))

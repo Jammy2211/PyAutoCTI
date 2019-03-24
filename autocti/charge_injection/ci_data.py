@@ -70,7 +70,8 @@ class CIData(object):
                             ci_pre_cti=func(self.ci_pre_cti),
                             mask=func(mask),
                             ci_pattern=self.ci_pattern,
-                            ci_frame=self.ci_frame)
+                            ci_frame=self.ci_frame,
+                            cosmic_ray_image=self.cosmic_ray_image)
 
     def map_to_ci_hyper_data_fit(self, func, mask, noise_scaling_maps):
         """
@@ -95,7 +96,8 @@ class CIData(object):
                                  mask=func(mask),
                                  ci_pattern=self.ci_pattern,
                                  ci_frame=self.ci_frame,
-                                 noise_scaling_maps=list(map(func, noise_scaling_maps)))
+                                 noise_scaling_maps=list(map(func, noise_scaling_maps)),
+                                 cosmic_ray_image=self.cosmic_ray_image)
 
     def parallel_extractor(self, columns):
         """
@@ -241,7 +243,7 @@ class CIData(object):
 
 class MaskedCIData(object):
 
-    def __init__(self, image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame):
+    def __init__(self, image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame, cosmic_ray_image=None):
         """A fitting image is the collection of data components (e.g. the image, noise-maps, PSF, etc.) which are used \
         to generate and fit it with a model image.
 
@@ -274,6 +276,7 @@ class MaskedCIData(object):
         self.mask = mask
         self.ci_pattern = ci_pattern
         self.ci_frame = ci_frame
+        self.cosmic_ray_image = cosmic_ray_image
 
     @property
     def chinj(self):
@@ -293,8 +296,10 @@ class MaskedCIData(object):
 
 
 class MaskedCIHyperData(MaskedCIData):
-    def __init__(self, image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame, noise_scaling_maps):
-        super().__init__(image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame)
+    def __init__(self, image, noise_map, ci_pre_cti, mask, ci_pattern, ci_frame, noise_scaling_maps,
+                 cosmic_ray_image=None):
+        super().__init__(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti, mask=mask, ci_pattern=ci_pattern,
+                         ci_frame=ci_frame, cosmic_ray_image=cosmic_ray_image)
         self.noise_scaling_maps = noise_scaling_maps
 
 
