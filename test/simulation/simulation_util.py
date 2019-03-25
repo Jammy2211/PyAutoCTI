@@ -60,7 +60,7 @@ def ci_data_resolution_from_shape(shape):
     else:
         raise ValueError('An invalid shape was entered when generating the data-type - ', shape)
 
-def load_test_ci_data(ci_data_type, ci_data_model, ci_data_resolution, normalization):
+def load_test_ci_data(ci_data_type, ci_data_model, ci_data_resolution, normalization, load_cosmic_ray_image=False):
 
     frame_geometry = frame_geometry_from_ci_data_resolution(ci_data_resolution=ci_data_resolution)
     ci_regions = ci_regions_from_ci_data_resolution(ci_data_resolution=ci_data_resolution)
@@ -71,10 +71,17 @@ def load_test_ci_data(ci_data_type, ci_data_model, ci_data_resolution, normaliza
 
     normalization = str(int(pattern.normalization))
 
-    return ci_data.ci_data_from_fits(frame_geometry=frame_geometry, ci_pattern=pattern,
-                                     image_path=data_path + 'image_' + normalization + '.fits',
-                                     noise_map_path=data_path + 'noise_map_' + normalization + '.fits',
-                                     ci_pre_cti_path=data_path + 'ci_pre_cti_' + normalization + '.fits')
+    if not load_cosmic_ray_image:
+        return ci_data.ci_data_from_fits(frame_geometry=frame_geometry, ci_pattern=pattern,
+                                         image_path=data_path + 'image_' + normalization + '.fits',
+                                         noise_map_path=data_path + 'noise_map_' + normalization + '.fits',
+                                         ci_pre_cti_path=data_path + 'ci_pre_cti_' + normalization + '.fits')
+    elif load_cosmic_ray_image:
+        return ci_data.ci_data_from_fits(frame_geometry=frame_geometry, ci_pattern=pattern,
+                                         image_path=data_path + 'image_' + normalization + '.fits',
+                                         noise_map_path=data_path + 'noise_map_' + normalization + '.fits',
+                                         ci_pre_cti_path=data_path + 'ci_pre_cti_' + normalization + '.fits',
+                                         cosmic_ray_image_path=data_path + 'cosmic_ray_image_' + normalization + '.fits')
 
 class CIFrameGeometryIntegration(ci_frame.FrameGeometry):
 
