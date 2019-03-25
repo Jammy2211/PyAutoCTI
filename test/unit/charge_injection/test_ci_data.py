@@ -665,17 +665,24 @@ class TestCISimulate(object):
 
         ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(5, 5))
 
-        cosmics = np.zeros((5, 5))
-        cosmics[1, 1] = 100.0
+        cosmic_ray_image = np.zeros((5, 5))
+        cosmic_ray_image[2, 2] = 100.0
 
         ci_data_simulate = ci_data.simulate(ci_pre_cti=ci_pre_cti,
                                             frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                             ci_pattern=pattern, cti_settings=arctic_parallel,
-                                            cti_params=params_parallel)
+                                            cti_params=params_parallel,
+                                            cosmic_ray_image=cosmic_ray_image)
 
         assert ci_data_simulate.image[0, 0:5] == pytest.approx(np.array([10.0, 10.0, 10.0, 10.0, 10.0]), 1e-2)
         assert 0.0 < ci_data_simulate.image[1, 1] < 100.0
+        assert ci_data_simulate.image[2,2] > 98.0
         assert (ci_data_simulate.image[1, 1:4] > 0.0).all()
+        assert (ci_data_simulate.cosmic_ray_image == np.array([[0.0, 0.0, 0.0, 0.0, 0.0],
+                                                               [0.0, 0.0, 0.0, 0.0, 0.0],
+                                                               [0.0, 0.0, 100.0, 0.0, 0.0],
+                                                               [0.0, 0.0, 0.0, 0.0, 0.0],
+                                                               [0.0, 0.0, 0.0, 0.0, 0.0]])).all()
 
     def test__include_parallel_poisson_trap_densities(self, arctic_parallel):
 

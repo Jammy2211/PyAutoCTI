@@ -45,7 +45,7 @@ def make_pipeline(test_name):
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
-    phase1 = ParallelPhase(phase_name='phase_1', phase_folders=[test_name, test_type],
+    phase1 = ParallelPhase(phase_name='phase_1', phase_folders=[test_type, test_name],
                            optimizer_class=nl.MultiNest, parallel_species=[prior_model.PriorModel(arctic_params.Species),
                                                                            prior_model.PriorModel(arctic_params.Species),
                                                                            prior_model.PriorModel(arctic_params.Species)],
