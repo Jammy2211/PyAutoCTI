@@ -151,7 +151,76 @@ class TestPhase(object):
         assert (analysis.ci_datas_full[0].noise_map == ci_data.noise_map).all()
         assert analysis.cti_settings == cti_settings
 
+    def test__make_analysis__uses_mask_function(self, phase, ci_data, cti_settings):
+
+        def mask_function(shape, frame_geometry):
+             return np.full(shape=shape, fill_value=False)
+
+        phase.mask_function = mask_function
+
+        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+
+        assert (analysis.ci_datas_full[0].mask == np.full(shape=(3,3), fill_value=False)).all()
+
+        def mask_function(shape, frame_geometry):
+            return np.array([[False, False, False],
+                             [False, True, False],
+                             [False, False, False]])
+
+        phase.mask_function = mask_function
+
+        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+
+        assert (analysis.ci_datas_full[0].mask == np.array([[False, False, False],
+                                                            [False, True, False],
+                                                            [False, False, False]])).all()
+
+    def test__make_analysis__default_mask_all_empty__cosmic_ray_image_masks_mask(self, phase, ci_data, cti_settings):
+
+        phase.cosmic_ray_parallel_buffer = 0
+        phase.cosmic_ray_serial_buffer = 0
+        phase.cosmic_ray_diagonal_buffer = 0
+
+        ci_data.cosmic_ray_image = np.array([[0.0, 0.0, 0.0],
+                                             [0.0, 1.0, 0.0],
+                                             [0.0, 0.0, 0.0]])
+
+        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+
+        assert (analysis.ci_datas_full[0].mask == np.array([[False, False, False],
+                                                            [False, True, False],
+                                                            [False, False, False]])).all()
+
+        phase.cosmic_ray_parallel_buffer = 1
+        phase.cosmic_ray_serial_buffer = 1
+        phase.cosmic_ray_diagonal_buffer = 1
+
+        ci_data.cosmic_ray_image = np.array([[0.0, 0.0, 0.0],
+                                             [0.0, 1.0, 0.0],
+                                             [0.0, 0.0, 0.0]])
+
+        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+
+        assert (analysis.ci_datas_full[0].mask == np.array([[False, False, False],
+                                                            [False, True, True],
+                                                            [False, True, True]])).all()
+
+        phase.cosmic_ray_parallel_buffer = 2
+        phase.cosmic_ray_serial_buffer = 1
+        phase.cosmic_ray_diagonal_buffer = 1
+
+        ci_data.cosmic_ray_image = np.array([[1.0, 0.0, 0.0],
+                                             [0.0, 0.0, 0.0],
+                                             [0.0, 0.0, 0.0]])
+
+        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+
+        assert (analysis.ci_datas_full[0].mask == np.array([[True, True, False],
+                                                            [True, True, False],
+                                                            [True, False, False]])).all()
+
     def test__parallel_phase__if_trap_lifetime_not_ascending__raises_exception(self, phase, ci_data, cti_settings):
+
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
 
         species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=1.0)

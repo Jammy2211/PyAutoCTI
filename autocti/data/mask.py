@@ -45,55 +45,53 @@ class Mask(np.ndarray):
             The dimensions of the 2D mask.
         """
         # noinspection PyArgumentList
-        return cls(array=np.full(shape, False))
+        return cls(array=np.full(shape=shape, fill_value=False))
 
     @classmethod
-    def create(cls, shape, frame_geometry, regions=None, cosmic_rays=None, cr_parallel=0, cr_serial=0,
-               cr_diagonal=0):
+    def from_masked_regions(cls, shape, masked_regions, **kwargs):
+
+        mask = cls.empty_for_shape(shape)
+        masked_regions = list(map(lambda r: ci_frame.Region(r), masked_regions))
+        for region in masked_regions:
+            mask[region.y0:region.y1, region.x0:region.x1] = True
+
+        return mask
+
+    @classmethod
+    def from_cosmic_ray_image(cls, shape, frame_geometry, cosmic_ray_image, cosmic_ray_parallel_buffer=0,
+                              cosmic_ray_serial_buffer=0, cosmic_ray_diagonal_buffer=0, **kwargs):
         """
         Create the mask used for CTI Calibration, which is all False unless specific regions are input for masking.
 
         Parameters
         ----------
-        cr_diagonal
         shape : (int, int)
             The dimensions of the 2D mask.
         frame_geometry : ci_frame.CIQuadGeometry
             The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
             therefore the direction of clocking and rotations before input into the cti algorithm.
-        regions : [(int,)]
-            A list of the regions on the image to mask.
-        cosmic_rays : ndarray.ma
+        cosmic_ray_image : ndarray
             2D array flagging where cosmic rays on the image.
-        cr_parallel : int
+        cosmic_ray_parallel_buffer : int
             If a cosmic-ray mask is supplied, the number of pixels from each ray pixels are masked in the parallel \
             direction.
-        cr_serial : int
+        cosmic_ray_serial_buffer : int
             If a cosmic-ray mask is supplied, the number of pixels from each ray pixels are masked in the serial \
             direction.
         """
         mask = cls.empty_for_shape(shape)
 
-        if regions is not None:
-            mask.regions = list(map(lambda r: ci_frame.Region(r), regions))
-            for region in mask.regions:
-                mask[region.y0:region.y1, region.x0:region.x1] = True
-        elif regions is None:
-            mask.regions = None
+        cosmic_ray_mask = (cosmic_ray_image > 0.0).astype('bool')
 
-        if cosmic_rays is not None:
-            for y in range(mask.shape[0]):
-                for x in range(mask.shape[1]):
-                    if cosmic_rays[y, x]:
-                        y0, y1 = frame_geometry.parallel_trail_from_y(y, cr_parallel)
-                        mask[y0:y1, x] = True
-                        x0, x1 = frame_geometry.serial_trail_from_x(x, cr_serial)
-                        mask[y, x0:x1] = True
-                        y0, y1 = frame_geometry.parallel_trail_from_y(y, cr_diagonal)
-                        x0, x1 = frame_geometry.serial_trail_from_x(x, cr_diagonal)
-                        mask[y0:y1, x0:x1] = True
-
-        elif cosmic_rays is None:
-            mask.cosmic_rays = None
+        for y in range(mask.shape[0]):
+            for x in range(mask.shape[1]):
+                if cosmic_ray_mask[y, x]:
+                    y0, y1 = frame_geometry.parallel_trail_from_y(y, cosmic_ray_parallel_buffer)
+                    mask[y0:y1, x] = True
+                    x0, x1 = frame_geometry.serial_trail_from_x(x, cosmic_ray_serial_buffer)
+                    mask[y, x0:x1] = True
+                    y0, y1 = frame_geometry.parallel_trail_from_y(y, cosmic_ray_diagonal_buffer)
+                    x0, x1 = frame_geometry.serial_trail_from_x(x, cosmic_ray_diagonal_buffer)
+                    mask[y0:y1, x0:x1] = True
 
         return mask
