@@ -124,24 +124,46 @@ def make_params_both():
 class TestCIData(object):
 
     def test_map(self):
-        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None)
+
+        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None, cosmic_ray_image=None)
         result = data.map_to_ci_data_fit(lambda x: 2 * x, 1)
         assert isinstance(result, ci_data.MaskedCIData)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
+        assert result.cosmic_ray_image == None
+
+        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None, cosmic_ray_image=10)
+        result = data.map_to_ci_data_fit(lambda x: 2 * x, 1)
+        assert isinstance(result, ci_data.MaskedCIData)
+        assert result.image == 2
+        assert result.noise_map == 6
+        assert result.ci_pre_cti == 8
+        assert result.cosmic_ray_image == 10
 
     def test_map_to_hyper_fits(self):
-        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None)
+
+        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None, cosmic_ray_image=None)
         result = data.map_to_ci_hyper_data_fit(lambda x: 2 * x, 1, [1, 2, 3])
         assert isinstance(result, ci_data.MaskedCIHyperData)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
         assert result.noise_scaling_maps == [2, 4, 6]
+        assert result.cosmic_ray_image == None
+
+        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None, cosmic_ray_image=10)
+        result = data.map_to_ci_hyper_data_fit(lambda x: 2 * x, 1, [1, 2, 3])
+        assert isinstance(result, ci_data.MaskedCIHyperData)
+        assert result.image == 2
+        assert result.noise_map == 6
+        assert result.ci_pre_cti == 8
+        assert result.noise_scaling_maps == [2, 4, 6]
+        assert result.cosmic_ray_image == 10
 
     def test_parallel_serial_calibration_data(self):
-        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None)
+
+        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None, cosmic_ray_image=10)
 
         def parallel_serial_extractor():
             def extractor(obj):
@@ -156,9 +178,10 @@ class TestCIData(object):
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
+        assert result.cosmic_ray_image == 10
 
     def test_parallel_serial_hyper_calibration_data(self):
-        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None)
+        data = ci_data.CIData(image=1, noise_map=3, ci_pre_cti=4, ci_pattern=None, ci_frame=None, cosmic_ray_image=10)
 
         def parallel_serial_extractor():
             def extractor(obj):
@@ -174,6 +197,7 @@ class TestCIData(object):
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
         assert result.noise_scaling_maps == [4, 6]
+        assert result.cosmic_ray_image == 10
 
     def test__signal_to_noise_map_and_max(self):
         image = np.ones((2, 2))
@@ -251,16 +275,16 @@ class TestCIMask(object):
     class TestMaskRemoveRegions:
 
         def test__remove_one_region(self):
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                   regions=[(0, 3, 2, 3)])
+            mask = msk.Mask.from_masked_regions(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                                masked_regions=[(0, 3, 2, 3)])
 
             assert (mask == np.array([[False, False, True],
                                       [False, False, True],
                                       [False, False, True]])).all()
 
         def test__remove_two_regions(self):
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                   regions=[(0, 3, 2, 3), (0, 2, 0, 2)])
+            mask = msk.Mask.from_masked_regions(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                                masked_regions=[(0, 3, 2, 3), (0, 2, 0, 2)])
 
             assert (mask == np.array([[True, True, True],
                                       [True, True, True],
@@ -273,25 +297,12 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                   cosmic_rays=cosmic_rays)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                                  cosmic_ray_image=cosmic_rays)
 
             assert (mask == np.array([[False, False, False],
                                       [False, True, False],
                                       [False, False, False]])).all()
-
-        def test__cosmic_ray_includes_trail_regions__and_a_mask_region(self):
-            cosmic_rays = np.array([[False, False, False],
-                                    [False, True, False],
-                                    [False, False, False]])
-
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                   regions=[(0, 1, 0, 1)], cosmic_rays=cosmic_rays,
-                                   cr_parallel=1, cr_serial=1)
-
-            assert (mask == np.array([[True, False, False],
-                                      [False, True, True],
-                                      [False, True, False]])).all()
 
     class TestMaskCosmicsBottomLeftGeometry:
 
@@ -300,8 +311,8 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                   cosmic_rays=cosmic_rays, cr_parallel=1)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_parallel_buffer=1)
 
             assert (mask == np.array([[False, False, False],
                                       [False, True, False],
@@ -312,8 +323,8 @@ class TestCIMask(object):
                                     [False, False, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                   cosmic_rays=cosmic_rays, cr_parallel=2)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_parallel_buffer=2)
 
             assert (mask == np.array([[False, True, False],
                                       [False, True, False],
@@ -324,8 +335,8 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                   cosmic_rays=cosmic_rays, cr_serial=1)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_serial_buffer=1)
 
             assert (mask == np.array([[False, False, False],
                                       [False, True, True],
@@ -336,8 +347,8 @@ class TestCIMask(object):
                                     [True, False, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                   cosmic_rays=cosmic_rays, cr_serial=2)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_serial_buffer=2)
 
             assert (mask == np.array([[False, False, False],
                                       [True, True, True],
@@ -348,8 +359,8 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                   cosmic_rays=cosmic_rays, cr_diagonal=1)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_diagonal_buffer=1)
 
             assert (mask == np.array([[False, False, False],
                                       [False, True, True],
@@ -361,8 +372,8 @@ class TestCIMask(object):
                                     [False, False, False, False],
                                     [False, False, False, False]])
 
-            mask = msk.Mask.create(shape=(4, 4), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                   cosmic_rays=cosmic_rays, cr_diagonal=2)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(4, 4), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_diagonal_buffer=2)
 
             assert (mask == np.array([[False, False, False, False],
                                       [False, True, True, True],
@@ -376,8 +387,8 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
-                                   cosmic_rays=cosmic_rays, cr_parallel=1)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_parallel_buffer=1)
 
             assert (mask == np.array([[False, False, False],
                                       [False, True, False],
@@ -388,8 +399,8 @@ class TestCIMask(object):
                                     [False, False, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
-                                   cosmic_rays=cosmic_rays, cr_parallel=2)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_parallel_buffer=2)
 
             assert (mask == np.array([[False, True, False],
                                       [False, True, False],
@@ -400,8 +411,8 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
-                                   cosmic_rays=cosmic_rays, cr_serial=1)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_serial_buffer=1)
 
             assert (mask == np.array([[False, False, False],
                                       [True, True, False],
@@ -412,8 +423,8 @@ class TestCIMask(object):
                                     [False, False, True],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
-                                   cosmic_rays=cosmic_rays, cr_serial=2)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_serial_buffer=2)
 
             assert (mask == np.array([[False, False, False],
                                       [True, True, True],
@@ -424,8 +435,8 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
-                                   cosmic_rays=cosmic_rays, cr_diagonal=1)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_diagonal_buffer=1)
 
             assert (mask == np.array([[False, False, False],
                                       [True, True, False],
@@ -437,8 +448,8 @@ class TestCIMask(object):
                                     [False, False, False, False],
                                     [False, False, False, False]])
 
-            mask = msk.Mask.create(shape=(4, 4), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
-                                   cosmic_rays=cosmic_rays, cr_diagonal=2)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(4, 4), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_diagonal_buffer=2)
 
             assert (mask == np.array([[False, False, False, False],
                                       [False, True, True, True],
@@ -452,8 +463,8 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
-                                   cosmic_rays=cosmic_rays, cr_parallel=1)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_parallel_buffer=1)
 
             assert (mask == np.array([[False, True, False],
                                       [False, True, False],
@@ -464,8 +475,8 @@ class TestCIMask(object):
                                     [False, False, False],
                                     [False, True, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
-                                   cosmic_rays=cosmic_rays, cr_parallel=2)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_parallel_buffer=2)
 
             assert (mask == np.array([[False, True, False],
                                       [False, True, False],
@@ -476,8 +487,8 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
-                                   cosmic_rays=cosmic_rays, cr_serial=1)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_serial_buffer=1)
 
             assert (mask == np.array([[False, False, False],
                                       [False, True, True],
@@ -488,8 +499,8 @@ class TestCIMask(object):
                                     [True, False, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
-                                   cosmic_rays=cosmic_rays, cr_serial=2)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_serial_buffer=2)
 
             assert (mask == np.array([[False, False, False],
                                       [True, True, True],
@@ -500,8 +511,8 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
-                                   cosmic_rays=cosmic_rays, cr_diagonal=1)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_diagonal_buffer=1)
 
             assert (mask == np.array([[False, True, True],
                                       [False, True, True],
@@ -513,8 +524,8 @@ class TestCIMask(object):
                                     [False, False, False, False],
                                     [False, True, False, False]])
 
-            mask = msk.Mask.create(shape=(4, 4), frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
-                                   cosmic_rays=cosmic_rays, cr_diagonal=2)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(4, 4), frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_diagonal_buffer=2)
 
             assert (mask == np.array([[False, False, False, False],
                                       [False, True, True, True],
@@ -528,8 +539,8 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
-                                   cosmic_rays=cosmic_rays, cr_parallel=1)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_parallel_buffer=1)
 
             assert (mask == np.array([[False, True, False],
                                       [False, True, False],
@@ -540,8 +551,8 @@ class TestCIMask(object):
                                     [False, False, False],
                                     [False, True, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
-                                   cosmic_rays=cosmic_rays, cr_parallel=2)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_parallel_buffer=2)
             assert (mask == np.array([[False, True, False],
                                       [False, True, False],
                                       [False, True, False]])).all()
@@ -551,8 +562,8 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
-                                   cosmic_rays=cosmic_rays, cr_serial=1)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_serial_buffer=1)
 
             assert (mask == np.array([[False, False, False],
                                       [True, True, False],
@@ -563,8 +574,8 @@ class TestCIMask(object):
                                     [False, False, True],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
-                                   cosmic_rays=cosmic_rays, cr_serial=2)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_serial_buffer=2)
 
             assert (mask == np.array([[False, False, False],
                                       [True, True, True],
@@ -575,8 +586,8 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.create(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
-                                   cosmic_rays=cosmic_rays, cr_diagonal=1)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_diagonal_buffer=1)
 
             assert (mask == np.array([[True, True, False],
                                       [True, True, False],
@@ -588,8 +599,8 @@ class TestCIMask(object):
                                     [False, False, False, False],
                                     [False, False, False, True]])
 
-            mask = msk.Mask.create(shape=(4, 4), frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
-                                   cosmic_rays=cosmic_rays, cr_diagonal=2)
+            mask = msk.Mask.from_cosmic_ray_image(shape=(4, 4), frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
+                                                  cosmic_ray_image=cosmic_rays, cosmic_ray_diagonal_buffer=2)
 
             assert (mask == np.array([[False, False, False, False],
                                       [False, True, True, True],
@@ -654,17 +665,24 @@ class TestCISimulate(object):
 
         ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(5, 5))
 
-        cosmics = np.zeros((5, 5))
-        cosmics[1, 1] = 100.0
+        cosmic_ray_image = np.zeros((5, 5))
+        cosmic_ray_image[2, 2] = 100.0
 
         ci_data_simulate = ci_data.simulate(ci_pre_cti=ci_pre_cti,
                                             frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
                                             ci_pattern=pattern, cti_settings=arctic_parallel,
-                                            cti_params=params_parallel)
+                                            cti_params=params_parallel,
+                                            cosmic_ray_image=cosmic_ray_image)
 
         assert ci_data_simulate.image[0, 0:5] == pytest.approx(np.array([10.0, 10.0, 10.0, 10.0, 10.0]), 1e-2)
         assert 0.0 < ci_data_simulate.image[1, 1] < 100.0
+        assert ci_data_simulate.image[2,2] > 98.0
         assert (ci_data_simulate.image[1, 1:4] > 0.0).all()
+        assert (ci_data_simulate.cosmic_ray_image == np.array([[0.0, 0.0, 0.0, 0.0, 0.0],
+                                                               [0.0, 0.0, 0.0, 0.0, 0.0],
+                                                               [0.0, 0.0, 100.0, 0.0, 0.0],
+                                                               [0.0, 0.0, 0.0, 0.0, 0.0],
+                                                               [0.0, 0.0, 0.0, 0.0, 0.0]])).all()
 
     def test__include_parallel_poisson_trap_densities(self, arctic_parallel):
 
@@ -693,65 +711,6 @@ class TestCISimulate(object):
         assert ci_data_simulate.image[2, 1] > ci_data_simulate.image[2, 2]
 
 
-class TestLoadCIDataList(object):
-
-    def test__load_all_data_components_as_list__gives_correct_components(self):
-        datas = load_ci_data_list_from_fits(frame_geometries=[MockGeometry(), MockGeometry()],
-                                            ci_patterns=[MockPattern(), MockPattern()],
-                                            ci_image_paths=[test_data_dir + '3x3_ones.fits',
-                                                            test_data_dir + '3x3_fours.fits'],
-                                            ci_noise_map_paths=[test_data_dir + '3x3_twos.fits',
-                                                                test_data_dir + '3x3_fives.fits'],
-                                            ci_pre_cti_paths=[test_data_dir + '3x3_threes.fits',
-                                                              test_data_dir + '3x3_sixes.fits'])
-
-        assert (datas[0].image == np.ones((3, 3))).all()
-        assert (datas[0].noise_map == 2.0 * np.ones((3, 3))).all()
-        assert (datas[0].ci_pre_cti == 3.0 * np.ones((3, 3))).all()
-        assert (datas[1].image == 4.0 * np.ones((3, 3))).all()
-        assert (datas[1].noise_map == 5.0 * np.ones((3, 3))).all()
-        assert (datas[1].ci_pre_cti == 6.0 * np.ones((3, 3))).all()
-
-    def test__load_all_data_components_as_list__use_multi_hdu_image(self):
-        datas = load_ci_data_list_from_fits(frame_geometries=[MockGeometry(), MockGeometry()],
-                                            ci_patterns=[MockPattern(), MockPattern()],
-                                            ci_image_paths=[test_data_dir + '3x3_multiple_hdu.fits',
-                                                            test_data_dir + '3x3_multiple_hdu.fits'],
-                                            ci_image_hdus=[0, 3],
-                                            ci_noise_map_paths=[test_data_dir + '3x3_multiple_hdu.fits',
-                                                                test_data_dir + '3x3_multiple_hdu.fits'],
-                                            ci_noise_map_hdus=[1, 4],
-                                            ci_pre_cti_paths=[test_data_dir + '3x3_multiple_hdu.fits',
-                                                              test_data_dir + '3x3_multiple_hdu.fits'],
-                                            ci_pre_cti_hdus=[2, 5])
-
-        assert (datas[0].image == np.ones((3, 3))).all()
-        assert (datas[0].noise_map == 2.0 * np.ones((3, 3))).all()
-        assert (datas[0].ci_pre_cti == 3.0 * np.ones((3, 3))).all()
-        assert (datas[1].image == 4.0 * np.ones((3, 3))).all()
-        assert (datas[1].noise_map == 5.0 * np.ones((3, 3))).all()
-        assert (datas[1].ci_pre_cti == 6.0 * np.ones((3, 3))).all()
-
-    def test__lload_ci_pre_cti_image_from_the_pattern_and_image(self):
-        datas = load_ci_data_list_from_fits(frame_geometries=[MockGeometry(), MockGeometry()],
-                                            ci_patterns=[
-                                                ci_pattern.CIPatternUniform(regions=[(0, 3, 0, 3)],
-                                                                            normalization=10.0),
-                                                ci_pattern.CIPatternUniform(regions=[(0, 3, 0, 3)],
-                                                                            normalization=11.0)],
-                                            ci_image_paths=[test_data_dir + '3x3_ones.fits',
-                                                            test_data_dir + '3x3_fours.fits'],
-                                            ci_noise_map_paths=[test_data_dir + '3x3_twos.fits',
-                                                                test_data_dir + '3x3_fives.fits'])
-
-        assert (datas[0].image == np.ones((3, 3))).all()
-        assert (datas[0].noise_map == 2.0 * np.ones((3, 3))).all()
-        assert (datas[0].ci_pre_cti == 10.0 * np.ones((3, 3))).all()
-        assert (datas[1].image == 4.0 * np.ones((3, 3))).all()
-        assert (datas[1].noise_map == 5.0 * np.ones((3, 3))).all()
-        assert (datas[1].ci_pre_cti == 11.0 * np.ones((3, 3))).all()
-
-
 class TestLoadCIData(object):
 
     def test__load_all_data_components__has_correct_attributes(self):
@@ -762,13 +721,15 @@ class TestLoadCIData(object):
         data = ci_data.ci_data_from_fits(frame_geometry=frame_geometry, ci_pattern=pattern,
                                          image_path=test_data_dir + '3x3_ones.fits', image_hdu=0,
                                          noise_map_path=test_data_dir + '3x3_twos.fits', noise_map_hdu=0,
-                                         ci_pre_cti_path=test_data_dir + '3x3_threes.fits', ci_pre_cti_hdu=0)
+                                         ci_pre_cti_path=test_data_dir + '3x3_threes.fits', ci_pre_cti_hdu=0,
+                                         cosmic_ray_image_path=test_data_dir + '3x3_fours.fits', cosmic_ray_image_hdu=0)
 
         assert (data.image == np.ones((3, 3))).all()
         assert (data.noise_map == 2.0 * np.ones((3, 3))).all()
         assert (data.ci_pre_cti == 3.0 * np.ones((3, 3))).all()
         assert data.ci_frame.frame_geometry == frame_geometry
         assert data.ci_frame.ci_pattern == pattern
+        assert (data.cosmic_ray_image ==  4.0 * np.ones((3, 3))).all()
 
     def test__load_all_image_components__load_from_multi_hdu_fits(self):
 
@@ -779,13 +740,15 @@ class TestLoadCIData(object):
                                          image_path=test_data_dir + '3x3_multiple_hdu.fits', image_hdu=0,
                                          noise_map_path=test_data_dir + '3x3_multiple_hdu.fits',
                                          noise_map_hdu=1,
-                                         ci_pre_cti_path=test_data_dir + '3x3_multiple_hdu.fits', ci_pre_cti_hdu=2)
+                                         ci_pre_cti_path=test_data_dir + '3x3_multiple_hdu.fits', ci_pre_cti_hdu=2,
+                                         cosmic_ray_image_path=test_data_dir + '3x3_multiple_hdu.fits', cosmic_ray_image_hdu=3)
 
         assert (data.image == np.ones((3, 3))).all()
         assert (data.noise_map == 2.0 * np.ones((3, 3))).all()
         assert (data.ci_pre_cti == 3.0 * np.ones((3, 3))).all()
         assert data.ci_frame.frame_geometry == frame_geometry
         assert data.ci_frame.ci_pattern == pattern
+        assert (data.cosmic_ray_image ==  4.0 * np.ones((3, 3))).all()
 
     def test__load_noise_map_from_single_value(self):
 
@@ -802,6 +765,7 @@ class TestLoadCIData(object):
         assert (data.ci_pre_cti == 3.0 * np.ones((3, 3))).all()
         assert data.ci_frame.frame_geometry == frame_geometry
         assert data.ci_frame.ci_pattern == pattern
+        assert data.cosmic_ray_image == None
 
     def test__load_ci_pre_cti_image_from_the_pattern_and_image(self):
 
@@ -817,13 +781,15 @@ class TestLoadCIData(object):
         assert (data.ci_pre_cti == 10.0 * np.ones((3, 3))).all()
         assert data.ci_frame.frame_geometry == frame_geometry
         assert data.ci_frame.ci_pattern == pattern
+        assert data.cosmic_ray_image == None
 
     def test__output_all_arrays(self):
 
         data = ci_data.ci_data_from_fits(frame_geometry=MockGeometry(), ci_pattern=MockPattern(),
                                          image_path=test_data_dir + '3x3_ones.fits', image_hdu=0,
                                          noise_map_path=test_data_dir + '3x3_twos.fits', noise_map_hdu=0,
-                                         ci_pre_cti_path=test_data_dir + '3x3_threes.fits', ci_pre_cti_hdu=0)
+                                         ci_pre_cti_path=test_data_dir + '3x3_threes.fits', ci_pre_cti_hdu=0,
+                                         cosmic_ray_image_path=test_data_dir + '3x3_fours.fits', cosmic_ray_image_hdu=0)
 
         output_data_dir = "{}/../test_files/array/output_test/".format(os.path.dirname(os.path.realpath(__file__)))
         if os.path.exists(output_data_dir):
@@ -834,52 +800,17 @@ class TestLoadCIData(object):
         ci_data.output_ci_data_to_fits(ci_data=data,
                                     image_path=output_data_dir + 'image.fits',
                                     noise_map_path=output_data_dir + 'noise_map.fits',
-                                    ci_pre_cti_path=output_data_dir + 'ci_pre_cti.fits')
+                                    ci_pre_cti_path=output_data_dir + 'ci_pre_cti.fits',
+                                    cosmic_ray_image_path=output_data_dir + 'cosmic_ray_image.fits')
 
         data = ci_data.ci_data_from_fits(frame_geometry=MockGeometry(), ci_pattern=MockPattern(),
                                          image_path=output_data_dir + 'image.fits', image_hdu=0,
                                          noise_map_path=output_data_dir + 'noise_map.fits', noise_map_hdu=0,
-                                         ci_pre_cti_path=output_data_dir + 'ci_pre_cti.fits', ci_pre_cti_hdu=0)
+                                         ci_pre_cti_path=output_data_dir + 'ci_pre_cti.fits', ci_pre_cti_hdu=0,
+                                         cosmic_ray_image_path=output_data_dir + 'cosmic_ray_image.fits',
+                                         cosmic_ray_image_hdu=0)
 
         assert (data.image == np.ones((3, 3))).all()
         assert (data.noise_map == 2.0 * np.ones((3, 3))).all()
         assert (data.ci_pre_cti == 3.0 * np.ones((3, 3))).all()
-
-def load_ci_data_list_from_fits(frame_geometries, ci_patterns,
-                                ci_image_paths, ci_image_hdus=None,
-                                ci_noise_map_paths=None, ci_noise_map_hdus=None,
-                                ci_pre_cti_paths=None, ci_pre_cti_hdus=None,
-                                masks=None):
-    list_size = len(ci_image_paths)
-
-    ci_datas = []
-
-    if ci_pre_cti_paths is None:
-        ci_pre_cti_paths = list_size * [None]
-
-    if masks is None:
-        masks = list_size * [None]
-
-    if ci_image_hdus is None:
-        ci_image_hdus = list_size * [0]
-
-    if ci_noise_map_hdus is None:
-        ci_noise_map_hdus = list_size * [0]
-
-    if ci_pre_cti_hdus is None:
-        ci_pre_cti_hdus = list_size * [0]
-
-    for data_index in range(list_size):
-        cid = ci_data_from_fits(frame_geometry=frame_geometries[data_index],
-                                ci_pattern=ci_patterns[data_index],
-                                image_path=ci_image_paths[data_index],
-                                image_hdu=ci_image_hdus[data_index],
-                                noise_map_path=ci_noise_map_paths[data_index],
-                                noise_map_hdu=ci_noise_map_hdus[data_index],
-                                ci_pre_cti_path=ci_pre_cti_paths[data_index],
-                                ci_pre_cti_hdu=ci_pre_cti_hdus[data_index],
-                                mask=masks[data_index])
-
-        ci_datas.append(cid)
-
-    return ci_datas
+        assert (data.cosmic_ray_image ==  4.0 * np.ones((3, 3))).all()
