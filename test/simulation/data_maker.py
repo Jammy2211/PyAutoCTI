@@ -14,3 +14,7 @@ makers.make_ci_uniform_parallel_and_serial_x1_species(data_resolutions=['patch']
 makers.make_ci_uniform_parallel_x3_species(data_resolutions=['patch'], normalizations=[1000.0, 84700.0])
 makers.make_ci_uniform_serial_x3_species(data_resolutions=['patch'], normalizations=[1000.0, 84700.0])
 makers.make_ci_uniform_parallel_and_serial_x3_species(data_resolutions=['patch'], normalizations=[1000.0, 84700.0])
+makers.make_ci_uniform_cosmic_rays_parallel_x1_species(data_resolutions=['patch'], normalizations=[1000.0, 84700.0])
+makers.make_ci_uniform_cosmic_rays_serial_x1_species(data_resolutions=['patch'], normalizations=[1000.0, 84700.0])
+makers.make_ci_uniform_cosmic_rays_parallel_and_serial_x1_species(data_resolutions=['patch'],
+                                                                  normalizations=[1000.0, 84700.0])

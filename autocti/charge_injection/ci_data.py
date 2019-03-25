@@ -346,7 +346,7 @@ def simulate(ci_pre_cti, frame_geometry, ci_pattern, cti_params, cti_settings, r
         ci_noise_map = None
 
     return CIData(ci_frame=ci_frame, image=ci_image, noise_map=ci_noise_map, ci_pre_cti=ci_pre_cti,
-                  ci_pattern=ci_pattern)
+                  ci_pattern=ci_pattern, cosmic_ray_image=cosmic_ray_image)
 
 
 def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, image, mask=None):
