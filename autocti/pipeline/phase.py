@@ -40,7 +40,8 @@ class Phase(ph.AbstractPhase):
                                      variable=result.variable, analysis=analysis, optimizer=self.optimizer)
 
     def __init__(self, phase_name, phase_folders=None, optimizer_class=nl.DownhillSimplex,
-                 mask_function=msk.Mask.empty_for_shape, columns=None, rows=None):
+                 mask_function=msk.Mask.empty_for_shape, columns=None, rows=None,
+                 cosmic_ray_parallel_buffer=10, cosmic_ray_serial_buffer=10, cosmic_ray_diagonal_buffer=3):
         """
         A phase in an analysis pipeline. Uses the set NonLinear optimizer to try to fit models and images passed to it.
 
@@ -54,6 +55,9 @@ class Phase(ph.AbstractPhase):
         self.mask_function = mask_function
         self.columns = columns
         self.rows = rows
+        self.cosmic_ray_parallel_buffer = cosmic_ray_parallel_buffer
+        self.cosmic_ray_serial_buffer = cosmic_ray_serial_buffer
+        self.cosmic_ray_diagonal_buffer = cosmic_ray_diagonal_buffer
 
     @property
     def constant(self):
@@ -129,6 +133,19 @@ class Phase(ph.AbstractPhase):
         """
         masks = list(map(lambda data: self.mask_function(shape=data.image.shape,
                                                          frame_geometry=data.ci_frame.frame_geometry), ci_datas))
+
+        cosmic_ray_masks = list(map(lambda data : msk.Mask.from_cosmic_ray_image(
+            shape=data.shape, frame_geometry=data.ci_frame.frame_geometry,
+            cosmic_ray_image=data.cosmic_ray_image,
+            cosmic_ray_parallel_buffer=self.cosmic_ray_parallel_buffer,
+            cosmic_ray_serial_buffer=self.cosmic_ray_serial_buffer,
+            cosmic_ray_diagonal_buffer=self.cosmic_ray_diagonal_buffer)
+        if data.cosmic_ray_image is not None else None, ci_datas))
+
+        masks = list(map(lambda mask, cosmic_ray_mask :
+                         mask + cosmic_ray_mask if cosmic_ray_mask is not None else mask,
+                         masks, cosmic_ray_masks))
+
         ci_datas_fit = [self.extract_ci_data(data=data, mask=mask) for data, mask in zip(ci_datas, masks)]
         ci_datas_full = list(map(lambda data, mask:
                                  ci_data.MaskedCIData(image=data.image, noise_map=data.noise_map,
@@ -370,12 +387,16 @@ class ParallelPhase(Phase):
     parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
 
     def __init__(self, phase_name, phase_folders=None, parallel_species=(), parallel_ccd=None, optimizer_class=nl.MultiNest,
-                 mask_function=msk.Mask.empty_for_shape, columns=None):
+                 mask_function=msk.Mask.empty_for_shape, columns=None,
+                 cosmic_ray_parallel_buffer=10, cosmic_ray_serial_buffer=10, cosmic_ray_diagonal_buffer=3):
         """
         A phase with a simple source/CTI model
         """
         super().__init__(phase_name=phase_name, phase_folders=phase_folders, optimizer_class=optimizer_class,
-                         mask_function=mask_function, columns=columns, rows=None)
+                         mask_function=mask_function, columns=columns, rows=None,
+                         cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
+                         cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
+                         cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
         self.parallel_species = parallel_species
         self.parallel_ccd = parallel_ccd
 
@@ -404,12 +425,16 @@ class SerialPhase(Phase):
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 
     def __init__(self, phase_name, phase_folders=None, serial_species=(), serial_ccd=None, optimizer_class=nl.MultiNest,
-                 mask_function=msk.Mask.empty_for_shape, rows=None):
+                 mask_function=msk.Mask.empty_for_shape, rows=None,
+                 cosmic_ray_parallel_buffer=10, cosmic_ray_serial_buffer=10, cosmic_ray_diagonal_buffer=3):
         """
         A phase with a simple source/CTI model
         """
         super().__init__(phase_name=phase_name, phase_folders=phase_folders, optimizer_class=optimizer_class,
-                         mask_function=mask_function, rows=rows)
+                         mask_function=mask_function, rows=rows,
+                         cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
+                         cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
+                         cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
         self.serial_species = serial_species
         self.serial_ccd = serial_ccd
 
@@ -439,8 +464,10 @@ class ParallelSerialPhase(Phase):
     parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 
-    def __init__(self, phase_name, phase_folders=None, parallel_species=(), serial_species=(), parallel_ccd=None, serial_ccd=None,
-                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape):
+    def __init__(self, phase_name, phase_folders=None, parallel_species=(), serial_species=(),
+                 parallel_ccd=None, serial_ccd=None,
+                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape,
+                 cosmic_ray_parallel_buffer=10, cosmic_ray_serial_buffer=10, cosmic_ray_diagonal_buffer=3):
         """
         A phase with a simple source/CTI model
 
@@ -450,7 +477,11 @@ class ParallelSerialPhase(Phase):
             The class of a non-linear optimizer
         """
         super().__init__(phase_name=phase_name, phase_folders=phase_folders, optimizer_class=optimizer_class,
-                         mask_function=mask_function, columns=None, rows=None)
+                         mask_function=mask_function, columns=None, rows=None,
+                         cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
+                         cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
+                         cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
+
         self.parallel_species = parallel_species
         self.serial_species = serial_species
         self.parallel_ccd = parallel_ccd
@@ -580,7 +611,8 @@ class HyperPhase(Phase):
 
 class ParallelHyperPhase(ParallelPhase, HyperPhase):
     def __init__(self, phase_name, phase_folders=None, parallel_species=(), parallel_ccd=None,
-                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, columns=None):
+                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, columns=None,
+                 cosmic_ray_parallel_buffer=10, cosmic_ray_serial_buffer=10, cosmic_ray_diagonal_buffer=3):
         """
         A phase with a simple source/CTI model
 
@@ -591,7 +623,10 @@ class ParallelHyperPhase(ParallelPhase, HyperPhase):
         """
         super().__init__(phase_name=phase_name, phase_folders=phase_folders, parallel_species=parallel_species,
                          parallel_ccd=parallel_ccd, optimizer_class=optimizer_class, mask_function=mask_function,
-                         columns=columns)
+                         columns=columns,
+                         cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
+                         cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
+                         cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
         self.number_of_noise_scalars = 2
 
     def noise_scaling_maps_from_result(self, result):
@@ -609,13 +644,17 @@ class ParallelHyperPhase(ParallelPhase, HyperPhase):
 class SerialHyperPhase(SerialPhase, HyperPhase):
 
     def __init__(self, phase_name, phase_folders=None, serial_species=(), serial_ccd=None,
-                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, rows=None):
+                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, rows=None,
+                 cosmic_ray_parallel_buffer=10, cosmic_ray_serial_buffer=10, cosmic_ray_diagonal_buffer=3):
         """
         A phase with a simple source/CTI model
         """
         HyperPhase.__init__(self=self, phase_name=phase_name, phase_folders=phase_folders)
         super().__init__(phase_name=phase_name, phase_folders=phase_folders, serial_species=serial_species,
-                         serial_ccd=serial_ccd, optimizer_class=optimizer_class, mask_function=mask_function, rows=rows)
+                         serial_ccd=serial_ccd, optimizer_class=optimizer_class, mask_function=mask_function, rows=rows,
+                         cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
+                         cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
+                         cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
         self.number_of_noise_scalars = 2
 
     def noise_scaling_maps_from_result(self, result):
@@ -631,7 +670,8 @@ class SerialHyperPhase(SerialPhase, HyperPhase):
 
 class ParallelSerialHyperPhase(ParallelSerialPhase, HyperPhase):
     def __init__(self, phase_name, phase_folders=None, parallel_species=(), serial_species=(), parallel_ccd=None,
-                 serial_ccd=None, optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape):
+                 serial_ccd=None, optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape,
+                 cosmic_ray_parallel_buffer=10, cosmic_ray_serial_buffer=10, cosmic_ray_diagonal_buffer=3):
         """
         A phase with a simple source/CTI model
 
@@ -642,7 +682,10 @@ class ParallelSerialHyperPhase(ParallelSerialPhase, HyperPhase):
         """
         super().__init__(phase_name=phase_name, phase_folders=phase_folders, parallel_species=parallel_species,
                          serial_species=serial_species, parallel_ccd=parallel_ccd,
-                         serial_ccd=serial_ccd, optimizer_class=optimizer_class, mask_function=mask_function)
+                         serial_ccd=serial_ccd, optimizer_class=optimizer_class, mask_function=mask_function,
+                         cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
+                         cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
+                         cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
         self.number_of_noise_scalars = 4
 
     def noise_scaling_maps_from_result(self, result):
