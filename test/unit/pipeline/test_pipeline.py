@@ -1,21 +1,56 @@
+import builtins
+
+import pytest
 from autofit.mapper import model_mapper as mm
 from autofit.optimize import non_linear as nl
 
 from autocti.pipeline import pipeline as pl
 
 
-class DummyPhase(object):
+class MockFile(object):
+    def __init__(self):
+        self.text = None
+        self.filename = None
+
+    def write(self, text):
+        self.text = text
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        pass
+
+
+@pytest.fixture(name="mock_files", autouse=True)
+def make_mock_file(monkeypatch):
+    files = []
+
+    def mock_open(filename, flag):
+        assert flag in ("w+", "w+b")
+        file = MockFile()
+        file.filename = filename
+        files.append(file)
+        return file
+
+    monkeypatch.setattr(builtins, 'open', mock_open)
+    return files
+
+
+class Optimizer(object):
     def __init__(self, phase_name):
+        self.phase_name = phase_name
+
+
+class DummyPhase(object):
+    def __init__(self, phase_name, phase_tag=None):
         self.masked_image = None
         self.results = None
         self.phase_name = phase_name
+        self.phase_tag = phase_tag
+        self.phase_path = phase_name
 
-        class Optimizer(object):
-            @property
-            def phase_name(self):
-                return phase_name
-
-        self.optimizer = Optimizer()
+        self.optimizer = Optimizer(phase_name)
 
     def run(self, ci_datas, cti_settings, results, pool):
         self.ci_datas = ci_datas
