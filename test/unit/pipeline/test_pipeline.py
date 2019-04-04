@@ -43,10 +43,11 @@ class Optimizer(object):
 
 
 class DummyPhase(object):
-    def __init__(self, phase_name):
+    def __init__(self, phase_name, phase_tag=None):
         self.masked_image = None
         self.results = None
         self.phase_name = phase_name
+        self.phase_tag = phase_tag
         self.phase_path = phase_name
 
         self.optimizer = Optimizer(phase_name)
