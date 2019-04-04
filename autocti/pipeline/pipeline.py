@@ -10,4 +10,4 @@ class Pipeline(pipeline.Pipeline):
         def runner(phase, results):
             return phase.run(ci_datas=ci_datas, cti_settings=cti_settings, results=results, pool=pool)
 
-        return self.run_function(runner, data_name=data_name)
+        return self.run_function(runner, data_name)

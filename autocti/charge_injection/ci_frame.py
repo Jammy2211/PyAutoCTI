@@ -952,11 +952,11 @@ class FrameGeometry(object):
 
     def parallel_trail_from_y(self, y, dy):
         """Coordinates of a parallel trail of size dy from coordinate y"""
-        return y - dy * self.corner[0], y + 1 + dy * (1 - self.corner[0])
+        return int(y - dy * self.corner[0]), int(y + 1 + dy * (1 - self.corner[0]))
 
     def serial_trail_from_x(self, x, dx):
         """Coordinates of a serial trail of size dx from coordinate x"""
-        return x - dx * self.corner[1], x + 1 + dx * (1 - self.corner[1])
+        return int(x - dx * self.corner[1]), int(x + 1 + dx * (1 - self.corner[1]))
 
     def parallel_front_edge_region(self, ci_region, rows=(0, 1)):
         check_parallel_front_edge_size(region=ci_region, rows=rows)
