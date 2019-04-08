@@ -1,12 +1,12 @@
-def phase_tag_from_phase_settings(columns, rows, include_cosmic_ray_tag, cosmic_ray_parallel_buffer,
-                                  cosmic_ray_serial_buffer, cosmic_ray_diagonal_buffer):
+def phase_tag_from_phase_settings(columns, rows, cosmic_ray_parallel_buffer, cosmic_ray_serial_buffer,
+                                  cosmic_ray_diagonal_buffer):
 
     columns_tag = columns_tag_from_columns(columns=columns)
     rows_tag = rows_tag_from_rows(rows=rows)
 
-    cosmic_ray_buffer_tag = cosmic_ray_buffer_tag_from_cosmic_ray_buffers(include_cosmic_ray_tag=include_cosmic_ray_tag,
-               cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer, cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
-               cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
+    cosmic_ray_buffer_tag = cosmic_ray_buffer_tag_from_cosmic_ray_buffers(
+        cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer, cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
+        cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
 
     return columns_tag + rows_tag + cosmic_ray_buffer_tag
 
@@ -42,8 +42,8 @@ def rows_tag_from_rows(rows):
         x1 = str(rows[1])
         return ('_rows_(' + x0 + ',' + x1 + ')')
 
-def cosmic_ray_buffer_tag_from_cosmic_ray_buffers(include_cosmic_ray_tag, cosmic_ray_parallel_buffer,
-                                                  cosmic_ray_serial_buffer, cosmic_ray_diagonal_buffer):
+def cosmic_ray_buffer_tag_from_cosmic_ray_buffers(cosmic_ray_parallel_buffer, cosmic_ray_serial_buffer,
+                                                  cosmic_ray_diagonal_buffer):
     """Generate a cosmic ray buffer tag, to customize phase names based on the size of the cosmic ray masks in the \
     parallel, serial and diagonal directions
 
@@ -52,8 +52,5 @@ def cosmic_ray_buffer_tag_from_cosmic_ray_buffers(include_cosmic_ray_tag, cosmic
     cosmic_ray_parallel_buffer = 1, cosmic_ray_serial_buffer=2, cosmic_ray_diagonal_buffer=3 = -> phase_name_cr_p1s2d3
     cosmic_ray_parallel_buffer = 10, cosmic_ray_serial_buffer=5, cosmic_ray_diagonal_buffer=1 = -> phase_name_cr_p10s5d1
     """
-    if not include_cosmic_ray_tag:
-        return ''
-    elif include_cosmic_ray_tag:
-        return ('_cr_p' + str(cosmic_ray_parallel_buffer) + 's' + str(cosmic_ray_serial_buffer) + 'd'
-                + str(cosmic_ray_diagonal_buffer))
+    return ('_cr_p' + str(cosmic_ray_parallel_buffer) + 's' + str(cosmic_ray_serial_buffer) + 'd'
+            + str(cosmic_ray_diagonal_buffer))

@@ -4,19 +4,19 @@ class TestPhaseTag:
 
     def test__mixture_of_values(self):
 
-        phase_tag = tagging.phase_tag_from_phase_settings(columns=1, rows=(0,1), include_cosmic_ray_tag=False,
+        phase_tag = tagging.phase_tag_from_phase_settings(columns=1, rows=(0,1),
                                                           cosmic_ray_parallel_buffer=1, cosmic_ray_serial_buffer=2,
                                                           cosmic_ray_diagonal_buffer=3)
 
 
-        assert phase_tag == '_col_1_rows_(0,1)'
+        assert phase_tag == '_col_1_rows_(0,1)_cr_p1s2d3'
 
-        phase_tag = tagging.phase_tag_from_phase_settings(columns=2, rows=(1,2), include_cosmic_ray_tag=True,
-                                                          cosmic_ray_parallel_buffer=1, cosmic_ray_serial_buffer=2,
-                                                          cosmic_ray_diagonal_buffer=3)
+        phase_tag = tagging.phase_tag_from_phase_settings(columns=2, rows=(1,2),
+                                                          cosmic_ray_parallel_buffer=4, cosmic_ray_serial_buffer=5,
+                                                          cosmic_ray_diagonal_buffer=6)
 
 
-        assert phase_tag == '_col_2_rows_(1,2)_cr_p1s2d3'
+        assert phase_tag == '_col_2_rows_(1,2)_cr_p4s5d6'
 
 
 class TestTaggers:
@@ -41,20 +41,12 @@ class TestTaggers:
 
     def test__cosmic_ray_buffer_tagger(self):
 
-        tag = tagging.cosmic_ray_buffer_tag_from_cosmic_ray_buffers(include_cosmic_ray_tag=False,
-                                                                    cosmic_ray_parallel_buffer=1,
-                                                                    cosmic_ray_serial_buffer=2,
-                                                                    cosmic_ray_diagonal_buffer=3)
-        assert tag == ''
-
-        tag = tagging.cosmic_ray_buffer_tag_from_cosmic_ray_buffers(include_cosmic_ray_tag=True,
-                                                                    cosmic_ray_parallel_buffer=1,
+        tag = tagging.cosmic_ray_buffer_tag_from_cosmic_ray_buffers(cosmic_ray_parallel_buffer=1,
                                                                     cosmic_ray_serial_buffer=2,
                                                                     cosmic_ray_diagonal_buffer=3)
         assert tag == '_cr_p1s2d3'
 
-        tag = tagging.cosmic_ray_buffer_tag_from_cosmic_ray_buffers(include_cosmic_ray_tag=True,
-                                                                    cosmic_ray_parallel_buffer=10,
+        tag = tagging.cosmic_ray_buffer_tag_from_cosmic_ray_buffers(cosmic_ray_parallel_buffer=10,
                                                                     cosmic_ray_serial_buffer=5,
                                                                     cosmic_ray_diagonal_buffer=1)
         assert tag == '_cr_p10s5d1'
