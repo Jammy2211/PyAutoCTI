@@ -8,6 +8,7 @@ from autofit.tools import phase as ph
 from autofit.tools import phase_property
 
 from autocti import exc
+from autocti.pipeline import tagging as tag
 from autocti.charge_injection import ci_fit, ci_data, ci_hyper
 from autocti.charge_injection.plotters import ci_data_plotters
 from autocti.charge_injection.plotters import ci_fit_plotters
@@ -387,17 +388,30 @@ class ParallelPhase(Phase):
     parallel_species = phase_property.PhasePropertyCollection("parallel_species")
     parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
 
-    def __init__(self, phase_name, tag_phases=True, phase_folders=None, parallel_species=(), parallel_ccd=None, optimizer_class=nl.MultiNest,
-                 mask_function=msk.Mask.empty_for_shape, columns=None,
+    def __init__(self, phase_name, tag_phases=True, phase_folders=None, parallel_species=(), parallel_ccd=None,
+                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, columns=None,
                  cosmic_ray_parallel_buffer=10, cosmic_ray_serial_buffer=10, cosmic_ray_diagonal_buffer=3):
         """
         A phase with a simple source/CTI model
         """
-        super().__init__(phase_name=phase_name, tag_phases=tag_phases, phase_folders=phase_folders,
+
+        if tag_phases:
+
+            phase_tag = tag.phase_tag_from_phase_settings(columns=columns, rows=None,
+                                                          cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
+                                                          cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
+                                                          cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
+
+        else:
+
+            phase_tag = None
+
+        super().__init__(phase_name=phase_name, phase_tag=phase_tag, phase_folders=phase_folders,
                          optimizer_class=optimizer_class, mask_function=mask_function, columns=columns, rows=None,
                          cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
                          cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
                          cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
+
         self.parallel_species = parallel_species
         self.parallel_ccd = parallel_ccd
 
@@ -425,13 +439,25 @@ class SerialPhase(Phase):
     serial_species = phase_property.PhasePropertyCollection("serial_species")
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 
-    def __init__(self, phase_name, tag_phases=True, phase_folders=None, serial_species=(), serial_ccd=None, optimizer_class=nl.MultiNest,
-                 mask_function=msk.Mask.empty_for_shape, rows=None,
+    def __init__(self, phase_name, tag_phases=True, phase_folders=None, serial_species=(), serial_ccd=None,
+                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, rows=None,
                  cosmic_ray_parallel_buffer=10, cosmic_ray_serial_buffer=10, cosmic_ray_diagonal_buffer=3):
         """
         A phase with a simple source/CTI model
         """
-        super().__init__(phase_name=phase_name, tag_phases=tag_phases, phase_folders=phase_folders,
+
+        if tag_phases:
+
+            phase_tag = tag.phase_tag_from_phase_settings(columns=None, rows=rows,
+                                                          cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
+                                                          cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
+                                                          cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
+
+        else:
+
+            phase_tag = None
+
+        super().__init__(phase_name=phase_name, phase_tag=phase_tag, phase_folders=phase_folders,
                          optimizer_class=optimizer_class, mask_function=mask_function, rows=rows,
                          cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
                          cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
@@ -477,7 +503,19 @@ class ParallelSerialPhase(Phase):
         optimizer_class: class
             The class of a non-linear optimizer
         """
-        super().__init__(phase_name=phase_name, tag_phases=tag_phases, phase_folders=phase_folders,
+
+        if tag_phases:
+
+            phase_tag = tag.phase_tag_from_phase_settings(columns=None, rows=None,
+                                                          cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
+                                                          cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
+                                                          cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
+
+        else:
+
+            phase_tag = None
+
+        super().__init__(phase_name=phase_name, phase_tag=phase_tag, phase_folders=phase_folders,
                          optimizer_class=optimizer_class, mask_function=mask_function, columns=None, rows=None,
                          cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
                          cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
