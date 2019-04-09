@@ -5,6 +5,13 @@ class TestPhaseTag:
     def test__mixture_of_values(self):
 
         phase_tag = tagging.phase_tag_from_phase_settings(columns=1, rows=(0,1),
+                                                          cosmic_ray_parallel_buffer=None, cosmic_ray_serial_buffer=None,
+                                                          cosmic_ray_diagonal_buffer=None)
+
+
+        assert phase_tag == '_col_1_rows_(0,1)'
+
+        phase_tag = tagging.phase_tag_from_phase_settings(columns=1, rows=(0,1),
                                                           cosmic_ray_parallel_buffer=1, cosmic_ray_serial_buffer=2,
                                                           cosmic_ray_diagonal_buffer=3)
 
@@ -40,6 +47,21 @@ class TestTaggers:
         assert tag == '_rows_(10,20)'
 
     def test__cosmic_ray_buffer_tagger(self):
+
+        tag = tagging.cosmic_ray_buffer_tag_from_cosmic_ray_buffers(cosmic_ray_parallel_buffer=None,
+                                                                    cosmic_ray_serial_buffer=None,
+                                                                    cosmic_ray_diagonal_buffer=None)
+        assert tag == ''
+
+        tag = tagging.cosmic_ray_buffer_tag_from_cosmic_ray_buffers(cosmic_ray_parallel_buffer=1,
+                                                                    cosmic_ray_serial_buffer=None,
+                                                                    cosmic_ray_diagonal_buffer=3)
+        assert tag == '_cr_p1d3'
+
+        tag = tagging.cosmic_ray_buffer_tag_from_cosmic_ray_buffers(cosmic_ray_parallel_buffer=10,
+                                                                    cosmic_ray_serial_buffer=20,
+                                                                    cosmic_ray_diagonal_buffer=None)
+        assert tag == '_cr_p10s20'
 
         tag = tagging.cosmic_ray_buffer_tag_from_cosmic_ray_buffers(cosmic_ray_parallel_buffer=1,
                                                                     cosmic_ray_serial_buffer=2,
