@@ -52,5 +52,23 @@ def cosmic_ray_buffer_tag_from_cosmic_ray_buffers(cosmic_ray_parallel_buffer, co
     cosmic_ray_parallel_buffer = 1, cosmic_ray_serial_buffer=2, cosmic_ray_diagonal_buffer=3 = -> phase_name_cr_p1s2d3
     cosmic_ray_parallel_buffer = 10, cosmic_ray_serial_buffer=5, cosmic_ray_diagonal_buffer=1 = -> phase_name_cr_p10s5d1
     """
-    return ('_cr_p' + str(cosmic_ray_parallel_buffer) + 's' + str(cosmic_ray_serial_buffer) + 'd'
-            + str(cosmic_ray_diagonal_buffer))
+
+    if cosmic_ray_diagonal_buffer is None and cosmic_ray_serial_buffer is None and cosmic_ray_diagonal_buffer is None:
+        return ''
+    
+    if cosmic_ray_parallel_buffer is None:
+        cosmic_ray_parallel_buffer_tag = ''
+    else:
+        cosmic_ray_parallel_buffer_tag = 'p' + str(cosmic_ray_parallel_buffer)
+    
+    if cosmic_ray_serial_buffer is None:
+        cosmic_ray_serial_buffer_tag = ''
+    else:
+        cosmic_ray_serial_buffer_tag = 's' + str(cosmic_ray_serial_buffer)
+
+    if cosmic_ray_diagonal_buffer is None:
+        cosmic_ray_diagonal_buffer_tag = ''
+    else:
+        cosmic_ray_diagonal_buffer_tag = 'd' + str(cosmic_ray_diagonal_buffer)
+
+    return '_cr_' + cosmic_ray_parallel_buffer_tag + cosmic_ray_serial_buffer_tag + cosmic_ray_diagonal_buffer_tag

@@ -38,7 +38,8 @@ class Phase(ph.AbstractPhase):
 
     def make_result(self, result, analysis):
         return self.__class__.Result(constant=result.constant, figure_of_merit=result.figure_of_merit,
-                                     variable=result.variable, analysis=analysis, optimizer=self.optimizer)
+                                     previous_variable=result.previous_variable, gaussian_tuples=result.gaussian_tuples,
+                                     analysis=analysis, optimizer=self.optimizer)
 
     def __init__(self, phase_name, phase_tag=None, phase_folders=None, optimizer_class=nl.DownhillSimplex,
                  mask_function=msk.Mask.empty_for_shape, columns=None, rows=None,
@@ -340,12 +341,13 @@ class Phase(ph.AbstractPhase):
     class Result(nl.Result):
 
         # noinspection PyUnusedLocal
-        def __init__(self, constant, figure_of_merit, variable, analysis, optimizer):
+        def __init__(self, constant, figure_of_merit, previous_variable, gaussian_tuples, analysis, optimizer):
             """
             The result of a phase
             """
 
-            super(Phase.Result, self).__init__(constant=constant, figure_of_merit=figure_of_merit, variable=variable)
+            super(Phase.Result, self).__init__(constant=constant, figure_of_merit=figure_of_merit,
+                                               previous_variable=previous_variable, gaussian_tuples=gaussian_tuples)
 
             self.analysis = analysis
             self.optimizer = optimizer
@@ -561,8 +563,8 @@ class HyperPhase(Phase):
     """
     hyper_noise_scalars = phase_property.PhasePropertyCollection("hyper_noise_scalars")
 
-    def __init__(self, phase_name, phase_tag, phase_folders, *args, **kwargs):
-        super().__init__(phase_name=phase_name, tag_phases=tag_phases, phase_folders=phase_folders, *args, **kwargs)
+    def __init__(self, phase_name, phase_folders, *args, **kwargs):
+        super().__init__(phase_name=phase_name, phase_folders=phase_folders, *args, **kwargs)
 
     def extract_ci_hyper_data(self, data, mask, noise_scaling_maps):
         raise NotImplementedError()
@@ -660,6 +662,7 @@ class ParallelHyperPhase(ParallelPhase, HyperPhase):
         optimizer_class: class
             The class of a non-linear optimizer
         """
+        HyperPhase.__init__(self=self, phase_name=phase_name, phase_folders=phase_folders)
         super().__init__(phase_name=phase_name, tag_phases=tag_phases, phase_folders=phase_folders,
                          parallel_species=parallel_species, parallel_ccd=parallel_ccd,
                          optimizer_class=optimizer_class, mask_function=mask_function, columns=columns,
@@ -688,7 +691,7 @@ class SerialHyperPhase(SerialPhase, HyperPhase):
         """
         A phase with a simple source/CTI model
         """
-        HyperPhase.__init__(self=self, phase_name=phase_name, tag_phases=tag_phases, phase_folders=phase_folders)
+        HyperPhase.__init__(self=self, phase_name=phase_name, phase_folders=phase_folders)
         super().__init__(phase_name=phase_name, tag_phases=tag_phases, phase_folders=phase_folders,
                          serial_species=serial_species, serial_ccd=serial_ccd, optimizer_class=optimizer_class,
                          mask_function=mask_function, rows=rows,
@@ -720,6 +723,7 @@ class ParallelSerialHyperPhase(ParallelSerialPhase, HyperPhase):
         optimizer_class: class
             The class of a non-linear optimizer
         """
+        HyperPhase.__init__(self=self, phase_name=phase_name, phase_folders=phase_folders)
         super().__init__(phase_name=phase_name, tag_phases=tag_phases, phase_folders=phase_folders,
                          parallel_species=parallel_species, serial_species=serial_species, parallel_ccd=parallel_ccd,
                          serial_ccd=serial_ccd, optimizer_class=optimizer_class, mask_function=mask_function,
