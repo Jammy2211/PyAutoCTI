@@ -1,0 +1,9 @@
+VIS Meeting summmay:
+
+- Cold calibration campaign, should use charge injection images to develop a model for the charge injection
+  (non uniformity, normalizaton, etc.)
+
+ - Also use to develop trap pumping model, can these images help tell us if we can calibrate CTI using these images?
+
+ - Need to write model descriptions on RedMine for Reiko (CTI, charge inj, trap pumping). This is a neat way to start
+   Preparing CI image generation in SIM pipeline. Do we need trap pumping data?
