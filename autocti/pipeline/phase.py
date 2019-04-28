@@ -438,6 +438,7 @@ class ParallelPhase(Phase):
 
 
 class SerialPhase(Phase):
+    
     serial_species = phase_property.PhasePropertyCollection("serial_species")
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 
@@ -590,7 +591,8 @@ class HyperPhase(Phase):
         analysis: Analysis
             An analysis object that the non-linear optimizer calls to determine the fit of a set of values
         """
-        masks = list(map(lambda data: self.mask_function(shape=data.image.shape), ci_datas))
+        masks = list(map(lambda data: self.mask_function(shape=data.image.shape,
+                                                         frame_geometry=data.ci_frame.frame_geometry), ci_datas))
         noise_scaling_maps = self.noise_scaling_maps_from_result(results[-1])
         ci_datas_fit = [self.extract_ci_hyper_data(data=data, mask=mask, noise_scaling_maps=maps) for
                         data, mask, maps in zip(ci_datas, masks, noise_scaling_maps)]
