@@ -6,7 +6,6 @@ from autofit import conf
 from autofit.mapper import model_mapper as mm
 from autofit.mapper import prior_model
 from autofit.optimize import non_linear as nl
-from autofit.tools import phase_property
 from autofit.tools.pipeline import ResultsCollection
 
 from autocti import exc
@@ -24,6 +23,7 @@ pytestmark = pytest.mark.filterwarnings(
     "either in an error or a different result.")
 
 directory = path.dirname(path.realpath(__file__))
+
 
 @pytest.fixture(scope="session", autouse=True)
 def do_something():
@@ -114,33 +114,23 @@ def make_results_collection():
 class TestPhase(object):
 
     def test_param_names(self, phase):
-        phase.parallel_species = [mm.PriorModel(arctic_params.Species), mm.PriorModel(arctic_params.Species)]
+        phase.parallel_species = [prior_model.PriorModel(arctic_params.Species),
+                                  prior_model.PriorModel(arctic_params.Species)]
 
         assert phase.optimizer.variable.param_names == ['parallel_species_0_trap_density',
                                                         'parallel_species_0_trap_lifetime',
                                                         'parallel_species_1_trap_density',
                                                         'parallel_species_1_trap_lifetime']
 
-        phase = ph.ParallelPhase(phase_name='test_phase', parallel_species=[mm.PriorModel(arctic_params.Species),
-                                                                            mm.PriorModel(arctic_params.Species)],
+        phase = ph.ParallelPhase(phase_name='test_phase',
+                                 parallel_species=[prior_model.PriorModel(arctic_params.Species),
+                                                   prior_model.PriorModel(arctic_params.Species)],
                                  optimizer_class=NLO)
 
         assert phase.optimizer.variable.param_names == ['parallel_species_0_trap_density',
                                                         'parallel_species_0_trap_lifetime',
                                                         'parallel_species_1_trap_density',
                                                         'parallel_species_1_trap_lifetime']
-
-    def test__set_constants(self, phase):
-        parallel_species = arctic_params.Species()
-        phase.parallel_species = [parallel_species]
-        assert phase.optimizer.constant.parallel_species == [parallel_species]
-        assert phase.optimizer.variable.parallel_species != [parallel_species]
-
-    def test__set_variables(self, phase):
-        parallel = [mm.PriorModel(arctic_params.Species)]
-        phase.parallel_species = parallel
-        assert phase.optimizer.variable.parallel_species == phase.parallel_species
-        assert phase.optimizer.constant.parallel_species != [parallel]
 
     def test__make_analysis(self, phase, ci_data, cti_settings):
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
@@ -152,15 +142,14 @@ class TestPhase(object):
         assert analysis.cti_settings == cti_settings
 
     def test__make_analysis__uses_mask_function(self, phase, ci_data, cti_settings):
-
         def mask_function(shape, frame_geometry):
-             return np.full(shape=shape, fill_value=False)
+            return np.full(shape=shape, fill_value=False)
 
         phase.mask_function = mask_function
 
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
 
-        assert (analysis.ci_datas_full[0].mask == np.full(shape=(3,3), fill_value=False)).all()
+        assert (analysis.ci_datas_full[0].mask == np.full(shape=(3, 3), fill_value=False)).all()
 
         def mask_function(shape, frame_geometry):
             return np.array([[False, False, False],
@@ -176,7 +165,6 @@ class TestPhase(object):
                                                             [False, False, False]])).all()
 
     def test__make_analysis__default_mask_all_empty__cosmic_ray_image_masks_mask(self, phase, ci_data, cti_settings):
-
         phase.cosmic_ray_parallel_buffer = 0
         phase.cosmic_ray_serial_buffer = 0
         phase.cosmic_ray_diagonal_buffer = 0
@@ -220,7 +208,6 @@ class TestPhase(object):
                                                             [True, False, False]])).all()
 
     def test__parallel_phase__if_trap_lifetime_not_ascending__raises_exception(self, phase, ci_data, cti_settings):
-
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
 
         species_0 = arctic_params.Species(trap_density=0.0, trap_lifetime=1.0)
@@ -387,26 +374,6 @@ class TestPhase(object):
         assert (ci_data.noise_map == ci_datas_fit.noise_map).all()
         assert (ci_data.ci_pre_cti == ci_datas_fit.ci_pre_cti).all()
 
-    def test__phase_property(self):
-        class MyPhase(ph.ParallelPhase):
-            prop = phase_property.PhaseProperty("prop")
-
-        parallel = arctic_params.Species()
-
-        phase = MyPhase(phase_name='test_phase', optimizer_class=NLO, parallel_species=[parallel])
-
-        phase.prop = arctic_params.Species
-
-        assert phase.variable.prop == phase.prop
-
-        phase.prop = [parallel]
-
-        assert phase.constant.prop == [parallel]
-        assert not hasattr(phase.variable, "prop")
-
-        phase.prop = arctic_params.Species
-        assert not hasattr(phase.constant, "prop")
-
     def test__duplication(self):
         parallel = arctic_params.Species()
 
@@ -561,7 +528,7 @@ Hyper Parameters:
 
         instance = phase.variable.instance_from_unit_vector([0.5, 0.5])
 
-        assert instance.hyper_noise_scalars == [5.0, 5.0]
+        assert list(instance.hyper_noise_scalars) == [5.0, 5.0]
 
 
 class TestResult(object):

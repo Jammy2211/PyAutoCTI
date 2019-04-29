@@ -387,7 +387,7 @@ class Phase(ph.AbstractPhase):
 
 class ParallelPhase(Phase):
 
-    parallel_species = phase_property.PhasePropertyCollection("parallel_species")
+    parallel_species = phase_property.PhaseProperty("parallel_species")
     parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
 
     def __init__(self, phase_name, tag_phases=True, phase_folders=None, parallel_species=(), parallel_ccd=None,
@@ -439,7 +439,7 @@ class ParallelPhase(Phase):
 
 class SerialPhase(Phase):
     
-    serial_species = phase_property.PhasePropertyCollection("serial_species")
+    serial_species = phase_property.PhaseProperty("serial_species")
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 
     def __init__(self, phase_name, tag_phases=True, phase_folders=None, serial_species=(), serial_ccd=None,
@@ -489,8 +489,8 @@ class SerialPhase(Phase):
 
 
 class ParallelSerialPhase(Phase):
-    parallel_species = phase_property.PhasePropertyCollection("parallel_species")
-    serial_species = phase_property.PhasePropertyCollection("serial_species")
+    parallel_species = phase_property.PhaseProperty("parallel_species")
+    serial_species = phase_property.PhaseProperty("serial_species")
     parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
     serial_ccd = phase_property.PhaseProperty("serial_ccd")
 
@@ -562,7 +562,7 @@ class HyperPhase(Phase):
     """
     Mixin for hyper phases. Extracts noise scaling maps and creates MaskedCIHyperData objects for analysis.
     """
-    hyper_noise_scalars = phase_property.PhasePropertyCollection("hyper_noise_scalars")
+    hyper_noise_scalars = phase_property.PhaseProperty("hyper_noise_scalars")
 
     def __init__(self, phase_name, phase_folders, *args, **kwargs):
         super().__init__(phase_name=phase_name, phase_folders=phase_folders, *args, **kwargs)
