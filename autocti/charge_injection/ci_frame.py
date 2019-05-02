@@ -943,20 +943,6 @@ class ChInj(object):
     def parallel_serial_calibration_section(self, array):
         return array[0:array.shape[0], self.frame_geometry.serial_prescan.x1:array.shape[1]]
 
-    def mask_containing_only_serial_trails(self, array):
-
-        from autocti.data import mask as msk
-
-        mask = np.full(array.shape, True)
-        trails_regions = list(map(lambda ci_region: self.frame_geometry.serial_trails_region(ci_region,
-                                                                                             columns=(
-                                                                                                 0, array.shape[1])),
-                                  self.ci_pattern.regions))
-        for region in trails_regions:
-            mask[region.y0:region.y1, region.x0:region.x1] = False
-
-        return msk.Mask(array=mask, frame_geometry=self.frame_geometry)
-
 
 class Region(object):
 

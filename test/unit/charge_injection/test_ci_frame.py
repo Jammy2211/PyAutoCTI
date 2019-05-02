@@ -1483,45 +1483,6 @@ class TestChInj(object):
                                                  [2.0, 3.0],
                                                  [2.0, 3.0]])).all()
 
-    class TestMaskOnlyContainingSerialTrails:
-
-        def test__pattern_bottom___mask_only_contains_trails(self):
-            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
-
-            image = np.array([[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
-                              [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
-                              [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]])
-
-            #                                    /| Trails Begin
-
-            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
-
-            mask = frame.mask_containing_only_serial_trails(image, )
-
-            assert type(mask) == msk.Mask
-
-            assert (mask == np.array([[True, True, True, True, False, False, False, False, False, False],
-                                      [True, True, True, True, False, False, False, False, False, False],
-                                      [True, True, True, True, False, False, False, False, False, False]])).all()
-
-        def test__pattern_bottom__2_regions__extracts_columns_correctly(self):
-            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 1, 1, 4), (2, 3, 1, 4)])
-
-            image = np.array([[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
-                              [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
-                              [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]])
-
-            #                                   /| Trails1           /\ Trails2
-
-            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
-
-            mask = frame.mask_containing_only_serial_trails(image, )
-
-            assert type(mask) == msk.Mask
-            assert (mask == np.array([[True, True, True, True, False, False, False, False, False, False],
-                                      [True, True, True, True, True, True, True, True, True, True],
-                                      [True, True, True, True, False, False, False, False, False, False]])).all()
-
 
 class TestQuadGeometryEuclid_bottom_left(object):
     class TestParallelFrontEdgeRegion:
