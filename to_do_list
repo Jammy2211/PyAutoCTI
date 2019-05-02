@@ -7,3 +7,5 @@ VIS Meeting summmay:
 
  - Need to write model descriptions on RedMine for Reiko (CTI, charge inj, trap pumping). This is a neat way to start
    Preparing CI image generation in SIM pipeline. Do we need trap pumping data?
+
+ - Where do we store the CTI calibration data-base? How big wil it be? Will it be distributed?

@@ -535,8 +535,57 @@ class ChInj(object):
                                        self.ci_pattern.regions))
         return list(map(lambda region: array[region.slice], calibration_regions))
 
+    def parallel_front_edge_regions_from_frame(self, array, rows):
+        """Calculate a list of the parallel front edge regions of a charge injection ci_frame.
+
+        The diagram below illustrates the region that calculaed from a ci_frame for rows=(0, 1):
+
+        ---KEY---
+        ---------
+
+        [] = read-out electronics   [==========] = read-out register
+
+        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
+        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
+        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
+
+        P = Parallel Direction      S = Serial Direction
+
+               [ppppppppppppppppppppp]
+               [ppppppppppppppppppppp]
+          [...][ttttttttttttttttttttt][sss]
+          [...][c1c1cc1c1cc1cc1ccc1cc][sss]
+        | [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
+        | [...][ttttttttttttttttttttt][sss]    | Direction
+        P [...][ttttttttttttttttttttt][sss]    | of
+        | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
+          [...][cc0ccc0cccc0cccc0cccc][sss]    |
+
+        []     [=====================]
+               <---------S----------
+
+        The extracted ci_frame keeps just the front edges of all charge injection regions.
+
+        list index 0:
+
+        [0, 1, 3, 21] (serial prescan is 3 pixels)
+
+        list index 1:
+
+        [3, 4, 3, 21] (serial prescan is 3 pixels)
+
+        Parameters
+        ------------
+        array
+        rows : (int, int)
+            The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
+        """
+        return list(map(lambda ci_region: self.frame_geometry.parallel_front_edge_region(ci_region, rows),
+                         self.ci_pattern.regions))
+
     def parallel_front_edge_arrays_from_frame(self, array, rows):
-        """Extract a list of the parallel front edge regions of a charge injection ci_frame.
+        """Extract a list of arrays of the parallel front edge regions of a charge injection ci_frame.
 
         The diagram below illustrates the array that is extracted from a ci_frame for rows=(0, 1):
 
@@ -581,8 +630,7 @@ class ChInj(object):
         rows : (int, int)
             The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
-        front_regions = list(map(lambda ci_region: self.frame_geometry.parallel_front_edge_region(ci_region, rows),
-                                 self.ci_pattern.regions))
+        front_regions = self.parallel_front_edge_regions_from_frame(array=array, rows=rows)
         front_arrays = np.array(list(map(lambda region: array[region.slice], front_regions)))
         return front_arrays
 
