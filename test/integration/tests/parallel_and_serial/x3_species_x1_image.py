@@ -12,7 +12,7 @@ from test.simulation import simulation_util
 from test.integration import integration_util
 
 test_type = 'parallel_and_serial'
-test_name = 'x3_species_x1_image_no_pool'
+test_name = 'x3_species_x1_image'
 
 test_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
 output_path = test_path + 'output/'
