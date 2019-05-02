@@ -36,6 +36,137 @@ class MockPattern(object):
         pass
 
 
+class TestMaskedParallelFrontEdge:
+
+    def test__pattern_bottom___mask_only_contains_front_edge(self):
+
+        pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
+
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+
+        mask = ci_mask.CIMask.masked_parallel_front_edge_from_ci_frame(shape=(10, 3), ci_frame=frame, rows=(0, 2))
+
+        assert type(mask) == ci_mask.CIMask
+
+        assert (mask == np.array([[True,  True,  True],
+                                  [False, False, False],  # <- Front edge according to region and this frame_geometry
+                                  [False, False, False],  # <- Next front edge row.
+                                  [True,  True,  True],
+                                  [True,  True,  True],
+                                  [True,  True,  True],
+                                  [True,  True,  True],
+                                  [True,  True,  True],
+                                  [True,  True,  True],
+                                  [True,  True,  True]])).all()
+        
+    def test__pattern_bottom__2_regions__extracts_rows_correctly(self):
+
+        pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 1), (1, 4, 2, 3)])
+
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+
+        mask = ci_mask.CIMask.masked_parallel_front_edge_from_ci_frame(shape=(10, 3), ci_frame=frame, rows=(0, 2))
+
+        assert type(mask) == ci_mask.CIMask
+
+        assert (mask == np.array([[True,  True,  True],
+                                  [False, True, False],  # <- Front edge according to region and this frame_geometry
+                                  [False, True, False],  # <- Next front edge row.
+                                  [True,  True,  True],
+                                  [True,  True,  True],
+                                  [True,  True,  True],
+                                  [True,  True,  True],
+                                  [True,  True,  True],
+                                  [True,  True,  True],
+                                  [True,  True,  True]])).all()
+
+    def test__pattern_top__mask_only_contains_front_edge(self):
+
+        pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
+
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), ci_pattern=pattern)
+
+        mask = ci_mask.CIMask.masked_parallel_front_edge_from_ci_frame(shape=(10, 3), ci_frame=frame, rows=(0, 2))
+
+        assert type(mask) == ci_mask.CIMask
+
+        assert (mask == np.array([[True,  True,  True],
+                                  [True,   True,  True],
+                                  [False, False, False],  # <- Next front edge row.
+                                  [False, False, False], # <- Front edge according to region and this frame_geometry
+                                  [True,  True,  True],
+                                  [True,  True,  True],
+                                  [True,  True,  True],
+                                  [True,  True,  True],
+                                  [True,  True,  True],
+                                  [True,  True,  True]])).all()
+
+class TestMaskedParallelTrails:
+
+    def test__pattern_bottom___mask_only_contains_trails(self):
+        
+        pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
+
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+
+        mask = ci_mask.CIMask.masked_parallel_trails_from_ci_frame(shape=(10, 3), ci_frame=frame, rows=(0, 4))
+
+        assert type(mask) == ci_mask.CIMask
+
+        assert (mask == np.array([[True, True, True],
+                                  [True, True, True],  
+                                  [True, True, True],  
+                                  [True, True, True],
+                                  [False, False, False], # <- Frist Trail according to region and this frame_geometry
+                                  [False, False, False], # <- Next trail row.
+                                  [False, False, False],
+                                  [False, False, False],
+                                  [True, True, True],
+                                  [True, True, True]])).all()
+
+    def test__pattern_bottom__2_regions__extracts_rows_correctly(self):
+        
+        pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 1), (1, 4, 2, 3)])
+
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+
+        mask = ci_mask.CIMask.masked_parallel_trails_from_ci_frame(shape=(10, 3), ci_frame=frame, rows=(0, 4))
+
+        assert type(mask) == ci_mask.CIMask
+
+        assert (mask == np.array([[True, True, True],
+                                  [True, True, True],
+                                  [True, True, True],
+                                  [True, True, True],
+                                  [False, True, False], # <- Frist Trail according to region and this frame_geometry
+                                  [False, True, False], # <- Next trail row.
+                                  [False, True, False],
+                                  [False, True, False],
+                                  [True, True, True],
+                                  [True, True, True]])).all()
+
+    def test__pattern_top__mask_only_contains_trails(self):
+        
+        pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
+
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), ci_pattern=pattern)
+
+        mask = ci_mask.CIMask.masked_parallel_trails_from_ci_frame(shape=(10, 3), ci_frame=frame, rows=(0, 1))
+
+        assert type(mask) == ci_mask.CIMask
+
+        assert (mask == np.array([[False, False, False], # <- Frist Trail according to region and this frame_geometry
+                                  [True, True, True],
+                                  [True, True, True], 
+                                  [True, True, True], 
+                                  [True, True, True], 
+                                  [True, True, True],
+                                  [True, True, True],
+                                  [True, True, True],
+                                  [True, True, True],
+                                  [True, True, True]])).all()
+
+
 class TestMaskedSerialFrontEdge:
 
     def test__pattern_left___mask_only_contains_front_edge(self):
@@ -79,6 +210,7 @@ class TestMaskedSerialFrontEdge:
         assert (mask == np.array([[True, True, False, False, True, True, True, True, True, True],
                                   [True, True, False, False, True, True, True, True, True, True],
                                   [True, True, False, False, True, True, True, True, True, True]])).all()
+
 
 class TestMaskedSerialTrails:
 

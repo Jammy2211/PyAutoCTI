@@ -9,9 +9,9 @@ class CIMask(msk.Mask):
         return mask
 
     @classmethod
-    def masked_parallel_front_edge_from_ci_frame(self, shape, ci_frame, columns):
+    def masked_parallel_front_edge_from_ci_frame(self, shape, ci_frame, rows):
 
-        front_edge_regions = ci_frame.parallel_front_edge_regions_from_frame(columns=columns)
+        front_edge_regions = ci_frame.parallel_front_edge_regions_from_frame(rows=rows)
         mask = np.full(shape, True)
 
         for region in front_edge_regions:
@@ -20,9 +20,9 @@ class CIMask(msk.Mask):
         return CIMask(array=mask, frame_geometry=ci_frame.frame_geometry)
 
     @classmethod
-    def masked_parallel_trails_from_ci_frame(self, shape, ci_frame, columns):
+    def masked_parallel_trails_from_ci_frame(self, shape, ci_frame, rows):
 
-        trails_regions = ci_frame.parallel_trails_regions_from_frame(columns=columns)
+        trails_regions = ci_frame.parallel_trails_regions_from_frame(rows=rows)
         mask = np.full(shape, True)
 
         for region in trails_regions:
