@@ -880,9 +880,10 @@ class TestChInj(object):
             assert (serial_region[0] == np.array([[0.0, 1.0, 2.0, 2.0, 2.0]])).all()
             assert (serial_region[1] == np.array([[0.0, 1.0, 4.0, 4.0, 4.0]])).all()
 
-    class TestExtractParallelFrontEdges:
+    class TestParallelFrontEdgesFromFrame:
 
         def test__pattern_bottom___extracts_1_front_edge_correctly(self):
+
             pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
             image = np.array([[0.0, 0.0, 0.0],
@@ -897,20 +898,24 @@ class TestChInj(object):
                               [9.0, 9.0, 9.0]])
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
-
+            
+            front_edge_region = frame.parallel_front_edge_regions_from_frame(image, rows=(0, 1))
+            assert front_edge_region == [ci_frame.Region((1, 2, 0, 3))]
             front_edge = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 1))
-
             assert (front_edge == np.array([[1.0, 1.0, 1.0]])).all()
 
+            front_edge_region = frame.parallel_front_edge_regions_from_frame(image, rows=(1, 2))
+            assert front_edge_region == [ci_frame.Region((2, 3, 0, 3))]
             front_edge = frame.parallel_front_edge_arrays_from_frame(image, rows=(1, 2))
-
             assert (front_edge == np.array([[2.0, 2.0, 2.0]])).all()
 
+            front_edge_region = frame.parallel_front_edge_regions_from_frame(image, rows=(2, 3))
+            assert front_edge_region == [ci_frame.Region((3, 4, 0, 3))]
             front_edge = frame.parallel_front_edge_arrays_from_frame(image, rows=(2, 3))
-
             assert (front_edge == np.array([[3.0, 3.0, 3.0]])).all()
 
         def test__pattern_bottom___extracts_multiple_front_edges_correctly(self):
+
             pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 5, 0, 3)])
 
             image = np.array([[0.0, 0.0, 0.0],
@@ -926,18 +931,21 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
+            front_edge_region = frame.parallel_front_edge_regions_from_frame(image, rows=(0, 2))
+            assert front_edge_region == [ci_frame.Region((1, 3, 0, 3))]
             front_edge = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 2))
-
             assert (front_edge == np.array([[1.0, 1.0, 1.0],
                                             [2.0, 2.0, 2.0]])).all()
 
+            front_edge_region = frame.parallel_front_edge_regions_from_frame(image, rows=(1, 4))
+            assert front_edge_region == [ci_frame.Region((2, 5, 0, 3))]
             front_edge = frame.parallel_front_edge_arrays_from_frame(image, rows=(1, 4))
-
             assert (front_edge == np.array([[2.0, 2.0, 2.0],
                                             [3.0, 3.0, 3.0],
                                             [4.0, 4.0, 4.0]])).all()
 
         def test__pattern_bottom__2_regions__extracts_rows_correctly(self):
+
             pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3), (5, 8, 0, 3)])
 
             image = np.array([[0.0, 0.0, 0.0],
@@ -953,21 +961,29 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
+            front_edge_region = frame.parallel_front_edge_regions_from_frame(image, rows=(0, 1))
+            assert front_edge_region == [ci_frame.Region((1, 2, 0, 3)), ci_frame.Region((5, 6, 0, 3))]
             front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 1))
-
             assert (front_edges[0] == np.array([[1.0, 1.0, 1.0]])).all()
             assert (front_edges[1] == np.array([[5.0, 5.0, 5.0]])).all()
 
-            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(1, 2))
 
+            front_edge_region = frame.parallel_front_edge_regions_from_frame(image, rows=(1, 2))
+            assert front_edge_region == [ci_frame.Region((2, 3, 0, 3)), ci_frame.Region((6, 7, 0, 3))]
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(1, 2))
             assert (front_edges[0] == np.array([[2.0, 2.0, 2.0]])).all()
             assert (front_edges[1] == np.array([[6.0, 6.0, 6.0]])).all()
 
-            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(2, 3))
 
+            front_edge_region = frame.parallel_front_edge_regions_from_frame(image, rows=(2, 3))
+            assert front_edge_region == [ci_frame.Region((3, 4, 0, 3)), ci_frame.Region((7, 8, 0, 3))]
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(2, 3))
             assert (front_edges[0] == np.array([[3.0, 3.0, 3.0]])).all()
             assert (front_edges[1] == np.array([[7.0, 7.0, 7.0]])).all()
 
+
+            front_edge_region = frame.parallel_front_edge_regions_from_frame(image, rows=(0, 3))
+            assert front_edge_region == [ci_frame.Region((1, 4, 0, 3)), ci_frame.Region((5, 8, 0, 3))]
             front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 3))
             assert (front_edges[0] == np.array([[1.0, 1.0, 1.0],
                                                 [2.0, 2.0, 2.0],
@@ -977,6 +993,7 @@ class TestChInj(object):
                                                 [7.0, 7.0, 7.0]])).all()
 
         def test__pattern_top__does_all_the_above_correctly(self):
+
             pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 5, 0, 3), (6, 9, 0, 3)])
 
             image = np.array([[0.0, 0.0, 0.0],
@@ -992,21 +1009,30 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), ci_pattern=pattern)
 
-            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 1))
 
+            front_edge_region = frame.parallel_front_edge_regions_from_frame(image, rows=(0, 1))
+            assert front_edge_region == [ci_frame.Region((4, 5, 0, 3)), ci_frame.Region((8, 9, 0, 3))]
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 1))
             assert (front_edges[0] == np.array([[4.0, 4.0, 4.0]])).all()
             assert (front_edges[1] == np.array([[8.0, 8.0, 8.0]])).all()
 
-            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(1, 2))
 
+            front_edge_region = frame.parallel_front_edge_regions_from_frame(image, rows=(1, 2))
+            assert front_edge_region == [ci_frame.Region((3, 4, 0, 3)), ci_frame.Region((7, 8, 0, 3))]
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(1, 2))
             assert (front_edges[0] == np.array([[3.0, 3.0, 3.0]])).all()
             assert (front_edges[1] == np.array([[7.0, 7.0, 7.0]])).all()
 
-            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(2, 3))
 
+            front_edge_region = frame.parallel_front_edge_regions_from_frame(image, rows=(2, 3))
+            assert front_edge_region == [ci_frame.Region((2, 3, 0, 3)), ci_frame.Region((6, 7, 0, 3))]
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(2, 3))
             assert (front_edges[0] == np.array([[2.0, 2.0, 2.0]])).all()
             assert (front_edges[1] == np.array([[6.0, 6.0, 6.0]])).all()
 
+
+            front_edge_region = frame.parallel_front_edge_regions_from_frame(image, rows=(0, 3))
+            assert front_edge_region == [ci_frame.Region((2, 5, 0, 3)), ci_frame.Region((6, 9, 0, 3))]
             front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 3))
             assert (front_edges[0] == np.array([[2.0, 2.0, 2.0],
                                                 [3.0, 3.0, 3.0],
