@@ -535,7 +535,7 @@ class ChInj(object):
                                        self.ci_pattern.regions))
         return list(map(lambda region: array[region.slice], calibration_regions))
 
-    def parallel_front_edge_regions_from_frame(self, array, rows):
+    def parallel_front_edge_regions_from_frame(self, rows):
         """Calculate a list of the parallel front edge regions of a charge injection ci_frame.
 
         The diagram below illustrates the region that calculaed from a ci_frame for rows=(0, 1):
@@ -630,7 +630,7 @@ class ChInj(object):
         rows : (int, int)
             The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
-        front_regions = self.parallel_front_edge_regions_from_frame(array=array, rows=rows)
+        front_regions = self.parallel_front_edge_regions_from_frame(rows=rows)
         front_arrays = np.array(list(map(lambda region: array[region.slice], front_regions)))
         return front_arrays
 
