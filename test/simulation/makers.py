@@ -46,7 +46,7 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(ci_data_type, ci
 def make_ci_uniform_parallel_x1_species(data_resolutions, normalizations):
 
     ci_data_type = 'ci_uniform'
-    ci_data_model = 'parallel_x1_species'
+    ci_data_model = 'parallel_x1'
 
     parallel_species = arctic_params.Species(trap_density=1.0, trap_lifetime=3.0)
     parallel_ccd = arctic_params.CCD(well_notch_depth=0.0, well_fill_alpha=1.0,
@@ -70,7 +70,7 @@ def make_ci_uniform_parallel_x1_species(data_resolutions, normalizations):
 def make_ci_uniform_serial_x1_species(data_resolutions, normalizations):
 
     ci_data_type = 'ci_uniform'
-    ci_data_model = 'serial_x1_species'
+    ci_data_model = 'serial_x1'
 
     serial_species = arctic_params.Species(trap_density=1.0, trap_lifetime=3.0)
     serial_ccd = arctic_params.CCD(well_notch_depth=0.00, well_fill_alpha=1.0,
@@ -94,7 +94,7 @@ def make_ci_uniform_serial_x1_species(data_resolutions, normalizations):
 def make_ci_uniform_parallel_and_serial_x1_species(data_resolutions, normalizations):
 
     ci_data_type = 'ci_uniform'
-    ci_data_model = 'parallel_and_serial_x1_species'
+    ci_data_model = 'parallel_and_serial_x1'
 
     parallel_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.5)
     parallel_ccd = arctic_params.CCD(well_notch_depth=0.01, well_fill_alpha=1.0,
@@ -128,7 +128,7 @@ def make_ci_uniform_parallel_and_serial_x1_species(data_resolutions, normalizati
 def make_ci_uniform_parallel_x3_species(data_resolutions, normalizations):
 
     ci_data_type = 'ci_uniform'
-    ci_data_model = 'parallel_x3_species'
+    ci_data_model = 'parallel_x3'
 
     parallel_species_0 = arctic_params.Species(trap_density=0.5, trap_lifetime=2.0)
     parallel_species_1 = arctic_params.Species(trap_density=1.5, trap_lifetime=5.0)
@@ -154,7 +154,7 @@ def make_ci_uniform_parallel_x3_species(data_resolutions, normalizations):
 def make_ci_uniform_serial_x3_species(data_resolutions, normalizations):
 
     ci_data_type = 'ci_uniform'
-    ci_data_model = 'serial_x3_species'
+    ci_data_model = 'serial_x3'
 
     serial_species_0 = arctic_params.Species(trap_density=0.5, trap_lifetime=2.0)
     serial_species_1 = arctic_params.Species(trap_density=1.5, trap_lifetime=5.0)
@@ -180,7 +180,7 @@ def make_ci_uniform_serial_x3_species(data_resolutions, normalizations):
 def make_ci_uniform_parallel_and_serial_x3_species(data_resolutions, normalizations):
 
     ci_data_type = 'ci_uniform'
-    ci_data_model = 'parallel_and_serial_x3_species'
+    ci_data_model = 'parallel_and_serial_x3'
 
     parallel_species_0 = arctic_params.Species(trap_density=0.5, trap_lifetime=2.0)
     parallel_species_1 = arctic_params.Species(trap_density=1.5, trap_lifetime=5.0)
@@ -220,7 +220,7 @@ def make_ci_uniform_parallel_and_serial_x3_species(data_resolutions, normalizati
 def make_ci_uniform_cosmic_rays_parallel_x1_species(data_resolutions, normalizations):
 
     ci_data_type = 'ci_uniform_cosmic_rays'
-    ci_data_model = 'parallel_x1_species'
+    ci_data_model = 'parallel_x1'
 
     parallel_species = arctic_params.Species(trap_density=1.0, trap_lifetime=3.0)
     parallel_ccd = arctic_params.CCD(well_notch_depth=0.0, well_fill_alpha=1.0,
@@ -250,7 +250,7 @@ def make_ci_uniform_cosmic_rays_parallel_x1_species(data_resolutions, normalizat
 def make_ci_uniform_cosmic_rays_serial_x1_species(data_resolutions, normalizations):
 
     ci_data_type = 'ci_uniform_cosmic_rays'
-    ci_data_model = 'serial_x1_species'
+    ci_data_model = 'serial_x1'
 
     serial_species = arctic_params.Species(trap_density=1.0, trap_lifetime=3.0)
     serial_ccd = arctic_params.CCD(well_notch_depth=0.00, well_fill_alpha=1.0,
@@ -280,7 +280,7 @@ def make_ci_uniform_cosmic_rays_serial_x1_species(data_resolutions, normalizatio
 def make_ci_uniform_cosmic_rays_parallel_and_serial_x1_species(data_resolutions, normalizations):
 
     ci_data_type = 'ci_uniform_cosmic_rays'
-    ci_data_model = 'parallel_and_serial_x1_species'
+    ci_data_model = 'parallel_and_serial_x1'
 
     parallel_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.5)
     parallel_ccd = arctic_params.CCD(well_notch_depth=0.01, well_fill_alpha=1.0,
