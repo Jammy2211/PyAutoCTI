@@ -58,9 +58,11 @@ class TestCIPatternViaList(object):
 
 
 class TestCIPattern(object):
+
     class TestConstructor:
 
         def test__setup_all_attributes_correctly(self):
+
             pattern = ci_pattern.CIPattern(normalization=1.0, regions=[(1, 2, 3, 4)])
 
             assert pattern.normalization == 1.0
