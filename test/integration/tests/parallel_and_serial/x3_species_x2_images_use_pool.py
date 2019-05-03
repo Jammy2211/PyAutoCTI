@@ -31,7 +31,7 @@ def pipeline():
     cti_settings = arctic_settings.ArcticSettings(parallel=parallel_settings, serial=serial_settings)
     data = list(map(lambda normalization :
                     simulation_util.load_test_ci_data(ci_data_type='ci_uniform',
-                                                      ci_data_model='parallel_and_serial_x3_species',
+                                                      ci_data_model='parallel_and_serial_x3',
                                                       ci_data_resolution='patch', normalization=normalization),
                     [1000.0, 84700.0]))
     pipeline = make_pipeline(test_name=test_name)
