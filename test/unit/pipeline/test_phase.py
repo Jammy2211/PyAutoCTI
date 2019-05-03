@@ -218,11 +218,9 @@ class TestPhase(object):
 
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
 
-        print(analysis.ci_datas_full[0].mask)
-
-        assert (analysis.ci_datas_full[0].mask == np.array([[False, True, True],
-                                                            [True, True, True],
-                                                            [True, True, True]])).all()
+        assert (analysis.ci_datas_full[0].mask == np.array([[True, False, False],
+                                                            [False, False, False],
+                                                            [False, False, False]])).all()
 
         phase.parallel_front_edge_mask_rows = None
         phase.parallel_trails_mask_rows = (0, 2)
@@ -231,9 +229,9 @@ class TestPhase(object):
 
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
 
-        assert (analysis.ci_datas_full[0].mask == np.array([[True, True, True],
-                                                            [False, True, True],
-                                                            [False, True, True]])).all()
+        assert (analysis.ci_datas_full[0].mask == np.array([[False, False, False],
+                                                            [True, False, False],
+                                                            [True, False, False]])).all()
 
 
         phase.parallel_front_edge_mask_rows = None
@@ -243,9 +241,9 @@ class TestPhase(object):
 
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
 
-        assert (analysis.ci_datas_full[0].mask == np.array([[False, True, True],
-                                                            [True, True, True],
-                                                            [True, True, True]])).all()
+        assert (analysis.ci_datas_full[0].mask == np.array([[True, False, False],
+                                                            [False, False, False],
+                                                            [False, False, False]])).all()
 
         phase.parallel_front_edge_mask_rows = None
         phase.parallel_trails_mask_rows = None
@@ -254,24 +252,20 @@ class TestPhase(object):
 
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
 
-        assert (analysis.ci_datas_full[0].mask == np.array([[True, False, False],
-                                                            [True, True, True],
-                                                            [True, True, True]])).all()
+        assert (analysis.ci_datas_full[0].mask == np.array([[False, True, True],
+                                                            [False, False, False],
+                                                            [False, False, False]])).all()
 
         phase.parallel_front_edge_mask_rows = (0, 1)
         phase.parallel_trails_mask_rows = (1, 2)
         phase.serial_front_edge_mask_columns = (0, 1)
         phase.serial_trails_mask_columns = (0, 2)
 
-        print()
-
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
 
-        print(analysis.ci_datas_full[0].mask)
-
-        assert (analysis.ci_datas_full[0].mask == np.array([[False, False, False],
-                                                            [True, True, True],
-                                                            [False, True, True]])).all()
+        assert (analysis.ci_datas_full[0].mask == np.array([[True,  True,  True],
+                                                            [False, False, False],
+                                                            [True, False, False]])).all()
 
 
     def test__parallel_phase__if_trap_lifetime_not_ascending__raises_exception(self, phase, ci_data, cti_settings):
