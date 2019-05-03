@@ -31,7 +31,7 @@ from autocti.charge_injection import ci_frame
 class Mask(np.ndarray):
 
     def __new__(cls, array, *args, **kwargs):
-        mask = np.array(array, dtype='float64').view(cls)
+        mask = np.array(array, dtype='bool').view(cls)
         return mask
 
     @classmethod

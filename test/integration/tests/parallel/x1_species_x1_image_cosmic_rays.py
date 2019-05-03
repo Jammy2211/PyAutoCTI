@@ -28,7 +28,7 @@ def pipeline():
     parallel_settings = arctic_settings.Settings(well_depth=84700, niter=1, express=2, n_levels=2000,
                                                  charge_injection_mode=False, readout_offset=0)
     cti_settings = arctic_settings.ArcticSettings(parallel=parallel_settings)
-    data = simulation_util.load_test_ci_data(ci_data_type='ci_uniform_cosmic_rays', ci_data_model='parallel_x1_species',
+    data = simulation_util.load_test_ci_data(ci_data_type='ci_uniform_cosmic_rays', ci_data_model='parallel_x1',
                                              ci_data_resolution='patch', normalization=84700.0,
                                              load_cosmic_ray_image=True)
     pipeline = make_pipeline(test_name=test_name)
