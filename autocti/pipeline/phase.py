@@ -77,6 +77,8 @@ class Phase(ph.AbstractPhase):
                                                           parallel_trails_mask_rows=parallel_trails_mask_rows,
                                                           serial_front_edge_mask_columns=serial_front_edge_mask_columns,
                                                           serial_trails_mask_columns=serial_trails_mask_columns,
+                                                          parallel_total_density_range=self.parallel_total_density_range,
+                                                          serial_total_density_range=self.serial_total_density_range,
                                                           cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
                                                           cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
                                                           cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
