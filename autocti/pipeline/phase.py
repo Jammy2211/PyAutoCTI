@@ -45,6 +45,7 @@ class Phase(ph.AbstractPhase):
                  mask_function=msk.Mask.empty_for_shape, columns=None, rows=None,
                  parallel_front_edge_mask_rows=None, parallel_trails_mask_rows=None,
                  serial_front_edge_mask_columns=None, serial_trails_mask_columns=None,
+                 parallel_total_density_range=None, serial_total_density_range=None,
                  cosmic_ray_parallel_buffer=10, cosmic_ray_serial_buffer=10, cosmic_ray_diagonal_buffer=3):
         """
         A phase in an analysis pipeline. Uses the set NonLinear optimizer to try to fit models and images passed to it.
@@ -63,6 +64,8 @@ class Phase(ph.AbstractPhase):
         self.parallel_trails_mask_rows = parallel_trails_mask_rows
         self.serial_front_edge_mask_columns = serial_front_edge_mask_columns
         self.serial_trails_mask_columns = serial_trails_mask_columns
+        self.parallel_total_density_range = parallel_total_density_range
+        self.serial_total_density_range = serial_total_density_range
         self.cosmic_ray_parallel_buffer = cosmic_ray_parallel_buffer
         self.cosmic_ray_serial_buffer = cosmic_ray_serial_buffer
         self.cosmic_ray_diagonal_buffer = cosmic_ray_diagonal_buffer
@@ -74,6 +77,8 @@ class Phase(ph.AbstractPhase):
                                                           parallel_trails_mask_rows=parallel_trails_mask_rows,
                                                           serial_front_edge_mask_columns=serial_front_edge_mask_columns,
                                                           serial_trails_mask_columns=serial_trails_mask_columns,
+                                                          parallel_total_density_range=self.parallel_total_density_range,
+                                                          serial_total_density_range=self.serial_total_density_range,
                                                           cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
                                                           cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
                                                           cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
@@ -229,14 +234,17 @@ class Phase(ph.AbstractPhase):
 
         self.pass_priors(results)
         analysis = self.__class__.Analysis(ci_datas_extracted=ci_datas_fit, ci_datas_full=ci_datas_full,
-                                           cti_settings=cti_settings, phase_name=self.phase_name,
-                                           results=results, pool=pool)
+                                           cti_settings=cti_settings,
+                                           parallel_total_density_range=self.parallel_total_density_range,
+                                           serial_total_density_range=self.serial_total_density_range,
+                                           phase_name=self.phase_name, results=results, pool=pool)
         return analysis
 
     # noinspection PyAbstractClass
     class Analysis(nl.Analysis):
 
-        def __init__(self, ci_datas_extracted, ci_datas_full, cti_settings, phase_name, results=None,
+        def __init__(self, ci_datas_extracted, ci_datas_full, cti_settings,
+                     serial_total_density_range, parallel_total_density_range, phase_name, results=None,
                      pool=None):
             """
             An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \
@@ -251,6 +259,8 @@ class Phase(ph.AbstractPhase):
             self.ci_datas_extracted = ci_datas_extracted
             self.ci_datas_full = ci_datas_full
             self.cti_settings = cti_settings
+            self.parallel_total_density_range = parallel_total_density_range
+            self.serial_total_density_range = serial_total_density_range
             self.phase_name = phase_name
             self.phase_output_path = "{}/{}".format(conf.instance.output_path, self.phase_name)
 
@@ -375,25 +385,16 @@ class Phase(ph.AbstractPhase):
             """
             cti_params = cti_params_for_instance(instance=instance)
             self.check_trap_lifetimes_are_ascending(cti_params=cti_params)
+            self.check_total_density_within_range(cti_params=cti_params)
             pipe_cti_pass = partial(pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings)
             likelihood = np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted)))
             return likelihood
 
         def check_trap_lifetimes_are_ascending(self, cti_params):
+            raise NotImplementedError
 
-            if hasattr(cti_params, 'serial'):
-
-                if len(cti_params.serial) == 2:
-
-                    if cti_params.serial_species[0].trap_lifetime > cti_params.serial_species[1].trap_lifetime:
-                        raise exc.PriorException
-
-                elif len(cti_params.serial) == 3:
-
-                    if cti_params.serial_species[0].trap_lifetime > cti_params.serial_species[1].trap_lifetime or \
-                            cti_params.serial_species[0].trap_lifetime > cti_params.serial_species[2].trap_lifetime or \
-                            cti_params.serial_species[1].trap_lifetime > cti_params.serial_species[2].trap_lifetime:
-                        raise exc.PriorException
+        def check_total_density_within_range(self, cti_params):
+            raise NotImplementedError
 
         def fits_of_ci_data_extracted_for_instance(self, instance):
             cti_params = cti_params_for_instance(instance=instance)
@@ -464,6 +465,7 @@ class ParallelPhase(Phase):
     def __init__(self, phase_name, tag_phases=True, phase_folders=None, parallel_species=(), parallel_ccd=None,
                  optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, columns=None,
                  parallel_front_edge_mask_rows=None, parallel_trails_mask_rows=None,
+                 parallel_total_density_range=None,
                  cosmic_ray_parallel_buffer=10, cosmic_ray_serial_buffer=10, cosmic_ray_diagonal_buffer=3):
         """
         A phase with a simple source/CTI model
@@ -473,6 +475,7 @@ class ParallelPhase(Phase):
                          optimizer_class=optimizer_class, mask_function=mask_function, columns=columns, rows=None,
                          parallel_front_edge_mask_rows=parallel_front_edge_mask_rows,
                          parallel_trails_mask_rows=parallel_trails_mask_rows,
+                         parallel_total_density_range=parallel_total_density_range,
                          cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
                          cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
                          cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
@@ -488,10 +491,20 @@ class ParallelPhase(Phase):
     class Analysis(Phase.Analysis):
 
         def check_trap_lifetimes_are_ascending(self, cti_params):
+
             trap_lifetimes = [parallel_species.trap_lifetime for parallel_species in cti_params.parallel_species]
 
             if not sorted(trap_lifetimes) == trap_lifetimes:
                 raise exc.PriorException
+
+        def check_total_density_within_range(self, cti_params):
+
+            if self.parallel_total_density_range is not None:
+
+                total_density = sum([parallel_species.trap_density for parallel_species in cti_params.parallel_species])
+
+                if total_density < self.parallel_total_density_range[0] or total_density > self.parallel_total_density_range[1]:
+                    raise exc.PriorException
 
         def describe(self, instance):
             return ("\nRunning CTI analysis for... \n\n"
@@ -508,6 +521,7 @@ class SerialPhase(Phase):
     def __init__(self, phase_name, tag_phases=True, phase_folders=None, serial_species=(), serial_ccd=None,
                  optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, rows=None,
                  serial_front_edge_mask_columns=None, serial_trails_mask_columns=None,
+                 serial_total_density_range=None,
                  cosmic_ray_parallel_buffer=10, cosmic_ray_serial_buffer=10, cosmic_ray_diagonal_buffer=3):
         """
         A phase with a simple source/CTI model
@@ -517,6 +531,7 @@ class SerialPhase(Phase):
                          optimizer_class=optimizer_class, mask_function=mask_function, rows=rows,
                          serial_front_edge_mask_columns=serial_front_edge_mask_columns,
                          serial_trails_mask_columns=serial_trails_mask_columns,
+                         serial_total_density_range=serial_total_density_range,
                          cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
                          cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
                          cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
@@ -535,6 +550,15 @@ class SerialPhase(Phase):
 
             if not sorted(trap_lifetimes) == trap_lifetimes:
                 raise exc.PriorException
+
+        def check_total_density_within_range(self, cti_params):
+
+            if self.serial_total_density_range is not None:
+
+                total_density = sum([serial_species.trap_density for serial_species in cti_params.serial_species])
+    
+                if total_density < self.serial_total_density_range[0] or total_density > self.serial_total_density_range[1]:
+                    raise exc.PriorException
 
         def describe(self, instance):
             return (
@@ -555,6 +579,7 @@ class ParallelSerialPhase(Phase):
                  optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape,
                  parallel_front_edge_mask_rows=None, parallel_trails_mask_rows=None,
                  serial_front_edge_mask_columns=None, serial_trails_mask_columns=None,
+                 parallel_total_density_range=None, serial_total_density_range=None,
                  cosmic_ray_parallel_buffer=10, cosmic_ray_serial_buffer=10, cosmic_ray_diagonal_buffer=3):
         """
         A phase with a simple source/CTI model
@@ -571,6 +596,8 @@ class ParallelSerialPhase(Phase):
                          parallel_trails_mask_rows=parallel_trails_mask_rows,
                          serial_front_edge_mask_columns=serial_front_edge_mask_columns,
                          serial_trails_mask_columns=serial_trails_mask_columns,
+                         parallel_total_density_range=parallel_total_density_range,
+                         serial_total_density_range=parallel_total_density_range,
                          cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
                          cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
                          cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
@@ -596,6 +623,22 @@ class ParallelSerialPhase(Phase):
 
             if not sorted(trap_lifetimes) == trap_lifetimes:
                 raise exc.PriorException
+
+        def check_total_density_within_range(self, cti_params):
+
+            if self.parallel_total_density_range is not None:
+
+                total_density = sum([parallel_species.trap_density for parallel_species in cti_params.parallel_species])
+
+                if total_density < self.parallel_total_density_range[0] or total_density > self.parallel_total_density_range[1]:
+                    raise exc.PriorException
+
+            if self.serial_total_density_range is not None:
+
+                total_density = sum([serial_species.trap_density for serial_species in cti_params.serial_species])
+
+                if total_density < self.serial_total_density_range[0] or total_density > self.serial_total_density_range[1]:
+                    raise exc.PriorException
 
         def describe(self, instance):
             return (
@@ -693,6 +736,8 @@ class HyperPhase(Phase):
 
         analysis = HyperAnalysis(ci_datas_extracted=ci_datas_fit, ci_datas_full=ci_datas_full,
                                  cti_settings=cti_settings, phase_name=self.phase_name,
+                                 parallel_total_density_range=self.parallel_total_density_range,
+                                 serial_total_density_range=self.serial_total_density_range,
                                  results=results, pool=pool)
         return analysis
 
@@ -709,6 +754,7 @@ class ParallelHyperPhase(ParallelPhase, HyperPhase):
     def __init__(self, phase_name, tag_phases=True, phase_folders=None, parallel_species=(), parallel_ccd=None,
                  optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, columns=None,
                  parallel_front_edge_mask_rows=None, parallel_trails_mask_rows=None,
+                 parallel_total_density_range=None,
                  cosmic_ray_parallel_buffer=10, cosmic_ray_serial_buffer=10, cosmic_ray_diagonal_buffer=3):
         """
         A phase with a simple source/CTI model
@@ -722,8 +768,9 @@ class ParallelHyperPhase(ParallelPhase, HyperPhase):
         super().__init__(phase_name=phase_name, tag_phases=tag_phases, phase_folders=phase_folders,
                          parallel_species=parallel_species, parallel_ccd=parallel_ccd,
                          optimizer_class=optimizer_class, mask_function=mask_function, columns=columns,
-                         parallel_front_edge_mask_rows=parallel_front_edge_mask_rows, 
+                         parallel_front_edge_mask_rows=parallel_front_edge_mask_rows,
                          parallel_trails_mask_rows=parallel_trails_mask_rows,
+                         parallel_total_density_range=parallel_total_density_range,
                          cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
                          cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
                          cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
@@ -746,6 +793,7 @@ class SerialHyperPhase(SerialPhase, HyperPhase):
     def __init__(self, phase_name, tag_phases=True, phase_folders=None, serial_species=(), serial_ccd=None,
                  optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, rows=None,
                  serial_front_edge_mask_columns=None, serial_trails_mask_columns=None,
+                 serial_total_density_range=None,
                  cosmic_ray_parallel_buffer=10, cosmic_ray_serial_buffer=10, cosmic_ray_diagonal_buffer=3):
         """
         A phase with a simple source/CTI model
@@ -756,6 +804,7 @@ class SerialHyperPhase(SerialPhase, HyperPhase):
                          mask_function=mask_function, rows=rows,
                          serial_front_edge_mask_columns=serial_front_edge_mask_columns,
                          serial_trails_mask_columns=serial_trails_mask_columns,
+                         serial_total_density_range=serial_total_density_range,
                          cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
                          cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
                          cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
@@ -777,6 +826,7 @@ class ParallelSerialHyperPhase(ParallelSerialPhase, HyperPhase):
                  serial_ccd=None, optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape,
                  parallel_front_edge_mask_rows=None, parallel_trails_mask_rows=None,
                  serial_front_edge_mask_columns=None, serial_trails_mask_columns=None,
+                 parallel_total_density_range=None, serial_total_density_range=None,
                  cosmic_ray_parallel_buffer=10, cosmic_ray_serial_buffer=10, cosmic_ray_diagonal_buffer=3):
         """
         A phase with a simple source/CTI model
@@ -794,6 +844,8 @@ class ParallelSerialHyperPhase(ParallelSerialPhase, HyperPhase):
                          parallel_trails_mask_rows=parallel_trails_mask_rows,
                          serial_front_edge_mask_columns=serial_front_edge_mask_columns,
                          serial_trails_mask_columns=serial_trails_mask_columns,
+                         parallel_total_density_range=parallel_total_density_range,
+                         serial_total_density_range=serial_total_density_range,
                          cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
                          cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
                          cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
