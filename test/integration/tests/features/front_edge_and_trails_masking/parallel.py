@@ -12,10 +12,10 @@ from autocti.pipeline import pipeline as pl
 from test.simulation import simulation_util
 from test.integration import integration_util
 
-test_type = 'parallel'
-test_name = 'x1_species_x1_image_density_range'
+test_type = 'features/front_edge_and_trails_masking'
+test_name = 'parallel'
 
-test_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
+test_path = '{}/../../../'.format(os.path.dirname(os.path.realpath(__file__)))
 output_path = test_path + 'output/'
 config_path = test_path + 'config'
 conf.instance = conf.Config(config_path=config_path, output_path=output_path)
@@ -46,7 +46,7 @@ def make_pipeline(test_name):
                            optimizer_class=nl.MultiNest,
                            parallel_species=[prior_model.PriorModel(arctic_params.Species)],
                            parallel_ccd=arctic_params.CCD, columns=None,
-                           parallel_total_density_range=(3.0, 4.0))
+                           parallel_front_edge_mask_rows=(0, 1), parallel_trails_mask_rows=(0,1))
 
     phase1.optimizer.n_live_points = 60
     phase1.optimizer.const_efficiency_mode = True
