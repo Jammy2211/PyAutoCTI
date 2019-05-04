@@ -9,6 +9,8 @@ class TestPhaseTag:
                                                           parallel_trails_mask_rows=None,
                                                           serial_front_edge_mask_columns=None,
                                                           serial_trails_mask_columns=None,
+                                                          parallel_total_density_range=None,
+                                                          serial_total_density_range=None,
                                                           cosmic_ray_parallel_buffer=None,
                                                           cosmic_ray_serial_buffer=None,
                                                           cosmic_ray_diagonal_buffer=None)
@@ -21,6 +23,8 @@ class TestPhaseTag:
                                                           parallel_trails_mask_rows=None,
                                                           serial_front_edge_mask_columns=None,
                                                           serial_trails_mask_columns=(5,10),
+                                                          parallel_total_density_range=None,
+                                                          serial_total_density_range=None,
                                                           cosmic_ray_parallel_buffer=None,
                                                           cosmic_ray_serial_buffer=None,
                                                           cosmic_ray_diagonal_buffer=None)
@@ -33,6 +37,8 @@ class TestPhaseTag:
                                                           parallel_trails_mask_rows=None,
                                                           serial_front_edge_mask_columns=None,
                                                           serial_trails_mask_columns=None,
+                                                          parallel_total_density_range=None,
+                                                          serial_total_density_range=None,
                                                           cosmic_ray_parallel_buffer=1,
                                                           cosmic_ray_serial_buffer=2,
                                                           cosmic_ray_diagonal_buffer=3)
@@ -45,22 +51,40 @@ class TestPhaseTag:
                                                           parallel_trails_mask_rows=None,
                                                           serial_front_edge_mask_columns=None,
                                                           serial_trails_mask_columns=None,
+                                                          parallel_total_density_range=None,
+                                                          serial_total_density_range=None,
                                                           cosmic_ray_parallel_buffer=4,
                                                           cosmic_ray_serial_buffer=5,
                                                           cosmic_ray_diagonal_buffer=6)
 
         assert phase_tag == '_col_2_rows_(1,2)_cr_p4s5d6'
 
+        phase_tag = tagging.phase_tag_from_phase_settings(columns=2, rows=(1,2),
+                                                          parallel_front_edge_mask_rows=None,
+                                                          parallel_trails_mask_rows=None,
+                                                          serial_front_edge_mask_columns=None,
+                                                          serial_trails_mask_columns=None,
+                                                          parallel_total_density_range=(0, 1),
+                                                          serial_total_density_range=(2,3),
+                                                          cosmic_ray_parallel_buffer=4,
+                                                          cosmic_ray_serial_buffer=5,
+                                                          cosmic_ray_diagonal_buffer=6)
+
+        assert phase_tag == '_col_2_rows_(1,2)_par_range_(0,1)_ser_range_(2,3)_cr_p4s5d6'
+
         phase_tag = tagging.phase_tag_from_phase_settings(columns=1, rows=(0,1),
                                                           parallel_front_edge_mask_rows=None,
                                                           parallel_trails_mask_rows=(1,2),
                                                           serial_front_edge_mask_columns=(2,4),
                                                           serial_trails_mask_columns=None,
+                                                          parallel_total_density_range=None,
+                                                          serial_total_density_range=None,
                                                           cosmic_ray_parallel_buffer=4,
                                                           cosmic_ray_serial_buffer=5,
                                                           cosmic_ray_diagonal_buffer=6)
 
         assert phase_tag == '_col_1_rows_(0,1)_par_trails_mask_rows_(1,2)_ser_front_mask_col_(2,4)_cr_p4s5d6'
+
 
 class TestTaggers:
 
@@ -134,6 +158,30 @@ class TestTaggers:
         tag = tagging.serial_trails_mask_columns_tag_from_serial_trails_mask_columns(
             serial_trails_mask_columns=(10, 20))
         assert tag == '_ser_trails_mask_col_(10,20)'
+
+    def test__parallel_total_density_range_tagger(self):
+
+        tag = tagging.parallel_total_density_range_tag_from_parallel_total_density_range(
+            parallel_total_density_range=None)
+        assert tag == ''
+        tag = tagging.parallel_total_density_range_tag_from_parallel_total_density_range(
+            parallel_total_density_range=(0, 5))
+        assert tag == '_par_range_(0,5)'
+        tag = tagging.parallel_total_density_range_tag_from_parallel_total_density_range(
+            parallel_total_density_range=(10, 20))
+        assert tag == '_par_range_(10,20)'
+        
+    def test__serial_total_density_range_tagger(self):
+
+        tag = tagging.serial_total_density_range_tag_from_serial_total_density_range(
+            serial_total_density_range=None)
+        assert tag == ''
+        tag = tagging.serial_total_density_range_tag_from_serial_total_density_range(
+            serial_total_density_range=(0, 5))
+        assert tag == '_ser_range_(0,5)'
+        tag = tagging.serial_total_density_range_tag_from_serial_total_density_range(
+            serial_total_density_range=(10, 20))
+        assert tag == '_ser_range_(10,20)'
 
     def test__cosmic_ray_buffer_tagger(self):
 
