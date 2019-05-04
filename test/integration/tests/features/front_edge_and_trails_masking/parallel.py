@@ -12,10 +12,10 @@ from autocti.pipeline import pipeline as pl
 from test.simulation import simulation_util
 from test.integration import integration_util
 
-test_type = 'parallel'
-test_name = 'x1_species_x1_image_front_edge_and_trails_masking'
+test_type = 'features/front_edge_and_trails_masking'
+test_name = 'parallel'
 
-test_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
+test_path = '{}/../../../'.format(os.path.dirname(os.path.realpath(__file__)))
 output_path = test_path + 'output/'
 config_path = test_path + 'config'
 conf.instance = conf.Config(config_path=config_path, output_path=output_path)
