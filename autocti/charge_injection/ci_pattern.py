@@ -64,6 +64,7 @@ class CIPattern(object):
                 raise exc.CIPatternException(
                     'The charge injection ci_pattern regions are bigger than the image image_shape')
 
+
 class CIPatternUniform(CIPattern):
     """ A uniform charge injection ci_pattern, which is defined by the regions it appears on the charge injection \
         ci_frame and its normalization.

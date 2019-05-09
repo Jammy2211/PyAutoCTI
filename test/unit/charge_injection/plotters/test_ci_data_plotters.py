@@ -89,3 +89,60 @@ def test__signal_to_noise_map_is_output(data, mask, data_plotter_path, plot_patc
                                               cb_tick_values=[1.0], cb_tick_labels=['1.0'],
                                               output_path=data_plotter_path, output_format='png')
     assert data_plotter_path + 'ci_signal_to_noise_map.png' in plot_patch.paths
+
+
+def test__ci_line_sub_plot_output(data, data_plotter_path, plot_patch):
+
+    ci_data_plotters.plot_ci_line_subplot(ci_data=data, stack_axis=0,
+                                     output_path=data_plotter_path, output_format='png')
+
+    assert data_plotter_path + 'ci_data_line.png' in plot_patch.paths
+
+
+def test__ci_line_individuals__output_dependent_on_inputs(data, data_plotter_path, plot_patch):
+
+    ci_data_plotters.plot_ci_data_line_individual(ci_data=data, stack_axis=0,
+                                                  should_plot_image=True,
+                                                  should_plot_ci_pre_cti=True,
+                                                  output_path=data_plotter_path, output_format='png')
+
+    assert data_plotter_path + 'ci_image_line.png' in plot_patch.paths
+
+    assert data_plotter_path + 'ci_noise_map_line.png' not in plot_patch.paths
+
+    assert data_plotter_path + 'ci_pre_cti_line.png' in plot_patch.paths
+
+    assert data_plotter_path + 'ci_signal_to_noise_map_line.png' not in plot_patch.paths
+
+
+
+def test__image_line_is_output(data, mask, data_plotter_path, plot_patch):
+
+    ci_data_plotters.plot_image_line(ci_data=data, stack_axis=0, mask=mask,
+                                output_path=data_plotter_path, output_format='png')
+
+    assert data_plotter_path + 'ci_image_line.png' in plot_patch.paths
+
+
+def test__noise_map_line_is_output(data, mask, data_plotter_path, plot_patch):
+
+    ci_data_plotters.plot_noise_map_line(ci_data=data, stack_axis=0, mask=mask,
+                                    output_path=data_plotter_path, output_format='png')
+
+    assert data_plotter_path + 'ci_noise_map_line.png' in plot_patch.paths
+
+
+def test__ci_pre_cti_line_is_output(data, mask, data_plotter_path, plot_patch):
+
+    ci_data_plotters.plot_ci_pre_cti_line(ci_data=data, stack_axis=0, mask=mask,
+                                     output_path=data_plotter_path, output_format='png')
+
+    assert data_plotter_path + 'ci_pre_cti_line.png' in plot_patch.paths
+
+
+def test__signal_to_noise_map_line_is_output(data, mask, data_plotter_path, plot_patch):
+
+    ci_data_plotters.plot_signal_to_noise_map_line(ci_data=data, stack_axis=0, mask=mask,
+                                              output_path=data_plotter_path, output_format='png')
+
+    assert data_plotter_path + 'ci_signal_to_noise_map_line.png' in plot_patch.paths
