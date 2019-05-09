@@ -9,7 +9,6 @@ def plot_line_from_array(array, stack_axis, mask=None, as_subplot=False,
                          title='Line', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
                          output_path=None, output_format='show', output_filename='line'):
 
-
     if mask is None:
         line = np.mean(array, axis=stack_axis)
     elif mask is not None:
@@ -116,7 +115,6 @@ def plot_figure(line, as_subplot, figsize):
     yticks_manual :  [] or None
         If input, the yticks do not use the array's default yticks but instead overwrite them as these values.
     """
-
     plotter_util.setup_figure(figsize=figsize, as_subplot=as_subplot)
     plt.plot(line)
 
