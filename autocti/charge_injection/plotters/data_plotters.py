@@ -127,7 +127,7 @@ def plot_image_line(
 def plot_noise_map_line(
         noise_map, stack_axis, mask=None, as_subplot=False,
         figsize=(7, 7),
-        title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        title='Noise-Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='noise_map_line'):
     """Plot the observed noise_map of the ccd data.
 
@@ -148,7 +148,7 @@ def plot_noise_map_line(
 def plot_ci_pre_cti_line(
         ci_pre_cti, stack_axis, mask=None, as_subplot=False,
         figsize=(7, 7),
-        title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        title='CI Pre-CTI Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='ci_pre_cti_line'):
     """Plot the observed ci_pre_cti of the ccd data.
 
@@ -168,7 +168,7 @@ def plot_ci_pre_cti_line(
 def plot_signal_to_noise_map_line(
         signal_to_noise_map, stack_axis, mask=None, as_subplot=False,
         figsize=(7, 7),
-        title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        title='Signal-To-Noise Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_format='show', output_filename='signal_to_noise_map_line'):
     """Plot the observed signal_to_noise_map of the ccd data.
 
