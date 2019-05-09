@@ -1,5 +1,5 @@
 from autocti.data.plotters import array_plotters
-
+from autocti.data.plotters import line_plotters
 
 def plot_image(
         image, mask=None, extract_array_from_mask=False, as_subplot=False,
@@ -103,3 +103,84 @@ def plot_signal_to_noise_map(
         cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
         title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
         output_path=output_path, output_format=output_format, output_filename=output_filename)
+
+def plot_image_line(
+        image, stack_axis, mask=None, as_subplot=False,
+        figsize=(7, 7),
+        title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        output_path=None, output_format='show', output_filename='image_line'):
+    """Plot the observed image of the ccd data.
+
+    Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    image : CIFrame
+        The image of the data.
+    """
+    line_plotters.plot_line_from_array(
+        array=image, stack_axis=stack_axis, mask=mask, as_subplot=as_subplot,
+       figsize=figsize,
+       title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
+       output_path=output_path, output_format=output_format, output_filename=output_filename)
+    
+def plot_noise_map_line(
+        noise_map, stack_axis, mask=None, as_subplot=False,
+        figsize=(7, 7),
+        title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        output_path=None, output_format='show', output_filename='noise_map_line'):
+    """Plot the observed noise_map of the ccd data.
+
+    Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    noise_map : CIFrame
+        The noise_map of the data.
+    """
+    line_plotters.plot_line_from_array(
+        array=noise_map, stack_axis=stack_axis, mask=mask,
+        as_subplot=as_subplot,
+        figsize=figsize,
+        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
+        output_path=output_path, output_format=output_format, output_filename=output_filename)
+    
+def plot_ci_pre_cti_line(
+        ci_pre_cti, stack_axis, mask=None, as_subplot=False,
+        figsize=(7, 7),
+        title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        output_path=None, output_format='show', output_filename='ci_pre_cti_line'):
+    """Plot the observed ci_pre_cti of the ccd data.
+
+    Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    ci_pre_cti : CIFrame
+        The ci_pre_cti of the data.
+    """
+    line_plotters.plot_line_from_array(
+        array=ci_pre_cti, stack_axis=stack_axis, mask=mask, as_subplot=as_subplot,
+       figsize=figsize,
+       title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
+       output_path=output_path, output_format=output_format, output_filename=output_filename)
+    
+def plot_signal_to_noise_map_line(
+        signal_to_noise_map, stack_axis, mask=None, as_subplot=False,
+        figsize=(7, 7),
+        title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        output_path=None, output_format='show', output_filename='signal_to_noise_map_line'):
+    """Plot the observed signal_to_noise_map of the ccd data.
+
+    Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    signal_to_noise_map : CIFrame
+        The signal_to_noise_map of the data.
+    """
+    line_plotters.plot_line_from_array(
+        array=signal_to_noise_map, stack_axis=stack_axis, mask=mask, as_subplot=as_subplot,
+       figsize=figsize,
+       title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
+       output_path=output_path, output_format=output_format, output_filename=output_filename)
