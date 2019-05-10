@@ -899,13 +899,13 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
-            front_edge = frame.parallel_front_edge_array_from_frame(image, rows=(0, 1))
+            front_edge = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 1))
             assert (front_edge[0] == np.array([[1.0, 1.0, 1.0]])).all()
 
-            front_edge = frame.parallel_front_edge_array_from_frame(image, rows=(1, 2))
+            front_edge = frame.parallel_front_edge_arrays_from_frame(image, rows=(1, 2))
             assert (front_edge[0] == np.array([[2.0, 2.0, 2.0]])).all()
 
-            front_edge = frame.parallel_front_edge_array_from_frame(image, rows=(2, 3))
+            front_edge = frame.parallel_front_edge_arrays_from_frame(image, rows=(2, 3))
             assert (front_edge[0] == np.array([[3.0, 3.0, 3.0]])).all()
 
         def test__pattern_bottom___extracts_multiple_front_edges_correctly(self):
@@ -925,11 +925,11 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
-            front_edge = frame.parallel_front_edge_array_from_frame(image, rows=(0, 2))
+            front_edge = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 2))
             assert (front_edge[0] == np.array([[1.0, 1.0, 1.0],
                                             [2.0, 2.0, 2.0]])).all()
 
-            front_edge = frame.parallel_front_edge_array_from_frame(image, rows=(1, 4))
+            front_edge = frame.parallel_front_edge_arrays_from_frame(image, rows=(1, 4))
             assert (front_edge[0] == np.array([[2.0, 2.0, 2.0],
                                             [3.0, 3.0, 3.0],
                                             [4.0, 4.0, 4.0]])).all()
@@ -951,19 +951,19 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
-            front_edges = frame.parallel_front_edge_array_from_frame(image, rows=(0, 1))
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 1))
             assert (front_edges[0] == np.array([[1.0, 1.0, 1.0]])).all()
             assert (front_edges[1] == np.array([[5.0, 5.0, 5.0]])).all()
 
-            front_edges = frame.parallel_front_edge_array_from_frame(image, rows=(1, 2))
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(1, 2))
             assert (front_edges[0] == np.array([[2.0, 2.0, 2.0]])).all()
             assert (front_edges[1] == np.array([[6.0, 6.0, 6.0]])).all()
 
-            front_edges = frame.parallel_front_edge_array_from_frame(image, rows=(2, 3))
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(2, 3))
             assert (front_edges[0] == np.array([[3.0, 3.0, 3.0]])).all()
             assert (front_edges[1] == np.array([[7.0, 7.0, 7.0]])).all()
 
-            front_edges = frame.parallel_front_edge_array_from_frame(image, rows=(0, 3))
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 3))
             assert (front_edges[0] == np.array([[1.0, 1.0, 1.0],
                                                 [2.0, 2.0, 2.0],
                                                 [3.0, 3.0, 3.0]])).all()
@@ -988,19 +988,19 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), ci_pattern=pattern)
 
-            front_edges = frame.parallel_front_edge_array_from_frame(image, rows=(0, 1))
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 1))
             assert (front_edges[0] == np.array([[4.0, 4.0, 4.0]])).all()
             assert (front_edges[1] == np.array([[8.0, 8.0, 8.0]])).all()
 
-            front_edges = frame.parallel_front_edge_array_from_frame(image, rows=(1, 2))
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(1, 2))
             assert (front_edges[0] == np.array([[3.0, 3.0, 3.0]])).all()
             assert (front_edges[1] == np.array([[7.0, 7.0, 7.0]])).all()
 
-            front_edges = frame.parallel_front_edge_array_from_frame(image, rows=(2, 3))
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(2, 3))
             assert (front_edges[0] == np.array([[2.0, 2.0, 2.0]])).all()
             assert (front_edges[1] == np.array([[6.0, 6.0, 6.0]])).all()
 
-            front_edges = frame.parallel_front_edge_array_from_frame(image, rows=(0, 3))
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 3))
             assert (front_edges[0] == np.array([[2.0, 2.0, 2.0],
                                                 [3.0, 3.0, 3.0],
                                                 [4.0, 4.0, 4.0]])).all()
@@ -1036,21 +1036,136 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
-            front_edges = frame.parallel_front_edge_array_from_frame(image, rows=(0, 3), mask=mask)
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 3), mask=mask)
             assert (front_edges[0] == np.array([[1.0, 1.0, 1.0],
                                                 [2.0, 2.0, 2.0],
                                                 [3.0, 3.0, 3.0]])).all()
-            assert (np.ma.getmask(front_edges[0]) == np.array([[False, False, False],
+            assert (front_edges[0].mask == np.array([[False, False, False],
                                                                [False, True, False],
                                                                [False, False, True]])).all()
 
             assert (front_edges[1] == np.array([[5.0, 5.0, 5.0],
                                                 [6.0, 6.0, 6.0],
                                                 [7.0, 7.0, 7.0]])).all()
-            assert (np.ma.getmask(front_edges[1]) == np.array([[False, False, False],
+            assert (front_edges[1].mask == np.array([[False, False, False],
                                                                [False, False, False],
                                                                [True, False, False]])).all()
 
+        def test__stacked_array__2_regions__no_masking(self):
+
+            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3), (5, 8, 0, 3)])
+
+            image = np.array([[0.0, 0.0, 0.0],
+                              [1.0, 1.0, 1.0],  # <- 1st Front edge according to region and this frame_geometry
+                              [2.0, 2.0, 2.0],  # <- Next front edge row.
+                              [3.0, 3.0, 3.0],
+                              [4.0, 4.0, 4.0],
+                              [5.0, 5.0, 5.0],  # <- 2nd Front edge according to region and this frame_geometry
+                              [6.0, 6.0, 6.0],  # <- Next front edge row.
+                              [7.0, 7.0, 7.0],
+                              [8.0, 8.0, 8.0],
+                              [9.0, 9.0, 9.0]])
+
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+
+            # First fronrt edge array:
+            #
+            # [[1.0, 1.0, 1.0],
+            #  [2.0, 2.0, 2.0],
+            #  [3.0, 3.0, 3.0]])
+
+            # Second front edge array:
+
+            # [[5.0, 5.0, 5.0],
+            #  [6.0, 6.0, 6.0],
+            #  [7.0, 7.0, 7.0]]
+
+            stacked_front_edges = frame.parallel_front_edge_stacked_array_from_frame(array=image, rows=(0,3))
+
+            assert (stacked_front_edges == np.array([[3.0, 3.0, 3.0],
+                                                    [4.0, 4.0, 4.0],
+                                                    [5.0, 5.0, 5.0]])).all()
+
+        def test__same_as_above__include_masking(self):
+
+            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3), (5, 8, 0, 3)])
+
+            image = np.array([[0.0, 0.0, 0.0],
+                              [1.0, 1.0, 1.0],  # <- 1st Front edge according to region and this frame_geometry
+                              [2.0, 2.0, 2.0],  # <- Next front edge row.
+                              [3.0, 3.0, 3.0],
+                              [4.0, 4.0, 4.0],
+                              [5.0, 5.0, 5.0],  # <- 2nd Front edge according to region and this frame_geometry
+                              [6.0, 6.0, 6.0],  # <- Next front edge row.
+                              [7.0, 7.0, 7.0],
+                              [8.0, 8.0, 8.0],
+                              [9.0, 9.0, 9.0]])
+
+            mask = np.array([[False, False, False],
+                             [True, False, True],  # <- Front edge according to region and this frame_geometry
+                             [False, True, False],  # <- Next front edge row.
+                             [False, False, True],
+                             [False, False, False],
+                             [False, False, False], # <- 2nd Front edge according to region and this frame_geometry
+                             [False, False, False],
+                             [True, False, False],
+                             [False, False, False],
+                             [False, False, False]])
+
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+
+            # First fronrt edge array:
+            #
+            # [[1.0, 1.0, 1.0],
+            #  [2.0, 2.0, 2.0],
+            #  [3.0, 3.0, 3.0]])
+
+            # Second front edge array:
+
+            # [[5.0, 5.0, 5.0],
+            #  [6.0, 6.0, 6.0],
+            #  [7.0, 7.0, 7.0]]
+
+            stacked_front_edges = frame.parallel_front_edge_stacked_array_from_frame(array=image, rows=(0,3), mask=mask)
+
+            assert (stacked_front_edges == np.ma.array([[5.0, 3.0, 5.0],
+                                                        [4.0, 6.0, 4.0],
+                                                        [3.0, 5.0, 7.0]])).all()
+            assert (stacked_front_edges.mask == np.ma.array([[False, False, False],
+                                                             [False, False, False],
+                                                             [False, False, False]])).all()
+
+
+            mask = np.array([[False, False, False],
+                             [True, False, True],  # <- Front edge according to region and this frame_geometry
+                             [False, True, False],  # <- Next front edge row.
+                             [False, False, True],
+                             [False, False, False],
+                             [False, False, True], # <- 2nd Front edge according to region and this frame_geometry
+                             [False, False, False],
+                             [True, False, False],
+                             [False, False, False],
+                             [False, False, False]])
+
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+
+            # First fronrt edge array:
+            #
+            # [[1.0, 1.0, 1.0],
+            #  [2.0, 2.0, 2.0],
+            #  [3.0, 3.0, 3.0]])
+
+            # Second front edge array:
+
+            # [[5.0, 5.0, 5.0],
+            #  [6.0, 6.0, 6.0],
+            #  [7.0, 7.0, 7.0]]
+
+            stacked_front_edges = frame.parallel_front_edge_stacked_array_from_frame(array=image, rows=(0,3), mask=mask)
+
+            assert (stacked_front_edges.mask == np.ma.array([[False, False, True],
+                                                             [False, False, False],
+                                                             [False, False, False]])).all()
 
     class TestParallelTrailsFromFrame:
 
@@ -1072,13 +1187,13 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
-            trails = frame.parallel_trails_array_from_frame(image, rows=(0, 1))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 1))
 
             assert (trails == np.array([[3.0, 3.0, 3.0]])).all()
-            trails = frame.parallel_trails_array_from_frame(image, rows=(1, 2))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(1, 2))
 
             assert (trails == np.array([[4.0, 4.0, 4.0]])).all()
-            trails = frame.parallel_trails_array_from_frame(image, rows=(2, 3))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(2, 3))
             assert (trails == np.array([[5.0, 5.0, 5.0]])).all()
 
         def test__pattern_bottom__extracts_multiple_trails_correctly(self):
@@ -1098,15 +1213,15 @@ class TestChInj(object):
                               [9.0, 9.0, 9.0]])
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
-            trails = frame.parallel_trails_array_from_frame(image, rows=(0, 2))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 2))
             assert (trails == np.array([[3.0, 3.0, 3.0],
                                         [4.0, 4.0, 4.0]])).all()
 
-            trails = frame.parallel_trails_array_from_frame(image, rows=(1, 3))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(1, 3))
             assert (trails == np.array([[4.0, 4.0, 4.0],
                                         [5.0, 5.0, 5.0]])).all()
 
-            trails = frame.parallel_trails_array_from_frame(image, rows=(1, 4))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(1, 4))
             assert (trails == np.array([[4.0, 4.0, 4.0],
                                         [5.0, 5.0, 5.0],
                                         [6.0, 6.0, 6.0]])).all()
@@ -1130,17 +1245,17 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
-            trails = frame.parallel_trails_array_from_frame(image, rows=(0, 1))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 1))
             assert (trails[0] == np.array([[3.0, 3.0, 3.0]])).all()
             assert (trails[1] == np.array([[6.0, 6.0, 6.0]])).all()
 
-            trails = frame.parallel_trails_array_from_frame(image, rows=(0, 2))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 2))
             assert (trails[0] == np.array([[3.0, 3.0, 3.0],
                                            [4.0, 4.0, 4.0]])).all()
             assert (trails[1] == np.array([[6.0, 6.0, 6.0],
                                            [7.0, 7.0, 7.0]])).all()
 
-            trails = frame.parallel_trails_array_from_frame(image, rows=(1, 4))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(1, 4))
             assert (trails[0] == np.array([[4.0, 4.0, 4.0],
                                            [5.0, 5.0, 5.0],
                                            [6.0, 6.0, 6.0]])).all()
@@ -1167,17 +1282,17 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), ci_pattern=pattern)
 
-            trails = frame.parallel_trails_array_from_frame(image, rows=(0, 1))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 1))
             assert (trails[0] == np.array([[2.0, 2.0, 2.0]])).all()
             assert (trails[1] == np.array([[8.0, 8.0, 8.0]])).all()
 
-            trails = frame.parallel_trails_array_from_frame(image, rows=(0, 2))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 2))
             assert (trails[0] == np.array([[1.0, 1.0, 1.0],
                                            [2.0, 2.0, 2.0]])).all()
             assert (trails[1] == np.array([[7.0, 7.0, 7.0],
                                            [8.0, 8.0, 8.0]])).all()
 
-            trails = frame.parallel_trails_array_from_frame(image, rows=(1, 3))
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(1, 3))
             assert (trails[0] == np.array([[0.0, 0.0, 0.0],
                                            [1.0, 1.0, 1.0]])).all()
             assert (trails[1] == np.array([[6.0, 6.0, 6.0],
@@ -1200,30 +1315,121 @@ class TestChInj(object):
 
 
             mask = np.array([[False, False, False],
-                             [False, True, False],  # <- Front edge according to region and this frame_geometry
-                             [False, False, False],  # <- Next front edge row.
-                             [False, True, True],
+                             [False, True, False],
                              [False, False, False],
+                             [False, True, True], # <- 1st Trails form here onwards according to region and this frame_geometry
+                             [False, False, False],  # <- Next trail.
                              [False, False, False],
-                             [False, False, False],
-                             [True, False, False],
+                             [False, False, False], # <- 2nd Trails form here onwards according to region and this frame_geometry
+                             [True, False, False], # <- Next trail.
                              [False, False, False],
                              [False, False, False]])
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
-            trails = frame.parallel_trails_array_from_frame(image, rows=(0, 2), mask=mask)
+            trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 2), mask=mask)
             assert (trails[0] == np.array([[3.0, 3.0, 3.0],
                                            [4.0, 4.0, 4.0]])).all()
-            assert (np.ma.getmask(trails[0]) == np.array([[False, True, True],
+            assert (trails[0].mask == np.array([[False, True, True],
                                                           [False, False, False]])).all()
 
             assert (trails[1] == np.array([[6.0, 6.0, 6.0],
                                            [7.0, 7.0, 7.0]])).all()
-            assert (np.ma.getmask(trails[1]) == np.array([[False, False, False],
+            assert (trails[1].mask == np.array([[False, False, False],
                                                           [True, False, False]])).all()
 
-    class TestExtractSerialFrontEdges:
+        def test__stacked_array__2_regions__no_masking(self):
+
+            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 3, 0, 3), (4, 6, 0, 3)])
+
+            image = np.array([[0.0, 0.0, 0.0],
+                              [1.0, 1.0, 1.0],
+                              [2.0, 2.0, 2.0],
+                              [3.0, 3.0, 3.0], # <- 1st Trails form here onwards according to region and this frame_geometry
+                              [4.0, 4.0, 4.0],  # <- Next trail.
+                              [5.0, 5.0, 5.0],
+                              [6.0, 6.0, 6.0], # <- 2nd Trails form here onwards according to region and this frame_geometry
+                              [7.0, 7.0, 7.0],  # <- Next trail.
+                              [8.0, 8.0, 8.0],
+                              [9.0, 9.0, 9.0]])
+
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+
+            # [3.0, 3.0, 3.0],
+            #  [4.0, 4.0, 4.0]]
+
+            # Array 2:
+
+            # [[6.0, 6.0, 6.0],
+            # [7.0, 7.0, 7.0]]
+
+            stacked_trails = frame.parallel_trails_stacked_array_from_frame(image, rows=(0, 2))
+
+            assert (stacked_trails == np.array([[4.5, 4.5, 4.5],
+                                                [5.5, 5.5, 5.5]])).all()
+
+        def test__same_as_above__include_masking(self):
+
+            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 3, 0, 3), (4, 6, 0, 3)])
+
+            image = np.array([[0.0, 0.0, 0.0],
+                              [1.0, 1.0, 1.0],
+                              [2.0, 2.0, 2.0],
+                              [3.0, 3.0, 3.0], # <- 1st Trails form here onwards according to region and this frame_geometry
+                              [4.0, 4.0, 4.0],  # <- Next trail.
+                              [5.0, 5.0, 5.0],
+                              [6.0, 6.0, 6.0], # <- 2nd Trails form here onwards according to region and this frame_geometry
+                              [7.0, 7.0, 7.0],  # <- Next trail.
+                              [8.0, 8.0, 8.0],
+                              [9.0, 9.0, 9.0]])
+
+            mask = np.array([[False, False, False],
+                             [False, True, False],
+                             [False, False, False],
+                             [False, True, True], # <- 1st Trails form here onwards according to region and this frame_geometry
+                             [False, False, False],  # <- Next trail.
+                             [False, False, False],
+                             [False, False, False], # <- 2nd Trails form here onwards according to region and this frame_geometry
+                             [True, False, False], # <- Next trail.
+                             [False, False, False],
+                             [False, False, False]])
+
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+
+            # [3.0, 3.0, 3.0],
+            #  [4.0, 4.0, 4.0]]
+
+            # Array 2:
+
+            # [[6.0, 6.0, 6.0],
+            # [7.0, 7.0, 7.0]]
+
+            stacked_trails = frame.parallel_trails_stacked_array_from_frame(image, rows=(0, 2), mask=mask)
+
+            assert (stacked_trails == np.array([[4.5, 6.0, 6.0],
+                                                [4.0, 5.5, 5.5]])).all()
+            assert (stacked_trails.mask == np.array([[False, False, False],
+                                                     [False, False, False]])).all()
+
+            mask = np.array([[False, False, False],
+                             [False, True, False],
+                             [False, False, False],
+                             [False, True, True], # <- 1st Trails form here onwards according to region and this frame_geometry
+                             [False, False, False],  # <- Next trail.
+                             [False, False, False],
+                             [False, False, True], # <- 2nd Trails form here onwards according to region and this frame_geometry
+                             [True, False, False], # <- Next trail.
+                             [False, False, False],
+                             [False, False, False]])
+
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+
+            stacked_trails = frame.parallel_trails_stacked_array_from_frame(image, rows=(0, 2), mask=mask)
+
+            assert (stacked_trails.mask == np.array([[False, False, True],
+                                                     [False, False, False]])).all()
+
+    class TestSerialFrontEdgeFromFrame:
 
         def test__pattern_bottom___extracts_1_front_edge_correctly(self):
             pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
@@ -1236,19 +1442,19 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
-            front_edge = frame.serial_front_edge_array_from_frame(image, columns=(0, 1))
+            front_edge = frame.serial_front_edge_arrays_from_frame(image, columns=(0, 1))
 
             assert (front_edge == np.array([[1.0],
                                             [1.0],
                                             [1.0]])).all()
 
-            front_edge = frame.serial_front_edge_array_from_frame(image, columns=(1, 2))
+            front_edge = frame.serial_front_edge_arrays_from_frame(image, columns=(1, 2))
 
             assert (front_edge == np.array([[2.0],
                                             [2.0],
                                             [2.0]])).all()
 
-            front_edge = frame.serial_front_edge_array_from_frame(image, columns=(2, 3))
+            front_edge = frame.serial_front_edge_arrays_from_frame(image, columns=(2, 3))
 
             assert (front_edge == np.array([[3.0],
                                             [3.0],
@@ -1265,19 +1471,20 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
-            front_edge = frame.serial_front_edge_array_from_frame(image, columns=(0, 2))
+            front_edge = frame.serial_front_edge_arrays_from_frame(image, columns=(0, 2))
 
             assert (front_edge == np.array([[1.0, 2.0],
                                             [1.0, 2.0],
                                             [1.0, 2.0]])).all()
 
-            front_edge = frame.serial_front_edge_array_from_frame(image, columns=(1, 4))
+            front_edge = frame.serial_front_edge_arrays_from_frame(image, columns=(1, 4))
 
             assert (front_edge == np.array([[2.0, 3.0, 4.0],
                                             [2.0, 3.0, 4.0],
                                             [2.0, 3.0, 4.0]])).all()
 
         def test__pattern_bottom__2_regions__extracts_columns_correctly(self):
+
             pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4), (0, 3, 5, 8)])
 
             image = np.array([[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
@@ -1288,7 +1495,7 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
-            front_edges = frame.serial_front_edge_array_from_frame(image, columns=(0, 1))
+            front_edges = frame.serial_front_edge_arrays_from_frame(image, columns=(0, 1))
 
             assert (front_edges[0] == np.array([[1.0],
                                                 [1.0],
@@ -1297,7 +1504,7 @@ class TestChInj(object):
                                                 [5.0],
                                                 [5.0]])).all()
 
-            front_edges = frame.serial_front_edge_array_from_frame(image, columns=(1, 2))
+            front_edges = frame.serial_front_edge_arrays_from_frame(image, columns=(1, 2))
 
             assert (front_edges[0] == np.array([[2.0],
                                                 [2.0],
@@ -1306,7 +1513,7 @@ class TestChInj(object):
                                                 [6.0],
                                                 [6.0]])).all()
 
-            front_edges = frame.serial_front_edge_array_from_frame(image, columns=(2, 3))
+            front_edges = frame.serial_front_edge_arrays_from_frame(image, columns=(2, 3))
 
             assert (front_edges[0] == np.array([[3.0],
                                                 [3.0],
@@ -1315,7 +1522,7 @@ class TestChInj(object):
                                                 [7.0],
                                                 [7.0]])).all()
 
-            front_edges = frame.serial_front_edge_array_from_frame(image, columns=(0, 3))
+            front_edges = frame.serial_front_edge_arrays_from_frame(image, columns=(0, 3))
 
             assert (front_edges[0] == np.array([[1.0, 2.0, 3.0],
                                                 [1.0, 2.0, 3.0],
@@ -1336,7 +1543,7 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern)
 
-            front_edges = frame.serial_front_edge_array_from_frame(image, columns=(0, 1))
+            front_edges = frame.serial_front_edge_arrays_from_frame(image, columns=(0, 1))
 
             assert (front_edges[0] == np.array([[3.0],
                                                 [3.0],
@@ -1345,7 +1552,7 @@ class TestChInj(object):
                                                 [7.0],
                                                 [7.0]])).all()
 
-            front_edges = frame.serial_front_edge_array_from_frame(image, columns=(1, 2))
+            front_edges = frame.serial_front_edge_arrays_from_frame(image, columns=(1, 2))
 
             assert (front_edges[0] == np.array([[2.0],
                                                 [2.0],
@@ -1354,7 +1561,7 @@ class TestChInj(object):
                                                 [6.0],
                                                 [6.0]])).all()
 
-            front_edges = frame.serial_front_edge_array_from_frame(image, columns=(2, 3))
+            front_edges = frame.serial_front_edge_arrays_from_frame(image, columns=(2, 3))
 
             assert (front_edges[0] == np.array([[1.0],
                                                 [1.0],
@@ -1363,7 +1570,7 @@ class TestChInj(object):
                                                 [5.0],
                                                 [5.0]])).all()
 
-            front_edges = frame.serial_front_edge_array_from_frame(image, columns=(0, 3))
+            front_edges = frame.serial_front_edge_arrays_from_frame(image, columns=(0, 3))
 
             assert (front_edges[0] == np.array([[1.0, 2.0, 3.0],
                                                 [1.0, 2.0, 3.0],
@@ -1389,23 +1596,98 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
-            front_edges = frame.serial_front_edge_array_from_frame(image, columns=(0, 3), mask=mask)
+            front_edges = frame.serial_front_edge_arrays_from_frame(image, columns=(0, 3), mask=mask)
 
             assert (front_edges[0] == np.array([[1.0, 2.0, 3.0],
                                                 [1.0, 2.0, 3.0],
                                                 [1.0, 2.0, 3.0]])).all()
-            assert (np.ma.getmask(front_edges[0]) == np.array([[False, False, False],
+            assert ((front_edges[0].mask) == np.array([[False, False, False],
                                                                [False, True, False],
                                                                [False, False, False]])).all()
 
             assert (front_edges[1] == np.array([[5.0, 6.0, 7.0],
                                                 [5.0, 6.0, 7.0],
                                                 [5.0, 6.0, 7.0]])).all()
-            assert (np.ma.getmask(front_edges[1]) == np.array([[False, False, False],
+            assert (front_edges[1].mask == np.array([[False, False, False],
                                                                [False, True, False],
                                                                [False, False, True]])).all()
 
-    class TestExtractSerialTrails:
+        def test__stacked_array__2_regions__no_masking(self):
+
+            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4), (0, 3, 5, 8)])
+
+            image = np.array([[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
+                              [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
+                              [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]])
+
+            #                      /| FE 1                /\ FE 2
+
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+
+            stacked_front_edges = frame.serial_front_edge_stacked_array_from_frame(image, columns=(0, 3))
+
+            # [[1.0, 2.0, 3.0],
+            #  [1.0, 2.0, 3.0],
+            #  [1.0, 2.0, 3.0]]
+
+            # [[5.0, 6.0, 7.0],
+            #  [5.0, 6.0, 7.0],
+            #  [5.0, 6.0, 7.0]]
+
+            assert (stacked_front_edges == np.array([[3.0, 4.0, 5.0],
+                                                     [3.0, 4.0, 5.0],
+                                                     [3.0, 4.0, 5.0]])).all()
+
+        def test__same_as_above__include_masking(self):
+
+            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4), (0, 3, 5, 8)])
+
+            image = np.array([[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
+                              [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
+                              [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]])
+
+            #                      /| FE 1                /\ FE 2
+
+            mask = np.array([[False, False, False, False, False, False, False, False, False, False],
+                             [False, False, False,  True, False, False, True,  False, False, False],
+                             [False, False, False, False,  False, False, False, True,  False, False]])
+
+            #                        /| FE 1                       /| FE 2
+
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+
+            stacked_front_edges = frame.serial_front_edge_stacked_array_from_frame(image, columns=(0, 3), mask=mask)
+
+            # [[1.0, 2.0, 3.0],
+            #  [1.0, 2.0, 3.0],
+            #  [1.0, 2.0, 3.0]]
+
+            # [[5.0, 6.0, 7.0],
+            #  [5.0, 6.0, 7.0],
+            #  [5.0, 6.0, 7.0]]
+
+            assert (stacked_front_edges == np.array([[3.0, 4.0, 5.0],
+                                                     [3.0, 2.0, 7.0],
+                                                     [3.0, 4.0, 3.0]])).all()
+            assert (stacked_front_edges.mask == np.array([[False, False, False],
+                                                          [False, False, False],
+                                                          [False, False, False]])).all()
+
+            mask = np.array([[False, False, False, False, False, False, False, False, False, False],
+                             [False, False, False,  True, False, False, True,  True, False, False],
+                             [False, False, False, False,  False, False, False, True,  False, False]])
+
+            #                        /| FE 1                       /| FE 2
+
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+
+            stacked_front_edges = frame.serial_front_edge_stacked_array_from_frame(image, columns=(0, 3), mask=mask)
+
+            assert (stacked_front_edges.mask == np.array([[False, False, False],
+                                                          [False, False, True],
+                                                          [False, False, False]])).all()
+
+    class TestSerialTrailsFromFrame:
 
         def test__pattern_bottom___extracts_1_trails_correctly(self):
             pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
@@ -1418,19 +1700,19 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
-            trails = frame.serial_trails_array_from_frame(image, columns=(0, 1))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 1))
 
             assert (trails == np.array([[4.0],
                                         [4.0],
                                         [4.0]])).all()
 
-            trails = frame.serial_trails_array_from_frame(image, columns=(1, 2))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(1, 2))
 
             assert (trails == np.array([[5.0],
                                         [5.0],
                                         [5.0]])).all()
 
-            trails = frame.serial_trails_array_from_frame(image, columns=(2, 3))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(2, 3))
 
             assert (trails == np.array([[6.0],
                                         [6.0],
@@ -1447,13 +1729,13 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
-            trails = frame.serial_trails_array_from_frame(image, columns=(0, 2))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 2))
 
             assert (trails == np.array([[4.0, 5.0],
                                         [4.0, 5.0],
                                         [4.0, 5.0]])).all()
 
-            trails = frame.serial_trails_array_from_frame(image, columns=(1, 4))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(1, 4))
 
             assert (trails == np.array([[5.0, 6.0, 7.0],
                                         [5.0, 6.0, 7.0],
@@ -1471,7 +1753,7 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
-            trails = frame.serial_trails_array_from_frame(image, columns=(0, 1))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 1))
 
             assert (trails[0] == np.array([[4.0],
                                            [4.0],
@@ -1480,7 +1762,7 @@ class TestChInj(object):
                                            [8.0],
                                            [8.0]])).all()
 
-            trails = frame.serial_trails_array_from_frame(image, columns=(1, 2))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(1, 2))
 
             assert (trails[0] == np.array([[5.0],
                                            [5.0],
@@ -1489,7 +1771,7 @@ class TestChInj(object):
                                            [9.0],
                                            [9.0]])).all()
 
-            trails = frame.serial_trails_array_from_frame(image, columns=(2, 3))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(2, 3))
 
             assert (trails[0] == np.array([[6.0],
                                            [6.0],
@@ -1498,7 +1780,7 @@ class TestChInj(object):
                                            [10.0],
                                            [10.0]])).all()
 
-            trails = frame.serial_trails_array_from_frame(image, columns=(0, 3))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 3))
 
             assert (trails[0] == np.array([[4.0, 5.0, 6.0],
                                            [4.0, 5.0, 6.0],
@@ -1519,7 +1801,7 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern)
 
-            trails = frame.serial_trails_array_from_frame(image, columns=(0, 1))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 1))
 
             assert (trails[0] == np.array([[2.0],
                                            [2.0],
@@ -1528,7 +1810,7 @@ class TestChInj(object):
                                            [7.0],
                                            [7.0]])).all()
 
-            trails = frame.serial_trails_array_from_frame(image, columns=(1, 2))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(1, 2))
 
             assert (trails[0] == np.array([[1.0],
                                            [1.0],
@@ -1537,7 +1819,7 @@ class TestChInj(object):
                                            [6.0],
                                            [6.0]])).all()
 
-            trails = frame.serial_trails_array_from_frame(image, columns=(2, 3))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(2, 3))
 
             assert (trails[0] == np.array([[0.0],
                                            [0.0],
@@ -1546,7 +1828,7 @@ class TestChInj(object):
                                            [5.0],
                                            [5.0]])).all()
 
-            trails = frame.serial_trails_array_from_frame(image, columns=(0, 3))
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 3))
 
             assert (trails[0] == np.array([[0.0, 1.0, 2.0],
                                            [0.0, 1.0, 2.0],
@@ -1572,19 +1854,94 @@ class TestChInj(object):
 
             frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
 
-            trails = frame.serial_trails_array_from_frame(image, columns=(0, 3), mask=mask)
+            trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 3), mask=mask)
 
             assert (trails[0] == np.array([[4.0, 5.0, 6.0],
                                            [4.0, 5.0, 6.0],
                                            [4.0, 5.0, 6.0]])).all()
-            assert (np.ma.getmask(trails[0]) == np.array([[False, False, False],
+            assert (trails[0].mask == np.array([[False, False, False],
                                                           [True, False, True],
                                                           [False, False, False]])).all()
 
             assert (trails[1] == np.array([[8.0, 9.0, 10.0],
                                            [8.0, 9.0, 10.0],
                                            [8.0, 9.0, 10.0]])).all()
-            assert (np.ma.getmask(trails[1]) == np.array([[False, False, False],
+            assert (trails[1].mask == np.array([[False, False, False],
+                                                          [False, False, False],
+                                                          [False, True, False]])).all()
+
+        def test__stacked_array__2_regions__no_masking(self):
+
+            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4), (0, 3, 5, 8)])
+
+            image = np.array([[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
+                              [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
+                              [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]])
+
+            #                                   /| Trails1           /\ Trails2
+
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+
+            # [[4.0, 5.0, 6.0],
+            #  [4.0, 5.0, 6.0],
+            #  [4.0, 5.0, 6.0]]
+
+             # [[8.0, 9.0, 10.0],
+             #  [8.0, 9.0, 10.0],
+             #  [8.0, 9.0, 10.0]]
+
+            stacked_trails = frame.serial_trails_stacked_array_from_frame(image, columns=(0, 3))
+
+            assert (stacked_trails == np.array([[6.0, 7.0, 8.0],
+                                                [6.0, 7.0, 8.0],
+                                                [6.0, 7.0, 8.0]])).all()
+
+        def test__same_as_above__include_masking(self):
+
+            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4), (0, 3, 5, 8)])
+
+            image = np.array([[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
+                              [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
+                              [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]])
+
+            #                                      /| Trails1           /\ Trails2
+
+            mask = np.array([[False, False, False, False, False, False, False,  False, False, False, False],
+                             [False, False, True,  False,  True, False, True,   False, False, False, False],
+                             [False, False, False, False, False, False, False,   True, False, True, False]])
+
+            #                                               /| Trails1                   /\ Trails2
+
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+
+            # [[4.0, 5.0, 6.0],
+            #  [4.0, 5.0, 6.0],
+            #  [4.0, 5.0, 6.0]]
+
+             # [[8.0, 9.0, 10.0],
+             #  [8.0, 9.0, 10.0],
+             #  [8.0, 9.0, 10.0]]
+
+            stacked_trails = frame.serial_trails_stacked_array_from_frame(image, columns=(0, 3), mask=mask)
+
+            assert (stacked_trails == np.array([[6.0, 7.0, 8.0],
+                                                [8.0, 7.0, 10.0],
+                                                [6.0, 5.0, 8.0]])).all()
+            assert (stacked_trails.mask == np.array([[False, False, False],
+                                                          [False, False, False],
+                                                          [False, False, False]])).all()
+
+            mask = np.array([[False, False, False, False, False, False, False,  False, False, False, False],
+                             [False, False, True,  False,  True, False, True,   False, False, False, False],
+                             [False, False, False, False, False, True, False,   True, False, True, False]])
+
+            #                                               /| Trails1                   /\ Trails2
+
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+
+            stacked_trails = frame.serial_trails_stacked_array_from_frame(image, columns=(0, 3), mask=mask)
+
+            assert (stacked_trails.mask == np.array([[False, False, False],
                                                           [False, False, False],
                                                           [False, True, False]])).all()
 
