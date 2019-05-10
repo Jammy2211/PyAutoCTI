@@ -182,7 +182,7 @@ def plot_fit_individuals(
 
 
 def plot_fit_line_subplot(
-        fit, line_region, ci_frame ,
+        fit, line_region,
         figsize=(7, 7),
         title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
         output_path=None, output_filename='ci_fit_line', output_format='show'):

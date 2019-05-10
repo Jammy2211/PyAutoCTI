@@ -14,6 +14,12 @@ def line_from_line_region_and_arrays(line_region, array, mask, ci_frame):
     """
     if line_region is 'parallel_front_edge':
         return ci_frame.parallel_front_edge_line_binned_over_columns_from_frame(array=array, rows=(0,10), mask=mask)
+    elif line_region is 'parallel_trails':
+        return ci_frame.parallel_trails_line_binned_over_columns_from_frame(array=array, rows=(0, 10), mask=mask)
+    elif line_region is 'serial_front_edge':
+        return ci_frame.serial_front_edge_line_binned_over_rows_from_frame(array=array, columns=(0, 10), mask=mask)
+    elif line_region is 'serial_trails':
+        return ci_frame.serial_trails_line_binned_over_rows_from_frame(array=array, columns=(0, 10), mask=mask)
     else:
         raise exc.PlottingException('The line region specified for the plotting of a line was invalid')
 
