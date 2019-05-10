@@ -7,6 +7,8 @@ class MockPattern(object):
     def __init__(self, regions=None):
 
         self.regions = regions
+        self.total_rows = 2
+        self.total_columns = 2
 
 
 class MockGeometry(object):
@@ -27,6 +29,7 @@ class MockCIFrame(object):
 
     def __init__(self, value=1.0):
 
+        self.ci_pattern = MockPattern()
         self.frame_geometry = MockFrameGeometry(value=value)
         self.value = value
 
@@ -42,6 +45,8 @@ class MockCIFrame(object):
     def serial_overscan_above_trails_frame_from_frame(self, array):
         return array[1, 0:2]
 
+    def parallel_front_edge_array_from_frame(self, array, rows):
+        return np.array([[1.0, 1.0], [2.0, 2.0]])
 
 class MockCIGeometry(object):
 

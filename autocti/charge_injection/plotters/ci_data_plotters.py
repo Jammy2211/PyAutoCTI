@@ -233,11 +233,11 @@ def plot_signal_to_noise_map(
         title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
         output_path=output_path, output_format=output_format, output_filename=output_filename)
 
-def plot_ci_line_subplot(
-        ci_data, stack_axis, mask=None,
+def plot_ci_stack_subplot(
+        ci_data, stack_region, mask=None,
         figsize=None,
         title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
-        output_path=None, output_format='show', output_filename='ci_data_line'):
+        output_path=None, output_format='show', output_filename='ci_data_stack'):
     """Plot the ci data as a sub-plot of all its quantites (e.g. the data, noise_map-map, PSF, Signal-to_noise-map, \
      etc).
 
@@ -265,32 +265,32 @@ def plot_ci_line_subplot(
     plt.figure(figsize=figsize)
     plt.subplot(rows, columns, 1)
 
-    plot_image_line(
-        ci_data=ci_data, stack_axis=stack_axis, mask=mask, as_subplot=True,
+    plot_image_stack(
+        ci_data=ci_data, stack_region=stack_region, mask=mask, as_subplot=True,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)
 
     plt.subplot(rows, columns, 2)
 
-    plot_noise_map_line(
-        ci_data=ci_data, stack_axis=stack_axis, mask=mask, as_subplot=True,
+    plot_noise_map_stack(
+        ci_data=ci_data, stack_region=stack_region, mask=mask, as_subplot=True,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)
 
     plt.subplot(rows, columns, 3)
 
-    plot_ci_pre_cti_line(
-        ci_data=ci_data, stack_axis=stack_axis, mask=mask, as_subplot=True,
+    plot_ci_pre_cti_stack(
+        ci_data=ci_data, stack_region=stack_region, mask=mask, as_subplot=True,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)
 
     plt.subplot(rows, columns, 4)
 
-    plot_signal_to_noise_map_line(
-        ci_data=ci_data, stack_axis=stack_axis, mask=mask, as_subplot=True,
+    plot_signal_to_noise_map_stack(
+        ci_data=ci_data, stack_region=stack_region, mask=mask, as_subplot=True,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)
@@ -301,7 +301,7 @@ def plot_ci_line_subplot(
     plt.close()
 
 
-def plot_ci_data_line_individual(ci_data, stack_axis, mask=None,
+def plot_ci_data_stack_individual(ci_data, stack_region, mask=None,
                                     should_plot_image=False,
                                     should_plot_noise_map=False,
                                     should_plot_ci_pre_cti=False,
@@ -321,27 +321,27 @@ def plot_ci_data_line_individual(ci_data, stack_axis, mask=None,
     """
 
     if should_plot_image:
-        plot_image_line(ci_data=ci_data, stack_axis=stack_axis, mask=mask,
+        plot_image_stack(ci_data=ci_data, stack_region=stack_region, mask=mask,
                         output_path=output_path, output_format=output_format)
 
     if should_plot_noise_map:
-        plot_noise_map_line(ci_data=ci_data, stack_axis=stack_axis, mask=mask,
+        plot_noise_map_stack(ci_data=ci_data, stack_region=stack_region, mask=mask,
                        output_path=output_path, output_format=output_format)
 
     if should_plot_ci_pre_cti:
-        plot_ci_pre_cti_line(ci_data=ci_data, stack_axis=stack_axis, mask=mask,
+        plot_ci_pre_cti_stack(ci_data=ci_data, stack_region=stack_region, mask=mask,
                         output_path=output_path, output_format=output_format)
 
     if should_plot_signal_to_noise_map:
-        plot_signal_to_noise_map_line(ci_data=ci_data, stack_axis=stack_axis, mask=mask,
+        plot_signal_to_noise_map_stack(ci_data=ci_data, stack_region=stack_region, mask=mask,
                                  output_path=output_path, output_format=output_format)
 
 
-def plot_image_line(
-        ci_data, stack_axis, mask=None, as_subplot=False,
+def plot_image_stack(
+        ci_data, stack_region, mask=None, as_subplot=False,
         figsize=(7, 7),
         title='CI Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
-        output_path=None, output_format='show', output_filename='ci_image_line'):
+        output_path=None, output_format='show', output_filename='ci_image_stack'):
     """Plot the observed image of the ci data.
 
     Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
@@ -351,18 +351,18 @@ def plot_image_line(
     image : CIFrame
         The image of the data.
     """
-    data_plotters.plot_image_line(
-        image=ci_data.image, stack_axis=stack_axis, mask=mask, as_subplot=as_subplot,
+    data_plotters.plot_image_stack(
+        image=ci_data.image, stack_region=stack_region, ci_frame=ci_data.ci_frame, mask=mask, as_subplot=as_subplot,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)
 
 
-def plot_noise_map_line(
-        ci_data, stack_axis, mask=None, as_subplot=False,
+def plot_noise_map_stack(
+        ci_data, stack_region, mask=None, as_subplot=False,
         figsize=(7, 7),
         title='CI Noise Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
-        output_path=None, output_format='show', output_filename='ci_noise_map_line'):
+        output_path=None, output_format='show', output_filename='ci_noise_map_stack'):
     """Plot the observed noise_map of the ci data.
 
     Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
@@ -372,18 +372,18 @@ def plot_noise_map_line(
     noise_map : CIFrame
         The noise map of the data.
     """
-    data_plotters.plot_noise_map_line(
-        noise_map=ci_data.noise_map, stack_axis=stack_axis, mask=mask, as_subplot=as_subplot,
+    data_plotters.plot_noise_map_stack(
+        noise_map=ci_data.noise_map, stack_region=stack_region, ci_frame=ci_data.ci_frame, mask=mask, as_subplot=as_subplot,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)
 
 
-def plot_ci_pre_cti_line(
-        ci_data, stack_axis, mask=None, as_subplot=False,
+def plot_ci_pre_cti_stack(
+        ci_data, stack_region, mask=None, as_subplot=False,
         figsize=(7, 7),
         title='CI Pre-CTI Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
-        output_path=None, output_format='show', output_filename='ci_pre_cti_line'):
+        output_path=None, output_format='show', output_filename='ci_pre_cti_stack'):
     """Plot the observed ci_pre_cti of the ci data.
 
     Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
@@ -393,18 +393,18 @@ def plot_ci_pre_cti_line(
     ci_pre_cti : CIFrame
         The ci_pre_cti of the data.
     """
-    data_plotters.plot_ci_pre_cti_line(
-        ci_pre_cti=ci_data.ci_pre_cti, stack_axis=stack_axis, mask=mask, as_subplot=as_subplot,
+    data_plotters.plot_ci_pre_cti_stack(
+        ci_pre_cti=ci_data.ci_pre_cti, stack_region=stack_region, ci_frame=ci_data.ci_frame, mask=mask, as_subplot=as_subplot,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)
 
 
-def plot_signal_to_noise_map_line(
-        ci_data, stack_axis, mask=None, as_subplot=False,
+def plot_signal_to_noise_map_stack(
+        ci_data, stack_region, mask=None, as_subplot=False,
         figsize=(7, 7),
         title='CI Signal-To-Noise Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
-        output_path=None, output_format='show', output_filename='ci_signal_to_noise_map_line'):
+        output_path=None, output_format='show', output_filename='ci_signal_to_noise_map_stack'):
     """Plot the observed signal_to_noise_map of the ci data.
 
     Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
@@ -414,8 +414,8 @@ def plot_signal_to_noise_map_line(
     signal_to_noise_map : CIFrame
         The signal-to-noise map of the data.
     """
-    data_plotters.plot_signal_to_noise_map_line(
-        signal_to_noise_map=ci_data.signal_to_noise_map, stack_axis=stack_axis, mask=mask, as_subplot=as_subplot,
+    data_plotters.plot_signal_to_noise_map_stack(
+        signal_to_noise_map=ci_data.signal_to_noise_map, stack_region=stack_region, ci_frame=ci_data.ci_frame, mask=mask, as_subplot=as_subplot,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)

@@ -36,6 +36,9 @@ def make_noise_map():
 def make_ci_pre_cti():
     return 3.0 * np.ones((2, 2))
 
+@pytest.fixture(name='ci_frame')
+def make_ci_frame():
+    return MockCIFrame(value=3.0)
 
 @pytest.fixture(name='ci_data_fit')
 def make_ci_data_fit(image, noise_map, mask, ci_pre_cti):
@@ -85,3 +88,30 @@ def test__fit_individuals__depedent_on_input(fit, ci_fit_plotter_path, plot_patc
     assert ci_fit_plotter_path + 'fit_residual_map.png' not in plot_patch.paths
 
     assert ci_fit_plotter_path + 'fit_chi_squared_map.png' in plot_patch.paths
+
+
+def test__fit_individuals_stack__depedent_on_input(fit, ci_frame, ci_fit_plotter_path, plot_patch):
+
+    ci_fit_plotters.plot_fit_stack_individuals(
+        fit=fit, stack_region='parallel_front_edge',
+        should_plot_image=True,
+        should_plot_noise_map=False,
+        should_plot_signal_to_noise_map=False,
+        should_plot_ci_pre_cti=True,
+        should_plot_ci_post_cti=True,
+        should_plot_chi_squared_map=True,
+        output_path=ci_fit_plotter_path, output_format='png')
+
+    assert ci_fit_plotter_path + 'fit_image_stack.png' in plot_patch.paths
+
+    assert ci_fit_plotter_path + 'fit_noise_map_stack.png' not in plot_patch.paths
+
+    assert ci_fit_plotter_path + 'fit_signal_to_noise_map_stack.png' not in plot_patch.paths
+
+    assert ci_fit_plotter_path + 'fit_ci_pre_cti_stack.png' in plot_patch.paths
+
+    assert ci_fit_plotter_path + 'fit_ci_post_cti_stack.png' in plot_patch.paths
+
+    assert ci_fit_plotter_path + 'fit_residual_map_stack.png' not in plot_patch.paths
+
+    assert ci_fit_plotter_path + 'fit_chi_squared_map_stack.png' in plot_patch.paths
