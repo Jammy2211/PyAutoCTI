@@ -209,7 +209,7 @@ class ChInj(object):
                                      self.frame_geometry.parallel_front_edge_region(ci_region, front_edge_rows),
                                      self.ci_pattern.regions))
 
-            front_edges = self.parallel_front_edge_array_from_frame(array, front_edge_rows)
+            front_edges = self.parallel_front_edge_arrays_from_frame(array, front_edge_rows)
 
             for i, region in enumerate(front_regions):
                 new_array[region.y0:region.y1, region.x0:region.x1] += front_edges[i]
@@ -220,7 +220,7 @@ class ChInj(object):
                 map(lambda ci_region: self.frame_geometry.parallel_trails_region(ci_region, trails_rows),
                     self.ci_pattern.regions))
 
-            trails = self.parallel_trails_array_from_frame(array, trails_rows)
+            trails = self.parallel_trails_arrays_from_frame(array, trails_rows)
 
             for i, region in enumerate(trails_regions):
                 new_array[region.y0:region.y1, region.x0:region.x1] += trails[i]
@@ -460,7 +460,7 @@ class ChInj(object):
                 map(lambda ci_region: self.frame_geometry.serial_front_edge_region(ci_region, front_edge_columns),
                     self.ci_pattern.regions))
 
-            front_edges = self.serial_front_edge_array_from_frame(array, front_edge_columns)
+            front_edges = self.serial_front_edge_arrays_from_frame(array, front_edge_columns)
 
             for i, region in enumerate(front_regions):
                 new_array[region.y0:region.y1, region.x0:region.x1] += front_edges[i]
@@ -471,7 +471,7 @@ class ChInj(object):
                 map(lambda ci_region: self.frame_geometry.serial_trails_region(ci_region, trails_columns),
                     self.ci_pattern.regions))
 
-            trails = self.serial_trails_array_from_frame(array, trails_columns)
+            trails = self.serial_trails_arrays_from_frame(array, trails_columns)
 
             for i, region in enumerate(trails_regions):
                 new_array[region.y0:region.y1, region.x0:region.x1] += trails[i]
@@ -535,7 +535,11 @@ class ChInj(object):
                                        self.ci_pattern.regions))
         return list(map(lambda region: array[region.slice], calibration_regions))
 
-    def parallel_front_edge_array_from_frame(self, array, rows, mask=None):
+    def parallel_front_edge_stacked_array_from_frame(self, array, rows, mask=None):
+        front_arrays = self.parallel_front_edge_arrays_from_frame(array=array, rows=rows, mask=mask)
+        return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
+
+    def parallel_front_edge_arrays_from_frame(self, array, rows, mask=None):
         """Extract a list of arrays of the parallel front edge regions of a charge injection ci_frame.
 
         The diagram below illustrates the array that is extracted from a ci_frame for rows=(0, 1):
@@ -639,7 +643,11 @@ class ChInj(object):
         return list(map(lambda ci_region: self.frame_geometry.parallel_front_edge_region(ci_region, rows),
                          self.ci_pattern.regions))
 
-    def parallel_trails_array_from_frame(self, array, rows, mask=None):
+    def parallel_trails_stacked_array_from_frame(self, array, rows, mask=None):
+        front_arrays = self.parallel_trails_arrays_from_frame(array=array, rows=rows, mask=mask)
+        return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
+
+    def parallel_trails_arrays_from_frame(self, array, rows, mask=None):
         """Extract the parallel trails of a charge injection ci_frame.
 
 
@@ -746,7 +754,11 @@ class ChInj(object):
         return list(map(lambda ci_region: self.frame_geometry.parallel_trails_region(ci_region, rows),
                         self.ci_pattern.regions))
 
-    def serial_front_edge_array_from_frame(self, array, columns, mask=None):
+    def serial_front_edge_stacked_array_from_frame(self, array, columns, mask=None):
+        front_arrays = self.serial_front_edge_arrays_from_frame(array=array, columns=columns, mask=mask)
+        return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
+
+    def serial_front_edge_arrays_from_frame(self, array, columns, mask=None):
         """Extract a list of the serial front edge arrays of a charge injection ci_frame.
 
         The diagram below illustrates the array that is extracted from a ci_frame for columnss=(0, 3):
@@ -854,7 +866,11 @@ class ChInj(object):
         return list(map(lambda ci_region: self.frame_geometry.serial_front_edge_region(ci_region, columns),
                                  self.ci_pattern.regions))
 
-    def serial_trails_array_from_frame(self, array, columns, mask=None):
+    def serial_trails_stacked_array_from_frame(self, array, columns, mask=None):
+        front_arrays = self.serial_trails_arrays_from_frame(array=array, columns=columns, mask=mask)
+        return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
+
+    def serial_trails_arrays_from_frame(self, array, columns, mask=None):
         """Extract a list of the serial trails of a charge injection ci_frame.
 
         The diagram below illustrates the array that is extracted from a ci_frame for columnss=(0, 3):

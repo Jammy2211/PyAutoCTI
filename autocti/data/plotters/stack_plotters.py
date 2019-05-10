@@ -15,8 +15,8 @@ def extracted_array_mask_and_stack_axis_from_stack_region(stack_region, array, m
         extracted_mask = mask if mask is not None else None
         stack_axis = 1
     elif stack_region is 'parallel_front_edge':
-        extracted_array = ci_frame.parallel_front_edge_array_from_frame(array=array, rows=(0, total_rows))
-        extracted_mask = ci_frame.parallel_front_edge_array_from_frame(array=mask, rows=(0, total_rows)) if mask is not None else None
+        extracted_array = ci_frame.parallel_front_edge_arrays_from_frame(array=array, rows=(0, total_rows))
+        extracted_mask = ci_frame.parallel_front_edge_arrays_from_frame(array=mask, rows=(0, total_rows)) if mask is not None else None
         stack_axis = 1
     elif stack_region is 'all_across_rows':
         extracted_array = array
