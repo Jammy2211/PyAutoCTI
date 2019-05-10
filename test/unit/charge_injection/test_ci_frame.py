@@ -1051,7 +1051,7 @@ class TestChInj(object):
                                                                [False, False, False],
                                                                [True, False, False]])).all()
 
-        def test__stacked_array__2_regions__no_masking(self):
+        def test__stacked_array_and_binned_line__2_regions__no_masking(self):
 
             pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3), (5, 8, 0, 3)])
 
@@ -1085,6 +1085,10 @@ class TestChInj(object):
             assert (stacked_front_edges == np.array([[3.0, 3.0, 3.0],
                                                     [4.0, 4.0, 4.0],
                                                     [5.0, 5.0, 5.0]])).all()
+
+            front_edge_line = frame.parallel_front_edge_line_binned_over_columns_from_frame(array=image, rows=(0,3))
+
+            assert (front_edge_line == np.array([3.0, 4.0, 5.0])).all()
 
         def test__same_as_above__include_masking(self):
 
@@ -1135,6 +1139,10 @@ class TestChInj(object):
                                                              [False, False, False],
                                                              [False, False, False]])).all()
 
+            front_edge_line = frame.parallel_front_edge_line_binned_over_columns_from_frame(array=image, rows=(0,3),
+                                                                                            mask=mask)
+
+            assert (front_edge_line == np.array([13.0/3.0, 14.0/3.0, 5.0])).all()
 
             mask = np.array([[False, False, False],
                              [True, False, True],  # <- Front edge according to region and this frame_geometry
@@ -1338,7 +1346,7 @@ class TestChInj(object):
             assert (trails[1].mask == np.array([[False, False, False],
                                                           [True, False, False]])).all()
 
-        def test__stacked_array__2_regions__no_masking(self):
+        def test__stacked_array_and_binned_line__2_regions__no_masking(self):
 
             pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 3, 0, 3), (4, 6, 0, 3)])
 
@@ -1367,6 +1375,10 @@ class TestChInj(object):
 
             assert (stacked_trails == np.array([[4.5, 4.5, 4.5],
                                                 [5.5, 5.5, 5.5]])).all()
+
+            trails_line = frame.parallel_trails_line_binned_over_columns_from_frame(array=image, rows=(0,2))
+
+            assert (trails_line == np.array([4.5, 5.5])).all()
 
         def test__same_as_above__include_masking(self):
 
@@ -1410,6 +1422,10 @@ class TestChInj(object):
                                                 [4.0, 5.5, 5.5]])).all()
             assert (stacked_trails.mask == np.array([[False, False, False],
                                                      [False, False, False]])).all()
+
+            trails_line = frame.parallel_trails_line_binned_over_columns_from_frame(array=image, rows=(0,2), mask=mask)
+
+            assert (trails_line == np.array([16.5/3.0, 15.0/3.0])).all()
 
             mask = np.array([[False, False, False],
                              [False, True, False],
@@ -1612,7 +1628,7 @@ class TestChInj(object):
                                                                [False, True, False],
                                                                [False, False, True]])).all()
 
-        def test__stacked_array__2_regions__no_masking(self):
+        def test__stacked_array_and_binned_line__2_regions__no_masking(self):
 
             pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4), (0, 3, 5, 8)])
 
@@ -1637,6 +1653,10 @@ class TestChInj(object):
             assert (stacked_front_edges == np.array([[3.0, 4.0, 5.0],
                                                      [3.0, 4.0, 5.0],
                                                      [3.0, 4.0, 5.0]])).all()
+
+            front_edge_line = frame.serial_front_edge_line_binned_over_rows_from_frame(image, columns=(0, 3))
+
+            assert (front_edge_line == np.array([3.0, 4.0, 5.0])).all()
 
         def test__same_as_above__include_masking(self):
 
@@ -1672,6 +1692,10 @@ class TestChInj(object):
             assert (stacked_front_edges.mask == np.array([[False, False, False],
                                                           [False, False, False],
                                                           [False, False, False]])).all()
+
+            front_edge_line = frame.serial_front_edge_line_binned_over_rows_from_frame(image, columns=(0, 3), mask=mask)
+
+            assert (front_edge_line == np.array([3.0, 10.0/3.0, 5.0])).all()
 
             mask = np.array([[False, False, False, False, False, False, False, False, False, False],
                              [False, False, False,  True, False, False, True,  True, False, False],
@@ -1870,7 +1894,7 @@ class TestChInj(object):
                                                           [False, False, False],
                                                           [False, True, False]])).all()
 
-        def test__stacked_array__2_regions__no_masking(self):
+        def test__stacked_array_and_binned_line__2_regions__no_masking(self):
 
             pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4), (0, 3, 5, 8)])
 
@@ -1895,6 +1919,10 @@ class TestChInj(object):
             assert (stacked_trails == np.array([[6.0, 7.0, 8.0],
                                                 [6.0, 7.0, 8.0],
                                                 [6.0, 7.0, 8.0]])).all()
+
+            trails_line = frame.serial_trails_line_binned_over_rows_from_frame(image, columns=(0,3))
+
+            assert (trails_line == np.array([6.0, 7.0, 8.0])).all()
 
         def test__same_as_above__include_masking(self):
 
@@ -1930,6 +1958,10 @@ class TestChInj(object):
             assert (stacked_trails.mask == np.array([[False, False, False],
                                                           [False, False, False],
                                                           [False, False, False]])).all()
+
+            trails_line = frame.serial_trails_line_binned_over_rows_from_frame(image, columns=(0,3), mask=mask)
+
+            assert (trails_line == np.array([20.0/3.0, 19.0/3.0, 26.0/3.0])).all()
 
             mask = np.array([[False, False, False, False, False, False, False,  False, False, False, False],
                              [False, False, True,  False,  True, False, True,   False, False, False, False],
