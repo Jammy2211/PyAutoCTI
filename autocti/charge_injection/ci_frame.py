@@ -327,7 +327,7 @@ class ChInj(object):
         """
         array = self.serial_edges_and_trails_frame_from_frame(array,
                                                               trails_columns=(
-                                                                  0, self.frame_geometry.serial_overscan.total_columns))
+                                                                  0, self.frame_geometry.serial_overscan.total_columns_min))
         return array
 
     def serial_overscan_above_trails_frame_from_frame(self, array):
@@ -383,7 +383,7 @@ class ChInj(object):
 
         trails_regions = list(map(lambda ci_region:
                                   self.frame_geometry.serial_trails_region(ci_region, (
-                                      0, self.frame_geometry.serial_overscan.total_columns)),
+                                      0, self.frame_geometry.serial_overscan.total_columns_min)),
                                   self.ci_pattern.regions))
 
         for region in trails_regions:
@@ -995,6 +995,23 @@ class ChInj(object):
     def parallel_serial_calibration_section(self, array):
         return array[0:array.shape[0], self.frame_geometry.serial_prescan.x1:array.shape[1]]
 
+    @property
+    def smallest_parallel_trails_rows(self):
+
+        parallel_trail_rows = self.ci_pattern.rows_between_regions
+
+        if self.corner[0] == 0:
+            row_sizes = self.ci_pattern.rows_between_regions
+            row_sizes.append(self.ci_pattern.regions[0].y1)
+
+        for i in range(len(self.regions)):
+            print(i, len(self.regions))
+            if i < len(self.regions)-1:
+                parallel_trail_rows.append(self.regions[i].y1 - self.regions[i+1].y0)
+            elif i == len(self.regions)-1:
+                parallel_trail_rows.append(total_rows - self.regions[i].y1)
+
+        return np.min(parallel_trail_rows)
 
 class Region(object):
 
@@ -1256,6 +1273,12 @@ class FrameGeometry(object):
             x_max = image_shape[1]
         return Region((ci_region.y0, ci_region.y1, x_min, x_max))
 
+    def parallel_trail_size_to_image_edge(self, ci_pattern, shape):
+
+        if self.corner[0] == 0:
+            return shape[0] - np.max([region.y1 for region in ci_pattern.regions])
+        else:
+            return np.min([region.y0 for region in ci_pattern.regions])
 
 class QuadGeometryEuclid(FrameGeometry):
 

@@ -2023,6 +2023,7 @@ class TestChInj(object):
 
 
 class TestQuadGeometryEuclid_bottom_left(object):
+
     class TestParallelFrontEdgeRegion:
 
         def test__extract_one_row__takes_coordinates_from_top_of_region(self):
@@ -2056,6 +2057,7 @@ class TestQuadGeometryEuclid_bottom_left(object):
     class TestParallelTrailsRegion:
 
         def test__extract_one_row__takes_coordinates_after_bottom_of_region(self):
+
             ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
 
             ci_region = ci_frame.Region(region=(0, 3, 0, 3))  # The trails are row 3 and above, so extract 3 -> 4
@@ -2081,6 +2083,32 @@ class TestQuadGeometryEuclid_bottom_left(object):
             ci_trails = ci_geometry.parallel_trails_region(ci_region=ci_region, rows=(1, 3))
 
             assert ci_trails == (4, 6, 0, 3)
+
+        def test__parallel_trail_size_to_image_edge(self):
+
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
+
+            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[ci_frame.Region(region=(0, 3, 0, 3))])
+
+            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(ci_pattern=pattern, shape=(5, 100))
+
+            assert parallel_trail_size == 2
+
+            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(ci_pattern=pattern, shape=(7, 100))
+
+            assert parallel_trail_size == 4
+
+            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[ci_frame.Region(region=(0, 2, 0, 3)),
+                                                                              ci_frame.Region(region=(5, 8, 0, 3)),
+                                                                              ci_frame.Region(region=(11, 14, 0, 3))])
+
+            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(ci_pattern=pattern, shape=(15, 100))
+
+            assert parallel_trail_size == 1
+
+            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(ci_pattern=pattern, shape=(20, 100))
+
+            assert parallel_trail_size == 6
 
     class TestParallelSideNearestReadOut:
 
@@ -2225,6 +2253,32 @@ class TestQuadGeometryEuclid_bottom_right(object):
             ci_trails = ci_geometry.parallel_trails_region(ci_region=ci_region, rows=(1, 3))
 
             assert ci_trails == (4, 6, 0, 3)
+
+        def test__parallel_trail_size_to_image_edge(self):
+
+            ci_geometry = ci_frame.QuadGeometryEuclid.bottom_right()
+
+            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[ci_frame.Region(region=(0, 3, 0, 3))])
+
+            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(ci_pattern=pattern, shape=(5, 100))
+
+            assert parallel_trail_size == 2
+
+            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(ci_pattern=pattern, shape=(7, 100))
+
+            assert parallel_trail_size == 4
+
+            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[ci_frame.Region(region=(0, 2, 0, 3)),
+                                                                              ci_frame.Region(region=(5, 8, 0, 3)),
+                                                                              ci_frame.Region(region=(11, 14, 0, 3))])
+
+            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(ci_pattern=pattern, shape=(15, 100))
+
+            assert parallel_trail_size == 1
+
+            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(ci_pattern=pattern, shape=(20, 100))
+
+            assert parallel_trail_size == 6
 
     class TestParallelSideNearestReadOut:
 
@@ -2419,6 +2473,28 @@ class TestQuadGeometryEuclid_top_left(object):
 
             assert ci_trails == (0, 2, 0, 3)
 
+        def test__parallel_trail_size_to_image_edge(self):
+
+            ci_geometry = ci_frame.QuadGeometryEuclid.top_left()
+
+            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[ci_frame.Region(region=(0, 3, 0, 3))])
+
+            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(ci_pattern=pattern, shape=(5, 100))
+
+            assert parallel_trail_size == 0
+
+            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(ci_pattern=pattern, shape=(7, 100))
+
+            assert parallel_trail_size == 0
+
+            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[ci_frame.Region(region=(5, 6, 0, 3)),
+                                                                              ci_frame.Region(region=(11, 12, 0, 3)),
+                                                                              ci_frame.Region(region=(17, 18, 0, 3))])
+
+            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(ci_pattern=pattern, shape=(20, 100))
+
+            assert parallel_trail_size == 5
+
     class TestParallelSideNearestReadOut:
 
         def test__columns_0_to_1__asymetric_image(self):
@@ -2466,6 +2542,7 @@ class TestQuadGeometryEuclid_top_left(object):
 
 
 class TestQuadGeometryEuclid_top_right(object):
+
     class TestParallelFrontEdgeOfRegion:
 
         def test__extract_two_rows__second_and_third__takes_coordinates_from_top_of_region(self):
@@ -2489,6 +2566,28 @@ class TestQuadGeometryEuclid_top_right(object):
             ci_trails = ci_geometry.parallel_trails_region(ci_region=ci_region, rows=(1, 3))
 
             assert ci_trails == (0, 2, 0, 3)
+
+        def test__parallel_trail_size_to_image_edge(self):
+
+            ci_geometry = ci_frame.QuadGeometryEuclid.top_right()
+
+            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[ci_frame.Region(region=(0, 3, 0, 3))])
+
+            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(ci_pattern=pattern, shape=(5, 100))
+
+            assert parallel_trail_size == 0
+
+            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(ci_pattern=pattern, shape=(7, 100))
+
+            assert parallel_trail_size == 0
+
+            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[ci_frame.Region(region=(5, 6, 0, 3)),
+                                                                              ci_frame.Region(region=(11, 12, 0, 3)),
+                                                                              ci_frame.Region(region=(17, 18, 0, 3))])
+
+            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(ci_pattern=pattern, shape=(20, 100))
+
+            assert parallel_trail_size == 5
 
     class TestParallelSideNearestReadOut:
 
