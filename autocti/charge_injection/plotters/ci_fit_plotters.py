@@ -181,11 +181,11 @@ def plot_fit_individuals(
             output_path=output_path, output_format=output_format)
 
 
-def plot_fit_stack_subplot(
-        fit, stack_region, ci_frame ,
+def plot_fit_line_subplot(
+        fit, line_region, ci_frame ,
         figsize=(7, 7),
         title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
-        output_path=None, output_filename='ci_fit_stack', output_format='show'):
+        output_path=None, output_filename='ci_fit_line', output_format='show'):
     """Plot the model datas_ of an analysis, using the *Fitter* class object.
 
     The visualization and output type can be fully customized.
@@ -229,56 +229,56 @@ def plot_fit_stack_subplot(
     plt.figure(figsize=figsize)
     plt.subplot(rows, columns, 1)
 
-    fit_plotters.plot_image_stack(
-        fit=fit, stack_region=stack_region,  mask=fit.mask, as_subplot=True,
+    fit_plotters.plot_image_line(
+        fit=fit, line_region=line_region,  mask=fit.mask, as_subplot=True,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)
 
     plt.subplot(rows, columns, 2)
 
-    fit_plotters.plot_noise_map_stack(
-        fit=fit, stack_region=stack_region,  mask=fit.mask, as_subplot=True,
+    fit_plotters.plot_noise_map_line(
+        fit=fit, line_region=line_region,  mask=fit.mask, as_subplot=True,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)
 
     plt.subplot(rows, columns, 3)
 
-    fit_plotters.plot_signal_to_noise_map_stack(
-        fit=fit, stack_region=stack_region,  mask=fit.mask, as_subplot=True,
+    fit_plotters.plot_signal_to_noise_map_line(
+        fit=fit, line_region=line_region,  mask=fit.mask, as_subplot=True,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)
 
     plt.subplot(rows, columns, 4)
 
-    fit_plotters.plot_ci_pre_cti_stack(
-        fit=fit, stack_region=stack_region,  mask=fit.mask, as_subplot=True,
+    fit_plotters.plot_ci_pre_cti_line(
+        fit=fit, line_region=line_region,  mask=fit.mask, as_subplot=True,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)
 
     plt.subplot(rows, columns, 5)
 
-    fit_plotters.plot_ci_post_cti_stack(
-        fit=fit, stack_region=stack_region,  mask=fit.mask, as_subplot=True,
+    fit_plotters.plot_ci_post_cti_line(
+        fit=fit, line_region=line_region,  mask=fit.mask, as_subplot=True,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)
 
     plt.subplot(rows, columns, 7)
 
-    fit_plotters.plot_residual_map_stack(
-        fit=fit, stack_region=stack_region,  mask=fit.mask, as_subplot=True,
+    fit_plotters.plot_residual_map_line(
+        fit=fit, line_region=line_region,  mask=fit.mask, as_subplot=True,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)
 
     plt.subplot(rows, columns, 8)
 
-    fit_plotters.plot_chi_squared_map_stack(
-        fit=fit, stack_region=stack_region,  mask=fit.mask, as_subplot=True,
+    fit_plotters.plot_chi_squared_map_line(
+        fit=fit, line_region=line_region,  mask=fit.mask, as_subplot=True,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)
@@ -289,8 +289,8 @@ def plot_fit_stack_subplot(
     plt.close()
 
 
-def plot_fit_stack_individuals(
-        fit, stack_region,
+def plot_fit_line_individuals(
+        fit, line_region,
         should_plot_image=False,
         should_plot_noise_map=False,
         should_plot_signal_to_noise_map=False,
@@ -300,36 +300,36 @@ def plot_fit_stack_individuals(
         should_plot_chi_squared_map=False,
         output_path=None, output_format='show'):
     if should_plot_image:
-        fit_plotters.plot_image_stack(
-            fit=fit, stack_region=stack_region, mask=fit.mask,
+        fit_plotters.plot_image_line(
+            fit=fit, line_region=line_region, mask=fit.mask,
             output_path=output_path, output_format=output_format)
 
     if should_plot_noise_map:
-        fit_plotters.plot_noise_map_stack(
-            fit=fit, stack_region=stack_region, mask=fit.mask,
+        fit_plotters.plot_noise_map_line(
+            fit=fit, line_region=line_region, mask=fit.mask,
             output_path=output_path, output_format=output_format)
 
     if should_plot_signal_to_noise_map:
-        fit_plotters.plot_signal_to_noise_map_stack(
-            fit=fit, stack_region=stack_region, mask=fit.mask,
+        fit_plotters.plot_signal_to_noise_map_line(
+            fit=fit, line_region=line_region, mask=fit.mask,
             output_path=output_path, output_format=output_format)
 
     if should_plot_ci_pre_cti:
-        fit_plotters.plot_ci_pre_cti_stack(
-            fit=fit, stack_region=stack_region, mask=fit.mask,
+        fit_plotters.plot_ci_pre_cti_line(
+            fit=fit, line_region=line_region, mask=fit.mask,
             output_path=output_path, output_format=output_format)
 
     if should_plot_ci_post_cti:
-        fit_plotters.plot_ci_post_cti_stack(
-            fit=fit, stack_region=stack_region, mask=fit.mask,
+        fit_plotters.plot_ci_post_cti_line(
+            fit=fit, line_region=line_region, mask=fit.mask,
             output_path=output_path, output_format=output_format)
 
     if should_plot_residual_map:
-        fit_plotters.plot_residual_map_stack(
-            fit=fit, stack_region=stack_region, mask=fit.mask,
+        fit_plotters.plot_residual_map_line(
+            fit=fit, line_region=line_region, mask=fit.mask,
             output_path=output_path, output_format=output_format)
 
     if should_plot_chi_squared_map:
-        fit_plotters.plot_chi_squared_map_stack(
-            fit=fit, stack_region=stack_region, mask=fit.mask,
+        fit_plotters.plot_chi_squared_map_line(
+            fit=fit, line_region=line_region, mask=fit.mask,
             output_path=output_path, output_format=output_format)
