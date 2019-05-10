@@ -299,6 +299,9 @@ class Phase(ph.AbstractPhase):
             self.plot_ci_data_line_ci_pre_cti = output_bool('plot_ci_data_line_ci_pre_cti')
             self.plot_ci_data_line_signal_to_noise_map = output_bool('plot_ci_data_line_signal_to_noise_map')
 
+            self.plot_ci_fit_line_all_at_end_png = output_bool('plot_ci_fit_line_all_at_end_png')
+            self.plot_ci_fit_line_all_at_end_fits = output_bool('plot_ci_fit_line_all_at_end_fits')
+
             self.plot_ci_fit_line_as_subplot = output_bool('plot_ci_fit_line_as_subplot')
             self.plot_ci_fit_line_image = output_bool('plot_ci_fit_line_image')
             self.plot_ci_fit_line_noise_map = output_bool('plot_ci_fit_line_noise_map')
@@ -315,12 +318,17 @@ class Phase(ph.AbstractPhase):
 
         def visualize(self, instance, image_path, during_analysis):
 
+            self.visualize_array_plots(instance=instance, image_path=image_path, during_analysis=during_analysis)
+            self.visualize_line_plots(instance=instance, image_path=image_path, during_analysis=during_analysis)
+
+        def visualize_array_plots(self, instance, image_path, during_analysis):
+
             self.plot_count += 1
 
             for ci_data_index in range(len(self.ci_datas_extracted)):
 
                 normalization = self.ci_datas_extracted[ci_data_index].ci_pattern.normalization
-                ci_image_path = image_path + '/' + 'ci_image_' + str(int(normalization)) + '/'
+                ci_image_path = image_path + '/' + 'ci_image_' + str(int(normalization)) + '/arrays/'
                 util.make_path_if_does_not_exist(path=ci_image_path+'fits/')
 
                 if self.plot_ci_data_as_subplot:
@@ -338,14 +346,77 @@ class Phase(ph.AbstractPhase):
                     should_plot_signal_to_noise_map=self.plot_ci_data_signal_to_noise_map,
                     output_path=ci_image_path, output_format='png')
 
-                if self.plot_ci_data_line_as_subplot:
+                fits = self.fits_of_ci_data_extracted_for_instance(instance=instance)
 
-                    ci_data_plotters.plot_ci_line_subplot(ci_data=self.ci_datas_extracted[ci_data_index], stack_axis=0,
+                for ci_fit_index in range(len(fits)):
+
+                    if self.plot_ci_fit_as_subplot:
+                        ci_fit_plotters.plot_fit_subplot(
+                            fit=fits[ci_fit_index], extract_array_from_mask=self.extract_array_from_mask,
+                            output_path=ci_image_path, output_format='png')
+
+                    if during_analysis:
+
+                        ci_fit_plotters.plot_fit_individuals(
+                            fit=fits[ci_fit_index],
+                            extract_array_from_mask=self.extract_array_from_mask,
+                            should_plot_image=self.plot_ci_fit_image,
+                            should_plot_noise_map=self.plot_ci_fit_noise_map,
+                            should_plot_signal_to_noise_map=self.plot_ci_fit_signal_to_noise_map,
+                            should_plot_ci_pre_cti=self.plot_ci_data_ci_pre_cti,
+                            should_plot_ci_post_cti=self.plot_ci_fit_ci_post_cti,
+                            should_plot_residual_map=self.plot_ci_fit_residual_map,
+                            should_plot_chi_squared_map=self.plot_ci_fit_chi_squared_map,
+                            output_path=ci_image_path, output_format='png')
+
+                    elif not during_analysis:
+    
+                        if self.plot_ci_fit_all_at_end_png:
+   
+                            ci_fit_plotters.plot_fit_individuals(
+                                fit=fits[ci_fit_index],
+                                extract_array_from_mask=self.extract_array_from_mask,
+                                should_plot_image=True,
+                                should_plot_noise_map=True,
+                                should_plot_signal_to_noise_map=True,
+                                should_plot_ci_pre_cti=True,
+                                should_plot_ci_post_cti=True,
+                                should_plot_residual_map=True,
+                                should_plot_chi_squared_map=True,
+                                output_path=ci_image_path, output_format='png')
+
+                        if self.plot_ci_fit_all_at_end_fits:
+                            
+                            ci_fit_plotters.plot_fit_individuals(
+                                fit=fits[ci_fit_index],
+                                extract_array_from_mask=self.extract_array_from_mask,
+                                should_plot_image=True,
+                                should_plot_noise_map=True,
+                                should_plot_signal_to_noise_map=True,
+                                should_plot_ci_pre_cti=True,
+                                should_plot_ci_post_cti=True,
+                                should_plot_residual_map=True,
+                                should_plot_chi_squared_map=True,
+                                output_path="{}/fits/".format(ci_image_path), output_format='fits')
+
+            return fits
+
+        def visualize_line_plots(self, instance, image_path, during_analysis):
+
+            self.plot_count += 1
+
+            for ci_data_index in range(len(self.ci_datas_extracted)):
+
+                normalization = self.ci_datas_extracted[ci_data_index].ci_pattern.normalization
+                ci_image_path = image_path + '/' + 'ci_image_' + str(int(normalization)) + '/lines/'
+                util.make_path_if_does_not_exist(path=ci_image_path + 'fits/')
+
+                if self.plot_ci_data_line_as_subplot:
+                    ci_data_plotters.plot_ci_line_subplot(ci_data=self.ci_datas_extracted[ci_data_index], stack_axis=1,
                                                           output_path=ci_image_path, output_format='png')
 
-
                 ci_data_plotters.plot_ci_data_line_individual(
-                    ci_data=self.ci_datas_extracted[ci_data_index], stack_axis=0,
+                    ci_data=self.ci_datas_extracted[ci_data_index], stack_axis=1,
                     should_plot_image=self.plot_ci_data_line_image,
                     should_plot_noise_map=self.plot_ci_data_line_noise_map,
                     should_plot_ci_pre_cti=self.plot_ci_data_line_ci_pre_cti,
@@ -354,55 +425,54 @@ class Phase(ph.AbstractPhase):
 
                 fits = self.fits_of_ci_data_extracted_for_instance(instance=instance)
 
-                ci_fit_index = 0
+                for ci_fit_index in range(len(fits)):
 
-                if self.plot_ci_fit_as_subplot:
-                    ci_fit_plotters.plot_fit_subplot(
-                        fit=fits[ci_fit_index], extract_array_from_mask=self.extract_array_from_mask,
-                        output_path=ci_image_path, output_format='png')
+                    if self.plot_ci_fit_line_as_subplot:
 
-                if during_analysis:
-                    ci_fit_plotters.plot_fit_individuals(
-                        fit=fits[ci_fit_index],
-                        extract_array_from_mask=self.extract_array_from_mask,
-                        should_plot_image=self.plot_ci_fit_image,
-                        should_plot_noise_map=self.plot_ci_fit_noise_map,
-                        should_plot_signal_to_noise_map=self.plot_ci_fit_signal_to_noise_map,
-                        should_plot_ci_pre_cti=self.plot_ci_data_ci_pre_cti,
-                        should_plot_ci_post_cti=self.plot_ci_fit_ci_post_cti,
-                        should_plot_residual_map=self.plot_ci_fit_residual_map,
-                        should_plot_chi_squared_map=self.plot_ci_fit_chi_squared_map,
-                        output_path=ci_image_path, output_format='png')
-
-                elif not during_analysis:
-
-                    if self.plot_ci_fit_all_at_end_png:
-                        ci_fit_plotters.plot_fit_individuals(
-                            fit=fits[ci_fit_index],
-                            extract_array_from_mask=self.extract_array_from_mask,
-                            should_plot_image=True,
-                            should_plot_noise_map=True,
-                            should_plot_signal_to_noise_map=True,
-                            should_plot_ci_pre_cti=True,
-                            should_plot_ci_post_cti=True,
-                            should_plot_residual_map=True,
-                            should_plot_chi_squared_map=True,
+                        ci_fit_plotters.plot_fit_line_subplot(
+                            fit=fits[ci_fit_index], stack_axis=1,
                             output_path=ci_image_path, output_format='png')
 
-                    if self.plot_ci_fit_all_at_end_fits:
-                        ci_fit_plotters.plot_fit_individuals(
-                            fit=fits[ci_fit_index],
-                            extract_array_from_mask=self.extract_array_from_mask,
-                            should_plot_image=True,
-                            should_plot_noise_map=True,
-                            should_plot_signal_to_noise_map=True,
-                            should_plot_ci_pre_cti=True,
-                            should_plot_ci_post_cti=True,
-                            should_plot_residual_map=True,
-                            should_plot_chi_squared_map=True,
-                            output_path="{}/fits/".format(ci_image_path), output_format='fits')
+                    if during_analysis:
 
-            return fits
+                        ci_fit_plotters.plot_fit_line_individuals(
+                            fit=fits[ci_fit_index], stack_axis=1,
+                            should_plot_image=self.plot_ci_fit_line_image,
+                            should_plot_noise_map=self.plot_ci_fit_line_noise_map,
+                            should_plot_signal_to_noise_map=self.plot_ci_fit_line_signal_to_noise_map,
+                            should_plot_ci_pre_cti=self.plot_ci_data_ci_pre_cti,
+                            should_plot_ci_post_cti=self.plot_ci_fit_line_ci_post_cti,
+                            should_plot_residual_map=self.plot_ci_fit_line_residual_map,
+                            should_plot_chi_squared_map=self.plot_ci_fit_line_chi_squared_map,
+                            output_path=ci_image_path, output_format='png')
+
+                    elif not during_analysis:
+
+                        if self.plot_ci_fit_line_all_at_end_png:
+
+                            ci_fit_plotters.plot_fit_line_individuals(
+                                fit=fits[ci_fit_index], stack_axis=1,
+                                should_plot_image=True,
+                                should_plot_noise_map=True,
+                                should_plot_signal_to_noise_map=True,
+                                should_plot_ci_pre_cti=True,
+                                should_plot_ci_post_cti=True,
+                                should_plot_residual_map=True,
+                                should_plot_chi_squared_map=True,
+                                output_path=ci_image_path, output_format='png')
+
+                        if self.plot_ci_fit_line_all_at_end_fits:
+
+                            ci_fit_plotters.plot_fit_line_individuals(
+                                fit=fits[ci_fit_index], stack_axis=1,
+                                should_plot_image=True,
+                                should_plot_noise_map=True,
+                                should_plot_signal_to_noise_map=True,
+                                should_plot_ci_pre_cti=True,
+                                should_plot_ci_post_cti=True,
+                                should_plot_residual_map=True,
+                                should_plot_chi_squared_map=True,
+                                output_path="{}/fits/".format(ci_image_path), output_format='fits')
 
         def fit(self, instance):
             """

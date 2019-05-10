@@ -110,59 +110,59 @@ def test__chi_squared_map_is_output(fit, mask, fit_plotter_path, plot_patch):
     assert fit_plotter_path + 'fit_chi_squared_map.png' in plot_patch.paths
 
 
-def test__image_line_is_output(fit, mask, fit_plotter_path, plot_patch):
+def test__image_stack_is_output(fit, mask, fit_plotter_path, plot_patch):
 
-    fit_plotters.plot_image_line(fit=fit, stack_axis=0, mask=mask,
+    fit_plotters.plot_image_stack(fit=fit, stack_region='parallel_front_edge', mask=mask,
                             output_path=fit_plotter_path, output_format='png')
 
-    assert fit_plotter_path + 'fit_image_line.png' in plot_patch.paths
+    assert fit_plotter_path + 'fit_image_stack.png' in plot_patch.paths
 
 
-def test__noise_map_line_is_output(fit, mask, fit_plotter_path, plot_patch):
+def test__noise_map_stack_is_output(fit, mask, fit_plotter_path, plot_patch):
 
-    fit_plotters.plot_noise_map_line(fit=fit, stack_axis=0, mask=mask,
+    fit_plotters.plot_noise_map_stack(fit=fit, stack_region='parallel_front_edge', mask=mask,
                                 output_path=fit_plotter_path, output_format='png')
 
-    assert fit_plotter_path + 'fit_noise_map_line.png' in plot_patch.paths
+    assert fit_plotter_path + 'fit_noise_map_stack.png' in plot_patch.paths
 
 
-def test__signal_to_noise_map_line_is_output(fit, mask, fit_plotter_path, plot_patch):
+def test__signal_to_noise_map_stack_is_output(fit, mask, fit_plotter_path, plot_patch):
 
-    fit_plotters.plot_signal_to_noise_map_line(fit=fit, stack_axis=0, mask=mask,
+    fit_plotters.plot_signal_to_noise_map_stack(fit=fit, stack_region='parallel_front_edge', mask=mask,
                                           output_path=fit_plotter_path, output_format='png')
 
-    assert fit_plotter_path + 'fit_signal_to_noise_map_line.png' in plot_patch.paths
+    assert fit_plotter_path + 'fit_signal_to_noise_map_stack.png' in plot_patch.paths
 
 
-def test__ci_pre_cti_line_is_output(fit, mask, fit_plotter_path, plot_patch):
+def test__ci_pre_cti_stack_is_output(fit, mask, fit_plotter_path, plot_patch):
 
-    fit_plotters.plot_ci_pre_cti_line(fit=fit, stack_axis=0, mask=mask,
+    fit_plotters.plot_ci_pre_cti_stack(fit=fit, stack_region='parallel_front_edge', mask=mask,
                                  output_path=fit_plotter_path, output_format='png')
 
-    assert fit_plotter_path + 'fit_ci_pre_cti_line.png' in plot_patch.paths
+    assert fit_plotter_path + 'fit_ci_pre_cti_stack.png' in plot_patch.paths
 
 
-def test__ci_post_cti_line_is_output(fit, mask, fit_plotter_path, plot_patch):
+def test__ci_post_cti_stack_is_output(fit, mask, fit_plotter_path, plot_patch):
 
-    fit_plotters.plot_ci_post_cti_line(fit=fit, stack_axis=0, mask=mask,
+    fit_plotters.plot_ci_post_cti_stack(fit=fit, stack_region='parallel_front_edge', mask=mask,
                                   output_path=fit_plotter_path, output_format='png')
 
-    assert fit_plotter_path + 'fit_ci_post_cti_line.png' in plot_patch.paths
+    assert fit_plotter_path + 'fit_ci_post_cti_stack.png' in plot_patch.paths
 
 
-def test__residual_map_line_is_output(fit, mask, fit_plotter_path, plot_patch):
+def test__residual_map_stack_is_output(fit, mask,fit_plotter_path, plot_patch):
 
-    fit_plotters.plot_residual_map_line(fit=fit, stack_axis=0, mask=mask,
+    fit_plotters.plot_residual_map_stack(fit=fit, stack_region='parallel_front_edge', mask=mask,
                                    output_path=fit_plotter_path, output_format='png')
 
     print(plot_patch.paths)
 
-    assert fit_plotter_path + 'fit_residual_map_line.png' in plot_patch.paths
+    assert fit_plotter_path + 'fit_residual_map_stack.png' in plot_patch.paths
 
 
-def test__chi_squared_map_line_is_output(fit, mask, fit_plotter_path, plot_patch):
+def test__chi_squared_map_stack_is_output(fit, mask, fit_plotter_path, plot_patch):
 
-    fit_plotters.plot_chi_squared_map_line(fit=fit, stack_axis=0, mask=mask,
+    fit_plotters.plot_chi_squared_map_stack(fit=fit, stack_region='parallel_front_edge', mask=mask,
                                       output_path=fit_plotter_path, output_format='png')
 
-    assert fit_plotter_path + 'fit_chi_squared_map_line.png' in plot_patch.paths
+    assert fit_plotter_path + 'fit_chi_squared_map_stack.png' in plot_patch.paths
