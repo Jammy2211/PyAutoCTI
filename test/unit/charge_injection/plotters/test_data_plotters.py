@@ -67,37 +67,37 @@ def test__signal_to_noise_map_is_output(image, noise_map, mask, data_plotter_pat
                                            output_format='png')
     assert data_plotter_path + 'signal_to_noise_map.png' in plot_patch.paths
 
-def test__image_stack_is_output(image, mask, ci_frame, data_plotter_path, plot_patch):
+def test__image_line_is_output(image, mask, ci_frame, data_plotter_path, plot_patch):
 
-    data_plotters.plot_image_stack(image=image, stack_region='parallel_front_edge', mask=mask, ci_frame=ci_frame,
+    data_plotters.plot_image_line(image=image, line_region='parallel_front_edge', mask=mask, ci_frame=ci_frame,
                                   output_path=data_plotter_path,
                                   output_format='png')
 
-    assert data_plotter_path + 'image_stack.png' in plot_patch.paths
+    assert data_plotter_path + 'image_line.png' in plot_patch.paths
 
 
-def test__noise_map_stack_is_output(noise_map, mask, ci_frame, data_plotter_path, plot_patch):
+def test__noise_map_line_is_output(noise_map, mask, ci_frame, data_plotter_path, plot_patch):
 
-    data_plotters.plot_noise_map_stack(noise_map=noise_map, stack_region='parallel_front_edge', mask=mask,
+    data_plotters.plot_noise_map_line(noise_map=noise_map, line_region='parallel_front_edge', mask=mask,
                                        ci_frame=ci_frame,
                                  output_path=data_plotter_path, output_format='png')
 
-    assert data_plotter_path + 'noise_map_stack.png' in plot_patch.paths
+    assert data_plotter_path + 'noise_map_line.png' in plot_patch.paths
 
 
-def test__ci_pre_cti_stack_is_output(ci_pre_cti, mask, ci_frame, data_plotter_path, plot_patch):
+def test__ci_pre_cti_line_is_output(ci_pre_cti, mask, ci_frame, data_plotter_path, plot_patch):
 
-    data_plotters.plot_ci_pre_cti_stack(ci_pre_cti=ci_pre_cti,  stack_region='parallel_front_edge', ci_frame=ci_frame,
+    data_plotters.plot_ci_pre_cti_line(ci_pre_cti=ci_pre_cti,  line_region='parallel_front_edge', ci_frame=ci_frame,
                                         mask=mask,
                                   output_path=data_plotter_path, output_format='png')
 
-    assert data_plotter_path + 'ci_pre_cti_stack.png' in plot_patch.paths
+    assert data_plotter_path + 'ci_pre_cti_line.png' in plot_patch.paths
 
 
-def test__signal_to_noise_map_stack_is_output(image, noise_map, mask, ci_frame, data_plotter_path, plot_patch):
+def test__signal_to_noise_map_line_is_output(image, noise_map, mask, ci_frame, data_plotter_path, plot_patch):
 
-    data_plotters.plot_signal_to_noise_map_stack(signal_to_noise_map=image / noise_map, ci_frame=ci_frame,
-                                                 stack_region='parallel_front_edge', mask=mask,
+    data_plotters.plot_signal_to_noise_map_line(signal_to_noise_map=image / noise_map, ci_frame=ci_frame,
+                                                 line_region='parallel_front_edge', mask=mask,
                                                 output_path=data_plotter_path, output_format='png')
 
-    assert data_plotter_path + 'signal_to_noise_map_stack.png' in plot_patch.paths
+    assert data_plotter_path + 'signal_to_noise_map_line.png' in plot_patch.paths

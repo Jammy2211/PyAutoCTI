@@ -1,7 +1,7 @@
 import numpy as np
 
 from autocti.data.plotters import array_plotters
-from autocti.data.plotters import stack_plotters
+from autocti.data.plotters import line_plotters
 
 def plot_image(
         fit, mask=None, extract_array_from_mask=False, as_subplot=False,
@@ -191,11 +191,11 @@ def plot_chi_squared_map(
         output_path=output_path, output_format=output_format, output_filename=output_filename)
 
 
-def plot_image_stack(
-        fit, stack_region, mask=None, as_subplot=False,
+def plot_image_line(
+        fit, line_region, mask=None, as_subplot=False,
         figsize=(7, 7),
         title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
-        output_path=None, output_format='show', output_filename='fit_image_stack'):
+        output_path=None, output_format='show', output_filename='fit_image_line'):
     """Plot the observed image of the ccd data.
 
     Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
@@ -205,18 +205,18 @@ def plot_image_stack(
     image : CIFrame
         The image of the data.
     """
-    stack_plotters.plot_extracted_stack_from_array_ci_frame_and_stack_region(
-        array=fit.image, stack_region=stack_region, ci_frame=fit.ci_data_fit.ci_frame, mask=mask, as_subplot=as_subplot,
+    line_plotters.plot_line_from_array_and_ci_frame(
+        array=fit.image, line_region=line_region, ci_frame=fit.ci_data_fit.ci_frame, mask=mask, as_subplot=as_subplot,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)
     
 
-def plot_noise_map_stack(
-        fit, stack_region, mask=None, as_subplot=False,
+def plot_noise_map_line(
+        fit, line_region, mask=None, as_subplot=False,
         figsize=(7, 7),
         title='Noise Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
-        output_path=None, output_format='show', output_filename='fit_noise_map_stack'):
+        output_path=None, output_format='show', output_filename='fit_noise_map_line'):
     """Plot the observed noise_map of the ccd data.
 
     Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
@@ -226,18 +226,18 @@ def plot_noise_map_stack(
     noise_map : CIFrame
         The noise_map of the data.
     """
-    stack_plotters.plot_extracted_stack_from_array_ci_frame_and_stack_region(
-        array=fit.noise_map, stack_region=stack_region, ci_frame=fit.ci_data_fit.ci_frame, mask=mask, as_subplot=as_subplot,
+    line_plotters.plot_line_from_array_and_ci_frame(
+        array=fit.noise_map, line_region=line_region, ci_frame=fit.ci_data_fit.ci_frame, mask=mask, as_subplot=as_subplot,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)
     
     
-def plot_signal_to_noise_map_stack(
-        fit, stack_region, mask=None, as_subplot=False,
+def plot_signal_to_noise_map_line(
+        fit, line_region, mask=None, as_subplot=False,
         figsize=(7, 7),
         title='Signal-To-Noise Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
-        output_path=None, output_format='show', output_filename='fit_signal_to_noise_map_stack'):
+        output_path=None, output_format='show', output_filename='fit_signal_to_noise_map_line'):
     """Plot the observed signal_to_noise_map of the ccd data.
 
     Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
@@ -247,18 +247,18 @@ def plot_signal_to_noise_map_stack(
     signal_to_noise_map : CIFrame
         The signal_to_noise_map of the data.
     """
-    stack_plotters.plot_extracted_stack_from_array_ci_frame_and_stack_region(
-        array=fit.signal_to_noise_map, stack_region=stack_region,  ci_frame=fit.ci_data_fit.ci_frame, mask=mask, as_subplot=as_subplot,
+    line_plotters.plot_line_from_array_and_ci_frame(
+        array=fit.signal_to_noise_map, line_region=line_region,  ci_frame=fit.ci_data_fit.ci_frame, mask=mask, as_subplot=as_subplot,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)
     
     
-def plot_ci_pre_cti_stack(
-        fit, stack_region, mask=None, as_subplot=False,
+def plot_ci_pre_cti_line(
+        fit, line_region, mask=None, as_subplot=False,
         figsize=(7, 7),
         title='CI Pre-CTI Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
-        output_path=None, output_format='show', output_filename='fit_ci_pre_cti_stack'):
+        output_path=None, output_format='show', output_filename='fit_ci_pre_cti_line'):
     """Plot the observed ci_pre_cti of the ccd data.
 
     Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
@@ -268,18 +268,18 @@ def plot_ci_pre_cti_stack(
     ci_pre_cti : CIFrame
         The ci_pre_cti of the data.
     """
-    stack_plotters.plot_extracted_stack_from_array_ci_frame_and_stack_region(
-        array=fit.ci_pre_cti, stack_region=stack_region,  ci_frame=fit.ci_data_fit.ci_frame, mask=mask, as_subplot=as_subplot,
+    line_plotters.plot_line_from_array_and_ci_frame(
+        array=fit.ci_pre_cti, line_region=line_region,  ci_frame=fit.ci_data_fit.ci_frame, mask=mask, as_subplot=as_subplot,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)
     
     
-def plot_ci_post_cti_stack(
-        fit, stack_region, mask=None, as_subplot=False,
+def plot_ci_post_cti_line(
+        fit, line_region, mask=None, as_subplot=False,
         figsize=(7, 7),
         title='CI Post-CTI Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
-        output_path=None, output_format='show', output_filename='fit_ci_post_cti_stack'):
+        output_path=None, output_format='show', output_filename='fit_ci_post_cti_line'):
     """Plot the observed ci_post_cti of the ccd data.
 
     Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
@@ -289,18 +289,18 @@ def plot_ci_post_cti_stack(
     ci_post_cti : CIFrame
         The ci_post_cti of the data.
     """
-    stack_plotters.plot_extracted_stack_from_array_ci_frame_and_stack_region(
-        array=fit.ci_post_cti, stack_region=stack_region, ci_frame=fit.ci_data_fit.ci_frame, mask=mask, as_subplot=as_subplot,
+    line_plotters.plot_line_from_array_and_ci_frame(
+        array=fit.ci_post_cti, line_region=line_region, ci_frame=fit.ci_data_fit.ci_frame, mask=mask, as_subplot=as_subplot,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)
     
     
-def plot_residual_map_stack(
-        fit, stack_region, mask=None, as_subplot=False,
+def plot_residual_map_line(
+        fit, line_region, mask=None, as_subplot=False,
         figsize=(7, 7),
         title='Residual Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
-        output_path=None, output_format='show', output_filename='fit_residual_map_stack'):
+        output_path=None, output_format='show', output_filename='fit_residual_map_line'):
     """Plot the observed residual_map of the ccd data.
 
     Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
@@ -310,18 +310,18 @@ def plot_residual_map_stack(
     residual_map : CIFrame
         The residual_map of the data.
     """
-    stack_plotters.plot_extracted_stack_from_array_ci_frame_and_stack_region(
-        array=fit.residual_map, stack_region=stack_region, ci_frame=fit.ci_data_fit.ci_frame, mask=mask, as_subplot=as_subplot,
+    line_plotters.plot_line_from_array_and_ci_frame(
+        array=fit.residual_map, line_region=line_region, ci_frame=fit.ci_data_fit.ci_frame, mask=mask, as_subplot=as_subplot,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)
     
     
-def plot_chi_squared_map_stack(
-        fit, stack_region, mask=None, as_subplot=False,
+def plot_chi_squared_map_line(
+        fit, line_region, mask=None, as_subplot=False,
         figsize=(7, 7),
         title='Chi-Squared Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
-        output_path=None, output_format='show', output_filename='fit_chi_squared_map_stack'):
+        output_path=None, output_format='show', output_filename='fit_chi_squared_map_line'):
     """Plot the observed chi_squared_map of the ccd data.
 
     Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
@@ -331,8 +331,8 @@ def plot_chi_squared_map_stack(
     chi_squared_map : CIFrame
         The chi_squared_map of the data.
     """
-    stack_plotters.plot_extracted_stack_from_array_ci_frame_and_stack_region(
-        array=fit.chi_squared_map, stack_region=stack_region, ci_frame=fit.ci_data_fit.ci_frame, mask=mask, as_subplot=as_subplot,
+    line_plotters.plot_line_from_array_and_ci_frame(
+        array=fit.chi_squared_map, line_region=line_region, ci_frame=fit.ci_data_fit.ci_frame, mask=mask, as_subplot=as_subplot,
        figsize=figsize,
        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
        output_path=output_path, output_format=output_format, output_filename=output_filename)

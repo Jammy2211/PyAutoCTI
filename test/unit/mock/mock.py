@@ -45,8 +45,8 @@ class MockCIFrame(object):
     def serial_overscan_above_trails_frame_from_frame(self, array):
         return array[1, 0:2]
 
-    def parallel_front_edge_arrays_from_frame(self, array, rows):
-        return np.array([[1.0, 1.0], [2.0, 2.0]])
+    def parallel_front_edge_line_binned_over_columns_from_frame(self, array, rows, mask):
+        return np.array([1.0, 1.0, 2.0, 2.0])
 
 class MockCIGeometry(object):
 
