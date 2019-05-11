@@ -1,5 +1,5 @@
-from autocti.data.plotters import array_plotters
-from autocti.data.plotters import line_plotters
+from autocti.plotters import line_plotters, array_plotters
+
 
 def plot_image(
         image, mask=None, extract_array_from_mask=False, as_subplot=False,

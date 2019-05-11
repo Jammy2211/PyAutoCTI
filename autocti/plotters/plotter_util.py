@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from astropy.io import fits
+import numpy as np
 
 from autocti import exc
 from autocti.data import util
@@ -85,7 +85,7 @@ def output_figure(array, as_subplot, output_path, output_filename, output_format
         elif output_format is 'png':
             plt.savefig(output_path + output_filename + '.png', bbox_inches='tight')
         elif output_format is 'fits':
-            util.numpy_array_2d_to_fits(array_2d=array, file_path=output_path + output_filename + '.fits', overwrite=True)
+            util.numpy_array_2d_to_fits(array_2d=np.asarray(array), file_path=output_path + output_filename + '.fits', overwrite=True)
 
 
 def output_subplot_array(output_path, output_filename, output_format):
@@ -122,3 +122,26 @@ def close_figure(as_subplot):
     """
     if not as_subplot:
         plt.close()
+
+
+def line_regions_from_should_plots(
+        should_plot_parallel_front_edge_line,
+        should_plot_parallel_trails_line,
+        should_plot_serial_front_edge_line,
+        should_plot_serial_trails_line,):
+
+    line_regions = []
+
+    if should_plot_parallel_front_edge_line:
+        line_regions.append('parallel_front_edge')
+
+    if should_plot_parallel_trails_line:
+        line_regions.append('parallel_trails')
+
+    if should_plot_serial_front_edge_line:
+        line_regions.append('serial_front_edge')
+
+    if should_plot_serial_trails_line:
+        line_regions.append('serial_trails')
+
+    return line_regions

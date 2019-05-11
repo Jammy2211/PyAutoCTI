@@ -115,3 +115,49 @@ def test__fit_individuals_line__depedent_on_input(fit, ci_frame, ci_fit_plotter_
     assert ci_fit_plotter_path + 'fit_residual_map_line.png' not in plot_patch.paths
 
     assert ci_fit_plotter_path + 'fit_chi_squared_map_line.png' in plot_patch.paths
+
+def test__plot_ci_fit_for_phase(fit, ci_fit_plotter_path, plot_patch):
+
+    ci_fit_plotters.plot_ci_fit_for_phase(fits=[fit], during_analysis=False,
+                                          extract_array_from_mask=True,
+                                          should_plot_all_at_end_png=False,
+                                          should_plot_all_at_end_fits=False,
+                                          should_plot_as_subplot=True,
+                                          should_plot_image=True,
+                                          should_plot_noise_map=False,
+                                          should_plot_ci_pre_cti=True,
+                                          should_plot_signal_to_noise_map=False,
+                                          should_plot_ci_post_cti=False,
+                                          should_plot_residual_map=True,
+                                          should_plot_chi_squared_map=False,
+                                          should_plot_parallel_front_edge_line=True,
+                                          should_plot_parallel_trails_line=False,
+                                          should_plot_serial_front_edge_line=True,
+                                          should_plot_serial_trails_line=False,
+                                          visualize_path=ci_fit_plotter_path)
+
+    print(plot_patch.paths)
+
+    assert ci_fit_plotter_path + '/ci_image_10/arrays/ci_fit.png' in plot_patch.paths
+    assert ci_fit_plotter_path + '/ci_image_10/arrays/fit_image.png' in plot_patch.paths
+    assert ci_fit_plotter_path + '/ci_image_10/arrays/fit_noise_map.png' not in plot_patch.paths
+    assert ci_fit_plotter_path + '/ci_image_10/arrays/fit_ci_pre_cti.png' in plot_patch.paths
+    assert ci_fit_plotter_path + '/ci_image_10/arrays/fit_signal_to_noise_map.png' not in plot_patch.paths
+    assert ci_fit_plotter_path + '/ci_image_10/arrays/fit_residual_map.png' in plot_patch.paths
+    assert ci_fit_plotter_path + '/ci_image_10/arrays/fit_chi_squared_map.png' not in plot_patch.paths
+
+    assert ci_fit_plotter_path + '/ci_image_10/parallel_front_edge/ci_fit_line.png' in plot_patch.paths
+    assert ci_fit_plotter_path + '/ci_image_10/parallel_front_edge/fit_image_line.png' in plot_patch.paths
+    assert ci_fit_plotter_path + '/ci_image_10/parallel_front_edge/fit_noise_map_line.png' not in plot_patch.paths
+    assert ci_fit_plotter_path + '/ci_image_10/parallel_front_edge/fit_ci_pre_cti_line.png' in plot_patch.paths
+    assert ci_fit_plotter_path + '/ci_image_10/parallel_front_edge/fit_signal_to_noise_map_line.png' not in plot_patch.paths
+    assert ci_fit_plotter_path + '/ci_image_10/parallel_front_edge/fit_residual_map_line.png' in plot_patch.paths
+    assert ci_fit_plotter_path + '/ci_image_10/parallel_front_edge/fit_chi_squared_map_line.png' not in plot_patch.paths
+
+    assert ci_fit_plotter_path + '/ci_image_10/serial_front_edge/ci_fit_line.png' in plot_patch.paths
+    assert ci_fit_plotter_path + '/ci_image_10/serial_front_edge/fit_image_line.png' in plot_patch.paths
+    assert ci_fit_plotter_path + '/ci_image_10/serial_front_edge/fit_noise_map_line.png' not in plot_patch.paths
+    assert ci_fit_plotter_path + '/ci_image_10/serial_front_edge/fit_ci_pre_cti_line.png' in plot_patch.paths
+    assert ci_fit_plotter_path + '/ci_image_10/serial_front_edge/fit_signal_to_noise_map_line.png' not in plot_patch.paths
+    assert ci_fit_plotter_path + '/ci_image_10/serial_front_edge/fit_residual_map_line.png' in plot_patch.paths
+    assert ci_fit_plotter_path + '/ci_image_10/serial_front_edge/fit_chi_squared_map_line.png' not in plot_patch.paths

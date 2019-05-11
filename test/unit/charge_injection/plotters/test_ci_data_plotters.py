@@ -40,29 +40,6 @@ def make_ci_data(image, noise_map, ci_pre_cti):
                           ci_frame=MockCIFrame(value=3.0))
 
 
-def test__ci_sub_plot_output(data, data_plotter_path, plot_patch):
-    ci_data_plotters.plot_ci_subplot(ci_data=data, extract_array_from_mask=True,
-                                     cb_tick_values=[1.0], cb_tick_labels=['1.0'],
-                                     output_path=data_plotter_path, output_format='png')
-
-    assert data_plotter_path + 'ci_data.png' in plot_patch.paths
-
-
-def test__ci_individuals__output_dependent_on_inputs(data, data_plotter_path, plot_patch):
-    ci_data_plotters.plot_ci_data_individual(ci_data=data, extract_array_from_mask=True,
-                                             should_plot_image=True,
-                                             should_plot_ci_pre_cti=True,
-                                             output_path=data_plotter_path, output_format='png')
-
-    assert data_plotter_path + 'ci_image.png' in plot_patch.paths
-
-    assert data_plotter_path + 'ci_noise_map.png' not in plot_patch.paths
-
-    assert data_plotter_path + 'ci_pre_cti.png' in plot_patch.paths
-
-    assert data_plotter_path + 'ci_signal_to_noise_map.png' not in plot_patch.paths
-
-
 def test__image_is_output(data, mask, data_plotter_path, plot_patch):
     ci_data_plotters.plot_image(ci_data=data, mask=mask, extract_array_from_mask=True,
                                 cb_tick_values=[1.0], cb_tick_labels=['1.0'],
@@ -146,3 +123,64 @@ def test__signal_to_noise_map_line_is_output(data, mask, data_plotter_path, plot
                                               output_path=data_plotter_path, output_format='png')
 
     assert data_plotter_path + 'ci_signal_to_noise_map_line.png' in plot_patch.paths
+
+def test__ci_sub_plot_output(data, data_plotter_path, plot_patch):
+    ci_data_plotters.plot_ci_subplot(ci_data=data, extract_array_from_mask=True,
+                                     cb_tick_values=[1.0], cb_tick_labels=['1.0'],
+                                     output_path=data_plotter_path, output_format='png')
+
+    assert data_plotter_path + 'ci_data.png' in plot_patch.paths
+
+
+def test__ci_individuals__output_dependent_on_inputs(data, data_plotter_path, plot_patch):
+    ci_data_plotters.plot_ci_data_individual(ci_data=data, extract_array_from_mask=True,
+                                             should_plot_image=True,
+                                             should_plot_ci_pre_cti=True,
+                                             output_path=data_plotter_path, output_format='png')
+
+    assert data_plotter_path + 'ci_image.png' in plot_patch.paths
+
+    assert data_plotter_path + 'ci_noise_map.png' not in plot_patch.paths
+
+    assert data_plotter_path + 'ci_pre_cti.png' in plot_patch.paths
+
+    assert data_plotter_path + 'ci_signal_to_noise_map.png' not in plot_patch.paths
+
+@pytest.fixture(name='data_extracted')
+def make_ci_data_extracted(data, mask):
+    return ci_data.MaskedCIData(image=data.image, noise_map=data.noise_map, ci_pre_cti=data.ci_pre_cti, mask=mask,
+                                    ci_pattern=data.ci_pattern, ci_frame=data.ci_frame)
+
+
+def test__plot_ci_data_for_phase(data_extracted, data_plotter_path, plot_patch):
+
+    ci_data_plotters.plot_ci_data_for_phase(ci_datas_extracted=[data_extracted],
+                                            extract_array_from_mask=True,
+                                            should_plot_as_subplot=True,
+                                            should_plot_image=True,
+                                            should_plot_noise_map=False,
+                                            should_plot_ci_pre_cti=True,
+                                            should_plot_signal_to_noise_map=False,
+                                            should_plot_parallel_front_edge_line=True,
+                                            should_plot_parallel_trails_line=False,
+                                            should_plot_serial_front_edge_line=True,
+                                            should_plot_serial_trails_line=False,
+                                            visualize_path=data_plotter_path)
+
+    assert data_plotter_path + '/ci_image_10/arrays/ci_data.png' in plot_patch.paths
+    assert data_plotter_path + '/ci_image_10/arrays/ci_image.png' in plot_patch.paths
+    assert data_plotter_path + '/ci_image_10/arrays/ci_noise_map.png' not in plot_patch.paths
+    assert data_plotter_path + '/ci_image_10/arrays/ci_pre_cti.png' in plot_patch.paths
+    assert data_plotter_path + '/ci_image_10/arrays/ci_signal_to_noise_map.png' not in plot_patch.paths
+
+    assert data_plotter_path + '/ci_image_10/parallel_front_edge/ci_data_line.png' in plot_patch.paths
+    assert data_plotter_path + '/ci_image_10/parallel_front_edge/ci_image_line.png' in plot_patch.paths
+    assert data_plotter_path + '/ci_image_10/parallel_front_edge/ci_noise_map_line.png' not in plot_patch.paths
+    assert data_plotter_path + '/ci_image_10/parallel_front_edge/ci_pre_cti_line.png' in plot_patch.paths
+    assert data_plotter_path + '/ci_image_10/parallel_front_edge/ci_signal_to_noise_map_line.png' not in plot_patch.paths
+
+    assert data_plotter_path + '/ci_image_10/serial_front_edge/ci_data_line.png' in plot_patch.paths
+    assert data_plotter_path + '/ci_image_10/serial_front_edge/ci_image_line.png' in plot_patch.paths
+    assert data_plotter_path + '/ci_image_10/serial_front_edge/ci_noise_map_line.png' not in plot_patch.paths
+    assert data_plotter_path + '/ci_image_10/serial_front_edge/ci_pre_cti_line.png' in plot_patch.paths
+    assert data_plotter_path + '/ci_image_10/serial_front_edge/ci_signal_to_noise_map_line.png' not in plot_patch.paths
