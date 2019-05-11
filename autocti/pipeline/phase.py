@@ -514,7 +514,7 @@ class ParallelPhase(Phase):
 
     def extract_ci_data(self, data, mask):
         return data.parallel_calibration_data(
-            columns=(0, self.columns or data.ci_frame.frame_geometry.parallel_overscan.total_columns_min),
+            columns=(0, self.columns or data.ci_frame.frame_geometry.parallel_overscan.total_columns),
             mask=mask)
 
     class Analysis(Phase.Analysis):
@@ -648,7 +648,7 @@ class SerialPhase(Phase):
         self.serial_ccd = serial_ccd
 
     def extract_ci_data(self, data, mask):
-        return data.serial_calibration_data(rows=self.rows or (0, data.ci_pattern.regions[0].total_rows_min),
+        return data.serial_calibration_data(rows=self.rows or (0, data.ci_pattern.regions[0].total_rows),
                                             mask=mask)
 
     class Analysis(Phase.Analysis):
@@ -892,7 +892,7 @@ class ParallelHyperPhase(ParallelPhase, HyperPhase):
 
     def extract_ci_hyper_data(self, data, mask, noise_scaling_maps):
         return data.parallel_hyper_calibration_data(
-            columns=(0, self.columns or data.ci_frame.frame_geometry.parallel_overscan.total_columns_min),
+            columns=(0, self.columns or data.ci_frame.frame_geometry.parallel_overscan.total_columns),
             mask=mask, noise_scaling_maps=noise_scaling_maps)
 
 
@@ -925,7 +925,7 @@ class SerialHyperPhase(SerialPhase, HyperPhase):
         return [result.noise_scaling_maps_of_ci_regions, result.noise_scaling_maps_of_serial_trails]
 
     def extract_ci_hyper_data(self, data, mask, noise_scaling_maps):
-        return data.serial_hyper_calibration_data(rows=self.rows or (0, data.ci_pattern.regions[0].total_rows_min),
+        return data.serial_hyper_calibration_data(rows=self.rows or (0, data.ci_pattern.regions[0].total_rows),
                                                   mask=mask, noise_scaling_maps=noise_scaling_maps)
 
 

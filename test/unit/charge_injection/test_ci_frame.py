@@ -1175,6 +1175,39 @@ class TestChInj(object):
                                                              [False, False, False],
                                                              [False, False, False]])).all()
 
+        def test__no_rows_specified__uses_smallest_ci_pattern_rows(self):
+
+            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 3, 0, 3), (5, 8, 0, 3)])
+
+            image = np.array([[0.0, 0.0, 0.0],
+                              [1.0, 1.0, 1.0],  # <- 1st Front edge according to region and this frame_geometry
+                              [2.0, 2.0, 2.0],  # <- Next front edge row.
+                              [3.0, 3.0, 3.0],
+                              [4.0, 4.0, 4.0],
+                              [5.0, 5.0, 5.0],  # <- 2nd Front edge according to region and this frame_geometry
+                              [6.0, 6.0, 6.0],  # <- Next front edge row.
+                              [7.0, 7.0, 7.0],
+                              [8.0, 8.0, 8.0],
+                              [9.0, 9.0, 9.0]])
+
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+
+            front_edges = frame.parallel_front_edge_arrays_from_frame(image)
+            assert (front_edges[0] == np.array([[1.0, 1.0, 1.0],
+                                                [2.0, 2.0, 2.0]])).all()
+
+            assert (front_edges[1] == np.array([[5.0, 5.0, 5.0],
+                                                [6.0, 6.0, 6.0]])).all()
+
+            stacked_front_edges = frame.parallel_front_edge_stacked_array_from_frame(array=image)
+
+            assert (stacked_front_edges == np.array([[3.0, 3.0, 3.0],
+                                                     [4.0, 4.0, 4.0]])).all()
+
+            front_edge_line = frame.parallel_front_edge_line_binned_over_columns_from_frame(array=image)
+
+            assert (front_edge_line == np.array([3.0, 4.0])).all()
+
     class TestParallelTrailsFromFrame:
 
         def test__pattern_bottom__extracts_1_trails_correctly(self):
@@ -1445,6 +1478,39 @@ class TestChInj(object):
             assert (stacked_trails.mask == np.array([[False, False, True],
                                                      [False, False, False]])).all()
 
+        def test__no_rows_specified__uses_smallest_parallel_trails_size(self):
+
+            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3), (6, 8, 0, 3)])
+
+            image = np.array([[0.0, 0.0, 0.0],
+                              [1.0, 1.0, 1.0],
+                              [2.0, 2.0, 2.0],
+                              [3.0, 3.0, 3.0],
+                              [4.0, 4.0, 4.0],  # <- 1st Trails form here onwards according to region and this frame_geometry
+                              [5.0, 5.0, 5.0], # <- Next trail
+                              [6.0, 6.0, 6.0],
+                              [7.0, 7.0, 7.0],
+                              [8.0, 8.0, 8.0], # <- 2nd Trails form here onwards according to region and this frame_geometry
+                              [9.0, 9.0, 9.0]]) # 2nd Trail starts here
+
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+
+            trails = frame.parallel_trails_arrays_from_frame(image)
+            assert (trails[0] == np.array([[4.0, 4.0, 4.0],
+                                           [5.0, 5.0, 5.0]])).all()
+            assert (trails[1] == np.array([[8.0, 8.0, 8.0],
+                                           [9.0, 9.0, 9.0]])).all()
+
+            stacked_trails = frame.parallel_trails_stacked_array_from_frame(image)
+
+            assert (stacked_trails == np.array([[6.0, 6.0, 6.0],
+                                                [7.0, 7.0, 7.0]])).all()
+
+            trails_line = frame.parallel_trails_line_binned_over_columns_from_frame(array=image)
+
+            assert (trails_line == np.array([6.0, 7.0])).all()
+
+
     class TestSerialFrontEdgeFromFrame:
 
         def test__pattern_bottom___extracts_1_front_edge_correctly(self):
@@ -1710,6 +1776,38 @@ class TestChInj(object):
             assert (stacked_front_edges.mask == np.array([[False, False, False],
                                                           [False, False, True],
                                                           [False, False, False]])).all()
+
+        def test__no_columns_specified_so_uses_smallest_charge_injection_region_column_size(self):
+
+            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 3), (0, 3, 5, 8)])
+
+            image = np.array([[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
+                              [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
+                              [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0]])
+
+            #                    /| FE 1        /\ FE 2
+
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+
+            front_edges = frame.serial_front_edge_arrays_from_frame(image)
+
+            assert (front_edges[0] == np.array([[1.0, 2.0],
+                                                [1.0, 2.0],
+                                                [1.0, 2.0]])).all()
+
+            assert (front_edges[1] == np.array([[5.0, 6.0],
+                                                [5.0, 6.0],
+                                                [5.0, 6.0]])).all()
+
+            stacked_front_edges = frame.serial_front_edge_stacked_array_from_frame(image)
+
+            assert (stacked_front_edges == np.array([[3.0, 4.0],
+                                                     [3.0, 4.0],
+                                                     [3.0, 4.0]])).all()
+
+            front_edge_line = frame.serial_front_edge_line_binned_over_rows_from_frame(image)
+
+            assert (front_edge_line == np.array([3.0, 4.0])).all()
 
     class TestSerialTrailsFromFrame:
 
@@ -1977,6 +2075,43 @@ class TestChInj(object):
                                                           [False, False, False],
                                                           [False, True, False]])).all()
 
+        def test__no_columns_specified_so_uses_full_serial_overscan(self):
+
+            pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4), (0, 3, 4, 7)])
+
+            image = np.array([[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
+                              [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0],
+                              [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0]])
+
+            #                                      /| Trails1           /\ Trails2
+
+            ci_geometry = ci_frame.FrameGeometry(
+                serial_overscan=ci_frame.Region((0, 1, 0, 4)),
+                serial_prescan=ci_frame.Region((0, 1, 0, 1)),
+                parallel_overscan=ci_frame.Region((0, 1, 0, 1)),  corner=(0,0))
+
+            frame = ci_frame.ChInj(frame_geometry=ci_geometry, ci_pattern=pattern)
+
+            trails = frame.serial_trails_arrays_from_frame(image)
+
+            assert (trails[0] == np.array([[4.0, 5.0, 6.0, 7.0],
+                                           [4.0, 5.0, 6.0, 7.0],
+                                           [4.0, 5.0, 6.0, 7.0]])).all()
+
+            assert (trails[1] == np.array([[7.0, 8.0, 9.0, 10.0],
+                                           [7.0, 8.0, 9.0, 10.0],
+                                           [7.0, 8.0, 9.0, 10.0]])).all()
+
+            stacked_trails = frame.serial_trails_stacked_array_from_frame(image)
+
+            assert (stacked_trails == np.array([[5.5, 6.5, 7.5, 8.5],
+                                                [5.5, 6.5, 7.5, 8.5],
+                                                [5.5, 6.5, 7.5, 8.5]])).all()
+
+            trails_line = frame.serial_trails_line_binned_over_rows_from_frame(image)
+
+            assert (trails_line == np.array([5.5, 6.5, 7.5, 8.5])).all()
+
     class TestParallelSerialCalibrationSection:
 
         def test__extracts_everything_except_prescan(self):
@@ -2020,6 +2155,76 @@ class TestChInj(object):
                                                  [2.0, 3.0],
                                                  [2.0, 3.0],
                                                  [2.0, 3.0]])).all()
+
+    class TestSmallestPArallelTrailsRows:
+
+        def test__x1_ci_region__bottom_frame_geometry(self):
+
+            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
+
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                   ci_pattern=pattern)
+
+            smallest_parallel_trails_rows = frame.smallest_parallel_trails_rows_from_shape(shape=(5, 5))
+
+            assert smallest_parallel_trails_rows == 2
+
+            smallest_parallel_trails_rows = frame.smallest_parallel_trails_rows_from_shape(shape=(7, 5))
+
+            assert smallest_parallel_trails_rows == 4
+
+        def test__x2_ci_region__bottom_frame_geometry(self):
+
+            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3), (5, 7, 0, 3)])
+
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                   ci_pattern=pattern)
+
+            smallest_parallel_trails_rows = frame.smallest_parallel_trails_rows_from_shape(shape=(10, 5))
+
+            assert smallest_parallel_trails_rows == 2
+
+            smallest_parallel_trails_rows = frame.smallest_parallel_trails_rows_from_shape(shape=(8, 5))
+
+            assert smallest_parallel_trails_rows == 1
+
+        def test__x2_ci_region__top_frame_geometry(self):
+
+            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(1, 4, 0, 3), (5, 7, 0, 3)])
+
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
+                                   ci_pattern=pattern)
+
+            smallest_parallel_trails_rows = frame.smallest_parallel_trails_rows_from_shape(shape=(10, 5))
+
+            assert smallest_parallel_trails_rows == 1
+
+            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(8, 12, 0, 3), (14, 16, 0, 3)])
+
+            frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
+                                   ci_pattern=pattern)
+
+            smallest_parallel_trails_rows = frame.smallest_parallel_trails_rows_from_shape(shape=(10, 5))
+
+            assert smallest_parallel_trails_rows == 2
+
+    class TestSerialTrailsColumns:
+
+        def test__extract_two_columns__second_and_third__takes_coordinates_after_right_of_region(self):
+
+            ci_geometry = ci_frame.FrameGeometry(
+                serial_overscan=ci_frame.Region((0, 1, 0, 10)),
+                serial_prescan=ci_frame.Region((0, 1, 0, 1)),
+                parallel_overscan=ci_frame.Region((0, 1, 0, 1)),  corner=(0,0))
+
+            assert ci_geometry.serial_trails_columns == 10
+
+            ci_geometry = ci_frame.FrameGeometry(
+                serial_overscan=ci_frame.Region((0, 1, 0, 50)),
+                serial_prescan=ci_frame.Region((0, 1, 0, 1)),
+                parallel_overscan=ci_frame.Region((0, 1, 0, 1)),  corner=(0,0))
+
+            assert ci_geometry.serial_trails_columns == 50
 
 
 class TestQuadGeometryEuclid_bottom_left(object):
@@ -2208,6 +2413,8 @@ class TestQuadGeometryEuclid_bottom_left(object):
             ci_trails = ci_geometry.serial_trails_region(ci_region=ci_region, columns=(1, 3))
 
             assert ci_trails == (0, 3, 4, 6)
+
+
 
     class TestSerialChargeInjectionAndTrails:
 

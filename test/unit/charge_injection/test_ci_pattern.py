@@ -107,6 +107,10 @@ class TestCIPattern(object):
 
         def test__rows_between_regions(self):
 
+            pattern = ci_pattern.CIPattern(normalization=1.0, regions=[(1, 2, 1, 2)])
+
+            assert pattern.rows_between_regions == []
+
             pattern = ci_pattern.CIPattern(normalization=1.0, regions=[(1, 2, 1, 2), (3, 4, 3, 4)])
 
             assert pattern.rows_between_regions == [1]
