@@ -283,6 +283,9 @@ class Phase(ph.AbstractPhase):
             self.plot_ci_fit_all_at_end_fits = output_bool('plot_ci_fit_all_at_end_fits')
 
             self.plot_ci_fit_as_subplot = output_bool('plot_ci_fit_as_subplot')
+            self.plot_ci_fit_residual_maps_subplot = output_bool('plot_ci_fit_residual_maps_subplot')
+            self.plot_ci_fit_chi_squared_maps_subplot = output_bool('plot_ci_fit_chi_squared_maps_subplot')
+            
             self.plot_ci_fit_image = output_bool('plot_ci_fit_image')
             self.plot_ci_fit_noise_map = output_bool('plot_ci_fit_noise_map')
             self.plot_ci_fit_signal_to_noise_map = output_bool('plot_ci_fit_signal_to_noise_map')
@@ -325,6 +328,8 @@ class Phase(ph.AbstractPhase):
                 should_plot_all_at_end_png=self.plot_ci_fit_all_at_end_png,
                 should_plot_all_at_end_fits=self.plot_ci_fit_all_at_end_fits,
                 should_plot_as_subplot=self.plot_ci_fit_as_subplot,
+                should_plot_residual_maps_subplot=self.plot_ci_fit_residual_maps_subplot,
+                should_plot_chi_squared_maps_subplot=self.plot_ci_fit_chi_squared_maps_subplot,
                 should_plot_image=self.plot_ci_fit_image,
                 should_plot_noise_map=self.plot_ci_fit_noise_map,
                 should_plot_signal_to_noise_map=self.plot_ci_fit_signal_to_noise_map,

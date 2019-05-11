@@ -124,7 +124,9 @@ def test__signal_to_noise_map_line_is_output(data, mask, data_plotter_path, plot
 
     assert data_plotter_path + 'ci_signal_to_noise_map_line.png' in plot_patch.paths
 
+
 def test__ci_sub_plot_output(data, data_plotter_path, plot_patch):
+
     ci_data_plotters.plot_ci_subplot(ci_data=data, extract_array_from_mask=True,
                                      cb_tick_values=[1.0], cb_tick_labels=['1.0'],
                                      output_path=data_plotter_path, output_format='png')
