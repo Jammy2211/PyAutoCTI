@@ -74,13 +74,7 @@ class CIPattern(object):
 
     @property
     def rows_between_regions(self):
-
-        parallel_trail_sizes = []
-
-        for i in range(len(self.regions)-1):
-            parallel_trail_sizes.append(self.regions[i+1].y0 - self.regions[i].y1)
-
-        return parallel_trail_sizes
+        return [self.regions[i+1].y0 - self.regions[i].y1 for i in range(len(self.regions)-1)]
 
 class CIPatternUniform(CIPattern):
     """ A uniform charge injection ci_pattern, which is defined by the regions it appears on the charge injection \

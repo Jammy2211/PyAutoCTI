@@ -327,7 +327,7 @@ class ChInj(object):
         """
         array = self.serial_edges_and_trails_frame_from_frame(array,
                                                               trails_columns=(
-                                                                  0, self.frame_geometry.serial_overscan.total_columns_min))
+                                                                  0, self.frame_geometry.serial_overscan.total_columns))
         return array
 
     def serial_overscan_above_trails_frame_from_frame(self, array):
@@ -383,7 +383,7 @@ class ChInj(object):
 
         trails_regions = list(map(lambda ci_region:
                                   self.frame_geometry.serial_trails_region(ci_region, (
-                                      0, self.frame_geometry.serial_overscan.total_columns_min)),
+                                      0, self.frame_geometry.serial_overscan.total_columns)),
                                   self.ci_pattern.regions))
 
         for region in trails_regions:
@@ -535,15 +535,15 @@ class ChInj(object):
                                        self.ci_pattern.regions))
         return list(map(lambda region: array[region.slice], calibration_regions))
 
-    def parallel_front_edge_line_binned_over_columns_from_frame(self, array, rows, mask=None):
+    def parallel_front_edge_line_binned_over_columns_from_frame(self, array, rows=None, mask=None):
         front_stacked_array = self.parallel_front_edge_stacked_array_from_frame(array=array, rows=rows, mask=mask)
         return np.ma.mean(np.ma.asarray(front_stacked_array), axis=1)
 
-    def parallel_front_edge_stacked_array_from_frame(self, array, rows, mask=None):
+    def parallel_front_edge_stacked_array_from_frame(self, array, rows=None, mask=None):
         front_arrays = self.parallel_front_edge_arrays_from_frame(array=array, rows=rows, mask=mask)
         return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
 
-    def parallel_front_edge_arrays_from_frame(self, array, rows, mask=None):
+    def parallel_front_edge_arrays_from_frame(self, array, rows=None, mask=None):
         """Extract a list of arrays of the parallel front edge regions of a charge injection ci_frame.
 
         The diagram below illustrates the array that is extracted from a ci_frame for rows=(0, 1):
@@ -598,7 +598,7 @@ class ChInj(object):
                                     front_arrays, front_masks))
         return front_arrays
 
-    def parallel_front_edge_regions_from_frame(self, rows):
+    def parallel_front_edge_regions_from_frame(self, rows=None):
         """Calculate a list of the parallel front edge regions of a charge injection ci_frame.
 
         The diagram below illustrates the region that calculaed from a ci_frame for rows=(0, 1):
@@ -644,18 +644,20 @@ class ChInj(object):
         rows : (int, int)
             The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
+        if rows is None:
+            rows = (0, self.ci_pattern.total_rows_min)
         return list(map(lambda ci_region: self.frame_geometry.parallel_front_edge_region(ci_region, rows),
                          self.ci_pattern.regions))
 
-    def parallel_trails_line_binned_over_columns_from_frame(self, array, rows, mask=None):
+    def parallel_trails_line_binned_over_columns_from_frame(self, array, rows=None, mask=None):
         trails_stacked_array = self.parallel_trails_stacked_array_from_frame(array=array, rows=rows, mask=mask)
         return np.ma.mean(np.ma.asarray(trails_stacked_array), axis=1)
 
-    def parallel_trails_stacked_array_from_frame(self, array, rows, mask=None):
+    def parallel_trails_stacked_array_from_frame(self, array, rows=None, mask=None):
         trails_arrays = self.parallel_trails_arrays_from_frame(array=array, rows=rows, mask=mask)
         return np.ma.mean(np.ma.asarray(trails_arrays), axis=0)
 
-    def parallel_trails_arrays_from_frame(self, array, rows, mask=None):
+    def parallel_trails_arrays_from_frame(self, array, rows=None, mask=None):
         """Extract the parallel trails of a charge injection ci_frame.
 
 
@@ -703,7 +705,7 @@ class ChInj(object):
         rows : (int, int)
             The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
-        trails_regions = self.parallel_trails_regions_from_frame(rows=rows)
+        trails_regions = self.parallel_trails_regions_from_frame(shape=array.shape, rows=rows)
         trails_arrays = list(map(lambda region: array[region.slice], trails_regions))
         if mask is not None:
             trails_masks = list(map(lambda region: mask[region.slice], trails_regions))
@@ -712,7 +714,9 @@ class ChInj(object):
                                     trails_arrays, trails_masks))
         return trails_arrays
 
-    def parallel_trails_regions_from_frame(self, rows):
+    def parallel_trails_regions_from_frame(self, shape, rows=None):
+        if rows is None:
+            rows = (0, self.smallest_parallel_trails_rows_from_shape(shape=shape))
         """Compute the parallel regions of a charge injection ci_frame.
 
         The diagram below illustrates the region that is calculated from a ci_frame for rows=(0, 1):
@@ -762,15 +766,15 @@ class ChInj(object):
         return list(map(lambda ci_region: self.frame_geometry.parallel_trails_region(ci_region, rows),
                         self.ci_pattern.regions))
 
-    def serial_front_edge_line_binned_over_rows_from_frame(self, array, columns, mask=None):
+    def serial_front_edge_line_binned_over_rows_from_frame(self, array, columns=None, mask=None):
         front_stacked_array = self.serial_front_edge_stacked_array_from_frame(array=array, columns=columns, mask=mask)
         return np.ma.mean(np.ma.asarray(front_stacked_array), axis=0)
 
-    def serial_front_edge_stacked_array_from_frame(self, array, columns, mask=None):
+    def serial_front_edge_stacked_array_from_frame(self, array, columns=None, mask=None):
         front_arrays = self.serial_front_edge_arrays_from_frame(array=array, columns=columns, mask=mask)
         return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
 
-    def serial_front_edge_arrays_from_frame(self, array, columns, mask=None):
+    def serial_front_edge_arrays_from_frame(self, array, columns=None, mask=None):
         """Extract a list of the serial front edge arrays of a charge injection ci_frame.
 
         The diagram below illustrates the array that is extracted from a ci_frame for columnss=(0, 3):
@@ -827,7 +831,7 @@ class ChInj(object):
                                     front_arrays, front_masks))
         return front_arrays
 
-    def serial_front_edge_regions_from_frame(self, columns):
+    def serial_front_edge_regions_from_frame(self, columns=None):
         """Compute a list of the serial front edges regions of a charge injection ci_frame.
 
         The diagram below illustrates the region that is calculated from a ci_frame for columns=(0, 4):
@@ -875,18 +879,20 @@ class ChInj(object):
             The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
             columns)
         """
+        if columns is None:
+            columns = (0, self.ci_pattern.total_columns_min)
         return list(map(lambda ci_region: self.frame_geometry.serial_front_edge_region(ci_region, columns),
                                  self.ci_pattern.regions))
 
-    def serial_trails_line_binned_over_rows_from_frame(self, array, columns, mask=None):
+    def serial_trails_line_binned_over_rows_from_frame(self, array, columns=None, mask=None):
         trails_stacked_array = self.serial_trails_stacked_array_from_frame(array=array, columns=columns, mask=mask)
         return np.ma.mean(np.ma.asarray(trails_stacked_array), axis=0)
 
-    def serial_trails_stacked_array_from_frame(self, array, columns, mask=None):
+    def serial_trails_stacked_array_from_frame(self, array, columns=None, mask=None):
         front_arrays = self.serial_trails_arrays_from_frame(array=array, columns=columns, mask=mask)
         return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
 
-    def serial_trails_arrays_from_frame(self, array, columns, mask=None):
+    def serial_trails_arrays_from_frame(self, array, columns=None, mask=None):
         """Extract a list of the serial trails of a charge injection ci_frame.
 
         The diagram below illustrates the array that is extracted from a ci_frame for columnss=(0, 3):
@@ -942,7 +948,7 @@ class ChInj(object):
                                     trails_arrays, trails_masks))
         return trails_arrays
 
-    def serial_trails_regions_from_frame(self, columns):
+    def serial_trails_regions_from_frame(self, columns=None):
         """Compute a list of the serial trails regions of a charge injection ci_frame.
 
         The diagram below illustrates the region is calculated from a ci_frame for columnss=(0, 4):
@@ -989,29 +995,20 @@ class ChInj(object):
         columns : (int, int)
             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd columns)
         """
+        if columns is None:
+            columns = (0, self.frame_geometry.serial_trails_columns)
         return list(map(lambda ci_region: self.frame_geometry.serial_trails_region(ci_region, columns),
                                   self.ci_pattern.regions))
 
     def parallel_serial_calibration_section(self, array):
         return array[0:array.shape[0], self.frame_geometry.serial_prescan.x1:array.shape[1]]
 
-    @property
-    def smallest_parallel_trails_rows(self):
+    def smallest_parallel_trails_rows_from_shape(self, shape):
 
-        parallel_trail_rows = self.ci_pattern.rows_between_regions
-
-        if self.corner[0] == 0:
-            row_sizes = self.ci_pattern.rows_between_regions
-            row_sizes.append(self.ci_pattern.regions[0].y1)
-
-        for i in range(len(self.regions)):
-            print(i, len(self.regions))
-            if i < len(self.regions)-1:
-                parallel_trail_rows.append(self.regions[i].y1 - self.regions[i+1].y0)
-            elif i == len(self.regions)-1:
-                parallel_trail_rows.append(total_rows - self.regions[i].y1)
-
-        return np.min(parallel_trail_rows)
+        rows_between_regions = self.ci_pattern.rows_between_regions
+        rows_to_image_edge = self.frame_geometry.parallel_trail_size_to_image_edge(shape=shape, ci_pattern=self.ci_pattern)
+        rows_between_regions.append(rows_to_image_edge)
+        return np.min(rows_between_regions)
 
 class Region(object):
 
@@ -1279,6 +1276,10 @@ class FrameGeometry(object):
             return shape[0] - np.max([region.y1 for region in ci_pattern.regions])
         else:
             return np.min([region.y0 for region in ci_pattern.regions])
+
+    @property
+    def serial_trails_columns(self):
+        return self.serial_overscan[3] - self.serial_overscan[2]
 
 class QuadGeometryEuclid(FrameGeometry):
 

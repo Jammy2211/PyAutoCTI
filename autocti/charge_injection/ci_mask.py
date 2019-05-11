@@ -24,7 +24,7 @@ class CIMask(msk.Mask):
     @classmethod
     def masked_parallel_trails_from_ci_frame(cls, shape, ci_frame, rows, invert=False):
 
-        trails_regions = ci_frame.parallel_trails_regions_from_frame(rows=rows)
+        trails_regions = ci_frame.parallel_trails_regions_from_frame(shape=shape, rows=rows)
         mask = np.full(shape, False)
 
         for region in trails_regions:
