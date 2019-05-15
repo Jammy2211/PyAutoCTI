@@ -1,10 +1,9 @@
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 import numpy as np
-import itertools
 
 from autocti import exc
-from autocti.data.plotters import plotter_util
+from autocti.plotters import plotter_util
 
 
 def plot_array(array, mask=None, extract_array_from_mask=False, as_subplot=False,

@@ -32,6 +32,7 @@ from autocti.charge_injection import ci_pattern
 class TestCIPatternViaList(object):
 
     def test__2_uniform_patterns__sets_up_collection(self):
+
         pattern_collection = ci_pattern.uniform_from_lists(normalizations=[1.0, 3.0], regions=[(1, 2, 3, 4)])
 
         assert type(pattern_collection[0]) == ci_pattern.CIPatternUniform
@@ -67,6 +68,60 @@ class TestCIPattern(object):
 
             assert pattern.normalization == 1.0
             assert pattern.regions == [(1, 2, 3, 4)]
+
+        def test__total_rows_minimum(self):
+
+            pattern = ci_pattern.CIPattern(normalization=1.0, regions=[(1, 2, 0, 1)])
+
+            assert pattern.total_rows_min == 1
+
+            pattern = ci_pattern.CIPattern(normalization=1.0, regions=[(1, 3, 0, 1)])
+
+            assert pattern.total_rows_min == 2
+
+            pattern = ci_pattern.CIPattern(normalization=1.0, regions=[(1, 2, 0, 1), (3, 4, 0, 1)])
+
+            assert pattern.total_rows_min == 1
+
+            pattern = ci_pattern.CIPattern(normalization=1.0, regions=[(1, 2, 0, 1), (3, 5, 0, 1)])
+
+            assert pattern.total_rows_min == 1
+
+        def test__total_columns_minimum(self):
+
+            pattern = ci_pattern.CIPattern(normalization=1.0, regions=[(0, 1, 1, 2)])
+
+            assert pattern.total_columns_min == 1
+
+            pattern = ci_pattern.CIPattern(normalization=1.0, regions=[(0, 1, 1, 3)])
+
+            assert pattern.total_columns_min == 2
+
+            pattern = ci_pattern.CIPattern(normalization=1.0, regions=[(0, 1, 1, 2), (0, 1, 3, 4)])
+
+            assert pattern.total_columns_min == 1
+
+            pattern = ci_pattern.CIPattern(normalization=1.0, regions=[(0, 1, 1, 2), (0, 1, 3, 5)])
+
+            assert pattern.total_columns_min == 1
+
+        def test__rows_between_regions(self):
+
+            pattern = ci_pattern.CIPattern(normalization=1.0, regions=[(1, 2, 1, 2)])
+
+            assert pattern.rows_between_regions == []
+
+            pattern = ci_pattern.CIPattern(normalization=1.0, regions=[(1, 2, 1, 2), (3, 4, 3, 4)])
+
+            assert pattern.rows_between_regions == [1]
+
+            pattern = ci_pattern.CIPattern(normalization=1.0, regions=[(1, 2, 1, 2), (4, 5, 3, 4)])
+
+            assert pattern.rows_between_regions == [2]
+
+            pattern = ci_pattern.CIPattern(normalization=1.0, regions=[(1, 2, 1, 2), (4, 5, 3, 4), (8, 9, 3, 4)])
+
+            assert pattern.rows_between_regions == [2, 3]
 
     class TestCheckImageDimensions:
 

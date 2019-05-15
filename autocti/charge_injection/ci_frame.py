@@ -535,7 +535,70 @@ class ChInj(object):
                                        self.ci_pattern.regions))
         return list(map(lambda region: array[region.slice], calibration_regions))
 
-    def parallel_front_edge_regions_from_frame(self, rows):
+    def parallel_front_edge_line_binned_over_columns_from_frame(self, array, rows=None, mask=None):
+        front_stacked_array = self.parallel_front_edge_stacked_array_from_frame(array=array, rows=rows, mask=mask)
+        return np.ma.mean(np.ma.asarray(front_stacked_array), axis=1)
+
+    def parallel_front_edge_stacked_array_from_frame(self, array, rows=None, mask=None):
+        front_arrays = self.parallel_front_edge_arrays_from_frame(array=array, rows=rows, mask=mask)
+        return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
+
+    def parallel_front_edge_arrays_from_frame(self, array, rows=None, mask=None):
+        """Extract a list of arrays of the parallel front edge regions of a charge injection ci_frame.
+
+        The diagram below illustrates the array that is extracted from a ci_frame for rows=(0, 1):
+
+        ---KEY---
+        ---------
+
+        [] = read-out electronics   [==========] = read-out register
+
+        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
+        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
+        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
+
+        P = Parallel Direction      S = Serial Direction
+
+               [ppppppppppppppppppppp]
+               [ppppppppppppppppppppp]
+          [...][ttttttttttttttttttttt][sss]
+          [...][c1c1cc1c1cc1cc1ccc1cc][sss]
+        | [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
+        | [...][ttttttttttttttttttttt][sss]    | Direction
+        P [...][ttttttttttttttttttttt][sss]    | of
+        | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
+          [...][cc0ccc0cccc0cccc0cccc][sss]    |
+
+        []     [=====================]
+               <---------S----------
+
+        The extracted ci_frame keeps just the front edges of all charge injection regions.
+
+        list index 0:
+
+        [c0c0c0cc0c0c0c0c0c0c0]
+
+        list index 1:
+
+        [1c1c1c1c1c1c1c1c1c1c1]
+
+        Parameters
+        ------------
+        array
+        rows : (int, int)
+            The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
+        """
+        front_regions = self.parallel_front_edge_regions_from_frame(rows=rows)
+        front_arrays = list(map(lambda region: array[region.slice], front_regions))
+        if mask is not None:
+            front_masks = list(map(lambda region: mask[region.slice], front_regions))
+            front_arrays = list(map(lambda front_array, front_mask :
+                                    np.ma.array(front_array, mask=front_mask),
+                                    front_arrays, front_masks))
+        return front_arrays
+
+    def parallel_front_edge_regions_from_frame(self, rows=None):
         """Calculate a list of the parallel front edge regions of a charge injection ci_frame.
 
         The diagram below illustrates the region that calculaed from a ci_frame for rows=(0, 1):
@@ -581,11 +644,22 @@ class ChInj(object):
         rows : (int, int)
             The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
+        if rows is None:
+            rows = (0, self.ci_pattern.total_rows_min)
         return list(map(lambda ci_region: self.frame_geometry.parallel_front_edge_region(ci_region, rows),
                          self.ci_pattern.regions))
 
-    def parallel_front_edge_arrays_from_frame(self, array, rows):
-        """Extract a list of arrays of the parallel front edge regions of a charge injection ci_frame.
+    def parallel_trails_line_binned_over_columns_from_frame(self, array, rows=None, mask=None):
+        trails_stacked_array = self.parallel_trails_stacked_array_from_frame(array=array, rows=rows, mask=mask)
+        return np.ma.mean(np.ma.asarray(trails_stacked_array), axis=1)
+
+    def parallel_trails_stacked_array_from_frame(self, array, rows=None, mask=None):
+        trails_arrays = self.parallel_trails_arrays_from_frame(array=array, rows=rows, mask=mask)
+        return np.ma.mean(np.ma.asarray(trails_arrays), axis=0)
+
+    def parallel_trails_arrays_from_frame(self, array, rows=None, mask=None):
+        """Extract the parallel trails of a charge injection ci_frame.
+
 
         The diagram below illustrates the array that is extracted from a ci_frame for rows=(0, 1):
 
@@ -596,45 +670,53 @@ class ChInj(object):
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
         [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
-        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci region index)
+        [xxxxxxxxxx]
+        [t#t#t#t#t#] = parallel / serial charge injection region trail (0 / 1 indicates ci region index)
 
         P = Parallel Direction      S = Serial Direction
 
                [ppppppppppppppppppppp]
                [ppppppppppppppppppppp]
-          [...][ttttttttttttttttttttt][sss]
+          [...][t1t1t1t1t1t1t1t1t1t1t][sss]
           [...][c1c1cc1c1cc1cc1ccc1cc][sss]
         | [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
-        | [...][ttttttttttttttttttttt][sss]    | Direction
-        P [...][ttttttttttttttttttttt][sss]    | of
+        | [...][t0t0t0t0t0t0t0t0t0t0t][sss]    | Direction
+        P [...][0t0t0t0t0t0t0t0t0t0t0][sss]    | of
         | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
           [...][cc0ccc0cccc0cccc0cccc][sss]    |
-                                                 
+
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the front edges of all charge injection regions.
+        The extracted ci_frame keeps just the trails following all charge injection regions:
 
         list index 0:
 
-        [c0c0c0cc0c0c0c0c0c0c0]
+        [t0t0t0tt0t0t0t0t0t0t0]
 
         list index 1:
 
-        [1c1c1c1c1c1c1c1c1c1c1]
+        [1t1t1t1t1t1t1t1t1t1t1]
 
         Parameters
         ------------
         array
         rows : (int, int)
-            The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
+            The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
-        front_regions = self.parallel_front_edge_regions_from_frame(rows=rows)
-        front_arrays = np.array(list(map(lambda region: array[region.slice], front_regions)))
-        return front_arrays
+        trails_regions = self.parallel_trails_regions_from_frame(shape=array.shape, rows=rows)
+        trails_arrays = list(map(lambda region: array[region.slice], trails_regions))
+        if mask is not None:
+            trails_masks = list(map(lambda region: mask[region.slice], trails_regions))
+            trails_arrays = list(map(lambda trails_array, front_mask :
+                                    np.ma.array(trails_array, mask=front_mask),
+                                    trails_arrays, trails_masks))
+        return trails_arrays
 
-    def parallel_trails_regions_from_frame(self, rows):
+    def parallel_trails_regions_from_frame(self, shape, rows=None):
+        if rows is None:
+            rows = (0, self.smallest_parallel_trails_rows_from_shape(shape=shape))
         """Compute the parallel regions of a charge injection ci_frame.
 
         The diagram below illustrates the region that is calculated from a ci_frame for rows=(0, 1):
@@ -684,11 +766,18 @@ class ChInj(object):
         return list(map(lambda ci_region: self.frame_geometry.parallel_trails_region(ci_region, rows),
                         self.ci_pattern.regions))
 
-    def parallel_trails_arrays_from_frame(self, array, rows):
-        """Extract the parallel trails of a charge injection ci_frame.
+    def serial_front_edge_line_binned_over_rows_from_frame(self, array, columns=None, mask=None):
+        front_stacked_array = self.serial_front_edge_stacked_array_from_frame(array=array, columns=columns, mask=mask)
+        return np.ma.mean(np.ma.asarray(front_stacked_array), axis=0)
 
+    def serial_front_edge_stacked_array_from_frame(self, array, columns=None, mask=None):
+        front_arrays = self.serial_front_edge_arrays_from_frame(array=array, columns=columns, mask=mask)
+        return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
 
-        The diagram below illustrates the array that is extracted from a ci_frame for rows=(0, 1):
+    def serial_front_edge_arrays_from_frame(self, array, columns=None, mask=None):
+        """Extract a list of the serial front edge arrays of a charge injection ci_frame.
+
+        The diagram below illustrates the array that is extracted from a ci_frame for columnss=(0, 3):
 
         ---KEY---
         ---------
@@ -697,46 +786,52 @@ class ChInj(object):
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
         [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci region index)
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
         [xxxxxxxxxx]
-        [t#t#t#t#t#] = parallel / serial charge injection region trail (0 / 1 indicates ci region index)
+        [tttttttttt] = parallel / serial charge injection region trail ((0 / 1 indicates ci_region index)
 
         P = Parallel Direction      S = Serial Direction
 
                [ppppppppppppppppppppp]
                [ppppppppppppppppppppp]
-          [...][t1t1t1t1t1t1t1t1t1t1t][sss]
+          [...][ttttttttttttttttttttt][sss]
           [...][c1c1cc1c1cc1cc1ccc1cc][sss]
-        | [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
-        | [...][t0t0t0t0t0t0t0t0t0t0t][sss]    | Direction
-        P [...][0t0t0t0t0t0t0t0t0t0t0][sss]    | of
+        | [...][1c1c1cc1c1cc1ccc1cc1c][sss]    |
+        | [...][ttttttttttttttttttttt][sss]    | Direction
+        P [...][ttttttttttttttttttttt][sss]    | of
         | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
           [...][cc0ccc0cccc0cccc0cccc][sss]    |
-                                                 
+
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the trails following all charge injection regions:
+        The extracted ci_frame keeps just the serial front edges of all charge injection regions.
 
         list index 0:
 
-        [t0t0t0tt0t0t0t0t0t0t0]
+        [c0c0]
 
         list index 1:
 
-        [1t1t1t1t1t1t1t1t1t1t1]
+        [1c1c]
 
         Parameters
         ------------
         array
-        rows : (int, int)
-            The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
+        columns : (int, int)
+            The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
+            columns)
         """
-        trails_regions = self.parallel_trails_regions_from_frame(rows=rows)
-        trails_arrays = np.array(list(map(lambda region: array[region.slice], trails_regions)))
-        return trails_arrays
+        front_regions = self.serial_front_edge_regions_from_frame(columns=columns)
+        front_arrays = list(map(lambda region: array[region.slice], front_regions))
+        if mask is not None:
+            front_masks = list(map(lambda region: mask[region.slice], front_regions))
+            front_arrays = list(map(lambda front_array, front_mask :
+                                    np.ma.array(front_array, mask=front_mask),
+                                    front_arrays, front_masks))
+        return front_arrays
 
-    def serial_front_edge_regions_from_frame(self, columns):
+    def serial_front_edge_regions_from_frame(self, columns=None):
         """Compute a list of the serial front edges regions of a charge injection ci_frame.
 
         The diagram below illustrates the region that is calculated from a ci_frame for columns=(0, 4):
@@ -784,11 +879,21 @@ class ChInj(object):
             The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
             columns)
         """
+        if columns is None:
+            columns = (0, self.ci_pattern.total_columns_min)
         return list(map(lambda ci_region: self.frame_geometry.serial_front_edge_region(ci_region, columns),
                                  self.ci_pattern.regions))
 
-    def serial_front_edge_arrays_from_frame(self, array, columns):
-        """Extract a list of the serial front edge arrays of a charge injection ci_frame.
+    def serial_trails_line_binned_over_rows_from_frame(self, array, columns=None, mask=None):
+        trails_stacked_array = self.serial_trails_stacked_array_from_frame(array=array, columns=columns, mask=mask)
+        return np.ma.mean(np.ma.asarray(trails_stacked_array), axis=0)
+
+    def serial_trails_stacked_array_from_frame(self, array, columns=None, mask=None):
+        front_arrays = self.serial_trails_arrays_from_frame(array=array, columns=columns, mask=mask)
+        return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
+
+    def serial_trails_arrays_from_frame(self, array, columns=None, mask=None):
+        """Extract a list of the serial trails of a charge injection ci_frame.
 
         The diagram below illustrates the array that is extracted from a ci_frame for columnss=(0, 3):
 
@@ -808,13 +913,13 @@ class ChInj(object):
                [ppppppppppppppppppppp]
                [ppppppppppppppppppppp]
           [...][ttttttttttttttttttttt][sss]
-          [...][c1c1cc1c1cc1cc1ccc1cc][sss]
-        | [...][1c1c1cc1c1cc1ccc1cc1c][sss]    |
+          [...][c1c1cc1c1cc1cc1ccc1cc][st1]
+        | [...][1c1c1cc1c1cc1ccc1cc1c][ts0]    |
         | [...][ttttttttttttttttttttt][sss]    | Direction
         P [...][ttttttttttttttttttttt][sss]    | of
-        | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
-          [...][cc0ccc0cccc0cccc0cccc][sss]    |
-                                                 
+        | [...][0ccc0cccc0cccc0cccc0c][st1]    | clocking
+          [...][cc0ccc0cccc0cccc0cccc][ts0]    |
+
         []     [=====================]
                <---------S----------
 
@@ -822,24 +927,28 @@ class ChInj(object):
 
         list index 0:
 
-        [c0c0]
+        [st0]
 
         list index 1:
 
-        [1c1c]
+        [st1]
 
         Parameters
         ------------
         array
         columns : (int, int)
-            The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
-            columns)
+            The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd columns)
         """
-        front_regions = self.serial_front_edge_regions_from_frame(columns=columns)
-        front_arrays = np.array(list(map(lambda region: array[region.slice], front_regions)))
-        return front_arrays
+        trails_regions = self.serial_trails_regions_from_frame(columns=columns)
+        trails_arrays = list(map(lambda region: array[region.slice], trails_regions))
+        if mask is not None:
+            trails_masks = list(map(lambda region: mask[region.slice], trails_regions))
+            trails_arrays = list(map(lambda trails_array, front_mask :
+                                    np.ma.array(trails_array, mask=front_mask),
+                                    trails_arrays, trails_masks))
+        return trails_arrays
 
-    def serial_trails_regions_from_frame(self, columns):
+    def serial_trails_regions_from_frame(self, columns=None):
         """Compute a list of the serial trails regions of a charge injection ci_frame.
 
         The diagram below illustrates the region is calculated from a ci_frame for columnss=(0, 4):
@@ -886,62 +995,20 @@ class ChInj(object):
         columns : (int, int)
             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd columns)
         """
+        if columns is None:
+            columns = (0, self.frame_geometry.serial_trails_columns)
         return list(map(lambda ci_region: self.frame_geometry.serial_trails_region(ci_region, columns),
                                   self.ci_pattern.regions))
 
-    def serial_trails_arrays_from_frame(self, array, columns):
-        """Extract a list of the serial trails of a charge injection ci_frame.
-
-        The diagram below illustrates the array that is extracted from a ci_frame for columnss=(0, 3):
-
-        ---KEY---
-        ---------
-
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
-        [xxxxxxxxxx]
-        [tttttttttt] = parallel / serial charge injection region trail ((0 / 1 indicates ci_region index)
-
-        P = Parallel Direction      S = Serial Direction
-
-               [ppppppppppppppppppppp]
-               [ppppppppppppppppppppp]
-          [...][ttttttttttttttttttttt][sss]
-          [...][c1c1cc1c1cc1cc1ccc1cc][st1]
-        | [...][1c1c1cc1c1cc1ccc1cc1c][ts0]    |
-        | [...][ttttttttttttttttttttt][sss]    | Direction
-        P [...][ttttttttttttttttttttt][sss]    | of
-        | [...][0ccc0cccc0cccc0cccc0c][st1]    | clocking
-          [...][cc0ccc0cccc0cccc0cccc][ts0]    |
-                                                 
-        []     [=====================]
-               <---------S----------
-
-        The extracted ci_frame keeps just the serial front edges of all charge injection regions.
-
-        list index 0:
-
-        [st0]
-
-        list index 1:
-
-        [st1]
-
-        Parameters
-        ------------
-        array
-        columns : (int, int)
-            The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd columns)
-        """
-        trails_regions = self.serial_trails_regions_from_frame(columns=columns)
-        trails_arrays = np.array(list(map(lambda region: array[region.slice], trails_regions)))
-        return trails_arrays
-
     def parallel_serial_calibration_section(self, array):
         return array[0:array.shape[0], self.frame_geometry.serial_prescan.x1:array.shape[1]]
+
+    def smallest_parallel_trails_rows_from_shape(self, shape):
+
+        rows_between_regions = self.ci_pattern.rows_between_regions
+        rows_to_image_edge = self.frame_geometry.parallel_trail_size_to_image_edge(shape=shape, ci_pattern=self.ci_pattern)
+        rows_between_regions.append(rows_to_image_edge)
+        return np.min(rows_between_regions)
 
 
 class Region(object):
@@ -1140,7 +1207,8 @@ class FrameGeometry(object):
         """Coordinates of a serial trail of size dx from coordinate x"""
         return int(x - dx * self.corner[1]), int(x + 1 + dx * (1 - self.corner[1]))
 
-    def parallel_front_edge_region(self, ci_region, rows=(0, 1)):
+    def parallel_front_edge_region(self, ci_region, rows):
+
         check_parallel_front_edge_size(region=ci_region, rows=rows)
         if self.corner[0] == 0:
             y_coord = ci_region.y0
@@ -1203,79 +1271,33 @@ class FrameGeometry(object):
             x_max = image_shape[1]
         return Region((ci_region.y0, ci_region.y1, x_min, x_max))
 
+    def parallel_trail_size_to_image_edge(self, ci_pattern, shape):
 
-class QuadGeometryEuclid(FrameGeometry):
+        if self.corner[0] == 0:
+            return shape[0] - np.max([region.y1 for region in ci_pattern.regions])
+        else:
+            return np.min([region.y0 for region in ci_pattern.regions])
 
-    def __init__(self, corner, parallel_overscan, serial_prescan, serial_overscan):
-        """Abstract class for the ci_frame geometry of Euclid quadrants. CTI uses a bias corrected raw VIS ci_frame, which   
-         is  described at http://euclid.esac.esa.int/dm/dpdd/latest/le1dpd/dpcards/le1_visrawframe.html
-
-        A ImageFrame is stored as a 2D NumPy array. When an image is passed to arctic, clocking goes towards the 'top'
-        of the NumPy array (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the array (e.g. the   
-        final row).
-
-        Arctic has no in-built functionality for changing the direction of clocking depending on the input   
-        configuration file. Therefore, image rotations are handled before arctic is called, using the functions   
-        defined in this class (and its children). These routines define how an image is rotated before parallel   
-        and serial clocking with arctic. They also define how to reorient the image to its original orientation after   
-        clocking with arctic is performed.
-
-        A Euclid CCD is defined as below:
-
-        ---KEY---
-        ---------
-
-        [] = read-out electronics
-
-        [==========] = read-out register
-
-        [xxxxxxxxxx]
-        [xxxxxxxxxx] = CCD panel
-        [xxxxxxxxxx]
-
-        P = Parallel Direction
-        S = Serial Direction
-
-             <--------S-----------   ---------S----------->
-        [] [========= 2 =========] [========= 3 =========] []          |
-        /    [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  /          |
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | Direction arctic
-        P   [xxxxxxxxx 2 xxxxxxxxx] [xxxxxxxxx 3 xxxxxxxxx]  P         | clocks an image
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | without any rotation
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | (e.g. towards row 0
-                                                                       | of the NumPy array)
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-        P   [xxxxxxxxx 0 xxxxxxxxx] [xxxxxxxxx 1 xxxxxxxxx] P          |
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-            [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]            |
-                                                                        
-        [] [========= 0 =========] [========= 1 =========] []
-            <---------S----------   ----------S----------->
-
-        Note that the arrow on the right defines the direction of clocking by arctic without any rotation. Therefore,   
-        there are 8 circumstances of how arctic requires an image to be rotated before clocking:
-
-        - Quadrant 0 - QuadGeometryEuclid.bottom_left()  - Parallel Clocking - No rotation.
-        - Quadrant 0 - QuadGeometryEuclid.bottom_left()  - Serial Clocking   - Rotation 90 degrees clockwise.
-        - Quadrant 1 - QuadGeometryEuclid.bottom_right() - Parallel Clocking - No rotation.
-        - Quadrant 1 - QuadGeometryEuclid.bottom_right() - Serial Clocking   - Rotation 270 degrees clockwise.
-        - Quadrant 2 - QuadGeometryEuclid.top_left()     - Parallel Clocking - Rotation 180 degrees.
-        - Quadrant 2 - QuadGeometryEuclid.top_left()     - Serial Clocking   - Rotation 90 degrees clockwise.
-        - Quadrant 3 - QuadGeometryEuclid.top_right()    - Parallel Clocking - Rotation 180 degrees.
-        - Quadrant 3 - QuadGeometryEuclid.top_right()    - Serial Clocking   - Rotation 270 degrees clockwise
-
-        After clocking has been performed with arctic (and CTI is added / corrected), it must be re-rotated back to   
-        its original orientation. This rotation is the reverse of what is specified above.
-
-        Rotations are performed using flipup / fliplr routines, but will ultimately use the Euclid Image Tools library.
-
-        """
-        super(QuadGeometryEuclid, self).__init__(corner=corner, parallel_overscan=parallel_overscan,
-                                                 serial_prescan=serial_prescan, serial_overscan=serial_overscan)
+    @property
+    def serial_trails_columns(self):
+        return self.serial_overscan[3] - self.serial_overscan[2]
 
     @classmethod
-    def from_ccd_and_quadrant_id(cls, ccd_id, quad_id):
+    def euclid_parallel_line(cls):
+        return FrameGeometry(corner=(0,0),
+                             parallel_overscan=Region((2066, 2086, 0, 1)),
+                             serial_prescan=None,
+                             serial_overscan=None)
+
+    @classmethod
+    def euclid_serial_line(cls):
+        return FrameGeometry(corner=(0, 0),
+                             parallel_overscan=None,
+                             serial_prescan=Region((0, 1, 0, 51)),
+                             serial_overscan=Region((0, 1, 2099, 2119)))
+
+    @classmethod
+    def euclid_from_ccd_and_quadrant_id(cls, ccd_id, quad_id):
         """Before reading this docstring, read the docstring for the __init__function above.
 
         In the Euclid FPA, the quadrant id ('E', 'F', 'G', 'H') depends on whether the CCD is located   
@@ -1330,49 +1352,49 @@ class QuadGeometryEuclid(FrameGeometry):
         row_index = ccd_id[-1]
 
         if (row_index in '123') and (quad_id == 'E'):
-            return QuadGeometryEuclid.bottom_left()
+            return FrameGeometry.euclid_bottom_left()
         elif (row_index in '123') and (quad_id == 'F'):
-            return QuadGeometryEuclid.bottom_right()
+            return FrameGeometry.euclid_bottom_right()
         elif (row_index in '123') and (quad_id == 'G'):
-            return QuadGeometryEuclid.top_right()
+            return FrameGeometry.euclid_top_right()
         elif (row_index in '123') and (quad_id == 'H'):
-            return QuadGeometryEuclid.top_left()
+            return FrameGeometry.euclid_top_left()
         elif (row_index in '456') and (quad_id == 'E'):
-            return QuadGeometryEuclid.top_right()
+            return FrameGeometry.euclid_top_right()
         elif (row_index in '456') and (quad_id == 'F'):
-            return QuadGeometryEuclid.top_left()
+            return FrameGeometry.euclid_top_left()
         elif (row_index in '456') and (quad_id == 'G'):
-            return QuadGeometryEuclid.bottom_left()
+            return FrameGeometry.euclid_bottom_left()
         elif (row_index in '456') and (quad_id == 'H'):
-            return QuadGeometryEuclid.bottom_right()
+            return FrameGeometry.euclid_bottom_right()
 
     @classmethod
-    def bottom_left(cls):
-        return QuadGeometryEuclid(corner=(0, 0),
-                                  parallel_overscan=Region((2066, 2086, 51, 2099)),
-                                  serial_prescan=Region((0, 2086, 0, 51)),
-                                  serial_overscan=Region((0, 2086, 2099, 2119)))
+    def euclid_bottom_left(cls):
+        return FrameGeometry(corner=(0, 0),
+                             parallel_overscan=Region((2066, 2086, 51, 2099)),
+                             serial_prescan=Region((0, 2086, 0, 51)),
+                             serial_overscan=Region((0, 2086, 2099, 2119)))
 
     @classmethod
-    def bottom_right(cls):
-        return QuadGeometryEuclid(corner=(0, 1),
-                                  parallel_overscan=Region((2066, 2086, 20, 2068)),
-                                  serial_prescan=Region((0, 2086, 2068, 2119)),
-                                  serial_overscan=Region((0, 2086, 0, 20)))
+    def euclid_bottom_right(cls):
+        return FrameGeometry(corner=(0, 1),
+                             parallel_overscan=Region((2066, 2086, 20, 2068)),
+                             serial_prescan=Region((0, 2086, 2068, 2119)),
+                             serial_overscan=Region((0, 2086, 0, 20)))
 
     @classmethod
-    def top_left(cls):
-        return QuadGeometryEuclid(corner=(1, 0),
-                                  parallel_overscan=Region((0, 20, 51, 2099)),
-                                  serial_prescan=Region((0, 2086, 0, 51)),
-                                  serial_overscan=Region((0, 2086, 2099, 2119)))
+    def euclid_top_left(cls):
+        return FrameGeometry(corner=(1, 0),
+                             parallel_overscan=Region((0, 20, 51, 2099)),
+                             serial_prescan=Region((0, 2086, 0, 51)),
+                             serial_overscan=Region((0, 2086, 2099, 2119)))
 
     @classmethod
-    def top_right(cls):
-        return QuadGeometryEuclid(corner=(1, 1),
-                                  parallel_overscan=Region((0, 20, 20, 2068)),
-                                  serial_prescan=Region((0, 2086, 2068, 2119)),
-                                  serial_overscan=Region((0, 2086, 0, 20)))
+    def euclid_top_right(cls):
+        return FrameGeometry(corner=(1, 1),
+                             parallel_overscan=Region((0, 20, 20, 2068)),
+                             serial_prescan=Region((0, 2086, 2068, 2119)),
+                             serial_overscan=Region((0, 2086, 0, 20)))
 
 
 def flip(image):

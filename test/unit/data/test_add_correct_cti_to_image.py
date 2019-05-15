@@ -112,7 +112,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, :] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_parallel, cti_settings=arctic_parallel)
 
@@ -126,7 +126,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[:, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_parallel, cti_settings=arctic_parallel)
 
@@ -142,7 +142,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, :] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_serial, cti_settings=arctic_serial)
 
@@ -158,7 +158,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[:, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_serial, cti_settings=arctic_serial)
 
@@ -175,7 +175,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 1:4] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_both, cti_settings=arctic_both)
 
@@ -200,7 +200,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[1:4, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_both, cti_settings=arctic_both)
 
@@ -223,7 +223,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_both, cti_settings=arctic_both)
 
@@ -241,7 +241,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), array=image_pre_cti)
 
                 params_0 = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                  p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
@@ -273,7 +273,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), array=image_pre_cti)
 
                 params_0 = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                  p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
@@ -305,7 +305,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), array=image_pre_cti)
 
                 params_0 = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                  p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
@@ -342,14 +342,14 @@ class TestQuadrantGeometryEuclidBottomLeft:
                                           [0.0, 9.0, 9.1, 9.3, 9.2, 9.0, 0.0],
                                           [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                        array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
+                                          array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_parallel, cti_settings=arctic_parallel)
                 image_difference_1 = image_post_cti - image_pre_cti
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                        array=image_post_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
+                                          array=image_post_cti)
 
                 image_correct_cti = im.correct_cti_from_image(cti_params=params_parallel, cti_settings=arctic_parallel)
                 image_difference_2 = image_correct_cti - image_pre_cti
@@ -367,14 +367,14 @@ class TestQuadrantGeometryEuclidBottomLeft:
                                           [0.0, 9.0, 9.1, 9.3, 9.2, 9.0, 0.0],
                                           [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_serial, cti_settings=arctic_serial)
                 image_difference_1 = image_post_cti - image_pre_cti
 
                 # Update ci_pre_ctis ci_data so that it corrects the cti added ci_pre_ctis
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
-                                        array=image_post_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
+                                          array=image_post_cti)
 
                 image_correct_cti = im.correct_cti_from_image(cti_params=params_serial, cti_settings=arctic_serial)
                 image_difference_2 = image_correct_cti - image_pre_cti
@@ -391,8 +391,8 @@ class TestQuadrantGeometryEuclidBottomRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, :] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
-                                        array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+                                          array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_parallel, cti_settings=arctic_parallel)
 
@@ -406,8 +406,8 @@ class TestQuadrantGeometryEuclidBottomRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[:, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
-                                        array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+                                          array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_parallel, cti_settings=arctic_parallel)
 
@@ -424,8 +424,8 @@ class TestQuadrantGeometryEuclidBottomRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, :] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
-                                        array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+                                          array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_serial, cti_settings=arctic_serial)
 
@@ -441,8 +441,8 @@ class TestQuadrantGeometryEuclidBottomRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[:, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
-                                        array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+                                          array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_serial, cti_settings=arctic_serial)
 
@@ -459,8 +459,8 @@ class TestQuadrantGeometryEuclidBottomRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 1:4] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
-                                        array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+                                          array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_both, cti_settings=arctic_both)
 
@@ -485,8 +485,8 @@ class TestQuadrantGeometryEuclidBottomRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[1:4, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
-                                        array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+                                          array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_both, cti_settings=arctic_both)
 
@@ -509,8 +509,8 @@ class TestQuadrantGeometryEuclidBottomRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
-                                        array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+                                          array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_both, cti_settings=arctic_both)
 
@@ -528,8 +528,8 @@ class TestQuadrantGeometryEuclidBottomRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
-                                        array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+                                          array=image_pre_cti)
 
                 params_0 = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                  p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
@@ -561,8 +561,8 @@ class TestQuadrantGeometryEuclidBottomRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
-                                        array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+                                          array=image_pre_cti)
 
                 params_0 = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                  p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
@@ -594,8 +594,8 @@ class TestQuadrantGeometryEuclidBottomRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
-                                        array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+                                          array=image_pre_cti)
 
                 params_0 = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                  p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
@@ -632,15 +632,15 @@ class TestQuadrantGeometryEuclidBottomRight:
                                           [0.0, 9.0, 9.1, 9.3, 9.2, 9.0, 0.0],
                                           [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
-                                        array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+                                          array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_parallel, cti_settings=arctic_parallel)
                 image_difference_1 = image_post_cti - image_pre_cti
 
                 # Update ci_pre_ctis ci_data so that it corrects the cti added ci_pre_ctis
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
-                                        array=image_post_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+                                          array=image_post_cti)
 
                 image_correct_cti = im.correct_cti_from_image(cti_params=params_parallel, cti_settings=arctic_parallel)
                 image_difference_2 = image_correct_cti - image_pre_cti
@@ -658,15 +658,15 @@ class TestQuadrantGeometryEuclidBottomRight:
                                           [0.0, 9.0, 9.1, 9.3, 9.2, 9.0, 0.0],
                                           [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
-                                        array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+                                          array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_serial, cti_settings=arctic_serial)
                 image_difference_1 = image_post_cti - image_pre_cti
 
                 # Update ci_pre_ctis ci_data so that it corrects the cti added ci_pre_ctis
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
-                                        array=image_post_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+                                          array=image_post_cti)
 
                 image_correct_cti = im.correct_cti_from_image(cti_params=params_serial, cti_settings=arctic_serial)
                 image_difference_2 = image_correct_cti - image_pre_cti
@@ -683,7 +683,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, :] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_left(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_parallel, cti_settings=arctic_parallel)
 
@@ -697,7 +697,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[:, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_left(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_parallel, cti_settings=arctic_parallel)
 
@@ -713,7 +713,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, :] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_left(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_serial, cti_settings=arctic_serial)
 
@@ -729,7 +729,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[:, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_left(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_serial, cti_settings=arctic_serial)
 
@@ -746,7 +746,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 1:4] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_left(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_both, cti_settings=arctic_both)
 
@@ -771,7 +771,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[1:4, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_left(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_both, cti_settings=arctic_both)
 
@@ -794,7 +794,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_left(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_both, cti_settings=arctic_both)
 
@@ -812,7 +812,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_left(), array=image_pre_cti)
 
                 params_0 = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                  p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
@@ -844,7 +844,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_left(), array=image_pre_cti)
 
                 params_0 = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                  p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
@@ -876,7 +876,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_left(), array=image_pre_cti)
 
                 params_0 = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                  p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
@@ -913,14 +913,14 @@ class TestQuadrantGeometryEuclidTopLeft:
                                           [0.0, 9.0, 9.1, 9.3, 9.2, 9.0, 0.0],
                                           [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_left(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_parallel, cti_settings=arctic_parallel)
                 image_difference_1 = image_post_cti - image_pre_cti
 
                 # Update ci_pre_ctis ci_data so that it corrects the cti added ci_pre_ctis
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
-                                        array=image_post_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_left(),
+                                          array=image_post_cti)
 
                 image_correct_cti = im.correct_cti_from_image(cti_params=params_parallel, cti_settings=arctic_parallel)
                 image_difference_2 = image_correct_cti - image_pre_cti
@@ -938,14 +938,14 @@ class TestQuadrantGeometryEuclidTopLeft:
                                           [0.0, 9.0, 9.1, 9.3, 9.2, 9.0, 0.0],
                                           [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_left(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_serial, cti_settings=arctic_serial)
                 image_difference_1 = image_post_cti - image_pre_cti
 
                 # Update ci_pre_ctis ci_data so that it corrects the cti added ci_pre_ctis
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
-                                        array=image_post_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_left(),
+                                          array=image_post_cti)
 
                 image_correct_cti = im.correct_cti_from_image(cti_params=params_serial, cti_settings=arctic_serial)
                 image_difference_2 = image_correct_cti - image_pre_cti
@@ -962,7 +962,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, :] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_right(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_parallel, cti_settings=arctic_parallel)
 
@@ -976,7 +976,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[:, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_right(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_parallel, cti_settings=arctic_parallel)
 
@@ -993,7 +993,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, :] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_right(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_serial, cti_settings=arctic_serial)
 
@@ -1009,7 +1009,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[:, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_right(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_serial, cti_settings=arctic_serial)
 
@@ -1026,7 +1026,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 1:4] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_right(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_both, cti_settings=arctic_both)
 
@@ -1051,7 +1051,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[1:4, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_right(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_both, cti_settings=arctic_both)
 
@@ -1074,7 +1074,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_right(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_both, cti_settings=arctic_both)
 
@@ -1092,7 +1092,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_right(), array=image_pre_cti)
 
                 params_0 = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                  p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
@@ -1124,7 +1124,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_right(), array=image_pre_cti)
 
                 params_0 = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                  p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
@@ -1156,7 +1156,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 2] = + 100
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_right(), array=image_pre_cti)
 
                 params_0 = setup(include_parallel=True, p_trap_densities=(0.1,), p_trap_lifetimes=(1.0,),
                                  p_well_notch_depth=0.0000001, p_well_fill_beta=0.8,
@@ -1193,14 +1193,14 @@ class TestQuadrantGeometryEuclidTopRight:
                                           [0.0, 9.0, 9.1, 9.3, 9.2, 9.0, 0.0],
                                           [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_right(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_parallel, cti_settings=arctic_parallel)
                 image_difference_1 = image_post_cti - image_pre_cti
 
                 # Update ci_pre_ctis ci_data so that it corrects the cti added ci_pre_ctis
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
-                                        array=image_post_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_right(),
+                                          array=image_post_cti)
 
                 image_correct_cti = im.correct_cti_from_image(cti_params=params_parallel, cti_settings=arctic_parallel)
                 image_difference_2 = image_correct_cti - image_pre_cti
@@ -1218,14 +1218,14 @@ class TestQuadrantGeometryEuclidTopRight:
                                           [0.0, 9.0, 9.1, 9.3, 9.2, 9.0, 0.0],
                                           [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]])
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_right(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_serial, cti_settings=arctic_serial)
                 image_difference_1 = image_post_cti - image_pre_cti
 
                 # Update ci_pre_ctis ci_data so that it corrects the cti added ci_pre_ctis
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
-                                        array=image_post_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_right(),
+                                          array=image_post_cti)
 
                 image_correct_cti = im.correct_cti_from_image(cti_params=params_serial, cti_settings=arctic_serial)
                 image_difference_2 = image_correct_cti - image_pre_cti
@@ -1238,14 +1238,14 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti = np.zeros((5, 5))
                 image_pre_cti[2, 2] = 1000.
 
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(), array=image_pre_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_right(), array=image_pre_cti)
 
                 image_post_cti = im.add_cti_to_image(cti_params=params_both, cti_settings=arctic_both)
                 image_difference_1 = image_post_cti - image_pre_cti
 
                 # Update ci_pre_ctis ci_data so that it corrects the cti added ci_pre_ctis
-                im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
-                                        array=image_post_cti)
+                im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_right(),
+                                          array=image_post_cti)
 
                 image_correct_cti = im.correct_cti_from_image(cti_params=params_both, cti_settings=arctic_both)
                 image_difference_2 = image_correct_cti - image_pre_cti
@@ -1261,7 +1261,7 @@ class TestParallelPoissonDensities:
         image_pre_cti = np.zeros((5, 5))
         image_pre_cti[2, :] = + 100
 
-        im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=image_pre_cti)
+        im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), array=image_pre_cti)
 
         parallel_species = arctic_params.Species(trap_density=10.0, trap_lifetime=1.0)
         parallel_ccd = arctic_params.CCD(well_notch_depth=1.0e-4, well_fill_beta=0.58, well_fill_gamma=0.0,
@@ -1295,7 +1295,7 @@ class TestParallelPoissonDensities:
         image_pre_cti = np.zeros((5, 5))
         image_pre_cti[2, 0:4] = + 100
 
-        im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=image_pre_cti)
+        im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), array=image_pre_cti)
 
         parallel_species = arctic_params.Species(trap_density=10.0, trap_lifetime=1.0)
         parallel_ccd = arctic_params.CCD(well_notch_depth=1.0e-4, well_fill_beta=0.58, well_fill_gamma=0.0,
@@ -1333,7 +1333,7 @@ class TestParallelPoissonDensities:
         image_pre_cti = np.zeros((5, 5))
         image_pre_cti[2, :] = + 100
 
-        im = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=image_pre_cti)
+        im = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), array=image_pre_cti)
 
         # Densities for this seed are [9.6, 8.2, 8.6, 9.6, 9.6]
 

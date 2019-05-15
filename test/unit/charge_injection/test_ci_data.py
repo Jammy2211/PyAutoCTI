@@ -275,7 +275,7 @@ class TestCIMask(object):
     class TestMaskRemoveRegions:
 
         def test__remove_one_region(self):
-            mask = msk.Mask.from_masked_regions(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+            mask = msk.Mask.from_masked_regions(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
                                                 masked_regions=[(0, 3, 2, 3)])
 
             assert (mask == np.array([[False, False, True],
@@ -283,7 +283,7 @@ class TestCIMask(object):
                                       [False, False, True]])).all()
 
         def test__remove_two_regions(self):
-            mask = msk.Mask.from_masked_regions(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+            mask = msk.Mask.from_masked_regions(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
                                                 masked_regions=[(0, 3, 2, 3), (0, 2, 0, 2)])
 
             assert (mask == np.array([[True, True, True],
@@ -297,7 +297,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
                                                   cosmic_ray_image=cosmic_rays)
 
             assert (mask == np.array([[False, False, False],
@@ -311,7 +311,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_parallel_buffer=1)
 
             assert (mask == np.array([[False, False, False],
@@ -323,7 +323,7 @@ class TestCIMask(object):
                                     [False, False, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_parallel_buffer=2)
 
             assert (mask == np.array([[False, True, False],
@@ -335,7 +335,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_serial_buffer=1)
 
             assert (mask == np.array([[False, False, False],
@@ -347,7 +347,7 @@ class TestCIMask(object):
                                     [True, False, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_serial_buffer=2)
 
             assert (mask == np.array([[False, False, False],
@@ -359,7 +359,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_diagonal_buffer=1)
 
             assert (mask == np.array([[False, False, False],
@@ -372,7 +372,7 @@ class TestCIMask(object):
                                     [False, False, False, False],
                                     [False, False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(4, 4), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(4, 4), frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_diagonal_buffer=2)
 
             assert (mask == np.array([[False, False, False, False],
@@ -387,7 +387,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_parallel_buffer=1)
 
             assert (mask == np.array([[False, False, False],
@@ -399,7 +399,7 @@ class TestCIMask(object):
                                     [False, False, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_parallel_buffer=2)
 
             assert (mask == np.array([[False, True, False],
@@ -411,7 +411,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_serial_buffer=1)
 
             assert (mask == np.array([[False, False, False],
@@ -423,7 +423,7 @@ class TestCIMask(object):
                                     [False, False, True],
                                     [False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_serial_buffer=2)
 
             assert (mask == np.array([[False, False, False],
@@ -435,7 +435,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_diagonal_buffer=1)
 
             assert (mask == np.array([[False, False, False],
@@ -448,7 +448,7 @@ class TestCIMask(object):
                                     [False, False, False, False],
                                     [False, False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(4, 4), frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(4, 4), frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_diagonal_buffer=2)
 
             assert (mask == np.array([[False, False, False, False],
@@ -463,7 +463,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_top_left(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_parallel_buffer=1)
 
             assert (mask == np.array([[False, True, False],
@@ -475,7 +475,7 @@ class TestCIMask(object):
                                     [False, False, False],
                                     [False, True, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_top_left(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_parallel_buffer=2)
 
             assert (mask == np.array([[False, True, False],
@@ -487,7 +487,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_top_left(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_serial_buffer=1)
 
             assert (mask == np.array([[False, False, False],
@@ -499,7 +499,7 @@ class TestCIMask(object):
                                     [True, False, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_top_left(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_serial_buffer=2)
 
             assert (mask == np.array([[False, False, False],
@@ -511,7 +511,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_top_left(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_diagonal_buffer=1)
 
             assert (mask == np.array([[False, True, True],
@@ -524,7 +524,7 @@ class TestCIMask(object):
                                     [False, False, False, False],
                                     [False, True, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(4, 4), frame_geometry=ci_frame.QuadGeometryEuclid.top_left(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(4, 4), frame_geometry=ci_frame.FrameGeometry.euclid_top_left(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_diagonal_buffer=2)
 
             assert (mask == np.array([[False, False, False, False],
@@ -539,7 +539,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_top_right(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_parallel_buffer=1)
 
             assert (mask == np.array([[False, True, False],
@@ -551,7 +551,7 @@ class TestCIMask(object):
                                     [False, False, False],
                                     [False, True, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_top_right(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_parallel_buffer=2)
             assert (mask == np.array([[False, True, False],
                                       [False, True, False],
@@ -562,7 +562,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_top_right(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_serial_buffer=1)
 
             assert (mask == np.array([[False, False, False],
@@ -574,7 +574,7 @@ class TestCIMask(object):
                                     [False, False, True],
                                     [False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_top_right(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_serial_buffer=2)
 
             assert (mask == np.array([[False, False, False],
@@ -586,7 +586,7 @@ class TestCIMask(object):
                                     [False, True, False],
                                     [False, False, False]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(3, 3), frame_geometry=ci_frame.FrameGeometry.euclid_top_right(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_diagonal_buffer=1)
 
             assert (mask == np.array([[True, True, False],
@@ -599,7 +599,7 @@ class TestCIMask(object):
                                     [False, False, False, False],
                                     [False, False, False, True]])
 
-            mask = msk.Mask.from_cosmic_ray_image(shape=(4, 4), frame_geometry=ci_frame.QuadGeometryEuclid.top_right(),
+            mask = msk.Mask.from_cosmic_ray_image(shape=(4, 4), frame_geometry=ci_frame.FrameGeometry.euclid_top_right(),
                                                   cosmic_ray_image=cosmic_rays, cosmic_ray_diagonal_buffer=2)
 
             assert (mask == np.array([[False, False, False, False],
@@ -611,7 +611,7 @@ class TestCIMask(object):
 class TestCIPreCTI(object):
 
     def test__simple_case__sets_up_post_cti_correctly(self, arctic_both, params_both):
-        frame_geometry = ci_frame.QuadGeometryEuclid.bottom_left()
+        frame_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
 
         ci_pre_cti = np.zeros((5, 5))
         ci_pre_cti[2, 2] = 10.0
@@ -634,7 +634,7 @@ class TestCISimulate(object):
         ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(5, 5))
 
         ci_data_simulate = ci_data.simulate(ci_pre_cti=ci_pre_cti,
-                                            frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                            frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
                                             ci_pattern=pattern, cti_settings=arctic_parallel,
                                             cti_params=params_parallel)
 
@@ -647,7 +647,7 @@ class TestCISimulate(object):
         ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(3, 3))
 
         ci_data_simulate = ci_data.simulate(ci_pre_cti=ci_pre_cti,
-                                            frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                            frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
                                             ci_pattern=pattern, cti_settings=arctic_parallel,
                                             cti_params=params_parallel, read_noise=1.0, noise_seed=1)
 
@@ -669,7 +669,7 @@ class TestCISimulate(object):
         cosmic_ray_image[2, 2] = 100.0
 
         ci_data_simulate = ci_data.simulate(ci_pre_cti=ci_pre_cti,
-                                            frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                            frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
                                             ci_pattern=pattern, cti_settings=arctic_parallel,
                                             cti_params=params_parallel,
                                             cosmic_ray_image=cosmic_ray_image)
@@ -700,7 +700,7 @@ class TestCISimulate(object):
         params_parallel = arctic_params.ArcticParams(parallel_species=parallel_species, parallel_ccd=parallel_ccd)
 
         ci_data_simulate = ci_data.simulate(ci_pre_cti=ci_pre_cti,
-                                            frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(),
+                                            frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
                                             ci_pattern=pattern, cti_settings=arctic_parallel,
                                             cti_params=params_parallel, use_parallel_poisson_densities=True)
 

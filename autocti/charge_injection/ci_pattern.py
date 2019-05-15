@@ -64,6 +64,18 @@ class CIPattern(object):
                 raise exc.CIPatternException(
                     'The charge injection ci_pattern regions are bigger than the image image_shape')
 
+    @property
+    def total_rows_min(self):
+        return np.min(list(map(lambda region : region.total_rows, self.regions)))
+
+    @property
+    def total_columns_min(self):
+        return np.min(list(map(lambda region : region.total_columns, self.regions)))
+
+    @property
+    def rows_between_regions(self):
+        return [self.regions[i+1].y0 - self.regions[i].y1 for i in range(len(self.regions)-1)]
+
 class CIPatternUniform(CIPattern):
     """ A uniform charge injection ci_pattern, which is defined by the regions it appears on the charge injection \
         ci_frame and its normalization.
