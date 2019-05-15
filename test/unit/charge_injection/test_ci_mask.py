@@ -42,7 +42,7 @@ class TestMaskedParallelFrontEdge:
 
         pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
-        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern)
 
         mask = ci_mask.CIMask.masked_parallel_front_edge_from_ci_frame(shape=(10, 3), ci_frame=frame, rows=(0, 2))
 
@@ -64,7 +64,7 @@ class TestMaskedParallelFrontEdge:
 
         pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
-        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern)
 
         mask = ci_mask.CIMask.masked_parallel_front_edge_from_ci_frame(shape=(10, 3), ci_frame=frame, rows=(0, 2), 
                                                                        invert=True)
@@ -86,7 +86,7 @@ class TestMaskedParallelFrontEdge:
 
         pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 1), (1, 4, 2, 3)])
 
-        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern)
 
         mask = ci_mask.CIMask.masked_parallel_front_edge_from_ci_frame(shape=(10, 3), ci_frame=frame, rows=(0, 2))
 
@@ -107,7 +107,7 @@ class TestMaskedParallelFrontEdge:
 
         pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
-        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), ci_pattern=pattern)
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.FrameGeometry.euclid_top_left(), ci_pattern=pattern)
 
         mask = ci_mask.CIMask.masked_parallel_front_edge_from_ci_frame(shape=(10, 3), ci_frame=frame, rows=(0, 2))
 
@@ -131,7 +131,7 @@ class TestMaskedParallelTrails:
         
         pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
-        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern)
 
         mask = ci_mask.CIMask.masked_parallel_trails_from_ci_frame(shape=(10, 3), ci_frame=frame, rows=(0, 4))
 
@@ -152,7 +152,7 @@ class TestMaskedParallelTrails:
         
         pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
-        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern)
 
         mask = ci_mask.CIMask.masked_parallel_trails_from_ci_frame(shape=(10, 3), ci_frame=frame, rows=(0, 4), 
                                                                    invert=True)
@@ -174,7 +174,7 @@ class TestMaskedParallelTrails:
         
         pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 1), (1, 4, 2, 3)])
 
-        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern)
 
         mask = ci_mask.CIMask.masked_parallel_trails_from_ci_frame(shape=(10, 3), ci_frame=frame, rows=(0, 4))
 
@@ -195,7 +195,7 @@ class TestMaskedParallelTrails:
         
         pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
-        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), ci_pattern=pattern)
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.FrameGeometry.euclid_top_left(), ci_pattern=pattern)
 
         mask = ci_mask.CIMask.masked_parallel_trails_from_ci_frame(shape=(10, 3), ci_frame=frame, rows=(0, 1))
 
@@ -219,7 +219,7 @@ class TestMaskedSerialFrontEdge:
 
         pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
-        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern)
 
         mask = ci_mask.CIMask.masked_serial_front_edge_from_ci_frame(shape=(3, 10), ci_frame=frame, columns=(0, 2))
 
@@ -233,7 +233,7 @@ class TestMaskedSerialFrontEdge:
 
         pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
-        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern)
 
         mask = ci_mask.CIMask.masked_serial_front_edge_from_ci_frame(shape=(3, 10), ci_frame=frame, columns=(0, 2),
                                                                      invert=True)
@@ -248,7 +248,7 @@ class TestMaskedSerialFrontEdge:
 
         pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 1, 1, 4), (2, 3, 1, 4)])
 
-        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern)
 
         mask = ci_mask.CIMask.masked_serial_front_edge_from_ci_frame(shape=(3, 10), ci_frame=frame, columns=(0, 3))
 
@@ -262,7 +262,7 @@ class TestMaskedSerialFrontEdge:
 
         pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
-        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern)
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(), ci_pattern=pattern)
 
         mask = ci_mask.CIMask.masked_serial_front_edge_from_ci_frame(shape=(3, 10), ci_frame=frame, columns=(0, 2))
 
@@ -279,7 +279,7 @@ class TestMaskedSerialTrails:
 
         pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
-        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern)
 
         mask = ci_mask.CIMask.masked_serial_trails_from_ci_frame(shape=(3, 10), ci_frame=frame, columns=(0, 6))
 
@@ -293,7 +293,7 @@ class TestMaskedSerialTrails:
 
         pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
-        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern)
 
         mask = ci_mask.CIMask.masked_serial_trails_from_ci_frame(shape=(3, 10), ci_frame=frame, columns=(0, 6), 
                                                                  invert=True)
@@ -308,7 +308,7 @@ class TestMaskedSerialTrails:
 
         pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 1, 1, 4), (2, 3, 1, 4)])
 
-        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), ci_pattern=pattern)
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern)
 
         mask = ci_mask.CIMask.masked_serial_trails_from_ci_frame(shape=(3, 10), ci_frame=frame, columns=(0, 6))
 
@@ -322,7 +322,7 @@ class TestMaskedSerialTrails:
 
         pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
-        frame = ci_frame.ChInj(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), ci_pattern=pattern)
+        frame = ci_frame.ChInj(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(), ci_pattern=pattern)
 
         mask = ci_mask.CIMask.masked_serial_trails_from_ci_frame(shape=(3, 10), ci_frame=frame, columns=(0, 1))
 

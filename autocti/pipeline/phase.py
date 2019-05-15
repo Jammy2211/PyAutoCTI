@@ -90,18 +90,6 @@ class Phase(ph.AbstractPhase):
                          optimizer_class=optimizer_class)
 
     @property
-    def constant(self):
-        """
-        Convenience method
-
-        Returns
-        -------
-        ModelInstance
-            A model instance comprising all the constant objects in this analysis
-        """
-        return self.optimizer.constant
-
-    @property
     def variable(self):
         """
         Convenience method
