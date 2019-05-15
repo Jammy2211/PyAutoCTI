@@ -1,4 +1,4 @@
-from autocti.data.plotters import array_plotters
+from autocti.plotters import line_plotters, array_plotters
 
 
 def plot_image(
@@ -103,3 +103,84 @@ def plot_signal_to_noise_map(
         cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
         title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
         output_path=output_path, output_format=output_format, output_filename=output_filename)
+
+def plot_image_line(
+        image, line_region, ci_frame, mask=None, as_subplot=False,
+        figsize=(7, 7),
+        title='Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        output_path=None, output_format='show', output_filename='image_line'):
+    """Plot the observed image of the ccd data.
+
+    Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    image : CIFrame
+        The image of the data.
+    """
+    line_plotters.plot_line_from_array_and_ci_frame(
+        array=image, line_region=line_region, ci_frame=ci_frame, mask=mask, as_subplot=as_subplot,
+       figsize=figsize,
+       title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
+       output_path=output_path, output_format=output_format, output_filename=output_filename)
+    
+def plot_noise_map_line(
+        noise_map, line_region, ci_frame, mask=None, as_subplot=False,
+        figsize=(7, 7),
+        title='Noise-Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        output_path=None, output_format='show', output_filename='noise_map_line'):
+    """Plot the observed noise_map of the ccd data.
+
+    Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    noise_map : CIFrame
+        The noise_map of the data.
+    """
+    line_plotters.plot_line_from_array_and_ci_frame(
+        array=noise_map, line_region=line_region, ci_frame=ci_frame, mask=mask,
+        as_subplot=as_subplot,
+        figsize=figsize,
+        title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
+        output_path=output_path, output_format=output_format, output_filename=output_filename)
+    
+def plot_ci_pre_cti_line(
+        ci_pre_cti, line_region, ci_frame, mask=None, as_subplot=False,
+        figsize=(7, 7),
+        title='CI Pre-CTI Image', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        output_path=None, output_format='show', output_filename='ci_pre_cti_line'):
+    """Plot the observed ci_pre_cti of the ccd data.
+
+    Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    ci_pre_cti : CIFrame
+        The ci_pre_cti of the data.
+    """
+    line_plotters.plot_line_from_array_and_ci_frame(
+        array=ci_pre_cti, line_region=line_region, ci_frame=ci_frame, mask=mask, as_subplot=as_subplot,
+       figsize=figsize,
+       title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
+       output_path=output_path, output_format=output_format, output_filename=output_filename)
+    
+def plot_signal_to_noise_map_line(
+        signal_to_noise_map, line_region, ci_frame, mask=None, as_subplot=False,
+        figsize=(7, 7),
+        title='Signal-To-Noise Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        output_path=None, output_format='show', output_filename='signal_to_noise_map_line'):
+    """Plot the observed signal_to_noise_map of the ccd data.
+
+    Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    signal_to_noise_map : CIFrame
+        The signal_to_noise_map of the data.
+    """
+    line_plotters.plot_line_from_array_and_ci_frame(
+        array=signal_to_noise_map, line_region=line_region, ci_frame=ci_frame, mask=mask, as_subplot=as_subplot,
+       figsize=figsize,
+       title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
+       output_path=output_path, output_format=output_format, output_filename=output_filename)
