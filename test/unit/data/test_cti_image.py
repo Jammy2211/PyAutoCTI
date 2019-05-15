@@ -64,30 +64,30 @@ class TestImageFrame:
     class TestConstructor:
 
         def test__geometry_is_bottom_left__loads_data_and_dimensions(self, euclid_data):
-            image = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_left(), array=euclid_data)
+            image = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(), array=euclid_data)
 
-            assert type(image.frame_geometry) == ci_frame.QuadGeometryEuclid
+            assert type(image.frame_geometry) == ci_frame.FrameGeometry
             assert image.shape == (2048, 2066)
             assert (image == np.zeros((2048, 2066))).all()
 
         def test__geometry_is_bottom_right__loads_data_and_dimensions(self, euclid_data):
-            image = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.bottom_right(), array=euclid_data)
+            image = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(), array=euclid_data)
 
-            assert type(image.frame_geometry) == ci_frame.QuadGeometryEuclid
+            assert type(image.frame_geometry) == ci_frame.FrameGeometry
             assert image.shape == (2048, 2066)
             assert (image == np.zeros((2048, 2066))).all()
 
         def test__geometry_is_top_left__loads_data_and_dimensions(self, euclid_data):
-            image = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_left(), array=euclid_data)
+            image = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_left(), array=euclid_data)
 
-            assert type(image.frame_geometry) == ci_frame.QuadGeometryEuclid
+            assert type(image.frame_geometry) == ci_frame.FrameGeometry
             assert image.shape == (2048, 2066)
             assert (image == np.zeros((2048, 2066))).all()
 
         def test__geometry_is_top_right__loads_data_and_dimensions(self, euclid_data):
-            image = cti_image.ImageFrame(frame_geometry=ci_frame.QuadGeometryEuclid.top_right(), array=euclid_data)
+            image = cti_image.ImageFrame(frame_geometry=ci_frame.FrameGeometry.euclid_top_right(), array=euclid_data)
 
-            assert type(image.frame_geometry) == ci_frame.QuadGeometryEuclid
+            assert type(image.frame_geometry) == ci_frame.FrameGeometry
             assert image.shape == (2048, 2066)
             assert (image == np.zeros((2048, 2066))).all()
 
@@ -97,126 +97,126 @@ class TestQuadrantEuclidGeometry:
         class TestLeftSide:
 
             def test__ccd_on_left_side_row_1__quadrant_id_E__chooses_bottom_left_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text1', quad_id='E')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text1', quad_id='E')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_left_side_row_2__quadrant_id_E__chooses_bottom_left_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text2', quad_id='E')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text2', quad_id='E')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_left_side_row_3__quadrant_id_E__chooses_bottom_left_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text3', quad_id='E')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text3', quad_id='E')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_left_side_row_1__quadrant_id_F__chooses_bottom_right_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text1', quad_id='F')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text1', quad_id='F')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_left_side_row_2__quadrant_id_F__chooses_bottom_right_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text2', quad_id='F')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text2', quad_id='F')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_left_side_row_3__quadrant_id_F__chooses_bottom_right_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text3', quad_id='F')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text3', quad_id='F')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_left_side_row_1__quadrant_id_G__chooses_top_right_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text1', quad_id='G')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text1', quad_id='G')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_left_side_row_2__quadrant_id_G__chooses_top_right_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text2', quad_id='G')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text2', quad_id='G')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_left_side_row_3__quadrant_id_G__chooses_top_right_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text3', quad_id='G')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text3', quad_id='G')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_left_side_row_1__quadrant_id_H__chooses_top_left_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text1', quad_id='H')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text1', quad_id='H')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_left_side_row_2__quadrant_id_H__chooses_top_left_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text2', quad_id='H')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text2', quad_id='H')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_left_side_row_3__quadrant_id_H__chooses_top_left_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text3', quad_id='H')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text3', quad_id='H')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
         class TestRightSide:
 
             def test__ccd_on_right_side_row_4__quadrant_id_E__chooses_top_right_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text4', quad_id='E')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text4', quad_id='E')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_right_side_row_5__quadrant_id_E__chooses_top_right_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text5', quad_id='E')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text5', quad_id='E')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_right_side_row_6__quadrant_id_E__chooses_top_right_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text6', quad_id='E')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text6', quad_id='E')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_right_side_row_4__quadrant_id_F__chooses_top_left_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text4', quad_id='F')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text4', quad_id='F')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_right_side_row_5__quadrant_id_F__chooses_top_left_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text5', quad_id='F')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text5', quad_id='F')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_right_side_row_6__quadrant_id_F__chooses_top_left_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text6', quad_id='F')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text6', quad_id='F')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_right_side_row_4__quadrant_id_G__chooses_bottom_left_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text4', quad_id='G')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text4', quad_id='G')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_right_side_row_5__quadrant_id_G__chooses_bottom_left_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text5', quad_id='G')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text5', quad_id='G')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_right_side_row_6__quadrant_id_G__chooses_bottom_left_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text6', quad_id='G')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text6', quad_id='G')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_right_side_row_4__quadrant_id_H__chooses_bottom_right_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text4', quad_id='H')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text4', quad_id='H')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_right_side_row_5__quadrant_id_H__chooses_bottom_right_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text5', quad_id='H')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text5', quad_id='H')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
             def test__ccd_on_right_side_row_6__quadrant_id_H__chooses_bottom_right_quadrant(self):
-                quadrant = ci_frame.QuadGeometryEuclid.from_ccd_and_quadrant_id(ccd_id='text6', quad_id='H')
+                quadrant = ci_frame.FrameGeometry.euclid_from_ccd_and_quadrant_id(ccd_id='text6', quad_id='H')
 
-                assert type(quadrant) == ci_frame.QuadGeometryEuclid
+                assert type(quadrant) == ci_frame.FrameGeometry
 
 
 class TestQuadrantGeometryEuclidBottomLeft:
@@ -224,9 +224,9 @@ class TestQuadrantGeometryEuclidBottomLeft:
     class TestConstrutor:
 
         def test__sets_up_quadrant__including_correct_scans(self):
-            quadrant = ci_frame.QuadGeometryEuclid.bottom_left()
+            quadrant = ci_frame.FrameGeometry.euclid_bottom_left()
 
-            assert type(quadrant) == ci_frame.QuadGeometryEuclid
+            assert type(quadrant) == ci_frame.FrameGeometry
 
             assert quadrant.parallel_overscan == (2066, 2086, 51, 2099)
             assert quadrant.serial_prescan == (0, 2086, 0, 51)
@@ -237,7 +237,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
         def test__rotate_for_parallel_clocking__oriented_as_described_in_documentation(self, quadrant_data):
             # Quadrant 0 - Bottom left panel of Euclid CCD - input ci_pre_ctis should not be rotated for parallel cti.
 
-            quadrant = ci_frame.QuadGeometryEuclid.bottom_left()
+            quadrant = ci_frame.FrameGeometry.euclid_bottom_left()
 
             quadrant_rotated = quadrant.rotate_for_parallel_cti(image=quadrant_data)
             assert (quadrant_rotated == quadrant_data).all()
@@ -245,7 +245,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
         def test__rotate_for_parallel_clocking_and_back_again__returns_to_original_orientation(self, quadrant_data):
             # Quadrant 0 - Bottom left panel of Euclid CCD - input ci_pre_ctis should not be rotated for parallel cti.
 
-            quadrant = ci_frame.QuadGeometryEuclid.bottom_left()
+            quadrant = ci_frame.FrameGeometry.euclid_bottom_left()
             quadrant_rotated = quadrant.rotate_for_parallel_cti(image=quadrant_data)
             quadrant_rotated_back = quadrant.rotate_for_parallel_cti(image=quadrant_rotated)
 
@@ -255,7 +255,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
             # Quadrant 0 - Bottom left panel of Euclid CCD - input ci_pre_ctis should be rotated 90 degrees for
             # serial cti.
 
-            quadrant = ci_frame.QuadGeometryEuclid.bottom_left()
+            quadrant = ci_frame.FrameGeometry.euclid_bottom_left()
 
             quadrant_rotated = quadrant.rotate_before_serial_cti(image_pre_clocking=quadrant_data)
             assert (quadrant_rotated == quadrant_data.T).all()
@@ -264,7 +264,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
             # Quadrant 0 - Bottom left panel of Euclid CCD - input ci_pre_ctis should be rotated 90 degrees for
             # serial cti.
 
-            quadrant = ci_frame.QuadGeometryEuclid.bottom_left()
+            quadrant = ci_frame.FrameGeometry.euclid_bottom_left()
             quadrant_rotated = quadrant.rotate_before_serial_cti(image_pre_clocking=quadrant_data)
             quadrant_rotated_back = quadrant.rotate_after_serial_cti(image_post_clocking=quadrant_rotated)
 
@@ -275,9 +275,9 @@ class TestQuadrantGeometryEuclidBottomRight:
     class TestConstrutor:
 
         def test__sets_up_quadrant__including_correct_overscans(self):
-            quadrant = ci_frame.QuadGeometryEuclid.bottom_right()
+            quadrant = ci_frame.FrameGeometry.euclid_bottom_right()
 
-            assert type(quadrant) == ci_frame.QuadGeometryEuclid
+            assert type(quadrant) == ci_frame.FrameGeometry
             assert quadrant.parallel_overscan == (2066, 2086, 20, 2068)
             assert quadrant.serial_prescan == (0, 2086, 2068, 2119)
             assert quadrant.serial_overscan == (0, 2086, 0, 20)
@@ -287,7 +287,7 @@ class TestQuadrantGeometryEuclidBottomRight:
         def test__rotate_for_parallel_clocking__oriented_as_described_in_documentation(self, quadrant_data):
             # Quadrant 1 - Bottom right panel of Euclid CCD - input ci_pre_ctis should not be rotateped for parallel cti.
 
-            quadrant = ci_frame.QuadGeometryEuclid.bottom_right()
+            quadrant = ci_frame.FrameGeometry.euclid_bottom_right()
 
             quadrant_rotated = quadrant.rotate_for_parallel_cti(image=quadrant_data)
             assert (quadrant_rotated == quadrant_data).all()
@@ -295,20 +295,20 @@ class TestQuadrantGeometryEuclidBottomRight:
         def test__rotate_for_parallel_clocking_and_back_again__returns_to_original_orientation(self, quadrant_data):
             # Quadrant 1 - Bottom right panel of Euclid CCD - input ci_pre_ctis should not be rotateped for parallel cti.
 
-            quadrant = ci_frame.QuadGeometryEuclid.bottom_right()
+            quadrant = ci_frame.FrameGeometry.euclid_bottom_right()
             quadrant_rotated = quadrant.rotate_for_parallel_cti(image=quadrant_data)
             quadrant_rotated_back = quadrant.rotate_for_parallel_cti(image=quadrant_rotated)
 
             assert (quadrant_rotated_back == quadrant_data).all()
 
         def test__rotate_for_serial_clocking__oriented_as_described_in_documentation(self, quadrant_data):
-            quadrant = ci_frame.QuadGeometryEuclid.bottom_right()
+            quadrant = ci_frame.FrameGeometry.euclid_bottom_right()
 
             quadrant_rotated = quadrant.rotate_before_serial_cti(image_pre_clocking=quadrant_data)
             assert (quadrant_rotated == np.fliplr(quadrant_data).T).all()
 
         def test__rotate_for_serial_clocking_and_back_again__returns_to_original_orientation(self, quadrant_data):
-            quadrant = ci_frame.QuadGeometryEuclid.bottom_right()
+            quadrant = ci_frame.FrameGeometry.euclid_bottom_right()
 
             quadrant_rotated = quadrant.rotate_before_serial_cti(image_pre_clocking=quadrant_data)
             quadrant_rotated_back = quadrant.rotate_after_serial_cti(image_post_clocking=quadrant_rotated)
@@ -319,9 +319,9 @@ class TestQuadrantGeometryEuclidTopLeft:
     class TestConstrutor:
 
         def test__sets_up_quadrant__including_correct_overscans(self):
-            quadrant = ci_frame.QuadGeometryEuclid.top_left()
+            quadrant = ci_frame.FrameGeometry.euclid_top_left()
 
-            assert type(quadrant) == ci_frame.QuadGeometryEuclid
+            assert type(quadrant) == ci_frame.FrameGeometry
             assert quadrant.parallel_overscan == (0, 20, 51, 2099)
             assert quadrant.serial_prescan == (0, 2086, 0, 51)
             assert quadrant.serial_overscan == (0, 2086, 2099, 2119)
@@ -331,7 +331,7 @@ class TestQuadrantGeometryEuclidTopLeft:
         def test__rotate_for_parallel_clocking__oriented_as_described_in_documentation(self, quadrant_data):
             # Quadrant 2 - top left panel of Euclid CCD - input ci_pre_ctis should be rotateped upside-down for parallel cti
 
-            quadrant = ci_frame.QuadGeometryEuclid.top_left()
+            quadrant = ci_frame.FrameGeometry.euclid_top_left()
 
             quadrant_rotated = quadrant.rotate_for_parallel_cti(image=quadrant_data)
             assert (quadrant_rotated == np.flipud(quadrant_data)).all()
@@ -339,7 +339,7 @@ class TestQuadrantGeometryEuclidTopLeft:
         def test__rotate_for_parallel_clocking_and_back_again__returns_to_original_orientation(self, quadrant_data):
             # Quadrant 2 - top left panel of Euclid CCD - input ci_pre_ctis should be rotateped upside-down for parallel cti
 
-            quadrant = ci_frame.QuadGeometryEuclid.top_left()
+            quadrant = ci_frame.FrameGeometry.euclid_top_left()
 
             quadrant_rotated = quadrant.rotate_for_parallel_cti(image=quadrant_data)
             quadrant_rotated_back = quadrant.rotate_for_parallel_cti(image=quadrant_rotated)
@@ -349,7 +349,7 @@ class TestQuadrantGeometryEuclidTopLeft:
         def test__rotate_for_serial_clocking__oriented_as_described_in_documentation(self, quadrant_data):
             # Quadrant 2 - top left panel of Euclid CCD - input ci_pre_ctis should be rotated 90 degrees for serial cti.
 
-            quadrant = ci_frame.QuadGeometryEuclid.top_left()
+            quadrant = ci_frame.FrameGeometry.euclid_top_left()
 
             quadrant_rotated = quadrant.rotate_before_serial_cti(image_pre_clocking=quadrant_data)
             assert (quadrant_rotated == quadrant_data.T).all()
@@ -357,7 +357,7 @@ class TestQuadrantGeometryEuclidTopLeft:
         def test__rotate_for_serial_clocking_and_back_again__returns_to_original_orientation(self, quadrant_data):
             # Quadrant 2 - top left panel of Euclid CCD - input ci_pre_ctis should be rotated 90 degrees for serial cti.
 
-            quadrant = ci_frame.QuadGeometryEuclid.top_left()
+            quadrant = ci_frame.FrameGeometry.euclid_top_left()
 
             quadrant_rotated = quadrant.rotate_before_serial_cti(image_pre_clocking=quadrant_data)
             quadrant_rotated_back = quadrant.rotate_after_serial_cti(image_post_clocking=quadrant_rotated)
@@ -368,9 +368,9 @@ class TestQuadrantGeometryEuclidTopRight:
     class TestConstrutor:
 
         def test__sets_up_quadrant__including_correct_overscans(self):
-            quadrant = ci_frame.QuadGeometryEuclid.top_right()
+            quadrant = ci_frame.FrameGeometry.euclid_top_right()
 
-            assert type(quadrant) == ci_frame.QuadGeometryEuclid
+            assert type(quadrant) == ci_frame.FrameGeometry
             assert quadrant.parallel_overscan == (0, 20, 20, 2068)
             assert quadrant.serial_prescan == (0, 2086, 2068, 2119)
             assert quadrant.serial_overscan == (0, 2086, 0, 20)
@@ -380,7 +380,7 @@ class TestQuadrantGeometryEuclidTopRight:
         def test__rotate_for_parallel_clocking__oriented_as_described_in_documentation(self, quadrant_data):
             # Quadrant 3 - top right panel of Euclid CCD - input ci_pre_ctis should be rotateped upside-down for parallel cti.
 
-            quadrant = ci_frame.QuadGeometryEuclid.top_right()
+            quadrant = ci_frame.FrameGeometry.euclid_top_right()
 
             quadrant_rotated = quadrant.rotate_for_parallel_cti(image=quadrant_data)
             assert (quadrant_rotated == np.flipud(quadrant_data)).all()
@@ -388,7 +388,7 @@ class TestQuadrantGeometryEuclidTopRight:
         def test__rotate_for_parallel_clocking_and_back_again__returns_to_original_orientation(self, quadrant_data):
             # Quadrant 3 - top right panel of Euclid CCD - input ci_pre_ctis should be rotateped upside-down for parallel cti.
 
-            quadrant = ci_frame.QuadGeometryEuclid.top_right()
+            quadrant = ci_frame.FrameGeometry.euclid_top_right()
 
             quadrant_rotated = quadrant.rotate_for_parallel_cti(image=quadrant_data)
             quadrant_rotated_back = quadrant.rotate_for_parallel_cti(image=quadrant_rotated)
@@ -397,7 +397,7 @@ class TestQuadrantGeometryEuclidTopRight:
         def test__rotate_for_serial_clocking__oriented_as_described_in_documentation(self, quadrant_data):
             # Quadrant 3 - top right panel of Euclid CCD - input ci_pre_ctis should be rotated 270 degrees for serial cti.
 
-            quadrant = ci_frame.QuadGeometryEuclid.top_right()
+            quadrant = ci_frame.FrameGeometry.euclid_top_right()
 
             quadrant_rotated = quadrant.rotate_before_serial_cti(image_pre_clocking=quadrant_data)
             assert (quadrant_rotated == np.fliplr(quadrant_data).T).all()
@@ -405,7 +405,7 @@ class TestQuadrantGeometryEuclidTopRight:
         def test__rotate_for_serial_clocking_and_back_again__returns_to_original_orientation(self, quadrant_data):
             # Quadrant 3 - top right panel of Euclid CCD - input ci_pre_ctis should be rotated 270 degrees for serial cti.
 
-            quadrant = ci_frame.QuadGeometryEuclid.top_right()
+            quadrant = ci_frame.FrameGeometry.euclid_top_right()
 
             quadrant_rotated = quadrant.rotate_before_serial_cti(image_pre_clocking=quadrant_data)
             quadrant_rotated_back = quadrant.rotate_after_serial_cti(image_post_clocking=quadrant_rotated)

@@ -1010,6 +1010,7 @@ class ChInj(object):
         rows_between_regions.append(rows_to_image_edge)
         return np.min(rows_between_regions)
 
+
 class Region(object):
 
     def __init__(self, region):
@@ -1281,78 +1282,22 @@ class FrameGeometry(object):
     def serial_trails_columns(self):
         return self.serial_overscan[3] - self.serial_overscan[2]
 
-class QuadGeometryEuclid(FrameGeometry):
-
-    def __init__(self, corner, parallel_overscan, serial_prescan, serial_overscan):
-        """Abstract class for the ci_frame geometry of Euclid quadrants. CTI uses a bias corrected raw VIS ci_frame, which   
-         is  described at http://euclid.esac.esa.int/dm/dpdd/latest/le1dpd/dpcards/le1_visrawframe.html
-
-        A ImageFrame is stored as a 2D NumPy array. When an image is passed to arctic, clocking goes towards the 'top'
-        of the NumPy array (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the array (e.g. the   
-        final row).
-
-        Arctic has no in-built functionality for changing the direction of clocking depending on the input   
-        configuration file. Therefore, image rotations are handled before arctic is called, using the functions   
-        defined in this class (and its children). These routines define how an image is rotated before parallel   
-        and serial clocking with arctic. They also define how to reorient the image to its original orientation after   
-        clocking with arctic is performed.
-
-        A Euclid CCD is defined as below:
-
-        ---KEY---
-        ---------
-
-        [] = read-out electronics
-
-        [==========] = read-out register
-
-        [xxxxxxxxxx]
-        [xxxxxxxxxx] = CCD panel
-        [xxxxxxxxxx]
-
-        P = Parallel Direction
-        S = Serial Direction
-
-             <--------S-----------   ---------S----------->
-        [] [========= 2 =========] [========= 3 =========] []          |
-        /    [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  /          |
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | Direction arctic
-        P   [xxxxxxxxx 2 xxxxxxxxx] [xxxxxxxxx 3 xxxxxxxxx]  P         | clocks an image
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | without any rotation
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | (e.g. towards row 0
-                                                                       | of the NumPy array)
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-        P   [xxxxxxxxx 0 xxxxxxxxx] [xxxxxxxxx 1 xxxxxxxxx] P          |
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-            [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]            |
-                                                                        
-        [] [========= 0 =========] [========= 1 =========] []
-            <---------S----------   ----------S----------->
-
-        Note that the arrow on the right defines the direction of clocking by arctic without any rotation. Therefore,   
-        there are 8 circumstances of how arctic requires an image to be rotated before clocking:
-
-        - Quadrant 0 - QuadGeometryEuclid.bottom_left()  - Parallel Clocking - No rotation.
-        - Quadrant 0 - QuadGeometryEuclid.bottom_left()  - Serial Clocking   - Rotation 90 degrees clockwise.
-        - Quadrant 1 - QuadGeometryEuclid.bottom_right() - Parallel Clocking - No rotation.
-        - Quadrant 1 - QuadGeometryEuclid.bottom_right() - Serial Clocking   - Rotation 270 degrees clockwise.
-        - Quadrant 2 - QuadGeometryEuclid.top_left()     - Parallel Clocking - Rotation 180 degrees.
-        - Quadrant 2 - QuadGeometryEuclid.top_left()     - Serial Clocking   - Rotation 90 degrees clockwise.
-        - Quadrant 3 - QuadGeometryEuclid.top_right()    - Parallel Clocking - Rotation 180 degrees.
-        - Quadrant 3 - QuadGeometryEuclid.top_right()    - Serial Clocking   - Rotation 270 degrees clockwise
-
-        After clocking has been performed with arctic (and CTI is added / corrected), it must be re-rotated back to   
-        its original orientation. This rotation is the reverse of what is specified above.
-
-        Rotations are performed using flipup / fliplr routines, but will ultimately use the Euclid Image Tools library.
-
-        """
-        super(QuadGeometryEuclid, self).__init__(corner=corner, parallel_overscan=parallel_overscan,
-                                                 serial_prescan=serial_prescan, serial_overscan=serial_overscan)
+    @classmethod
+    def euclid_parallel_line(cls):
+        return FrameGeometry(corner=(0,0),
+                             parallel_overscan=Region((2066, 2086, 0, 1)),
+                             serial_prescan=None,
+                             serial_overscan=None)
 
     @classmethod
-    def from_ccd_and_quadrant_id(cls, ccd_id, quad_id):
+    def euclid_serial_line(cls):
+        return FrameGeometry(corner=(0, 0),
+                             parallel_overscan=None,
+                             serial_prescan=Region((0, 1, 0, 51)),
+                             serial_overscan=Region((0, 1, 2099, 2119)))
+
+    @classmethod
+    def euclid_from_ccd_and_quadrant_id(cls, ccd_id, quad_id):
         """Before reading this docstring, read the docstring for the __init__function above.
 
         In the Euclid FPA, the quadrant id ('E', 'F', 'G', 'H') depends on whether the CCD is located   
@@ -1407,49 +1352,49 @@ class QuadGeometryEuclid(FrameGeometry):
         row_index = ccd_id[-1]
 
         if (row_index in '123') and (quad_id == 'E'):
-            return QuadGeometryEuclid.bottom_left()
+            return FrameGeometry.euclid_bottom_left()
         elif (row_index in '123') and (quad_id == 'F'):
-            return QuadGeometryEuclid.bottom_right()
+            return FrameGeometry.euclid_bottom_right()
         elif (row_index in '123') and (quad_id == 'G'):
-            return QuadGeometryEuclid.top_right()
+            return FrameGeometry.euclid_top_right()
         elif (row_index in '123') and (quad_id == 'H'):
-            return QuadGeometryEuclid.top_left()
+            return FrameGeometry.euclid_top_left()
         elif (row_index in '456') and (quad_id == 'E'):
-            return QuadGeometryEuclid.top_right()
+            return FrameGeometry.euclid_top_right()
         elif (row_index in '456') and (quad_id == 'F'):
-            return QuadGeometryEuclid.top_left()
+            return FrameGeometry.euclid_top_left()
         elif (row_index in '456') and (quad_id == 'G'):
-            return QuadGeometryEuclid.bottom_left()
+            return FrameGeometry.euclid_bottom_left()
         elif (row_index in '456') and (quad_id == 'H'):
-            return QuadGeometryEuclid.bottom_right()
+            return FrameGeometry.euclid_bottom_right()
 
     @classmethod
-    def bottom_left(cls):
-        return QuadGeometryEuclid(corner=(0, 0),
-                                  parallel_overscan=Region((2066, 2086, 51, 2099)),
-                                  serial_prescan=Region((0, 2086, 0, 51)),
-                                  serial_overscan=Region((0, 2086, 2099, 2119)))
+    def euclid_bottom_left(cls):
+        return FrameGeometry(corner=(0, 0),
+                             parallel_overscan=Region((2066, 2086, 51, 2099)),
+                             serial_prescan=Region((0, 2086, 0, 51)),
+                             serial_overscan=Region((0, 2086, 2099, 2119)))
 
     @classmethod
-    def bottom_right(cls):
-        return QuadGeometryEuclid(corner=(0, 1),
-                                  parallel_overscan=Region((2066, 2086, 20, 2068)),
-                                  serial_prescan=Region((0, 2086, 2068, 2119)),
-                                  serial_overscan=Region((0, 2086, 0, 20)))
+    def euclid_bottom_right(cls):
+        return FrameGeometry(corner=(0, 1),
+                             parallel_overscan=Region((2066, 2086, 20, 2068)),
+                             serial_prescan=Region((0, 2086, 2068, 2119)),
+                             serial_overscan=Region((0, 2086, 0, 20)))
 
     @classmethod
-    def top_left(cls):
-        return QuadGeometryEuclid(corner=(1, 0),
-                                  parallel_overscan=Region((0, 20, 51, 2099)),
-                                  serial_prescan=Region((0, 2086, 0, 51)),
-                                  serial_overscan=Region((0, 2086, 2099, 2119)))
+    def euclid_top_left(cls):
+        return FrameGeometry(corner=(1, 0),
+                             parallel_overscan=Region((0, 20, 51, 2099)),
+                             serial_prescan=Region((0, 2086, 0, 51)),
+                             serial_overscan=Region((0, 2086, 2099, 2119)))
 
     @classmethod
-    def top_right(cls):
-        return QuadGeometryEuclid(corner=(1, 1),
-                                  parallel_overscan=Region((0, 20, 20, 2068)),
-                                  serial_prescan=Region((0, 2086, 2068, 2119)),
-                                  serial_overscan=Region((0, 2086, 0, 20)))
+    def euclid_top_right(cls):
+        return FrameGeometry(corner=(1, 1),
+                             parallel_overscan=Region((0, 20, 20, 2068)),
+                             serial_prescan=Region((0, 2086, 2068, 2119)),
+                             serial_overscan=Region((0, 2086, 0, 20)))
 
 
 def flip(image):

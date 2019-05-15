@@ -33,24 +33,20 @@ def do_something():
 class MockResults(object):
     def __init__(self, ci_post_ctis):
         self.ci_post_ctis = ci_post_ctis
-        self.constant = mm.ModelInstance()
         self.variable = mm.ModelMapper()
-
+        self.constant = mm.ModelMapper()
 
 class NLO(nl.NonLinearOptimizer):
 
     def fit(self, analysis):
         class Fitness(object):
 
-            def __init__(self, instance_from_physical_vector, constant):
+            def __init__(self, instance_from_physical_vector):
                 self.result = None
                 self.instance_from_physical_vector = instance_from_physical_vector
-                self.constant = constant
 
             def __call__(self, vector):
                 instance = self.instance_from_physical_vector(vector)
-                for key, value in self.constant.__dict__.items():
-                    setattr(instance, key, value)
 
                 likelihood = analysis.fit(instance)
                 self.result = nl.Result(instance, likelihood)
@@ -58,7 +54,7 @@ class NLO(nl.NonLinearOptimizer):
                 # Return Chi squared
                 return -2 * likelihood
 
-        fitness_function = Fitness(self.variable.instance_from_physical_vector, self.constant)
+        fitness_function = Fitness(self.variable.instance_from_physical_vector)
         fitness_function(self.variable.prior_count * [0.5])
 
         return fitness_function.result
@@ -83,7 +79,7 @@ def make_cti_settings():
 
 @pytest.fixture(name="frame_geometry")
 def make_frame_geometry():
-    return ci_frame.QuadGeometryEuclid.bottom_left()
+    return ci_frame.FrameGeometry.euclid_bottom_left()
 
 
 @pytest.fixture(name="ci_pattern")
@@ -756,7 +752,7 @@ class TestResult(object):
                                  phase_name='test_phase')
 
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
-        instance = phase.constant
+        instance = phase.variable.instance_from_unit_vector([])
 
         fits = analysis.fits_of_ci_data_extracted_for_instance(instance=instance)
         assert fits[0].ci_pre_cti.shape == (3, 1)
@@ -773,7 +769,7 @@ class TestResult(object):
                                  phase_name='test_phase')
 
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
-        instance = phase.constant
+        instance = phase.variable.instance_from_unit_vector([])
         cti_params = ph.cti_params_for_instance(instance=instance)
         fit_figure_of_merit = analysis.fit(instance=instance)
 
