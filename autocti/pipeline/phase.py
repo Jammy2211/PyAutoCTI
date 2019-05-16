@@ -243,7 +243,7 @@ class Phase(ph.AbstractPhase):
                 The charge injection ci_data-sets.
             """
 
-            self.ci_datas_extracted = ci_datas_extracted
+            self.ci_datas_extracted = ci_datas_full
             self.ci_datas_full = ci_datas_full
             self.cti_settings = cti_settings
             self.parallel_total_density_range = parallel_total_density_range
@@ -451,6 +451,28 @@ class ParallelPhase(Phase):
 
     class Analysis(Phase.Analysis):
 
+        def __init__(self, ci_datas_extracted, ci_datas_full, cti_settings,
+                     serial_total_density_range, parallel_total_density_range, phase_name, results=None,
+                     pool=None):
+            """
+            An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \
+            set of objects describing a model and determines how well they fit the image.
+
+            Params
+            ----------
+            ci_data : [CIImage.CIImage]
+                The charge injection ci_data-sets.
+            """
+
+            super().__init__(ci_datas_extracted=ci_datas_extracted, ci_datas_full=ci_datas_full,
+                             cti_settings=cti_settings,
+                             serial_total_density_range=serial_total_density_range,
+                             parallel_total_density_range=parallel_total_density_range, phase_name=phase_name,
+                             results=results, pool=pool)
+
+            self.plot_serial_front_edge_line = False
+            self.plot_serial_trails_line = False
+
         def check_trap_lifetimes_are_ascending(self, cti_params):
 
             trap_lifetimes = [parallel_species.trap_lifetime for parallel_species in cti_params.parallel_species]
@@ -505,6 +527,28 @@ class SerialPhase(Phase):
                                             mask=mask)
 
     class Analysis(Phase.Analysis):
+
+        def __init__(self, ci_datas_extracted, ci_datas_full, cti_settings,
+                     serial_total_density_range, parallel_total_density_range, phase_name, results=None,
+                     pool=None):
+            """
+            An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \
+            set of objects describing a model and determines how well they fit the image.
+
+            Params
+            ----------
+            ci_data : [CIImage.CIImage]
+                The charge injection ci_data-sets.
+            """
+
+            super().__init__(ci_datas_extracted=ci_datas_extracted, ci_datas_full=ci_datas_full,
+                             cti_settings=cti_settings,
+                             serial_total_density_range=serial_total_density_range,
+                             parallel_total_density_range=parallel_total_density_range, phase_name=phase_name,
+                             results=results, pool=pool)
+
+            self.plot_parallel_front_edge_line = False
+            self.plot_parallel_trails_line = False
 
         def check_trap_lifetimes_are_ascending(self, cti_params):
             trap_lifetimes = [serial_species.trap_lifetime for serial_species in cti_params.serial_species]
