@@ -42,10 +42,11 @@ def make_pipeline(test_name):
             self.serial_ccd.well_fill_alpha = 1.0
             self.serial_ccd.well_fill_gamma = 0.0
 
-    phase1 = SerialPhase(phase_name='phase_1', phase_folders=[test_type, test_name],
-                         optimizer_class=nl.MultiNest,
-                         serial_species=[prior_model.PriorModel(arctic_params.Species)],
-                         serial_ccd=arctic_params.CCD)
+    phase1 = SerialPhase(
+        phase_name='phase_1', phase_folders=[test_type, test_name],
+        serial_species=[prior_model.PriorModel(arctic_params.Species)],
+        serial_ccd=arctic_params.CCD,
+        optimizer_class=nl.MultiNest)
 
     phase1.optimizer.n_live_points = 60
     phase1.optimizer.const_efficiency_mode = True

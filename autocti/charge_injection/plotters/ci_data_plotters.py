@@ -468,6 +468,7 @@ def plot_image_line(
     image : CIFrame
         The image of the data.
     """
+
     data_plotters.plot_image_line(
         image=ci_data.image, line_region=line_region, ci_frame=ci_data.ci_frame, mask=mask, as_subplot=as_subplot,
        figsize=figsize,

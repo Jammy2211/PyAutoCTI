@@ -36,6 +36,7 @@ class MockResults(object):
         self.variable = mm.ModelMapper()
         self.constant = mm.ModelMapper()
 
+
 class NLO(nl.NonLinearOptimizer):
 
     def fit(self, analysis):
@@ -743,22 +744,22 @@ Hyper Parameters:
 
 
 class TestResult(object):
-    def test__fits_for_instance__uses_ci_data_fit(self, ci_data, cti_settings):
-        parallel_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-        parallel_ccd = arctic_params.CCD(well_notch_depth=0.1, well_fill_alpha=0.5, well_fill_beta=0.5,
-                                         well_fill_gamma=0.5)
-
-        phase = ph.ParallelPhase(parallel_species=[parallel_species], parallel_ccd=parallel_ccd, columns=1,
-                                 phase_name='test_phase')
-
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
-        instance = phase.variable.instance_from_unit_vector([])
-
-        fits = analysis.fits_of_ci_data_extracted_for_instance(instance=instance)
-        assert fits[0].ci_pre_cti.shape == (3, 1)
-
-        full_fits = analysis.fits_of_ci_data_full_for_instance(instance=instance)
-        assert full_fits[0].ci_pre_cti.shape == (3, 3)
+    # def test__fits_for_instance__uses_ci_data_fit(self, ci_data, cti_settings):
+    #     parallel_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
+    #     parallel_ccd = arctic_params.CCD(well_notch_depth=0.1, well_fill_alpha=0.5, well_fill_beta=0.5,
+    #                                      well_fill_gamma=0.5)
+    #
+    #     phase = ph.ParallelPhase(parallel_species=[parallel_species], parallel_ccd=parallel_ccd, columns=1,
+    #                              phase_name='test_phase')
+    #
+    #     analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+    #     instance = phase.variable.instance_from_unit_vector([])
+    #
+    #     fits = analysis.fits_of_ci_data_extracted_for_instance(instance=instance)
+    #     assert fits[0].ci_pre_cti.shape == (3, 1)
+    #
+    #     full_fits = analysis.fits_of_ci_data_full_for_instance(instance=instance)
+    #     assert full_fits[0].ci_pre_cti.shape == (3, 3)
 
     def test__fit_figure_of_merit__matches_correct_fit_given_galaxy_profiles(self, ci_data, cti_settings):
         parallel_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)

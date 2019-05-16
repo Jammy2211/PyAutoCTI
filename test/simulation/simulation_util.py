@@ -23,7 +23,7 @@ def shape_from_ci_data_resolution(ci_data_resolution):
 def ci_regions_from_ci_data_resolution(ci_data_resolution):
 
     if ci_data_resolution == 'patch':
-        return [(1, 7, 3, 30), (17, 23, 3, 30)]
+        return [(1, 7, 1, 30), (17, 23, 1, 30)]
     elif ci_data_resolution == 'lowres':
         return [(10, 30, 10, 80), (60, 80, 10, 80)]
     elif ci_data_resolution == 'midres':
@@ -93,8 +93,9 @@ class CIFrameGeometryIntegration(ci_frame.FrameGeometry):
     @classmethod
     def patch(cls):
         """This class represents the quadrant geometry of an integration quadrant."""
-        return CIFrameGeometryIntegration(corner=(0, 0), parallel_overscan=ci_frame.Region((33, 36, 1, 30)),
-                                          serial_overscan=ci_frame.Region((0, 33, 31, 36)),
+        return CIFrameGeometryIntegration(corner=(0, 0),
+                                          parallel_overscan=ci_frame.Region((33, 36, 1, 30)),
+                                          serial_overscan=ci_frame.Region((0, 33, 30, 36)),
                                           serial_prescan=ci_frame.Region((0, 36, 0, 1)))
 
     @classmethod
