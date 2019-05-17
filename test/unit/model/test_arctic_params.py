@@ -91,6 +91,35 @@ class TestParams:
         assert parameters.serial_ccd.well_fill_beta == 1.4
         assert parameters.serial_ccd.well_fill_gamma == 1.6
 
+    def test__delta_ellpiticity_of_species(self):
+
+        species = arctic_params.Species(trap_density=0.5, trap_lifetime=2.0)
+
+        assert species.delta_ellipticity == pytest.approx(0.06385647733, 1.0e-5)
+
+    def test__delta_ellipticity_of_arctic_params(self):
+
+        parallel_1_species = arctic_params.Species(trap_density=0.1, trap_lifetime=4.0)
+        parallel_2_species = arctic_params.Species(trap_density=0.1, trap_lifetime=4.0)
+        serial_1_species = arctic_params.Species(trap_density=0.2, trap_lifetime=2.0)
+        serial_2_species = arctic_params.Species(trap_density=0.7, trap_lifetime=7.0)
+
+        parameters = arctic_params.ArcticParams(parallel_species=[parallel_1_species])
+        assert parameters.delta_ellipticity == parallel_1_species.delta_ellipticity
+        
+        parameters = arctic_params.ArcticParams(parallel_species=[parallel_1_species, parallel_2_species])
+        assert parameters.delta_ellipticity == parallel_1_species.delta_ellipticity + parallel_2_species.delta_ellipticity
+
+        parameters = arctic_params.ArcticParams(serial_species=[serial_1_species])
+        assert parameters.delta_ellipticity == serial_1_species.delta_ellipticity
+
+        parameters = arctic_params.ArcticParams(serial_species=[serial_1_species, serial_2_species])
+        assert parameters.delta_ellipticity == serial_1_species.delta_ellipticity + serial_2_species.delta_ellipticity
+
+        parameters = arctic_params.ArcticParams(parallel_species=[parallel_1_species, parallel_2_species],
+                                                serial_species=[serial_1_species, serial_2_species])
+        assert parameters.delta_ellipticity == parallel_1_species.delta_ellipticity + parallel_2_species.delta_ellipticity + \
+                                                serial_1_species.delta_ellipticity + serial_2_species.delta_ellipticity
 
 class TestParallelDensityVary:
 
