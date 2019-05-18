@@ -95,7 +95,7 @@ class TestParams:
 
         species = arctic_params.Species(trap_density=0.5, trap_lifetime=2.0)
 
-        assert species.delta_ellipticity == pytest.approx(0.06385647733, 1.0e-5)
+        assert species.delta_ellipticity == pytest.approx(0.047378295117617694, 1.0e-5)
 
     def test__delta_ellipticity_of_arctic_params(self):
 
@@ -118,12 +118,15 @@ class TestParams:
 
         parameters = arctic_params.ArcticParams(parallel_species=[parallel_1_species, parallel_2_species],
                                                 serial_species=[serial_1_species, serial_2_species])
-        assert parameters.delta_ellipticity == parallel_1_species.delta_ellipticity + parallel_2_species.delta_ellipticity + \
-                                                serial_1_species.delta_ellipticity + serial_2_species.delta_ellipticity
+
+        assert parameters.delta_ellipticity == pytest.approx(
+            parallel_1_species.delta_ellipticity + parallel_2_species.delta_ellipticity + \
+            serial_1_species.delta_ellipticity + serial_2_species.delta_ellipticity, 1.0e-6)
 
 class TestParallelDensityVary:
 
-    def test_1_species__density_01__1000_column_pixels__1_row_pixel_so_100_traps__posison_density_near_01(self):
+    def test_1_species__density_01__1000_column_pixels__1_row_pixel_so_100_traps__posison_density_near_01(self):#
+
         parallel_vary = arctic_params.Species.poisson_species(
             species=list(map(lambda density: arctic_params.Species(trap_density=density, trap_lifetime=1.), (0.1,))),
             shape=(1000, 1),
