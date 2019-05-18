@@ -46,34 +46,10 @@ class ArcticParams(object):
         self.parallel_species = parallel_species or []
         self.serial_species = serial_species or []
 
-    def update_fits_header_info(self, ext_header):
-        """Output the CTI model parameters into the fits header of a fits image.
-
-        Parameters
-        -----------
-        ext_header : astropy.io.hdulist
-            The opened header of the astropy fits header.
-        """
-
-        def add_species(name, species_list):
-            for i, species in species_list:
-                ext_header.set('cte_pt{}d'.format(i), species.trap_density,
-                               'Trap species {} density ({})'.format(i, name))
-                ext_header.set('cte_pt{}t'.format(i), species.trap_lifetime,
-                               'Trap species {} lifetime ({})'.format(i, name))
-
-        add_species("Parallel", self.parallel_species)
-        add_species("Serial", self.serial_species)
-
-        if self.serial_ccd is not None:
-            ext_header.set('cte_swln', self.serial_ccd.well_notch_depth, 'CCD Well notch depth (Serial)')
-            ext_header.set('cte_swlp', self.serial_ccd.well_fill_beta, 'CCD Well filling power (Serial)')
-
-        if self.parallel_ccd is not None:
-            ext_header.set('cte_pwln', self.parallel_ccd.well_notch_depth, 'CCD Well notch depth (Parallel)')
-            ext_header.set('cte_pwlp', self.parallel_ccd.well_fill_beta, 'CCD Well filling power (Parallel)')
-
-        return ext_header
+    @property
+    def delta_ellipticity(self):
+        return sum([species.delta_ellipticity for species in self.parallel_species]) + \
+               sum([species.delta_ellipticity for species in self.serial_species])
 
 
 class CCD(object):
@@ -119,6 +95,50 @@ class Species(object):
         """
         self.trap_density = trap_density
         self.trap_lifetime = trap_lifetime
+
+    @property
+    def delta_ellipticity(self):
+
+        a = 0.05333
+        d_a = 0.03357
+        d_p = 1.628
+        d_w = 0.2951
+        g_a = 0.09901
+        g_p = 0.4553
+        g_w = 0.4132
+
+        return self.trap_density * \
+               (a + d_a * (np.arctan((np.log(self.trap_lifetime) - d_p) / d_w)) +
+               (g_a*np.exp(-((np.log(self.trap_lifetime) - g_p) ** 2.0) / (2 * g_w ** 2.0))))
+
+    def update_fits_header_info(self, ext_header):
+        """Output the CTI model parameters into the fits header of a fits image.
+
+        Parameters
+        -----------
+        ext_header : astropy.io.hdulist
+            The opened header of the astropy fits header.
+        """
+
+        def add_species(name, species_list):
+            for i, species in species_list:
+                ext_header.set('cte_pt{}d'.format(i), species.trap_density,
+                               'Trap species {} density ({})'.format(i, name))
+                ext_header.set('cte_pt{}t'.format(i), species.trap_lifetime,
+                               'Trap species {} lifetime ({})'.format(i, name))
+
+        add_species("Parallel", self.parallel_species)
+        add_species("Serial", self.serial_species)
+
+        if self.serial_ccd is not None:
+            ext_header.set('cte_swln', self.serial_ccd.well_notch_depth, 'CCD Well notch depth (Serial)')
+            ext_header.set('cte_swlp', self.serial_ccd.well_fill_beta, 'CCD Well filling power (Serial)')
+
+        if self.parallel_ccd is not None:
+            ext_header.set('cte_pwln', self.parallel_ccd.well_notch_depth, 'CCD Well notch depth (Parallel)')
+            ext_header.set('cte_pwlp', self.parallel_ccd.well_fill_beta, 'CCD Well filling power (Parallel)')
+
+        return ext_header
 
     def __repr__(self):
         return "\n".join(('Trap Density: {}'.format(self.trap_density),
