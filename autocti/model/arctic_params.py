@@ -51,6 +51,7 @@ class ArcticParams(object):
         return sum([species.delta_ellipticity for species in self.parallel_species]) + \
                sum([species.delta_ellipticity for species in self.serial_species])
 
+
 class CCD(object):
 
     def __init__(self, well_notch_depth=1e-9, well_fill_alpha=1.0, well_fill_beta=0.58, well_fill_gamma=0.0):
@@ -108,7 +109,7 @@ class Species(object):
 
         return self.trap_density * \
                (a + d_a * (np.arctan((np.log(self.trap_lifetime) - d_p) / d_w)) +
-               (g_a*np.exp(((np.log(self.trap_lifetime) - g_p) ** 2.0) / (2 * g_w ** 2.0))))
+               (g_a*np.exp(-((np.log(self.trap_lifetime) - g_p) ** 2.0) / (2 * g_w ** 2.0))))
 
     def update_fits_header_info(self, ext_header):
         """Output the CTI model parameters into the fits header of a fits image.
