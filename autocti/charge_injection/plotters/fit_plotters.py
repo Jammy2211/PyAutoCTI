@@ -1,5 +1,6 @@
+from matplotlib import pyplot as plt
 from autocti.plotters import line_plotters, array_plotters
-
+from autocti.plotters import plotter_util
 
 def plot_image(
         fit, mask=None, extract_array_from_mask=False, as_subplot=False,
@@ -188,6 +189,48 @@ def plot_chi_squared_map(
         title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
         output_path=output_path, output_format=output_format, output_filename=output_filename)
 
+
+def plot_noise_scaling_maps(
+        fit_hyper, mask=None, extract_array_from_mask=False,
+        figsize=(7, 7), aspect='equal',
+        cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
+        cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01, cb_tick_values=None, cb_tick_labels=None,
+        title='Fit Chi-Squared Map', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
+        output_path=None, output_format='show', output_filename='fit_noise_scaling_maps'):
+    """Plot the observed chi_squared_map of the ccd data.
+
+    Set *autocti.data.plotters.array_plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    chi_squared_map : CIFrame
+        The chi_squared_map of the data.
+    """
+
+    rows, columns, figsize_tool = plotter_util.get_subplot_rows_columns_figsize(number_subplots=len(fit_hyper.noise_scaling_maps))
+
+    if figsize is None:
+        figsize = figsize_tool
+
+    plt.figure(figsize=figsize)
+
+    for index in range(len(fit_hyper.noise_scaling_maps)):
+
+        plt.subplot(rows, columns, index+1)
+
+        array_plotters.plot_array(
+            array=fit_hyper.noise_scaling_maps[index], mask=mask, extract_array_from_mask=extract_array_from_mask, as_subplot=True,
+            figsize=figsize, aspect=aspect,
+            cmap=cmap, norm=norm, norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale,
+            cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
+            cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels,
+            title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
+            output_path=output_path, output_format=output_format, output_filename=output_filename)
+
+    plotter_util.output_subplot_array(output_path=output_path, output_filename=output_filename,
+                                      output_format=output_format)
+
+    plt.close()
 
 def plot_image_line(
         fit, line_region, mask=None, as_subplot=False,

@@ -19,6 +19,7 @@ def plot_ci_fit_for_phase(
         should_plot_ci_post_cti,
         should_plot_residual_map,
         should_plot_chi_squared_map,
+        should_plot_noise_scaling_maps,
         should_plot_parallel_front_edge_line,
         should_plot_parallel_trails_line,
         should_plot_serial_front_edge_line,
@@ -38,6 +39,7 @@ def plot_ci_fit_for_phase(
         should_plot_signal_to_noise_map=should_plot_signal_to_noise_map,
         should_plot_ci_pre_cti=should_plot_ci_pre_cti,
         should_plot_ci_post_cti=should_plot_ci_post_cti,
+        should_plot_noise_scaling_maps=should_plot_noise_scaling_maps,
         should_plot_residual_map=should_plot_residual_map,
         should_plot_chi_squared_map=should_plot_chi_squared_map,
         visualize_path=visualize_path)
@@ -77,6 +79,7 @@ def plot_ci_fit_arrays_for_phase(
         should_plot_ci_post_cti,
         should_plot_residual_map,
         should_plot_chi_squared_map,
+        should_plot_noise_scaling_maps,
         visualize_path=None):
 
     for fit in fits:
@@ -101,6 +104,7 @@ def plot_ci_fit_arrays_for_phase(
             should_plot_ci_post_cti=should_plot_ci_post_cti,
             should_plot_residual_map=should_plot_residual_map,
             should_plot_chi_squared_map=should_plot_chi_squared_map,
+            should_plot_noise_scaling_maps=should_plot_noise_scaling_maps,
             output_path=output_path, output_format='png')
 
         if not during_analysis:
@@ -117,6 +121,7 @@ def plot_ci_fit_arrays_for_phase(
                     should_plot_ci_post_cti=True,
                     should_plot_residual_map=True,
                     should_plot_chi_squared_map=True,
+                    should_plot_noise_scaling_maps=True,
                     output_path=output_path, output_format='png')
 
             if should_plot_all_at_end_fits:
@@ -131,6 +136,7 @@ def plot_ci_fit_arrays_for_phase(
                     should_plot_ci_post_cti=True,
                     should_plot_residual_map=True,
                     should_plot_chi_squared_map=True,
+                    should_plot_noise_scaling_maps=True,
                     output_path="{}/fits/".format(output_path), output_format='fits')
 
         output_path = visualize_path + '/'
@@ -519,7 +525,9 @@ def plot_fit_individuals(
         should_plot_ci_post_cti=False,
         should_plot_residual_map=False,
         should_plot_chi_squared_map=False,
+        should_plot_noise_scaling_maps=False,
         output_path=None, output_format='show'):
+
     if should_plot_image:
         fit_plotters.plot_image(
             fit=fit, mask=fit.mask, extract_array_from_mask=extract_array_from_mask,
@@ -553,6 +561,12 @@ def plot_fit_individuals(
     if should_plot_chi_squared_map:
         fit_plotters.plot_chi_squared_map(
             fit=fit, mask=fit.mask, extract_array_from_mask=extract_array_from_mask,
+            output_path=output_path, output_format=output_format)
+
+    if should_plot_noise_scaling_maps and hasattr(fit, 'noise_scaling_maps'):
+
+        fit_plotters.plot_noise_scaling_maps(
+            fit_hyper=fit, mask=fit.mask, extract_array_from_mask=extract_array_from_mask,
             output_path=output_path, output_format=output_format)
 
 

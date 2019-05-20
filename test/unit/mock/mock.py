@@ -60,8 +60,9 @@ class MockCIFrame(object):
 
 class MockCIGeometry(object):
 
-    def __init__(self, serial_prescan=(0, 1, 0, 1), serial_overscan=(0, 1, 0, 1)):
+    def __init__(self, parallel_overscan=(0, 1, 0, 1), serial_prescan=(0, 1, 0, 1), serial_overscan=(0, 1, 0, 1)):
         super(MockCIGeometry, self).__init__()
+        self.parallel_overscan = Region(parallel_overscan)
         self.serial_prescan = Region(serial_prescan)
         self.serial_overscan = Region(serial_overscan)
 
