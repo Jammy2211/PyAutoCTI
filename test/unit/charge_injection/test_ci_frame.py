@@ -167,7 +167,8 @@ class TestChInj(object):
 
     class TestCIParallelNonRegionArrayFromFrame:
 
-        def test__1_ci_region__pre_scan_and_overscan_in_corner__extracts_everything_outside_region_correctly(self):
+        def test__1_ci_region__parallel_overscan_is_entire_image__extracts_everything_between_its_columns(self):
+
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
 
             image = np.array([[0.0, 1.0, 2.0],
@@ -175,9 +176,7 @@ class TestChInj(object):
                               [6.0, 7.0, 8.0],
                               [9.0, 10.0, 11.0]])
 
-            frame = ci_frame.ChInj(
-                frame_geometry=MockCIGeometry(serial_prescan=(0, 1, 0, 1), serial_overscan=(0, 1, 0, 1)),
-                ci_pattern=pattern)
+            frame = ci_frame.ChInj(frame_geometry=MockCIGeometry(parallel_overscan=(3, 4, 0, 3)), ci_pattern=pattern)
 
             new_frame = frame.parallel_non_ci_regions_frame_from_frame(image, )
 
@@ -186,7 +185,8 @@ class TestChInj(object):
                                            [0.0, 0.0, 0.0],
                                            [9.0, 10.0, 11.0]])).all()
 
-        def test__2_ci_regions__pre_scan_and_overscan_in_corner__extracts_everything_outside_region_correctly(self):
+        def test__same_as_above_but_2_ci_regions(self):
+
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 1, 0, 3), (3, 4, 0, 3)])
 
             image = np.array([[0.0, 1.0, 2.0],
@@ -195,9 +195,7 @@ class TestChInj(object):
                               [9.0, 10.0, 11.0],
                               [12.0, 13.0, 14.0]])
 
-            frame = ci_frame.ChInj(
-                frame_geometry=MockCIGeometry(serial_prescan=(0, 1, 0, 1), serial_overscan=(0, 1, 0, 1)),
-                ci_pattern=pattern)
+            frame = ci_frame.ChInj(frame_geometry=MockCIGeometry(parallel_overscan=(3, 4, 0, 3)), ci_pattern=pattern)
 
             new_frame = frame.parallel_non_ci_regions_frame_from_frame(image, )
 
@@ -207,7 +205,8 @@ class TestChInj(object):
                                            [0.0, 0.0, 0.0],
                                            [12.0, 13.0, 14.0]])).all()
 
-        def test__2_ci_regions__serial_prescan_overlaps_an_extraction__extraction_goes_to_0(self):
+        def test__same_as_above_with_parallel_overscan_thinner__columsn_outside_overscan_are_zeros(self):
+
             pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 1, 0, 3), (3, 4, 0, 3)])
 
             image = np.array([[0.0, 1.0, 2.0],
@@ -216,38 +215,17 @@ class TestChInj(object):
                               [9.0, 10.0, 11.0],
                               [12.0, 13.0, 14.0]])
 
-            frame = ci_frame.ChInj(frame_geometry=MockCIGeometry(serial_prescan=(1, 2, 0, 2),
-                                                                   serial_overscan=(0, 1, 0, 1)),
-                                     ci_pattern=pattern)
+            frame = ci_frame.ChInj(frame_geometry=MockCIGeometry(parallel_overscan=(3, 4, 1, 2)), ci_pattern=pattern)
 
             new_frame = frame.parallel_non_ci_regions_frame_from_frame(image, )
 
-            assert (new_frame == np.array([[0.0, 0.0, 0.0],
-                                           [0.0, 0.0, 5.0],
-                                           [6.0, 7.0, 8.0],
-                                           [0.0, 0.0, 0.0],
-                                           [12.0, 13.0, 14.0]])).all()
-
-        def test__2_ci_regions__serial_overscan_overlaps_an_extraction__extraction_goes_to_0(self):
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 1, 0, 3), (3, 4, 0, 3)])
-
-            image = np.array([[0.0, 1.0, 2.0],
-                              [3.0, 4.0, 5.0],
-                              [6.0, 7.0, 8.0],
-                              [9.0, 10.0, 11.0],
-                              [12.0, 13.0, 14.0]])
-
-            frame = ci_frame.ChInj(frame_geometry=MockCIGeometry(serial_prescan=(0, 1, 0, 1),
-                                                                   serial_overscan=(1, 2, 1, 3)),
-                                     ci_pattern=pattern)
-
-            new_frame = frame.parallel_non_ci_regions_frame_from_frame(image, )
+            print(new_frame)
 
             assert (new_frame == np.array([[0.0, 0.0, 0.0],
-                                           [3.0, 0.0, 0.0],
-                                           [6.0, 7.0, 8.0],
+                                           [0.0, 4.0, 0.0],
+                                           [0.0, 7.0, 0.0],
                                            [0.0, 0.0, 0.0],
-                                           [12.0, 13.0, 14.0]])).all()
+                                           [0.0, 13.0, 0.0]])).all()
 
     class TestParallelEdgesAndTrailsArrayFromFrame:
 
@@ -1509,7 +1487,6 @@ class TestChInj(object):
             trails_line = frame.parallel_trails_line_binned_over_columns_from_frame(array=image)
 
             assert (trails_line == np.array([6.0, 7.0])).all()
-
 
     class TestSerialFrontEdgeFromFrame:
 
