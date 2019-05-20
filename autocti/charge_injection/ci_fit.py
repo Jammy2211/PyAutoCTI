@@ -106,6 +106,7 @@ class CIHyperFit(AbstractCIFit):
             The ci_hyper-parameter(s) which the noise_scaling_maps is multiplied by to scale the noise-map.
         """
         self.hyper_noises = hyper_noise_scalars
+        self.noise_scaling_maps = masked_hyper_ci_data.noise_scaling_maps
         self.hyper_noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
             noise_scaling_maps=masked_hyper_ci_data.noise_scaling_maps, hyper_noise_scalars=hyper_noise_scalars,
             noise_map=masked_hyper_ci_data.noise_map)

@@ -130,15 +130,17 @@ class ChInj(object):
                <---------S----------
         """
 
-        array = array[:, :]
+        parallel_array = np.zeros(array.shape)
+
+        x0 = self.frame_geometry.parallel_overscan.x0
+        x1 = self.frame_geometry.parallel_overscan.x1
+
+        parallel_array[:, x0:x1] = array[:, x0:x1]
 
         for region in self.ci_pattern.regions:
-            array[region.slice] = 0
+            parallel_array[region.slice] = 0
 
-        array[self.frame_geometry.serial_overscan.slice] = 0
-        array[self.frame_geometry.serial_prescan.slice] = 0
-
-        return array
+        return parallel_array.copy()
 
     def parallel_edges_and_trails_frame_from_frame(self, array, front_edge_rows=None, trails_rows=None):
         """Extract an array of all of the parallel front edges and trails of each the charge-injection regions from   
@@ -325,9 +327,8 @@ class ChInj(object):
         []     [=====================]
                <---------S----------
         """
-        array = self.serial_edges_and_trails_frame_from_frame(array,
-                                                              trails_columns=(
-                                                                  0, self.frame_geometry.serial_overscan.total_columns))
+        array = self.serial_edges_and_trails_frame_from_frame(
+            array=array, trails_columns=(0, self.frame_geometry.serial_overscan.total_columns))
         return array
 
     def serial_overscan_above_trails_frame_from_frame(self, array):

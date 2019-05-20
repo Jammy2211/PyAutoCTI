@@ -2,6 +2,7 @@ import numpy as np
 
 from autocti.charge_injection import ci_data
 from autocti.charge_injection import ci_fit
+from autocti.charge_injection import ci_hyper
 from autocti.charge_injection.plotters import fit_plotters
 from autocti.data import mask as msk
 from autocti.model import arctic_params
@@ -166,3 +167,27 @@ def test__chi_squared_map_line_is_output(fit, mask, fit_plotter_path, plot_patch
                                       output_path=fit_plotter_path, output_format='png')
 
     assert fit_plotter_path + 'fit_chi_squared_map_line.png' in plot_patch.paths
+    
+
+@pytest.fixture(name='ci_data_fit_hyper')
+def make_ci_data_fit_hyper(image, noise_map, mask, ci_pre_cti):
+    return ci_data.MaskedCIHyperData(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti, mask=mask,
+                                ci_pattern=MockPattern(), ci_frame=MockCIFrame(value=3.0), 
+                                     noise_scaling_maps=[np.ones((2,2)), 2.0*np.ones((2,2))])
+
+@pytest.fixture(name='hyper_noise_scalars')
+def make_hyper_noise_scalars():
+    return [ci_hyper.CIHyperNoiseScalar(scale_factor=1.0), ci_hyper.CIHyperNoiseScalar(scale_factor=2.0)]
+
+@pytest.fixture(name="fit_hyper")
+def make_fit_hyper(ci_data_fit_hyper, cti_params, cti_settings, hyper_noise_scalars):
+    return ci_fit.CIHyperFit(masked_hyper_ci_data=ci_data_fit_hyper, cti_params=cti_params, cti_settings=cti_settings,
+                             hyper_noise_scalars=hyper_noise_scalars)
+
+def test__noise_scaling_map_is_output(fit_hyper, mask, fit_plotter_path, plot_patch):
+
+    fit_plotters.plot_noise_scaling_maps(fit_hyper=fit_hyper, mask=mask, extract_array_from_mask=True,
+                                         cb_tick_values=[1.0], cb_tick_labels=['1.0'],
+                                         output_path=fit_plotter_path, output_format='png')
+
+    assert fit_plotter_path + 'fit_noise_scaling_maps.png' in plot_patch.paths

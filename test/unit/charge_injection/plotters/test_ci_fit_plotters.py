@@ -2,6 +2,7 @@ import numpy as np
 
 from autocti.charge_injection import ci_data
 from autocti.charge_injection import ci_fit
+from autocti.charge_injection import ci_hyper
 from autocti.charge_injection.plotters import ci_fit_plotters
 from autocti.data import mask as msk
 from autocti.model import arctic_params
@@ -170,6 +171,7 @@ def test__plot_ci_fit_for_phase(fit, ci_fit_plotter_path, plot_patch):
                                           should_plot_ci_post_cti=False,
                                           should_plot_residual_map=True,
                                           should_plot_chi_squared_map=False,
+                                          should_plot_noise_scaling_maps=False,
                                           should_plot_parallel_front_edge_line=True,
                                           should_plot_parallel_trails_line=False,
                                           should_plot_serial_front_edge_line=True,
@@ -202,3 +204,35 @@ def test__plot_ci_fit_for_phase(fit, ci_fit_plotter_path, plot_patch):
 
     assert ci_fit_plotter_path + '/ci_fits_residual_maps.png' in plot_patch.paths
     assert ci_fit_plotter_path + '/ci_fits_chi_sqaured_maps.png' not in plot_patch.paths
+
+
+@pytest.fixture(name='ci_data_fit_hyper')
+def make_ci_data_fit_hyper(image, noise_map, mask, ci_pre_cti):
+    return ci_data.MaskedCIHyperData(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti, mask=mask,
+                                ci_pattern=MockPattern(), ci_frame=MockCIFrame(value=3.0),
+                                     noise_scaling_maps=[np.ones((2,2)), 2.0*np.ones((2,2))])
+
+@pytest.fixture(name='hyper_noise_scalars')
+def make_hyper_noise_scalars():
+    return [ci_hyper.CIHyperNoiseScalar(scale_factor=1.0), ci_hyper.CIHyperNoiseScalar(scale_factor=2.0)]
+
+@pytest.fixture(name="fit_hyper")
+def make_fit_hyper(ci_data_fit_hyper, cti_params, cti_settings, hyper_noise_scalars):
+    return ci_fit.CIHyperFit(masked_hyper_ci_data=ci_data_fit_hyper, cti_params=cti_params, cti_settings=cti_settings,
+                             hyper_noise_scalars=hyper_noise_scalars)
+
+def test__fit_individuals__fit_hyper_plots_noise_scaling_maps(fit, fit_hyper, ci_fit_plotter_path, plot_patch):
+
+    ci_fit_plotters.plot_fit_individuals(
+        fit=fit,
+        should_plot_noise_scaling_maps=True,
+        output_path=ci_fit_plotter_path, output_format='png')
+
+    assert ci_fit_plotter_path + 'fit_noise_scaling_maps.png' not in plot_patch.paths
+
+    ci_fit_plotters.plot_fit_individuals(
+        fit=fit_hyper,
+        should_plot_noise_scaling_maps=True,
+        output_path=ci_fit_plotter_path, output_format='png')
+
+    assert ci_fit_plotter_path + 'fit_noise_scaling_maps.png' in plot_patch.paths

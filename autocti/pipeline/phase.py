@@ -281,11 +281,14 @@ class Phase(ph.AbstractPhase):
             self.plot_ci_fit_ci_post_cti = output_bool('plot_ci_fit_ci_post_cti')
             self.plot_ci_fit_residual_map = output_bool('plot_ci_fit_residual_map')
             self.plot_ci_fit_chi_squared_map = output_bool('plot_ci_fit_chi_squared_map')
+            self.plot_ci_fit_noise_scaling_maps = output_bool('plot_ci_fit_noise_scaling_maps')
 
             self.plot_parallel_front_edge_line = output_bool('plot_parallel_front_edge_line')
             self.plot_parallel_trails_line = output_bool('plot_parallel_trails_line')
             self.plot_serial_front_edge_line = output_bool('plot_serial_front_edge_line')
             self.plot_serial_trails_line = output_bool('plot_serial_trails_line')
+
+            self.is_hyper = False
 
         @property
         def last_results(self):
@@ -308,7 +311,10 @@ class Phase(ph.AbstractPhase):
                 should_plot_serial_trails_line=self.plot_serial_trails_line,
                 visualize_path=image_path)
 
-            fits = self.fits_of_ci_data_extracted_for_instance(instance=instance)
+            if not self.is_hyper:
+                fits = self.fits_of_ci_data_extracted_for_instance(instance=instance)
+            elif self.is_hyper:
+                fits = self.fits_of_ci_data_hyper_extracted_for_instance(instance=instance)
 
             ci_fit_plotters.plot_ci_fit_for_phase(
                 fits=fits, during_analysis=during_analysis,
@@ -325,6 +331,7 @@ class Phase(ph.AbstractPhase):
                 should_plot_ci_post_cti=self.plot_ci_fit_ci_post_cti,
                 should_plot_residual_map=self.plot_ci_fit_residual_map,
                 should_plot_chi_squared_map=self.plot_ci_fit_chi_squared_map,
+                should_plot_noise_scaling_maps=self.plot_ci_fit_noise_scaling_maps,
                 should_plot_parallel_front_edge_line=self.plot_parallel_front_edge_line,
                 should_plot_parallel_trails_line=self.plot_parallel_trails_line,
                 should_plot_serial_front_edge_line=self.plot_serial_front_edge_line,
@@ -358,6 +365,7 @@ class Phase(ph.AbstractPhase):
             raise NotImplementedError
 
         def fits_of_ci_data_extracted_for_instance(self, instance):
+
             cti_params = cti_params_for_instance(instance=instance)
             return list(map(lambda ci_data_fit:
                             ci_fit.CIFit(
@@ -370,6 +378,12 @@ class Phase(ph.AbstractPhase):
                             ci_fit.CIFit(
                                 masked_ci_data=data, cti_params=cti_params, cti_settings=self.cti_settings),
                             self.ci_datas_full))
+
+        def fits_of_ci_data_hyper_extracted_for_instance(self, instance):
+            raise NotImplementedError
+
+        def fits_of_ci_data_hyper_full_for_instance(self, instance):
+            raise NotImplementedError
 
     class Result(nl.Result):
 
@@ -708,6 +722,46 @@ class HyperPhase(Phase):
 
         class HyperAnalysis(self.__class__.Analysis):
 
+            def __init__(self, ci_datas_extracted, ci_datas_full, cti_settings,
+                         serial_total_density_range, parallel_total_density_range, phase_name, results=None,
+                         pool=None):
+                """
+                An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \
+                set of objects describing a model and determines how well they fit the image.
+
+                Params
+                ----------
+                ci_data : [CIImage.CIImage]
+                    The charge injection ci_data-sets.
+                """
+
+                super().__init__(ci_datas_extracted=ci_datas_extracted, ci_datas_full=ci_datas_full,
+                                 cti_settings=cti_settings,
+                                 serial_total_density_range=serial_total_density_range,
+                                 parallel_total_density_range=parallel_total_density_range, phase_name=phase_name,
+                                 results=results, pool=pool)
+
+                self.is_hyper = True
+
+            def fits_of_ci_data_hyper_extracted_for_instance(self, instance):
+
+                cti_params = cti_params_for_instance(instance=instance)
+                return list(map(lambda ci_data_hyper_fit:
+                                ci_fit.CIHyperFit(
+                                    masked_hyper_ci_data=ci_data_hyper_fit, cti_params=cti_params,
+                                    cti_settings=self.cti_settings,
+                                    hyper_noise_scalars=instance.hyper_noise_scalars),
+                                self.ci_datas_extracted))
+
+            def fits_of_ci_data_hyper_full_for_instance(self, instance):
+                cti_params = cti_params_for_instance(instance=instance)
+                return list(map(lambda hyper_data:
+                                ci_fit.CIHyperFit(
+                                    masked_hyper_ci_data=hyper_data, cti_params=cti_params,
+                                    cti_settings=self.cti_settings,
+                                    hyper_noise_scalars=instance.hyper_noise_scalars),
+                                self.ci_datas_full))
+
             def fit(self, instance):
                 """
                 Runs the analysis. Determine how well the supplied cti_params fits the image.
@@ -785,7 +839,17 @@ class ParallelHyperPhase(ParallelPhase, HyperPhase):
         """
         Extract relevant noise scalings maps from the previous result.
         """
-        return [result.noise_scaling_maps_of_ci_regions, result.noise_scaling_maps_of_parallel_trails]
+
+        noise_scaling_maps = []
+        noise_scaling_maps_of_ci_regions = result.noise_scaling_maps_of_ci_regions
+        noise_scaling_maps_of_parallel_trails = result.noise_scaling_maps_of_parallel_trails
+
+        for image_index in range(len(noise_scaling_maps_of_ci_regions)):
+
+            noise_scaling_maps.append([noise_scaling_maps_of_ci_regions[image_index],
+                                      noise_scaling_maps_of_parallel_trails[image_index]])
+
+        return noise_scaling_maps
 
     def extract_ci_hyper_data(self, data, mask, noise_scaling_maps):
         return data.parallel_hyper_calibration_data(
@@ -819,7 +883,16 @@ class SerialHyperPhase(SerialPhase, HyperPhase):
         """
         Extract relevant noise scalings maps from the previous result.
         """
-        return [result.noise_scaling_maps_of_ci_regions, result.noise_scaling_maps_of_serial_trails]
+        noise_scaling_maps = []
+        noise_scaling_maps_of_ci_regions = result.noise_scaling_maps_of_ci_regions
+        noise_scaling_maps_of_serial_trails = result.noise_scaling_maps_of_serial_trails
+
+        for image_index in range(len(noise_scaling_maps_of_ci_regions)):
+
+            noise_scaling_maps.append([noise_scaling_maps_of_ci_regions[image_index],
+                                      noise_scaling_maps_of_serial_trails[image_index]])
+
+        return noise_scaling_maps
 
     def extract_ci_hyper_data(self, data, mask, noise_scaling_maps):
         return data.serial_hyper_calibration_data(rows=self.rows or (0, data.ci_pattern.regions[0].total_rows),
@@ -860,10 +933,21 @@ class ParallelSerialHyperPhase(ParallelSerialPhase, HyperPhase):
         """
         Extract relevant noise scalings maps from the previous result.
         """
-        return [result.noise_scaling_maps_of_ci_regions,
-                result.noise_scaling_maps_of_parallel_trails,
-                result.noise_scaling_maps_of_serial_trails,
-                result.noise_scaling_maps_of_serial_overscan_above_trails]
+
+        noise_scaling_maps = []
+        noise_scaling_maps_of_ci_regions = result.noise_scaling_maps_of_ci_regions
+        noise_scaling_maps_of_parallel_trails = result.noise_scaling_maps_of_parallel_trails
+        noise_scaling_maps_of_serial_trails = result.noise_scaling_maps_of_serial_trails
+        noise_scaling_maps_of_serial_overscan_above_trails = result.noise_scaling_maps_of_serial_overscan_above_trails
+
+        for image_index in range(len(noise_scaling_maps_of_ci_regions)):
+
+            noise_scaling_maps.append([noise_scaling_maps_of_ci_regions[image_index],
+                                       noise_scaling_maps_of_parallel_trails[image_index],
+                                       noise_scaling_maps_of_serial_trails[image_index],
+                                       noise_scaling_maps_of_serial_overscan_above_trails[image_index]])
+
+        return noise_scaling_maps
 
     def extract_ci_hyper_data(self, data, mask, noise_scaling_maps):
         return data.parallel_serial_hyper_calibration_data(mask, noise_scaling_maps=noise_scaling_maps)
