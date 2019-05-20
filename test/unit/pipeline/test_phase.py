@@ -604,10 +604,11 @@ class TestPhase(object):
 
 
 class MockResult:
-    noise_scaling_maps_of_ci_regions = 1
-    noise_scaling_maps_of_parallel_trails = 2
-    noise_scaling_maps_of_serial_trails = 3
-    noise_scaling_maps_of_serial_overscan_above_trails = 4
+    
+    noise_scaling_maps_of_ci_regions = [1]
+    noise_scaling_maps_of_parallel_trails = [2]
+    noise_scaling_maps_of_serial_trails = [3]
+    noise_scaling_maps_of_serial_overscan_above_trails = [4]
 
 
 class MockInstance:
@@ -658,9 +659,8 @@ class TestHyperPhase(object):
         assert isinstance(serial_hyper_analysis, ph.HyperPhase.Analysis)
         assert isinstance(parallel_serial_hyper_analysis, ph.HyperPhase.Analysis)
 
-    def test_describe(self, parallel_hyper_analysis,
-                      serial_hyper_analysis,
-                      parallel_serial_hyper_analysis):
+    def test_describe(self, parallel_hyper_analysis, serial_hyper_analysis, parallel_serial_hyper_analysis):
+
         assert """
 Running CTI analysis for... 
 
@@ -714,6 +714,7 @@ Hyper Parameters:
 """ == parallel_serial_hyper_analysis.describe(MockInstance)
 
     def test__make_analysis(self, phase, ci_data, cti_settings):
+
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
         assert analysis.last_results is None
         assert (analysis.ci_datas_extracted[0].image == ci_data.image).all()
@@ -723,15 +724,16 @@ Hyper Parameters:
         assert analysis.cti_settings == cti_settings
 
     def test_noise_scaling_map_extraction(self):
+
         noise_scaling_maps = ph.ParallelHyperPhase(phase_name='test_phase').noise_scaling_maps_from_result(MockResult)
-        assert noise_scaling_maps == [1, 2]
+        assert noise_scaling_maps == [[1, 2]]
 
         noise_scaling_maps = ph.SerialHyperPhase(phase_name='test_phase').noise_scaling_maps_from_result(MockResult)
-        assert noise_scaling_maps == [1, 3]
+        assert noise_scaling_maps == [[1, 3]]
 
         noise_scaling_maps = ph.ParallelSerialHyperPhase(phase_name='test_phase').noise_scaling_maps_from_result(
             MockResult)
-        assert noise_scaling_maps == [1, 2, 3, 4]
+        assert noise_scaling_maps == [[1, 2, 3, 4]]
 
     def test_hyper_phase(self):
         phase = ph.ParallelHyperPhase(phase_name='test_phase')
@@ -762,12 +764,14 @@ class TestResult(object):
     #     assert full_fits[0].ci_pre_cti.shape == (3, 3)
 
     def test__fit_figure_of_merit__matches_correct_fit_given_galaxy_profiles(self, ci_data, cti_settings):
+
         parallel_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
         parallel_ccd = arctic_params.CCD(well_notch_depth=0.1, well_fill_alpha=0.5, well_fill_beta=0.5,
                                          well_fill_gamma=0.5)
 
-        phase = ph.ParallelPhase(parallel_species=[parallel_species], parallel_ccd=parallel_ccd,
-                                 phase_name='test_phase')
+        phase = ph.ParallelPhase(
+            parallel_species=[parallel_species], parallel_ccd=parallel_ccd,
+            optimizer_class=NLO, phase_name='test_phase')
 
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
         instance = phase.variable.instance_from_unit_vector([])
@@ -781,9 +785,9 @@ class TestResult(object):
         assert fit.likelihood == fit_figure_of_merit
 
     def test__results_of_phase_are_available_as_properties(self, ci_data, cti_settings):
-        phase = ph.ParallelPhase(optimizer_class=NLO,
-                                 parallel_species=[prior_model.PriorModel(arctic_params.Species)],
-                                 parallel_ccd=arctic_params.CCD, phase_name='test_phase')
+        phase = ph.ParallelPhase(
+            parallel_species=[prior_model.PriorModel(arctic_params.Species)], parallel_ccd=arctic_params.CCD,
+            optimizer_class=NLO, phase_name='test_phase')
 
         result = phase.run(ci_datas=[ci_data], cti_settings=cti_settings)
 
@@ -795,9 +799,10 @@ class TestResult(object):
         assert hasattr(result, 'noise_scaling_maps_of_serial_overscan_above_trails')
 
     def test__parallel_phase__noise_scaling_maps_of_images_are_correct(self, ci_data, cti_settings):
-        phase = ph.ParallelPhase(optimizer_class=NLO,
-                                 parallel_species=[prior_model.PriorModel(arctic_params.Species)],
-                                 parallel_ccd=arctic_params.CCD, phase_name='test_phase')
+
+        phase = ph.ParallelPhase(
+            parallel_species=[prior_model.PriorModel(arctic_params.Species)], parallel_ccd=arctic_params.CCD,
+            optimizer_class=NLO, phase_name='test_phase')
 
         # The ci_region is [0, 1, 0, 1], therefore by changing the image at 0,0 to 2.0 there will be a residual of 1.0,
         # which for a noise_map entry of 2.0 gives a chi squared of 0.25..
@@ -814,3 +819,145 @@ class TestResult(object):
         assert (result.noise_scaling_maps_of_parallel_trails[0] == np.zeros((3, 3))).all()
         assert (result.noise_scaling_maps_of_serial_trails[0] == np.zeros((3, 3))).all()
         assert (result.noise_scaling_maps_of_serial_overscan_above_trails[0] == np.zeros((3, 3))).all()
+
+    def test__parallel_hyper_phase__noise_scaling_maps_are_setup_correctly(self, ci_data, cti_settings):
+
+        phase = ph.ParallelPhase(
+            parallel_species=[prior_model.PriorModel(arctic_params.Species)], parallel_ccd=arctic_params.CCD,
+            optimizer_class=NLO, phase_name='test_phase')
+
+        # The ci_region is [0, 1, 0, 1], therefore by changing the image at 0,0 to 2.0 there will be a residual of 1.0,
+        # which for a noise_map entry of 2.0 gives a chi squared of 0.25..
+
+        ci_data.image[0, 0] = 2.0
+        ci_data.noise_map[0, 0] = 2.0
+
+        result = phase.run(ci_datas=[ci_data, ci_data, ci_data, ci_data], cti_settings=cti_settings)
+
+        phase2 = ph.ParallelHyperPhase(phase_name='test_phase_2',
+                                       parallel_species=[prior_model.PriorModel(arctic_params.Species)],
+                                       parallel_ccd=arctic_params.CCD, optimizer_class=NLO)
+
+        noise_scaling_maps = phase2.noise_scaling_maps_from_result(result=result)
+
+        assert (noise_scaling_maps[0][0] ==  np.array([[0.25, 0.0, 0.0],
+                                                       [0.0, 0.0, 0.0],
+                                                       [0.0, 0.0, 0.0]])).all()
+
+        assert (noise_scaling_maps[1][0] ==  np.array([[0.25, 0.0, 0.0],
+                                                       [0.0, 0.0, 0.0],
+                                                       [0.0, 0.0, 0.0]])).all()
+
+        assert (noise_scaling_maps[2][0] ==  np.array([[0.25, 0.0, 0.0],
+                                                       [0.0, 0.0, 0.0],
+                                                       [0.0, 0.0, 0.0]])).all()
+
+        assert (noise_scaling_maps[3][0] ==  np.array([[0.25, 0.0, 0.0],
+                                                       [0.0, 0.0, 0.0],
+                                                       [0.0, 0.0, 0.0]])).all()
+
+        assert (noise_scaling_maps[0][1] ==  np.zeros((3, 3))).all()
+        assert (noise_scaling_maps[1][1] ==  np.zeros((3, 3))).all()
+        assert (noise_scaling_maps[2][1] ==  np.zeros((3, 3))).all()
+        assert (noise_scaling_maps[3][1] ==  np.zeros((3, 3))).all()
+        
+    def test__serial_hyper_phase__noise_scaling_maps_are_setup_correctly(self, ci_data):
+        
+        serial_settings = arctic_settings.Settings(well_depth=0, niter=1, express=1, n_levels=2000)
+        cti_settings = arctic_settings.ArcticSettings(neomode='NEO', serial=serial_settings)
+
+        phase = ph.SerialPhase(
+            serial_species=[prior_model.PriorModel(arctic_params.Species)], serial_ccd=arctic_params.CCD,
+            optimizer_class=NLO, phase_name='test_phase')
+
+        # The ci_region is [0, 1, 0, 1], therefore by changing the image at 0,0 to 2.0 there will be a residual of 1.0,
+        # which for a noise_map entry of 2.0 gives a chi squared of 0.25..
+
+        ci_data.image[0, 0] = 2.0
+        ci_data.noise_map[0, 0] = 2.0
+
+        result = phase.run(ci_datas=[ci_data, ci_data, ci_data, ci_data], cti_settings=cti_settings)
+
+        phase2 = ph.SerialHyperPhase(
+            serial_species=[prior_model.PriorModel(arctic_params.Species)], serial_ccd=arctic_params.CCD,
+            optimizer_class=NLO, phase_name='test_phase_2')
+
+        noise_scaling_maps = phase2.noise_scaling_maps_from_result(result=result)
+
+        assert (noise_scaling_maps[0][0] ==  np.array([[0.25, 0.0, 0.0],
+                                                       [0.0, 0.0, 0.0],
+                                                       [0.0, 0.0, 0.0]])).all()
+
+        assert (noise_scaling_maps[1][0] ==  np.array([[0.25, 0.0, 0.0],
+                                                       [0.0, 0.0, 0.0],
+                                                       [0.0, 0.0, 0.0]])).all()
+
+        assert (noise_scaling_maps[2][0] ==  np.array([[0.25, 0.0, 0.0],
+                                                       [0.0, 0.0, 0.0],
+                                                       [0.0, 0.0, 0.0]])).all()
+
+        assert (noise_scaling_maps[3][0] ==  np.array([[0.25, 0.0, 0.0],
+                                                       [0.0, 0.0, 0.0],
+                                                       [0.0, 0.0, 0.0]])).all()
+
+        assert (noise_scaling_maps[0][1] ==  np.zeros((3, 3))).all()
+        assert (noise_scaling_maps[1][1] ==  np.zeros((3, 3))).all()
+        assert (noise_scaling_maps[2][1] ==  np.zeros((3, 3))).all()
+        assert (noise_scaling_maps[3][1] ==  np.zeros((3, 3))).all()
+
+    def test__parallel_and_serial_hyper_phase__noise_scaling_maps_are_setup_correctly(self, ci_data):
+
+        parallel_settings = arctic_settings.Settings(well_depth=0, niter=1, express=1, n_levels=2000)
+        serial_settings = arctic_settings.Settings(well_depth=0, niter=1, express=1, n_levels=2000)
+        cti_settings = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings, serial=serial_settings)
+
+        phase = ph.ParallelSerialPhase(
+            parallel_species=[prior_model.PriorModel(arctic_params.Species)], parallel_ccd=arctic_params.CCD,
+            serial_species=[prior_model.PriorModel(arctic_params.Species)], serial_ccd=arctic_params.CCD,
+            optimizer_class=NLO, phase_name='test_phase')
+
+        # The ci_region is [0, 1, 0, 1], therefore by changing the image at 0,0 to 2.0 there will be a residual of 1.0,
+        # which for a noise_map entry of 2.0 gives a chi squared of 0.25..
+
+        ci_data.image[0, 0] = 2.0
+        ci_data.noise_map[0, 0] = 2.0
+
+        result = phase.run(ci_datas=[ci_data, ci_data, ci_data, ci_data], cti_settings=cti_settings)
+
+        phase2 = ph.ParallelSerialHyperPhase(
+            parallel_species=[prior_model.PriorModel(arctic_params.Species)], parallel_ccd=arctic_params.CCD,
+            serial_species=[prior_model.PriorModel(arctic_params.Species)], serial_ccd=arctic_params.CCD,
+            optimizer_class=NLO, phase_name='test_phase_2')
+
+        noise_scaling_maps = phase2.noise_scaling_maps_from_result(result=result)
+
+        assert (noise_scaling_maps[0][0] == np.array([[0.25, 0.0, 0.0],
+                                                      [0.0, 0.0, 0.0],
+                                                      [0.0, 0.0, 0.0]])).all()
+
+        assert (noise_scaling_maps[1][0] == np.array([[0.25, 0.0, 0.0],
+                                                      [0.0, 0.0, 0.0],
+                                                      [0.0, 0.0, 0.0]])).all()
+
+        assert (noise_scaling_maps[2][0] == np.array([[0.25, 0.0, 0.0],
+                                                      [0.0, 0.0, 0.0],
+                                                      [0.0, 0.0, 0.0]])).all()
+
+        assert (noise_scaling_maps[3][0] == np.array([[0.25, 0.0, 0.0],
+                                                      [0.0, 0.0, 0.0],
+                                                      [0.0, 0.0, 0.0]])).all()
+
+        assert (noise_scaling_maps[0][1] == np.zeros((3, 3))).all()
+        assert (noise_scaling_maps[1][1] == np.zeros((3, 3))).all()
+        assert (noise_scaling_maps[2][1] == np.zeros((3, 3))).all()
+        assert (noise_scaling_maps[3][1] == np.zeros((3, 3))).all()
+
+        assert (noise_scaling_maps[0][2] == np.zeros((3, 3))).all()
+        assert (noise_scaling_maps[1][2] == np.zeros((3, 3))).all()
+        assert (noise_scaling_maps[2][2] == np.zeros((3, 3))).all()
+        assert (noise_scaling_maps[3][2] == np.zeros((3, 3))).all()
+
+        assert (noise_scaling_maps[0][3] == np.zeros((3, 3))).all()
+        assert (noise_scaling_maps[1][3] == np.zeros((3, 3))).all()
+        assert (noise_scaling_maps[2][3] == np.zeros((3, 3))).all()
+        assert (noise_scaling_maps[3][3] == np.zeros((3, 3))).all()
