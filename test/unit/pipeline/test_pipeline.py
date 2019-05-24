@@ -3,6 +3,7 @@ import builtins
 import pytest
 from autofit.mapper import model_mapper as mm
 from autofit.optimize import non_linear as nl
+from autofit.tools.phase import AbstractPhase
 
 from autocti.pipeline import pipeline as pl
 
@@ -26,8 +27,8 @@ class MockFile(object):
 def make_mock_file(monkeypatch):
     files = []
 
-    def mock_open(filename, flag):
-        assert flag in ("w+", "w+b")
+    def mock_open(filename, flag, *args, **kwargs):
+        assert flag in ("w+", "w+b", "a")
         file = MockFile()
         file.filename = filename
         files.append(file)
@@ -42,8 +43,12 @@ class Optimizer(object):
         self.phase_name = phase_name
 
 
-class DummyPhase(object):
+class DummyPhase(AbstractPhase):
+    def make_result(self, result, analysis):
+        pass
+
     def __init__(self, phase_name, phase_tag=None):
+        super().__init__(phase_name)
         self.masked_image = None
         self.results = None
         self.phase_name = phase_name
