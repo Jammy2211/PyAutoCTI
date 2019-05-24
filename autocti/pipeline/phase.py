@@ -121,7 +121,8 @@ class Phase(ph.AbstractPhase):
 
         analysis = self.make_analysis(ci_datas=ci_datas, cti_settings=cti_settings, results=results,
                                       pool=pool)
-
+        self.pass_priors(results)
+        self.assert_and_save_pickle()
         result = self.optimizer.fit(analysis)
 
         return self.make_result(result=result, analysis=analysis)
@@ -219,7 +220,6 @@ class Phase(ph.AbstractPhase):
                                                       ci_pattern=data.ci_pattern, ci_frame=data.ci_frame),
                                  ci_datas, masks))
 
-        self.pass_priors(results)
         analysis = self.__class__.Analysis(ci_datas_extracted=ci_datas_fit, ci_datas_full=ci_datas_full,
                                            cti_settings=cti_settings,
                                            parallel_total_density_range=self.parallel_total_density_range,
@@ -717,8 +717,6 @@ class HyperPhase(Phase):
                                                            ci_pattern=data.ci_pattern, ci_frame=data.ci_frame,
                                                            noise_scaling_maps=maps),
                                  ci_datas, masks, noise_scaling_maps))
-
-        self.pass_priors(results)
 
         class HyperAnalysis(self.__class__.Analysis):
 
