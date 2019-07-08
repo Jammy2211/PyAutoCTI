@@ -31,7 +31,7 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(ci_data_type, ci
     # Now, lets output this simulated ccd-data to the test/data folder.
     test_path = '{}/../'.format(os.path.dirname(os.path.realpath(__file__)))
 
-    ci_data_path = path_util.make_and_return_path_from_path_and_folder_names(
+    ci_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
         path=test_path, folder_names=['data', ci_data_type, ci_data_model, ci_data_resolution])
 
     normalization = str(int(pattern.normalization))
@@ -321,7 +321,7 @@ def cosmic_ray_image_from_shape_and_well_depth(shape, well_depth):
     # We use the LA Cosmic algorithm to simulate and add cosmic rays to our ci pre cti image. This routine randomly
     # generates cosmimc rays based on realistic cosmic ray rates expected. These cosmic rays will then be added to our
     # ci pre-cti image in the simulaate function below, and subject to CTI according to the CTI model.
-    cosmic_path = path_util.make_and_return_path_from_path_and_folder_names(path=workspace_path,
+    cosmic_path = af.path_util.make_and_return_path_from_path_and_folder_names(path=workspace_path,
                                                                             folder_names=['scripts',
                                                                                           'cosmic_rays'])
 
