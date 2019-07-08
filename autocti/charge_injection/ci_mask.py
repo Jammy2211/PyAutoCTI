@@ -1,3 +1,4 @@
+import autofit as af
 from autocti.data import mask as msk
 
 import numpy as np

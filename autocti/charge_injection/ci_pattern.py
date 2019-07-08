@@ -7,6 +7,7 @@ Author: James Nightingale
 
 import numpy as np
 
+import autofit as af
 from autocti import exc
 from autocti.charge_injection import ci_frame
 
