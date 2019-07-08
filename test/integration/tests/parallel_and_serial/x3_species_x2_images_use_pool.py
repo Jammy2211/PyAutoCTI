@@ -1,10 +1,7 @@
 import os
 from multiprocessing import Pool
 
-from autofit import conf
-from autofit.mapper import prior_model
-from autofit.optimize import non_linear as nl
-
+import autofit as af
 from autocti.model import arctic_params
 from autocti.model import arctic_settings
 from autocti.pipeline import phase as ph
@@ -18,7 +15,7 @@ test_name = 'x3_species_x2_images_use_pool'
 test_path = '{}/../../'.format(os.path.dirname(os.path.realpath(__file__)))
 output_path = test_path + 'output/'
 config_path = test_path + 'config'
-conf.instance = conf.Config(config_path=config_path, output_path=output_path)
+af.conf.instance = af.conf.Config(config_path=config_path, output_path=output_path)
 
 
 def pipeline():
@@ -48,14 +45,14 @@ def make_pipeline(test_name):
             self.serial_ccd.well_fill_gamma = 0.0
 
     phase1 = ParallelSerialPhase(phase_name='phase_1', phase_folders=[test_type, test_name],
-                                 optimizer_class=nl.MultiNest,
-                                 parallel_species=[prior_model.PriorModel(arctic_params.Species),
-                                                   prior_model.PriorModel(arctic_params.Species),
-                                                   prior_model.PriorModel(arctic_params.Species)],
+                                 optimizer_class=af.MultiNest,
+                                 parallel_species=[af.PriorModel(arctic_params.Species),
+                                                   af.PriorModel(arctic_params.Species),
+                                                   af.PriorModel(arctic_params.Species)],
                                  parallel_ccd=arctic_params.CCD,
-                                 serial_species=[prior_model.PriorModel(arctic_params.Species),
-                                                 prior_model.PriorModel(arctic_params.Species),
-                                                 prior_model.PriorModel(arctic_params.Species)],
+                                 serial_species=[af.PriorModel(arctic_params.Species),
+                                                 af.PriorModel(arctic_params.Species),
+                                                 af.PriorModel(arctic_params.Species)],
                                  serial_ccd=arctic_params.CCD)
 
     phase1.optimizer.n_live_points = 60

@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
-from autofit.tools import fit_util
 
+import autofit as af
 from autocti.charge_injection import ci_fit
 from autocti.charge_injection import ci_frame
 from autocti.charge_injection import ci_hyper, ci_data
@@ -35,7 +35,7 @@ class TestCIFit:
     class TestFits:
 
         def test__residual_map_same_as_calculated_individually(self, ci_data_fit):
-            residual_map = fit_util.residual_map_from_data_mask_and_model_data(data=ci_data_fit.image,
+            residual_map = af.fit_util.residual_map_from_data_mask_and_model_data(data=ci_data_fit.image,
                                                                                mask=ci_data_fit.mask,
                                                                                model_data=ci_data_fit.ci_pre_cti)
 
@@ -45,11 +45,11 @@ class TestCIFit:
             assert (fit.residual_map == residual_map).all()
 
         def test__chi_squared_map_same_as_calculated_individually(self, ci_data_fit):
-            residual_map = fit_util.residual_map_from_data_mask_and_model_data(data=ci_data_fit.image,
+            residual_map = af.fit_util.residual_map_from_data_mask_and_model_data(data=ci_data_fit.image,
                                                                                mask=ci_data_fit.mask,
                                                                                model_data=ci_data_fit.ci_pre_cti)
 
-            chi_sqaured_map = fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
+            chi_sqaured_map = af.fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
                 residual_map=residual_map, noise_map=ci_data_fit.noise_map, mask=ci_data_fit.mask)
 
             fit = ci_fit.CIFit(masked_ci_data=ci_data_fit, cti_params=MockParams(),
@@ -58,20 +58,20 @@ class TestCIFit:
             assert (fit.chi_squared_map == chi_sqaured_map).all()
 
         def test__likelihood_same_as_calculated_individually(self, ci_data_fit):
-            residual_map = fit_util.residual_map_from_data_mask_and_model_data(data=ci_data_fit.image,
+            residual_map = af.fit_util.residual_map_from_data_mask_and_model_data(data=ci_data_fit.image,
                                                                                mask=ci_data_fit.mask,
                                                                                model_data=ci_data_fit.ci_pre_cti)
 
-            chi_squared_map = fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
+            chi_squared_map = af.fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
                 residual_map=residual_map, noise_map=ci_data_fit.noise_map, mask=ci_data_fit.mask)
 
-            chi_squared = fit_util.chi_squared_from_chi_squared_map_and_mask(chi_squared_map=chi_squared_map,
+            chi_squared = af.fit_util.chi_squared_from_chi_squared_map_and_mask(chi_squared_map=chi_squared_map,
                                                                              mask=ci_data_fit.mask)
 
-            noise_normalization = fit_util.noise_normalization_from_noise_map_and_mask(noise_map=ci_data_fit.noise_map,
+            noise_normalization = af.fit_util.noise_normalization_from_noise_map_and_mask(noise_map=ci_data_fit.noise_map,
                                                                                        mask=ci_data_fit.mask)
 
-            likelihood = fit_util.likelihood_from_chi_squared_and_noise_normalization(
+            likelihood = af.fit_util.likelihood_from_chi_squared_and_noise_normalization(
                 chi_squared=chi_squared, noise_normalization=noise_normalization)
 
             fit = ci_fit.CIFit(masked_ci_data=ci_data_fit, cti_params=MockParams(),
@@ -196,24 +196,24 @@ class TestCIHyperFit:
 
         assert (hyper_noise_map == fit.noise_map).all()
 
-        residual_map = fit_util.residual_map_from_data_mask_and_model_data(data=ci_data_hyper_fit.image,
+        residual_map = af.fit_util.residual_map_from_data_mask_and_model_data(data=ci_data_hyper_fit.image,
                                                                            mask=ci_data_hyper_fit.mask,
                                                                            model_data=ci_data_hyper_fit.ci_pre_cti)
 
         assert (residual_map == fit.residual_map).all()
 
-        chi_squared_map = fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
+        chi_squared_map = af.fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
             residual_map=residual_map, noise_map=hyper_noise_map, mask=ci_data_hyper_fit.mask)
 
         assert (chi_squared_map == fit.chi_squared_map).all()
 
-        chi_squared = fit_util.chi_squared_from_chi_squared_map_and_mask(chi_squared_map=chi_squared_map,
+        chi_squared = af.fit_util.chi_squared_from_chi_squared_map_and_mask(chi_squared_map=chi_squared_map,
                                                                          mask=ci_data_hyper_fit.mask)
 
-        noise_normalization = fit_util.noise_normalization_from_noise_map_and_mask(
+        noise_normalization = af.fit_util.noise_normalization_from_noise_map_and_mask(
             noise_map=hyper_noise_map, mask=ci_data_hyper_fit.mask)
 
-        likelihood = fit_util.likelihood_from_chi_squared_and_noise_normalization(chi_squared=chi_squared,
+        likelihood = af.fit_util.likelihood_from_chi_squared_and_noise_normalization(chi_squared=chi_squared,
                                                                                   noise_normalization=noise_normalization)
 
         assert (likelihood == fit.likelihood).all()
