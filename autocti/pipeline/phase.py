@@ -252,10 +252,10 @@ class Phase(af.AbstractPhase):
 
             self.plot_count = 0
 
-            def output_bool(name):
-                return af.conf.instance.general.get('output', name, bool)
+            self.extract_array_from_mask = af.conf.instance.visualize.get('figures', 'extract_images_from_mask', bool)
 
-            self.extract_array_from_mask = output_bool('extract_images_from_mask')
+            def output_bool(name):
+                return af.conf.instance.visualize.get('output', name, bool)
 
             self.plot_ci_data_as_subplot = output_bool('plot_ci_data_as_subplot')
             self.plot_ci_data_image = output_bool('plot_ci_data_image')
