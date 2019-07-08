@@ -1,4 +1,4 @@
-from autofit.tools import path_util
+from autoaf.tools import path_util
 from autocti.charge_injection import ci_frame
 from autocti.charge_injection import ci_data
 from autocti.charge_injection import ci_pattern

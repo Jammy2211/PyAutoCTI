@@ -2,12 +2,8 @@ from os import path
 
 import numpy as np
 import pytest
-from autofit import conf
-from autofit.mapper import model_mapper as mm
-from autofit.mapper import prior_model
-from autofit.optimize import non_linear as nl
-from autofit.tools.pipeline import ResultsCollection
 
+import autofit as af
 from autocti import exc
 from autocti.charge_injection import ci_data as data
 from autocti.charge_injection import ci_fit
@@ -27,17 +23,17 @@ directory = path.dirname(path.realpath(__file__))
 
 @pytest.fixture(scope="session", autouse=True)
 def do_something():
-    conf.instance = conf.Config('{}/../test_files/configs/phase'.format(directory))
+    af.conf.instance = af.conf.Config('{}/../test_files/configs/phase'.format(directory))
 
 
 class MockResults(object):
     def __init__(self, ci_post_ctis):
         self.ci_post_ctis = ci_post_ctis
-        self.variable = mm.ModelMapper()
-        self.constant = mm.ModelMapper()
+        self.variable = af.ModelMapper()
+        self.constant = af.ModelMapper()
 
 
-class NLO(nl.NonLinearOptimizer):
+class NLO(af.NonLinearOptimizer):
 
     def fit(self, analysis):
         class Fitness(object):
@@ -50,7 +46,7 @@ class NLO(nl.NonLinearOptimizer):
                 instance = self.instance_from_physical_vector(vector)
 
                 likelihood = analysis.fit(instance)
-                self.result = nl.Result(instance, likelihood)
+                self.result = af.Result(instance, likelihood)
 
                 # Return Chi squared
                 return -2 * likelihood
@@ -105,14 +101,15 @@ def make_results():
 
 @pytest.fixture(name="results_collection")
 def make_results_collection():
-    return ResultsCollection()
+    return af.ResultsCollection()
 
 
 class TestPhase(object):
 
     def test_param_names(self, phase):
-        phase.parallel_species = [prior_model.PriorModel(arctic_params.Species),
-                                  prior_model.PriorModel(arctic_params.Species)]
+
+        phase.parallel_species = [af.PriorModel(arctic_params.Species),
+                                  af.PriorModel(arctic_params.Species)]
 
         assert phase.optimizer.variable.param_names == ['parallel_species_0_trap_density',
                                                         'parallel_species_0_trap_lifetime',
@@ -120,8 +117,8 @@ class TestPhase(object):
                                                         'parallel_species_1_trap_lifetime']
 
         phase = ph.ParallelPhase(phase_name='test_phase',
-                                 parallel_species=[prior_model.PriorModel(arctic_params.Species),
-                                                   prior_model.PriorModel(arctic_params.Species)],
+                                 parallel_species=[af.PriorModel(arctic_params.Species),
+                                                   af.PriorModel(arctic_params.Species)],
                                  optimizer_class=NLO)
 
         assert phase.optimizer.variable.param_names == ['parallel_species_0_trap_density',
@@ -569,7 +566,7 @@ class TestPhase(object):
 
         setattr(results.constant, "parallel_species", [parallel])
 
-        results_collection = ResultsCollection()
+        results_collection = af.ResultsCollection()
         results_collection.add("first_phase", results)
 
         phase = MyPhase(phase_name='test_phase', optimizer_class=NLO, parallel_species=[parallel])
@@ -596,7 +593,8 @@ class TestPhase(object):
         assert phase.parallel_species is not None
 
     def test__cti_params_for_instance(self):
-        instance = mm.ModelInstance()
+
+        instance = af.ModelInstance()
         instance.parallel_species = [arctic_params.Species(trap_density=0.0)]
         cti_params = ph.cti_params_for_instance(instance)
 
@@ -786,7 +784,7 @@ class TestResult(object):
 
     def test__results_of_phase_are_available_as_properties(self, ci_data, cti_settings):
         phase = ph.ParallelPhase(
-            parallel_species=[prior_model.PriorModel(arctic_params.Species)], parallel_ccd=arctic_params.CCD,
+            parallel_species=[af.PriorModel(arctic_params.Species)], parallel_ccd=arctic_params.CCD,
             optimizer_class=NLO, phase_name='test_phase')
 
         result = phase.run(ci_datas=[ci_data], cti_settings=cti_settings)
@@ -801,7 +799,7 @@ class TestResult(object):
     def test__parallel_phase__noise_scaling_maps_of_images_are_correct(self, ci_data, cti_settings):
 
         phase = ph.ParallelPhase(
-            parallel_species=[prior_model.PriorModel(arctic_params.Species)], parallel_ccd=arctic_params.CCD,
+            parallel_species=[af.PriorModel(arctic_params.Species)], parallel_ccd=arctic_params.CCD,
             optimizer_class=NLO, phase_name='test_phase')
 
         # The ci_region is [0, 1, 0, 1], therefore by changing the image at 0,0 to 2.0 there will be a residual of 1.0,
@@ -823,7 +821,7 @@ class TestResult(object):
     def test__parallel_hyper_phase__noise_scaling_maps_are_setup_correctly(self, ci_data, cti_settings):
 
         phase = ph.ParallelPhase(
-            parallel_species=[prior_model.PriorModel(arctic_params.Species)], parallel_ccd=arctic_params.CCD,
+            parallel_species=[af.PriorModel(arctic_params.Species)], parallel_ccd=arctic_params.CCD,
             optimizer_class=NLO, phase_name='test_phase')
 
         # The ci_region is [0, 1, 0, 1], therefore by changing the image at 0,0 to 2.0 there will be a residual of 1.0,
@@ -835,7 +833,7 @@ class TestResult(object):
         result = phase.run(ci_datas=[ci_data, ci_data, ci_data, ci_data], cti_settings=cti_settings)
 
         phase2 = ph.ParallelHyperPhase(phase_name='test_phase_2',
-                                       parallel_species=[prior_model.PriorModel(arctic_params.Species)],
+                                       parallel_species=[af.PriorModel(arctic_params.Species)],
                                        parallel_ccd=arctic_params.CCD, optimizer_class=NLO)
 
         noise_scaling_maps = phase2.noise_scaling_maps_from_result(result=result)
@@ -867,7 +865,7 @@ class TestResult(object):
         cti_settings = arctic_settings.ArcticSettings(neomode='NEO', serial=serial_settings)
 
         phase = ph.SerialPhase(
-            serial_species=[prior_model.PriorModel(arctic_params.Species)], serial_ccd=arctic_params.CCD,
+            serial_species=[af.PriorModel(arctic_params.Species)], serial_ccd=arctic_params.CCD,
             optimizer_class=NLO, phase_name='test_phase')
 
         # The ci_region is [0, 1, 0, 1], therefore by changing the image at 0,0 to 2.0 there will be a residual of 1.0,
@@ -879,7 +877,7 @@ class TestResult(object):
         result = phase.run(ci_datas=[ci_data, ci_data, ci_data, ci_data], cti_settings=cti_settings)
 
         phase2 = ph.SerialHyperPhase(
-            serial_species=[prior_model.PriorModel(arctic_params.Species)], serial_ccd=arctic_params.CCD,
+            serial_species=[af.PriorModel(arctic_params.Species)], serial_ccd=arctic_params.CCD,
             optimizer_class=NLO, phase_name='test_phase_2')
 
         noise_scaling_maps = phase2.noise_scaling_maps_from_result(result=result)
@@ -912,8 +910,8 @@ class TestResult(object):
         cti_settings = arctic_settings.ArcticSettings(neomode='NEO', parallel=parallel_settings, serial=serial_settings)
 
         phase = ph.ParallelSerialPhase(
-            parallel_species=[prior_model.PriorModel(arctic_params.Species)], parallel_ccd=arctic_params.CCD,
-            serial_species=[prior_model.PriorModel(arctic_params.Species)], serial_ccd=arctic_params.CCD,
+            parallel_species=[af.PriorModel(arctic_params.Species)], parallel_ccd=arctic_params.CCD,
+            serial_species=[af.PriorModel(arctic_params.Species)], serial_ccd=arctic_params.CCD,
             optimizer_class=NLO, phase_name='test_phase')
 
         # The ci_region is [0, 1, 0, 1], therefore by changing the image at 0,0 to 2.0 there will be a residual of 1.0,
@@ -925,8 +923,8 @@ class TestResult(object):
         result = phase.run(ci_datas=[ci_data, ci_data, ci_data, ci_data], cti_settings=cti_settings)
 
         phase2 = ph.ParallelSerialHyperPhase(
-            parallel_species=[prior_model.PriorModel(arctic_params.Species)], parallel_ccd=arctic_params.CCD,
-            serial_species=[prior_model.PriorModel(arctic_params.Species)], serial_ccd=arctic_params.CCD,
+            parallel_species=[af.PriorModel(arctic_params.Species)], parallel_ccd=arctic_params.CCD,
+            serial_species=[af.PriorModel(arctic_params.Species)], serial_ccd=arctic_params.CCD,
             optimizer_class=NLO, phase_name='test_phase_2')
 
         noise_scaling_maps = phase2.noise_scaling_maps_from_result(result=result)

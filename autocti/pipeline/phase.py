@@ -1,11 +1,7 @@
 from functools import partial
 
 import numpy as np
-from autofit import conf
-from autofit.mapper import prior_model as pm
-from autofit.optimize import non_linear as nl
-from autofit.tools import phase as ph
-from autofit.tools import phase_property
+import autofit as af
 
 from autocti import exc
 from autocti.pipeline import tagging as tag
@@ -33,14 +29,14 @@ class ConsecutivePool(object):
         return map(func, ls)
 
 
-class Phase(ph.AbstractPhase):
+class Phase(af.AbstractPhase):
 
     def make_result(self, result, analysis):
         return self.__class__.Result(constant=result.constant, figure_of_merit=result.figure_of_merit,
                                      previous_variable=result.previous_variable, gaussian_tuples=result.gaussian_tuples,
                                      analysis=analysis, optimizer=self.optimizer)
 
-    def __init__(self, phase_name, tag_phases=True, phase_folders=None, optimizer_class=nl.DownhillSimplex,
+    def __init__(self, phase_name, tag_phases=True, phase_folders=tuple(), optimizer_class=af.DownhillSimplex,
                  mask_function=msk.Mask.empty_for_shape, columns=None, rows=None,
                  parallel_front_edge_mask_rows=None, parallel_trails_mask_rows=None,
                  serial_front_edge_mask_columns=None, serial_trails_mask_columns=None,
@@ -228,7 +224,7 @@ class Phase(ph.AbstractPhase):
         return analysis
 
     # noinspection PyAbstractClass
-    class Analysis(nl.Analysis):
+    class Analysis(af.Analysis):
 
         def __init__(self, ci_datas_extracted, ci_datas_full, cti_settings,
                      serial_total_density_range, parallel_total_density_range, phase_name, results=None,
@@ -249,7 +245,7 @@ class Phase(ph.AbstractPhase):
             self.parallel_total_density_range = parallel_total_density_range
             self.serial_total_density_range = serial_total_density_range
             self.phase_name = phase_name
-            self.phase_output_path = "{}/{}".format(conf.instance.output_path, self.phase_name)
+            self.phase_output_path = "{}/{}".format(af.conf.instance.output_path, self.phase_name)
 
             self.pool = pool or ConsecutivePool
             self.results = results
@@ -257,7 +253,7 @@ class Phase(ph.AbstractPhase):
             self.plot_count = 0
 
             def output_bool(name):
-                return conf.instance.general.get('output', name, bool)
+                return af.conf.instance.general.get('output', name, bool)
 
             self.extract_array_from_mask = output_bool('extract_images_from_mask')
 
@@ -385,7 +381,7 @@ class Phase(ph.AbstractPhase):
         def fits_of_ci_data_hyper_full_for_instance(self, instance):
             raise NotImplementedError
 
-    class Result(nl.Result):
+    class Result(af.Result):
 
         # noinspection PyUnusedLocal
         def __init__(self, constant, figure_of_merit, previous_variable, gaussian_tuples, analysis, optimizer):
@@ -434,11 +430,11 @@ class Phase(ph.AbstractPhase):
 
 class ParallelPhase(Phase):
 
-    parallel_species = phase_property.PhaseProperty("parallel_species")
-    parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
+    parallel_species = af.PhaseProperty("parallel_species")
+    parallel_ccd = af.PhaseProperty("parallel_ccd")
 
-    def __init__(self, phase_name, tag_phases=True, phase_folders=None, parallel_species=(), parallel_ccd=None,
-                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, columns=None,
+    def __init__(self, phase_name, tag_phases=True, phase_folders=tuple(), parallel_species=(), parallel_ccd=None,
+                 optimizer_class=af.MultiNest, mask_function=msk.Mask.empty_for_shape, columns=None,
                  parallel_front_edge_mask_rows=None, parallel_trails_mask_rows=None,
                  parallel_total_density_range=None,
                  cosmic_ray_parallel_buffer=10, cosmic_ray_serial_buffer=10, cosmic_ray_diagonal_buffer=3):
@@ -512,11 +508,11 @@ class ParallelPhase(Phase):
 
 class SerialPhase(Phase):
     
-    serial_species = phase_property.PhaseProperty("serial_species")
-    serial_ccd = phase_property.PhaseProperty("serial_ccd")
+    serial_species = af.PhaseProperty("serial_species")
+    serial_ccd = af.PhaseProperty("serial_ccd")
 
-    def __init__(self, phase_name, tag_phases=True, phase_folders=None, serial_species=(), serial_ccd=None,
-                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, rows=None,
+    def __init__(self, phase_name, tag_phases=True, phase_folders=tuple(), serial_species=(), serial_ccd=None,
+                 optimizer_class=af.MultiNest, mask_function=msk.Mask.empty_for_shape, rows=None,
                  serial_front_edge_mask_columns=None, serial_trails_mask_columns=None,
                  serial_total_density_range=None,
                  cosmic_ray_parallel_buffer=10, cosmic_ray_serial_buffer=10, cosmic_ray_diagonal_buffer=3):
@@ -588,14 +584,14 @@ class SerialPhase(Phase):
 
 
 class ParallelSerialPhase(Phase):
-    parallel_species = phase_property.PhaseProperty("parallel_species")
-    serial_species = phase_property.PhaseProperty("serial_species")
-    parallel_ccd = phase_property.PhaseProperty("parallel_ccd")
-    serial_ccd = phase_property.PhaseProperty("serial_ccd")
+    parallel_species = af.PhaseProperty("parallel_species")
+    serial_species = af.PhaseProperty("serial_species")
+    parallel_ccd = af.PhaseProperty("parallel_ccd")
+    serial_ccd = af.PhaseProperty("serial_ccd")
 
-    def __init__(self, phase_name, tag_phases=True, phase_folders=None, parallel_species=(), serial_species=(),
+    def __init__(self, phase_name, tag_phases=True, phase_folders=tuple(), parallel_species=(), serial_species=(),
                  parallel_ccd=None, serial_ccd=None,
-                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape,
+                 optimizer_class=af.MultiNest, mask_function=msk.Mask.empty_for_shape,
                  parallel_front_edge_mask_rows=None, parallel_trails_mask_rows=None,
                  serial_front_edge_mask_columns=None, serial_trails_mask_columns=None,
                  parallel_total_density_range=None, serial_total_density_range=None,
@@ -616,7 +612,7 @@ class ParallelSerialPhase(Phase):
                          serial_front_edge_mask_columns=serial_front_edge_mask_columns,
                          serial_trails_mask_columns=serial_trails_mask_columns,
                          parallel_total_density_range=parallel_total_density_range,
-                         serial_total_density_range=parallel_total_density_range,
+                         serial_total_density_range=serial_total_density_range,
                          cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
                          cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
                          cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer)
@@ -675,7 +671,7 @@ class HyperPhase(Phase):
     """
     Mixin for hyper phases. Extracts noise scaling maps and creates MaskedCIHyperData objects for analysis.
     """
-    hyper_noise_scalars = phase_property.PhaseProperty("hyper_noise_scalars")
+    hyper_noise_scalars = af.PhaseProperty("hyper_noise_scalars")
 
     def __init__(self, phase_name, phase_folders, *args, **kwargs):
         super().__init__(phase_name=phase_name, phase_folders=phase_folders, *args, **kwargs)
@@ -804,12 +800,12 @@ class HyperPhase(Phase):
 
     @number_of_noise_scalars.setter
     def number_of_noise_scalars(self, number):
-        self.hyper_noise_scalars = [pm.PriorModel(ci_hyper.CIHyperNoiseScalar) for _ in range(number)]
+        self.hyper_noise_scalars = [af.PriorModel(ci_hyper.CIHyperNoiseScalar) for _ in range(number)]
 
 
 class ParallelHyperPhase(ParallelPhase, HyperPhase):
-    def __init__(self, phase_name, tag_phases=True, phase_folders=None, parallel_species=(), parallel_ccd=None,
-                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, columns=None,
+    def __init__(self, phase_name, tag_phases=True, phase_folders=tuple(), parallel_species=(), parallel_ccd=None,
+                 optimizer_class=af.MultiNest, mask_function=msk.Mask.empty_for_shape, columns=None,
                  parallel_front_edge_mask_rows=None, parallel_trails_mask_rows=None,
                  parallel_total_density_range=None,
                  cosmic_ray_parallel_buffer=10, cosmic_ray_serial_buffer=10, cosmic_ray_diagonal_buffer=3):
@@ -857,8 +853,8 @@ class ParallelHyperPhase(ParallelPhase, HyperPhase):
 
 class SerialHyperPhase(SerialPhase, HyperPhase):
 
-    def __init__(self, phase_name, tag_phases=True, phase_folders=None, serial_species=(), serial_ccd=None,
-                 optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape, rows=None,
+    def __init__(self, phase_name, tag_phases=True, phase_folders=tuple(), serial_species=(), serial_ccd=None,
+                 optimizer_class=af.MultiNest, mask_function=msk.Mask.empty_for_shape, rows=None,
                  serial_front_edge_mask_columns=None, serial_trails_mask_columns=None,
                  serial_total_density_range=None,
                  cosmic_ray_parallel_buffer=10, cosmic_ray_serial_buffer=10, cosmic_ray_diagonal_buffer=3):
@@ -898,8 +894,8 @@ class SerialHyperPhase(SerialPhase, HyperPhase):
 
 
 class ParallelSerialHyperPhase(ParallelSerialPhase, HyperPhase):
-    def __init__(self, phase_name, tag_phases=True, phase_folders=None, parallel_species=(), serial_species=(), parallel_ccd=None,
-                 serial_ccd=None, optimizer_class=nl.MultiNest, mask_function=msk.Mask.empty_for_shape,
+    def __init__(self, phase_name, tag_phases=True, phase_folders=tuple(), parallel_species=(), serial_species=(), parallel_ccd=None,
+                 serial_ccd=None, optimizer_class=af.MultiNest, mask_function=msk.Mask.empty_for_shape,
                  parallel_front_edge_mask_rows=None, parallel_trails_mask_rows=None,
                  serial_front_edge_mask_columns=None, serial_trails_mask_columns=None,
                  parallel_total_density_range=None, serial_total_density_range=None,

@@ -1,5 +1,6 @@
 import numpy as np
 
+import autofit as af
 from autocti import exc
 from autocti.model import pyarctic
 

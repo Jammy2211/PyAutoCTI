@@ -1,10 +1,8 @@
 import builtins
 
 import pytest
-from autofit.mapper import model_mapper as mm
-from autofit.optimize import non_linear as nl
-from autofit.tools.phase import AbstractPhase
 
+import autofit as af
 from autocti.pipeline import pipeline as pl
 
 
@@ -39,11 +37,12 @@ def make_mock_file(monkeypatch):
 
 
 class Optimizer(object):
-    def __init__(self, phase_name):
+    def __init__(self, phase_name="dummy_phase"):
         self.phase_name = phase_name
+        self.phase_path = ""
 
 
-class DummyPhase(AbstractPhase):
+class DummyPhase(af.AbstractPhase):
     def make_result(self, result, analysis):
         pass
 
@@ -62,7 +61,7 @@ class DummyPhase(AbstractPhase):
         self.cti_settings = cti_settings
         self.results = results
         self.pool = pool
-        return nl.Result(mm.ModelInstance(), 1)
+        return af.Result(af.ModelInstance(), 1)
 
 
 class TestPipeline(object):
