@@ -1,5 +1,5 @@
 astropy
-autofit==0.24.0
+autofit==0.27.3
 decorator==4.2.1
 matplotlib==3.0.3
 GetDist==0.2.8
