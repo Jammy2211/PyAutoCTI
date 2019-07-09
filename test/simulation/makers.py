@@ -1,4 +1,4 @@
-from autoaf.tools import path_util
+import autofit as af
 from autocti.charge_injection import ci_data
 from autocti.charge_injection import ci_pattern
 from autocti.model import arctic_params
