@@ -254,35 +254,35 @@ class Phase(af.AbstractPhase):
 
             self.extract_array_from_mask = af.conf.instance.visualize.get('figures', 'extract_images_from_mask', bool)
 
-            def output_bool(name):
-                return af.conf.instance.visualize.get('output', name, bool)
+            def output_plots(name):
+                return af.conf.instance.visualize.get('plots', name, bool)
 
-            self.plot_ci_data_as_subplot = output_bool('plot_ci_data_as_subplot')
-            self.plot_ci_data_image = output_bool('plot_ci_data_image')
-            self.plot_ci_data_noise_map = output_bool('plot_ci_data_noise_map')
-            self.plot_ci_data_ci_pre_cti = output_bool('plot_ci_data_ci_pre_cti')
-            self.plot_ci_data_signal_to_noise_map = output_bool('plot_ci_data_signal_to_noise_map')
+            self.plot_ci_data_as_subplot = output_plots('plot_ci_data_as_subplot')
+            self.plot_ci_data_image = output_plots('plot_ci_data_image')
+            self.plot_ci_data_noise_map = output_plots('plot_ci_data_noise_map')
+            self.plot_ci_data_ci_pre_cti = output_plots('plot_ci_data_ci_pre_cti')
+            self.plot_ci_data_signal_to_noise_map = output_plots('plot_ci_data_signal_to_noise_map')
 
-            self.plot_ci_fit_all_at_end_png = output_bool('plot_ci_fit_all_at_end_png')
-            self.plot_ci_fit_all_at_end_fits = output_bool('plot_ci_fit_all_at_end_fits')
+            self.plot_ci_fit_all_at_end_png = output_plots('plot_ci_fit_all_at_end_png')
+            self.plot_ci_fit_all_at_end_fits = output_plots('plot_ci_fit_all_at_end_fits')
 
-            self.plot_ci_fit_as_subplot = output_bool('plot_ci_fit_as_subplot')
-            self.plot_ci_fit_residual_maps_subplot = output_bool('plot_ci_fit_residual_maps_subplot')
-            self.plot_ci_fit_chi_squared_maps_subplot = output_bool('plot_ci_fit_chi_squared_maps_subplot')
+            self.plot_ci_fit_as_subplot = output_plots('plot_ci_fit_as_subplot')
+            self.plot_ci_fit_residual_maps_subplot = output_plots('plot_ci_fit_residual_maps_subplot')
+            self.plot_ci_fit_chi_squared_maps_subplot = output_plots('plot_ci_fit_chi_squared_maps_subplot')
             
-            self.plot_ci_fit_image = output_bool('plot_ci_fit_image')
-            self.plot_ci_fit_noise_map = output_bool('plot_ci_fit_noise_map')
-            self.plot_ci_fit_signal_to_noise_map = output_bool('plot_ci_fit_signal_to_noise_map')
-            self.plot_ci_fit_ci_pre_cti = output_bool('plot_ci_fit_ci_pre_cti')
-            self.plot_ci_fit_ci_post_cti = output_bool('plot_ci_fit_ci_post_cti')
-            self.plot_ci_fit_residual_map = output_bool('plot_ci_fit_residual_map')
-            self.plot_ci_fit_chi_squared_map = output_bool('plot_ci_fit_chi_squared_map')
-            self.plot_ci_fit_noise_scaling_maps = output_bool('plot_ci_fit_noise_scaling_maps')
+            self.plot_ci_fit_image = output_plots('plot_ci_fit_image')
+            self.plot_ci_fit_noise_map = output_plots('plot_ci_fit_noise_map')
+            self.plot_ci_fit_signal_to_noise_map = output_plots('plot_ci_fit_signal_to_noise_map')
+            self.plot_ci_fit_ci_pre_cti = output_plots('plot_ci_fit_ci_pre_cti')
+            self.plot_ci_fit_ci_post_cti = output_plots('plot_ci_fit_ci_post_cti')
+            self.plot_ci_fit_residual_map = output_plots('plot_ci_fit_residual_map')
+            self.plot_ci_fit_chi_squared_map = output_plots('plot_ci_fit_chi_squared_map')
+            self.plot_ci_fit_noise_scaling_maps = output_plots('plot_ci_fit_noise_scaling_maps')
 
-            self.plot_parallel_front_edge_line = output_bool('plot_parallel_front_edge_line')
-            self.plot_parallel_trails_line = output_bool('plot_parallel_trails_line')
-            self.plot_serial_front_edge_line = output_bool('plot_serial_front_edge_line')
-            self.plot_serial_trails_line = output_bool('plot_serial_trails_line')
+            self.plot_parallel_front_edge_line = output_plots('plot_parallel_front_edge_line')
+            self.plot_parallel_trails_line = output_plots('plot_parallel_trails_line')
+            self.plot_serial_front_edge_line = output_plots('plot_serial_front_edge_line')
+            self.plot_serial_trails_line = output_plots('plot_serial_trails_line')
 
             self.is_hyper = False
 
