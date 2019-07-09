@@ -52,12 +52,12 @@ def make_pipeline(test_name):
 
             previous_total_density = results[-1].constant.parallel_species[0].trap_density
 
-            self.parallel_species[0].trap_density = prior.UniformPrior(lower_limit=0.0, upper_limit=previous_total_density)
-            self.parallel_species[1].trap_density = prior.UniformPrior(lower_limit=0.0, upper_limit=previous_total_density)
-            self.parallel_species[2].trap_density = prior.UniformPrior(lower_limit=0.0, upper_limit=previous_total_density)
-            self.parallel_species[0].trap_lifetime = prior.UniformPrior(lower_limit=0.0, upper_limit=30.0)
-            self.parallel_species[1].trap_lifetime = prior.UniformPrior(lower_limit=0.0, upper_limit=30.0)
-            self.parallel_species[2].trap_lifetime = prior.UniformPrior(lower_limit=0.0, upper_limit=30.0)
+            self.parallel_species[0].trap_density = af.UniformPrior(lower_limit=0.0, upper_limit=previous_total_density)
+            self.parallel_species[1].trap_density = af.UniformPrior(lower_limit=0.0, upper_limit=previous_total_density)
+            self.parallel_species[2].trap_density = af.UniformPrior(lower_limit=0.0, upper_limit=previous_total_density)
+            self.parallel_species[0].trap_lifetime = af.UniformPrior(lower_limit=0.0, upper_limit=30.0)
+            self.parallel_species[1].trap_lifetime = af.UniformPrior(lower_limit=0.0, upper_limit=30.0)
+            self.parallel_species[2].trap_lifetime = af.UniformPrior(lower_limit=0.0, upper_limit=30.0)
 
             self.parallel_ccd.well_notch_depth = results.from_phase('phase_1').variable.parallel_ccd.well_notch_depth
             self.parallel_ccd.well_fill_beta = results.from_phase('phase_1').variable.parallel_ccd.well_fill_beta
