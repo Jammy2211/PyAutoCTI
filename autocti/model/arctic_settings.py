@@ -1,7 +1,5 @@
-
 class ArcticSettings(object):
-
-    def __init__(self, neomode='NEO', parallel=None, serial=None):
+    def __init__(self, neomode="NEO", parallel=None, serial=None):
         """Sets up the CTI settings for parallel and serial clocking, specified using the \
         ArcticSettings.Settings and ArcticSettings.Settings classes.
         
@@ -32,21 +30,42 @@ class ArcticSettings(object):
         """
 
         if self.parallel is not None:
-            ext_header.set('cte_pite', self.parallel.niter, 'Iterations Used In Correction (Parallel)')
-            ext_header.set('cte_pwld', self.parallel.well_depth, 'CCD Well Depth (Parallel)')
-            ext_header.set('cte_pnts', self.parallel.n_levels, 'Number of levels (Parallel)')
+            ext_header.set(
+                "cte_pite",
+                self.parallel.niter,
+                "Iterations Used In Correction (Parallel)",
+            )
+            ext_header.set(
+                "cte_pwld", self.parallel.well_depth, "CCD Well Depth (Parallel)"
+            )
+            ext_header.set(
+                "cte_pnts", self.parallel.n_levels, "Number of levels (Parallel)"
+            )
 
         if self.serial is not None:
-            ext_header.set('cte_site', self.serial.niter, 'Iterations Used In Correction (Serial)')
-            ext_header.set('cte_swld', self.serial.well_depth, 'CCD Well Depth (Serial)')
-            ext_header.set('cte_snts', self.serial.n_levels, 'Number of levels (Serial)')
+            ext_header.set(
+                "cte_site", self.serial.niter, "Iterations Used In Correction (Serial)"
+            )
+            ext_header.set(
+                "cte_swld", self.serial.well_depth, "CCD Well Depth (Serial)"
+            )
+            ext_header.set(
+                "cte_snts", self.serial.n_levels, "Number of levels (Serial)"
+            )
 
         return ext_header
 
 
 class Settings(object):
-
-    def __init__(self, well_depth, niter, express, n_levels, charge_injection_mode=False, readout_offset=0):
+    def __init__(
+        self,
+        well_depth,
+        niter,
+        express,
+        n_levels,
+        charge_injection_mode=False,
+        readout_offset=0,
+    ):
         """
         The CTI settings for parallel clocking.
 
@@ -82,7 +101,9 @@ class Settings(object):
         ext_header : astropy.io.hdulist
             The opened header of the astropy fits header.
         """
-        ext_header.set('cte_pite', self.niter, 'Iterations Used In Correction (Parallel)')
-        ext_header.set('cte_pwld', self.well_depth, 'CCD Well Depth (Parallel)')
-        ext_header.set('cte_pnts', self.n_levels, 'Number of levels (Parallel)')
+        ext_header.set(
+            "cte_pite", self.niter, "Iterations Used In Correction (Parallel)"
+        )
+        ext_header.set("cte_pwld", self.well_depth, "CCD Well Depth (Parallel)")
+        ext_header.set("cte_pnts", self.n_levels, "Number of levels (Parallel)")
         return ext_header

@@ -11,4 +11,4 @@ class CIHyperNoiseScalar(float):
         return self * noise_scaling
 
     def __repr__(self):
-        return "Noise Scale Factor: {}".format(self) + '\n'
+        return "Noise Scale Factor: {}".format(self) + "\n"

@@ -1,16 +1,28 @@
-
 import numpy as np
 
 from autocti.model import arctic_params
 
-def call_arctic(image, species, ccd, settings, correct_cti=False, use_poisson_densities=False):
+
+def call_arctic(
+    image, species, ccd, settings, correct_cti=False, use_poisson_densities=False
+):
 
     if not use_poisson_densities:
-        return call_arctic_constant_density(image=image, species=species, ccd=ccd, settings=settings,
-                                            correct_cti=correct_cti)
+        return call_arctic_constant_density(
+            image=image,
+            species=species,
+            ccd=ccd,
+            settings=settings,
+            correct_cti=correct_cti,
+        )
     elif use_poisson_densities:
-        return call_arctic_parallel_poisson_density(image=image, species=species, ccd=ccd, settings=settings,
-                                                    correct_cti=correct_cti)
+        return call_arctic_parallel_poisson_density(
+            image=image,
+            species=species,
+            ccd=ccd,
+            settings=settings,
+            correct_cti=correct_cti,
+        )
 
 
 def call_arctic_constant_density(image, species, ccd, settings, correct_cti):
@@ -51,23 +63,32 @@ def call_arctic_constant_density(image, species, ccd, settings, correct_cti):
     # noinspection PyUnresolvedReferences,PyPep8Naming
     import pySHE_ArCTIC as arctic
 
-    clock_routine = arctic.cte_image_neo()  # Setup instance of arctic charge clocking routine
+    clock_routine = (
+        arctic.cte_image_neo()
+    )  # Setup instance of arctic charge clocking routine
 
-    clock_params = clock_routine.parameters  # Initiate the parameters which the arctic clocking routine uses
-    clock_params.unclock = correct_cti  # Include unclock in parameters to pass to different
+    clock_params = (
+        clock_routine.parameters
+    )  # Initiate the parameters which the arctic clocking routine uses
+    clock_params.unclock = (
+        correct_cti
+    )  # Include unclock in parameters to pass to different
     # routines easily
 
     set_arctic_settings(clock_params=clock_params, settings=settings)
     set_arctic_params(clock_params=clock_params, species=species, ccd=ccd)
 
-    return clock_image(clock_routine=clock_routine, clock_params=clock_params, image=image)
+    return clock_image(
+        clock_routine=clock_routine, clock_params=clock_params, image=image
+    )
 
 
 def clock_image(clock_routine, clock_params, image):
     """Clock the image using arctic."""
 
-    set_arctic_image_dimensions(clock_routine=clock_routine, clock_params=clock_params,
-                                dimensions=image.shape)
+    set_arctic_image_dimensions(
+        clock_routine=clock_routine, clock_params=clock_params, dimensions=image.shape
+    )
 
     image = image.astype(np.float64)  # Have to convert type to avoid c++ memory issues
     clock_routine.clock_charge(image)
@@ -78,15 +99,26 @@ def call_arctic_parallel_poisson_density(image, species, ccd, settings, correct_
     # noinspection PyUnresolvedReferences,PyPep8Naming
     import pySHE_ArCTIC as arctic
 
-    clock_routine = arctic.cte_image_neo()  # Setup instance of arctic charge clocking routine
+    clock_routine = (
+        arctic.cte_image_neo()
+    )  # Setup instance of arctic charge clocking routine
 
-    clock_params = clock_routine.parameters  # Initiate the parameters which the arctic clocking routine uses
-    clock_params.unclock = correct_cti # Include unclock in parameters to pass to different
+    clock_params = (
+        clock_routine.parameters
+    )  # Initiate the parameters which the arctic clocking routine uses
+    clock_params.unclock = (
+        correct_cti
+    )  # Include unclock in parameters to pass to different
 
     set_arctic_settings(clock_params=clock_params, settings=settings)
 
-    return clock_image_variable_density(clock_routine=clock_routine, clock_params=clock_params, image=image,
-                                        species=species, ccd=ccd)
+    return clock_image_variable_density(
+        clock_routine=clock_routine,
+        clock_params=clock_params,
+        image=image,
+        species=species,
+        ccd=ccd,
+    )
 
 
 def clock_image_variable_density(clock_routine, clock_params, image, species, ccd):
@@ -103,19 +135,28 @@ def clock_image_variable_density(clock_routine, clock_params, image, species, cc
     column_pre_clocking = np.zeros(shape=(image.shape[0], 1))
 
     # Setup the arctic image such that it knows to expect one column from every call
-    set_arctic_image_dimensions(clock_routine=clock_routine, clock_params=clock_params,
-                                dimensions=(image.shape[0], 1))
+    set_arctic_image_dimensions(
+        clock_routine=clock_routine,
+        clock_params=clock_params,
+        dimensions=(image.shape[0], 1),
+    )
 
     species_per_column = int(len(species) / image.shape[1])
 
     for column_no in range(image.shape[1]):
 
-        set_arctic_params(clock_params=clock_params,
-                          species=species[column_no * species_per_column: (column_no + 1) * species_per_column],
-                          ccd=ccd)
+        set_arctic_params(
+            clock_params=clock_params,
+            species=species[
+                column_no * species_per_column : (column_no + 1) * species_per_column
+            ],
+            ccd=ccd,
+        )
 
         column_pre_clocking[:, 0] = image[:, column_no]
-        column_post_clocking = column_pre_clocking.astype(np.float64)  # Have to convert type to avoid c++ memory issues
+        column_post_clocking = column_pre_clocking.astype(
+            np.float64
+        )  # Have to convert type to avoid c++ memory issues
         clock_routine.clock_charge(column_post_clocking)
         image_post_clocking[:, column_no] = column_post_clocking[:, 0]
 
@@ -135,7 +176,9 @@ def set_arctic_settings(clock_params, settings):
 
 def set_arctic_params(clock_params, species, ccd):
     """Set the clock_params for the arctic clocking routine."""
-    clock_params.set_traps([s.trap_density for s in species], [s.trap_lifetime for s in species])
+    clock_params.set_traps(
+        [s.trap_density for s in species], [s.trap_lifetime for s in species]
+    )
 
     clock_params.well_notch_depth = ccd.well_notch_depth
     clock_params.well_fill_alpha = ccd.well_fill_alpha
