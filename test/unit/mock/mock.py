@@ -3,31 +3,28 @@ from autocti.charge_injection.ci_frame import Region
 
 
 class MockPattern(object):
-
     def __init__(self, regions=None):
 
-        self.normalization=10
+        self.normalization = 10
         self.regions = regions
         self.total_rows = 2
         self.total_columns = 2
 
 
 class MockGeometry(object):
-
     def __init__(self):
         super(MockGeometry, self).__init__()
 
 
 class MockFrameGeometry(object):
-
     def __init__(self, value=1.0):
         self.value = value
 
     def add_cti(self, image, cti_params, cti_settings):
         return self.value * np.ones((2, 2))
 
-class MockCIFrame(object):
 
+class MockCIFrame(object):
     def __init__(self, value=1.0):
 
         self.ci_pattern = MockPattern()
@@ -46,21 +43,34 @@ class MockCIFrame(object):
     def serial_overscan_above_trails_frame_from_frame(self, array):
         return array[1, 0:2]
 
-    def parallel_front_edge_line_binned_over_columns_from_frame(self, array, rows=None, mask=None):
-        return np.array([1.0, 1.0, 2.0, 2.0])
-    
-    def parallel_trails_line_binned_over_columns_from_frame(self, array, rows=None, mask=None):
-        return np.array([1.0, 1.0, 2.0, 2.0])
-
-    def serial_front_edge_line_binned_over_rows_from_frame(self, array, columns=None, mask=None):
+    def parallel_front_edge_line_binned_over_columns_from_frame(
+        self, array, rows=None, mask=None
+    ):
         return np.array([1.0, 1.0, 2.0, 2.0])
 
-    def serial_trails_line_binned_over_rows_from_frame(self, array, columns=None, mask=None):
+    def parallel_trails_line_binned_over_columns_from_frame(
+        self, array, rows=None, mask=None
+    ):
         return np.array([1.0, 1.0, 2.0, 2.0])
+
+    def serial_front_edge_line_binned_over_rows_from_frame(
+        self, array, columns=None, mask=None
+    ):
+        return np.array([1.0, 1.0, 2.0, 2.0])
+
+    def serial_trails_line_binned_over_rows_from_frame(
+        self, array, columns=None, mask=None
+    ):
+        return np.array([1.0, 1.0, 2.0, 2.0])
+
 
 class MockCIGeometry(object):
-
-    def __init__(self, parallel_overscan=(0, 1, 0, 1), serial_prescan=(0, 1, 0, 1), serial_overscan=(0, 1, 0, 1)):
+    def __init__(
+        self,
+        parallel_overscan=(0, 1, 0, 1),
+        serial_prescan=(0, 1, 0, 1),
+        serial_overscan=(0, 1, 0, 1),
+    ):
         super(MockCIGeometry, self).__init__()
         self.parallel_overscan = Region(parallel_overscan)
         self.serial_prescan = Region(serial_prescan)
@@ -68,8 +78,15 @@ class MockCIGeometry(object):
 
 
 class MockCIPreCTI(np.ndarray):
-
-    def __new__(cls, array, frame_geometry=MockGeometry(), ci_pattern=MockPattern(), value=1.0, *args, **kwargs):
+    def __new__(
+        cls,
+        array,
+        frame_geometry=MockGeometry(),
+        ci_pattern=MockPattern(),
+        value=1.0,
+        *args,
+        **kwargs
+    ):
         ci = np.array(array).view(cls)
         ci.frame_geometry = frame_geometry
         ci.ci_pattern = ci_pattern
@@ -81,19 +98,16 @@ class MockCIPreCTI(np.ndarray):
 
 
 class MockParams(object):
-
     def __init__(self):
         pass
 
 
 class MockSettings(object):
-
     def __init__(self):
         pass
 
 
 class MockChInj(np.ndarray):
-
     def __new__(cls, array, geometry=None, ci_pattern=None, *args, **kwargs):
         ci = np.array(array).view(cls)
         ci.frame_geometry = geometry

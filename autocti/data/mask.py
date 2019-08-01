@@ -4,9 +4,8 @@ from autocti.charge_injection import ci_frame
 
 
 class Mask(np.ndarray):
-
     def __new__(cls, array, *args, **kwargs):
-        mask = np.array(array, dtype='bool').view(cls)
+        mask = np.array(array, dtype="bool").view(cls)
         return mask
 
     @classmethod
@@ -28,13 +27,21 @@ class Mask(np.ndarray):
         mask = cls.empty_for_shape(shape)
         masked_regions = list(map(lambda r: ci_frame.Region(r), masked_regions))
         for region in masked_regions:
-            mask[region.y0:region.y1, region.x0:region.x1] = True
+            mask[region.y0 : region.y1, region.x0 : region.x1] = True
 
         return mask
 
     @classmethod
-    def from_cosmic_ray_image(cls, shape, frame_geometry, cosmic_ray_image, cosmic_ray_parallel_buffer=0,
-                              cosmic_ray_serial_buffer=0, cosmic_ray_diagonal_buffer=0, **kwargs):
+    def from_cosmic_ray_image(
+        cls,
+        shape,
+        frame_geometry,
+        cosmic_ray_image,
+        cosmic_ray_parallel_buffer=0,
+        cosmic_ray_serial_buffer=0,
+        cosmic_ray_diagonal_buffer=0,
+        **kwargs
+    ):
         """
         Create the mask used for CTI Calibration, which is all False unless specific regions are input for masking.
 
@@ -56,17 +63,25 @@ class Mask(np.ndarray):
         """
         mask = cls.empty_for_shape(shape)
 
-        cosmic_ray_mask = (cosmic_ray_image > 0.0).astype('bool')
+        cosmic_ray_mask = (cosmic_ray_image > 0.0).astype("bool")
 
         for y in range(mask.shape[0]):
             for x in range(mask.shape[1]):
                 if cosmic_ray_mask[y, x]:
-                    y0, y1 = frame_geometry.parallel_trail_from_y(y, cosmic_ray_parallel_buffer)
+                    y0, y1 = frame_geometry.parallel_trail_from_y(
+                        y, cosmic_ray_parallel_buffer
+                    )
                     mask[y0:y1, x] = True
-                    x0, x1 = frame_geometry.serial_trail_from_x(x, cosmic_ray_serial_buffer)
+                    x0, x1 = frame_geometry.serial_trail_from_x(
+                        x, cosmic_ray_serial_buffer
+                    )
                     mask[y, x0:x1] = True
-                    y0, y1 = frame_geometry.parallel_trail_from_y(y, cosmic_ray_diagonal_buffer)
-                    x0, x1 = frame_geometry.serial_trail_from_x(x, cosmic_ray_diagonal_buffer)
+                    y0, y1 = frame_geometry.parallel_trail_from_y(
+                        y, cosmic_ray_diagonal_buffer
+                    )
+                    x0, x1 = frame_geometry.serial_trail_from_x(
+                        x, cosmic_ray_diagonal_buffer
+                    )
                     mask[y0:y1, x0:x1] = True
 
         return mask

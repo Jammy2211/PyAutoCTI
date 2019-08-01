@@ -11,34 +11,77 @@ def line_from_line_region_and_arrays(line_region, array, mask, ci_frame):
     -----------
     ci_frame : charge_injection.ci_frame.ChInj
     """
-    if line_region is 'parallel_front_edge':
-        return ci_frame.parallel_front_edge_line_binned_over_columns_from_frame(array=array, mask=mask)
-    elif line_region is 'parallel_trails':
-        return ci_frame.parallel_trails_line_binned_over_columns_from_frame(array=array, mask=mask)
-    elif line_region is 'serial_front_edge':
-        return ci_frame.serial_front_edge_line_binned_over_rows_from_frame(array=array, mask=mask)
-    elif line_region is 'serial_trails':
-        return ci_frame.serial_trails_line_binned_over_rows_from_frame(array=array, mask=mask)
+    if line_region is "parallel_front_edge":
+        return ci_frame.parallel_front_edge_line_binned_over_columns_from_frame(
+            array=array, mask=mask
+        )
+    elif line_region is "parallel_trails":
+        return ci_frame.parallel_trails_line_binned_over_columns_from_frame(
+            array=array, mask=mask
+        )
+    elif line_region is "serial_front_edge":
+        return ci_frame.serial_front_edge_line_binned_over_rows_from_frame(
+            array=array, mask=mask
+        )
+    elif line_region is "serial_trails":
+        return ci_frame.serial_trails_line_binned_over_rows_from_frame(
+            array=array, mask=mask
+        )
     else:
-        raise exc.PlottingException('The line region specified for the plotting of a line was invalid')
+        raise exc.PlottingException(
+            "The line region specified for the plotting of a line was invalid"
+        )
+
 
 def plot_line_from_array_and_ci_frame(
-        array, line_region, ci_frame, mask=None, as_subplot=False,
-        figsize=(7, 7),
-        title='Stack', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
-        output_path=None, output_format='show', output_filename='line'):
+    array,
+    line_region,
+    ci_frame,
+    mask=None,
+    as_subplot=False,
+    figsize=(7, 7),
+    title="Stack",
+    titlesize=16,
+    xlabelsize=16,
+    ylabelsize=16,
+    xyticksize=16,
+    output_path=None,
+    output_format="show",
+    output_filename="line",
+):
 
-    line = line_from_line_region_and_arrays(line_region=line_region, array=array, mask=mask, ci_frame=ci_frame)
+    line = line_from_line_region_and_arrays(
+        line_region=line_region, array=array, mask=mask, ci_frame=ci_frame
+    )
 
-    plot_line(line=line, as_subplot=as_subplot,
-               figsize=figsize,
-               title=title, titlesize=titlesize, xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize,
-               output_path=output_path, output_format=output_format, output_filename=output_filename)
+    plot_line(
+        line=line,
+        as_subplot=as_subplot,
+        figsize=figsize,
+        title=title,
+        titlesize=titlesize,
+        xlabelsize=xlabelsize,
+        ylabelsize=ylabelsize,
+        xyticksize=xyticksize,
+        output_path=output_path,
+        output_format=output_format,
+        output_filename=output_filename,
+    )
 
-def plot_line(line, as_subplot=False,
-               figsize=(7, 7),
-               title='Stack', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
-               output_path=None, output_format='show', output_filename='line'):
+
+def plot_line(
+    line,
+    as_subplot=False,
+    figsize=(7, 7),
+    title="Stack",
+    titlesize=16,
+    xlabelsize=16,
+    ylabelsize=16,
+    xyticksize=16,
+    output_path=None,
+    output_format="show",
+    output_filename="line",
+):
     """Plot an array of hyper as a figure.
 
     Parameters
@@ -86,9 +129,16 @@ def plot_line(line, as_subplot=False,
     plot_figure(line=line, as_subplot=as_subplot, figsize=figsize)
 
     plotter_util.set_title(title=title, titlesize=titlesize)
-    set_xy_labels_and_ticksize(xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize)
-    plotter_util.output_figure(line, as_subplot=as_subplot, output_path=output_path, output_filename=output_filename,
-                               output_format=output_format)
+    set_xy_labels_and_ticksize(
+        xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize
+    )
+    plotter_util.output_figure(
+        line,
+        as_subplot=as_subplot,
+        output_path=output_path,
+        output_filename=output_filename,
+        output_format=output_format,
+    )
     plotter_util.close_figure(as_subplot=as_subplot)
 
 
@@ -133,6 +183,7 @@ def plot_figure(line, as_subplot, figsize):
     plotter_util.setup_figure(figsize=figsize, as_subplot=as_subplot)
     plt.plot(line)
 
+
 def set_xy_labels_and_ticksize(xlabelsize, ylabelsize, xyticksize):
     """Set the x and y labels of the figure, and set the fontsize of those labels.
 
@@ -152,6 +203,6 @@ def set_xy_labels_and_ticksize(xlabelsize, ylabelsize, xyticksize):
     xyticksize : int
         The font size of the x and y ticks on the figure axes.
     """
-    plt.xlabel('x (pixels)', fontsize=xlabelsize)
-    plt.ylabel('y (pixels)', fontsize=ylabelsize)
+    plt.xlabel("x (pixels)", fontsize=xlabelsize)
+    plt.ylabel("y (pixels)", fontsize=ylabelsize)
     plt.tick_params(labelsize=xyticksize)

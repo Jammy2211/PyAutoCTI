@@ -32,7 +32,7 @@ def make_mock_file(monkeypatch):
         files.append(file)
         return file
 
-    monkeypatch.setattr(builtins, 'open', mock_open)
+    monkeypatch.setattr(builtins, "open", mock_open)
     return files
 
 
@@ -66,9 +66,9 @@ class DummyPhase(af.AbstractPhase):
 
 class TestPipeline(object):
     def test_run_pipeline(self):
-        phase_1 = DummyPhase(phase_name='dummy1')
-        phase_2 = DummyPhase(phase_name='dummy2')
-        pipeline = pl.Pipeline('', phase_1, phase_2)
+        phase_1 = DummyPhase(phase_name="dummy1")
+        phase_2 = DummyPhase(phase_name="dummy2")
+        pipeline = pl.Pipeline("", phase_1, phase_2)
 
         pipeline.run(ci_datas=None, cti_settings=None, pool=None)
 
@@ -76,11 +76,11 @@ class TestPipeline(object):
         assert len(phase_2.results) == 2
 
     def test_addition(self):
-        phase_1 = DummyPhase(phase_name='dummy1')
-        phase_2 = DummyPhase(phase_name='dummy2')
-        phase_3 = DummyPhase(phase_name='dumy3')
+        phase_1 = DummyPhase(phase_name="dummy1")
+        phase_2 = DummyPhase(phase_name="dummy2")
+        phase_3 = DummyPhase(phase_name="dumy3")
 
-        pipeline1 = pl.Pipeline('', phase_1, phase_2)
-        pipeline2 = pl.Pipeline('', phase_3)
+        pipeline1 = pl.Pipeline("", phase_1, phase_2)
+        pipeline2 = pl.Pipeline("", phase_3)
 
         assert (phase_1, phase_2, phase_3) == (pipeline1 + pipeline2).phases

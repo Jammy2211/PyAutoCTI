@@ -4,6 +4,7 @@ import numpy as np
 from autocti import exc
 from autocti.data import util
 
+
 def get_subplot_rows_columns_figsize(number_subplots):
     """Get the size of a sub plot in (rows, columns), based on the number of subplots that are going to be plotted.
 
@@ -80,12 +81,16 @@ def output_figure(array, as_subplot, output_path, output_filename, output_format
     """
     if not as_subplot:
 
-        if output_format is 'show':
+        if output_format is "show":
             plt.show()
-        elif output_format is 'png':
-            plt.savefig(output_path + output_filename + '.png', bbox_inches='tight')
-        elif output_format is 'fits':
-            util.numpy_array_2d_to_fits(array_2d=np.asarray(array), file_path=output_path + output_filename + '.fits', overwrite=True)
+        elif output_format is "png":
+            plt.savefig(output_path + output_filename + ".png", bbox_inches="tight")
+        elif output_format is "fits":
+            util.numpy_array_2d_to_fits(
+                array_2d=np.asarray(array),
+                file_path=output_path + output_filename + ".fits",
+                overwrite=True,
+            )
 
 
 def output_subplot_array(output_path, output_filename, output_format):
@@ -103,12 +108,12 @@ def output_subplot_array(output_path, output_filename, output_format):
         'show' - display on computer screen.
         'png' - output to hard-disk as a png.
     """
-    if output_format is 'show':
+    if output_format is "show":
         plt.show()
-    elif output_format is 'png':
-        plt.savefig(output_path + output_filename + '.png', bbox_inches='tight')
-    elif output_format is 'fits':
-        raise exc.PlottingException('You cannot output a subplots with format .fits')
+    elif output_format is "png":
+        plt.savefig(output_path + output_filename + ".png", bbox_inches="tight")
+    elif output_format is "fits":
+        raise exc.PlottingException("You cannot output a subplots with format .fits")
 
 
 def close_figure(as_subplot):
@@ -125,23 +130,24 @@ def close_figure(as_subplot):
 
 
 def line_regions_from_should_plots(
-        should_plot_parallel_front_edge_line,
-        should_plot_parallel_trails_line,
-        should_plot_serial_front_edge_line,
-        should_plot_serial_trails_line,):
+    should_plot_parallel_front_edge_line,
+    should_plot_parallel_trails_line,
+    should_plot_serial_front_edge_line,
+    should_plot_serial_trails_line,
+):
 
     line_regions = []
 
     if should_plot_parallel_front_edge_line:
-        line_regions.append('parallel_front_edge')
+        line_regions.append("parallel_front_edge")
 
     if should_plot_parallel_trails_line:
-        line_regions.append('parallel_trails')
+        line_regions.append("parallel_trails")
 
     if should_plot_serial_front_edge_line:
-        line_regions.append('serial_front_edge')
+        line_regions.append("serial_front_edge")
 
     if should_plot_serial_trails_line:
-        line_regions.append('serial_trails')
+        line_regions.append("serial_trails")
 
     return line_regions
