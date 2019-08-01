@@ -6,12 +6,33 @@ from autocti import exc
 from autocti.plotters import plotter_util
 
 
-def plot_array(array, mask=None, extract_array_from_mask=False, as_subplot=False,
-               figsize=(7, 7), aspect='equal',
-               cmap='jet', norm='linear', norm_min=None, norm_max=None, linthresh=0.05, linscale=0.01,
-               cb_ticksize=10, cb_fraction=0.047, cb_pad=0.01, cb_tick_values=None, cb_tick_labels=None,
-               title='Array', titlesize=16, xlabelsize=16, ylabelsize=16, xyticksize=16,
-               output_path=None, output_format='show', output_filename='array'):
+def plot_array(
+    array,
+    mask=None,
+    extract_array_from_mask=False,
+    as_subplot=False,
+    figsize=(7, 7),
+    aspect="equal",
+    cmap="jet",
+    norm="linear",
+    norm_min=None,
+    norm_max=None,
+    linthresh=0.05,
+    linscale=0.01,
+    cb_ticksize=10,
+    cb_fraction=0.047,
+    cb_pad=0.01,
+    cb_tick_values=None,
+    cb_tick_labels=None,
+    title="Array",
+    titlesize=16,
+    xlabelsize=16,
+    ylabelsize=16,
+    xyticksize=16,
+    output_path=None,
+    output_format="show",
+    output_filename="array",
+):
     """Plot an array of hyper as a figure.
 
     Parameters
@@ -72,24 +93,57 @@ def plot_array(array, mask=None, extract_array_from_mask=False, as_subplot=False
         return
 
     if extract_array_from_mask and mask is not None:
-        array = np.add(array, 0.0, out=np.zeros_like(array), where=np.asarray(mask) == 0)
+        array = np.add(
+            array, 0.0, out=np.zeros_like(array), where=np.asarray(mask) == 0
+        )
 
-    plot_figure(array=array, as_subplot=as_subplot,
-                figsize=figsize, aspect=aspect, cmap=cmap, norm=norm,
-                norm_min=norm_min, norm_max=norm_max, linthresh=linthresh, linscale=linscale)
+    plot_figure(
+        array=array,
+        as_subplot=as_subplot,
+        figsize=figsize,
+        aspect=aspect,
+        cmap=cmap,
+        norm=norm,
+        norm_min=norm_min,
+        norm_max=norm_max,
+        linthresh=linthresh,
+        linscale=linscale,
+    )
 
     plotter_util.set_title(title=title, titlesize=titlesize)
-    set_xy_labels_and_ticksize(xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize)
+    set_xy_labels_and_ticksize(
+        xlabelsize=xlabelsize, ylabelsize=ylabelsize, xyticksize=xyticksize
+    )
 
-    set_colorbar(cb_ticksize=cb_ticksize, cb_fraction=cb_fraction, cb_pad=cb_pad,
-                 cb_tick_values=cb_tick_values, cb_tick_labels=cb_tick_labels)
-    plotter_util.output_figure(array, as_subplot=as_subplot, output_path=output_path, output_filename=output_filename,
-                               output_format=output_format)
+    set_colorbar(
+        cb_ticksize=cb_ticksize,
+        cb_fraction=cb_fraction,
+        cb_pad=cb_pad,
+        cb_tick_values=cb_tick_values,
+        cb_tick_labels=cb_tick_labels,
+    )
+    plotter_util.output_figure(
+        array,
+        as_subplot=as_subplot,
+        output_path=output_path,
+        output_filename=output_filename,
+        output_format=output_format,
+    )
     plotter_util.close_figure(as_subplot=as_subplot)
 
 
-def plot_figure(array, as_subplot, figsize, aspect, cmap, norm, norm_min, norm_max,
-                linthresh, linscale):
+def plot_figure(
+    array,
+    as_subplot,
+    figsize,
+    aspect,
+    cmap,
+    norm,
+    norm_min,
+    norm_max,
+    linthresh,
+    linscale,
+):
     """Open a matplotlib figure and plot the array of hyper on it.
 
     Parameters
@@ -130,9 +184,16 @@ def plot_figure(array, as_subplot, figsize, aspect, cmap, norm, norm_min, norm_m
 
     plotter_util.setup_figure(figsize=figsize, as_subplot=as_subplot)
 
-    norm_min, norm_max = get_normalization_min_max(array=array, norm_min=norm_min, norm_max=norm_max)
-    norm_scale = get_normalization_scale(norm=norm, norm_min=norm_min, norm_max=norm_max,
-                                         linthresh=linthresh, linscale=linscale)
+    norm_min, norm_max = get_normalization_min_max(
+        array=array, norm_min=norm_min, norm_max=norm_max
+    )
+    norm_scale = get_normalization_scale(
+        norm=norm,
+        norm_min=norm_min,
+        norm_max=norm_max,
+        linthresh=linthresh,
+        linscale=linscale,
+    )
 
     extent = get_extent(array=array)
 
@@ -206,17 +267,21 @@ def get_normalization_scale(norm, norm_min, norm_max, linthresh, linscale):
         For the 'symmetric_log' colormap normalization, this allowws the linear range set by linthresh to be stretched \
         relative to the logarithmic range.
     """
-    if norm is 'linear':
+    if norm is "linear":
         return colors.Normalize(vmin=norm_min, vmax=norm_max)
-    elif norm is 'log':
+    elif norm is "log":
         if norm_min == 0.0:
-            norm_min = 1.e-4
+            norm_min = 1.0e-4
         return colors.LogNorm(vmin=norm_min, vmax=norm_max)
-    elif norm is 'symmetric_log':
-        return colors.SymLogNorm(linthresh=linthresh, linscale=linscale, vmin=norm_min, vmax=norm_max)
+    elif norm is "symmetric_log":
+        return colors.SymLogNorm(
+            linthresh=linthresh, linscale=linscale, vmin=norm_min, vmax=norm_max
+        )
     else:
-        raise exc.PlottingException('The normalization (norm) supplied to the plotter is not a valid string (must be '
-                                    'linear | log | symmetric_log')
+        raise exc.PlottingException(
+            "The normalization (norm) supplied to the plotter is not a valid string (must be "
+            "linear | log | symmetric_log"
+        )
 
 
 def set_xy_labels_and_ticksize(xlabelsize, ylabelsize, xyticksize):
@@ -238,8 +303,8 @@ def set_xy_labels_and_ticksize(xlabelsize, ylabelsize, xyticksize):
     xyticksize : int
         The font size of the x and y ticks on the figure axes.
     """
-    plt.xlabel('x (pixels)', fontsize=xlabelsize)
-    plt.ylabel('y (pixels)', fontsize=ylabelsize)
+    plt.xlabel("x (pixels)", fontsize=xlabelsize)
+    plt.ylabel("y (pixels)", fontsize=ylabelsize)
     plt.tick_params(labelsize=xyticksize)
 
 
@@ -266,8 +331,10 @@ def set_colorbar(cb_ticksize, cb_fraction, cb_pad, cb_tick_values, cb_tick_label
         cb = plt.colorbar(fraction=cb_fraction, pad=cb_pad, ticks=cb_tick_values)
         cb.ax.set_yticklabels(cb_tick_labels)
     else:
-        raise exc.PlottingException('Only 1 entry of cb_tick_values or cb_tick_labels was input. You must either supply'
-                                    'both the values and labels, or neither.')
+        raise exc.PlottingException(
+            "Only 1 entry of cb_tick_values or cb_tick_labels was input. You must either supply"
+            "both the values and labels, or neither."
+        )
 
     cb.ax.tick_params(labelsize=cb_ticksize)
 
@@ -287,9 +354,9 @@ def convert_grid_units(array, grid_arc_seconds, units, kpc_per_arcsec):
     kpc_per_arcsec : float
         The conversion factor between arc-seconds and kiloparsecs, required to plot the units in kpc.
     """
-    if units is 'pixels':
+    if units is "pixels":
         return array.grid_arc_seconds_to_grid_pixels(grid_arc_seconds=grid_arc_seconds)
-    elif units is 'arcsec' or kpc_per_arcsec is None:
+    elif units is "arcsec" or kpc_per_arcsec is None:
         return grid_arc_seconds
-    elif units is 'kpc':
+    elif units is "kpc":
         return grid_arc_seconds * kpc_per_arcsec

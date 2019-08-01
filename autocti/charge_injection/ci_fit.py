@@ -4,8 +4,9 @@ from autocti.charge_injection import ci_data
 
 
 class AbstractCIFit(af.DataFit):
-
-    def __init__(self, masked_ci_data: ci_data.MaskedCIData, noise_map, cti_params, cti_settings):
+    def __init__(
+        self, masked_ci_data: ci_data.MaskedCIData, noise_map, cti_params, cti_settings
+    ):
         """Abstract fit of a charge injection dataset with a model cti image.
 
         Parameters
@@ -17,12 +18,18 @@ class AbstractCIFit(af.DataFit):
         cti_settings : arctic_settings.ArcticSettings
             The settings that control how arctic models CTI.
         """
-        model_data = masked_ci_data.ci_frame.frame_geometry.add_cti(image=masked_ci_data.ci_pre_cti,
-                                                                    cti_params=cti_params,
-                                                                    cti_settings=cti_settings)
+        model_data = masked_ci_data.ci_frame.frame_geometry.add_cti(
+            image=masked_ci_data.ci_pre_cti,
+            cti_params=cti_params,
+            cti_settings=cti_settings,
+        )
 
-        super().__init__(data=masked_ci_data.image, noise_map=noise_map,
-                         mask=masked_ci_data.mask, model_data=model_data)
+        super().__init__(
+            data=masked_ci_data.image,
+            noise_map=noise_map,
+            mask=masked_ci_data.mask,
+            model_data=model_data,
+        )
         self.ci_data_fit = masked_ci_data
         self.cti_params = cti_params
         self.cti_settings = cti_settings
@@ -49,30 +56,44 @@ class AbstractCIFit(af.DataFit):
 
 
 class CIFit(AbstractCIFit):
-
     def __init__(self, masked_ci_data: ci_data.MaskedCIData, cti_params, cti_settings):
-        super().__init__(masked_ci_data, masked_ci_data.noise_map, cti_params, cti_settings)
+        super().__init__(
+            masked_ci_data, masked_ci_data.noise_map, cti_params, cti_settings
+        )
 
     @property
     def noise_scaling_map_of_ci_regions(self):
-        return self.ci_data_fit.chinj.ci_regions_from_array(array=self.chi_squared_map.copy())
+        return self.ci_data_fit.chinj.ci_regions_from_array(
+            array=self.chi_squared_map.copy()
+        )
 
     @property
     def noise_scaling_map_of_parallel_trails(self):
-        return self.ci_data_fit.chinj.parallel_non_ci_regions_frame_from_frame(array=self.chi_squared_map.copy())
+        return self.ci_data_fit.chinj.parallel_non_ci_regions_frame_from_frame(
+            array=self.chi_squared_map.copy()
+        )
 
     @property
     def noise_scaling_map_of_serial_trails(self):
-        return self.ci_data_fit.chinj.serial_all_trails_frame_from_frame(array=self.chi_squared_map.copy())
+        return self.ci_data_fit.chinj.serial_all_trails_frame_from_frame(
+            array=self.chi_squared_map.copy()
+        )
 
     @property
     def noise_scaling_map_of_serial_overscan_above_trails(self):
-        return self.ci_data_fit.chinj.serial_overscan_above_trails_frame_from_frame(array=self.chi_squared_map.copy())
+        return self.ci_data_fit.chinj.serial_overscan_above_trails_frame_from_frame(
+            array=self.chi_squared_map.copy()
+        )
 
 
 class CIHyperFit(AbstractCIFit):
-
-    def __init__(self, masked_hyper_ci_data: ci_data.MaskedCIHyperData, cti_params, cti_settings, hyper_noise_scalars):
+    def __init__(
+        self,
+        masked_hyper_ci_data: ci_data.MaskedCIHyperData,
+        cti_params,
+        cti_settings,
+        hyper_noise_scalars,
+    ):
         """Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian
         framework.
 
@@ -90,13 +111,21 @@ class CIHyperFit(AbstractCIFit):
         self.hyper_noises = hyper_noise_scalars
         self.noise_scaling_maps = masked_hyper_ci_data.noise_scaling_maps
         self.hyper_noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
-            noise_scaling_maps=masked_hyper_ci_data.noise_scaling_maps, hyper_noise_scalars=hyper_noise_scalars,
-            noise_map=masked_hyper_ci_data.noise_map)
-        super().__init__(masked_ci_data=masked_hyper_ci_data, noise_map=self.hyper_noise_map, cti_params=cti_params,
-                         cti_settings=cti_settings)
+            noise_scaling_maps=masked_hyper_ci_data.noise_scaling_maps,
+            hyper_noise_scalars=hyper_noise_scalars,
+            noise_map=masked_hyper_ci_data.noise_map,
+        )
+        super().__init__(
+            masked_ci_data=masked_hyper_ci_data,
+            noise_map=self.hyper_noise_map,
+            cti_params=cti_params,
+            cti_settings=cti_settings,
+        )
 
 
-def hyper_noise_map_from_noise_map_and_noise_scalings(noise_scaling_maps, hyper_noise_scalars, noise_map):
+def hyper_noise_map_from_noise_map_and_noise_scalings(
+    noise_scaling_maps, hyper_noise_scalars, noise_map
+):
     """For a noise-map, use the model hyper noise and noise-scaling maps to compute a scaled noise-map.
 
     Parameters
@@ -107,8 +136,14 @@ def hyper_noise_map_from_noise_map_and_noise_scalings(noise_scaling_maps, hyper_
         An array describing the RMS standard deviation error in each pixel, preferably in units of electrons per
         second.
     """
-    hyper_noise_maps = list(map(lambda hyper_noise_scalar, noise_scaling_map:
-                                hyper_noise_scalar.scaled_noise_map_from_noise_scaling(noise_scaling_map),
-                                hyper_noise_scalars, noise_scaling_maps))
+    hyper_noise_maps = list(
+        map(
+            lambda hyper_noise_scalar, noise_scaling_map: hyper_noise_scalar.scaled_noise_map_from_noise_scaling(
+                noise_scaling_map
+            ),
+            hyper_noise_scalars,
+            noise_scaling_maps,
+        )
+    )
 
     return np.add(noise_map, sum(hyper_noise_maps))

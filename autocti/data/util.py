@@ -3,6 +3,7 @@ import os
 import numpy as np
 from astropy.io import fits
 
+
 def make_path_if_does_not_exist(path):
     if os.path.exists(path) is False:
         os.makedirs(path)
