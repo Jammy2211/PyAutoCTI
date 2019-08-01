@@ -14,7 +14,6 @@ def bin_array_across_parallel(array, mask=None):
 
 
 class ChInj(object):
-
     def __init__(self, frame_geometry, ci_pattern):
         """
         Class which represents the CCD quadrant of a charge injection image (e.g. the location of the parallel and
@@ -143,7 +142,9 @@ class ChInj(object):
 
         return parallel_array.copy()
 
-    def parallel_edges_and_trails_frame_from_frame(self, array, front_edge_rows=None, trails_rows=None):
+    def parallel_edges_and_trails_frame_from_frame(
+        self, array, front_edge_rows=None, trails_rows=None
+    ):
         """Extract an array of all of the parallel front edges and trails of each the charge-injection regions from   
         a charge injection ci_frame.
 
@@ -208,25 +209,39 @@ class ChInj(object):
 
         if front_edge_rows is not None:
 
-            front_regions = list(map(lambda ci_region:
-                                     self.frame_geometry.parallel_front_edge_region(ci_region, front_edge_rows),
-                                     self.ci_pattern.regions))
+            front_regions = list(
+                map(
+                    lambda ci_region: self.frame_geometry.parallel_front_edge_region(
+                        ci_region, front_edge_rows
+                    ),
+                    self.ci_pattern.regions,
+                )
+            )
 
-            front_edges = self.parallel_front_edge_arrays_from_frame(array, front_edge_rows)
+            front_edges = self.parallel_front_edge_arrays_from_frame(
+                array, front_edge_rows
+            )
 
             for i, region in enumerate(front_regions):
-                new_array[region.y0:region.y1, region.x0:region.x1] += front_edges[i]
+                new_array[region.y0 : region.y1, region.x0 : region.x1] += front_edges[
+                    i
+                ]
 
         if trails_rows is not None:
 
             trails_regions = list(
-                map(lambda ci_region: self.frame_geometry.parallel_trails_region(ci_region, trails_rows),
-                    self.ci_pattern.regions))
+                map(
+                    lambda ci_region: self.frame_geometry.parallel_trails_region(
+                        ci_region, trails_rows
+                    ),
+                    self.ci_pattern.regions,
+                )
+            )
 
             trails = self.parallel_trails_arrays_from_frame(array, trails_rows)
 
             for i, region in enumerate(trails_regions):
-                new_array[region.y0:region.y1, region.x0:region.x1] += trails[i]
+                new_array[region.y0 : region.y1, region.x0 : region.x1] += trails[i]
 
         return new_array
 
@@ -277,8 +292,9 @@ class ChInj(object):
         []     [=====================]
                <---------S----------
         """
-        calibration_region = self.frame_geometry.parallel_side_nearest_read_out_region(self.ci_pattern.regions[0],
-                                                                                       array.shape, columns)
+        calibration_region = self.frame_geometry.parallel_side_nearest_read_out_region(
+            self.ci_pattern.regions[0], array.shape, columns
+        )
         array = array[calibration_region.slice]
         return array
 
@@ -329,7 +345,9 @@ class ChInj(object):
                <---------S----------
         """
         array = self.serial_edges_and_trails_frame_from_frame(
-            array=array, trails_columns=(0, self.frame_geometry.serial_overscan.total_columns))
+            array=array,
+            trails_columns=(0, self.frame_geometry.serial_overscan.total_columns),
+        )
         return array
 
     def serial_overscan_above_trails_frame_from_frame(self, array):
@@ -383,17 +401,23 @@ class ChInj(object):
 
         new_array[overscan_slice] = array[overscan_slice]
 
-        trails_regions = list(map(lambda ci_region:
-                                  self.frame_geometry.serial_trails_region(ci_region, (
-                                      0, self.frame_geometry.serial_overscan.total_columns)),
-                                  self.ci_pattern.regions))
+        trails_regions = list(
+            map(
+                lambda ci_region: self.frame_geometry.serial_trails_region(
+                    ci_region, (0, self.frame_geometry.serial_overscan.total_columns)
+                ),
+                self.ci_pattern.regions,
+            )
+        )
 
         for region in trails_regions:
             new_array[region.slice] = 0
 
         return new_array
 
-    def serial_edges_and_trails_frame_from_frame(self, array, front_edge_columns=None, trails_columns=None):
+    def serial_edges_and_trails_frame_from_frame(
+        self, array, front_edge_columns=None, trails_columns=None
+    ):
         """Extract an array of all of the serial front edges and trails of each the charge-injection regions from   
         a charge injection ci_frame.
 
@@ -459,24 +483,38 @@ class ChInj(object):
         if front_edge_columns is not None:
 
             front_regions = list(
-                map(lambda ci_region: self.frame_geometry.serial_front_edge_region(ci_region, front_edge_columns),
-                    self.ci_pattern.regions))
+                map(
+                    lambda ci_region: self.frame_geometry.serial_front_edge_region(
+                        ci_region, front_edge_columns
+                    ),
+                    self.ci_pattern.regions,
+                )
+            )
 
-            front_edges = self.serial_front_edge_arrays_from_frame(array, front_edge_columns)
+            front_edges = self.serial_front_edge_arrays_from_frame(
+                array, front_edge_columns
+            )
 
             for i, region in enumerate(front_regions):
-                new_array[region.y0:region.y1, region.x0:region.x1] += front_edges[i]
+                new_array[region.y0 : region.y1, region.x0 : region.x1] += front_edges[
+                    i
+                ]
 
         if trails_columns is not None:
 
             trails_regions = list(
-                map(lambda ci_region: self.frame_geometry.serial_trails_region(ci_region, trails_columns),
-                    self.ci_pattern.regions))
+                map(
+                    lambda ci_region: self.frame_geometry.serial_trails_region(
+                        ci_region, trails_columns
+                    ),
+                    self.ci_pattern.regions,
+                )
+            )
 
             trails = self.serial_trails_arrays_from_frame(array, trails_columns)
 
             for i, region in enumerate(trails_regions):
-                new_array[region.y0:region.y1, region.x0:region.x1] += trails[i]
+                new_array[region.y0 : region.y1, region.x0 : region.x1] += trails[i]
 
         return new_array
 
@@ -524,25 +562,37 @@ class ChInj(object):
                <---------S----------
         """
         calibration_images = self.serial_calibration_sub_arrays_from_frame(array=array)
-        calibration_images = list(map(lambda image: image[rows[0]:rows[1], :], calibration_images))
+        calibration_images = list(
+            map(lambda image: image[rows[0] : rows[1], :], calibration_images)
+        )
         array = np.concatenate(calibration_images, axis=0)
         return array
 
     def serial_calibration_sub_arrays_from_frame(self, array):
         """Extract each charge injection region image for the serial calibration array above."""
 
-        calibration_regions = list(map(lambda ci_region:
-                                       self.frame_geometry.serial_prescan_ci_region_and_trails(ci_region=ci_region,
-                                                                                               image_shape=array.shape),
-                                       self.ci_pattern.regions))
+        calibration_regions = list(
+            map(
+                lambda ci_region: self.frame_geometry.serial_prescan_ci_region_and_trails(
+                    ci_region=ci_region, image_shape=array.shape
+                ),
+                self.ci_pattern.regions,
+            )
+        )
         return list(map(lambda region: array[region.slice], calibration_regions))
 
-    def parallel_front_edge_line_binned_over_columns_from_frame(self, array, rows=None, mask=None):
-        front_stacked_array = self.parallel_front_edge_stacked_array_from_frame(array=array, rows=rows, mask=mask)
+    def parallel_front_edge_line_binned_over_columns_from_frame(
+        self, array, rows=None, mask=None
+    ):
+        front_stacked_array = self.parallel_front_edge_stacked_array_from_frame(
+            array=array, rows=rows, mask=mask
+        )
         return np.ma.mean(np.ma.asarray(front_stacked_array), axis=1)
 
     def parallel_front_edge_stacked_array_from_frame(self, array, rows=None, mask=None):
-        front_arrays = self.parallel_front_edge_arrays_from_frame(array=array, rows=rows, mask=mask)
+        front_arrays = self.parallel_front_edge_arrays_from_frame(
+            array=array, rows=rows, mask=mask
+        )
         return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
 
     def parallel_front_edge_arrays_from_frame(self, array, rows=None, mask=None):
@@ -595,9 +645,15 @@ class ChInj(object):
         front_arrays = list(map(lambda region: array[region.slice], front_regions))
         if mask is not None:
             front_masks = list(map(lambda region: mask[region.slice], front_regions))
-            front_arrays = list(map(lambda front_array, front_mask :
-                                    np.ma.array(front_array, mask=front_mask),
-                                    front_arrays, front_masks))
+            front_arrays = list(
+                map(
+                    lambda front_array, front_mask: np.ma.array(
+                        front_array, mask=front_mask
+                    ),
+                    front_arrays,
+                    front_masks,
+                )
+            )
         return front_arrays
 
     def parallel_front_edge_regions_from_frame(self, rows=None):
@@ -648,15 +704,27 @@ class ChInj(object):
         """
         if rows is None:
             rows = (0, self.ci_pattern.total_rows_min)
-        return list(map(lambda ci_region: self.frame_geometry.parallel_front_edge_region(ci_region, rows),
-                         self.ci_pattern.regions))
+        return list(
+            map(
+                lambda ci_region: self.frame_geometry.parallel_front_edge_region(
+                    ci_region, rows
+                ),
+                self.ci_pattern.regions,
+            )
+        )
 
-    def parallel_trails_line_binned_over_columns_from_frame(self, array, rows=None, mask=None):
-        trails_stacked_array = self.parallel_trails_stacked_array_from_frame(array=array, rows=rows, mask=mask)
+    def parallel_trails_line_binned_over_columns_from_frame(
+        self, array, rows=None, mask=None
+    ):
+        trails_stacked_array = self.parallel_trails_stacked_array_from_frame(
+            array=array, rows=rows, mask=mask
+        )
         return np.ma.mean(np.ma.asarray(trails_stacked_array), axis=1)
 
     def parallel_trails_stacked_array_from_frame(self, array, rows=None, mask=None):
-        trails_arrays = self.parallel_trails_arrays_from_frame(array=array, rows=rows, mask=mask)
+        trails_arrays = self.parallel_trails_arrays_from_frame(
+            array=array, rows=rows, mask=mask
+        )
         return np.ma.mean(np.ma.asarray(trails_arrays), axis=0)
 
     def parallel_trails_arrays_from_frame(self, array, rows=None, mask=None):
@@ -707,13 +775,21 @@ class ChInj(object):
         rows : (int, int)
             The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
-        trails_regions = self.parallel_trails_regions_from_frame(shape=array.shape, rows=rows)
+        trails_regions = self.parallel_trails_regions_from_frame(
+            shape=array.shape, rows=rows
+        )
         trails_arrays = list(map(lambda region: array[region.slice], trails_regions))
         if mask is not None:
             trails_masks = list(map(lambda region: mask[region.slice], trails_regions))
-            trails_arrays = list(map(lambda trails_array, front_mask :
-                                    np.ma.array(trails_array, mask=front_mask),
-                                    trails_arrays, trails_masks))
+            trails_arrays = list(
+                map(
+                    lambda trails_array, front_mask: np.ma.array(
+                        trails_array, mask=front_mask
+                    ),
+                    trails_arrays,
+                    trails_masks,
+                )
+            )
         return trails_arrays
 
     def parallel_trails_regions_from_frame(self, shape, rows=None):
@@ -765,15 +841,29 @@ class ChInj(object):
         rows : (int, int)
             The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
-        return list(map(lambda ci_region: self.frame_geometry.parallel_trails_region(ci_region, rows),
-                        self.ci_pattern.regions))
+        return list(
+            map(
+                lambda ci_region: self.frame_geometry.parallel_trails_region(
+                    ci_region, rows
+                ),
+                self.ci_pattern.regions,
+            )
+        )
 
-    def serial_front_edge_line_binned_over_rows_from_frame(self, array, columns=None, mask=None):
-        front_stacked_array = self.serial_front_edge_stacked_array_from_frame(array=array, columns=columns, mask=mask)
+    def serial_front_edge_line_binned_over_rows_from_frame(
+        self, array, columns=None, mask=None
+    ):
+        front_stacked_array = self.serial_front_edge_stacked_array_from_frame(
+            array=array, columns=columns, mask=mask
+        )
         return np.ma.mean(np.ma.asarray(front_stacked_array), axis=0)
 
-    def serial_front_edge_stacked_array_from_frame(self, array, columns=None, mask=None):
-        front_arrays = self.serial_front_edge_arrays_from_frame(array=array, columns=columns, mask=mask)
+    def serial_front_edge_stacked_array_from_frame(
+        self, array, columns=None, mask=None
+    ):
+        front_arrays = self.serial_front_edge_arrays_from_frame(
+            array=array, columns=columns, mask=mask
+        )
         return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
 
     def serial_front_edge_arrays_from_frame(self, array, columns=None, mask=None):
@@ -828,9 +918,15 @@ class ChInj(object):
         front_arrays = list(map(lambda region: array[region.slice], front_regions))
         if mask is not None:
             front_masks = list(map(lambda region: mask[region.slice], front_regions))
-            front_arrays = list(map(lambda front_array, front_mask :
-                                    np.ma.array(front_array, mask=front_mask),
-                                    front_arrays, front_masks))
+            front_arrays = list(
+                map(
+                    lambda front_array, front_mask: np.ma.array(
+                        front_array, mask=front_mask
+                    ),
+                    front_arrays,
+                    front_masks,
+                )
+            )
         return front_arrays
 
     def serial_front_edge_regions_from_frame(self, columns=None):
@@ -883,15 +979,27 @@ class ChInj(object):
         """
         if columns is None:
             columns = (0, self.ci_pattern.total_columns_min)
-        return list(map(lambda ci_region: self.frame_geometry.serial_front_edge_region(ci_region, columns),
-                                 self.ci_pattern.regions))
+        return list(
+            map(
+                lambda ci_region: self.frame_geometry.serial_front_edge_region(
+                    ci_region, columns
+                ),
+                self.ci_pattern.regions,
+            )
+        )
 
-    def serial_trails_line_binned_over_rows_from_frame(self, array, columns=None, mask=None):
-        trails_stacked_array = self.serial_trails_stacked_array_from_frame(array=array, columns=columns, mask=mask)
+    def serial_trails_line_binned_over_rows_from_frame(
+        self, array, columns=None, mask=None
+    ):
+        trails_stacked_array = self.serial_trails_stacked_array_from_frame(
+            array=array, columns=columns, mask=mask
+        )
         return np.ma.mean(np.ma.asarray(trails_stacked_array), axis=0)
 
     def serial_trails_stacked_array_from_frame(self, array, columns=None, mask=None):
-        front_arrays = self.serial_trails_arrays_from_frame(array=array, columns=columns, mask=mask)
+        front_arrays = self.serial_trails_arrays_from_frame(
+            array=array, columns=columns, mask=mask
+        )
         return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
 
     def serial_trails_arrays_from_frame(self, array, columns=None, mask=None):
@@ -945,9 +1053,15 @@ class ChInj(object):
         trails_arrays = list(map(lambda region: array[region.slice], trails_regions))
         if mask is not None:
             trails_masks = list(map(lambda region: mask[region.slice], trails_regions))
-            trails_arrays = list(map(lambda trails_array, front_mask :
-                                    np.ma.array(trails_array, mask=front_mask),
-                                    trails_arrays, trails_masks))
+            trails_arrays = list(
+                map(
+                    lambda trails_array, front_mask: np.ma.array(
+                        trails_array, mask=front_mask
+                    ),
+                    trails_arrays,
+                    trails_masks,
+                )
+            )
         return trails_arrays
 
     def serial_trails_regions_from_frame(self, columns=None):
@@ -999,22 +1113,31 @@ class ChInj(object):
         """
         if columns is None:
             columns = (0, self.frame_geometry.serial_trails_columns)
-        return list(map(lambda ci_region: self.frame_geometry.serial_trails_region(ci_region, columns),
-                                  self.ci_pattern.regions))
+        return list(
+            map(
+                lambda ci_region: self.frame_geometry.serial_trails_region(
+                    ci_region, columns
+                ),
+                self.ci_pattern.regions,
+            )
+        )
 
     def parallel_serial_calibration_section(self, array):
-        return array[0:array.shape[0], self.frame_geometry.serial_prescan.x1:array.shape[1]]
+        return array[
+            0 : array.shape[0], self.frame_geometry.serial_prescan.x1 : array.shape[1]
+        ]
 
     def smallest_parallel_trails_rows_from_shape(self, shape):
 
         rows_between_regions = self.ci_pattern.rows_between_regions
-        rows_to_image_edge = self.frame_geometry.parallel_trail_size_to_image_edge(shape=shape, ci_pattern=self.ci_pattern)
+        rows_to_image_edge = self.frame_geometry.parallel_trail_size_to_image_edge(
+            shape=shape, ci_pattern=self.ci_pattern
+        )
         rows_between_regions.append(rows_to_image_edge)
         return np.min(rows_between_regions)
 
 
 class Region(object):
-
     def __init__(self, region):
         """Setup a region of an image, which could be where the parallel overscan, serial overscan, etc. are.
 
@@ -1027,13 +1150,19 @@ class Region(object):
         """
 
         if region[0] < 0 or region[1] < 0 or region[2] < 0 or region[3] < 0:
-            raise exc.RegionException('A coordinate of the Region was specified as negative.')
+            raise exc.RegionException(
+                "A coordinate of the Region was specified as negative."
+            )
 
         if region[0] >= region[1]:
-            raise exc.RegionException('The first row in the Region was equal to or greater than the second row.')
+            raise exc.RegionException(
+                "The first row in the Region was equal to or greater than the second row."
+            )
 
         if region[2] >= region[3]:
-            raise exc.RegionException('The first column in the Region was equal to greater than the second column.')
+            raise exc.RegionException(
+                "The first column in the Region was equal to greater than the second column."
+            )
         self.region = region
 
     @property
@@ -1073,15 +1202,15 @@ class Region(object):
 
     @property
     def slice(self):
-        return np.s_[self.y0:self.y1, self.x0:self.x1]
+        return np.s_[self.y0 : self.y1, self.x0 : self.x1]
 
     @property
     def y_slice(self):
-        return np.s_[self.y0:self.y1]
+        return np.s_[self.y0 : self.y1]
 
     @property
     def x_slice(self):
-        return np.s_[self.x0:self.x1]
+        return np.s_[self.x0 : self.x1]
 
     @property
     def shape(self):
@@ -1089,7 +1218,6 @@ class Region(object):
 
 
 class FrameGeometry(object):
-
     def __init__(self, corner, parallel_overscan, serial_prescan, serial_overscan):
         """Abstract class for the geometry of a CTI Image.
 
@@ -1120,7 +1248,9 @@ class FrameGeometry(object):
         self.serial_overscan = serial_overscan
         self.corner = corner
 
-    def add_cti(self, image, cti_params, cti_settings, use_parallel_poisson_densities=False):
+    def add_cti(
+        self, image, cti_params, cti_settings, use_parallel_poisson_densities=False
+    ):
         """add cti to an image.
 
         Parameters
@@ -1135,22 +1265,28 @@ class FrameGeometry(object):
 
         if cti_params.parallel_ccd is not None:
             image_pre_parallel_clocking = self.rotate_for_parallel_cti(image=image)
-            image_post_parallel_clocking = pyarctic.call_arctic(image=image_pre_parallel_clocking,
-                                                                species=cti_params.parallel_species,
-                                                                ccd=cti_params.parallel_ccd,
-                                                                settings=cti_settings.parallel,
-                                                                correct_cti=False,
-                                                                use_poisson_densities=use_parallel_poisson_densities)
+            image_post_parallel_clocking = pyarctic.call_arctic(
+                image=image_pre_parallel_clocking,
+                species=cti_params.parallel_species,
+                ccd=cti_params.parallel_ccd,
+                settings=cti_settings.parallel,
+                correct_cti=False,
+                use_poisson_densities=use_parallel_poisson_densities,
+            )
             image = self.rotate_for_parallel_cti(image_post_parallel_clocking)
 
         if cti_params.serial_ccd is not None:
-            image_pre_serial_clocking = self.rotate_before_serial_cti(image_pre_clocking=image)
-            image_post_serial_clocking = pyarctic.call_arctic(image=image_pre_serial_clocking,
-                                                              species=cti_params.serial_species,
-                                                              ccd=cti_params.serial_ccd,
-                                                              settings=cti_settings.serial,
-                                                              correct_cti=False,
-                                                              use_poisson_densities=False)
+            image_pre_serial_clocking = self.rotate_before_serial_cti(
+                image_pre_clocking=image
+            )
+            image_post_serial_clocking = pyarctic.call_arctic(
+                image=image_pre_serial_clocking,
+                species=cti_params.serial_species,
+                ccd=cti_params.serial_ccd,
+                settings=cti_settings.serial,
+                correct_cti=False,
+                use_poisson_densities=False,
+            )
             image = self.rotate_after_serial_cti(image_post_serial_clocking)
 
         return image
@@ -1169,23 +1305,29 @@ class FrameGeometry(object):
         """
 
         if cti_settings.serial is not None:
-            image_pre_serial_clocking = self.rotate_before_serial_cti(image_pre_clocking=image)
-            image_post_serial_clocking = pyarctic.call_arctic(image=image_pre_serial_clocking,
-                                                              species=cti_params.serial_species,
-                                                              ccd=cti_params.serial_ccd,
-                                                              settings=cti_settings.serial,
-                                                              correct_cti=True,
-                                                              use_poisson_densities=False)
+            image_pre_serial_clocking = self.rotate_before_serial_cti(
+                image_pre_clocking=image
+            )
+            image_post_serial_clocking = pyarctic.call_arctic(
+                image=image_pre_serial_clocking,
+                species=cti_params.serial_species,
+                ccd=cti_params.serial_ccd,
+                settings=cti_settings.serial,
+                correct_cti=True,
+                use_poisson_densities=False,
+            )
             image = self.rotate_after_serial_cti(image_post_serial_clocking)
 
         if cti_settings.parallel is not None:
             image_pre_parallel_clocking = self.rotate_for_parallel_cti(image=image)
-            image_post_parallel_clocking = pyarctic.call_arctic(image=image_pre_parallel_clocking,
-                                                                species=cti_params.parallel_species,
-                                                                ccd=cti_params.parallel_ccd,
-                                                                settings=cti_settings.parallel,
-                                                                correct_cti=True,
-                                                                use_poisson_densities=False)
+            image_post_parallel_clocking = pyarctic.call_arctic(
+                image=image_pre_parallel_clocking,
+                species=cti_params.parallel_species,
+                ccd=cti_params.parallel_ccd,
+                settings=cti_settings.parallel,
+                correct_cti=True,
+                use_poisson_densities=False,
+            )
             image = self.rotate_for_parallel_cti(image_post_parallel_clocking)
 
         return image
@@ -1198,7 +1340,9 @@ class FrameGeometry(object):
         return flip(transposed) if self.corner[1] == 1 else transposed
 
     def rotate_after_serial_cti(self, image_post_clocking):
-        flipped = flip(image_post_clocking) if self.corner[1] == 1 else image_post_clocking
+        flipped = (
+            flip(image_post_clocking) if self.corner[1] == 1 else image_post_clocking
+        )
         return flipped.T.copy()
 
     def parallel_trail_from_y(self, y, dy):
@@ -1249,7 +1393,9 @@ class FrameGeometry(object):
         x_min, x_max = self.x_limits(ci_region, columns)
         return Region((ci_region.y0, ci_region.y1, x_min, x_max))
 
-    def parallel_side_nearest_read_out_region(self, ci_region, image_shape, columns=(0, 1)):
+    def parallel_side_nearest_read_out_region(
+        self, ci_region, image_shape, columns=(0, 1)
+    ):
         x_min, x_max = self.x_limits(ci_region, columns)
         return Region((0, image_shape[0], x_min, x_max))
 
@@ -1286,17 +1432,21 @@ class FrameGeometry(object):
 
     @classmethod
     def euclid_parallel_line(cls):
-        return FrameGeometry(corner=(0,0),
-                             parallel_overscan=Region((2066, 2086, 0, 1)),
-                             serial_prescan=None,
-                             serial_overscan=None)
+        return FrameGeometry(
+            corner=(0, 0),
+            parallel_overscan=Region((2066, 2086, 0, 1)),
+            serial_prescan=None,
+            serial_overscan=None,
+        )
 
     @classmethod
     def euclid_serial_line(cls):
-        return FrameGeometry(corner=(0, 0),
-                             parallel_overscan=None,
-                             serial_prescan=Region((0, 1, 0, 51)),
-                             serial_overscan=Region((0, 1, 2099, 2119)))
+        return FrameGeometry(
+            corner=(0, 0),
+            parallel_overscan=None,
+            serial_prescan=Region((0, 1, 0, 51)),
+            serial_overscan=Region((0, 1, 2099, 2119)),
+        )
 
     @classmethod
     def euclid_from_ccd_and_quadrant_id(cls, ccd_id, quad_id):
@@ -1353,50 +1503,58 @@ class FrameGeometry(object):
 
         row_index = ccd_id[-1]
 
-        if (row_index in '123') and (quad_id == 'E'):
+        if (row_index in "123") and (quad_id == "E"):
             return FrameGeometry.euclid_bottom_left()
-        elif (row_index in '123') and (quad_id == 'F'):
+        elif (row_index in "123") and (quad_id == "F"):
             return FrameGeometry.euclid_bottom_right()
-        elif (row_index in '123') and (quad_id == 'G'):
+        elif (row_index in "123") and (quad_id == "G"):
             return FrameGeometry.euclid_top_right()
-        elif (row_index in '123') and (quad_id == 'H'):
+        elif (row_index in "123") and (quad_id == "H"):
             return FrameGeometry.euclid_top_left()
-        elif (row_index in '456') and (quad_id == 'E'):
+        elif (row_index in "456") and (quad_id == "E"):
             return FrameGeometry.euclid_top_right()
-        elif (row_index in '456') and (quad_id == 'F'):
+        elif (row_index in "456") and (quad_id == "F"):
             return FrameGeometry.euclid_top_left()
-        elif (row_index in '456') and (quad_id == 'G'):
+        elif (row_index in "456") and (quad_id == "G"):
             return FrameGeometry.euclid_bottom_left()
-        elif (row_index in '456') and (quad_id == 'H'):
+        elif (row_index in "456") and (quad_id == "H"):
             return FrameGeometry.euclid_bottom_right()
 
     @classmethod
     def euclid_bottom_left(cls):
-        return FrameGeometry(corner=(0, 0),
-                             parallel_overscan=Region((2066, 2086, 51, 2099)),
-                             serial_prescan=Region((0, 2086, 0, 51)),
-                             serial_overscan=Region((0, 2086, 2099, 2119)))
+        return FrameGeometry(
+            corner=(0, 0),
+            parallel_overscan=Region((2066, 2086, 51, 2099)),
+            serial_prescan=Region((0, 2086, 0, 51)),
+            serial_overscan=Region((0, 2086, 2099, 2119)),
+        )
 
     @classmethod
     def euclid_bottom_right(cls):
-        return FrameGeometry(corner=(0, 1),
-                             parallel_overscan=Region((2066, 2086, 20, 2068)),
-                             serial_prescan=Region((0, 2086, 2068, 2119)),
-                             serial_overscan=Region((0, 2086, 0, 20)))
+        return FrameGeometry(
+            corner=(0, 1),
+            parallel_overscan=Region((2066, 2086, 20, 2068)),
+            serial_prescan=Region((0, 2086, 2068, 2119)),
+            serial_overscan=Region((0, 2086, 0, 20)),
+        )
 
     @classmethod
     def euclid_top_left(cls):
-        return FrameGeometry(corner=(1, 0),
-                             parallel_overscan=Region((0, 20, 51, 2099)),
-                             serial_prescan=Region((0, 2086, 0, 51)),
-                             serial_overscan=Region((0, 2086, 2099, 2119)))
+        return FrameGeometry(
+            corner=(1, 0),
+            parallel_overscan=Region((0, 20, 51, 2099)),
+            serial_prescan=Region((0, 2086, 0, 51)),
+            serial_overscan=Region((0, 2086, 2099, 2119)),
+        )
 
     @classmethod
     def euclid_top_right(cls):
-        return FrameGeometry(corner=(1, 1),
-                             parallel_overscan=Region((0, 20, 20, 2068)),
-                             serial_prescan=Region((0, 2086, 2068, 2119)),
-                             serial_overscan=Region((0, 2086, 0, 20)))
+        return FrameGeometry(
+            corner=(1, 1),
+            parallel_overscan=Region((0, 20, 20, 2068)),
+            serial_prescan=Region((0, 2086, 2068, 2119)),
+            serial_overscan=Region((0, 2086, 0, 20)),
+        )
 
 
 def flip(image):
@@ -1405,12 +1563,26 @@ def flip(image):
 
 def check_parallel_front_edge_size(region, rows):
     # TODO: are these checks important?
-    if rows[0] < 0 or rows[1] < 1 or rows[1] > region.y1 - region.y0 or rows[0] >= rows[1]:
-        raise exc.CIPatternException('The number of rows to extract from the leading edge is bigger than the entire'
-                                     'ci ci_region')
+    if (
+        rows[0] < 0
+        or rows[1] < 1
+        or rows[1] > region.y1 - region.y0
+        or rows[0] >= rows[1]
+    ):
+        raise exc.CIPatternException(
+            "The number of rows to extract from the leading edge is bigger than the entire"
+            "ci ci_region"
+        )
 
 
 def check_serial_front_edge_size(region, columns):
-    if columns[0] < 0 or columns[1] < 1 or columns[1] > region.x1 - region.x0 or columns[0] >= columns[1]:
-        raise exc.CIPatternException('The number of columns to extract from the leading edge is bigger than the entire'
-                                     'ci ci_region')
+    if (
+        columns[0] < 0
+        or columns[1] < 1
+        or columns[1] > region.x1 - region.x0
+        or columns[0] >= columns[1]
+    ):
+        raise exc.CIPatternException(
+            "The number of columns to extract from the leading edge is bigger than the entire"
+            "ci ci_region"
+        )

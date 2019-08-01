@@ -4,7 +4,6 @@ from autocti.data import util
 
 
 class ImageFrame(np.ndarray):
-
     def __new__(cls, frame_geometry, array, **kwargs):
         """The CCD ci_frame of an image, including its geometry and therefore the directions parallel and serial CTI are \
         defined.
@@ -17,7 +16,7 @@ class ImageFrame(np.ndarray):
         array : ndarray
             The 2D array of the ci_data of this ci_frame.
         """
-        quad = np.array(array, dtype='float64').view(cls)
+        quad = np.array(array, dtype="float64").view(cls)
         quad.frame_geometry = frame_geometry
         return quad
 
@@ -70,7 +69,10 @@ class ImageFrame(np.ndarray):
             The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
             locations of different regions of the CCD (overscans, prescan, etc.)
         """
-        return cls(frame_geometry=frame_geometry, array=util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu))
+        return cls(
+            frame_geometry=frame_geometry,
+            array=util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu),
+        )
 
     def output_as_fits(self, file_path, overwrite=False):
         """Output the image ci_data as a fits file.
@@ -82,9 +84,13 @@ class ImageFrame(np.ndarray):
         filename : str
             The file phase_name of the output image.
         """
-        util.numpy_array_2d_to_fits(array_2d=self, file_path=file_path, overwrite=overwrite)
+        util.numpy_array_2d_to_fits(
+            array_2d=self, file_path=file_path, overwrite=overwrite
+        )
 
-    def add_cti_to_image(self, cti_params, cti_settings, use_parallel_poisson_densities=False):
+    def add_cti_to_image(
+        self, cti_params, cti_settings, use_parallel_poisson_densities=False
+    ):
         """Add cti to the image.
 
         Parameters
@@ -94,8 +100,12 @@ class ImageFrame(np.ndarray):
         cti_settings : ArcticSettings.ArcticSettings
             The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
         """
-        return self.frame_geometry.add_cti(image=self, cti_params=cti_params, cti_settings=cti_settings,
-                                           use_parallel_poisson_densities=use_parallel_poisson_densities)
+        return self.frame_geometry.add_cti(
+            image=self,
+            cti_params=cti_params,
+            cti_settings=cti_settings,
+            use_parallel_poisson_densities=use_parallel_poisson_densities,
+        )
 
     def correct_cti_from_image(self, cti_params, cti_settings):
         """Correct cti from the image.
@@ -107,4 +117,6 @@ class ImageFrame(np.ndarray):
         cti_settings : ArcticSettings.ArcticSettings
             The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
         """
-        return self.frame_geometry.correct_cti(image=self, cti_params=cti_params, cti_settings=cti_settings)
+        return self.frame_geometry.correct_cti(
+            image=self, cti_params=cti_params, cti_settings=cti_settings
+        )
