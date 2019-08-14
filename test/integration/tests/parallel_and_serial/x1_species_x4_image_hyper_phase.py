@@ -7,55 +7,42 @@ from autocti.pipeline import phase as ph
 from autocti.pipeline import pipeline as pl
 from test.simulation import simulation_util
 from test.integration import integration_util
+from test.integration.tests import runner
 
 test_type = "parallel_and_serial"
 test_name = "x1_species_x4_image_hyper_phase"
+ci_data_type = "ci_uniform"
+ci_data_model = "parallel_and_serial_x1"
+ci_data_resolution = "patch"
+ci_normalizations = [1000.0, 10000.0, 25000.0, 84700.0]
 
 test_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
 output_path = test_path + "output/"
 config_path = test_path + "config"
 af.conf.instance = af.conf.Config(config_path=config_path, output_path=output_path)
 
-
-def pipeline():
-
-    integration_util.reset_paths(test_name=test_name, output_path=output_path)
-
-    parallel_settings = arctic_settings.Settings(
-        well_depth=84700,
-        niter=1,
-        express=2,
-        n_levels=2000,
-        charge_injection_mode=False,
-        readout_offset=0,
-    )
-    serial_settings = arctic_settings.Settings(
-        well_depth=84700,
-        niter=1,
-        express=1,
-        n_levels=2000,
-        charge_injection_mode=False,
-        readout_offset=0,
-    )
-    cti_settings = arctic_settings.ArcticSettings(
-        parallel=parallel_settings, serial=serial_settings
-    )
-    data = list(
-        map(
-            lambda normalization: simulation_util.load_test_ci_data(
-                ci_data_type="ci_uniform",
-                ci_data_model="parallel_and_serial_x1",
-                ci_data_resolution="patch",
-                normalization=normalization,
-            ),
-            [1000.0, 10000.0, 25000.0, 84700.0],
-        )
-    )
-    pipeline = make_pipeline(test_name=test_name)
-    pipeline.run(ci_datas=data, cti_settings=cti_settings)
+parallel_settings = arctic_settings.Settings(
+    well_depth=84700,
+    niter=1,
+    express=2,
+    n_levels=2000,
+    charge_injection_mode=False,
+    readout_offset=0,
+)
+serial_settings = arctic_settings.Settings(
+    well_depth=84700,
+    niter=1,
+    express=1,
+    n_levels=2000,
+    charge_injection_mode=False,
+    readout_offset=0,
+)
+cti_settings = arctic_settings.ArcticSettings(
+    parallel=parallel_settings, serial=serial_settings
+)
 
 
-def make_pipeline(test_name):
+def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     class ParallelSerialPhase(ph.ParallelSerialPhase):
         def pass_priors(self, results):
 
@@ -66,8 +53,8 @@ def make_pipeline(test_name):
 
     phase1 = ParallelSerialPhase(
         phase_name="phase_1",
-        phase_folders=[test_type, test_name],
-        optimizer_class=af.MultiNest,
+        phase_folders=phase_folders,
+        optimizer_class=optimizer_class,
         parallel_species=[af.PriorModel(arctic_params.Species)],
         parallel_ccd=arctic_params.CCD,
         serial_species=[af.PriorModel(arctic_params.Species)],
@@ -90,12 +77,12 @@ def make_pipeline(test_name):
 
     phase2 = ParallelSerialHyperModelFixedPhase(
         phase_name="phase_2",
-        phase_folders=[test_type, test_name],
+        phase_folders=phase_folders,
         parallel_species=[af.PriorModel(arctic_params.Species)],
         parallel_ccd=arctic_params.CCD,
         serial_species=[af.PriorModel(arctic_params.Species)],
         serial_ccd=arctic_params.CCD,
-        optimizer_class=af.MultiNest,
+        optimizer_class=optimizer_class,
     )
 
     class SerialHyperFixedPhase(ph.SerialHyperPhase):
@@ -117,8 +104,8 @@ def make_pipeline(test_name):
 
     phase3 = SerialHyperFixedPhase(
         phase_name="phase_3",
-        phase_folders=[test_type, test_name],
-        optimizer_class=af.MultiNest,
+        phase_folders=phase_folders,
+        optimizer_class=optimizer_class,
         rows=None,
     )
 
@@ -129,8 +116,11 @@ def make_pipeline(test_name):
     phase3.optimizer.n_live_points = 50
     phase3.optimizer.sampling_efficiency = 0.3
 
-    return pl.Pipeline(test_type, phase1, phase2, phase3)
+    return pl.Pipeline(name, phase1, phase2, phase3)
 
 
 if __name__ == "__main__":
-    pipeline()
+
+    import sys
+
+    runner.run(sys.modules[__name__], cti_settings=cti_settings)

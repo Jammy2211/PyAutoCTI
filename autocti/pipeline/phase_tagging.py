@@ -67,7 +67,7 @@ def columns_tag_from_columns(columns):
     if columns == None:
         return ""
     else:
-        return "_col_" + str(int(columns))
+        return "__col_" + str(int(columns))
 
 
 def rows_tag_from_rows(rows):
@@ -85,7 +85,7 @@ def rows_tag_from_rows(rows):
     else:
         x0 = str(rows[0])
         x1 = str(rows[1])
-        return "_rows_(" + x0 + "," + x1 + ")"
+        return "__rows_(" + x0 + "," + x1 + ")"
 
 
 def parallel_front_edge_mask_rows_tag_from_parallel_front_edge_mask_rows(
@@ -105,7 +105,7 @@ def parallel_front_edge_mask_rows_tag_from_parallel_front_edge_mask_rows(
     else:
         x0 = str(parallel_front_edge_mask_rows[0])
         x1 = str(parallel_front_edge_mask_rows[1])
-        return "_par_front_mask_rows_(" + x0 + "," + x1 + ")"
+        return "__par_front_mask_rows_(" + x0 + "," + x1 + ")"
 
 
 def parallel_trails_mask_rows_tag_from_parallel_trails_mask_rows(
@@ -125,7 +125,7 @@ def parallel_trails_mask_rows_tag_from_parallel_trails_mask_rows(
     else:
         x0 = str(parallel_trails_mask_rows[0])
         x1 = str(parallel_trails_mask_rows[1])
-        return "_par_trails_mask_rows_(" + x0 + "," + x1 + ")"
+        return "__par_trails_mask_rows_(" + x0 + "," + x1 + ")"
 
 
 def serial_front_edge_mask_columns_tag_from_serial_front_edge_mask_columns(
@@ -145,7 +145,7 @@ def serial_front_edge_mask_columns_tag_from_serial_front_edge_mask_columns(
     else:
         x0 = str(serial_front_edge_mask_columns[0])
         x1 = str(serial_front_edge_mask_columns[1])
-        return "_ser_front_mask_col_(" + x0 + "," + x1 + ")"
+        return "__ser_front_mask_col_(" + x0 + "," + x1 + ")"
 
 
 def serial_trails_mask_columns_tag_from_serial_trails_mask_columns(
@@ -165,7 +165,7 @@ def serial_trails_mask_columns_tag_from_serial_trails_mask_columns(
     else:
         x0 = str(serial_trails_mask_columns[0])
         x1 = str(serial_trails_mask_columns[1])
-        return "_ser_trails_mask_col_(" + x0 + "," + x1 + ")"
+        return "__ser_trails_mask_col_(" + x0 + "," + x1 + ")"
 
 
 def parallel_total_density_range_tag_from_parallel_total_density_range(
@@ -185,7 +185,7 @@ def parallel_total_density_range_tag_from_parallel_total_density_range(
     else:
         x0 = str(parallel_total_density_range[0])
         x1 = str(parallel_total_density_range[1])
-        return "_par_range_(" + x0 + "," + x1 + ")"
+        return "__par_range_(" + x0 + "," + x1 + ")"
 
 
 def serial_total_density_range_tag_from_serial_total_density_range(
@@ -205,7 +205,7 @@ def serial_total_density_range_tag_from_serial_total_density_range(
     else:
         x0 = str(serial_total_density_range[0])
         x1 = str(serial_total_density_range[1])
-        return "_ser_range_(" + x0 + "," + x1 + ")"
+        return "__ser_range_(" + x0 + "," + x1 + ")"
 
 
 def cosmic_ray_buffer_tag_from_cosmic_ray_buffers(
@@ -243,7 +243,7 @@ def cosmic_ray_buffer_tag_from_cosmic_ray_buffers(
         cosmic_ray_diagonal_buffer_tag = "d" + str(cosmic_ray_diagonal_buffer)
 
     return (
-        "_cr_"
+        "__cr_"
         + cosmic_ray_parallel_buffer_tag
         + cosmic_ray_serial_buffer_tag
         + cosmic_ray_diagonal_buffer_tag

@@ -4,7 +4,7 @@ import numpy as np
 import autofit as af
 
 from autocti import exc
-from autocti.pipeline import tagging as tag
+from autocti.pipeline import phase_tagging as tag
 from autocti.charge_injection import ci_fit, ci_data, ci_hyper, ci_mask
 from autocti.charge_injection.plotters import ci_data_plotters, ci_fit_plotters
 from autocti.data import mask as msk
@@ -50,7 +50,7 @@ class Phase(af.AbstractPhase):
     def __init__(
         self,
         phase_name,
-        tag_phases=True,
+        phase_tag=None,
         phase_folders=tuple(),
         optimizer_class=af.DownhillSimplex,
         mask_function=msk.Mask.empty_for_shape,
@@ -89,25 +89,19 @@ class Phase(af.AbstractPhase):
         self.cosmic_ray_serial_buffer = cosmic_ray_serial_buffer
         self.cosmic_ray_diagonal_buffer = cosmic_ray_diagonal_buffer
 
-        if tag_phases:
-
-            phase_tag = tag.phase_tag_from_phase_settings(
-                columns=columns,
-                rows=rows,
-                parallel_front_edge_mask_rows=parallel_front_edge_mask_rows,
-                parallel_trails_mask_rows=parallel_trails_mask_rows,
-                serial_front_edge_mask_columns=serial_front_edge_mask_columns,
-                serial_trails_mask_columns=serial_trails_mask_columns,
-                parallel_total_density_range=self.parallel_total_density_range,
-                serial_total_density_range=self.serial_total_density_range,
-                cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
-                cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
-                cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer,
-            )
-
-        else:
-
-            phase_tag = None
+        phase_tag = tag.phase_tag_from_phase_settings(
+            columns=columns,
+            rows=rows,
+            parallel_front_edge_mask_rows=parallel_front_edge_mask_rows,
+            parallel_trails_mask_rows=parallel_trails_mask_rows,
+            serial_front_edge_mask_columns=serial_front_edge_mask_columns,
+            serial_trails_mask_columns=serial_trails_mask_columns,
+            parallel_total_density_range=self.parallel_total_density_range,
+            serial_total_density_range=self.serial_total_density_range,
+            cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
+            cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
+            cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer,
+        )
 
         super().__init__(
             phase_name=phase_name,
@@ -629,7 +623,6 @@ class ParallelPhase(Phase):
     def __init__(
         self,
         phase_name,
-        tag_phases=True,
         phase_folders=tuple(),
         parallel_species=(),
         parallel_ccd=None,
@@ -649,7 +642,6 @@ class ParallelPhase(Phase):
 
         super().__init__(
             phase_name=phase_name,
-            tag_phases=tag_phases,
             phase_folders=phase_folders,
             optimizer_class=optimizer_class,
             mask_function=mask_function,
@@ -758,7 +750,6 @@ class SerialPhase(Phase):
     def __init__(
         self,
         phase_name,
-        tag_phases=True,
         phase_folders=tuple(),
         serial_species=(),
         serial_ccd=None,
@@ -778,7 +769,6 @@ class SerialPhase(Phase):
 
         super().__init__(
             phase_name=phase_name,
-            tag_phases=tag_phases,
             phase_folders=phase_folders,
             optimizer_class=optimizer_class,
             mask_function=mask_function,
@@ -881,7 +871,6 @@ class ParallelSerialPhase(Phase):
     def __init__(
         self,
         phase_name,
-        tag_phases=True,
         phase_folders=tuple(),
         parallel_species=(),
         serial_species=(),
@@ -910,7 +899,6 @@ class ParallelSerialPhase(Phase):
 
         super().__init__(
             phase_name=phase_name,
-            tag_phases=tag_phases,
             phase_folders=phase_folders,
             optimizer_class=optimizer_class,
             mask_function=mask_function,
@@ -1105,8 +1093,8 @@ class HyperPhase(Phase):
                 cti_params = cti_params_for_instance(instance=instance)
                 return list(
                     map(
-                        lambda ci_data_hyper_fit: ci_fit.CIHyperFit(
-                            masked_hyper_ci_data=ci_data_hyper_fit,
+                        lambda ci_data_extracted: ci_fit.CIHyperFit(
+                            masked_hyper_ci_data=ci_data_extracted,
                             cti_params=cti_params,
                             cti_settings=self.cti_settings,
                             hyper_noise_scalars=instance.hyper_noise_scalars,
@@ -1193,7 +1181,6 @@ class ParallelHyperPhase(ParallelPhase, HyperPhase):
     def __init__(
         self,
         phase_name,
-        tag_phases=True,
         phase_folders=tuple(),
         parallel_species=(),
         parallel_ccd=None,
@@ -1220,7 +1207,6 @@ class ParallelHyperPhase(ParallelPhase, HyperPhase):
         )
         super().__init__(
             phase_name=phase_name,
-            tag_phases=tag_phases,
             phase_folders=phase_folders,
             parallel_species=parallel_species,
             parallel_ccd=parallel_ccd,
@@ -1274,7 +1260,6 @@ class SerialHyperPhase(SerialPhase, HyperPhase):
     def __init__(
         self,
         phase_name,
-        tag_phases=True,
         phase_folders=tuple(),
         serial_species=(),
         serial_ccd=None,
@@ -1296,7 +1281,6 @@ class SerialHyperPhase(SerialPhase, HyperPhase):
         )
         super().__init__(
             phase_name=phase_name,
-            tag_phases=tag_phases,
             phase_folders=phase_folders,
             serial_species=serial_species,
             serial_ccd=serial_ccd,
@@ -1343,7 +1327,6 @@ class ParallelSerialHyperPhase(ParallelSerialPhase, HyperPhase):
     def __init__(
         self,
         phase_name,
-        tag_phases=True,
         phase_folders=tuple(),
         parallel_species=(),
         serial_species=(),
@@ -1374,7 +1357,6 @@ class ParallelSerialHyperPhase(ParallelSerialPhase, HyperPhase):
         )
         super().__init__(
             phase_name=phase_name,
-            tag_phases=tag_phases,
             phase_folders=phase_folders,
             parallel_species=parallel_species,
             serial_species=serial_species,
