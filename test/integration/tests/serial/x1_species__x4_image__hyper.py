@@ -25,7 +25,7 @@ cti_settings = ac.ArcticSettings(serial=serial_settings)
 
 def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     class SerialPhase(ac.SerialPhase):
-        def pass_priors(self, results):
+        def customize_priors(self, results):
 
             self.serial_ccd.well_fill_alpha = 1.0
             self.serial_ccd.well_fill_gamma = 0.0
@@ -44,7 +44,7 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     phase1.optimizer.sampling_efficiency = 0.2
 
     class SerialHyperModelFixedPhase(ac.SerialHyperPhase):
-        def pass_priors(self, results):
+        def customize_priors(self, results):
 
             self.serial_species = results.from_phase("phase_1").constant.serial_species
             self.serial_ccd = results.from_phase("phase_1").constant.serial_ccd
@@ -59,7 +59,7 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     )
 
     class SerialHyperFixedPhase(ac.SerialHyperPhase):
-        def pass_priors(self, results):
+        def customize_priors(self, results):
 
             self.hyper_noise_scalars = results.from_phase(
                 "phase_2"

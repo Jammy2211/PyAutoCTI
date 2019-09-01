@@ -50,7 +50,6 @@ class Phase(af.AbstractPhase):
     def __init__(
         self,
         phase_name,
-        phase_tag=None,
         phase_folders=tuple(),
         optimizer_class=af.DownhillSimplex,
         mask_function=msk.Mask.empty_for_shape,
@@ -143,7 +142,7 @@ class Phase(af.AbstractPhase):
         analysis = self.make_analysis(
             ci_datas=ci_datas, cti_settings=cti_settings, results=results, pool=pool
         )
-        self.pass_priors(results)
+        self.customize_priors(results)
         self.assert_and_save_pickle()
         result = self.optimizer.fit(analysis)
 
@@ -331,6 +330,18 @@ class Phase(af.AbstractPhase):
             pool=pool,
         )
         return analysis
+
+    def customize_priors(self, results):
+        """
+        Perform any prior or constant passing. This could involve setting model
+        attributes equal to priors or constants from a previous phase.
+
+        Parameters
+        ----------
+        results: autofit.tools.pipeline.ResultsCollection
+            The result of the previous phase
+        """
+        pass
 
     # noinspection PyAbstractClass
     class Analysis(af.Analysis):

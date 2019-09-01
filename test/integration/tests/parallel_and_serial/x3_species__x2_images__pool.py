@@ -35,7 +35,7 @@ cti_settings = ac.ArcticSettings(parallel=parallel_settings, serial=serial_setti
 
 def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     class ParallelSerialPhase(ac.ParallelSerialPhase):
-        def pass_priors(self, results):
+        def customize_priors(self, results):
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
             self.serial_ccd.well_fill_alpha = 1.0
