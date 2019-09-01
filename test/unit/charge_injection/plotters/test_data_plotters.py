@@ -1,7 +1,6 @@
 import numpy as np
 
-from autocti.charge_injection.plotters import data_plotters
-from autocti.data import mask as msk
+import autocti as ac
 from test.unit.mock.mock import MockCIFrame
 
 from test.fixtures import make_plot_patch
@@ -43,7 +42,7 @@ def make_ci_frame():
 
 def test__image_is_output(image, mask, data_plotter_path, plot_patch):
 
-    data_plotters.plot_image(
+    ac.data_plotters.plot_image(
         image=image,
         mask=mask,
         extract_array_from_mask=True,
@@ -57,7 +56,7 @@ def test__image_is_output(image, mask, data_plotter_path, plot_patch):
 
 
 def test__noise_map_is_output(noise_map, mask, data_plotter_path, plot_patch):
-    data_plotters.plot_noise_map(
+    ac.data_plotters.plot_noise_map(
         noise_map=noise_map,
         mask=mask,
         extract_array_from_mask=True,
@@ -70,7 +69,7 @@ def test__noise_map_is_output(noise_map, mask, data_plotter_path, plot_patch):
 
 
 def test__ci_pre_cti_is_output(ci_pre_cti, mask, data_plotter_path, plot_patch):
-    data_plotters.plot_ci_pre_cti(
+    ac.data_plotters.plot_ci_pre_cti(
         ci_pre_cti=ci_pre_cti,
         mask=mask,
         extract_array_from_mask=True,
@@ -85,7 +84,7 @@ def test__ci_pre_cti_is_output(ci_pre_cti, mask, data_plotter_path, plot_patch):
 def test__signal_to_noise_map_is_output(
     image, noise_map, mask, data_plotter_path, plot_patch
 ):
-    data_plotters.plot_signal_to_noise_map(
+    ac.data_plotters.plot_signal_to_noise_map(
         signal_to_noise_map=image / noise_map,
         mask=mask,
         extract_array_from_mask=True,
@@ -99,7 +98,7 @@ def test__signal_to_noise_map_is_output(
 
 def test__image_line_is_output(image, mask, ci_frame, data_plotter_path, plot_patch):
 
-    data_plotters.plot_image_line(
+    ac.data_plotters.plot_image_line(
         image=image,
         line_region="parallel_front_edge",
         mask=mask,
@@ -115,7 +114,7 @@ def test__noise_map_line_is_output(
     noise_map, mask, ci_frame, data_plotter_path, plot_patch
 ):
 
-    data_plotters.plot_noise_map_line(
+    ac.data_plotters.plot_noise_map_line(
         noise_map=noise_map,
         line_region="parallel_front_edge",
         mask=mask,
@@ -131,7 +130,7 @@ def test__ci_pre_cti_line_is_output(
     ci_pre_cti, mask, ci_frame, data_plotter_path, plot_patch
 ):
 
-    data_plotters.plot_ci_pre_cti_line(
+    ac.data_plotters.plot_ci_pre_cti_line(
         ci_pre_cti=ci_pre_cti,
         line_region="parallel_front_edge",
         ci_frame=ci_frame,
@@ -147,7 +146,7 @@ def test__signal_to_noise_map_line_is_output(
     image, noise_map, mask, ci_frame, data_plotter_path, plot_patch
 ):
 
-    data_plotters.plot_signal_to_noise_map_line(
+    ac.data_plotters.plot_signal_to_noise_map_line(
         signal_to_noise_map=image / noise_map,
         ci_frame=ci_frame,
         line_region="parallel_front_edge",
