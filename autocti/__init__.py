@@ -42,7 +42,7 @@ from autocti.pipeline.phase import (
 )
 from autocti.pipeline.pipeline import Pipeline
 
-from autocti.charge_injection.plotters import ci_data_plotters, ci_fit_plotters, fit_plotters
+from autocti.charge_injection.plotters import ci_data_plotters, ci_fit_plotters, fit_plotters, data_plotters
 from autocti.plotters import array_plotters, line_plotters, plotter_util
 
 __version__ = "0.11.3"

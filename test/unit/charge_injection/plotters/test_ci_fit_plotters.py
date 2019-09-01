@@ -1,12 +1,6 @@
 import numpy as np
 
-from autocti.charge_injection import ci_data
-from autocti.charge_injection import ci_fit
-from autocti.charge_injection import ci_hyper
-from autocti.charge_injection.plotters import ci_fit_plotters
-from autocti.data import mask as msk
-from autocti.model import arctic_params
-from autocti.model import arctic_settings
+import autocti as ac
 from test.unit.mock.mock import MockPattern, MockCIFrame
 
 from test.fixtures import make_plot_patch
@@ -79,7 +73,7 @@ def make_fit(ci_data_fit, cti_params, cti_settings):
 
 def test__ci_fit_subplot_is_output(fit, ci_fit_plotter_path, plot_patch):
 
-    ci_fit_plotters.plot_fit_subplot(
+    ac.ci_fit_plotters.plot_fit_subplot(
         fit=fit,
         extract_array_from_mask=True,
         cb_tick_values=[1.0],
@@ -93,7 +87,7 @@ def test__ci_fit_subplot_is_output(fit, ci_fit_plotter_path, plot_patch):
 
 def test__ci_fit_residual_maps_subplot_is_output(fit, ci_fit_plotter_path, plot_patch):
 
-    ci_fit_plotters.plot_fit_residual_maps_subplot(
+    ac.ci_fit_plotters.plot_fit_residual_maps_subplot(
         fits=[fit],
         extract_array_from_mask=True,
         cb_tick_values=[1.0],
@@ -104,7 +98,7 @@ def test__ci_fit_residual_maps_subplot_is_output(fit, ci_fit_plotter_path, plot_
 
     assert ci_fit_plotter_path + "ci_fits_residual_maps.png" in plot_patch.paths
 
-    ci_fit_plotters.plot_fit_residual_maps_lines_subplot(
+    ac.ci_fit_plotters.plot_fit_residual_maps_lines_subplot(
         fits=[fit],
         line_region="parallel_front_edge",
         output_path=ci_fit_plotter_path,
@@ -116,7 +110,7 @@ def test__ci_fit_residual_maps_subplot_is_output(fit, ci_fit_plotter_path, plot_
 
 def test__ci_fit_chi_squareds_subplot_is_output(fit, ci_fit_plotter_path, plot_patch):
 
-    ci_fit_plotters.plot_fit_chi_squared_maps_subplot(
+    ac.ci_fit_plotters.plot_fit_chi_squared_maps_subplot(
         fits=[fit],
         extract_array_from_mask=True,
         cb_tick_values=[1.0],
@@ -127,7 +121,7 @@ def test__ci_fit_chi_squareds_subplot_is_output(fit, ci_fit_plotter_path, plot_p
 
     assert ci_fit_plotter_path + "ci_fits_chi_squared_maps.png" in plot_patch.paths
 
-    ci_fit_plotters.plot_fit_chi_squared_maps_lines_subplot(
+    ac.ci_fit_plotters.plot_fit_chi_squared_maps_lines_subplot(
         fits=[fit],
         line_region="parallel_front_edge",
         output_path=ci_fit_plotter_path,
@@ -141,7 +135,7 @@ def test__ci_fit_chi_squareds_subplot_is_output(fit, ci_fit_plotter_path, plot_p
 
 def test__fit_individuals__depedent_on_input(fit, ci_fit_plotter_path, plot_patch):
 
-    ci_fit_plotters.plot_fit_individuals(
+    ac.ci_fit_plotters.plot_fit_individuals(
         fit=fit,
         should_plot_image=True,
         should_plot_noise_map=False,
@@ -172,7 +166,7 @@ def test__fit_individuals_line__depedent_on_input(
     fit, ci_frame, ci_fit_plotter_path, plot_patch
 ):
 
-    ci_fit_plotters.plot_fit_line_individuals(
+    ac.ci_fit_plotters.plot_fit_line_individuals(
         fit=fit,
         line_region="parallel_front_edge",
         should_plot_image=True,
@@ -204,7 +198,7 @@ def test__fit_individuals_line__depedent_on_input(
 
 def test__plot_ci_fit_for_phase(fit, ci_fit_plotter_path, plot_patch):
 
-    ci_fit_plotters.plot_ci_fit_for_phase(
+    ac.ci_fit_plotters.plot_ci_fit_for_phase(
         fits=[fit],
         during_analysis=False,
         extract_array_from_mask=True,
@@ -353,7 +347,7 @@ def test__fit_individuals__fit_hyper_plots_noise_scaling_maps(
     fit, fit_hyper, ci_fit_plotter_path, plot_patch
 ):
 
-    ci_fit_plotters.plot_fit_individuals(
+    ac.ci_fit_plotters.plot_fit_individuals(
         fit=fit,
         should_plot_noise_scaling_maps=True,
         output_path=ci_fit_plotter_path,
@@ -362,7 +356,7 @@ def test__fit_individuals__fit_hyper_plots_noise_scaling_maps(
 
     assert ci_fit_plotter_path + "fit_noise_scaling_maps.png" not in plot_patch.paths
 
-    ci_fit_plotters.plot_fit_individuals(
+    ac.ci_fit_plotters.plot_fit_individuals(
         fit=fit_hyper,
         should_plot_noise_scaling_maps=True,
         output_path=ci_fit_plotter_path,

@@ -1,8 +1,6 @@
 import numpy as np
 
-from autocti.charge_injection import ci_data
-from autocti.charge_injection.plotters import ci_data_plotters
-from autocti.data import mask as msk
+import autocti as ac
 from test.unit.mock.mock import MockPattern, MockCIFrame
 
 from test.fixtures import make_plot_patch
@@ -49,7 +47,7 @@ def make_ci_data(image, noise_map, ci_pre_cti):
 
 
 def test__image_is_output(data, mask, data_plotter_path, plot_patch):
-    ci_data_plotters.plot_image(
+    ac.ci_data_plotters.plot_image(
         ci_data=data,
         mask=mask,
         extract_array_from_mask=True,
@@ -62,7 +60,7 @@ def test__image_is_output(data, mask, data_plotter_path, plot_patch):
 
 
 def test__noise_map_is_output(data, mask, data_plotter_path, plot_patch):
-    ci_data_plotters.plot_noise_map(
+    ac.ci_data_plotters.plot_noise_map(
         ci_data=data,
         mask=mask,
         extract_array_from_mask=True,
@@ -75,7 +73,7 @@ def test__noise_map_is_output(data, mask, data_plotter_path, plot_patch):
 
 
 def test__ci_pre_cti_is_output(data, mask, data_plotter_path, plot_patch):
-    ci_data_plotters.plot_ci_pre_cti(
+    ac.ci_data_plotters.plot_ci_pre_cti(
         ci_data=data,
         mask=mask,
         extract_array_from_mask=True,
@@ -88,7 +86,7 @@ def test__ci_pre_cti_is_output(data, mask, data_plotter_path, plot_patch):
 
 
 def test__signal_to_noise_map_is_output(data, mask, data_plotter_path, plot_patch):
-    ci_data_plotters.plot_signal_to_noise_map(
+    ac.ci_data_plotters.plot_signal_to_noise_map(
         ci_data=data,
         mask=mask,
         extract_array_from_mask=True,
@@ -102,7 +100,7 @@ def test__signal_to_noise_map_is_output(data, mask, data_plotter_path, plot_patc
 
 def test__ci_line_sub_plot_output(data, data_plotter_path, plot_patch):
 
-    ci_data_plotters.plot_ci_line_subplot(
+    ac.ci_data_plotters.plot_ci_line_subplot(
         ci_data=data,
         line_region="parallel_front_edge",
         output_path=data_plotter_path,
@@ -116,7 +114,7 @@ def test__ci_line_individuals__output_dependent_on_inputs(
     data, data_plotter_path, plot_patch
 ):
 
-    ci_data_plotters.plot_ci_data_line_individual(
+    ac.ci_data_plotters.plot_ci_data_line_individual(
         ci_data=data,
         line_region="parallel_front_edge",
         should_plot_image=True,
@@ -136,7 +134,7 @@ def test__ci_line_individuals__output_dependent_on_inputs(
 
 def test__image_line_is_output(data, mask, data_plotter_path, plot_patch):
 
-    ci_data_plotters.plot_image_line(
+    ac.ci_data_plotters.plot_image_line(
         ci_data=data,
         line_region="parallel_front_edge",
         mask=mask,
@@ -149,7 +147,7 @@ def test__image_line_is_output(data, mask, data_plotter_path, plot_patch):
 
 def test__noise_map_line_is_output(data, mask, data_plotter_path, plot_patch):
 
-    ci_data_plotters.plot_noise_map_line(
+    ac.ci_data_plotters.plot_noise_map_line(
         ci_data=data,
         line_region="parallel_front_edge",
         mask=mask,
@@ -162,7 +160,7 @@ def test__noise_map_line_is_output(data, mask, data_plotter_path, plot_patch):
 
 def test__ci_pre_cti_line_is_output(data, mask, data_plotter_path, plot_patch):
 
-    ci_data_plotters.plot_ci_pre_cti_line(
+    ac.ci_data_plotters.plot_ci_pre_cti_line(
         ci_data=data,
         line_region="parallel_front_edge",
         mask=mask,
@@ -175,7 +173,7 @@ def test__ci_pre_cti_line_is_output(data, mask, data_plotter_path, plot_patch):
 
 def test__signal_to_noise_map_line_is_output(data, mask, data_plotter_path, plot_patch):
 
-    ci_data_plotters.plot_signal_to_noise_map_line(
+    ac.ci_data_plotters.plot_signal_to_noise_map_line(
         ci_data=data,
         line_region="parallel_front_edge",
         mask=mask,
@@ -188,7 +186,7 @@ def test__signal_to_noise_map_line_is_output(data, mask, data_plotter_path, plot
 
 def test__ci_sub_plot_output(data, data_plotter_path, plot_patch):
 
-    ci_data_plotters.plot_ci_subplot(
+    ac.ci_data_plotters.plot_ci_subplot(
         ci_data=data,
         extract_array_from_mask=True,
         cb_tick_values=[1.0],
@@ -203,7 +201,7 @@ def test__ci_sub_plot_output(data, data_plotter_path, plot_patch):
 def test__ci_individuals__output_dependent_on_inputs(
     data, data_plotter_path, plot_patch
 ):
-    ci_data_plotters.plot_ci_data_individual(
+    ac.ci_data_plotters.plot_ci_data_individual(
         ci_data=data,
         extract_array_from_mask=True,
         should_plot_image=True,
@@ -235,7 +233,7 @@ def make_ci_data_extracted(data, mask):
 
 def test__plot_ci_data_for_phase(data_extracted, data_plotter_path, plot_patch):
 
-    ci_data_plotters.plot_ci_data_for_phase(
+    ac.ci_data_plotters.plot_ci_data_for_phase(
         ci_datas_extracted=[data_extracted],
         extract_array_from_mask=True,
         should_plot_as_subplot=True,
