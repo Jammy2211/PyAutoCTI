@@ -66,12 +66,12 @@
 #
 #         phase.optimizer.phase_tag = ""
 #         phase.phase_tag = ""
-#         phase.pass_priors = self.pass_priors
+#         phase.customize_priors = self.customize_priors
 #         phase.preload_pixelization_grid = None
 #
 #         return phase
 #
-#     def pass_priors(self, results):
+#     def customize_priors(self, results):
 #
 #         pass
 #

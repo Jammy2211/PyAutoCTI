@@ -26,7 +26,7 @@ cti_settings = ac.ArcticSettings(parallel=parallel_settings)
 
 def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     class ParallelPhase(ac.ParallelPhase):
-        def pass_priors(self, results):
+        def customize_priors(self, results):
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
@@ -44,7 +44,7 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     phase1.optimizer.sampling_efficiency = 0.2
 
     class ParallelPhase(ac.ParallelPhase):
-        def pass_priors(self, results):
+        def customize_priors(self, results):
 
             previous_total_density = (
                 results[-1].constant.parallel_species[0].trap_density

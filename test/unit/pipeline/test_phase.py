@@ -619,7 +619,7 @@ class TestPhase(object):
 
     def test__customize_constant(self, results, ci_data, cti_settings):
         class MyPhase(ac.ParallelPhase):
-            def pass_priors(self, previous_results):
+            def customize_priors(self, previous_results):
                 self.parallel_species = previous_results.last.constant.parallel_species
 
         parallel = ac.Species()
