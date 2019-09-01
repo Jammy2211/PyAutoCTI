@@ -19,7 +19,7 @@ def make_ci_data_plotter_setup():
 
 @pytest.fixture(name="mask")
 def make_mask():
-    return msk.Mask.empty_for_shape(shape=(6, 6))
+    return ac.Mask.empty_for_shape(shape=(6, 6))
 
 
 @pytest.fixture(name="image")
@@ -39,7 +39,7 @@ def make_ci_pre_cti():
 
 @pytest.fixture(name="data")
 def make_ci_data(image, noise_map, ci_pre_cti):
-    return ci_data.CIData(
+    return ac.CIData(
         image=image,
         noise_map=noise_map,
         ci_pre_cti=ci_pre_cti,
@@ -223,7 +223,7 @@ def test__ci_individuals__output_dependent_on_inputs(
 
 @pytest.fixture(name="data_extracted")
 def make_ci_data_extracted(data, mask):
-    return ci_data.MaskedCIData(
+    return ac.MaskedCIData(
         image=data.image,
         noise_map=data.noise_map,
         ci_pre_cti=data.ci_pre_cti,

@@ -3,7 +3,7 @@ import builtins
 import pytest
 
 import autofit as af
-from autocti.pipeline import pipeline as pl
+import autocti as ac
 
 
 class MockFile(object):
@@ -68,7 +68,7 @@ class TestPipeline(object):
     def test_run_pipeline(self):
         phase_1 = DummyPhase(phase_name="dummy1")
         phase_2 = DummyPhase(phase_name="dummy2")
-        pipeline = pl.Pipeline("", phase_1, phase_2)
+        pipeline = ac.Pipeline("", phase_1, phase_2)
 
         pipeline.run(ci_datas=None, cti_settings=None, pool=None)
 
@@ -80,7 +80,7 @@ class TestPipeline(object):
         phase_2 = DummyPhase(phase_name="dummy2")
         phase_3 = DummyPhase(phase_name="dumy3")
 
-        pipeline1 = pl.Pipeline("", phase_1, phase_2)
-        pipeline2 = pl.Pipeline("", phase_3)
+        pipeline1 = ac.Pipeline("", phase_1, phase_2)
+        pipeline2 = ac.Pipeline("", phase_3)
 
         assert (phase_1, phase_2, phase_3) == (pipeline1 + pipeline2).phases

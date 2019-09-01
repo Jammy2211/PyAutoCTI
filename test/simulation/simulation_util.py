@@ -1,7 +1,5 @@
 import autofit as af
-from autocti.charge_injection import ci_frame
-from autocti.charge_injection import ci_data
-from autocti.charge_injection import ci_pattern
+import autocti as ac
 
 import os
 
@@ -95,9 +93,7 @@ def load_test_ci_data(
         ci_data_resolution=ci_data_resolution
     )
 
-    pattern = ci_pattern.CIPatternUniform(
-        normalization=normalization, regions=ci_regions
-    )
+    pattern = ac.CIPatternUniform(normalization=normalization, regions=ci_regions)
     data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
         path=test_path,
         folder_names=["data", ci_data_type, ci_data_model, ci_data_resolution],
@@ -106,7 +102,7 @@ def load_test_ci_data(
     normalization = str(int(pattern.normalization))
 
     if not load_cosmic_ray_image:
-        return ci_data.ci_data_from_fits(
+        return ac.ci_data_from_fits(
             frame_geometry=frame_geometry,
             ci_pattern=pattern,
             image_path=data_path + "image_" + normalization + ".fits",
@@ -114,7 +110,7 @@ def load_test_ci_data(
             ci_pre_cti_path=data_path + "ci_pre_cti_" + normalization + ".fits",
         )
     elif load_cosmic_ray_image:
-        return ci_data.ci_data_from_fits(
+        return ac.ci_data_from_fits(
             frame_geometry=frame_geometry,
             ci_pattern=pattern,
             image_path=data_path + "image_" + normalization + ".fits",
@@ -127,7 +123,7 @@ def load_test_ci_data(
         )
 
 
-class CIFrameGeometryIntegration(ci_frame.FrameGeometry):
+class CIFrameGeometryIntegration(ac.FrameGeometry):
     def __init__(self, corner, parallel_overscan, serial_prescan, serial_overscan):
         """This class represents the quadrant geometry of an integration quadrant."""
         super(CIFrameGeometryIntegration, self).__init__(
@@ -142,9 +138,9 @@ class CIFrameGeometryIntegration(ci_frame.FrameGeometry):
         """This class represents the quadrant geometry of an integration quadrant."""
         return CIFrameGeometryIntegration(
             corner=(0, 0),
-            parallel_overscan=ci_frame.Region((33, 36, 1, 30)),
-            serial_overscan=ci_frame.Region((0, 33, 30, 36)),
-            serial_prescan=ci_frame.Region((0, 36, 0, 1)),
+            parallel_overscan=ac.Region((33, 36, 1, 30)),
+            serial_overscan=ac.Region((0, 33, 30, 36)),
+            serial_prescan=ac.Region((0, 36, 0, 1)),
         )
 
     @classmethod
@@ -152,9 +148,9 @@ class CIFrameGeometryIntegration(ci_frame.FrameGeometry):
         """This class represents the quadrant geometry of an integration quadrant."""
         return CIFrameGeometryIntegration(
             corner=(0, 0),
-            parallel_overscan=ci_frame.Region((90, 100, 10, 80)),
-            serial_overscan=ci_frame.Region((0, 90, 80, 100)),
-            serial_prescan=ci_frame.Region((0, 100, 0, 10)),
+            parallel_overscan=ac.Region((90, 100, 10, 80)),
+            serial_overscan=ac.Region((0, 90, 80, 100)),
+            serial_prescan=ac.Region((0, 100, 0, 10)),
         )
 
     @classmethod
@@ -162,9 +158,9 @@ class CIFrameGeometryIntegration(ci_frame.FrameGeometry):
         """This class represents the quadrant geometry of an integration quadrant."""
         return CIFrameGeometryIntegration(
             corner=(0, 0),
-            parallel_overscan=ci_frame.Region((280, 300, 10, 280)),
-            serial_overscan=ci_frame.Region((0, 280, 280, 300)),
-            serial_prescan=ci_frame.Region((0, 300, 0, 10)),
+            parallel_overscan=ac.Region((280, 300, 10, 280)),
+            serial_overscan=ac.Region((0, 280, 280, 300)),
+            serial_prescan=ac.Region((0, 300, 0, 10)),
         )
 
     @classmethod
@@ -172,7 +168,7 @@ class CIFrameGeometryIntegration(ci_frame.FrameGeometry):
         """This class represents the quadrant geometry of an integration quadrant."""
         return CIFrameGeometryIntegration(
             corner=(0, 0),
-            parallel_overscan=ci_frame.Region((580, 600, 20, 580)),
-            serial_overscan=ci_frame.Region((0, 580, 580, 600)),
-            serial_prescan=ci_frame.Region((0, 600, 20, 1)),
+            parallel_overscan=ac.Region((580, 600, 20, 580)),
+            serial_overscan=ac.Region((0, 580, 580, 600)),
+            serial_prescan=ac.Region((0, 600, 20, 1)),
         )

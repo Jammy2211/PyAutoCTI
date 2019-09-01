@@ -23,7 +23,7 @@ def make_ci_data_plotter_setup():
 
 @pytest.fixture(name="mask")
 def make_mask():
-    return msk.Mask.empty_for_shape(shape=(2, 2))
+    return ac.Mask.empty_for_shape(shape=(2, 2))
 
 
 @pytest.fixture(name="image")
@@ -48,7 +48,7 @@ def make_ci_frame():
 
 @pytest.fixture(name="ci_data_fit")
 def make_ci_data_fit(image, noise_map, mask, ci_pre_cti):
-    return ci_data.MaskedCIData(
+    return ac.MaskedCIData(
         image=image,
         noise_map=noise_map,
         ci_pre_cti=ci_pre_cti,
@@ -60,21 +60,19 @@ def make_ci_data_fit(image, noise_map, mask, ci_pre_cti):
 
 @pytest.fixture(name="cti_settings")
 def make_cti_settings():
-    parallel_settings = arctic_settings.Settings(
-        well_depth=0, niter=1, express=1, n_levels=2000
-    )
-    return arctic_settings.ArcticSettings(neomode="NEO", parallel=parallel_settings)
+    parallel_settings = ac.Settings(well_depth=0, niter=1, express=1, n_levels=2000)
+    return ac.ArcticSettings(neomode="NEO", parallel=parallel_settings)
 
 
 @pytest.fixture(name="cti_params")
 def make_cti_params():
-    parallel_1_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-    return arctic_params.ArcticParams(parallel_species=parallel_1_species)
+    parallel_1_species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+    return ac.ArcticParams(parallel_species=parallel_1_species)
 
 
 @pytest.fixture(name="fit")
 def make_fit(ci_data_fit, cti_params, cti_settings):
-    return ci_fit.CIFit(
+    return ac.CIFit(
         masked_ci_data=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings
     )
 
@@ -322,7 +320,7 @@ def test__plot_ci_fit_for_phase(fit, ci_fit_plotter_path, plot_patch):
 
 @pytest.fixture(name="ci_data_fit_hyper")
 def make_ci_data_fit_hyper(image, noise_map, mask, ci_pre_cti):
-    return ci_data.MaskedCIHyperData(
+    return ac.MaskedCIHyperData(
         image=image,
         noise_map=noise_map,
         ci_pre_cti=ci_pre_cti,
@@ -336,14 +334,14 @@ def make_ci_data_fit_hyper(image, noise_map, mask, ci_pre_cti):
 @pytest.fixture(name="hyper_noise_scalars")
 def make_hyper_noise_scalars():
     return [
-        ci_hyper.CIHyperNoiseScalar(scale_factor=1.0),
-        ci_hyper.CIHyperNoiseScalar(scale_factor=2.0),
+        ac.CIHyperNoiseScalar(scale_factor=1.0),
+        ac.CIHyperNoiseScalar(scale_factor=2.0),
     ]
 
 
 @pytest.fixture(name="fit_hyper")
 def make_fit_hyper(ci_data_fit_hyper, cti_params, cti_settings, hyper_noise_scalars):
-    return ci_fit.CIHyperFit(
+    return ac.CIHyperFit(
         masked_hyper_ci_data=ci_data_fit_hyper,
         cti_params=cti_params,
         cti_settings=cti_settings,

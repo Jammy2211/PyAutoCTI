@@ -1,14 +1,18 @@
+import os
+from multiprocessing import Pool
+
 import autofit as af
 import autocti as ac
 from test.integration.tests import runner
 
-test_type = "features/total_density_range"
-test_name = "serial"
+test_type = "serial"
+test_name = "x3_species__x2_images__pool"
+ci_data_type = "ci_uniform"
+ci_data_model = "serial_x3"
+ci_data_resolution = "patch"
+ci_normalizations = [1000.0, 84700.0]
 
-test_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
-output_path = test_path + "output/"
-config_path = test_path + "config"
-af.conf.instance = af.conf.Config(config_path=config_path, output_path=output_path)
+
 
 
 serial_settings = ac.Settings(
@@ -25,7 +29,6 @@ cti_settings = ac.ArcticSettings(serial=serial_settings)
 def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     class SerialPhase(ac.SerialPhase):
         def pass_priors(self, results):
-
             self.serial_ccd.well_fill_alpha = 1.0
             self.serial_ccd.well_fill_gamma = 0.0
 
@@ -33,9 +36,13 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
         phase_name="phase_1",
         phase_folders=phase_folders,
         optimizer_class=optimizer_class,
-        serial_species=[af.PriorModel(ac.Species)],
+        serial_species=[
+            af.PriorModel(ac.Species),
+            af.PriorModel(ac.Species),
+            af.PriorModel(ac.Species),
+        ],
         serial_ccd=ac.CCDVolume,
-        serial_total_density_range=(0.1, 0.3),
+        rows=None,
     )
 
     phase1.optimizer.n_live_points = 60
@@ -49,4 +56,4 @@ if __name__ == "__main__":
 
     import sys
 
-    runner.run(sys.modules[__name__], cti_settings=cti_settings)
+    runner.run(sys.modules[__name__], cti_settings=cti_settings, pool=Pool(processes=2))

@@ -86,7 +86,8 @@ class TestPhaseTag:
         )
 
         assert (
-            phase_tag == "__col_2__rows_(1,2)__par_range_(0,1)__ser_range_(2,3)__cr_p4s5d6"
+            phase_tag
+            == "__col_2__rows_(1,2)__par_range_(0,1)__ser_range_(2,3)__cr_p4s5d6"
         )
 
         phase_tag = phase_tagging.phase_tag_from_phase_settings(

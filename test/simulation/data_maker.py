@@ -17,7 +17,7 @@ makers.make_ci_uniform_parallel_x1_species(
 makers.make_ci_uniform_serial_x1_species(
     data_resolutions=data_resolutions, normalizations=normalizations
 )
-makers.make_ci_uniform_parallel_and_serial_x1_species(
+makers.make_ci_uniform_parallel_x1__serial_x1_species(
     data_resolutions=data_resolutions, normalizations=normalizations
 )
 makers.make_ci_uniform_parallel_x3_species(
@@ -26,7 +26,7 @@ makers.make_ci_uniform_parallel_x3_species(
 makers.make_ci_uniform_serial_x3_species(
     data_resolutions=data_resolutions, normalizations=normalizations
 )
-makers.make_ci_uniform_parallel_and_serial_x3_species(
+makers.make_ci_uniform_parallel_x3__serial_x3_species(
     data_resolutions=data_resolutions, normalizations=normalizations
 )
 makers.make_ci_uniform_cosmic_rays_parallel_x1_species(
@@ -35,6 +35,6 @@ makers.make_ci_uniform_cosmic_rays_parallel_x1_species(
 makers.make_ci_uniform_cosmic_rays_serial_x1_species(
     data_resolutions=data_resolutions, normalizations=normalizations
 )
-makers.make_ci_uniform_cosmic_rays_parallel_and_serial_x1_species(
+makers.make_ci_uniform_cosmic_rays_parallel_x1__serial_x1_species(
     data_resolutions=data_resolutions, normalizations=normalizations
 )
