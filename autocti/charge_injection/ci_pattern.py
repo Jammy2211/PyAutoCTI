@@ -12,37 +12,7 @@ from autocti import exc
 from autocti.charge_injection import ci_frame
 
 
-def uniform_from_lists(normalizations, regions):
-    """Setup the collection of patterns from lists of uniform ci_pattern properties
-
-    Params
-    -----------
-    normalizations : list
-        The normalization in each charge injection ci_pattern.
-    regions : [(int, int, int, int)]
-        The regions each charge injection ci_pattern appears. This is identical across all images.
-    """
-    return list(map(lambda n: CIPatternUniform(n, regions), normalizations))
-
-
-def non_uniform_from_lists(normalizations, regions, row_slopes):
-    """Setup the collection of patterns from lists of non-uniform ci_pattern properties
-
-    Params
-    -----------
-    normalizations : [float]
-        The normalization in each charge injection ci_pattern.
-    regions : [(int, int, int, int)]
-        The regions each charge injection ci_pattern appears. This is identical across all images.
-    row_slopes : [float]
-        The power-law slopes of non-uniformity in the rows of each charge injection profile.
-    """
-    return list(
-        map(lambda n, s: CIPatternNonUniform(n, regions, s), normalizations, row_slopes)
-    )
-
-
-class CIPattern(object):
+class AbstractCIPattern(object):
     def __init__(self, normalization, regions):
         """ Abstract base class for a charge injection ci_pattern, which defines the regions charge injections appears \
          on a charge-injection ci_frame, the input normalization and other properties.
@@ -83,7 +53,7 @@ class CIPattern(object):
         ]
 
 
-class CIPatternUniform(CIPattern):
+class CIPatternUniform(AbstractCIPattern):
     """ A uniform charge injection ci_pattern, which is defined by the regions it appears on the charge injection \
         ci_frame and its normalization.
 
@@ -131,7 +101,7 @@ class CIPatternUniform(CIPattern):
         return ci_pre_cti
 
 
-class CIPatternNonUniform(CIPattern):
+class CIPatternNonUniform(AbstractCIPattern):
     def __init__(self, normalization, regions, row_slope):
         """ A non-uniform charge injection ci_pattern, which is defined by the regions it appears on a charge injection
         ci_frame and its average normalization.

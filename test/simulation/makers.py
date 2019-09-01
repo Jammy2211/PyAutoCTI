@@ -1,8 +1,5 @@
 import autofit as af
-from autocti.charge_injection import ci_data
-from autocti.charge_injection import ci_pattern
-from autocti.model import arctic_params
-from autocti.model import arctic_settings
+import autocti as ac
 
 from test.simulation import simulation_util
 
@@ -39,7 +36,7 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(
 
     ci_pre_cti = pattern.simulate_ci_pre_cti(shape=shape)
 
-    data = ci_data.simulate(
+    data = ac.simulate(
         ci_pre_cti=ci_pre_cti,
         frame_geometry=frame_geometry,
         ci_pattern=pattern,
@@ -59,7 +56,7 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(
 
     normalization = str(int(pattern.normalization))
 
-    ci_data.output_ci_data_to_fits(
+    ac.output_ci_data_to_fits(
         ci_data=data,
         image_path=ci_data_path + "image_" + normalization + ".fits",
         noise_map_path=ci_data_path + "noise_map_" + normalization + ".fits",
@@ -77,18 +74,18 @@ def make_ci_uniform_parallel_x1_species(data_resolutions, normalizations):
     ci_data_type = "ci_uniform"
     ci_data_model = "parallel_x1"
 
-    parallel_species = arctic_params.Species(trap_density=1.0, trap_lifetime=3.0)
-    parallel_ccd = arctic_params.CCD(
+    parallel_species = ac.Species(trap_density=1.0, trap_lifetime=3.0)
+    parallel_ccd = ac.CCDVolume(
         well_notch_depth=0.0,
         well_fill_alpha=1.0,
         well_fill_beta=0.5,
         well_fill_gamma=0.0,
     )
-    cti_params = arctic_params.ArcticParams(
+    cti_params = ac.ArcticParams(
         parallel_ccd=parallel_ccd, parallel_species=[parallel_species]
     )
 
-    parallel_settings = arctic_settings.Settings(
+    parallel_settings = ac.Settings(
         well_depth=84700,
         niter=1,
         express=2,
@@ -96,7 +93,7 @@ def make_ci_uniform_parallel_x1_species(data_resolutions, normalizations):
         charge_injection_mode=False,
         readout_offset=0,
     )
-    cti_settings = arctic_settings.ArcticSettings(parallel=parallel_settings)
+    cti_settings = ac.ArcticSettings(parallel=parallel_settings)
 
     for data_resolution in data_resolutions:
         for normalization in normalizations:
@@ -104,7 +101,7 @@ def make_ci_uniform_parallel_x1_species(data_resolutions, normalizations):
             ci_regions = simulation_util.ci_regions_from_ci_data_resolution(
                 ci_data_resolution=data_resolution
             )
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=normalization, regions=ci_regions
             )
 
@@ -123,18 +120,16 @@ def make_ci_uniform_serial_x1_species(data_resolutions, normalizations):
     ci_data_type = "ci_uniform"
     ci_data_model = "serial_x1"
 
-    serial_species = arctic_params.Species(trap_density=1.0, trap_lifetime=3.0)
-    serial_ccd = arctic_params.CCD(
+    serial_species = ac.Species(trap_density=1.0, trap_lifetime=3.0)
+    serial_ccd = ac.CCDVolume(
         well_notch_depth=0.00,
         well_fill_alpha=1.0,
         well_fill_beta=0.5,
         well_fill_gamma=0.0,
     )
-    cti_params = arctic_params.ArcticParams(
-        serial_ccd=serial_ccd, serial_species=[serial_species]
-    )
+    cti_params = ac.ArcticParams(serial_ccd=serial_ccd, serial_species=[serial_species])
 
-    serial_settings = arctic_settings.Settings(
+    serial_settings = ac.Settings(
         well_depth=84700,
         niter=1,
         express=2,
@@ -142,7 +137,7 @@ def make_ci_uniform_serial_x1_species(data_resolutions, normalizations):
         charge_injection_mode=False,
         readout_offset=0,
     )
-    cti_settings = arctic_settings.ArcticSettings(serial=serial_settings)
+    cti_settings = ac.ArcticSettings(serial=serial_settings)
 
     for data_resolution in data_resolutions:
         for normalization in normalizations:
@@ -150,7 +145,7 @@ def make_ci_uniform_serial_x1_species(data_resolutions, normalizations):
             ci_regions = simulation_util.ci_regions_from_ci_data_resolution(
                 ci_data_resolution=data_resolution
             )
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=normalization, regions=ci_regions
             )
 
@@ -164,35 +159,35 @@ def make_ci_uniform_serial_x1_species(data_resolutions, normalizations):
             )
 
 
-def make_ci_uniform_parallel_and_serial_x1_species(data_resolutions, normalizations):
+def make_ci_uniform_parallel_x1__serial_x1_species(data_resolutions, normalizations):
 
     ci_data_type = "ci_uniform"
-    ci_data_model = "parallel_and_serial_x1"
+    ci_data_model = "parallel_x1__serial_x1"
 
-    parallel_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.5)
-    parallel_ccd = arctic_params.CCD(
+    parallel_species = ac.Species(trap_density=0.1, trap_lifetime=1.5)
+    parallel_ccd = ac.CCDVolume(
         well_notch_depth=0.01,
         well_fill_alpha=1.0,
         well_fill_beta=0.5,
         well_fill_gamma=0.0,
     )
 
-    serial_species = arctic_params.Species(trap_density=1.0, trap_lifetime=3.0)
-    serial_ccd = arctic_params.CCD(
+    serial_species = ac.Species(trap_density=1.0, trap_lifetime=3.0)
+    serial_ccd = ac.CCDVolume(
         well_notch_depth=0.00,
         well_fill_alpha=1.0,
         well_fill_beta=0.5,
         well_fill_gamma=0.0,
     )
 
-    cti_params = arctic_params.ArcticParams(
+    cti_params = ac.ArcticParams(
         parallel_ccd=parallel_ccd,
         parallel_species=[parallel_species],
         serial_ccd=serial_ccd,
         serial_species=[serial_species],
     )
 
-    parallel_settings = arctic_settings.Settings(
+    parallel_settings = ac.Settings(
         well_depth=84700,
         niter=1,
         express=2,
@@ -201,7 +196,7 @@ def make_ci_uniform_parallel_and_serial_x1_species(data_resolutions, normalizati
         readout_offset=0,
     )
 
-    serial_settings = arctic_settings.Settings(
+    serial_settings = ac.Settings(
         well_depth=84700,
         niter=1,
         express=2,
@@ -210,9 +205,7 @@ def make_ci_uniform_parallel_and_serial_x1_species(data_resolutions, normalizati
         readout_offset=0,
     )
 
-    cti_settings = arctic_settings.ArcticSettings(
-        parallel=parallel_settings, serial=serial_settings
-    )
+    cti_settings = ac.ArcticSettings(parallel=parallel_settings, serial=serial_settings)
 
     for data_resolution in data_resolutions:
         for normalization in normalizations:
@@ -220,7 +213,7 @@ def make_ci_uniform_parallel_and_serial_x1_species(data_resolutions, normalizati
             ci_regions = simulation_util.ci_regions_from_ci_data_resolution(
                 ci_data_resolution=data_resolution
             )
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=normalization, regions=ci_regions
             )
 
@@ -239,21 +232,21 @@ def make_ci_uniform_parallel_x3_species(data_resolutions, normalizations):
     ci_data_type = "ci_uniform"
     ci_data_model = "parallel_x3"
 
-    parallel_species_0 = arctic_params.Species(trap_density=0.5, trap_lifetime=2.0)
-    parallel_species_1 = arctic_params.Species(trap_density=1.5, trap_lifetime=5.0)
-    parallel_species_2 = arctic_params.Species(trap_density=2.5, trap_lifetime=20.0)
-    parallel_ccd = arctic_params.CCD(
+    parallel_species_0 = ac.Species(trap_density=0.5, trap_lifetime=2.0)
+    parallel_species_1 = ac.Species(trap_density=1.5, trap_lifetime=5.0)
+    parallel_species_2 = ac.Species(trap_density=2.5, trap_lifetime=20.0)
+    parallel_ccd = ac.CCDVolume(
         well_notch_depth=0.0,
         well_fill_alpha=1.0,
         well_fill_beta=0.5,
         well_fill_gamma=0.0,
     )
-    cti_params = arctic_params.ArcticParams(
+    cti_params = ac.ArcticParams(
         parallel_ccd=parallel_ccd,
         parallel_species=[parallel_species_0, parallel_species_1, parallel_species_2],
     )
 
-    parallel_settings = arctic_settings.Settings(
+    parallel_settings = ac.Settings(
         well_depth=84700,
         niter=1,
         express=2,
@@ -261,14 +254,14 @@ def make_ci_uniform_parallel_x3_species(data_resolutions, normalizations):
         charge_injection_mode=False,
         readout_offset=0,
     )
-    cti_settings = arctic_settings.ArcticSettings(parallel=parallel_settings)
+    cti_settings = ac.ArcticSettings(parallel=parallel_settings)
 
     for data_resolution in data_resolutions:
         for normalization in normalizations:
             ci_regions = simulation_util.ci_regions_from_ci_data_resolution(
                 ci_data_resolution=data_resolution
             )
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=normalization, regions=ci_regions
             )
 
@@ -287,21 +280,21 @@ def make_ci_uniform_serial_x3_species(data_resolutions, normalizations):
     ci_data_type = "ci_uniform"
     ci_data_model = "serial_x3"
 
-    serial_species_0 = arctic_params.Species(trap_density=0.5, trap_lifetime=2.0)
-    serial_species_1 = arctic_params.Species(trap_density=1.5, trap_lifetime=5.0)
-    serial_species_2 = arctic_params.Species(trap_density=2.5, trap_lifetime=20.0)
-    serial_ccd = arctic_params.CCD(
+    serial_species_0 = ac.Species(trap_density=0.5, trap_lifetime=2.0)
+    serial_species_1 = ac.Species(trap_density=1.5, trap_lifetime=5.0)
+    serial_species_2 = ac.Species(trap_density=2.5, trap_lifetime=20.0)
+    serial_ccd = ac.CCDVolume(
         well_notch_depth=0.00,
         well_fill_alpha=1.0,
         well_fill_beta=0.5,
         well_fill_gamma=0.0,
     )
-    cti_params = arctic_params.ArcticParams(
+    cti_params = ac.ArcticParams(
         serial_ccd=serial_ccd,
         serial_species=[serial_species_0, serial_species_1, serial_species_2],
     )
 
-    serial_settings = arctic_settings.Settings(
+    serial_settings = ac.Settings(
         well_depth=84700,
         niter=1,
         express=2,
@@ -309,14 +302,14 @@ def make_ci_uniform_serial_x3_species(data_resolutions, normalizations):
         charge_injection_mode=False,
         readout_offset=0,
     )
-    cti_settings = arctic_settings.ArcticSettings(serial=serial_settings)
+    cti_settings = ac.ArcticSettings(serial=serial_settings)
 
     for data_resolution in data_resolutions:
         for normalization in normalizations:
             ci_regions = simulation_util.ci_regions_from_ci_data_resolution(
                 ci_data_resolution=data_resolution
             )
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=normalization, regions=ci_regions
             )
 
@@ -330,39 +323,39 @@ def make_ci_uniform_serial_x3_species(data_resolutions, normalizations):
             )
 
 
-def make_ci_uniform_parallel_and_serial_x3_species(data_resolutions, normalizations):
+def make_ci_uniform_parallel_x3__serial_x3_species(data_resolutions, normalizations):
 
     ci_data_type = "ci_uniform"
-    ci_data_model = "parallel_and_serial_x3"
+    ci_data_model = "parallel_x3__serial_x3"
 
-    parallel_species_0 = arctic_params.Species(trap_density=0.5, trap_lifetime=2.0)
-    parallel_species_1 = arctic_params.Species(trap_density=1.5, trap_lifetime=5.0)
-    parallel_species_2 = arctic_params.Species(trap_density=2.5, trap_lifetime=20.0)
-    parallel_ccd = arctic_params.CCD(
+    parallel_species_0 = ac.Species(trap_density=0.5, trap_lifetime=2.0)
+    parallel_species_1 = ac.Species(trap_density=1.5, trap_lifetime=5.0)
+    parallel_species_2 = ac.Species(trap_density=2.5, trap_lifetime=20.0)
+    parallel_ccd = ac.CCDVolume(
         well_notch_depth=0.01,
         well_fill_alpha=1.0,
         well_fill_beta=0.5,
         well_fill_gamma=0.0,
     )
 
-    serial_species_0 = arctic_params.Species(trap_density=0.5, trap_lifetime=2.0)
-    serial_species_1 = arctic_params.Species(trap_density=1.5, trap_lifetime=5.0)
-    serial_species_2 = arctic_params.Species(trap_density=2.5, trap_lifetime=20.0)
-    serial_ccd = arctic_params.CCD(
+    serial_species_0 = ac.Species(trap_density=0.5, trap_lifetime=2.0)
+    serial_species_1 = ac.Species(trap_density=1.5, trap_lifetime=5.0)
+    serial_species_2 = ac.Species(trap_density=2.5, trap_lifetime=20.0)
+    serial_ccd = ac.CCDVolume(
         well_notch_depth=0.00,
         well_fill_alpha=1.0,
         well_fill_beta=0.5,
         well_fill_gamma=0.0,
     )
 
-    cti_params = arctic_params.ArcticParams(
+    cti_params = ac.ArcticParams(
         parallel_ccd=parallel_ccd,
         parallel_species=[parallel_species_0, parallel_species_1, parallel_species_2],
         serial_ccd=serial_ccd,
         serial_species=[serial_species_0, serial_species_1, serial_species_2],
     )
 
-    parallel_settings = arctic_settings.Settings(
+    parallel_settings = ac.Settings(
         well_depth=84700,
         niter=1,
         express=2,
@@ -371,7 +364,7 @@ def make_ci_uniform_parallel_and_serial_x3_species(data_resolutions, normalizati
         readout_offset=0,
     )
 
-    serial_settings = arctic_settings.Settings(
+    serial_settings = ac.Settings(
         well_depth=84700,
         niter=1,
         express=2,
@@ -380,16 +373,14 @@ def make_ci_uniform_parallel_and_serial_x3_species(data_resolutions, normalizati
         readout_offset=0,
     )
 
-    cti_settings = arctic_settings.ArcticSettings(
-        parallel=parallel_settings, serial=serial_settings
-    )
+    cti_settings = ac.ArcticSettings(parallel=parallel_settings, serial=serial_settings)
 
     for data_resolution in data_resolutions:
         for normalization in normalizations:
             ci_regions = simulation_util.ci_regions_from_ci_data_resolution(
                 ci_data_resolution=data_resolution
             )
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=normalization, regions=ci_regions
             )
 
@@ -408,18 +399,18 @@ def make_ci_uniform_cosmic_rays_parallel_x1_species(data_resolutions, normalizat
     ci_data_type = "ci_uniform_cosmic_rays"
     ci_data_model = "parallel_x1"
 
-    parallel_species = arctic_params.Species(trap_density=1.0, trap_lifetime=3.0)
-    parallel_ccd = arctic_params.CCD(
+    parallel_species = ac.Species(trap_density=1.0, trap_lifetime=3.0)
+    parallel_ccd = ac.CCDVolume(
         well_notch_depth=0.0,
         well_fill_alpha=1.0,
         well_fill_beta=0.5,
         well_fill_gamma=0.0,
     )
-    cti_params = arctic_params.ArcticParams(
+    cti_params = ac.ArcticParams(
         parallel_ccd=parallel_ccd, parallel_species=[parallel_species]
     )
 
-    parallel_settings = arctic_settings.Settings(
+    parallel_settings = ac.Settings(
         well_depth=84700,
         niter=1,
         express=2,
@@ -427,7 +418,7 @@ def make_ci_uniform_cosmic_rays_parallel_x1_species(data_resolutions, normalizat
         charge_injection_mode=False,
         readout_offset=0,
     )
-    cti_settings = arctic_settings.ArcticSettings(parallel=parallel_settings)
+    cti_settings = ac.ArcticSettings(parallel=parallel_settings)
 
     for data_resolution in data_resolutions:
 
@@ -440,7 +431,7 @@ def make_ci_uniform_cosmic_rays_parallel_x1_species(data_resolutions, normalizat
             ci_regions = simulation_util.ci_regions_from_ci_data_resolution(
                 ci_data_resolution=data_resolution
             )
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=normalization, regions=ci_regions
             )
 
@@ -464,18 +455,16 @@ def make_ci_uniform_cosmic_rays_serial_x1_species(data_resolutions, normalizatio
     ci_data_type = "ci_uniform_cosmic_rays"
     ci_data_model = "serial_x1"
 
-    serial_species = arctic_params.Species(trap_density=1.0, trap_lifetime=3.0)
-    serial_ccd = arctic_params.CCD(
+    serial_species = ac.Species(trap_density=1.0, trap_lifetime=3.0)
+    serial_ccd = ac.CCDVolume(
         well_notch_depth=0.00,
         well_fill_alpha=1.0,
         well_fill_beta=0.5,
         well_fill_gamma=0.0,
     )
-    cti_params = arctic_params.ArcticParams(
-        serial_ccd=serial_ccd, serial_species=[serial_species]
-    )
+    cti_params = ac.ArcticParams(serial_ccd=serial_ccd, serial_species=[serial_species])
 
-    serial_settings = arctic_settings.Settings(
+    serial_settings = ac.Settings(
         well_depth=84700,
         niter=1,
         express=2,
@@ -483,7 +472,7 @@ def make_ci_uniform_cosmic_rays_serial_x1_species(data_resolutions, normalizatio
         charge_injection_mode=False,
         readout_offset=0,
     )
-    cti_settings = arctic_settings.ArcticSettings(serial=serial_settings)
+    cti_settings = ac.ArcticSettings(serial=serial_settings)
 
     for data_resolution in data_resolutions:
 
@@ -496,7 +485,7 @@ def make_ci_uniform_cosmic_rays_serial_x1_species(data_resolutions, normalizatio
             ci_regions = simulation_util.ci_regions_from_ci_data_resolution(
                 ci_data_resolution=data_resolution
             )
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=normalization, regions=ci_regions
             )
 
@@ -515,37 +504,37 @@ def make_ci_uniform_cosmic_rays_serial_x1_species(data_resolutions, normalizatio
             )
 
 
-def make_ci_uniform_cosmic_rays_parallel_and_serial_x1_species(
+def make_ci_uniform_cosmic_rays_parallel_x1__serial_x1_species(
     data_resolutions, normalizations
 ):
 
     ci_data_type = "ci_uniform_cosmic_rays"
-    ci_data_model = "parallel_and_serial_x1"
+    ci_data_model = "parallel_x1__serial_x1"
 
-    parallel_species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.5)
-    parallel_ccd = arctic_params.CCD(
+    parallel_species = ac.Species(trap_density=0.1, trap_lifetime=1.5)
+    parallel_ccd = ac.CCDVolume(
         well_notch_depth=0.01,
         well_fill_alpha=1.0,
         well_fill_beta=0.5,
         well_fill_gamma=0.0,
     )
 
-    serial_species = arctic_params.Species(trap_density=1.0, trap_lifetime=3.0)
-    serial_ccd = arctic_params.CCD(
+    serial_species = ac.Species(trap_density=1.0, trap_lifetime=3.0)
+    serial_ccd = ac.CCDVolume(
         well_notch_depth=0.00,
         well_fill_alpha=1.0,
         well_fill_beta=0.5,
         well_fill_gamma=0.0,
     )
 
-    cti_params = arctic_params.ArcticParams(
+    cti_params = ac.ArcticParams(
         parallel_ccd=parallel_ccd,
         parallel_species=[parallel_species],
         serial_ccd=serial_ccd,
         serial_species=[serial_species],
     )
 
-    parallel_settings = arctic_settings.Settings(
+    parallel_settings = ac.Settings(
         well_depth=84700,
         niter=1,
         express=2,
@@ -554,7 +543,7 @@ def make_ci_uniform_cosmic_rays_parallel_and_serial_x1_species(
         readout_offset=0,
     )
 
-    serial_settings = arctic_settings.Settings(
+    serial_settings = ac.Settings(
         well_depth=84700,
         niter=1,
         express=2,
@@ -563,9 +552,7 @@ def make_ci_uniform_cosmic_rays_parallel_and_serial_x1_species(
         readout_offset=0,
     )
 
-    cti_settings = arctic_settings.ArcticSettings(
-        parallel=parallel_settings, serial=serial_settings
-    )
+    cti_settings = ac.ArcticSettings(parallel=parallel_settings, serial=serial_settings)
 
     for data_resolution in data_resolutions:
 
@@ -578,7 +565,7 @@ def make_ci_uniform_cosmic_rays_parallel_and_serial_x1_species(
             ci_regions = simulation_util.ci_regions_from_ci_data_resolution(
                 ci_data_resolution=data_resolution
             )
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=normalization, regions=ci_regions
             )
 

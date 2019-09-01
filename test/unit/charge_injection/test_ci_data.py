@@ -4,11 +4,8 @@ import numpy as np
 import pytest
 import shutil
 
-from autocti.charge_injection import ci_data, ci_frame, ci_pattern
-from autocti.charge_injection.ci_data import ci_data_from_fits
-from autocti.data import mask as msk
-from autocti.model import arctic_params
-from autocti.model import arctic_settings
+import autocti as ac
+
 from test.unit.mock.mock import MockGeometry, MockPattern
 
 test_data_dir = "{}/../test_files/array/".format(
@@ -18,46 +15,46 @@ test_data_dir = "{}/../test_files/array/".format(
 
 @pytest.fixture(scope="class", name="empty_mask")
 def make_empty_mask():
-    parallel_settings = arctic_settings.Settings(
+    parallel_settings = ac.Settings(
         well_depth=84700, niter=1, express=5, n_levels=2000, readout_offset=0
     )
-    parallel = arctic_settings.ArcticSettings(neomode="NEO", parallel=parallel_settings)
+    parallel = ac.ArcticSettings(neomode="NEO", parallel=parallel_settings)
 
     return parallel
 
 
 @pytest.fixture(scope="class", name="arctic_parallel")
 def make_arctic_parallel():
-    parallel_settings = arctic_settings.Settings(
+    parallel_settings = ac.Settings(
         well_depth=84700, niter=1, express=5, n_levels=2000, readout_offset=0
     )
-    parallel = arctic_settings.ArcticSettings(neomode="NEO", parallel=parallel_settings)
+    parallel = ac.ArcticSettings(neomode="NEO", parallel=parallel_settings)
 
     return parallel
 
 
 @pytest.fixture(scope="class", name="arctic_serial")
 def make_arctic_serial():
-    serial_settings = arctic_settings.Settings(
+    serial_settings = ac.Settings(
         well_depth=84700, niter=1, express=5, n_levels=2000, readout_offset=0
     )
 
-    serial = arctic_settings.ArcticSettings(neomode="NEO", serial=serial_settings)
+    serial = ac.ArcticSettings(neomode="NEO", serial=serial_settings)
 
     return serial
 
 
 @pytest.fixture(scope="class", name="arctic_both")
 def make_arctic_both():
-    parallel_settings = arctic_settings.Settings(
+    parallel_settings = ac.Settings(
         well_depth=84700, niter=1, express=5, n_levels=2000, readout_offset=0
     )
 
-    serial_settings = arctic_settings.Settings(
+    serial_settings = ac.Settings(
         well_depth=84700, niter=1, express=5, n_levels=2000, readout_offset=0
     )
 
-    both = arctic_settings.ArcticSettings(
+    both = ac.ArcticSettings(
         neomode="NEO", parallel=parallel_settings, serial=serial_settings
     )
 
@@ -66,37 +63,37 @@ def make_arctic_both():
 
 @pytest.fixture(scope="class", name="params_parallel")
 def make_params_parallel():
-    parallel = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
+    parallel = ac.Species(trap_density=0.1, trap_lifetime=1.0)
 
-    ccd = arctic_params.CCD(well_notch_depth=0.000001, well_fill_beta=0.8)
+    ccd = ac.CCDVolume(well_notch_depth=0.000001, well_fill_beta=0.8)
 
-    parallel = arctic_params.ArcticParams(parallel_species=[parallel], parallel_ccd=ccd)
+    parallel = ac.ArcticParams(parallel_species=[parallel], parallel_ccd=ccd)
 
     return parallel
 
 
 @pytest.fixture(scope="class", name="params_serial")
 def make_params_serial():
-    serial = arctic_params.Species(trap_density=0.2, trap_lifetime=2.0)
+    serial = ac.Species(trap_density=0.2, trap_lifetime=2.0)
 
-    ccd = arctic_params.CCD(well_notch_depth=0.000001, well_fill_beta=0.4)
+    ccd = ac.CCDVolume(well_notch_depth=0.000001, well_fill_beta=0.4)
 
-    serial = arctic_params.ArcticParams(serial_species=[serial], serial_ccd=ccd)
+    serial = ac.ArcticParams(serial_species=[serial], serial_ccd=ccd)
 
     return serial
 
 
 @pytest.fixture(scope="class", name="params_both")
 def make_params_both():
-    parallel = arctic_params.Species(trap_density=0.4, trap_lifetime=1.0)
+    parallel = ac.Species(trap_density=0.4, trap_lifetime=1.0)
 
-    parallel_ccd = arctic_params.CCD(well_notch_depth=0.000001, well_fill_beta=0.8)
+    parallel_ccd = ac.CCDVolume(well_notch_depth=0.000001, well_fill_beta=0.8)
 
-    serial = arctic_params.Species(trap_density=0.2, trap_lifetime=2.0)
+    serial = ac.Species(trap_density=0.2, trap_lifetime=2.0)
 
-    serial_ccd = arctic_params.CCD(well_notch_depth=0.000001, well_fill_beta=0.4)
+    serial_ccd = ac.CCDVolume(well_notch_depth=0.000001, well_fill_beta=0.4)
 
-    both = arctic_params.ArcticParams(
+    both = ac.ArcticParams(
         parallel_species=[parallel],
         serial_species=[serial],
         parallel_ccd=parallel_ccd,
@@ -109,7 +106,7 @@ def make_params_both():
 class TestCIData(object):
     def test_map(self):
 
-        data = ci_data.CIData(
+        data = ac.CIData(
             image=1,
             noise_map=3,
             ci_pre_cti=4,
@@ -118,13 +115,13 @@ class TestCIData(object):
             cosmic_ray_image=None,
         )
         result = data.map_to_ci_data_fit(lambda x: 2 * x, 1)
-        assert isinstance(result, ci_data.MaskedCIData)
+        assert isinstance(result, ac.MaskedCIData)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
         assert result.cosmic_ray_image == None
 
-        data = ci_data.CIData(
+        data = ac.CIData(
             image=1,
             noise_map=3,
             ci_pre_cti=4,
@@ -133,7 +130,7 @@ class TestCIData(object):
             cosmic_ray_image=10,
         )
         result = data.map_to_ci_data_fit(lambda x: 2 * x, 1)
-        assert isinstance(result, ci_data.MaskedCIData)
+        assert isinstance(result, ac.MaskedCIData)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
@@ -141,7 +138,7 @@ class TestCIData(object):
 
     def test_map_to_hyper_fits(self):
 
-        data = ci_data.CIData(
+        data = ac.CIData(
             image=1,
             noise_map=3,
             ci_pre_cti=4,
@@ -150,14 +147,14 @@ class TestCIData(object):
             cosmic_ray_image=None,
         )
         result = data.map_to_ci_hyper_data_fit(lambda x: 2 * x, 1, [1, 2, 3])
-        assert isinstance(result, ci_data.MaskedCIHyperData)
+        assert isinstance(result, ac.MaskedCIHyperData)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
         assert result.noise_scaling_maps == [2, 4, 6]
         assert result.cosmic_ray_image == None
 
-        data = ci_data.CIData(
+        data = ac.CIData(
             image=1,
             noise_map=3,
             ci_pre_cti=4,
@@ -166,7 +163,7 @@ class TestCIData(object):
             cosmic_ray_image=10,
         )
         result = data.map_to_ci_hyper_data_fit(lambda x: 2 * x, 1, [1, 2, 3])
-        assert isinstance(result, ci_data.MaskedCIHyperData)
+        assert isinstance(result, ac.MaskedCIHyperData)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
@@ -175,7 +172,7 @@ class TestCIData(object):
 
     def test_parallel_serial_calibration_data(self):
 
-        data = ci_data.CIData(
+        data = ac.CIData(
             image=1,
             noise_map=3,
             ci_pre_cti=4,
@@ -193,14 +190,14 @@ class TestCIData(object):
         data.parallel_serial_extractor = parallel_serial_extractor
         result = data.parallel_serial_calibration_data(1)
 
-        assert isinstance(result, ci_data.MaskedCIData)
+        assert isinstance(result, ac.MaskedCIData)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
         assert result.cosmic_ray_image == 10
 
     def test_parallel_serial_hyper_calibration_data(self):
-        data = ci_data.CIData(
+        data = ac.CIData(
             image=1,
             noise_map=3,
             ci_pre_cti=4,
@@ -218,7 +215,7 @@ class TestCIData(object):
         data.parallel_serial_extractor = parallel_serial_extractor
         result = data.parallel_serial_hyper_calibration_data(1, [2, 3])
 
-        assert isinstance(result, ci_data.MaskedCIHyperData)
+        assert isinstance(result, ac.MaskedCIHyperData)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
@@ -229,7 +226,7 @@ class TestCIData(object):
         image = np.ones((2, 2))
         image[0, 0] = 6.0
 
-        data = ci_data.CIData(
+        data = ac.CIData(
             image=image,
             noise_map=2.0 * np.ones((2, 2)),
             ci_pre_cti=None,
@@ -247,12 +244,10 @@ class TestCIImage(object):
         def test__uniform_pattern_1_region_normalization_10__correct_pre_clock_image(
             self
         ):
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=10.0, regions=[(0, 2, 0, 2)]
-            )
+            pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 2, 0, 2)])
             image = 10.0 * np.ones((3, 3))
 
-            ci_pre_cti = ci_data.ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
+            ci_pre_cti = ac.ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
                 ci_pattern=pattern, image=image
             )
 
@@ -262,12 +257,12 @@ class TestCIImage(object):
             ).all()
 
         def test__same_as_above_but_different_normalization_and_regions(self):
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=20.0, regions=[(0, 2, 0, 1), (2, 3, 2, 3)]
             )
             image = 10.0 * np.ones((3, 3))
 
-            ci_pre_cti = ci_data.ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
+            ci_pre_cti = ac.ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
                 ci_pattern=pattern, image=image
             )
 
@@ -277,15 +272,15 @@ class TestCIImage(object):
             ).all()
 
         def test__non_uniform_pattern__image_is_same_as_computed_image(self):
-            pattern = ci_pattern.CIPatternNonUniform(
+            pattern = ac.CIPatternNonUniform(
                 normalization=100.0,
                 regions=[(0, 2, 0, 2), (2, 3, 0, 3)],
                 row_slope=-1.0,
             )
             image = np.array([[10.0, 10.0, 10.0], [2.0, 2.0, 2.0], [8.0, 12.0, 10.0]])
-            mask = msk.Mask.empty_for_shape(shape=(3, 3))
+            mask = ac.Mask.empty_for_shape(shape=(3, 3))
 
-            ci_pre_cti = ci_data.ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
+            ci_pre_cti = ac.ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
                 mask=mask, ci_pattern=pattern, image=image
             )
 
@@ -298,7 +293,7 @@ class TestCIImage(object):
         def test__read_noise_sigma_0__read_noise_map_all_0__image_is_identical_to_input(
             self
         ):
-            simulate_read_noise = ci_data.read_noise_map_from_shape_and_sigma(
+            simulate_read_noise = ac.read_noise_map_from_shape_and_sigma(
                 shape=(3, 3), sigma=0.0, noise_seed=1
             )
 
@@ -307,7 +302,7 @@ class TestCIImage(object):
         def test__read_noise_sigma_1__read_noise_map_all_non_0__image_has_noise_added(
             self
         ):
-            simulate_read_noise = ci_data.read_noise_map_from_shape_and_sigma(
+            simulate_read_noise = ac.read_noise_map_from_shape_and_sigma(
                 shape=(3, 3), sigma=1.0, noise_seed=1
             )
 
@@ -324,9 +319,9 @@ class TestCIImage(object):
 class TestCIMask(object):
     class TestMaskRemoveRegions:
         def test__remove_one_region(self):
-            mask = msk.Mask.from_masked_regions(
+            mask = ac.Mask.from_masked_regions(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
                 masked_regions=[(0, 3, 2, 3)],
             )
 
@@ -338,9 +333,9 @@ class TestCIMask(object):
             ).all()
 
         def test__remove_two_regions(self):
-            mask = msk.Mask.from_masked_regions(
+            mask = ac.Mask.from_masked_regions(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
                 masked_regions=[(0, 3, 2, 3), (0, 2, 0, 2)],
             )
 
@@ -357,9 +352,9 @@ class TestCIMask(object):
                 [[False, False, False], [False, True, False], [False, False, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
                 cosmic_ray_image=cosmic_rays,
             )
 
@@ -376,9 +371,9 @@ class TestCIMask(object):
                 [[False, False, False], [False, True, False], [False, False, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_parallel_buffer=1,
             )
@@ -395,9 +390,9 @@ class TestCIMask(object):
                 [[False, True, False], [False, False, False], [False, False, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_parallel_buffer=2,
             )
@@ -414,9 +409,9 @@ class TestCIMask(object):
                 [[False, False, False], [False, True, False], [False, False, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_serial_buffer=1,
             )
@@ -433,9 +428,9 @@ class TestCIMask(object):
                 [[False, False, False], [True, False, False], [False, False, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_serial_buffer=2,
             )
@@ -452,9 +447,9 @@ class TestCIMask(object):
                 [[False, False, False], [False, True, False], [False, False, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_diagonal_buffer=1,
             )
@@ -476,9 +471,9 @@ class TestCIMask(object):
                 ]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(4, 4),
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_diagonal_buffer=2,
             )
@@ -501,9 +496,9 @@ class TestCIMask(object):
                 [[False, False, False], [False, True, False], [False, False, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+                frame_geometry=ac.FrameGeometry.euclid_bottom_right(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_parallel_buffer=1,
             )
@@ -520,9 +515,9 @@ class TestCIMask(object):
                 [[False, True, False], [False, False, False], [False, False, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+                frame_geometry=ac.FrameGeometry.euclid_bottom_right(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_parallel_buffer=2,
             )
@@ -539,9 +534,9 @@ class TestCIMask(object):
                 [[False, False, False], [False, True, False], [False, False, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+                frame_geometry=ac.FrameGeometry.euclid_bottom_right(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_serial_buffer=1,
             )
@@ -558,9 +553,9 @@ class TestCIMask(object):
                 [[False, False, False], [False, False, True], [False, False, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+                frame_geometry=ac.FrameGeometry.euclid_bottom_right(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_serial_buffer=2,
             )
@@ -577,9 +572,9 @@ class TestCIMask(object):
                 [[False, False, False], [False, True, False], [False, False, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+                frame_geometry=ac.FrameGeometry.euclid_bottom_right(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_diagonal_buffer=1,
             )
@@ -601,9 +596,9 @@ class TestCIMask(object):
                 ]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(4, 4),
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+                frame_geometry=ac.FrameGeometry.euclid_bottom_right(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_diagonal_buffer=2,
             )
@@ -626,9 +621,9 @@ class TestCIMask(object):
                 [[False, False, False], [False, True, False], [False, False, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_top_left(),
+                frame_geometry=ac.FrameGeometry.euclid_top_left(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_parallel_buffer=1,
             )
@@ -645,9 +640,9 @@ class TestCIMask(object):
                 [[False, False, False], [False, False, False], [False, True, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_top_left(),
+                frame_geometry=ac.FrameGeometry.euclid_top_left(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_parallel_buffer=2,
             )
@@ -664,9 +659,9 @@ class TestCIMask(object):
                 [[False, False, False], [False, True, False], [False, False, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_top_left(),
+                frame_geometry=ac.FrameGeometry.euclid_top_left(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_serial_buffer=1,
             )
@@ -683,9 +678,9 @@ class TestCIMask(object):
                 [[False, False, False], [True, False, False], [False, False, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_top_left(),
+                frame_geometry=ac.FrameGeometry.euclid_top_left(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_serial_buffer=2,
             )
@@ -702,9 +697,9 @@ class TestCIMask(object):
                 [[False, False, False], [False, True, False], [False, False, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_top_left(),
+                frame_geometry=ac.FrameGeometry.euclid_top_left(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_diagonal_buffer=1,
             )
@@ -726,9 +721,9 @@ class TestCIMask(object):
                 ]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(4, 4),
-                frame_geometry=ci_frame.FrameGeometry.euclid_top_left(),
+                frame_geometry=ac.FrameGeometry.euclid_top_left(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_diagonal_buffer=2,
             )
@@ -751,9 +746,9 @@ class TestCIMask(object):
                 [[False, False, False], [False, True, False], [False, False, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_top_right(),
+                frame_geometry=ac.FrameGeometry.euclid_top_right(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_parallel_buffer=1,
             )
@@ -770,9 +765,9 @@ class TestCIMask(object):
                 [[False, False, False], [False, False, False], [False, True, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_top_right(),
+                frame_geometry=ac.FrameGeometry.euclid_top_right(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_parallel_buffer=2,
             )
@@ -788,9 +783,9 @@ class TestCIMask(object):
                 [[False, False, False], [False, True, False], [False, False, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_top_right(),
+                frame_geometry=ac.FrameGeometry.euclid_top_right(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_serial_buffer=1,
             )
@@ -807,9 +802,9 @@ class TestCIMask(object):
                 [[False, False, False], [False, False, True], [False, False, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_top_right(),
+                frame_geometry=ac.FrameGeometry.euclid_top_right(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_serial_buffer=2,
             )
@@ -826,9 +821,9 @@ class TestCIMask(object):
                 [[False, False, False], [False, True, False], [False, False, False]]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(3, 3),
-                frame_geometry=ci_frame.FrameGeometry.euclid_top_right(),
+                frame_geometry=ac.FrameGeometry.euclid_top_right(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_diagonal_buffer=1,
             )
@@ -850,9 +845,9 @@ class TestCIMask(object):
                 ]
             )
 
-            mask = msk.Mask.from_cosmic_ray_image(
+            mask = ac.Mask.from_cosmic_ray_image(
                 shape=(4, 4),
-                frame_geometry=ci_frame.FrameGeometry.euclid_top_right(),
+                frame_geometry=ac.FrameGeometry.euclid_top_right(),
                 cosmic_ray_image=cosmic_rays,
                 cosmic_ray_diagonal_buffer=2,
             )
@@ -872,7 +867,7 @@ class TestCIMask(object):
 
 class TestCIPreCTI(object):
     def test__simple_case__sets_up_post_cti_correctly(self, arctic_both, params_both):
-        frame_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
+        frame_geometry = ac.FrameGeometry.euclid_bottom_left()
 
         ci_pre_cti = np.zeros((5, 5))
         ci_pre_cti[2, 2] = 10.0
@@ -891,15 +886,13 @@ class TestCISimulate(object):
         self, arctic_parallel, params_parallel
     ):
 
-        pattern = ci_pattern.CIPatternUniform(
-            normalization=10.0, regions=[(0, 1, 0, 5)]
-        )
+        pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
 
         ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(5, 5))
 
-        ci_data_simulate = ci_data.simulate(
+        ci_data_simulate = ac.simulate(
             ci_pre_cti=ci_pre_cti,
-            frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
+            frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
             ci_pattern=pattern,
             cti_settings=arctic_parallel,
             cti_params=params_parallel,
@@ -913,15 +906,13 @@ class TestCISimulate(object):
         self, arctic_parallel, params_parallel
     ):
 
-        pattern = ci_pattern.CIPatternUniform(
-            normalization=10.0, regions=[(0, 1, 0, 3)]
-        )
+        pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 3)])
 
         ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(3, 3))
 
-        ci_data_simulate = ci_data.simulate(
+        ci_data_simulate = ac.simulate(
             ci_pre_cti=ci_pre_cti,
-            frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
+            frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
             ci_pattern=pattern,
             cti_settings=arctic_parallel,
             cti_params=params_parallel,
@@ -942,18 +933,16 @@ class TestCISimulate(object):
         self, arctic_parallel, params_parallel
     ):
 
-        pattern = ci_pattern.CIPatternUniform(
-            normalization=10.0, regions=[(0, 1, 0, 5)]
-        )
+        pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
 
         ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(5, 5))
 
         cosmic_ray_image = np.zeros((5, 5))
         cosmic_ray_image[2, 2] = 100.0
 
-        ci_data_simulate = ci_data.simulate(
+        ci_data_simulate = ac.simulate(
             ci_pre_cti=ci_pre_cti,
-            frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
+            frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
             ci_pattern=pattern,
             cti_settings=arctic_parallel,
             cti_params=params_parallel,
@@ -981,32 +970,30 @@ class TestCISimulate(object):
 
     def test__include_parallel_poisson_trap_densities(self, arctic_parallel):
 
-        pattern = ci_pattern.CIPatternUniform(
-            normalization=10.0, regions=[(2, 3, 0, 5)]
-        )
+        pattern = ac.CIPatternUniform(normalization=10.0, regions=[(2, 3, 0, 5)])
 
         ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(5, 5))
 
         # Densities for this seed are [9.6, 8.2, 8.6, 9.6, 9.6]
 
-        parallel_species = arctic_params.Species(trap_density=10.0, trap_lifetime=1.0)
-        parallel_species = arctic_params.Species.poisson_species(
+        parallel_species = ac.Species(trap_density=10.0, trap_lifetime=1.0)
+        parallel_species = ac.Species.poisson_species(
             species=[parallel_species], shape=(5, 5), seed=1
         )
-        parallel_ccd = arctic_params.CCD(
+        parallel_ccd = ac.CCDVolume(
             well_notch_depth=1.0e-4,
             well_fill_beta=0.58,
             well_fill_gamma=0.0,
             well_fill_alpha=1.0,
         )
 
-        params_parallel = arctic_params.ArcticParams(
+        params_parallel = ac.ArcticParams(
             parallel_species=parallel_species, parallel_ccd=parallel_ccd
         )
 
-        ci_data_simulate = ci_data.simulate(
+        ci_data_simulate = ac.simulate(
             ci_pre_cti=ci_pre_cti,
-            frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
+            frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
             ci_pattern=pattern,
             cti_settings=arctic_parallel,
             cti_params=params_parallel,
@@ -1026,7 +1013,7 @@ class TestLoadCIData(object):
         frame_geometry = MockGeometry()
         pattern = MockPattern()
 
-        data = ci_data.ci_data_from_fits(
+        data = ac.ci_data_from_fits(
             frame_geometry=frame_geometry,
             ci_pattern=pattern,
             image_path=test_data_dir + "3x3_ones.fits",
@@ -1051,7 +1038,7 @@ class TestLoadCIData(object):
         frame_geometry = MockGeometry()
         pattern = MockPattern()
 
-        data = ci_data.ci_data_from_fits(
+        data = ac.ci_data_from_fits(
             frame_geometry=frame_geometry,
             ci_pattern=pattern,
             image_path=test_data_dir + "3x3_multiple_hdu.fits",
@@ -1076,7 +1063,7 @@ class TestLoadCIData(object):
         frame_geometry = MockGeometry()
         pattern = MockPattern()
 
-        data = ci_data.ci_data_from_fits(
+        data = ac.ci_data_from_fits(
             frame_geometry=frame_geometry,
             ci_pattern=pattern,
             image_path=test_data_dir + "3x3_ones.fits",
@@ -1096,11 +1083,9 @@ class TestLoadCIData(object):
     def test__load_ci_pre_cti_image_from_the_pattern_and_image(self):
 
         frame_geometry = MockGeometry()
-        pattern = ci_pattern.CIPatternUniform(
-            regions=[(0, 3, 0, 3)], normalization=10.0
-        )
+        pattern = ac.CIPatternUniform(regions=[(0, 3, 0, 3)], normalization=10.0)
 
-        data = ci_data.ci_data_from_fits(
+        data = ac.ci_data_from_fits(
             frame_geometry=frame_geometry,
             ci_pattern=pattern,
             image_path=test_data_dir + "3x3_ones.fits",
@@ -1118,7 +1103,7 @@ class TestLoadCIData(object):
 
     def test__output_all_arrays(self):
 
-        data = ci_data.ci_data_from_fits(
+        data = ac.ci_data_from_fits(
             frame_geometry=MockGeometry(),
             ci_pattern=MockPattern(),
             image_path=test_data_dir + "3x3_ones.fits",
@@ -1139,7 +1124,7 @@ class TestLoadCIData(object):
 
         os.makedirs(output_data_dir)
 
-        ci_data.output_ci_data_to_fits(
+        ac.output_ci_data_to_fits(
             ci_data=data,
             image_path=output_data_dir + "image.fits",
             noise_map_path=output_data_dir + "noise_map.fits",
@@ -1147,7 +1132,7 @@ class TestLoadCIData(object):
             cosmic_ray_image_path=output_data_dir + "cosmic_ray_image.fits",
         )
 
-        data = ci_data.ci_data_from_fits(
+        data = ac.ci_data_from_fits(
             frame_geometry=MockGeometry(),
             ci_pattern=MockPattern(),
             image_path=output_data_dir + "image.fits",

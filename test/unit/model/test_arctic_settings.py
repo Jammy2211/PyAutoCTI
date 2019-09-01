@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 from astropy.io import fits
 
-from autocti.model import arctic_settings
+import autocti as ac
 
 
 @pytest.fixture(name="hdr_path")
@@ -26,7 +26,7 @@ class TestArcticSettings:
     class TestConstructor:
         def test__sets_up_parameters_with_correct_values(self):
 
-            parallel_settings = arctic_settings.Settings(
+            parallel_settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -35,11 +35,11 @@ class TestArcticSettings:
                 readout_offset=0,
             )
 
-            serial_settings = arctic_settings.Settings(
+            serial_settings = ac.Settings(
                 well_depth=84700, niter=1, express=5, n_levels=2000, readout_offset=0
             )
 
-            arctic_both = arctic_settings.ArcticSettings(
+            arctic_both = ac.ArcticSettings(
                 neomode="NEO", parallel=parallel_settings, serial=serial_settings
             )
 
@@ -63,7 +63,7 @@ class TestArcticSettings:
         def test__parallel_only__sets_up_header_info_consistent_with_previous_vis_pf(
             self, hdr_path
         ):
-            parallel_settings = arctic_settings.Settings(
+            parallel_settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -72,7 +72,7 @@ class TestArcticSettings:
                 readout_offset=0,
             )
 
-            arctic_parallel = arctic_settings.ArcticSettings(
+            arctic_parallel = ac.ArcticSettings(
                 neomode="NEO", parallel=parallel_settings
             )
 
@@ -90,7 +90,7 @@ class TestArcticSettings:
         def test__serial_only__sets_up_header_info_consistent_with_previous_vis_pf(
             self, hdr_path
         ):
-            serial_settings = arctic_settings.Settings(
+            serial_settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -99,9 +99,7 @@ class TestArcticSettings:
                 readout_offset=0,
             )
 
-            arctic_serial = arctic_settings.ArcticSettings(
-                neomode="NEO", serial=serial_settings
-            )
+            arctic_serial = ac.ArcticSettings(neomode="NEO", serial=serial_settings)
 
             hdu = fits.PrimaryHDU(np.ones((1, 1)), fits.Header())
             hdu.header = arctic_serial.update_fits_header_info(ext_header=hdu.header)
@@ -114,10 +112,10 @@ class TestArcticSettings:
             assert ext_header["cte_swld"] == 84700
             assert ext_header["cte_snts"] == 2000
 
-        def test__parallel_and_serial__sets_up_header_info_consistent_with_previous_vis_pf(
+        def test__parallel_x1__serial_x1__sets_up_header_info_consistent_with_previous_vis_pf(
             self, hdr_path
         ):
-            parallel_settings = arctic_settings.Settings(
+            parallel_settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -126,7 +124,7 @@ class TestArcticSettings:
                 readout_offset=0,
             )
 
-            serial_settings = arctic_settings.Settings(
+            serial_settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -135,7 +133,7 @@ class TestArcticSettings:
                 readout_offset=0,
             )
 
-            arctic_both = arctic_settings.ArcticSettings(
+            arctic_both = ac.ArcticSettings(
                 neomode="NEO", parallel=parallel_settings, serial=serial_settings
             )
 

@@ -41,7 +41,7 @@ def call_arctic_constant_density(image, species, ccd, settings, correct_cti):
         The settings that control arctic (e.g. ccd well_depth express option). This is the settings in one specific \
         direction of clocking (e.g. ArcticSettings.Settings or ArcticSettings.Settings)
     species: [arctic_params.Species]
-    ccd: arctic_params.CCD
+    ccd: arctic_params.CCDVolume
 
     Returns
     ----------

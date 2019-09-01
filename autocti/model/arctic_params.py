@@ -14,9 +14,9 @@ class ArcticParams(object):
 
         Parameters
         ----------
-        parallel_ccd: CCD
+        parallel_ccd: CCDVolume
             Class describing the state of the CCD in the parallel direction
-        serial_ccd: CCD
+        serial_ccd: CCDVolume
             Class describing the state of the CCD in the serial direction
         parallel_species : [ArcticParams.ParallelParams]
            The parallel parameters for the arctic CTI model
@@ -35,7 +35,7 @@ class ArcticParams(object):
         ) + sum([species.delta_ellipticity for species in self.serial_species])
 
 
-class CCD(object):
+class CCDVolume(object):
     def __init__(
         self,
         well_notch_depth=1e-9,

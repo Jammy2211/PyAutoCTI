@@ -2,13 +2,15 @@ import autofit as af
 import autocti as ac
 from test.integration.tests import runner
 
-test_type = "features/front_edge_and_trails_masking"
-test_name = "parallel"
+from multiprocessing import Pool
 
-test_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
-output_path = test_path + "output/"
-config_path = test_path + "config"
-af.conf.instance = af.conf.Config(config_path=config_path, output_path=output_path)
+test_type = "parallel"
+test_name = "x3_species__x2_images__pool"
+ci_data_type = "ci_uniform"
+ci_data_model = "parallel_x3"
+ci_data_resolution = "patch"
+ci_normalizations = [1000.0, 84700.0]
+
 
 
 parallel_settings = ac.Settings(
@@ -25,6 +27,7 @@ cti_settings = ac.ArcticSettings(parallel=parallel_settings)
 def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     class ParallelPhase(ac.ParallelPhase):
         def pass_priors(self, results):
+
             self.parallel_ccd.well_fill_alpha = 1.0
             self.parallel_ccd.well_fill_gamma = 0.0
 
@@ -32,11 +35,13 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
         phase_name="phase_1",
         phase_folders=phase_folders,
         optimizer_class=optimizer_class,
-        parallel_species=[af.PriorModel(ac.Species)],
+        parallel_species=[
+            af.PriorModel(ac.Species),
+            af.PriorModel(ac.Species),
+            af.PriorModel(ac.Species),
+        ],
         parallel_ccd=ac.CCDVolume,
-        columns=None,
-        parallel_front_edge_mask_rows=(0, 1),
-        parallel_trails_mask_rows=(0, 1),
+        columns=3,
     )
 
     phase1.optimizer.n_live_points = 60
@@ -50,4 +55,4 @@ if __name__ == "__main__":
 
     import sys
 
-    runner.run(sys.modules[__name__], cti_settings=cti_settings)
+    runner.run(sys.modules[__name__], cti_settings=cti_settings, pool=Pool(processes=2))

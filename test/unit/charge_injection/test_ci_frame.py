@@ -1,7 +1,6 @@
 import numpy as np
 
-from autocti.charge_injection import ci_frame, ci_pattern
-from autocti.data import mask as msk
+import autocti as ac
 from test.unit.mock.mock import MockCIGeometry
 
 
@@ -9,28 +8,28 @@ class TestBinArrayAcrossSerial:
     def test__3x3_array__all_1s__bin_gives_a_1d_array_of_3_1s(self):
         image = np.ones((3, 3))
 
-        binned_array = ci_frame.bin_array_across_serial(image)
+        binned_array = ac.bin_array_across_serial(image)
 
         assert (binned_array == np.array([1.0, 1.0, 1.0])).all()
 
     def test__4x3_array__all_1s__bin_gives_a_1d_array_of_4_1s(self):
         image = np.ones((4, 3))
 
-        binned_array = ci_frame.bin_array_across_serial(image)
+        binned_array = ac.bin_array_across_serial(image)
 
         assert (binned_array == np.array([1.0, 1.0, 1.0, 1.0])).all()
 
     def test__3x4_array__all_1s__bin_gives_a_1d_array_of_3_1s(self):
         image = np.ones((3, 4))
 
-        binned_array = ci_frame.bin_array_across_serial(image)
+        binned_array = ac.bin_array_across_serial(image)
 
         assert (binned_array == np.array([1.0, 1.0, 1.0])).all()
 
     def test__3x3_array__different_values__bin_gives_a_1d_array_of_each_mean(self):
         image = np.array([[1.0, 2.0, 3.0], [6.0, 6.0, 6.0], [9.0, 9.0, 9.0]])
 
-        binned_array = ci_frame.bin_array_across_serial(image)
+        binned_array = ac.bin_array_across_serial(image)
 
         assert (binned_array == np.array([2.0, 6.0, 9.0])).all()
 
@@ -41,7 +40,7 @@ class TestBinArrayAcrossSerial:
             [[False, False, True], [False, False, False], [False, False, False]]
         )
 
-        binned_array = ci_frame.bin_array_across_serial(image, mask)
+        binned_array = ac.bin_array_across_serial(image, mask)
 
         assert (binned_array == np.array([1.5, 6.0, 9.0])).all()
 
@@ -52,7 +51,7 @@ class TestBinArrayAcrossSerial:
             [[False, False, True], [True, True, True], [False, False, False]]
         )
 
-        binned_array = ci_frame.bin_array_across_serial(image, mask)
+        binned_array = ac.bin_array_across_serial(image, mask)
 
         assert (binned_array == np.array([1.5, np.inf, 9.0])).all()
 
@@ -61,32 +60,32 @@ class TestBinArrayAcrossParallel:
     def test__3x3_array__all_1s__bin_gives_a_1d_array_of_3_1s(self):
         image = np.ones((3, 3))
 
-        binned_array = ci_frame.bin_array_across_parallel(image)
+        binned_array = ac.bin_array_across_parallel(image)
 
         assert (binned_array == np.array([1.0, 1.0, 1.0])).all()
 
     def test__4x3_array__all_1s__bin_gives_a_1d_array_of_3_1s(self):
-        pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
+        pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
         image = np.ones((4, 3))
 
-        binned_array = ci_frame.bin_array_across_parallel(image)
+        binned_array = ac.bin_array_across_parallel(image)
 
         assert (binned_array == np.array([1.0, 1.0, 1.0])).all()
 
     def test__3x4_array__all_1s__bin_gives_a_1d_array_of_4_1s(self):
-        pattern = ci_pattern.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
+        pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
         image = np.ones((3, 4))
 
-        binned_array = ci_frame.bin_array_across_parallel(image)
+        binned_array = ac.bin_array_across_parallel(image)
 
         assert (binned_array == np.array([1.0, 1.0, 1.0, 1.0])).all()
 
     def test__3x3_array__different_values__bin_gives_a_1d_array_of_each_mean(self):
         image = np.array([[1.0, 6.0, 9.0], [2.0, 6.0, 9.0], [3.0, 6.0, 9.0]])
 
-        binned_array = ci_frame.bin_array_across_parallel(image)
+        binned_array = ac.bin_array_across_parallel(image)
 
         assert (binned_array == np.array([2.0, 6.0, 9.0])).all()
 
@@ -97,7 +96,7 @@ class TestBinArrayAcrossParallel:
             [[False, False, False], [False, False, False], [True, False, False]]
         )
 
-        binned_array = ci_frame.bin_array_across_parallel(image, mask)
+        binned_array = ac.bin_array_across_parallel(image, mask)
 
         assert (binned_array == np.array([1.5, 6.0, 9.0])).all()
 
@@ -108,7 +107,7 @@ class TestBinArrayAcrossParallel:
             [[False, True, False], [False, True, False], [True, True, False]]
         )
 
-        binned_array = ci_frame.bin_array_across_parallel(image, mask)
+        binned_array = ac.bin_array_across_parallel(image, mask)
 
         assert (binned_array == np.array([1.5, np.inf, 9.0])).all()
 
@@ -116,14 +115,13 @@ class TestBinArrayAcrossParallel:
 class TestChInj(object):
     class TestCiRegionArrayFromFrame:
         def test__1_ci_region__extracted_correctly(self):
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
+            pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 3)])
             image = np.array(
                 [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             new_frame = frame.ci_regions_from_array(image)
@@ -136,16 +134,15 @@ class TestChInj(object):
             ).all()
 
         def test__2_ci_regions__extracted_correctly(self):
-            pattern = ci_pattern.CIPattern(
+            pattern = ac.CIPatternUniform(
                 normalization=10.0, regions=[(0, 1, 1, 2), (2, 3, 1, 3)]
             )
             image = np.array(
                 [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             new_frame = frame.ci_regions_from_array(image)
@@ -162,13 +159,13 @@ class TestChInj(object):
             self
         ):
 
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
+            pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 3)])
 
             image = np.array(
                 [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]]
             )
 
-            frame = ci_frame.ChInj(
+            frame = ac.ChInj(
                 frame_geometry=MockCIGeometry(parallel_overscan=(3, 4, 0, 3)),
                 ci_pattern=pattern,
             )
@@ -189,7 +186,7 @@ class TestChInj(object):
 
         def test__same_as_above_but_2_ci_regions(self):
 
-            pattern = ci_pattern.CIPattern(
+            pattern = ac.CIPatternUniform(
                 normalization=10.0, regions=[(0, 1, 0, 3), (3, 4, 0, 3)]
             )
 
@@ -203,7 +200,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
+            frame = ac.ChInj(
                 frame_geometry=MockCIGeometry(parallel_overscan=(3, 4, 0, 3)),
                 ci_pattern=pattern,
             )
@@ -227,7 +224,7 @@ class TestChInj(object):
             self
         ):
 
-            pattern = ci_pattern.CIPattern(
+            pattern = ac.CIPatternUniform(
                 normalization=10.0, regions=[(0, 1, 0, 3), (3, 4, 0, 3)]
             )
 
@@ -241,7 +238,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
+            frame = ac.ChInj(
                 frame_geometry=MockCIGeometry(parallel_overscan=(3, 4, 1, 2)),
                 ci_pattern=pattern,
             )
@@ -265,15 +262,14 @@ class TestChInj(object):
 
     class TestParallelEdgesAndTrailsArrayFromFrame:
         def test__front_edge_only__1_row__new_frame_is_just_that_edge(self):
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
+            pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 3)])
 
             image = np.array(
                 [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             new_frame = frame.parallel_edges_and_trails_frame_from_frame(
@@ -288,15 +284,14 @@ class TestChInj(object):
             ).all()
 
         def test__front_edge_only__2_rows__new_frame_is_just_that_edge(self):
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
+            pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 3)])
 
             image = np.array(
                 [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             new_frame = frame.parallel_edges_and_trails_frame_from_frame(
@@ -311,7 +306,7 @@ class TestChInj(object):
             ).all()
 
         def test__trails_only__1_row__new_frame_is_just_that_trail(self):
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 4, 0, 3)])
+            pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 4, 0, 3)])
 
             image = np.array(
                 [
@@ -323,9 +318,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             new_frame = frame.parallel_edges_and_trails_frame_from_frame(
@@ -346,7 +340,7 @@ class TestChInj(object):
             ).all()
 
         def test__trails_only__2_rows__new_frame_is_the_trails(self):
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 4, 0, 3)])
+            pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 4, 0, 3)])
 
             image = np.array(
                 [
@@ -359,9 +353,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             new_frame = frame.parallel_edges_and_trails_frame_from_frame(
@@ -385,7 +378,7 @@ class TestChInj(object):
         def test__front_edge_and_trails__2_rows_of_each__new_frame_is_edge_and_trail(
             self
         ):
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 4, 0, 3)])
+            pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 4, 0, 3)])
 
             image = np.array(
                 [
@@ -398,9 +391,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             new_frame = frame.parallel_edges_and_trails_frame_from_frame(
@@ -424,7 +416,7 @@ class TestChInj(object):
         def test__front_edge_and_trails__2_regions__1_row_of_each__new_frame_is_edge_and_trail(
             self
         ):
-            pattern = ci_pattern.CIPattern(
+            pattern = ac.CIPatternUniform(
                 normalization=10.0, regions=[(0, 1, 0, 3), (3, 4, 0, 3)]
             )
 
@@ -439,9 +431,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             new_frame = frame.parallel_edges_and_trails_frame_from_frame(
@@ -466,9 +457,7 @@ class TestChInj(object):
         def test__geometry_left__columns_0_to_1__extracts_1_column_left_hand_side_of_array(
             self
         ):
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[(1, 3, 0, 3)]
-            )
+            pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 3, 0, 3)])
 
             image = np.array(
                 [
@@ -480,9 +469,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             extracted_side = frame.parallel_calibration_section_for_columns(
@@ -496,9 +484,7 @@ class TestChInj(object):
         def test__geometry_bottom__columns_1_to_3__extracts_2_columns_middle_and_right_of_array(
             self
         ):
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[(0, 5, 0, 3)]
-            )
+            pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 5, 0, 3)])
 
             image = np.array(
                 [
@@ -510,9 +496,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             extracted_side = frame.parallel_calibration_section_for_columns(
@@ -529,9 +514,7 @@ class TestChInj(object):
         def test__geometry_right__columns_1_to_3__extracts_2_columns_middle_and_left_of_array(
             self
         ):
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[(0, 5, 0, 3)]
-            )
+            pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 5, 0, 3)])
 
             image = np.array(
                 [
@@ -543,8 +526,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_right(),
                 ci_pattern=pattern,
             )
 
@@ -561,14 +544,13 @@ class TestChInj(object):
 
     class TestKeepSerialEdgesAndTrailsArrayFromFrame:
         def test__front_edge_only__1_column__new_frame_is_just_that_edge(self):
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
+            pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 3)])
 
             image = np.array(
                 [[0.0, 1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0], [8.0, 9.0, 10.0, 11.0]]
             )
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             new_frame = frame.serial_edges_and_trails_frame_from_frame(
@@ -583,14 +565,13 @@ class TestChInj(object):
             ).all()
 
         def test__front_edge_only__2_columns__new_frame_is_just_that_edge(self):
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
+            pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 3)])
 
             image = np.array(
                 [[0.0, 1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0], [8.0, 9.0, 10.0, 11.0]]
             )
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             new_frame = frame.serial_edges_and_trails_frame_from_frame(
@@ -605,14 +586,13 @@ class TestChInj(object):
             ).all()
 
         def test__trails_only__1_column__new_frame_is_just_that_trail(self):
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 2)])
+            pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 2)])
 
             image = np.array(
                 [[0.0, 1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0], [8.0, 9.0, 10.0, 11.0]]
             )
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             new_frame = frame.serial_edges_and_trails_frame_from_frame(
@@ -627,14 +607,13 @@ class TestChInj(object):
             ).all()
 
         def test__trails_only__2_columns__new_frame_is_the_trails(self):
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 2)])
+            pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 2)])
 
             image = np.array(
                 [[0.0, 1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0], [8.0, 9.0, 10.0, 11.0]]
             )
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             new_frame = frame.serial_edges_and_trails_frame_from_frame(
@@ -651,7 +630,7 @@ class TestChInj(object):
         def test__front_edge_and_trails__2_columns_of_each__new_frame_is_edge_and_trail(
             self
         ):
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 2)])
+            pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 2)])
 
             image = np.array(
                 [
@@ -660,9 +639,8 @@ class TestChInj(object):
                     [8.0, 9.0, 1.1, 10.0, 11.0],
                 ]
             )
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             new_frame = frame.serial_edges_and_trails_frame_from_frame(
@@ -683,7 +661,7 @@ class TestChInj(object):
         def test__front_edge_and_trails__2_regions_1_column_of_each__new_frame_is_edge_and_trail(
             self
         ):
-            pattern = ci_pattern.CIPattern(
+            pattern = ac.CIPatternUniform(
                 normalization=10.0, regions=[(0, 3, 0, 1), (0, 3, 3, 4)]
             )
 
@@ -694,9 +672,8 @@ class TestChInj(object):
                     [8.0, 9.0, 1.1, 10.0, 11.0],
                 ]
             )
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             new_frame = frame.serial_edges_and_trails_frame_from_frame(
@@ -716,16 +693,16 @@ class TestChInj(object):
 
     class TestSerialAllTrailsArrayFromFrame:
         def test__left_quadrant__1_ci_region__1_serial_trail__extracts_all_trails(self):
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 4, 0, 2)])
+            pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 4, 0, 2)])
 
-            frame_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
-            frame_geometry.serial_overscan = ci_frame.Region((0, 4, 2, 3))
+            frame_geometry = ac.FrameGeometry.euclid_bottom_left()
+            frame_geometry.serial_overscan = ac.Region((0, 4, 2, 3))
 
             image = np.array(
                 [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]]
             )
 
-            frame = ci_frame.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
+            frame = ac.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
 
             new_frame = frame.serial_all_trails_frame_from_frame(image)
 
@@ -742,10 +719,10 @@ class TestChInj(object):
             ).all()
 
         def test__left_quadrant__1_ci_region__2_serial_trail__extracts_all_trails(self):
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 4, 0, 2)])
+            pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 4, 0, 2)])
 
-            frame_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
-            frame_geometry.serial_overscan = ci_frame.Region((0, 4, 2, 4))
+            frame_geometry = ac.FrameGeometry.euclid_bottom_left()
+            frame_geometry.serial_overscan = ac.Region((0, 4, 2, 4))
 
             image = np.array(
                 [
@@ -756,7 +733,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
+            frame = ac.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
 
             new_frame = frame.serial_all_trails_frame_from_frame(image)
 
@@ -775,12 +752,12 @@ class TestChInj(object):
         def test__left_quadrant__2_ci_regions__2_serial_trail__extracts_all_trails(
             self
         ):
-            pattern = ci_pattern.CIPattern(
+            pattern = ac.CIPatternUniform(
                 normalization=10.0, regions=[(0, 1, 0, 2), (2, 3, 0, 2)]
             )
 
-            frame_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
-            frame_geometry.serial_overscan = ci_frame.Region((0, 4, 2, 4))
+            frame_geometry = ac.FrameGeometry.euclid_bottom_left()
+            frame_geometry.serial_overscan = ac.Region((0, 4, 2, 4))
 
             image = np.array(
                 [
@@ -791,7 +768,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
+            frame = ac.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
 
             new_frame = frame.serial_all_trails_frame_from_frame(image)
 
@@ -808,12 +785,12 @@ class TestChInj(object):
             ).all()
 
         def test__same_as_above_but_right_quadrant__flips_trails_side(self):
-            pattern = ci_pattern.CIPattern(
+            pattern = ac.CIPatternUniform(
                 normalization=10.0, regions=[(0, 1, 2, 4), (2, 3, 2, 4)]
             )
 
-            frame_geometry = ci_frame.FrameGeometry.euclid_bottom_right()
-            frame_geometry.serial_overscan = ci_frame.Region((0, 4, 0, 2))
+            frame_geometry = ac.FrameGeometry.euclid_bottom_right()
+            frame_geometry.serial_overscan = ac.Region((0, 4, 0, 2))
 
             image = np.array(
                 [
@@ -824,7 +801,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
+            frame = ac.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
 
             new_frame = frame.serial_all_trails_frame_from_frame(image)
 
@@ -844,17 +821,17 @@ class TestChInj(object):
         def test__left_quadrant__1_ci_region__serial_trails_go_over_2_right_hand_columns__2_pixels_above_kept(
             self
         ):
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(1, 3, 1, 2)])
+            pattern = ac.CIPatternUniform(normalization=10.0, regions=[(1, 3, 1, 2)])
 
-            frame_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
-            frame_geometry.serial_prescan = ci_frame.Region((0, 3, 0, 1))
-            frame_geometry.serial_overscan = ci_frame.Region((0, 3, 2, 4))
+            frame_geometry = ac.FrameGeometry.euclid_bottom_left()
+            frame_geometry.serial_prescan = ac.Region((0, 3, 0, 1))
+            frame_geometry.serial_overscan = ac.Region((0, 3, 2, 4))
 
             image = np.array(
                 [[0.0, 1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0], [8.0, 9.0, 10.0, 11.0]]
             )
 
-            frame = ci_frame.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
+            frame = ac.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
 
             new_frame = frame.serial_overscan_above_trails_frame_from_frame(image)
 
@@ -868,17 +845,17 @@ class TestChInj(object):
         def test__left_quadrant__1_ci_region__serial_trails_go_over_1_right_hand_column__1_pixel_above_kept(
             self
         ):
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(1, 3, 1, 3)])
+            pattern = ac.CIPatternUniform(normalization=10.0, regions=[(1, 3, 1, 3)])
 
-            frame_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
-            frame_geometry.serial_prescan = ci_frame.Region((0, 3, 0, 1))
-            frame_geometry.serial_overscan = ci_frame.Region((0, 3, 3, 4))
+            frame_geometry = ac.FrameGeometry.euclid_bottom_left()
+            frame_geometry.serial_prescan = ac.Region((0, 3, 0, 1))
+            frame_geometry.serial_overscan = ac.Region((0, 3, 3, 4))
 
             image = np.array(
                 [[0.0, 1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0], [8.0, 9.0, 10.0, 11.0]]
             )
 
-            frame = ci_frame.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
+            frame = ac.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
 
             new_frame = frame.serial_overscan_above_trails_frame_from_frame(image)
 
@@ -892,13 +869,13 @@ class TestChInj(object):
         def test__left_quadrant__2_ci_regions__serial_trails_go_over_1_right_hand_column__1_pixel_above_each_kept(
             self
         ):
-            pattern = ci_pattern.CIPattern(
+            pattern = ac.CIPatternUniform(
                 normalization=10.0, regions=[(1, 2, 1, 3), (3, 4, 1, 3)]
             )
 
-            frame_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
-            frame_geometry.serial_prescan = ci_frame.Region((0, 5, 0, 1))
-            frame_geometry.serial_overscan = ci_frame.Region((0, 5, 3, 4))
+            frame_geometry = ac.FrameGeometry.euclid_bottom_left()
+            frame_geometry.serial_prescan = ac.Region((0, 5, 0, 1))
+            frame_geometry.serial_overscan = ac.Region((0, 5, 3, 4))
 
             image = np.array(
                 [
@@ -910,7 +887,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
+            frame = ac.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
 
             new_frame = frame.serial_overscan_above_trails_frame_from_frame(image)
 
@@ -930,13 +907,13 @@ class TestChInj(object):
         def test__right_quadrant__2_ci_regions__serial_trails_go_over_1_right_hand_column__1_pixel_above_each_kept(
             self
         ):
-            pattern = ci_pattern.CIPattern(
+            pattern = ac.CIPatternUniform(
                 normalization=10.0, regions=[(1, 2, 1, 3), (3, 4, 1, 3)]
             )
 
-            frame_geometry = ci_frame.FrameGeometry.euclid_bottom_right()
-            frame_geometry.serial_prescan = ci_frame.Region((0, 5, 3, 4))
-            frame_geometry.serial_overscan = ci_frame.Region((0, 5, 0, 1))
+            frame_geometry = ac.FrameGeometry.euclid_bottom_right()
+            frame_geometry.serial_prescan = ac.Region((0, 5, 3, 4))
+            frame_geometry.serial_overscan = ac.Region((0, 5, 0, 1))
 
             image = np.array(
                 [
@@ -948,7 +925,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
+            frame = ac.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
 
             new_frame = frame.serial_overscan_above_trails_frame_from_frame(image)
 
@@ -970,9 +947,7 @@ class TestChInj(object):
             self
         ):
 
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[(0, 3, 0, 5)]
-            )
+            pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 0, 5)])
 
             image = np.array(
                 [
@@ -982,9 +957,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             serial_frame = frame.serial_calibration_section_for_rows(image, rows=(0, 3))
@@ -1002,7 +976,7 @@ class TestChInj(object):
 
         def test__geometry_left__2_ci_regions__both_extracted(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(0, 1, 1, 4), (2, 3, 1, 4)]
             )
 
@@ -1014,9 +988,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             serial_frame = frame.serial_calibration_section_for_rows(image, rows=(0, 1))
@@ -1028,7 +1001,7 @@ class TestChInj(object):
 
         def test__geometry_right__2_ci_regions__both_extracted(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(0, 1, 1, 4), (2, 3, 1, 4)]
             )
 
@@ -1040,8 +1013,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_right(),
                 ci_pattern=pattern,
             )
 
@@ -1054,9 +1027,7 @@ class TestChInj(object):
 
         def test__geometry_left__rows_cuts_out_bottom_row(self):
 
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[(0, 3, 0, 5)]
-            )
+            pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 0, 5)])
 
             image = np.array(
                 [
@@ -1066,9 +1037,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             serial_frame = frame.serial_calibration_section_for_rows(image, rows=(0, 2))
@@ -1080,7 +1050,7 @@ class TestChInj(object):
 
         def test__extract_two_regions_and_cut_bottom_row_from_each(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(0, 2, 1, 4), (3, 5, 1, 4)]
             )
 
@@ -1094,8 +1064,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_right(),
                 ci_pattern=pattern,
             )
 
@@ -1108,7 +1078,7 @@ class TestChInj(object):
 
         def test__extract_two_regions_and_cut_top_row_from_each(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(0, 2, 1, 4), (3, 5, 1, 4)]
             )
 
@@ -1122,8 +1092,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_right(),
                 ci_pattern=pattern,
             )
 
@@ -1138,9 +1108,7 @@ class TestChInj(object):
         def test__geometry_left__ci_region_across_all_image__column_0__extracts_all_columns(
             self
         ):
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[(0, 3, 0, 5)]
-            )
+            pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 0, 5)])
 
             image = np.array(
                 [
@@ -1150,9 +1118,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             serial_region = frame.serial_calibration_sub_arrays_from_frame(array=image)
@@ -1172,9 +1139,7 @@ class TestChInj(object):
             self
         ):
 
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[(0, 3, 0, 4)]
-            )
+            pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 0, 4)])
 
             image = np.array(
                 [
@@ -1184,9 +1149,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             serial_region = frame.serial_calibration_sub_arrays_from_frame(array=image)
@@ -1206,9 +1170,7 @@ class TestChInj(object):
             self
         ):
 
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[(0, 3, 1, 4)]
-            )
+            pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
             image = np.array(
                 [
@@ -1218,9 +1180,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             serial_region = frame.serial_calibration_sub_arrays_from_frame(array=image)
@@ -1237,9 +1198,7 @@ class TestChInj(object):
             ).all()
 
         def test__geometry_right__ci_region_has_prescan_and_overscan(self):
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[(0, 3, 1, 4)]
-            )
+            pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
             image = np.array(
                 [
@@ -1249,8 +1208,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_right(),
                 ci_pattern=pattern,
             )
 
@@ -1268,7 +1227,7 @@ class TestChInj(object):
             ).all()
 
         def test__geometry_left__2_ci_regions__both_extracted(self):
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(0, 1, 1, 4), (2, 3, 1, 4)]
             )
 
@@ -1280,9 +1239,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             serial_region = frame.serial_calibration_sub_arrays_from_frame(array=image)
@@ -1293,9 +1251,7 @@ class TestChInj(object):
     class TestParallelFrontEdgeFromFrame:
         def test__pattern_bottom___extracts_1_front_edge_correctly(self):
 
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[(1, 4, 0, 3)]
-            )
+            pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
             image = np.array(
                 [
@@ -1316,9 +1272,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             front_edge = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 1))
@@ -1332,9 +1287,7 @@ class TestChInj(object):
 
         def test__pattern_bottom___extracts_multiple_front_edges_correctly(self):
 
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[(1, 5, 0, 3)]
-            )
+            pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 5, 0, 3)])
 
             image = np.array(
                 [
@@ -1355,9 +1308,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             front_edge = frame.parallel_front_edge_arrays_from_frame(image, rows=(0, 2))
@@ -1371,7 +1323,7 @@ class TestChInj(object):
 
         def test__pattern_bottom__2_regions__extracts_rows_correctly(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(1, 4, 0, 3), (5, 8, 0, 3)]
             )
 
@@ -1398,9 +1350,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             front_edges = frame.parallel_front_edge_arrays_from_frame(
@@ -1435,7 +1386,7 @@ class TestChInj(object):
 
         def test__pattern_top__does_all_the_above_correctly(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(1, 5, 0, 3), (6, 9, 0, 3)]
             )
 
@@ -1462,9 +1413,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_top_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_top_left(), ci_pattern=pattern
             )
 
             front_edges = frame.parallel_front_edge_arrays_from_frame(
@@ -1499,7 +1449,7 @@ class TestChInj(object):
 
         def test__mask_is_input__extracted_mask_and_masked_array_are_given(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(1, 4, 0, 3), (5, 8, 0, 3)]
             )
 
@@ -1545,9 +1495,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             front_edges = frame.parallel_front_edge_arrays_from_frame(
@@ -1577,7 +1526,7 @@ class TestChInj(object):
 
         def test__stacked_array_and_binned_line__2_regions__no_masking(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(1, 4, 0, 3), (5, 8, 0, 3)]
             )
 
@@ -1604,9 +1553,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             # First fronrt edge array:
@@ -1638,7 +1586,7 @@ class TestChInj(object):
 
         def test__same_as_above__include_masking(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(1, 4, 0, 3), (5, 8, 0, 3)]
             )
 
@@ -1688,9 +1636,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             # First fronrt edge array:
@@ -1753,9 +1700,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             # First fronrt edge array:
@@ -1783,7 +1729,7 @@ class TestChInj(object):
 
         def test__no_rows_specified__uses_smallest_ci_pattern_rows(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(1, 3, 0, 3), (5, 8, 0, 3)]
             )
 
@@ -1810,9 +1756,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             front_edges = frame.parallel_front_edge_arrays_from_frame(image)
@@ -1841,9 +1786,7 @@ class TestChInj(object):
     class TestParallelTrailsFromFrame:
         def test__pattern_bottom__extracts_1_trails_correctly(self):
 
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[(1, 3, 0, 3)]
-            )
+            pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 3, 0, 3)])
 
             image = np.array(
                 [
@@ -1861,9 +1804,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 1))
@@ -1877,9 +1819,7 @@ class TestChInj(object):
 
         def test__pattern_bottom__extracts_multiple_trails_correctly(self):
 
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[(1, 3, 0, 3)]
-            )
+            pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 3, 0, 3)])
 
             image = np.array(
                 [
@@ -1896,9 +1836,8 @@ class TestChInj(object):
                     [9.0, 9.0, 9.0],
                 ]
             )
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 2))
@@ -1914,7 +1853,7 @@ class TestChInj(object):
 
         def test__pattern_bottom__2_regions__extracts_rows_correctly(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(1, 3, 0, 3), (4, 6, 0, 3)]
             )
 
@@ -1935,9 +1874,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 1))
@@ -1960,7 +1898,7 @@ class TestChInj(object):
 
         def test__pattern_top__does_all_the_above_correctly(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(3, 5, 0, 3), (9, 10, 0, 3)]
             )
 
@@ -1981,9 +1919,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_top_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_top_left(), ci_pattern=pattern
             )
 
             trails = frame.parallel_trails_arrays_from_frame(image, rows=(0, 1))
@@ -2000,7 +1937,7 @@ class TestChInj(object):
 
         def test__mask_is_input__extracted_mask_and_masked_array_are_given(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(1, 3, 0, 3), (4, 6, 0, 3)]
             )
 
@@ -2050,9 +1987,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             trails = frame.parallel_trails_arrays_from_frame(
@@ -2071,7 +2007,7 @@ class TestChInj(object):
 
         def test__stacked_array_and_binned_line__2_regions__no_masking(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(1, 3, 0, 3), (4, 6, 0, 3)]
             )
 
@@ -2098,9 +2034,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             # [3.0, 3.0, 3.0],
@@ -2127,7 +2062,7 @@ class TestChInj(object):
 
         def test__same_as_above__include_masking(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(1, 3, 0, 3), (4, 6, 0, 3)]
             )
 
@@ -2177,9 +2112,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             # [3.0, 3.0, 3.0],
@@ -2231,9 +2165,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             stacked_trails = frame.parallel_trails_stacked_array_from_frame(
@@ -2247,7 +2180,7 @@ class TestChInj(object):
 
         def test__no_rows_specified__uses_smallest_parallel_trails_size(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(1, 4, 0, 3), (6, 8, 0, 3)]
             )
 
@@ -2274,9 +2207,8 @@ class TestChInj(object):
                 ]
             )  # 2nd Trail starts here
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             trails = frame.parallel_trails_arrays_from_frame(image)
@@ -2297,9 +2229,7 @@ class TestChInj(object):
 
     class TestSerialFrontEdgeFromFrame:
         def test__pattern_bottom___extracts_1_front_edge_correctly(self):
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[(0, 3, 1, 4)]
-            )
+            pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
             image = np.array(
                 [
@@ -2311,9 +2241,8 @@ class TestChInj(object):
 
             #       /| Front Edge
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             front_edge = frame.serial_front_edge_arrays_from_frame(
@@ -2335,9 +2264,7 @@ class TestChInj(object):
             assert (front_edge == np.array([[3.0], [3.0], [3.0]])).all()
 
         def test__pattern_bottom___extracts_multiple_front_edges_correctly(self):
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[(0, 3, 1, 5)]
-            )
+            pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 5)])
 
             image = np.array(
                 [
@@ -2349,9 +2276,8 @@ class TestChInj(object):
 
             #                    /| Front Edge
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             front_edge = frame.serial_front_edge_arrays_from_frame(
@@ -2371,7 +2297,7 @@ class TestChInj(object):
 
         def test__pattern_bottom__2_regions__extracts_columns_correctly(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(0, 3, 1, 4), (0, 3, 5, 8)]
             )
 
@@ -2385,9 +2311,8 @@ class TestChInj(object):
 
             #                    /| FE 1        /\ FE 2
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             front_edges = frame.serial_front_edge_arrays_from_frame(
@@ -2426,7 +2351,7 @@ class TestChInj(object):
             ).all()
 
         def test__pattern_right__does_all_the_above_correctly(self):
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(0, 3, 1, 4), (0, 3, 5, 8)]
             )
 
@@ -2440,8 +2365,8 @@ class TestChInj(object):
 
             #                               /| FE 1            /\ FE 2
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_right(),
                 ci_pattern=pattern,
             )
 
@@ -2482,7 +2407,7 @@ class TestChInj(object):
 
         def test__mask_is_input__extracted_mask_and_masked_array_are_given(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(0, 3, 1, 4), (0, 3, 5, 8)]
             )
 
@@ -2537,9 +2462,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             front_edges = frame.serial_front_edge_arrays_from_frame(
@@ -2570,7 +2494,7 @@ class TestChInj(object):
 
         def test__stacked_array_and_binned_line__2_regions__no_masking(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(0, 3, 1, 4), (0, 3, 5, 8)]
             )
 
@@ -2584,9 +2508,8 @@ class TestChInj(object):
 
             #                      /| FE 1                /\ FE 2
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             stacked_front_edges = frame.serial_front_edge_stacked_array_from_frame(
@@ -2614,7 +2537,7 @@ class TestChInj(object):
 
         def test__same_as_above__include_masking(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(0, 3, 1, 4), (0, 3, 5, 8)]
             )
 
@@ -2671,9 +2594,8 @@ class TestChInj(object):
 
             #                        /| FE 1                       /| FE 2
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             stacked_front_edges = frame.serial_front_edge_stacked_array_from_frame(
@@ -2741,9 +2663,8 @@ class TestChInj(object):
 
             #                        /| FE 1                       /| FE 2
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             stacked_front_edges = frame.serial_front_edge_stacked_array_from_frame(
@@ -2761,7 +2682,7 @@ class TestChInj(object):
             self
         ):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(0, 3, 1, 3), (0, 3, 5, 8)]
             )
 
@@ -2775,9 +2696,8 @@ class TestChInj(object):
 
             #                    /| FE 1        /\ FE 2
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             front_edges = frame.serial_front_edge_arrays_from_frame(image)
@@ -2806,9 +2726,7 @@ class TestChInj(object):
 
     class TestSerialTrailsFromFrame:
         def test__pattern_bottom___extracts_1_trails_correctly(self):
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[(0, 3, 1, 4)]
-            )
+            pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
             image = np.array(
                 [
@@ -2820,9 +2738,8 @@ class TestChInj(object):
 
             #                                    /| Trails Begin
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 1))
@@ -2838,9 +2755,7 @@ class TestChInj(object):
             assert (trails == np.array([[6.0], [6.0], [6.0]])).all()
 
         def test__pattern_bottom___extracts_multiple_trails_correctly(self):
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[(0, 3, 1, 4)]
-            )
+            pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
             image = np.array(
                 [
@@ -2852,9 +2767,8 @@ class TestChInj(object):
 
             #                                   /| Trails Begin
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 2))
@@ -2869,7 +2783,7 @@ class TestChInj(object):
 
         def test__pattern_bottom__2_regions__extracts_columns_correctly(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(0, 3, 1, 4), (0, 3, 5, 8)]
             )
 
@@ -2883,9 +2797,8 @@ class TestChInj(object):
 
             #                                   /| Trails1           /\ Trails2
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 1))
@@ -2916,7 +2829,7 @@ class TestChInj(object):
             ).all()
 
         def test__pattern_right__does_all_the_above_correctly(self):
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(0, 3, 3, 6), (0, 3, 8, 11)]
             )
 
@@ -2930,8 +2843,8 @@ class TestChInj(object):
 
             #               Trails1   /|                Trails2 /\
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_right(),
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_right(),
                 ci_pattern=pattern,
             )
 
@@ -2964,7 +2877,7 @@ class TestChInj(object):
 
         def test__mask_is_input__extracted_mask_and_masked_array_are_given(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(0, 3, 1, 4), (0, 3, 5, 8)]
             )
 
@@ -3022,9 +2935,8 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             trails = frame.serial_trails_arrays_from_frame(
@@ -3055,7 +2967,7 @@ class TestChInj(object):
 
         def test__stacked_array_and_binned_line__2_regions__no_masking(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(0, 3, 1, 4), (0, 3, 5, 8)]
             )
 
@@ -3069,9 +2981,8 @@ class TestChInj(object):
 
             #                                   /| Trails1           /\ Trails2
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             # [[4.0, 5.0, 6.0],
@@ -3099,7 +3010,7 @@ class TestChInj(object):
 
         def test__same_as_above__include_masking(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(0, 3, 1, 4), (0, 3, 5, 8)]
             )
 
@@ -3159,9 +3070,8 @@ class TestChInj(object):
 
             #                                               /| Trails1                   /\ Trails2
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             # [[4.0, 5.0, 6.0],
@@ -3243,9 +3153,8 @@ class TestChInj(object):
 
             #                                               /| Trails1                   /\ Trails2
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             stacked_trails = frame.serial_trails_stacked_array_from_frame(
@@ -3261,7 +3170,7 @@ class TestChInj(object):
 
         def test__no_columns_specified_so_uses_full_serial_overscan(self):
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0, regions=[(0, 3, 1, 4), (0, 3, 4, 7)]
             )
 
@@ -3275,14 +3184,14 @@ class TestChInj(object):
 
             #                                      /| Trails1           /\ Trails2
 
-            ci_geometry = ci_frame.FrameGeometry(
-                serial_overscan=ci_frame.Region((0, 1, 0, 4)),
-                serial_prescan=ci_frame.Region((0, 1, 0, 1)),
-                parallel_overscan=ci_frame.Region((0, 1, 0, 1)),
+            ci_geometry = ac.FrameGeometry(
+                serial_overscan=ac.Region((0, 1, 0, 4)),
+                serial_prescan=ac.Region((0, 1, 0, 1)),
+                parallel_overscan=ac.Region((0, 1, 0, 1)),
                 corner=(0, 0),
             )
 
-            frame = ci_frame.ChInj(frame_geometry=ci_geometry, ci_pattern=pattern)
+            frame = ac.ChInj(frame_geometry=ci_geometry, ci_pattern=pattern)
 
             trails = frame.serial_trails_arrays_from_frame(image)
 
@@ -3319,9 +3228,7 @@ class TestChInj(object):
 
     class TestParallelSerialCalibrationSection:
         def test__extracts_everything_except_prescan(self):
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[(0, 1, 0, 1)]
-            )
+            pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 1, 0, 1)])
 
             image = np.array(
                 [
@@ -3333,12 +3240,11 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
-            frame.frame_geometry.serial_prescan = ci_frame.Region(region=(0, 4, 0, 1))
+            frame.frame_geometry.serial_prescan = ac.Region(region=(0, 4, 0, 1))
 
             extracted_array = frame.parallel_serial_calibration_section(image)
 
@@ -3356,9 +3262,7 @@ class TestChInj(object):
             ).all()
 
         def test__extracts_everything_except_prescan_2(self):
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[(0, 1, 0, 1)]
-            )
+            pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 1, 0, 1)])
 
             image = np.array(
                 [
@@ -3370,12 +3274,11 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
-            frame.frame_geometry.serial_prescan = ci_frame.Region(region=(0, 4, 0, 2))
+            frame.frame_geometry.serial_prescan = ac.Region(region=(0, 4, 0, 2))
 
             extracted_array = frame.parallel_serial_calibration_section(image)
 
@@ -3389,11 +3292,10 @@ class TestChInj(object):
     class TestSmallestPArallelTrailsRows:
         def test__x1_ci_region__bottom_frame_geometry(self):
 
-            pattern = ci_pattern.CIPattern(normalization=10.0, regions=[(0, 3, 0, 3)])
+            pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 3)])
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             smallest_parallel_trails_rows = frame.smallest_parallel_trails_rows_from_shape(
@@ -3410,13 +3312,12 @@ class TestChInj(object):
 
         def test__x2_ci_region__bottom_frame_geometry(self):
 
-            pattern = ci_pattern.CIPattern(
+            pattern = ac.CIPatternUniform(
                 normalization=10.0, regions=[(0, 3, 0, 3), (5, 7, 0, 3)]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_bottom_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
             smallest_parallel_trails_rows = frame.smallest_parallel_trails_rows_from_shape(
@@ -3433,13 +3334,12 @@ class TestChInj(object):
 
         def test__x2_ci_region__top_frame_geometry(self):
 
-            pattern = ci_pattern.CIPattern(
+            pattern = ac.CIPatternUniform(
                 normalization=10.0, regions=[(1, 4, 0, 3), (5, 7, 0, 3)]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_top_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_top_left(), ci_pattern=pattern
             )
 
             smallest_parallel_trails_rows = frame.smallest_parallel_trails_rows_from_shape(
@@ -3448,13 +3348,12 @@ class TestChInj(object):
 
             assert smallest_parallel_trails_rows == 1
 
-            pattern = ci_pattern.CIPattern(
+            pattern = ac.CIPatternUniform(
                 normalization=10.0, regions=[(8, 12, 0, 3), (14, 16, 0, 3)]
             )
 
-            frame = ci_frame.ChInj(
-                frame_geometry=ci_frame.FrameGeometry.euclid_top_left(),
-                ci_pattern=pattern,
+            frame = ac.ChInj(
+                frame_geometry=ac.FrameGeometry.euclid_top_left(), ci_pattern=pattern
             )
 
             smallest_parallel_trails_rows = frame.smallest_parallel_trails_rows_from_shape(
@@ -3468,19 +3367,19 @@ class TestChInj(object):
             self
         ):
 
-            ci_geometry = ci_frame.FrameGeometry(
-                serial_overscan=ci_frame.Region((0, 1, 0, 10)),
-                serial_prescan=ci_frame.Region((0, 1, 0, 1)),
-                parallel_overscan=ci_frame.Region((0, 1, 0, 1)),
+            ci_geometry = ac.FrameGeometry(
+                serial_overscan=ac.Region((0, 1, 0, 10)),
+                serial_prescan=ac.Region((0, 1, 0, 1)),
+                parallel_overscan=ac.Region((0, 1, 0, 1)),
                 corner=(0, 0),
             )
 
             assert ci_geometry.serial_trails_columns == 10
 
-            ci_geometry = ci_frame.FrameGeometry(
-                serial_overscan=ci_frame.Region((0, 1, 0, 50)),
-                serial_prescan=ci_frame.Region((0, 1, 0, 1)),
-                parallel_overscan=ci_frame.Region((0, 1, 0, 1)),
+            ci_geometry = ac.FrameGeometry(
+                serial_overscan=ac.Region((0, 1, 0, 50)),
+                serial_prescan=ac.Region((0, 1, 0, 1)),
+                parallel_overscan=ac.Region((0, 1, 0, 1)),
                 corner=(0, 0),
             )
 
@@ -3490,9 +3389,9 @@ class TestChInj(object):
 class TestQuadGeometryEuclid_bottom_left(object):
     class TestParallelFrontEdgeRegion:
         def test__extract_one_row__takes_coordinates_from_top_of_region(self):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_left()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 region=(0, 3, 0, 3)
             )  # Front edge is row 0, so for 1 row we extract 0 -> 1
 
@@ -3505,9 +3404,9 @@ class TestQuadGeometryEuclid_bottom_left(object):
         def test__extract_two_rows__first_and_second__takes_coordinates_from_top_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_left()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 region=(0, 3, 0, 3)
             )  # Front edge is row 0, so for 2 rows we extract 0 -> 2
 
@@ -3520,9 +3419,9 @@ class TestQuadGeometryEuclid_bottom_left(object):
         def test__extract_two_rows__second_and_third__takes_coordinates_from_top_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_left()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 region=(0, 3, 0, 3)
             )  # Front edge is row 0, so for these 2 rows we extract 1 ->2
 
@@ -3535,9 +3434,9 @@ class TestQuadGeometryEuclid_bottom_left(object):
     class TestParallelTrailsRegion:
         def test__extract_one_row__takes_coordinates_after_bottom_of_region(self):
 
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_left()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 region=(0, 3, 0, 3)
             )  # The trails are row 3 and above, so extract 3 -> 4
 
@@ -3550,9 +3449,9 @@ class TestQuadGeometryEuclid_bottom_left(object):
         def test__extract_two_rows__first_and_second__takes_coordinates_after_bottom_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_left()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 (0, 3, 0, 3)
             )  # The trails are row 3 and above, so extract 3 -> 5
 
@@ -3565,9 +3464,9 @@ class TestQuadGeometryEuclid_bottom_left(object):
         def test__extract_two_rows__second_and_third__takes_coordinates_after_bottom_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_left()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 (0, 3, 0, 3)
             )  # The trails are row 3 and above, so extract 4 -> 6
 
@@ -3579,10 +3478,10 @@ class TestQuadGeometryEuclid_bottom_left(object):
 
         def test__parallel_trail_size_to_image_edge(self):
 
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_left()
 
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[ci_frame.Region(region=(0, 3, 0, 3))]
+            pattern = ac.CIPatternUniform(
+                normalization=1.0, regions=[ac.Region(region=(0, 3, 0, 3))]
             )
 
             parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
@@ -3597,12 +3496,12 @@ class TestQuadGeometryEuclid_bottom_left(object):
 
             assert parallel_trail_size == 4
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0,
                 regions=[
-                    ci_frame.Region(region=(0, 2, 0, 3)),
-                    ci_frame.Region(region=(5, 8, 0, 3)),
-                    ci_frame.Region(region=(11, 14, 0, 3)),
+                    ac.Region(region=(0, 2, 0, 3)),
+                    ac.Region(region=(5, 8, 0, 3)),
+                    ac.Region(region=(11, 14, 0, 3)),
                 ],
             )
 
@@ -3620,8 +3519,8 @@ class TestQuadGeometryEuclid_bottom_left(object):
 
     class TestParallelSideNearestReadOut:
         def test__columns_0_to_1__region_is_left_hand_side(self):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
-            ci_region = ci_frame.Region(region=(1, 3, 0, 5))
+            ci_geometry = ac.FrameGeometry.euclid_bottom_left()
+            ci_region = ac.Region(region=(1, 3, 0, 5))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
                 ci_region=ci_region, image_shape=(5, 5), columns=(0, 1)
@@ -3630,8 +3529,8 @@ class TestQuadGeometryEuclid_bottom_left(object):
             assert ci_parallel_region == (0, 5, 0, 1)
 
         def test__columns_1_to_3__region_is_left_hand_side(self):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
-            ci_region = ci_frame.Region(region=(1, 3, 0, 5))
+            ci_geometry = ac.FrameGeometry.euclid_bottom_left()
+            ci_region = ac.Region(region=(1, 3, 0, 5))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
                 ci_region=ci_region, image_shape=(4, 4), columns=(1, 3)
@@ -3640,8 +3539,8 @@ class TestQuadGeometryEuclid_bottom_left(object):
             assert ci_parallel_region == (0, 4, 1, 3)
 
         def test__columns_1_to_3__different_region(self):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
-            ci_region = ci_frame.Region(region=(1, 3, 2, 5))
+            ci_geometry = ac.FrameGeometry.euclid_bottom_left()
+            ci_region = ac.Region(region=(1, 3, 2, 5))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
                 ci_region=ci_region, image_shape=(4, 4), columns=(1, 3)
@@ -3650,8 +3549,8 @@ class TestQuadGeometryEuclid_bottom_left(object):
             assert ci_parallel_region == (0, 4, 3, 5)
 
         def test__columns_0_to_1__asymetric_image(self):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
-            ci_region = ci_frame.Region(region=(1, 3, 0, 5))
+            ci_geometry = ac.FrameGeometry.euclid_bottom_left()
+            ci_region = ac.Region(region=(1, 3, 0, 5))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
                 ci_region=ci_region, image_shape=(2, 5), columns=(0, 1)
@@ -3661,9 +3560,9 @@ class TestQuadGeometryEuclid_bottom_left(object):
 
     class TestSerialFrontEdgeRegion:
         def test__extract_one_column__takes_coordinates_from_left_of_region(self):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_left()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 region=(0, 3, 0, 3)
             )  # Front edge is column 0, so for 1 column we extract 0 -> 1
 
@@ -3676,9 +3575,9 @@ class TestQuadGeometryEuclid_bottom_left(object):
         def test__extract_two_columns__first_and_second__takes_coordinates_from_left_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_left()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 region=(0, 3, 0, 3)
             )  # Front edge is column 0, so for 2 columns we extract 0 -> 2
 
@@ -3691,9 +3590,9 @@ class TestQuadGeometryEuclid_bottom_left(object):
         def test__extract_two_columns__second_and_third__takes_coordinates_from_left_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_left()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 region=(0, 3, 0, 3)
             )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
 
@@ -3705,9 +3604,9 @@ class TestQuadGeometryEuclid_bottom_left(object):
 
     class TestSerialTrailsRegion:
         def test__extract_one_row__takes_coordinates_after_right_of_region(self):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_left()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 region=(0, 3, 0, 3)
             )  # The trails are column 3 and above, so extract 3 -> 4
 
@@ -3720,9 +3619,9 @@ class TestQuadGeometryEuclid_bottom_left(object):
         def test__extract_two_columns__first_and_second__takes_coordinates_after_right_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_left()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 (0, 3, 0, 3)
             )  # The trails are column 3 and above, so extract 3 -> 5
 
@@ -3735,9 +3634,9 @@ class TestQuadGeometryEuclid_bottom_left(object):
         def test__extract_two_columns__second_and_third__takes_coordinates_after_right_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_left()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 (0, 3, 0, 3)
             )  # The trails are column 3 and above, so extract 4 -> 6
 
@@ -3752,8 +3651,8 @@ class TestQuadGeometryEuclid_bottom_left(object):
             self
         ):
 
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
-            ci_region = ci_frame.Region(region=(1, 3, 0, 5))
+            ci_geometry = ac.FrameGeometry.euclid_bottom_left()
+            ci_region = ac.Region(region=(1, 3, 0, 5))
 
             ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
                 ci_region=ci_region, image_shape=(5, 5)
@@ -3765,8 +3664,8 @@ class TestQuadGeometryEuclid_bottom_left(object):
             self
         ):
 
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
-            ci_region = ci_frame.Region(region=(1, 3, 0, 5))
+            ci_geometry = ac.FrameGeometry.euclid_bottom_left()
+            ci_region = ac.Region(region=(1, 3, 0, 5))
 
             ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
                 ci_region=ci_region, image_shape=(5, 25)
@@ -3780,9 +3679,9 @@ class TestQuadGeometryEuclid_bottom_right(object):
         def test__extract_two_rows__second_and_third__takes_coordinates_from_top_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_right()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_right()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 region=(0, 3, 0, 3)
             )  # Front edge is row 0, so for these 2 rows we extract 1 ->2
 
@@ -3796,9 +3695,9 @@ class TestQuadGeometryEuclid_bottom_right(object):
         def test__extract_two_rows__second_and_third__takes_coordinates_after_bottom_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_right()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_right()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 (0, 3, 0, 3)
             )  # The trails are row 3 and above, so extract 4 -> 6
 
@@ -3810,10 +3709,10 @@ class TestQuadGeometryEuclid_bottom_right(object):
 
         def test__parallel_trail_size_to_image_edge(self):
 
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_right()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_right()
 
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[ci_frame.Region(region=(0, 3, 0, 3))]
+            pattern = ac.CIPatternUniform(
+                normalization=1.0, regions=[ac.Region(region=(0, 3, 0, 3))]
             )
 
             parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
@@ -3828,12 +3727,12 @@ class TestQuadGeometryEuclid_bottom_right(object):
 
             assert parallel_trail_size == 4
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0,
                 regions=[
-                    ci_frame.Region(region=(0, 2, 0, 3)),
-                    ci_frame.Region(region=(5, 8, 0, 3)),
-                    ci_frame.Region(region=(11, 14, 0, 3)),
+                    ac.Region(region=(0, 2, 0, 3)),
+                    ac.Region(region=(5, 8, 0, 3)),
+                    ac.Region(region=(11, 14, 0, 3)),
                 ],
             )
 
@@ -3851,8 +3750,8 @@ class TestQuadGeometryEuclid_bottom_right(object):
 
     class TestParallelSideNearestReadOut:
         def test__columns_0_to_1__region_is_right_hand_side(self):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_right()
-            ci_region = ci_frame.Region(region=(1, 3, 0, 5))
+            ci_geometry = ac.FrameGeometry.euclid_bottom_right()
+            ci_region = ac.Region(region=(1, 3, 0, 5))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
                 ci_region=ci_region, image_shape=(5, 5), columns=(0, 1)
@@ -3861,8 +3760,8 @@ class TestQuadGeometryEuclid_bottom_right(object):
             assert ci_parallel_region == (0, 5, 4, 5)
 
         def test__columns_1_to_3__region_is_right_hand_side(self):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_right()
-            ci_region = ci_frame.Region(region=(1, 3, 0, 4))
+            ci_geometry = ac.FrameGeometry.euclid_bottom_right()
+            ci_region = ac.Region(region=(1, 3, 0, 4))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
                 ci_region=ci_region, image_shape=(4, 4), columns=(1, 3)
@@ -3871,8 +3770,8 @@ class TestQuadGeometryEuclid_bottom_right(object):
             assert ci_parallel_region == (0, 4, 1, 3)
 
         def test__columns_1_to_3__different_region(self):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_right()
-            ci_region = ci_frame.Region(region=(1, 3, 2, 4))
+            ci_geometry = ac.FrameGeometry.euclid_bottom_right()
+            ci_region = ac.Region(region=(1, 3, 2, 4))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
                 ci_region=ci_region, image_shape=(4, 4), columns=(1, 3)
@@ -3881,8 +3780,8 @@ class TestQuadGeometryEuclid_bottom_right(object):
             assert ci_parallel_region == (0, 4, 1, 3)
 
         def test__columns_0_to_1__asymetric_image(self):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_right()
-            ci_region = ci_frame.Region(region=(0, 1, 0, 5))
+            ci_geometry = ac.FrameGeometry.euclid_bottom_right()
+            ci_region = ac.Region(region=(0, 1, 0, 5))
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
                 ci_region=ci_region, image_shape=(2, 5), columns=(0, 1)
             )
@@ -3891,9 +3790,9 @@ class TestQuadGeometryEuclid_bottom_right(object):
 
     class TestSerialFrontEdgeRegion:
         def test__extract_one_column__takes_coordinates_from_right_of_region(self):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_right()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_right()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 region=(0, 3, 0, 3)
             )  # Front edge is column 0, so for 1 column we extract 0 -> 1
 
@@ -3906,9 +3805,9 @@ class TestQuadGeometryEuclid_bottom_right(object):
         def test__extract_two_columns__first_and_second__takes_coordinates_from_right_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_right()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_right()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 region=(0, 3, 0, 3)
             )  # Front edge is column 0, so for 2 columns we extract 0 -> 2
 
@@ -3921,9 +3820,9 @@ class TestQuadGeometryEuclid_bottom_right(object):
         def test__extract_two_columns__second_and_third__takes_coordinates_from_right_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_right()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_right()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 region=(0, 3, 0, 3)
             )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
 
@@ -3935,9 +3834,9 @@ class TestQuadGeometryEuclid_bottom_right(object):
 
     class TestSerialTrailsRegion:
         def test__extract_one_row__takes_coordinates_after_left_of_region(self):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_right()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_right()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 region=(0, 3, 3, 6)
             )  # The trails are column 3 and above, so extract 3 -> 4
 
@@ -3950,9 +3849,9 @@ class TestQuadGeometryEuclid_bottom_right(object):
         def test__extract_two_columns__first_and_second__takes_coordinates_after_left_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_right()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_right()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 (0, 3, 3, 6)
             )  # The trails are column 3 and above, so extract 3 -> 5
 
@@ -3965,9 +3864,9 @@ class TestQuadGeometryEuclid_bottom_right(object):
         def test__extract_two_columns__second_and_third__takes_coordinates_after_left_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_right()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_right()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 (0, 3, 3, 6)
             )  # The trails are column 3 and above, so extract 4 -> 6
 
@@ -3982,8 +3881,8 @@ class TestQuadGeometryEuclid_bottom_right(object):
             self
         ):
 
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_right()
-            ci_region = ci_frame.Region(region=(1, 3, 0, 5))
+            ci_geometry = ac.FrameGeometry.euclid_bottom_right()
+            ci_region = ac.Region(region=(1, 3, 0, 5))
 
             ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
                 ci_region=ci_region, image_shape=(5, 5)
@@ -3993,8 +3892,8 @@ class TestQuadGeometryEuclid_bottom_right(object):
 
         def test__front_edge__region_is_left_hand_side__overscan_beyond_ci_region(self):
 
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_right()
-            ci_region = ci_frame.Region(region=(1, 3, 20, 25))
+            ci_geometry = ac.FrameGeometry.euclid_bottom_right()
+            ci_region = ac.Region(region=(1, 3, 20, 25))
 
             ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
                 ci_region=ci_region, image_shape=(5, 25)
@@ -4006,8 +3905,8 @@ class TestQuadGeometryEuclid_bottom_right(object):
             self
         ):
 
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_right()
-            ci_region = ci_frame.Region(region=(1, 3, 10, 20))
+            ci_geometry = ac.FrameGeometry.euclid_bottom_right()
+            ci_region = ac.Region(region=(1, 3, 10, 20))
 
             ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
                 ci_region=ci_region, image_shape=(5, 25)
@@ -4019,9 +3918,9 @@ class TestQuadGeometryEuclid_bottom_right(object):
 class TestQuadGeometryEuclid_top_left(object):
     class TestParallelFrontEdgeOfRegion:
         def test__extract_one_row__takes_coordinates_from_top_of_region(self):
-            ci_geometry = ci_frame.FrameGeometry.euclid_top_left()
+            ci_geometry = ac.FrameGeometry.euclid_top_left()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 (0, 3, 0, 3)
             )  # The front edge is closest to 3, so for 1 edge we extract row 3-> 4
 
@@ -4034,9 +3933,9 @@ class TestQuadGeometryEuclid_top_left(object):
         def test__extract_two_rows__first_and_second__takes_coordinates_from_top_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_top_left()
+            ci_geometry = ac.FrameGeometry.euclid_top_left()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 (0, 3, 0, 3)
             )  # The front edge is closest to 3, so for these 2 rows we extract 2 & 3
 
@@ -4049,9 +3948,9 @@ class TestQuadGeometryEuclid_top_left(object):
         def test__extract_two_rows__second_and_third__takes_coordinates_from_top_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_top_left()
+            ci_geometry = ac.FrameGeometry.euclid_top_left()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 (0, 3, 0, 3)
             )  # The front edge is closest to 3, so for these 2 rows we extract 1 & 2
 
@@ -4063,9 +3962,9 @@ class TestQuadGeometryEuclid_top_left(object):
 
     class TestParallelTrailsRegion:
         def test__extract_one_row__takes_coordinates_after_bottom_of_region(self):
-            ci_geometry = ci_frame.FrameGeometry.euclid_top_left()
+            ci_geometry = ac.FrameGeometry.euclid_top_left()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 (3, 5, 0, 3)
             )  # The trails are the rows after row 3, so for 1 edge we should extract just row 2
 
@@ -4078,9 +3977,9 @@ class TestQuadGeometryEuclid_top_left(object):
         def test__extract_two_rows__first_and_second__takes_coordinates_after_bottom_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_top_left()
+            ci_geometry = ac.FrameGeometry.euclid_top_left()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 (3, 5, 0, 3)
             )  # The trails are the row after row 3, so for these 2 edges we extract rows 1->3
 
@@ -4093,9 +3992,9 @@ class TestQuadGeometryEuclid_top_left(object):
         def test__extract_two_rows__second_and_third__takes_coordinates_after_bottom_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_top_left()
+            ci_geometry = ac.FrameGeometry.euclid_top_left()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 (3, 5, 0, 3)
             )  # The trails are the row after row 3, so for these 2 edges we extract rows 0 & 2
 
@@ -4107,10 +4006,10 @@ class TestQuadGeometryEuclid_top_left(object):
 
         def test__parallel_trail_size_to_image_edge(self):
 
-            ci_geometry = ci_frame.FrameGeometry.euclid_top_left()
+            ci_geometry = ac.FrameGeometry.euclid_top_left()
 
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[ci_frame.Region(region=(0, 3, 0, 3))]
+            pattern = ac.CIPatternUniform(
+                normalization=1.0, regions=[ac.Region(region=(0, 3, 0, 3))]
             )
 
             parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
@@ -4125,12 +4024,12 @@ class TestQuadGeometryEuclid_top_left(object):
 
             assert parallel_trail_size == 0
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0,
                 regions=[
-                    ci_frame.Region(region=(5, 6, 0, 3)),
-                    ci_frame.Region(region=(11, 12, 0, 3)),
-                    ci_frame.Region(region=(17, 18, 0, 3)),
+                    ac.Region(region=(5, 6, 0, 3)),
+                    ac.Region(region=(11, 12, 0, 3)),
+                    ac.Region(region=(17, 18, 0, 3)),
                 ],
             )
 
@@ -4142,8 +4041,8 @@ class TestQuadGeometryEuclid_top_left(object):
 
     class TestParallelSideNearestReadOut:
         def test__columns_0_to_1__asymetric_image(self):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_left()
-            ci_region = ci_frame.Region(region=(1, 3, 0, 5))
+            ci_geometry = ac.FrameGeometry.euclid_bottom_left()
+            ci_region = ac.Region(region=(1, 3, 0, 5))
 
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
                 ci_region=ci_region, image_shape=(2, 5), columns=(0, 1)
@@ -4155,9 +4054,9 @@ class TestQuadGeometryEuclid_top_left(object):
         def test__extract_two_columns__second_and_third__takes_coordinates_from_top_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_top_left()
+            ci_geometry = ac.FrameGeometry.euclid_top_left()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 region=(0, 3, 0, 3)
             )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
 
@@ -4171,9 +4070,9 @@ class TestQuadGeometryEuclid_top_left(object):
         def test__extract_two_columns__second_and_third__takes_coordinates_after_bottom_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_top_left()
+            ci_geometry = ac.FrameGeometry.euclid_top_left()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 (0, 3, 0, 3)
             )  # The trails are column 3 and above, so extract 4 -> 6
 
@@ -4186,8 +4085,8 @@ class TestQuadGeometryEuclid_top_left(object):
     class TestSerialChargeInjectionAndTrails:
         def test__different_ci_region(self):
 
-            ci_geometry = ci_frame.FrameGeometry.euclid_top_left()
-            ci_region = ci_frame.Region(region=(3, 5, 5, 30))
+            ci_geometry = ac.FrameGeometry.euclid_top_left()
+            ci_region = ac.Region(region=(3, 5, 5, 30))
 
             ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
                 ci_region=ci_region, image_shape=(8, 55)
@@ -4201,9 +4100,9 @@ class TestQuadGeometryEuclid_top_right(object):
         def test__extract_two_rows__second_and_third__takes_coordinates_from_top_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_top_right()
+            ci_geometry = ac.FrameGeometry.euclid_top_right()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 (0, 3, 0, 3)
             )  # The front edge is closest to 3, so for these 2 rows we extract 1 & 2
 
@@ -4217,9 +4116,9 @@ class TestQuadGeometryEuclid_top_right(object):
         def test__extract_two_rows__second_and_third__takes_coordinates_after_bottom_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_top_right()
+            ci_geometry = ac.FrameGeometry.euclid_top_right()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 (3, 5, 0, 3)
             )  # The trails are the row after row 3, so for these 2 edges we extract rows 0 & 2
 
@@ -4231,10 +4130,10 @@ class TestQuadGeometryEuclid_top_right(object):
 
         def test__parallel_trail_size_to_image_edge(self):
 
-            ci_geometry = ci_frame.FrameGeometry.euclid_top_right()
+            ci_geometry = ac.FrameGeometry.euclid_top_right()
 
-            pattern = ci_pattern.CIPatternUniform(
-                normalization=1.0, regions=[ci_frame.Region(region=(0, 3, 0, 3))]
+            pattern = ac.CIPatternUniform(
+                normalization=1.0, regions=[ac.Region(region=(0, 3, 0, 3))]
             )
 
             parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
@@ -4249,12 +4148,12 @@ class TestQuadGeometryEuclid_top_right(object):
 
             assert parallel_trail_size == 0
 
-            pattern = ci_pattern.CIPatternUniform(
+            pattern = ac.CIPatternUniform(
                 normalization=1.0,
                 regions=[
-                    ci_frame.Region(region=(5, 6, 0, 3)),
-                    ci_frame.Region(region=(11, 12, 0, 3)),
-                    ci_frame.Region(region=(17, 18, 0, 3)),
+                    ac.Region(region=(5, 6, 0, 3)),
+                    ac.Region(region=(11, 12, 0, 3)),
+                    ac.Region(region=(17, 18, 0, 3)),
                 ],
             )
 
@@ -4266,8 +4165,8 @@ class TestQuadGeometryEuclid_top_right(object):
 
     class TestParallelSideNearestReadOut:
         def test__columns_0_to_1__asymetric_image(self):
-            ci_geometry = ci_frame.FrameGeometry.euclid_top_right()
-            ci_region = ci_frame.Region(region=(0, 1, 0, 5))
+            ci_geometry = ac.FrameGeometry.euclid_top_right()
+            ci_region = ac.Region(region=(0, 1, 0, 5))
             ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
                 ci_region=ci_region, image_shape=(2, 5), columns=(0, 1)
             )
@@ -4278,9 +4177,9 @@ class TestQuadGeometryEuclid_top_right(object):
         def test__extract_two_columns__second_and_third__takes_coordinates_from_right_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_right()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_right()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 region=(0, 3, 0, 3)
             )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
 
@@ -4294,9 +4193,9 @@ class TestQuadGeometryEuclid_top_right(object):
         def test__extract_two_columns__second_and_third__takes_coordinates_after_left_of_region(
             self
         ):
-            ci_geometry = ci_frame.FrameGeometry.euclid_bottom_right()
+            ci_geometry = ac.FrameGeometry.euclid_bottom_right()
 
-            ci_region = ci_frame.Region(
+            ci_region = ac.Region(
                 (0, 3, 3, 6)
             )  # The trails are column 3 and above, so extract 4 -> 6
 
@@ -4309,8 +4208,8 @@ class TestQuadGeometryEuclid_top_right(object):
     class TestSerialChargeInjectionAndTrails:
         def test__different_ci_region(self):
 
-            ci_geometry = ci_frame.FrameGeometry.euclid_top_right()
-            ci_region = ci_frame.Region(region=(3, 5, 5, 30))
+            ci_geometry = ac.FrameGeometry.euclid_top_right()
+            ci_region = ac.Region(region=(3, 5, 5, 30))
 
             ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
                 ci_region=ci_region, image_shape=(8, 55)

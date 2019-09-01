@@ -1,9 +1,6 @@
 import numpy as np
-import pytest
 
-from autocti.model import arctic_params
-from autocti.model import arctic_settings
-from autocti.model import pyarctic
+import autocti as ac
 
 
 class TestArcticAddCTI:
@@ -13,15 +10,15 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -30,7 +27,7 @@ class TestArcticAddCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -54,15 +51,15 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[:, 2] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -71,7 +68,7 @@ class TestArcticAddCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -94,16 +91,16 @@ class TestArcticAddCTI:
 
             # SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED #
 
-            species_0 = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            species_1 = arctic_params.Species(trap_density=0.2, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species_0 = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species_1 = ac.Species(trap_density=0.2, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -114,14 +111,14 @@ class TestArcticAddCTI:
 
             # NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
-            image_post_cti_0 = pyarctic.call_arctic(
+            image_post_cti_0 = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species_0],
                 ccd=ccd,
                 settings=settings,
                 correct_cti=False,
             )
-            image_post_cti_1 = pyarctic.call_arctic(
+            image_post_cti_1 = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species_1],
                 ccd=ccd,
@@ -150,16 +147,16 @@ class TestArcticAddCTI:
 
             # SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED #
 
-            species_0 = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            species_1 = arctic_params.Species(trap_density=0.1, trap_lifetime=2.0)
-            ccd = arctic_params.CCD(
+            species_0 = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species_1 = ac.Species(trap_density=0.1, trap_lifetime=2.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -170,14 +167,14 @@ class TestArcticAddCTI:
 
             # NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
-            image_post_cti_0 = pyarctic.call_arctic(
+            image_post_cti_0 = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species_0],
                 ccd=ccd,
                 settings=settings,
                 correct_cti=False,
             )
-            image_post_cti_1 = pyarctic.call_arctic(
+            image_post_cti_1 = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species_1],
                 ccd=ccd,
@@ -206,21 +203,21 @@ class TestArcticAddCTI:
 
             # SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED #
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd_0 = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd_0 = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
-            ccd_1 = arctic_params.CCD(
+            ccd_1 = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.9,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -231,14 +228,14 @@ class TestArcticAddCTI:
 
             # NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
-            image_post_cti_0 = pyarctic.call_arctic(
+            image_post_cti_0 = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd_0,
                 settings=settings,
                 correct_cti=False,
             )
-            image_post_cti_1 = pyarctic.call_arctic(
+            image_post_cti_1 = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd_1,
@@ -267,17 +264,17 @@ class TestArcticAddCTI:
 
             # SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED #
 
-            species_0 = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            species_1 = arctic_params.Species(trap_density=0.05, trap_lifetime=1.0)
+            species_0 = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species_1 = ac.Species(trap_density=0.05, trap_lifetime=1.0)
 
-            ccd = arctic_params.CCD(
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -288,14 +285,14 @@ class TestArcticAddCTI:
 
             # NOW GENERATE THE IMAGE POST CTI OF EACH SET
 
-            image_post_cti_0 = pyarctic.call_arctic(
+            image_post_cti_0 = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species_0],
                 ccd=ccd,
                 settings=settings,
                 correct_cti=False,
             )
-            image_post_cti_1 = pyarctic.call_arctic(
+            image_post_cti_1 = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species_1, species_1],
                 ccd=ccd,
@@ -313,15 +310,15 @@ class TestArcticAddCTI:
             image_pre_cti[3, 3] += 100  # Delta 2
             image_pre_cti[2, 4] += 100  # Delta 3
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -330,7 +327,7 @@ class TestArcticAddCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -365,15 +362,15 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((5, 7))
             image_pre_cti[2, :] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -382,7 +379,7 @@ class TestArcticAddCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -401,15 +398,15 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((4, 6))
             image_pre_cti[2, :] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -418,7 +415,7 @@ class TestArcticAddCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -436,15 +433,15 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((4, 7))
             image_pre_cti[2, :] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -453,7 +450,7 @@ class TestArcticAddCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -471,15 +468,15 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((5, 6))
             image_pre_cti[2, :] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -488,7 +485,7 @@ class TestArcticAddCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -505,15 +502,15 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((3, 5))
             image_pre_cti[:, 2] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -522,7 +519,7 @@ class TestArcticAddCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -541,15 +538,15 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((4, 6))
             image_pre_cti[:, 2] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -558,7 +555,7 @@ class TestArcticAddCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -577,15 +574,15 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((4, 7))
             image_pre_cti[:, 2] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -594,7 +591,7 @@ class TestArcticAddCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -613,15 +610,15 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((5, 6))
             image_pre_cti[:, 2] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -630,7 +627,7 @@ class TestArcticAddCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -651,15 +648,15 @@ class TestArcticAddCTI:
             image_pre_cti[3, 3] += 100  # Delta 2
             image_pre_cti[2, 4] += 100  # Delta 3
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -668,7 +665,7 @@ class TestArcticAddCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -708,15 +705,15 @@ class TestArcticAddCTI:
             image_pre_cti[3, 3] += 100  # Delta 2
             image_pre_cti[2, 4] += 100  # Delta 3
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -725,7 +722,7 @@ class TestArcticAddCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -766,15 +763,15 @@ class TestArcticAddCTI:
             image_pre_cti[3, 3] += 100  # Delta 2
             image_pre_cti[2, 4] += 100  # Delta 3
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -783,7 +780,7 @@ class TestArcticAddCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -823,15 +820,15 @@ class TestArcticAddCTI:
             image_pre_cti[3, 3] += 100  # Delta 2
             image_pre_cti[2, 4] += 100  # Delta 3
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -840,7 +837,7 @@ class TestArcticAddCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -878,15 +875,15 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -895,7 +892,7 @@ class TestArcticAddCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -903,7 +900,7 @@ class TestArcticAddCTI:
                 correct_cti=False,
             )
 
-            settings_charge_inj = arctic_settings.Settings(
+            settings_charge_inj = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -912,7 +909,7 @@ class TestArcticAddCTI:
                 readout_offset=0,
             )
 
-            image_post_cti_charge_inj = pyarctic.call_arctic(
+            image_post_cti_charge_inj = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -935,7 +932,7 @@ class TestArcticAddCTI:
     class TestDensityVary:
         def test__horizontal_line__different_density_in_each_column(self):
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -944,19 +941,19 @@ class TestArcticAddCTI:
                 readout_offset=0,
             )
 
-            ccd = arctic_params.CCD(well_fill_beta=0.8, well_notch_depth=0.01)
+            ccd = ac.CCDVolume(well_fill_beta=0.8, well_notch_depth=0.01)
             species = [
-                arctic_params.Species(trap_density=10.0, trap_lifetime=1.0),
-                arctic_params.Species(trap_density=20.0, trap_lifetime=1.0),
-                arctic_params.Species(trap_density=30.0, trap_lifetime=1.0),
-                arctic_params.Species(trap_density=40.0, trap_lifetime=1.0),
-                arctic_params.Species(trap_density=50.0, trap_lifetime=1.0),
+                ac.Species(trap_density=10.0, trap_lifetime=1.0),
+                ac.Species(trap_density=20.0, trap_lifetime=1.0),
+                ac.Species(trap_density=30.0, trap_lifetime=1.0),
+                ac.Species(trap_density=40.0, trap_lifetime=1.0),
+                ac.Species(trap_density=50.0, trap_lifetime=1.0),
             ]
 
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=species,
                 ccd=ccd,
@@ -982,15 +979,15 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -999,7 +996,7 @@ class TestArcticCorrectCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -1009,7 +1006,7 @@ class TestArcticCorrectCTI:
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.call_arctic(
+            image_correct_cti = ac.call_arctic(
                 image=image_post_cti,
                 species=[species],
                 ccd=ccd,
@@ -1028,15 +1025,15 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[:, 2] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -1045,7 +1042,7 @@ class TestArcticCorrectCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -1055,7 +1052,7 @@ class TestArcticCorrectCTI:
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.call_arctic(
+            image_correct_cti = ac.call_arctic(
                 image=image_post_cti,
                 species=[species],
                 ccd=ccd,
@@ -1076,15 +1073,15 @@ class TestArcticCorrectCTI:
             image_pre_cti[3, 3] += 100  # Delta 2
             image_pre_cti[2, 4] += 100  # Delta 3
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -1093,7 +1090,7 @@ class TestArcticCorrectCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -1103,7 +1100,7 @@ class TestArcticCorrectCTI:
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.call_arctic(
+            image_correct_cti = ac.call_arctic(
                 image=image_post_cti,
                 species=[species],
                 ccd=ccd,
@@ -1122,15 +1119,15 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings_niter_5 = arctic_settings.Settings(
+            settings_niter_5 = ac.Settings(
                 well_depth=84700,
                 niter=5,
                 express=5,
@@ -1139,7 +1136,7 @@ class TestArcticCorrectCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -1147,7 +1144,7 @@ class TestArcticCorrectCTI:
                 correct_cti=False,
             )
 
-            image_correct_cti = pyarctic.call_arctic(
+            image_correct_cti = ac.call_arctic(
                 image=image_post_cti,
                 species=[species],
                 ccd=ccd,
@@ -1157,7 +1154,7 @@ class TestArcticCorrectCTI:
 
             image_difference_niter_5 = image_correct_cti - image_pre_cti
 
-            settings_niter_3 = arctic_settings.Settings(
+            settings_niter_3 = ac.Settings(
                 well_depth=84700,
                 niter=3,
                 express=5,
@@ -1166,7 +1163,7 @@ class TestArcticCorrectCTI:
                 readout_offset=0,
             )
 
-            image_correct_cti = pyarctic.call_arctic(
+            image_correct_cti = ac.call_arctic(
                 image=image_post_cti,
                 species=[species],
                 ccd=ccd,
@@ -1186,15 +1183,15 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((5, 3))
             image_pre_cti[2, :] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -1203,7 +1200,7 @@ class TestArcticCorrectCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -1213,7 +1210,7 @@ class TestArcticCorrectCTI:
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.call_arctic(
+            image_correct_cti = ac.call_arctic(
                 image=image_post_cti,
                 species=[species],
                 ccd=ccd,
@@ -1232,15 +1229,15 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((6, 4))
             image_pre_cti[2, :] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -1249,7 +1246,7 @@ class TestArcticCorrectCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -1259,7 +1256,7 @@ class TestArcticCorrectCTI:
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.call_arctic(
+            image_correct_cti = ac.call_arctic(
                 image=image_post_cti,
                 species=[species],
                 ccd=ccd,
@@ -1278,15 +1275,15 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((6, 3))
             image_pre_cti[2, :] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -1295,7 +1292,7 @@ class TestArcticCorrectCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -1305,7 +1302,7 @@ class TestArcticCorrectCTI:
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.call_arctic(
+            image_correct_cti = ac.call_arctic(
                 image=image_post_cti,
                 species=[species],
                 ccd=ccd,
@@ -1323,15 +1320,15 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((5, 4))
             image_pre_cti[2, :] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -1340,7 +1337,7 @@ class TestArcticCorrectCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -1350,7 +1347,7 @@ class TestArcticCorrectCTI:
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.call_arctic(
+            image_correct_cti = ac.call_arctic(
                 image=image_post_cti,
                 species=[species],
                 ccd=ccd,
@@ -1368,15 +1365,15 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((5, 3))
             image_pre_cti[:, 2] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -1385,7 +1382,7 @@ class TestArcticCorrectCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -1395,7 +1392,7 @@ class TestArcticCorrectCTI:
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.call_arctic(
+            image_correct_cti = ac.call_arctic(
                 image=image_post_cti,
                 species=[species],
                 ccd=ccd,
@@ -1413,15 +1410,15 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((6, 4))
             image_pre_cti[:, 2] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -1430,7 +1427,7 @@ class TestArcticCorrectCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -1440,7 +1437,7 @@ class TestArcticCorrectCTI:
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.call_arctic(
+            image_correct_cti = ac.call_arctic(
                 image=image_post_cti,
                 species=[species],
                 ccd=ccd,
@@ -1458,15 +1455,15 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((6, 3))
             image_pre_cti[:, 2] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -1475,7 +1472,7 @@ class TestArcticCorrectCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -1485,7 +1482,7 @@ class TestArcticCorrectCTI:
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.call_arctic(
+            image_correct_cti = ac.call_arctic(
                 image=image_post_cti,
                 species=[species],
                 ccd=ccd,
@@ -1504,15 +1501,15 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((5, 4))
             image_pre_cti[:, 2] += 100
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -1521,7 +1518,7 @@ class TestArcticCorrectCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -1531,7 +1528,7 @@ class TestArcticCorrectCTI:
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.call_arctic(
+            image_correct_cti = ac.call_arctic(
                 image=image_post_cti,
                 species=[species],
                 ccd=ccd,
@@ -1552,15 +1549,15 @@ class TestArcticCorrectCTI:
             image_pre_cti[3, 3] += 100  # Delta 2
             image_pre_cti[2, 4] += 100  # Delta 3
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -1569,7 +1566,7 @@ class TestArcticCorrectCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -1579,7 +1576,7 @@ class TestArcticCorrectCTI:
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.call_arctic(
+            image_correct_cti = ac.call_arctic(
                 image=image_post_cti,
                 species=[species],
                 ccd=ccd,
@@ -1600,15 +1597,15 @@ class TestArcticCorrectCTI:
             image_pre_cti[3, 3] += 100  # Delta 2
             image_pre_cti[2, 4] += 100  # Delta 3
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -1617,7 +1614,7 @@ class TestArcticCorrectCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -1627,7 +1624,7 @@ class TestArcticCorrectCTI:
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.call_arctic(
+            image_correct_cti = ac.call_arctic(
                 image=image_post_cti,
                 species=[species],
                 ccd=ccd,
@@ -1648,15 +1645,15 @@ class TestArcticCorrectCTI:
             image_pre_cti[3, 3] += 100  # Delta 2
             image_pre_cti[2, 4] += 100  # Delta 3
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -1665,7 +1662,7 @@ class TestArcticCorrectCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -1675,7 +1672,7 @@ class TestArcticCorrectCTI:
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.call_arctic(
+            image_correct_cti = ac.call_arctic(
                 image=image_post_cti,
                 species=[species],
                 ccd=ccd,
@@ -1696,15 +1693,15 @@ class TestArcticCorrectCTI:
             image_pre_cti[3, 3] += 100  # Delta 2
             image_pre_cti[2, 4] += 100  # Delta 3
 
-            species = arctic_params.Species(trap_density=0.1, trap_lifetime=1.0)
-            ccd = arctic_params.CCD(
+            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
                 well_fill_beta=0.8,
                 well_fill_gamma=0.0,
             )
 
-            settings = arctic_settings.Settings(
+            settings = ac.Settings(
                 well_depth=84700,
                 niter=1,
                 express=5,
@@ -1713,7 +1710,7 @@ class TestArcticCorrectCTI:
                 readout_offset=0,
             )
 
-            image_post_cti = pyarctic.call_arctic(
+            image_post_cti = ac.call_arctic(
                 image=image_pre_cti,
                 species=[species],
                 ccd=ccd,
@@ -1723,7 +1720,7 @@ class TestArcticCorrectCTI:
 
             image_difference_1 = image_post_cti - image_pre_cti
 
-            image_correct_cti = pyarctic.call_arctic(
+            image_correct_cti = ac.call_arctic(
                 image=image_post_cti,
                 species=[species],
                 ccd=ccd,

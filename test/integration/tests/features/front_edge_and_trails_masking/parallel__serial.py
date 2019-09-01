@@ -1,27 +1,17 @@
-import os
-
 import autofit as af
-from autocti.model import arctic_params
-from autocti.model import arctic_settings
-from autocti.pipeline import phase as ph
-from autocti.pipeline import pipeline as pl
-from test.simulation import simulation_util
-from test.integration import integration_util
+import autocti as ac
 from test.integration.tests import runner
 
-test_type = "parallel_and_serial"
-test_name = "x1_species_x1_image"
-ci_data_type = "ci_uniform"
-ci_data_model = "parallel_and_serial_x1"
-ci_data_resolution = "patch"
-ci_normalizations = [84700.0]
+test_type = "features/front_edge_and_trails_masking"
+test_name = "parallel_x1__serial_x1"
 
-test_path = "{}/../../".format(os.path.dirname(os.path.realpath(__file__)))
+test_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
 output_path = test_path + "output/"
 config_path = test_path + "config"
 af.conf.instance = af.conf.Config(config_path=config_path, output_path=output_path)
 
-parallel_settings = arctic_settings.Settings(
+
+parallel_settings = ac.Settings(
     well_depth=84700,
     niter=1,
     express=2,
@@ -29,7 +19,7 @@ parallel_settings = arctic_settings.Settings(
     charge_injection_mode=False,
     readout_offset=0,
 )
-serial_settings = arctic_settings.Settings(
+serial_settings = ac.Settings(
     well_depth=84700,
     niter=1,
     express=2,
@@ -37,13 +27,11 @@ serial_settings = arctic_settings.Settings(
     charge_injection_mode=False,
     readout_offset=0,
 )
-cti_settings = arctic_settings.ArcticSettings(
-    parallel=parallel_settings, serial=serial_settings
-)
+cti_settings = ac.ArcticSettings(parallel=parallel_settings, serial=serial_settings)
 
 
 def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
-    class ParallelSerialPhase(ph.ParallelSerialPhase):
+    class ParallelSerialPhase(ac.ParallelSerialPhase):
         def pass_priors(self, results):
 
             self.parallel_ccd.well_fill_alpha = 1.0
@@ -55,17 +43,21 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
         phase_name="phase_1",
         phase_folders=phase_folders,
         optimizer_class=optimizer_class,
-        parallel_species=[af.PriorModel(arctic_params.Species)],
-        parallel_ccd=arctic_params.CCD,
-        serial_species=[af.PriorModel(arctic_params.Species)],
-        serial_ccd=arctic_params.CCD,
+        parallel_species=[af.PriorModel(ac.Species)],
+        parallel_ccd=ac.CCDVolume,
+        serial_species=[af.PriorModel(ac.Species)],
+        serial_ccd=ac.CCDVolume,
+        parallel_front_edge_mask_rows=(0, 1),
+        parallel_trails_mask_rows=(0, 1),
+        serial_front_edge_mask_columns=(0, 1),
+        serial_trails_mask_columns=(0, 1),
     )
 
     phase1.optimizer.n_live_points = 60
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.sampling_efficiency = 0.2
 
-    return pl.Pipeline(name, phase1)
+    return ac.Pipeline(name, phase1)
 
 
 if __name__ == "__main__":

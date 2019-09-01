@@ -1,6 +1,5 @@
-import os
-
 import math
+import os
 
 import autofit as af
 from test.integration import integration_util
@@ -45,6 +44,7 @@ def run(
     config_folder="config",
     cti_settings=None,
     load_cosmic_ray_image=False,
+    pool=None,
 ):
     test_name = test_name or module.test_name
     test_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
@@ -70,7 +70,7 @@ def run(
         name=test_name,
         phase_folders=[module.test_type, test_name],
         optimizer_class=optimizer_class,
-    ).run(ci_datas=data, cti_settings=cti_settings)
+    ).run(ci_datas=data, cti_settings=cti_settings, pool=pool)
 
 
 def run_a_mock(module):
@@ -88,6 +88,6 @@ def run_with_multi_nest(module):
     run(
         module,
         test_name=f"{module.test_name}_nest",
-        optimizer_class=optimizer_class,
+        optimizer_class=af.MultiNest,
         config_folder="config_mock",
     )
