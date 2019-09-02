@@ -54,52 +54,21 @@ class AbstractCIFit(af.DataFit):
     def figure_of_merit(self):
         return self.likelihood
 
-
 class CIFit(AbstractCIFit):
-    def __init__(self, masked_ci_data: ci_data.MaskedCIData, cti_params, cti_settings):
-        super().__init__(
-            masked_ci_data, masked_ci_data.noise_map, cti_params, cti_settings
-        )
 
-    @property
-    def noise_scaling_map_of_ci_regions(self):
-        return self.ci_data_fit.chinj.ci_regions_from_array(
-            array=self.chi_squared_map.copy()
-        )
-
-    @property
-    def noise_scaling_map_of_parallel_trails(self):
-        return self.ci_data_fit.chinj.parallel_non_ci_regions_frame_from_frame(
-            array=self.chi_squared_map.copy()
-        )
-
-    @property
-    def noise_scaling_map_of_serial_trails(self):
-        return self.ci_data_fit.chinj.serial_all_trails_frame_from_frame(
-            array=self.chi_squared_map.copy()
-        )
-
-    @property
-    def noise_scaling_map_of_serial_overscan_above_trails(self):
-        return self.ci_data_fit.chinj.serial_overscan_above_trails_frame_from_frame(
-            array=self.chi_squared_map.copy()
-        )
-
-
-class CIHyperFit(AbstractCIFit):
     def __init__(
-        self,
-        masked_hyper_ci_data: ci_data.MaskedCIHyperData,
-        cti_params,
-        cti_settings,
-        hyper_noise_scalars,
+            self,
+            masked_ci_data: ci_data.MaskedCIData,
+            cti_params,
+            cti_settings,
+            hyper_noise_scalars=None,
     ):
         """Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian
         framework.
 
         Parameters
         -----------
-        masked_hyper_ci_data
+        masked_ci_data
             The charge injection image that is fitted.
         cti_params : arctic_params.ArcticParams
             The cti model parameters which describe how CTI during clocking.
@@ -108,23 +77,55 @@ class CIHyperFit(AbstractCIFit):
         hyper_noise_scalars :
             The ci_hyper-parameter(s) which the noise_scaling_maps is multiplied by to scale the noise-map.
         """
-        self.hyper_noises = hyper_noise_scalars
-        self.noise_scaling_maps = masked_hyper_ci_data.noise_scaling_maps
-        self.hyper_noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
-            noise_scaling_maps=masked_hyper_ci_data.noise_scaling_maps,
-            hyper_noise_scalars=hyper_noise_scalars,
-            noise_map=masked_hyper_ci_data.noise_map,
-        )
+
+        self.hyper_noise_scalars = hyper_noise_scalars
+
+        if hyper_noise_scalars is not None:
+
+            self.noise_scaling_maps = masked_ci_data.noise_scaling_maps
+            noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
+                hyper_noise_scalars=hyper_noise_scalars,
+                noise_scaling_maps=masked_ci_data.noise_scaling_maps,
+                noise_map=masked_ci_data.noise_map,
+            )
+
+        else:
+
+            noise_map = masked_ci_data.noise_map
+
         super().__init__(
-            masked_ci_data=masked_hyper_ci_data,
-            noise_map=self.hyper_noise_map,
+            masked_ci_data=masked_ci_data,
+            noise_map=noise_map,
             cti_params=cti_params,
             cti_settings=cti_settings,
         )
 
+    @property
+    def chi_squared_map_of_ci_regions(self):
+        return self.ci_data_fit.chinj.ci_regions_from_array(
+            array=self.chi_squared_map.copy()
+        )
+
+    @property
+    def chi_squared_map_of_parallel_trails(self):
+        return self.ci_data_fit.chinj.parallel_non_ci_regions_frame_from_frame(
+            array=self.chi_squared_map.copy()
+        )
+
+    @property
+    def chi_squared_map_of_serial_trails(self):
+        return self.ci_data_fit.chinj.serial_all_trails_frame_from_frame(
+            array=self.chi_squared_map.copy()
+        )
+
+    @property
+    def chi_squared_map_of_serial_overscan_above_trails(self):
+        return self.ci_data_fit.chinj.serial_overscan_above_trails_frame_from_frame(
+            array=self.chi_squared_map.copy()
+        )
 
 def hyper_noise_map_from_noise_map_and_noise_scalings(
-    noise_scaling_maps, hyper_noise_scalars, noise_map
+    hyper_noise_scalars, noise_scaling_maps, noise_map
 ):
     """For a noise-map, use the model hyper noise and noise-scaling maps to compute a scaled noise-map.
 

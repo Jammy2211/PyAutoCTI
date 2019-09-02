@@ -593,7 +593,7 @@ class Phase(af.AbstractPhase):
         def noise_scaling_maps_of_ci_regions(self):
             return list(
                 map(
-                    lambda most_likely_full_fit: most_likely_full_fit.noise_scaling_map_of_ci_regions,
+                    lambda most_likely_full_fit: most_likely_full_fit.chi_squared_map_of_ci_regions,
                     self.most_likely_full_fits,
                 )
             )
@@ -602,7 +602,7 @@ class Phase(af.AbstractPhase):
         def noise_scaling_maps_of_parallel_trails(self):
             return list(
                 map(
-                    lambda most_likely_full_fit: most_likely_full_fit.noise_scaling_map_of_parallel_trails,
+                    lambda most_likely_full_fit: most_likely_full_fit.chi_squared_map_of_parallel_trails,
                     self.most_likely_full_fits,
                 )
             )
@@ -611,7 +611,7 @@ class Phase(af.AbstractPhase):
         def noise_scaling_maps_of_serial_trails(self):
             return list(
                 map(
-                    lambda most_likely_full_fit: most_likely_full_fit.noise_scaling_map_of_serial_trails,
+                    lambda most_likely_full_fit: most_likely_full_fit.chi_squared_map_of_serial_trails,
                     self.most_likely_full_fits,
                 )
             )
@@ -620,7 +620,7 @@ class Phase(af.AbstractPhase):
         def noise_scaling_maps_of_serial_overscan_above_trails(self):
             return list(
                 map(
-                    lambda most_likely_full_fit: most_likely_full_fit.noise_scaling_map_of_serial_overscan_above_trails,
+                    lambda most_likely_full_fit: most_likely_full_fit.chi_squared_map_of_serial_overscan_above_trails,
                     self.most_likely_full_fits,
                 )
             )
@@ -1104,8 +1104,8 @@ class HyperPhase(Phase):
                 cti_params = cti_params_for_instance(instance=instance)
                 return list(
                     map(
-                        lambda ci_data_extracted: ci_fit.CIHyperFit(
-                            masked_hyper_ci_data=ci_data_extracted,
+                        lambda ci_data_extracted: ci_fit.CIFit(
+                            masked_ci_data=ci_data_extracted,
                             cti_params=cti_params,
                             cti_settings=self.cti_settings,
                             hyper_noise_scalars=instance.hyper_noise_scalars,
@@ -1118,8 +1118,8 @@ class HyperPhase(Phase):
                 cti_params = cti_params_for_instance(instance=instance)
                 return list(
                     map(
-                        lambda hyper_data: ci_fit.CIHyperFit(
-                            masked_hyper_ci_data=hyper_data,
+                        lambda hyper_data: ci_fit.CIFit(
+                            masked_ci_data=hyper_data,
                             cti_params=cti_params,
                             cti_settings=self.cti_settings,
                             hyper_noise_scalars=instance.hyper_noise_scalars,
@@ -1429,8 +1429,8 @@ def pipe_cti(ci_data_fit, cti_params, cti_settings):
 
 
 def pipe_cti_hyper(ci_data_fit, cti_params, cti_settings, hyper_noise_scalars):
-    fit = ci_fit.CIHyperFit(
-        masked_hyper_ci_data=ci_data_fit,
+    fit = ci_fit.CIFit(
+        masked_ci_data=ci_data_fit,
         cti_params=cti_params,
         cti_settings=cti_settings,
         hyper_noise_scalars=hyper_noise_scalars,
