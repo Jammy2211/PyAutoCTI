@@ -17,7 +17,7 @@ from autocti.charge_injection.ci_data import (
 )
 from autocti.charge_injection.ci_fit import (
     CIFit,
-    CIHyperFit,
+    CIFit,
     hyper_noise_map_from_noise_map_and_noise_scalings,
 )
 from autocti.charge_injection.ci_frame import (

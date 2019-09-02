@@ -335,8 +335,8 @@ def make_hyper_noise_scalars():
 
 @pytest.fixture(name="fit_hyper")
 def make_fit_hyper(ci_data_fit_hyper, cti_params, cti_settings, hyper_noise_scalars):
-    return ac.CIHyperFit(
-        masked_hyper_ci_data=ci_data_fit_hyper,
+    return ac.CIFit(
+        masked_ci_data=ci_data_fit_hyper,
         cti_params=cti_params,
         cti_settings=cti_settings,
         hyper_noise_scalars=hyper_noise_scalars,
