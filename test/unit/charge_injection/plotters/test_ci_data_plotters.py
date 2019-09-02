@@ -221,7 +221,7 @@ def test__ci_individuals__output_dependent_on_inputs(
 
 @pytest.fixture(name="data_extracted")
 def make_ci_data_extracted(data, mask):
-    return ac.MaskedCIData(
+    return ac.CIDataMasked(
         image=data.image,
         noise_map=data.noise_map,
         ci_pre_cti=data.ci_pre_cti,

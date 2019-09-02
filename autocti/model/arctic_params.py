@@ -4,8 +4,8 @@ import numpy as np
 class ArcticParams(object):
     def __init__(
         self,
-        parallel_ccd=None,
-        serial_ccd=None,
+        parallel_ccd_volume=None,
+        serial_ccd_volume=None,
         parallel_species=None,
         serial_species=None,
     ):
@@ -14,17 +14,17 @@ class ArcticParams(object):
 
         Parameters
         ----------
-        parallel_ccd: CCDVolume
+        parallel_ccd_volume: CCDVolume
             Class describing the state of the CCD in the parallel direction
-        serial_ccd: CCDVolume
+        serial_ccd_volume: CCDVolume
             Class describing the state of the CCD in the serial direction
         parallel_species : [ArcticParams.ParallelParams]
            The parallel parameters for the arctic CTI model
         serial_species : [ArcticParams.SerialParams]
            The serial parameters for the arctic CTI model
         """
-        self.parallel_ccd = parallel_ccd
-        self.serial_ccd = serial_ccd
+        self.parallel_ccd_volume = parallel_ccd_volume
+        self.serial_ccd_volume = serial_ccd_volume
         self.parallel_species = parallel_species or []
         self.serial_species = serial_species or []
 
@@ -134,27 +134,27 @@ class Species(object):
         add_species("Parallel", self.parallel_species)
         add_species("Serial", self.serial_species)
 
-        if self.serial_ccd is not None:
+        if self.serial_ccd_volume is not None:
             ext_header.set(
                 "cte_swln",
-                self.serial_ccd.well_notch_depth,
+                self.serial_ccd_volume.well_notch_depth,
                 "CCD Well notch depth (Serial)",
             )
             ext_header.set(
                 "cte_swlp",
-                self.serial_ccd.well_fill_beta,
+                self.serial_ccd_volume.well_fill_beta,
                 "CCD Well filling power (Serial)",
             )
 
-        if self.parallel_ccd is not None:
+        if self.parallel_ccd_volume is not None:
             ext_header.set(
                 "cte_pwln",
-                self.parallel_ccd.well_notch_depth,
+                self.parallel_ccd_volume.well_notch_depth,
                 "CCD Well notch depth (Parallel)",
             )
             ext_header.set(
                 "cte_pwlp",
-                self.parallel_ccd.well_fill_beta,
+                self.parallel_ccd_volume.well_fill_beta,
                 "CCD Well filling power (Parallel)",
             )
 

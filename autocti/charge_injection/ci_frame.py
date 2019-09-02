@@ -1263,26 +1263,26 @@ class FrameGeometry(object):
             The settings that control the cti clocking algorithm (e.g. the ccd well_depth express option).
         """
 
-        if cti_params.parallel_ccd is not None:
+        if cti_params.parallel_ccd_volume is not None:
             image_pre_parallel_clocking = self.rotate_for_parallel_cti(image=image)
             image_post_parallel_clocking = pyarctic.call_arctic(
                 image=image_pre_parallel_clocking,
                 species=cti_params.parallel_species,
-                ccd=cti_params.parallel_ccd,
+                ccd=cti_params.parallel_ccd_volume,
                 settings=cti_settings.parallel,
                 correct_cti=False,
                 use_poisson_densities=use_parallel_poisson_densities,
             )
             image = self.rotate_for_parallel_cti(image_post_parallel_clocking)
 
-        if cti_params.serial_ccd is not None:
+        if cti_params.serial_ccd_volume is not None:
             image_pre_serial_clocking = self.rotate_before_serial_cti(
                 image_pre_clocking=image
             )
             image_post_serial_clocking = pyarctic.call_arctic(
                 image=image_pre_serial_clocking,
                 species=cti_params.serial_species,
-                ccd=cti_params.serial_ccd,
+                ccd=cti_params.serial_ccd_volume,
                 settings=cti_settings.serial,
                 correct_cti=False,
                 use_poisson_densities=False,
@@ -1311,7 +1311,7 @@ class FrameGeometry(object):
             image_post_serial_clocking = pyarctic.call_arctic(
                 image=image_pre_serial_clocking,
                 species=cti_params.serial_species,
-                ccd=cti_params.serial_ccd,
+                ccd=cti_params.serial_ccd_volume,
                 settings=cti_settings.serial,
                 correct_cti=True,
                 use_poisson_densities=False,
@@ -1323,7 +1323,7 @@ class FrameGeometry(object):
             image_post_parallel_clocking = pyarctic.call_arctic(
                 image=image_pre_parallel_clocking,
                 species=cti_params.parallel_species,
-                ccd=cti_params.parallel_ccd,
+                ccd=cti_params.parallel_ccd_volume,
                 settings=cti_settings.parallel,
                 correct_cti=True,
                 use_poisson_densities=False,

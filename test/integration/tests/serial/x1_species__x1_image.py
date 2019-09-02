@@ -10,7 +10,6 @@ ci_data_resolution = "patch"
 ci_normalizations = [84700.0]
 
 
-
 serial_settings = ac.Settings(
     well_depth=84700,
     niter=1,
@@ -26,14 +25,14 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     class SerialPhase(ac.SerialPhase):
         def customize_priors(self, results):
 
-            self.serial_ccd.well_fill_alpha = 1.0
-            self.serial_ccd.well_fill_gamma = 0.0
+            self.serial_ccd_volume.well_fill_alpha = 1.0
+            self.serial_ccd_volume.well_fill_gamma = 0.0
 
     phase1 = SerialPhase(
         phase_name="phase_1",
         phase_folders=phase_folders,
         serial_species=[af.PriorModel(ac.Species)],
-        serial_ccd=ac.CCDVolume,
+        serial_ccd_volume=ac.CCDVolume,
         optimizer_class=optimizer_class,
     )
 

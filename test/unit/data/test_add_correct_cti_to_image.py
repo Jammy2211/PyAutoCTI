@@ -22,11 +22,11 @@ def setup(
 ):
     serial_species = []
     parallel_species = []
-    serial_ccd = None
-    parallel_ccd = None
+    serial_ccd_volume = None
+    parallel_ccd_volume = None
 
     if include_serial:
-        serial_ccd = ac.CCDVolume(
+        serial_ccd_volume = ac.CCDVolume(
             well_notch_depth=s_well_notch_depth,
             well_fill_alpha=s_well_fill_alpha,
             well_fill_beta=s_well_fill_beta,
@@ -39,7 +39,7 @@ def setup(
             for i in range(len(s_trap_densities))
         ]
     if include_parallel:
-        parallel_ccd = ac.CCDVolume(
+        parallel_ccd_volume = ac.CCDVolume(
             well_notch_depth=p_well_notch_depth,
             well_fill_alpha=p_well_fill_alpha,
             well_fill_beta=p_well_fill_beta,
@@ -53,8 +53,8 @@ def setup(
         ]
 
     return ac.ArcticParams(
-        parallel_ccd=parallel_ccd,
-        serial_ccd=serial_ccd,
+        parallel_ccd_volume=parallel_ccd_volume,
+        serial_ccd_volume=serial_ccd_volume,
         serial_species=serial_species,
         parallel_species=parallel_species,
     )
@@ -104,7 +104,7 @@ def make_params_parallel():
     ccd = ac.CCDVolume(well_notch_depth=0.000001, well_fill_beta=0.8)
 
     params_parallel = ac.ArcticParams(
-        parallel_species=params_parallel, parallel_ccd=ccd
+        parallel_species=params_parallel, parallel_ccd_volume=ccd
     )
 
     return params_parallel
@@ -115,7 +115,7 @@ def make_params_serial():
     params_serial = [ac.Species(trap_density=0.2, trap_lifetime=2.0)]
     ccd = ac.CCDVolume(well_notch_depth=0.000001, well_fill_beta=0.4)
 
-    params_serial = ac.ArcticParams(serial_species=params_serial, serial_ccd=ccd)
+    params_serial = ac.ArcticParams(serial_species=params_serial, serial_ccd_volume=ccd)
 
     return params_serial
 
@@ -123,16 +123,16 @@ def make_params_serial():
 @pytest.fixture(scope="class", name="params_both")
 def make_params_both():
     params_parallel = [ac.Species(trap_density=0.4, trap_lifetime=1.0)]
-    parallel_ccd = ac.CCDVolume(well_notch_depth=0.000001, well_fill_beta=0.8)
+    parallel_ccd_volume = ac.CCDVolume(well_notch_depth=0.000001, well_fill_beta=0.8)
 
     params_serial = [ac.Species(trap_density=0.2, trap_lifetime=2.0)]
-    serial_ccd = ac.CCDVolume(well_notch_depth=0.000001, well_fill_beta=0.4)
+    serial_ccd_volume = ac.CCDVolume(well_notch_depth=0.000001, well_fill_beta=0.4)
 
     params_both = ac.ArcticParams(
         parallel_species=params_parallel,
         serial_species=params_serial,
-        parallel_ccd=parallel_ccd,
-        serial_ccd=serial_ccd,
+        parallel_ccd_volume=parallel_ccd_volume,
+        serial_ccd_volume=serial_ccd_volume,
     )
 
     return params_both
@@ -2170,14 +2170,14 @@ class TestParallelPoissonDensities:
         )
 
         parallel_species = ac.Species(trap_density=10.0, trap_lifetime=1.0)
-        parallel_ccd = ac.CCDVolume(
+        parallel_ccd_volume = ac.CCDVolume(
             well_notch_depth=1.0e-4,
             well_fill_beta=0.58,
             well_fill_gamma=0.0,
             well_fill_alpha=1.0,
         )
         params_parallel = ac.ArcticParams(
-            parallel_species=[parallel_species], parallel_ccd=parallel_ccd
+            parallel_species=[parallel_species], parallel_ccd_volume=parallel_ccd_volume
         )
         image_post_cti_const = im.add_cti_to_image(
             cti_params=params_parallel,
@@ -2194,7 +2194,7 @@ class TestParallelPoissonDensities:
         parallel_species[2].trap_density = 10.0
         parallel_species[3].trap_density = 10.0
         parallel_species[4].trap_density = 10.0
-        parallel_ccd = ac.CCDVolume(
+        parallel_ccd_volume = ac.CCDVolume(
             well_notch_depth=1.0e-4,
             well_fill_beta=0.58,
             well_fill_gamma=0.0,
@@ -2202,7 +2202,7 @@ class TestParallelPoissonDensities:
         )
 
         params_parallel = ac.ArcticParams(
-            parallel_species=parallel_species, parallel_ccd=parallel_ccd
+            parallel_species=parallel_species, parallel_ccd_volume=parallel_ccd_volume
         )
 
         image_post_cti_poisson = im.add_cti_to_image(
@@ -2218,7 +2218,7 @@ class TestParallelPoissonDensities:
     ):
 
         serial_species = ac.Species(trap_density=0.2, trap_lifetime=2.0)
-        serial_ccd = ac.CCDVolume(well_notch_depth=0.000001, well_fill_beta=0.4)
+        serial_ccd_volume = ac.CCDVolume(well_notch_depth=0.000001, well_fill_beta=0.4)
 
         image_pre_cti = np.zeros((5, 5))
         image_pre_cti[2, 0:4] = +100
@@ -2228,7 +2228,7 @@ class TestParallelPoissonDensities:
         )
 
         parallel_species = ac.Species(trap_density=10.0, trap_lifetime=1.0)
-        parallel_ccd = ac.CCDVolume(
+        parallel_ccd_volume = ac.CCDVolume(
             well_notch_depth=1.0e-4,
             well_fill_beta=0.58,
             well_fill_gamma=0.0,
@@ -2236,9 +2236,9 @@ class TestParallelPoissonDensities:
         )
         params_both = ac.ArcticParams(
             parallel_species=[parallel_species],
-            parallel_ccd=parallel_ccd,
+            parallel_ccd_volume=parallel_ccd_volume,
             serial_species=[serial_species],
-            serial_ccd=serial_ccd,
+            serial_ccd_volume=serial_ccd_volume,
         )
 
         arctic_both = ac.ArcticSettings(
@@ -2262,7 +2262,7 @@ class TestParallelPoissonDensities:
         parallel_species[2].trap_density = 10.0
         parallel_species[3].trap_density = 10.0
         parallel_species[4].trap_density = 10.0
-        parallel_ccd = ac.CCDVolume(
+        parallel_ccd_volume = ac.CCDVolume(
             well_notch_depth=1.0e-4,
             well_fill_beta=0.58,
             well_fill_gamma=0.0,
@@ -2271,9 +2271,9 @@ class TestParallelPoissonDensities:
 
         params_both = ac.ArcticParams(
             parallel_species=parallel_species,
-            parallel_ccd=parallel_ccd,
+            parallel_ccd_volume=parallel_ccd_volume,
             serial_species=[serial_species],
-            serial_ccd=serial_ccd,
+            serial_ccd_volume=serial_ccd_volume,
         )
 
         image_post_cti_poisson = im.add_cti_to_image(
@@ -2302,7 +2302,7 @@ class TestParallelPoissonDensities:
         parallel_species = ac.Species.poisson_species(
             species=[parallel_species], shape=im.shape, seed=1
         )
-        parallel_ccd = ac.CCDVolume(
+        parallel_ccd_volume = ac.CCDVolume(
             well_notch_depth=1.0e-4,
             well_fill_beta=0.58,
             well_fill_gamma=0.0,
@@ -2310,7 +2310,7 @@ class TestParallelPoissonDensities:
         )
 
         params_parallel = ac.ArcticParams(
-            parallel_species=parallel_species, parallel_ccd=parallel_ccd
+            parallel_species=parallel_species, parallel_ccd_volume=parallel_ccd_volume
         )
 
         image_post_cti = im.add_cti_to_image(

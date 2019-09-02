@@ -21,7 +21,7 @@ class TestParams:
         parallel_species_0 = ac.Species(trap_density=0.1, trap_lifetime=1.0)
         parallel_species_1 = ac.Species(trap_density=0.2, trap_lifetime=2.0)
 
-        parallel_ccd = ac.CCDVolume(
+        parallel_ccd_volume = ac.CCDVolume(
             well_notch_depth=0.01,
             well_fill_alpha=0.2,
             well_fill_beta=0.8,
@@ -31,7 +31,7 @@ class TestParams:
         serial_species_0 = ac.Species(trap_density=0.3, trap_lifetime=3.0)
         serial_species_1 = ac.Species(trap_density=0.4, trap_lifetime=4.0)
 
-        serial_ccd = ac.CCDVolume(
+        serial_ccd_volume = ac.CCDVolume(
             well_notch_depth=1.02,
             well_fill_alpha=1.1,
             well_fill_beta=1.4,
@@ -41,37 +41,37 @@ class TestParams:
         parameters = ac.ArcticParams(
             parallel_species=[parallel_species_0, parallel_species_1],
             serial_species=[serial_species_0, serial_species_1],
-            parallel_ccd=parallel_ccd,
-            serial_ccd=serial_ccd,
+            parallel_ccd_volume=parallel_ccd_volume,
+            serial_ccd_volume=serial_ccd_volume,
         )
 
         assert type(parameters) == ac.ArcticParams
         assert type(parameters.parallel_species[0]) == ac.Species
         assert type(parameters.parallel_species[1]) == ac.Species
-        assert type(parameters.parallel_ccd) == ac.CCDVolume
+        assert type(parameters.parallel_ccd_volume) == ac.CCDVolume
 
         assert parameters.parallel_species[0].trap_density == 0.1
         assert parameters.parallel_species[0].trap_lifetime == 1.0
         assert parameters.parallel_species[1].trap_density == 0.2
         assert parameters.parallel_species[1].trap_lifetime == 2.0
-        assert parameters.parallel_ccd.well_notch_depth == 0.01
-        assert parameters.parallel_ccd.well_fill_alpha == 0.2
-        assert parameters.parallel_ccd.well_fill_beta == 0.8
-        assert parameters.parallel_ccd.well_fill_gamma == 2.0
+        assert parameters.parallel_ccd_volume.well_notch_depth == 0.01
+        assert parameters.parallel_ccd_volume.well_fill_alpha == 0.2
+        assert parameters.parallel_ccd_volume.well_fill_beta == 0.8
+        assert parameters.parallel_ccd_volume.well_fill_gamma == 2.0
 
         assert type(parameters) == ac.ArcticParams
         assert type(parameters.serial_species[0]) == ac.Species
         assert type(parameters.serial_species[1]) == ac.Species
-        assert type(parameters.serial_ccd) == ac.CCDVolume
+        assert type(parameters.serial_ccd_volume) == ac.CCDVolume
 
         assert parameters.serial_species[0].trap_density == 0.3
         assert parameters.serial_species[0].trap_lifetime == 3.0
         assert parameters.serial_species[1].trap_density == 0.4
         assert parameters.serial_species[1].trap_lifetime == 4.0
-        assert parameters.serial_ccd.well_notch_depth == 1.02
-        assert parameters.serial_ccd.well_fill_alpha == 1.1
-        assert parameters.serial_ccd.well_fill_beta == 1.4
-        assert parameters.serial_ccd.well_fill_gamma == 1.6
+        assert parameters.serial_ccd_volume.well_notch_depth == 1.02
+        assert parameters.serial_ccd_volume.well_fill_alpha == 1.1
+        assert parameters.serial_ccd_volume.well_fill_beta == 1.4
+        assert parameters.serial_ccd_volume.well_fill_gamma == 1.6
 
     def test__delta_ellpiticity_of_species(self):
 
