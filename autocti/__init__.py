@@ -7,9 +7,8 @@ from autocti.model.arctic_settings import ArcticSettings, Settings
 from autocti.model.pyarctic import call_arctic
 from autocti.charge_injection.ci_data import (
     CIData,
-    MaskedCIData,
-    MaskedCIHyperData,
-    simulate,
+    CIDataMasked,
+    CIDataMasked,
     ci_pre_cti_from_ci_pattern_geometry_image_and_mask,
     ci_data_from_fits,
     output_ci_data_to_fits,
@@ -34,15 +33,16 @@ from autocti.pipeline.phase import (
     ParallelPhase,
     SerialPhase,
     ParallelSerialPhase,
-    ParallelHyperPhase,
-    SerialHyperPhase,
-    ParallelSerialHyperPhase,
-    HyperPhase,
     cti_params_for_instance,
 )
 from autocti.pipeline.pipeline import Pipeline
 
-from autocti.charge_injection.plotters import ci_data_plotters, ci_fit_plotters, fit_plotters, data_plotters
+from autocti.charge_injection.plotters import (
+    ci_data_plotters,
+    ci_fit_plotters,
+    fit_plotters,
+    data_plotters,
+)
 from autocti.plotters import array_plotters, line_plotters, plotter_util
 
 __version__ = "0.11.3"

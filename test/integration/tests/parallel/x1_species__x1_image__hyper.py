@@ -23,15 +23,15 @@ cti_settings = ac.ArcticSettings(parallel=parallel_settings)
 def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     class ParallelPhase(ac.ParallelPhase):
         def customize_priors(self, results):
-            self.parallel_ccd.well_fill_alpha = 1.0
-            self.parallel_ccd.well_fill_gamma = 0.0
+            self.parallel_ccd_volume.well_fill_alpha = 1.0
+            self.parallel_ccd_volume.well_fill_gamma = 0.0
 
     phase1 = ParallelPhase(
         phase_name="phase_1",
         phase_folders=phase_folders,
         optimizer_class=optimizer_class,
         parallel_species=[af.PriorModel(ac.Species)],
-        parallel_ccd=ac.CCDVolume,
+        parallel_ccd_volume=ac.CCDVolume,
         columns=40,
     )
 
@@ -39,24 +39,26 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.sampling_efficiency = 0.2
 
-    class ParallelHyperModelFixedPhase(ac.ParallelHyperPhase):
+    class ParallelModelFixedPhase(ac.ParallelPhase):
         def customize_priors(self, results):
 
             self.parallel_species = results.from_phase(
                 "phase_1"
             ).constant.parallel_species
-            self.parallel_ccd = results.from_phase("phase_1").constant.parallel_ccd
+            self.parallel_ccd_volume = results.from_phase(
+                "phase_1"
+            ).constant.parallel_ccd_volume
 
-    phase2 = ParallelHyperModelFixedPhase(
+    phase2 = ParallelModelFixedPhase(
         phase_name="phase_2",
         phase_folders=phase_folders,
         parallel_species=[af.PriorModel(ac.Species)],
-        parallel_ccd=ac.CCDVolume,
+        parallel_ccd_volume=ac.CCDVolume,
         optimizer_class=optimizer_class,
         columns=None,
     )
 
-    class ParallelHyperFixedPhase(ac.ParallelHyperPhase):
+    class ParallelFixedPhase(ac.ParallelPhase):
         def customize_priors(self, results):
 
             self.hyper_noise_scalars = results.from_phase(
@@ -65,11 +67,13 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
             self.parallel_species = results.from_phase(
                 "phase_1"
             ).variable.parallel_species
-            self.parallel_ccd = results.from_phase("phase_1").variable.parallel_ccd
-            self.parallel_ccd.well_fill_alpha = 1.0
-            self.parallel_ccd.well_fill_gamma = 0.0
+            self.parallel_ccd_volume = results.from_phase(
+                "phase_1"
+            ).variable.parallel_ccd_volume
+            self.parallel_ccd_volume.well_fill_alpha = 1.0
+            self.parallel_ccd_volume.well_fill_gamma = 0.0
 
-    phase3 = ParallelHyperFixedPhase(
+    phase3 = ParallelFixedPhase(
         phase_name="phase_3",
         phase_folders=phase_folders,
         optimizer_class=optimizer_class,

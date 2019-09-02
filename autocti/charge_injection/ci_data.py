@@ -19,6 +19,74 @@ class CIData(object):
         self.ci_frame = ci_frame
         self.cosmic_ray_image = cosmic_ray_image
 
+    @classmethod
+    def simulate(
+        cls,
+        ci_pre_cti,
+        frame_geometry,
+        ci_pattern,
+        cti_params,
+        cti_settings,
+        read_noise=None,
+        cosmic_ray_image=None,
+        use_parallel_poisson_densities=False,
+        noise_seed=-1,
+    ):
+        """Simulate a charge injection image, including effects like noises.
+
+        Parameters
+        -----------
+        ci_pre_cti
+        cosmic_ray_image
+            The dimensions of the output simulated charge injection image.
+        frame_geometry : ci_frame.CIQuadGeometry
+            The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
+            therefore the direction of clocking and rotations before input into the cti algorithm.
+        ci_pattern : ci_pattern.CIPatternSimulate
+            The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
+        cti_params : ArcticParams.ArcticParams
+            The CTI model parameters (trap density, trap lifetimes etc.).
+        cti_settings : ArcticSettings.ArcticSettings
+            The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
+        read_noise : None or float
+            The FWHM of the Gaussian read-noises added to the image.
+        noise_seed : int
+            Seed for the read-noises added to the image.
+        """
+
+        ci_frame = frame.ChInj(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
+
+        if cosmic_ray_image is not None:
+            ci_pre_cti += cosmic_ray_image
+
+        ci_pre_cti = cti_image.ImageFrame(
+            frame_geometry=frame_geometry, array=ci_pre_cti
+        )
+
+        ci_post_cti = ci_pre_cti.add_cti_to_image(
+            cti_params=cti_params,
+            cti_settings=cti_settings,
+            use_parallel_poisson_densities=use_parallel_poisson_densities,
+        )
+
+        if read_noise is not None:
+            ci_image = ci_post_cti + read_noise_map_from_shape_and_sigma(
+                shape=ci_post_cti.shape, sigma=read_noise, noise_seed=noise_seed
+            )
+            ci_noise_map = read_noise * np.ones(ci_post_cti.shape)
+        else:
+            ci_image = ci_post_cti
+            ci_noise_map = None
+
+        return CIData(
+            ci_frame=ci_frame,
+            image=ci_image,
+            noise_map=ci_noise_map,
+            ci_pre_cti=ci_pre_cti,
+            ci_pattern=ci_pattern,
+            cosmic_ray_image=cosmic_ray_image,
+        )
+
     @property
     def chinj(self):
         return frame.ChInj(frame_geometry=self.ci_frame, ci_pattern=self.ci_pattern)
@@ -27,32 +95,7 @@ class CIData(object):
     def shape(self):
         return self.image.shape
 
-    def map_to_ci_data_fit(self, func, mask: msk.Mask):
-        """
-        Maps an extraction function onto the arrays in this object and a mask.
-
-        Parameters
-        ----------
-        func
-            The extraction function
-        mask
-            A mask
-
-        Returns
-        -------
-        masked_ci_data: MaskedCIData
-        """
-        return MaskedCIData(
-            image=func(self.image),
-            noise_map=func(self.noise_map),
-            ci_pre_cti=func(self.ci_pre_cti),
-            mask=func(mask),
-            ci_pattern=self.ci_pattern,
-            ci_frame=self.ci_frame,
-            cosmic_ray_image=self.cosmic_ray_image,
-        )
-
-    def map_to_ci_hyper_data_fit(self, func, mask, noise_scaling_maps):
+    def map_to_ci_data_masked(self, func, mask, noise_scaling_maps=None):
         """
         Maps an extraction function onto the arrays in this object, a mask and noise scaling maps.
 
@@ -67,16 +110,19 @@ class CIData(object):
 
         Returns
         -------
-        masked_ci_data: MaskedCIData
+        masked_ci_data: CIDataMasked
         """
-        return MaskedCIHyperData(
+
+        return CIDataMasked(
             image=func(self.image),
             noise_map=func(self.noise_map),
             ci_pre_cti=func(self.ci_pre_cti),
             mask=func(mask),
             ci_pattern=self.ci_pattern,
             ci_frame=self.ci_frame,
-            noise_scaling_maps=list(map(func, noise_scaling_maps)),
+            noise_scaling_maps=list(map(func, noise_scaling_maps))
+            if noise_scaling_maps is not None
+            else None,
             cosmic_ray_image=self.cosmic_ray_image,
         )
 
@@ -114,55 +160,8 @@ class CIData(object):
 
         return extractor
 
-    def parallel_calibration_data(self, columns: (int,), mask: msk.Mask):
-        """
-        Creates a MaskedCIData object for a parallel section of the CCD
-
-        Parameters
-        ----------
-        columns
-            Columns to be extracted
-        mask
-            A mask
-
-        Returns
-        -------
-        MaskedCIData
-        """
-        return self.map_to_ci_data_fit(self.parallel_extractor(columns), mask)
-
-    def serial_calibration_data(self, rows: (int,), mask: msk.Mask):
-        """
-        Creates a MaskedCIData object for a serial section of the CCD
-
-        Parameters
-        ----------
-        rows
-            Rows to be extracted
-        mask
-            A mask
-        Returns
-        -------
-        MaskedCIData
-        """
-        return self.map_to_ci_data_fit(self.serial_extractor(rows), mask)
-
-    def parallel_serial_calibration_data(self, mask: msk.Mask):
-        """
-        Creates a MaskedCIData object for a section of the CCD
-
-        Parameters
-        ----------
-        mask
-            A mask
-        Returns
-        -------
-        MaskedCIData
-        """
-        return self.map_to_ci_data_fit(self.parallel_serial_extractor(), mask)
-
-    def parallel_hyper_calibration_data(
-        self, columns: (int,), mask: msk.Mask, noise_scaling_maps: (np.ndarray,)
+    def parallel_ci_data_masked_from_columns_and_mask(
+        self, columns: (int,), mask: msk.Mask, noise_scaling_maps: (np.ndarray,) = None
     ):
         """
         Creates a MaskedCIData object for a parallel section of the CCD
@@ -177,14 +176,16 @@ class CIData(object):
             A mask
         Returns
         -------
-        MaskedCIHyperData
+        CIDataMasked
         """
-        return self.map_to_ci_hyper_data_fit(
-            self.parallel_extractor(columns), mask, noise_scaling_maps
+        return self.map_to_ci_data_masked(
+            func=self.parallel_extractor(columns),
+            mask=mask,
+            noise_scaling_maps=noise_scaling_maps,
         )
 
-    def serial_hyper_calibration_data(
-        self, rows: (int,), mask: msk.Mask, noise_scaling_maps: (np.ndarray,)
+    def serial_ci_data_masked_from_rows_and_mask(
+        self, rows: (int,), mask: msk.Mask, noise_scaling_maps: (np.ndarray,) = None
     ):
         """
         Creates a MaskedCIData object for a serial section of the CCD
@@ -199,14 +200,16 @@ class CIData(object):
             A mask
         Returns
         -------
-        MaskedCIHyperData
+        CIDataMasked
         """
-        return self.map_to_ci_hyper_data_fit(
-            self.serial_extractor(rows), mask, noise_scaling_maps
+        return self.map_to_ci_data_masked(
+            func=self.serial_extractor(rows),
+            mask=mask,
+            noise_scaling_maps=noise_scaling_maps,
         )
 
-    def parallel_serial_hyper_calibration_data(
-        self, mask: msk.Mask, noise_scaling_maps: (np.ndarray,)
+    def parallel_serial_ci_data_masked_from_mask(
+        self, mask: msk.Mask, noise_scaling_maps: (np.ndarray,) = None
     ):
         """
         Creates a MaskedCIData object for a section of the CCD
@@ -219,10 +222,12 @@ class CIData(object):
             A mask
         Returns
         -------
-        MaskedCIHyperData
+        CIDataMasked
         """
-        return self.map_to_ci_hyper_data_fit(
-            self.parallel_serial_extractor(), mask, noise_scaling_maps
+        return self.map_to_ci_data_masked(
+            func=self.parallel_serial_extractor(),
+            mask=mask,
+            noise_scaling_maps=noise_scaling_maps,
         )
 
     @property
@@ -238,7 +243,7 @@ class CIData(object):
         return np.max(self.signal_to_noise_map)
 
 
-class MaskedCIData(object):
+class CIDataMasked(object):
     def __init__(
         self,
         image,
@@ -248,6 +253,7 @@ class MaskedCIData(object):
         ci_pattern,
         ci_frame,
         cosmic_ray_image=None,
+        noise_scaling_maps=None,
     ):
         """A fitting image is the collection of data components (e.g. the image, noise-maps, PSF, etc.) which are used \
         to generate and fit it with a model image.
@@ -282,6 +288,7 @@ class MaskedCIData(object):
         self.ci_pattern = ci_pattern
         self.ci_frame = ci_frame
         self.cosmic_ray_image = cosmic_ray_image
+        self.noise_scaling_maps = noise_scaling_maps
 
     @property
     def chinj(self):
@@ -300,95 +307,6 @@ class MaskedCIData(object):
     def signal_to_noise_max(self):
         """The maximum value of signal-to-noise_maps in an image pixel in the image's signal-to-noise_maps mappers"""
         return np.max(self.signal_to_noise_map)
-
-
-class MaskedCIHyperData(MaskedCIData):
-    def __init__(
-        self,
-        image,
-        noise_map,
-        ci_pre_cti,
-        mask,
-        ci_pattern,
-        ci_frame,
-        noise_scaling_maps,
-        cosmic_ray_image=None,
-    ):
-        super().__init__(
-            image=image,
-            noise_map=noise_map,
-            ci_pre_cti=ci_pre_cti,
-            mask=mask,
-            ci_pattern=ci_pattern,
-            ci_frame=ci_frame,
-            cosmic_ray_image=cosmic_ray_image,
-        )
-        self.noise_scaling_maps = noise_scaling_maps
-
-
-def simulate(
-    ci_pre_cti,
-    frame_geometry,
-    ci_pattern,
-    cti_params,
-    cti_settings,
-    read_noise=None,
-    cosmic_ray_image=None,
-    use_parallel_poisson_densities=False,
-    noise_seed=-1,
-):
-    """Simulate a charge injection image, including effects like noises.
-
-    Parameters
-    -----------
-    ci_pre_cti
-    cosmic_ray_image
-        The dimensions of the output simulated charge injection image.
-    frame_geometry : ci_frame.CIQuadGeometry
-        The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
-        therefore the direction of clocking and rotations before input into the cti algorithm.
-    ci_pattern : ci_pattern.CIPatternSimulate
-        The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
-    cti_params : ArcticParams.ArcticParams
-        The CTI model parameters (trap density, trap lifetimes etc.).
-    cti_settings : ArcticSettings.ArcticSettings
-        The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
-    read_noise : None or float
-        The FWHM of the Gaussian read-noises added to the image.
-    noise_seed : int
-        Seed for the read-noises added to the image.
-    """
-
-    ci_frame = frame.ChInj(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
-
-    if cosmic_ray_image is not None:
-        ci_pre_cti += cosmic_ray_image
-
-    ci_pre_cti = cti_image.ImageFrame(frame_geometry=frame_geometry, array=ci_pre_cti)
-
-    ci_post_cti = ci_pre_cti.add_cti_to_image(
-        cti_params=cti_params,
-        cti_settings=cti_settings,
-        use_parallel_poisson_densities=use_parallel_poisson_densities,
-    )
-
-    if read_noise is not None:
-        ci_image = ci_post_cti + read_noise_map_from_shape_and_sigma(
-            shape=ci_post_cti.shape, sigma=read_noise, noise_seed=noise_seed
-        )
-        ci_noise_map = read_noise * np.ones(ci_post_cti.shape)
-    else:
-        ci_image = ci_post_cti
-        ci_noise_map = None
-
-    return CIData(
-        ci_frame=ci_frame,
-        image=ci_image,
-        noise_map=ci_noise_map,
-        ci_pre_cti=ci_pre_cti,
-        ci_pattern=ci_pattern,
-        cosmic_ray_image=cosmic_ray_image,
-    )
 
 
 def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, image, mask=None):

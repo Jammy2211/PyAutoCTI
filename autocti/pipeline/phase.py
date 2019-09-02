@@ -5,7 +5,7 @@ import autofit as af
 
 from autocti import exc
 from autocti.pipeline import phase_tagging as tag
-from autocti.charge_injection import ci_fit, ci_data, ci_hyper, ci_mask
+from autocti.charge_injection import ci_data, ci_fit, ci_hyper, ci_mask
 from autocti.charge_injection.plotters import ci_data_plotters, ci_fit_plotters
 from autocti.data import mask as msk
 from autocti.model import arctic_params
@@ -13,13 +13,15 @@ from autocti.model import arctic_params
 
 def cti_params_for_instance(instance):
     return arctic_params.ArcticParams(
-        parallel_ccd=instance.parallel_ccd
-        if hasattr(instance, "parallel_ccd")
+        parallel_ccd_volume=instance.parallel_ccd_volume
+        if hasattr(instance, "parallel_ccd_volume")
         else None,
         parallel_species=instance.parallel_species
         if hasattr(instance, "parallel_species")
         else None,
-        serial_ccd=instance.serial_ccd if hasattr(instance, "serial_ccd") else None,
+        serial_ccd_volume=instance.serial_ccd_volume
+        if hasattr(instance, "serial_ccd_volume")
+        else None,
         serial_species=instance.serial_species
         if hasattr(instance, "serial_species")
         else None,
@@ -51,6 +53,10 @@ class Phase(af.AbstractPhase):
         self,
         phase_name,
         phase_folders=tuple(),
+        hyper_noise_scalar_of_ci_regions=None,
+        hyper_noise_scalar_of_parallel_trails=None,
+        hyper_noise_scalar_of_serial_trails=None,
+        hyper_noise_scalar_of_serial_overscan_above_trails=None,
         optimizer_class=af.DownhillSimplex,
         mask_function=msk.Mask.empty_for_shape,
         columns=None,
@@ -109,6 +115,15 @@ class Phase(af.AbstractPhase):
             optimizer_class=optimizer_class,
         )
 
+        self.hyper_noise_scalar_of_ci_regions = hyper_noise_scalar_of_ci_regions
+        self.hyper_noise_scalar_of_parallel_trails = (
+            hyper_noise_scalar_of_parallel_trails
+        )
+        self.hyper_noise_scalar_of_serial_trails = hyper_noise_scalar_of_serial_trails
+        self.hyper_noise_scalar_of_serial_overscan_above_trails = (
+            hyper_noise_scalar_of_serial_overscan_above_trails
+        )
+
     @property
     def variable(self):
         """
@@ -149,14 +164,17 @@ class Phase(af.AbstractPhase):
         return self.make_result(result=result, analysis=analysis)
 
     # noinspection PyMethodMayBeStatic
-    def extract_ci_data(self, data, mask):
-        return ci_data.MaskedCIData(
-            image=data.image,
-            noise_map=data.noise_map,
-            ci_pre_cti=data.ci_pre_cti,
+    def ci_datas_masked_extracted_from_ci_data(
+        self, ci_data, mask, noise_scaling_maps=None
+    ):
+        return ci_data.CIDataMasked(
+            image=ci_data.image,
+            noise_map=ci_data.noise_map,
+            ci_pre_cti=ci_data.ci_pre_cti,
             mask=mask,
-            ci_pattern=data.ci_pattern,
-            ci_frame=data.ci_frame,
+            ci_pattern=ci_data.ci_pattern,
+            ci_frame=ci_data.ci_frame,
+            noise_scaling_maps=noise_scaling_maps,
         )
 
     def masks_for_analysis_from_ci_datas(self, ci_datas):
@@ -300,28 +318,36 @@ class Phase(af.AbstractPhase):
 
         masks = self.masks_for_analysis_from_ci_datas(ci_datas=ci_datas)
 
-        ci_datas_fit = [
-            self.extract_ci_data(data=data, mask=mask)
-            for data, mask in zip(ci_datas, masks)
+        noise_scaling_maps = self.noise_scaling_maps_from_total_images_and_results(
+            total_images=len(ci_datas), results=results
+        )
+
+        ci_datas_masked_extracted = [
+            self.ci_datas_masked_extracted_from_ci_data(
+                ci_data=data, mask=mask, noise_scaling_maps=maps
+            )
+            for data, mask, maps in zip(ci_datas, masks, noise_scaling_maps)
         ]
-        ci_datas_full = list(
+        ci_datas_masked_full = list(
             map(
-                lambda data, mask: ci_data.MaskedCIData(
+                lambda data, mask, maps: ci_data.CIDataMasked(
                     image=data.image,
                     noise_map=data.noise_map,
                     ci_pre_cti=data.ci_pre_cti,
                     mask=mask,
                     ci_pattern=data.ci_pattern,
                     ci_frame=data.ci_frame,
+                    noise_scaling_maps=maps,
                 ),
                 ci_datas,
                 masks,
+                noise_scaling_maps,
             )
         )
 
         analysis = self.__class__.Analysis(
-            ci_datas_extracted=ci_datas_fit,
-            ci_datas_full=ci_datas_full,
+            ci_datas_masked_extracted=ci_datas_masked_extracted,
+            ci_datas_masked_full=ci_datas_masked_full,
             cti_settings=cti_settings,
             parallel_total_density_range=self.parallel_total_density_range,
             serial_total_density_range=self.serial_total_density_range,
@@ -330,6 +356,62 @@ class Phase(af.AbstractPhase):
             pool=pool,
         )
         return analysis
+
+    def noise_scaling_maps_from_total_images_and_results(self, total_images, results):
+
+        if self.hyper_noise_scalar_of_ci_regions is not None:
+            noise_scaling_maps_of_ci_regions = (
+                results.last.noise_scaling_maps_of_ci_regions
+            )
+        else:
+            noise_scaling_maps_of_ci_regions = total_images * [None]
+
+        if self.hyper_noise_scalar_of_parallel_trails is not None:
+            noise_scaling_maps_of_parallel_trails = (
+                results.last.noise_scaling_maps_of_parallel_trails
+            )
+        else:
+            noise_scaling_maps_of_parallel_trails = total_images * [None]
+
+        if self.hyper_noise_scalar_of_serial_trails is not None:
+            noise_scaling_maps_of_serial_trails = (
+                results.last.noise_scaling_maps_of_serial_trails
+            )
+        else:
+            noise_scaling_maps_of_serial_trails = total_images * [None]
+
+        if self.hyper_noise_scalar_of_serial_overscan_above_trails is not None:
+            noise_scaling_maps_of_serial_overscan_above_trails = (
+                results.last.noise_scaling_maps_of_serial_overscan_above_trails
+            )
+        else:
+            noise_scaling_maps_of_serial_overscan_above_trails = total_images * [None]
+
+        noise_scaling_maps = []
+
+        for image_index in range(total_images):
+            noise_scaling_maps.append(
+                [
+                    noise_scaling_maps_of_ci_regions[image_index],
+                    noise_scaling_maps_of_parallel_trails[image_index],
+                    noise_scaling_maps_of_serial_trails[image_index],
+                    noise_scaling_maps_of_serial_overscan_above_trails[image_index],
+                ]
+            )
+
+        for image_index in range(total_images):
+            noise_scaling_maps[image_index] = [
+                noise_scaling_map
+                for noise_scaling_map in noise_scaling_maps[image_index]
+                if noise_scaling_map is not None
+            ]
+
+        noise_scaling_maps = list(filter(None, noise_scaling_maps))
+
+        if noise_scaling_maps == []:
+            noise_scaling_maps = total_images * [None]
+
+        return noise_scaling_maps
 
     def customize_priors(self, results):
         """
@@ -343,12 +425,30 @@ class Phase(af.AbstractPhase):
         """
         pass
 
+    @property
+    def number_of_noise_scalars(self):
+        return len(self.hyper_noise_scalars)
+
+    @property
+    def hyper_noise_scalars(self):
+        return list(
+            filter(
+                None,
+                [
+                    self.hyper_noise_scalar_of_ci_regions,
+                    self.hyper_noise_scalar_of_parallel_trails,
+                    self.hyper_noise_scalar_of_serial_trails,
+                    self.hyper_noise_scalar_of_serial_overscan_above_trails,
+                ],
+            )
+        )
+
     # noinspection PyAbstractClass
     class Analysis(af.Analysis):
         def __init__(
             self,
-            ci_datas_extracted,
-            ci_datas_full,
+            ci_datas_masked_extracted,
+            ci_datas_masked_full,
             cti_settings,
             serial_total_density_range,
             parallel_total_density_range,
@@ -366,8 +466,8 @@ class Phase(af.AbstractPhase):
                 The charge injection ci_data-sets.
             """
 
-            self.ci_datas_extracted = ci_datas_full
-            self.ci_datas_full = ci_datas_full
+            self.ci_datas_masked_extracted = ci_datas_masked_full
+            self.ci_datas_masked_full = ci_datas_masked_full
             self.cti_settings = cti_settings
             self.parallel_total_density_range = parallel_total_density_range
             self.serial_total_density_range = serial_total_density_range
@@ -443,7 +543,7 @@ class Phase(af.AbstractPhase):
         def visualize(self, instance, image_path, during_analysis):
 
             ci_data_plotters.plot_ci_data_for_phase(
-                ci_datas_extracted=self.ci_datas_extracted,
+                ci_datas_extracted=self.ci_datas_masked_extracted,
                 extract_array_from_mask=self.extract_array_from_mask,
                 should_plot_as_subplot=self.plot_ci_data_as_subplot,
                 should_plot_image=self.plot_ci_data_image,
@@ -504,11 +604,19 @@ class Phase(af.AbstractPhase):
             cti_params = cti_params_for_instance(instance=instance)
             self.check_trap_lifetimes_are_ascending(cti_params=cti_params)
             self.check_total_density_within_range(cti_params=cti_params)
+
+            hyper_noise_scalars = self.hyper_noise_scalars_from_instance(
+                instance=instance
+            )
+
             pipe_cti_pass = partial(
-                pipe_cti, cti_params=cti_params, cti_settings=self.cti_settings
+                pipe_cti,
+                cti_params=cti_params,
+                cti_settings=self.cti_settings,
+                hyper_noise_scalars=hyper_noise_scalars,
             )
             likelihood = np.sum(
-                list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted))
+                list(self.pool.map(pipe_cti_pass, self.ci_datas_masked_extracted))
             )
             return likelihood
 
@@ -518,38 +626,71 @@ class Phase(af.AbstractPhase):
         def check_total_density_within_range(self, cti_params):
             raise NotImplementedError
 
-        def fits_of_ci_data_extracted_for_instance(self, instance):
+        def hyper_noise_scalars_from_instance(self, instance):
+            hyper_noise_scalars = list(
+                filter(
+                    None,
+                    [
+                        instance.hyper_noise_scalar_of_ci_regions,
+                        instance.hyper_noise_scalar_of_parallel_trails,
+                        instance.hyper_noise_scalar_of_serial_trails,
+                        instance.hyper_noise_scalar_of_serial_overscan_above_trails,
+                    ],
+                )
+            )
+            if hyper_noise_scalars:
+                return hyper_noise_scalars
+            else:
+                return None
+
+        def hyper_noise_scalars_from_instance_and_hyper_noise_scale(
+            self, instance, hyper_noise_scale
+        ):
+
+            if hyper_noise_scale:
+                return self.hyper_noise_scalars_from_instance(instance=instance)
+            else:
+                return None
+
+        def fits_of_ci_data_extracted_for_instance(
+            self, instance, hyper_noise_scale=True
+        ):
 
             cti_params = cti_params_for_instance(instance=instance)
+            hyper_noise_scalars = self.hyper_noise_scalars_from_instance_and_hyper_noise_scale(
+                instance=instance, hyper_noise_scale=hyper_noise_scale
+            )
+
             return list(
                 map(
-                    lambda ci_data_fit: ci_fit.CIFit(
-                        masked_ci_data=ci_data_fit,
+                    lambda ci_data_masked_extracted: ci_fit.CIFit(
+                        ci_data_masked=ci_data_masked_extracted,
                         cti_params=cti_params,
                         cti_settings=self.cti_settings,
+                        hyper_noise_scalars=hyper_noise_scalars,
                     ),
-                    self.ci_datas_extracted,
+                    self.ci_datas_masked_extracted,
                 )
             )
 
-        def fits_of_ci_data_full_for_instance(self, instance):
+        def fits_of_ci_data_full_for_instance(self, instance, hyper_noise_scale=True):
+
             cti_params = cti_params_for_instance(instance=instance)
-            return list(
-                map(
-                    lambda data: ci_fit.CIFit(
-                        masked_ci_data=data,
-                        cti_params=cti_params,
-                        cti_settings=self.cti_settings,
-                    ),
-                    self.ci_datas_full,
-                )
+            hyper_noise_scalars = self.hyper_noise_scalars_from_instance_and_hyper_noise_scale(
+                instance=instance, hyper_noise_scale=hyper_noise_scale
             )
 
-        def fits_of_ci_data_hyper_extracted_for_instance(self, instance):
-            raise NotImplementedError
-
-        def fits_of_ci_data_hyper_full_for_instance(self, instance):
-            raise NotImplementedError
+            return list(
+                map(
+                    lambda ci_data_masked_full: ci_fit.CIFit(
+                        ci_data_masked=ci_data_masked_full,
+                        cti_params=cti_params,
+                        cti_settings=self.cti_settings,
+                        hyper_noise_scalars=hyper_noise_scalars,
+                    ),
+                    self.ci_datas_masked_full,
+                )
+            )
 
     class Result(af.Result):
 
@@ -590,38 +731,48 @@ class Phase(af.AbstractPhase):
             )
 
         @property
+        def most_likely_full_fits_no_hyper_scaling(self):
+            return self.analysis.fits_of_ci_data_full_for_instance(
+                instance=self.constant
+            )
+
+        @property
         def noise_scaling_maps_of_ci_regions(self):
+
             return list(
                 map(
-                    lambda most_likely_full_fit: most_likely_full_fit.chi_squared_map_of_ci_regions,
-                    self.most_likely_full_fits,
+                    lambda fit: fit.chi_squared_map_of_ci_regions,
+                    self.most_likely_full_fits_no_hyper_scaling,
                 )
             )
 
         @property
         def noise_scaling_maps_of_parallel_trails(self):
+
             return list(
                 map(
                     lambda most_likely_full_fit: most_likely_full_fit.chi_squared_map_of_parallel_trails,
-                    self.most_likely_full_fits,
+                    self.most_likely_full_fits_no_hyper_scaling,
                 )
             )
 
         @property
         def noise_scaling_maps_of_serial_trails(self):
+
             return list(
                 map(
                     lambda most_likely_full_fit: most_likely_full_fit.chi_squared_map_of_serial_trails,
-                    self.most_likely_full_fits,
+                    self.most_likely_full_fits_no_hyper_scaling,
                 )
             )
 
         @property
         def noise_scaling_maps_of_serial_overscan_above_trails(self):
+
             return list(
                 map(
                     lambda most_likely_full_fit: most_likely_full_fit.chi_squared_map_of_serial_overscan_above_trails,
-                    self.most_likely_full_fits,
+                    self.most_likely_full_fits_no_hyper_scaling,
                 )
             )
 
@@ -629,14 +780,30 @@ class Phase(af.AbstractPhase):
 class ParallelPhase(Phase):
 
     parallel_species = af.PhaseProperty("parallel_species")
-    parallel_ccd = af.PhaseProperty("parallel_ccd")
+    parallel_ccd_volume = af.PhaseProperty("parallel_ccd_volume")
+    hyper_noise_scalar_of_ci_regions = af.PhaseProperty(
+        "hyper_noise_scalar_of_ci_regions"
+    )
+    hyper_noise_scalar_of_parallel_trails = af.PhaseProperty(
+        "hyper_noise_scalar_of_parallel_trails"
+    )
+    hyper_noise_scalar_of_serial_trails = af.PhaseProperty(
+        "hyper_noise_scalar_of_serial_trails"
+    )
+    hyper_noise_scalar_of_serial_overscan_above_trails = af.PhaseProperty(
+        "hyper_noise_scalar_of_serial_overscan_above_trails"
+    )
 
     def __init__(
         self,
         phase_name,
         phase_folders=tuple(),
         parallel_species=(),
-        parallel_ccd=None,
+        parallel_ccd_volume=None,
+        hyper_noise_scalar_of_ci_regions=None,
+        hyper_noise_scalar_of_parallel_trails=None,
+        hyper_noise_scalar_of_serial_trails=None,
+        hyper_noise_scalar_of_serial_overscan_above_trails=None,
         optimizer_class=af.MultiNest,
         mask_function=msk.Mask.empty_for_shape,
         columns=None,
@@ -654,6 +821,10 @@ class ParallelPhase(Phase):
         super().__init__(
             phase_name=phase_name,
             phase_folders=phase_folders,
+            hyper_noise_scalar_of_ci_regions=hyper_noise_scalar_of_ci_regions,
+            hyper_noise_scalar_of_parallel_trails=hyper_noise_scalar_of_parallel_trails,
+            hyper_noise_scalar_of_serial_trails=hyper_noise_scalar_of_serial_trails,
+            hyper_noise_scalar_of_serial_overscan_above_trails=hyper_noise_scalar_of_serial_overscan_above_trails,
             optimizer_class=optimizer_class,
             mask_function=mask_function,
             columns=columns,
@@ -667,23 +838,26 @@ class ParallelPhase(Phase):
         )
 
         self.parallel_species = parallel_species
-        self.parallel_ccd = parallel_ccd
+        self.parallel_ccd_volume = parallel_ccd_volume
 
-    def extract_ci_data(self, data, mask):
-        return data.parallel_calibration_data(
+    def ci_datas_masked_extracted_from_ci_data(
+        self, ci_data, mask, noise_scaling_maps=None
+    ):
+        return ci_data.parallel_ci_data_masked_from_columns_and_mask(
             columns=(
                 0,
                 self.columns
-                or data.ci_frame.frame_geometry.parallel_overscan.total_columns,
+                or ci_data.ci_frame.frame_geometry.parallel_overscan.total_columns,
             ),
             mask=mask,
+            noise_scaling_maps=noise_scaling_maps,
         )
 
     class Analysis(Phase.Analysis):
         def __init__(
             self,
-            ci_datas_extracted,
-            ci_datas_full,
+            ci_datas_masked_extracted,
+            ci_datas_masked_full,
             cti_settings,
             serial_total_density_range,
             parallel_total_density_range,
@@ -702,8 +876,8 @@ class ParallelPhase(Phase):
             """
 
             super().__init__(
-                ci_datas_extracted=ci_datas_extracted,
-                ci_datas_full=ci_datas_full,
+                ci_datas_masked_extracted=ci_datas_masked_extracted,
+                ci_datas_masked_full=ci_datas_masked_full,
                 cti_settings=cti_settings,
                 serial_total_density_range=serial_total_density_range,
                 parallel_total_density_range=parallel_total_density_range,
@@ -748,7 +922,7 @@ class ParallelPhase(Phase):
                 "Parallel CTI: \n"
                 "Parallel Species:\n{}\n\n"
                 "Parallel CCD\n{}\n\n".format(
-                    instance.parallel_species, instance.parallel_ccd
+                    instance.parallel_species, instance.parallel_ccd_volume
                 )
             )
 
@@ -756,14 +930,30 @@ class ParallelPhase(Phase):
 class SerialPhase(Phase):
 
     serial_species = af.PhaseProperty("serial_species")
-    serial_ccd = af.PhaseProperty("serial_ccd")
+    serial_ccd_volume = af.PhaseProperty("serial_ccd_volume")
+    hyper_noise_scalar_of_ci_regions = af.PhaseProperty(
+        "hyper_noise_scalar_of_ci_regions"
+    )
+    hyper_noise_scalar_of_parallel_trails = af.PhaseProperty(
+        "hyper_noise_scalar_of_parallel_trails"
+    )
+    hyper_noise_scalar_of_serial_trails = af.PhaseProperty(
+        "hyper_noise_scalar_of_serial_trails"
+    )
+    hyper_noise_scalar_of_serial_overscan_above_trails = af.PhaseProperty(
+        "hyper_noise_scalar_of_serial_overscan_above_trails"
+    )
 
     def __init__(
         self,
         phase_name,
         phase_folders=tuple(),
         serial_species=(),
-        serial_ccd=None,
+        serial_ccd_volume=None,
+        hyper_noise_scalar_of_ci_regions=None,
+        hyper_noise_scalar_of_parallel_trails=None,
+        hyper_noise_scalar_of_serial_trails=None,
+        hyper_noise_scalar_of_serial_overscan_above_trails=None,
         optimizer_class=af.MultiNest,
         mask_function=msk.Mask.empty_for_shape,
         rows=None,
@@ -781,6 +971,10 @@ class SerialPhase(Phase):
         super().__init__(
             phase_name=phase_name,
             phase_folders=phase_folders,
+            hyper_noise_scalar_of_ci_regions=hyper_noise_scalar_of_ci_regions,
+            hyper_noise_scalar_of_parallel_trails=hyper_noise_scalar_of_parallel_trails,
+            hyper_noise_scalar_of_serial_trails=hyper_noise_scalar_of_serial_trails,
+            hyper_noise_scalar_of_serial_overscan_above_trails=hyper_noise_scalar_of_serial_overscan_above_trails,
             optimizer_class=optimizer_class,
             mask_function=mask_function,
             rows=rows,
@@ -793,18 +987,22 @@ class SerialPhase(Phase):
         )
 
         self.serial_species = serial_species
-        self.serial_ccd = serial_ccd
+        self.serial_ccd_volume = serial_ccd_volume
 
-    def extract_ci_data(self, data, mask):
-        return data.serial_calibration_data(
-            rows=self.rows or (0, data.ci_pattern.regions[0].total_rows), mask=mask
+    def ci_datas_masked_extracted_from_ci_data(
+        self, ci_data, mask, noise_scaling_maps=None
+    ):
+        return ci_data.serial_ci_data_masked_from_rows_and_mask(
+            rows=self.rows or (0, ci_data.ci_pattern.regions[0].total_rows),
+            mask=mask,
+            noise_scaling_maps=noise_scaling_maps,
         )
 
     class Analysis(Phase.Analysis):
         def __init__(
             self,
-            ci_datas_extracted,
-            ci_datas_full,
+            ci_datas_masked_extracted,
+            ci_datas_masked_full,
             cti_settings,
             serial_total_density_range,
             parallel_total_density_range,
@@ -823,8 +1021,8 @@ class SerialPhase(Phase):
             """
 
             super().__init__(
-                ci_datas_extracted=ci_datas_extracted,
-                ci_datas_full=ci_datas_full,
+                ci_datas_masked_extracted=ci_datas_masked_extracted,
+                ci_datas_masked_full=ci_datas_masked_full,
                 cti_settings=cti_settings,
                 serial_total_density_range=serial_total_density_range,
                 parallel_total_density_range=parallel_total_density_range,
@@ -868,16 +1066,29 @@ class SerialPhase(Phase):
                 "Serial CTI: \n"
                 "Serial Species:\n{}\n\n"
                 "Serial CCD\n{}\n\n".format(
-                    instance.serial_species, instance.serial_ccd
+                    instance.serial_species, instance.serial_ccd_volume
                 )
             )
 
 
 class ParallelSerialPhase(Phase):
+
     parallel_species = af.PhaseProperty("parallel_species")
     serial_species = af.PhaseProperty("serial_species")
-    parallel_ccd = af.PhaseProperty("parallel_ccd")
-    serial_ccd = af.PhaseProperty("serial_ccd")
+    parallel_ccd_volume = af.PhaseProperty("parallel_ccd_volume")
+    serial_ccd_volume = af.PhaseProperty("serial_ccd_volume")
+    hyper_noise_scalar_of_ci_regions = af.PhaseProperty(
+        "hyper_noise_scalar_of_ci_regions"
+    )
+    hyper_noise_scalar_of_parallel_trails = af.PhaseProperty(
+        "hyper_noise_scalar_of_parallel_trails"
+    )
+    hyper_noise_scalar_of_serial_trails = af.PhaseProperty(
+        "hyper_noise_scalar_of_serial_trails"
+    )
+    hyper_noise_scalar_of_serial_overscan_above_trails = af.PhaseProperty(
+        "hyper_noise_scalar_of_serial_overscan_above_trails"
+    )
 
     def __init__(
         self,
@@ -885,8 +1096,12 @@ class ParallelSerialPhase(Phase):
         phase_folders=tuple(),
         parallel_species=(),
         serial_species=(),
-        parallel_ccd=None,
-        serial_ccd=None,
+        parallel_ccd_volume=None,
+        serial_ccd_volume=None,
+        hyper_noise_scalar_of_ci_regions=None,
+        hyper_noise_scalar_of_parallel_trails=None,
+        hyper_noise_scalar_of_serial_trails=None,
+        hyper_noise_scalar_of_serial_overscan_above_trails=None,
         optimizer_class=af.MultiNest,
         mask_function=msk.Mask.empty_for_shape,
         parallel_front_edge_mask_rows=None,
@@ -911,6 +1126,10 @@ class ParallelSerialPhase(Phase):
         super().__init__(
             phase_name=phase_name,
             phase_folders=phase_folders,
+            hyper_noise_scalar_of_ci_regions=hyper_noise_scalar_of_ci_regions,
+            hyper_noise_scalar_of_parallel_trails=hyper_noise_scalar_of_parallel_trails,
+            hyper_noise_scalar_of_serial_trails=hyper_noise_scalar_of_serial_trails,
+            hyper_noise_scalar_of_serial_overscan_above_trails=hyper_noise_scalar_of_serial_overscan_above_trails,
             optimizer_class=optimizer_class,
             mask_function=mask_function,
             columns=None,
@@ -928,11 +1147,15 @@ class ParallelSerialPhase(Phase):
 
         self.parallel_species = parallel_species
         self.serial_species = serial_species
-        self.parallel_ccd = parallel_ccd
-        self.serial_ccd = serial_ccd
+        self.parallel_ccd_volume = parallel_ccd_volume
+        self.serial_ccd_volume = serial_ccd_volume
 
-    def extract_ci_data(self, data, mask):
-        return data.parallel_serial_calibration_data(mask)
+    def ci_datas_masked_extracted_from_ci_data(
+        self, ci_data, mask, noise_scaling_maps=None
+    ):
+        return ci_data.parallel_serial_ci_data_masked_from_mask(
+            mask=mask, noise_scaling_maps=noise_scaling_maps
+        )
 
     class Analysis(Phase.Analysis):
         def check_trap_lifetimes_are_ascending(self, cti_params):
@@ -995,442 +1218,16 @@ class ParallelSerialPhase(Phase):
                 "Serial Species:\n{}\n\n"
                 "Serial CCD\n{}\n\n".format(
                     instance.parallel_species,
-                    instance.parallel_ccd,
+                    instance.parallel_ccd_volume,
                     instance.serial_species,
-                    instance.serial_ccd,
+                    instance.serial_ccd_volume,
                 )
             )
 
 
-class HyperPhase(Phase):
-    """
-    Mixin for hyper phases. Extracts noise scaling maps and creates MaskedCIHyperData objects for analysis.
-    """
-
-    hyper_noise_scalars = af.PhaseProperty("hyper_noise_scalars")
-
-    def __init__(self, phase_name, phase_folders, *args, **kwargs):
-        super().__init__(
-            phase_name=phase_name, phase_folders=phase_folders, *args, **kwargs
-        )
-
-    def extract_ci_hyper_data(self, data, mask, noise_scaling_maps):
-        raise NotImplementedError()
-
-    def noise_scaling_maps_from_result(self, result):
-        raise NotImplementedError()
-
-    def make_analysis(self, ci_datas, cti_settings, results=None, pool=None):
-        """
-        Create an analysis object. Also calls the prior passing and image modifying functions to allow child classes to
-        change the behaviour of the phase.
-
-        Parameters
-        ----------
-        cti_settings
-        ci_datas
-        pool
-        results: [Result]
-            The result from the previous phase
-
-        Returns
-        -------
-        analysis: Analysis
-            An analysis object that the non-linear optimizer calls to determine the fit of a set of values
-        """
-
-        masks = self.masks_for_analysis_from_ci_datas(ci_datas=ci_datas)
-
-        noise_scaling_maps = self.noise_scaling_maps_from_result(results[-1])
-
-        ci_datas_fit = [
-            self.extract_ci_hyper_data(data=data, mask=mask, noise_scaling_maps=maps)
-            for data, mask, maps in zip(ci_datas, masks, noise_scaling_maps)
-        ]
-        ci_datas_full = list(
-            map(
-                lambda data, mask, maps: ci_data.MaskedCIHyperData(
-                    image=data.image,
-                    noise_map=data.noise_map,
-                    ci_pre_cti=data.ci_pre_cti,
-                    mask=mask,
-                    ci_pattern=data.ci_pattern,
-                    ci_frame=data.ci_frame,
-                    noise_scaling_maps=maps,
-                ),
-                ci_datas,
-                masks,
-                noise_scaling_maps,
-            )
-        )
-
-        class HyperAnalysis(self.__class__.Analysis):
-            def __init__(
-                self,
-                ci_datas_extracted,
-                ci_datas_full,
-                cti_settings,
-                serial_total_density_range,
-                parallel_total_density_range,
-                phase_name,
-                results=None,
-                pool=None,
-            ):
-                """
-                An analysis object. Once set up with the image ci_data (image, mask, noises) and pre-cti image it takes a \
-                set of objects describing a model and determines how well they fit the image.
-
-                Params
-                ----------
-                ci_data : [CIImage.CIImage]
-                    The charge injection ci_data-sets.
-                """
-
-                super().__init__(
-                    ci_datas_extracted=ci_datas_extracted,
-                    ci_datas_full=ci_datas_full,
-                    cti_settings=cti_settings,
-                    serial_total_density_range=serial_total_density_range,
-                    parallel_total_density_range=parallel_total_density_range,
-                    phase_name=phase_name,
-                    results=results,
-                    pool=pool,
-                )
-
-                self.is_hyper = True
-
-            def fits_of_ci_data_hyper_extracted_for_instance(self, instance):
-
-                cti_params = cti_params_for_instance(instance=instance)
-                return list(
-                    map(
-                        lambda ci_data_extracted: ci_fit.CIFit(
-                            masked_ci_data=ci_data_extracted,
-                            cti_params=cti_params,
-                            cti_settings=self.cti_settings,
-                            hyper_noise_scalars=instance.hyper_noise_scalars,
-                        ),
-                        self.ci_datas_extracted,
-                    )
-                )
-
-            def fits_of_ci_data_hyper_full_for_instance(self, instance):
-                cti_params = cti_params_for_instance(instance=instance)
-                return list(
-                    map(
-                        lambda hyper_data: ci_fit.CIFit(
-                            masked_ci_data=hyper_data,
-                            cti_params=cti_params,
-                            cti_settings=self.cti_settings,
-                            hyper_noise_scalars=instance.hyper_noise_scalars,
-                        ),
-                        self.ci_datas_full,
-                    )
-                )
-
-            def fit(self, instance):
-                """
-                Runs the analysis. Determine how well the supplied cti_params fits the image.
-
-                Params
-                ----------
-                parallel : arctic_params.ParallelParams
-                    A class describing the parallel cti model and parameters.
-                parallel : arctic_params.SerialParams
-                    A class describing the serial cti model and parameters.
-                hyp : ci_hyper.HyperCINoise
-                    A class describing the noises scaling ci_hyper-parameters.
-
-                Returns
-                -------
-                result: Result
-                    An object comprising the final cti_params instances generated and a corresponding figure_of_merit
-                """
-                cti_params = cti_params_for_instance(instance=instance)
-                self.check_trap_lifetimes_are_ascending(cti_params=cti_params)
-                pipe_cti_pass = partial(
-                    pipe_cti_hyper,
-                    cti_params=cti_params,
-                    cti_settings=self.cti_settings,
-                    hyper_noise_scalars=instance.hyper_noise_scalars,
-                )
-                likelihood = np.sum(
-                    list(self.pool.map(pipe_cti_pass, self.ci_datas_extracted))
-                )
-                return likelihood
-
-            def describe(self, instance):
-                return "{}" "Hyper Parameters:\n{}\n\n".format(
-                    super().describe(instance),
-                    " ".join(map(str, instance.hyper_noise_scalars)),
-                )
-
-        analysis = HyperAnalysis(
-            ci_datas_extracted=ci_datas_fit,
-            ci_datas_full=ci_datas_full,
-            cti_settings=cti_settings,
-            phase_name=self.phase_name,
-            parallel_total_density_range=self.parallel_total_density_range,
-            serial_total_density_range=self.serial_total_density_range,
-            results=results,
-            pool=pool,
-        )
-        return analysis
-
-    @property
-    def number_of_noise_scalars(self):
-        return len(self.hyper_noise_scalars)
-
-    @number_of_noise_scalars.setter
-    def number_of_noise_scalars(self, number):
-        self.hyper_noise_scalars = [
-            af.PriorModel(ci_hyper.CIHyperNoiseScalar) for _ in range(number)
-        ]
-
-
-class ParallelHyperPhase(ParallelPhase, HyperPhase):
-    def __init__(
-        self,
-        phase_name,
-        phase_folders=tuple(),
-        parallel_species=(),
-        parallel_ccd=None,
-        optimizer_class=af.MultiNest,
-        mask_function=msk.Mask.empty_for_shape,
-        columns=None,
-        parallel_front_edge_mask_rows=None,
-        parallel_trails_mask_rows=None,
-        parallel_total_density_range=None,
-        cosmic_ray_parallel_buffer=10,
-        cosmic_ray_serial_buffer=10,
-        cosmic_ray_diagonal_buffer=3,
-    ):
-        """
-        A phase with a simple source/CTI model
-
-        Parameters
-        ----------
-        optimizer_class: class
-            The class of a non-linear optimizer
-        """
-        HyperPhase.__init__(
-            self=self, phase_name=phase_name, phase_folders=phase_folders
-        )
-        super().__init__(
-            phase_name=phase_name,
-            phase_folders=phase_folders,
-            parallel_species=parallel_species,
-            parallel_ccd=parallel_ccd,
-            optimizer_class=optimizer_class,
-            mask_function=mask_function,
-            columns=columns,
-            parallel_front_edge_mask_rows=parallel_front_edge_mask_rows,
-            parallel_trails_mask_rows=parallel_trails_mask_rows,
-            parallel_total_density_range=parallel_total_density_range,
-            cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
-            cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
-            cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer,
-        )
-        self.number_of_noise_scalars = 2
-
-    def noise_scaling_maps_from_result(self, result):
-        """
-        Extract relevant noise scalings maps from the previous result.
-        """
-
-        noise_scaling_maps = []
-        noise_scaling_maps_of_ci_regions = result.noise_scaling_maps_of_ci_regions
-        noise_scaling_maps_of_parallel_trails = (
-            result.noise_scaling_maps_of_parallel_trails
-        )
-
-        for image_index in range(len(noise_scaling_maps_of_ci_regions)):
-
-            noise_scaling_maps.append(
-                [
-                    noise_scaling_maps_of_ci_regions[image_index],
-                    noise_scaling_maps_of_parallel_trails[image_index],
-                ]
-            )
-
-        return noise_scaling_maps
-
-    def extract_ci_hyper_data(self, data, mask, noise_scaling_maps):
-        return data.parallel_hyper_calibration_data(
-            columns=(
-                0,
-                self.columns
-                or data.ci_frame.frame_geometry.parallel_overscan.total_columns,
-            ),
-            mask=mask,
-            noise_scaling_maps=noise_scaling_maps,
-        )
-
-
-class SerialHyperPhase(SerialPhase, HyperPhase):
-    def __init__(
-        self,
-        phase_name,
-        phase_folders=tuple(),
-        serial_species=(),
-        serial_ccd=None,
-        optimizer_class=af.MultiNest,
-        mask_function=msk.Mask.empty_for_shape,
-        rows=None,
-        serial_front_edge_mask_columns=None,
-        serial_trails_mask_columns=None,
-        serial_total_density_range=None,
-        cosmic_ray_parallel_buffer=10,
-        cosmic_ray_serial_buffer=10,
-        cosmic_ray_diagonal_buffer=3,
-    ):
-        """
-        A phase with a simple source/CTI model
-        """
-        HyperPhase.__init__(
-            self=self, phase_name=phase_name, phase_folders=phase_folders
-        )
-        super().__init__(
-            phase_name=phase_name,
-            phase_folders=phase_folders,
-            serial_species=serial_species,
-            serial_ccd=serial_ccd,
-            optimizer_class=optimizer_class,
-            mask_function=mask_function,
-            rows=rows,
-            serial_front_edge_mask_columns=serial_front_edge_mask_columns,
-            serial_trails_mask_columns=serial_trails_mask_columns,
-            serial_total_density_range=serial_total_density_range,
-            cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
-            cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
-            cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer,
-        )
-        self.number_of_noise_scalars = 2
-
-    def noise_scaling_maps_from_result(self, result):
-        """
-        Extract relevant noise scalings maps from the previous result.
-        """
-        noise_scaling_maps = []
-        noise_scaling_maps_of_ci_regions = result.noise_scaling_maps_of_ci_regions
-        noise_scaling_maps_of_serial_trails = result.noise_scaling_maps_of_serial_trails
-
-        for image_index in range(len(noise_scaling_maps_of_ci_regions)):
-
-            noise_scaling_maps.append(
-                [
-                    noise_scaling_maps_of_ci_regions[image_index],
-                    noise_scaling_maps_of_serial_trails[image_index],
-                ]
-            )
-
-        return noise_scaling_maps
-
-    def extract_ci_hyper_data(self, data, mask, noise_scaling_maps):
-        return data.serial_hyper_calibration_data(
-            rows=self.rows or (0, data.ci_pattern.regions[0].total_rows),
-            mask=mask,
-            noise_scaling_maps=noise_scaling_maps,
-        )
-
-
-class ParallelSerialHyperPhase(ParallelSerialPhase, HyperPhase):
-    def __init__(
-        self,
-        phase_name,
-        phase_folders=tuple(),
-        parallel_species=(),
-        serial_species=(),
-        parallel_ccd=None,
-        serial_ccd=None,
-        optimizer_class=af.MultiNest,
-        mask_function=msk.Mask.empty_for_shape,
-        parallel_front_edge_mask_rows=None,
-        parallel_trails_mask_rows=None,
-        serial_front_edge_mask_columns=None,
-        serial_trails_mask_columns=None,
-        parallel_total_density_range=None,
-        serial_total_density_range=None,
-        cosmic_ray_parallel_buffer=10,
-        cosmic_ray_serial_buffer=10,
-        cosmic_ray_diagonal_buffer=3,
-    ):
-        """
-        A phase with a simple source/CTI model
-
-        Parameters
-        ----------
-        optimizer_class: class
-            The class of a non-linear optimizer
-        """
-        HyperPhase.__init__(
-            self=self, phase_name=phase_name, phase_folders=phase_folders
-        )
-        super().__init__(
-            phase_name=phase_name,
-            phase_folders=phase_folders,
-            parallel_species=parallel_species,
-            serial_species=serial_species,
-            parallel_ccd=parallel_ccd,
-            serial_ccd=serial_ccd,
-            optimizer_class=optimizer_class,
-            mask_function=mask_function,
-            parallel_front_edge_mask_rows=parallel_front_edge_mask_rows,
-            parallel_trails_mask_rows=parallel_trails_mask_rows,
-            serial_front_edge_mask_columns=serial_front_edge_mask_columns,
-            serial_trails_mask_columns=serial_trails_mask_columns,
-            parallel_total_density_range=parallel_total_density_range,
-            serial_total_density_range=serial_total_density_range,
-            cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
-            cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
-            cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer,
-        )
-        self.number_of_noise_scalars = 4
-
-    def noise_scaling_maps_from_result(self, result):
-        """
-        Extract relevant noise scalings maps from the previous result.
-        """
-
-        noise_scaling_maps = []
-        noise_scaling_maps_of_ci_regions = result.noise_scaling_maps_of_ci_regions
-        noise_scaling_maps_of_parallel_trails = (
-            result.noise_scaling_maps_of_parallel_trails
-        )
-        noise_scaling_maps_of_serial_trails = result.noise_scaling_maps_of_serial_trails
-        noise_scaling_maps_of_serial_overscan_above_trails = (
-            result.noise_scaling_maps_of_serial_overscan_above_trails
-        )
-
-        for image_index in range(len(noise_scaling_maps_of_ci_regions)):
-
-            noise_scaling_maps.append(
-                [
-                    noise_scaling_maps_of_ci_regions[image_index],
-                    noise_scaling_maps_of_parallel_trails[image_index],
-                    noise_scaling_maps_of_serial_trails[image_index],
-                    noise_scaling_maps_of_serial_overscan_above_trails[image_index],
-                ]
-            )
-
-        return noise_scaling_maps
-
-    def extract_ci_hyper_data(self, data, mask, noise_scaling_maps):
-        return data.parallel_serial_hyper_calibration_data(
-            mask, noise_scaling_maps=noise_scaling_maps
-        )
-
-
-def pipe_cti(ci_data_fit, cti_params, cti_settings):
+def pipe_cti(ci_data_fit, cti_params, cti_settings, hyper_noise_scalars):
     fit = ci_fit.CIFit(
-        masked_ci_data=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings
-    )
-    return fit.figure_of_merit
-
-
-def pipe_cti_hyper(ci_data_fit, cti_params, cti_settings, hyper_noise_scalars):
-    fit = ci_fit.CIFit(
-        masked_ci_data=ci_data_fit,
+        ci_data_masked=ci_data_fit,
         cti_params=cti_params,
         cti_settings=cti_settings,
         hyper_noise_scalars=hyper_noise_scalars,

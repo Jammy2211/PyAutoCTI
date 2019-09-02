@@ -10,8 +10,6 @@ ci_data_resolution = "patch"
 ci_normalizations = [84700.0]
 
 
-
-
 serial_settings = ac.Settings(
     well_depth=84700,
     niter=1,
@@ -27,8 +25,8 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     class SerialPhase(ac.SerialPhase):
         def customize_priors(self, results):
 
-            self.serial_ccd.well_fill_alpha = 1.0
-            self.serial_ccd.well_fill_gamma = 0.0
+            self.serial_ccd_volume.well_fill_alpha = 1.0
+            self.serial_ccd_volume.well_fill_gamma = 0.0
 
     phase1 = SerialPhase(
         phase_name="phase_1",
@@ -36,40 +34,44 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
         optimizer_class=optimizer_class,
         serial_species=[af.PriorModel(ac.Species)],
         rows=(0, 4),
-        serial_ccd=ac.CCDVolume,
+        serial_ccd_volume=ac.CCDVolume,
     )
 
     phase1.optimizer.n_live_points = 60
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.sampling_efficiency = 0.2
 
-    class SerialHyperModelFixedPhase(ac.SerialHyperPhase):
+    class SerialModelFixedPhase(ac.SerialPhase):
         def customize_priors(self, results):
 
             self.serial_species = results.from_phase("phase_1").constant.serial_species
-            self.serial_ccd = results.from_phase("phase_1").constant.serial_ccd
+            self.serial_ccd_volume = results.from_phase(
+                "phase_1"
+            ).constant.serial_ccd_volume
 
-    phase2 = SerialHyperModelFixedPhase(
+    phase2 = SerialModelFixedPhase(
         phase_name="phase_2",
         phase_folders=phase_folders,
         serial_species=[af.PriorModel(ac.Species)],
-        serial_ccd=ac.CCDVolume,
+        serial_ccd_volume=ac.CCDVolume,
         optimizer_class=optimizer_class,
         rows=None,
     )
 
-    class SerialHyperFixedPhase(ac.SerialHyperPhase):
+    class SerialFixedPhase(ac.SerialPhase):
         def customize_priors(self, results):
 
             self.hyper_noise_scalars = results.from_phase(
                 "phase_2"
             ).constant.hyper_noise_scalars
             self.serial_species = results.from_phase("phase_1").variable.serial_species
-            self.serial_ccd = results.from_phase("phase_1").variable.serial_ccd
-            self.serial_ccd.well_fill_alpha = 1.0
-            self.serial_ccd.well_fill_gamma = 0.0
+            self.serial_ccd_volume = results.from_phase(
+                "phase_1"
+            ).variable.serial_ccd_volume
+            self.serial_ccd_volume.well_fill_alpha = 1.0
+            self.serial_ccd_volume.well_fill_gamma = 0.0
 
-    phase3 = SerialHyperFixedPhase(
+    phase3 = SerialFixedPhase(
         phase_name="phase_3",
         phase_folders=phase_folders,
         optimizer_class=optimizer_class,

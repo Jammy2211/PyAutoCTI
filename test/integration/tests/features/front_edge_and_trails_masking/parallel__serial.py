@@ -34,19 +34,19 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     class ParallelSerialPhase(ac.ParallelSerialPhase):
         def customize_priors(self, results):
 
-            self.parallel_ccd.well_fill_alpha = 1.0
-            self.parallel_ccd.well_fill_gamma = 0.0
-            self.serial_ccd.well_fill_alpha = 1.0
-            self.serial_ccd.well_fill_gamma = 0.0
+            self.parallel_ccd_volume.well_fill_alpha = 1.0
+            self.parallel_ccd_volume.well_fill_gamma = 0.0
+            self.serial_ccd_volume.well_fill_alpha = 1.0
+            self.serial_ccd_volume.well_fill_gamma = 0.0
 
     phase1 = ParallelSerialPhase(
         phase_name="phase_1",
         phase_folders=phase_folders,
         optimizer_class=optimizer_class,
         parallel_species=[af.PriorModel(ac.Species)],
-        parallel_ccd=ac.CCDVolume,
+        parallel_ccd_volume=ac.CCDVolume,
         serial_species=[af.PriorModel(ac.Species)],
-        serial_ccd=ac.CCDVolume,
+        serial_ccd_volume=ac.CCDVolume,
         parallel_front_edge_mask_rows=(0, 1),
         parallel_trails_mask_rows=(0, 1),
         serial_front_edge_mask_columns=(0, 1),

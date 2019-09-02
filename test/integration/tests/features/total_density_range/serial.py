@@ -26,15 +26,15 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     class SerialPhase(ac.SerialPhase):
         def customize_priors(self, results):
 
-            self.serial_ccd.well_fill_alpha = 1.0
-            self.serial_ccd.well_fill_gamma = 0.0
+            self.serial_ccd_volume.well_fill_alpha = 1.0
+            self.serial_ccd_volume.well_fill_gamma = 0.0
 
     phase1 = SerialPhase(
         phase_name="phase_1",
         phase_folders=phase_folders,
         optimizer_class=optimizer_class,
         serial_species=[af.PriorModel(ac.Species)],
-        serial_ccd=ac.CCDVolume,
+        serial_ccd_volume=ac.CCDVolume,
         serial_total_density_range=(0.1, 0.3),
     )
 
