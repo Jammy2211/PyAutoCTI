@@ -1,8 +1,6 @@
 import autofit as af
 import autocti as ac
-from test.integration import integration_util
 from test.integration.tests import runner
-from test.simulation import simulation_util
 
 test_type = "parallel"
 test_name = "x3_species__x2_image__linked_phases"
