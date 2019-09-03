@@ -18,7 +18,7 @@ class TestPhaseTag:
             cosmic_ray_diagonal_buffer=None,
         )
 
-        assert phase_tag == "__col_1__rows_(0,1)"
+        assert phase_tag == "phase_tag__col_1__rows_(0,1)"
 
         phase_tag = phase_tagging.phase_tag_from_phase_settings(
             columns=1,
@@ -36,7 +36,7 @@ class TestPhaseTag:
 
         assert (
             phase_tag
-            == "__col_1__rows_(0,1)__par_front_mask_rows_(0,1)__ser_trails_mask_col_(5,10)"
+            == "phase_tag__col_1__rows_(0,1)__par_front_mask_rows_(0,1)__ser_trails_mask_col_(5,10)"
         )
 
         phase_tag = phase_tagging.phase_tag_from_phase_settings(
@@ -53,7 +53,7 @@ class TestPhaseTag:
             cosmic_ray_diagonal_buffer=3,
         )
 
-        assert phase_tag == "__col_1__rows_(0,1)__cr_p1s2d3"
+        assert phase_tag == "phase_tag__col_1__rows_(0,1)__cr_p1s2d3"
 
         phase_tag = phase_tagging.phase_tag_from_phase_settings(
             columns=2,
@@ -69,7 +69,7 @@ class TestPhaseTag:
             cosmic_ray_diagonal_buffer=6,
         )
 
-        assert phase_tag == "__col_2__rows_(1,2)__cr_p4s5d6"
+        assert phase_tag == "phase_tag__col_2__rows_(1,2)__cr_p4s5d6"
 
         phase_tag = phase_tagging.phase_tag_from_phase_settings(
             columns=2,
@@ -87,7 +87,7 @@ class TestPhaseTag:
 
         assert (
             phase_tag
-            == "__col_2__rows_(1,2)__par_range_(0,1)__ser_range_(2,3)__cr_p4s5d6"
+            == "phase_tag__col_2__rows_(1,2)__par_range_(0,1)__ser_range_(2,3)__cr_p4s5d6"
         )
 
         phase_tag = phase_tagging.phase_tag_from_phase_settings(
@@ -106,7 +106,7 @@ class TestPhaseTag:
 
         assert (
             phase_tag
-            == "__col_1__rows_(0,1)__par_trails_mask_rows_(1,2)__ser_front_mask_col_(2,4)__cr_p4s5d6"
+            == "phase_tag__col_1__rows_(0,1)__par_trails_mask_rows_(1,2)__ser_front_mask_col_(2,4)__cr_p4s5d6"
         )
 
 
