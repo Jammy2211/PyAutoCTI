@@ -156,7 +156,9 @@ class CIData(object):
         """
 
         def extractor(obj):
-            return self.chinj.frame_geometry.parallel_serial_calibration_section(obj)
+            return self.chinj.frame_geometry.parallel_serial_calibration_section(
+                array=obj
+            )
 
         return extractor
 

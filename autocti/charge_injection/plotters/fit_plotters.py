@@ -578,7 +578,7 @@ def plot_image_line(
     line_plotters.plot_line_from_array_and_ci_frame(
         array=fit.image,
         line_region=line_region,
-        ci_frame=fit.ci_data_fit.ci_frame,
+        ci_frame=fit.ci_data_masked.ci_frame,
         mask=mask,
         as_subplot=as_subplot,
         figsize=figsize,
@@ -620,7 +620,7 @@ def plot_noise_map_line(
     line_plotters.plot_line_from_array_and_ci_frame(
         array=fit.noise_map,
         line_region=line_region,
-        ci_frame=fit.ci_data_fit.ci_frame,
+        ci_frame=fit.ci_data_masked.ci_frame,
         mask=mask,
         as_subplot=as_subplot,
         figsize=figsize,
@@ -662,7 +662,7 @@ def plot_signal_to_noise_map_line(
     line_plotters.plot_line_from_array_and_ci_frame(
         array=fit.signal_to_noise_map,
         line_region=line_region,
-        ci_frame=fit.ci_data_fit.ci_frame,
+        ci_frame=fit.ci_data_masked.ci_frame,
         mask=mask,
         as_subplot=as_subplot,
         figsize=figsize,
@@ -704,7 +704,7 @@ def plot_ci_pre_cti_line(
     line_plotters.plot_line_from_array_and_ci_frame(
         array=fit.ci_pre_cti,
         line_region=line_region,
-        ci_frame=fit.ci_data_fit.ci_frame,
+        ci_frame=fit.ci_data_masked.ci_frame,
         mask=mask,
         as_subplot=as_subplot,
         figsize=figsize,
@@ -746,7 +746,7 @@ def plot_ci_post_cti_line(
     line_plotters.plot_line_from_array_and_ci_frame(
         array=fit.ci_post_cti,
         line_region=line_region,
-        ci_frame=fit.ci_data_fit.ci_frame,
+        ci_frame=fit.ci_data_masked.ci_frame,
         mask=mask,
         as_subplot=as_subplot,
         figsize=figsize,
@@ -788,7 +788,7 @@ def plot_residual_map_line(
     line_plotters.plot_line_from_array_and_ci_frame(
         array=fit.residual_map,
         line_region=line_region,
-        ci_frame=fit.ci_data_fit.ci_frame,
+        ci_frame=fit.ci_data_masked.ci_frame,
         mask=mask,
         as_subplot=as_subplot,
         figsize=figsize,
@@ -830,7 +830,7 @@ def plot_chi_squared_map_line(
     line_plotters.plot_line_from_array_and_ci_frame(
         array=fit.chi_squared_map,
         line_region=line_region,
-        ci_frame=fit.ci_data_fit.ci_frame,
+        ci_frame=fit.ci_data_masked.ci_frame,
         mask=mask,
         as_subplot=as_subplot,
         figsize=figsize,

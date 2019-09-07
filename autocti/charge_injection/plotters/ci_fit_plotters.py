@@ -94,7 +94,7 @@ def plot_ci_fit_arrays_for_phase(
 
     for fit in fits:
 
-        normalization = fit.ci_data_fit.ci_pattern.normalization
+        normalization = fit.ci_data_masked.ci_pattern.normalization
         output_path = (
             visualize_path + "/" + "ci_image_" + str(int(normalization)) + "/arrays/"
         )
@@ -214,7 +214,7 @@ def plot_ci_fit_lines_for_phase(
 
         for fit in fits:
 
-            normalization = fit.ci_data_fit.ci_pattern.normalization
+            normalization = fit.ci_data_masked.ci_pattern.normalization
             output_path = (
                 visualize_path
                 + "/"

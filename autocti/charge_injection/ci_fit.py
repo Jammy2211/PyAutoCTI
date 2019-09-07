@@ -3,10 +3,8 @@ import autofit as af
 from autocti.charge_injection import ci_data
 
 
-class AbstractCIFit(af.DataFit):
-    def __init__(
-        self, ci_data_masked: ci_data.CIDataMasked, noise_map, cti_params, cti_settings
-    ):
+class CIDataFit(af.DataFit):
+    def __init__(self, ci_data_masked: ci_data.CIDataMasked, noise_map, model_data):
         """Abstract fit of a charge injection dataset with a model cti image.
 
         Parameters
@@ -18,21 +16,15 @@ class AbstractCIFit(af.DataFit):
         cti_settings : arctic_settings.ArcticSettings
             The settings that control how arctic models CTI.
         """
-        model_data = ci_data_masked.ci_frame.frame_geometry.add_cti(
-            image=ci_data_masked.ci_pre_cti,
-            cti_params=cti_params,
-            cti_settings=cti_settings,
-        )
 
-        super().__init__(
+        super(CIDataFit, self).__init__(
             data=ci_data_masked.image,
             noise_map=noise_map,
             mask=ci_data_masked.mask,
             model_data=model_data,
         )
-        self.ci_data_fit = ci_data_masked
-        self.cti_params = cti_params
-        self.cti_settings = cti_settings
+
+        self.ci_data_masked = ci_data_masked
 
     @property
     def ci_post_cti(self):
@@ -40,7 +32,7 @@ class AbstractCIFit(af.DataFit):
 
     @property
     def ci_pre_cti(self):
-        return self.ci_data_fit.ci_pre_cti
+        return self.ci_data_masked.ci_pre_cti
 
     @property
     def image(self):
@@ -54,8 +46,32 @@ class AbstractCIFit(af.DataFit):
     def figure_of_merit(self):
         return self.likelihood
 
+    @property
+    def chi_squared_map_of_ci_regions(self):
+        return self.ci_data_masked.chinj.ci_regions_from_array(
+            array=self.chi_squared_map.copy()
+        )
 
-class CIFit(AbstractCIFit):
+    @property
+    def chi_squared_map_of_parallel_trails(self):
+        return self.ci_data_masked.chinj.parallel_non_ci_regions_frame_from_frame(
+            array=self.chi_squared_map.copy()
+        )
+
+    @property
+    def chi_squared_map_of_serial_trails(self):
+        return self.ci_data_masked.chinj.serial_all_trails_frame_from_frame(
+            array=self.chi_squared_map.copy()
+        )
+
+    @property
+    def chi_squared_map_of_serial_overscan_above_trails(self):
+        return self.ci_data_masked.chinj.serial_overscan_above_trails_frame_from_frame(
+            array=self.chi_squared_map.copy()
+        )
+
+
+class CIFit(CIDataFit):
     def __init__(
         self,
         ci_data_masked: ci_data.CIDataMasked,
@@ -78,6 +94,15 @@ class CIFit(AbstractCIFit):
             The ci_hyper-parameter(s) which the noise_scaling_maps is multiplied by to scale the noise-map.
         """
 
+        self.cti_params = cti_params
+        self.cti_settings = cti_settings
+
+        model_data = ci_data_masked.ci_frame.frame_geometry.add_cti(
+            image=ci_data_masked.ci_pre_cti,
+            cti_params=cti_params,
+            cti_settings=cti_settings,
+        )
+
         self.hyper_noise_scalars = hyper_noise_scalars
 
         if hyper_noise_scalars is not None and hyper_noise_scalars is not []:
@@ -94,34 +119,7 @@ class CIFit(AbstractCIFit):
             noise_map = ci_data_masked.noise_map
 
         super().__init__(
-            ci_data_masked=ci_data_masked,
-            noise_map=noise_map,
-            cti_params=cti_params,
-            cti_settings=cti_settings,
-        )
-
-    @property
-    def chi_squared_map_of_ci_regions(self):
-        return self.ci_data_fit.chinj.ci_regions_from_array(
-            array=self.chi_squared_map.copy()
-        )
-
-    @property
-    def chi_squared_map_of_parallel_trails(self):
-        return self.ci_data_fit.chinj.parallel_non_ci_regions_frame_from_frame(
-            array=self.chi_squared_map.copy()
-        )
-
-    @property
-    def chi_squared_map_of_serial_trails(self):
-        return self.ci_data_fit.chinj.serial_all_trails_frame_from_frame(
-            array=self.chi_squared_map.copy()
-        )
-
-    @property
-    def chi_squared_map_of_serial_overscan_above_trails(self):
-        return self.ci_data_fit.chinj.serial_overscan_above_trails_frame_from_frame(
-            array=self.chi_squared_map.copy()
+            ci_data_masked=ci_data_masked, noise_map=noise_map, model_data=model_data
         )
 
 

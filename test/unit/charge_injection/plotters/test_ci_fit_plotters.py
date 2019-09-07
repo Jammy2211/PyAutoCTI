@@ -40,7 +40,7 @@ def make_ci_frame():
     return MockCIFrame(value=3.0)
 
 
-@pytest.fixture(name="ci_data_fit")
+@pytest.fixture(name="ci_data_masked")
 def make_ci_data_fit(image, noise_map, mask, ci_pre_cti):
     return ac.CIDataMasked(
         image=image,
@@ -65,9 +65,9 @@ def make_cti_params():
 
 
 @pytest.fixture(name="fit")
-def make_fit(ci_data_fit, cti_params, cti_settings):
+def make_fit(ci_data_masked, cti_params, cti_settings):
     return ac.CIFit(
-        ci_data_masked=ci_data_fit, cti_params=cti_params, cti_settings=cti_settings
+        ci_data_masked=ci_data_masked, cti_params=cti_params, cti_settings=cti_settings
     )
 
 

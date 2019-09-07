@@ -4,12 +4,12 @@ from test.integration.tests import runner
 
 from multiprocessing import Pool
 
-test_type = "parallel_x1__serial_x1"
+test_type = "parallel_and_serial"
 test_name = "x1_species__x2_images__pool"
-ci_data_type = "ci_uniform"
+ci_data_type = "ci__uniform"
 ci_data_model = "parallel_x1__serial_x1"
 ci_data_resolution = "patch"
-ci_normalizations = [84700.0]
+ci_normalizations = [10000.0, 84700.0]
 
 
 parallel_settings = ac.Settings(
@@ -32,7 +32,7 @@ cti_settings = ac.ArcticSettings(parallel=parallel_settings, serial=serial_setti
 
 
 def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
-    class ParallelSerialPhase(ac.ParallelSerialPhase):
+    class PhaseCI(ac.PhaseCI):
         def customize_priors(self, results):
 
             self.parallel_ccd_volume.well_fill_alpha = 1.0
@@ -40,7 +40,7 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
             self.serial_ccd_volume.well_fill_alpha = 1.0
             self.serial_ccd_volume.well_fill_gamma = 0.0
 
-    phase1 = ParallelSerialPhase(
+    phase1 = PhaseCI(
         phase_name="phase_1",
         phase_folders=phase_folders,
         optimizer_class=optimizer_class,

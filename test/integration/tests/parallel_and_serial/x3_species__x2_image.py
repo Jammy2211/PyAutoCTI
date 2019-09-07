@@ -2,12 +2,12 @@ import autofit as af
 import autocti as ac
 from test.integration.tests import runner
 
-test_type = "parallel_x1__serial_x1"
-test_name = "x1_species__x1_image"
-ci_data_type = "ci_uniform"
-ci_data_model = "parallel_x1__serial_x1"
+test_type = "parallel_and_serial"
+test_name = "x3_species__x1_image"
+ci_data_type = "ci__uniform"
+ci_data_model = "parallel_x3__serial_x3"
 ci_data_resolution = "patch"
-ci_normalizations = [84700.0]
+ci_normalizations = [10000.0, 84700.0]
 
 
 parallel_settings = ac.Settings(
@@ -30,21 +30,28 @@ cti_settings = ac.ArcticSettings(parallel=parallel_settings, serial=serial_setti
 
 
 def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
-    class ParallelSerialPhase(ac.ParallelSerialPhase):
+    class PhaseCI(ac.PhaseCI):
         def customize_priors(self, results):
-
             self.parallel_ccd_volume.well_fill_alpha = 1.0
             self.parallel_ccd_volume.well_fill_gamma = 0.0
             self.serial_ccd_volume.well_fill_alpha = 1.0
             self.serial_ccd_volume.well_fill_gamma = 0.0
 
-    phase1 = ParallelSerialPhase(
+    phase1 = PhaseCI(
         phase_name="phase_1",
         phase_folders=phase_folders,
         optimizer_class=optimizer_class,
-        parallel_species=[af.PriorModel(ac.Species)],
+        parallel_species=[
+            af.PriorModel(ac.Species),
+            af.PriorModel(ac.Species),
+            af.PriorModel(ac.Species),
+        ],
         parallel_ccd_volume=ac.CCDVolume,
-        serial_species=[af.PriorModel(ac.Species)],
+        serial_species=[
+            af.PriorModel(ac.Species),
+            af.PriorModel(ac.Species),
+            af.PriorModel(ac.Species),
+        ],
         serial_ccd_volume=ac.CCDVolume,
     )
 

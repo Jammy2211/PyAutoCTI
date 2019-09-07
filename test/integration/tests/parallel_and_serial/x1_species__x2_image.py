@@ -3,11 +3,11 @@ import autocti as ac
 from test.integration.tests import runner
 
 test_type = "parallel_x1__serial_x1"
-test_name = "x1_species__x2_image__hyper"
-ci_data_type = "ci_uniform"
+test_name = "x1_species__x1_image__hyper"
+ci_data_type = "ci__uniform"
 ci_data_model = "parallel_x1__serial_x1"
 ci_data_resolution = "patch"
-ci_normalizations = [84700.0]
+ci_normalizations = [10000.0, 84700.0]
 
 
 parallel_settings = ac.Settings(
@@ -30,7 +30,7 @@ cti_settings = ac.ArcticSettings(parallel=parallel_settings, serial=serial_setti
 
 
 def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
-    class ParallelSerialPhase(ac.ParallelSerialPhase):
+    class PhaseCI(ac.PhaseCI):
         def customize_priors(self, results):
 
             self.parallel_ccd_volume.well_fill_alpha = 1.0
@@ -38,7 +38,7 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
             self.serial_ccd_volume.well_fill_alpha = 1.0
             self.serial_ccd_volume.well_fill_gamma = 0.0
 
-    phase1 = ParallelSerialPhase(
+    phase1 = PhaseCI(
         phase_name="phase_1",
         phase_folders=phase_folders,
         optimizer_class=optimizer_class,
@@ -52,7 +52,7 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.sampling_efficiency = 0.2
 
-    class ParallelSerialHyperModelFixedPhase(ac.ParallelSerialPhase):
+    class HyperModelFixedPhaseCI(ac.PhaseCI):
         def customize_priors(self, results):
 
             self.parallel_species = results.from_phase(
@@ -66,40 +66,50 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
                 "phase_1"
             ).constant.serial_ccd_volume
 
-    phase2 = ParallelSerialHyperModelFixedPhase(
+    phase2 = HyperModelFixedPhaseCI(
         phase_name="phase_2",
         phase_folders=phase_folders,
         parallel_species=[af.PriorModel(ac.Species)],
         parallel_ccd_volume=ac.CCDVolume,
         serial_species=[af.PriorModel(ac.Species)],
         serial_ccd_volume=ac.CCDVolume,
+        hyper_noise_scalar_of_ci_regions=ac.CIHyperNoiseScalar,
+        hyper_noise_scalar_of_parallel_trails=ac.CIHyperNoiseScalar,
+        hyper_noise_scalar_of_serial_trails=ac.CIHyperNoiseScalar,
+        hyper_noise_scalar_of_serial_overscan_above_trails=ac.CIHyperNoiseScalar,
         optimizer_class=optimizer_class,
     )
 
-    class SerialFixedPhase(ac.SerialPhase):
+    class FixedPhaseCI(ac.PhaseCI):
         def customize_priors(self, results):
 
-            self.hyper_noise_scalars = results.from_phase(
+            self.hyper_noise_scalar_of_ci_regions = results.from_phase(
                 "phase_2"
-            ).constant.hyper_noise_scalars
-            self.parallel_species = results.from_phase(
-                "phase_1"
-            ).variable.parallel_species
-            self.parallel_ccd_volume = results.from_phase(
-                "phase_1"
-            ).variable.parallel_ccd_volume
-            self.parallel_ccd_volume.well_fill_alpha = 1.0
-            self.parallel_ccd_volume.well_fill_gamma = 0.0
-            self.serial_species = results.from_phase("phase_1").variable.serial_species
-            self.serial_ccd_volume = results.from_phase(
-                "phase_1"
-            ).variable.serial_ccd_volume
-            self.serial_ccd_volume.well_fill_alpha = 1.0
-            self.serial_ccd_volume.well_fill_gamma = 0.0
+            ).constant.hyper_noise_scalar_of_ci_regions
 
-    phase3 = SerialFixedPhase(
+            self.hyper_noise_scalar_of_parallel_trails = results.from_phase(
+                "phase_2"
+            ).constant.hyper_noise_scalar_of_parallel_trails
+
+            self.hyper_noise_scalar_of_serial_trails = results.from_phase(
+                "phase_2"
+            ).constant.hyper_noise_scalar_of_serial_trails
+
+            self.hyper_noise_scalar_of_serial_overscan_above_trails = results.from_phase(
+                "phase_2"
+            ).constant.hyper_noise_scalar_of_serial_overscan_above_trails
+
+    phase3 = FixedPhaseCI(
         phase_name="phase_3",
         phase_folders=phase_folders,
+        parallel_species=phase1.result.variable.parallel_species,
+        parallel_ccd_volume=phase1.result.variable.parallel_ccd_volume,
+        serial_species=phase1.result.variable.serial_species,
+        serial_ccd_volume=phase1.result.variable.serial_ccd_volume,
+        hyper_noise_scalar_of_ci_regions=ac.CIHyperNoiseScalar,
+        hyper_noise_scalar_of_parallel_trails=ac.CIHyperNoiseScalar,
+        hyper_noise_scalar_of_serial_trails=ac.CIHyperNoiseScalar,
+        hyper_noise_scalar_of_serial_overscan_above_trails=ac.CIHyperNoiseScalar,
         optimizer_class=optimizer_class,
         rows=None,
     )

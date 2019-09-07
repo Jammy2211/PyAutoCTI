@@ -23,12 +23,12 @@ cti_settings = ac.ArcticSettings(parallel=parallel_settings)
 
 
 def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
-    class ParallelPhase(ac.ParallelPhase):
+    class PhaseCI(ac.PhaseCI):
         def customize_priors(self, results):
             self.parallel_ccd_volume.well_fill_alpha = 1.0
             self.parallel_ccd_volume.well_fill_gamma = 0.0
 
-    phase1 = ParallelPhase(
+    phase1 = PhaseCI(
         phase_name="phase_1",
         phase_folders=phase_folders,
         optimizer_class=optimizer_class,
