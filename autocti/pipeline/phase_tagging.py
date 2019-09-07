@@ -42,8 +42,8 @@ def phase_tag_from_phase_settings(
     )
 
     return (
-        "phase_tag" +
-        columns_tag
+        "phase_tag"
+        + columns_tag
         + rows_tag
         + parallel_front_edge_mask_rows_tag
         + parallel_trails_mask_rows_tag

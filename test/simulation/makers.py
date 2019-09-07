@@ -36,7 +36,7 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(
 
     ci_pre_cti = pattern.simulate_ci_pre_cti(shape=shape)
 
-    data = ac.simulate(
+    data = ac.CIData.simulate(
         ci_pre_cti=ci_pre_cti,
         frame_geometry=frame_geometry,
         ci_pattern=pattern,
@@ -71,7 +71,7 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(
 
 def make_ci_uniform_parallel_x1_species(data_resolutions, normalizations):
 
-    ci_data_type = "ci_uniform"
+    ci_data_type = "ci__uniform"
     ci_data_model = "parallel_x1"
 
     parallel_species = ac.Species(trap_density=1.0, trap_lifetime=3.0)
@@ -117,7 +117,7 @@ def make_ci_uniform_parallel_x1_species(data_resolutions, normalizations):
 
 def make_ci_uniform_serial_x1_species(data_resolutions, normalizations):
 
-    ci_data_type = "ci_uniform"
+    ci_data_type = "ci__uniform"
     ci_data_model = "serial_x1"
 
     serial_species = ac.Species(trap_density=1.0, trap_lifetime=3.0)
@@ -163,7 +163,7 @@ def make_ci_uniform_serial_x1_species(data_resolutions, normalizations):
 
 def make_ci_uniform_parallel_x1__serial_x1_species(data_resolutions, normalizations):
 
-    ci_data_type = "ci_uniform"
+    ci_data_type = "ci__uniform"
     ci_data_model = "parallel_x1__serial_x1"
 
     parallel_species = ac.Species(trap_density=0.1, trap_lifetime=1.5)
@@ -231,7 +231,7 @@ def make_ci_uniform_parallel_x1__serial_x1_species(data_resolutions, normalizati
 
 def make_ci_uniform_parallel_x3_species(data_resolutions, normalizations):
 
-    ci_data_type = "ci_uniform"
+    ci_data_type = "ci__uniform"
     ci_data_model = "parallel_x3"
 
     parallel_species_0 = ac.Species(trap_density=0.5, trap_lifetime=2.0)
@@ -279,7 +279,7 @@ def make_ci_uniform_parallel_x3_species(data_resolutions, normalizations):
 
 def make_ci_uniform_serial_x3_species(data_resolutions, normalizations):
 
-    ci_data_type = "ci_uniform"
+    ci_data_type = "ci__uniform"
     ci_data_model = "serial_x3"
 
     serial_species_0 = ac.Species(trap_density=0.5, trap_lifetime=2.0)
@@ -327,7 +327,7 @@ def make_ci_uniform_serial_x3_species(data_resolutions, normalizations):
 
 def make_ci_uniform_parallel_x3__serial_x3_species(data_resolutions, normalizations):
 
-    ci_data_type = "ci_uniform"
+    ci_data_type = "ci__uniform"
     ci_data_model = "parallel_x3__serial_x3"
 
     parallel_species_0 = ac.Species(trap_density=0.5, trap_lifetime=2.0)
@@ -398,7 +398,7 @@ def make_ci_uniform_parallel_x3__serial_x3_species(data_resolutions, normalizati
 
 def make_ci_uniform_cosmic_rays_parallel_x1_species(data_resolutions, normalizations):
 
-    ci_data_type = "ci_uniform_cosmic_rays"
+    ci_data_type = "ci__uniform__cosmic_rays"
     ci_data_model = "parallel_x1"
 
     parallel_species = ac.Species(trap_density=1.0, trap_lifetime=3.0)
@@ -454,7 +454,7 @@ def make_ci_uniform_cosmic_rays_parallel_x1_species(data_resolutions, normalizat
 
 def make_ci_uniform_cosmic_rays_serial_x1_species(data_resolutions, normalizations):
 
-    ci_data_type = "ci_uniform_cosmic_rays"
+    ci_data_type = "ci__uniform__cosmic_rays"
     ci_data_model = "serial_x1"
 
     serial_species = ac.Species(trap_density=1.0, trap_lifetime=3.0)
@@ -512,7 +512,7 @@ def make_ci_uniform_cosmic_rays_parallel_x1__serial_x1_species(
     data_resolutions, normalizations
 ):
 
-    ci_data_type = "ci_uniform_cosmic_rays"
+    ci_data_type = "ci__uniform__cosmic_rays"
     ci_data_model = "parallel_x1__serial_x1"
 
     parallel_species = ac.Species(trap_density=0.1, trap_lifetime=1.5)

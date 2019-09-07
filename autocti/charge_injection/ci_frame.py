@@ -1124,7 +1124,7 @@ class ChInj(object):
 
     def parallel_serial_calibration_section(self, array):
         return array[
-            0 : array.shape[0], self.frame_geometry.serial_prescan.x1 : array.shape[1]
+            0 : array.shape[0], self.frame_geometry.serial_prescan.x0 : array.shape[1]
         ]
 
     def smallest_parallel_trails_rows_from_shape(self, shape):

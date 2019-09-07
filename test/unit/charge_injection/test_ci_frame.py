@@ -3227,7 +3227,8 @@ class TestChInj(object):
             assert (trails_line == np.array([5.5, 6.5, 7.5, 8.5])).all()
 
     class TestParallelSerialCalibrationSection:
-        def test__extracts_everything_except_prescan(self):
+        def test__extracts_everything(self):
+
             pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 1, 0, 1)])
 
             image = np.array(
@@ -3248,20 +3249,8 @@ class TestChInj(object):
 
             extracted_array = frame.parallel_serial_calibration_section(image)
 
-            assert (
-                extracted_array
-                == np.array(
-                    [
-                        [1.0, 2.0, 3.0],
-                        [1.0, 2.0, 3.0],
-                        [1.0, 2.0, 3.0],
-                        [1.0, 2.0, 3.0],
-                        [1.0, 2.0, 3.0],
-                    ]
-                )
-            ).all()
+            assert (extracted_array == image).all()
 
-        def test__extracts_everything_except_prescan_2(self):
             pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 1, 0, 1)])
 
             image = np.array(
@@ -3282,12 +3271,7 @@ class TestChInj(object):
 
             extracted_array = frame.parallel_serial_calibration_section(image)
 
-            assert (
-                extracted_array
-                == np.array(
-                    [[2.0, 3.0], [2.0, 3.0], [2.0, 3.0], [2.0, 3.0], [2.0, 3.0]]
-                )
-            ).all()
+            assert (extracted_array == image).all()
 
     class TestSmallestPArallelTrailsRows:
         def test__x1_ci_region__bottom_frame_geometry(self):

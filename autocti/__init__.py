@@ -29,12 +29,8 @@ from autocti.charge_injection.ci_frame import (
 from autocti.charge_injection.ci_hyper import CIHyperNoiseScalar
 from autocti.charge_injection.ci_mask import CIMask
 from autocti.charge_injection.ci_pattern import CIPatternUniform, CIPatternNonUniform
-from autocti.pipeline.phase import (
-    ParallelPhase,
-    SerialPhase,
-    ParallelSerialPhase,
-    cti_params_for_instance,
-)
+from autocti.pipeline.phase.phase_ci import PhaseCI, cti_params_for_instance
+from autocti.pipeline.phase.phase_extensions import HyperNoisePhase
 from autocti.pipeline.pipeline import Pipeline
 
 from autocti.charge_injection.plotters import (
