@@ -1,6 +1,6 @@
-from test.simulation import makers
+from test import makers
 
-# Welcome to the PyAutoCTI test suite data maker. Here, we'll make the suite of data that we use to test and profile
+# Welcome to the PyAutoCTI test_autoarray suite data maker. Here, we'll make the suite of data that we use to test_autoarray and profile
 # PyAutoCTI. This consists of the following sets of images:
 
 # A uniform charge injectiono line image, generated using a parallel CTI model with 1 trap species.

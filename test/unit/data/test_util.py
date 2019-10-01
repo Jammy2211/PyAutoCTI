@@ -29,15 +29,15 @@ class TestFits:
         assert (arr == np.ones((4, 3))).all()
 
     def test__numpy_array_to_fits__output_and_load(self):
-        if os.path.exists(test_data_path + "test.fits"):
-            os.remove(test_data_path + "test.fits")
+        if os.path.exists(test_data_path + "test_autoarray.fits"):
+            os.remove(test_data_path + "test_autoarray.fits")
 
         arr = np.array([[10.0, 30.0, 40.0], [92.0, 19.0, 20.0]])
 
-        ac.util.numpy_array_2d_to_fits(arr, file_path=test_data_path + "test.fits")
+        ac.util.numpy_array_2d_to_fits(arr, file_path=test_data_path + "test_autoarray.fits")
 
         array_load = ac.util.numpy_array_2d_from_fits(
-            file_path=test_data_path + "test.fits", hdu=0
+            file_path=test_data_path + "test_autoarray.fits", hdu=0
         )
 
         assert arr == pytest.approx(array_load, 1.0e-4)

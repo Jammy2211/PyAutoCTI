@@ -1,6 +1,6 @@
 import autofit as af
 import autocti as ac
-from test.integration.tests import runner
+from test import runner
 
 test_type = "parallel_x1__serial_x1"
 test_name = "x1_species__x1_image__hyper"

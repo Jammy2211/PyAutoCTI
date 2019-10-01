@@ -4,7 +4,7 @@ import pytest
 import autofit as af
 import autocti as ac
 
-from test.unit.mock.mock import (
+from test import (
     MockGeometry,
     MockPattern,
     MockCIFrame,

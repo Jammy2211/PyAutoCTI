@@ -1,6 +1,6 @@
 import autofit as af
 import autocti as ac
-from test.integration.tests import runner
+from test import runner
 
 test_type = "features/front_edge_and_trails_masking"
 test_name = "serial"

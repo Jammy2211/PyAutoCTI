@@ -1,6 +1,6 @@
 import autofit as af
 import autocti as ac
-from test.integration.tests import runner
+from test import runner
 
 from multiprocessing import Pool
 

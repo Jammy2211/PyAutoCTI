@@ -78,9 +78,9 @@ class TestArcticSettings:
 
             hdu = fits.PrimaryHDU(np.ones((1, 1)), fits.Header())
             hdu.header = arctic_parallel.update_fits_header_info(ext_header=hdu.header)
-            hdu.writeto(hdr_path + "/test.fits")
+            hdu.writeto(hdr_path + "/test_autoarray.fits")
 
-            hdu = fits.open(hdr_path + "/test.fits")
+            hdu = fits.open(hdr_path + "/test_autoarray.fits")
             ext_header = hdu[0].header
 
             assert ext_header["cte_pite"] == 1
@@ -103,9 +103,9 @@ class TestArcticSettings:
 
             hdu = fits.PrimaryHDU(np.ones((1, 1)), fits.Header())
             hdu.header = arctic_serial.update_fits_header_info(ext_header=hdu.header)
-            hdu.writeto(hdr_path + "/test.fits")
+            hdu.writeto(hdr_path + "/test_autoarray.fits")
 
-            hdu = fits.open(hdr_path + "/test.fits")
+            hdu = fits.open(hdr_path + "/test_autoarray.fits")
             ext_header = hdu[0].header
 
             assert ext_header["cte_site"] == 1
@@ -139,9 +139,9 @@ class TestArcticSettings:
 
             hdu = fits.PrimaryHDU(np.ones((1, 1)), fits.Header())
             hdu.header = arctic_both.update_fits_header_info(ext_header=hdu.header)
-            hdu.writeto(hdr_path + "/test.fits")
+            hdu.writeto(hdr_path + "/test_autoarray.fits")
 
-            hdu = fits.open(hdr_path + "/test.fits")
+            hdu = fits.open(hdr_path + "/test_autoarray.fits")
             ext_header = hdu[0].header
 
             assert ext_header["cte_pite"] == 1
