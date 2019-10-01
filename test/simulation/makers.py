@@ -1,7 +1,7 @@
 import autofit as af
 import autocti as ac
 
-from test.simulation import simulation_util
+from test import simulation_util
 
 from workspace_jam.scripts.cosmic_rays import cosmics
 
@@ -46,7 +46,7 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(
         cosmic_ray_image=cosmic_ray_image,
     )
 
-    # Now, lets output this simulated ccd-data to the test/data folder.
+    # Now, lets output this simulated ccd-data to the test_autoarray/data folder.
     test_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
 
     ci_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(

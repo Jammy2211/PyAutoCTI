@@ -1,9 +1,8 @@
 import numpy as np
 
 import autocti as ac
-from test.unit.mock.mock import MockCIFrame
+from test import MockCIFrame
 
-from test.fixtures import make_plot_patch
 import os
 import pytest
 

@@ -57,7 +57,7 @@ def frame_geometry_from_ci_data_resolution(ci_data_resolution):
         return CIFrameGeometryIntegration.high_res()
     else:
         raise ValueError(
-            "An invalid data-type was entered when generating the test-data suite - ",
+            "An invalid data-type was entered when generating the test_autoarray-data suite - ",
             ci_data_resolution,
         )
 

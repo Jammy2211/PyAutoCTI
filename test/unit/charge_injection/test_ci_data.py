@@ -6,7 +6,7 @@ import shutil
 
 import autocti as ac
 
-from test.unit.mock.mock import MockGeometry, MockPattern
+from test import MockGeometry, MockPattern
 
 test_data_dir = "{}/../test_files/array/".format(
     os.path.dirname(os.path.realpath(__file__))
@@ -277,7 +277,7 @@ class TestCIDataSimulate(object):
 
         image_no_noise = pattern.ci_pre_cti_from_shape(shape=(3, 3))
 
-        # Use seed to give us a known read noises map we'll test for
+        # Use seed to give us a known read noises map we'll test_autoarray for
 
         assert ci_data_simulate.image - image_no_noise == pytest.approx(
             np.array([[1.62, -0.61, -0.53], [-1.07, 0.87, -2.30], [1.74, -0.76, 0.32]]),
@@ -429,7 +429,7 @@ class TestCIImage(object):
                 shape=(3, 3), sigma=1.0, noise_seed=1
             )
 
-            # Use seed to give us a known read noises map we'll test for
+            # Use seed to give us a known read noises map we'll test_autoarray for
 
             assert simulate_read_noise == pytest.approx(
                 np.array(

@@ -2,8 +2,8 @@ import math
 import os
 
 import autofit as af
-from test.integration import integration_util
-from test.simulation import simulation_util
+from test import integration_util
+from test import simulation_util
 
 
 class MockNLO(af.NonLinearOptimizer):

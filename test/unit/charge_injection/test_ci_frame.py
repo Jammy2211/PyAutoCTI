@@ -1,7 +1,7 @@
 import numpy as np
 
 import autocti as ac
-from test.unit.mock.mock import MockCIGeometry
+from test import MockCIGeometry
 
 
 class TestBinArrayAcrossSerial:
