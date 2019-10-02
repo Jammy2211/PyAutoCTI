@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 import os
 
-workspace_path = "{}/../../workspace/".format(
+workspace_path = "{}/../../autolens_workspace/".format(
     os.path.dirname(os.path.realpath(__file__))
 )
 
