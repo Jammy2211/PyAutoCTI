@@ -97,7 +97,7 @@ class CIData(object):
 
     def map_to_ci_data_masked(self, func, mask, noise_scaling_maps=None):
         """
-        Maps an extraction function onto the arrays in this object, a mask and noise scaling maps.
+        Maps an extraction function onto the structures in this object, a mask and noise scaling maps.
 
         Parameters
         ----------

@@ -96,7 +96,7 @@ def plot_ci_fit_arrays_for_phase(
 
         normalization = fit.ci_data_masked.ci_pattern.normalization
         output_path = (
-            visualize_path + "/" + "ci_image_" + str(int(normalization)) + "/arrays/"
+            visualize_path + "/" + "ci_image_" + str(int(normalization)) + "/structures/"
         )
         util.make_path_if_does_not_exist(path=output_path + "fits/")
 
