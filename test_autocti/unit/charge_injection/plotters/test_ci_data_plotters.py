@@ -247,15 +247,15 @@ def test__plot_ci_data_for_phase(data_extracted, data_plotter_path, plot_patch):
         visualize_path=data_plotter_path,
     )
 
-    assert data_plotter_path + "/ci_image_10/arrays/ci_data.png" in plot_patch.paths
-    assert data_plotter_path + "/ci_image_10/arrays/ci_image.png" in plot_patch.paths
+    assert data_plotter_path + "/ci_image_10/structures/ci_data.png" in plot_patch.paths
+    assert data_plotter_path + "/ci_image_10/structures/ci_image.png" in plot_patch.paths
     assert (
-        data_plotter_path + "/ci_image_10/arrays/ci_noise_map.png"
+        data_plotter_path + "/ci_image_10/structures/ci_noise_map.png"
         not in plot_patch.paths
     )
-    assert data_plotter_path + "/ci_image_10/arrays/ci_pre_cti.png" in plot_patch.paths
+    assert data_plotter_path + "/ci_image_10/structures/ci_pre_cti.png" in plot_patch.paths
     assert (
-        data_plotter_path + "/ci_image_10/arrays/ci_signal_to_noise_map.png"
+        data_plotter_path + "/ci_image_10/structures/ci_signal_to_noise_map.png"
         not in plot_patch.paths
     )
 

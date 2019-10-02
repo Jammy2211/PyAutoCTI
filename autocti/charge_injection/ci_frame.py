@@ -596,7 +596,7 @@ class ChInj(object):
         return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
 
     def parallel_front_edge_arrays_from_frame(self, array, rows=None, mask=None):
-        """Extract a list of arrays of the parallel front edge regions of a charge injection ci_frame.
+        """Extract a list of structures of the parallel front edge regions of a charge injection ci_frame.
 
         The diagram below illustrates the array that is extracted from a ci_frame for rows=(0, 1):
 
@@ -867,7 +867,7 @@ class ChInj(object):
         return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
 
     def serial_front_edge_arrays_from_frame(self, array, columns=None, mask=None):
-        """Extract a list of the serial front edge arrays of a charge injection ci_frame.
+        """Extract a list of the serial front edge structures of a charge injection ci_frame.
 
         The diagram below illustrates the array that is extracted from a ci_frame for columnss=(0, 3):
 

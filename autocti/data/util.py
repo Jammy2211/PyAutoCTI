@@ -42,7 +42,7 @@ def numpy_array_2d_to_fits(array_2d, file_path, overwrite=False):
 def numpy_array_2d_from_fits(file_path, hdu):
     """Read a 2D NumPy array to a .fits file.
 
-    After loading the NumPy array, the array is flipped upside-down using np.flipud. This is so that the arrays \
+    After loading the NumPy array, the array is flipped upside-down using np.flipud. This is so that the structures \
     appear the same orientation as .fits files loaded in DS9.
 
     Parameters
