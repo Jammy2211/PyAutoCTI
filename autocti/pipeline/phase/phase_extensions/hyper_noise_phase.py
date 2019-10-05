@@ -67,10 +67,12 @@ class HyperNoisePhase(HyperPhase):
             return np.sum(list(map(lambda fit: fit.figure_of_merit, fits)))
 
         def hyper_noise_scalars_from_instance(self, instance):
-            return [instance.hyper_noise_scalar_of_ci_regions,
-                    instance.hyper_noise_scalar_of_parallel_trails,
-                    instance.hyper_noise_scalar_of_serial_trails,
-                    instance.hyper_noise_scalar_of_serial_overscan_above_trails]
+            return [
+                instance.hyper_noise_scalar_of_ci_regions,
+                instance.hyper_noise_scalar_of_parallel_trails,
+                instance.hyper_noise_scalar_of_serial_trails,
+                instance.hyper_noise_scalar_of_serial_overscan_above_trails,
+            ]
 
         def fit_for_ci_data_model_image_and_hyper_noise_scalars(
             self, ci_data, model_image, hyper_noise_scalars
@@ -83,7 +85,9 @@ class HyperNoisePhase(HyperPhase):
             )
 
             return ci_fit.CIDataFit(
-                ci_data_masked=ci_data, noise_map=hyper_noise_map, model_data=model_image
+                ci_data_masked=ci_data,
+                noise_map=hyper_noise_map,
+                model_data=model_image,
             )
 
         @classmethod

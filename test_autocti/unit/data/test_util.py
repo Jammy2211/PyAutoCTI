@@ -34,7 +34,9 @@ class TestFits:
 
         arr = np.array([[10.0, 30.0, 40.0], [92.0, 19.0, 20.0]])
 
-        ac.util.numpy_array_2d_to_fits(arr, file_path=test_data_path + "test_autoarray.fits")
+        ac.util.numpy_array_2d_to_fits(
+            arr, file_path=test_data_path + "test_autoarray.fits"
+        )
 
         array_load = ac.util.numpy_array_2d_from_fits(
             file_path=test_data_path + "test_autoarray.fits", hdu=0

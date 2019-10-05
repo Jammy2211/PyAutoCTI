@@ -59,8 +59,12 @@ class MockPattern(object):
 
 @pytest.fixture(name="phase")
 def make_phase():
-    return ac.PhaseCI(phase_name="test_phase",
-                      parallel_species=ac.Species, parallel_ccd_volume=ac.CCDVolume, optimizer_class=NLO)
+    return ac.PhaseCI(
+        phase_name="test_phase",
+        parallel_species=ac.Species,
+        parallel_ccd_volume=ac.CCDVolume,
+        optimizer_class=NLO,
+    )
 
 
 @pytest.fixture(name="cti_settings")
@@ -107,8 +111,7 @@ def make_results_collection():
 class TestPhase(object):
     def test__param_names(self):
 
-        phase = ac.PhaseCI(phase_name="test_phase",
-                   optimizer_class=NLO)
+        phase = ac.PhaseCI(phase_name="test_phase", optimizer_class=NLO)
 
         phase.parallel_species = [af.PriorModel(ac.Species), af.PriorModel(ac.Species)]
 
