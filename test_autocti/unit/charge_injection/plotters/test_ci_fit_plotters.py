@@ -221,8 +221,13 @@ def test__plot_ci_fit_for_phase(fit, ci_fit_plotter_path, plot_patch):
         visualize_path=ci_fit_plotter_path,
     )
 
-    assert ci_fit_plotter_path + "/ci_image_10/structures/ci_fit.png" in plot_patch.paths
-    assert ci_fit_plotter_path + "/ci_image_10/structures/fit_image.png" in plot_patch.paths
+    assert (
+        ci_fit_plotter_path + "/ci_image_10/structures/ci_fit.png" in plot_patch.paths
+    )
+    assert (
+        ci_fit_plotter_path + "/ci_image_10/structures/fit_image.png"
+        in plot_patch.paths
+    )
     assert (
         ci_fit_plotter_path + "/ci_image_10/structures/fit_noise_map.png"
         not in plot_patch.paths

@@ -66,4 +66,6 @@ if __name__ == "__main__":
 
     import sys
 
-    runner.run(sys.modules[__name__], cti_settings=cti_settings, load_cosmic_ray_image=True)
+    runner.run(
+        sys.modules[__name__], cti_settings=cti_settings, load_cosmic_ray_image=True
+    )

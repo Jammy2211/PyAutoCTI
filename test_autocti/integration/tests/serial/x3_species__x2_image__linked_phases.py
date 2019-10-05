@@ -43,9 +43,7 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     class PhaseCI(ac.PhaseCI):
         def customize_priors(self, results):
 
-            previous_total_density = (
-                results[-1].constant.serial_species[0].trap_density
-            )
+            previous_total_density = results[-1].constant.serial_species[0].trap_density
 
             self.serial_species[0].trap_density = af.UniformPrior(
                 lower_limit=0.0, upper_limit=previous_total_density
