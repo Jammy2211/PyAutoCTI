@@ -1104,7 +1104,7 @@ class TestChInj(object):
                 == np.array([[0.0, 1.0, 3.0, 3.0, 3.0], [0.0, 1.0, 6.0, 6.0, 6.0]])
             ).all()
 
-    class TestSerialCalibrationSubArrays:
+    class TestSerialCalibrationArrays:
         def test__geometry_left__ci_region_across_all_image__column_0__extracts_all_columns(
             self
         ):
