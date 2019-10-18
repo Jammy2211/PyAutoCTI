@@ -6,7 +6,7 @@ from autocti.data import util
 
 
 def get_subplot_rows_columns_figsize(number_subplots):
-    """Get the size of a sub plot in (rows, columns), based on the number of subplots that are going to be plotted.
+    """Get the size of a sub plotters in (rows, columns), based on the number of subplots that are going to be plotted.
 
     Parameters
     -----------

@@ -188,7 +188,7 @@ def plot_ci_subplot(
     output_filename="ci_data",
     output_format="show",
 ):
-    """Plot the ci data as a sub-plot of all its quantites (e.g. the data, noise_map-map, PSF, Signal-to_noise-map, \
+    """Plot the ci data as a sub-plotters of all its quantites (e.g. the data, noise_map-map, PSF, Signal-to_noise-map, \
      etc).
 
     Set *autolens.data.array.plotters.array_plotters* for a description of all innput parameters not described below.
@@ -670,7 +670,7 @@ def plot_ci_line_subplot(
     output_format="show",
     output_filename="ci_data_line",
 ):
-    """Plot the ci data as a sub-plot of all its quantites (e.g. the data, noise_map-map, PSF, Signal-to_noise-map, \
+    """Plot the ci data as a sub-plotters of all its quantites (e.g. the data, noise_map-map, PSF, Signal-to_noise-map, \
      etc).
 
     Set *autolens.data.array.plotters.array_plotters* for a description of all innput parameters not described below.
