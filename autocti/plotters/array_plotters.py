@@ -39,7 +39,7 @@ def plot_array(
     -----------
     array : ndarray or hyper.array.scaled_array.ScaledArray
         The 2D array of hyper which is plotted.
-    mask : ndarray of data.mask.Mask
+    mask : ndarray of simulate.mask.Mask
         The masks applied to the hyper, the edge of which is plotted as a set of points over the plotted array.
     extract_array_from_mask : bool
         The plotter array is extracted using the mask, such that masked values are plotted as zeros. This ensures \

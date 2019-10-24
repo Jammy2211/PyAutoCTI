@@ -46,12 +46,12 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(
         cosmic_ray_image=cosmic_ray_image,
     )
 
-    # Now, lets output this simulated ccd-data to the test_autoarray/data folder.
+    # Now, lets output this simulated ccd-simulate to the test_autoarray/simulate folder.
     test_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
 
     ci_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
         path=test_path,
-        folder_names=["data", ci_data_type, ci_data_model, ci_data_resolution],
+        folder_names=["simulate", ci_data_type, ci_data_model, ci_data_resolution],
     )
 
     normalization = str(int(pattern.normalization))

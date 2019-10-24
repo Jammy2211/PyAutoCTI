@@ -101,7 +101,7 @@ class HyperNoisePhase(HyperPhase):
         Run a fit for each galaxy from the previous phase.
         Parameters
         ----------
-        data: LensData
+        simulate: LensData
         results: ResultsCollection
             Results from all previous phases
         Returns

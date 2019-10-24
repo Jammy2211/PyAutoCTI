@@ -18,7 +18,7 @@ def shape_from_ci_data_resolution(ci_data_resolution):
         return (600, 600)
     else:
         raise ValueError(
-            "An invalid data resolution was entered - ", ci_data_resolution
+            "An invalid simulate resolution was entered - ", ci_data_resolution
         )
 
 
@@ -41,7 +41,7 @@ def ci_regions_from_ci_data_resolution(ci_data_resolution):
         ]
     else:
         raise ValueError(
-            "An invalid data resolution was entered - ", ci_data_resolution
+            "An invalid simulate resolution was entered - ", ci_data_resolution
         )
 
 
@@ -57,7 +57,7 @@ def frame_geometry_from_ci_data_resolution(ci_data_resolution):
         return CIFrameGeometryIntegration.high_res()
     else:
         raise ValueError(
-            "An invalid data-type was entered when generating the test_autoarray-data suite - ",
+            "An invalid simulate-type was entered when generating the test_autoarray-simulate suite - ",
             ci_data_resolution,
         )
 
@@ -74,7 +74,7 @@ def ci_data_resolution_from_shape(shape):
         return "highres"
     else:
         raise ValueError(
-            "An invalid shape was entered when generating the data-type - ", shape
+            "An invalid shape was entered when generating the simulate-type - ", shape
         )
 
 
@@ -96,7 +96,7 @@ def load_test_ci_data(
     pattern = ac.CIPatternUniform(normalization=normalization, regions=ci_regions)
     data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
         path=test_path,
-        folder_names=["data", ci_data_type, ci_data_model, ci_data_resolution],
+        folder_names=["simulate", ci_data_type, ci_data_model, ci_data_resolution],
     )
 
     normalization = str(int(pattern.normalization))
