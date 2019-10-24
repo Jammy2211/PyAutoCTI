@@ -257,7 +257,7 @@ class CIDataMasked(object):
         cosmic_ray_image=None,
         noise_scaling_maps=None,
     ):
-        """A fitting image is the collection of data components (e.g. the image, noise-maps, PSF, etc.) which are used \
+        """A fitting image is the collection of simulate components (e.g. the image, noise-maps, PSF, etc.) which are used \
         to generate and fit it with a model image.
 
         The fitting image is in 2D and masked, primarily to remove cosmic rays.
@@ -270,18 +270,18 @@ class CIDataMasked(object):
         image : im.Image
             The 2D observed image and other observed quantities (noise-map, PSF, exposure-time map, etc.)
         mask: msk.Mask | None
-            The 2D mask that is applied to image data.
+            The 2D mask that is applied to image simulate.
 
         Attributes
         ----------
         image : ScaledSquarePixelArray
-            The 2D observed image data (not an instance of im.Image, so does not include the other data attributes,
+            The 2D observed image simulate (not an instance of im.Image, so does not include the other simulate attributes,
             which are explicitly made as new attributes of the fitting image).
         noise_map : NoiseMap
             An array describing the RMS standard deviation error in each pixel, preferably in units of electrons per
             second.
         mask: msk.Mask
-            The 2D mask that is applied to image data.
+            The 2D mask that is applied to image simulate.
         """
         self.image = image
         self.noise_map = noise_map

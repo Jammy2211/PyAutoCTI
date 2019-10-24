@@ -9,7 +9,7 @@ import pytest
 
 @pytest.fixture(name="data_plotter_path")
 def make_data_plotter_setup():
-    return "{}/../../test_files/plotting/data/".format(
+    return "{}/../../test_files/plotting/simulate/".format(
         os.path.dirname(os.path.realpath(__file__))
     )
 
