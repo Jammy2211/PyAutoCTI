@@ -138,9 +138,9 @@ class CIPatternNonUniform(AbstractCIPattern):
         Parameters
         -----------
         ci_image : ndarray
-            2D array of ci_pre_ctis ci_data the column non-uniformity is estimated from.
+            2D arrays of ci_pre_ctis ci_data the column non-uniformity is estimated from.
         mask : ndarray
-            2D array of masked ci_pre_ctis pixels, used to mask cosmic rays.
+            2D arrays of masked ci_pre_ctis pixels, used to mask cosmic rays.
         """
 
         dimensions = ci_image.shape
@@ -176,9 +176,9 @@ class CIPatternNonUniform(AbstractCIPattern):
         Parameters
         -----------
         column : ndarray
-            1D array of the ci_pre_ctis column.
+            1D arrays of the ci_pre_ctis column.
         column_mask : ndarray
-            1D array of the column's masked pixels, to mask cosmic rays.
+            1D arrays of the column's masked pixels, to mask cosmic rays.
          """
 
         means_of_columns = []
@@ -200,9 +200,9 @@ class CIPatternNonUniform(AbstractCIPattern):
         Parameters
         -----------
         column : ndarray
-            1D array of the column of the charge injection region.
+            1D arrays of the column of the charge injection region.
         column_mask : ndarray
-            1D array of the column's masked pixels, to mask cosmic rays.
+            1D arrays of the column's masked pixels, to mask cosmic rays.
         """
         column_size = len(column)
 

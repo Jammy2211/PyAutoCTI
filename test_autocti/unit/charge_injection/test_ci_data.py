@@ -8,7 +8,7 @@ import autocti as ac
 
 from test import MockGeometry, MockPattern
 
-test_data_dir = "{}/../test_files/array/".format(
+test_data_dir = "{}/../test_files/arrays/".format(
     os.path.dirname(os.path.realpath(__file__))
 )
 
@@ -564,7 +564,7 @@ class TestLoadCIData(object):
             cosmic_ray_image_hdu=0,
         )
 
-        output_data_dir = "{}/../test_files/array/output_test/".format(
+        output_data_dir = "{}/../test_files/arrays/output_test/".format(
             os.path.dirname(os.path.realpath(__file__))
         )
         if os.path.exists(output_data_dir):

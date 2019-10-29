@@ -31,35 +31,35 @@ def plot_array(
     xyticksize=16,
     output_path=None,
     output_format="show",
-    output_filename="array",
+    output_filename="arrays",
 ):
-    """Plot an array of hyper as a figure.
+    """Plot an arrays of hyper as a figure.
 
     Parameters
     -----------
-    array : ndarray or hyper.array.scaled_array.ScaledArray
-        The 2D array of hyper which is plotted.
+    array : ndarray or hyper.arrays.scaled_array.ScaledArray
+        The 2D arrays of hyper which is plotted.
     mask : ndarray of simulate.mask.Mask
-        The masks applied to the hyper, the edge of which is plotted as a set of points over the plotted array.
+        The masks applied to the hyper, the edge of which is plotted as a set of points over the plotted arrays.
     extract_array_from_mask : bool
-        The plotter array is extracted using the mask, such that masked values are plotted as zeros. This ensures \
+        The plotter arrays is extracted using the mask, such that masked values are plotted as zeros. This ensures \
         bright features outside the mask do not impact the color map of the plotters.
     as_subplot : bool
-        Whether the array is plotted as part of a subplot, in which case the grid figure is not opened / closed.
+        Whether the arrays is plotted as part of a subplot, in which case the grid figure is not opened / closed.
     figsize : (int, int)
         The size of the figure in (rows, columns).
     aspect : str
         The aspect ratio of the hyper, specifically whether it is forced to be square ('equal') or adapts its size to \
         the figure size ('auto').
     cmap : str
-        The colormap the array is plotted using, which may be chosen from the standard matplotlib colormaps.
+        The colormap the arrays is plotted using, which may be chosen from the standard matplotlib colormaps.
     norm : str
         The normalization of the colormap used to plotters the hyper, specifically whether it is linear ('linear'), log \
         ('log') or a symmetric log normalization ('symmetric_log').
     norm_min : float or None
-        The minimum array value the colormap map spans (all values below this value are plotted the same color).
+        The minimum arrays value the colormap map spans (all values below this value are plotted the same color).
     norm_max : float or None
-        The maximum array value the colormap map spans (all values above this value are plotted the same color).
+        The maximum arrays value the colormap map spans (all values above this value are plotted the same color).
     linthresh : float
         For the 'symmetric_log' colormap normalization ,this specifies the range of values within which the colormap \
         is linear.
@@ -144,14 +144,14 @@ def plot_figure(
     linthresh,
     linscale,
 ):
-    """Open a matplotlib figure and plotters the array of hyper on it.
+    """Open a matplotlib figure and plotters the arrays of hyper on it.
 
     Parameters
     -----------
-    array : ndarray or hyper.array.scaled_array.ScaledArray
-        The 2D array of hyper which is plotted.
+    array : ndarray or hyper.arrays.scaled_array.ScaledArray
+        The 2D arrays of hyper which is plotted.
     as_subplot : bool
-        Whether the array is plotted as part of a subplot, in which case the grid figure is not opened / closed.
+        Whether the arrays is plotted as part of a subplot, in which case the grid figure is not opened / closed.
     units : str
         The units of the y / x axis of the plots, in arc-seconds ('arcsec') or kiloparsecs ('kpc').
     kpc_per_arcsec : float or None
@@ -162,14 +162,14 @@ def plot_figure(
         The aspect ratio of the hyper, specifically whether it is forced to be square ('equal') or adapts its size to \
         the figure size ('auto').
     cmap : str
-        The colormap the array is plotted using, which may be chosen from the standard matplotlib colormaps.
+        The colormap the arrays is plotted using, which may be chosen from the standard matplotlib colormaps.
     norm : str
         The normalization of the colormap used to plotters the hyper, specifically whether it is linear ('linear'), log \
         ('log') or a symmetric log normalization ('symmetric_log').
     norm_min : float or None
-        The minimum array value the colormap map spans (all values below this value are plotted the same color).
+        The minimum arrays value the colormap map spans (all values below this value are plotted the same color).
     norm_max : float or None
-        The maximum array value the colormap map spans (all values above this value are plotted the same color).
+        The maximum arrays value the colormap map spans (all values above this value are plotted the same color).
     linthresh : float
         For the 'symmetric_log' colormap normalization ,this specifies the range of values within which the colormap \
         is linear.
@@ -177,9 +177,9 @@ def plot_figure(
         For the 'symmetric_log' colormap normalization, this allowws the linear range set by linthresh to be stretched \
         relative to the logarithmic range.
     xticks_manual :  [] or None
-        If input, the xticks do not use the array's default xticks but instead overwrite them as these values.
+        If input, the xticks do not use the arrays's default xticks but instead overwrite them as these values.
     yticks_manual :  [] or None
-        If input, the yticks do not use the array's default yticks but instead overwrite them as these values.
+        If input, the yticks do not use the arrays's default yticks but instead overwrite them as these values.
     """
 
     plotter_util.setup_figure(figsize=figsize, as_subplot=as_subplot)
@@ -201,40 +201,40 @@ def plot_figure(
 
 
 def get_extent(array):
-    """Get the extent of the dimensions of the array in the units of the figure (e.g. arc-seconds or kpc).
+    """Get the extent of the dimensions of the arrays in the units of the figure (e.g. arc-seconds or kpc).
 
-    This is used to set the extent of the array and thus the y / x axis limits.
+    This is used to set the extent of the arrays and thus the y / x axis limits.
 
     Parameters
     -----------
-    array : ndarray or hyper.array.scaled_array.ScaledArray
-        The 2D array of hyper which is plotted.
+    array : ndarray or hyper.arrays.scaled_array.ScaledArray
+        The 2D arrays of hyper which is plotted.
     units : str
         The units of the y / x axis of the plots, in arc-seconds ('arcsec') or kiloparsecs ('kpc').
     kpc_per_arcsec : float
         The conversion factor between arc-seconds and kiloparsecs, required to plotters the units in kpc.
     xticks_manual :  [] or None
-        If input, the xticks do not use the array's default xticks but instead overwrite them as these values.
+        If input, the xticks do not use the arrays's default xticks but instead overwrite them as these values.
     yticks_manual :  [] or None
-        If input, the yticks do not use the array's default yticks but instead overwrite them as these values.
+        If input, the yticks do not use the arrays's default yticks but instead overwrite them as these values.
     """
     return np.asarray([0, array.shape[1], 0, array.shape[0]])
 
 
 def get_normalization_min_max(array, norm_min, norm_max):
-    """Get the minimum and maximum of the normalization of the array, which sets the lower and upper limits of the \
+    """Get the minimum and maximum of the normalization of the arrays, which sets the lower and upper limits of the \
     colormap.
 
-    If norm_min / norm_max are not supplied, the minimum / maximum values of the array of hyper are used.
+    If norm_min / norm_max are not supplied, the minimum / maximum values of the arrays of hyper are used.
 
     Parameters
     -----------
-    array : ndarray or hyper.array.scaled_array.ScaledArray
-        The 2D array of hyper which is plotted.
+    array : ndarray or hyper.arrays.scaled_array.ScaledArray
+        The 2D arrays of hyper which is plotted.
     norm_min : float or None
-        The minimum array value the colormap map spans (all values below this value are plotted the same color).
+        The minimum arrays value the colormap map spans (all values below this value are plotted the same color).
     norm_max : float or None
-        The maximum array value the colormap map spans (all values above this value are plotted the same color).
+        The maximum arrays value the colormap map spans (all values above this value are plotted the same color).
     """
     if norm_min is None:
         norm_min = array.min()
@@ -250,16 +250,16 @@ def get_normalization_scale(norm, norm_min, norm_max, linthresh, linscale):
 
     For a 'symmetric_log' colormap, linthesh and linscale also change the colormap.
 
-    If norm_min / norm_max are not supplied, the minimum / maximum values of the array of hyper are used.
+    If norm_min / norm_max are not supplied, the minimum / maximum values of the arrays of hyper are used.
 
     Parameters
     -----------
-    array : ndarray or hyper.array.scaled_array.ScaledArray
-        The 2D array of hyper which is plotted.
+    arrays : ndarray or hyper.arrays.scaled_array.ScaledArray
+        The 2D arrays of hyper which is plotted.
     norm_min : float or None
-        The minimum array value the colormap map spans (all values below this value are plotted the same color).
+        The minimum arrays value the colormap map spans (all values below this value are plotted the same color).
     norm_max : float or None
-        The maximum array value the colormap map spans (all values above this value are plotted the same color).
+        The maximum arrays value the colormap map spans (all values above this value are plotted the same color).
     linthresh : float
         For the 'symmetric_log' colormap normalization ,this specifies the range of values within which the colormap \
         is linear.
@@ -345,10 +345,10 @@ def convert_grid_units(array, grid_arc_seconds, units, kpc_per_arcsec):
 
     Parameters
     -----------
-    array : ndarray or hyper.array.scaled_array.ScaledArray
-        The 2D array of hyper which is plotted, the shape of which is used for converting the grid to units of pixels.
-    grid_arc_seconds : ndarray or hyper.array.grid_stacks.RegularGrid
-        The (y,x) coordinates of the grid in arc-seconds, in an array of shape (total_coordinates, 2).
+    array : ndarray or hyper.arrays.scaled_array.ScaledArray
+        The 2D arrays of hyper which is plotted, the shape of which is used for converting the grid to units of pixels.
+    grid_arc_seconds : ndarray or hyper.arrays.grid_stacks.RegularGrid
+        The (y,x) coordinates of the grid in arc-seconds, in an arrays of shape (total_coordinates, 2).
     units : str
         The units of the y / x axis of the plots, in arc-seconds ('arcsec') or kiloparsecs ('kpc').
     kpc_per_arcsec : float

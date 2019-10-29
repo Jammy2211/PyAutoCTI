@@ -128,7 +128,7 @@ def clock_image_variable_density(clock_routine, clock_params, image, species, cc
     Note that for serial CTI, the image will have already been rotated to the corrct orientation and that using this \
     feature on columns will give the correct CTI ci_pattern."""
 
-    # The post clocking image is stored in a new array.
+    # The post clocking image is stored in a new arrays.
     image_post_clocking = np.zeros(image.shape)
 
     # Setup the density / column length for computing Poisson density values
