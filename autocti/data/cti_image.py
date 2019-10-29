@@ -14,7 +14,7 @@ class ImageFrame(np.ndarray):
             The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
             locations of different regions of the CCD (overscans, prescan, etc.)
         array : ndarray
-            The 2D array of the ci_data of this ci_frame.
+            The 2D arrays of the ci_data of this ci_frame.
         """
         quad = np.array(array, dtype="float64").view(cls)
         quad.frame_geometry = frame_geometry
@@ -28,8 +28,8 @@ class ImageFrame(np.ndarray):
         frame_geometry : ImageFrame.FrameGeometry
             The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
             locations of different regions of the CCD (overscans, prescan, etc.)
-        array : ndarray
-            The 2D array of the ci_data of this ci_frame.
+        arrays : ndarray
+            The 2D arrays of the ci_data of this ci_frame.
         """
         # noinspection PyArgumentList
         super(ImageFrame, self).__init__()

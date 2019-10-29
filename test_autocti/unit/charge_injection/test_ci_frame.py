@@ -1557,13 +1557,13 @@ class TestChInj(object):
                 frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
-            # First fronrt edge array:
+            # First fronrt edge arrays:
             #
             # [[1.0, 1.0, 1.0],
             #  [2.0, 2.0, 2.0],
             #  [3.0, 3.0, 3.0]])
 
-            # Second front edge array:
+            # Second front edge arrays:
 
             # [[5.0, 5.0, 5.0],
             #  [6.0, 6.0, 6.0],
@@ -1640,13 +1640,13 @@ class TestChInj(object):
                 frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
-            # First fronrt edge array:
+            # First fronrt edge arrays:
             #
             # [[1.0, 1.0, 1.0],
             #  [2.0, 2.0, 2.0],
             #  [3.0, 3.0, 3.0]])
 
-            # Second front edge array:
+            # Second front edge arrays:
 
             # [[5.0, 5.0, 5.0],
             #  [6.0, 6.0, 6.0],
@@ -1704,13 +1704,13 @@ class TestChInj(object):
                 frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
             )
 
-            # First fronrt edge array:
+            # First fronrt edge arrays:
             #
             # [[1.0, 1.0, 1.0],
             #  [2.0, 2.0, 2.0],
             #  [3.0, 3.0, 3.0]])
 
-            # Second front edge array:
+            # Second front edge arrays:
 
             # [[5.0, 5.0, 5.0],
             #  [6.0, 6.0, 6.0],

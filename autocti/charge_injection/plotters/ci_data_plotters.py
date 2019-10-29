@@ -191,7 +191,7 @@ def plot_ci_subplot(
     """Plot the ci simulate as a sub-plotters of all its quantites (e.g. the simulate, noise_map-map, PSF, Signal-to_noise-map, \
      etc).
 
-    Set *autolens.simulate.array.plotters.array_plotters* for a description of all innput parameters not described below.
+    Set *autolens.simulate.arrays.plotters.array_plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
@@ -199,7 +199,7 @@ def plot_ci_subplot(
         The ci simulate, which includes the observed simulate, noise_map-map, PSF, signal-to-noise_map-map, etc.
     plot_origin : True
         If true, the origin of the simulate's coordinate system is plotted as a 'x'.
-    image_plane_pix_grid : ndarray or simulate.array.grid_lines.PixGrid
+    image_plane_pix_grid : ndarray or simulate.arrays.grid_lines.PixGrid
         If an adaptive pixelization whose pixels are formed by tracing pixels from the simulate, this plots those pixels \
         over the immage.
     ignore_config : bool
@@ -350,7 +350,7 @@ def plot_ci_data_individual(
     """Plot each attribute of the ci simulate as individual figures one by one (e.g. the simulate, noise_map-map, PSF, \
      Signal-to_noise-map, etc).
 
-    Set *autolens.simulate.array.plotters.array_plotters* for a description of all innput parameters not described below.
+    Set *autolens.simulate.arrays.plotters.array_plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
@@ -673,7 +673,7 @@ def plot_ci_line_subplot(
     """Plot the ci simulate as a sub-plotters of all its quantites (e.g. the simulate, noise_map-map, PSF, Signal-to_noise-map, \
      etc).
 
-    Set *autolens.simulate.array.plotters.array_plotters* for a description of all innput parameters not described below.
+    Set *autolens.simulate.arrays.plotters.array_plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
@@ -681,7 +681,7 @@ def plot_ci_line_subplot(
         The ci simulate, which includes the observed simulate, noise_map-map, PSF, signal-to-noise_map-map, etc.
     plot_origin : True
         If true, the origin of the simulate's coordinate system is plotted as a 'x'.
-    image_plane_pix_grid : ndarray or simulate.array.grid_lines.PixGrid
+    image_plane_pix_grid : ndarray or simulate.arrays.grid_lines.PixGrid
         If an adaptive pixelization whose pixels are formed by tracing pixels from the simulate, this plots those pixels \
         over the immage.
     ignore_config : bool
@@ -792,7 +792,7 @@ def plot_ci_data_line_individual(
     """Plot each attribute of the ci simulate as individual figures one by one (e.g. the simulate, noise_map-map, PSF, \
      Signal-to_noise-map, etc).
 
-    Set *autolens.simulate.array.plotters.array_plotters* for a description of all innput parameters not described below.
+    Set *autolens.simulate.arrays.plotters.array_plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------

@@ -10,12 +10,12 @@ def make_path_if_does_not_exist(path):
 
 
 def numpy_array_2d_to_fits(array_2d, file_path, overwrite=False):
-    """Write a 2D NumPy array to a .fits file.
+    """Write a 2D NumPy arrays to a .fits file.
 
     Parameters
     ----------
     array_2d : ndarray
-        The 2D array that is written to fits.
+        The 2D arrays that is written to fits.
     file_path : str
         The full path of the file that is output, including the file name and '.fits' extension.
     overwrite : bool
@@ -29,7 +29,7 @@ def numpy_array_2d_to_fits(array_2d, file_path, overwrite=False):
     Examples
     --------
     array_2d = np.ones((5,5))
-    numpy_array_to_fits(array=array_2d, file_path='/path/to/file/filename.fits', overwrite=True)
+    numpy_array_to_fits(arrays=array_2d, file_path='/path/to/file/filename.fits', overwrite=True)
     """
     if overwrite and os.path.exists(file_path):
         os.remove(file_path)
@@ -40,9 +40,9 @@ def numpy_array_2d_to_fits(array_2d, file_path, overwrite=False):
 
 
 def numpy_array_2d_from_fits(file_path, hdu):
-    """Read a 2D NumPy array to a .fits file.
+    """Read a 2D NumPy arrays to a .fits file.
 
-    After loading the NumPy array, the array is flipped upside-down using np.flipud. This is so that the structures \
+    After loading the NumPy arrays, the arrays is flipped upside-down using np.flipud. This is so that the structures \
     appear the same orientation as .fits files loaded in DS9.
 
     Parameters
@@ -50,12 +50,12 @@ def numpy_array_2d_from_fits(file_path, hdu):
     file_path : str
         The full path of the file that is loaded, including the file name and '.fits' extension.
     hdu : int
-        The HDU extension of the array that is loaded from the .fits file.
+        The HDU extension of the arrays that is loaded from the .fits file.
 
     Returns
     -------
     ndarray
-        The NumPy array that is loaded from the .fits file.
+        The NumPy arrays that is loaded from the .fits file.
 
     Examples
     --------

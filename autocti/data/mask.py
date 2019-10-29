@@ -53,7 +53,7 @@ class Mask(np.ndarray):
             The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
             therefore the direction of clocking and rotations before input into the cti algorithm.
         cosmic_ray_image : ndarray
-            2D array flagging where cosmic rays on the image.
+            2D arrays flagging where cosmic rays on the image.
         cosmic_ray_parallel_buffer : int
             If a cosmic-ray mask is supplied, the number of pixels from each ray pixels are masked in the parallel \
             direction.

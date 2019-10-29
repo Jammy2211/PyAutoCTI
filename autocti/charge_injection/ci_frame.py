@@ -29,9 +29,9 @@ class ChInj(object):
         self.ci_pattern = ci_pattern
 
     def ci_regions_from_array(self, array):
-        """Extract an array of all of the charge-injection regions from a charge injection ci_frame.
+        """Extract an arrays of all of the charge-injection regions from a charge injection ci_frame.
 
-        The diagram below illustrates the array that is extracted from a ci_frame:
+        The diagram below illustrates the arrays that is extracted from a ci_frame:
 
         ---KEY---
         ---------
@@ -84,10 +84,10 @@ class ChInj(object):
         return new_array
 
     def parallel_non_ci_regions_frame_from_frame(self, array):
-        """Extract an array of all of the parallel trails following the charge-injection regions from a charge   
+        """Extract an arrays of all of the parallel trails following the charge-injection regions from a charge
         injection ci_frame.
 
-        The diagram below illustrates the array that is extracted from a ci_frame:
+        The diagram below illustrates the arrays that is extracted from a ci_frame:
 
         ---KEY---
         ---------
@@ -145,7 +145,7 @@ class ChInj(object):
     def parallel_edges_and_trails_frame_from_frame(
         self, array, front_edge_rows=None, trails_rows=None
     ):
-        """Extract an array of all of the parallel front edges and trails of each the charge-injection regions from   
+        """Extract an arrays of all of the parallel front edges and trails of each the charge-injection regions from
         a charge injection ci_frame.
 
         One can specify the range of rows that are extracted, for example:
@@ -154,7 +154,7 @@ class ChInj(object):
         front_edge_rows = (0, 2) will extract the leading two front edge rows.
         trails_rows = (0, 1) will extract the first row of trails closest to the charge injection region.
 
-        The diagram below illustrates the array that is extracted from a ci_frame for front_edge_rows=(0,1) and   
+        The diagram below illustrates the arrays that is extracted from a ci_frame for front_edge_rows=(0,1) and
         trails_rows=(0,1):
 
         ---KEY---
@@ -246,11 +246,11 @@ class ChInj(object):
         return new_array
 
     def parallel_calibration_section_for_columns(self, array, columns):
-        """Extract an parallel calibration array from a charge injection ci_frame, where this array is a sub-set of
+        """Extract an parallel calibration arrays from a charge injection ci_frame, where this arrays is a sub-set of
         the ci_frame which be used for just parallel calibration. Specifically, this ci_frame is a specified number
         of columns closest to the read-out electronics.
 
-        The diagram below illustrates the array that is extracted from a ci_frame with columns=(0, 3):
+        The diagram below illustrates the arrays that is extracted from a ci_frame with columns=(0, 3):
 
         ---KEY---
         ---------
@@ -299,10 +299,10 @@ class ChInj(object):
         return array
 
     def serial_all_trails_frame_from_frame(self, array):
-        """Extract an array of all of the serial trails in the serial overscan region, that are to the side of a
+        """Extract an arrays of all of the serial trails in the serial overscan region, that are to the side of a
         charge-injection regions from a charge injection ci_frame.
 
-        The diagram below illustrates the array that is extracted from a ci_frame:
+        The diagram below illustrates the arrays that is extracted from a ci_frame:
 
         ---KEY---
         ---------
@@ -351,10 +351,10 @@ class ChInj(object):
         return array
 
     def serial_overscan_above_trails_frame_from_frame(self, array):
-        """Extract an array of all of the regions of the serial overscan that don't contain trails from a   
+        """Extract an arrays of all of the regions of the serial overscan that don't contain trails from a
         charge injection region (i.e. are not to the side of one).
 
-        The diagram below illustrates the array that is extracted from a ci_frame:
+        The diagram below illustrates the arrays that is extracted from a ci_frame:
 
         ---KEY---
         ---------
@@ -418,7 +418,7 @@ class ChInj(object):
     def serial_edges_and_trails_frame_from_frame(
         self, array, front_edge_columns=None, trails_columns=None
     ):
-        """Extract an array of all of the serial front edges and trails of each the charge-injection regions from   
+        """Extract an arrays of all of the serial front edges and trails of each the charge-injection regions from
         a charge injection ci_frame.
 
         One can specify the range of columns that are extracted, for example:
@@ -427,7 +427,7 @@ class ChInj(object):
         front_edge_columns = (0, 2) will extract the leading two front edge columns.
         trails_columns = (0, 1) will extract the first column of trails closest to the charge injection region.
 
-        The diagram below illustrates the array that is extracted from a ci_frame for front_edge_columns=(0,2) and   
+        The diagram below illustrates the arrays that is extracted from a ci_frame for front_edge_columns=(0,2) and
         trails_columns=(0,2):
 
         ---KEY---
@@ -519,11 +519,11 @@ class ChInj(object):
         return new_array
 
     def serial_calibration_section_for_rows(self, array, rows):
-        """Extract a serial calibration array from a charge injection ci_frame, where this array is a sub-set of the
+        """Extract a serial calibration arrays from a charge injection ci_frame, where this arrays is a sub-set of the
         ci_frame which can be used for serial-only calibration. Specifically, this ci_frame is all charge injection
         regions and their serial over-scan trails.
 
-        The diagram below illustrates the array that is extracted from a ci_frame with column=5:
+        The diagram below illustrates the arrays that is extracted from a ci_frame with column=5:
 
         ---KEY---
         ---------
@@ -569,7 +569,7 @@ class ChInj(object):
         return array
 
     def serial_calibration_sub_arrays_from_frame(self, array):
-        """Extract each charge injection region image for the serial calibration array above."""
+        """Extract each charge injection region image for the serial calibration arrays above."""
 
         calibration_regions = list(
             map(
@@ -598,7 +598,7 @@ class ChInj(object):
     def parallel_front_edge_arrays_from_frame(self, array, rows=None, mask=None):
         """Extract a list of structures of the parallel front edge regions of a charge injection ci_frame.
 
-        The diagram below illustrates the array that is extracted from a ci_frame for rows=(0, 1):
+        The diagram below illustrates the arrays that is extracted from a ci_frame for rows=(0, 1):
 
         ---KEY---
         ---------
@@ -698,7 +698,7 @@ class ChInj(object):
 
         Parameters
         ------------
-        array
+        arrays
         rows : (int, int)
             The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
@@ -731,7 +731,7 @@ class ChInj(object):
         """Extract the parallel trails of a charge injection ci_frame.
 
 
-        The diagram below illustrates the array that is extracted from a ci_frame for rows=(0, 1):
+        The diagram below illustrates the arrays that is extracted from a ci_frame for rows=(0, 1):
 
         ---KEY---
         ---------
@@ -837,7 +837,7 @@ class ChInj(object):
 
         Parameters
         ------------
-        array
+        arrays
         rows : (int, int)
             The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
@@ -869,7 +869,7 @@ class ChInj(object):
     def serial_front_edge_arrays_from_frame(self, array, columns=None, mask=None):
         """Extract a list of the serial front edge structures of a charge injection ci_frame.
 
-        The diagram below illustrates the array that is extracted from a ci_frame for columnss=(0, 3):
+        The diagram below illustrates the arrays that is extracted from a ci_frame for columnss=(0, 3):
 
         ---KEY---
         ---------
@@ -972,7 +972,7 @@ class ChInj(object):
 
         Parameters
         ------------
-        array
+        arrays
         columns : (int, int)
             The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
             columns)
@@ -1005,7 +1005,7 @@ class ChInj(object):
     def serial_trails_arrays_from_frame(self, array, columns=None, mask=None):
         """Extract a list of the serial trails of a charge injection ci_frame.
 
-        The diagram below illustrates the array that is extracted from a ci_frame for columnss=(0, 3):
+        The diagram below illustrates the arrays that is extracted from a ci_frame for columnss=(0, 3):
 
         ---KEY---
         ---------
@@ -1107,7 +1107,7 @@ class ChInj(object):
 
         Parameters
         ------------
-        array
+        arrays
         columns : (int, int)
             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd columns)
         """
@@ -1221,8 +1221,8 @@ class FrameGeometry(object):
     def __init__(self, corner, parallel_overscan, serial_prescan, serial_overscan):
         """Abstract class for the geometry of a CTI Image.
 
-        A ImageFrame is stored as a 2D NumPy array. When this immage is passed to arctic, clocking goes towards
-        the 'top' of the NumPy array (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the array   
+        A ImageFrame is stored as a 2D NumPy arrays. When this immage is passed to arctic, clocking goes towards
+        the 'top' of the NumPy arrays (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the arrays
         (e.g. the final row).
 
         Arctic has no in-built functionality for changing the direction of clocking depending on the input   
@@ -1465,7 +1465,7 @@ class FrameGeometry(object):
         P   [xxxxxxxxx H xxxxxxxxx] [xxxxxxxxx G xxxxxxxxx]  P         | clocks an image
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | without any rotation
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | (e.g. towards row 0
-                                                                       | of the NumPy array)
+                                                                       | of the NumPy arrays)
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
         P   [xxxxxxxxx E xxxxxxxxx] [xxxxxxxxx F xxxxxxxxx] P          |
@@ -1486,7 +1486,7 @@ class FrameGeometry(object):
         P   [xxxxxxxxx F xxxxxxxxx] [xxxxxxxxx E xxxxxxxxx]  P         | clocks an image
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | without any rotation
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | (e.g. towards row 0
-                                                                       | of the NumPy array)
+                                                                       | of the NumPy arrays)
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
         P   [xxxxxxxxx G xxxxxxxxx] [xxxxxxxxx H xxxxxxxxx] P          |

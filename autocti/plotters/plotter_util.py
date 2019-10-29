@@ -65,7 +65,7 @@ def output_figure(array, as_subplot, output_path, output_filename, output_format
     Parameters
     -----------
     array : ndarray
-        The 2D array of hyper to be output, required for outputting the hyper as a fits file.
+        The 2D arrays of hyper to be output, required for outputting the hyper as a fits file.
     as_subplot : bool
         Whether the figure is part of subplot, in which case the figure is not output so that the entire subplot can \
         be output instead using the *output_subplot_array* function.

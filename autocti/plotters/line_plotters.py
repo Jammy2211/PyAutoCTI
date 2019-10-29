@@ -82,19 +82,19 @@ def plot_line(
     output_format="show",
     output_filename="line",
 ):
-    """Plot an array of hyper as a figure.
+    """Plot an arrays of hyper as a figure.
 
     Parameters
     -----------
-    line : ndarray or hyper.array.scaled_array.ScaledArray
-        The 2D array of hyper which is plotted.
+    line : ndarray or hyper.arrays.scaled_array.ScaledArray
+        The 2D arrays of hyper which is plotted.
     mask : ndarray of simulate.mask.Mask
-        The masks applied to the hyper, the edge of which is plotted as a set of points over the plotted array.
+        The masks applied to the hyper, the edge of which is plotted as a set of points over the plotted arrays.
     extract_line_from_mask : bool
-        The plotter array is extracted using the mask, such that masked values are plotted as zeros. This ensures \
+        The plotter arrays is extracted using the mask, such that masked values are plotted as zeros. This ensures \
         bright features outside the mask do not impact the color map of the plotters.
     as_subplot : bool
-        Whether the array is plotted as part of a subplot, in which case the grid figure is not opened / closed.
+        Whether the arrays is plotted as part of a subplot, in which case the grid figure is not opened / closed.
     figsize : (int, int)
         The size of the figure in (rows, columns).
     aspect : str
@@ -143,14 +143,14 @@ def plot_line(
 
 
 def plot_figure(line, as_subplot, figsize):
-    """Open a matplotlib figure and plotters the array of hyper on it.
+    """Open a matplotlib figure and plotters the arrays of hyper on it.
 
     Parameters
     -----------
-    line : ndarray or hyper.array.scaled_array.ScaledArray
-        The 2D array of hyper which is plotted.
+    line : ndarray or hyper.arrays.scaled_array.ScaledArray
+        The 2D arrays of hyper which is plotted.
     as_subplot : bool
-        Whether the array is plotted as part of a subplot, in which case the grid figure is not opened / closed.
+        Whether the arrays is plotted as part of a subplot, in which case the grid figure is not opened / closed.
     units : str
         The units of the y / x axis of the plots, in arc-seconds ('arcsec') or kiloparsecs ('kpc').
     kpc_per_arcsec : float or None
@@ -161,14 +161,14 @@ def plot_figure(line, as_subplot, figsize):
         The aspect ratio of the hyper, specifically whether it is forced to be square ('equal') or adapts its size to \
         the figure size ('auto').
     cmap : str
-        The colormap the array is plotted using, which may be chosen from the standard matplotlib colormaps.
+        The colormap the arrays is plotted using, which may be chosen from the standard matplotlib colormaps.
     norm : str
         The normalization of the colormap used to plotters the hyper, specifically whether it is linear ('linear'), log \
         ('log') or a symmetric log normalization ('symmetric_log').
     norm_min : float or None
-        The minimum array value the colormap map spans (all values below this value are plotted the same color).
+        The minimum arrays value the colormap map spans (all values below this value are plotted the same color).
     norm_max : float or None
-        The maximum array value the colormap map spans (all values above this value are plotted the same color).
+        The maximum arrays value the colormap map spans (all values above this value are plotted the same color).
     linthresh : float
         For the 'symmetric_log' colormap normalization ,this specifies the range of values within which the colormap \
         is linear.
@@ -176,9 +176,9 @@ def plot_figure(line, as_subplot, figsize):
         For the 'symmetric_log' colormap normalization, this allowws the linear range set by linthresh to be stretched \
         relative to the logarithmic range.
     xticks_manual :  [] or None
-        If input, the xticks do not use the array's default xticks but instead overwrite them as these values.
+        If input, the xticks do not use the arrays's default xticks but instead overwrite them as these values.
     yticks_manual :  [] or None
-        If input, the yticks do not use the array's default yticks but instead overwrite them as these values.
+        If input, the yticks do not use the arrays's default yticks but instead overwrite them as these values.
     """
     plotter_util.setup_figure(figsize=figsize, as_subplot=as_subplot)
     plt.plot(line)

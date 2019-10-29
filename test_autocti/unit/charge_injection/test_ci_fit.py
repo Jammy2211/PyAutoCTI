@@ -450,7 +450,7 @@ class TestChiSquaredMapsOfRegions:
     def test__chi_squared_map_of_ci_regions__extracts_correctly_from_chi_squard_map(
         self, ci_data_fit_1
     ):
-        # For the mock object MockCIFrame, the ci_regions_from_array function extracts the array entries
+        # For the mock object MockCIFrame, the ci_regions_from_array function extracts the arrays entries
         # [0:2,0]
 
         fit = ac.CIFit(
@@ -464,7 +464,7 @@ class TestChiSquaredMapsOfRegions:
     def test__chi_squared_map_of_parallel_non_ci_regions__extracts_correctly_from_chi_squard_map(
         self, ci_data_fit_1
     ):
-        # For the mock object MockCIFrame, the parallel_non_ci_regions_frame_from_frame function extracts the array
+        # For the mock object MockCIFrame, the parallel_non_ci_regions_frame_from_frame function extracts the arrays
         # entries [0:2,1]
 
         fit = ac.CIFit(
@@ -480,7 +480,7 @@ class TestChiSquaredMapsOfRegions:
     def test__chi_squared_map_of_serial_trails__extracts_correctly_from_chi_squard_map(
         self, ci_data_fit_1
     ):
-        # For the mock object MockCIFrame, the parallel_non_ci_regions_frame_from_frame function extracts the array
+        # For the mock object MockCIFrame, the parallel_non_ci_regions_frame_from_frame function extracts the arrays
         # entries [0, 0:2]
 
         fit = ac.CIFit(
@@ -496,7 +496,7 @@ class TestChiSquaredMapsOfRegions:
     def test__chi_squared_map_of_overscan_above_serial_trails__extracts_correctly_from_chi_squard_map(
         self, ci_data_fit_1
     ):
-        # For the mock object MockCIFrame, the parallel_non_ci_regions_frame_from_frame function extracts the array
+        # For the mock object MockCIFrame, the parallel_non_ci_regions_frame_from_frame function extracts the arrays
         # entries [0, 0:2]
 
         fit = ac.CIFit(
