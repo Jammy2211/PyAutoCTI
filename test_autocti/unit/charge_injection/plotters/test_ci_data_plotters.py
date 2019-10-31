@@ -34,7 +34,7 @@ def make_ci_pre_cti():
     return 3.0 * np.ones((6, 6))
 
 
-@pytest.fixture(name="simulate")
+@pytest.fixture(name="simulator")
 def make_ci_data(image, noise_map, ci_pre_cti):
     return ac.CIData(
         image=image,

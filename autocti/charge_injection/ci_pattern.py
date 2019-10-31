@@ -79,7 +79,7 @@ class CIPatternUniform(AbstractCIPattern):
 
         return ci_pre_cti
 
-    """ Class to simulate a charge injection image with a uniform charge injection ci_pattern."""
+    """ Class to simulator a charge injection image with a uniform charge injection ci_pattern."""
 
     def simulate_ci_pre_cti(self, shape):
         """Use this charge injection ci_pattern to generate a pre-cti charge injection image. This is performed by \
@@ -283,16 +283,16 @@ class CIPatternNonUniform(AbstractCIPattern):
         across both the rows and columns of the charge injection region.
 
         Before adding non-uniformity to the rows and columns, we assume an input charge injection level \
-        (e.g. the average current being injected). We then simulate non-uniformity in this region.
+        (e.g. the average current being injected). We then simulator non-uniformity in this region.
 
-        Non-uniformity in the columns is caused by sharp peaks and troughs in the input charge current. To simulate  \
+        Non-uniformity in the columns is caused by sharp peaks and troughs in the input charge current. To simulator  \
         this, we change the normalization of each column by drawing its normalization value from a Gaussian \
         distribution which has a mean of the input normalization and standard deviation *column_deviation*. The seed \
         of the random number generator ensures that the non-uniform charge injection update_via_regions of each ci_pre_ctis \
         are identical.
 
         Non-uniformity in the rows is caused by the charge smoothly decreasing as the injection is switched off. To \
-        simulate this, we assume the charge level as a function of row number is not flat but defined by a \
+        simulator this, we assume the charge level as a function of row number is not flat but defined by a \
         power-law with slope *row_slope*.
 
         Non-uniform charge injection images are generated using the function *simulate_pre_cti*, which uses this \

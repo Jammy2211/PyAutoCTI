@@ -28,14 +28,14 @@ def plot_image(
     output_format="show",
     output_filename="image",
 ):
-    """Plot the observed image of the ccd simulate.
+    """Plot the observed image of the ccd simulator.
 
-    Set *autocti.simulate.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     image : CIFrame
-        The image of the simulate.
+        The image of the simulator.
     """
     array_plotters.plot_array(
         array=image,
@@ -93,14 +93,14 @@ def plot_noise_map(
     output_format="show",
     output_filename="noise_map",
 ):
-    """Plot the observed noise_map of the ccd simulate.
+    """Plot the observed noise_map of the ccd simulator.
 
-    Set *autocti.simulate.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     noise_map : CIFrame
-        The noise map of the simulate.
+        The noise map of the simulator.
     """
     array_plotters.plot_array(
         array=noise_map,
@@ -158,14 +158,14 @@ def plot_ci_pre_cti(
     output_format="show",
     output_filename="ci_pre_cti",
 ):
-    """Plot the observed ci_pre_cti of the ccd simulate.
+    """Plot the observed ci_pre_cti of the ccd simulator.
 
-    Set *autocti.simulate.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     ci_pre_cti : CIFrame
-        The ci_pre_cti of the simulate.
+        The ci_pre_cti of the simulator.
     """
     array_plotters.plot_array(
         array=ci_pre_cti,
@@ -223,14 +223,14 @@ def plot_signal_to_noise_map(
     output_format="show",
     output_filename="signal_to_noise_map",
 ):
-    """Plot the observed signal_to_noise_map of the ccd simulate.
+    """Plot the observed signal_to_noise_map of the ccd simulator.
 
-    Set *autocti.simulate.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     signal_to_noise_map : CIFrame
-        The signal-to-noise map of the simulate.
+        The signal-to-noise map of the simulator.
     """
     array_plotters.plot_array(
         array=signal_to_noise_map,
@@ -277,14 +277,14 @@ def plot_image_line(
     output_format="show",
     output_filename="image_line",
 ):
-    """Plot the observed image of the ccd simulate.
+    """Plot the observed image of the ccd simulator.
 
-    Set *autocti.simulate.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     image : CIFrame
-        The image of the simulate.
+        The image of the simulator.
     """
     line_plotters.plot_line_from_array_and_ci_frame(
         array=image,
@@ -320,14 +320,14 @@ def plot_noise_map_line(
     output_format="show",
     output_filename="noise_map_line",
 ):
-    """Plot the observed noise_map of the ccd simulate.
+    """Plot the observed noise_map of the ccd simulator.
 
-    Set *autocti.simulate.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     noise_map : CIFrame
-        The noise_map of the simulate.
+        The noise_map of the simulator.
     """
     line_plotters.plot_line_from_array_and_ci_frame(
         array=noise_map,
@@ -363,14 +363,14 @@ def plot_ci_pre_cti_line(
     output_format="show",
     output_filename="ci_pre_cti_line",
 ):
-    """Plot the observed ci_pre_cti of the ccd simulate.
+    """Plot the observed ci_pre_cti of the ccd simulator.
 
-    Set *autocti.simulate.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     ci_pre_cti : CIFrame
-        The ci_pre_cti of the simulate.
+        The ci_pre_cti of the simulator.
     """
     line_plotters.plot_line_from_array_and_ci_frame(
         array=ci_pre_cti,
@@ -406,14 +406,14 @@ def plot_signal_to_noise_map_line(
     output_format="show",
     output_filename="signal_to_noise_map_line",
 ):
-    """Plot the observed signal_to_noise_map of the ccd simulate.
+    """Plot the observed signal_to_noise_map of the ccd simulator.
 
-    Set *autocti.simulate.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     signal_to_noise_map : CIFrame
-        The signal_to_noise_map of the simulate.
+        The signal_to_noise_map of the simulator.
     """
     line_plotters.plot_line_from_array_and_ci_frame(
         array=signal_to_noise_map,

@@ -46,12 +46,12 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(
         cosmic_ray_image=cosmic_ray_image,
     )
 
-    # Now, lets output this simulated ccd-simulate to the test_autoarray/simulate folder.
+    # Now, lets output this simulated ccd-simulator to the test_autoarray/simulator folder.
     test_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
 
     ci_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
         path=test_path,
-        folder_names=["simulate", ci_data_type, ci_data_model, ci_data_resolution],
+        folder_names=["simulator", ci_data_type, ci_data_model, ci_data_resolution],
     )
 
     normalization = str(int(pattern.normalization))
@@ -589,7 +589,7 @@ def make_ci_uniform_cosmic_rays_parallel_x1__serial_x1_species(
 
 
 def cosmic_ray_image_from_shape_and_well_depth(shape, well_depth):
-    # We use the LA Cosmic algorithm to simulate and add cosmic rays to our ci pre cti image. This routine randomly
+    # We use the LA Cosmic algorithm to simulator and add cosmic rays to our ci pre cti image. This routine randomly
     # generates cosmimc rays based on realistic cosmic ray rates expected. These cosmic rays will then be added to our
     # ci pre-cti image in the simulaate function below, and subject to CTI according to the CTI model.
     cosmic_path = af.path_util.make_and_return_path_from_path_and_folder_names(
