@@ -1,7 +1,7 @@
 import autofit as af
 import autocti as ac
 
-from test import simulation_util
+from test import simulate_util
 
 from workspace_jam.scripts.cosmic_rays import cosmics
 
@@ -27,10 +27,10 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(
     cosmic_ray_image=None,
 ):
 
-    shape = simulation_util.shape_from_ci_data_resolution(
+    shape = simulate_util.shape_from_ci_data_resolution(
         ci_data_resolution=ci_data_resolution
     )
-    frame_geometry = simulation_util.frame_geometry_from_ci_data_resolution(
+    frame_geometry = simulate_util.frame_geometry_from_ci_data_resolution(
         ci_data_resolution=ci_data_resolution
     )
 
@@ -98,7 +98,7 @@ def make_ci_uniform_parallel_x1_species(data_resolutions, normalizations):
     for data_resolution in data_resolutions:
         for normalization in normalizations:
 
-            ci_regions = simulation_util.ci_regions_from_ci_data_resolution(
+            ci_regions = simulate_util.ci_regions_from_ci_data_resolution(
                 ci_data_resolution=data_resolution
             )
             pattern = ac.CIPatternUniform(
@@ -144,7 +144,7 @@ def make_ci_uniform_serial_x1_species(data_resolutions, normalizations):
     for data_resolution in data_resolutions:
         for normalization in normalizations:
 
-            ci_regions = simulation_util.ci_regions_from_ci_data_resolution(
+            ci_regions = simulate_util.ci_regions_from_ci_data_resolution(
                 ci_data_resolution=data_resolution
             )
             pattern = ac.CIPatternUniform(
@@ -212,7 +212,7 @@ def make_ci_uniform_parallel_x1__serial_x1_species(data_resolutions, normalizati
     for data_resolution in data_resolutions:
         for normalization in normalizations:
 
-            ci_regions = simulation_util.ci_regions_from_ci_data_resolution(
+            ci_regions = simulate_util.ci_regions_from_ci_data_resolution(
                 ci_data_resolution=data_resolution
             )
             pattern = ac.CIPatternUniform(
@@ -260,7 +260,7 @@ def make_ci_uniform_parallel_x3_species(data_resolutions, normalizations):
 
     for data_resolution in data_resolutions:
         for normalization in normalizations:
-            ci_regions = simulation_util.ci_regions_from_ci_data_resolution(
+            ci_regions = simulate_util.ci_regions_from_ci_data_resolution(
                 ci_data_resolution=data_resolution
             )
             pattern = ac.CIPatternUniform(
@@ -308,7 +308,7 @@ def make_ci_uniform_serial_x3_species(data_resolutions, normalizations):
 
     for data_resolution in data_resolutions:
         for normalization in normalizations:
-            ci_regions = simulation_util.ci_regions_from_ci_data_resolution(
+            ci_regions = simulate_util.ci_regions_from_ci_data_resolution(
                 ci_data_resolution=data_resolution
             )
             pattern = ac.CIPatternUniform(
@@ -379,7 +379,7 @@ def make_ci_uniform_parallel_x3__serial_x3_species(data_resolutions, normalizati
 
     for data_resolution in data_resolutions:
         for normalization in normalizations:
-            ci_regions = simulation_util.ci_regions_from_ci_data_resolution(
+            ci_regions = simulate_util.ci_regions_from_ci_data_resolution(
                 ci_data_resolution=data_resolution
             )
             pattern = ac.CIPatternUniform(
@@ -424,13 +424,13 @@ def make_ci_uniform_cosmic_rays_parallel_x1_species(data_resolutions, normalizat
 
     for data_resolution in data_resolutions:
 
-        shape = simulation_util.shape_from_ci_data_resolution(
+        shape = simulate_util.shape_from_ci_data_resolution(
             ci_data_resolution=data_resolution
         )
 
         for normalization in normalizations:
 
-            ci_regions = simulation_util.ci_regions_from_ci_data_resolution(
+            ci_regions = simulate_util.ci_regions_from_ci_data_resolution(
                 ci_data_resolution=data_resolution
             )
             pattern = ac.CIPatternUniform(
@@ -480,13 +480,13 @@ def make_ci_uniform_cosmic_rays_serial_x1_species(data_resolutions, normalizatio
 
     for data_resolution in data_resolutions:
 
-        shape = simulation_util.shape_from_ci_data_resolution(
+        shape = simulate_util.shape_from_ci_data_resolution(
             ci_data_resolution=data_resolution
         )
 
         for normalization in normalizations:
 
-            ci_regions = simulation_util.ci_regions_from_ci_data_resolution(
+            ci_regions = simulate_util.ci_regions_from_ci_data_resolution(
                 ci_data_resolution=data_resolution
             )
             pattern = ac.CIPatternUniform(
@@ -560,13 +560,13 @@ def make_ci_uniform_cosmic_rays_parallel_x1__serial_x1_species(
 
     for data_resolution in data_resolutions:
 
-        shape = simulation_util.shape_from_ci_data_resolution(
+        shape = simulate_util.shape_from_ci_data_resolution(
             ci_data_resolution=data_resolution
         )
 
         for normalization in normalizations:
 
-            ci_regions = simulation_util.ci_regions_from_ci_data_resolution(
+            ci_regions = simulate_util.ci_regions_from_ci_data_resolution(
                 ci_data_resolution=data_resolution
             )
             pattern = ac.CIPatternUniform(

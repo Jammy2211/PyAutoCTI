@@ -246,7 +246,7 @@ class ChInj(object):
         return new_array
 
     def parallel_calibration_section_for_columns(self, array, columns):
-        """Extract an parallel calibration arrays from a charge injection ci_frame, where this arrays is a sub-set of
+        """Extract an parallel calibration array from a charge injection ci_frame, where this arrays is a sub-set of
         the ci_frame which be used for just parallel calibration. Specifically, this ci_frame is a specified number
         of columns closest to the read-out electronics.
 
@@ -519,7 +519,7 @@ class ChInj(object):
         return new_array
 
     def serial_calibration_section_for_rows(self, array, rows):
-        """Extract a serial calibration arrays from a charge injection ci_frame, where this arrays is a sub-set of the
+        """Extract a serial calibration array from a charge injection ci_frame, where this arrays is a sub-set of the
         ci_frame which can be used for serial-only calibration. Specifically, this ci_frame is all charge injection
         regions and their serial over-scan trails.
 

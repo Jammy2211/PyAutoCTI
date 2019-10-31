@@ -3,7 +3,7 @@ import os
 
 import autofit as af
 from test import integration_util
-from test import simulation_util
+from test import simulate_util
 
 
 class MockNLO(af.NonLinearOptimizer):
@@ -55,7 +55,7 @@ def run(
 
     data = list(
         map(
-            lambda normalization: simulation_util.load_test_ci_data(
+            lambda normalization: simulate_util.load_test_ci_data(
                 ci_data_type=module.ci_data_type,
                 ci_data_model=module.ci_data_model,
                 ci_data_resolution=module.ci_data_resolution,
