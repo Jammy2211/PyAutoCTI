@@ -188,7 +188,7 @@ def plot_ci_subplot(
     output_filename="ci_data",
     output_format="show",
 ):
-    """Plot the ci simulator as a sub-plotters of all its quantites (e.g. the simulator, noise_map-map, PSF, Signal-to_noise-map, \
+    """Plot the ci simulator as a sub-plotters of all its quantites (e.g. the data, noise_map-map, PSF, Signal-to_noise-map, \
      etc).
 
     Set *autolens.simulator.arrays.plotters.array_plotters* for a description of all innput parameters not described below.
@@ -198,9 +198,9 @@ def plot_ci_subplot(
     ci_data : simulator.CCDData
         The ci simulator, which includes the observed simulator, noise_map-map, PSF, signal-to-noise_map-map, etc.
     plot_origin : True
-        If true, the origin of the simulator's coordinate system is plotted as a 'x'.
+        If true, the origin of the data's coordinate system is plotted as a 'x'.
     image_plane_pix_grid : ndarray or simulator.arrays.grid_lines.PixGrid
-        If an adaptive pixelization whose pixels are formed by tracing pixels from the simulator, this plots those pixels \
+        If an adaptive pixelization whose pixels are formed by tracing pixels from the data, this plots those pixels \
         over the immage.
     ignore_config : bool
         If *False*, the config file general.ini is used to determine whether the subpot is plotted. If *True*, the \
@@ -347,7 +347,7 @@ def plot_ci_data_individual(
     output_path=None,
     output_format="png",
 ):
-    """Plot each attribute of the ci simulator as individual figures one by one (e.g. the simulator, noise_map-map, PSF, \
+    """Plot each attribute of the ci simulator as individual figures one by one (e.g. the data, noise_map-map, PSF, \
      Signal-to_noise-map, etc).
 
     Set *autolens.simulator.arrays.plotters.array_plotters* for a description of all innput parameters not described below.
@@ -357,7 +357,7 @@ def plot_ci_data_individual(
     ci_data : simulator.CCDData
         The ci simulator, which includes the observed simulator, noise_map-map, PSF, signal-to-noise_map-map, etc.
     plot_origin : True
-        If true, the origin of the simulator's coordinate system is plotted as a 'x'.
+        If true, the origin of the data's coordinate system is plotted as a 'x'.
     """
 
     if should_plot_image:
@@ -430,7 +430,7 @@ def plot_image(
     Parameters
     -----------
     image : CIFrame
-        The image of the simulator.
+        The image of the data.
     """
     data_plotters.plot_image(
         image=ci_data.image,
@@ -495,7 +495,7 @@ def plot_noise_map(
     Parameters
     -----------
     noise_map : CIFrame
-        The noise map of the simulator.
+        The noise map of the data.
     """
     data_plotters.plot_noise_map(
         noise_map=ci_data.noise_map,
@@ -560,7 +560,7 @@ def plot_ci_pre_cti(
     Parameters
     -----------
     ci_pre_cti : CIFrame
-        The ci_pre_cti of the simulator.
+        The ci_pre_cti of the data.
     """
     data_plotters.plot_ci_pre_cti(
         ci_pre_cti=ci_data.ci_pre_cti,
@@ -625,7 +625,7 @@ def plot_signal_to_noise_map(
     Parameters
     -----------
     signal_to_noise_map : CIFrame
-        The signal-to-noise map of the simulator.
+        The signal-to-noise map of the data.
     """
     data_plotters.plot_signal_to_noise_map(
         signal_to_noise_map=ci_data.signal_to_noise_map,
@@ -670,7 +670,7 @@ def plot_ci_line_subplot(
     output_format="show",
     output_filename="ci_data_line",
 ):
-    """Plot the ci simulator as a sub-plotters of all its quantites (e.g. the simulator, noise_map-map, PSF, Signal-to_noise-map, \
+    """Plot the ci simulator as a sub-plotters of all its quantites (e.g. the data, noise_map-map, PSF, Signal-to_noise-map, \
      etc).
 
     Set *autolens.simulator.arrays.plotters.array_plotters* for a description of all innput parameters not described below.
@@ -680,9 +680,9 @@ def plot_ci_line_subplot(
     ci_data : simulator.CCDData
         The ci simulator, which includes the observed simulator, noise_map-map, PSF, signal-to-noise_map-map, etc.
     plot_origin : True
-        If true, the origin of the simulator's coordinate system is plotted as a 'x'.
+        If true, the origin of the data's coordinate system is plotted as a 'x'.
     image_plane_pix_grid : ndarray or simulator.arrays.grid_lines.PixGrid
-        If an adaptive pixelization whose pixels are formed by tracing pixels from the simulator, this plots those pixels \
+        If an adaptive pixelization whose pixels are formed by tracing pixels from the data, this plots those pixels \
         over the immage.
     ignore_config : bool
         If *False*, the config file general.ini is used to determine whether the subpot is plotted. If *True*, the \
@@ -789,7 +789,7 @@ def plot_ci_data_line_individual(
     output_path=None,
     output_format="png",
 ):
-    """Plot each attribute of the ci simulator as individual figures one by one (e.g. the simulator, noise_map-map, PSF, \
+    """Plot each attribute of the ci simulator as individual figures one by one (e.g. the data, noise_map-map, PSF, \
      Signal-to_noise-map, etc).
 
     Set *autolens.simulator.arrays.plotters.array_plotters* for a description of all innput parameters not described below.
@@ -799,7 +799,7 @@ def plot_ci_data_line_individual(
     ci_data : simulator.CCDData
         The ci simulator, which includes the observed simulator, noise_map-map, PSF, signal-to-noise_map-map, etc.
     plot_origin : True
-        If true, the origin of the simulator's coordinate system is plotted as a 'x'.
+        If true, the origin of the data's coordinate system is plotted as a 'x'.
     """
 
     if should_plot_image:
@@ -861,7 +861,7 @@ def plot_image_line(
     Parameters
     -----------
     image : CIFrame
-        The image of the simulator.
+        The image of the data.
     """
 
     data_plotters.plot_image_line(
@@ -904,7 +904,7 @@ def plot_noise_map_line(
     Parameters
     -----------
     noise_map : CIFrame
-        The noise map of the simulator.
+        The noise map of the data.
     """
     data_plotters.plot_noise_map_line(
         noise_map=ci_data.noise_map,
@@ -946,7 +946,7 @@ def plot_ci_pre_cti_line(
     Parameters
     -----------
     ci_pre_cti : CIFrame
-        The ci_pre_cti of the simulator.
+        The ci_pre_cti of the data.
     """
     data_plotters.plot_ci_pre_cti_line(
         ci_pre_cti=ci_data.ci_pre_cti,
@@ -988,7 +988,7 @@ def plot_signal_to_noise_map_line(
     Parameters
     -----------
     signal_to_noise_map : CIFrame
-        The signal-to-noise map of the simulator.
+        The signal-to-noise map of the data.
     """
     data_plotters.plot_signal_to_noise_map_line(
         signal_to_noise_map=ci_data.signal_to_noise_map,

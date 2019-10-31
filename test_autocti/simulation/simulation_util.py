@@ -74,7 +74,7 @@ def ci_data_resolution_from_shape(shape):
         return "highres"
     else:
         raise ValueError(
-            "An invalid shape was entered when generating the simulator-type - ", shape
+            "An invalid shape was entered when generating the data-type - ", shape
         )
 
 

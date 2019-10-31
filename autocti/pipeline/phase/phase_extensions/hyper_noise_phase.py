@@ -17,7 +17,7 @@ class HyperNoisePhase(HyperPhase):
             An analysis to fit the noise for a single galaxy image.
             Parameters
             ----------
-            lens_data: LensData
+            masked_imaging: LensData
                 Lens instrument, including an image and noise
             hyper_noise_scaling_map: ndarray
                 An image produce of the overall system by a model

@@ -8,14 +8,14 @@ from autocti.charge_injection import ci_hyper
 
 @pytest.fixture(name="lens_galaxy")
 def make_lens_galaxy():
-    return g.Galaxy(
-        redshift=1.0, light=lp.SphericalSersic(), mass=mp.SphericalIsothermal()
+    return al.galaxy(
+        redshift=1.0, light=al.lp.SphericalSersic(), mass=al.mp.SphericalIsothermal()
     )
 
 
 @pytest.fixture(name="source_galaxy")
 def make_source_galaxy():
-    return g.Galaxy(redshift=2.0, light=lp.SphericalSersic())
+    return al.galaxy(redshift=2.0, light=al.lp.SphericalSersic())
 
 
 @pytest.fixture(name="all_galaxies")
@@ -34,14 +34,14 @@ def make_instance(all_galaxies):
 
 
 @pytest.fixture(name="result")
-def make_result(lens_data_7x7, instance):
+def make_result(masked_imaging_7x7, instance):
     return phase_imaging.PhaseImaging.Result(
         constant=instance,
         figure_of_merit=1.0,
         previous_variable=af.ModelMapper(),
         gaussian_tuples=None,
         analysis=phase_imaging.PhaseImaging.Analysis(
-            lens_data=lens_data_7x7,
+            masked_imaging=masked_imaging_7x7,
             cosmology=cosmo.Planck15,
             positions_threshold=1.0,
             image_path="",

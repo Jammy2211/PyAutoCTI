@@ -79,7 +79,7 @@ class CIPatternUniform(AbstractCIPattern):
 
         return ci_pre_cti
 
-    """ Class to simulator a charge injection image with a uniform charge injection ci_pattern."""
+    """ Class to simulate a charge injection image with a uniform charge injection ci_pattern."""
 
     def simulate_ci_pre_cti(self, shape):
         """Use this charge injection ci_pattern to generate a pre-cti charge injection image. This is performed by \
