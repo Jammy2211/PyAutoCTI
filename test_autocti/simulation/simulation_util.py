@@ -96,7 +96,7 @@ def load_test_ci_data(
     pattern = ac.CIPatternUniform(normalization=normalization, regions=ci_regions)
     data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
         path=test_path,
-        folder_names=["simulator", ci_data_type, ci_data_model, ci_data_resolution],
+        folder_names=["data", ci_data_type, ci_data_model, ci_data_resolution],
     )
 
     normalization = str(int(pattern.normalization))

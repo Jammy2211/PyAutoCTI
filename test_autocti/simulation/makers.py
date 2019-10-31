@@ -51,7 +51,7 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(
 
     ci_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
         path=test_path,
-        folder_names=["simulator", ci_data_type, ci_data_model, ci_data_resolution],
+        folder_names=["data", ci_data_type, ci_data_model, ci_data_resolution],
     )
 
     normalization = str(int(pattern.normalization))
