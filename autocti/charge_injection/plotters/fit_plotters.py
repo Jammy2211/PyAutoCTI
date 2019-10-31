@@ -37,7 +37,7 @@ def plot_image(
     Parameters
     -----------
     image : CIFrame
-        The image of the simulator.
+        The image of the data.
     """
 
     array_plotters.plot_array(
@@ -103,7 +103,7 @@ def plot_noise_map(
     Parameters
     -----------
     noise_map : CIFrame
-        The noise_map of the simulator.
+        The noise_map of the data.
     """
 
     array_plotters.plot_array(
@@ -169,7 +169,7 @@ def plot_signal_to_noise_map(
     Parameters
     -----------
     signal_to_noise_map : CIFrame
-        The signal_to_noise_map of the simulator.
+        The signal_to_noise_map of the data.
     """
 
     array_plotters.plot_array(
@@ -235,7 +235,7 @@ def plot_ci_pre_cti(
     Parameters
     -----------
     ci_pre_cti : CIFrame
-        The ci_pre_cti of the simulator.
+        The ci_pre_cti of the data.
     """
 
     array_plotters.plot_array(
@@ -301,7 +301,7 @@ def plot_ci_post_cti(
     Parameters
     -----------
     ci_post_cti : CIFrame
-        The ci_post_cti of the simulator.
+        The ci_post_cti of the data.
     """
 
     array_plotters.plot_array(
@@ -367,7 +367,7 @@ def plot_residual_map(
     Parameters
     -----------
     residual_map : CIFrame
-        The residual_map of the simulator.
+        The residual_map of the data.
     """
 
     array_plotters.plot_array(
@@ -433,7 +433,7 @@ def plot_chi_squared_map(
     Parameters
     -----------
     chi_squared_map : CIFrame
-        The chi_squared_map of the simulator.
+        The chi_squared_map of the data.
     """
 
     array_plotters.plot_array(
@@ -498,7 +498,7 @@ def plot_noise_scaling_maps(
     Parameters
     -----------
     chi_squared_map : CIFrame
-        The chi_squared_map of the simulator.
+        The chi_squared_map of the data.
     """
 
     rows, columns, figsize_tool = plotter_util.get_subplot_rows_columns_figsize(
@@ -573,7 +573,7 @@ def plot_image_line(
     Parameters
     -----------
     image : CIFrame
-        The image of the simulator.
+        The image of the data.
     """
     line_plotters.plot_line_from_array_and_ci_frame(
         array=fit.image,
@@ -615,7 +615,7 @@ def plot_noise_map_line(
     Parameters
     -----------
     noise_map : CIFrame
-        The noise_map of the simulator.
+        The noise_map of the data.
     """
     line_plotters.plot_line_from_array_and_ci_frame(
         array=fit.noise_map,
@@ -657,7 +657,7 @@ def plot_signal_to_noise_map_line(
     Parameters
     -----------
     signal_to_noise_map : CIFrame
-        The signal_to_noise_map of the simulator.
+        The signal_to_noise_map of the data.
     """
     line_plotters.plot_line_from_array_and_ci_frame(
         array=fit.signal_to_noise_map,
@@ -699,7 +699,7 @@ def plot_ci_pre_cti_line(
     Parameters
     -----------
     ci_pre_cti : CIFrame
-        The ci_pre_cti of the simulator.
+        The ci_pre_cti of the data.
     """
     line_plotters.plot_line_from_array_and_ci_frame(
         array=fit.ci_pre_cti,
@@ -741,7 +741,7 @@ def plot_ci_post_cti_line(
     Parameters
     -----------
     ci_post_cti : CIFrame
-        The ci_post_cti of the simulator.
+        The ci_post_cti of the data.
     """
     line_plotters.plot_line_from_array_and_ci_frame(
         array=fit.ci_post_cti,
@@ -783,7 +783,7 @@ def plot_residual_map_line(
     Parameters
     -----------
     residual_map : CIFrame
-        The residual_map of the simulator.
+        The residual_map of the data.
     """
     line_plotters.plot_line_from_array_and_ci_frame(
         array=fit.residual_map,
@@ -825,7 +825,7 @@ def plot_chi_squared_map_line(
     Parameters
     -----------
     chi_squared_map : CIFrame
-        The chi_squared_map of the simulator.
+        The chi_squared_map of the data.
     """
     line_plotters.plot_line_from_array_and_ci_frame(
         array=fit.chi_squared_map,
