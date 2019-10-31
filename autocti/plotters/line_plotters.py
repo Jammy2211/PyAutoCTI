@@ -88,7 +88,7 @@ def plot_line(
     -----------
     line : ndarray or hyper.arrays.scaled_array.ScaledArray
         The 2D arrays of hyper which is plotted.
-    mask : ndarray of simulate.mask.Mask
+    mask : ndarray of simulator.mask.Mask
         The masks applied to the hyper, the edge of which is plotted as a set of points over the plotted arrays.
     extract_line_from_mask : bool
         The plotter arrays is extracted using the mask, such that masked values are plotted as zeros. This ensures \

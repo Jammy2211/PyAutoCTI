@@ -188,19 +188,19 @@ def plot_ci_subplot(
     output_filename="ci_data",
     output_format="show",
 ):
-    """Plot the ci simulate as a sub-plotters of all its quantites (e.g. the simulate, noise_map-map, PSF, Signal-to_noise-map, \
+    """Plot the ci simulator as a sub-plotters of all its quantites (e.g. the simulator, noise_map-map, PSF, Signal-to_noise-map, \
      etc).
 
-    Set *autolens.simulate.arrays.plotters.array_plotters* for a description of all innput parameters not described below.
+    Set *autolens.simulator.arrays.plotters.array_plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
-    ci_data : simulate.CCDData
-        The ci simulate, which includes the observed simulate, noise_map-map, PSF, signal-to-noise_map-map, etc.
+    ci_data : simulator.CCDData
+        The ci simulator, which includes the observed simulator, noise_map-map, PSF, signal-to-noise_map-map, etc.
     plot_origin : True
-        If true, the origin of the simulate's coordinate system is plotted as a 'x'.
-    image_plane_pix_grid : ndarray or simulate.arrays.grid_lines.PixGrid
-        If an adaptive pixelization whose pixels are formed by tracing pixels from the simulate, this plots those pixels \
+        If true, the origin of the simulator's coordinate system is plotted as a 'x'.
+    image_plane_pix_grid : ndarray or simulator.arrays.grid_lines.PixGrid
+        If an adaptive pixelization whose pixels are formed by tracing pixels from the simulator, this plots those pixels \
         over the immage.
     ignore_config : bool
         If *False*, the config file general.ini is used to determine whether the subpot is plotted. If *True*, the \
@@ -347,17 +347,17 @@ def plot_ci_data_individual(
     output_path=None,
     output_format="png",
 ):
-    """Plot each attribute of the ci simulate as individual figures one by one (e.g. the simulate, noise_map-map, PSF, \
+    """Plot each attribute of the ci simulator as individual figures one by one (e.g. the simulator, noise_map-map, PSF, \
      Signal-to_noise-map, etc).
 
-    Set *autolens.simulate.arrays.plotters.array_plotters* for a description of all innput parameters not described below.
+    Set *autolens.simulator.arrays.plotters.array_plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
-    ci_data : simulate.CCDData
-        The ci simulate, which includes the observed simulate, noise_map-map, PSF, signal-to-noise_map-map, etc.
+    ci_data : simulator.CCDData
+        The ci simulator, which includes the observed simulator, noise_map-map, PSF, signal-to-noise_map-map, etc.
     plot_origin : True
-        If true, the origin of the simulate's coordinate system is plotted as a 'x'.
+        If true, the origin of the simulator's coordinate system is plotted as a 'x'.
     """
 
     if should_plot_image:
@@ -423,14 +423,14 @@ def plot_image(
     output_format="show",
     output_filename="ci_image",
 ):
-    """Plot the observed image of the ci simulate.
+    """Plot the observed image of the ci simulator.
 
-    Set *autocti.simulate.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     image : CIFrame
-        The image of the simulate.
+        The image of the simulator.
     """
     data_plotters.plot_image(
         image=ci_data.image,
@@ -488,14 +488,14 @@ def plot_noise_map(
     output_format="show",
     output_filename="ci_noise_map",
 ):
-    """Plot the observed noise_map of the ci simulate.
+    """Plot the observed noise_map of the ci simulator.
 
-    Set *autocti.simulate.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     noise_map : CIFrame
-        The noise map of the simulate.
+        The noise map of the simulator.
     """
     data_plotters.plot_noise_map(
         noise_map=ci_data.noise_map,
@@ -553,14 +553,14 @@ def plot_ci_pre_cti(
     output_format="show",
     output_filename="ci_pre_cti",
 ):
-    """Plot the observed ci_pre_cti of the ci simulate.
+    """Plot the observed ci_pre_cti of the ci simulator.
 
-    Set *autocti.simulate.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     ci_pre_cti : CIFrame
-        The ci_pre_cti of the simulate.
+        The ci_pre_cti of the simulator.
     """
     data_plotters.plot_ci_pre_cti(
         ci_pre_cti=ci_data.ci_pre_cti,
@@ -618,14 +618,14 @@ def plot_signal_to_noise_map(
     output_format="show",
     output_filename="ci_signal_to_noise_map",
 ):
-    """Plot the observed signal_to_noise_map of the ci simulate.
+    """Plot the observed signal_to_noise_map of the ci simulator.
 
-    Set *autocti.simulate.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     signal_to_noise_map : CIFrame
-        The signal-to-noise map of the simulate.
+        The signal-to-noise map of the simulator.
     """
     data_plotters.plot_signal_to_noise_map(
         signal_to_noise_map=ci_data.signal_to_noise_map,
@@ -670,19 +670,19 @@ def plot_ci_line_subplot(
     output_format="show",
     output_filename="ci_data_line",
 ):
-    """Plot the ci simulate as a sub-plotters of all its quantites (e.g. the simulate, noise_map-map, PSF, Signal-to_noise-map, \
+    """Plot the ci simulator as a sub-plotters of all its quantites (e.g. the simulator, noise_map-map, PSF, Signal-to_noise-map, \
      etc).
 
-    Set *autolens.simulate.arrays.plotters.array_plotters* for a description of all innput parameters not described below.
+    Set *autolens.simulator.arrays.plotters.array_plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
-    ci_data : simulate.CCDData
-        The ci simulate, which includes the observed simulate, noise_map-map, PSF, signal-to-noise_map-map, etc.
+    ci_data : simulator.CCDData
+        The ci simulator, which includes the observed simulator, noise_map-map, PSF, signal-to-noise_map-map, etc.
     plot_origin : True
-        If true, the origin of the simulate's coordinate system is plotted as a 'x'.
-    image_plane_pix_grid : ndarray or simulate.arrays.grid_lines.PixGrid
-        If an adaptive pixelization whose pixels are formed by tracing pixels from the simulate, this plots those pixels \
+        If true, the origin of the simulator's coordinate system is plotted as a 'x'.
+    image_plane_pix_grid : ndarray or simulator.arrays.grid_lines.PixGrid
+        If an adaptive pixelization whose pixels are formed by tracing pixels from the simulator, this plots those pixels \
         over the immage.
     ignore_config : bool
         If *False*, the config file general.ini is used to determine whether the subpot is plotted. If *True*, the \
@@ -789,17 +789,17 @@ def plot_ci_data_line_individual(
     output_path=None,
     output_format="png",
 ):
-    """Plot each attribute of the ci simulate as individual figures one by one (e.g. the simulate, noise_map-map, PSF, \
+    """Plot each attribute of the ci simulator as individual figures one by one (e.g. the simulator, noise_map-map, PSF, \
      Signal-to_noise-map, etc).
 
-    Set *autolens.simulate.arrays.plotters.array_plotters* for a description of all innput parameters not described below.
+    Set *autolens.simulator.arrays.plotters.array_plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
-    ci_data : simulate.CCDData
-        The ci simulate, which includes the observed simulate, noise_map-map, PSF, signal-to-noise_map-map, etc.
+    ci_data : simulator.CCDData
+        The ci simulator, which includes the observed simulator, noise_map-map, PSF, signal-to-noise_map-map, etc.
     plot_origin : True
-        If true, the origin of the simulate's coordinate system is plotted as a 'x'.
+        If true, the origin of the simulator's coordinate system is plotted as a 'x'.
     """
 
     if should_plot_image:
@@ -854,14 +854,14 @@ def plot_image_line(
     output_format="show",
     output_filename="ci_image_line",
 ):
-    """Plot the observed image of the ci simulate.
+    """Plot the observed image of the ci simulator.
 
-    Set *autocti.simulate.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     image : CIFrame
-        The image of the simulate.
+        The image of the simulator.
     """
 
     data_plotters.plot_image_line(
@@ -897,14 +897,14 @@ def plot_noise_map_line(
     output_format="show",
     output_filename="ci_noise_map_line",
 ):
-    """Plot the observed noise_map of the ci simulate.
+    """Plot the observed noise_map of the ci simulator.
 
-    Set *autocti.simulate.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     noise_map : CIFrame
-        The noise map of the simulate.
+        The noise map of the simulator.
     """
     data_plotters.plot_noise_map_line(
         noise_map=ci_data.noise_map,
@@ -939,14 +939,14 @@ def plot_ci_pre_cti_line(
     output_format="show",
     output_filename="ci_pre_cti_line",
 ):
-    """Plot the observed ci_pre_cti of the ci simulate.
+    """Plot the observed ci_pre_cti of the ci simulator.
 
-    Set *autocti.simulate.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     ci_pre_cti : CIFrame
-        The ci_pre_cti of the simulate.
+        The ci_pre_cti of the simulator.
     """
     data_plotters.plot_ci_pre_cti_line(
         ci_pre_cti=ci_data.ci_pre_cti,
@@ -981,14 +981,14 @@ def plot_signal_to_noise_map_line(
     output_format="show",
     output_filename="ci_signal_to_noise_map_line",
 ):
-    """Plot the observed signal_to_noise_map of the ci simulate.
+    """Plot the observed signal_to_noise_map of the ci simulator.
 
-    Set *autocti.simulate.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     signal_to_noise_map : CIFrame
-        The signal-to-noise map of the simulate.
+        The signal-to-noise map of the simulator.
     """
     data_plotters.plot_signal_to_noise_map_line(
         signal_to_noise_map=ci_data.signal_to_noise_map,

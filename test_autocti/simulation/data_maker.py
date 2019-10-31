@@ -1,6 +1,6 @@
 from test import makers
 
-# Welcome to the PyAutoCTI test_autoarray suite simulate maker. Here, we'll make the suite of simulate that we use to test_autoarray and profile
+# Welcome to the PyAutoCTI test_autoarray suite simulator maker. Here, we'll make the suite of simulator that we use to test_autoarray and profile
 # PyAutoCTI. This consists of the following sets of images:
 
 # A uniform charge injectiono line image, generated using a parallel CTI model with 1 trap species.
@@ -10,7 +10,7 @@ from test import makers
 data_resolutions = ["patch"]
 normalizations = [1000.0, 10000.0, 25000.0, 84700.0]
 
-# To simulate each lens, we pass it a name and call its maker. In the makers.py file, you'll see these functions.
+# To simulator each lens, we pass it a name and call its maker. In the makers.py file, you'll see these functions.
 makers.make_ci_uniform_parallel_x1_species(
     data_resolutions=data_resolutions, normalizations=normalizations
 )

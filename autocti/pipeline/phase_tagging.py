@@ -56,7 +56,7 @@ def phase_tag_from_phase_settings(
 
 
 def columns_tag_from_columns(columns):
-    """Generate a columns tag, to customize phase names based on the number of columns of simulate extracted in the fit,
+    """Generate a columns tag, to customize phase names based on the number of columns of simulator extracted in the fit,
     which is used to speed up parallel CTI fits.
 
     This changes the phase name 'phase_name' as follows:
@@ -72,7 +72,7 @@ def columns_tag_from_columns(columns):
 
 
 def rows_tag_from_rows(rows):
-    """Generate a rows tag, to customize phase names based on the number of rows of simulate extracted in the fit,
+    """Generate a rows tag, to customize phase names based on the number of rows of simulator extracted in the fit,
     which is used to speed up serial CTI fits.
 
     This changes the phase name 'phase_name' as follows:
