@@ -197,7 +197,7 @@ def plot_ci_subplot(
     -----------
     ci_data : simulator.CCDData
         The ci simulator, which includes the observed simulator, noise_map-map, PSF, signal-to-noise_map-map, etc.
-    plot_origin : True
+    include_origin : True
         If true, the origin of the data's coordinate system is plotted as a 'x'.
     image_plane_pix_grid : ndarray or simulator.arrays.grid_lines.PixGrid
         If an adaptive pixelization whose pixels are formed by tracing pixels from the data, this plots those pixels \
@@ -356,7 +356,7 @@ def plot_ci_data_individual(
     -----------
     ci_data : simulator.CCDData
         The ci simulator, which includes the observed simulator, noise_map-map, PSF, signal-to-noise_map-map, etc.
-    plot_origin : True
+    include_origin : True
         If true, the origin of the data's coordinate system is plotted as a 'x'.
     """
 
@@ -679,7 +679,7 @@ def plot_ci_line_subplot(
     -----------
     ci_data : simulator.CCDData
         The ci simulator, which includes the observed simulator, noise_map-map, PSF, signal-to-noise_map-map, etc.
-    plot_origin : True
+    include_origin : True
         If true, the origin of the data's coordinate system is plotted as a 'x'.
     image_plane_pix_grid : ndarray or simulator.arrays.grid_lines.PixGrid
         If an adaptive pixelization whose pixels are formed by tracing pixels from the data, this plots those pixels \
@@ -798,7 +798,7 @@ def plot_ci_data_line_individual(
     -----------
     ci_data : simulator.CCDData
         The ci simulator, which includes the observed simulator, noise_map-map, PSF, signal-to-noise_map-map, etc.
-    plot_origin : True
+    include_origin : True
         If true, the origin of the data's coordinate system is plotted as a 'x'.
     """
 
