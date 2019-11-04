@@ -94,7 +94,7 @@ def load_test_ci_data(
     )
 
     pattern = ac.CIPatternUniform(normalization=normalization, regions=ci_regions)
-    data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
+    dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
         path=test_path,
         folder_names=["dataset", ci_data_type, ci_data_model, ci_data_resolution],
     )
@@ -105,18 +105,18 @@ def load_test_ci_data(
         return ac.ci_data_from_fits(
             frame_geometry=frame_geometry,
             ci_pattern=pattern,
-            image_path=data_path + "image_" + normalization + ".fits",
-            noise_map_path=data_path + "noise_map_" + normalization + ".fits",
-            ci_pre_cti_path=data_path + "ci_pre_cti_" + normalization + ".fits",
+            image_path=dataset_path + "image_" + normalization + ".fits",
+            noise_map_path=dataset_path + "noise_map_" + normalization + ".fits",
+            ci_pre_cti_path=dataset_path + "ci_pre_cti_" + normalization + ".fits",
         )
     elif load_cosmic_ray_image:
         return ac.ci_data_from_fits(
             frame_geometry=frame_geometry,
             ci_pattern=pattern,
-            image_path=data_path + "image_" + normalization + ".fits",
-            noise_map_path=data_path + "noise_map_" + normalization + ".fits",
-            ci_pre_cti_path=data_path + "ci_pre_cti_" + normalization + ".fits",
-            cosmic_ray_image_path=data_path
+            image_path=dataset_path + "image_" + normalization + ".fits",
+            noise_map_path=dataset_path + "noise_map_" + normalization + ".fits",
+            ci_pre_cti_path=dataset_path + "ci_pre_cti_" + normalization + ".fits",
+            cosmic_ray_image_path=dataset_path
             + "cosmic_ray_image_"
             + normalization
             + ".fits",
