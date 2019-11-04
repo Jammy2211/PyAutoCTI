@@ -74,7 +74,7 @@ def ci_data_resolution_from_shape(shape):
         return "highres"
     else:
         raise ValueError(
-            "An invalid shape was entered when generating the data-type - ", shape
+            "An invalid shape was entered when generating the dataset-type - ", shape
         )
 
 
@@ -96,7 +96,7 @@ def load_test_ci_data(
     pattern = ac.CIPatternUniform(normalization=normalization, regions=ci_regions)
     data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
         path=test_path,
-        folder_names=["data", ci_data_type, ci_data_model, ci_data_resolution],
+        folder_names=["dataset", ci_data_type, ci_data_model, ci_data_resolution],
     )
 
     normalization = str(int(pattern.normalization))
