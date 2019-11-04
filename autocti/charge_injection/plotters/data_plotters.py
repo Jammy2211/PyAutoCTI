@@ -35,7 +35,7 @@ def plot_image(
     Parameters
     -----------
     image : CIFrame
-        The image of the data.
+        The image of the dataset.
     """
     array_plotters.plot_array(
         array=image,
@@ -100,7 +100,7 @@ def plot_noise_map(
     Parameters
     -----------
     noise_map : CIFrame
-        The noise map of the data.
+        The noise map of the dataset.
     """
     array_plotters.plot_array(
         array=noise_map,
@@ -165,7 +165,7 @@ def plot_ci_pre_cti(
     Parameters
     -----------
     ci_pre_cti : CIFrame
-        The ci_pre_cti of the data.
+        The ci_pre_cti of the dataset.
     """
     array_plotters.plot_array(
         array=ci_pre_cti,
@@ -230,7 +230,7 @@ def plot_signal_to_noise_map(
     Parameters
     -----------
     signal_to_noise_map : CIFrame
-        The signal-to-noise map of the data.
+        The signal-to-noise map of the dataset.
     """
     array_plotters.plot_array(
         array=signal_to_noise_map,
@@ -284,7 +284,7 @@ def plot_image_line(
     Parameters
     -----------
     image : CIFrame
-        The image of the data.
+        The image of the dataset.
     """
     line_plotters.plot_line_from_array_and_ci_frame(
         array=image,
@@ -327,7 +327,7 @@ def plot_noise_map_line(
     Parameters
     -----------
     noise_map : CIFrame
-        The noise_map of the data.
+        The noise_map of the dataset.
     """
     line_plotters.plot_line_from_array_and_ci_frame(
         array=noise_map,
@@ -370,7 +370,7 @@ def plot_ci_pre_cti_line(
     Parameters
     -----------
     ci_pre_cti : CIFrame
-        The ci_pre_cti of the data.
+        The ci_pre_cti of the dataset.
     """
     line_plotters.plot_line_from_array_and_ci_frame(
         array=ci_pre_cti,
@@ -413,7 +413,7 @@ def plot_signal_to_noise_map_line(
     Parameters
     -----------
     signal_to_noise_map : CIFrame
-        The signal_to_noise_map of the data.
+        The signal_to_noise_map of the dataset.
     """
     line_plotters.plot_line_from_array_and_ci_frame(
         array=signal_to_noise_map,
