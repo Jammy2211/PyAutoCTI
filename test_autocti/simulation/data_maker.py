@@ -1,6 +1,6 @@
 from test import makers
 
-# Welcome to the PyAutoCTI test_autoarray suite simulator maker. Here, we'll make the suite of simulator that we use to test_autoarray and profile
+# Welcome to the PyAutoCTI test_autoarray suite simulator maker. Here, we'll make the suite of simulator that we use to test and profile
 # PyAutoCTI. This consists of the following sets of images:
 
 # A uniform charge injectiono line image, generated using a parallel CTI model with 1 trap species.
