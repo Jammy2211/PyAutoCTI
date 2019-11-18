@@ -152,7 +152,7 @@ def plot_figure(line, as_subplot, figsize):
     as_subplot : bool
         Whether the arrays is plotted as part of a subplot, in which case the grid figure is not opened / closed.
     units : str
-        The units of the y / x axis of the plots, in arc-seconds ('arcsec') or kiloparsecs ('kpc').
+        The units of the y / x axis of the plots.
     kpc_per_arcsec : float or None
         The conversion factor between arc-seconds and kiloparsecs, required to plotters the units in kpc.
     figsize : (int, int)
@@ -193,7 +193,7 @@ def set_xy_labels_and_ticksize(xlabelsize, ylabelsize, xyticksize):
     Parameters
     -----------
     units : str
-        The units of the y / x axis of the plots, in arc-seconds ('arcsec') or kiloparsecs ('kpc').
+        The units of the y / x axis of the plots.
     kpc_per_arcsec : float
         The conversion factor between arc-seconds and kiloparsecs, required to plotters the units in kpc.
     xlabelsize : int
