@@ -151,10 +151,10 @@ def plot_figure(line, as_subplot, figsize):
         The 2D arrays of hyper which is plotted.
     as_subplot : bool
         Whether the arrays is plotted as part of a subplot, in which case the grid figure is not opened / closed.
-    units : str
-        The units of the y / x axis of the plots.
+    unit_label : str
+        The unit_label of the y / x axis of the plots.
     kpc_per_arcsec : float or None
-        The conversion factor between arc-seconds and kiloparsecs, required to plotters the units in kpc.
+        The conversion factor between arc-seconds and kiloparsecs, required to plotters the unit_label in kpc.
     figsize : (int, int)
         The size of the figure in (rows, columns).
     aspect : str
@@ -188,14 +188,14 @@ def set_xy_labels_and_ticksize(xlabelsize, ylabelsize, xyticksize):
     """Set the x and y labels of the figure, and set the fontsize of those labels.
 
     The x and y labels are always the distance scales, thus the labels are either arc-seconds or kpc and depend on the \
-    units the figure is plotted in.
+    unit_label the figure is plotted in.
 
     Parameters
     -----------
-    units : str
-        The units of the y / x axis of the plots.
+    unit_label : str
+        The unit_label of the y / x axis of the plots.
     kpc_per_arcsec : float
-        The conversion factor between arc-seconds and kiloparsecs, required to plotters the units in kpc.
+        The conversion factor between arc-seconds and kiloparsecs, required to plotters the unit_label in kpc.
     xlabelsize : int
         The fontsize of the x axes label.
     ylabelsize : int

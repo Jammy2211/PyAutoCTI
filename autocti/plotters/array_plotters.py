@@ -152,10 +152,10 @@ def plot_figure(
         The 2D arrays of hyper which is plotted.
     as_subplot : bool
         Whether the arrays is plotted as part of a subplot, in which case the grid figure is not opened / closed.
-    units : str
-        The units of the y / x axis of the plots.
+    unit_label : str
+        The unit_label of the y / x axis of the plots.
     kpc_per_arcsec : float or None
-        The conversion factor between arc-seconds and kiloparsecs, required to plotters the units in kpc.
+        The conversion factor between arc-seconds and kiloparsecs, required to plotters the unit_label in kpc.
     figsize : (int, int)
         The size of the figure in (rows, columns).
     aspect : str
@@ -201,7 +201,7 @@ def plot_figure(
 
 
 def get_extent(array):
-    """Get the extent of the dimensions of the arrays in the units of the figure (e.g. arc-seconds or kpc).
+    """Get the extent of the dimensions of the arrays in the unit_label of the figure (e.g. arc-seconds or kpc).
 
     This is used to set the extent of the arrays and thus the y / x axis limits.
 
@@ -209,10 +209,10 @@ def get_extent(array):
     -----------
     array : ndarray or hyper.arrays.scaled_array.ScaledArray
         The 2D arrays of hyper which is plotted.
-    units : str
-        The units of the y / x axis of the plots.
+    unit_label : str
+        The unit_label of the y / x axis of the plots.
     kpc_per_arcsec : float
-        The conversion factor between arc-seconds and kiloparsecs, required to plotters the units in kpc.
+        The conversion factor between arc-seconds and kiloparsecs, required to plotters the unit_label in kpc.
     xticks_manual :  [] or None
         If input, the xticks do not use the arrays's default xticks but instead overwrite them as these values.
     yticks_manual :  [] or None
@@ -288,14 +288,14 @@ def set_xy_labels_and_ticksize(xlabelsize, ylabelsize, xyticksize):
     """Set the x and y labels of the figure, and set the fontsize of those labels.
 
     The x and y labels are always the distance scales, thus the labels are either arc-seconds or kpc and depend on the \
-    units the figure is plotted in.
+    unit_label the figure is plotted in.
 
     Parameters
     -----------
-    units : str
-        The units of the y / x axis of the plots.
+    unit_label : str
+        The unit_label of the y / x axis of the plots.
     kpc_per_arcsec : float
-        The conversion factor between arc-seconds and kiloparsecs, required to plotters the units in kpc.
+        The conversion factor between arc-seconds and kiloparsecs, required to plotters the unit_label in kpc.
     xlabelsize : int
         The fontsize of the x axes label.
     ylabelsize : int
@@ -339,24 +339,24 @@ def set_colorbar(cb_ticksize, cb_fraction, cb_pad, cb_tick_values, cb_tick_label
     cb.ax.tick_params(labelsize=cb_ticksize)
 
 
-def convert_grid_units(array, grid_arc_seconds, units, kpc_per_arcsec):
-    """Convert the grid from its input units (arc-seconds) to the input unit (e.g. retain arc-seconds) or convert to \
-    another set of units (pixels or kilo parsecs).
+def convert_grid_units(array, grid_arc_seconds, unit_label, kpc_per_arcsec):
+    """Convert the grid from its input unit_label (arc-seconds) to the input unit (e.g. retain arc-seconds) or convert to \
+    another set of unit_label (pixels or kilo parsecs).
 
     Parameters
     -----------
     array : ndarray or hyper.arrays.scaled_array.ScaledArray
-        The 2D arrays of hyper which is plotted, the shape of which is used for converting the grid to units of pixels.
+        The 2D arrays of hyper which is plotted, the shape of which is used for converting the grid to unit_label of pixels.
     grid_arc_seconds : ndarray or hyper.arrays.grid_stacks.RegularGrid
         The (y,x) coordinates of the grid in arc-seconds, in an arrays of shape (total_coordinates, 2).
-    units : str
-        The units of the y / x axis of the plots.
+    unit_label : str
+        The unit_label of the y / x axis of the plots.
     kpc_per_arcsec : float
-        The conversion factor between arc-seconds and kiloparsecs, required to plotters the units in kpc.
+        The conversion factor between arc-seconds and kiloparsecs, required to plotters the unit_label in kpc.
     """
-    if units is "pixels":
+    if unit_label is "pixels":
         return array.grid_arc_seconds_to_grid_pixels(grid_arc_seconds=grid_arc_seconds)
-    elif units is "arcsec" or kpc_per_arcsec is None:
+    elif unit_label is "arcsec" or kpc_per_arcsec is None:
         return grid_arc_seconds
-    elif units is "kpc":
+    elif unit_label is "kpc":
         return grid_arc_seconds * kpc_per_arcsec

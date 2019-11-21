@@ -133,7 +133,7 @@ def hyper_noise_map_from_noise_map_and_noise_scalings(
     hyper_noise_scalars
     noise_scaling_maps
     noise_map : imaging.NoiseMap or ndarray
-        An arrays describing the RMS standard deviation error in each pixel, preferably in units of electrons per
+        An arrays describing the RMS standard deviation error in each pixel, preferably in unit_label of electrons per
         second.
     """
     hyper_noise_maps = list(
