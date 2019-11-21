@@ -278,7 +278,7 @@ class CIDataMasked(object):
             The 2D observed image simulator (not an instance of im.Image, so does not include the other simulator attributes,
             which are explicitly made as new attributes of the fitting image).
         noise_map : NoiseMap
-            An arrays describing the RMS standard deviation error in each pixel, preferably in units of electrons per
+            An arrays describing the RMS standard deviation error in each pixel, preferably in unit_label of electrons per
             second.
         mask: msk.Mask
             The 2D mask that is applied to image simulator.
