@@ -8,14 +8,14 @@ from autocti.charge_injection import ci_hyper
 
 @pytest.fixture(name="lens_galaxy")
 def make_lens_galaxy():
-    return al.galaxy(
+    return al.Galaxy(
         redshift=1.0, light=al.lp.SphericalSersic(), mass=al.mp.SphericalIsothermal()
     )
 
 
 @pytest.fixture(name="source_galaxy")
 def make_source_galaxy():
-    return al.galaxy(redshift=2.0, light=al.lp.SphericalSersic())
+    return al.Galaxy(redshift=2.0, light=al.lp.SphericalSersic())
 
 
 @pytest.fixture(name="all_galaxies")
