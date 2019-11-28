@@ -3,7 +3,7 @@ import autocti as ac
 
 from test import simulate_util
 
-from workspace_jam.scripts.cosmic_rays import cosmics
+from autolens_workspace_jam.scripts.cosmic_rays import cosmics
 
 import logging
 
