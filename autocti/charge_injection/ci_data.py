@@ -3,7 +3,7 @@ import numpy as np
 import autofit as af
 from autocti.charge_injection import ci_frame as frame
 from autocti.charge_injection import ci_pattern as pattern
-from autocti.structures import frame_array
+from autocti.structures import frame
 from autocti.structures import mask as msk
 from autoarray.util import array_util
 
@@ -54,7 +54,7 @@ class CIImaging(object):
             Seed for the read-noises added to the image.
         """
 
-        ci_frame = frame.ChInj(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
+        ci_frame = frame.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
 
         if cosmic_ray_image is not None:
             ci_pre_cti += cosmic_ray_image
@@ -89,7 +89,7 @@ class CIImaging(object):
 
     @property
     def chinj(self):
-        return frame.ChInj(frame_geometry=self.ci_frame, ci_pattern=self.ci_pattern)
+        return frame.CIFrame(frame_geometry=self.ci_frame, ci_pattern=self.ci_pattern)
 
     @property
     def shape(self):
@@ -294,7 +294,7 @@ class CIMaskedImaging(object):
 
     @property
     def chinj(self):
-        return frame.ChInj(
+        return frame.CIFrame(
             frame_geometry=self.ci_frame.frame_geometry, ci_pattern=self.ci_pattern
         )
 
@@ -337,7 +337,7 @@ def ci_data_from_fits(
     mask=None,
 ):
 
-    ci_frame = frame.ChInj(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
+    ci_frame = frame.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
 
     ci_image = array_util.numpy_array_2d_from_fits(file_path=image_path, hdu=image_hdu)
 

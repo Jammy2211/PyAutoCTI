@@ -1,5 +1,5 @@
 import numpy as np
-from autocti.charge_injection.ci_frame import Region
+from autocti.structures.frame import Region
 
 
 class MockPattern(object):

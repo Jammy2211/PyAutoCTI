@@ -1,115 +1,8 @@
 import numpy as np
 
 import autocti as ac
-from test import MockCIGeometry
-
-
-class TestBinArrayAcrossSerial:
-    def test__3x3_array__all_1s__bin_gives_a_1d_array_of_3_1s(self):
-        image = np.ones((3, 3))
-
-        binned_array = ac.bin_array_across_serial(image)
-
-        assert (binned_array == np.array([1.0, 1.0, 1.0])).all()
-
-    def test__4x3_array__all_1s__bin_gives_a_1d_array_of_4_1s(self):
-        image = np.ones((4, 3))
-
-        binned_array = ac.bin_array_across_serial(image)
-
-        assert (binned_array == np.array([1.0, 1.0, 1.0, 1.0])).all()
-
-    def test__3x4_array__all_1s__bin_gives_a_1d_array_of_3_1s(self):
-        image = np.ones((3, 4))
-
-        binned_array = ac.bin_array_across_serial(image)
-
-        assert (binned_array == np.array([1.0, 1.0, 1.0])).all()
-
-    def test__3x3_array__different_values__bin_gives_a_1d_array_of_each_mean(self):
-        image = np.array([[1.0, 2.0, 3.0], [6.0, 6.0, 6.0], [9.0, 9.0, 9.0]])
-
-        binned_array = ac.bin_array_across_serial(image)
-
-        assert (binned_array == np.array([2.0, 6.0, 9.0])).all()
-
-    def test__3x3_array__same_as_above_but_including_mask(self):
-        image = np.array([[1.0, 2.0, 3.0], [6.0, 6.0, 6.0], [9.0, 9.0, 9.0]])
-
-        mask = np.ma.array(
-            [[False, False, True], [False, False, False], [False, False, False]]
-        )
-
-        binned_array = ac.bin_array_across_serial(image, mask)
-
-        assert (binned_array == np.array([1.5, 6.0, 9.0])).all()
-
-    def test__3x3_array__same_as_above_but_an_entire_row_is_masked(self):
-        image = np.array([[1.0, 2.0, 3.0], [6.0, 6.0, 6.0], [9.0, 9.0, 9.0]])
-
-        mask = np.ma.array(
-            [[False, False, True], [True, True, True], [False, False, False]]
-        )
-
-        binned_array = ac.bin_array_across_serial(image, mask)
-
-        assert (binned_array == np.array([1.5, np.inf, 9.0])).all()
-
-
-class TestBinArrayAcrossParallel:
-    def test__3x3_array__all_1s__bin_gives_a_1d_array_of_3_1s(self):
-        image = np.ones((3, 3))
-
-        binned_array = ac.bin_array_across_parallel(image)
-
-        assert (binned_array == np.array([1.0, 1.0, 1.0])).all()
-
-    def test__4x3_array__all_1s__bin_gives_a_1d_array_of_3_1s(self):
-        pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
-
-        image = np.ones((4, 3))
-
-        binned_array = ac.bin_array_across_parallel(image)
-
-        assert (binned_array == np.array([1.0, 1.0, 1.0])).all()
-
-    def test__3x4_array__all_1s__bin_gives_a_1d_array_of_4_1s(self):
-        pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
-
-        image = np.ones((3, 4))
-
-        binned_array = ac.bin_array_across_parallel(image)
-
-        assert (binned_array == np.array([1.0, 1.0, 1.0, 1.0])).all()
-
-    def test__3x3_array__different_values__bin_gives_a_1d_array_of_each_mean(self):
-        image = np.array([[1.0, 6.0, 9.0], [2.0, 6.0, 9.0], [3.0, 6.0, 9.0]])
-
-        binned_array = ac.bin_array_across_parallel(image)
-
-        assert (binned_array == np.array([2.0, 6.0, 9.0])).all()
-
-    def test__3x3_array__same_as_above_but_with_mask(self):
-        image = np.array([[1.0, 6.0, 9.0], [2.0, 6.0, 9.0], [3.0, 6.0, 9.0]])
-
-        mask = np.ma.array(
-            [[False, False, False], [False, False, False], [True, False, False]]
-        )
-
-        binned_array = ac.bin_array_across_parallel(image, mask)
-
-        assert (binned_array == np.array([1.5, 6.0, 9.0])).all()
-
-    def test__3x3_array__same_as_above_but_with_entire_column_masked(self):
-        image = np.array([[1.0, 6.0, 9.0], [2.0, 6.0, 9.0], [3.0, 6.0, 9.0]])
-
-        mask = np.ma.array(
-            [[False, True, False], [False, True, False], [True, True, False]]
-        )
-
-        binned_array = ac.bin_array_across_parallel(image, mask)
-
-        assert (binned_array == np.array([1.5, np.inf, 9.0])).all()
+from autocti.structures import frame
+from test_autocti.mock.mock import MockCIGeometry
 
 
 class TestChInj(object):
@@ -120,7 +13,7 @@ class TestChInj(object):
                 [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -141,7 +34,7 @@ class TestChInj(object):
                 [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -165,7 +58,7 @@ class TestChInj(object):
                 [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=MockCIGeometry(parallel_overscan=(3, 4, 0, 3)),
                 ci_pattern=pattern,
             )
@@ -200,7 +93,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=MockCIGeometry(parallel_overscan=(3, 4, 0, 3)),
                 ci_pattern=pattern,
             )
@@ -238,7 +131,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=MockCIGeometry(parallel_overscan=(3, 4, 1, 2)),
                 ci_pattern=pattern,
             )
@@ -268,7 +161,7 @@ class TestChInj(object):
                 [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -290,7 +183,7 @@ class TestChInj(object):
                 [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -318,7 +211,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -353,7 +246,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -391,7 +284,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -431,7 +324,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -469,7 +362,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -496,7 +389,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -526,7 +419,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_right(),
                 ci_pattern=pattern,
             )
@@ -549,7 +442,7 @@ class TestChInj(object):
             image = np.array(
                 [[0.0, 1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0], [8.0, 9.0, 10.0, 11.0]]
             )
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -570,7 +463,7 @@ class TestChInj(object):
             image = np.array(
                 [[0.0, 1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0], [8.0, 9.0, 10.0, 11.0]]
             )
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -591,7 +484,7 @@ class TestChInj(object):
             image = np.array(
                 [[0.0, 1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0], [8.0, 9.0, 10.0, 11.0]]
             )
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -612,7 +505,7 @@ class TestChInj(object):
             image = np.array(
                 [[0.0, 1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0], [8.0, 9.0, 10.0, 11.0]]
             )
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -639,7 +532,7 @@ class TestChInj(object):
                     [8.0, 9.0, 1.1, 10.0, 11.0],
                 ]
             )
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -672,7 +565,7 @@ class TestChInj(object):
                     [8.0, 9.0, 1.1, 10.0, 11.0],
                 ]
             )
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -702,7 +595,7 @@ class TestChInj(object):
                 [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]]
             )
 
-            frame = ac.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
+            frame = ac.CIFrame(frame_geometry=frame_geometry, ci_pattern=pattern)
 
             new_frame = frame.serial_all_trails_frame_from_frame(image)
 
@@ -733,7 +626,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
+            frame = ac.CIFrame(frame_geometry=frame_geometry, ci_pattern=pattern)
 
             new_frame = frame.serial_all_trails_frame_from_frame(image)
 
@@ -768,7 +661,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
+            frame = ac.CIFrame(frame_geometry=frame_geometry, ci_pattern=pattern)
 
             new_frame = frame.serial_all_trails_frame_from_frame(image)
 
@@ -801,7 +694,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
+            frame = ac.CIFrame(frame_geometry=frame_geometry, ci_pattern=pattern)
 
             new_frame = frame.serial_all_trails_frame_from_frame(image)
 
@@ -831,7 +724,7 @@ class TestChInj(object):
                 [[0.0, 1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0], [8.0, 9.0, 10.0, 11.0]]
             )
 
-            frame = ac.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
+            frame = ac.CIFrame(frame_geometry=frame_geometry, ci_pattern=pattern)
 
             new_frame = frame.serial_overscan_above_trails_frame_from_frame(image)
 
@@ -855,7 +748,7 @@ class TestChInj(object):
                 [[0.0, 1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0], [8.0, 9.0, 10.0, 11.0]]
             )
 
-            frame = ac.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
+            frame = ac.CIFrame(frame_geometry=frame_geometry, ci_pattern=pattern)
 
             new_frame = frame.serial_overscan_above_trails_frame_from_frame(image)
 
@@ -887,7 +780,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
+            frame = ac.CIFrame(frame_geometry=frame_geometry, ci_pattern=pattern)
 
             new_frame = frame.serial_overscan_above_trails_frame_from_frame(image)
 
@@ -925,7 +818,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(frame_geometry=frame_geometry, ci_pattern=pattern)
+            frame = ac.CIFrame(frame_geometry=frame_geometry, ci_pattern=pattern)
 
             new_frame = frame.serial_overscan_above_trails_frame_from_frame(image)
 
@@ -957,7 +850,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -988,7 +881,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -1013,7 +906,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_right(),
                 ci_pattern=pattern,
             )
@@ -1037,7 +930,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -1064,7 +957,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_right(),
                 ci_pattern=pattern,
             )
@@ -1092,7 +985,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_right(),
                 ci_pattern=pattern,
             )
@@ -1118,7 +1011,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -1149,7 +1042,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -1180,7 +1073,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -1208,7 +1101,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_right(),
                 ci_pattern=pattern,
             )
@@ -1239,7 +1132,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -1272,7 +1165,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -1308,7 +1201,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -1350,7 +1243,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -1413,7 +1306,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.top_left(), ci_pattern=pattern
             )
 
@@ -1495,7 +1388,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -1553,7 +1446,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -1636,7 +1529,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -1700,7 +1593,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -1756,7 +1649,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -1804,7 +1697,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -1836,7 +1729,7 @@ class TestChInj(object):
                     [9.0, 9.0, 9.0],
                 ]
             )
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -1874,7 +1767,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -1919,7 +1812,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.top_left(), ci_pattern=pattern
             )
 
@@ -1987,7 +1880,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -2034,7 +1927,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -2112,7 +2005,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -2165,7 +2058,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -2207,7 +2100,7 @@ class TestChInj(object):
                 ]
             )  # 2nd Trail starts here
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -2241,7 +2134,7 @@ class TestChInj(object):
 
             #       /| Front Edge
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -2276,7 +2169,7 @@ class TestChInj(object):
 
             #                    /| Front Edge
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -2311,7 +2204,7 @@ class TestChInj(object):
 
             #                    /| FE 1        /\ FE 2
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -2365,7 +2258,7 @@ class TestChInj(object):
 
             #                               /| FE 1            /\ FE 2
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_right(),
                 ci_pattern=pattern,
             )
@@ -2462,7 +2355,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -2508,7 +2401,7 @@ class TestChInj(object):
 
             #                      /| FE 1                /\ FE 2
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -2594,7 +2487,7 @@ class TestChInj(object):
 
             #                        /| FE 1                       /| FE 2
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -2663,7 +2556,7 @@ class TestChInj(object):
 
             #                        /| FE 1                       /| FE 2
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -2696,7 +2589,7 @@ class TestChInj(object):
 
             #                    /| FE 1        /\ FE 2
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -2738,7 +2631,7 @@ class TestChInj(object):
 
             #                                    /| Trails Begin
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -2767,7 +2660,7 @@ class TestChInj(object):
 
             #                                   /| Trails Begin
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -2797,7 +2690,7 @@ class TestChInj(object):
 
             #                                   /| Trails1           /\ Trails2
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -2843,7 +2736,7 @@ class TestChInj(object):
 
             #               Trails1   /|                Trails2 /\
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_right(),
                 ci_pattern=pattern,
             )
@@ -2935,7 +2828,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -2981,7 +2874,7 @@ class TestChInj(object):
 
             #                                   /| Trails1           /\ Trails2
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -3070,7 +2963,7 @@ class TestChInj(object):
 
             #                                               /| Trails1                   /\ Trails2
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -3153,7 +3046,7 @@ class TestChInj(object):
 
             #                                               /| Trails1                   /\ Trails2
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -3191,7 +3084,7 @@ class TestChInj(object):
                 corner=(0, 0),
             )
 
-            frame = ac.ChInj(frame_geometry=ci_geometry, ci_pattern=pattern)
+            frame = ac.CIFrame(frame_geometry=ci_geometry, ci_pattern=pattern)
 
             trails = frame.serial_trails_arrays_from_frame(image)
 
@@ -3241,7 +3134,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -3263,7 +3156,7 @@ class TestChInj(object):
                 ]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -3278,7 +3171,7 @@ class TestChInj(object):
 
             pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 3)])
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -3300,7 +3193,7 @@ class TestChInj(object):
                 normalization=10.0, regions=[(0, 3, 0, 3), (5, 7, 0, 3)]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
             )
 
@@ -3322,7 +3215,7 @@ class TestChInj(object):
                 normalization=10.0, regions=[(1, 4, 0, 3), (5, 7, 0, 3)]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.top_left(), ci_pattern=pattern
             )
 
@@ -3336,7 +3229,7 @@ class TestChInj(object):
                 normalization=10.0, regions=[(8, 12, 0, 3), (14, 16, 0, 3)]
             )
 
-            frame = ac.ChInj(
+            frame = ac.CIFrame(
                 frame_geometry=ac.FrameGeometry.top_left(), ci_pattern=pattern
             )
 

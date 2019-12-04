@@ -1,9 +1,11 @@
-from autocti.structures.frame_array import Frame as frame, EuclidFrame as euclid_frame, Region
+from autocti.structures.mask import Mask as mask
+from autocti.structures.frame import Frame as frame, EuclidFrame as euclid_frame, Region
 from autocti.structures.mask import Mask
 from autocti.model import arctic_params
 from autocti.model.arctic_params import ArcticParams, CCDVolume, Species
 from autocti.model.arctic_settings import ArcticSettings, Settings
 from autocti.model.pyarctic import call_arctic
+from autocti import masked
 from autocti.charge_injection.ci_data import (
     CIImaging,
     CIMaskedImaging,
@@ -17,7 +19,7 @@ from autocti.charge_injection.ci_fit import (
     CIImagingFit,
     hyper_noise_map_from_noise_map_and_noise_scalings,
 )
-from autocti.charge_injection.ci_frame import ChInj
+from autocti.charge_injection.ci_frame import CIFrame
 from autocti.charge_injection.ci_hyper import CIHyperNoiseScalar
 from autocti.charge_injection.ci_mask import CIMask
 from autocti.charge_injection.ci_pattern import CIPatternUniform, CIPatternNonUniform

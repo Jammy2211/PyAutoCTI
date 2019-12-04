@@ -88,7 +88,7 @@ def make_ci_data(frame_geometry, ci_pattern):
     image = np.ones((3, 3))
     noise = np.ones((3, 3))
     ci_pre_cti = np.ones((3, 3))
-    frame = ac.ChInj(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
+    frame = ac.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
     return ac.CIImaging(
         image=image,
         noise_map=noise,
