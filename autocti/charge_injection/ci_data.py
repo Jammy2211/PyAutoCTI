@@ -3,12 +3,12 @@ import numpy as np
 import autofit as af
 from autocti.charge_injection import ci_frame as frame
 from autocti.charge_injection import ci_pattern as pattern
-from autocti.data import cti_image
-from autocti.data import mask as msk
-from autocti.data import util
+from autocti.structures import frame_array
+from autocti.structures import mask as msk
+from autoarray.util import array_util
 
 
-class CIData(object):
+class CIImaging(object):
     def __init__(
         self, image, noise_map, ci_pre_cti, ci_pattern, ci_frame, cosmic_ray_image=None
     ):
@@ -59,7 +59,7 @@ class CIData(object):
         if cosmic_ray_image is not None:
             ci_pre_cti += cosmic_ray_image
 
-        ci_pre_cti = cti_image.ImageFrame(
+        ci_pre_cti = cti_image.FrameArray(
             frame_geometry=frame_geometry, array=ci_pre_cti
         )
 
@@ -78,7 +78,7 @@ class CIData(object):
             ci_image = ci_post_cti
             ci_noise_map = None
 
-        return CIData(
+        return CIImaging(
             ci_frame=ci_frame,
             image=ci_image,
             noise_map=ci_noise_map,
@@ -110,10 +110,10 @@ class CIData(object):
 
         Returns
         -------
-        masked_ci_data: CIDataMasked
+        masked_ci_data: CIMaskedImaging
         """
 
-        return CIDataMasked(
+        return CIMaskedImaging(
             image=func(self.image),
             noise_map=func(self.noise_map),
             ci_pre_cti=func(self.ci_pre_cti),
@@ -178,7 +178,7 @@ class CIData(object):
             A mask
         Returns
         -------
-        CIDataMasked
+        CIMaskedImaging
         """
         return self.map_to_ci_data_masked(
             func=self.parallel_extractor(columns),
@@ -202,7 +202,7 @@ class CIData(object):
             A mask
         Returns
         -------
-        CIDataMasked
+        CIMaskedImaging
         """
         return self.map_to_ci_data_masked(
             func=self.serial_extractor(rows),
@@ -224,7 +224,7 @@ class CIData(object):
             A mask
         Returns
         -------
-        CIDataMasked
+        CIMaskedImaging
         """
         return self.map_to_ci_data_masked(
             func=self.parallel_serial_extractor(),
@@ -245,7 +245,7 @@ class CIData(object):
         return np.max(self.signal_to_noise_map)
 
 
-class CIDataMasked(object):
+class CIMaskedImaging(object):
     def __init__(
         self,
         image,
@@ -339,17 +339,17 @@ def ci_data_from_fits(
 
     ci_frame = frame.ChInj(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
 
-    ci_image = util.numpy_array_2d_from_fits(file_path=image_path, hdu=image_hdu)
+    ci_image = array_util.numpy_array_2d_from_fits(file_path=image_path, hdu=image_hdu)
 
     if noise_map_path is not None:
-        ci_noise_map = util.numpy_array_2d_from_fits(
+        ci_noise_map = array_util.numpy_array_2d_from_fits(
             file_path=noise_map_path, hdu=noise_map_hdu
         )
     else:
         ci_noise_map = np.ones(ci_image.shape) * noise_map_from_single_value
 
     if ci_pre_cti_path is not None:
-        ci_pre_cti = util.numpy_array_2d_from_fits(
+        ci_pre_cti = array_util.numpy_array_2d_from_fits(
             file_path=ci_pre_cti_path, hdu=ci_pre_cti_hdu
         )
     else:
@@ -358,13 +358,13 @@ def ci_data_from_fits(
         )
 
     if cosmic_ray_image_path is not None:
-        cosmic_ray_image = util.numpy_array_2d_from_fits(
+        cosmic_ray_image = array_util.numpy_array_2d_from_fits(
             file_path=cosmic_ray_image_path, hdu=cosmic_ray_image_hdu
         )
     else:
         cosmic_ray_image = None
 
-    return CIData(
+    return CIImaging(
         image=ci_image,
         noise_map=ci_noise_map,
         ci_pre_cti=ci_pre_cti,
@@ -383,22 +383,22 @@ def output_ci_data_to_fits(
     overwrite=False,
 ):
 
-    util.numpy_array_2d_to_fits(
+    array_util.numpy_array_2d_to_fits(
         array_2d=ci_data.image, file_path=image_path, overwrite=overwrite
     )
 
     if ci_data.noise_map is not None and noise_map_path is not None:
-        util.numpy_array_2d_to_fits(
+        array_util.numpy_array_2d_to_fits(
             array_2d=ci_data.noise_map, file_path=noise_map_path, overwrite=overwrite
         )
 
     if ci_data.ci_pre_cti is not None and ci_pre_cti_path is not None:
-        util.numpy_array_2d_to_fits(
+        array_util.numpy_array_2d_to_fits(
             array_2d=ci_data.ci_pre_cti, file_path=ci_pre_cti_path, overwrite=overwrite
         )
 
     if ci_data.cosmic_ray_image is not None and cosmic_ray_image_path is not None:
-        util.numpy_array_2d_to_fits(
+        array_util.numpy_array_2d_to_fits(
             array_2d=ci_data.cosmic_ray_image,
             file_path=cosmic_ray_image_path,
             overwrite=overwrite,

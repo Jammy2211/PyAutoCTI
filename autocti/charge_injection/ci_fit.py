@@ -1,30 +1,66 @@
 import numpy as np
-import autofit as af
+from autoarray.fit import fit as aa_fit
 from autocti.charge_injection import ci_data
 
 
-class CIDataFit(af.DataFit):
-    def __init__(self, ci_data_masked: ci_data.CIDataMasked, noise_map, model_data):
-        """Abstract fit of a charge injection dataset with a model cti image.
+class CIImagingFit(aa_fit.ImagingFit):
+    def __init__(
+        self,
+        ci_masked_imaging: ci_data.CIMaskedImaging,
+        cti_params,
+        cti_settings,
+        hyper_noise_scalars=None,
+    ):
+        """Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian
+        framework.
 
         Parameters
         -----------
-        ci_data_masked : ci_data.CIDataMasked
+        ci_masked_imaging
             The charge injection image that is fitted.
         cti_params : arctic_params.ArcticParams
             The cti model parameters which describe how CTI during clocking.
         cti_settings : arctic_settings.ArcticSettings
             The settings that control how arctic models CTI.
+        hyper_noise_scalars :
+            The ci_hyper-parameter(s) which the noise_scaling_maps is multiplied by to scale the noise-map.
         """
 
-        super(CIDataFit, self).__init__(
-            data=ci_data_masked.image,
-            noise_map=noise_map,
-            mask=ci_data_masked.mask,
-            model_data=model_data,
+        self.ci_masked_data = ci_masked_imaging
+        self.cti_params = cti_params
+        self.cti_settings = cti_settings
+
+        model_image = ci_masked_imaging.ci_frame.frame_geometry.add_cti(
+            image=ci_masked_imaging.ci_pre_cti,
+            cti_params=cti_params,
+            cti_settings=cti_settings,
         )
 
-        self.ci_data_masked = ci_data_masked
+        self.hyper_noise_scalars = hyper_noise_scalars
+
+        if hyper_noise_scalars is not None and hyper_noise_scalars is not []:
+
+            self.noise_scaling_maps = ci_masked_imaging.noise_scaling_maps
+            noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
+                hyper_noise_scalars=hyper_noise_scalars,
+                noise_scaling_maps=ci_masked_imaging.noise_scaling_maps,
+                noise_map=ci_masked_imaging.noise_map,
+            )
+
+        else:
+
+            noise_map = ci_masked_imaging.noise_map
+
+        super().__init__(
+            mask=ci_masked_imaging.mask,
+            image=ci_masked_imaging.image,
+            noise_map=noise_map,
+            model_image=model_image,
+        )
+
+    @property
+    def ci_masked_imaging(self):
+        return self.ci_masked_data
 
     @property
     def ci_post_cti(self):
@@ -33,18 +69,6 @@ class CIDataFit(af.DataFit):
     @property
     def ci_pre_cti(self):
         return self.ci_data_masked.ci_pre_cti
-
-    @property
-    def image(self):
-        return self.data
-
-    @property
-    def model_image(self):
-        return self.model_data
-
-    @property
-    def figure_of_merit(self):
-        return self.likelihood
 
     @property
     def chi_squared_map_of_ci_regions(self):
@@ -68,58 +92,6 @@ class CIDataFit(af.DataFit):
     def chi_squared_map_of_serial_overscan_above_trails(self):
         return self.ci_data_masked.chinj.serial_overscan_above_trails_frame_from_frame(
             array=self.chi_squared_map.copy()
-        )
-
-
-class CIFit(CIDataFit):
-    def __init__(
-        self,
-        ci_data_masked: ci_data.CIDataMasked,
-        cti_params,
-        cti_settings,
-        hyper_noise_scalars=None,
-    ):
-        """Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian
-        framework.
-
-        Parameters
-        -----------
-        ci_data_masked
-            The charge injection image that is fitted.
-        cti_params : arctic_params.ArcticParams
-            The cti model parameters which describe how CTI during clocking.
-        cti_settings : arctic_settings.ArcticSettings
-            The settings that control how arctic models CTI.
-        hyper_noise_scalars :
-            The ci_hyper-parameter(s) which the noise_scaling_maps is multiplied by to scale the noise-map.
-        """
-
-        self.cti_params = cti_params
-        self.cti_settings = cti_settings
-
-        model_data = ci_data_masked.ci_frame.frame_geometry.add_cti(
-            image=ci_data_masked.ci_pre_cti,
-            cti_params=cti_params,
-            cti_settings=cti_settings,
-        )
-
-        self.hyper_noise_scalars = hyper_noise_scalars
-
-        if hyper_noise_scalars is not None and hyper_noise_scalars is not []:
-
-            self.noise_scaling_maps = ci_data_masked.noise_scaling_maps
-            noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
-                hyper_noise_scalars=hyper_noise_scalars,
-                noise_scaling_maps=ci_data_masked.noise_scaling_maps,
-                noise_map=ci_data_masked.noise_map,
-            )
-
-        else:
-
-            noise_map = ci_data_masked.noise_map
-
-        super().__init__(
-            ci_data_masked=ci_data_masked, noise_map=noise_map, model_data=model_data
         )
 
 

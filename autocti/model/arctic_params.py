@@ -34,6 +34,57 @@ class ArcticParams(object):
             [species.delta_ellipticity for species in self.parallel_species]
         ) + sum([species.delta_ellipticity for species in self.serial_species])
 
+    def update_fits_header_info(self, ext_header):
+        """Output the CTI model parameters into the fits header of a fits image.
+
+        Parameters
+        -----------
+        ext_header : astropy.io.hdulist
+            The opened header of the astropy fits header.
+        """
+
+        def add_species(name, species_list):
+            for i, species in species_list:
+                ext_header.set(
+                    "cte_pt{}d".format(i),
+                    species.trap_density,
+                    "Trap species {} density ({})".format(i, name),
+                )
+                ext_header.set(
+                    "cte_pt{}t".format(i),
+                    species.trap_lifetime,
+                    "Trap species {} lifetime ({})".format(i, name),
+                )
+
+        add_species("Parallel", self.parallel_species)
+        add_species("Serial", self.serial_species)
+
+        if self.serial_ccd_volume is not None:
+            ext_header.set(
+                "cte_swln",
+                self.serial_ccd_volume.well_notch_depth,
+                "CCD Well notch depth (Serial)",
+            )
+            ext_header.set(
+                "cte_swlp",
+                self.serial_ccd_volume.well_fill_beta,
+                "CCD Well filling power (Serial)",
+            )
+
+        if self.parallel_ccd_volume is not None:
+            ext_header.set(
+                "cte_pwln",
+                self.parallel_ccd_volume.well_notch_depth,
+                "CCD Well notch depth (Parallel)",
+            )
+            ext_header.set(
+                "cte_pwlp",
+                self.parallel_ccd_volume.well_fill_beta,
+                "CCD Well filling power (Parallel)",
+            )
+
+        return ext_header
+
 
 class CCDVolume(object):
     def __init__(
@@ -108,57 +159,6 @@ class Species(object):
                 )
             )
         )
-
-    def update_fits_header_info(self, ext_header):
-        """Output the CTI model parameters into the fits header of a fits image.
-
-        Parameters
-        -----------
-        ext_header : astropy.io.hdulist
-            The opened header of the astropy fits header.
-        """
-
-        def add_species(name, species_list):
-            for i, species in species_list:
-                ext_header.set(
-                    "cte_pt{}d".format(i),
-                    species.trap_density,
-                    "Trap species {} density ({})".format(i, name),
-                )
-                ext_header.set(
-                    "cte_pt{}t".format(i),
-                    species.trap_lifetime,
-                    "Trap species {} lifetime ({})".format(i, name),
-                )
-
-        add_species("Parallel", self.parallel_species)
-        add_species("Serial", self.serial_species)
-
-        if self.serial_ccd_volume is not None:
-            ext_header.set(
-                "cte_swln",
-                self.serial_ccd_volume.well_notch_depth,
-                "CCD Well notch depth (Serial)",
-            )
-            ext_header.set(
-                "cte_swlp",
-                self.serial_ccd_volume.well_fill_beta,
-                "CCD Well filling power (Serial)",
-            )
-
-        if self.parallel_ccd_volume is not None:
-            ext_header.set(
-                "cte_pwln",
-                self.parallel_ccd_volume.well_notch_depth,
-                "CCD Well notch depth (Parallel)",
-            )
-            ext_header.set(
-                "cte_pwlp",
-                self.parallel_ccd_volume.well_fill_beta,
-                "CCD Well filling power (Parallel)",
-            )
-
-        return ext_header
 
     def __repr__(self):
         return "\n".join(

@@ -89,7 +89,7 @@ def make_ci_data(frame_geometry, ci_pattern):
     noise = np.ones((3, 3))
     ci_pre_cti = np.ones((3, 3))
     frame = ac.ChInj(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
-    return ac.CIData(
+    return ac.CIImaging(
         image=image,
         noise_map=noise,
         ci_pre_cti=ci_pre_cti,
@@ -654,7 +654,7 @@ class TestPhase(object):
             ci_data, ac.Mask.empty_for_shape(ci_data.image.shape)
         )
 
-        assert isinstance(ci_datas_masked, ac.CIDataMasked)
+        assert isinstance(ci_datas_masked, ac.CIMaskedImaging)
         assert (ci_data.image == ci_datas_masked.image).all()
         assert (ci_data.noise_map == ci_datas_masked.noise_map).all()
         assert (ci_data.ci_pre_cti == ci_datas_masked.ci_pre_cti).all()
@@ -671,7 +671,7 @@ class TestPhase(object):
             ci_data, ac.Mask.empty_for_shape(ci_data.image.shape)
         )
 
-        assert isinstance(ci_datas_masked, ac.CIDataMasked)
+        assert isinstance(ci_datas_masked, ac.CIMaskedImaging)
         assert (ci_data.image[:, 0] == ci_datas_masked.image).all()
         assert (ci_data.noise_map[:, 0] == ci_datas_masked.noise_map).all()
         assert (ci_data.ci_pre_cti[:, 0] == ci_datas_masked.ci_pre_cti).all()
@@ -687,7 +687,7 @@ class TestPhase(object):
             ci_data, ac.Mask.empty_for_shape(ci_data.image.shape)
         )
 
-        assert isinstance(ci_datas_masked, ac.CIDataMasked)
+        assert isinstance(ci_datas_masked, ac.CIMaskedImaging)
         assert (ci_data.image == ci_datas_masked.image).all()
         assert (ci_data.noise_map == ci_datas_masked.noise_map).all()
         assert (ci_data.ci_pre_cti == ci_datas_masked.ci_pre_cti).all()
@@ -704,7 +704,7 @@ class TestPhase(object):
             ci_data, ac.Mask.empty_for_shape(ci_data.image.shape)
         )
 
-        assert isinstance(ci_datas_masked, ac.CIDataMasked)
+        assert isinstance(ci_datas_masked, ac.CIMaskedImaging)
         assert (ci_data.image[0, :] == ci_datas_masked.image).all()
         assert (ci_data.noise_map[0, :] == ci_datas_masked.noise_map).all()
         assert (ci_data.ci_pre_cti[0, :] == ci_datas_masked.ci_pre_cti).all()
@@ -724,7 +724,7 @@ class TestPhase(object):
             ci_data, ac.Mask.empty_for_shape(ci_data.image.shape)
         )
 
-        assert isinstance(ci_datas_masked, ac.CIDataMasked)
+        assert isinstance(ci_datas_masked, ac.CIMaskedImaging)
         assert (ci_data.image == ci_datas_masked.image).all()
         assert (ci_data.noise_map == ci_datas_masked.noise_map).all()
         assert (ci_data.ci_pre_cti == ci_datas_masked.ci_pre_cti).all()
@@ -1157,8 +1157,8 @@ class TestResult(object):
             phase.ci_datas_masked_extracted_from_ci_data(ci_data=d, mask=mask)
             for d, mask in zip([ci_data], [mask])
         ]
-        fit = ac.CIFit(
-            ci_data_masked=ci_datas_masked[0],
+        fit = ac.CIImagingFit(
+            ci_masked_imaging=ci_datas_masked[0],
             cti_params=cti_params,
             cti_settings=cti_settings,
         )

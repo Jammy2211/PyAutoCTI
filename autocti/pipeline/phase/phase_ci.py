@@ -8,8 +8,9 @@ from autocti.pipeline import phase_tagging as tag
 from autocti.pipeline.phase.phase import Phase
 from autocti.pipeline.phase import phase_extensions
 from autocti.charge_injection import ci_data, ci_fit, ci_mask
-from autocti.charge_injection.plotters import ci_data_plotters, ci_fit_plotters
-from autocti.data import mask as msk
+from autocti.plotters.ci_plotters import ci_data_plotters
+from autocti.plotters.ci_plotters import ci_fit_plotters
+from autocti.structures import mask as msk
 from autocti.model import arctic_params
 
 
@@ -338,7 +339,7 @@ class PhaseCI(Phase):
 
         ci_datas_masked_full = list(
             map(
-                lambda data, mask, maps: ci_data.CIDataMasked(
+                lambda data, mask, maps: ci_data.CIMaskedImaging(
                     image=data.image,
                     noise_map=data.noise_map,
                     ci_pre_cti=data.ci_pre_cti,
@@ -771,8 +772,8 @@ class PhaseCI(Phase):
 
             return list(
                 map(
-                    lambda ci_data_masked_extracted: ci_fit.CIFit(
-                        ci_data_masked=ci_data_masked_extracted,
+                    lambda ci_data_masked_extracted: ci_fit.CIImagingFit(
+                        ci_masked_imaging=ci_data_masked_extracted,
                         cti_params=cti_params,
                         cti_settings=self.cti_settings,
                         hyper_noise_scalars=hyper_noise_scalars,
@@ -790,8 +791,8 @@ class PhaseCI(Phase):
 
             return list(
                 map(
-                    lambda ci_data_masked_full: ci_fit.CIFit(
-                        ci_data_masked=ci_data_masked_full,
+                    lambda ci_data_masked_full: ci_fit.CIImagingFit(
+                        ci_masked_imaging=ci_data_masked_full,
                         cti_params=cti_params,
                         cti_settings=self.cti_settings,
                         hyper_noise_scalars=hyper_noise_scalars,
@@ -904,8 +905,8 @@ class PhaseCI(Phase):
 
 
 def pipe_cti(ci_data_masked, cti_params, cti_settings, hyper_noise_scalars):
-    fit = ci_fit.CIFit(
-        ci_data_masked=ci_data_masked,
+    fit = ci_fit.CIImagingFit(
+        ci_masked_imaging=ci_data_masked,
         cti_params=cti_params,
         cti_settings=cti_settings,
         hyper_noise_scalars=hyper_noise_scalars,

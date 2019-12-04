@@ -1,8 +1,8 @@
 from matplotlib import pyplot as plt
 
-from autocti.charge_injection.plotters import fit_plotters
+from autocti.plotters.ci_plotters import fit_plotters
 from autocti.plotters import plotter_util
-from autocti.data import util
+from autoarray.util import array_util
 
 
 def plot_ci_fit_for_phase(
@@ -102,7 +102,7 @@ def plot_ci_fit_arrays_for_phase(
             + str(int(normalization))
             + "/structures/"
         )
-        util.make_path_if_does_not_exist(path=output_path + "fits/")
+        array_util.make_path_if_does_not_exist(path=output_path + "fits/")
 
         if should_plot_as_subplot:
 
@@ -228,7 +228,7 @@ def plot_ci_fit_lines_for_phase(
                 + line_region
                 + "/"
             )
-            util.make_path_if_does_not_exist(path=output_path + "fits/")
+            array_util.make_path_if_does_not_exist(path=output_path + "fits/")
 
             if should_plot_as_subplot:
 

@@ -36,7 +36,7 @@ def make_ci_pre_cti():
 
 @pytest.fixture(name="dataset")
 def make_ci_data(image, noise_map, ci_pre_cti):
-    return ac.CIData(
+    return ac.CIImaging(
         image=image,
         noise_map=noise_map,
         ci_pre_cti=ci_pre_cti,
@@ -220,7 +220,7 @@ def test__ci_individuals__output_dependent_on_inputs(
 
 @pytest.fixture(name="data_extracted")
 def make_ci_data_extracted(data, mask):
-    return ac.CIDataMasked(
+    return ac.CIMaskedImaging(
         image=data.image,
         noise_map=data.noise_map,
         ci_pre_cti=data.ci_pre_cti,
