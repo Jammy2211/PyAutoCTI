@@ -13,7 +13,7 @@ class TestMaskedParallelFrontEdge:
 
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
-        frame = ac.ChInj(
+        frame = ac.CIFrame(
             frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
@@ -49,7 +49,7 @@ class TestMaskedParallelFrontEdge:
 
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
-        frame = ac.ChInj(
+        frame = ac.CIFrame(
             frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
@@ -87,7 +87,7 @@ class TestMaskedParallelFrontEdge:
             normalization=1.0, regions=[(1, 4, 0, 1), (1, 4, 2, 3)]
         )
 
-        frame = ac.ChInj(
+        frame = ac.CIFrame(
             frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
@@ -123,7 +123,7 @@ class TestMaskedParallelFrontEdge:
 
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
-        frame = ac.ChInj(
+        frame = ac.CIFrame(
             frame_geometry=ac.FrameGeometry.top_left(), ci_pattern=pattern
         )
 
@@ -161,7 +161,7 @@ class TestMaskedParallelTrails:
 
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
-        frame = ac.ChInj(
+        frame = ac.CIFrame(
             frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
@@ -197,7 +197,7 @@ class TestMaskedParallelTrails:
 
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
-        frame = ac.ChInj(
+        frame = ac.CIFrame(
             frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
@@ -235,7 +235,7 @@ class TestMaskedParallelTrails:
             normalization=1.0, regions=[(1, 4, 0, 1), (1, 4, 2, 3)]
         )
 
-        frame = ac.ChInj(
+        frame = ac.CIFrame(
             frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
@@ -271,7 +271,7 @@ class TestMaskedParallelTrails:
 
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
-        frame = ac.ChInj(
+        frame = ac.CIFrame(
             frame_geometry=ac.FrameGeometry.top_left(), ci_pattern=pattern
         )
 
@@ -309,7 +309,7 @@ class TestMaskedSerialFrontEdge:
 
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
-        frame = ac.ChInj(
+        frame = ac.CIFrame(
             frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
@@ -367,7 +367,7 @@ class TestMaskedSerialFrontEdge:
 
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
-        frame = ac.ChInj(
+        frame = ac.CIFrame(
             frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
@@ -394,7 +394,7 @@ class TestMaskedSerialFrontEdge:
             normalization=1.0, regions=[(0, 1, 1, 4), (2, 3, 1, 4)]
         )
 
-        frame = ac.ChInj(
+        frame = ac.CIFrame(
             frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
@@ -430,7 +430,7 @@ class TestMaskedSerialFrontEdge:
 
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
-        frame = ac.ChInj(
+        frame = ac.CIFrame(
             frame_geometry=ac.FrameGeometry.bottom_right(), ci_pattern=pattern
         )
 
@@ -490,7 +490,7 @@ class TestMaskedSerialTrails:
 
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
-        frame = ac.ChInj(
+        frame = ac.CIFrame(
             frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
@@ -515,7 +515,7 @@ class TestMaskedSerialTrails:
 
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
-        frame = ac.ChInj(
+        frame = ac.CIFrame(
             frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
@@ -542,7 +542,7 @@ class TestMaskedSerialTrails:
             normalization=1.0, regions=[(0, 1, 1, 4), (2, 3, 1, 4)]
         )
 
-        frame = ac.ChInj(
+        frame = ac.CIFrame(
             frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
@@ -578,7 +578,7 @@ class TestMaskedSerialTrails:
 
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
-        frame = ac.ChInj(
+        frame = ac.CIFrame(
             frame_geometry=ac.FrameGeometry.bottom_right(), ci_pattern=pattern
         )
 

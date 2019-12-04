@@ -1,10 +1,12 @@
 import numpy as np
 
-from autocti import exc
+from autocti.structures import frame
 
 
-class ChInj(object):
-    def __init__(self, frame_geometry, ci_pattern):
+class CIFrame(frame.Frame):
+    
+    def __new__(cls, array, ci_pattern, corner=(0,0), parallel_overscan=None, serial_prescan=None, 
+                 serial_overscan=None, pixel_scales=None):
         """
         Class which represents the CCD quadrant of a charge injection image (e.g. the location of the parallel and
         serial front edge, trails).
@@ -15,8 +17,14 @@ class ChInj(object):
         ci_pattern : CIPattern.CIPattern
             The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
         """
-        self.frame_geometry = frame_geometry
-        self.ci_pattern = ci_pattern
+        
+        obj = super(CIFrame, cls).__new__(cls=cls, array=array, corner=corner, 
+                                          parallel_overscan=parallel_overscan, serial_prescan=serial_prescan, 
+                                          serial_overscan=serial_overscan, pixel_scales=pixel_scales)
+        
+        obj.ci_pattern = ci_pattern
+        
+        return obj
 
     def ci_regions_from_array(self, array):
         """Extract an arrays of all of the charge-injection regions from a charge injection ci_frame.
@@ -122,8 +130,8 @@ class ChInj(object):
 
         parallel_array = np.zeros(array.shape)
 
-        x0 = self.frame_geometry.parallel_overscan.x0
-        x1 = self.frame_geometry.parallel_overscan.x1
+        x0 = self.parallel_overscan.x0
+        x1 = self.parallel_overscan.x1
 
         parallel_array[:, x0:x1] = array[:, x0:x1]
 
@@ -201,7 +209,7 @@ class ChInj(object):
 
             front_regions = list(
                 map(
-                    lambda ci_region: self.frame_geometry.parallel_front_edge_region(
+                    lambda ci_region: self.parallel_front_edge_region(
                         ci_region, front_edge_rows
                     ),
                     self.ci_pattern.regions,
@@ -221,7 +229,7 @@ class ChInj(object):
 
             trails_regions = list(
                 map(
-                    lambda ci_region: self.frame_geometry.parallel_trails_region(
+                    lambda ci_region: self.parallel_trails_region(
                         ci_region, trails_rows
                     ),
                     self.ci_pattern.regions,
@@ -282,7 +290,7 @@ class ChInj(object):
         []     [=====================]
                <---------S----------
         """
-        calibration_region = self.frame_geometry.parallel_side_nearest_read_out_region(
+        calibration_region = self.parallel_side_nearest_read_out_region(
             self.ci_pattern.regions[0], array.shape, columns
         )
         array = array[calibration_region.slice]
@@ -336,7 +344,7 @@ class ChInj(object):
         """
         array = self.serial_edges_and_trails_frame_from_frame(
             array=array,
-            trails_columns=(0, self.frame_geometry.serial_overscan.total_columns),
+            trails_columns=(0, self.serial_overscan.total_columns),
         )
         return array
 
@@ -387,14 +395,14 @@ class ChInj(object):
                <---------S----------
         """
         new_array = np.zeros(array.shape)
-        overscan_slice = self.frame_geometry.serial_overscan.slice
+        overscan_slice = self.serial_overscan.slice
 
         new_array[overscan_slice] = array[overscan_slice]
 
         trails_regions = list(
             map(
-                lambda ci_region: self.frame_geometry.serial_trails_region(
-                    ci_region, (0, self.frame_geometry.serial_overscan.total_columns)
+                lambda ci_region: self.serial_trails_region(
+                    ci_region, (0, self.serial_overscan.total_columns)
                 ),
                 self.ci_pattern.regions,
             )
@@ -474,7 +482,7 @@ class ChInj(object):
 
             front_regions = list(
                 map(
-                    lambda ci_region: self.frame_geometry.serial_front_edge_region(
+                    lambda ci_region: self.serial_front_edge_region(
                         ci_region, front_edge_columns
                     ),
                     self.ci_pattern.regions,
@@ -494,7 +502,7 @@ class ChInj(object):
 
             trails_regions = list(
                 map(
-                    lambda ci_region: self.frame_geometry.serial_trails_region(
+                    lambda ci_region: self.serial_trails_region(
                         ci_region, trails_columns
                     ),
                     self.ci_pattern.regions,
@@ -563,7 +571,7 @@ class ChInj(object):
 
         calibration_regions = list(
             map(
-                lambda ci_region: self.frame_geometry.serial_prescan_ci_region_and_trails(
+                lambda ci_region: self.serial_prescan_ci_region_and_trails(
                     ci_region=ci_region, image_shape=array.shape
                 ),
                 self.ci_pattern.regions,
@@ -696,7 +704,7 @@ class ChInj(object):
             rows = (0, self.ci_pattern.total_rows_min)
         return list(
             map(
-                lambda ci_region: self.frame_geometry.parallel_front_edge_region(
+                lambda ci_region: self.parallel_front_edge_region(
                     ci_region, rows
                 ),
                 self.ci_pattern.regions,
@@ -833,7 +841,7 @@ class ChInj(object):
         """
         return list(
             map(
-                lambda ci_region: self.frame_geometry.parallel_trails_region(
+                lambda ci_region: self.parallel_trails_region(
                     ci_region, rows
                 ),
                 self.ci_pattern.regions,
@@ -971,7 +979,7 @@ class ChInj(object):
             columns = (0, self.ci_pattern.total_columns_min)
         return list(
             map(
-                lambda ci_region: self.frame_geometry.serial_front_edge_region(
+                lambda ci_region: self.serial_front_edge_region(
                     ci_region, columns
                 ),
                 self.ci_pattern.regions,
@@ -1102,10 +1110,10 @@ class ChInj(object):
             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd columns)
         """
         if columns is None:
-            columns = (0, self.frame_geometry.serial_trails_columns)
+            columns = (0, self.serial_trails_columns)
         return list(
             map(
-                lambda ci_region: self.frame_geometry.serial_trails_region(
+                lambda ci_region: self.serial_trails_region(
                     ci_region, columns
                 ),
                 self.ci_pattern.regions,
@@ -1114,13 +1122,13 @@ class ChInj(object):
 
     def parallel_serial_calibration_section(self, array):
         return array[
-            0 : array.shape[0], self.frame_geometry.serial_prescan.x0 : array.shape[1]
+            0 : array.shape[0], self.serial_prescan.x0 : array.shape[1]
         ]
 
     def smallest_parallel_trails_rows_from_shape(self, shape):
 
         rows_between_regions = self.ci_pattern.rows_between_regions
-        rows_to_image_edge = self.frame_geometry.parallel_trail_size_to_image_edge(
+        rows_to_image_edge = self.parallel_trail_size_to_image_edge(
             shape=shape, ci_pattern=self.ci_pattern
         )
         rows_between_regions.append(rows_to_image_edge)

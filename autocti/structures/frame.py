@@ -7,15 +7,16 @@ from autocti import exc
 from autocti.model import pyarctic
 
 
-class Frame(arrays.AbstractArray):
+class AbstractFrame(arrays.AbstractArray):
+
     def __new__(
         cls,
         array,
+        mask,
         corner=(0,0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
-        pixel_scales=None,
     ):
         """Abstract class for the geometry of a CTI Image.
 
@@ -44,12 +45,9 @@ class Frame(arrays.AbstractArray):
         if type(array) is list:
             array = np.asarray(array)
 
-        if type(pixel_scales) is float:
-            pixel_scales = (pixel_scales, pixel_scales)
+        array[mask == True] = 0.0
 
-        mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
-
-        obj = super(Frame, cls).__new__(cls=cls, array=array, mask=mask, store_in_1d=False)
+        obj = super(AbstractFrame, cls).__new__(cls=cls, array=array, mask=mask, store_in_1d=False)
 
         obj.corner = corner
         obj.parallel_overscan = parallel_overscan
@@ -58,46 +56,13 @@ class Frame(arrays.AbstractArray):
 
         return obj
 
-    @classmethod
-    def from_fits(
-        cls,
-        file_path,
-        hdu,
-        corner=(0,0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
-        pixel_scales=None,
-    ):
-        """Load the image ci_data from a fits file.
-
-        Params
-        ----------
-        path : str
-            The path to the ci_data
-        filename : str
-            The file phase_name of the fits image ci_data.
-        hdu : int
-            The HDU number in the fits file containing the image ci_data.
-        frame_geometry : FrameArray.FrameGeometry
-            The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
-            locations of different regions of the CCD (overscans, prescan, etc.)
-        """
-        return cls(
-            array=array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu),
-            corner=corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
-            pixel_scales=pixel_scales,
-        )
-
     def __array_finalize__(self, obj):
 
-        super(Frame, self).__array_finalize__(obj)
+        super(AbstractFrame, self).__array_finalize__(obj)
 
-        if isinstance(obj, Frame):
-            self.corner = obj.corner
+        if isinstance(obj, AbstractFrame):
+            if hasattr(obj, "corner"):
+                self.corner = obj.corner
 
     def __reduce__(self):
         # Get the parent's __reduce__ tuple
@@ -215,9 +180,17 @@ class Frame(arrays.AbstractArray):
         flipped = flip(self.in_2d) if self.corner[1] == 1 else self.in_2d
         return flipped.T.copy()
 
+    @property
+    def binned_across_parallel(self):
+        return np.mean(np.ma.masked_array(self, self.mask), axis=0)
+
+    @property
+    def binned_across_serial(self):
+        return np.mean(np.ma.masked_array(self, self.mask), axis=1)
+
     def parallel_trail_from_y(self, y, dy):
         """Coordinates of a parallel trail of size dy from coordinate y"""
-        return int(y - dy * self.corner[0]), int(y + 1 + dy * (1 - self.corner[0]))
+        return int(y - dy * self.corner[0]), int(y + 1 + dy * (abs(self.corner[0]-1)))
 
     def serial_trail_from_x(self, x, dx):
         """Coordinates of a serial trail of size dx from coordinate x"""
@@ -302,24 +275,89 @@ class Frame(arrays.AbstractArray):
         return self.serial_overscan[3] - self.serial_overscan[2]
 
 
-class EuclidFrame(Frame):
-    @classmethod
-    def parallel_line(cls):
-        return EuclidFrame(
-            corner=(0, 0),
-            parallel_overscan=Region((2066, 2086, 0, 1)),
-            serial_prescan=None,
-            serial_overscan=None,
-        )
+class Frame(AbstractFrame):
 
     @classmethod
-    def serial_line(cls):
-        return EuclidFrame(
-            corner=(0, 0),
-            parallel_overscan=None,
-            serial_prescan=Region((0, 1, 0, 51)),
-            serial_overscan=Region((0, 1, 2099, 2119)),
+    def manual(
+        cls,
+        array,
+        corner=(0,0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+        pixel_scales=None,
+    ):
+        """Abstract class for the geometry of a CTI Image.
+
+        A FrameArray is stored as a 2D NumPy arrays. When this immage is passed to arctic, clocking goes towards
+        the 'top' of the NumPy arrays (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the arrays
+        (e.g. the final row).
+
+        Arctic has no in-built functionality for changing the direction of clocking depending on the input
+        configuration file. Therefore, image rotations are handled before arctic is called, using the functions
+        defined in this class (and its children). These routines define how an image is rotated before parallel
+        and serial clocking and how to reorient the image back to its original orientation after clocking is performed.
+
+        Currently, only four geometries are available, which are specific to Euclid (and documented in the
+        *QuadGeometryEuclid* class).
+
+        Parameters
+        -----------
+        parallel_overscan : ci_frame.Region
+            The parallel overscan region of the ci_frame.
+        serial_prescan : ci_frame.Region
+            The serial prescan region of the ci_frame.
+        serial_overscan : ci_frame.Region
+            The serial overscan region of the ci_frame.
+        """
+
+        if type(array) is list:
+            array = np.asarray(array)
+
+        if type(pixel_scales) is float:
+            pixel_scales = (pixel_scales, pixel_scales)
+
+        mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
+
+        return Frame(array=array, mask=mask, corner=corner, parallel_overscan=parallel_overscan,
+                                         serial_prescan=serial_prescan, serial_overscan=serial_overscan)
+
+    @classmethod
+    def from_fits(
+        cls,
+        file_path,
+        hdu,
+        corner=(0,0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+        pixel_scales=None,
+    ):
+        """Load the image ci_data from a fits file.
+
+        Params
+        ----------
+        path : str
+            The path to the ci_data
+        filename : str
+            The file phase_name of the fits image ci_data.
+        hdu : int
+            The HDU number in the fits file containing the image ci_data.
+        frame_geometry : FrameArray.FrameGeometry
+            The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
+            locations of different regions of the CCD (overscans, prescan, etc.)
+        """
+        return Frame(
+            array=array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu),
+            corner=corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+            pixel_scales=pixel_scales,
         )
+
+
+class EuclidFrame(Frame):
 
     @classmethod
     def ccd_and_quadrant_id(cls, array, ccd_id, quad_id):
@@ -395,7 +433,7 @@ class EuclidFrame(Frame):
 
     @classmethod
     def top_left(cls, array):
-        return EuclidFrame(
+        return Frame.manual(
             array=array,
             corner=(0, 0),
             parallel_overscan=Region((0, 20, 51, 2099)),
@@ -405,7 +443,7 @@ class EuclidFrame(Frame):
 
     @classmethod
     def top_right(cls, array):
-        return EuclidFrame(
+        return Frame.manual(
             array=array,
             corner=(0, 1),
             parallel_overscan=Region((0, 20, 20, 2068)),
@@ -415,7 +453,7 @@ class EuclidFrame(Frame):
 
     @classmethod
     def bottom_left(cls, array):
-        return EuclidFrame(
+        return Frame.manual(
             array=array,
             corner=(1, 0),
             parallel_overscan=Region((2066, 2086, 51, 2099)),
@@ -425,7 +463,7 @@ class EuclidFrame(Frame):
 
     @classmethod
     def bottom_right(cls, array):
-        return EuclidFrame(
+        return Frame.manual(
             array=array,
             corner=(1, 1),
             parallel_overscan=Region((2066, 2086, 20, 2068)),
@@ -539,14 +577,6 @@ def check_serial_front_edge_size(region, columns):
             "The number of columns to extract from the leading edge is bigger than the entire"
             "ci ci_region"
         )
-
-
-def bin_array_across_serial(array, mask=None):
-    return np.mean(np.ma.masked_array(array, mask), axis=1)
-
-
-def bin_array_across_parallel(array, mask=None):
-    return np.mean(np.ma.masked_array(array, mask), axis=0)
 
 
 def flip(image):

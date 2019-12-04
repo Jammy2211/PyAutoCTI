@@ -1,7 +1,7 @@
 import numpy as np
 
 from autoarray.mask import mask as msk
-from autocti.structures import frame_array
+from autocti.structures import frame
 
 
 class Mask(msk.Mask):
@@ -17,7 +17,7 @@ class Mask(msk.Mask):
     def from_masked_regions(cls, shape_2d, masked_regions, **kwargs):
 
         mask = cls.unmasked(shape_2d=shape_2d)
-        masked_regions = list(map(lambda region: frame_array.Region(region=region), masked_regions))
+        masked_regions = list(map(lambda region: frame.Region(region=region), masked_regions))
         for region in masked_regions:
             mask[region.y0 : region.y1, region.x0 : region.x1] = True
 
