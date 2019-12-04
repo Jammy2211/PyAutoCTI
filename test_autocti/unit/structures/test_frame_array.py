@@ -147,12 +147,64 @@ class TestRegion(object):
 
 class TestFrameArrayRotations:
 
+        def test__top_left__rotate_for_parallel_clocking_and_back_again__returns_to_original_orientation(
+            self, frame_data
+        ):
+            # Quadrant 2 - top left panel of Euclid CCD - input ci_pre_ctis should be rotateped upside-down for parallel cti
+
+            frame = ac.frame(array=frame_data, corner=(0, 0))
+
+            frame_rotated = frame.rotated_for_parallel_cti
+            assert (frame_rotated == np.flipud(frame_data)).all()
+
+            frame_rotated_back = frame_rotated.rotated_for_parallel_cti
+            assert (frame_rotated_back == frame_data).all()
+
+        def test__top_left__rotate_for_serial_clocking_and_back_again__returns_to_original_orientation(
+            self, frame_data
+        ):
+            # Quadrant 2 - top left panel of Euclid CCD - input ci_pre_ctis should be rotated 90 degrees for serial cti.
+
+            frame = ac.frame(array=frame_data, corner=(0, 0))
+
+            frame_rotated = frame.rotated_before_serial_clocking
+            assert (frame_rotated == frame_data.T).all()
+
+            frame_rotated_back = frame_rotated.rotated_after_serial_clocking
+            assert (frame_rotated_back == frame_data).all()
+
+        def test__top_right__rotate_for_parallel_clocking_and_back_again__returns_to_original_orientation(
+            self, frame_data
+        ):
+            # Quadrant 3 - top right panel of Euclid CCD - input ci_pre_ctis should be rotateped upside-down for parallel cti.
+
+            frame = ac.frame(array=frame_data, corner=(0, 1))
+
+            frame_rotated = frame.rotated_for_parallel_cti
+            assert (frame_rotated == np.flipud(frame_data)).all()
+
+            frame_rotated_back = frame_rotated.rotated_for_parallel_cti
+            assert (frame_rotated_back == frame_data).all()
+
+        def test__top_right__rotate_for_serial_clocking_and_back_again__returns_to_original_orientation(
+            self, frame_data
+        ):
+            # Quadrant 3 - top right panel of Euclid CCD - input ci_pre_ctis should be rotated 270 degrees for serial cti.
+
+            frame = ac.frame(array=frame_data, corner=(0, 1))
+
+            frame_rotated = frame.rotated_before_serial_clocking
+            assert (frame_rotated == np.fliplr(frame_data).T).all()
+
+            frame_rotated_back = frame_rotated.rotated_after_serial_clocking
+            assert (frame_rotated_back == frame_data).all()
+
         def test__bottom_left__rotate_for_parallel_clocking_and_back_again__returns_to_original_orientation(
             self, frame_data
         ):
             # Quadrant 0 - Bottom left panel of Euclid CCD - input ci_pre_ctis should not be rotated for parallel cti.
 
-            frame = ac.FrameArray(array=frame_data, corner=(0, 0))
+            frame = ac.frame(array=frame_data, corner=(1, 0))
             frame_rotated = frame.rotated_for_parallel_cti
 
             assert (frame_rotated == frame_data).all()
@@ -167,7 +219,7 @@ class TestFrameArrayRotations:
             # Quadrant 0 - Bottom left panel of Euclid CCD - input ci_pre_ctis should be rotated 90 degrees for
             # serial cti.
 
-            frame = ac.FrameArray(array=frame_data, corner=(0, 0))
+            frame = ac.frame(array=frame_data, corner=(1, 0))
             frame_rotated = frame.rotated_before_serial_clocking
 
             assert (frame_rotated == frame_data.T).all()
@@ -181,7 +233,7 @@ class TestFrameArrayRotations:
         ):
             # Quadrant 1 - Bottom right panel of Euclid CCD - input ci_pre_ctis should not be rotateped for parallel cti.
 
-            frame = ac.FrameArray(array=frame_data, corner=(0, 1))
+            frame = ac.frame(array=frame_data, corner=(1, 1))
 
             frame_rotated = frame.rotated_for_parallel_cti
             assert (frame_rotated == frame_data).all()
@@ -193,59 +245,7 @@ class TestFrameArrayRotations:
         def test__bottom_right__rotate_for_serial_clocking_and_back_again__returns_to_original_orientation(
             self, frame_data
         ):
-            frame = ac.FrameArray(array=frame_data, corner=(0, 1))
-
-            frame_rotated = frame.rotated_before_serial_clocking
-            assert (frame_rotated == np.fliplr(frame_data).T).all()
-
-            frame_rotated_back = frame_rotated.rotated_after_serial_clocking
-            assert (frame_rotated_back == frame_data).all()
-
-        def test__top_left__rotate_for_parallel_clocking_and_back_again__returns_to_original_orientation(
-            self, frame_data
-        ):
-            # Quadrant 2 - top left panel of Euclid CCD - input ci_pre_ctis should be rotateped upside-down for parallel cti
-
-            frame = ac.FrameArray(array=frame_data, corner=(1, 0))
-
-            frame_rotated = frame.rotated_for_parallel_cti
-            assert (frame_rotated == np.flipud(frame_data)).all()
-
-            frame_rotated_back = frame_rotated.rotated_for_parallel_cti
-            assert (frame_rotated_back == frame_data).all()
-
-        def test__top_left__rotate_for_serial_clocking_and_back_again__returns_to_original_orientation(
-            self, frame_data
-        ):
-            # Quadrant 2 - top left panel of Euclid CCD - input ci_pre_ctis should be rotated 90 degrees for serial cti.
-
-            frame = ac.FrameArray(array=frame_data, corner=(1, 0))
-
-            frame_rotated = frame.rotated_before_serial_clocking
-            assert (frame_rotated == frame_data.T).all()
-
-            frame_rotated_back = frame_rotated.rotated_after_serial_clocking
-            assert (frame_rotated_back == frame_data).all()
-
-        def test__top_right__rotate_for_parallel_clocking_and_back_again__returns_to_original_orientation(
-            self, frame_data
-        ):
-            # Quadrant 3 - top right panel of Euclid CCD - input ci_pre_ctis should be rotateped upside-down for parallel cti.
-
-            frame = ac.FrameArray(array=frame_data, corner=(1, 1))
-
-            frame_rotated = frame.rotated_for_parallel_cti
-            assert (frame_rotated == np.flipud(frame_data)).all()
-
-            frame_rotated_back = frame_rotated.rotated_for_parallel_cti
-            assert (frame_rotated_back == frame_data).all()
-
-        def test__top_right__rotate_for_serial_clocking_and_back_again__returns_to_original_orientation(
-            self, frame_data
-        ):
-            # Quadrant 3 - top right panel of Euclid CCD - input ci_pre_ctis should be rotated 270 degrees for serial cti.
-
-            frame = ac.FrameArray(array=frame_data, corner=(1, 1))
+            frame = ac.frame(array=frame_data, corner=(1, 1))
 
             frame_rotated = frame.rotated_before_serial_clocking
             assert (frame_rotated == np.fliplr(frame_data).T).all()
@@ -259,188 +259,188 @@ class TestEuclidFrame:
         self, euclid_data
     ):
 
-        euclid_frame = ac.EuclidArray.euclid_bottom_left(array=euclid_data)
+        euclid_frame = ac.euclid_frame.top_left(array=euclid_data)
 
-        assert type(euclid_frame) == ac.EuclidArray
-        assert euclid_frame.shape_2d == (2048, 2066)
-        assert (euclid_frame.in_2d == np.zeros((2048, 2066))).all()
-        assert euclid_frame.parallel_overscan == (2066, 2086, 51, 2099)
-        assert euclid_frame.serial_prescan == (0, 2086, 0, 51)
-        assert euclid_frame.serial_overscan == (0, 2086, 2099, 2119)
-
-        euclid_frame = ac.EuclidArray.euclid_bottom_right(array=euclid_data)
-
-        assert type(euclid_frame) == ac.EuclidArray
-        assert euclid_frame.shape_2d == (2048, 2066)
-        assert (euclid_frame.in_2d == np.zeros((2048, 2066))).all()
-        assert euclid_frame.parallel_overscan == (2066, 2086, 20, 2068)
-        assert euclid_frame.serial_prescan == (0, 2086, 2068, 2119)
-        assert euclid_frame.serial_overscan == (0, 2086, 0, 20)
-
-        euclid_frame = ac.EuclidArray.euclid_top_left(array=euclid_data)
-
-        assert type(euclid_frame) == ac.EuclidArray
+        assert euclid_frame.corner == (0, 0)
         assert euclid_frame.shape_2d == (2048, 2066)
         assert (euclid_frame.in_2d == np.zeros((2048, 2066))).all()
         assert euclid_frame.parallel_overscan == (0, 20, 51, 2099)
         assert euclid_frame.serial_prescan == (0, 2086, 0, 51)
         assert euclid_frame.serial_overscan == (0, 2086, 2099, 2119)
 
-        euclid_frame = ac.EuclidArray.euclid_top_right(array=euclid_data)
+        euclid_frame = ac.euclid_frame.top_right(array=euclid_data)
 
-        assert type(euclid_frame) == ac.EuclidArray
+        assert euclid_frame.corner == (0, 1)
         assert euclid_frame.shape_2d == (2048, 2066)
         assert (euclid_frame.in_2d == np.zeros((2048, 2066))).all()
         assert euclid_frame.parallel_overscan == (0, 20, 20, 2068)
         assert euclid_frame.serial_prescan == (0, 2086, 2068, 2119)
         assert euclid_frame.serial_overscan == (0, 2086, 0, 20)
 
+        euclid_frame = ac.euclid_frame.bottom_left(array=euclid_data)
+
+        assert euclid_frame.corner == (1, 0)
+        assert euclid_frame.shape_2d == (2048, 2066)
+        assert (euclid_frame.in_2d == np.zeros((2048, 2066))).all()
+        assert euclid_frame.parallel_overscan == (2066, 2086, 51, 2099)
+        assert euclid_frame.serial_prescan == (0, 2086, 0, 51)
+        assert euclid_frame.serial_overscan == (0, 2086, 2099, 2119)
+
+        euclid_frame = ac.euclid_frame.bottom_right(array=euclid_data)
+
+        assert euclid_frame.corner == (1, 1)
+        assert euclid_frame.shape_2d == (2048, 2066)
+        assert (euclid_frame.in_2d == np.zeros((2048, 2066))).all()
+        assert euclid_frame.parallel_overscan == (2066, 2086, 20, 2068)
+        assert euclid_frame.serial_prescan == (0, 2086, 2068, 2119)
+        assert euclid_frame.serial_overscan == (0, 2086, 0, 20)
+
     def test__left_side__chooses_correct_frame_given_input(
         self, frame_data
     ):
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text1", quad_id="E"
         )
 
-        assert frame.corner == (0, 0)
+        assert frame.corner == (1, 0)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text2", quad_id="E"
         )
 
-        assert frame.corner == (0, 0)
+        assert frame.corner == (1, 0)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text3", quad_id="E"
         )
 
-        assert frame.corner == (0, 0)
+        assert frame.corner == (1, 0)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text1", quad_id="F"
         )
 
-        assert frame.corner == (0, 1)
+        assert frame.corner == (1, 1)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text2", quad_id="F"
         )
 
-        assert frame.corner == (0, 1)
+        assert frame.corner == (1, 1)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text3", quad_id="F"
         )
 
-        assert frame.corner == (0, 1)
+        assert frame.corner == (1, 1)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text1", quad_id="G"
         )
 
-        assert frame.corner == (1, 1)
+        assert frame.corner == (0, 1)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text2", quad_id="G"
         )
 
-        assert frame.corner == (1, 1)
+        assert frame.corner == (0, 1)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text3", quad_id="G"
         )
 
-        assert frame.corner == (1, 1)
+        assert frame.corner == (0, 1)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text1", quad_id="H"
         )
 
-        assert frame.corner == (1, 0)
+        assert frame.corner == (0, 0)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text2", quad_id="H"
         )
 
-        assert frame.corner == (1, 0)
+        assert frame.corner == (0, 0)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text3", quad_id="H"
         )
 
-        assert frame.corner == (1, 0)
+        assert frame.corner == (0, 0)
 
     def test__right_side__chooses_correct_frame_given_input(
         self, frame_data
     ):
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text4", quad_id="E"
         )
 
-        assert frame.corner == (1, 1)
+        assert frame.corner == (0, 1)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text5", quad_id="E"
         )
 
-        assert frame.corner == (1, 1)
+        assert frame.corner == (0, 1)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text6", quad_id="E"
         )
 
-        assert frame.corner == (1, 1)
+        assert frame.corner == (0, 1)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text4", quad_id="F"
         )
 
-        assert frame.corner == (1, 0)
+        assert frame.corner == (0, 0)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text5", quad_id="F"
         )
 
-        assert frame.corner == (1, 0)
+        assert frame.corner == (0, 0)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text6", quad_id="F"
         )
 
-        assert frame.corner == (1, 0)
+        assert frame.corner == (0, 0)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text4", quad_id="G"
         )
 
-        assert frame.corner == (0, 0)
+        assert frame.corner == (1, 0)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text5", quad_id="G"
         )
 
-        assert frame.corner == (0, 0)
+        assert frame.corner == (1, 0)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text6", quad_id="G"
         )
 
-        assert frame.corner == (0, 0)
+        assert frame.corner == (1, 0)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text4", quad_id="H"
         )
 
-        assert frame.corner == (0, 1)
+        assert frame.corner == (1, 1)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text5", quad_id="H"
         )
 
-        assert frame.corner == (0, 1)
+        assert frame.corner == (1, 1)
 
-        frame = ac.EuclidArray.euclid_from_ccd_and_quadrant_id(
+        frame = ac.euclid_frame.ccd_and_quadrant_id(
             array=frame_data, ccd_id="text6", quad_id="H"
         )
 
-        assert frame.corner == (0, 1)
+        assert frame.corner == (1, 1)

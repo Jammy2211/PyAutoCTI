@@ -14,7 +14,7 @@ class TestMaskedParallelFrontEdge:
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
         frame = ac.ChInj(
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
+            frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
         mask = ac.CIMask.masked_parallel_front_edge_from_ci_frame(
@@ -50,7 +50,7 @@ class TestMaskedParallelFrontEdge:
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
         frame = ac.ChInj(
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
+            frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
         mask = ac.CIMask.masked_parallel_front_edge_from_ci_frame(
@@ -88,7 +88,7 @@ class TestMaskedParallelFrontEdge:
         )
 
         frame = ac.ChInj(
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
+            frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
         mask = ac.CIMask.masked_parallel_front_edge_from_ci_frame(
@@ -124,7 +124,7 @@ class TestMaskedParallelFrontEdge:
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
         frame = ac.ChInj(
-            frame_geometry=ac.FrameGeometry.euclid_top_left(), ci_pattern=pattern
+            frame_geometry=ac.FrameGeometry.top_left(), ci_pattern=pattern
         )
 
         mask = ac.CIMask.masked_parallel_front_edge_from_ci_frame(
@@ -162,7 +162,7 @@ class TestMaskedParallelTrails:
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
         frame = ac.ChInj(
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
+            frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
         mask = ac.CIMask.masked_parallel_trails_from_ci_frame(
@@ -198,7 +198,7 @@ class TestMaskedParallelTrails:
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
         frame = ac.ChInj(
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
+            frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
         mask = ac.CIMask.masked_parallel_trails_from_ci_frame(
@@ -236,7 +236,7 @@ class TestMaskedParallelTrails:
         )
 
         frame = ac.ChInj(
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
+            frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
         mask = ac.CIMask.masked_parallel_trails_from_ci_frame(
@@ -272,7 +272,7 @@ class TestMaskedParallelTrails:
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
         frame = ac.ChInj(
-            frame_geometry=ac.FrameGeometry.euclid_top_left(), ci_pattern=pattern
+            frame_geometry=ac.FrameGeometry.top_left(), ci_pattern=pattern
         )
 
         mask = ac.CIMask.masked_parallel_trails_from_ci_frame(
@@ -310,7 +310,7 @@ class TestMaskedSerialFrontEdge:
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
         frame = ac.ChInj(
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
+            frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
         mask = ac.CIMask.masked_serial_front_edge_from_ci_frame(
@@ -368,7 +368,7 @@ class TestMaskedSerialFrontEdge:
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
         frame = ac.ChInj(
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
+            frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
         mask = ac.CIMask.masked_serial_front_edge_from_ci_frame(
@@ -395,7 +395,7 @@ class TestMaskedSerialFrontEdge:
         )
 
         frame = ac.ChInj(
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
+            frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
         mask = ac.CIMask.masked_serial_front_edge_from_ci_frame(
@@ -431,7 +431,7 @@ class TestMaskedSerialFrontEdge:
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
         frame = ac.ChInj(
-            frame_geometry=ac.FrameGeometry.euclid_bottom_right(), ci_pattern=pattern
+            frame_geometry=ac.FrameGeometry.bottom_right(), ci_pattern=pattern
         )
 
         mask = ac.CIMask.masked_serial_front_edge_from_ci_frame(
@@ -491,7 +491,7 @@ class TestMaskedSerialTrails:
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
         frame = ac.ChInj(
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
+            frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
         mask = ac.CIMask.masked_serial_trails_from_ci_frame(
@@ -516,7 +516,7 @@ class TestMaskedSerialTrails:
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
         frame = ac.ChInj(
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
+            frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
         mask = ac.CIMask.masked_serial_trails_from_ci_frame(
@@ -543,7 +543,7 @@ class TestMaskedSerialTrails:
         )
 
         frame = ac.ChInj(
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(), ci_pattern=pattern
+            frame_geometry=ac.FrameGeometry.bottom_left(), ci_pattern=pattern
         )
 
         mask = ac.CIMask.masked_serial_trails_from_ci_frame(
@@ -579,7 +579,7 @@ class TestMaskedSerialTrails:
         pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
         frame = ac.ChInj(
-            frame_geometry=ac.FrameGeometry.euclid_bottom_right(), ci_pattern=pattern
+            frame_geometry=ac.FrameGeometry.bottom_right(), ci_pattern=pattern
         )
 
         mask = ac.CIMask.masked_serial_trails_from_ci_frame(

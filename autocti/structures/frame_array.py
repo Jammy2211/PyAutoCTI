@@ -7,11 +7,11 @@ from autocti import exc
 from autocti.model import pyarctic
 
 
-class FrameArray(arrays.AbstractArray):
+class Frame(arrays.AbstractArray):
     def __new__(
         cls,
         array,
-        corner,
+        corner=(0,0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -49,7 +49,7 @@ class FrameArray(arrays.AbstractArray):
 
         mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
 
-        obj = super(FrameArray, cls).__new__(cls=cls, array=array, mask=mask, store_in_1d=False)
+        obj = super(Frame, cls).__new__(cls=cls, array=array, mask=mask, store_in_1d=False)
 
         obj.corner = corner
         obj.parallel_overscan = parallel_overscan
@@ -63,7 +63,7 @@ class FrameArray(arrays.AbstractArray):
         cls,
         file_path,
         hdu,
-        corner,
+        corner=(0,0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -94,14 +94,14 @@ class FrameArray(arrays.AbstractArray):
 
     def __array_finalize__(self, obj):
 
-        super(FrameArray, self).__array_finalize__(obj)
+        super(Frame, self).__array_finalize__(obj)
 
-        if isinstance(obj, FrameArray):
+        if isinstance(obj, Frame):
             self.corner = obj.corner
 
     def __reduce__(self):
         # Get the parent's __reduce__ tuple
-        pickled_state = super(FrameArray, self).__reduce__()
+        pickled_state = super(Frame, self).__reduce__()
         # Create our own tuple to pass to __setstate__
         class_dict = {}
         for key, value in self.__dict__.items():
@@ -115,7 +115,7 @@ class FrameArray(arrays.AbstractArray):
 
         for key, value in state[-1].items():
             setattr(self, key, value)
-        super(FrameArray, self).__setstate__(state[0:-1])
+        super(Frame, self).__setstate__(state[0:-1])
 
     def add_cti(
         self, image, cti_params, cti_settings, use_parallel_poisson_densities=False
@@ -203,7 +203,7 @@ class FrameArray(arrays.AbstractArray):
 
     @property
     def rotated_for_parallel_cti(self):
-        return flip(self.in_2d) if self.corner[0] == 1 else self.in_2d
+        return flip(self.in_2d) if self.corner[0] == 0 else self.in_2d
 
     @property
     def rotated_before_serial_clocking(self):
@@ -302,10 +302,10 @@ class FrameArray(arrays.AbstractArray):
         return self.serial_overscan[3] - self.serial_overscan[2]
 
 
-class EuclidArray(FrameArray):
+class EuclidFrame(Frame):
     @classmethod
-    def euclid_parallel_line(cls):
-        return EuclidArray(
+    def parallel_line(cls):
+        return EuclidFrame(
             corner=(0, 0),
             parallel_overscan=Region((2066, 2086, 0, 1)),
             serial_prescan=None,
@@ -313,8 +313,8 @@ class EuclidArray(FrameArray):
         )
 
     @classmethod
-    def euclid_serial_line(cls):
-        return EuclidArray(
+    def serial_line(cls):
+        return EuclidFrame(
             corner=(0, 0),
             parallel_overscan=None,
             serial_prescan=Region((0, 1, 0, 51)),
@@ -322,7 +322,7 @@ class EuclidArray(FrameArray):
         )
 
     @classmethod
-    def euclid_from_ccd_and_quadrant_id(cls, array, ccd_id, quad_id):
+    def ccd_and_quadrant_id(cls, array, ccd_id, quad_id):
         """Before reading this docstring, read the docstring for the __init__function above.
 
         In the Euclid FPA, the quadrant id ('E', 'F', 'G', 'H') depends on whether the CCD is located
@@ -377,58 +377,58 @@ class EuclidArray(FrameArray):
         row_index = ccd_id[-1]
 
         if (row_index in "123") and (quad_id == "E"):
-            return EuclidArray.euclid_bottom_left(array=array)
+            return EuclidFrame.bottom_left(array=array)
         elif (row_index in "123") and (quad_id == "F"):
-            return EuclidArray.euclid_bottom_right(array=array)
+            return EuclidFrame.bottom_right(array=array)
         elif (row_index in "123") and (quad_id == "G"):
-            return EuclidArray.euclid_top_right(array=array)
+            return EuclidFrame.top_right(array=array)
         elif (row_index in "123") and (quad_id == "H"):
-            return EuclidArray.euclid_top_left(array=array)
+            return EuclidFrame.top_left(array=array)
         elif (row_index in "456") and (quad_id == "E"):
-            return EuclidArray.euclid_top_right(array=array)
+            return EuclidFrame.top_right(array=array)
         elif (row_index in "456") and (quad_id == "F"):
-            return EuclidArray.euclid_top_left(array=array)
+            return EuclidFrame.top_left(array=array)
         elif (row_index in "456") and (quad_id == "G"):
-            return EuclidArray.euclid_bottom_left(array=array)
+            return EuclidFrame.bottom_left(array=array)
         elif (row_index in "456") and (quad_id == "H"):
-            return EuclidArray.euclid_bottom_right(array=array)
+            return EuclidFrame.bottom_right(array=array)
 
     @classmethod
-    def euclid_bottom_left(cls, array):
-        return EuclidArray(
+    def top_left(cls, array):
+        return EuclidFrame(
             array=array,
             corner=(0, 0),
-            parallel_overscan=Region((2066, 2086, 51, 2099)),
-            serial_prescan=Region((0, 2086, 0, 51)),
-            serial_overscan=Region((0, 2086, 2099, 2119)),
-        )
-
-    @classmethod
-    def euclid_bottom_right(cls, array):
-        return EuclidArray(
-            array=array,
-            corner=(0, 1),
-            parallel_overscan=Region((2066, 2086, 20, 2068)),
-            serial_prescan=Region((0, 2086, 2068, 2119)),
-            serial_overscan=Region((0, 2086, 0, 20)),
-        )
-
-    @classmethod
-    def euclid_top_left(cls, array):
-        return EuclidArray(
-            array=array,
-            corner=(1, 0),
             parallel_overscan=Region((0, 20, 51, 2099)),
             serial_prescan=Region((0, 2086, 0, 51)),
             serial_overscan=Region((0, 2086, 2099, 2119)),
         )
 
     @classmethod
-    def euclid_top_right(cls, array):
-        return EuclidArray(
+    def top_right(cls, array):
+        return EuclidFrame(
+            array=array,
+            corner=(0, 1),
+            parallel_overscan=Region((0, 20, 20, 2068)),
+            serial_prescan=Region((0, 2086, 2068, 2119)),
+            serial_overscan=Region((0, 2086, 0, 20)),
+        )
+
+    @classmethod
+    def bottom_left(cls, array):
+        return EuclidFrame(
+            array=array,
+            corner=(1, 0),
+            parallel_overscan=Region((2066, 2086, 51, 2099)),
+            serial_prescan=Region((0, 2086, 0, 51)),
+            serial_overscan=Region((0, 2086, 2099, 2119)),
+        )
+
+    @classmethod
+    def bottom_right(cls, array):
+        return EuclidFrame(
             array=array,
             corner=(1, 1),
-            parallel_overscan=Region((0, 20, 20, 2068)),
+            parallel_overscan=Region((2066, 2086, 20, 2068)),
             serial_prescan=Region((0, 2086, 2068, 2119)),
             serial_overscan=Region((0, 2086, 0, 20)),
         )

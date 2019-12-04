@@ -16,7 +16,7 @@ def make_data_plotter_setup():
 
 @pytest.fixture(name="mask")
 def make_mask():
-    return ac.Mask.empty_for_shape(shape=(6, 6))
+    return ac.Mask.unmasked(shape_2d=(6, 6))
 
 
 @pytest.fixture(name="image")

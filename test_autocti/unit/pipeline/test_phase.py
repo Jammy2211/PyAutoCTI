@@ -75,7 +75,7 @@ def make_cti_settings():
 
 @pytest.fixture(name="frame_geometry")
 def make_frame_geometry():
-    return ac.FrameGeometry.euclid_bottom_left()
+    return ac.FrameGeometry.bottom_left()
 
 
 @pytest.fixture(name="ci_pattern")
@@ -651,7 +651,7 @@ class TestPhase(object):
         )
 
         ci_datas_masked = phase.ci_datas_masked_extracted_from_ci_data(
-            ci_data, ac.Mask.empty_for_shape(ci_data.image.shape)
+            ci_data, ac.Mask.unmasked(shape_2d=ci_data.image.shape_2d)
         )
 
         assert isinstance(ci_datas_masked, ac.CIMaskedImaging)
@@ -668,7 +668,7 @@ class TestPhase(object):
         )
 
         ci_datas_masked = phase.ci_datas_masked_extracted_from_ci_data(
-            ci_data, ac.Mask.empty_for_shape(ci_data.image.shape)
+            ci_data, ac.Mask.unmasked(shape_2d=ci_data.image.shape_2d)
         )
 
         assert isinstance(ci_datas_masked, ac.CIMaskedImaging)
@@ -684,7 +684,7 @@ class TestPhase(object):
         )
 
         ci_datas_masked = phase.ci_datas_masked_extracted_from_ci_data(
-            ci_data, ac.Mask.empty_for_shape(ci_data.image.shape)
+            ci_data, ac.Mask.unmasked(shape_2d=ci_data.image.shape_2d)
         )
 
         assert isinstance(ci_datas_masked, ac.CIMaskedImaging)
@@ -701,7 +701,7 @@ class TestPhase(object):
         )
 
         ci_datas_masked = phase.ci_datas_masked_extracted_from_ci_data(
-            ci_data, ac.Mask.empty_for_shape(ci_data.image.shape)
+            ci_data, ac.Mask.unmasked(shape_2d=ci_data.image.shape_2d)
         )
 
         assert isinstance(ci_datas_masked, ac.CIMaskedImaging)
@@ -721,7 +721,7 @@ class TestPhase(object):
         )
 
         ci_datas_masked = phase.ci_datas_masked_extracted_from_ci_data(
-            ci_data, ac.Mask.empty_for_shape(ci_data.image.shape)
+            ci_data, ac.Mask.unmasked(shape_2d=ci_data.image.shape_2d)
         )
 
         assert isinstance(ci_datas_masked, ac.CIMaskedImaging)
