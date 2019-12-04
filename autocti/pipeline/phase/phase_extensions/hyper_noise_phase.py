@@ -85,7 +85,7 @@ class HyperNoisePhase(HyperPhase):
             )
 
             return ci_fit.CIDataFit(
-                ci_data_masked=ci_data,
+                ci_masked_imaging=ci_data,
                 noise_map=hyper_noise_map,
                 model_data=model_image,
             )
@@ -125,7 +125,7 @@ class HyperNoisePhase(HyperPhase):
 
         ci_datas_masked_full = list(
             map(
-                lambda data, mask, maps: ci_data.CIDataMasked(
+                lambda data, mask, maps: ci_data.CIMaskedImaging(
                     image=data.image,
                     noise_map=data.noise_map,
                     ci_pre_cti=data.ci_pre_cti,

@@ -36,7 +36,7 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(
 
     ci_pre_cti = pattern.simulate_ci_pre_cti(shape=shape)
 
-    data = ac.CIData.simulate(
+    data = ac.CIImaging.simulate(
         ci_pre_cti=ci_pre_cti,
         frame_geometry=frame_geometry,
         ci_pattern=pattern,

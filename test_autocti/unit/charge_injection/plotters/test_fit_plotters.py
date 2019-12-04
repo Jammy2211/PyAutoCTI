@@ -36,7 +36,7 @@ def make_ci_pre_cti():
 
 @pytest.fixture(name="ci_data_masked")
 def make_ci_data_fit(image, noise_map, mask, ci_pre_cti):
-    return ac.CIDataMasked(
+    return ac.CIMaskedImaging(
         image=image,
         noise_map=noise_map,
         ci_pre_cti=ci_pre_cti,
@@ -60,8 +60,10 @@ def make_cti_params():
 
 @pytest.fixture(name="fit")
 def make_fit(ci_data_masked, cti_params, cti_settings):
-    return ac.CIFit(
-        ci_data_masked=ci_data_masked, cti_params=cti_params, cti_settings=cti_settings
+    return ac.CIImagingFit(
+        ci_masked_imaging=ci_data_masked,
+        cti_params=cti_params,
+        cti_settings=cti_settings,
     )
 
 
@@ -251,7 +253,7 @@ def test__chi_squared_map_line_is_output(fit, mask, fit_plotter_path, plot_patch
 
 @pytest.fixture(name="ci_data_fit_hyper")
 def make_ci_data_fit_hyper(image, noise_map, mask, ci_pre_cti):
-    return ac.CIDataMasked(
+    return ac.CIMaskedImaging(
         image=image,
         noise_map=noise_map,
         ci_pre_cti=ci_pre_cti,
@@ -272,8 +274,8 @@ def make_hyper_noise_scalars():
 
 @pytest.fixture(name="fit_hyper")
 def make_fit_hyper(ci_data_fit_hyper, cti_params, cti_settings, hyper_noise_scalars):
-    return ac.CIFit(
-        ci_data_masked=ci_data_fit_hyper,
+    return ac.CIImagingFit(
+        ci_masked_imaging=ci_data_fit_hyper,
         cti_params=cti_params,
         cti_settings=cti_settings,
         hyper_noise_scalars=hyper_noise_scalars,

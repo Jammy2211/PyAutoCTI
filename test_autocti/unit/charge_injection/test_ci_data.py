@@ -96,7 +96,7 @@ def make_params_both():
 class TestCIData(object):
     def test__map(self):
 
-        data = ac.CIData(
+        data = ac.CIImaging(
             image=1,
             noise_map=3,
             ci_pre_cti=4,
@@ -106,13 +106,13 @@ class TestCIData(object):
         )
 
         result = data.map_to_ci_data_masked(func=lambda x: 2 * x, mask=1)
-        assert isinstance(result, ac.CIDataMasked)
+        assert isinstance(result, ac.CIMaskedImaging)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
         assert result.cosmic_ray_image == None
 
-        data = ac.CIData(
+        data = ac.CIImaging(
             image=1,
             noise_map=3,
             ci_pre_cti=4,
@@ -121,7 +121,7 @@ class TestCIData(object):
             cosmic_ray_image=10,
         )
         result = data.map_to_ci_data_masked(func=lambda x: 2 * x, mask=1)
-        assert isinstance(result, ac.CIDataMasked)
+        assert isinstance(result, ac.CIMaskedImaging)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
@@ -129,7 +129,7 @@ class TestCIData(object):
 
     def test__map_including_noise_scaling_maps(self):
 
-        data = ac.CIData(
+        data = ac.CIImaging(
             image=1,
             noise_map=3,
             ci_pre_cti=4,
@@ -140,14 +140,14 @@ class TestCIData(object):
         result = data.map_to_ci_data_masked(
             func=lambda x: 2 * x, mask=1, noise_scaling_maps=[1, 2, 3]
         )
-        assert isinstance(result, ac.CIDataMasked)
+        assert isinstance(result, ac.CIMaskedImaging)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
         assert result.noise_scaling_maps == [2, 4, 6]
         assert result.cosmic_ray_image == None
 
-        data = ac.CIData(
+        data = ac.CIImaging(
             image=1,
             noise_map=3,
             ci_pre_cti=4,
@@ -158,7 +158,7 @@ class TestCIData(object):
         result = data.map_to_ci_data_masked(
             func=lambda x: 2 * x, mask=1, noise_scaling_maps=[1, 2, 3]
         )
-        assert isinstance(result, ac.CIDataMasked)
+        assert isinstance(result, ac.CIMaskedImaging)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
@@ -167,7 +167,7 @@ class TestCIData(object):
 
     def test__parallel_serial_ci_data_fit_from_mask(self):
 
-        data = ac.CIData(
+        data = ac.CIImaging(
             image=1,
             noise_map=3,
             ci_pre_cti=4,
@@ -185,14 +185,14 @@ class TestCIData(object):
         data.parallel_serial_extractor = parallel_serial_extractor
         result = data.parallel_serial_ci_data_masked_from_mask(mask=1)
 
-        assert isinstance(result, ac.CIDataMasked)
+        assert isinstance(result, ac.CIMaskedImaging)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
         assert result.cosmic_ray_image == 10
 
     def test__parallel_serial_ci_data_fit_from_mask__include_noise_scaling_maps(self):
-        data = ac.CIData(
+        data = ac.CIImaging(
             image=1,
             noise_map=3,
             ci_pre_cti=4,
@@ -212,7 +212,7 @@ class TestCIData(object):
             mask=1, noise_scaling_maps=[2, 3]
         )
 
-        assert isinstance(result, ac.CIDataMasked)
+        assert isinstance(result, ac.CIMaskedImaging)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
@@ -223,7 +223,7 @@ class TestCIData(object):
         image = np.ones((2, 2))
         image[0, 0] = 6.0
 
-        data = ac.CIData(
+        data = ac.CIImaging(
             image=image,
             noise_map=2.0 * np.ones((2, 2)),
             ci_pre_cti=None,
@@ -245,7 +245,7 @@ class TestCIDataSimulate(object):
 
         ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(5, 5))
 
-        ci_data_simulate = ac.CIData.simulate(
+        ci_data_simulate = ac.CIImaging.simulate(
             ci_pre_cti=ci_pre_cti,
             frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
             ci_pattern=pattern,
@@ -265,7 +265,7 @@ class TestCIDataSimulate(object):
 
         ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(3, 3))
 
-        ci_data_simulate = ac.CIData.simulate(
+        ci_data_simulate = ac.CIImaging.simulate(
             ci_pre_cti=ci_pre_cti,
             frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
             ci_pattern=pattern,
@@ -295,7 +295,7 @@ class TestCIDataSimulate(object):
         cosmic_ray_image = np.zeros((5, 5))
         cosmic_ray_image[2, 2] = 100.0
 
-        ci_data_simulate = ac.CIData.simulate(
+        ci_data_simulate = ac.CIImaging.simulate(
             ci_pre_cti=ci_pre_cti,
             frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
             ci_pattern=pattern,
@@ -346,7 +346,7 @@ class TestCIDataSimulate(object):
             parallel_species=parallel_species, parallel_ccd_volume=parallel_ccd_volume
         )
 
-        ci_data_simulate = ac.CIData.simulate(
+        ci_data_simulate = ac.CIImaging.simulate(
             ci_pre_cti=ci_pre_cti,
             frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
             ci_pattern=pattern,
