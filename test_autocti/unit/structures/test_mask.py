@@ -12,8 +12,7 @@ class TestMaskRemoveRegions:
     def test__remove_one_region(self):
 
         mask = ac.Mask.from_masked_regions(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
+            shape_2d=(3, 3),
             masked_regions=[(0, 3, 2, 3)],
         )
 
@@ -27,8 +26,7 @@ class TestMaskRemoveRegions:
     def test__remove_two_regions(self):
 
         mask = ac.Mask.from_masked_regions(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
+            shape_2d=(3, 3),
             masked_regions=[(0, 3, 2, 3), (0, 2, 0, 2)],
         )
 
@@ -41,13 +39,11 @@ class TestMaskRemoveRegions:
 class TestCosmicRayMask:
     def test__cosmic_ray_mask_included_in_total_mask(self):
 
-        cosmic_ray_image = np.array(
+        cosmic_ray_image = ac.frame(array=np.array(
             [[False, False, False], [False, True, False], [False, False, False]]
-        )
+        ), corner=(1, 0))
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
             cosmic_ray_image=cosmic_ray_image,
         )
 
@@ -61,13 +57,13 @@ class TestCosmicRayMask:
 
 class TestMaskCosmicsBottomLeftGeometry:
     def test__mask_one_cosmic_ray_with_parallel_mask(self):
-        cosmic_ray_image = np.array(
-            [[False, False, False], [False, True, False], [False, False, False]]
-        )
+        cosmic_ray_image = ac.frame(array=np.array(
+            [[False, False, False],
+             [False, True, False],
+             [False, False, False]]
+        ), corner=(0, 0))
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_parallel_buffer=1,
         )
@@ -75,7 +71,9 @@ class TestMaskCosmicsBottomLeftGeometry:
         assert (
             mask
             == np.array(
-                [[False, False, False], [False, True, False], [False, True, False]]
+                [[False, False, False],
+                 [False, True, False],
+                 [False, True, False]]
             )
         ).all()
 
@@ -85,8 +83,8 @@ class TestMaskCosmicsBottomLeftGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
+            shape_2d=(3, 3),
+            frame_geometry=ac.FrameGeometry.bottom_left(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_parallel_buffer=2,
         )
@@ -104,8 +102,8 @@ class TestMaskCosmicsBottomLeftGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
+            shape_2d=(3, 3),
+            frame_geometry=ac.FrameGeometry.bottom_left(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_serial_buffer=1,
         )
@@ -123,8 +121,8 @@ class TestMaskCosmicsBottomLeftGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
+            shape_2d=(3, 3),
+            frame_geometry=ac.FrameGeometry.bottom_left(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_serial_buffer=2,
         )
@@ -142,8 +140,8 @@ class TestMaskCosmicsBottomLeftGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
+            shape_2d=(3, 3),
+            frame_geometry=ac.FrameGeometry.bottom_left(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_diagonal_buffer=1,
         )
@@ -166,8 +164,8 @@ class TestMaskCosmicsBottomLeftGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(4, 4),
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
+            shape_2d=(4, 4),
+            frame_geometry=ac.FrameGeometry.bottom_left(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_diagonal_buffer=2,
         )
@@ -192,8 +190,8 @@ class TestMaskCosmicsBottomRightGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_bottom_right(),
+            shape_2d=(3, 3),
+            frame_geometry=ac.FrameGeometry.bottom_right(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_parallel_buffer=1,
         )
@@ -211,8 +209,8 @@ class TestMaskCosmicsBottomRightGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_bottom_right(),
+            shape_2d=(3, 3),
+            frame_geometry=ac.FrameGeometry.bottom_right(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_parallel_buffer=2,
         )
@@ -230,8 +228,8 @@ class TestMaskCosmicsBottomRightGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_bottom_right(),
+            shape_2d=(3, 3),
+            frame_geometry=ac.FrameGeometry.bottom_right(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_serial_buffer=1,
         )
@@ -249,8 +247,8 @@ class TestMaskCosmicsBottomRightGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_bottom_right(),
+            shape_2d=(3, 3),
+            frame_geometry=ac.FrameGeometry.bottom_right(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_serial_buffer=2,
         )
@@ -268,8 +266,8 @@ class TestMaskCosmicsBottomRightGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_bottom_right(),
+            shape_2d=(3, 3),
+            frame_geometry=ac.FrameGeometry.bottom_right(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_diagonal_buffer=1,
         )
@@ -292,8 +290,8 @@ class TestMaskCosmicsBottomRightGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(4, 4),
-            frame_geometry=ac.FrameGeometry.euclid_bottom_right(),
+            shape_2d=(4, 4),
+            frame_geometry=ac.FrameGeometry.bottom_right(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_diagonal_buffer=2,
         )
@@ -318,8 +316,8 @@ class TestMaskCosmicsTopLeftGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_top_left(),
+            shape_2d=(3, 3),
+            frame_geometry=ac.FrameGeometry.top_left(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_parallel_buffer=1,
         )
@@ -337,8 +335,8 @@ class TestMaskCosmicsTopLeftGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_top_left(),
+            shape_2d=(3, 3),
+            frame_geometry=ac.FrameGeometry.top_left(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_parallel_buffer=2,
         )
@@ -356,8 +354,8 @@ class TestMaskCosmicsTopLeftGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_top_left(),
+            shape_2d=(3, 3),
+            frame_geometry=ac.FrameGeometry.top_left(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_serial_buffer=1,
         )
@@ -375,8 +373,8 @@ class TestMaskCosmicsTopLeftGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_top_left(),
+            shape_2d=(3, 3),
+            frame_geometry=ac.FrameGeometry.top_left(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_serial_buffer=2,
         )
@@ -394,8 +392,8 @@ class TestMaskCosmicsTopLeftGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_top_left(),
+            shape_2d=(3, 3),
+            frame_geometry=ac.FrameGeometry.top_left(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_diagonal_buffer=1,
         )
@@ -418,8 +416,8 @@ class TestMaskCosmicsTopLeftGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(4, 4),
-            frame_geometry=ac.FrameGeometry.euclid_top_left(),
+            shape_2d=(4, 4),
+            frame_geometry=ac.FrameGeometry.top_left(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_diagonal_buffer=2,
         )
@@ -444,8 +442,8 @@ class TestMaskCosmicsTopRightGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_top_right(),
+            shape_2d=(3, 3),
+            frame_geometry=ac.FrameGeometry.top_right(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_parallel_buffer=1,
         )
@@ -463,8 +461,8 @@ class TestMaskCosmicsTopRightGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_top_right(),
+            shape_2d=(3, 3),
+            frame_geometry=ac.FrameGeometry.top_right(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_parallel_buffer=2,
         )
@@ -481,8 +479,8 @@ class TestMaskCosmicsTopRightGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_top_right(),
+            shape_2d=(3, 3),
+            frame_geometry=ac.FrameGeometry.top_right(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_serial_buffer=1,
         )
@@ -500,8 +498,8 @@ class TestMaskCosmicsTopRightGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_top_right(),
+            shape_2d=(3, 3),
+            frame_geometry=ac.FrameGeometry.top_right(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_serial_buffer=2,
         )
@@ -519,8 +517,8 @@ class TestMaskCosmicsTopRightGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(3, 3),
-            frame_geometry=ac.FrameGeometry.euclid_top_right(),
+            shape_2d=(3, 3),
+            frame_geometry=ac.FrameGeometry.top_right(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_diagonal_buffer=1,
         )
@@ -543,8 +541,8 @@ class TestMaskCosmicsTopRightGeometry:
         )
 
         mask = ac.Mask.from_cosmic_ray_image(
-            shape=(4, 4),
-            frame_geometry=ac.FrameGeometry.euclid_top_right(),
+            shape_2d=(4, 4),
+            frame_geometry=ac.FrameGeometry.top_right(),
             cosmic_ray_image=cosmic_ray_image,
             cosmic_ray_diagonal_buffer=2,
         )

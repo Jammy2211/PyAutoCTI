@@ -247,7 +247,7 @@ class TestCIDataSimulate(object):
 
         ci_data_simulate = ac.CIImaging.simulate(
             ci_pre_cti=ci_pre_cti,
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
+            frame_geometry=ac.FrameGeometry.bottom_left(),
             ci_pattern=pattern,
             cti_settings=arctic_parallel,
             cti_params=params_parallel,
@@ -267,7 +267,7 @@ class TestCIDataSimulate(object):
 
         ci_data_simulate = ac.CIImaging.simulate(
             ci_pre_cti=ci_pre_cti,
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
+            frame_geometry=ac.FrameGeometry.bottom_left(),
             ci_pattern=pattern,
             cti_settings=arctic_parallel,
             cti_params=params_parallel,
@@ -297,7 +297,7 @@ class TestCIDataSimulate(object):
 
         ci_data_simulate = ac.CIImaging.simulate(
             ci_pre_cti=ci_pre_cti,
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
+            frame_geometry=ac.FrameGeometry.bottom_left(),
             ci_pattern=pattern,
             cti_settings=arctic_parallel,
             cti_params=params_parallel,
@@ -348,7 +348,7 @@ class TestCIDataSimulate(object):
 
         ci_data_simulate = ac.CIImaging.simulate(
             ci_pre_cti=ci_pre_cti,
-            frame_geometry=ac.FrameGeometry.euclid_bottom_left(),
+            frame_geometry=ac.FrameGeometry.bottom_left(),
             ci_pattern=pattern,
             cti_settings=arctic_parallel,
             cti_params=params_parallel,
@@ -401,7 +401,7 @@ class TestCIImage(object):
                 row_slope=-1.0,
             )
             image = np.array([[10.0, 10.0, 10.0], [2.0, 2.0, 2.0], [8.0, 12.0, 10.0]])
-            mask = ac.Mask.empty_for_shape(shape=(3, 3))
+            mask = ac.Mask.unmasked(shape_2d=(3, 3))
 
             ci_pre_cti = ac.ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
                 mask=mask, ci_pattern=pattern, image=image
@@ -441,7 +441,7 @@ class TestCIImage(object):
 
 class TestCIPreCTI(object):
     def test__simple_case__sets_up_post_cti_correctly(self, arctic_both, params_both):
-        frame_geometry = ac.FrameGeometry.euclid_bottom_left()
+        frame_geometry = ac.FrameGeometry.bottom_left()
 
         ci_pre_cti = np.zeros((5, 5))
         ci_pre_cti[2, 2] = 10.0

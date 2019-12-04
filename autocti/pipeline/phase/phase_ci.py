@@ -83,7 +83,7 @@ class PhaseCI(Phase):
         hyper_noise_scalar_of_serial_trails=None,
         hyper_noise_scalar_of_serial_overscan_above_trails=None,
         optimizer_class=af.DownhillSimplex,
-        mask_function=msk.Mask.empty_for_shape,
+        mask_function=msk.Mask.unmasked,
         columns=None,
         rows=None,
         parallel_front_edge_mask_rows=None,
@@ -199,7 +199,7 @@ class PhaseCI(Phase):
         cosmic_ray_masks = list(
             map(
                 lambda data: msk.Mask.from_cosmic_ray_image(
-                    shape=data.shape,
+                    shape_2d=data.shape,
                     frame_geometry=data.ci_frame.frame_geometry,
                     cosmic_ray_image=data.cosmic_ray_image,
                     cosmic_ray_parallel_buffer=self.cosmic_ray_parallel_buffer,

@@ -5,8 +5,8 @@ import numpy as np
 
 
 class CIMask(msk.Mask):
-    def __new__(cls, array, *args, **kwargs):
-        mask = np.array(array, dtype="bool").view(cls)
+    def __new__(cls, mask_2d, *args, **kwargs):
+        mask = np.array(mask_2d, dtype="bool").view(cls)
         return mask
 
     @classmethod
@@ -23,7 +23,7 @@ class CIMask(msk.Mask):
         if invert:
             mask = np.invert(mask)
 
-        return CIMask(array=mask.astype("bool"), frame_geometry=ci_frame.frame_geometry)
+        return CIMask(mask_2d=mask.astype("bool"), frame_geometry=ci_frame.frame_geometry)
 
     @classmethod
     def masked_parallel_trails_from_ci_frame(cls, shape, ci_frame, rows, invert=False):
@@ -39,7 +39,7 @@ class CIMask(msk.Mask):
         if invert:
             mask = np.invert(mask)
 
-        return CIMask(array=mask.astype("bool"), frame_geometry=ci_frame.frame_geometry)
+        return CIMask(mask_2d=mask.astype("bool"), frame_geometry=ci_frame.frame_geometry)
 
     @classmethod
     def masked_serial_front_edge_from_ci_frame(
@@ -57,7 +57,7 @@ class CIMask(msk.Mask):
         if invert:
             mask = np.invert(mask)
 
-        return CIMask(array=mask.astype("bool"), frame_geometry=ci_frame.frame_geometry)
+        return CIMask(mask_2d=mask.astype("bool"), frame_geometry=ci_frame.frame_geometry)
 
     @classmethod
     def masked_serial_trails_from_ci_frame(cls, shape, ci_frame, columns, invert=False):
@@ -71,4 +71,4 @@ class CIMask(msk.Mask):
         if invert:
             mask = np.invert(mask)
 
-        return CIMask(array=mask.astype("bool"), frame_geometry=ci_frame.frame_geometry)
+        return CIMask(mask_2d=mask.astype("bool"), frame_geometry=ci_frame.frame_geometry)

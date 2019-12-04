@@ -1,4 +1,4 @@
-from autocti.structures.frame_array import FrameArray, EuclidArray, Region
+from autocti.structures.frame_array import Frame as frame, EuclidFrame as euclid_frame, Region
 from autocti.structures.mask import Mask
 from autocti.model import arctic_params
 from autocti.model.arctic_params import ArcticParams, CCDVolume, Species
