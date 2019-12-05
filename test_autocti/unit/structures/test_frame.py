@@ -938,9 +938,9 @@ class TestParallelRegionNearestReadOut:
         assert parallel_region == (0, 2, 4, 5)
 
 
-class TestSerialFrontEdgeRegion:
+class TestSerialFrontEdgeOfRegion:
 
-    def test__top_left__extract_two_columns__second_and_third__takes_coordinates_from_top_of_region(
+    def test__top_left__extracts_coluns_to_left_of_region(
         self
     ):
         frame = ac.frame.manual(array=np.ones((3,3)), corner=(0, 0))
@@ -949,13 +949,13 @@ class TestSerialFrontEdgeRegion:
             region=(0, 3, 0, 3)
         )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
 
-        front_edge = frame.serial_front_edge_region(
+        front_edge = frame.serial_front_edge_of_region(
             region=region, columns=(1, 3)
         )
 
         assert front_edge == (0, 3, 1, 3)
 
-    def test__top_right__extract_two_columns__second_and_third__takes_coordinates_from_right_of_region(
+    def test__top_right__extracts_regions_to_right_of_region(
         self
     ):
         frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
@@ -964,93 +964,65 @@ class TestSerialFrontEdgeRegion:
             region=(0, 3, 0, 3)
         )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
 
-        front_edge = frame.serial_front_edge_region(
+        front_edge = frame.serial_front_edge_of_region(
             region=region, columns=(1, 3)
         )
 
         assert front_edge == (0, 3, 0, 2)
 
-    def test__bottom_left__extract_one_column__takes_coordinates_from_left_of_region(self):
+    def test__bottom_left__extracts_region_to_left_of_region(self):
         frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
 
         region = ac.Region(
             region=(0, 3, 0, 3)
         )  # Front edge is column 0, so for 1 column we extract 0 -> 1
 
-        front_edge = frame.serial_front_edge_region(
+        front_edge = frame.serial_front_edge_of_region(
             region=region, columns=(0, 1)
         )
 
         assert front_edge == (0, 3, 0, 1)
 
-    def test__bottom_left__extract_two_columns__first_and_second__takes_coordinates_from_left_of_region(
-        self
-    ):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+        # Front edge is column 0, so for 2 columns we extract 0 -> 2
 
-        region = ac.Region(
-            region=(0, 3, 0, 3)
-        )  # Front edge is column 0, so for 2 columns we extract 0 -> 2
-
-        front_edge = frame.serial_front_edge_region(
+        front_edge = frame.serial_front_edge_of_region(
             region=region, columns=(0, 2)
         )
 
         assert front_edge == (0, 3, 0, 2)
 
-    def test__bottom_left__extract_two_columns__second_and_third__takes_coordinates_from_left_of_region(
-        self
-    ):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+        # Front edge is column 0, so for these 2 columns we extract 1 ->2
 
-        region = ac.Region(
-            region=(0, 3, 0, 3)
-        )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
-
-        front_edge = frame.serial_front_edge_region(
+        front_edge = frame.serial_front_edge_of_region(
             region=region, columns=(1, 3)
         )
 
         assert front_edge == (0, 3, 1, 3)
 
-    def test__bottom_right__extract_one_column__takes_coordinates_from_right_of_region(self):
+    def test__bottom_right__extracts_region_to_right_of_region(self):
         frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
 
         region = ac.Region(
             region=(0, 3, 0, 3)
         )  # Front edge is column 0, so for 1 column we extract 0 -> 1
 
-        front_edge = frame.serial_front_edge_region(
+        front_edge = frame.serial_front_edge_of_region(
             region=region, columns=(0, 1)
         )
 
         assert front_edge == (0, 3, 2, 3)
 
-    def test__bottom_right__extract_two_columns__first_and_second__takes_coordinates_from_right_of_region(
-        self
-    ):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+        # Front edge is column 0, so for 2 columns we extract 0 -> 2
 
-        region = ac.Region(
-            region=(0, 3, 0, 3)
-        )  # Front edge is column 0, so for 2 columns we extract 0 -> 2
-
-        front_edge = frame.serial_front_edge_region(
+        front_edge = frame.serial_front_edge_of_region(
             region=region, columns=(0, 2)
         )
 
         assert front_edge == (0, 3, 1, 3)
 
-    def test__bottom_right__extract_two_columns__second_and_third__takes_coordinates_from_right_of_region(
-        self
-    ):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+        # Front edge is column 0, so for these 2 columns we extract 1 ->2
 
-        region = ac.Region(
-            region=(0, 3, 0, 3)
-        )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
-
-        front_edge = frame.serial_front_edge_region(
+        front_edge = frame.serial_front_edge_of_region(
             region=region, columns=(1, 3)
         )
 

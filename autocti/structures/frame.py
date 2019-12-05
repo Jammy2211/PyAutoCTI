@@ -223,27 +223,16 @@ class AbstractFrame(arrays.AbstractArray):
             y_max = y_coord + rows[1]
         return Region((y_min, y_max, region.x0, region.x1))
 
-    def x_limits(self, region, columns):
-        if self.corner[1] == 0:
-            x_coord = region.x0
-            x_min = x_coord + columns[0]
-            x_max = x_coord + columns[1]
-        else:
-            x_coord = region.x1
-            x_min = x_coord - columns[1]
-            x_max = x_coord - columns[0]
-        return x_min, x_max
-
-    def serial_front_edge_region(self, ci_region, columns=(0, 1)):
-        check_serial_front_edge_size(ci_region, columns)
-        x_min, x_max = self.x_limits(ci_region, columns)
-        return Region((ci_region.y0, ci_region.y1, x_min, x_max))
-
     def parallel_side_nearest_read_out_region(
         self, region, columns=(0, 1)
     ):
         x_min, x_max = self.x_limits(region, columns)
         return Region((0, self.shape_2d[0], x_min, x_max))
+
+    def serial_front_edge_of_region(self, region, columns=(0, 1)):
+        check_serial_front_edge_size(region, columns)
+        x_min, x_max = self.x_limits(region, columns)
+        return Region((region.y0, region.y1, x_min, x_max))
 
     def serial_trails_region(self, ci_region, columns=(0, 1)):
         if self.corner[1] == 0:
@@ -269,6 +258,16 @@ class AbstractFrame(arrays.AbstractArray):
     def serial_trails_columns(self):
         return self.serial_overscan[3] - self.serial_overscan[2]
 
+    def x_limits(self, region, columns):
+        if self.corner[1] == 0:
+            x_coord = region.x0
+            x_min = x_coord + columns[0]
+            x_max = x_coord + columns[1]
+        else:
+            x_coord = region.x1
+            x_min = x_coord - columns[1]
+            x_max = x_coord - columns[0]
+        return x_min, x_max
 
 class Frame(AbstractFrame):
     @classmethod
