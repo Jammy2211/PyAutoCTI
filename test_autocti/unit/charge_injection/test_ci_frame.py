@@ -2612,11 +2612,7 @@ class TestParallelSerialCalibrationSection:
 
         frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
 
-        frame.frame_geometry.serial_prescan = ac.Region(region=(0, 4, 0, 1))
-
-        extracted_array = frame.parallel_serial_calibration_section(arr)
-
-        assert (extracted_array == arr).all()
+        assert (frame.parallel_serial_calibration_section == arr).all()
 
         ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 1, 0, 1)])
 
@@ -2632,11 +2628,7 @@ class TestParallelSerialCalibrationSection:
 
         frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
 
-        frame.frame_geometry.serial_prescan = ac.Region(region=(0, 4, 0, 2))
-
-        extracted_array = frame.parallel_serial_calibration_section(arr)
-
-        assert (extracted_array == arr).all()
+        assert (frame.parallel_serial_calibration_section == arr).all()
 
 
 class TestSmallestPArallelTrailsRowsToEdge:
