@@ -511,7 +511,7 @@ class CIFrame(AbstractCIFrame):
         []     [=====================]
                <---------S----------
         """
-        new_array = self
+        new_array = self * 0.0
         overscan_slice = self.serial_overscan.slice
 
         new_array[overscan_slice] = self[overscan_slice]
