@@ -5,13 +5,12 @@ from autocti.structures import frame
 
 
 class MaskedFrame(frame.AbstractFrame):
-
     @classmethod
     def manual(
         cls,
         array,
         mask,
-        corner=(0,0),
+        corner=(0, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -45,15 +44,22 @@ class MaskedFrame(frame.AbstractFrame):
 
         array[mask == True] = 0.0
 
-        return frame.Frame(array=array, mask=mask, corner=corner, parallel_overscan=parallel_overscan,
-                                         serial_prescan=serial_prescan, serial_overscan=serial_overscan)
+        return frame.Frame(
+            array=array,
+            mask=mask,
+            corner=corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
     @classmethod
     def from_fits(
         cls,
         file_path,
         hdu,
         mask,
-        corner=(0,0),
+        corner=(0, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -83,7 +89,6 @@ class MaskedFrame(frame.AbstractFrame):
 
 
 class MaskedEuclidFrame(frame.AbstractFrame):
-
     @classmethod
     def ccd_and_quadrant_id(cls, array, mask, ccd_id, quad_id):
         """Before reading this docstring, read the docstring for the __init__function above.
@@ -199,4 +204,3 @@ class MaskedEuclidFrame(frame.AbstractFrame):
             serial_prescan=frame.Region((0, 2086, 2068, 2119)),
             serial_overscan=frame.Region((0, 2086, 0, 20)),
         )
-

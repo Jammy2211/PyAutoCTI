@@ -8,12 +8,11 @@ from autocti.model import pyarctic
 
 
 class AbstractFrame(arrays.AbstractArray):
-
     def __new__(
         cls,
         array,
         mask,
-        corner=(0,0),
+        corner=(0, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -47,7 +46,9 @@ class AbstractFrame(arrays.AbstractArray):
 
         array[mask == True] = 0.0
 
-        obj = super(AbstractFrame, cls).__new__(cls=cls, array=array, mask=mask, store_in_1d=False)
+        obj = super(AbstractFrame, cls).__new__(
+            cls=cls, array=array, mask=mask, store_in_1d=False
+        )
 
         obj.corner = corner
         obj.parallel_overscan = parallel_overscan
@@ -66,7 +67,7 @@ class AbstractFrame(arrays.AbstractArray):
 
     def __reduce__(self):
         # Get the parent's __reduce__ tuple
-        pickled_state = super(Frame, self).__reduce__()
+        pickled_state = super(AbstractFrame, self).__reduce__()
         # Create our own tuple to pass to __setstate__
         class_dict = {}
         for key, value in self.__dict__.items():
@@ -80,7 +81,7 @@ class AbstractFrame(arrays.AbstractArray):
 
         for key, value in state[-1].items():
             setattr(self, key, value)
-        super(Frame, self).__setstate__(state[0:-1])
+        super(AbstractFrame, self).__setstate__(state[0:-1])
 
     def add_cti(
         self, image, cti_params, cti_settings, use_parallel_poisson_densities=False
@@ -190,25 +191,26 @@ class AbstractFrame(arrays.AbstractArray):
 
     def parallel_trail_from_y(self, y, dy):
         """Coordinates of a parallel trail of size dy from coordinate y"""
-        return int(y - dy * self.corner[0]), int(y + 1 + dy * (abs(self.corner[0]-1)))
+        return int(y - dy * self.corner[0]), int(y + 1 + dy * (abs(self.corner[0] - 1)))
 
     def serial_trail_from_x(self, x, dx):
         """Coordinates of a serial trail of size dx from coordinate x"""
         return int(x - dx * self.corner[1]), int(x + 1 + dx * (1 - self.corner[1]))
 
-    def parallel_front_edge_region(self, ci_region, rows):
+    def parallel_front_edge_of_region(self, region, rows):
 
-        check_parallel_front_edge_size(region=ci_region, rows=rows)
+        check_parallel_front_edge_size(region=region, rows=rows)
 
         if self.corner[0] == 0:
-            y_coord = ci_region.y0
-            y_min = y_coord + rows[0]
-            y_max = y_coord + rows[1]
-        else:
-            y_coord = ci_region.y1
+            y_coord = region.y1
             y_min = y_coord - rows[1]
             y_max = y_coord - rows[0]
-        return Region((y_min, y_max, ci_region.x0, ci_region.x1))
+        else:
+            y_coord = region.y0
+            y_min = y_coord + rows[0]
+            y_max = y_coord + rows[1]
+
+        return Region((y_min, y_max, region.x0, region.x1))
 
     def parallel_trails_region(self, ci_region, rows=(0, 1)):
         if self.corner[0] == 0:
@@ -276,12 +278,11 @@ class AbstractFrame(arrays.AbstractArray):
 
 
 class Frame(AbstractFrame):
-
     @classmethod
     def manual(
         cls,
         array,
-        corner=(0,0),
+        corner=(0, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -319,15 +320,21 @@ class Frame(AbstractFrame):
 
         mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
 
-        return Frame(array=array, mask=mask, corner=corner, parallel_overscan=parallel_overscan,
-                                         serial_prescan=serial_prescan, serial_overscan=serial_overscan)
+        return Frame(
+            array=array,
+            mask=mask,
+            corner=corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
 
     @classmethod
     def from_fits(
         cls,
         file_path,
         hdu,
-        corner=(0,0),
+        corner=(0, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -358,7 +365,6 @@ class Frame(AbstractFrame):
 
 
 class EuclidFrame(Frame):
-
     @classmethod
     def ccd_and_quadrant_id(cls, array, ccd_id, quad_id):
         """Before reading this docstring, read the docstring for the __init__function above.
