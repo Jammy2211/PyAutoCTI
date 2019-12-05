@@ -593,7 +593,7 @@ class CIFrame(AbstractCIFrame):
         trails_columns : (int, int)
             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
-        new_array = self
+        new_array = self * 0.0
 
         if front_edge_columns is not None:
 
