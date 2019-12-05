@@ -33,11 +33,11 @@ class AbstractFrame(arrays.AbstractArray):
 
         Parameters
         -----------
-        parallel_overscan : ci_frame.Region
+        parallel_overscan : frame.Region
             The parallel overscan region of the ci_frame.
-        serial_prescan : ci_frame.Region
+        serial_prescan : frame.Region
             The serial prescan region of the ci_frame.
-        serial_overscan : ci_frame.Region
+        serial_overscan : frame.Region
             The serial overscan region of the ci_frame.
         """
 
@@ -290,11 +290,11 @@ class Frame(AbstractFrame):
 
         Parameters
         -----------
-        parallel_overscan : ci_frame.Region
+        parallel_overscan : frame.Region
             The parallel overscan region of the ci_frame.
-        serial_prescan : ci_frame.Region
+        serial_prescan : frame.Region
             The serial prescan region of the ci_frame.
-        serial_overscan : ci_frame.Region
+        serial_overscan : frame.Region
             The serial overscan region of the ci_frame.
         """
 
@@ -340,8 +340,17 @@ class Frame(AbstractFrame):
             The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
             locations of different regions of the CCD (overscans, prescan, etc.)
         """
+
+        if type(pixel_scales) is float:
+            pixel_scales = (pixel_scales, pixel_scales)
+
+        array=array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
+
+        mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
+
         return Frame(
-            array=array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu),
+            array=array,
+            mask=mask,
             corner=corner,
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,

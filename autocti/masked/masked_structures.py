@@ -31,11 +31,11 @@ class MaskedFrame(frame.AbstractFrame):
 
         Parameters
         -----------
-        parallel_overscan : ci_frame.Region
+        parallel_overscan : frame.Region
             The parallel overscan region of the ci_frame.
-        serial_prescan : ci_frame.Region
+        serial_prescan : frame.Region
             The serial prescan region of the ci_frame.
-        serial_overscan : ci_frame.Region
+        serial_overscan : frame.Region
             The serial overscan region of the ci_frame.
         """
 

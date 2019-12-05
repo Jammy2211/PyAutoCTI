@@ -1,9 +1,12 @@
 import numpy as np
 
+from autoarray.util import array_util
+from autoarray.mask import mask as msk
 from autocti.structures import frame
 
 
-class CIFrame(frame.Frame):
+class AbstractCIFrame(frame.Frame):
+
     def __new__(
         cls,
         array,
@@ -13,7 +16,6 @@ class CIFrame(frame.Frame):
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
-        pixel_scales=None,
     ):
         """
         Class which represents the CCD quadrant of a charge injection image (e.g. the location of the parallel and
@@ -26,19 +28,119 @@ class CIFrame(frame.Frame):
             The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
         """
 
-        obj = super(CIFrame, cls).__new__(
+        obj = super(AbstractCIFrame, cls).__new__(
             cls=cls,
             array=array,
+            mask=mask,
+            corner=corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+        obj.ci_pattern = ci_pattern
+
+        return obj
+
+class CIFrame(AbstractCIFrame):
+
+    @classmethod
+    def manual(
+        cls,
+        array,
+        ci_pattern,
+        corner=(0, 0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+        pixel_scales=None,
+    ):
+        """Abstract class for the geometry of a CTI Image.
+
+        A FrameArray is stored as a 2D NumPy arrays. When this immage is passed to arctic, clocking goes towards
+        the 'top' of the NumPy arrays (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the arrays
+        (e.g. the final row).
+
+        Arctic has no in-built functionality for changing the direction of clocking depending on the input
+        configuration file. Therefore, image rotations are handled before arctic is called, using the functions
+        defined in this class (and its children). These routines define how an image is rotated before parallel
+        and serial clocking and how to reorient the image back to its original orientation after clocking is performed.
+
+        Currently, only four geometries are available, which are specific to Euclid (and documented in the
+        *QuadGeometryEuclid* class).
+
+        Parameters
+        -----------
+        parallel_overscan : frame.Region
+            The parallel overscan region of the ci_frame.
+        serial_prescan : frame.Region
+            The serial prescan region of the ci_frame.
+        serial_overscan : frame.Region
+            The serial overscan region of the ci_frame.
+        """
+
+        if type(array) is list:
+            array = np.asarray(array)
+
+        if type(pixel_scales) is float:
+            pixel_scales = (pixel_scales, pixel_scales)
+
+        mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
+
+        return CIFrame(
+            array=array,
+            mask=mask,
+            ci_pattern=ci_pattern,
+            corner=corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+    @classmethod
+    def from_fits(
+            cls,
+            ci_pattern,
+            file_path,
+            hdu,
+            corner=(0, 0),
+            parallel_overscan=None,
+            serial_prescan=None,
+            serial_overscan=None,
+            pixel_scales=None,
+    ):
+        """Load the image ci_data from a fits file.
+
+        Params
+        ----------
+        path : str
+            The path to the ci_data
+        filename : str
+            The file phase_name of the fits image ci_data.
+        hdu : int
+            The HDU number in the fits file containing the image ci_data.
+        frame_geometry : FrameArray.FrameGeometry
+            The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
+            locations of different regions of the CCD (overscans, prescan, etc.)
+        """
+
+        if type(pixel_scales) is float:
+            pixel_scales = (pixel_scales, pixel_scales)
+
+        array = array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
+
+        mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
+
+        return CIFrame(
+            array=array,
+            mask=mask,
+            ci_pattern=ci_pattern,
             corner=corner,
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
             pixel_scales=pixel_scales,
         )
-
-        obj.ci_pattern = ci_pattern
-
-        return obj
 
     def ci_regions_from_array(self, array):
         """Extract an arrays of all of the charge-injection regions from a charge injection ci_frame.
@@ -1131,15 +1233,16 @@ class CIFrame(frame.Frame):
     def smallest_parallel_trails_rows_from_shape(self, shape):
 
         rows_between_regions = self.ci_pattern.rows_between_regions
-        rows_to_image_edge = self.parallel_trail_size_to_image_edge(
+        rows_to_image_edge = self.parallel_trail_size_to_frame_edge(
             shape=shape, ci_pattern=self.ci_pattern
         )
         rows_between_regions.append(rows_to_image_edge)
         return np.min(rows_between_regions)
 
-    def parallel_trail_size_to_image_edge(self, ci_pattern, shape):
+    @property
+    def parallel_trail_size_to_frame_edge(self):
 
         if self.corner[0] == 0:
-            return shape[0] - np.max([region.y1 for region in ci_pattern.regions])
+            return np.min([region.y0 for region in self.ci_pattern.regions])
         else:
-            return np.min([region.y0 for region in ci_pattern.regions])
+            return self.shape_2d[0] - np.max([region.y1 for region in self.ci_pattern.regions])
