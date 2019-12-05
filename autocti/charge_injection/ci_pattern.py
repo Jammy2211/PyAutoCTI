@@ -7,9 +7,8 @@ Author: James Nightingale
 
 import numpy as np
 
-import autofit as af
 from autocti import exc
-from autocti.charge_injection import ci_frame
+from autocti.structures import frame
 
 
 class AbstractCIPattern(object):
@@ -26,7 +25,7 @@ class AbstractCIPattern(object):
             (top-row, bottom-row, left-column, right-column).
         """
         self.normalization = normalization
-        self.regions = list(map(ci_frame.Region, regions))
+        self.regions = list(map(frame.Region, regions))
 
     def check_pattern_is_within_image_dimensions(self, dimensions):
 

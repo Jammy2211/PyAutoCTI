@@ -19,7 +19,7 @@ from autocti.charge_injection.ci_fit import (
     CIImagingFit,
     hyper_noise_map_from_noise_map_and_noise_scalings,
 )
-from autocti.charge_injection.ci_frame import CIFrame
+from autocti.charge_injection.ci_frame import CIFrame as ci_frame
 from autocti.charge_injection.ci_hyper import CIHyperNoiseScalar
 from autocti.charge_injection.ci_mask import CIMask
 from autocti.charge_injection.ci_pattern import CIPatternUniform, CIPatternNonUniform
