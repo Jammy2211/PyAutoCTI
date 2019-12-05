@@ -44,6 +44,15 @@ class AbstractFrame(arrays.AbstractArray):
         if type(array) is list:
             array = np.asarray(array)
 
+        if isinstance(parallel_overscan, tuple):
+            parallel_overscan = Region(region=parallel_overscan)
+
+        if isinstance(serial_prescan, tuple):
+            serial_prescan = Region(region=serial_prescan)
+
+        if isinstance(serial_overscan, tuple):
+            serial_overscan = Region(region=serial_overscan)
+
         array[mask == True] = 0.0
 
         obj = super(AbstractFrame, cls).__new__(

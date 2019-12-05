@@ -41,7 +41,7 @@ class TestCiRegionsArray:
         ).all()
 
 
-class TestCIParallelNonRegionArrayFromFrame:
+class TestCIParallelNonCIRegionFrame:
     def test__1_ci_region__parallel_overscan_is_entire_image__extracts_everything_between_its_columns(
         self
     ):
@@ -52,19 +52,18 @@ class TestCIParallelNonRegionArrayFromFrame:
             [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]]
         )
 
-        frame = ac.CIFrame(
-            frame_geometry=MockCIGeometry(parallel_overscan=(3, 4, 0, 3)),
+        frame = ac.ci_frame.manual(
+            array=arr,
             ci_pattern=ci_pattern,
         )
 
-        new_frame = frame.parallel_non_ci_regions_frame_from_frame(arr)
-
         assert (
-            new_frame
+            frame.parallel_non_ci_regions_frame
             == np.array(
                 [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [9.0, 10.0, 11.0]]
             )
         ).all()
+        assert frame.parallel_non_ci_regions_frame.ci_pattern == ci_pattern
 
     def test__same_as_above_but_2_ci_regions(self):
 
@@ -82,15 +81,13 @@ class TestCIParallelNonRegionArrayFromFrame:
             ]
         )
 
-        frame = ac.CIFrame(
-            frame_geometry=MockCIGeometry(parallel_overscan=(3, 4, 0, 3)),
+        frame = ac.ci_frame.manual(
+            array=arr,
             ci_pattern=ci_pattern,
         )
 
-        new_frame = frame.parallel_non_ci_regions_frame_from_frame(arr)
-
         assert (
-            new_frame
+            frame.parallel_non_ci_regions_frame
             == np.array(
                 [
                     [0.0, 0.0, 0.0],
@@ -101,46 +98,7 @@ class TestCIParallelNonRegionArrayFromFrame:
                 ]
             )
         ).all()
-
-    def test__same_as_above_with_parallel_overscan_thinner__columsn_outside_overscan_are_zeros(
-        self
-    ):
-
-        ci_pattern = ac.CIPatternUniform(
-            normalization=10.0, regions=[(0, 1, 0, 3), (3, 4, 0, 3)]
-        )
-
-        arr = np.array(
-            [
-                [0.0, 1.0, 2.0],
-                [3.0, 4.0, 5.0],
-                [6.0, 7.0, 8.0],
-                [9.0, 10.0, 11.0],
-                [12.0, 13.0, 14.0],
-            ]
-        )
-
-        frame = ac.CIFrame(
-            frame_geometry=MockCIGeometry(parallel_overscan=(3, 4, 1, 2)),
-            ci_pattern=ci_pattern,
-        )
-
-        new_frame = frame.parallel_non_ci_regions_frame_from_frame(arr)
-
-        print(new_frame)
-
-        assert (
-            new_frame
-            == np.array(
-                [
-                    [0.0, 0.0, 0.0],
-                    [0.0, 4.0, 0.0],
-                    [0.0, 7.0, 0.0],
-                    [0.0, 0.0, 0.0],
-                    [0.0, 13.0, 0.0],
-                ]
-            )
-        ).all()
+        assert frame.parallel_non_ci_regions_frame.ci_pattern == ci_pattern
 
 
 class TestParallelEdgesAndTrailsArrayFromFrame:
@@ -564,7 +522,7 @@ class TestSerialAllTrailsArrayFromFrame:
             [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]]
         )
 
-        frame = ac.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
+        frame = ac.ci_frame.manual(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
 
         new_frame = frame.serial_all_trails_frame_from_frame(arr)
 
@@ -590,7 +548,7 @@ class TestSerialAllTrailsArrayFromFrame:
             ]
         )
 
-        frame = ac.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
+        frame = ac.ci_frame.manual(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
 
         new_frame = frame.serial_all_trails_frame_from_frame(arr)
 
@@ -623,7 +581,7 @@ class TestSerialAllTrailsArrayFromFrame:
             ]
         )
 
-        frame = ac.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
+        frame = ac.ci_frame.manual(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
 
         new_frame = frame.serial_all_trails_frame_from_frame(arr)
 
@@ -656,7 +614,7 @@ class TestSerialAllTrailsArrayFromFrame:
             ]
         )
 
-        frame = ac.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
+        frame = ac.ci_frame.manual(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
 
         new_frame = frame.serial_all_trails_frame_from_frame(arr)
 
@@ -687,7 +645,7 @@ class TestSerialOverScanNonTrailsFromFrame:
             [[0.0, 1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0], [8.0, 9.0, 10.0, 11.0]]
         )
 
-        frame = ac.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
+        frame = ac.ci_frame.manual(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
 
         new_frame = frame.serial_overscan_above_trails_frame_from_frame(arr)
 
@@ -711,7 +669,7 @@ class TestSerialOverScanNonTrailsFromFrame:
             [[0.0, 1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0], [8.0, 9.0, 10.0, 11.0]]
         )
 
-        frame = ac.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
+        frame = ac.ci_frame.manual(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
 
         new_frame = frame.serial_overscan_above_trails_frame_from_frame(arr)
 
@@ -743,7 +701,7 @@ class TestSerialOverScanNonTrailsFromFrame:
             ]
         )
 
-        frame = ac.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
+        frame = ac.ci_frame.manual(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
 
         new_frame = frame.serial_overscan_above_trails_frame_from_frame(arr)
 
@@ -781,7 +739,7 @@ class TestSerialOverScanNonTrailsFromFrame:
             ]
         )
 
-        frame = ac.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
+        frame = ac.ci_frame.manual(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
 
         new_frame = frame.serial_overscan_above_trails_frame_from_frame(arr)
 
@@ -2831,7 +2789,7 @@ class TestSerialTrailsFromFrame:
             corner=(0, 0),
         )
 
-        frame = ac.CIFrame(frame_geometry=ci_frame, ci_pattern=ci_pattern)
+        frame = ac.ci_frame.manual(frame_geometry=ci_frame, ci_pattern=ci_pattern)
 
         trails = frame.serial_trails_arrays_from_frame(arr)
 
