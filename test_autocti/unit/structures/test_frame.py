@@ -659,7 +659,6 @@ class TestRegion(object):
 
 
 class TestParallelFrontEdgeOfRegion:
-
     def test__top_left__extracts_rows_from_top_of_region(self):
         frame = ac.frame.manual(array=np.ones((3, 3)), corner=(0, 0))
 
@@ -667,187 +666,143 @@ class TestParallelFrontEdgeOfRegion:
             (0, 3, 0, 3)
         )  # The front edge is closest to 3, so for 1 edge we extract row 3-> 4
 
-        front_edge = frame.parallel_front_edge_of_region(
-            region=region, rows=(0, 1)
-        )
+        front_edge = frame.parallel_front_edge_of_region(region=region, rows=(0, 1))
 
         assert front_edge == (2, 3, 0, 3)
 
-         # The front edge is closest to 3, so for these 2 rows we extract 2 & 3
+        # The front edge is closest to 3, so for these 2 rows we extract 2 & 3
 
-        front_edge = frame.parallel_front_edge_of_region(
-            region=region, rows=(0, 2)
-        )
+        front_edge = frame.parallel_front_edge_of_region(region=region, rows=(0, 2))
 
         assert front_edge == (1, 3, 0, 3)
 
         # The front edge is closest to 3, so for these 2 rows we extract 1 & 2
 
-        front_edge = frame.parallel_front_edge_of_region(
-            region=region, rows=(1, 3)
-        )
+        front_edge = frame.parallel_front_edge_of_region(region=region, rows=(1, 3))
 
         assert front_edge == (0, 2, 0, 3)
 
-    def test__top_right__same_extraction_as_above(
-            self
-    ):
+    def test__top_right__same_extraction_as_above(self):
         frame = ac.frame.manual(array=np.ones((3, 3)), corner=(0, 1))
 
         region = ac.Region(
             (0, 3, 0, 3)
         )  # The front edge is closest to 3, so for these 2 rows we extract 1 & 2
 
-        front_edge = frame.parallel_front_edge_of_region(
-            region=region, rows=(1, 3)
-        )
+        front_edge = frame.parallel_front_edge_of_region(region=region, rows=(1, 3))
 
         assert front_edge == (0, 2, 0, 3)
 
     def test__bottom_left__extracts_rows_from_bottom_of_region(self):
 
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+        frame = ac.frame.manual(array=np.ones((3, 3)), corner=(1, 0))
 
-        region = ac.Region(
-            region=(0, 3, 0, 3)
-        )
+        region = ac.Region(region=(0, 3, 0, 3))
 
         # Front edge is row 0, so for 1 row we extract 0 -> 1
 
-        front_edge = frame.parallel_front_edge_of_region(
-            region=region, rows=(0, 1)
-        )
+        front_edge = frame.parallel_front_edge_of_region(region=region, rows=(0, 1))
 
         assert front_edge == (0, 1, 0, 3)
 
-         # Front edge is row 0, so for 2 rows we extract 0 -> 2
+        # Front edge is row 0, so for 2 rows we extract 0 -> 2
 
-        front_edge = frame.parallel_front_edge_of_region(
-            region=region, rows=(0, 2)
-        )
+        front_edge = frame.parallel_front_edge_of_region(region=region, rows=(0, 2))
 
         assert front_edge == (0, 2, 0, 3)
 
         # Front edge is row 0, so for these 2 rows we extract 1 ->2
 
-        front_edge = frame.parallel_front_edge_of_region(
-            region=region, rows=(1, 3)
-        )
+        front_edge = frame.parallel_front_edge_of_region(region=region, rows=(1, 3))
 
         assert front_edge == (1, 3, 0, 3)
 
-    def test__bottom_right__same_extraction_as_above(
-        self
-    ):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+    def test__bottom_right__same_extraction_as_above(self):
+        frame = ac.frame.manual(array=np.ones((3, 3)), corner=(1, 1))
 
         region = ac.Region(
             region=(0, 3, 0, 3)
         )  # Front edge is row 0, so for these 2 rows we extract 1 ->2
 
-        front_edge = frame.parallel_front_edge_of_region(
-            region=region, rows=(1, 3)
-        )
+        front_edge = frame.parallel_front_edge_of_region(region=region, rows=(1, 3))
 
         assert front_edge == (1, 3, 0, 3)
 
 
 class TestParallelTrailsOfRegion:
-
     def test__top_left__extracts_rows_behind_region(self):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(0, 0))
+        frame = ac.frame.manual(array=np.ones((3, 3)), corner=(0, 0))
 
         region = ac.Region(
             (3, 5, 0, 3)
         )  # The trails are the rows after row 3, so for 1 edge we should extract just row 2
 
-        trails = frame.parallel_trails_of_region(
-            region=region, rows=(0, 1)
-        )
+        trails = frame.parallel_trails_of_region(region=region, rows=(0, 1))
 
         assert trails == (2, 3, 0, 3)
 
         # The trails are the row after row 3, so for these 2 edges we extract rows 1->3
 
-        trails = frame.parallel_trails_of_region(
-            region=region, rows=(0, 2)
-        )
+        trails = frame.parallel_trails_of_region(region=region, rows=(0, 2))
 
         assert trails == (1, 3, 0, 3)
 
-          # The trails are the row after row 3, so for these 2 edges we extract rows 0 & 2
+        # The trails are the row after row 3, so for these 2 edges we extract rows 0 & 2
 
-        trails = frame.parallel_trails_of_region(
-            region=region, rows=(1, 3)
-        )
+        trails = frame.parallel_trails_of_region(region=region, rows=(1, 3))
 
         assert trails == (0, 2, 0, 3)
 
-    def test__top_right__extacts_same_rows_as_above(
-        self
-    ):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(0, 1))
+    def test__top_right__extacts_same_rows_as_above(self):
+        frame = ac.frame.manual(array=np.ones((3, 3)), corner=(0, 1))
 
         region = ac.Region(
             (3, 5, 0, 3)
         )  # The trails are the row after row 3, so for these 2 edges we extract rows 0 & 2
 
-        trails = frame.parallel_trails_of_region(
-            region=region, rows=(1, 3)
-        )
+        trails = frame.parallel_trails_of_region(region=region, rows=(1, 3))
 
         assert trails == (0, 2, 0, 3)
 
     def test__bottom_left__extracts_rows_above_region(self):
 
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+        frame = ac.frame.manual(array=np.ones((3, 3)), corner=(1, 0))
 
         region = ac.Region(
             region=(0, 3, 0, 3)
         )  # The trails are row 3 and above, so extract 3 -> 4
 
-        trails = frame.parallel_trails_of_region(
-            region=region, rows=(0, 1)
-        )
+        trails = frame.parallel_trails_of_region(region=region, rows=(0, 1))
 
         assert trails == (3, 4, 0, 3)
 
-         # The trails are row 3 and above, so extract 3 -> 5
+        # The trails are row 3 and above, so extract 3 -> 5
 
-        trails = frame.parallel_trails_of_region(
-            region=region, rows=(0, 2)
-        )
+        trails = frame.parallel_trails_of_region(region=region, rows=(0, 2))
 
         assert trails == (3, 5, 0, 3)
 
-         # The trails are row 3 and above, so extract 4 -> 6
+        # The trails are row 3 and above, so extract 4 -> 6
 
-        trails = frame.parallel_trails_of_region(
-            region=region, rows=(1, 3)
-        )
+        trails = frame.parallel_trails_of_region(region=region, rows=(1, 3))
 
         assert trails == (4, 6, 0, 3)
 
-    def test__bottom_right__extracts_same_rows_as_above(
-        self
-    ):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+    def test__bottom_right__extracts_same_rows_as_above(self):
+        frame = ac.frame.manual(array=np.ones((3, 3)), corner=(1, 1))
 
         region = ac.Region(
             (0, 3, 0, 3)
         )  # The trails are row 3 and above, so extract 4 -> 6
 
-        trails = frame.parallel_trails_of_region(
-            region=region, rows=(1, 3)
-        )
+        trails = frame.parallel_trails_of_region(region=region, rows=(1, 3))
 
         assert trails == (4, 6, 0, 3)
 
 
 class TestParallelRegionNearestReadOut:
-
     def test__top_left__extracts_region_to_left_of_region(self):
-        frame = ac.frame.manual(array=np.ones((2,5)), corner=(1, 0))
+        frame = ac.frame.manual(array=np.ones((2, 5)), corner=(1, 0))
         region = ac.Region(region=(1, 3, 0, 5))
 
         parallel_region = frame.parallel_side_nearest_read_out_region(
@@ -858,7 +813,7 @@ class TestParallelRegionNearestReadOut:
 
     def test__top_right__extracts_region_to_right_of_region(self):
 
-        frame = ac.frame.manual(array=np.ones((2,5)), corner=(0, 1))
+        frame = ac.frame.manual(array=np.ones((2, 5)), corner=(0, 1))
         region = ac.Region(region=(0, 1, 0, 5))
         parallel_region = frame.parallel_side_nearest_read_out_region(
             region=region, columns=(0, 1)
@@ -867,7 +822,7 @@ class TestParallelRegionNearestReadOut:
         assert parallel_region == (0, 2, 4, 5)
 
     def test__bottom_left__extracts_regioon_to_left_of_region(self):
-        frame = ac.frame.manual(array=np.ones((5,5)), corner=(1, 0))
+        frame = ac.frame.manual(array=np.ones((5, 5)), corner=(1, 0))
         region = ac.Region(region=(1, 3, 0, 5))
 
         parallel_region = frame.parallel_side_nearest_read_out_region(
@@ -876,7 +831,7 @@ class TestParallelRegionNearestReadOut:
 
         assert parallel_region == (0, 5, 0, 1)
 
-        frame = ac.frame.manual(array=np.ones((4,4)), corner=(1, 0))
+        frame = ac.frame.manual(array=np.ones((4, 4)), corner=(1, 0))
         region = ac.Region(region=(1, 3, 0, 5))
 
         parallel_region = frame.parallel_side_nearest_read_out_region(
@@ -893,7 +848,7 @@ class TestParallelRegionNearestReadOut:
 
         assert parallel_region == (0, 4, 3, 5)
 
-        frame = ac.frame.manual(array=np.ones((2,5)), corner=(1, 0))
+        frame = ac.frame.manual(array=np.ones((2, 5)), corner=(1, 0))
         region = ac.Region(region=(1, 3, 0, 5))
 
         parallel_region = frame.parallel_side_nearest_read_out_region(
@@ -903,7 +858,7 @@ class TestParallelRegionNearestReadOut:
         assert parallel_region == (0, 2, 0, 1)
 
     def test__bottom_right__extracts_region_to_right_of_region(self):
-        frame = ac.frame.manual(array=np.ones((5,5)), corner=(1, 1))
+        frame = ac.frame.manual(array=np.ones((5, 5)), corner=(1, 1))
         region = ac.Region(region=(1, 3, 0, 5))
 
         parallel_region = frame.parallel_side_nearest_read_out_region(
@@ -912,7 +867,7 @@ class TestParallelRegionNearestReadOut:
 
         assert parallel_region == (0, 5, 4, 5)
 
-        frame = ac.frame.manual(array=np.ones((4,4)), corner=(1, 1))
+        frame = ac.frame.manual(array=np.ones((4, 4)), corner=(1, 1))
         region = ac.Region(region=(1, 3, 0, 4))
 
         parallel_region = frame.parallel_side_nearest_read_out_region(
@@ -929,7 +884,7 @@ class TestParallelRegionNearestReadOut:
 
         assert parallel_region == (0, 4, 1, 3)
 
-        frame = ac.frame.manual(array=np.ones((2,5)), corner=(1, 1))
+        frame = ac.frame.manual(array=np.ones((2, 5)), corner=(1, 1))
         region = ac.Region(region=(0, 1, 0, 5))
         parallel_region = frame.parallel_side_nearest_read_out_region(
             region=region, columns=(0, 1)
@@ -939,208 +894,165 @@ class TestParallelRegionNearestReadOut:
 
 
 class TestSerialFrontEdgeOfRegion:
-
-    def test__top_left__extracts_coluns_to_left_of_region(
-        self
-    ):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(0, 0))
+    def test__top_left__extracts_coluns_to_left_of_region(self):
+        frame = ac.frame.manual(array=np.ones((3, 3)), corner=(0, 0))
 
         region = ac.Region(
             region=(0, 3, 0, 3)
         )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
 
-        front_edge = frame.serial_front_edge_of_region(
-            region=region, columns=(1, 3)
-        )
+        front_edge = frame.serial_front_edge_of_region(region=region, columns=(1, 3))
 
         assert front_edge == (0, 3, 1, 3)
 
-    def test__top_right__extracts_regions_to_right_of_region(
-        self
-    ):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+    def test__top_right__extracts_regions_to_right_of_region(self):
+        frame = ac.frame.manual(array=np.ones((3, 3)), corner=(1, 1))
 
         region = ac.Region(
             region=(0, 3, 0, 3)
         )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
 
-        front_edge = frame.serial_front_edge_of_region(
-            region=region, columns=(1, 3)
-        )
+        front_edge = frame.serial_front_edge_of_region(region=region, columns=(1, 3))
 
         assert front_edge == (0, 3, 0, 2)
 
     def test__bottom_left__extracts_region_to_left_of_region(self):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+        frame = ac.frame.manual(array=np.ones((3, 3)), corner=(1, 0))
 
         region = ac.Region(
             region=(0, 3, 0, 3)
         )  # Front edge is column 0, so for 1 column we extract 0 -> 1
 
-        front_edge = frame.serial_front_edge_of_region(
-            region=region, columns=(0, 1)
-        )
+        front_edge = frame.serial_front_edge_of_region(region=region, columns=(0, 1))
 
         assert front_edge == (0, 3, 0, 1)
 
         # Front edge is column 0, so for 2 columns we extract 0 -> 2
 
-        front_edge = frame.serial_front_edge_of_region(
-            region=region, columns=(0, 2)
-        )
+        front_edge = frame.serial_front_edge_of_region(region=region, columns=(0, 2))
 
         assert front_edge == (0, 3, 0, 2)
 
         # Front edge is column 0, so for these 2 columns we extract 1 ->2
 
-        front_edge = frame.serial_front_edge_of_region(
-            region=region, columns=(1, 3)
-        )
+        front_edge = frame.serial_front_edge_of_region(region=region, columns=(1, 3))
 
         assert front_edge == (0, 3, 1, 3)
 
     def test__bottom_right__extracts_region_to_right_of_region(self):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+        frame = ac.frame.manual(array=np.ones((3, 3)), corner=(1, 1))
 
         region = ac.Region(
             region=(0, 3, 0, 3)
         )  # Front edge is column 0, so for 1 column we extract 0 -> 1
 
-        front_edge = frame.serial_front_edge_of_region(
-            region=region, columns=(0, 1)
-        )
+        front_edge = frame.serial_front_edge_of_region(region=region, columns=(0, 1))
 
         assert front_edge == (0, 3, 2, 3)
 
         # Front edge is column 0, so for 2 columns we extract 0 -> 2
 
-        front_edge = frame.serial_front_edge_of_region(
-            region=region, columns=(0, 2)
-        )
+        front_edge = frame.serial_front_edge_of_region(region=region, columns=(0, 2))
 
         assert front_edge == (0, 3, 1, 3)
 
         # Front edge is column 0, so for these 2 columns we extract 1 ->2
 
-        front_edge = frame.serial_front_edge_of_region(
-            region=region, columns=(1, 3)
-        )
+        front_edge = frame.serial_front_edge_of_region(region=region, columns=(1, 3))
 
         assert front_edge == (0, 3, 0, 2)
 
 
 class TestSerialTrailsOfRegion:
-
-    def test__top_left__extracts_region_to_left_of_region(
-        self
-    ):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(0, 0))
+    def test__top_left__extracts_region_to_left_of_region(self):
+        frame = ac.frame.manual(array=np.ones((3, 3)), corner=(0, 0))
 
         region = ac.Region(
             (0, 3, 0, 3)
         )  # The trails are column 3 and above, so extract 4 -> 6
 
-        trails = frame.serial_trails_of_region(
-            region=region, columns=(1, 3)
-        )
+        trails = frame.serial_trails_of_region(region=region, columns=(1, 3))
 
         assert trails == (0, 3, 4, 6)
 
-    def test__top_right__extracts_region_to_right_of_region(
-        self
-    ):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+    def test__top_right__extracts_region_to_right_of_region(self):
+        frame = ac.frame.manual(array=np.ones((3, 3)), corner=(1, 1))
 
         region = ac.Region(
             (0, 3, 3, 6)
         )  # The trails are column 3 and above, so extract 4 -> 6
 
-        trails = frame.serial_trails_of_region(
-            region=region, columns=(1, 3)
-        )
+        trails = frame.serial_trails_of_region(region=region, columns=(1, 3))
 
         assert trails == (0, 3, 0, 2)
 
     def test__bottom_left__extracts_region_to_left_of_region(self):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+        frame = ac.frame.manual(array=np.ones((3, 3)), corner=(1, 0))
 
         region = ac.Region(
             region=(0, 3, 0, 3)
         )  # The trails are column 3 and above, so extract 3 -> 4
 
-        trails = frame.serial_trails_of_region(
-            region=region, columns=(0, 1)
-        )
+        trails = frame.serial_trails_of_region(region=region, columns=(0, 1))
 
         assert trails == (0, 3, 3, 4)
 
         # The trails are column 3 and above, so extract 3 -> 5
 
-        trails = frame.serial_trails_of_region(
-            region=region, columns=(0, 2)
-        )
+        trails = frame.serial_trails_of_region(region=region, columns=(0, 2))
 
         assert trails == (0, 3, 3, 5)
 
-         # The trails are column 3 and above, so extract 4 -> 6
+        # The trails are column 3 and above, so extract 4 -> 6
 
-        trails = frame.serial_trails_of_region(
-            region=region, columns=(1, 3)
-        )
+        trails = frame.serial_trails_of_region(region=region, columns=(1, 3))
 
         assert trails == (0, 3, 4, 6)
 
     def test__bottom_right__extracts_region_to_right_of_region(self):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+        frame = ac.frame.manual(array=np.ones((3, 3)), corner=(1, 1))
 
         region = ac.Region(
             region=(0, 3, 3, 6)
         )  # The trails are column 3 and above, so extract 3 -> 4
 
-        trails = frame.serial_trails_of_region(
-            region=region, columns=(0, 1)
-        )
+        trails = frame.serial_trails_of_region(region=region, columns=(0, 1))
 
         assert trails == (0, 3, 2, 3)
 
-         # The trails are column 3 and above, so extract 3 -> 5
+        # The trails are column 3 and above, so extract 3 -> 5
 
-        trails = frame.serial_trails_of_region(
-            region=region, columns=(0, 2)
-        )
+        trails = frame.serial_trails_of_region(region=region, columns=(0, 2))
 
         assert trails == (0, 3, 1, 3)
 
-         # The trails are column 3 and above, so extract 4 -> 6
+        # The trails are column 3 and above, so extract 4 -> 6
 
-        trails = frame.serial_trails_of_region(
-            region=region, columns=(1, 3)
-        )
+        trails = frame.serial_trails_of_region(region=region, columns=(1, 3))
 
         assert trails == (0, 3, 0, 2)
 
 
 class TestSerialEntireRowsOfRegion:
+    def test__top_left__full_region_from_left_most_prescan_to_right_most_end_of_trails(
+        self
+    ):
 
-    def test__top_left__full_region_from_left_most_prescan_to_right_most_end_of_trails(self):
-
-        frame = ac.frame.manual(array=np.ones((8,55)), corner=(0, 0))
+        frame = ac.frame.manual(array=np.ones((8, 55)), corner=(0, 0))
         region = ac.Region(region=(3, 5, 5, 30))
 
-        serial_region = frame.serial_entire_rows_of_region(
-            region=region,
-        )
+        serial_region = frame.serial_entire_rows_of_region(region=region)
 
         assert serial_region == (3, 5, 0, 55)
 
-    def test__top_right__full_region_from_left_most_prescan_to_right_most_end_of_trails(self):
+    def test__top_right__full_region_from_left_most_prescan_to_right_most_end_of_trails(
+        self
+    ):
 
-        frame = ac.frame.manual(array=np.ones((8,55)), corner=(0, 1))
+        frame = ac.frame.manual(array=np.ones((8, 55)), corner=(0, 1))
         region = ac.Region(region=(3, 5, 5, 30))
 
-        serial_region = frame.serial_entire_rows_of_region(
-            region=region, 
-        )
+        serial_region = frame.serial_entire_rows_of_region(region=region)
 
         assert serial_region == (3, 5, 0, 55)
 
@@ -1148,21 +1060,17 @@ class TestSerialEntireRowsOfRegion:
         self
     ):
 
-        frame = ac.frame.manual(array=np.ones((5,5)), corner=(1, 0))
+        frame = ac.frame.manual(array=np.ones((5, 5)), corner=(1, 0))
         region = ac.Region(region=(1, 3, 0, 5))
 
-        serial_region = frame.serial_entire_rows_of_region(
-            region=region,
-        )
+        serial_region = frame.serial_entire_rows_of_region(region=region)
 
         assert serial_region == (1, 3, 0, 5)
 
-        frame = ac.frame.manual(array=np.ones((5,25)), corner=(1, 0))
+        frame = ac.frame.manual(array=np.ones((5, 25)), corner=(1, 0))
         region = ac.Region(region=(1, 3, 0, 5))
 
-        serial_region = frame.serial_entire_rows_of_region(
-            region=region,
-        )
+        serial_region = frame.serial_entire_rows_of_region(region=region)
 
         assert serial_region == (1, 3, 0, 25)
 
@@ -1170,29 +1078,23 @@ class TestSerialEntireRowsOfRegion:
         self
     ):
 
-        frame = ac.frame.manual(array=np.ones((5,5)), corner=(1, 1))
+        frame = ac.frame.manual(array=np.ones((5, 5)), corner=(1, 1))
         region = ac.Region(region=(1, 3, 0, 5))
 
-        serial_region = frame.serial_entire_rows_of_region(
-            region=region, 
-        )
+        serial_region = frame.serial_entire_rows_of_region(region=region)
 
         assert serial_region == (1, 3, 0, 5)
 
-        frame = ac.frame.manual(array=np.ones((5,25)), corner=(1, 1))
+        frame = ac.frame.manual(array=np.ones((5, 25)), corner=(1, 1))
         region = ac.Region(region=(1, 3, 20, 25))
 
-        serial_region = frame.serial_entire_rows_of_region(
-            region=region, 
-        )
+        serial_region = frame.serial_entire_rows_of_region(region=region)
 
         assert serial_region == (1, 3, 0, 25)
 
         region = ac.Region(region=(1, 3, 10, 20))
 
-        serial_region = frame.serial_entire_rows_of_region(
-            region=region,
-        )
+        serial_region = frame.serial_entire_rows_of_region(region=region)
 
         assert serial_region == (1, 3, 0, 25)
 

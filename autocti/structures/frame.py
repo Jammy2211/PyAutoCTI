@@ -223,9 +223,7 @@ class AbstractFrame(arrays.AbstractArray):
             y_max = y_coord + rows[1]
         return Region((y_min, y_max, region.x0, region.x1))
 
-    def parallel_side_nearest_read_out_region(
-        self, region, columns=(0, 1)
-    ):
+    def parallel_side_nearest_read_out_region(self, region, columns=(0, 1)):
         x_min, x_max = self.x_limits(region, columns)
         return Region((0, self.shape_2d[0], x_min, x_max))
 
@@ -262,6 +260,7 @@ class AbstractFrame(arrays.AbstractArray):
             x_min = x_coord - columns[1]
             x_max = x_coord - columns[0]
         return x_min, x_max
+
 
 class Frame(AbstractFrame):
     @classmethod
@@ -344,7 +343,7 @@ class Frame(AbstractFrame):
         if type(pixel_scales) is float:
             pixel_scales = (pixel_scales, pixel_scales)
 
-        array=array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
+        array = array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
 
         mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
 
