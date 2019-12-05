@@ -1987,7 +1987,9 @@ class TestSerialFrontEdgeArrays:
             ]
         )
 
-        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(
+            array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern
+        )
 
         front_edges = frame.serial_front_edge_arrays(columns=(0, 3))
 
@@ -2068,7 +2070,9 @@ class TestSerialFrontEdgeArrays:
 
         #                        /| FE 1                       /| FE 2
 
-        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(
+            array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern
+        )
 
         stacked_front_edges = frame.serial_front_edge_stacked_array(columns=(0, 3))
 
@@ -2105,7 +2109,9 @@ class TestSerialFrontEdgeArrays:
 
         #                        /| FE 1                       /| FE 2
 
-        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(
+            array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern
+        )
 
         stacked_front_edges = frame.serial_front_edge_stacked_array(columns=(0, 3))
 
@@ -2339,7 +2345,9 @@ class TestSerialTrailsArrays:
             ]
         )
 
-        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(
+            array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern
+        )
 
         trails = frame.serial_trails_arrays(columns=(0, 3))
 
@@ -2456,7 +2464,9 @@ class TestSerialTrailsArrays:
 
         #                                               /| Trails1                   /\ Trails2
 
-        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(
+            array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern
+        )
 
         # [[4.0, 5.0, 6.0],
         #  [4.0, 5.0, 6.0],
@@ -2529,7 +2539,9 @@ class TestSerialTrailsArrays:
 
         #                                               /| Trails1                   /\ Trails2
 
-        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(
+            array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern
+        )
 
         stacked_trails = frame.serial_trails_stacked_array(columns=(0, 3))
 
