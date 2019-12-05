@@ -212,16 +212,16 @@ class AbstractFrame(arrays.AbstractArray):
 
         return Region((y_min, y_max, region.x0, region.x1))
 
-    def parallel_trails_region(self, ci_region, rows=(0, 1)):
+    def parallel_trails_of_region(self, region, rows=(0, 1)):
         if self.corner[0] == 0:
-            y_coord = ci_region.y1
-            y_min = y_coord + rows[0]
-            y_max = y_coord + rows[1]
-        else:
-            y_coord = ci_region.y0
+            y_coord = region.y0
             y_min = y_coord - rows[1]
             y_max = y_coord - rows[0]
-        return Region((y_min, y_max, ci_region.x0, ci_region.x1))
+        else:
+            y_coord = region.y1
+            y_min = y_coord + rows[0]
+            y_max = y_coord + rows[1]
+        return Region((y_min, y_max, region.x0, region.x1))
 
     def x_limits(self, region, columns):
         if self.corner[1] == 0:
@@ -264,13 +264,6 @@ class AbstractFrame(arrays.AbstractArray):
             x_min = 0
             x_max = image_shape[1]
         return Region((ci_region.y0, ci_region.y1, x_min, x_max))
-
-    def parallel_trail_size_to_image_edge(self, ci_pattern, shape):
-
-        if self.corner[0] == 0:
-            return shape[0] - np.max([region.y1 for region in ci_pattern.regions])
-        else:
-            return np.min([region.y0 for region in ci_pattern.regions])
 
     @property
     def serial_trails_columns(self):
