@@ -78,19 +78,19 @@ class CIImagingFit(aa_fit.ImagingFit):
 
     @property
     def chi_squared_map_of_parallel_trails(self):
-        return self.ci_data_masked.chinj.parallel_non_ci_regions_frame(
+        return self.ci_data_masked.chinj.non_ci_regions_frame(
             array=self.chi_squared_map.copy()
         )
 
     @property
     def chi_squared_map_of_serial_trails(self):
-        return self.ci_data_masked.chinj.serial_all_trails_frame_from_frame(
+        return self.ci_data_masked.chinj.serial_trails_frame(
             array=self.chi_squared_map.copy()
         )
 
     @property
     def chi_squared_map_of_serial_overscan_above_trails(self):
-        return self.ci_data_masked.chinj.serial_overscan_above_trails_frame_from_frame(
+        return self.ci_data_masked.chinj.serial_overscan_above_trails_frame(
             array=self.chi_squared_map.copy()
         )
 
