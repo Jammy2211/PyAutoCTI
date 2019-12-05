@@ -1200,7 +1200,7 @@ class CIFrame(AbstractCIFrame):
 
     @property
     def parallel_serial_calibration_section(self):
-        return self[0 : self.shape_2d[0], self.serial_prescan.x0 : self.shape_2d[1]]
+        return self[0 : self.shape_2d[0], 0 : self.shape_2d[1]]
 
     @property
     def smallest_parallel_trails_rows_to_frame_edge(self):
