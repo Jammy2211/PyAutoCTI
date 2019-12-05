@@ -141,7 +141,8 @@ class CIFrame(AbstractCIFrame):
             pixel_scales=pixel_scales,
         )
 
-    def ci_regions_from_array(self, array):
+    @property
+    def ci_regions_array(self):
         """Extract an arrays of all of the charge-injection regions from a charge injection ci_frame.
 
         The diagram below illustrates the arrays that is extracted from a ci_frame:
@@ -189,10 +190,10 @@ class CIFrame(AbstractCIFrame):
 
         """
 
-        new_array = np.zeros(shape=array.shape)
+        new_array = np.zeros(shape=self.shape_2d)
 
         for region in self.ci_pattern.regions:
-            new_array[region.slice] += array[region.slice]
+            new_array[region.slice] += self[region.slice]
 
         return new_array
 
