@@ -72,7 +72,7 @@ class CIImagingFit(aa_fit.ImagingFit):
 
     @property
     def chi_squared_map_of_ci_regions(self):
-        return self.ci_data_masked.chinj.ci_regions_from_array(
+        return self.ci_data_masked.chinj.ci_regions_array(
             array=self.chi_squared_map.copy()
         )
 
