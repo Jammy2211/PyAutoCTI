@@ -407,7 +407,7 @@ class CIFrame(AbstractCIFrame):
                <---------S----------
         """
         calibration_region = self.parallel_side_nearest_read_out_region(
-            self.ci_pattern.regions[0], self.shape_2d, columns
+            region=self.ci_pattern.regions[0], columns=columns
         )
         array = self[calibration_region.slice]
         return array
