@@ -2154,7 +2154,7 @@ class TestSerialFrontEdgeArrays:
 
 
 class TestSerialTrailsArrays:
-    def test__bottom___extracts_1_trails_correctly(self):
+    def test__bottom___1_region__extracts_multiple_trails_correctly(self):
         ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
         arr = np.array(
@@ -2180,19 +2180,6 @@ class TestSerialTrailsArrays:
         trails = frame.serial_trails_arrays(columns=(2, 3))
 
         assert (trails == np.array([[6.0], [6.0], [6.0]])).all()
-
-    def test__bottom___extracts_multiple_trails_correctly(self):
-        ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
-
-        arr = np.array(
-            [
-                [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
-                [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
-                [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
-            ]
-        )
-
-        #                                   /| Trails Begin
 
         frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
 
@@ -2352,13 +2339,10 @@ class TestSerialTrailsArrays:
             ]
         )
 
-        frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
 
         trails = frame.serial_trails_arrays(columns=(0, 3))
 
-        assert (
-            trails[0] == np.array([[4.0, 5.0, 6.0], [4.0, 5.0, 6.0], [4.0, 5.0, 6.0]])
-        ).all()
         assert (
             trails[0].mask
             == np.array(
@@ -2366,10 +2350,6 @@ class TestSerialTrailsArrays:
             )
         ).all()
 
-        assert (
-            trails[1]
-            == np.array([[8.0, 9.0, 10.0], [8.0, 9.0, 10.0], [8.0, 9.0, 10.0]])
-        ).all()
         assert (
             trails[1].mask
             == np.array(
@@ -2476,7 +2456,7 @@ class TestSerialTrailsArrays:
 
         #                                               /| Trails1                   /\ Trails2
 
-        frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
 
         # [[4.0, 5.0, 6.0],
         #  [4.0, 5.0, 6.0],
@@ -2549,7 +2529,7 @@ class TestSerialTrailsArrays:
 
         #                                               /| Trails1                   /\ Trails2
 
-        frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
 
         stacked_trails = frame.serial_trails_stacked_array(columns=(0, 3))
 
@@ -2576,16 +2556,16 @@ class TestSerialTrailsArrays:
 
         #                                      /| Trails1           /\ Trails2
 
-        ci_frame = ac.FrameGeometry(
+        ci_frame = ac.ci_frame.manual(
+            array=arr,
+            ci_pattern=ci_pattern,
             serial_overscan=ac.Region((0, 1, 0, 4)),
             serial_prescan=ac.Region((0, 1, 0, 1)),
             parallel_overscan=ac.Region((0, 1, 0, 1)),
             corner=(0, 0),
         )
 
-        frame = ac.ci_frame.manual(frame_geometry=ci_frame, ci_pattern=ci_pattern)
-
-        trails = frame.serial_trails_arrays(arr)
+        trails = ci_frame.serial_trails_arrays()
 
         assert (
             trails[0]
@@ -2601,7 +2581,7 @@ class TestSerialTrailsArrays:
             )
         ).all()
 
-        stacked_trails = frame.serial_trails_stacked_array(arr)
+        stacked_trails = ci_frame.serial_trails_stacked_array()
 
         assert (
             stacked_trails
@@ -2610,7 +2590,7 @@ class TestSerialTrailsArrays:
             )
         ).all()
 
-        trails_line = frame.serial_trails_line_binned_over_rows(arr)
+        trails_line = ci_frame.serial_trails_line_binned_over_rows()
 
         assert (trails_line == np.array([5.5, 6.5, 7.5, 8.5])).all()
 
