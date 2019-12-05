@@ -1,9 +1,10 @@
 import numpy as np
 import pytest
 
+import autoarray as aa
 import autocti as ac
 
-from test import (
+from test_autocti.mock.mock import (
     MockGeometry,
     MockPattern,
     MockCIFrame,
@@ -56,294 +57,268 @@ def make_ci_datas_hyper_fit(ci_data_masked):
 
 
 class TestCIFit:
-    class TestFits:
-        def test__residual_map_same_as_calculated_individually(self, ci_data_masked):
-            residual_map = autoarray.fit.fit_util.residual_map_from_data_mask_and_model_data(
-                data=ci_data_masked.image,
-                mask=ci_data_masked.mask,
-                model_data=ci_data_masked.ci_pre_cti,
-            )
 
-            fit = ac.CIImagingFit(
-                ci_masked_imaging=ci_data_masked,
-                cti_params=MockParams(),
-                cti_settings=MockSettings(),
-            )
+    def test__fit_quantities_same_as_calculated_individually(self, ci_data_masked):
 
-            assert (fit.residual_map == residual_map).all()
+        fit = ac.CIImagingFit(
+            ci_masked_imaging=ci_data_masked,
+            cti_params=MockParams(),
+            cti_settings=MockSettings(),
+        )
 
-        def test__chi_squared_map_same_as_calculated_individually(self, ci_data_masked):
-            residual_map = autoarray.fit.fit_util.residual_map_from_data_mask_and_model_data(
-                data=ci_data_masked.image,
-                mask=ci_data_masked.mask,
-                model_data=ci_data_masked.ci_pre_cti,
-            )
+        residual_map = aa.util.fit.residual_map_from_data_mask_and_model_data(
+            data=ci_data_masked.image,
+            mask=ci_data_masked.mask,
+            model_data=ci_data_masked.ci_pre_cti,
+        )
 
-            chi_sqaured_map = autoarray.fit.fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
-                residual_map=residual_map,
-                noise_map=ci_data_masked.noise_map,
-                mask=ci_data_masked.mask,
-            )
+        assert (fit.residual_map == residual_map).all()
 
-            fit = ac.CIImagingFit(
-                ci_masked_imaging=ci_data_masked,
-                cti_params=MockParams(),
-                cti_settings=MockSettings(),
-            )
+        chi_squared_map = aa.util.fit.chi_squared_map_from_residual_map_noise_map_and_mask(
+            residual_map=residual_map,
+            noise_map=ci_data_masked.noise_map,
+            mask=ci_data_masked.mask,
+        )
 
-            assert (fit.chi_squared_map == chi_sqaured_map).all()
+        assert (fit.chi_squared_map == chi_squared_map).all()
 
-        def test__likelihood_same_as_calculated_individually(self, ci_data_masked):
-            residual_map = autoarray.fit.fit_util.residual_map_from_data_mask_and_model_data(
-                data=ci_data_masked.image,
-                mask=ci_data_masked.mask,
-                model_data=ci_data_masked.ci_pre_cti,
-            )
+        chi_squared = aa.util.fit.chi_squared_from_chi_squared_map_and_mask(
+            chi_squared_map=chi_squared_map, mask=ci_data_masked.mask
+        )
 
-            chi_squared_map = autoarray.fit.fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
-                residual_map=residual_map,
-                noise_map=ci_data_masked.noise_map,
-                mask=ci_data_masked.mask,
-            )
+        noise_normalization = aa.util.fit.noise_normalization_from_noise_map_and_mask(
+            noise_map=ci_data_masked.noise_map, mask=ci_data_masked.mask
+        )
 
-            chi_squared = autoarray.fit.fit_util.chi_squared_from_chi_squared_map_and_mask(
-                chi_squared_map=chi_squared_map, mask=ci_data_masked.mask
-            )
+        likelihood = aa.util.fit.likelihood_from_chi_squared_and_noise_normalization(
+            chi_squared=chi_squared, noise_normalization=noise_normalization
+        )
 
-            noise_normalization = autoarray.fit.fit_util.noise_normalization_from_noise_map_and_mask(
-                noise_map=ci_data_masked.noise_map, mask=ci_data_masked.mask
-            )
+        fit = ac.CIImagingFit(
+            ci_masked_imaging=ci_data_masked,
+            cti_params=MockParams(),
+            cti_settings=MockSettings(),
+        )
 
-            likelihood = autoarray.fit.fit_util.likelihood_from_chi_squared_and_noise_normalization(
-                chi_squared=chi_squared, noise_normalization=noise_normalization
-            )
+        assert fit.likelihood == likelihood
+        assert fit.figure_of_merit == fit.likelihood
 
-            fit = ac.CIImagingFit(
-                ci_masked_imaging=ci_data_masked,
-                cti_params=MockParams(),
-                cti_settings=MockSettings(),
-            )
+    def test__image_and_ci_post_cti_the_same__noise_scaling_all_0s__likelihood_is_noise_normalization(
+        self
+    ):
+        ci_image = 10.0 * np.ones((2, 2))
+        ci_noise_map = 2.0 * np.ones((2, 2))
+        ci_mask = np.ma.zeros((2, 2))
+        ci_pre_cti = 10.0 * np.ones((2, 2))
+        ci_noise_scalings = [np.array([[0.0, 0.0], [0.0, 0.0]])]
 
-            assert fit.likelihood == likelihood
-            assert fit.figure_of_merit == fit.likelihood
+        ci_data_hyper_fit = ac.CIMaskedImaging(
+            ci_frame=MockCIFrame(value=10.0),
+            ci_pattern=MockPattern(),
+            image=ci_image,
+            noise_map=ci_noise_map,
+            ci_pre_cti=ci_pre_cti,
+            mask=ci_mask,
+            noise_scaling_maps=ci_noise_scalings,
+        )
 
-    class TestHyperFits:
-        def test__image_and_ci_post_cti_the_same__noise_scaling_alls__likelihood_is_noise_normalization(
-            self
-        ):
-            ci_image = 10.0 * np.ones((2, 2))
-            ci_noise_map = 2.0 * np.ones((2, 2))
-            ci_mask = np.ma.zeros((2, 2))
-            ci_pre_cti = 10.0 * np.ones((2, 2))
-            ci_noise_scalings = [np.array([[0.0, 0.0], [0.0, 0.0]])]
+        hyper_noise_scalar = ac.CIHyperNoiseScalar(scale_factor=1.0)
 
-            ci_data_hyper_fit = ac.CIMaskedImaging(
-                ci_frame=MockCIFrame(value=10.0),
-                ci_pattern=MockPattern(),
-                image=ci_image,
-                noise_map=ci_noise_map,
-                ci_pre_cti=ci_pre_cti,
-                mask=ci_mask,
-                noise_scaling_maps=ci_noise_scalings,
-            )
+        fit = ac.CIImagingFit(
+            ci_masked_imaging=ci_data_hyper_fit,
+            cti_params=MockParams(),
+            cti_settings=MockSettings(),
+            hyper_noise_scalars=[hyper_noise_scalar],
+        )
 
-            hyper_noise_scalar = ac.CIHyperNoiseScalar(scale_factor=1.0)
+        chi_squared = 0
+        noise_normalization = 4.0 * np.log(2 * np.pi * 4.0)
 
-            fit = ac.CIImagingFit(
-                ci_masked_imaging=ci_data_hyper_fit,
-                cti_params=MockParams(),
-                cti_settings=MockSettings(),
-                hyper_noise_scalars=[hyper_noise_scalar],
-            )
+        assert fit.likelihood == -0.5 * (chi_squared + noise_normalization)
 
-            chi_squared = 0
-            noise_normalization = 4.0 * np.log(2 * np.pi * 4.0)
+    def test__image_and_post_cti_different__noise_scaling_all_0s__likelihood_chi_squared_and_noise_normalization(
+        self
+    ):
+        ci_image = 9.0 * np.ones((2, 2))
+        ci_noise_map = 2.0 * np.ones((2, 2))
+        ci_mask = np.ma.zeros((2, 2))
+        ci_pre_cti = 10.0 * np.ones((2, 2))
+        ci_noise_scalings = [np.array([[0.0, 0.0], [0.0, 0.0]])]
 
-            assert fit.likelihood == -0.5 * (chi_squared + noise_normalization)
+        ci_data_hyper_fit = ac.CIMaskedImaging(
+            ci_frame=MockCIFrame(value=10.0),
+            ci_pattern=MockPattern(),
+            image=ci_image,
+            noise_map=ci_noise_map,
+            ci_pre_cti=ci_pre_cti,
+            mask=ci_mask,
+            noise_scaling_maps=ci_noise_scalings,
+        )
 
-        def test__image_and_post_cti_different__noise_scaling_alls__likelihood_chi_squared_and_noise_normalization(
-            self
-        ):
-            ci_image = 9.0 * np.ones((2, 2))
-            ci_noise_map = 2.0 * np.ones((2, 2))
-            ci_mask = np.ma.zeros((2, 2))
-            ci_pre_cti = 10.0 * np.ones((2, 2))
-            ci_noise_scalings = [np.array([[0.0, 0.0], [0.0, 0.0]])]
+        hyper_noise_scalar = ac.CIHyperNoiseScalar(scale_factor=1.0)
 
-            ci_data_hyper_fit = ac.CIMaskedImaging(
-                ci_frame=MockCIFrame(value=10.0),
-                ci_pattern=MockPattern(),
-                image=ci_image,
-                noise_map=ci_noise_map,
-                ci_pre_cti=ci_pre_cti,
-                mask=ci_mask,
-                noise_scaling_maps=ci_noise_scalings,
-            )
+        fit = ac.CIImagingFit(
+            ci_masked_imaging=ci_data_hyper_fit,
+            cti_params=MockParams(),
+            cti_settings=MockSettings(),
+            hyper_noise_scalars=[hyper_noise_scalar],
+        )
 
-            hyper_noise_scalar = ac.CIHyperNoiseScalar(scale_factor=1.0)
+        chi_squared = 4.0 * ((1.0 / 2.0) ** 2.0)
+        noise_normalization = 4.0 * np.log(2 * np.pi * 4.0)
 
-            fit = ac.CIImagingFit(
-                ci_masked_imaging=ci_data_hyper_fit,
-                cti_params=MockParams(),
-                cti_settings=MockSettings(),
-                hyper_noise_scalars=[hyper_noise_scalar],
-            )
+        assert fit.likelihood == pytest.approx(
+            -0.5 * (chi_squared + noise_normalization), 1e-4
+        )
 
-            chi_squared = 4.0 * ((1.0 / 2.0) ** 2.0)
-            noise_normalization = 4.0 * np.log(2 * np.pi * 4.0)
+    def test__image_and_ci_post_cti_the_same__noise_scaling_non_0s__likelihood_is_noise_normalization(
+        self
+    ):
+        ci_image = 10.0 * np.ones((2, 2))
+        ci_noise_map = 2.0 * np.ones((2, 2))
+        ci_mask = np.ma.zeros((2, 2))
+        ci_pre_cti = MockCIPreCTI(
+            frame_geometry=MockGeometry(),
+            ci_pattern=MockPattern(),
+            array=10.0 * np.ones((2, 2)),
+            value=10.0,
+        )
 
-            assert fit.likelihood == pytest.approx(
-                -0.5 * (chi_squared + noise_normalization), 1e-4
-            )
+        ci_noise_scalings = [
+            np.array([[1.0, 2.0], [3.0, 4.0]]),
+            np.array([[5.0, 6.0], [7.0, 8.0]]),
+        ]
 
-        def test__image_and_ci_post_cti_the_same__noise_scaling_nons__likelihood_is_noise_normalization(
-            self
-        ):
-            ci_image = 10.0 * np.ones((2, 2))
-            ci_noise_map = 2.0 * np.ones((2, 2))
-            ci_mask = np.ma.zeros((2, 2))
-            ci_pre_cti = MockCIPreCTI(
-                frame_geometry=MockGeometry(),
-                ci_pattern=MockPattern(),
-                array=10.0 * np.ones((2, 2)),
-                value=10.0,
-            )
+        ci_data_hyper_fit = ac.CIMaskedImaging(
+            ci_frame=MockCIFrame(value=10.0),
+            ci_pattern=MockPattern(),
+            image=ci_image,
+            noise_map=ci_noise_map,
+            ci_pre_cti=ci_pre_cti,
+            mask=ci_mask,
+            noise_scaling_maps=ci_noise_scalings,
+        )
 
-            ci_noise_scalings = [
-                np.array([[1.0, 2.0], [3.0, 4.0]]),
-                np.array([[5.0, 6.0], [7.0, 8.0]]),
-            ]
+        hyper_noise_scalar = ac.CIHyperNoiseScalar(scale_factor=1.0)
 
-            ci_data_hyper_fit = ac.CIMaskedImaging(
-                ci_frame=MockCIFrame(value=10.0),
-                ci_pattern=MockPattern(),
-                image=ci_image,
-                noise_map=ci_noise_map,
-                ci_pre_cti=ci_pre_cti,
-                mask=ci_mask,
-                noise_scaling_maps=ci_noise_scalings,
-            )
+        fit = ac.CIImagingFit(
+            ci_masked_imaging=ci_data_hyper_fit,
+            cti_params=MockParams(),
+            cti_settings=MockSettings(),
+            hyper_noise_scalars=[hyper_noise_scalar],
+        )
 
-            hyper_noise_scalar = ac.CIHyperNoiseScalar(scale_factor=1.0)
+        chi_squared = 0
+        noise_normalization = (
+            np.log(2 * np.pi * (2.0 + 1.0) ** 2.0)
+            + np.log(2 * np.pi * (2.0 + 2.0) ** 2.0)
+            + np.log(2 * np.pi * (2.0 + 3.0) ** 2.0)
+            + np.log(2 * np.pi * (2.0 + 4.0) ** 2.0)
+        )
 
-            fit = ac.CIImagingFit(
-                ci_masked_imaging=ci_data_hyper_fit,
-                cti_params=MockParams(),
-                cti_settings=MockSettings(),
-                hyper_noise_scalars=[hyper_noise_scalar],
-            )
+        assert fit.likelihood == -0.5 * (chi_squared + noise_normalization)
 
-            chi_squared = 0
-            noise_normalization = (
-                np.log(2 * np.pi * (2.0 + 1.0) ** 2.0)
-                + np.log(2 * np.pi * (2.0 + 2.0) ** 2.0)
-                + np.log(2 * np.pi * (2.0 + 3.0) ** 2.0)
-                + np.log(2 * np.pi * (2.0 + 4.0) ** 2.0)
-            )
+    def test__x2_noise_map_scaling_and_hyper_params__noise_map_term_comes_out_correct(
+        self
+    ):
+        ci_image = 10.0 * np.ones((2, 2))
+        ci_noise_map = 3.0 * np.ones((2, 2))
+        ci_mask = np.ma.zeros((2, 2))
+        ci_pre_cti = MockCIPreCTI(
+            frame_geometry=MockGeometry(),
+            ci_pattern=MockPattern(),
+            array=10.0 * np.ones((2, 2)),
+            value=10.0,
+        )
 
-            assert fit.likelihood == -0.5 * (chi_squared + noise_normalization)
+        ci_noise_scalings = [
+            np.array([[1.0, 2.0], [3.0, 4.0]]),
+            np.array([[5.0, 6.0], [7.0, 8.0]]),
+        ]
 
-        def test__x2_noise_map_scaling_and_hyper_params__noise_map_term_comes_out_correct(
-            self
-        ):
-            ci_image = 10.0 * np.ones((2, 2))
-            ci_noise_map = 3.0 * np.ones((2, 2))
-            ci_mask = np.ma.zeros((2, 2))
-            ci_pre_cti = MockCIPreCTI(
-                frame_geometry=MockGeometry(),
-                ci_pattern=MockPattern(),
-                array=10.0 * np.ones((2, 2)),
-                value=10.0,
-            )
+        ci_data_hyper_fit = ac.CIMaskedImaging(
+            ci_frame=MockCIFrame(value=10.0),
+            ci_pattern=MockPattern(),
+            image=ci_image,
+            noise_map=ci_noise_map,
+            ci_pre_cti=ci_pre_cti,
+            mask=ci_mask,
+            noise_scaling_maps=ci_noise_scalings,
+        )
 
-            ci_noise_scalings = [
-                np.array([[1.0, 2.0], [3.0, 4.0]]),
-                np.array([[5.0, 6.0], [7.0, 8.0]]),
-            ]
+        hyper_noise_scalar_0 = ac.CIHyperNoiseScalar(scale_factor=1.0)
+        hyper_noise_scalar_1 = ac.CIHyperNoiseScalar(scale_factor=2.0)
 
-            ci_data_hyper_fit = ac.CIMaskedImaging(
-                ci_frame=MockCIFrame(value=10.0),
-                ci_pattern=MockPattern(),
-                image=ci_image,
-                noise_map=ci_noise_map,
-                ci_pre_cti=ci_pre_cti,
-                mask=ci_mask,
-                noise_scaling_maps=ci_noise_scalings,
-            )
+        fit = ac.CIImagingFit(
+            ci_masked_imaging=ci_data_hyper_fit,
+            cti_params=MockParams(),
+            cti_settings=MockSettings(),
+            hyper_noise_scalars=[hyper_noise_scalar_0, hyper_noise_scalar_1],
+        )
 
-            hyper_noise_scalar_0 = ac.CIHyperNoiseScalar(scale_factor=1.0)
-            hyper_noise_scalar_1 = ac.CIHyperNoiseScalar(scale_factor=2.0)
+        chi_squared = 0
+        noise_normalization = (
+            np.log(2 * np.pi * (3.0 + 1.0 + 10.0) ** 2.0)
+            + np.log(2 * np.pi * (3.0 + 2.0 + 12.0) ** 2.0)
+            + np.log(2 * np.pi * (3.0 + 3.0 + 14.0) ** 2.0)
+            + np.log(2 * np.pi * (3.0 + 4.0 + 16.0) ** 2.0)
+        )
 
-            fit = ac.CIImagingFit(
-                ci_masked_imaging=ci_data_hyper_fit,
-                cti_params=MockParams(),
-                cti_settings=MockSettings(),
-                hyper_noise_scalars=[hyper_noise_scalar_0, hyper_noise_scalar_1],
-            )
+        assert fit.likelihood == -0.5 * (chi_squared + noise_normalization)
 
-            chi_squared = 0
-            noise_normalization = (
-                np.log(2 * np.pi * (3.0 + 1.0 + 10.0) ** 2.0)
-                + np.log(2 * np.pi * (3.0 + 2.0 + 12.0) ** 2.0)
-                + np.log(2 * np.pi * (3.0 + 3.0 + 14.0) ** 2.0)
-                + np.log(2 * np.pi * (3.0 + 4.0 + 16.0) ** 2.0)
-            )
+    def test__all_quantities_are_same_as_calculated_individually(
+        self, ci_data_hyper_fit
+    ):
+        hyper_noise_scalar_0 = ac.CIHyperNoiseScalar(scale_factor=1.0)
+        hyper_noise_scalar_1 = ac.CIHyperNoiseScalar(scale_factor=2.0)
 
-            assert fit.likelihood == -0.5 * (chi_squared + noise_normalization)
+        fit = ac.CIImagingFit(
+            ci_masked_imaging=ci_data_hyper_fit,
+            cti_params=MockParams(),
+            cti_settings=MockSettings(),
+            hyper_noise_scalars=[hyper_noise_scalar_0, hyper_noise_scalar_1],
+        )
 
-        def test__all_quantities_are_same_as_calculated_individually(
-            self, ci_data_hyper_fit
-        ):
-            hyper_noise_scalar_0 = ac.CIHyperNoiseScalar(scale_factor=1.0)
-            hyper_noise_scalar_1 = ac.CIHyperNoiseScalar(scale_factor=2.0)
+        hyper_noise_map = ac.hyper_noise_map_from_noise_map_and_noise_scalings(
+            noise_map=ci_data_hyper_fit.noise_map,
+            noise_scaling_maps=ci_data_hyper_fit.noise_scaling_maps,
+            hyper_noise_scalars=[hyper_noise_scalar_0, hyper_noise_scalar_1],
+        )
 
-            fit = ac.CIImagingFit(
-                ci_masked_imaging=ci_data_hyper_fit,
-                cti_params=MockParams(),
-                cti_settings=MockSettings(),
-                hyper_noise_scalars=[hyper_noise_scalar_0, hyper_noise_scalar_1],
-            )
+        assert (hyper_noise_map == fit.noise_map).all()
 
-            hyper_noise_map = ac.hyper_noise_map_from_noise_map_and_noise_scalings(
-                noise_map=ci_data_hyper_fit.noise_map,
-                noise_scaling_maps=ci_data_hyper_fit.noise_scaling_maps,
-                hyper_noise_scalars=[hyper_noise_scalar_0, hyper_noise_scalar_1],
-            )
+        residual_map = aa.util.fit.residual_map_from_data_mask_and_model_data(
+            data=ci_data_hyper_fit.image,
+            mask=ci_data_hyper_fit.mask,
+            model_data=ci_data_hyper_fit.ci_pre_cti,
+        )
 
-            assert (hyper_noise_map == fit.noise_map).all()
+        assert (residual_map == fit.residual_map).all()
 
-            residual_map = autoarray.fit.fit_util.residual_map_from_data_mask_and_model_data(
-                data=ci_data_hyper_fit.image,
-                mask=ci_data_hyper_fit.mask,
-                model_data=ci_data_hyper_fit.ci_pre_cti,
-            )
+        chi_squared_map = aa.util.fit.chi_squared_map_from_residual_map_noise_map_and_mask(
+            residual_map=residual_map,
+            noise_map=hyper_noise_map,
+            mask=ci_data_hyper_fit.mask,
+        )
 
-            assert (residual_map == fit.residual_map).all()
+        assert (chi_squared_map == fit.chi_squared_map).all()
 
-            chi_squared_map = autoarray.fit.fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
-                residual_map=residual_map,
-                noise_map=hyper_noise_map,
-                mask=ci_data_hyper_fit.mask,
-            )
+        chi_squared = aa.util.fit.chi_squared_from_chi_squared_map_and_mask(
+            chi_squared_map=chi_squared_map, mask=ci_data_hyper_fit.mask
+        )
 
-            assert (chi_squared_map == fit.chi_squared_map).all()
+        noise_normalization = aa.util.fit.noise_normalization_from_noise_map_and_mask(
+            noise_map=hyper_noise_map, mask=ci_data_hyper_fit.mask
+        )
 
-            chi_squared = autoarray.fit.fit_util.chi_squared_from_chi_squared_map_and_mask(
-                chi_squared_map=chi_squared_map, mask=ci_data_hyper_fit.mask
-            )
+        likelihood = aa.util.fit.likelihood_from_chi_squared_and_noise_normalization(
+            chi_squared=chi_squared, noise_normalization=noise_normalization
+        )
 
-            noise_normalization = autoarray.fit.fit_util.noise_normalization_from_noise_map_and_mask(
-                noise_map=hyper_noise_map, mask=ci_data_hyper_fit.mask
-            )
-
-            likelihood = autoarray.fit.fit_util.likelihood_from_chi_squared_and_noise_normalization(
-                chi_squared=chi_squared, noise_normalization=noise_normalization
-            )
-
-            assert (likelihood == fit.likelihood).all()
+        assert (likelihood == fit.likelihood).all()
 
 
-class TestScaledNoiseMap:
+class TestHyperNoiseMap:
     def test__image_and_pre_cti_not_identical__noise_scalings_ares__no_noise_map_scaling(
         self
     ):
