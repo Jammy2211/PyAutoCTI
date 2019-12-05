@@ -576,6 +576,7 @@ def check_parallel_front_edge_size(region, rows):
 
 
 def check_serial_front_edge_size(region, columns):
+
     if (
         columns[0] < 0
         or columns[1] < 1

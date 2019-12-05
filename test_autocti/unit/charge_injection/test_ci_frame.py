@@ -713,9 +713,7 @@ class TestSerialOverScanAboveTrailsFrame:
 
 
 class TestSerialCalibrationSection:
-    def test__left__ci_region_across_all_image__column_0__extracts_all_columns(
-        self
-    ):
+    def test__left__ci_region_across_all_image__column_0__extracts_all_columns(self):
 
         ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 0, 5)])
 
@@ -861,9 +859,7 @@ class TestSerialCalibrationSection:
 
 
 class TestSerialCalibrationArrays:
-    def test__left__different_ci_regions__extracts_all_columns(
-        self
-    ):
+    def test__left__different_ci_regions__extracts_all_columns(self):
         ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 0, 5)])
 
         arr = np.array(
@@ -1186,9 +1182,7 @@ class TestParallelFrontEdgeArrays:
         #  [6.0, 6.0, 6.0],
         #  [7.0, 7.0, 7.0]]
 
-        stacked_front_edges = frame.parallel_front_edge_stacked_array(
-            rows=(0, 3)
-        )
+        stacked_front_edges = frame.parallel_front_edge_stacked_array(rows=(0, 3))
 
         assert (
             stacked_front_edges
@@ -1295,7 +1289,9 @@ class TestParallelFrontEdgeArrays:
             ]
         )
 
-        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(
+            array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern
+        )
 
         front_edges = frame.parallel_front_edge_arrays(rows=(0, 3))
 
@@ -1365,7 +1361,9 @@ class TestParallelFrontEdgeArrays:
             ]
         )
 
-        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(
+            array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern
+        )
 
         # First fronrt edge arrays:
         #
@@ -1379,9 +1377,7 @@ class TestParallelFrontEdgeArrays:
         #  [6.0, 6.0, 6.0],
         #  [7.0, 7.0, 7.0]]
 
-        stacked_front_edges = frame.parallel_front_edge_stacked_array(
-            rows=(0, 3)
-        )
+        stacked_front_edges = frame.parallel_front_edge_stacked_array(rows=(0, 3))
 
         assert (
             stacked_front_edges
@@ -1423,7 +1419,9 @@ class TestParallelFrontEdgeArrays:
             ]
         )
 
-        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(
+            array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern
+        )
 
         # First fronrt edge arrays:
         #
@@ -1437,9 +1435,7 @@ class TestParallelFrontEdgeArrays:
         #  [6.0, 6.0, 6.0],
         #  [7.0, 7.0, 7.0]]
 
-        stacked_front_edges = frame.parallel_front_edge_stacked_array(
-            rows=(0, 3)
-        )
+        stacked_front_edges = frame.parallel_front_edge_stacked_array(rows=(0, 3))
 
         assert (
             stacked_front_edges.mask
@@ -1622,7 +1618,9 @@ class TestParallelTrailsArray:
             ]
         )
 
-        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(
+            array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern
+        )
 
         trails = frame.parallel_trails_arrays(rows=(0, 2))
         assert (
@@ -1676,9 +1674,7 @@ class TestParallelTrailsArray:
 
         assert (stacked_trails == np.array([[4.5, 4.5, 4.5], [5.5, 5.5, 5.5]])).all()
 
-        trails_line = frame.parallel_trails_line_binned_over_columns(
-            rows=(0, 2)
-        )
+        trails_line = frame.parallel_trails_line_binned_over_columns(rows=(0, 2))
 
         assert (trails_line == np.array([4.5, 5.5])).all()
 
@@ -1734,7 +1730,9 @@ class TestParallelTrailsArray:
             ]
         )
 
-        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(
+            array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern
+        )
 
         # [3.0, 3.0, 3.0],
         #  [4.0, 4.0, 4.0]]
@@ -1752,9 +1750,7 @@ class TestParallelTrailsArray:
             == np.array([[False, False, False], [False, False, False]])
         ).all()
 
-        trails_line = frame.parallel_trails_line_binned_over_columns(
-            rows=(0, 2)
-        )
+        trails_line = frame.parallel_trails_line_binned_over_columns(rows=(0, 2))
 
         assert (trails_line == np.array([16.5 / 3.0, 15.0 / 3.0])).all()
 
@@ -1781,7 +1777,9 @@ class TestParallelTrailsArray:
             ]
         )
 
-        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(
+            array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern
+        )
 
         stacked_trails = frame.parallel_trails_stacked_array(rows=(0, 2))
 
@@ -1834,8 +1832,8 @@ class TestParallelTrailsArray:
         assert (trails_line == np.array([6.0, 7.0])).all()
 
 
-class TestSerialFrontEdgeFromFrame:
-    def test__bottom___extracts_1_front_edge_correctly(self):
+class TestSerialFrontEdgeArrays:
+    def test__bottom___1_region__extracts_multiple_front_edges_correctly(self):
         ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
         arr = np.array(
@@ -1862,18 +1860,7 @@ class TestSerialFrontEdgeFromFrame:
 
         assert (front_edge == np.array([[3.0], [3.0], [3.0]])).all()
 
-    def test__bottom___extracts_multiple_front_edges_correctly(self):
         ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 5)])
-
-        arr = np.array(
-            [
-                [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
-                [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
-                [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
-            ]
-        )
-
-        #                    /| Front Edge
 
         frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
 
@@ -2000,14 +1987,10 @@ class TestSerialFrontEdgeFromFrame:
             ]
         )
 
-        frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
 
         front_edges = frame.serial_front_edge_arrays(columns=(0, 3))
 
-        assert (
-            front_edges[0]
-            == np.array([[1.0, 2.0, 3.0], [1.0, 2.0, 3.0], [1.0, 2.0, 3.0]])
-        ).all()
         assert (
             (front_edges[0].mask)
             == np.array(
@@ -2015,10 +1998,6 @@ class TestSerialFrontEdgeFromFrame:
             )
         ).all()
 
-        assert (
-            front_edges[1]
-            == np.array([[5.0, 6.0, 7.0], [5.0, 6.0, 7.0], [5.0, 6.0, 7.0]])
-        ).all()
         assert (
             front_edges[1].mask
             == np.array(
@@ -2089,11 +2068,9 @@ class TestSerialFrontEdgeFromFrame:
 
         #                        /| FE 1                       /| FE 2
 
-        frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
 
-        stacked_front_edges = frame.serial_front_edge_stacked_array(
-            columns=(0, 3)
-        )
+        stacked_front_edges = frame.serial_front_edge_stacked_array(columns=(0, 3))
 
         # [[1.0, 2.0, 3.0],
         #  [1.0, 2.0, 3.0],
@@ -2114,9 +2091,7 @@ class TestSerialFrontEdgeFromFrame:
             )
         ).all()
 
-        front_edge_line = frame.serial_front_edge_line_binned_over_rows(
-            columns=(0, 3)
-        )
+        front_edge_line = frame.serial_front_edge_line_binned_over_rows(columns=(0, 3))
 
         assert (front_edge_line == np.array([3.0, 10.0 / 3.0, 5.0])).all()
 
@@ -2130,11 +2105,9 @@ class TestSerialFrontEdgeFromFrame:
 
         #                        /| FE 1                       /| FE 2
 
-        frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
 
-        stacked_front_edges = frame.serial_front_edge_stacked_array(
-            columns=(0, 3)
-        )
+        stacked_front_edges = frame.serial_front_edge_stacked_array(columns=(0, 3))
 
         assert (
             stacked_front_edges.mask
@@ -2163,24 +2136,24 @@ class TestSerialFrontEdgeFromFrame:
 
         frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
 
-        front_edges = frame.serial_front_edge_arrays(arr)
+        front_edges = frame.serial_front_edge_arrays()
 
         assert (front_edges[0] == np.array([[1.0, 2.0], [1.0, 2.0], [1.0, 2.0]])).all()
 
         assert (front_edges[1] == np.array([[5.0, 6.0], [5.0, 6.0], [5.0, 6.0]])).all()
 
-        stacked_front_edges = frame.serial_front_edge_stacked_array(arr)
+        stacked_front_edges = frame.serial_front_edge_stacked_array()
 
         assert (
             stacked_front_edges == np.array([[3.0, 4.0], [3.0, 4.0], [3.0, 4.0]])
         ).all()
 
-        front_edge_line = frame.serial_front_edge_line_binned_over_rows(arr)
+        front_edge_line = frame.serial_front_edge_line_binned_over_rows()
 
         assert (front_edge_line == np.array([3.0, 4.0])).all()
 
 
-class TestSerialTrailsFromFrame:
+class TestSerialTrailsArrays:
     def test__bottom___extracts_1_trails_correctly(self):
         ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
@@ -2526,9 +2499,7 @@ class TestSerialTrailsFromFrame:
             )
         ).all()
 
-        trails_line = frame.serial_trails_line_binned_over_rows(
-            columns=(0, 3)
-        )
+        trails_line = frame.serial_trails_line_binned_over_rows(columns=(0, 3))
 
         assert (trails_line == np.array([20.0 / 3.0, 19.0 / 3.0, 26.0 / 3.0])).all()
 
