@@ -420,8 +420,7 @@ class TestChInj(object):
             )
 
             frame = ac.CIFrame(
-                frame_geometry=ac.FrameGeometry.bottom_right(),
-                ci_pattern=pattern,
+                frame_geometry=ac.FrameGeometry.bottom_right(), ci_pattern=pattern
             )
 
             extracted_side = frame.parallel_calibration_section_for_columns(
@@ -907,8 +906,7 @@ class TestChInj(object):
             )
 
             frame = ac.CIFrame(
-                frame_geometry=ac.FrameGeometry.bottom_right(),
-                ci_pattern=pattern,
+                frame_geometry=ac.FrameGeometry.bottom_right(), ci_pattern=pattern
             )
 
             serial_frame = frame.serial_calibration_section_for_rows(image, rows=(0, 1))
@@ -958,8 +956,7 @@ class TestChInj(object):
             )
 
             frame = ac.CIFrame(
-                frame_geometry=ac.FrameGeometry.bottom_right(),
-                ci_pattern=pattern,
+                frame_geometry=ac.FrameGeometry.bottom_right(), ci_pattern=pattern
             )
 
             serial_frame = frame.serial_calibration_section_for_rows(image, rows=(0, 1))
@@ -986,8 +983,7 @@ class TestChInj(object):
             )
 
             frame = ac.CIFrame(
-                frame_geometry=ac.FrameGeometry.bottom_right(),
-                ci_pattern=pattern,
+                frame_geometry=ac.FrameGeometry.bottom_right(), ci_pattern=pattern
             )
 
             serial_frame = frame.serial_calibration_section_for_rows(image, rows=(1, 2))
@@ -1102,8 +1098,7 @@ class TestChInj(object):
             )
 
             frame = ac.CIFrame(
-                frame_geometry=ac.FrameGeometry.bottom_right(),
-                ci_pattern=pattern,
+                frame_geometry=ac.FrameGeometry.bottom_right(), ci_pattern=pattern
             )
 
             serial_region = frame.serial_calibration_sub_arrays_from_frame(array=image)
@@ -2259,8 +2254,7 @@ class TestChInj(object):
             #                               /| FE 1            /\ FE 2
 
             frame = ac.CIFrame(
-                frame_geometry=ac.FrameGeometry.bottom_right(),
-                ci_pattern=pattern,
+                frame_geometry=ac.FrameGeometry.bottom_right(), ci_pattern=pattern
             )
 
             front_edges = frame.serial_front_edge_arrays_from_frame(
@@ -2737,8 +2731,7 @@ class TestChInj(object):
             #               Trails1   /|                Trails2 /\
 
             frame = ac.CIFrame(
-                frame_geometry=ac.FrameGeometry.bottom_right(),
-                ci_pattern=pattern,
+                frame_geometry=ac.FrameGeometry.bottom_right(), ci_pattern=pattern
             )
 
             trails = frame.serial_trails_arrays_from_frame(image, columns=(0, 1))
@@ -3263,833 +3256,708 @@ class TestChInj(object):
             assert ci_geometry.serial_trails_columns == 50
 
 
-class TestQuadGeometryEuclid_bottom_left(object):
-    class TestParallelFrontEdgeRegion:
-        def test__extract_one_row__takes_coordinates_from_top_of_region(self):
-            ci_geometry = ac.FrameGeometry.bottom_left()
+class TestParallelTrailsRegion:
+    def test__bottom_left__extract_one_row__takes_coordinates_after_bottom_of_region(self):
 
-            ci_region = ac.Region(
-                region=(0, 3, 0, 3)
-            )  # Front edge is row 0, so for 1 row we extract 0 -> 1
+        ci_geometry = ac.FrameGeometry.bottom_left()
 
-            ci_front_edge = ci_geometry.parallel_front_edge_region(
-                ci_region=ci_region, rows=(0, 1)
-            )
+        ci_region = ac.Region(
+            region=(0, 3, 0, 3)
+        )  # The trails are row 3 and above, so extract 3 -> 4
 
-            assert ci_front_edge == (0, 1, 0, 3)
+        ci_trails = ci_geometry.parallel_trails_region(
+            ci_region=ci_region, rows=(0, 1)
+        )
 
-        def test__extract_two_rows__first_and_second__takes_coordinates_from_top_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.bottom_left()
+        assert ci_trails == (3, 4, 0, 3)
 
-            ci_region = ac.Region(
-                region=(0, 3, 0, 3)
-            )  # Front edge is row 0, so for 2 rows we extract 0 -> 2
+    def test__bottom_left__extract_two_rows__first_and_second__takes_coordinates_after_bottom_of_region(
+        self
+    ):
+        ci_geometry = ac.FrameGeometry.bottom_left()
 
-            ci_front_edge = ci_geometry.parallel_front_edge_region(
-                ci_region=ci_region, rows=(0, 2)
-            )
+        ci_region = ac.Region(
+            (0, 3, 0, 3)
+        )  # The trails are row 3 and above, so extract 3 -> 5
 
-            assert ci_front_edge == (0, 2, 0, 3)
+        ci_trails = ci_geometry.parallel_trails_region(
+            ci_region=ci_region, rows=(0, 2)
+        )
 
-        def test__extract_two_rows__second_and_third__takes_coordinates_from_top_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.bottom_left()
+        assert ci_trails == (3, 5, 0, 3)
 
-            ci_region = ac.Region(
-                region=(0, 3, 0, 3)
-            )  # Front edge is row 0, so for these 2 rows we extract 1 ->2
+    def test__bottom_left__extract_two_rows__second_and_third__takes_coordinates_after_bottom_of_region(
+        self
+    ):
+        ci_geometry = ac.FrameGeometry.bottom_left()
 
-            ci_front_edge = ci_geometry.parallel_front_edge_region(
-                ci_region=ci_region, rows=(1, 3)
-            )
+        ci_region = ac.Region(
+            (0, 3, 0, 3)
+        )  # The trails are row 3 and above, so extract 4 -> 6
 
-            assert ci_front_edge == (1, 3, 0, 3)
+        ci_trails = ci_geometry.parallel_trails_region(
+            ci_region=ci_region, rows=(1, 3)
+        )
 
-    class TestParallelTrailsRegion:
-        def test__extract_one_row__takes_coordinates_after_bottom_of_region(self):
+        assert ci_trails == (4, 6, 0, 3)
 
-            ci_geometry = ac.FrameGeometry.bottom_left()
+    def test__bottom_left__parallel_trail_size_to_image_edge(self):
 
-            ci_region = ac.Region(
-                region=(0, 3, 0, 3)
-            )  # The trails are row 3 and above, so extract 3 -> 4
+        ci_geometry = ac.FrameGeometry.bottom_left()
 
-            ci_trails = ci_geometry.parallel_trails_region(
-                ci_region=ci_region, rows=(0, 1)
-            )
+        pattern = ac.CIPatternUniform(
+            normalization=1.0, regions=[ac.Region(region=(0, 3, 0, 3))]
+        )
 
-            assert ci_trails == (3, 4, 0, 3)
+        parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
+            ci_pattern=pattern, shape=(5, 100)
+        )
 
-        def test__extract_two_rows__first_and_second__takes_coordinates_after_bottom_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.bottom_left()
+        assert parallel_trail_size == 2
 
-            ci_region = ac.Region(
-                (0, 3, 0, 3)
-            )  # The trails are row 3 and above, so extract 3 -> 5
+        parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
+            ci_pattern=pattern, shape=(7, 100)
+        )
 
-            ci_trails = ci_geometry.parallel_trails_region(
-                ci_region=ci_region, rows=(0, 2)
-            )
+        assert parallel_trail_size == 4
 
-            assert ci_trails == (3, 5, 0, 3)
+        pattern = ac.CIPatternUniform(
+            normalization=1.0,
+            regions=[
+                ac.Region(region=(0, 2, 0, 3)),
+                ac.Region(region=(5, 8, 0, 3)),
+                ac.Region(region=(11, 14, 0, 3)),
+            ],
+        )
 
-        def test__extract_two_rows__second_and_third__takes_coordinates_after_bottom_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.bottom_left()
+        parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
+            ci_pattern=pattern, shape=(15, 100)
+        )
 
-            ci_region = ac.Region(
-                (0, 3, 0, 3)
-            )  # The trails are row 3 and above, so extract 4 -> 6
+        assert parallel_trail_size == 1
 
-            ci_trails = ci_geometry.parallel_trails_region(
-                ci_region=ci_region, rows=(1, 3)
-            )
+        parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
+            ci_pattern=pattern, shape=(20, 100)
+        )
 
-            assert ci_trails == (4, 6, 0, 3)
+        assert parallel_trail_size == 6
 
-        def test__parallel_trail_size_to_image_edge(self):
+class TestParallelSideNearestReadOut:
+    def test__bottom_left__columns_0_to_1__region_is_left_hand_side(self):
+        ci_geometry = ac.FrameGeometry.bottom_left()
+        ci_region = ac.Region(region=(1, 3, 0, 5))
 
-            ci_geometry = ac.FrameGeometry.bottom_left()
+        ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
+            ci_region=ci_region, image_shape=(5, 5), columns=(0, 1)
+        )
 
-            pattern = ac.CIPatternUniform(
-                normalization=1.0, regions=[ac.Region(region=(0, 3, 0, 3))]
-            )
+        assert ci_parallel_region == (0, 5, 0, 1)
 
-            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
-                ci_pattern=pattern, shape=(5, 100)
-            )
+    def test__bottom_left__columns_1_to_3__region_is_left_hand_side(self):
+        ci_geometry = ac.FrameGeometry.bottom_left()
+        ci_region = ac.Region(region=(1, 3, 0, 5))
 
-            assert parallel_trail_size == 2
+        ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
+            ci_region=ci_region, image_shape=(4, 4), columns=(1, 3)
+        )
 
-            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
-                ci_pattern=pattern, shape=(7, 100)
-            )
+        assert ci_parallel_region == (0, 4, 1, 3)
 
-            assert parallel_trail_size == 4
+    def test__bottom_left__columns_1_to_3__different_region(self):
+        ci_geometry = ac.FrameGeometry.bottom_left()
+        ci_region = ac.Region(region=(1, 3, 2, 5))
 
-            pattern = ac.CIPatternUniform(
-                normalization=1.0,
-                regions=[
-                    ac.Region(region=(0, 2, 0, 3)),
-                    ac.Region(region=(5, 8, 0, 3)),
-                    ac.Region(region=(11, 14, 0, 3)),
-                ],
-            )
+        ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
+            ci_region=ci_region, image_shape=(4, 4), columns=(1, 3)
+        )
 
-            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
-                ci_pattern=pattern, shape=(15, 100)
-            )
+        assert ci_parallel_region == (0, 4, 3, 5)
 
-            assert parallel_trail_size == 1
+    def test__bottom_left__columns_0_to_1__asymetric_image(self):
+        ci_geometry = ac.FrameGeometry.bottom_left()
+        ci_region = ac.Region(region=(1, 3, 0, 5))
 
-            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
-                ci_pattern=pattern, shape=(20, 100)
-            )
+        ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
+            ci_region=ci_region, image_shape=(2, 5), columns=(0, 1)
+        )
 
-            assert parallel_trail_size == 6
+        assert ci_parallel_region == (0, 2, 0, 1)
 
-    class TestParallelSideNearestReadOut:
-        def test__columns_0_to_1__region_is_left_hand_side(self):
-            ci_geometry = ac.FrameGeometry.bottom_left()
-            ci_region = ac.Region(region=(1, 3, 0, 5))
+class TestSerialFrontEdgeRegion:
+    def test__bottom_left__extract_one_column__takes_coordinates_from_left_of_region(self):
+        ci_geometry = ac.FrameGeometry.bottom_left()
 
-            ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
-                ci_region=ci_region, image_shape=(5, 5), columns=(0, 1)
-            )
+        ci_region = ac.Region(
+            region=(0, 3, 0, 3)
+        )  # Front edge is column 0, so for 1 column we extract 0 -> 1
 
-            assert ci_parallel_region == (0, 5, 0, 1)
+        ci_front_edge = ci_geometry.serial_front_edge_region(
+            ci_region=ci_region, columns=(0, 1)
+        )
 
-        def test__columns_1_to_3__region_is_left_hand_side(self):
-            ci_geometry = ac.FrameGeometry.bottom_left()
-            ci_region = ac.Region(region=(1, 3, 0, 5))
+        assert ci_front_edge == (0, 3, 0, 1)
 
-            ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
-                ci_region=ci_region, image_shape=(4, 4), columns=(1, 3)
-            )
+    def test__bottom_left__extract_two_columns__first_and_second__takes_coordinates_from_left_of_region(
+        self
+    ):
+        ci_geometry = ac.FrameGeometry.bottom_left()
 
-            assert ci_parallel_region == (0, 4, 1, 3)
+        ci_region = ac.Region(
+            region=(0, 3, 0, 3)
+        )  # Front edge is column 0, so for 2 columns we extract 0 -> 2
 
-        def test__columns_1_to_3__different_region(self):
-            ci_geometry = ac.FrameGeometry.bottom_left()
-            ci_region = ac.Region(region=(1, 3, 2, 5))
+        ci_front_edge = ci_geometry.serial_front_edge_region(
+            ci_region=ci_region, columns=(0, 2)
+        )
 
-            ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
-                ci_region=ci_region, image_shape=(4, 4), columns=(1, 3)
-            )
+        assert ci_front_edge == (0, 3, 0, 2)
 
-            assert ci_parallel_region == (0, 4, 3, 5)
+    def test__bottom_left__extract_two_columns__second_and_third__takes_coordinates_from_left_of_region(
+        self
+    ):
+        ci_geometry = ac.FrameGeometry.bottom_left()
 
-        def test__columns_0_to_1__asymetric_image(self):
-            ci_geometry = ac.FrameGeometry.bottom_left()
-            ci_region = ac.Region(region=(1, 3, 0, 5))
+        ci_region = ac.Region(
+            region=(0, 3, 0, 3)
+        )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
 
-            ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
-                ci_region=ci_region, image_shape=(2, 5), columns=(0, 1)
-            )
+        ci_front_edge = ci_geometry.serial_front_edge_region(
+            ci_region=ci_region, columns=(1, 3)
+        )
 
-            assert ci_parallel_region == (0, 2, 0, 1)
+        assert ci_front_edge == (0, 3, 1, 3)
 
-    class TestSerialFrontEdgeRegion:
-        def test__extract_one_column__takes_coordinates_from_left_of_region(self):
-            ci_geometry = ac.FrameGeometry.bottom_left()
+class TestSerialTrailsRegion:
+    def test__bottom_left__extract_one_row__takes_coordinates_after_right_of_region(self):
+        ci_geometry = ac.FrameGeometry.bottom_left()
 
-            ci_region = ac.Region(
-                region=(0, 3, 0, 3)
-            )  # Front edge is column 0, so for 1 column we extract 0 -> 1
+        ci_region = ac.Region(
+            region=(0, 3, 0, 3)
+        )  # The trails are column 3 and above, so extract 3 -> 4
 
-            ci_front_edge = ci_geometry.serial_front_edge_region(
-                ci_region=ci_region, columns=(0, 1)
-            )
+        ci_trails = ci_geometry.serial_trails_region(
+            ci_region=ci_region, columns=(0, 1)
+        )
 
-            assert ci_front_edge == (0, 3, 0, 1)
+        assert ci_trails == (0, 3, 3, 4)
 
-        def test__extract_two_columns__first_and_second__takes_coordinates_from_left_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.bottom_left()
+    def test__bottom_left__extract_two_columns__first_and_second__takes_coordinates_after_right_of_region(
+        self
+    ):
+        ci_geometry = ac.FrameGeometry.bottom_left()
 
-            ci_region = ac.Region(
-                region=(0, 3, 0, 3)
-            )  # Front edge is column 0, so for 2 columns we extract 0 -> 2
+        ci_region = ac.Region(
+            (0, 3, 0, 3)
+        )  # The trails are column 3 and above, so extract 3 -> 5
 
-            ci_front_edge = ci_geometry.serial_front_edge_region(
-                ci_region=ci_region, columns=(0, 2)
-            )
+        ci_trails = ci_geometry.serial_trails_region(
+            ci_region=ci_region, columns=(0, 2)
+        )
 
-            assert ci_front_edge == (0, 3, 0, 2)
+        assert ci_trails == (0, 3, 3, 5)
 
-        def test__extract_two_columns__second_and_third__takes_coordinates_from_left_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.bottom_left()
+    def test__bottom_left__extract_two_columns__second_and_third__takes_coordinates_after_right_of_region(
+        self
+    ):
+        ci_geometry = ac.FrameGeometry.bottom_left()
 
-            ci_region = ac.Region(
-                region=(0, 3, 0, 3)
-            )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
+        ci_region = ac.Region(
+            (0, 3, 0, 3)
+        )  # The trails are column 3 and above, so extract 4 -> 6
 
-            ci_front_edge = ci_geometry.serial_front_edge_region(
-                ci_region=ci_region, columns=(1, 3)
-            )
+        ci_trails = ci_geometry.serial_trails_region(
+            ci_region=ci_region, columns=(1, 3)
+        )
 
-            assert ci_front_edge == (0, 3, 1, 3)
+        assert ci_trails == (0, 3, 4, 6)
 
-    class TestSerialTrailsRegion:
-        def test__extract_one_row__takes_coordinates_after_right_of_region(self):
-            ci_geometry = ac.FrameGeometry.bottom_left()
+class TestSerialChargeInjectionAndTrails:
+    def test__bottom_left__column_0_of_front_edge__region_is_left_hand_side__no_overscan_beyond_ci_region(
+        self
+    ):
 
-            ci_region = ac.Region(
-                region=(0, 3, 0, 3)
-            )  # The trails are column 3 and above, so extract 3 -> 4
+        ci_geometry = ac.FrameGeometry.bottom_left()
+        ci_region = ac.Region(region=(1, 3, 0, 5))
 
-            ci_trails = ci_geometry.serial_trails_region(
-                ci_region=ci_region, columns=(0, 1)
-            )
+        ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
+            ci_region=ci_region, image_shape=(5, 5)
+        )
 
-            assert ci_trails == (0, 3, 3, 4)
+        assert ci_serial_region == (1, 3, 0, 5)
 
-        def test__extract_two_columns__first_and_second__takes_coordinates_after_right_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.bottom_left()
+    def test__bottom_left__column_0_of_front_edge__region_is_left_hand_side__overscan_beyond_ci_region(
+        self
+    ):
 
-            ci_region = ac.Region(
-                (0, 3, 0, 3)
-            )  # The trails are column 3 and above, so extract 3 -> 5
+        ci_geometry = ac.FrameGeometry.bottom_left()
+        ci_region = ac.Region(region=(1, 3, 0, 5))
 
-            ci_trails = ci_geometry.serial_trails_region(
-                ci_region=ci_region, columns=(0, 2)
-            )
+        ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
+            ci_region=ci_region, image_shape=(5, 25)
+        )
 
-            assert ci_trails == (0, 3, 3, 5)
+        assert ci_serial_region == (1, 3, 0, 25)
 
-        def test__extract_two_columns__second_and_third__takes_coordinates_after_right_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.bottom_left()
 
-            ci_region = ac.Region(
-                (0, 3, 0, 3)
-            )  # The trails are column 3 and above, so extract 4 -> 6
+class TestParallelTrailsRegion:
+    def test__bottom_right__extract_two_rows__second_and_third__takes_coordinates_after_bottom_of_region(
+        self
+    ):
+        ci_geometry = ac.FrameGeometry.bottom_right()
 
-            ci_trails = ci_geometry.serial_trails_region(
-                ci_region=ci_region, columns=(1, 3)
-            )
+        ci_region = ac.Region(
+            (0, 3, 0, 3)
+        )  # The trails are row 3 and above, so extract 4 -> 6
 
-            assert ci_trails == (0, 3, 4, 6)
+        ci_trails = ci_geometry.parallel_trails_region(
+            ci_region=ci_region, rows=(1, 3)
+        )
 
-    class TestSerialChargeInjectionAndTrails:
-        def test__column_0_of_front_edge__region_is_left_hand_side__no_overscan_beyond_ci_region(
-            self
-        ):
+        assert ci_trails == (4, 6, 0, 3)
 
-            ci_geometry = ac.FrameGeometry.bottom_left()
-            ci_region = ac.Region(region=(1, 3, 0, 5))
+    def test__bottom_right__parallel_trail_size_to_image_edge(self):
 
-            ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
-                ci_region=ci_region, image_shape=(5, 5)
-            )
+        ci_geometry = ac.FrameGeometry.bottom_right()
 
-            assert ci_serial_region == (1, 3, 0, 5)
+        pattern = ac.CIPatternUniform(
+            normalization=1.0, regions=[ac.Region(region=(0, 3, 0, 3))]
+        )
 
-        def test__column_0_of_front_edge__region_is_left_hand_side__overscan_beyond_ci_region(
-            self
-        ):
+        parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
+            ci_pattern=pattern, shape=(5, 100)
+        )
 
-            ci_geometry = ac.FrameGeometry.bottom_left()
-            ci_region = ac.Region(region=(1, 3, 0, 5))
+        assert parallel_trail_size == 2
 
-            ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
-                ci_region=ci_region, image_shape=(5, 25)
-            )
+        parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
+            ci_pattern=pattern, shape=(7, 100)
+        )
 
-            assert ci_serial_region == (1, 3, 0, 25)
+        assert parallel_trail_size == 4
 
+        pattern = ac.CIPatternUniform(
+            normalization=1.0,
+            regions=[
+                ac.Region(region=(0, 2, 0, 3)),
+                ac.Region(region=(5, 8, 0, 3)),
+                ac.Region(region=(11, 14, 0, 3)),
+            ],
+        )
 
-class TestQuadGeometryEuclid_bottom_right(object):
-    class TestParallelFrontEdgeOfRegion:
-        def test__extract_two_rows__second_and_third__takes_coordinates_from_top_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.bottom_right()
+        parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
+            ci_pattern=pattern, shape=(15, 100)
+        )
 
-            ci_region = ac.Region(
-                region=(0, 3, 0, 3)
-            )  # Front edge is row 0, so for these 2 rows we extract 1 ->2
+        assert parallel_trail_size == 1
 
-            ci_front_edge = ci_geometry.parallel_front_edge_region(
-                ci_region=ci_region, rows=(1, 3)
-            )
+        parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
+            ci_pattern=pattern, shape=(20, 100)
+        )
 
-            assert ci_front_edge == (1, 3, 0, 3)
+        assert parallel_trail_size == 6
 
-    class TestParallelTrailsRegion:
-        def test__extract_two_rows__second_and_third__takes_coordinates_after_bottom_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.bottom_right()
+class TestParallelSideNearestReadOut:
+    def test__bottom_right__columns_0_to_1__region_is_right_hand_side(self):
+        ci_geometry = ac.FrameGeometry.bottom_right()
+        ci_region = ac.Region(region=(1, 3, 0, 5))
 
-            ci_region = ac.Region(
-                (0, 3, 0, 3)
-            )  # The trails are row 3 and above, so extract 4 -> 6
+        ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
+            ci_region=ci_region, image_shape=(5, 5), columns=(0, 1)
+        )
 
-            ci_trails = ci_geometry.parallel_trails_region(
-                ci_region=ci_region, rows=(1, 3)
-            )
+        assert ci_parallel_region == (0, 5, 4, 5)
 
-            assert ci_trails == (4, 6, 0, 3)
+    def test__bottom_right__columns_1_to_3__region_is_right_hand_side(self):
+        ci_geometry = ac.FrameGeometry.bottom_right()
+        ci_region = ac.Region(region=(1, 3, 0, 4))
 
-        def test__parallel_trail_size_to_image_edge(self):
+        ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
+            ci_region=ci_region, image_shape=(4, 4), columns=(1, 3)
+        )
 
-            ci_geometry = ac.FrameGeometry.bottom_right()
+        assert ci_parallel_region == (0, 4, 1, 3)
 
-            pattern = ac.CIPatternUniform(
-                normalization=1.0, regions=[ac.Region(region=(0, 3, 0, 3))]
-            )
+    def test__bottom_right__columns_1_to_3__different_region(self):
+        ci_geometry = ac.FrameGeometry.bottom_right()
+        ci_region = ac.Region(region=(1, 3, 2, 4))
 
-            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
-                ci_pattern=pattern, shape=(5, 100)
-            )
+        ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
+            ci_region=ci_region, image_shape=(4, 4), columns=(1, 3)
+        )
 
-            assert parallel_trail_size == 2
+        assert ci_parallel_region == (0, 4, 1, 3)
 
-            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
-                ci_pattern=pattern, shape=(7, 100)
-            )
+    def test__bottom_right__columns_0_to_1__asymetric_image(self):
+        ci_geometry = ac.FrameGeometry.bottom_right()
+        ci_region = ac.Region(region=(0, 1, 0, 5))
+        ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
+            ci_region=ci_region, image_shape=(2, 5), columns=(0, 1)
+        )
 
-            assert parallel_trail_size == 4
+        assert ci_parallel_region == (0, 2, 4, 5)
 
-            pattern = ac.CIPatternUniform(
-                normalization=1.0,
-                regions=[
-                    ac.Region(region=(0, 2, 0, 3)),
-                    ac.Region(region=(5, 8, 0, 3)),
-                    ac.Region(region=(11, 14, 0, 3)),
-                ],
-            )
+class TestSerialFrontEdgeRegion:
+    def test__bottom_right__extract_one_column__takes_coordinates_from_right_of_region(self):
+        ci_geometry = ac.FrameGeometry.bottom_right()
 
-            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
-                ci_pattern=pattern, shape=(15, 100)
-            )
+        ci_region = ac.Region(
+            region=(0, 3, 0, 3)
+        )  # Front edge is column 0, so for 1 column we extract 0 -> 1
 
-            assert parallel_trail_size == 1
+        ci_front_edge = ci_geometry.serial_front_edge_region(
+            ci_region=ci_region, columns=(0, 1)
+        )
 
-            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
-                ci_pattern=pattern, shape=(20, 100)
-            )
+        assert ci_front_edge == (0, 3, 2, 3)
 
-            assert parallel_trail_size == 6
+    def test__bottom_right__extract_two_columns__first_and_second__takes_coordinates_from_right_of_region(
+        self
+    ):
+        ci_geometry = ac.FrameGeometry.bottom_right()
 
-    class TestParallelSideNearestReadOut:
-        def test__columns_0_to_1__region_is_right_hand_side(self):
-            ci_geometry = ac.FrameGeometry.bottom_right()
-            ci_region = ac.Region(region=(1, 3, 0, 5))
+        ci_region = ac.Region(
+            region=(0, 3, 0, 3)
+        )  # Front edge is column 0, so for 2 columns we extract 0 -> 2
 
-            ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
-                ci_region=ci_region, image_shape=(5, 5), columns=(0, 1)
-            )
+        ci_front_edge = ci_geometry.serial_front_edge_region(
+            ci_region=ci_region, columns=(0, 2)
+        )
 
-            assert ci_parallel_region == (0, 5, 4, 5)
+        assert ci_front_edge == (0, 3, 1, 3)
 
-        def test__columns_1_to_3__region_is_right_hand_side(self):
-            ci_geometry = ac.FrameGeometry.bottom_right()
-            ci_region = ac.Region(region=(1, 3, 0, 4))
+    def test__bottom_right__extract_two_columns__second_and_third__takes_coordinates_from_right_of_region(
+        self
+    ):
+        ci_geometry = ac.FrameGeometry.bottom_right()
 
-            ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
-                ci_region=ci_region, image_shape=(4, 4), columns=(1, 3)
-            )
+        ci_region = ac.Region(
+            region=(0, 3, 0, 3)
+        )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
 
-            assert ci_parallel_region == (0, 4, 1, 3)
+        ci_front_edge = ci_geometry.serial_front_edge_region(
+            ci_region=ci_region, columns=(1, 3)
+        )
 
-        def test__columns_1_to_3__different_region(self):
-            ci_geometry = ac.FrameGeometry.bottom_right()
-            ci_region = ac.Region(region=(1, 3, 2, 4))
+        assert ci_front_edge == (0, 3, 0, 2)
 
-            ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
-                ci_region=ci_region, image_shape=(4, 4), columns=(1, 3)
-            )
+class TestSerialTrailsRegion:
+    def test__bottom_right__extract_one_row__takes_coordinates_after_left_of_region(self):
+        ci_geometry = ac.FrameGeometry.bottom_right()
 
-            assert ci_parallel_region == (0, 4, 1, 3)
+        ci_region = ac.Region(
+            region=(0, 3, 3, 6)
+        )  # The trails are column 3 and above, so extract 3 -> 4
 
-        def test__columns_0_to_1__asymetric_image(self):
-            ci_geometry = ac.FrameGeometry.bottom_right()
-            ci_region = ac.Region(region=(0, 1, 0, 5))
-            ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
-                ci_region=ci_region, image_shape=(2, 5), columns=(0, 1)
-            )
+        ci_trails = ci_geometry.serial_trails_region(
+            ci_region=ci_region, columns=(0, 1)
+        )
 
-            assert ci_parallel_region == (0, 2, 4, 5)
+        assert ci_trails == (0, 3, 2, 3)
 
-    class TestSerialFrontEdgeRegion:
-        def test__extract_one_column__takes_coordinates_from_right_of_region(self):
-            ci_geometry = ac.FrameGeometry.bottom_right()
+    def test__bottom_right__extract_two_columns__first_and_second__takes_coordinates_after_left_of_region(
+        self
+    ):
+        ci_geometry = ac.FrameGeometry.bottom_right()
 
-            ci_region = ac.Region(
-                region=(0, 3, 0, 3)
-            )  # Front edge is column 0, so for 1 column we extract 0 -> 1
+        ci_region = ac.Region(
+            (0, 3, 3, 6)
+        )  # The trails are column 3 and above, so extract 3 -> 5
 
-            ci_front_edge = ci_geometry.serial_front_edge_region(
-                ci_region=ci_region, columns=(0, 1)
-            )
+        ci_trails = ci_geometry.serial_trails_region(
+            ci_region=ci_region, columns=(0, 2)
+        )
 
-            assert ci_front_edge == (0, 3, 2, 3)
+        assert ci_trails == (0, 3, 1, 3)
 
-        def test__extract_two_columns__first_and_second__takes_coordinates_from_right_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.bottom_right()
+    def test__bottom_right__extract_two_columns__second_and_third__takes_coordinates_after_left_of_region(
+        self
+    ):
+        ci_geometry = ac.FrameGeometry.bottom_right()
 
-            ci_region = ac.Region(
-                region=(0, 3, 0, 3)
-            )  # Front edge is column 0, so for 2 columns we extract 0 -> 2
+        ci_region = ac.Region(
+            (0, 3, 3, 6)
+        )  # The trails are column 3 and above, so extract 4 -> 6
 
-            ci_front_edge = ci_geometry.serial_front_edge_region(
-                ci_region=ci_region, columns=(0, 2)
-            )
+        ci_trails = ci_geometry.serial_trails_region(
+            ci_region=ci_region, columns=(1, 3)
+        )
 
-            assert ci_front_edge == (0, 3, 1, 3)
+        assert ci_trails == (0, 3, 0, 2)
 
-        def test__extract_two_columns__second_and_third__takes_coordinates_from_right_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.bottom_right()
+class TestSerialChargeInjectionAndTrails:
+    def test__bottom_right__front_edge__region_is_left_hand_side__no_overscan_beyond_ci_region(
+        self
+    ):
 
-            ci_region = ac.Region(
-                region=(0, 3, 0, 3)
-            )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
+        ci_geometry = ac.FrameGeometry.bottom_right()
+        ci_region = ac.Region(region=(1, 3, 0, 5))
 
-            ci_front_edge = ci_geometry.serial_front_edge_region(
-                ci_region=ci_region, columns=(1, 3)
-            )
+        ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
+            ci_region=ci_region, image_shape=(5, 5)
+        )
 
-            assert ci_front_edge == (0, 3, 0, 2)
+        assert ci_serial_region == (1, 3, 0, 5)
 
-    class TestSerialTrailsRegion:
-        def test__extract_one_row__takes_coordinates_after_left_of_region(self):
-            ci_geometry = ac.FrameGeometry.bottom_right()
+    def test__bottom_right__front_edge__region_is_left_hand_side__overscan_beyond_ci_region(self):
 
-            ci_region = ac.Region(
-                region=(0, 3, 3, 6)
-            )  # The trails are column 3 and above, so extract 3 -> 4
+        ci_geometry = ac.FrameGeometry.bottom_right()
+        ci_region = ac.Region(region=(1, 3, 20, 25))
 
-            ci_trails = ci_geometry.serial_trails_region(
-                ci_region=ci_region, columns=(0, 1)
-            )
+        ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
+            ci_region=ci_region, image_shape=(5, 25)
+        )
 
-            assert ci_trails == (0, 3, 2, 3)
+        assert ci_serial_region == (1, 3, 0, 25)
 
-        def test__extract_two_columns__first_and_second__takes_coordinates_after_left_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.bottom_right()
+    def test__bottom_right__ci_region_has_overscan_and_prescan_either_side__prescan_included(
+        self
+    ):
 
-            ci_region = ac.Region(
-                (0, 3, 3, 6)
-            )  # The trails are column 3 and above, so extract 3 -> 5
+        ci_geometry = ac.FrameGeometry.bottom_right()
+        ci_region = ac.Region(region=(1, 3, 10, 20))
 
-            ci_trails = ci_geometry.serial_trails_region(
-                ci_region=ci_region, columns=(0, 2)
-            )
+        ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
+            ci_region=ci_region, image_shape=(5, 25)
+        )
 
-            assert ci_trails == (0, 3, 1, 3)
+        assert ci_serial_region == (1, 3, 0, 25)
 
-        def test__extract_two_columns__second_and_third__takes_coordinates_after_left_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.bottom_right()
 
-            ci_region = ac.Region(
-                (0, 3, 3, 6)
-            )  # The trails are column 3 and above, so extract 4 -> 6
+class TestParallelTrailsRegion:
+    def test__top_left__extract_one_row__takes_coordinates_after_bottom_of_region(self):
+        ci_geometry = ac.FrameGeometry.top_left()
 
-            ci_trails = ci_geometry.serial_trails_region(
-                ci_region=ci_region, columns=(1, 3)
-            )
+        ci_region = ac.Region(
+            (3, 5, 0, 3)
+        )  # The trails are the rows after row 3, so for 1 edge we should extract just row 2
 
-            assert ci_trails == (0, 3, 0, 2)
+        ci_trails = ci_geometry.parallel_trails_region(
+            ci_region=ci_region, rows=(0, 1)
+        )
 
-    class TestSerialChargeInjectionAndTrails:
-        def test__front_edge__region_is_left_hand_side__no_overscan_beyond_ci_region(
-            self
-        ):
+        assert ci_trails == (2, 3, 0, 3)
 
-            ci_geometry = ac.FrameGeometry.bottom_right()
-            ci_region = ac.Region(region=(1, 3, 0, 5))
+    def test__top_left__extract_two_rows__first_and_second__takes_coordinates_after_bottom_of_region(
+        self
+    ):
+        ci_geometry = ac.FrameGeometry.top_left()
 
-            ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
-                ci_region=ci_region, image_shape=(5, 5)
-            )
+        ci_region = ac.Region(
+            (3, 5, 0, 3)
+        )  # The trails are the row after row 3, so for these 2 edges we extract rows 1->3
 
-            assert ci_serial_region == (1, 3, 0, 5)
+        ci_trails = ci_geometry.parallel_trails_region(
+            ci_region=ci_region, rows=(0, 2)
+        )
 
-        def test__front_edge__region_is_left_hand_side__overscan_beyond_ci_region(self):
+        assert ci_trails == (1, 3, 0, 3)
 
-            ci_geometry = ac.FrameGeometry.bottom_right()
-            ci_region = ac.Region(region=(1, 3, 20, 25))
+    def test__top_left__extract_two_rows__second_and_third__takes_coordinates_after_bottom_of_region(
+        self
+    ):
+        ci_geometry = ac.FrameGeometry.top_left()
 
-            ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
-                ci_region=ci_region, image_shape=(5, 25)
-            )
+        ci_region = ac.Region(
+            (3, 5, 0, 3)
+        )  # The trails are the row after row 3, so for these 2 edges we extract rows 0 & 2
 
-            assert ci_serial_region == (1, 3, 0, 25)
+        ci_trails = ci_geometry.parallel_trails_region(
+            ci_region=ci_region, rows=(1, 3)
+        )
 
-        def test__ci_region_has_overscan_and_prescan_either_side__prescan_included(
-            self
-        ):
+        assert ci_trails == (0, 2, 0, 3)
 
-            ci_geometry = ac.FrameGeometry.bottom_right()
-            ci_region = ac.Region(region=(1, 3, 10, 20))
+    def test__top_left__parallel_trail_size_to_image_edge(self):
 
-            ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
-                ci_region=ci_region, image_shape=(5, 25)
-            )
+        ci_geometry = ac.FrameGeometry.top_left()
 
-            assert ci_serial_region == (1, 3, 0, 25)
+        pattern = ac.CIPatternUniform(
+            normalization=1.0, regions=[ac.Region(region=(0, 3, 0, 3))]
+        )
 
+        parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
+            ci_pattern=pattern, shape=(5, 100)
+        )
 
-class TestQuadGeometryEuclid_top_left(object):
-    class TestParallelFrontEdgeOfRegion:
-        def test__extract_one_row__takes_coordinates_from_top_of_region(self):
-            ci_geometry = ac.FrameGeometry.top_left()
+        assert parallel_trail_size == 0
 
-            ci_region = ac.Region(
-                (0, 3, 0, 3)
-            )  # The front edge is closest to 3, so for 1 edge we extract row 3-> 4
+        parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
+            ci_pattern=pattern, shape=(7, 100)
+        )
 
-            ci_front_edge = ci_geometry.parallel_front_edge_region(
-                ci_region=ci_region, rows=(0, 1)
-            )
+        assert parallel_trail_size == 0
 
-            assert ci_front_edge == (2, 3, 0, 3)
+        pattern = ac.CIPatternUniform(
+            normalization=1.0,
+            regions=[
+                ac.Region(region=(5, 6, 0, 3)),
+                ac.Region(region=(11, 12, 0, 3)),
+                ac.Region(region=(17, 18, 0, 3)),
+            ],
+        )
 
-        def test__extract_two_rows__first_and_second__takes_coordinates_from_top_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.top_left()
+        parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
+            ci_pattern=pattern, shape=(20, 100)
+        )
 
-            ci_region = ac.Region(
-                (0, 3, 0, 3)
-            )  # The front edge is closest to 3, so for these 2 rows we extract 2 & 3
+        assert parallel_trail_size == 5
 
-            ci_front_edge = ci_geometry.parallel_front_edge_region(
-                ci_region=ci_region, rows=(0, 2)
-            )
+class TestParallelSideNearestReadOut:
+    def test__top_left__columns_0_to_1__asymetric_image(self):
+        ci_geometry = ac.FrameGeometry.bottom_left()
+        ci_region = ac.Region(region=(1, 3, 0, 5))
 
-            assert ci_front_edge == (1, 3, 0, 3)
+        ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
+            ci_region=ci_region, image_shape=(2, 5), columns=(0, 1)
+        )
 
-        def test__extract_two_rows__second_and_third__takes_coordinates_from_top_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.top_left()
+        assert ci_parallel_region == (0, 2, 0, 1)
 
-            ci_region = ac.Region(
-                (0, 3, 0, 3)
-            )  # The front edge is closest to 3, so for these 2 rows we extract 1 & 2
+class TestSerialFrontEdgeRegion:
+    def test__top_left__extract_two_columns__second_and_third__takes_coordinates_from_top_of_region(
+        self
+    ):
+        ci_geometry = ac.FrameGeometry.top_left()
 
-            ci_front_edge = ci_geometry.parallel_front_edge_region(
-                ci_region=ci_region, rows=(1, 3)
-            )
+        ci_region = ac.Region(
+            region=(0, 3, 0, 3)
+        )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
 
-            assert ci_front_edge == (0, 2, 0, 3)
+        ci_front_edge = ci_geometry.serial_front_edge_region(
+            ci_region=ci_region, columns=(1, 3)
+        )
 
-    class TestParallelTrailsRegion:
-        def test__extract_one_row__takes_coordinates_after_bottom_of_region(self):
-            ci_geometry = ac.FrameGeometry.top_left()
+        assert ci_front_edge == (0, 3, 1, 3)
 
-            ci_region = ac.Region(
-                (3, 5, 0, 3)
-            )  # The trails are the rows after row 3, so for 1 edge we should extract just row 2
+class TestSerialTrailsRegion:
+    def test__top_left__extract_two_columns__second_and_third__takes_coordinates_after_bottom_of_region(
+        self
+    ):
+        ci_geometry = ac.FrameGeometry.top_left()
 
-            ci_trails = ci_geometry.parallel_trails_region(
-                ci_region=ci_region, rows=(0, 1)
-            )
+        ci_region = ac.Region(
+            (0, 3, 0, 3)
+        )  # The trails are column 3 and above, so extract 4 -> 6
 
-            assert ci_trails == (2, 3, 0, 3)
+        ci_trails = ci_geometry.serial_trails_region(
+            ci_region=ci_region, columns=(1, 3)
+        )
 
-        def test__extract_two_rows__first_and_second__takes_coordinates_after_bottom_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.top_left()
+        assert ci_trails == (0, 3, 4, 6)
 
-            ci_region = ac.Region(
-                (3, 5, 0, 3)
-            )  # The trails are the row after row 3, so for these 2 edges we extract rows 1->3
+class TestSerialChargeInjectionAndTrails:
+    def test__top_left__different_ci_region(self):
 
-            ci_trails = ci_geometry.parallel_trails_region(
-                ci_region=ci_region, rows=(0, 2)
-            )
+        ci_geometry = ac.FrameGeometry.top_left()
+        ci_region = ac.Region(region=(3, 5, 5, 30))
 
-            assert ci_trails == (1, 3, 0, 3)
+        ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
+            ci_region=ci_region, image_shape=(8, 55)
+        )
 
-        def test__extract_two_rows__second_and_third__takes_coordinates_after_bottom_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.top_left()
+        assert ci_serial_region == (3, 5, 0, 55)
 
-            ci_region = ac.Region(
-                (3, 5, 0, 3)
-            )  # The trails are the row after row 3, so for these 2 edges we extract rows 0 & 2
+class TestParallelTrailsRegion:
+    def test__top_right__extract_two_rows__second_and_third__takes_coordinates_after_bottom_of_region(
+        self
+    ):
+        ci_geometry = ac.FrameGeometry.top_right()
 
-            ci_trails = ci_geometry.parallel_trails_region(
-                ci_region=ci_region, rows=(1, 3)
-            )
+        ci_region = ac.Region(
+            (3, 5, 0, 3)
+        )  # The trails are the row after row 3, so for these 2 edges we extract rows 0 & 2
 
-            assert ci_trails == (0, 2, 0, 3)
+        ci_trails = ci_geometry.parallel_trails_region(
+            ci_region=ci_region, rows=(1, 3)
+        )
 
-        def test__parallel_trail_size_to_image_edge(self):
+        assert ci_trails == (0, 2, 0, 3)
 
-            ci_geometry = ac.FrameGeometry.top_left()
+    def test__top_right__parallel_trail_size_to_image_edge(self):
 
-            pattern = ac.CIPatternUniform(
-                normalization=1.0, regions=[ac.Region(region=(0, 3, 0, 3))]
-            )
+        ci_geometry = ac.FrameGeometry.top_right()
 
-            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
-                ci_pattern=pattern, shape=(5, 100)
-            )
+        pattern = ac.CIPatternUniform(
+            normalization=1.0, regions=[ac.Region(region=(0, 3, 0, 3))]
+        )
 
-            assert parallel_trail_size == 0
+        parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
+            ci_pattern=pattern, shape=(5, 100)
+        )
 
-            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
-                ci_pattern=pattern, shape=(7, 100)
-            )
+        assert parallel_trail_size == 0
 
-            assert parallel_trail_size == 0
+        parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
+            ci_pattern=pattern, shape=(7, 100)
+        )
 
-            pattern = ac.CIPatternUniform(
-                normalization=1.0,
-                regions=[
-                    ac.Region(region=(5, 6, 0, 3)),
-                    ac.Region(region=(11, 12, 0, 3)),
-                    ac.Region(region=(17, 18, 0, 3)),
-                ],
-            )
+        assert parallel_trail_size == 0
 
-            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
-                ci_pattern=pattern, shape=(20, 100)
-            )
+        pattern = ac.CIPatternUniform(
+            normalization=1.0,
+            regions=[
+                ac.Region(region=(5, 6, 0, 3)),
+                ac.Region(region=(11, 12, 0, 3)),
+                ac.Region(region=(17, 18, 0, 3)),
+            ],
+        )
 
-            assert parallel_trail_size == 5
+        parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
+            ci_pattern=pattern, shape=(20, 100)
+        )
 
-    class TestParallelSideNearestReadOut:
-        def test__columns_0_to_1__asymetric_image(self):
-            ci_geometry = ac.FrameGeometry.bottom_left()
-            ci_region = ac.Region(region=(1, 3, 0, 5))
+        assert parallel_trail_size == 5
 
-            ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
-                ci_region=ci_region, image_shape=(2, 5), columns=(0, 1)
-            )
+class TestParallelSideNearestReadOut:
+    def test__top_right__columns_0_to_1__asymetric_image(self):
+        ci_geometry = ac.FrameGeometry.top_right()
+        ci_region = ac.Region(region=(0, 1, 0, 5))
+        ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
+            ci_region=ci_region, image_shape=(2, 5), columns=(0, 1)
+        )
 
-            assert ci_parallel_region == (0, 2, 0, 1)
+        assert ci_parallel_region == (0, 2, 4, 5)
 
-    class TestSerialFrontEdgeRegion:
-        def test__extract_two_columns__second_and_third__takes_coordinates_from_top_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.top_left()
+class TestSerialFrontEdgeRegion:
+    def test__top_right__extract_two_columns__second_and_third__takes_coordinates_from_right_of_region(
+        self
+    ):
+        ci_geometry = ac.FrameGeometry.bottom_right()
 
-            ci_region = ac.Region(
-                region=(0, 3, 0, 3)
-            )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
+        ci_region = ac.Region(
+            region=(0, 3, 0, 3)
+        )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
 
-            ci_front_edge = ci_geometry.serial_front_edge_region(
-                ci_region=ci_region, columns=(1, 3)
-            )
+        ci_front_edge = ci_geometry.serial_front_edge_region(
+            ci_region=ci_region, columns=(1, 3)
+        )
 
-            assert ci_front_edge == (0, 3, 1, 3)
+        assert ci_front_edge == (0, 3, 0, 2)
 
-    class TestSerialTrailsRegion:
-        def test__extract_two_columns__second_and_third__takes_coordinates_after_bottom_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.top_left()
+class TestSerialTrailsRegion:
+    def test__top_right__extract_two_columns__second_and_third__takes_coordinates_after_left_of_region(
+        self
+    ):
+        ci_geometry = ac.FrameGeometry.bottom_right()
 
-            ci_region = ac.Region(
-                (0, 3, 0, 3)
-            )  # The trails are column 3 and above, so extract 4 -> 6
+        ci_region = ac.Region(
+            (0, 3, 3, 6)
+        )  # The trails are column 3 and above, so extract 4 -> 6
 
-            ci_trails = ci_geometry.serial_trails_region(
-                ci_region=ci_region, columns=(1, 3)
-            )
+        ci_trails = ci_geometry.serial_trails_region(
+            ci_region=ci_region, columns=(1, 3)
+        )
 
-            assert ci_trails == (0, 3, 4, 6)
+        assert ci_trails == (0, 3, 0, 2)
 
-    class TestSerialChargeInjectionAndTrails:
-        def test__different_ci_region(self):
+class TestSerialChargeInjectionAndTrails:
+    def test__top_right__different_ci_region(self):
 
-            ci_geometry = ac.FrameGeometry.top_left()
-            ci_region = ac.Region(region=(3, 5, 5, 30))
+        ci_geometry = ac.FrameGeometry.top_right()
+        ci_region = ac.Region(region=(3, 5, 5, 30))
 
-            ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
-                ci_region=ci_region, image_shape=(8, 55)
-            )
+        ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
+            ci_region=ci_region, image_shape=(8, 55)
+        )
 
-            assert ci_serial_region == (3, 5, 0, 55)
-
-
-class TestQuadGeometryEuclid_top_right(object):
-    class TestParallelFrontEdgeOfRegion:
-        def test__extract_two_rows__second_and_third__takes_coordinates_from_top_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.top_right()
-
-            ci_region = ac.Region(
-                (0, 3, 0, 3)
-            )  # The front edge is closest to 3, so for these 2 rows we extract 1 & 2
-
-            ci_front_edge = ci_geometry.parallel_front_edge_region(
-                ci_region=ci_region, rows=(1, 3)
-            )
-
-            assert ci_front_edge == (0, 2, 0, 3)
-
-    class TestParallelTrailsRegion:
-        def test__extract_two_rows__second_and_third__takes_coordinates_after_bottom_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.top_right()
-
-            ci_region = ac.Region(
-                (3, 5, 0, 3)
-            )  # The trails are the row after row 3, so for these 2 edges we extract rows 0 & 2
-
-            ci_trails = ci_geometry.parallel_trails_region(
-                ci_region=ci_region, rows=(1, 3)
-            )
-
-            assert ci_trails == (0, 2, 0, 3)
-
-        def test__parallel_trail_size_to_image_edge(self):
-
-            ci_geometry = ac.FrameGeometry.top_right()
-
-            pattern = ac.CIPatternUniform(
-                normalization=1.0, regions=[ac.Region(region=(0, 3, 0, 3))]
-            )
-
-            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
-                ci_pattern=pattern, shape=(5, 100)
-            )
-
-            assert parallel_trail_size == 0
-
-            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
-                ci_pattern=pattern, shape=(7, 100)
-            )
-
-            assert parallel_trail_size == 0
-
-            pattern = ac.CIPatternUniform(
-                normalization=1.0,
-                regions=[
-                    ac.Region(region=(5, 6, 0, 3)),
-                    ac.Region(region=(11, 12, 0, 3)),
-                    ac.Region(region=(17, 18, 0, 3)),
-                ],
-            )
-
-            parallel_trail_size = ci_geometry.parallel_trail_size_to_image_edge(
-                ci_pattern=pattern, shape=(20, 100)
-            )
-
-            assert parallel_trail_size == 5
-
-    class TestParallelSideNearestReadOut:
-        def test__columns_0_to_1__asymetric_image(self):
-            ci_geometry = ac.FrameGeometry.top_right()
-            ci_region = ac.Region(region=(0, 1, 0, 5))
-            ci_parallel_region = ci_geometry.parallel_side_nearest_read_out_region(
-                ci_region=ci_region, image_shape=(2, 5), columns=(0, 1)
-            )
-
-            assert ci_parallel_region == (0, 2, 4, 5)
-
-    class TestSerialFrontEdgeRegion:
-        def test__extract_two_columns__second_and_third__takes_coordinates_from_right_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.bottom_right()
-
-            ci_region = ac.Region(
-                region=(0, 3, 0, 3)
-            )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
-
-            ci_front_edge = ci_geometry.serial_front_edge_region(
-                ci_region=ci_region, columns=(1, 3)
-            )
-
-            assert ci_front_edge == (0, 3, 0, 2)
-
-    class TestSerialTrailsRegion:
-        def test__extract_two_columns__second_and_third__takes_coordinates_after_left_of_region(
-            self
-        ):
-            ci_geometry = ac.FrameGeometry.bottom_right()
-
-            ci_region = ac.Region(
-                (0, 3, 3, 6)
-            )  # The trails are column 3 and above, so extract 4 -> 6
-
-            ci_trails = ci_geometry.serial_trails_region(
-                ci_region=ci_region, columns=(1, 3)
-            )
-
-            assert ci_trails == (0, 3, 0, 2)
-
-    class TestSerialChargeInjectionAndTrails:
-        def test__different_ci_region(self):
-
-            ci_geometry = ac.FrameGeometry.top_right()
-            ci_region = ac.Region(region=(3, 5, 5, 30))
-
-            ci_serial_region = ci_geometry.serial_prescan_ci_region_and_trails(
-                ci_region=ci_region, image_shape=(8, 55)
-            )
-
-            assert ci_serial_region == (3, 5, 0, 55)
+        assert ci_serial_region == (3, 5, 0, 55)

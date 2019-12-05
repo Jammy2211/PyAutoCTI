@@ -4,9 +4,17 @@ from autocti.structures import frame
 
 
 class CIFrame(frame.Frame):
-    
-    def __new__(cls, array, ci_pattern, corner=(0,0), parallel_overscan=None, serial_prescan=None, 
-                 serial_overscan=None, pixel_scales=None):
+    def __new__(
+        cls,
+        array,
+        mask,
+        ci_pattern,
+        corner=(0, 0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+        pixel_scales=None,
+    ):
         """
         Class which represents the CCD quadrant of a charge injection image (e.g. the location of the parallel and
         serial front edge, trails).
@@ -17,13 +25,19 @@ class CIFrame(frame.Frame):
         ci_pattern : CIPattern.CIPattern
             The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
         """
-        
-        obj = super(CIFrame, cls).__new__(cls=cls, array=array, corner=corner, 
-                                          parallel_overscan=parallel_overscan, serial_prescan=serial_prescan, 
-                                          serial_overscan=serial_overscan, pixel_scales=pixel_scales)
-        
+
+        obj = super(CIFrame, cls).__new__(
+            cls=cls,
+            array=array,
+            corner=corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+            pixel_scales=pixel_scales,
+        )
+
         obj.ci_pattern = ci_pattern
-        
+
         return obj
 
     def ci_regions_from_array(self, array):
@@ -209,7 +223,7 @@ class CIFrame(frame.Frame):
 
             front_regions = list(
                 map(
-                    lambda ci_region: self.parallel_front_edge_region(
+                    lambda ci_region: self.parallel_front_edge_of_region(
                         ci_region, front_edge_rows
                     ),
                     self.ci_pattern.regions,
@@ -343,8 +357,7 @@ class CIFrame(frame.Frame):
                <---------S----------
         """
         array = self.serial_edges_and_trails_frame_from_frame(
-            array=array,
-            trails_columns=(0, self.serial_overscan.total_columns),
+            array=array, trails_columns=(0, self.serial_overscan.total_columns)
         )
         return array
 
@@ -704,9 +717,7 @@ class CIFrame(frame.Frame):
             rows = (0, self.ci_pattern.total_rows_min)
         return list(
             map(
-                lambda ci_region: self.parallel_front_edge_region(
-                    ci_region, rows
-                ),
+                lambda ci_region: self.parallel_front_edge_of_region(ci_region, rows),
                 self.ci_pattern.regions,
             )
         )
@@ -841,9 +852,7 @@ class CIFrame(frame.Frame):
         """
         return list(
             map(
-                lambda ci_region: self.parallel_trails_region(
-                    ci_region, rows
-                ),
+                lambda ci_region: self.parallel_trails_region(ci_region, rows),
                 self.ci_pattern.regions,
             )
         )
@@ -979,9 +988,7 @@ class CIFrame(frame.Frame):
             columns = (0, self.ci_pattern.total_columns_min)
         return list(
             map(
-                lambda ci_region: self.serial_front_edge_region(
-                    ci_region, columns
-                ),
+                lambda ci_region: self.serial_front_edge_region(ci_region, columns),
                 self.ci_pattern.regions,
             )
         )
@@ -1113,17 +1120,13 @@ class CIFrame(frame.Frame):
             columns = (0, self.serial_trails_columns)
         return list(
             map(
-                lambda ci_region: self.serial_trails_region(
-                    ci_region, columns
-                ),
+                lambda ci_region: self.serial_trails_region(ci_region, columns),
                 self.ci_pattern.regions,
             )
         )
 
     def parallel_serial_calibration_section(self, array):
-        return array[
-            0 : array.shape[0], self.serial_prescan.x0 : array.shape[1]
-        ]
+        return array[0 : array.shape[0], self.serial_prescan.x0 : array.shape[1]]
 
     def smallest_parallel_trails_rows_from_shape(self, shape):
 

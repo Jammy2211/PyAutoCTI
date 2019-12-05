@@ -148,8 +148,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_pre_cti[2, :] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_left(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -173,8 +172,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_pre_cti[:, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_left(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -199,8 +197,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_pre_cti[2, :] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_left(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -224,8 +221,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_pre_cti[:, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_left(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -250,8 +246,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_pre_cti[2, 1:4] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_left(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -290,8 +285,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_pre_cti[1:4, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_left(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -330,8 +324,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_pre_cti[2, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_left(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -366,8 +359,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_pre_cti[2, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_left(), array=image_pre_cti
                 )
 
                 params_0 = setup(
@@ -432,8 +424,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_pre_cti[2, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_left(), array=image_pre_cti
                 )
 
                 params_0 = setup(
@@ -496,8 +487,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_pre_cti[2, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_left(), array=image_pre_cti
                 )
 
                 params_0 = setup(
@@ -573,8 +563,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 )
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_left(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -583,8 +572,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 image_difference_1 = image_post_cti - image_pre_cti
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_left(),
-                    array=image_post_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_left(), array=image_post_cti
                 )
 
                 image_correct_cti = im.correct_cti_from_image(
@@ -611,8 +599,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
                 )
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_left(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -622,8 +609,7 @@ class TestQuadrantGeometryEuclidBottomLeft:
 
                 # Update ci_pre_ctis ci_data so that it corrects the cti added ci_pre_ctis
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_left(),
-                    array=image_post_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_left(), array=image_post_cti
                 )
 
                 image_correct_cti = im.correct_cti_from_image(
@@ -644,8 +630,7 @@ class TestQuadrantGeometryEuclidBottomRight:
                 image_pre_cti[2, :] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_right(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -669,8 +654,7 @@ class TestQuadrantGeometryEuclidBottomRight:
                 image_pre_cti[:, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_right(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -695,8 +679,7 @@ class TestQuadrantGeometryEuclidBottomRight:
                 image_pre_cti[2, :] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_right(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -720,8 +703,7 @@ class TestQuadrantGeometryEuclidBottomRight:
                 image_pre_cti[:, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_right(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -746,8 +728,7 @@ class TestQuadrantGeometryEuclidBottomRight:
                 image_pre_cti[2, 1:4] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_right(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -786,8 +767,7 @@ class TestQuadrantGeometryEuclidBottomRight:
                 image_pre_cti[1:4, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_right(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -826,8 +806,7 @@ class TestQuadrantGeometryEuclidBottomRight:
                 image_pre_cti[2, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_right(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -862,8 +841,7 @@ class TestQuadrantGeometryEuclidBottomRight:
                 image_pre_cti[2, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_right(), array=image_pre_cti
                 )
 
                 params_0 = setup(
@@ -928,8 +906,7 @@ class TestQuadrantGeometryEuclidBottomRight:
                 image_pre_cti[2, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_right(), array=image_pre_cti
                 )
 
                 params_0 = setup(
@@ -992,8 +969,7 @@ class TestQuadrantGeometryEuclidBottomRight:
                 image_pre_cti[2, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_right(), array=image_pre_cti
                 )
 
                 params_0 = setup(
@@ -1069,8 +1045,7 @@ class TestQuadrantGeometryEuclidBottomRight:
                 )
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_right(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -1080,8 +1055,7 @@ class TestQuadrantGeometryEuclidBottomRight:
 
                 # Update ci_pre_ctis ci_data so that it corrects the cti added ci_pre_ctis
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_right(),
-                    array=image_post_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_right(), array=image_post_cti
                 )
 
                 image_correct_cti = im.correct_cti_from_image(
@@ -1108,8 +1082,7 @@ class TestQuadrantGeometryEuclidBottomRight:
                 )
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_right(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -1119,8 +1092,7 @@ class TestQuadrantGeometryEuclidBottomRight:
 
                 # Update ci_pre_ctis ci_data so that it corrects the cti added ci_pre_ctis
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.bottom_right(),
-                    array=image_post_cti,
+                    frame_geometry=ac.FrameGeometry.bottom_right(), array=image_post_cti
                 )
 
                 image_correct_cti = im.correct_cti_from_image(
@@ -1141,8 +1113,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 image_pre_cti[2, :] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_left(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -1166,8 +1137,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 image_pre_cti[:, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_left(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -1192,8 +1162,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 image_pre_cti[2, :] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_left(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -1217,8 +1186,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 image_pre_cti[:, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_left(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -1243,8 +1211,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 image_pre_cti[2, 1:4] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_left(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -1285,8 +1252,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 image_pre_cti[1:4, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_left(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -1325,8 +1291,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 image_pre_cti[2, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_left(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -1361,8 +1326,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 image_pre_cti[2, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_left(), array=image_pre_cti
                 )
 
                 params_0 = setup(
@@ -1427,8 +1391,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 image_pre_cti[2, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_left(), array=image_pre_cti
                 )
 
                 params_0 = setup(
@@ -1491,8 +1454,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 image_pre_cti[2, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_left(), array=image_pre_cti
                 )
 
                 params_0 = setup(
@@ -1568,8 +1530,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 )
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_left(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -1579,8 +1540,7 @@ class TestQuadrantGeometryEuclidTopLeft:
 
                 # Update ci_pre_ctis ci_data so that it corrects the cti added ci_pre_ctis
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_left(),
-                    array=image_post_cti,
+                    frame_geometry=ac.FrameGeometry.top_left(), array=image_post_cti
                 )
 
                 image_correct_cti = im.correct_cti_from_image(
@@ -1607,8 +1567,7 @@ class TestQuadrantGeometryEuclidTopLeft:
                 )
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_left(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_left(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -1618,8 +1577,7 @@ class TestQuadrantGeometryEuclidTopLeft:
 
                 # Update ci_pre_ctis ci_data so that it corrects the cti added ci_pre_ctis
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_left(),
-                    array=image_post_cti,
+                    frame_geometry=ac.FrameGeometry.top_left(), array=image_post_cti
                 )
 
                 image_correct_cti = im.correct_cti_from_image(
@@ -1640,8 +1598,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti[2, :] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_right(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -1665,8 +1622,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti[:, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_right(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -1691,8 +1647,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti[2, :] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_right(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -1716,8 +1671,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti[:, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_right(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -1742,8 +1696,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti[2, 1:4] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_right(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -1782,8 +1735,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti[1:4, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_right(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -1822,8 +1774,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti[2, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_right(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -1858,8 +1809,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti[2, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_right(), array=image_pre_cti
                 )
 
                 params_0 = setup(
@@ -1924,8 +1874,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti[2, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_right(), array=image_pre_cti
                 )
 
                 params_0 = setup(
@@ -1988,8 +1937,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti[2, 2] = +100
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_right(), array=image_pre_cti
                 )
 
                 params_0 = setup(
@@ -2065,8 +2013,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 )
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_right(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -2076,8 +2023,7 @@ class TestQuadrantGeometryEuclidTopRight:
 
                 # Update ci_pre_ctis ci_data so that it corrects the cti added ci_pre_ctis
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_right(),
-                    array=image_post_cti,
+                    frame_geometry=ac.FrameGeometry.top_right(), array=image_post_cti
                 )
 
                 image_correct_cti = im.correct_cti_from_image(
@@ -2104,8 +2050,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 )
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_right(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -2115,8 +2060,7 @@ class TestQuadrantGeometryEuclidTopRight:
 
                 # Update ci_pre_ctis ci_data so that it corrects the cti added ci_pre_ctis
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_right(),
-                    array=image_post_cti,
+                    frame_geometry=ac.FrameGeometry.top_right(), array=image_post_cti
                 )
 
                 image_correct_cti = im.correct_cti_from_image(
@@ -2134,8 +2078,7 @@ class TestQuadrantGeometryEuclidTopRight:
                 image_pre_cti[2, 2] = 1000.0
 
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_right(),
-                    array=image_pre_cti,
+                    frame_geometry=ac.FrameGeometry.top_right(), array=image_pre_cti
                 )
 
                 image_post_cti = im.add_cti_to_image(
@@ -2145,8 +2088,7 @@ class TestQuadrantGeometryEuclidTopRight:
 
                 # Update ci_pre_ctis ci_data so that it corrects the cti added ci_pre_ctis
                 im = ac.FrameArray(
-                    frame_geometry=ac.FrameGeometry.top_right(),
-                    array=image_post_cti,
+                    frame_geometry=ac.FrameGeometry.top_right(), array=image_post_cti
                 )
 
                 image_correct_cti = im.correct_cti_from_image(
