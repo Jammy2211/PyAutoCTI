@@ -712,8 +712,8 @@ class TestSerialOverScanAboveTrailsFrame:
         assert new_frame.ci_pattern == ci_pattern
 
 
-class TestSerialCalibrationArrayFromFrame:
-    def test__geometry_left__ci_region_across_all_image__column_0__extracts_all_columns(
+class TestSerialCalibrationArray:
+    def test__left__ci_region_across_all_image__column_0__extracts_all_columns(
         self
     ):
 
@@ -742,7 +742,7 @@ class TestSerialCalibrationArrayFromFrame:
             )
         ).all()
 
-    def test__geometry_left__2_ci_regions__both_extracted(self):
+    def test__left__2_ci_regions__both_extracted(self):
 
         ci_pattern = ac.CIPatternUniform(
             normalization=1.0, regions=[(0, 1, 1, 4), (2, 3, 1, 4)]
@@ -765,7 +765,7 @@ class TestSerialCalibrationArrayFromFrame:
             == np.array([[0.0, 1.0, 2.0, 2.0, 2.0], [0.0, 1.0, 4.0, 4.0, 4.0]])
         ).all()
 
-    def test__geometry_right__2_ci_regions__both_extracted(self):
+    def test__right__2_ci_regions__both_extracted(self):
 
         ci_pattern = ac.CIPatternUniform(
             normalization=1.0, regions=[(0, 1, 1, 4), (2, 3, 1, 4)]
@@ -788,7 +788,7 @@ class TestSerialCalibrationArrayFromFrame:
             == np.array([[0.0, 1.0, 2.0, 2.0, 2.0], [0.0, 1.0, 4.0, 4.0, 4.0]])
         ).all()
 
-    def test__geometry_left__rows_cuts_out_bottom_row(self):
+    def test__left__rows_cuts_out_bottom_row(self):
 
         ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 0, 5)])
 
@@ -861,7 +861,7 @@ class TestSerialCalibrationArrayFromFrame:
 
 
 class TestSerialCalibrationArrays:
-    def test__geometry_left__ci_region_across_all_image__column_0__extracts_all_columns(
+    def test__left__different_ci_regions__extracts_all_columns(
         self
     ):
         ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 0, 5)])
@@ -876,7 +876,7 @@ class TestSerialCalibrationArrays:
 
         frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
 
-        serial_region = frame.serial_calibration_sub_arrays(array=arr)
+        serial_region = frame.serial_calibration_sub_arrays
 
         assert (
             serial_region[0]
@@ -888,24 +888,12 @@ class TestSerialCalibrationArrays:
                 ]
             )
         ).all()
-
-    def test__geometry_left__ci_region_misses_serial_overscan__column_0__extracts_all_columns(
-        self
-    ):
 
         ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 0, 4)])
 
-        arr = np.array(
-            [
-                [0.0, 1.0, 2.0, 3.0, 4.0],
-                [0.0, 1.0, 2.0, 3.0, 4.0],
-                [0.0, 1.0, 2.0, 3.0, 4.0],
-            ]
-        )
-
         frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
 
-        serial_region = frame.serial_calibration_sub_arrays(array=arr)
+        serial_region = frame.serial_calibration_sub_arrays
 
         assert (
             serial_region[0]
@@ -917,24 +905,12 @@ class TestSerialCalibrationArrays:
                 ]
             )
         ).all()
-
-    def test__geometry_left__ci_region_also_has_prescan__extracts_all_but_1_column(
-        self
-    ):
 
         ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
-        arr = np.array(
-            [
-                [0.0, 1.0, 2.0, 3.0, 4.0],
-                [0.0, 1.0, 2.0, 3.0, 4.0],
-                [0.0, 1.0, 2.0, 3.0, 4.0],
-            ]
-        )
-
         frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
 
-        serial_region = frame.serial_calibration_sub_arrays(array=arr)
+        serial_region = frame.serial_calibration_sub_arrays
 
         assert (
             serial_region[0]
@@ -947,7 +923,7 @@ class TestSerialCalibrationArrays:
             )
         ).all()
 
-    def test__geometry_right__ci_region_has_prescan_and_overscan(self):
+    def test__right__ci_region_has_prescan_and_overscan(self):
         ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
         arr = np.array(
@@ -960,7 +936,7 @@ class TestSerialCalibrationArrays:
 
         frame = ac.ci_frame.manual(array=arr, corner=(1, 1), ci_pattern=ci_pattern)
 
-        serial_region = frame.serial_calibration_sub_arrays(array=arr)
+        serial_region = frame.serial_calibration_sub_arrays
 
         assert (
             serial_region[0]
@@ -973,7 +949,7 @@ class TestSerialCalibrationArrays:
             )
         ).all()
 
-    def test__geometry_left__2_ci_regions__both_extracted(self):
+    def test__left__2_ci_regions__both_extracted(self):
         ci_pattern = ac.CIPatternUniform(
             normalization=1.0, regions=[(0, 1, 1, 4), (2, 3, 1, 4)]
         )
@@ -988,7 +964,7 @@ class TestSerialCalibrationArrays:
 
         frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
 
-        serial_region = frame.serial_calibration_sub_arrays(array=arr)
+        serial_region = frame.serial_calibration_sub_arrays
 
         assert (serial_region[0] == np.array([[0.0, 1.0, 2.0, 2.0, 2.0]])).all()
         assert (serial_region[1] == np.array([[0.0, 1.0, 4.0, 4.0, 4.0]])).all()
