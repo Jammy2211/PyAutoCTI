@@ -243,7 +243,7 @@ class CIFrame(frame.Frame):
 
             trails_regions = list(
                 map(
-                    lambda ci_region: self.parallel_trails_region(
+                    lambda ci_region: self.parallel_trails_of_region(
                         ci_region, trails_rows
                     ),
                     self.ci_pattern.regions,
@@ -852,7 +852,7 @@ class CIFrame(frame.Frame):
         """
         return list(
             map(
-                lambda ci_region: self.parallel_trails_region(ci_region, rows),
+                lambda ci_region: self.parallel_trails_of_region(ci_region, rows),
                 self.ci_pattern.regions,
             )
         )
@@ -1136,3 +1136,10 @@ class CIFrame(frame.Frame):
         )
         rows_between_regions.append(rows_to_image_edge)
         return np.min(rows_between_regions)
+
+    def parallel_trail_size_to_image_edge(self, ci_pattern, shape):
+
+        if self.corner[0] == 0:
+            return shape[0] - np.max([region.y1 for region in ci_pattern.regions])
+        else:
+            return np.min([region.y0 for region in ci_pattern.regions])

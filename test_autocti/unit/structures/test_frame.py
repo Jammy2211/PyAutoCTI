@@ -751,6 +751,526 @@ class TestParallelFrontEdgeOfRegion:
 
         assert front_edge == (1, 3, 0, 3)
 
+
+class TestParallelTrailsOfRegion:
+
+    def test__top_left__extracts_rows_behind_region(self):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(0, 0))
+
+        region = ac.Region(
+            (3, 5, 0, 3)
+        )  # The trails are the rows after row 3, so for 1 edge we should extract just row 2
+
+        trails = frame.parallel_trails_of_region(
+            region=region, rows=(0, 1)
+        )
+
+        assert trails == (2, 3, 0, 3)
+
+        # The trails are the row after row 3, so for these 2 edges we extract rows 1->3
+
+        trails = frame.parallel_trails_of_region(
+            region=region, rows=(0, 2)
+        )
+
+        assert trails == (1, 3, 0, 3)
+
+          # The trails are the row after row 3, so for these 2 edges we extract rows 0 & 2
+
+        trails = frame.parallel_trails_of_region(
+            region=region, rows=(1, 3)
+        )
+
+        assert trails == (0, 2, 0, 3)
+
+    def test__top_right__extacts_same_rows_as_above(
+        self
+    ):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(0, 1))
+
+        region = ac.Region(
+            (3, 5, 0, 3)
+        )  # The trails are the row after row 3, so for these 2 edges we extract rows 0 & 2
+
+        trails = frame.parallel_trails_of_region(
+            region=region, rows=(1, 3)
+        )
+
+        assert trails == (0, 2, 0, 3)
+
+    def test__bottom_left__extracts_rows_above_region(self):
+
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+
+        region = ac.Region(
+            region=(0, 3, 0, 3)
+        )  # The trails are row 3 and above, so extract 3 -> 4
+
+        trails = frame.parallel_trails_of_region(
+            region=region, rows=(0, 1)
+        )
+
+        assert trails == (3, 4, 0, 3)
+
+         # The trails are row 3 and above, so extract 3 -> 5
+
+        trails = frame.parallel_trails_of_region(
+            region=region, rows=(0, 2)
+        )
+
+        assert trails == (3, 5, 0, 3)
+
+         # The trails are row 3 and above, so extract 4 -> 6
+
+        trails = frame.parallel_trails_of_region(
+            region=region, rows=(1, 3)
+        )
+
+        assert trails == (4, 6, 0, 3)
+
+    def test__bottom_right__extracts_same_rows_as_above(
+        self
+    ):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+
+        region = ac.Region(
+            (0, 3, 0, 3)
+        )  # The trails are row 3 and above, so extract 4 -> 6
+
+        trails = frame.parallel_trails_of_region(
+            region=region, rows=(1, 3)
+        )
+
+        assert trails == (4, 6, 0, 3)
+
+
+class TestParallelRegionNearestReadOut:
+
+    def test__top_left__columns_0_to_1__asymetric_image(self):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+        region = ac.Region(region=(1, 3, 0, 5))
+
+        parallel_region = frame.parallel_side_nearest_read_out_region(
+            region=region, image_shape=(2, 5), columns=(0, 1)
+        )
+
+        assert parallel_region == (0, 2, 0, 1)
+
+    def test__top_right__columns_0_to_1__asymetric_image(self):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(0, 1))
+        region = ac.Region(region=(0, 1, 0, 5))
+        parallel_region = frame.parallel_side_nearest_read_out_region(
+            region=region, image_shape=(2, 5), columns=(0, 1)
+        )
+
+        assert parallel_region == (0, 2, 4, 5)
+
+    def test__bottom_left__columns_0_to_1__region_is_left_hand_side(self):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+        region = ac.Region(region=(1, 3, 0, 5))
+
+        parallel_region = frame.parallel_side_nearest_read_out_region(
+            region=region, image_shape=(5, 5), columns=(0, 1)
+        )
+
+        assert parallel_region == (0, 5, 0, 1)
+
+    def test__bottom_left__columns_1_to_3__region_is_left_hand_side(self):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+        region = ac.Region(region=(1, 3, 0, 5))
+
+        parallel_region = frame.parallel_side_nearest_read_out_region(
+            region=region, image_shape=(4, 4), columns=(1, 3)
+        )
+
+        assert parallel_region == (0, 4, 1, 3)
+
+    def test__bottom_left__columns_1_to_3__different_region(self):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+        region = ac.Region(region=(1, 3, 2, 5))
+
+        parallel_region = frame.parallel_side_nearest_read_out_region(
+            region=region, image_shape=(4, 4), columns=(1, 3)
+        )
+
+        assert parallel_region == (0, 4, 3, 5)
+
+    def test__bottom_left__columns_0_to_1__asymetric_image(self):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+        region = ac.Region(region=(1, 3, 0, 5))
+
+        parallel_region = frame.parallel_side_nearest_read_out_region(
+            region=region, image_shape=(2, 5), columns=(0, 1)
+        )
+
+        assert parallel_region == (0, 2, 0, 1)
+
+    def test__bottom_right__columns_0_to_1__region_is_right_hand_side(self):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+        region = ac.Region(region=(1, 3, 0, 5))
+
+        parallel_region = frame.parallel_side_nearest_read_out_region(
+            region=region, image_shape=(5, 5), columns=(0, 1)
+        )
+
+        assert parallel_region == (0, 5, 4, 5)
+
+    def test__bottom_right__columns_1_to_3__region_is_right_hand_side(self):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+        region = ac.Region(region=(1, 3, 0, 4))
+
+        parallel_region = frame.parallel_side_nearest_read_out_region(
+            region=region, image_shape=(4, 4), columns=(1, 3)
+        )
+
+        assert parallel_region == (0, 4, 1, 3)
+
+    def test__bottom_right__columns_1_to_3__different_region(self):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+        region = ac.Region(region=(1, 3, 2, 4))
+
+        parallel_region = frame.parallel_side_nearest_read_out_region(
+            region=region, image_shape=(4, 4), columns=(1, 3)
+        )
+
+        assert parallel_region == (0, 4, 1, 3)
+
+    def test__bottom_right__columns_0_to_1__asymetric_image(self):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+        region = ac.Region(region=(0, 1, 0, 5))
+        parallel_region = frame.parallel_side_nearest_read_out_region(
+            region=region, image_shape=(2, 5), columns=(0, 1)
+        )
+
+        assert parallel_region == (0, 2, 4, 5)
+
+
+class TestSerialFrontEdgeRegion:
+
+    def test__top_left__extract_two_columns__second_and_third__takes_coordinates_from_top_of_region(
+        self
+    ):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(0, 0))
+
+        region = ac.Region(
+            region=(0, 3, 0, 3)
+        )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
+
+        front_edge = frame.serial_front_edge_region(
+            region=region, columns=(1, 3)
+        )
+
+        assert front_edge == (0, 3, 1, 3)
+
+    def test__top_right__extract_two_columns__second_and_third__takes_coordinates_from_right_of_region(
+        self
+    ):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+
+        region = ac.Region(
+            region=(0, 3, 0, 3)
+        )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
+
+        front_edge = frame.serial_front_edge_region(
+            region=region, columns=(1, 3)
+        )
+
+        assert front_edge == (0, 3, 0, 2)
+
+    def test__bottom_left__extract_one_column__takes_coordinates_from_left_of_region(self):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+
+        region = ac.Region(
+            region=(0, 3, 0, 3)
+        )  # Front edge is column 0, so for 1 column we extract 0 -> 1
+
+        front_edge = frame.serial_front_edge_region(
+            region=region, columns=(0, 1)
+        )
+
+        assert front_edge == (0, 3, 0, 1)
+
+    def test__bottom_left__extract_two_columns__first_and_second__takes_coordinates_from_left_of_region(
+        self
+    ):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+
+        region = ac.Region(
+            region=(0, 3, 0, 3)
+        )  # Front edge is column 0, so for 2 columns we extract 0 -> 2
+
+        front_edge = frame.serial_front_edge_region(
+            region=region, columns=(0, 2)
+        )
+
+        assert front_edge == (0, 3, 0, 2)
+
+    def test__bottom_left__extract_two_columns__second_and_third__takes_coordinates_from_left_of_region(
+        self
+    ):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+
+        region = ac.Region(
+            region=(0, 3, 0, 3)
+        )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
+
+        front_edge = frame.serial_front_edge_region(
+            region=region, columns=(1, 3)
+        )
+
+        assert front_edge == (0, 3, 1, 3)
+
+    def test__bottom_right__extract_one_column__takes_coordinates_from_right_of_region(self):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+
+        region = ac.Region(
+            region=(0, 3, 0, 3)
+        )  # Front edge is column 0, so for 1 column we extract 0 -> 1
+
+        front_edge = frame.serial_front_edge_region(
+            region=region, columns=(0, 1)
+        )
+
+        assert front_edge == (0, 3, 2, 3)
+
+    def test__bottom_right__extract_two_columns__first_and_second__takes_coordinates_from_right_of_region(
+        self
+    ):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+
+        region = ac.Region(
+            region=(0, 3, 0, 3)
+        )  # Front edge is column 0, so for 2 columns we extract 0 -> 2
+
+        front_edge = frame.serial_front_edge_region(
+            region=region, columns=(0, 2)
+        )
+
+        assert front_edge == (0, 3, 1, 3)
+
+    def test__bottom_right__extract_two_columns__second_and_third__takes_coordinates_from_right_of_region(
+        self
+    ):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+
+        region = ac.Region(
+            region=(0, 3, 0, 3)
+        )  # Front edge is column 0, so for these 2 columns we extract 1 ->2
+
+        front_edge = frame.serial_front_edge_region(
+            region=region, columns=(1, 3)
+        )
+
+        assert front_edge == (0, 3, 0, 2)
+
+
+class TestSerialTrailsRegion:
+
+    def test__top_left__extract_two_columns__second_and_third__takes_coordinates_after_bottom_of_region(
+        self
+    ):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(0, 0))
+
+        region = ac.Region(
+            (0, 3, 0, 3)
+        )  # The trails are column 3 and above, so extract 4 -> 6
+
+        trails = frame.serial_trails_region(
+            region=region, columns=(1, 3)
+        )
+
+        assert trails == (0, 3, 4, 6)
+
+    def test__top_right__extract_two_columns__second_and_third__takes_coordinates_after_left_of_region(
+        self
+    ):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+
+        region = ac.Region(
+            (0, 3, 3, 6)
+        )  # The trails are column 3 and above, so extract 4 -> 6
+
+        trails = frame.serial_trails_region(
+            region=region, columns=(1, 3)
+        )
+
+        assert trails == (0, 3, 0, 2)
+
+    def test__bottom_left__extract_one_row__takes_coordinates_after_right_of_region(self):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+
+        region = ac.Region(
+            region=(0, 3, 0, 3)
+        )  # The trails are column 3 and above, so extract 3 -> 4
+
+        trails = frame.serial_trails_region(
+            region=region, columns=(0, 1)
+        )
+
+        assert trails == (0, 3, 3, 4)
+
+    def test__bottom_left__extract_two_columns__first_and_second__takes_coordinates_after_right_of_region(
+        self
+    ):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+
+        region = ac.Region(
+            (0, 3, 0, 3)
+        )  # The trails are column 3 and above, so extract 3 -> 5
+
+        trails = frame.serial_trails_region(
+            region=region, columns=(0, 2)
+        )
+
+        assert trails == (0, 3, 3, 5)
+
+    def test__bottom_left__extract_two_columns__second_and_third__takes_coordinates_after_right_of_region(
+        self
+    ):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+
+        region = ac.Region(
+            (0, 3, 0, 3)
+        )  # The trails are column 3 and above, so extract 4 -> 6
+
+        trails = frame.serial_trails_region(
+            region=region, columns=(1, 3)
+        )
+
+        assert trails == (0, 3, 4, 6)
+
+    def test__bottom_right__extract_one_row__takes_coordinates_after_left_of_region(self):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+
+        region = ac.Region(
+            region=(0, 3, 3, 6)
+        )  # The trails are column 3 and above, so extract 3 -> 4
+
+        trails = frame.serial_trails_region(
+            region=region, columns=(0, 1)
+        )
+
+        assert trails == (0, 3, 2, 3)
+
+    def test__bottom_right__extract_two_columns__first_and_second__takes_coordinates_after_left_of_region(
+        self
+    ):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+
+        region = ac.Region(
+            (0, 3, 3, 6)
+        )  # The trails are column 3 and above, so extract 3 -> 5
+
+        trails = frame.serial_trails_region(
+            region=region, columns=(0, 2)
+        )
+
+        assert trails == (0, 3, 1, 3)
+
+    def test__bottom_right__extract_two_columns__second_and_third__takes_coordinates_after_left_of_region(
+        self
+    ):
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+
+        region = ac.Region(
+            (0, 3, 3, 6)
+        )  # The trails are column 3 and above, so extract 4 -> 6
+
+        trails = frame.serial_trails_region(
+            region=region, columns=(1, 3)
+        )
+
+        assert trails == (0, 3, 0, 2)
+
+
+class TestSerialChargeInjectionAndTrails:
+
+    def test__top_left__different_region(self):
+
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(0, 0))
+        region = ac.Region(region=(3, 5, 5, 30))
+
+        serial_region = frame.serial_prescan_region_and_trails(
+            region=region, image_shape=(8, 55)
+        )
+
+        assert serial_region == (3, 5, 0, 55)
+
+    def test__top_right__different_region(self):
+
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(0, 1))
+        region = ac.Region(region=(3, 5, 5, 30))
+
+        serial_region = frame.serial_prescan_region_and_trails(
+            region=region, image_shape=(8, 55)
+        )
+
+        assert serial_region == (3, 5, 0, 55)
+
+    def test__bottom_left__column_0_of_front_edge__region_is_left_hand_side__no_overscan_beyond_region(
+        self
+    ):
+
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+        region = ac.Region(region=(1, 3, 0, 5))
+
+        serial_region = frame.serial_prescan_region_and_trails(
+            region=region, image_shape=(5, 5)
+        )
+
+        assert serial_region == (1, 3, 0, 5)
+
+    def test__bottom_left__column_0_of_front_edge__region_is_left_hand_side__overscan_beyond_region(
+        self
+    ):
+
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+        region = ac.Region(region=(1, 3, 0, 5))
+
+        serial_region = frame.serial_prescan_region_and_trails(
+            region=region, image_shape=(5, 25)
+        )
+
+        assert serial_region == (1, 3, 0, 25)
+
+    def test__bottom_right__front_edge__region_is_left_hand_side__no_overscan_beyond_region(
+        self
+    ):
+
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+        region = ac.Region(region=(1, 3, 0, 5))
+
+        serial_region = frame.serial_prescan_region_and_trails(
+            region=region, image_shape=(5, 5)
+        )
+
+        assert serial_region == (1, 3, 0, 5)
+
+    def test__bottom_right__front_edge__region_is_left_hand_side__overscan_beyond_region(self):
+
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+        region = ac.Region(region=(1, 3, 20, 25))
+
+        serial_region = frame.serial_prescan_region_and_trails(
+            region=region, image_shape=(5, 25)
+        )
+
+        assert serial_region == (1, 3, 0, 25)
+
+    def test__bottom_right__region_has_overscan_and_prescan_either_side__prescan_included(
+        self
+    ):
+
+        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+        region = ac.Region(region=(1, 3, 10, 20))
+
+        serial_region = frame.serial_prescan_region_and_trails(
+            region=region, image_shape=(5, 25)
+        )
+
+        assert serial_region == (1, 3, 0, 25)
+
+
 class TestFrameArrayRotations:
     def test__top_left__rotate_for_parallel_clocking_and_back_again__returns_to_original_orientation(
         self, frame_data
