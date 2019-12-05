@@ -846,100 +846,93 @@ class TestParallelTrailsOfRegion:
 
 class TestParallelRegionNearestReadOut:
 
-    def test__top_left__columns_0_to_1__asymetric_image(self):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+    def test__top_left__extracts_region_to_left_of_region(self):
+        frame = ac.frame.manual(array=np.ones((2,5)), corner=(1, 0))
         region = ac.Region(region=(1, 3, 0, 5))
 
         parallel_region = frame.parallel_side_nearest_read_out_region(
-            region=region, image_shape=(2, 5), columns=(0, 1)
+            region=region, columns=(0, 1)
         )
 
         assert parallel_region == (0, 2, 0, 1)
 
-    def test__top_right__columns_0_to_1__asymetric_image(self):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(0, 1))
+    def test__top_right__extracts_region_to_right_of_region(self):
+
+        frame = ac.frame.manual(array=np.ones((2,5)), corner=(0, 1))
         region = ac.Region(region=(0, 1, 0, 5))
         parallel_region = frame.parallel_side_nearest_read_out_region(
-            region=region, image_shape=(2, 5), columns=(0, 1)
+            region=region, columns=(0, 1)
         )
 
         assert parallel_region == (0, 2, 4, 5)
 
-    def test__bottom_left__columns_0_to_1__region_is_left_hand_side(self):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+    def test__bottom_left__extracts_regioon_to_left_of_region(self):
+        frame = ac.frame.manual(array=np.ones((5,5)), corner=(1, 0))
         region = ac.Region(region=(1, 3, 0, 5))
 
         parallel_region = frame.parallel_side_nearest_read_out_region(
-            region=region, image_shape=(5, 5), columns=(0, 1)
+            region=region, columns=(0, 1)
         )
 
         assert parallel_region == (0, 5, 0, 1)
 
-    def test__bottom_left__columns_1_to_3__region_is_left_hand_side(self):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+        frame = ac.frame.manual(array=np.ones((4,4)), corner=(1, 0))
         region = ac.Region(region=(1, 3, 0, 5))
 
         parallel_region = frame.parallel_side_nearest_read_out_region(
-            region=region, image_shape=(4, 4), columns=(1, 3)
+            region=region, columns=(1, 3)
         )
 
         assert parallel_region == (0, 4, 1, 3)
 
-    def test__bottom_left__columns_1_to_3__different_region(self):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
         region = ac.Region(region=(1, 3, 2, 5))
 
         parallel_region = frame.parallel_side_nearest_read_out_region(
-            region=region, image_shape=(4, 4), columns=(1, 3)
+            region=region, columns=(1, 3)
         )
 
         assert parallel_region == (0, 4, 3, 5)
 
-    def test__bottom_left__columns_0_to_1__asymetric_image(self):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+        frame = ac.frame.manual(array=np.ones((2,5)), corner=(1, 0))
         region = ac.Region(region=(1, 3, 0, 5))
 
         parallel_region = frame.parallel_side_nearest_read_out_region(
-            region=region, image_shape=(2, 5), columns=(0, 1)
+            region=region, columns=(0, 1)
         )
 
         assert parallel_region == (0, 2, 0, 1)
 
-    def test__bottom_right__columns_0_to_1__region_is_right_hand_side(self):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+    def test__bottom_right__extracts_region_to_right_of_region(self):
+        frame = ac.frame.manual(array=np.ones((5,5)), corner=(1, 1))
         region = ac.Region(region=(1, 3, 0, 5))
 
         parallel_region = frame.parallel_side_nearest_read_out_region(
-            region=region, image_shape=(5, 5), columns=(0, 1)
+            region=region, columns=(0, 1)
         )
 
         assert parallel_region == (0, 5, 4, 5)
 
-    def test__bottom_right__columns_1_to_3__region_is_right_hand_side(self):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+        frame = ac.frame.manual(array=np.ones((4,4)), corner=(1, 1))
         region = ac.Region(region=(1, 3, 0, 4))
 
         parallel_region = frame.parallel_side_nearest_read_out_region(
-            region=region, image_shape=(4, 4), columns=(1, 3)
+            region=region, columns=(1, 3)
         )
 
         assert parallel_region == (0, 4, 1, 3)
 
-    def test__bottom_right__columns_1_to_3__different_region(self):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
         region = ac.Region(region=(1, 3, 2, 4))
 
         parallel_region = frame.parallel_side_nearest_read_out_region(
-            region=region, image_shape=(4, 4), columns=(1, 3)
+            region=region, columns=(1, 3)
         )
 
         assert parallel_region == (0, 4, 1, 3)
 
-    def test__bottom_right__columns_0_to_1__asymetric_image(self):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+        frame = ac.frame.manual(array=np.ones((2,5)), corner=(1, 1))
         region = ac.Region(region=(0, 1, 0, 5))
         parallel_region = frame.parallel_side_nearest_read_out_region(
-            region=region, image_shape=(2, 5), columns=(0, 1)
+            region=region, columns=(0, 1)
         )
 
         assert parallel_region == (0, 2, 4, 5)

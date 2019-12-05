@@ -240,10 +240,10 @@ class AbstractFrame(arrays.AbstractArray):
         return Region((ci_region.y0, ci_region.y1, x_min, x_max))
 
     def parallel_side_nearest_read_out_region(
-        self, ci_region, image_shape, columns=(0, 1)
+        self, region, columns=(0, 1)
     ):
-        x_min, x_max = self.x_limits(ci_region, columns)
-        return Region((0, image_shape[0], x_min, x_max))
+        x_min, x_max = self.x_limits(region, columns)
+        return Region((0, self.shape_2d[0], x_min, x_max))
 
     def serial_trails_region(self, ci_region, columns=(0, 1)):
         if self.corner[1] == 0:
