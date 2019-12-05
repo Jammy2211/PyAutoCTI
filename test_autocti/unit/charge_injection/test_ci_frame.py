@@ -93,7 +93,7 @@ class TestNonCIRegionFrame:
         assert frame.non_ci_regions_frame.ci_pattern == ci_pattern
 
 
-class TestParallelEdgesAndTrailsArray:
+class TestParallelEdgesAndTrailsFrame:
     def test__front_edge_only__multiple_rows__new_frame_contains_only_edge(self):
         ci_pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 3)])
 
@@ -126,6 +126,7 @@ class TestParallelEdgesAndTrailsArray:
                 [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
             )
         ).all()
+        assert new_frame.ci_pattern == ci_pattern
 
     def test__trails_only__new_frame_contains_only_trails(self):
         ci_pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 4, 0, 3)])
@@ -185,6 +186,7 @@ class TestParallelEdgesAndTrailsArray:
                 ]
             )
         ).all()
+        assert new_frame.ci_pattern == ci_pattern
 
     def test__front_edge_and_trails__2_rows_of_each__new_frame_is_edge_and_trail(self):
         ci_pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 4, 0, 3)])
@@ -219,6 +221,7 @@ class TestParallelEdgesAndTrailsArray:
                 ]
             )
         ).all()
+        assert new_frame.ci_pattern == ci_pattern
 
     def test__front_edge_and_trails__2_regions__1_row_of_each__new_frame_is_edge_and_trail(
         self
@@ -257,6 +260,7 @@ class TestParallelEdgesAndTrailsArray:
                 ]
             )
         ).all()
+        assert new_frame.ci_pattern == ci_pattern
 
 
 class TestParallelCalibrationSection:
@@ -326,8 +330,8 @@ class TestParallelCalibrationSection:
         ).all()
 
 
-class TestKeepSerialEdgesAndTrailsArrayFromFrame:
-    def test__front_edge_only__1_column__new_frame_is_just_that_edge(self):
+class TestSerialEdgesAndTrailsFrame:
+    def test__front_edge_only__multiple_columns__new_frame_is_only_edge(self):
         ci_pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 3)])
 
         arr = np.array(
@@ -344,14 +348,6 @@ class TestKeepSerialEdgesAndTrailsArrayFromFrame:
             )
         ).all()
 
-    def test__front_edge_only__2_columns__new_frame_is_just_that_edge(self):
-        ci_pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 3)])
-
-        arr = np.array(
-            [[0.0, 1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0], [8.0, 9.0, 10.0, 11.0]]
-        )
-        frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
-
         new_frame = frame.serial_edges_and_trails_frame(front_edge_columns=(0, 2))
 
         assert (
@@ -360,8 +356,9 @@ class TestKeepSerialEdgesAndTrailsArrayFromFrame:
                 [[0.0, 1.0, 0.0, 0.0], [4.0, 5.0, 0.0, 0.0], [8.0, 9.0, 0.0, 0.0]]
             )
         ).all()
+        assert new_frame.ci_pattern == ci_pattern
 
-    def test__trails_only__1_column__new_frame_is_just_that_trail(self):
+    def test__trails_only__multiple_columns__new_frame_is_only_that_trail(self):
         ci_pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 2)])
 
         arr = np.array(
@@ -378,12 +375,6 @@ class TestKeepSerialEdgesAndTrailsArrayFromFrame:
             )
         ).all()
 
-    def test__trails_only__2_columns__new_frame_is_the_trails(self):
-        ci_pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 2)])
-
-        arr = np.array(
-            [[0.0, 1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0], [8.0, 9.0, 10.0, 11.0]]
-        )
         frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
 
         new_frame = frame.serial_edges_and_trails_frame(trails_columns=(0, 2))
