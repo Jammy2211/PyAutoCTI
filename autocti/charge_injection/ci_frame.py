@@ -584,8 +584,8 @@ class CIFrame(frame.Frame):
 
         calibration_regions = list(
             map(
-                lambda ci_region: self.serial_prescan_ci_region_and_trails(
-                    ci_region=ci_region, image_shape=array.shape
+                lambda ci_region: self.serial_entire_rows_of_region(
+                    region=ci_region, image_shape=array.shape
                 ),
                 self.ci_pattern.regions,
             )

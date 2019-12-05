@@ -245,14 +245,8 @@ class AbstractFrame(arrays.AbstractArray):
             x_max = x_coord - columns[0]
         return Region((region.y0, region.y1, x_min, x_max))
 
-    def serial_prescan_ci_region_and_trails(self, ci_region, image_shape):
-        if self.corner[1] == 0:
-            x_min = 0
-            x_max = image_shape[1]
-        else:
-            x_min = 0
-            x_max = image_shape[1]
-        return Region((ci_region.y0, ci_region.y1, x_min, x_max))
+    def serial_entire_rows_of_region(self, region):
+        return Region((region.y0, region.y1, 0, self.shape_2d[1]))
 
     @property
     def serial_trails_columns(self):

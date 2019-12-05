@@ -1120,89 +1120,78 @@ class TestSerialTrailsOfRegion:
         assert trails == (0, 3, 0, 2)
 
 
-class TestSerialChargeInjectionAndTrails:
+class TestSerialEntireRowsOfRegion:
 
-    def test__top_left__different_region(self):
+    def test__top_left__full_region_from_left_most_prescan_to_right_most_end_of_trails(self):
 
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(0, 0))
+        frame = ac.frame.manual(array=np.ones((8,55)), corner=(0, 0))
         region = ac.Region(region=(3, 5, 5, 30))
 
-        serial_region = frame.serial_prescan_region_and_trails(
-            region=region, image_shape=(8, 55)
+        serial_region = frame.serial_entire_rows_of_region(
+            region=region,
         )
 
         assert serial_region == (3, 5, 0, 55)
 
-    def test__top_right__different_region(self):
+    def test__top_right__full_region_from_left_most_prescan_to_right_most_end_of_trails(self):
 
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(0, 1))
+        frame = ac.frame.manual(array=np.ones((8,55)), corner=(0, 1))
         region = ac.Region(region=(3, 5, 5, 30))
 
-        serial_region = frame.serial_prescan_region_and_trails(
-            region=region, image_shape=(8, 55)
+        serial_region = frame.serial_entire_rows_of_region(
+            region=region, 
         )
 
         assert serial_region == (3, 5, 0, 55)
 
-    def test__bottom_left__column_0_of_front_edge__region_is_left_hand_side__no_overscan_beyond_region(
+    def test__bottom_left__full_region_from_left_most_prescan_to_right_most_end_of_trails(
         self
     ):
 
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+        frame = ac.frame.manual(array=np.ones((5,5)), corner=(1, 0))
         region = ac.Region(region=(1, 3, 0, 5))
 
-        serial_region = frame.serial_prescan_region_and_trails(
-            region=region, image_shape=(5, 5)
+        serial_region = frame.serial_entire_rows_of_region(
+            region=region,
         )
 
         assert serial_region == (1, 3, 0, 5)
 
-    def test__bottom_left__column_0_of_front_edge__region_is_left_hand_side__overscan_beyond_region(
-        self
-    ):
-
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+        frame = ac.frame.manual(array=np.ones((5,25)), corner=(1, 0))
         region = ac.Region(region=(1, 3, 0, 5))
 
-        serial_region = frame.serial_prescan_region_and_trails(
-            region=region, image_shape=(5, 25)
+        serial_region = frame.serial_entire_rows_of_region(
+            region=region,
         )
 
         assert serial_region == (1, 3, 0, 25)
 
-    def test__bottom_right__front_edge__region_is_left_hand_side__no_overscan_beyond_region(
+    def test__bottom_right__full_region_from_left_most_prescan_to_right_most_end_of_trails(
         self
     ):
 
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+        frame = ac.frame.manual(array=np.ones((5,5)), corner=(1, 1))
         region = ac.Region(region=(1, 3, 0, 5))
 
-        serial_region = frame.serial_prescan_region_and_trails(
-            region=region, image_shape=(5, 5)
+        serial_region = frame.serial_entire_rows_of_region(
+            region=region, 
         )
 
         assert serial_region == (1, 3, 0, 5)
 
-    def test__bottom_right__front_edge__region_is_left_hand_side__overscan_beyond_region(self):
-
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+        frame = ac.frame.manual(array=np.ones((5,25)), corner=(1, 1))
         region = ac.Region(region=(1, 3, 20, 25))
 
-        serial_region = frame.serial_prescan_region_and_trails(
-            region=region, image_shape=(5, 25)
+        serial_region = frame.serial_entire_rows_of_region(
+            region=region, 
         )
 
         assert serial_region == (1, 3, 0, 25)
 
-    def test__bottom_right__region_has_overscan_and_prescan_either_side__prescan_included(
-        self
-    ):
-
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
         region = ac.Region(region=(1, 3, 10, 20))
 
-        serial_region = frame.serial_prescan_region_and_trails(
-            region=region, image_shape=(5, 25)
+        serial_region = frame.serial_entire_rows_of_region(
+            region=region,
         )
 
         assert serial_region == (1, 3, 0, 25)
