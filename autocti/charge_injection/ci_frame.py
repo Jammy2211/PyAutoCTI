@@ -141,6 +141,14 @@ class CIFrame(AbstractCIFrame):
             pixel_scales=pixel_scales,
         )
 
+    def __array_finalize__(self, obj):
+
+        super(AbstractCIFrame, self).__array_finalize__(obj)
+
+        if isinstance(obj, AbstractCIFrame):
+            if hasattr(obj, "ci_pattern"):
+                self.ci_pattern = obj.ci_pattern
+
     @property
     def ci_regions_array(self):
         """Extract an arrays of all of the charge-injection regions from a charge injection ci_frame.
@@ -197,7 +205,8 @@ class CIFrame(AbstractCIFrame):
 
         return new_array
 
-    def parallel_non_ci_regions_frame_from_frame(self, array):
+    @property
+    def parallel_non_ci_regions_frame(self):
         """Extract an arrays of all of the parallel trails following the charge-injection regions from a charge
         injection ci_frame.
 
@@ -244,17 +253,12 @@ class CIFrame(AbstractCIFrame):
                <---------S----------
         """
 
-        parallel_array = np.zeros(array.shape)
-
-        x0 = self.parallel_overscan.x0
-        x1 = self.parallel_overscan.x1
-
-        parallel_array[:, x0:x1] = array[:, x0:x1]
+        parallel_array = self.copy()
 
         for region in self.ci_pattern.regions:
             parallel_array[region.slice] = 0
 
-        return parallel_array.copy()
+        return parallel_array
 
     def parallel_edges_and_trails_frame_from_frame(
         self, array, front_edge_rows=None, trails_rows=None
