@@ -495,7 +495,7 @@ class CIFrame(frame.Frame):
 
             front_regions = list(
                 map(
-                    lambda ci_region: self.serial_front_edge_region(
+                    lambda ci_region: self.serial_front_edge_of_region(
                         ci_region, front_edge_columns
                     ),
                     self.ci_pattern.regions,
@@ -988,7 +988,7 @@ class CIFrame(frame.Frame):
             columns = (0, self.ci_pattern.total_columns_min)
         return list(
             map(
-                lambda ci_region: self.serial_front_edge_region(ci_region, columns),
+                lambda ci_region: self.serial_front_edge_of_region(ci_region, columns),
                 self.ci_pattern.regions,
             )
         )
