@@ -2683,7 +2683,7 @@ class TestSmallestPArallelTrailsRowsToEdge:
         )
 
         frame = ac.ci_frame.manual(
-            array=np.ones(10, 5), corner=(0, 0), ci_pattern=ci_pattern
+            array=np.ones((8, 5)), corner=(0, 0), ci_pattern=ci_pattern
         )
 
         assert frame.smallest_parallel_trails_rows_to_frame_edge == 2
@@ -2694,7 +2694,9 @@ class TestSerialTrailsColumns:
         self
     ):
 
-        ci_frame = ac.FrameGeometry(
+        ci_frame = ac.ci_frame.manual(
+            array=np.ones((10, 10)),
+            ci_pattern=None,
             serial_overscan=ac.Region((0, 1, 0, 10)),
             serial_prescan=ac.Region((0, 1, 0, 1)),
             parallel_overscan=ac.Region((0, 1, 0, 1)),
@@ -2703,7 +2705,9 @@ class TestSerialTrailsColumns:
 
         assert ci_frame.serial_trails_columns == 10
 
-        ci_frame = ac.FrameGeometry(
+        ci_frame = ac.ci_frame.manual(
+            array=np.ones((50, 50)),
+            ci_pattern=None,
             serial_overscan=ac.Region((0, 1, 0, 50)),
             serial_prescan=ac.Region((0, 1, 0, 1)),
             parallel_overscan=ac.Region((0, 1, 0, 1)),
@@ -2714,7 +2718,7 @@ class TestSerialTrailsColumns:
 
 
 class TestParallelTrailsSizeToFrameEdge:
-    def test__top_left__parallel_trail_size_to_image_edge(self):
+    def test__top_left__parallel_trail_size_to_edge(self):
 
         ci_pattern = ac.CIPatternUniform(
             normalization=1.0, regions=[ac.Region(region=(0, 3, 0, 3))]
@@ -2747,7 +2751,7 @@ class TestParallelTrailsSizeToFrameEdge:
 
         assert ci_frame.parallel_trail_size_to_frame_edge == 5
 
-    def test__top_right__parallel_trail_size_to_image_edge(self):
+    def test__top_right__parallel_trail_size_to_edge(self):
 
         ci_pattern = ac.CIPatternUniform(
             normalization=1.0, regions=[ac.Region(region=(0, 3, 0, 3))]
@@ -2780,7 +2784,7 @@ class TestParallelTrailsSizeToFrameEdge:
 
         assert ci_frame.parallel_trail_size_to_frame_edge == 5
 
-    def test__bottom_left__parallel_trail_size_to_image_edge(self):
+    def test__bottom_left__parallel_trail_size_to_edge(self):
 
         ci_pattern = ac.CIPatternUniform(
             normalization=1.0, regions=[ac.Region(region=(0, 3, 0, 3))]
@@ -2819,7 +2823,7 @@ class TestParallelTrailsSizeToFrameEdge:
 
         assert ci_frame.parallel_trail_size_to_frame_edge == 6
 
-    def test__bottom_right__parallel_trail_size_to_image_edge(self):
+    def test__bottom_right__parallel_trail_size_to_edge(self):
 
         ci_pattern = ac.CIPatternUniform(
             normalization=1.0, regions=[ac.Region(region=(0, 3, 0, 3))]
