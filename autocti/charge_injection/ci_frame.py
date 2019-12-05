@@ -694,9 +694,7 @@ class CIFrame(AbstractCIFrame):
         return list(map(lambda region: self[region.slice], calibration_regions))
 
     def parallel_front_edge_line_binned_over_columns(self, rows=None):
-        front_stacked_array = self.parallel_front_edge_stacked_array(
-            rows=rows,
-        )
+        front_stacked_array = self.parallel_front_edge_stacked_array(rows=rows)
         return np.ma.mean(np.ma.asarray(front_stacked_array), axis=1)
 
     def parallel_front_edge_stacked_array(self, rows=None):
@@ -949,9 +947,7 @@ class CIFrame(AbstractCIFrame):
         )
 
     def serial_front_edge_line_binned_over_rows(self, columns=None):
-        front_stacked_array = self.serial_front_edge_stacked_array(
-            columns=columns,
-        )
+        front_stacked_array = self.serial_front_edge_stacked_array(columns=columns)
         return np.ma.mean(np.ma.asarray(front_stacked_array), axis=0)
 
     def serial_front_edge_stacked_array(self, columns=None):
@@ -1078,9 +1074,7 @@ class CIFrame(AbstractCIFrame):
         )
 
     def serial_trails_line_binned_over_rows(self, columns=None):
-        trails_stacked_array = self.serial_trails_stacked_array(
-            columns=columns,
-        )
+        trails_stacked_array = self.serial_trails_stacked_array(columns=columns)
         return np.ma.mean(np.ma.asarray(trails_stacked_array), axis=0)
 
     def serial_trails_stacked_array(self, columns=None):

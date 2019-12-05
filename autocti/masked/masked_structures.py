@@ -208,7 +208,6 @@ class MaskedEuclidFrame(frame.AbstractFrame):
 
 
 class MaskedCIFrame(ci_frame.AbstractCIFrame):
-
     @classmethod
     def manual(
         cls,
