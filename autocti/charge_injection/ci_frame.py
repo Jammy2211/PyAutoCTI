@@ -891,8 +891,6 @@ class CIFrame(AbstractCIFrame):
         return trails_arrays
 
     def parallel_trails_regions(self, rows=None):
-        if rows is None:
-            rows = (0, self.smallest_parallel_trails_rows_to_frame_edge)
         """Compute the parallel regions of a charge injection ci_frame.
 
         The diagram below illustrates the region that is calculated from a ci_frame for rows=(0, 1):
@@ -939,6 +937,10 @@ class CIFrame(AbstractCIFrame):
         rows : (int, int)
             The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
+
+        if rows is None:
+            rows = (0, self.smallest_parallel_trails_rows_to_frame_edge)
+
         return list(
             map(
                 lambda ci_region: self.parallel_trails_of_region(ci_region, rows),
@@ -1210,10 +1212,7 @@ class CIFrame(AbstractCIFrame):
     def smallest_parallel_trails_rows_to_frame_edge(self):
 
         rows_between_regions = self.ci_pattern.rows_between_regions
-        rows_to_image_edge = self.parallel_trail_size_to_frame_edge(
-            shape=self.shape_2d, ci_pattern=self.ci_pattern
-        )
-        rows_between_regions.append(rows_to_image_edge)
+        rows_between_regions.append(self.parallel_trail_size_to_frame_edge)
         return np.min(rows_between_regions)
 
     @property

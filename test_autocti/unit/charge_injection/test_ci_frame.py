@@ -1449,8 +1449,8 @@ class TestParallelFrontEdgeArrays:
         ).all()
 
 
-class TestParallelTrailsFromFrame:
-    def test__bottom__extracts_1_trails_correctly(self):
+class TestParallelTrailsArray:
+    def test__bottom__1_region__extracts_trails_correctly(self):
 
         ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 3, 0, 3)])
 
@@ -1480,27 +1480,6 @@ class TestParallelTrailsFromFrame:
         assert (trails == np.array([[4.0, 4.0, 4.0]])).all()
         trails = frame.parallel_trails_arrays(rows=(2, 3))
         assert (trails == np.array([[5.0, 5.0, 5.0]])).all()
-
-    def test__bottom__extracts_multiple_trails_correctly(self):
-
-        ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 3, 0, 3)])
-
-        arr = np.array(
-            [
-                [0.0, 0.0, 0.0],
-                [1.0, 1.0, 1.0],
-                [2.0, 2.0, 2.0],
-                [3.0, 3.0, 3.0],
-                # <- Trails form here onwards according to region and this frame_geometry
-                [4.0, 4.0, 4.0],  # <- Next trail.
-                [5.0, 5.0, 5.0],
-                [6.0, 6.0, 6.0],
-                [7.0, 7.0, 7.0],
-                [8.0, 8.0, 8.0],
-                [9.0, 9.0, 9.0],
-            ]
-        )
-        frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
 
         trails = frame.parallel_trails_arrays(rows=(0, 2))
         assert (trails == np.array([[3.0, 3.0, 3.0], [4.0, 4.0, 4.0]])).all()
@@ -1643,15 +1622,13 @@ class TestParallelTrailsFromFrame:
             ]
         )
 
-        frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
 
         trails = frame.parallel_trails_arrays(rows=(0, 2))
-        assert (trails[0] == np.array([[3.0, 3.0, 3.0], [4.0, 4.0, 4.0]])).all()
         assert (
             trails[0].mask == np.array([[False, True, True], [False, False, False]])
         ).all()
 
-        assert (trails[1] == np.array([[6.0, 6.0, 6.0], [7.0, 7.0, 7.0]])).all()
         assert (
             trails[1].mask == np.array([[False, False, False], [True, False, False]])
         ).all()
@@ -1757,7 +1734,7 @@ class TestParallelTrailsFromFrame:
             ]
         )
 
-        frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
 
         # [3.0, 3.0, 3.0],
         #  [4.0, 4.0, 4.0]]
@@ -1804,7 +1781,7 @@ class TestParallelTrailsFromFrame:
             ]
         )
 
-        frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
+        frame = ac.masked.ci_frame.manual(array=arr, mask=mask, corner=(1, 0), ci_pattern=ci_pattern)
 
         stacked_trails = frame.parallel_trails_stacked_array(rows=(0, 2))
 
@@ -1848,11 +1825,11 @@ class TestParallelTrailsFromFrame:
         assert (trails[0] == np.array([[4.0, 4.0, 4.0], [5.0, 5.0, 5.0]])).all()
         assert (trails[1] == np.array([[8.0, 8.0, 8.0], [9.0, 9.0, 9.0]])).all()
 
-        stacked_trails = frame.parallel_trails_stacked_array(arr)
+        stacked_trails = frame.parallel_trails_stacked_array()
 
         assert (stacked_trails == np.array([[6.0, 6.0, 6.0], [7.0, 7.0, 7.0]])).all()
 
-        trails_line = frame.parallel_trails_line_binned_over_columns(array=arr)
+        trails_line = frame.parallel_trails_line_binned_over_columns()
 
         assert (trails_line == np.array([6.0, 7.0])).all()
 
