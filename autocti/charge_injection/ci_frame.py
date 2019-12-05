@@ -6,7 +6,6 @@ from autocti.structures import frame
 
 
 class AbstractCIFrame(frame.Frame):
-
     def __new__(
         cls,
         array,
@@ -42,8 +41,8 @@ class AbstractCIFrame(frame.Frame):
 
         return obj
 
-class CIFrame(AbstractCIFrame):
 
+class CIFrame(AbstractCIFrame):
     @classmethod
     def manual(
         cls,
@@ -99,15 +98,15 @@ class CIFrame(AbstractCIFrame):
 
     @classmethod
     def from_fits(
-            cls,
-            ci_pattern,
-            file_path,
-            hdu,
-            corner=(0, 0),
-            parallel_overscan=None,
-            serial_prescan=None,
-            serial_overscan=None,
-            pixel_scales=None,
+        cls,
+        ci_pattern,
+        file_path,
+        hdu,
+        corner=(0, 0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+        pixel_scales=None,
     ):
         """Load the image ci_data from a fits file.
 
@@ -905,7 +904,7 @@ class CIFrame(AbstractCIFrame):
 
     def parallel_trails_regions_from_frame(self, shape, rows=None):
         if rows is None:
-            rows = (0, self.smallest_parallel_trails_rows_from_shape(shape=shape))
+            rows = (0, self.smallest_parallel_trails_rows_to_frame_edge(shape=shape))
         """Compute the parallel regions of a charge injection ci_frame.
 
         The diagram below illustrates the region that is calculated from a ci_frame for rows=(0, 1):
@@ -1230,11 +1229,12 @@ class CIFrame(AbstractCIFrame):
     def parallel_serial_calibration_section(self, array):
         return array[0 : array.shape[0], self.serial_prescan.x0 : array.shape[1]]
 
-    def smallest_parallel_trails_rows_from_shape(self, shape):
+    @property
+    def smallest_parallel_trails_rows_to_frame_edge(self):
 
         rows_between_regions = self.ci_pattern.rows_between_regions
         rows_to_image_edge = self.parallel_trail_size_to_frame_edge(
-            shape=shape, ci_pattern=self.ci_pattern
+            shape=self.shape_2d, ci_pattern=self.ci_pattern
         )
         rows_between_regions.append(rows_to_image_edge)
         return np.min(rows_between_regions)
@@ -1245,4 +1245,6 @@ class CIFrame(AbstractCIFrame):
         if self.corner[0] == 0:
             return np.min([region.y0 for region in self.ci_pattern.regions])
         else:
-            return self.shape_2d[0] - np.max([region.y1 for region in self.ci_pattern.regions])
+            return self.shape_2d[0] - np.max(
+                [region.y1 for region in self.ci_pattern.regions]
+            )
