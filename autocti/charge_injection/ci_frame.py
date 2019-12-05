@@ -150,7 +150,7 @@ class CIFrame(AbstractCIFrame):
                 self.ci_pattern = obj.ci_pattern
 
     @property
-    def ci_regions_array(self):
+    def ci_regions_frame(self):
         """Extract an arrays of all of the charge-injection regions from a charge injection ci_frame.
 
         The diagram below illustrates the arrays that is extracted from a ci_frame:
@@ -198,7 +198,7 @@ class CIFrame(AbstractCIFrame):
 
         """
 
-        new_array = np.zeros(shape=self.shape_2d)
+        new_array = self.copy()
 
         for region in self.ci_pattern.regions:
             new_array[region.slice] += self[region.slice]
@@ -511,7 +511,7 @@ class CIFrame(AbstractCIFrame):
         []     [=====================]
                <---------S----------
         """
-        new_array = self * 0.0
+        new_array = self.copy() * 0.0
         overscan_slice = self.serial_overscan.slice
 
         new_array[overscan_slice] = self[overscan_slice]
@@ -593,7 +593,7 @@ class CIFrame(AbstractCIFrame):
         trails_columns : (int, int)
             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
-        new_array = self * 0.0
+        new_array = self.copy() * 0.0
 
         if front_edge_columns is not None:
 
