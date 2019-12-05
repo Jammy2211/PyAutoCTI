@@ -13,7 +13,7 @@ class CIMask(msk.Mask):
         cls, shape, ci_frame, rows, invert=False
     ):
 
-        front_edge_regions = ci_frame.parallel_front_edge_regions_from_frame(rows=rows)
+        front_edge_regions = ci_frame.parallel_front_edge_regions(rows=rows)
         mask = np.full(shape, False)
 
         for region in front_edge_regions:
@@ -29,9 +29,7 @@ class CIMask(msk.Mask):
     @classmethod
     def masked_parallel_trails_from_ci_frame(cls, shape, ci_frame, rows, invert=False):
 
-        trails_regions = ci_frame.parallel_trails_regions_from_frame(
-            shape=shape, rows=rows
-        )
+        trails_regions = ci_frame.parallel_trails_regions(shape=shape, rows=rows)
         mask = np.full(shape, False)
 
         for region in trails_regions:
@@ -49,9 +47,7 @@ class CIMask(msk.Mask):
         cls, shape, ci_frame, columns, invert=False
     ):
 
-        front_edge_regions = ci_frame.serial_front_edge_regions_from_frame(
-            columns=columns
-        )
+        front_edge_regions = ci_frame.serial_front_edge_regions(columns=columns)
         mask = np.full(shape, False)
 
         for region in front_edge_regions:
@@ -67,7 +63,7 @@ class CIMask(msk.Mask):
     @classmethod
     def masked_serial_trails_from_ci_frame(cls, shape, ci_frame, columns, invert=False):
 
-        trails_regions = ci_frame.serial_trails_regions_from_frame(columns=columns)
+        trails_regions = ci_frame.serial_trails_regions(columns=columns)
         mask = np.full(shape, False)
 
         for region in trails_regions:
