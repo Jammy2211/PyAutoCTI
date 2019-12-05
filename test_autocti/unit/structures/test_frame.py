@@ -1029,9 +1029,9 @@ class TestSerialFrontEdgeOfRegion:
         assert front_edge == (0, 3, 0, 2)
 
 
-class TestSerialTrailsRegion:
+class TestSerialTrailsOfRegion:
 
-    def test__top_left__extract_two_columns__second_and_third__takes_coordinates_after_bottom_of_region(
+    def test__top_left__extracts_region_to_left_of_region(
         self
     ):
         frame = ac.frame.manual(array=np.ones((3,3)), corner=(0, 0))
@@ -1040,13 +1040,13 @@ class TestSerialTrailsRegion:
             (0, 3, 0, 3)
         )  # The trails are column 3 and above, so extract 4 -> 6
 
-        trails = frame.serial_trails_region(
+        trails = frame.serial_trails_of_region(
             region=region, columns=(1, 3)
         )
 
         assert trails == (0, 3, 4, 6)
 
-    def test__top_right__extract_two_columns__second_and_third__takes_coordinates_after_left_of_region(
+    def test__top_right__extracts_region_to_right_of_region(
         self
     ):
         frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
@@ -1055,93 +1055,65 @@ class TestSerialTrailsRegion:
             (0, 3, 3, 6)
         )  # The trails are column 3 and above, so extract 4 -> 6
 
-        trails = frame.serial_trails_region(
+        trails = frame.serial_trails_of_region(
             region=region, columns=(1, 3)
         )
 
         assert trails == (0, 3, 0, 2)
 
-    def test__bottom_left__extract_one_row__takes_coordinates_after_right_of_region(self):
+    def test__bottom_left__extracts_region_to_left_of_region(self):
         frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
 
         region = ac.Region(
             region=(0, 3, 0, 3)
         )  # The trails are column 3 and above, so extract 3 -> 4
 
-        trails = frame.serial_trails_region(
+        trails = frame.serial_trails_of_region(
             region=region, columns=(0, 1)
         )
 
         assert trails == (0, 3, 3, 4)
 
-    def test__bottom_left__extract_two_columns__first_and_second__takes_coordinates_after_right_of_region(
-        self
-    ):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+        # The trails are column 3 and above, so extract 3 -> 5
 
-        region = ac.Region(
-            (0, 3, 0, 3)
-        )  # The trails are column 3 and above, so extract 3 -> 5
-
-        trails = frame.serial_trails_region(
+        trails = frame.serial_trails_of_region(
             region=region, columns=(0, 2)
         )
 
         assert trails == (0, 3, 3, 5)
 
-    def test__bottom_left__extract_two_columns__second_and_third__takes_coordinates_after_right_of_region(
-        self
-    ):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 0))
+         # The trails are column 3 and above, so extract 4 -> 6
 
-        region = ac.Region(
-            (0, 3, 0, 3)
-        )  # The trails are column 3 and above, so extract 4 -> 6
-
-        trails = frame.serial_trails_region(
+        trails = frame.serial_trails_of_region(
             region=region, columns=(1, 3)
         )
 
         assert trails == (0, 3, 4, 6)
 
-    def test__bottom_right__extract_one_row__takes_coordinates_after_left_of_region(self):
+    def test__bottom_right__extracts_region_to_right_of_region(self):
         frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
 
         region = ac.Region(
             region=(0, 3, 3, 6)
         )  # The trails are column 3 and above, so extract 3 -> 4
 
-        trails = frame.serial_trails_region(
+        trails = frame.serial_trails_of_region(
             region=region, columns=(0, 1)
         )
 
         assert trails == (0, 3, 2, 3)
 
-    def test__bottom_right__extract_two_columns__first_and_second__takes_coordinates_after_left_of_region(
-        self
-    ):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+         # The trails are column 3 and above, so extract 3 -> 5
 
-        region = ac.Region(
-            (0, 3, 3, 6)
-        )  # The trails are column 3 and above, so extract 3 -> 5
-
-        trails = frame.serial_trails_region(
+        trails = frame.serial_trails_of_region(
             region=region, columns=(0, 2)
         )
 
         assert trails == (0, 3, 1, 3)
 
-    def test__bottom_right__extract_two_columns__second_and_third__takes_coordinates_after_left_of_region(
-        self
-    ):
-        frame = ac.frame.manual(array=np.ones((3,3)), corner=(1, 1))
+         # The trails are column 3 and above, so extract 4 -> 6
 
-        region = ac.Region(
-            (0, 3, 3, 6)
-        )  # The trails are column 3 and above, so extract 4 -> 6
-
-        trails = frame.serial_trails_region(
+        trails = frame.serial_trails_of_region(
             region=region, columns=(1, 3)
         )
 

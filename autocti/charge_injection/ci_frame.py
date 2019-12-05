@@ -414,7 +414,7 @@ class CIFrame(frame.Frame):
 
         trails_regions = list(
             map(
-                lambda ci_region: self.serial_trails_region(
+                lambda ci_region: self.serial_trails_of_region(
                     ci_region, (0, self.serial_overscan.total_columns)
                 ),
                 self.ci_pattern.regions,
@@ -515,7 +515,7 @@ class CIFrame(frame.Frame):
 
             trails_regions = list(
                 map(
-                    lambda ci_region: self.serial_trails_region(
+                    lambda ci_region: self.serial_trails_of_region(
                         ci_region, trails_columns
                     ),
                     self.ci_pattern.regions,
@@ -1120,7 +1120,7 @@ class CIFrame(frame.Frame):
             columns = (0, self.serial_trails_columns)
         return list(
             map(
-                lambda ci_region: self.serial_trails_region(ci_region, columns),
+                lambda ci_region: self.serial_trails_of_region(ci_region, columns),
                 self.ci_pattern.regions,
             )
         )
