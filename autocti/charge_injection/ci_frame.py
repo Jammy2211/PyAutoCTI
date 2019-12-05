@@ -693,17 +693,17 @@ class CIFrame(AbstractCIFrame):
         )
         return list(map(lambda region: self[region.slice], calibration_regions))
 
-    def parallel_front_edge_line_binned_over_columns(self, rows=None, mask=None):
+    def parallel_front_edge_line_binned_over_columns(self, rows=None):
         front_stacked_array = self.parallel_front_edge_stacked_array(
-            rows=rows, mask=mask
+            rows=rows,
         )
         return np.ma.mean(np.ma.asarray(front_stacked_array), axis=1)
 
-    def parallel_front_edge_stacked_array(self, rows=None, mask=None):
-        front_arrays = self.parallel_front_edge_arrays(rows=rows, mask=mask)
+    def parallel_front_edge_stacked_array(self, rows=None):
+        front_arrays = self.parallel_front_edge_arrays(rows=rows)
         return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
 
-    def parallel_front_edge_arrays(self, rows=None, mask=None):
+    def parallel_front_edge_arrays(self, rows=None):
         """Extract a list of structures of the parallel front edge regions of a charge injection ci_frame.
 
         The diagram below illustrates the arrays that is extracted from a ci_frame for rows=(0, 1):
@@ -751,17 +751,16 @@ class CIFrame(AbstractCIFrame):
         """
         front_regions = self.parallel_front_edge_regions(rows=rows)
         front_arrays = list(map(lambda region: self[region.slice], front_regions))
-        if mask is not None:
-            front_masks = list(map(lambda region: mask[region.slice], front_regions))
-            front_arrays = list(
-                map(
-                    lambda front_array, front_mask: np.ma.array(
-                        front_array, mask=front_mask
-                    ),
-                    front_arrays,
-                    front_masks,
-                )
+        front_masks = list(map(lambda region: self.mask[region.slice], front_regions))
+        front_arrays = list(
+            map(
+                lambda front_array, front_mask: np.ma.array(
+                    front_array, mask=front_mask
+                ),
+                front_arrays,
+                front_masks,
             )
+        )
         return front_arrays
 
     def parallel_front_edge_regions(self, rows=None):
@@ -821,15 +820,15 @@ class CIFrame(AbstractCIFrame):
             )
         )
 
-    def parallel_trails_line_binned_over_columns(self, rows=None, mask=None):
-        trails_stacked_array = self.parallel_trails_stacked_array(rows=rows, mask=mask)
+    def parallel_trails_line_binned_over_columns(self, rows=None):
+        trails_stacked_array = self.parallel_trails_stacked_array(rows=rows)
         return np.ma.mean(np.ma.asarray(trails_stacked_array), axis=1)
 
-    def parallel_trails_stacked_array(self, rows=None, mask=None):
-        trails_arrays = self.parallel_trails_arrays(rows=rows, mask=mask)
+    def parallel_trails_stacked_array(self, rows=None):
+        trails_arrays = self.parallel_trails_arrays(rows=rows)
         return np.ma.mean(np.ma.asarray(trails_arrays), axis=0)
 
-    def parallel_trails_arrays(self, rows=None, mask=None):
+    def parallel_trails_arrays(self, rows=None):
         """Extract the parallel trails of a charge injection ci_frame.
 
 
@@ -879,17 +878,16 @@ class CIFrame(AbstractCIFrame):
         """
         trails_regions = self.parallel_trails_regions(rows=rows)
         trails_arrays = list(map(lambda region: self[region.slice], trails_regions))
-        if mask is not None:
-            trails_masks = list(map(lambda region: mask[region.slice], trails_regions))
-            trails_arrays = list(
-                map(
-                    lambda trails_array, front_mask: np.ma.array(
-                        trails_array, mask=front_mask
-                    ),
-                    trails_arrays,
-                    trails_masks,
-                )
+        trails_masks = list(map(lambda region: self.mask[region.slice], trails_regions))
+        trails_arrays = list(
+            map(
+                lambda trails_array, front_mask: np.ma.array(
+                    trails_array, mask=front_mask
+                ),
+                trails_arrays,
+                trails_masks,
             )
+        )
         return trails_arrays
 
     def parallel_trails_regions(self, rows=None):
@@ -948,17 +946,17 @@ class CIFrame(AbstractCIFrame):
             )
         )
 
-    def serial_front_edge_line_binned_over_rows(self, columns=None, mask=None):
+    def serial_front_edge_line_binned_over_rows(self, columns=None):
         front_stacked_array = self.serial_front_edge_stacked_array(
-            columns=columns, mask=mask
+            columns=columns,
         )
         return np.ma.mean(np.ma.asarray(front_stacked_array), axis=0)
 
-    def serial_front_edge_stacked_array(self, columns=None, mask=None):
-        front_arrays = self.serial_front_edge_arrays(columns=columns, mask=mask)
+    def serial_front_edge_stacked_array(self, columns=None):
+        front_arrays = self.serial_front_edge_arrays(columns=columns)
         return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
 
-    def serial_front_edge_arrays(self, columns=None, mask=None):
+    def serial_front_edge_arrays(self, columns=None):
         """Extract a list of the serial front edge structures of a charge injection ci_frame.
 
         The diagram below illustrates the arrays that is extracted from a ci_frame for columnss=(0, 3):
@@ -1008,17 +1006,16 @@ class CIFrame(AbstractCIFrame):
         """
         front_regions = self.serial_front_edge_regions(columns=columns)
         front_arrays = list(map(lambda region: self[region.slice], front_regions))
-        if mask is not None:
-            front_masks = list(map(lambda region: mask[region.slice], front_regions))
-            front_arrays = list(
-                map(
-                    lambda front_array, front_mask: np.ma.array(
-                        front_array, mask=front_mask
-                    ),
-                    front_arrays,
-                    front_masks,
-                )
+        front_masks = list(map(lambda region: self.mask[region.slice], front_regions))
+        front_arrays = list(
+            map(
+                lambda front_array, front_mask: np.ma.array(
+                    front_array, mask=front_mask
+                ),
+                front_arrays,
+                front_masks,
             )
+        )
         return front_arrays
 
     def serial_front_edge_regions(self, columns=None):
@@ -1078,17 +1075,17 @@ class CIFrame(AbstractCIFrame):
             )
         )
 
-    def serial_trails_line_binned_over_rows(self, columns=None, mask=None):
+    def serial_trails_line_binned_over_rows(self, columns=None):
         trails_stacked_array = self.serial_trails_stacked_array(
-            columns=columns, mask=mask
+            columns=columns,
         )
         return np.ma.mean(np.ma.asarray(trails_stacked_array), axis=0)
 
-    def serial_trails_stacked_array(self, columns=None, mask=None):
-        front_arrays = self.serial_trails_arrays(columns=columns, mask=mask)
+    def serial_trails_stacked_array(self, columns=None):
+        front_arrays = self.serial_trails_arrays(columns=columns)
         return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
 
-    def serial_trails_arrays(self, columns=None, mask=None):
+    def serial_trails_arrays(self, columns=None):
         """Extract a list of the serial trails of a charge injection ci_frame.
 
         The diagram below illustrates the arrays that is extracted from a ci_frame for columnss=(0, 3):
@@ -1137,17 +1134,16 @@ class CIFrame(AbstractCIFrame):
         """
         trails_regions = self.serial_trails_regions(columns=columns)
         trails_arrays = list(map(lambda region: self[region.slice], trails_regions))
-        if mask is not None:
-            trails_masks = list(map(lambda region: mask[region.slice], trails_regions))
-            trails_arrays = list(
-                map(
-                    lambda trails_array, front_mask: np.ma.array(
-                        trails_array, mask=front_mask
-                    ),
-                    trails_arrays,
-                    trails_masks,
-                )
+        trails_masks = list(map(lambda region: self.mask[region.slice], trails_regions))
+        trails_arrays = list(
+            map(
+                lambda trails_array, front_mask: np.ma.array(
+                    trails_array, mask=front_mask
+                ),
+                trails_arrays,
+                trails_masks,
             )
+        )
         return trails_arrays
 
     def serial_trails_regions(self, columns=None):

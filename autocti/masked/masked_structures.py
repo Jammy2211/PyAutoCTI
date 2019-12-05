@@ -2,6 +2,7 @@ import numpy as np
 
 from autoarray.util import array_util
 from autocti.structures import frame
+from autocti.charge_injection import ci_frame
 
 
 class MaskedFrame(frame.AbstractFrame):
@@ -203,4 +204,93 @@ class MaskedEuclidFrame(frame.AbstractFrame):
             parallel_overscan=frame.Region((2066, 2086, 20, 2068)),
             serial_prescan=frame.Region((0, 2086, 2068, 2119)),
             serial_overscan=frame.Region((0, 2086, 0, 20)),
+        )
+
+
+class MaskedCIFrame(ci_frame.AbstractCIFrame):
+
+    @classmethod
+    def manual(
+        cls,
+        array,
+        mask,
+        ci_pattern,
+        corner=(0, 0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+    ):
+        """Abstract class for the geometry of a CTI Image.
+
+        A FrameArray is stored as a 2D NumPy arrays. When this immage is passed to arctic, clocking goes towards
+        the 'top' of the NumPy arrays (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the arrays
+        (e.g. the final row).
+
+        Arctic has no in-built functionality for changing the direction of clocking depending on the input
+        configuration file. Therefore, image rotations are handled before arctic is called, using the functions
+        defined in this class (and its children). These routines define how an image is rotated before parallel
+        and serial clocking and how to reorient the image back to its original orientation after clocking is performed.
+
+        Currently, only four geometries are available, which are specific to Euclid (and documented in the
+        *QuadGeometryEuclid* class).
+
+        Parameters
+        -----------
+        parallel_overscan : frame.Region
+            The parallel overscan region of the ci_frame.
+        serial_prescan : frame.Region
+            The serial prescan region of the ci_frame.
+        serial_overscan : frame.Region
+            The serial overscan region of the ci_frame.
+        """
+
+        if type(array) is list:
+            array = np.asarray(array)
+
+        array[mask == True] = 0.0
+
+        return ci_frame.CIFrame(
+            array=array,
+            mask=mask,
+            ci_pattern=ci_pattern,
+            corner=corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+    @classmethod
+    def from_fits(
+        cls,
+        file_path,
+        hdu,
+        mask,
+        ci_pattern,
+        corner=(0, 0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+    ):
+        """Load the image ci_data from a fits file.
+
+        Params
+        ----------
+        path : str
+            The path to the ci_data
+        filename : str
+            The file phase_name of the fits image ci_data.
+        hdu : int
+            The HDU number in the fits file containing the image ci_data.
+        frame_geometry : FrameArray.FrameGeometry
+            The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
+            locations of different regions of the CCD (overscans, prescan, etc.)
+        """
+        return ci_frame.CIFrame(
+            array=array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu),
+            mask=mask,
+            ci_pattern=ci_pattern,
+            corner=corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
         )
