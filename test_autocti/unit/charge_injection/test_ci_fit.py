@@ -57,7 +57,6 @@ def make_ci_datas_hyper_fit(ci_data_masked):
 
 
 class TestCIFit:
-
     def test__fit_quantities_same_as_calculated_individually(self, ci_data_masked):
 
         fit = ac.CIImagingFit(
