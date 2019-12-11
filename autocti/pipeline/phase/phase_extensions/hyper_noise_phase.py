@@ -3,7 +3,7 @@ import copy
 import autofit as af
 from .hyper_phase import HyperPhase
 import numpy as np
-from autocti.charge_injection import ci_data, ci_fit, ci_hyper
+from autocti.charge_injection import ci_imaging, ci_fit, ci_hyper
 
 
 class HyperNoisePhase(HyperPhase):
@@ -125,7 +125,7 @@ class HyperNoisePhase(HyperPhase):
 
         ci_datas_masked_full = list(
             map(
-                lambda data, mask, maps: ci_data.CIMaskedImaging(
+                lambda data, mask, maps: ci_imaging.CIMaskedImaging(
                     image=data.image,
                     noise_map=data.noise_map,
                     ci_pre_cti=data.ci_pre_cti,

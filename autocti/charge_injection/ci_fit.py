@@ -1,12 +1,12 @@
 import numpy as np
 from autoarray.fit import fit as aa_fit
-from autocti.charge_injection import ci_data
+from autocti.charge_injection import ci_imaging
 
 
 class CIImagingFit(aa_fit.ImagingFit):
     def __init__(
         self,
-        ci_masked_imaging: ci_data.CIMaskedImaging,
+        ci_masked_imaging: ci_imaging.CIMaskedImaging,
         cti_params,
         cti_settings,
         hyper_noise_scalars=None,

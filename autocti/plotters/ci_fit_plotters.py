@@ -1,7 +1,6 @@
 from matplotlib import pyplot as plt
 
-from autocti.plotters.ci_plotters import fit_plotters
-from autocti.plotters import plotter_util
+from autocti.plotters import ci_plotter_util, fit_plotters
 from autoarray.util import array_util
 
 
@@ -32,7 +31,6 @@ def plot_ci_fit_for_phase(
     plot_ci_fit_arrays_for_phase(
         fits=fits,
         during_analysis=during_analysis,
-        extract_array_from_mask=extract_array_from_mask,
         should_plot_all_at_end_png=should_plot_all_at_end_png,
         should_plot_all_at_end_fits=should_plot_all_at_end_fits,
         should_plot_as_subplot=should_plot_as_subplot,
@@ -108,14 +106,12 @@ def plot_ci_fit_arrays_for_phase(
 
             plot_fit_subplot(
                 fit=fit,
-                extract_array_from_mask=extract_array_from_mask,
                 output_path=output_path,
                 output_format="png",
             )
 
         plot_fit_individuals(
             fit=fit,
-            extract_array_from_mask=extract_array_from_mask,
             should_plot_image=should_plot_image,
             should_plot_noise_map=should_plot_noise_map,
             should_plot_signal_to_noise_map=should_plot_signal_to_noise_map,
@@ -134,7 +130,6 @@ def plot_ci_fit_arrays_for_phase(
 
                 plot_fit_individuals(
                     fit=fit,
-                    extract_array_from_mask=extract_array_from_mask,
                     should_plot_image=True,
                     should_plot_noise_map=True,
                     should_plot_signal_to_noise_map=True,
@@ -151,7 +146,6 @@ def plot_ci_fit_arrays_for_phase(
 
                 plot_fit_individuals(
                     fit=fit,
-                    extract_array_from_mask=extract_array_from_mask,
                     should_plot_image=True,
                     should_plot_noise_map=True,
                     should_plot_signal_to_noise_map=True,
@@ -170,7 +164,6 @@ def plot_ci_fit_arrays_for_phase(
 
             plot_fit_residual_maps_subplot(
                 fits=fits,
-                extract_array_from_mask=extract_array_from_mask,
                 output_path=output_path,
                 output_format="png",
             )
@@ -179,7 +172,6 @@ def plot_ci_fit_arrays_for_phase(
 
             plot_fit_chi_squared_maps_subplot(
                 fits=fits,
-                extract_array_from_mask=extract_array_from_mask,
                 output_path=output_path,
                 output_format="png",
             )
@@ -207,7 +199,7 @@ def plot_ci_fit_lines_for_phase(
     visualize_path=None,
 ):
 
-    line_regions = plotter_util.line_regions_from_should_plots(
+    line_regions = ci_plotter_util.line_regions_from_should_plots(
         should_plot_parallel_front_edge_line=should_plot_parallel_front_edge_line,
         should_plot_parallel_trails_line=should_plot_parallel_trails_line,
         should_plot_serial_front_edge_line=should_plot_serial_front_edge_line,
@@ -310,7 +302,6 @@ def plot_ci_fit_lines_for_phase(
 
 def plot_fit_subplot(
     fit,
-    extract_array_from_mask=False,
     figsize=None,
     aspect="equal",
     cmap="jet",
@@ -367,7 +358,7 @@ def plot_fit_subplot(
         in the python interpreter window.
     """
 
-    rows, columns, figsize_tool = plotter_util.get_subplot_rows_columns_figsize(
+    rows, columns, figsize_tool = ci_plotter_util.get_subplot_rows_columns_figsize(
         number_subplots=9
     )
 
@@ -380,7 +371,6 @@ def plot_fit_subplot(
     fit_plotters.plot_image(
         fit=fit,
         mask=fit.mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=True,
         figsize=figsize,
         aspect=aspect,
@@ -409,7 +399,6 @@ def plot_fit_subplot(
     fit_plotters.plot_noise_map(
         fit=fit,
         mask=fit.mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=True,
         figsize=figsize,
         aspect=aspect,
@@ -438,7 +427,6 @@ def plot_fit_subplot(
     fit_plotters.plot_signal_to_noise_map(
         fit=fit,
         mask=fit.mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=True,
         figsize=figsize,
         aspect=aspect,
@@ -467,7 +455,6 @@ def plot_fit_subplot(
     fit_plotters.plot_ci_pre_cti(
         fit=fit,
         mask=fit.mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=True,
         figsize=figsize,
         aspect=aspect,
@@ -496,7 +483,6 @@ def plot_fit_subplot(
     fit_plotters.plot_ci_post_cti(
         fit=fit,
         mask=fit.mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=True,
         figsize=figsize,
         aspect=aspect,
@@ -525,7 +511,6 @@ def plot_fit_subplot(
     fit_plotters.plot_residual_map(
         fit=fit,
         mask=fit.mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=True,
         figsize=figsize,
         aspect=aspect,
@@ -554,7 +539,6 @@ def plot_fit_subplot(
     fit_plotters.plot_chi_squared_map(
         fit=fit,
         mask=fit.mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=True,
         figsize=figsize,
         aspect=aspect,
@@ -578,7 +562,7 @@ def plot_fit_subplot(
         output_filename=output_filename,
     )
 
-    plotter_util.output_subplot_array(
+    ci_plotter_util.output_subplot_array(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -589,7 +573,6 @@ def plot_fit_subplot(
 
 def plot_fit_residual_maps_subplot(
     fits,
-    extract_array_from_mask=False,
     figsize=None,
     aspect="equal",
     cmap="jet",
@@ -646,7 +629,7 @@ def plot_fit_residual_maps_subplot(
         in the python interpreter window.
     """
 
-    rows, columns, figsize_tool = plotter_util.get_subplot_rows_columns_figsize(
+    rows, columns, figsize_tool = ci_plotter_util.get_subplot_rows_columns_figsize(
         number_subplots=len(fits)
     )
 
@@ -662,7 +645,6 @@ def plot_fit_residual_maps_subplot(
         fit_plotters.plot_residual_map(
             fit=fit,
             mask=fit.mask,
-            extract_array_from_mask=extract_array_from_mask,
             as_subplot=True,
             figsize=figsize,
             aspect=aspect,
@@ -686,7 +668,7 @@ def plot_fit_residual_maps_subplot(
             output_filename=output_filename,
         )
 
-    plotter_util.output_subplot_array(
+    ci_plotter_util.output_subplot_array(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -697,7 +679,6 @@ def plot_fit_residual_maps_subplot(
 
 def plot_fit_chi_squared_maps_subplot(
     fits,
-    extract_array_from_mask=False,
     figsize=None,
     aspect="equal",
     cmap="jet",
@@ -754,7 +735,7 @@ def plot_fit_chi_squared_maps_subplot(
         in the python interpreter window.
     """
 
-    rows, columns, figsize_tool = plotter_util.get_subplot_rows_columns_figsize(
+    rows, columns, figsize_tool = ci_plotter_util.get_subplot_rows_columns_figsize(
         number_subplots=len(fits)
     )
 
@@ -770,7 +751,6 @@ def plot_fit_chi_squared_maps_subplot(
         fit_plotters.plot_chi_squared_map(
             fit=fit,
             mask=fit.mask,
-            extract_array_from_mask=extract_array_from_mask,
             as_subplot=True,
             figsize=figsize,
             aspect=aspect,
@@ -794,7 +774,7 @@ def plot_fit_chi_squared_maps_subplot(
             output_filename=output_filename,
         )
 
-    plotter_util.output_subplot_array(
+    ci_plotter_util.output_subplot_array(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -805,7 +785,6 @@ def plot_fit_chi_squared_maps_subplot(
 
 def plot_fit_individuals(
     fit,
-    extract_array_from_mask=False,
     should_plot_image=False,
     should_plot_noise_map=False,
     should_plot_signal_to_noise_map=False,
@@ -822,7 +801,6 @@ def plot_fit_individuals(
         fit_plotters.plot_image(
             fit=fit,
             mask=fit.mask,
-            extract_array_from_mask=extract_array_from_mask,
             output_path=output_path,
             output_format=output_format,
         )
@@ -831,7 +809,6 @@ def plot_fit_individuals(
         fit_plotters.plot_noise_map(
             fit=fit,
             mask=fit.mask,
-            extract_array_from_mask=extract_array_from_mask,
             output_path=output_path,
             output_format=output_format,
         )
@@ -840,7 +817,6 @@ def plot_fit_individuals(
         fit_plotters.plot_signal_to_noise_map(
             fit=fit,
             mask=fit.mask,
-            extract_array_from_mask=extract_array_from_mask,
             output_path=output_path,
             output_format=output_format,
         )
@@ -849,7 +825,6 @@ def plot_fit_individuals(
         fit_plotters.plot_ci_pre_cti(
             fit=fit,
             mask=fit.mask,
-            extract_array_from_mask=extract_array_from_mask,
             output_path=output_path,
             output_format=output_format,
         )
@@ -858,7 +833,6 @@ def plot_fit_individuals(
         fit_plotters.plot_ci_post_cti(
             fit=fit,
             mask=fit.mask,
-            extract_array_from_mask=extract_array_from_mask,
             output_path=output_path,
             output_format=output_format,
         )
@@ -867,7 +841,6 @@ def plot_fit_individuals(
         fit_plotters.plot_residual_map(
             fit=fit,
             mask=fit.mask,
-            extract_array_from_mask=extract_array_from_mask,
             output_path=output_path,
             output_format=output_format,
         )
@@ -876,7 +849,6 @@ def plot_fit_individuals(
         fit_plotters.plot_chi_squared_map(
             fit=fit,
             mask=fit.mask,
-            extract_array_from_mask=extract_array_from_mask,
             output_path=output_path,
             output_format=output_format,
         )
@@ -886,7 +858,6 @@ def plot_fit_individuals(
         fit_plotters.plot_noise_scaling_maps(
             fit_hyper=fit,
             mask=fit.mask,
-            extract_array_from_mask=extract_array_from_mask,
             output_path=output_path,
             output_format=output_format,
         )
@@ -939,7 +910,7 @@ def plot_fit_line_subplot(
         in the python interpreter window.
     """
 
-    rows, columns, figsize_tool = plotter_util.get_subplot_rows_columns_figsize(
+    rows, columns, figsize_tool = ci_plotter_util.get_subplot_rows_columns_figsize(
         number_subplots=9
     )
 
@@ -1066,7 +1037,7 @@ def plot_fit_line_subplot(
         output_filename=output_filename,
     )
 
-    plotter_util.output_subplot_array(
+    ci_plotter_util.output_subplot_array(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -1122,7 +1093,7 @@ def plot_fit_residual_maps_lines_subplot(
         in the python interpreter window.
     """
 
-    rows, columns, figsize_tool = plotter_util.get_subplot_rows_columns_figsize(
+    rows, columns, figsize_tool = ci_plotter_util.get_subplot_rows_columns_figsize(
         number_subplots=len(fits)
     )
 
@@ -1148,7 +1119,7 @@ def plot_fit_residual_maps_lines_subplot(
             output_filename=output_filename,
         )
 
-    plotter_util.output_subplot_array(
+    ci_plotter_util.output_subplot_array(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -1204,7 +1175,7 @@ def plot_fit_chi_squared_maps_lines_subplot(
         in the python interpreter window.
     """
 
-    rows, columns, figsize_tool = plotter_util.get_subplot_rows_columns_figsize(
+    rows, columns, figsize_tool = ci_plotter_util.get_subplot_rows_columns_figsize(
         number_subplots=len(fits)
     )
 
@@ -1231,7 +1202,7 @@ def plot_fit_chi_squared_maps_lines_subplot(
             output_filename=output_filename,
         )
 
-    plotter_util.output_subplot_array(
+    ci_plotter_util.output_subplot_array(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,

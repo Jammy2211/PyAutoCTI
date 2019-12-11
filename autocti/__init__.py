@@ -6,7 +6,7 @@ from autocti.model.arctic_params import ArcticParams, CCDVolume, Species
 from autocti.model.arctic_settings import ArcticSettings, Settings
 from autocti.model.pyarctic import call_arctic
 from autocti import masked
-from autocti.charge_injection.ci_data import (
+from autocti.charge_injection.ci_imaging import (
     CIImaging,
     CIMaskedImaging,
     ci_pre_cti_from_ci_pattern_geometry_image_and_mask,
@@ -27,6 +27,6 @@ from autocti.pipeline.phase.phase_ci import PhaseCI, cti_params_for_instance
 from autocti.pipeline.phase.phase_extensions import HyperNoisePhase
 from autocti.pipeline.pipeline import Pipeline
 
-from autocti.plotters import array_plotters, line_plotters, plotter_util
+from autocti import plotters
 
 __version__ = "0.11.3"

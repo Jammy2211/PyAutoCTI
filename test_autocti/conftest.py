@@ -1,7 +1,6 @@
 import os
 
 import pytest
-from autofit import conf
 from matplotlib import pyplot
 
 
