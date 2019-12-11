@@ -1,3 +1,5 @@
+from autoarray.structures.arrays import Array as array
+
 from autocti.structures.mask import Mask as mask
 from autocti.structures.frame import Frame as frame, EuclidFrame as euclid_frame, Region
 from autocti.structures.mask import Mask
@@ -7,7 +9,7 @@ from autocti.model.arctic_settings import ArcticSettings, Settings
 from autocti.model.pyarctic import call_arctic
 from autocti import masked
 from autocti.charge_injection.ci_imaging import (
-    CIImaging,
+    CIImaging as ci_imaging,
     CIMaskedImaging,
     ci_pre_cti_from_ci_pattern_geometry_image_and_mask,
     ci_data_from_fits,

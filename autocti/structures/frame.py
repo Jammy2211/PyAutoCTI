@@ -324,6 +324,67 @@ class Frame(AbstractFrame):
         )
 
     @classmethod
+    def full(
+        cls,
+        fill_value,
+        shape_2d,
+        corner=(0, 0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+        pixel_scales=None,
+    ):
+
+        return cls.manual(
+            array=np.full(fill_value=fill_value, shape=shape_2d),
+            corner=corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+            pixel_scales=pixel_scales,
+        )
+
+    @classmethod
+    def ones(
+        cls,
+        shape_2d,
+        corner=(0, 0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+        pixel_scales=None,
+    ):
+        return cls.full(
+            fill_value=1.0,
+            shape_2d=shape_2d,
+            corner=corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+            pixel_scales=pixel_scales,
+        )
+
+    @classmethod
+    def zeros(
+        cls,
+        shape_2d,
+        corner=(0, 0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+        pixel_scales=None,
+    ):
+        return cls.full(
+            fill_value=0.0,
+            shape_2d=shape_2d,
+            corner=corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+            pixel_scales=pixel_scales,
+        )
+
+    @classmethod
     def from_fits(
         cls,
         file_path,
