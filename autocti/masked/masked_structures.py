@@ -316,6 +316,68 @@ class MaskedCIFrame(ci_frame.AbstractCIFrame):
         )
 
     @classmethod
+    def full(
+        cls,
+        fill_value,
+        mask,
+        ci_pattern,
+        corner=(0, 0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+    ):
+
+        return cls.manual(
+            array=np.full(fill_value=fill_value, shape=mask.shape_2d),
+            ci_pattern=ci_pattern,
+            corner=corner,
+            mask=mask,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+    @classmethod
+    def ones(
+        cls,
+        mask,
+        ci_pattern,
+        corner=(0, 0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+    ):
+        return cls.full(
+            fill_value=1.0,
+            ci_pattern=ci_pattern,
+            mask=mask,
+            corner=corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+    @classmethod
+    def zeros(
+        cls,
+        mask,
+        ci_pattern,
+        corner=(0, 0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+    ):
+        return cls.full(
+            fill_value=0.0,
+            ci_pattern=ci_pattern,
+            mask=mask,
+            corner=corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+    @classmethod
     def from_fits(
         cls,
         file_path,
