@@ -41,106 +41,6 @@ class AbstractCIFrame(frame.Frame):
 
         return obj
 
-
-class CIFrame(AbstractCIFrame):
-    @classmethod
-    def manual(
-        cls,
-        array,
-        ci_pattern,
-        corner=(0, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
-        pixel_scales=None,
-    ):
-        """Abstract class for the geometry of a CTI Image.
-
-        A FrameArray is stored as a 2D NumPy arrays. When this immage is passed to arctic, clocking goes towards
-        the 'top' of the NumPy arrays (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the arrays
-        (e.g. the final row).
-
-        Arctic has no in-built functionality for changing the direction of clocking depending on the input
-        configuration file. Therefore, image rotations are handled before arctic is called, using the functions
-        defined in this class (and its children). These routines define how an image is rotated before parallel
-        and serial clocking and how to reorient the image back to its original orientation after clocking is performed.
-
-        Currently, only four geometries are available, which are specific to Euclid (and documented in the
-        *QuadGeometryEuclid* class).
-
-        Parameters
-        -----------
-        parallel_overscan : frame.Region
-            The parallel overscan region of the ci_frame.
-        serial_prescan : frame.Region
-            The serial prescan region of the ci_frame.
-        serial_overscan : frame.Region
-            The serial overscan region of the ci_frame.
-        """
-
-        if type(array) is list:
-            array = np.asarray(array)
-
-        if type(pixel_scales) is float:
-            pixel_scales = (pixel_scales, pixel_scales)
-
-        mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
-
-        return CIFrame(
-            array=array,
-            mask=mask,
-            ci_pattern=ci_pattern,
-            corner=corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
-        )
-
-    @classmethod
-    def from_fits(
-        cls,
-        ci_pattern,
-        file_path,
-        hdu,
-        corner=(0, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
-        pixel_scales=None,
-    ):
-        """Load the image ci_data from a fits file.
-
-        Params
-        ----------
-        path : str
-            The path to the ci_data
-        filename : str
-            The file phase_name of the fits image ci_data.
-        hdu : int
-            The HDU number in the fits file containing the image ci_data.
-        frame_geometry : FrameArray.FrameGeometry
-            The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
-            locations of different regions of the CCD (overscans, prescan, etc.)
-        """
-
-        if type(pixel_scales) is float:
-            pixel_scales = (pixel_scales, pixel_scales)
-
-        array = array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
-
-        mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
-
-        return CIFrame(
-            array=array,
-            mask=mask,
-            ci_pattern=ci_pattern,
-            corner=corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
-            pixel_scales=pixel_scales,
-        )
-
     def __array_finalize__(self, obj):
 
         super(AbstractCIFrame, self).__array_finalize__(obj)
@@ -175,7 +75,7 @@ class CIFrame(AbstractCIFrame):
         P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
         | [...][ccccccccccccccccccccc][sss]    | clocking
           [...][ccccccccccccccccccccc][sss]    |
-                                                 
+
         []     [=====================]
                <---------S----------
 
@@ -190,7 +90,7 @@ class CIFrame(AbstractCIFrame):
         P [000][000000000000000000000][000]    | of
         | [000][ccccccccccccccccccccc][000]    | clocking
           [000][ccccccccccccccccccccc][000]    |
-                                                 
+
         []     [=====================]
                <---------S----------
 
@@ -198,7 +98,7 @@ class CIFrame(AbstractCIFrame):
 
         """
 
-        new_array = self.copy()
+        new_array = self.copy() * 0.0
 
         for region in self.ci_pattern.regions:
             new_array[region.slice] += self[region.slice]
@@ -232,7 +132,7 @@ class CIFrame(AbstractCIFrame):
         P [...][ttttttttttttttttttttt][sss]    | of
         | [...][ccccccccccccccccccccc][sss]    | clocking
           [...][ccccccccccccccccccccc][sss]    |
-                                                 
+
         []     [=====================]
                <---------S----------
 
@@ -248,7 +148,7 @@ class CIFrame(AbstractCIFrame):
         P [000][ttttttttttttttttttttt][000]    | of
         | [000][000000000000000000000][000]    | clocking
           [000][000000000000000000000][000]    |
-                                                 
+
         []     [=====================]
                <---------S----------
         """
@@ -293,11 +193,11 @@ class CIFrame(AbstractCIFrame):
         P [...][ttttttttttttttttttttt][sss]    | of
         | [...][ccccccccccccccccccccc][sss]    | clocking
           [...][ccccccccccccccccccccc][sss]    |
-                                                 
+
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the leading edges and trails following all charge injection regions and   
+        The extracted ci_frame keeps just the leading edges and trails following all charge injection regions and
         replaces all other values with 0s:
 
                [000000000000000000000]
@@ -309,7 +209,7 @@ class CIFrame(AbstractCIFrame):
         P [000][ttttttttttttttttttttt][000]    | of
         | [000][000000000000000000000][000]    | clocking
           [000][ccccccccccccccccccccc][000]    |
-                                                 
+
         []     [=====================]
                <---------S----------
 
@@ -337,7 +237,7 @@ class CIFrame(AbstractCIFrame):
             front_edges = self.parallel_front_edge_arrays(rows=front_edge_rows)
 
             for i, region in enumerate(front_regions):
-                new_frame[region.y0 : region.y1, region.x0 : region.x1] += front_edges[
+                new_frame[region.y0: region.y1, region.x0: region.x1] += front_edges[
                     i
                 ]
 
@@ -355,7 +255,7 @@ class CIFrame(AbstractCIFrame):
             trails = self.parallel_trails_arrays(rows=trails_rows)
 
             for i, region in enumerate(trails_regions):
-                new_frame[region.y0 : region.y1, region.x0 : region.x1] += trails[i]
+                new_frame[region.y0: region.y1, region.x0: region.x1] += trails[i]
 
         return new_frame
 
@@ -386,7 +286,7 @@ class CIFrame(AbstractCIFrame):
         P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
         | [...][ccccccccccccccccccccc][sss]    | clocking
           [...][ccccccccccccccccccccc][sss]    |
-                                                 
+
         []     [=====================]
                <---------S----------
 
@@ -402,7 +302,7 @@ class CIFrame(AbstractCIFrame):
         P      [xxx]                           | of
         |      [ccc]                           | clocking
                [ccc]                           |
-                                                 
+
         []     [=====================]
                <---------S----------
         """
@@ -439,7 +339,7 @@ class CIFrame(AbstractCIFrame):
         P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
         | [...][ccccccccccccccccccccc][tst]    | clocking
           [...][ccccccccccccccccccccc][sts]    |
-                                                 
+
         []     [=====================]
                <---------S----------
 
@@ -455,7 +355,7 @@ class CIFrame(AbstractCIFrame):
         P [000][000000000000000000000][000]    | of
         | [000][000000000000000000000][tst]    | clocking
           [000][000000000000000000000][sts]    |
-                                                 
+
         []     [=====================]
                <---------S----------
         """
@@ -491,7 +391,7 @@ class CIFrame(AbstractCIFrame):
         P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
         | [...][ccccccccccccccccccccc][tst]    | clocking
           [...][ccccccccccccccccccccc][sts]    |
-                                                 
+
         []     [=====================]
                <---------S----------
 
@@ -507,7 +407,7 @@ class CIFrame(AbstractCIFrame):
         P [000][000000000000000000000][sss]    | of
         | [000][000000000000000000000][000]    | clocking
           [000][000000000000000000000][000]    |
-                                                 
+
         []     [=====================]
                <---------S----------
         """
@@ -531,7 +431,7 @@ class CIFrame(AbstractCIFrame):
         return new_array
 
     def serial_edges_and_trails_frame(
-        self, front_edge_columns=None, trails_columns=None
+            self, front_edge_columns=None, trails_columns=None
     ):
         """Extract an arrays of all of the serial front edges and trails of each the charge-injection regions from
         a charge injection ci_frame.
@@ -565,7 +465,7 @@ class CIFrame(AbstractCIFrame):
         P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
         | [...][ccccccccccccccccccccc][sts]    | clocking
           [...][ccccccccccccccccccccc][tst]    |
-                                                 
+
         []     [=====================]
                <---------S----------
 
@@ -581,7 +481,7 @@ class CIFrame(AbstractCIFrame):
         P [000][000000000000000000000][000]    | of
         | [000][cc0000000000000000000][st0]    | clocking
           [000][cc0000000000000000000][st0]    |
-                                                 
+
         []     [=====================]
                <---------S----------
 
@@ -609,7 +509,7 @@ class CIFrame(AbstractCIFrame):
             front_edges = self.serial_front_edge_arrays(columns=front_edge_columns)
 
             for i, region in enumerate(front_regions):
-                new_array[region.y0 : region.y1, region.x0 : region.x1] += front_edges[
+                new_array[region.y0: region.y1, region.x0: region.x1] += front_edges[
                     i
                 ]
 
@@ -627,7 +527,7 @@ class CIFrame(AbstractCIFrame):
             trails = self.serial_trails_arrays(columns=trails_columns)
 
             for i, region in enumerate(trails_regions):
-                new_array[region.y0 : region.y1, region.x0 : region.x1] += trails[i]
+                new_array[region.y0: region.y1, region.x0: region.x1] += trails[i]
 
         return new_array
 
@@ -658,7 +558,7 @@ class CIFrame(AbstractCIFrame):
         P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
         | [...][ccccccccccccccccccccc][tst]    | clocking
           [...][ccccccccccccccccccccc][sts]    |
-                                                 
+
         []     [=====================]
                <---------S----------
 
@@ -670,13 +570,13 @@ class CIFrame(AbstractCIFrame):
         P      [cccccccccccccccc][tst]         | of
         |      [cccccccccccccccc][tst]         | clocking
                [cccccccccccccccc][tst]         |
-                                                 
+
         []     [=====================]
                <---------S----------
         """
         calibration_images = self.serial_calibration_sub_arrays
         calibration_images = list(
-            map(lambda image: image[rows[0] : rows[1], :], calibration_images)
+            map(lambda image: image[rows[0]: rows[1], :], calibration_images)
         )
         array = np.concatenate(calibration_images, axis=0)
         return array
@@ -1200,7 +1100,7 @@ class CIFrame(AbstractCIFrame):
 
     @property
     def parallel_serial_calibration_section(self):
-        return self[0 : self.shape_2d[0], 0 : self.shape_2d[1]]
+        return self[0: self.shape_2d[0], 0: self.shape_2d[1]]
 
     @property
     def smallest_parallel_trails_rows_to_frame_edge(self):
@@ -1218,3 +1118,171 @@ class CIFrame(AbstractCIFrame):
             return self.shape_2d[0] - np.max(
                 [region.y1 for region in self.ci_pattern.regions]
             )
+
+
+class CIFrame(AbstractCIFrame):
+    @classmethod
+    def manual(
+        cls,
+        array,
+        ci_pattern,
+        corner=(0, 0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+        pixel_scales=None,
+    ):
+        """Abstract class for the geometry of a CTI Image.
+
+        A FrameArray is stored as a 2D NumPy arrays. When this immage is passed to arctic, clocking goes towards
+        the 'top' of the NumPy arrays (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the arrays
+        (e.g. the final row).
+
+        Arctic has no in-built functionality for changing the direction of clocking depending on the input
+        configuration file. Therefore, image rotations are handled before arctic is called, using the functions
+        defined in this class (and its children). These routines define how an image is rotated before parallel
+        and serial clocking and how to reorient the image back to its original orientation after clocking is performed.
+
+        Currently, only four geometries are available, which are specific to Euclid (and documented in the
+        *QuadGeometryEuclid* class).
+
+        Parameters
+        -----------
+        parallel_overscan : frame.Region
+            The parallel overscan region of the ci_frame.
+        serial_prescan : frame.Region
+            The serial prescan region of the ci_frame.
+        serial_overscan : frame.Region
+            The serial overscan region of the ci_frame.
+        """
+
+        if type(array) is list:
+            array = np.asarray(array)
+
+        if type(pixel_scales) is float:
+            pixel_scales = (pixel_scales, pixel_scales)
+
+        mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
+
+        return CIFrame(
+            array=array,
+            mask=mask,
+            ci_pattern=ci_pattern,
+            corner=corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+    @classmethod
+    def full(
+        cls,
+        fill_value,
+        shape_2d,
+        ci_pattern,
+        corner=(0, 0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+        pixel_scales=None,
+    ):
+
+        return cls.manual(
+            array=np.full(fill_value=fill_value, shape=shape_2d),
+            ci_pattern=ci_pattern,
+            corner=corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+            pixel_scales=pixel_scales,
+        )
+
+    @classmethod
+    def ones(
+        cls,
+        shape_2d,
+        ci_pattern,
+        corner=(0, 0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+        pixel_scales=None,
+    ):
+        return cls.full(
+            fill_value=1.0,
+            shape_2d=shape_2d,
+            ci_pattern=ci_pattern,
+            corner=corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+            pixel_scales=pixel_scales,
+        )
+
+    @classmethod
+    def zeros(
+        cls,
+        shape_2d,
+        ci_pattern,
+        corner=(0, 0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+        pixel_scales=None,
+    ):
+        return cls.full(
+            fill_value=0.0,
+            shape_2d=shape_2d,
+            ci_pattern=ci_pattern,
+            corner=corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+            pixel_scales=pixel_scales,
+        )
+
+
+    @classmethod
+    def from_fits(
+        cls,
+        ci_pattern,
+        file_path,
+        hdu,
+        corner=(0, 0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+        pixel_scales=None,
+    ):
+        """Load the image ci_data from a fits file.
+
+        Params
+        ----------
+        path : str
+            The path to the ci_data
+        filename : str
+            The file phase_name of the fits image ci_data.
+        hdu : int
+            The HDU number in the fits file containing the image ci_data.
+        frame_geometry : FrameArray.FrameGeometry
+            The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
+            locations of different regions of the CCD (overscans, prescan, etc.)
+        """
+
+        if type(pixel_scales) is float:
+            pixel_scales = (pixel_scales, pixel_scales)
+
+        array = array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
+
+        mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
+
+        return CIFrame(
+            array=array,
+            mask=mask,
+            ci_pattern=ci_pattern,
+            corner=corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+            pixel_scales=pixel_scales,
+        )

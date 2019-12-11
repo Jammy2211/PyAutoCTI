@@ -55,6 +55,63 @@ class MaskedFrame(frame.AbstractFrame):
         )
 
     @classmethod
+    def full(
+        cls,
+        fill_value,
+        mask,
+        corner=(0, 0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+    ):
+
+        return cls.manual(
+            array=np.full(fill_value=fill_value, shape=mask.shape_2d),
+            corner=corner,
+            mask=mask,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+    @classmethod
+    def ones(
+        cls,
+        mask,
+        corner=(0, 0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+    ):
+        return cls.full(
+            fill_value=1.0,
+            mask=mask,
+            corner=corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+    @classmethod
+    def zeros(
+        cls,
+        mask,
+        corner=(0, 0),
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+    ):
+        return cls.full(
+            fill_value=0.0,
+            mask=mask,
+            corner=corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+
+    @classmethod
     def from_fits(
         cls,
         file_path,
