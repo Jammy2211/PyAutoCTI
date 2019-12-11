@@ -1,7 +1,7 @@
 import numpy as np
 
 import autocti as ac
-from test import MockPattern, MockCIFrame
+from test_autocti.mock.mock import MockPattern, MockCIFrame
 
 import os
 import pytest

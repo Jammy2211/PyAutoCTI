@@ -7,9 +7,8 @@ from autocti import exc
 from autocti.pipeline import phase_tagging as tag
 from autocti.pipeline.phase.phase import Phase
 from autocti.pipeline.phase import phase_extensions
-from autocti.charge_injection import ci_data, ci_fit, ci_mask
-from autocti.plotters.ci_plotters import ci_data_plotters
-from autocti.plotters.ci_plotters import ci_fit_plotters
+from autocti.charge_injection import ci_imaging, ci_fit, ci_mask
+from autocti.plotters import ci_fit_plotters, ci_data_plotters
 from autocti.structures import mask as msk
 from autocti.model import arctic_params
 
@@ -339,7 +338,7 @@ class PhaseCI(Phase):
 
         ci_datas_masked_full = list(
             map(
-                lambda data, mask, maps: ci_data.CIMaskedImaging(
+                lambda data, mask, maps: ci_imaging.CIMaskedImaging(
                     image=data.image,
                     noise_map=data.noise_map,
                     ci_pre_cti=data.ci_pre_cti,

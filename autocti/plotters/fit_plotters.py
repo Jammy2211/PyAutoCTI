@@ -1,12 +1,12 @@
 from matplotlib import pyplot as plt
-from autocti.plotters import line_plotters, array_plotters
-from autocti.plotters import plotter_util
+from autoarray.plotters import array_plotters
+from autocti.plotters import ci_line_plotters
+from autocti.plotters import ci_plotter_util
 
 
 def plot_image(
     fit,
     mask=None,
-    extract_array_from_mask=False,
     as_subplot=False,
     figsize=(7, 7),
     aspect="equal",
@@ -43,7 +43,6 @@ def plot_image(
     array_plotters.plot_array(
         array=fit.image,
         mask=mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=as_subplot,
         figsize=figsize,
         aspect=aspect,
@@ -72,7 +71,6 @@ def plot_image(
 def plot_noise_map(
     fit,
     mask=None,
-    extract_array_from_mask=False,
     as_subplot=False,
     figsize=(7, 7),
     aspect="equal",
@@ -109,7 +107,6 @@ def plot_noise_map(
     array_plotters.plot_array(
         array=fit.noise_map,
         mask=mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=as_subplot,
         figsize=figsize,
         aspect=aspect,
@@ -138,7 +135,6 @@ def plot_noise_map(
 def plot_signal_to_noise_map(
     fit,
     mask=None,
-    extract_array_from_mask=False,
     as_subplot=False,
     figsize=(7, 7),
     aspect="equal",
@@ -175,7 +171,6 @@ def plot_signal_to_noise_map(
     array_plotters.plot_array(
         array=fit.signal_to_noise_map,
         mask=mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=as_subplot,
         figsize=figsize,
         aspect=aspect,
@@ -204,7 +199,6 @@ def plot_signal_to_noise_map(
 def plot_ci_pre_cti(
     fit,
     mask=None,
-    extract_array_from_mask=False,
     as_subplot=False,
     figsize=(7, 7),
     aspect="equal",
@@ -241,7 +235,6 @@ def plot_ci_pre_cti(
     array_plotters.plot_array(
         array=fit.ci_pre_cti,
         mask=mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=as_subplot,
         figsize=figsize,
         aspect=aspect,
@@ -270,7 +263,6 @@ def plot_ci_pre_cti(
 def plot_ci_post_cti(
     fit,
     mask=None,
-    extract_array_from_mask=False,
     as_subplot=False,
     figsize=(7, 7),
     aspect="equal",
@@ -307,7 +299,6 @@ def plot_ci_post_cti(
     array_plotters.plot_array(
         array=fit.ci_post_cti,
         mask=mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=as_subplot,
         figsize=figsize,
         aspect=aspect,
@@ -336,7 +327,6 @@ def plot_ci_post_cti(
 def plot_residual_map(
     fit,
     mask=None,
-    extract_array_from_mask=False,
     as_subplot=False,
     figsize=(7, 7),
     aspect="equal",
@@ -373,7 +363,6 @@ def plot_residual_map(
     array_plotters.plot_array(
         array=fit.residual_map,
         mask=mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=as_subplot,
         figsize=figsize,
         aspect=aspect,
@@ -402,7 +391,6 @@ def plot_residual_map(
 def plot_chi_squared_map(
     fit,
     mask=None,
-    extract_array_from_mask=False,
     as_subplot=False,
     figsize=(7, 7),
     aspect="equal",
@@ -439,7 +427,6 @@ def plot_chi_squared_map(
     array_plotters.plot_array(
         array=fit.chi_squared_map,
         mask=mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=as_subplot,
         figsize=figsize,
         aspect=aspect,
@@ -468,7 +455,6 @@ def plot_chi_squared_map(
 def plot_noise_scaling_maps(
     fit_hyper,
     mask=None,
-    extract_array_from_mask=False,
     figsize=(7, 7),
     aspect="equal",
     cmap="jet",
@@ -501,7 +487,7 @@ def plot_noise_scaling_maps(
         The chi_squared_map of the dataset.
     """
 
-    rows, columns, figsize_tool = plotter_util.get_subplot_rows_columns_figsize(
+    rows, columns, figsize_tool = ci_plotter_util.get_subplot_rows_columns_figsize(
         number_subplots=len(fit_hyper.noise_scaling_maps)
     )
 
@@ -517,7 +503,6 @@ def plot_noise_scaling_maps(
         array_plotters.plot_array(
             array=fit_hyper.noise_scaling_maps[index],
             mask=mask,
-            extract_array_from_mask=extract_array_from_mask,
             as_subplot=True,
             figsize=figsize,
             aspect=aspect,
@@ -542,7 +527,7 @@ def plot_noise_scaling_maps(
             output_filename=output_filename,
         )
 
-    plotter_util.output_subplot_array(
+    ci_plotter_util.output_subplot_array(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -575,7 +560,7 @@ def plot_image_line(
     image : CIFrame
         The image of the dataset.
     """
-    line_plotters.plot_line_from_array_and_ci_frame(
+    ci_line_plotters.plot_line_from_ci_frame(
         array=fit.image,
         line_region=line_region,
         ci_frame=fit.ci_data_masked.ci_frame,
@@ -617,7 +602,7 @@ def plot_noise_map_line(
     noise_map : CIFrame
         The noise_map of the dataset.
     """
-    line_plotters.plot_line_from_array_and_ci_frame(
+    ci_line_plotters.plot_line_from_ci_frame(
         array=fit.noise_map,
         line_region=line_region,
         ci_frame=fit.ci_data_masked.ci_frame,
@@ -659,7 +644,7 @@ def plot_signal_to_noise_map_line(
     signal_to_noise_map : CIFrame
         The signal_to_noise_map of the dataset.
     """
-    line_plotters.plot_line_from_array_and_ci_frame(
+    ci_line_plotters.plot_line_from_ci_frame(
         array=fit.signal_to_noise_map,
         line_region=line_region,
         ci_frame=fit.ci_data_masked.ci_frame,
@@ -701,7 +686,7 @@ def plot_ci_pre_cti_line(
     ci_pre_cti : CIFrame
         The ci_pre_cti of the dataset.
     """
-    line_plotters.plot_line_from_array_and_ci_frame(
+    ci_line_plotters.plot_line_from_ci_frame(
         array=fit.ci_pre_cti,
         line_region=line_region,
         ci_frame=fit.ci_data_masked.ci_frame,
@@ -743,7 +728,7 @@ def plot_ci_post_cti_line(
     ci_post_cti : CIFrame
         The ci_post_cti of the dataset.
     """
-    line_plotters.plot_line_from_array_and_ci_frame(
+    ci_line_plotters.plot_line_from_ci_frame(
         array=fit.ci_post_cti,
         line_region=line_region,
         ci_frame=fit.ci_data_masked.ci_frame,
@@ -785,7 +770,7 @@ def plot_residual_map_line(
     residual_map : CIFrame
         The residual_map of the dataset.
     """
-    line_plotters.plot_line_from_array_and_ci_frame(
+    ci_line_plotters.plot_line_from_ci_frame(
         array=fit.residual_map,
         line_region=line_region,
         ci_frame=fit.ci_data_masked.ci_frame,
@@ -827,7 +812,7 @@ def plot_chi_squared_map_line(
     chi_squared_map : CIFrame
         The chi_squared_map of the dataset.
     """
-    line_plotters.plot_line_from_array_and_ci_frame(
+    ci_line_plotters.plot_line_from_ci_frame(
         array=fit.chi_squared_map,
         line_region=line_region,
         ci_frame=fit.ci_data_masked.ci_frame,

@@ -1,7 +1,6 @@
 from matplotlib import pyplot as plt
 
-from autocti.plotters.ci_plotters import data_plotters
-from autocti.plotters import plotter_util
+from autocti.plotters import ci_plotter_util, ci_imaging_plotters
 from autoarray.util import array_util
 
 
@@ -22,7 +21,6 @@ def plot_ci_data_for_phase(
 
     plot_ci_data_arrays_for_phase(
         ci_datas_extracted=ci_datas_extracted,
-        extract_array_from_mask=extract_array_from_mask,
         should_plot_as_subplot=should_plot_as_subplot,
         should_plot_image=should_plot_image,
         should_plot_noise_map=should_plot_noise_map,
@@ -74,7 +72,6 @@ def plot_ci_data_arrays_for_phase(
             plot_ci_subplot(
                 ci_data=ci_datas_extracted[data_index],
                 mask=ci_datas_extracted[data_index].mask,
-                extract_array_from_mask=extract_array_from_mask,
                 output_path=output_path,
                 output_format="png",
             )
@@ -82,7 +79,6 @@ def plot_ci_data_arrays_for_phase(
         plot_ci_data_individual(
             ci_data=ci_datas_extracted[data_index],
             mask=ci_datas_extracted[data_index].mask,
-            extract_array_from_mask=extract_array_from_mask,
             should_plot_image=should_plot_image,
             should_plot_noise_map=should_plot_noise_map,
             should_plot_ci_pre_cti=should_plot_ci_pre_cti,
@@ -106,7 +102,7 @@ def plot_ci_data_lines_for_phase(
     visualize_path,
 ):
 
-    line_regions = plotter_util.line_regions_from_should_plots(
+    line_regions = ci_plotter_util.line_regions_from_should_plots(
         should_plot_parallel_front_edge_line=should_plot_parallel_front_edge_line,
         should_plot_parallel_trails_line=should_plot_parallel_trails_line,
         should_plot_serial_front_edge_line=should_plot_serial_front_edge_line,
@@ -166,7 +162,6 @@ def plot_ci_data_lines_for_phase(
 def plot_ci_subplot(
     ci_data,
     mask=None,
-    extract_array_from_mask=False,
     figsize=None,
     aspect="equal",
     cmap="jet",
@@ -207,7 +202,7 @@ def plot_ci_subplot(
         config file is ignored.
     """
 
-    rows, columns, figsize_tool = plotter_util.get_subplot_rows_columns_figsize(
+    rows, columns, figsize_tool = ci_plotter_util.get_subplot_rows_columns_figsize(
         number_subplots=4
     )
 
@@ -220,7 +215,6 @@ def plot_ci_subplot(
     plot_image(
         ci_data=ci_data,
         mask=mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=True,
         figsize=figsize,
         aspect=aspect,
@@ -248,7 +242,6 @@ def plot_ci_subplot(
     plot_noise_map(
         ci_data=ci_data,
         mask=mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=True,
         figsize=figsize,
         aspect=aspect,
@@ -276,7 +269,6 @@ def plot_ci_subplot(
     plot_ci_pre_cti(
         ci_data=ci_data,
         mask=mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=True,
         figsize=figsize,
         aspect=aspect,
@@ -304,7 +296,6 @@ def plot_ci_subplot(
     plot_signal_to_noise_map(
         ci_data=ci_data,
         mask=mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=True,
         figsize=figsize,
         aspect=aspect,
@@ -327,7 +318,7 @@ def plot_ci_subplot(
         output_format=output_format,
     )
 
-    plotter_util.output_subplot_array(
+    ci_plotter_util.output_subplot_array(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -339,7 +330,6 @@ def plot_ci_subplot(
 def plot_ci_data_individual(
     ci_data,
     mask=None,
-    extract_array_from_mask=False,
     should_plot_image=False,
     should_plot_noise_map=False,
     should_plot_ci_pre_cti=False,
@@ -364,7 +354,6 @@ def plot_ci_data_individual(
         plot_image(
             ci_data=ci_data,
             mask=mask,
-            extract_array_from_mask=extract_array_from_mask,
             output_path=output_path,
             output_format=output_format,
         )
@@ -373,7 +362,6 @@ def plot_ci_data_individual(
         plot_noise_map(
             ci_data=ci_data,
             mask=mask,
-            extract_array_from_mask=extract_array_from_mask,
             output_path=output_path,
             output_format=output_format,
         )
@@ -381,7 +369,6 @@ def plot_ci_data_individual(
     if should_plot_ci_pre_cti:
         plot_ci_pre_cti(
             ci_data=ci_data,
-            extract_array_from_mask=extract_array_from_mask,
             output_path=output_path,
             output_format=output_format,
         )
@@ -390,7 +377,6 @@ def plot_ci_data_individual(
         plot_signal_to_noise_map(
             ci_data=ci_data,
             mask=mask,
-            extract_array_from_mask=extract_array_from_mask,
             output_path=output_path,
             output_format=output_format,
         )
@@ -399,7 +385,6 @@ def plot_ci_data_individual(
 def plot_image(
     ci_data,
     mask=None,
-    extract_array_from_mask=False,
     as_subplot=False,
     figsize=(7, 7),
     aspect="equal",
@@ -432,10 +417,9 @@ def plot_image(
     image : CIFrame
         The image of the dataset.
     """
-    data_plotters.plot_image(
+    ci_imaging_plotters.plot_image(
         image=ci_data.image,
         mask=mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=as_subplot,
         figsize=figsize,
         aspect=aspect,
@@ -464,7 +448,6 @@ def plot_image(
 def plot_noise_map(
     ci_data,
     mask=None,
-    extract_array_from_mask=False,
     as_subplot=False,
     figsize=(7, 7),
     aspect="equal",
@@ -497,10 +480,9 @@ def plot_noise_map(
     noise_map : CIFrame
         The noise map of the dataset.
     """
-    data_plotters.plot_noise_map(
+    ci_imaging_plotters.plot_noise_map(
         noise_map=ci_data.noise_map,
         mask=mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=as_subplot,
         figsize=figsize,
         aspect=aspect,
@@ -529,7 +511,6 @@ def plot_noise_map(
 def plot_ci_pre_cti(
     ci_data,
     mask=None,
-    extract_array_from_mask=False,
     as_subplot=False,
     figsize=(7, 7),
     aspect="equal",
@@ -562,10 +543,9 @@ def plot_ci_pre_cti(
     ci_pre_cti : CIFrame
         The ci_pre_cti of the dataset.
     """
-    data_plotters.plot_ci_pre_cti(
+    ci_imaging_plotters.ci_pre_cti(
         ci_pre_cti=ci_data.ci_pre_cti,
         mask=mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=as_subplot,
         figsize=figsize,
         aspect=aspect,
@@ -594,7 +574,6 @@ def plot_ci_pre_cti(
 def plot_signal_to_noise_map(
     ci_data,
     mask=None,
-    extract_array_from_mask=False,
     as_subplot=False,
     figsize=(7, 7),
     aspect="equal",
@@ -627,10 +606,9 @@ def plot_signal_to_noise_map(
     signal_to_noise_map : CIFrame
         The signal-to-noise map of the dataset.
     """
-    data_plotters.plot_signal_to_noise_map(
+    ci_imaging_plotters.plot_signal_to_noise_map(
         signal_to_noise_map=ci_data.signal_to_noise_map,
         mask=mask,
-        extract_array_from_mask=extract_array_from_mask,
         as_subplot=as_subplot,
         figsize=figsize,
         aspect=aspect,
@@ -689,7 +667,7 @@ def plot_ci_line_subplot(
         config file is ignored.
     """
 
-    rows, columns, figsize_tool = plotter_util.get_subplot_rows_columns_figsize(
+    rows, columns, figsize_tool = ci_plotter_util.get_subplot_rows_columns_figsize(
         number_subplots=4
     )
 
@@ -769,7 +747,7 @@ def plot_ci_line_subplot(
         output_filename=output_filename,
     )
 
-    plotter_util.output_subplot_array(
+    ci_plotter_util.output_subplot_array(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -864,7 +842,7 @@ def plot_image_line(
         The image of the dataset.
     """
 
-    data_plotters.plot_image_line(
+    ci_imaging_plotters.plot_image_line(
         image=ci_data.image,
         line_region=line_region,
         ci_frame=ci_data.ci_frame,
@@ -906,7 +884,7 @@ def plot_noise_map_line(
     noise_map : CIFrame
         The noise map of the dataset.
     """
-    data_plotters.plot_noise_map_line(
+    ci_imaging_plotters.plot_noise_map_line(
         noise_map=ci_data.noise_map,
         line_region=line_region,
         ci_frame=ci_data.ci_frame,
@@ -948,7 +926,7 @@ def plot_ci_pre_cti_line(
     ci_pre_cti : CIFrame
         The ci_pre_cti of the dataset.
     """
-    data_plotters.plot_ci_pre_cti_line(
+    ci_imaging_plotters.plot_ci_pre_cti_line(
         ci_pre_cti=ci_data.ci_pre_cti,
         line_region=line_region,
         ci_frame=ci_data.ci_frame,
@@ -990,7 +968,7 @@ def plot_signal_to_noise_map_line(
     signal_to_noise_map : CIFrame
         The signal-to-noise map of the dataset.
     """
-    data_plotters.plot_signal_to_noise_map_line(
+    ci_imaging_plotters.plot_signal_to_noise_map_line(
         signal_to_noise_map=ci_data.signal_to_noise_map,
         line_region=line_region,
         ci_frame=ci_data.ci_frame,
