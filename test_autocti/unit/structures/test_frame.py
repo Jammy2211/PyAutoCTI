@@ -298,7 +298,7 @@ class TestFrameAPI:
 
 
 class TestMaskedFrameAPI:
-    def test__frame__makes_frame_using_inputs(self):
+    def test__manual__makes_frame_using_inputs(self):
 
         mask = ac.mask.manual(mask_2d=[[False, True], [False, False]])
 
@@ -314,6 +314,66 @@ class TestMaskedFrameAPI:
         assert (frame == np.array([[1.0, 0.0], [3.0, 4.0]])).all()
         assert (frame.in_2d == np.array([[1.0, 0.0], [3.0, 4.0]])).all()
         assert (frame.in_1d == np.array([1.0, 3.0, 4.0])).all()
+        assert frame.corner == (0, 0)
+        assert frame.parallel_overscan == (0, 1, 0, 1)
+        assert frame.serial_prescan == (1, 2, 1, 2)
+        assert frame.serial_overscan == (2, 3, 2, 3)
+        assert (frame.mask == np.array([[False, True], [False, False]])).all()
+
+    def test__ones_zeros_full__makes_frame_using_inputs(self):
+
+        mask = ac.mask.manual(mask_2d=[[False, True], [False, False]])
+
+        frame = ac.masked.frame.full(
+            fill_value=8.0,
+            mask=mask,
+            corner=(0, 0),
+            parallel_overscan=(0, 1, 0, 1),
+            serial_prescan=(1, 2, 1, 2),
+            serial_overscan=(2, 3, 2, 3),
+        )
+
+        assert (frame == np.array([[8.0, 0.0], [8.0, 8.0]])).all()
+        assert (frame.in_2d == np.array([[8.0, 0.0], [8.0, 8.0]])).all()
+        assert (frame.in_1d == np.array([8.0, 8.0, 8.0])).all()
+        assert frame.corner == (0, 0)
+        assert frame.parallel_overscan == (0, 1, 0, 1)
+        assert frame.serial_prescan == (1, 2, 1, 2)
+        assert frame.serial_overscan == (2, 3, 2, 3)
+        assert (frame.mask == np.array([[False, True], [False, False]])).all()
+        
+        mask = ac.mask.manual(mask_2d=[[False, True], [False, False]])
+
+        frame = ac.masked.frame.ones(
+            mask=mask,
+            corner=(0, 0),
+            parallel_overscan=(0, 1, 0, 1),
+            serial_prescan=(1, 2, 1, 2),
+            serial_overscan=(2, 3, 2, 3),
+        )
+
+        assert (frame == np.array([[1.0, 0.0], [1.0, 1.0]])).all()
+        assert (frame.in_2d == np.array([[1.0, 0.0], [1.0, 1.0]])).all()
+        assert (frame.in_1d == np.array([1.0, 1.0, 1.0])).all()
+        assert frame.corner == (0, 0)
+        assert frame.parallel_overscan == (0, 1, 0, 1)
+        assert frame.serial_prescan == (1, 2, 1, 2)
+        assert frame.serial_overscan == (2, 3, 2, 3)
+        assert (frame.mask == np.array([[False, True], [False, False]])).all()
+
+        mask = ac.mask.manual(mask_2d=[[False, True], [False, False]])
+
+        frame = ac.masked.frame.zeros(
+            mask=mask,
+            corner=(0, 0),
+            parallel_overscan=(0, 1, 0, 1),
+            serial_prescan=(1, 2, 1, 2),
+            serial_overscan=(2, 3, 2, 3),
+        )
+
+        assert (frame == np.array([[0.0, 0.0], [0.0, 0.0]])).all()
+        assert (frame.in_2d == np.array([[0.0, 0.0], [0.0, 0.0]])).all()
+        assert (frame.in_1d == np.array([0.0, 0.0, 0.0])).all()
         assert frame.corner == (0, 0)
         assert frame.parallel_overscan == (0, 1, 0, 1)
         assert frame.serial_prescan == (1, 2, 1, 2)
