@@ -8,64 +8,64 @@ def plot_ci_fit_for_phase(
     fits,
     during_analysis,
     extract_array_from_mask,
-    should_plot_all_at_end_png,
-    should_plot_all_at_end_fits,
-    should_plot_as_subplot,
-    should_plot_residual_maps_subplot,
-    should_plot_chi_squared_maps_subplot,
-    should_plot_image,
-    should_plot_noise_map,
-    should_plot_signal_to_noise_map,
-    should_plot_ci_pre_cti,
-    should_plot_ci_post_cti,
-    should_plot_residual_map,
-    should_plot_chi_squared_map,
-    should_plot_noise_scaling_maps,
-    should_plot_parallel_front_edge_line,
-    should_plot_parallel_trails_line,
-    should_plot_serial_front_edge_line,
-    should_plot_serial_trails_line,
+    plot_all_at_end_png,
+    plot_all_at_end_fits,
+    plot_as_subplot,
+    plot_residual_maps_subplot,
+    plot_chi_squared_maps_subplot,
+    plot_image,
+    plot_noise_map,
+    plot_signal_to_noise_map,
+    plot_ci_pre_cti,
+    plot_ci_post_cti,
+    plot_residual_map,
+    plot_chi_squared_map,
+    plot_noise_scaling_maps,
+    plot_parallel_front_edge_line,
+    plot_parallel_trails_line,
+    plot_serial_front_edge_line,
+    plot_serial_trails_line,
     visualize_path=None,
 ):
 
     plot_ci_fit_arrays_for_phase(
         fits=fits,
         during_analysis=during_analysis,
-        should_plot_all_at_end_png=should_plot_all_at_end_png,
-        should_plot_all_at_end_fits=should_plot_all_at_end_fits,
-        should_plot_as_subplot=should_plot_as_subplot,
-        should_plot_residual_maps_subplot=should_plot_residual_maps_subplot,
-        should_plot_chi_squared_maps_subplot=should_plot_chi_squared_maps_subplot,
-        should_plot_image=should_plot_image,
-        should_plot_noise_map=should_plot_noise_map,
-        should_plot_signal_to_noise_map=should_plot_signal_to_noise_map,
-        should_plot_ci_pre_cti=should_plot_ci_pre_cti,
-        should_plot_ci_post_cti=should_plot_ci_post_cti,
-        should_plot_noise_scaling_maps=should_plot_noise_scaling_maps,
-        should_plot_residual_map=should_plot_residual_map,
-        should_plot_chi_squared_map=should_plot_chi_squared_map,
+        plot_all_at_end_png=plot_all_at_end_png,
+        plot_all_at_end_fits=plot_all_at_end_fits,
+        plot_as_subplot=plot_as_subplot,
+        plot_residual_maps_subplot=plot_residual_maps_subplot,
+        plot_chi_squared_maps_subplot=plot_chi_squared_maps_subplot,
+        plot_image=plot_image,
+        plot_noise_map=plot_noise_map,
+        plot_signal_to_noise_map=plot_signal_to_noise_map,
+        plot_ci_pre_cti=plot_ci_pre_cti,
+        plot_ci_post_cti=plot_ci_post_cti,
+        plot_noise_scaling_maps=plot_noise_scaling_maps,
+        plot_residual_map=plot_residual_map,
+        plot_chi_squared_map=plot_chi_squared_map,
         visualize_path=visualize_path,
     )
 
     plot_ci_fit_lines_for_phase(
         fits=fits,
         during_analysis=during_analysis,
-        should_plot_all_at_end_png=should_plot_all_at_end_png,
-        should_plot_all_at_end_fits=should_plot_all_at_end_fits,
-        should_plot_as_subplot=should_plot_as_subplot,
-        should_plot_residual_maps_subplot=should_plot_residual_maps_subplot,
-        should_plot_chi_squared_maps_subplot=should_plot_chi_squared_maps_subplot,
-        should_plot_image=should_plot_image,
-        should_plot_noise_map=should_plot_noise_map,
-        should_plot_signal_to_noise_map=should_plot_signal_to_noise_map,
-        should_plot_ci_pre_cti=should_plot_ci_pre_cti,
-        should_plot_ci_post_cti=should_plot_ci_post_cti,
-        should_plot_residual_map=should_plot_residual_map,
-        should_plot_chi_squared_map=should_plot_chi_squared_map,
-        should_plot_parallel_front_edge_line=should_plot_parallel_front_edge_line,
-        should_plot_parallel_trails_line=should_plot_parallel_trails_line,
-        should_plot_serial_front_edge_line=should_plot_serial_front_edge_line,
-        should_plot_serial_trails_line=should_plot_serial_trails_line,
+        plot_all_at_end_png=plot_all_at_end_png,
+        plot_all_at_end_fits=plot_all_at_end_fits,
+        plot_as_subplot=plot_as_subplot,
+        plot_residual_maps_subplot=plot_residual_maps_subplot,
+        plot_chi_squared_maps_subplot=plot_chi_squared_maps_subplot,
+        plot_image=plot_image,
+        plot_noise_map=plot_noise_map,
+        plot_signal_to_noise_map=plot_signal_to_noise_map,
+        plot_ci_pre_cti=plot_ci_pre_cti,
+        plot_ci_post_cti=plot_ci_post_cti,
+        plot_residual_map=plot_residual_map,
+        plot_chi_squared_map=plot_chi_squared_map,
+        plot_parallel_front_edge_line=plot_parallel_front_edge_line,
+        plot_parallel_trails_line=plot_parallel_trails_line,
+        plot_serial_front_edge_line=plot_serial_front_edge_line,
+        plot_serial_trails_line=plot_serial_trails_line,
         visualize_path=visualize_path,
     )
 
@@ -74,19 +74,19 @@ def plot_ci_fit_arrays_for_phase(
     fits,
     during_analysis,
     extract_array_from_mask,
-    should_plot_all_at_end_png,
-    should_plot_all_at_end_fits,
-    should_plot_as_subplot,
-    should_plot_residual_maps_subplot,
-    should_plot_chi_squared_maps_subplot,
-    should_plot_image,
-    should_plot_noise_map,
-    should_plot_signal_to_noise_map,
-    should_plot_ci_pre_cti,
-    should_plot_ci_post_cti,
-    should_plot_residual_map,
-    should_plot_chi_squared_map,
-    should_plot_noise_scaling_maps,
+    plot_all_at_end_png,
+    plot_all_at_end_fits,
+    plot_as_subplot,
+    plot_residual_maps_subplot,
+    plot_chi_squared_maps_subplot,
+    plot_image,
+    plot_noise_map,
+    plot_signal_to_noise_map,
+    plot_ci_pre_cti,
+    plot_ci_post_cti,
+    plot_residual_map,
+    plot_chi_squared_map,
+    plot_noise_scaling_maps,
     visualize_path=None,
 ):
 
@@ -102,108 +102,100 @@ def plot_ci_fit_arrays_for_phase(
         )
         array_util.make_path_if_does_not_exist(path=output_path + "fits/")
 
-        if should_plot_as_subplot:
+        if plot_as_subplot:
 
-            plot_fit_subplot(
-                fit=fit,
-                output_path=output_path,
-                output_format="png",
-            )
+            plot_fit_subplot(fit=fit, output_path=output_path, output_format="png")
 
         plot_fit_individuals(
             fit=fit,
-            should_plot_image=should_plot_image,
-            should_plot_noise_map=should_plot_noise_map,
-            should_plot_signal_to_noise_map=should_plot_signal_to_noise_map,
-            should_plot_ci_pre_cti=should_plot_ci_pre_cti,
-            should_plot_ci_post_cti=should_plot_ci_post_cti,
-            should_plot_residual_map=should_plot_residual_map,
-            should_plot_chi_squared_map=should_plot_chi_squared_map,
-            should_plot_noise_scaling_maps=should_plot_noise_scaling_maps,
+            plot_image=plot_image,
+            plot_noise_map=plot_noise_map,
+            plot_signal_to_noise_map=plot_signal_to_noise_map,
+            plot_ci_pre_cti=plot_ci_pre_cti,
+            plot_ci_post_cti=plot_ci_post_cti,
+            plot_residual_map=plot_residual_map,
+            plot_chi_squared_map=plot_chi_squared_map,
+            plot_noise_scaling_maps=plot_noise_scaling_maps,
             output_path=output_path,
             output_format="png",
         )
 
         if not during_analysis:
 
-            if should_plot_all_at_end_png:
+            if plot_all_at_end_png:
 
                 plot_fit_individuals(
                     fit=fit,
-                    should_plot_image=True,
-                    should_plot_noise_map=True,
-                    should_plot_signal_to_noise_map=True,
-                    should_plot_ci_pre_cti=True,
-                    should_plot_ci_post_cti=True,
-                    should_plot_residual_map=True,
-                    should_plot_chi_squared_map=True,
-                    should_plot_noise_scaling_maps=True,
+                    plot_image=True,
+                    plot_noise_map=True,
+                    plot_signal_to_noise_map=True,
+                    plot_ci_pre_cti=True,
+                    plot_ci_post_cti=True,
+                    plot_residual_map=True,
+                    plot_chi_squared_map=True,
+                    plot_noise_scaling_maps=True,
                     output_path=output_path,
                     output_format="png",
                 )
 
-            if should_plot_all_at_end_fits:
+            if plot_all_at_end_fits:
 
                 plot_fit_individuals(
                     fit=fit,
-                    should_plot_image=True,
-                    should_plot_noise_map=True,
-                    should_plot_signal_to_noise_map=True,
-                    should_plot_ci_pre_cti=True,
-                    should_plot_ci_post_cti=True,
-                    should_plot_residual_map=True,
-                    should_plot_chi_squared_map=True,
-                    should_plot_noise_scaling_maps=True,
+                    plot_image=True,
+                    plot_noise_map=True,
+                    plot_signal_to_noise_map=True,
+                    plot_ci_pre_cti=True,
+                    plot_ci_post_cti=True,
+                    plot_residual_map=True,
+                    plot_chi_squared_map=True,
+                    plot_noise_scaling_maps=True,
                     output_path="{}/fits/".format(output_path),
                     output_format="fits",
                 )
 
         output_path = visualize_path + "/"
 
-        if should_plot_residual_maps_subplot:
+        if plot_residual_maps_subplot:
 
             plot_fit_residual_maps_subplot(
-                fits=fits,
-                output_path=output_path,
-                output_format="png",
+                fits=fits, output_path=output_path, output_format="png"
             )
 
-        if should_plot_chi_squared_maps_subplot:
+        if plot_chi_squared_maps_subplot:
 
             plot_fit_chi_squared_maps_subplot(
-                fits=fits,
-                output_path=output_path,
-                output_format="png",
+                fits=fits, output_path=output_path, output_format="png"
             )
 
 
 def plot_ci_fit_lines_for_phase(
     fits,
     during_analysis,
-    should_plot_all_at_end_png,
-    should_plot_all_at_end_fits,
-    should_plot_as_subplot,
-    should_plot_residual_maps_subplot,
-    should_plot_chi_squared_maps_subplot,
-    should_plot_image,
-    should_plot_noise_map,
-    should_plot_signal_to_noise_map,
-    should_plot_ci_pre_cti,
-    should_plot_ci_post_cti,
-    should_plot_residual_map,
-    should_plot_chi_squared_map,
-    should_plot_parallel_front_edge_line,
-    should_plot_parallel_trails_line,
-    should_plot_serial_front_edge_line,
-    should_plot_serial_trails_line,
+    plot_all_at_end_png,
+    plot_all_at_end_fits,
+    plot_as_subplot,
+    plot_residual_maps_subplot,
+    plot_chi_squared_maps_subplot,
+    plot_image,
+    plot_noise_map,
+    plot_signal_to_noise_map,
+    plot_ci_pre_cti,
+    plot_ci_post_cti,
+    plot_residual_map,
+    plot_chi_squared_map,
+    plot_parallel_front_edge_line,
+    plot_parallel_trails_line,
+    plot_serial_front_edge_line,
+    plot_serial_trails_line,
     visualize_path=None,
 ):
 
-    line_regions = ci_plotter_util.line_regions_from_should_plots(
-        should_plot_parallel_front_edge_line=should_plot_parallel_front_edge_line,
-        should_plot_parallel_trails_line=should_plot_parallel_trails_line,
-        should_plot_serial_front_edge_line=should_plot_serial_front_edge_line,
-        should_plot_serial_trails_line=should_plot_serial_trails_line,
+    line_regions = ci_plotter_util.line_regions_from_plots(
+        plot_parallel_front_edge_line=plot_parallel_front_edge_line,
+        plot_parallel_trails_line=plot_parallel_trails_line,
+        plot_serial_front_edge_line=plot_serial_front_edge_line,
+        plot_serial_trails_line=plot_serial_trails_line,
     )
 
     for line_region in line_regions:
@@ -222,7 +214,7 @@ def plot_ci_fit_lines_for_phase(
             )
             array_util.make_path_if_does_not_exist(path=output_path + "fits/")
 
-            if should_plot_as_subplot:
+            if plot_as_subplot:
 
                 plot_fit_line_subplot(
                     fit=fit,
@@ -234,54 +226,54 @@ def plot_ci_fit_lines_for_phase(
             plot_fit_line_individuals(
                 fit=fit,
                 line_region=line_region,
-                should_plot_image=should_plot_image,
-                should_plot_noise_map=should_plot_noise_map,
-                should_plot_signal_to_noise_map=should_plot_signal_to_noise_map,
-                should_plot_ci_pre_cti=should_plot_ci_pre_cti,
-                should_plot_ci_post_cti=should_plot_ci_post_cti,
-                should_plot_residual_map=should_plot_residual_map,
-                should_plot_chi_squared_map=should_plot_chi_squared_map,
+                plot_image=plot_image,
+                plot_noise_map=plot_noise_map,
+                plot_signal_to_noise_map=plot_signal_to_noise_map,
+                plot_ci_pre_cti=plot_ci_pre_cti,
+                plot_ci_post_cti=plot_ci_post_cti,
+                plot_residual_map=plot_residual_map,
+                plot_chi_squared_map=plot_chi_squared_map,
                 output_path=output_path,
                 output_format="png",
             )
 
             if not during_analysis:
 
-                if should_plot_all_at_end_png:
+                if plot_all_at_end_png:
 
                     plot_fit_line_individuals(
                         fit=fit,
                         line_region=line_region,
-                        should_plot_image=True,
-                        should_plot_noise_map=True,
-                        should_plot_signal_to_noise_map=True,
-                        should_plot_ci_pre_cti=True,
-                        should_plot_ci_post_cti=True,
-                        should_plot_residual_map=True,
-                        should_plot_chi_squared_map=True,
+                        plot_image=True,
+                        plot_noise_map=True,
+                        plot_signal_to_noise_map=True,
+                        plot_ci_pre_cti=True,
+                        plot_ci_post_cti=True,
+                        plot_residual_map=True,
+                        plot_chi_squared_map=True,
                         output_path=output_path,
                         output_format="png",
                     )
 
-                if should_plot_all_at_end_fits:
+                if plot_all_at_end_fits:
 
                     plot_fit_line_individuals(
                         fit=fit,
                         line_region=line_region,
-                        should_plot_image=True,
-                        should_plot_noise_map=True,
-                        should_plot_signal_to_noise_map=True,
-                        should_plot_ci_pre_cti=True,
-                        should_plot_ci_post_cti=True,
-                        should_plot_residual_map=True,
-                        should_plot_chi_squared_map=True,
+                        plot_image=True,
+                        plot_noise_map=True,
+                        plot_signal_to_noise_map=True,
+                        plot_ci_pre_cti=True,
+                        plot_ci_post_cti=True,
+                        plot_residual_map=True,
+                        plot_chi_squared_map=True,
                         output_path=output_path,
                         output_format="fits",
                     )
 
         output_path = visualize_path + "/" + line_region + "_"
 
-        if should_plot_residual_maps_subplot:
+        if plot_residual_maps_subplot:
 
             plot_fit_residual_maps_lines_subplot(
                 fits=fits,
@@ -290,7 +282,7 @@ def plot_ci_fit_lines_for_phase(
                 output_format="png",
             )
 
-        if should_plot_chi_squared_maps_subplot:
+        if plot_chi_squared_maps_subplot:
 
             plot_fit_chi_squared_maps_lines_subplot(
                 fits=fits,
@@ -785,75 +777,54 @@ def plot_fit_chi_squared_maps_subplot(
 
 def plot_fit_individuals(
     fit,
-    should_plot_image=False,
-    should_plot_noise_map=False,
-    should_plot_signal_to_noise_map=False,
-    should_plot_ci_pre_cti=False,
-    should_plot_ci_post_cti=False,
-    should_plot_residual_map=False,
-    should_plot_chi_squared_map=False,
-    should_plot_noise_scaling_maps=False,
+    plot_image=False,
+    plot_noise_map=False,
+    plot_signal_to_noise_map=False,
+    plot_ci_pre_cti=False,
+    plot_ci_post_cti=False,
+    plot_residual_map=False,
+    plot_chi_squared_map=False,
+    plot_noise_scaling_maps=False,
     output_path=None,
     output_format="show",
 ):
 
-    if should_plot_image:
+    if plot_image:
         fit_plotters.plot_image(
-            fit=fit,
-            mask=fit.mask,
-            output_path=output_path,
-            output_format=output_format,
+            fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
         )
 
-    if should_plot_noise_map:
+    if plot_noise_map:
         fit_plotters.plot_noise_map(
-            fit=fit,
-            mask=fit.mask,
-            output_path=output_path,
-            output_format=output_format,
+            fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
         )
 
-    if should_plot_signal_to_noise_map:
+    if plot_signal_to_noise_map:
         fit_plotters.plot_signal_to_noise_map(
-            fit=fit,
-            mask=fit.mask,
-            output_path=output_path,
-            output_format=output_format,
+            fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
         )
 
-    if should_plot_ci_pre_cti:
+    if plot_ci_pre_cti:
         fit_plotters.plot_ci_pre_cti(
-            fit=fit,
-            mask=fit.mask,
-            output_path=output_path,
-            output_format=output_format,
+            fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
         )
 
-    if should_plot_ci_post_cti:
+    if plot_ci_post_cti:
         fit_plotters.plot_ci_post_cti(
-            fit=fit,
-            mask=fit.mask,
-            output_path=output_path,
-            output_format=output_format,
+            fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
         )
 
-    if should_plot_residual_map:
+    if plot_residual_map:
         fit_plotters.plot_residual_map(
-            fit=fit,
-            mask=fit.mask,
-            output_path=output_path,
-            output_format=output_format,
+            fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
         )
 
-    if should_plot_chi_squared_map:
+    if plot_chi_squared_map:
         fit_plotters.plot_chi_squared_map(
-            fit=fit,
-            mask=fit.mask,
-            output_path=output_path,
-            output_format=output_format,
+            fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
         )
 
-    if should_plot_noise_scaling_maps and hasattr(fit, "noise_scaling_maps"):
+    if plot_noise_scaling_maps and hasattr(fit, "noise_scaling_maps"):
 
         fit_plotters.plot_noise_scaling_maps(
             fit_hyper=fit,
@@ -1214,18 +1185,18 @@ def plot_fit_chi_squared_maps_lines_subplot(
 def plot_fit_line_individuals(
     fit,
     line_region,
-    should_plot_image=False,
-    should_plot_noise_map=False,
-    should_plot_signal_to_noise_map=False,
-    should_plot_ci_pre_cti=False,
-    should_plot_ci_post_cti=False,
-    should_plot_residual_map=False,
-    should_plot_chi_squared_map=False,
+    plot_image=False,
+    plot_noise_map=False,
+    plot_signal_to_noise_map=False,
+    plot_ci_pre_cti=False,
+    plot_ci_post_cti=False,
+    plot_residual_map=False,
+    plot_chi_squared_map=False,
     output_path=None,
     output_format="show",
 ):
 
-    if should_plot_image:
+    if plot_image:
         fit_plotters.plot_image_line(
             fit=fit,
             line_region=line_region,
@@ -1234,7 +1205,7 @@ def plot_fit_line_individuals(
             output_format=output_format,
         )
 
-    if should_plot_noise_map:
+    if plot_noise_map:
         fit_plotters.plot_noise_map_line(
             fit=fit,
             line_region=line_region,
@@ -1243,7 +1214,7 @@ def plot_fit_line_individuals(
             output_format=output_format,
         )
 
-    if should_plot_signal_to_noise_map:
+    if plot_signal_to_noise_map:
         fit_plotters.plot_signal_to_noise_map_line(
             fit=fit,
             line_region=line_region,
@@ -1252,7 +1223,7 @@ def plot_fit_line_individuals(
             output_format=output_format,
         )
 
-    if should_plot_ci_pre_cti:
+    if plot_ci_pre_cti:
         fit_plotters.plot_ci_pre_cti_line(
             fit=fit,
             line_region=line_region,
@@ -1261,7 +1232,7 @@ def plot_fit_line_individuals(
             output_format=output_format,
         )
 
-    if should_plot_ci_post_cti:
+    if plot_ci_post_cti:
         fit_plotters.plot_ci_post_cti_line(
             fit=fit,
             line_region=line_region,
@@ -1270,7 +1241,7 @@ def plot_fit_line_individuals(
             output_format=output_format,
         )
 
-    if should_plot_residual_map:
+    if plot_residual_map:
         fit_plotters.plot_residual_map_line(
             fit=fit,
             line_region=line_region,
@@ -1279,7 +1250,7 @@ def plot_fit_line_individuals(
             output_format=output_format,
         )
 
-    if should_plot_chi_squared_map:
+    if plot_chi_squared_map:
         fit_plotters.plot_chi_squared_map_line(
             fit=fit,
             line_region=line_region,

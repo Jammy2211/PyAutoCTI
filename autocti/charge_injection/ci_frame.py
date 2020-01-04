@@ -237,7 +237,7 @@ class AbstractCIFrame(frame.Frame):
             front_edges = self.parallel_front_edge_arrays(rows=front_edge_rows)
 
             for i, region in enumerate(front_regions):
-                new_frame[region.y0: region.y1, region.x0: region.x1] += front_edges[
+                new_frame[region.y0 : region.y1, region.x0 : region.x1] += front_edges[
                     i
                 ]
 
@@ -255,7 +255,7 @@ class AbstractCIFrame(frame.Frame):
             trails = self.parallel_trails_arrays(rows=trails_rows)
 
             for i, region in enumerate(trails_regions):
-                new_frame[region.y0: region.y1, region.x0: region.x1] += trails[i]
+                new_frame[region.y0 : region.y1, region.x0 : region.x1] += trails[i]
 
         return new_frame
 
@@ -431,7 +431,7 @@ class AbstractCIFrame(frame.Frame):
         return new_array
 
     def serial_edges_and_trails_frame(
-            self, front_edge_columns=None, trails_columns=None
+        self, front_edge_columns=None, trails_columns=None
     ):
         """Extract an arrays of all of the serial front edges and trails of each the charge-injection regions from
         a charge injection ci_frame.
@@ -509,7 +509,7 @@ class AbstractCIFrame(frame.Frame):
             front_edges = self.serial_front_edge_arrays(columns=front_edge_columns)
 
             for i, region in enumerate(front_regions):
-                new_array[region.y0: region.y1, region.x0: region.x1] += front_edges[
+                new_array[region.y0 : region.y1, region.x0 : region.x1] += front_edges[
                     i
                 ]
 
@@ -527,7 +527,7 @@ class AbstractCIFrame(frame.Frame):
             trails = self.serial_trails_arrays(columns=trails_columns)
 
             for i, region in enumerate(trails_regions):
-                new_array[region.y0: region.y1, region.x0: region.x1] += trails[i]
+                new_array[region.y0 : region.y1, region.x0 : region.x1] += trails[i]
 
         return new_array
 
@@ -576,7 +576,7 @@ class AbstractCIFrame(frame.Frame):
         """
         calibration_images = self.serial_calibration_sub_arrays
         calibration_images = list(
-            map(lambda image: image[rows[0]: rows[1], :], calibration_images)
+            map(lambda image: image[rows[0] : rows[1], :], calibration_images)
         )
         array = np.concatenate(calibration_images, axis=0)
         return array
@@ -1100,7 +1100,7 @@ class AbstractCIFrame(frame.Frame):
 
     @property
     def parallel_serial_calibration_section(self):
-        return self[0: self.shape_2d[0], 0: self.shape_2d[1]]
+        return self[0 : self.shape_2d[0], 0 : self.shape_2d[1]]
 
     @property
     def smallest_parallel_trails_rows_to_frame_edge(self):
@@ -1240,7 +1240,6 @@ class CIFrame(AbstractCIFrame):
             serial_overscan=serial_overscan,
             pixel_scales=pixel_scales,
         )
-
 
     @classmethod
     def from_fits(

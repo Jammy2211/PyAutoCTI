@@ -4,7 +4,6 @@ import autocti as ac
 
 
 class TestCIFrameAPI:
-
     def test__manual__makes_frame_using_inputs(self):
 
         ci_pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 3)])
@@ -91,11 +90,11 @@ class TestCIFrameAPI:
         assert (ci_frame.mask == np.array([[False, False], [False, False]])).all()
 
     def test__masked_ci_frame__ones_zeros_full__makes_frame_using_inputs(self):
-        
+
         ci_pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 3)])
-        
+
         mask = ac.mask.manual(mask_2d=[[False, True], [False, False]])
-    
+
         ci_frame = ac.masked.ci_frame.full(
             fill_value=8.0,
             mask=mask,
@@ -105,7 +104,7 @@ class TestCIFrameAPI:
             serial_prescan=(1, 2, 1, 2),
             serial_overscan=(2, 3, 2, 3),
         )
-    
+
         assert (ci_frame == np.array([[8.0, 0.0], [8.0, 8.0]])).all()
         assert (ci_frame.in_2d == np.array([[8.0, 0.0], [8.0, 8.0]])).all()
         assert (ci_frame.in_1d == np.array([8.0, 8.0, 8.0])).all()
@@ -115,9 +114,9 @@ class TestCIFrameAPI:
         assert ci_frame.serial_prescan == (1, 2, 1, 2)
         assert ci_frame.serial_overscan == (2, 3, 2, 3)
         assert (ci_frame.mask == np.array([[False, True], [False, False]])).all()
-    
+
         mask = ac.mask.manual(mask_2d=[[False, True], [False, False]])
-    
+
         ci_frame = ac.masked.ci_frame.ones(
             mask=mask,
             ci_pattern=ci_pattern,
@@ -126,7 +125,7 @@ class TestCIFrameAPI:
             serial_prescan=(1, 2, 1, 2),
             serial_overscan=(2, 3, 2, 3),
         )
-    
+
         assert (ci_frame == np.array([[1.0, 0.0], [1.0, 1.0]])).all()
         assert (ci_frame.in_2d == np.array([[1.0, 0.0], [1.0, 1.0]])).all()
         assert (ci_frame.in_1d == np.array([1.0, 1.0, 1.0])).all()
@@ -136,9 +135,9 @@ class TestCIFrameAPI:
         assert ci_frame.serial_prescan == (1, 2, 1, 2)
         assert ci_frame.serial_overscan == (2, 3, 2, 3)
         assert (ci_frame.mask == np.array([[False, True], [False, False]])).all()
-    
+
         mask = ac.mask.manual(mask_2d=[[False, True], [False, False]])
-    
+
         ci_frame = ac.masked.ci_frame.zeros(
             mask=mask,
             ci_pattern=ci_pattern,
@@ -147,7 +146,7 @@ class TestCIFrameAPI:
             serial_prescan=(1, 2, 1, 2),
             serial_overscan=(2, 3, 2, 3),
         )
-    
+
         assert (ci_frame == np.array([[0.0, 0.0], [0.0, 0.0]])).all()
         assert (ci_frame.in_2d == np.array([[0.0, 0.0], [0.0, 0.0]])).all()
         assert (ci_frame.in_1d == np.array([0.0, 0.0, 0.0])).all()
@@ -157,6 +156,7 @@ class TestCIFrameAPI:
         assert ci_frame.serial_prescan == (1, 2, 1, 2)
         assert ci_frame.serial_overscan == (2, 3, 2, 3)
         assert (ci_frame.mask == np.array([[False, True], [False, False]])).all()
+
 
 class TestCiRegionsArray:
     def test__1_ci_region__extracted_correctly(self):
@@ -432,7 +432,9 @@ class TestParallelCalibrationSection:
 
         ci_frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
 
-        extracted_side = ci_frame.parallel_calibration_section_for_columns(columns=(0, 1))
+        extracted_side = ci_frame.parallel_calibration_section_for_columns(
+            columns=(0, 1)
+        )
 
         assert (extracted_side == np.array([[0.0], [0.0], [0.0], [0.0], [0.0]])).all()
 
@@ -453,7 +455,9 @@ class TestParallelCalibrationSection:
 
         ci_frame = ac.ci_frame.manual(array=arr, corner=(1, 0), ci_pattern=ci_pattern)
 
-        extracted_side = ci_frame.parallel_calibration_section_for_columns(columns=(1, 3))
+        extracted_side = ci_frame.parallel_calibration_section_for_columns(
+            columns=(1, 3)
+        )
 
         assert (
             extracted_side
@@ -475,7 +479,9 @@ class TestParallelCalibrationSection:
 
         ci_frame = ac.ci_frame.manual(array=arr, corner=(1, 1), ci_pattern=ci_pattern)
 
-        extracted_side = ci_frame.parallel_calibration_section_for_columns(columns=(1, 3))
+        extracted_side = ci_frame.parallel_calibration_section_for_columns(
+            columns=(1, 3)
+        )
 
         assert (
             extracted_side
@@ -2193,7 +2199,9 @@ class TestSerialFrontEdgeArrays:
             == np.array([[3.0, 4.0, 5.0], [3.0, 4.0, 5.0], [3.0, 4.0, 5.0]])
         ).all()
 
-        front_edge_line = ci_frame.serial_front_edge_line_binned_over_rows(columns=(0, 3))
+        front_edge_line = ci_frame.serial_front_edge_line_binned_over_rows(
+            columns=(0, 3)
+        )
 
         assert (front_edge_line == np.array([3.0, 4.0, 5.0])).all()
 
@@ -2248,7 +2256,9 @@ class TestSerialFrontEdgeArrays:
             )
         ).all()
 
-        front_edge_line = ci_frame.serial_front_edge_line_binned_over_rows(columns=(0, 3))
+        front_edge_line = ci_frame.serial_front_edge_line_binned_over_rows(
+            columns=(0, 3)
+        )
 
         assert (front_edge_line == np.array([3.0, 10.0 / 3.0, 5.0])).all()
 

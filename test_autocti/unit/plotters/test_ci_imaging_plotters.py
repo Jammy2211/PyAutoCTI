@@ -45,7 +45,9 @@ def make_ci_data(image, noise_map, ci_pre_cti):
     )
 
 
-def test__individual_attributes_are_output(dataset, mask, data_plotter_path, plot_patch):
+def test__individual_attributes_are_output(
+    dataset, mask, data_plotter_path, plot_patch
+):
     ac.ci_data_plotters.plot_image(
         ci_data=dataset,
         mask=mask,
@@ -116,8 +118,8 @@ def test__ci_line_individuals__output_dependent_on_inputs(
     ac.ci_data_plotters.plot_ci_data_line_individual(
         ci_data=dataset,
         line_region="parallel_front_edge",
-        should_plot_image=True,
-        should_plot_ci_pre_cti=True,
+        plot_image=True,
+        plot_ci_pre_cti=True,
         output_path=data_plotter_path,
         output_format="png",
     )
@@ -170,7 +172,9 @@ def test__ci_pre_cti_line_is_output(dataset, mask, data_plotter_path, plot_patch
     assert data_plotter_path + "ci_pre_cti_line.png" in plot_patch.paths
 
 
-def test__signal_to_noise_map_line_is_output(dataset, mask, data_plotter_path, plot_patch):
+def test__signal_to_noise_map_line_is_output(
+    dataset, mask, data_plotter_path, plot_patch
+):
 
     ac.ci_data_plotters.plot_signal_to_noise_map_line(
         ci_data=dataset,
@@ -203,8 +207,8 @@ def test__ci_individuals__output_dependent_on_inputs(
     ac.ci_data_plotters.plot_ci_data_individual(
         ci_data=dataset,
         extract_array_from_mask=True,
-        should_plot_image=True,
-        should_plot_ci_pre_cti=True,
+        plot_image=True,
+        plot_ci_pre_cti=True,
         output_path=data_plotter_path,
         output_format="png",
     )
@@ -235,15 +239,15 @@ def test__plot_ci_data_for_phase(data_extracted, data_plotter_path, plot_patch):
     ac.ci_data_plotters.plot_ci_data_for_phase(
         ci_datas_extracted=[data_extracted],
         extract_array_from_mask=True,
-        should_plot_as_subplot=True,
-        should_plot_image=True,
-        should_plot_noise_map=False,
-        should_plot_ci_pre_cti=True,
-        should_plot_signal_to_noise_map=False,
-        should_plot_parallel_front_edge_line=True,
-        should_plot_parallel_trails_line=False,
-        should_plot_serial_front_edge_line=True,
-        should_plot_serial_trails_line=False,
+        plot_as_subplot=True,
+        plot_image=True,
+        plot_noise_map=False,
+        plot_ci_pre_cti=True,
+        plot_signal_to_noise_map=False,
+        plot_parallel_front_edge_line=True,
+        plot_parallel_trails_line=False,
+        plot_serial_front_edge_line=True,
+        plot_serial_trails_line=False,
         visualize_path=data_plotter_path,
     )
 
