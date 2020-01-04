@@ -8,7 +8,7 @@ from autocti.pipeline import phase_tagging as tag
 from autocti.pipeline.phase.phase import Phase
 from autocti.pipeline.phase import phase_extensions
 from autocti.charge_injection import ci_imaging, ci_fit, ci_mask
-from autocti.plotters import ci_fit_plotters, ci_data_plotters
+from autocti.plotters import ci_fit_plotters, phase_plotters
 from autocti.structures import mask as msk
 from autocti.model import arctic_params
 
@@ -602,18 +602,18 @@ class PhaseCI(Phase):
 
         def visualize(self, instance, image_path, during_analysis):
 
-            ci_data_plotters.plot_ci_data_for_phase(
+            phase_plotters.plot_ci_data_for_phase(
                 ci_datas_extracted=self.ci_datas_masked_extracted,
                 extract_array_from_mask=self.extract_array_from_mask,
-                should_plot_as_subplot=self.plot_ci_data_as_subplot,
-                should_plot_image=self.plot_ci_data_image,
-                should_plot_noise_map=self.plot_ci_data_noise_map,
-                should_plot_ci_pre_cti=self.plot_ci_data_ci_pre_cti,
-                should_plot_signal_to_noise_map=self.plot_ci_data_signal_to_noise_map,
-                should_plot_parallel_front_edge_line=self.plot_parallel_front_edge_line,
-                should_plot_parallel_trails_line=self.plot_parallel_trails_line,
-                should_plot_serial_front_edge_line=self.plot_serial_front_edge_line,
-                should_plot_serial_trails_line=self.plot_serial_trails_line,
+                plot_as_subplot=self.plot_ci_data_as_subplot,
+                plot_image=self.plot_ci_data_image,
+                plot_noise_map=self.plot_ci_data_noise_map,
+                plot_ci_pre_cti=self.plot_ci_data_ci_pre_cti,
+                plot_signal_to_noise_map=self.plot_ci_data_signal_to_noise_map,
+                plot_parallel_front_edge_line=self.plot_parallel_front_edge_line,
+                plot_parallel_trails_line=self.plot_parallel_trails_line,
+                plot_serial_front_edge_line=self.plot_serial_front_edge_line,
+                plot_serial_trails_line=self.plot_serial_trails_line,
                 visualize_path=image_path,
             )
 
@@ -628,23 +628,23 @@ class PhaseCI(Phase):
                 fits=fits,
                 during_analysis=during_analysis,
                 extract_array_from_mask=self.extract_array_from_mask,
-                should_plot_all_at_end_png=self.plot_ci_fit_all_at_end_png,
-                should_plot_all_at_end_fits=self.plot_ci_fit_all_at_end_fits,
-                should_plot_as_subplot=self.plot_ci_fit_as_subplot,
-                should_plot_residual_maps_subplot=self.plot_ci_fit_residual_maps_subplot,
-                should_plot_chi_squared_maps_subplot=self.plot_ci_fit_chi_squared_maps_subplot,
-                should_plot_image=self.plot_ci_fit_image,
-                should_plot_noise_map=self.plot_ci_fit_noise_map,
-                should_plot_signal_to_noise_map=self.plot_ci_fit_signal_to_noise_map,
-                should_plot_ci_pre_cti=self.plot_ci_fit_ci_pre_cti,
-                should_plot_ci_post_cti=self.plot_ci_fit_ci_post_cti,
-                should_plot_residual_map=self.plot_ci_fit_residual_map,
-                should_plot_chi_squared_map=self.plot_ci_fit_chi_squared_map,
-                should_plot_noise_scaling_maps=self.plot_ci_fit_noise_scaling_maps,
-                should_plot_parallel_front_edge_line=self.plot_parallel_front_edge_line,
-                should_plot_parallel_trails_line=self.plot_parallel_trails_line,
-                should_plot_serial_front_edge_line=self.plot_serial_front_edge_line,
-                should_plot_serial_trails_line=self.plot_serial_trails_line,
+                plot_all_at_end_png=self.plot_ci_fit_all_at_end_png,
+                plot_all_at_end_fits=self.plot_ci_fit_all_at_end_fits,
+                plot_as_subplot=self.plot_ci_fit_as_subplot,
+                plot_residual_maps_subplot=self.plot_ci_fit_residual_maps_subplot,
+                plot_chi_squared_maps_subplot=self.plot_ci_fit_chi_squared_maps_subplot,
+                plot_image=self.plot_ci_fit_image,
+                plot_noise_map=self.plot_ci_fit_noise_map,
+                plot_signal_to_noise_map=self.plot_ci_fit_signal_to_noise_map,
+                plot_ci_pre_cti=self.plot_ci_fit_ci_pre_cti,
+                plot_ci_post_cti=self.plot_ci_fit_ci_post_cti,
+                plot_residual_map=self.plot_ci_fit_residual_map,
+                plot_chi_squared_map=self.plot_ci_fit_chi_squared_map,
+                plot_noise_scaling_maps=self.plot_ci_fit_noise_scaling_maps,
+                plot_parallel_front_edge_line=self.plot_parallel_front_edge_line,
+                plot_parallel_trails_line=self.plot_parallel_trails_line,
+                plot_serial_front_edge_line=self.plot_serial_front_edge_line,
+                plot_serial_trails_line=self.plot_serial_trails_line,
                 visualize_path=image_path,
             )
 

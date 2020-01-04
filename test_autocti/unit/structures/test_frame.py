@@ -32,9 +32,7 @@ path = "{}/".format(os.path.dirname(os.path.realpath(__file__)))
 
 
 class TestFrameAPI:
-
     class TestConstructors:
-
         def test__manual__makes_frame_using_inputs(self):
 
             frame = ac.frame.manual(
@@ -55,10 +53,10 @@ class TestFrameAPI:
             assert (frame.mask == np.array([[False, False], [False, False]])).all()
 
         def test__full_ones_zeros__makes_frame_using_inputs(self):
-            
+
             frame = ac.frame.full(
                 fill_value=8.0,
-                shape_2d=(2,2),
+                shape_2d=(2, 2),
                 corner=(0, 0),
                 parallel_overscan=(0, 1, 0, 1),
                 serial_prescan=(1, 2, 1, 2),
@@ -75,7 +73,7 @@ class TestFrameAPI:
             assert (frame.mask == np.array([[False, False], [False, False]])).all()
 
             frame = ac.frame.ones(
-                shape_2d=(2,2),
+                shape_2d=(2, 2),
                 corner=(0, 0),
                 parallel_overscan=(0, 1, 0, 1),
                 serial_prescan=(1, 2, 1, 2),
@@ -90,9 +88,9 @@ class TestFrameAPI:
             assert frame.serial_prescan == (1, 2, 1, 2)
             assert frame.serial_overscan == (2, 3, 2, 3)
             assert (frame.mask == np.array([[False, False], [False, False]])).all()
-            
+
             frame = ac.frame.zeros(
-                shape_2d=(2,2),
+                shape_2d=(2, 2),
                 corner=(0, 0),
                 parallel_overscan=(0, 1, 0, 1),
                 serial_prescan=(1, 2, 1, 2),
@@ -109,7 +107,6 @@ class TestFrameAPI:
             assert (frame.mask == np.array([[False, False], [False, False]])).all()
 
     class TestEuclid:
-
         def test__euclid_frame_for_four_quandrants__loads_data_and_dimensions(
             self, euclid_data
         ):
@@ -341,7 +338,7 @@ class TestMaskedFrameAPI:
         assert frame.serial_prescan == (1, 2, 1, 2)
         assert frame.serial_overscan == (2, 3, 2, 3)
         assert (frame.mask == np.array([[False, True], [False, False]])).all()
-        
+
         mask = ac.mask.manual(mask_2d=[[False, True], [False, False]])
 
         frame = ac.masked.frame.ones(

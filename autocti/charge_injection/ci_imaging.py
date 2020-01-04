@@ -9,9 +9,7 @@ from autoarray.util import array_util
 
 
 class CIImaging(object):
-    def __init__(
-        self, image, noise_map, ci_pre_cti, ci_pattern, cosmic_ray_image=None
-    ):
+    def __init__(self, image, noise_map, ci_pre_cti, ci_pattern, cosmic_ray_image=None):
         self.image = image
         self.noise_map = noise_map
         self.ci_pre_cti = ci_pre_cti

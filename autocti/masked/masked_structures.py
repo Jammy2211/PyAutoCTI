@@ -110,7 +110,6 @@ class MaskedFrame(frame.AbstractFrame):
             serial_overscan=serial_overscan,
         )
 
-
     @classmethod
     def from_fits(
         cls,

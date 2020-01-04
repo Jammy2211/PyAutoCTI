@@ -6,7 +6,7 @@ from autocti.plotters import ci_plotter_util
 
 
 def plot_line_from_ci_frame(
-        ci_frame,
+    ci_frame,
     line_region,
     as_subplot=False,
     figsize=(7, 7),
@@ -17,7 +17,7 @@ def plot_line_from_ci_frame(
     xyticksize=16,
     output_path=None,
     output_format="show",
-    output_filename="line"
+    output_filename="line",
 ):
 
     if line_region is "parallel_front_edge":
