@@ -104,7 +104,7 @@ def plot_ci_fit_arrays_for_phase(
 
         if plot_as_subplot:
 
-            plot_fit_subplot(fit=fit, output_path=output_path, output_format="png")
+            plot_fit_subplot(fit=fit, output_path=output_path, format="png")
 
         plot_fit_individuals(
             fit=fit,
@@ -117,7 +117,7 @@ def plot_ci_fit_arrays_for_phase(
             plot_chi_squared_map=plot_chi_squared_map,
             plot_noise_scaling_maps=plot_noise_scaling_maps,
             output_path=output_path,
-            output_format="png",
+            format="png",
         )
 
         if not during_analysis:
@@ -135,7 +135,7 @@ def plot_ci_fit_arrays_for_phase(
                     plot_chi_squared_map=True,
                     plot_noise_scaling_maps=True,
                     output_path=output_path,
-                    output_format="png",
+                    format="png",
                 )
 
             if plot_all_at_end_fits:
@@ -159,13 +159,13 @@ def plot_ci_fit_arrays_for_phase(
         if plot_residual_maps_subplot:
 
             plot_fit_residual_maps_subplot(
-                fits=fits, output_path=output_path, output_format="png"
+                fits=fits, output_path=output_path, format="png"
             )
 
         if plot_chi_squared_maps_subplot:
 
             plot_fit_chi_squared_maps_subplot(
-                fits=fits, output_path=output_path, output_format="png"
+                fits=fits, output_path=output_path, format="png"
             )
 
 
@@ -220,7 +220,7 @@ def plot_ci_fit_lines_for_phase(
                     fit=fit,
                     line_region=line_region,
                     output_path=output_path,
-                    output_format="png",
+                    format="png",
                 )
 
             plot_fit_line_individuals(
@@ -234,7 +234,7 @@ def plot_ci_fit_lines_for_phase(
                 plot_residual_map=plot_residual_map,
                 plot_chi_squared_map=plot_chi_squared_map,
                 output_path=output_path,
-                output_format="png",
+                format="png",
             )
 
             if not during_analysis:
@@ -252,7 +252,7 @@ def plot_ci_fit_lines_for_phase(
                         plot_residual_map=True,
                         plot_chi_squared_map=True,
                         output_path=output_path,
-                        output_format="png",
+                        format="png",
                     )
 
                 if plot_all_at_end_fits:
@@ -279,7 +279,7 @@ def plot_ci_fit_lines_for_phase(
                 fits=fits,
                 line_region=line_region,
                 output_path=output_path,
-                output_format="png",
+                format="png",
             )
 
         if plot_chi_squared_maps_subplot:
@@ -288,7 +288,7 @@ def plot_ci_fit_lines_for_phase(
                 fits=fits,
                 line_region=line_region,
                 output_path=output_path,
-                output_format="png",
+                format="png",
             )
 
 
@@ -308,8 +308,8 @@ def plot_fit_subplot(
     cb_tick_values=None,
     cb_tick_labels=None,
     titlesize=10,
-    xlabelsize=10,
-    ylabelsize=10,
+    xsize=10,
+    ysize=10,
     xyticksize=10,
     output_path=None,
     output_filename="ci_fit",
@@ -322,8 +322,8 @@ def plot_fit_subplot(
     Parameters
     -----------
     xyticksize
-    ylabelsize
-    xlabelsize
+    ysize
+    xsize
     titlesize
     cb_tick_labels
     cb_tick_values
@@ -378,8 +378,8 @@ def plot_fit_subplot(
         cb_tick_values=cb_tick_values,
         cb_tick_labels=cb_tick_labels,
         titlesize=titlesize,
-        xlabelsize=xlabelsize,
-        ylabelsize=ylabelsize,
+        xsize=xsize,
+        ysize=ysize,
         xyticksize=xyticksize,
         output_path=output_path,
         output_format=output_format,
@@ -406,8 +406,8 @@ def plot_fit_subplot(
         cb_tick_values=cb_tick_values,
         cb_tick_labels=cb_tick_labels,
         titlesize=titlesize,
-        xlabelsize=xlabelsize,
-        ylabelsize=ylabelsize,
+        xsize=xsize,
+        ysize=ysize,
         xyticksize=xyticksize,
         output_path=output_path,
         output_format=output_format,
@@ -434,8 +434,8 @@ def plot_fit_subplot(
         cb_tick_values=cb_tick_values,
         cb_tick_labels=cb_tick_labels,
         titlesize=titlesize,
-        xlabelsize=xlabelsize,
-        ylabelsize=ylabelsize,
+        xsize=xsize,
+        ysize=ysize,
         xyticksize=xyticksize,
         output_path=output_path,
         output_format=output_format,
@@ -462,8 +462,8 @@ def plot_fit_subplot(
         cb_tick_values=cb_tick_values,
         cb_tick_labels=cb_tick_labels,
         titlesize=titlesize,
-        xlabelsize=xlabelsize,
-        ylabelsize=ylabelsize,
+        xsize=xsize,
+        ysize=ysize,
         xyticksize=xyticksize,
         output_path=output_path,
         output_format=output_format,
@@ -490,8 +490,8 @@ def plot_fit_subplot(
         cb_tick_values=cb_tick_values,
         cb_tick_labels=cb_tick_labels,
         titlesize=titlesize,
-        xlabelsize=xlabelsize,
-        ylabelsize=ylabelsize,
+        xsize=xsize,
+        ysize=ysize,
         xyticksize=xyticksize,
         output_path=output_path,
         output_format=output_format,
@@ -518,8 +518,8 @@ def plot_fit_subplot(
         cb_tick_values=cb_tick_values,
         cb_tick_labels=cb_tick_labels,
         titlesize=titlesize,
-        xlabelsize=xlabelsize,
-        ylabelsize=ylabelsize,
+        xsize=xsize,
+        ysize=ysize,
         xyticksize=xyticksize,
         output_path=output_path,
         output_format=output_format,
@@ -546,8 +546,8 @@ def plot_fit_subplot(
         cb_tick_values=cb_tick_values,
         cb_tick_labels=cb_tick_labels,
         titlesize=titlesize,
-        xlabelsize=xlabelsize,
-        ylabelsize=ylabelsize,
+        xsize=xsize,
+        ysize=ysize,
         xyticksize=xyticksize,
         output_path=output_path,
         output_format=output_format,
@@ -579,8 +579,8 @@ def plot_fit_residual_maps_subplot(
     cb_tick_values=None,
     cb_tick_labels=None,
     titlesize=10,
-    xlabelsize=10,
-    ylabelsize=10,
+    xsize=10,
+    ysize=10,
     xyticksize=10,
     output_path=None,
     output_filename="ci_fits_residual_maps",
@@ -593,8 +593,8 @@ def plot_fit_residual_maps_subplot(
     Parameters
     -----------
     xyticksize
-    ylabelsize
-    xlabelsize
+    ysize
+    xsize
     titlesize
     cb_tick_labels
     cb_tick_values
@@ -652,8 +652,8 @@ def plot_fit_residual_maps_subplot(
             cb_tick_values=cb_tick_values,
             cb_tick_labels=cb_tick_labels,
             titlesize=titlesize,
-            xlabelsize=xlabelsize,
-            ylabelsize=ylabelsize,
+            xsize=xsize,
+            ysize=ysize,
             xyticksize=xyticksize,
             output_path=output_path,
             output_format=output_format,
@@ -685,8 +685,8 @@ def plot_fit_chi_squared_maps_subplot(
     cb_tick_values=None,
     cb_tick_labels=None,
     titlesize=10,
-    xlabelsize=10,
-    ylabelsize=10,
+    xsize=10,
+    ysize=10,
     xyticksize=10,
     output_path=None,
     output_filename="ci_fits_chi_squared_maps",
@@ -699,8 +699,8 @@ def plot_fit_chi_squared_maps_subplot(
     Parameters
     -----------
     xyticksize
-    ylabelsize
-    xlabelsize
+    ysize
+    xsize
     titlesize
     cb_tick_labels
     cb_tick_values
@@ -758,8 +758,8 @@ def plot_fit_chi_squared_maps_subplot(
             cb_tick_values=cb_tick_values,
             cb_tick_labels=cb_tick_labels,
             titlesize=titlesize,
-            xlabelsize=xlabelsize,
-            ylabelsize=ylabelsize,
+            xsize=xsize,
+            ysize=ysize,
             xyticksize=xyticksize,
             output_path=output_path,
             output_format=output_format,
@@ -839,8 +839,8 @@ def plot_fit_line_subplot(
     line_region,
     figsize=None,
     titlesize=16,
-    xlabelsize=16,
-    ylabelsize=16,
+    xsize=16,
+    ysize=16,
     xyticksize=16,
     output_path=None,
     output_filename="ci_fit_line",
@@ -853,8 +853,8 @@ def plot_fit_line_subplot(
     Parameters
     -----------
     xyticksize
-    ylabelsize
-    xlabelsize
+    ysize
+    xsize
     titlesize
     cb_tick_labels
     cb_tick_values
@@ -898,8 +898,8 @@ def plot_fit_line_subplot(
         as_subplot=True,
         figsize=figsize,
         titlesize=titlesize,
-        xlabelsize=xlabelsize,
-        ylabelsize=ylabelsize,
+        xsize=xsize,
+        ysize=ysize,
         xyticksize=xyticksize,
         output_path=output_path,
         output_format=output_format,
@@ -915,8 +915,8 @@ def plot_fit_line_subplot(
         as_subplot=True,
         figsize=figsize,
         titlesize=titlesize,
-        xlabelsize=xlabelsize,
-        ylabelsize=ylabelsize,
+        xsize=xsize,
+        ysize=ysize,
         xyticksize=xyticksize,
         output_path=output_path,
         output_format=output_format,
@@ -932,8 +932,8 @@ def plot_fit_line_subplot(
         as_subplot=True,
         figsize=figsize,
         titlesize=titlesize,
-        xlabelsize=xlabelsize,
-        ylabelsize=ylabelsize,
+        xsize=xsize,
+        ysize=ysize,
         xyticksize=xyticksize,
         output_path=output_path,
         output_format=output_format,
@@ -949,8 +949,8 @@ def plot_fit_line_subplot(
         as_subplot=True,
         figsize=figsize,
         titlesize=titlesize,
-        xlabelsize=xlabelsize,
-        ylabelsize=ylabelsize,
+        xsize=xsize,
+        ysize=ysize,
         xyticksize=xyticksize,
         output_path=output_path,
         output_format=output_format,
@@ -966,8 +966,8 @@ def plot_fit_line_subplot(
         as_subplot=True,
         figsize=figsize,
         titlesize=titlesize,
-        xlabelsize=xlabelsize,
-        ylabelsize=ylabelsize,
+        xsize=xsize,
+        ysize=ysize,
         xyticksize=xyticksize,
         output_path=output_path,
         output_format=output_format,
@@ -983,8 +983,8 @@ def plot_fit_line_subplot(
         as_subplot=True,
         figsize=figsize,
         titlesize=titlesize,
-        xlabelsize=xlabelsize,
-        ylabelsize=ylabelsize,
+        xsize=xsize,
+        ysize=ysize,
         xyticksize=xyticksize,
         output_path=output_path,
         output_format=output_format,
@@ -1000,8 +1000,8 @@ def plot_fit_line_subplot(
         as_subplot=True,
         figsize=figsize,
         titlesize=titlesize,
-        xlabelsize=xlabelsize,
-        ylabelsize=ylabelsize,
+        xsize=xsize,
+        ysize=ysize,
         xyticksize=xyticksize,
         output_path=output_path,
         output_format=output_format,
@@ -1022,8 +1022,8 @@ def plot_fit_residual_maps_lines_subplot(
     line_region,
     figsize=None,
     titlesize=16,
-    xlabelsize=16,
-    ylabelsize=16,
+    xsize=16,
+    ysize=16,
     xyticksize=16,
     output_path=None,
     output_filename="ci_fits_residual_maps_lines",
@@ -1036,8 +1036,8 @@ def plot_fit_residual_maps_lines_subplot(
     Parameters
     -----------
     xyticksize
-    ylabelsize
-    xlabelsize
+    ysize
+    xsize
     titlesize
     cb_tick_labels
     cb_tick_values
@@ -1082,8 +1082,8 @@ def plot_fit_residual_maps_lines_subplot(
             line_region=line_region,
             as_subplot=True,
             titlesize=titlesize,
-            xlabelsize=xlabelsize,
-            ylabelsize=ylabelsize,
+            xsize=xsize,
+            ysize=ysize,
             xyticksize=xyticksize,
             output_path=output_path,
             output_format=output_format,
@@ -1104,8 +1104,8 @@ def plot_fit_chi_squared_maps_lines_subplot(
     line_region,
     figsize=None,
     titlesize=16,
-    xlabelsize=16,
-    ylabelsize=16,
+    xsize=16,
+    ysize=16,
     xyticksize=16,
     output_path=None,
     output_filename="ci_fits_chi_squared_maps_lines",
@@ -1118,8 +1118,8 @@ def plot_fit_chi_squared_maps_lines_subplot(
     Parameters
     -----------
     xyticksize
-    ylabelsize
-    xlabelsize
+    ysize
+    xsize
     titlesize
     cb_tick_labels
     cb_tick_values
@@ -1165,8 +1165,8 @@ def plot_fit_chi_squared_maps_lines_subplot(
             line_region=line_region,
             as_subplot=True,
             titlesize=titlesize,
-            xlabelsize=xlabelsize,
-            ylabelsize=ylabelsize,
+            xsize=xsize,
+            ysize=ysize,
             xyticksize=xyticksize,
             output_path=output_path,
             output_format=output_format,

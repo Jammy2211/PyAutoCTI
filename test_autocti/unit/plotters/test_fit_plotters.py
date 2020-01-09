@@ -75,7 +75,7 @@ def test__image_is_output(fit, mask, fit_plotter_path, plot_patch):
         cb_tick_values=[1.0],
         cb_tick_labels=["1.0"],
         output_path=fit_plotter_path,
-        output_format="png",
+        format="png",
     )
     assert fit_plotter_path + "fit_image.png" in plot_patch.paths
 
@@ -88,7 +88,7 @@ def test__noise_map_is_output(fit, mask, fit_plotter_path, plot_patch):
         cb_tick_values=[1.0],
         cb_tick_labels=["1.0"],
         output_path=fit_plotter_path,
-        output_format="png",
+        format="png",
     )
     assert fit_plotter_path + "fit_noise_map.png" in plot_patch.paths
 
@@ -101,7 +101,7 @@ def test__signal_to_noise_map_is_output(fit, mask, fit_plotter_path, plot_patch)
         cb_tick_values=[1.0],
         cb_tick_labels=["1.0"],
         output_path=fit_plotter_path,
-        output_format="png",
+        format="png",
     )
     assert fit_plotter_path + "fit_signal_to_noise_map.png" in plot_patch.paths
 
@@ -114,7 +114,7 @@ def test__ci_pre_cti_is_output(fit, mask, fit_plotter_path, plot_patch):
         cb_tick_values=[1.0],
         cb_tick_labels=["1.0"],
         output_path=fit_plotter_path,
-        output_format="png",
+        format="png",
     )
     assert fit_plotter_path + "fit_ci_pre_cti.png" in plot_patch.paths
 
@@ -127,7 +127,7 @@ def test__ci_post_cti_is_output(fit, mask, fit_plotter_path, plot_patch):
         cb_tick_values=[1.0],
         cb_tick_labels=["1.0"],
         output_path=fit_plotter_path,
-        output_format="png",
+        format="png",
     )
     assert fit_plotter_path + "fit_ci_post_cti.png" in plot_patch.paths
 
@@ -140,7 +140,7 @@ def test__residual_map_is_output(fit, mask, fit_plotter_path, plot_patch):
         cb_tick_values=[1.0],
         cb_tick_labels=["1.0"],
         output_path=fit_plotter_path,
-        output_format="png",
+        format="png",
     )
     assert fit_plotter_path + "fit_residual_map.png" in plot_patch.paths
 
@@ -153,7 +153,7 @@ def test__chi_squared_map_is_output(fit, mask, fit_plotter_path, plot_patch):
         cb_tick_values=[1.0],
         cb_tick_labels=["1.0"],
         output_path=fit_plotter_path,
-        output_format="png",
+        format="png",
     )
     assert fit_plotter_path + "fit_chi_squared_map.png" in plot_patch.paths
 
@@ -165,7 +165,7 @@ def test__image_line_is_output(fit, mask, fit_plotter_path, plot_patch):
         line_region="parallel_front_edge",
         mask=mask,
         output_path=fit_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert fit_plotter_path + "fit_image_line.png" in plot_patch.paths
@@ -178,7 +178,7 @@ def test__noise_map_line_is_output(fit, mask, fit_plotter_path, plot_patch):
         line_region="parallel_front_edge",
         mask=mask,
         output_path=fit_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert fit_plotter_path + "fit_noise_map_line.png" in plot_patch.paths
@@ -191,7 +191,7 @@ def test__signal_to_noise_map_line_is_output(fit, mask, fit_plotter_path, plot_p
         line_region="parallel_front_edge",
         mask=mask,
         output_path=fit_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert fit_plotter_path + "fit_signal_to_noise_map_line.png" in plot_patch.paths
@@ -204,7 +204,7 @@ def test__ci_pre_cti_line_is_output(fit, mask, fit_plotter_path, plot_patch):
         line_region="parallel_front_edge",
         mask=mask,
         output_path=fit_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert fit_plotter_path + "fit_ci_pre_cti_line.png" in plot_patch.paths
@@ -217,7 +217,7 @@ def test__ci_post_cti_line_is_output(fit, mask, fit_plotter_path, plot_patch):
         line_region="parallel_front_edge",
         mask=mask,
         output_path=fit_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert fit_plotter_path + "fit_ci_post_cti_line.png" in plot_patch.paths
@@ -230,7 +230,7 @@ def test__residual_map_line_is_output(fit, mask, fit_plotter_path, plot_patch):
         line_region="parallel_front_edge",
         mask=mask,
         output_path=fit_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     print(plot_patch.paths)
@@ -245,7 +245,7 @@ def test__chi_squared_map_line_is_output(fit, mask, fit_plotter_path, plot_patch
         line_region="parallel_front_edge",
         mask=mask,
         output_path=fit_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert fit_plotter_path + "fit_chi_squared_map_line.png" in plot_patch.paths
@@ -291,7 +291,7 @@ def test__noise_scaling_map_is_output(fit_hyper, mask, fit_plotter_path, plot_pa
         cb_tick_values=[1.0],
         cb_tick_labels=["1.0"],
         output_path=fit_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert fit_plotter_path + "fit_noise_scaling_maps.png" in plot_patch.paths
