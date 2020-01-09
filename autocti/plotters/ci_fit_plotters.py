@@ -554,7 +554,7 @@ def plot_fit_subplot(
         output_filename=output_filename,
     )
 
-    ci_plotter_util.output_subplot_array(
+    ci_plotter_util.output.to_figure(structure=None, is_sub_plotter=False)(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -660,7 +660,7 @@ def plot_fit_residual_maps_subplot(
             output_filename=output_filename,
         )
 
-    ci_plotter_util.output_subplot_array(
+    ci_plotter_util.output.to_figure(structure=None, is_sub_plotter=False)(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -766,7 +766,7 @@ def plot_fit_chi_squared_maps_subplot(
             output_filename=output_filename,
         )
 
-    ci_plotter_util.output_subplot_array(
+    ci_plotter_util.output.to_figure(structure=None, is_sub_plotter=False)(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -1008,7 +1008,7 @@ def plot_fit_line_subplot(
         output_filename=output_filename,
     )
 
-    ci_plotter_util.output_subplot_array(
+    ci_plotter_util.output.to_figure(structure=None, is_sub_plotter=False)(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -1090,7 +1090,7 @@ def plot_fit_residual_maps_lines_subplot(
             output_filename=output_filename,
         )
 
-    ci_plotter_util.output_subplot_array(
+    ci_plotter_util.output.to_figure(structure=None, is_sub_plotter=False)(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -1173,7 +1173,7 @@ def plot_fit_chi_squared_maps_lines_subplot(
             output_filename=output_filename,
         )
 
-    ci_plotter_util.output_subplot_array(
+    ci_plotter_util.output.to_figure(structure=None, is_sub_plotter=False)(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
