@@ -73,7 +73,7 @@ def plot_ci_data_arrays_for_phase(
                 ci_data=ci_datas_extracted[data_index],
                 mask=ci_datas_extracted[data_index].mask,
                 output_path=output_path,
-                output_format="png",
+                format="png",
             )
 
         plot_ci_data_individual(
@@ -84,7 +84,7 @@ def plot_ci_data_arrays_for_phase(
             plot_ci_pre_cti=plot_ci_pre_cti,
             plot_signal_to_noise_map=plot_signal_to_noise_map,
             output_path=output_path,
-            output_format="png",
+            format="png",
         )
 
 
@@ -131,7 +131,7 @@ def plot_ci_data_lines_for_phase(
                     ci_data=ci_datas_extracted[data_index],
                     line_region=line_region,
                     output_path=output_path,
-                    output_format="png",
+                    format="png",
                 )
 
             plot_ci_data_line_individual(
@@ -143,7 +143,7 @@ def plot_ci_data_lines_for_phase(
                 plot_ci_pre_cti=plot_ci_pre_cti,
                 plot_signal_to_noise_map=plot_signal_to_noise_map,
                 output_path=output_path,
-                output_format="png",
+                format="png",
             )
 
             plot_ci_data_line_individual(

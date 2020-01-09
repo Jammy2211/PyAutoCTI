@@ -80,7 +80,7 @@ def test__ci_fit_subplot_is_output(fit, ci_fit_plotter_path, plot_patch):
         cb_tick_values=[1.0],
         cb_tick_labels=["1.0"],
         output_path=ci_fit_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert ci_fit_plotter_path + "ci_fit.png" in plot_patch.paths
@@ -94,7 +94,7 @@ def test__ci_fit_residual_maps_subplot_is_output(fit, ci_fit_plotter_path, plot_
         cb_tick_values=[1.0],
         cb_tick_labels=["1.0"],
         output_path=ci_fit_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert ci_fit_plotter_path + "ci_fits_residual_maps.png" in plot_patch.paths
@@ -103,7 +103,7 @@ def test__ci_fit_residual_maps_subplot_is_output(fit, ci_fit_plotter_path, plot_
         fits=[fit],
         line_region="parallel_front_edge",
         output_path=ci_fit_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert ci_fit_plotter_path + "ci_fits_residual_maps_lines.png" in plot_patch.paths
@@ -117,7 +117,7 @@ def test__ci_fit_chi_squareds_subplot_is_output(fit, ci_fit_plotter_path, plot_p
         cb_tick_values=[1.0],
         cb_tick_labels=["1.0"],
         output_path=ci_fit_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert ci_fit_plotter_path + "ci_fits_chi_squared_maps.png" in plot_patch.paths
@@ -126,7 +126,7 @@ def test__ci_fit_chi_squareds_subplot_is_output(fit, ci_fit_plotter_path, plot_p
         fits=[fit],
         line_region="parallel_front_edge",
         output_path=ci_fit_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert (
@@ -145,7 +145,7 @@ def test__fit_individuals__depedent_on_input(fit, ci_fit_plotter_path, plot_patc
         plot_ci_post_cti=True,
         plot_chi_squared_map=True,
         output_path=ci_fit_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert ci_fit_plotter_path + "fit_image.png" in plot_patch.paths
@@ -177,7 +177,7 @@ def test__fit_individuals_line__depedent_on_input(
         plot_ci_post_cti=True,
         plot_chi_squared_map=True,
         output_path=ci_fit_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert ci_fit_plotter_path + "fit_image_line.png" in plot_patch.paths
@@ -357,7 +357,7 @@ def test__fit_individuals__fit_hyper_plots_noise_scaling_maps(
         fit=fit,
         plot_noise_scaling_maps=True,
         output_path=ci_fit_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert ci_fit_plotter_path + "fit_noise_scaling_maps.png" not in plot_patch.paths
@@ -366,7 +366,7 @@ def test__fit_individuals__fit_hyper_plots_noise_scaling_maps(
         fit=fit_hyper,
         plot_noise_scaling_maps=True,
         output_path=ci_fit_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert ci_fit_plotter_path + "fit_noise_scaling_maps.png" in plot_patch.paths

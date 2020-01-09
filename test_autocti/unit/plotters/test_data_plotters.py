@@ -48,7 +48,7 @@ def test__image_is_output(image, mask, data_plotter_path, plot_patch):
         cb_tick_values=[1.0],
         cb_tick_labels=["1.0"],
         output_path=data_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert data_plotter_path + "image.png" in plot_patch.paths
@@ -62,7 +62,7 @@ def test__noise_map_is_output(noise_map, mask, data_plotter_path, plot_patch):
         cb_tick_values=[1.0],
         cb_tick_labels=["1.0"],
         output_path=data_plotter_path,
-        output_format="png",
+        format="png",
     )
     assert data_plotter_path + "noise_map.png" in plot_patch.paths
 
@@ -75,7 +75,7 @@ def test__ci_pre_cti_is_output(ci_pre_cti, mask, data_plotter_path, plot_patch):
         cb_tick_values=[1.0],
         cb_tick_labels=["1.0"],
         output_path=data_plotter_path,
-        output_format="png",
+        format="png",
     )
     assert data_plotter_path + "ci_pre_cti.png" in plot_patch.paths
 
@@ -90,7 +90,7 @@ def test__signal_to_noise_map_is_output(
         cb_tick_values=[1.0],
         cb_tick_labels=["1.0"],
         output_path=data_plotter_path,
-        output_format="png",
+        format="png",
     )
     assert data_plotter_path + "signal_to_noise_map.png" in plot_patch.paths
 
@@ -103,7 +103,7 @@ def test__image_line_is_output(image, mask, ci_frame, data_plotter_path, plot_pa
         mask=mask,
         ci_frame=ci_frame,
         output_path=data_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert data_plotter_path + "image_line.png" in plot_patch.paths
@@ -119,7 +119,7 @@ def test__noise_map_line_is_output(
         mask=mask,
         ci_frame=ci_frame,
         output_path=data_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert data_plotter_path + "noise_map_line.png" in plot_patch.paths
@@ -135,7 +135,7 @@ def test__ci_pre_cti_line_is_output(
         ci_frame=ci_frame,
         mask=mask,
         output_path=data_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert data_plotter_path + "ci_pre_cti_line.png" in plot_patch.paths
@@ -151,7 +151,7 @@ def test__signal_to_noise_map_line_is_output(
         line_region="parallel_front_edge",
         mask=mask,
         output_path=data_plotter_path,
-        output_format="png",
+        format="png",
     )
 
     assert data_plotter_path + "signal_to_noise_map_line.png" in plot_patch.paths
