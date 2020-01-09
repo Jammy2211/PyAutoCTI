@@ -527,7 +527,7 @@ def plot_noise_scaling_maps(
             output_filename=output_filename,
         )
 
-    ci_plotter_util.output_subplot_array(
+    ci_plotter_util.output.to_figure(structure=None, is_sub_plotter=False)(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,

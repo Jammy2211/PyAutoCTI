@@ -188,7 +188,7 @@ def subplot(
         output_format=output_format,
     )
 
-    plotter_util.output_subplot_array(
+    plotter_util.output.to_figure(structure=None, is_sub_plotter=False)(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -428,7 +428,7 @@ def plot_ci_line_subplot(
         output_filename=output_filename,
     )
 
-    ci_plotter_util.output_subplot_array(
+    ci_plotter_util.output.to_figure(structure=None, is_sub_plotter=False)(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
