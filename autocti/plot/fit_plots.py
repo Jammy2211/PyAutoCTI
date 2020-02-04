@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
-from autoarray.plotters import array_plotters
-from autocti.plotters import ci_line_plotters
-from autocti.plotters import ci_plotter_util
+from autoarray.plot import plotters
+from autocti.plot import ci_line_plots
+from autocti.plot import ci_plotter_util
 
 
 def plot_image(
@@ -32,7 +32,7 @@ def plot_image(
 ):
     """Plot the observed image of the ccd simulator.
 
-    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
@@ -40,7 +40,7 @@ def plot_image(
         The image of the dataset.
     """
 
-    array_plotters.plot_array(
+    plotters.plot_array(
         array=fit.image,
         mask=mask,
         as_subplot=as_subplot,
@@ -96,7 +96,7 @@ def plot_noise_map(
 ):
     """Plot the observed noise_map of the ccd simulator.
 
-    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
@@ -104,7 +104,7 @@ def plot_noise_map(
         The noise_map of the dataset.
     """
 
-    array_plotters.plot_array(
+    plotters.plot_array(
         array=fit.noise_map,
         mask=mask,
         as_subplot=as_subplot,
@@ -160,7 +160,7 @@ def plot_signal_to_noise_map(
 ):
     """Plot the observed signal_to_noise_map of the ccd simulator.
 
-    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
@@ -168,7 +168,7 @@ def plot_signal_to_noise_map(
         The signal_to_noise_map of the dataset.
     """
 
-    array_plotters.plot_array(
+    plotters.plot_array(
         array=fit.signal_to_noise_map,
         mask=mask,
         as_subplot=as_subplot,
@@ -224,7 +224,7 @@ def plot_ci_pre_cti(
 ):
     """Plot the observed ci_pre_cti of the ccd simulator.
 
-    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
@@ -232,7 +232,7 @@ def plot_ci_pre_cti(
         The ci_pre_cti of the dataset.
     """
 
-    array_plotters.plot_array(
+    plotters.plot_array(
         array=fit.ci_pre_cti,
         mask=mask,
         as_subplot=as_subplot,
@@ -288,7 +288,7 @@ def plot_ci_post_cti(
 ):
     """Plot the observed ci_post_cti of the ccd simulator.
 
-    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
@@ -296,7 +296,7 @@ def plot_ci_post_cti(
         The ci_post_cti of the dataset.
     """
 
-    array_plotters.plot_array(
+    plotters.plot_array(
         array=fit.ci_post_cti,
         mask=mask,
         as_subplot=as_subplot,
@@ -352,7 +352,7 @@ def plot_residual_map(
 ):
     """Plot the observed residual_map of the ccd simulator.
 
-    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
@@ -360,7 +360,7 @@ def plot_residual_map(
         The residual_map of the dataset.
     """
 
-    array_plotters.plot_array(
+    plotters.plot_array(
         array=fit.residual_map,
         mask=mask,
         as_subplot=as_subplot,
@@ -416,7 +416,7 @@ def plot_chi_squared_map(
 ):
     """Plot the observed chi_squared_map of the ccd simulator.
 
-    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
@@ -424,7 +424,7 @@ def plot_chi_squared_map(
         The chi_squared_map of the dataset.
     """
 
-    array_plotters.plot_array(
+    plotters.plot_array(
         array=fit.chi_squared_map,
         mask=mask,
         as_subplot=as_subplot,
@@ -479,7 +479,7 @@ def plot_noise_scaling_maps(
 ):
     """Plot the observed chi_squared_map of the ccd simulator.
 
-    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
@@ -498,9 +498,9 @@ def plot_noise_scaling_maps(
 
     for index in range(len(fit_hyper.noise_scaling_maps)):
 
-        plt.subplot(rows, columns, index + 1)
+        sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= index + 1)
 
-        array_plotters.plot_array(
+        plotters.plot_array(
             array=fit_hyper.noise_scaling_maps[index],
             mask=mask,
             as_subplot=True,
@@ -527,7 +527,7 @@ def plot_noise_scaling_maps(
             output_filename=output_filename,
         )
 
-    ci_plotter_util.output.to_figure(structure=None, is_sub_plotter=False)(
+    ci_plotter_util.output.to_figure(structure=None,)(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -553,14 +553,14 @@ def plot_image_line(
 ):
     """Plot the observed image of the ccd simulator.
 
-    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     image : CIFrame
         The image of the dataset.
     """
-    ci_line_plotters.plot_line_from_ci_frame(
+    ci_line_plots.plot_line_from_ci_frame(
         array=fit.image,
         line_region=line_region,
         ci_frame=fit.ci_data_masked.ci_frame,
@@ -595,14 +595,14 @@ def plot_noise_map_line(
 ):
     """Plot the observed noise_map of the ccd simulator.
 
-    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     noise_map : CIFrame
         The noise_map of the dataset.
     """
-    ci_line_plotters.plot_line_from_ci_frame(
+    ci_line_plots.plot_line_from_ci_frame(
         array=fit.noise_map,
         line_region=line_region,
         ci_frame=fit.ci_data_masked.ci_frame,
@@ -637,14 +637,14 @@ def plot_signal_to_noise_map_line(
 ):
     """Plot the observed signal_to_noise_map of the ccd simulator.
 
-    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     signal_to_noise_map : CIFrame
         The signal_to_noise_map of the dataset.
     """
-    ci_line_plotters.plot_line_from_ci_frame(
+    ci_line_plots.plot_line_from_ci_frame(
         array=fit.signal_to_noise_map,
         line_region=line_region,
         ci_frame=fit.ci_data_masked.ci_frame,
@@ -679,14 +679,14 @@ def plot_ci_pre_cti_line(
 ):
     """Plot the observed ci_pre_cti of the ccd simulator.
 
-    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     ci_pre_cti : CIFrame
         The ci_pre_cti of the dataset.
     """
-    ci_line_plotters.plot_line_from_ci_frame(
+    ci_line_plots.plot_line_from_ci_frame(
         array=fit.ci_pre_cti,
         line_region=line_region,
         ci_frame=fit.ci_data_masked.ci_frame,
@@ -721,14 +721,14 @@ def plot_ci_post_cti_line(
 ):
     """Plot the observed ci_post_cti of the ccd simulator.
 
-    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     ci_post_cti : CIFrame
         The ci_post_cti of the dataset.
     """
-    ci_line_plotters.plot_line_from_ci_frame(
+    ci_line_plots.plot_line_from_ci_frame(
         array=fit.ci_post_cti,
         line_region=line_region,
         ci_frame=fit.ci_data_masked.ci_frame,
@@ -763,14 +763,14 @@ def plot_residual_map_line(
 ):
     """Plot the observed residual_map of the ccd simulator.
 
-    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     residual_map : CIFrame
         The residual_map of the dataset.
     """
-    ci_line_plotters.plot_line_from_ci_frame(
+    ci_line_plots.plot_line_from_ci_frame(
         array=fit.residual_map,
         line_region=line_region,
         ci_frame=fit.ci_data_masked.ci_frame,
@@ -805,14 +805,14 @@ def plot_chi_squared_map_line(
 ):
     """Plot the observed chi_squared_map of the ccd simulator.
 
-    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     chi_squared_map : CIFrame
         The chi_squared_map of the dataset.
     """
-    ci_line_plotters.plot_line_from_ci_frame(
+    ci_line_plots.plot_line_from_ci_frame(
         array=fit.chi_squared_map,
         line_region=line_region,
         ci_frame=fit.ci_data_masked.ci_frame,

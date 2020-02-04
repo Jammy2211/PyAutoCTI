@@ -8,7 +8,7 @@ from autocti.pipeline import phase_tagging as tag
 from autocti.pipeline.phase.phase import Phase
 from autocti.pipeline.phase import phase_extensions
 from autocti.charge_injection import ci_imaging, ci_fit, ci_mask
-from autocti.plotters import ci_fit_plotters, phase_plotters
+from autocti.plot import ci_fit_plots, phase_plots
 from autocti.structures import mask as msk
 from autocti.model import arctic_params
 
@@ -189,7 +189,7 @@ class PhaseCI(Phase):
         masks = list(
             map(
                 lambda data: self.mask_function(
-                    shape=data.image.shape, ci_frame=data.ci_frame
+                    shape=data.profile_image.shape, ci_frame=data.ci_frame
                 ),
                 ci_datas,
             )
@@ -339,7 +339,7 @@ class PhaseCI(Phase):
         ci_datas_masked_full = list(
             map(
                 lambda data, mask, maps: ci_imaging.CIMaskedImaging(
-                    image=data.image,
+                    image=data.profile_image,
                     noise_map=data.noise_map,
                     ci_pre_cti=data.ci_pre_cti,
                     mask=mask,
@@ -602,7 +602,7 @@ class PhaseCI(Phase):
 
         def visualize(self, instance, image_path, during_analysis):
 
-            phase_plotters.plot_ci_data_for_phase(
+            phase_plots.plot_ci_data_for_phase(
                 ci_datas_extracted=self.ci_datas_masked_extracted,
                 extract_array_from_mask=self.extract_array_from_mask,
                 plot_as_subplot=self.plot_ci_data_as_subplot,
@@ -624,7 +624,7 @@ class PhaseCI(Phase):
                     instance=instance
                 )
 
-            ci_fit_plotters.plot_ci_fit_for_phase(
+            ci_fit_plots.plot_ci_fit_for_phase(
                 fits=fits,
                 during_analysis=during_analysis,
                 extract_array_from_mask=self.extract_array_from_mask,

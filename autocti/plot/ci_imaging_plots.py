@@ -5,9 +5,9 @@ backend = conf.get_matplotlib_backend()
 matplotlib.use(backend)
 from matplotlib import pyplot as plt
 
-from autocti.plotters import ci_line_plotters, ci_plotter_util
-from autoarray.plotters import array_plotters
-from autoarray.plots import imaging_plotters
+from autocti.plot import ci_line_plots, ci_plotter_util
+from autoarray.plot import plotters
+from autoarray.plot import imaging_plots
 from autoarray.util import plotter_util
 
 
@@ -43,7 +43,7 @@ def subplot(
     """Plot the imaging data_type as a sub-plotters of all its quantites (e.g. the dataset, noise_map-map, PSF, Signal-to_noise-map, \
      etc).
 
-    Set *autolens.data_type.array.plotters.array_plotters* for a description of all innput parameters not described below.
+    Set *autolens.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
@@ -66,10 +66,11 @@ def subplot(
     if figsize is None:
         figsize = figsize_tool
 
-    plt.figure(figsize=figsize)
-    plt.subplot(rows, columns, 1)
+        sub_plotter.open_subplot_figure(number_subplots=number_subplots)
 
-    imaging_plotters.image(
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=1)
+
+    imaging_plots.profile_image(
         imaging=imaging,
         as_subplot=True,
         use_scaled_units=use_scaled_units,
@@ -99,9 +100,9 @@ def subplot(
         output_format=output_format,
     )
 
-    plt.subplot(rows, columns, 2)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 2)
 
-    imaging_plotters.noise_map(
+    imaging_plots.noise_map(
         imaging=imaging,
         as_subplot=True,
         use_scaled_units=use_scaled_units,
@@ -129,7 +130,7 @@ def subplot(
         output_format=output_format,
     )
 
-    plt.subplot(rows, columns, 3)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 3)
 
     ci_pre_cti(
         imaging=imaging,
@@ -158,9 +159,9 @@ def subplot(
         output_format=output_format,
     )
 
-    plt.subplot(rows, columns, 4)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 4)
 
-    imaging_plotters.signal_to_noise_map(
+    imaging_plots.signal_to_noise_map(
         imaging=imaging,
         as_subplot=True,
         use_scaled_units=use_scaled_units,
@@ -188,7 +189,7 @@ def subplot(
         output_format=output_format,
     )
 
-    plotter_util.output.to_figure(structure=None, is_sub_plotter=False)(
+    plotter_util.output.to_figure(structure=None)(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -212,7 +213,7 @@ def individual(
     """Plot each attribute of the imaging data_type as individual figures one by one (e.g. the dataset, noise_map-map, PSF, \
      Signal-to_noise-map, etc).
 
-    Set *autolens.data_type.array.plotters.array_plotters* for a description of all innput parameters not described below.
+    Set *autolens.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
@@ -222,7 +223,7 @@ def individual(
         If true, the origin of the dataset's coordinate system is plotted as a 'x'.
     """
 
-    imaging_plotters.individual(
+    imaging_plots.individual(
         imaging=imaging,
         plot_image=plot_image,
         plot_noise_map=plot_noise_map,
@@ -280,14 +281,14 @@ def ci_pre_cti(
 ):
     """Plot the observed ci_pre_cti of the ccd simulator.
 
-    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     ci_pre_cti : CIFrame
         The ci_pre_cti of the dataset.
     """
-    array_plotters.plot_array(
+    plotters.plot_array(
         array=imaging.ci_pre_cti,
         mask=mask,
         as_subplot=as_subplot,
@@ -332,7 +333,7 @@ def plot_ci_line_subplot(
     """Plot the ci simulator as a sub-plotters of all its quantites (e.g. the dataset, noise_map-map, PSF, Signal-to_noise-map, \
      etc).
 
-    Set *autolens.simulator.arrays.plotters.array_plotters* for a description of all innput parameters not described below.
+    Set *autolens.simulator.arrays.plotters.plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
@@ -355,8 +356,9 @@ def plot_ci_line_subplot(
     if figsize is None:
         figsize = figsize_tool
 
-    plt.figure(figsize=figsize)
-    plt.subplot(rows, columns, 1)
+        sub_plotter.open_subplot_figure(number_subplots=number_subplots)
+
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=1)
 
     image_line(
         ci_data=ci_data,
@@ -374,7 +376,7 @@ def plot_ci_line_subplot(
         output_filename=output_filename,
     )
 
-    plt.subplot(rows, columns, 2)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 2)
 
     noise_map_line(
         ci_data=ci_data,
@@ -392,7 +394,7 @@ def plot_ci_line_subplot(
         output_filename=output_filename,
     )
 
-    plt.subplot(rows, columns, 3)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 3)
 
     ci_pre_cti_line(
         ci_data=ci_data,
@@ -410,7 +412,7 @@ def plot_ci_line_subplot(
         output_filename=output_filename,
     )
 
-    plt.subplot(rows, columns, 4)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 4)
 
     signal_to_noise_map_line(
         ci_data=ci_data,
@@ -428,7 +430,7 @@ def plot_ci_line_subplot(
         output_filename=output_filename,
     )
 
-    ci_plotter_util.output.to_figure(structure=None, is_sub_plotter=False)(
+    ci_plotter_util.output.to_figure(structure=None)(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -451,7 +453,7 @@ def plot_ci_data_line_individual(
     """Plot each attribute of the ci simulator as individual figures one by one (e.g. the dataset, noise_map-map, PSF, \
      Signal-to_noise-map, etc).
 
-    Set *autolens.simulator.arrays.plotters.array_plotters* for a description of all innput parameters not described below.
+    Set *autolens.simulator.arrays.plotters.plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
@@ -514,14 +516,14 @@ def image_line(
 ):
     """Plot the observed image of the ccd simulator.
 
-    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     imaging : CIFrame
         The image of the dataset.
     """
-    ci_line_plotters.plot_line_from_ci_frame(
+    ci_line_plots.plot_line_from_ci_frame(
         ci_frame=imaging,
         line_region=line_region,
         as_subplot=as_subplot,
@@ -553,14 +555,14 @@ def noise_map_line(
 ):
     """Plot the observed noise_map of the ccd simulator.
 
-    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     imaging : CIFrame
         The noise_map of the dataset.
     """
-    ci_line_plotters.plot_line_from_ci_frame(
+    ci_line_plots.plot_line_from_ci_frame(
         ci_frame=imaging,
         line_region=line_region,
         as_subplot=as_subplot,
@@ -592,14 +594,14 @@ def ci_pre_cti_line(
 ):
     """Plot the observed ci_pre_cti of the ccd simulator.
 
-    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     imaging : CIFrame
         The ci_pre_cti of the dataset.
     """
-    ci_line_plotters.plot_line_from_ci_frame(
+    ci_line_plots.plot_line_from_ci_frame(
         ci_frame=imaging,
         line_region=line_region,
         as_subplot=as_subplot,
@@ -631,14 +633,14 @@ def signal_to_noise_map_line(
 ):
     """Plot the observed signal_to_noise_map of the ccd simulator.
 
-    Set *autocti.simulator.plotters.array_plotters* for a description of all input parameters not described below.
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
     imaging : CIFrame
         The signal_to_noise_map of the dataset.
     """
-    ci_line_plotters.plot_line_from_ci_frame(
+    ci_line_plots.plot_line_from_ci_frame(
         ci_frame=imaging,
         line_region=line_region,
         as_subplot=as_subplot,

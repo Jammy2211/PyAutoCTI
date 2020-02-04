@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 
-from autocti.plotters import ci_plotter_util, fit_plotters
+from autocti.plot import cti_plotters
 from autoarray.util import array_util
 
 
@@ -357,10 +357,11 @@ def plot_fit_subplot(
     if figsize is None:
         figsize = figsize_tool
 
-    plt.figure(figsize=figsize)
-    plt.subplot(rows, columns, 1)
+        sub_plotter.open_subplot_figure(number_subplots=number_subplots)
 
-    fit_plotters.plot_image(
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=1)
+
+    fit_plots.plot_image(
         fit=fit,
         mask=fit.mask,
         as_subplot=True,
@@ -386,9 +387,9 @@ def plot_fit_subplot(
         output_filename=output_filename,
     )
 
-    plt.subplot(rows, columns, 2)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 2)
 
-    fit_plotters.plot_noise_map(
+    fit_plots.plot_noise_map(
         fit=fit,
         mask=fit.mask,
         as_subplot=True,
@@ -414,9 +415,9 @@ def plot_fit_subplot(
         output_filename=output_filename,
     )
 
-    plt.subplot(rows, columns, 3)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 3)
 
-    fit_plotters.plot_signal_to_noise_map(
+    fit_plots.plot_signal_to_noise_map(
         fit=fit,
         mask=fit.mask,
         as_subplot=True,
@@ -442,9 +443,9 @@ def plot_fit_subplot(
         output_filename=output_filename,
     )
 
-    plt.subplot(rows, columns, 4)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 4)
 
-    fit_plotters.plot_ci_pre_cti(
+    fit_plots.plot_ci_pre_cti(
         fit=fit,
         mask=fit.mask,
         as_subplot=True,
@@ -470,9 +471,9 @@ def plot_fit_subplot(
         output_filename=output_filename,
     )
 
-    plt.subplot(rows, columns, 5)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 5)
 
-    fit_plotters.plot_ci_post_cti(
+    fit_plots.plot_ci_post_cti(
         fit=fit,
         mask=fit.mask,
         as_subplot=True,
@@ -498,9 +499,9 @@ def plot_fit_subplot(
         output_filename=output_filename,
     )
 
-    plt.subplot(rows, columns, 7)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 7)
 
-    fit_plotters.plot_residual_map(
+    fit_plots.plot_residual_map(
         fit=fit,
         mask=fit.mask,
         as_subplot=True,
@@ -526,9 +527,9 @@ def plot_fit_subplot(
         output_filename=output_filename,
     )
 
-    plt.subplot(rows, columns, 8)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 8)
 
-    fit_plotters.plot_chi_squared_map(
+    fit_plots.plot_chi_squared_map(
         fit=fit,
         mask=fit.mask,
         as_subplot=True,
@@ -554,7 +555,7 @@ def plot_fit_subplot(
         output_filename=output_filename,
     )
 
-    ci_plotter_util.output.to_figure(structure=None, is_sub_plotter=False)(
+    ci_plotter_util.output.to_figure(structure=None)(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -632,9 +633,9 @@ def plot_fit_residual_maps_subplot(
 
     for index, fit in enumerate(fits):
 
-        plt.subplot(rows, columns, index + 1)
+        sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= index + 1)
 
-        fit_plotters.plot_residual_map(
+        fit_plots.plot_residual_map(
             fit=fit,
             mask=fit.mask,
             as_subplot=True,
@@ -660,7 +661,7 @@ def plot_fit_residual_maps_subplot(
             output_filename=output_filename,
         )
 
-    ci_plotter_util.output.to_figure(structure=None, is_sub_plotter=False)(
+    ci_plotter_util.output.to_figure(structure=None)(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -738,9 +739,9 @@ def plot_fit_chi_squared_maps_subplot(
 
     for index, fit in enumerate(fits):
 
-        plt.subplot(rows, columns, index + 1)
+        sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= index + 1)
 
-        fit_plotters.plot_chi_squared_map(
+        fit_plots.plot_chi_squared_map(
             fit=fit,
             mask=fit.mask,
             as_subplot=True,
@@ -766,7 +767,7 @@ def plot_fit_chi_squared_maps_subplot(
             output_filename=output_filename,
         )
 
-    ci_plotter_util.output.to_figure(structure=None, is_sub_plotter=False)(
+    ci_plotter_util.output.to_figure(structure=None)(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -790,43 +791,43 @@ def plot_fit_individuals(
 ):
 
     if plot_image:
-        fit_plotters.plot_image(
+        fit_plots.plot_image(
             fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
         )
 
     if plot_noise_map:
-        fit_plotters.plot_noise_map(
+        fit_plots.plot_noise_map(
             fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
         )
 
     if plot_signal_to_noise_map:
-        fit_plotters.plot_signal_to_noise_map(
+        fit_plots.plot_signal_to_noise_map(
             fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
         )
 
     if plot_ci_pre_cti:
-        fit_plotters.plot_ci_pre_cti(
+        fit_plots.plot_ci_pre_cti(
             fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
         )
 
     if plot_ci_post_cti:
-        fit_plotters.plot_ci_post_cti(
+        fit_plots.plot_ci_post_cti(
             fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
         )
 
     if plot_residual_map:
-        fit_plotters.plot_residual_map(
+        fit_plots.plot_residual_map(
             fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
         )
 
     if plot_chi_squared_map:
-        fit_plotters.plot_chi_squared_map(
+        fit_plots.plot_chi_squared_map(
             fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
         )
 
     if plot_noise_scaling_maps and hasattr(fit, "noise_scaling_maps"):
 
-        fit_plotters.plot_noise_scaling_maps(
+        fit_plots.plot_noise_scaling_maps(
             fit_hyper=fit,
             mask=fit.mask,
             output_path=output_path,
@@ -888,10 +889,11 @@ def plot_fit_line_subplot(
     if figsize is None:
         figsize = figsize_tool
 
-    plt.figure(figsize=figsize)
-    plt.subplot(rows, columns, 1)
+        sub_plotter.open_subplot_figure(number_subplots=number_subplots)
 
-    fit_plotters.plot_image_line(
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=1)
+
+    fit_plots.plot_image_line(
         fit=fit,
         line_region=line_region,
         mask=fit.mask,
@@ -906,9 +908,9 @@ def plot_fit_line_subplot(
         output_filename=output_filename,
     )
 
-    plt.subplot(rows, columns, 2)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 2)
 
-    fit_plotters.plot_noise_map_line(
+    fit_plots.plot_noise_map_line(
         fit=fit,
         line_region=line_region,
         mask=fit.mask,
@@ -923,9 +925,9 @@ def plot_fit_line_subplot(
         output_filename=output_filename,
     )
 
-    plt.subplot(rows, columns, 3)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 3)
 
-    fit_plotters.plot_signal_to_noise_map_line(
+    fit_plots.plot_signal_to_noise_map_line(
         fit=fit,
         line_region=line_region,
         mask=fit.mask,
@@ -940,9 +942,9 @@ def plot_fit_line_subplot(
         output_filename=output_filename,
     )
 
-    plt.subplot(rows, columns, 4)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 4)
 
-    fit_plotters.plot_ci_pre_cti_line(
+    fit_plots.plot_ci_pre_cti_line(
         fit=fit,
         line_region=line_region,
         mask=fit.mask,
@@ -957,9 +959,9 @@ def plot_fit_line_subplot(
         output_filename=output_filename,
     )
 
-    plt.subplot(rows, columns, 5)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 5)
 
-    fit_plotters.plot_ci_post_cti_line(
+    fit_plots.plot_ci_post_cti_line(
         fit=fit,
         line_region=line_region,
         mask=fit.mask,
@@ -974,9 +976,9 @@ def plot_fit_line_subplot(
         output_filename=output_filename,
     )
 
-    plt.subplot(rows, columns, 7)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 7)
 
-    fit_plotters.plot_residual_map_line(
+    fit_plots.plot_residual_map_line(
         fit=fit,
         line_region=line_region,
         mask=fit.mask,
@@ -991,9 +993,9 @@ def plot_fit_line_subplot(
         output_filename=output_filename,
     )
 
-    plt.subplot(rows, columns, 8)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 8)
 
-    fit_plotters.plot_chi_squared_map_line(
+    fit_plots.plot_chi_squared_map_line(
         fit=fit,
         line_region=line_region,
         mask=fit.mask,
@@ -1008,7 +1010,7 @@ def plot_fit_line_subplot(
         output_filename=output_filename,
     )
 
-    ci_plotter_util.output.to_figure(structure=None, is_sub_plotter=False)(
+    ci_plotter_util.output.to_figure(structure=None)(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -1074,9 +1076,9 @@ def plot_fit_residual_maps_lines_subplot(
     plt.figure(figsize=figsize)
 
     for index, fit in enumerate(fits):
-        plt.subplot(rows, columns, index + 1)
+        sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= index + 1)
 
-        fit_plotters.plot_residual_map_line(
+        fit_plots.plot_residual_map_line(
             fit=fit,
             mask=fit.mask,
             line_region=line_region,
@@ -1090,7 +1092,7 @@ def plot_fit_residual_maps_lines_subplot(
             output_filename=output_filename,
         )
 
-    ci_plotter_util.output.to_figure(structure=None, is_sub_plotter=False)(
+    ci_plotter_util.output.to_figure(structure=None)(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -1157,9 +1159,9 @@ def plot_fit_chi_squared_maps_lines_subplot(
 
     for index, fit in enumerate(fits):
 
-        plt.subplot(rows, columns, index + 1)
+        sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= index + 1)
 
-        fit_plotters.plot_chi_squared_map_line(
+        fit_plots.plot_chi_squared_map_line(
             fit=fit,
             mask=fit.mask,
             line_region=line_region,
@@ -1173,7 +1175,7 @@ def plot_fit_chi_squared_maps_lines_subplot(
             output_filename=output_filename,
         )
 
-    ci_plotter_util.output.to_figure(structure=None, is_sub_plotter=False)(
+    ci_plotter_util.output.to_figure(structure=None)(
         output_path=output_path,
         output_filename=output_filename,
         output_format=output_format,
@@ -1197,7 +1199,7 @@ def plot_fit_line_individuals(
 ):
 
     if plot_image:
-        fit_plotters.plot_image_line(
+        fit_plots.plot_image_line(
             fit=fit,
             line_region=line_region,
             mask=fit.mask,
@@ -1206,7 +1208,7 @@ def plot_fit_line_individuals(
         )
 
     if plot_noise_map:
-        fit_plotters.plot_noise_map_line(
+        fit_plots.plot_noise_map_line(
             fit=fit,
             line_region=line_region,
             mask=fit.mask,
@@ -1215,7 +1217,7 @@ def plot_fit_line_individuals(
         )
 
     if plot_signal_to_noise_map:
-        fit_plotters.plot_signal_to_noise_map_line(
+        fit_plots.plot_signal_to_noise_map_line(
             fit=fit,
             line_region=line_region,
             mask=fit.mask,
@@ -1224,7 +1226,7 @@ def plot_fit_line_individuals(
         )
 
     if plot_ci_pre_cti:
-        fit_plotters.plot_ci_pre_cti_line(
+        fit_plots.plot_ci_pre_cti_line(
             fit=fit,
             line_region=line_region,
             mask=fit.mask,
@@ -1233,7 +1235,7 @@ def plot_fit_line_individuals(
         )
 
     if plot_ci_post_cti:
-        fit_plotters.plot_ci_post_cti_line(
+        fit_plots.plot_ci_post_cti_line(
             fit=fit,
             line_region=line_region,
             mask=fit.mask,
@@ -1242,7 +1244,7 @@ def plot_fit_line_individuals(
         )
 
     if plot_residual_map:
-        fit_plotters.plot_residual_map_line(
+        fit_plots.plot_residual_map_line(
             fit=fit,
             line_region=line_region,
             mask=fit.mask,
@@ -1251,7 +1253,7 @@ def plot_fit_line_individuals(
         )
 
     if plot_chi_squared_map:
-        fit_plotters.plot_chi_squared_map_line(
+        fit_plots.plot_chi_squared_map_line(
             fit=fit,
             line_region=line_region,
             mask=fit.mask,

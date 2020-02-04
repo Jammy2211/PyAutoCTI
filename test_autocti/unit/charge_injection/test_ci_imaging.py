@@ -253,7 +253,7 @@ class TestCIDataSimulate(object):
             cti_params=params_parallel,
         )
 
-        assert ci_data_simulate.image[0, 0:5] == pytest.approx(
+        assert ci_data_simulate.profile_image[0, 0:5] == pytest.approx(
             np.array([10.0, 10.0, 10.0, 10.0, 10.0]), 1e-2
         )
 
@@ -279,7 +279,7 @@ class TestCIDataSimulate(object):
 
         # Use seed to give us a known read noises map we'll test_autoarray for
 
-        assert ci_data_simulate.image - image_no_noise == pytest.approx(
+        assert ci_data_simulate.profile_image - image_no_noise == pytest.approx(
             np.array([[1.62, -0.61, -0.53], [-1.07, 0.87, -2.30], [1.74, -0.76, 0.32]]),
             1e-2,
         )
@@ -304,12 +304,12 @@ class TestCIDataSimulate(object):
             cosmic_ray_image=cosmic_ray_image,
         )
 
-        assert ci_data_simulate.image[0, 0:5] == pytest.approx(
+        assert ci_data_simulate.profile_image[0, 0:5] == pytest.approx(
             np.array([10.0, 10.0, 10.0, 10.0, 10.0]), 1e-2
         )
-        assert 0.0 < ci_data_simulate.image[1, 1] < 100.0
-        assert ci_data_simulate.image[2, 2] > 98.0
-        assert (ci_data_simulate.image[1, 1:4] > 0.0).all()
+        assert 0.0 < ci_data_simulate.profile_image[1, 1] < 100.0
+        assert ci_data_simulate.profile_image[2, 2] > 98.0
+        assert (ci_data_simulate.profile_image[1, 1:4] > 0.0).all()
         assert (
             ci_data_simulate.cosmic_ray_image
             == np.array(
@@ -355,11 +355,11 @@ class TestCIDataSimulate(object):
             use_parallel_poisson_densities=True,
         )
 
-        assert ci_data_simulate.image[2, 0] == ci_data_simulate.image[2, 3]
-        assert ci_data_simulate.image[2, 0] == ci_data_simulate.image[2, 4]
-        assert ci_data_simulate.image[2, 0] < ci_data_simulate.image[2, 1]
-        assert ci_data_simulate.image[2, 0] < ci_data_simulate.image[2, 2]
-        assert ci_data_simulate.image[2, 1] > ci_data_simulate.image[2, 2]
+        assert ci_data_simulate.profile_image[2, 0] == ci_data_simulate.profile_image[2, 3]
+        assert ci_data_simulate.profile_image[2, 0] == ci_data_simulate.profile_image[2, 4]
+        assert ci_data_simulate.profile_image[2, 0] < ci_data_simulate.profile_image[2, 1]
+        assert ci_data_simulate.profile_image[2, 0] < ci_data_simulate.profile_image[2, 2]
+        assert ci_data_simulate.profile_image[2, 1] > ci_data_simulate.profile_image[2, 2]
 
 
 class TestCIImage(object):
@@ -474,7 +474,7 @@ class TestLoadCIData(object):
             cosmic_ray_image_hdu=0,
         )
 
-        assert (data.image == np.ones((3, 3))).all()
+        assert (data.profile_image == np.ones((3, 3))).all()
         assert (data.noise_map == 2.0 * np.ones((3, 3))).all()
         assert (data.ci_pre_cti == 3.0 * np.ones((3, 3))).all()
         assert data.ci_frame.frame_geometry == frame_geometry
@@ -499,7 +499,7 @@ class TestLoadCIData(object):
             cosmic_ray_image_hdu=3,
         )
 
-        assert (data.image == np.ones((3, 3))).all()
+        assert (data.profile_image == np.ones((3, 3))).all()
         assert (data.noise_map == 2.0 * np.ones((3, 3))).all()
         assert (data.ci_pre_cti == 3.0 * np.ones((3, 3))).all()
         assert data.ci_frame.frame_geometry == frame_geometry
@@ -521,7 +521,7 @@ class TestLoadCIData(object):
             ci_pre_cti_hdu=0,
         )
 
-        assert (data.image == np.ones((3, 3))).all()
+        assert (data.profile_image == np.ones((3, 3))).all()
         assert (data.noise_map == 10.0 * np.ones((3, 3))).all()
         assert (data.ci_pre_cti == 3.0 * np.ones((3, 3))).all()
         assert data.ci_frame.frame_geometry == frame_geometry
@@ -542,7 +542,7 @@ class TestLoadCIData(object):
             noise_map_hdu=0,
         )
 
-        assert (data.image == np.ones((3, 3))).all()
+        assert (data.profile_image == np.ones((3, 3))).all()
         assert (data.noise_map == 2.0 * np.ones((3, 3))).all()
         assert (data.ci_pre_cti == 10.0 * np.ones((3, 3))).all()
         assert data.ci_frame.frame_geometry == frame_geometry
@@ -593,7 +593,7 @@ class TestLoadCIData(object):
             cosmic_ray_image_hdu=0,
         )
 
-        assert (data.image == np.ones((3, 3))).all()
+        assert (data.profile_image == np.ones((3, 3))).all()
         assert (data.noise_map == 2.0 * np.ones((3, 3))).all()
         assert (data.ci_pre_cti == 3.0 * np.ones((3, 3))).all()
         assert (data.cosmic_ray_image == 4.0 * np.ones((3, 3))).all()
