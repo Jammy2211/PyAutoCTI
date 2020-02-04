@@ -19,3 +19,7 @@ class FittingException(Exception):
 
 class PriorException(exc.FitException):
     pass
+
+
+class FrameException(Exception):
+    pass

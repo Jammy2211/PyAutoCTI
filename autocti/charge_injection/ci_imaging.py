@@ -381,7 +381,7 @@ def output_ci_data_to_fits(
 ):
 
     array_util.numpy_array_2d_to_fits(
-        array_2d=ci_data.image, file_path=image_path, overwrite=overwrite
+        array_2d=ci_data.profile_image, file_path=image_path, overwrite=overwrite
     )
 
     if ci_data.noise_map is not None and noise_map_path is not None:

@@ -74,7 +74,7 @@ def make_fit(ci_data_masked, cti_params, cti_settings):
 
 def test__ci_fit_subplot_is_output(fit, ci_fit_plotter_path, plot_patch):
 
-    autocti.plotters.plotters.ci_fit_plotters.plot_fit_subplot(
+    autocti.plotters.plotters.ci_fit_plots.plot_fit_subplot(
         fit=fit,
         extract_array_from_mask=True,
         cb_tick_values=[1.0],
@@ -88,7 +88,7 @@ def test__ci_fit_subplot_is_output(fit, ci_fit_plotter_path, plot_patch):
 
 def test__ci_fit_residual_maps_subplot_is_output(fit, ci_fit_plotter_path, plot_patch):
 
-    autocti.plotters.plotters.ci_fit_plotters.plot_fit_residual_maps_subplot(
+    autocti.plotters.plotters.ci_fit_plots.plot_fit_residual_maps_subplot(
         fits=[fit],
         extract_array_from_mask=True,
         cb_tick_values=[1.0],
@@ -99,7 +99,7 @@ def test__ci_fit_residual_maps_subplot_is_output(fit, ci_fit_plotter_path, plot_
 
     assert ci_fit_plotter_path + "ci_fits_residual_maps.png" in plot_patch.paths
 
-    autocti.plotters.plotters.ci_fit_plotters.plot_fit_residual_maps_lines_subplot(
+    autocti.plotters.plotters.ci_fit_plots.plot_fit_residual_maps_lines_subplot(
         fits=[fit],
         line_region="parallel_front_edge",
         output_path=ci_fit_plotter_path,
@@ -111,7 +111,7 @@ def test__ci_fit_residual_maps_subplot_is_output(fit, ci_fit_plotter_path, plot_
 
 def test__ci_fit_chi_squareds_subplot_is_output(fit, ci_fit_plotter_path, plot_patch):
 
-    autocti.plotters.plotters.ci_fit_plotters.plot_fit_chi_squared_maps_subplot(
+    autocti.plotters.plotters.ci_fit_plots.plot_fit_chi_squared_maps_subplot(
         fits=[fit],
         extract_array_from_mask=True,
         cb_tick_values=[1.0],
@@ -122,7 +122,7 @@ def test__ci_fit_chi_squareds_subplot_is_output(fit, ci_fit_plotter_path, plot_p
 
     assert ci_fit_plotter_path + "ci_fits_chi_squared_maps.png" in plot_patch.paths
 
-    autocti.plotters.plotters.ci_fit_plotters.plot_fit_chi_squared_maps_lines_subplot(
+    autocti.plotters.plotters.ci_fit_plots.plot_fit_chi_squared_maps_lines_subplot(
         fits=[fit],
         line_region="parallel_front_edge",
         output_path=ci_fit_plotter_path,
@@ -136,7 +136,7 @@ def test__ci_fit_chi_squareds_subplot_is_output(fit, ci_fit_plotter_path, plot_p
 
 def test__fit_individuals__depedent_on_input(fit, ci_fit_plotter_path, plot_patch):
 
-    autocti.plotters.plotters.ci_fit_plotters.plot_fit_individuals(
+    autocti.plotters.plotters.ci_fit_plots.plot_fit_individuals(
         fit=fit,
         plot_image=True,
         plot_noise_map=False,
@@ -167,7 +167,7 @@ def test__fit_individuals_line__depedent_on_input(
     fit, ci_frame, ci_fit_plotter_path, plot_patch
 ):
 
-    autocti.plotters.plotters.ci_fit_plotters.plot_fit_line_individuals(
+    autocti.plotters.plotters.ci_fit_plots.plot_fit_line_individuals(
         fit=fit,
         line_region="parallel_front_edge",
         plot_image=True,
@@ -199,7 +199,7 @@ def test__fit_individuals_line__depedent_on_input(
 
 def test__plot_ci_fit_for_phase(fit, ci_fit_plotter_path, plot_patch):
 
-    autocti.plotters.plotters.ci_fit_plotters.plot_ci_fit_for_phase(
+    autocti.plotters.plotters.ci_fit_plots.plot_ci_fit_for_phase(
         fits=[fit],
         during_analysis=False,
         extract_array_from_mask=True,
@@ -353,7 +353,7 @@ def test__fit_individuals__fit_hyper_plots_noise_scaling_maps(
     fit, fit_hyper, ci_fit_plotter_path, plot_patch
 ):
 
-    autocti.plotters.plotters.ci_fit_plotters.plot_fit_individuals(
+    autocti.plotters.plotters.ci_fit_plots.plot_fit_individuals(
         fit=fit,
         plot_noise_scaling_maps=True,
         output_path=ci_fit_plotter_path,
@@ -362,7 +362,7 @@ def test__fit_individuals__fit_hyper_plots_noise_scaling_maps(
 
     assert ci_fit_plotter_path + "fit_noise_scaling_maps.png" not in plot_patch.paths
 
-    autocti.plotters.plotters.ci_fit_plotters.plot_fit_individuals(
+    autocti.plotters.plotters.ci_fit_plots.plot_fit_individuals(
         fit=fit_hyper,
         plot_noise_scaling_maps=True,
         output_path=ci_fit_plotter_path,

@@ -29,6 +29,6 @@ from autocti.pipeline.phase.phase_ci import PhaseCI, cti_params_for_instance
 from autocti.pipeline.phase.phase_extensions import HyperNoisePhase
 from autocti.pipeline.pipeline import Pipeline
 
-from autocti import plotters
+from autocti import plot
 
 __version__ = "0.11.3"

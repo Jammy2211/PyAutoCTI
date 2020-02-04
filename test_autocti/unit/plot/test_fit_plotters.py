@@ -68,7 +68,7 @@ def make_fit(ci_data_masked, cti_params, cti_settings):
 
 
 def test__image_is_output(fit, mask, fit_plotter_path, plot_patch):
-    ac.fit_plotters.plot_image(
+    ac.fit_plots.plot_image(
         fit=fit,
         mask=mask,
         extract_array_from_mask=True,
@@ -81,7 +81,7 @@ def test__image_is_output(fit, mask, fit_plotter_path, plot_patch):
 
 
 def test__noise_map_is_output(fit, mask, fit_plotter_path, plot_patch):
-    ac.fit_plotters.plot_noise_map(
+    ac.fit_plots.plot_noise_map(
         fit=fit,
         mask=mask,
         extract_array_from_mask=True,
@@ -94,7 +94,7 @@ def test__noise_map_is_output(fit, mask, fit_plotter_path, plot_patch):
 
 
 def test__signal_to_noise_map_is_output(fit, mask, fit_plotter_path, plot_patch):
-    ac.fit_plotters.plot_signal_to_noise_map(
+    ac.fit_plots.plot_signal_to_noise_map(
         fit=fit,
         mask=mask,
         extract_array_from_mask=True,
@@ -107,7 +107,7 @@ def test__signal_to_noise_map_is_output(fit, mask, fit_plotter_path, plot_patch)
 
 
 def test__ci_pre_cti_is_output(fit, mask, fit_plotter_path, plot_patch):
-    ac.fit_plotters.plot_ci_pre_cti(
+    ac.fit_plots.plot_ci_pre_cti(
         fit=fit,
         mask=mask,
         extract_array_from_mask=True,
@@ -120,7 +120,7 @@ def test__ci_pre_cti_is_output(fit, mask, fit_plotter_path, plot_patch):
 
 
 def test__ci_post_cti_is_output(fit, mask, fit_plotter_path, plot_patch):
-    ac.fit_plotters.plot_ci_post_cti(
+    ac.fit_plots.plot_ci_post_cti(
         fit=fit,
         mask=mask,
         extract_array_from_mask=True,
@@ -133,7 +133,7 @@ def test__ci_post_cti_is_output(fit, mask, fit_plotter_path, plot_patch):
 
 
 def test__residual_map_is_output(fit, mask, fit_plotter_path, plot_patch):
-    ac.fit_plotters.plot_residual_map(
+    ac.fit_plots.plot_residual_map(
         fit=fit,
         mask=mask,
         extract_array_from_mask=True,
@@ -146,7 +146,7 @@ def test__residual_map_is_output(fit, mask, fit_plotter_path, plot_patch):
 
 
 def test__chi_squared_map_is_output(fit, mask, fit_plotter_path, plot_patch):
-    ac.fit_plotters.plot_chi_squared_map(
+    ac.fit_plots.plot_chi_squared_map(
         fit=fit,
         mask=mask,
         extract_array_from_mask=True,
@@ -160,7 +160,7 @@ def test__chi_squared_map_is_output(fit, mask, fit_plotter_path, plot_patch):
 
 def test__image_line_is_output(fit, mask, fit_plotter_path, plot_patch):
 
-    ac.fit_plotters.plot_image_line(
+    ac.fit_plots.plot_image_line(
         fit=fit,
         line_region="parallel_front_edge",
         mask=mask,
@@ -173,7 +173,7 @@ def test__image_line_is_output(fit, mask, fit_plotter_path, plot_patch):
 
 def test__noise_map_line_is_output(fit, mask, fit_plotter_path, plot_patch):
 
-    ac.fit_plotters.plot_noise_map_line(
+    ac.fit_plots.plot_noise_map_line(
         fit=fit,
         line_region="parallel_front_edge",
         mask=mask,
@@ -186,7 +186,7 @@ def test__noise_map_line_is_output(fit, mask, fit_plotter_path, plot_patch):
 
 def test__signal_to_noise_map_line_is_output(fit, mask, fit_plotter_path, plot_patch):
 
-    ac.fit_plotters.plot_signal_to_noise_map_line(
+    ac.fit_plots.plot_signal_to_noise_map_line(
         fit=fit,
         line_region="parallel_front_edge",
         mask=mask,
@@ -199,7 +199,7 @@ def test__signal_to_noise_map_line_is_output(fit, mask, fit_plotter_path, plot_p
 
 def test__ci_pre_cti_line_is_output(fit, mask, fit_plotter_path, plot_patch):
 
-    ac.fit_plotters.plot_ci_pre_cti_line(
+    ac.fit_plots.plot_ci_pre_cti_line(
         fit=fit,
         line_region="parallel_front_edge",
         mask=mask,
@@ -212,7 +212,7 @@ def test__ci_pre_cti_line_is_output(fit, mask, fit_plotter_path, plot_patch):
 
 def test__ci_post_cti_line_is_output(fit, mask, fit_plotter_path, plot_patch):
 
-    ac.fit_plotters.plot_ci_post_cti_line(
+    ac.fit_plots.plot_ci_post_cti_line(
         fit=fit,
         line_region="parallel_front_edge",
         mask=mask,
@@ -225,7 +225,7 @@ def test__ci_post_cti_line_is_output(fit, mask, fit_plotter_path, plot_patch):
 
 def test__residual_map_line_is_output(fit, mask, fit_plotter_path, plot_patch):
 
-    ac.fit_plotters.plot_residual_map_line(
+    ac.fit_plots.plot_residual_map_line(
         fit=fit,
         line_region="parallel_front_edge",
         mask=mask,
@@ -240,7 +240,7 @@ def test__residual_map_line_is_output(fit, mask, fit_plotter_path, plot_patch):
 
 def test__chi_squared_map_line_is_output(fit, mask, fit_plotter_path, plot_patch):
 
-    ac.fit_plotters.plot_chi_squared_map_line(
+    ac.fit_plots.plot_chi_squared_map_line(
         fit=fit,
         line_region="parallel_front_edge",
         mask=mask,
@@ -284,7 +284,7 @@ def make_fit_hyper(ci_data_fit_hyper, cti_params, cti_settings, hyper_noise_scal
 
 def test__noise_scaling_map_is_output(fit_hyper, mask, fit_plotter_path, plot_patch):
 
-    ac.fit_plotters.plot_noise_scaling_maps(
+    ac.fit_plots.plot_noise_scaling_maps(
         fit_hyper=fit_hyper,
         mask=mask,
         extract_array_from_mask=True,
