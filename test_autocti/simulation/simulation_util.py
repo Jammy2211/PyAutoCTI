@@ -83,7 +83,7 @@ def load_test_ci_data(
     ci_data_model,
     ci_data_resolution,
     normalization,
-    load_cosmic_ray_image=False,
+    load_cosmic_ray_map=False,
 ):
 
     frame_geometry = frame_geometry_from_ci_data_resolution(
@@ -101,7 +101,7 @@ def load_test_ci_data(
 
     normalization = str(int(pattern.normalization))
 
-    if not load_cosmic_ray_image:
+    if not load_cosmic_ray_map:
         return ac.ci_data_from_fits(
             frame_geometry=frame_geometry,
             ci_pattern=pattern,
@@ -109,15 +109,15 @@ def load_test_ci_data(
             noise_map_path=dataset_path + "noise_map_" + normalization + ".fits",
             ci_pre_cti_path=dataset_path + "ci_pre_cti_" + normalization + ".fits",
         )
-    elif load_cosmic_ray_image:
+    elif load_cosmic_ray_map:
         return ac.ci_data_from_fits(
             frame_geometry=frame_geometry,
             ci_pattern=pattern,
             image_path=dataset_path + "image_" + normalization + ".fits",
             noise_map_path=dataset_path + "noise_map_" + normalization + ".fits",
             ci_pre_cti_path=dataset_path + "ci_pre_cti_" + normalization + ".fits",
-            cosmic_ray_image_path=dataset_path
-            + "cosmic_ray_image_"
+            cosmic_ray_map_path=dataset_path
+            + "cosmic_ray_map_"
             + normalization
             + ".fits",
         )

@@ -31,10 +31,10 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
         phase_name="phase_1",
         phase_folders=phase_folders,
         optimizer_class=optimizer_class,
-        parallel_species=[
-            af.PriorModel(ac.Species),
-            af.PriorModel(ac.Species),
-            af.PriorModel(ac.Species),
+        parallel_traps=[
+            af.PriorModel(ac.Trap),
+            af.PriorModel(ac.Trap),
+            af.PriorModel(ac.Trap),
         ],
         parallel_ccd_volume=ac.CCDVolume,
         columns=3,
@@ -49,7 +49,7 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     phase2 = ac.PhaseCI(
         phase_name="phase_2",
         phase_folders=phase_folders,
-        parallel_species=phase1.result.variable.parallel_species,
+        parallel_traps=phase1.result.variable.parallel_traps,
         parallel_ccd_volume=phase1.result.variable.parallel_ccd_volume,
         hyper_noise_scalar_of_ci_regions=phase1.result.hyper_combined.constant.hyper_noise_scalar_of_ci_regions,
         hyper_noise_scalar_of_parallel_trails=phase1.result.hyper_combined.constant.hyper_noise_scalar_of_parallel_trails,

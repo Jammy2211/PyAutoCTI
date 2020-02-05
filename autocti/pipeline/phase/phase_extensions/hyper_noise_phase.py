@@ -125,7 +125,7 @@ class HyperNoisePhase(HyperPhase):
 
         ci_datas_masked_full = list(
             map(
-                lambda data, mask, maps: ci_imaging.CIMaskedImaging(
+                lambda data, mask, maps: ci_imaging.MaskedCIImaging(
                     image=data.profile_image,
                     noise_map=data.noise_map,
                     ci_pre_cti=data.ci_pre_cti,
@@ -155,7 +155,7 @@ class HyperNoisePhase(HyperPhase):
         hyper_result.analysis.uses_hyper_images = True
         hyper_result.analysis.model_images = model_images
 
-        phase.optimizer.variable.parallel_species = []
+        phase.optimizer.variable.parallel_traps = []
         phase.optimizer.variable.parallel_ccd_volume = []
         phase.optimizer.phase_tag = ""
 

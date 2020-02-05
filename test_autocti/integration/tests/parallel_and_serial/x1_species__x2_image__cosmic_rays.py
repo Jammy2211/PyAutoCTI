@@ -42,9 +42,9 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
         phase_name="phase_1",
         phase_folders=phase_folders,
         optimizer_class=optimizer_class,
-        parallel_species=[af.PriorModel(ac.Species)],
+        parallel_traps=[af.PriorModel(ac.Trap)],
         parallel_ccd_volume=ac.CCDVolume,
-        serial_species=[af.PriorModel(ac.Species)],
+        serial_traps=[af.PriorModel(ac.Trap)],
         serial_ccd_volume=ac.CCDVolume,
     )
 
@@ -60,5 +60,5 @@ if __name__ == "__main__":
     import sys
 
     runner.run(
-        sys.modules[__name__], cti_settings=cti_settings, load_cosmic_ray_image=True
+        sys.modules[__name__], cti_settings=cti_settings, load_cosmic_ray_map=True
     )

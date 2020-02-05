@@ -1,45 +1,11 @@
-from autoarray import conf
-import matplotlib
-
-backend = conf.get_matplotlib_backend()
-matplotlib.use(backend)
-from matplotlib import pyplot as plt
-
-from autocti.plot import ci_line_plots, ci_plotter_util
 from autoarray.plot import plotters
-from autoarray.plot import imaging_plots
-from autoarray.util import plotter_util
+from autoarray.plot.imaging_plots import image
+from autocti.plot import cti_plotters, ci_line_plots
 
 
-def subplot(
-    imaging,
-    use_scaled_units=True,
-    unit_conversion_factor=None,
-    unit_label="scaled",
-    figsize=None,
-    aspect="square",
-    cmap="jet",
-    norm="linear",
-    norm_min=None,
-    norm_max=None,
-    linthresh=0.05,
-    linscale=0.01,
-    cb_ticksize=10,
-    cb_fraction=0.047,
-    cb_pad=0.01,
-    cb_tick_values=None,
-    cb_tick_labels=None,
-    titlesize=10,
-    xsize=10,
-    ysize=10,
-    xyticksize=10,
-    mask_pointsize=10,
-    position_pointsize=30,
-    grid_pointsize=1,
-    output_path=None,
-    output_filename="imaging",
-    output_format="show",
-):
+@cti_plotters.set_include_and_sub_plotter
+@plotters.set_subplot_filename
+def subplot_ci_imaging(ci_imaging, include=None, sub_plotter=None):
     """Plot the imaging data_type as a sub-plotters of all its quantites (e.g. the dataset, noise_map-map, PSF, Signal-to_noise-map, \
      etc).
 
@@ -47,7 +13,7 @@ def subplot(
 
     Parameters
     -----------
-    imaging : data_type.ImagingData
+    ci_imaging : data_type.ImagingData
         The imaging data_type, which includes the observed data_type, noise_map-map, PSF, signal-to-noise_map-map, etc.
     origin : True
         If true, the origin of the dataset's coordinate system is plotted as a 'x'.
@@ -59,156 +25,42 @@ def subplot(
         config file is ignored.
     """
 
-    rows, columns, figsize_tool = plotter_util.get_subplot_rows_columns_figsize(
-        number_subplots=4
-    )
+    number_subplots = 4
 
-    if figsize is None:
-        figsize = figsize_tool
-
-        sub_plotter.open_subplot_figure(number_subplots=number_subplots)
+    sub_plotter.open_subplot_figure(number_subplots=number_subplots)
 
     sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=1)
 
-    imaging_plots.profile_image(
-        imaging=imaging,
-        as_subplot=True,
-        use_scaled_units=use_scaled_units,
-        unit_conversion_factor=unit_conversion_factor,
-        unit_label=unit_label,
-        figsize=figsize,
-        aspect=aspect,
-        cmap=cmap,
-        norm=norm,
-        norm_min=norm_min,
-        norm_max=norm_max,
-        linthresh=linthresh,
-        linscale=linscale,
-        cb_ticksize=cb_ticksize,
-        cb_fraction=cb_fraction,
-        cb_pad=cb_pad,
-        cb_tick_values=cb_tick_values,
-        cb_tick_labels=cb_tick_labels,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        mask_pointsize=mask_pointsize,
-        position_pointsize=position_pointsize,
-        grid_pointsize=grid_pointsize,
-        output_path=output_path,
-        output_format=output_format,
+    image(ci_imaging=ci_imaging, include=include, plotter=sub_plotter)
+
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=2)
+
+    noise_map(ci_imaging=ci_imaging, include=include, plotter=sub_plotter)
+
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=3)
+
+    ci_pre_cti(ci_imaging=ci_imaging, include=include, plotter=sub_plotter)
+
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=4)
+
+    signal_to_noise_map(
+        ci_imaging=ci_imaging, include=include, plotter=sub_plotter
     )
 
-    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 2)
+    sub_plotter.output.subplot_to_figure()
 
-    imaging_plots.noise_map(
-        imaging=imaging,
-        as_subplot=True,
-        use_scaled_units=use_scaled_units,
-        unit_conversion_factor=unit_conversion_factor,
-        unit_label=unit_label,
-        figsize=figsize,
-        aspect=aspect,
-        cmap=cmap,
-        norm=norm,
-        norm_min=norm_min,
-        norm_max=norm_max,
-        linthresh=linthresh,
-        linscale=linscale,
-        cb_ticksize=cb_ticksize,
-        cb_fraction=cb_fraction,
-        cb_pad=cb_pad,
-        cb_tick_values=cb_tick_values,
-        cb_tick_labels=cb_tick_labels,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        mask_pointsize=mask_pointsize,
-        output_path=output_path,
-        output_format=output_format,
-    )
-
-    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 3)
-
-    ci_pre_cti(
-        imaging=imaging,
-        as_subplot=True,
-        use_scaled_units=use_scaled_units,
-        unit_conversion_factor=unit_conversion_factor,
-        unit_label=unit_label,
-        figsize=figsize,
-        aspect=aspect,
-        cmap=cmap,
-        norm=norm,
-        norm_min=norm_min,
-        norm_max=norm_max,
-        linthresh=linthresh,
-        linscale=linscale,
-        cb_ticksize=cb_ticksize,
-        cb_fraction=cb_fraction,
-        cb_pad=cb_pad,
-        cb_tick_values=cb_tick_values,
-        cb_tick_labels=cb_tick_labels,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-    )
-
-    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 4)
-
-    imaging_plots.signal_to_noise_map(
-        imaging=imaging,
-        as_subplot=True,
-        use_scaled_units=use_scaled_units,
-        unit_conversion_factor=unit_conversion_factor,
-        unit_label=unit_label,
-        figsize=figsize,
-        aspect=aspect,
-        cmap=cmap,
-        norm=norm,
-        norm_min=norm_min,
-        norm_max=norm_max,
-        linthresh=linthresh,
-        linscale=linscale,
-        cb_ticksize=cb_ticksize,
-        cb_fraction=cb_fraction,
-        cb_pad=cb_pad,
-        cb_tick_values=cb_tick_values,
-        cb_tick_labels=cb_tick_labels,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        mask_pointsize=mask_pointsize,
-        output_path=output_path,
-        output_format=output_format,
-    )
-
-    plotter_util.output.to_figure(structure=None)(
-        output_path=output_path,
-        output_filename=output_filename,
-        output_format=output_format,
-    )
-
-    plt.close()
+    sub_plotter.figure.close()
 
 
 def individual(
-    imaging,
-    unit_label="scaled",
-    unit_conversion_factor=None,
+    ci_imaging,
     plot_image=False,
     plot_noise_map=False,
     plot_signal_to_noise_map=False,
     plot_ci_pre_cti=False,
-    plot_cosmic_ray_image=False,
-    output_path=None,
-    format="png",
+    plot_cosmic_ray_map=False,
+    include=None,
+    plotter=None,
 ):
     """Plot each attribute of the imaging data_type as individual figures one by one (e.g. the dataset, noise_map-map, PSF, \
      Signal-to_noise-map, etc).
@@ -217,68 +69,105 @@ def individual(
 
     Parameters
     -----------
-    imaging : data_type.ImagingData
+    ci_imaging : data_type.ImagingData
         The imaging data_type, which includes the observed data_type, noise_map-map, PSF, signal-to-noise_map-map, etc.
     origin : True
         If true, the origin of the dataset's coordinate system is plotted as a 'x'.
     """
 
-    imaging_plots.individual(
-        imaging=imaging,
-        plot_image=plot_image,
-        plot_noise_map=plot_noise_map,
-        plot_signal_to_noise_map=plot_signal_to_noise_map,
-        output_path=output_path,
-        output_format=output_format,
-    )
+    if plot_image:
+
+        image(ci_imaging=ci_imaging, include=include, plotter=plotter)
+
+    if plot_noise_map:
+
+        noise_map(ci_imaging=ci_imaging, include=include, plotter=plotter)
+
+    if plot_signal_to_noise_map:
+
+        signal_to_noise_map(ci_imaging=ci_imaging, include=include, plotter=plotter)
 
     if plot_ci_pre_cti:
 
-        ci_pre_cti(
-            imaging=imaging,
-            unit_label=unit_label,
-            unit_conversion_factor=unit_conversion_factor,
-            output_path=output_path,
-            output_format=output_format,
-        )
+        ci_pre_cti(ci_imaging=ci_imaging, include=include, plotter=plotter)
 
-    # if plot_cosmic_ray_image:
-    #
-    #     cosmic_ray_image(
-    #         imaging=imaging,
-    #         unit_label=unit_label,
-    #         unit_conversion_factor=unit_conversion_factor,
-    #         output_path=output_path,
-    #         output_format=output_format,
-    #     )
+    if plot_cosmic_ray_map:
+
+        cosmic_ray_map(ci_imaging=ci_imaging, include=include, plotter=plotter)
 
 
-def ci_pre_cti(
-    imaging,
-    mask=None,
-    as_subplot=False,
-    figsize=(7, 7),
-    aspect="equal",
-    cmap="jet",
-    norm="linear",
-    norm_min=None,
-    norm_max=None,
-    linthresh=0.05,
-    linscale=0.01,
-    cb_ticksize=10,
-    cb_fraction=0.047,
-    cb_pad=0.01,
-    cb_tick_values=None,
-    cb_tick_labels=None,
-    title="",
-    titlesize=16,
-    xsize=16,
-    ysize=16,
-    xyticksize=16,
-    output_path=None,
-    output_format="show",
-    output_filename="ci_pre_cti",
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def image(ci_imaging, include=None, plotter=None):
+    """Plot the observed data_type of the imaging data_type.
+
+    Set *autolens.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
+
+    Parameters
+    -----------
+    image : data_type.ImagingData
+        The imaging data_type, which includes the observed data_type, noise_map-map, PSF, signal-to-noise_map-map, etc.
+    include_origin : True
+        If true, the include_origin of the dataset's coordinate system is plotted as a 'x'.
+    image_plane_pix_grid : ndarray or data_type.array.grid_stacks.PixGrid
+        If an adaptive pixelization whose pixels are formed by tracing pixels from the dataset, this plots those pixels \
+        over the immage.
+    """
+
+    plotter.plot_frame(frame=ci_imaging.image,
+                       include_origin=include.origin,
+                       include_parallel_overscan=include.parallel_overscan,
+                       include_serial_prescan=include.serial_prescan,
+                       include_serial_overscan=include.serial_overscan)
+
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def noise_map(
+    ci_imaging, include=None, plotter=None
 ):
+    """Plot the noise_map-map of the imaging data_type.
+
+    Set *autolens.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
+
+    Parameters
+    -----------
+    image : data_type.ImagingData
+        The imaging data_type, which includes the observed data_type, noise_map-map, PSF, signal-to-noise_map-map, etc.
+    include_origin : True
+        If true, the include_origin of the dataset's coordinate system is plotted as a 'x'.
+    """
+    plotter.plot_frame(frame=ci_imaging.noise_map,
+                       include_origin=include.origin,
+                       include_parallel_overscan=include.parallel_overscan,
+                       include_serial_prescan=include.serial_prescan,
+                       include_serial_overscan=include.serial_overscan)
+
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def signal_to_noise_map(
+    ci_imaging, include=None, plotter=None
+):
+    """Plot the signal-to-noise_map-map of the imaging data_type.
+
+    Set *autolens.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
+
+    Parameters
+    -----------
+    image : data_type.ImagingData
+        The imaging data_type, which includes the observed image, noise_map-map, PSF, signal-to-noise_map-map, etc.
+    include_origin : True
+        If true, the include_origin of the dataset's coordinate system is plotted as a 'x'.
+    """
+    plotter.plot_frame(frame=ci_imaging.signal_to_noise_map,
+                       include_origin=include.origin,
+                       include_parallel_overscan=include.parallel_overscan,
+                       include_serial_prescan=include.serial_prescan,
+                       include_serial_overscan=include.serial_overscan)
+
+
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def ci_pre_cti(ci_imaging, include=None, plotter=None):
     """Plot the observed ci_pre_cti of the ccd simulator.
 
     Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
@@ -288,48 +177,34 @@ def ci_pre_cti(
     ci_pre_cti : CIFrame
         The ci_pre_cti of the dataset.
     """
-    plotters.plot_array(
-        array=imaging.ci_pre_cti,
-        mask=mask,
-        as_subplot=as_subplot,
-        figsize=figsize,
-        aspect=aspect,
-        cmap=cmap,
-        norm=norm,
-        norm_min=norm_min,
-        norm_max=norm_max,
-        linthresh=linthresh,
-        linscale=linscale,
-        cb_ticksize=cb_ticksize,
-        cb_fraction=cb_fraction,
-        cb_pad=cb_pad,
-        cb_tick_values=cb_tick_values,
-        cb_tick_labels=cb_tick_labels,
-        title=title,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
-    )
+    plotter.plot_frame(frame=ci_imaging.ci_pre_cti,
+                       include_origin=include.origin,
+                       include_parallel_overscan=include.parallel_overscan,
+                       include_serial_prescan=include.serial_prescan,
+                       include_serial_overscan=include.serial_overscan)
 
 
-def plot_ci_line_subplot(
-    ci_data,
-    line_region,
-    mask=None,
-    figsize=None,
-    title="Image",
-    titlesize=16,
-    xsize=16,
-    ysize=16,
-    xyticksize=16,
-    output_path=None,
-    output_format="show",
-    output_filename="ci_data_line",
-):
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def cosmic_ray_map(ci_imaging, include=None, plotter=None):
+    """Plot the observed ci_pre_cti of the ccd simulator.
+
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    ci_pre_cti : CIFrame
+        The ci_pre_cti of the dataset.
+    """
+    plotter.plot_frame(frame=ci_imaging.cosmic_ray_map,                        include_origin=include.origin,
+                       include_parallel_overscan=include.parallel_overscan,
+                       include_serial_prescan=include.serial_prescan,
+                       include_serial_overscan=include.serial_overscan)
+
+
+@cti_plotters.set_include_and_sub_plotter
+@plotters.set_subplot_filename
+def subplot_ci_lines(ci_imaging, line_region, include=None, sub_plotter=None):
     """Plot the ci simulator as a sub-plotters of all its quantites (e.g. the dataset, noise_map-map, PSF, Signal-to_noise-map, \
      etc).
 
@@ -337,7 +212,7 @@ def plot_ci_line_subplot(
 
     Parameters
     -----------
-    ci_data : simulator.CCDData
+    ci_imaging : simulator.CCDData
         The ci simulator, which includes the observed simulator, noise_map-map, PSF, signal-to-noise_map-map, etc.
     origin : True
         If true, the origin of the dataset's coordinate system is plotted as a 'x'.
@@ -349,106 +224,60 @@ def plot_ci_line_subplot(
         config file is ignored.
     """
 
-    rows, columns, figsize_tool = plotter_util.get_subplot_rows_columns_figsize(
-        number_subplots=4
-    )
+    number_subplots = 4
 
-    if figsize is None:
-        figsize = figsize_tool
-
-        sub_plotter.open_subplot_figure(number_subplots=number_subplots)
+    sub_plotter.open_subplot_figure(number_subplots=number_subplots)
 
     sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=1)
 
     image_line(
-        ci_data=ci_data,
+        ci_imaging=ci_imaging,
         line_region=line_region,
-        mask=mask,
-        as_subplot=True,
-        figsize=figsize,
-        title=title,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
+        include=include,
+        plotter=sub_plotter,
     )
 
-    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 2)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=2)
 
     noise_map_line(
-        ci_data=ci_data,
+        ci_imaging=ci_imaging,
         line_region=line_region,
-        mask=mask,
-        as_subplot=True,
-        figsize=figsize,
-        title=title,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
+        include=include,
+        plotter=sub_plotter,
     )
 
-    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 3)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=3)
 
     ci_pre_cti_line(
-        ci_data=ci_data,
+        ci_imaging=ci_imaging,
         line_region=line_region,
-        mask=mask,
-        as_subplot=True,
-        figsize=figsize,
-        title=title,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
+        include=include,
+        plotter=sub_plotter,
     )
 
-    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 4)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=4)
 
     signal_to_noise_map_line(
-        ci_data=ci_data,
+        ci_imaging=ci_imaging,
         line_region=line_region,
-        mask=mask,
-        as_subplot=True,
-        figsize=figsize,
-        title=title,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
+        include=include,
+        plotter=sub_plotter,
     )
 
-    ci_plotter_util.output.to_figure(structure=None)(
-        output_path=output_path,
-        output_filename=output_filename,
-        output_format=output_format,
-    )
+    sub_plotter.output.subplot_to_figure()
 
-    plt.close()
+    sub_plotter.figure.close()
 
 
-def plot_ci_data_line_individual(
-    ci_data,
+def individual_ci_lines(
+    ci_imaging,
     line_region,
-    mask=None,
     plot_image=False,
     plot_noise_map=False,
     plot_ci_pre_cti=False,
     plot_signal_to_noise_map=False,
-    output_path=None,
-    format="png",
+    include=None,
+    plotter=None,
 ):
     """Plot each attribute of the ci simulator as individual figures one by one (e.g. the dataset, noise_map-map, PSF, \
      Signal-to_noise-map, etc).
@@ -457,7 +286,7 @@ def plot_ci_data_line_individual(
 
     Parameters
     -----------
-    ci_data : simulator.CCDData
+    ci_imaging : simulator.CCDData
         The ci simulator, which includes the observed simulator, noise_map-map, PSF, signal-to-noise_map-map, etc.
     origin : True
         If true, the origin of the dataset's coordinate system is plotted as a 'x'.
@@ -465,192 +294,100 @@ def plot_ci_data_line_individual(
 
     if plot_image:
         image_line(
-            ci_data=ci_data,
+            ci_imaging=ci_imaging,
             line_region=line_region,
-            mask=mask,
-            output_path=output_path,
-            output_format=output_format,
+            include=include,
+            plotter=plotter,
         )
 
     if plot_noise_map:
         noise_map_line(
-            ci_data=ci_data,
+            ci_imaging=ci_imaging,
             line_region=line_region,
-            mask=mask,
-            output_path=output_path,
-            output_format=output_format,
+            include=include,
+            plotter=plotter,
         )
 
     if plot_ci_pre_cti:
         ci_pre_cti_line(
-            ci_data=ci_data,
+            ci_imaging=ci_imaging,
             line_region=line_region,
-            mask=mask,
-            output_path=output_path,
-            output_format=output_format,
+            include=include,
+            plotter=plotter,
         )
 
     if plot_signal_to_noise_map:
         signal_to_noise_map_line(
-            ci_data=ci_data,
+            ci_imaging=ci_imaging,
             line_region=line_region,
-            mask=mask,
-            output_path=output_path,
-            output_format=output_format,
+            include=include,
+            plotter=plotter,
         )
 
 
-def image_line(
-    imaging,
-    line_region,
-    as_subplot=False,
-    figsize=(7, 7),
-    title="Image",
-    titlesize=16,
-    xsize=16,
-    ysize=16,
-    xyticksize=16,
-    output_path=None,
-    output_format="show",
-    output_filename="image_line",
-):
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def image_line(ci_imaging, line_region, include=None, plotter=None):
     """Plot the observed image of the ccd simulator.
 
     Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
-    imaging : CIFrame
+    ci_imaging : CIFrame
         The image of the dataset.
     """
     ci_line_plots.plot_line_from_ci_frame(
-        ci_frame=imaging,
-        line_region=line_region,
-        as_subplot=as_subplot,
-        figsize=figsize,
-        title=title,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
+        ci_frame=ci_imaging.image, line_region=line_region, include=include, plotter=plotter
     )
 
 
-def noise_map_line(
-    imaging,
-    line_region,
-    as_subplot=False,
-    figsize=(7, 7),
-    title="Noise-Map",
-    titlesize=16,
-    xsize=16,
-    ysize=16,
-    xyticksize=16,
-    output_path=None,
-    output_format="show",
-    output_filename="noise_map_line",
-):
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def noise_map_line(ci_imaging, line_region, include=None, plotter=None):
     """Plot the observed noise_map of the ccd simulator.
 
     Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
-    imaging : CIFrame
+    ci_imaging : CIFrame
         The noise_map of the dataset.
     """
     ci_line_plots.plot_line_from_ci_frame(
-        ci_frame=imaging,
-        line_region=line_region,
-        as_subplot=as_subplot,
-        figsize=figsize,
-        title=title,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
+        ci_frame=ci_imaging.noise_map, line_region=line_region, include=include, plotter=plotter
     )
 
 
-def ci_pre_cti_line(
-    imaging,
-    line_region,
-    as_subplot=False,
-    figsize=(7, 7),
-    title="CI Pre-CTI Image",
-    titlesize=16,
-    xsize=16,
-    ysize=16,
-    xyticksize=16,
-    output_path=None,
-    output_format="show",
-    output_filename="ci_pre_cti_line",
-):
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def ci_pre_cti_line(ci_imaging, line_region, include=None, plotter=None):
     """Plot the observed ci_pre_cti of the ccd simulator.
 
     Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
-    imaging : CIFrame
+    ci_imaging : CIFrame
         The ci_pre_cti of the dataset.
     """
     ci_line_plots.plot_line_from_ci_frame(
-        ci_frame=imaging,
-        line_region=line_region,
-        as_subplot=as_subplot,
-        figsize=figsize,
-        title=title,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
+        ci_frame=ci_imaging.ci_pre_cti, line_region=line_region, include=include, plotter=plotter
     )
 
 
-def signal_to_noise_map_line(
-    imaging,
-    line_region,
-    as_subplot=False,
-    figsize=(7, 7),
-    title="Signal-To-Noise Map",
-    titlesize=16,
-    xsize=16,
-    ysize=16,
-    xyticksize=16,
-    output_path=None,
-    output_format="show",
-    output_filename="signal_to_noise_map_line",
-):
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def signal_to_noise_map_line(ci_imaging, line_region, include=None, plotter=None):
     """Plot the observed signal_to_noise_map of the ccd simulator.
 
     Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
 
     Parameters
     -----------
-    imaging : CIFrame
+    ci_imaging : CIFrame
         The signal_to_noise_map of the dataset.
     """
     ci_line_plots.plot_line_from_ci_frame(
-        ci_frame=imaging,
-        line_region=line_region,
-        as_subplot=as_subplot,
-        figsize=figsize,
-        title=title,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
+        ci_frame=ci_imaging.signal_to_noise_map, line_region=line_region, include=include, plotter=plotter
     )

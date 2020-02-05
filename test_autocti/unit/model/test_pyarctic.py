@@ -10,7 +10,7 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -51,7 +51,7 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[:, 2] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -91,8 +91,8 @@ class TestArcticAddCTI:
 
             # SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED #
 
-            species_0 = ac.Species(trap_density=0.1, trap_lifetime=1.0)
-            species_1 = ac.Species(trap_density=0.2, trap_lifetime=1.0)
+            species_0 = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
+            species_1 = ac.Trap(trap_density=0.2, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -147,8 +147,8 @@ class TestArcticAddCTI:
 
             # SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED #
 
-            species_0 = ac.Species(trap_density=0.1, trap_lifetime=1.0)
-            species_1 = ac.Species(trap_density=0.1, trap_lifetime=2.0)
+            species_0 = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
+            species_1 = ac.Trap(trap_density=0.1, trap_lifetime=2.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -203,7 +203,7 @@ class TestArcticAddCTI:
 
             # SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED #
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd_0 = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -264,8 +264,8 @@ class TestArcticAddCTI:
 
             # SETUP TWO SETS OF PARAMETERS WITH ONE PARAMETER DOUBLED #
 
-            species_0 = ac.Species(trap_density=0.1, trap_lifetime=1.0)
-            species_1 = ac.Species(trap_density=0.05, trap_lifetime=1.0)
+            species_0 = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
+            species_1 = ac.Trap(trap_density=0.05, trap_lifetime=1.0)
 
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
@@ -310,7 +310,7 @@ class TestArcticAddCTI:
             image_pre_cti[3, 3] += 100  # Delta 2
             image_pre_cti[2, 4] += 100  # Delta 3
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -362,7 +362,7 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((5, 7))
             image_pre_cti[2, :] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -398,7 +398,7 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((4, 6))
             image_pre_cti[2, :] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -433,7 +433,7 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((4, 7))
             image_pre_cti[2, :] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -468,7 +468,7 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((5, 6))
             image_pre_cti[2, :] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -502,7 +502,7 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((3, 5))
             image_pre_cti[:, 2] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -538,7 +538,7 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((4, 6))
             image_pre_cti[:, 2] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -574,7 +574,7 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((4, 7))
             image_pre_cti[:, 2] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -610,7 +610,7 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((5, 6))
             image_pre_cti[:, 2] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -648,7 +648,7 @@ class TestArcticAddCTI:
             image_pre_cti[3, 3] += 100  # Delta 2
             image_pre_cti[2, 4] += 100  # Delta 3
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -705,7 +705,7 @@ class TestArcticAddCTI:
             image_pre_cti[3, 3] += 100  # Delta 2
             image_pre_cti[2, 4] += 100  # Delta 3
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -763,7 +763,7 @@ class TestArcticAddCTI:
             image_pre_cti[3, 3] += 100  # Delta 2
             image_pre_cti[2, 4] += 100  # Delta 3
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -820,7 +820,7 @@ class TestArcticAddCTI:
             image_pre_cti[3, 3] += 100  # Delta 2
             image_pre_cti[2, 4] += 100  # Delta 3
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -875,7 +875,7 @@ class TestArcticAddCTI:
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -943,11 +943,11 @@ class TestArcticAddCTI:
 
             ccd = ac.CCDVolume(well_fill_beta=0.8, well_notch_depth=0.01)
             species = [
-                ac.Species(trap_density=10.0, trap_lifetime=1.0),
-                ac.Species(trap_density=20.0, trap_lifetime=1.0),
-                ac.Species(trap_density=30.0, trap_lifetime=1.0),
-                ac.Species(trap_density=40.0, trap_lifetime=1.0),
-                ac.Species(trap_density=50.0, trap_lifetime=1.0),
+                ac.Trap(trap_density=10.0, trap_lifetime=1.0),
+                ac.Trap(trap_density=20.0, trap_lifetime=1.0),
+                ac.Trap(trap_density=30.0, trap_lifetime=1.0),
+                ac.Trap(trap_density=40.0, trap_lifetime=1.0),
+                ac.Trap(trap_density=50.0, trap_lifetime=1.0),
             ]
 
             image_pre_cti = np.zeros((5, 5))
@@ -979,7 +979,7 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -1025,7 +1025,7 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[:, 2] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -1073,7 +1073,7 @@ class TestArcticCorrectCTI:
             image_pre_cti[3, 3] += 100  # Delta 2
             image_pre_cti[2, 4] += 100  # Delta 3
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -1119,7 +1119,7 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((5, 5))
             image_pre_cti[2, :] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -1183,7 +1183,7 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((5, 3))
             image_pre_cti[2, :] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -1229,7 +1229,7 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((6, 4))
             image_pre_cti[2, :] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -1275,7 +1275,7 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((6, 3))
             image_pre_cti[2, :] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -1320,7 +1320,7 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((5, 4))
             image_pre_cti[2, :] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -1365,7 +1365,7 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((5, 3))
             image_pre_cti[:, 2] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -1410,7 +1410,7 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((6, 4))
             image_pre_cti[:, 2] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -1455,7 +1455,7 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((6, 3))
             image_pre_cti[:, 2] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -1501,7 +1501,7 @@ class TestArcticCorrectCTI:
             image_pre_cti = np.zeros((5, 4))
             image_pre_cti[:, 2] += 100
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -1549,7 +1549,7 @@ class TestArcticCorrectCTI:
             image_pre_cti[3, 3] += 100  # Delta 2
             image_pre_cti[2, 4] += 100  # Delta 3
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -1597,7 +1597,7 @@ class TestArcticCorrectCTI:
             image_pre_cti[3, 3] += 100  # Delta 2
             image_pre_cti[2, 4] += 100  # Delta 3
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -1645,7 +1645,7 @@ class TestArcticCorrectCTI:
             image_pre_cti[3, 3] += 100  # Delta 2
             image_pre_cti[2, 4] += 100  # Delta 3
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,
@@ -1693,7 +1693,7 @@ class TestArcticCorrectCTI:
             image_pre_cti[3, 3] += 100  # Delta 2
             image_pre_cti[2, 4] += 100  # Delta 3
 
-            species = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+            species = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
             ccd = ac.CCDVolume(
                 well_notch_depth=0.01,
                 well_fill_alpha=1.0,

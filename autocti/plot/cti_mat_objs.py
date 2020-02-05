@@ -29,7 +29,7 @@ class ParallelOverscanLiner(mat_objs.Liner):
             pointsize=pointsize,
             from_subplot_config=True,
         )
-    
+
 
 class SerialPrescanLiner(mat_objs.Liner):
     def __init__(
@@ -59,7 +59,8 @@ class SerialPrescanLiner(mat_objs.Liner):
             pointsize=pointsize,
             from_subplot_config=True,
         )
-    
+
+
 class SerialOverscanLiner(mat_objs.Liner):
     def __init__(
         self,
