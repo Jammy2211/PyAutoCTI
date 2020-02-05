@@ -30,7 +30,7 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
         phase_name="phase_1",
         phase_folders=phase_folders,
         optimizer_class=optimizer_class,
-        serial_species=[af.PriorModel(ac.Species)],
+        serial_traps=[af.PriorModel(ac.Trap)],
         serial_ccd_volume=ac.CCDVolume,
         columns=40,
     )
@@ -44,7 +44,7 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     phase2 = ac.PhaseCI(
         phase_name="phase_2",
         phase_folders=phase_folders,
-        serial_species=phase1.result.variable.serial_species,
+        serial_traps=phase1.result.variable.serial_traps,
         serial_ccd_volume=phase1.result.variable.serial_ccd_volume,
         hyper_noise_scalar_of_ci_regions=phase1.result.hyper_combined.constant.hyper_noise_scalar_of_ci_regions,
         hyper_noise_scalar_of_serial_trails=phase1.result.hyper_combined.constant.hyper_noise_scalar_of_serial_trails,

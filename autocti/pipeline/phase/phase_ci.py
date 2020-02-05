@@ -10,22 +10,22 @@ from autocti.pipeline.phase import phase_extensions
 from autocti.charge_injection import ci_imaging, ci_fit, ci_mask
 from autocti.plot import ci_fit_plots, phase_plots
 from autocti.structures import mask as msk
-from autocti.model import arctic_params
+from arctic import model
 
 
 def cti_params_for_instance(instance):
-    return arctic_params.ArcticParams(
+    return model.ArcticParams(
         parallel_ccd_volume=instance.parallel_ccd_volume
         if hasattr(instance, "parallel_ccd_volume")
         else None,
-        parallel_species=instance.parallel_species
-        if hasattr(instance, "parallel_species")
+        parallel_traps=instance.parallel_traps
+        if hasattr(instance, "parallel_traps")
         else None,
         serial_ccd_volume=instance.serial_ccd_volume
         if hasattr(instance, "serial_ccd_volume")
         else None,
-        serial_species=instance.serial_species
-        if hasattr(instance, "serial_species")
+        serial_traps=instance.serial_traps
+        if hasattr(instance, "serial_traps")
         else None,
     )
 
@@ -42,8 +42,8 @@ class ConsecutivePool(object):
 
 class PhaseCI(Phase):
 
-    parallel_species = af.PhaseProperty("parallel_species")
-    serial_species = af.PhaseProperty("serial_species")
+    parallel_traps = af.PhaseProperty("parallel_traps")
+    serial_traps = af.PhaseProperty("serial_traps")
     parallel_ccd_volume = af.PhaseProperty("parallel_ccd_volume")
     serial_ccd_volume = af.PhaseProperty("serial_ccd_volume")
     hyper_noise_scalar_of_ci_regions = af.PhaseProperty(
@@ -73,9 +73,9 @@ class PhaseCI(Phase):
         self,
         phase_name,
         phase_folders=tuple(),
-        parallel_species=(),
+        parallel_traps=(),
         parallel_ccd_volume=None,
-        serial_species=(),
+        serial_traps=(),
         serial_ccd_volume=None,
         hyper_noise_scalar_of_ci_regions=None,
         hyper_noise_scalar_of_parallel_trails=None,
@@ -141,9 +141,9 @@ class PhaseCI(Phase):
             optimizer_class=optimizer_class,
         )
 
-        self.parallel_species = parallel_species
+        self.parallel_traps = parallel_traps
         self.parallel_ccd_volume = parallel_ccd_volume
-        self.serial_species = serial_species
+        self.serial_traps = serial_traps
         self.serial_ccd_volume = serial_ccd_volume
 
         self.hyper_noise_scalar_of_ci_regions = hyper_noise_scalar_of_ci_regions
@@ -197,15 +197,15 @@ class PhaseCI(Phase):
 
         cosmic_ray_masks = list(
             map(
-                lambda data: msk.Mask.from_cosmic_ray_image(
+                lambda data: msk.Mask.from_cosmic_ray_map(
                     shape_2d=data.shape,
                     frame_geometry=data.ci_frame.frame_geometry,
-                    cosmic_ray_image=data.cosmic_ray_image,
+                    cosmic_ray_map=data.cosmic_ray_map,
                     cosmic_ray_parallel_buffer=self.cosmic_ray_parallel_buffer,
                     cosmic_ray_serial_buffer=self.cosmic_ray_serial_buffer,
                     cosmic_ray_diagonal_buffer=self.cosmic_ray_diagonal_buffer,
                 )
-                if data.cosmic_ray_image is not None
+                if data.cosmic_ray_map is not None
                 else None,
                 ci_datas,
             )
@@ -338,7 +338,7 @@ class PhaseCI(Phase):
 
         ci_datas_masked_full = list(
             map(
-                lambda data, mask, maps: ci_imaging.CIMaskedImaging(
+                lambda data, mask, maps: ci_imaging.MaskedCIImaging(
                     image=data.profile_image,
                     noise_map=data.noise_map,
                     ci_pre_cti=data.ci_pre_cti,
@@ -682,21 +682,21 @@ class PhaseCI(Phase):
 
         def check_trap_lifetimes_are_ascending(self, cti_params):
 
-            if cti_params.parallel_species:
+            if cti_params.parallel_traps:
 
                 trap_lifetimes = [
-                    parallel_species.trap_lifetime
-                    for parallel_species in cti_params.parallel_species
+                    parallel_traps.trap_lifetime
+                    for parallel_traps in cti_params.parallel_traps
                 ]
 
                 if not sorted(trap_lifetimes) == trap_lifetimes:
                     raise exc.PriorException
 
-            if cti_params.serial_species:
+            if cti_params.serial_traps:
 
                 trap_lifetimes = [
-                    serial_species.trap_lifetime
-                    for serial_species in cti_params.serial_species
+                    serial_traps.trap_lifetime
+                    for serial_traps in cti_params.serial_traps
                 ]
 
                 if not sorted(trap_lifetimes) == trap_lifetimes:
@@ -708,8 +708,8 @@ class PhaseCI(Phase):
 
                 total_density = sum(
                     [
-                        parallel_species.trap_density
-                        for parallel_species in cti_params.parallel_species
+                        parallel_traps.trap_density
+                        for parallel_traps in cti_params.parallel_traps
                     ]
                 )
 
@@ -723,8 +723,8 @@ class PhaseCI(Phase):
 
                 total_density = sum(
                     [
-                        serial_species.trap_density
-                        for serial_species in cti_params.serial_species
+                        serial_traps.trap_density
+                        for serial_traps in cti_params.serial_traps
                     ]
                 )
 
@@ -772,7 +772,7 @@ class PhaseCI(Phase):
             return list(
                 map(
                     lambda ci_data_masked_extracted: ci_fit.CIImagingFit(
-                        ci_masked_imaging=ci_data_masked_extracted,
+                        masked_ci_imaging=ci_data_masked_extracted,
                         cti_params=cti_params,
                         cti_settings=self.cti_settings,
                         hyper_noise_scalars=hyper_noise_scalars,
@@ -791,7 +791,7 @@ class PhaseCI(Phase):
             return list(
                 map(
                     lambda ci_data_masked_full: ci_fit.CIImagingFit(
-                        ci_masked_imaging=ci_data_masked_full,
+                        masked_ci_imaging=ci_data_masked_full,
                         cti_params=cti_params,
                         cti_settings=self.cti_settings,
                         hyper_noise_scalars=hyper_noise_scalars,
@@ -804,14 +804,14 @@ class PhaseCI(Phase):
             return (
                 "\nRunning CTI analysis for... \n\n"
                 "Parallel CTI: \n"
-                "Parallel Species:\n{}\n\n"
+                "Parallel Trap:\n{}\n\n"
                 "Parallel CCD\n{}\n\n"
                 "Serial CTI: \n"
-                "Serial Species:\n{}\n\n"
+                "Serial Trap:\n{}\n\n"
                 "Serial CCD\n{}\n\n".format(
-                    instance.parallel_species,
+                    instance.parallel_traps,
                     instance.parallel_ccd_volume,
-                    instance.serial_species,
+                    instance.serial_traps,
                     instance.serial_ccd_volume,
                 )
             )
@@ -905,7 +905,7 @@ class PhaseCI(Phase):
 
 def pipe_cti(ci_data_masked, cti_params, cti_settings, hyper_noise_scalars):
     fit = ci_fit.CIImagingFit(
-        ci_masked_imaging=ci_data_masked,
+        masked_ci_imaging=ci_data_masked,
         cti_params=cti_params,
         cti_settings=cti_settings,
         hyper_noise_scalars=hyper_noise_scalars,

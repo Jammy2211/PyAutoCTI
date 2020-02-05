@@ -41,16 +41,16 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
         phase_name="phase_1",
         phase_folders=phase_folders,
         optimizer_class=optimizer_class,
-        parallel_species=[
-            af.PriorModel(ac.Species),
-            af.PriorModel(ac.Species),
-            af.PriorModel(ac.Species),
+        parallel_traps=[
+            af.PriorModel(ac.Trap),
+            af.PriorModel(ac.Trap),
+            af.PriorModel(ac.Trap),
         ],
         parallel_ccd_volume=ac.CCDVolume,
-        serial_species=[
-            af.PriorModel(ac.Species),
-            af.PriorModel(ac.Species),
-            af.PriorModel(ac.Species),
+        serial_traps=[
+            af.PriorModel(ac.Trap),
+            af.PriorModel(ac.Trap),
+            af.PriorModel(ac.Trap),
         ],
         serial_ccd_volume=ac.CCDVolume,
     )

@@ -1,6 +1,6 @@
 import numpy as np
 
-from autocti.model import arctic_params
+from arctic import model
 
 
 def call_arctic(
@@ -40,8 +40,8 @@ def call_arctic_constant_density(image, species, ccd, settings, correct_cti):
     settings : ArcticSettings
         The settings that control arctic (e.g. ccd well_depth express option). This is the settings in one specific \
         direction of clocking (e.g. ArcticSettings.Settings or ArcticSettings.Settings)
-    species: [arctic_params.Species]
-    ccd: arctic_params.CCDVolume
+    species: [model.Trap]
+    ccd: model.CCDVolume
 
     Returns
     ----------
@@ -53,7 +53,7 @@ def call_arctic_constant_density(image, species, ccd, settings, correct_cti):
     settings = ArcticSettings(neomode='NEO',serial_settings=Settings(well_depth=84700, niter=1,
                                                                         express=5, n_levels=2000, readout_offset=0))
 
-    model = ArcticParams(serial_parameters=SerialOneSpecies(trap_densities=(0.1,), trap_lifetimes=(1.0,)
+    model = ArcticParams(serial_parameters=SerialOneTrap(trap_densities=(0.1,), trap_lifetimes=(1.0,)
                                                                        well_notch_depth=0.01, well_fill_beta=0.8))
 
     image = call_arctic(image, unclock=True, settings.serial, model.serial)
@@ -76,7 +76,7 @@ def call_arctic_constant_density(image, species, ccd, settings, correct_cti):
     # routines easily
 
     set_arctic_settings(clock_params=clock_params, settings=settings)
-    set_arctic_params(clock_params=clock_params, species=species, ccd=ccd)
+    set_model(clock_params=clock_params, species=species, ccd=ccd)
 
     return clock_image(
         clock_routine=clock_routine, clock_params=clock_params, image=image
@@ -145,7 +145,7 @@ def clock_image_variable_density(clock_routine, clock_params, image, species, cc
 
     for column_no in range(image.shape[1]):
 
-        set_arctic_params(
+        set_model(
             clock_params=clock_params,
             species=species[
                 column_no * species_per_column : (column_no + 1) * species_per_column
@@ -174,7 +174,7 @@ def set_arctic_settings(clock_params, settings):
     clock_params.readout_offset = settings.readout_offset
 
 
-def set_arctic_params(clock_params, species, ccd):
+def set_model(clock_params, species, ccd):
     """Set the clock_params for the arctic clocking routine."""
     clock_params.set_traps(
         [s.trap_density for s in species], [s.trap_lifetime for s in species]

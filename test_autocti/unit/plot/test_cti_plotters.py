@@ -25,7 +25,6 @@ def set_config_path():
 
 
 class TestCTIPlotterAttributes:
-
     def test__parallel_overscan_liner__from_config_or_via_manual_input(self):
 
         plotter = aplt.Plotter()
@@ -150,10 +149,7 @@ class TestCTIPlotterPlots:
             output=aplt.Output(path=plot_path, filename="frame1", format="png")
         )
 
-        plotter.plot_frame(
-            frame=frame,
-            include_origin=True,
-        )
+        plotter.plot_frame(frame=frame, include_origin=True)
 
         assert plot_path + "frame1.png" in plot_patch.paths
 
@@ -161,10 +157,7 @@ class TestCTIPlotterPlots:
             output=aplt.Output(path=plot_path, filename="frame2", format="png")
         )
 
-        plotter.plot_frame(
-            frame=frame,
-            include_origin=True,
-        )
+        plotter.plot_frame(frame=frame, include_origin=True)
 
         assert plot_path + "frame2.png" in plot_patch.paths
 
@@ -270,7 +263,9 @@ class TestInclude:
 
         assert parallel_overscan == None
 
-        frame = ac.frame.ones(shape_2d=(31, 31), pixel_scales=(1.0, 1.0), parallel_overscan=(0, 1, 2, 3))
+        frame = ac.frame.ones(
+            shape_2d=(31, 31), pixel_scales=(1.0, 1.0), parallel_overscan=(0, 1, 2, 3)
+        )
 
         include = aplt.Include(parallel_overscan=False)
 
@@ -294,7 +289,9 @@ class TestInclude:
 
         assert serial_prescan == None
 
-        frame = ac.frame.ones(shape_2d=(31, 31), pixel_scales=(1.0, 1.0), serial_prescan=(0, 1, 2, 3))
+        frame = ac.frame.ones(
+            shape_2d=(31, 31), pixel_scales=(1.0, 1.0), serial_prescan=(0, 1, 2, 3)
+        )
 
         include = aplt.Include(serial_prescan=False)
 
@@ -318,7 +315,9 @@ class TestInclude:
 
         assert serial_overscan == None
 
-        frame = ac.frame.ones(shape_2d=(31, 31), pixel_scales=(1.0, 1.0), serial_overscan=(0, 1, 2, 3))
+        frame = ac.frame.ones(
+            shape_2d=(31, 31), pixel_scales=(1.0, 1.0), serial_overscan=(0, 1, 2, 3)
+        )
 
         include = aplt.Include(serial_overscan=False)
 

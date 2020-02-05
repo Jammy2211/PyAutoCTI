@@ -43,7 +43,7 @@ def run(
     optimizer_class=af.MultiNest,
     config_folder="config",
     cti_settings=None,
-    load_cosmic_ray_image=False,
+    load_cosmic_ray_map=False,
     pool=None,
 ):
     test_name = test_name or module.test_name
@@ -60,7 +60,7 @@ def run(
                 ci_data_model=module.ci_data_model,
                 ci_data_resolution=module.ci_data_resolution,
                 normalization=normalization,
-                load_cosmic_ray_image=load_cosmic_ray_image,
+                load_cosmic_ray_map=load_cosmic_ray_map,
             ),
             module.ci_normalizations,
         )

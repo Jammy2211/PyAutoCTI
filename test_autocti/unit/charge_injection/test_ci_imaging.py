@@ -53,39 +53,39 @@ def make_arctic_both():
 
 @pytest.fixture(scope="class", name="params_parallel")
 def make_params_parallel():
-    parallel = ac.Species(trap_density=0.1, trap_lifetime=1.0)
+    parallel = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
 
     ccd = ac.CCDVolume(well_notch_depth=0.000001, well_fill_beta=0.8)
 
-    parallel = ac.ArcticParams(parallel_species=[parallel], parallel_ccd_volume=ccd)
+    parallel = ac.ArcticParams(parallel_traps=[parallel], parallel_ccd_volume=ccd)
 
     return parallel
 
 
 @pytest.fixture(scope="class", name="params_serial")
 def make_params_serial():
-    serial = ac.Species(trap_density=0.2, trap_lifetime=2.0)
+    serial = ac.Trap(trap_density=0.2, trap_lifetime=2.0)
 
     ccd = ac.CCDVolume(well_notch_depth=0.000001, well_fill_beta=0.4)
 
-    serial = ac.ArcticParams(serial_species=[serial], serial_ccd_volume=ccd)
+    serial = ac.ArcticParams(serial_traps=[serial], serial_ccd_volume=ccd)
 
     return serial
 
 
 @pytest.fixture(scope="class", name="params_both")
 def make_params_both():
-    parallel = ac.Species(trap_density=0.4, trap_lifetime=1.0)
+    parallel = ac.Trap(trap_density=0.4, trap_lifetime=1.0)
 
     parallel_ccd_volume = ac.CCDVolume(well_notch_depth=0.000001, well_fill_beta=0.8)
 
-    serial = ac.Species(trap_density=0.2, trap_lifetime=2.0)
+    serial = ac.Trap(trap_density=0.2, trap_lifetime=2.0)
 
     serial_ccd_volume = ac.CCDVolume(well_notch_depth=0.000001, well_fill_beta=0.4)
 
     both = ac.ArcticParams(
-        parallel_species=[parallel],
-        serial_species=[serial],
+        parallel_traps=[parallel],
+        serial_traps=[serial],
         parallel_ccd_volume=parallel_ccd_volume,
         serial_ccd_volume=serial_ccd_volume,
     )
@@ -102,15 +102,15 @@ class TestCIData(object):
             ci_pre_cti=4,
             ci_pattern=None,
             ci_frame=None,
-            cosmic_ray_image=None,
+            cosmic_ray_map=None,
         )
 
         result = data.map_to_ci_data_masked(func=lambda x: 2 * x, mask=1)
-        assert isinstance(result, ac.CIMaskedImaging)
+        assert isinstance(result, ac.MaskedCIImaging)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
-        assert result.cosmic_ray_image == None
+        assert result.cosmic_ray_map == None
 
         data = ac.CIImaging(
             image=1,
@@ -118,14 +118,14 @@ class TestCIData(object):
             ci_pre_cti=4,
             ci_pattern=None,
             ci_frame=None,
-            cosmic_ray_image=10,
+            cosmic_ray_map=10,
         )
         result = data.map_to_ci_data_masked(func=lambda x: 2 * x, mask=1)
-        assert isinstance(result, ac.CIMaskedImaging)
+        assert isinstance(result, ac.MaskedCIImaging)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
-        assert result.cosmic_ray_image == 10
+        assert result.cosmic_ray_map == 10
 
     def test__map_including_noise_scaling_maps(self):
 
@@ -135,17 +135,17 @@ class TestCIData(object):
             ci_pre_cti=4,
             ci_pattern=None,
             ci_frame=None,
-            cosmic_ray_image=None,
+            cosmic_ray_map=None,
         )
         result = data.map_to_ci_data_masked(
             func=lambda x: 2 * x, mask=1, noise_scaling_maps=[1, 2, 3]
         )
-        assert isinstance(result, ac.CIMaskedImaging)
+        assert isinstance(result, ac.MaskedCIImaging)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
         assert result.noise_scaling_maps == [2, 4, 6]
-        assert result.cosmic_ray_image == None
+        assert result.cosmic_ray_map == None
 
         data = ac.CIImaging(
             image=1,
@@ -153,17 +153,17 @@ class TestCIData(object):
             ci_pre_cti=4,
             ci_pattern=None,
             ci_frame=None,
-            cosmic_ray_image=10,
+            cosmic_ray_map=10,
         )
         result = data.map_to_ci_data_masked(
             func=lambda x: 2 * x, mask=1, noise_scaling_maps=[1, 2, 3]
         )
-        assert isinstance(result, ac.CIMaskedImaging)
+        assert isinstance(result, ac.MaskedCIImaging)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
         assert result.noise_scaling_maps == [2, 4, 6]
-        assert result.cosmic_ray_image == 10
+        assert result.cosmic_ray_map == 10
 
     def test__parallel_serial_ci_data_fit_from_mask(self):
 
@@ -173,7 +173,7 @@ class TestCIData(object):
             ci_pre_cti=4,
             ci_pattern=None,
             ci_frame=None,
-            cosmic_ray_image=10,
+            cosmic_ray_map=10,
         )
 
         def parallel_serial_extractor():
@@ -185,11 +185,11 @@ class TestCIData(object):
         data.parallel_serial_extractor = parallel_serial_extractor
         result = data.parallel_serial_ci_data_masked_from_mask(mask=1)
 
-        assert isinstance(result, ac.CIMaskedImaging)
+        assert isinstance(result, ac.MaskedCIImaging)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
-        assert result.cosmic_ray_image == 10
+        assert result.cosmic_ray_map == 10
 
     def test__parallel_serial_ci_data_fit_from_mask__include_noise_scaling_maps(self):
         data = ac.CIImaging(
@@ -198,7 +198,7 @@ class TestCIData(object):
             ci_pre_cti=4,
             ci_pattern=None,
             ci_frame=None,
-            cosmic_ray_image=10,
+            cosmic_ray_map=10,
         )
 
         def parallel_serial_extractor():
@@ -212,12 +212,12 @@ class TestCIData(object):
             mask=1, noise_scaling_maps=[2, 3]
         )
 
-        assert isinstance(result, ac.CIMaskedImaging)
+        assert isinstance(result, ac.MaskedCIImaging)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
         assert result.noise_scaling_maps == [4, 6]
-        assert result.cosmic_ray_image == 10
+        assert result.cosmic_ray_map == 10
 
     def test__signal_to_noise_map_and_max(self):
         image = np.ones((2, 2))
@@ -292,8 +292,8 @@ class TestCIDataSimulate(object):
 
         ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(5, 5))
 
-        cosmic_ray_image = np.zeros((5, 5))
-        cosmic_ray_image[2, 2] = 100.0
+        cosmic_ray_map = np.zeros((5, 5))
+        cosmic_ray_map[2, 2] = 100.0
 
         ci_data_simulate = ac.CIImaging.simulate(
             ci_pre_cti=ci_pre_cti,
@@ -301,7 +301,7 @@ class TestCIDataSimulate(object):
             ci_pattern=pattern,
             cti_settings=arctic_parallel,
             cti_params=params_parallel,
-            cosmic_ray_image=cosmic_ray_image,
+            cosmic_ray_map=cosmic_ray_map,
         )
 
         assert ci_data_simulate.profile_image[0, 0:5] == pytest.approx(
@@ -311,7 +311,7 @@ class TestCIDataSimulate(object):
         assert ci_data_simulate.profile_image[2, 2] > 98.0
         assert (ci_data_simulate.profile_image[1, 1:4] > 0.0).all()
         assert (
-            ci_data_simulate.cosmic_ray_image
+            ci_data_simulate.cosmic_ray_map
             == np.array(
                 [
                     [0.0, 0.0, 0.0, 0.0, 0.0],
@@ -331,9 +331,9 @@ class TestCIDataSimulate(object):
 
         # Densities for this seed are [9.6, 8.2, 8.6, 9.6, 9.6]
 
-        parallel_species = ac.Species(trap_density=10.0, trap_lifetime=1.0)
-        parallel_species = ac.Species.poisson_species(
-            species=[parallel_species], shape=(5, 5), seed=1
+        parallel_traps = ac.Trap(trap_density=10.0, trap_lifetime=1.0)
+        parallel_traps = ac.Trap.poisson_species(
+            species=[parallel_traps], shape=(5, 5), seed=1
         )
         parallel_ccd_volume = ac.CCDVolume(
             well_notch_depth=1.0e-4,
@@ -343,7 +343,7 @@ class TestCIDataSimulate(object):
         )
 
         params_parallel = ac.ArcticParams(
-            parallel_species=parallel_species, parallel_ccd_volume=parallel_ccd_volume
+            parallel_traps=parallel_traps, parallel_ccd_volume=parallel_ccd_volume
         )
 
         ci_data_simulate = ac.CIImaging.simulate(
@@ -355,11 +355,21 @@ class TestCIDataSimulate(object):
             use_parallel_poisson_densities=True,
         )
 
-        assert ci_data_simulate.profile_image[2, 0] == ci_data_simulate.profile_image[2, 3]
-        assert ci_data_simulate.profile_image[2, 0] == ci_data_simulate.profile_image[2, 4]
-        assert ci_data_simulate.profile_image[2, 0] < ci_data_simulate.profile_image[2, 1]
-        assert ci_data_simulate.profile_image[2, 0] < ci_data_simulate.profile_image[2, 2]
-        assert ci_data_simulate.profile_image[2, 1] > ci_data_simulate.profile_image[2, 2]
+        assert (
+            ci_data_simulate.profile_image[2, 0] == ci_data_simulate.profile_image[2, 3]
+        )
+        assert (
+            ci_data_simulate.profile_image[2, 0] == ci_data_simulate.profile_image[2, 4]
+        )
+        assert (
+            ci_data_simulate.profile_image[2, 0] < ci_data_simulate.profile_image[2, 1]
+        )
+        assert (
+            ci_data_simulate.profile_image[2, 0] < ci_data_simulate.profile_image[2, 2]
+        )
+        assert (
+            ci_data_simulate.profile_image[2, 1] > ci_data_simulate.profile_image[2, 2]
+        )
 
 
 class TestCIImage(object):
@@ -470,8 +480,8 @@ class TestLoadCIData(object):
             noise_map_hdu=0,
             ci_pre_cti_path=test_data_dir + "3x3_threes.fits",
             ci_pre_cti_hdu=0,
-            cosmic_ray_image_path=test_data_dir + "3x3_fours.fits",
-            cosmic_ray_image_hdu=0,
+            cosmic_ray_map_path=test_data_dir + "3x3_fours.fits",
+            cosmic_ray_map_hdu=0,
         )
 
         assert (data.profile_image == np.ones((3, 3))).all()
@@ -479,7 +489,7 @@ class TestLoadCIData(object):
         assert (data.ci_pre_cti == 3.0 * np.ones((3, 3))).all()
         assert data.ci_frame.frame_geometry == frame_geometry
         assert data.ci_frame.ci_pattern == pattern
-        assert (data.cosmic_ray_image == 4.0 * np.ones((3, 3))).all()
+        assert (data.cosmic_ray_map == 4.0 * np.ones((3, 3))).all()
 
     def test__load_all_image_components__load_from_multi_hdu_fits(self):
 
@@ -495,8 +505,8 @@ class TestLoadCIData(object):
             noise_map_hdu=1,
             ci_pre_cti_path=test_data_dir + "3x3_multiple_hdu.fits",
             ci_pre_cti_hdu=2,
-            cosmic_ray_image_path=test_data_dir + "3x3_multiple_hdu.fits",
-            cosmic_ray_image_hdu=3,
+            cosmic_ray_map_path=test_data_dir + "3x3_multiple_hdu.fits",
+            cosmic_ray_map_hdu=3,
         )
 
         assert (data.profile_image == np.ones((3, 3))).all()
@@ -504,7 +514,7 @@ class TestLoadCIData(object):
         assert (data.ci_pre_cti == 3.0 * np.ones((3, 3))).all()
         assert data.ci_frame.frame_geometry == frame_geometry
         assert data.ci_frame.ci_pattern == pattern
-        assert (data.cosmic_ray_image == 4.0 * np.ones((3, 3))).all()
+        assert (data.cosmic_ray_map == 4.0 * np.ones((3, 3))).all()
 
     def test__load_noise_map_from_single_value(self):
 
@@ -526,7 +536,7 @@ class TestLoadCIData(object):
         assert (data.ci_pre_cti == 3.0 * np.ones((3, 3))).all()
         assert data.ci_frame.frame_geometry == frame_geometry
         assert data.ci_frame.ci_pattern == pattern
-        assert data.cosmic_ray_image == None
+        assert data.cosmic_ray_map == None
 
     def test__load_ci_pre_cti_image_from_the_pattern_and_image(self):
 
@@ -547,7 +557,7 @@ class TestLoadCIData(object):
         assert (data.ci_pre_cti == 10.0 * np.ones((3, 3))).all()
         assert data.ci_frame.frame_geometry == frame_geometry
         assert data.ci_frame.ci_pattern == pattern
-        assert data.cosmic_ray_image == None
+        assert data.cosmic_ray_map == None
 
     def test__output_all_arrays(self):
 
@@ -560,8 +570,8 @@ class TestLoadCIData(object):
             noise_map_hdu=0,
             ci_pre_cti_path=test_data_dir + "3x3_threes.fits",
             ci_pre_cti_hdu=0,
-            cosmic_ray_image_path=test_data_dir + "3x3_fours.fits",
-            cosmic_ray_image_hdu=0,
+            cosmic_ray_map_path=test_data_dir + "3x3_fours.fits",
+            cosmic_ray_map_hdu=0,
         )
 
         output_data_dir = "{}/../test_files/arrays/output_test/".format(
@@ -577,7 +587,7 @@ class TestLoadCIData(object):
             image_path=output_data_dir + "image.fits",
             noise_map_path=output_data_dir + "noise_map.fits",
             ci_pre_cti_path=output_data_dir + "ci_pre_cti.fits",
-            cosmic_ray_image_path=output_data_dir + "cosmic_ray_image.fits",
+            cosmic_ray_map_path=output_data_dir + "cosmic_ray_map.fits",
         )
 
         data = ac.ci_data_from_fits(
@@ -589,11 +599,11 @@ class TestLoadCIData(object):
             noise_map_hdu=0,
             ci_pre_cti_path=output_data_dir + "ci_pre_cti.fits",
             ci_pre_cti_hdu=0,
-            cosmic_ray_image_path=output_data_dir + "cosmic_ray_image.fits",
-            cosmic_ray_image_hdu=0,
+            cosmic_ray_map_path=output_data_dir + "cosmic_ray_map.fits",
+            cosmic_ray_map_hdu=0,
         )
 
         assert (data.profile_image == np.ones((3, 3))).all()
         assert (data.noise_map == 2.0 * np.ones((3, 3))).all()
         assert (data.ci_pre_cti == 3.0 * np.ones((3, 3))).all()
-        assert (data.cosmic_ray_image == 4.0 * np.ones((3, 3))).all()
+        assert (data.cosmic_ray_map == 4.0 * np.ones((3, 3))).all()

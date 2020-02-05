@@ -6,7 +6,7 @@ from autocti.charge_injection import ci_imaging
 class CIImagingFit(aa_fit.ImagingFit):
     def __init__(
         self,
-        ci_masked_imaging: ci_imaging.CIMaskedImaging,
+        masked_ci_imaging: ci_imaging.MaskedCIImaging,
         cti_params,
         cti_settings,
         hyper_noise_scalars=None,
@@ -16,7 +16,7 @@ class CIImagingFit(aa_fit.ImagingFit):
 
         Parameters
         -----------
-        ci_masked_imaging
+        masked_ci_imaging
             The charge injection image that is fitted.
         cti_params : arctic_params.ArcticParams
             The cti model parameters which describe how CTI during clocking.
@@ -26,12 +26,12 @@ class CIImagingFit(aa_fit.ImagingFit):
             The ci_hyper-parameter(s) which the noise_scaling_maps is multiplied by to scale the noise-map.
         """
 
-        self.ci_masked_data = ci_masked_imaging
+        self.ci_masked_data = masked_ci_imaging
         self.cti_params = cti_params
         self.cti_settings = cti_settings
 
-        model_image = ci_masked_imaging.ci_frame.frame_geometry.add_cti(
-            image=ci_masked_imaging.ci_pre_cti,
+        model_image = masked_ci_imaging.ci_pre_cti.add_cti(
+            image=masked_ci_imaging.ci_pre_cti,
             cti_params=cti_params,
             cti_settings=cti_settings,
         )
@@ -40,20 +40,20 @@ class CIImagingFit(aa_fit.ImagingFit):
 
         if hyper_noise_scalars is not None and hyper_noise_scalars is not []:
 
-            self.noise_scaling_maps = ci_masked_imaging.noise_scaling_maps
+            self.noise_scaling_maps = masked_ci_imaging.noise_scaling_maps
             noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
                 hyper_noise_scalars=hyper_noise_scalars,
-                noise_scaling_maps=ci_masked_imaging.noise_scaling_maps,
-                noise_map=ci_masked_imaging.noise_map,
+                noise_scaling_maps=masked_ci_imaging.noise_scaling_maps,
+                noise_map=masked_ci_imaging.noise_map,
             )
 
         else:
 
-            noise_map = ci_masked_imaging.noise_map
+            noise_map = masked_ci_imaging.noise_map
 
         super().__init__(
-            mask=ci_masked_imaging.mask,
-            image=ci_masked_imaging.image,
+            mask=masked_ci_imaging.mask,
+            image=masked_ci_imaging.image,
             noise_map=noise_map,
             model_image=model_image,
         )

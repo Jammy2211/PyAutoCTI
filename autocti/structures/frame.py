@@ -111,7 +111,7 @@ class AbstractFrame(arrays.AbstractArray):
             image_pre_parallel_clocking = self.rotated_for_parallel_cti(image=image)
             image_post_parallel_clocking = pyarctic.call_arctic(
                 image=image_pre_parallel_clocking,
-                species=cti_params.parallel_species,
+                species=cti_params.parallel_traps,
                 ccd=cti_params.parallel_ccd_volume,
                 settings=cti_settings.parallel,
                 correct_cti=False,
@@ -125,7 +125,7 @@ class AbstractFrame(arrays.AbstractArray):
             )
             image_post_serial_clocking = pyarctic.call_arctic(
                 image=image_pre_serial_clocking,
-                species=cti_params.serial_species,
+                species=cti_params.serial_traps,
                 ccd=cti_params.serial_ccd_volume,
                 settings=cti_settings.serial,
                 correct_cti=False,
@@ -154,7 +154,7 @@ class AbstractFrame(arrays.AbstractArray):
             )
             image_post_serial_clocking = pyarctic.call_arctic(
                 image=image_pre_serial_clocking,
-                species=cti_params.serial_species,
+                species=cti_params.serial_traps,
                 ccd=cti_params.serial_ccd_volume,
                 settings=cti_settings.serial,
                 correct_cti=True,
@@ -166,7 +166,7 @@ class AbstractFrame(arrays.AbstractArray):
             image_pre_parallel_clocking = self.rotated_for_parallel_cti(image=image)
             image_post_parallel_clocking = pyarctic.call_arctic(
                 image=image_pre_parallel_clocking,
-                species=cti_params.parallel_species,
+                species=cti_params.parallel_traps,
                 ccd=cti_params.parallel_ccd_volume,
                 settings=cti_settings.parallel,
                 correct_cti=True,

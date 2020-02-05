@@ -37,14 +37,14 @@ class TestMaskRemoveRegions:
 class TestCosmicRayMask:
     def test__cosmic_ray_mask_included_in_total_mask(self):
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
             ),
             corner=(1, 0),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(cosmic_ray_image=cosmic_ray_image)
+        mask = ac.Mask.from_cosmic_ray_map(cosmic_ray_map=cosmic_ray_map)
 
         assert (
             mask
@@ -57,15 +57,15 @@ class TestCosmicRayMask:
 class TestMaskCosmics:
     def test__top_left__mask_cosmic_ray_in_different_directions(self):
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
             ),
             corner=(0, 0),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_parallel_buffer=1
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_parallel_buffer=1
         )
 
         assert (
@@ -75,15 +75,15 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, True, False], [False, False, False], [False, False, False]]
             ),
             corner=(0, 0),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_parallel_buffer=2
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_parallel_buffer=2
         )
 
         assert (
@@ -93,15 +93,15 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
             ),
             corner=(0, 0),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_serial_buffer=1
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_serial_buffer=1
         )
 
         assert (
@@ -111,15 +111,15 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, False, False], [True, False, False], [False, False, False]]
             ),
             corner=(0, 0),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_serial_buffer=2
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_serial_buffer=2
         )
 
         assert (
@@ -129,15 +129,15 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
             ),
             corner=(0, 0),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_diagonal_buffer=1
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_diagonal_buffer=1
         )
 
         assert (
@@ -147,7 +147,7 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [
                     [False, False, False, False],
@@ -159,8 +159,8 @@ class TestMaskCosmics:
             corner=(0, 0),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_diagonal_buffer=2
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_diagonal_buffer=2
         )
 
         assert (
@@ -176,15 +176,15 @@ class TestMaskCosmics:
         ).all()
 
     def test__top_right__mask_cosmic_ray_in_different_directions(self):
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
             ),
             corner=(0, 1),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_parallel_buffer=1
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_parallel_buffer=1
         )
 
         assert (
@@ -194,15 +194,15 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, True, False], [False, False, False], [False, False, False]]
             ),
             corner=(0, 1),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_parallel_buffer=2
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_parallel_buffer=2
         )
 
         assert (
@@ -212,15 +212,15 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
             ),
             corner=(0, 1),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_serial_buffer=1
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_serial_buffer=1
         )
 
         assert (
@@ -230,15 +230,15 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, False, False], [False, False, True], [False, False, False]]
             ),
             corner=(0, 1),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_serial_buffer=2
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_serial_buffer=2
         )
 
         assert (
@@ -248,15 +248,15 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
             ),
             corner=(0, 1),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_diagonal_buffer=1
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_diagonal_buffer=1
         )
 
         assert (
@@ -266,7 +266,7 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [
                     [False, False, False, False],
@@ -278,8 +278,8 @@ class TestMaskCosmics:
             corner=(0, 1),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_diagonal_buffer=2
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_diagonal_buffer=2
         )
 
         assert (
@@ -296,15 +296,15 @@ class TestMaskCosmics:
 
     def test__bottom_left__mask_cosmic_ray_in_different_directions(self):
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
             ),
             corner=(1, 0),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_parallel_buffer=1
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_parallel_buffer=1
         )
 
         assert (
@@ -314,15 +314,15 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, False, False], [False, False, False], [False, True, False]]
             ),
             corner=(1, 0),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_parallel_buffer=2
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_parallel_buffer=2
         )
 
         assert (
@@ -332,15 +332,15 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
             ),
             corner=(1, 0),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_serial_buffer=1
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_serial_buffer=1
         )
 
         assert (
@@ -350,15 +350,15 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, False, False], [True, False, False], [False, False, False]]
             ),
             corner=(1, 0),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_serial_buffer=2
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_serial_buffer=2
         )
 
         assert (
@@ -368,15 +368,15 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
             ),
             corner=(1, 0),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_diagonal_buffer=1
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_diagonal_buffer=1
         )
 
         assert (
@@ -386,7 +386,7 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [
                     [False, False, False, False],
@@ -398,8 +398,8 @@ class TestMaskCosmics:
             corner=(1, 0),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_diagonal_buffer=2
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_diagonal_buffer=2
         )
 
         assert (
@@ -416,15 +416,15 @@ class TestMaskCosmics:
 
     def test__bottom_right__mask_cosmic_ray_in_different_directions(self):
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
             ),
             corner=(1, 1),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_parallel_buffer=1
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_parallel_buffer=1
         )
 
         assert (
@@ -434,15 +434,15 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, False, False], [False, False, False], [False, True, False]]
             ),
             corner=(1, 1),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_parallel_buffer=2
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_parallel_buffer=2
         )
         assert (
             mask
@@ -451,15 +451,15 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
             ),
             corner=(1, 1),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_serial_buffer=1
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_serial_buffer=1
         )
 
         assert (
@@ -469,15 +469,15 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, False, False], [False, False, True], [False, False, False]]
             ),
             corner=(1, 1),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_serial_buffer=2
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_serial_buffer=2
         )
 
         assert (
@@ -487,15 +487,15 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
             ),
             corner=(1, 1),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_diagonal_buffer=1
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_diagonal_buffer=1
         )
 
         assert (
@@ -505,7 +505,7 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_image = ac.frame(
+        cosmic_ray_map = ac.frame(
             array=np.array(
                 [
                     [False, False, False, False],
@@ -517,8 +517,8 @@ class TestMaskCosmics:
             corner=(1, 1),
         )
 
-        mask = ac.Mask.from_cosmic_ray_image(
-            cosmic_ray_image=cosmic_ray_image, cosmic_ray_diagonal_buffer=2
+        mask = ac.Mask.from_cosmic_ray_map(
+            cosmic_ray_map=cosmic_ray_map, cosmic_ray_diagonal_buffer=2
         )
 
         assert (

@@ -9,12 +9,11 @@ from autoarray.util import array_util
 
 
 class CIImaging(object):
-    def __init__(self, image, noise_map, ci_pre_cti, ci_pattern, cosmic_ray_image=None):
+    def __init__(self, image, noise_map, ci_pre_cti, cosmic_ray_map=None):
         self.image = image
         self.noise_map = noise_map
         self.ci_pre_cti = ci_pre_cti
-        self.ci_pattern = ci_pattern
-        self.cosmic_ray_image = cosmic_ray_image
+        self.cosmic_ray_map = cosmic_ray_map
 
     @classmethod
     def simulate(
@@ -25,7 +24,7 @@ class CIImaging(object):
         cti_params,
         cti_settings,
         read_noise=None,
-        cosmic_ray_image=None,
+        cosmic_ray_map=None,
         use_parallel_poisson_densities=False,
         noise_seed=-1,
     ):
@@ -34,7 +33,7 @@ class CIImaging(object):
         Parameters
         -----------
         ci_pre_cti
-        cosmic_ray_image
+        cosmic_ray_map
             The dimensions of the output simulated charge injection image.
         frame_geometry : ci_frame.CIQuadGeometry
             The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
@@ -53,8 +52,8 @@ class CIImaging(object):
 
         ci_frame = frame.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
 
-        if cosmic_ray_image is not None:
-            ci_pre_cti += cosmic_ray_image
+        if cosmic_ray_map is not None:
+            ci_pre_cti += cosmic_ray_map
 
         ci_pre_cti = cti_image.FrameArray(
             frame_geometry=frame_geometry, array=ci_pre_cti
@@ -81,12 +80,12 @@ class CIImaging(object):
             noise_map=ci_noise_map,
             ci_pre_cti=ci_pre_cti,
             ci_pattern=ci_pattern,
-            cosmic_ray_image=cosmic_ray_image,
+            cosmic_ray_map=cosmic_ray_map,
         )
 
     @property
-    def chinj(self):
-        return frame.CIFrame(frame_geometry=self.ci_frame, ci_pattern=self.ci_pattern)
+    def ci_pattern(self):
+        return self.image.ci_pattern
 
     @property
     def shape(self):
@@ -107,10 +106,10 @@ class CIImaging(object):
 
         Returns
         -------
-        masked_ci_data: CIMaskedImaging
+        masked_ci_data: MaskedCIImaging
         """
 
-        return CIMaskedImaging(
+        return MaskedCIImaging(
             image=func(self.image),
             noise_map=func(self.noise_map),
             ci_pre_cti=func(self.ci_pre_cti),
@@ -120,7 +119,7 @@ class CIImaging(object):
             noise_scaling_maps=list(map(func, noise_scaling_maps))
             if noise_scaling_maps is not None
             else None,
-            cosmic_ray_image=self.cosmic_ray_image,
+            cosmic_ray_map=self.cosmic_ray_map,
         )
 
     def parallel_extractor(self, columns):
@@ -129,7 +128,7 @@ class CIImaging(object):
         """
 
         def extractor(obj):
-            return self.chinj.frame_geometry.parallel_calibration_section_for_columns(
+            return self.ci_frame.frame_geometry.parallel_calibration_section_for_columns(
                 array=obj, columns=columns
             )
 
@@ -141,7 +140,7 @@ class CIImaging(object):
         """
 
         def extractor(obj):
-            return self.chinj.frame_geometry.serial_calibration_section_for_rows(
+            return self.ci_frame.frame_geometry.serial_calibration_section_for_rows(
                 array=obj, rows=rows
             )
 
@@ -153,7 +152,7 @@ class CIImaging(object):
         """
 
         def extractor(obj):
-            return self.chinj.frame_geometry.parallel_serial_calibration_section(
+            return self.ci_frame.frame_geometry.parallel_serial_calibration_section(
                 array=obj
             )
 
@@ -175,7 +174,7 @@ class CIImaging(object):
             A mask
         Returns
         -------
-        CIMaskedImaging
+        MaskedCIImaging
         """
         return self.map_to_ci_data_masked(
             func=self.parallel_extractor(columns),
@@ -199,7 +198,7 @@ class CIImaging(object):
             A mask
         Returns
         -------
-        CIMaskedImaging
+        MaskedCIImaging
         """
         return self.map_to_ci_data_masked(
             func=self.serial_extractor(rows),
@@ -221,7 +220,7 @@ class CIImaging(object):
             A mask
         Returns
         -------
-        CIMaskedImaging
+        MaskedCIImaging
         """
         return self.map_to_ci_data_masked(
             func=self.parallel_serial_extractor(),
@@ -242,16 +241,14 @@ class CIImaging(object):
         return np.max(self.signal_to_noise_map)
 
 
-class CIMaskedImaging(object):
+class MaskedCIImaging(object):
     def __init__(
         self,
+            mask,
         image,
         noise_map,
         ci_pre_cti,
-        mask,
-        ci_pattern,
-        ci_frame,
-        cosmic_ray_image=None,
+        cosmic_ray_map=None,
         noise_scaling_maps=None,
     ):
         """A fitting image is the collection of simulator components (e.g. the image, noise-maps, PSF, etc.) which are used \
@@ -280,20 +277,15 @@ class CIMaskedImaging(object):
         mask: msk.Mask
             The 2D mask that is applied to image simulator.
         """
+
+        # TODO : Need to make masked arrays like in AutoArray.
+
+        self.mask = mask
         self.image = image
         self.noise_map = noise_map
         self.ci_pre_cti = ci_pre_cti
-        self.mask = mask
-        self.ci_pattern = ci_pattern
-        self.ci_frame = ci_frame
-        self.cosmic_ray_image = cosmic_ray_image
+        self.cosmic_ray_map = cosmic_ray_map
         self.noise_scaling_maps = noise_scaling_maps
-
-    @property
-    def chinj(self):
-        return frame.CIFrame(
-            frame_geometry=self.ci_frame.frame_geometry, ci_pattern=self.ci_pattern
-        )
 
     @property
     def signal_to_noise_map(self):
@@ -329,8 +321,8 @@ def ci_data_from_fits(
     noise_map_from_single_value=None,
     ci_pre_cti_path=None,
     ci_pre_cti_hdu=0,
-    cosmic_ray_image_path=None,
-    cosmic_ray_image_hdu=0,
+    cosmic_ray_map_path=None,
+    cosmic_ray_map_hdu=0,
     mask=None,
 ):
 
@@ -354,12 +346,12 @@ def ci_data_from_fits(
             ci_pattern, ci_image, mask=mask
         )
 
-    if cosmic_ray_image_path is not None:
-        cosmic_ray_image = array_util.numpy_array_2d_from_fits(
-            file_path=cosmic_ray_image_path, hdu=cosmic_ray_image_hdu
+    if cosmic_ray_map_path is not None:
+        cosmic_ray_map = array_util.numpy_array_2d_from_fits(
+            file_path=cosmic_ray_map_path, hdu=cosmic_ray_map_hdu
         )
     else:
-        cosmic_ray_image = None
+        cosmic_ray_map = None
 
     return CIImaging(
         image=ci_image,
@@ -367,7 +359,7 @@ def ci_data_from_fits(
         ci_pre_cti=ci_pre_cti,
         ci_pattern=ci_pattern,
         ci_frame=ci_frame,
-        cosmic_ray_image=cosmic_ray_image,
+        cosmic_ray_map=cosmic_ray_map,
     )
 
 
@@ -376,7 +368,7 @@ def output_ci_data_to_fits(
     image_path,
     noise_map_path=None,
     ci_pre_cti_path=None,
-    cosmic_ray_image_path=None,
+    cosmic_ray_map_path=None,
     overwrite=False,
 ):
 
@@ -394,10 +386,10 @@ def output_ci_data_to_fits(
             array_2d=ci_data.ci_pre_cti, file_path=ci_pre_cti_path, overwrite=overwrite
         )
 
-    if ci_data.cosmic_ray_image is not None and cosmic_ray_image_path is not None:
+    if ci_data.cosmic_ray_map is not None and cosmic_ray_map_path is not None:
         array_util.numpy_array_2d_to_fits(
-            array_2d=ci_data.cosmic_ray_image,
-            file_path=cosmic_ray_image_path,
+            array_2d=ci_data.cosmic_ray_map,
+            file_path=cosmic_ray_map_path,
             overwrite=overwrite,
         )
 

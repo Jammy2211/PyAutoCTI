@@ -48,6 +48,13 @@ class AbstractCIFrame(frame.Frame):
         if isinstance(obj, AbstractCIFrame):
             if hasattr(obj, "ci_pattern"):
                 self.ci_pattern = obj.ci_pattern
+            if hasattr(obj, "parallel_overscan"):
+                self.parallel_overscan = obj.parallel_overscan
+            if hasattr(obj, "serial_prescan"):
+                self.serial_prescan = obj.serial_prescan
+            if hasattr(obj, "serial_overscan"):
+                self.serial_overscan = obj.serial_overscan
+
 
     @property
     def ci_regions_frame(self):

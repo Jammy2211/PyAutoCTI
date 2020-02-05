@@ -31,7 +31,7 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
         phase_name="phase_1",
         phase_folders=phase_folders,
         optimizer_class=optimizer_class,
-        serial_species=[af.PriorModel(ac.Species)],
+        serial_traps=[af.PriorModel(ac.Trap)],
         serial_ccd_volume=ac.CCDVolume,
         columns=None,
     )
@@ -43,24 +43,24 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     class PhaseCI(ac.PhaseCI):
         def customize_priors(self, results):
 
-            previous_total_density = results[-1].constant.serial_species[0].trap_density
+            previous_total_density = results[-1].constant.serial_traps[0].trap_density
 
-            self.serial_species[0].trap_density = af.UniformPrior(
+            self.serial_traps[0].trap_density = af.UniformPrior(
                 lower_limit=0.0, upper_limit=previous_total_density
             )
-            self.serial_species[1].trap_density = af.UniformPrior(
+            self.serial_traps[1].trap_density = af.UniformPrior(
                 lower_limit=0.0, upper_limit=previous_total_density
             )
-            self.serial_species[2].trap_density = af.UniformPrior(
+            self.serial_traps[2].trap_density = af.UniformPrior(
                 lower_limit=0.0, upper_limit=previous_total_density
             )
-            self.serial_species[0].trap_lifetime = af.UniformPrior(
+            self.serial_traps[0].trap_lifetime = af.UniformPrior(
                 lower_limit=0.0, upper_limit=30.0
             )
-            self.serial_species[1].trap_lifetime = af.UniformPrior(
+            self.serial_traps[1].trap_lifetime = af.UniformPrior(
                 lower_limit=0.0, upper_limit=30.0
             )
-            self.serial_species[2].trap_lifetime = af.UniformPrior(
+            self.serial_traps[2].trap_lifetime = af.UniformPrior(
                 lower_limit=0.0, upper_limit=30.0
             )
 
@@ -68,10 +68,10 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
         phase_name="phase_2",
         phase_folders=phase_folders,
         optimizer_class=optimizer_class,
-        serial_species=[
-            af.PriorModel(ac.Species),
-            af.PriorModel(ac.Species),
-            af.PriorModel(ac.Species),
+        serial_traps=[
+            af.PriorModel(ac.Trap),
+            af.PriorModel(ac.Trap),
+            af.PriorModel(ac.Trap),
         ],
         serial_ccd_volume=phase1.result.variable.serial_ccd_volume,
     )
@@ -85,7 +85,7 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     phase3 = ac.PhaseCI(
         phase_name="phase_3",
         phase_folders=phase_folders,
-        serial_species=phase1.result.variable.serial_species,
+        serial_traps=phase1.result.variable.serial_traps,
         serial_ccd_volume=phase1.result.variable.serial_ccd_volume,
         hyper_noise_scalar_of_ci_regions=phase1.result.hyper_combined.constant.hyper_noise_scalar_of_ci_regions,
         hyper_noise_scalar_of_serial_trails=phase1.result.hyper_combined.constant.hyper_noise_scalar_of_serial_trails,

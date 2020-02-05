@@ -24,9 +24,9 @@ class Mask(msk.Mask):
         return mask
 
     @classmethod
-    def from_cosmic_ray_image(
+    def from_cosmic_ray_map(
         cls,
-        cosmic_ray_image,
+        cosmic_ray_map,
         cosmic_ray_parallel_buffer=0,
         cosmic_ray_serial_buffer=0,
         cosmic_ray_diagonal_buffer=0,
@@ -41,7 +41,7 @@ class Mask(msk.Mask):
         frame_geometry : ci_frame.CIQuadGeometry
             The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
             therefore the direction of clocking and rotations before input into the cti algorithm.
-        cosmic_ray_image : ndarray
+        cosmic_ray_map : ndarray
             2D arrays flagging where cosmic rays on the image.
         cosmic_ray_parallel_buffer : int
             If a cosmic-ray mask is supplied, the number of pixels from each ray pixels are masked in the parallel \
@@ -50,25 +50,25 @@ class Mask(msk.Mask):
             If a cosmic-ray mask is supplied, the number of pixels from each ray pixels are masked in the serial \
             direction.
         """
-        mask = cls.unmasked(shape_2d=cosmic_ray_image.shape_2d)
+        mask = cls.unmasked(shape_2d=cosmic_ray_map.shape_2d)
 
-        cosmic_ray_mask = (cosmic_ray_image > 0.0).astype("bool")
+        cosmic_ray_mask = (cosmic_ray_map > 0.0).astype("bool")
 
         for y in range(mask.shape[0]):
             for x in range(mask.shape[1]):
                 if cosmic_ray_mask[y, x]:
-                    y0, y1 = cosmic_ray_image.parallel_trail_from_y(
+                    y0, y1 = cosmic_ray_map.parallel_trail_from_y(
                         y=y, dy=cosmic_ray_parallel_buffer
                     )
                     mask[y0:y1, x] = True
-                    x0, x1 = cosmic_ray_image.serial_trail_from_x(
+                    x0, x1 = cosmic_ray_map.serial_trail_from_x(
                         x=x, dx=cosmic_ray_serial_buffer
                     )
                     mask[y, x0:x1] = True
-                    y0, y1 = cosmic_ray_image.parallel_trail_from_y(
+                    y0, y1 = cosmic_ray_map.parallel_trail_from_y(
                         y=y, dy=cosmic_ray_diagonal_buffer
                     )
-                    x0, x1 = cosmic_ray_image.serial_trail_from_x(
+                    x0, x1 = cosmic_ray_map.serial_trail_from_x(
                         x=x, dx=cosmic_ray_diagonal_buffer
                     )
                     mask[y0:y1, x0:x1] = True

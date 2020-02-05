@@ -1,13 +1,12 @@
-from matplotlib import pyplot as plt
+from autoarray.plot import plotters
 
-from autocti.plot import cti_plotters
+from autocti.plot import cti_plotters, ci_plotter_util, ci_line_plots
 from autoarray.util import array_util
 
 
 def plot_ci_fit_for_phase(
     fits,
     during_analysis,
-    extract_array_from_mask,
     plot_all_at_end_png,
     plot_all_at_end_fits,
     plot_as_subplot,
@@ -104,9 +103,9 @@ def plot_ci_fit_arrays_for_phase(
 
         if plot_as_subplot:
 
-            plot_fit_subplot(fit=fit, output_path=output_path, format="png")
+            subplot_ci_fit(fit=fit, output_path=output_path, format="png")
 
-        plot_fit_individuals(
+        individuals(
             fit=fit,
             plot_image=plot_image,
             plot_noise_map=plot_noise_map,
@@ -124,7 +123,7 @@ def plot_ci_fit_arrays_for_phase(
 
             if plot_all_at_end_png:
 
-                plot_fit_individuals(
+                individuals(
                     fit=fit,
                     plot_image=True,
                     plot_noise_map=True,
@@ -140,7 +139,7 @@ def plot_ci_fit_arrays_for_phase(
 
             if plot_all_at_end_fits:
 
-                plot_fit_individuals(
+                individuals(
                     fit=fit,
                     plot_image=True,
                     plot_noise_map=True,
@@ -158,13 +157,13 @@ def plot_ci_fit_arrays_for_phase(
 
         if plot_residual_maps_subplot:
 
-            plot_fit_residual_maps_subplot(
+            subplot_residual_maps(
                 fits=fits, output_path=output_path, format="png"
             )
 
         if plot_chi_squared_maps_subplot:
 
-            plot_fit_chi_squared_maps_subplot(
+            subplot_chi_squared_maps(
                 fits=fits, output_path=output_path, format="png"
             )
 
@@ -216,14 +215,14 @@ def plot_ci_fit_lines_for_phase(
 
             if plot_as_subplot:
 
-                plot_fit_line_subplot(
+                subplot_fit_lines(
                     fit=fit,
                     line_region=line_region,
                     output_path=output_path,
                     format="png",
                 )
 
-            plot_fit_line_individuals(
+            individuals_lines(
                 fit=fit,
                 line_region=line_region,
                 plot_image=plot_image,
@@ -241,7 +240,7 @@ def plot_ci_fit_lines_for_phase(
 
                 if plot_all_at_end_png:
 
-                    plot_fit_line_individuals(
+                    individuals_lines(
                         fit=fit,
                         line_region=line_region,
                         plot_image=True,
@@ -257,7 +256,7 @@ def plot_ci_fit_lines_for_phase(
 
                 if plot_all_at_end_fits:
 
-                    plot_fit_line_individuals(
+                    individuals_lines(
                         fit=fit,
                         line_region=line_region,
                         plot_image=True,
@@ -275,7 +274,7 @@ def plot_ci_fit_lines_for_phase(
 
         if plot_residual_maps_subplot:
 
-            plot_fit_residual_maps_lines_subplot(
+            subplot_residual_map_lines(
                 fits=fits,
                 line_region=line_region,
                 output_path=output_path,
@@ -284,7 +283,7 @@ def plot_ci_fit_lines_for_phase(
 
         if plot_chi_squared_maps_subplot:
 
-            plot_fit_chi_squared_maps_lines_subplot(
+            subplot_chi_squared_map_lines(
                 fits=fits,
                 line_region=line_region,
                 output_path=output_path,
@@ -292,29 +291,9 @@ def plot_ci_fit_lines_for_phase(
             )
 
 
-def plot_fit_subplot(
-    fit,
-    figsize=None,
-    aspect="equal",
-    cmap="jet",
-    norm="linear",
-    norm_min=None,
-    norm_max=None,
-    linthresh=0.05,
-    linscale=0.01,
-    cb_ticksize=10,
-    cb_fraction=0.047,
-    cb_pad=0.01,
-    cb_tick_values=None,
-    cb_tick_labels=None,
-    titlesize=10,
-    xsize=10,
-    ysize=10,
-    xyticksize=10,
-    output_path=None,
-    output_filename="ci_fit",
-    output_format="show",
-):
+@cti_plotters.set_include_and_sub_plotter
+@plotters.set_labels
+def subplot_ci_fit(fit, include=None, sub_plotter=None):
     """Plot the model datas_ of an analysis, using the *Fitter* class object.
 
     The visualization and output type can be fully customized.
@@ -338,7 +317,6 @@ def plot_fit_subplot(
     cmap
     aspect
     figsize
-    extract_array_from_mask
     fit : autolens.lens.fitting.Fitter
         Class containing fit between the model datas_ and observed lens datas_ (including residual_map, chi_squared_map etc.)
     output_path : str
@@ -350,433 +328,96 @@ def plot_fit_subplot(
         in the python interpreter window.
     """
 
-    rows, columns, figsize_tool = ci_plotter_util.get_subplot_rows_columns_figsize(
-        number_subplots=9
-    )
+    number_subplots = 9
 
-    if figsize is None:
-        figsize = figsize_tool
-
-        sub_plotter.open_subplot_figure(number_subplots=number_subplots)
+    sub_plotter.open_subplot_figure(number_subplots=number_subplots)
 
     sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=1)
 
-    fit_plots.plot_image(
-        fit=fit,
-        mask=fit.mask,
-        as_subplot=True,
-        figsize=figsize,
-        aspect=aspect,
-        cmap=cmap,
-        norm=norm,
-        norm_min=norm_min,
-        norm_max=norm_max,
-        linthresh=linthresh,
-        linscale=linscale,
-        cb_ticksize=cb_ticksize,
-        cb_fraction=cb_fraction,
-        cb_pad=cb_pad,
-        cb_tick_values=cb_tick_values,
-        cb_tick_labels=cb_tick_labels,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
-    )
+    image(fit=fit, include=include, plotter=sub_plotter)
 
-    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 2)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=2)
 
-    fit_plots.plot_noise_map(
-        fit=fit,
-        mask=fit.mask,
-        as_subplot=True,
-        figsize=figsize,
-        aspect=aspect,
-        cmap=cmap,
-        norm=norm,
-        norm_min=norm_min,
-        norm_max=norm_max,
-        linthresh=linthresh,
-        linscale=linscale,
-        cb_ticksize=cb_ticksize,
-        cb_fraction=cb_fraction,
-        cb_pad=cb_pad,
-        cb_tick_values=cb_tick_values,
-        cb_tick_labels=cb_tick_labels,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
-    )
+    noise_map(fit=fit, include=include, plotter=sub_plotter)
 
-    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 3)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=3)
 
-    fit_plots.plot_signal_to_noise_map(
-        fit=fit,
-        mask=fit.mask,
-        as_subplot=True,
-        figsize=figsize,
-        aspect=aspect,
-        cmap=cmap,
-        norm=norm,
-        norm_min=norm_min,
-        norm_max=norm_max,
-        linthresh=linthresh,
-        linscale=linscale,
-        cb_ticksize=cb_ticksize,
-        cb_fraction=cb_fraction,
-        cb_pad=cb_pad,
-        cb_tick_values=cb_tick_values,
-        cb_tick_labels=cb_tick_labels,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
-    )
+    signal_to_noise_map(fit=fit, include=include, plotter=sub_plotter)
 
-    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 4)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=4)
 
-    fit_plots.plot_ci_pre_cti(
-        fit=fit,
-        mask=fit.mask,
-        as_subplot=True,
-        figsize=figsize,
-        aspect=aspect,
-        cmap=cmap,
-        norm=norm,
-        norm_min=norm_min,
-        norm_max=norm_max,
-        linthresh=linthresh,
-        linscale=linscale,
-        cb_ticksize=cb_ticksize,
-        cb_fraction=cb_fraction,
-        cb_pad=cb_pad,
-        cb_tick_values=cb_tick_values,
-        cb_tick_labels=cb_tick_labels,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
-    )
+    ci_pre_cti(fit=fit, include=include, plotter=sub_plotter)
 
-    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 5)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=5)
 
-    fit_plots.plot_ci_post_cti(
-        fit=fit,
-        mask=fit.mask,
-        as_subplot=True,
-        figsize=figsize,
-        aspect=aspect,
-        cmap=cmap,
-        norm=norm,
-        norm_min=norm_min,
-        norm_max=norm_max,
-        linthresh=linthresh,
-        linscale=linscale,
-        cb_ticksize=cb_ticksize,
-        cb_fraction=cb_fraction,
-        cb_pad=cb_pad,
-        cb_tick_values=cb_tick_values,
-        cb_tick_labels=cb_tick_labels,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
-    )
+    ci_post_cti(fit=fit, include=include, plotter=sub_plotter)
 
-    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 7)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=7)
 
-    fit_plots.plot_residual_map(
-        fit=fit,
-        mask=fit.mask,
-        as_subplot=True,
-        figsize=figsize,
-        aspect=aspect,
-        cmap=cmap,
-        norm=norm,
-        norm_min=norm_min,
-        norm_max=norm_max,
-        linthresh=linthresh,
-        linscale=linscale,
-        cb_ticksize=cb_ticksize,
-        cb_fraction=cb_fraction,
-        cb_pad=cb_pad,
-        cb_tick_values=cb_tick_values,
-        cb_tick_labels=cb_tick_labels,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
-    )
+    residual_map(fit=fit, include=include, plotter=sub_plotter)
 
-    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 8)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=8)
 
-    fit_plots.plot_chi_squared_map(
-        fit=fit,
-        mask=fit.mask,
-        as_subplot=True,
-        figsize=figsize,
-        aspect=aspect,
-        cmap=cmap,
-        norm=norm,
-        norm_min=norm_min,
-        norm_max=norm_max,
-        linthresh=linthresh,
-        linscale=linscale,
-        cb_ticksize=cb_ticksize,
-        cb_fraction=cb_fraction,
-        cb_pad=cb_pad,
-        cb_tick_values=cb_tick_values,
-        cb_tick_labels=cb_tick_labels,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
-    )
+    chi_squared_map(fit=fit, include=include, plotter=sub_plotter)
 
-    ci_plotter_util.output.to_figure(structure=None)(
-        output_path=output_path,
-        output_filename=output_filename,
-        output_format=output_format,
-    )
+    sub_plotter.output.subplot_to_figure()
 
-    plt.close()
+    sub_plotter.figure.close()
 
 
-def plot_fit_residual_maps_subplot(
-    fits,
-    figsize=None,
-    aspect="equal",
-    cmap="jet",
-    norm="linear",
-    norm_min=None,
-    norm_max=None,
-    linthresh=0.05,
-    linscale=0.01,
-    cb_ticksize=10,
-    cb_fraction=0.047,
-    cb_pad=0.01,
-    cb_tick_values=None,
-    cb_tick_labels=None,
-    titlesize=10,
-    xsize=10,
-    ysize=10,
-    xyticksize=10,
-    output_path=None,
-    output_filename="ci_fits_residual_maps",
-    output_format="show",
-):
+@cti_plotters.set_include_and_sub_plotter
+@plotters.set_labels
+def subplot_residual_maps(fits, include=None, sub_plotter=None):
+    """Plot the model datas_ of an analysis, using the *Fitter* class object.
+
+    The visualization and output type can be fully customied.
+
+    """
+
+    number_subplots = len(fits)
+
+    sub_plotter.open_subplot_figure(number_subplots=number_subplots)
+
+    for index, fit in enumerate(fits):
+
+        sub_plotter.setup_subplot(
+            number_subplots=number_subplots, subplot_index=index + 1
+        )
+
+        residual_map(fit=fit, include=include, plotter=sub_plotter)
+
+    sub_plotter.output.subplot_to_figure()
+
+    sub_plotter.figure.close()
+
+
+@cti_plotters.set_include_and_sub_plotter
+@plotters.set_labels
+def subplot_chi_squared_maps(fits, include=None, sub_plotter=None):
     """Plot the model datas_ of an analysis, using the *Fitter* class object.
 
     The visualization and output type can be fully customized.
 
-    Parameters
-    -----------
-    xyticksize
-    ysize
-    xsize
-    titlesize
-    cb_tick_labels
-    cb_tick_values
-    cb_pad
-    cb_fraction
-    cb_ticksize
-    linscale
-    linthresh
-    norm_max
-    norm_min
-    norm
-    cmap
-    aspect
-    figsize
-    extract_array_from_mask
-    fit : autolens.lens.fitting.Fitter
-        Class containing fit between the model datas_ and observed lens datas_ (including residual_map, chi_squared_map etc.)
-    output_path : str
-        The path where the datas_ is output if the output_type is a file format (e.g. png, fits)
-    output_filename : str
-        The name of the file that is output, if the output_type is a file format (e.g. png, fits)
-    output_format : str
-        How the datas_ is output. File formats (e.g. png, fits) output the datas_ to harddisk. 'show' displays the datas_ \
-        in the python interpreter window.
     """
 
-    rows, columns, figsize_tool = ci_plotter_util.get_subplot_rows_columns_figsize(
-        number_subplots=len(fits)
-    )
+    number_subplots = len(fits)
 
-    if figsize is None:
-        figsize = figsize_tool
-
-    plt.figure(figsize=figsize)
+    sub_plotter.open_subplot_figure(number_subplots=number_subplots)
 
     for index, fit in enumerate(fits):
 
-        sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= index + 1)
-
-        fit_plots.plot_residual_map(
-            fit=fit,
-            mask=fit.mask,
-            as_subplot=True,
-            figsize=figsize,
-            aspect=aspect,
-            cmap=cmap,
-            norm=norm,
-            norm_min=norm_min,
-            norm_max=norm_max,
-            linthresh=linthresh,
-            linscale=linscale,
-            cb_ticksize=cb_ticksize,
-            cb_fraction=cb_fraction,
-            cb_pad=cb_pad,
-            cb_tick_values=cb_tick_values,
-            cb_tick_labels=cb_tick_labels,
-            titlesize=titlesize,
-            xsize=xsize,
-            ysize=ysize,
-            xyticksize=xyticksize,
-            output_path=output_path,
-            output_format=output_format,
-            output_filename=output_filename,
+        sub_plotter.setup_subplot(
+            number_subplots=number_subplots, subplot_index=index + 1
         )
 
-    ci_plotter_util.output.to_figure(structure=None)(
-        output_path=output_path,
-        output_filename=output_filename,
-        output_format=output_format,
-    )
+        chi_squared_map(fit=fit, include=include, plotter=sub_plotter)
 
-    plt.close()
+    sub_plotter.output.subplot_to_figure()
+
+    sub_plotter.figure.close()
 
 
-def plot_fit_chi_squared_maps_subplot(
-    fits,
-    figsize=None,
-    aspect="equal",
-    cmap="jet",
-    norm="linear",
-    norm_min=None,
-    norm_max=None,
-    linthresh=0.05,
-    linscale=0.01,
-    cb_ticksize=10,
-    cb_fraction=0.047,
-    cb_pad=0.01,
-    cb_tick_values=None,
-    cb_tick_labels=None,
-    titlesize=10,
-    xsize=10,
-    ysize=10,
-    xyticksize=10,
-    output_path=None,
-    output_filename="ci_fits_chi_squared_maps",
-    output_format="show",
-):
-    """Plot the model datas_ of an analysis, using the *Fitter* class object.
-
-    The visualization and output type can be fully customized.
-
-    Parameters
-    -----------
-    xyticksize
-    ysize
-    xsize
-    titlesize
-    cb_tick_labels
-    cb_tick_values
-    cb_pad
-    cb_fraction
-    cb_ticksize
-    linscale
-    linthresh
-    norm_max
-    norm_min
-    norm
-    cmap
-    aspect
-    figsize
-    extract_array_from_mask
-    fit : autolens.lens.fitting.Fitter
-        Class containing fit between the model datas_ and observed lens datas_ (including chi_squared_map, chi_squared_map etc.)
-    output_path : str
-        The path where the datas_ is output if the output_type is a file format (e.g. png, fits)
-    output_filename : str
-        The name of the file that is output, if the output_type is a file format (e.g. png, fits)
-    output_format : str
-        How the datas_ is output. File formats (e.g. png, fits) output the datas_ to harddisk. 'show' displays the datas_ \
-        in the python interpreter window.
-    """
-
-    rows, columns, figsize_tool = ci_plotter_util.get_subplot_rows_columns_figsize(
-        number_subplots=len(fits)
-    )
-
-    if figsize is None:
-        figsize = figsize_tool
-
-    plt.figure(figsize=figsize)
-
-    for index, fit in enumerate(fits):
-
-        sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= index + 1)
-
-        fit_plots.plot_chi_squared_map(
-            fit=fit,
-            mask=fit.mask,
-            as_subplot=True,
-            figsize=figsize,
-            aspect=aspect,
-            cmap=cmap,
-            norm=norm,
-            norm_min=norm_min,
-            norm_max=norm_max,
-            linthresh=linthresh,
-            linscale=linscale,
-            cb_ticksize=cb_ticksize,
-            cb_fraction=cb_fraction,
-            cb_pad=cb_pad,
-            cb_tick_values=cb_tick_values,
-            cb_tick_labels=cb_tick_labels,
-            titlesize=titlesize,
-            xsize=xsize,
-            ysize=ysize,
-            xyticksize=xyticksize,
-            output_path=output_path,
-            output_format=output_format,
-            output_filename=output_filename,
-        )
-
-    ci_plotter_util.output.to_figure(structure=None)(
-        output_path=output_path,
-        output_filename=output_filename,
-        output_format=output_format,
-    )
-
-    plt.close()
-
-
-def plot_fit_individuals(
+def individuals(
     fit,
     plot_image=False,
     plot_noise_map=False,
@@ -785,406 +426,177 @@ def plot_fit_individuals(
     plot_ci_post_cti=False,
     plot_residual_map=False,
     plot_chi_squared_map=False,
-    plot_noise_scaling_maps=False,
-    output_path=None,
-    output_format="show",
+    include=None,
+    plotter=None,
 ):
 
     if plot_image:
-        fit_plots.plot_image(
-            fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
-        )
+        image(fit=fit, include=include, plotter=plotter)
 
     if plot_noise_map:
-        fit_plots.plot_noise_map(
-            fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
-        )
+        noise_map(fit=fit, include=include, plotter=plotter)
 
     if plot_signal_to_noise_map:
-        fit_plots.plot_signal_to_noise_map(
-            fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
-        )
+        signal_to_noise_map(fit=fit, include=include, plotter=plotter)
 
     if plot_ci_pre_cti:
-        fit_plots.plot_ci_pre_cti(
-            fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
-        )
+        ci_pre_cti(fit=fit, include=include, plotter=plotter)
 
     if plot_ci_post_cti:
-        fit_plots.plot_ci_post_cti(
-            fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
-        )
+        ci_post_cti(fit=fit, include=include, plotter=plotter)
 
     if plot_residual_map:
-        fit_plots.plot_residual_map(
-            fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
-        )
+        residual_map(fit=fit, include=include, plotter=plotter)
 
     if plot_chi_squared_map:
-        fit_plots.plot_chi_squared_map(
-            fit=fit, mask=fit.mask, output_path=output_path, output_format=output_format
-        )
-
-    if plot_noise_scaling_maps and hasattr(fit, "noise_scaling_maps"):
-
-        fit_plots.plot_noise_scaling_maps(
-            fit_hyper=fit,
-            mask=fit.mask,
-            output_path=output_path,
-            output_format=output_format,
-        )
+        chi_squared_map(fit=fit, include=include, plotter=plotter)
 
 
-def plot_fit_line_subplot(
-    fit,
-    line_region,
-    figsize=None,
-    titlesize=16,
-    xsize=16,
-    ysize=16,
-    xyticksize=16,
-    output_path=None,
-    output_filename="ci_fit_line",
-    output_format="show",
-):
+@cti_plotters.set_include_and_sub_plotter
+@plotters.set_labels
+def subplot_fit_lines(fit, line_region, include=None, sub_plotter=None):
     """Plot the model datas_ of an analysis, using the *Fitter* class object.
 
     The visualization and output type can be fully customized.
 
-    Parameters
-    -----------
-    xyticksize
-    ysize
-    xsize
-    titlesize
-    cb_tick_labels
-    cb_tick_values
-    cb_pad
-    cb_fraction
-    cb_ticksize
-    linscale
-    linthresh
-    norm_max
-    norm_min
-    norm
-    cmap
-    aspect
-    figsize
-    extract_array_from_mask
-    fit : autolens.lens.fitting.Fitter
-        Class containing fit between the model datas_ and observed lens datas_ (including residual_map, chi_squared_map etc.)
-    output_path : str
-        The path where the datas_ is output if the output_type is a file format (e.g. png, fits)
-    output_filename : str
-        The name of the file that is output, if the output_type is a file format (e.g. png, fits)
-    output_format : str
-        How the datas_ is output. File formats (e.g. png, fits) output the datas_ to harddisk. 'show' displays the datas_ \
-        in the python interpreter window.
     """
 
-    rows, columns, figsize_tool = ci_plotter_util.get_subplot_rows_columns_figsize(
-        number_subplots=9
-    )
+    number_subplots = 9
 
-    if figsize is None:
-        figsize = figsize_tool
-
-        sub_plotter.open_subplot_figure(number_subplots=number_subplots)
+    sub_plotter.open_subplot_figure(number_subplots=number_subplots)
 
     sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=1)
 
-    fit_plots.plot_image_line(
+    image_line(
         fit=fit,
         line_region=line_region,
-        mask=fit.mask,
-        as_subplot=True,
-        figsize=figsize,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
+        include=include,
+        plotter=sub_plotter,
     )
 
-    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 2)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=2)
 
-    fit_plots.plot_noise_map_line(
+    noise_map_line(
         fit=fit,
         line_region=line_region,
-        mask=fit.mask,
-        as_subplot=True,
-        figsize=figsize,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
+        include=include,
+        plotter=sub_plotter,
     )
 
-    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 3)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=3)
 
-    fit_plots.plot_signal_to_noise_map_line(
+    signal_to_noise_map_line(
         fit=fit,
         line_region=line_region,
-        mask=fit.mask,
-        as_subplot=True,
-        figsize=figsize,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
+        include=include,
+        plotter=sub_plotter,
     )
 
-    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 4)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=4)
 
-    fit_plots.plot_ci_pre_cti_line(
+    ci_pre_cti_line(
         fit=fit,
         line_region=line_region,
-        mask=fit.mask,
-        as_subplot=True,
-        figsize=figsize,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
+        include=include,
+        plotter=sub_plotter,
     )
 
-    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 5)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=5)
 
-    fit_plots.plot_ci_post_cti_line(
+    ci_post_cti_line(
         fit=fit,
         line_region=line_region,
-        mask=fit.mask,
-        as_subplot=True,
-        figsize=figsize,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
+        include=include,
+        plotter=sub_plotter,
     )
 
-    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 7)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=7)
 
-    fit_plots.plot_residual_map_line(
+    residual_map_line(
         fit=fit,
         line_region=line_region,
-        mask=fit.mask,
-        as_subplot=True,
-        figsize=figsize,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
+        include=include,
+        plotter=sub_plotter,
     )
 
-    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= 8)
+    sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=8)
 
-    fit_plots.plot_chi_squared_map_line(
+    chi_squared_map_line(
         fit=fit,
         line_region=line_region,
-        mask=fit.mask,
-        as_subplot=True,
-        figsize=figsize,
-        titlesize=titlesize,
-        xsize=xsize,
-        ysize=ysize,
-        xyticksize=xyticksize,
-        output_path=output_path,
-        output_format=output_format,
-        output_filename=output_filename,
+        include=include,
+        plotter=sub_plotter,
     )
 
-    ci_plotter_util.output.to_figure(structure=None)(
-        output_path=output_path,
-        output_filename=output_filename,
-        output_format=output_format,
-    )
+    sub_plotter.output.subplot_to_figure()
 
-    plt.close()
+    sub_plotter.figure.close()
 
 
-def plot_fit_residual_maps_lines_subplot(
-    fits,
-    line_region,
-    figsize=None,
-    titlesize=16,
-    xsize=16,
-    ysize=16,
-    xyticksize=16,
-    output_path=None,
-    output_filename="ci_fits_residual_maps_lines",
-    output_format="show",
+@cti_plotters.set_include_and_sub_plotter
+@plotters.set_labels
+def subplot_residual_map_lines(
+    fits, line_region, include=None, sub_plotter=None
 ):
     """Plot the model datas_ of an analysis, using the *Fitter* class object.
 
     The visualization and output type can be fully customized.
-
-    Parameters
-    -----------
-    xyticksize
-    ysize
-    xsize
-    titlesize
-    cb_tick_labels
-    cb_tick_values
-    cb_pad
-    cb_fraction
-    cb_ticksize
-    linscale
-    linthresh
-    norm_max
-    norm_min
-    norm
-    cmap
-    aspect
-    figsize
-    extract_array_from_mask
-    fit : autolens.lens.fitting.Fitter
-        Class containing fit between the model datas_ and observed lens datas_ (including residual_map, residual_map etc.)
-    output_path : str
-        The path where the datas_ is output if the output_type is a file format (e.g. png, fits)
-    output_filename : str
-        The name of the file that is output, if the output_type is a file format (e.g. png, fits)
-    output_format : str
-        How the datas_ is output. File formats (e.g. png, fits) output the datas_ to harddisk. 'show' displays the datas_ \
-        in the python interpreter window.
     """
 
-    rows, columns, figsize_tool = ci_plotter_util.get_subplot_rows_columns_figsize(
-        number_subplots=len(fits)
-    )
+    number_subplots = len(fits)
 
-    if figsize is None:
-        figsize = figsize_tool
-
-    plt.figure(figsize=figsize)
+    sub_plotter.open_subplot_figure(number_subplots=number_subplots)
 
     for index, fit in enumerate(fits):
-        sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= index + 1)
-
-        fit_plots.plot_residual_map_line(
-            fit=fit,
-            mask=fit.mask,
-            line_region=line_region,
-            as_subplot=True,
-            titlesize=titlesize,
-            xsize=xsize,
-            ysize=ysize,
-            xyticksize=xyticksize,
-            output_path=output_path,
-            output_format=output_format,
-            output_filename=output_filename,
+        sub_plotter.setup_subplot(
+            number_subplots=number_subplots, subplot_index=index + 1
         )
 
-    ci_plotter_util.output.to_figure(structure=None)(
-        output_path=output_path,
-        output_filename=output_filename,
-        output_format=output_format,
-    )
+        residual_map_line(
+            fit=fit,
+            line_region=line_region,
+            include=include,
+            plotter=sub_plotter,
+        )
 
-    plt.close()
+    sub_plotter.output.subplot_to_figure()
+
+    sub_plotter.figure.close()
 
 
-def plot_fit_chi_squared_maps_lines_subplot(
-    fits,
-    line_region,
-    figsize=None,
-    titlesize=16,
-    xsize=16,
-    ysize=16,
-    xyticksize=16,
-    output_path=None,
-    output_filename="ci_fits_chi_squared_maps_lines",
-    output_format="show",
+@cti_plotters.set_include_and_sub_plotter
+@plotters.set_labels
+def subplot_chi_squared_map_lines(
+    fits, line_region, include=None, sub_plotter=None
 ):
     """Plot the model datas_ of an analysis, using the *Fitter* class object.
 
     The visualization and output type can be fully customized.
-
-    Parameters
-    -----------
-    xyticksize
-    ysize
-    xsize
-    titlesize
-    cb_tick_labels
-    cb_tick_values
-    cb_pad
-    cb_fraction
-    cb_ticksize
-    linscale
-    linthresh
-    norm_max
-    norm_min
-    norm
-    cmap
-    aspect
-    figsize
-    extract_array_from_mask
-    fit : autolens.lens.fitting.Fitter
-        Class containing fit between the model datas_ and observed lens datas_ (including chi_squared_map, chi_squared_map etc.)
-    output_path : str
-        The path where the datas_ is output if the output_type is a file format (e.g. png, fits)
-    output_filename : str
-        The name of the file that is output, if the output_type is a file format (e.g. png, fits)
-    output_format : str
-        How the datas_ is output. File formats (e.g. png, fits) output the datas_ to harddisk. 'show' displays the datas_ \
-        in the python interpreter window.
     """
 
-    rows, columns, figsize_tool = ci_plotter_util.get_subplot_rows_columns_figsize(
-        number_subplots=len(fits)
-    )
+    number_subplots = len(fits)
 
-    if figsize is None:
-        figsize = figsize_tool
-
-    plt.figure(figsize=figsize)
+    sub_plotter.open_subplot_figure(number_subplots=number_subplots)
 
     for index, fit in enumerate(fits):
 
-        sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index= index + 1)
-
-        fit_plots.plot_chi_squared_map_line(
-            fit=fit,
-            mask=fit.mask,
-            line_region=line_region,
-            as_subplot=True,
-            titlesize=titlesize,
-            xsize=xsize,
-            ysize=ysize,
-            xyticksize=xyticksize,
-            output_path=output_path,
-            output_format=output_format,
-            output_filename=output_filename,
+        sub_plotter.setup_subplot(
+            number_subplots=number_subplots, subplot_index=index + 1
         )
 
-    ci_plotter_util.output.to_figure(structure=None)(
-        output_path=output_path,
-        output_filename=output_filename,
-        output_format=output_format,
-    )
+        chi_squared_map_line(
+            fit=fit,
+            line_region=line_region,
+            include=include,
+            plotter=sub_plotter,
+        )
 
-    plt.close()
+    sub_plotter.output.subplot_to_figure()
+
+    sub_plotter.figure.close()
 
 
-def plot_fit_line_individuals(
+def individuals_lines(
     fit,
     line_region,
     plot_image=False,
@@ -1194,69 +606,355 @@ def plot_fit_line_individuals(
     plot_ci_post_cti=False,
     plot_residual_map=False,
     plot_chi_squared_map=False,
-    output_path=None,
-    output_format="show",
+    include=None,
+    plotter=None,
 ):
 
     if plot_image:
-        fit_plots.plot_image_line(
-            fit=fit,
-            line_region=line_region,
-            mask=fit.mask,
-            output_path=output_path,
-            output_format=output_format,
-        )
+        image_line(fit=fit, line_region=line_region, include=include, plotter=plotter)
 
     if plot_noise_map:
-        fit_plots.plot_noise_map_line(
-            fit=fit,
-            line_region=line_region,
-            mask=fit.mask,
-            output_path=output_path,
-            output_format=output_format,
-        )
+        noise_map_line(fit=fit, line_region=line_region, include=include, plotter=plotter)
 
     if plot_signal_to_noise_map:
-        fit_plots.plot_signal_to_noise_map_line(
-            fit=fit,
-            line_region=line_region,
-            mask=fit.mask,
-            output_path=output_path,
-            output_format=output_format,
+        signal_to_noise_map_line(
+            fit=fit, line_region=line_region, include=include, plotter=plotter
         )
 
     if plot_ci_pre_cti:
-        fit_plots.plot_ci_pre_cti_line(
-            fit=fit,
-            line_region=line_region,
-            mask=fit.mask,
-            output_path=output_path,
-            output_format=output_format,
+        ci_pre_cti_line(
+            fit=fit, line_region=line_region, include=include, plotter=plotter
         )
 
     if plot_ci_post_cti:
-        fit_plots.plot_ci_post_cti_line(
-            fit=fit,
-            line_region=line_region,
-            mask=fit.mask,
-            output_path=output_path,
-            output_format=output_format,
+        ci_post_cti_line(
+            fit=fit, line_region=line_region, include=include, plotter=plotter
         )
 
     if plot_residual_map:
-        fit_plots.plot_residual_map_line(
-            fit=fit,
-            line_region=line_region,
-            mask=fit.mask,
-            output_path=output_path,
-            output_format=output_format,
+        residual_map_line(
+            fit=fit, line_region=line_region, include=include, plotter=plotter
         )
 
     if plot_chi_squared_map:
-        fit_plots.plot_chi_squared_map_line(
-            fit=fit,
-            line_region=line_region,
-            mask=fit.mask,
-            output_path=output_path,
-            output_format=output_format,
+        chi_squared_map_line(
+            fit=fit, line_region=line_region, include=include, plotter=plotter
         )
+
+
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def image(fit, include=None, plotter=None):
+    """Plot the observed image of the ccd simulator.
+
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    image : CIFrame
+        The image of the dataset.
+    """
+
+    plotter.plot_frame(frame=fit.image,
+                       include_origin=include.origin,
+                       include_parallel_overscan=include.parallel_overscan,
+                       include_serial_prescan=include.serial_prescan,
+                       include_serial_overscan=include.serial_overscan)
+
+
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def noise_map(fit, include=None, plotter=None):
+    """Plot the observed noise_map of the ccd simulator.
+
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    noise_map : CIFrame
+        The noise_map of the dataset.
+    """
+
+    plotter.plot_frame(frame=fit.noise_map,
+                       include_origin=include.origin,
+                       include_parallel_overscan=include.parallel_overscan,
+                       include_serial_prescan=include.serial_prescan,
+                       include_serial_overscan=include.serial_overscan)
+
+
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def signal_to_noise_map(fit, include=None, plotter=None):
+    """Plot the observed signal_to_noise_map of the ccd simulator.
+
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    signal_to_noise_map : CIFrame
+        The signal_to_noise_map of the dataset.
+    """
+
+    plotter.plot_frame(frame=fit.signal_to_noise_map,
+                       include_origin=include.origin,
+                       include_parallel_overscan=include.parallel_overscan,
+                       include_serial_prescan=include.serial_prescan,
+                       include_serial_overscan=include.serial_overscan)
+
+
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def ci_pre_cti(fit, include=None, plotter=None):
+    """Plot the observed ci_pre_cti of the ccd simulator.
+
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    ci_pre_cti : CIFrame
+        The ci_pre_cti of the dataset.
+    """
+
+    plotter.plot_frame(frame=fit.ci_pre_cti,
+                       include_origin=include.origin,
+                       include_parallel_overscan=include.parallel_overscan,
+                       include_serial_prescan=include.serial_prescan,
+                       include_serial_overscan=include.serial_overscan)
+
+
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def ci_post_cti(fit, include=None, plotter=None):
+    """Plot the observed ci_post_cti of the ccd simulator.
+
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    ci_post_cti : CIFrame
+        The ci_post_cti of the dataset.
+    """
+
+    plotter.plot_frame(frame=fit.ci_post_cti,
+                       include_origin=include.origin,
+                       include_parallel_overscan=include.parallel_overscan,
+                       include_serial_prescan=include.serial_prescan,
+                       include_serial_overscan=include.serial_overscan)
+
+
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def residual_map(fit, include=None, plotter=None):
+    """Plot the observed residual_map of the ccd simulator.
+
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    residual_map : CIFrame
+        The residual_map of the dataset.
+    """
+
+    plotter.plot_frame(frame=fit.residual_map,
+                       include_origin=include.origin,
+                       include_parallel_overscan=include.parallel_overscan,
+                       include_serial_prescan=include.serial_prescan,
+                       include_serial_overscan=include.serial_overscan)
+
+
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def chi_squared_map(fit, include=None, plotter=None):
+    """Plot the observed chi_squared_map of the ccd simulator.
+
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    chi_squared_map : CIFrame
+        The chi_squared_map of the dataset.
+    """
+
+    plotter.plot_frame(frame=fit.chi_squared_map,
+                       include_origin=include.origin,
+                       include_parallel_overscan=include.parallel_overscan,
+                       include_serial_prescan=include.serial_prescan,
+                       include_serial_overscan=include.serial_overscan)
+
+
+@cti_plotters.set_include_and_sub_plotter
+@plotters.set_labels
+def noise_scaling_maps(fit, include=None, sub_plotter=None):
+    """Plot the observed chi_squared_map of the ccd simulator.
+
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    chi_squared_map : CIFrame
+        The chi_squared_map of the dataset.
+    """
+
+
+
+    number_subplots = len(fit.noise_scaling_maps)
+
+    sub_plotter.open_subplot_figure(number_subplots=number_subplots)
+
+    for index in range(len(fit.noise_scaling_maps)):
+
+        sub_plotter.setup_subplot(
+            number_subplots=number_subplots, subplot_index=index + 1
+        )
+
+        sub_plotter.plot_frame(
+            frame=fit.noise_scaling_maps[index],
+            include_origin=include.origin,
+            include_parallel_overscan=include.parallel_overscan,
+            include_serial_prescan=include.serial_prescan,
+            include_serial_overscan=include.serial_overscan
+        )
+
+    sub_plotter.output.subplot_to_figure()
+
+    sub_plotter.figure.close()
+
+
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def image_line(fit, line_region, include=None, plotter=None):
+    """Plot the observed image of the ccd simulator.
+
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    image : CIFrame
+        The image of the dataset.
+    """
+    ci_line_plots.plot_line_from_ci_frame(
+        ci_frame=fit.image,
+        line_region=line_region,
+        include=include,
+        plotter=plotter,
+    )
+
+
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def noise_map_line(fit, line_region, include=None, plotter=None):
+    """Plot the observed noise_map of the ccd simulator.
+
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    noise_map : CIFrame
+        The noise_map of the dataset.
+    """
+    ci_line_plots.plot_line_from_ci_frame(
+        ci_frame=fit.noise_map,
+        line_region=line_region,
+        include=include,
+        plotter=plotter,
+    )
+
+
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def signal_to_noise_map_line(fit, line_region, include=None, plotter=None):
+    """Plot the observed signal_to_noise_map of the ccd simulator.
+
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    signal_to_noise_map : CIFrame
+        The signal_to_noise_map of the dataset.
+    """
+    ci_line_plots.plot_line_from_ci_frame(
+        ci_frame=fit.signal_to_noise_map,
+        line_region=line_region,
+        include=include,
+        plotter=plotter,
+    )
+
+
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def ci_pre_cti_line(fit, line_region, include=None, plotter=None):
+    """Plot the observed ci_pre_cti of the ccd simulator.
+
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    ci_pre_cti : CIFrame
+        The ci_pre_cti of the dataset.
+    """
+    ci_line_plots.plot_line_from_ci_frame(
+        ci_frame=fit.ci_pre_cti,
+        line_region=line_region,
+        include=include,
+        plotter=plotter,
+    )
+
+
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def ci_post_cti_line(fit, line_region, include=None, plotter=None):
+    """Plot the observed ci_post_cti of the ccd simulator.
+
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    ci_post_cti : CIFrame
+        The ci_post_cti of the dataset.
+    """
+    ci_line_plots.plot_line_from_ci_frame(
+        ci_frame=fit.ci_post_cti,
+        line_region=line_region,
+        include=include,
+        plotter=plotter,
+    )
+
+
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def residual_map_line(fit, line_region, include=None, plotter=None):
+    """Plot the observed residual_map of the ccd simulator.
+
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    residual_map : CIFrame
+        The residual_map of the dataset.
+    """
+    ci_line_plots.plot_line_from_ci_frame(
+        ci_frame=fit.residual_map,
+        line_region=line_region,
+        include=include,
+        plotter=plotter,
+    )
+
+
+@cti_plotters.set_include_and_plotter
+@plotters.set_labels
+def chi_squared_map_line(fit, line_region, include=None, plotter=None):
+    """Plot the observed chi_squared_map of the ccd simulator.
+
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    chi_squared_map : CIFrame
+        The chi_squared_map of the dataset.
+    """
+    ci_line_plots.plot_line_from_ci_frame(
+        ci_frame=fit.chi_squared_map,
+        line_region=line_region,
+        include=include,
+        plotter=plotter,
+    )

@@ -214,7 +214,7 @@ class CTIPlotter(object):
 
         Examples
         --------
-            plotters.plot_array(
+            plotter.plot_frame(
             array=image, origin=(0.0, 0.0), mask=circular_mask,
             border=False, points=[[1.0, 1.0], [2.0, 2.0]], grid=None, as_subplot=False,
             unit_label='scaled', kpc_per_arcsec=None, figsize=(7,7), aspect='auto',
@@ -251,8 +251,12 @@ class CTIPlotter(object):
 
         plt.axis(frame.mask.geometry.extent)
 
-        self.ticks.set_yticks(array=frame, extent=frame.mask.geometry.extent, units=self.units)
-        self.ticks.set_xticks(array=frame, extent=frame.mask.geometry.extent, units=self.units)
+        self.ticks.set_yticks(
+            array=frame, extent=frame.mask.geometry.extent, units=self.units
+        )
+        self.ticks.set_xticks(
+            array=frame, extent=frame.mask.geometry.extent, units=self.units
+        )
 
         self.labels.set_title()
         self.labels.set_yunits(units=self.units, include_brackets=True)
@@ -262,15 +266,23 @@ class CTIPlotter(object):
         if include_origin:
             self.origin_scatterer.scatter_grids(grids=[frame.origin])
 
-        if include_parallel_overscan is not None and frame.parallel_overscan is not None:
-            self.parallel_overscan_liner.draw_rectangular_grid_lines(extent=frame.parallel_overscan, shape_2d=frame.shape_2d)
+        if (
+            include_parallel_overscan is not None
+            and frame.parallel_overscan is not None
+        ):
+            self.parallel_overscan_liner.draw_rectangular_grid_lines(
+                extent=frame.parallel_overscan, shape_2d=frame.shape_2d
+            )
 
         if include_serial_prescan is not None and frame.serial_prescan is not None:
-            self.serial_prescan_liner.draw_rectangular_grid_lines(extent=frame.serial_prescan, shape_2d=frame.shape_2d)
+            self.serial_prescan_liner.draw_rectangular_grid_lines(
+                extent=frame.serial_prescan, shape_2d=frame.shape_2d
+            )
 
         if include_serial_overscan is not None and frame.serial_overscan is not None:
-            self.serial_overscan_liner.draw_rectangular_grid_lines(extent=frame.serial_overscan, shape_2d=frame.shape_2d)
-
+            self.serial_overscan_liner.draw_rectangular_grid_lines(
+                extent=frame.serial_overscan, shape_2d=frame.shape_2d
+            )
 
         if not bypass_output:
             self.output.to_figure(structure=frame)
@@ -288,7 +300,6 @@ class CTIPlotter(object):
         vertical_line_labels=None,
         bypass_output=False,
     ):
-
 
         if y is None:
             return
@@ -407,9 +418,15 @@ class Include(object):
     ):
 
         self.origin = self.load_include(value=origin, name="origin")
-        self.parallel_overscan = self.load_include(value=parallel_overscan, name="parallel_overscan")
-        self.serial_prescan = self.load_include(value=serial_prescan, name="serial_prescan")
-        self.serial_overscan = self.load_include(value=serial_overscan, name="serial_overscan")
+        self.parallel_overscan = self.load_include(
+            value=parallel_overscan, name="parallel_overscan"
+        )
+        self.serial_prescan = self.load_include(
+            value=serial_prescan, name="serial_prescan"
+        )
+        self.serial_overscan = self.load_include(
+            value=serial_overscan, name="serial_overscan"
+        )
 
     @staticmethod
     def load_include(value, name):
@@ -502,11 +519,7 @@ def set_include_and_sub_plotter(func):
     return wrapper
 
 
-def plot_frame(
-    frame,
-    include=None,
-    plotter=None,
-):
+def plot_frame(frame, include=None, plotter=None):
 
     if include is None:
         include = Include()

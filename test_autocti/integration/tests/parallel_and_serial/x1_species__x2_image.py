@@ -42,9 +42,9 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
         phase_name="phase_1",
         phase_folders=phase_folders,
         optimizer_class=optimizer_class,
-        parallel_species=[af.PriorModel(ac.Species)],
+        parallel_traps=[af.PriorModel(ac.Trap)],
         parallel_ccd_volume=ac.CCDVolume,
-        serial_species=[af.PriorModel(ac.Species)],
+        serial_traps=[af.PriorModel(ac.Trap)],
         serial_ccd_volume=ac.CCDVolume,
     )
 
@@ -55,13 +55,13 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     class HyperModelFixedPhaseCI(ac.PhaseCI):
         def customize_priors(self, results):
 
-            self.parallel_species = results.from_phase(
+            self.parallel_traps = results.from_phase(
                 "phase_1"
-            ).constant.parallel_species
+            ).constant.parallel_traps
             self.parallel_ccd_volume = results.from_phase(
                 "phase_1"
             ).constant.parallel_ccd_volume
-            self.serial_species = results.from_phase("phase_1").constant.serial_species
+            self.serial_traps = results.from_phase("phase_1").constant.serial_traps
             self.serial_ccd_volume = results.from_phase(
                 "phase_1"
             ).constant.serial_ccd_volume
@@ -69,9 +69,9 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     phase2 = HyperModelFixedPhaseCI(
         phase_name="phase_2",
         phase_folders=phase_folders,
-        parallel_species=[af.PriorModel(ac.Species)],
+        parallel_traps=[af.PriorModel(ac.Trap)],
         parallel_ccd_volume=ac.CCDVolume,
-        serial_species=[af.PriorModel(ac.Species)],
+        serial_traps=[af.PriorModel(ac.Trap)],
         serial_ccd_volume=ac.CCDVolume,
         hyper_noise_scalar_of_ci_regions=ac.CIHyperNoiseScalar,
         hyper_noise_scalar_of_parallel_trails=ac.CIHyperNoiseScalar,
@@ -102,9 +102,9 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     phase3 = FixedPhaseCI(
         phase_name="phase_3",
         phase_folders=phase_folders,
-        parallel_species=phase1.result.variable.parallel_species,
+        parallel_traps=phase1.result.variable.parallel_traps,
         parallel_ccd_volume=phase1.result.variable.parallel_ccd_volume,
-        serial_species=phase1.result.variable.serial_species,
+        serial_traps=phase1.result.variable.serial_traps,
         serial_ccd_volume=phase1.result.variable.serial_ccd_volume,
         hyper_noise_scalar_of_ci_regions=ac.CIHyperNoiseScalar,
         hyper_noise_scalar_of_parallel_trails=ac.CIHyperNoiseScalar,
