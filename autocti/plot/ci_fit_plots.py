@@ -157,15 +157,11 @@ def plot_ci_fit_arrays_for_phase(
 
         if plot_residual_maps_subplot:
 
-            subplot_residual_maps(
-                fits=fits, output_path=output_path, format="png"
-            )
+            subplot_residual_maps(fits=fits, output_path=output_path, format="png")
 
         if plot_chi_squared_maps_subplot:
 
-            subplot_chi_squared_maps(
-                fits=fits, output_path=output_path, format="png"
-            )
+            subplot_chi_squared_maps(fits=fits, output_path=output_path, format="png")
 
 
 def plot_ci_fit_lines_for_phase(
@@ -467,65 +463,42 @@ def subplot_fit_lines(fit, line_region, include=None, sub_plotter=None):
 
     sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=1)
 
-    image_line(
-        fit=fit,
-        line_region=line_region,
-        include=include,
-        plotter=sub_plotter,
-    )
+    image_line(fit=fit, line_region=line_region, include=include, plotter=sub_plotter)
 
     sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=2)
 
     noise_map_line(
-        fit=fit,
-        line_region=line_region,
-        include=include,
-        plotter=sub_plotter,
+        fit=fit, line_region=line_region, include=include, plotter=sub_plotter
     )
 
     sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=3)
 
     signal_to_noise_map_line(
-        fit=fit,
-        line_region=line_region,
-        include=include,
-        plotter=sub_plotter,
+        fit=fit, line_region=line_region, include=include, plotter=sub_plotter
     )
 
     sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=4)
 
     ci_pre_cti_line(
-        fit=fit,
-        line_region=line_region,
-        include=include,
-        plotter=sub_plotter,
+        fit=fit, line_region=line_region, include=include, plotter=sub_plotter
     )
 
     sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=5)
 
     ci_post_cti_line(
-        fit=fit,
-        line_region=line_region,
-        include=include,
-        plotter=sub_plotter,
+        fit=fit, line_region=line_region, include=include, plotter=sub_plotter
     )
 
     sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=7)
 
     residual_map_line(
-        fit=fit,
-        line_region=line_region,
-        include=include,
-        plotter=sub_plotter,
+        fit=fit, line_region=line_region, include=include, plotter=sub_plotter
     )
 
     sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=8)
 
     chi_squared_map_line(
-        fit=fit,
-        line_region=line_region,
-        include=include,
-        plotter=sub_plotter,
+        fit=fit, line_region=line_region, include=include, plotter=sub_plotter
     )
 
     sub_plotter.output.subplot_to_figure()
@@ -535,9 +508,7 @@ def subplot_fit_lines(fit, line_region, include=None, sub_plotter=None):
 
 @cti_plotters.set_include_and_sub_plotter
 @plotters.set_labels
-def subplot_residual_map_lines(
-    fits, line_region, include=None, sub_plotter=None
-):
+def subplot_residual_map_lines(fits, line_region, include=None, sub_plotter=None):
     """Plot the model datas_ of an analysis, using the *Fitter* class object.
 
     The visualization and output type can be fully customized.
@@ -553,10 +524,7 @@ def subplot_residual_map_lines(
         )
 
         residual_map_line(
-            fit=fit,
-            line_region=line_region,
-            include=include,
-            plotter=sub_plotter,
+            fit=fit, line_region=line_region, include=include, plotter=sub_plotter
         )
 
     sub_plotter.output.subplot_to_figure()
@@ -566,9 +534,7 @@ def subplot_residual_map_lines(
 
 @cti_plotters.set_include_and_sub_plotter
 @plotters.set_labels
-def subplot_chi_squared_map_lines(
-    fits, line_region, include=None, sub_plotter=None
-):
+def subplot_chi_squared_map_lines(fits, line_region, include=None, sub_plotter=None):
     """Plot the model datas_ of an analysis, using the *Fitter* class object.
 
     The visualization and output type can be fully customized.
@@ -585,10 +551,7 @@ def subplot_chi_squared_map_lines(
         )
 
         chi_squared_map_line(
-            fit=fit,
-            line_region=line_region,
-            include=include,
-            plotter=sub_plotter,
+            fit=fit, line_region=line_region, include=include, plotter=sub_plotter
         )
 
     sub_plotter.output.subplot_to_figure()
@@ -614,7 +577,9 @@ def individuals_lines(
         image_line(fit=fit, line_region=line_region, include=include, plotter=plotter)
 
     if plot_noise_map:
-        noise_map_line(fit=fit, line_region=line_region, include=include, plotter=plotter)
+        noise_map_line(
+            fit=fit, line_region=line_region, include=include, plotter=plotter
+        )
 
     if plot_signal_to_noise_map:
         signal_to_noise_map_line(
@@ -655,11 +620,13 @@ def image(fit, include=None, plotter=None):
         The image of the dataset.
     """
 
-    plotter.plot_frame(frame=fit.image,
-                       include_origin=include.origin,
-                       include_parallel_overscan=include.parallel_overscan,
-                       include_serial_prescan=include.serial_prescan,
-                       include_serial_overscan=include.serial_overscan)
+    plotter.plot_frame(
+        frame=fit.image,
+        include_origin=include.origin,
+        include_parallel_overscan=include.parallel_overscan,
+        include_serial_prescan=include.serial_prescan,
+        include_serial_overscan=include.serial_overscan,
+    )
 
 
 @cti_plotters.set_include_and_plotter
@@ -675,11 +642,13 @@ def noise_map(fit, include=None, plotter=None):
         The noise_map of the dataset.
     """
 
-    plotter.plot_frame(frame=fit.noise_map,
-                       include_origin=include.origin,
-                       include_parallel_overscan=include.parallel_overscan,
-                       include_serial_prescan=include.serial_prescan,
-                       include_serial_overscan=include.serial_overscan)
+    plotter.plot_frame(
+        frame=fit.noise_map,
+        include_origin=include.origin,
+        include_parallel_overscan=include.parallel_overscan,
+        include_serial_prescan=include.serial_prescan,
+        include_serial_overscan=include.serial_overscan,
+    )
 
 
 @cti_plotters.set_include_and_plotter
@@ -695,11 +664,13 @@ def signal_to_noise_map(fit, include=None, plotter=None):
         The signal_to_noise_map of the dataset.
     """
 
-    plotter.plot_frame(frame=fit.signal_to_noise_map,
-                       include_origin=include.origin,
-                       include_parallel_overscan=include.parallel_overscan,
-                       include_serial_prescan=include.serial_prescan,
-                       include_serial_overscan=include.serial_overscan)
+    plotter.plot_frame(
+        frame=fit.signal_to_noise_map,
+        include_origin=include.origin,
+        include_parallel_overscan=include.parallel_overscan,
+        include_serial_prescan=include.serial_prescan,
+        include_serial_overscan=include.serial_overscan,
+    )
 
 
 @cti_plotters.set_include_and_plotter
@@ -715,11 +686,13 @@ def ci_pre_cti(fit, include=None, plotter=None):
         The ci_pre_cti of the dataset.
     """
 
-    plotter.plot_frame(frame=fit.ci_pre_cti,
-                       include_origin=include.origin,
-                       include_parallel_overscan=include.parallel_overscan,
-                       include_serial_prescan=include.serial_prescan,
-                       include_serial_overscan=include.serial_overscan)
+    plotter.plot_frame(
+        frame=fit.ci_pre_cti,
+        include_origin=include.origin,
+        include_parallel_overscan=include.parallel_overscan,
+        include_serial_prescan=include.serial_prescan,
+        include_serial_overscan=include.serial_overscan,
+    )
 
 
 @cti_plotters.set_include_and_plotter
@@ -735,11 +708,13 @@ def ci_post_cti(fit, include=None, plotter=None):
         The ci_post_cti of the dataset.
     """
 
-    plotter.plot_frame(frame=fit.ci_post_cti,
-                       include_origin=include.origin,
-                       include_parallel_overscan=include.parallel_overscan,
-                       include_serial_prescan=include.serial_prescan,
-                       include_serial_overscan=include.serial_overscan)
+    plotter.plot_frame(
+        frame=fit.ci_post_cti,
+        include_origin=include.origin,
+        include_parallel_overscan=include.parallel_overscan,
+        include_serial_prescan=include.serial_prescan,
+        include_serial_overscan=include.serial_overscan,
+    )
 
 
 @cti_plotters.set_include_and_plotter
@@ -755,11 +730,13 @@ def residual_map(fit, include=None, plotter=None):
         The residual_map of the dataset.
     """
 
-    plotter.plot_frame(frame=fit.residual_map,
-                       include_origin=include.origin,
-                       include_parallel_overscan=include.parallel_overscan,
-                       include_serial_prescan=include.serial_prescan,
-                       include_serial_overscan=include.serial_overscan)
+    plotter.plot_frame(
+        frame=fit.residual_map,
+        include_origin=include.origin,
+        include_parallel_overscan=include.parallel_overscan,
+        include_serial_prescan=include.serial_prescan,
+        include_serial_overscan=include.serial_overscan,
+    )
 
 
 @cti_plotters.set_include_and_plotter
@@ -775,11 +752,13 @@ def chi_squared_map(fit, include=None, plotter=None):
         The chi_squared_map of the dataset.
     """
 
-    plotter.plot_frame(frame=fit.chi_squared_map,
-                       include_origin=include.origin,
-                       include_parallel_overscan=include.parallel_overscan,
-                       include_serial_prescan=include.serial_prescan,
-                       include_serial_overscan=include.serial_overscan)
+    plotter.plot_frame(
+        frame=fit.chi_squared_map,
+        include_origin=include.origin,
+        include_parallel_overscan=include.parallel_overscan,
+        include_serial_prescan=include.serial_prescan,
+        include_serial_overscan=include.serial_overscan,
+    )
 
 
 @cti_plotters.set_include_and_sub_plotter
@@ -794,8 +773,6 @@ def noise_scaling_maps(fit, include=None, sub_plotter=None):
     chi_squared_map : CIFrame
         The chi_squared_map of the dataset.
     """
-
-
 
     number_subplots = len(fit.noise_scaling_maps)
 
@@ -812,7 +789,7 @@ def noise_scaling_maps(fit, include=None, sub_plotter=None):
             include_origin=include.origin,
             include_parallel_overscan=include.parallel_overscan,
             include_serial_prescan=include.serial_prescan,
-            include_serial_overscan=include.serial_overscan
+            include_serial_overscan=include.serial_overscan,
         )
 
     sub_plotter.output.subplot_to_figure()
@@ -833,10 +810,7 @@ def image_line(fit, line_region, include=None, plotter=None):
         The image of the dataset.
     """
     ci_line_plots.plot_line_from_ci_frame(
-        ci_frame=fit.image,
-        line_region=line_region,
-        include=include,
-        plotter=plotter,
+        ci_frame=fit.image, line_region=line_region, include=include, plotter=plotter
     )
 
 

@@ -10,6 +10,7 @@ import pytest
 
 directory = os.path.dirname(os.path.realpath(__file__))
 
+
 @pytest.fixture(name="plot_path")
 def make_ci_fit_plotter_setup():
     return "{}/../../test_files/plotting/fit/".format(
@@ -24,7 +25,9 @@ def set_config_path():
     )
 
 
-def test__individual_attriute_plots__all_plot_correctly(fit_ci_imaging_7x7, plot_path, plot_patch):
+def test__individual_attriute_plots__all_plot_correctly(
+    fit_ci_imaging_7x7, plot_path, plot_patch
+):
 
     aplt.ci_fit.image(
         fit=fit_ci_imaging_7x7,
@@ -37,7 +40,6 @@ def test__individual_attriute_plots__all_plot_correctly(fit_ci_imaging_7x7, plot
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
     assert plot_path + "noise_map.png" in plot_patch.paths
-
 
     aplt.ci_fit.signal_to_noise_map(
         fit=fit_ci_imaging_7x7,
@@ -77,7 +79,9 @@ def test__individual_attriute_plots__all_plot_correctly(fit_ci_imaging_7x7, plot
     assert plot_path + "noise_scaling_maps.png" in plot_patch.paths
 
 
-def test__individual_line_attriutes_plot__all_plot_correctly_output(fit_ci_imaging_7x7, plot_path, plot_patch):
+def test__individual_line_attriutes_plot__all_plot_correctly_output(
+    fit_ci_imaging_7x7, plot_path, plot_patch
+):
 
     aplt.ci_fit.image_line(
         fit=fit_ci_imaging_7x7,
@@ -159,6 +163,7 @@ def test__ci_fit_subplots_are_output(fit_ci_imaging_7x7, plot_path, plot_patch):
 
     assert plot_path + "subplot_chi_squared_maps.png" in plot_patch.paths
 
+
 def test__ci_fit_subplots_lines_are_output(fit_ci_imaging_7x7, plot_path, plot_patch):
 
     aplt.ci_fit.subplot_residual_map_lines(
@@ -175,9 +180,7 @@ def test__ci_fit_subplots_lines_are_output(fit_ci_imaging_7x7, plot_path, plot_p
         sub_plotter=aplt.SubPlotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert (
-        plot_path + "subplot_chi_squared_map_lines.png" in plot_patch.paths
-    )
+    assert plot_path + "subplot_chi_squared_map_lines.png" in plot_patch.paths
 
 
 def test__fit_individuals__depedent_on_input(fit_ci_imaging_7x7, plot_path, plot_patch):
@@ -228,9 +231,7 @@ def test__fit_individuals_line__dependent_on_input(
 
     assert plot_path + "noise_map_line.png" not in plot_patch.paths
 
-    assert (
-        plot_path + "signal_to_noise_map_line.png" not in plot_patch.paths
-    )
+    assert plot_path + "signal_to_noise_map_line.png" not in plot_patch.paths
 
     assert plot_path + "ci_pre_cti_line.png" in plot_patch.paths
 
@@ -267,28 +268,18 @@ def test__plot_ci_fit_for_phase(fit, plot_path, plot_patch):
         visualize_path=plot_path,
     )
 
+    assert plot_path + "/ci_image_10/structures/ci_fit.png" in plot_patch.paths
+    assert plot_path + "/ci_image_10/structures/fit_image.png" in plot_patch.paths
     assert (
-        plot_path + "/ci_image_10/structures/ci_fit.png" in plot_patch.paths
+        plot_path + "/ci_image_10/structures/fit_noise_map.png" not in plot_patch.paths
     )
-    assert (
-        plot_path + "/ci_image_10/structures/fit_image.png"
-        in plot_patch.paths
-    )
-    assert (
-        plot_path + "/ci_image_10/structures/fit_noise_map.png"
-        not in plot_patch.paths
-    )
-    assert (
-        plot_path + "/ci_image_10/structures/fit_ci_pre_cti.png"
-        in plot_patch.paths
-    )
+    assert plot_path + "/ci_image_10/structures/fit_ci_pre_cti.png" in plot_patch.paths
     assert (
         plot_path + "/ci_image_10/structures/fit_signal_to_noise_map.png"
         not in plot_patch.paths
     )
     assert (
-        plot_path + "/ci_image_10/structures/fit_residual_map.png"
-        in plot_patch.paths
+        plot_path + "/ci_image_10/structures/fit_residual_map.png" in plot_patch.paths
     )
     assert (
         plot_path + "/ci_image_10/structures/fit_chi_squared_map.png"
@@ -312,24 +303,20 @@ def test__plot_ci_fit_for_phase(fit, plot_path, plot_patch):
         in plot_patch.paths
     )
     assert (
-        plot_path
-        + "/ci_image_10/parallel_front_edge/fit_signal_to_noise_map_line.png"
+        plot_path + "/ci_image_10/parallel_front_edge/fit_signal_to_noise_map_line.png"
         not in plot_patch.paths
     )
     assert (
-        plot_path
-        + "/ci_image_10/parallel_front_edge/fit_residual_map_line.png"
+        plot_path + "/ci_image_10/parallel_front_edge/fit_residual_map_line.png"
         in plot_patch.paths
     )
     assert (
-        plot_path
-        + "/ci_image_10/parallel_front_edge/fit_chi_squared_map_line.png"
+        plot_path + "/ci_image_10/parallel_front_edge/fit_chi_squared_map_line.png"
         not in plot_patch.paths
     )
 
     assert (
-        plot_path + "/ci_image_10/serial_front_edge/ci_fit_line.png"
-        in plot_patch.paths
+        plot_path + "/ci_image_10/serial_front_edge/ci_fit_line.png" in plot_patch.paths
     )
     assert (
         plot_path + "/ci_image_10/serial_front_edge/fit_image_line.png"
@@ -344,8 +331,7 @@ def test__plot_ci_fit_for_phase(fit, plot_path, plot_patch):
         in plot_patch.paths
     )
     assert (
-        plot_path
-        + "/ci_image_10/serial_front_edge/fit_signal_to_noise_map_line.png"
+        plot_path + "/ci_image_10/serial_front_edge/fit_signal_to_noise_map_line.png"
         not in plot_patch.paths
     )
     assert (
@@ -353,8 +339,7 @@ def test__plot_ci_fit_for_phase(fit, plot_path, plot_patch):
         in plot_patch.paths
     )
     assert (
-        plot_path
-        + "/ci_image_10/serial_front_edge/fit_chi_squared_map_line.png"
+        plot_path + "/ci_image_10/serial_front_edge/fit_chi_squared_map_line.png"
         not in plot_patch.paths
     )
 

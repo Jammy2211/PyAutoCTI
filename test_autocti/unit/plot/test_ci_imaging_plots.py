@@ -7,11 +7,13 @@ import pytest
 
 directory = os.path.dirname(os.path.realpath(__file__))
 
+
 @pytest.fixture(name="plot_path")
 def make_ci_imaging_plotter_setup():
     return "{}/../../test_files/plotting/ci_imaging/".format(
         os.path.dirname(os.path.realpath(__file__))
     )
+
 
 @pytest.fixture(autouse=True)
 def set_config_path():
@@ -19,9 +21,8 @@ def set_config_path():
         os.path.join(directory, "../test_files/plot"), os.path.join(directory, "output")
     )
 
-def test__individual_attributes_are_output(
-    ci_imaging_7x7, plot_path, plot_patch
-):
+
+def test__individual_attributes_are_output(ci_imaging_7x7, plot_path, plot_patch):
 
     aplt.ci_imaging.image(
         ci_imaging=ci_imaging_7x7,
@@ -58,6 +59,7 @@ def test__individual_attributes_are_output(
     )
     assert plot_path + "cosmic_ray_map.png" in plot_patch.paths
 
+
 def test__individual_lines_are_output(ci_imaging_7x7, plot_path, plot_patch):
 
     aplt.ci_imaging.image_line(
@@ -68,7 +70,6 @@ def test__individual_lines_are_output(ci_imaging_7x7, plot_path, plot_patch):
     )
 
     assert plot_path + "image_line.png" in plot_patch.paths
-
 
     aplt.ci_imaging.noise_map_line(
         ci_imaging=ci_imaging_7x7,
@@ -97,6 +98,7 @@ def test__individual_lines_are_output(ci_imaging_7x7, plot_path, plot_patch):
 
     assert plot_path + "signal_to_noise_map_line.png" in plot_patch.paths
 
+
 def test__subplot_ci_lines__is_output(ci_imaging_7x7, plot_path, plot_patch):
 
     aplt.ci_imaging.subplot_ci_lines(
@@ -106,6 +108,7 @@ def test__subplot_ci_lines__is_output(ci_imaging_7x7, plot_path, plot_patch):
     )
 
     assert plot_path + "subplot_ci_lines.png" in plot_patch.paths
+
 
 def test__subplot_ci_imaging__is_output(ci_imaging_7x7, plot_path, plot_patch):
 
@@ -156,6 +159,7 @@ def test__ci_line_individuals__output_dependent_on_inputs(
 
     assert plot_path + "signal_to_noise_map_line.png" not in plot_patch.paths
 
+
 @pytest.fixture(name="data_extracted")
 def make_ci_data_extracted(ci_imaging_7x7, mask):
     return ac.MaskedCIImaging(
@@ -186,16 +190,11 @@ def test__plot_ci_data_for_phase(data_extracted, plot_path, plot_patch):
     )
 
     assert plot_path + "/ci_image_10/structures/ci_data.png" in plot_patch.paths
+    assert plot_path + "/ci_image_10/structures/ci_image.png" in plot_patch.paths
     assert (
-        plot_path + "/ci_image_10/structures/ci_image.png" in plot_patch.paths
+        plot_path + "/ci_image_10/structures/ci_noise_map.png" not in plot_patch.paths
     )
-    assert (
-        plot_path + "/ci_image_10/structures/ci_noise_map.png"
-        not in plot_patch.paths
-    )
-    assert (
-        plot_path + "/ci_image_10/structures/ci_pre_cti.png" in plot_patch.paths
-    )
+    assert plot_path + "/ci_image_10/structures/ci_pre_cti.png" in plot_patch.paths
     assert (
         plot_path + "/ci_image_10/structures/ci_signal_to_noise_map.png"
         not in plot_patch.paths
@@ -218,8 +217,7 @@ def test__plot_ci_data_for_phase(data_extracted, plot_path, plot_patch):
         in plot_patch.paths
     )
     assert (
-        plot_path
-        + "/ci_image_10/parallel_front_edge/ci_signal_to_noise_map_line.png"
+        plot_path + "/ci_image_10/parallel_front_edge/ci_signal_to_noise_map_line.png"
         not in plot_patch.paths
     )
 
@@ -240,7 +238,6 @@ def test__plot_ci_data_for_phase(data_extracted, plot_path, plot_patch):
         in plot_patch.paths
     )
     assert (
-        plot_path
-        + "/ci_image_10/serial_front_edge/ci_signal_to_noise_map_line.png"
+        plot_path + "/ci_image_10/serial_front_edge/ci_signal_to_noise_map_line.png"
         not in plot_patch.paths
     )

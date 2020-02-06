@@ -33,9 +33,7 @@ def setup(
             well_fill_gamma=s_well_fill_gamma,
         )
         serial_traps = [
-            ac.Trap(
-                trap_density=s_trap_densities[i], trap_lifetime=s_trap_lifetimes[i]
-            )
+            ac.Trap(trap_density=s_trap_densities[i], trap_lifetime=s_trap_lifetimes[i])
             for i in range(len(s_trap_densities))
         ]
     if include_parallel:
@@ -46,9 +44,7 @@ def setup(
             well_fill_gamma=p_well_fill_gamma,
         )
         parallel_traps = [
-            ac.Trap(
-                trap_density=p_trap_densities[i], trap_lifetime=p_trap_lifetimes[i]
-            )
+            ac.Trap(trap_density=p_trap_densities[i], trap_lifetime=p_trap_lifetimes[i])
             for i in range(len(p_trap_densities))
         ]
 

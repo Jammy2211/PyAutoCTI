@@ -43,9 +43,7 @@ def subplot_ci_imaging(ci_imaging, include=None, sub_plotter=None):
 
     sub_plotter.setup_subplot(number_subplots=number_subplots, subplot_index=4)
 
-    signal_to_noise_map(
-        ci_imaging=ci_imaging, include=include, plotter=sub_plotter
-    )
+    signal_to_noise_map(ci_imaging=ci_imaging, include=include, plotter=sub_plotter)
 
     sub_plotter.output.subplot_to_figure()
 
@@ -114,17 +112,18 @@ def image(ci_imaging, include=None, plotter=None):
         over the immage.
     """
 
-    plotter.plot_frame(frame=ci_imaging.image,
-                       include_origin=include.origin,
-                       include_parallel_overscan=include.parallel_overscan,
-                       include_serial_prescan=include.serial_prescan,
-                       include_serial_overscan=include.serial_overscan)
+    plotter.plot_frame(
+        frame=ci_imaging.image,
+        include_origin=include.origin,
+        include_parallel_overscan=include.parallel_overscan,
+        include_serial_prescan=include.serial_prescan,
+        include_serial_overscan=include.serial_overscan,
+    )
+
 
 @cti_plotters.set_include_and_plotter
 @plotters.set_labels
-def noise_map(
-    ci_imaging, include=None, plotter=None
-):
+def noise_map(ci_imaging, include=None, plotter=None):
     """Plot the noise_map-map of the imaging data_type.
 
     Set *autolens.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
@@ -136,17 +135,18 @@ def noise_map(
     include_origin : True
         If true, the include_origin of the dataset's coordinate system is plotted as a 'x'.
     """
-    plotter.plot_frame(frame=ci_imaging.noise_map,
-                       include_origin=include.origin,
-                       include_parallel_overscan=include.parallel_overscan,
-                       include_serial_prescan=include.serial_prescan,
-                       include_serial_overscan=include.serial_overscan)
+    plotter.plot_frame(
+        frame=ci_imaging.noise_map,
+        include_origin=include.origin,
+        include_parallel_overscan=include.parallel_overscan,
+        include_serial_prescan=include.serial_prescan,
+        include_serial_overscan=include.serial_overscan,
+    )
+
 
 @cti_plotters.set_include_and_plotter
 @plotters.set_labels
-def signal_to_noise_map(
-    ci_imaging, include=None, plotter=None
-):
+def signal_to_noise_map(ci_imaging, include=None, plotter=None):
     """Plot the signal-to-noise_map-map of the imaging data_type.
 
     Set *autolens.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
@@ -158,11 +158,13 @@ def signal_to_noise_map(
     include_origin : True
         If true, the include_origin of the dataset's coordinate system is plotted as a 'x'.
     """
-    plotter.plot_frame(frame=ci_imaging.signal_to_noise_map,
-                       include_origin=include.origin,
-                       include_parallel_overscan=include.parallel_overscan,
-                       include_serial_prescan=include.serial_prescan,
-                       include_serial_overscan=include.serial_overscan)
+    plotter.plot_frame(
+        frame=ci_imaging.signal_to_noise_map,
+        include_origin=include.origin,
+        include_parallel_overscan=include.parallel_overscan,
+        include_serial_prescan=include.serial_prescan,
+        include_serial_overscan=include.serial_overscan,
+    )
 
 
 @cti_plotters.set_include_and_plotter
@@ -177,11 +179,13 @@ def ci_pre_cti(ci_imaging, include=None, plotter=None):
     ci_pre_cti : CIFrame
         The ci_pre_cti of the dataset.
     """
-    plotter.plot_frame(frame=ci_imaging.ci_pre_cti,
-                       include_origin=include.origin,
-                       include_parallel_overscan=include.parallel_overscan,
-                       include_serial_prescan=include.serial_prescan,
-                       include_serial_overscan=include.serial_overscan)
+    plotter.plot_frame(
+        frame=ci_imaging.ci_pre_cti,
+        include_origin=include.origin,
+        include_parallel_overscan=include.parallel_overscan,
+        include_serial_prescan=include.serial_prescan,
+        include_serial_overscan=include.serial_overscan,
+    )
 
 
 @cti_plotters.set_include_and_plotter
@@ -196,10 +200,13 @@ def cosmic_ray_map(ci_imaging, include=None, plotter=None):
     ci_pre_cti : CIFrame
         The ci_pre_cti of the dataset.
     """
-    plotter.plot_frame(frame=ci_imaging.cosmic_ray_map,                        include_origin=include.origin,
-                       include_parallel_overscan=include.parallel_overscan,
-                       include_serial_prescan=include.serial_prescan,
-                       include_serial_overscan=include.serial_overscan)
+    plotter.plot_frame(
+        frame=ci_imaging.cosmic_ray_map,
+        include_origin=include.origin,
+        include_parallel_overscan=include.parallel_overscan,
+        include_serial_prescan=include.serial_prescan,
+        include_serial_overscan=include.serial_overscan,
+    )
 
 
 @cti_plotters.set_include_and_sub_plotter
@@ -338,7 +345,10 @@ def image_line(ci_imaging, line_region, include=None, plotter=None):
         The image of the dataset.
     """
     ci_line_plots.plot_line_from_ci_frame(
-        ci_frame=ci_imaging.image, line_region=line_region, include=include, plotter=plotter
+        ci_frame=ci_imaging.image,
+        line_region=line_region,
+        include=include,
+        plotter=plotter,
     )
 
 
@@ -355,7 +365,10 @@ def noise_map_line(ci_imaging, line_region, include=None, plotter=None):
         The noise_map of the dataset.
     """
     ci_line_plots.plot_line_from_ci_frame(
-        ci_frame=ci_imaging.noise_map, line_region=line_region, include=include, plotter=plotter
+        ci_frame=ci_imaging.noise_map,
+        line_region=line_region,
+        include=include,
+        plotter=plotter,
     )
 
 
@@ -372,7 +385,10 @@ def ci_pre_cti_line(ci_imaging, line_region, include=None, plotter=None):
         The ci_pre_cti of the dataset.
     """
     ci_line_plots.plot_line_from_ci_frame(
-        ci_frame=ci_imaging.ci_pre_cti, line_region=line_region, include=include, plotter=plotter
+        ci_frame=ci_imaging.ci_pre_cti,
+        line_region=line_region,
+        include=include,
+        plotter=plotter,
     )
 
 
@@ -389,5 +405,8 @@ def signal_to_noise_map_line(ci_imaging, line_region, include=None, plotter=None
         The signal_to_noise_map of the dataset.
     """
     ci_line_plots.plot_line_from_ci_frame(
-        ci_frame=ci_imaging.signal_to_noise_map, line_region=line_region, include=include, plotter=plotter
+        ci_frame=ci_imaging.signal_to_noise_map,
+        line_region=line_region,
+        include=include,
+        plotter=plotter,
     )

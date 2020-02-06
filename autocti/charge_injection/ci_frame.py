@@ -3,6 +3,7 @@ import numpy as np
 from autoarray.util import array_util
 from autoarray.mask import mask as msk
 from autocti.structures import frame
+from autocti.util import rotate_util
 
 
 class AbstractCIFrame(frame.Frame):
@@ -11,7 +12,7 @@ class AbstractCIFrame(frame.Frame):
         array,
         mask,
         ci_pattern,
-        corner=(0, 0),
+        original_roe_corner=(0, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -31,7 +32,7 @@ class AbstractCIFrame(frame.Frame):
             cls=cls,
             array=array,
             mask=mask,
-            corner=corner,
+            original_roe_corner=original_roe_corner,
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
@@ -54,7 +55,6 @@ class AbstractCIFrame(frame.Frame):
                 self.serial_prescan = obj.serial_prescan
             if hasattr(obj, "serial_overscan"):
                 self.serial_overscan = obj.serial_overscan
-
 
     @property
     def ci_regions_frame(self):
@@ -1119,7 +1119,7 @@ class AbstractCIFrame(frame.Frame):
     @property
     def parallel_trail_size_to_frame_edge(self):
 
-        if self.corner[0] == 0:
+        if self.original_roe_corner[0] == 0:
             return np.min([region.y0 for region in self.ci_pattern.regions])
         else:
             return self.shape_2d[0] - np.max(
@@ -1133,7 +1133,7 @@ class CIFrame(AbstractCIFrame):
         cls,
         array,
         ci_pattern,
-        corner=(0, 0),
+        roe_corner=(0, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -1172,13 +1172,23 @@ class CIFrame(AbstractCIFrame):
         mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
 
         return CIFrame(
-            array=array,
+            array=frame.rotate_util.rotate_array_from_roe_corner(
+                array=array, roe_corner=roe_corner
+            ),
             mask=mask,
-            ci_pattern=ci_pattern,
-            corner=corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            ci_pattern=rotate_util.rotate_ci_pattern_from_roe_corner(
+                ci_pattern=ci_pattern, shape_2d=array.shape, roe_corner=roe_corner
+            ),
+            original_roe_corner=roe_corner,
+            parallel_overscan=frame.rotate_util.rotate_region_from_roe_corner(
+                region=parallel_overscan, shape_2d=array.shape, roe_corner=roe_corner
+            ),
+            serial_prescan=frame.rotate_util.rotate_region_from_roe_corner(
+                region=serial_prescan, shape_2d=array.shape, roe_corner=roe_corner
+            ),
+            serial_overscan=frame.rotate_util.rotate_region_from_roe_corner(
+                region=serial_overscan, shape_2d=array.shape, roe_corner=roe_corner
+            ),
         )
 
     @classmethod
@@ -1187,7 +1197,7 @@ class CIFrame(AbstractCIFrame):
         fill_value,
         shape_2d,
         ci_pattern,
-        corner=(0, 0),
+        roe_corner=(0, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -1197,7 +1207,7 @@ class CIFrame(AbstractCIFrame):
         return cls.manual(
             array=np.full(fill_value=fill_value, shape=shape_2d),
             ci_pattern=ci_pattern,
-            corner=corner,
+            roe_corner=roe_corner,
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
@@ -1209,7 +1219,7 @@ class CIFrame(AbstractCIFrame):
         cls,
         shape_2d,
         ci_pattern,
-        corner=(0, 0),
+        roe_corner=(0, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -1219,7 +1229,7 @@ class CIFrame(AbstractCIFrame):
             fill_value=1.0,
             shape_2d=shape_2d,
             ci_pattern=ci_pattern,
-            corner=corner,
+            roe_corner=roe_corner,
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
@@ -1231,7 +1241,7 @@ class CIFrame(AbstractCIFrame):
         cls,
         shape_2d,
         ci_pattern,
-        corner=(0, 0),
+        roe_corner=(0, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -1241,7 +1251,7 @@ class CIFrame(AbstractCIFrame):
             fill_value=0.0,
             shape_2d=shape_2d,
             ci_pattern=ci_pattern,
-            corner=corner,
+            roe_corner=roe_corner,
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
@@ -1254,7 +1264,7 @@ class CIFrame(AbstractCIFrame):
         ci_pattern,
         file_path,
         hdu,
-        corner=(0, 0),
+        roe_corner=(0, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -1282,11 +1292,11 @@ class CIFrame(AbstractCIFrame):
 
         mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
 
-        return CIFrame(
+        return cls.manual(
             array=array,
             mask=mask,
             ci_pattern=ci_pattern,
-            corner=corner,
+            roe_corner=roe_corner,
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,

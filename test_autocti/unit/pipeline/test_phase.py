@@ -431,11 +431,7 @@ class TestPhase(object):
         serial_traps_1 = ac.Trap(trap_density=0.0, trap_lifetime=2.0)
         serial_traps_2 = ac.Trap(trap_density=0.0, trap_lifetime=3.0)
         cti_params = ac.ArcticParams(
-            parallel_traps=[
-                parallel_traps_0,
-                parallel_traps_1,
-                parallel_traps_2,
-            ],
+            parallel_traps=[parallel_traps_0, parallel_traps_1, parallel_traps_2],
             serial_traps=[serial_traps_0, serial_traps_1, serial_traps_2],
         )
 
@@ -583,8 +579,7 @@ class TestPhase(object):
         species_3 = ac.Trap(trap_density=0.1, trap_lifetime=2.0)
 
         cti_params = ac.ArcticParams(
-            parallel_traps=[species_0, species_1],
-            serial_traps=[species_2, species_3],
+            parallel_traps=[species_0, species_1], serial_traps=[species_2, species_3]
         )
 
         analysis.check_total_density_within_range(cti_params=cti_params)
@@ -600,8 +595,7 @@ class TestPhase(object):
         species_3 = ac.Trap(trap_density=0.1, trap_lifetime=2.0)
 
         cti_params = ac.ArcticParams(
-            parallel_traps=[species_0, species_1],
-            serial_traps=[species_2, species_3],
+            parallel_traps=[species_0, species_1], serial_traps=[species_2, species_3]
         )
 
         with pytest.raises(exc.PriorException):
@@ -618,8 +612,7 @@ class TestPhase(object):
         species_3 = ac.Trap(trap_density=0.1, trap_lifetime=2.0)
 
         cti_params = ac.ArcticParams(
-            parallel_traps=[species_0, species_1],
-            serial_traps=[species_2, species_3],
+            parallel_traps=[species_0, species_1], serial_traps=[species_2, species_3]
         )
 
         with pytest.raises(exc.PriorException):

@@ -3,8 +3,8 @@ import numpy as np
 from autoarray.util import array_util
 from autoarray.structures import arrays
 from autoarray.mask import mask as msk
+from autocti.util import rotate_util
 from autocti import exc
-from autocti.model import pyarctic
 
 
 class AbstractFrame(arrays.AbstractArray):
@@ -12,7 +12,7 @@ class AbstractFrame(arrays.AbstractArray):
         cls,
         array,
         mask,
-        corner=(0, 0),
+        original_roe_corner=(0, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -59,7 +59,7 @@ class AbstractFrame(arrays.AbstractArray):
             cls=cls, array=array, mask=mask, store_in_1d=False
         )
 
-        obj.corner = corner
+        obj.original_roe_corner = original_roe_corner
         obj.parallel_overscan = parallel_overscan
         obj.serial_prescan = serial_prescan
         obj.serial_overscan = serial_overscan
@@ -71,8 +71,8 @@ class AbstractFrame(arrays.AbstractArray):
         super(AbstractFrame, self).__array_finalize__(obj)
 
         if isinstance(obj, AbstractFrame):
-            if hasattr(obj, "corner"):
-                self.corner = obj.corner
+            if hasattr(obj, "roe_corner"):
+                self.roe_corner = obj.roe_corner
 
     def __reduce__(self):
         # Get the parent's __reduce__ tuple
@@ -92,104 +92,6 @@ class AbstractFrame(arrays.AbstractArray):
             setattr(self, key, value)
         super(AbstractFrame, self).__setstate__(state[0:-1])
 
-    def add_cti(
-        self, image, cti_params, cti_settings, use_parallel_poisson_densities=False
-    ):
-        """add cti to an image.
-
-        Parameters
-        ----------
-        image : ndarray
-            The image cti is added too.
-        cti_params : ArcticParams.ArcticParams
-            The CTI model parameters (trap density, trap lifetimes etc.).
-        cti_settings : ArcticSettings.ArcticSettings
-            The settings that control the cti clocking algorithm (e.g. the ccd well_depth express option).
-        """
-
-        if cti_params.parallel_ccd_volume is not None:
-            image_pre_parallel_clocking = self.rotated_for_parallel_cti(image=image)
-            image_post_parallel_clocking = pyarctic.call_arctic(
-                image=image_pre_parallel_clocking,
-                species=cti_params.parallel_traps,
-                ccd=cti_params.parallel_ccd_volume,
-                settings=cti_settings.parallel,
-                correct_cti=False,
-                use_poisson_densities=use_parallel_poisson_densities,
-            )
-            image = self.rotated_for_parallel_cti(image_post_parallel_clocking)
-
-        if cti_params.serial_ccd_volume is not None:
-            image_pre_serial_clocking = self.rotated_before_serial_clocking(
-                image_pre_clocking=image
-            )
-            image_post_serial_clocking = pyarctic.call_arctic(
-                image=image_pre_serial_clocking,
-                species=cti_params.serial_traps,
-                ccd=cti_params.serial_ccd_volume,
-                settings=cti_settings.serial,
-                correct_cti=False,
-                use_poisson_densities=False,
-            )
-            image = self.rotated_after_serial_clocking(image_post_serial_clocking)
-
-        return image
-
-    def correct_cti(self, image, cti_params, cti_settings):
-        """Correct cti from an image.
-
-        Parameters
-        ----------
-        image : ndarray
-            The image cti is corrected from.
-        cti_params : ArcticParams.ArcticParams
-            The CTI model parameters (trap density, trap lifetimes etc.).
-        cti_settings : ArcticSettings.ArcticSettings
-            The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
-        """
-
-        if cti_settings.serial is not None:
-            image_pre_serial_clocking = self.rotated_before_serial_clocking(
-                image_pre_clocking=image
-            )
-            image_post_serial_clocking = pyarctic.call_arctic(
-                image=image_pre_serial_clocking,
-                species=cti_params.serial_traps,
-                ccd=cti_params.serial_ccd_volume,
-                settings=cti_settings.serial,
-                correct_cti=True,
-                use_poisson_densities=False,
-            )
-            image = self.rotated_after_serial_clocking(image_post_serial_clocking)
-
-        if cti_settings.parallel is not None:
-            image_pre_parallel_clocking = self.rotated_for_parallel_cti(image=image)
-            image_post_parallel_clocking = pyarctic.call_arctic(
-                image=image_pre_parallel_clocking,
-                species=cti_params.parallel_traps,
-                ccd=cti_params.parallel_ccd_volume,
-                settings=cti_settings.parallel,
-                correct_cti=True,
-                use_poisson_densities=False,
-            )
-            image = self.rotated_for_parallel_cti(image_post_parallel_clocking)
-
-        return image
-
-    @property
-    def rotated_for_parallel_cti(self):
-        return flip(self.in_2d) if self.corner[0] == 0 else self.in_2d
-
-    @property
-    def rotated_before_serial_clocking(self):
-        transposed = self.in_2d.T.copy()
-        return flip(transposed) if self.corner[1] == 1 else transposed
-
-    @property
-    def rotated_after_serial_clocking(self):
-        flipped = flip(self.in_2d) if self.corner[1] == 1 else self.in_2d
-        return flipped.T.copy()
-
     @property
     def binned_across_parallel(self):
         return np.mean(np.ma.masked_array(self, self.mask), axis=0)
@@ -200,17 +102,23 @@ class AbstractFrame(arrays.AbstractArray):
 
     def parallel_trail_from_y(self, y, dy):
         """Coordinates of a parallel trail of size dy from coordinate y"""
-        return int(y - dy * self.corner[0]), int(y + 1 + dy * (abs(self.corner[0] - 1)))
+        return (
+            int(y - dy * self.original_roe_corner[0]),
+            int(y + 1 + dy * (abs(self.original_roe_corner[0] - 1))),
+        )
 
     def serial_trail_from_x(self, x, dx):
         """Coordinates of a serial trail of size dx from coordinate x"""
-        return int(x - dx * self.corner[1]), int(x + 1 + dx * (1 - self.corner[1]))
+        return (
+            int(x - dx * self.original_roe_corner[1]),
+            int(x + 1 + dx * (1 - self.original_roe_corner[1])),
+        )
 
     def parallel_front_edge_of_region(self, region, rows):
 
         check_parallel_front_edge_size(region=region, rows=rows)
 
-        if self.corner[0] == 0:
+        if self.original_roe_corner[0] == 0:
             y_coord = region.y1
             y_min = y_coord - rows[1]
             y_max = y_coord - rows[0]
@@ -222,7 +130,7 @@ class AbstractFrame(arrays.AbstractArray):
         return Region((y_min, y_max, region.x0, region.x1))
 
     def parallel_trails_of_region(self, region, rows=(0, 1)):
-        if self.corner[0] == 0:
+        if self.original_roe_corner[0] == 0:
             y_coord = region.y0
             y_min = y_coord - rows[1]
             y_max = y_coord - rows[0]
@@ -242,7 +150,7 @@ class AbstractFrame(arrays.AbstractArray):
         return Region((region.y0, region.y1, x_min, x_max))
 
     def serial_trails_of_region(self, region, columns=(0, 1)):
-        if self.corner[1] == 0:
+        if self.original_roe_corner[1] == 0:
             x_coord = region.x1
             x_min = x_coord + columns[0]
             x_max = x_coord + columns[1]
@@ -260,7 +168,7 @@ class AbstractFrame(arrays.AbstractArray):
         return self.serial_overscan[3] - self.serial_overscan[2]
 
     def x_limits(self, region, columns):
-        if self.corner[1] == 0:
+        if self.original_roe_corner[1] == 0:
             x_coord = region.x0
             x_min = x_coord + columns[0]
             x_max = x_coord + columns[1]
@@ -276,7 +184,7 @@ class Frame(AbstractFrame):
     def manual(
         cls,
         array,
-        corner=(0, 0),
+        roe_corner=(0, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -315,12 +223,20 @@ class Frame(AbstractFrame):
         mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
 
         return Frame(
-            array=array,
+            array=rotate_util.rotate_array_from_roe_corner(
+                array=array, roe_corner=roe_corner
+            ),
             mask=mask,
-            corner=corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            original_roe_corner=roe_corner,
+            parallel_overscan=rotate_util.rotate_region_from_roe_corner(
+                region=parallel_overscan, shape_2d=array.shape, roe_corner=roe_corner
+            ),
+            serial_prescan=rotate_util.rotate_region_from_roe_corner(
+                region=serial_prescan, shape_2d=array.shape, roe_corner=roe_corner
+            ),
+            serial_overscan=rotate_util.rotate_region_from_roe_corner(
+                region=serial_overscan, shape_2d=array.shape, roe_corner=roe_corner
+            ),
         )
 
     @classmethod
@@ -328,7 +244,7 @@ class Frame(AbstractFrame):
         cls,
         fill_value,
         shape_2d,
-        corner=(0, 0),
+        roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -337,7 +253,7 @@ class Frame(AbstractFrame):
 
         return cls.manual(
             array=np.full(fill_value=fill_value, shape=shape_2d),
-            corner=corner,
+            roe_corner=roe_corner,
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
@@ -348,7 +264,7 @@ class Frame(AbstractFrame):
     def ones(
         cls,
         shape_2d,
-        corner=(0, 0),
+        roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -357,7 +273,7 @@ class Frame(AbstractFrame):
         return cls.full(
             fill_value=1.0,
             shape_2d=shape_2d,
-            corner=corner,
+            roe_corner=roe_corner,
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
@@ -368,7 +284,7 @@ class Frame(AbstractFrame):
     def zeros(
         cls,
         shape_2d,
-        corner=(0, 0),
+        roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -377,7 +293,7 @@ class Frame(AbstractFrame):
         return cls.full(
             fill_value=0.0,
             shape_2d=shape_2d,
-            corner=corner,
+            roe_corner=roe_corner,
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
@@ -389,7 +305,7 @@ class Frame(AbstractFrame):
         cls,
         file_path,
         hdu,
-        corner=(0, 0),
+        roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -417,10 +333,10 @@ class Frame(AbstractFrame):
 
         mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
 
-        return Frame(
+        return cls.manual(
             array=array,
             mask=mask,
-            corner=corner,
+            roe_corner=roe_corner,
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
@@ -505,7 +421,7 @@ class EuclidFrame(Frame):
     def top_left(cls, array):
         return Frame.manual(
             array=array,
-            corner=(0, 0),
+            roe_corner=(0, 0),
             parallel_overscan=Region((0, 20, 51, 2099)),
             serial_prescan=Region((0, 2086, 0, 51)),
             serial_overscan=Region((0, 2086, 2099, 2119)),
@@ -515,7 +431,7 @@ class EuclidFrame(Frame):
     def top_right(cls, array):
         return Frame.manual(
             array=array,
-            corner=(0, 1),
+            roe_corner=(0, 1),
             parallel_overscan=Region((0, 20, 20, 2068)),
             serial_prescan=Region((0, 2086, 2068, 2119)),
             serial_overscan=Region((0, 2086, 0, 20)),
@@ -525,7 +441,7 @@ class EuclidFrame(Frame):
     def bottom_left(cls, array):
         return Frame.manual(
             array=array,
-            corner=(1, 0),
+            roe_corner=(1, 0),
             parallel_overscan=Region((2066, 2086, 51, 2099)),
             serial_prescan=Region((0, 2086, 0, 51)),
             serial_overscan=Region((0, 2086, 2099, 2119)),
@@ -535,7 +451,7 @@ class EuclidFrame(Frame):
     def bottom_right(cls, array):
         return Frame.manual(
             array=array,
-            corner=(1, 1),
+            roe_corner=(1, 1),
             parallel_overscan=Region((2066, 2086, 20, 2068)),
             serial_prescan=Region((0, 2086, 2068, 2119)),
             serial_overscan=Region((0, 2086, 0, 20)),

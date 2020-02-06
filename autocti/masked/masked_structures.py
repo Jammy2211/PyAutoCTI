@@ -1,17 +1,18 @@
 import numpy as np
 
 from autoarray.util import array_util
-from autocti.structures import frame
-from autocti.charge_injection import ci_frame
+from autocti.structures.frame import AbstractFrame, Frame, Region
+from autocti.charge_injection.ci_frame import AbstractCIFrame, CIFrame
+from autocti.util import rotate_util
 
 
-class MaskedFrame(frame.AbstractFrame):
+class MaskedFrame(AbstractFrame):
     @classmethod
     def manual(
         cls,
         array,
         mask,
-        corner=(0, 0),
+        roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -32,26 +33,39 @@ class MaskedFrame(frame.AbstractFrame):
 
         Parameters
         -----------
-        parallel_overscan : frame.Region
+        parallel_overscan : Region
             The parallel overscan region of the ci_frame.
-        serial_prescan : frame.Region
+        serial_prescan : Region
             The serial prescan region of the ci_frame.
-        serial_overscan : frame.Region
+        serial_overscan : Region
             The serial overscan region of the ci_frame.
         """
 
         if type(array) is list:
             array = np.asarray(array)
 
+        array = rotate_util.rotate_array_from_roe_corner(
+            array=array, roe_corner=roe_corner
+        )
+        mask = rotate_util.rotate_array_from_roe_corner(
+            array=mask, roe_corner=roe_corner
+        )
+
         array[mask == True] = 0.0
 
-        return frame.Frame(
+        return Frame(
             array=array,
             mask=mask,
-            corner=corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            original_roe_corner=roe_corner,
+            parallel_overscan=rotate_util.rotate_region_from_roe_corner(
+                region=parallel_overscan, shape_2d=array.shape, roe_corner=roe_corner
+            ),
+            serial_prescan=rotate_util.rotate_region_from_roe_corner(
+                region=serial_prescan, shape_2d=array.shape, roe_corner=roe_corner
+            ),
+            serial_overscan=rotate_util.rotate_region_from_roe_corner(
+                region=serial_overscan, shape_2d=array.shape, roe_corner=roe_corner
+            ),
         )
 
     @classmethod
@@ -59,7 +73,7 @@ class MaskedFrame(frame.AbstractFrame):
         cls,
         fill_value,
         mask,
-        corner=(0, 0),
+        roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -67,7 +81,7 @@ class MaskedFrame(frame.AbstractFrame):
 
         return cls.manual(
             array=np.full(fill_value=fill_value, shape=mask.shape_2d),
-            corner=corner,
+            roe_corner=roe_corner,
             mask=mask,
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
@@ -78,7 +92,7 @@ class MaskedFrame(frame.AbstractFrame):
     def ones(
         cls,
         mask,
-        corner=(0, 0),
+        roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -86,7 +100,7 @@ class MaskedFrame(frame.AbstractFrame):
         return cls.full(
             fill_value=1.0,
             mask=mask,
-            corner=corner,
+            roe_corner=roe_corner,
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
@@ -96,7 +110,7 @@ class MaskedFrame(frame.AbstractFrame):
     def zeros(
         cls,
         mask,
-        corner=(0, 0),
+        roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -104,7 +118,7 @@ class MaskedFrame(frame.AbstractFrame):
         return cls.full(
             fill_value=0.0,
             mask=mask,
-            corner=corner,
+            roe_corner=roe_corner,
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
@@ -116,7 +130,7 @@ class MaskedFrame(frame.AbstractFrame):
         file_path,
         hdu,
         mask,
-        corner=(0, 0),
+        roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -135,17 +149,28 @@ class MaskedFrame(frame.AbstractFrame):
             The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
             locations of different regions of the CCD (overscans, prescan, etc.)
         """
-        return frame.Frame(
+        return cls.manual(
             array=array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu),
             mask=mask,
-            corner=corner,
+            roe_corner=roe_corner,
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
         )
 
+    @classmethod
+    def from_frame(cls, frame, mask):
+        return Frame(
+            array=frame,
+            mask=mask,
+            original_roe_corner=frame.original_roe_corner,
+            parallel_overscan=frame.parallel_overscan,
+            serial_prescan=frame.serial_prescan,
+            serial_overscan=frame.serial_overscan,
+        )
 
-class MaskedEuclidFrame(frame.AbstractFrame):
+
+class MaskedEuclidFrame(AbstractFrame):
     @classmethod
     def ccd_and_quadrant_id(cls, array, mask, ccd_id, quad_id):
         """Before reading this docstring, read the docstring for the __init__function above.
@@ -224,9 +249,9 @@ class MaskedEuclidFrame(frame.AbstractFrame):
             array=array,
             mask=mask,
             corner=(0, 0),
-            parallel_overscan=frame.Region((0, 20, 51, 2099)),
-            serial_prescan=frame.Region((0, 2086, 0, 51)),
-            serial_overscan=frame.Region((0, 2086, 2099, 2119)),
+            parallel_overscan=Region((0, 20, 51, 2099)),
+            serial_prescan=Region((0, 2086, 0, 51)),
+            serial_overscan=Region((0, 2086, 2099, 2119)),
         )
 
     @classmethod
@@ -235,9 +260,9 @@ class MaskedEuclidFrame(frame.AbstractFrame):
             array=array,
             mask=mask,
             corner=(0, 1),
-            parallel_overscan=frame.Region((0, 20, 20, 2068)),
-            serial_prescan=frame.Region((0, 2086, 2068, 2119)),
-            serial_overscan=frame.Region((0, 2086, 0, 20)),
+            parallel_overscan=Region((0, 20, 20, 2068)),
+            serial_prescan=Region((0, 2086, 2068, 2119)),
+            serial_overscan=Region((0, 2086, 0, 20)),
         )
 
     @classmethod
@@ -246,9 +271,9 @@ class MaskedEuclidFrame(frame.AbstractFrame):
             array=array,
             mask=mask,
             corner=(1, 0),
-            parallel_overscan=frame.Region((2066, 2086, 51, 2099)),
-            serial_prescan=frame.Region((0, 2086, 0, 51)),
-            serial_overscan=frame.Region((0, 2086, 2099, 2119)),
+            parallel_overscan=Region((2066, 2086, 51, 2099)),
+            serial_prescan=Region((0, 2086, 0, 51)),
+            serial_overscan=Region((0, 2086, 2099, 2119)),
         )
 
     @classmethod
@@ -257,20 +282,20 @@ class MaskedEuclidFrame(frame.AbstractFrame):
             array=array,
             mask=mask,
             corner=(1, 1),
-            parallel_overscan=frame.Region((2066, 2086, 20, 2068)),
-            serial_prescan=frame.Region((0, 2086, 2068, 2119)),
-            serial_overscan=frame.Region((0, 2086, 0, 20)),
+            parallel_overscan=Region((2066, 2086, 20, 2068)),
+            serial_prescan=Region((0, 2086, 2068, 2119)),
+            serial_overscan=Region((0, 2086, 0, 20)),
         )
 
 
-class MaskedCIFrame(ci_frame.AbstractCIFrame):
+class MaskedCIFrame(AbstractCIFrame):
     @classmethod
     def manual(
         cls,
         array,
         mask,
         ci_pattern,
-        corner=(0, 0),
+        roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -291,27 +316,42 @@ class MaskedCIFrame(ci_frame.AbstractCIFrame):
 
         Parameters
         -----------
-        parallel_overscan : frame.Region
+        parallel_overscan : Region
             The parallel overscan region of the ci_frame.
-        serial_prescan : frame.Region
+        serial_prescan : Region
             The serial prescan region of the ci_frame.
-        serial_overscan : frame.Region
+        serial_overscan : Region
             The serial overscan region of the ci_frame.
         """
 
         if type(array) is list:
             array = np.asarray(array)
 
+        array = rotate_util.rotate_array_from_roe_corner(
+            array=array, roe_corner=roe_corner
+        )
+        mask = rotate_util.rotate_array_from_roe_corner(
+            array=mask, roe_corner=roe_corner
+        )
+
         array[mask == True] = 0.0
 
-        return ci_frame.CIFrame(
+        return CIFrame(
             array=array,
             mask=mask,
-            ci_pattern=ci_pattern,
-            corner=corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            ci_pattern=rotate_util.rotate_ci_pattern_from_roe_corner(
+                ci_pattern=ci_pattern, shape_2d=array.shape, roe_corner=roe_corner
+            ),
+            original_roe_corner=roe_corner,
+            parallel_overscan=rotate_util.rotate_region_from_roe_corner(
+                region=parallel_overscan, shape_2d=array.shape, roe_corner=roe_corner
+            ),
+            serial_prescan=rotate_util.rotate_region_from_roe_corner(
+                region=serial_prescan, shape_2d=array.shape, roe_corner=roe_corner
+            ),
+            serial_overscan=rotate_util.rotate_region_from_roe_corner(
+                region=serial_overscan, shape_2d=array.shape, roe_corner=roe_corner
+            ),
         )
 
     @classmethod
@@ -320,7 +360,7 @@ class MaskedCIFrame(ci_frame.AbstractCIFrame):
         fill_value,
         mask,
         ci_pattern,
-        corner=(0, 0),
+        roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -329,7 +369,7 @@ class MaskedCIFrame(ci_frame.AbstractCIFrame):
         return cls.manual(
             array=np.full(fill_value=fill_value, shape=mask.shape_2d),
             ci_pattern=ci_pattern,
-            corner=corner,
+            roe_corner=roe_corner,
             mask=mask,
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
@@ -341,7 +381,7 @@ class MaskedCIFrame(ci_frame.AbstractCIFrame):
         cls,
         mask,
         ci_pattern,
-        corner=(0, 0),
+        roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -350,7 +390,7 @@ class MaskedCIFrame(ci_frame.AbstractCIFrame):
             fill_value=1.0,
             ci_pattern=ci_pattern,
             mask=mask,
-            corner=corner,
+            roe_corner=roe_corner,
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
@@ -361,7 +401,7 @@ class MaskedCIFrame(ci_frame.AbstractCIFrame):
         cls,
         mask,
         ci_pattern,
-        corner=(0, 0),
+        roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -370,7 +410,7 @@ class MaskedCIFrame(ci_frame.AbstractCIFrame):
             fill_value=0.0,
             ci_pattern=ci_pattern,
             mask=mask,
-            corner=corner,
+            roe_corner=roe_corner,
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
@@ -383,7 +423,7 @@ class MaskedCIFrame(ci_frame.AbstractCIFrame):
         hdu,
         mask,
         ci_pattern,
-        corner=(0, 0),
+        roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -402,12 +442,24 @@ class MaskedCIFrame(ci_frame.AbstractCIFrame):
             The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
             locations of different regions of the CCD (overscans, prescan, etc.)
         """
-        return ci_frame.CIFrame(
+        return cls.manual(
             array=array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu),
             mask=mask,
             ci_pattern=ci_pattern,
-            corner=corner,
+            roe_corner=roe_corner,
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
+        )
+
+    @classmethod
+    def from_ci_frame(cls, ci_frame, mask):
+        return CIFrame(
+            array=ci_frame,
+            mask=mask,
+            ci_pattern=ci_frame.ci_pattern,
+            original_roe_corner=ci_frame.original_roe_corner,
+            parallel_overscan=ci_frame.parallel_overscan,
+            serial_prescan=ci_frame.serial_prescan,
+            serial_overscan=ci_frame.serial_overscan,
         )
