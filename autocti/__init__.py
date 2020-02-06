@@ -1,15 +1,9 @@
-from autoarray.structures.arrays import Array as array
-from arctic.model import ArcticParams, CCDVolume, CCDVolumeComplex, Trap
-
 from autocti.structures.mask import Mask as mask
 from autocti.structures.frame import Frame as frame, EuclidFrame as euclid_frame, Region
 from autocti.structures.mask import Mask
-from autocti.model.arctic_settings import ArcticSettings, Settings
-from autocti.model.pyarctic import call_arctic
 from autocti import masked
 from autocti.charge_injection.ci_imaging import (
     CIImaging as ci_imaging,
-    MaskedCIImaging,
     ci_pre_cti_from_ci_pattern_geometry_image_and_mask,
     ci_data_from_fits,
     output_ci_data_to_fits,
@@ -28,6 +22,7 @@ from autocti.pipeline.phase.phase_ci import PhaseCI, cti_params_for_instance
 from autocti.pipeline.phase.phase_extensions import HyperNoisePhase
 from autocti.pipeline.pipeline import Pipeline
 
+from autocti import util
 from autocti import plot
 
 __version__ = "0.11.3"

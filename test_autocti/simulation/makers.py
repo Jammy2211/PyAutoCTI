@@ -61,10 +61,7 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(
         image_path=ci_data_path + "image_" + normalization + ".fits",
         noise_map_path=ci_data_path + "noise_map_" + normalization + ".fits",
         ci_pre_cti_path=ci_data_path + "ci_pre_cti_" + normalization + ".fits",
-        cosmic_ray_map_path=ci_data_path
-        + "cosmic_ray_map_"
-        + normalization
-        + ".fits",
+        cosmic_ray_map_path=ci_data_path + "cosmic_ray_map_" + normalization + ".fits",
         overwrite=True,
     )
 

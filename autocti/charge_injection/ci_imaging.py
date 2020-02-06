@@ -1,6 +1,5 @@
 import numpy as np
 
-import autofit as af
 from autocti.charge_injection import ci_frame as frame
 from autocti.charge_injection import ci_pattern as pattern
 from autocti.structures import frame
@@ -227,65 +226,6 @@ class CIImaging(object):
             mask=mask,
             noise_scaling_maps=noise_scaling_maps,
         )
-
-    @property
-    def signal_to_noise_map(self):
-        """The estimated signal-to-noise_maps mappers of the image."""
-        signal_to_noise_map = np.divide(self.image, self.noise_map)
-        signal_to_noise_map[signal_to_noise_map < 0] = 0
-        return signal_to_noise_map
-
-    @property
-    def signal_to_noise_max(self):
-        """The maximum value of signal-to-noise_maps in an image pixel in the image's signal-to-noise_maps mappers"""
-        return np.max(self.signal_to_noise_map)
-
-
-class MaskedCIImaging(object):
-    def __init__(
-        self,
-            mask,
-        image,
-        noise_map,
-        ci_pre_cti,
-        cosmic_ray_map=None,
-        noise_scaling_maps=None,
-    ):
-        """A fitting image is the collection of simulator components (e.g. the image, noise-maps, PSF, etc.) which are used \
-        to generate and fit it with a model image.
-
-        The fitting image is in 2D and masked, primarily to remove cosmic rays.
-
-        The fitting image also includes a number of attributes which are used to performt the fit, including (y,x) \
-        grids of coordinates, convolvers and other utilities.
-
-        Parameters
-        ----------
-        image : im.Image
-            The 2D observed image and other observed quantities (noise-map, PSF, exposure-time map, etc.)
-        mask: msk.Mask | None
-            The 2D mask that is applied to image simulator.
-
-        Attributes
-        ----------
-        image : ScaledSquarePixelArray
-            The 2D observed image simulator (not an instance of im.Image, so does not include the other simulator attributes,
-            which are explicitly made as new attributes of the fitting image).
-        noise_map : NoiseMap
-            An arrays describing the RMS standard deviation error in each pixel, preferably in unit_label of electrons per
-            second.
-        mask: msk.Mask
-            The 2D mask that is applied to image simulator.
-        """
-
-        # TODO : Need to make masked arrays like in AutoArray.
-
-        self.mask = mask
-        self.image = image
-        self.noise_map = noise_map
-        self.ci_pre_cti = ci_pre_cti
-        self.cosmic_ray_map = cosmic_ray_map
-        self.noise_scaling_maps = noise_scaling_maps
 
     @property
     def signal_to_noise_map(self):

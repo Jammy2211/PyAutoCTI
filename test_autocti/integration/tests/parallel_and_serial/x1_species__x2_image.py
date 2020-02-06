@@ -55,9 +55,7 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     class HyperModelFixedPhaseCI(ac.PhaseCI):
         def customize_priors(self, results):
 
-            self.parallel_traps = results.from_phase(
-                "phase_1"
-            ).constant.parallel_traps
+            self.parallel_traps = results.from_phase("phase_1").constant.parallel_traps
             self.parallel_ccd_volume = results.from_phase(
                 "phase_1"
             ).constant.parallel_ccd_volume
