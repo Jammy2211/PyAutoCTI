@@ -8,16 +8,9 @@ import autocti as ac
 from autocti.structures import frame
 
 
-@pytest.fixture(scope="function")
-def frame_data():
-    frame_data = np.array([[9, 0, 0], [1, 1, 14], [25, -6, 2]])
-
-    return frame_data
-
-
 @pytest.fixture(scope="class")
 def euclid_data():
-    euclid_data = np.zeros((2048, 2066))
+    euclid_data = np.zeros((2086, 2119))
     return euclid_data
 
 
@@ -158,26 +151,26 @@ class TestFrameAPI:
             euclid_frame = ac.euclid_frame.top_left(array=euclid_data)
 
             assert euclid_frame.original_roe_corner == (0, 0)
-            assert euclid_frame.shape_2d == (2048, 2066)
-            assert (euclid_frame.in_2d == np.zeros((2048, 2066))).all()
-            assert euclid_frame.parallel_overscan == (0, 20, 51, 2099)
+            assert euclid_frame.shape_2d == (2086, 2119)
+            assert (euclid_frame.in_2d == np.zeros((2086, 2119))).all()
+            assert euclid_frame.parallel_overscan == (2066, 2086, 51, 2099)
             assert euclid_frame.serial_prescan == (0, 2086, 0, 51)
             assert euclid_frame.serial_overscan == (0, 2086, 2099, 2119)
 
             euclid_frame = ac.euclid_frame.top_right(array=euclid_data)
 
             assert euclid_frame.original_roe_corner == (0, 1)
-            assert euclid_frame.shape_2d == (2048, 2066)
-            assert (euclid_frame.in_2d == np.zeros((2048, 2066))).all()
-            assert euclid_frame.parallel_overscan == (0, 20, 20, 2068)
-            assert euclid_frame.serial_prescan == (0, 2086, 2068, 2119)
-            assert euclid_frame.serial_overscan == (0, 2086, 0, 20)
+            assert euclid_frame.shape_2d == (2086, 2119)
+            assert (euclid_frame.in_2d == np.zeros((2086, 2119))).all()
+            assert euclid_frame.parallel_overscan == (2066, 2086, 51, 2099)
+            assert euclid_frame.serial_prescan == (0, 2086, 0, 51)
+            assert euclid_frame.serial_overscan == (0, 2086, 2099, 2119)
 
             euclid_frame = ac.euclid_frame.bottom_left(array=euclid_data)
 
             assert euclid_frame.original_roe_corner == (1, 0)
-            assert euclid_frame.shape_2d == (2048, 2066)
-            assert (euclid_frame.in_2d == np.zeros((2048, 2066))).all()
+            assert euclid_frame.shape_2d == (2086, 2119)
+            assert (euclid_frame.in_2d == np.zeros((2086, 2119))).all()
             assert euclid_frame.parallel_overscan == (2066, 2086, 51, 2099)
             assert euclid_frame.serial_prescan == (0, 2086, 0, 51)
             assert euclid_frame.serial_overscan == (0, 2086, 2099, 2119)
@@ -185,154 +178,154 @@ class TestFrameAPI:
             euclid_frame = ac.euclid_frame.bottom_right(array=euclid_data)
 
             assert euclid_frame.original_roe_corner == (1, 1)
-            assert euclid_frame.shape_2d == (2048, 2066)
-            assert (euclid_frame.in_2d == np.zeros((2048, 2066))).all()
-            assert euclid_frame.parallel_overscan == (2066, 2086, 20, 2068)
-            assert euclid_frame.serial_prescan == (0, 2086, 2068, 2119)
-            assert euclid_frame.serial_overscan == (0, 2086, 0, 20)
+            assert euclid_frame.shape_2d == (2086, 2119)
+            assert (euclid_frame.in_2d == np.zeros((2086, 2119))).all()
+            assert euclid_frame.parallel_overscan == (2066, 2086, 51, 2099)
+            assert euclid_frame.serial_prescan == (0, 2086, 0, 51)
+            assert euclid_frame.serial_overscan == (0, 2086, 2099, 2119)
 
-        def test__left_side__chooses_correct_frame_given_input(self, frame_data):
+        def test__left_side__chooses_correct_frame_given_input(self, euclid_data):
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text1", quad_id="E"
+                array=euclid_data, ccd_id="text1", quad_id="E"
             )
 
             assert frame.original_roe_corner == (1, 0)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text2", quad_id="E"
+                array=euclid_data, ccd_id="text2", quad_id="E"
             )
 
             assert frame.original_roe_corner == (1, 0)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text3", quad_id="E"
+                array=euclid_data, ccd_id="text3", quad_id="E"
             )
 
             assert frame.original_roe_corner == (1, 0)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text1", quad_id="F"
+                array=euclid_data, ccd_id="text1", quad_id="F"
             )
 
             assert frame.original_roe_corner == (1, 1)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text2", quad_id="F"
+                array=euclid_data, ccd_id="text2", quad_id="F"
             )
 
             assert frame.original_roe_corner == (1, 1)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text3", quad_id="F"
+                array=euclid_data, ccd_id="text3", quad_id="F"
             )
 
             assert frame.original_roe_corner == (1, 1)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text1", quad_id="G"
+                array=euclid_data, ccd_id="text1", quad_id="G"
             )
 
             assert frame.original_roe_corner == (0, 1)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text2", quad_id="G"
+                array=euclid_data, ccd_id="text2", quad_id="G"
             )
 
             assert frame.original_roe_corner == (0, 1)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text3", quad_id="G"
+                array=euclid_data, ccd_id="text3", quad_id="G"
             )
 
             assert frame.original_roe_corner == (0, 1)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text1", quad_id="H"
+                array=euclid_data, ccd_id="text1", quad_id="H"
             )
 
             assert frame.original_roe_corner == (0, 0)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text2", quad_id="H"
+                array=euclid_data, ccd_id="text2", quad_id="H"
             )
 
             assert frame.original_roe_corner == (0, 0)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text3", quad_id="H"
+                array=euclid_data, ccd_id="text3", quad_id="H"
             )
 
             assert frame.original_roe_corner == (0, 0)
 
-        def test__right_side__chooses_correct_frame_given_input(self, frame_data):
+        def test__right_side__chooses_correct_frame_given_input(self, euclid_data):
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text4", quad_id="E"
+                array=euclid_data, ccd_id="text4", quad_id="E"
             )
 
             assert frame.original_roe_corner == (0, 1)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text5", quad_id="E"
+                array=euclid_data, ccd_id="text5", quad_id="E"
             )
 
             assert frame.original_roe_corner == (0, 1)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text6", quad_id="E"
+                array=euclid_data, ccd_id="text6", quad_id="E"
             )
 
             assert frame.original_roe_corner == (0, 1)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text4", quad_id="F"
+                array=euclid_data, ccd_id="text4", quad_id="F"
             )
 
             assert frame.original_roe_corner == (0, 0)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text5", quad_id="F"
+                array=euclid_data, ccd_id="text5", quad_id="F"
             )
 
             assert frame.original_roe_corner == (0, 0)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text6", quad_id="F"
+                array=euclid_data, ccd_id="text6", quad_id="F"
             )
 
             assert frame.original_roe_corner == (0, 0)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text4", quad_id="G"
+                array=euclid_data, ccd_id="text4", quad_id="G"
             )
 
             assert frame.original_roe_corner == (1, 0)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text5", quad_id="G"
+                array=euclid_data, ccd_id="text5", quad_id="G"
             )
 
             assert frame.original_roe_corner == (1, 0)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text6", quad_id="G"
+                array=euclid_data, ccd_id="text6", quad_id="G"
             )
 
             assert frame.original_roe_corner == (1, 0)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text4", quad_id="H"
+                array=euclid_data, ccd_id="text4", quad_id="H"
             )
 
             assert frame.original_roe_corner == (1, 1)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text5", quad_id="H"
+                array=euclid_data, ccd_id="text5", quad_id="H"
             )
 
             assert frame.original_roe_corner == (1, 1)
 
             frame = ac.euclid_frame.ccd_and_quadrant_id(
-                array=frame_data, ccd_id="text6", quad_id="H"
+                array=euclid_data, ccd_id="text6", quad_id="H"
             )
 
             assert frame.original_roe_corner == (1, 1)
@@ -523,36 +516,36 @@ class TestMaskedFrameAPI:
         self, euclid_data
     ):
 
-        mask = np.full(shape=(2048, 2066), fill_value=False)
+        mask = np.full(shape=(2086, 2119), fill_value=False)
         mask[0, 0] = True
 
         euclid_frame = ac.masked.euclid_frame.top_left(array=euclid_data, mask=mask)
 
         assert euclid_frame.original_roe_corner == (0, 0)
-        assert euclid_frame.shape_2d == (2048, 2066)
-        assert (euclid_frame.in_2d == np.zeros((2048, 2066))).all()
-        assert euclid_frame.parallel_overscan == (0, 20, 51, 2099)
+        assert euclid_frame.shape_2d == (2086, 2119)
+        assert (euclid_frame.in_2d == np.zeros((2086, 2119))).all()
+        assert euclid_frame.parallel_overscan == (2066, 2086, 51, 2099)
         assert euclid_frame.serial_prescan == (0, 2086, 0, 51)
         assert euclid_frame.serial_overscan == (0, 2086, 2099, 2119)
-        assert euclid_frame.mask[0, 0] == True
-        assert euclid_frame.mask[0, 1] == False
+        assert euclid_frame.mask[2085, 0] == True
+        assert euclid_frame.mask[2085, 1] == False
 
         euclid_frame = ac.masked.euclid_frame.top_right(array=euclid_data, mask=mask)
 
         assert euclid_frame.original_roe_corner == (0, 1)
-        assert euclid_frame.shape_2d == (2048, 2066)
-        assert (euclid_frame.in_2d == np.zeros((2048, 2066))).all()
-        assert euclid_frame.parallel_overscan == (0, 20, 20, 2068)
-        assert euclid_frame.serial_prescan == (0, 2086, 2068, 2119)
-        assert euclid_frame.serial_overscan == (0, 2086, 0, 20)
-        assert euclid_frame.mask[0, 0] == True
-        assert euclid_frame.mask[0, 1] == False
+        assert euclid_frame.shape_2d == (2086, 2119)
+        assert (euclid_frame.in_2d == np.zeros((2086, 2119))).all()
+        assert euclid_frame.parallel_overscan == (2066, 2086, 51, 2099)
+        assert euclid_frame.serial_prescan == (0, 2086, 0, 51)
+        assert euclid_frame.serial_overscan == (0, 2086, 2099, 2119)
+        assert euclid_frame.mask[2085, 2118] == True
+        assert euclid_frame.mask[2085, 2117] == False
 
         euclid_frame = ac.masked.euclid_frame.bottom_left(array=euclid_data, mask=mask)
 
         assert euclid_frame.original_roe_corner == (1, 0)
-        assert euclid_frame.shape_2d == (2048, 2066)
-        assert (euclid_frame.in_2d == np.zeros((2048, 2066))).all()
+        assert euclid_frame.shape_2d == (2086, 2119)
+        assert (euclid_frame.in_2d == np.zeros((2086, 2119))).all()
         assert euclid_frame.parallel_overscan == (2066, 2086, 51, 2099)
         assert euclid_frame.serial_prescan == (0, 2086, 0, 51)
         assert euclid_frame.serial_overscan == (0, 2086, 2099, 2119)
@@ -562,17 +555,17 @@ class TestMaskedFrameAPI:
         euclid_frame = ac.masked.euclid_frame.bottom_right(array=euclid_data, mask=mask)
 
         assert euclid_frame.original_roe_corner == (1, 1)
-        assert euclid_frame.shape_2d == (2048, 2066)
-        assert (euclid_frame.in_2d == np.zeros((2048, 2066))).all()
-        assert euclid_frame.parallel_overscan == (2066, 2086, 20, 2068)
-        assert euclid_frame.serial_prescan == (0, 2086, 2068, 2119)
-        assert euclid_frame.serial_overscan == (0, 2086, 0, 20)
-        assert euclid_frame.mask[0, 0] == True
-        assert euclid_frame.mask[0, 1] == False
+        assert euclid_frame.shape_2d == (2086, 2119)
+        assert (euclid_frame.in_2d == np.zeros((2086, 2119))).all()
+        assert euclid_frame.parallel_overscan == (2066, 2086, 51, 2099)
+        assert euclid_frame.serial_prescan == (0, 2086, 0, 51)
+        assert euclid_frame.serial_overscan == (0, 2086, 2099, 2119)
+        assert euclid_frame.mask[0, 2118] == True
+        assert euclid_frame.mask[0, 2117] == False
 
     def test__left_side__chooses_correct_frame_given_input(self, euclid_data):
 
-        mask = np.full(shape=(2048, 2066), fill_value=False)
+        mask = np.full(shape=(2086, 2119), fill_value=False)
         mask[0, 0] = True
 
         frame = ac.masked.euclid_frame.ccd_and_quadrant_id(
@@ -651,7 +644,7 @@ class TestMaskedFrameAPI:
 
     def test__right_side__chooses_correct_frame_given_input(self, euclid_data):
 
-        mask = np.full(shape=(2048, 2066), fill_value=False)
+        mask = np.full(shape=(2086, 2119), fill_value=False)
         mask[0, 0] = True
 
         frame = ac.masked.euclid_frame.ccd_and_quadrant_id(
@@ -659,8 +652,8 @@ class TestMaskedFrameAPI:
         )
 
         assert frame.original_roe_corner == (0, 1)
-        assert frame.mask[0, 0] == True
-        assert frame.mask[0, 1] == False
+        assert frame.mask[2085, 2118] == True
+        assert frame.mask[2085, 2117] == False
 
         frame = ac.masked.euclid_frame.ccd_and_quadrant_id(
             array=euclid_data, mask=mask, ccd_id="text5", quad_id="E"
