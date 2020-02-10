@@ -4,7 +4,7 @@ from autoarray.util import array_util
 from autoarray.structures import arrays
 from autoarray.mask import mask as msk
 from autocti.util import rotate_util
-from autocti import exc
+from autocti.structures import region as reg
 
 
 class AbstractFrame(arrays.AbstractArray):
@@ -12,7 +12,7 @@ class AbstractFrame(arrays.AbstractArray):
         cls,
         array,
         mask,
-        original_roe_corner=(0, 0),
+        original_roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -45,13 +45,13 @@ class AbstractFrame(arrays.AbstractArray):
             array = np.asarray(array)
 
         if isinstance(parallel_overscan, tuple):
-            parallel_overscan = Region(region=parallel_overscan)
+            parallel_overscan = reg.Region(region=parallel_overscan)
 
         if isinstance(serial_prescan, tuple):
-            serial_prescan = Region(region=serial_prescan)
+            serial_prescan = reg.Region(region=serial_prescan)
 
         if isinstance(serial_overscan, tuple):
-            serial_overscan = Region(region=serial_overscan)
+            serial_overscan = reg.Region(region=serial_overscan)
 
         array[mask == True] = 0.0
 
@@ -102,80 +102,54 @@ class AbstractFrame(arrays.AbstractArray):
 
     def parallel_trail_from_y(self, y, dy):
         """Coordinates of a parallel trail of size dy from coordinate y"""
-        return (
-            int(y - dy * self.original_roe_corner[0]),
-            int(y + 1 + dy * (abs(self.original_roe_corner[0] - 1))),
-        )
+        return (int(y - dy), int(y + 1))
 
     def serial_trail_from_x(self, x, dx):
         """Coordinates of a serial trail of size dx from coordinate x"""
-        return (
-            int(x - dx * self.original_roe_corner[1]),
-            int(x + 1 + dx * (1 - self.original_roe_corner[1])),
-        )
+        return (int(x), int(x + 1 + dx))
 
     def parallel_front_edge_of_region(self, region, rows):
 
-        check_parallel_front_edge_size(region=region, rows=rows)
+        reg.check_parallel_front_edge_size(region=region, rows=rows)
 
-        if self.original_roe_corner[0] == 0:
-            y_coord = region.y1
-            y_min = y_coord - rows[1]
-            y_max = y_coord - rows[0]
-        else:
-            y_coord = region.y0
-            y_min = y_coord + rows[0]
-            y_max = y_coord + rows[1]
+        y_coord = region.y0
+        y_min = y_coord + rows[0]
+        y_max = y_coord + rows[1]
 
-        return Region((y_min, y_max, region.x0, region.x1))
+        return reg.Region((y_min, y_max, region.x0, region.x1))
 
     def parallel_trails_of_region(self, region, rows=(0, 1)):
-        if self.original_roe_corner[0] == 0:
-            y_coord = region.y0
-            y_min = y_coord - rows[1]
-            y_max = y_coord - rows[0]
-        else:
-            y_coord = region.y1
-            y_min = y_coord + rows[0]
-            y_max = y_coord + rows[1]
-        return Region((y_min, y_max, region.x0, region.x1))
+        y_coord = region.y1
+        y_min = y_coord + rows[0]
+        y_max = y_coord + rows[1]
+        return reg.Region((y_min, y_max, region.x0, region.x1))
 
     def parallel_side_nearest_read_out_region(self, region, columns=(0, 1)):
         x_min, x_max = self.x_limits(region, columns)
-        return Region((0, self.shape_2d[0], x_min, x_max))
+        return reg.Region(region=(0, self.shape_2d[0], x_min, x_max))
 
     def serial_front_edge_of_region(self, region, columns=(0, 1)):
-        check_serial_front_edge_size(region, columns)
+        reg.check_serial_front_edge_size(region, columns)
         x_min, x_max = self.x_limits(region, columns)
-        return Region((region.y0, region.y1, x_min, x_max))
+        return reg.Region(region=(region.y0, region.y1, x_min, x_max))
 
     def serial_trails_of_region(self, region, columns=(0, 1)):
-        if self.original_roe_corner[1] == 0:
-            x_coord = region.x1
-            x_min = x_coord + columns[0]
-            x_max = x_coord + columns[1]
-        else:
-            x_coord = region.x0
-            x_min = x_coord - columns[1]
-            x_max = x_coord - columns[0]
-        return Region((region.y0, region.y1, x_min, x_max))
+        x_coord = region.x1
+        x_min = x_coord + columns[0]
+        x_max = x_coord + columns[1]
+        return reg.Region(region=(region.y0, region.y1, x_min, x_max))
 
     def serial_entire_rows_of_region(self, region):
-        return Region((region.y0, region.y1, 0, self.shape_2d[1]))
+        return reg.Region(region=(region.y0, region.y1, 0, self.shape_2d[1]))
 
     @property
     def serial_trails_columns(self):
         return self.serial_overscan[3] - self.serial_overscan[2]
 
     def x_limits(self, region, columns):
-        if self.original_roe_corner[1] == 0:
-            x_coord = region.x0
-            x_min = x_coord + columns[0]
-            x_max = x_coord + columns[1]
-        else:
-            x_coord = region.x1
-            x_min = x_coord - columns[1]
-            x_max = x_coord - columns[0]
+        x_coord = region.x0
+        x_min = x_coord + columns[0]
+        x_max = x_coord + columns[1]
         return x_min, x_max
 
 
@@ -184,7 +158,7 @@ class Frame(AbstractFrame):
     def manual(
         cls,
         array,
-        roe_corner=(0, 0),
+        roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -422,9 +396,9 @@ class EuclidFrame(Frame):
         return Frame.manual(
             array=array,
             roe_corner=(0, 0),
-            parallel_overscan=Region((0, 20, 51, 2099)),
-            serial_prescan=Region((0, 2086, 0, 51)),
-            serial_overscan=Region((0, 2086, 2099, 2119)),
+            parallel_overscan=reg.Region((0, 20, 51, 2099)),
+            serial_prescan=reg.Region((0, 2086, 0, 51)),
+            serial_overscan=reg.Region((0, 2086, 2099, 2119)),
         )
 
     @classmethod
@@ -432,9 +406,9 @@ class EuclidFrame(Frame):
         return Frame.manual(
             array=array,
             roe_corner=(0, 1),
-            parallel_overscan=Region((0, 20, 20, 2068)),
-            serial_prescan=Region((0, 2086, 2068, 2119)),
-            serial_overscan=Region((0, 2086, 0, 20)),
+            parallel_overscan=reg.Region((0, 20, 20, 2068)),
+            serial_prescan=reg.Region((0, 2086, 2068, 2119)),
+            serial_overscan=reg.Region((0, 2086, 0, 20)),
         )
 
     @classmethod
@@ -442,9 +416,9 @@ class EuclidFrame(Frame):
         return Frame.manual(
             array=array,
             roe_corner=(1, 0),
-            parallel_overscan=Region((2066, 2086, 51, 2099)),
-            serial_prescan=Region((0, 2086, 0, 51)),
-            serial_overscan=Region((0, 2086, 2099, 2119)),
+            parallel_overscan=reg.Region((2066, 2086, 51, 2099)),
+            serial_prescan=reg.Region((0, 2086, 0, 51)),
+            serial_overscan=reg.Region((0, 2086, 2099, 2119)),
         )
 
     @classmethod
@@ -452,119 +426,7 @@ class EuclidFrame(Frame):
         return Frame.manual(
             array=array,
             roe_corner=(1, 1),
-            parallel_overscan=Region((2066, 2086, 20, 2068)),
-            serial_prescan=Region((0, 2086, 2068, 2119)),
-            serial_overscan=Region((0, 2086, 0, 20)),
+            parallel_overscan=reg.Region((2066, 2086, 20, 2068)),
+            serial_prescan=reg.Region((0, 2086, 2068, 2119)),
+            serial_overscan=reg.Region((0, 2086, 0, 20)),
         )
-
-
-class Region(object):
-    def __init__(self, region):
-        """Setup a region of an image, which could be where the parallel overscan, serial overscan, etc. are.
-
-        This is defined as a tuple (y0, y1, x0, x1).
-
-        Parameters
-        -----------
-        region : (int,)
-            The coordinates on the image of the region (y0, y1, x0, y1).
-        """
-
-        if region[0] < 0 or region[1] < 0 or region[2] < 0 or region[3] < 0:
-            raise exc.RegionException(
-                "A coordinate of the Region was specified as negative."
-            )
-
-        if region[0] >= region[1]:
-            raise exc.RegionException(
-                "The first row in the Region was equal to or greater than the second row."
-            )
-
-        if region[2] >= region[3]:
-            raise exc.RegionException(
-                "The first column in the Region was equal to greater than the second column."
-            )
-        self.region = region
-
-    @property
-    def total_rows(self):
-        return self.y1 - self.y0
-
-    @property
-    def total_columns(self):
-        return self.x1 - self.x0
-
-    @property
-    def y0(self):
-        return self[0]
-
-    @property
-    def y1(self):
-        return self[1]
-
-    @property
-    def x0(self):
-        return self[2]
-
-    @property
-    def x1(self):
-        return self[3]
-
-    def __getitem__(self, item):
-        return self.region[item]
-
-    def __eq__(self, other):
-        if self.region == other:
-            return True
-        return super().__eq__(other)
-
-    def __repr__(self):
-        return "<Region {} {} {} {}>".format(*self)
-
-    @property
-    def slice(self):
-        return np.s_[self.y0 : self.y1, self.x0 : self.x1]
-
-    @property
-    def y_slice(self):
-        return np.s_[self.y0 : self.y1]
-
-    @property
-    def x_slice(self):
-        return np.s_[self.x0 : self.x1]
-
-    @property
-    def shape(self):
-        return self.y1 - self.y0, self.x1 - self.x0
-
-
-def check_parallel_front_edge_size(region, rows):
-    # TODO: are these checks important?
-    if (
-        rows[0] < 0
-        or rows[1] < 1
-        or rows[1] > region.y1 - region.y0
-        or rows[0] >= rows[1]
-    ):
-        raise exc.CIPatternException(
-            "The number of rows to extract from the leading edge is bigger than the entire"
-            "ci ci_region"
-        )
-
-
-def check_serial_front_edge_size(region, columns):
-
-    if (
-        columns[0] < 0
-        or columns[1] < 1
-        or columns[1] > region.x1 - region.x0
-        or columns[0] >= columns[1]
-    ):
-        raise exc.CIPatternException(
-            "The number of columns to extract from the leading edge is bigger than the entire"
-            "ci ci_region"
-        )
-
-
-def flip(image):
-    return image[::-1, :]

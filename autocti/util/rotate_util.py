@@ -16,6 +16,9 @@ def rotate_array_from_roe_corner(array, roe_corner):
 
 def rotate_region_from_roe_corner(region, shape_2d, roe_corner):
 
+    if region is None:
+        return None
+
     if roe_corner == (1, 0):
         return region
     elif roe_corner == (0, 0):

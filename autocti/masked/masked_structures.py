@@ -1,7 +1,8 @@
 import numpy as np
 
 from autoarray.util import array_util
-from autocti.structures.frame import AbstractFrame, Frame, Region
+from autocti.structures.frame import AbstractFrame, Frame
+from autocti.structures.region import Region
 from autocti.charge_injection.ci_frame import AbstractCIFrame, CIFrame
 from autocti.util import rotate_util
 
