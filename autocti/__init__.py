@@ -1,5 +1,6 @@
 from autocti.structures.mask import Mask as mask
-from autocti.structures.frame import Frame as frame, EuclidFrame as euclid_frame, Region
+from autocti.structures.frame import Frame as frame, EuclidFrame as euclid_frame
+from autocti.structures.region import Region as region
 from autocti.structures.mask import Mask
 from autocti import masked
 from autocti.charge_injection.ci_imaging import (
