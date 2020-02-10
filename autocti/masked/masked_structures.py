@@ -245,10 +245,10 @@ class MaskedEuclidFrame(AbstractFrame):
 
     @classmethod
     def top_left(cls, array, mask):
-        return MaskedFrame(
+        return MaskedFrame.manual(
             array=array,
             mask=mask,
-            corner=(0, 0),
+            roe_corner=(0, 0),
             parallel_overscan=Region((0, 20, 51, 2099)),
             serial_prescan=Region((0, 2086, 0, 51)),
             serial_overscan=Region((0, 2086, 2099, 2119)),
@@ -256,10 +256,10 @@ class MaskedEuclidFrame(AbstractFrame):
 
     @classmethod
     def top_right(cls, array, mask):
-        return MaskedFrame(
+        return MaskedFrame.manual(
             array=array,
             mask=mask,
-            corner=(0, 1),
+            roe_corner=(0, 1),
             parallel_overscan=Region((0, 20, 20, 2068)),
             serial_prescan=Region((0, 2086, 2068, 2119)),
             serial_overscan=Region((0, 2086, 0, 20)),
@@ -267,10 +267,10 @@ class MaskedEuclidFrame(AbstractFrame):
 
     @classmethod
     def bottom_left(cls, array, mask):
-        return MaskedFrame(
+        return MaskedFrame.manual(
             array=array,
             mask=mask,
-            corner=(1, 0),
+            roe_corner=(1, 0),
             parallel_overscan=Region((2066, 2086, 51, 2099)),
             serial_prescan=Region((0, 2086, 0, 51)),
             serial_overscan=Region((0, 2086, 2099, 2119)),
@@ -278,10 +278,10 @@ class MaskedEuclidFrame(AbstractFrame):
 
     @classmethod
     def bottom_right(cls, array, mask):
-        return MaskedFrame(
+        return MaskedFrame.manual(
             array=array,
             mask=mask,
-            corner=(1, 1),
+            roe_corner=(1, 1),
             parallel_overscan=Region((2066, 2086, 20, 2068)),
             serial_prescan=Region((0, 2086, 2068, 2119)),
             serial_overscan=Region((0, 2086, 0, 20)),
