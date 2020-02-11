@@ -8,7 +8,7 @@ Author: James Nightingale
 import numpy as np
 
 from autocti import exc
-from autocti.structures import frame
+from autocti.structures import region
 
 
 class AbstractCIPattern(object):
@@ -25,7 +25,7 @@ class AbstractCIPattern(object):
             (top-row, bottom-row, left-column, right-column).
         """
         self.normalization = normalization
-        self.regions = list(map(frame.Region, regions))
+        self.regions = list(map(region.Region, regions))
 
     def check_pattern_is_within_image_dimensions(self, dimensions):
 
