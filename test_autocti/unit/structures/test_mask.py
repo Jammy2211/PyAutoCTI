@@ -55,13 +55,12 @@ class TestCosmicRayMask:
 
 
 class TestMaskCosmics:
-
     def test__mask_cosmic_ray_in_different_directions(self):
 
         cosmic_ray_map = ac.frame.manual(
             array=np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
-            ),
+            )
         )
 
         mask = ac.Mask.from_cosmic_ray_map(
@@ -78,7 +77,7 @@ class TestMaskCosmics:
         cosmic_ray_map = ac.frame.manual(
             array=np.array(
                 [[False, False, False], [False, False, False], [False, True, False]]
-            ),
+            )
         )
 
         mask = ac.Mask.from_cosmic_ray_map(
@@ -95,7 +94,7 @@ class TestMaskCosmics:
         cosmic_ray_map = ac.frame.manual(
             array=np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
-            ),
+            )
         )
 
         mask = ac.Mask.from_cosmic_ray_map(
@@ -112,7 +111,7 @@ class TestMaskCosmics:
         cosmic_ray_map = ac.frame.manual(
             array=np.array(
                 [[False, False, False], [True, False, False], [False, False, False]]
-            ),
+            )
         )
 
         mask = ac.Mask.from_cosmic_ray_map(
@@ -129,7 +128,7 @@ class TestMaskCosmics:
         cosmic_ray_map = ac.frame.manual(
             array=np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
-            ),
+            )
         )
 
         mask = ac.Mask.from_cosmic_ray_map(
@@ -151,7 +150,7 @@ class TestMaskCosmics:
                     [False, False, False, False],
                     [False, True, False, False],
                 ]
-            ),
+            )
         )
 
         mask = ac.Mask.from_cosmic_ray_map(
