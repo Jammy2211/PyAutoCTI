@@ -1,5 +1,7 @@
 from copy import deepcopy
 
+from autocti.structures import region as reg
+
 
 def rotate_array_from_roe_corner(array, roe_corner):
 
@@ -20,17 +22,33 @@ def rotate_region_from_roe_corner(region, shape_2d, roe_corner):
         return None
 
     if roe_corner == (1, 0):
-        return region
+        return reg.Region(region=region)
     elif roe_corner == (0, 0):
-        return (shape_2d[0] - region[1], shape_2d[0] - region[0], region[2], region[3])
+        return reg.Region(
+            region=(
+                shape_2d[0] - region[1],
+                shape_2d[0] - region[0],
+                region[2],
+                region[3],
+            )
+        )
     elif roe_corner == (1, 1):
-        return (region[0], region[1], shape_2d[1] - region[3], shape_2d[1] - region[2])
+        return reg.Region(
+            region=(
+                region[0],
+                region[1],
+                shape_2d[1] - region[3],
+                shape_2d[1] - region[2],
+            )
+        )
     elif roe_corner == (0, 1):
-        return (
-            shape_2d[0] - region[1],
-            shape_2d[0] - region[0],
-            shape_2d[1] - region[3],
-            shape_2d[1] - region[2],
+        return reg.Region(
+            region=(
+                shape_2d[0] - region[1],
+                shape_2d[0] - region[0],
+                shape_2d[1] - region[3],
+                shape_2d[1] - region[2],
+            )
         )
 
 

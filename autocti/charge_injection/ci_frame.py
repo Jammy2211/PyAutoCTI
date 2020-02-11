@@ -12,7 +12,7 @@ class AbstractCIFrame(frame.Frame):
         array,
         mask,
         ci_pattern,
-        original_roe_corner=(0, 0),
+        original_roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -1119,12 +1119,9 @@ class AbstractCIFrame(frame.Frame):
     @property
     def parallel_trail_size_to_frame_edge(self):
 
-        if self.original_roe_corner[0] == 0:
-            return np.min([region.y0 for region in self.ci_pattern.regions])
-        else:
-            return self.shape_2d[0] - np.max(
-                [region.y1 for region in self.ci_pattern.regions]
-            )
+        return self.shape_2d[0] - np.max(
+            [region.y1 for region in self.ci_pattern.regions]
+        )
 
 
 class CIFrame(AbstractCIFrame):
@@ -1133,7 +1130,7 @@ class CIFrame(AbstractCIFrame):
         cls,
         array,
         ci_pattern,
-        roe_corner=(0, 0),
+        roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -1197,7 +1194,7 @@ class CIFrame(AbstractCIFrame):
         fill_value,
         shape_2d,
         ci_pattern,
-        roe_corner=(0, 0),
+        roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -1219,7 +1216,7 @@ class CIFrame(AbstractCIFrame):
         cls,
         shape_2d,
         ci_pattern,
-        roe_corner=(0, 0),
+        roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -1241,7 +1238,7 @@ class CIFrame(AbstractCIFrame):
         cls,
         shape_2d,
         ci_pattern,
-        roe_corner=(0, 0),
+        roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
@@ -1264,7 +1261,7 @@ class CIFrame(AbstractCIFrame):
         ci_pattern,
         file_path,
         hdu,
-        roe_corner=(0, 0),
+        roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
