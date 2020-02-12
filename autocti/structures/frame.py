@@ -3,7 +3,7 @@ import numpy as np
 from autoarray.util import array_util
 from autoarray.structures import arrays
 from autoarray.mask import mask as msk
-from autocti.util import rotate_util
+from autocti.util import frame_util
 from autocti.structures import region as reg
 
 
@@ -197,18 +197,18 @@ class Frame(AbstractFrame):
         mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
 
         return Frame(
-            array=rotate_util.rotate_array_from_roe_corner(
+            array=frame_util.rotate_array_from_roe_corner(
                 array=array, roe_corner=roe_corner
             ),
             mask=mask,
             original_roe_corner=roe_corner,
-            parallel_overscan=rotate_util.rotate_region_from_roe_corner(
+            parallel_overscan=frame_util.rotate_region_from_roe_corner(
                 region=parallel_overscan, shape_2d=array.shape, roe_corner=roe_corner
             ),
-            serial_prescan=rotate_util.rotate_region_from_roe_corner(
+            serial_prescan=frame_util.rotate_region_from_roe_corner(
                 region=serial_prescan, shape_2d=array.shape, roe_corner=roe_corner
             ),
-            serial_overscan=rotate_util.rotate_region_from_roe_corner(
+            serial_overscan=frame_util.rotate_region_from_roe_corner(
                 region=serial_overscan, shape_2d=array.shape, roe_corner=roe_corner
             ),
         )
@@ -272,6 +272,15 @@ class Frame(AbstractFrame):
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
             pixel_scales=pixel_scales,
+        )
+
+    @classmethod
+    def extracted_array_as_frame(cls, extracted_array, original_frame):
+
+        return cls.manual(
+            array=extracted_array,
+            roe_corner=original_frame.original_roe_corner,
+            pixel_scales=original_frame.pixel_scales,
         )
 
     @classmethod

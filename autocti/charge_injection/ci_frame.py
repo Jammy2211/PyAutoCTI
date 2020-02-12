@@ -3,7 +3,7 @@ import numpy as np
 from autoarray.util import array_util
 from autoarray.mask import mask as msk
 from autocti.structures import frame
-from autocti.util import rotate_util
+from autocti.util import frame_util
 
 
 class AbstractCIFrame(frame.Frame):
@@ -266,7 +266,7 @@ class AbstractCIFrame(frame.Frame):
 
         return new_frame
 
-    def parallel_calibration_section_for_columns(self, columns):
+    def parallel_calibration_frame_from_columns(self, columns):
         """Extract an parallel calibration array from a charge injection ci_frame, where this arrays is a sub-set of
         the ci_frame which be used for just parallel calibration. Specifically, this ci_frame is a specified number
         of columns closest to the read-out electronics.
@@ -313,10 +313,10 @@ class AbstractCIFrame(frame.Frame):
         []     [=====================]
                <---------S----------
         """
-        calibration_region = self.parallel_side_nearest_read_out_region(
+        extraction_region = self.parallel_side_nearest_read_out_region(
             region=self.ci_pattern.regions[0], columns=columns
         )
-        array = self[calibration_region.slice]
+        array = self[extraction_region.slice]
         return array
 
     @property
@@ -1169,21 +1169,21 @@ class CIFrame(AbstractCIFrame):
         mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
 
         return CIFrame(
-            array=frame.rotate_util.rotate_array_from_roe_corner(
+            array=frame.frame_util.rotate_array_from_roe_corner(
                 array=array, roe_corner=roe_corner
             ),
             mask=mask,
-            ci_pattern=rotate_util.rotate_ci_pattern_from_roe_corner(
+            ci_pattern=frame_util.rotate_ci_pattern_from_roe_corner(
                 ci_pattern=ci_pattern, shape_2d=array.shape, roe_corner=roe_corner
             ),
             original_roe_corner=roe_corner,
-            parallel_overscan=frame.rotate_util.rotate_region_from_roe_corner(
+            parallel_overscan=frame.frame_util.rotate_region_from_roe_corner(
                 region=parallel_overscan, shape_2d=array.shape, roe_corner=roe_corner
             ),
-            serial_prescan=frame.rotate_util.rotate_region_from_roe_corner(
+            serial_prescan=frame.frame_util.rotate_region_from_roe_corner(
                 region=serial_prescan, shape_2d=array.shape, roe_corner=roe_corner
             ),
-            serial_overscan=frame.rotate_util.rotate_region_from_roe_corner(
+            serial_overscan=frame.frame_util.rotate_region_from_roe_corner(
                 region=serial_overscan, shape_2d=array.shape, roe_corner=roe_corner
             ),
         )

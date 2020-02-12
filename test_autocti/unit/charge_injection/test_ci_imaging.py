@@ -5,123 +5,35 @@ import pytest
 import shutil
 
 import autocti as ac
-
-from test import MockGeometry, MockPattern
+from autocti.masked import masked_dataset
 
 test_data_dir = "{}/../test_files/arrays/".format(
     os.path.dirname(os.path.realpath(__file__))
 )
 
 
-@pytest.fixture(scope="class", name="arctic_parallel")
-def make_arctic_parallel():
-    parallel_settings = ac.Settings(
-        well_depth=84700, niter=1, express=5, n_levels=2000, readout_offset=0
-    )
-    parallel = ac.ArcticSettings(neomode="NEO", parallel=parallel_settings)
-
-    return parallel
-
-
-@pytest.fixture(scope="class", name="arctic_serial")
-def make_arctic_serial():
-    serial_settings = ac.Settings(
-        well_depth=84700, niter=1, express=5, n_levels=2000, readout_offset=0
-    )
-
-    serial = ac.ArcticSettings(neomode="NEO", serial=serial_settings)
-
-    return serial
-
-
-@pytest.fixture(scope="class", name="arctic_both")
-def make_arctic_both():
-    parallel_settings = ac.Settings(
-        well_depth=84700, niter=1, express=5, n_levels=2000, readout_offset=0
-    )
-
-    serial_settings = ac.Settings(
-        well_depth=84700, niter=1, express=5, n_levels=2000, readout_offset=0
-    )
-
-    both = ac.ArcticSettings(
-        neomode="NEO", parallel=parallel_settings, serial=serial_settings
-    )
-
-    return both
-
-
-@pytest.fixture(scope="class", name="params_parallel")
-def make_params_parallel():
-    parallel = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
-
-    ccd = ac.CCDVolume(well_notch_depth=0.000001, well_fill_beta=0.8)
-
-    parallel = ac.ArcticParams(parallel_traps=[parallel], parallel_ccd_volume=ccd)
-
-    return parallel
-
-
-@pytest.fixture(scope="class", name="params_serial")
-def make_params_serial():
-    serial = ac.Trap(trap_density=0.2, trap_lifetime=2.0)
-
-    ccd = ac.CCDVolume(well_notch_depth=0.000001, well_fill_beta=0.4)
-
-    serial = ac.ArcticParams(serial_traps=[serial], serial_ccd_volume=ccd)
-
-    return serial
-
-
-@pytest.fixture(scope="class", name="params_both")
-def make_params_both():
-    parallel = ac.Trap(trap_density=0.4, trap_lifetime=1.0)
-
-    parallel_ccd_volume = ac.CCDVolume(well_notch_depth=0.000001, well_fill_beta=0.8)
-
-    serial = ac.Trap(trap_density=0.2, trap_lifetime=2.0)
-
-    serial_ccd_volume = ac.CCDVolume(well_notch_depth=0.000001, well_fill_beta=0.4)
-
-    both = ac.ArcticParams(
-        parallel_traps=[parallel],
-        serial_traps=[serial],
-        parallel_ccd_volume=parallel_ccd_volume,
-        serial_ccd_volume=serial_ccd_volume,
-    )
-
-    return both
-
-
 class TestCIData(object):
-    def test__map(self):
+    def test__map(self, ci_pattern_7x7):
 
-        data = ac.CIImaging(
-            image=1,
+        data = ac.ci_imaging(
+            image=ac.ci_frame.full(
+                fill_value=1.0, shape_2d=(1, 1), ci_pattern=ci_pattern_7x7
+            ),
             noise_map=3,
             ci_pre_cti=4,
-            ci_pattern=None,
-            ci_frame=None,
             cosmic_ray_map=None,
         )
 
         result = data.map_to_ci_data_masked(func=lambda x: 2 * x, mask=1)
-        assert isinstance(result, ac.MaskedCIImaging)
-        assert result.image == 2
+        assert isinstance(result, masked_dataset.MaskedCIImaging)
+        assert result.image == 1.0
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
         assert result.cosmic_ray_map == None
 
-        data = ac.CIImaging(
-            image=1,
-            noise_map=3,
-            ci_pre_cti=4,
-            ci_pattern=None,
-            ci_frame=None,
-            cosmic_ray_map=10,
-        )
+        data = ac.ci_imaging(image=1, noise_map=3, ci_pre_cti=4, cosmic_ray_map=10)
         result = data.map_to_ci_data_masked(func=lambda x: 2 * x, mask=1)
-        assert isinstance(result, ac.MaskedCIImaging)
+        assert isinstance(result, masked_dataset.MaskedCIImaging)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
@@ -129,36 +41,22 @@ class TestCIData(object):
 
     def test__map_including_noise_scaling_maps(self):
 
-        data = ac.CIImaging(
-            image=1,
-            noise_map=3,
-            ci_pre_cti=4,
-            ci_pattern=None,
-            ci_frame=None,
-            cosmic_ray_map=None,
-        )
+        data = ac.ci_imaging(image=1, noise_map=3, ci_pre_cti=4, cosmic_ray_map=None)
         result = data.map_to_ci_data_masked(
             func=lambda x: 2 * x, mask=1, noise_scaling_maps=[1, 2, 3]
         )
-        assert isinstance(result, ac.MaskedCIImaging)
+        assert isinstance(result, masked_dataset.MaskedCIImaging)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
         assert result.noise_scaling_maps == [2, 4, 6]
         assert result.cosmic_ray_map == None
 
-        data = ac.CIImaging(
-            image=1,
-            noise_map=3,
-            ci_pre_cti=4,
-            ci_pattern=None,
-            ci_frame=None,
-            cosmic_ray_map=10,
-        )
+        data = ac.ci_imaging(image=1, noise_map=3, ci_pre_cti=4, cosmic_ray_map=10)
         result = data.map_to_ci_data_masked(
             func=lambda x: 2 * x, mask=1, noise_scaling_maps=[1, 2, 3]
         )
-        assert isinstance(result, ac.MaskedCIImaging)
+        assert isinstance(result, masked_dataset.MaskedCIImaging)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
@@ -167,14 +65,7 @@ class TestCIData(object):
 
     def test__parallel_serial_ci_data_fit_from_mask(self):
 
-        data = ac.CIImaging(
-            image=1,
-            noise_map=3,
-            ci_pre_cti=4,
-            ci_pattern=None,
-            ci_frame=None,
-            cosmic_ray_map=10,
-        )
+        data = ac.ci_imaging(image=1, noise_map=3, ci_pre_cti=4, cosmic_ray_map=10)
 
         def parallel_serial_extractor():
             def extractor(obj):
@@ -182,24 +73,17 @@ class TestCIData(object):
 
             return extractor
 
-        data.parallel_serial_extractor = parallel_serial_extractor
+        data.parallel_serial_ci_imaging = parallel_serial_extractor
         result = data.parallel_serial_ci_data_masked_from_mask(mask=1)
 
-        assert isinstance(result, ac.MaskedCIImaging)
+        assert isinstance(result, masked_dataset.MaskedCIImaging)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
         assert result.cosmic_ray_map == 10
 
     def test__parallel_serial_ci_data_fit_from_mask__include_noise_scaling_maps(self):
-        data = ac.CIImaging(
-            image=1,
-            noise_map=3,
-            ci_pre_cti=4,
-            ci_pattern=None,
-            ci_frame=None,
-            cosmic_ray_map=10,
-        )
+        data = ac.ci_imaging(image=1, noise_map=3, ci_pre_cti=4, cosmic_ray_map=10)
 
         def parallel_serial_extractor():
             def extractor(obj):
@@ -207,12 +91,12 @@ class TestCIData(object):
 
             return extractor
 
-        data.parallel_serial_extractor = parallel_serial_extractor
+        data.parallel_serial_ci_imaging = parallel_serial_extractor
         result = data.parallel_serial_ci_data_masked_from_mask(
             mask=1, noise_scaling_maps=[2, 3]
         )
 
-        assert isinstance(result, ac.MaskedCIImaging)
+        assert isinstance(result, masked_dataset.MaskedCIImaging)
         assert result.image == 2
         assert result.noise_map == 6
         assert result.ci_pre_cti == 8
@@ -223,12 +107,8 @@ class TestCIData(object):
         image = np.ones((2, 2))
         image[0, 0] = 6.0
 
-        data = ac.CIImaging(
-            image=image,
-            noise_map=2.0 * np.ones((2, 2)),
-            ci_pre_cti=None,
-            ci_pattern=None,
-            ci_frame=None,
+        data = ac.ci_imaging(
+            image=image, noise_map=2.0 * np.ones((2, 2)), ci_pre_cti=None
         )
 
         assert (data.signal_to_noise_map == np.array([[3.0, 0.5], [0.5, 0.5]])).all()
@@ -245,7 +125,7 @@ class TestCIDataSimulate(object):
 
         ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(5, 5))
 
-        ci_data_simulate = ac.CIImaging.simulate(
+        ci_data_simulate = ac.ci_imaging.simulate(
             ci_pre_cti=ci_pre_cti,
             frame_geometry=ac.FrameGeometry.bottom_left(),
             ci_pattern=pattern,
@@ -265,7 +145,7 @@ class TestCIDataSimulate(object):
 
         ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(3, 3))
 
-        ci_data_simulate = ac.CIImaging.simulate(
+        ci_data_simulate = ac.ci_imaging.simulate(
             ci_pre_cti=ci_pre_cti,
             frame_geometry=ac.FrameGeometry.bottom_left(),
             ci_pattern=pattern,
@@ -295,7 +175,7 @@ class TestCIDataSimulate(object):
         cosmic_ray_map = np.zeros((5, 5))
         cosmic_ray_map[2, 2] = 100.0
 
-        ci_data_simulate = ac.CIImaging.simulate(
+        ci_data_simulate = ac.ci_imaging.simulate(
             ci_pre_cti=ci_pre_cti,
             frame_geometry=ac.FrameGeometry.bottom_left(),
             ci_pattern=pattern,
@@ -346,7 +226,7 @@ class TestCIDataSimulate(object):
             parallel_traps=parallel_traps, parallel_ccd_volume=parallel_ccd_volume
         )
 
-        ci_data_simulate = ac.CIImaging.simulate(
+        ci_data_simulate = ac.ci_imaging.simulate(
             ci_pre_cti=ci_pre_cti,
             frame_geometry=ac.FrameGeometry.bottom_left(),
             ci_pattern=pattern,

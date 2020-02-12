@@ -630,7 +630,7 @@ class TestParallelEdgesAndTrailsFrame:
         assert new_ci_frame.ci_pattern.regions == [(0, 1, 0, 3), (3, 4, 0, 3)]
 
 
-class TestParallelCalibrationSection:
+class TestParallelCalibrationFrame:
     def test__columns_0_to_1__extracts_1_column_left_hand_side_of_array(self):
         ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 3, 0, 3)])
 
@@ -648,11 +648,11 @@ class TestParallelCalibrationSection:
             array=arr, roe_corner=(1, 0), ci_pattern=ci_pattern
         )
 
-        extracted_side = ci_frame.parallel_calibration_section_for_columns(
+        extracted_frame = ci_frame.parallel_calibration_frame_from_columns(
             columns=(0, 1)
         )
 
-        assert (extracted_side == np.array([[0.0], [0.0], [0.0], [0.0], [0.0]])).all()
+        assert (extracted_frame == np.array([[0.0], [0.0], [0.0], [0.0], [0.0]])).all()
 
     def test__columns_1_to_3__extracts_2_columns_middle_and_right_of_array(self):
         ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 5, 0, 3)])
@@ -671,7 +671,7 @@ class TestParallelCalibrationSection:
             array=arr, roe_corner=(1, 0), ci_pattern=ci_pattern
         )
 
-        extracted_side = ci_frame.parallel_calibration_section_for_columns(
+        extracted_side = ci_frame.parallel_calibration_frame_from_columns(
             columns=(1, 3)
         )
 

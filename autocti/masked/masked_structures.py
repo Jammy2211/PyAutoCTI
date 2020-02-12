@@ -4,7 +4,7 @@ from autoarray.util import array_util
 from autocti.structures.frame import AbstractFrame, Frame
 from autocti.structures.region import Region
 from autocti.charge_injection.ci_frame import AbstractCIFrame, CIFrame
-from autocti.util import rotate_util
+from autocti.util import frame_util
 
 
 class MaskedFrame(AbstractFrame):
@@ -45,10 +45,10 @@ class MaskedFrame(AbstractFrame):
         if type(array) is list:
             array = np.asarray(array)
 
-        array = rotate_util.rotate_array_from_roe_corner(
+        array = frame_util.rotate_array_from_roe_corner(
             array=array, roe_corner=roe_corner
         )
-        mask = rotate_util.rotate_array_from_roe_corner(
+        mask = frame_util.rotate_array_from_roe_corner(
             array=mask, roe_corner=roe_corner
         )
 
@@ -58,13 +58,13 @@ class MaskedFrame(AbstractFrame):
             array=array,
             mask=mask,
             original_roe_corner=roe_corner,
-            parallel_overscan=rotate_util.rotate_region_from_roe_corner(
+            parallel_overscan=frame_util.rotate_region_from_roe_corner(
                 region=parallel_overscan, shape_2d=array.shape, roe_corner=roe_corner
             ),
-            serial_prescan=rotate_util.rotate_region_from_roe_corner(
+            serial_prescan=frame_util.rotate_region_from_roe_corner(
                 region=serial_prescan, shape_2d=array.shape, roe_corner=roe_corner
             ),
-            serial_overscan=rotate_util.rotate_region_from_roe_corner(
+            serial_overscan=frame_util.rotate_region_from_roe_corner(
                 region=serial_overscan, shape_2d=array.shape, roe_corner=roe_corner
             ),
         )
@@ -328,10 +328,10 @@ class MaskedCIFrame(AbstractCIFrame):
         if type(array) is list:
             array = np.asarray(array)
 
-        array = rotate_util.rotate_array_from_roe_corner(
+        array = frame_util.rotate_array_from_roe_corner(
             array=array, roe_corner=roe_corner
         )
-        mask = rotate_util.rotate_array_from_roe_corner(
+        mask = frame_util.rotate_array_from_roe_corner(
             array=mask, roe_corner=roe_corner
         )
 
@@ -340,17 +340,17 @@ class MaskedCIFrame(AbstractCIFrame):
         return CIFrame(
             array=array,
             mask=mask,
-            ci_pattern=rotate_util.rotate_ci_pattern_from_roe_corner(
+            ci_pattern=frame_util.rotate_ci_pattern_from_roe_corner(
                 ci_pattern=ci_pattern, shape_2d=array.shape, roe_corner=roe_corner
             ),
             original_roe_corner=roe_corner,
-            parallel_overscan=rotate_util.rotate_region_from_roe_corner(
+            parallel_overscan=frame_util.rotate_region_from_roe_corner(
                 region=parallel_overscan, shape_2d=array.shape, roe_corner=roe_corner
             ),
-            serial_prescan=rotate_util.rotate_region_from_roe_corner(
+            serial_prescan=frame_util.rotate_region_from_roe_corner(
                 region=serial_prescan, shape_2d=array.shape, roe_corner=roe_corner
             ),
-            serial_overscan=rotate_util.rotate_region_from_roe_corner(
+            serial_overscan=frame_util.rotate_region_from_roe_corner(
                 region=serial_overscan, shape_2d=array.shape, roe_corner=roe_corner
             ),
         )
