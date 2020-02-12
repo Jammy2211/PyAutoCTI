@@ -4,6 +4,7 @@ from autocti.charge_injection import ci_frame as frame
 from autocti.charge_injection import ci_pattern as pattern
 from autocti.structures import frame
 from autocti.structures import mask as msk
+from autocti.masked import masked_dataset
 from autoarray.util import array_util
 
 
@@ -87,8 +88,8 @@ class CIImaging(object):
         return self.image.ci_pattern
 
     @property
-    def shape(self):
-        return self.image.shape
+    def shape_2d(self):
+        return self.image.shape_2d
 
     def map_to_ci_data_masked(self, func, mask, noise_scaling_maps=None):
         """
@@ -108,52 +109,44 @@ class CIImaging(object):
         masked_ci_data: MaskedCIImaging
         """
 
-        return MaskedCIImaging(
+        return masked_dataset.MaskedCIImaging(
             image=func(self.image),
             noise_map=func(self.noise_map),
             ci_pre_cti=func(self.ci_pre_cti),
             mask=func(mask),
             ci_pattern=self.ci_pattern,
-            ci_frame=self.ci_frame,
             noise_scaling_maps=list(map(func, noise_scaling_maps))
             if noise_scaling_maps is not None
             else None,
             cosmic_ray_map=self.cosmic_ray_map,
         )
 
-    def parallel_extractor(self, columns):
+    def parallel_calibration_ci_imaging_for_columns(self, columns):
         """
         Creates a function to extract a parallel section for given columns
         """
 
-        def extractor(obj):
-            return self.ci_frame.frame_geometry.parallel_calibration_section_for_columns(
-                array=obj, columns=columns
-            )
+        return CIImaging(
+            image=self.image.parallel_calibration_frame_from_columns(columns=columns)
+        )
 
-        return extractor
-
-    def serial_extractor(self, rows):
+    def serial_calibration_ci_imaging_for_rows(self, rows):
         """
         Creates a function to extract a serial section for given rows
         """
 
         def extractor(obj):
-            return self.ci_frame.frame_geometry.serial_calibration_section_for_rows(
-                array=obj, rows=rows
-            )
+            return obj.serial_calibration_section_for_rows(rows=rows)
 
         return extractor
 
-    def parallel_serial_extractor(self):
+    def parallel_serial_ci_imaging(self):
         """
         Creates a function to extract a parallel and serial calibration section
         """
 
         def extractor(obj):
-            return self.ci_frame.frame_geometry.parallel_serial_calibration_section(
-                array=obj
-            )
+            return obj.parallel_serial_calibration_section()
 
         return extractor
 
@@ -176,7 +169,7 @@ class CIImaging(object):
         MaskedCIImaging
         """
         return self.map_to_ci_data_masked(
-            func=self.parallel_extractor(columns),
+            func=self.parallel_calibration_ci_imaging_for_columns(columns),
             mask=mask,
             noise_scaling_maps=noise_scaling_maps,
         )
@@ -200,7 +193,7 @@ class CIImaging(object):
         MaskedCIImaging
         """
         return self.map_to_ci_data_masked(
-            func=self.serial_extractor(rows),
+            func=self.serial_calibration_ci_imaging_for_rows(rows),
             mask=mask,
             noise_scaling_maps=noise_scaling_maps,
         )
@@ -222,7 +215,7 @@ class CIImaging(object):
         MaskedCIImaging
         """
         return self.map_to_ci_data_masked(
-            func=self.parallel_serial_extractor(),
+            func=self.parallel_serial_ci_imaging(),
             mask=mask,
             noise_scaling_maps=noise_scaling_maps,
         )
