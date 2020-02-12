@@ -66,19 +66,22 @@ def rotate_ci_pattern_from_roe_corner(ci_pattern, shape_2d, roe_corner):
     return new_ci_pattern
 
 
-def region_after_extraction(original_region, extracted_frame_region):
+def region_after_extraction(original_region, extraction_region):
+
+    if original_region is None:
+        return None
 
     y0, y1 = x0x1_after_extraction(
         x0o=original_region[0],
         x1o=original_region[1],
-        x0e=extracted_frame_region[0],
-        x1e=extracted_frame_region[1],
+        x0e=extraction_region[0],
+        x1e=extraction_region[1],
     )
     x0, x1 = x0x1_after_extraction(
         x0o=original_region[2],
         x1o=original_region[3],
-        x0e=extracted_frame_region[2],
-        x1e=extracted_frame_region[3],
+        x0e=extraction_region[2],
+        x1e=extraction_region[3],
     )
 
     if None in [y0, y1, x0, x1]:

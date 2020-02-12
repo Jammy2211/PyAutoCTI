@@ -1256,6 +1256,32 @@ class CIFrame(AbstractCIFrame):
         )
 
     @classmethod
+    def extracted_ci_frame_from_ci_frame_and_extraction_region(
+        cls, ci_frame, extraction_region
+    ):
+
+        return cls.manual(
+            array=ci_frame[extraction_region.slice],
+            ci_pattern=ci_frame.ci_pattern.with_extracted_regions(
+                extraction_region=extraction_region
+            ),
+            parallel_overscan=frame_util.region_after_extraction(
+                original_region=ci_frame.parallel_overscan,
+                extraction_region=extraction_region,
+            ),
+            serial_prescan=frame_util.region_after_extraction(
+                original_region=ci_frame.serial_prescan,
+                extraction_region=extraction_region,
+            ),
+            serial_overscan=frame_util.region_after_extraction(
+                original_region=ci_frame.serial_overscan,
+                extraction_region=extraction_region,
+            ),
+            roe_corner=ci_frame.original_roe_corner,
+            pixel_scales=ci_frame.pixel_scales,
+        )
+
+    @classmethod
     def from_fits(
         cls,
         ci_pattern,

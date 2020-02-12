@@ -187,25 +187,25 @@ class TestRegionAfterExtraction:
     def test__simple_test_cases(self):
 
         region = ac.util.frame.region_after_extraction(
-            original_region=(2, 4, 2, 4), extracted_frame_region=(0, 6, 0, 6)
+            original_region=(2, 4, 2, 4), extraction_region=(0, 6, 0, 6)
         )
 
         assert region == (2, 4, 2, 4)
 
         region = ac.util.frame.region_after_extraction(
-            original_region=(2, 4, 2, 4), extracted_frame_region=(3, 5, 3, 5)
+            original_region=(2, 4, 2, 4), extraction_region=(3, 5, 3, 5)
         )
 
         assert region == (0, 1, 0, 1)
 
         region = ac.util.frame.region_after_extraction(
-            original_region=(2, 4, 2, 4), extracted_frame_region=(2, 5, 2, 5)
+            original_region=(2, 4, 2, 4), extraction_region=(2, 5, 2, 5)
         )
 
         assert region == (0, 2, 0, 2)
 
         region = ac.util.frame.region_after_extraction(
-            original_region=(2, 4, 2, 4), extracted_frame_region=(0, 3, 0, 3)
+            original_region=(2, 4, 2, 4), extraction_region=(0, 3, 0, 3)
         )
 
         assert region == (2, 3, 2, 3)
@@ -213,19 +213,25 @@ class TestRegionAfterExtraction:
     def test__regions_do_not_overlap__returns_none(self):
 
         region = ac.util.frame.region_after_extraction(
-            original_region=(2, 4, 2, 4), extracted_frame_region=(0, 6, 0, 1)
+            original_region=(2, 4, 2, 4), extraction_region=(0, 6, 0, 1)
         )
 
         assert region == None
 
         region = ac.util.frame.region_after_extraction(
-            original_region=(2, 4, 2, 4), extracted_frame_region=(0, 1, 0, 6)
+            original_region=(2, 4, 2, 4), extraction_region=(0, 1, 0, 6)
         )
 
         assert region == None
 
         region = ac.util.frame.region_after_extraction(
-            original_region=(2, 4, 2, 4), extracted_frame_region=(0, 1, 0, 1)
+            original_region=(2, 4, 2, 4), extraction_region=(0, 1, 0, 1)
+        )
+
+        assert region == None
+
+        region = ac.util.frame.region_after_extraction(
+            original_region=None, extraction_region=(0, 6, 0, 1)
         )
 
         assert region == None

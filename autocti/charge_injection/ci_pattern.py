@@ -7,7 +7,10 @@ Author: James Nightingale
 
 import numpy as np
 
+from copy import deepcopy
+
 from autocti import exc
+from autocti.util import frame_util
 from autocti.structures import region
 
 
@@ -26,6 +29,25 @@ class AbstractCIPattern(object):
         """
         self.normalization = normalization
         self.regions = list(map(region.Region, regions))
+
+    def with_extracted_regions(self, extraction_region):
+
+        ci_pattern = deepcopy(self)
+
+        extracted_regions = list(
+            map(
+                lambda region: frame_util.region_after_extraction(
+                    original_region=region, extraction_region=extraction_region
+                ),
+                self.regions,
+            )
+        )
+        extracted_regions = list(filter(None, extracted_regions))
+        if not extracted_regions:
+            extracted_regions = None
+
+        ci_pattern.regions = extracted_regions
+        return ci_pattern
 
     def check_pattern_is_within_image_dimensions(self, dimensions):
 
