@@ -275,12 +275,24 @@ class Frame(AbstractFrame):
         )
 
     @classmethod
-    def extracted_array_as_frame(cls, extracted_array, original_frame):
+    def extracted_frame_from_frame_and_extraction_region(cls, frame, extraction_region):
 
         return cls.manual(
-            array=extracted_array,
-            roe_corner=original_frame.original_roe_corner,
-            pixel_scales=original_frame.pixel_scales,
+            array=frame[extraction_region.slice],
+            parallel_overscan=frame_util.region_after_extraction(
+                original_region=frame.parallel_overscan,
+                extraction_region=extraction_region,
+            ),
+            serial_prescan=frame_util.region_after_extraction(
+                original_region=frame.serial_prescan,
+                extraction_region=extraction_region,
+            ),
+            serial_overscan=frame_util.region_after_extraction(
+                original_region=frame.serial_overscan,
+                extraction_region=extraction_region,
+            ),
+            roe_corner=frame.original_roe_corner,
+            pixel_scales=frame.pixel_scales,
         )
 
     @classmethod

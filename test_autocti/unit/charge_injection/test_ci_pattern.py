@@ -123,6 +123,45 @@ class TestCIPattern(object):
             with pytest.raises(exc.RegionException):
                 ac.CIPatternUniform(normalization=1.0, regions=([(0, 0, 0, -1)]))
 
+    class TestWithExtractedRegions:
+        def test__regions_are_extracted_correctly(self):
+
+            pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 2, 0, 2)])
+
+            pattern_extracted = pattern.with_extracted_regions(
+                extraction_region=ac.region((0, 2, 0, 2))
+            )
+
+            assert pattern_extracted.regions == [(0, 2, 0, 2)]
+
+            pattern_extracted = pattern.with_extracted_regions(
+                extraction_region=ac.region((0, 1, 0, 1))
+            )
+
+            assert pattern_extracted.regions == [(0, 1, 0, 1)]
+
+            pattern = ac.CIPatternUniform(
+                normalization=1.0, regions=[(2, 4, 2, 4), (0, 1, 0, 1)]
+            )
+
+            pattern_extracted = pattern.with_extracted_regions(
+                extraction_region=ac.region((0, 3, 0, 3))
+            )
+
+            assert pattern_extracted.regions == [(2, 3, 2, 3), (0, 1, 0, 1)]
+
+            pattern_extracted = pattern.with_extracted_regions(
+                extraction_region=ac.region((2, 5, 2, 5))
+            )
+
+            assert pattern_extracted.regions == [(0, 2, 0, 2)]
+
+            pattern_extracted = pattern.with_extracted_regions(
+                extraction_region=ac.region((8, 9, 8, 9))
+            )
+
+            assert pattern_extracted.regions == None
+
 
 class TestCIPatternUniform(object):
     class TestConstructor:

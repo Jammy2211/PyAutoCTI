@@ -146,6 +146,33 @@ class TestCIFrameAPI:
         assert ci_frame.serial_overscan == (0, 2, 0, 2)
         assert (ci_frame.mask == np.array([[False, False], [False, False]])).all()
 
+    def test__extracted_ci_frame_from_ci_frame_and_extraction_region(self):
+
+        ci_frame = ac.ci_frame.manual(
+            array=[[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]],
+            ci_pattern=ac.CIPatternUniform(
+                regions=[(0, 1, 0, 1), (1, 2, 1, 2)], normalization=10.0
+            ),
+            roe_corner=(1, 0),
+            parallel_overscan=None,
+            serial_prescan=(0, 2, 0, 2),
+            serial_overscan=(1, 2, 1, 2),
+        )
+
+        ci_frame = ac.ci_frame.extracted_ci_frame_from_ci_frame_and_extraction_region(
+            ci_frame=ci_frame, extraction_region=ac.region(region=(1, 3, 1, 3))
+        )
+
+        assert (ci_frame == np.array([[5.0, 6.0], [8.0, 9.0]])).all()
+        assert (ci_frame.in_2d == np.array([[5.0, 6.0], [8.0, 9.0]])).all()
+        assert (ci_frame.in_1d == np.array([5.0, 6.0, 8.0, 9.0])).all()
+        assert ci_frame.ci_pattern.regions == [(0, 1, 0, 1)]
+        assert ci_frame.original_roe_corner == (1, 0)
+        assert ci_frame.parallel_overscan == None
+        assert ci_frame.serial_prescan == (0, 1, 0, 1)
+        assert ci_frame.serial_overscan == (0, 1, 0, 1)
+        assert (ci_frame.mask == np.array([[False, False], [False, False]])).all()
+
 
 class TestCIMaskedFrameAPI:
     def test__manual__makes_ci_frame_using_inputs(self):
