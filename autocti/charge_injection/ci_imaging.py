@@ -136,7 +136,7 @@ class CIImaging(object):
         """
 
         def extractor(obj):
-            return obj.serial_calibration_section_for_rows(rows=rows)
+            return obj.serial_calibration_frame_from_rows(rows=rows)
 
         return extractor
 
