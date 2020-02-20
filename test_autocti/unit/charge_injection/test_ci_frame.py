@@ -659,7 +659,7 @@ class TestParallelEdgesAndTrailsFrame:
 
 class TestParallelCalibrationFrame:
     def test__columns_0_to_1__extracts_1_column_left_hand_side_of_array(self):
-        ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(1, 3, 0, 3)])
+        ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 0, 3)])
 
         arr = np.array(
             [
@@ -680,6 +680,7 @@ class TestParallelCalibrationFrame:
         )
 
         assert (extracted_frame == np.array([[0.0], [0.0], [0.0], [0.0], [0.0]])).all()
+        assert extracted_frame.ci_pattern.regions == [(0, 3, 0, 1)]
 
     def test__columns_1_to_3__extracts_2_columns_middle_and_right_of_array(self):
         ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 5, 0, 3)])
@@ -698,14 +699,15 @@ class TestParallelCalibrationFrame:
             array=arr, roe_corner=(1, 0), ci_pattern=ci_pattern
         )
 
-        extracted_side = ci_frame.parallel_calibration_frame_from_columns(
+        extracted_frame = ci_frame.parallel_calibration_frame_from_columns(
             columns=(1, 3)
         )
 
         assert (
-            extracted_side
+            extracted_frame
             == np.array([[1.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0]])
         ).all()
+        assert extracted_frame.ci_pattern.regions == [(0, 5, 0, 2)]
 
 
 class TestSerialEdgesAndTrailsFrame:
@@ -1026,7 +1028,7 @@ class TestSerialOverScanAboveTrailsFrame:
 class TestSerialCalibrationSection:
     def test__ci_region_across_all_image__column_0__extracts_all_columns(self):
 
-        ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 0, 5)])
+        ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 5)])
 
         arr = np.array(
             [
@@ -1037,10 +1039,13 @@ class TestSerialCalibrationSection:
         )
 
         ci_frame = ac.ci_frame.manual(
-            array=arr, roe_corner=(1, 0), ci_pattern=ci_pattern
+            array=arr,
+            roe_corner=(1, 0),
+            ci_pattern=ci_pattern,
+            serial_prescan=(0, 3, 0, 1),
         )
 
-        serial_frame = ci_frame.serial_calibration_section_for_rows(rows=(0, 3))
+        serial_frame = ci_frame.serial_calibration_frame_from_rows(rows=(0, 3))
 
         assert (
             serial_frame[0]
@@ -1053,10 +1058,17 @@ class TestSerialCalibrationSection:
             )
         ).all()
 
+        assert serial_frame.original_roe_corner == (1, 0)
+        assert serial_frame.ci_pattern.regions == [(0, 3, 1, 5)]
+        assert serial_frame.parallel_overscan == None
+        assert serial_frame.serial_prescan == (0, 3, 0, 1)
+        assert serial_frame.serial_overscan == None
+        assert serial_frame.pixel_scales == None
+
     def test__2_ci_regions__both_extracted(self):
 
         ci_pattern = ac.CIPatternUniform(
-            normalization=1.0, regions=[(0, 1, 1, 4), (2, 3, 1, 4)]
+            normalization=1.0, regions=[(0, 1, 1, 3), (2, 3, 1, 3)]
         )
 
         arr = np.array(
@@ -1068,19 +1080,29 @@ class TestSerialCalibrationSection:
         )
 
         ci_frame = ac.ci_frame.manual(
-            array=arr, roe_corner=(1, 0), ci_pattern=ci_pattern
+            array=arr,
+            roe_corner=(1, 0),
+            ci_pattern=ci_pattern,
+            serial_prescan=(0, 3, 0, 1),
+            serial_overscan=(0, 3, 3, 4),
         )
 
-        serial_frame = ci_frame.serial_calibration_section_for_rows(rows=(0, 1))
+        serial_frame = ci_frame.serial_calibration_frame_from_rows(rows=(0, 1))
 
         assert (
             serial_frame
             == np.array([[0.0, 1.0, 2.0, 2.0, 2.0], [0.0, 1.0, 4.0, 4.0, 4.0]])
         ).all()
+        assert serial_frame.original_roe_corner == (1, 0)
+        assert serial_frame.ci_pattern.regions == [(0, 1, 1, 3), (1, 2, 1, 3)]
+        assert serial_frame.parallel_overscan == None
+        assert serial_frame.serial_prescan == (0, 2, 0, 1)
+        assert serial_frame.serial_overscan == (0, 2, 3, 4)
+        assert serial_frame.pixel_scales == None
 
     def test__rows_cuts_out_bottom_row(self):
 
-        ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 0, 5)])
+        ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 2, 1, 4)])
 
         arr = np.array(
             [
@@ -1091,15 +1113,25 @@ class TestSerialCalibrationSection:
         )
 
         ci_frame = ac.ci_frame.manual(
-            array=arr, roe_corner=(1, 0), ci_pattern=ci_pattern
+            array=arr,
+            roe_corner=(1, 0),
+            ci_pattern=ci_pattern,
+            serial_prescan=(0, 3, 0, 1),
+            serial_overscan=(0, 3, 3, 4),
         )
 
-        serial_frame = ci_frame.serial_calibration_section_for_rows(rows=(0, 2))
+        serial_frame = ci_frame.serial_calibration_frame_from_rows(rows=(0, 2))
 
         assert (
             serial_frame
             == np.array([[0.0, 1.0, 2.0, 3.0, 4.0], [0.0, 1.0, 2.0, 3.0, 4.0]])
         ).all()
+        assert serial_frame.original_roe_corner == (1, 0)
+        assert serial_frame.ci_pattern.regions == [(0, 2, 1, 4)]
+        assert serial_frame.parallel_overscan == None
+        assert serial_frame.serial_prescan == (0, 2, 0, 1)
+        assert serial_frame.serial_overscan == (0, 2, 3, 4)
+        assert serial_frame.pixel_scales == None
 
     def test__extract_two_regions_and_cut_bottom_row_from_each(self):
 
@@ -1118,15 +1150,25 @@ class TestSerialCalibrationSection:
         )
 
         ci_frame = ac.ci_frame.manual(
-            array=arr, roe_corner=(1, 0), ci_pattern=ci_pattern
+            array=arr,
+            roe_corner=(1, 0),
+            ci_pattern=ci_pattern,
+            serial_prescan=(0, 5, 0, 1),
+            serial_overscan=(0, 5, 3, 4),
         )
 
-        serial_frame = ci_frame.serial_calibration_section_for_rows(rows=(0, 1))
+        serial_frame = ci_frame.serial_calibration_frame_from_rows(rows=(0, 1))
 
         assert (
             serial_frame
             == np.array([[0.0, 1.0, 2.0, 2.0, 2.0], [0.0, 1.0, 5.0, 5.0, 5.0]])
         ).all()
+        assert serial_frame.original_roe_corner == (1, 0)
+        assert serial_frame.ci_pattern.regions == [(0, 1, 1, 4), (1, 2, 1, 4)]
+        assert serial_frame.parallel_overscan == None
+        assert serial_frame.serial_prescan == (0, 2, 0, 1)
+        assert serial_frame.serial_overscan == (0, 2, 3, 4)
+        assert serial_frame.pixel_scales == None
 
     def test__extract_two_regions_and_cut_top_row_from_each(self):
 
@@ -1145,15 +1187,25 @@ class TestSerialCalibrationSection:
         )
 
         ci_frame = ac.ci_frame.manual(
-            array=arr, roe_corner=(1, 0), ci_pattern=ci_pattern
+            array=arr,
+            roe_corner=(1, 0),
+            ci_pattern=ci_pattern,
+            serial_prescan=(0, 3, 0, 1),
+            serial_overscan=(0, 3, 3, 4),
         )
 
-        serial_frame = ci_frame.serial_calibration_section_for_rows(rows=(1, 2))
+        serial_frame = ci_frame.serial_calibration_frame_from_rows(rows=(1, 2))
 
         assert (
             serial_frame
             == np.array([[0.0, 1.0, 3.0, 3.0, 3.0], [0.0, 1.0, 6.0, 6.0, 6.0]])
         ).all()
+        assert serial_frame.original_roe_corner == (1, 0)
+        assert serial_frame.ci_pattern.regions == [(0, 1, 1, 4), (1, 2, 1, 4)]
+        assert serial_frame.parallel_overscan == None
+        assert serial_frame.serial_prescan == (0, 2, 0, 1)
+        assert serial_frame.serial_overscan == (0, 2, 3, 4)
+        assert serial_frame.pixel_scales == None
 
 
 class TestSerialCalibrationArrays:

@@ -5,6 +5,8 @@ from autoarray.mask import mask as msk
 from autocti.structures import frame
 from autocti.util import frame_util
 
+from copy import deepcopy
+
 
 class AbstractCIFrame(frame.Frame):
     def __new__(
@@ -316,8 +318,9 @@ class AbstractCIFrame(frame.Frame):
         extraction_region = self.parallel_side_nearest_read_out_region(
             region=self.ci_pattern.regions[0], columns=columns
         )
-        array = self[extraction_region.slice]
-        return array
+        return CIFrame.extracted_ci_frame_from_ci_frame_and_extraction_region(
+            ci_frame=self, extraction_region=extraction_region
+        )
 
     @property
     def serial_trails_frame(self):
@@ -538,7 +541,7 @@ class AbstractCIFrame(frame.Frame):
 
         return new_array
 
-    def serial_calibration_section_for_rows(self, rows):
+    def serial_calibration_frame_from_rows(self, rows):
         """Extract a serial calibration array from a charge injection ci_frame, where this arrays is a sub-set of the
         ci_frame which can be used for serial-only calibration. Specifically, this ci_frame is all charge injection
         regions and their serial over-scan trails.
@@ -585,8 +588,44 @@ class AbstractCIFrame(frame.Frame):
         calibration_images = list(
             map(lambda image: image[rows[0] : rows[1], :], calibration_images)
         )
+
         array = np.concatenate(calibration_images, axis=0)
-        return array
+
+        # TODO : can we generalize this method for multiple extracts? Feels too complicated so just doing it for this
+        # TODO : specific case for now.
+
+        serial_prescan = (
+            (0, array.shape[0], self.serial_prescan[2], self.serial_prescan[3])
+            if self.serial_prescan is not None
+            else None
+        )
+        serial_overscan = (
+            (0, array.shape[0], self.serial_overscan[2], self.serial_overscan[3])
+            if self.serial_overscan is not None
+            else None
+        )
+
+        x0 = self.ci_pattern.regions[0][2]
+        x1 = self.ci_pattern.regions[0][3]
+        offset = 0
+        new_ci_pattern_regions = []
+        for region in self.ci_pattern.regions:
+            ysize = rows[1] - rows[0]
+            new_ci_pattern_regions.append((offset, offset + ysize, x0, x1))
+            offset += ysize
+
+        new_ci_pattern = deepcopy(self.ci_pattern)
+        new_ci_pattern.regions = new_ci_pattern_regions
+
+        return CIFrame.manual(
+            array=array,
+            ci_pattern=new_ci_pattern,
+            roe_corner=self.original_roe_corner,
+            parallel_overscan=None,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+            pixel_scales=self.pixel_scales,
+        )
 
     @property
     def serial_calibration_sub_arrays(self):
