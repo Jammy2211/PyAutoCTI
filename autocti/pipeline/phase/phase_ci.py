@@ -189,7 +189,7 @@ class PhaseCI(Phase):
         masks = list(
             map(
                 lambda data: self.mask_function(
-                    shape=data.profile_image.shape, ci_frame=data.ci_frame
+                    shape=data.image.shape, ci_frame=data.ci_frame
                 ),
                 ci_datas,
             )
@@ -339,7 +339,7 @@ class PhaseCI(Phase):
         ci_datas_masked_full = list(
             map(
                 lambda data, mask, maps: ci_imaging.MaskedCIImaging(
-                    image=data.profile_image,
+                    image=data.image,
                     noise_map=data.noise_map,
                     ci_pre_cti=data.ci_pre_cti,
                     mask=mask,
@@ -459,7 +459,7 @@ class PhaseCI(Phase):
     ):
 
         if self.is_only_parallel_fit:
-            return ci_data.parallel_ci_data_masked_from_columns_and_mask(
+            return ci_data.for_parallel_from_columns(
                 columns=(
                     0,
                     self.columns
@@ -470,7 +470,7 @@ class PhaseCI(Phase):
             )
 
         elif self.is_only_serial_fit:
-            return ci_data.serial_ci_data_masked_from_rows_and_mask(
+            return ci_data.for_serial_from_rows(
                 rows=self.rows or (0, ci_data.ci_pattern.regions[0].total_rows),
                 mask=mask,
                 noise_scaling_maps=noise_scaling_maps,

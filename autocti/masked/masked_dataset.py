@@ -62,3 +62,59 @@ class MaskedCIImaging(object):
     def signal_to_noise_max(self):
         """The maximum value of signal-to-noise_maps in an image pixel in the image's signal-to-noise_maps mappers"""
         return np.max(self.signal_to_noise_map)
+
+    @classmethod
+    def for_parallel_from_columns(
+        cls, ci_imaging, mask, columns, noise_scaling_maps=None
+    ):
+        """
+        Creates a MaskedCIData object for a parallel section of the CCD
+
+        Parameters
+        ----------
+        noise_scaling_maps
+            A list of maps that are used to scale noise
+        columns
+            Columns to be extracted
+        mask
+            A mask
+        Returns
+        -------
+        MaskedCIImaging
+        """
+
+        return MaskedCIImaging(
+            ci_imaging=ci_imaging.parallel_calibration_ci_imaging_for_columns(
+                columns=columns
+            ),
+            mask=ci_imaging.image.parallel_calibration_mask_from_mask_and_columns(
+                mask=mask, columns=columns
+            ),
+            noise_scaling_maps=noise_scaling_maps,
+        )
+
+    @classmethod
+    def for_serial_from_rows(cls, ci_imaging, mask, rows, noise_scaling_maps=None):
+        """
+        Creates a MaskedCIData object for a serial section of the CCD
+
+        Parameters
+        ----------
+        noise_scaling_maps
+            A list of maps that are used to scale noise
+        rows
+            Columns to be extracted
+        mask
+            A mask
+        Returns
+        -------
+        MaskedCIImaging
+        """
+
+        return MaskedCIImaging(
+            ci_imaging=ci_imaging.serial_calibration_ci_imaging_for_rows(rows=rows),
+            mask=ci_imaging.image.serial_calibration_mask_from_mask_and_rows(
+                mask=mask, rows=rows
+            ),
+            noise_scaling_maps=noise_scaling_maps,
+        )

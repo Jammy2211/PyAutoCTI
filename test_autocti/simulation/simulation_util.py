@@ -102,7 +102,7 @@ def load_test_ci_data(
     normalization = str(int(pattern.normalization))
 
     if not load_cosmic_ray_map:
-        return ac.ci_data_from_fits(
+        return ac.ci_imaging.from_fits(
             frame_geometry=frame_geometry,
             ci_pattern=pattern,
             image_path=dataset_path + "image_" + normalization + ".fits",
@@ -110,7 +110,7 @@ def load_test_ci_data(
             ci_pre_cti_path=dataset_path + "ci_pre_cti_" + normalization + ".fits",
         )
     elif load_cosmic_ray_map:
-        return ac.ci_data_from_fits(
+        return ac.ci_imaging.from_fits(
             frame_geometry=frame_geometry,
             ci_pattern=pattern,
             image_path=dataset_path + "image_" + normalization + ".fits",

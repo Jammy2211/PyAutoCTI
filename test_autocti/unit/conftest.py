@@ -1,3 +1,5 @@
+from arcticpy.test_arctic.unit.conftest import *
+
 import autofit as af
 import autocti as ac
 import os
@@ -66,6 +68,7 @@ def make_cosmic_ray_map_7x7(ci_pattern_7x7):
 
 @pytest.fixture(name="ci_imaging_7x7")
 def make_ci_imaging_7x7(image_7x7, noise_map_7x7, ci_pre_cti_7x7, cosmic_ray_map_7x7):
+
     return ac.ci_imaging(
         image=image_7x7,
         noise_map=noise_map_7x7,
