@@ -1265,6 +1265,9 @@ class CIFrame(AbstractCIFrame):
             The serial overscan region of the ci_frame.
         """
 
+        if array is None:
+            return None
+
         if type(array) is list:
             array = np.asarray(array)
 

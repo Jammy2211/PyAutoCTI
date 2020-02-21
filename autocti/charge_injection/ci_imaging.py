@@ -166,14 +166,15 @@ class CIImaging(object):
     @classmethod
     def simulate(
         cls,
+        clocker,
         ci_pre_cti,
-        frame_geometry,
         ci_pattern,
-        cti_params,
-        cti_settings,
+        parallel_traps=None,
+        parallel_ccd_volume=None,
+        serial_traps=None,
+        serial_ccd_volume=None,
         read_noise=None,
         cosmic_ray_map=None,
-        use_parallel_poisson_densities=False,
         noise_seed=-1,
     ):
         """Simulate a charge injection image, including effects like noises.
@@ -198,19 +199,15 @@ class CIImaging(object):
             Seed for the read-noises added to the image.
         """
 
-        ci_frame = frame.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
-
         if cosmic_ray_map is not None:
             ci_pre_cti += cosmic_ray_map
 
-        ci_pre_cti = cti_image.FrameArray(
-            frame_geometry=frame_geometry, array=ci_pre_cti
-        )
-
-        ci_post_cti = ci_pre_cti.add_cti_to_image(
-            cti_params=cti_params,
-            cti_settings=cti_settings,
-            use_parallel_poisson_densities=use_parallel_poisson_densities,
+        ci_post_cti = clocker.add_cti(
+            image=ci_pre_cti,
+            parallel_traps=parallel_traps,
+            parallel_ccd_volume=parallel_ccd_volume,
+            serial_traps=serial_traps,
+            serial_ccd_volume=serial_ccd_volume,
         )
 
         if read_noise is not None:
@@ -223,12 +220,14 @@ class CIImaging(object):
             ci_noise_map = None
 
         return CIImaging(
-            ci_frame=ci_frame,
-            image=ci_image,
-            noise_map=ci_noise_map,
-            ci_pre_cti=ci_pre_cti,
-            ci_pattern=ci_pattern,
-            cosmic_ray_map=cosmic_ray_map,
+            image=ci_frame.CIFrame.manual(array=ci_image, ci_pattern=ci_pattern),
+            noise_map=ci_frame.CIFrame.manual(
+                array=ci_noise_map, ci_pattern=ci_pattern
+            ),
+            ci_pre_cti=ci_frame.CIFrame.manual(array=ci_pre_cti, ci_pattern=ci_pattern),
+            cosmic_ray_map=ci_frame.CIFrame.manual(
+                array=cosmic_ray_map, ci_pattern=ci_pattern
+            ),
         )
 
 
