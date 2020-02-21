@@ -1,5 +1,5 @@
 from autoarray.mask import mask as msk
-from autocti.structures import region as reg
+from autocti.structures import frame, region as reg
 
 
 class Mask(msk.Mask):

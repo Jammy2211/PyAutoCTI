@@ -709,6 +709,44 @@ class TestParallelCalibrationFrame:
         ).all()
         assert extracted_frame.ci_pattern.regions == [(0, 5, 0, 2)]
 
+    def test__parallel_extracted_mask(self):
+        ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 5, 0, 3)])
+
+        arr = np.array(
+            [
+                [0.0, 1.0, 2.0],
+                [0.0, 1.0, 2.0],
+                [0.0, 1.0, 2.0],
+                [0.0, 1.0, 2.0],
+                [0.0, 1.0, 2.0],
+            ]
+        )
+
+        ci_frame = ac.ci_frame.manual(
+            array=arr, roe_corner=(1, 0), ci_pattern=ci_pattern
+        )
+
+        mask = ac.CIMask(mask_2d=np.full(fill_value=False, shape=arr.shape))
+
+        mask[0, 1] = True
+
+        extracted_mask = ci_frame.parallel_calibration_mask_from_mask_and_columns(
+            mask, columns=(1, 3)
+        )
+
+        assert (
+            extracted_mask
+            == np.array(
+                [
+                    [True, False],
+                    [False, False],
+                    [False, False],
+                    [False, False],
+                    [False, False],
+                ]
+            )
+        ).all()
+
 
 class TestSerialEdgesAndTrailsFrame:
     def test__front_edge_only__multiple_columns__new_frame_is_only_edge(self):
@@ -1025,7 +1063,7 @@ class TestSerialOverScanAboveTrailsFrame:
         assert new_ci_frame.ci_pattern.regions == [(1, 2, 1, 3), (3, 4, 1, 3)]
 
 
-class TestSerialCalibrationSection:
+class TestSerialCalibrationFrame:
     def test__ci_region_across_all_image__column_0__extracts_all_columns(self):
 
         ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 5)])
@@ -1206,6 +1244,42 @@ class TestSerialCalibrationSection:
         assert serial_frame.serial_prescan == (0, 2, 0, 1)
         assert serial_frame.serial_overscan == (0, 2, 3, 4)
         assert serial_frame.pixel_scales == None
+
+    def test__extract_mask_as_above(self):
+
+        ci_pattern = ac.CIPatternUniform(
+            normalization=1.0, regions=[(0, 2, 1, 4), (3, 5, 1, 4)]
+        )
+
+        arr = np.array(
+            [
+                [0.0, 1.0, 2.0, 2.0, 2.0],
+                [0.0, 1.0, 3.0, 3.0, 3.0],
+                [0.0, 1.0, 4.0, 4.0, 4.0],
+                [0.0, 1.0, 5.0, 5.0, 5.0],
+                [0.0, 1.0, 6.0, 6.0, 6.0],
+            ]
+        )
+
+        ci_frame = ac.ci_frame.manual(
+            array=arr, ci_pattern=ci_pattern, roe_corner=(1, 0)
+        )
+
+        mask = ac.CIMask(mask_2d=np.full(fill_value=False, shape=arr.shape))
+
+        mask[1, 1] = True
+        mask[4, 3] = True
+
+        serial_frame = ci_frame.serial_calibration_mask_from_mask_and_rows(
+            mask=mask, rows=(1, 2)
+        )
+
+        assert (
+            serial_frame
+            == np.array(
+                [[False, True, False, False, False], [False, False, False, True, False]]
+            )
+        ).all()
 
 
 class TestSerialCalibrationArrays:
@@ -2822,7 +2896,7 @@ class TestExtractions:
             array=arr, roe_corner=(1, 0), ci_pattern=ci_pattern
         )
 
-        assert (ci_frame.parallel_serial_calibration_section == arr).all()
+        assert (ci_frame.parallel_serial_calibration_frame == arr).all()
 
         ci_pattern = ac.CIPatternUniform(normalization=1.0, regions=[(0, 1, 0, 1)])
 
@@ -2840,7 +2914,7 @@ class TestExtractions:
             array=arr, roe_corner=(1, 0), ci_pattern=ci_pattern
         )
 
-        assert (ci_frame.parallel_serial_calibration_section == arr).all()
+        assert (ci_frame.parallel_serial_calibration_frame == arr).all()
 
     def test__smallest_parallel_trails_rows_to_frame_edge__x2_ci_region__bottom_frame_geometry(
         self

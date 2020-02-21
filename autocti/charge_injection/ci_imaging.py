@@ -1,10 +1,7 @@
 import numpy as np
 
-from autocti.charge_injection import ci_frame as frame
+from autocti.charge_injection import ci_frame
 from autocti.charge_injection import ci_pattern as pattern
-from autocti.structures import frame
-from autocti.structures import mask as msk
-from autocti.masked import masked_dataset
 from autoarray.util import array_util
 
 
@@ -14,6 +11,157 @@ class CIImaging(object):
         self.noise_map = noise_map
         self.ci_pre_cti = ci_pre_cti
         self.cosmic_ray_map = cosmic_ray_map
+
+    @property
+    def ci_pattern(self):
+        return self.image.ci_pattern
+
+    @property
+    def shape_2d(self):
+        return self.image.shape_2d
+
+    @property
+    def signal_to_noise_map(self):
+        """The estimated signal-to-noise_maps mappers of the image."""
+        signal_to_noise_map = np.divide(self.image, self.noise_map)
+        signal_to_noise_map[signal_to_noise_map < 0] = 0
+        return signal_to_noise_map
+
+    @property
+    def signal_to_noise_max(self):
+        """The maximum value of signal-to-noise_maps in an image pixel in the image's signal-to-noise_maps mappers"""
+        return np.max(self.signal_to_noise_map)
+
+    def parallel_calibration_ci_imaging_for_columns(self, columns):
+        """
+        Creates a function to extract a parallel section for given columns
+        """
+
+        cosmic_ray_map = (
+            self.cosmic_ray_map.parallel_calibration_frame_from_columns(columns=columns)
+            if self.cosmic_ray_map is not None
+            else None
+        )
+
+        return CIImaging(
+            image=self.image.parallel_calibration_frame_from_columns(columns=columns),
+            noise_map=self.noise_map.parallel_calibration_frame_from_columns(
+                columns=columns
+            ),
+            ci_pre_cti=self.ci_pre_cti.parallel_calibration_frame_from_columns(
+                columns=columns
+            ),
+            cosmic_ray_map=cosmic_ray_map,
+        )
+
+    def serial_calibration_ci_imaging_for_rows(self, rows):
+        """
+        Creates a function to extract a serial section for given rows
+        """
+
+        cosmic_ray_map = (
+            self.cosmic_ray_map.serial_calibration_frame_from_rows(rows=rows)
+            if self.cosmic_ray_map is not None
+            else None
+        )
+
+        return CIImaging(
+            image=self.image.serial_calibration_frame_from_rows(rows=rows),
+            noise_map=self.noise_map.serial_calibration_frame_from_rows(rows=rows),
+            ci_pre_cti=self.ci_pre_cti.serial_calibration_frame_from_rows(rows=rows),
+            cosmic_ray_map=cosmic_ray_map,
+        )
+
+    @classmethod
+    def from_fits(
+        cls,
+        roe_corner,
+        ci_pattern,
+        image_path,
+        pixel_scales=None,
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
+        image_hdu=0,
+        noise_map_path=None,
+        noise_map_hdu=0,
+        noise_map_from_single_value=None,
+        ci_pre_cti_path=None,
+        ci_pre_cti_hdu=0,
+        cosmic_ray_map_path=None,
+        cosmic_ray_map_hdu=0,
+        mask=None,
+    ):
+
+        ci_image = ci_frame.CIFrame.from_fits(
+            file_path=image_path,
+            hdu=image_hdu,
+            roe_corner=roe_corner,
+            ci_pattern=ci_pattern,
+            pixel_scales=pixel_scales,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+        if noise_map_path is not None:
+            ci_noise_map = array_util.numpy_array_2d_from_fits(
+                file_path=noise_map_path, hdu=noise_map_hdu
+            )
+        else:
+            ci_noise_map = np.ones(ci_image.shape_2d) * noise_map_from_single_value
+
+        ci_noise_map = ci_frame.CIFrame.manual(
+            array=ci_noise_map,
+            roe_corner=roe_corner,
+            ci_pattern=ci_pattern,
+            pixel_scales=pixel_scales,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+        if ci_pre_cti_path is not None:
+            ci_pre_cti = array_util.numpy_array_2d_from_fits(
+                file_path=ci_pre_cti_path, hdu=ci_pre_cti_hdu
+            )
+        else:
+            ci_pre_cti = ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
+                ci_pattern, ci_image, mask=mask
+            )
+
+        ci_pre_cti = ci_frame.CIFrame.manual(
+            array=ci_pre_cti,
+            roe_corner=roe_corner,
+            ci_pattern=ci_pattern,
+            pixel_scales=pixel_scales,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+        if cosmic_ray_map_path is not None:
+
+            cosmic_ray_map = ci_frame.CIFrame.from_fits(
+                file_path=cosmic_ray_map_path,
+                hdu=cosmic_ray_map_hdu,
+                roe_corner=roe_corner,
+                ci_pattern=ci_pattern,
+                pixel_scales=pixel_scales,
+                parallel_overscan=parallel_overscan,
+                serial_prescan=serial_prescan,
+                serial_overscan=serial_overscan,
+            )
+
+        else:
+            cosmic_ray_map = None
+
+        return CIImaging(
+            image=ci_image,
+            noise_map=ci_noise_map,
+            ci_pre_cti=ci_pre_cti,
+            cosmic_ray_map=cosmic_ray_map,
+        )
 
     @classmethod
     def simulate(
@@ -83,155 +231,6 @@ class CIImaging(object):
             cosmic_ray_map=cosmic_ray_map,
         )
 
-    @property
-    def ci_pattern(self):
-        return self.image.ci_pattern
-
-    @property
-    def shape_2d(self):
-        return self.image.shape_2d
-
-    def map_to_ci_data_masked(self, func, mask, noise_scaling_maps=None):
-        """
-        Maps an extraction function onto the structures in this object, a mask and noise scaling maps.
-
-        Parameters
-        ----------
-        func
-            The extraction function
-        mask
-            A mask
-        noise_scaling_maps
-            A list of noise maps used for scaling noise in poorly fit regions
-
-        Returns
-        -------
-        masked_ci_data: MaskedCIImaging
-        """
-
-        return masked_dataset.MaskedCIImaging(
-            image=func(self.image),
-            noise_map=func(self.noise_map),
-            ci_pre_cti=func(self.ci_pre_cti),
-            mask=func(mask),
-            ci_pattern=self.ci_pattern,
-            noise_scaling_maps=list(map(func, noise_scaling_maps))
-            if noise_scaling_maps is not None
-            else None,
-            cosmic_ray_map=self.cosmic_ray_map,
-        )
-
-    def parallel_calibration_ci_imaging_for_columns(self, columns):
-        """
-        Creates a function to extract a parallel section for given columns
-        """
-
-        return CIImaging(
-            image=self.image.parallel_calibration_frame_from_columns(columns=columns)
-        )
-
-    def serial_calibration_ci_imaging_for_rows(self, rows):
-        """
-        Creates a function to extract a serial section for given rows
-        """
-
-        def extractor(obj):
-            return obj.serial_calibration_frame_from_rows(rows=rows)
-
-        return extractor
-
-    def parallel_serial_ci_imaging(self):
-        """
-        Creates a function to extract a parallel and serial calibration section
-        """
-
-        def extractor(obj):
-            return obj.parallel_serial_calibration_section()
-
-        return extractor
-
-    def parallel_ci_data_masked_from_columns_and_mask(
-        self, columns: (int,), mask: msk.Mask, noise_scaling_maps: (np.ndarray,) = None
-    ):
-        """
-        Creates a MaskedCIData object for a parallel section of the CCD
-
-        Parameters
-        ----------
-        noise_scaling_maps
-            A list of maps that are used to scale noise
-        columns
-            Columns to be extracted
-        mask
-            A mask
-        Returns
-        -------
-        MaskedCIImaging
-        """
-        return self.map_to_ci_data_masked(
-            func=self.parallel_calibration_ci_imaging_for_columns(columns),
-            mask=mask,
-            noise_scaling_maps=noise_scaling_maps,
-        )
-
-    def serial_ci_data_masked_from_rows_and_mask(
-        self, rows: (int,), mask: msk.Mask, noise_scaling_maps: (np.ndarray,) = None
-    ):
-        """
-        Creates a MaskedCIData object for a serial section of the CCD
-
-        Parameters
-        ----------
-        noise_scaling_maps
-            A list of maps that are used to scale noise
-        rows
-            Rows to be extracted
-        mask
-            A mask
-        Returns
-        -------
-        MaskedCIImaging
-        """
-        return self.map_to_ci_data_masked(
-            func=self.serial_calibration_ci_imaging_for_rows(rows),
-            mask=mask,
-            noise_scaling_maps=noise_scaling_maps,
-        )
-
-    def parallel_serial_ci_data_masked_from_mask(
-        self, mask: msk.Mask, noise_scaling_maps: (np.ndarray,) = None
-    ):
-        """
-        Creates a MaskedCIData object for a section of the CCD
-
-        Parameters
-        ----------
-        noise_scaling_maps
-            A list of maps that are used to scale noise
-        mask
-            A mask
-        Returns
-        -------
-        MaskedCIImaging
-        """
-        return self.map_to_ci_data_masked(
-            func=self.parallel_serial_ci_imaging(),
-            mask=mask,
-            noise_scaling_maps=noise_scaling_maps,
-        )
-
-    @property
-    def signal_to_noise_map(self):
-        """The estimated signal-to-noise_maps mappers of the image."""
-        signal_to_noise_map = np.divide(self.image, self.noise_map)
-        signal_to_noise_map[signal_to_noise_map < 0] = 0
-        return signal_to_noise_map
-
-    @property
-    def signal_to_noise_max(self):
-        """The maximum value of signal-to-noise_maps in an image pixel in the image's signal-to-noise_maps mappers"""
-        return np.max(self.signal_to_noise_map)
-
 
 def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, image, mask=None):
     """Setup a pre-cti image from this charge injection ci_data, using the charge injection ci_pattern.
@@ -244,58 +243,6 @@ def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, image, mask=N
     return ci_pattern.ci_pre_cti_from_ci_image_and_mask(image, mask)
 
 
-def ci_data_from_fits(
-    frame_geometry,
-    ci_pattern,
-    image_path,
-    image_hdu=0,
-    noise_map_path=None,
-    noise_map_hdu=0,
-    noise_map_from_single_value=None,
-    ci_pre_cti_path=None,
-    ci_pre_cti_hdu=0,
-    cosmic_ray_map_path=None,
-    cosmic_ray_map_hdu=0,
-    mask=None,
-):
-
-    ci_frame = frame.CIFrame(frame_geometry=frame_geometry, ci_pattern=ci_pattern)
-
-    ci_image = array_util.numpy_array_2d_from_fits(file_path=image_path, hdu=image_hdu)
-
-    if noise_map_path is not None:
-        ci_noise_map = array_util.numpy_array_2d_from_fits(
-            file_path=noise_map_path, hdu=noise_map_hdu
-        )
-    else:
-        ci_noise_map = np.ones(ci_image.shape) * noise_map_from_single_value
-
-    if ci_pre_cti_path is not None:
-        ci_pre_cti = array_util.numpy_array_2d_from_fits(
-            file_path=ci_pre_cti_path, hdu=ci_pre_cti_hdu
-        )
-    else:
-        ci_pre_cti = ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
-            ci_pattern, ci_image, mask=mask
-        )
-
-    if cosmic_ray_map_path is not None:
-        cosmic_ray_map = array_util.numpy_array_2d_from_fits(
-            file_path=cosmic_ray_map_path, hdu=cosmic_ray_map_hdu
-        )
-    else:
-        cosmic_ray_map = None
-
-    return CIImaging(
-        image=ci_image,
-        noise_map=ci_noise_map,
-        ci_pre_cti=ci_pre_cti,
-        ci_pattern=ci_pattern,
-        ci_frame=ci_frame,
-        cosmic_ray_map=cosmic_ray_map,
-    )
-
-
 def output_ci_data_to_fits(
     ci_data,
     image_path,
@@ -306,7 +253,7 @@ def output_ci_data_to_fits(
 ):
 
     array_util.numpy_array_2d_to_fits(
-        array_2d=ci_data.profile_image, file_path=image_path, overwrite=overwrite
+        array_2d=ci_data.image, file_path=image_path, overwrite=overwrite
     )
 
     if ci_data.noise_map is not None and noise_map_path is not None:

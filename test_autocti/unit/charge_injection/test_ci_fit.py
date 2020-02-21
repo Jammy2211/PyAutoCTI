@@ -48,7 +48,7 @@ def make_ci_datas_hyper_fit(ci_data_masked):
     return ac.MaskedCIImaging(
         ci_frame=MockCIFrame(value=3.0),
         ci_pattern=MockPattern(),
-        image=ci_data_masked.profile_image,
+        image=ci_data_masked.image,
         noise_map=ci_data_masked.noise_map,
         ci_pre_cti=ci_data_masked.ci_pre_cti,
         mask=ci_data_masked.mask,
@@ -66,7 +66,7 @@ class TestCIFit:
         )
 
         residual_map = aa.util.fit.residual_map_from_data_mask_and_model_data(
-            data=ci_data_masked.profile_image,
+            data=ci_data_masked.image,
             mask=ci_data_masked.mask,
             model_data=ci_data_masked.ci_pre_cti,
         )

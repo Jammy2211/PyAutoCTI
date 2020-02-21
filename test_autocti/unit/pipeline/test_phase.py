@@ -138,15 +138,11 @@ class TestPhase(object):
     def test__make_analysis(self, phase, ci_data, cti_settings):
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
         assert analysis.last_results is None
-        assert (
-            analysis.ci_datas_masked_extracted[0].profile_image == ci_data.profile_image
-        ).all()
+        assert (analysis.ci_datas_masked_extracted[0].image == ci_data.image).all()
         assert (
             analysis.ci_datas_masked_extracted[0].noise_map == ci_data.noise_map
         ).all()
-        assert (
-            analysis.ci_datas_masked_full[0].profile_image == ci_data.profile_image
-        ).all()
+        assert (analysis.ci_datas_masked_full[0].image == ci_data.image).all()
         assert (analysis.ci_datas_masked_full[0].noise_map == ci_data.noise_map).all()
         assert analysis.cti_settings == cti_settings
 
@@ -648,11 +644,11 @@ class TestPhase(object):
         )
 
         ci_datas_masked = phase.ci_datas_masked_extracted_from_ci_data(
-            ci_data, ac.Mask.unmasked(shape_2d=ci_data.profile_image.shape_2d)
+            ci_data, ac.Mask.unmasked(shape_2d=ci_data.image.shape_2d)
         )
 
         assert isinstance(ci_datas_masked, ac.MaskedCIImaging)
-        assert (ci_data.profile_image == ci_datas_masked.image).all()
+        assert (ci_data.image == ci_datas_masked.image).all()
         assert (ci_data.noise_map == ci_datas_masked.noise_map).all()
         assert (ci_data.ci_pre_cti == ci_datas_masked.ci_pre_cti).all()
 
@@ -665,11 +661,11 @@ class TestPhase(object):
         )
 
         ci_datas_masked = phase.ci_datas_masked_extracted_from_ci_data(
-            ci_data, ac.Mask.unmasked(shape_2d=ci_data.profile_image.shape_2d)
+            ci_data, ac.Mask.unmasked(shape_2d=ci_data.image.shape_2d)
         )
 
         assert isinstance(ci_datas_masked, ac.MaskedCIImaging)
-        assert (ci_data.profile_image[:, 0] == ci_datas_masked.image).all()
+        assert (ci_data.image[:, 0] == ci_datas_masked.image).all()
         assert (ci_data.noise_map[:, 0] == ci_datas_masked.noise_map).all()
         assert (ci_data.ci_pre_cti[:, 0] == ci_datas_masked.ci_pre_cti).all()
 
@@ -681,11 +677,11 @@ class TestPhase(object):
         )
 
         ci_datas_masked = phase.ci_datas_masked_extracted_from_ci_data(
-            ci_data, ac.Mask.unmasked(shape_2d=ci_data.profile_image.shape_2d)
+            ci_data, ac.Mask.unmasked(shape_2d=ci_data.image.shape_2d)
         )
 
         assert isinstance(ci_datas_masked, ac.MaskedCIImaging)
-        assert (ci_data.profile_image == ci_datas_masked.image).all()
+        assert (ci_data.image == ci_datas_masked.image).all()
         assert (ci_data.noise_map == ci_datas_masked.noise_map).all()
         assert (ci_data.ci_pre_cti == ci_datas_masked.ci_pre_cti).all()
 
@@ -698,11 +694,11 @@ class TestPhase(object):
         )
 
         ci_datas_masked = phase.ci_datas_masked_extracted_from_ci_data(
-            ci_data, ac.Mask.unmasked(shape_2d=ci_data.profile_image.shape_2d)
+            ci_data, ac.Mask.unmasked(shape_2d=ci_data.image.shape_2d)
         )
 
         assert isinstance(ci_datas_masked, ac.MaskedCIImaging)
-        assert (ci_data.profile_image[0, :] == ci_datas_masked.image).all()
+        assert (ci_data.image[0, :] == ci_datas_masked.image).all()
         assert (ci_data.noise_map[0, :] == ci_datas_masked.noise_map).all()
         assert (ci_data.ci_pre_cti[0, :] == ci_datas_masked.ci_pre_cti).all()
 
@@ -718,11 +714,11 @@ class TestPhase(object):
         )
 
         ci_datas_masked = phase.ci_datas_masked_extracted_from_ci_data(
-            ci_data, ac.Mask.unmasked(shape_2d=ci_data.profile_image.shape_2d)
+            ci_data, ac.Mask.unmasked(shape_2d=ci_data.image.shape_2d)
         )
 
         assert isinstance(ci_datas_masked, ac.MaskedCIImaging)
-        assert (ci_data.profile_image == ci_datas_masked.image).all()
+        assert (ci_data.image == ci_datas_masked.image).all()
         assert (ci_data.noise_map == ci_datas_masked.noise_map).all()
         assert (ci_data.ci_pre_cti == ci_datas_masked.ci_pre_cti).all()
 
@@ -833,7 +829,7 @@ class TestPhase(object):
         # The ci_region is [0, 1, 0, 1], therefore by changing the image at 0,0 to 2.0 there will be a residual of 1.0,
         # which for a noise_map entry of 2.0 gives a chi squared of 0.25..
 
-        ci_data.profile_image[0, 0] = 2.0
+        ci_data.image[0, 0] = 2.0
         ci_data.noise_map[0, 0] = 2.0
 
         result = phase.run(
@@ -911,7 +907,7 @@ class TestPhase(object):
         # The ci_region is [0, 1, 0, 1], therefore by changing the image at 0,0 to 2.0 there will be a residual of 1.0,
         # which for a noise_map entry of 2.0 gives a chi squared of 0.25..
 
-        ci_data.profile_image[0, 0] = 2.0
+        ci_data.image[0, 0] = 2.0
         ci_data.noise_map[0, 0] = 2.0
 
         result = phase.run(
@@ -994,7 +990,7 @@ class TestPhase(object):
         # The ci_region is [0, 1, 0, 1], therefore by changing the image at 0,0 to 2.0 there will be a residual of 1.0,
         # which for a noise_map entry of 2.0 gives a chi squared of 0.25..
 
-        ci_data.profile_image[0, 0] = 2.0
+        ci_data.image[0, 0] = 2.0
         ci_data.noise_map[0, 0] = 2.0
 
         result = phase.run(
@@ -1149,7 +1145,7 @@ class TestResult(object):
         cti_params = ac.cti_params_for_instance(instance=instance)
         fit_figure_of_merit = analysis.fit(instance=instance)
 
-        mask = phase.mask_function(shape=ci_data.profile_image.shape)
+        mask = phase.mask_function(shape=ci_data.image.shape)
         ci_datas_masked = [
             phase.ci_datas_masked_extracted_from_ci_data(ci_data=d, mask=mask)
             for d, mask in zip([ci_data], [mask])
@@ -1207,7 +1203,7 @@ class TestResult(object):
         # The ci_region is [0, 1, 0, 1], therefore by changing the image at 0,0 to 2.0 there will be a residual of 1.0,
         # which for a noise_map entry of 2.0 gives a chi squared of 0.25..
 
-        ci_data.profile_image[0, 0] = 2.0
+        ci_data.image[0, 0] = 2.0
         ci_data.noise_map[0, 0] = 2.0
 
         result = phase.run(ci_datas=[ci_data], cti_settings=cti_settings)

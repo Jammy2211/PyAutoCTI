@@ -126,7 +126,7 @@ class HyperNoisePhase(HyperPhase):
         ci_datas_masked_full = list(
             map(
                 lambda data, mask, maps: ci_imaging.MaskedCIImaging(
-                    image=data.profile_image,
+                    image=data.image,
                     noise_map=data.noise_map,
                     ci_pre_cti=data.ci_pre_cti,
                     mask=mask,

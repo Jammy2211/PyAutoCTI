@@ -2,6 +2,7 @@ import numpy as np
 
 from autoarray.util import array_util
 from autoarray.mask import mask as msk
+from autocti.charge_injection import ci_mask
 from autocti.structures import frame
 from autocti.util import frame_util
 
@@ -322,6 +323,12 @@ class AbstractCIFrame(frame.Frame):
             ci_frame=self, extraction_region=extraction_region
         )
 
+    def parallel_calibration_mask_from_mask_and_columns(self, mask, columns):
+        extraction_region = self.parallel_side_nearest_read_out_region(
+            region=self.ci_pattern.regions[0], columns=columns
+        )
+        return ci_mask.CIMask(mask_2d=mask[extraction_region.slice])
+
     @property
     def serial_trails_frame(self):
         """Extract an arrays of all of the serial trails in the serial overscan region, that are to the side of a
@@ -626,6 +633,65 @@ class AbstractCIFrame(frame.Frame):
             serial_overscan=serial_overscan,
             pixel_scales=self.pixel_scales,
         )
+
+    def serial_calibration_mask_from_mask_and_rows(self, mask, rows):
+        """Extract a serial calibration array from a charge injection ci_frame, where this arrays is a sub-set of the
+        ci_frame which can be used for serial-only calibration. Specifically, this ci_frame is all charge injection
+        regions and their serial over-scan trails.
+
+        The diagram below illustrates the arrays that is extracted from a ci_frame with column=5:
+
+        ---KEY---
+        ---------
+
+        [] = read-out electronics   [==========] = read-out register
+
+        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
+        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
+        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
+
+        P = Parallel Direction      S = Serial Direction
+
+               [ppppppppppppppppppppp]
+               [pppppppppppppppppppp ]
+          [...][xxxxxxxxxxxxxxxxxxxxx][sss]
+          [...][ccccccccccccccccccccc][tst]
+        | [...][ccccccccccccccccccccc][sts]    |
+        | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
+        P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
+        | [...][ccccccccccccccccccccc][tst]    | clocking
+          [...][ccccccccccccccccccccc][sts]    |
+
+        []     [=====================]
+               <---------S----------
+
+        The extracted ci_frame keeps just the trails following all charge injection regions and replaces all other
+        values with 0s:
+
+        |                                      |
+        |      [cccccccccccccccc][tst]         | Direction
+        P      [cccccccccccccccc][tst]         | of
+        |      [cccccccccccccccc][tst]         | clocking
+               [cccccccccccccccc][tst]         |
+
+        []     [=====================]
+               <---------S----------
+        """
+
+        calibration_regions = list(
+            map(
+                lambda ci_region: self.serial_entire_rows_of_region(region=ci_region),
+                self.ci_pattern.regions,
+            )
+        )
+        calibration_masks = list(
+            map(lambda region: mask[region.slice], calibration_regions)
+        )
+
+        calibration_masks = list(
+            map(lambda mask: mask[rows[0] : rows[1], :], calibration_masks)
+        )
+        return ci_mask.CIMask(mask_2d=np.concatenate(calibration_masks, axis=0))
 
     @property
     def serial_calibration_sub_arrays(self):
@@ -1145,8 +1211,8 @@ class AbstractCIFrame(frame.Frame):
         )
 
     @property
-    def parallel_serial_calibration_section(self):
-        return self[0 : self.shape_2d[0], 0 : self.shape_2d[1]]
+    def parallel_serial_calibration_frame(self):
+        return self
 
     @property
     def smallest_parallel_trails_rows_to_frame_edge(self):
@@ -1323,9 +1389,9 @@ class CIFrame(AbstractCIFrame):
     @classmethod
     def from_fits(
         cls,
-        ci_pattern,
         file_path,
         hdu,
+        ci_pattern,
         roe_corner=(1, 0),
         parallel_overscan=None,
         serial_prescan=None,
@@ -1352,11 +1418,8 @@ class CIFrame(AbstractCIFrame):
 
         array = array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
 
-        mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
-
-        return cls.manual(
+        return CIFrame.manual(
             array=array,
-            mask=mask,
             ci_pattern=ci_pattern,
             roe_corner=roe_corner,
             parallel_overscan=parallel_overscan,
