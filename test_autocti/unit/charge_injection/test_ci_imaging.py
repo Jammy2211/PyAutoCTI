@@ -72,39 +72,37 @@ class TestCIImaging(object):
 
 class TestCIDataSimulate(object):
     def test__no_instrumental_effects_input__only_cti_simulated(
-        self, arctic_parallel, params_parallel
+        self, parallel_clocker, traps_x2, ccd_volume
     ):
 
         pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
 
         ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(5, 5))
 
-        ci_data_simulate = ac.ci_imaging.simulate(
+        ci_imaging = ac.ci_imaging.simulate(
             ci_pre_cti=ci_pre_cti,
-            frame_geometry=ac.FrameGeometry.bottom_left(),
             ci_pattern=pattern,
-            cti_settings=arctic_parallel,
-            cti_params=params_parallel,
+            clocker=parallel_clocker,
+            parallel_traps=traps_x2,
+            parallel_ccd_volume=ccd_volume,
         )
 
-        assert ci_data_simulate.image[0, 0:5] == pytest.approx(
-            np.array([10.0, 10.0, 10.0, 10.0, 10.0]), 1e-2
+        assert ci_imaging.image[0, 0:5] == pytest.approx(
+            np.array([9.43, 9.43, 9.43, 9.43, 9.43]), 1e-2
         )
 
     def test__include_read_noise__is_added_after_cti(
-        self, arctic_parallel, params_parallel
+        self, parallel_clocker, traps_x2, ccd_volume
     ):
 
         pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 3)])
 
         ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(3, 3))
 
-        ci_data_simulate = ac.ci_imaging.simulate(
+        ci_imaging = ac.ci_imaging.simulate(
             ci_pre_cti=ci_pre_cti,
-            frame_geometry=ac.FrameGeometry.bottom_left(),
             ci_pattern=pattern,
-            cti_settings=arctic_parallel,
-            cti_params=params_parallel,
+            clocker=parallel_clocker,
             read_noise=1.0,
             noise_seed=1,
         )
@@ -113,13 +111,13 @@ class TestCIDataSimulate(object):
 
         # Use seed to give us a known read noises map we'll test_autoarray for
 
-        assert ci_data_simulate.image - image_no_noise == pytest.approx(
+        assert ci_imaging.image - image_no_noise == pytest.approx(
             np.array([[1.62, -0.61, -0.53], [-1.07, 0.87, -2.30], [1.74, -0.76, 0.32]]),
             1e-2,
         )
 
     def test__include_cosmics__is_added_to_image_and_trailed(
-        self, arctic_parallel, params_parallel
+        self, parallel_clocker, traps_x2, ccd_volume
     ):
 
         pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
@@ -129,23 +127,23 @@ class TestCIDataSimulate(object):
         cosmic_ray_map = np.zeros((5, 5))
         cosmic_ray_map[2, 2] = 100.0
 
-        ci_data_simulate = ac.ci_imaging.simulate(
+        ci_imaging = ac.ci_imaging.simulate(
             ci_pre_cti=ci_pre_cti,
-            frame_geometry=ac.FrameGeometry.bottom_left(),
             ci_pattern=pattern,
-            cti_settings=arctic_parallel,
-            cti_params=params_parallel,
+            clocker=parallel_clocker,
+            parallel_traps=traps_x2,
+            parallel_ccd_volume=ccd_volume,
             cosmic_ray_map=cosmic_ray_map,
         )
 
-        assert ci_data_simulate.image[0, 0:5] == pytest.approx(
-            np.array([10.0, 10.0, 10.0, 10.0, 10.0]), 1e-2
+        assert ci_imaging.image[0, 0:5] == pytest.approx(
+            np.array([9.43, 9.43, 9.43, 9.43, 9.43]), 1e-2
         )
-        assert 0.0 < ci_data_simulate.image[1, 1] < 100.0
-        assert ci_data_simulate.image[2, 2] > 98.0
-        assert (ci_data_simulate.image[1, 1:4] > 0.0).all()
+        assert 0.0 < ci_imaging.image[1, 1] < 100.0
+        assert ci_imaging.image[2, 2] > 94.0
+        assert (ci_imaging.image[1, 1:4] > 0.0).all()
         assert (
-            ci_data_simulate.cosmic_ray_map
+            ci_imaging.cosmic_ray_map
             == np.array(
                 [
                     [0.0, 0.0, 0.0, 0.0, 0.0],
@@ -180,7 +178,7 @@ class TestCIDataSimulate(object):
             parallel_traps=parallel_traps, parallel_ccd_volume=parallel_ccd_volume
         )
 
-        ci_data_simulate = ac.ci_imaging.simulate(
+        ci_imaging = ac.ci_imaging.simulate(
             ci_pre_cti=ci_pre_cti,
             frame_geometry=ac.FrameGeometry.bottom_left(),
             ci_pattern=pattern,
@@ -189,11 +187,11 @@ class TestCIDataSimulate(object):
             use_parallel_poisson_densities=True,
         )
 
-        assert ci_data_simulate.image[2, 0] == ci_data_simulate.image[2, 3]
-        assert ci_data_simulate.image[2, 0] == ci_data_simulate.image[2, 4]
-        assert ci_data_simulate.image[2, 0] < ci_data_simulate.image[2, 1]
-        assert ci_data_simulate.image[2, 0] < ci_data_simulate.image[2, 2]
-        assert ci_data_simulate.image[2, 1] > ci_data_simulate.image[2, 2]
+        assert ci_imaging.image[2, 0] == ci_imaging.image[2, 3]
+        assert ci_imaging.image[2, 0] == ci_imaging.image[2, 4]
+        assert ci_imaging.image[2, 0] < ci_imaging.image[2, 1]
+        assert ci_imaging.image[2, 0] < ci_imaging.image[2, 2]
+        assert ci_imaging.image[2, 1] > ci_imaging.image[2, 2]
 
 
 class TestCIImagingFromFits(object):
