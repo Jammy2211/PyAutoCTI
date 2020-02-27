@@ -1019,7 +1019,7 @@ class TestPhase(object):
             hyper_noise_scalar_of_ci_regions=ac.CIHyperNoiseScalar,
             hyper_noise_scalar_of_parallel_trails=ac.CIHyperNoiseScalar,
             hyper_noise_scalar_of_serial_trails=ac.CIHyperNoiseScalar,
-            hyper_noise_scalar_of_serial_overscan_above_trails=ac.CIHyperNoiseScalar,
+            hyper_noise_scalar_of_serial_overscan_no_trails=ac.CIHyperNoiseScalar,
             optimizer_class=NLO,
             phase_name="test_phase_2",
         )
@@ -1112,7 +1112,7 @@ class MockResult:
     noise_scaling_maps_list_of_ci_regions = [1]
     noise_scaling_maps_list_of_parallel_trails = [2]
     noise_scaling_maps_list_of_serial_trails = [3]
-    noise_scaling_maps_list_of_serial_overscan_above_trails = [4]
+    noise_scaling_maps_list_of_serial_overscan_no_trails = [4]
 
 
 class MockInstance:
@@ -1194,9 +1194,7 @@ class TestResult(object):
         assert hasattr(result, "noise_scaling_maps_list_of_ci_regions")
         assert hasattr(result, "noise_scaling_maps_list_of_parallel_trails")
         assert hasattr(result, "noise_scaling_maps_list_of_serial_trails")
-        assert hasattr(
-            result, "noise_scaling_maps_list_of_serial_overscan_above_trails"
-        )
+        assert hasattr(result, "noise_scaling_maps_list_of_serial_overscan_no_trails")
 
     def test__cti_settings_passed_as_result_correctly(self, ci_data, cti_settings):
 
@@ -1242,6 +1240,6 @@ class TestResult(object):
             result.noise_scaling_maps_list_of_serial_trails[0] == np.zeros((3, 3))
         ).all()
         assert (
-            result.noise_scaling_maps_list_of_serial_overscan_above_trails[0]
+            result.noise_scaling_maps_list_of_serial_overscan_no_trails[0]
             == np.zeros((3, 3))
         ).all()

@@ -36,7 +36,7 @@ class TestCIMaskedImaging:
         assert (masked_ci_imaging.cosmic_ray_map == masked_image).all()
 
     def test__for_parallel_masked_ci_imaging(
-        self, ci_imaging_7x7, mask_7x7, noise_scaling_maps_list_7x7
+        self, ci_imaging_7x7, mask_7x7, noise_scaling_maps_7x7
     ):
 
         mask = ac.mask.unmasked(shape_2d=ci_imaging_7x7.shape_2d)
@@ -46,7 +46,7 @@ class TestCIMaskedImaging:
             ci_imaging=ci_imaging_7x7,
             mask=mask,
             columns=(1, 3),
-            noise_scaling_maps_list=noise_scaling_maps_list_7x7,
+            noise_scaling_maps=noise_scaling_maps_7x7,
         )
 
         mask = np.full(fill_value=False, shape=(7, 2))
@@ -73,19 +73,19 @@ class TestCIMaskedImaging:
         noise_scaling_map_0 = np.ones((7, 2))
         noise_scaling_map_0[0, 0] = 0.0
 
-        assert masked_ci_imaging.noise_scaling_maps_list[0][0] == pytest.approx(
+        assert masked_ci_imaging.noise_scaling_maps[0] == pytest.approx(
             noise_scaling_map_0, 1.0e-4
         )
 
-        noise_scaling_map_0 = 2.0 * np.ones((7, 2))
-        noise_scaling_map_0[0, 0] = 0.0
+        noise_scaling_map_1 = 2.0 * np.ones((7, 2))
+        noise_scaling_map_1[0, 0] = 0.0
 
-        assert masked_ci_imaging.noise_scaling_maps_list[0][1] == pytest.approx(
-            noise_scaling_map_0, 1.0e-4
+        assert masked_ci_imaging.noise_scaling_maps[1] == pytest.approx(
+            noise_scaling_map_1, 1.0e-4
         )
 
     def test__for_serial_masked_ci_imaging(
-        self, ci_imaging_7x7, mask_7x7, noise_scaling_maps_list_7x7
+        self, ci_imaging_7x7, mask_7x7, noise_scaling_maps_7x7
     ):
 
         mask = ac.mask.unmasked(shape_2d=ci_imaging_7x7.shape_2d)
@@ -95,7 +95,7 @@ class TestCIMaskedImaging:
             ci_imaging=ci_imaging_7x7,
             mask=mask,
             rows=(0, 1),
-            noise_scaling_maps_list=noise_scaling_maps_list_7x7,
+            noise_scaling_maps=noise_scaling_maps_7x7,
         )
 
         mask = np.full(fill_value=False, shape=(1, 7))
@@ -122,13 +122,13 @@ class TestCIMaskedImaging:
         noise_scaling_map_0 = np.ones((1, 7))
         noise_scaling_map_0[0, 0] = 0.0
 
-        assert masked_ci_imaging.noise_scaling_maps_list[0][0] == pytest.approx(
+        assert masked_ci_imaging.noise_scaling_maps[0] == pytest.approx(
             noise_scaling_map_0, 1.0e-4
         )
 
-        noise_scaling_map_0 = 2.0 * np.ones((1, 7))
-        noise_scaling_map_0[0, 0] = 0.0
+        noise_scaling_map_1 = 2.0 * np.ones((1, 7))
+        noise_scaling_map_1[0, 0] = 0.0
 
-        assert masked_ci_imaging.noise_scaling_maps_list[0][1] == pytest.approx(
-            noise_scaling_map_0, 1.0e-4
+        assert masked_ci_imaging.noise_scaling_maps[1] == pytest.approx(
+            noise_scaling_map_1, 1.0e-4
         )

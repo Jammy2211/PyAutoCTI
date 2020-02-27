@@ -71,7 +71,7 @@ class HyperNoisePhase(HyperPhase):
                 instance.hyper_noise_scalar_of_ci_regions,
                 instance.hyper_noise_scalar_of_parallel_trails,
                 instance.hyper_noise_scalar_of_serial_trails,
-                instance.hyper_noise_scalar_of_serial_overscan_above_trails,
+                instance.hyper_noise_scalar_of_serial_overscan_no_trails,
             ]
 
         def fit_for_ci_data_model_image_and_hyper_noise_scalars(
@@ -79,7 +79,7 @@ class HyperNoisePhase(HyperPhase):
         ):
 
             hyper_noise_map = ci_fit.hyper_noise_map_from_noise_map_and_noise_scalings(
-                noise_scaling_maps_list=ci_data.noise_scaling_maps_list,
+                noise_scaling_maps=ci_data.noise_scaling_maps_list,
                 hyper_noise_scalars=hyper_noise_scalars,
                 noise_map=ci_data.noise_map,
             )
@@ -113,7 +113,7 @@ class HyperNoisePhase(HyperPhase):
         phase.hyper_noise_scalar_of_ci_regions = ci_hyper.CIHyperNoiseScalar
         phase.hyper_noise_scalar_of_parallel_trails = ci_hyper.CIHyperNoiseScalar
         phase.hyper_noise_scalar_of_serial_trails = ci_hyper.CIHyperNoiseScalar
-        phase.hyper_noise_scalar_of_serial_overscan_above_trails = (
+        phase.hyper_noise_scalar_of_serial_overscan_no_trails = (
             ci_hyper.CIHyperNoiseScalar
         )
 
@@ -186,6 +186,6 @@ class HyperNoisePhase(HyperPhase):
         transfer_field(name="hyper_noise_scalar_of_ci_regions")
         transfer_field(name="hyper_noise_scalar_of_parallel_trails")
         transfer_field(name="hyper_noise_scalar_of_serial_trails")
-        transfer_field(name="hyper_noise_scalar_of_serial_overscan_above_trails")
+        transfer_field(name="hyper_noise_scalar_of_serial_overscan_no_trails")
 
         return hyper_result

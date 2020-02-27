@@ -1,5 +1,4 @@
 import numpy as np
-from autocti.structures.frame import Region
 
 
 class MockPattern(object):
@@ -40,7 +39,7 @@ class MockCIFrame(object):
     def serial_all_trails_frame_from_frame(self, array):
         return array[0, 0:2]
 
-    def serial_overscan_above_trails_frame_from_frame(self, array):
+    def serial_overscan_no_trails_frame_from_frame(self, array):
         return array[1, 0:2]
 
     def parallel_front_edge_line_binned_over_columns_from_frame(
@@ -64,19 +63,6 @@ class MockCIFrame(object):
         return np.array([1.0, 1.0, 2.0, 2.0])
 
 
-class MockCIGeometry(object):
-    def __init__(
-        self,
-        parallel_overscan=(0, 1, 0, 1),
-        serial_prescan=(0, 1, 0, 1),
-        serial_overscan=(0, 1, 0, 1),
-    ):
-        super(MockCIGeometry, self).__init__()
-        self.parallel_overscan = Region(parallel_overscan)
-        self.serial_prescan = Region(serial_prescan)
-        self.serial_overscan = Region(serial_overscan)
-
-
 class MockCIPreCTI(np.ndarray):
     def __new__(
         cls,
@@ -95,16 +81,6 @@ class MockCIPreCTI(np.ndarray):
 
     def ci_post_cti_from_cti_params_and_settings(self, cti_params, cti_settings):
         return self.value * np.ones((2, 2))
-
-
-class MockParams(object):
-    def __init__(self):
-        pass
-
-
-class MockSettings(object):
-    def __init__(self):
-        pass
 
 
 class MockChInj(np.ndarray):

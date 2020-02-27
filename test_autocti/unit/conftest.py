@@ -77,46 +77,29 @@ def make_ci_imaging_7x7(image_7x7, noise_map_7x7, ci_pre_cti_7x7, cosmic_ray_map
     )
 
 
-@pytest.fixture(name="noise_scaling_maps_list_7x7")
-def make_noise_scaling_maps_list_7x7(ci_pattern_7x7):
+@pytest.fixture(name="noise_scaling_maps_7x7")
+def make_noise_scaling_maps_7x7(ci_pattern_7x7):
 
     return [
-        [
-            ac.ci_frame.ones(
-                shape_2d=(7, 7), pixel_scales=(1.0, 1.0), ci_pattern=ci_pattern_7x7
-            ),
-            ac.ci_frame.full(
-                shape_2d=(7, 7),
-                fill_value=2.0,
-                pixel_scales=(1.0, 1.0),
-                ci_pattern=ci_pattern_7x7,
-            ),
-        ]
+        ac.ci_frame.ones(
+            shape_2d=(7, 7), pixel_scales=(1.0, 1.0), ci_pattern=ci_pattern_7x7
+        ),
+        ac.ci_frame.full(
+            shape_2d=(7, 7),
+            fill_value=2.0,
+            pixel_scales=(1.0, 1.0),
+            ci_pattern=ci_pattern_7x7,
+        ),
     ]
 
 
 @pytest.fixture(name="masked_ci_imaging_7x7")
-def make_masked_ci_imaging_7x7(ci_imaging_7x7, mask_7x7, noise_scaling_maps_list_7x7):
-    return ac.MaskedCIImaging(
+def make_masked_ci_imaging_7x7(ci_imaging_7x7, mask_7x7, noise_scaling_maps_7x7):
+    return ac.masked.ci_imaging(
+        ci_imaging=ci_imaging_7x7,
         mask=mask_7x7,
-        image=ci_imaging_7x7.image,
-        noise_map=ci_imaging_7x7.noise_map,
-        ci_pre_cti=ci_imaging_7x7.ci_pre_cti,
-        cosmic_ray_map=ci_imaging_7x7.cosmic_ray_map,
-        noise_scaling_maps_list=noise_scaling_maps_list_7x7,
+        noise_scaling_maps=noise_scaling_maps_7x7,
     )
-
-
-@pytest.fixture(name="cti_settings")
-def make_cti_settings():
-    parallel_settings = ac.Settings(well_depth=0, niter=1, express=1, n_levels=2000)
-    return ac.ArcticSettings(neomode="NEO", parallel=parallel_settings)
-
-
-@pytest.fixture(name="cti_params")
-def make_cti_params():
-    parallel_1_species = ac.Trap(density=0.1, lifetime=1.0)
-    return ac.ArcticParams(parallel_traps=parallel_1_species)
 
 
 @pytest.fixture(name="hyper_noise_scalars")

@@ -7,8 +7,7 @@ class CIImagingFit(aa_fit.ImagingFit):
     def __init__(
         self,
         masked_ci_imaging: masked_dataset.MaskedCIImaging,
-        cti_params,
-        cti_settings,
+        ci_post_cti,
         hyper_noise_scalars=None,
     ):
         """Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian
@@ -27,23 +26,15 @@ class CIImagingFit(aa_fit.ImagingFit):
         """
 
         self.ci_masked_data = masked_ci_imaging
-        self.cti_params = cti_params
-        self.cti_settings = cti_settings
-
-        model_image = masked_ci_imaging.ci_pre_cti.add_cti(
-            image=masked_ci_imaging.ci_pre_cti,
-            cti_params=cti_params,
-            cti_settings=cti_settings,
-        )
-
         self.hyper_noise_scalars = hyper_noise_scalars
 
         if hyper_noise_scalars is not None and hyper_noise_scalars is not []:
 
-            self.noise_scaling_maps_list = masked_ci_imaging.noise_scaling_maps_list
+            self.noise_scaling_maps = masked_ci_imaging.noise_scaling_maps
+
             noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
                 hyper_noise_scalars=hyper_noise_scalars,
-                noise_scaling_maps_list=masked_ci_imaging.noise_scaling_maps_list,
+                noise_scaling_maps=masked_ci_imaging.noise_scaling_maps,
                 noise_map=masked_ci_imaging.noise_map,
             )
 
@@ -55,7 +46,7 @@ class CIImagingFit(aa_fit.ImagingFit):
             mask=masked_ci_imaging.mask,
             image=masked_ci_imaging.image,
             noise_map=noise_map,
-            model_image=model_image,
+            model_image=ci_post_cti,
         )
 
     @property
@@ -76,26 +67,26 @@ class CIImagingFit(aa_fit.ImagingFit):
 
     @property
     def chi_squared_map_of_parallel_trails(self):
-        return self.chi_squared_map.non_ci_regions_frame
+        return self.chi_squared_map.parallel_non_ci_regions_frame
 
     @property
     def chi_squared_map_of_serial_trails(self):
-        return self.chi_squared_map.serial_trials_frame
+        return self.chi_squared_map.serial_trails_frame
 
     @property
-    def chi_squared_map_of_serial_overscan_above_trails(self):
-        return self.chi_squared_map.serial_overscan_above_trails_frame
+    def chi_squared_map_of_serial_overscan_no_trails(self):
+        return self.chi_squared_map.serial_overscan_no_trails_frame
 
 
 def hyper_noise_map_from_noise_map_and_noise_scalings(
-    hyper_noise_scalars, noise_scaling_maps_list, noise_map
+    hyper_noise_scalars, noise_scaling_maps, noise_map
 ):
     """For a noise-map, use the model hyper noise and noise-scaling maps to compute a scaled noise-map.
 
     Parameters
     -----------
     hyper_noise_scalars
-    noise_scaling_maps_list
+    noise_scaling_maps
     noise_map : imaging.NoiseMap or ndarray
         An arrays describing the RMS standard deviation error in each pixel, preferably in unit_label of electrons per
         second.
@@ -106,7 +97,7 @@ def hyper_noise_map_from_noise_map_and_noise_scalings(
                 noise_scaling_map
             ),
             hyper_noise_scalars,
-            noise_scaling_maps_list,
+            noise_scaling_maps,
         )
     )
 

@@ -50,6 +50,10 @@ class AbstractCIFrame(frame.Frame):
         super(AbstractCIFrame, self).__array_finalize__(obj)
 
         if isinstance(obj, AbstractCIFrame):
+            if hasattr(obj, "mask"):
+                self.mask = obj.mask
+            if hasattr(obj, "original_roe_corner"):
+                self.original_roe_corner = obj.original_roe_corner
             if hasattr(obj, "ci_pattern"):
                 self.ci_pattern = obj.ci_pattern
             if hasattr(obj, "parallel_overscan"):
@@ -163,12 +167,67 @@ class AbstractCIFrame(frame.Frame):
                <---------S----------
         """
 
-        parallel_array = self.copy()
+        non_ci_regions_array = self.copy()
 
         for region in self.ci_pattern.regions:
-            parallel_array[region.slice] = 0
+            non_ci_regions_array[region.slice] = 0.0
 
-        return parallel_array
+        return non_ci_regions_array
+
+    @property
+    def parallel_non_ci_regions_frame(self):
+        """Extract an arrays of all of the parallel trails following the charge-injection regions from a charge
+        injection ci_frame.
+
+        The diagram below illustrates the arrays that is extracted from a ci_frame:
+
+        ---KEY---
+        ---------
+
+        [] = read-out electronics   [==========] = read-out register
+
+        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
+        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
+        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
+
+        P = Parallel Direction      S = Serial Direction
+
+               [tptpptptptpptpptpptpt]
+               [tptptptpptpttptptptpt]
+          [...][ttttttttttttttttttttt][sss]
+          [...][ccccccccccccccccccccc][sss]
+        | [...][ccccccccccccccccccccc][sss]    |
+        | [...][ttttttttttttttttttttt][sss]    | Direction
+        P [...][ttttttttttttttttttttt][sss]    | of
+        | [...][ccccccccccccccccccccc][sss]    | clocking
+          [...][ccccccccccccccccccccc][sss]    |
+
+        []     [=====================]
+               <---------S----------
+
+        The extracted ci_frame keeps just the trails following all charge injection regions and replaces all other
+        values with 0s:
+
+               [tptpptptptpptpptpptpt]
+               [tptptptpptpttptptptpt]
+          [000][ttttttttttttttttttttt][000]
+          [000][000000000000000000000][000]
+        | [000][000000000000000000000][000]    |
+        | [000][ttttttttttttttttttttt][000]    | Direction
+        P [000][ttttttttttttttttttttt][000]    | of
+        | [000][000000000000000000000][000]    | clocking
+          [000][000000000000000000000][000]    |
+
+        []     [=====================]
+               <---------S----------
+        """
+
+        parallel_frame = self.non_ci_regions_frame
+
+        parallel_frame[self.serial_prescan.slice] = 0.0
+        parallel_frame[self.serial_overscan.slice] = 0.0
+
+        return parallel_frame
 
     def parallel_edges_and_trails_frame(self, front_edge_rows=None, trails_rows=None):
         """Extract an arrays of all of the parallel front edges and trails of each the charge-injection regions from
@@ -382,7 +441,7 @@ class AbstractCIFrame(frame.Frame):
         return array
 
     @property
-    def serial_overscan_above_trails_frame(self):
+    def serial_overscan_no_trails_frame(self):
         """Extract an arrays of all of the regions of the serial overscan that don't contain trails from a
         charge injection region (i.e. are not to the side of one).
 

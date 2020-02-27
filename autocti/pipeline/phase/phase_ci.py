@@ -55,8 +55,8 @@ class PhaseCI(Phase):
     hyper_noise_scalar_of_serial_trails = af.PhaseProperty(
         "hyper_noise_scalar_of_serial_trails"
     )
-    hyper_noise_scalar_of_serial_overscan_above_trails = af.PhaseProperty(
-        "hyper_noise_scalar_of_serial_overscan_above_trails"
+    hyper_noise_scalar_of_serial_overscan_no_trails = af.PhaseProperty(
+        "hyper_noise_scalar_of_serial_overscan_no_trails"
     )
 
     def make_result(self, result, analysis):
@@ -80,7 +80,7 @@ class PhaseCI(Phase):
         hyper_noise_scalar_of_ci_regions=None,
         hyper_noise_scalar_of_parallel_trails=None,
         hyper_noise_scalar_of_serial_trails=None,
-        hyper_noise_scalar_of_serial_overscan_above_trails=None,
+        hyper_noise_scalar_of_serial_overscan_no_trails=None,
         optimizer_class=af.DownhillSimplex,
         mask_function=msk.Mask.unmasked,
         columns=None,
@@ -151,8 +151,8 @@ class PhaseCI(Phase):
             hyper_noise_scalar_of_parallel_trails
         )
         self.hyper_noise_scalar_of_serial_trails = hyper_noise_scalar_of_serial_trails
-        self.hyper_noise_scalar_of_serial_overscan_above_trails = (
-            hyper_noise_scalar_of_serial_overscan_above_trails
+        self.hyper_noise_scalar_of_serial_overscan_no_trails = (
+            hyper_noise_scalar_of_serial_overscan_no_trails
         )
 
     def run(self, ci_datas, cti_settings, results=None, pool=None):
@@ -390,14 +390,12 @@ class PhaseCI(Phase):
         else:
             noise_scaling_maps_list_of_serial_trails = total_images * [None]
 
-        if self.hyper_noise_scalar_of_serial_overscan_above_trails is not None:
-            noise_scaling_maps_list_of_serial_overscan_above_trails = (
-                results.last.noise_scaling_maps_list_of_serial_overscan_above_trails
+        if self.hyper_noise_scalar_of_serial_overscan_no_trails is not None:
+            noise_scaling_maps_list_of_serial_overscan_no_trails = (
+                results.last.noise_scaling_maps_list_of_serial_overscan_no_trails
             )
         else:
-            noise_scaling_maps_list_of_serial_overscan_above_trails = total_images * [
-                None
-            ]
+            noise_scaling_maps_list_of_serial_overscan_no_trails = total_images * [None]
 
         noise_scaling_maps_list = []
 
@@ -407,9 +405,7 @@ class PhaseCI(Phase):
                     noise_scaling_maps_list_of_ci_regions[image_index],
                     noise_scaling_maps_list_of_parallel_trails[image_index],
                     noise_scaling_maps_list_of_serial_trails[image_index],
-                    noise_scaling_maps_list_of_serial_overscan_above_trails[
-                        image_index
-                    ],
+                    noise_scaling_maps_list_of_serial_overscan_no_trails[image_index],
                 ]
             )
 
@@ -472,14 +468,14 @@ class PhaseCI(Phase):
                     or ci_data.ci_frame.frame_geometry.parallel_overscan.total_columns,
                 ),
                 mask=mask,
-                noise_scaling_maps_list=noise_scaling_maps_list,
+                noise_scaling_maps=noise_scaling_maps_list,
             )
 
         elif self.is_only_serial_fit:
             return ci_data.for_serial_from_rows(
                 rows=self.rows or (0, ci_data.ci_pattern.regions[0].total_rows),
                 mask=mask,
-                noise_scaling_maps_list=noise_scaling_maps_list,
+                noise_scaling_maps=noise_scaling_maps_list,
             )
         elif self.is_parallel_and_serial_fit:
             return ci_data.parallel_serial_ci_data_masked_from_mask(
@@ -499,7 +495,7 @@ class PhaseCI(Phase):
                     self.hyper_noise_scalar_of_ci_regions,
                     self.hyper_noise_scalar_of_parallel_trails,
                     self.hyper_noise_scalar_of_serial_trails,
-                    self.hyper_noise_scalar_of_serial_overscan_above_trails,
+                    self.hyper_noise_scalar_of_serial_overscan_no_trails,
                 ],
             )
         )
@@ -748,7 +744,7 @@ class PhaseCI(Phase):
                         instance.hyper_noise_scalar_of_ci_regions,
                         instance.hyper_noise_scalar_of_parallel_trails,
                         instance.hyper_noise_scalar_of_serial_trails,
-                        instance.hyper_noise_scalar_of_serial_overscan_above_trails,
+                        instance.hyper_noise_scalar_of_serial_overscan_no_trails,
                     ],
                 )
             )
@@ -899,11 +895,11 @@ class PhaseCI(Phase):
             )
 
         @property
-        def noise_scaling_maps_list_of_serial_overscan_above_trails(self):
+        def noise_scaling_maps_list_of_serial_overscan_no_trails(self):
 
             return list(
                 map(
-                    lambda most_likely_full_fit: most_likely_full_fit.chi_squared_map_of_serial_overscan_above_trails,
+                    lambda most_likely_full_fit: most_likely_full_fit.chi_squared_map_of_serial_overscan_no_trails,
                     self.most_likely_full_fits_no_hyper_scaling,
                 )
             )
