@@ -79,7 +79,7 @@ class HyperNoisePhase(HyperPhase):
         ):
 
             hyper_noise_map = ci_fit.hyper_noise_map_from_noise_map_and_noise_scalings(
-                noise_scaling_maps=ci_data.noise_scaling_maps,
+                noise_scaling_maps_list=ci_data.noise_scaling_maps_list,
                 hyper_noise_scalars=hyper_noise_scalars,
                 noise_map=ci_data.noise_map,
             )
@@ -119,7 +119,7 @@ class HyperNoisePhase(HyperPhase):
 
         masks = phase.masks_for_analysis_from_ci_datas(ci_datas=ci_datas)
 
-        noise_scaling_maps = phase.noise_scaling_maps_from_total_images_and_results(
+        noise_scaling_maps_list = phase.noise_scaling_maps_list_from_total_images_and_results(
             total_images=len(ci_datas), results=results
         )
 
@@ -132,11 +132,11 @@ class HyperNoisePhase(HyperPhase):
                     mask=mask,
                     ci_pattern=data.ci_pattern,
                     ci_frame=data.ci_frame,
-                    noise_scaling_maps=maps,
+                    noise_scaling_maps_list=maps,
                 ),
                 ci_datas,
                 masks,
-                noise_scaling_maps,
+                noise_scaling_maps_list,
             )
         )
 

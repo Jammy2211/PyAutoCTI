@@ -194,7 +194,7 @@ class TestCIDataSimulate(object):
         assert ci_imaging.image[2, 1] > ci_imaging.image[2, 2]
 
 
-class TestCIImagingFromFits(object):
+class TestCIImagingFits(object):
     def test__load_all_data_components__has_correct_attributes(self, ci_pattern_7x7):
 
         ci_imaging = ac.ci_imaging.from_fits(
@@ -307,8 +307,7 @@ class TestCIImagingFromFits(object):
 
         os.makedirs(output_data_dir)
 
-        ac.output_ci_data_to_fits(
-            ci_data=ci_imaging,
+        ci_imaging.output_ci_data_to_fits(
             image_path=output_data_dir + "image.fits",
             noise_map_path=output_data_dir + "noise_map.fits",
             ci_pre_cti_path=output_data_dir + "ci_pre_cti.fits",

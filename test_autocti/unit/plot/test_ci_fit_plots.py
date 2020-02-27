@@ -71,12 +71,12 @@ def test__individual_attriute_plots__all_plot_correctly(
     )
     assert plot_path + "chi_squared_map.png" in plot_patch.paths
 
-    aplt.ci_fit.noise_scaling_maps(
+    aplt.ci_fit.noise_scaling_maps_list(
         fit=fit_ci_imaging_7x7,
         sub_plotter=aplt.SubPlotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert plot_path + "noise_scaling_maps.png" in plot_patch.paths
+    assert plot_path + "noise_scaling_maps_list.png" in plot_patch.paths
 
 
 def test__individual_line_attriutes_plot__all_plot_correctly_output(
@@ -260,7 +260,7 @@ def test__plot_ci_fit_for_phase(fit, plot_path, plot_patch):
         plot_ci_post_cti=False,
         plot_residual_map=True,
         plot_chi_squared_map=False,
-        plot_noise_scaling_maps=False,
+        plot_noise_scaling_maps_list=False,
         plot_parallel_front_edge_line=True,
         plot_parallel_trails_line=False,
         plot_serial_front_edge_line=True,

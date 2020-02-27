@@ -4,3 +4,4 @@ from autocti.masked.masked_structures import (
     MaskedEuclidFrame as euclid_frame,
     MaskedCIFrame as ci_frame,
 )
+from autocti.masked.masked_dataset import MaskedCIImaging as ci_imaging

@@ -325,15 +325,15 @@ class PhaseCI(Phase):
 
         masks = self.masks_for_analysis_from_ci_datas(ci_datas=ci_datas)
 
-        noise_scaling_maps = self.noise_scaling_maps_from_total_images_and_results(
+        noise_scaling_maps_list = self.noise_scaling_maps_list_from_total_images_and_results(
             total_images=len(ci_datas), results=results
         )
 
         ci_datas_masked_extracted = [
             self.ci_datas_masked_extracted_from_ci_data(
-                ci_data=data, mask=mask, noise_scaling_maps=maps
+                ci_data=data, mask=mask, noise_scaling_maps_list=maps
             )
-            for data, mask, maps in zip(ci_datas, masks, noise_scaling_maps)
+            for data, mask, maps in zip(ci_datas, masks, noise_scaling_maps_list)
         ]
 
         ci_datas_masked_full = list(
@@ -345,11 +345,11 @@ class PhaseCI(Phase):
                     mask=mask,
                     ci_pattern=data.ci_pattern,
                     ci_frame=data.ci_frame,
-                    noise_scaling_maps=maps,
+                    noise_scaling_maps_list=maps,
                 ),
                 ci_datas,
                 masks,
-                noise_scaling_maps,
+                noise_scaling_maps_list,
             )
         )
 
@@ -365,61 +365,67 @@ class PhaseCI(Phase):
         )
         return analysis
 
-    def noise_scaling_maps_from_total_images_and_results(self, total_images, results):
+    def noise_scaling_maps_list_from_total_images_and_results(
+        self, total_images, results
+    ):
 
         if self.hyper_noise_scalar_of_ci_regions is not None:
-            noise_scaling_maps_of_ci_regions = (
-                results.last.noise_scaling_maps_of_ci_regions
+            noise_scaling_maps_list_of_ci_regions = (
+                results.last.noise_scaling_maps_list_of_ci_regions
             )
         else:
-            noise_scaling_maps_of_ci_regions = total_images * [None]
+            noise_scaling_maps_list_of_ci_regions = total_images * [None]
 
         if self.hyper_noise_scalar_of_parallel_trails is not None:
-            noise_scaling_maps_of_parallel_trails = (
-                results.last.noise_scaling_maps_of_parallel_trails
+            noise_scaling_maps_list_of_parallel_trails = (
+                results.last.noise_scaling_maps_list_of_parallel_trails
             )
         else:
-            noise_scaling_maps_of_parallel_trails = total_images * [None]
+            noise_scaling_maps_list_of_parallel_trails = total_images * [None]
 
         if self.hyper_noise_scalar_of_serial_trails is not None:
-            noise_scaling_maps_of_serial_trails = (
-                results.last.noise_scaling_maps_of_serial_trails
+            noise_scaling_maps_list_of_serial_trails = (
+                results.last.noise_scaling_maps_list_of_serial_trails
             )
         else:
-            noise_scaling_maps_of_serial_trails = total_images * [None]
+            noise_scaling_maps_list_of_serial_trails = total_images * [None]
 
         if self.hyper_noise_scalar_of_serial_overscan_above_trails is not None:
-            noise_scaling_maps_of_serial_overscan_above_trails = (
-                results.last.noise_scaling_maps_of_serial_overscan_above_trails
+            noise_scaling_maps_list_of_serial_overscan_above_trails = (
+                results.last.noise_scaling_maps_list_of_serial_overscan_above_trails
             )
         else:
-            noise_scaling_maps_of_serial_overscan_above_trails = total_images * [None]
+            noise_scaling_maps_list_of_serial_overscan_above_trails = total_images * [
+                None
+            ]
 
-        noise_scaling_maps = []
+        noise_scaling_maps_list = []
 
         for image_index in range(total_images):
-            noise_scaling_maps.append(
+            noise_scaling_maps_list.append(
                 [
-                    noise_scaling_maps_of_ci_regions[image_index],
-                    noise_scaling_maps_of_parallel_trails[image_index],
-                    noise_scaling_maps_of_serial_trails[image_index],
-                    noise_scaling_maps_of_serial_overscan_above_trails[image_index],
+                    noise_scaling_maps_list_of_ci_regions[image_index],
+                    noise_scaling_maps_list_of_parallel_trails[image_index],
+                    noise_scaling_maps_list_of_serial_trails[image_index],
+                    noise_scaling_maps_list_of_serial_overscan_above_trails[
+                        image_index
+                    ],
                 ]
             )
 
         for image_index in range(total_images):
-            noise_scaling_maps[image_index] = [
+            noise_scaling_maps_list[image_index] = [
                 noise_scaling_map
-                for noise_scaling_map in noise_scaling_maps[image_index]
+                for noise_scaling_map in noise_scaling_maps_list[image_index]
                 if noise_scaling_map is not None
             ]
 
-        noise_scaling_maps = list(filter(None, noise_scaling_maps))
+        noise_scaling_maps_list = list(filter(None, noise_scaling_maps_list))
 
-        if noise_scaling_maps == []:
-            noise_scaling_maps = total_images * [None]
+        if noise_scaling_maps_list == []:
+            noise_scaling_maps_list = total_images * [None]
 
-        return noise_scaling_maps
+        return noise_scaling_maps_list
 
     def customize_priors(self, results):
         """
@@ -455,7 +461,7 @@ class PhaseCI(Phase):
             return False
 
     def ci_datas_masked_extracted_from_ci_data(
-        self, ci_data, mask, noise_scaling_maps=None
+        self, ci_data, mask, noise_scaling_maps_list=None
     ):
 
         if self.is_only_parallel_fit:
@@ -466,18 +472,18 @@ class PhaseCI(Phase):
                     or ci_data.ci_frame.frame_geometry.parallel_overscan.total_columns,
                 ),
                 mask=mask,
-                noise_scaling_maps=noise_scaling_maps,
+                noise_scaling_maps_list=noise_scaling_maps_list,
             )
 
         elif self.is_only_serial_fit:
             return ci_data.for_serial_from_rows(
                 rows=self.rows or (0, ci_data.ci_pattern.regions[0].total_rows),
                 mask=mask,
-                noise_scaling_maps=noise_scaling_maps,
+                noise_scaling_maps_list=noise_scaling_maps_list,
             )
         elif self.is_parallel_and_serial_fit:
             return ci_data.parallel_serial_ci_data_masked_from_mask(
-                mask=mask, noise_scaling_maps=noise_scaling_maps
+                mask=mask, noise_scaling_maps_list=noise_scaling_maps_list
             )
 
     @property
@@ -580,8 +586,8 @@ class PhaseCI(Phase):
             self.plot_ci_fit_chi_squared_map = output_plots(
                 "plot_ci_fit_chi_squared_map"
             )
-            self.plot_ci_fit_noise_scaling_maps = output_plots(
-                "plot_ci_fit_noise_scaling_maps"
+            self.plot_ci_fit_noise_scaling_maps_list = output_plots(
+                "plot_ci_fit_noise_scaling_maps_list"
             )
 
             self.plot_parallel_front_edge_line = output_plots(
@@ -640,7 +646,7 @@ class PhaseCI(Phase):
                 plot_ci_post_cti=self.plot_ci_fit_ci_post_cti,
                 plot_residual_map=self.plot_ci_fit_residual_map,
                 plot_chi_squared_map=self.plot_ci_fit_chi_squared_map,
-                plot_noise_scaling_maps=self.plot_ci_fit_noise_scaling_maps,
+                plot_noise_scaling_maps_list=self.plot_ci_fit_noise_scaling_maps_list,
                 plot_parallel_front_edge_line=self.plot_parallel_front_edge_line,
                 plot_parallel_trails_line=self.plot_parallel_trails_line,
                 plot_serial_front_edge_line=self.plot_serial_front_edge_line,
@@ -863,7 +869,7 @@ class PhaseCI(Phase):
             )
 
         @property
-        def noise_scaling_maps_of_ci_regions(self):
+        def noise_scaling_maps_list_of_ci_regions(self):
 
             return list(
                 map(
@@ -873,7 +879,7 @@ class PhaseCI(Phase):
             )
 
         @property
-        def noise_scaling_maps_of_parallel_trails(self):
+        def noise_scaling_maps_list_of_parallel_trails(self):
 
             return list(
                 map(
@@ -883,7 +889,7 @@ class PhaseCI(Phase):
             )
 
         @property
-        def noise_scaling_maps_of_serial_trails(self):
+        def noise_scaling_maps_list_of_serial_trails(self):
 
             return list(
                 map(
@@ -893,7 +899,7 @@ class PhaseCI(Phase):
             )
 
         @property
-        def noise_scaling_maps_of_serial_overscan_above_trails(self):
+        def noise_scaling_maps_list_of_serial_overscan_above_trails(self):
 
             return list(
                 map(

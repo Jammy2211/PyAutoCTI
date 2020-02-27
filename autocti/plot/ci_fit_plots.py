@@ -19,7 +19,7 @@ def plot_ci_fit_for_phase(
     plot_ci_post_cti,
     plot_residual_map,
     plot_chi_squared_map,
-    plot_noise_scaling_maps,
+    plot_noise_scaling_maps_list,
     plot_parallel_front_edge_line,
     plot_parallel_trails_line,
     plot_serial_front_edge_line,
@@ -40,7 +40,7 @@ def plot_ci_fit_for_phase(
         plot_signal_to_noise_map=plot_signal_to_noise_map,
         plot_ci_pre_cti=plot_ci_pre_cti,
         plot_ci_post_cti=plot_ci_post_cti,
-        plot_noise_scaling_maps=plot_noise_scaling_maps,
+        plot_noise_scaling_maps_list=plot_noise_scaling_maps_list,
         plot_residual_map=plot_residual_map,
         plot_chi_squared_map=plot_chi_squared_map,
         visualize_path=visualize_path,
@@ -85,7 +85,7 @@ def plot_ci_fit_arrays_for_phase(
     plot_ci_post_cti,
     plot_residual_map,
     plot_chi_squared_map,
-    plot_noise_scaling_maps,
+    plot_noise_scaling_maps_list,
     visualize_path=None,
 ):
 
@@ -114,7 +114,7 @@ def plot_ci_fit_arrays_for_phase(
             plot_ci_post_cti=plot_ci_post_cti,
             plot_residual_map=plot_residual_map,
             plot_chi_squared_map=plot_chi_squared_map,
-            plot_noise_scaling_maps=plot_noise_scaling_maps,
+            plot_noise_scaling_maps_list=plot_noise_scaling_maps_list,
             output_path=output_path,
             format="png",
         )
@@ -132,7 +132,7 @@ def plot_ci_fit_arrays_for_phase(
                     plot_ci_post_cti=True,
                     plot_residual_map=True,
                     plot_chi_squared_map=True,
-                    plot_noise_scaling_maps=True,
+                    plot_noise_scaling_maps_list=True,
                     output_path=output_path,
                     format="png",
                 )
@@ -148,7 +148,7 @@ def plot_ci_fit_arrays_for_phase(
                     plot_ci_post_cti=True,
                     plot_residual_map=True,
                     plot_chi_squared_map=True,
-                    plot_noise_scaling_maps=True,
+                    plot_noise_scaling_maps_list=True,
                     output_path="{}/fits/".format(output_path),
                     output_format="fits",
                 )
@@ -763,7 +763,7 @@ def chi_squared_map(fit, include=None, plotter=None):
 
 @cti_plotters.set_include_and_sub_plotter
 @plotters.set_labels
-def noise_scaling_maps(fit, include=None, sub_plotter=None):
+def noise_scaling_maps_list(fit, include=None, sub_plotter=None):
     """Plot the observed chi_squared_map of the ccd simulator.
 
     Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
@@ -774,18 +774,18 @@ def noise_scaling_maps(fit, include=None, sub_plotter=None):
         The chi_squared_map of the dataset.
     """
 
-    number_subplots = len(fit.noise_scaling_maps)
+    number_subplots = len(fit.noise_scaling_maps_list)
 
     sub_plotter.open_subplot_figure(number_subplots=number_subplots)
 
-    for index in range(len(fit.noise_scaling_maps)):
+    for index in range(len(fit.noise_scaling_maps_list)):
 
         sub_plotter.setup_subplot(
             number_subplots=number_subplots, subplot_index=index + 1
         )
 
         sub_plotter.plot_frame(
-            frame=fit.noise_scaling_maps[index],
+            frame=fit.noise_scaling_maps_list[index],
             include_origin=include.origin,
             include_parallel_overscan=include.parallel_overscan,
             include_serial_prescan=include.serial_prescan,

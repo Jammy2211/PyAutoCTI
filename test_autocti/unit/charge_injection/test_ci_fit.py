@@ -52,7 +52,7 @@ def make_ci_datas_hyper_fit(ci_data_masked):
         noise_map=ci_data_masked.noise_map,
         ci_pre_cti=ci_data_masked.ci_pre_cti,
         mask=ci_data_masked.mask,
-        noise_scaling_maps=ci_noise_scalings,
+        noise_scaling_maps_list=ci_noise_scalings,
     )
 
 
@@ -118,7 +118,7 @@ class TestCIFit:
             noise_map=ci_noise_map,
             ci_pre_cti=ci_pre_cti,
             mask=ci_mask,
-            noise_scaling_maps=ci_noise_scalings,
+            noise_scaling_maps_list=ci_noise_scalings,
         )
 
         hyper_noise_scalar = ac.CIHyperNoiseScalar(scale_factor=1.0)
@@ -151,7 +151,7 @@ class TestCIFit:
             noise_map=ci_noise_map,
             ci_pre_cti=ci_pre_cti,
             mask=ci_mask,
-            noise_scaling_maps=ci_noise_scalings,
+            noise_scaling_maps_list=ci_noise_scalings,
         )
 
         hyper_noise_scalar = ac.CIHyperNoiseScalar(scale_factor=1.0)
@@ -195,7 +195,7 @@ class TestCIFit:
             noise_map=ci_noise_map,
             ci_pre_cti=ci_pre_cti,
             mask=ci_mask,
-            noise_scaling_maps=ci_noise_scalings,
+            noise_scaling_maps_list=ci_noise_scalings,
         )
 
         hyper_noise_scalar = ac.CIHyperNoiseScalar(scale_factor=1.0)
@@ -242,7 +242,7 @@ class TestCIFit:
             noise_map=ci_noise_map,
             ci_pre_cti=ci_pre_cti,
             mask=ci_mask,
-            noise_scaling_maps=ci_noise_scalings,
+            noise_scaling_maps_list=ci_noise_scalings,
         )
 
         hyper_noise_scalar_0 = ac.CIHyperNoiseScalar(scale_factor=1.0)
@@ -280,7 +280,7 @@ class TestCIFit:
 
         hyper_noise_map = ac.hyper_noise_map_from_noise_map_and_noise_scalings(
             noise_map=ci_data_hyper_fit.noise_map,
-            noise_scaling_maps=ci_data_hyper_fit.noise_scaling_maps,
+            noise_scaling_maps_list=ci_data_hyper_fit.noise_scaling_maps_list,
             hyper_noise_scalars=[hyper_noise_scalar_0, hyper_noise_scalar_1],
         )
 
@@ -322,39 +322,39 @@ class TestHyperNoiseMap:
         self
     ):
         noise_map = 2.0 * np.ones((2, 2))
-        noise_scaling_maps = [np.array([[0.0, 0.0], [0.0, 0.0]])]
+        noise_scaling_maps_list = [np.array([[0.0, 0.0], [0.0, 0.0]])]
         hyper_noise_scalars = [ac.CIHyperNoiseScalar(scale_factor=1.0)]
 
         noise_map = ac.hyper_noise_map_from_noise_map_and_noise_scalings(
             hyper_noise_scalars=hyper_noise_scalars,
             noise_map=noise_map,
-            noise_scaling_maps=noise_scaling_maps,
+            noise_scaling_maps_list=noise_scaling_maps_list,
         )
 
         assert (noise_map == (np.array([[2.0, 2.0], [2.0, 2.0]]))).all()
 
     def test__image_and_pre_cti_not_identical__factor_is__no_noise_map_scaling(self):
         noise_map = 2.0 * np.ones((2, 2))
-        noise_scaling_maps = [np.array([[1.0, 2.0], [3.0, 4.0]])]
+        noise_scaling_maps_list = [np.array([[1.0, 2.0], [3.0, 4.0]])]
         hyper_noise_scalars = [ac.CIHyperNoiseScalar(scale_factor=0.0)]
 
         noise_map = ac.hyper_noise_map_from_noise_map_and_noise_scalings(
             hyper_noise_scalars=hyper_noise_scalars,
             noise_map=noise_map,
-            noise_scaling_maps=noise_scaling_maps,
+            noise_scaling_maps_list=noise_scaling_maps_list,
         )
 
         assert (noise_map == (np.array([[2.0, 2.0], [2.0, 2.0]]))).all()
 
     def test__image_and_pre_cti_not_identical__chi_sq_is_by_noise_map(self):
         noise_map = 2.0 * np.ones((2, 2))
-        noise_scaling_maps = [np.array([[1.0, 2.0], [3.0, 4.0]])]
+        noise_scaling_maps_list = [np.array([[1.0, 2.0], [3.0, 4.0]])]
         hyper_noise_scalars = [ac.CIHyperNoiseScalar(scale_factor=1.0)]
 
         noise_map = ac.hyper_noise_map_from_noise_map_and_noise_scalings(
             hyper_noise_scalars=hyper_noise_scalars,
             noise_map=noise_map,
-            noise_scaling_maps=noise_scaling_maps,
+            noise_scaling_maps_list=noise_scaling_maps_list,
         )
 
         assert (noise_map == (np.array([[3.0, 4.0], [5.0, 6.0]]))).all()
@@ -363,7 +363,7 @@ class TestHyperNoiseMap:
         self
     ):
         noise_map = 2.0 * np.ones((2, 2))
-        noise_scaling_maps = [
+        noise_scaling_maps_list = [
             np.array([[1.0, 2.0], [3.0, 4.0]]),
             np.array([[1.0, 2.0], [3.0, 4.0]]),
         ]
@@ -375,7 +375,7 @@ class TestHyperNoiseMap:
         noise_map = ac.hyper_noise_map_from_noise_map_and_noise_scalings(
             hyper_noise_scalars=hyper_noise_scalars,
             noise_map=noise_map,
-            noise_scaling_maps=noise_scaling_maps,
+            noise_scaling_maps_list=noise_scaling_maps_list,
         )
 
         assert (noise_map == (np.array([[5.0, 8.0], [11.0, 14.0]]))).all()

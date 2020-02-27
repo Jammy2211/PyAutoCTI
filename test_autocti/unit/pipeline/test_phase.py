@@ -33,12 +33,12 @@ class MockResults(object):
 class NLO(af.NonLinearOptimizer):
     def fit(self, analysis):
         class Fitness(object):
-            def __init__(self, instance_from_physical_vector):
+            def __init__(self, instance_from_vector):
                 self.result = None
-                self.instance_from_physical_vector = instance_from_physical_vector
+                self.instance_from_vector = instance_from_vector
 
             def __call__(self, vector):
-                instance = self.instance_from_physical_vector(vector)
+                instance = self.instance_from_vector(vector)
 
                 likelihood = analysis.fit(instance)
                 self.result = af.Result(instance, likelihood)
@@ -46,7 +46,7 @@ class NLO(af.NonLinearOptimizer):
                 # Return Chi squared
                 return -2 * likelihood
 
-        fitness_function = Fitness(self.variable.instance_from_physical_vector)
+        fitness_function = Fitness(self.variable.instance_from_vector)
         fitness_function(self.variable.prior_count * [0.5])
 
         return fitness_function.result
@@ -815,7 +815,7 @@ class TestPhase(object):
         assert instance.hyper_noise_scalar_of_ci_regions == 5.0
         assert instance.hyper_noise_scalar_of_parallel_trails == 5.0
 
-    def test__make_analysis__ci_regions_and_parallel_trail_scalars__noise_scaling_maps_are_setup_correctly(
+    def test__make_analysis__ci_regions_and_parallel_trail_scalars__noise_scaling_maps_list_are_setup_correctly(
         self, ci_data, cti_settings
     ):
 
@@ -858,39 +858,43 @@ class TestPhase(object):
         )
 
         assert (
-            analysis.ci_datas_masked_full[0].noise_scaling_maps[0]
+            analysis.ci_datas_masked_full[0].noise_scaling_maps_list[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[1].noise_scaling_maps[0]
+            analysis.ci_datas_masked_full[1].noise_scaling_maps_list[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[2].noise_scaling_maps[0]
+            analysis.ci_datas_masked_full[2].noise_scaling_maps_list[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[3].noise_scaling_maps[0]
+            analysis.ci_datas_masked_full[3].noise_scaling_maps_list[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[0].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.ci_datas_masked_full[0].noise_scaling_maps_list[1]
+            == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[1].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.ci_datas_masked_full[1].noise_scaling_maps_list[1]
+            == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[2].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.ci_datas_masked_full[2].noise_scaling_maps_list[1]
+            == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[3].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.ci_datas_masked_full[3].noise_scaling_maps_list[1]
+            == np.zeros((3, 3))
         ).all()
 
-    def test__make_analysis__ci_region_and_serial_trail_scalars___noise_scaling_maps_are_setup_correctly(
+    def test__make_analysis__ci_region_and_serial_trail_scalars___noise_scaling_maps_list_are_setup_correctly(
         self, ci_data
     ):
 
@@ -936,39 +940,43 @@ class TestPhase(object):
         )
 
         assert (
-            analysis.ci_datas_masked_full[0].noise_scaling_maps[0]
+            analysis.ci_datas_masked_full[0].noise_scaling_maps_list[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[1].noise_scaling_maps[0]
+            analysis.ci_datas_masked_full[1].noise_scaling_maps_list[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[2].noise_scaling_maps[0]
+            analysis.ci_datas_masked_full[2].noise_scaling_maps_list[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[3].noise_scaling_maps[0]
+            analysis.ci_datas_masked_full[3].noise_scaling_maps_list[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[0].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.ci_datas_masked_full[0].noise_scaling_maps_list[1]
+            == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[1].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.ci_datas_masked_full[1].noise_scaling_maps_list[1]
+            == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[2].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.ci_datas_masked_full[2].noise_scaling_maps_list[1]
+            == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[3].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.ci_datas_masked_full[3].noise_scaling_maps_list[1]
+            == np.zeros((3, 3))
         ).all()
 
-    def test__make_analysis__all_4_scalars__noise_scaling_maps_are_setup_correctly(
+    def test__make_analysis__all_4_scalars__noise_scaling_maps_list_are_setup_correctly(
         self, ci_data
     ):
 
@@ -1023,62 +1031,74 @@ class TestPhase(object):
         )
 
         assert (
-            analysis.ci_datas_masked_full[0].noise_scaling_maps[0]
+            analysis.ci_datas_masked_full[0].noise_scaling_maps_list[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[1].noise_scaling_maps[0]
+            analysis.ci_datas_masked_full[1].noise_scaling_maps_list[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[2].noise_scaling_maps[0]
+            analysis.ci_datas_masked_full[2].noise_scaling_maps_list[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[3].noise_scaling_maps[0]
+            analysis.ci_datas_masked_full[3].noise_scaling_maps_list[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[0].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.ci_datas_masked_full[0].noise_scaling_maps_list[1]
+            == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[1].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.ci_datas_masked_full[1].noise_scaling_maps_list[1]
+            == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[2].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.ci_datas_masked_full[2].noise_scaling_maps_list[1]
+            == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[3].noise_scaling_maps[1] == np.zeros((3, 3))
-        ).all()
-
-        assert (
-            analysis.ci_datas_masked_full[0].noise_scaling_maps[2] == np.zeros((3, 3))
-        ).all()
-        assert (
-            analysis.ci_datas_masked_full[1].noise_scaling_maps[2] == np.zeros((3, 3))
-        ).all()
-        assert (
-            analysis.ci_datas_masked_full[2].noise_scaling_maps[2] == np.zeros((3, 3))
-        ).all()
-        assert (
-            analysis.ci_datas_masked_full[3].noise_scaling_maps[2] == np.zeros((3, 3))
+            analysis.ci_datas_masked_full[3].noise_scaling_maps_list[1]
+            == np.zeros((3, 3))
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[0].noise_scaling_maps[3] == np.zeros((3, 3))
+            analysis.ci_datas_masked_full[0].noise_scaling_maps_list[2]
+            == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[1].noise_scaling_maps[3] == np.zeros((3, 3))
+            analysis.ci_datas_masked_full[1].noise_scaling_maps_list[2]
+            == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[2].noise_scaling_maps[3] == np.zeros((3, 3))
+            analysis.ci_datas_masked_full[2].noise_scaling_maps_list[2]
+            == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[3].noise_scaling_maps[3] == np.zeros((3, 3))
+            analysis.ci_datas_masked_full[3].noise_scaling_maps_list[2]
+            == np.zeros((3, 3))
+        ).all()
+
+        assert (
+            analysis.ci_datas_masked_full[0].noise_scaling_maps_list[3]
+            == np.zeros((3, 3))
+        ).all()
+        assert (
+            analysis.ci_datas_masked_full[1].noise_scaling_maps_list[3]
+            == np.zeros((3, 3))
+        ).all()
+        assert (
+            analysis.ci_datas_masked_full[2].noise_scaling_maps_list[3]
+            == np.zeros((3, 3))
+        ).all()
+        assert (
+            analysis.ci_datas_masked_full[3].noise_scaling_maps_list[3]
+            == np.zeros((3, 3))
         ).all()
 
     def test__extended_with_hyper_noise_phase(self, phase):
@@ -1089,10 +1109,10 @@ class TestPhase(object):
 
 class MockResult:
 
-    noise_scaling_maps_of_ci_regions = [1]
-    noise_scaling_maps_of_parallel_trails = [2]
-    noise_scaling_maps_of_serial_trails = [3]
-    noise_scaling_maps_of_serial_overscan_above_trails = [4]
+    noise_scaling_maps_list_of_ci_regions = [1]
+    noise_scaling_maps_list_of_parallel_trails = [2]
+    noise_scaling_maps_list_of_serial_trails = [3]
+    noise_scaling_maps_list_of_serial_overscan_above_trails = [4]
 
 
 class MockInstance:
@@ -1171,10 +1191,12 @@ class TestResult(object):
         assert hasattr(result, "most_likely_extracted_fits")
         assert hasattr(result, "most_likely_full_fits")
         assert hasattr(result, "cti_settings")
-        assert hasattr(result, "noise_scaling_maps_of_ci_regions")
-        assert hasattr(result, "noise_scaling_maps_of_parallel_trails")
-        assert hasattr(result, "noise_scaling_maps_of_serial_trails")
-        assert hasattr(result, "noise_scaling_maps_of_serial_overscan_above_trails")
+        assert hasattr(result, "noise_scaling_maps_list_of_ci_regions")
+        assert hasattr(result, "noise_scaling_maps_list_of_parallel_trails")
+        assert hasattr(result, "noise_scaling_maps_list_of_serial_trails")
+        assert hasattr(
+            result, "noise_scaling_maps_list_of_serial_overscan_above_trails"
+        )
 
     def test__cti_settings_passed_as_result_correctly(self, ci_data, cti_settings):
 
@@ -1189,7 +1211,7 @@ class TestResult(object):
 
         assert result.cti_settings == cti_settings
 
-    def test__parallel_phase__noise_scaling_maps_of_result__are_correct(
+    def test__parallel_phase__noise_scaling_maps_list_of_result__are_correct(
         self, ci_data, cti_settings
     ):
 
@@ -1209,15 +1231,17 @@ class TestResult(object):
         result = phase.run(ci_datas=[ci_data], cti_settings=cti_settings)
 
         assert (
-            result.noise_scaling_maps_of_ci_regions[0]
+            result.noise_scaling_maps_list_of_ci_regions[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            result.noise_scaling_maps_of_parallel_trails[0] == np.zeros((3, 3))
+            result.noise_scaling_maps_list_of_parallel_trails[0] == np.zeros((3, 3))
         ).all()
-        assert (result.noise_scaling_maps_of_serial_trails[0] == np.zeros((3, 3))).all()
         assert (
-            result.noise_scaling_maps_of_serial_overscan_above_trails[0]
+            result.noise_scaling_maps_list_of_serial_trails[0] == np.zeros((3, 3))
+        ).all()
+        assert (
+            result.noise_scaling_maps_list_of_serial_overscan_above_trails[0]
             == np.zeros((3, 3))
         ).all()
