@@ -23,7 +23,7 @@ class CIImagingFit(aa_fit.ImagingFit):
         cti_settings : arctic_settings.ArcticSettings
             The settings that control how arctic models CTI.
         hyper_noise_scalars :
-            The ci_hyper-parameter(s) which the noise_scaling_maps is multiplied by to scale the noise-map.
+            The ci_hyper-parameter(s) which the noise_scaling_maps_list is multiplied by to scale the noise-map.
         """
 
         self.ci_masked_data = masked_ci_imaging
@@ -40,10 +40,10 @@ class CIImagingFit(aa_fit.ImagingFit):
 
         if hyper_noise_scalars is not None and hyper_noise_scalars is not []:
 
-            self.noise_scaling_maps = masked_ci_imaging.noise_scaling_maps
+            self.noise_scaling_maps_list = masked_ci_imaging.noise_scaling_maps_list
             noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
                 hyper_noise_scalars=hyper_noise_scalars,
-                noise_scaling_maps=masked_ci_imaging.noise_scaling_maps,
+                noise_scaling_maps_list=masked_ci_imaging.noise_scaling_maps_list,
                 noise_map=masked_ci_imaging.noise_map,
             )
 
@@ -88,14 +88,14 @@ class CIImagingFit(aa_fit.ImagingFit):
 
 
 def hyper_noise_map_from_noise_map_and_noise_scalings(
-    hyper_noise_scalars, noise_scaling_maps, noise_map
+    hyper_noise_scalars, noise_scaling_maps_list, noise_map
 ):
     """For a noise-map, use the model hyper noise and noise-scaling maps to compute a scaled noise-map.
 
     Parameters
     -----------
     hyper_noise_scalars
-    noise_scaling_maps
+    noise_scaling_maps_list
     noise_map : imaging.NoiseMap or ndarray
         An arrays describing the RMS standard deviation error in each pixel, preferably in unit_label of electrons per
         second.
@@ -106,7 +106,7 @@ def hyper_noise_map_from_noise_map_and_noise_scalings(
                 noise_scaling_map
             ),
             hyper_noise_scalars,
-            noise_scaling_maps,
+            noise_scaling_maps_list,
         )
     )
 

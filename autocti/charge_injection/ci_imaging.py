@@ -7,6 +7,7 @@ from autoarray.util import array_util
 
 class CIImaging(object):
     def __init__(self, image, noise_map, ci_pre_cti, cosmic_ray_map=None):
+
         self.image = image
         self.noise_map = noise_map
         self.ci_pre_cti = ci_pre_cti
@@ -163,6 +164,36 @@ class CIImaging(object):
             cosmic_ray_map=cosmic_ray_map,
         )
 
+    def output_to_fits(
+        self,
+        image_path,
+        noise_map_path=None,
+        ci_pre_cti_path=None,
+        cosmic_ray_map_path=None,
+        overwrite=False,
+    ):
+
+        array_util.numpy_array_2d_to_fits(
+            array_2d=self.image, file_path=image_path, overwrite=overwrite
+        )
+
+        if self.noise_map is not None and noise_map_path is not None:
+            array_util.numpy_array_2d_to_fits(
+                array_2d=self.noise_map, file_path=noise_map_path, overwrite=overwrite
+            )
+
+        if self.ci_pre_cti is not None and ci_pre_cti_path is not None:
+            array_util.numpy_array_2d_to_fits(
+                array_2d=self.ci_pre_cti, file_path=ci_pre_cti_path, overwrite=overwrite
+            )
+
+        if self.cosmic_ray_map is not None and cosmic_ray_map_path is not None:
+            array_util.numpy_array_2d_to_fits(
+                array_2d=self.cosmic_ray_map,
+                file_path=cosmic_ray_map_path,
+                overwrite=overwrite,
+            )
+
     @classmethod
     def simulate(
         cls,
@@ -240,37 +271,6 @@ def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, image, mask=N
     if isinstance(ci_pattern, pattern.CIPatternUniform):
         return ci_pattern.ci_pre_cti_from_shape(image.shape)
     return ci_pattern.ci_pre_cti_from_ci_image_and_mask(image, mask)
-
-
-def output_ci_data_to_fits(
-    ci_data,
-    image_path,
-    noise_map_path=None,
-    ci_pre_cti_path=None,
-    cosmic_ray_map_path=None,
-    overwrite=False,
-):
-
-    array_util.numpy_array_2d_to_fits(
-        array_2d=ci_data.image, file_path=image_path, overwrite=overwrite
-    )
-
-    if ci_data.noise_map is not None and noise_map_path is not None:
-        array_util.numpy_array_2d_to_fits(
-            array_2d=ci_data.noise_map, file_path=noise_map_path, overwrite=overwrite
-        )
-
-    if ci_data.ci_pre_cti is not None and ci_pre_cti_path is not None:
-        array_util.numpy_array_2d_to_fits(
-            array_2d=ci_data.ci_pre_cti, file_path=ci_pre_cti_path, overwrite=overwrite
-        )
-
-    if ci_data.cosmic_ray_map is not None and cosmic_ray_map_path is not None:
-        array_util.numpy_array_2d_to_fits(
-            array_2d=ci_data.cosmic_ray_map,
-            file_path=cosmic_ray_map_path,
-            overwrite=overwrite,
-        )
 
 
 def read_noise_map_from_shape_and_sigma(shape, sigma, noise_seed=-1):

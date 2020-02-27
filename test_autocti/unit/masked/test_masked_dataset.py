@@ -1,90 +1,134 @@
-class TestCIMaskImaged:
-    def test__map(self, ci_pattern_7x7):
+import numpy as np
+import pytest
 
-        data = ac.ci_imaging(
-            image=ac.ci_frame.full(
-                fill_value=1.0, shape_2d=(1, 1), ci_pattern=ci_pattern_7x7
-            ),
-            noise_map=3,
-            ci_pre_cti=4,
-            cosmic_ray_map=None,
+import autocti as ac
+
+
+class TestCIMaskedImaging:
+    def test__construtor__masks_arrays_correctly(self, ci_imaging_7x7):
+
+        mask = ac.mask.unmasked(shape_2d=ci_imaging_7x7.shape_2d)
+
+        mask[0, 0] = True
+
+        masked_ci_imaging = ac.masked.ci_imaging(ci_imaging=ci_imaging_7x7, mask=mask)
+
+        assert (masked_ci_imaging.mask == mask).all()
+
+        masked_image = ci_imaging_7x7.image
+        masked_image[0, 0] = 0.0
+
+        assert (masked_ci_imaging.image == masked_image).all()
+
+        masked_image = ci_imaging_7x7.noise_map
+        masked_image[0, 0] = 0.0
+
+        assert (masked_ci_imaging.noise_map == masked_image).all()
+
+        masked_image = ci_imaging_7x7.ci_pre_cti
+        masked_image[0, 0] = 0.0
+
+        assert (masked_ci_imaging.ci_pre_cti == masked_image).all()
+
+        masked_image = ci_imaging_7x7.cosmic_ray_map
+        masked_image[0, 0] = 0.0
+
+        assert (masked_ci_imaging.cosmic_ray_map == masked_image).all()
+
+    def test__for_parallel_masked_ci_imaging(
+        self, ci_imaging_7x7, mask_7x7, noise_scaling_maps_list_7x7
+    ):
+
+        mask = ac.mask.unmasked(shape_2d=ci_imaging_7x7.shape_2d)
+        mask[0, 2] = True
+
+        masked_ci_imaging = ac.masked.ci_imaging.for_parallel_from_columns(
+            ci_imaging=ci_imaging_7x7,
+            mask=mask,
+            columns=(1, 3),
+            noise_scaling_maps_list=noise_scaling_maps_list_7x7,
         )
 
-        result = data.map_to_ci_data_masked(func=lambda x: 2 * x, mask=1)
-        assert isinstance(result, masked_dataset.MaskedCIImaging)
-        assert result.image == 1.0
-        assert result.noise_map == 6
-        assert result.ci_pre_cti == 8
-        assert result.cosmic_ray_map == None
+        mask = np.full(fill_value=False, shape=(7, 2))
+        mask[0, 0] = True
+        assert (masked_ci_imaging.mask == mask).all()
 
-        data = ac.ci_imaging(image=1, noise_map=3, ci_pre_cti=4, cosmic_ray_map=10)
-        result = data.map_to_ci_data_masked(func=lambda x: 2 * x, mask=1)
-        assert isinstance(result, masked_dataset.MaskedCIImaging)
-        assert result.image == 2
-        assert result.noise_map == 6
-        assert result.ci_pre_cti == 8
-        assert result.cosmic_ray_map == 10
+        image = np.ones((7, 2))
+        image[0, 0] = 0.0
 
-    def test__map_including_noise_scaling_maps(self):
+        assert masked_ci_imaging.image == pytest.approx(image, 1.0e-4)
 
-        data = ac.ci_imaging(image=1, noise_map=3, ci_pre_cti=4, cosmic_ray_map=None)
-        result = data.map_to_ci_data_masked(
-            func=lambda x: 2 * x, mask=1, noise_scaling_maps=[1, 2, 3]
-        )
-        assert isinstance(result, masked_dataset.MaskedCIImaging)
-        assert result.image == 2
-        assert result.noise_map == 6
-        assert result.ci_pre_cti == 8
-        assert result.noise_scaling_maps == [2, 4, 6]
-        assert result.cosmic_ray_map == None
+        noise_map = 2.0 * np.ones((7, 2))
+        noise_map[0, 0] = 0.0
 
-        data = ac.ci_imaging(image=1, noise_map=3, ci_pre_cti=4, cosmic_ray_map=10)
-        result = data.map_to_ci_data_masked(
-            func=lambda x: 2 * x, mask=1, noise_scaling_maps=[1, 2, 3]
-        )
-        assert isinstance(result, masked_dataset.MaskedCIImaging)
-        assert result.image == 2
-        assert result.noise_map == 6
-        assert result.ci_pre_cti == 8
-        assert result.noise_scaling_maps == [2, 4, 6]
-        assert result.cosmic_ray_map == 10
+        assert masked_ci_imaging.noise_map == pytest.approx(noise_map, 1.0e-4)
 
-    def test__parallel_serial_ci_data_fit_from_mask(self):
+        ci_pre_cti = 10.0 * np.ones((7, 2))
+        ci_pre_cti[0, 0] = 0.0
 
-        data = ac.ci_imaging(image=1, noise_map=3, ci_pre_cti=4, cosmic_ray_map=10)
+        assert masked_ci_imaging.ci_pre_cti == pytest.approx(ci_pre_cti, 1.0e-4)
 
-        def parallel_serial_extractor():
-            def extractor(obj):
-                return 2 * obj
+        assert masked_ci_imaging.cosmic_ray_map.shape == (7, 2)
 
-            return extractor
+        noise_scaling_map_0 = np.ones((7, 2))
+        noise_scaling_map_0[0, 0] = 0.0
 
-        data.parallel_serial_ci_imaging = parallel_serial_extractor
-        result = data.parallel_serial_ci_data_masked_from_mask(mask=1)
-
-        assert isinstance(result, masked_dataset.MaskedCIImaging)
-        assert result.image == 2
-        assert result.noise_map == 6
-        assert result.ci_pre_cti == 8
-        assert result.cosmic_ray_map == 10
-
-    def test__parallel_serial_ci_data_fit_from_mask__include_noise_scaling_maps(self):
-        data = ac.ci_imaging(image=1, noise_map=3, ci_pre_cti=4, cosmic_ray_map=10)
-
-        def parallel_serial_extractor():
-            def extractor(obj):
-                return 2 * obj
-
-            return extractor
-
-        data.parallel_serial_ci_imaging = parallel_serial_extractor
-        result = data.parallel_serial_ci_data_masked_from_mask(
-            mask=1, noise_scaling_maps=[2, 3]
+        assert masked_ci_imaging.noise_scaling_maps_list[0][0] == pytest.approx(
+            noise_scaling_map_0, 1.0e-4
         )
 
-        assert isinstance(result, masked_dataset.MaskedCIImaging)
-        assert result.image == 2
-        assert result.noise_map == 6
-        assert result.ci_pre_cti == 8
-        assert result.noise_scaling_maps == [4, 6]
-        assert result.cosmic_ray_map == 10
+        noise_scaling_map_0 = 2.0 * np.ones((7, 2))
+        noise_scaling_map_0[0, 0] = 0.0
+
+        assert masked_ci_imaging.noise_scaling_maps_list[0][1] == pytest.approx(
+            noise_scaling_map_0, 1.0e-4
+        )
+
+    def test__for_serial_masked_ci_imaging(
+        self, ci_imaging_7x7, mask_7x7, noise_scaling_maps_list_7x7
+    ):
+
+        mask = ac.mask.unmasked(shape_2d=ci_imaging_7x7.shape_2d)
+        mask[1, 0] = True
+
+        masked_ci_imaging = ac.masked.ci_imaging.for_serial_from_rows(
+            ci_imaging=ci_imaging_7x7,
+            mask=mask,
+            rows=(0, 1),
+            noise_scaling_maps_list=noise_scaling_maps_list_7x7,
+        )
+
+        mask = np.full(fill_value=False, shape=(1, 7))
+        mask[0, 0] = True
+        assert (masked_ci_imaging.mask == mask).all()
+
+        image = np.ones((1, 7))
+        image[0, 0] = 0.0
+
+        assert masked_ci_imaging.image == pytest.approx(image, 1.0e-4)
+
+        noise_map = 2.0 * np.ones((1, 7))
+        noise_map[0, 0] = 0.0
+
+        assert masked_ci_imaging.noise_map == pytest.approx(noise_map, 1.0e-4)
+
+        ci_pre_cti = 10.0 * np.ones((1, 7))
+        ci_pre_cti[0, 0] = 0.0
+
+        assert masked_ci_imaging.ci_pre_cti == pytest.approx(ci_pre_cti, 1.0e-4)
+
+        assert masked_ci_imaging.cosmic_ray_map.shape == (1, 7)
+
+        noise_scaling_map_0 = np.ones((1, 7))
+        noise_scaling_map_0[0, 0] = 0.0
+
+        assert masked_ci_imaging.noise_scaling_maps_list[0][0] == pytest.approx(
+            noise_scaling_map_0, 1.0e-4
+        )
+
+        noise_scaling_map_0 = 2.0 * np.ones((1, 7))
+        noise_scaling_map_0[0, 0] = 0.0
+
+        assert masked_ci_imaging.noise_scaling_maps_list[0][1] == pytest.approx(
+            noise_scaling_map_0, 1.0e-4
+        )

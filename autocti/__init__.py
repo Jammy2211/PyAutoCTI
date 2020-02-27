@@ -6,7 +6,6 @@ from autocti import masked
 from autocti.charge_injection.ci_imaging import (
     CIImaging as ci_imaging,
     ci_pre_cti_from_ci_pattern_geometry_image_and_mask,
-    output_ci_data_to_fits,
     read_noise_map_from_shape_and_sigma,
 )
 from autocti.charge_injection.ci_fit import (

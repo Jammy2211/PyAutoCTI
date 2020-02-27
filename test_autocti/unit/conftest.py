@@ -77,31 +77,33 @@ def make_ci_imaging_7x7(image_7x7, noise_map_7x7, ci_pre_cti_7x7, cosmic_ray_map
     )
 
 
-@pytest.fixture(name="noise_scaling_maps_7x7")
-def make_noise_scaling_map_7x7(ci_pattern_7x7):
+@pytest.fixture(name="noise_scaling_maps_list_7x7")
+def make_noise_scaling_maps_list_7x7(ci_pattern_7x7):
 
     return [
-        ac.ci_frame.ones(
-            shape_2d=(7, 7), pixel_scales=(1.0, 1.0), ci_pattern=ci_pattern_7x7
-        ),
-        ac.ci_frame.full(
-            shape_2d=(7, 7),
-            fill_value=2.0,
-            pixel_scales=(1.0, 1.0),
-            ci_pattern=ci_pattern_7x7,
-        ),
+        [
+            ac.ci_frame.ones(
+                shape_2d=(7, 7), pixel_scales=(1.0, 1.0), ci_pattern=ci_pattern_7x7
+            ),
+            ac.ci_frame.full(
+                shape_2d=(7, 7),
+                fill_value=2.0,
+                pixel_scales=(1.0, 1.0),
+                ci_pattern=ci_pattern_7x7,
+            ),
+        ]
     ]
 
 
 @pytest.fixture(name="masked_ci_imaging_7x7")
-def make_masked_ci_imaging_7x7(ci_imaging_7x7, mask_7x7, noise_scaling_maps_7x7):
+def make_masked_ci_imaging_7x7(ci_imaging_7x7, mask_7x7, noise_scaling_maps_list_7x7):
     return ac.MaskedCIImaging(
         mask=mask_7x7,
         image=ci_imaging_7x7.image,
         noise_map=ci_imaging_7x7.noise_map,
         ci_pre_cti=ci_imaging_7x7.ci_pre_cti,
         cosmic_ray_map=ci_imaging_7x7.cosmic_ray_map,
-        noise_scaling_maps=noise_scaling_maps_7x7,
+        noise_scaling_maps_list=noise_scaling_maps_list_7x7,
     )
 
 
