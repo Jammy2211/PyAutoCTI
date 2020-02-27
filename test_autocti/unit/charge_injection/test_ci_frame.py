@@ -475,6 +475,76 @@ class TestNonCIRegionFrame:
         ]
 
 
+class TestParallelNonCIRegionFrame:
+    def test__1_ci_region__parallel_overscan_is_entire_image__extracts_everything_but_removes_serial_scans(
+        self
+    ):
+
+        ci_pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 3)])
+
+        arr = np.array(
+            [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]]
+        )
+
+        ci_frame = ac.ci_frame.manual(
+            array=arr,
+            ci_pattern=ci_pattern,
+            roe_corner=(1, 0),
+            serial_prescan=(3, 4, 2, 3),
+            serial_overscan=(3, 4, 0, 1),
+        )
+
+        assert (
+            ci_frame.parallel_non_ci_regions_frame
+            == np.array(
+                [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 10.0, 0.0]]
+            )
+        ).all()
+        assert ci_frame.parallel_non_ci_regions_frame.ci_pattern.regions == [
+            (0, 3, 0, 3)
+        ]
+
+    def test__same_as_above_but_2_ci_regions(self):
+
+        ci_pattern = ac.CIPatternUniform(
+            normalization=10.0, regions=[(0, 1, 0, 3), (3, 4, 0, 3)]
+        )
+
+        arr = np.array(
+            [
+                [0.0, 1.0, 2.0],
+                [3.0, 4.0, 5.0],
+                [6.0, 7.0, 8.0],
+                [9.0, 10.0, 11.0],
+                [12.0, 13.0, 14.0],
+            ]
+        )
+
+        ci_frame = ac.ci_frame.manual(
+            array=arr,
+            ci_pattern=ci_pattern,
+            serial_prescan=(1, 2, 0, 3),
+            serial_overscan=(0, 1, 0, 1),
+        )
+
+        assert (
+            ci_frame.parallel_non_ci_regions_frame
+            == np.array(
+                [
+                    [0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0],
+                    [6.0, 7.0, 8.0],
+                    [0.0, 0.0, 0.0],
+                    [12.0, 13.0, 14.0],
+                ]
+            )
+        ).all()
+        assert ci_frame.parallel_non_ci_regions_frame.ci_pattern.regions == [
+            (0, 1, 0, 3),
+            (3, 4, 0, 3),
+        ]
+
+
 class TestParallelEdgesAndTrailsFrame:
     def test__front_edge_only__multiple_rows__new_frame_contains_only_edge(self):
         ci_pattern = ac.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 3)])
@@ -987,7 +1057,7 @@ class TestSerialOverScanAboveTrailsFrame:
             serial_overscan=(0, 3, 2, 4),
         )
 
-        new_ci_frame = ci_frame.serial_overscan_above_trails_frame
+        new_ci_frame = ci_frame.serial_overscan_no_trails_frame
 
         assert (
             new_ci_frame
@@ -1011,7 +1081,7 @@ class TestSerialOverScanAboveTrailsFrame:
             serial_overscan=(0, 3, 3, 4),
         )
 
-        new_ci_frame = ci_frame.serial_overscan_above_trails_frame
+        new_ci_frame = ci_frame.serial_overscan_no_trails_frame
 
         assert (
             new_ci_frame
@@ -1046,7 +1116,7 @@ class TestSerialOverScanAboveTrailsFrame:
             serial_overscan=(0, 5, 3, 4),
         )
 
-        new_ci_frame = ci_frame.serial_overscan_above_trails_frame
+        new_ci_frame = ci_frame.serial_overscan_no_trails_frame
 
         assert (
             new_ci_frame

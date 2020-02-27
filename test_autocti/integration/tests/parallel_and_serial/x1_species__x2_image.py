@@ -74,7 +74,7 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
         hyper_noise_scalar_of_ci_regions=ac.CIHyperNoiseScalar,
         hyper_noise_scalar_of_parallel_trails=ac.CIHyperNoiseScalar,
         hyper_noise_scalar_of_serial_trails=ac.CIHyperNoiseScalar,
-        hyper_noise_scalar_of_serial_overscan_above_trails=ac.CIHyperNoiseScalar,
+        hyper_noise_scalar_of_serial_overscan_no_trails=ac.CIHyperNoiseScalar,
         optimizer_class=optimizer_class,
     )
 
@@ -93,9 +93,9 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
                 "phase_2"
             ).constant.hyper_noise_scalar_of_serial_trails
 
-            self.hyper_noise_scalar_of_serial_overscan_above_trails = results.from_phase(
+            self.hyper_noise_scalar_of_serial_overscan_no_trails = results.from_phase(
                 "phase_2"
-            ).constant.hyper_noise_scalar_of_serial_overscan_above_trails
+            ).constant.hyper_noise_scalar_of_serial_overscan_no_trails
 
     phase3 = FixedPhaseCI(
         phase_name="phase_3",
@@ -107,7 +107,7 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
         hyper_noise_scalar_of_ci_regions=ac.CIHyperNoiseScalar,
         hyper_noise_scalar_of_parallel_trails=ac.CIHyperNoiseScalar,
         hyper_noise_scalar_of_serial_trails=ac.CIHyperNoiseScalar,
-        hyper_noise_scalar_of_serial_overscan_above_trails=ac.CIHyperNoiseScalar,
+        hyper_noise_scalar_of_serial_overscan_no_trails=ac.CIHyperNoiseScalar,
         optimizer_class=optimizer_class,
         rows=None,
     )
