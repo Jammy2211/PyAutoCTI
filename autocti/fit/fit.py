@@ -80,7 +80,7 @@ class FitDataset:
         The chi-squared map values in masked pixels are returned as zero.
         """
         return fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
-            residual_map=self.residual_map, noise_map=self.noise_map, mask=self.mask,
+            residual_map=self.residual_map, noise_map=self.noise_map, mask=self.mask
         )
 
     @property
@@ -114,13 +114,16 @@ class FitDataset:
 
         The noise map values in masked pixels are omitted from the calculation.
         """
-        return fit_util.noise_normalization_from_noise_map_and_mask(noise_map=self.noise_map, mask=self.mask)
+        return fit_util.noise_normalization_from_noise_map_and_mask(
+            noise_map=self.noise_map, mask=self.mask
+        )
 
     @property
     def likelihood(self):
         return fit_util.likelihood_from_chi_squared_and_noise_normalization(
             chi_squared=self.chi_squared, noise_normalization=self.noise_normalization
         )
+
 
 class FitImaging(FitDataset):
     def __init__(self, masked_imaging, model_image):
@@ -150,10 +153,7 @@ class FitImaging(FitDataset):
             The overall likelihood of the model's fit to the dataset, summed over evey data point.
         """
 
-        super().__init__(
-            masked_dataset=masked_imaging,
-            model_data=model_image,
-        )
+        super().__init__(masked_dataset=masked_imaging, model_data=model_image)
 
     @property
     def masked_imaging(self):

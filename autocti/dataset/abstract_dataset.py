@@ -7,7 +7,6 @@ from autocti.structures import arrays
 
 
 class AbstractDataset:
-
     def __init__(self, data, noise_map, name=None):
         """A collection of abstract 2D for different data_type classes (an image, pixel-scale, noise map, etc.)
 
@@ -83,9 +82,6 @@ class AbstractDataset:
 
 
 class AbstractMaskedDataset:
-    def __init__(
-        self,
-        mask,
-    ):
+    def __init__(self, mask):
 
         self.mask = mask

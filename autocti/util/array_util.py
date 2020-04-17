@@ -57,7 +57,6 @@ class Memoizer:
         return wrapper
 
 
-
 def numpy_array_1d_to_fits(array_1d, file_path, overwrite=False):
     """Write a 1D NumPy array to a .fits file.
 

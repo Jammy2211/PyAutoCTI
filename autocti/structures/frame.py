@@ -6,6 +6,7 @@ from autocti.structures import region as reg
 from autocti.util import array_util
 from autocti.util import frame_util
 
+
 class AbstractFrame(arrays.AbstractArray):
     def __new__(
         cls,
@@ -146,7 +147,9 @@ class AbstractFrame(arrays.AbstractArray):
         []     [=====================]
                <---------S----------
         """
-        return Frame.extracted_frame_from_frame_and_extraction_region(frame=self, extraction_region=self.parallel_overscan)
+        return Frame.extracted_frame_from_frame_and_extraction_region(
+            frame=self, extraction_region=self.parallel_overscan
+        )
 
     @property
     def parallel_overscan_binned_line(self):
@@ -227,7 +230,9 @@ class AbstractFrame(arrays.AbstractArray):
         []     [=====================]
                <---------S----------
         """
-        return Frame.extracted_frame_from_frame_and_extraction_region(frame=self, extraction_region=self.serial_overscan)
+        return Frame.extracted_frame_from_frame_and_extraction_region(
+            frame=self, extraction_region=self.serial_overscan
+        )
 
     @property
     def serial_overscan_binned_line(self):

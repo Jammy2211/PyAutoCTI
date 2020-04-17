@@ -192,7 +192,6 @@ def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, image, mask=N
 
 
 class MaskedCIImaging(imaging.MaskedImaging):
-
     def __init__(self, ci_imaging, mask, noise_scaling_maps=None):
         """A data is the collection of simulator components (e.g. the image, noise maps, PSF, etc.) which are used \
         to generate and fit it with a model image.
@@ -221,9 +220,7 @@ class MaskedCIImaging(imaging.MaskedImaging):
             The 2D mask that is applied to image simulator.
         """
 
-        super().__init__(
-           imaging=ci_imaging, mask=mask,
-        )
+        super().__init__(imaging=ci_imaging, mask=mask)
 
         self.image = ci_frame.MaskedCIFrame.from_ci_frame(
             ci_frame=ci_imaging.image, mask=mask

@@ -59,9 +59,7 @@ class Mask(np.ndarray):
             self.pixel_scales = None
 
     @classmethod
-    def manual(
-        cls, mask_2d, pixel_scales=None, origin=(0.0, 0.0), invert=False
-    ):
+    def manual(cls, mask_2d, pixel_scales=None, origin=(0.0, 0.0), invert=False):
 
         if type(mask_2d) is list:
             mask_2d = np.asarray(mask_2d).astype("bool")
@@ -75,14 +73,10 @@ class Mask(np.ndarray):
         if len(mask_2d.shape) != 2:
             raise exc.MaskException("The input mask_2d is not a two dimensional array")
 
-        return Mask(
-            mask_2d=mask_2d, pixel_scales=pixel_scales, origin=origin
-        )
+        return Mask(mask_2d=mask_2d, pixel_scales=pixel_scales, origin=origin)
 
     @classmethod
-    def unmasked(
-        cls, shape_2d, pixel_scales=None, origin=(0.0, 0.0), invert=False
-    ):
+    def unmasked(cls, shape_2d, pixel_scales=None, origin=(0.0, 0.0), invert=False):
         """Setup a mask where all pixels are unmasked.
 
         Parameters
@@ -164,13 +158,7 @@ class Mask(np.ndarray):
         return mask
 
     @classmethod
-    def from_fits(
-        cls,
-        file_path,
-        pixel_scales,
-        hdu=0,
-        origin=(0.0, 0.0),
-    ):
+    def from_fits(cls, file_path, pixel_scales, hdu=0, origin=(0.0, 0.0)):
         """
         Loads the image from a .fits file.
 
