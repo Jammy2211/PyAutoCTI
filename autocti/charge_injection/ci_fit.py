@@ -1,12 +1,12 @@
 import numpy as np
-from autoarray.fit import fit as aa_fit
-from autocti.masked import masked_dataset
+from autocti.fit import fit
+from autocti.charge_injection import ci_imaging
 
 
-class CIImagingFit(aa_fit.ImagingFit):
+class CIFitImaging(fit.FitImaging):
     def __init__(
         self,
-        masked_ci_imaging: masked_dataset.MaskedCIImaging,
+        masked_ci_imaging: ci_imaging.MaskedCIImaging,
         ci_post_cti,
         hyper_noise_scalars=None,
     ):
@@ -22,13 +22,13 @@ class CIImagingFit(aa_fit.ImagingFit):
         cti_settings : arctic_settings.ArcticSettings
             The settings that control how arctic models CTI.
         hyper_noise_scalars :
-            The ci_hyper-parameter(s) which the noise_scaling_maps_list is multiplied by to scale the noise-map.
+            The ci_hyper-parameter(s) which the noise_scaling_maps_list is multiplied by to scale the noise map.
         """
 
         self.ci_masked_data = masked_ci_imaging
         self.hyper_noise_scalars = hyper_noise_scalars
 
-        if hyper_noise_scalars is not None and hyper_noise_scalars is not []:
+        if hyper_noise_scalars is not None and len(hyper_noise_scalars) > 0:
 
             self.noise_scaling_maps = masked_ci_imaging.noise_scaling_maps
 
@@ -50,7 +50,7 @@ class CIImagingFit(aa_fit.ImagingFit):
         )
 
     @property
-    def ci_masked_imaging(self):
+    def masked_ci_imaging(self):
         return self.ci_masked_data
 
     @property
@@ -81,14 +81,14 @@ class CIImagingFit(aa_fit.ImagingFit):
 def hyper_noise_map_from_noise_map_and_noise_scalings(
     hyper_noise_scalars, noise_scaling_maps, noise_map
 ):
-    """For a noise-map, use the model hyper noise and noise-scaling maps to compute a scaled noise-map.
+    """For a noise map, use the model hyper noise and noise-scaling maps to compute a scaled noise map.
 
     Parameters
     -----------
     hyper_noise_scalars
     noise_scaling_maps
     noise_map : imaging.NoiseMap or ndarray
-        An arrays describing the RMS standard deviation error in each pixel, preferably in unit_label of electrons per
+        An arrays describing the RMS standard deviation error in each pixel, preferably in units of electrons per
         second.
     """
     hyper_noise_maps = list(

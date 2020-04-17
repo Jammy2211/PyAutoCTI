@@ -1,9 +1,9 @@
-from autocti.structures import mask as msk
+from autocti.structures.mask import Mask
 
 import numpy as np
 
 
-class CIMask(msk.Mask):
+class CIMask(Mask):
     def __new__(cls, mask_2d, *args, **kwargs):
         mask = np.array(mask_2d, dtype="bool").view(cls)
         return mask

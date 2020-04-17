@@ -57,7 +57,7 @@ def frame_geometry_from_ci_data_resolution(ci_data_resolution):
         return CIFrameGeometryIntegration.high_res()
     else:
         raise ValueError(
-            "An invalid simulator-type was entered when generating the test_autoarray-simulator suite - ",
+            "An invalid simulator-type was entered when generating the test_autocti-simulator suite - ",
             ci_data_resolution,
         )
 

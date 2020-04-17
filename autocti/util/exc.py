@@ -1,6 +1,18 @@
 from autofit import exc
 
 
+class ArrayException(Exception):
+    pass
+
+
+class MaskException(Exception):
+    pass
+
+
+class DataException(Exception):
+    pass
+
+
 class CIPatternException(Exception):
     pass
 

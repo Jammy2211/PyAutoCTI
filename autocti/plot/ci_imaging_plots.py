@@ -1,12 +1,11 @@
-from autoarray.plot import plotters
-from autoarray.plot.imaging_plots import image
-from autocti.plot import cti_plotters, ci_line_plots
+from autocti.plot import plotters
+from autocti.plot import plotters, ci_line_plots
 
 
-@cti_plotters.set_include_and_sub_plotter
+@plotters.set_include_and_sub_plotter
 @plotters.set_subplot_filename
 def subplot_ci_imaging(ci_imaging, include=None, sub_plotter=None):
-    """Plot the imaging data_type as a sub-plotters of all its quantites (e.g. the dataset, noise_map-map, PSF, Signal-to_noise-map, \
+    """Plot the imaging data_type as a sub-plotters of all its quantites (e.g. the dataset, noise_map, PSF, Signal-to_noise map, \
      etc).
 
     Set *autolens.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
@@ -14,7 +13,7 @@ def subplot_ci_imaging(ci_imaging, include=None, sub_plotter=None):
     Parameters
     -----------
     ci_imaging : data_type.ImagingData
-        The imaging data_type, which includes the observed data_type, noise_map-map, PSF, signal-to-noise_map-map, etc.
+        The imaging data_type, which includes the observed data_type, noise_map, PSF, signal-to-noise_map, etc.
     origin : True
         If true, the origin of the dataset's coordinate system is plotted as a 'x'.
     image_plane_pix_grid : ndarray or data_type.array.grid_stacks.PixGrid
@@ -60,15 +59,15 @@ def individual(
     include=None,
     plotter=None,
 ):
-    """Plot each attribute of the imaging data_type as individual figures one by one (e.g. the dataset, noise_map-map, PSF, \
-     Signal-to_noise-map, etc).
+    """Plot each attribute of the imaging data_type as individual figures one by one (e.g. the dataset, noise_map, PSF, \
+     Signal-to_noise map, etc).
 
     Set *autolens.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
     ci_imaging : data_type.ImagingData
-        The imaging data_type, which includes the observed data_type, noise_map-map, PSF, signal-to-noise_map-map, etc.
+        The imaging data_type, which includes the observed data_type, noise_map, PSF, signal-to-noise_map, etc.
     origin : True
         If true, the origin of the dataset's coordinate system is plotted as a 'x'.
     """
@@ -94,7 +93,7 @@ def individual(
         cosmic_ray_map(ci_imaging=ci_imaging, include=include, plotter=plotter)
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def image(ci_imaging, include=None, plotter=None):
     """Plot the observed data_type of the imaging data_type.
@@ -104,7 +103,7 @@ def image(ci_imaging, include=None, plotter=None):
     Parameters
     -----------
     image : data_type.ImagingData
-        The imaging data_type, which includes the observed data_type, noise_map-map, PSF, signal-to-noise_map-map, etc.
+        The imaging data_type, which includes the observed data_type, noise_map, PSF, signal-to-noise_map, etc.
     include_origin : True
         If true, the include_origin of the dataset's coordinate system is plotted as a 'x'.
     image_plane_pix_grid : ndarray or data_type.array.grid_stacks.PixGrid
@@ -121,17 +120,17 @@ def image(ci_imaging, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def noise_map(ci_imaging, include=None, plotter=None):
-    """Plot the noise_map-map of the imaging data_type.
+    """Plot the noise_map of the imaging data_type.
 
     Set *autolens.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
     image : data_type.ImagingData
-        The imaging data_type, which includes the observed data_type, noise_map-map, PSF, signal-to-noise_map-map, etc.
+        The imaging data_type, which includes the observed data_type, noise_map, PSF, signal-to-noise_map, etc.
     include_origin : True
         If true, the include_origin of the dataset's coordinate system is plotted as a 'x'.
     """
@@ -144,17 +143,17 @@ def noise_map(ci_imaging, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def signal_to_noise_map(ci_imaging, include=None, plotter=None):
-    """Plot the signal-to-noise_map-map of the imaging data_type.
+    """Plot the signal-to-noise_map of the imaging data_type.
 
     Set *autolens.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
     image : data_type.ImagingData
-        The imaging data_type, which includes the observed image, noise_map-map, PSF, signal-to-noise_map-map, etc.
+        The imaging data_type, which includes the observed image, noise_map, PSF, signal-to-noise_map, etc.
     include_origin : True
         If true, the include_origin of the dataset's coordinate system is plotted as a 'x'.
     """
@@ -167,7 +166,7 @@ def signal_to_noise_map(ci_imaging, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def ci_pre_cti(ci_imaging, include=None, plotter=None):
     """Plot the observed ci_pre_cti of the ccd simulator.
@@ -188,7 +187,7 @@ def ci_pre_cti(ci_imaging, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def cosmic_ray_map(ci_imaging, include=None, plotter=None):
     """Plot the observed ci_pre_cti of the ccd simulator.
@@ -209,10 +208,10 @@ def cosmic_ray_map(ci_imaging, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_sub_plotter
+@plotters.set_include_and_sub_plotter
 @plotters.set_subplot_filename
 def subplot_ci_lines(ci_imaging, line_region, include=None, sub_plotter=None):
-    """Plot the ci simulator as a sub-plotters of all its quantites (e.g. the dataset, noise_map-map, PSF, Signal-to_noise-map, \
+    """Plot the ci simulator as a sub-plotters of all its quantites (e.g. the dataset, noise_map, PSF, Signal-to_noise map, \
      etc).
 
     Set *autolens.simulator.arrays.plotters.plotters* for a description of all innput parameters not described below.
@@ -220,7 +219,7 @@ def subplot_ci_lines(ci_imaging, line_region, include=None, sub_plotter=None):
     Parameters
     -----------
     ci_imaging : simulator.CCDData
-        The ci simulator, which includes the observed simulator, noise_map-map, PSF, signal-to-noise_map-map, etc.
+        The ci simulator, which includes the observed dataset, noise_map, PSF, signal-to-noise_map, etc.
     origin : True
         If true, the origin of the dataset's coordinate system is plotted as a 'x'.
     image_plane_pix_grid : ndarray or simulator.arrays.grid_lines.PixGrid
@@ -286,15 +285,15 @@ def individual_ci_lines(
     include=None,
     plotter=None,
 ):
-    """Plot each attribute of the ci simulator as individual figures one by one (e.g. the dataset, noise_map-map, PSF, \
-     Signal-to_noise-map, etc).
+    """Plot each attribute of the ci simulator as individual figures one by one (e.g. the dataset, noise_map, PSF, \
+     Signal-to_noise map, etc).
 
     Set *autolens.simulator.arrays.plotters.plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
     ci_imaging : simulator.CCDData
-        The ci simulator, which includes the observed simulator, noise_map-map, PSF, signal-to-noise_map-map, etc.
+        The ci simulator, which includes the observed dataset, noise_map, PSF, signal-to-noise_map, etc.
     origin : True
         If true, the origin of the dataset's coordinate system is plotted as a 'x'.
     """
@@ -332,7 +331,7 @@ def individual_ci_lines(
         )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def image_line(ci_imaging, line_region, include=None, plotter=None):
     """Plot the observed image of the ccd simulator.
@@ -352,7 +351,7 @@ def image_line(ci_imaging, line_region, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def noise_map_line(ci_imaging, line_region, include=None, plotter=None):
     """Plot the observed noise_map of the ccd simulator.
@@ -372,7 +371,7 @@ def noise_map_line(ci_imaging, line_region, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def ci_pre_cti_line(ci_imaging, line_region, include=None, plotter=None):
     """Plot the observed ci_pre_cti of the ccd simulator.
@@ -392,7 +391,7 @@ def ci_pre_cti_line(ci_imaging, line_region, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def signal_to_noise_map_line(ci_imaging, line_region, include=None, plotter=None):
     """Plot the observed signal_to_noise_map of the ccd simulator.

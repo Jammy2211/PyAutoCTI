@@ -1,10 +1,6 @@
 import numpy as np
 
-from autoarray.util import array_util
-from autoarray.structures import arrays
-from autoarray.mask import mask as msk
-from autocti.util import frame_util
-from autocti import exc
+from autocti.util import exc
 
 
 class Region(object):

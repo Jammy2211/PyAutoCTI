@@ -1,6 +1,6 @@
 import autofit as af
-from autoarray.plot import mat_objs
-from autocti.plot import cti_plotters
+from autocti.plot import mat_objs
+from autocti.plot import plotters
 from autocti.plot import ci_imaging_plots, ci_fit_plots
 import copy
 
@@ -16,13 +16,13 @@ def plot_setting(section, name):
 class AbstractVisualizer:
     def __init__(self, image_path):
 
-        self.plotter = cti_plotters.Plotter(
+        self.plotter = plotters.Plotter(
             output=mat_objs.Output(path=image_path, format="png")
         )
-        self.sub_plotter = cti_plotters.SubPlotter(
+        self.sub_plotter = plotters.SubPlotter(
             output=mat_objs.Output(path=image_path + "subplots/", format="png")
         )
-        self.include = cti_plotters.Include()
+        self.include = plotters.Include()
 
 
 class PhaseDatasetVisualizer(AbstractVisualizer):
@@ -83,13 +83,13 @@ class PhaseCIImagingVisualizer(PhaseDatasetVisualizer):
 
         if self.plot_subplot_dataset:
             ci_imaging_plots.subplot_ci_imaging(
-                imaging=self.masked_imaging.imaging,
+                imaging=self.MaskedImaging.imaging,
                 include=self.include,
                 sub_plotter=self.sub_plotter,
             )
 
-        aa.plot.imaging.individual(
-            imaging=self.masked_imaging.imaging,
+        aa.plot.Imaging.individual(
+            imaging=self.MaskedImaging.imaging,
             mask=self.include.mask_from_masked_dataset(
                 masked_dataset=self.masked_dataset
             ),
@@ -346,13 +346,13 @@ class PhaseInterferometerVisualizer(PhaseDatasetVisualizer):
         )
 
         if self.plot_subplot_dataset:
-            aa.plot.interferometer.subplot_interferometer(
+            aa.plot.Interferometer.subplot_interferometer(
                 interferometer=self.masked_dataset.interferometer,
                 include=self.include,
                 sub_plotter=self.sub_plotter,
             )
 
-        aa.plot.interferometer.individual(
+        aa.plot.Interferometer.individual(
             interferometer=self.masked_dataset.interferometer,
             plot_visibilities=self.plot_dataset_data,
             plot_u_wavelengths=self.plot_dataset_uv_wavelengths,

@@ -21,7 +21,7 @@ serial_settings = ac.Settings(
 cti_settings = ac.ArcticSettings(serial=serial_settings)
 
 
-def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
+def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
     class PhaseCI(ac.PhaseCI):
         def customize_priors(self, results):
             self.serial_ccd_volume.well_fill_alpha = 1.0
@@ -30,7 +30,7 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     phase1 = PhaseCI(
         phase_name="phase_1",
         phase_folders=phase_folders,
-        optimizer_class=optimizer_class,
+        non_linear_class=non_linear_class,
         serial_traps=[
             af.PriorModel(ac.Trap),
             af.PriorModel(ac.Trap),
@@ -53,7 +53,7 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
         serial_ccd_volume=phase1.result.variable.serial_ccd_volume,
         hyper_noise_scalar_of_ci_regions=phase1.result.hyper_combined.constant.hyper_noise_scalar_of_ci_regions,
         hyper_noise_scalar_of_serial_trails=phase1.result.hyper_combined.constant.hyper_noise_scalar_of_serial_trails,
-        optimizer_class=optimizer_class,
+        non_linear_class=non_linear_class,
         columns=None,
     )
 

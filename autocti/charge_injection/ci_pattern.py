@@ -9,7 +9,7 @@ import numpy as np
 
 from copy import deepcopy
 
-from autocti import exc
+from autocti.util import exc
 from autocti.util import frame_util
 from autocti.structures import region
 

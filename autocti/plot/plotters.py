@@ -1,15 +1,14 @@
 import autofit as af
-from autoarray.plot import plotters, mat_objs
-from autocti.plot import cti_mat_objs
-from autocti import exc
+from autocti.plot import mat_objs
+from autocti.util import exc
 
 import matplotlib.pyplot as plt
 from functools import wraps
 import copy
 import numpy as np
+import os
 
-
-class CTIPlotter(object):
+class AbstractPlotter(object):
     def __init__(
         self,
         units=None,
@@ -93,7 +92,7 @@ class CTIPlotter(object):
         self.parallel_overscan_liner = (
             parallel_overscan_liner
             if parallel_overscan_liner is not None
-            else cti_mat_objs.ParallelOverscanLiner(
+            else mat_objs.ParallelOverscanLiner(
                 from_subplot_config=from_subplot_config
             )
         )
@@ -101,7 +100,7 @@ class CTIPlotter(object):
         self.serial_prescan_liner = (
             serial_prescan_liner
             if serial_prescan_liner is not None
-            else cti_mat_objs.SerialPrescanLiner(
+            else mat_objs.SerialPrescanLiner(
                 from_subplot_config=from_subplot_config
             )
         )
@@ -109,7 +108,7 @@ class CTIPlotter(object):
         self.serial_overscan_liner = (
             serial_overscan_liner
             if serial_overscan_liner is not None
-            else cti_mat_objs.SerialOverscanLiner(
+            else mat_objs.SerialOverscanLiner(
                 from_subplot_config=from_subplot_config
             )
         )
@@ -235,8 +234,6 @@ class CTIPlotter(object):
                 "a pixel scales attribute."
             )
 
-        frame = frame.in_2d
-
         self.figure.open()
         aspect = self.figure.aspect_from_shape_2d(shape_2d=frame.shape_2d)
         norm_scale = self.cmap.norm_from_array(array=frame)
@@ -246,16 +243,16 @@ class CTIPlotter(object):
             aspect=aspect,
             cmap=self.cmap.cmap,
             norm=norm_scale,
-            extent=frame.mask.geometry.extent,
+            extent=frame.mask.extent,
         )
 
-        plt.axis(frame.mask.geometry.extent)
+        plt.axis(frame.mask.extent)
 
         self.ticks.set_yticks(
-            array=frame, extent=frame.mask.geometry.extent, units=self.units
+            array=frame, extent=frame.mask.extent, units=self.units
         )
         self.ticks.set_xticks(
-            array=frame, extent=frame.mask.geometry.extent, units=self.units
+            array=frame, extent=frame.mask.extent, units=self.units
         )
 
         self.labels.set_title()
@@ -337,8 +334,93 @@ class CTIPlotter(object):
         if not isinstance(self, SubPlotter) and not bypass_output:
             self.figure.close()
 
+    def plotter_with_new_labels(
+        self,
+        title=None,
+        yunits=None,
+        xunits=None,
+        titlesize=None,
+        ysize=None,
+        xsize=None,
+    ):
 
-class Plotter(CTIPlotter, plotters.Plotter):
+        plotter = copy.deepcopy(self)
+
+        plotter.labels.title = title if title is not None else self.labels.title
+        plotter.labels._yunits = yunits if yunits is not None else self.labels._yunits
+        plotter.labels._xunits = xunits if xunits is not None else self.labels._xunits
+        plotter.labels.titlesize = (
+            titlesize if titlesize is not None else self.labels.titlesize
+        )
+        plotter.labels.ysize = ysize if ysize is not None else self.labels.ysize
+        plotter.labels.xsize = xsize if xsize is not None else self.labels.xsize
+
+        return plotter
+
+    def plotter_with_new_cmap(
+        self,
+        cmap=None,
+        norm=None,
+        norm_max=None,
+        norm_min=None,
+        linthresh=None,
+        linscale=None,
+    ):
+
+        plotter = copy.deepcopy(self)
+
+        plotter.cmap.cmap = cmap if cmap is not None else self.cmap.cmap
+        plotter.cmap.norm = norm if norm is not None else self.cmap.norm
+        plotter.cmap.norm_max = norm_max if norm_max is not None else self.cmap.norm_max
+        plotter.cmap.norm_min = norm_min if norm_min is not None else self.cmap.norm_min
+        plotter.cmap.linthresh = (
+            linthresh if linthresh is not None else self.cmap.linthresh
+        )
+        plotter.cmap.linscale = linscale if linscale is not None else self.cmap.linscale
+
+        return plotter
+
+    def plotter_with_new_units(
+        self, use_scaled=None, conversion_factor=None, in_kpc=None
+    ):
+
+        plotter = copy.deepcopy(self)
+
+        plotter.units.use_scaled = (
+            use_scaled if use_scaled is not None else self.units.use_scaled
+        )
+
+        plotter.units.in_kpc = in_kpc if in_kpc is not None else self.units.in_kpc
+
+        plotter.units.conversion_factor = (
+            conversion_factor
+            if conversion_factor is not None
+            else self.units.conversion_factor
+        )
+
+        return plotter
+
+    def plotter_with_new_output(self, path=None, filename=None, format=None):
+
+        plotter = copy.deepcopy(self)
+
+        plotter.output.path = path if path is not None else self.output.path
+
+        if path is not None and path:
+            try:
+                os.makedirs(path)
+            except FileExistsError:
+                pass
+
+        plotter.output.filename = (
+            filename if filename is not None else self.output.filename
+        )
+
+        plotter.output._format = format if format is not None else self.output._format
+
+        return plotter
+
+class Plotter(AbstractPlotter):
     def __init__(
         self,
         units=None,
@@ -373,7 +455,7 @@ class Plotter(CTIPlotter, plotters.Plotter):
         )
 
 
-class SubPlotter(CTIPlotter, plotters.SubPlotter):
+class SubPlotter(AbstractPlotter):
     def __init__(
         self,
         units=None,
@@ -406,6 +488,81 @@ class SubPlotter(CTIPlotter, plotters.SubPlotter):
             serial_prescan_liner=serial_prescan_liner,
             serial_overscan_liner=serial_overscan_liner,
         )
+
+    def open_subplot_figure(self, number_subplots):
+        """Setup a figure for plotting an image.
+
+        Parameters
+        -----------
+        figsize : (int, int)
+            The size of the figure in (rows, columns).
+        as_subplot : bool
+            If the figure is a subplot, the setup_figure function is omitted to ensure that each subplot does not create a \
+            new figure and so that it can be output using the *output.output_figure(structure=None)* function.
+        """
+        figsize = self.get_subplot_figsize(number_subplots=number_subplots)
+        plt.figure(figsize=figsize)
+
+    def setup_subplot(self, number_subplots, subplot_index, aspect=None):
+        rows, columns = self.get_subplot_rows_columns(number_subplots=number_subplots)
+        if aspect is None:
+            plt.subplot(rows, columns, subplot_index)
+        else:
+            plt.subplot(rows, columns, subplot_index, aspect=float(aspect))
+
+    def get_subplot_rows_columns(self, number_subplots):
+        """Get the size of a sub plotters in (rows, columns), based on the number of subplots that are going to be plotted.
+
+        Parameters
+        -----------
+        number_subplots : int
+            The number of subplots that are to be plotted in the figure.
+        """
+        if number_subplots <= 2:
+            return 1, 2
+        elif number_subplots <= 4:
+            return 2, 2
+        elif number_subplots <= 6:
+            return 2, 3
+        elif number_subplots <= 9:
+            return 3, 3
+        elif number_subplots <= 12:
+            return 3, 4
+        elif number_subplots <= 16:
+            return 4, 4
+        elif number_subplots <= 20:
+            return 4, 5
+        else:
+            return 6, 6
+
+    def get_subplot_figsize(self, number_subplots):
+        """Get the size of a sub plotters in (rows, columns), based on the number of subplots that are going to be plotted.
+
+        Parameters
+        -----------
+        number_subplots : int
+            The number of subplots that are to be plotted in the figure.
+        """
+
+        if self.figure.figsize is not None:
+            return self.figure.figsize
+
+        if number_subplots <= 2:
+            return (18, 8)
+        elif number_subplots <= 4:
+            return (13, 10)
+        elif number_subplots <= 6:
+            return (18, 12)
+        elif number_subplots <= 9:
+            return (25, 20)
+        elif number_subplots <= 12:
+            return (25, 20)
+        elif number_subplots <= 16:
+            return (25, 20)
+        elif number_subplots <= 20:
+            return (25, 20)
+        else:
+            return (25, 20)
 
 
 class Include(object):
@@ -461,11 +618,44 @@ class Include(object):
             return None
 
 
+def include_key_from_dictionary(dictionary):
+
+    include_key = None
+
+    for key, value in dictionary.items():
+        if isinstance(value, Include):
+            include_key = key
+
+    return include_key
+
+
+def plotter_key_from_dictionary(dictionary):
+
+    plotter_key = None
+
+    for key, value in dictionary.items():
+        if isinstance(value, AbstractPlotter):
+            plotter_key = key
+
+    return plotter_key
+
+
+def kpc_per_arcsec_of_object_from_dictionary(dictionary):
+
+    kpc_per_arcsec = None
+
+    for key, value in dictionary.items():
+        if hasattr(value, "kpc_per_arcsec"):
+            return value.kpc_per_arcsec
+
+    return kpc_per_arcsec
+
+
 def set_include_and_plotter(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
 
-        include_key = plotters.include_key_from_dictionary(dictionary=kwargs)
+        include_key = include_key_from_dictionary(dictionary=kwargs)
 
         if include_key is not None:
             include = kwargs[include_key]
@@ -475,7 +665,7 @@ def set_include_and_plotter(func):
 
         kwargs[include_key] = include
 
-        plotter_key = plotters.plotter_key_from_dictionary(dictionary=kwargs)
+        plotter_key = plotter_key_from_dictionary(dictionary=kwargs)
 
         if plotter_key is not None:
             plotter = kwargs[plotter_key]
@@ -494,7 +684,7 @@ def set_include_and_sub_plotter(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
 
-        include_key = plotters.include_key_from_dictionary(dictionary=kwargs)
+        include_key = include_key_from_dictionary(dictionary=kwargs)
 
         if include_key is not None:
             include = kwargs[include_key]
@@ -504,13 +694,104 @@ def set_include_and_sub_plotter(func):
 
         kwargs[include_key] = include
 
-        plotter_key = plotters.plotter_key_from_dictionary(dictionary=kwargs)
+        plotter_key = plotter_key_from_dictionary(dictionary=kwargs)
 
         if plotter_key is not None:
             plotter = kwargs[plotter_key]
         else:
             plotter = SubPlotter()
             plotter_key = "sub_plotter"
+
+        kwargs[plotter_key] = plotter
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def set_subplot_filename(func):
+    """
+    Decorate a profile method that accepts a coordinate grid and returns a data_type grid.
+
+    If an interpolator attribute is associated with the input grid then that interpolator is used to down sample the
+    coordinate grid prior to calling the function and up sample the result of the function.
+
+    If no interpolator attribute is associated with the input grid then the function is called as hyper.
+
+    Parameters
+    ----------
+    func
+        Some method that accepts a grid
+
+    Returns
+    -------
+    decorated_function
+        The function with optional interpolation
+    """
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+
+        plotter_key = plotter_key_from_dictionary(dictionary=kwargs)
+        plotter = kwargs[plotter_key]
+
+        if not isinstance(plotter, SubPlotter):
+            raise exc.PlottingException(
+                "The decorator set_subplot_title was applied to a function without a SubPlotter class"
+            )
+
+        filename = plotter.output.filename_from_func(func=func)
+
+        plotter = plotter.plotter_with_new_output(filename=filename)
+
+        kwargs[plotter_key] = plotter
+
+        return func(*args, **kwargs)
+
+    return wrapper
+
+
+def set_labels(func):
+    """
+    Decorate a profile method that accepts a coordinate grid and returns a data_type grid.
+
+    If an interpolator attribute is associated with the input grid then that interpolator is used to down sample the
+    coordinate grid prior to calling the function and up sample the result of the function.
+
+    If no interpolator attribute is associated with the input grid then the function is called as hyper.
+
+    Parameters
+    ----------
+    func
+        Some method that accepts a grid
+
+    Returns
+    -------
+    decorated_function
+        The function with optional interpolation
+    """
+
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+
+        plotter_key = plotter_key_from_dictionary(dictionary=kwargs)
+        plotter = kwargs[plotter_key]
+
+        title = plotter.labels.title_from_func(func=func)
+        yunits = plotter.labels.yunits_from_func(func=func)
+        xunits = plotter.labels.xunits_from_func(func=func)
+
+        plotter = plotter.plotter_with_new_labels(
+            title=title, yunits=yunits, xunits=xunits
+        )
+
+        filename = plotter.output.filename_from_func(func=func)
+
+        plotter = plotter.plotter_with_new_output(filename=filename)
+
+        kpc_per_arcsec = kpc_per_arcsec_of_object_from_dictionary(dictionary=kwargs)
+
+        plotter = plotter.plotter_with_new_units(conversion_factor=kpc_per_arcsec)
 
         kwargs[plotter_key] = plotter
 

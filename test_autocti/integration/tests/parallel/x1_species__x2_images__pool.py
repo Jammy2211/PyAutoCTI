@@ -23,7 +23,7 @@ parallel_settings = ac.Settings(
 cti_settings = ac.ArcticSettings(parallel=parallel_settings)
 
 
-def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
+def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
     class PhaseCI(ac.PhaseCI):
         def customize_priors(self, results):
 
@@ -33,7 +33,7 @@ def make_pipeline(name, phase_folders, optimizer_class=af.MultiNest):
     phase1 = PhaseCI(
         phase_name="phase_1",
         phase_folders=phase_folders,
-        optimizer_class=optimizer_class,
+        non_linear_class=non_linear_class,
         parallel_traps=[af.PriorModel(ac.Trap)],
         parallel_ccd_volume=ac.CCDVolume,
         columns=40,

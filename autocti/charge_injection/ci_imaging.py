@@ -1,37 +1,22 @@
 import numpy as np
 
+from autocti.dataset import preprocess, imaging
 from autocti.charge_injection import ci_frame
 from autocti.charge_injection import ci_pattern as pattern
-from autoarray.util import array_util
+from autocti.util import array_util
 
 
-class CIImaging(object):
-    def __init__(self, image, noise_map, ci_pre_cti, cosmic_ray_map=None):
+class CIImaging(imaging.Imaging):
+    def __init__(self, image, noise_map, ci_pre_cti, cosmic_ray_map=None, name=None):
 
-        self.image = image
-        self.noise_map = noise_map
+        super().__init__(image=image, noise_map=noise_map, name=name)
+
         self.ci_pre_cti = ci_pre_cti
         self.cosmic_ray_map = cosmic_ray_map
 
     @property
     def ci_pattern(self):
         return self.image.ci_pattern
-
-    @property
-    def shape_2d(self):
-        return self.image.shape_2d
-
-    @property
-    def signal_to_noise_map(self):
-        """The estimated signal-to-noise_maps mappers of the image."""
-        signal_to_noise_map = np.divide(self.image, self.noise_map)
-        signal_to_noise_map[signal_to_noise_map < 0] = 0
-        return signal_to_noise_map
-
-    @property
-    def signal_to_noise_max(self):
-        """The maximum value of signal-to-noise_maps in an image pixel in the image's signal-to-noise_maps mappers"""
-        return np.max(self.signal_to_noise_map)
 
     def parallel_calibration_ci_imaging_for_columns(self, columns):
         """
@@ -194,9 +179,183 @@ class CIImaging(object):
                 overwrite=overwrite,
             )
 
+
+def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, image, mask=None):
+    """Setup a pre-cti image from this charge injection ci_data, using the charge injection ci_pattern.
+
+    The pre-cti image is computed depending on whether the charge injection ci_pattern is uniform, non-uniform or \
+    'fast' (see ChargeInjectPattern).
+    """
+    if isinstance(ci_pattern, pattern.CIPatternUniform):
+        return ci_pattern.ci_pre_cti_from_shape(image.shape)
+    return ci_pattern.ci_pre_cti_from_ci_image_and_mask(image, mask)
+
+
+class MaskedCIImaging(imaging.MaskedImaging):
+
+    def __init__(self, ci_imaging, mask, noise_scaling_maps=None):
+        """A data is the collection of simulator components (e.g. the image, noise maps, PSF, etc.) which are used \
+        to generate and fit it with a model image.
+
+        The data is in 2D and masked, primarily to remove cosmic rays.
+
+        The data also includes a number of attributes which are used to performt the fit, including (y,x) \
+        grids of coordinates, convolvers and other utilities.
+
+        Parameters
+        ----------
+        image : im.Image
+            The 2D observed image and other observed quantities (noise map, PSF, exposure-time map, etc.)
+        mask: msk.Mask | None
+            The 2D mask that is applied to image simulator.
+
+        Attributes
+        ----------
+        image : ScaledSquarePixelArray
+            The 2D observed image simulator (not an instance of im.Image, so does not include the other simulator attributes,
+            which are explicitly made as new attributes of the data).
+        noise_map : NoiseMap
+            An arrays describing the RMS standard deviation error in each pixel, preferably in units of electrons per
+            second.
+        mask: msk.Mask
+            The 2D mask that is applied to image simulator.
+        """
+
+        super().__init__(
+           imaging=ci_imaging, mask=mask,
+        )
+
+        self.image = ci_frame.MaskedCIFrame.from_ci_frame(
+            ci_frame=ci_imaging.image, mask=mask
+        )
+        self.noise_map = ci_frame.MaskedCIFrame.from_ci_frame(
+            ci_frame=ci_imaging.noise_map, mask=mask
+        )
+        self.ci_pre_cti = ci_frame.MaskedCIFrame.from_ci_frame(
+            ci_frame=ci_imaging.ci_pre_cti, mask=mask
+        )
+
+        if ci_imaging.cosmic_ray_map is not None:
+
+            self.cosmic_ray_map = ci_frame.MaskedCIFrame.from_ci_frame(
+                ci_frame=ci_imaging.cosmic_ray_map, mask=mask
+            )
+
+        else:
+
+            self.cosmic_ray_map = None
+
+        if noise_scaling_maps is not None:
+            self.noise_scaling_maps = [
+                ci_frame.MaskedCIFrame.from_ci_frame(
+                    ci_frame=noise_scaling_map, mask=mask
+                )
+                for noise_scaling_map in noise_scaling_maps
+            ]
+        else:
+            self.noise_scaling_maps_list = None
+
+    @property
+    def ci_imaging(self):
+        return self.imaging
+
     @classmethod
-    def simulate(
-        cls,
+    def for_parallel_from_columns(
+        cls, ci_imaging, mask, columns, noise_scaling_maps=None
+    ):
+        """
+        Creates a MaskedCIData object for a parallel section of the CCD
+
+        Parameters
+        ----------
+        noise_scaling_maps
+            A list of maps that are used to scale noise
+        columns
+            Columns to be extracted
+        mask
+            A mask
+        Returns
+        -------
+        MaskedCIImaging
+        """
+
+        if noise_scaling_maps is not None:
+
+            noise_scaling_maps = [
+                noise_scaling_map.parallel_calibration_frame_from_columns(
+                    columns=columns
+                )
+                for noise_scaling_map in noise_scaling_maps
+            ]
+
+        return MaskedCIImaging(
+            ci_imaging=ci_imaging.parallel_calibration_ci_imaging_for_columns(
+                columns=columns
+            ),
+            mask=ci_imaging.image.parallel_calibration_mask_from_mask_and_columns(
+                mask=mask, columns=columns
+            ),
+            noise_scaling_maps=noise_scaling_maps,
+        )
+
+    @classmethod
+    def for_serial_from_rows(cls, ci_imaging, mask, rows, noise_scaling_maps=None):
+        """
+        Creates a MaskedCIData object for a serial section of the CCD
+
+        Parameters
+        ----------
+        noise_scaling_maps
+            A list of maps that are used to scale noise
+        rows
+            Columns to be extracted
+        mask
+            A mask
+        Returns
+        -------
+        MaskedCIImaging
+        """
+
+        if noise_scaling_maps is not None:
+
+            noise_scaling_maps = [
+                noise_scaling_map.serial_calibration_frame_from_rows(rows=rows)
+                for noise_scaling_map in noise_scaling_maps
+            ]
+
+        return MaskedCIImaging(
+            ci_imaging=ci_imaging.serial_calibration_ci_imaging_for_rows(rows=rows),
+            mask=ci_imaging.image.serial_calibration_mask_from_mask_and_rows(
+                mask=mask, rows=rows
+            ),
+            noise_scaling_maps=noise_scaling_maps,
+        )
+
+
+class SimulatorCIImaging:
+    def __init__(
+        self,
+        read_noise=None,
+        add_noise=True,
+        noise_if_add_noise_false=0.1,
+        noise_seed=-1,
+    ):
+        """A class representing a Imaging observation, using the shape of the image, the pixel scale,
+        psf, exposure time, etc.
+
+        Parameters
+        ----------
+        exposure_time_map : float
+            The exposure time of an observation using this data_type.
+        """
+
+        self.read_noise = read_noise
+        self.add_noise = add_noise
+        self.noise_if_add_noise_false = noise_if_add_noise_false
+        self.noise_seed = noise_seed
+
+    def from_image(
+        self,
         clocker,
         ci_pre_cti,
         ci_pattern,
@@ -204,9 +363,8 @@ class CIImaging(object):
         parallel_ccd_volume=None,
         serial_traps=None,
         serial_ccd_volume=None,
-        read_noise=None,
         cosmic_ray_map=None,
-        noise_seed=-1,
+        name=None,
     ):
         """Simulate a charge injection image, including effects like noises.
 
@@ -241,11 +399,11 @@ class CIImaging(object):
             serial_ccd_volume=serial_ccd_volume,
         )
 
-        if read_noise is not None:
-            ci_image = ci_post_cti + read_noise_map_from_shape_and_sigma(
-                shape=ci_post_cti.shape, sigma=read_noise, noise_seed=noise_seed
+        if self.read_noise is not None:
+            ci_image = preprocess.data_with_gaussian_noise_added(
+                data=ci_post_cti, sigma=self.read_noise, seed=self.noise_seed
             )
-            ci_noise_map = read_noise * np.ones(ci_post_cti.shape)
+            ci_noise_map = self.read_noise * np.ones(ci_post_cti.shape)
         else:
             ci_image = ci_post_cti
             ci_noise_map = None
@@ -259,35 +417,5 @@ class CIImaging(object):
             cosmic_ray_map=ci_frame.CIFrame.manual(
                 array=cosmic_ray_map, ci_pattern=ci_pattern
             ),
+            name=name,
         )
-
-
-def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, image, mask=None):
-    """Setup a pre-cti image from this charge injection ci_data, using the charge injection ci_pattern.
-
-    The pre-cti image is computed depending on whether the charge injection ci_pattern is uniform, non-uniform or \
-    'fast' (see ChargeInjectPattern).
-    """
-    if isinstance(ci_pattern, pattern.CIPatternUniform):
-        return ci_pattern.ci_pre_cti_from_shape(image.shape)
-    return ci_pattern.ci_pre_cti_from_ci_image_and_mask(image, mask)
-
-
-def read_noise_map_from_shape_and_sigma(shape, sigma, noise_seed=-1):
-    """Generate a two-dimensional read noises-map, generating values from a Gaussian distribution with mean 0.0.
-
-    Params
-    ----------
-    shape : (int, int)
-        The (x,y) image_shape of the generated Gaussian noises map.
-    read_noise : float
-        Standard deviation of the 1D Gaussian that each noises value is drawn from
-    seed : int
-        The seed of the random number generator, used for the random noises maps.
-    """
-    if noise_seed == -1:
-        # Use one seed, so all regions have identical column non-uniformity.
-        noise_seed = np.random.randint(0, int(1e9))
-    np.random.seed(noise_seed)
-    read_noise_map = np.random.normal(loc=0.0, scale=sigma, size=shape)
-    return read_noise_map

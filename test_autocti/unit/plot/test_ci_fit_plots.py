@@ -1,9 +1,7 @@
 import numpy as np
 
-import autoarray as aa
-import autocti as ac
+from autoconf import conf
 import autocti.plot as aplt
-from test_autocti.mock.mock import MockPattern, MockCIFrame
 
 import os
 import pytest
@@ -13,126 +11,126 @@ directory = os.path.dirname(os.path.realpath(__file__))
 
 @pytest.fixture(name="plot_path")
 def make_ci_fit_plotter_setup():
-    return "{}/../../test_files/plotting/fit/".format(
+    return "{}/../../files/plot/fit/".format(
         os.path.dirname(os.path.realpath(__file__))
     )
 
 
 @pytest.fixture(autouse=True)
 def set_config_path():
-    aa.conf.instance = aa.conf.Config(
-        os.path.join(directory, "../test_files/plot"), os.path.join(directory, "output")
+    conf.instance = conf.Config(
+        os.path.join(directory, "../files/plot"), os.path.join(directory, "output")
     )
 
 
 def test__individual_attriute_plots__all_plot_correctly(
-    fit_ci_imaging_7x7, plot_path, plot_patch
+    ci_fit_7x7, plot_path, plot_patch
 ):
 
-    aplt.ci_fit.image(
-        fit=fit_ci_imaging_7x7,
+    aplt.CIFit.image(
+        fit=ci_fit_7x7,
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
     assert plot_path + "image.png" in plot_patch.paths
 
-    aplt.ci_fit.noise_map(
-        fit=fit_ci_imaging_7x7,
+    aplt.CIFit.noise_map(
+        fit=ci_fit_7x7,
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
     assert plot_path + "noise_map.png" in plot_patch.paths
 
-    aplt.ci_fit.signal_to_noise_map(
-        fit=fit_ci_imaging_7x7,
+    aplt.CIFit.signal_to_noise_map(
+        fit=ci_fit_7x7,
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
     assert plot_path + "signal_to_noise_map.png" in plot_patch.paths
 
-    aplt.ci_fit.ci_pre_cti(
-        fit=fit_ci_imaging_7x7,
+    aplt.CIFit.ci_pre_cti(
+        fit=ci_fit_7x7,
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
     assert plot_path + "ci_pre_cti.png" in plot_patch.paths
 
-    aplt.ci_fit.ci_post_cti(
-        fit=fit_ci_imaging_7x7,
+    aplt.CIFit.ci_post_cti(
+        fit=ci_fit_7x7,
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
     assert plot_path + "ci_post_cti.png" in plot_patch.paths
 
-    aplt.ci_fit.residual_map(
-        fit=fit_ci_imaging_7x7,
+    aplt.CIFit.residual_map(
+        fit=ci_fit_7x7,
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
     assert plot_path + "residual_map.png" in plot_patch.paths
 
-    aplt.ci_fit.chi_squared_map(
-        fit=fit_ci_imaging_7x7,
+    aplt.CIFit.chi_squared_map(
+        fit=ci_fit_7x7,
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
     assert plot_path + "chi_squared_map.png" in plot_patch.paths
 
-    aplt.ci_fit.noise_scaling_maps_list(
-        fit=fit_ci_imaging_7x7,
+    aplt.CIFit.noise_scaling_maps(
+        fit=ci_fit_7x7,
         sub_plotter=aplt.SubPlotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert plot_path + "noise_scaling_maps_list.png" in plot_patch.paths
+    assert plot_path + "noise_scaling_maps.png" in plot_patch.paths
 
 
 def test__individual_line_attriutes_plot__all_plot_correctly_output(
-    fit_ci_imaging_7x7, plot_path, plot_patch
+    ci_fit_7x7, plot_path, plot_patch
 ):
 
-    aplt.ci_fit.image_line(
-        fit=fit_ci_imaging_7x7,
+    aplt.CIFit.image_line(
+        fit=ci_fit_7x7,
         line_region="parallel_front_edge",
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
 
     assert plot_path + "image_line.png" in plot_patch.paths
 
-    aplt.ci_fit.noise_map_line(
-        fit=fit_ci_imaging_7x7,
+    aplt.CIFit.noise_map_line(
+        fit=ci_fit_7x7,
         line_region="parallel_front_edge",
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
 
     assert plot_path + "noise_map_line.png" in plot_patch.paths
 
-    aplt.ci_fit.signal_to_noise_map_line(
-        fit=fit_ci_imaging_7x7,
+    aplt.CIFit.signal_to_noise_map_line(
+        fit=ci_fit_7x7,
         line_region="parallel_front_edge",
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
 
     assert plot_path + "signal_to_noise_map_line.png" in plot_patch.paths
 
-    aplt.ci_fit.ci_pre_cti_line(
-        fit=fit_ci_imaging_7x7,
+    aplt.CIFit.ci_pre_cti_line(
+        fit=ci_fit_7x7,
         line_region="parallel_front_edge",
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
 
     assert plot_path + "ci_pre_cti_line.png" in plot_patch.paths
 
-    aplt.ci_fit.ci_post_cti_line(
-        fit=fit_ci_imaging_7x7,
+    aplt.CIFit.ci_post_cti_line(
+        fit=ci_fit_7x7,
         line_region="parallel_front_edge",
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
 
     assert plot_path + "ci_post_cti_line.png" in plot_patch.paths
 
-    aplt.ci_fit.residual_map_line(
-        fit=fit_ci_imaging_7x7,
+    aplt.CIFit.residual_map_line(
+        fit=ci_fit_7x7,
         line_region="parallel_front_edge",
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
 
     assert plot_path + "residual_map_line.png" in plot_patch.paths
 
-    aplt.ci_fit.chi_squared_map_line(
-        fit=fit_ci_imaging_7x7,
+    aplt.CIFit.chi_squared_map_line(
+        fit=ci_fit_7x7,
         line_region="parallel_front_edge",
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
@@ -140,42 +138,42 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
     assert plot_path + "chi_squared_map_line.png" in plot_patch.paths
 
 
-def test__ci_fit_subplots_are_output(fit_ci_imaging_7x7, plot_path, plot_patch):
+def test__ci_fit_subplots_are_output(ci_fit_7x7, plot_path, plot_patch):
 
-    aplt.ci_fit.subplot_ci_fit(
-        fit=fit_ci_imaging_7x7,
+    aplt.CIFit.subplot_ci_fit(
+        fit=ci_fit_7x7,
         sub_plotter=aplt.SubPlotter(output=aplt.Output(plot_path, format="png")),
     )
 
     assert plot_path + "subplot_ci_fit.png" in plot_patch.paths
 
-    aplt.ci_fit.subplot_residual_maps(
-        fits=[fit_ci_imaging_7x7],
+    aplt.CIFit.subplot_residual_maps(
+        fits=[ci_fit_7x7],
         sub_plotter=aplt.SubPlotter(output=aplt.Output(plot_path, format="png")),
     )
 
     assert plot_path + "subplot_residual_maps.png" in plot_patch.paths
 
-    aplt.ci_fit.subplot_chi_squared_maps(
-        fits=[fit_ci_imaging_7x7],
+    aplt.CIFit.subplot_chi_squared_maps(
+        fits=[ci_fit_7x7],
         sub_plotter=aplt.SubPlotter(output=aplt.Output(plot_path, format="png")),
     )
 
     assert plot_path + "subplot_chi_squared_maps.png" in plot_patch.paths
 
 
-def test__ci_fit_subplots_lines_are_output(fit_ci_imaging_7x7, plot_path, plot_patch):
+def test__ci_fit_subplots_lines_are_output(ci_fit_7x7, plot_path, plot_patch):
 
-    aplt.ci_fit.subplot_residual_map_lines(
-        fits=[fit_ci_imaging_7x7],
+    aplt.CIFit.subplot_residual_map_lines(
+        fits=[ci_fit_7x7],
         line_region="parallel_front_edge",
         sub_plotter=aplt.SubPlotter(output=aplt.Output(plot_path, format="png")),
     )
 
     assert plot_path + "subplot_residual_map_lines.png" in plot_patch.paths
 
-    aplt.ci_fit.subplot_chi_squared_map_lines(
-        fits=[fit_ci_imaging_7x7],
+    aplt.CIFit.subplot_chi_squared_map_lines(
+        fits=[ci_fit_7x7],
         line_region="parallel_front_edge",
         sub_plotter=aplt.SubPlotter(output=aplt.Output(plot_path, format="png")),
     )
@@ -183,10 +181,10 @@ def test__ci_fit_subplots_lines_are_output(fit_ci_imaging_7x7, plot_path, plot_p
     assert plot_path + "subplot_chi_squared_map_lines.png" in plot_patch.paths
 
 
-def test__fit_individuals__depedent_on_input(fit_ci_imaging_7x7, plot_path, plot_patch):
+def test__fit_individuals__dependent_on_input(ci_fit_7x7, plot_path, plot_patch):
 
-    aplt.ci_fit.individuals(
-        fit=fit_ci_imaging_7x7,
+    aplt.CIFit.individuals(
+        fit=ci_fit_7x7,
         plot_image=True,
         plot_noise_map=False,
         plot_signal_to_noise_map=False,
@@ -211,12 +209,10 @@ def test__fit_individuals__depedent_on_input(fit_ci_imaging_7x7, plot_path, plot
     assert plot_path + "chi_squared_map.png" in plot_patch.paths
 
 
-def test__fit_individuals_line__dependent_on_input(
-    fit_ci_imaging_7x7, plot_path, plot_patch
-):
+def test__fit_individuals_line__dependent_on_input(ci_fit_7x7, plot_path, plot_patch):
 
-    aplt.ci_fit.individuals_lines(
-        fit=fit_ci_imaging_7x7,
+    aplt.CIFit.individuals_lines(
+        fit=ci_fit_7x7,
         line_region="parallel_front_edge",
         plot_image=True,
         plot_noise_map=False,
@@ -244,7 +240,7 @@ def test__fit_individuals_line__dependent_on_input(
 
 def test__plot_ci_fit_for_phase(fit, plot_path, plot_patch):
 
-    aplt.ci_fit.plot_ci_fit_for_phase(
+    aplt.CIFit.plot_ci_fit_for_phase(
         fits=[fit],
         during_analysis=False,
         extract_array_from_mask=True,
