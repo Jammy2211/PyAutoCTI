@@ -11,15 +11,13 @@ directory = os.path.dirname(os.path.realpath(__file__))
 
 @pytest.fixture(name="plot_path")
 def make_ci_fit_plotter_setup():
-    return "{}/../../files/plot/fit/".format(
-        os.path.dirname(os.path.realpath(__file__))
-    )
+    return "{}/files/plots/fit/".format(os.path.dirname(os.path.realpath(__file__)))
 
 
 @pytest.fixture(autouse=True)
 def set_config_path():
     conf.instance = conf.Config(
-        os.path.join(directory, "../files/plot"), os.path.join(directory, "output")
+        os.path.join(directory, "/files/plotter"), os.path.join(directory, "output")
     )
 
 

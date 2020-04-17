@@ -15,13 +15,13 @@ directory = path.dirname(path.realpath(__file__))
 
 @pytest.fixture(name="plot_path")
 def make_plotter_setup():
-    return "{}/../files/plot/".format(os.path.dirname(os.path.realpath(__file__)))
+    return "{}/files/plotter/".format(os.path.dirname(os.path.realpath(__file__)))
 
 
 @pytest.fixture(autouse=True)
 def set_config_path():
     conf.instance = conf.Config(
-        path.join(directory, "../files/plot"), path.join(directory, "output")
+        path.join(directory, "files/plotter"), path.join(directory, "output")
     )
 
 
@@ -59,7 +59,7 @@ class TestAbstractPlotterAttributes:
         plotter = aplt.Plotter()
 
         assert plotter.figure.figsize == (7, 7)
-        assert plotter.figure.aspect == "auto"
+        assert plotter.figure.aspect == "square"
 
         plotter = aplt.Plotter(figure=aplt.Figure(aspect="auto"))
 
@@ -110,8 +110,8 @@ class TestAbstractPlotterAttributes:
         assert sub_plotter.cmap.norm == "linear"
         assert sub_plotter.cmap.norm_min == None
         assert sub_plotter.cmap.norm_max == None
-        assert sub_plotter.cmap.linthresh == 1.0
-        assert sub_plotter.cmap.linscale == 2.0
+        assert sub_plotter.cmap.linthresh == 3.0
+        assert sub_plotter.cmap.linscale == 4.0
 
         sub_plotter = aplt.SubPlotter(
             cmap=aplt.ColorMap.sub(
@@ -123,7 +123,7 @@ class TestAbstractPlotterAttributes:
         assert sub_plotter.cmap.norm == "log"
         assert sub_plotter.cmap.norm_min == 0.1
         assert sub_plotter.cmap.norm_max == 1.0
-        assert sub_plotter.cmap.linthresh == 1.0
+        assert sub_plotter.cmap.linthresh == 3.0
         assert sub_plotter.cmap.linscale == 2.0
 
     def test__colorbar__from_config_or_via_manual_input(self):
@@ -156,7 +156,7 @@ class TestAbstractPlotterAttributes:
 
         assert sub_plotter.cb.ticksize == 1
         assert sub_plotter.cb.fraction == 3.0
-        assert sub_plotter.cb.pad == 4.0
+        assert sub_plotter.cb.pad == 10.0
 
         sub_plotter = aplt.SubPlotter(cb=aplt.ColorBar.sub(fraction=0.001, pad=10.0))
 
@@ -481,7 +481,7 @@ class TestAbstractPlotterAttributes:
         assert sub_plotter.serial_overscan_liner.pointsize == 21
 
 
-class TestPlotterPlots:
+class TestAbstractPlotterPlots:
     def test__plot_frame__works_with_all_extras_included(self, plot_path, plot_patch):
 
         frame = struct.Frame.ones(shape_2d=(31, 31), pixel_scales=(1.0, 1.0))

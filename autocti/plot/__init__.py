@@ -20,9 +20,9 @@ from autocti.plot.mat_objs import (
 
 from autocti.plot.plotters import Plotter, SubPlotter, Include
 
-from autocti.plot.plotters import plot_frame as frame
-from autocti.plot.plotters import plot_line as line
+from autocti.plot.plotters import plot_frame as Frame
+from autocti.plot.plotters import plot_line as Line
 
-from autocti.plot import ci_imaging_plots as ci_imaging
-from autocti.plot import ci_fit_plots as ci_fit
-from autocti.plot import ci_line_plots as ci_line
+from autocti.plot import ci_imaging_plots as CIImaging
+from autocti.plot import ci_fit_plots as CIFit
+from autocti.plot import ci_line_plots as CILine
