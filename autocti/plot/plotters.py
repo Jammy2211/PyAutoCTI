@@ -8,6 +8,7 @@ import copy
 import numpy as np
 import os
 
+
 class AbstractPlotter(object):
     def __init__(
         self,
@@ -92,25 +93,19 @@ class AbstractPlotter(object):
         self.parallel_overscan_liner = (
             parallel_overscan_liner
             if parallel_overscan_liner is not None
-            else mat_objs.ParallelOverscanLiner(
-                from_subplot_config=from_subplot_config
-            )
+            else mat_objs.ParallelOverscanLiner(from_subplot_config=from_subplot_config)
         )
 
         self.serial_prescan_liner = (
             serial_prescan_liner
             if serial_prescan_liner is not None
-            else mat_objs.SerialPrescanLiner(
-                from_subplot_config=from_subplot_config
-            )
+            else mat_objs.SerialPrescanLiner(from_subplot_config=from_subplot_config)
         )
 
         self.serial_overscan_liner = (
             serial_overscan_liner
             if serial_overscan_liner is not None
-            else mat_objs.SerialOverscanLiner(
-                from_subplot_config=from_subplot_config
-            )
+            else mat_objs.SerialOverscanLiner(from_subplot_config=from_subplot_config)
         )
 
     def plot_frame(
@@ -248,12 +243,8 @@ class AbstractPlotter(object):
 
         plt.axis(frame.mask.extent)
 
-        self.ticks.set_yticks(
-            array=frame, extent=frame.mask.extent, units=self.units
-        )
-        self.ticks.set_xticks(
-            array=frame, extent=frame.mask.extent, units=self.units
-        )
+        self.ticks.set_yticks(array=frame, extent=frame.mask.extent, units=self.units)
+        self.ticks.set_xticks(array=frame, extent=frame.mask.extent, units=self.units)
 
         self.labels.set_title()
         self.labels.set_yunits(units=self.units, include_brackets=True)
@@ -419,6 +410,7 @@ class AbstractPlotter(object):
         plotter.output._format = format if format is not None else self.output._format
 
         return plotter
+
 
 class Plotter(AbstractPlotter):
     def __init__(

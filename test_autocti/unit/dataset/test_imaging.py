@@ -177,18 +177,14 @@ class TestMaskedImaging:
         assert (masked_imaging.image[9, 9] == np.array([1.0])).all()
         assert (masked_imaging.noise_map[9, 9] == np.array([2.0])).all()
 
-    def test__modified_image_and_noise_map(
-        self, image_7x7, noise_map_7x7, imaging_7x7, mask_7x7
-    ):
+    def test__modified_noise_map(self, noise_map_7x7, imaging_7x7, mask_7x7):
 
         masked_imaging_7x7 = ds.MaskedImaging(imaging=imaging_7x7, mask=mask_7x7)
 
-        image_7x7[0, 0] = 10.0
         noise_map_7x7[0, 0] = 11.0
 
-        masked_imaging_7x7 = masked_imaging_7x7.modify_image_and_noise_map(
-            image=image_7x7, noise_map=noise_map_7x7
+        masked_imaging_7x7 = masked_imaging_7x7.modify_noise_map(
+            noise_map=noise_map_7x7
         )
 
-        assert masked_imaging_7x7.image[0, 0] == 10.0
         assert masked_imaging_7x7.noise_map[0, 0] == 11.0

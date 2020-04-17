@@ -25,9 +25,7 @@ class RunTests(Command):
 
     def run(self):
         """Run all tests!"""
-        errno = call(
-            ["py.test_autocti", "--cov=autocti", "--cov-report=term-missing"]
-        )
+        errno = call(["py.test_autocti", "--cov=autocti", "--cov-report=term-missing"])
         raise SystemExit(errno)
 
 

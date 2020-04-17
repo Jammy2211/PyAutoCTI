@@ -63,7 +63,7 @@ class TestCIFit:
 
         imaging = ci.CIImaging(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti)
 
-        mask = np.ma.zeros((2, 2))
+        mask = np.full(fill_value=False, shape=(2, 2))
         noise_scaling_maps = [
             ci.CIFrame.zeros(shape_2d=(2, 2), ci_pattern=ci_pattern_7x7),
             ci.CIFrame.zeros(shape_2d=(2, 2), ci_pattern=ci_pattern_7x7),
@@ -101,7 +101,7 @@ class TestCIFit:
 
         imaging = ci.CIImaging(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti)
 
-        mask = np.ma.zeros((2, 2))
+        mask = np.full(fill_value=False, shape=(2, 2))
         noise_scaling_maps = [
             ci.CIFrame.manual(array=[[0.0, 0.0], [0.0, 0.0]], ci_pattern=ci_pattern_7x7)
         ]
@@ -138,7 +138,7 @@ class TestCIFit:
 
         imaging = ci.CIImaging(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti)
 
-        mask = np.ma.zeros((2, 2))
+        mask = np.full(fill_value=False, shape=(2, 2))
 
         noise_scaling_maps = [
             ci.CIFrame.manual(
@@ -182,7 +182,7 @@ class TestCIFit:
 
         imaging = ci.CIImaging(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti)
 
-        mask = np.ma.zeros((2, 2))
+        mask = np.full(fill_value=False, shape=(2, 2))
 
         noise_scaling_maps = [
             ci.CIFrame.manual(
@@ -368,7 +368,7 @@ class TestChiSquaredMapsOfRegions:
 
         imaging = ci.CIImaging(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti)
 
-        mask = np.ma.zeros((2, 2))
+        mask = np.full(fill_value=False, shape=(2, 2))
 
         masked_imaging = ci.MaskedCIImaging(ci_imaging=imaging, mask=mask)
 
@@ -406,7 +406,7 @@ class TestChiSquaredMapsOfRegions:
 
         imaging = ci.CIImaging(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti)
 
-        mask = np.ma.zeros((2, 2))
+        mask = np.full(fill_value=False, shape=(2, 2))
 
         masked_imaging = ci.MaskedCIImaging(ci_imaging=imaging, mask=mask)
 
@@ -437,7 +437,7 @@ class TestChiSquaredMapsOfRegions:
 
         imaging = ci.CIImaging(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti)
 
-        mask = np.ma.zeros((2, 2))
+        mask = np.full(fill_value=False, shape=(2, 2))
 
         masked_imaging = ci.MaskedCIImaging(ci_imaging=imaging, mask=mask)
 
@@ -467,7 +467,7 @@ class TestChiSquaredMapsOfRegions:
 
         imaging = ci.CIImaging(image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti)
 
-        mask = np.ma.zeros((2, 2))
+        mask = np.full(fill_value=False, shape=(2, 2))
 
         masked_imaging = ci.MaskedCIImaging(ci_imaging=imaging, mask=mask)
 

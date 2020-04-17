@@ -829,6 +829,7 @@ class Scatterer:
             marker=self.marker,
         )
 
+
 class OriginScatterer(Scatterer):
     def __init__(self, size=None, marker=None, colors=None, from_subplot_config=False):
 

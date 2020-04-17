@@ -8,13 +8,9 @@ from autocti.structures import arrays
 
 logger = logging.getLogger(__name__)
 
+
 class Imaging(abstract_dataset.AbstractDataset):
-    def __init__(
-        self,
-        image,
-        noise_map,
-        name=None,
-    ):
+    def __init__(self, image, noise_map, name=None):
         """A collection of 2D imaging dataset(an image, noise map, psf, etc.)
 
         Parameters
@@ -36,9 +32,7 @@ class Imaging(abstract_dataset.AbstractDataset):
             An array describing the background sky.
         """
 
-        super(Imaging, self).__init__(
-            data=image, noise_map=noise_map, name=name,
-        )
+        super(Imaging, self).__init__(data=image, noise_map=noise_map, name=name)
 
     @classmethod
     def from_fits(
@@ -79,9 +73,7 @@ class Imaging(abstract_dataset.AbstractDataset):
             file_path=noise_map_path, hdu=noise_map_hdu, pixel_scales=pixel_scales
         )
 
-        return Imaging(
-            image=image, noise_map=noise_map, name=name,
-        )
+        return Imaging(image=image, noise_map=noise_map, name=name)
 
     @property
     def shape_2d(self):
@@ -119,12 +111,7 @@ class Imaging(abstract_dataset.AbstractDataset):
 
         return imaging
 
-    def output_to_fits(
-        self,
-        image_path,
-        noise_map_path=None,
-        overwrite=False,
-    ):
+    def output_to_fits(self, image_path, noise_map_path=None, overwrite=False):
 
         self.image.output_to_fits(file_path=image_path, overwrite=overwrite)
 
@@ -133,12 +120,7 @@ class Imaging(abstract_dataset.AbstractDataset):
 
 
 class MaskedImaging(abstract_dataset.AbstractMaskedDataset):
-
-    def __init__(
-        self,
-        imaging,
-        mask,
-    ):
+    def __init__(self, imaging, mask):
         """
         The lens dataset is the collection of data_type (image, noise map, PSF), a mask, grid, convolver \
         and other utilities that are used for modeling and fitting an image of a strong lens.
@@ -154,19 +136,16 @@ class MaskedImaging(abstract_dataset.AbstractMaskedDataset):
             The 2D mask that is applied to the image.
         """
 
-        super().__init__(
-            mask=mask,
-        )
+        super().__init__(mask=mask)
 
         self.imaging = imaging
         self.image = imaging.image * np.invert(mask)
         self.noise_map = imaging.noise_map * np.invert(mask)
 
-    def modify_image_and_noise_map(self, image, noise_map):
+    def modify_noise_map(self, noise_map):
 
         masked_imaging = copy.deepcopy(self)
 
-        masked_imaging.image = image
         masked_imaging.noise_map = noise_map
 
         return masked_imaging

@@ -28,9 +28,7 @@ class AbstractArray(abstract_structure.AbstractStructure):
             The arc-second origin of the hyper array's coordinate system.
         """
 
-        obj = super(AbstractArray, cls).__new__(
-            cls=cls, structure=array, mask=mask,
-        )
+        obj = super(AbstractArray, cls).__new__(cls=cls, structure=array, mask=mask)
         return obj
 
     def new_with_array(self, array):
@@ -90,11 +88,8 @@ class AbstractArray(abstract_structure.AbstractStructure):
 
 
 class Array(AbstractArray):
-
     @classmethod
-    def manual_2d(
-        cls, array, pixel_scales=None, origin=(0.0, 0.0),
-    ):
+    def manual_2d(cls, array, pixel_scales=None, origin=(0.0, 0.0)):
 
         if type(array) is list:
             array = np.asarray(array)
@@ -103,21 +98,13 @@ class Array(AbstractArray):
             pixel_scales = (pixel_scales, pixel_scales)
 
         mask = msk.Mask.unmasked(
-            shape_2d=array.shape,
-            pixel_scales=pixel_scales,
-            origin=origin,
+            shape_2d=array.shape, pixel_scales=pixel_scales, origin=origin
         )
 
         return Array(array=array, mask=mask)
 
     @classmethod
-    def full(
-        cls,
-        fill_value,
-        shape_2d,
-        pixel_scales=None,
-        origin=(0.0, 0.0),
-    ):
+    def full(cls, fill_value, shape_2d, pixel_scales=None, origin=(0.0, 0.0)):
 
         return cls.manual_2d(
             array=np.full(fill_value=fill_value, shape=shape_2d),
@@ -126,51 +113,24 @@ class Array(AbstractArray):
         )
 
     @classmethod
-    def ones(
-        cls,
-        shape_2d,
-        pixel_scales=None,
-        origin=(0.0, 0.0),
-    ):
+    def ones(cls, shape_2d, pixel_scales=None, origin=(0.0, 0.0)):
         return cls.full(
-            fill_value=1.0,
-            shape_2d=shape_2d,
-            pixel_scales=pixel_scales,
-            origin=origin,
+            fill_value=1.0, shape_2d=shape_2d, pixel_scales=pixel_scales, origin=origin
         )
 
     @classmethod
-    def zeros(
-        cls,
-        shape_2d,
-        pixel_scales=None,
-        origin=(0.0, 0.0),
-    ):
+    def zeros(cls, shape_2d, pixel_scales=None, origin=(0.0, 0.0)):
         return cls.full(
-            fill_value=0.0,
-            shape_2d=shape_2d,
-            pixel_scales=pixel_scales,
-            origin=origin,
+            fill_value=0.0, shape_2d=shape_2d, pixel_scales=pixel_scales, origin=origin
         )
 
     @classmethod
-    def from_fits(
-        cls,
-        file_path,
-        hdu=0,
-        pixel_scales=None,
-        origin=(0.0, 0.0),
-    ):
+    def from_fits(cls, file_path, hdu=0, pixel_scales=None, origin=(0.0, 0.0)):
         array_2d = array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
-        return cls.manual_2d(
-            array=array_2d,
-            pixel_scales=pixel_scales,
-            origin=origin,
-        )
+        return cls.manual_2d(array=array_2d, pixel_scales=pixel_scales, origin=origin)
 
 
 class MaskedArray(AbstractArray):
-
     @classmethod
     def manual_2d(cls, array, mask):
 
@@ -188,8 +148,7 @@ class MaskedArray(AbstractArray):
     @classmethod
     def full(cls, fill_value, mask):
         return cls.manual_2d(
-            array=np.full(fill_value=fill_value, shape=mask.shape_2d),
-            mask=mask,
+            array=np.full(fill_value=fill_value, shape=mask.shape_2d), mask=mask
         )
 
     @classmethod
