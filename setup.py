@@ -26,7 +26,7 @@ class RunTests(Command):
     def run(self):
         """Run all tests!"""
         errno = call(
-            ["py.test_autoarray", "--cov=autocti", "--cov-report=term-missing"]
+            ["py.test_autocti", "--cov=autocti", "--cov-report=term-missing"]
         )
         raise SystemExit(errno)
 
@@ -76,6 +76,6 @@ setup(
         "getDist",
         "autofit==0.27.3",
     ],
-    extras_require={"test_autoarray": ["coverage", "pytest", "pytest-cov"]},
-    cmdclass={"test_autoarray": RunTests},
+    extras_require={"test_autocti": ["coverage", "pytest", "pytest-cov"]},
+    cmdclass={"test_autocti": RunTests},
 )

@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from autocti import exc
-from autoarray.util import array_util
+from autocti.util import exc
+from autocti.util import array_util
 
 
 def line_regions_from_plots(

@@ -2,20 +2,21 @@ import pytest
 from astropy import cosmology as cosmo
 
 import autofit as af
-from autocti.pipeline.phase import phase_extensions
+import autocti as ac
+from autocti.pipeline.phase import extensions
 from autocti.charge_injection import ci_hyper
 
 
 @pytest.fixture(name="lens_galaxy")
 def make_lens_galaxy():
-    return al.Galaxy(
-        redshift=1.0, light=al.lp.SphericalSersic(), mass=al.mp.SphericalIsothermal()
+    return ac.Galaxy(
+        redshift=1.0, light=ac.lp.SphericalSersic(), mass=ac.mp.SphericalIsothermal()
     )
 
 
 @pytest.fixture(name="source_galaxy")
 def make_source_galaxy():
-    return al.Galaxy(redshift=2.0, light=al.lp.SphericalSersic())
+    return ac.Galaxy(redshift=2.0, light=ac.lp.SphericalSersic())
 
 
 @pytest.fixture(name="all_galaxies")
@@ -110,8 +111,8 @@ def make_combined():
         return MockResult()
 
     # noinspection PyTypeChecker
-    hyper_combined = phase_extensions.CombinedHyperPhase(
-        normal_phase, hyper_phase_classes=(phase_extensions.HyperNoisePhase,)
+    hyper_combined = extensions.CombinedHyperPhase(
+        normal_phase, hyper_phase_classes=(extensions.HyperNoisePhase,)
     )
 
     for phase in hyper_combined.hyper_phases:
@@ -156,13 +157,13 @@ class TestHyperAPI(object):
         noise_phase = hyper_combined.hyper_phases[0]
 
         assert noise_phase.hyper_name == "hyper_noise"
-        assert isinstance(noise_phase, phase_extensions.HyperNoisePhase)
+        assert isinstance(noise_phase, extensions.HyperNoisePhase)
 
     # def test_hyper_result(self, ccd_data_7x7):
     #     normal_phase = MockPhase()
     #
     #     # noinspection PyTypeChecker
-    #     phase = phase_extensions.HyperGalaxyPhase(normal_phase)
+    #     phase = extensions.HyperGalaxyPhase(normal_phase)
     #
     #     # noinspection PyUnusedLocal
     #     def run_hyper(*args, **kwargs):

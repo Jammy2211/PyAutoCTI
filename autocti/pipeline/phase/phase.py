@@ -7,7 +7,7 @@ class AbstractPhase(af.AbstractPhase):
         phase_name,
         phase_tag=None,
         phase_folders=tuple(),
-        optimizer_class=af.MultiNest,
+        non_linear_class=af.MultiNest,
     ):
         """
         A phase in an lens pipeline. Uses the set non_linear optimizer to try to fit
@@ -15,7 +15,7 @@ class AbstractPhase(af.AbstractPhase):
 
         Parameters
         ----------
-        optimizer_class: class
+        non_linear_class: class
             The class of a non_linear optimizer
         phase_name: str
             The name of this phase
@@ -27,7 +27,7 @@ class AbstractPhase(af.AbstractPhase):
             phase_name=phase_name,
             phase_tag=phase_tag,
             phase_folders=phase_folders,
-            optimizer_class=optimizer_class,
+            non_linear_class=non_linear_class,
         )
 
     @property
@@ -93,7 +93,7 @@ class AbstractPhase(af.AbstractPhase):
     def make_result(self, result, analysis):
         return self.__class__.Result(
             constant=result.constant,
-            figure_of_merit=result.figure_of_merit,
+            likelihood=result.figure_of_merit,
             previous_variable=result.previous_variable,
             gaussian_tuples=result.gaussian_tuples,
             analysis=analysis,
@@ -104,7 +104,7 @@ class AbstractPhase(af.AbstractPhase):
         def __init__(
             self,
             constant,
-            figure_of_merit,
+            likelihood,
             previous_variable,
             gaussian_tuples,
             analysis,
@@ -115,7 +115,7 @@ class AbstractPhase(af.AbstractPhase):
             """
             super(Phase.Result, self).__init__(
                 constant=constant,
-                figure_of_merit=figure_of_merit,
+                likelihood=likelihood,
                 previous_variable=previous_variable,
                 gaussian_tuples=gaussian_tuples,
             )

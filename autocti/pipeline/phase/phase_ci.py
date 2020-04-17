@@ -3,10 +3,10 @@ from functools import partial
 import numpy as np
 import autofit as af
 
-from autocti import exc
+from autocti.util import exc
 from autocti.pipeline import phase_tagging as tag
 from autocti.pipeline.phase.phase import Phase
-from autocti.pipeline.phase import phase_extensions
+from autocti.pipeline.phase import extensions
 from autocti.charge_injection import ci_imaging, ci_fit, ci_mask
 from autocti.plot import ci_fit_plots, phase_plots
 from autocti.structures import mask as msk
@@ -62,7 +62,7 @@ class PhaseCI(Phase):
     def make_result(self, result, analysis):
         return self.__class__.Result(
             constant=result.constant,
-            figure_of_merit=result.figure_of_merit,
+            likelihood=result.figure_of_merit,
             previous_variable=result.previous_variable,
             gaussian_tuples=result.gaussian_tuples,
             analysis=analysis,
@@ -81,7 +81,7 @@ class PhaseCI(Phase):
         hyper_noise_scalar_of_parallel_trails=None,
         hyper_noise_scalar_of_serial_trails=None,
         hyper_noise_scalar_of_serial_overscan_no_trails=None,
-        optimizer_class=af.DownhillSimplex,
+        non_linear_class=af.DownhillSimplex,
         mask_function=msk.Mask.unmasked,
         columns=None,
         rows=None,
@@ -100,7 +100,7 @@ class PhaseCI(Phase):
 
         Parameters
         ----------
-        optimizer_class: class
+        non_linear_class: class
             The class of a NonLinear optimizer
             The side length of the subgrid
         """
@@ -138,7 +138,7 @@ class PhaseCI(Phase):
             phase_name=phase_name,
             phase_tag=phase_tag,
             phase_folders=phase_folders,
-            optimizer_class=optimizer_class,
+            non_linear_class=non_linear_class,
         )
 
         self.parallel_traps = parallel_traps
@@ -501,8 +501,8 @@ class PhaseCI(Phase):
         )
 
     def extend_with_hyper_noise_phases(self,):
-        return phase_extensions.CombinedHyperPhase(
-            phase=self, hyper_phase_classes=(phase_extensions.HyperNoisePhase,)
+        return extensions.CombinedHyperPhase(
+            phase=self, hyper_phase_classes=(extensions.HyperNoisePhase,)
         )
 
     # noinspection PyAbstractClass
@@ -773,7 +773,7 @@ class PhaseCI(Phase):
 
             return list(
                 map(
-                    lambda ci_data_masked_extracted: ci_fit.CIImagingFit(
+                    lambda ci_data_masked_extracted: ci_fit.CIFitImaging(
                         masked_ci_imaging=ci_data_masked_extracted,
                         cti_params=cti_params,
                         cti_settings=self.cti_settings,
@@ -792,7 +792,7 @@ class PhaseCI(Phase):
 
             return list(
                 map(
-                    lambda ci_data_masked_full: ci_fit.CIImagingFit(
+                    lambda ci_data_masked_full: ci_fit.CIFitImaging(
                         masked_ci_imaging=ci_data_masked_full,
                         cti_params=cti_params,
                         cti_settings=self.cti_settings,
@@ -824,7 +824,7 @@ class PhaseCI(Phase):
         def __init__(
             self,
             constant,
-            figure_of_merit,
+            likelihood,
             previous_variable,
             gaussian_tuples,
             analysis,
@@ -836,7 +836,7 @@ class PhaseCI(Phase):
 
             super(PhaseCI.Result, self).__init__(
                 constant=constant,
-                figure_of_merit=figure_of_merit,
+                likelihood=likelihood,
                 previous_variable=previous_variable,
                 gaussian_tuples=gaussian_tuples,
                 analysis=analysis,
@@ -906,7 +906,7 @@ class PhaseCI(Phase):
 
 
 def pipe_cti(ci_data_masked, cti_params, cti_settings, hyper_noise_scalars):
-    fit = ci_fit.CIImagingFit(
+    fit = ci_fit.CIFitImaging(
         masked_ci_imaging=ci_data_masked,
         cti_params=cti_params,
         cti_settings=cti_settings,

@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 
-from autocti import exc
+from autocti.util import exc
 from autocti.plot import ci_plotter_util
 
 

@@ -1,7 +1,7 @@
-from autoarray.plot import plotters
+from autocti.plot import plotters
 
-from autocti.plot import cti_plotters, ci_plotter_util, ci_line_plots
-from autoarray.util import array_util
+from autocti.plot import plotters, ci_plotter_util, ci_line_plots
+from autocti.util import array_util
 
 
 def plot_ci_fit_for_phase(
@@ -287,7 +287,7 @@ def plot_ci_fit_lines_for_phase(
             )
 
 
-@cti_plotters.set_include_and_sub_plotter
+@plotters.set_include_and_sub_plotter
 @plotters.set_labels
 def subplot_ci_fit(fit, include=None, sub_plotter=None):
     """Plot the model datas_ of an analysis, using the *Fitter* class object.
@@ -361,7 +361,7 @@ def subplot_ci_fit(fit, include=None, sub_plotter=None):
     sub_plotter.figure.close()
 
 
-@cti_plotters.set_include_and_sub_plotter
+@plotters.set_include_and_sub_plotter
 @plotters.set_labels
 def subplot_residual_maps(fits, include=None, sub_plotter=None):
     """Plot the model datas_ of an analysis, using the *Fitter* class object.
@@ -387,7 +387,7 @@ def subplot_residual_maps(fits, include=None, sub_plotter=None):
     sub_plotter.figure.close()
 
 
-@cti_plotters.set_include_and_sub_plotter
+@plotters.set_include_and_sub_plotter
 @plotters.set_labels
 def subplot_chi_squared_maps(fits, include=None, sub_plotter=None):
     """Plot the model datas_ of an analysis, using the *Fitter* class object.
@@ -448,7 +448,7 @@ def individuals(
         chi_squared_map(fit=fit, include=include, plotter=plotter)
 
 
-@cti_plotters.set_include_and_sub_plotter
+@plotters.set_include_and_sub_plotter
 @plotters.set_labels
 def subplot_fit_lines(fit, line_region, include=None, sub_plotter=None):
     """Plot the model datas_ of an analysis, using the *Fitter* class object.
@@ -506,7 +506,7 @@ def subplot_fit_lines(fit, line_region, include=None, sub_plotter=None):
     sub_plotter.figure.close()
 
 
-@cti_plotters.set_include_and_sub_plotter
+@plotters.set_include_and_sub_plotter
 @plotters.set_labels
 def subplot_residual_map_lines(fits, line_region, include=None, sub_plotter=None):
     """Plot the model datas_ of an analysis, using the *Fitter* class object.
@@ -532,7 +532,7 @@ def subplot_residual_map_lines(fits, line_region, include=None, sub_plotter=None
     sub_plotter.figure.close()
 
 
-@cti_plotters.set_include_and_sub_plotter
+@plotters.set_include_and_sub_plotter
 @plotters.set_labels
 def subplot_chi_squared_map_lines(fits, line_region, include=None, sub_plotter=None):
     """Plot the model datas_ of an analysis, using the *Fitter* class object.
@@ -607,7 +607,7 @@ def individuals_lines(
         )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def image(fit, include=None, plotter=None):
     """Plot the observed image of the ccd simulator.
@@ -629,7 +629,7 @@ def image(fit, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def noise_map(fit, include=None, plotter=None):
     """Plot the observed noise_map of the ccd simulator.
@@ -651,7 +651,7 @@ def noise_map(fit, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def signal_to_noise_map(fit, include=None, plotter=None):
     """Plot the observed signal_to_noise_map of the ccd simulator.
@@ -673,7 +673,7 @@ def signal_to_noise_map(fit, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def ci_pre_cti(fit, include=None, plotter=None):
     """Plot the observed ci_pre_cti of the ccd simulator.
@@ -695,7 +695,7 @@ def ci_pre_cti(fit, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def ci_post_cti(fit, include=None, plotter=None):
     """Plot the observed ci_post_cti of the ccd simulator.
@@ -717,7 +717,7 @@ def ci_post_cti(fit, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def residual_map(fit, include=None, plotter=None):
     """Plot the observed residual_map of the ccd simulator.
@@ -739,7 +739,7 @@ def residual_map(fit, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def chi_squared_map(fit, include=None, plotter=None):
     """Plot the observed chi_squared_map of the ccd simulator.
@@ -761,9 +761,9 @@ def chi_squared_map(fit, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_sub_plotter
+@plotters.set_include_and_sub_plotter
 @plotters.set_labels
-def noise_scaling_maps_list(fit, include=None, sub_plotter=None):
+def noise_scaling_maps(fit, include=None, sub_plotter=None):
     """Plot the observed chi_squared_map of the ccd simulator.
 
     Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
@@ -774,18 +774,18 @@ def noise_scaling_maps_list(fit, include=None, sub_plotter=None):
         The chi_squared_map of the dataset.
     """
 
-    number_subplots = len(fit.noise_scaling_maps_list)
+    number_subplots = len(fit.noise_scaling_maps)
 
     sub_plotter.open_subplot_figure(number_subplots=number_subplots)
 
-    for index in range(len(fit.noise_scaling_maps_list)):
+    for index in range(len(fit.noise_scaling_maps)):
 
         sub_plotter.setup_subplot(
             number_subplots=number_subplots, subplot_index=index + 1
         )
 
         sub_plotter.plot_frame(
-            frame=fit.noise_scaling_maps_list[index],
+            frame=fit.noise_scaling_maps[index],
             include_origin=include.origin,
             include_parallel_overscan=include.parallel_overscan,
             include_serial_prescan=include.serial_prescan,
@@ -797,7 +797,7 @@ def noise_scaling_maps_list(fit, include=None, sub_plotter=None):
     sub_plotter.figure.close()
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def image_line(fit, line_region, include=None, plotter=None):
     """Plot the observed image of the ccd simulator.
@@ -814,7 +814,7 @@ def image_line(fit, line_region, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def noise_map_line(fit, line_region, include=None, plotter=None):
     """Plot the observed noise_map of the ccd simulator.
@@ -834,7 +834,7 @@ def noise_map_line(fit, line_region, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def signal_to_noise_map_line(fit, line_region, include=None, plotter=None):
     """Plot the observed signal_to_noise_map of the ccd simulator.
@@ -854,7 +854,7 @@ def signal_to_noise_map_line(fit, line_region, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def ci_pre_cti_line(fit, line_region, include=None, plotter=None):
     """Plot the observed ci_pre_cti of the ccd simulator.
@@ -874,7 +874,7 @@ def ci_pre_cti_line(fit, line_region, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def ci_post_cti_line(fit, line_region, include=None, plotter=None):
     """Plot the observed ci_post_cti of the ccd simulator.
@@ -894,7 +894,7 @@ def ci_post_cti_line(fit, line_region, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def residual_map_line(fit, line_region, include=None, plotter=None):
     """Plot the observed residual_map of the ccd simulator.
@@ -914,7 +914,7 @@ def residual_map_line(fit, line_region, include=None, plotter=None):
     )
 
 
-@cti_plotters.set_include_and_plotter
+@plotters.set_include_and_plotter
 @plotters.set_labels
 def chi_squared_map_line(fit, line_region, include=None, plotter=None):
     """Plot the observed chi_squared_map of the ccd simulator.

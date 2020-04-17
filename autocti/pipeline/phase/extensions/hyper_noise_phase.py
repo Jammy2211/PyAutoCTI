@@ -79,13 +79,13 @@ class HyperNoisePhase(HyperPhase):
         ):
 
             hyper_noise_map = ci_fit.hyper_noise_map_from_noise_map_and_noise_scalings(
-                noise_scaling_maps=ci_data.noise_scaling_maps_list,
+                noise_scaling_maps=ci_data.noise_scaling_maps,
                 hyper_noise_scalars=hyper_noise_scalars,
                 noise_map=ci_data.noise_map,
             )
 
             return ci_fit.CIDataFit(
-                ci_masked_imaging=ci_data,
+                masked_ci_imaging=ci_data,
                 noise_map=hyper_noise_map,
                 model_data=model_image,
             )
