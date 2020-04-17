@@ -11,7 +11,7 @@ directory = os.path.dirname(os.path.realpath(__file__))
 
 @pytest.fixture(name="plot_path")
 def make_ci_imaging_plotter_setup():
-    return "{}/../../files/plotting/ci_imaging/".format(
+    return "{}/files/plots/ci_imaging/".format(
         os.path.dirname(os.path.realpath(__file__))
     )
 
@@ -19,7 +19,7 @@ def make_ci_imaging_plotter_setup():
 @pytest.fixture(autouse=True)
 def set_config_path():
     conf.instance = conf.Config(
-        os.path.join(directory, "../files/plot"), os.path.join(directory, "output")
+        os.path.join(directory, "/files/plotter"), os.path.join(directory, "output")
     )
 
 
