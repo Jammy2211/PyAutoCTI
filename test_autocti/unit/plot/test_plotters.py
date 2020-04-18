@@ -389,7 +389,7 @@ class TestAbstractPlotterAttributes:
         sub_plotter = aplt.SubPlotter()
 
         assert sub_plotter.parallel_overscan_liner.width == 4
-        assert sub_plotter.parallel_overscan_liner.style == "x"
+        assert sub_plotter.parallel_overscan_liner.style == "-"
         assert sub_plotter.parallel_overscan_liner.colors == ["w"]
         assert sub_plotter.parallel_overscan_liner.pointsize == 23
 
@@ -447,7 +447,7 @@ class TestAbstractPlotterAttributes:
         plotter = aplt.Plotter()
 
         assert plotter.serial_overscan_liner.width == 3
-        assert plotter.serial_overscan_liner.style == "x"
+        assert plotter.serial_overscan_liner.style == "-"
         assert plotter.serial_overscan_liner.colors == ["y"]
         assert plotter.serial_overscan_liner.pointsize == 23
 

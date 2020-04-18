@@ -89,7 +89,7 @@ class TestPhaseCIImagingVisualizer:
             masked_dataset=masked_ci_imaging_7x7, image_path=plot_path
         )
 
-        visualizer.visualize_fit(fit=ci_fit_7x7, during_analysis=True)
+        visualizer.visualize_ci_fit(fit=ci_fit_7x7, during_analysis=True)
 
         assert plot_path + "subplots/subplot_ci_fit.png" in plot_patch.paths
         assert plot_path + "fit_ci_imaging/image.png" in plot_patch.paths
@@ -105,7 +105,7 @@ class TestPhaseCIImagingVisualizer:
         )
         assert plot_path + "fit_ci_imaging/chi_squared_map.png" in plot_patch.paths
 
-        visualizer.visualize_fit(fit=ci_fit_7x7, during_analysis=False)
+        visualizer.visualize_ci_fit(fit=ci_fit_7x7, during_analysis=False)
 
         assert plot_path + "subplots/subplot_ci_fit.png" in plot_patch.paths
         assert plot_path + "fit_ci_imaging/image.png" in plot_patch.paths
@@ -130,7 +130,7 @@ class TestPhaseCIImagingVisualizer:
             masked_dataset=masked_ci_imaging_7x7, image_path=plot_path
         )
 
-        visualizer.visualize_fit_lines(
+        visualizer.visualize_ci_fit_lines(
             fit=ci_fit_7x7, line_region="parallel_front_edge", during_analysis=True
         )
 
@@ -173,7 +173,7 @@ class TestPhaseCIImagingVisualizer:
             in plot_patch.paths
         )
 
-        visualizer.visualize_fit_lines(
+        visualizer.visualize_ci_fit_lines(
             fit=ci_fit_7x7, line_region="parallel_front_edge", during_analysis=False
         )
 
@@ -213,5 +213,55 @@ class TestPhaseCIImagingVisualizer:
         )
         assert (
             plot_path + "fit_ci_imaging_parallel_front_edge/chi_squared_map_line.png"
+            in plot_patch.paths
+        )
+
+    def test___visualizes_multiple_ci_fits_subplot__using_configs(
+        self, masked_ci_imaging_7x7, ci_fit_7x7, plot_path, plot_patch
+    ):
+
+        if os.path.exists(plot_path):
+            shutil.rmtree(plot_path)
+
+        visualizer = vis.PhaseCIImagingVisualizer(
+            masked_dataset=masked_ci_imaging_7x7, image_path=plot_path
+        )
+
+        visualizer.visualize_multiple_ci_fits_subplots(fits=[ci_fit_7x7])
+
+        assert plot_path + "subplots/subplot_residual_maps.png" in plot_patch.paths
+        assert (
+            plot_path + "subplots/subplot_normalized_residual_maps.png"
+            in plot_patch.paths
+        )
+        assert plot_path + "subplots/subplot_chi_squared_maps.png" in plot_patch.paths
+
+    def test___visualizes_multiple_ci_fits_lines_subplot__using_configs(
+        self, masked_ci_imaging_7x7, ci_fit_7x7, plot_path, plot_patch
+    ):
+
+        if os.path.exists(plot_path):
+            shutil.rmtree(plot_path)
+
+        visualizer = vis.PhaseCIImagingVisualizer(
+            masked_dataset=masked_ci_imaging_7x7, image_path=plot_path
+        )
+
+        visualizer.visualize_multiple_ci_fits_subplots_lines(
+            fits=[ci_fit_7x7], line_region="parallel_front_edge"
+        )
+
+        assert (
+            plot_path + "subplots/subplot_residual_maps_lines_parallel_front_edge.png"
+            in plot_patch.paths
+        )
+        assert (
+            plot_path
+            + "subplots/subplot_normalized_residual_maps_lines_parallel_front_edge.png"
+            in plot_patch.paths
+        )
+        assert (
+            plot_path
+            + "subplots/subplot_chi_squared_maps_lines_parallel_front_edge.png"
             in plot_patch.paths
         )
