@@ -42,6 +42,13 @@ class PhaseDatasetVisualizer(AbstractVisualizer):
         self.plot_fit_all_at_end_png = plot_setting("fit", "all_at_end_png")
         self.plot_fit_all_at_end_fits = plot_setting("fit", "all_at_end_fits")
         self.plot_subplot_fit = plot_setting("fit", "subplot_fit")
+        self.plot_subplot_residual_maps = plot_setting("fit", "subplot_residual_maps")
+        self.plot_subplot_normalized_residual_maps = plot_setting(
+            "fit", "subplot_normalized_residual_maps"
+        )
+        self.plot_subplot_chi_squared_maps = plot_setting(
+            "fit", "subplot_chi_squared_maps"
+        )
 
         self.plot_fit_data = plot_setting("fit", "data")
         self.plot_fit_noise_map = plot_setting("fit", "noise_map")
@@ -62,10 +69,6 @@ class PhaseCIImagingVisualizer(PhaseDatasetVisualizer):
         )
 
         self.visualize_ci_imaging()
-
-        if results is not None and results.last is not None:
-
-            self.visualize_hyper_images(last_results=results.last)
 
     @property
     def masked_imaging(self):
@@ -126,7 +129,7 @@ class PhaseCIImagingVisualizer(PhaseDatasetVisualizer):
             plotter=plotter,
         )
 
-    def visualize_fit(self, fit, during_analysis):
+    def visualize_ci_fit(self, fit, during_analysis):
 
         plotter = self.plotter.plotter_with_new_output(
             path=f"{self.plotter.output.path}fit_ci_imaging/"
@@ -172,7 +175,7 @@ class PhaseCIImagingVisualizer(PhaseDatasetVisualizer):
 
                 self.visualize_fit_in_fits(fit=fit)
 
-    def visualize_fit_lines(self, fit, line_region, during_analysis):
+    def visualize_ci_fit_lines(self, fit, line_region, during_analysis):
 
         if self.plot_subplot_fit:
 
@@ -224,6 +227,56 @@ class PhaseCIImagingVisualizer(PhaseDatasetVisualizer):
                     include=self.include,
                     plotter=plotter,
                 )
+
+    def visualize_multiple_ci_fits_subplots(self, fits):
+
+        if self.plot_subplot_residual_maps:
+            ci_fit_plots.subplot_residual_maps(fits=fits, sub_plotter=self.sub_plotter)
+
+        if self.plot_subplot_normalized_residual_maps:
+            ci_fit_plots.subplot_normalized_residual_maps(
+                fits=fits, sub_plotter=self.sub_plotter
+            )
+
+        if self.plot_subplot_chi_squared_maps:
+            ci_fit_plots.subplot_chi_squared_maps(
+                fits=fits, sub_plotter=self.sub_plotter
+            )
+
+    def visualize_multiple_ci_fits_subplots_lines(self, fits, line_region):
+
+        if self.plot_subplot_residual_maps:
+
+            sub_plotter = self.sub_plotter.plotter_with_new_output(
+                path=self.sub_plotter.output.path,
+                filename=f"subplot_residual_maps_lines_{line_region}",
+            )
+
+            ci_fit_plots.subplot_residual_map_lines(
+                fits=fits, line_region=line_region, sub_plotter=sub_plotter
+            )
+
+        if self.plot_subplot_normalized_residual_maps:
+
+            sub_plotter = self.sub_plotter.plotter_with_new_output(
+                path=self.sub_plotter.output.path,
+                filename=f"subplot_normalized_residual_maps_lines_{line_region}",
+            )
+
+            ci_fit_plots.subplot_normalized_residual_map_lines(
+                fits=fits, line_region=line_region, sub_plotter=sub_plotter
+            )
+
+        if self.plot_subplot_chi_squared_maps:
+
+            sub_plotter = self.sub_plotter.plotter_with_new_output(
+                path=self.sub_plotter.output.path,
+                filename=f"subplot_chi_squared_maps_lines_{line_region}",
+            )
+
+            ci_fit_plots.subplot_chi_squared_map_lines(
+                fits=fits, line_region=line_region, sub_plotter=sub_plotter
+            )
 
     def visualize_fit_in_fits(self, fit):
 
