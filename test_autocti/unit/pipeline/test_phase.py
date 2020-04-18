@@ -18,7 +18,7 @@ directory = path.dirname(path.realpath(__file__))
 
 @pytest.fixture(scope="session", autouse=True)
 def do_something():
-    af.conf.instance = af.conf.Config("{}/../files/configs/phase".format(directory))
+    af.conf.instance = af.conf.Config("{}/files/configs/phase".format(directory))
 
 
 class MockResults(object):
@@ -38,11 +38,11 @@ class NLO(af.NonLinearOptimizer):
             def __call__(self, vector):
                 instance = self.instance_from_vector(vector)
 
-                likelihood = analysis.fit(instance)
-                self.result = af.Result(instance, likelihood)
+                log_likelihood = analysis.fit(instance)
+                self.result = af.Result(instance, log_likelihood)
 
                 # Return Chi squared
-                return -2 * likelihood
+                return -2 * log_likelihood
 
         fitness_function = Fitness(self.variable.instance_from_vector)
         fitness_function(self.variable.prior_count * [0.5])
@@ -1154,7 +1154,7 @@ class TestResult(object):
             cti_settings=cti_settings,
         )
 
-        assert fit.likelihood == fit_figure_of_merit
+        assert fit.log_likelihood == fit_figure_of_merit
 
     def test__results_of_phase_are_available_as_properties(self, ci_data, cti_settings):
         phase = ac.PhaseCI(

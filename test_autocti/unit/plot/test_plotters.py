@@ -502,7 +502,7 @@ class TestAbstractPlotterPlots:
 
         assert plot_path + "frame2.png" in plot_patch.paths
 
-        aplt.frame(
+        aplt.Frame(
             frame=frame,
             plotter=aplt.Plotter(
                 output=aplt.Output(path=plot_path, filename="frame3", format="png")

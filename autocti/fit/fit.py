@@ -29,8 +29,8 @@ class FitDataset:
             every data point.
         noise_normalization : float
             The overall normalization term of the noise_map, summed over every data point.
-        likelihood : float
-            The overall likelihood of the model's fit to the dataset, summed over evey data point.
+        log_likelihood : float
+            The overall log likelihood of the model's fit to the dataset, summed over evey data point.
         """
         self.masked_dataset = masked_dataset
         self.model_data = model_data
@@ -119,7 +119,7 @@ class FitDataset:
         )
 
     @property
-    def likelihood(self):
+    def log_likelihood(self):
         return fit_util.likelihood_from_chi_squared_and_noise_normalization(
             chi_squared=self.chi_squared, noise_normalization=self.noise_normalization
         )
@@ -149,8 +149,8 @@ class FitImaging(FitDataset):
             every data point.
         noise_normalization : float
             The overall normalization term of the noise_map, summed over every data point.
-        likelihood : float
-            The overall likelihood of the model's fit to the dataset, summed over evey data point.
+        log_likelihood : float
+            The overall log likelihood of the model's fit to the dataset, summed over evey data point.
         """
 
         super().__init__(masked_dataset=masked_imaging, model_data=model_image)

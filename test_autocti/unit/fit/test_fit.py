@@ -47,7 +47,7 @@ class TestFitImaging:
         assert fit.chi_squared == 0.0
         assert fit.reduced_chi_squared == 0.0
         assert fit.noise_normalization == np.sum(np.log(2 * np.pi * noise_map ** 2.0))
-        assert fit.likelihood == -0.5 * (fit.chi_squared + fit.noise_normalization)
+        assert fit.log_likelihood == -0.5 * (fit.chi_squared + fit.noise_normalization)
 
     def test__image_and_model_are_different__inclue_masking__check_values_are_correct(
         self
@@ -95,4 +95,4 @@ class TestFitImaging:
         assert fit.chi_squared == 0.25
         assert fit.reduced_chi_squared == 0.25 / 3.0
         assert fit.noise_normalization == 3.0 * (np.log(2 * np.pi * 2.0 ** 2.0))
-        assert fit.likelihood == -0.5 * (fit.chi_squared + fit.noise_normalization)
+        assert fit.log_likelihood == -0.5 * (fit.chi_squared + fit.noise_normalization)

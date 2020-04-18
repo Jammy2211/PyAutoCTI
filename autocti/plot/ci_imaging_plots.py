@@ -1,4 +1,3 @@
-from autocti.plot import plotters
 from autocti.plot import plotters, ci_line_plots
 
 
