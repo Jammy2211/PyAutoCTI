@@ -1,5 +1,3 @@
-from autocti.plot import plotters
-
 from autocti.plot import plotters, ci_plotter_util, ci_line_plots
 from autocti.util import array_util
 
@@ -421,6 +419,7 @@ def individuals(
     plot_ci_pre_cti=False,
     plot_ci_post_cti=False,
     plot_residual_map=False,
+    plot_normalized_residual_map=False,
     plot_chi_squared_map=False,
     include=None,
     plotter=None,
@@ -443,6 +442,9 @@ def individuals(
 
     if plot_residual_map:
         residual_map(fit=fit, include=include, plotter=plotter)
+
+    if plot_normalized_residual_map:
+        normalized_residual_map(fit=fit, include=include, plotter=plotter)
 
     if plot_chi_squared_map:
         chi_squared_map(fit=fit, include=include, plotter=plotter)
@@ -568,6 +570,7 @@ def individuals_lines(
     plot_ci_pre_cti=False,
     plot_ci_post_cti=False,
     plot_residual_map=False,
+    plot_normalized_residual_map=False,
     plot_chi_squared_map=False,
     include=None,
     plotter=None,
@@ -598,6 +601,11 @@ def individuals_lines(
 
     if plot_residual_map:
         residual_map_line(
+            fit=fit, line_region=line_region, include=include, plotter=plotter
+        )
+
+    if plot_normalized_residual_map:
+        normalized_residual_map_line(
             fit=fit, line_region=line_region, include=include, plotter=plotter
         )
 
@@ -732,6 +740,28 @@ def residual_map(fit, include=None, plotter=None):
 
     plotter.plot_frame(
         frame=fit.residual_map,
+        include_origin=include.origin,
+        include_parallel_overscan=include.parallel_overscan,
+        include_serial_prescan=include.serial_prescan,
+        include_serial_overscan=include.serial_overscan,
+    )
+
+
+@plotters.set_include_and_plotter
+@plotters.set_labels
+def normalized_residual_map(fit, include=None, plotter=None):
+    """Plot the observed normalized_residual_map of the ccd simulator.
+
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    normalized_residual_map : CIFrame
+        The normalized_residual_map of the dataset.
+    """
+
+    plotter.plot_frame(
+        frame=fit.normalized_residual_map,
         include_origin=include.origin,
         include_parallel_overscan=include.parallel_overscan,
         include_serial_prescan=include.serial_prescan,
@@ -908,6 +938,26 @@ def residual_map_line(fit, line_region, include=None, plotter=None):
     """
     ci_line_plots.plot_line_from_ci_frame(
         ci_frame=fit.residual_map,
+        line_region=line_region,
+        include=include,
+        plotter=plotter,
+    )
+
+
+@plotters.set_include_and_plotter
+@plotters.set_labels
+def normalized_residual_map_line(fit, line_region, include=None, plotter=None):
+    """Plot the observed normalized_residual_map of the ccd simulator.
+
+    Set *autocti.simulator.plotters.plotters* for a description of all input parameters not described below.
+
+    Parameters
+    -----------
+    normalized_residual_map : CIFrame
+        The normalized_residual_map of the dataset.
+    """
+    ci_line_plots.plot_line_from_ci_frame(
+        ci_frame=fit.normalized_residual_map,
         line_region=line_region,
         include=include,
         plotter=plotter,

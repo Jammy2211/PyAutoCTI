@@ -61,6 +61,12 @@ def test__individual_attriute_plots__all_plot_correctly(
     )
     assert plot_path + "residual_map.png" in plot_patch.paths
 
+    aplt.CIFit.normalized_residual_map(
+        fit=ci_fit_7x7,
+        plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
+    )
+    assert plot_path + "normalized_residual_map.png" in plot_patch.paths
+
     aplt.CIFit.chi_squared_map(
         fit=ci_fit_7x7,
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
@@ -126,6 +132,14 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
     )
 
     assert plot_path + "residual_map_line.png" in plot_patch.paths
+
+    aplt.CIFit.normalized_residual_map_line(
+        fit=ci_fit_7x7,
+        line_region="parallel_front_edge",
+        plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
+    )
+
+    assert plot_path + "normalized_residual_map_line.png" in plot_patch.paths
 
     aplt.CIFit.chi_squared_map_line(
         fit=ci_fit_7x7,
