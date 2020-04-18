@@ -36,6 +36,9 @@ def make_image_7x7(ci_pattern_7x7):
         shape_2d=(7, 7),
         pixel_scales=(1.0, 1.0),
         ci_pattern=ci_pattern_7x7,
+        serial_overscan=(1, 2, 1, 2),
+        serial_prescan=(0, 1, 0, 1),
+        parallel_overscan=(1, 2, 1, 2),
     )
 
 
@@ -46,6 +49,9 @@ def make_noise_map_7x7(ci_pattern_7x7):
         shape_2d=(7, 7),
         pixel_scales=(1.0, 1.0),
         ci_pattern=ci_pattern_7x7,
+        serial_overscan=(1, 2, 1, 2),
+        serial_prescan=(0, 1, 0, 1),
+        parallel_overscan=(1, 2, 1, 2),
     )
 
 
@@ -56,6 +62,9 @@ def make_ci_pre_cti_7x7(ci_pattern_7x7):
         fill_value=10.0,
         pixel_scales=(1.0, 1.0),
         ci_pattern=ci_pattern_7x7,
+        serial_overscan=(1, 2, 1, 2),
+        serial_prescan=(0, 1, 0, 1),
+        parallel_overscan=(1, 2, 1, 2),
     )
 
 
@@ -65,7 +74,12 @@ def make_cosmic_ray_map_7x7(ci_pattern_7x7):
     cosmic_ray_map[1, 1] = 4.0
     cosmic_ray_map[1, 2] = 7.0
     return ci.CIFrame.manual(
-        array=cosmic_ray_map, pixel_scales=(1.0, 1.0), ci_pattern=ci_pattern_7x7
+        array=cosmic_ray_map,
+        pixel_scales=(1.0, 1.0),
+        ci_pattern=ci_pattern_7x7,
+        serial_overscan=(1, 2, 1, 2),
+        serial_prescan=(0, 1, 0, 1),
+        parallel_overscan=(1, 2, 1, 2),
     )
 
 

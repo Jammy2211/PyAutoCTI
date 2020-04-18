@@ -20,7 +20,7 @@ class AbstractVisualizer:
             output=mat_objs.Output(path=image_path, format="png")
         )
         self.sub_plotter = plotters.SubPlotter(
-            output=mat_objs.Output(path=image_path + "subplots/", format="png")
+            output=mat_objs.Output(path=f"{image_path}subplots/", format="png")
         )
         self.include = plotters.Include()
 
@@ -36,6 +36,7 @@ class PhaseDatasetVisualizer(AbstractVisualizer):
         self.plot_dataset_signal_to_noise_map = plot_setting(
             "dataset", "signal_to_noise_map"
         )
+        self.plot_dataset_ci_pre_cti = plot_setting("dataset", "ci_pre_cti")
         self.plot_dataset_cosmic_ray_map = plot_setting("dataset", "cosmic_ray_map")
 
         self.plot_fit_all_at_end_png = plot_setting("fit", "all_at_end_png")
@@ -73,7 +74,7 @@ class PhaseCIImagingVisualizer(PhaseDatasetVisualizer):
     def visualize_ci_imaging(self):
 
         plotter = self.plotter.plotter_with_new_output(
-            path=self.plotter.output.path + "ci_imaging/"
+            path=f"{self.plotter.output.path}ci_imaging/"
         )
 
         if self.plot_subplot_dataset:
@@ -88,7 +89,39 @@ class PhaseCIImagingVisualizer(PhaseDatasetVisualizer):
             plot_image=self.plot_dataset_data,
             plot_noise_map=self.plot_dataset_noise_map,
             plot_signal_to_noise_map=self.plot_dataset_signal_to_noise_map,
+            plot_ci_pre_cti=self.plot_dataset_ci_pre_cti,
             plot_cosmic_ray_map=self.plot_dataset_cosmic_ray_map,
+            include=self.include,
+            plotter=plotter,
+        )
+
+    def visualize_ci_imaging_lines(self, line_region):
+
+        if self.plot_subplot_dataset:
+
+            sub_plotter = self.sub_plotter.plotter_with_new_output(
+                path=self.sub_plotter.output.path,
+                filename=f"subplot_ci_lines_{line_region}",
+            )
+
+            ci_imaging_plots.subplot_ci_lines(
+                ci_imaging=self.masked_imaging.imaging,
+                line_region=line_region,
+                include=self.include,
+                sub_plotter=sub_plotter,
+            )
+
+        plotter = self.plotter.plotter_with_new_output(
+            path=f"{self.plotter.output.path}ci_imaging_{line_region}/"
+        )
+
+        ci_imaging_plots.individual_ci_lines(
+            ci_imaging=self.masked_imaging.imaging,
+            line_region=line_region,
+            plot_image=self.plot_dataset_data,
+            plot_noise_map=self.plot_dataset_noise_map,
+            plot_signal_to_noise_map=self.plot_dataset_signal_to_noise_map,
+            plot_ci_pre_cti=self.plot_dataset_ci_pre_cti,
             include=self.include,
             plotter=plotter,
         )
@@ -96,7 +129,7 @@ class PhaseCIImagingVisualizer(PhaseDatasetVisualizer):
     def visualize_fit(self, fit, during_analysis):
 
         plotter = self.plotter.plotter_with_new_output(
-            path=self.plotter.output.path + "fit_ci_imaging/"
+            path=f"{self.plotter.output.path}fit_ci_imaging/"
         )
 
         if self.plot_subplot_fit:
@@ -138,6 +171,59 @@ class PhaseCIImagingVisualizer(PhaseDatasetVisualizer):
             if self.plot_fit_all_at_end_fits:
 
                 self.visualize_fit_in_fits(fit=fit)
+
+    def visualize_fit_lines(self, fit, line_region, during_analysis):
+
+        if self.plot_subplot_fit:
+
+            sub_plotter = self.sub_plotter.plotter_with_new_output(
+                path=self.sub_plotter.output.path,
+                filename=f"subplot_ci_fit_lines_{line_region}",
+            )
+
+            ci_fit_plots.subplot_fit_lines(
+                fit=fit,
+                line_region=line_region,
+                include=self.include,
+                sub_plotter=sub_plotter,
+            )
+
+        plotter = self.plotter.plotter_with_new_output(
+            path=f"{self.plotter.output.path}fit_ci_imaging_{line_region}/"
+        )
+
+        ci_fit_plots.individuals_lines(
+            fit=fit,
+            line_region=line_region,
+            plot_image=self.plot_fit_data,
+            plot_noise_map=self.plot_fit_noise_map,
+            plot_signal_to_noise_map=self.plot_fit_signal_to_noise_map,
+            plot_ci_pre_cti=self.plot_fit_ci_pre_cti,
+            plot_ci_post_cti=self.plot_fit_ci_post_cti,
+            plot_residual_map=self.plot_fit_residual_map,
+            plot_normalized_residual_map=self.plot_fit_normalized_residual_map,
+            plot_chi_squared_map=self.plot_fit_chi_squared_map,
+            include=self.include,
+            plotter=plotter,
+        )
+
+        if not during_analysis:
+
+            if self.plot_fit_all_at_end_png:
+                ci_fit_plots.individuals_lines(
+                    fit=fit,
+                    line_region=line_region,
+                    plot_image=True,
+                    plot_noise_map=True,
+                    plot_signal_to_noise_map=True,
+                    plot_ci_pre_cti=True,
+                    plot_ci_post_cti=True,
+                    plot_residual_map=True,
+                    plot_normalized_residual_map=True,
+                    plot_chi_squared_map=True,
+                    include=self.include,
+                    plotter=plotter,
+                )
 
     def visualize_fit_in_fits(self, fit):
 
