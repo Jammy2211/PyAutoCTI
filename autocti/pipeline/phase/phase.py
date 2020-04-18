@@ -93,7 +93,7 @@ class AbstractPhase(af.AbstractPhase):
     def make_result(self, result, analysis):
         return self.__class__.Result(
             constant=result.constant,
-            likelihood=result.figure_of_merit,
+            log_likelihood=result.figure_of_merit,
             previous_variable=result.previous_variable,
             gaussian_tuples=result.gaussian_tuples,
             analysis=analysis,
@@ -104,7 +104,7 @@ class AbstractPhase(af.AbstractPhase):
         def __init__(
             self,
             constant,
-            likelihood,
+            log_likelihood,
             previous_variable,
             gaussian_tuples,
             analysis,
@@ -115,7 +115,7 @@ class AbstractPhase(af.AbstractPhase):
             """
             super(Phase.Result, self).__init__(
                 constant=constant,
-                likelihood=likelihood,
+                log_likelihood=log_likelihood,
                 previous_variable=previous_variable,
                 gaussian_tuples=gaussian_tuples,
             )

@@ -100,9 +100,9 @@ def noise_normalization_from_noise_map_and_mask(noise_map, mask):
 def likelihood_from_chi_squared_and_noise_normalization(
     chi_squared, noise_normalization
 ):
-    """Compute the likelihood of each masked 1D model-simulator fit to the dataset, where:
+    """Compute the log likelihood of each masked 1D model-simulator fit to the dataset, where:
 
-    Likelihood = -0.5*[Chi_Squared_Term + Noise_Term] (see functions above for these definitions)
+    Log Likelihood = -0.5*[Chi_Squared_Term + Noise_Term] (see functions above for these definitions)
 
     Parameters
     ----------

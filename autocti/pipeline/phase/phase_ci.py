@@ -62,7 +62,7 @@ class PhaseCI(Phase):
     def make_result(self, result, analysis):
         return self.__class__.Result(
             constant=result.constant,
-            likelihood=result.figure_of_merit,
+            log_likelihood=result.figure_of_merit,
             previous_variable=result.previous_variable,
             gaussian_tuples=result.gaussian_tuples,
             analysis=analysis,
@@ -677,10 +677,10 @@ class PhaseCI(Phase):
                 cti_settings=self.cti_settings,
                 hyper_noise_scalars=hyper_noise_scalars,
             )
-            likelihood = np.sum(
+            log_likelihood = np.sum(
                 list(self.pool.map(pipe_cti_pass, self.ci_datas_masked_extracted))
             )
-            return likelihood
+            return log_likelihood
 
         def check_trap_lifetimes_are_ascending(self, cti_params):
 
@@ -824,7 +824,7 @@ class PhaseCI(Phase):
         def __init__(
             self,
             constant,
-            likelihood,
+            log_likelihood,
             previous_variable,
             gaussian_tuples,
             analysis,
@@ -836,7 +836,7 @@ class PhaseCI(Phase):
 
             super(PhaseCI.Result, self).__init__(
                 constant=constant,
-                likelihood=likelihood,
+                log_likelihood=log_likelihood,
                 previous_variable=previous_variable,
                 gaussian_tuples=gaussian_tuples,
                 analysis=analysis,

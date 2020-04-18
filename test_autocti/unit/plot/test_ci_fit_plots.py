@@ -17,7 +17,7 @@ def make_ci_fit_plotter_setup():
 @pytest.fixture(autouse=True)
 def set_config_path():
     conf.instance = conf.Config(
-        os.path.join(directory, "/files/plotter"), os.path.join(directory, "output")
+        os.path.join(directory, "files/plotter"), os.path.join(directory, "output")
     )
 
 
@@ -236,10 +236,10 @@ def test__fit_individuals_line__dependent_on_input(ci_fit_7x7, plot_path, plot_p
     assert plot_path + "chi_squared_map_line.png" in plot_patch.paths
 
 
-def test__plot_ci_fit_for_phase(fit, plot_path, plot_patch):
+def test__plot_ci_fit_for_phase(ci_fit_7x7, plot_path, plot_patch):
 
     aplt.CIFit.plot_ci_fit_for_phase(
-        fits=[fit],
+        fits=[ci_fit_7x7],
         during_analysis=False,
         extract_array_from_mask=True,
         plot_all_at_end_png=False,

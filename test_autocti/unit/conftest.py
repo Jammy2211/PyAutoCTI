@@ -15,7 +15,7 @@ directory = os.path.dirname(os.path.realpath(__file__))
 @pytest.fixture(autouse=True)
 def set_config_path():
     af.conf.instance = af.conf.Config(
-        os.path.join(directory, "files/config"), os.path.join(directory, "output")
+        os.path.join(directory, "config"), os.path.join(directory, "output")
     )
 
 

@@ -120,7 +120,7 @@ class TestImaging:
             noise_map_path=test_data_path + "3x3_threes.fits",
         )
 
-        output_data_dir = "{}/../files/array/output_test/".format(
+        output_data_dir = "{}/files/array/output_test/".format(
             os.path.dirname(os.path.realpath(__file__))
         )
         if os.path.exists(output_data_dir):

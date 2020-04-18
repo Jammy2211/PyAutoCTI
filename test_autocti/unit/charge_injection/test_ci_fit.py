@@ -45,11 +45,11 @@ class TestCIFit:
             noise_map=masked_ci_imaging_7x7.noise_map, mask=masked_ci_imaging_7x7.mask
         )
 
-        likelihood = fit_util.likelihood_from_chi_squared_and_noise_normalization(
+        log_likelihood = fit_util.likelihood_from_chi_squared_and_noise_normalization(
             chi_squared=chi_squared, noise_normalization=noise_normalization
         )
 
-        assert fit.likelihood == likelihood
+        assert fit.log_likelihood == log_likelihood
 
     def test__image_and_ci_post_cti_the_same__noise_scaling_all_0s__likelihood_is_noise_normalization(
         self, ci_pattern_7x7
@@ -84,7 +84,7 @@ class TestCIFit:
         chi_squared = 0
         noise_normalization = 4.0 * np.log(2 * np.pi * 4.0)
 
-        assert fit.likelihood == -0.5 * (chi_squared + noise_normalization)
+        assert fit.log_likelihood == -0.5 * (chi_squared + noise_normalization)
 
     def test__image_and_post_cti_different__noise_scaling_all_0s__likelihood_chi_squared_and_noise_normalization(
         self, ci_pattern_7x7
@@ -121,7 +121,7 @@ class TestCIFit:
         chi_squared = 4.0 * ((1.0 / 2.0) ** 2.0)
         noise_normalization = 4.0 * np.log(2 * np.pi * 4.0)
 
-        assert fit.likelihood == pytest.approx(
+        assert fit.log_likelihood == pytest.approx(
             -0.5 * (chi_squared + noise_normalization), 1e-4
         )
 
@@ -169,7 +169,7 @@ class TestCIFit:
             + np.log(2 * np.pi * (2.0 + 4.0) ** 2.0)
         )
 
-        assert fit.likelihood == -0.5 * (chi_squared + noise_normalization)
+        assert fit.log_likelihood == -0.5 * (chi_squared + noise_normalization)
 
     def test__x2_noise_map_scaling_and_hyper_params__noise_map_term_comes_out_correct(
         self, ci_pattern_7x7
@@ -214,7 +214,7 @@ class TestCIFit:
             + np.log(2 * np.pi * (3.0 + 4.0 + 16.0) ** 2.0)
         )
 
-        assert fit.likelihood == -0.5 * (chi_squared + noise_normalization)
+        assert fit.log_likelihood == -0.5 * (chi_squared + noise_normalization)
 
     def test__all_quantities_are_same_as_calculated_individually(
         self, masked_ci_imaging_7x7, ci_pattern_7x7
@@ -260,11 +260,11 @@ class TestCIFit:
             noise_map=hyper_noise_map, mask=masked_ci_imaging_7x7.mask
         )
 
-        likelihood = fit_util.likelihood_from_chi_squared_and_noise_normalization(
+        log_likelihood = fit_util.likelihood_from_chi_squared_and_noise_normalization(
             chi_squared=chi_squared, noise_normalization=noise_normalization
         )
 
-        assert (likelihood == fit.likelihood).all()
+        assert (log_likelihood == fit.log_likelihood).all()
 
 
 class TestHyperNoiseMap:

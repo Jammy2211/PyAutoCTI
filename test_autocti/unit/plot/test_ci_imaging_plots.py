@@ -19,7 +19,7 @@ def make_ci_imaging_plotter_setup():
 @pytest.fixture(autouse=True)
 def set_config_path():
     conf.instance = conf.Config(
-        os.path.join(directory, "/files/plotter"), os.path.join(directory, "output")
+        os.path.join(directory, "files/plotter"), os.path.join(directory, "output")
     )
 
 

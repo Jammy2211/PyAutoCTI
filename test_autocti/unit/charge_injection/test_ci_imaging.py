@@ -177,7 +177,7 @@ class TestCIImaging(object):
             cosmic_ray_map_hdu=0,
         )
 
-        output_data_dir = "{}/../files/arrays/output_test/".format(
+        output_data_dir = "{}/files/arrays/output_test/".format(
             os.path.dirname(os.path.realpath(__file__))
         )
         if os.path.exists(output_data_dir):
