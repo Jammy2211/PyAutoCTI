@@ -941,6 +941,29 @@ class Liner:
                 ls=self.style,
             )
 
+    def draw_rectangular_grid_lines(self, extent, shape_2d):
+
+        ys = np.linspace(extent[2], extent[3], shape_2d[1] + 1)
+        xs = np.linspace(extent[0], extent[1], shape_2d[0] + 1)
+
+        # grid lines
+        for x in xs:
+            plt.plot(
+                [x, x],
+                [ys[0], ys[-1]],
+                color=self.colors[0],
+                lw=self.width,
+                ls=self.style,
+            )
+        for y in ys:
+            plt.plot(
+                [xs[0], xs[-1]],
+                [y, y],
+                color=self.colors[0],
+                lw=self.width,
+                ls=self.style,
+            )
+
 
 class ParallelOverscanLiner(Liner):
     def __init__(
