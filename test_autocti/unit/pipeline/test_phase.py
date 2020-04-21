@@ -24,8 +24,8 @@ def do_something():
 class MockResults(object):
     def __init__(self, ci_post_ctis):
         self.ci_post_ctis = ci_post_ctis
-        self.variable = af.ModelMapper()
-        self.constant = af.ModelMapper()
+        self.model = af.ModelMapper()
+        self.instance = af.ModelMapper()
 
 
 class NLO(af.NonLinearOptimizer):
@@ -44,8 +44,8 @@ class NLO(af.NonLinearOptimizer):
                 # Return Chi squared
                 return -2 * log_likelihood
 
-        fitness_function = Fitness(self.variable.instance_from_vector)
-        fitness_function(self.variable.prior_count * [0.5])
+        fitness_function = Fitness(self.model.instance_from_vector)
+        fitness_function(self.model.prior_count * [0.5])
 
         return fitness_function.result
 
@@ -113,7 +113,7 @@ class TestPhase(object):
 
         phase.parallel_traps = [af.PriorModel(ac.Trap), af.PriorModel(ac.Trap)]
 
-        assert phase.optimizer.variable.param_names == [
+        assert phase.optimizer.model.param_names == [
             "parallel_traps_0_trap_density",
             "parallel_traps_0_trap_lifetime",
             "parallel_traps_1_trap_density",
@@ -126,7 +126,7 @@ class TestPhase(object):
             non_linear_class=NLO,
         )
 
-        assert phase.optimizer.variable.param_names == [
+        assert phase.optimizer.model.param_names == [
             "parallel_traps_0_trap_density",
             "parallel_traps_0_trap_lifetime",
             "parallel_traps_1_trap_density",
@@ -136,12 +136,12 @@ class TestPhase(object):
     def test__make_analysis(self, phase, ci_data, cti_settings):
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
         assert analysis.last_results is None
-        assert (analysis.ci_datas_masked_extracted[0].image == ci_data.image).all()
+        assert (analysis.masked_ci_dataset_extracted[0].image == ci_data.image).all()
         assert (
-            analysis.ci_datas_masked_extracted[0].noise_map == ci_data.noise_map
+            analysis.masked_ci_dataset_extracted[0].noise_map == ci_data.noise_map
         ).all()
-        assert (analysis.ci_datas_masked_full[0].image == ci_data.image).all()
-        assert (analysis.ci_datas_masked_full[0].noise_map == ci_data.noise_map).all()
+        assert (analysis.masked_ci_dataset_full[0].image == ci_data.image).all()
+        assert (analysis.masked_ci_dataset_full[0].noise_map == ci_data.noise_map).all()
         assert analysis.cti_settings == cti_settings
 
     def test__make_analysis__uses_mask_function(self, phase, ci_data, cti_settings):
@@ -153,7 +153,7 @@ class TestPhase(object):
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
 
         assert (
-            analysis.ci_datas_masked_full[0].mask
+            analysis.masked_ci_dataset_full[0].mask
             == np.full(shape=(3, 3), fill_value=False)
         ).all()
 
@@ -167,7 +167,7 @@ class TestPhase(object):
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
 
         assert (
-            analysis.ci_datas_masked_full[0].mask
+            analysis.masked_ci_dataset_full[0].mask
             == np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
             )
@@ -188,7 +188,7 @@ class TestPhase(object):
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
 
         assert (
-            analysis.ci_datas_masked_full[0].mask
+            analysis.masked_ci_dataset_full[0].mask
             == np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
             )
@@ -205,7 +205,7 @@ class TestPhase(object):
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
 
         assert (
-            analysis.ci_datas_masked_full[0].mask
+            analysis.masked_ci_dataset_full[0].mask
             == np.array(
                 [[False, False, False], [False, True, True], [False, True, True]]
             )
@@ -222,7 +222,7 @@ class TestPhase(object):
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
 
         assert (
-            analysis.ci_datas_masked_full[0].mask
+            analysis.masked_ci_dataset_full[0].mask
             == np.array(
                 [[True, True, False], [True, True, False], [True, False, False]]
             )
@@ -240,7 +240,7 @@ class TestPhase(object):
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
 
         assert (
-            analysis.ci_datas_masked_full[0].mask
+            analysis.masked_ci_dataset_full[0].mask
             == np.array(
                 [[True, False, False], [False, False, False], [False, False, False]]
             )
@@ -254,7 +254,7 @@ class TestPhase(object):
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
 
         assert (
-            analysis.ci_datas_masked_full[0].mask
+            analysis.masked_ci_dataset_full[0].mask
             == np.array(
                 [[False, False, False], [True, False, False], [True, False, False]]
             )
@@ -268,7 +268,7 @@ class TestPhase(object):
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
 
         assert (
-            analysis.ci_datas_masked_full[0].mask
+            analysis.masked_ci_dataset_full[0].mask
             == np.array(
                 [[True, False, False], [False, False, False], [False, False, False]]
             )
@@ -282,7 +282,7 @@ class TestPhase(object):
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
 
         assert (
-            analysis.ci_datas_masked_full[0].mask
+            analysis.masked_ci_dataset_full[0].mask
             == np.array(
                 [[False, True, True], [False, False, False], [False, False, False]]
             )
@@ -296,7 +296,7 @@ class TestPhase(object):
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
 
         assert (
-            analysis.ci_datas_masked_full[0].mask
+            analysis.masked_ci_dataset_full[0].mask
             == np.array(
                 [[True, True, True], [False, False, False], [True, False, False]]
             )
@@ -615,11 +615,11 @@ class TestPhase(object):
     def test__customize_constant(self, results, ci_data, cti_settings):
         class MyPhaseCI(ac.PhaseCI):
             def customize_priors(self, previous_results):
-                self.parallel_traps = previous_results.last.constant.parallel_traps
+                self.parallel_traps = previous_results.last.instance.parallel_traps
 
         parallel = ac.Trap()
 
-        setattr(results.constant, "parallel_traps", [parallel])
+        setattr(results.instance, "parallel_traps", [parallel])
 
         results_collection = af.ResultsCollection()
         results_collection.add("first_phase", results)
@@ -641,7 +641,7 @@ class TestPhase(object):
             non_linear_class=NLO,
         )
 
-        ci_datas_masked = phase.ci_datas_masked_extracted_from_ci_data(
+        ci_datas_masked = phase.masked_ci_dataset_extracted_from_ci_data(
             ci_data, ac.Mask.unmasked(shape_2d=ci_data.image.shape_2d)
         )
 
@@ -658,7 +658,7 @@ class TestPhase(object):
             non_linear_class=NLO,
         )
 
-        ci_datas_masked = phase.ci_datas_masked_extracted_from_ci_data(
+        ci_datas_masked = phase.masked_ci_dataset_extracted_from_ci_data(
             ci_data, ac.Mask.unmasked(shape_2d=ci_data.image.shape_2d)
         )
 
@@ -674,7 +674,7 @@ class TestPhase(object):
             non_linear_class=NLO,
         )
 
-        ci_datas_masked = phase.ci_datas_masked_extracted_from_ci_data(
+        ci_datas_masked = phase.masked_ci_dataset_extracted_from_ci_data(
             ci_data, ac.Mask.unmasked(shape_2d=ci_data.image.shape_2d)
         )
 
@@ -691,7 +691,7 @@ class TestPhase(object):
             non_linear_class=NLO,
         )
 
-        ci_datas_masked = phase.ci_datas_masked_extracted_from_ci_data(
+        ci_datas_masked = phase.masked_ci_dataset_extracted_from_ci_data(
             ci_data, ac.Mask.unmasked(shape_2d=ci_data.image.shape_2d)
         )
 
@@ -711,7 +711,7 @@ class TestPhase(object):
             non_linear_class=NLO,
         )
 
-        ci_datas_masked = phase.ci_datas_masked_extracted_from_ci_data(
+        ci_datas_masked = phase.masked_ci_dataset_extracted_from_ci_data(
             ci_data, ac.Mask.unmasked(shape_2d=ci_data.image.shape_2d)
         )
 
@@ -806,9 +806,9 @@ class TestPhase(object):
             hyper_noise_scalar_of_parallel_trails=ac.CIHyperNoiseScalar,
         )
         assert len(phase.hyper_noise_scalars) == 2
-        assert len(phase.variable.priors) == 2
+        assert len(phase.model.priors) == 2
 
-        instance = phase.variable.instance_from_unit_vector([0.5, 0.5])
+        instance = phase.model.instance_from_unit_vector([0.5, 0.5])
 
         assert instance.hyper_noise_scalar_of_ci_regions == 5.0
         assert instance.hyper_noise_scalar_of_parallel_trails == 5.0
@@ -856,36 +856,36 @@ class TestPhase(object):
         )
 
         assert (
-            analysis.ci_datas_masked_full[0].noise_scaling_maps[0]
+            analysis.masked_ci_dataset_full[0].noise_scaling_maps[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[1].noise_scaling_maps[0]
+            analysis.masked_ci_dataset_full[1].noise_scaling_maps[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[2].noise_scaling_maps[0]
+            analysis.masked_ci_dataset_full[2].noise_scaling_maps[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[3].noise_scaling_maps[0]
+            analysis.masked_ci_dataset_full[3].noise_scaling_maps[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[0].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.masked_ci_dataset_full[0].noise_scaling_maps[1] == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[1].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.masked_ci_dataset_full[1].noise_scaling_maps[1] == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[2].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.masked_ci_dataset_full[2].noise_scaling_maps[1] == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[3].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.masked_ci_dataset_full[3].noise_scaling_maps[1] == np.zeros((3, 3))
         ).all()
 
     def test__make_analysis__ci_region_and_serial_trail_scalars___noise_scaling_maps_list_are_setup_correctly(
@@ -934,36 +934,36 @@ class TestPhase(object):
         )
 
         assert (
-            analysis.ci_datas_masked_full[0].noise_scaling_maps[0]
+            analysis.masked_ci_dataset_full[0].noise_scaling_maps[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[1].noise_scaling_maps[0]
+            analysis.masked_ci_dataset_full[1].noise_scaling_maps[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[2].noise_scaling_maps[0]
+            analysis.masked_ci_dataset_full[2].noise_scaling_maps[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[3].noise_scaling_maps[0]
+            analysis.masked_ci_dataset_full[3].noise_scaling_maps[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[0].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.masked_ci_dataset_full[0].noise_scaling_maps[1] == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[1].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.masked_ci_dataset_full[1].noise_scaling_maps[1] == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[2].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.masked_ci_dataset_full[2].noise_scaling_maps[1] == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[3].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.masked_ci_dataset_full[3].noise_scaling_maps[1] == np.zeros((3, 3))
         ).all()
 
     def test__make_analysis__all_4_scalars__noise_scaling_maps_list_are_setup_correctly(
@@ -1021,62 +1021,62 @@ class TestPhase(object):
         )
 
         assert (
-            analysis.ci_datas_masked_full[0].noise_scaling_maps[0]
+            analysis.masked_ci_dataset_full[0].noise_scaling_maps[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[1].noise_scaling_maps[0]
+            analysis.masked_ci_dataset_full[1].noise_scaling_maps[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[2].noise_scaling_maps[0]
+            analysis.masked_ci_dataset_full[2].noise_scaling_maps[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[3].noise_scaling_maps[0]
+            analysis.masked_ci_dataset_full[3].noise_scaling_maps[0]
             == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[0].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.masked_ci_dataset_full[0].noise_scaling_maps[1] == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[1].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.masked_ci_dataset_full[1].noise_scaling_maps[1] == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[2].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.masked_ci_dataset_full[2].noise_scaling_maps[1] == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[3].noise_scaling_maps[1] == np.zeros((3, 3))
-        ).all()
-
-        assert (
-            analysis.ci_datas_masked_full[0].noise_scaling_maps[2] == np.zeros((3, 3))
-        ).all()
-        assert (
-            analysis.ci_datas_masked_full[1].noise_scaling_maps[2] == np.zeros((3, 3))
-        ).all()
-        assert (
-            analysis.ci_datas_masked_full[2].noise_scaling_maps[2] == np.zeros((3, 3))
-        ).all()
-        assert (
-            analysis.ci_datas_masked_full[3].noise_scaling_maps[2] == np.zeros((3, 3))
+            analysis.masked_ci_dataset_full[3].noise_scaling_maps[1] == np.zeros((3, 3))
         ).all()
 
         assert (
-            analysis.ci_datas_masked_full[0].noise_scaling_maps[3] == np.zeros((3, 3))
+            analysis.masked_ci_dataset_full[0].noise_scaling_maps[2] == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[1].noise_scaling_maps[3] == np.zeros((3, 3))
+            analysis.masked_ci_dataset_full[1].noise_scaling_maps[2] == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[2].noise_scaling_maps[3] == np.zeros((3, 3))
+            analysis.masked_ci_dataset_full[2].noise_scaling_maps[2] == np.zeros((3, 3))
         ).all()
         assert (
-            analysis.ci_datas_masked_full[3].noise_scaling_maps[3] == np.zeros((3, 3))
+            analysis.masked_ci_dataset_full[3].noise_scaling_maps[2] == np.zeros((3, 3))
+        ).all()
+
+        assert (
+            analysis.masked_ci_dataset_full[0].noise_scaling_maps[3] == np.zeros((3, 3))
+        ).all()
+        assert (
+            analysis.masked_ci_dataset_full[1].noise_scaling_maps[3] == np.zeros((3, 3))
+        ).all()
+        assert (
+            analysis.masked_ci_dataset_full[2].noise_scaling_maps[3] == np.zeros((3, 3))
+        ).all()
+        assert (
+            analysis.masked_ci_dataset_full[3].noise_scaling_maps[3] == np.zeros((3, 3))
         ).all()
 
     def test__extended_with_hyper_noise_phase(self, phase):
@@ -1111,7 +1111,7 @@ class TestResult(object):
     #                              phase_name='test_phase')
     #
     #     analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
-    #     instance = phase.variable.instance_from_unit_vector([])
+    #     instance = phase.model.instance_from_unit_vector([])
     #
     #     fits = analysis.fits_of_ci_data_extracted_for_instance(instance=instance)
     #     assert fits[0].ci_pre_cti.shape == (3, 1)
@@ -1139,13 +1139,13 @@ class TestResult(object):
         )
 
         analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
-        instance = phase.variable.instance_from_unit_vector([])
+        instance = phase.model.instance_from_unit_vector([])
         cti_params = ac.cti_params_for_instance(instance=instance)
         fit_figure_of_merit = analysis.fit(instance=instance)
 
         mask = phase.mask_function(shape=ci_data.image.shape)
         ci_datas_masked = [
-            phase.ci_datas_masked_extracted_from_ci_data(ci_data=d, mask=mask)
+            phase.masked_ci_dataset_extracted_from_ci_data(ci_data=d, mask=mask)
             for d, mask in zip([ci_data], [mask])
         ]
         fit = ac.CIFitImaging(

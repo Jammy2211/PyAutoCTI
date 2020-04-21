@@ -7,7 +7,7 @@ def subplot_ci_imaging(ci_imaging, include=None, sub_plotter=None):
     """Plot the imaging data_type as a sub-plotters of all its quantites (e.g. the dataset, noise_map, PSF, Signal-to_noise map, \
      etc).
 
-    Set *autolens.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
+    Set *autocti.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
@@ -61,7 +61,7 @@ def individual(
     """Plot each attribute of the imaging data_type as individual figures one by one (e.g. the dataset, noise_map, PSF, \
      Signal-to_noise map, etc).
 
-    Set *autolens.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
+    Set *autocti.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
@@ -97,7 +97,7 @@ def individual(
 def image(ci_imaging, include=None, plotter=None):
     """Plot the observed data_type of the imaging data_type.
 
-    Set *autolens.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
+    Set *autocti.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
@@ -124,7 +124,7 @@ def image(ci_imaging, include=None, plotter=None):
 def noise_map(ci_imaging, include=None, plotter=None):
     """Plot the noise_map of the imaging data_type.
 
-    Set *autolens.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
+    Set *autocti.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
@@ -147,7 +147,7 @@ def noise_map(ci_imaging, include=None, plotter=None):
 def signal_to_noise_map(ci_imaging, include=None, plotter=None):
     """Plot the signal-to-noise_map of the imaging data_type.
 
-    Set *autolens.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
+    Set *autocti.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
@@ -213,7 +213,7 @@ def subplot_ci_lines(ci_imaging, line_region, include=None, sub_plotter=None):
     """Plot the ci simulator as a sub-plotters of all its quantites (e.g. the dataset, noise_map, PSF, Signal-to_noise map, \
      etc).
 
-    Set *autolens.simulator.arrays.plotters.plotters* for a description of all innput parameters not described below.
+    Set *autocti.simulator.arrays.plotters.plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------
@@ -287,7 +287,7 @@ def individual_ci_lines(
     """Plot each attribute of the ci simulator as individual figures one by one (e.g. the dataset, noise_map, PSF, \
      Signal-to_noise map, etc).
 
-    Set *autolens.simulator.arrays.plotters.plotters* for a description of all innput parameters not described below.
+    Set *autocti.simulator.arrays.plotters.plotters* for a description of all innput parameters not described below.
 
     Parameters
     -----------

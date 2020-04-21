@@ -12,7 +12,7 @@ class HyperNoisePhase(HyperPhase):
         super().__init__(phase=phase, hyper_name="hyper_noise")
 
     class Analysis(af.Analysis):
-        def __init__(self, ci_datas_masked_full, model_images):
+        def __init__(self, masked_ci_dataset_full, model_images):
             """
             An analysis to fit the noise for a single galaxy image.
             Parameters
@@ -25,7 +25,7 @@ class HyperNoisePhase(HyperPhase):
                 The contribution of one galaxy to the model image
             """
 
-            self.ci_datas_masked_full = ci_datas_masked_full
+            self.masked_ci_dataset_full = masked_ci_dataset_full
             self.model_images = model_images
 
             # self.plot_hyper_noise_subplot = af.conf.instance.visualize.get(
@@ -59,7 +59,7 @@ class HyperNoisePhase(HyperPhase):
                         model_image=model_image,
                         hyper_noise_scalars=hyper_noise_scalars,
                     ),
-                    self.ci_datas_masked_full,
+                    self.masked_ci_dataset_full,
                     self.model_images,
                 )
             )
@@ -123,7 +123,7 @@ class HyperNoisePhase(HyperPhase):
             total_images=len(ci_datas), results=results
         )
 
-        ci_datas_masked_full = list(
+        masked_ci_dataset_full = list(
             map(
                 lambda data, mask, maps: ci_imaging.MaskedCIImaging(
                     image=data.image,
@@ -148,15 +148,15 @@ class HyperNoisePhase(HyperPhase):
         )
 
         hyper_result = copy.deepcopy(results.last)
-        hyper_result.variable = hyper_result.variable.copy_with_fixed_priors(
-            hyper_result.constant
+        hyper_result.model = hyper_result.model.copy_with_fixed_priors(
+            hyper_result.instance
         )
 
         hyper_result.analysis.uses_hyper_images = True
         hyper_result.analysis.model_images = model_images
 
-        phase.optimizer.variable.parallel_traps = []
-        phase.optimizer.variable.parallel_ccd_volume = []
+        phase.optimizer.model.parallel_traps = []
+        phase.optimizer.model.parallel_ccd_volume = []
         phase.optimizer.phase_tag = ""
 
         phase.optimizer.const_efficiency_mode = af.conf.instance.non_linear.get(
@@ -173,15 +173,15 @@ class HyperNoisePhase(HyperPhase):
         )
 
         analysis = self.Analysis(
-            ci_datas_masked_full=ci_datas_masked_full, model_images=model_images
+            masked_ci_dataset_full=masked_ci_dataset_full, model_images=model_images
         )
 
         result = phase.optimizer.fit(analysis)
 
         def transfer_field(name):
-            if hasattr(result.constant, name):
-                setattr(hyper_result.constant, name, getattr(result.constant, name))
-                setattr(hyper_result.variable, name, getattr(result.variable, name))
+            if hasattr(result.instance, name):
+                setattr(hyper_result.instance, name, getattr(result.instance, name))
+                setattr(hyper_result.model, name, getattr(result.model, name))
 
         transfer_field(name="hyper_noise_scalar_of_ci_regions")
         transfer_field(name="hyper_noise_scalar_of_parallel_trails")

@@ -3,7 +3,7 @@ import autocti as ac
 
 from test import simulate_util
 
-from autolens_workspace_jam.scripts.cosmic_rays import cosmics
+from autocti_workspace_jam.scripts.cosmic_rays import cosmics
 
 import logging
 
@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 
 import os
 
-workspace_path = "{}/../../autolens_workspace/".format(
+workspace_path = "{}/../../autocti_workspace/".format(
     os.path.dirname(os.path.realpath(__file__))
 )
 

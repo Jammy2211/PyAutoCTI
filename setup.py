@@ -59,9 +59,9 @@ setup(
         exclude=[
             "docs",
             "tests*",
-            "autolens_workspace",
-            "autolens_workspace/*",
-            "autolens_workspace_jam",
+            "autocti_workspace",
+            "autocti_workspace/*",
+            "autocti_workspace_jam",
             "worspace_jam/*",
         ]
     ),

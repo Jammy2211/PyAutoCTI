@@ -289,7 +289,7 @@ class TestMaskedCIImaging:
         assert (masked_ci_imaging.cosmic_ray_map == masked_image).all()
 
     def test__for_parallel_masked_ci_imaging(
-        self, ci_imaging_7x7, mask_7x7, noise_scaling_maps_7x7
+        self, ci_imaging_7x7, mask_7x7, ci_noise_scaling_maps_7x7
     ):
 
         mask = struct.Mask.unmasked(shape_2d=ci_imaging_7x7.shape_2d)
@@ -299,7 +299,7 @@ class TestMaskedCIImaging:
             ci_imaging=ci_imaging_7x7,
             mask=mask,
             columns=(1, 3),
-            noise_scaling_maps=noise_scaling_maps_7x7,
+            noise_scaling_maps=ci_noise_scaling_maps_7x7,
         )
 
         mask = np.full(fill_value=False, shape=(7, 2))
@@ -338,7 +338,7 @@ class TestMaskedCIImaging:
         )
 
     def test__for_serial_masked_ci_imaging(
-        self, ci_imaging_7x7, mask_7x7, noise_scaling_maps_7x7
+        self, ci_imaging_7x7, mask_7x7, ci_noise_scaling_maps_7x7
     ):
 
         mask = struct.Mask.unmasked(shape_2d=ci_imaging_7x7.shape_2d)
@@ -348,7 +348,7 @@ class TestMaskedCIImaging:
             ci_imaging=ci_imaging_7x7,
             mask=mask,
             rows=(0, 1),
-            noise_scaling_maps=noise_scaling_maps_7x7,
+            noise_scaling_maps=ci_noise_scaling_maps_7x7,
         )
 
         mask = np.full(fill_value=False, shape=(1, 7))
