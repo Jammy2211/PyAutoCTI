@@ -1,11 +1,10 @@
 import copy
 
 import autofit as af
-from autocti.pipeline.phase import phase_ci as ph
 
 
 class HyperPhase(object):
-    def __init__(self, phase: ph.PhaseCI, hyper_name: str):
+    def __init__(self, phase, hyper_name: str):
         """
         Abstract HyperPhase. Wraps a phase, performing that phase before performing the action
         specified by the run_hyper.
@@ -34,7 +33,7 @@ class HyperPhase(object):
         """
         raise NotImplementedError()
 
-    def make_hyper_phase(self) -> ph.PhaseCI:
+    def make_hyper_phase(self):
         """
         Returns
         -------

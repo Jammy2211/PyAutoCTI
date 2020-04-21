@@ -28,7 +28,7 @@ def subplot_ci_fit(fit, include=None, sub_plotter=None):
     cmap
     aspect
     figsize
-    fit : autolens.lens.fitting.Fitter
+    fit : autocti.lens.fitting.Fitter
         Class containing fit between the model datas_ and observed lens datas_ (including residual_map, chi_squared_map etc.)
     output_path : str
         The path where the datas_ is output if the output_type is a file format (e.g. png, fits)

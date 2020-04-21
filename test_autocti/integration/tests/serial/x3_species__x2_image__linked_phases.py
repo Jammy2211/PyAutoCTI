@@ -43,7 +43,7 @@ def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
     class PhaseCI(ac.PhaseCI):
         def customize_priors(self, results):
 
-            previous_total_density = results[-1].constant.serial_traps[0].trap_density
+            previous_total_density = results[-1].instance.serial_traps[0].trap_density
 
             self.serial_traps[0].trap_density = af.UniformPrior(
                 lower_limit=0.0, upper_limit=previous_total_density
@@ -73,7 +73,7 @@ def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
             af.PriorModel(ac.Trap),
             af.PriorModel(ac.Trap),
         ],
-        serial_ccd_volume=phase1.result.variable.serial_ccd_volume,
+        serial_ccd_volume=phase1.result.model.serial_ccd_volume,
     )
 
     phase2.optimizer.n_live_points = 60
@@ -85,10 +85,10 @@ def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
     phase3 = ac.PhaseCI(
         phase_name="phase_3",
         phase_folders=phase_folders,
-        serial_traps=phase1.result.variable.serial_traps,
-        serial_ccd_volume=phase1.result.variable.serial_ccd_volume,
-        hyper_noise_scalar_of_ci_regions=phase1.result.hyper_combined.constant.hyper_noise_scalar_of_ci_regions,
-        hyper_noise_scalar_of_serial_trails=phase1.result.hyper_combined.constant.hyper_noise_scalar_of_serial_trails,
+        serial_traps=phase1.result.model.serial_traps,
+        serial_ccd_volume=phase1.result.model.serial_ccd_volume,
+        hyper_noise_scalar_of_ci_regions=phase1.result.hyper_combined.instance.hyper_noise_scalar_of_ci_regions,
+        hyper_noise_scalar_of_serial_trails=phase1.result.hyper_combined.instance.hyper_noise_scalar_of_serial_trails,
         non_linear_class=non_linear_class,
         columns=None,
     )

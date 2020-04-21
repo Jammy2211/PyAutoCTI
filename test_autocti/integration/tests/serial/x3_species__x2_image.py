@@ -49,10 +49,10 @@ def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
     phase2 = ac.PhaseCI(
         phase_name="phase_2",
         phase_folders=phase_folders,
-        serial_traps=phase1.result.variable.serial_traps,
-        serial_ccd_volume=phase1.result.variable.serial_ccd_volume,
-        hyper_noise_scalar_of_ci_regions=phase1.result.hyper_combined.constant.hyper_noise_scalar_of_ci_regions,
-        hyper_noise_scalar_of_serial_trails=phase1.result.hyper_combined.constant.hyper_noise_scalar_of_serial_trails,
+        serial_traps=phase1.result.model.serial_traps,
+        serial_ccd_volume=phase1.result.model.serial_ccd_volume,
+        hyper_noise_scalar_of_ci_regions=phase1.result.hyper_combined.instance.hyper_noise_scalar_of_ci_regions,
+        hyper_noise_scalar_of_serial_trails=phase1.result.hyper_combined.instance.hyper_noise_scalar_of_serial_trails,
         non_linear_class=non_linear_class,
         columns=None,
     )

@@ -55,14 +55,14 @@ def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
     class HyperModelFixedPhaseCI(ac.PhaseCI):
         def customize_priors(self, results):
 
-            self.parallel_traps = results.from_phase("phase_1").constant.parallel_traps
+            self.parallel_traps = results.from_phase("phase_1").instance.parallel_traps
             self.parallel_ccd_volume = results.from_phase(
                 "phase_1"
-            ).constant.parallel_ccd_volume
-            self.serial_traps = results.from_phase("phase_1").constant.serial_traps
+            ).instance.parallel_ccd_volume
+            self.serial_traps = results.from_phase("phase_1").instance.serial_traps
             self.serial_ccd_volume = results.from_phase(
                 "phase_1"
-            ).constant.serial_ccd_volume
+            ).instance.serial_ccd_volume
 
     phase2 = HyperModelFixedPhaseCI(
         phase_name="phase_2",
@@ -83,27 +83,27 @@ def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
 
             self.hyper_noise_scalar_of_ci_regions = results.from_phase(
                 "phase_2"
-            ).constant.hyper_noise_scalar_of_ci_regions
+            ).instance.hyper_noise_scalar_of_ci_regions
 
             self.hyper_noise_scalar_of_parallel_trails = results.from_phase(
                 "phase_2"
-            ).constant.hyper_noise_scalar_of_parallel_trails
+            ).instance.hyper_noise_scalar_of_parallel_trails
 
             self.hyper_noise_scalar_of_serial_trails = results.from_phase(
                 "phase_2"
-            ).constant.hyper_noise_scalar_of_serial_trails
+            ).instance.hyper_noise_scalar_of_serial_trails
 
             self.hyper_noise_scalar_of_serial_overscan_no_trails = results.from_phase(
                 "phase_2"
-            ).constant.hyper_noise_scalar_of_serial_overscan_no_trails
+            ).instance.hyper_noise_scalar_of_serial_overscan_no_trails
 
     phase3 = FixedPhaseCI(
         phase_name="phase_3",
         phase_folders=phase_folders,
-        parallel_traps=phase1.result.variable.parallel_traps,
-        parallel_ccd_volume=phase1.result.variable.parallel_ccd_volume,
-        serial_traps=phase1.result.variable.serial_traps,
-        serial_ccd_volume=phase1.result.variable.serial_ccd_volume,
+        parallel_traps=phase1.result.model.parallel_traps,
+        parallel_ccd_volume=phase1.result.model.parallel_ccd_volume,
+        serial_traps=phase1.result.model.serial_traps,
+        serial_ccd_volume=phase1.result.model.serial_ccd_volume,
         hyper_noise_scalar_of_ci_regions=ac.CIHyperNoiseScalar,
         hyper_noise_scalar_of_parallel_trails=ac.CIHyperNoiseScalar,
         hyper_noise_scalar_of_serial_trails=ac.CIHyperNoiseScalar,

@@ -43,7 +43,7 @@ def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
     class PhaseCI(ac.PhaseCI):
         def customize_priors(self, results):
 
-            previous_total_density = results[-1].constant.parallel_traps[0].trap_density
+            previous_total_density = results[-1].instance.parallel_traps[0].trap_density
 
             self.parallel_traps[0].trap_density = af.UniformPrior(
                 lower_limit=0.0, upper_limit=previous_total_density
@@ -73,7 +73,7 @@ def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
             af.PriorModel(ac.Trap),
             af.PriorModel(ac.Trap),
         ],
-        parallel_ccd_volume=phase1.result.variable.parallel_ccd_volume,
+        parallel_ccd_volume=phase1.result.model.parallel_ccd_volume,
     )
 
     phase2.optimizer.n_live_points = 60
@@ -85,10 +85,10 @@ def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
     phase3 = ac.PhaseCI(
         phase_name="phase_3",
         phase_folders=phase_folders,
-        parallel_traps=phase1.result.variable.parallel_traps,
-        parallel_ccd_volume=phase1.result.variable.parallel_ccd_volume,
-        hyper_noise_scalar_of_ci_regions=phase1.result.hyper_combined.constant.hyper_noise_scalar_of_ci_regions,
-        hyper_noise_scalar_of_parallel_trails=phase1.result.hyper_combined.constant.hyper_noise_scalar_of_parallel_trails,
+        parallel_traps=phase1.result.model.parallel_traps,
+        parallel_ccd_volume=phase1.result.model.parallel_ccd_volume,
+        hyper_noise_scalar_of_ci_regions=phase1.result.hyper_combined.instance.hyper_noise_scalar_of_ci_regions,
+        hyper_noise_scalar_of_parallel_trails=phase1.result.hyper_combined.instance.hyper_noise_scalar_of_parallel_trails,
         non_linear_class=non_linear_class,
         columns=None,
     )

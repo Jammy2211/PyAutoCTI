@@ -39,7 +39,7 @@ def make_result(masked_imaging_7x7, instance):
     return phase_imaging.PhaseImaging.Result(
         constant=instance,
         figure_of_merit=1.0,
-        previous_variable=af.ModelMapper(),
+        previous_model=af.ModelMapper(),
         gaussian_tuples=None,
         analysis=phase_imaging.PhaseImaging.Analysis(
             masked_imaging=masked_imaging_7x7,
@@ -60,7 +60,7 @@ class MockResult(object):
     def __init__(self, most_likely_fit=None):
         self.most_likely_fit = most_likely_fit
         self.analysis = MockAnalysis()
-        self.variable = af.ModelMapper()
+        self.model = af.ModelMapper()
         self.cti_settings = None
 
 
@@ -135,21 +135,19 @@ class TestHyperAPI(object):
         result = MockResult()
         hyper_noise_result = MockResult()
 
-        hyper_noise_result.variable = af.ModelMapper()
+        hyper_noise_result.model = af.ModelMapper()
 
-        hyper_noise_result.variable.hyper_noise_scalar_of_ci_regions = (
+        hyper_noise_result.model.hyper_noise_scalar_of_ci_regions = (
             ci_hyper.CIHyperNoiseScalar
         )
 
         result.hyper_noise = hyper_noise_result
 
-        variable = hyper_combined.combine_variables(result)
+        model = hyper_combined.combine_variables(result)
 
-        assert isinstance(variable.hyper_noise_scalar_of_ci_regions, af.PriorModel)
+        assert isinstance(model.hyper_noise_scalar_of_ci_regions, af.PriorModel)
 
-        assert (
-            variable.hyper_noise_scalar_of_ci_regions.cls == ci_hyper.CIHyperNoiseScalar
-        )
+        assert model.hyper_noise_scalar_of_ci_regions.cls == ci_hyper.CIHyperNoiseScalar
 
     def test_instantiation(self, hyper_combined):
         assert len(hyper_combined.hyper_phases) == 1

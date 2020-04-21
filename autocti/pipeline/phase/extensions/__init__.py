@@ -1,11 +1,10 @@
 import autofit as af
-from autocti.pipeline.phase import phase_ci as ph
 from .hyper_noise_phase import HyperNoisePhase
 from .hyper_phase import HyperPhase
 
 
 class CombinedHyperPhase(HyperPhase):
-    def __init__(self, phase: ph.PhaseCI, hyper_phase_classes: (type,) = tuple()):
+    def __init__(self, phase, hyper_phase_classes: (type,) = tuple()):
         """
         A hyper_combined hyper_galaxy phase that can run zero or more other hyper_galaxy phases after the initial phase is
         run.
@@ -39,7 +38,7 @@ class CombinedHyperPhase(HyperPhase):
         Run the regular phase followed by the hyper_galaxy phases. Each result of a hyper_galaxy phase is attached to the
         overall result object by the hyper_name of that phase.
 
-        Finally, a phase in run with all of the variable results from all the individual hyper_galaxy phases.
+        Finally, a phase in run with all of the model results from all the individual hyper_galaxy phases.
 
         Parameters
         ----------
@@ -77,10 +76,10 @@ class CombinedHyperPhase(HyperPhase):
 
     def combine_variables(self, result) -> af.ModelMapper:
         """
-        Combine the variable objects from all previous results in this hyper_combined hyper_galaxy phase.
+        Combine the model objects from all previous results in this hyper_combined hyper_galaxy phase.
 
         Iterates through the hyper_galaxy names of the included hyper_galaxy phases, extracting a result
-        for each name and adding the variable of that result to a new variable.
+        for each name and adding the model of that result to a new model.
 
         Parameters
         ----------
@@ -90,19 +89,19 @@ class CombinedHyperPhase(HyperPhase):
         Returns
         -------
         combined_variable
-            A variable object including all variables from results in this phase.
+            A model object including all variables from results in this phase.
         """
-        variable = af.ModelMapper()
+        model = af.ModelMapper()
         for name in self.phase_names:
-            variable += getattr(result, name).variable
-        return variable
+            model += getattr(result, name).model
+        return model
 
     def run_hyper(self, ci_datas, pool, results, **kwargs) -> af.Result:
-        variable = self.combine_variables(result=results.last)
+        model = self.combine_variables(result=results.last)
 
         phase = self.make_hyper_phase()
         phase.optimizer.phase_tag = ""
-        phase.optimizer.variable = variable
+        phase.optimizer.model = model
 
         phase.phase_tag = ""
 
