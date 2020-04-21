@@ -1,4 +1,5 @@
 from autocti.dataset import imaging
+from autocti.charge_injection import ci_mask, ci_imaging
 from autocti.pipeline.phase.dataset import meta_dataset
 
 
@@ -21,18 +22,65 @@ class MetaCIImaging(meta_dataset.MetaDataset):
 
         super().__init__(
             model=model,
-            columns=columns,
-            rows=rows,
-            parallel_front_edge_mask_rows=parallel_front_edge_mask_rows,
-            parallel_trails_mask_rows=parallel_trails_mask_rows,
             parallel_total_density_range=parallel_total_density_range,
-            serial_front_edge_mask_columns=serial_front_edge_mask_columns,
-            serial_trails_mask_columns=serial_trails_mask_columns,
             serial_total_density_range=serial_total_density_range,
             cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
             cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
             cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer,
         )
+
+        if not self.is_only_parallel_fit:
+            columns = None
+
+        if not self.is_only_serial_fit:
+            rows = None
+
+        self.columns = columns
+        self.rows = rows
+        self.parallel_front_edge_mask_rows = parallel_front_edge_mask_rows
+        self.parallel_trails_mask_rows = parallel_trails_mask_rows
+        self.serial_front_edge_mask_columns = serial_front_edge_mask_columns
+        self.serial_trails_mask_columns = serial_trails_mask_columns
+
+    def mask_for_analysis_from_dataset(self, dataset, mask):
+
+        mask = self.mask_for_analysis_from_cosmic_ray_map(
+            cosmic_ray_map=dataset.cosmic_ray_map, mask=mask
+        )
+
+        if self.parallel_front_edge_mask_rows is not None:
+
+            parallel_front_edge_mask = ci_mask.CIMask.masked_parallel_front_edge_from_ci_frame(
+                ci_frame=dataset.image, rows=self.parallel_front_edge_mask_rows
+            )
+
+            mask = mask + parallel_front_edge_mask
+
+        if self.parallel_trails_mask_rows is not None:
+
+            parallel_trails_mask = ci_mask.CIMask.masked_parallel_trails_from_ci_frame(
+                ci_frame=dataset.image, rows=self.parallel_trails_mask_rows
+            )
+
+            mask = mask + parallel_trails_mask
+
+        if self.serial_front_edge_mask_columns is not None:
+
+            serial_front_edge_mask = ci_mask.CIMask.masked_serial_front_edge_from_ci_frame(
+                ci_frame=dataset.image, columns=self.serial_front_edge_mask_columns
+            )
+
+            mask = mask + serial_front_edge_mask
+
+        if self.serial_trails_mask_columns is not None:
+
+            serial_trails_mask = ci_mask.CIMask.masked_serial_trails_from_ci_frame(
+                ci_frame=dataset.image, columns=self.serial_trails_mask_columns
+            )
+
+            mask = mask + serial_trails_mask
+
+        return mask
 
     def noise_scaling_maps_list_from_total_images_and_results(
         self, total_images, results
@@ -92,29 +140,12 @@ class MetaCIImaging(meta_dataset.MetaDataset):
 
         return noise_scaling_maps_list
 
-    def masked_ci_dataset_from_dataset(
-        self, dataset, mask, noise_scaling_maps_list=None
-    ):
+    def masked_ci_dataset_from_dataset(self, dataset, mask, noise_scaling_maps=None):
 
-        if self.is_only_parallel_fit:
-            return dataset.for_parallel_from_columns(
-                columns=(
-                    0,
-                    self.columns
-                    or dataset.ci_frame.frame_geometry.parallel_overscan.total_columns,
-                ),
-                mask=mask,
-                noise_scaling_maps=noise_scaling_maps_list,
-            )
-
-        elif self.is_only_serial_fit:
-            return dataset.for_serial_from_rows(
-                rows=self.rows or (0, dataset.ci_pattern.regions[0].total_rows),
-                mask=mask,
-                noise_scaling_maps=noise_scaling_maps_list,
-            )
-
-        elif self.is_parallel_and_serial_fit:
-            return dataset.parallel_serial_ci_data_masked_from_mask(
-                mask=mask, noise_scaling_maps_list=noise_scaling_maps_list
-            )
+        return ci_imaging.MaskedCIImaging(
+            ci_imaging=dataset,
+            mask=mask,
+            noise_scaling_maps=noise_scaling_maps,
+            parallel_columns=self.columns,
+            serial_rows=self.rows,
+        )

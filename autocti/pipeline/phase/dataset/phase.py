@@ -42,18 +42,18 @@ class PhaseDataset(abstract.AbstractPhase):
         self.serial_traps = serial_traps
         self.serial_ccd_volume = serial_ccd_volume
 
-    def run(self, dataset: Dataset, mask, results=None, info=None, pool=None):
+    def run(self, datasets: Dataset, masks, results=None, info=None, pool=None):
         """
         Run this phase.
 
         Parameters
         ----------
         positions
-        mask: Mask
+        masks: Mask
             The default masks passed in by the pipeline
         results: autofit.tools.pipeline.ResultsCollection
             An object describing the results of the last phase or None if no phase has been executed
-        dataset: scaled_array.ScaledSquarePixelArray
+        datasets: scaled_array.ScaledSquarePixelArray
             An masked_imaging that has been masked
 
         Returns
@@ -61,9 +61,9 @@ class PhaseDataset(abstract.AbstractPhase):
         result: AbstractPhase.Result
             A result object comprising the best fit model and other hyper_galaxies.
         """
-        self.save_metadata(dataset=dataset)
-        self.save_dataset(dataset=dataset)
-        self.save_mask(mask)
+        #    self.save_metadata(dataset=datasets)
+        #    self.save_dataset(dataset=datasets)
+        #    self.save_mask(masks)
         self.save_meta_dataset(meta_dataset=self.meta_dataset)
         self.save_info(info=info)
 
@@ -71,10 +71,12 @@ class PhaseDataset(abstract.AbstractPhase):
 
         results = results or af.ResultsCollection()
 
-        analysis = self.make_analysis(dataset=dataset, mask=mask, results=results)
+        analysis = self.make_analysis(
+            datasets=datasets, cti_settings=None, results=results
+        )
 
-        phase_attributes = self.make_phase_attributes(analysis=analysis)
-        self.save_phase_attributes(phase_attributes=phase_attributes)
+        #    phase_attributes = self.make_phase_attributes(analysis=analysis)
+        #    self.save_phase_attributes(phase_attributes=phase_attributes)
 
         self.customize_priors(results)
         self.assert_and_save_pickle()

@@ -1,6 +1,5 @@
-from astropy import cosmology as cosmo
-
 import autofit as af
+from autocti.charge_injection import ci_mask
 from autocti.pipeline import tagging
 from autocti.pipeline.phase import dataset
 from autocti.pipeline.phase.ci_imaging.analysis import Analysis
@@ -133,7 +132,14 @@ class PhaseCIImaging(dataset.PhaseDataset):
             An analysis object that the non-linear optimizer calls to determine the fit of a set of values
         """
 
-        masks = self.meta_dataset.masks_for_analysis_from_datasets(datasets=datasets)
+        mask = ci_mask.CIMask.unmasked(
+            shape_2d=datasets[0].image.shape_2d, pixel_scales=datasets[0].image.shape_2d
+        )
+
+        masks = [
+            self.meta_dataset.mask_for_analysis_from_dataset(dataset=dataset, mask=mask)
+            for dataset in datasets
+        ]
 
         noise_scaling_maps_list = self.meta_dataset.noise_scaling_maps_list_from_total_images_and_results(
             total_images=len(datasets), results=results
@@ -141,36 +147,16 @@ class PhaseCIImaging(dataset.PhaseDataset):
 
         masked_ci_datasets = [
             self.meta_dataset.masked_ci_dataset_from_dataset(
-                dataset=dataset, mask=mask, noise_scaling_maps_list=maps
+                dataset=dataset, mask=mask, noise_scaling_maps=maps
             )
             for dataset, mask, maps in zip(datasets, masks, noise_scaling_maps_list)
         ]
 
-        masked_ci_dataset_full = list(
-            map(
-                lambda data, mask, maps: ci_imaging.MaskedCIImaging(
-                    image=data.image,
-                    noise_map=data.noise_map,
-                    ci_pre_cti=data.ci_pre_cti,
-                    mask=mask,
-                    ci_pattern=data.ci_pattern,
-                    ci_frame=data.ci_frame,
-                    noise_scaling_maps_list=maps,
-                ),
-                datasets,
-                masks,
-                noise_scaling_maps_list,
-            )
-        )
-
-        analysis = self.__class__.Analysis(
-            ci_datas_masked_extracted=masked_ci_datasets,
-            masked_ci_dataset_full=masked_ci_dataset_full,
+        return Analysis(
+            masked_ci_imagings=masked_ci_datasets,
             cti_settings=cti_settings,
-            parallel_total_density_range=self.parallel_total_density_range,
-            serial_total_density_range=self.serial_total_density_range,
-            phase_name=self.phase_name,
+            parallel_total_density_range=self.meta_dataset.parallel_total_density_range,
+            serial_total_density_range=self.meta_dataset.serial_total_density_range,
             results=results,
             pool=pool,
         )
-        return analysis

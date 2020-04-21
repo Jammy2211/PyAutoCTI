@@ -1,3 +1,5 @@
+import numpy as np
+
 from autoarray.exc import InversionException, GridException
 from autofit.exc import FitException
 from autocti.fit import fit
@@ -8,8 +10,7 @@ from autocti.pipeline.phase.dataset import analysis as analysis_dataset
 class Analysis(analysis_dataset.Analysis):
     def __init__(
         self,
-        masked_ci_imaging_extracted,
-        masked_ci_imaging_full,
+        masked_ci_imagings,
         cti_settings,
         serial_total_density_range,
         parallel_total_density_range,
@@ -19,29 +20,25 @@ class Analysis(analysis_dataset.Analysis):
     ):
 
         super().__init__(
-            masked_ci_dataset_extracted=masked_ci_imaging_extracted,
-            masked_ci_dataset_full=masked_ci_imaging_full,
+            masked_ci_datasets=masked_ci_imagings,
             cti_settings=cti_settings,
             parallel_total_density_range=parallel_total_density_range,
             serial_total_density_range=serial_total_density_range,
             results=results,
         )
 
-        self.visualizer = visualizer.PhaseCIImagingVisualizer(
-            masked_dataset=masked_ci_imaging_extracted,
-            image_path=image_path,
-            results=results,
-        )
+        self.visualizer = [
+            visualizer.PhaseCIImagingVisualizer(
+                masked_dataset=masked_ci_imaging, image_path=image_path, results=results
+            )
+            for masked_ci_imaging in masked_ci_imagings
+        ]
 
         self.pool = pool
 
     @property
-    def masked_ci_imaging_extracted(self):
-        return self.masked_ci_dataset_extracted
-
-    @property
-    def masked_ci_imaging_full(self):
-        return self.masked_ci_dataset_full
+    def masked_ci_imagings(self):
+        return self.masked_ci_datasets
 
     def fit(self, instance):
         """
@@ -69,7 +66,7 @@ class Analysis(analysis_dataset.Analysis):
             hyper_noise_scalars=hyper_noise_scalars,
         )
         log_likelihood = np.sum(
-            list(self.pool.map(pipe_cti_pass, self.masked_ci_dataset_extracted))
+            list(self.pool.map(pipe_cti_pass, self.masked_ci_datasets))
         )
         return log_likelihood
 
@@ -114,7 +111,7 @@ class Analysis(analysis_dataset.Analysis):
                     cti_settings=self.cti_settings,
                     hyper_noise_scalars=hyper_noise_scalars,
                 ),
-                self.masked_ci_dataset_extracted,
+                self.masked_ci_datasets,
             )
         )
 
