@@ -134,7 +134,7 @@ class TestPhase(object):
         ]
 
     def test__make_analysis(self, phase, ci_data, cti_settings):
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
         assert analysis.last_results is None
         assert (analysis.masked_ci_dataset_extracted[0].image == ci_data.image).all()
         assert (
@@ -143,35 +143,6 @@ class TestPhase(object):
         assert (analysis.masked_ci_dataset_full[0].image == ci_data.image).all()
         assert (analysis.masked_ci_dataset_full[0].noise_map == ci_data.noise_map).all()
         assert analysis.cti_settings == cti_settings
-
-    def test__make_analysis__uses_mask_function(self, phase, ci_data, cti_settings):
-        def mask_function(shape, ci_frame):
-            return np.full(shape=shape, fill_value=False)
-
-        phase.mask_function = mask_function
-
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
-
-        assert (
-            analysis.masked_ci_dataset_full[0].mask
-            == np.full(shape=(3, 3), fill_value=False)
-        ).all()
-
-        def mask_function(shape, ci_frame):
-            return np.array(
-                [[False, False, False], [False, True, False], [False, False, False]]
-            )
-
-        phase.mask_function = mask_function
-
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
-
-        assert (
-            analysis.masked_ci_dataset_full[0].mask
-            == np.array(
-                [[False, False, False], [False, True, False], [False, False, False]]
-            )
-        ).all()
 
     def test__make_analysis__default_mask_all_empty__cosmic_ray_map_masks_mask(
         self, phase, ci_data, cti_settings
@@ -185,7 +156,7 @@ class TestPhase(object):
             [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 0.0]]
         )
 
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
 
         assert (
             analysis.masked_ci_dataset_full[0].mask
@@ -202,7 +173,7 @@ class TestPhase(object):
             [[0.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 0.0]]
         )
 
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
 
         assert (
             analysis.masked_ci_dataset_full[0].mask
@@ -219,7 +190,7 @@ class TestPhase(object):
             [[1.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
         )
 
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
 
         assert (
             analysis.masked_ci_dataset_full[0].mask
@@ -237,7 +208,7 @@ class TestPhase(object):
         phase.serial_front_edge_mask_columns = None
         phase.serial_trails_mask_columns = None
 
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
 
         assert (
             analysis.masked_ci_dataset_full[0].mask
@@ -251,7 +222,7 @@ class TestPhase(object):
         phase.serial_front_edge_mask_columns = None
         phase.serial_trails_mask_columns = None
 
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
 
         assert (
             analysis.masked_ci_dataset_full[0].mask
@@ -265,7 +236,7 @@ class TestPhase(object):
         phase.serial_front_edge_mask_columns = (0, 1)
         phase.serial_trails_mask_columns = None
 
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
 
         assert (
             analysis.masked_ci_dataset_full[0].mask
@@ -279,7 +250,7 @@ class TestPhase(object):
         phase.serial_front_edge_mask_columns = None
         phase.serial_trails_mask_columns = (0, 2)
 
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
 
         assert (
             analysis.masked_ci_dataset_full[0].mask
@@ -293,7 +264,7 @@ class TestPhase(object):
         phase.serial_front_edge_mask_columns = (0, 1)
         phase.serial_trails_mask_columns = (0, 2)
 
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
 
         assert (
             analysis.masked_ci_dataset_full[0].mask
@@ -302,165 +273,13 @@ class TestPhase(object):
             )
         ).all()
 
-    def test__phase_parallel_only_fit__if_trap_lifetime_not_ascending__raises_exception(
-        self, phase, ci_data, cti_settings
-    ):
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
-
-        species_0 = ac.Trap(trap_density=0.0, trap_lifetime=1.0)
-        species_1 = ac.Trap(trap_density=0.0, trap_lifetime=2.0)
-        cti_params = ac.ArcticParams(parallel_traps=[species_0, species_1])
-
-        analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
-
-        species_0 = ac.Trap(trap_density=0.0, trap_lifetime=1.0)
-        species_1 = ac.Trap(trap_density=0.0, trap_lifetime=2.0)
-        species_2 = ac.Trap(trap_density=0.0, trap_lifetime=3.0)
-        cti_params = ac.ArcticParams(parallel_traps=[species_0, species_1, species_2])
-
-        analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
-
-        species_0 = ac.Trap(trap_density=0.0, trap_lifetime=2.0)
-        species_1 = ac.Trap(trap_density=0.0, trap_lifetime=1.0)
-        cti_params = ac.ArcticParams(parallel_traps=[species_0, species_1])
-
-        with pytest.raises(exc.PriorException):
-            analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
-
-        species_0 = ac.Trap(trap_density=0.0, trap_lifetime=1.0)
-        species_1 = ac.Trap(trap_density=0.0, trap_lifetime=2.0)
-        species_2 = ac.Trap(trap_density=0.0, trap_lifetime=1.0)
-        cti_params = ac.ArcticParams(parallel_traps=[species_0, species_1, species_2])
-
-        with pytest.raises(exc.PriorException):
-            analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
-
-        species_0 = ac.Trap(trap_density=0.0, trap_lifetime=4.0)
-        species_1 = ac.Trap(trap_density=0.0, trap_lifetime=2.0)
-        species_2 = ac.Trap(trap_density=0.0, trap_lifetime=3.0)
-        cti_params = ac.ArcticParams(parallel_traps=[species_0, species_1, species_2])
-
-        with pytest.raises(exc.PriorException):
-            analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
-
-        species_0 = ac.Trap(trap_density=0.0, trap_lifetime=5.0)
-        species_1 = ac.Trap(trap_density=0.0, trap_lifetime=4.0)
-        species_2 = ac.Trap(trap_density=0.0, trap_lifetime=3.0)
-        cti_params = ac.ArcticParams(parallel_traps=[species_0, species_1, species_2])
-
-        with pytest.raises(exc.PriorException):
-            analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
-
-    def test__phase_serial_only_fit__if_trap_lifetime_not_ascending__raises_exception(
-        self, phase, ci_data, cti_settings
-    ):
-
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
-
-        species_0 = ac.Trap(trap_density=0.0, trap_lifetime=1.0)
-        species_1 = ac.Trap(trap_density=0.0, trap_lifetime=2.0)
-        cti_params = ac.ArcticParams(serial_traps=[species_0, species_1])
-
-        analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
-
-        species_0 = ac.Trap(trap_density=0.0, trap_lifetime=1.0)
-        species_1 = ac.Trap(trap_density=0.0, trap_lifetime=2.0)
-        species_2 = ac.Trap(trap_density=0.0, trap_lifetime=3.0)
-        cti_params = ac.ArcticParams(serial_traps=[species_0, species_1, species_2])
-
-        analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
-
-        species_0 = ac.Trap(trap_density=0.0, trap_lifetime=2.0)
-        species_1 = ac.Trap(trap_density=0.0, trap_lifetime=1.0)
-        cti_params = ac.ArcticParams(serial_traps=[species_0, species_1])
-
-        with pytest.raises(exc.PriorException):
-            analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
-
-        species_0 = ac.Trap(trap_density=0.0, trap_lifetime=1.0)
-        species_1 = ac.Trap(trap_density=0.0, trap_lifetime=2.0)
-        species_2 = ac.Trap(trap_density=0.0, trap_lifetime=1.0)
-        cti_params = ac.ArcticParams(serial_traps=[species_0, species_1, species_2])
-
-        with pytest.raises(exc.PriorException):
-            analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
-
-        species_0 = ac.Trap(trap_density=0.0, trap_lifetime=4.0)
-        species_1 = ac.Trap(trap_density=0.0, trap_lifetime=2.0)
-        species_2 = ac.Trap(trap_density=0.0, trap_lifetime=3.0)
-        cti_params = ac.ArcticParams(serial_traps=[species_0, species_1, species_2])
-
-        with pytest.raises(exc.PriorException):
-            analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
-
-        species_0 = ac.Trap(trap_density=0.0, trap_lifetime=5.0)
-        species_1 = ac.Trap(trap_density=0.0, trap_lifetime=4.0)
-        species_2 = ac.Trap(trap_density=0.0, trap_lifetime=3.0)
-        cti_params = ac.ArcticParams(serial_traps=[species_0, species_1, species_2])
-
-        with pytest.raises(exc.PriorException):
-            analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
-
-    def test__parallel_serial_phase__if_trap_lifetime_not_ascending__raises_exception(
-        self, phase, ci_data, cti_settings
-    ):
-
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
-
-        parallel_traps_0 = ac.Trap(trap_density=0.0, trap_lifetime=1.0)
-        parallel_traps_1 = ac.Trap(trap_density=0.0, trap_lifetime=2.0)
-        serial_traps_0 = ac.Trap(trap_density=0.0, trap_lifetime=1.0)
-        serial_traps_1 = ac.Trap(trap_density=0.0, trap_lifetime=2.0)
-        cti_params = ac.ArcticParams(
-            parallel_traps=[parallel_traps_0, parallel_traps_1],
-            serial_traps=[serial_traps_0, serial_traps_1],
-        )
-
-        analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
-
-        parallel_traps_0 = ac.Trap(trap_density=0.0, trap_lifetime=1.0)
-        parallel_traps_1 = ac.Trap(trap_density=0.0, trap_lifetime=2.0)
-        parallel_traps_2 = ac.Trap(trap_density=0.0, trap_lifetime=3.0)
-        serial_traps_0 = ac.Trap(trap_density=0.0, trap_lifetime=1.0)
-        serial_traps_1 = ac.Trap(trap_density=0.0, trap_lifetime=2.0)
-        serial_traps_2 = ac.Trap(trap_density=0.0, trap_lifetime=3.0)
-        cti_params = ac.ArcticParams(
-            parallel_traps=[parallel_traps_0, parallel_traps_1, parallel_traps_2],
-            serial_traps=[serial_traps_0, serial_traps_1, serial_traps_2],
-        )
-
-        analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
-
-        parallel_traps_0 = ac.Trap(trap_density=0.0, trap_lifetime=2.0)
-        parallel_traps_1 = ac.Trap(trap_density=0.0, trap_lifetime=1.0)
-        serial_traps_0 = ac.Trap(trap_density=0.0, trap_lifetime=1.0)
-        serial_traps_1 = ac.Trap(trap_density=0.0, trap_lifetime=2.0)
-        cti_params = ac.ArcticParams(
-            parallel_traps=[parallel_traps_0, parallel_traps_1],
-            serial_traps=[serial_traps_0, serial_traps_1],
-        )
-
-        with pytest.raises(exc.PriorException):
-            analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
-
-        parallel_traps_0 = ac.Trap(trap_density=0.0, trap_lifetime=1.0)
-        parallel_traps_1 = ac.Trap(trap_density=0.0, trap_lifetime=2.0)
-        serial_traps_0 = ac.Trap(trap_density=0.0, trap_lifetime=2.0)
-        serial_traps_1 = ac.Trap(trap_density=0.0, trap_lifetime=1.0)
-        cti_params = ac.ArcticParams(
-            parallel_traps=[parallel_traps_0, parallel_traps_1],
-            serial_traps=[serial_traps_0, serial_traps_1],
-        )
-        with pytest.raises(exc.PriorException):
-            analysis.check_trap_lifetimes_are_ascending(cti_params=cti_params)
-
     def test__parallel_total_density_within_values__if_not_true_raises_exception(
         self, phase, ci_data, cti_settings
     ):
 
         phase.parallel_total_density_range = (1.0, 2.0)
 
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
 
         species_0 = ac.Trap(trap_density=0.75, trap_lifetime=1.0)
         species_1 = ac.Trap(trap_density=0.75, trap_lifetime=2.0)
@@ -484,7 +303,7 @@ class TestPhase(object):
 
         phase.parallel_total_density_range = (10.0, 15.0)
 
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
 
         species_0 = ac.Trap(trap_density=12.0, trap_lifetime=1.0)
         species_1 = ac.Trap(trap_density=2.0, trap_lifetime=2.0)
@@ -512,7 +331,7 @@ class TestPhase(object):
 
         phase.serial_total_density_range = (1.0, 2.0)
 
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
 
         species_0 = ac.Trap(trap_density=0.75, trap_lifetime=1.0)
         species_1 = ac.Trap(trap_density=0.75, trap_lifetime=2.0)
@@ -536,7 +355,7 @@ class TestPhase(object):
 
         phase.serial_total_density_range = (10.0, 15.0)
 
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
 
         species_0 = ac.Trap(trap_density=12.0, trap_lifetime=1.0)
         species_1 = ac.Trap(trap_density=2.0, trap_lifetime=2.0)
@@ -565,7 +384,7 @@ class TestPhase(object):
         phase.parallel_total_density_range = (1.0, 2.0)
         phase.serial_total_density_range = (5.0, 6.0)
 
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
 
         species_0 = ac.Trap(trap_density=0.75, trap_lifetime=1.0)
         species_1 = ac.Trap(trap_density=0.75, trap_lifetime=2.0)
@@ -581,7 +400,7 @@ class TestPhase(object):
         phase.parallel_total_density_range = (1.0, 2.0)
         phase.serial_total_density_range = (5.0, 6.0)
 
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
 
         species_0 = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
         species_1 = ac.Trap(trap_density=0.1, trap_lifetime=2.0)
@@ -598,7 +417,7 @@ class TestPhase(object):
         phase.parallel_total_density_range = (1.0, 2.0)
         phase.serial_total_density_range = (5.0, 6.0)
 
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
 
         species_0 = ac.Trap(trap_density=1.0, trap_lifetime=1.0)
         species_1 = ac.Trap(trap_density=0.5, trap_lifetime=2.0)
@@ -720,15 +539,6 @@ class TestPhase(object):
         assert (ci_data.noise_map == ci_datas_masked.noise_map).all()
         assert (ci_data.ci_pre_cti == ci_datas_masked.ci_pre_cti).all()
 
-    def test__duplication(self):
-        parallel = ac.Trap()
-
-        phase = ac.PhaseCI(phase_name="test_phase", parallel_traps=[parallel])
-
-        ac.PhaseCI(phase_name="test_phase", parallel_traps=[])
-
-        assert phase.parallel_traps is not None
-
     def test__cti_params_for_instance(self):
 
         instance = af.ModelInstance()
@@ -736,68 +546,6 @@ class TestPhase(object):
         cti_params = ac.cti_params_for_instance(instance)
 
         assert cti_params.parallel_traps == instance.parallel_traps
-
-    # def test_describe(
-    #     self,
-    # ):
-    #
-    #         assert """
-    # Running CTI analysis for...
-    #
-    # Parallel CTI:
-    # Parallel Trap:
-    # 1
-    #
-    # Parallel CCD
-    # 2
-    #
-    # Hyper Parameters:
-    # 5
-    #
-    # """ == parallel_hyper_analysis.describe(
-    #             MockInstance
-    #         )
-    #
-    #         assert """
-    # Running CTI analysis for...
-    #
-    # Serial CTI:
-    # Serial Trap:
-    # 3
-    #
-    # Serial CCD
-    # 4
-    #
-    # Hyper Parameters:
-    # 5
-    #
-    # """ == serial_hyper_analysis.describe(
-    #             MockInstance
-    #         )
-    #
-    #         assert """
-    # Running CTI analysis for...
-    #
-    # Parallel CTI:
-    # Parallel Trap:
-    # 1
-    #
-    # Parallel CCD
-    # 2
-    #
-    # Serial CTI:
-    # Serial Trap:
-    # 3
-    #
-    # Serial CCD
-    # 4
-    #
-    # Hyper Parameters:
-    # 5
-    #
-    # """ == parallel_serial_hyper_analysis.describe(
-    #             MockInstance
-    #         )
 
     def test__hyper_noise_scalar_properties_of_phase(self):
         phase = ac.PhaseCI(
@@ -850,7 +598,7 @@ class TestPhase(object):
         )
 
         analysis = phase2.make_analysis(
-            ci_datas=[ci_data, ci_data, ci_data, ci_data],
+            datasets=[ci_data, ci_data, ci_data, ci_data],
             cti_settings=cti_settings,
             results=results,
         )
@@ -928,7 +676,7 @@ class TestPhase(object):
         )
 
         analysis = phase2.make_analysis(
-            ci_datas=[ci_data, ci_data, ci_data, ci_data],
+            datasets=[ci_data, ci_data, ci_data, ci_data],
             cti_settings=cti_settings,
             results=results,
         )
@@ -1015,7 +763,7 @@ class TestPhase(object):
         )
 
         analysis = phase2.make_analysis(
-            ci_datas=[ci_data, ci_data, ci_data, ci_data],
+            datasets=[ci_data, ci_data, ci_data, ci_data],
             cti_settings=cti_settings,
             results=results,
         )
@@ -1138,7 +886,7 @@ class TestResult(object):
             phase_name="test_phase",
         )
 
-        analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
         instance = phase.model.instance_from_unit_vector([])
         cti_params = ac.cti_params_for_instance(instance=instance)
         fit_figure_of_merit = analysis.fit(instance=instance)

@@ -4,21 +4,6 @@ import autofit as af
 import autocti as al
 
 
-class GalaxiesMockAnalysis:
-    def __init__(self, number_galaxies, value):
-        self.number_galaxies = number_galaxies
-        self.value = value
-        self.hyper_model_image = None
-        self.hyper_galaxy_image_path_dict = None
-
-    # noinspection PyUnusedLocal
-    def galaxy_images_for_model(self, model):
-        return self.number_galaxies * [np.array([self.value])]
-
-    def fit(self, instance):
-        return 1
-
-
 class MockResult:
     def __init__(
         self,

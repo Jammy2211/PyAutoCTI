@@ -288,22 +288,23 @@ class TestMaskedCIImaging:
 
         assert (masked_ci_imaging.cosmic_ray_map == masked_image).all()
 
-    def test__for_parallel_masked_ci_imaging(
+    def test__include_parallel_columns_extraction(
         self, ci_imaging_7x7, mask_7x7, ci_noise_scaling_maps_7x7
     ):
 
         mask = struct.Mask.unmasked(shape_2d=ci_imaging_7x7.shape_2d)
         mask[0, 2] = True
 
-        masked_ci_imaging = ci.MaskedCIImaging.for_parallel_from_columns(
+        masked_ci_imaging = ci.MaskedCIImaging(
             ci_imaging=ci_imaging_7x7,
             mask=mask,
-            columns=(1, 3),
+            parallel_columns=(1, 3),
             noise_scaling_maps=ci_noise_scaling_maps_7x7,
         )
 
         mask = np.full(fill_value=False, shape=(7, 2))
         mask[0, 0] = True
+
         assert (masked_ci_imaging.mask == mask).all()
 
         image = np.ones((7, 2))
@@ -344,15 +345,16 @@ class TestMaskedCIImaging:
         mask = struct.Mask.unmasked(shape_2d=ci_imaging_7x7.shape_2d)
         mask[1, 0] = True
 
-        masked_ci_imaging = ci.MaskedCIImaging.for_serial_from_rows(
+        masked_ci_imaging = ci.MaskedCIImaging(
             ci_imaging=ci_imaging_7x7,
             mask=mask,
-            rows=(0, 1),
+            serial_rows=(0, 1),
             noise_scaling_maps=ci_noise_scaling_maps_7x7,
         )
 
         mask = np.full(fill_value=False, shape=(1, 7))
         mask[0, 0] = True
+
         assert (masked_ci_imaging.mask == mask).all()
 
         image = np.ones((1, 7))

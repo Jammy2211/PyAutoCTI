@@ -82,7 +82,7 @@ class MetaDataset:
         else:
             return False
 
-    def masks_for_analysis_from_ci_datas(self, ci_datas, masks):
+    def masks_for_analysis_from_datasets(self, datasets, masks):
 
         cosmic_ray_masks = list(
             map(
@@ -96,7 +96,7 @@ class MetaDataset:
                 )
                 if data.cosmic_ray_map is not None
                 else None,
-                ci_datas,
+                datasets,
             )
         )
 
@@ -118,7 +118,7 @@ class MetaDataset:
                         ci_frame=data.ci_frame,
                         rows=self.parallel_front_edge_mask_rows,
                     ),
-                    ci_datas,
+                    datasets,
                 )
             )
 
@@ -139,7 +139,7 @@ class MetaDataset:
                         ci_frame=data.ci_frame,
                         rows=self.parallel_trails_mask_rows,
                     ),
-                    ci_datas,
+                    datasets,
                 )
             )
 
@@ -159,7 +159,7 @@ class MetaDataset:
                         ci_frame=data.ci_frame,
                         columns=self.serial_front_edge_mask_columns,
                     ),
-                    ci_datas,
+                    datasets,
                 )
             )
 
@@ -179,7 +179,7 @@ class MetaDataset:
                         ci_frame=data.ci_frame,
                         columns=self.serial_trails_mask_columns,
                     ),
-                    ci_datas,
+                    datasets,
                 )
             )
 
@@ -192,29 +192,3 @@ class MetaDataset:
             )
 
         return masks
-
-    def ci_datas_masked_extracted_from_ci_data(
-        self, ci_data, mask, noise_scaling_maps_list=None
-    ):
-
-        if self.is_only_parallel_fit:
-            return ci_data.for_parallel_from_columns(
-                columns=(
-                    0,
-                    self.columns
-                    or ci_data.ci_frame.frame_geometry.parallel_overscan.total_columns,
-                ),
-                mask=mask,
-                noise_scaling_maps=noise_scaling_maps_list,
-            )
-
-        elif self.is_only_serial_fit:
-            return ci_data.for_serial_from_rows(
-                rows=self.rows or (0, ci_data.ci_pattern.regions[0].total_rows),
-                mask=mask,
-                noise_scaling_maps=noise_scaling_maps_list,
-            )
-        elif self.is_parallel_and_serial_fit:
-            return ci_data.parallel_serial_ci_data_masked_from_mask(
-                mask=mask, noise_scaling_maps_list=noise_scaling_maps_list
-            )

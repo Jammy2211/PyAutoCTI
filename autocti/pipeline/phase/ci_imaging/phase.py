@@ -87,10 +87,6 @@ class PhaseCIImaging(dataset.PhaseDataset):
             parallel_ccd_volume=parallel_ccd_volume,
             serial_traps=serial_traps,
             serial_ccd_volume=serial_ccd_volume,
-            hyper_noise_scalar_of_ci_regions=hyper_noise_scalar_of_ci_regions,
-            hyper_noise_scalar_of_parallel_trails=hyper_noise_scalar_of_parallel_trails,
-            hyper_noise_scalar_of_serial_trails=hyper_noise_scalar_of_serial_trails,
-            hyper_noise_scalar_of_serial_overscan_no_trails=hyper_noise_scalar_of_serial_overscan_no_trails,
             non_linear_class=non_linear_class,
         )
 
@@ -118,7 +114,7 @@ class PhaseCIImaging(dataset.PhaseDataset):
             cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer,
         )
 
-    def make_analysis(self, ci_datas, cti_settings, results=None, pool=None):
+    def make_analysis(self, datasets, cti_settings, results=None, pool=None):
         """
         Create an analysis object. Also calls the prior passing and image modifying functions to allow child classes to
         change the behaviour of the phase.
@@ -126,7 +122,7 @@ class PhaseCIImaging(dataset.PhaseDataset):
         Parameters
         ----------
         cti_settings
-        ci_datas
+        datasets
         pool
         results: [Results]
             The result from the previous phase
@@ -137,17 +133,17 @@ class PhaseCIImaging(dataset.PhaseDataset):
             An analysis object that the non-linear optimizer calls to determine the fit of a set of values
         """
 
-        masks = self.meta_dataset.masks_for_analysis_from_ci_datas(ci_datas=ci_datas)
+        masks = self.meta_dataset.masks_for_analysis_from_datasets(datasets=datasets)
 
         noise_scaling_maps_list = self.meta_dataset.noise_scaling_maps_list_from_total_images_and_results(
-            total_images=len(ci_datas), results=results
+            total_images=len(datasets), results=results
         )
 
-        ci_datas_masked_extracted = [
-            self.meta_dataset.ci_datas_masked_extracted_from_ci_data(
-                ci_data=data, mask=mask, noise_scaling_maps_list=maps
+        masked_ci_datasets = [
+            self.meta_dataset.masked_ci_dataset_from_dataset(
+                dataset=dataset, mask=mask, noise_scaling_maps_list=maps
             )
-            for data, mask, maps in zip(ci_datas, masks, noise_scaling_maps_list)
+            for dataset, mask, maps in zip(datasets, masks, noise_scaling_maps_list)
         ]
 
         masked_ci_dataset_full = list(
@@ -161,14 +157,14 @@ class PhaseCIImaging(dataset.PhaseDataset):
                     ci_frame=data.ci_frame,
                     noise_scaling_maps_list=maps,
                 ),
-                ci_datas,
+                datasets,
                 masks,
                 noise_scaling_maps_list,
             )
         )
 
         analysis = self.__class__.Analysis(
-            ci_datas_masked_extracted=ci_datas_masked_extracted,
+            ci_datas_masked_extracted=masked_ci_datasets,
             masked_ci_dataset_full=masked_ci_dataset_full,
             cti_settings=cti_settings,
             parallel_total_density_range=self.parallel_total_density_range,
