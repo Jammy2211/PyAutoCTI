@@ -40,9 +40,9 @@ def make_image_7x7():
         fill_value=1.0,
         shape_2d=(7, 7),
         pixel_scales=(1.0, 1.0),
-        serial_overscan=(1, 2, 1, 2),
-        serial_prescan=(0, 1, 0, 1),
-        parallel_overscan=(1, 2, 1, 2),
+        serial_overscan=(0, 6, 6, 7),
+        serial_prescan=(0, 7, 0, 1),
+        parallel_overscan=(6, 7, 1, 6),
     )
 
 
@@ -52,9 +52,9 @@ def make_noise_map_7x7():
         fill_value=1.0,
         shape_2d=(7, 7),
         pixel_scales=(1.0, 1.0),
-        serial_overscan=(1, 2, 1, 2),
-        serial_prescan=(0, 1, 0, 1),
-        parallel_overscan=(1, 2, 1, 2),
+        serial_overscan=(0, 6, 6, 7),
+        serial_prescan=(0, 7, 0, 1),
+        parallel_overscan=(6, 7, 1, 6),
     )
 
 
@@ -71,7 +71,7 @@ def make_imaging_7x7(image_7x7, noise_map_7x7):
 
 @pytest.fixture(name="ci_pattern_7x7")
 def make_ci_pattern_7x7():
-    return ci.CIPatternUniform(normalization=10.0, regions=[(1, 3, 1, 3)])
+    return ci.CIPatternUniform(normalization=10.0, regions=[(1, 5, 1, 5)])
 
 
 @pytest.fixture(name="ci_image_7x7")
@@ -81,9 +81,10 @@ def make_ci_image_7x7(ci_pattern_7x7):
         shape_2d=(7, 7),
         pixel_scales=(1.0, 1.0),
         ci_pattern=ci_pattern_7x7,
-        serial_overscan=(1, 2, 1, 2),
-        serial_prescan=(0, 1, 0, 1),
-        parallel_overscan=(1, 2, 1, 2),
+        roe_corner=(1, 0),
+        serial_overscan=(0, 6, 6, 7),
+        serial_prescan=(0, 7, 0, 1),
+        parallel_overscan=(6, 7, 1, 6),
     )
 
 
@@ -93,10 +94,11 @@ def make_ci_noise_map_7x7(ci_pattern_7x7):
         fill_value=2.0,
         shape_2d=(7, 7),
         pixel_scales=(1.0, 1.0),
+        roe_corner=(1, 0),
         ci_pattern=ci_pattern_7x7,
-        serial_overscan=(1, 2, 1, 2),
-        serial_prescan=(0, 1, 0, 1),
-        parallel_overscan=(1, 2, 1, 2),
+        serial_overscan=(0, 6, 6, 7),
+        serial_prescan=(0, 7, 0, 1),
+        parallel_overscan=(6, 7, 1, 6),
     )
 
 
@@ -106,10 +108,11 @@ def make_ci_pre_cti_7x7(ci_pattern_7x7):
         shape_2d=(7, 7),
         fill_value=10.0,
         pixel_scales=(1.0, 1.0),
+        roe_corner=(1, 0),
         ci_pattern=ci_pattern_7x7,
-        serial_overscan=(1, 2, 1, 2),
-        serial_prescan=(0, 1, 0, 1),
-        parallel_overscan=(1, 2, 1, 2),
+        serial_overscan=(0, 6, 6, 7),
+        serial_prescan=(0, 7, 0, 1),
+        parallel_overscan=(6, 7, 1, 6),
     )
 
 
@@ -121,10 +124,11 @@ def make_ci_cosmic_ray_map_7x7(ci_pattern_7x7):
     return ci.CIFrame.manual(
         array=cosmic_ray_map,
         pixel_scales=(1.0, 1.0),
+        roe_corner=(1, 0),
         ci_pattern=ci_pattern_7x7,
-        serial_overscan=(1, 2, 1, 2),
-        serial_prescan=(0, 1, 0, 1),
-        parallel_overscan=(1, 2, 1, 2),
+        serial_overscan=(0, 6, 6, 7),
+        serial_prescan=(0, 7, 0, 1),
+        parallel_overscan=(6, 7, 1, 6),
     )
 
 
@@ -133,10 +137,14 @@ def make_ci_noise_scaling_maps_7x7(ci_pattern_7x7):
 
     return [
         ci.CIFrame.ones(
-            shape_2d=(7, 7), pixel_scales=(1.0, 1.0), ci_pattern=ci_pattern_7x7
+            shape_2d=(7, 7),
+            pixel_scales=(1.0, 1.0),
+            roe_corner=(1, 0),
+            ci_pattern=ci_pattern_7x7,
         ),
         ci.CIFrame.full(
             shape_2d=(7, 7),
+            roe_corner=(1, 0),
             fill_value=2.0,
             pixel_scales=(1.0, 1.0),
             ci_pattern=ci_pattern_7x7,

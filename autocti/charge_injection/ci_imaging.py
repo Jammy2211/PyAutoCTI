@@ -1,4 +1,5 @@
 import numpy as np
+import copy
 
 from autocti.dataset import preprocess, imaging
 from autocti.charge_injection import ci_frame
@@ -192,7 +193,14 @@ def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, image, mask=N
 
 
 class MaskedCIImaging(imaging.MaskedImaging):
-    def __init__(self, ci_imaging, mask, noise_scaling_maps=None):
+    def __init__(
+        self,
+        ci_imaging,
+        mask,
+        noise_scaling_maps=None,
+        parallel_columns=None,
+        serial_rows=None,
+    ):
         """A data is the collection of simulator components (e.g. the image, noise maps, PSF, etc.) which are used \
         to generate and fit it with a model image.
 
@@ -219,6 +227,46 @@ class MaskedCIImaging(imaging.MaskedImaging):
         mask: msk.Mask
             The 2D mask that is applied to image simulator.
         """
+
+        self.ci_imaging_full = copy.deepcopy(ci_imaging)
+        self.mask_full = copy.deepcopy(mask)
+
+        if parallel_columns is not None:
+
+            ci_imaging = self.ci_imaging_full.parallel_calibration_ci_imaging_for_columns(
+                columns=parallel_columns
+            )
+
+            mask = self.ci_imaging_full.image.parallel_calibration_mask_from_mask_and_columns(
+                mask=mask, columns=parallel_columns
+            )
+
+            if noise_scaling_maps is not None:
+                noise_scaling_maps = [
+                    noise_scaling_map.parallel_calibration_frame_from_columns(
+                        columns=parallel_columns
+                    )
+                    for noise_scaling_map in noise_scaling_maps
+                ]
+
+        if serial_rows is not None:
+
+            ci_imaging = self.ci_imaging_full.serial_calibration_ci_imaging_for_rows(
+                rows=serial_rows
+            )
+
+            mask = self.ci_imaging_full.image.serial_calibration_mask_from_mask_and_rows(
+                mask=mask, rows=serial_rows
+            )
+
+            if noise_scaling_maps is not None:
+
+                noise_scaling_maps = [
+                    noise_scaling_map.serial_calibration_frame_from_rows(
+                        rows=serial_rows
+                    )
+                    for noise_scaling_map in noise_scaling_maps
+                ]
 
         super().__init__(imaging=ci_imaging, mask=mask)
 
@@ -255,78 +303,6 @@ class MaskedCIImaging(imaging.MaskedImaging):
     @property
     def ci_imaging(self):
         return self.imaging
-
-    @classmethod
-    def for_parallel_from_columns(
-        cls, ci_imaging, mask, columns, noise_scaling_maps=None
-    ):
-        """
-        Creates a MaskedCIData object for a parallel section of the CCD
-
-        Parameters
-        ----------
-        noise_scaling_maps
-            A list of maps that are used to scale noise
-        columns
-            Columns to be extracted
-        mask
-            A mask
-        Returns
-        -------
-        MaskedCIImaging
-        """
-
-        if noise_scaling_maps is not None:
-
-            noise_scaling_maps = [
-                noise_scaling_map.parallel_calibration_frame_from_columns(
-                    columns=columns
-                )
-                for noise_scaling_map in noise_scaling_maps
-            ]
-
-        return MaskedCIImaging(
-            ci_imaging=ci_imaging.parallel_calibration_ci_imaging_for_columns(
-                columns=columns
-            ),
-            mask=ci_imaging.image.parallel_calibration_mask_from_mask_and_columns(
-                mask=mask, columns=columns
-            ),
-            noise_scaling_maps=noise_scaling_maps,
-        )
-
-    @classmethod
-    def for_serial_from_rows(cls, ci_imaging, mask, rows, noise_scaling_maps=None):
-        """
-        Creates a MaskedCIData object for a serial section of the CCD
-
-        Parameters
-        ----------
-        noise_scaling_maps
-            A list of maps that are used to scale noise
-        rows
-            Columns to be extracted
-        mask
-            A mask
-        Returns
-        -------
-        MaskedCIImaging
-        """
-
-        if noise_scaling_maps is not None:
-
-            noise_scaling_maps = [
-                noise_scaling_map.serial_calibration_frame_from_rows(rows=rows)
-                for noise_scaling_map in noise_scaling_maps
-            ]
-
-        return MaskedCIImaging(
-            ci_imaging=ci_imaging.serial_calibration_ci_imaging_for_rows(rows=rows),
-            mask=ci_imaging.image.serial_calibration_mask_from_mask_and_rows(
-                mask=mask, rows=rows
-            ),
-            noise_scaling_maps=noise_scaling_maps,
-        )
 
 
 class SimulatorCIImaging:

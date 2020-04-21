@@ -5,6 +5,7 @@ import pytest
 import autofit as af
 import arctic as ac
 from autocti.pipeline.phase.dataset import PhaseDataset
+from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 from test_autocti.mock import mock_pipeline
 
 pytestmark = pytest.mark.filterwarnings(
@@ -73,32 +74,18 @@ class TestModel:
 
 
 class TestSetup:
-    def test__uses_pixelization_preload_grids_if_possible(self, imaging_7x7, mask_7x7):
-        phase_dataset_7x7 = al.PhaseImaging(phase_name="test_phase")
-
-        analysis = phase_dataset_7x7.make_analysis(
-            dataset=imaging_7x7, mask=mask_7x7, results=mock_pipeline.MockResults()
-        )
-
-        assert analysis.masked_dataset.preload_sparse_grids_of_planes is None
 
     # noinspection PyTypeChecker
     def test_assertion_failure(self, imaging_7x7, mask_7x7):
-        def make_analysis(*args, **kwargs):
-            return mock_pipeline.GalaxiesMockAnalysis(1, 1)
 
-        phase_dataset_7x7 = al.PhaseImaging(
+        phase_dataset_7x7 = PhaseCIImaging(
             phase_name="phase_name",
             non_linear_class=mock_pipeline.MockNLO,
-            galaxies=dict(
-                lens=al.Galaxy(light=al.lp.EllipticalLightProfile, redshift=1)
-            ),
+            parallel_traps=[ac.Trap],
+            parallel_ccd_volume=ac.CCDVolume,
         )
 
-        phase_dataset_7x7.make_analysis = make_analysis
-        result = phase_dataset_7x7.run(
-            dataset=imaging_7x7, results=None, mask=None, positions=None
-        )
+        result = phase_dataset_7x7.run(dataset=imaging_7x7, mask=None, results=None)
         assert result is not None
 
         phase_dataset_7x7 = al.PhaseImaging(
@@ -114,19 +101,3 @@ class TestSetup:
             dataset=imaging_7x7, results=None, mask=None, positions=None
         )
         assert result is not None
-
-        class CustomPhase(al.PhaseImaging):
-            def customize_priors(self, results):
-                self.galaxies.lens.light = al.lp.EllipticalLightProfile()
-
-        phase_dataset_7x7 = CustomPhase(
-            phase_name="phase_name",
-            non_linear_class=mock_pipeline.MockNLO,
-            galaxies=dict(
-                lens=al.Galaxy(light=al.lp.EllipticalLightProfile, redshift=1)
-            ),
-        )
-        phase_dataset_7x7.make_analysis = make_analysis
-
-        # with pytest.raises(af.exc.PipelineException):
-        #     phase_dataset_7x7.run(data_type=imaging_7x7, results=None, mask=None, positions=None)

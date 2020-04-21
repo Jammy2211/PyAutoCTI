@@ -91,3 +91,30 @@ class MetaCIImaging(meta_dataset.MetaDataset):
             noise_scaling_maps_list = total_images * [None]
 
         return noise_scaling_maps_list
+
+    def masked_ci_dataset_from_dataset(
+        self, dataset, mask, noise_scaling_maps_list=None
+    ):
+
+        if self.is_only_parallel_fit:
+            return dataset.for_parallel_from_columns(
+                columns=(
+                    0,
+                    self.columns
+                    or dataset.ci_frame.frame_geometry.parallel_overscan.total_columns,
+                ),
+                mask=mask,
+                noise_scaling_maps=noise_scaling_maps_list,
+            )
+
+        elif self.is_only_serial_fit:
+            return dataset.for_serial_from_rows(
+                rows=self.rows or (0, dataset.ci_pattern.regions[0].total_rows),
+                mask=mask,
+                noise_scaling_maps=noise_scaling_maps_list,
+            )
+
+        elif self.is_parallel_and_serial_fit:
+            return dataset.parallel_serial_ci_data_masked_from_mask(
+                mask=mask, noise_scaling_maps_list=noise_scaling_maps_list
+            )

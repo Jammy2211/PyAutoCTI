@@ -117,7 +117,7 @@ class HyperNoisePhase(HyperPhase):
             ci_hyper.CIHyperNoiseScalar
         )
 
-        masks = phase.masks_for_analysis_from_ci_datas(ci_datas=ci_datas)
+        masks = phase.masks_for_analysis_from_datasets(datasets=ci_datas)
 
         noise_scaling_maps_list = phase.noise_scaling_maps_list_from_total_images_and_results(
             total_images=len(ci_datas), results=results
