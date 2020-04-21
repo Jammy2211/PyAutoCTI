@@ -41,7 +41,7 @@ class TestGeneric:
         )
 
         result = phase_dataset_7x7.run(
-            dataset=ci_imaging_7x7, mask=mask_7x7, results=mock_pipeline.MockResults()
+            datasets=ci_imaging_7x7, masks=mask_7x7, results=mock_pipeline.MockResults()
         )
 
         assert isinstance(result, AbstractPhase.Result)

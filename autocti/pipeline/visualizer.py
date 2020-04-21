@@ -30,10 +30,6 @@ class PhaseDatasetVisualizer(AbstractVisualizer):
         super().__init__(image_path)
         self.masked_dataset = masked_dataset
 
-        self.extract_array_from_mask = af.conf.instance.visualize.get(
-            "figures", "extract_images_from_mask", bool
-        )
-
         self.plot_subplot_dataset = plot_setting("dataset", "subplot_dataset")
         self.plot_dataset_data = plot_setting("dataset", "data")
         self.plot_dataset_noise_map = plot_setting("dataset", "noise_map")
@@ -73,7 +69,7 @@ class PhaseCIImagingVisualizer(PhaseDatasetVisualizer):
         )
 
         self.plot_ci_fit_noise_scaling_maps_list = plot_setting(
-            "fit", "plot_ci_fit_noise_scaling_maps_list"
+            "fit", "noise_scaling_maps"
         )
 
         self.visualize_ci_imaging()

@@ -31,8 +31,7 @@ class ConsecutivePool(object):
 class Analysis(af.Analysis):
     def __init__(
         self,
-        masked_ci_dataset_extracted,
-        masked_ci_dataset_full,
+        masked_ci_datasets,
         cti_settings,
         serial_total_density_range,
         parallel_total_density_range,
@@ -40,8 +39,7 @@ class Analysis(af.Analysis):
         pool=None,
     ):
 
-        self.masked_ci_dataset_extracted = masked_ci_dataset_extracted
-        self.masked_ci_dataset_full = masked_ci_dataset_full
+        self.masked_ci_datasets = masked_ci_datasets
         self.cti_settings = cti_settings
         self.parallel_total_density_range = parallel_total_density_range
         self.serial_total_density_range = serial_total_density_range
