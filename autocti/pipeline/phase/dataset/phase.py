@@ -42,18 +42,18 @@ class PhaseDataset(abstract.AbstractPhase):
         self.serial_traps = serial_traps
         self.serial_ccd_volume = serial_ccd_volume
 
-    def run(self, datasets: Dataset, masks, results=None, info=None, pool=None):
+    def run(self, dataset: Dataset, results=None, info=None, pool=None):
         """
         Run this phase.
 
         Parameters
         ----------
         positions
-        masks: Mask
+        mask: Mask
             The default masks passed in by the pipeline
         results: autofit.tools.pipeline.ResultsCollection
             An object describing the results of the last phase or None if no phase has been executed
-        datasets: scaled_array.ScaledSquarePixelArray
+        dataset: scaled_array.ScaledSquarePixelArray
             An masked_imaging that has been masked
 
         Returns
@@ -72,7 +72,7 @@ class PhaseDataset(abstract.AbstractPhase):
         results = results or af.ResultsCollection()
 
         analysis = self.make_analysis(
-            datasets=datasets, cti_settings=None, results=results
+            datasets=dataset, cti_settings=None, results=results
         )
 
         #    phase_attributes = self.make_phase_attributes(analysis=analysis)
@@ -85,7 +85,7 @@ class PhaseDataset(abstract.AbstractPhase):
 
         return self.make_result(result=result, analysis=analysis)
 
-    def make_analysis(self, dataset, mask, results=None, pool=None):
+    def make_analysis(self, dataset, results=None, pool=None):
         """
         Create an lens object. Also calls the prior passing and masked_imaging modifying functions to allow child
         classes to change the behaviour of the phase.

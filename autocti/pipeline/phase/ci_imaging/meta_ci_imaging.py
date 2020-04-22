@@ -29,10 +29,10 @@ class MetaCIImaging(meta_dataset.MetaDataset):
             cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer,
         )
 
-        if not self.is_only_parallel_fit:
+        if not self.is_parallel_fit:
             columns = None
 
-        if not self.is_only_serial_fit:
+        if not self.is_serial_fit:
             rows = None
 
         self.columns = columns

@@ -1,11 +1,5 @@
 import autofit as af
-import autoarray as aa
-from autocti.util import exc
-from autocti.fit import fit
 from autocti.structures import mask as msk
-from autoarray.operators.inversion import pixelizations as pix
-
-import numpy as np
 
 
 def isprior(obj):
@@ -41,7 +35,7 @@ class MetaDataset:
         self.cosmic_ray_diagonal_buffer = cosmic_ray_diagonal_buffer
 
     @property
-    def is_only_parallel_fit(self):
+    def is_parallel_fit(self):
         if (
             self.model.parallel_ccd_volume is not None
             and self.model.serial_ccd_volume is None
@@ -51,7 +45,7 @@ class MetaDataset:
             return False
 
     @property
-    def is_only_serial_fit(self):
+    def is_serial_fit(self):
         if (
             self.model.parallel_ccd_volume is None
             and self.model.serial_ccd_volume is not None

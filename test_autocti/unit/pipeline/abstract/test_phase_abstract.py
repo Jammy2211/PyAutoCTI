@@ -86,7 +86,7 @@ class TestSetup:
         )
 
         result = phase_dataset_7x7.run(
-            datasets=[ci_imaging_7x7], masks=None, results=None
+            dataset=[ci_imaging_7x7], mask=None, results=None
         )
         assert result is not None
 
@@ -100,6 +100,6 @@ class TestSetup:
 
         phase_dataset_7x7.make_analysis = make_analysis
         result = phase_dataset_7x7.run(
-            datasets=imaging_7x7, results=None, masks=None, positions=None
+            dataset=imaging_7x7, results=None, mask=None, positions=None
         )
         assert result is not None
