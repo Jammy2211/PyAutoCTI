@@ -3,7 +3,9 @@ from os import path
 import numpy as np
 import pytest
 
+import arctic as ac
 from autocti import charge_injection as ci
+from autocti.pipeline.phase.extensions import HyperNoisePhase
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 from test_autocti.mock import mock_pipeline
 
@@ -17,62 +19,15 @@ directory = path.dirname(path.realpath(__file__))
 
 
 class TestPhase:
-    def test__extend_with_hyper_and_pixelizations(self):
 
-        phase_no_pixelization = al.PhaseImaging(
+    def test__extend_with_hyper_noise_phase(self):
+
+        phase = PhaseCIImaging(
             non_linear_class=mock_pipeline.MockNLO, phase_name="test_phase"
         )
 
-        phase_extended = phase_no_pixelization.extend_with_multiple_hyper_phases(
-            hyper_galaxy=False, inversion=False
-        )
-        assert phase_extended == phase_no_pixelization
-
-        # This phase does not have a pixelization, so even though inversion=True it will not be extended
-
-        phase_extended = phase_no_pixelization.extend_with_multiple_hyper_phases(
-            inversion=True
-        )
-        assert phase_extended == phase_no_pixelization
-
-        phase_with_pixelization = al.PhaseImaging(
-            galaxies=dict(
-                source=al.GalaxyModel(
-                    redshift=0.5,
-                    pixelization=al.pix.Rectangular,
-                    regularization=al.reg.Constant,
-                )
-            ),
-            non_linear_class=mock_pipeline.MockNLO,
-            phase_name="test_phase",
-        )
-
-        phase_extended = phase_with_pixelization.extend_with_multiple_hyper_phases(
-            inversion=True
-        )
-        assert type(phase_extended.hyper_phases[0]) == al.InversionPhase
-
-        phase_extended = phase_with_pixelization.extend_with_multiple_hyper_phases(
-            hyper_galaxy=True, inversion=False
-        )
-        assert type(phase_extended.hyper_phases[0]) == al.HyperGalaxyPhase
-
-        phase_extended = phase_with_pixelization.extend_with_multiple_hyper_phases(
-            hyper_galaxy=False, inversion=True
-        )
-        assert type(phase_extended.hyper_phases[0]) == al.InversionPhase
-
-        phase_extended = phase_with_pixelization.extend_with_multiple_hyper_phases(
-            hyper_galaxy=True, inversion=True
-        )
-        assert type(phase_extended.hyper_phases[0]) == al.InversionPhase
-        assert type(phase_extended.hyper_phases[1]) == al.HyperGalaxyPhase
-
-        phase_extended = phase_with_pixelization.extend_with_multiple_hyper_phases(
-            hyper_galaxy=True, inversion=True, hyper_galaxy_phase_first=True
-        )
-        assert type(phase_extended.hyper_phases[0]) == al.HyperGalaxyPhase
-        assert type(phase_extended.hyper_phases[1]) == al.InversionPhase
+        phase_extended = phase.extend_with_hyper_noise_phases()
+        assert type(phase_extended.hyper_phases[0]) == HyperNoisePhase
 
 
 class TestMakeAnalysis:
@@ -225,54 +180,3 @@ class TestMakeAnalysis:
                          [False, False, False, False, False, False, False],
                          [False, False, False, False, False, False, False]])
         ).all()
-
-class TestPhasePickle:
-
-    # noinspection PyTypeChecker
-    def test_assertion_failure(self, imaging_7x7, mask_7x7):
-        def make_analysis(*args, **kwargs):
-            return mock_pipeline.GalaxiesMockAnalysis(1, 1)
-
-        phase_imaging_7x7 = al.PhaseImaging(
-            phase_name="phase_name",
-            non_linear_class=mock_pipeline.MockNLO,
-            galaxies=dict(
-                lens=al.Galaxy(light=al.lp.EllipticalLightProfile, redshift=1)
-            ),
-        )
-
-        phase_imaging_7x7.make_analysis = make_analysis
-        result = phase_imaging_7x7.run(
-            dataset=imaging_7x7, mask=mask_7x7, results=None, positions=None
-        )
-        assert result is not None
-
-        phase_imaging_7x7 = al.PhaseImaging(
-            phase_name="phase_name",
-            non_linear_class=mock_pipeline.MockNLO,
-            galaxies=dict(
-                lens=al.Galaxy(light=al.lp.EllipticalLightProfile, redshift=1)
-            ),
-        )
-
-        phase_imaging_7x7.make_analysis = make_analysis
-        result = phase_imaging_7x7.run(
-            dataset=imaging_7x7, mask=mask_7x7, results=None, positions=None
-        )
-        assert result is not None
-
-        class CustomPhase(al.PhaseImaging):
-            def customize_priors(self, results):
-                self.galaxies.lens.light = al.lp.EllipticalLightProfile()
-
-        phase_imaging_7x7 = CustomPhase(
-            phase_name="phase_name",
-            non_linear_class=mock_pipeline.MockNLO,
-            galaxies=dict(
-                lens=al.Galaxy(light=al.lp.EllipticalLightProfile, redshift=1)
-            ),
-        )
-        phase_imaging_7x7.make_analysis = make_analysis
-
-        # with pytest.raises(af.exc.PipelineException):
-        #     phase_imaging_7x7.run(data_type=imaging_7x7, results=None, mask=None, positions=None)

@@ -144,58 +144,6 @@ class TestPhase(object):
         assert (analysis.masked_ci_dataset_full[0].noise_map == ci_data.noise_map).all()
         assert analysis.cti_settings == cti_settings
 
-    def test__parallel_total_density_within_values__if_not_true_raises_exception(
-        self, phase, ci_data, cti_settings
-    ):
-
-        phase.parallel_total_density_range = (1.0, 2.0)
-
-        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
-
-        species_0 = ac.Trap(trap_density=0.75, trap_lifetime=1.0)
-        species_1 = ac.Trap(trap_density=0.75, trap_lifetime=2.0)
-        cti_params = ac.ArcticParams(parallel_traps=[species_0, species_1])
-
-        analysis.check_total_density_within_range(cti_params=cti_params)
-
-        species_0 = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
-        species_1 = ac.Trap(trap_density=0.1, trap_lifetime=2.0)
-        cti_params = ac.ArcticParams(parallel_traps=[species_0, species_1])
-
-        with pytest.raises(exc.PriorException):
-            analysis.check_total_density_within_range(cti_params=cti_params)
-
-        species_0 = ac.Trap(trap_density=1.5, trap_lifetime=1.0)
-        species_1 = ac.Trap(trap_density=1.5, trap_lifetime=2.0)
-        cti_params = ac.ArcticParams(parallel_traps=[species_0, species_1])
-
-        with pytest.raises(exc.PriorException):
-            analysis.check_total_density_within_range(cti_params=cti_params)
-
-        phase.parallel_total_density_range = (10.0, 15.0)
-
-        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
-
-        species_0 = ac.Trap(trap_density=12.0, trap_lifetime=1.0)
-        species_1 = ac.Trap(trap_density=2.0, trap_lifetime=2.0)
-        cti_params = ac.ArcticParams(parallel_traps=[species_0, species_1])
-
-        analysis.check_total_density_within_range(cti_params=cti_params)
-
-        species_0 = ac.Trap(trap_density=9.0, trap_lifetime=1.0)
-        species_1 = ac.Trap(trap_density=0.9, trap_lifetime=2.0)
-        cti_params = ac.ArcticParams(parallel_traps=[species_0, species_1])
-
-        with pytest.raises(exc.PriorException):
-            analysis.check_total_density_within_range(cti_params=cti_params)
-
-        species_0 = ac.Trap(trap_density=14.0, trap_lifetime=1.0)
-        species_1 = ac.Trap(trap_density=2.0, trap_lifetime=2.0)
-        cti_params = ac.ArcticParams(parallel_traps=[species_0, species_1])
-
-        with pytest.raises(exc.PriorException):
-            analysis.check_total_density_within_range(cti_params=cti_params)
-
     def test__serial_total_density_within_values__if_not_true_raises_exception(
         self, phase, ci_data, cti_settings
     ):
@@ -208,21 +156,21 @@ class TestPhase(object):
         species_1 = ac.Trap(trap_density=0.75, trap_lifetime=2.0)
         cti_params = ac.ArcticParams(serial_traps=[species_0, species_1])
 
-        analysis.check_total_density_within_range(cti_params=cti_params)
+        analysis.check_total_density_within_range(instance=cti_params)
 
         species_0 = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
         species_1 = ac.Trap(trap_density=0.1, trap_lifetime=2.0)
         cti_params = ac.ArcticParams(serial_traps=[species_0, species_1])
 
         with pytest.raises(exc.PriorException):
-            analysis.check_total_density_within_range(cti_params=cti_params)
+            analysis.check_total_density_within_range(instance=cti_params)
 
         species_0 = ac.Trap(trap_density=1.5, trap_lifetime=1.0)
         species_1 = ac.Trap(trap_density=1.5, trap_lifetime=2.0)
         cti_params = ac.ArcticParams(serial_traps=[species_0, species_1])
 
         with pytest.raises(exc.PriorException):
-            analysis.check_total_density_within_range(cti_params=cti_params)
+            analysis.check_total_density_within_range(instance=cti_params)
 
         phase.serial_total_density_range = (10.0, 15.0)
 
@@ -232,21 +180,21 @@ class TestPhase(object):
         species_1 = ac.Trap(trap_density=2.0, trap_lifetime=2.0)
         cti_params = ac.ArcticParams(serial_traps=[species_0, species_1])
 
-        analysis.check_total_density_within_range(cti_params=cti_params)
+        analysis.check_total_density_within_range(instance=cti_params)
 
         species_0 = ac.Trap(trap_density=9.0, trap_lifetime=1.0)
         species_1 = ac.Trap(trap_density=0.9, trap_lifetime=2.0)
         cti_params = ac.ArcticParams(serial_traps=[species_0, species_1])
 
         with pytest.raises(exc.PriorException):
-            analysis.check_total_density_within_range(cti_params=cti_params)
+            analysis.check_total_density_within_range(instance=cti_params)
 
         species_0 = ac.Trap(trap_density=14.0, trap_lifetime=1.0)
         species_1 = ac.Trap(trap_density=2.0, trap_lifetime=2.0)
         cti_params = ac.ArcticParams(serial_traps=[species_0, species_1])
 
         with pytest.raises(exc.PriorException):
-            analysis.check_total_density_within_range(cti_params=cti_params)
+            analysis.check_total_density_within_range(instance=cti_params)
 
     def test__parallel_serial__total_density_within_values__if_not_true_raises_exception(
         self, phase, ci_data, cti_settings
@@ -266,7 +214,7 @@ class TestPhase(object):
             parallel_traps=[species_0, species_1], serial_traps=[species_2, species_3]
         )
 
-        analysis.check_total_density_within_range(cti_params=cti_params)
+        analysis.check_total_density_within_range(instance=cti_params)
 
         phase.parallel_total_density_range = (1.0, 2.0)
         phase.serial_total_density_range = (5.0, 6.0)
@@ -283,7 +231,7 @@ class TestPhase(object):
         )
 
         with pytest.raises(exc.PriorException):
-            analysis.check_total_density_within_range(cti_params=cti_params)
+            analysis.check_total_density_within_range(instance=cti_params)
 
         phase.parallel_total_density_range = (1.0, 2.0)
         phase.serial_total_density_range = (5.0, 6.0)
@@ -300,7 +248,7 @@ class TestPhase(object):
         )
 
         with pytest.raises(exc.PriorException):
-            analysis.check_total_density_within_range(cti_params=cti_params)
+            analysis.check_total_density_within_range(instance=cti_params)
 
     def test__customize_constant(self, results, ci_data, cti_settings):
         class MyPhaseCI(ac.PhaseCI):
@@ -698,10 +646,6 @@ class TestPhase(object):
             analysis.masked_ci_dataset_full[3].noise_scaling_maps[3] == np.zeros((3, 3))
         ).all()
 
-    def test__extended_with_hyper_noise_phase(self, phase):
-
-        phase_extended = phase.extend_with_hyper_noise_phases()
-        assert type(phase_extended.hyper_phases[0]) == ac.HyperNoisePhase
 
 
 class MockResult:

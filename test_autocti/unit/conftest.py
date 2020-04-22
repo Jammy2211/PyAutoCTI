@@ -207,8 +207,8 @@ def make_phase_data(mask_7x7):
     )
 
 
-@pytest.fixture(name="phase_imaging_7x7")
-def make_phase_imaging_7x7():
+@pytest.fixture(name="phase_ci_imaging_7x7")
+def make_phase_ci_imaging_7x7():
     return PhaseCIImaging(
         non_linear_class=mock_pipeline.MockNLO, phase_name="test_phase"
     )
