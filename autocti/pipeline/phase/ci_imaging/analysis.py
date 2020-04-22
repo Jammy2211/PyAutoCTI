@@ -55,7 +55,7 @@ class Analysis(analysis_dataset.Analysis):
         """
         cti_params = cti_params_for_instance(instance=instance)
 
-        self.check_total_density_within_range(cti_params=cti_params)
+        self.check_total_density_within_range(instance=cti_params)
 
         hyper_noise_scalars = self.hyper_noise_scalars_from_instance(instance=instance)
 

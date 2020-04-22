@@ -1,5 +1,6 @@
 import autofit as af
 
+from autocti.util import exc
 
 def cti_params_for_instance(instance):
     return model.ArcticParams(
@@ -45,14 +46,14 @@ class Analysis(af.Analysis):
         self.serial_total_density_range = serial_total_density_range
         self.pool = pool or ConsecutivePool
 
-    def check_total_density_within_range(self, cti_params):
+    def check_total_density_within_range(self, instance):
 
         if self.parallel_total_density_range is not None:
 
             total_density = sum(
                 [
-                    parallel_traps.trap_density
-                    for parallel_traps in cti_params.parallel_traps
+                    trap.density
+                    for trap in instance.parallel_traps
                 ]
             )
 
@@ -65,7 +66,7 @@ class Analysis(af.Analysis):
         if self.serial_total_density_range is not None:
 
             total_density = sum(
-                [serial_traps.trap_density for serial_traps in cti_params.serial_traps]
+                [trap.density for trap in instance.serial_traps]
             )
 
             if (

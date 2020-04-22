@@ -5,8 +5,11 @@ from astropy import cosmology as cosmo
 import numpy as np
 
 import autofit as af
-import autocti as al
+import arctic as ac
+from autocti.util import exc
 from test_autocti.mock import mock_pipeline
+
+from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of "
@@ -17,49 +20,37 @@ pytestmark = pytest.mark.filterwarnings(
 directory = path.dirname(path.realpath(__file__))
 
 
-class TestHyperMethods:
-    def test__associate_images(self, masked_imaging_7x7):
+class TestCheckDensity:
 
-        galaxies = af.ModelInstance()
-        galaxies.lens = al.Galaxy(redshift=0.5)
-        galaxies.source = al.Galaxy(redshift=1.0)
+    def test__parallel_and_serial_checks_raise_exception(self, phase_ci_imaging_7x7, ci_imaging_7x7):
+
+        phase_ci_imaging_7x7.meta_dataset.parallel_total_density_range = (1.0, 2.0)
+
+        analysis = phase_ci_imaging_7x7.make_analysis(datasets=[ci_imaging_7x7], cti_settings=None)
 
         instance = af.ModelInstance()
-        instance.galaxies = galaxies
+        instance.parallel_traps = [ac.Trap(density=0.75), ac.Trap(density=0.75)]
 
-        hyper_galaxy_image_path_dict = {
-            ("galaxies", "lens"): al.Array.ones(shape_2d=(3, 3), pixel_scales=1.0),
-            ("galaxies", "source"): al.Array.full(
-                fill_value=2.0, shape_2d=(3, 3), pixel_scales=1.0
-            ),
-        }
+        analysis.check_total_density_within_range(instance=instance)
 
-        results = mock_pipeline.MockResults(
-            instance=instance,
-            hyper_galaxy_image_path_dict=hyper_galaxy_image_path_dict,
-            hyper_model_image=al.Array.full(fill_value=3.0, shape_2d=(3, 3)),
-            use_as_hyper_dataset=True,
-        )
+        instance = af.ModelInstance()
+        instance.parallel_traps = [ac.Trap(density=1.1), ac.Trap(density=1.1)]
 
-        analysis = al.PhaseImaging.Analysis(
-            masked_imaging=masked_imaging_7x7,
-            cosmology=cosmo.Planck15,
-            image_path="files/",
-            results=results,
-        )
+        with pytest.raises(exc.PriorException):
+            analysis.check_total_density_within_range(instance=instance)
 
-        instance = analysis.associate_hyper_images(instance=instance)
+        phase_ci_imaging_7x7.meta_dataset.parallel_total_density_range = None
+        phase_ci_imaging_7x7.meta_dataset.serial_total_density_range = (1.0, 2.0)
 
-        assert instance.galaxies.lens.hyper_galaxy_image.in_2d == pytest.approx(
-            np.ones((3, 3)), 1.0e-4
-        )
-        assert instance.galaxies.source.hyper_galaxy_image.in_2d == pytest.approx(
-            2.0 * np.ones((3, 3)), 1.0e-4
-        )
+        analysis = phase_ci_imaging_7x7.make_analysis(datasets=[ci_imaging_7x7], cti_settings=None)
 
-        assert instance.galaxies.lens.hyper_model_image.in_2d == pytest.approx(
-            3.0 * np.ones((3, 3)), 1.0e-4
-        )
-        assert instance.galaxies.source.hyper_model_image.in_2d == pytest.approx(
-            3.0 * np.ones((3, 3)), 1.0e-4
-        )
+        instance = af.ModelInstance()
+        instance.serial_traps = [ac.Trap(density=0.75), ac.Trap(density=0.75)]
+
+        analysis.check_total_density_within_range(instance=instance)
+
+        instance = af.ModelInstance()
+        instance.serial_traps = [ac.Trap(density=1.1), ac.Trap(density=1.1)]
+
+        with pytest.raises(exc.PriorException):
+            analysis.check_total_density_within_range(instance=instance)
