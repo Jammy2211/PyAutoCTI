@@ -17,13 +17,12 @@ directory = path.dirname(path.realpath(__file__))
 
 
 class TestSetup:
-
     def test__recognises_type_of_fit_correctly(self):
 
         phase_dataset_7x7 = PhaseCIImaging(
             phase_name="test_phase",
             parallel_traps=[ac.Trap],
-            parallel_ccd_volume=ac.CCDVolume
+            parallel_ccd_volume=ac.CCDVolume,
         )
 
         assert phase_dataset_7x7.meta_dataset.is_parallel_fit is True
@@ -33,7 +32,7 @@ class TestSetup:
         phase_dataset_7x7 = PhaseCIImaging(
             phase_name="test_phase",
             serial_traps=[ac.Trap],
-            serial_ccd_volume=ac.CCDVolume
+            serial_ccd_volume=ac.CCDVolume,
         )
 
         assert phase_dataset_7x7.meta_dataset.is_parallel_fit is False
