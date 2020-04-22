@@ -21,12 +21,15 @@ directory = path.dirname(path.realpath(__file__))
 
 
 class TestCheckDensity:
-
-    def test__parallel_and_serial_checks_raise_exception(self, phase_ci_imaging_7x7, ci_imaging_7x7):
+    def test__parallel_and_serial_checks_raise_exception(
+        self, phase_ci_imaging_7x7, ci_imaging_7x7
+    ):
 
         phase_ci_imaging_7x7.meta_dataset.parallel_total_density_range = (1.0, 2.0)
 
-        analysis = phase_ci_imaging_7x7.make_analysis(datasets=[ci_imaging_7x7], cti_settings=None)
+        analysis = phase_ci_imaging_7x7.make_analysis(
+            datasets=[ci_imaging_7x7], cti_settings=None
+        )
 
         instance = af.ModelInstance()
         instance.parallel_traps = [ac.Trap(density=0.75), ac.Trap(density=0.75)]
@@ -42,7 +45,9 @@ class TestCheckDensity:
         phase_ci_imaging_7x7.meta_dataset.parallel_total_density_range = None
         phase_ci_imaging_7x7.meta_dataset.serial_total_density_range = (1.0, 2.0)
 
-        analysis = phase_ci_imaging_7x7.make_analysis(datasets=[ci_imaging_7x7], cti_settings=None)
+        analysis = phase_ci_imaging_7x7.make_analysis(
+            datasets=[ci_imaging_7x7], cti_settings=None
+        )
 
         instance = af.ModelInstance()
         instance.serial_traps = [ac.Trap(density=0.75), ac.Trap(density=0.75)]

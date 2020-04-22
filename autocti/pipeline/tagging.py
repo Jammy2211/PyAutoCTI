@@ -68,7 +68,9 @@ def columns_tag_from_columns(columns):
     if columns == None:
         return ""
     else:
-        return "__col_" + str(int(columns))
+        x0 = str(columns[0])
+        x1 = str(columns[1])
+        return "__columns_(" + x0 + "," + x1 + ")"
 
 
 def rows_tag_from_rows(rows):

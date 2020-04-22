@@ -2,6 +2,7 @@ import autofit as af
 
 from autocti.util import exc
 
+
 def cti_params_for_instance(instance):
     return model.ArcticParams(
         parallel_ccd_volume=instance.parallel_ccd_volume
@@ -50,12 +51,7 @@ class Analysis(af.Analysis):
 
         if self.parallel_total_density_range is not None:
 
-            total_density = sum(
-                [
-                    trap.density
-                    for trap in instance.parallel_traps
-                ]
-            )
+            total_density = sum([trap.density for trap in instance.parallel_traps])
 
             if (
                 total_density < self.parallel_total_density_range[0]
@@ -65,9 +61,7 @@ class Analysis(af.Analysis):
 
         if self.serial_total_density_range is not None:
 
-            total_density = sum(
-                [trap.density for trap in instance.serial_traps]
-            )
+            total_density = sum([trap.density for trap in instance.serial_traps])
 
             if (
                 total_density < self.serial_total_density_range[0]
