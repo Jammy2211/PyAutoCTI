@@ -42,7 +42,7 @@ class PhaseDataset(abstract.AbstractPhase):
         self.serial_traps = serial_traps
         self.serial_ccd_volume = serial_ccd_volume
 
-    def run(self, dataset: Dataset, results=None, info=None, pool=None):
+    def run(self, datasets: Dataset, results=None, info=None, pool=None):
         """
         Run this phase.
 
@@ -72,7 +72,7 @@ class PhaseDataset(abstract.AbstractPhase):
         results = results or af.ResultsCollection()
 
         analysis = self.make_analysis(
-            datasets=dataset, cti_settings=None, results=results
+            datasets=datasets, cti_settings=None, results=results
         )
 
         #    phase_attributes = self.make_phase_attributes(analysis=analysis)

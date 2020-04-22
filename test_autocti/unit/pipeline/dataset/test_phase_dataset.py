@@ -3,7 +3,6 @@ from os import path
 import numpy as np
 import pytest
 
-import arctic as ac
 from autocti import charge_injection as ci
 from autocti.pipeline.phase.extensions import HyperNoisePhase
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
