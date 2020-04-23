@@ -107,20 +107,6 @@ def make_results_collection():
 
 
 class TestPhase(object):
-    def test__hyper_noise_scalar_properties_of_phase(self):
-        phase = ac.PhaseCI(
-            phase_name="test_phase",
-            hyper_noise_scalar_of_ci_regions=ac.CIHyperNoiseScalar,
-            hyper_noise_scalar_of_parallel_trails=ac.CIHyperNoiseScalar,
-        )
-        assert len(phase.hyper_noise_scalars) == 2
-        assert len(phase.model.priors) == 2
-
-        instance = phase.model.instance_from_unit_vector([0.5, 0.5])
-
-        assert instance.hyper_noise_scalar_of_ci_regions == 5.0
-        assert instance.hyper_noise_scalar_of_parallel_trails == 5.0
-
     def test__make_analysis__ci_region_and_serial_trail_scalars___noise_scaling_maps_list_are_setup_correctly(
         self, ci_data
     ):
