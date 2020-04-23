@@ -298,7 +298,7 @@ class MaskedCIImaging(imaging.MaskedImaging):
                 for noise_scaling_map in noise_scaling_maps
             ]
         else:
-            self.noise_scaling_maps_list = None
+            self.noise_scaling_maps = None
 
     @property
     def ci_imaging(self):

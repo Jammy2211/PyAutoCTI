@@ -6,6 +6,8 @@ import pytest
 import autofit as af
 import arctic as ac
 
+import autocti.structures as struct
+import autocti.charge_injection as ci
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 from test_autocti.mock import mock_pipeline
 
@@ -165,58 +167,104 @@ class TestMakeAnalysis:
         ).all()
 
     def test__noise_scaling_maps_are_setup_correctly__ci_regions_and_parallel_trail_scalars(
-        self, ci_data, clocker
+        self, ci_imaging_7x7, ci_pattern_7x7, parallel_clocker
     ):
+
+        ci_imaging_7x7.cosmic_ray_map = None
+
+        noise_scaling_maps_list_of_ci_regions = [
+            ci.CIFrame.ones(
+                shape_2d=(7, 7), pixel_scales=1.0, ci_pattern=ci_pattern_7x7
+            )
+        ]
+        noise_scaling_maps_list_of_parallel_trails = [
+            ci.CIFrame.full(
+                fill_value=2.0,
+                shape_2d=(7, 7),
+                pixel_scales=1.0,
+                ci_pattern=ci_pattern_7x7,
+            )
+        ]
+        noise_scaling_maps_list_of_serial_trails = [
+            ci.CIFrame.full(
+                fill_value=3.0,
+                shape_2d=(7, 7),
+                pixel_scales=1.0,
+                ci_pattern=ci_pattern_7x7,
+            )
+        ]
+        noise_scaling_maps_list_of_serial_overscan_no_trails = [
+            ci.CIFrame.full(
+                fill_value=4.0,
+                shape_2d=(7, 7),
+                pixel_scales=1.0,
+                ci_pattern=ci_pattern_7x7,
+            )
+        ]
 
         phase = PhaseCIImaging(
             parallel_traps=[af.PriorModel(ac.Trap)],
             parallel_ccd_volume=ac.CCDVolume,
+            hyper_noise_scalar_of_ci_regions=ci.CIHyperNoiseScalar,
+            hyper_noise_scalar_of_parallel_trails=ci.CIHyperNoiseScalar,
             phase_name="test_phase",
         )
 
-        # The ci_region is [0, 1, 0, 1], therefore by changing the image at 0,0 to 2.0 there will be a residual of 1.0,
-        # which for a noise_map entry of 2.0 gives a chi squared of 0.25..
-
-        ci_data.image[0, 0] = 2.0
-        ci_data.noise_map[0, 0] = 2.0
-
-        results =
-
         analysis = phase.make_analysis(
-            datasets=[ci_data, ci_data, ci_data, ci_data],
-            clocker=clocker,
-            results=results,
+            datasets=[ci_imaging_7x7],
+            clocker=parallel_clocker,
+            results=mock_pipeline.MockResults(
+                noise_scaling_maps_list_of_ci_regions=noise_scaling_maps_list_of_ci_regions,
+                noise_scaling_maps_list_of_parallel_trails=noise_scaling_maps_list_of_parallel_trails,
+                noise_scaling_maps_list_of_serial_trails=noise_scaling_maps_list_of_serial_trails,
+                noise_scaling_maps_list_of_serial_overscan_no_trails=noise_scaling_maps_list_of_serial_overscan_no_trails,
+            ),
         )
 
+        assert len(analysis.masked_ci_imagings[0].noise_scaling_maps) == 2
+
         assert (
-            analysis.masked_ci_dataset_full[0].noise_scaling_maps[0]
-            == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
+            analysis.masked_ci_imagings[0].noise_scaling_maps[0] == np.ones((7, 7))
         ).all()
 
         assert (
-            analysis.masked_ci_dataset_full[1].noise_scaling_maps[0]
-            == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
+            analysis.masked_ci_imagings[0].noise_scaling_maps[1]
+            == 2.0 * np.ones((7, 7))
+        ).all()
+
+        phase = PhaseCIImaging(
+            parallel_traps=[af.PriorModel(ac.Trap)],
+            parallel_ccd_volume=ac.CCDVolume,
+            hyper_noise_scalar_of_parallel_trails=ci.CIHyperNoiseScalar,
+            hyper_noise_scalar_of_serial_trails=ci.CIHyperNoiseScalar,
+            hyper_noise_scalar_of_serial_overscan_no_trails=ci.CIHyperNoiseScalar,
+            phase_name="test_phase",
+        )
+
+        analysis = phase.make_analysis(
+            datasets=[ci_imaging_7x7],
+            clocker=parallel_clocker,
+            results=mock_pipeline.MockResults(
+                noise_scaling_maps_list_of_ci_regions=noise_scaling_maps_list_of_ci_regions,
+                noise_scaling_maps_list_of_parallel_trails=noise_scaling_maps_list_of_parallel_trails,
+                noise_scaling_maps_list_of_serial_trails=noise_scaling_maps_list_of_serial_trails,
+                noise_scaling_maps_list_of_serial_overscan_no_trails=noise_scaling_maps_list_of_serial_overscan_no_trails,
+            ),
+        )
+
+        assert len(analysis.masked_ci_imagings[0].noise_scaling_maps) == 3
+
+        assert (
+            analysis.masked_ci_imagings[0].noise_scaling_maps[0]
+            == 2.0 * np.ones((7, 7))
         ).all()
 
         assert (
-            analysis.masked_ci_dataset_full[2].noise_scaling_maps[0]
-            == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
+            analysis.masked_ci_imagings[0].noise_scaling_maps[1]
+            == 3.0 * np.ones((7, 7))
         ).all()
 
         assert (
-            analysis.masked_ci_dataset_full[3].noise_scaling_maps[0]
-            == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
-        ).all()
-
-        assert (
-            analysis.masked_ci_dataset_full[0].noise_scaling_maps[1] == np.zeros((3, 3))
-        ).all()
-        assert (
-            analysis.masked_ci_dataset_full[1].noise_scaling_maps[1] == np.zeros((3, 3))
-        ).all()
-        assert (
-            analysis.masked_ci_dataset_full[2].noise_scaling_maps[1] == np.zeros((3, 3))
-        ).all()
-        assert (
-            analysis.masked_ci_dataset_full[3].noise_scaling_maps[1] == np.zeros((3, 3))
+            analysis.masked_ci_imagings[0].noise_scaling_maps[2]
+            == 4.0 * np.ones((7, 7))
         ).all()

@@ -46,10 +46,8 @@ class AbstractPhase(af.AbstractPhase):
 
     def make_result(self, result, analysis):
         return self.Result(
-            constant=result.instance,
-            log_likelihood=result.figure_of_merit,
+            samples=result.samples,
             previous_model=result.previous_model,
-            gaussian_tuples=result.gaussian_tuples,
             analysis=analysis,
             optimizer=self.optimizer,
         )

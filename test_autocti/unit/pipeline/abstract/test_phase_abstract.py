@@ -76,7 +76,7 @@ class TestModel:
 class TestSetup:
 
     # noinspection PyTypeChecker
-    def test_assertion_failure(self, ci_imaging_7x7, mask_7x7):
+    def test_assertion_failure(self, ci_imaging_7x7, mask_7x7, parallel_clocker):
 
         phase_dataset_7x7 = PhaseCIImaging(
             phase_name="phase_name",
@@ -86,20 +86,6 @@ class TestSetup:
         )
 
         result = phase_dataset_7x7.run(
-            dataset=[ci_imaging_7x7], mask=None, results=None
-        )
-        assert result is not None
-
-        phase_dataset_7x7 = al.PhaseImaging(
-            phase_name="phase_name",
-            non_linear_class=mock_pipeline.MockNLO,
-            galaxies=dict(
-                lens=al.Galaxy(light=al.lp.EllipticalLightProfile, redshift=1)
-            ),
-        )
-
-        phase_dataset_7x7.make_analysis = make_analysis
-        result = phase_dataset_7x7.run(
-            dataset=imaging_7x7, results=None, mask=None, positions=None
+            datasets=[ci_imaging_7x7], clocker=parallel_clocker, results=None
         )
         assert result is not None

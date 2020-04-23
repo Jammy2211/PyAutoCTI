@@ -27,21 +27,18 @@ def do_something():
 
 
 class TestGeneric:
-    def test__results_of_phase_are_available_as_properties(
-        self, ci_imaging_7x7, mask_7x7
+    def test__clocker_passed_as_result_correctly(
+        self, ci_imaging_7x7, parallel_clocker
     ):
 
-        phase_dataset_7x7 = PhaseCIImaging(
-            parallel_traps=[ac.Trap],
-            parallel_ccd_volume=ac.CCDVolume,
-            serial_traps=[ac.Trap],
-            serial_ccd_volume=ac.CCDVolume,
-            non_linear_class=af.MultiNest,
-            phase_name="test_phase",
+        phase_ci_imaging_7x7 = PhaseCIImaging(
+            non_linear_class=mock_pipeline.MockNLO, phase_name="test_phase_2"
         )
 
-        result = phase_dataset_7x7.run(
-            dataset=ci_imaging_7x7, mask=mask_7x7, results=mock_pipeline.MockResults()
+        result = phase_ci_imaging_7x7.run(
+            datasets=[ci_imaging_7x7],
+            clocker=parallel_clocker,
+            results=mock_pipeline.MockResults(),
         )
 
-        assert isinstance(result, AbstractPhase.Result)
+        assert result.clocker == parallel_clocker

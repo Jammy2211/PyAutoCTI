@@ -135,8 +135,8 @@ class MetaCIImaging(meta_dataset.MetaDataset):
 
         noise_scaling_maps_list = list(filter(None, noise_scaling_maps_list))
 
-        if noise_scaling_maps_list == []:
-            noise_scaling_maps_list = total_images * [None]
+        if len(noise_scaling_maps_list) == 0:
+            return total_images * [None]
 
         return noise_scaling_maps_list
 

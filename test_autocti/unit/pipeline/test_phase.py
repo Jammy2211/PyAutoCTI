@@ -107,14 +107,6 @@ def make_results_collection():
 
 
 class TestPhase(object):
-    def test__cti_params_for_instance(self):
-
-        instance = af.ModelInstance()
-        instance.parallel_traps = [ac.Trap(trap_density=0.0)]
-        cti_params = ac.cti_params_for_instance(instance)
-
-        assert cti_params.parallel_traps == instance.parallel_traps
-
     def test__hyper_noise_scalar_properties_of_phase(self):
         phase = ac.PhaseCI(
             phase_name="test_phase",
@@ -335,88 +327,3 @@ class MockInstance:
     serial_traps = 3
     serial_ccd_volume = 4
     hyper_noise_scalars = [5]
-
-
-class TestResult(object):
-    # def test__fits_for_instance__uses_ci_data_fit(self, ci_data, clocker):
-    #     parallel_traps = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
-    #     parallel_ccd_volume = ac.CCDVolume(well_notch_depth=0.1, well_fill_alpha=0.5, well_fill_beta=0.5,
-    #                                      well_fill_gamma=0.5)
-    #
-    #     phase = ac.ParallelPhase(parallel_traps=[parallel_traps], parallel_ccd_volume=parallel_ccd_volume, columns=1,
-    #                              phase_name='test_phase')
-    #
-    #     analysis = phase.make_analysis(ci_datas=[ci_data], clocker=clocker)
-    #     instance = phase.model.instance_from_unit_vector([])
-    #
-    #     fits = analysis.fits_of_ci_data_extracted_for_instance(instance=instance)
-    #     assert fits[0].ci_pre_cti.shape == (3, 1)
-    #
-    #     full_fits = analysis.fits_of_ci_data_full_for_instance(instance=instance)
-    #     assert full_fits[0].ci_pre_cti.shape == (3, 3)
-
-    def test__results_of_phase_are_available_as_properties(self, ci_data, clocker):
-        phase = ac.PhaseCI(
-            parallel_traps=[af.PriorModel(ac.Trap)],
-            parallel_ccd_volume=ac.CCDVolume,
-            non_linear_class=NLO,
-            phase_name="test_phase",
-        )
-
-        result = phase.run(ci_datas=[ci_data], clocker=clocker)
-
-        assert hasattr(result, "most_likely_extracted_fits")
-        assert hasattr(result, "most_likely_full_fits")
-        assert hasattr(result, "clocker")
-        assert hasattr(result, "noise_scaling_maps_list_of_ci_regions")
-        assert hasattr(result, "noise_scaling_maps_list_of_parallel_trails")
-        assert hasattr(result, "noise_scaling_maps_list_of_serial_trails")
-        assert hasattr(result, "noise_scaling_maps_list_of_serial_overscan_no_trails")
-
-    def test__clocker_passed_as_result_correctly(self, ci_data, clocker):
-
-        phase = ac.PhaseCI(
-            parallel_traps=[af.PriorModel(ac.Trap)],
-            parallel_ccd_volume=ac.CCDVolume,
-            non_linear_class=NLO,
-            phase_name="test_phase",
-        )
-
-        result = phase.run(ci_datas=[ci_data], clocker=clocker)
-
-        assert result.clocker == clocker
-
-    def test__parallel_phase__noise_scaling_maps_list_of_result__are_correct(
-        self, ci_data, clocker
-    ):
-
-        phase = ac.PhaseCI(
-            parallel_traps=[af.PriorModel(ac.Trap)],
-            parallel_ccd_volume=ac.CCDVolume,
-            non_linear_class=NLO,
-            phase_name="test_phase",
-        )
-
-        # The ci_region is [0, 1, 0, 1], therefore by changing the image at 0,0 to 2.0 there will be a residual of 1.0,
-        # which for a noise_map entry of 2.0 gives a chi squared of 0.25..
-
-        ci_data.image[0, 0] = 2.0
-        ci_data.noise_map[0, 0] = 2.0
-
-        result = phase.run(ci_datas=[ci_data], clocker=clocker)
-
-        assert (
-            result.noise_scaling_maps_list_of_ci_regions[0]
-            == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
-        ).all()
-
-        assert (
-            result.noise_scaling_maps_list_of_parallel_trails[0] == np.zeros((3, 3))
-        ).all()
-        assert (
-            result.noise_scaling_maps_list_of_serial_trails[0] == np.zeros((3, 3))
-        ).all()
-        assert (
-            result.noise_scaling_maps_list_of_serial_overscan_no_trails[0]
-            == np.zeros((3, 3))
-        ).all()
