@@ -56,9 +56,9 @@ class DummyPhase(af.AbstractPhase):
 
         self.optimizer = Optimizer(phase_name)
 
-    def run(self, ci_datas, cti_settings, results, pool):
+    def run(self, ci_datas, clocker, results, pool):
         self.ci_datas = ci_datas
-        self.cti_settings = cti_settings
+        self.clocker = clocker
         self.results = results
         self.pool = pool
         return af.Result(af.ModelInstance(), 1)
@@ -70,7 +70,7 @@ class TestPipeline(object):
         phase_2 = DummyPhase(phase_name="dummy2")
         pipeline = ac.Pipeline("", phase_1, phase_2)
 
-        pipeline.run(ci_datas=None, cti_settings=None, pool=None)
+        pipeline.run(ci_datas=None, clocker=None, pool=None)
 
         assert len(phase_1.results) == 2
         assert len(phase_2.results) == 2

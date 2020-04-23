@@ -3,23 +3,6 @@ import autofit as af
 from autocti.util import exc
 
 
-def cti_params_for_instance(instance):
-    return model.ArcticParams(
-        parallel_ccd_volume=instance.parallel_ccd_volume
-        if hasattr(instance, "parallel_ccd_volume")
-        else None,
-        parallel_traps=instance.parallel_traps
-        if hasattr(instance, "parallel_traps")
-        else None,
-        serial_ccd_volume=instance.serial_ccd_volume
-        if hasattr(instance, "serial_ccd_volume")
-        else None,
-        serial_traps=instance.serial_traps
-        if hasattr(instance, "serial_traps")
-        else None,
-    )
-
-
 class ConsecutivePool(object):
     """
     Replicates the interface of a multithread pool but performs computations consecutively
@@ -34,7 +17,7 @@ class Analysis(af.Analysis):
     def __init__(
         self,
         masked_ci_datasets,
-        cti_settings,
+        clocker,
         serial_total_density_range,
         parallel_total_density_range,
         results=None,
@@ -42,7 +25,7 @@ class Analysis(af.Analysis):
     ):
 
         self.masked_ci_datasets = masked_ci_datasets
-        self.cti_settings = cti_settings
+        self.clocker = clocker
         self.parallel_total_density_range = parallel_total_density_range
         self.serial_total_density_range = serial_total_density_range
         self.pool = pool or ConsecutivePool

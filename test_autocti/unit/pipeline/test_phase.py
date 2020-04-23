@@ -65,8 +65,8 @@ def make_phase():
     )
 
 
-@pytest.fixture(name="cti_settings")
-def make_cti_settings():
+@pytest.fixture(name="clocker")
+def make_clocker():
     parallel_settings = ac.Settings(well_depth=0, niter=1, express=1, n_levels=2000)
     return ac.ArcticSettings(neomode="NEO", parallel=parallel_settings)
 
@@ -107,151 +107,6 @@ def make_results_collection():
 
 
 class TestPhase(object):
-    def test__param_names(self):
-
-        phase = ac.PhaseCI(phase_name="test_phase", non_linear_class=NLO)
-
-        phase.parallel_traps = [af.PriorModel(ac.Trap), af.PriorModel(ac.Trap)]
-
-        assert phase.optimizer.model.param_names == [
-            "parallel_traps_0_trap_density",
-            "parallel_traps_0_trap_lifetime",
-            "parallel_traps_1_trap_density",
-            "parallel_traps_1_trap_lifetime",
-        ]
-
-        phase = ac.PhaseCI(
-            phase_name="test_phase",
-            parallel_traps=[af.PriorModel(ac.Trap), af.PriorModel(ac.Trap)],
-            non_linear_class=NLO,
-        )
-
-        assert phase.optimizer.model.param_names == [
-            "parallel_traps_0_trap_density",
-            "parallel_traps_0_trap_lifetime",
-            "parallel_traps_1_trap_density",
-            "parallel_traps_1_trap_lifetime",
-        ]
-
-    def test__make_analysis(self, phase, ci_data, cti_settings):
-        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
-        assert analysis.last_results is None
-        assert (analysis.masked_ci_dataset_extracted[0].image == ci_data.image).all()
-        assert (
-            analysis.masked_ci_dataset_extracted[0].noise_map == ci_data.noise_map
-        ).all()
-        assert (analysis.masked_ci_dataset_full[0].image == ci_data.image).all()
-        assert (analysis.masked_ci_dataset_full[0].noise_map == ci_data.noise_map).all()
-        assert analysis.cti_settings == cti_settings
-
-    def test__customize_constant(self, results, ci_data, cti_settings):
-        class MyPhaseCI(ac.PhaseCI):
-            def customize_priors(self, previous_results):
-                self.parallel_traps = previous_results.last.instance.parallel_traps
-
-        parallel = ac.Trap()
-
-        setattr(results.instance, "parallel_traps", [parallel])
-
-        results_collection = af.ResultsCollection()
-        results_collection.add("first_phase", results)
-
-        phase = MyPhaseCI(
-            phase_name="test_phase", non_linear_class=NLO, parallel_traps=[parallel]
-        )
-        phase.make_analysis([ci_data], cti_settings, results=results_collection)
-
-        assert phase.parallel_traps == [parallel]
-
-    # noinspection PyUnresolvedReferences
-    def test__data_extractors(self, ci_data):
-
-        phase = ac.PhaseCI(
-            phase_name="test_phase",
-            parallel_traps=[ac.Trap],
-            parallel_ccd_volume=ac.CCDVolume,
-            non_linear_class=NLO,
-        )
-
-        ci_datas_masked = phase.masked_ci_dataset_extracted_from_ci_data(
-            ci_data, ac.Mask.unmasked(shape_2d=ci_data.image.shape_2d)
-        )
-
-        assert isinstance(ci_datas_masked, ac.MaskedCIImaging)
-        assert (ci_data.image == ci_datas_masked_image).all()
-        assert (ci_data.noise_map == ci_datas_masked.noise_map).all()
-        assert (ci_data.ci_pre_cti == ci_datas_masked.ci_pre_cti).all()
-
-        phase = ac.PhaseCI(
-            phase_name="test_phase",
-            parallel_traps=[ac.Trap],
-            parallel_ccd_volume=ac.CCDVolume,
-            columns=1,
-            non_linear_class=NLO,
-        )
-
-        ci_datas_masked = phase.masked_ci_dataset_extracted_from_ci_data(
-            ci_data, ac.Mask.unmasked(shape_2d=ci_data.image.shape_2d)
-        )
-
-        assert isinstance(ci_datas_masked, ac.MaskedCIImaging)
-        assert (ci_data.image[:, 0] == ci_datas_masked_image).all()
-        assert (ci_data.noise_map[:, 0] == ci_datas_masked.noise_map).all()
-        assert (ci_data.ci_pre_cti[:, 0] == ci_datas_masked.ci_pre_cti).all()
-
-        phase = ac.PhaseCI(
-            phase_name="test_phase",
-            serial_traps=[ac.Trap],
-            serial_ccd_volume=ac.CCDVolume,
-            non_linear_class=NLO,
-        )
-
-        ci_datas_masked = phase.masked_ci_dataset_extracted_from_ci_data(
-            ci_data, ac.Mask.unmasked(shape_2d=ci_data.image.shape_2d)
-        )
-
-        assert isinstance(ci_datas_masked, ac.MaskedCIImaging)
-        assert (ci_data.image == ci_datas_masked_image).all()
-        assert (ci_data.noise_map == ci_datas_masked.noise_map).all()
-        assert (ci_data.ci_pre_cti == ci_datas_masked.ci_pre_cti).all()
-
-        phase = ac.PhaseCI(
-            phase_name="test_phase",
-            serial_traps=[ac.Trap],
-            serial_ccd_volume=ac.CCDVolume,
-            rows=(0, 1),
-            non_linear_class=NLO,
-        )
-
-        ci_datas_masked = phase.masked_ci_dataset_extracted_from_ci_data(
-            ci_data, ac.Mask.unmasked(shape_2d=ci_data.image.shape_2d)
-        )
-
-        assert isinstance(ci_datas_masked, ac.MaskedCIImaging)
-        assert (ci_data.image[0, :] == ci_datas_masked_image).all()
-        assert (ci_data.noise_map[0, :] == ci_datas_masked.noise_map).all()
-        assert (ci_data.ci_pre_cti[0, :] == ci_datas_masked.ci_pre_cti).all()
-
-        phase = ac.PhaseCI(
-            phase_name="test_phase",
-            parallel_traps=[ac.Trap],
-            parallel_ccd_volume=ac.CCDVolume,
-            serial_traps=[ac.Trap],
-            serial_ccd_volume=ac.CCDVolume,
-            columns=1,
-            rows=(0, 1),
-            non_linear_class=NLO,
-        )
-
-        ci_datas_masked = phase.masked_ci_dataset_extracted_from_ci_data(
-            ci_data, ac.Mask.unmasked(shape_2d=ci_data.image.shape_2d)
-        )
-
-        assert isinstance(ci_datas_masked, ac.MaskedCIImaging)
-        assert (ci_data.image == ci_datas_masked_image).all()
-        assert (ci_data.noise_map == ci_datas_masked.noise_map).all()
-        assert (ci_data.ci_pre_cti == ci_datas_masked.ci_pre_cti).all()
-
     def test__cti_params_for_instance(self):
 
         instance = af.ModelInstance()
@@ -274,87 +129,12 @@ class TestPhase(object):
         assert instance.hyper_noise_scalar_of_ci_regions == 5.0
         assert instance.hyper_noise_scalar_of_parallel_trails == 5.0
 
-    def test__make_analysis__ci_regions_and_parallel_trail_scalars__noise_scaling_maps_list_are_setup_correctly(
-        self, ci_data, cti_settings
-    ):
-
-        phase = ac.PhaseCI(
-            parallel_traps=[af.PriorModel(ac.Trap)],
-            parallel_ccd_volume=ac.CCDVolume,
-            non_linear_class=NLO,
-            phase_name="test_phase",
-        )
-
-        # The ci_region is [0, 1, 0, 1], therefore by changing the image at 0,0 to 2.0 there will be a residual of 1.0,
-        # which for a noise_map entry of 2.0 gives a chi squared of 0.25..
-
-        ci_data.image[0, 0] = 2.0
-        ci_data.noise_map[0, 0] = 2.0
-
-        result = phase.run(
-            ci_datas=[ci_data, ci_data, ci_data, ci_data], cti_settings=cti_settings
-        )
-
-        class Results(object):
-            def __init__(self, last):
-                self.last = last
-
-        results = Results(last=result)
-
-        phase2 = ac.PhaseCI(
-            phase_name="test_phase_2",
-            parallel_traps=[af.PriorModel(ac.Trap)],
-            parallel_ccd_volume=ac.CCDVolume,
-            hyper_noise_scalar_of_ci_regions=ac.CIHyperNoiseScalar,
-            hyper_noise_scalar_of_parallel_trails=ac.CIHyperNoiseScalar,
-            non_linear_class=NLO,
-        )
-
-        analysis = phase2.make_analysis(
-            datasets=[ci_data, ci_data, ci_data, ci_data],
-            cti_settings=cti_settings,
-            results=results,
-        )
-
-        assert (
-            analysis.masked_ci_dataset_full[0].noise_scaling_maps[0]
-            == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
-        ).all()
-
-        assert (
-            analysis.masked_ci_dataset_full[1].noise_scaling_maps[0]
-            == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
-        ).all()
-
-        assert (
-            analysis.masked_ci_dataset_full[2].noise_scaling_maps[0]
-            == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
-        ).all()
-
-        assert (
-            analysis.masked_ci_dataset_full[3].noise_scaling_maps[0]
-            == np.array([[0.25, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
-        ).all()
-
-        assert (
-            analysis.masked_ci_dataset_full[0].noise_scaling_maps[1] == np.zeros((3, 3))
-        ).all()
-        assert (
-            analysis.masked_ci_dataset_full[1].noise_scaling_maps[1] == np.zeros((3, 3))
-        ).all()
-        assert (
-            analysis.masked_ci_dataset_full[2].noise_scaling_maps[1] == np.zeros((3, 3))
-        ).all()
-        assert (
-            analysis.masked_ci_dataset_full[3].noise_scaling_maps[1] == np.zeros((3, 3))
-        ).all()
-
     def test__make_analysis__ci_region_and_serial_trail_scalars___noise_scaling_maps_list_are_setup_correctly(
         self, ci_data
     ):
 
         serial_settings = ac.Settings(well_depth=0, niter=1, express=1, n_levels=2000)
-        cti_settings = ac.ArcticSettings(neomode="NEO", serial=serial_settings)
+        clocker = ac.ArcticSettings(neomode="NEO", serial=serial_settings)
 
         phase = ac.PhaseCI(
             serial_traps=[af.PriorModel(ac.Trap)],
@@ -370,7 +150,7 @@ class TestPhase(object):
         ci_data.noise_map[0, 0] = 2.0
 
         result = phase.run(
-            ci_datas=[ci_data, ci_data, ci_data, ci_data], cti_settings=cti_settings
+            ci_datas=[ci_data, ci_data, ci_data, ci_data], clocker=clocker
         )
 
         class Results(object):
@@ -390,7 +170,7 @@ class TestPhase(object):
 
         analysis = phase2.make_analysis(
             datasets=[ci_data, ci_data, ci_data, ci_data],
-            cti_settings=cti_settings,
+            clocker=clocker,
             results=results,
         )
 
@@ -433,7 +213,7 @@ class TestPhase(object):
 
         parallel_settings = ac.Settings(well_depth=0, niter=1, express=1, n_levels=2000)
         serial_settings = ac.Settings(well_depth=0, niter=1, express=1, n_levels=2000)
-        cti_settings = ac.ArcticSettings(
+        clocker = ac.ArcticSettings(
             neomode="NEO", parallel=parallel_settings, serial=serial_settings
         )
 
@@ -453,7 +233,7 @@ class TestPhase(object):
         ci_data.noise_map[0, 0] = 2.0
 
         result = phase.run(
-            ci_datas=[ci_data, ci_data, ci_data, ci_data], cti_settings=cti_settings
+            ci_datas=[ci_data, ci_data, ci_data, ci_data], clocker=clocker
         )
 
         class Results(object):
@@ -477,7 +257,7 @@ class TestPhase(object):
 
         analysis = phase2.make_analysis(
             datasets=[ci_data, ci_data, ci_data, ci_data],
-            cti_settings=cti_settings,
+            clocker=clocker,
             results=results,
         )
 
@@ -558,7 +338,7 @@ class MockInstance:
 
 
 class TestResult(object):
-    # def test__fits_for_instance__uses_ci_data_fit(self, ci_data, cti_settings):
+    # def test__fits_for_instance__uses_ci_data_fit(self, ci_data, clocker):
     #     parallel_traps = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
     #     parallel_ccd_volume = ac.CCDVolume(well_notch_depth=0.1, well_fill_alpha=0.5, well_fill_beta=0.5,
     #                                      well_fill_gamma=0.5)
@@ -566,7 +346,7 @@ class TestResult(object):
     #     phase = ac.ParallelPhase(parallel_traps=[parallel_traps], parallel_ccd_volume=parallel_ccd_volume, columns=1,
     #                              phase_name='test_phase')
     #
-    #     analysis = phase.make_analysis(ci_datas=[ci_data], cti_settings=cti_settings)
+    #     analysis = phase.make_analysis(ci_datas=[ci_data], clocker=clocker)
     #     instance = phase.model.instance_from_unit_vector([])
     #
     #     fits = analysis.fits_of_ci_data_extracted_for_instance(instance=instance)
@@ -575,44 +355,7 @@ class TestResult(object):
     #     full_fits = analysis.fits_of_ci_data_full_for_instance(instance=instance)
     #     assert full_fits[0].ci_pre_cti.shape == (3, 3)
 
-    def test__fit_figure_of_merit__matches_correct_fit_given_galaxy_profiles(
-        self, ci_data, cti_settings
-    ):
-
-        parallel_traps = ac.Trap(trap_density=0.1, trap_lifetime=1.0)
-        parallel_ccd_volume = ac.CCDVolume(
-            well_notch_depth=0.1,
-            well_fill_alpha=0.5,
-            well_fill_beta=0.5,
-            well_fill_gamma=0.5,
-        )
-
-        phase = ac.PhaseCI(
-            parallel_traps=[parallel_traps],
-            parallel_ccd_volume=parallel_ccd_volume,
-            non_linear_class=NLO,
-            phase_name="test_phase",
-        )
-
-        analysis = phase.make_analysis(datasets=[ci_data], cti_settings=cti_settings)
-        instance = phase.model.instance_from_unit_vector([])
-        cti_params = ac.cti_params_for_instance(instance=instance)
-        fit_figure_of_merit = analysis.fit(instance=instance)
-
-        mask = phase.mask_function(shape=ci_data.image.shape)
-        ci_datas_masked = [
-            phase.masked_ci_dataset_extracted_from_ci_data(ci_data=d, mask=mask)
-            for d, mask in zip([ci_data], [mask])
-        ]
-        fit = ac.CIFitImaging(
-            masked_ci_imaging=ci_datas_masked[0],
-            cti_params=cti_params,
-            cti_settings=cti_settings,
-        )
-
-        assert fit.log_likelihood == fit_figure_of_merit
-
-    def test__results_of_phase_are_available_as_properties(self, ci_data, cti_settings):
+    def test__results_of_phase_are_available_as_properties(self, ci_data, clocker):
         phase = ac.PhaseCI(
             parallel_traps=[af.PriorModel(ac.Trap)],
             parallel_ccd_volume=ac.CCDVolume,
@@ -620,17 +363,17 @@ class TestResult(object):
             phase_name="test_phase",
         )
 
-        result = phase.run(ci_datas=[ci_data], cti_settings=cti_settings)
+        result = phase.run(ci_datas=[ci_data], clocker=clocker)
 
         assert hasattr(result, "most_likely_extracted_fits")
         assert hasattr(result, "most_likely_full_fits")
-        assert hasattr(result, "cti_settings")
+        assert hasattr(result, "clocker")
         assert hasattr(result, "noise_scaling_maps_list_of_ci_regions")
         assert hasattr(result, "noise_scaling_maps_list_of_parallel_trails")
         assert hasattr(result, "noise_scaling_maps_list_of_serial_trails")
         assert hasattr(result, "noise_scaling_maps_list_of_serial_overscan_no_trails")
 
-    def test__cti_settings_passed_as_result_correctly(self, ci_data, cti_settings):
+    def test__clocker_passed_as_result_correctly(self, ci_data, clocker):
 
         phase = ac.PhaseCI(
             parallel_traps=[af.PriorModel(ac.Trap)],
@@ -639,12 +382,12 @@ class TestResult(object):
             phase_name="test_phase",
         )
 
-        result = phase.run(ci_datas=[ci_data], cti_settings=cti_settings)
+        result = phase.run(ci_datas=[ci_data], clocker=clocker)
 
-        assert result.cti_settings == cti_settings
+        assert result.clocker == clocker
 
     def test__parallel_phase__noise_scaling_maps_list_of_result__are_correct(
-        self, ci_data, cti_settings
+        self, ci_data, clocker
     ):
 
         phase = ac.PhaseCI(
@@ -660,7 +403,7 @@ class TestResult(object):
         ci_data.image[0, 0] = 2.0
         ci_data.noise_map[0, 0] = 2.0
 
-        result = phase.run(ci_datas=[ci_data], cti_settings=cti_settings)
+        result = phase.run(ci_datas=[ci_data], clocker=clocker)
 
         assert (
             result.noise_scaling_maps_list_of_ci_regions[0]

@@ -30,9 +30,9 @@ class PhaseCIImaging(dataset.PhaseDataset):
         self,
         paths,
         *,
-        parallel_traps=(),
+        parallel_traps=None,
         parallel_ccd_volume=None,
-        serial_traps=(),
+        serial_traps=None,
         serial_ccd_volume=None,
         hyper_noise_scalar_of_ci_regions=None,
         hyper_noise_scalar_of_parallel_trails=None,
@@ -113,14 +113,14 @@ class PhaseCIImaging(dataset.PhaseDataset):
             cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer,
         )
 
-    def make_analysis(self, datasets, cti_settings, results=None, pool=None):
+    def make_analysis(self, datasets, clocker, results=None, pool=None):
         """
         Create an analysis object. Also calls the prior passing and image modifying functions to allow child classes to
         change the behaviour of the phase.
 
         Parameters
         ----------
-        cti_settings
+        clocker
         datasets
         pool
         results: [Results]
@@ -154,7 +154,7 @@ class PhaseCIImaging(dataset.PhaseDataset):
 
         return Analysis(
             masked_ci_imagings=masked_ci_datasets,
-            cti_settings=cti_settings,
+            clocker=clocker,
             parallel_total_density_range=self.meta_dataset.parallel_total_density_range,
             serial_total_density_range=self.meta_dataset.serial_total_density_range,
             results=results,

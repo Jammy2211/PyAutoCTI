@@ -18,9 +18,9 @@ class PhaseDataset(abstract.AbstractPhase):
     def __init__(
         self,
         paths,
-        parallel_traps=(),
+        parallel_traps=None,
         parallel_ccd_volume=None,
-        serial_traps=(),
+        serial_traps=None,
         serial_ccd_volume=None,
         non_linear_class=af.MultiNest,
     ):
@@ -71,9 +71,7 @@ class PhaseDataset(abstract.AbstractPhase):
 
         results = results or af.ResultsCollection()
 
-        analysis = self.make_analysis(
-            datasets=datasets, cti_settings=None, results=results
-        )
+        analysis = self.make_analysis(datasets=datasets, clocker=None, results=results)
 
         #    phase_attributes = self.make_phase_attributes(analysis=analysis)
         #    self.save_phase_attributes(phase_attributes=phase_attributes)

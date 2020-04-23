@@ -19,7 +19,7 @@ parallel_settings = ac.Settings(
     charge_injection_mode=False,
     readout_offset=0,
 )
-cti_settings = ac.ArcticSettings(parallel=parallel_settings)
+clocker = ac.ArcticSettings(parallel=parallel_settings)
 
 
 def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
@@ -50,4 +50,4 @@ if __name__ == "__main__":
 
     import sys
 
-    runner.run(sys.modules[__name__], cti_settings=cti_settings)
+    runner.run(sys.modules[__name__], clocker=clocker)

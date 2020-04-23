@@ -19,7 +19,7 @@ class CIFitImaging(fit.FitImaging):
             The charge injection image that is fitted.
         cti_params : arctic_params.ArcticParams
             The cti model parameters which describe how CTI during clocking.
-        cti_settings : arctic_settings.ArcticSettings
+        clocker : arctic_settings.ArcticSettings
             The settings that control how arctic models CTI.
         hyper_noise_scalars :
             The ci_hyper-parameter(s) which the noise_scaling_maps_list is multiplied by to scale the noise map.
