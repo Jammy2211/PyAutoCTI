@@ -57,8 +57,8 @@ class MostLikelyFit(object):
 
 
 class MockResult(object):
-    def __init__(self, most_likely_fit=None):
-        self.most_likely_fit = most_likely_fit
+    def __init__(self, max_log_likelihood_fit=None):
+        self.max_log_likelihood_fit = max_log_likelihood_fit
         self.analysis = MockAnalysis()
         self.model = af.ModelMapper()
         self.clocker = None

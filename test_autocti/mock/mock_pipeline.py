@@ -4,31 +4,61 @@ import autofit as af
 import autocti as al
 
 
+class MockSamples:
+    def __init__(self, max_log_likelihood_instance=None):
+
+        self._max_log_likelihood_instance = max_log_likelihood_instance
+
+    @property
+    def max_log_likelihood_instance(self):
+
+        if self._max_log_likelihood_instance is not None:
+            return self._max_log_likelihood_instance
+
+        return af.ModelInstance()
+
+
 class MockResult:
     def __init__(
         self,
+        samples=None,
         instance=None,
-        log_likelihood=None,
         model=None,
         analysis=None,
         optimizer=None,
         mask=None,
         model_image=None,
+        noise_scaling_maps_list_of_ci_regions=None,
+        noise_scaling_maps_list_of_parallel_trails=None,
+        noise_scaling_maps_list_of_serial_trails=None,
+        noise_scaling_maps_list_of_serial_overscan_no_trails=None,
         use_as_hyper_dataset=False,
     ):
-        self.instance = instance
-        self.log_likelihood = log_likelihood
-        self.model = model
+
+        self.instance = instance or af.ModelInstance()
+        self.model = model or af.ModelMapper()
+        self.samples = samples or MockSamples(max_log_likelihood_instance=self.instance)
+
         self.previous_model = model
         self.gaussian_tuples = None
         self.mask_2d = None
         self.positions = None
         self.mask_2d = mask
         self.model_image = model_image
-        self.instance = instance or af.ModelInstance()
-        self.model = af.ModelMapper()
         self.analysis = analysis
         self.optimizer = optimizer
+        self.noise_scaling_maps_list_of_ci_regions = (
+            noise_scaling_maps_list_of_ci_regions
+        )
+        self.noise_scaling_maps_list_of_parallel_trails = (
+            noise_scaling_maps_list_of_parallel_trails
+        )
+        self.noise_scaling_maps_list_of_serial_trails = (
+            noise_scaling_maps_list_of_serial_trails
+        )
+        self.noise_scaling_maps_list_of_serial_overscan_no_trails = (
+            noise_scaling_maps_list_of_serial_overscan_no_trails
+        )
         self.hyper_combined = MockHyperCombinedPhase()
         self.use_as_hyper_dataset = use_as_hyper_dataset
 
@@ -40,13 +70,17 @@ class MockResult:
 class MockResults(af.ResultsCollection):
     def __init__(
         self,
+        samples=None,
         instance=None,
-        log_likelihood=None,
+        model=None,
         analysis=None,
         optimizer=None,
-        model=None,
         mask=None,
         model_image=None,
+        noise_scaling_maps_list_of_ci_regions=None,
+        noise_scaling_maps_list_of_parallel_trails=None,
+        noise_scaling_maps_list_of_serial_trails=None,
+        noise_scaling_maps_list_of_serial_overscan_no_trails=None,
         use_as_hyper_dataset=False,
     ):
         """
@@ -57,13 +91,17 @@ class MockResults(af.ResultsCollection):
         super().__init__()
 
         result = MockResult(
+            samples=samples,
             instance=instance,
-            log_likelihood=log_likelihood,
+            model=model,
             analysis=analysis,
             optimizer=optimizer,
-            model=model,
             mask=mask,
             model_image=model_image,
+            noise_scaling_maps_list_of_ci_regions=noise_scaling_maps_list_of_ci_regions,
+            noise_scaling_maps_list_of_parallel_trails=noise_scaling_maps_list_of_parallel_trails,
+            noise_scaling_maps_list_of_serial_trails=noise_scaling_maps_list_of_serial_trails,
+            noise_scaling_maps_list_of_serial_overscan_no_trails=noise_scaling_maps_list_of_serial_overscan_no_trails,
             use_as_hyper_dataset=use_as_hyper_dataset,
         )
 
@@ -118,7 +156,7 @@ class MockNLO(af.NonLinearOptimizer):
                 instance = self.instance_from_vector(vector)
 
                 log_likelihood = analysis.fit(instance)
-                self.result = MockResult(instance, log_likelihood)
+                self.result = MockResult(instance=instance)
 
                 # Return Chi squared
                 return -2 * log_likelihood
@@ -128,10 +166,5 @@ class MockNLO(af.NonLinearOptimizer):
 
         return fitness_function.result
 
-    def samples_from_model(self, model, paths):
-        return MockOutput()
-
-
-class MockOutput:
-    def __init__(self):
-        pass
+    def samples_from_model(self, model):
+        return MockSamples()

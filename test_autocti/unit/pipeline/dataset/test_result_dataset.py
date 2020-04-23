@@ -17,15 +17,21 @@ directory = path.dirname(path.realpath(__file__))
 
 
 class TestResult:
-    def test__results_of_phase_are_available_as_properties(self, ci_imaging_7x7):
+    def test__results_of_phase_are_available_as_properties(
+        self, ci_imaging_7x7, parallel_clocker
+    ):
+
+        ci_imaging_7x7.cosmic_ray_map = None
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             non_linear_class=mock_pipeline.MockNLO, phase_name="test_phase_2"
         )
 
         result = phase_ci_imaging_7x7.run(
-            datasets=[ci_imaging_7x7], results=mock_pipeline.MockResults()
+            datasets=[ci_imaging_7x7],
+            clocker=parallel_clocker,
+            results=mock_pipeline.MockResults(),
         )
 
         assert isinstance(result, Result)
-        assert (result.mask == np.full(fill_value=False, shape=(7, 7))).all()
+        assert (result.masks[0] == np.full(fill_value=False, shape=(7, 7))).all()

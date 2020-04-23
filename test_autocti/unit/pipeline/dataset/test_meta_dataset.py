@@ -1,11 +1,9 @@
 from os import path
 
-import numpy as np
 import pytest
 import arctic as ac
 
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
-from test_autocti.mock import mock_pipeline
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of "
