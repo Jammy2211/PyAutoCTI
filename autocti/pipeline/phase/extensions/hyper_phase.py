@@ -100,10 +100,7 @@ class HyperPhase(object):
         )
 
         result = self.phase.run(
-            ci_datas=ci_datas,
-            cti_settings=results.last.cti_settings,
-            results=results,
-            **kwargs
+            ci_datas=ci_datas, clocker=results.last.clocker, results=results, **kwargs
         )
         results.add(self.phase.phase_name, result)
         hyper_result = self.run_hyper(ci_data=ci_datas, results=results, **kwargs)

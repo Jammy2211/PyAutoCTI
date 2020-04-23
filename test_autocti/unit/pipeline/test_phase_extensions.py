@@ -61,7 +61,7 @@ class MockResult(object):
         self.most_likely_fit = most_likely_fit
         self.analysis = MockAnalysis()
         self.model = af.ModelMapper()
-        self.cti_settings = None
+        self.clocker = None
 
 
 class MockAnalysis(object):

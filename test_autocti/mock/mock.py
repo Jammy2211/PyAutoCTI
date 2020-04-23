@@ -19,7 +19,7 @@ class MockFrameGeometry(object):
     def __init__(self, value=1.0):
         self.value = value
 
-    def add_cti(self, image, cti_params, cti_settings):
+    def add_cti(self, image, cti_params, clocker):
         return self.value * np.ones((2, 2))
 
 
@@ -79,7 +79,7 @@ class MockCIPreCTI(np.ndarray):
         ci.value = value
         return ci
 
-    def ci_post_cti_from_cti_params_and_settings(self, cti_params, cti_settings):
+    def ci_post_cti_from_cti_params_and_settings(self, cti_params, clocker):
         return self.value * np.ones((2, 2))
 
 

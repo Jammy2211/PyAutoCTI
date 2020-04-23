@@ -353,7 +353,7 @@ class SimulatorCIImaging:
             The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
         cti_params : ArcticParams.ArcticParams
             The CTI model parameters (trap density, trap lifetimes etc.).
-        cti_settings : ArcticSettings.ArcticSettings
+        clocker : ArcticSettings.ArcticSettings
             The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
         read_noise : None or float
             The FWHM of the Gaussian read-noises added to the image.

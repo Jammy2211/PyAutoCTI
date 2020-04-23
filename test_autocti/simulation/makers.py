@@ -22,7 +22,7 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(
     ci_data_resolution,
     pattern,
     cti_params,
-    cti_settings,
+    clocker,
     read_noise=1.0,
     cosmic_ray_map=None,
 ):
@@ -40,7 +40,7 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(
         ci_pre_cti=ci_pre_cti,
         frame_geometry=frame_geometry,
         ci_pattern=pattern,
-        cti_settings=cti_settings,
+        clocker=clocker,
         cti_params=cti_params,
         read_noise=read_noise,
         cosmic_ray_map=cosmic_ray_map,
@@ -90,7 +90,7 @@ def make_ci_uniform_parallel_x1_species(data_resolutions, normalizations):
         charge_injection_mode=False,
         readout_offset=0,
     )
-    cti_settings = ac.ArcticSettings(parallel=parallel_settings)
+    clocker = ac.ArcticSettings(parallel=parallel_settings)
 
     for data_resolution in data_resolutions:
         for normalization in normalizations:
@@ -108,7 +108,7 @@ def make_ci_uniform_parallel_x1_species(data_resolutions, normalizations):
                 ci_data_resolution=data_resolution,
                 pattern=pattern,
                 cti_params=cti_params,
-                cti_settings=cti_settings,
+                clocker=clocker,
             )
 
 
@@ -136,7 +136,7 @@ def make_ci_uniform_serial_x1_species(data_resolutions, normalizations):
         charge_injection_mode=False,
         readout_offset=0,
     )
-    cti_settings = ac.ArcticSettings(serial=serial_settings)
+    clocker = ac.ArcticSettings(serial=serial_settings)
 
     for data_resolution in data_resolutions:
         for normalization in normalizations:
@@ -154,7 +154,7 @@ def make_ci_uniform_serial_x1_species(data_resolutions, normalizations):
                 ci_data_resolution=data_resolution,
                 pattern=pattern,
                 cti_params=cti_params,
-                cti_settings=cti_settings,
+                clocker=clocker,
             )
 
 
@@ -204,7 +204,7 @@ def make_ci_uniform_parallel_x1__serial_x1_species(data_resolutions, normalizati
         readout_offset=0,
     )
 
-    cti_settings = ac.ArcticSettings(parallel=parallel_settings, serial=serial_settings)
+    clocker = ac.ArcticSettings(parallel=parallel_settings, serial=serial_settings)
 
     for data_resolution in data_resolutions:
         for normalization in normalizations:
@@ -222,7 +222,7 @@ def make_ci_uniform_parallel_x1__serial_x1_species(data_resolutions, normalizati
                 ci_data_resolution=data_resolution,
                 pattern=pattern,
                 cti_params=cti_params,
-                cti_settings=cti_settings,
+                clocker=clocker,
             )
 
 
@@ -253,7 +253,7 @@ def make_ci_uniform_parallel_x3_species(data_resolutions, normalizations):
         charge_injection_mode=False,
         readout_offset=0,
     )
-    cti_settings = ac.ArcticSettings(parallel=parallel_settings)
+    clocker = ac.ArcticSettings(parallel=parallel_settings)
 
     for data_resolution in data_resolutions:
         for normalization in normalizations:
@@ -270,7 +270,7 @@ def make_ci_uniform_parallel_x3_species(data_resolutions, normalizations):
                 ci_data_resolution=data_resolution,
                 pattern=pattern,
                 cti_params=cti_params,
-                cti_settings=cti_settings,
+                clocker=clocker,
             )
 
 
@@ -301,7 +301,7 @@ def make_ci_uniform_serial_x3_species(data_resolutions, normalizations):
         charge_injection_mode=False,
         readout_offset=0,
     )
-    cti_settings = ac.ArcticSettings(serial=serial_settings)
+    clocker = ac.ArcticSettings(serial=serial_settings)
 
     for data_resolution in data_resolutions:
         for normalization in normalizations:
@@ -318,7 +318,7 @@ def make_ci_uniform_serial_x3_species(data_resolutions, normalizations):
                 ci_data_resolution=data_resolution,
                 pattern=pattern,
                 cti_params=cti_params,
-                cti_settings=cti_settings,
+                clocker=clocker,
             )
 
 
@@ -372,7 +372,7 @@ def make_ci_uniform_parallel_x3__serial_x3_species(data_resolutions, normalizati
         readout_offset=0,
     )
 
-    cti_settings = ac.ArcticSettings(parallel=parallel_settings, serial=serial_settings)
+    clocker = ac.ArcticSettings(parallel=parallel_settings, serial=serial_settings)
 
     for data_resolution in data_resolutions:
         for normalization in normalizations:
@@ -389,7 +389,7 @@ def make_ci_uniform_parallel_x3__serial_x3_species(data_resolutions, normalizati
                 ci_data_resolution=data_resolution,
                 pattern=pattern,
                 cti_params=cti_params,
-                cti_settings=cti_settings,
+                clocker=clocker,
             )
 
 
@@ -417,7 +417,7 @@ def make_ci_uniform_cosmic_rays_parallel_x1_species(data_resolutions, normalizat
         charge_injection_mode=False,
         readout_offset=0,
     )
-    cti_settings = ac.ArcticSettings(parallel=parallel_settings)
+    clocker = ac.ArcticSettings(parallel=parallel_settings)
 
     for data_resolution in data_resolutions:
 
@@ -435,7 +435,7 @@ def make_ci_uniform_cosmic_rays_parallel_x1_species(data_resolutions, normalizat
             )
 
             cosmic_ray_map = cosmic_ray_map_from_shape_and_well_depth(
-                shape=shape, well_depth=cti_settings.parallel.well_depth
+                shape=shape, well_depth=clocker.parallel.well_depth
             )
 
             simulate_ci_data_from_ci_normalization_region_and_cti_model(
@@ -444,7 +444,7 @@ def make_ci_uniform_cosmic_rays_parallel_x1_species(data_resolutions, normalizat
                 ci_data_resolution=data_resolution,
                 pattern=pattern,
                 cti_params=cti_params,
-                cti_settings=cti_settings,
+                clocker=clocker,
                 cosmic_ray_map=cosmic_ray_map,
             )
 
@@ -473,7 +473,7 @@ def make_ci_uniform_cosmic_rays_serial_x1_species(data_resolutions, normalizatio
         charge_injection_mode=False,
         readout_offset=0,
     )
-    cti_settings = ac.ArcticSettings(serial=serial_settings)
+    clocker = ac.ArcticSettings(serial=serial_settings)
 
     for data_resolution in data_resolutions:
 
@@ -491,7 +491,7 @@ def make_ci_uniform_cosmic_rays_serial_x1_species(data_resolutions, normalizatio
             )
 
             cosmic_ray_map = cosmic_ray_map_from_shape_and_well_depth(
-                shape=shape, well_depth=cti_settings.serial.well_depth
+                shape=shape, well_depth=clocker.serial.well_depth
             )
 
             simulate_ci_data_from_ci_normalization_region_and_cti_model(
@@ -500,7 +500,7 @@ def make_ci_uniform_cosmic_rays_serial_x1_species(data_resolutions, normalizatio
                 ci_data_resolution=data_resolution,
                 pattern=pattern,
                 cti_params=cti_params,
-                cti_settings=cti_settings,
+                clocker=clocker,
                 cosmic_ray_map=cosmic_ray_map,
             )
 
@@ -553,7 +553,7 @@ def make_ci_uniform_cosmic_rays_parallel_x1__serial_x1_species(
         readout_offset=0,
     )
 
-    cti_settings = ac.ArcticSettings(parallel=parallel_settings, serial=serial_settings)
+    clocker = ac.ArcticSettings(parallel=parallel_settings, serial=serial_settings)
 
     for data_resolution in data_resolutions:
 
@@ -571,7 +571,7 @@ def make_ci_uniform_cosmic_rays_parallel_x1__serial_x1_species(
             )
 
             cosmic_ray_map = cosmic_ray_map_from_shape_and_well_depth(
-                shape=shape, well_depth=cti_settings.serial.well_depth
+                shape=shape, well_depth=clocker.serial.well_depth
             )
 
             simulate_ci_data_from_ci_normalization_region_and_cti_model(
@@ -580,7 +580,7 @@ def make_ci_uniform_cosmic_rays_parallel_x1__serial_x1_species(
                 ci_data_resolution=data_resolution,
                 pattern=pattern,
                 cti_params=cti_params,
-                cti_settings=cti_settings,
+                clocker=clocker,
                 cosmic_ray_map=cosmic_ray_map,
             )
 

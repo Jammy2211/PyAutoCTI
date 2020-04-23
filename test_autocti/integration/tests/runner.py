@@ -42,7 +42,7 @@ def run(
     test_name=None,
     non_linear_class=af.MultiNest,
     config_folder="config",
-    cti_settings=None,
+    clocker=None,
     load_cosmic_ray_map=False,
     pool=None,
 ):
@@ -70,7 +70,7 @@ def run(
         name=test_name,
         phase_folders=[module.test_type, test_name],
         non_linear_class=non_linear_class,
-    ).run(ci_datas=data, cti_settings=cti_settings, pool=pool)
+    ).run(ci_datas=data, clocker=clocker, pool=pool)
 
 
 def run_a_mock(module):

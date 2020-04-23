@@ -20,8 +20,7 @@ class TestResult:
     def test__results_of_phase_are_available_as_properties(self, ci_imaging_7x7):
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
-            non_linear_class=mock_pipeline.MockNLO,
-            phase_name="test_phase_2",
+            non_linear_class=mock_pipeline.MockNLO, phase_name="test_phase_2"
         )
 
         result = phase_ci_imaging_7x7.run(
@@ -29,4 +28,4 @@ class TestResult:
         )
 
         assert isinstance(result, Result)
-        assert (result.mask == np.full(fill_value=False, shape=(7,7))).all()
+        assert (result.mask == np.full(fill_value=False, shape=(7, 7))).all()

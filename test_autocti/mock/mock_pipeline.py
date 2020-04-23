@@ -25,7 +25,6 @@ class MockResult:
         self.positions = None
         self.mask_2d = mask
         self.model_image = model_image
-        self.unmasked_model_image = model_image
         self.instance = instance or af.ModelInstance()
         self.model = af.ModelMapper()
         self.analysis = analysis

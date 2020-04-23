@@ -503,7 +503,7 @@ class TestSimulatorCIImaging(object):
     #         ci_pre_cti=ci_pre_cti,
     #         frame_geometry=ac.FrameGeometry.bottom_left(),
     #         ci_pattern=pattern,
-    #         cti_settings=arctic_parallel,
+    #         clocker=arctic_parallel,
     #         cti_params=params_parallel,
     #         use_parallel_poisson_densities=True,
     #     )

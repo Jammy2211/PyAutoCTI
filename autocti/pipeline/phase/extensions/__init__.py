@@ -29,7 +29,7 @@ class CombinedHyperPhase(HyperPhase):
     def run(
         self,
         ci_datas,
-        cti_settings=None,
+        clocker=None,
         pool=None,
         results: af.ResultsCollection = None,
         **kwargs
@@ -56,9 +56,7 @@ class CombinedHyperPhase(HyperPhase):
             The result of the regular phase, with hyper_galaxy results attached by associated hyper_galaxy names
         """
         results = results.copy() if results is not None else af.ResultsCollection()
-        result = self.phase.run(
-            ci_datas, results=results, cti_settings=cti_settings, **kwargs
-        )
+        result = self.phase.run(ci_datas, results=results, clocker=clocker, **kwargs)
         results.add(self.phase.phase_name, result)
 
         for phase in self.hyper_phases:
@@ -106,8 +104,5 @@ class CombinedHyperPhase(HyperPhase):
         phase.phase_tag = ""
 
         return phase.run(
-            ci_datas=ci_datas,
-            results=results,
-            pool=pool,
-            cti_settings=results.last.cti_settings,
+            ci_datas=ci_datas, results=results, pool=pool, clocker=results.last.clocker
         )

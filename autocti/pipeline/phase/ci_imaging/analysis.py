@@ -1,8 +1,9 @@
 import numpy as np
+from functools import partial
 
 from autoarray.exc import InversionException, GridException
 from autofit.exc import FitException
-from autocti.fit import fit
+from autocti.charge_injection import ci_fit
 from autocti.pipeline import visualizer
 from autocti.pipeline.phase.dataset import analysis as analysis_dataset
 
@@ -11,7 +12,7 @@ class Analysis(analysis_dataset.Analysis):
     def __init__(
         self,
         masked_ci_imagings,
-        cti_settings,
+        clocker,
         serial_total_density_range,
         parallel_total_density_range,
         image_path=None,
@@ -21,7 +22,7 @@ class Analysis(analysis_dataset.Analysis):
 
         super().__init__(
             masked_ci_datasets=masked_ci_imagings,
-            cti_settings=cti_settings,
+            clocker=clocker,
             parallel_total_density_range=parallel_total_density_range,
             serial_total_density_range=serial_total_density_range,
             results=results,
@@ -34,7 +35,7 @@ class Analysis(analysis_dataset.Analysis):
             for masked_ci_imaging in masked_ci_imagings
         ]
 
-        self.pool = pool
+        self.pool = pool or analysis_dataset.ConsecutivePool
 
     @property
     def masked_ci_imagings(self):
@@ -53,24 +54,22 @@ class Analysis(analysis_dataset.Analysis):
         fit: ci_fit.Fit
             How fit the model is and the model
         """
-        cti_params = cti_params_for_instance(instance=instance)
 
-        self.check_total_density_within_range(instance=cti_params)
+        self.check_total_density_within_range(instance=instance)
 
         hyper_noise_scalars = self.hyper_noise_scalars_from_instance(instance=instance)
 
         pipe_cti_pass = partial(
             pipe_cti,
-            cti_params=cti_params,
-            cti_settings=self.cti_settings,
+            instance=instance,
+            clocker=self.clocker,
             hyper_noise_scalars=hyper_noise_scalars,
         )
-        log_likelihood = np.sum(
-            list(self.pool.map(pipe_cti_pass, self.masked_ci_datasets))
-        )
-        return log_likelihood
+
+        return np.sum(list(self.pool.map(pipe_cti_pass, self.masked_ci_datasets)))
 
     def hyper_noise_scalars_from_instance(self, instance):
+
         hyper_noise_scalars = list(
             filter(
                 None,
@@ -87,33 +86,36 @@ class Analysis(analysis_dataset.Analysis):
         else:
             return None
 
-    def hyper_noise_scalars_from_instance_and_hyper_noise_scale(
-        self, instance, hyper_noise_scale
-    ):
+    def fits_from_instance(self, instance, hyper_noise_scale=True):
 
         if hyper_noise_scale:
-            return self.hyper_noise_scalars_from_instance(instance=instance)
-        else:
-            return None
-
-    def fits_of_ci_data_extracted_for_instance(self, instance, hyper_noise_scale=True):
-
-        cti_params = cti_params_for_instance(instance=instance)
-        hyper_noise_scalars = self.hyper_noise_scalars_from_instance_and_hyper_noise_scale(
-            instance=instance, hyper_noise_scale=hyper_noise_scale
-        )
-
-        return list(
-            map(
-                lambda ci_data_masked_extracted: ci_fit.CIFitImaging(
-                    masked_ci_imaging=ci_data_masked_extracted,
-                    cti_params=cti_params,
-                    cti_settings=self.cti_settings,
-                    hyper_noise_scalars=hyper_noise_scalars,
-                ),
-                self.masked_ci_datasets,
+            hyper_noise_scalars = self.hyper_noise_scalars_from_instance(
+                instance=instance
             )
-        )
+        else:
+            hyper_noise_scalars = None
+
+        ci_post_ctis = [
+            self.clocker.add_cti(
+                image=masked_ci_imaging.ci_pre_cti,
+                parallel_traps=instance.parallel_traps,
+                parallel_ccd_volume=instance.parallel_ccd_volume,
+                serial_traps=instance.serial_traps,
+                serial_ccd_volume=instance.serial_ccd_volume,
+            )
+            for masked_ci_imaging in self.masked_ci_imagings
+        ]
+
+        return [
+            ci_fit.CIFitImaging(
+                masked_ci_imaging=masked_ci_imaging,
+                ci_post_cti=ci_post_cti,
+                hyper_noise_scalars=hyper_noise_scalars,
+            )
+            for masked_ci_imaging, ci_post_cti in zip(
+                self.masked_ci_imagings, ci_post_ctis
+            )
+        ]
 
     def fits_of_ci_data_full_for_instance(self, instance, hyper_noise_scale=True):
 
@@ -127,7 +129,7 @@ class Analysis(analysis_dataset.Analysis):
                 lambda ci_data_masked_full: ci_fit.CIFitImaging(
                     masked_ci_imaging=ci_data_masked_full,
                     cti_params=cti_params,
-                    cti_settings=self.cti_settings,
+                    clocker=self.clocker,
                     hyper_noise_scalars=hyper_noise_scalars,
                 ),
                 self.masked_ci_dataset_full,
@@ -151,11 +153,24 @@ class Analysis(analysis_dataset.Analysis):
         )
 
 
-def pipe_cti(ci_data_masked, cti_params, cti_settings, hyper_noise_scalars):
+def pipe_cti(ci_data_masked, instance, clocker, hyper_noise_scalars):
+
+    print(instance.parallel_traps)
+    print(instance.parallel_ccd_volume)
+    print(instance.serial_traps)
+
+    ci_post_cti = clocker.add_cti(
+        image=ci_data_masked.ci_pre_cti,
+        parallel_traps=instance.parallel_traps,
+        parallel_ccd_volume=instance.parallel_ccd_volume,
+        serial_traps=instance.serial_traps,
+        serial_ccd_volume=instance.serial_ccd_volume,
+    )
+
     fit = ci_fit.CIFitImaging(
         masked_ci_imaging=ci_data_masked,
-        cti_params=cti_params,
-        cti_settings=cti_settings,
+        ci_post_cti=ci_post_cti,
         hyper_noise_scalars=hyper_noise_scalars,
     )
-    return fit.figure_of_merit
+
+    return fit.log_likelihood
