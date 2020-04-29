@@ -6,10 +6,8 @@ logger = logging.getLogger(__name__)
 
 
 class Pipeline(af.Pipeline):
-    def run(self, ci_datas, clocker, pool=None, data_name=None):
+    def run(self, datasets, clocker, info=None, pool=None):
         def runner(phase, results):
-            return phase.run(
-                ci_datas=ci_datas, clocker=clocker, results=results, pool=pool
-            )
+            return phase.run(datasets=datasets, results=results, info=info, pool=pool)
 
-        return self.run_function(runner, data_name)
+        return self.run_function(runner)
