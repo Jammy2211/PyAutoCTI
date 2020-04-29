@@ -1,6 +1,4 @@
-import autocti as ac
 from autoconf import conf
-from autocti import dataset
 import autocti.plot as aplt
 
 import os
@@ -52,6 +50,8 @@ def test__individual_attributes_are_output(ci_imaging_7x7, plot_path, plot_patch
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
     assert plot_path + "signal_to_noise_map.png" in plot_patch.paths
+
+    ci_imaging_7x7.cosmic_ray_map[0, 0] = 1.0
 
     aplt.CIImaging.cosmic_ray_map(
         ci_imaging=ci_imaging_7x7,

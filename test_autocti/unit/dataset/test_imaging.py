@@ -1,10 +1,8 @@
 import os
 
 import numpy as np
-import pytest
 import shutil
 
-from autocti.util import exc
 from autocti import structures as struct
 from autocti import dataset as ds
 

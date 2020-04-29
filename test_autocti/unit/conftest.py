@@ -49,7 +49,7 @@ def make_image_7x7():
 @pytest.fixture(name="noise_map_7x7")
 def make_noise_map_7x7():
     return struct.Frame.full(
-        fill_value=1.0,
+        fill_value=2.0,
         shape_2d=(7, 7),
         pixel_scales=(1.0, 1.0),
         serial_overscan=(0, 6, 6, 7),

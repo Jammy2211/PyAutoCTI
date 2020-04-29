@@ -28,6 +28,8 @@ class TestPhaseCIImagingVisualizer:
         self, masked_ci_imaging_7x7, plot_path, plot_patch
     ):
 
+        masked_ci_imaging_7x7.cosmic_ray_map[0, 0] = 1
+
         if os.path.exists(plot_path):
             shutil.rmtree(plot_path)
 
