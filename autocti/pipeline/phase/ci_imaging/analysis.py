@@ -68,7 +68,10 @@ class Analysis(analysis_dataset.Analysis):
 
         return np.sum(list(self.pool.map(pipe_cti_pass, self.masked_ci_datasets)))
 
-    def hyper_noise_scalars_from_instance(self, instance):
+    def hyper_noise_scalars_from_instance(self, instance, hyper_noise_scale=True):
+
+        if not hyper_noise_scale:
+            return None
 
         hyper_noise_scalars = list(
             filter(
@@ -81,60 +84,53 @@ class Analysis(analysis_dataset.Analysis):
                 ],
             )
         )
+
         if hyper_noise_scalars:
             return hyper_noise_scalars
-        else:
-            return None
+
+    def fit_from_instance_and_ci_imaging(
+        self, instance, ci_imaging, hyper_noise_scale=True
+    ):
+
+        hyper_noise_scalars = self.hyper_noise_scalars_from_instance(
+            instance=instance, hyper_noise_scale=hyper_noise_scale
+        )
+
+        ci_post_cti = self.clocker.add_cti(
+            image=ci_imaging.ci_pre_cti,
+            parallel_traps=instance.parallel_traps,
+            parallel_ccd_volume=instance.parallel_ccd_volume,
+            serial_traps=instance.serial_traps,
+            serial_ccd_volume=instance.serial_ccd_volume,
+        )
+
+        return ci_fit.CIFitImaging(
+            masked_ci_imaging=ci_imaging,
+            ci_post_cti=ci_post_cti,
+            hyper_noise_scalars=hyper_noise_scalars,
+        )
 
     def fits_from_instance(self, instance, hyper_noise_scale=True):
 
-        if hyper_noise_scale:
-            hyper_noise_scalars = self.hyper_noise_scalars_from_instance(
-                instance=instance
-            )
-        else:
-            hyper_noise_scalars = None
-
-        ci_post_ctis = [
-            self.clocker.add_cti(
-                image=masked_ci_imaging.ci_pre_cti,
-                parallel_traps=instance.parallel_traps,
-                parallel_ccd_volume=instance.parallel_ccd_volume,
-                serial_traps=instance.serial_traps,
-                serial_ccd_volume=instance.serial_ccd_volume,
+        return [
+            self.fit_from_instance_and_ci_imaging(
+                instance=instance,
+                ci_imaging=masked_ci_imaging,
+                hyper_noise_scale=hyper_noise_scale,
             )
             for masked_ci_imaging in self.masked_ci_imagings
         ]
 
+    def fits_full_dataset_from_instance(self, instance, hyper_noise_scale=True):
+
         return [
-            ci_fit.CIFitImaging(
-                masked_ci_imaging=masked_ci_imaging,
-                ci_post_cti=ci_post_cti,
-                hyper_noise_scalars=hyper_noise_scalars,
+            self.fit_from_instance_and_ci_imaging(
+                instance=instance,
+                ci_imaging=masked_ci_imaging.ci_imaging_full,
+                hyper_noise_scale=hyper_noise_scale,
             )
-            for masked_ci_imaging, ci_post_cti in zip(
-                self.masked_ci_imagings, ci_post_ctis
-            )
+            for masked_ci_imaging in self.masked_ci_imagings
         ]
-
-    def fits_of_ci_data_full_for_instance(self, instance, hyper_noise_scale=True):
-
-        cti_params = cti_params_for_instance(instance=instance)
-        hyper_noise_scalars = self.hyper_noise_scalars_from_instance_and_hyper_noise_scale(
-            instance=instance, hyper_noise_scale=hyper_noise_scale
-        )
-
-        return list(
-            map(
-                lambda ci_data_masked_full: ci_fit.CIFitImaging(
-                    masked_ci_imaging=ci_data_masked_full,
-                    cti_params=cti_params,
-                    clocker=self.clocker,
-                    hyper_noise_scalars=hyper_noise_scalars,
-                ),
-                self.masked_ci_dataset_full,
-            )
-        )
 
     def visualize(self, instance, during_analysis):
 
@@ -154,10 +150,6 @@ class Analysis(analysis_dataset.Analysis):
 
 
 def pipe_cti(ci_data_masked, instance, clocker, hyper_noise_scalars):
-
-    print(instance.parallel_traps)
-    print(instance.parallel_ccd_volume)
-    print(instance.serial_traps)
 
     ci_post_cti = clocker.add_cti(
         image=ci_data_masked.ci_pre_cti,

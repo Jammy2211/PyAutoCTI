@@ -1,15 +1,10 @@
 from os import path
 
 import pytest
-from astropy import cosmology as cosmo
-import numpy as np
 
 import autofit as af
 import arctic as ac
 from autocti.util import exc
-from test_autocti.mock import mock_pipeline
-
-from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of "

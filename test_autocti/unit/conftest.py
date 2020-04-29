@@ -119,8 +119,7 @@ def make_ci_pre_cti_7x7(ci_pattern_7x7):
 @pytest.fixture(name="ci_cosmic_ray_map_7x7")
 def make_ci_cosmic_ray_map_7x7(ci_pattern_7x7):
     cosmic_ray_map = np.zeros(shape=(7, 7))
-    cosmic_ray_map[1, 1] = 4.0
-    cosmic_ray_map[1, 2] = 7.0
+
     return ci.CIFrame.manual(
         array=cosmic_ray_map,
         pixel_scales=(1.0, 1.0),

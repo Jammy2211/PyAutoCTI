@@ -143,7 +143,7 @@ class HyperNoisePhase(HyperPhase):
         model_images = list(
             map(
                 lambda max_log_likelihood_fit: max_log_likelihood_fit.model_image,
-                results.last.most_likely_full_fits,
+                results.last.max_log_likelihood_full_fits,
             )
         )
 

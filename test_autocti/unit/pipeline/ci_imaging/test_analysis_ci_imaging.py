@@ -63,6 +63,76 @@ class TestChecks:
 
 
 class TestFit:
+    def test__fits_from_instance_and_ci_imaging__masked(
+        self, ci_imaging_7x7, mask_7x7, traps_x1, ccd_volume, parallel_clocker
+    ):
+
+        phase = PhaseCIImaging(
+            parallel_traps=traps_x1,
+            parallel_ccd_volume=ccd_volume,
+            non_linear_class=mock_pipeline.MockNLO,
+            columns=(0, 1),
+            phase_name="test_phase",
+        )
+
+        analysis = phase.make_analysis(
+            datasets=[ci_imaging_7x7], clocker=parallel_clocker
+        )
+        instance = phase.model.instance_from_unit_vector([])
+
+        fits = analysis.fits_from_instance(instance=instance)
+
+        mask_from_phase = phase.meta_dataset.mask_for_analysis_from_dataset(
+            dataset=ci_imaging_7x7, mask=mask_7x7
+        )
+
+        masked_ci_imaging = ci.MaskedCIImaging(
+            ci_imaging=ci_imaging_7x7, mask=mask_from_phase, parallel_columns=(0, 1)
+        )
+
+        ci_post_cti = parallel_clocker.add_cti(
+            image=masked_ci_imaging.ci_pre_cti,
+            parallel_traps=traps_x1,
+            parallel_ccd_volume=ccd_volume,
+        )
+
+        fit = ci.CIFitImaging(
+            masked_ci_imaging=masked_ci_imaging, ci_post_cti=ci_post_cti
+        )
+
+        assert fits[0].image.shape == (7, 1)
+        assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood)
+
+    def test__fits_from_instance_and_ci_imaging__full(
+        self, ci_imaging_7x7, mask_7x7, traps_x1, ccd_volume, parallel_clocker
+    ):
+
+        phase = PhaseCIImaging(
+            parallel_traps=traps_x1,
+            parallel_ccd_volume=ccd_volume,
+            non_linear_class=mock_pipeline.MockNLO,
+            columns=(0, 1),
+            phase_name="test_phase",
+        )
+
+        analysis = phase.make_analysis(
+            datasets=[ci_imaging_7x7], clocker=parallel_clocker
+        )
+        instance = phase.model.instance_from_unit_vector([])
+
+        fits = analysis.fits_full_dataset_from_instance(instance=instance)
+
+        ci_post_cti = parallel_clocker.add_cti(
+            image=ci_imaging_7x7.ci_pre_cti,
+            parallel_traps=traps_x1,
+            parallel_ccd_volume=ccd_volume,
+        )
+
+        fit = ci.CIFitImaging(masked_ci_imaging=ci_imaging_7x7, ci_post_cti=ci_post_cti)
+
+        assert fits[0].image.shape == (7, 7)
+        assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood)
+
     def test__fit_figure_of_merit__log_likelihood_matches_via_manual_fit(
         self, ci_imaging_7x7, ci_pre_cti_7x7, traps_x1, ccd_volume, parallel_clocker
     ):

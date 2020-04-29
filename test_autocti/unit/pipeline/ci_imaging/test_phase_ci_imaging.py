@@ -166,7 +166,7 @@ class TestMakeAnalysis:
             )
         ).all()
 
-    def test__noise_scaling_maps_are_setup_correctly__ci_regions_and_parallel_trail_scalars(
+    def test__noise_scaling_maps_are_setup_correctly(
         self, ci_imaging_7x7, ci_pattern_7x7, parallel_clocker
     ):
 

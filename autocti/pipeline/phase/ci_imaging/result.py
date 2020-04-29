@@ -3,12 +3,16 @@ from autocti.pipeline.phase import dataset
 
 class Result(dataset.Result):
     @property
-    def most_likely_full_fits(self):
-        return self.analysis.fits_of_ci_data_full_for_instance(instance=self._instance)
+    def max_log_likelihood_full_fits(self):
+        return self.analysis.fits_full_dataset_from_instance(
+            instance=self.instance, hyper_noise_scale=True
+        )
 
     @property
-    def most_likely_full_fits_no_hyper_scaling(self):
-        return self.analysis.fits_of_ci_data_full_for_instance(instance=self._instance)
+    def max_log_likelihood_full_fits_no_hyper_scaling(self):
+        return self.analysis.fits_full_dataset_from_instance(
+            instance=self.instance, hyper_noise_scale=False
+        )
 
     @property
     def noise_scaling_maps_list_of_ci_regions(self):
@@ -16,7 +20,7 @@ class Result(dataset.Result):
         return list(
             map(
                 lambda fit: fit.chi_squared_map_of_ci_regions,
-                self.most_likely_full_fits_no_hyper_scaling,
+                self.max_log_likelihood_full_fits_no_hyper_scaling,
             )
         )
 
@@ -25,8 +29,8 @@ class Result(dataset.Result):
 
         return list(
             map(
-                lambda most_likely_full_fit: most_likely_full_fit.chi_squared_map_of_parallel_trails,
-                self.most_likely_full_fits_no_hyper_scaling,
+                lambda max_log_likelihood_full_fit: max_log_likelihood_full_fit.chi_squared_map_of_parallel_trails,
+                self.max_log_likelihood_full_fits_no_hyper_scaling,
             )
         )
 
@@ -35,8 +39,8 @@ class Result(dataset.Result):
 
         return list(
             map(
-                lambda most_likely_full_fit: most_likely_full_fit.chi_squared_map_of_serial_trails,
-                self.most_likely_full_fits_no_hyper_scaling,
+                lambda max_log_likelihood_full_fit: max_log_likelihood_full_fit.chi_squared_map_of_serial_trails,
+                self.max_log_likelihood_full_fits_no_hyper_scaling,
             )
         )
 
@@ -45,7 +49,7 @@ class Result(dataset.Result):
 
         return list(
             map(
-                lambda most_likely_full_fit: most_likely_full_fit.chi_squared_map_of_serial_overscan_no_trails,
-                self.most_likely_full_fits_no_hyper_scaling,
+                lambda max_log_likelihood_full_fit: max_log_likelihood_full_fit.chi_squared_map_of_serial_overscan_no_trails,
+                self.max_log_likelihood_full_fits_no_hyper_scaling,
             )
         )

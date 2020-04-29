@@ -2,6 +2,7 @@ import numpy as np
 import copy
 
 from autocti.dataset import preprocess, imaging
+from autocti.structures import mask as msk
 from autocti.charge_injection import ci_frame
 from autocti.charge_injection import ci_pattern as pattern
 from autocti.util import array_util
@@ -14,6 +15,10 @@ class CIImaging(imaging.Imaging):
 
         self.ci_pre_cti = ci_pre_cti
         self.cosmic_ray_map = cosmic_ray_map
+
+    @property
+    def mask(self):
+        return msk.Mask.unmasked(shape_2d=self.shape_2d, pixel_scales=self.pixel_scales)
 
     @property
     def ci_pattern(self):
@@ -276,9 +281,7 @@ class MaskedCIImaging(imaging.MaskedImaging):
         self.noise_map = ci_frame.MaskedCIFrame.from_ci_frame(
             ci_frame=ci_imaging.noise_map, mask=mask
         )
-        self.ci_pre_cti = ci_frame.MaskedCIFrame.from_ci_frame(
-            ci_frame=ci_imaging.ci_pre_cti, mask=mask
-        )
+        self.ci_pre_cti = ci_imaging.ci_pre_cti
 
         if ci_imaging.cosmic_ray_map is not None:
 
