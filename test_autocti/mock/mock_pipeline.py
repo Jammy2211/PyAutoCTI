@@ -8,6 +8,10 @@ class MockSamples:
     def __init__(self, max_log_likelihood_instance=None):
 
         self._max_log_likelihood_instance = max_log_likelihood_instance
+        self.log_likelihoods = [1.0]
+
+    def gaussian_priors_at_sigma(self, sigma):
+        return None
 
     @property
     def max_log_likelihood_instance(self):
