@@ -1,5 +1,3 @@
-import numpy as np
-
 from autoconf import conf
 import autocti.plot as aplt
 

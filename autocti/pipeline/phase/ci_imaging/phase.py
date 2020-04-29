@@ -157,6 +157,7 @@ class PhaseCIImaging(dataset.PhaseDataset):
             clocker=clocker,
             parallel_total_density_range=self.meta_dataset.parallel_total_density_range,
             serial_total_density_range=self.meta_dataset.serial_total_density_range,
+            image_path=self.optimizer.paths.image_path,
             results=results,
             pool=pool,
         )
