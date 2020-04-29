@@ -3,7 +3,7 @@ import builtins
 import pytest
 
 import autofit as af
-import autocti as ac
+import autocti.pipeline.pipeline as pl
 
 
 class MockFile(object):
@@ -56,8 +56,8 @@ class DummyPhase(af.AbstractPhase):
 
         self.optimizer = Optimizer(phase_name)
 
-    def run(self, ci_datas, clocker, results, pool):
-        self.ci_datas = ci_datas
+    def run(self, datasets, clocker, results, pool):
+        self.datasets = datasets
         self.clocker = clocker
         self.results = results
         self.pool = pool
@@ -68,9 +68,9 @@ class TestPipeline(object):
     def test_run_pipeline(self):
         phase_1 = DummyPhase(phase_name="dummy1")
         phase_2 = DummyPhase(phase_name="dummy2")
-        pipeline = ac.Pipeline("", phase_1, phase_2)
+        pipeline = pl.Pipeline("", phase_1, phase_2)
 
-        pipeline.run(ci_datas=None, clocker=None, pool=None)
+        pipeline.run(datasets=None, clocker=None, pool=None)
 
         assert len(phase_1.results) == 2
         assert len(phase_2.results) == 2
@@ -80,7 +80,7 @@ class TestPipeline(object):
         phase_2 = DummyPhase(phase_name="dummy2")
         phase_3 = DummyPhase(phase_name="dumy3")
 
-        pipeline1 = ac.Pipeline("", phase_1, phase_2)
-        pipeline2 = ac.Pipeline("", phase_3)
+        pipeline1 = pl.Pipeline("", phase_1, phase_2)
+        pipeline2 = pl.Pipeline("", phase_3)
 
         assert (phase_1, phase_2, phase_3) == (pipeline1 + pipeline2).phases
