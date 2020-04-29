@@ -1,6 +1,7 @@
 import pickle
 
 import numpy as np
+import copy
 
 from autocti.util import exc
 from autocti.structures import arrays
@@ -80,8 +81,24 @@ class AbstractDataset:
         """The maximum value of the potential chi-squared map"""
         return np.max(self.potential_chi_squared_map)
 
+    def modify_noise_map(self, noise_map):
+
+        masked_imaging = copy.deepcopy(self)
+
+        masked_imaging.noise_map = noise_map
+
+        return masked_imaging
+
 
 class AbstractMaskedDataset:
     def __init__(self, mask):
 
         self.mask = mask
+
+    def modify_noise_map(self, noise_map):
+
+        masked_imaging = copy.deepcopy(self)
+
+        masked_imaging.noise_map = noise_map
+
+        return masked_imaging

@@ -63,7 +63,37 @@ class TestChecks:
 
 
 class TestFit:
-    def test__fits_from_instance_and_ci_imaging__masked(
+    def test__log_likelihood_via_analysis__matches_manual_fit(
+        self, ci_imaging_7x7, ci_pre_cti_7x7, traps_x1, ccd_volume, parallel_clocker
+    ):
+
+        phase = PhaseCIImaging(
+            parallel_traps=traps_x1,
+            parallel_ccd_volume=ccd_volume,
+            non_linear_class=mock_pipeline.MockNLO,
+            phase_name="test_phase",
+        )
+
+        analysis = phase.make_analysis(
+            datasets=[ci_imaging_7x7], clocker=parallel_clocker
+        )
+        instance = phase.model.instance_from_unit_vector([])
+
+        log_likelihood_via_analysis = analysis.fit(instance=instance)
+
+        ci_post_cti = parallel_clocker.add_cti(
+            image=ci_pre_cti_7x7,
+            parallel_traps=traps_x1,
+            parallel_ccd_volume=ccd_volume,
+        )
+
+        fit = ci.CIFitImaging(
+            masked_ci_imaging=analysis.masked_ci_imagings[0], ci_post_cti=ci_post_cti
+        )
+
+        assert fit.log_likelihood == log_likelihood_via_analysis
+
+    def test__extracted_fits_from_instance_and_ci_imaging(
         self, ci_imaging_7x7, mask_7x7, traps_x1, ccd_volume, parallel_clocker
     ):
 
@@ -103,7 +133,7 @@ class TestFit:
         assert fits[0].image.shape == (7, 1)
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood)
 
-    def test__fits_from_instance_and_ci_imaging__full(
+    def test__full_fits_from_instance_and_ci_imaging(
         self, ci_imaging_7x7, mask_7x7, traps_x1, ccd_volume, parallel_clocker
     ):
 
@@ -133,35 +163,146 @@ class TestFit:
         assert fits[0].image.shape == (7, 7)
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood)
 
-    def test__fit_figure_of_merit__log_likelihood_matches_via_manual_fit(
-        self, ci_imaging_7x7, ci_pre_cti_7x7, traps_x1, ccd_volume, parallel_clocker
+    def test__extracted_fits_from_instance_and_ci_imaging__include_noise_scaling(
+        self,
+        ci_imaging_7x7,
+        mask_7x7,
+        traps_x1,
+        ccd_volume,
+        parallel_clocker,
+        ci_pattern_7x7,
     ):
 
         phase = PhaseCIImaging(
             parallel_traps=traps_x1,
             parallel_ccd_volume=ccd_volume,
+            hyper_noise_scalar_of_ci_regions=ci.CIHyperNoiseScalar,
             non_linear_class=mock_pipeline.MockNLO,
+            columns=(0, 1),
             phase_name="test_phase",
         )
 
-        analysis = phase.make_analysis(
-            datasets=[ci_imaging_7x7], clocker=parallel_clocker
-        )
-        instance = phase.model.instance_from_unit_vector([])
+        noise_scaling_maps_list_of_ci_regions = [
+            ci.CIFrame.ones(
+                shape_2d=(7, 7), pixel_scales=1.0, ci_pattern=ci_pattern_7x7
+            )
+        ]
 
-        log_likelihood_via_analysis = analysis.fit(instance=instance)
+        analysis = phase.make_analysis(
+            datasets=[ci_imaging_7x7],
+            clocker=parallel_clocker,
+            results=mock_pipeline.MockResults(
+                noise_scaling_maps_list_of_ci_regions=noise_scaling_maps_list_of_ci_regions
+            ),
+        )
+        instance = phase.model.instance_from_prior_medians()
+
+        fits = analysis.fits_from_instance(instance=instance, hyper_noise_scale=True)
+
+        mask = ci.CIMask.unmasked(
+            shape_2d=ci_imaging_7x7.shape_2d, pixel_scales=ci_imaging_7x7.pixel_scales
+        )
+
+        masked_ci_imaging_7x7 = ci.MaskedCIImaging(
+            ci_imaging=ci_imaging_7x7,
+            mask=mask,
+            noise_scaling_maps=[noise_scaling_maps_list_of_ci_regions[0]],
+            parallel_columns=(0, 1),
+        )
 
         ci_post_cti = parallel_clocker.add_cti(
-            image=ci_pre_cti_7x7,
+            image=masked_ci_imaging_7x7.ci_pre_cti,
             parallel_traps=traps_x1,
             parallel_ccd_volume=ccd_volume,
         )
 
         fit = ci.CIFitImaging(
-            masked_ci_imaging=analysis.masked_ci_imagings[0], ci_post_cti=ci_post_cti
+            masked_ci_imaging=masked_ci_imaging_7x7,
+            ci_post_cti=ci_post_cti,
+            hyper_noise_scalars=[instance.hyper_noise_scalar_of_ci_regions],
         )
 
-        assert fit.log_likelihood == log_likelihood_via_analysis
+        assert fits[0].image.shape == (7, 1)
+        assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood, 1.0e-4)
+
+        fit = ci.CIFitImaging(
+            masked_ci_imaging=masked_ci_imaging_7x7,
+            ci_post_cti=ci_post_cti,
+            hyper_noise_scalars=[ci.CIHyperNoiseScalar(scale_factor=0.0)],
+        )
+
+        assert fit.log_likelihood != pytest.approx(fits[0].log_likelihood, 1.0e-4)
+
+    def test__full_fits_from_instance_and_ci_imaging__include_noise_scaling(
+        self,
+        ci_imaging_7x7,
+        mask_7x7,
+        traps_x1,
+        ccd_volume,
+        parallel_clocker,
+        ci_pattern_7x7,
+    ):
+
+        phase = PhaseCIImaging(
+            parallel_traps=traps_x1,
+            parallel_ccd_volume=ccd_volume,
+            hyper_noise_scalar_of_ci_regions=ci.CIHyperNoiseScalar,
+            non_linear_class=mock_pipeline.MockNLO,
+            columns=(0, 1),
+            phase_name="test_phase",
+        )
+
+        noise_scaling_maps_list_of_ci_regions = [
+            ci.CIFrame.ones(
+                shape_2d=(7, 7), pixel_scales=1.0, ci_pattern=ci_pattern_7x7
+            )
+        ]
+
+        analysis = phase.make_analysis(
+            datasets=[ci_imaging_7x7],
+            clocker=parallel_clocker,
+            results=mock_pipeline.MockResults(
+                noise_scaling_maps_list_of_ci_regions=noise_scaling_maps_list_of_ci_regions
+            ),
+        )
+        instance = phase.model.instance_from_prior_medians()
+
+        fits = analysis.fits_full_dataset_from_instance(
+            instance=instance, hyper_noise_scale=True
+        )
+
+        ci_post_cti = parallel_clocker.add_cti(
+            image=ci_imaging_7x7.ci_pre_cti,
+            parallel_traps=traps_x1,
+            parallel_ccd_volume=ccd_volume,
+        )
+
+        mask = ci.CIMask.unmasked(
+            shape_2d=ci_imaging_7x7.shape_2d, pixel_scales=ci_imaging_7x7.pixel_scales
+        )
+
+        masked_ci_imaging_7x7 = ci.MaskedCIImaging(
+            ci_imaging=ci_imaging_7x7,
+            mask=mask,
+            noise_scaling_maps=[noise_scaling_maps_list_of_ci_regions[0]],
+        )
+
+        fit = ci.CIFitImaging(
+            masked_ci_imaging=masked_ci_imaging_7x7,
+            ci_post_cti=ci_post_cti,
+            hyper_noise_scalars=[instance.hyper_noise_scalar_of_ci_regions],
+        )
+
+        assert fits[0].image.shape == (7, 7)
+        assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood, 1.0e-4)
+
+        fit = ci.CIFitImaging(
+            masked_ci_imaging=masked_ci_imaging_7x7,
+            ci_post_cti=ci_post_cti,
+            hyper_noise_scalars=[ci.CIHyperNoiseScalar(scale_factor=0.0)],
+        )
+
+        assert fit.log_likelihood != pytest.approx(fits[0].log_likelihood, 1.0e-4)
 
     def test__hyper_noise_scalar_properties_of_phase(
         self, ci_imaging_7x7, ci_pattern_7x7, parallel_clocker

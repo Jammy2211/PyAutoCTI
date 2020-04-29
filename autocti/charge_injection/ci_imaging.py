@@ -234,6 +234,7 @@ class MaskedCIImaging(imaging.MaskedImaging):
         """
 
         self.ci_imaging_full = copy.deepcopy(ci_imaging)
+        self.ci_imaging_full.noise_scaling_maps = noise_scaling_maps
         self.mask_full = copy.deepcopy(mask)
 
         if parallel_columns is not None:

@@ -142,14 +142,6 @@ class MaskedImaging(abstract_dataset.AbstractMaskedDataset):
         self.image = imaging.image * np.invert(mask)
         self.noise_map = imaging.noise_map * np.invert(mask)
 
-    def modify_noise_map(self, noise_map):
-
-        masked_imaging = copy.deepcopy(self)
-
-        masked_imaging.noise_map = noise_map
-
-        return masked_imaging
-
     @property
     def data(self):
         return self.image
