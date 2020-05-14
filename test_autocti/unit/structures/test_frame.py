@@ -2,7 +2,6 @@ import os
 
 import numpy as np
 import pytest
-
 from autocti import structures as struct
 
 

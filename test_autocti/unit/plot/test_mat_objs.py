@@ -1,23 +1,21 @@
-from autoconf import conf
-import autocti.plot as aplt
-from autocti.structures import arrays
+import os
+import shutil
 
-from os import path
-
-
-import matplotlib.pyplot as plt
 import matplotlib.colors as colors
-import pytest
-import os, shutil
+import matplotlib.pyplot as plt
 import numpy as np
+import pytest
+from autoconf import conf
+from autocti import plot as aplt
+from autocti import structures as struct
 
-directory = path.dirname(path.realpath(__file__))
+directory = os.path.dirname(os.path.realpath(__file__))
 
 
 @pytest.fixture(autouse=True)
 def set_config_path():
     conf.instance = conf.Config(
-        path.join(directory, "files/plotter"), path.join(directory, "output")
+        os.path.join(directory, "files/plotter"), os.path.join(directory, "output")
     )
 
 
@@ -91,7 +89,7 @@ class TestColorMap:
         self
     ):
 
-        array = arrays.Array.ones(shape_2d=(2, 2))
+        array = struct.Array.ones(shape_2d=(2, 2))
         array[0] = 0.0
 
         cmap = aplt.ColorMap(norm_min=None, norm_max=None, norm="linear")
@@ -159,7 +157,7 @@ class TestColorBar:
 class TestTicks:
     def test__set_yx_ticks__works_for_good_values(self):
 
-        array = arrays.Array.ones(shape_2d=(2, 2), pixel_scales=1.0)
+        array = struct.Array.ones(shape_2d=(2, 2), pixel_scales=1.0)
 
         units = aplt.Units(use_scaled=True, conversion_factor=None)
 
@@ -359,7 +357,7 @@ class TestLegend:
 class TestOutput:
     def test__input_path_is_created(self):
 
-        test_path = path.join(directory, "files/output_path")
+        test_path = os.path.join(directory, "files/output_path")
 
         if os.path.exists(test_path):
             shutil.rmtree(test_path)

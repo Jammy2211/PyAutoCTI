@@ -1,19 +1,4 @@
-import autofit as af
 from autocti.structures import mask as msk
-
-
-def isprior(obj):
-    if isinstance(obj, af.PriorModel):
-        return True
-    return False
-
-
-def isinstance_or_prior(obj, cls):
-    if isinstance(obj, cls):
-        return True
-    if isinstance(obj, af.PriorModel) and obj.cls == cls:
-        return True
-    return False
 
 
 class MetaDataset:

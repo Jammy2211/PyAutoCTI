@@ -1,10 +1,3 @@
-import matplotlib.pyplot as plt
-import numpy as np
-
-from autocti.util import exc
-from autocti.util import array_util
-
-
 def line_regions_from_plots(
     plot_parallel_front_edge_line,
     plot_parallel_trails_line,

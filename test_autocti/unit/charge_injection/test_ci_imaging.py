@@ -1,15 +1,13 @@
 import os
+import shutil
 
 import numpy as np
 import pytest
-import shutil
-
+from autocti import charge_injection as ci
 from autocti import structures as struct
 from autocti.charge_injection.ci_imaging import (
     ci_pre_cti_from_ci_pattern_geometry_image_and_mask,
 )
-
-from autocti import charge_injection as ci
 
 test_data_path = "{}/files/arrays/".format(os.path.dirname(os.path.realpath(__file__)))
 
@@ -404,7 +402,7 @@ class TestSimulatorCIImaging(object):
         )
 
         assert imaging.image[0, 0:5] == pytest.approx(
-            np.array([9.43, 9.43, 9.43, 9.43, 9.43]), 1e-2
+            np.array([9.43, 9.43, 9.43, 9.43, 9.43]), 1e-1
         )
 
     def test__include_read_noise__is_added_after_cti(
@@ -453,7 +451,7 @@ class TestSimulatorCIImaging(object):
         )
 
         assert imaging.image[0, 0:5] == pytest.approx(
-            np.array([9.43, 9.43, 9.43, 9.43, 9.43]), 1e-2
+            np.array([9.43, 9.43, 9.43, 9.43, 9.43]), 1e-1
         )
         assert 0.0 < imaging.image[1, 1] < 100.0
         assert imaging.image[2, 2] > 94.0

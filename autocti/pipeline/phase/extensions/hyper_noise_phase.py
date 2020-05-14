@@ -1,9 +1,11 @@
 import copy
 
-import autofit as af
-from .hyper_phase import HyperPhase
 import numpy as np
+from autoconf import conf
 from autocti.charge_injection import ci_imaging, ci_fit, ci_hyper
+from autofit.optimize import non_linear
+
+from .hyper_phase import HyperPhase
 
 
 class HyperNoisePhase(HyperPhase):
@@ -11,7 +13,7 @@ class HyperNoisePhase(HyperPhase):
 
         super().__init__(phase=phase, hyper_name="hyper_noise")
 
-    class Analysis(af.Analysis):
+    class Analysis(non_linear.Analysis):
         def __init__(self, masked_ci_dataset_full, model_images):
             """
             An analysis to fit the noise for a single galaxy image.
@@ -28,7 +30,7 @@ class HyperNoisePhase(HyperPhase):
             self.masked_ci_dataset_full = masked_ci_dataset_full
             self.model_images = model_images
 
-            # self.plot_hyper_noise_subplot = af.conf.instance.visualize.get(
+            # self.plot_hyper_noise_subplot = conf.instance.visualize.get(
             #     "plots", "plot_hyper_noise_subplot", bool
             # )
 
@@ -36,7 +38,7 @@ class HyperNoisePhase(HyperPhase):
 
             pass
 
-        def fit(self, instance):
+        def log_likelihood_function(self, instance):
             """
             Fit the model image to the real image by scaling the hyper_noise noise.
             Parameters
@@ -96,7 +98,7 @@ class HyperNoisePhase(HyperPhase):
                 instance.hyper_noise
             )
 
-    def run_hyper(self, ci_datas, pool, results=None):
+    def run_hyper(self, datasets, pool, results=None):
         """
         Run a fit for each galaxy from the previous phase.
         Parameters
@@ -117,10 +119,10 @@ class HyperNoisePhase(HyperPhase):
             ci_hyper.CIHyperNoiseScalar
         )
 
-        masks = phase.mask_for_analysis_from_dataset(dataset=ci_datas)
+        masks = phase.mask_for_analysis_from_dataset(dataset=datasets)
 
         noise_scaling_maps_list = phase.noise_scaling_maps_list_from_total_images_and_results(
-            total_images=len(ci_datas), results=results
+            total_images=len(datasets), results=results
         )
 
         masked_ci_dataset_full = list(
@@ -134,7 +136,7 @@ class HyperNoisePhase(HyperPhase):
                     ci_frame=data.ci_frame,
                     noise_scaling_maps_list=maps,
                 ),
-                ci_datas,
+                datasets,
                 masks,
                 noise_scaling_maps_list,
             )
@@ -159,24 +161,24 @@ class HyperNoisePhase(HyperPhase):
         phase.optimizer.model.parallel_ccd_volume = []
         phase.optimizer.phase_tag = ""
 
-        phase.optimizer.const_efficiency_mode = af.conf.instance.non_linear.get(
-            "MultiNest", "extension_hyper_galaxy_const_efficiency_mode", bool
+        phase.optimizer.const_efficiency_mode = conf.instance.non_linear.get(
+            "MultiNest", "const_efficiency_mode", bool
         )
-        phase.optimizer.sampling_efficiency = af.conf.instance.non_linear.get(
-            "MultiNest", "extension_hyper_galaxy_sampling_efficiency", float
+        phase.optimizer.sampling_efficiency = conf.instance.non_linear.get(
+            "MultiNest", "sampling_efficiency", float
         )
-        phase.optimizer.n_live_points = af.conf.instance.non_linear.get(
-            "MultiNest", "extension_hyper_galaxy_n_live_points", int
+        phase.optimizer.n_live_points = conf.instance.non_linear.get(
+            "MultiNest", "n_live_points", int
         )
-        phase.optimizer.multimodal = af.conf.instance.non_linear.get(
-            "MultiNest", "extension_hyper_galaxy_multimodal", bool
+        phase.optimizer.multimodal = conf.instance.non_linear.get(
+            "MultiNest", "multimodal", bool
         )
 
         analysis = self.Analysis(
             masked_ci_dataset_full=masked_ci_dataset_full, model_images=model_images
         )
 
-        result = phase.optimizer.fit(analysis)
+        result = phase.optimizer.f(analysis)
 
         def transfer_field(name):
             if hasattr(result.instance, name):

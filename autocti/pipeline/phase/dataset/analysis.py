@@ -1,6 +1,5 @@
-import autofit as af
-
-from autocti.util import exc
+from autocti import exc
+from autofit.optimize import non_linear
 
 
 class ConsecutivePool(object):
@@ -13,7 +12,7 @@ class ConsecutivePool(object):
         return map(func, ls)
 
 
-class Analysis(af.Analysis):
+class Analysis(non_linear.Analysis):
     def __init__(
         self,
         masked_ci_datasets,

@@ -1,8 +1,7 @@
+import copy
 import logging
 
 import numpy as np
-import copy
-
 from autocti.dataset import abstract_dataset
 from autocti.structures import arrays
 

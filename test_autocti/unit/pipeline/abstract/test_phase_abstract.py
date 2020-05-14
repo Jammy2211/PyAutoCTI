@@ -1,11 +1,8 @@
-from os import path
-
-import pytest
-
-import autofit as af
 import arctic as ac
-from autocti.pipeline.phase.dataset import PhaseDataset
+import autofit as af
+import pytest
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
+from autocti.pipeline.phase.dataset import PhaseDataset
 from test_autocti.mock import mock_pipeline
 
 pytestmark = pytest.mark.filterwarnings(

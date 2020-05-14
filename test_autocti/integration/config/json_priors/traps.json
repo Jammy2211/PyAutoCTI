@@ -1,0 +1,30 @@
+{
+    "Trap": {
+        "density": {
+            "type": "Uniform",
+            "lower_limit": 0.0,
+            "upper_limit": 30.0,
+            "width_modifier": {
+                "type": "Relative",
+                "value": 0.5
+            },
+            "gaussian_limits": {
+                "lower": 0.0,
+                "upper": "inf"
+            }
+        },
+        "lifetime": {
+            "type": "Uniform",
+            "lower_limit": 0.0,
+            "upper_limit": 30.0,
+            "width_modifier": {
+                "type": "Relative",
+                "value": 0.5
+            },
+            "gaussian_limits": {
+                "lower": 0.0,
+                "upper": "inf"
+            }
+        }
+    }
+}

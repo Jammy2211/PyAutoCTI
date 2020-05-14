@@ -1,7 +1,7 @@
-import autofit as af
+from autofit.optimize import non_linear
 
 
-class Result(af.Result):
+class Result(non_linear.Result):
     def __init__(self, samples, previous_model, analysis, optimizer):
         """
         The result of a phase

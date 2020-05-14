@@ -1,12 +1,12 @@
-import autofit as af
-from autocti.plot import mat_objs
-from autocti.util import exc
+import copy
+import os
+from functools import wraps
 
 import matplotlib.pyplot as plt
-from functools import wraps
-import copy
 import numpy as np
-import os
+from autoconf import conf
+from autocti import exc
+from autocti.plot import mat_objs
 
 
 class AbstractPlotter(object):
@@ -581,7 +581,7 @@ class Include(object):
     def load_include(value, name):
 
         return (
-            af.conf.instance.visualize_general.get(
+            conf.instance.visualize_general.get(
                 section_name="include", attribute_name=name, attribute_type=bool
             )
             if value is None

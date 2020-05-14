@@ -1,5 +1,5 @@
-from autoconf import conf
 import matplotlib
+from autoconf import conf
 
 backend = conf.get_matplotlib_backend()
 
@@ -11,10 +11,9 @@ import matplotlib.colors as colors
 import matplotlib.cm as cm
 import numpy as np
 import inspect
-import itertools
 import os
 
-from autocti.util import exc
+from autocti import exc
 
 
 def load_setting(section, name, python_type, from_subplot_config):

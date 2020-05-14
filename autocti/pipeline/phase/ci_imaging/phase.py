@@ -1,31 +1,31 @@
-import autofit as af
 from autocti.charge_injection import ci_mask
 from autocti.pipeline import tagging
 from autocti.pipeline.phase import dataset
 from autocti.pipeline.phase.ci_imaging.analysis import Analysis
 from autocti.pipeline.phase.ci_imaging.meta_ci_imaging import MetaCIImaging
 from autocti.pipeline.phase.ci_imaging.result import Result
+from autofit.optimize.non_linear.nested_sampling.multi_nest import MultiNest
+from autofit.optimize.non_linear.paths import convert_paths
+from autofit.tools.phase_property import PhaseProperty
 
 
 class PhaseCIImaging(dataset.PhaseDataset):
 
-    hyper_noise_scalar_of_ci_regions = af.PhaseProperty(
-        "hyper_noise_scalar_of_ci_regions"
-    )
-    hyper_noise_scalar_of_parallel_trails = af.PhaseProperty(
+    hyper_noise_scalar_of_ci_regions = PhaseProperty("hyper_noise_scalar_of_ci_regions")
+    hyper_noise_scalar_of_parallel_trails = PhaseProperty(
         "hyper_noise_scalar_of_parallel_trails"
     )
-    hyper_noise_scalar_of_serial_trails = af.PhaseProperty(
+    hyper_noise_scalar_of_serial_trails = PhaseProperty(
         "hyper_noise_scalar_of_serial_trails"
     )
-    hyper_noise_scalar_of_serial_overscan_no_trails = af.PhaseProperty(
+    hyper_noise_scalar_of_serial_overscan_no_trails = PhaseProperty(
         "hyper_noise_scalar_of_serial_overscan_no_trails"
     )
 
     Analysis = Analysis
     Result = Result
 
-    @af.convert_paths
+    @convert_paths
     def __init__(
         self,
         paths,
@@ -38,7 +38,7 @@ class PhaseCIImaging(dataset.PhaseDataset):
         hyper_noise_scalar_of_parallel_trails=None,
         hyper_noise_scalar_of_serial_trails=None,
         hyper_noise_scalar_of_serial_overscan_no_trails=None,
-        non_linear_class=af.MultiNest,
+        non_linear_class=MultiNest,
         columns=None,
         rows=None,
         parallel_front_edge_mask_rows=None,

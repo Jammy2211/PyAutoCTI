@@ -2,9 +2,7 @@ import os
 
 import numpy as np
 import pytest
-
-from autocti.util import exc
-
+from autocti import exc
 from autocti import structures as struct
 
 

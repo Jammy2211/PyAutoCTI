@@ -1,8 +1,6 @@
-import numpy as np
 from functools import partial
 
-from autoarray.exc import InversionException, GridException
-from autofit.exc import FitException
+import numpy as np
 from autocti.charge_injection import ci_fit
 from autocti.pipeline import visualizer
 from autocti.pipeline.phase.dataset import analysis as analysis_dataset
@@ -28,7 +26,7 @@ class Analysis(analysis_dataset.Analysis):
             results=results,
         )
 
-        self.visualizer = [
+        self.visualizers = [
             visualizer.PhaseCIImagingVisualizer(
                 masked_dataset=masked_ci_imaging, image_path=image_path, results=results
             )
@@ -41,7 +39,7 @@ class Analysis(analysis_dataset.Analysis):
     def masked_ci_imagings(self):
         return self.masked_ci_datasets
 
-    def fit(self, instance):
+    def log_likelihood_function(self, instance):
         """
         Determine the fitness of a particular model
 
@@ -134,19 +132,12 @@ class Analysis(analysis_dataset.Analysis):
 
     def visualize(self, instance, during_analysis):
 
-        if not self.is_hyper:
-            fits = self.fits_of_ci_data_extracted_for_instance(instance=instance)
-        elif self.is_hyper:
-            fits = self.fits_of_ci_data_hyper_extracted_for_instance(instance=instance)
+        fits = self.fits_from_instance(instance=instance)
 
-        self.visualizer.visualize_ci_fit(fit=fit, during_analysis=during_analysis)
-        self.visualizer.visualize_ci_fit_lines(fit=fit, during_analysis=during_analysis)
-        self.visualizer.visualize_multiple_ci_fits_subplots(
-            fits=fits, during_analysis=during_analysis
-        )
-        self.visualizer.visualize_multiple_ci_fits_subplots_lines(
-            fits=fits, during_analysis=during_analysis
-        )
+        for fit, visualizer in zip(fits, self.visualizers):
+
+            visualizer.visualize_ci_fit(fit=fit, during_analysis=during_analysis)
+            visualizer.visualize_ci_fit_lines(fit=fit, during_analysis=during_analysis)
 
 
 def pipe_cti(ci_data_masked, instance, clocker, hyper_noise_scalars):

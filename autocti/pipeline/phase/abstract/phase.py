@@ -1,15 +1,18 @@
-import autofit as af
 from autocti.pipeline.phase.abstract.result import Result
+from autofit.optimize.non_linear.nested_sampling.multi_nest import MultiNest
+from autofit.optimize.non_linear.paths import convert_paths
+from autofit.tools import phase as af_phase
+
 
 # noinspection PyAbstractClass
 
 
-class AbstractPhase(af.AbstractPhase):
+class AbstractPhase(af_phase.AbstractPhase):
 
     Result = Result
 
-    @af.convert_paths
-    def __init__(self, paths, *, non_linear_class=af.MultiNest):
+    @convert_paths
+    def __init__(self, paths, *, non_linear_class=MultiNest):
         """
         A phase in an lens pipeline. Uses the set non_linear optimizer to try to fit
         models and hyper_galaxies passed to it.

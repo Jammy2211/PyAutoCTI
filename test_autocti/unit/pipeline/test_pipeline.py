@@ -1,9 +1,8 @@
 import builtins
 
-import pytest
-
-import autofit as af
 import autocti.pipeline.pipeline as pl
+import autofit as af
+import pytest
 
 
 class MockFile(object):

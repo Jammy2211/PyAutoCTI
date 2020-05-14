@@ -2,7 +2,6 @@ import logging
 import os
 
 import numpy as np
-
 from autocti import structures as struct
 from autocti.dataset import abstract_dataset
 

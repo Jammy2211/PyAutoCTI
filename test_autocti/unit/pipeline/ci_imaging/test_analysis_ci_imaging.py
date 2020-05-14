@@ -1,16 +1,12 @@
 from os import path
 
-import pytest
-from astropy import cosmology as cosmo
-import numpy as np
-
-import autofit as af
 import arctic as ac
 import autocti.charge_injection as ci
-from autocti.util import exc
-from test_autocti.mock import mock_pipeline
-
+import autofit as af
+import pytest
+from autocti import exc
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
+from test_autocti.mock import mock_pipeline
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of "
@@ -79,7 +75,9 @@ class TestFit:
         )
         instance = phase.model.instance_from_unit_vector([])
 
-        log_likelihood_via_analysis = analysis.fit(instance=instance)
+        log_likelihood_via_analysis = analysis.log_likelihood_function(
+            instance=instance
+        )
 
         ci_post_cti = parallel_clocker.add_cti(
             image=ci_pre_cti_7x7,

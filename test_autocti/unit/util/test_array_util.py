@@ -1,9 +1,8 @@
-from autocti import util
-
 import os
+
 import numpy as np
 import pytest
-
+from autocti import util
 
 test_data_path = "{}/files/array/".format(os.path.dirname(os.path.realpath(__file__)))
 

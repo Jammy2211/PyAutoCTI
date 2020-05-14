@@ -1,4 +1,3 @@
-from autocti.dataset import imaging
 from autocti.charge_injection import ci_mask, ci_imaging
 from autocti.pipeline.phase.dataset import meta_dataset
 

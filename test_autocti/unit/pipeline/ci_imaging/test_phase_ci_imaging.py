@@ -1,13 +1,10 @@
 from os import path
 
+import arctic as ac
+import autocti.charge_injection as ci
+import autofit as af
 import numpy as np
 import pytest
-
-import autofit as af
-import arctic as ac
-
-import autocti.structures as struct
-import autocti.charge_injection as ci
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 from test_autocti.mock import mock_pipeline
 

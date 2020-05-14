@@ -1,7 +1,4 @@
-import numpy as np
-
 import autofit as af
-import autocti as al
 
 
 class MockSamples:
@@ -146,11 +143,11 @@ class MockHyperCombinedPhase:
 
 
 class MockNLO(af.NonLinearOptimizer):
-    def _simple_fit(self, analysis, fitness_function):
+    def _fit(self, analysis, fitness_function):
         # noinspection PyTypeChecker
-        return af.Result(None, analysis.fit(None), None)
+        return af.Result(None, analysis.log_likelihood_function(None), None)
 
-    def _fit(self, analysis, model):
+    def _full_fit(self, model, analysis):
         class Fitness:
             def __init__(self, instance_from_vector):
                 self.result = None
@@ -159,7 +156,7 @@ class MockNLO(af.NonLinearOptimizer):
             def __call__(self, vector):
                 instance = self.instance_from_vector(vector)
 
-                log_likelihood = analysis.fit(instance)
+                log_likelihood = analysis.log_likelihood_function(instance)
                 self.result = MockResult(instance=instance)
 
                 # Return Chi squared

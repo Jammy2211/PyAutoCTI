@@ -1,6 +1,5 @@
-from autocti.structures.mask import Mask
-
 import numpy as np
+from autocti.structures.mask import Mask
 
 
 class CIMask(Mask):

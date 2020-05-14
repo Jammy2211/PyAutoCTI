@@ -2,10 +2,9 @@ from os import path
 
 import numpy as np
 import pytest
-
 from autocti import charge_injection as ci
-from autocti.pipeline.phase.extensions import HyperNoisePhase
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
+from autocti.pipeline.phase.extensions import HyperNoisePhase
 from test_autocti.mock import mock_pipeline
 
 pytestmark = pytest.mark.filterwarnings(

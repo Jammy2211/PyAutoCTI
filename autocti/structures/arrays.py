@@ -1,12 +1,10 @@
 import logging
 
 import numpy as np
-
+from autocti import exc
 from autocti.structures import abstract_structure
 from autocti.structures import mask as msk
 from autocti.util import array_util
-
-from autocti.util import exc
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
