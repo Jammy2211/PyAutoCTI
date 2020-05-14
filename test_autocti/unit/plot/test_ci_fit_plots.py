@@ -1,8 +1,8 @@
-from autoconf import conf
-import autocti.plot as aplt
-
 import os
+
 import pytest
+from autoconf import conf
+from autocti import plot as aplt
 
 directory = os.path.dirname(os.path.realpath(__file__))
 

@@ -1,9 +1,7 @@
+import copy
 import pickle
 
 import numpy as np
-import copy
-
-from autocti.util import exc
 from autocti.structures import arrays
 
 

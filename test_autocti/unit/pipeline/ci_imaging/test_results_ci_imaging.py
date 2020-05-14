@@ -1,13 +1,10 @@
 from os import path
 
+import autocti.charge_injection as ci
 import numpy as np
 import pytest
-import autofit as af
-
-import arctic as ac
-import autocti.charge_injection as ci
-from autocti.pipeline.phase.dataset.result import Result
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
+from autocti.pipeline.phase.dataset.result import Result
 from test_autocti.mock import mock_pipeline
 
 pytestmark = pytest.mark.filterwarnings(

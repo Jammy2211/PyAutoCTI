@@ -1,6 +1,8 @@
 import copy
 
-import autofit as af
+from autoconf import conf
+from autofit.optimize import non_linear
+from autofit.tools.pipeline import ResultsCollection
 
 
 class HyperPhase(object):
@@ -17,7 +19,7 @@ class HyperPhase(object):
         self.phase = phase
         self.hyper_name = hyper_name
 
-    def run_hyper(self, *args, **kwargs) -> af.Result:
+    def run_hyper(self, *args, **kwargs) -> non_linear.Result:
         """
         Run the hyper_galaxies phase.
 
@@ -50,17 +52,17 @@ class HyperPhase(object):
             extension=self.hyper_name + "_" + phase.phase_tag
         )
 
-        phase.optimizer.const_efficiency_mode = af.conf.instance.non_linear.get(
-            "MultiNest", "extension_combined_const_efficiency_mode", bool
+        phase.optimizer.const_efficiency_mode = conf.instance.non_linear.get(
+            "MultiNest", "const_efficiency_mode", bool
         )
-        phase.optimizer.sampling_efficiency = af.conf.instance.non_linear.get(
-            "MultiNest", "extension_combined_sampling_efficiency", float
+        phase.optimizer.sampling_efficiency = conf.instance.non_linear.get(
+            "MultiNest", "sampling_efficiency", float
         )
-        phase.optimizer.n_live_points = af.conf.instance.non_linear.get(
-            "MultiNest", "extension_combined_n_live_points", int
+        phase.optimizer.n_live_points = conf.instance.non_linear.get(
+            "MultiNest", "n_live_points", int
         )
-        phase.optimizer.multimodal = af.conf.instance.non_linear.get(
-            "MultiNest", "extension_combined_multimodal", bool
+        phase.optimizer.multimodal = conf.instance.non_linear.get(
+            "MultiNest", "multimodal", bool
         )
 
         phase.is_hyper_phase = True
@@ -75,14 +77,14 @@ class HyperPhase(object):
         pass
 
     def run(
-        self, ci_datas, results: af.ResultsCollection = None, **kwargs
-    ) -> af.Result:
+        self, datasets, results: ResultsCollection = None, **kwargs
+    ) -> non_linear.Result:
         """
         Run the hyper phase and then the hyper_galaxies phase.
 
         Parameters
         ----------
-        ci_datas
+        datasets
             Data
         results
             Results from previous phases.
@@ -95,15 +97,13 @@ class HyperPhase(object):
             phase.
         """
 
-        results = (
-            copy.deepcopy(results) if results is not None else af.ResultsCollection()
-        )
+        results = copy.deepcopy(results) if results is not None else ResultsCollection()
 
         result = self.phase.run(
-            ci_datas=ci_datas, clocker=results.last.clocker, results=results, **kwargs
+            datasets=datasets, clocker=results.last.clocker, results=results, **kwargs
         )
         results.add(self.phase.phase_name, result)
-        hyper_result = self.run_hyper(ci_data=ci_datas, results=results, **kwargs)
+        hyper_result = self.run_hyper(ci_data=datasets, results=results, **kwargs)
         setattr(result, self.hyper_name, hyper_result)
         return result
 

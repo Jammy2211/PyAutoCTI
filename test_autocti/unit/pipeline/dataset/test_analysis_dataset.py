@@ -1,10 +1,9 @@
 from os import path
 
-import pytest
-
-import autofit as af
 import arctic as ac
-from autocti.util import exc
+import autofit as af
+import pytest
+from autocti import exc
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of "

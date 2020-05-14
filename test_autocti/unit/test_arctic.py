@@ -1,8 +1,7 @@
-from arcticpy.arctic import clock
-from arcticpy_cpp import pyarctic
-
 import numpy as np
 import pytest
+from arcticpy.arctic import clock
+from arcticpy_cpp import pyarctic
 
 
 def test__add_cti_to_image_with_both_clockers__parallel__identical_results(

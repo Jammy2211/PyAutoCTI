@@ -1,9 +1,9 @@
 import inspect
 import os
+from functools import wraps
 
 import numpy as np
 from astropy.io import fits
-from functools import wraps
 
 
 class Memoizer:

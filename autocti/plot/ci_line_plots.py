@@ -1,7 +1,4 @@
-import matplotlib.pyplot as plt
-
-from autocti.util import exc
-from autocti.plot import ci_plotter_util
+from autocti import exc
 
 
 def plot_line_from_ci_frame(ci_frame, line_region, include=None, plotter=None):

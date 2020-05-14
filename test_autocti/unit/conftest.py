@@ -1,16 +1,12 @@
-from arcticpy.test_arctic.unit.conftest import *
+import os
 
 import autofit as af
-from autocti import structures as struct
-from autocti import dataset as ds
+from arcticpy.test_arctic.unit.conftest import *
 from autocti import charge_injection as ci
-from autocti.pipeline.phase.dataset import PhaseDataset
+from autocti import dataset as ds
+from autocti import structures as struct
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
-
-import os
-import pytest
-import numpy as np
-
+from autocti.pipeline.phase.dataset import PhaseDataset
 from test_autocti.mock import mock_pipeline
 
 directory = os.path.dirname(os.path.realpath(__file__))

@@ -1,9 +1,8 @@
-from autocti import structures as struct
-from autocti import dataset as ds
-from autocti.fit import fit as f
-
 import numpy as np
 import pytest
+from autocti import dataset as ds
+from autocti import fit as f
+from autocti import structures as struct
 
 
 class TestFitImaging:

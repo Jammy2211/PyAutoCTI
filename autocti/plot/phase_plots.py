@@ -1,6 +1,4 @@
-from matplotlib import pyplot as plt
-
-from autocti.plot import ci_plotter_util, ci_imaging_plots
+from autocti.plot import ci_plotter_util
 from autocti.util import array_util
 
 

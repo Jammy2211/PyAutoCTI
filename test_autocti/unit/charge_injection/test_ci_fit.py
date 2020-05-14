@@ -1,8 +1,7 @@
 import numpy as np
 import pytest
-
-from autocti.util import fit_util
 from autocti import charge_injection as ci
+from autocti import util
 from autocti.charge_injection.ci_fit import (
     hyper_noise_map_from_noise_map_and_noise_scalings,
 )
@@ -21,7 +20,7 @@ class TestCIFit:
             masked_ci_imaging=masked_ci_imaging_7x7, ci_post_cti=ci_post_cti
         )
 
-        residual_map = fit_util.residual_map_from_data_mask_and_model_data(
+        residual_map = util.fit.residual_map_from_data_mask_and_model_data(
             data=masked_ci_imaging_7x7.image,
             mask=masked_ci_imaging_7x7.mask,
             model_data=ci_post_cti,
@@ -29,7 +28,7 @@ class TestCIFit:
 
         assert (fit.residual_map == residual_map).all()
 
-        chi_squared_map = fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
+        chi_squared_map = util.fit.chi_squared_map_from_residual_map_noise_map_and_mask(
             residual_map=residual_map,
             noise_map=masked_ci_imaging_7x7.noise_map,
             mask=masked_ci_imaging_7x7.mask,
@@ -37,15 +36,15 @@ class TestCIFit:
 
         assert (fit.chi_squared_map == chi_squared_map).all()
 
-        chi_squared = fit_util.chi_squared_from_chi_squared_map_and_mask(
+        chi_squared = util.fit.chi_squared_from_chi_squared_map_and_mask(
             chi_squared_map=chi_squared_map, mask=masked_ci_imaging_7x7.mask
         )
 
-        noise_normalization = fit_util.noise_normalization_from_noise_map_and_mask(
+        noise_normalization = util.fit.noise_normalization_from_noise_map_and_mask(
             noise_map=masked_ci_imaging_7x7.noise_map, mask=masked_ci_imaging_7x7.mask
         )
 
-        log_likelihood = fit_util.likelihood_from_chi_squared_and_noise_normalization(
+        log_likelihood = util.fit.likelihood_from_chi_squared_and_noise_normalization(
             chi_squared=chi_squared, noise_normalization=noise_normalization
         )
 
@@ -236,7 +235,7 @@ class TestCIFit:
 
         assert (hyper_noise_map == fit.noise_map).all()
 
-        residual_map = fit_util.residual_map_from_data_mask_and_model_data(
+        residual_map = util.fit.residual_map_from_data_mask_and_model_data(
             data=masked_ci_imaging_7x7.image,
             mask=masked_ci_imaging_7x7.mask,
             model_data=masked_ci_imaging_7x7.ci_pre_cti,
@@ -244,7 +243,7 @@ class TestCIFit:
 
         assert (residual_map == fit.residual_map).all()
 
-        chi_squared_map = fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
+        chi_squared_map = util.fit.chi_squared_map_from_residual_map_noise_map_and_mask(
             residual_map=residual_map,
             noise_map=hyper_noise_map,
             mask=masked_ci_imaging_7x7.mask,
@@ -252,15 +251,15 @@ class TestCIFit:
 
         assert (chi_squared_map == fit.chi_squared_map).all()
 
-        chi_squared = fit_util.chi_squared_from_chi_squared_map_and_mask(
+        chi_squared = util.fit.chi_squared_from_chi_squared_map_and_mask(
             chi_squared_map=chi_squared_map, mask=masked_ci_imaging_7x7.mask
         )
 
-        noise_normalization = fit_util.noise_normalization_from_noise_map_and_mask(
+        noise_normalization = util.fit.noise_normalization_from_noise_map_and_mask(
             noise_map=hyper_noise_map, mask=masked_ci_imaging_7x7.mask
         )
 
-        log_likelihood = fit_util.likelihood_from_chi_squared_and_noise_normalization(
+        log_likelihood = util.fit.likelihood_from_chi_squared_and_noise_normalization(
             chi_squared=chi_squared, noise_normalization=noise_normalization
         )
 

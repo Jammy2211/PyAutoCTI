@@ -1,12 +1,10 @@
-import numpy as np
+from copy import deepcopy
 
-from autocti.util import array_util
-from autocti.structures.mask import Mask
+import numpy as np
 from autocti.charge_injection import ci_mask
 from autocti.structures.frame import Frame
-from autocti.util import frame_util
-
-from copy import deepcopy
+from autocti.structures.mask import Mask
+from autocti.util import array_util, frame_util
 
 
 class AbstractCIFrame(Frame):

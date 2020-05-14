@@ -1,9 +1,6 @@
 import numpy as np
-
-from autocti import structures as struct
 from autocti import charge_injection as ci
-
-from autocti.charge_injection import ci_mask as ci_msk
+from autocti import structures as struct
 
 
 class TestCIFrameAPI:

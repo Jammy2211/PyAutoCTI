@@ -1,14 +1,14 @@
-from autoconf import conf
-from os import path
-import matplotlib.pyplot as plt
 import os
-import pytest
 import shutil
+from os import path
 
+import matplotlib.pyplot as plt
 import numpy as np
-from autocti.util import array_util
+import pytest
+from autoconf import conf
+from autocti import plot as aplt
 from autocti import structures as struct
-import autocti.plot as aplt
+from autocti import util
 
 directory = path.dirname(path.realpath(__file__))
 
@@ -532,7 +532,7 @@ class TestAbstractPlotterPlots:
 
         plotter.plot_frame(frame=frame)
 
-        frame = array_util.numpy_array_2d_from_fits(
+        frame = util.array.numpy_array_2d_from_fits(
             file_path=plot_path + "/frame.fits", hdu=0
         )
 
@@ -544,7 +544,7 @@ class TestAbstractPlotterPlots:
 
         plotter.plot_frame(frame=masked_frame)
 
-        frame = array_util.numpy_array_2d_from_fits(
+        frame = util.array.numpy_array_2d_from_fits(
             file_path=plot_path + "/frame.fits", hdu=0
         )
 

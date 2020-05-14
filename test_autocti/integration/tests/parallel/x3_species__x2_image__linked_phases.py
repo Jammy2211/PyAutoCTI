@@ -1,38 +1,31 @@
-import autofit as af
 import autocti as ac
-from test import runner
+import autofit as af
+from test_autocti.integration.tests import runner
 
 test_type = "parallel"
 test_name = "x3_species__x2_image__linked_phases"
-ci_data_type = "ci__uniform"
+ci_data_type = "ci_uniform"
 ci_data_model = "parallel_x3"
-ci_data_resolution = "patch"
+resolution = "patch"
 ci_normalizations = [84700.0]
 
 
-parallel_settings = ac.Settings(
-    well_depth=84700,
-    niter=1,
-    express=2,
-    n_levels=2000,
-    charge_injection_mode=False,
-    readout_offset=0,
-)
-clocker = ac.ArcticSettings(parallel=parallel_settings)
+clocker = ac.Clocker(parallel_express=2)
 
 
 def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
-    class PhaseCI(ac.PhaseCI):
-        def customize_priors(self, results):
-            self.parallel_ccd_volume.well_fill_alpha = 1.0
-            self.parallel_ccd_volume.well_fill_gamma = 0.0
 
-    phase1 = PhaseCI(
+    parallel_ccd_volume = af.PriorModel(ac.CCDVolume)
+
+    parallel_ccd_volume.well_max_height = 8.47e4
+    parallel_ccd_volume.well_notch_depth = 1e-7
+
+    phase1 = ac.PhaseCIImaging(
         phase_name="phase_1",
         phase_folders=phase_folders,
         non_linear_class=non_linear_class,
         parallel_traps=[af.PriorModel(ac.Trap)],
-        parallel_ccd_volume=ac.CCDVolume,
+        parallel_ccd_volume=parallel_ccd_volume,
         columns=None,
     )
 
@@ -40,7 +33,7 @@ def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.sampling_efficiency = 0.2
 
-    class PhaseCI(ac.PhaseCI):
+    class PhaseCIImaging(ac.PhaseCIImaging):
         def customize_priors(self, results):
 
             previous_total_density = results[-1].instance.parallel_traps[0].trap_density
@@ -64,7 +57,7 @@ def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
                 lower_limit=0.0, upper_limit=30.0
             )
 
-    phase2 = PhaseCI(
+    phase2 = PhaseCIImaging(
         phase_name="phase_2",
         phase_folders=phase_folders,
         non_linear_class=non_linear_class,
@@ -82,7 +75,7 @@ def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
 
     phase2 = phase1.extend_with_hyper_noise_phases()
 
-    phase3 = ac.PhaseCI(
+    phase3 = ac.PhaseCIImaging(
         phase_name="phase_3",
         phase_folders=phase_folders,
         parallel_traps=phase1.result.model.parallel_traps,

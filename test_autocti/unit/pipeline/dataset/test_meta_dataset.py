@@ -1,8 +1,7 @@
 from os import path
 
-import pytest
 import arctic as ac
-
+import pytest
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 
 pytestmark = pytest.mark.filterwarnings(

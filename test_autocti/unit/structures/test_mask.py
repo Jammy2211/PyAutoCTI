@@ -1,11 +1,10 @@
-import numpy as np
-
-from autocti import structures as struct
-from autocti.util import exc
-
-import pytest
 import os
 import shutil
+
+import numpy as np
+import pytest
+from autocti import exc
+from autocti import structures as struct
 
 test_data_path = "{}/files/array/".format(os.path.dirname(os.path.realpath(__file__)))
 

@@ -1,7 +1,6 @@
-from autocti.util import fit_util
-
 import numpy as np
 import pytest
+from autocti import util
 
 
 class TestResiduals:
@@ -11,7 +10,7 @@ class TestResiduals:
         mask = np.full(fill_value=False, shape=(4,))
         model_data = np.array([10.0, 10.0, 10.0, 10.0])
 
-        residual_map = fit_util.residual_map_from_data_mask_and_model_data(
+        residual_map = util.fit.residual_map_from_data_mask_and_model_data(
             data=data, mask=mask, model_data=model_data
         )
 
@@ -23,7 +22,7 @@ class TestResiduals:
         mask = np.full(fill_value=False, shape=(4,))
         model_data = np.array([11.0, 10.0, 9.0, 8.0])
 
-        residual_map = fit_util.residual_map_from_data_mask_and_model_data(
+        residual_map = util.fit.residual_map_from_data_mask_and_model_data(
             data=data, mask=mask, model_data=model_data
         )
 
@@ -35,7 +34,7 @@ class TestResiduals:
         mask = np.array([True, False, False, True])
         model_data = np.array([11.0, 10.0, 9.0, 8.0])
 
-        residual_map = fit_util.residual_map_from_data_mask_and_model_data(
+        residual_map = util.fit.residual_map_from_data_mask_and_model_data(
             data=data, mask=mask, model_data=model_data
         )
 
@@ -50,11 +49,11 @@ class TestNormalizedResidualMap:
         mask = np.full(fill_value=False, shape=(4,))
         model_data = np.array([10.0, 10.0, 10.0, 10.0])
 
-        residual_map = fit_util.residual_map_from_data_mask_and_model_data(
+        residual_map = util.fit.residual_map_from_data_mask_and_model_data(
             data=data, mask=mask, model_data=model_data
         )
 
-        normalized_residual_map = fit_util.normalized_residual_map_from_residual_map_noise_map_and_mask(
+        normalized_residual_map = util.fit.normalized_residual_map_from_residual_map_noise_map_and_mask(
             residual_map=residual_map, noise_map=noise_map, mask=mask
         )
 
@@ -67,11 +66,11 @@ class TestNormalizedResidualMap:
         mask = np.full(fill_value=False, shape=(4,))
         model_data = np.array([11.0, 10.0, 9.0, 8.0])
 
-        residual_map = fit_util.residual_map_from_data_mask_and_model_data(
+        residual_map = util.fit.residual_map_from_data_mask_and_model_data(
             data=data, mask=mask, model_data=model_data
         )
 
-        normalized_residual_map = fit_util.normalized_residual_map_from_residual_map_noise_map_and_mask(
+        normalized_residual_map = util.fit.normalized_residual_map_from_residual_map_noise_map_and_mask(
             residual_map=residual_map, noise_map=noise_map, mask=mask
         )
 
@@ -89,11 +88,11 @@ class TestNormalizedResidualMap:
         mask = np.array([True, False, False, True])
         model_data = np.array([11.0, 10.0, 9.0, 8.0])
 
-        residual_map = fit_util.residual_map_from_data_mask_and_model_data(
+        residual_map = util.fit.residual_map_from_data_mask_and_model_data(
             data=data, mask=mask, model_data=model_data
         )
 
-        normalized_residual_map = fit_util.normalized_residual_map_from_residual_map_noise_map_and_mask(
+        normalized_residual_map = util.fit.normalized_residual_map_from_residual_map_noise_map_and_mask(
             residual_map=residual_map, noise_map=noise_map, mask=mask
         )
 
@@ -106,11 +105,11 @@ class TestNormalizedResidualMap:
         mask = np.array([True, False, False, True])
         model_data = np.array([11.0, 10.0, 9.0, 8.0])
 
-        residual_map = fit_util.residual_map_from_data_mask_and_model_data(
+        residual_map = util.fit.residual_map_from_data_mask_and_model_data(
             data=data, mask=mask, model_data=model_data
         )
 
-        normalized_residual_map = fit_util.normalized_residual_map_from_residual_map_noise_map_and_mask(
+        normalized_residual_map = util.fit.normalized_residual_map_from_residual_map_noise_map_and_mask(
             residual_map=residual_map, noise_map=noise_map, mask=mask
         )
 
@@ -125,11 +124,11 @@ class TestChiSquareds:
         mask = np.full(fill_value=False, shape=(4,))
         model_data = np.array([10.0, 10.0, 10.0, 10.0])
 
-        residual_map = fit_util.residual_map_from_data_mask_and_model_data(
+        residual_map = util.fit.residual_map_from_data_mask_and_model_data(
             data=data, mask=mask, model_data=model_data
         )
 
-        chi_squared_map = fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
+        chi_squared_map = util.fit.chi_squared_map_from_residual_map_noise_map_and_mask(
             residual_map=residual_map, noise_map=noise_map, mask=mask
         )
 
@@ -142,11 +141,11 @@ class TestChiSquareds:
         mask = np.full(fill_value=False, shape=(4,))
         model_data = np.array([11.0, 10.0, 9.0, 8.0])
 
-        residual_map = fit_util.residual_map_from_data_mask_and_model_data(
+        residual_map = util.fit.residual_map_from_data_mask_and_model_data(
             data=data, mask=mask, model_data=model_data
         )
 
-        chi_squared_map = fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
+        chi_squared_map = util.fit.chi_squared_map_from_residual_map_noise_map_and_mask(
             residual_map=residual_map, noise_map=noise_map, mask=mask
         )
 
@@ -164,11 +163,11 @@ class TestChiSquareds:
         mask = np.array([True, False, False, True])
         model_data = np.array([11.0, 10.0, 9.0, 8.0])
 
-        residual_map = fit_util.residual_map_from_data_mask_and_model_data(
+        residual_map = util.fit.residual_map_from_data_mask_and_model_data(
             data=data, mask=mask, model_data=model_data
         )
 
-        chi_squared_map = fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
+        chi_squared_map = util.fit.chi_squared_map_from_residual_map_noise_map_and_mask(
             residual_map=residual_map, noise_map=noise_map, mask=mask
         )
 
@@ -181,11 +180,11 @@ class TestChiSquareds:
         mask = np.array([True, False, False, True])
         model_data = np.array([11.0, 10.0, 9.0, 8.0])
 
-        residual_map = fit_util.residual_map_from_data_mask_and_model_data(
+        residual_map = util.fit.residual_map_from_data_mask_and_model_data(
             data=data, mask=mask, model_data=model_data
         )
 
-        chi_squared_map = fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
+        chi_squared_map = util.fit.chi_squared_map_from_residual_map_noise_map_and_mask(
             residual_map=residual_map, noise_map=noise_map, mask=mask
         )
 
@@ -200,23 +199,23 @@ class TestLikelihood:
         mask = np.full(fill_value=False, shape=(4,))
         model_data = np.array([10.0, 10.0, 10.0, 10.0])
 
-        residual_map = fit_util.residual_map_from_data_mask_and_model_data(
+        residual_map = util.fit.residual_map_from_data_mask_and_model_data(
             data=data, mask=mask, model_data=model_data
         )
 
-        chi_squared_map = fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
+        chi_squared_map = util.fit.chi_squared_map_from_residual_map_noise_map_and_mask(
             residual_map=residual_map, noise_map=noise_map, mask=mask
         )
 
-        chi_squared = fit_util.chi_squared_from_chi_squared_map_and_mask(
+        chi_squared = util.fit.chi_squared_from_chi_squared_map_and_mask(
             chi_squared_map=chi_squared_map, mask=mask
         )
 
-        noise_normalization = fit_util.noise_normalization_from_noise_map_and_mask(
+        noise_normalization = util.fit.noise_normalization_from_noise_map_and_mask(
             noise_map=noise_map, mask=mask
         )
 
-        log_likelihood = fit_util.likelihood_from_chi_squared_and_noise_normalization(
+        log_likelihood = util.fit.likelihood_from_chi_squared_and_noise_normalization(
             chi_squared=chi_squared, noise_normalization=noise_normalization
         )
 
@@ -239,23 +238,23 @@ class TestLikelihood:
         mask = np.full(fill_value=False, shape=(4,))
         model_data = np.array([11.0, 10.0, 9.0, 8.0])
 
-        residual_map = fit_util.residual_map_from_data_mask_and_model_data(
+        residual_map = util.fit.residual_map_from_data_mask_and_model_data(
             data=data, mask=mask, model_data=model_data
         )
 
-        chi_squared_map = fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
+        chi_squared_map = util.fit.chi_squared_map_from_residual_map_noise_map_and_mask(
             residual_map=residual_map, noise_map=noise_map, mask=mask
         )
 
-        chi_squared = fit_util.chi_squared_from_chi_squared_map_and_mask(
+        chi_squared = util.fit.chi_squared_from_chi_squared_map_and_mask(
             chi_squared_map=chi_squared_map, mask=mask
         )
 
-        noise_normalization = fit_util.noise_normalization_from_noise_map_and_mask(
+        noise_normalization = util.fit.noise_normalization_from_noise_map_and_mask(
             noise_map=noise_map, mask=mask
         )
 
-        log_likelihood = fit_util.likelihood_from_chi_squared_and_noise_normalization(
+        log_likelihood = util.fit.likelihood_from_chi_squared_and_noise_normalization(
             chi_squared=chi_squared, noise_normalization=noise_normalization
         )
 
@@ -281,23 +280,23 @@ class TestLikelihood:
         mask = np.full(fill_value=False, shape=(4,))
         model_data = np.array([11.0, 10.0, 9.0, 8.0])
 
-        residual_map = fit_util.residual_map_from_data_mask_and_model_data(
+        residual_map = util.fit.residual_map_from_data_mask_and_model_data(
             data=data, mask=mask, model_data=model_data
         )
 
-        chi_squared_map = fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
+        chi_squared_map = util.fit.chi_squared_map_from_residual_map_noise_map_and_mask(
             residual_map=residual_map, noise_map=noise_map, mask=mask
         )
 
-        chi_squared = fit_util.chi_squared_from_chi_squared_map_and_mask(
+        chi_squared = util.fit.chi_squared_from_chi_squared_map_and_mask(
             chi_squared_map=chi_squared_map, mask=mask
         )
 
-        noise_normalization = fit_util.noise_normalization_from_noise_map_and_mask(
+        noise_normalization = util.fit.noise_normalization_from_noise_map_and_mask(
             noise_map=noise_map, mask=mask
         )
 
-        log_likelihood = fit_util.likelihood_from_chi_squared_and_noise_normalization(
+        log_likelihood = util.fit.likelihood_from_chi_squared_and_noise_normalization(
             chi_squared=chi_squared, noise_normalization=noise_normalization
         )
 
@@ -322,23 +321,23 @@ class TestLikelihood:
         mask = np.array([True, False, False, True])
         model_data = np.array([11.0, 10.0, 9.0, 8.0])
 
-        residual_map = fit_util.residual_map_from_data_mask_and_model_data(
+        residual_map = util.fit.residual_map_from_data_mask_and_model_data(
             data=data, mask=mask, model_data=model_data
         )
 
-        chi_squared_map = fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
+        chi_squared_map = util.fit.chi_squared_map_from_residual_map_noise_map_and_mask(
             residual_map=residual_map, noise_map=noise_map, mask=mask
         )
 
-        chi_squared = fit_util.chi_squared_from_chi_squared_map_and_mask(
+        chi_squared = util.fit.chi_squared_from_chi_squared_map_and_mask(
             chi_squared_map=chi_squared_map, mask=mask
         )
 
-        noise_normalization = fit_util.noise_normalization_from_noise_map_and_mask(
+        noise_normalization = util.fit.noise_normalization_from_noise_map_and_mask(
             noise_map=noise_map, mask=mask
         )
 
-        log_likelihood = fit_util.likelihood_from_chi_squared_and_noise_normalization(
+        log_likelihood = util.fit.likelihood_from_chi_squared_and_noise_normalization(
             chi_squared=chi_squared, noise_normalization=noise_normalization
         )
 
@@ -360,23 +359,23 @@ class TestLikelihood:
         mask = np.array([[True, False], [False, True]])
         model_data = np.array([[11.0, 10.0], [9.0, 8.0]])
 
-        residual_map = fit_util.residual_map_from_data_mask_and_model_data(
+        residual_map = util.fit.residual_map_from_data_mask_and_model_data(
             data=data, mask=mask, model_data=model_data
         )
 
-        chi_squared_map = fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
+        chi_squared_map = util.fit.chi_squared_map_from_residual_map_noise_map_and_mask(
             residual_map=residual_map, noise_map=noise_map, mask=mask
         )
 
-        chi_squared = fit_util.chi_squared_from_chi_squared_map_and_mask(
+        chi_squared = util.fit.chi_squared_from_chi_squared_map_and_mask(
             chi_squared_map=chi_squared_map, mask=mask
         )
 
-        noise_normalization = fit_util.noise_normalization_from_noise_map_and_mask(
+        noise_normalization = util.fit.noise_normalization_from_noise_map_and_mask(
             noise_map=noise_map, mask=mask
         )
 
-        log_likelihood = fit_util.likelihood_from_chi_squared_and_noise_normalization(
+        log_likelihood = util.fit.likelihood_from_chi_squared_and_noise_normalization(
             chi_squared=chi_squared, noise_normalization=noise_normalization
         )
 

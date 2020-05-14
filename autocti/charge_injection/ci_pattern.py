@@ -5,13 +5,12 @@ Created on: 02/14/18
 Author: James Nightingale
 """
 
-import numpy as np
-
 from copy import deepcopy
 
-from autocti.util import exc
-from autocti.util import frame_util
+import numpy as np
+from autocti import exc
 from autocti.structures import region
+from autocti.util import frame_util
 
 
 class AbstractCIPattern(object):

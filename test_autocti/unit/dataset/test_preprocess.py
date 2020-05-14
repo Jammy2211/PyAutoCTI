@@ -2,10 +2,8 @@ import os
 
 import numpy as np
 import pytest
-import shutil
-
-from autocti import structures as struct
 from autocti import dataset as ds
+from autocti import structures as struct
 
 test_data_dir = "{}/files/imaging/".format(os.path.dirname(os.path.realpath(__file__)))
 

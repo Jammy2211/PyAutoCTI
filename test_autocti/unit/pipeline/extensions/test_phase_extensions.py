@@ -8,7 +8,7 @@
 #
 #
 # @pytest.fixture(name="lens_galaxy")
-# def make_lens_galaxy():
+# def simulate_lens_galaxy():
 #     return ac.Galaxy(
 #         redshift=1.0, light=ac.lp.SphericalSersic(), mass=ac.mp.SphericalIsothermal()
 #     )
@@ -123,7 +123,7 @@
 #
 # class TestHyperAPI(object):
 #     def test_combined_result(self, hyper_combined):
-#         result = hyper_combined.run(ci_datas=None)
+#         result = hyper_combined.run(datasets=None)
 #
 #         assert hasattr(result, "hyper_noise")
 #         assert isinstance(result.hyper_noise, MockResult)

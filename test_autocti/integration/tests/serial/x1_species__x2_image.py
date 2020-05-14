@@ -1,37 +1,30 @@
-import autofit as af
 import autocti as ac
-from test import runner
+import autofit as af
+from test_autocti.integration.tests import runner
 
 test_type = "serial"
 test_name = "x1_species__x2_image"
-ci_data_type = "ci__uniform"
+ci_data_type = "ci_uniform"
 ci_data_model = "serial_x1"
-ci_data_resolution = "patch"
+resolution = "patch"
 ci_normalizations = [10000.0, 84700.0]
 
-serial_settings = ac.Settings(
-    well_depth=84700,
-    niter=1,
-    express=2,
-    n_levels=2000,
-    charge_injection_mode=False,
-    readout_offset=0,
-)
-clocker = ac.ArcticSettings(serial=serial_settings)
+clocker = ac.Clocker(serial_express=2)
 
 
 def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
-    class PhaseCI(ac.PhaseCI):
-        def customize_priors(self, results):
-            self.serial_ccd_volume.well_fill_alpha = 1.0
-            self.serial_ccd_volume.well_fill_gamma = 0.0
 
-    phase1 = PhaseCI(
+    serial_ccd_volume = af.PriorModel(ac.CCDVolume)
+
+    serial_ccd_volume.well_max_height = 8.47e4
+    serial_ccd_volume.well_notch_depth = 1e-7
+
+    phase1 = ac.PhaseCIImaging(
         phase_name="phase_1",
         phase_folders=phase_folders,
         non_linear_class=non_linear_class,
         serial_traps=[af.PriorModel(ac.Trap)],
-        serial_ccd_volume=ac.CCDVolume,
+        serial_ccd_volume=serial_ccd_volume,
         columns=40,
     )
 
@@ -41,7 +34,7 @@ def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
 
     phase1 = phase1.extend_with_hyper_noise_phases()
 
-    phase2 = ac.PhaseCI(
+    phase2 = ac.PhaseCIImaging(
         phase_name="phase_2",
         phase_folders=phase_folders,
         serial_traps=phase1.result.model.serial_traps,

@@ -1,8 +1,7 @@
 import numpy as np
-
+from autocti import exc
 from autocti.structures import region as reg
 from autocti.util import array_util
-from autocti.util import exc
 
 
 class Mask(np.ndarray):

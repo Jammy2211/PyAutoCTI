@@ -1,13 +1,11 @@
 import os
+import shutil
 
 import numpy as np
-import shutil
 import pytest
-
+from autocti import exc
 from autocti import structures as struct
-from autocti.structures import arrays
 from autocti import util
-from autocti.util import exc
 
 test_data_path = "{}/files/array/".format(os.path.dirname(os.path.realpath(__file__)))
 
@@ -167,7 +165,6 @@ class TestMaskedArrayAPI:
                 array=[[1.0, 2.0], [3.0, 4.0]], mask=mask
             )
 
-            assert isinstance(arr, arrays.AbstractArray)
             assert (arr == np.array([[1.0, 2.0], [3.0, 4.0]])).all()
             assert arr.pixel_scales == (1.0, 1.0)
 
@@ -180,7 +177,6 @@ class TestMaskedArrayAPI:
                 array=[[1.0, 2.0], [3.0, 4.0]], mask=mask
             )
 
-            assert isinstance(arr, arrays.AbstractArray)
             assert (arr == np.array([[1.0, 2.0], [0.0, 4.0]])).all()
             assert arr.pixel_scales == (1.0, 1.0)
             assert arr.origin == (0.0, 1.0)
@@ -205,7 +201,6 @@ class TestMaskedArrayAPI:
             mask = struct.Mask.unmasked(shape_2d=(2, 2), pixel_scales=1.0)
             arr = struct.MaskedArray.ones(mask=mask)
 
-            assert isinstance(arr, arrays.AbstractArray)
             assert (arr == np.array([[1.0, 1.0], [1.0, 1.0]])).all()
             assert arr.pixel_scales == (1.0, 1.0)
 
@@ -216,7 +211,6 @@ class TestMaskedArrayAPI:
             )
             arr = struct.MaskedArray.full(fill_value=2.0, mask=mask)
 
-            assert isinstance(arr, arrays.AbstractArray)
             assert (arr == np.array([[2.0, 2.0], [0.0, 2.0]])).all()
             assert arr.pixel_scales == (1.0, 1.0)
             assert arr.origin == (0.0, 1.0)
@@ -227,7 +221,6 @@ class TestMaskedArrayAPI:
             mask = struct.Mask.unmasked(shape_2d=(2, 2), pixel_scales=1.0)
             arr = struct.MaskedArray.ones(mask=mask)
 
-            assert isinstance(arr, arrays.AbstractArray)
             assert (arr == np.array([[1.0, 1.0], [1.0, 1.0]])).all()
             assert arr.pixel_scales == (1.0, 1.0)
 
@@ -238,7 +231,6 @@ class TestMaskedArrayAPI:
             )
             arr = struct.MaskedArray.zeros(mask=mask)
 
-            assert isinstance(arr, arrays.AbstractArray)
             assert (arr == np.array([[0.0, 0.0], [0.0, 0.0]])).all()
             assert arr.pixel_scales == (1.0, 1.0)
             assert arr.origin == (0.0, 1.0)
@@ -251,7 +243,6 @@ class TestMaskedArrayAPI:
                 file_path=test_data_path + "3x3_ones.fits", hdu=0, mask=mask
             )
 
-            assert isinstance(arr, arrays.AbstractArray)
             assert (arr == np.ones((3, 3))).all()
             assert arr.pixel_scales == (1.0, 1.0)
 
@@ -269,7 +260,6 @@ class TestMaskedArrayAPI:
                 file_path=test_data_path + "4x3_ones.fits", hdu=0, mask=mask
             )
 
-            assert isinstance(arr, arrays.AbstractArray)
             assert (
                 arr
                 == np.array(
@@ -282,7 +272,7 @@ class TestMaskedArrayAPI:
     class TestOutputToFits:
         def test__output_to_fits__shapes_of_arrays_are_2d(self):
 
-            arr = arrays.Array.from_fits(
+            arr = struct.Array.from_fits(
                 file_path=test_data_path + "3x3_ones.fits", hdu=0
             )
 

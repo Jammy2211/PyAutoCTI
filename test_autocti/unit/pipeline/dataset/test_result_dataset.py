@@ -2,9 +2,8 @@ from os import path
 
 import numpy as np
 import pytest
-
-from autocti.pipeline.phase.dataset.result import Result
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
+from autocti.pipeline.phase.dataset.result import Result
 from test_autocti.mock import mock_pipeline
 
 pytestmark = pytest.mark.filterwarnings(

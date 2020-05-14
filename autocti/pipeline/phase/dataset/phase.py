@@ -1,20 +1,23 @@
-import autofit as af
-from autofit.tools.phase import Dataset
 from autocti.pipeline.phase import abstract
 from autocti.pipeline.phase import extensions
 from autocti.pipeline.phase.dataset.result import Result
+from autofit.optimize.non_linear.nested_sampling.multi_nest import MultiNest
+from autofit.optimize.non_linear.paths import convert_paths
+from autofit.tools.phase import Dataset
+from autofit.tools.phase_property import PhaseProperty
+from autofit.tools.pipeline import ResultsCollection
 
 
 class PhaseDataset(abstract.AbstractPhase):
 
-    parallel_traps = af.PhaseProperty("parallel_traps")
-    serial_traps = af.PhaseProperty("serial_traps")
-    parallel_ccd_volume = af.PhaseProperty("parallel_ccd_volume")
-    serial_ccd_volume = af.PhaseProperty("serial_ccd_volume")
+    parallel_traps = PhaseProperty("parallel_traps")
+    serial_traps = PhaseProperty("serial_traps")
+    parallel_ccd_volume = PhaseProperty("parallel_ccd_volume")
+    serial_ccd_volume = PhaseProperty("serial_ccd_volume")
 
     Result = Result
 
-    @af.convert_paths
+    @convert_paths
     def __init__(
         self,
         paths,
@@ -22,7 +25,7 @@ class PhaseDataset(abstract.AbstractPhase):
         parallel_ccd_volume=None,
         serial_traps=None,
         serial_ccd_volume=None,
-        non_linear_class=af.MultiNest,
+        non_linear_class=MultiNest,
     ):
         """
 
@@ -69,10 +72,10 @@ class PhaseDataset(abstract.AbstractPhase):
 
         self.model = self.model.populate(results)
 
-        results = results or af.ResultsCollection()
+        results = results or ResultsCollection()
 
         analysis = self.make_analysis(
-            datasets=datasets, clocker=clocker, results=results
+            datasets=datasets, clocker=clocker, results=results, pool=pool
         )
 
         #    phase_attributes = self.make_phase_attributes(analysis=analysis)

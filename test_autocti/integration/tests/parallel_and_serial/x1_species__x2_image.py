@@ -1,58 +1,45 @@
-import autofit as af
 import autocti as ac
-from test import runner
+import autofit as af
+from test_autocti.integration.tests import runner
 
 test_type = "parallel_x1__serial_x1"
 test_name = "x1_species__x1_image__hyper"
-ci_data_type = "ci__uniform"
+ci_data_type = "ci_uniform"
 ci_data_model = "parallel_x1__serial_x1"
-ci_data_resolution = "patch"
+resolution = "patch"
 ci_normalizations = [10000.0, 84700.0]
 
 
-parallel_settings = ac.Settings(
-    well_depth=84700,
-    niter=1,
-    express=2,
-    n_levels=2000,
-    charge_injection_mode=False,
-    readout_offset=0,
-)
-serial_settings = ac.Settings(
-    well_depth=84700,
-    niter=1,
-    express=1,
-    n_levels=2000,
-    charge_injection_mode=False,
-    readout_offset=0,
-)
-clocker = ac.ArcticSettings(parallel=parallel_settings, serial=serial_settings)
+clocker = ac.Clocker(parallel_express=2, serial_express=2)
 
 
 def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
-    class PhaseCI(ac.PhaseCI):
-        def customize_priors(self, results):
 
-            self.parallel_ccd_volume.well_fill_alpha = 1.0
-            self.parallel_ccd_volume.well_fill_gamma = 0.0
-            self.serial_ccd_volume.well_fill_alpha = 1.0
-            self.serial_ccd_volume.well_fill_gamma = 0.0
+    parallel_ccd_volume = af.PriorModel(ac.CCDVolume)
 
-    phase1 = PhaseCI(
+    parallel_ccd_volume.well_max_height = 8.47e4
+    parallel_ccd_volume.well_notch_depth = 1e-7
+
+    serial_ccd_volume = af.PriorModel(ac.CCDVolume)
+
+    serial_ccd_volume.well_max_height = 8.47e4
+    serial_ccd_volume.well_notch_depth = 1e-7
+
+    phase1 = ac.PhaseCIImaging(
         phase_name="phase_1",
         phase_folders=phase_folders,
         non_linear_class=non_linear_class,
         parallel_traps=[af.PriorModel(ac.Trap)],
-        parallel_ccd_volume=ac.CCDVolume,
+        parallel_ccd_volume=parallel_ccd_volume,
         serial_traps=[af.PriorModel(ac.Trap)],
-        serial_ccd_volume=ac.CCDVolume,
+        serial_ccd_volume=serial_ccd_volume,
     )
 
     phase1.optimizer.n_live_points = 60
     phase1.optimizer.const_efficiency_mode = True
     phase1.optimizer.sampling_efficiency = 0.2
 
-    class HyperModelFixedPhaseCI(ac.PhaseCI):
+    class HyperModelFixedPhaseCI(ac.PhaseCIImaging):
         def customize_priors(self, results):
 
             self.parallel_traps = results.from_phase("phase_1").instance.parallel_traps
@@ -68,9 +55,9 @@ def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
         phase_name="phase_2",
         phase_folders=phase_folders,
         parallel_traps=[af.PriorModel(ac.Trap)],
-        parallel_ccd_volume=ac.CCDVolume,
+        parallel_ccd_volume=parallel_ccd_volume,
         serial_traps=[af.PriorModel(ac.Trap)],
-        serial_ccd_volume=ac.CCDVolume,
+        serial_ccd_volume=serial_ccd_volume,
         hyper_noise_scalar_of_ci_regions=ac.CIHyperNoiseScalar,
         hyper_noise_scalar_of_parallel_trails=ac.CIHyperNoiseScalar,
         hyper_noise_scalar_of_serial_trails=ac.CIHyperNoiseScalar,
@@ -78,7 +65,7 @@ def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
         non_linear_class=non_linear_class,
     )
 
-    class FixedPhaseCI(ac.PhaseCI):
+    class FixedPhaseCI(ac.PhaseCIImaging):
         def customize_priors(self, results):
 
             self.hyper_noise_scalar_of_ci_regions = results.from_phase(

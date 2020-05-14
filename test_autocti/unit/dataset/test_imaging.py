@@ -1,10 +1,9 @@
 import os
-
-import numpy as np
 import shutil
 
-from autocti import structures as struct
+import numpy as np
 from autocti import dataset as ds
+from autocti import structures as struct
 
 test_data_path = "{}/files/array/".format(os.path.dirname(os.path.realpath(__file__)))
 
@@ -175,14 +174,14 @@ class TestMaskedImaging:
         assert (masked_imaging.image[9, 9] == np.array([1.0])).all()
         assert (masked_imaging.noise_map[9, 9] == np.array([2.0])).all()
 
-    def test__modified_noise_map(self, ci_noise_map_7x7, imaging_7x7, mask_7x7):
+    def test__modified_noise_map(self, noise_map_7x7, imaging_7x7, mask_7x7):
 
         masked_imaging_7x7 = ds.MaskedImaging(imaging=imaging_7x7, mask=mask_7x7)
 
-        ci_noise_map_7x7[0, 0] = 11.0
+        noise_map_7x7[0, 0] = 11.0
 
         masked_imaging_7x7 = masked_imaging_7x7.modify_noise_map(
-            noise_map=ci_noise_map_7x7
+            noise_map=noise_map_7x7
         )
 
         assert masked_imaging_7x7.noise_map[0, 0] == 11.0

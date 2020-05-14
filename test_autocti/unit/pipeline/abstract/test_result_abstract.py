@@ -1,12 +1,7 @@
-import os
 from os import path
-import numpy as np
-
-import pytest
 
 import autofit as af
-import arctic as ac
-from autocti.pipeline.phase.abstract import AbstractPhase
+import pytest
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 from test_autocti.mock import mock_pipeline
 

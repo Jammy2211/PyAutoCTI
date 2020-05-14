@@ -1,4 +1,5 @@
 import autofit as af
+
 from .hyper_noise_phase import HyperNoisePhase
 from .hyper_phase import HyperPhase
 
@@ -11,7 +12,7 @@ class CombinedHyperPhase(HyperPhase):
 
         Parameters
         ----------
-        phase : phase.PhaseCI
+        phase : phase.PhaseCIImaging
             The phase wrapped by this hyper_galaxy phase
         hyper_phase_classes
             The classes of hyper_galaxy phases to be run following the initial phase
@@ -28,7 +29,7 @@ class CombinedHyperPhase(HyperPhase):
 
     def run(
         self,
-        ci_datas,
+        datasets,
         clocker=None,
         pool=None,
         results: af.ResultsCollection = None,
@@ -44,7 +45,7 @@ class CombinedHyperPhase(HyperPhase):
         ----------
         positions
         mask
-        ci_datas
+        datasets
             The instrument
         results
             Results from previous phases
@@ -56,19 +57,19 @@ class CombinedHyperPhase(HyperPhase):
             The result of the regular phase, with hyper_galaxy results attached by associated hyper_galaxy names
         """
         results = results.copy() if results is not None else af.ResultsCollection()
-        result = self.phase.run(ci_datas, results=results, clocker=clocker, **kwargs)
+        result = self.phase.run(datasets, results=results, clocker=clocker, **kwargs)
         results.add(self.phase.phase_name, result)
 
         for phase in self.hyper_phases:
             hyper_result = phase.run_hyper(
-                ci_datas=ci_datas, pool=pool, results=results, **kwargs
+                datasets=datasets, pool=pool, results=results, **kwargs
             )
             setattr(result, phase.hyper_name, hyper_result)
 
         setattr(
             result,
             self.hyper_name,
-            self.run_hyper(ci_datas=ci_datas, pool=pool, results=results),
+            self.run_hyper(datasets=datasets, pool=pool, results=results),
         )
         return result
 
@@ -94,7 +95,7 @@ class CombinedHyperPhase(HyperPhase):
             model += getattr(result, name).model
         return model
 
-    def run_hyper(self, ci_datas, pool, results, **kwargs) -> af.Result:
+    def run_hyper(self, datasets, pool, results, **kwargs) -> af.Result:
         model = self.combine_variables(result=results.last)
 
         phase = self.make_hyper_phase()
@@ -104,5 +105,5 @@ class CombinedHyperPhase(HyperPhase):
         phase.phase_tag = ""
 
         return phase.run(
-            ci_datas=ci_datas, results=results, pool=pool, clocker=results.last.clocker
+            datasets=datasets, results=results, pool=pool, clocker=results.last.clocker
         )

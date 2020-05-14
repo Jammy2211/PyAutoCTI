@@ -1,6 +1,6 @@
 import numpy as np
 
-from autocti.util import exc
+from autocti import exc
 
 
 class Region(object):

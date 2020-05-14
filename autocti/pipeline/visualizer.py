@@ -1,12 +1,9 @@
-import autofit as af
-from autocti.plot import mat_objs
-from autocti.plot import plotters
-from autocti.plot import ci_imaging_plots, ci_fit_plots
-import copy
+from autoconf import conf
+from autocti.plot import ci_imaging_plots, ci_fit_plots, mat_objs, plotters
 
 
 def setting(section, name):
-    return af.conf.instance.visualize_plots.get(section, name, bool)
+    return conf.instance.visualize_plots.get(section, name, bool)
 
 
 def plot_setting(section, name):

@@ -1,6 +1,6 @@
-import autofit as af
 import autocti as ac
-from test import runner
+import autofit as af
+from test_autocti.integration.tests import runner
 
 test_type = "features/total_density_range"
 test_name = "parallel"
@@ -23,17 +23,17 @@ clocker = ac.ArcticSettings(parallel=parallel_settings)
 
 
 def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
-    class PhaseCI(ac.PhaseCI):
+    class PhaseCIImaging(ac.PhaseCIImaging):
         def customize_priors(self, results):
             self.parallel_ccd_volume.well_fill_alpha = 1.0
             self.parallel_ccd_volume.well_fill_gamma = 0.0
 
-    phase1 = PhaseCI(
+    phase1 = ac.PhaseCIImaging(
         phase_name="phase_1",
         phase_folders=phase_folders,
         non_linear_class=non_linear_class,
         parallel_traps=[af.PriorModel(ac.Trap)],
-        parallel_ccd_volume=ac.CCDVolume,
+        parallel_ccd_volume=parallel_ccd_volume,
         columns=None,
         parallel_total_density_range=(0.1, 0.3),
     )
