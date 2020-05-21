@@ -1,5 +1,7 @@
 from arctic.clock import Clocker
-from arctic.model import ArcticParams, CCDVolume, CCDVolumeComplex
+from arctic.model import ArcticParams
+from arctic.model import CCDVolume
+from arctic.model import CCDVolumeComplex
 from arctic.traps import Trap
 
 from .structures.arrays import Array
@@ -10,7 +12,8 @@ from .structures.region import Region
 from .structures.arrays import MaskedArray
 from .structures.frame import MaskedFrame
 from .structures.frame import MaskedEuclidFrame
-from .dataset.imaging import Imaging, MaskedImaging
+from .dataset.imaging import Imaging
+from .dataset.imaging import MaskedImaging
 from .dataset import preprocess
 from .fit.fit import FitImaging
 from . import charge_injection as ci

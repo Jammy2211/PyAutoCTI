@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 from autocti.pipeline.phase.dataset.result import Result
-from test_autocti.mock import mock_pipeline
+from test_autocti import mock
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of "
@@ -23,13 +23,13 @@ class TestResult:
         ci_imaging_7x7.cosmic_ray_map = None
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
-            non_linear_class=mock_pipeline.MockNLO, phase_name="test_phase_2"
+            non_linear_class=mock.MockNLO, phase_name="test_phase_2"
         )
 
         result = phase_ci_imaging_7x7.run(
             datasets=[ci_imaging_7x7],
             clocker=parallel_clocker,
-            results=mock_pipeline.MockResults(),
+            results=mock.MockResults(),
         )
 
         assert isinstance(result, Result)

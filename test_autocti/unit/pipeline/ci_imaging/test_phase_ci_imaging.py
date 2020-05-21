@@ -5,7 +5,7 @@ import autofit as af
 import numpy as np
 import pytest
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
-from test_autocti.mock import mock_pipeline
+from test_autocti import mock
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of "
@@ -209,7 +209,7 @@ class TestMakeAnalysis:
         analysis = phase.make_analysis(
             datasets=[ci_imaging_7x7],
             clocker=parallel_clocker,
-            results=mock_pipeline.MockResults(
+            results=mock.MockResults(
                 noise_scaling_maps_list_of_ci_regions=noise_scaling_maps_list_of_ci_regions,
                 noise_scaling_maps_list_of_parallel_trails=noise_scaling_maps_list_of_parallel_trails,
                 noise_scaling_maps_list_of_serial_trails=noise_scaling_maps_list_of_serial_trails,
@@ -240,7 +240,7 @@ class TestMakeAnalysis:
         analysis = phase.make_analysis(
             datasets=[ci_imaging_7x7],
             clocker=parallel_clocker,
-            results=mock_pipeline.MockResults(
+            results=mock.MockResults(
                 noise_scaling_maps_list_of_ci_regions=noise_scaling_maps_list_of_ci_regions,
                 noise_scaling_maps_list_of_parallel_trails=noise_scaling_maps_list_of_parallel_trails,
                 noise_scaling_maps_list_of_serial_trails=noise_scaling_maps_list_of_serial_trails,

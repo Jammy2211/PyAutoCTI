@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 from autocti.pipeline.phase.dataset.result import Result
-from test_autocti.mock import mock_pipeline
+from test_autocti import mock
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of "
@@ -22,15 +22,13 @@ class TestResult:
     ):
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
-            non_linear_class=mock_pipeline.MockNLO,
-            columns=(0, 1),
-            phase_name="test_phase_2",
+            non_linear_class=mock.MockNLO, columns=(0, 1), phase_name="test_phase_2"
         )
 
         result = phase_ci_imaging_7x7.run(
             datasets=[ci_imaging_7x7],
             clocker=parallel_clocker,
-            results=mock_pipeline.MockResults(),
+            results=mock.MockResults(),
         )
 
         assert isinstance(result, Result)
@@ -80,7 +78,7 @@ class TestResult:
         ]
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
-            non_linear_class=mock_pipeline.MockNLO,
+            non_linear_class=mock.MockNLO,
             hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
             hyper_noise_scalar_of_parallel_trails=ac.ci.CIHyperNoiseScalar,
             hyper_noise_scalar_of_serial_trails=ac.ci.CIHyperNoiseScalar,
@@ -91,7 +89,7 @@ class TestResult:
         result = phase_ci_imaging_7x7.run(
             datasets=[ci_imaging_7x7],
             clocker=parallel_clocker,
-            results=mock_pipeline.MockResults(
+            results=mock.MockResults(
                 noise_scaling_maps_list_of_ci_regions=noise_scaling_maps_list_of_ci_regions,
                 noise_scaling_maps_list_of_parallel_trails=noise_scaling_maps_list_of_parallel_trails,
                 noise_scaling_maps_list_of_serial_trails=noise_scaling_maps_list_of_serial_trails,

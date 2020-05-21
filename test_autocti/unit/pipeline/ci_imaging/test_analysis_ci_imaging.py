@@ -5,7 +5,7 @@ import autofit as af
 import pytest
 from autocti import exc
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
-from test_autocti.mock import mock_pipeline
+from test_autocti import mock
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of "
@@ -65,7 +65,7 @@ class TestFit:
         phase = PhaseCIImaging(
             parallel_traps=traps_x1,
             parallel_ccd_volume=ccd_volume,
-            non_linear_class=mock_pipeline.MockNLO,
+            non_linear_class=mock.MockNLO,
             phase_name="test_phase",
         )
 
@@ -97,7 +97,7 @@ class TestFit:
         phase = PhaseCIImaging(
             parallel_traps=traps_x1,
             parallel_ccd_volume=ccd_volume,
-            non_linear_class=mock_pipeline.MockNLO,
+            non_linear_class=mock.MockNLO,
             columns=(0, 1),
             phase_name="test_phase",
         )
@@ -137,7 +137,7 @@ class TestFit:
         phase = PhaseCIImaging(
             parallel_traps=traps_x1,
             parallel_ccd_volume=ccd_volume,
-            non_linear_class=mock_pipeline.MockNLO,
+            non_linear_class=mock.MockNLO,
             columns=(0, 1),
             phase_name="test_phase",
         )
@@ -176,7 +176,7 @@ class TestFit:
             parallel_traps=traps_x1,
             parallel_ccd_volume=ccd_volume,
             hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
-            non_linear_class=mock_pipeline.MockNLO,
+            non_linear_class=mock.MockNLO,
             columns=(0, 1),
             phase_name="test_phase",
         )
@@ -190,7 +190,7 @@ class TestFit:
         analysis = phase.make_analysis(
             datasets=[ci_imaging_7x7],
             clocker=parallel_clocker,
-            results=mock_pipeline.MockResults(
+            results=mock.MockResults(
                 noise_scaling_maps_list_of_ci_regions=noise_scaling_maps_list_of_ci_regions
             ),
         )
@@ -246,7 +246,7 @@ class TestFit:
             parallel_traps=traps_x1,
             parallel_ccd_volume=ccd_volume,
             hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
-            non_linear_class=mock_pipeline.MockNLO,
+            non_linear_class=mock.MockNLO,
             columns=(0, 1),
             phase_name="test_phase",
         )
@@ -260,7 +260,7 @@ class TestFit:
         analysis = phase.make_analysis(
             datasets=[ci_imaging_7x7],
             clocker=parallel_clocker,
-            results=mock_pipeline.MockResults(
+            results=mock.MockResults(
                 noise_scaling_maps_list_of_ci_regions=noise_scaling_maps_list_of_ci_regions
             ),
         )
@@ -330,7 +330,7 @@ class TestFit:
         analysis = phase.make_analysis(
             datasets=[ci_imaging_7x7],
             clocker=parallel_clocker,
-            results=mock_pipeline.MockResults(
+            results=mock.MockResults(
                 noise_scaling_maps_list_of_ci_regions=noise_scaling_maps_list_of_ci_regions,
                 noise_scaling_maps_list_of_parallel_trails=noise_scaling_maps_list_of_parallel_trails,
             ),
