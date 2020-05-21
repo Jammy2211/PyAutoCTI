@@ -9,7 +9,7 @@ test_data_path = "{}/files/array/".format(os.path.dirname(os.path.realpath(__fil
 
 @pytest.fixture(name="memoizer")
 def make_memoizer():
-    return ac.ac.util.array.Memoizer()
+    return ac.util.array.Memoizer()
 
 
 class TestMemoizer:

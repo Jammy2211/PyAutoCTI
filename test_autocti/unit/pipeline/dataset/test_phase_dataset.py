@@ -5,7 +5,7 @@ import pytest
 import autocti as ac
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 from autocti.pipeline.phase.extensions import HyperNoisePhase
-from test_autocti.mock import mock_pipeline
+from test_autocti import mock
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of "
@@ -19,9 +19,7 @@ directory = path.dirname(path.realpath(__file__))
 class TestPhase:
     def test__extend_with_hyper_noise_phase(self):
 
-        phase = PhaseCIImaging(
-            non_linear_class=mock_pipeline.MockNLO, phase_name="test_phase"
-        )
+        phase = PhaseCIImaging(non_linear_class=mock.MockNLO, phase_name="test_phase")
 
         phase_extended = phase.extend_with_hyper_noise_phases()
         assert type(phase_extended.hyper_phases[0]) == HyperNoisePhase

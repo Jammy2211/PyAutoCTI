@@ -18,7 +18,7 @@ def simulate__ci_uniform__parallel_x1(resolution, normalizations):
     for normalization in normalizations:
 
         ci_regions = resolution_util.ci_regions_from_resolution(resolution=resolution)
-        pattern = ac.ac.ci.CIPatternUniform(
+        pattern = ac.ci.CIPatternUniform(
             normalization=normalization, regions=ci_regions
         )
 
@@ -52,7 +52,7 @@ def simulate__ci_uniform__parallel_x3(resolution, normalizations):
 
     for normalization in normalizations:
         ci_regions = resolution_util.ci_regions_from_resolution(resolution=resolution)
-        pattern = ac.ac.ci.CIPatternUniform(
+        pattern = ac.ci.CIPatternUniform(
             normalization=normalization, regions=ci_regions
         )
 
@@ -82,7 +82,7 @@ def simulate__ci_uniform__serial_x1(resolution, normalizations):
     for normalization in normalizations:
 
         ci_regions = resolution_util.ci_regions_from_resolution(resolution=resolution)
-        pattern = ac.ac.ci.CIPatternUniform(
+        pattern = ac.ci.CIPatternUniform(
             normalization=normalization, regions=ci_regions
         )
 
@@ -115,7 +115,7 @@ def simulate__ci_uniform__serial_x3(resolution, normalizations):
 
     for normalization in normalizations:
         ci_regions = resolution_util.ci_regions_from_resolution(resolution=resolution)
-        pattern = ac.ac.ci.CIPatternUniform(
+        pattern = ac.ci.CIPatternUniform(
             normalization=normalization, regions=ci_regions
         )
 
@@ -150,7 +150,7 @@ def simulate__ci_uniform__parallel_x1__serial_x1(resolution, normalizations):
     for normalization in normalizations:
 
         ci_regions = resolution_util.ci_regions_from_resolution(resolution=resolution)
-        pattern = ac.ac.ci.CIPatternUniform(
+        pattern = ac.ci.CIPatternUniform(
             normalization=normalization, regions=ci_regions
         )
 
@@ -195,7 +195,7 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
 
     for normalization in normalizations:
         ci_regions = resolution_util.ci_regions_from_resolution(resolution=resolution)
-        pattern = ac.ac.ci.CIPatternUniform(
+        pattern = ac.ci.CIPatternUniform(
             normalization=normalization, regions=ci_regions
         )
 
@@ -233,7 +233,7 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
 #         ci_regions = resolution_util.ci_regions_from_resolution(
 #             resolution=resolution
 #         )
-#         pattern = ac.ac.ci.CIPatternUniform(
+#         pattern = ac.ci.CIPatternUniform(
 #             normalization=normalization, regions=ci_regions
 #         )
 #
@@ -274,7 +274,7 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
 #         ci_regions = resolution_util.ci_regions_from_resolution(
 #             resolution=resolution
 #         )
-#         pattern = ac.ac.ci.CIPatternUniform(
+#         pattern = ac.ci.CIPatternUniform(
 #             normalization=normalization, regions=ci_regions
 #         )
 #
@@ -322,7 +322,7 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
 #         ci_regions = resolution_util.ci_regions_from_resolution(
 #             resolution=resolution
 #         )
-#         pattern = ac.ac.ci.CIPatternUniform(
+#         pattern = ac.ci.CIPatternUniform(
 #             normalization=normalization, regions=ci_regions
 #         )
 #

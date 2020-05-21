@@ -3,7 +3,7 @@ import autofit as af
 import pytest
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 from autocti.pipeline.phase.dataset import PhaseDataset
-from test_autocti.mock import mock_pipeline
+from test_autocti import mock
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of "
@@ -77,7 +77,7 @@ class TestSetup:
 
         phase_dataset_7x7 = PhaseCIImaging(
             phase_name="phase_name",
-            non_linear_class=mock_pipeline.MockNLO,
+            non_linear_class=mock.MockNLO,
             parallel_traps=[ac.Trap],
             parallel_ccd_volume=ac.CCDVolume,
         )
