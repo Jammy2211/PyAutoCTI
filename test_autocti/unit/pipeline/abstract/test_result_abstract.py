@@ -1,6 +1,6 @@
 from os import path
 
-import autofit as af
+from autoconf import conf
 import pytest
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 from test_autocti.mock import mock_pipeline
@@ -18,7 +18,7 @@ directory = path.dirname(path.realpath(__file__))
 def do_something():
     print("{}/config/".format(directory))
 
-    af.conf.instance = af.conf.Config("{}/config/".format(directory))
+    conf.instance = conf.Config("{}/config/".format(directory))
 
 
 class TestGeneric:

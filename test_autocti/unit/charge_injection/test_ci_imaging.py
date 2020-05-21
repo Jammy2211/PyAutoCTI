@@ -3,8 +3,7 @@ import shutil
 
 import numpy as np
 import pytest
-from autocti import charge_injection as ci
-from autocti import structures as struct
+import autocti as ac
 from autocti.charge_injection.ci_imaging import (
     ci_pre_cti_from_ci_pattern_geometry_image_and_mask,
 )
@@ -59,7 +58,7 @@ class TestCIImaging(object):
         image = np.ones((2, 2))
         image[0, 0] = 6.0
 
-        imaging = ci.CIImaging(
+        imaging = ac.ci.CIImaging(
             image=image, noise_map=2.0 * np.ones((2, 2)), ci_pre_cti=None
         )
 
@@ -71,7 +70,7 @@ class TestCIImaging(object):
         self, ci_pattern_7x7
     ):
 
-        imaging = ci.CIImaging.from_fits(
+        imaging = ac.ci.CIImaging.from_fits(
             roe_corner=(1, 0),
             parallel_overscan=(1, 2, 3, 4),
             serial_prescan=(5, 6, 7, 8),
@@ -101,7 +100,7 @@ class TestCIImaging(object):
         self, ci_pattern_7x7
     ):
 
-        imaging = ci.CIImaging.from_fits(
+        imaging = ac.ci.CIImaging.from_fits(
             roe_corner=(1, 0),
             ci_pattern=ci_pattern_7x7,
             image_path=test_data_path + "3x3_multiple_hdu.fits",
@@ -123,7 +122,7 @@ class TestCIImaging(object):
 
     def test__from_fits__noise_map_from_single_value(self, ci_pattern_7x7):
 
-        imaging = ci.CIImaging.from_fits(
+        imaging = ac.ci.CIImaging.from_fits(
             roe_corner=(1, 0),
             ci_pattern=ci_pattern_7x7,
             image_path=test_data_path + "3x3_ones.fits",
@@ -142,9 +141,9 @@ class TestCIImaging(object):
 
     def test__from_fits__load_ci_pre_cti_image_from_the_pattern_and_image(self):
 
-        pattern = ci.CIPatternUniform(regions=[(0, 3, 0, 3)], normalization=10.0)
+        pattern = ac.ci.CIPatternUniform(regions=[(0, 3, 0, 3)], normalization=10.0)
 
-        imaging = ci.CIImaging.from_fits(
+        imaging = ac.ci.CIImaging.from_fits(
             roe_corner=(1, 0),
             ci_pattern=pattern,
             image_path=test_data_path + "3x3_ones.fits",
@@ -162,7 +161,7 @@ class TestCIImaging(object):
 
     def test__output_to_fits___all_arrays(self, ci_pattern_7x7):
 
-        imaging = ci.CIImaging.from_fits(
+        imaging = ac.ci.CIImaging.from_fits(
             roe_corner=(1, 0),
             ci_pattern=ci_pattern_7x7,
             image_path=test_data_path + "3x3_ones.fits",
@@ -190,7 +189,7 @@ class TestCIImaging(object):
             cosmic_ray_map_path=output_data_dir + "cosmic_ray_map.fits",
         )
 
-        imaging = ci.CIImaging.from_fits(
+        imaging = ac.ci.CIImaging.from_fits(
             roe_corner=(1, 0),
             ci_pattern=ci_pattern_7x7,
             image_path=output_data_dir + "image.fits",
@@ -211,7 +210,7 @@ class TestCIImaging(object):
 
 class TestCIImage(object):
     def test__uniform_pattern_1_region_normalization_10__correct_pre_clock_image(self):
-        pattern = ci.CIPatternUniform(normalization=10.0, regions=[(0, 2, 0, 2)])
+        pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 2, 0, 2)])
         image = 10.0 * np.ones((3, 3))
 
         ci_pre_cti = ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
@@ -224,7 +223,7 @@ class TestCIImage(object):
         ).all()
 
     def test__same_as_above_but_different_normalization_and_regions(self):
-        pattern = ci.CIPatternUniform(
+        pattern = ac.ci.CIPatternUniform(
             normalization=20.0, regions=[(0, 2, 0, 1), (2, 3, 2, 3)]
         )
         image = 10.0 * np.ones((3, 3))
@@ -239,11 +238,11 @@ class TestCIImage(object):
         ).all()
 
     def test__non_uniform_pattern__image_is_same_as_computed_image(self):
-        pattern = ci.CIPatternNonUniform(
+        pattern = ac.ci.CIPatternNonUniform(
             normalization=100.0, regions=[(0, 2, 0, 2), (2, 3, 0, 3)], row_slope=-1.0
         )
         image = np.array([[10.0, 10.0, 10.0], [2.0, 2.0, 2.0], [8.0, 12.0, 10.0]])
-        mask = struct.Mask.unmasked(shape_2d=(3, 3))
+        mask = ac.Mask.unmasked(shape_2d=(3, 3))
 
         ci_pre_cti = ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
             mask=mask, ci_pattern=pattern, image=image
@@ -258,11 +257,11 @@ class TestCIImage(object):
 class TestMaskedCIImaging:
     def test__construtor__masks_arrays_correctly(self, ci_imaging_7x7):
 
-        mask = struct.Mask.unmasked(shape_2d=ci_imaging_7x7.shape_2d)
+        mask = ac.Mask.unmasked(shape_2d=ci_imaging_7x7.shape_2d)
 
         mask[0, 0] = True
 
-        masked_ci_imaging = ci.MaskedCIImaging(ci_imaging=ci_imaging_7x7, mask=mask)
+        masked_ci_imaging = ac.ci.MaskedCIImaging(ci_imaging=ci_imaging_7x7, mask=mask)
 
         assert (masked_ci_imaging.mask == mask).all()
 
@@ -287,10 +286,10 @@ class TestMaskedCIImaging:
         self, ci_imaging_7x7, mask_7x7, ci_noise_scaling_maps_7x7
     ):
 
-        mask = struct.Mask.unmasked(shape_2d=ci_imaging_7x7.shape_2d)
+        mask = ac.Mask.unmasked(shape_2d=ci_imaging_7x7.shape_2d)
         mask[0, 2] = True
 
-        masked_ci_imaging = ci.MaskedCIImaging(
+        masked_ci_imaging = ac.ci.MaskedCIImaging(
             ci_imaging=ci_imaging_7x7,
             mask=mask,
             parallel_columns=(1, 3),
@@ -336,10 +335,10 @@ class TestMaskedCIImaging:
         self, ci_imaging_7x7, mask_7x7, ci_noise_scaling_maps_7x7
     ):
 
-        mask = struct.Mask.unmasked(shape_2d=ci_imaging_7x7.shape_2d)
+        mask = ac.Mask.unmasked(shape_2d=ci_imaging_7x7.shape_2d)
         mask[1, 0] = True
 
-        masked_ci_imaging = ci.MaskedCIImaging(
+        masked_ci_imaging = ac.ci.MaskedCIImaging(
             ci_imaging=ci_imaging_7x7,
             mask=mask,
             serial_rows=(0, 1),
@@ -387,11 +386,11 @@ class TestSimulatorCIImaging(object):
         self, parallel_clocker, traps_x2, ccd_volume
     ):
 
-        pattern = ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
+        pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
 
         ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(5, 5))
 
-        simulator = ci.SimulatorCIImaging(add_noise=False)
+        simulator = ac.ci.SimulatorCIImaging(add_noise=False)
 
         imaging = simulator.from_image(
             ci_pre_cti=ci_pre_cti,
@@ -409,11 +408,13 @@ class TestSimulatorCIImaging(object):
         self, parallel_clocker, traps_x2, ccd_volume
     ):
 
-        pattern = ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 3)])
+        pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 3)])
 
         ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(3, 3))
 
-        simulator = ci.SimulatorCIImaging(read_noise=1.0, add_noise=True, noise_seed=1)
+        simulator = ac.ci.SimulatorCIImaging(
+            read_noise=1.0, add_noise=True, noise_seed=1
+        )
 
         imaging = simulator.from_image(
             ci_pre_cti=ci_pre_cti, ci_pattern=pattern, clocker=parallel_clocker
@@ -432,11 +433,11 @@ class TestSimulatorCIImaging(object):
         self, parallel_clocker, traps_x2, ccd_volume
     ):
 
-        pattern = ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
+        pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
 
         ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(5, 5))
 
-        simulator = ci.SimulatorCIImaging(add_noise=False)
+        simulator = ac.ci.SimulatorCIImaging(add_noise=False)
 
         cosmic_ray_map = np.zeros((5, 5))
         cosmic_ray_map[2, 2] = 100.0
@@ -471,7 +472,7 @@ class TestSimulatorCIImaging(object):
 
     # def test__include_parallel_poisson_trap_densities(self, arctic_parallel):
     #
-    #     pattern = ci.CIPatternUniform(normalization=10.0, regions=[(2, 3, 0, 5)])
+    #     pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(2, 3, 0, 5)])
     #
     #     ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(5, 5))
     #
@@ -492,7 +493,7 @@ class TestSimulatorCIImaging(object):
     #         parallel_traps=parallel_traps, parallel_ccd_volume=parallel_ccd_volume
     #     )
     #
-    #     imaging = ci.CIImaging.simulate(
+    #     imaging = ac.ci.CIImaging.simulate(
     #         ci_pre_cti=ci_pre_cti,
     #         frame_geometry=ac.FrameGeometry.bottom_left(),
     #         ci_pattern=pattern,

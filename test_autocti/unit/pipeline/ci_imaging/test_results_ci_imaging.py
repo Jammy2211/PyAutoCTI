@@ -1,6 +1,6 @@
 from os import path
 
-import autocti.charge_injection as ci
+import autocti as ac
 import numpy as np
 import pytest
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
@@ -50,12 +50,12 @@ class TestResult:
     ):
 
         noise_scaling_maps_list_of_ci_regions = [
-            ci.CIFrame.ones(
+            ac.ci.CIFrame.ones(
                 shape_2d=(7, 7), pixel_scales=1.0, ci_pattern=ci_pattern_7x7
             )
         ]
         noise_scaling_maps_list_of_parallel_trails = [
-            ci.CIFrame.full(
+            ac.ci.CIFrame.full(
                 fill_value=2.0,
                 shape_2d=(7, 7),
                 pixel_scales=1.0,
@@ -63,7 +63,7 @@ class TestResult:
             )
         ]
         noise_scaling_maps_list_of_serial_trails = [
-            ci.CIFrame.full(
+            ac.ci.CIFrame.full(
                 fill_value=3.0,
                 shape_2d=(7, 7),
                 pixel_scales=1.0,
@@ -71,7 +71,7 @@ class TestResult:
             )
         ]
         noise_scaling_maps_list_of_serial_overscan_no_trails = [
-            ci.CIFrame.full(
+            ac.ci.CIFrame.full(
                 fill_value=4.0,
                 shape_2d=(7, 7),
                 pixel_scales=1.0,
@@ -81,10 +81,10 @@ class TestResult:
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             non_linear_class=mock_pipeline.MockNLO,
-            hyper_noise_scalar_of_ci_regions=ci.CIHyperNoiseScalar,
-            hyper_noise_scalar_of_parallel_trails=ci.CIHyperNoiseScalar,
-            hyper_noise_scalar_of_serial_trails=ci.CIHyperNoiseScalar,
-            hyper_noise_scalar_of_serial_overscan_no_trails=ci.CIHyperNoiseScalar,
+            hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
+            hyper_noise_scalar_of_parallel_trails=ac.ci.CIHyperNoiseScalar,
+            hyper_noise_scalar_of_serial_trails=ac.ci.CIHyperNoiseScalar,
+            hyper_noise_scalar_of_serial_overscan_no_trails=ac.ci.CIHyperNoiseScalar,
             phase_name="test_phase_2",
         )
 
@@ -101,10 +101,10 @@ class TestResult:
 
         ci_post_cti = parallel_clocker.add_cti(image=ci_imaging_7x7.ci_pre_cti)
 
-        mask = ci.CIMask.unmasked(
+        mask = ac.ci.CIMask.unmasked(
             shape_2d=ci_imaging_7x7.shape_2d, pixel_scales=ci_imaging_7x7.pixel_scales
         )
-        masked_ci_imaging_7x7 = ci.MaskedCIImaging(
+        masked_ci_imaging_7x7 = ac.ci.MaskedCIImaging(
             ci_imaging=ci_imaging_7x7,
             mask=mask,
             noise_scaling_maps=[
@@ -115,14 +115,14 @@ class TestResult:
             ],
         )
 
-        fit = ci.CIFitImaging(
+        fit = ac.ci.CIFitImaging(
             masked_ci_imaging=masked_ci_imaging_7x7,
             ci_post_cti=ci_post_cti,
             hyper_noise_scalars=[
-                ci.CIHyperNoiseScalar(scale_factor=0.0),
-                ci.CIHyperNoiseScalar(scale_factor=0.0),
-                ci.CIHyperNoiseScalar(scale_factor=0.0),
-                ci.CIHyperNoiseScalar(scale_factor=0.0),
+                ac.ci.CIHyperNoiseScalar(scale_factor=0.0),
+                ac.ci.CIHyperNoiseScalar(scale_factor=0.0),
+                ac.ci.CIHyperNoiseScalar(scale_factor=0.0),
+                ac.ci.CIHyperNoiseScalar(scale_factor=0.0),
             ],
         )
 
@@ -152,14 +152,14 @@ class TestResult:
             1, 1
         ] == pytest.approx(0.0, 1.0e-4)
 
-        fit = ci.CIFitImaging(
+        fit = ac.ci.CIFitImaging(
             masked_ci_imaging=masked_ci_imaging_7x7,
             ci_post_cti=ci_post_cti,
             hyper_noise_scalars=[
-                ci.CIHyperNoiseScalar(scale_factor=1.0),
-                ci.CIHyperNoiseScalar(scale_factor=1.0),
-                ci.CIHyperNoiseScalar(scale_factor=1.0),
-                ci.CIHyperNoiseScalar(scale_factor=1.0),
+                ac.ci.CIHyperNoiseScalar(scale_factor=1.0),
+                ac.ci.CIHyperNoiseScalar(scale_factor=1.0),
+                ac.ci.CIHyperNoiseScalar(scale_factor=1.0),
+                ac.ci.CIHyperNoiseScalar(scale_factor=1.0),
             ],
         )
 

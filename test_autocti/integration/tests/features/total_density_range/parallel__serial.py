@@ -8,7 +8,7 @@ test_name = "parallel_x1__serial_x1"
 test_path = "{}/../../../".format(os.path.dirname(os.path.realpath(__file__)))
 output_path = test_path + "output/"
 config_path = test_path + "config"
-af.conf.instance = af.conf.Config(config_path=config_path, output_path=output_path)
+conf.instance = conf.Config(config_path=config_path, output_path=output_path)
 
 
 clocker = ac.Clocker(parallel_express=2, serial_express=2)

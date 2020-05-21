@@ -1,6 +1,6 @@
 from os import path
 
-import arctic as ac
+import autocti as ac
 import pytest
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 

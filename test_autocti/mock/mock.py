@@ -74,9 +74,9 @@ class MockCIPreCTI(np.ndarray):
         **kwargs
     ):
         ci = np.array(array).view(cls)
-        ci.frame_geometry = frame_geometry
-        ci.ci_pattern = ci_pattern
-        ci.value = value
+        ac.ci.frame_geometry = frame_geometry
+        ac.ci.ci_pattern = ci_pattern
+        ac.ci.value = value
         return ci
 
     def ci_post_cti_from_cti_params_and_settings(self, cti_params, clocker):
@@ -86,6 +86,6 @@ class MockCIPreCTI(np.ndarray):
 class MockChInj(np.ndarray):
     def __new__(cls, array, geometry=None, ci_pattern=None, *args, **kwargs):
         ci = np.array(array).view(cls)
-        ci.frame_geometry = geometry
-        ci.ci_pattern = ci_pattern
+        ac.ci.frame_geometry = geometry
+        ac.ci.ci_pattern = ci_pattern
         return ci

@@ -75,7 +75,7 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(
 
     ci_pre_cti = pattern.simulate_ci_pre_cti(shape=shape)
 
-    simulator = ac.ci.SimulatorCIImaging(read_noise=read_noise)
+    simulator = ac.ac.ci.SimulatorCIImaging(read_noise=read_noise)
 
     imaging = simulator.from_image(
         clocker=clocker,
@@ -111,7 +111,9 @@ def load_test_ci_data(ci_data_type, ci_data_model, resolution, normalization):
 
     ci_regions = ci_regions_from_resolution(resolution=resolution)
 
-    ci_pattern = ac.ci.CIPatternUniform(normalization=normalization, regions=ci_regions)
+    ci_pattern = ac.ac.ci.CIPatternUniform(
+        normalization=normalization, regions=ci_regions
+    )
 
     dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
         path=test_path,
@@ -125,7 +127,7 @@ def load_test_ci_data(ci_data_type, ci_data_model, resolution, normalization):
     else:
         cosmic_ray_map_path = None
 
-    return ac.ci.CIImaging.from_fits(
+    return ac.ac.ci.CIImaging.from_fits(
         roe_corner=(1, 0),
         ci_pattern=ci_pattern,
         pixel_scales=0.1,
@@ -141,7 +143,7 @@ def load_test_ci_data(ci_data_type, ci_data_model, resolution, normalization):
 
 # TODO : Keeping here for now so we have the overscans need to just load thm from data resolution.
 
-# class CIFrame(ac.ci.CIFrame):
+# class CIFrame(ac.ac.ci.CIFrame):
 #     @classmethod
 #     def patch(cls):
 #         """This class represents the quadrant geometry of an integration quadrant."""
