@@ -31,8 +31,8 @@ A description of the general.ini visualization config.
 
     int_kpc : bool
 
-    If True, figures are output in units of kpc, using the lens & source redshifts to convert from arc seconds. If
-    False, figures are output in arc-seconds.
+    If True, figures are output in units of kpc, using the lens & source redshifts to convert from arc seconac. If
+    False, figures are output in arc-seconac.
 
 [include]
 

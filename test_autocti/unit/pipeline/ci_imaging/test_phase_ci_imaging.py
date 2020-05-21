@@ -1,7 +1,6 @@
 from os import path
 
-import arctic as ac
-import autocti.charge_injection as ci
+import autocti as ac
 import autofit as af
 import numpy as np
 import pytest
@@ -170,12 +169,12 @@ class TestMakeAnalysis:
         ci_imaging_7x7.cosmic_ray_map = None
 
         noise_scaling_maps_list_of_ci_regions = [
-            ci.CIFrame.ones(
+            ac.ci.CIFrame.ones(
                 shape_2d=(7, 7), pixel_scales=1.0, ci_pattern=ci_pattern_7x7
             )
         ]
         noise_scaling_maps_list_of_parallel_trails = [
-            ci.CIFrame.full(
+            ac.ci.CIFrame.full(
                 fill_value=2.0,
                 shape_2d=(7, 7),
                 pixel_scales=1.0,
@@ -183,7 +182,7 @@ class TestMakeAnalysis:
             )
         ]
         noise_scaling_maps_list_of_serial_trails = [
-            ci.CIFrame.full(
+            ac.ci.CIFrame.full(
                 fill_value=3.0,
                 shape_2d=(7, 7),
                 pixel_scales=1.0,
@@ -191,7 +190,7 @@ class TestMakeAnalysis:
             )
         ]
         noise_scaling_maps_list_of_serial_overscan_no_trails = [
-            ci.CIFrame.full(
+            ac.ci.CIFrame.full(
                 fill_value=4.0,
                 shape_2d=(7, 7),
                 pixel_scales=1.0,
@@ -202,8 +201,8 @@ class TestMakeAnalysis:
         phase = PhaseCIImaging(
             parallel_traps=[af.PriorModel(ac.Trap)],
             parallel_ccd_volume=ac.CCDVolume,
-            hyper_noise_scalar_of_ci_regions=ci.CIHyperNoiseScalar,
-            hyper_noise_scalar_of_parallel_trails=ci.CIHyperNoiseScalar,
+            hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
+            hyper_noise_scalar_of_parallel_trails=ac.ci.CIHyperNoiseScalar,
             phase_name="test_phase",
         )
 
@@ -232,9 +231,9 @@ class TestMakeAnalysis:
         phase = PhaseCIImaging(
             parallel_traps=[af.PriorModel(ac.Trap)],
             parallel_ccd_volume=ac.CCDVolume,
-            hyper_noise_scalar_of_parallel_trails=ci.CIHyperNoiseScalar,
-            hyper_noise_scalar_of_serial_trails=ci.CIHyperNoiseScalar,
-            hyper_noise_scalar_of_serial_overscan_no_trails=ci.CIHyperNoiseScalar,
+            hyper_noise_scalar_of_parallel_trails=ac.ci.CIHyperNoiseScalar,
+            hyper_noise_scalar_of_serial_trails=ac.ci.CIHyperNoiseScalar,
+            hyper_noise_scalar_of_serial_overscan_no_trails=ac.ci.CIHyperNoiseScalar,
             phase_name="test_phase",
         )
 

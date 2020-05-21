@@ -1,16 +1,15 @@
 import os
-
-import autofit as af
+from autoconf import conf
 import pytest
 from matplotlib import pyplot
 
 
 @pytest.fixture(name="general_config", autouse=True)
 def make_general_config():
-    general_config_path = "{}/../../test_files/configs/plotting/".format(
+    general_config_path = "{}/unit/config/".format(
         os.path.dirname(os.path.realpath(__file__))
     )
-    af.conf.instance.general = af.conf.NamedConfig(general_config_path + "general.ini")
+    conf.instance.general = conf.NamedConfig(general_config_path + "general.ini")
 
 
 class PlotPatch(object):

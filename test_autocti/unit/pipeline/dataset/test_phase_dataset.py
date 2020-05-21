@@ -2,7 +2,7 @@ from os import path
 
 import numpy as np
 import pytest
-from autocti import charge_injection as ci
+import autocti as ac
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 from autocti.pipeline.phase.extensions import HyperNoisePhase
 from test_autocti.mock import mock_pipeline
@@ -49,7 +49,7 @@ class TestMakeAnalysis:
         self, ci_imaging_7x7, ci_pattern_7x7
     ):
 
-        cosmic_ray_map = ci.CIFrame.full(
+        cosmic_ray_map = ac.ci.CIFrame.full(
             fill_value=False, shape_2d=(7, 7), ci_pattern=ci_pattern_7x7
         )
         cosmic_ray_map[1, 1] = True
@@ -82,7 +82,7 @@ class TestMakeAnalysis:
             )
         ).all()
 
-        cosmic_ray_map = ci.CIFrame.full(
+        cosmic_ray_map = ac.ci.CIFrame.full(
             fill_value=False, shape_2d=(7, 7), ci_pattern=ci_pattern_7x7
         )
         cosmic_ray_map[1, 1] = True

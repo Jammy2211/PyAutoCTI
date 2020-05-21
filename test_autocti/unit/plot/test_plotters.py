@@ -6,9 +6,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from autoconf import conf
+import autocti as ac
 from autocti import plot as aplt
-from autocti import structures as struct
-from autocti import util
 
 directory = path.dirname(path.realpath(__file__))
 
@@ -490,7 +489,7 @@ class TestAbstractPlotterAttributes:
 class TestAbstractPlotterPlots:
     def test__plot_frame__works_with_all_extras_included(self, plot_path, plot_patch):
 
-        frame = struct.Frame.ones(shape_2d=(31, 31), pixel_scales=(1.0, 1.0))
+        frame = ac.Frame.ones(shape_2d=(31, 31), pixel_scales=(1.0, 1.0))
 
         plotter = aplt.Plotter(
             output=aplt.Output(path=plot_path, filename="frame1", format="png")
@@ -524,7 +523,7 @@ class TestAbstractPlotterPlots:
         if os.path.exists(plot_path):
             shutil.rmtree(plot_path)
 
-        frame = struct.Frame.ones(shape_2d=(31, 31), pixel_scales=(1.0, 1.0))
+        frame = ac.Frame.ones(shape_2d=(31, 31), pixel_scales=(1.0, 1.0))
 
         plotter = aplt.Plotter(
             output=aplt.Output(path=plot_path, filename="frame", format="fits")
@@ -532,19 +531,19 @@ class TestAbstractPlotterPlots:
 
         plotter.plot_frame(frame=frame)
 
-        frame = util.array.numpy_array_2d_from_fits(
+        frame = ac.util.array.numpy_array_2d_from_fits(
             file_path=plot_path + "/frame.fits", hdu=0
         )
 
         assert (frame == np.ones(shape=(31, 31))).all()
 
-        mask = struct.Mask.unmasked(shape_2d=(31, 31), pixel_scales=(1.0, 1.0))
+        mask = ac.Mask.unmasked(shape_2d=(31, 31), pixel_scales=(1.0, 1.0))
 
-        masked_frame = struct.MaskedFrame.manual(array=frame, mask=mask)
+        masked_frame = ac.MaskedFrame.manual(array=frame, mask=mask)
 
         plotter.plot_frame(frame=masked_frame)
 
-        frame = util.array.numpy_array_2d_from_fits(
+        frame = ac.util.array.numpy_array_2d_from_fits(
             file_path=plot_path + "/frame.fits", hdu=0
         )
 
@@ -805,7 +804,7 @@ class TestSubPlotter:
 class TestInclude:
     def test__parallel_overscan_from_frame(self):
 
-        frame = struct.Frame.ones(shape_2d=(31, 31), pixel_scales=(1.0, 1.0))
+        frame = ac.Frame.ones(shape_2d=(31, 31), pixel_scales=(1.0, 1.0))
 
         include = aplt.Include(parallel_overscan=True)
 
@@ -813,7 +812,7 @@ class TestInclude:
 
         assert parallel_overscan == None
 
-        frame = struct.Frame.ones(
+        frame = ac.Frame.ones(
             shape_2d=(31, 31), pixel_scales=(1.0, 1.0), parallel_overscan=(0, 1, 2, 3)
         )
 
@@ -831,7 +830,7 @@ class TestInclude:
 
     def test__serial_prescan_from_frame(self):
 
-        frame = struct.Frame.ones(shape_2d=(31, 31), pixel_scales=(1.0, 1.0))
+        frame = ac.Frame.ones(shape_2d=(31, 31), pixel_scales=(1.0, 1.0))
 
         include = aplt.Include(serial_prescan=True)
 
@@ -839,7 +838,7 @@ class TestInclude:
 
         assert serial_prescan == None
 
-        frame = struct.Frame.ones(
+        frame = ac.Frame.ones(
             shape_2d=(31, 31), pixel_scales=(1.0, 1.0), serial_prescan=(0, 1, 2, 3)
         )
 
@@ -857,7 +856,7 @@ class TestInclude:
 
     def test__serial_overscan_from_frame(self):
 
-        frame = struct.Frame.ones(shape_2d=(31, 31), pixel_scales=(1.0, 1.0))
+        frame = ac.Frame.ones(shape_2d=(31, 31), pixel_scales=(1.0, 1.0))
 
         include = aplt.Include(serial_overscan=True)
 
@@ -865,7 +864,7 @@ class TestInclude:
 
         assert serial_overscan == None
 
-        frame = struct.Frame.ones(
+        frame = ac.Frame.ones(
             shape_2d=(31, 31), pixel_scales=(1.0, 1.0), serial_overscan=(0, 1, 2, 3)
         )
 

@@ -1,6 +1,6 @@
 from os import path
 
-import arctic as ac
+import autocti as ac
 import autofit as af
 import pytest
 from autocti import exc

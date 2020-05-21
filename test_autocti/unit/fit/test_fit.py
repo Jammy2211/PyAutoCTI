@@ -1,33 +1,31 @@
 import numpy as np
 import pytest
-from autocti import dataset as ds
-from autocti import fit as f
-from autocti import structures as struct
+import autocti as ac
 
 
 class TestFitImaging:
     def test__image_and_model_are_identical__no_masking__check_values_are_correct(self):
 
-        mask = struct.Mask.manual(
+        mask = ac.Mask.manual(
             mask_2d=np.array([[False, False], [False, False]]), pixel_scales=(1.0, 1.0)
         )
 
-        data = struct.MaskedArray.manual_2d(
+        data = ac.MaskedArray.manual_2d(
             array=np.array([[1.0, 2.0], [3.0, 4.0]]), mask=mask
         )
-        noise_map = struct.MaskedArray.manual_2d(
+        noise_map = ac.MaskedArray.manual_2d(
             array=np.array([[2.0, 2.0], [2.0, 2.0]]), mask=mask
         )
 
-        imaging = ds.Imaging(image=data, noise_map=noise_map)
+        imaging = ac.Imaging(image=data, noise_map=noise_map)
 
-        masked_imaging = ds.MaskedImaging(imaging=imaging, mask=mask)
+        masked_imaging = ac.MaskedImaging(imaging=imaging, mask=mask)
 
-        model_image = struct.MaskedArray.manual_2d(
+        model_image = ac.MaskedArray.manual_2d(
             array=np.array([[1.0, 2.0], [3.0, 4.0]]), mask=mask
         )
 
-        fit = f.FitImaging(masked_imaging=masked_imaging, model_image=model_image)
+        fit = ac.FitImaging(masked_imaging=masked_imaging, model_image=model_image)
 
         assert (fit.mask == np.array([[False, False], [False, False]])).all()
 
@@ -52,26 +50,26 @@ class TestFitImaging:
         self
     ):
 
-        mask = struct.Mask.manual(
+        mask = ac.Mask.manual(
             mask_2d=np.array([[False, False], [True, False]]), pixel_scales=(1.0, 1.0)
         )
 
-        data = struct.MaskedArray.manual_2d(
+        data = ac.MaskedArray.manual_2d(
             array=np.array([[1.0, 2.0], [10.0, 4.0]]), mask=mask
         )
-        noise_map = struct.MaskedArray.manual_2d(
+        noise_map = ac.MaskedArray.manual_2d(
             array=np.array([[2.0, 2.0], [2.0, 2.0]]), mask=mask
         )
 
-        imaging = ds.Imaging(image=data, noise_map=noise_map)
+        imaging = ac.Imaging(image=data, noise_map=noise_map)
 
-        masked_imaging = ds.MaskedImaging(imaging=imaging, mask=mask)
+        masked_imaging = ac.MaskedImaging(imaging=imaging, mask=mask)
 
-        model_image = struct.MaskedArray.manual_2d(
+        model_image = ac.MaskedArray.manual_2d(
             array=np.array([[1.0, 2.0], [100.0, 3.0]]), mask=mask
         )
 
-        fit = f.FitImaging(masked_imaging=masked_imaging, model_image=model_image)
+        fit = ac.FitImaging(masked_imaging=masked_imaging, model_image=model_image)
 
         assert (fit.mask == np.array([[False, False], [True, False]])).all()
 

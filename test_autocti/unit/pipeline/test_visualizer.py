@@ -4,7 +4,7 @@ from os import path
 
 import pytest
 from autocti.pipeline import visualizer as vis
-from autofit import conf
+from autoconf import conf
 
 directory = path.dirname(path.realpath(__file__))
 

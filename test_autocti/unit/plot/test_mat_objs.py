@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pytest
 from autoconf import conf
+import autocti as ac
 from autocti import plot as aplt
-from autocti import structures as struct
 
 directory = os.path.dirname(os.path.realpath(__file__))
 
@@ -89,7 +89,7 @@ class TestColorMap:
         self
     ):
 
-        array = struct.Array.ones(shape_2d=(2, 2))
+        array = ac.Array.ones(shape_2d=(2, 2))
         array[0] = 0.0
 
         cmap = aplt.ColorMap(norm_min=None, norm_max=None, norm="linear")
@@ -157,7 +157,7 @@ class TestColorBar:
 class TestTicks:
     def test__set_yx_ticks__works_for_good_values(self):
 
-        array = struct.Array.ones(shape_2d=(2, 2), pixel_scales=1.0)
+        array = ac.Array.ones(shape_2d=(2, 2), pixel_scales=1.0)
 
         units = aplt.Units(use_scaled=True, conversion_factor=None)
 
