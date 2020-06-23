@@ -18,11 +18,13 @@ directory = path.dirname(path.realpath(__file__))
 
 class TestResult:
     def test__fits_to_extracted_and_full_datasets_available(
-        self, ci_imaging_7x7, parallel_clocker
+        self, ci_imaging_7x7, parallel_clocker, samples_with_result
     ):
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
-            non_linear_class=mock.MockNLO, columns=(0, 1), phase_name="test_phase_2"
+            search=mock.MockSearch(samples=samples_with_result),
+            settings=ac.PhaseSettingsCIImaging(columns=(0, 1)),
+            phase_name="test_phase_2",
         )
 
         result = phase_ci_imaging_7x7.run(
@@ -44,7 +46,7 @@ class TestResult:
         ).all()
 
     def test__noise_scaling_maps_list_of_result__are_correct(
-        self, ci_imaging_7x7, parallel_clocker, ci_pattern_7x7
+        self, ci_imaging_7x7, parallel_clocker, ci_pattern_7x7, samples_with_result
     ):
 
         noise_scaling_maps_list_of_ci_regions = [
@@ -78,12 +80,12 @@ class TestResult:
         ]
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
-            non_linear_class=mock.MockNLO,
             hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
             hyper_noise_scalar_of_parallel_trails=ac.ci.CIHyperNoiseScalar,
             hyper_noise_scalar_of_serial_trails=ac.ci.CIHyperNoiseScalar,
             hyper_noise_scalar_of_serial_overscan_no_trails=ac.ci.CIHyperNoiseScalar,
             phase_name="test_phase_2",
+            search=mock.MockSearch(samples=samples_with_result),
         )
 
         result = phase_ci_imaging_7x7.run(

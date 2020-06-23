@@ -47,7 +47,7 @@
 #             positions_threshold=1.0,
 #             image_path="",
 #         ),
-#         optimizer=None,
+#         search=None,
 #     )
 #
 #
@@ -69,16 +69,16 @@
 #
 #
 # # noinspection PyAbstractClass
-# class MockOptimizer(af.NonLinearOptimizer):
+# class MockOptimizer(af.NonLinearSearch):
 #     def __init__(
 #         self,
-#         phase_name="mock_optimizer",
+#         phase_name="mock_search",
 #         phase_tag="tag",
-#         phase_folders=tuple(),
+#         folders=tuple(),
 #         model_mapper=None,
 #     ):
 #         super().__init__(
-#             phase_folders=phase_folders,
+#             folders=folders,
 #             phase_tag=phase_tag,
 #             phase_name=phase_name,
 #             model_mapper=model_mapper,
@@ -93,8 +93,8 @@
 #     def __init__(self):
 #         self.phase_name = "phase name"
 #         self.phase_path = "phase_path"
-#         self.optimizer = MockOptimizer()
-#         self.phase_folders = [""]
+#         self.search = MockOptimizer()
+#         self.folders = [""]
 #         self.phase_tag = ""
 #
 #     # noinspection PyUnusedLocal,PyMethodMayBeStatic

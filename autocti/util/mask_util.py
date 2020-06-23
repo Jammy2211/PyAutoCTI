@@ -1,4 +1,4 @@
-def mask_2d_centres_from_shape_pixel_scale_and_centre(shape, pixel_scales, centre):
+def mask_centres_from_shape_pixel_scale_and_centre(shape, pixel_scales, centre):
     """Determine the (y,x) arc-second central coordinates of a mask from its shape, pixel-scales and centre.
 
      The coordinate system is defined such that the positive y axis is up and positive x axis is right.
@@ -27,12 +27,12 @@ def mask_2d_centres_from_shape_pixel_scale_and_centre(shape, pixel_scales, centr
     return (y_centre_arcsec, x_centre_arcsec)
 
 
-def total_pixels_from_mask_2d(mask_2d):
+def total_pixels_from_mask(mask):
     """Compute the total number of unmasked pixels in a mask.
 
     Parameters
      ----------
-    mask_2d : ndarray
+    mask : ndarray
         A 2D array of bools, where *False* values are unmasked and included when counting pixels.
 
     Returns
@@ -52,9 +52,9 @@ def total_pixels_from_mask_2d(mask_2d):
 
     total_regular_pixels = 0
 
-    for y in range(mask_2d.shape[0]):
-        for x in range(mask_2d.shape[1]):
-            if not mask_2d[y, x]:
+    for y in range(mask.shape[0]):
+        for x in range(mask.shape[1]):
+            if not mask[y, x]:
                 total_regular_pixels += 1
 
     return total_regular_pixels

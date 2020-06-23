@@ -15,7 +15,7 @@ ci_normalizations = [10000.0, 84700.0]
 clocker = ac.Clocker(parallel_express=2, serial_express=2)
 
 
-def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
+def make_pipeline(name, folders, search=af.DynestyStatic()):
 
     parallel_ccd_volume = af.PriorModel(ac.CCDVolume)
 
@@ -29,16 +29,16 @@ def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
 
     phase1 = ac.PhaseCIImaging(
         phase_name="phase_1",
-        phase_folders=phase_folders,
-        non_linear_class=non_linear_class,
+        folders=folders,
+        search=search,
         parallel_traps=[af.PriorModel(ac.Trap)],
         parallel_ccd_volume=parallel_ccd_volume,
         serial_traps=[af.PriorModel(ac.Trap)],
         serial_ccd_volume=serial_ccd_volume,
     )
-    phase1.optimizer.n_live_points = 60
-    phase1.optimizer.const_efficiency_mode = True
-    phase1.optimizer.sampling_efficiency = 0.2
+    phase1.search.n_live_points = 60
+    phase1.search.const_efficiency_mode = True
+    phase1.search.facc = 0.2
 
     return ac.Pipeline(name, phase1)
 

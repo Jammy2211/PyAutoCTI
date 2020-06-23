@@ -22,7 +22,7 @@ serial_settings = ac.Settings(
 clocker = ac.ArcticSettings(serial=serial_settings)
 
 
-def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
+def make_pipeline(name, folders, search=af.DynestyStatic()):
     class PhaseCIImaging(ac.PhaseCIImaging):
         def customize_priors(self, results):
 
@@ -31,16 +31,16 @@ def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
 
     phase1 = ac.PhaseCIImaging(
         phase_name="phase_1",
-        phase_folders=phase_folders,
-        non_linear_class=non_linear_class,
+        folders=folders,
+        search=search,
         serial_traps=[af.PriorModel(ac.Trap)],
         serial_ccd_volume=serial_ccd_volume,
         serial_total_density_range=(0.1, 0.3),
     )
 
-    phase1.optimizer.n_live_points = 60
-    phase1.optimizer.const_efficiency_mode = True
-    phase1.optimizer.sampling_efficiency = 0.2
+    phase1.search.n_live_points = 60
+    phase1.search.const_efficiency_mode = True
+    phase1.search.facc = 0.2
 
     return ac.Pipeline(name, phase1)
 

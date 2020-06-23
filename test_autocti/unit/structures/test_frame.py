@@ -6,12 +6,6 @@ import autocti as ac
 from autocti import structures as struct
 
 
-@pytest.fixture(scope="class")
-def euclid_data():
-    euclid_data = np.zeros((2086, 2119))
-    return euclid_data
-
-
 path = "{}/".format(os.path.dirname(os.path.realpath(__file__)))
 
 
@@ -341,7 +335,7 @@ class TestMaskedFrameAPI:
         self
     ):
 
-        mask = ac.Mask.manual(mask_2d=[[False, True], [False, False]])
+        mask = ac.Mask.manual(mask=[[False, True], [False, False]])
 
         frame = ac.MaskedFrame.manual(
             array=[[1.0, 2.0], [3.0, 4.0]],
@@ -409,7 +403,7 @@ class TestMaskedFrameAPI:
 
     def test__from_frame__no_rotation_as_frame_is_correct_orientation(self):
 
-        mask = ac.Mask.manual(mask_2d=[[False, True], [False, False]])
+        mask = ac.Mask.manual(mask=[[False, True], [False, False]])
 
         frame = ac.Frame.manual(
             array=[[1.0, 2.0], [3.0, 4.0]],
@@ -428,7 +422,7 @@ class TestMaskedFrameAPI:
         assert frame.serial_overscan == (0, 2, 0, 2)
         assert (frame.mask == np.array([[False, True], [False, False]])).all()
 
-        mask = ac.Mask.manual(mask_2d=[[False, True], [False, False]])
+        mask = ac.Mask.manual(mask=[[False, True], [False, False]])
 
         frame = ac.Frame.manual(
             array=[[1.0, 2.0], [3.0, 4.0]],
@@ -449,7 +443,7 @@ class TestMaskedFrameAPI:
 
     def test__ones_zeros_full__makes_frame_using_inputs(self):
 
-        mask = ac.Mask.manual(mask_2d=[[False, True], [False, False]])
+        mask = ac.Mask.manual(mask=[[False, True], [False, False]])
 
         frame = ac.MaskedFrame.full(
             fill_value=8.0,
@@ -482,7 +476,7 @@ class TestMaskedFrameAPI:
         assert frame.serial_overscan == (0, 2, 0, 2)
         assert (frame.mask == np.array([[False, True], [False, False]])).all()
 
-        mask = ac.Mask.manual(mask_2d=[[False, True], [False, False]])
+        mask = ac.Mask.manual(mask=[[False, True], [False, False]])
 
         frame = ac.MaskedFrame.zeros(
             mask=mask,

@@ -1,4 +1,6 @@
-import autofit as af
+from autofit.tools.pipeline import ResultsCollection
+from autofit.non_linear.abstract_search import Result
+from autofit.mapper.model_mapper import ModelMapper
 
 from .hyper_noise_phase import HyperNoisePhase
 from .hyper_phase import HyperPhase
@@ -32,9 +34,9 @@ class CombinedHyperPhase(HyperPhase):
         datasets,
         clocker=None,
         pool=None,
-        results: af.ResultsCollection = None,
+        results: ResultsCollection = None,
         **kwargs
-    ) -> af.Result:
+    ) -> Result:
         """
         Run the regular phase followed by the hyper_galaxy phases. Each result of a hyper_galaxy phase is attached to the
         overall result object by the hyper_name of that phase.
@@ -56,9 +58,9 @@ class CombinedHyperPhase(HyperPhase):
         result
             The result of the regular phase, with hyper_galaxy results attached by associated hyper_galaxy names
         """
-        results = results.copy() if results is not None else af.ResultsCollection()
+        results = results.copy() if results is not None else ResultsCollection()
         result = self.phase.run(datasets, results=results, clocker=clocker, **kwargs)
-        results.add(self.phase.phase_name, result)
+        results.add(self.phase.name, result)
 
         for phase in self.hyper_phases:
             hyper_result = phase.run_hyper(
@@ -73,7 +75,7 @@ class CombinedHyperPhase(HyperPhase):
         )
         return result
 
-    def combine_variables(self, result) -> af.ModelMapper:
+    def combine_variables(self, result) -> ModelMapper:
         """
         Combine the model objects from all previous results in this hyper_combined hyper_galaxy phase.
 
@@ -90,19 +92,19 @@ class CombinedHyperPhase(HyperPhase):
         combined_variable
             A model object including all variables from results in this phase.
         """
-        model = af.ModelMapper()
+        model = ModelMapper()
         for name in self.phase_names:
             model += getattr(result, name).model
         return model
 
-    def run_hyper(self, datasets, pool, results, **kwargs) -> af.Result:
+    def run_hyper(self, datasets, pool, results, **kwargs) -> Result:
         model = self.combine_variables(result=results.last)
 
         phase = self.make_hyper_phase()
-        phase.optimizer.phase_tag = ""
-        phase.optimizer.model = model
+        phase.search.tag = ""
+        phase.search.model = model
 
-        phase.phase_tag = ""
+        phase.tag = ""
 
         return phase.run(
             datasets=datasets, results=results, pool=pool, clocker=results.last.clocker

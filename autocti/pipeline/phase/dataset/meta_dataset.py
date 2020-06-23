@@ -2,22 +2,10 @@ from autocti.structures import mask as msk
 
 
 class MetaDataset:
-    def __init__(
-        self,
-        model,
-        parallel_total_density_range=None,
-        serial_total_density_range=None,
-        cosmic_ray_parallel_buffer=10,
-        cosmic_ray_serial_buffer=10,
-        cosmic_ray_diagonal_buffer=3,
-    ):
+    def __init__(self, model, settings):
 
         self.model = model
-        self.parallel_total_density_range = parallel_total_density_range
-        self.serial_total_density_range = serial_total_density_range
-        self.cosmic_ray_parallel_buffer = cosmic_ray_parallel_buffer
-        self.cosmic_ray_serial_buffer = cosmic_ray_serial_buffer
-        self.cosmic_ray_diagonal_buffer = cosmic_ray_diagonal_buffer
+        self.settings = settings
 
     @property
     def is_parallel_fit(self):
@@ -54,9 +42,9 @@ class MetaDataset:
         cosmic_ray_mask = (
             msk.Mask.from_cosmic_ray_map(
                 cosmic_ray_map=cosmic_ray_map,
-                cosmic_ray_parallel_buffer=self.cosmic_ray_parallel_buffer,
-                cosmic_ray_serial_buffer=self.cosmic_ray_serial_buffer,
-                cosmic_ray_diagonal_buffer=self.cosmic_ray_diagonal_buffer,
+                cosmic_ray_parallel_buffer=self.settings.cosmic_ray_parallel_buffer,
+                cosmic_ray_serial_buffer=self.settings.cosmic_ray_serial_buffer,
+                cosmic_ray_diagonal_buffer=self.settings.cosmic_ray_diagonal_buffer,
             )
             if cosmic_ray_map is not None
             else None

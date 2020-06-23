@@ -12,19 +12,19 @@ test_data_path = "{}/files/array/".format(os.path.dirname(os.path.realpath(__fil
 class TestMask:
     def test__mask__makes_mask_without_other_inputs(self):
 
-        mask = ac.Mask.manual(mask_2d=[[False, False], [False, False]])
+        mask = ac.Mask.manual(mask=[[False, False], [False, False]])
 
         assert type(mask) == ac.Mask
         assert (mask == np.array([[False, False], [False, False]])).all()
 
-        mask = ac.Mask.manual(mask_2d=[[False, False, True], [True, True, False]])
+        mask = ac.Mask.manual(mask=[[False, False, True], [True, True, False]])
 
         assert type(mask) == ac.Mask
         assert (mask == np.array([[False, False, True], [True, True, False]])).all()
 
     def test__mask__makes_mask_with_pixel_scale(self):
 
-        mask = ac.Mask.manual(mask_2d=[[False, False], [True, True]], pixel_scales=1.0)
+        mask = ac.Mask.manual(mask=[[False, False], [True, True]], pixel_scales=1.0)
 
         assert type(mask) == ac.Mask
         assert (mask == np.array([[False, False], [True, True]])).all()
@@ -32,7 +32,7 @@ class TestMask:
         assert mask.origin == (0.0, 0.0)
 
         mask = ac.Mask.manual(
-            mask_2d=[[False, False, True], [True, True, False]],
+            mask=[[False, False, True], [True, True, False]],
             pixel_scales=(2.0, 3.0),
             origin=(0.0, 1.0),
         )
@@ -45,7 +45,7 @@ class TestMask:
     def test__mask__invert_is_true_inverts_the_mask(self):
 
         mask = ac.Mask.manual(
-            mask_2d=[[False, False, True], [True, True, False]], invert=True
+            mask=[[False, False, True], [True, True, False]], invert=True
         )
 
         assert type(mask) == ac.Mask
@@ -55,35 +55,35 @@ class TestMask:
 
         with pytest.raises(exc.MaskException):
 
-            ac.Mask.manual(mask_2d=[False, False, True])
+            ac.Mask.manual(mask=[False, False, True])
 
         with pytest.raises(exc.MaskException):
 
-            ac.Mask.manual(mask_2d=[False, False, True], pixel_scales=False)
+            ac.Mask.manual(mask=[False, False, True], pixel_scales=False)
 
         with pytest.raises(exc.MaskException):
 
-            ac.Mask.manual(mask_2d=[False, False, True])
+            ac.Mask.manual(mask=[False, False, True])
 
         with pytest.raises(exc.MaskException):
 
-            ac.Mask.manual(mask_2d=[False, False, True], pixel_scales=False)
+            ac.Mask.manual(mask=[False, False, True], pixel_scales=False)
 
     def test__is_all_false(self):
 
-        mask = ac.Mask.manual(mask_2d=[[False, False], [False, False]])
+        mask = ac.Mask.manual(mask=[[False, False], [False, False]])
 
         assert mask.is_all_false == True
 
-        mask = ac.Mask.manual(mask_2d=[[False, False]])
+        mask = ac.Mask.manual(mask=[[False, False]])
 
         assert mask.is_all_false == True
 
-        mask = ac.Mask.manual(mask_2d=[[False, True], [False, False]])
+        mask = ac.Mask.manual(mask=[[False, True], [False, False]])
 
         assert mask.is_all_false == False
 
-        mask = ac.Mask.manual(mask_2d=[[True, True], [False, False]])
+        mask = ac.Mask.manual(mask=[[True, True], [False, False]])
 
         assert mask.is_all_false == False
 

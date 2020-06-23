@@ -5,7 +5,7 @@ from autocti.util import array_util
 
 
 class Mask(np.ndarray):
-    def __new__(cls, mask_2d, pixel_scales=None, origin=(0.0, 0.0), *args, **kwargs):
+    def __new__(cls, mask, pixel_scales=None, origin=(0.0, 0.0), *args, **kwargs):
         """ A mask, which is applied to data to extract a set of unmasked image pixels (i.e. mask entry \
         is *False* or 0) which are then fitted in an analysis.
 
@@ -13,7 +13,7 @@ class Mask(np.ndarray):
 
         Parameters
         ----------
-        mask_2d: ndarray
+        mask: ndarray
             An array of bools representing the mask.
         pixel_scales: (float, float)
             The arc-second to pixel conversion factor of each pixel.
@@ -24,8 +24,8 @@ class Mask(np.ndarray):
         """
         # noinspection PyArgumentList
 
-        mask_2d = mask_2d.astype("bool")
-        obj = mask_2d.view(cls)
+        mask = mask.astype("bool")
+        obj = mask.view(cls)
         obj.pixel_scales = pixel_scales
         obj.origin = origin
         return obj
@@ -58,21 +58,21 @@ class Mask(np.ndarray):
             self.pixel_scales = None
 
     @classmethod
-    def manual(cls, mask_2d, pixel_scales=None, origin=(0.0, 0.0), invert=False):
+    def manual(cls, mask, pixel_scales=None, origin=(0.0, 0.0), invert=False):
 
-        if type(mask_2d) is list:
-            mask_2d = np.asarray(mask_2d).astype("bool")
+        if type(mask) is list:
+            mask = np.asarray(mask).astype("bool")
 
         if invert:
-            mask_2d = np.invert(mask_2d)
+            mask = np.invert(mask)
 
         if type(pixel_scales) is float:
             pixel_scales = (pixel_scales, pixel_scales)
 
-        if len(mask_2d.shape) != 2:
-            raise exc.MaskException("The input mask_2d is not a two dimensional array")
+        if len(mask.shape) != 2:
+            raise exc.MaskException("The input mask is not a two dimensional array")
 
-        return Mask(mask_2d=mask_2d, pixel_scales=pixel_scales, origin=origin)
+        return Mask(mask=mask, pixel_scales=pixel_scales, origin=origin)
 
     @classmethod
     def unmasked(cls, shape_2d, pixel_scales=None, origin=(0.0, 0.0), invert=False):
@@ -86,7 +86,7 @@ class Mask(np.ndarray):
             The arc-second to pixel conversion factor of each pixel.
         """
         return cls.manual(
-            mask_2d=np.full(shape=shape_2d, fill_value=False),
+            mask=np.full(shape=shape_2d, fill_value=False),
             pixel_scales=pixel_scales,
             origin=origin,
             invert=invert,

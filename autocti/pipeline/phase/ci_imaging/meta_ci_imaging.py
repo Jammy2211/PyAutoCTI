@@ -3,43 +3,17 @@ from autocti.pipeline.phase.dataset import meta_dataset
 
 
 class MetaCIImaging(meta_dataset.MetaDataset):
-    def __init__(
-        self,
-        model,
-        columns=None,
-        rows=None,
-        parallel_front_edge_mask_rows=None,
-        parallel_trails_mask_rows=None,
-        parallel_total_density_range=None,
-        serial_front_edge_mask_columns=None,
-        serial_trails_mask_columns=None,
-        serial_total_density_range=None,
-        cosmic_ray_parallel_buffer=10,
-        cosmic_ray_serial_buffer=10,
-        cosmic_ray_diagonal_buffer=3,
-    ):
+    def __init__(self, model, settings):
 
-        super().__init__(
-            model=model,
-            parallel_total_density_range=parallel_total_density_range,
-            serial_total_density_range=serial_total_density_range,
-            cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
-            cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
-            cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer,
-        )
+        self.model = model
 
         if not self.is_parallel_fit:
-            columns = None
+            settings.columns = None
 
         if not self.is_serial_fit:
-            rows = None
+            settings.rows = None
 
-        self.columns = columns
-        self.rows = rows
-        self.parallel_front_edge_mask_rows = parallel_front_edge_mask_rows
-        self.parallel_trails_mask_rows = parallel_trails_mask_rows
-        self.serial_front_edge_mask_columns = serial_front_edge_mask_columns
-        self.serial_trails_mask_columns = serial_trails_mask_columns
+        super().__init__(model=model, settings=settings)
 
     def mask_for_analysis_from_dataset(self, dataset, mask):
 
@@ -47,34 +21,35 @@ class MetaCIImaging(meta_dataset.MetaDataset):
             cosmic_ray_map=dataset.cosmic_ray_map, mask=mask
         )
 
-        if self.parallel_front_edge_mask_rows is not None:
+        if self.settings.parallel_front_edge_mask_rows is not None:
 
             parallel_front_edge_mask = ci_mask.CIMask.masked_parallel_front_edge_from_ci_frame(
-                ci_frame=dataset.image, rows=self.parallel_front_edge_mask_rows
+                ci_frame=dataset.image, rows=self.settings.parallel_front_edge_mask_rows
             )
 
             mask = mask + parallel_front_edge_mask
 
-        if self.parallel_trails_mask_rows is not None:
+        if self.settings.parallel_trails_mask_rows is not None:
 
             parallel_trails_mask = ci_mask.CIMask.masked_parallel_trails_from_ci_frame(
-                ci_frame=dataset.image, rows=self.parallel_trails_mask_rows
+                ci_frame=dataset.image, rows=self.settings.parallel_trails_mask_rows
             )
 
             mask = mask + parallel_trails_mask
 
-        if self.serial_front_edge_mask_columns is not None:
+        if self.settings.serial_front_edge_mask_columns is not None:
 
             serial_front_edge_mask = ci_mask.CIMask.masked_serial_front_edge_from_ci_frame(
-                ci_frame=dataset.image, columns=self.serial_front_edge_mask_columns
+                ci_frame=dataset.image,
+                columns=self.settings.serial_front_edge_mask_columns,
             )
 
             mask = mask + serial_front_edge_mask
 
-        if self.serial_trails_mask_columns is not None:
+        if self.settings.serial_trails_mask_columns is not None:
 
             serial_trails_mask = ci_mask.CIMask.masked_serial_trails_from_ci_frame(
-                ci_frame=dataset.image, columns=self.serial_trails_mask_columns
+                ci_frame=dataset.image, columns=self.settings.serial_trails_mask_columns
             )
 
             mask = mask + serial_trails_mask
@@ -145,6 +120,6 @@ class MetaCIImaging(meta_dataset.MetaDataset):
             ci_imaging=dataset,
             mask=mask,
             noise_scaling_maps=noise_scaling_maps,
-            parallel_columns=self.columns,
-            serial_rows=self.rows,
+            parallel_columns=self.settings.columns,
+            serial_rows=self.settings.rows,
         )

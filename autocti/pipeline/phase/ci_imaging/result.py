@@ -1,7 +1,7 @@
-from autocti.pipeline.phase import dataset
+from autocti.pipeline.phase.dataset import Result as DatasetResult
 
 
-class Result(dataset.Result):
+class Result(DatasetResult):
     @property
     def max_log_likelihood_full_fits(self):
         return self.analysis.fits_full_dataset_from_instance(

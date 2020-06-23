@@ -1,7 +1,7 @@
 from os import path
 
+from autofit.mapper.prior_model import prior_model
 import autocti as ac
-import autofit as af
 import numpy as np
 import pytest
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
@@ -21,7 +21,9 @@ class TestMakeAnalysis:
 
         ci_imaging_7x7.cosmic_ray_map = None
 
-        phase_ci_imaging_7x7 = PhaseCIImaging(phase_name="test_phase")
+        phase_ci_imaging_7x7 = PhaseCIImaging(
+            phase_name="test_phase", search=mock.MockSearch()
+        )
 
         analysis = phase_ci_imaging_7x7.make_analysis(
             datasets=[ci_imaging_7x7], clocker=None
@@ -36,7 +38,11 @@ class TestMakeAnalysis:
             == np.full(fill_value=False, shape=(7, 7))
         ).all()
 
-        phase_ci_imaging_7x7 = PhaseCIImaging(phase_name="test_phase", columns=(0, 1))
+        phase_ci_imaging_7x7 = PhaseCIImaging(
+            phase_name="test_phase",
+            settings=ac.PhaseSettingsCIImaging(columns=(0, 1)),
+            search=mock.MockSearch(),
+        )
 
         analysis = phase_ci_imaging_7x7.make_analysis(
             datasets=[ci_imaging_7x7], clocker=None
@@ -51,7 +57,11 @@ class TestMakeAnalysis:
             == np.full(fill_value=False, shape=(7, 1))
         ).all()
 
-        phase_ci_imaging_7x7 = PhaseCIImaging(phase_name="test_phase", rows=(0, 1))
+        phase_ci_imaging_7x7 = PhaseCIImaging(
+            phase_name="test_phase",
+            settings=ac.PhaseSettingsCIImaging(rows=(0, 1)),
+            search=mock.MockSearch(),
+        )
 
         analysis = phase_ci_imaging_7x7.make_analysis(
             datasets=[ci_imaging_7x7], clocker=None
@@ -71,7 +81,9 @@ class TestMakeAnalysis:
         ci_imaging_7x7.cosmic_ray_map = None
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
-            phase_name="test_phase", parallel_front_edge_mask_rows=(0, 1)
+            phase_name="test_phase",
+            settings=ac.PhaseSettingsCIImaging(parallel_front_edge_mask_rows=(0, 1)),
+            search=mock.MockSearch(),
         )
 
         analysis = phase_ci_imaging_7x7.make_analysis(
@@ -94,7 +106,9 @@ class TestMakeAnalysis:
         ).all()
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
-            phase_name="test_phase", parallel_trails_mask_rows=(0, 1)
+            phase_name="test_phase",
+            settings=ac.PhaseSettingsCIImaging(parallel_trails_mask_rows=(0, 1)),
+            search=mock.MockSearch(),
         )
 
         analysis = phase_ci_imaging_7x7.make_analysis(
@@ -117,7 +131,9 @@ class TestMakeAnalysis:
         ).all()
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
-            phase_name="test_phase", serial_front_edge_mask_columns=(0, 1)
+            phase_name="test_phase",
+            settings=ac.PhaseSettingsCIImaging(serial_front_edge_mask_columns=(0, 1)),
+            search=mock.MockSearch(),
         )
 
         analysis = phase_ci_imaging_7x7.make_analysis(
@@ -140,7 +156,9 @@ class TestMakeAnalysis:
         ).all()
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
-            phase_name="test_phase", serial_trails_mask_columns=(0, 1)
+            phase_name="test_phase",
+            settings=ac.PhaseSettingsCIImaging(serial_trails_mask_columns=(0, 1)),
+            search=mock.MockSearch(),
         )
 
         analysis = phase_ci_imaging_7x7.make_analysis(
@@ -199,11 +217,12 @@ class TestMakeAnalysis:
         ]
 
         phase = PhaseCIImaging(
-            parallel_traps=[af.PriorModel(ac.Trap)],
+            parallel_traps=[prior_model.PriorModel(ac.Trap)],
             parallel_ccd_volume=ac.CCDVolume,
             hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
             hyper_noise_scalar_of_parallel_trails=ac.ci.CIHyperNoiseScalar,
             phase_name="test_phase",
+            search=mock.MockSearch(),
         )
 
         analysis = phase.make_analysis(
@@ -229,12 +248,13 @@ class TestMakeAnalysis:
         ).all()
 
         phase = PhaseCIImaging(
-            parallel_traps=[af.PriorModel(ac.Trap)],
+            parallel_traps=[prior_model.PriorModel(ac.Trap)],
             parallel_ccd_volume=ac.CCDVolume,
             hyper_noise_scalar_of_parallel_trails=ac.ci.CIHyperNoiseScalar,
             hyper_noise_scalar_of_serial_trails=ac.ci.CIHyperNoiseScalar,
             hyper_noise_scalar_of_serial_overscan_no_trails=ac.ci.CIHyperNoiseScalar,
             phase_name="test_phase",
+            search=mock.MockSearch(),
         )
 
         analysis = phase.make_analysis(

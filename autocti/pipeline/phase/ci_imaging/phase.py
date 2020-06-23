@@ -1,15 +1,14 @@
+from autocti.pipeline.phase.settings import PhaseSettingsCIImaging
 from autocti.charge_injection import ci_mask
-from autocti.pipeline import tagging
-from autocti.pipeline.phase import dataset
+from autocti.pipeline.phase.dataset.phase import PhaseDataset
 from autocti.pipeline.phase.ci_imaging.analysis import Analysis
 from autocti.pipeline.phase.ci_imaging.meta_ci_imaging import MetaCIImaging
 from autocti.pipeline.phase.ci_imaging.result import Result
-from autofit.optimize.non_linear.nested_sampling.multi_nest import MultiNest
-from autofit.optimize.non_linear.paths import convert_paths
+from autofit.non_linear.paths import convert_paths
 from autofit.tools.phase_property import PhaseProperty
 
 
-class PhaseCIImaging(dataset.PhaseDataset):
+class PhaseCIImaging(PhaseDataset):
 
     hyper_noise_scalar_of_ci_regions = PhaseProperty("hyper_noise_scalar_of_ci_regions")
     hyper_noise_scalar_of_parallel_trails = PhaseProperty(
@@ -30,6 +29,7 @@ class PhaseCIImaging(dataset.PhaseDataset):
         self,
         paths,
         *,
+        search,
         parallel_traps=None,
         parallel_ccd_volume=None,
         serial_traps=None,
@@ -38,55 +38,30 @@ class PhaseCIImaging(dataset.PhaseDataset):
         hyper_noise_scalar_of_parallel_trails=None,
         hyper_noise_scalar_of_serial_trails=None,
         hyper_noise_scalar_of_serial_overscan_no_trails=None,
-        non_linear_class=MultiNest,
-        columns=None,
-        rows=None,
-        parallel_front_edge_mask_rows=None,
-        parallel_trails_mask_rows=None,
-        parallel_total_density_range=None,
-        serial_front_edge_mask_columns=None,
-        serial_trails_mask_columns=None,
-        serial_total_density_range=None,
-        cosmic_ray_parallel_buffer=10,
-        cosmic_ray_serial_buffer=10,
-        cosmic_ray_diagonal_buffer=3,
+        settings=PhaseSettingsCIImaging(),
     ):
 
         """
 
-        A phase in an cti pipeline. Uses the set non_linear optimizer to try to fit models and hyper_galaxies
+        A phase in an cti pipeline. Uses the set non_linear search to try to fit models and hyper_galaxies
         passed to it.
 
         Parameters
         ----------
-        non_linear_class: class
-            The class of a non_linear optimizer
+        search: class
+            The class of a non_linear search
         sub_size: int
             The side length of the subgrid
         """
 
-        phase_tag = tagging.phase_tag_from_phase_settings(
-            columns=columns,
-            rows=rows,
-            parallel_front_edge_mask_rows=parallel_front_edge_mask_rows,
-            parallel_trails_mask_rows=parallel_trails_mask_rows,
-            serial_front_edge_mask_columns=serial_front_edge_mask_columns,
-            serial_trails_mask_columns=serial_trails_mask_columns,
-            parallel_total_density_range=parallel_total_density_range,
-            serial_total_density_range=serial_total_density_range,
-            cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
-            cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
-            cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer,
-        )
-        paths.phase_tag = phase_tag
-
         super().__init__(
-            paths,
+            paths=paths,
             parallel_traps=parallel_traps,
             parallel_ccd_volume=parallel_ccd_volume,
             serial_traps=serial_traps,
             serial_ccd_volume=serial_ccd_volume,
-            non_linear_class=non_linear_class,
+            settings=settings,
+            search=search,
         )
 
         self.hyper_noise_scalar_of_ci_regions = hyper_noise_scalar_of_ci_regions
@@ -98,20 +73,7 @@ class PhaseCIImaging(dataset.PhaseDataset):
             hyper_noise_scalar_of_serial_overscan_no_trails
         )
 
-        self.meta_dataset = MetaCIImaging(
-            model=self.model,
-            columns=columns,
-            rows=rows,
-            parallel_front_edge_mask_rows=parallel_front_edge_mask_rows,
-            parallel_trails_mask_rows=parallel_trails_mask_rows,
-            parallel_total_density_range=parallel_total_density_range,
-            serial_front_edge_mask_columns=serial_front_edge_mask_columns,
-            serial_trails_mask_columns=serial_trails_mask_columns,
-            serial_total_density_range=serial_total_density_range,
-            cosmic_ray_parallel_buffer=cosmic_ray_parallel_buffer,
-            cosmic_ray_serial_buffer=cosmic_ray_serial_buffer,
-            cosmic_ray_diagonal_buffer=cosmic_ray_diagonal_buffer,
-        )
+        self.meta_dataset = MetaCIImaging(model=self.model, settings=settings)
 
     def make_analysis(self, datasets, clocker, results=None, pool=None):
         """
@@ -129,7 +91,7 @@ class PhaseCIImaging(dataset.PhaseDataset):
         Returns
         -------
         analysis: Analysis
-            An analysis object that the non-linear optimizer calls to determine the fit of a set of values
+            An analysis object that the non-linear search calls to determine the fit of a set of values
         """
 
         mask = ci_mask.CIMask.unmasked(
@@ -155,9 +117,9 @@ class PhaseCIImaging(dataset.PhaseDataset):
         return Analysis(
             masked_ci_imagings=masked_ci_datasets,
             clocker=clocker,
-            parallel_total_density_range=self.meta_dataset.parallel_total_density_range,
-            serial_total_density_range=self.meta_dataset.serial_total_density_range,
-            image_path=self.optimizer.paths.image_path,
+            parallel_total_density_range=self.meta_dataset.settings.parallel_total_density_range,
+            serial_total_density_range=self.meta_dataset.settings.serial_total_density_range,
+            image_path=self.search.paths.image_path,
             results=results,
             pool=pool,
         )

@@ -1,9 +1,9 @@
 from matplotlib import pyplot
-
+import numpy as np
 import os
+import pytest
 
 from autoconf import conf
-from arcticpy.test_arctic.unit.conftest import *
 
 import autocti as ac
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
@@ -34,6 +34,61 @@ def make_plot_patch(monkeypatch):
     plot_patch = PlotPatch()
     monkeypatch.setattr(pyplot, "savefig", plot_patch)
     return plot_patch
+
+
+### Arctic ###
+
+
+@pytest.fixture(name="trap_0")
+def make_trap_0():
+    return ac.Trap(density=10, lifetime=-1 / np.log(0.5))
+
+
+@pytest.fixture(name="trap_1")
+def make_trap_1():
+    return ac.Trap(density=8, lifetime=-1 / np.log(0.2))
+
+
+@pytest.fixture(name="traps_x1")
+def make_traps_x1(trap_0):
+    return [trap_0]
+
+
+@pytest.fixture(name="traps_x2")
+def make_traps_x2(trap_0, trap_1):
+    return [trap_0, trap_1]
+
+
+@pytest.fixture(name="ccd_volume")
+def make_ccd_volume():
+    return ac.CCDVolume(
+        well_fill_beta=0.5, well_max_height=10000, well_notch_depth=1e-7
+    )
+
+
+@pytest.fixture(name="ccd_volume_complex")
+def make_ccd_volume_complex():
+    return ac.CCDVolumeComplex(
+        well_fill_alpha=1.0,
+        well_fill_beta=0.5,
+        well_max_height=10000,
+        well_notch_depth=1e-7,
+    )
+
+
+@pytest.fixture(name="parallel_clocker")
+def make_parallel_clocker():
+    return ac.Clocker(
+        parallel_sequence=1,
+        parallel_express=2,
+        parallel_charge_injection_mode=False,
+        parallel_readout_offset=0,
+    )
+
+
+@pytest.fixture(name="serial_clocker")
+def make_serial_clocker():
+    return ac.Clocker(serial_sequence=1, serial_express=2, serial_readout_offset=0)
 
 
 ### MASK ###
@@ -209,16 +264,42 @@ def make_ci_fit_7x7(masked_ci_imaging_7x7, hyper_noise_scalars):
     )
 
 
-### PHASES ###
+# ### PHASES ###
+
+import autofit as af
+
+
+@pytest.fixture(name="samples_with_result")
+def make_samples_with_result(trap_0, ccd_volume):
+
+    instance = af.ModelInstance()
+
+    instance.parallel_traps = [ac.Trap(density=0, lifetime=1)]
+    instance.parallel_ccd_volume = ccd_volume
+    instance.serial_traps = [ac.Trap(density=0, lifetime=1)]
+    instance.serial_ccd_volume = ccd_volume
+
+    instance.hyper_noise_scalar_of_ci_regions = None
+    instance.hyper_noise_scalar_of_parallel_trails = None
+    instance.hyper_noise_scalar_of_serial_trails = None
+    instance.hyper_noise_scalar_of_serial_overscan_no_trails = None
+
+    return mock.MockSamples(max_log_likelihood_instance=instance)
 
 
 @pytest.fixture(name="phase_dataset_7x7")
 def make_phase_data(mask_7x7):
-    return PhaseDataset(
-        non_linear_class=mock.MockNLO, phase_tag="", phase_name="test_phase"
-    )
+    return PhaseDataset(phase_name="test_phase", search=mock.MockSearch())
 
 
 @pytest.fixture(name="phase_ci_imaging_7x7")
 def make_phase_ci_imaging_7x7():
-    return PhaseCIImaging(non_linear_class=mock.MockNLO, phase_name="test_phase")
+    return PhaseCIImaging(phase_name="test_phase", search=mock.MockSearch())
+
+
+### EUCLID DATA ####
+
+
+@pytest.fixture(name="euclid_data")
+def make_euclid_data():
+    return np.zeros((2086, 2119))

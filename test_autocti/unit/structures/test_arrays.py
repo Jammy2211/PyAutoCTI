@@ -159,7 +159,7 @@ class TestMaskedArrayAPI:
             assert arr.pixel_scales == (1.0, 1.0)
 
             mask = ac.Mask.manual(
-                mask_2d=[[False, False], [True, False]],
+                mask=[[False, False], [True, False]],
                 pixel_scales=1.0,
                 origin=(0.0, 1.0),
             )
@@ -193,7 +193,7 @@ class TestMaskedArrayAPI:
             assert arr.pixel_scales == (1.0, 1.0)
 
             mask = ac.Mask.manual(
-                mask_2d=[[False, False], [True, False]],
+                mask=[[False, False], [True, False]],
                 pixel_scales=1.0,
                 origin=(0.0, 1.0),
             )
@@ -213,7 +213,7 @@ class TestMaskedArrayAPI:
             assert arr.pixel_scales == (1.0, 1.0)
 
             mask = ac.Mask.manual(
-                mask_2d=[[False, False], [True, False]],
+                mask=[[False, False], [True, False]],
                 pixel_scales=1.0,
                 origin=(0.0, 1.0),
             )

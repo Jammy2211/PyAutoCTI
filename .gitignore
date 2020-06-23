@@ -12,7 +12,7 @@ arctic/
 output/
 test/unit/pipeline/output
 test/autofit/test_fit/phase/model.results
-test/autofit/test_fit/phase/optimizer
+test/autofit/test_fit/phase/search
 pySHE_ArCTIC.py
 test/integration/data/
 test/integration/tests/output/
