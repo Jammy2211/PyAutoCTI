@@ -13,7 +13,7 @@ ci_normalizations = [84700.0]
 clocker = ac.Clocker(serial_express=2)
 
 
-def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
+def make_pipeline(name, folders, search=af.DynestyStatic()):
 
     serial_ccd_volume = af.PriorModel(ac.CCDVolume)
 
@@ -22,16 +22,16 @@ def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
 
     phase1 = ac.PhaseCIImaging(
         phase_name="phase_1",
-        phase_folders=phase_folders,
-        non_linear_class=non_linear_class,
+        folders=folders,
+        search=search,
         serial_traps=[af.PriorModel(ac.Trap)],
         serial_ccd_volume=serial_ccd_volume,
         columns=None,
     )
 
-    phase1.optimizer.n_live_points = 60
-    phase1.optimizer.const_efficiency_mode = True
-    phase1.optimizer.sampling_efficiency = 0.2
+    phase1.search.n_live_points = 60
+    phase1.search.const_efficiency_mode = True
+    phase1.search.facc = 0.2
 
     class PhaseCIImaging(ac.PhaseCIImaging):
         def customize_priors(self, results):
@@ -59,8 +59,8 @@ def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
 
     phase2 = PhaseCIImaging(
         phase_name="phase_2",
-        phase_folders=phase_folders,
-        non_linear_class=non_linear_class,
+        folders=folders,
+        search=search,
         serial_traps=[
             af.PriorModel(ac.Trap),
             af.PriorModel(ac.Trap),
@@ -69,29 +69,29 @@ def make_pipeline(name, phase_folders, non_linear_class=af.MultiNest):
         serial_ccd_volume=phase1.result.model.serial_ccd_volume,
     )
 
-    phase2.optimizer.n_live_points = 60
-    phase2.optimizer.const_efficiency_mode = True
-    phase2.optimizer.sampling_efficiency = 0.2
+    phase2.search.n_live_points = 60
+    phase2.search.const_efficiency_mode = True
+    phase2.search.facc = 0.2
 
     phase2 = phase1.extend_with_hyper_noise_phases()
 
     phase3 = ac.PhaseCIImaging(
         phase_name="phase_3",
-        phase_folders=phase_folders,
+        folders=folders,
         serial_traps=phase1.result.model.serial_traps,
         serial_ccd_volume=phase1.result.model.serial_ccd_volume,
         hyper_noise_scalar_of_ci_regions=phase1.result.hyper_combined.instance.hyper_noise_scalar_of_ci_regions,
         hyper_noise_scalar_of_serial_trails=phase1.result.hyper_combined.instance.hyper_noise_scalar_of_serial_trails,
-        non_linear_class=non_linear_class,
+        search=search,
         columns=None,
     )
 
     # For the final CTI model, constant efficiency mode has a tendancy to sample parameter space too fast and infer an
     # inaccurate model. Thus, we turn it off for phase 2.
 
-    phase3.optimizer.const_efficiency_mode = False
-    phase3.optimizer.n_live_points = 50
-    phase3.optimizer.sampling_efficiency = 0.3
+    phase3.search.const_efficiency_mode = False
+    phase3.search.n_live_points = 50
+    phase3.search.facc = 0.3
 
     return ac.Pipeline(name, phase1, phase2, phase3)
 

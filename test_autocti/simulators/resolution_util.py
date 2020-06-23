@@ -91,9 +91,8 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(
     # Now, lets output this simulated ccd-simulator to the test_autocti/simulator folder.
     test_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
 
-    ci_data_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-        path=test_path,
-        folder_names=["dataset", ci_data_type, ci_data_model, resolution],
+    ci_data_path = af.util.create_path(
+        path=test_path, folders=["dataset", ci_data_type, ci_data_model, resolution]
     )
 
     normalization = str(int(pattern.normalization))
@@ -113,9 +112,8 @@ def load_test_ci_data(ci_data_type, ci_data_model, resolution, normalization):
 
     ci_pattern = ac.ci.CIPatternUniform(normalization=normalization, regions=ci_regions)
 
-    dataset_path = af.path_util.make_and_return_path_from_path_and_folder_names(
-        path=test_path,
-        folder_names=["dataset", ci_data_type, ci_data_model, resolution],
+    dataset_path = af.util.create_path(
+        path=test_path, folders=["dataset", ci_data_type, ci_data_model, resolution]
     )
 
     normalization = str(int(ci_pattern.normalization))

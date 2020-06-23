@@ -3,7 +3,7 @@ import copy
 import numpy as np
 from autoconf import conf
 from autocti.charge_injection import ci_imaging, ci_fit, ci_hyper
-from autofit.optimize import non_linear
+from autofit.non_linear import abstract_search
 
 from .hyper_phase import HyperPhase
 
@@ -13,7 +13,7 @@ class HyperNoisePhase(HyperPhase):
 
         super().__init__(phase=phase, hyper_name="hyper_noise")
 
-    class Analysis(non_linear.Analysis):
+    class Analysis(abstract_search.Analysis):
         def __init__(self, masked_ci_dataset_full, model_images):
             """
             An analysis to fit the noise for a single galaxy image.
@@ -157,20 +157,20 @@ class HyperNoisePhase(HyperPhase):
         hyper_result.analysis.uses_hyper_images = True
         hyper_result.analysis.model_images = model_images
 
-        phase.optimizer.model.parallel_traps = []
-        phase.optimizer.model.parallel_ccd_volume = []
-        phase.optimizer.phase_tag = ""
+        phase.search.model.parallel_traps = []
+        phase.search.model.parallel_ccd_volume = []
+        phase.search.tag = ""
 
-        phase.optimizer.const_efficiency_mode = conf.instance.non_linear.get(
+        phase.search.const_efficiency_mode = conf.instance.non_linear.get(
             "MultiNest", "const_efficiency_mode", bool
         )
-        phase.optimizer.sampling_efficiency = conf.instance.non_linear.get(
+        phase.search.facc = conf.instance.non_linear.get(
             "MultiNest", "sampling_efficiency", float
         )
-        phase.optimizer.n_live_points = conf.instance.non_linear.get(
+        phase.search.n_live_points = conf.instance.non_linear.get(
             "MultiNest", "n_live_points", int
         )
-        phase.optimizer.multimodal = conf.instance.non_linear.get(
+        phase.search.multimodal = conf.instance.non_linear.get(
             "MultiNest", "multimodal", bool
         )
 
@@ -178,7 +178,7 @@ class HyperNoisePhase(HyperPhase):
             masked_ci_dataset_full=masked_ci_dataset_full, model_images=model_images
         )
 
-        result = phase.optimizer.f(analysis)
+        result = phase.search.f(analysis)
 
         def transfer_field(name):
             if hasattr(result.instance, name):

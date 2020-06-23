@@ -1,7 +1,7 @@
 from os import path
 
+from autofit.mapper import model
 import autocti as ac
-import autofit as af
 import pytest
 from autocti import exc
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
@@ -17,40 +17,45 @@ directory = path.dirname(path.realpath(__file__))
 
 
 class TestChecks:
-    def test__parallel_and_serial_checks_raise_exception(
-        self, phase_ci_imaging_7x7, ci_imaging_7x7
-    ):
+    def test__parallel_and_serial_checks_raise_exception(self, ci_imaging_7x7):
 
-        phase_ci_imaging_7x7.meta_dataset.parallel_total_density_range = (1.0, 2.0)
+        phase_ci_imaging_7x7 = PhaseCIImaging(
+            phase_name="test_phase",
+            settings=ac.PhaseSettingsCIImaging(parallel_total_density_range=(1.0, 2.0)),
+            search=mock.MockSearch(),
+        )
 
         analysis = phase_ci_imaging_7x7.make_analysis(
             datasets=[ci_imaging_7x7], clocker=None
         )
 
-        instance = af.ModelInstance()
+        instance = model.ModelInstance()
         instance.parallel_traps = [ac.Trap(density=0.75), ac.Trap(density=0.75)]
 
         analysis.check_total_density_within_range(instance=instance)
 
-        instance = af.ModelInstance()
+        instance = model.ModelInstance()
         instance.parallel_traps = [ac.Trap(density=1.1), ac.Trap(density=1.1)]
 
         with pytest.raises(exc.PriorException):
             analysis.check_total_density_within_range(instance=instance)
 
-        phase_ci_imaging_7x7.meta_dataset.parallel_total_density_range = None
-        phase_ci_imaging_7x7.meta_dataset.serial_total_density_range = (1.0, 2.0)
+        phase_ci_imaging_7x7 = PhaseCIImaging(
+            phase_name="test_phase",
+            settings=ac.PhaseSettingsCIImaging(serial_total_density_range=(1.0, 2.0)),
+            search=mock.MockSearch(),
+        )
 
         analysis = phase_ci_imaging_7x7.make_analysis(
             datasets=[ci_imaging_7x7], clocker=None
         )
 
-        instance = af.ModelInstance()
+        instance = model.ModelInstance()
         instance.serial_traps = [ac.Trap(density=0.75), ac.Trap(density=0.75)]
 
         analysis.check_total_density_within_range(instance=instance)
 
-        instance = af.ModelInstance()
+        instance = model.ModelInstance()
         instance.serial_traps = [ac.Trap(density=1.1), ac.Trap(density=1.1)]
 
         with pytest.raises(exc.PriorException):
@@ -65,8 +70,8 @@ class TestFit:
         phase = PhaseCIImaging(
             parallel_traps=traps_x1,
             parallel_ccd_volume=ccd_volume,
-            non_linear_class=mock.MockNLO,
             phase_name="test_phase",
+            search=mock.MockSearch(),
         )
 
         analysis = phase.make_analysis(
@@ -97,9 +102,9 @@ class TestFit:
         phase = PhaseCIImaging(
             parallel_traps=traps_x1,
             parallel_ccd_volume=ccd_volume,
-            non_linear_class=mock.MockNLO,
-            columns=(0, 1),
+            settings=ac.PhaseSettingsCIImaging(columns=(0, 1)),
             phase_name="test_phase",
+            search=mock.MockSearch(),
         )
 
         analysis = phase.make_analysis(
@@ -137,9 +142,9 @@ class TestFit:
         phase = PhaseCIImaging(
             parallel_traps=traps_x1,
             parallel_ccd_volume=ccd_volume,
-            non_linear_class=mock.MockNLO,
-            columns=(0, 1),
+            settings=ac.PhaseSettingsCIImaging(columns=(0, 1)),
             phase_name="test_phase",
+            search=mock.MockSearch(),
         )
 
         analysis = phase.make_analysis(
@@ -176,9 +181,9 @@ class TestFit:
             parallel_traps=traps_x1,
             parallel_ccd_volume=ccd_volume,
             hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
-            non_linear_class=mock.MockNLO,
-            columns=(0, 1),
+            settings=ac.PhaseSettingsCIImaging(columns=(0, 1)),
             phase_name="test_phase",
+            search=mock.MockSearch(),
         )
 
         noise_scaling_maps_list_of_ci_regions = [
@@ -246,9 +251,9 @@ class TestFit:
             parallel_traps=traps_x1,
             parallel_ccd_volume=ccd_volume,
             hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
-            non_linear_class=mock.MockNLO,
-            columns=(0, 1),
+            settings=ac.PhaseSettingsCIImaging(columns=(0, 1)),
             phase_name="test_phase",
+            search=mock.MockSearch(),
         )
 
         noise_scaling_maps_list_of_ci_regions = [
@@ -325,6 +330,7 @@ class TestFit:
             phase_name="test_phase",
             hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
             hyper_noise_scalar_of_parallel_trails=ac.ci.CIHyperNoiseScalar,
+            search=mock.MockSearch(),
         )
 
         analysis = phase.make_analysis(

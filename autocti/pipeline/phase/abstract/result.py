@@ -1,15 +1,15 @@
-from autofit.optimize import non_linear
+from autofit.non_linear import abstract_search
 
 
-class Result(non_linear.Result):
-    def __init__(self, samples, previous_model, analysis, optimizer):
+class Result(abstract_search.Result):
+    def __init__(self, samples, previous_model, analysis, search):
         """
         The result of a phase
         """
         super().__init__(samples=samples, previous_model=previous_model)
 
         self.analysis = analysis
-        self.optimizer = optimizer
+        self.search = search
 
     @property
     def clocker(self):

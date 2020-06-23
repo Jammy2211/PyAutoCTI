@@ -1,8 +1,8 @@
+from autocti.pipeline.phase.settings import PhaseSettingsCIImaging
 from autocti.pipeline.phase import abstract
 from autocti.pipeline.phase import extensions
 from autocti.pipeline.phase.dataset.result import Result
-from autofit.optimize.non_linear.nested_sampling.multi_nest import MultiNest
-from autofit.optimize.non_linear.paths import convert_paths
+from autofit.non_linear.paths import convert_paths
 from autofit.tools.phase import Dataset
 from autofit.tools.phase_property import PhaseProperty
 from autofit.tools.pipeline import ResultsCollection
@@ -21,28 +21,31 @@ class PhaseDataset(abstract.AbstractPhase):
     def __init__(
         self,
         paths,
+        search,
         parallel_traps=None,
         parallel_ccd_volume=None,
         serial_traps=None,
         serial_ccd_volume=None,
-        non_linear_class=MultiNest,
+        settings=PhaseSettingsCIImaging(),
     ):
         """
 
-        A phase in an lens pipeline. Uses the set non_linear optimizer to try to fit models and hyper_galaxies
+        A phase in an lens pipeline. Uses the set non_linear search to try to fit models and hyper_galaxies
         passed to it.
 
         Parameters
         ----------
-        non_linear_class: class
-            The class of a non_linear optimizer
+        search: class
+            The class of a non_linear search
         """
 
-        super().__init__(paths=paths, non_linear_class=non_linear_class)
+        paths.tag = settings.phase_tag
 
-        self.parallel_traps = parallel_traps
+        super().__init__(paths=paths, search=search)
+
+        self.parallel_traps = parallel_traps or []
         self.parallel_ccd_volume = parallel_ccd_volume
-        self.serial_traps = serial_traps
+        self.serial_traps = serial_traps or []
         self.serial_ccd_volume = serial_ccd_volume
 
     def run(self, datasets: Dataset, clocker, results=None, info=None, pool=None):
@@ -68,7 +71,6 @@ class PhaseDataset(abstract.AbstractPhase):
         #    self.save_dataset(dataset=datasets)
         #    self.save_mask(masks)
         self.save_meta_dataset(meta_dataset=self.meta_dataset)
-        self.save_info(info=info)
 
         self.model = self.model.populate(results)
 
@@ -81,10 +83,7 @@ class PhaseDataset(abstract.AbstractPhase):
         #    phase_attributes = self.make_phase_attributes(analysis=analysis)
         #    self.save_phase_attributes(phase_attributes=phase_attributes)
 
-        self.customize_priors(results)
-        self.assert_and_save_pickle()
-
-        result = self.run_analysis(analysis)
+        result = self.run_analysis(analysis=analysis, info=info)
 
         return self.make_result(result=result, analysis=analysis)
 
@@ -106,7 +105,7 @@ class PhaseDataset(abstract.AbstractPhase):
         Returns
         -------
         lens : Analysis
-            An lens object that the non-linear optimizer calls to determine the fit of a set of values
+            An lens object that the non-linear search calls to determine the fit of a set of values
         """
         raise NotImplementedError()
 

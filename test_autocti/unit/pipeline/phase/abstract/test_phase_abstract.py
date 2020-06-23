@@ -1,9 +1,10 @@
 import arctic as ac
-import autofit as af
-import pytest
+from autofit.mapper.prior_model import prior_model
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 from autocti.pipeline.phase.dataset import PhaseDataset
 from test_autocti import mock
+
+import pytest
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of "
@@ -19,23 +20,23 @@ class TestModel:
         assert phase_dataset_7x7.model.parallel_traps == [trap]
 
     def test__set_models(self, phase_dataset_7x7):
-        trap_model = af.PriorModel(ac.Trap)
+        trap_model = prior_model.PriorModel(ac.Trap)
         phase_dataset_7x7.parallel_traps = [trap_model]
         assert phase_dataset_7x7.parallel_traps == [trap_model]
 
-        ccd_volume_model = af.PriorModel(ac.CCDVolume)
+        ccd_volume_model = prior_model.PriorModel(ac.CCDVolume)
         phase_dataset_7x7.parallel_ccd_volume = ccd_volume_model
         assert phase_dataset_7x7.parallel_ccd_volume == ccd_volume_model
 
-    def test__phase_can_receive_list_of_galaxy_models(self):
+    def test__phase_can_receive_model_objects(self):
 
         phase_dataset_7x7 = PhaseDataset(
+            phase_name="test_phase",
             parallel_traps=[ac.Trap],
             parallel_ccd_volume=ac.CCDVolume,
             serial_traps=[ac.Trap],
             serial_ccd_volume=ac.CCDVolume,
-            non_linear_class=af.MultiNest,
-            phase_name="test_phase",
+            search=mock.MockSearch(),
         )
 
         parallel_trap = phase_dataset_7x7.model.parallel_traps[0]
@@ -77,9 +78,9 @@ class TestSetup:
 
         phase_dataset_7x7 = PhaseCIImaging(
             phase_name="phase_name",
-            non_linear_class=mock.MockNLO,
             parallel_traps=[ac.Trap],
             parallel_ccd_volume=ac.CCDVolume,
+            search=mock.MockSearch(),
         )
 
         result = phase_dataset_7x7.run(

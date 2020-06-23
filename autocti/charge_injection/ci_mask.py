@@ -3,8 +3,8 @@ from autocti.structures.mask import Mask
 
 
 class CIMask(Mask):
-    def __new__(cls, mask_2d, *args, **kwargs):
-        mask = np.array(mask_2d, dtype="bool").view(cls)
+    def __new__(cls, mask, *args, **kwargs):
+        mask = np.array(mask, dtype="bool").view(cls)
         return mask
 
     @classmethod
@@ -19,7 +19,7 @@ class CIMask(Mask):
         if invert:
             mask = np.invert(mask)
 
-        return CIMask(mask_2d=mask.astype("bool"))
+        return CIMask(mask=mask.astype("bool"))
 
     @classmethod
     def masked_parallel_trails_from_ci_frame(cls, ci_frame, rows, invert=False):
@@ -33,7 +33,7 @@ class CIMask(Mask):
         if invert:
             mask = np.invert(mask)
 
-        return CIMask(mask_2d=mask.astype("bool"))
+        return CIMask(mask=mask.astype("bool"))
 
     @classmethod
     def masked_serial_front_edge_from_ci_frame(cls, ci_frame, columns, invert=False):
@@ -47,7 +47,7 @@ class CIMask(Mask):
         if invert:
             mask = np.invert(mask)
 
-        return CIMask(mask_2d=mask.astype("bool"))
+        return CIMask(mask=mask.astype("bool"))
 
     @classmethod
     def masked_serial_trails_from_ci_frame(cls, ci_frame, columns, invert=False):
@@ -61,4 +61,4 @@ class CIMask(Mask):
         if invert:
             mask = np.invert(mask)
 
-        return CIMask(mask_2d=mask.astype("bool"))
+        return CIMask(mask=mask.astype("bool"))

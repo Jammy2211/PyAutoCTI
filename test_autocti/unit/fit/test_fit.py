@@ -7,7 +7,7 @@ class TestFitImaging:
     def test__image_and_model_are_identical__no_masking__check_values_are_correct(self):
 
         mask = ac.Mask.manual(
-            mask_2d=np.array([[False, False], [False, False]]), pixel_scales=(1.0, 1.0)
+            mask=np.array([[False, False], [False, False]]), pixel_scales=(1.0, 1.0)
         )
 
         data = ac.MaskedArray.manual_2d(
@@ -51,7 +51,7 @@ class TestFitImaging:
     ):
 
         mask = ac.Mask.manual(
-            mask_2d=np.array([[False, False], [True, False]]), pixel_scales=(1.0, 1.0)
+            mask=np.array([[False, False], [True, False]]), pixel_scales=(1.0, 1.0)
         )
 
         data = ac.MaskedArray.manual_2d(

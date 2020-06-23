@@ -8,7 +8,7 @@ from test_autocti.simulate import simulate_util
 def run(
     module,
     test_name=None,
-    non_linear_class=af.MultiNest,
+    search=af.DynestyStatic(),
     config_folder="config",
     clocker=None,
     pool=None,
@@ -33,9 +33,7 @@ def run(
     )
 
     pipeline = module.make_pipeline(
-        name=test_name,
-        phase_folders=[module.test_type, test_name],
-        non_linear_class=non_linear_class,
+        name=test_name, folders=[module.test_type, test_name], search=search
     )
 
     pipeline.run(datasets=datasets, clocker=clocker, pool=pool)
@@ -46,7 +44,7 @@ def run_a_mock(module):
     run(
         module,
         test_name=f"{module.test_name}_mock",
-        non_linear_class=af.MockNLO,
+        search=af.MockSearch,
         config_folder="config_mock",
     )
 
@@ -56,6 +54,6 @@ def run_with_multi_nest(module):
     run(
         module,
         test_name=f"{module.test_name}_nest",
-        non_linear_class=af.MultiNest,
+        search=af.DynestyStatic(),
         config_folder="config_mock",
     )

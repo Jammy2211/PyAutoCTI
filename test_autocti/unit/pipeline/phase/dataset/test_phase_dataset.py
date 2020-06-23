@@ -19,7 +19,7 @@ directory = path.dirname(path.realpath(__file__))
 class TestPhase:
     def test__extend_with_hyper_noise_phase(self):
 
-        phase = PhaseCIImaging(non_linear_class=mock.MockNLO, phase_name="test_phase")
+        phase = PhaseCIImaging(phase_name="test_phase", search=mock.MockSearch())
 
         phase_extended = phase.extend_with_hyper_noise_phases()
         assert type(phase_extended.hyper_phases[0]) == HyperNoisePhase
@@ -32,7 +32,9 @@ class TestMakeAnalysis:
 
         ci_imaging_7x7.cosmic_ray_map = None
 
-        phase_ci_imaging_7x7 = PhaseCIImaging(phase_name="test_phase")
+        phase_ci_imaging_7x7 = PhaseCIImaging(
+            phase_name="test_phase", search=mock.MockSearch()
+        )
 
         analysis = phase_ci_imaging_7x7.make_analysis(
             datasets=[ci_imaging_7x7], clocker=None
@@ -56,9 +58,12 @@ class TestMakeAnalysis:
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            cosmic_ray_serial_buffer=0,
-            cosmic_ray_parallel_buffer=0,
-            cosmic_ray_diagonal_buffer=0,
+            settings=ac.PhaseSettingsCIImaging(
+                cosmic_ray_serial_buffer=0,
+                cosmic_ray_parallel_buffer=0,
+                cosmic_ray_diagonal_buffer=0,
+            ),
+            search=mock.MockSearch(),
         )
 
         analysis = phase_ci_imaging_7x7.make_analysis(
@@ -89,9 +94,12 @@ class TestMakeAnalysis:
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            cosmic_ray_serial_buffer=2,
-            cosmic_ray_parallel_buffer=1,
-            cosmic_ray_diagonal_buffer=1,
+            settings=ac.PhaseSettingsCIImaging(
+                cosmic_ray_serial_buffer=2,
+                cosmic_ray_parallel_buffer=1,
+                cosmic_ray_diagonal_buffer=1,
+            ),
+            search=mock.MockSearch(),
         )
 
         analysis = phase_ci_imaging_7x7.make_analysis(

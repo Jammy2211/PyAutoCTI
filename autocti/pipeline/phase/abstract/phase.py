@@ -1,6 +1,5 @@
 from autocti.pipeline.phase.abstract.result import Result
-from autofit.optimize.non_linear.nested_sampling.multi_nest import MultiNest
-from autofit.optimize.non_linear.paths import convert_paths
+from autofit.non_linear.paths import convert_paths
 from autofit.tools import phase as af_phase
 
 
@@ -12,24 +11,24 @@ class AbstractPhase(af_phase.AbstractPhase):
     Result = Result
 
     @convert_paths
-    def __init__(self, paths, *, non_linear_class=MultiNest):
+    def __init__(self, paths, *, search):
         """
-        A phase in an lens pipeline. Uses the set non_linear optimizer to try to fit
+        A phase in an lens pipeline. Uses the set non_linear search to try to fit
         models and hyper_galaxies passed to it.
 
         Parameters
         ----------
-        non_linear_class: class
-            The class of a non_linear optimizer
+        search: class
+            The class of a non_linear search
         phase_name: str
             The name of this phase
         """
 
-        super().__init__(paths=paths, non_linear_class=non_linear_class)
+        super().__init__(paths=paths, search=search)
 
     @property
-    def phase_folders(self):
-        return self.optimizer.phase_folders
+    def folders(self):
+        return self.search.folders
 
     @property
     def phase_property_collections(self):
@@ -45,12 +44,12 @@ class AbstractPhase(af_phase.AbstractPhase):
 
     @property
     def path(self):
-        return self.optimizer.path
+        return self.search.path
 
     def make_result(self, result, analysis):
         return self.Result(
             samples=result.samples,
             previous_model=result.previous_model,
             analysis=analysis,
-            optimizer=self.optimizer,
+            search=self.search,
         )

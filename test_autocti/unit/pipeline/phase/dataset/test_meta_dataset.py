@@ -4,6 +4,8 @@ import autocti as ac
 import pytest
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 
+from test_autocti import mock
+
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of "
     "`arr[seq]`. In the future this will be interpreted as an arrays index, `arr[np.arrays(seq)]`, which will result "
@@ -20,6 +22,7 @@ class TestSetup:
             phase_name="test_phase",
             parallel_traps=[ac.Trap],
             parallel_ccd_volume=ac.CCDVolume,
+            search=mock.MockSearch(),
         )
 
         assert phase_dataset_7x7.meta_dataset.is_parallel_fit is True
@@ -30,6 +33,7 @@ class TestSetup:
             phase_name="test_phase",
             serial_traps=[ac.Trap],
             serial_ccd_volume=ac.CCDVolume,
+            search=mock.MockSearch(),
         )
 
         assert phase_dataset_7x7.meta_dataset.is_parallel_fit is False
@@ -42,6 +46,7 @@ class TestSetup:
             parallel_ccd_volume=ac.CCDVolume,
             serial_traps=[ac.Trap],
             serial_ccd_volume=ac.CCDVolume,
+            search=mock.MockSearch(),
         )
 
         assert phase_dataset_7x7.meta_dataset.is_parallel_fit is False

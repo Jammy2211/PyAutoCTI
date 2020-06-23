@@ -1,7 +1,8 @@
 import builtins
-
-import autocti.pipeline.pipeline as pl
-import autofit as af
+from autofit.mapper import model
+from autofit.non_linear import abstract_search
+from autofit.tools import phase
+from autocti.pipeline import pipeline as pl
 import pytest
 
 
@@ -41,7 +42,7 @@ class Optimizer(object):
         self.phase_path = ""
 
 
-class DummyPhase(af.AbstractPhase):
+class DummyPhase(phase.AbstractPhase):
     def make_result(self, result, analysis):
         pass
 
@@ -53,14 +54,14 @@ class DummyPhase(af.AbstractPhase):
         self.phase_tag = phase_tag
         self.phase_path = phase_name
 
-        self.optimizer = Optimizer(phase_name)
+        self.search = Optimizer(phase_name)
 
     def run(self, datasets, clocker, results, pool):
         self.datasets = datasets
         self.clocker = clocker
         self.results = results
         self.pool = pool
-        return af.Result(af.ModelInstance(), 1)
+        return abstract_search.Result(model.ModelInstance(), 1)
 
 
 class TestPipeline(object):

@@ -348,7 +348,7 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
 #     # We use the LA Cosmic algorithm to simulate and add cosmic rays to our ci pre cti image. This routine randomly
 #     # generates cosmimc rays based on realistic cosmic ray rates expected. These cosmic rays will then be added to our
 #     # ci pre-cti image in the simulaate function below, and subject to CTI according to the CTI model.
-#     cosmic_path = af.path_util.make_and_return_path_from_path_and_folder_names(
+#     cosmic_path = af.util.create_path(
 #         path=workspace_path, folder_names=["scripts", "cosmic_rays"]
 #     )
 #

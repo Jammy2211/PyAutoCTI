@@ -17,7 +17,7 @@ from .dataset.imaging import MaskedImaging
 from .dataset import preprocess
 from .fit.fit import FitImaging
 from . import charge_injection as ci
-from .pipeline import tagging
+from .pipeline.phase.settings import PhaseSettingsCIImaging
 from .pipeline.phase.extensions import CombinedHyperPhase
 from .pipeline.phase.ci_imaging.phase import PhaseCIImaging
 from .pipeline.pipeline import Pipeline

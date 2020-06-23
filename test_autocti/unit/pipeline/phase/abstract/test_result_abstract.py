@@ -27,7 +27,7 @@ class TestGeneric:
     ):
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
-            non_linear_class=mock.MockNLO, phase_name="test_phase_2"
+            phase_name="test_phase", search=mock.MockSearch()
         )
 
         result = phase_ci_imaging_7x7.run(
