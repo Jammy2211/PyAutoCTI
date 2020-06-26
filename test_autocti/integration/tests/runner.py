@@ -1,8 +1,8 @@
 import os
 
+from autoconf import conf
 import autofit as af
-from test_autocti.integration import integration_util
-from test_autocti.simulate import simulate_util
+from test_autocti.simulators import resolution_util
 
 
 def run(
@@ -18,11 +18,10 @@ def run(
     output_path = test_path + "output/"
     config_path = test_path + config_folder
     conf.instance = conf.Config(config_path=config_path, output_path=output_path)
-    integration_util.reset_paths(test_name=test_name, output_path=output_path)
 
     datasets = list(
         map(
-            lambda normalization: simulate_util.load_test_ci_data(
+            lambda normalization: resolution_util.load_test_ci_data(
                 ci_data_type=module.ci_data_type,
                 ci_data_model=module.ci_data_model,
                 resolution=module.resolution,
@@ -45,15 +44,5 @@ def run_a_mock(module):
         module,
         test_name=f"{module.test_name}_mock",
         search=af.MockSearch,
-        config_folder="config_mock",
-    )
-
-
-def run_with_multi_nest(module):
-    # noinspection PyTypeChecker
-    run(
-        module,
-        test_name=f"{module.test_name}_nest",
-        search=af.DynestyStatic(),
         config_folder="config_mock",
     )

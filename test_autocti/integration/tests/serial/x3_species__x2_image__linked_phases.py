@@ -29,51 +29,20 @@ def make_pipeline(name, folders, search=af.DynestyStatic()):
         columns=None,
     )
 
-    phase1.search.n_live_points = 60
-    phase1.search.const_efficiency_mode = True
-    phase1.search.facc = 0.2
+    previous_total_density = phase1.result.instance.serial_traps[0].trap_density
 
-    class PhaseCIImaging(ac.PhaseCIImaging):
-        def customize_priors(self, results):
+    trap = af.PriorModel(ac.Trap)
+    trap.density = af.UniformPrior(lower_limit=0.0, upper_limit=previous_total_density)
 
-            previous_total_density = results[-1].instance.serial_traps[0].trap_density
-
-            self.serial_traps[0].trap_density = af.UniformPrior(
-                lower_limit=0.0, upper_limit=previous_total_density
-            )
-            self.serial_traps[1].trap_density = af.UniformPrior(
-                lower_limit=0.0, upper_limit=previous_total_density
-            )
-            self.serial_traps[2].trap_density = af.UniformPrior(
-                lower_limit=0.0, upper_limit=previous_total_density
-            )
-            self.serial_traps[0].trap_lifetime = af.UniformPrior(
-                lower_limit=0.0, upper_limit=30.0
-            )
-            self.serial_traps[1].trap_lifetime = af.UniformPrior(
-                lower_limit=0.0, upper_limit=30.0
-            )
-            self.serial_traps[2].trap_lifetime = af.UniformPrior(
-                lower_limit=0.0, upper_limit=30.0
-            )
-
-    phase2 = PhaseCIImaging(
+    phase2 = ac.PhaseCIImaging(
         phase_name="phase_2",
         folders=folders,
         search=search,
-        serial_traps=[
-            af.PriorModel(ac.Trap),
-            af.PriorModel(ac.Trap),
-            af.PriorModel(ac.Trap),
-        ],
+        serial_traps=3 * [trap],
         serial_ccd_volume=phase1.result.model.serial_ccd_volume,
     )
 
-    phase2.search.n_live_points = 60
-    phase2.search.const_efficiency_mode = True
-    phase2.search.facc = 0.2
-
-    phase2 = phase1.extend_with_hyper_noise_phases()
+    phase2 = phase2.extend_with_hyper_noise_phases()
 
     phase3 = ac.PhaseCIImaging(
         phase_name="phase_3",
@@ -83,15 +52,7 @@ def make_pipeline(name, folders, search=af.DynestyStatic()):
         hyper_noise_scalar_of_ci_regions=phase1.result.hyper_combined.instance.hyper_noise_scalar_of_ci_regions,
         hyper_noise_scalar_of_serial_trails=phase1.result.hyper_combined.instance.hyper_noise_scalar_of_serial_trails,
         search=search,
-        columns=None,
     )
-
-    # For the final CTI model, constant efficiency mode has a tendancy to sample parameter space too fast and infer an
-    # inaccurate model. Thus, we turn it off for phase 2.
-
-    phase3.search.const_efficiency_mode = False
-    phase3.search.n_live_points = 50
-    phase3.search.facc = 0.3
 
     return ac.Pipeline(name, phase1, phase2, phase3)
 
