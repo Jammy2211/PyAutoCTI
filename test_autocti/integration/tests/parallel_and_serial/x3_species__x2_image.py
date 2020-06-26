@@ -29,23 +29,11 @@ def make_pipeline(name, folders, search=af.DynestyStatic()):
         phase_name="phase_1",
         folders=folders,
         search=search,
-        parallel_traps=[
-            af.PriorModel(ac.Trap),
-            af.PriorModel(ac.Trap),
-            af.PriorModel(ac.Trap),
-        ],
+        parallel_traps=3 * [af.PriorModel(ac.Trap)],
         parallel_ccd_volume=parallel_ccd_volume,
-        serial_traps=[
-            af.PriorModel(ac.Trap),
-            af.PriorModel(ac.Trap),
-            af.PriorModel(ac.Trap),
-        ],
+        serial_traps=3 * [af.PriorModel(ac.Trap)],
         serial_ccd_volume=serial_ccd_volume,
     )
-
-    phase1.search.n_live_points = 60
-    phase1.search.const_efficiency_mode = True
-    phase1.search.facc = 0.2
 
     return ac.Pipeline(name, phase1)
 

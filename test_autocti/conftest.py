@@ -266,13 +266,13 @@ def make_ci_fit_7x7(masked_ci_imaging_7x7, hyper_noise_scalars):
 
 # ### PHASES ###
 
-import autofit as af
+from autofit.mapper.model import ModelInstance
 
 
 @pytest.fixture(name="samples_with_result")
 def make_samples_with_result(trap_0, ccd_volume):
 
-    instance = af.ModelInstance()
+    instance = ModelInstance()
 
     instance.parallel_traps = [ac.Trap(density=0, lifetime=1)]
     instance.parallel_ccd_volume = ccd_volume

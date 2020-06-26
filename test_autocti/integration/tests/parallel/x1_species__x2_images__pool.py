@@ -11,7 +11,6 @@ ci_data_model = "parallel_x1"
 resolution = "patch"
 ci_normalizations = [10000.0, 84700.0]
 
-
 clocker = ac.Clocker(parallel_express=2)
 
 
@@ -25,15 +24,11 @@ def make_pipeline(name, folders, search=af.DynestyStatic()):
     phase1 = ac.PhaseCIImaging(
         phase_name="phase_1",
         folders=folders,
-        search=search,
         parallel_traps=[af.PriorModel(ac.Trap)],
         parallel_ccd_volume=parallel_ccd_volume,
-        columns=40,
+        settings=ac.PhaseSettingsCIImaging(columns=40),
+        search=search,
     )
-
-    phase1.search.const_efficiency_mode = True
-    phase1.search.n_live_points = 60
-    phase1.search.facc = 0.2
 
     return ac.Pipeline(name, phase1)
 

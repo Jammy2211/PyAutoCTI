@@ -22,15 +22,11 @@ def make_pipeline(name, folders, search=af.DynestyStatic()):
     phase1 = ac.PhaseCIImaging(
         phase_name="phase_1",
         folders=folders,
-        search=search,
         parallel_traps=[af.PriorModel(ac.Trap)],
         parallel_ccd_volume=parallel_ccd_volume,
-        columns=(0, 30),
+        settings=ac.PhaseSettingsCIImaging(columns=(0, 30)),
+        search=search,
     )
-
-    phase1.search.n_live_points = 60
-    phase1.search.const_efficiency_mode = True
-    phase1.search.facc = 0.2
 
     phase1 = phase1.extend_with_hyper_noise_phases()
 
@@ -42,15 +38,7 @@ def make_pipeline(name, folders, search=af.DynestyStatic()):
         hyper_noise_scalar_of_ci_regions=phase1.result.hyper_combined.instance.hyper_noise_scalar_of_ci_regions,
         hyper_noise_scalar_of_parallel_trails=phase1.result.hyper_combined.instance.hyper_noise_scalar_of_parallel_trails,
         search=search,
-        columns=None,
     )
-
-    # For the final CTI model, constant efficiency mode has a tendancy to sample parameter space too fast and infer an
-    # inaccurate model. Thus, we turn it off for phase 2.
-
-    phase2.search.const_efficiency_mode = False
-    phase2.search.n_live_points = 50
-    phase2.search.facc = 0.3
 
     return ac.Pipeline(name, phase1, phase2)
 

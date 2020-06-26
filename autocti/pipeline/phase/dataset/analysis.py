@@ -23,6 +23,8 @@ class Analysis(abstract_search.Analysis):
         pool=None,
     ):
 
+        super().__init__()
+
         self.masked_ci_datasets = masked_ci_datasets
         self.clocker = clocker
         self.parallel_total_density_range = parallel_total_density_range

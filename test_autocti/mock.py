@@ -1,4 +1,4 @@
-import autofit as af
+from autofit.tools.pipeline import ResultsCollection
 from test_autofit import mock
 from test_autofit.mock import MockSearch, MockSamples
 
@@ -58,7 +58,7 @@ class MockResult(mock.MockResult):
         return self
 
 
-class MockResults(af.ResultsCollection):
+class MockResults(ResultsCollection):
     def __init__(
         self,
         samples=None,
