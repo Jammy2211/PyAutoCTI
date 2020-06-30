@@ -1783,3 +1783,5 @@ class MaskedCIFrame(AbstractCIFrame):
             serial_prescan=ci_frame.serial_prescan,
             serial_overscan=ci_frame.serial_overscan,
         )
+
+
