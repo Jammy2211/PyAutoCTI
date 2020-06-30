@@ -6,7 +6,7 @@ class Result(abstract_search.Result):
         """
         The result of a phase
         """
-        super().__init__(samples=samples, previous_model=previous_model)
+        super().__init__(samples=samples, previous_model=previous_model, search=search)
 
         self.analysis = analysis
         self.search = search
