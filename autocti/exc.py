@@ -1,11 +1,7 @@
 from autofit import exc
-
+from autoarray.exc import MaskException
 
 class ArrayException(Exception):
-    pass
-
-
-class MaskException(Exception):
     pass
 
 

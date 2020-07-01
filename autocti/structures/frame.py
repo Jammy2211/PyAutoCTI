@@ -7,7 +7,7 @@ from autocti.util import array_util
 from autocti.util import frame_util
 
 
-class AbstractFrame(arrays.AbstractArray):
+class AbstractFrame(arrays.Array):
     def __new__(
         cls,
         array,
