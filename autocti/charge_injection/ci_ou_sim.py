@@ -30,6 +30,7 @@ am not clear on how standard ELViS data products are oriented, but it may be tha
 them to fits to oriented them in the way they are observed (VIS_CTI has tools for this, as I'm sure ELViS does too).
 """
 
+
 def non_uniform_frame_for_ou_sim(ccd_id, quadrant_id):
 
     """The 2D shape of the image"""
@@ -86,6 +87,7 @@ def non_uniform_frame_for_ou_sim(ccd_id, quadrant_id):
 
     return ci_pre_ctis
 
+
 def add_cti_to_frame_for_ou_sim(frames):
 
     """
@@ -94,9 +96,7 @@ def add_cti_to_frame_for_ou_sim(frames):
     For parallel clocking, we use 'charge injection mode' which transfers the charge of every pixel over the full CCD.
     """
     clocker = clock.Clocker(
-        parallel_express=2,
-        parallel_charge_injection_mode=True,
-        serial_express=2
+        parallel_express=2, parallel_charge_injection_mode=True, serial_express=2
     )
 
     """
