@@ -1,11 +1,8 @@
-import numpy as np
 from autoarray.mask import mask as msk
-from autocti import exc
 from autocti.structures import region as reg
-from autocti.util import array_util
+
 
 class Mask(msk.Mask):
-
     @classmethod
     def from_masked_regions(cls, shape_2d, masked_regions):
 
@@ -31,19 +28,14 @@ class Mask(msk.Mask):
 
         Parameters
         ----------
-        shape_2d : (int, int)
-            The dimensions of the 2D mask.
-        frame_geometry : ci_frame.CIQuadGeometry
-            The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
-            therefore the direction of clocking and rotations before input into the cti algorithm.
-        cosmic_ray_map : ndarray
+        cosmic_ray_map : arrays.Array
             2D arrays flagging where cosmic rays on the image.
         cosmic_ray_parallel_buffer : int
-            If a cosmic-ray mask is supplied, the number of pixels from each ray pixels are masked in the parallel \
-            direction.
+            The number of pixels from each ray pixels are masked in the parallel direction.
         cosmic_ray_serial_buffer : int
-            If a cosmic-ray mask is supplied, the number of pixels from each ray pixels are masked in the serial \
-            direction.
+            The number of pixels from each ray pixels are masked in the serial direction.
+        cosmic_ray_diagonal_buffer : int
+            The number of pixels from each ray pixels are masked in the digonal up from the parallel + serial direction.
         """
         mask = cls.unmasked(shape_2d=cosmic_ray_map.shape_2d)
 

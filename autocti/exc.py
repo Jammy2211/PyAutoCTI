@@ -1,8 +1,5 @@
 from autofit import exc
-from autoarray.exc import MaskException
-
-class ArrayException(Exception):
-    pass
+from autoarray.exc import ArrayException, MaskException
 
 
 class DataException(Exception):
