@@ -66,19 +66,19 @@ class DummyPhase(phase.AbstractPhase):
 
 class TestPipeline(object):
     def test_run_pipeline(self):
-        phase_1 = DummyPhase(phase_name="dummy1")
-        phase_2 = DummyPhase(phase_name="dummy2")
+        phase1 = DummyPhase(phase_name="dummy1")
+        phase2 = DummyPhase(phase_name="dummy2")
         pipeline = pl.Pipeline("", phase_1, phase_2)
 
         pipeline.run(datasets=None, clocker=None, pool=None)
 
-        assert len(phase_1.results) == 2
-        assert len(phase_2.results) == 2
+        assert len(phase1.results) == 2
+        assert len(phase2.results) == 2
 
     def test_addition(self):
-        phase_1 = DummyPhase(phase_name="dummy1")
-        phase_2 = DummyPhase(phase_name="dummy2")
-        phase_3 = DummyPhase(phase_name="dumy3")
+        phase1 = DummyPhase(phase_name="dummy1")
+        phase2 = DummyPhase(phase_name="dummy2")
+        phase3 = DummyPhase(phase_name="dumy3")
 
         pipeline1 = pl.Pipeline("", phase_1, phase_2)
         pipeline2 = pl.Pipeline("", phase_3)

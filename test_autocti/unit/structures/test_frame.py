@@ -1,9 +1,7 @@
 import os
 
 import numpy as np
-import pytest
 import autocti as ac
-from autocti import structures as struct
 
 
 path = "{}/".format(os.path.dirname(os.path.realpath(__file__)))

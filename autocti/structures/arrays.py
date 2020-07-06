@@ -1,14 +1,16 @@
 import logging
 
 import numpy as np
+from autoarray.structures.arrays import abstract_array
 from autoarray.structures import arrays
+from autoarray import exc
 from autocti.util import array_util
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 
-class AbstractArray(arrays.AbstractArray):
+class AbstractArray(abstract_array.AbstractArray):
     def __new__(cls, array, mask, *args, **kwargs):
         """An array of values, which are paired to a uniform 2D mask of pixels and sub-pixels. Each entry
         on the array corresponds to a value at the centre of a sub-pixel in an unmasked pixel.
@@ -176,9 +178,15 @@ class AbstractArray(arrays.AbstractArray):
             If True, the array is stored in 1D as an ndarray of shape [total_unmasked_pixels]. If False, it is
             stored in 2D as an ndarray of shape [total_y_pixels, total_x_pixels].
         """
-        obj = super(AbstractArray, cls).__new__(
-            cls=cls, array=array, mask=mask, store_in_1d=False
-        )
+        if len(array.shape) != 2:
+            raise exc.ArrayException(
+                "An array input into the arrays.Array.__new__ method has store_in_1d = True but"
+                "the input shape of the array is not 1."
+            )
+
+        obj = array.view(cls)
+        obj.mask = mask
+        obj.store_in_1d = False
         return obj
 
 

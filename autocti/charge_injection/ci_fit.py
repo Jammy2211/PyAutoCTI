@@ -23,7 +23,7 @@ class CIFitImaging(fit.FitImaging):
         clocker : arctic_settings.ArcticSettings
             The settings that control how arctic models CTI.
         hyper_noise_scalars :
-            The ci_hyper-parameter(s) which the noise_scaling_maps_list is multiplied by to scale the noise map.
+            The ci_hyper-parameter(s) which the noise_scaling_maps_list is multiplied by to scale the noise-map.
         """
 
         self.ci_masked_data = masked_ci_imaging
@@ -74,7 +74,7 @@ class CIFitImaging(fit.FitImaging):
 def hyper_noise_map_from_noise_map_and_noise_scalings(
     hyper_noise_scalars, noise_scaling_maps, noise_map
 ):
-    """For a noise map, use the model hyper noise and noise-scaling maps to compute a scaled noise map.
+    """For a noise-map, use the model hyper noise and noise-scaling maps to compute a scaled noise-map.
 
     Parameters
     -----------

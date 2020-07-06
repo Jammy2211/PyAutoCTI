@@ -1,5 +1,6 @@
 import numpy as np
 
+from autoarray.structures import abstract_structure
 from autocti.structures import arrays
 from autocti.structures import mask as msk
 from autocti.structures import region as reg
@@ -301,8 +302,9 @@ class Frame(AbstractFrame):
         if type(array) is list:
             array = np.asarray(array)
 
-        if type(pixel_scales) is float:
-            pixel_scales = (pixel_scales, pixel_scales)
+        pixel_scales = abstract_structure.convert_pixel_scales(
+            pixel_scales=pixel_scales
+        )
 
         mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
 
@@ -431,8 +433,9 @@ class Frame(AbstractFrame):
             locations of different regions of the CCD (overscans, prescan, etc.)
         """
 
-        if type(pixel_scales) is float:
-            pixel_scales = (pixel_scales, pixel_scales)
+        pixel_scales = abstract_structure.convert_pixel_scales(
+            pixel_scales=pixel_scales
+        )
 
         array = array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
 
