@@ -7,7 +7,7 @@ from arctic.traps import Trap
 from .structures.arrays import Array
 from .structures.frame import Frame
 from .structures.frame import EuclidFrame
-from .structures.mask import Mask
+from .mask.mask import Mask
 from .structures.region import Region
 from .structures.arrays import MaskedArray
 from .structures.frame import MaskedFrame

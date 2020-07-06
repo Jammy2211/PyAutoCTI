@@ -1,4 +1,4 @@
-from autocti.structures import mask as msk
+from autocti.mask import mask as msk
 
 
 class MetaDataset:

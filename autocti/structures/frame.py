@@ -2,7 +2,7 @@ import numpy as np
 
 from autoarray.structures import abstract_structure
 from autocti.structures import arrays
-from autocti.structures import mask as msk
+from autocti.mask import mask as msk
 from autocti.structures import region as reg
 from autocti.util import array_util
 from autocti.util import frame_util
