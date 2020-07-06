@@ -7,7 +7,7 @@ from autocti.structures import arrays
 
 class AbstractDataset:
     def __init__(self, data, noise_map, name=None):
-        """A collection of abstract 2D for different data_type classes (an image, pixel-scale, noise map, etc.)
+        """A collection of abstract 2D for different data_type classes (an image, pixel-scale, noise-map, etc.)
 
         Parameters
         ----------
@@ -70,13 +70,13 @@ class AbstractDataset:
 
     @property
     def potential_chi_squared_map(self):
-        """The potential chi-squared map of the imaging data_type. This represents how much each pixel can contribute to \
-        the chi-squared map, assuming the model fails to fit it at all (e.g. model value = 0.0)."""
+        """The potential chi-squared-map of the imaging data_type. This represents how much each pixel can contribute to \
+        the chi-squared-map, assuming the model fails to fit it at all (e.g. model value = 0.0)."""
         return np.square(self.absolute_signal_to_noise_map)
 
     @property
     def potential_chi_squared_max(self):
-        """The maximum value of the potential chi-squared map"""
+        """The maximum value of the potential chi-squared-map"""
         return np.max(self.potential_chi_squared_map)
 
     def modify_noise_map(self, noise_map):

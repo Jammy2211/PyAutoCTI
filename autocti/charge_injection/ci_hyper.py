@@ -1,5 +1,5 @@
 class CIHyperNoiseScalar(float):
-    def __new__(cls, scale_factor):
+    def __new__(cls, scale_factor=0.0):
         return super().__new__(cls, scale_factor)
 
     def __init__(self, scale_factor=0.0):

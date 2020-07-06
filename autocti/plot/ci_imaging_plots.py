@@ -4,7 +4,7 @@ from autocti.plot import plotters, ci_line_plots
 @plotters.set_include_and_sub_plotter
 @plotters.set_subplot_filename
 def subplot_ci_imaging(ci_imaging, include=None, sub_plotter=None):
-    """Plot the imaging data_type as a sub-plotters of all its quantites (e.g. the dataset, noise_map, PSF, Signal-to_noise map, \
+    """Plot the imaging data_type as a sub-plotters of all its quantites (e.g. the dataset, noise_map, PSF, Signal-to_noise-map, \
      etc).
 
     Set *autocti.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
@@ -59,7 +59,7 @@ def individual(
     plotter=None,
 ):
     """Plot each attribute of the imaging data_type as individual figures one by one (e.g. the dataset, noise_map, PSF, \
-     Signal-to_noise map, etc).
+     Signal-to_noise-map, etc).
 
     Set *autocti.data_type.array.plotters.plotters* for a description of all innput parameters not described below.
 
@@ -210,7 +210,7 @@ def cosmic_ray_map(ci_imaging, include=None, plotter=None):
 @plotters.set_include_and_sub_plotter
 @plotters.set_subplot_filename
 def subplot_ci_lines(ci_imaging, line_region, include=None, sub_plotter=None):
-    """Plot the ci simulator as a sub-plotters of all its quantites (e.g. the dataset, noise_map, PSF, Signal-to_noise map, \
+    """Plot the ci simulator as a sub-plotters of all its quantites (e.g. the dataset, noise_map, PSF, Signal-to_noise-map, \
      etc).
 
     Set *autocti.simulator.arrays.plotters.plotters* for a description of all innput parameters not described below.
@@ -285,7 +285,7 @@ def individual_ci_lines(
     plotter=None,
 ):
     """Plot each attribute of the ci simulator as individual figures one by one (e.g. the dataset, noise_map, PSF, \
-     Signal-to_noise map, etc).
+     Signal-to_noise-map, etc).
 
     Set *autocti.simulator.arrays.plotters.plotters* for a description of all innput parameters not described below.
 

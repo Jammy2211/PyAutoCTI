@@ -238,13 +238,17 @@ class AbstractPlotter(object):
             aspect=aspect,
             cmap=self.cmap.cmap,
             norm=norm_scale,
-            extent=frame.mask.extent,
+            extent=frame.mask.geometry.extent,
         )
 
-        plt.axis(frame.mask.extent)
+        plt.axis(frame.mask.geometry.extent)
 
-        self.ticks.set_yticks(array=frame, extent=frame.mask.extent, units=self.units)
-        self.ticks.set_xticks(array=frame, extent=frame.mask.extent, units=self.units)
+        self.ticks.set_yticks(
+            array=frame, extent=frame.mask.geometry.extent, units=self.units
+        )
+        self.ticks.set_xticks(
+            array=frame, extent=frame.mask.geometry.extent, units=self.units
+        )
 
         self.labels.set_title()
         self.labels.set_yunits(units=self.units, include_brackets=True)

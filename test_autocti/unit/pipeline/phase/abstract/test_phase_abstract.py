@@ -78,8 +78,8 @@ class TestSetup:
 
         phase_dataset_7x7 = PhaseCIImaging(
             phase_name="phase_name",
-            parallel_traps=[ac.Trap],
-            parallel_ccd_volume=ac.CCDVolume,
+            parallel_traps=[ac.Trap()],
+            parallel_ccd_volume=ac.CCDVolume(),
             search=mock.MockSearch(),
         )
 

@@ -1,6 +1,7 @@
 from copy import deepcopy
 
 import numpy as np
+from autoarray.structures import abstract_structure
 from autocti.charge_injection import ci_mask
 from autocti.structures.frame import Frame
 from autocti.structures.mask import Mask
@@ -1329,8 +1330,9 @@ class CIFrame(AbstractCIFrame):
         if type(array) is list:
             array = np.asarray(array)
 
-        if type(pixel_scales) is float:
-            pixel_scales = (pixel_scales, pixel_scales)
+        pixel_scales = abstract_structure.convert_pixel_scales(
+            pixel_scales=pixel_scales
+        )
 
         mask = Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
 
@@ -1474,8 +1476,9 @@ class CIFrame(AbstractCIFrame):
             locations of different regions of the CCD (overscans, prescan, etc.)
         """
 
-        if type(pixel_scales) is float:
-            pixel_scales = (pixel_scales, pixel_scales)
+        pixel_scales = abstract_structure.convert_pixel_scales(
+            pixel_scales=pixel_scales
+        )
 
         array = array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
 

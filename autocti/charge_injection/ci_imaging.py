@@ -205,7 +205,7 @@ class MaskedCIImaging(imaging.MaskedImaging):
         parallel_columns=None,
         serial_rows=None,
     ):
-        """A data is the collection of simulator components (e.g. the image, noise maps, PSF, etc.) which are used \
+        """A data is the collection of simulator components (e.g. the image, noise-maps, PSF, etc.) which are used \
         to generate and fit it with a model image.
 
         The data is in 2D and masked, primarily to remove cosmic rays.
@@ -216,7 +216,7 @@ class MaskedCIImaging(imaging.MaskedImaging):
         Parameters
         ----------
         image : im.Image
-            The 2D observed image and other observed quantities (noise map, PSF, exposure-time map, etc.)
+            The 2D observed image and other observed quantities (noise-map, PSF, exposure-time map, etc.)
         mask: msk.Mask | None
             The 2D mask that is applied to image simulator.
 

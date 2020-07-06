@@ -80,10 +80,10 @@ class TestResult:
         ]
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
-            hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
-            hyper_noise_scalar_of_parallel_trails=ac.ci.CIHyperNoiseScalar,
-            hyper_noise_scalar_of_serial_trails=ac.ci.CIHyperNoiseScalar,
-            hyper_noise_scalar_of_serial_overscan_no_trails=ac.ci.CIHyperNoiseScalar,
+            hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar(),
+            hyper_noise_scalar_of_parallel_trails=ac.ci.CIHyperNoiseScalar(),
+            hyper_noise_scalar_of_serial_trails=ac.ci.CIHyperNoiseScalar(),
+            hyper_noise_scalar_of_serial_overscan_no_trails=ac.ci.CIHyperNoiseScalar(),
             phase_name="test_phase_2",
             search=mock.MockSearch(samples=samples_with_result),
         )

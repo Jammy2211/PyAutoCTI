@@ -1,8 +1,16 @@
-- Make PyAutoCTI use PyAutoArray and set up edenise scripts to handle the dependencies.
-- Mask1D, Line in AutoArray. CTI specific structures using these, for example with overscan / prescans.
-- Implement charge injection line data structure, simulators, example model fits.
-- Implement pipelines + runners for this.
-- Extend to fitting of CI images.
+Features:
+
+    - Make PyAutoCTI use PyAutoArray and set up edenise scripts to handle the dependencies.
+    - Mask1D, Line in AutoArray. CTI specific structures using these, for example with overscan / prescans.
+    - Implement charge injection line data structure, simulators, example model fits.
+    - Implement pipelines + runners for this.
+    - Extend to fitting of CI images.
+
+Euclid:
+
+    - Validation of correction.
+    - CTI Issue to do with where results are stored.
+    - Follow up DCQT Data quality flags telecom for PE.
 
 VIS Meeting summmay:
 
