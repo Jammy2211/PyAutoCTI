@@ -4,7 +4,7 @@ import numpy as np
 from autoarray.structures import abstract_structure
 from autocti.charge_injection import ci_mask
 from autocti.structures.frame import Frame
-from autocti.structures.mask import Mask
+from autocti.mask.mask import Mask
 from autocti.structures import region as reg
 from autocti.util import array_util, frame_util
 

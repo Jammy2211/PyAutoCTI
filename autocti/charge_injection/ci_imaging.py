@@ -3,7 +3,7 @@ import copy
 import numpy as np
 from autocti.charge_injection import ci_frame, ci_pattern as pattern
 from autocti.dataset import preprocess, imaging
-from autocti.structures import mask as msk
+from autocti.mask import mask as msk
 from autocti.util import array_util
 
 
