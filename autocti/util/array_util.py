@@ -145,7 +145,7 @@ def numpy_array_2d_to_fits(array_2d, file_path, overwrite=False):
         os.remove(file_path)
 
     new_hdr = fits.Header()
-    hdu = fits.PrimaryHDU(np.flipud(array_2d), new_hdr)
+    hdu = fits.PrimaryHDU(array_2d, new_hdr)
     hdu.writeto(file_path)
 
 
@@ -172,4 +172,4 @@ def numpy_array_2d_from_fits(file_path, hdu):
     array_2d = numpy_array_from_fits(file_path='/path/to/file/filename.fits', hdu=0)
     """
     hdu_list = fits.open(file_path)
-    return np.flipud(np.array(hdu_list[hdu].data)).astype("float64")
+    return np.array(hdu_list[hdu].data).astype("float64")

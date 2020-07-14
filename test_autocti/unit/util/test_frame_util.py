@@ -23,9 +23,7 @@ class TestRotations:
             array=arr_bl, roe_corner=(1, 0)
         )
 
-        assert arr_bl == pytest.approx(
-            np.array([[0.0, 1.0, 0.0], [1.0, 2.0, 0.0], [0.0, 0.0, 0.0]]), 1.0e-4
-        )
+        assert arr_bl == pytest.approx(np.array(arr), 1.0e-4)
 
         arr_br = ac.util.frame.rotate_array_from_roe_corner(
             array=arr, roe_corner=(1, 1)
@@ -39,9 +37,7 @@ class TestRotations:
             array=arr_br, roe_corner=(1, 1)
         )
 
-        assert arr_br == pytest.approx(
-            np.array([[0.0, 1.0, 0.0], [1.0, 2.0, 0.0], [0.0, 0.0, 0.0]]), 1.0e-4
-        )
+        assert arr_br == pytest.approx(np.array(arr), 1.0e-4)
 
         arr_tl = ac.util.frame.rotate_array_from_roe_corner(
             array=arr, roe_corner=(0, 0)
@@ -55,9 +51,7 @@ class TestRotations:
             array=arr_tl, roe_corner=(0, 0)
         )
 
-        assert arr_tl == pytest.approx(
-            np.array([[0.0, 1.0, 0.0], [1.0, 2.0, 0.0], [0.0, 0.0, 0.0]]), 1.0e-4
-        )
+        assert arr_tl == pytest.approx(np.array(arr), 1.0e-4)
 
         arr_tr = ac.util.frame.rotate_array_from_roe_corner(
             array=arr, roe_corner=(0, 1)
@@ -71,9 +65,7 @@ class TestRotations:
             array=arr_tr, roe_corner=(0, 1)
         )
 
-        assert arr_tr == pytest.approx(
-            np.array([[0.0, 1.0, 0.0], [1.0, 2.0, 0.0], [0.0, 0.0, 0.0]]), 1.0e-4
-        )
+        assert arr_tr == pytest.approx(np.array(arr), 1.0e-4)
 
     def test__rotate_region__all_4_rotations_with_rotation_back(self):
 
