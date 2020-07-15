@@ -12,7 +12,9 @@ Richard
 
 
 Where are the quadrants?
-An HST/ACS fits file contains 6 arrays (I’m not sure how you select which one is to be read in python), and 7 headers (one main header, plus one header for each image). Arrays 4 and 1 are the pixel data for CCD1 (quadrants C and D) and CCD2 (quadrants B and A).
+An HST/ACS fits file contains 6 arrays (I’m not sure how you select which one is to be read in python), and
+7 headers (one main header, plus one header for each image). Arrays 4 and 1 are the pixel data for CCD1
+(quadrants C and D) and CCD2 (quadrants B and A).
 Arrays 2, 3, 5 and 6 are noise estimates and data quality flags - you don’t need to touch those.
 If you want to check you have an HST image, the main header should contain
 TELESCOP= 'HST'                / telescope used to acquire data
