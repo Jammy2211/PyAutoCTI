@@ -7,11 +7,13 @@ from arctic.traps import Trap
 from .structures.arrays import Array
 from .structures.frame import Frame
 from .structures.frame import EuclidFrame
+from .structures.frame import HSTFrame
 from .mask.mask import Mask
 from .structures.region import Region
 from .structures.arrays import MaskedArray
 from .structures.frame import MaskedFrame
 from .structures.frame import MaskedEuclidFrame
+from .structures.frame import MaskedHSTFrame
 from .dataset.imaging import Imaging
 from .dataset.imaging import MaskedImaging
 from .dataset import preprocess

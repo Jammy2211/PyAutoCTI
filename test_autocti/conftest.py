@@ -303,3 +303,13 @@ def make_phase_ci_imaging_7x7():
 @pytest.fixture(name="euclid_data")
 def make_euclid_data():
     return np.zeros((2086, 2119))
+
+
+@pytest.fixture(name="hst_ccd")
+def make_hst_ccd():
+    return np.zeros((2068, 4144))
+
+
+@pytest.fixture(name="hst_quadrant")
+def make_hst_quadrant():
+    return np.zeros((2068, 2072))

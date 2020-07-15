@@ -182,11 +182,8 @@ class Frame(abstract_frame.AbstractFrame):
 
         array = array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
 
-        mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
-
         return cls.manual(
             array=array,
-            mask=mask,
             roe_corner=roe_corner,
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
