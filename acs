@@ -5,7 +5,9 @@ https://www.dropbox.com/s/4smmwgq4id6fi88/j8xi61meq_raw.fits?dl=0
 which I’ve corrected using IDL code at
 https://www.dropbox.com/s/f1pk620smhzlrq9/j8xi61meq_cte.fits?dl=0
 
-I’ve attached an IDL routine that splits the quadrants and converts them to units of electrons (acs_split.pro - the main routine is toward the end of the file) and another IDL routine that calculates trap parameters (acs_trap_species.pro, which the C++ code also does, perhaps more cleanly). I’ve also described all the steps below.
+I’ve attached an IDL routine that splits the quadrants and converts them to units of electrons (acs_split.pro - the
+main routine is toward the end of the file) and another IDL routine that calculates trap parameters (acs_trap_species.pro,
+which the C++ code also does, perhaps more cleanly). I’ve also described all the steps below.
 
 Cheers,
 Richard
@@ -22,9 +24,11 @@ INSTRUME= 'ACS   '             / identifier for instrument used to acquire data
 
 
 Size/orientation of the quadrants
-Both image arrays contain 2 quadrants, and have the same number of pixels/orientation. See diagram in attached photo or https://hst-docs.stsci.edu/acsihb/chapter-4-detector-performance/4-2-the-ccds#id-4.2TheCCDs-4.2.54.2.5CCDReadoutFormat
+Both image arrays contain 2 quadrants, and have the same number of pixels/orientation. See diagram in attached photo
+or https://hst-docs.stsci.edu/acsihb/chapter-4-detector-performance/4-2-the-ccds#id-4.2TheCCDs-4.2.54.2.5CCDReadoutFormat
 If you look at an image array, the parallel CTI trails make things obvious.
-You can hardcode the layout of the pixels, as it has alwys been the same - but if you insist, it is specified in the header for each array as
+You can hardcode the layout of the pixels, as it has alwys been the same - but if you insist, it is specified in the
+header for each array as
 NAXIS   =                    2 / number of data axes
 NAXIS1  =                 4144 / length of first data axis
 NAXIS2  =                 2068 / length of second data axis
@@ -50,7 +54,8 @@ or
 
 
 Image units (part 2)
-The images are usually stored in units of ADU “counts” or sometimes counts per second (cps). We need to convert to electrons, correct CTI, then convert back. Converting to electrons involves:
+The images are usually stored in units of ADU “counts” or sometimes counts per second (cps). We need to convert to
+electrons, correct CTI, then convert back. Converting to electrons involves:
   (image*calibrated_gain)-bias
 ...where calibrated_gain comes from commanded gain listed in the main header
 CCDAMP  = 'ABCD'               / CCD Amplifier Readout Configuration

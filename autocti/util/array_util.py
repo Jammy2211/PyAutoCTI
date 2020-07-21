@@ -149,7 +149,7 @@ def numpy_array_2d_to_fits(array_2d, file_path, overwrite=False):
     hdu.writeto(file_path)
 
 
-def numpy_array_2d_from_fits(file_path, hdu):
+def numpy_array_2d_from_fits(file_path, hdu, do_not_scale_image_data=False):
     """Read a 2D NumPy array to a .fits file.
 
     After loading the NumPy array, the array is flipped upside-down using np.flipud. This is so that the structures \
@@ -171,5 +171,5 @@ def numpy_array_2d_from_fits(file_path, hdu):
     --------
     array_2d = numpy_array_from_fits(file_path='/path/to/file/filename.fits', hdu=0)
     """
-    hdu_list = fits.open(file_path)
+    hdu_list = fits.open(file_path, do_not_scale_image_data=do_not_scale_image_data)
     return np.array(hdu_list[hdu].data).astype("float64")

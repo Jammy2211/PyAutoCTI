@@ -1,98 +1,95 @@
 from autocti.structures.frame import abstract_frame
 from autocti.structures import frame as f
 from autocti.structures import region as reg
+from autocti.util import array_util
+from autocti import exc
+
+from astropy.io import fits
+
+
+def array_converted_to_electrons_from_fits(file_path, quadrant_letter):
+
+    if quadrant_letter is "A" or quadrant_letter is "B":
+        hdu = 1
+    elif quadrant_letter is "C" or quadrant_letter is "D":
+        hdu = 4
+    else:
+        raise exc.FrameException("Quadrant letter for HSTFrame must be A, B, C or D.")
+
+    array = array_util.numpy_array_2d_from_fits(
+        file_path=file_path, hdu=hdu, do_not_scale_image_data=True
+    )
+
+    hdulist = fits.open(file_path)
+    ext_header = hdulist[hdu].header
+
+    units = ext_header["BUNIT"]
+    bscale = ext_header["BSCALE"]
+    bzero = ext_header["BZERO"]
+    exposure_time = ext_header["EXPTIME"]
+
+    if units in "COUNTS":
+        return (array * bscale) + bzero
+    elif units in "CPS":
+        return (array * exposure_time * bscale) + bzero
 
 
 class HSTFrame(f.Frame):
+    """An ACS frame consists of four quadrants ('A', 'B', 'C', 'D') which have the following layout:
+
+       <--------S-----------   ---------S----------->
+    [] [========= 2 =========] [========= 3 =========] []          /\
+    /    [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  /        |
+    |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | Direction arctic
+    P   [xxxxxxxxx B/C xxxxxxx] [xxxxxxxxx A/D xxxxxxx]  P         | clocks an image
+    |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | without any rotation
+    \/  [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  \/        | (e.g. towards row 0
+                                                                   | of the NumPy arrays)
+
+    For a HST .fits file:
+
+    - The images contained in hdu 1 correspond to quadrants B (left) and A (right).
+    - The images contained in hdu 4 correspond to quadrants C (left) and D (right).
+    """
+
     @classmethod
-    def from_fits_header(cls, array, ext_header):
-        """Before reading this docstring, read the docstring for the __init__function above.
+    def from_fits(cls, file_path, quadrant_letter):
+        """
+        Use the input .fits file and quadrant letter to extract the quadrant from the full CCD, perform
+        the rotations required to give correct arctic clocking and convert the image from units of COUNTS / CPS to
+        ELECTRONS.
 
-        In the HST FPA, the quadrant id ('E', 'F', 'G', 'H') depends on whether the CCD is located
-        on the left side (rows 1-3) or right side (rows 4-6) of the FPA:
-
-        LEFT SIDE ROWS 1-2-3
-        --------------------
-
-         <--------S-----------   ---------S----------->
-        [] [========= 2 =========] [========= 3 =========] []          |
-        /    [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  /          |
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | Direction arctic
-        P   [xxxxxxxxx H xxxxxxxxx] [xxxxxxxxx G xxxxxxxxx]  P         | clocks an image
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | without any rotation
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | (e.g. towards row 0
-                                                                       | of the NumPy arrays)
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-        P   [xxxxxxxxx E xxxxxxxxx] [xxxxxxxxx F xxxxxxxxx] P          |
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-            [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]            |
-
-        [] [========= 0 =========] [========= 1 =========] []
-            <---------S----------   ----------S----------->
-
-
-        RIGHT SIDE ROWS 4-5-6
-        ---------------------
-
-         <--------S-----------   ---------S----------->
-        [] [========= 2 =========] [========= 3 =========] []          |
-        /    [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  /          |
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | Direction arctic
-        P   [xxxxxxxxx F xxxxxxxxx] [xxxxxxxxx E xxxxxxxxx]  P         | clocks an image
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | without any rotation
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | (e.g. towards row 0
-                                                                       | of the NumPy arrays)
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-        P   [xxxxxxxxx G xxxxxxxxx] [xxxxxxxxx H xxxxxxxxx] P          |
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-            [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]            |
-
-        [] [========= 0 =========] [========= 1 =========] []
-            <---------S----------   ----------S----------->
-
-        Therefore, to setup a quadrant image with the correct frame_geometry using its CCD id (from which
-        we can extract its row number) and quadrant id, we need to first determine if the CCD is on the left / right
-        side and then use its quadrant id ('E', 'F', 'G' or 'H') to pick the correct quadrant.
+        See the docstring of the _HSTFrame_ class for a complete description of the Euclid FPA, quadrants and
+        rotations.
         """
 
-        ccd_id = ext_header["CCDID"]
-        quadrant_id = ext_header["QUADID"]
-
-        parallel_overscan_size = ext_header.get("PAROVRX", default=None)
-        if parallel_overscan_size is None:
-            parallel_overscan_size = 0
-        serial_overscan_size = ext_header.get("OVRSCANX", default=None)
-        serial_prescan_size = ext_header.get("PRESCANX", default=None)
-        serial_size = ext_header.get("NAXIS1", default=None)
-        parallel_size = ext_header.get("NAXIS2", default=None)
-
-        return cls.from_ccd_and_quadrant_id(
-            array=array,
-            ccd_id=ccd_id,
-            quadrant_id=quadrant_id,
-            parallel_size=parallel_size,
-            serial_size=serial_size,
-            serial_prescan_size=serial_prescan_size,
-            serial_overscan_size=serial_overscan_size,
-            parallel_overscan_size=parallel_overscan_size,
+        array = array_converted_to_electrons_from_fits(
+            file_path=file_path, quadrant_letter=quadrant_letter
         )
+
+        return cls.from_ccd(array_electrons=array, quadrant_letter=quadrant_letter)
 
     @classmethod
     def from_ccd(
         cls,
-        array,
+        array_electrons,
         quadrant_letter,
         parallel_size=2068,
         serial_size=2072,
         serial_prescan_size=24,
         parallel_overscan_size=20,
     ):
+        """
+        Using an input array of both quadrants in electrons, use the quadrant letter to extract the quadrant from the
+        full CCD and perform the rotations required to give correct arctic.
+
+        See the docstring of the _HSTFrame_ class for a complete description of the Euclid FPA, quadrants and
+        rotations.
+        """
         if quadrant_letter is "B" or quadrant_letter is "C":
 
             return cls.left(
-                array=array[0:parallel_size, 0:serial_size],
+                array_electrons=array_electrons[0:parallel_size, 0:serial_size],
                 parallel_size=parallel_size,
                 serial_size=serial_size,
                 serial_prescan_size=serial_prescan_size,
@@ -100,23 +97,33 @@ class HSTFrame(f.Frame):
             )
         elif quadrant_letter is "A" or quadrant_letter is "D":
             return cls.right(
-                array=array[0:parallel_size, serial_size : serial_size * 2],
+                array=array_electrons[0:parallel_size, serial_size : serial_size * 2],
                 parallel_size=parallel_size,
                 serial_size=serial_size,
                 serial_prescan_size=serial_prescan_size,
                 parallel_overscan_size=parallel_overscan_size,
             )
+        else:
+            raise exc.FrameException(
+                "Quadrant letter for HSTFrame must be A, B, C or D."
+            )
 
     @classmethod
     def left(
         cls,
-        array,
+        array_electrons,
         parallel_size=2068,
         serial_size=2072,
         serial_prescan_size=24,
         parallel_overscan_size=20,
     ):
+        """
+        Use an input array of the left quadrant in electrons and perform the rotations required to give correct
+        arctic clocking.
 
+        See the docstring of the _HSTFrame_ class for a complete description of the Euclid FPA, quadrants and
+        rotations.
+        """
         parallel_overscan = reg.Region(
             (
                 parallel_size - parallel_overscan_size,
@@ -129,7 +136,7 @@ class HSTFrame(f.Frame):
         serial_prescan = reg.Region((0, parallel_size, 0, serial_prescan_size))
 
         return f.Frame.manual(
-            array=array,
+            array=array_electrons,
             roe_corner=(1, 0),
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
@@ -145,7 +152,13 @@ class HSTFrame(f.Frame):
         parallel_overscan_size=20,
         serial_prescan_size=51,
     ):
+        """
+        Use an input array of the right quadrant in electrons and perform the rotations required to give correct
+        arctic clocking.
 
+        See the docstring of the _HSTFrame_ class for a complete description of the Euclid FPA, quadrants and
+        rotations.
+        """
         parallel_overscan = reg.Region(
             (
                 parallel_size - parallel_overscan_size,
@@ -170,228 +183,141 @@ class HSTFrame(f.Frame):
 
 class MaskedHSTFrame(abstract_frame.AbstractFrame):
     @classmethod
-    def from_ccd_and_quadrant_id(
-        cls,
-        array,
-        mask,
-        ccd_id,
-        quadrant_id,
-        parallel_size=2068,
-        serial_size=2072,
-        serial_prescan_size=51,
-        serial_overscan_size=20,
-        parallel_overscan_size=20,
-    ):
-        """Before reading this docstring, read the docstring for the __init__function above.
-
-        In the HST FPA, the quadrant id ('E', 'F', 'G', 'H') depends on whether the CCD is located
-        on the left side (rows 1-3) or right side (rows 4-6) of the FPA:
-
-        LEFT SIDE ROWS 1-2-3
-        --------------------
-
-         <--------S-----------   ---------S----------->
-        [] [========= 2 =========] [========= 3 =========] []          |
-        /    [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  /          |
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | Direction arctic
-        P   [xxxxxxxxx H xxxxxxxxx] [xxxxxxxxx G xxxxxxxxx]  P         | clocks an image
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | without any rotation
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | (e.g. towards row 0
-                                                                       | of the NumPy arrays)
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-        P   [xxxxxxxxx E xxxxxxxxx] [xxxxxxxxx F xxxxxxxxx] P          |
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-            [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]            |
-
-        [] [========= 0 =========] [========= 1 =========] []
-            <---------S----------   ----------S----------->
-
-
-        RIGHT SIDE ROWS 4-5-6
-        ---------------------
-
-         <--------S-----------   ---------S----------->
-        [] [========= 2 =========] [========= 3 =========] []          |
-        /    [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  /          |
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | Direction arctic
-        P   [xxxxxxxxx F xxxxxxxxx] [xxxxxxxxx E xxxxxxxxx]  P         | clocks an image
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | without any rotation
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | (e.g. towards row 0
-                                                                       | of the NumPy arrays)
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-        P   [xxxxxxxxx G xxxxxxxxx] [xxxxxxxxx H xxxxxxxxx] P          |
-        |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
-            [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]            |
-
-        [] [========= 0 =========] [========= 1 =========] []
-            <---------S----------   ----------S----------->
-
-        Therefore, to setup a quadrant image with the correct frame_geometry using its CCD id (from which
-        we can extract its row number) and quadrant id, we need to first determine if the CCD is on the left / right
-        side and then use its quadrant id ('E', 'F', 'G' or 'H') to pick the correct quadrant.
+    def from_fits(cls, file_path, quadrant_letter, mask):
         """
+        Use the input .fits file and quadrant letter to extract the quadrant from the full CCD, perform
+        the rotations required to give correct arctic clocking and convert the image from units of COUNTS / CPS to
+        ELECTRONS.
 
-        row_index = ccd_id[-1]
+        A mask is input which is subject to the same extraction and rotations.
 
-        if (row_index in "123") and (quadrant_id == "E"):
-            return MaskedHSTFrame.bottom_left(
-                array=array,
-                mask=mask,
-                parallel_size=parallel_size,
-                serial_size=serial_size,
-                serial_prescan_size=serial_prescan_size,
-                serial_overscan_size=serial_overscan_size,
-                parallel_overscan_size=parallel_overscan_size,
-            )
-        elif (row_index in "123") and (quadrant_id == "F"):
-            return MaskedHSTFrame.bottom_right(
-                array=array,
-                mask=mask,
-                parallel_size=parallel_size,
-                serial_size=serial_size,
-                serial_prescan_size=serial_prescan_size,
-                serial_overscan_size=serial_overscan_size,
-                parallel_overscan_size=parallel_overscan_size,
-            )
-        elif (row_index in "123") and (quadrant_id == "G"):
-            return MaskedHSTFrame.top_right(
-                array=array,
-                mask=mask,
-                parallel_size=parallel_size,
-                serial_size=serial_size,
-                serial_prescan_size=serial_prescan_size,
-                serial_overscan_size=serial_overscan_size,
-                parallel_overscan_size=parallel_overscan_size,
-            )
-        elif (row_index in "123") and (quadrant_id == "H"):
-            return MaskedHSTFrame.top_left(
-                array=array,
-                mask=mask,
-                parallel_size=parallel_size,
-                serial_size=serial_size,
-                serial_prescan_size=serial_prescan_size,
-                serial_overscan_size=serial_overscan_size,
-                parallel_overscan_size=parallel_overscan_size,
-            )
-        elif (row_index in "456") and (quadrant_id == "E"):
-            return MaskedHSTFrame.top_right(
-                array=array,
-                mask=mask,
-                parallel_size=parallel_size,
-                serial_size=serial_size,
-                serial_prescan_size=serial_prescan_size,
-                serial_overscan_size=serial_overscan_size,
-                parallel_overscan_size=parallel_overscan_size,
-            )
-        elif (row_index in "456") and (quadrant_id == "F"):
-            return MaskedHSTFrame.top_left(
-                array=array,
-                mask=mask,
-                parallel_size=parallel_size,
-                serial_size=serial_size,
-                serial_prescan_size=serial_prescan_size,
-                serial_overscan_size=serial_overscan_size,
-                parallel_overscan_size=parallel_overscan_size,
-            )
-        elif (row_index in "456") and (quadrant_id == "G"):
-            return MaskedHSTFrame.bottom_left(
-                array=array,
-                mask=mask,
-                parallel_size=parallel_size,
-                serial_size=serial_size,
-                serial_prescan_size=serial_prescan_size,
-                serial_overscan_size=serial_overscan_size,
-                parallel_overscan_size=parallel_overscan_size,
-            )
-        elif (row_index in "456") and (quadrant_id == "H"):
-            return MaskedHSTFrame.bottom_right(
-                array=array,
-                mask=mask,
-                parallel_size=parallel_size,
-                serial_size=serial_size,
-                serial_prescan_size=serial_prescan_size,
-                serial_overscan_size=serial_overscan_size,
-                parallel_overscan_size=parallel_overscan_size,
-            )
-
-    @classmethod
-    def top_left(
-        cls,
-        array,
-        mask,
-        parallel_size=2068,
-        serial_size=2072,
-        serial_prescan_size=51,
-        serial_overscan_size=20,
-        parallel_overscan_size=20,
-    ):
-        return f.MaskedFrame.manual(
-            array=array,
-            mask=mask,
-            roe_corner=(0, 0),
-            parallel_overscan=reg.Region((0, 20, 51, 2099)),
-            serial_prescan=reg.Region((0, 2086, 0, 51)),
-            serial_overscan=reg.Region((0, 2086, 2099, 2119)),
+        See the docstring of the _HSTFrame_ class for a complete description of the Euclid FPA, quadrants and
+        rotations.
+        """
+        array = array_converted_to_electrons_from_fits(
+            file_path=file_path, quadrant_letter=quadrant_letter
         )
 
-    @classmethod
-    def top_right(
-        cls,
-        array,
-        mask,
-        parallel_size=2068,
-        serial_size=2072,
-        serial_prescan_size=51,
-        serial_overscan_size=20,
-        parallel_overscan_size=20,
-    ):
-        return f.MaskedFrame.manual(
-            array=array,
-            mask=mask,
-            roe_corner=(0, 1),
-            parallel_overscan=reg.Region((0, 20, 20, 2068)),
-            serial_prescan=reg.Region((0, 2086, 2068, 2119)),
-            serial_overscan=reg.Region((0, 2086, 0, 20)),
-        )
+        return cls.from_ccd(array=array, quadrant_letter=quadrant_letter, mask=mask)
 
     @classmethod
-    def bottom_left(
+    def from_ccd(
+        cls,
+        array,
+        mask,
+        quadrant_letter,
+        parallel_size=2068,
+        serial_size=2072,
+        serial_prescan_size=24,
+        parallel_overscan_size=20,
+    ):
+        """
+        Using an input array of both quadrants in electrons, use the quadrant letter to extract the quadrant from the
+        full CCD and perform the rotations required to give correct arctic.
+
+        A mask is input which is subject to the same extraction and rotations.
+
+        See the docstring of the _HSTFrame_ class for a complete description of the Euclid FPA, quadrants and
+        rotations.
+        """
+        if quadrant_letter is "B" or quadrant_letter is "C":
+
+            return cls.left(
+                array=array[0:parallel_size, 0:serial_size],
+                mask=mask[0:parallel_size, 0:serial_size],
+                parallel_size=parallel_size,
+                serial_size=serial_size,
+                serial_prescan_size=serial_prescan_size,
+                parallel_overscan_size=parallel_overscan_size,
+            )
+        elif quadrant_letter is "A" or quadrant_letter is "D":
+            return cls.right(
+                array=array[0:parallel_size, serial_size : serial_size * 2],
+                mask=mask[0:parallel_size, serial_size : serial_size * 2],
+                parallel_size=parallel_size,
+                serial_size=serial_size,
+                serial_prescan_size=serial_prescan_size,
+                parallel_overscan_size=parallel_overscan_size,
+            )
+        else:
+            raise exc.FrameException(
+                "Quadrant letter for HSTFrame must be A, B, C or D."
+            )
+
+    @classmethod
+    def left(
         cls,
         array,
         mask,
         parallel_size=2068,
         serial_size=2072,
-        serial_prescan_size=51,
-        serial_overscan_size=20,
+        serial_prescan_size=24,
         parallel_overscan_size=20,
     ):
+        """
+        Use an input array of the left quadrant in electrons and perform the rotations required to give correct
+        arctic clocking.
+
+        A mask is input which is subject to the same extraction and rotations.
+
+        See the docstring of the _HSTFrame_ class for a complete description of the Euclid FPA, quadrants and
+        rotations.
+        """
+        parallel_overscan = reg.Region(
+            (
+                parallel_size - parallel_overscan_size,
+                parallel_size,
+                serial_prescan_size,
+                serial_size,
+            )
+        )
+
+        serial_prescan = reg.Region((0, parallel_size, 0, serial_prescan_size))
+
         return f.MaskedFrame.manual(
             array=array,
             mask=mask,
             roe_corner=(1, 0),
-            parallel_overscan=reg.Region((2066, 2086, 51, 2099)),
-            serial_prescan=reg.Region((0, 2086, 0, 51)),
-            serial_overscan=reg.Region((0, 2086, 2099, 2119)),
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
         )
 
     @classmethod
-    def bottom_right(
+    def right(
         cls,
         array,
         mask,
         parallel_size=2068,
         serial_size=2072,
-        serial_prescan_size=51,
-        serial_overscan_size=20,
         parallel_overscan_size=20,
+        serial_prescan_size=51,
     ):
+        """
+        Use an input array of the right quadrant in electrons and perform the rotations required to give correct
+        arctic clocking.
+
+        A mask is input which is subject to the same extraction and rotations.
+
+        See the docstring of the _HSTFrame_ class for a complete description of the Euclid FPA, quadrants and
+        rotations.
+        """
+        parallel_overscan = reg.Region(
+            (
+                parallel_size - parallel_overscan_size,
+                parallel_size,
+                0,
+                serial_size - serial_prescan_size,
+            )
+        )
+
+        serial_prescan = reg.Region(
+            (0, parallel_size, serial_size - serial_prescan_size, serial_size)
+        )
+
         return f.MaskedFrame.manual(
             array=array,
             mask=mask,
             roe_corner=(1, 1),
-            parallel_overscan=reg.Region((2066, 2086, 20, 2068)),
-            serial_prescan=reg.Region((0, 2086, 2068, 2119)),
-            serial_overscan=reg.Region((0, 2086, 0, 20)),
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
         )
