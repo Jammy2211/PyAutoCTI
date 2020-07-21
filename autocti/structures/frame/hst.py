@@ -29,9 +29,9 @@ def array_converted_to_electrons_from_fits(file_path, quadrant_letter):
     exposure_time = ext_header["EXPTIME"]
 
     if units in "COUNTS":
-        return (array * bscale) + bzero
+        return (array * bscale) + bzero, bscale, bzero, exposure_time
     elif units in "CPS":
-        return (array * exposure_time * bscale) + bzero
+        return (array * exposure_time * bscale) + bzero, bscale, bzero, exposure_time
 
 
 class HSTFrame(f.Frame):
@@ -63,11 +63,17 @@ class HSTFrame(f.Frame):
         rotations.
         """
 
-        array = array_converted_to_electrons_from_fits(
+        array, gain, gain_zero, exposure_time = array_converted_to_electrons_from_fits(
             file_path=file_path, quadrant_letter=quadrant_letter
         )
 
-        return cls.from_ccd(array_electrons=array, quadrant_letter=quadrant_letter)
+        return cls.from_ccd(
+            array_electrons=array,
+            quadrant_letter=quadrant_letter,
+            gain=gain,
+            gain_zero=gain_zero,
+            exposure_time=exposure_time,
+        )
 
     @classmethod
     def from_ccd(
@@ -78,6 +84,9 @@ class HSTFrame(f.Frame):
         serial_size=2072,
         serial_prescan_size=24,
         parallel_overscan_size=20,
+        gain=None,
+        gain_zero=0.0,
+        exposure_time=None,
     ):
         """
         Using an input array of both quadrants in electrons, use the quadrant letter to extract the quadrant from the
@@ -94,6 +103,9 @@ class HSTFrame(f.Frame):
                 serial_size=serial_size,
                 serial_prescan_size=serial_prescan_size,
                 parallel_overscan_size=parallel_overscan_size,
+                gain=gain,
+                gain_zero=gain_zero,
+                exposure_time=exposure_time,
             )
         elif quadrant_letter is "A" or quadrant_letter is "D":
             return cls.right(
@@ -102,6 +114,9 @@ class HSTFrame(f.Frame):
                 serial_size=serial_size,
                 serial_prescan_size=serial_prescan_size,
                 parallel_overscan_size=parallel_overscan_size,
+                gain=gain,
+                gain_zero=gain_zero,
+                exposure_time=exposure_time,
             )
         else:
             raise exc.FrameException(
@@ -116,6 +131,9 @@ class HSTFrame(f.Frame):
         serial_size=2072,
         serial_prescan_size=24,
         parallel_overscan_size=20,
+        gain=None,
+        gain_zero=0.0,
+        exposure_time=None,
     ):
         """
         Use an input array of the left quadrant in electrons and perform the rotations required to give correct
@@ -140,6 +158,9 @@ class HSTFrame(f.Frame):
             roe_corner=(1, 0),
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
+            gain=gain,
+            gain_zero=gain_zero,
+            exposure_time=exposure_time,
             pixel_scales=0.05,
         )
 
@@ -151,6 +172,9 @@ class HSTFrame(f.Frame):
         serial_size=2072,
         parallel_overscan_size=20,
         serial_prescan_size=51,
+        gain=None,
+        gain_zero=0.0,
+        exposure_time=None,
     ):
         """
         Use an input array of the right quadrant in electrons and perform the rotations required to give correct
@@ -177,6 +201,9 @@ class HSTFrame(f.Frame):
             roe_corner=(1, 1),
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
+            gain=gain,
+            gain_zero=gain_zero,
+            exposure_time=exposure_time,
             pixel_scales=0.05,
         )
 
@@ -198,7 +225,14 @@ class MaskedHSTFrame(abstract_frame.AbstractFrame):
             file_path=file_path, quadrant_letter=quadrant_letter
         )
 
-        return cls.from_ccd(array=array, quadrant_letter=quadrant_letter, mask=mask)
+        return cls.from_ccd(
+            array=array,
+            quadrant_letter=quadrant_letter,
+            mask=mask,
+            gain=gain,
+            gain_zero=gain_zero,
+            exposure_time=exposure_time,
+        )
 
     @classmethod
     def from_ccd(
@@ -210,6 +244,9 @@ class MaskedHSTFrame(abstract_frame.AbstractFrame):
         serial_size=2072,
         serial_prescan_size=24,
         parallel_overscan_size=20,
+        gain=None,
+        gain_zero=0.0,
+        exposure_time=None,
     ):
         """
         Using an input array of both quadrants in electrons, use the quadrant letter to extract the quadrant from the
@@ -229,6 +266,9 @@ class MaskedHSTFrame(abstract_frame.AbstractFrame):
                 serial_size=serial_size,
                 serial_prescan_size=serial_prescan_size,
                 parallel_overscan_size=parallel_overscan_size,
+                gain=gain,
+                gain_zero=gain_zero,
+                exposure_time=exposure_time,
             )
         elif quadrant_letter is "A" or quadrant_letter is "D":
             return cls.right(
@@ -238,6 +278,9 @@ class MaskedHSTFrame(abstract_frame.AbstractFrame):
                 serial_size=serial_size,
                 serial_prescan_size=serial_prescan_size,
                 parallel_overscan_size=parallel_overscan_size,
+                gain=gain,
+                gain_zero=gain_zero,
+                exposure_time=exposure_time,
             )
         else:
             raise exc.FrameException(
@@ -253,6 +296,9 @@ class MaskedHSTFrame(abstract_frame.AbstractFrame):
         serial_size=2072,
         serial_prescan_size=24,
         parallel_overscan_size=20,
+        gain=None,
+        gain_zero=0.0,
+        exposure_time=None,
     ):
         """
         Use an input array of the left quadrant in electrons and perform the rotations required to give correct
@@ -280,6 +326,9 @@ class MaskedHSTFrame(abstract_frame.AbstractFrame):
             roe_corner=(1, 0),
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
+            gain=gain,
+            gain_zero=gain_zero,
+            exposure_time=exposure_time,
         )
 
     @classmethod
@@ -291,6 +340,9 @@ class MaskedHSTFrame(abstract_frame.AbstractFrame):
         serial_size=2072,
         parallel_overscan_size=20,
         serial_prescan_size=51,
+        gain=None,
+        gain_zero=0.0,
+        exposure_time=None,
     ):
         """
         Use an input array of the right quadrant in electrons and perform the rotations required to give correct
@@ -320,4 +372,7 @@ class MaskedHSTFrame(abstract_frame.AbstractFrame):
             roe_corner=(1, 1),
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
+            gain=gain,
+            gain_zero=gain_zero,
+            exposure_time=exposure_time,
         )
