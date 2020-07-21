@@ -156,6 +156,7 @@ class TestFrameAPI:
         )
 
         assert frame[0, 0] == (10.0 * 2.0) + 10.0
+        assert frame.in_counts[0, 0] == 10.0
         assert frame.original_roe_corner == (1, 0)
         assert frame.shape_2d == (2068, 2072)
 

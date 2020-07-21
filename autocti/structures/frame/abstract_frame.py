@@ -5,6 +5,8 @@ from autocti.structures import frame as f
 from autocti.structures import region as reg
 from autocti.util import frame_util
 
+from autocti import exc
+
 
 class AbstractFrame(arrays.Array):
     def __new__(
@@ -15,6 +17,9 @@ class AbstractFrame(arrays.Array):
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
+        gain=None,
+        gain_zero=0.0,
+        exposure_time=None,
     ):
         """Abstract class for the geometry of a CTI Image.
 
@@ -62,6 +67,9 @@ class AbstractFrame(arrays.Array):
         obj.parallel_overscan = parallel_overscan
         obj.serial_prescan = serial_prescan
         obj.serial_overscan = serial_overscan
+        obj.gain = gain
+        obj.gain_zero = gain_zero
+        obj.exposure_time = exposure_time
 
         return obj
 
@@ -84,6 +92,15 @@ class AbstractFrame(arrays.Array):
 
             if hasattr(obj, "serial_overscan"):
                 self.serial_overscan = obj.serial_overscan
+
+            if hasattr(obj, "gain"):
+                self.gain = obj.gain
+
+            if hasattr(obj, "gain_zero"):
+                self.gain_zero = obj.gain_zero
+
+            if hasattr(obj, "exposure_time"):
+                self.exposure_time = obj.exposure_time
 
     def __reduce__(self):
         # Get the parent's __reduce__ tuple
@@ -108,6 +125,29 @@ class AbstractFrame(arrays.Array):
         return frame_util.rotate_array_from_roe_corner(
             array=self, roe_corner=self.original_roe_corner
         )
+
+    @property
+    def in_counts(self):
+        if self.gain is None:
+            raise exc.FrameException(
+                "Cannot convert a Frame to units COUNTS without a gain attribute (gain = None)."
+            )
+
+        return (self - self.gain_zero) / self.gain
+
+    @property
+    def in_counts_per_second(self):
+        if self.gain is None:
+            raise exc.FrameException(
+                "Cannot convert a Frame to units counts without a gain attribute (gain = None)."
+            )
+
+        if self.exposure_time is None:
+            raise exc.FrameException(
+                "Cannot convert a Frame to units counts per second without an exposure time attribute (exposure_time = None)."
+            )
+
+        return self.in_counts / self.exposure_time
 
     @property
     def binned_across_parallel(self):

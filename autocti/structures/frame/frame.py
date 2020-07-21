@@ -16,6 +16,9 @@ class Frame(abstract_frame.AbstractFrame):
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
+        gain=None,
+        gain_zero=0.0,
+        exposure_time=None,
         pixel_scales=None,
     ):
         """Abstract class for the geometry of a CTI Image.
@@ -66,6 +69,9 @@ class Frame(abstract_frame.AbstractFrame):
             serial_overscan=frame_util.rotate_region_from_roe_corner(
                 region=serial_overscan, shape_2d=array.shape, roe_corner=roe_corner
             ),
+            gain=gain,
+            gain_zero=gain_zero,
+            exposure_time=exposure_time,
         )
 
     @classmethod
@@ -77,6 +83,9 @@ class Frame(abstract_frame.AbstractFrame):
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
+        gain=None,
+        gain_zero=0.0,
+        exposure_time=None,
         pixel_scales=None,
     ):
 
@@ -86,6 +95,9 @@ class Frame(abstract_frame.AbstractFrame):
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
+            gain=gain,
+            gain_zero=gain_zero,
+            exposure_time=exposure_time,
             pixel_scales=pixel_scales,
         )
 
@@ -97,6 +109,9 @@ class Frame(abstract_frame.AbstractFrame):
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
+        gain=None,
+        gain_zero=0.0,
+        exposure_time=None,
         pixel_scales=None,
     ):
         return cls.full(
@@ -106,6 +121,9 @@ class Frame(abstract_frame.AbstractFrame):
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
+            gain=gain,
+            gain_zero=gain_zero,
+            exposure_time=exposure_time,
             pixel_scales=pixel_scales,
         )
 
@@ -117,6 +135,9 @@ class Frame(abstract_frame.AbstractFrame):
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
+        gain=None,
+        gain_zero=0.0,
+        exposure_time=None,
         pixel_scales=None,
     ):
         return cls.full(
@@ -126,6 +147,9 @@ class Frame(abstract_frame.AbstractFrame):
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
+            gain=gain,
+            gain_zero=gain_zero,
+            exposure_time=exposure_time,
             pixel_scales=pixel_scales,
         )
 
@@ -147,6 +171,9 @@ class Frame(abstract_frame.AbstractFrame):
                 extraction_region=extraction_region,
             ),
             roe_corner=frame.original_roe_corner,
+            gain=frame.gain,
+            gain_zero=frame.gain_zero,
+            exposure_time=frame.exposure_time,
             pixel_scales=frame.pixel_scales,
         )
 
@@ -159,6 +186,9 @@ class Frame(abstract_frame.AbstractFrame):
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
+        gain=None,
+        gain_zero=0.0,
+        exposure_time=None,
         pixel_scales=None,
     ):
         """Load the image ci_data from a fits file.
@@ -188,6 +218,9 @@ class Frame(abstract_frame.AbstractFrame):
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
+            gain=gain,
+            gain_zero=gain_zero,
+            exposure_time=exposure_time,
             pixel_scales=pixel_scales,
         )
 
@@ -202,6 +235,9 @@ class MaskedFrame(abstract_frame.AbstractFrame):
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
+        gain=None,
+        gain_zero=0.0,
+        exposure_time=None,
     ):
         """Abstract class for the geometry of a CTI Image.
 
@@ -252,6 +288,9 @@ class MaskedFrame(abstract_frame.AbstractFrame):
             serial_overscan=frame_util.rotate_region_from_roe_corner(
                 region=serial_overscan, shape_2d=array.shape, roe_corner=roe_corner
             ),
+            gain=gain,
+            gain_zero=gain_zero,
+            exposure_time=exposure_time,
         )
 
     @classmethod
@@ -263,6 +302,9 @@ class MaskedFrame(abstract_frame.AbstractFrame):
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
+        gain=None,
+        gain_zero=0.0,
+        exposure_time=None,
     ):
 
         return cls.manual(
@@ -272,6 +314,9 @@ class MaskedFrame(abstract_frame.AbstractFrame):
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
+            gain=gain,
+            gain_zero=gain_zero,
+            exposure_time=exposure_time,
         )
 
     @classmethod
@@ -282,6 +327,9 @@ class MaskedFrame(abstract_frame.AbstractFrame):
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
+        gain=None,
+        gain_zero=0.0,
+        exposure_time=None,
     ):
         return cls.full(
             fill_value=1.0,
@@ -290,6 +338,9 @@ class MaskedFrame(abstract_frame.AbstractFrame):
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
+            gain=gain,
+            gain_zero=gain_zero,
+            exposure_time=exposure_time,
         )
 
     @classmethod
@@ -300,6 +351,9 @@ class MaskedFrame(abstract_frame.AbstractFrame):
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
+        gain=None,
+        gain_zero=0.0,
+        exposure_time=None,
     ):
         return cls.full(
             fill_value=0.0,
@@ -308,6 +362,9 @@ class MaskedFrame(abstract_frame.AbstractFrame):
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
+            gain=gain,
+            gain_zero=gain_zero,
+            exposure_time=exposure_time,
         )
 
     @classmethod
@@ -320,6 +377,9 @@ class MaskedFrame(abstract_frame.AbstractFrame):
         parallel_overscan=None,
         serial_prescan=None,
         serial_overscan=None,
+        gain=None,
+        gain_zero=0.0,
+        exposure_time=None,
     ):
         """Load the image ci_data from a fits file.
 
@@ -342,6 +402,9 @@ class MaskedFrame(abstract_frame.AbstractFrame):
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
+            gain=gain,
+            gain_zero=gain_zero,
+            exposure_time=exposure_time,
         )
 
     @classmethod
@@ -353,4 +416,7 @@ class MaskedFrame(abstract_frame.AbstractFrame):
             parallel_overscan=frame.parallel_overscan,
             serial_prescan=frame.serial_prescan,
             serial_overscan=frame.serial_overscan,
+            gain=frame.gain,
+            gain_zero=frame.gain_zero,
+            exposure_time=frame.exposure_time,
         )
