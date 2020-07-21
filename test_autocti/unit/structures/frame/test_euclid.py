@@ -13,7 +13,7 @@ class TestFrameAPI:
     ):
 
         euclid_frame = ac.EuclidFrame.top_left(
-            array=euclid_data,
+            array_electrons=euclid_data,
             parallel_size=2086,
             serial_size=2119,
             serial_prescan_size=51,
@@ -29,7 +29,7 @@ class TestFrameAPI:
         assert euclid_frame.serial_overscan == (20, 2086, 2099, 2119)
 
         euclid_frame = ac.EuclidFrame.top_left(
-            array=euclid_data,
+            array_electrons=euclid_data,
             parallel_size=2086,
             serial_size=2119,
             serial_prescan_size=41,
@@ -302,7 +302,7 @@ class TestMaskedFrameAPI:
         assert (euclid_frame == np.zeros((2086, 2119))).all()
         assert euclid_frame.parallel_overscan == (2066, 2086, 51, 2099)
         assert euclid_frame.serial_prescan == (0, 2086, 0, 51)
-        assert euclid_frame.serial_overscan == (0, 2086, 2099, 2119)
+        assert euclid_frame.serial_overscan == (20, 2086, 2099, 2119)
         assert euclid_frame.mask[2085, 0] == True
         assert euclid_frame.mask[2085, 1] == False
 
@@ -313,7 +313,7 @@ class TestMaskedFrameAPI:
         assert (euclid_frame == np.zeros((2086, 2119))).all()
         assert euclid_frame.parallel_overscan == (2066, 2086, 51, 2099)
         assert euclid_frame.serial_prescan == (0, 2086, 0, 51)
-        assert euclid_frame.serial_overscan == (0, 2086, 2099, 2119)
+        assert euclid_frame.serial_overscan == (20, 2086, 2099, 2119)
         assert euclid_frame.mask[2085, 2118] == True
         assert euclid_frame.mask[2085, 2117] == False
 
@@ -324,7 +324,7 @@ class TestMaskedFrameAPI:
         assert (euclid_frame == np.zeros((2086, 2119))).all()
         assert euclid_frame.parallel_overscan == (2066, 2086, 51, 2099)
         assert euclid_frame.serial_prescan == (0, 2086, 0, 51)
-        assert euclid_frame.serial_overscan == (0, 2086, 2099, 2119)
+        assert euclid_frame.serial_overscan == (0, 2066, 2099, 2119)
         assert euclid_frame.mask[0, 0] == True
         assert euclid_frame.mask[0, 1] == False
 
@@ -335,7 +335,7 @@ class TestMaskedFrameAPI:
         assert (euclid_frame == np.zeros((2086, 2119))).all()
         assert euclid_frame.parallel_overscan == (2066, 2086, 51, 2099)
         assert euclid_frame.serial_prescan == (0, 2086, 0, 51)
-        assert euclid_frame.serial_overscan == (0, 2086, 2099, 2119)
+        assert euclid_frame.serial_overscan == (0, 2066, 2099, 2119)
         assert euclid_frame.mask[0, 2118] == True
         assert euclid_frame.mask[0, 2117] == False
 
