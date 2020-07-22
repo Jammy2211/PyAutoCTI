@@ -70,9 +70,7 @@ class CIImaging(imaging.Imaging):
         ci_pattern,
         image_path,
         pixel_scales=None,
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
+        scans=None,
         image_hdu=0,
         noise_map_path=None,
         noise_map_hdu=0,
@@ -90,9 +88,7 @@ class CIImaging(imaging.Imaging):
             roe_corner=roe_corner,
             ci_pattern=ci_pattern,
             pixel_scales=pixel_scales,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=scans,
         )
 
         if noise_map_path is not None:
@@ -107,9 +103,7 @@ class CIImaging(imaging.Imaging):
             roe_corner=roe_corner,
             ci_pattern=ci_pattern,
             pixel_scales=pixel_scales,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=scans,
         )
 
         if ci_pre_cti_path is not None:
@@ -126,9 +120,7 @@ class CIImaging(imaging.Imaging):
             roe_corner=roe_corner,
             ci_pattern=ci_pattern,
             pixel_scales=pixel_scales,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=scans,
         )
 
         if cosmic_ray_map_path is not None:
@@ -139,9 +131,7 @@ class CIImaging(imaging.Imaging):
                 roe_corner=roe_corner,
                 ci_pattern=ci_pattern,
                 pixel_scales=pixel_scales,
-                parallel_overscan=parallel_overscan,
-                serial_prescan=serial_prescan,
-                serial_overscan=serial_overscan,
+                scans=scans,
             )
 
         else:

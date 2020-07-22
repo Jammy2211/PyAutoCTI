@@ -5,6 +5,7 @@ from arctic.model import CCDVolumeComplex
 from arctic.traps import Trap
 
 from .structures.arrays import Array
+from .structures.frame.abstract_frame import Scans
 from .structures.frame import Frame
 from .structures.frame import EuclidFrame
 from .structures.frame import HSTFrame

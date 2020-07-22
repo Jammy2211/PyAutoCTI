@@ -199,38 +199,15 @@ class EuclidFrame(f.Frame):
         rotations.
         """
 
-        if parallel_overscan_size > 0:
-
-            parallel_overscan = reg.Region(
-                (
-                    0,
-                    parallel_overscan_size,
-                    serial_prescan_size,
-                    serial_size - serial_overscan_size,
-                )
-            )
-
-        else:
-
-            parallel_overscan = None
-
-        serial_prescan = reg.Region((0, parallel_size, 0, serial_prescan_size))
-        serial_overscan = reg.Region(
-            (
-                0,
-                parallel_size - parallel_overscan_size,
-                serial_size - serial_overscan_size,
-                serial_size,
-            )
+        scans = EuclidScans.top_left(
+            parallel_size=parallel_size,
+            serial_size=serial_size,
+            serial_prescan_size=serial_prescan_size,
+            serial_overscan_size=serial_overscan_size,
+            parallel_overscan_size=parallel_overscan_size,
         )
 
-        return f.Frame.manual(
-            array=array_electrons,
-            roe_corner=(0, 0),
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
-        )
+        return f.Frame.manual(array=array_electrons, roe_corner=(0, 0), scans=scans)
 
     @classmethod
     def top_right(
@@ -249,35 +226,16 @@ class EuclidFrame(f.Frame):
         See the docstring of the _EuclidFrame_ class for a complete description of the Euclid FPA, quadrants and
         rotations.
         """
-        if parallel_overscan_size > 0:
 
-            parallel_overscan = reg.Region(
-                (
-                    0,
-                    parallel_overscan_size,
-                    serial_overscan_size,
-                    serial_size - serial_prescan_size,
-                )
-            )
-
-        else:
-
-            parallel_overscan = None
-
-        serial_prescan = reg.Region(
-            (0, parallel_size, serial_size - serial_prescan_size, serial_size)
-        )
-        serial_overscan = reg.Region(
-            (0, parallel_size - parallel_overscan_size, 0, serial_overscan_size)
+        scans = EuclidScans.top_right(
+            parallel_size=parallel_size,
+            serial_size=serial_size,
+            serial_prescan_size=serial_prescan_size,
+            serial_overscan_size=serial_overscan_size,
+            parallel_overscan_size=parallel_overscan_size,
         )
 
-        return f.Frame.manual(
-            array=array,
-            roe_corner=(0, 1),
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
-        )
+        return f.Frame.manual(array=array, roe_corner=(0, 1), scans=scans)
 
     @classmethod
     def bottom_left(
@@ -296,38 +254,16 @@ class EuclidFrame(f.Frame):
         See the docstring of the _EuclidFrame_ class for a complete description of the Euclid FPA, quadrants and
         rotations.
         """
-        if parallel_overscan_size > 0:
 
-            parallel_overscan = reg.Region(
-                (
-                    parallel_size - parallel_overscan_size,
-                    parallel_size,
-                    serial_prescan_size,
-                    serial_size - serial_overscan_size,
-                )
-            )
-
-        else:
-
-            parallel_overscan = None
-
-        serial_prescan = reg.Region((0, parallel_size, 0, serial_prescan_size))
-        serial_overscan = reg.Region(
-            (
-                0,
-                parallel_size - parallel_overscan_size,
-                serial_size - serial_overscan_size,
-                serial_size,
-            )
+        scans = EuclidScans.bottom_left(
+            parallel_size=parallel_size,
+            serial_size=serial_size,
+            serial_prescan_size=serial_prescan_size,
+            serial_overscan_size=serial_overscan_size,
+            parallel_overscan_size=parallel_overscan_size,
         )
 
-        return f.Frame.manual(
-            array=array,
-            roe_corner=(1, 0),
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
-        )
+        return f.Frame.manual(array=array, roe_corner=(1, 0), scans=scans)
 
     @classmethod
     def bottom_right(
@@ -346,35 +282,16 @@ class EuclidFrame(f.Frame):
         See the docstring of the _EuclidFrame_ class for a complete description of the Euclid FPA, quadrants and
         rotations.
         """
-        if parallel_overscan_size > 0:
 
-            parallel_overscan = reg.Region(
-                (
-                    parallel_size - parallel_overscan_size,
-                    parallel_size,
-                    serial_overscan_size,
-                    serial_size - serial_prescan_size,
-                )
-            )
-
-        else:
-
-            parallel_overscan = None
-
-        serial_prescan = reg.Region(
-            (0, parallel_size, serial_size - serial_prescan_size, serial_size)
-        )
-        serial_overscan = reg.Region(
-            (0, parallel_size - parallel_overscan_size, 0, serial_overscan_size)
+        scans = EuclidScans.bottom_right(
+            parallel_size=parallel_size,
+            serial_size=serial_size,
+            serial_prescan_size=serial_prescan_size,
+            serial_overscan_size=serial_overscan_size,
+            parallel_overscan_size=parallel_overscan_size,
         )
 
-        return f.Frame.manual(
-            array=array,
-            roe_corner=(1, 1),
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
-        )
+        return f.Frame.manual(array=array, roe_corner=(1, 1), scans=scans)
 
 
 class MaskedEuclidFrame(abstract_frame.AbstractFrame):
@@ -534,9 +451,11 @@ class MaskedEuclidFrame(abstract_frame.AbstractFrame):
             array=array,
             mask=mask,
             roe_corner=(0, 0),
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=abstract_frame.Scans(
+                parallel_overscan=parallel_overscan,
+                serial_prescan=serial_prescan,
+                serial_overscan=serial_overscan,
+            ),
         )
 
     @classmethod
@@ -586,9 +505,11 @@ class MaskedEuclidFrame(abstract_frame.AbstractFrame):
             array=array,
             mask=mask,
             roe_corner=(0, 1),
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=abstract_frame.Scans(
+                parallel_overscan=parallel_overscan,
+                serial_prescan=serial_prescan,
+                serial_overscan=serial_overscan,
+            ),
         )
 
     @classmethod
@@ -641,9 +562,11 @@ class MaskedEuclidFrame(abstract_frame.AbstractFrame):
             array=array,
             mask=mask,
             roe_corner=(1, 0),
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=abstract_frame.Scans(
+                parallel_overscan=parallel_overscan,
+                serial_prescan=serial_prescan,
+                serial_overscan=serial_overscan,
+            ),
         )
 
     @classmethod
@@ -693,6 +616,168 @@ class MaskedEuclidFrame(abstract_frame.AbstractFrame):
             array=array,
             mask=mask,
             roe_corner=(1, 1),
+            scans=abstract_frame.Scans(
+                parallel_overscan=parallel_overscan,
+                serial_prescan=serial_prescan,
+                serial_overscan=serial_overscan,
+            ),
+        )
+
+
+class EuclidScans(abstract_frame.Scans):
+    @classmethod
+    def top_left(
+        cls,
+        parallel_size=2086,
+        serial_size=2119,
+        serial_prescan_size=51,
+        serial_overscan_size=20,
+        parallel_overscan_size=20,
+    ):
+
+        if parallel_overscan_size > 0:
+
+            parallel_overscan = reg.Region(
+                (
+                    0,
+                    parallel_overscan_size,
+                    serial_prescan_size,
+                    serial_size - serial_overscan_size,
+                )
+            )
+
+        else:
+
+            parallel_overscan = None
+
+        serial_prescan = reg.Region((0, parallel_size, 0, serial_prescan_size))
+        serial_overscan = reg.Region(
+            (
+                0,
+                parallel_size - parallel_overscan_size,
+                serial_size - serial_overscan_size,
+                serial_size,
+            )
+        )
+
+        return abstract_frame.Scans(
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+    @classmethod
+    def top_right(
+        cls,
+        parallel_size=2086,
+        serial_size=2119,
+        serial_prescan_size=51,
+        serial_overscan_size=20,
+        parallel_overscan_size=20,
+    ):
+
+        if parallel_overscan_size > 0:
+
+            parallel_overscan = reg.Region(
+                (
+                    0,
+                    parallel_overscan_size,
+                    serial_overscan_size,
+                    serial_size - serial_prescan_size,
+                )
+            )
+
+        else:
+
+            parallel_overscan = None
+
+        serial_prescan = reg.Region(
+            (0, parallel_size, serial_size - serial_prescan_size, serial_size)
+        )
+        serial_overscan = reg.Region(
+            (0, parallel_size - parallel_overscan_size, 0, serial_overscan_size)
+        )
+
+        return abstract_frame.Scans(
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+    @classmethod
+    def bottom_left(
+        cls,
+        parallel_size=2086,
+        serial_size=2119,
+        serial_prescan_size=51,
+        serial_overscan_size=20,
+        parallel_overscan_size=20,
+    ):
+
+        if parallel_overscan_size > 0:
+
+            parallel_overscan = reg.Region(
+                (
+                    parallel_size - parallel_overscan_size,
+                    parallel_size,
+                    serial_prescan_size,
+                    serial_size - serial_overscan_size,
+                )
+            )
+
+        else:
+
+            parallel_overscan = None
+
+        serial_prescan = reg.Region((0, parallel_size, 0, serial_prescan_size))
+        serial_overscan = reg.Region(
+            (
+                0,
+                parallel_size - parallel_overscan_size,
+                serial_size - serial_overscan_size,
+                serial_size,
+            )
+        )
+
+        return abstract_frame.Scans(
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+    @classmethod
+    def bottom_right(
+        cls,
+        parallel_size=2086,
+        serial_size=2119,
+        serial_prescan_size=51,
+        serial_overscan_size=20,
+        parallel_overscan_size=20,
+    ):
+
+        if parallel_overscan_size > 0:
+
+            parallel_overscan = reg.Region(
+                (
+                    parallel_size - parallel_overscan_size,
+                    parallel_size,
+                    serial_overscan_size,
+                    serial_size - serial_prescan_size,
+                )
+            )
+
+        else:
+
+            parallel_overscan = None
+
+        serial_prescan = reg.Region(
+            (0, parallel_size, serial_size - serial_prescan_size, serial_size)
+        )
+        serial_overscan = reg.Region(
+            (0, parallel_size - parallel_overscan_size, 0, serial_overscan_size)
+        )
+
+        return abstract_frame.Scans(
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,

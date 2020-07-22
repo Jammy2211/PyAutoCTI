@@ -3,23 +3,14 @@ from copy import deepcopy
 import numpy as np
 from autoarray.structures import abstract_structure
 from autocti.charge_injection import ci_mask
+from autocti.structures.frame import abstract_frame, euclid
 from autocti.structures.frame import Frame
 from autocti.mask.mask import Mask
-from autocti.structures import region as reg
 from autocti.util import array_util, frame_util
 
 
 class AbstractCIFrame(Frame):
-    def __new__(
-        cls,
-        array,
-        mask,
-        ci_pattern,
-        original_roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
-    ):
+    def __new__(cls, array, mask, ci_pattern, original_roe_corner=(1, 0), scans=None):
         """
         Class which represents the CCD quadrant of a charge injection image (e.g. the location of the parallel and
         serial front edge, trails).
@@ -28,7 +19,7 @@ class AbstractCIFrame(Frame):
             The quadrant geometry of the image, defining where the parallel / serial overscans are and
             therefore the direction of clocking and rotations before input into the cti algorithm.
         ci_pattern : CIPattern.CIPattern
-            The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
+            The charge injection ci_pattern (scans, normalization, etc.) of the charge injection image.
         """
 
         obj = super(AbstractCIFrame, cls).__new__(
@@ -36,9 +27,7 @@ class AbstractCIFrame(Frame):
             array=array,
             mask=mask,
             original_roe_corner=original_roe_corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=scans,
         )
 
         obj.ci_pattern = ci_pattern
@@ -56,16 +45,12 @@ class AbstractCIFrame(Frame):
                 self.original_roe_corner = obj.original_roe_corner
             if hasattr(obj, "ci_pattern"):
                 self.ci_pattern = obj.ci_pattern
-            if hasattr(obj, "parallel_overscan"):
-                self.parallel_overscan = obj.parallel_overscan
-            if hasattr(obj, "serial_prescan"):
-                self.serial_prescan = obj.serial_prescan
-            if hasattr(obj, "serial_overscan"):
-                self.serial_overscan = obj.serial_overscan
+            if hasattr(obj, "scans"):
+                self.scans = obj.scans
 
     @property
     def ci_regions_frame(self):
-        """Extract an arrays of all of the charge-injection regions from a charge injection ci_frame.
+        """Extract an arrays of all of the charge-injection scans from a charge injection ci_frame.
 
         The diagram below illustrates the arrays that is extracted from a ci_frame:
 
@@ -121,7 +106,7 @@ class AbstractCIFrame(Frame):
 
     @property
     def non_ci_regions_frame(self):
-        """Extract an arrays of all of the parallel trails following the charge-injection regions from a charge
+        """Extract an arrays of all of the parallel trails following the charge-injection scans from a charge
         injection ci_frame.
 
         The diagram below illustrates the arrays that is extracted from a ci_frame:
@@ -150,7 +135,7 @@ class AbstractCIFrame(Frame):
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the trails following all charge injection regions and replaces all other
+        The extracted ci_frame keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
 
                [tptpptptptpptpptpptpt]
@@ -176,7 +161,7 @@ class AbstractCIFrame(Frame):
 
     @property
     def parallel_non_ci_regions_frame(self):
-        """Extract an arrays of all of the parallel trails following the charge-injection regions from a charge
+        """Extract an arrays of all of the parallel trails following the charge-injection scans from a charge
         injection ci_frame.
 
         The diagram below illustrates the arrays that is extracted from a ci_frame:
@@ -205,7 +190,7 @@ class AbstractCIFrame(Frame):
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the trails following all charge injection regions and replaces all other
+        The extracted ci_frame keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
 
                [tptpptptptpptpptpptpt]
@@ -224,13 +209,13 @@ class AbstractCIFrame(Frame):
 
         parallel_frame = self.non_ci_regions_frame
 
-        parallel_frame[self.serial_prescan.slice] = 0.0
-        parallel_frame[self.serial_overscan.slice] = 0.0
+        parallel_frame[self.scans.serial_prescan.slice] = 0.0
+        parallel_frame[self.scans.serial_overscan.slice] = 0.0
 
         return parallel_frame
 
     def parallel_edges_and_trails_frame(self, front_edge_rows=None, trails_rows=None):
-        """Extract an arrays of all of the parallel front edges and trails of each the charge-injection regions from
+        """Extract an arrays of all of the parallel front edges and trails of each the charge-injection scans from
         a charge injection ci_frame.
 
         One can specify the range of rows that are extracted, for example:
@@ -266,7 +251,7 @@ class AbstractCIFrame(Frame):
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the leading edges and trails following all charge injection regions and
+        The extracted ci_frame keeps just the leading edges and trails following all charge injection scans and
         replaces all other values with 0s:
 
                [000000000000000000000]
@@ -359,7 +344,7 @@ class AbstractCIFrame(Frame):
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the trails following all charge injection regions and replaces all other
+        The extracted ci_frame keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
 
                [ptp]
@@ -391,7 +376,7 @@ class AbstractCIFrame(Frame):
     @property
     def serial_trails_frame(self):
         """Extract an arrays of all of the serial trails in the serial overscan region, that are to the side of a
-        charge-injection regions from a charge injection ci_frame.
+        charge-injection scans from a charge injection ci_frame.
 
         The diagram below illustrates the arrays that is extracted from a ci_frame:
 
@@ -419,7 +404,7 @@ class AbstractCIFrame(Frame):
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the trails following all charge injection regions and replaces all other
+        The extracted ci_frame keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
 
                [000000000000000000000]
@@ -436,13 +421,13 @@ class AbstractCIFrame(Frame):
                <---------S----------
         """
         array = self.serial_edges_and_trails_frame(
-            trails_columns=(0, self.serial_overscan.total_columns)
+            trails_columns=(0, self.scans.serial_overscan.total_columns)
         )
         return array
 
     @property
     def serial_overscan_no_trails_frame(self):
-        """Extract an arrays of all of the regions of the serial overscan that don't contain trails from a
+        """Extract an arrays of all of the scans of the serial overscan that don't contain trails from a
         charge injection region (i.e. are not to the side of one).
 
         The diagram below illustrates the arrays that is extracted from a ci_frame:
@@ -471,7 +456,7 @@ class AbstractCIFrame(Frame):
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the trails following all charge injection regions and replaces all other
+        The extracted ci_frame keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
 
                [000000000000000000000]
@@ -488,14 +473,14 @@ class AbstractCIFrame(Frame):
                <---------S----------
         """
         new_array = self.copy() * 0.0
-        overscan_slice = self.serial_overscan.slice
+        overscan_slice = self.scans.serial_overscan.slice
 
         new_array[overscan_slice] = self[overscan_slice]
 
         trails_regions = list(
             map(
                 lambda ci_region: self.serial_trails_of_region(
-                    ci_region, (0, self.serial_overscan.total_columns)
+                    ci_region, (0, self.scans.serial_overscan.total_columns)
                 ),
                 self.ci_pattern.regions,
             )
@@ -509,7 +494,7 @@ class AbstractCIFrame(Frame):
     def serial_edges_and_trails_frame(
         self, front_edge_columns=None, trails_columns=None
     ):
-        """Extract an arrays of all of the serial front edges and trails of each the charge-injection regions from
+        """Extract an arrays of all of the serial front edges and trails of each the charge-injection scans from
         a charge injection ci_frame.
 
         One can specify the range of columns that are extracted, for example:
@@ -545,7 +530,7 @@ class AbstractCIFrame(Frame):
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the leading edge and trails following all charge injection regions and
+        The extracted ci_frame keeps just the leading edge and trails following all charge injection scans and
         replaces all other values with 0s:
 
                [000000000000000000000]
@@ -610,7 +595,7 @@ class AbstractCIFrame(Frame):
     def serial_calibration_frame_from_rows(self, rows):
         """Extract a serial calibration array from a charge injection ci_frame, where this arrays is a sub-set of the
         ci_frame which can be used for serial-only calibration. Specifically, this ci_frame is all charge injection
-        regions and their serial over-scan trails.
+        scans and their serial over-scan trails.
 
         The diagram below illustrates the arrays that is extracted from a ci_frame with column=5:
 
@@ -638,7 +623,7 @@ class AbstractCIFrame(Frame):
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the trails following all charge injection regions and replaces all other
+        The extracted ci_frame keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
 
         |                                      |
@@ -661,13 +646,23 @@ class AbstractCIFrame(Frame):
         # TODO : specific case for now.
 
         serial_prescan = (
-            (0, array.shape[0], self.serial_prescan[2], self.serial_prescan[3])
-            if self.serial_prescan is not None
+            (
+                0,
+                array.shape[0],
+                self.scans.serial_prescan[2],
+                self.scans.serial_prescan[3],
+            )
+            if self.scans.serial_prescan is not None
             else None
         )
         serial_overscan = (
-            (0, array.shape[0], self.serial_overscan[2], self.serial_overscan[3])
-            if self.serial_overscan is not None
+            (
+                0,
+                array.shape[0],
+                self.scans.serial_overscan[2],
+                self.scans.serial_overscan[3],
+            )
+            if self.scans.serial_overscan is not None
             else None
         )
 
@@ -687,16 +682,18 @@ class AbstractCIFrame(Frame):
             array=array,
             ci_pattern=new_ci_pattern,
             roe_corner=self.original_roe_corner,
-            parallel_overscan=None,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=abstract_frame.Scans(
+                parallel_overscan=None,
+                serial_prescan=serial_prescan,
+                serial_overscan=serial_overscan,
+            ),
             pixel_scales=self.pixel_scales,
         )
 
     def serial_calibration_mask_from_mask_and_rows(self, mask, rows):
         """Extract a serial calibration array from a charge injection ci_frame, where this arrays is a sub-set of the
         ci_frame which can be used for serial-only calibration. Specifically, this ci_frame is all charge injection
-        regions and their serial over-scan trails.
+        scans and their serial over-scan trails.
 
         The diagram below illustrates the arrays that is extracted from a ci_frame with column=5:
 
@@ -724,7 +721,7 @@ class AbstractCIFrame(Frame):
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the trails following all charge injection regions and replaces all other
+        The extracted ci_frame keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
 
         |                                      |
@@ -773,7 +770,7 @@ class AbstractCIFrame(Frame):
         return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
 
     def parallel_front_edge_arrays(self, rows=None):
-        """Extract a list of structures of the parallel front edge regions of a charge injection ci_frame.
+        """Extract a list of structures of the parallel front edge scans of a charge injection ci_frame.
 
         The diagram below illustrates the arrays that is extracted from a ci_frame for rows=(0, 1):
 
@@ -802,7 +799,7 @@ class AbstractCIFrame(Frame):
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the front edges of all charge injection regions.
+        The extracted ci_frame keeps just the front edges of all charge injection scans.
 
         list index 0:
 
@@ -833,7 +830,7 @@ class AbstractCIFrame(Frame):
         return front_arrays
 
     def parallel_front_edge_regions(self, rows=None):
-        """Calculate a list of the parallel front edge regions of a charge injection ci_frame.
+        """Calculate a list of the parallel front edge scans of a charge injection ci_frame.
 
         The diagram below illustrates the region that calculaed from a ci_frame for rows=(0, 1):
 
@@ -862,7 +859,7 @@ class AbstractCIFrame(Frame):
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the front edges of all charge injection regions.
+        The extracted ci_frame keeps just the front edges of all charge injection scans.
 
         list index 0:
 
@@ -929,7 +926,7 @@ class AbstractCIFrame(Frame):
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the trails following all charge injection regions:
+        The extracted ci_frame keeps just the trails following all charge injection scans:
 
         list index 0:
 
@@ -960,7 +957,7 @@ class AbstractCIFrame(Frame):
         return trails_arrays
 
     def parallel_trails_regions(self, rows=None):
-        """Compute the parallel regions of a charge injection ci_frame.
+        """Compute the parallel scans of a charge injection ci_frame.
 
         The diagram below illustrates the region that is calculated from a ci_frame for rows=(0, 1):
 
@@ -990,7 +987,7 @@ class AbstractCIFrame(Frame):
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the trails following all charge injection regions:
+        The extracted ci_frame keeps just the trails following all charge injection scans:
 
         list index 0:
 
@@ -1056,7 +1053,7 @@ class AbstractCIFrame(Frame):
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the serial front edges of all charge injection regions.
+        The extracted ci_frame keeps just the serial front edges of all charge injection scans.
 
         list index 0:
 
@@ -1088,7 +1085,7 @@ class AbstractCIFrame(Frame):
         return front_arrays
 
     def serial_front_edge_regions(self, columns=None):
-        """Compute a list of the serial front edges regions of a charge injection ci_frame.
+        """Compute a list of the serial front edges scans of a charge injection ci_frame.
 
         The diagram below illustrates the region that is calculated from a ci_frame for columns=(0, 4):
 
@@ -1118,7 +1115,7 @@ class AbstractCIFrame(Frame):
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the serial front edges of all charge injection regions.
+        The extracted ci_frame keeps just the serial front edges of all charge injection scans.
 
         list index 0:
 
@@ -1183,7 +1180,7 @@ class AbstractCIFrame(Frame):
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the serial front edges of all charge injection regions.
+        The extracted ci_frame keeps just the serial front edges of all charge injection scans.
 
         list index 0:
 
@@ -1214,7 +1211,7 @@ class AbstractCIFrame(Frame):
         return trails_arrays
 
     def serial_trails_regions(self, columns=None):
-        """Compute a list of the serial trails regions of a charge injection ci_frame.
+        """Compute a list of the serial trails scans of a charge injection ci_frame.
 
         The diagram below illustrates the region is calculated from a ci_frame for columnss=(0, 4):
 
@@ -1244,7 +1241,7 @@ class AbstractCIFrame(Frame):
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the serial front edges of all charge injection regions.
+        The extracted ci_frame keeps just the serial front edges of all charge injection scans.
 
         list index 0:
 
@@ -1291,14 +1288,7 @@ class AbstractCIFrame(Frame):
 class CIFrame(AbstractCIFrame):
     @classmethod
     def manual(
-        cls,
-        array,
-        ci_pattern,
-        roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
-        pixel_scales=None,
+        cls, array, ci_pattern, roe_corner=(1, 0), scans=None, pixel_scales=None
     ):
         """Abstract class for the geometry of a CTI Image.
 
@@ -1336,6 +1326,10 @@ class CIFrame(AbstractCIFrame):
 
         mask = Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
 
+        scans = abstract_frame.Scans.rotated_from_roe_corner(
+            roe_corner=roe_corner, shape_2d=array.shape, scans=scans
+        )
+
         return CIFrame(
             array=frame_util.rotate_array_from_roe_corner(
                 array=array, roe_corner=roe_corner
@@ -1345,15 +1339,7 @@ class CIFrame(AbstractCIFrame):
                 ci_pattern=ci_pattern, shape_2d=array.shape, roe_corner=roe_corner
             ),
             original_roe_corner=roe_corner,
-            parallel_overscan=frame_util.rotate_region_from_roe_corner(
-                region=parallel_overscan, shape_2d=array.shape, roe_corner=roe_corner
-            ),
-            serial_prescan=frame_util.rotate_region_from_roe_corner(
-                region=serial_prescan, shape_2d=array.shape, roe_corner=roe_corner
-            ),
-            serial_overscan=frame_util.rotate_region_from_roe_corner(
-                region=serial_overscan, shape_2d=array.shape, roe_corner=roe_corner
-            ),
+            scans=scans,
         )
 
     @classmethod
@@ -1363,9 +1349,7 @@ class CIFrame(AbstractCIFrame):
         shape_2d,
         ci_pattern,
         roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
+        scans=None,
         pixel_scales=None,
     ):
 
@@ -1373,53 +1357,33 @@ class CIFrame(AbstractCIFrame):
             array=np.full(fill_value=fill_value, shape=shape_2d),
             ci_pattern=ci_pattern,
             roe_corner=roe_corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=scans,
             pixel_scales=pixel_scales,
         )
 
     @classmethod
     def ones(
-        cls,
-        shape_2d,
-        ci_pattern,
-        roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
-        pixel_scales=None,
+        cls, shape_2d, ci_pattern, roe_corner=(1, 0), scans=None, pixel_scales=None
     ):
         return cls.full(
             fill_value=1.0,
             shape_2d=shape_2d,
             ci_pattern=ci_pattern,
             roe_corner=roe_corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=scans,
             pixel_scales=pixel_scales,
         )
 
     @classmethod
     def zeros(
-        cls,
-        shape_2d,
-        ci_pattern,
-        roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
-        pixel_scales=None,
+        cls, shape_2d, ci_pattern, roe_corner=(1, 0), scans=None, pixel_scales=None
     ):
         return cls.full(
             fill_value=0.0,
             shape_2d=shape_2d,
             ci_pattern=ci_pattern,
             roe_corner=roe_corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=scans,
             pixel_scales=pixel_scales,
         )
 
@@ -1428,23 +1392,16 @@ class CIFrame(AbstractCIFrame):
         cls, ci_frame, extraction_region
     ):
 
+        scans = abstract_frame.Scans.after_extraction(
+            frame=ci_frame, extraction_region=extraction_region
+        )
+
         return cls.manual(
             array=ci_frame[extraction_region.slice],
             ci_pattern=ci_frame.ci_pattern.with_extracted_regions(
                 extraction_region=extraction_region
             ),
-            parallel_overscan=frame_util.region_after_extraction(
-                original_region=ci_frame.parallel_overscan,
-                extraction_region=extraction_region,
-            ),
-            serial_prescan=frame_util.region_after_extraction(
-                original_region=ci_frame.serial_prescan,
-                extraction_region=extraction_region,
-            ),
-            serial_overscan=frame_util.region_after_extraction(
-                original_region=ci_frame.serial_overscan,
-                extraction_region=extraction_region,
-            ),
+            scans=scans,
             roe_corner=ci_frame.original_roe_corner,
             pixel_scales=ci_frame.pixel_scales,
         )
@@ -1456,9 +1413,7 @@ class CIFrame(AbstractCIFrame):
         hdu,
         ci_pattern,
         roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
+        scans=None,
         pixel_scales=None,
     ):
         """Load the image ci_data from a fits file.
@@ -1473,7 +1428,7 @@ class CIFrame(AbstractCIFrame):
             The HDU number in the fits file containing the image ci_data.
         frame_geometry : FrameArray.FrameGeometry
             The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
-            locations of different regions of the CCD (overscans, prescan, etc.)
+            locations of different scans of the CCD (overscans, prescan, etc.)
         """
 
         pixel_scales = abstract_structure.convert_pixel_scales(
@@ -1486,16 +1441,25 @@ class CIFrame(AbstractCIFrame):
             array=array,
             ci_pattern=ci_pattern,
             roe_corner=roe_corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=scans,
             pixel_scales=pixel_scales,
         )
 
 
 class EuclidCIFrame(CIFrame):
     @classmethod
-    def ccd_and_quadrant_id(cls, array, ccd_id, quadrant_id, ci_pattern):
+    def from_ccd_and_quadrant_id(
+        cls,
+        array,
+        ccd_id,
+        quadrant_id,
+        ci_pattern,
+        parallel_size=2086,
+        serial_size=2119,
+        serial_prescan_size=51,
+        serial_overscan_size=20,
+        parallel_overscan_size=20,
+    ):
         """Before reading this docstring, read the docstring for the __init__function above.
 
         In the Euclid FPA, the quadrant id ('E', 'F', 'G', 'H') depends on whether the CCD is located
@@ -1567,62 +1531,105 @@ class EuclidCIFrame(CIFrame):
             return EuclidCIFrame.bottom_right(array=array, ci_pattern=ci_pattern)
 
     @classmethod
-    def top_left(cls, array, ci_pattern):
+    def top_left(
+        cls,
+        array,
+        ci_pattern,
+        parallel_size=2086,
+        serial_size=2119,
+        serial_prescan_size=51,
+        serial_overscan_size=20,
+        parallel_overscan_size=20,
+    ):
+
+        scans = euclid.EuclidScans.top_left(
+            parallel_size=parallel_size,
+            serial_size=serial_size,
+            serial_prescan_size=serial_prescan_size,
+            serial_overscan_size=serial_overscan_size,
+            parallel_overscan_size=parallel_overscan_size,
+        )
+
         return CIFrame.manual(
-            array=array,
-            ci_pattern=ci_pattern,
-            roe_corner=(0, 0),
-            parallel_overscan=reg.Region((0, 20, 51, 2099)),
-            serial_prescan=reg.Region((0, 2086, 0, 51)),
-            serial_overscan=reg.Region((0, 2086, 2099, 2119)),
+            array=array, ci_pattern=ci_pattern, roe_corner=(0, 0), scans=scans
         )
 
     @classmethod
-    def top_right(cls, array, ci_pattern):
+    def top_right(
+        cls,
+        array,
+        ci_pattern,
+        parallel_size=2086,
+        serial_size=2119,
+        serial_prescan_size=51,
+        serial_overscan_size=20,
+        parallel_overscan_size=20,
+    ):
+
+        scans = euclid.EuclidScans.top_right(
+            parallel_size=parallel_size,
+            serial_size=serial_size,
+            serial_prescan_size=serial_prescan_size,
+            serial_overscan_size=serial_overscan_size,
+            parallel_overscan_size=parallel_overscan_size,
+        )
+
         return CIFrame.manual(
-            array=array,
-            ci_pattern=ci_pattern,
-            roe_corner=(0, 1),
-            parallel_overscan=reg.Region((0, 20, 20, 2068)),
-            serial_prescan=reg.Region((0, 2086, 2068, 2119)),
-            serial_overscan=reg.Region((0, 2086, 0, 20)),
+            array=array, ci_pattern=ci_pattern, roe_corner=(0, 1), scans=scans
         )
 
     @classmethod
-    def bottom_left(cls, array, ci_pattern):
+    def bottom_left(
+        cls,
+        array,
+        ci_pattern,
+        parallel_size=2086,
+        serial_size=2119,
+        serial_prescan_size=51,
+        serial_overscan_size=20,
+        parallel_overscan_size=20,
+    ):
+
+        scans = euclid.EuclidScans.bottom_left(
+            parallel_size=parallel_size,
+            serial_size=serial_size,
+            serial_prescan_size=serial_prescan_size,
+            serial_overscan_size=serial_overscan_size,
+            parallel_overscan_size=parallel_overscan_size,
+        )
+
         return CIFrame.manual(
-            array=array,
-            ci_pattern=ci_pattern,
-            roe_corner=(1, 0),
-            parallel_overscan=reg.Region((2066, 2086, 51, 2099)),
-            serial_prescan=reg.Region((0, 2086, 0, 51)),
-            serial_overscan=reg.Region((0, 2086, 2099, 2119)),
+            array=array, ci_pattern=ci_pattern, roe_corner=(1, 0), scans=scans
         )
 
     @classmethod
-    def bottom_right(cls, array, ci_pattern):
+    def bottom_right(
+        cls,
+        array,
+        ci_pattern,
+        parallel_size=2086,
+        serial_size=2119,
+        serial_prescan_size=51,
+        serial_overscan_size=20,
+        parallel_overscan_size=20,
+    ):
+
+        scans = euclid.EuclidScans.bottom_right(
+            parallel_size=parallel_size,
+            serial_size=serial_size,
+            serial_prescan_size=serial_prescan_size,
+            serial_overscan_size=serial_overscan_size,
+            parallel_overscan_size=parallel_overscan_size,
+        )
+
         return CIFrame.manual(
-            array=array,
-            ci_pattern=ci_pattern,
-            roe_corner=(1, 1),
-            parallel_overscan=reg.Region((2066, 2086, 20, 2068)),
-            serial_prescan=reg.Region((0, 2086, 2068, 2119)),
-            serial_overscan=reg.Region((0, 2086, 0, 20)),
+            array=array, ci_pattern=ci_pattern, roe_corner=(1, 1), scans=scans
         )
 
 
 class MaskedCIFrame(AbstractCIFrame):
     @classmethod
-    def manual(
-        cls,
-        array,
-        mask,
-        ci_pattern,
-        roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
-    ):
+    def manual(cls, array, mask, ci_pattern, roe_corner=(1, 0), scans=None):
         """Abstract class for the geometry of a CTI Image.
 
         A FrameArray is stored as a 2D NumPy arrays. When this immage is passed to arctic, clocking goes towards
@@ -1659,6 +1666,10 @@ class MaskedCIFrame(AbstractCIFrame):
 
         array[mask == True] = 0.0
 
+        scans = abstract_frame.Scans.rotated_from_roe_corner(
+            roe_corner=roe_corner, shape_2d=array.shape, scans=scans
+        )
+
         return CIFrame(
             array=array,
             mask=mask,
@@ -1666,91 +1677,42 @@ class MaskedCIFrame(AbstractCIFrame):
                 ci_pattern=ci_pattern, shape_2d=array.shape, roe_corner=roe_corner
             ),
             original_roe_corner=roe_corner,
-            parallel_overscan=frame_util.rotate_region_from_roe_corner(
-                region=parallel_overscan, shape_2d=array.shape, roe_corner=roe_corner
-            ),
-            serial_prescan=frame_util.rotate_region_from_roe_corner(
-                region=serial_prescan, shape_2d=array.shape, roe_corner=roe_corner
-            ),
-            serial_overscan=frame_util.rotate_region_from_roe_corner(
-                region=serial_overscan, shape_2d=array.shape, roe_corner=roe_corner
-            ),
+            scans=scans,
         )
 
     @classmethod
-    def full(
-        cls,
-        fill_value,
-        mask,
-        ci_pattern,
-        roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
-    ):
+    def full(cls, fill_value, mask, ci_pattern, roe_corner=(1, 0), scans=None):
 
         return cls.manual(
             array=np.full(fill_value=fill_value, shape=mask.shape_2d),
             ci_pattern=ci_pattern,
             roe_corner=roe_corner,
             mask=mask,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=scans,
         )
 
     @classmethod
-    def ones(
-        cls,
-        mask,
-        ci_pattern,
-        roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
-    ):
+    def ones(cls, mask, ci_pattern, roe_corner=(1, 0), scans=None):
         return cls.full(
             fill_value=1.0,
             ci_pattern=ci_pattern,
             mask=mask,
             roe_corner=roe_corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=scans,
         )
 
     @classmethod
-    def zeros(
-        cls,
-        mask,
-        ci_pattern,
-        roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
-    ):
+    def zeros(cls, mask, ci_pattern, roe_corner=(1, 0), scans=None):
         return cls.full(
             fill_value=0.0,
             ci_pattern=ci_pattern,
             mask=mask,
             roe_corner=roe_corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=scans,
         )
 
     @classmethod
-    def from_fits(
-        cls,
-        file_path,
-        hdu,
-        mask,
-        ci_pattern,
-        roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
-    ):
+    def from_fits(cls, file_path, hdu, mask, ci_pattern, roe_corner=(1, 0), scans=None):
         """Load the image ci_data from a fits file.
 
         Params
@@ -1763,16 +1725,14 @@ class MaskedCIFrame(AbstractCIFrame):
             The HDU number in the fits file containing the image ci_data.
         frame_geometry : FrameArray.FrameGeometry
             The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
-            locations of different regions of the CCD (overscans, prescan, etc.)
+            locations of different scans of the CCD (overscans, prescan, etc.)
         """
         return cls.manual(
             array=array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu),
             mask=mask,
             ci_pattern=ci_pattern,
             roe_corner=roe_corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=scans,
         )
 
     @classmethod
@@ -1782,7 +1742,5 @@ class MaskedCIFrame(AbstractCIFrame):
             mask=mask,
             ci_pattern=ci_frame.ci_pattern,
             original_roe_corner=ci_frame.original_roe_corner,
-            parallel_overscan=ci_frame.parallel_overscan,
-            serial_prescan=ci_frame.serial_prescan,
-            serial_overscan=ci_frame.serial_overscan,
+            scans=abstract_frame.Scans.from_frame(frame=ci_frame),
         )

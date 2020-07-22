@@ -14,9 +14,7 @@ class AbstractFrame(arrays.Array):
         array,
         mask,
         original_roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
+        scans=None,
         gain=None,
         gain_zero=0.0,
         exposure_time=None,
@@ -48,15 +46,6 @@ class AbstractFrame(arrays.Array):
         if type(array) is list:
             array = np.asarray(array)
 
-        if isinstance(parallel_overscan, tuple):
-            parallel_overscan = reg.Region(region=parallel_overscan)
-
-        if isinstance(serial_prescan, tuple):
-            serial_prescan = reg.Region(region=serial_prescan)
-
-        if isinstance(serial_overscan, tuple):
-            serial_overscan = reg.Region(region=serial_overscan)
-
         array[mask == True] = 0.0
 
         obj = super(AbstractFrame, cls).__new__(
@@ -64,9 +53,7 @@ class AbstractFrame(arrays.Array):
         )
 
         obj.original_roe_corner = original_roe_corner
-        obj.parallel_overscan = parallel_overscan
-        obj.serial_prescan = serial_prescan
-        obj.serial_overscan = serial_overscan
+        obj.scans = scans or AbstractFrame()
         obj.gain = gain
         obj.gain_zero = gain_zero
         obj.exposure_time = exposure_time
@@ -84,14 +71,8 @@ class AbstractFrame(arrays.Array):
             if hasattr(obj, "original_roe_corner"):
                 self.original_roe_corner = obj.original_roe_corner
 
-            if hasattr(obj, "parallel_overscan"):
-                self.parallel_overscan = obj.parallel_overscan
-
-            if hasattr(obj, "serial_prescan"):
-                self.serial_prescan = obj.serial_prescan
-
-            if hasattr(obj, "serial_overscan"):
-                self.serial_overscan = obj.serial_overscan
+            if hasattr(obj, "scans"):
+                self.scans = obj.scans
 
             if hasattr(obj, "gain"):
                 self.gain = obj.gain
@@ -160,7 +141,7 @@ class AbstractFrame(arrays.Array):
     @property
     def parallel_overscan_frame(self):
         """Extract an arrays of all of the parallel trails in the parallel overscan region, that are to the side of a
-        charge-injection regions from a charge injection ci_frame.
+        charge-injection scans from a charge injection ci_frame.
 
         The diagram below illustrates the arrays that is extracted from a ci_frame:
 
@@ -188,7 +169,7 @@ class AbstractFrame(arrays.Array):
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the trails following all charge injection regions and replaces all other
+        The extracted ci_frame keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
 
                [000000000000000000000]
@@ -205,7 +186,7 @@ class AbstractFrame(arrays.Array):
                <---------S----------
         """
         return f.Frame.extracted_frame_from_frame_and_extraction_region(
-            frame=self, extraction_region=self.parallel_overscan
+            frame=self, extraction_region=self.scans.parallel_overscan
         )
 
     @property
@@ -243,7 +224,7 @@ class AbstractFrame(arrays.Array):
     @property
     def serial_overscan_frame(self):
         """Extract an arrays of all of the serial trails in the serial overscan region, that are to the side of a
-        charge-injection regions from a charge injection ci_frame.
+        charge-injection scans from a charge injection ci_frame.
 
         The diagram below illustrates the arrays that is extracted from a ci_frame:
 
@@ -271,7 +252,7 @@ class AbstractFrame(arrays.Array):
         []     [=====================]
                <---------S----------
 
-        The extracted ci_frame keeps just the trails following all charge injection regions and replaces all other
+        The extracted ci_frame keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
 
                [000000000000000000000]
@@ -288,7 +269,7 @@ class AbstractFrame(arrays.Array):
                <---------S----------
         """
         return f.Frame.extracted_frame_from_frame_and_extraction_region(
-            frame=self, extraction_region=self.serial_overscan
+            frame=self, extraction_region=self.scans.serial_overscan
         )
 
     @property
@@ -311,10 +292,82 @@ class AbstractFrame(arrays.Array):
 
     @property
     def serial_trails_columns(self):
-        return self.serial_overscan[3] - self.serial_overscan[2]
+        return self.scans.serial_overscan[3] - self.scans.serial_overscan[2]
 
     def x_limits(self, region, columns):
         x_coord = region.x0
         x_min = x_coord + columns[0]
         x_max = x_coord + columns[1]
         return x_min, x_max
+
+
+class Scans:
+    def __init__(
+        self, parallel_overscan=None, serial_prescan=None, serial_overscan=None
+    ):
+
+        if isinstance(parallel_overscan, tuple):
+            parallel_overscan = reg.Region(region=parallel_overscan)
+
+        if isinstance(serial_prescan, tuple):
+            serial_prescan = reg.Region(region=serial_prescan)
+
+        if isinstance(serial_overscan, tuple):
+            serial_overscan = reg.Region(region=serial_overscan)
+
+        self.parallel_overscan = parallel_overscan
+        self.serial_prescan = serial_prescan
+        self.serial_overscan = serial_overscan
+
+    @classmethod
+    def rotated_from_roe_corner(cls, roe_corner, shape_2d, scans):
+
+        if scans is None:
+            return Scans()
+
+        parallel_overscan = frame_util.rotate_region_from_roe_corner(
+            region=scans.parallel_overscan, shape_2d=shape_2d, roe_corner=roe_corner
+        )
+        serial_prescan = frame_util.rotate_region_from_roe_corner(
+            region=scans.serial_prescan, shape_2d=shape_2d, roe_corner=roe_corner
+        )
+        serial_overscan = frame_util.rotate_region_from_roe_corner(
+            region=scans.serial_overscan, shape_2d=shape_2d, roe_corner=roe_corner
+        )
+
+        return Scans(
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+    @classmethod
+    def after_extraction(cls, frame, extraction_region):
+
+        parallel_overscan = frame_util.region_after_extraction(
+            original_region=frame.scans.parallel_overscan,
+            extraction_region=extraction_region,
+        )
+        serial_prescan = frame_util.region_after_extraction(
+            original_region=frame.scans.serial_prescan,
+            extraction_region=extraction_region,
+        )
+        serial_overscan = frame_util.region_after_extraction(
+            original_region=frame.scans.serial_overscan,
+            extraction_region=extraction_region,
+        )
+
+        return Scans(
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+    @classmethod
+    def from_frame(cls, frame):
+
+        return Scans(
+            parallel_overscan=frame.scans.parallel_overscan,
+            serial_prescan=frame.scans.serial_prescan,
+            serial_overscan=frame.scans.serial_overscan,
+        )
