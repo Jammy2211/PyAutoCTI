@@ -2638,7 +2638,7 @@ class TestExtractions:
             roe_corner=(1, 0),
         )
 
-        assert ci_frame.serial_trails_columns == 10
+        assert ci_frame.scans.serial_trails_columns == 10
 
         ci_frame = ac.ci.CIFrame.manual(
             array=np.ones((50, 50)),
@@ -2651,7 +2651,7 @@ class TestExtractions:
             roe_corner=(1, 0),
         )
 
-        assert ci_frame.serial_trails_columns == 50
+        assert ci_frame.scans.serial_trails_columns == 50
 
     def test__parallel_trail_size_to_frame_edge__parallel_trail_size_to_edge(self):
 

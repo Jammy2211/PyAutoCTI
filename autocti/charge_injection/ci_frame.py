@@ -1258,7 +1258,7 @@ class AbstractCIFrame(Frame):
             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd columns)
         """
         if columns is None:
-            columns = (0, self.serial_trails_columns)
+            columns = (0, self.scans.serial_trails_columns)
         return list(
             map(
                 lambda ci_region: self.serial_trails_of_region(ci_region, columns),
