@@ -221,7 +221,7 @@ class MaskedHSTFrame(abstract_frame.AbstractFrame):
         See the docstring of the _HSTFrame_ class for a complete description of the Euclid FPA, quadrants and
         rotations.
         """
-        array = array_converted_to_electrons_from_fits(
+        array, bscale, bzero, exposure_time = array_converted_to_electrons_from_fits(
             file_path=file_path, quadrant_letter=quadrant_letter
         )
 
@@ -229,8 +229,8 @@ class MaskedHSTFrame(abstract_frame.AbstractFrame):
             array=array,
             quadrant_letter=quadrant_letter,
             mask=mask,
-            gain=gain,
-            gain_zero=gain_zero,
+            gain=bscale,
+            gain_zero=bzero,
             exposure_time=exposure_time,
         )
 
