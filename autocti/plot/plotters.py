@@ -260,20 +260,26 @@ class AbstractPlotter(object):
 
         if (
             include_parallel_overscan is not None
-            and frame.parallel_overscan is not None
+            and frame.scans.parallel_overscan is not None
         ):
             self.parallel_overscan_liner.draw_rectangular_grid_lines(
-                extent=frame.parallel_overscan, shape_2d=frame.shape_2d
+                extent=frame.scans.parallel_overscan, shape_2d=frame.shape_2d
             )
 
-        if include_serial_prescan is not None and frame.serial_prescan is not None:
+        if (
+            include_serial_prescan is not None
+            and frame.scans.serial_prescan is not None
+        ):
             self.serial_prescan_liner.draw_rectangular_grid_lines(
-                extent=frame.serial_prescan, shape_2d=frame.shape_2d
+                extent=frame.scans.serial_prescan, shape_2d=frame.shape_2d
             )
 
-        if include_serial_overscan is not None and frame.serial_overscan is not None:
+        if (
+            include_serial_overscan is not None
+            and frame.scans.serial_overscan is not None
+        ):
             self.serial_overscan_liner.draw_rectangular_grid_lines(
-                extent=frame.serial_overscan, shape_2d=frame.shape_2d
+                extent=frame.scans.serial_overscan, shape_2d=frame.shape_2d
             )
 
         if not bypass_output:
@@ -595,21 +601,21 @@ class Include(object):
     def parallel_overscan_from_frame(self, frame):
 
         if self.parallel_overscan:
-            return frame.parallel_overscan
+            return frame.scans.parallel_overscan
         else:
             return None
 
     def serial_prescan_from_frame(self, frame):
 
         if self.serial_prescan:
-            return frame.serial_prescan
+            return frame.scans.serial_prescan
         else:
             return None
 
     def serial_overscan_from_frame(self, frame):
 
         if self.serial_overscan:
-            return frame.serial_overscan
+            return frame.scans.serial_overscan
         else:
             return None
 

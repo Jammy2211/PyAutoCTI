@@ -407,21 +407,18 @@ class TestChiSquaredMapsOfRegions:
         image = 3.0 * ac.ci.CIFrame.ones(
             shape_2d=(2, 2),
             ci_pattern=pattern,
-            serial_prescan=(1, 2, 1, 2),
-            serial_overscan=(0, 1, 1, 2),
+            scans=ac.Scans(serial_prescan=(1, 2, 1, 2), serial_overscan=(0, 1, 1, 2)),
         )
         noise_map = ac.ci.CIFrame.ones(
             shape_2d=(2, 2),
             ci_pattern=pattern,
-            serial_prescan=(1, 2, 1, 2),
-            serial_overscan=(0, 1, 1, 2),
+            scans=ac.Scans(serial_prescan=(1, 2, 1, 2), serial_overscan=(0, 1, 1, 2)),
         )
         ci_pre_cti = ac.ci.CIFrame.full(
             fill_value=1.0,
             shape_2d=(2, 2),
             ci_pattern=pattern,
-            serial_prescan=(1, 2, 1, 2),
-            serial_overscan=(0, 1, 1, 2),
+            scans=ac.Scans(serial_prescan=(1, 2, 1, 2), serial_overscan=(0, 1, 1, 2)),
         )
 
         imaging = ac.ci.CIImaging(
@@ -447,16 +444,20 @@ class TestChiSquaredMapsOfRegions:
         pattern = ac.ci.CIPatternUniform(regions=[(0, 2, 0, 1)], normalization=1.0)
 
         image = 3.0 * ac.ci.CIFrame.ones(
-            shape_2d=(2, 2), ci_pattern=pattern, serial_overscan=(1, 2, 0, 2)
+            shape_2d=(2, 2),
+            ci_pattern=pattern,
+            scans=ac.Scans(serial_overscan=(1, 2, 0, 2)),
         )
         noise_map = ac.ci.CIFrame.ones(
-            shape_2d=(2, 2), ci_pattern=pattern, serial_overscan=(1, 2, 0, 2)
+            shape_2d=(2, 2),
+            ci_pattern=pattern,
+            scans=ac.Scans(serial_overscan=(1, 2, 0, 2)),
         )
         ci_pre_cti = ac.ci.CIFrame.full(
             fill_value=1.0,
             shape_2d=(2, 2),
             ci_pattern=pattern,
-            serial_overscan=(1, 2, 0, 2),
+            scans=ac.Scans(serial_overscan=(1, 2, 0, 2)),
         )
 
         imaging = ac.ci.CIImaging(
@@ -481,16 +482,20 @@ class TestChiSquaredMapsOfRegions:
         pattern = ac.ci.CIPatternUniform(regions=[(0, 1, 0, 1)], normalization=1.0)
 
         image = 3.0 * ac.ci.CIFrame.ones(
-            shape_2d=(2, 2), ci_pattern=pattern, serial_overscan=(0, 2, 1, 2)
+            shape_2d=(2, 2),
+            ci_pattern=pattern,
+            scans=ac.Scans(serial_overscan=(0, 2, 1, 2)),
         )
         noise_map = ac.ci.CIFrame.ones(
-            shape_2d=(2, 2), ci_pattern=pattern, serial_overscan=(0, 2, 1, 2)
+            shape_2d=(2, 2),
+            ci_pattern=pattern,
+            scans=ac.Scans(serial_overscan=(0, 2, 1, 2)),
         )
         ci_pre_cti = ac.ci.CIFrame.full(
             fill_value=1.0,
             shape_2d=(2, 2),
             ci_pattern=pattern,
-            serial_overscan=(0, 2, 1, 2),
+            scans=ac.Scans(serial_overscan=(0, 2, 1, 2)),
         )
 
         imaging = ac.ci.CIImaging(

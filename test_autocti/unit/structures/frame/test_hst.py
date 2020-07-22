@@ -62,8 +62,8 @@ class TestFrameAPI:
         assert hst_frame.original_roe_corner == (1, 0)
         assert hst_frame.shape_2d == (2068, 2072)
         assert (hst_frame == np.zeros((2068, 2072))).all()
-        assert hst_frame.parallel_overscan == (2048, 2068, 24, 2072)
-        assert hst_frame.serial_prescan == (0, 2068, 0, 24)
+        assert hst_frame.scans.parallel_overscan == (2048, 2068, 24, 2072)
+        assert hst_frame.scans.serial_prescan == (0, 2068, 0, 24)
 
         hst_frame = ac.HSTFrame.left(
             array_electrons=hst_quadrant,
@@ -76,8 +76,8 @@ class TestFrameAPI:
         assert hst_frame.original_roe_corner == (1, 0)
         assert hst_frame.shape_2d == (2068, 2072)
         assert (hst_frame == np.zeros((2068, 2072))).all()
-        assert hst_frame.parallel_overscan == (2060, 2070, 28, 2072)
-        assert hst_frame.serial_prescan == (0, 2070, 0, 28)
+        assert hst_frame.scans.parallel_overscan == (2060, 2070, 28, 2072)
+        assert hst_frame.scans.serial_prescan == (0, 2070, 0, 28)
 
         hst_frame = ac.HSTFrame.right(
             array=hst_quadrant,
@@ -90,8 +90,8 @@ class TestFrameAPI:
         assert hst_frame.original_roe_corner == (1, 1)
         assert hst_frame.shape_2d == (2068, 2072)
         assert (hst_frame == np.zeros((2068, 2072))).all()
-        assert hst_frame.parallel_overscan == (2048, 2068, 24, 2072)
-        assert hst_frame.serial_prescan == (0, 2068, 0, 24)
+        assert hst_frame.scans.parallel_overscan == (2048, 2068, 24, 2072)
+        assert hst_frame.scans.serial_prescan == (0, 2068, 0, 24)
 
         hst_frame = ac.HSTFrame.right(
             array=hst_quadrant,
@@ -104,8 +104,8 @@ class TestFrameAPI:
         assert hst_frame.original_roe_corner == (1, 1)
         assert hst_frame.shape_2d == (2068, 2072)
         assert (hst_frame == np.zeros((2068, 2072))).all()
-        assert hst_frame.parallel_overscan == (2060, 2070, 28, 2072)
-        assert hst_frame.serial_prescan == (0, 2070, 0, 28)
+        assert hst_frame.scans.parallel_overscan == (2060, 2070, 28, 2072)
+        assert hst_frame.scans.serial_prescan == (0, 2070, 0, 28)
 
     def test__from_ccd__chooses_correct_frame_given_quadrant_letter(self, hst_ccd):
 
@@ -259,8 +259,8 @@ class TestMaskedFrameAPI:
         assert hst_frame.original_roe_corner == (1, 0)
         assert hst_frame.shape_2d == (2068, 2072)
         assert (hst_frame == np.zeros((2068, 2072))).all()
-        assert hst_frame.parallel_overscan == (2048, 2068, 24, 2072)
-        assert hst_frame.serial_prescan == (0, 2068, 0, 24)
+        assert hst_frame.scans.parallel_overscan == (2048, 2068, 24, 2072)
+        assert hst_frame.scans.serial_prescan == (0, 2068, 0, 24)
         assert hst_frame.mask[0, 0] == True
         assert hst_frame.mask[0, 1] == False
 
@@ -276,8 +276,8 @@ class TestMaskedFrameAPI:
         assert hst_frame.original_roe_corner == (1, 0)
         assert hst_frame.shape_2d == (2068, 2072)
         assert (hst_frame == np.zeros((2068, 2072))).all()
-        assert hst_frame.parallel_overscan == (2060, 2070, 28, 2072)
-        assert hst_frame.serial_prescan == (0, 2070, 0, 28)
+        assert hst_frame.scans.parallel_overscan == (2060, 2070, 28, 2072)
+        assert hst_frame.scans.serial_prescan == (0, 2070, 0, 28)
         assert hst_frame.mask[0, 0] == True
         assert hst_frame.mask[0, 1] == False
 
@@ -293,8 +293,8 @@ class TestMaskedFrameAPI:
         assert hst_frame.original_roe_corner == (1, 1)
         assert hst_frame.shape_2d == (2068, 2072)
         assert (hst_frame == np.zeros((2068, 2072))).all()
-        assert hst_frame.parallel_overscan == (2048, 2068, 24, 2072)
-        assert hst_frame.serial_prescan == (0, 2068, 0, 24)
+        assert hst_frame.scans.parallel_overscan == (2048, 2068, 24, 2072)
+        assert hst_frame.scans.serial_prescan == (0, 2068, 0, 24)
         assert hst_frame.mask[0, -1] == True
         assert hst_frame.mask[0, 1] == False
 
@@ -310,8 +310,8 @@ class TestMaskedFrameAPI:
         assert hst_frame.original_roe_corner == (1, 1)
         assert hst_frame.shape_2d == (2068, 2072)
         assert (hst_frame == np.zeros((2068, 2072))).all()
-        assert hst_frame.parallel_overscan == (2060, 2070, 28, 2072)
-        assert hst_frame.serial_prescan == (0, 2070, 0, 28)
+        assert hst_frame.scans.parallel_overscan == (2060, 2070, 28, 2072)
+        assert hst_frame.scans.serial_prescan == (0, 2070, 0, 28)
         assert hst_frame.mask[0, -1] == True
         assert hst_frame.mask[0, 1] == False
 

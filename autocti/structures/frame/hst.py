@@ -156,8 +156,9 @@ class HSTFrame(f.Frame):
         return f.Frame.manual(
             array=array_electrons,
             roe_corner=(1, 0),
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
+            scans=abstract_frame.Scans(
+                parallel_overscan=parallel_overscan, serial_prescan=serial_prescan
+            ),
             gain=gain,
             gain_zero=gain_zero,
             exposure_time=exposure_time,
@@ -199,8 +200,9 @@ class HSTFrame(f.Frame):
         return f.Frame.manual(
             array=array,
             roe_corner=(1, 1),
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
+            scans=abstract_frame.Scans(
+                parallel_overscan=parallel_overscan, serial_prescan=serial_prescan
+            ),
             gain=gain,
             gain_zero=gain_zero,
             exposure_time=exposure_time,
@@ -324,8 +326,9 @@ class MaskedHSTFrame(abstract_frame.AbstractFrame):
             array=array,
             mask=mask,
             roe_corner=(1, 0),
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
+            scans=abstract_frame.Scans(
+                parallel_overscan=parallel_overscan, serial_prescan=serial_prescan
+            ),
             gain=gain,
             gain_zero=gain_zero,
             exposure_time=exposure_time,
@@ -370,8 +373,9 @@ class MaskedHSTFrame(abstract_frame.AbstractFrame):
             array=array,
             mask=mask,
             roe_corner=(1, 1),
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
+            scans=abstract_frame.Scans(
+                parallel_overscan=parallel_overscan, serial_prescan=serial_prescan
+            ),
             gain=gain,
             gain_zero=gain_zero,
             exposure_time=exposure_time,

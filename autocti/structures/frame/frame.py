@@ -13,9 +13,7 @@ class Frame(abstract_frame.AbstractFrame):
         cls,
         array,
         roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
+        scans=None,
         gain=None,
         gain_zero=0.0,
         exposure_time=None,
@@ -54,21 +52,17 @@ class Frame(abstract_frame.AbstractFrame):
 
         mask = msk.Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
 
+        scans = abstract_frame.Scans.rotated_from_roe_corner(
+            roe_corner=roe_corner, shape_2d=array.shape, scans=scans
+        )
+
         return Frame(
             array=frame_util.rotate_array_from_roe_corner(
                 array=array, roe_corner=roe_corner
             ),
             mask=mask,
             original_roe_corner=roe_corner,
-            parallel_overscan=frame_util.rotate_region_from_roe_corner(
-                region=parallel_overscan, shape_2d=array.shape, roe_corner=roe_corner
-            ),
-            serial_prescan=frame_util.rotate_region_from_roe_corner(
-                region=serial_prescan, shape_2d=array.shape, roe_corner=roe_corner
-            ),
-            serial_overscan=frame_util.rotate_region_from_roe_corner(
-                region=serial_overscan, shape_2d=array.shape, roe_corner=roe_corner
-            ),
+            scans=scans,
             gain=gain,
             gain_zero=gain_zero,
             exposure_time=exposure_time,
@@ -80,9 +74,7 @@ class Frame(abstract_frame.AbstractFrame):
         fill_value,
         shape_2d,
         roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
+        scans=None,
         gain=None,
         gain_zero=0.0,
         exposure_time=None,
@@ -92,9 +84,7 @@ class Frame(abstract_frame.AbstractFrame):
         return cls.manual(
             array=np.full(fill_value=fill_value, shape=shape_2d),
             roe_corner=roe_corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=scans,
             gain=gain,
             gain_zero=gain_zero,
             exposure_time=exposure_time,
@@ -106,9 +96,7 @@ class Frame(abstract_frame.AbstractFrame):
         cls,
         shape_2d,
         roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
+        scans=None,
         gain=None,
         gain_zero=0.0,
         exposure_time=None,
@@ -118,9 +106,7 @@ class Frame(abstract_frame.AbstractFrame):
             fill_value=1.0,
             shape_2d=shape_2d,
             roe_corner=roe_corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=scans,
             gain=gain,
             gain_zero=gain_zero,
             exposure_time=exposure_time,
@@ -132,9 +118,7 @@ class Frame(abstract_frame.AbstractFrame):
         cls,
         shape_2d,
         roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
+        scans=None,
         gain=None,
         gain_zero=0.0,
         exposure_time=None,
@@ -144,9 +128,7 @@ class Frame(abstract_frame.AbstractFrame):
             fill_value=0.0,
             shape_2d=shape_2d,
             roe_corner=roe_corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=scans,
             gain=gain,
             gain_zero=gain_zero,
             exposure_time=exposure_time,
@@ -156,21 +138,14 @@ class Frame(abstract_frame.AbstractFrame):
     @classmethod
     def extracted_frame_from_frame_and_extraction_region(cls, frame, extraction_region):
 
+        scans = abstract_frame.Scans.after_extraction(
+            frame=frame, extraction_region=extraction_region
+        )
+
         return cls.manual(
             array=frame[extraction_region.slice],
-            parallel_overscan=frame_util.region_after_extraction(
-                original_region=frame.parallel_overscan,
-                extraction_region=extraction_region,
-            ),
-            serial_prescan=frame_util.region_after_extraction(
-                original_region=frame.serial_prescan,
-                extraction_region=extraction_region,
-            ),
-            serial_overscan=frame_util.region_after_extraction(
-                original_region=frame.serial_overscan,
-                extraction_region=extraction_region,
-            ),
             roe_corner=frame.original_roe_corner,
+            scans=scans,
             gain=frame.gain,
             gain_zero=frame.gain_zero,
             exposure_time=frame.exposure_time,
@@ -183,9 +158,7 @@ class Frame(abstract_frame.AbstractFrame):
         file_path,
         hdu,
         roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
+        scans=None,
         gain=None,
         gain_zero=0.0,
         exposure_time=None,
@@ -203,7 +176,7 @@ class Frame(abstract_frame.AbstractFrame):
             The HDU number in the fits file containing the image ci_data.
         frame_geometry : FrameArray.FrameGeometry
             The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
-            locations of different regions of the CCD (overscans, prescan, etc.)
+            locations of different scans of the CCD (overscans, prescan, etc.)
         """
 
         pixel_scales = abstract_structure.convert_pixel_scales(
@@ -215,9 +188,7 @@ class Frame(abstract_frame.AbstractFrame):
         return cls.manual(
             array=array,
             roe_corner=roe_corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=scans,
             gain=gain,
             gain_zero=gain_zero,
             exposure_time=exposure_time,
@@ -232,9 +203,7 @@ class MaskedFrame(abstract_frame.AbstractFrame):
         array,
         mask,
         roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
+        scans=None,
         gain=None,
         gain_zero=0.0,
         exposure_time=None,
@@ -275,19 +244,15 @@ class MaskedFrame(abstract_frame.AbstractFrame):
 
         array[mask == True] = 0.0
 
+        scans = abstract_frame.Scans.rotated_from_roe_corner(
+            roe_corner=roe_corner, shape_2d=array.shape, scans=scans
+        )
+
         return Frame(
             array=array,
             mask=mask,
             original_roe_corner=roe_corner,
-            parallel_overscan=frame_util.rotate_region_from_roe_corner(
-                region=parallel_overscan, shape_2d=array.shape, roe_corner=roe_corner
-            ),
-            serial_prescan=frame_util.rotate_region_from_roe_corner(
-                region=serial_prescan, shape_2d=array.shape, roe_corner=roe_corner
-            ),
-            serial_overscan=frame_util.rotate_region_from_roe_corner(
-                region=serial_overscan, shape_2d=array.shape, roe_corner=roe_corner
-            ),
+            scans=scans,
             gain=gain,
             gain_zero=gain_zero,
             exposure_time=exposure_time,
@@ -299,9 +264,7 @@ class MaskedFrame(abstract_frame.AbstractFrame):
         fill_value,
         mask,
         roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
+        scans=None,
         gain=None,
         gain_zero=0.0,
         exposure_time=None,
@@ -311,9 +274,7 @@ class MaskedFrame(abstract_frame.AbstractFrame):
             array=np.full(fill_value=fill_value, shape=mask.shape_2d),
             roe_corner=roe_corner,
             mask=mask,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=scans,
             gain=gain,
             gain_zero=gain_zero,
             exposure_time=exposure_time,
@@ -324,9 +285,7 @@ class MaskedFrame(abstract_frame.AbstractFrame):
         cls,
         mask,
         roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
+        scans=None,
         gain=None,
         gain_zero=0.0,
         exposure_time=None,
@@ -335,9 +294,7 @@ class MaskedFrame(abstract_frame.AbstractFrame):
             fill_value=1.0,
             mask=mask,
             roe_corner=roe_corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=scans,
             gain=gain,
             gain_zero=gain_zero,
             exposure_time=exposure_time,
@@ -348,9 +305,7 @@ class MaskedFrame(abstract_frame.AbstractFrame):
         cls,
         mask,
         roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
+        scans=None,
         gain=None,
         gain_zero=0.0,
         exposure_time=None,
@@ -359,9 +314,7 @@ class MaskedFrame(abstract_frame.AbstractFrame):
             fill_value=0.0,
             mask=mask,
             roe_corner=roe_corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=scans,
             gain=gain,
             gain_zero=gain_zero,
             exposure_time=exposure_time,
@@ -374,9 +327,7 @@ class MaskedFrame(abstract_frame.AbstractFrame):
         hdu,
         mask,
         roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
+        scans=None,
         gain=None,
         gain_zero=0.0,
         exposure_time=None,
@@ -393,15 +344,13 @@ class MaskedFrame(abstract_frame.AbstractFrame):
             The HDU number in the fits file containing the image ci_data.
         frame_geometry : FrameArray.FrameGeometry
             The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
-            locations of different regions of the CCD (overscans, prescan, etc.)
+            locations of different scans of the CCD (overscans, prescan, etc.)
         """
         return cls.manual(
             array=array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu),
             mask=mask,
             roe_corner=roe_corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            scans=scans,
             gain=gain,
             gain_zero=gain_zero,
             exposure_time=exposure_time,
@@ -413,9 +362,7 @@ class MaskedFrame(abstract_frame.AbstractFrame):
             array=frame,
             mask=mask,
             original_roe_corner=frame.original_roe_corner,
-            parallel_overscan=frame.parallel_overscan,
-            serial_prescan=frame.serial_prescan,
-            serial_overscan=frame.serial_overscan,
+            scans=abstract_frame.Scans.from_frame(frame=frame),
             gain=frame.gain,
             gain_zero=frame.gain_zero,
             exposure_time=frame.exposure_time,

@@ -83,13 +83,13 @@ class TestFrameRegions:
         )
 
         frame = ac.Frame.manual(
-            array=arr, roe_corner=(1, 0), parallel_overscan=(0, 1, 0, 1)
+            array=arr, roe_corner=(1, 0), scans=ac.Scans(parallel_overscan=(0, 1, 0, 1))
         )
 
         assert (frame.parallel_overscan_frame == np.array([[0.0]])).all()
 
         frame = ac.Frame.manual(
-            array=arr, roe_corner=(1, 0), parallel_overscan=(0, 3, 0, 2)
+            array=arr, roe_corner=(1, 0), scans=ac.Scans(parallel_overscan=(0, 3, 0, 2))
         )
 
         assert (
@@ -98,7 +98,7 @@ class TestFrameRegions:
         ).all()
 
         frame = ac.Frame.manual(
-            array=arr, roe_corner=(1, 0), parallel_overscan=(0, 4, 2, 3)
+            array=arr, roe_corner=(1, 0), scans=ac.Scans(parallel_overscan=(0, 4, 2, 3))
         )
 
         assert (
@@ -112,19 +112,19 @@ class TestFrameRegions:
         )
 
         frame = ac.Frame.manual(
-            array=arr, roe_corner=(1, 0), parallel_overscan=(0, 1, 0, 1)
+            array=arr, roe_corner=(1, 0), scans=ac.Scans(parallel_overscan=(0, 1, 0, 1))
         )
 
         assert (frame.parallel_overscan_binned_line == np.array([0.0])).all()
 
         frame = ac.Frame.manual(
-            array=arr, roe_corner=(1, 0), parallel_overscan=(0, 3, 0, 2)
+            array=arr, roe_corner=(1, 0), scans=ac.Scans(parallel_overscan=(0, 3, 0, 2))
         )
 
         assert (frame.parallel_overscan_binned_line == np.array([0.5, 3.5, 6.5])).all()
 
         frame = ac.Frame.manual(
-            array=arr, roe_corner=(1, 0), parallel_overscan=(0, 4, 2, 3)
+            array=arr, roe_corner=(1, 0), scans=ac.Scans(parallel_overscan=(0, 4, 2, 3))
         )
 
         assert (
@@ -224,13 +224,13 @@ class TestFrameRegions:
         )
 
         frame = ac.Frame.manual(
-            array=arr, roe_corner=(1, 0), serial_overscan=(0, 1, 0, 1)
+            array=arr, roe_corner=(1, 0), scans=ac.Scans(serial_overscan=(0, 1, 0, 1))
         )
 
         assert (frame.serial_overscan_frame == np.array([[0.0]])).all()
 
         frame = ac.Frame.manual(
-            array=arr, roe_corner=(1, 0), serial_overscan=(0, 3, 0, 2)
+            array=arr, roe_corner=(1, 0), scans=ac.Scans(serial_overscan=(0, 3, 0, 2))
         )
 
         assert (
@@ -239,7 +239,7 @@ class TestFrameRegions:
         ).all()
 
         frame = ac.Frame.manual(
-            array=arr, roe_corner=(1, 0), serial_overscan=(0, 4, 2, 3)
+            array=arr, roe_corner=(1, 0), scans=ac.Scans(serial_overscan=(0, 4, 2, 3))
         )
 
         assert (
@@ -253,19 +253,19 @@ class TestFrameRegions:
         )
 
         frame = ac.Frame.manual(
-            array=arr, roe_corner=(1, 0), serial_overscan=(0, 1, 0, 1)
+            array=arr, roe_corner=(1, 0), scans=ac.Scans(serial_overscan=(0, 1, 0, 1))
         )
 
         assert (frame.serial_overscan_binned_line == np.array([0.0])).all()
 
         frame = ac.Frame.manual(
-            array=arr, roe_corner=(1, 0), serial_overscan=(0, 3, 0, 2)
+            array=arr, roe_corner=(1, 0), scans=ac.Scans(serial_overscan=(0, 3, 0, 2))
         )
 
         assert (frame.serial_overscan_binned_line == np.array([3.0, 4.0])).all()
 
         frame = ac.Frame.manual(
-            array=arr, roe_corner=(1, 0), serial_overscan=(0, 4, 2, 3)
+            array=arr, roe_corner=(1, 0), scans=ac.Scans(serial_overscan=(0, 4, 2, 3))
         )
 
         assert (frame.serial_overscan_binned_line == np.array([6.5])).all()

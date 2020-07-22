@@ -72,9 +72,11 @@ class TestCIImaging(object):
 
         imaging = ac.ci.CIImaging.from_fits(
             roe_corner=(1, 0),
-            parallel_overscan=(1, 2, 3, 4),
-            serial_prescan=(5, 6, 7, 8),
-            serial_overscan=(2, 4, 6, 8),
+            scans=ac.Scans(
+                parallel_overscan=(1, 2, 3, 4),
+                serial_prescan=(5, 6, 7, 8),
+                serial_overscan=(2, 4, 6, 8),
+            ),
             ci_pattern=ci_pattern_7x7,
             image_path=test_data_path + "3x3_ones.fits",
             image_hdu=0,
@@ -88,9 +90,9 @@ class TestCIImaging(object):
 
         assert imaging.image.original_roe_corner == (1, 0)
         assert imaging.ci_pattern.regions == ci_pattern_7x7.regions
-        assert imaging.image.parallel_overscan == (1, 2, 3, 4)
-        assert imaging.image.serial_prescan == (5, 6, 7, 8)
-        assert imaging.image.serial_overscan == (2, 4, 6, 8)
+        assert imaging.image.scans.parallel_overscan == (1, 2, 3, 4)
+        assert imaging.image.scans.serial_prescan == (5, 6, 7, 8)
+        assert imaging.image.scans.serial_overscan == (2, 4, 6, 8)
         assert (imaging.image == np.ones((3, 3))).all()
         assert (imaging.noise_map == 2.0 * np.ones((3, 3))).all()
         assert (imaging.ci_pre_cti == 3.0 * np.ones((3, 3))).all()

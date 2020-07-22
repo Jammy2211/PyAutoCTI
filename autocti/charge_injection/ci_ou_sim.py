@@ -76,7 +76,7 @@ def non_uniform_frame_for_ou_sim(ccd_id, quadrant_id):
         - Includes information on different regions of the image, such as the serial prescan and overscans.
     """
     ci_pre_ctis = [
-        ci_frame.EuclidCIFrame.ccd_and_quadrant_id(
+        ci_frame.EuclidCIFrame.from_ccd_and_quadrant_id(
             array=ci_pre_cti,
             ci_pattern=ci_pattern,
             ccd_id=ccd_id,

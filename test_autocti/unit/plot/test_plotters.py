@@ -813,7 +813,9 @@ class TestInclude:
         assert parallel_overscan == None
 
         frame = ac.Frame.ones(
-            shape_2d=(31, 31), pixel_scales=(1.0, 1.0), parallel_overscan=(0, 1, 2, 3)
+            shape_2d=(31, 31),
+            pixel_scales=(1.0, 1.0),
+            scans=ac.Scans(parallel_overscan=(0, 1, 2, 3)),
         )
 
         include = aplt.Include(parallel_overscan=False)
@@ -839,7 +841,9 @@ class TestInclude:
         assert serial_prescan == None
 
         frame = ac.Frame.ones(
-            shape_2d=(31, 31), pixel_scales=(1.0, 1.0), serial_prescan=(0, 1, 2, 3)
+            shape_2d=(31, 31),
+            pixel_scales=(1.0, 1.0),
+            scans=ac.Scans(serial_prescan=(0, 1, 2, 3)),
         )
 
         include = aplt.Include(serial_prescan=False)
@@ -865,7 +869,9 @@ class TestInclude:
         assert serial_overscan == None
 
         frame = ac.Frame.ones(
-            shape_2d=(31, 31), pixel_scales=(1.0, 1.0), serial_overscan=(0, 1, 2, 3)
+            shape_2d=(31, 31),
+            pixel_scales=(1.0, 1.0),
+            scans=ac.Scans(serial_overscan=(0, 1, 2, 3)),
         )
 
         include = aplt.Include(serial_overscan=False)
