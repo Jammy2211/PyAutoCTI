@@ -290,10 +290,6 @@ class AbstractFrame(arrays.Array):
     def serial_entire_rows_of_region(self, region):
         return reg.Region(region=(region.y0, region.y1, 0, self.shape_2d[1]))
 
-    @property
-    def serial_trails_columns(self):
-        return self.scans.serial_overscan[3] - self.scans.serial_overscan[2]
-
     def x_limits(self, region, columns):
         x_coord = region.x0
         x_min = x_coord + columns[0]
@@ -371,3 +367,7 @@ class Scans:
             serial_prescan=frame.scans.serial_prescan,
             serial_overscan=frame.scans.serial_overscan,
         )
+
+    @property
+    def serial_trails_columns(self):
+        return self.serial_overscan[3] - self.serial_overscan[2]
