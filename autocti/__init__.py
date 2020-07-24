@@ -4,6 +4,7 @@ from arctic.model import CCDVolume
 from arctic.model import CCDVolumeComplex
 from arctic.traps import Trap
 
+from autoarray.fit.fit import FitImaging
 from autoarray.structures.frame import EuclidFrame
 from autoarray.structures.frame import ACSFrame
 from autoarray.structures.region import Region
@@ -20,7 +21,6 @@ from .structures.frame import MaskedFrame
 from .dataset.imaging import Imaging
 from .dataset.imaging import MaskedImaging
 from .dataset import preprocess
-from .fit.fit import FitImaging
 from . import charge_injection as ci
 from .pipeline.phase.settings import PhaseSettingsCIImaging
 from .pipeline.phase.extensions import CombinedHyperPhase

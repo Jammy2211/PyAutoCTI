@@ -43,7 +43,7 @@ class TestCIFit:
             noise_map=masked_ci_imaging_7x7.noise_map, mask=masked_ci_imaging_7x7.mask
         )
 
-        log_likelihood = ac.util.fit.likelihood_from(
+        log_likelihood = ac.util.fit.log_likelihood_from(
             chi_squared=chi_squared, noise_normalization=noise_normalization
         )
 
@@ -270,7 +270,7 @@ class TestCIFit:
             noise_map=hyper_noise_map, mask=masked_ci_imaging_7x7.mask
         )
 
-        log_likelihood = ac.util.fit.likelihood_from(
+        log_likelihood = ac.util.fit.log_likelihood_from(
             chi_squared=chi_squared, noise_normalization=noise_normalization
         )
 
