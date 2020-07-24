@@ -298,7 +298,7 @@ class TestMaskedCIImaging:
             noise_scaling_maps=ci_noise_scaling_maps_7x7,
         )
 
-        mask = np.full(fill_value=False, shape=(7, 2))
+        mask = ac.Mask.unmasked(shape_2d=(7, 2))
         mask[0, 0] = True
 
         assert (masked_ci_imaging.mask == mask).all()
@@ -347,7 +347,7 @@ class TestMaskedCIImaging:
             noise_scaling_maps=ci_noise_scaling_maps_7x7,
         )
 
-        mask = np.full(fill_value=False, shape=(1, 7))
+        mask = ac.Mask.unmasked(shape_2d=(1, 7))
         mask[0, 0] = True
 
         assert (masked_ci_imaging.mask == mask).all()

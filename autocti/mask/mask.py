@@ -8,39 +8,6 @@ import numpy as np
 
 
 class Mask(abstract_mask.AbstractMask):
-
-    # noinspection PyUnusedLocal
-    def __new__(cls, mask, pixel_scales=None, origin=(0.0, 0.0), *args, **kwargs):
-        """ A 2D mask, representing a uniform rectangular grid of neighboring rectangular pixels.
-
-        A mask s applied to an Array or Grid structure to signify which entries are used in calculations, where a
-        *False* entry signifies that the mask entry is unmasked and therefore is used in calculations.
-
-        The mask defines the geometry of the 2D uniform grid of pixels, for example their pixel scale and coordinate
-        origin. The 2D uniform grid may also be sub-gridded, whereby every pixel is sub-divided into a uniform gridd
-        of sub-pixels which are all used to perform calculations more accurate. See *Grid* for a detailed description
-        of sub-gridding.
-
-        Parameters
-        ----------
-        mask: ndarray
-            The array of shape [total_y_pixels, total_x_pixels] containing the bools representing the mask, where
-            *False* signifies an entry is unmasked and used in calculations.
-        pixel_scales: (float, float) or float
-            The (y,x) arc-second to pixel conversion factors of every pixel. If this is input as a float, it is
-            converted to a (float, float) structure.
-        origin : (float, float)
-            The (y,x) arc-second origin of the mask's coordinate system.
-        """
-        # noinspection PyArgumentList
-
-        mask = mask.astype("bool")
-        obj = mask.view(cls)
-        obj.pixel_scales = pixel_scales
-        obj.sub_size = 1
-        obj.origin = origin
-        return obj
-
     @classmethod
     def manual(cls, mask, pixel_scales=None, origin=(0.0, 0.0), invert=False):
         """Create a Mask (see *Mask.__new__*) by inputting the array values in 2D, for example:
@@ -195,12 +162,3 @@ class Mask(abstract_mask.AbstractMask):
             mask = mask.resized_mask_from_new_shape(new_shape=resized_mask_shape)
 
         return mask
-
-    def __array_finalize__(self, obj):
-
-        if isinstance(obj, abstract_mask.AbstractMask):
-            self.pixel_scales = obj.pixel_scales
-            self.origin = obj.origin
-        else:
-            self.origin = (0.0, 0.0)
-            self.pixel_scales = None
