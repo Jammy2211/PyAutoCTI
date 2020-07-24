@@ -10,14 +10,7 @@ from autocti import exc
 
 class AbstractFrame(arrays.Array):
     def __new__(
-        cls,
-        array,
-        mask,
-        original_roe_corner=(1, 0),
-        scans=None,
-        gain=None,
-        gain_zero=0.0,
-        exposure_time=None,
+        cls, array, mask, original_roe_corner=(1, 0), scans=None, exposure_info=None
     ):
         """Abstract class for the geometry of a CTI Image.
 
@@ -54,9 +47,7 @@ class AbstractFrame(arrays.Array):
 
         obj.original_roe_corner = original_roe_corner
         obj.scans = scans or AbstractFrame()
-        obj.gain = gain
-        obj.gain_zero = gain_zero
-        obj.exposure_time = exposure_time
+        obj.exposure_info = exposure_info
 
         return obj
 
@@ -74,14 +65,8 @@ class AbstractFrame(arrays.Array):
             if hasattr(obj, "scans"):
                 self.scans = obj.scans
 
-            if hasattr(obj, "gain"):
-                self.gain = obj.gain
-
-            if hasattr(obj, "gain_zero"):
-                self.gain_zero = obj.gain_zero
-
-            if hasattr(obj, "exposure_time"):
-                self.exposure_time = obj.exposure_time
+            if hasattr(obj, "exposure_info"):
+                self.exposure_info = obj.exposure_info
 
     def __reduce__(self):
         # Get the parent's __reduce__ tuple
@@ -109,26 +94,26 @@ class AbstractFrame(arrays.Array):
 
     @property
     def in_counts(self):
-        if self.gain is None:
+        if self.exposure_info.bscale is None:
             raise exc.FrameException(
-                "Cannot convert a Frame to units COUNTS without a gain attribute (gain = None)."
+                "Cannot convert a Frame to units COUNTS without a bscale attribute (bscale = None)."
             )
 
-        return (self - self.gain_zero) / self.gain
+        return (self - self.exposure_info.bzero) / self.exposure_info.bscale
 
     @property
     def in_counts_per_second(self):
-        if self.gain is None:
+        if self.exposure_info.bscale is None:
             raise exc.FrameException(
-                "Cannot convert a Frame to units counts without a gain attribute (gain = None)."
+                "Cannot convert a Frame to units counts without a bscale attribute (bscale = None)."
             )
 
-        if self.exposure_time is None:
+        if self.exposure_info.exposure_time is None:
             raise exc.FrameException(
                 "Cannot convert a Frame to units counts per second without an exposure time attribute (exposure_time = None)."
             )
 
-        return self.in_counts / self.exposure_time
+        return self.in_counts / self.exposure_info.exposure_time
 
     @property
     def binned_across_parallel(self):
@@ -371,3 +356,12 @@ class Scans:
     @property
     def serial_trails_columns(self):
         return self.serial_overscan[3] - self.serial_overscan[2]
+
+
+class ExposureInfo:
+    def __init__(self, original_units=None, bscale=None, bzero=0.0, exposure_time=None):
+
+        self.original_units = original_units
+        self.bscale = bscale
+        self.bzero = bzero
+        self.exposure_time = exposure_time

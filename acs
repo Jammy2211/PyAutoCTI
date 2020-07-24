@@ -57,14 +57,14 @@ Image units (part 2)
 The images are usually stored in units of ADU “counts” or sometimes counts per second (cps). We need to convert to
 electrons, correct CTI, then convert back. Converting to electrons involves:
   (image*calibrated_gain)-bias
-...where calibrated_gain comes from commanded gain listed in the main header
+...where calibrated_gain comes from commanded bscale listed in the main header
 CCDAMP  = 'ABCD'               / CCD Amplifier Readout Configuration
-CCDGAIN =                  2.0 / commanded gain of CCD
+CCDGAIN =                  2.0 / commanded bscale of CCD
 CCDOFSTA=                    1 / commanded CCD bias offset for amplifier A
 CCDOFSTB=                    1 / commanded CCD bias offset for amplifier B
 CCDOFSTC=                    1 / commanded CCD bias offset for amplifier C
 CCDOFSTD=                    1 / commanded CCD bias offset for amplifier D
-converted into a true gain, which varies slightly between readout nodes, as listed in https://hst-docs.stsci.edu/acsihb/chapter-4-detector-performance/4-2-the-ccds#id-4.2TheCCDs-table4.1 (only 1.0 or 2.0 is ever commanded).
+converted into a true bscale, which varies slightly between readout nodes, as listed in https://hst-docs.stsci.edu/acsihb/chapter-4-detector-performance/4-2-the-ccds#id-4.2TheCCDs-table4.1 (only 1.0 or 2.0 is ever commanded).
 ...and where the most appropriate bias exposure is listed in the main header as
 BIASFILE= 'jref$2571633hj_bia.fits' / bias image file name
 where the file can be dowloaded from https://hst-crds.stsci.edu/browse/2571633hj_bia.fits (there is even a command-line command to get the file, althgouh I haven’t figured it out)
