@@ -9,8 +9,8 @@ from copy import deepcopy
 
 import numpy as np
 from autocti import exc
-from autocti.structures import region
-from autocti.util import frame_util
+from autoarray.structures import region
+from autoarray.util import frame_util
 
 
 class AbstractCIPattern(object):

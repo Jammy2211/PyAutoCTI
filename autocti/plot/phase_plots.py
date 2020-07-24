@@ -1,5 +1,5 @@
 from autocti.plot import ci_plotter_util
-from autocti.util import array_util
+from autoarray.util import array_util
 
 
 def plot_ci_data_for_phase(

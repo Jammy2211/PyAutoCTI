@@ -3,10 +3,10 @@ from copy import deepcopy
 import numpy as np
 from autoarray.structures import abstract_structure
 from autocti.charge_injection import ci_mask
-from autocti.structures.frame import abstract_frame, euclid
 from autocti.structures.frame import Frame
 from autocti.mask.mask import Mask
-from autocti.util import array_util, frame_util
+from autoarray.structures.frame import abstract_frame, euclid
+from autoarray.util import array_util, frame_util
 
 
 class AbstractCIFrame(Frame):

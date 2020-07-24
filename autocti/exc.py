@@ -1,5 +1,5 @@
 from autofit import exc
-from autoarray.exc import ArrayException, MaskException
+from autoarray.exc import ArrayException, MaskException, FrameException, RegionException
 
 
 class DataException(Exception):
@@ -7,10 +7,6 @@ class DataException(Exception):
 
 
 class CIPatternException(Exception):
-    pass
-
-
-class RegionException(Exception):
     pass
 
 
@@ -23,8 +19,4 @@ class FittingException(Exception):
 
 
 class PriorException(exc.FitException):
-    pass
-
-
-class FrameException(Exception):
     pass

@@ -8,6 +8,12 @@ from autoconf import conf
 import autocti as ac
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 from autocti.pipeline.phase.dataset import PhaseDataset
+
+from test_autoarray.unit.conftest import (
+    make_euclid_data,
+    make_acs_ccd,
+    make_acs_quadrant,
+)
 from test_autocti import mock
 
 directory = os.path.dirname(os.path.realpath(__file__))
@@ -288,24 +294,3 @@ def make_phase_data(mask_7x7):
 @pytest.fixture(name="phase_ci_imaging_7x7")
 def make_phase_ci_imaging_7x7():
     return PhaseCIImaging(phase_name="test_phase", search=mock.MockSearch())
-
-
-### EUCLID DATA ####
-
-
-@pytest.fixture(name="euclid_data")
-def make_euclid_data():
-    return np.zeros((2086, 2119))
-
-
-### ACS DATA ####
-
-
-@pytest.fixture(name="acs_ccd")
-def make_acs_ccd():
-    return np.zeros((2068, 4144))
-
-
-@pytest.fixture(name="acs_quadrant")
-def make_acs_quadrant():
-    return np.zeros((2068, 2072))

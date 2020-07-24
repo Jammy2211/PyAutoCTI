@@ -4,18 +4,19 @@ from arctic.model import CCDVolume
 from arctic.model import CCDVolumeComplex
 from arctic.traps import Trap
 
+from autoarray.structures.frame import EuclidFrame
+from autoarray.structures.frame import ACSFrame
+from autoarray.structures.region import Region
+from autoarray.structures.frame import MaskedEuclidFrame
+from autoarray.structures.frame import MaskedACSFrame
+from autoarray.structures.frame.abstract_frame import Scans
+from autoarray.structures.frame.abstract_frame import ExposureInfo
+
 from .structures.arrays import Array
-from .structures.frame.abstract_frame import Scans
-from .structures.frame.abstract_frame import ExposureInfo
 from .structures.frame import Frame
-from .structures.frame import EuclidFrame
-from .structures.frame import ACSFrame
 from .mask.mask import Mask
-from .structures.region import Region
 from .structures.arrays import MaskedArray
 from .structures.frame import MaskedFrame
-from .structures.frame import MaskedEuclidFrame
-from .structures.frame import MaskedACSFrame
 from .dataset.imaging import Imaging
 from .dataset.imaging import MaskedImaging
 from .dataset import preprocess
