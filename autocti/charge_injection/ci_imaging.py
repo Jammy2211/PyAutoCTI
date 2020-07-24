@@ -2,12 +2,12 @@ import copy
 
 import numpy as np
 from autocti.charge_injection import ci_frame, ci_pattern as pattern
-from autocti.dataset import preprocess, imaging
+from autoarray.dataset import preprocess, imaging
 from autocti.mask import mask as msk
 from autoarray.util import array_util
 
 
-class CIImaging(imaging.Imaging):
+class CIImaging(imaging.AbstractImaging):
     def __init__(self, image, noise_map, ci_pre_cti, cosmic_ray_map=None, name=None):
 
         super().__init__(image=image, noise_map=noise_map, name=name)
@@ -186,7 +186,7 @@ def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, image, mask=N
     return ci_pattern.ci_pre_cti_from_ci_image_and_mask(image, mask)
 
 
-class MaskedCIImaging(imaging.MaskedImaging):
+class MaskedCIImaging(imaging.AbstractMaskedImaging):
     def __init__(
         self,
         ci_imaging,
@@ -298,7 +298,7 @@ class MaskedCIImaging(imaging.MaskedImaging):
         return self.imaging
 
 
-class SimulatorCIImaging:
+class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
     def __init__(
         self,
         read_noise=None,
@@ -315,10 +315,12 @@ class SimulatorCIImaging:
             The exposure time of an observation using this data_type.
         """
 
-        self.read_noise = read_noise
-        self.add_noise = add_noise
-        self.noise_if_add_noise_false = noise_if_add_noise_false
-        self.noise_seed = noise_seed
+        super(SimulatorCIImaging, self).__init__(
+            read_noise=read_noise,
+            add_noise=add_noise,
+            noise_if_add_noise_false=noise_if_add_noise_false,
+            noise_seed=noise_seed,
+        )
 
     def from_image(
         self,

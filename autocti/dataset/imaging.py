@@ -8,7 +8,7 @@ from autocti.structures import arrays
 logger = logging.getLogger(__name__)
 
 
-class Imaging(im.Imaging):
+class Imaging(im.AbstractImaging):
     def __init__(self, image, noise_map, name=None):
         """A collection of 2D imaging dataset(an image, noise-map, psf, etc.)
 
