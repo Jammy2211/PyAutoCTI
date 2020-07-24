@@ -10,14 +10,7 @@ from autocti.util import frame_util
 class Frame(abstract_frame.AbstractFrame):
     @classmethod
     def manual(
-        cls,
-        array,
-        roe_corner=(1, 0),
-        scans=None,
-        gain=None,
-        gain_zero=0.0,
-        exposure_time=None,
-        pixel_scales=None,
+        cls, array, roe_corner=(1, 0), scans=None, exposure_info=None, pixel_scales=None
     ):
         """Abstract class for the geometry of a CTI Image.
 
@@ -63,9 +56,7 @@ class Frame(abstract_frame.AbstractFrame):
             mask=mask,
             original_roe_corner=roe_corner,
             scans=scans,
-            gain=gain,
-            gain_zero=gain_zero,
-            exposure_time=exposure_time,
+            exposure_info=exposure_info,
         )
 
     @classmethod
@@ -75,9 +66,7 @@ class Frame(abstract_frame.AbstractFrame):
         shape_2d,
         roe_corner=(1, 0),
         scans=None,
-        gain=None,
-        gain_zero=0.0,
-        exposure_time=None,
+        exposure_info=None,
         pixel_scales=None,
     ):
 
@@ -85,9 +74,7 @@ class Frame(abstract_frame.AbstractFrame):
             array=np.full(fill_value=fill_value, shape=shape_2d),
             roe_corner=roe_corner,
             scans=scans,
-            gain=gain,
-            gain_zero=gain_zero,
-            exposure_time=exposure_time,
+            exposure_info=exposure_info,
             pixel_scales=pixel_scales,
         )
 
@@ -97,9 +84,7 @@ class Frame(abstract_frame.AbstractFrame):
         shape_2d,
         roe_corner=(1, 0),
         scans=None,
-        gain=None,
-        gain_zero=0.0,
-        exposure_time=None,
+        exposure_info=None,
         pixel_scales=None,
     ):
         return cls.full(
@@ -107,9 +92,7 @@ class Frame(abstract_frame.AbstractFrame):
             shape_2d=shape_2d,
             roe_corner=roe_corner,
             scans=scans,
-            gain=gain,
-            gain_zero=gain_zero,
-            exposure_time=exposure_time,
+            exposure_info=exposure_info,
             pixel_scales=pixel_scales,
         )
 
@@ -119,9 +102,7 @@ class Frame(abstract_frame.AbstractFrame):
         shape_2d,
         roe_corner=(1, 0),
         scans=None,
-        gain=None,
-        gain_zero=0.0,
-        exposure_time=None,
+        exposure_info=None,
         pixel_scales=None,
     ):
         return cls.full(
@@ -129,9 +110,7 @@ class Frame(abstract_frame.AbstractFrame):
             shape_2d=shape_2d,
             roe_corner=roe_corner,
             scans=scans,
-            gain=gain,
-            gain_zero=gain_zero,
-            exposure_time=exposure_time,
+            exposure_info=exposure_info,
             pixel_scales=pixel_scales,
         )
 
@@ -146,9 +125,7 @@ class Frame(abstract_frame.AbstractFrame):
             array=frame[extraction_region.slice],
             roe_corner=frame.original_roe_corner,
             scans=scans,
-            gain=frame.gain,
-            gain_zero=frame.gain_zero,
-            exposure_time=frame.exposure_time,
+            exposure_info=frame.exposure_info,
             pixel_scales=frame.pixel_scales,
         )
 
@@ -159,9 +136,7 @@ class Frame(abstract_frame.AbstractFrame):
         hdu,
         roe_corner=(1, 0),
         scans=None,
-        gain=None,
-        gain_zero=0.0,
-        exposure_time=None,
+        exposure_info=None,
         pixel_scales=None,
     ):
         """Load the image ci_data from a fits file.
@@ -189,25 +164,14 @@ class Frame(abstract_frame.AbstractFrame):
             array=array,
             roe_corner=roe_corner,
             scans=scans,
-            gain=gain,
-            gain_zero=gain_zero,
-            exposure_time=exposure_time,
+            exposure_info=exposure_info,
             pixel_scales=pixel_scales,
         )
 
 
 class MaskedFrame(abstract_frame.AbstractFrame):
     @classmethod
-    def manual(
-        cls,
-        array,
-        mask,
-        roe_corner=(1, 0),
-        scans=None,
-        gain=None,
-        gain_zero=0.0,
-        exposure_time=None,
-    ):
+    def manual(cls, array, mask, roe_corner=(1, 0), scans=None, exposure_info=None):
         """Abstract class for the geometry of a CTI Image.
 
         A FrameArray is stored as a 2D NumPy arrays. When this immage is passed to arctic, clocking goes towards
@@ -253,84 +217,43 @@ class MaskedFrame(abstract_frame.AbstractFrame):
             mask=mask,
             original_roe_corner=roe_corner,
             scans=scans,
-            gain=gain,
-            gain_zero=gain_zero,
-            exposure_time=exposure_time,
+            exposure_info=exposure_info,
         )
 
     @classmethod
-    def full(
-        cls,
-        fill_value,
-        mask,
-        roe_corner=(1, 0),
-        scans=None,
-        gain=None,
-        gain_zero=0.0,
-        exposure_time=None,
-    ):
+    def full(cls, fill_value, mask, roe_corner=(1, 0), scans=None, exposure_info=None):
 
         return cls.manual(
             array=np.full(fill_value=fill_value, shape=mask.shape_2d),
             roe_corner=roe_corner,
             mask=mask,
             scans=scans,
-            gain=gain,
-            gain_zero=gain_zero,
-            exposure_time=exposure_time,
+            exposure_info=exposure_info,
         )
 
     @classmethod
-    def ones(
-        cls,
-        mask,
-        roe_corner=(1, 0),
-        scans=None,
-        gain=None,
-        gain_zero=0.0,
-        exposure_time=None,
-    ):
+    def ones(cls, mask, roe_corner=(1, 0), scans=None, exposure_info=None):
         return cls.full(
             fill_value=1.0,
             mask=mask,
             roe_corner=roe_corner,
             scans=scans,
-            gain=gain,
-            gain_zero=gain_zero,
-            exposure_time=exposure_time,
+            exposure_info=exposure_info,
         )
 
     @classmethod
-    def zeros(
-        cls,
-        mask,
-        roe_corner=(1, 0),
-        scans=None,
-        gain=None,
-        gain_zero=0.0,
-        exposure_time=None,
-    ):
+    def zeros(cls, mask, roe_corner=(1, 0), scans=None, exposure_info=None):
         return cls.full(
             fill_value=0.0,
             mask=mask,
             roe_corner=roe_corner,
             scans=scans,
-            gain=gain,
-            gain_zero=gain_zero,
-            exposure_time=exposure_time,
+            exposure_info=exposure_info,
         )
 
     @classmethod
     def from_fits(
-        cls,
-        file_path,
-        hdu,
-        mask,
-        roe_corner=(1, 0),
-        scans=None,
-        gain=None,
-        gain_zero=0.0,
-        exposure_time=None,
+        cls, file_path, hdu, mask, roe_corner=(1, 0), scans=None, exposure_info=None
     ):
         """Load the image ci_data from a fits file.
 
@@ -351,9 +274,7 @@ class MaskedFrame(abstract_frame.AbstractFrame):
             mask=mask,
             roe_corner=roe_corner,
             scans=scans,
-            gain=gain,
-            gain_zero=gain_zero,
-            exposure_time=exposure_time,
+            exposure_info=exposure_info,
         )
 
     @classmethod
@@ -363,7 +284,5 @@ class MaskedFrame(abstract_frame.AbstractFrame):
             mask=mask,
             original_roe_corner=frame.original_roe_corner,
             scans=abstract_frame.Scans.from_frame(frame=frame),
-            gain=frame.gain,
-            gain_zero=frame.gain_zero,
-            exposure_time=frame.exposure_time,
+            exposure_info=frame.exposure_info,
         )
