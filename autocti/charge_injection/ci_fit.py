@@ -1,7 +1,7 @@
 import numpy as np
 
 from autocti.charge_injection import ci_imaging
-from autocti.fit import fit
+from autoarray.fit import fit
 
 
 class CIFitImaging(fit.FitImaging):
