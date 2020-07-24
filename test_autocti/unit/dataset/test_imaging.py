@@ -8,65 +8,6 @@ test_data_path = "{}/files/array/".format(os.path.dirname(os.path.realpath(__fil
 
 
 class TestImaging:
-    def test__new_imaging__signal_to_noise_limit_above_max_signal_to_noise__signal_to_noise_map_unchanged(
-        self
-    ):
-        image = ac.Array.full(fill_value=20.0, shape_2d=(2, 2))
-        image[1, 1] = 5.0
-
-        noise_map_array = ac.Array.full(fill_value=5.0, shape_2d=(2, 2))
-        noise_map_array[1, 1] = 2.0
-
-        imaging = ac.Imaging(image=image, noise_map=noise_map_array)
-
-        imaging = imaging.signal_to_noise_limited_from_signal_to_noise_limit(
-            signal_to_noise_limit=100.0
-        )
-
-        assert (imaging.image == np.array([[20.0, 20.0], [20.0, 5.0]])).all()
-
-        assert (imaging.noise_map == np.array([[5.0, 5.0], [5.0, 2.0]])).all()
-
-        assert (imaging.signal_to_noise_map == np.array([[4.0, 4.0], [4.0, 2.5]])).all()
-
-    def test__new_imaging__signal_to_noise_limit_below_max_signal_to_noise__signal_to_noise_map_capped_to_limit(
-        self
-    ):
-        image = ac.Array.full(fill_value=20.0, shape_2d=(2, 2))
-        image[1, 1] = 5.0
-
-        noise_map_array = ac.Array.full(fill_value=5.0, shape_2d=(2, 2))
-        noise_map_array[1, 1] = 2.0
-
-        imaging = ac.Imaging(image=image, noise_map=noise_map_array)
-
-        imaging_capped = imaging.signal_to_noise_limited_from_signal_to_noise_limit(
-            signal_to_noise_limit=2.0
-        )
-
-        assert (imaging_capped.image == np.array([[20.0, 20.0], [20.0, 5.0]])).all()
-
-        assert (imaging_capped.noise_map == np.array([[10.0, 10.0], [10.0, 2.5]])).all()
-
-        assert (
-            imaging_capped.signal_to_noise_map == np.array([[2.0, 2.0], [2.0, 2.0]])
-        ).all()
-
-        imaging_capped = imaging.signal_to_noise_limited_from_signal_to_noise_limit(
-            signal_to_noise_limit=3.0
-        )
-
-        assert (imaging_capped.image == np.array([[20.0, 20.0], [20.0, 5.0]])).all()
-
-        assert (
-            imaging_capped.noise_map
-            == np.array([[(20.0 / 3.0), (20.0 / 3.0)], [(20.0 / 3.0), 2.0]])
-        ).all()
-
-        assert (
-            imaging_capped.signal_to_noise_map == np.array([[3.0, 3.0], [3.0, 2.5]])
-        ).all()
-
     def test__from_fits__loads_arrays_and_psf_is_renormalized(self):
 
         imaging = ac.Imaging.from_fits(
@@ -172,15 +113,3 @@ class TestMaskedImaging:
         assert (masked_imaging.imaging.noise_map == 2.0 * np.ones((19, 19))).all()
         assert (masked_imaging.image[9, 9] == np.array([1.0])).all()
         assert (masked_imaging.noise_map[9, 9] == np.array([2.0])).all()
-
-    def test__modified_noise_map(self, noise_map_7x7, imaging_7x7, mask_7x7):
-
-        masked_imaging_7x7 = ac.MaskedImaging(imaging=imaging_7x7, mask=mask_7x7)
-
-        noise_map_7x7[0, 0] = 11.0
-
-        masked_imaging_7x7 = masked_imaging_7x7.modify_noise_map(
-            noise_map=noise_map_7x7
-        )
-
-        assert masked_imaging_7x7.noise_map[0, 0] == 11.0

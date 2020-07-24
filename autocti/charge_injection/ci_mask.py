@@ -3,10 +3,6 @@ from autocti.mask.mask import Mask
 
 
 class CIMask(Mask):
-    def __new__(cls, mask, *args, **kwargs):
-        mask = np.array(mask, dtype="bool").view(cls)
-        return mask
-
     @classmethod
     def masked_parallel_front_edge_from_ci_frame(cls, ci_frame, rows, invert=False):
 

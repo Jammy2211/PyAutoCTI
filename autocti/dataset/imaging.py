@@ -2,13 +2,13 @@ import copy
 import logging
 
 import numpy as np
-from autocti.dataset import abstract_dataset
+from autoarray.dataset import imaging as im
 from autocti.structures import arrays
 
 logger = logging.getLogger(__name__)
 
 
-class Imaging(abstract_dataset.AbstractDataset):
+class Imaging(im.Imaging):
     def __init__(self, image, noise_map, name=None):
         """A collection of 2D imaging dataset(an image, noise-map, psf, etc.)
 
@@ -31,7 +31,7 @@ class Imaging(abstract_dataset.AbstractDataset):
             An array describing the background sky.
         """
 
-        super(Imaging, self).__init__(data=image, noise_map=noise_map, name=name)
+        super(Imaging, self).__init__(image=image, noise_map=noise_map, name=name)
 
     @classmethod
     def from_fits(
@@ -74,42 +74,6 @@ class Imaging(abstract_dataset.AbstractDataset):
 
         return Imaging(image=image, noise_map=noise_map, name=name)
 
-    @property
-    def shape_2d(self):
-        return self.image.shape_2d
-
-    @property
-    def image(self):
-        return self.data
-
-    @property
-    def pixel_scales(self):
-        return self.data.pixel_scales
-
-    @property
-    def pixel_scale(self):
-        return self.data.pixel_scale
-
-    @property
-    def origin(self):
-        return self.image.mask.origin
-
-    def signal_to_noise_limited_from_signal_to_noise_limit(self, signal_to_noise_limit):
-
-        imaging = copy.deepcopy(self)
-
-        noise_map_limit = np.where(
-            self.signal_to_noise_map > signal_to_noise_limit,
-            np.abs(self.image) / signal_to_noise_limit,
-            self.noise_map,
-        )
-
-        imaging.noise_map = arrays.MaskedArray(
-            array=noise_map_limit, mask=self.image.mask
-        )
-
-        return imaging
-
     def output_to_fits(self, image_path, noise_map_path=None, overwrite=False):
 
         self.image.output_to_fits(file_path=image_path, overwrite=overwrite)
@@ -118,7 +82,7 @@ class Imaging(abstract_dataset.AbstractDataset):
             self.noise_map.output_to_fits(file_path=noise_map_path, overwrite=overwrite)
 
 
-class MaskedImaging(abstract_dataset.AbstractMaskedDataset):
+class MaskedImaging(im.MaskedImaging):
     def __init__(self, imaging, mask):
         """
         The lens dataset is the collection of data_type (image, noise-map, PSF), a mask, grid, convolver \
@@ -135,20 +99,7 @@ class MaskedImaging(abstract_dataset.AbstractMaskedDataset):
             The 2D mask that is applied to the image.
         """
 
-        super().__init__(mask=mask)
+        super().__init__(imaging=imaging, mask=mask)
 
-        self.imaging = imaging
         self.image = imaging.image * np.invert(mask)
         self.noise_map = imaging.noise_map * np.invert(mask)
-
-    @property
-    def data(self):
-        return self.image
-
-    def signal_to_noise_map(self):
-        return self.image / self.noise_map
-
-    @property
-    def signal_to_noise_max(self):
-        """The maximum value of signal-to-noise_maps in an image pixel in the image's signal-to-noise_maps mappers"""
-        return np.max(self.signal_to_noise_map)
