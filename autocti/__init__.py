@@ -9,13 +9,13 @@ from .structures.frame.abstract_frame import Scans
 from .structures.frame.abstract_frame import ExposureInfo
 from .structures.frame import Frame
 from .structures.frame import EuclidFrame
-from .structures.frame import HSTFrame
+from .structures.frame import ACSFrame
 from .mask.mask import Mask
 from .structures.region import Region
 from .structures.arrays import MaskedArray
 from .structures.frame import MaskedFrame
 from .structures.frame import MaskedEuclidFrame
-from .structures.frame import MaskedHSTFrame
+from .structures.frame import MaskedACSFrame
 from .dataset.imaging import Imaging
 from .dataset.imaging import MaskedImaging
 from .dataset import preprocess

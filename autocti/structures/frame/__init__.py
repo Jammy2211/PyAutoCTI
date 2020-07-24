@@ -4,7 +4,7 @@ __path__ = extend_path(__path__, __name__)
 
 from .frame import Frame
 from .frame import MaskedFrame
-from .hst import HSTFrame
-from .hst import MaskedHSTFrame
+from .acs import ACSFrame
+from .acs import MaskedACSFrame
 from .euclid import EuclidFrame
 from .euclid import MaskedEuclidFrame

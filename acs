@@ -1,6 +1,6 @@
 Hi James,
 
-Thanks for writing an HST wrapper. An example HST data file is
+Thanks for writing an ACS wrapper. An example ACS data file is
 https://www.dropbox.com/s/4smmwgq4id6fi88/j8xi61meq_raw.fits?dl=0
 which I’ve corrected using IDL code at
 https://www.dropbox.com/s/f1pk620smhzlrq9/j8xi61meq_cte.fits?dl=0
@@ -14,18 +14,18 @@ Richard
 
 
 Where are the quadrants?
-An HST/ACS fits file contains 6 arrays (I’m not sure how you select which one is to be read in python), and
+An ACS/ACS fits file contains 6 arrays (I’m not sure how you select which one is to be read in python), and
 7 headers (one main header, plus one header for each image). Arrays 4 and 1 are the pixel data for CCD1
 (quadrants C and D) and CCD2 (quadrants B and A).
 Arrays 2, 3, 5 and 6 are noise estimates and data quality flags - you don’t need to touch those.
-If you want to check you have an HST image, the main header should contain
-TELESCOP= 'HST'                / telescope used to acquire data
+If you want to check you have an ACS image, the main header should contain
+TELESCOP= 'ACS'                / telescope used to acquire data
 INSTRUME= 'ACS   '             / identifier for instrument used to acquire data
 
 
 Size/orientation of the quadrants
 Both image arrays contain 2 quadrants, and have the same number of pixels/orientation. See diagram in attached photo
-or https://hst-docs.stsci.edu/acsihb/chapter-4-detector-performance/4-2-the-ccds#id-4.2TheCCDs-4.2.54.2.5CCDReadoutFormat
+or https://acs-docs.stsci.edu/acsihb/chapter-4-detector-performance/4-2-the-ccds#id-4.2TheCCDs-4.2.54.2.5CCDReadoutFormat
 If you look at an image array, the parallel CTI trails make things obvious.
 You can hardcode the layout of the pixels, as it has alwys been the same - but if you insist, it is specified in the
 header for each array as
@@ -64,13 +64,13 @@ CCDOFSTA=                    1 / commanded CCD bias offset for amplifier A
 CCDOFSTB=                    1 / commanded CCD bias offset for amplifier B
 CCDOFSTC=                    1 / commanded CCD bias offset for amplifier C
 CCDOFSTD=                    1 / commanded CCD bias offset for amplifier D
-converted into a true bscale, which varies slightly between readout nodes, as listed in https://hst-docs.stsci.edu/acsihb/chapter-4-detector-performance/4-2-the-ccds#id-4.2TheCCDs-table4.1 (only 1.0 or 2.0 is ever commanded).
+converted into a true bscale, which varies slightly between readout nodes, as listed in https://acs-docs.stsci.edu/acsihb/chapter-4-detector-performance/4-2-the-ccds#id-4.2TheCCDs-table4.1 (only 1.0 or 2.0 is ever commanded).
 ...and where the most appropriate bias exposure is listed in the main header as
 BIASFILE= 'jref$2571633hj_bia.fits' / bias image file name
-where the file can be dowloaded from https://hst-crds.stsci.edu/browse/2571633hj_bia.fits (there is even a command-line command to get the file, althgouh I haven’t figured it out)
+where the file can be dowloaded from https://acs-crds.stsci.edu/browse/2571633hj_bia.fits (there is even a command-line command to get the file, althgouh I haven’t figured it out)
 (note this file also needs the BSCALE and BZERO treatment.
 In my IDL script, I also coded options to use the overscan pixels to approximate the bias, but it never worked well as there are lots of individually bad pixels.
-There is more information at https://hst-docs.stsci.edu/acsihb
+There is more information at https://acs-docs.stsci.edu/acsihb
 
 
 Trap parameters
