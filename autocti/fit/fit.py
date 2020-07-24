@@ -1,6 +1,6 @@
 import numpy as np
 
-from autocti.util import fit_util
+from autoarray.util import fit_util
 
 
 class FitDataset:
@@ -55,7 +55,7 @@ class FitDataset:
 
         The residual-map values in masked pixels are returned as zero.
         """
-        return fit_util.residual_map_from_data_mask_and_model_data(
+        return fit_util.residual_map_with_mask_from(
             data=self.data, model_data=self.model_data, mask=self.mask
         )
 
@@ -67,7 +67,7 @@ class FitDataset:
 
         The normalized residual-map values in masked pixels are returned as zero.
         """
-        return fit_util.normalized_residual_map_from_residual_map_noise_map_and_mask(
+        return fit_util.normalized_residual_map_with_mask_from(
             residual_map=self.residual_map, noise_map=self.noise_map, mask=self.mask
         )
 
@@ -79,7 +79,7 @@ class FitDataset:
 
         The chi-squared-map values in masked pixels are returned as zero.
         """
-        return fit_util.chi_squared_map_from_residual_map_noise_map_and_mask(
+        return fit_util.chi_squared_map_with_mask_from(
             residual_map=self.residual_map, noise_map=self.noise_map, mask=self.mask
         )
 
@@ -98,7 +98,7 @@ class FitDataset:
 
         The chi-squared values in masked pixels are omitted from the calculation.
         """
-        return fit_util.chi_squared_from_chi_squared_map_and_mask(
+        return fit_util.chi_squared_with_mask_from(
             chi_squared_map=self.chi_squared_map, mask=self.mask
         )
 
@@ -114,13 +114,13 @@ class FitDataset:
 
         The noise-map values in masked pixels are omitted from the calculation.
         """
-        return fit_util.noise_normalization_from_noise_map_and_mask(
+        return fit_util.noise_normalization_with_mask_from(
             noise_map=self.noise_map, mask=self.mask
         )
 
     @property
     def log_likelihood(self):
-        return fit_util.likelihood_from_chi_squared_and_noise_normalization(
+        return fit_util.likelihood_from(
             chi_squared=self.chi_squared, noise_normalization=self.noise_normalization
         )
 

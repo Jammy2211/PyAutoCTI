@@ -19,7 +19,7 @@ class TestCIFit:
             masked_ci_imaging=masked_ci_imaging_7x7, ci_post_cti=ci_post_cti
         )
 
-        residual_map = ac.util.fit.residual_map_from_data_mask_and_model_data(
+        residual_map = ac.util.fit.residual_map_with_mask_from(
             data=masked_ci_imaging_7x7.image,
             mask=masked_ci_imaging_7x7.mask,
             model_data=ci_post_cti,
@@ -27,7 +27,7 @@ class TestCIFit:
 
         assert (fit.residual_map == residual_map).all()
 
-        chi_squared_map = ac.util.fit.chi_squared_map_from_residual_map_noise_map_and_mask(
+        chi_squared_map = ac.util.fit.chi_squared_map_with_mask_from(
             residual_map=residual_map,
             noise_map=masked_ci_imaging_7x7.noise_map,
             mask=masked_ci_imaging_7x7.mask,
@@ -35,15 +35,15 @@ class TestCIFit:
 
         assert (fit.chi_squared_map == chi_squared_map).all()
 
-        chi_squared = ac.util.fit.chi_squared_from_chi_squared_map_and_mask(
+        chi_squared = ac.util.fit.chi_squared_with_mask_from(
             chi_squared_map=chi_squared_map, mask=masked_ci_imaging_7x7.mask
         )
 
-        noise_normalization = ac.util.fit.noise_normalization_from_noise_map_and_mask(
+        noise_normalization = ac.util.fit.noise_normalization_with_mask_from(
             noise_map=masked_ci_imaging_7x7.noise_map, mask=masked_ci_imaging_7x7.mask
         )
 
-        log_likelihood = ac.util.fit.likelihood_from_chi_squared_and_noise_normalization(
+        log_likelihood = ac.util.fit.likelihood_from(
             chi_squared=chi_squared, noise_normalization=noise_normalization
         )
 
@@ -246,7 +246,7 @@ class TestCIFit:
 
         assert (hyper_noise_map == fit.noise_map).all()
 
-        residual_map = ac.util.fit.residual_map_from_data_mask_and_model_data(
+        residual_map = ac.util.fit.residual_map_with_mask_from(
             data=masked_ci_imaging_7x7.image,
             mask=masked_ci_imaging_7x7.mask,
             model_data=masked_ci_imaging_7x7.ci_pre_cti,
@@ -254,7 +254,7 @@ class TestCIFit:
 
         assert (residual_map == fit.residual_map).all()
 
-        chi_squared_map = ac.util.fit.chi_squared_map_from_residual_map_noise_map_and_mask(
+        chi_squared_map = ac.util.fit.chi_squared_map_with_mask_from(
             residual_map=residual_map,
             noise_map=hyper_noise_map,
             mask=masked_ci_imaging_7x7.mask,
@@ -262,15 +262,15 @@ class TestCIFit:
 
         assert (chi_squared_map == fit.chi_squared_map).all()
 
-        chi_squared = ac.util.fit.chi_squared_from_chi_squared_map_and_mask(
+        chi_squared = ac.util.fit.chi_squared_with_mask_from(
             chi_squared_map=chi_squared_map, mask=masked_ci_imaging_7x7.mask
         )
 
-        noise_normalization = ac.util.fit.noise_normalization_from_noise_map_and_mask(
+        noise_normalization = ac.util.fit.noise_normalization_with_mask_from(
             noise_map=hyper_noise_map, mask=masked_ci_imaging_7x7.mask
         )
 
-        log_likelihood = ac.util.fit.likelihood_from_chi_squared_and_noise_normalization(
+        log_likelihood = ac.util.fit.likelihood_from(
             chi_squared=chi_squared, noise_normalization=noise_normalization
         )
 
