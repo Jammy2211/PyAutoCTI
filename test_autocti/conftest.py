@@ -298,14 +298,14 @@ def make_euclid_data():
     return np.zeros((2086, 2119))
 
 
-### HST DATA ####
+### ACS DATA ####
 
 
-@pytest.fixture(name="hst_ccd")
-def make_hst_ccd():
+@pytest.fixture(name="acs_ccd")
+def make_acs_ccd():
     return np.zeros((2068, 4144))
 
 
-@pytest.fixture(name="hst_quadrant")
-def make_hst_quadrant():
+@pytest.fixture(name="acs_quadrant")
+def make_acs_quadrant():
     return np.zeros((2068, 2072))
