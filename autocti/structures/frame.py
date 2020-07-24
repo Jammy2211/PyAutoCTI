@@ -1,10 +1,10 @@
 import numpy as np
 
 from autoarray.structures import abstract_structure
-from autocti.structures.frame import abstract_frame
+from autoarray.structures.frame import abstract_frame
+from autoarray.util import array_util
+from autoarray.util import frame_util
 from autocti.mask import mask as msk
-from autocti.util import array_util
-from autocti.util import frame_util
 
 
 class Frame(abstract_frame.AbstractFrame):

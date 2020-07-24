@@ -1,8 +1,8 @@
 from autoarray.mask import abstract_mask
 from autoarray.structures import abstract_structure
 from autoarray import exc
-from autocti.structures import region as reg
-from autocti.util import array_util
+from autoarray.structures import region as reg
+from autoarray.util import array_util
 
 import numpy as np
 

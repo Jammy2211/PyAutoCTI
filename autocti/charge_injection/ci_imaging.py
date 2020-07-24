@@ -4,7 +4,7 @@ import numpy as np
 from autocti.charge_injection import ci_frame, ci_pattern as pattern
 from autocti.dataset import preprocess, imaging
 from autocti.mask import mask as msk
-from autocti.util import array_util
+from autoarray.util import array_util
 
 
 class CIImaging(imaging.Imaging):

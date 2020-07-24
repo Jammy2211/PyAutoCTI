@@ -4,7 +4,7 @@ import numpy as np
 from autoarray.structures.arrays import abstract_array
 from autoarray.structures import arrays
 from autoarray import exc
-from autocti.util import array_util
+from autoarray.util import array_util
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
