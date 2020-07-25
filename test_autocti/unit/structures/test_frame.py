@@ -159,15 +159,13 @@ class TestFrameAPI:
         assert frame.scans.serial_overscan == (0, 1, 0, 1)
         assert (frame.mask == np.array([[False, False], [False, False]])).all()
 
-
-class TestMaskedFrameAPI:
-    def test__manual__makes_frame_using_inputs__includes_rotation_which_includes_mask(
+    def test__manual_mask__makes_frame_using_inputs__includes_rotation_which_includes_mask(
         self
     ):
 
         mask = ac.Mask.manual(mask=[[False, True], [False, False]])
 
-        frame = ac.MaskedFrame.manual(
+        frame = ac.Frame.manual_mask(
             array=[[1.0, 2.0], [3.0, 4.0]],
             mask=mask,
             roe_corner=(1, 0),
@@ -185,7 +183,7 @@ class TestMaskedFrameAPI:
         assert frame.scans.serial_overscan == (0, 2, 0, 2)
         assert (frame.mask == np.array([[False, True], [False, False]])).all()
 
-        frame = ac.MaskedFrame.manual(
+        frame = ac.Frame.manual_mask(
             array=[[1.0, 2.0], [3.0, 4.0]],
             mask=mask,
             roe_corner=(0, 0),
@@ -203,7 +201,7 @@ class TestMaskedFrameAPI:
         assert frame.scans.serial_overscan == (0, 2, 0, 2)
         assert (frame.mask == np.array([[False, False], [False, True]])).all()
 
-        frame = ac.MaskedFrame.manual(
+        frame = ac.Frame.manual_mask(
             array=[[1.0, 2.0], [3.0, 4.0]],
             mask=mask,
             roe_corner=(1, 1),
@@ -221,7 +219,7 @@ class TestMaskedFrameAPI:
         assert frame.scans.serial_overscan == (0, 2, 0, 2)
         assert (frame.mask == np.array([[True, False], [False, False]])).all()
 
-        frame = ac.MaskedFrame.manual(
+        frame = ac.Frame.manual_mask(
             array=[[1.0, 2.0], [3.0, 4.0]],
             mask=mask,
             roe_corner=(0, 1),
@@ -253,7 +251,7 @@ class TestMaskedFrameAPI:
             ),
         )
 
-        frame = ac.MaskedFrame.from_frame(frame=frame, mask=mask)
+        frame = ac.Frame.from_frame(frame=frame, mask=mask)
 
         assert (frame == np.array([[1.0, 0.0], [3.0, 4.0]])).all()
         assert frame.original_roe_corner == (1, 0)
@@ -274,69 +272,11 @@ class TestMaskedFrameAPI:
             ),
         )
 
-        frame = ac.MaskedFrame.from_frame(frame=frame, mask=mask)
+        frame = ac.Frame.from_frame(frame=frame, mask=mask)
 
         assert (frame == np.array([[3.0, 0.0], [1.0, 2.0]])).all()
         assert frame.original_roe_corner == (0, 0)
         assert frame.scans.parallel_overscan == (1, 2, 0, 1)
         assert frame.scans.serial_prescan == (0, 1, 1, 2)
-        assert frame.scans.serial_overscan == (0, 2, 0, 2)
-        assert (frame.mask == np.array([[False, True], [False, False]])).all()
-
-    def test__ones_zeros_full__makes_frame_using_inputs(self):
-
-        mask = ac.Mask.manual(mask=[[False, True], [False, False]])
-
-        frame = ac.MaskedFrame.full(
-            fill_value=8.0,
-            mask=mask,
-            roe_corner=(1, 0),
-            scans=ac.Scans(
-                parallel_overscan=(0, 1, 0, 1),
-                serial_prescan=(1, 2, 1, 2),
-                serial_overscan=(0, 2, 0, 2),
-            ),
-        )
-
-        assert (frame == np.array([[8.0, 0.0], [8.0, 8.0]])).all()
-        assert frame.original_roe_corner == (1, 0)
-        assert frame.scans.parallel_overscan == (0, 1, 0, 1)
-        assert frame.scans.serial_prescan == (1, 2, 1, 2)
-        assert frame.scans.serial_overscan == (0, 2, 0, 2)
-        assert (frame.mask == np.array([[False, True], [False, False]])).all()
-
-        frame = ac.MaskedFrame.ones(
-            mask=mask,
-            roe_corner=(1, 0),
-            scans=ac.Scans(
-                parallel_overscan=(0, 1, 0, 1),
-                serial_prescan=(1, 2, 1, 2),
-                serial_overscan=(0, 2, 0, 2),
-            ),
-        )
-
-        assert (frame == np.array([[1.0, 0.0], [1.0, 1.0]])).all()
-        assert frame.original_roe_corner == (1, 0)
-        assert frame.scans.parallel_overscan == (0, 1, 0, 1)
-        assert frame.scans.serial_prescan == (1, 2, 1, 2)
-        assert frame.scans.serial_overscan == (0, 2, 0, 2)
-        assert (frame.mask == np.array([[False, True], [False, False]])).all()
-
-        mask = ac.Mask.manual(mask=[[False, True], [False, False]])
-
-        frame = ac.MaskedFrame.zeros(
-            mask=mask,
-            roe_corner=(1, 0),
-            scans=ac.Scans(
-                parallel_overscan=(0, 1, 0, 1),
-                serial_prescan=(1, 2, 1, 2),
-                serial_overscan=(0, 2, 0, 2),
-            ),
-        )
-
-        assert (frame == np.array([[0.0, 0.0], [0.0, 0.0]])).all()
-        assert frame.original_roe_corner == (1, 0)
-        assert frame.scans.parallel_overscan == (0, 1, 0, 1)
-        assert frame.scans.serial_prescan == (1, 2, 1, 2)
         assert frame.scans.serial_overscan == (0, 2, 0, 2)
         assert (frame.mask == np.array([[False, True], [False, False]])).all()
