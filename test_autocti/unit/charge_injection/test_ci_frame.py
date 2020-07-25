@@ -2864,7 +2864,7 @@ class TestCIFrameAPI:
         assert (ci_frame.mask == np.array([[False, False], [False, False]])).all()
 
 
-class TestCIMaskedFrameAPI:
+class TestCIFrameAPI:
     def test__manual__makes_ci_frame_using_inputs(self):
 
         pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 1)])
