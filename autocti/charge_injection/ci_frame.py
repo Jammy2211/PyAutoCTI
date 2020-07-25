@@ -3,13 +3,13 @@ from copy import deepcopy
 import numpy as np
 from autoarray.structures import abstract_structure
 from autocti.charge_injection import ci_mask
-from autocti.structures.frame import Frame
 from autocti.mask.mask import Mask
-from autoarray.structures.frame import abstract_frame, euclid
+from autoarray.structures.frame import abstract_frame
+from autoarray.structures.instruments import euclid
 from autoarray.util import array_util, frame_util
 
 
-class AbstractCIFrame(Frame):
+class AbstractCIFrame(abstract_frame.AbstractFrame):
     def __new__(cls, array, mask, ci_pattern, original_roe_corner=(1, 0), scans=None):
         """
         Class which represents the CCD quadrant of a charge injection image (e.g. the location of the parallel and
