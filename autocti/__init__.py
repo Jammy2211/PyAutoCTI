@@ -8,8 +8,8 @@ from autoarray.fit.fit import FitImaging
 from autoarray.structures.region import Region
 from autoarray.structures.arrays.abstract_array import ExposureInfo
 from autoarray.structures.frame.abstract_frame import Scans
-from autoarray.structures.instruments.euclid import FrameEuclid, MaskedFrameEuclid
-from autoarray.structures.instruments.acs import FrameACS, MaskedFrameACS
+from autoarray.structures.instruments.euclid import FrameEuclid
+from autoarray.structures.instruments.acs import FrameACS
 from autoarray.dataset import preprocess
 
 from .structures.arrays import Array
