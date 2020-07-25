@@ -1337,7 +1337,7 @@ class TestParallelFrontEdgeArrays:
             ]
         )
 
-        ci_frame = ac.ci.MaskedCIFrame.manual(
+        ci_frame = ac.ci.CIFrame.manual_mask(
             array=arr, mask=mask, roe_corner=(1, 0), ci_pattern=pattern
         )
 
@@ -1409,7 +1409,7 @@ class TestParallelFrontEdgeArrays:
             ]
         )
 
-        ci_frame = ac.ci.MaskedCIFrame.manual(
+        ci_frame = ac.ci.CIFrame.manual_mask(
             array=arr, mask=mask, roe_corner=(1, 0), ci_pattern=pattern
         )
 
@@ -1467,7 +1467,7 @@ class TestParallelFrontEdgeArrays:
             ]
         )
 
-        ci_frame = ac.ci.MaskedCIFrame.manual(
+        ci_frame = ac.ci.CIFrame.manual_mask(
             array=arr, mask=mask, roe_corner=(1, 0), ci_pattern=pattern
         )
 
@@ -1633,7 +1633,7 @@ class TestParallelTrailsArray:
             ]
         )
 
-        ci_frame = ac.ci.MaskedCIFrame.manual(
+        ci_frame = ac.ci.CIFrame.manual_mask(
             array=arr, mask=mask, roe_corner=(1, 0), ci_pattern=pattern
         )
 
@@ -1747,7 +1747,7 @@ class TestParallelTrailsArray:
             ]
         )
 
-        ci_frame = ac.ci.MaskedCIFrame.manual(
+        ci_frame = ac.ci.CIFrame.manual_mask(
             array=arr, mask=mask, roe_corner=(1, 0), ci_pattern=pattern
         )
 
@@ -1794,7 +1794,7 @@ class TestParallelTrailsArray:
             ]
         )
 
-        ci_frame = ac.ci.MaskedCIFrame.manual(
+        ci_frame = ac.ci.CIFrame.manual_mask(
             array=arr, mask=mask, roe_corner=(1, 0), ci_pattern=pattern
         )
 
@@ -1968,7 +1968,7 @@ class TestSerialFrontEdgeArrays:
             ]
         )
 
-        ci_frame = ac.ci.MaskedCIFrame.manual(
+        ci_frame = ac.ci.CIFrame.manual_mask(
             array=arr, mask=mask, roe_corner=(1, 0), ci_pattern=pattern
         )
 
@@ -2055,7 +2055,7 @@ class TestSerialFrontEdgeArrays:
 
         #                        /| FE 1                       /| FE 2
 
-        ci_frame = ac.ci.MaskedCIFrame.manual(
+        ci_frame = ac.ci.CIFrame.manual_mask(
             array=arr, mask=mask, roe_corner=(1, 0), ci_pattern=pattern
         )
 
@@ -2096,7 +2096,7 @@ class TestSerialFrontEdgeArrays:
 
         #                        /| FE 1                       /| FE 2
 
-        ci_frame = ac.ci.MaskedCIFrame.manual(
+        ci_frame = ac.ci.CIFrame.manual_mask(
             array=arr, mask=mask, roe_corner=(1, 0), ci_pattern=pattern
         )
 
@@ -2298,7 +2298,7 @@ class TestSerialTrailsArrays:
             ]
         )
 
-        ci_frame = ac.ci.MaskedCIFrame.manual(
+        ci_frame = ac.ci.CIFrame.manual_mask(
             array=arr, mask=mask, roe_corner=(1, 0), ci_pattern=pattern
         )
 
@@ -2419,7 +2419,7 @@ class TestSerialTrailsArrays:
 
         #                                               /| Trails1                   /\ Trails2
 
-        ci_frame = ac.ci.MaskedCIFrame.manual(
+        ci_frame = ac.ci.CIFrame.manual_mask(
             array=arr, mask=mask, roe_corner=(1, 0), ci_pattern=pattern
         )
 
@@ -2494,7 +2494,7 @@ class TestSerialTrailsArrays:
 
         #                                               /| Trails1                   /\ Trails2
 
-        ci_frame = ac.ci.MaskedCIFrame.manual(
+        ci_frame = ac.ci.CIFrame.manual_mask(
             array=arr, mask=mask, roe_corner=(1, 0), ci_pattern=pattern
         )
 
@@ -2863,15 +2863,13 @@ class TestCIFrameAPI:
         assert ci_frame.scans.serial_overscan == (0, 1, 0, 1)
         assert (ci_frame.mask == np.array([[False, False], [False, False]])).all()
 
-
-class TestCIFrameAPI:
-    def test__manual__makes_ci_frame_using_inputs(self):
+    def test__manual_mask__makes_ci_frame_using_inputs(self):
 
         pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 1)])
 
         mask = ac.Mask.manual(mask=[[False, True], [False, False]])
 
-        ci_frame = ac.ci.MaskedCIFrame.manual(
+        ci_frame = ac.ci.CIFrame.manual_mask(
             array=[[1.0, 2.0], [3.0, 4.0]],
             mask=mask,
             ci_pattern=pattern,
@@ -2891,7 +2889,7 @@ class TestCIFrameAPI:
         assert ci_frame.scans.serial_overscan == (0, 2, 0, 2)
         assert (ci_frame.mask == np.array([[False, True], [False, False]])).all()
 
-        ci_frame = ac.ci.MaskedCIFrame.manual(
+        ci_frame = ac.ci.CIFrame.manual_mask(
             array=[[1.0, 2.0], [3.0, 4.0]],
             mask=mask,
             ci_pattern=pattern,
@@ -2911,7 +2909,7 @@ class TestCIFrameAPI:
         assert ci_frame.scans.serial_overscan == (0, 2, 0, 2)
         assert (ci_frame.mask == np.array([[False, False], [False, True]])).all()
 
-        ci_frame = ac.ci.MaskedCIFrame.manual(
+        ci_frame = ac.ci.CIFrame.manual_mask(
             array=[[1.0, 2.0], [3.0, 4.0]],
             mask=mask,
             ci_pattern=pattern,
@@ -2931,7 +2929,7 @@ class TestCIFrameAPI:
         assert ci_frame.scans.serial_overscan == (0, 2, 0, 2)
         assert (ci_frame.mask == np.array([[True, False], [False, False]])).all()
 
-        ci_frame = ac.ci.MaskedCIFrame.manual(
+        ci_frame = ac.ci.CIFrame.manual_mask(
             array=[[1.0, 2.0], [3.0, 4.0]],
             mask=mask,
             ci_pattern=pattern,
@@ -2951,73 +2949,7 @@ class TestCIFrameAPI:
         assert ci_frame.scans.serial_overscan == (0, 2, 0, 2)
         assert (ci_frame.mask == np.array([[False, False], [True, False]])).all()
 
-    def test__ones_zeros_full__makes_frame_using_inputs(self):
-
-        pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 3)])
-
-        mask = ac.Mask.manual(mask=[[False, True], [False, False]])
-
-        ci_frame = ac.ci.MaskedCIFrame.full(
-            fill_value=8.0,
-            mask=mask,
-            ci_pattern=pattern,
-            roe_corner=(1, 0),
-            scans=ac.Scans(
-                parallel_overscan=(0, 1, 0, 1),
-                serial_prescan=(1, 2, 1, 2),
-                serial_overscan=(0, 2, 0, 2),
-            ),
-        )
-
-        assert (ci_frame == np.array([[8.0, 0.0], [8.0, 8.0]])).all()
-        assert ci_frame.ci_pattern.regions == [(0, 3, 0, 3)]
-        assert ci_frame.original_roe_corner == (1, 0)
-        assert ci_frame.scans.parallel_overscan == (0, 1, 0, 1)
-        assert ci_frame.scans.serial_prescan == (1, 2, 1, 2)
-        assert ci_frame.scans.serial_overscan == (0, 2, 0, 2)
-        assert (ci_frame.mask == np.array([[False, True], [False, False]])).all()
-
-        ci_frame = ac.ci.MaskedCIFrame.ones(
-            mask=mask,
-            ci_pattern=pattern,
-            roe_corner=(1, 0),
-            scans=ac.Scans(
-                parallel_overscan=(0, 1, 0, 1),
-                serial_prescan=(1, 2, 1, 2),
-                serial_overscan=(0, 2, 0, 2),
-            ),
-        )
-
-        assert (ci_frame == np.array([[1.0, 0.0], [1.0, 1.0]])).all()
-        assert ci_frame.ci_pattern.regions == [(0, 3, 0, 3)]
-        assert ci_frame.original_roe_corner == (1, 0)
-        assert ci_frame.scans.parallel_overscan == (0, 1, 0, 1)
-        assert ci_frame.scans.serial_prescan == (1, 2, 1, 2)
-        assert ci_frame.scans.serial_overscan == (0, 2, 0, 2)
-        assert (ci_frame.mask == np.array([[False, True], [False, False]])).all()
-
-        mask = ac.Mask.manual(mask=[[False, True], [False, False]])
-
-        ci_frame = ac.ci.MaskedCIFrame.zeros(
-            mask=mask,
-            ci_pattern=pattern,
-            roe_corner=(1, 0),
-            scans=ac.Scans(
-                parallel_overscan=(0, 1, 0, 1),
-                serial_prescan=(1, 2, 1, 2),
-                serial_overscan=(0, 2, 0, 2),
-            ),
-        )
-
-        assert (ci_frame == np.array([[0.0, 0.0], [0.0, 0.0]])).all()
-        assert ci_frame.ci_pattern.regions == [(0, 3, 0, 3)]
-        assert ci_frame.original_roe_corner == (1, 0)
-        assert ci_frame.scans.parallel_overscan == (0, 1, 0, 1)
-        assert ci_frame.scans.serial_prescan == (1, 2, 1, 2)
-        assert ci_frame.scans.serial_overscan == (0, 2, 0, 2)
-        assert (ci_frame.mask == np.array([[False, True], [False, False]])).all()
-
-    def test__masked_ci_frame__from_frame__makes_frame_using_inputs(self):
+    def test__from_ci_frame__from_frame__makes_frame_using_inputs(self):
 
         pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 1)])
 
@@ -3035,7 +2967,7 @@ class TestCIFrameAPI:
             ),
         )
 
-        ci_frame = ac.ci.MaskedCIFrame.from_ci_frame(ci_frame=ci_frame, mask=mask)
+        ci_frame = ac.ci.CIFrame.from_ci_frame(ci_frame=ci_frame, mask=mask)
 
         assert (ci_frame == np.array([[8.0, 0.0], [8.0, 8.0]])).all()
         assert ci_frame.ci_pattern.regions == [(0, 1, 0, 1)]
@@ -3057,7 +2989,7 @@ class TestCIFrameAPI:
             ),
         )
 
-        ci_frame = ac.ci.MaskedCIFrame.from_ci_frame(ci_frame=ci_frame, mask=mask)
+        ci_frame = ac.ci.CIFrame.from_ci_frame(ci_frame=ci_frame, mask=mask)
 
         assert (ci_frame == np.array([[8.0, 0.0], [8.0, 8.0]])).all()
         assert ci_frame.ci_pattern.regions == [(1, 2, 0, 1)]
