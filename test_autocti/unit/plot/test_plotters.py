@@ -539,7 +539,7 @@ class TestAbstractPlotterPlots:
 
         mask = ac.Mask.unmasked(shape_2d=(31, 31), pixel_scales=(1.0, 1.0))
 
-        masked_frame = ac.MaskedFrame.manual(array=frame, mask=mask)
+        masked_frame = ac.Frame.manual_mask(array=frame, mask=mask)
 
         plotter.plot_frame(frame=masked_frame)
 

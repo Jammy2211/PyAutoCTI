@@ -242,10 +242,7 @@ class Array(AbstractArray):
         array = abstract_array.convert_manual_array(
             array=array, mask=mask, store_in_1d=False
         )
-        return Array(
-            array=array, mask=mask, exposure_info=exposure_info,
-        )
-
+        return Array(array=array, mask=mask, exposure_info=exposure_info)
 
     @classmethod
     def full(cls, fill_value, shape_2d, pixel_scales=None, origin=(0.0, 0.0)):
@@ -327,6 +324,3 @@ class Array(AbstractArray):
         """
         array_2d = array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
         return cls.manual_2d(array=array_2d, pixel_scales=pixel_scales, origin=origin)
-
-
-

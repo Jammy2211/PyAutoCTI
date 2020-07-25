@@ -8,20 +8,13 @@ from autoarray.fit.fit import FitImaging
 from autoarray.structures.region import Region
 from autoarray.structures.arrays.abstract_array import ExposureInfo
 from autoarray.structures.frame.abstract_frame import Scans
-from autoarray.structures.instruments.euclid import (
-    FrameEuclid,
-    MaskedFrameEuclid,
-)
-from autoarray.structures.instruments.acs import (
-    FrameACS,
-    MaskedFrameACS,
-)
+from autoarray.structures.instruments.euclid import FrameEuclid, MaskedFrameEuclid
+from autoarray.structures.instruments.acs import FrameACS, MaskedFrameACS
 from autoarray.dataset import preprocess
 
 from .structures.arrays import Array
 from .structures.frame import Frame
 from .mask.mask import Mask
-from .structures.frame import MaskedFrame
 from .dataset.imaging import Imaging
 from .dataset.imaging import MaskedImaging
 from . import charge_injection as ci

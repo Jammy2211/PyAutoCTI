@@ -53,8 +53,8 @@ class TestManual:
         assert (arr == np.array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])).all()
         assert arr.pixel_scales == (2.0, 3.0)
 
-class TestManualMask:
 
+class TestManualMask:
     def test__array__makes_array_with_pixel_scale(self):
         mask = ac.Mask.unmasked(shape_2d=(2, 2), pixel_scales=1.0)
         arr = ac.Array.manual_mask(array=[[1.0, 2.0], [3.0, 4.0]], mask=mask)
@@ -63,9 +63,7 @@ class TestManualMask:
         assert arr.pixel_scales == (1.0, 1.0)
 
         mask = ac.Mask.manual(
-            mask=[[False, False], [True, False]],
-            pixel_scales=1.0,
-            origin=(0.0, 1.0),
+            mask=[[False, False], [True, False]], pixel_scales=1.0, origin=(0.0, 1.0)
         )
         arr = ac.Array.manual_mask(array=[[1.0, 2.0], [3.0, 4.0]], mask=mask)
 
@@ -74,7 +72,7 @@ class TestManualMask:
         assert arr.origin == (0.0, 1.0)
 
     def test__manual_2d__exception_raised_if_input_array_is_2d_and_not_shape_of_mask(
-            self
+        self
     ):
         with pytest.raises(exc.ArrayException):
             mask = ac.Mask.unmasked(shape_2d=(2, 2), pixel_scales=1.0)
@@ -82,9 +80,8 @@ class TestManualMask:
 
         with pytest.raises(exc.ArrayException):
             mask = ac.Mask.unmasked(shape_2d=(2, 2), pixel_scales=1.0)
-            ac.Array.manual_mask(
-                array=[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]], mask=mask
-            )
+            ac.Array.manual_mask(array=[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]], mask=mask)
+
 
 class TestFull:
     def test__array__makes_array_without_other_inputs(self):
@@ -116,6 +113,7 @@ class TestFull:
         assert arr.pixel_scales == (1.0, 1.0)
         assert arr.origin == (0.0, 1.0)
 
+
 class TestOnesZeros:
     def test__array__makes_array_without_other_inputs(self):
 
@@ -143,6 +141,7 @@ class TestOnesZeros:
         assert (arr == np.array([[0.0, 0.0], [0.0, 0.0]])).all()
         assert arr.pixel_scales == (1.0, 1.0)
         assert arr.origin == (0.0, 1.0)
+
 
 class TestFromFits:
     def test__array__makes_array_without_other_inputs(self):
