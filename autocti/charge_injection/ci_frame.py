@@ -2,6 +2,7 @@ from copy import deepcopy
 
 import numpy as np
 from autoarray.structures import abstract_structure
+from autoarray.structures.arrays import abstract_array
 from autocti.charge_injection import ci_mask
 from autocti.mask.mask import Mask
 from autoarray.structures.frame import abstract_frame
@@ -1317,8 +1318,7 @@ class CIFrame(AbstractCIFrame):
         if array is None:
             return None
 
-        if type(array) is list:
-            array = np.asarray(array)
+        array = abstract_array.convert_array(array=array)
 
         pixel_scales = abstract_structure.convert_pixel_scales(
             pixel_scales=pixel_scales
@@ -1334,6 +1334,57 @@ class CIFrame(AbstractCIFrame):
             array=frame_util.rotate_array_from_roe_corner(
                 array=array, roe_corner=roe_corner
             ),
+            mask=mask,
+            ci_pattern=frame_util.rotate_ci_pattern_from_roe_corner(
+                ci_pattern=ci_pattern, shape_2d=array.shape, roe_corner=roe_corner
+            ),
+            original_roe_corner=roe_corner,
+            scans=scans,
+        )
+
+    @classmethod
+    def manual_mask(cls, array, mask, ci_pattern, roe_corner=(1, 0), scans=None):
+        """Abstract class for the geometry of a CTI Image.
+
+        A FrameArray is stored as a 2D NumPy arrays. When this immage is passed to arctic, clocking goes towards
+        the 'top' of the NumPy arrays (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the arrays
+        (e.g. the final row).
+
+        Arctic has no in-built functionality for changing the direction of clocking depending on the input
+        configuration file. Therefore, image rotations are handled before arctic is called, using the functions
+        defined in this class (and its children). These routines define how an image is rotated before parallel
+        and serial clocking and how to reorient the image back to its original orientation after clocking is performed.
+
+        Currently, only four geometries are available, which are specific to Euclid (and documented in the
+        *QuadGeometryEuclid* class).
+
+        Parameters
+        -----------
+        parallel_overscan : Region
+            The parallel overscan region of the ci_frame.
+        serial_prescan : Region
+            The serial prescan region of the ci_frame.
+        serial_overscan : Region
+            The serial overscan region of the ci_frame.
+        """
+
+        array = abstract_array.convert_array(array=array)
+
+        array = frame_util.rotate_array_from_roe_corner(
+            array=array, roe_corner=roe_corner
+        )
+        mask = frame_util.rotate_array_from_roe_corner(
+            array=mask, roe_corner=roe_corner
+        )
+
+        array[mask == True] = 0.0
+
+        scans = abstract_frame.Scans.rotated_from_roe_corner(
+            roe_corner=roe_corner, shape_2d=array.shape, scans=scans
+        )
+
+        return CIFrame(
+            array=array,
             mask=mask,
             ci_pattern=frame_util.rotate_ci_pattern_from_roe_corner(
                 ci_pattern=ci_pattern, shape_2d=array.shape, roe_corner=roe_corner
@@ -1443,6 +1494,16 @@ class CIFrame(AbstractCIFrame):
             roe_corner=roe_corner,
             scans=scans,
             pixel_scales=pixel_scales,
+        )
+
+    @classmethod
+    def from_ci_frame(cls, ci_frame, mask):
+        return CIFrame(
+            array=ci_frame,
+            mask=mask,
+            ci_pattern=ci_frame.ci_pattern,
+            original_roe_corner=ci_frame.original_roe_corner,
+            scans=abstract_frame.Scans.from_frame(frame=ci_frame),
         )
 
 
@@ -1624,123 +1685,4 @@ class EuclidCIFrame(CIFrame):
 
         return CIFrame.manual(
             array=array, ci_pattern=ci_pattern, roe_corner=(1, 1), scans=scans
-        )
-
-
-class MaskedCIFrame(AbstractCIFrame):
-    @classmethod
-    def manual(cls, array, mask, ci_pattern, roe_corner=(1, 0), scans=None):
-        """Abstract class for the geometry of a CTI Image.
-
-        A FrameArray is stored as a 2D NumPy arrays. When this immage is passed to arctic, clocking goes towards
-        the 'top' of the NumPy arrays (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the arrays
-        (e.g. the final row).
-
-        Arctic has no in-built functionality for changing the direction of clocking depending on the input
-        configuration file. Therefore, image rotations are handled before arctic is called, using the functions
-        defined in this class (and its children). These routines define how an image is rotated before parallel
-        and serial clocking and how to reorient the image back to its original orientation after clocking is performed.
-
-        Currently, only four geometries are available, which are specific to Euclid (and documented in the
-        *QuadGeometryEuclid* class).
-
-        Parameters
-        -----------
-        parallel_overscan : Region
-            The parallel overscan region of the ci_frame.
-        serial_prescan : Region
-            The serial prescan region of the ci_frame.
-        serial_overscan : Region
-            The serial overscan region of the ci_frame.
-        """
-
-        if type(array) is list:
-            array = np.asarray(array)
-
-        array = frame_util.rotate_array_from_roe_corner(
-            array=array, roe_corner=roe_corner
-        )
-        mask = frame_util.rotate_array_from_roe_corner(
-            array=mask, roe_corner=roe_corner
-        )
-
-        array[mask == True] = 0.0
-
-        scans = abstract_frame.Scans.rotated_from_roe_corner(
-            roe_corner=roe_corner, shape_2d=array.shape, scans=scans
-        )
-
-        return CIFrame(
-            array=array,
-            mask=mask,
-            ci_pattern=frame_util.rotate_ci_pattern_from_roe_corner(
-                ci_pattern=ci_pattern, shape_2d=array.shape, roe_corner=roe_corner
-            ),
-            original_roe_corner=roe_corner,
-            scans=scans,
-        )
-
-    @classmethod
-    def full(cls, fill_value, mask, ci_pattern, roe_corner=(1, 0), scans=None):
-
-        return cls.manual(
-            array=np.full(fill_value=fill_value, shape=mask.shape_2d),
-            ci_pattern=ci_pattern,
-            roe_corner=roe_corner,
-            mask=mask,
-            scans=scans,
-        )
-
-    @classmethod
-    def ones(cls, mask, ci_pattern, roe_corner=(1, 0), scans=None):
-        return cls.full(
-            fill_value=1.0,
-            ci_pattern=ci_pattern,
-            mask=mask,
-            roe_corner=roe_corner,
-            scans=scans,
-        )
-
-    @classmethod
-    def zeros(cls, mask, ci_pattern, roe_corner=(1, 0), scans=None):
-        return cls.full(
-            fill_value=0.0,
-            ci_pattern=ci_pattern,
-            mask=mask,
-            roe_corner=roe_corner,
-            scans=scans,
-        )
-
-    @classmethod
-    def from_fits(cls, file_path, hdu, mask, ci_pattern, roe_corner=(1, 0), scans=None):
-        """Load the image ci_data from a fits file.
-
-        Params
-        ----------
-        path : str
-            The path to the ci_data
-        filename : str
-            The file phase_name of the fits image ci_data.
-        hdu : int
-            The HDU number in the fits file containing the image ci_data.
-        frame_geometry : FrameArray.FrameGeometry
-            The geometry of the ci_frame, defining the direction of parallel and serial clocking and the \
-            locations of different scans of the CCD (overscans, prescan, etc.)
-        """
-        return cls.manual(
-            array=array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu),
-            mask=mask,
-            ci_pattern=ci_pattern,
-            roe_corner=roe_corner,
-            scans=scans,
-        )
-
-    @classmethod
-    def from_ci_frame(cls, ci_frame, mask):
-        return CIFrame(
-            array=ci_frame,
-            mask=mask,
-            ci_pattern=ci_frame.ci_pattern,
-            original_roe_corner=ci_frame.original_roe_corner,
-            scans=abstract_frame.Scans.from_frame(frame=ci_frame),
         )

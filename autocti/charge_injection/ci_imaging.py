@@ -265,17 +265,17 @@ class MaskedCIImaging(imaging.AbstractMaskedImaging):
 
         super().__init__(imaging=ci_imaging, mask=mask)
 
-        self.image = ci_frame.MaskedCIFrame.from_ci_frame(
+        self.image = ci_frame.CIFrame.from_ci_frame(
             ci_frame=ci_imaging.image, mask=mask
         )
-        self.noise_map = ci_frame.MaskedCIFrame.from_ci_frame(
+        self.noise_map = ci_frame.CIFrame.from_ci_frame(
             ci_frame=ci_imaging.noise_map, mask=mask
         )
         self.ci_pre_cti = ci_imaging.ci_pre_cti
 
         if ci_imaging.cosmic_ray_map is not None:
 
-            self.cosmic_ray_map = ci_frame.MaskedCIFrame.from_ci_frame(
+            self.cosmic_ray_map = ci_frame.CIFrame.from_ci_frame(
                 ci_frame=ci_imaging.cosmic_ray_map, mask=mask
             )
 
@@ -285,9 +285,7 @@ class MaskedCIImaging(imaging.AbstractMaskedImaging):
 
         if noise_scaling_maps is not None:
             self.noise_scaling_maps = [
-                ci_frame.MaskedCIFrame.from_ci_frame(
-                    ci_frame=noise_scaling_map, mask=mask
-                )
+                ci_frame.CIFrame.from_ci_frame(ci_frame=noise_scaling_map, mask=mask)
                 for noise_scaling_map in noise_scaling_maps
             ]
         else:
