@@ -47,12 +47,12 @@ def make_plot_patch(monkeypatch):
 
 @pytest.fixture(name="trap_0")
 def make_trap_0():
-    return ac.Trap(density=10, lifetime=-1 / np.log(0.5))
+    return ac.TrapInstantCapture(density=10, release_timescale=-1 / np.log(0.5))
 
 
 @pytest.fixture(name="trap_1")
 def make_trap_1():
-    return ac.Trap(density=8, lifetime=-1 / np.log(0.2))
+    return ac.TrapInstantCapture(density=8, release_timescale=-1 / np.log(0.2))
 
 
 @pytest.fixture(name="traps_x1")
@@ -65,19 +65,17 @@ def make_traps_x2(trap_0, trap_1):
     return [trap_0, trap_1]
 
 
-@pytest.fixture(name="ccd_volume")
-def make_ccd_volume():
-    return ac.CCDVolume(
-        well_fill_beta=0.5, well_max_height=10000, well_notch_depth=1e-7
-    )
+@pytest.fixture(name="ccd")
+def make_ccd():
+    return ac.CCD(well_fill_power=0.5, full_well_depth=10000, well_notch_depth=1e-7)
 
 
-@pytest.fixture(name="ccd_volume_complex")
-def make_ccd_volume_complex():
-    return ac.CCDVolumeComplex(
+@pytest.fixture(name="ccd_complex")
+def make_ccd_complex():
+    return ac.CCDComplex(
         well_fill_alpha=1.0,
-        well_fill_beta=0.5,
-        well_max_height=10000,
+        well_fill_power=0.5,
+        full_well_depth=10000,
         well_notch_depth=1e-7,
     )
 
@@ -85,16 +83,13 @@ def make_ccd_volume_complex():
 @pytest.fixture(name="parallel_clocker")
 def make_parallel_clocker():
     return ac.Clocker(
-        parallel_sequence=1,
-        parallel_express=2,
-        parallel_charge_injection_mode=False,
-        parallel_readout_offset=0,
+        parallel_express=2, parallel_charge_injection_mode=False, parallel_offset=0
     )
 
 
 @pytest.fixture(name="serial_clocker")
 def make_serial_clocker():
-    return ac.Clocker(serial_sequence=1, serial_express=2, serial_readout_offset=0)
+    return ac.Clocker(serial_express=2, serial_offset=0)
 
 
 ### MASK ###
@@ -269,14 +264,14 @@ from autofit.mapper.model import ModelInstance
 
 
 @pytest.fixture(name="samples_with_result")
-def make_samples_with_result(trap_0, ccd_volume):
+def make_samples_with_result(trap_0, ccd):
 
     instance = ModelInstance()
 
-    instance.parallel_traps = [ac.Trap(density=0, lifetime=1)]
-    instance.parallel_ccd_volume = ccd_volume
-    instance.serial_traps = [ac.Trap(density=0, lifetime=1)]
-    instance.serial_ccd_volume = ccd_volume
+    instance.parallel_traps = [ac.TrapInstantCapture(density=0, release_timescale=1)]
+    instance.parallel_ccd = ccd
+    instance.serial_traps = [ac.TrapInstantCapture(density=0, release_timescale=1)]
+    instance.serial_ccd = ccd
 
     instance.hyper_noise_scalar_of_ci_regions = None
     instance.hyper_noise_scalar_of_parallel_trails = None

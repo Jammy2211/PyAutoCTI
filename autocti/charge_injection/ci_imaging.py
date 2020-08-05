@@ -326,9 +326,9 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
         ci_pre_cti,
         ci_pattern,
         parallel_traps=None,
-        parallel_ccd_volume=None,
+        parallel_ccd=None,
         serial_traps=None,
-        serial_ccd_volume=None,
+        serial_ccd=None,
         cosmic_ray_map=None,
         name=None,
     ):
@@ -345,7 +345,7 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
         ci_pattern : ci_pattern.CIPatternSimulate
             The charge injection ci_pattern (regions, normalization, etc.) of the charge injection image.
         cti_params : ArcticParams.ArcticParams
-            The CTI model parameters (trap density, trap lifetimes etc.).
+            The CTI model parameters (trap density, trap release_timescales etc.).
         clocker : ArcticSettings.ArcticSettings
             The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
         read_noise : None or float
@@ -360,9 +360,9 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
         ci_post_cti = clocker.add_cti(
             image=ci_pre_cti,
             parallel_traps=parallel_traps,
-            parallel_ccd_volume=parallel_ccd_volume,
+            parallel_ccd=parallel_ccd,
             serial_traps=serial_traps,
-            serial_ccd_volume=serial_ccd_volume,
+            serial_ccd=serial_ccd,
         )
 
         if self.read_noise is not None:

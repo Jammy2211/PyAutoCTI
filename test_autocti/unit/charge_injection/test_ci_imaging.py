@@ -385,7 +385,7 @@ class TestMaskedCIImaging:
 
 class TestSimulatorCIImaging(object):
     def test__no_instrumental_effects_input__only_cti_simulated(
-        self, parallel_clocker, traps_x2, ccd_volume
+        self, parallel_clocker, traps_x2, ccd
     ):
 
         pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
@@ -399,7 +399,7 @@ class TestSimulatorCIImaging(object):
             ci_pattern=pattern,
             clocker=parallel_clocker,
             parallel_traps=traps_x2,
-            parallel_ccd_volume=ccd_volume,
+            parallel_ccd=ccd,
         )
 
         assert imaging.image[0, 0:5] == pytest.approx(
@@ -407,7 +407,7 @@ class TestSimulatorCIImaging(object):
         )
 
     def test__include_read_noise__is_added_after_cti(
-        self, parallel_clocker, traps_x2, ccd_volume
+        self, parallel_clocker, traps_x2, ccd
     ):
 
         pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 3)])
@@ -432,7 +432,7 @@ class TestSimulatorCIImaging(object):
         )
 
     def test__include_cosmics__is_added_to_image_and_trailed(
-        self, parallel_clocker, traps_x2, ccd_volume
+        self, parallel_clocker, traps_x2, ccd
     ):
 
         pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
@@ -449,7 +449,7 @@ class TestSimulatorCIImaging(object):
             ci_pattern=pattern,
             clocker=parallel_clocker,
             parallel_traps=traps_x2,
-            parallel_ccd_volume=ccd_volume,
+            parallel_ccd=ccd,
             cosmic_ray_map=cosmic_ray_map,
         )
 
@@ -480,19 +480,19 @@ class TestSimulatorCIImaging(object):
     #
     #     # Densities for this seed are [9.6, 8.2, 8.6, 9.6, 9.6]
     #
-    #     parallel_traps = ac.Trap(trap_density=10.0, trap_lifetime=1.0)
-    #     parallel_traps = ac.Trap.poisson_species(
+    #     parallel_traps = ac.TrapInstantCapture(trap_density=10.0, trap_release_timescale=1.0)
+    #     parallel_traps = ac.TrapInstantCapture.poisson_species(
     #         species=[parallel_traps], shape=(5, 5), seed=1
     #     )
-    #     parallel_ccd_volume = ac.CCDVolume(
+    #     parallel_ccd = ac.CCD(
     #         well_notch_depth=1.0e-4,
-    #         well_fill_beta=0.58,
+    #         well_fill_power=0.58,
     #         well_fill_gamma=0.0,
     #         well_fill_alpha=1.0,
     #     )
     #
     #     params_parallel = ac.ArcticParams(
-    #         parallel_traps=parallel_traps, parallel_ccd_volume=parallel_ccd_volume
+    #         parallel_traps=parallel_traps, parallel_ccd=parallel_ccd
     #     )
     #
     #     imaging = ac.ci.CIImaging.simulate(

@@ -6,12 +6,21 @@ from autoarray.structures.arrays import abstract_array
 from autocti.charge_injection import ci_mask
 from autocti.mask.mask import Mask
 from autoarray.structures.frame import abstract_frame
-from autoarray.structures.instruments import euclid
+from autoarray.instruments import euclid
 from autoarray.util import array_util, frame_util
+from autocti.structures import frame as f
 
 
 class AbstractCIFrame(abstract_frame.AbstractFrame):
-    def __new__(cls, array, mask, ci_pattern, original_roe_corner=(1, 0), scans=None):
+    def __new__(
+        cls,
+        array,
+        mask,
+        ci_pattern,
+        original_roe_corner=(1, 0),
+        exposure_info=None,
+        scans=None,
+    ):
         """
         Class which represents the CCD quadrant of a charge injection image (e.g. the location of the parallel and
         serial front edge, trails).
@@ -23,14 +32,17 @@ class AbstractCIFrame(abstract_frame.AbstractFrame):
             The charge injection ci_pattern (scans, normalization, etc.) of the charge injection image.
         """
 
-        obj = super(AbstractCIFrame, cls).__new__(
-            cls=cls,
-            array=array,
-            mask=mask,
-            original_roe_corner=original_roe_corner,
-            scans=scans,
-        )
+        if type(array) is list:
+            array = np.asarray(array)
 
+        array[mask == True] = 0.0
+
+        obj = array.view(cls)
+        obj.mask = mask
+        obj.store_in_1d = False
+        obj.original_roe_corner = original_roe_corner
+        obj.exposure_info = exposure_info
+        obj.scans = scans or abstract_frame.Scans()
         obj.ci_pattern = ci_pattern
 
         return obj
@@ -1289,7 +1301,13 @@ class AbstractCIFrame(abstract_frame.AbstractFrame):
 class CIFrame(AbstractCIFrame):
     @classmethod
     def manual(
-        cls, array, ci_pattern, roe_corner=(1, 0), scans=None, pixel_scales=None
+        cls,
+        array,
+        ci_pattern,
+        roe_corner=(1, 0),
+        exposure_info=None,
+        scans=None,
+        pixel_scales=None,
     ):
         """Abstract class for the geometry of a CTI Image.
 
@@ -1339,11 +1357,14 @@ class CIFrame(AbstractCIFrame):
                 ci_pattern=ci_pattern, shape_2d=array.shape, roe_corner=roe_corner
             ),
             original_roe_corner=roe_corner,
+            exposure_info=exposure_info,
             scans=scans,
         )
 
     @classmethod
-    def manual_mask(cls, array, mask, ci_pattern, roe_corner=(1, 0), scans=None):
+    def manual_mask(
+        cls, array, mask, ci_pattern, roe_corner=(1, 0), exposure_info=None, scans=None
+    ):
         """Abstract class for the geometry of a CTI Image.
 
         A FrameArray is stored as a 2D NumPy arrays. When this immage is passed to arctic, clocking goes towards
@@ -1390,6 +1411,7 @@ class CIFrame(AbstractCIFrame):
                 ci_pattern=ci_pattern, shape_2d=array.shape, roe_corner=roe_corner
             ),
             original_roe_corner=roe_corner,
+            exposure_info=exposure_info,
             scans=scans,
         )
 
@@ -1400,6 +1422,7 @@ class CIFrame(AbstractCIFrame):
         shape_2d,
         ci_pattern,
         roe_corner=(1, 0),
+        exposure_info=None,
         scans=None,
         pixel_scales=None,
     ):
@@ -1408,32 +1431,47 @@ class CIFrame(AbstractCIFrame):
             array=np.full(fill_value=fill_value, shape=shape_2d),
             ci_pattern=ci_pattern,
             roe_corner=roe_corner,
+            exposure_info=exposure_info,
             scans=scans,
             pixel_scales=pixel_scales,
         )
 
     @classmethod
     def ones(
-        cls, shape_2d, ci_pattern, roe_corner=(1, 0), scans=None, pixel_scales=None
+        cls,
+        shape_2d,
+        ci_pattern,
+        roe_corner=(1, 0),
+        exposure_info=None,
+        scans=None,
+        pixel_scales=None,
     ):
         return cls.full(
             fill_value=1.0,
             shape_2d=shape_2d,
             ci_pattern=ci_pattern,
             roe_corner=roe_corner,
+            exposure_info=exposure_info,
             scans=scans,
             pixel_scales=pixel_scales,
         )
 
     @classmethod
     def zeros(
-        cls, shape_2d, ci_pattern, roe_corner=(1, 0), scans=None, pixel_scales=None
+        cls,
+        shape_2d,
+        ci_pattern,
+        roe_corner=(1, 0),
+        exposure_info=None,
+        scans=None,
+        pixel_scales=None,
     ):
         return cls.full(
             fill_value=0.0,
             shape_2d=shape_2d,
             ci_pattern=ci_pattern,
             roe_corner=roe_corner,
+            exposure_info=exposure_info,
             scans=scans,
             pixel_scales=pixel_scales,
         )
@@ -1452,6 +1490,7 @@ class CIFrame(AbstractCIFrame):
             ci_pattern=ci_frame.ci_pattern.with_extracted_regions(
                 extraction_region=extraction_region
             ),
+            exposure_info=ci_frame.exposure_info,
             scans=scans,
             roe_corner=ci_frame.original_roe_corner,
             pixel_scales=ci_frame.pixel_scales,
@@ -1464,6 +1503,7 @@ class CIFrame(AbstractCIFrame):
         hdu,
         ci_pattern,
         roe_corner=(1, 0),
+        exposure_info=None,
         scans=None,
         pixel_scales=None,
     ):
@@ -1492,6 +1532,7 @@ class CIFrame(AbstractCIFrame):
             array=array,
             ci_pattern=ci_pattern,
             roe_corner=roe_corner,
+            exposure_info=exposure_info,
             scans=scans,
             pixel_scales=pixel_scales,
         )
@@ -1503,11 +1544,12 @@ class CIFrame(AbstractCIFrame):
             mask=mask,
             ci_pattern=ci_frame.ci_pattern,
             original_roe_corner=ci_frame.original_roe_corner,
+            exposure_info=ci_frame.exposure_info,
             scans=abstract_frame.Scans.from_frame(frame=ci_frame),
         )
 
 
-class EuclidCIFrame(CIFrame):
+class CIFrameEuclid(CIFrame):
     @classmethod
     def from_ccd_and_quadrant_id(
         cls,
@@ -1575,21 +1617,85 @@ class EuclidCIFrame(CIFrame):
         row_index = ccd_id[-1]
 
         if (row_index in "123") and (quadrant_id == "E"):
-            return EuclidCIFrame.bottom_left(array=array, ci_pattern=ci_pattern)
+            return CIFrameEuclid.bottom_left(
+                array=array,
+                ci_pattern=ci_pattern,
+                parallel_size=parallel_size,
+                serial_size=serial_size,
+                serial_prescan_size=serial_prescan_size,
+                serial_overscan_size=serial_overscan_size,
+                parallel_overscan_size=parallel_overscan_size,
+            )
         elif (row_index in "123") and (quadrant_id == "F"):
-            return EuclidCIFrame.bottom_right(array=array, ci_pattern=ci_pattern)
+            return CIFrameEuclid.bottom_right(
+                array=array,
+                ci_pattern=ci_pattern,
+                parallel_size=parallel_size,
+                serial_size=serial_size,
+                serial_prescan_size=serial_prescan_size,
+                serial_overscan_size=serial_overscan_size,
+                parallel_overscan_size=parallel_overscan_size,
+            )
         elif (row_index in "123") and (quadrant_id == "G"):
-            return EuclidCIFrame.top_right(array=array, ci_pattern=ci_pattern)
+            return CIFrameEuclid.top_right(
+                array=array,
+                ci_pattern=ci_pattern,
+                parallel_size=parallel_size,
+                serial_size=serial_size,
+                serial_prescan_size=serial_prescan_size,
+                serial_overscan_size=serial_overscan_size,
+                parallel_overscan_size=parallel_overscan_size,
+            )
         elif (row_index in "123") and (quadrant_id == "H"):
-            return EuclidCIFrame.top_left(array=array, ci_pattern=ci_pattern)
+            return CIFrameEuclid.top_left(
+                array=array,
+                ci_pattern=ci_pattern,
+                parallel_size=parallel_size,
+                serial_size=serial_size,
+                serial_prescan_size=serial_prescan_size,
+                serial_overscan_size=serial_overscan_size,
+                parallel_overscan_size=parallel_overscan_size,
+            )
         elif (row_index in "456") and (quadrant_id == "E"):
-            return EuclidCIFrame.top_right(array=array, ci_pattern=ci_pattern)
+            return CIFrameEuclid.top_right(
+                array=array,
+                ci_pattern=ci_pattern,
+                parallel_size=parallel_size,
+                serial_size=serial_size,
+                serial_prescan_size=serial_prescan_size,
+                serial_overscan_size=serial_overscan_size,
+                parallel_overscan_size=parallel_overscan_size,
+            )
         elif (row_index in "456") and (quadrant_id == "F"):
-            return EuclidCIFrame.top_left(array=array, ci_pattern=ci_pattern)
+            return CIFrameEuclid.top_left(
+                array=array,
+                ci_pattern=ci_pattern,
+                parallel_size=parallel_size,
+                serial_size=serial_size,
+                serial_prescan_size=serial_prescan_size,
+                serial_overscan_size=serial_overscan_size,
+                parallel_overscan_size=parallel_overscan_size,
+            )
         elif (row_index in "456") and (quadrant_id == "G"):
-            return EuclidCIFrame.bottom_left(array=array, ci_pattern=ci_pattern)
+            return CIFrameEuclid.bottom_left(
+                array=array,
+                ci_pattern=ci_pattern,
+                parallel_size=parallel_size,
+                serial_size=serial_size,
+                serial_prescan_size=serial_prescan_size,
+                serial_overscan_size=serial_overscan_size,
+                parallel_overscan_size=parallel_overscan_size,
+            )
         elif (row_index in "456") and (quadrant_id == "H"):
-            return EuclidCIFrame.bottom_right(array=array, ci_pattern=ci_pattern)
+            return CIFrameEuclid.bottom_right(
+                array=array,
+                ci_pattern=ci_pattern,
+                parallel_size=parallel_size,
+                serial_size=serial_size,
+                serial_prescan_size=serial_prescan_size,
+                serial_overscan_size=serial_overscan_size,
+                parallel_overscan_size=parallel_overscan_size,
+            )
 
     @classmethod
     def top_left(
@@ -1603,7 +1709,7 @@ class EuclidCIFrame(CIFrame):
         parallel_overscan_size=20,
     ):
 
-        scans = euclid.EuclidScans.top_left(
+        scans = euclid.ScansEuclid.top_left(
             parallel_size=parallel_size,
             serial_size=serial_size,
             serial_prescan_size=serial_prescan_size,
@@ -1627,7 +1733,7 @@ class EuclidCIFrame(CIFrame):
         parallel_overscan_size=20,
     ):
 
-        scans = euclid.EuclidScans.top_right(
+        scans = euclid.ScansEuclid.top_right(
             parallel_size=parallel_size,
             serial_size=serial_size,
             serial_prescan_size=serial_prescan_size,
@@ -1651,7 +1757,7 @@ class EuclidCIFrame(CIFrame):
         parallel_overscan_size=20,
     ):
 
-        scans = euclid.EuclidScans.bottom_left(
+        scans = euclid.ScansEuclid.bottom_left(
             parallel_size=parallel_size,
             serial_size=serial_size,
             serial_prescan_size=serial_prescan_size,
@@ -1675,7 +1781,7 @@ class EuclidCIFrame(CIFrame):
         parallel_overscan_size=20,
     ):
 
-        scans = euclid.EuclidScans.bottom_right(
+        scans = euclid.ScansEuclid.bottom_right(
             parallel_size=parallel_size,
             serial_size=serial_size,
             serial_prescan_size=serial_prescan_size,

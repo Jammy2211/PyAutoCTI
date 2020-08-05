@@ -18,19 +18,19 @@ def make_pipeline(name, folders, search):
     class PhaseCIImaging(ac.PhaseCIImaging):
         def customize_priors(self, results):
 
-            self.parallel_ccd_volume.well_fill_alpha = 1.0
-            self.parallel_ccd_volume.well_fill_gamma = 0.0
-            self.serial_ccd_volume.well_fill_alpha = 1.0
-            self.serial_ccd_volume.well_fill_gamma = 0.0
+            self.parallel_ccd.well_fill_alpha = 1.0
+            self.parallel_ccd.well_fill_gamma = 0.0
+            self.serial_ccd.well_fill_alpha = 1.0
+            self.serial_ccd.well_fill_gamma = 0.0
 
     phase1 = ac.PhaseCIImaging(
         phase_name="phase_1",
         folders=folders,
         search=search,
-        parallel_traps=[af.PriorModel(ac.Trap)],
-        parallel_ccd_volume=parallel_ccd_volume,
-        serial_traps=[af.PriorModel(ac.Trap)],
-        serial_ccd_volume=serial_ccd_volume,
+        parallel_traps=[af.PriorModel(ac.TrapInstantCapture)],
+        parallel_ccd=parallel_ccd,
+        serial_traps=[af.PriorModel(ac.TrapInstantCapture)],
+        serial_ccd=serial_ccd,
         parallel_front_edge_mask_rows=(0, 1),
         parallel_trails_mask_rows=(0, 1),
         serial_front_edge_mask_columns=(0, 1),

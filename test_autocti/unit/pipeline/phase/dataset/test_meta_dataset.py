@@ -20,8 +20,8 @@ class TestSetup:
 
         phase_dataset_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            parallel_traps=[ac.Trap],
-            parallel_ccd_volume=ac.CCDVolume,
+            parallel_traps=[ac.TrapInstantCapture],
+            parallel_ccd=ac.CCD,
             search=mock.MockSearch(),
         )
 
@@ -31,8 +31,8 @@ class TestSetup:
 
         phase_dataset_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            serial_traps=[ac.Trap],
-            serial_ccd_volume=ac.CCDVolume,
+            serial_traps=[ac.TrapInstantCapture],
+            serial_ccd=ac.CCD,
             search=mock.MockSearch(),
         )
 
@@ -42,10 +42,10 @@ class TestSetup:
 
         phase_dataset_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            parallel_traps=[ac.Trap],
-            parallel_ccd_volume=ac.CCDVolume,
-            serial_traps=[ac.Trap],
-            serial_ccd_volume=ac.CCDVolume,
+            parallel_traps=[ac.TrapInstantCapture],
+            parallel_ccd=ac.CCD,
+            serial_traps=[ac.TrapInstantCapture],
+            serial_ccd=ac.CCD,
             search=mock.MockSearch(),
         )
 

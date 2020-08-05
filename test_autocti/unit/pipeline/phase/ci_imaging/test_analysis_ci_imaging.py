@@ -30,12 +30,18 @@ class TestChecks:
         )
 
         instance = model.ModelInstance()
-        instance.parallel_traps = [ac.Trap(density=0.75), ac.Trap(density=0.75)]
+        instance.parallel_traps = [
+            ac.TrapInstantCapture(density=0.75),
+            ac.TrapInstantCapture(density=0.75),
+        ]
 
         analysis.check_total_density_within_range(instance=instance)
 
         instance = model.ModelInstance()
-        instance.parallel_traps = [ac.Trap(density=1.1), ac.Trap(density=1.1)]
+        instance.parallel_traps = [
+            ac.TrapInstantCapture(density=1.1),
+            ac.TrapInstantCapture(density=1.1),
+        ]
 
         with pytest.raises(exc.PriorException):
             analysis.check_total_density_within_range(instance=instance)
@@ -51,12 +57,18 @@ class TestChecks:
         )
 
         instance = model.ModelInstance()
-        instance.serial_traps = [ac.Trap(density=0.75), ac.Trap(density=0.75)]
+        instance.serial_traps = [
+            ac.TrapInstantCapture(density=0.75),
+            ac.TrapInstantCapture(density=0.75),
+        ]
 
         analysis.check_total_density_within_range(instance=instance)
 
         instance = model.ModelInstance()
-        instance.serial_traps = [ac.Trap(density=1.1), ac.Trap(density=1.1)]
+        instance.serial_traps = [
+            ac.TrapInstantCapture(density=1.1),
+            ac.TrapInstantCapture(density=1.1),
+        ]
 
         with pytest.raises(exc.PriorException):
             analysis.check_total_density_within_range(instance=instance)
@@ -64,12 +76,12 @@ class TestChecks:
 
 class TestFit:
     def test__log_likelihood_via_analysis__matches_manual_fit(
-        self, ci_imaging_7x7, ci_pre_cti_7x7, traps_x1, ccd_volume, parallel_clocker
+        self, ci_imaging_7x7, ci_pre_cti_7x7, traps_x1, ccd, parallel_clocker
     ):
 
         phase = PhaseCIImaging(
             parallel_traps=traps_x1,
-            parallel_ccd_volume=ccd_volume,
+            parallel_ccd=ccd,
             phase_name="test_phase",
             search=mock.MockSearch(),
         )
@@ -84,9 +96,7 @@ class TestFit:
         )
 
         ci_post_cti = parallel_clocker.add_cti(
-            image=ci_pre_cti_7x7,
-            parallel_traps=traps_x1,
-            parallel_ccd_volume=ccd_volume,
+            image=ci_pre_cti_7x7, parallel_traps=traps_x1, parallel_ccd=ccd
         )
 
         fit = ac.ci.CIFitImaging(
@@ -96,12 +106,12 @@ class TestFit:
         assert fit.log_likelihood == log_likelihood_via_analysis
 
     def test__extracted_fits_from_instance_and_ci_imaging(
-        self, ci_imaging_7x7, mask_7x7, traps_x1, ccd_volume, parallel_clocker
+        self, ci_imaging_7x7, mask_7x7, traps_x1, ccd, parallel_clocker
     ):
 
         phase = PhaseCIImaging(
             parallel_traps=traps_x1,
-            parallel_ccd_volume=ccd_volume,
+            parallel_ccd=ccd,
             settings=ac.PhaseSettingsCIImaging(columns=(0, 1)),
             phase_name="test_phase",
             search=mock.MockSearch(),
@@ -125,7 +135,7 @@ class TestFit:
         ci_post_cti = parallel_clocker.add_cti(
             image=masked_ci_imaging.ci_pre_cti,
             parallel_traps=traps_x1,
-            parallel_ccd_volume=ccd_volume,
+            parallel_ccd=ccd,
         )
 
         fit = ac.ci.CIFitImaging(
@@ -136,12 +146,12 @@ class TestFit:
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood)
 
     def test__full_fits_from_instance_and_ci_imaging(
-        self, ci_imaging_7x7, mask_7x7, traps_x1, ccd_volume, parallel_clocker
+        self, ci_imaging_7x7, mask_7x7, traps_x1, ccd, parallel_clocker
     ):
 
         phase = PhaseCIImaging(
             parallel_traps=traps_x1,
-            parallel_ccd_volume=ccd_volume,
+            parallel_ccd=ccd,
             settings=ac.PhaseSettingsCIImaging(columns=(0, 1)),
             phase_name="test_phase",
             search=mock.MockSearch(),
@@ -155,9 +165,7 @@ class TestFit:
         fits = analysis.fits_full_dataset_from_instance(instance=instance)
 
         ci_post_cti = parallel_clocker.add_cti(
-            image=ci_imaging_7x7.ci_pre_cti,
-            parallel_traps=traps_x1,
-            parallel_ccd_volume=ccd_volume,
+            image=ci_imaging_7x7.ci_pre_cti, parallel_traps=traps_x1, parallel_ccd=ccd
         )
 
         fit = ac.ci.CIFitImaging(
@@ -168,18 +176,12 @@ class TestFit:
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood)
 
     def test__extracted_fits_from_instance_and_ci_imaging__include_noise_scaling(
-        self,
-        ci_imaging_7x7,
-        mask_7x7,
-        traps_x1,
-        ccd_volume,
-        parallel_clocker,
-        ci_pattern_7x7,
+        self, ci_imaging_7x7, mask_7x7, traps_x1, ccd, parallel_clocker, ci_pattern_7x7
     ):
 
         phase = PhaseCIImaging(
             parallel_traps=traps_x1,
-            parallel_ccd_volume=ccd_volume,
+            parallel_ccd=ccd,
             hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
             settings=ac.PhaseSettingsCIImaging(columns=(0, 1)),
             phase_name="test_phase",
@@ -217,7 +219,7 @@ class TestFit:
         ci_post_cti = parallel_clocker.add_cti(
             image=masked_ci_imaging_7x7.ci_pre_cti,
             parallel_traps=traps_x1,
-            parallel_ccd_volume=ccd_volume,
+            parallel_ccd=ccd,
         )
 
         fit = ac.ci.CIFitImaging(
@@ -238,18 +240,12 @@ class TestFit:
         assert fit.log_likelihood != pytest.approx(fits[0].log_likelihood, 1.0e-4)
 
     def test__full_fits_from_instance_and_ci_imaging__include_noise_scaling(
-        self,
-        ci_imaging_7x7,
-        mask_7x7,
-        traps_x1,
-        ccd_volume,
-        parallel_clocker,
-        ci_pattern_7x7,
+        self, ci_imaging_7x7, mask_7x7, traps_x1, ccd, parallel_clocker, ci_pattern_7x7
     ):
 
         phase = PhaseCIImaging(
             parallel_traps=traps_x1,
-            parallel_ccd_volume=ccd_volume,
+            parallel_ccd=ccd,
             hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
             settings=ac.PhaseSettingsCIImaging(columns=(0, 1)),
             phase_name="test_phase",
@@ -276,9 +272,7 @@ class TestFit:
         )
 
         ci_post_cti = parallel_clocker.add_cti(
-            image=ci_imaging_7x7.ci_pre_cti,
-            parallel_traps=traps_x1,
-            parallel_ccd_volume=ccd_volume,
+            image=ci_imaging_7x7.ci_pre_cti, parallel_traps=traps_x1, parallel_ccd=ccd
         )
 
         mask = ac.ci.CIMask.unmasked(

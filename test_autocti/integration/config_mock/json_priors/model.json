@@ -1,6 +1,6 @@
 {
-    "CCDVolume": {
-        "well_max_height": {
+    "CCD": {
+        "full_well_depth": {
             "type": "Uniform",
             "lower_limit": 0.0,
             "upper_limit": 100000.0,
@@ -26,7 +26,7 @@
                 "upper": "inf"
             }
         },
-        "well_fill_beta": {
+        "well_fill_power": {
             "type": "Uniform",
             "lower_limit": 0.0,
             "upper_limit": 1.0,
@@ -40,8 +40,8 @@
             }
         }
     },
-    "CCDVolumeComplex": {
-        "well_max_height": {
+    "CCDComplex": {
+        "full_well_depth": {
             "type": "Uniform",
             "lower_limit": 0.0,
             "upper_limit": 100000.0,
@@ -80,7 +80,7 @@
                 "upper": "inf"
             }
         },
-        "well_fill_beta": {
+        "well_fill_power": {
             "type": "Uniform",
             "lower_limit": 0.0,
             "upper_limit": 1.0,

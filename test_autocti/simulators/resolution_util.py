@@ -64,9 +64,9 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(
     clocker,
     pattern,
     parallel_traps=None,
-    parallel_ccd_volume=None,
+    parallel_ccd=None,
     serial_traps=None,
-    serial_ccd_volume=None,
+    serial_ccd=None,
     read_noise=1.0,
     cosmic_ray_map=None,
 ):
@@ -82,9 +82,9 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(
         ci_pre_cti=ci_pre_cti,
         ci_pattern=pattern,
         parallel_traps=parallel_traps,
-        parallel_ccd_volume=parallel_ccd_volume,
+        parallel_ccd=parallel_ccd,
         serial_traps=serial_traps,
-        serial_ccd_volume=serial_ccd_volume,
+        serial_ccd=serial_ccd,
         cosmic_ray_map=cosmic_ray_map,
     )
 

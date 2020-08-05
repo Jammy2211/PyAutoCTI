@@ -76,7 +76,7 @@ def non_uniform_frame_for_ou_sim(ccd_id, quadrant_id):
         - Includes information on different regions of the image, such as the serial prescan and overscans.
     """
     ci_pre_ctis = [
-        ci_frame.EuclidCIFrame.from_ccd_and_quadrant_id(
+        ci_frame.CIFrameEuclid.from_ccd_and_quadrant_id(
             array=ci_pre_cti,
             ci_pattern=ci_pattern,
             ccd_id=ccd_id,
@@ -102,21 +102,21 @@ def add_cti_to_frame_for_ou_sim(frames):
     """
     The CTI model used by arCTIc to add CTI to the input image in the parallel direction, which contains: 
 
-        - 2 *Trap* species in the parallel direction.
+        - 2 *TrapInstantCapture* species in the parallel direction.
         - A simple CCD volume beta parametrization.
-        - 3 *Trap* species in the serial direction.
+        - 3 *TrapInstantCapture* species in the serial direction.
         - A simple CCD volume beta parametrization.
     """
-    parallel_trap_0 = traps.Trap(density=0.13, lifetime=1.25)
-    parallel_trap_1 = traps.Trap(density=0.25, lifetime=4.4)
-    parallel_ccd_volume = model.CCDVolume(
-        well_fill_beta=0.8, well_notch_depth=0.0, well_max_height=84700
+    parallel_trap_0 = traps.TrapInstantCapture(density=0.13, release_timescale=1.25)
+    parallel_trap_1 = traps.TrapInstantCapture(density=0.25, release_timescale=4.4)
+    parallel_ccd = model.CCD(
+        well_fill_power=0.8, well_notch_depth=0.0, full_well_depth=84700
     )
-    serial_trap_0 = traps.Trap(density=0.0442, lifetime=0.8)
-    serial_trap_1 = traps.Trap(density=0.1326, lifetime=4.0)
-    serial_trap_2 = traps.Trap(density=3.9782, lifetime=20.0)
-    serial_ccd_volume = model.CCDVolume(
-        well_fill_beta=0.8, well_notch_depth=0.0, well_max_height=84700
+    serial_trap_0 = traps.TrapInstantCapture(density=0.0442, release_timescale=0.8)
+    serial_trap_1 = traps.TrapInstantCapture(density=0.1326, release_timescale=4.0)
+    serial_trap_2 = traps.TrapInstantCapture(density=3.9782, release_timescale=20.0)
+    serial_ccd = model.CCD(
+        well_fill_power=0.8, well_notch_depth=0.0, full_well_depth=84700
     )
 
     """
@@ -134,9 +134,9 @@ def add_cti_to_frame_for_ou_sim(frames):
             ci_pre_cti=frame.ci_pre_cti,
             ci_pattern=frame.ci_pattern,
             parallel_traps=[parallel_trap_0, parallel_trap_1],
-            parallel_ccd_volume=parallel_ccd_volume,
+            parallel_ccd=parallel_ccd,
             serial_traps=[serial_trap_0, serial_trap_1, serial_trap_2],
-            serial_ccd_volume=serial_ccd_volume,
+            serial_ccd=serial_ccd,
         )
         for frame in zip(frames)
     ]

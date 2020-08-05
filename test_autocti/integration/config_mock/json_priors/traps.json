@@ -1,5 +1,5 @@
 {
-    "Trap": {
+    "TrapInstantCapture": {
         "density": {
             "type": "Uniform",
             "lower_limit": 0.0,
@@ -13,7 +13,7 @@
                 "upper": "inf"
             }
         },
-        "lifetime": {
+        "release_timescale": {
             "type": "Uniform",
             "lower_limit": 0.0,
             "upper_limit": 30.0,

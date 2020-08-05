@@ -94,12 +94,22 @@ class Analysis(analysis_dataset.Analysis):
             instance=instance, hyper_noise_scale=hyper_noise_scale
         )
 
+        if len(instance.parallel_traps) > 0:
+            parallel_traps = list(instance.parallel_traps)
+        else:
+            parallel_traps = None
+
+        if len(instance.serial_traps) > 0:
+            serial_traps = list(instance.serial_traps)
+        else:
+            serial_traps = None
+
         ci_post_cti = self.clocker.add_cti(
             image=ci_imaging.ci_pre_cti,
-            parallel_traps=instance.parallel_traps,
-            parallel_ccd_volume=instance.parallel_ccd_volume,
-            serial_traps=instance.serial_traps,
-            serial_ccd_volume=instance.serial_ccd_volume,
+            parallel_traps=parallel_traps,
+            parallel_ccd=instance.parallel_ccd,
+            serial_traps=serial_traps,
+            serial_ccd=instance.serial_ccd,
         )
 
         return ci_fit.CIFitImaging(
@@ -142,12 +152,24 @@ class Analysis(analysis_dataset.Analysis):
 
 def pipe_cti(ci_data_masked, instance, clocker, hyper_noise_scalars):
 
+    # TODO : Convesions ini pyarctic make this dodgy - will fix but sorting them out in arcticpy.
+
+    if len(instance.parallel_traps) > 0:
+        parallel_traps = list(instance.parallel_traps)
+    else:
+        parallel_traps = None
+
+    if len(instance.serial_traps) > 0:
+        serial_traps = list(instance.serial_traps)
+    else:
+        serial_traps = None
+
     ci_post_cti = clocker.add_cti(
         image=ci_data_masked.ci_pre_cti,
-        parallel_traps=instance.parallel_traps,
-        parallel_ccd_volume=instance.parallel_ccd_volume,
-        serial_traps=instance.serial_traps,
-        serial_ccd_volume=instance.serial_ccd_volume,
+        parallel_traps=parallel_traps,
+        parallel_ccd=instance.parallel_ccd,
+        serial_traps=serial_traps,
+        serial_ccd=instance.serial_ccd,
     )
 
     fit = ci_fit.CIFitImaging(

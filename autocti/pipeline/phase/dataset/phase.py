@@ -12,8 +12,8 @@ class PhaseDataset(abstract.AbstractPhase):
 
     parallel_traps = PhaseProperty("parallel_traps")
     serial_traps = PhaseProperty("serial_traps")
-    parallel_ccd_volume = PhaseProperty("parallel_ccd_volume")
-    serial_ccd_volume = PhaseProperty("serial_ccd_volume")
+    parallel_ccd = PhaseProperty("parallel_ccd")
+    serial_ccd = PhaseProperty("serial_ccd")
 
     Result = Result
 
@@ -23,9 +23,9 @@ class PhaseDataset(abstract.AbstractPhase):
         paths,
         search,
         parallel_traps=None,
-        parallel_ccd_volume=None,
+        parallel_ccd=None,
         serial_traps=None,
-        serial_ccd_volume=None,
+        serial_ccd=None,
         settings=PhaseSettingsCIImaging(),
     ):
         """
@@ -44,9 +44,9 @@ class PhaseDataset(abstract.AbstractPhase):
         super().__init__(paths=paths, search=search)
 
         self.parallel_traps = parallel_traps or []
-        self.parallel_ccd_volume = parallel_ccd_volume
+        self.parallel_ccd = parallel_ccd
         self.serial_traps = serial_traps or []
-        self.serial_ccd_volume = serial_ccd_volume
+        self.serial_ccd = serial_ccd
 
     def run(self, datasets: Dataset, clocker, results=None, info=None, pool=None):
         """

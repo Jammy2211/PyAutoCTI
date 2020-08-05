@@ -14,17 +14,17 @@ clocker = ac.Clocker(serial_express=2)
 
 def make_pipeline(name, folders, search=af.DynestyStatic()):
 
-    serial_ccd_volume = af.PriorModel(ac.CCDVolume)
+    serial_ccd = af.PriorModel(ac.CCD)
 
-    serial_ccd_volume.well_max_height = 8.47e4
-    serial_ccd_volume.well_notch_depth = 1e-7
+    serial_ccd.full_well_depth = 8.47e4
+    serial_ccd.well_notch_depth = 1e-7
 
     phase1 = ac.PhaseCIImaging(
         phase_name="phase_1",
         folders=folders,
         search=search,
-        serial_traps=[af.PriorModel(ac.Trap)],
-        serial_ccd_volume=serial_ccd_volume,
+        serial_traps=[af.PriorModel(ac.TrapInstantCapture)],
+        serial_ccd=serial_ccd,
         settings=ac.PhaseSettingsCIImaging(rows=(0, 40)),
     )
 
@@ -34,7 +34,7 @@ def make_pipeline(name, folders, search=af.DynestyStatic()):
         phase_name="phase_2",
         folders=folders,
         serial_traps=phase1.result.model.serial_traps,
-        serial_ccd_volume=phase1.result.model.serial_ccd_volume,
+        serial_ccd=phase1.result.model.serial_ccd,
         hyper_noise_scalar_of_ci_regions=phase1.result.hyper_combined.instance.hyper_noise_scalar_of_ci_regions,
         hyper_noise_scalar_of_serial_trails=phase1.result.hyper_combined.instance.hyper_noise_scalar_of_serial_trails,
         search=search,

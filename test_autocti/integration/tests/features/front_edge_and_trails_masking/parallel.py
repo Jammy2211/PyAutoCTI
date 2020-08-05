@@ -17,7 +17,7 @@ parallel_settings = ac.Settings(
     express=2,
     n_levels=2000,
     charge_injection_mode=False,
-    readout_offset=0,
+    offset=0,
 )
 clocker = ac.ArcticSettings(parallel=parallel_settings)
 
@@ -25,15 +25,15 @@ clocker = ac.ArcticSettings(parallel=parallel_settings)
 def make_pipeline(name, folders, search):
     class PhaseCIImaging(ac.PhaseCIImaging):
         def customize_priors(self, results):
-            self.parallel_ccd_volume.well_fill_alpha = 1.0
-            self.parallel_ccd_volume.well_fill_gamma = 0.0
+            self.parallel_ccd.well_fill_alpha = 1.0
+            self.parallel_ccd.well_fill_gamma = 0.0
 
     phase1 = ac.PhaseCIImaging(
         phase_name="phase_1",
         folders=folders,
         search=search,
-        parallel_traps=[af.PriorModel(ac.Trap)],
-        parallel_ccd_volume=parallel_ccd_volume,
+        parallel_traps=[af.PriorModel(ac.TrapInstantCapture)],
+        parallel_ccd=parallel_ccd,
         columns=None,
         parallel_front_edge_mask_rows=(0, 1),
         parallel_trails_mask_rows=(0, 1),
