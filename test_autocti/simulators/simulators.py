@@ -8,9 +8,9 @@ def simulate__ci_uniform__parallel_x1(resolution, normalizations):
     ci_data_type = "ci_uniform"
     ci_data_model = "parallel_x1"
 
-    parallel_traps = [ac.Trap(density=1.0, lifetime=3.0)]
-    parallel_ccd_volume = ac.CCDVolume(
-        well_fill_beta=0.8, well_max_height=8.47e4, well_notch_depth=1e-7
+    parallel_traps = [ac.TrapInstantCapture(density=1.0, release_timescale=3.0)]
+    parallel_ccd = ac.CCD(
+        well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
     )
 
     clocker = ac.Clocker(iterations=1, parallel_express=2)
@@ -29,7 +29,7 @@ def simulate__ci_uniform__parallel_x1(resolution, normalizations):
             clocker=clocker,
             pattern=pattern,
             parallel_traps=parallel_traps,
-            parallel_ccd_volume=parallel_ccd_volume,
+            parallel_ccd=parallel_ccd,
         )
 
 
@@ -39,13 +39,13 @@ def simulate__ci_uniform__parallel_x3(resolution, normalizations):
     ci_data_model = "parallel_x3"
 
     parallel_traps = [
-        ac.Trap(density=0.5, lifetime=2.0),
-        ac.Trap(density=1.5, lifetime=5.0),
-        ac.Trap(density=2.5, lifetime=20.0),
+        ac.TrapInstantCapture(density=0.5, release_timescale=2.0),
+        ac.TrapInstantCapture(density=1.5, release_timescale=5.0),
+        ac.TrapInstantCapture(density=2.5, release_timescale=20.0),
     ]
 
-    parallel_ccd_volume = ac.CCDVolume(
-        well_fill_beta=0.8, well_max_height=8.47e4, well_notch_depth=1e-7
+    parallel_ccd = ac.CCD(
+        well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
     )
 
     clocker = ac.Clocker(iterations=1, parallel_express=2)
@@ -62,7 +62,7 @@ def simulate__ci_uniform__parallel_x3(resolution, normalizations):
             resolution=resolution,
             pattern=pattern,
             parallel_traps=parallel_traps,
-            parallel_ccd_volume=parallel_ccd_volume,
+            parallel_ccd=parallel_ccd,
             clocker=clocker,
         )
 
@@ -72,9 +72,9 @@ def simulate__ci_uniform__serial_x1(resolution, normalizations):
     ci_data_type = "ci_uniform"
     ci_data_model = "serial_x1"
 
-    serial_traps = [ac.Trap(density=1.0, lifetime=3.0)]
-    serial_ccd_volume = ac.CCDVolume(
-        well_fill_beta=0.8, well_max_height=8.47e4, well_notch_depth=1e-7
+    serial_traps = [ac.TrapInstantCapture(density=1.0, release_timescale=3.0)]
+    serial_ccd = ac.CCD(
+        well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
     )
 
     clocker = ac.Clocker(iterations=1, serial_express=2)
@@ -92,7 +92,7 @@ def simulate__ci_uniform__serial_x1(resolution, normalizations):
             resolution=resolution,
             pattern=pattern,
             serial_traps=serial_traps,
-            serial_ccd_volume=serial_ccd_volume,
+            serial_ccd=serial_ccd,
             clocker=clocker,
         )
 
@@ -103,12 +103,12 @@ def simulate__ci_uniform__serial_x3(resolution, normalizations):
     ci_data_model = "serial_x3"
 
     serial_traps = [
-        ac.Trap(density=0.5, lifetime=2.0),
-        ac.Trap(density=1.5, lifetime=5.0),
-        ac.Trap(density=2.5, lifetime=20.0),
+        ac.TrapInstantCapture(density=0.5, release_timescale=2.0),
+        ac.TrapInstantCapture(density=1.5, release_timescale=5.0),
+        ac.TrapInstantCapture(density=2.5, release_timescale=20.0),
     ]
-    serial_ccd_volume = ac.CCDVolume(
-        well_fill_beta=0.8, well_max_height=8.47e4, well_notch_depth=1e-7
+    serial_ccd = ac.CCD(
+        well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
     )
 
     clocker = ac.Clocker(iterations=1, serial_express=2)
@@ -125,7 +125,7 @@ def simulate__ci_uniform__serial_x3(resolution, normalizations):
             resolution=resolution,
             pattern=pattern,
             serial_traps=serial_traps,
-            serial_ccd_volume=serial_ccd_volume,
+            serial_ccd=serial_ccd,
             clocker=clocker,
         )
 
@@ -135,14 +135,14 @@ def simulate__ci_uniform__parallel_x1__serial_x1(resolution, normalizations):
     ci_data_type = "ci_uniform"
     ci_data_model = "parallel_x1__serial_x1"
 
-    parallel_traps = [ac.Trap(density=1.0, lifetime=3.0)]
-    parallel_ccd_volume = ac.CCDVolume(
-        well_fill_beta=0.8, well_max_height=8.47e4, well_notch_depth=1e-7
+    parallel_traps = [ac.TrapInstantCapture(density=1.0, release_timescale=3.0)]
+    parallel_ccd = ac.CCD(
+        well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
     )
 
-    serial_traps = [ac.Trap(density=1.0, lifetime=3.0)]
-    serial_ccd_volume = ac.CCDVolume(
-        well_fill_beta=0.8, well_max_height=8.47e4, well_notch_depth=1e-7
+    serial_traps = [ac.TrapInstantCapture(density=1.0, release_timescale=3.0)]
+    serial_ccd = ac.CCD(
+        well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
     )
 
     clocker = ac.Clocker(iterations=1, parallel_express=2, serial_express=2)
@@ -160,9 +160,9 @@ def simulate__ci_uniform__parallel_x1__serial_x1(resolution, normalizations):
             resolution=resolution,
             pattern=pattern,
             parallel_traps=parallel_traps,
-            parallel_ccd_volume=parallel_ccd_volume,
+            parallel_ccd=parallel_ccd,
             serial_traps=serial_traps,
-            serial_ccd_volume=serial_ccd_volume,
+            serial_ccd=serial_ccd,
             clocker=clocker,
         )
 
@@ -173,22 +173,22 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
     ci_data_model = "parallel_x3__serial_x3"
 
     parallel_traps = [
-        ac.Trap(density=0.5, lifetime=2.0),
-        ac.Trap(density=1.5, lifetime=5.0),
-        ac.Trap(density=2.5, lifetime=20.0),
+        ac.TrapInstantCapture(density=0.5, release_timescale=2.0),
+        ac.TrapInstantCapture(density=1.5, release_timescale=5.0),
+        ac.TrapInstantCapture(density=2.5, release_timescale=20.0),
     ]
 
-    parallel_ccd_volume = ac.CCDVolume(
-        well_fill_beta=0.8, well_max_height=8.47e4, well_notch_depth=1e-7
+    parallel_ccd = ac.CCD(
+        well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
     )
 
     serial_traps = [
-        ac.Trap(density=0.5, lifetime=2.0),
-        ac.Trap(density=1.5, lifetime=5.0),
-        ac.Trap(density=2.5, lifetime=20.0),
+        ac.TrapInstantCapture(density=0.5, release_timescale=2.0),
+        ac.TrapInstantCapture(density=1.5, release_timescale=5.0),
+        ac.TrapInstantCapture(density=2.5, release_timescale=20.0),
     ]
-    serial_ccd_volume = ac.CCDVolume(
-        well_fill_beta=0.8, well_max_height=8.47e4, well_notch_depth=1e-7
+    serial_ccd = ac.CCD(
+        well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
     )
 
     clocker = ac.Clocker(iterations=1, parallel_express=2, serial_express=2)
@@ -205,9 +205,9 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
             resolution=resolution,
             pattern=pattern,
             parallel_traps=parallel_traps,
-            parallel_ccd_volume=parallel_ccd_volume,
+            parallel_ccd=parallel_ccd,
             serial_traps=serial_traps,
-            serial_ccd_volume=serial_ccd_volume,
+            serial_ccd=serial_ccd,
             clocker=clocker,
         )
 
@@ -217,9 +217,9 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
 #     ci_data_type = "ci_uniform_cosmic_rays"
 #     ci_data_model = "parallel_x1"
 #
-#     parallel_traps = ac.Trap(density=1.0, lifetime=3.0)
-#     parallel_ccd_volume = ac.CCDVolume(
-#         well_fill_beta=0.8, well_max_height=8.47e4, well_notch_depth=1e-7
+#     parallel_traps = ac.TrapInstantCapture(density=1.0, release_timescale=3.0)
+#     parallel_ccd = ac.CCD(
+#         well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
 #     )
 #
 #     clocker = ac.Clocker(iterations=1, parallel_express=2)
@@ -238,7 +238,7 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
 #         )
 #
 #         cosmic_ray_map = cosmic_ray_map_from_shape_and_well_depth(
-#             shape=shape, well_depth=parallel_ccd_volume.well_notch_depth
+#             shape=shape, well_depth=parallel_ccd.well_notch_depth
 #         )
 #
 #         return resolution_util.simulate_ci_data_from_ci_normalization_region_and_cti_model(
@@ -247,7 +247,7 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
 #             resolution=resolution,
 #             pattern=pattern,
 #             parallel_traps=parallel_traps,
-#             parallel_ccd_volume=parallel_ccd_volume,
+#             parallel_ccd=parallel_ccd,
 #             clocker=clocker,
 #             cosmic_ray_map=cosmic_ray_map,
 #         )
@@ -258,9 +258,9 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
 #     ci_data_type = "ci_uniform_cosmic_rays"
 #     ci_data_model = "serial_x1"
 #
-#     serial_traps = ac.Trap(density=1.0, lifetime=3.0)
-#     serial_ccd_volume = ac.CCDVolume(
-#         well_fill_beta=0.8, well_max_height=8.47e4, well_notch_depth=1e-7
+#     serial_traps = ac.TrapInstantCapture(density=1.0, release_timescale=3.0)
+#     serial_ccd = ac.CCD(
+#         well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
 #     )
 #
 #     clocker = ac.Clocker(iterations=1, serial_express=2)
@@ -279,7 +279,7 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
 #         )
 #
 #         cosmic_ray_map = cosmic_ray_map_from_shape_and_well_depth(
-#             shape=shape, well_depth=serial_ccd_volume.well_notch_depth
+#             shape=shape, well_depth=serial_ccd.well_notch_depth
 #         )
 #
 #         resolution_util.simulate_ci_data_from_ci_normalization_region_and_cti_model(
@@ -288,7 +288,7 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
 #             resolution=resolution,
 #             pattern=pattern,
 #             serial_traps=serial_traps,
-#             serial_ccd_volume=serial_ccd_volume,
+#             serial_ccd=serial_ccd,
 #             clocker=clocker,
 #             cosmic_ray_map=cosmic_ray_map,
 #         )
@@ -301,14 +301,14 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
 #     ci_data_type = "ci_uniform_cosmic_rays"
 #     ci_data_model = "parallel_x1__serial_x1"
 #
-#     parallel_traps = ac.Trap(density=1.0, lifetime=3.0)
-#     parallel_ccd_volume = ac.CCDVolume(
-#         well_fill_beta=0.8, well_max_height=8.47e4, well_notch_depth=1e-7
+#     parallel_traps = ac.TrapInstantCapture(density=1.0, release_timescale=3.0)
+#     parallel_ccd = ac.CCD(
+#         well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
 #     )
 #
-#     serial_traps = ac.Trap(density=1.0, lifetime=3.0)
-#     serial_ccd_volume = ac.CCDVolume(
-#         well_fill_beta=0.8, well_max_height=8.47e4, well_notch_depth=1e-7
+#     serial_traps = ac.TrapInstantCapture(density=1.0, release_timescale=3.0)
+#     serial_ccd = ac.CCD(
+#         well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
 #     )
 #
 #     clocker = ac.Clocker(iterations=1, parallel_express=1, serial_express=2)
@@ -327,7 +327,7 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
 #         )
 #
 #         cosmic_ray_map = cosmic_ray_map_from_shape_and_well_depth(
-#             shape=shape, well_depth=parallel_ccd_volume.well_notch_depth
+#             shape=shape, well_depth=parallel_ccd.well_notch_depth
 #         )
 #
 #         resolution_util.simulate_ci_data_from_ci_normalization_region_and_cti_model(
@@ -336,9 +336,9 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
 #             resolution=resolution,
 #             pattern=pattern,
 #             parallel_traps=parallel_traps,
-#             parallel_ccd_volume=parallel_ccd_volume,
+#             parallel_ccd=parallel_ccd,
 #             serial_traps=serial_traps,
-#             serial_ccd_volume=serial_ccd_volume,
+#             serial_ccd=serial_ccd,
 #             clocker=clocker,
 #             cosmic_ray_map=cosmic_ray_map,
 #         )

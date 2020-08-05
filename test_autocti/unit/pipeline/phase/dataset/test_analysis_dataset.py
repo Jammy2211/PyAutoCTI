@@ -30,13 +30,19 @@ class TestCheckDensity:
         )
 
         instance = model.ModelInstance()
-        instance.parallel_traps = [ac.Trap(density=0.75), ac.Trap(density=0.75)]
+        instance.parallel_traps = [
+            ac.TrapInstantCapture(density=0.75),
+            ac.TrapInstantCapture(density=0.75),
+        ]
         instance.serial_traps = []
 
         analysis.check_total_density_within_range(instance=instance)
 
         instance = model.ModelInstance()
-        instance.parallel_traps = [ac.Trap(density=1.1), ac.Trap(density=1.1)]
+        instance.parallel_traps = [
+            ac.TrapInstantCapture(density=1.1),
+            ac.TrapInstantCapture(density=1.1),
+        ]
 
         with pytest.raises(exc.PriorException):
             analysis.check_total_density_within_range(instance=instance)
@@ -53,12 +59,18 @@ class TestCheckDensity:
 
         instance = model.ModelInstance()
         instance.parallel_traps = []
-        instance.serial_traps = [ac.Trap(density=0.75), ac.Trap(density=0.75)]
+        instance.serial_traps = [
+            ac.TrapInstantCapture(density=0.75),
+            ac.TrapInstantCapture(density=0.75),
+        ]
 
         analysis.check_total_density_within_range(instance=instance)
 
         instance = model.ModelInstance()
-        instance.serial_traps = [ac.Trap(density=1.1), ac.Trap(density=1.1)]
+        instance.serial_traps = [
+            ac.TrapInstantCapture(density=1.1),
+            ac.TrapInstantCapture(density=1.1),
+        ]
 
         with pytest.raises(exc.PriorException):
             analysis.check_total_density_within_range(instance=instance)

@@ -1,3 +1,7 @@
+- CTI Roadmap - DOCUMENT OF WHAT WE'VE DONE, WHATS NEXT, ETC. Time with new version of arctic.
+- Partricia: Non uniform electron density... new feature for FPR of charge injection of a new effect. Show
+  Richard 'spatial distribution of electrons' slide.
+
 Features:
 
     - Make PyAutoCTI use PyAutoArray and set up edenise scripts to handle the dependencies.

@@ -1,16 +1,22 @@
-from arctic.clock import Clocker
-from arctic.model import ArcticParams
-from arctic.model import CCDVolume
-from arctic.model import CCDVolumeComplex
-from arctic.traps import Trap
+from arcticpy.traps import (
+    TrapInstantCapture,
+    TrapInstantCapture,
+    TrapLifetimeContinuum,
+    TrapLogNormalLifetimeContinuum,
+    TrapNonUniformHeightDistribution,
+)
 
 from autoarray.fit.fit import FitImaging
 from autoarray.structures.region import Region
 from autoarray.structures.arrays.abstract_array import ExposureInfo
 from autoarray.structures.frame.abstract_frame import Scans
-from autoarray.structures.instruments.euclid import FrameEuclid
-from autoarray.structures.instruments.acs import FrameACS
+from autoarray.instruments import euclid
+from autoarray.instruments import acs
 from autoarray.dataset import preprocess
+
+from .wrap import Clocker
+from .wrap import CCD
+from .wrap import TrapInstantCapture
 
 from .structures.arrays import Array
 from .structures.frame import Frame

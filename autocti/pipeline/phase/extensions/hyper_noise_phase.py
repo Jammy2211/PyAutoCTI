@@ -158,7 +158,7 @@ class HyperNoisePhase(HyperPhase):
         hyper_result.analysis.model_images = model_images
 
         phase.search.model.parallel_traps = []
-        phase.search.model.parallel_ccd_volume = []
+        phase.search.model.parallel_ccd = []
         phase.search.tag = ""
 
         phase.search.const_efficiency_mode = conf.instance.non_linear.get(

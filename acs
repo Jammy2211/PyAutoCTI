@@ -73,7 +73,7 @@ In my IDL script, I also coded options to use the overscan pixels to approximate
 There is more information at https://acs-docs.stsci.edu/acsihb
 
 
-Trap parameters
+TrapInstantCapture parameters
 The main header contains
 DATE-OBS= '2013-10-06'         / UT date of start of observation (yyyy-mm-dd)
 TIME-OBS= '06:39:13'           / UT time of start of observation (hh:mm:ss)

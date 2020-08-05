@@ -217,8 +217,8 @@ class TestMakeAnalysis:
         ]
 
         phase = PhaseCIImaging(
-            parallel_traps=[prior_model.PriorModel(ac.Trap)],
-            parallel_ccd_volume=ac.CCDVolume,
+            parallel_traps=[prior_model.PriorModel(ac.TrapInstantCapture)],
+            parallel_ccd=ac.CCD,
             hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
             hyper_noise_scalar_of_parallel_trails=ac.ci.CIHyperNoiseScalar,
             phase_name="test_phase",
@@ -248,8 +248,8 @@ class TestMakeAnalysis:
         ).all()
 
         phase = PhaseCIImaging(
-            parallel_traps=[prior_model.PriorModel(ac.Trap)],
-            parallel_ccd_volume=ac.CCDVolume,
+            parallel_traps=[prior_model.PriorModel(ac.TrapInstantCapture)],
+            parallel_ccd=ac.CCD,
             hyper_noise_scalar_of_parallel_trails=ac.ci.CIHyperNoiseScalar,
             hyper_noise_scalar_of_serial_trails=ac.ci.CIHyperNoiseScalar,
             hyper_noise_scalar_of_serial_overscan_no_trails=ac.ci.CIHyperNoiseScalar,

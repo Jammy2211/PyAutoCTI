@@ -1,4 +1,4 @@
-import arctic as ac
+import autocti as ac
 from autofit.mapper.prior_model import prior_model
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 from autocti.pipeline.phase.dataset import PhaseDataset
@@ -15,60 +15,60 @@ pytestmark = pytest.mark.filterwarnings(
 
 class TestModel:
     def test__set_instances(self, phase_dataset_7x7):
-        trap = ac.Trap()
+        trap = ac.TrapInstantCapture()
         phase_dataset_7x7.parallel_traps = [trap]
         assert phase_dataset_7x7.model.parallel_traps == [trap]
 
     def test__set_models(self, phase_dataset_7x7):
-        trap_model = prior_model.PriorModel(ac.Trap)
+        trap_model = prior_model.PriorModel(ac.TrapInstantCapture)
         phase_dataset_7x7.parallel_traps = [trap_model]
         assert phase_dataset_7x7.parallel_traps == [trap_model]
 
-        ccd_volume_model = prior_model.PriorModel(ac.CCDVolume)
-        phase_dataset_7x7.parallel_ccd_volume = ccd_volume_model
-        assert phase_dataset_7x7.parallel_ccd_volume == ccd_volume_model
+        ccd_model = prior_model.PriorModel(ac.CCD)
+        phase_dataset_7x7.parallel_ccd = ccd_model
+        assert phase_dataset_7x7.parallel_ccd == ccd_model
 
     def test__phase_can_receive_model_objects(self):
 
         phase_dataset_7x7 = PhaseDataset(
             phase_name="test_phase",
-            parallel_traps=[ac.Trap],
-            parallel_ccd_volume=ac.CCDVolume,
-            serial_traps=[ac.Trap],
-            serial_ccd_volume=ac.CCDVolume,
+            parallel_traps=[ac.TrapInstantCapture],
+            parallel_ccd=ac.CCD,
+            serial_traps=[ac.TrapInstantCapture],
+            serial_ccd=ac.CCD,
             search=mock.MockSearch(),
         )
 
         parallel_trap = phase_dataset_7x7.model.parallel_traps[0]
-        parallel_ccd_volume = phase_dataset_7x7.model.parallel_ccd_volume
+        parallel_ccd = phase_dataset_7x7.model.parallel_ccd
         serial_trap = phase_dataset_7x7.model.serial_traps[0]
-        serial_ccd_volume = phase_dataset_7x7.model.serial_ccd_volume
+        serial_ccd = phase_dataset_7x7.model.serial_ccd
 
         arguments = {
             parallel_trap.density: 0.1,
-            parallel_trap.lifetime: 0.2,
-            parallel_ccd_volume.well_max_height: 0.3,
-            parallel_ccd_volume.well_notch_depth: 0.4,
-            parallel_ccd_volume.well_fill_beta: 0.5,
+            parallel_trap.release_timescale: 0.2,
+            parallel_ccd.full_well_depth: 0.3,
+            parallel_ccd.well_notch_depth: 0.4,
+            parallel_ccd.well_fill_power: 0.5,
             serial_trap.density: 0.6,
-            serial_trap.lifetime: 0.7,
-            serial_ccd_volume.well_max_height: 0.8,
-            serial_ccd_volume.well_notch_depth: 0.9,
-            serial_ccd_volume.well_fill_beta: 1.0,
+            serial_trap.release_timescale: 0.7,
+            serial_ccd.full_well_depth: 0.8,
+            serial_ccd.well_notch_depth: 0.9,
+            serial_ccd.well_fill_power: 1.0,
         }
 
         instance = phase_dataset_7x7.model.instance_for_arguments(arguments=arguments)
 
         assert instance.parallel_traps[0].density == 0.1
-        assert instance.parallel_traps[0].lifetime == 0.2
-        assert instance.parallel_ccd_volume.well_max_height == 0.3
-        assert instance.parallel_ccd_volume.well_notch_depth == 0.4
-        assert instance.parallel_ccd_volume.well_fill_beta == 0.5
+        assert instance.parallel_traps[0].release_timescale == 0.2
+        assert instance.parallel_ccd.full_well_depth == [0.3]
+        assert instance.parallel_ccd.well_notch_depth == [0.4]
+        assert instance.parallel_ccd.well_fill_power == [0.5]
         assert instance.serial_traps[0].density == 0.6
-        assert instance.serial_traps[0].lifetime == 0.7
-        assert instance.serial_ccd_volume.well_max_height == 0.8
-        assert instance.serial_ccd_volume.well_notch_depth == 0.9
-        assert instance.serial_ccd_volume.well_fill_beta == 1.0
+        assert instance.serial_traps[0].release_timescale == 0.7
+        assert instance.serial_ccd.full_well_depth == [0.8]
+        assert instance.serial_ccd.well_notch_depth == [0.9]
+        assert instance.serial_ccd.well_fill_power == [1.0]
 
 
 class TestSetup:
@@ -78,8 +78,8 @@ class TestSetup:
 
         phase_dataset_7x7 = PhaseCIImaging(
             phase_name="phase_name",
-            parallel_traps=[ac.Trap()],
-            parallel_ccd_volume=ac.CCDVolume(),
+            parallel_traps=[ac.TrapInstantCapture()],
+            parallel_ccd=ac.CCD(),
             search=mock.MockSearch(),
         )
 

@@ -17,7 +17,7 @@ serial_settings = ac.Settings(
     express=2,
     n_levels=2000,
     charge_injection_mode=False,
-    readout_offset=0,
+    offset=0,
 )
 clocker = ac.ArcticSettings(serial=serial_settings)
 
@@ -26,15 +26,15 @@ def make_pipeline(name, folders, search=af.DynestyStatic()):
     class PhaseCIImaging(ac.PhaseCIImaging):
         def customize_priors(self, results):
 
-            self.serial_ccd_volume.well_fill_alpha = 1.0
-            self.serial_ccd_volume.well_fill_gamma = 0.0
+            self.serial_ccd.well_fill_alpha = 1.0
+            self.serial_ccd.well_fill_gamma = 0.0
 
     phase1 = ac.PhaseCIImaging(
         phase_name="phase_1",
         folders=folders,
         search=search,
-        serial_traps=[af.PriorModel(ac.Trap)],
-        serial_ccd_volume=serial_ccd_volume,
+        serial_traps=[af.PriorModel(ac.TrapInstantCapture)],
+        serial_ccd=serial_ccd,
         serial_total_density_range=(0.1, 0.3),
     )
 
