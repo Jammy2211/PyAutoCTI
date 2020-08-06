@@ -85,6 +85,7 @@ class Clocker(object):
     ):
         return arcticpy.remove_cti(
             image=image,
+            iterations=self.iterations,
             parallel_ccd=parallel_ccd,
             parallel_roe=self.parallel_roe,
             parallel_traps=parallel_traps,
