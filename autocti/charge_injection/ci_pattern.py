@@ -79,41 +79,19 @@ class CIPatternUniform(AbstractCIPattern):
 
     """
 
-    def ci_pre_cti_from_shape(self, shape):
-        """Compute the pre-cti image of the uniform charge injection ci_pattern.
-
-        This is performed by going to each charge injection region and adding the charge injection normalization value.
-
-        Parameters
-        -----------
-        shape : (int,)
-            The image_shape of the ci_pre_ctis to be created.
-        """
-
-        self.check_pattern_is_within_image_dimensions(shape)
-
-        ci_pre_cti = np.zeros(shape)
-
-        for region in self.regions:
-            ci_pre_cti[region.slice] += self.normalization
-
-        return ci_pre_cti
-
-    """ Class to simulate a charge injection image with a uniform charge injection ci_pattern."""
-
-    def simulate_ci_pre_cti(self, shape):
+    def ci_pre_cti_from_shape_2d(self, shape_2d):
         """Use this charge injection ci_pattern to generate a pre-cti charge injection image. This is performed by \
         going to its charge injection regions and adding the charge injection normalization value.
 
         Parameters
         -----------
-        shape : (int, int)
+        shape_2d : (int, int)
             The image_shape of the ci_pre_ctis to be created.
         """
 
-        self.check_pattern_is_within_image_dimensions(shape)
+        self.check_pattern_is_within_image_dimensions(shape_2d)
 
-        ci_pre_cti = np.zeros(shape)
+        ci_pre_cti = np.zeros(shape_2d)
 
         for region in self.regions:
             ci_pre_cti[region.slice] += self.normalization
@@ -122,7 +100,14 @@ class CIPatternUniform(AbstractCIPattern):
 
 
 class CIPatternNonUniform(AbstractCIPattern):
-    def __init__(self, normalization, regions, row_slope):
+    def __init__(
+        self,
+        normalization,
+        regions,
+        row_slope,
+        column_sigma=None,
+        maximum_normalization=np.inf,
+    ):
         """ A non-uniform charge injection ci_pattern, which is defined by the regions it appears on a charge injection
         ci_frame and its average normalization.
 
@@ -147,111 +132,10 @@ class CIPatternNonUniform(AbstractCIPattern):
         """
         super(CIPatternNonUniform, self).__init__(normalization, regions)
         self.row_slope = row_slope
+        self.column_sigma = column_sigma
+        self.maximum_normalization = maximum_normalization
 
-    def ci_pre_cti_from_ci_image_and_mask(self, ci_image, mask):
-        """Compute the pre-cti image of this non-uniform charge injection ci_pattern.
-
-        This is performed by estimating the charge injection of each column, by taking the average value of all charge \
-        regions in that column (including non-uniformity across the rows). The mask is used to remove cosmic rays from \
-        this averaging.
-
-        Parameters
-        -----------
-        ci_image : ndarray
-            2D arrays of ci_pre_ctis ci_data the column non-uniformity is estimated from.
-        mask : ndarray
-            2D arrays of masked ci_pre_ctis pixels, used to mask cosmic rays.
-        """
-
-        dimensions = ci_image.shape
-
-        self.check_pattern_is_within_image_dimensions(dimensions)
-
-        ci_pre_cti = np.zeros(dimensions)
-
-        for column_number in range(dimensions[1]):
-
-            means_of_columns = self.mean_charge_in_all_image_columns(
-                column=ci_image[:, column_number], column_mask=mask[:, column_number]
-            )
-
-            filtered = list(filter(None, means_of_columns))
-            if len(filtered) == 0:
-                raise exc.CIPatternException(
-                    "All Pixels in a charge injection region were flagged as masked - code does"
-                    "not currently handle such a circumstance"
-                )
-
-            overall_mean = np.mean(filtered)
-
-            for region in self.regions:
-                ci_pre_cti[region.y_slice, column_number] = overall_mean
-
-        return ci_pre_cti
-
-    def mean_charge_in_all_image_columns(self, column, column_mask):
-        """For one column of a charge injection image, measure the mean charge in each column of each charge injection \
-        region.
-
-        Parameters
-        -----------
-        column : ndarray
-            1D arrays of the ci_pre_ctis column.
-        column_mask : ndarray
-            1D arrays of the column's masked pixels, to mask cosmic rays.
-         """
-
-        means_of_columns = []
-
-        for region in self.regions:
-            means_of_columns.append(
-                self.mean_charge_in_column(
-                    column[region.y_slice].flatten(),
-                    column_mask[region.y_slice].flatten(),
-                )
-            )
-
-        return means_of_columns
-
-    def mean_charge_in_column(self, column, column_mask):
-        """Measure the mean charge in a column of a non-uniform charge injection region (accounting for row \
-        non-uniformity if present). Cosmic rays can be masked.
-
-        Parameters
-        -----------
-        column : ndarray
-            1D arrays of the column of the charge injection region.
-        column_mask : ndarray
-            1D arrays of the column's masked pixels, to mask cosmic rays.
-        """
-        column_size = len(column)
-
-        if sum(column_mask) == column_size:
-            return None
-
-        model_column = self.generate_column(column_size, self.normalization)
-        return np.mean(
-            np.ma.masked_array(column - model_column + self.normalization, column_mask)
-        )
-
-    def generate_column(self, size, normalization):
-        """Generate a column of non-uniform charge, including row non-uniformity.
-
-        The pixel-numbering used to generate non-uniformity across the charge injection rows runs from 1 -> size
-
-        Parameters
-        -----------
-        size : int
-            The size of the non-uniform column of charge
-        normalization : float
-            The input normalization of the column's charge e.g. the level of charge injected.
-
-        """
-        return normalization * (np.arange(1, size + 1)) ** self.row_slope
-
-    def simulate_ci_pre_cti(
-        self, shape, ci_seed=-1, column_deviation=0.0, maximum_normalization=np.inf
-    ):
+    def ci_pre_cti_from_shape_2d(self, shape_2d, ci_seed=-1):
         """Use this charge injection ci_pattern to generate a pre-cti charge injection image. This is performed by going \
         to its charge injection regions and adding its non-uniform charge distribution.
 
@@ -262,8 +146,8 @@ class CIPatternNonUniform(AbstractCIPattern):
 
         Parameters
         -----------
-        column_deviation
-        shape
+        column_sigma
+        shape_2d
             The image_shape of the ci_pre_ctis to be created.
         maximum_normalization
 
@@ -272,9 +156,9 @@ class CIPatternNonUniform(AbstractCIPattern):
             ci_pre_ctis, ensuring each non-uniform ci_region has the same column non-uniformity ci_pattern.
         """
 
-        self.check_pattern_is_within_image_dimensions(shape)
+        self.check_pattern_is_within_image_dimensions(shape_2d)
 
-        ci_pre_cti = np.zeros(shape)
+        ci_pre_cti = np.zeros(shape_2d)
 
         if ci_seed == -1:
             ci_seed = np.random.randint(
@@ -283,22 +167,13 @@ class CIPatternNonUniform(AbstractCIPattern):
             # non-uniformity.
 
         for region in self.regions:
-            ci_pre_cti[region.slice] += self.simulate_region(
-                region_dimensions=region.shape,
-                ci_seed=ci_seed,
-                column_deviation=column_deviation,
-                maximum_normalization=maximum_normalization,
+            ci_pre_cti[region.slice] += self.ci_region_from_region(
+                region_dimensions=region.shape, ci_seed=ci_seed
             )
 
         return ci_pre_cti
 
-    def simulate_region(
-        self,
-        region_dimensions,
-        ci_seed,
-        column_deviation=0.0,
-        maximum_normalization=np.inf,
-    ):
+    def ci_region_from_region(self, region_dimensions, ci_seed):
         """Generate the non-uniform charge distribution of a charge injection region. This includes non-uniformity \
         across both the rows and columns of the charge injection region.
 
@@ -339,10 +214,10 @@ class CIPatternNonUniform(AbstractCIPattern):
             column_normalization = 0
             while (
                 column_normalization <= 0
-                or column_normalization >= maximum_normalization
+                or column_normalization >= self.maximum_normalization
             ):
                 column_normalization = np.random.normal(
-                    self.normalization, column_deviation
+                    self.normalization, self.column_sigma
                 )
 
             ci_region[0:ci_rows, column_number] = self.generate_column(
@@ -350,3 +225,18 @@ class CIPatternNonUniform(AbstractCIPattern):
             )
 
         return ci_region
+
+    def generate_column(self, size, normalization):
+        """Generate a column of non-uniform charge, including row non-uniformity.
+
+        The pixel-numbering used to generate non-uniformity across the charge injection rows runs from 1 -> size
+
+        Parameters
+        -----------
+        size : int
+            The size of the non-uniform column of charge
+        normalization : float
+            The input normalization of the column's charge e.g. the level of charge injected.
+
+        """
+        return normalization * (np.arange(1, size + 1)) ** self.row_slope

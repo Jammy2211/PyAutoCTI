@@ -60,9 +60,9 @@ def non_uniform_frame_for_ou_sim(ccd_id, quadrant_id):
 
     """Create every pre-cti charge injection image using each *CIPattern*"""
     ci_pre_ctis = [
-        ci_pattern.simulate_ci_pre_cti(
-            shape=shape_2d,
-            column_deviation=column_deviation,
+        ci_pattern.ci_pre_cti_from_shape_2d(
+            shape_2d=shape_2d,
+            column_sigma=column_deviation,
             maximum_normalization=84700,
         )
         for ci_pattern, column_deviation in zip(ci_patterns, column_deviations)
@@ -129,7 +129,7 @@ def add_cti_to_frame_for_ou_sim(frames):
     simulator = ci_imaging.SimulatorCIImaging(add_noise=False)
 
     ci_datasets = [
-        simulator.from_image(
+        simulator.from_ci_pre_cti(
             clocker=clocker,
             ci_pre_cti=frame.ci_pre_cti,
             ci_pattern=frame.ci_pattern,

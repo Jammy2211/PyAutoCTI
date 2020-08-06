@@ -5,6 +5,7 @@ from autocti.charge_injection import ci_frame, ci_pattern as pattern
 from autoarray.dataset import preprocess, imaging
 from autocti.mask import mask as msk
 from autoarray.util import array_util
+from autocti import exc
 
 
 class CIImaging(imaging.AbstractImaging):
@@ -79,7 +80,6 @@ class CIImaging(imaging.AbstractImaging):
         ci_pre_cti_hdu=0,
         cosmic_ray_map_path=None,
         cosmic_ray_map_hdu=0,
-        mask=None,
     ):
 
         ci_image = ci_frame.CIFrame.from_fits(
@@ -111,9 +111,12 @@ class CIImaging(imaging.AbstractImaging):
                 file_path=ci_pre_cti_path, hdu=ci_pre_cti_hdu
             )
         else:
-            ci_pre_cti = ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
-                ci_pattern, ci_image, mask=mask
-            )
+            if isinstance(ci_pattern, pattern.CIPatternUniform):
+                ci_pre_cti = ci_pattern.ci_pre_cti_from_shape_2d(ci_image.shape)
+            else:
+                raise exc.CIPatternException(
+                    "Cannot estimate ci_pre_cti image from non-uniform charge injectiono pattern"
+                )
 
         ci_pre_cti = ci_frame.CIFrame.manual(
             array=ci_pre_cti,
@@ -173,17 +176,6 @@ class CIImaging(imaging.AbstractImaging):
                 file_path=cosmic_ray_map_path,
                 overwrite=overwrite,
             )
-
-
-def ci_pre_cti_from_ci_pattern_geometry_image_and_mask(ci_pattern, image, mask=None):
-    """Setup a pre-cti image from this charge injection ci_data, using the charge injection ci_pattern.
-
-    The pre-cti image is computed depending on whether the charge injection ci_pattern is uniform, non-uniform or \
-    'fast' (see ChargeInjectPattern).
-    """
-    if isinstance(ci_pattern, pattern.CIPatternUniform):
-        return ci_pattern.ci_pre_cti_from_shape(image.shape)
-    return ci_pattern.ci_pre_cti_from_ci_image_and_mask(image, mask)
 
 
 class MaskedCIImaging(imaging.AbstractMaskedImaging):
@@ -303,6 +295,7 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
         add_noise=True,
         noise_if_add_noise_false=0.1,
         noise_seed=-1,
+        ci_seed=-1,
     ):
         """A class representing a Imaging observation, using the shape of the image, the pixel scale,
         psf, exposure time, etc.
@@ -320,11 +313,13 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
             noise_seed=noise_seed,
         )
 
-    def from_image(
+        self.ci_seed = ci_seed
+
+    def from_ci_pre_cti(
         self,
-        clocker,
         ci_pre_cti,
         ci_pattern,
+        clocker,
         parallel_traps=None,
         parallel_ccd=None,
         serial_traps=None,
@@ -383,5 +378,37 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
             cosmic_ray_map=ci_frame.CIFrame.manual(
                 array=cosmic_ray_map, ci_pattern=ci_pattern
             ),
+            name=name,
+        )
+
+    def from_ci_pattern(
+        self,
+        shape_2d,
+        ci_pattern,
+        clocker,
+        parallel_traps=None,
+        parallel_ccd=None,
+        serial_traps=None,
+        serial_ccd=None,
+        cosmic_ray_map=None,
+        name=None,
+    ):
+
+        if isinstance(ci_pattern, pattern.CIPatternUniform):
+            ci_pre_cti = ci_pattern.ci_pre_cti_from_shape_2d(shape_2d=shape_2d)
+        else:
+            ci_pre_cti = ci_pattern.ci_pre_cti_from_shape_2d(
+                shape_2d=shape_2d, ci_seed=self.ci_seed
+            )
+
+        return self.from_ci_pre_cti(
+            ci_pre_cti=ci_pre_cti,
+            ci_pattern=ci_pattern,
+            clocker=clocker,
+            parallel_traps=parallel_traps,
+            parallel_ccd=parallel_ccd,
+            serial_traps=serial_traps,
+            serial_ccd=serial_ccd,
+            cosmic_ray_map=cosmic_ray_map,
             name=name,
         )
