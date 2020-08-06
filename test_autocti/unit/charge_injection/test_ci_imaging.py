@@ -4,9 +4,6 @@ import shutil
 import numpy as np
 import pytest
 import autocti as ac
-from autocti.charge_injection.ci_imaging import (
-    ci_pre_cti_from_ci_pattern_geometry_image_and_mask,
-)
 
 test_data_path = "{}/files/arrays/".format(os.path.dirname(os.path.realpath(__file__)))
 
@@ -210,52 +207,6 @@ class TestCIImaging(object):
         assert (imaging.cosmic_ray_map == 4.0 * np.ones((3, 3))).all()
 
 
-class TestCIImage(object):
-    def test__uniform_pattern_1_region_normalization_10__correct_pre_clock_image(self):
-        pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 2, 0, 2)])
-        image = 10.0 * np.ones((3, 3))
-
-        ci_pre_cti = ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
-            ci_pattern=pattern, image=image
-        )
-
-        assert (
-            ci_pre_cti
-            == np.array([[10.0, 10.0, 0.0], [10.0, 10.0, 0.0], [00.0, 00.0, 0.0]])
-        ).all()
-
-    def test__same_as_above_but_different_normalization_and_regions(self):
-        pattern = ac.ci.CIPatternUniform(
-            normalization=20.0, regions=[(0, 2, 0, 1), (2, 3, 2, 3)]
-        )
-        image = 10.0 * np.ones((3, 3))
-
-        ci_pre_cti = ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
-            ci_pattern=pattern, image=image
-        )
-
-        assert (
-            ci_pre_cti
-            == np.array([[20.0, 0.0, 0.0], [20.0, 0.0, 0.0], [0.0, 0.0, 20.0]])
-        ).all()
-
-    def test__non_uniform_pattern__image_is_same_as_computed_image(self):
-        pattern = ac.ci.CIPatternNonUniform(
-            normalization=100.0, regions=[(0, 2, 0, 2), (2, 3, 0, 3)], row_slope=-1.0
-        )
-        image = np.array([[10.0, 10.0, 10.0], [2.0, 2.0, 2.0], [8.0, 12.0, 10.0]])
-        mask = ac.Mask.unmasked(shape_2d=(3, 3))
-
-        ci_pre_cti = ci_pre_cti_from_ci_pattern_geometry_image_and_mask(
-            mask=mask, ci_pattern=pattern, image=image
-        )
-
-        pattern_ci_pre_cti = pattern.ci_pre_cti_from_ci_image_and_mask(image, mask)
-
-        # noinspection PyUnresolvedReferences
-        assert (ci_pre_cti == pattern_ci_pre_cti).all()
-
-
 class TestMaskedCIImaging:
     def test__construtor__masks_arrays_correctly(self, ci_imaging_7x7):
 
@@ -390,11 +341,11 @@ class TestSimulatorCIImaging(object):
 
         pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
 
-        ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(5, 5))
+        ci_pre_cti = pattern.ci_pre_cti_from_shape_2d(shape_2d=(5, 5))
 
         simulator = ac.ci.SimulatorCIImaging(add_noise=False)
 
-        imaging = simulator.from_image(
+        imaging = simulator.from_ci_pre_cti(
             ci_pre_cti=ci_pre_cti,
             ci_pattern=pattern,
             clocker=parallel_clocker,
@@ -412,17 +363,17 @@ class TestSimulatorCIImaging(object):
 
         pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 3)])
 
-        ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(3, 3))
+        ci_pre_cti = pattern.ci_pre_cti_from_shape_2d(shape_2d=(3, 3))
 
         simulator = ac.ci.SimulatorCIImaging(
             read_noise=1.0, add_noise=True, noise_seed=1
         )
 
-        imaging = simulator.from_image(
+        imaging = simulator.from_ci_pre_cti(
             ci_pre_cti=ci_pre_cti, ci_pattern=pattern, clocker=parallel_clocker
         )
 
-        image_no_noise = pattern.ci_pre_cti_from_shape(shape=(3, 3))
+        image_no_noise = pattern.ci_pre_cti_from_shape_2d(shape_2d=(3, 3))
 
         # Use seed to give us a known read noises map we'll test_autocti for
 
@@ -437,14 +388,14 @@ class TestSimulatorCIImaging(object):
 
         pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
 
-        ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(5, 5))
+        ci_pre_cti = pattern.ci_pre_cti_from_shape_2d(shape_2d=(5, 5))
 
         simulator = ac.ci.SimulatorCIImaging(add_noise=False)
 
         cosmic_ray_map = np.zeros((5, 5))
         cosmic_ray_map[2, 2] = 100.0
 
-        imaging = simulator.from_image(
+        imaging = simulator.from_ci_pre_cti(
             ci_pre_cti=ci_pre_cti,
             ci_pattern=pattern,
             clocker=parallel_clocker,
@@ -471,6 +422,60 @@ class TestSimulatorCIImaging(object):
                 ]
             )
         ).all()
+
+    def test__from_ci_pattern_same_as_from_ci_pre_cti_above(
+        self, parallel_clocker, traps_x2, ccd
+    ):
+
+        pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
+
+        ci_pre_cti = pattern.ci_pre_cti_from_shape_2d(shape_2d=(5, 5))
+
+        simulator = ac.ci.SimulatorCIImaging(add_noise=False)
+
+        imaging = simulator.from_ci_pre_cti(
+            ci_pre_cti=ci_pre_cti,
+            ci_pattern=pattern,
+            clocker=parallel_clocker,
+            parallel_traps=traps_x2,
+            parallel_ccd=ccd,
+        )
+
+        imaging_via_pattern = simulator.from_ci_pattern(
+            ci_pattern=pattern,
+            shape_2d=(5, 5),
+            clocker=parallel_clocker,
+            parallel_traps=traps_x2,
+            parallel_ccd=ccd,
+        )
+
+        assert (imaging.image == imaging_via_pattern.image).all()
+
+        pattern = ac.ci.CIPatternNonUniform(
+            normalization=10.0, regions=[(0, 1, 0, 5)], row_slope=0.1, column_sigma=1.0
+        )
+
+        ci_pre_cti = pattern.ci_pre_cti_from_shape_2d(shape_2d=(5, 5), ci_seed=1)
+
+        simulator = ac.ci.SimulatorCIImaging(add_noise=False, ci_seed=1)
+
+        imaging = simulator.from_ci_pre_cti(
+            ci_pre_cti=ci_pre_cti,
+            ci_pattern=pattern,
+            clocker=parallel_clocker,
+            parallel_traps=traps_x2,
+            parallel_ccd=ccd,
+        )
+
+        imaging_via_pattern = simulator.from_ci_pattern(
+            ci_pattern=pattern,
+            shape_2d=(5, 5),
+            clocker=parallel_clocker,
+            parallel_traps=traps_x2,
+            parallel_ccd=ccd,
+        )
+
+        assert (imaging.image == imaging_via_pattern.image).all()
 
     # def test__include_parallel_poisson_trap_densities(self, arctic_parallel):
     #
