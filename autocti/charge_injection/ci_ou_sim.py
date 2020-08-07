@@ -49,7 +49,7 @@ def non_uniform_frame_for_ou_sim(ccd_id, quadrant_id):
     normalizations = [100.0, 500.0, 1000.0, 5000.0, 10000.0, 25000.0, 50000.0, 84700.0]
 
     """Use the charge injection normalizations and regions to create *CIPatternNonUniform* of every image we'll simulate."""
-    column_deviations = [100.0] * len(normalizations)
+    column_sigmas = [100.0] * len(normalizations)
     row_slopes = [0.0] * len(normalizations)
     ci_patterns = [
         pattern.CIPatternNonUniform(
@@ -62,10 +62,10 @@ def non_uniform_frame_for_ou_sim(ccd_id, quadrant_id):
     ci_pre_ctis = [
         ci_pattern.ci_pre_cti_from_shape_2d(
             shape_2d=shape_2d,
-            column_sigma=column_deviation,
+            column_sigma=column_sigma,
             maximum_normalization=84700,
         )
-        for ci_pattern, column_deviation in zip(ci_patterns, column_deviations)
+        for ci_pattern, column_sigma in zip(ci_patterns, column_sigmas)
     ]
 
     """Before passing this image to arCTIc to add CTI, we want to make it a *Frame* object, which:

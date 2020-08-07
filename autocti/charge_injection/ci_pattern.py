@@ -182,7 +182,7 @@ class CIPatternNonUniform(AbstractCIPattern):
 
         Non-uniformity in the columns is caused by sharp peaks and troughs in the input charge current. To simulator  \
         this, we change the normalization of each column by drawing its normalization value from a Gaussian \
-        distribution which has a mean of the input normalization and standard deviation *column_deviation*. The seed \
+        distribution which has a mean of the input normalization and standard deviation *column_sigma*. The seed \
         of the random number generator ensures that the non-uniform charge injection update_via_regions of each ci_pre_ctis \
         are identical.
 
@@ -196,7 +196,7 @@ class CIPatternNonUniform(AbstractCIPattern):
         Parameters
         -----------
         maximum_normalization
-        column_deviation
+        column_sigma
         region_dimensions : (int, int)
             The size of the non-uniform charge injection region.
         ci_seed : int

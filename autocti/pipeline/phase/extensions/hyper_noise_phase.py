@@ -157,7 +157,7 @@ class HyperNoisePhase(HyperPhase):
         hyper_result.analysis.uses_hyper_images = True
         hyper_result.analysis.model_images = model_images
 
-        phase.search.model.parallel_traps = []
+        phase.search.model.parallel_trap = []
         phase.search.model.parallel_ccd = []
         phase.search.tag = ""
 

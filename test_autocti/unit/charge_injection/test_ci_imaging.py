@@ -341,12 +341,13 @@ class TestSimulatorCIImaging(object):
 
         pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
 
-        ci_pre_cti = pattern.ci_pre_cti_from_shape_2d(shape_2d=(5, 5))
+        simulator = ac.ci.SimulatorCIImaging(
+            shape_2d=(5, 5),
+            add_noise=False,
+            scans=ac.Scans(serial_overscan=ac.Region((1, 2, 1, 2))),
+        )
 
-        simulator = ac.ci.SimulatorCIImaging(add_noise=False)
-
-        imaging = simulator.from_ci_pre_cti(
-            ci_pre_cti=ci_pre_cti,
+        imaging = simulator.from_ci_pattern(
             ci_pattern=pattern,
             clocker=parallel_clocker,
             parallel_traps=traps_x2,
@@ -356,6 +357,8 @@ class TestSimulatorCIImaging(object):
         assert imaging.image[0, 0:5] == pytest.approx(
             np.array([9.43, 9.43, 9.43, 9.43, 9.43]), 1e-1
         )
+        assert imaging.image.scans.serial_overscan == (1, 2, 1, 2)
+        assert imaging.ci_pre_cti.scans.serial_overscan == (1, 2, 1, 2)
 
     def test__include_read_noise__is_added_after_cti(
         self, parallel_clocker, traps_x2, ccd
@@ -363,14 +366,16 @@ class TestSimulatorCIImaging(object):
 
         pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 3)])
 
-        ci_pre_cti = pattern.ci_pre_cti_from_shape_2d(shape_2d=(3, 3))
-
         simulator = ac.ci.SimulatorCIImaging(
-            read_noise=1.0, add_noise=True, noise_seed=1
+            shape_2d=(3, 3),
+            scans=ac.Scans(serial_overscan=ac.Region((1, 2, 1, 2))),
+            read_noise=1.0,
+            add_noise=True,
+            noise_seed=1,
         )
 
-        imaging = simulator.from_ci_pre_cti(
-            ci_pre_cti=ci_pre_cti, ci_pattern=pattern, clocker=parallel_clocker
+        imaging = simulator.from_ci_pattern(
+            ci_pattern=pattern, clocker=parallel_clocker
         )
 
         image_no_noise = pattern.ci_pre_cti_from_shape_2d(shape_2d=(3, 3))
@@ -381,6 +386,7 @@ class TestSimulatorCIImaging(object):
             np.array([[1.62, -0.61, -0.53], [-1.07, 0.87, -2.30], [1.74, -0.76, 0.32]]),
             1e-2,
         )
+        assert imaging.noise_map.scans.serial_overscan == (1, 2, 1, 2)
 
     def test__include_cosmics__is_added_to_image_and_trailed(
         self, parallel_clocker, traps_x2, ccd
@@ -388,15 +394,16 @@ class TestSimulatorCIImaging(object):
 
         pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
 
-        ci_pre_cti = pattern.ci_pre_cti_from_shape_2d(shape_2d=(5, 5))
-
-        simulator = ac.ci.SimulatorCIImaging(add_noise=False)
+        simulator = ac.ci.SimulatorCIImaging(
+            shape_2d=(5, 5),
+            scans=ac.Scans(serial_overscan=ac.Region((1, 2, 1, 2))),
+            add_noise=False,
+        )
 
         cosmic_ray_map = np.zeros((5, 5))
         cosmic_ray_map[2, 2] = 100.0
 
-        imaging = simulator.from_ci_pre_cti(
-            ci_pre_cti=ci_pre_cti,
+        imaging = simulator.from_ci_pattern(
             ci_pattern=pattern,
             clocker=parallel_clocker,
             parallel_traps=traps_x2,
@@ -422,60 +429,7 @@ class TestSimulatorCIImaging(object):
                 ]
             )
         ).all()
-
-    def test__from_ci_pattern_same_as_from_ci_pre_cti_above(
-        self, parallel_clocker, traps_x2, ccd
-    ):
-
-        pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
-
-        ci_pre_cti = pattern.ci_pre_cti_from_shape_2d(shape_2d=(5, 5))
-
-        simulator = ac.ci.SimulatorCIImaging(add_noise=False)
-
-        imaging = simulator.from_ci_pre_cti(
-            ci_pre_cti=ci_pre_cti,
-            ci_pattern=pattern,
-            clocker=parallel_clocker,
-            parallel_traps=traps_x2,
-            parallel_ccd=ccd,
-        )
-
-        imaging_via_pattern = simulator.from_ci_pattern(
-            ci_pattern=pattern,
-            shape_2d=(5, 5),
-            clocker=parallel_clocker,
-            parallel_traps=traps_x2,
-            parallel_ccd=ccd,
-        )
-
-        assert (imaging.image == imaging_via_pattern.image).all()
-
-        pattern = ac.ci.CIPatternNonUniform(
-            normalization=10.0, regions=[(0, 1, 0, 5)], row_slope=0.1, column_sigma=1.0
-        )
-
-        ci_pre_cti = pattern.ci_pre_cti_from_shape_2d(shape_2d=(5, 5), ci_seed=1)
-
-        simulator = ac.ci.SimulatorCIImaging(add_noise=False, ci_seed=1)
-
-        imaging = simulator.from_ci_pre_cti(
-            ci_pre_cti=ci_pre_cti,
-            ci_pattern=pattern,
-            clocker=parallel_clocker,
-            parallel_traps=traps_x2,
-            parallel_ccd=ccd,
-        )
-
-        imaging_via_pattern = simulator.from_ci_pattern(
-            ci_pattern=pattern,
-            shape_2d=(5, 5),
-            clocker=parallel_clocker,
-            parallel_traps=traps_x2,
-            parallel_ccd=ccd,
-        )
-
-        assert (imaging.image == imaging_via_pattern.image).all()
+        assert imaging.cosmic_ray_map.scans.serial_overscan == (1, 2, 1, 2)
 
     # def test__include_parallel_poisson_trap_densities(self, arctic_parallel):
     #
