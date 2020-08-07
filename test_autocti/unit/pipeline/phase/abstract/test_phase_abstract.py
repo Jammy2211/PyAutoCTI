@@ -16,13 +16,13 @@ pytestmark = pytest.mark.filterwarnings(
 class TestModel:
     def test__set_instances(self, phase_dataset_7x7):
         trap = ac.TrapInstantCapture()
-        phase_dataset_7x7.parallel_traps = [trap]
-        assert phase_dataset_7x7.model.parallel_traps == [trap]
+        phase_dataset_7x7.parallel_trap = [trap]
+        assert phase_dataset_7x7.model.parallel_trap == [trap]
 
     def test__set_models(self, phase_dataset_7x7):
         trap_model = prior_model.PriorModel(ac.TrapInstantCapture)
-        phase_dataset_7x7.parallel_traps = [trap_model]
-        assert phase_dataset_7x7.parallel_traps == [trap_model]
+        phase_dataset_7x7.parallel_trap = [trap_model]
+        assert phase_dataset_7x7.parallel_trap == [trap_model]
 
         ccd_model = prior_model.PriorModel(ac.CCD)
         phase_dataset_7x7.parallel_ccd = ccd_model
@@ -39,7 +39,7 @@ class TestModel:
             search=mock.MockSearch(),
         )
 
-        parallel_trap = phase_dataset_7x7.model.parallel_traps[0]
+        parallel_trap = phase_dataset_7x7.model.parallel_trap[0]
         parallel_ccd = phase_dataset_7x7.model.parallel_ccd
         serial_trap = phase_dataset_7x7.model.serial_traps[0]
         serial_ccd = phase_dataset_7x7.model.serial_ccd
@@ -59,8 +59,8 @@ class TestModel:
 
         instance = phase_dataset_7x7.model.instance_for_arguments(arguments=arguments)
 
-        assert instance.parallel_traps[0].density == 0.1
-        assert instance.parallel_traps[0].release_timescale == 0.2
+        assert instance.parallel_trap[0].density == 0.1
+        assert instance.parallel_trap[0].release_timescale == 0.2
         assert instance.parallel_ccd.full_well_depth == [0.3]
         assert instance.parallel_ccd.well_notch_depth == [0.4]
         assert instance.parallel_ccd.well_fill_power == [0.5]

@@ -291,8 +291,10 @@ class MaskedCIImaging(imaging.AbstractMaskedImaging):
 class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
     def __init__(
         self,
+        shape_2d,
         read_noise=None,
         add_noise=True,
+        scans=None,
         noise_if_add_noise_false=0.1,
         noise_seed=-1,
         ci_seed=-1,
@@ -313,11 +315,12 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
             noise_seed=noise_seed,
         )
 
+        self.shape_2d = shape_2d
+        self.scans = scans
         self.ci_seed = ci_seed
 
-    def from_ci_pre_cti(
+    def from_ci_pattern(
         self,
-        ci_pre_cti,
         ci_pattern,
         clocker,
         parallel_traps=None,
@@ -348,6 +351,12 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
         noise_seed : int
             Seed for the read-noises added to the image.
         """
+        if isinstance(ci_pattern, pattern.CIPatternUniform):
+            ci_pre_cti = ci_pattern.ci_pre_cti_from_shape_2d(shape_2d=self.shape_2d)
+        else:
+            ci_pre_cti = ci_pattern.ci_pre_cti_from_shape_2d(
+                shape_2d=self.shape_2d, ci_seed=self.ci_seed
+            )
 
         if cosmic_ray_map is not None:
             ci_pre_cti += cosmic_ray_map
@@ -370,45 +379,17 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
             ci_noise_map = None
 
         return CIImaging(
-            image=ci_frame.CIFrame.manual(array=ci_image, ci_pattern=ci_pattern),
+            image=ci_frame.CIFrame.manual(
+                array=ci_image, ci_pattern=ci_pattern, scans=self.scans
+            ),
             noise_map=ci_frame.CIFrame.manual(
-                array=ci_noise_map, ci_pattern=ci_pattern
+                array=ci_noise_map, ci_pattern=ci_pattern, scans=self.scans
             ),
-            ci_pre_cti=ci_frame.CIFrame.manual(array=ci_pre_cti, ci_pattern=ci_pattern),
+            ci_pre_cti=ci_frame.CIFrame.manual(
+                array=ci_pre_cti, ci_pattern=ci_pattern, scans=self.scans
+            ),
             cosmic_ray_map=ci_frame.CIFrame.manual(
-                array=cosmic_ray_map, ci_pattern=ci_pattern
+                array=cosmic_ray_map, ci_pattern=ci_pattern, scans=self.scans
             ),
-            name=name,
-        )
-
-    def from_ci_pattern(
-        self,
-        shape_2d,
-        ci_pattern,
-        clocker,
-        parallel_traps=None,
-        parallel_ccd=None,
-        serial_traps=None,
-        serial_ccd=None,
-        cosmic_ray_map=None,
-        name=None,
-    ):
-
-        if isinstance(ci_pattern, pattern.CIPatternUniform):
-            ci_pre_cti = ci_pattern.ci_pre_cti_from_shape_2d(shape_2d=shape_2d)
-        else:
-            ci_pre_cti = ci_pattern.ci_pre_cti_from_shape_2d(
-                shape_2d=shape_2d, ci_seed=self.ci_seed
-            )
-
-        return self.from_ci_pre_cti(
-            ci_pre_cti=ci_pre_cti,
-            ci_pattern=ci_pattern,
-            clocker=clocker,
-            parallel_traps=parallel_traps,
-            parallel_ccd=parallel_ccd,
-            serial_traps=serial_traps,
-            serial_ccd=serial_ccd,
-            cosmic_ray_map=cosmic_ray_map,
             name=name,
         )

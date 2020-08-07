@@ -28,7 +28,7 @@ def make_pipeline(name, folders, search=af.DynestyStatic()):
         parallel_ccd=parallel_ccd,
     )
 
-    previous_total_density = phase1.result.instance.parallel_traps[0].trap_density
+    previous_total_density = phase1.result.instance.parallel_trap[0].trap_density
 
     trap = af.PriorModel(ac.TrapInstantCapture)
     trap.density = af.UniformPrior(lower_limit=0.0, upper_limit=previous_total_density)
@@ -46,7 +46,7 @@ def make_pipeline(name, folders, search=af.DynestyStatic()):
     phase3 = ac.PhaseCIImaging(
         phase_name="phase_3",
         folders=folders,
-        parallel_traps=phase1.result.model.parallel_traps,
+        parallel_traps=phase1.result.model.parallel_trap,
         parallel_ccd=phase1.result.model.parallel_ccd,
         hyper_noise_scalar_of_ci_regions=phase1.result.hyper_combined.instance.hyper_noise_scalar_of_ci_regions,
         hyper_noise_scalar_of_parallel_trails=phase1.result.hyper_combined.instance.hyper_noise_scalar_of_parallel_trails,
