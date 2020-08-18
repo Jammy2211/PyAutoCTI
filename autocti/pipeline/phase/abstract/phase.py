@@ -53,3 +53,24 @@ class AbstractPhase(af_phase.AbstractPhase):
             analysis=analysis,
             search=self.search,
         )
+
+    @property
+    def is_parallel_fit(self):
+        if self.model.parallel_ccd is not None and self.model.serial_ccd is None:
+            return True
+        else:
+            return False
+
+    @property
+    def is_serial_fit(self):
+        if self.model.parallel_ccd is None and self.model.serial_ccd is not None:
+            return True
+        else:
+            return False
+
+    @property
+    def is_parallel_and_serial_fit(self):
+        if self.model.parallel_ccd is not None and self.model.serial_ccd is not None:
+            return True
+        else:
+            return False

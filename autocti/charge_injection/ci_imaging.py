@@ -1,6 +1,7 @@
 import copy
 
 import numpy as np
+from autoconf import conf
 from autocti.charge_injection import ci_frame, ci_pattern as pattern
 from autoarray.dataset import preprocess, imaging
 from autocti.mask import mask as msk
@@ -178,14 +179,91 @@ class CIImaging(imaging.AbstractImaging):
             )
 
 
+class SettingsMaskedCIImaging(imaging.AbstractSettingsMaskedImaging):
+    def __init__(self, parallel_columns=None, serial_rows=None):
+
+        super().__init__()
+
+        self.parallel_columns = parallel_columns
+        self.serial_rows = serial_rows
+
+    @property
+    def parallel_columns_tag(self):
+        """Generate a columns tag, to customize phase names based on the number of columns of simulator extracted in the fit,
+        which is used to speed up parallel CTI fits.
+
+        This changes the phase settings folder as follows:
+
+        columns = None -> settings
+        columns = 10 -> settings__col_10
+        columns = 60 -> settings__col_60
+        """
+        if self.parallel_columns == None:
+            return ""
+        else:
+            x0 = str(self.parallel_columns[0])
+            x1 = str(self.parallel_columns[1])
+            return f"__{conf.instance.tag.get('ci_imaging', 'parallel_columns')}_({x0},{x1})"
+
+    @property
+    def serial_rows_tag(self):
+        """Generate a rows tag, to customize phase names based on the number of rows of simulator extracted in the fit,
+        which is used to speed up serial CTI fits.
+
+        This changes the phase settings folder as follows:
+
+        rows = None -> settings
+        rows = (0, 10) -> settings__rows_(0,10)
+        rows = (20, 60) -> settings__rows_(20,60)
+        """
+        if self.serial_rows == None:
+            return ""
+        else:
+            x0 = str(self.serial_rows[0])
+            x1 = str(self.serial_rows[1])
+            return f"__{conf.instance.tag.get('ci_imaging', 'serial_rows')}_({x0},{x1})"
+
+    def modify_via_fit_type(self, is_parallel_fit, is_serial_fit):
+        """Modify the settings based on the type of fit being performed where:
+
+        - If the fit is a parallel only fit (is_parallel_fit=True, is_serial_fit=False) the serial_rows are set to None
+          and all other settings remain the same.
+
+        - If the fit is a serial only fit (is_parallel_fit=False, is_serial_fit=True) the parallel_columns are set to
+          None and all other settings remain the same.
+
+        - If the fit is a parallel and serial fit (is_parallel_fit=True, is_serial_fit=True) the *parallel_columns* and
+          *serial_rows* are set to None and all other settings remain the same.
+
+         These settings reflect the appropriate way to extract the charge injection imaging data for fits which use a
+         parallel only CTI model, serial only CTI model or fit both.
+
+         Parameters
+         ----------
+         is_parallel_fit : bool
+            If True, the CTI model that is used to fit the charge injection data includes a parallel CTI component.
+         is_serial_fit : bool
+            If True, the CTI model that is used to fit the charge injection data includes a serial CTI component.
+          """
+
+        settings = copy.copy(self)
+
+        if is_parallel_fit:
+            settings.serial_rows = None
+
+        if is_serial_fit:
+            settings.parallel_columns = None
+
+        return settings
+
+
 class MaskedCIImaging(imaging.AbstractMaskedImaging):
     def __init__(
         self,
         ci_imaging,
         mask,
         noise_scaling_maps=None,
-        parallel_columns=None,
-        serial_rows=None,
+        settings=SettingsMaskedCIImaging(),
     ):
         """A data is the collection of simulator components (e.g. the image, noise-maps, PSF, etc.) which are used \
         to generate and fit it with a model image.
@@ -218,44 +296,44 @@ class MaskedCIImaging(imaging.AbstractMaskedImaging):
         self.ci_imaging_full.noise_scaling_maps = noise_scaling_maps
         self.mask_full = copy.deepcopy(mask)
 
-        if parallel_columns is not None:
+        if settings.parallel_columns is not None:
 
             ci_imaging = self.ci_imaging_full.parallel_calibration_ci_imaging_for_columns(
-                columns=parallel_columns
+                columns=settings.parallel_columns
             )
 
             mask = self.ci_imaging_full.image.parallel_calibration_mask_from_mask_and_columns(
-                mask=mask, columns=parallel_columns
+                mask=mask, columns=settings.parallel_columns
             )
 
             if noise_scaling_maps is not None:
                 noise_scaling_maps = [
                     noise_scaling_map.parallel_calibration_frame_from_columns(
-                        columns=parallel_columns
+                        columns=settings.parallel_columns
                     )
                     for noise_scaling_map in noise_scaling_maps
                 ]
 
-        if serial_rows is not None:
+        if settings.serial_rows is not None:
 
             ci_imaging = self.ci_imaging_full.serial_calibration_ci_imaging_for_rows(
-                rows=serial_rows
+                rows=settings.serial_rows
             )
 
             mask = self.ci_imaging_full.image.serial_calibration_mask_from_mask_and_rows(
-                mask=mask, rows=serial_rows
+                mask=mask, rows=settings.serial_rows
             )
 
             if noise_scaling_maps is not None:
 
                 noise_scaling_maps = [
                     noise_scaling_map.serial_calibration_frame_from_rows(
-                        rows=serial_rows
+                        rows=settings.serial_rows
                     )
                     for noise_scaling_map in noise_scaling_maps
                 ]
 
-        super().__init__(imaging=ci_imaging, mask=mask)
+        super().__init__(imaging=ci_imaging, mask=mask, settings=settings)
 
         self.image = ci_frame.CIFrame.from_ci_frame(
             ci_frame=ci_imaging.image, mask=mask

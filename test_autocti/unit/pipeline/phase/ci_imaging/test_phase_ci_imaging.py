@@ -40,8 +40,10 @@ class TestMakeAnalysis:
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            settings=ac.PhaseSettingsCIImaging(columns=(0, 1)),
             search=mock.MockSearch(),
+            settings=ac.SettingsPhaseCIImaging(
+                masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(parallel_columns=(0, 1))
+            ),
         )
 
         analysis = phase_ci_imaging_7x7.make_analysis(
@@ -59,8 +61,10 @@ class TestMakeAnalysis:
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            settings=ac.PhaseSettingsCIImaging(rows=(0, 1)),
             search=mock.MockSearch(),
+            settings=ac.SettingsPhaseCIImaging(
+                masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(serial_rows=(0, 1))
+            ),
         )
 
         analysis = phase_ci_imaging_7x7.make_analysis(
@@ -82,7 +86,7 @@ class TestMakeAnalysis:
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            settings=ac.PhaseSettingsCIImaging(parallel_front_edge_mask_rows=(0, 1)),
+            settings=ac.SettingsPhaseCIImaging(parallel_front_edge_mask_rows=(0, 1)),
             search=mock.MockSearch(),
         )
 
@@ -107,7 +111,7 @@ class TestMakeAnalysis:
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            settings=ac.PhaseSettingsCIImaging(parallel_trails_mask_rows=(0, 1)),
+            settings=ac.SettingsPhaseCIImaging(parallel_trails_mask_rows=(0, 1)),
             search=mock.MockSearch(),
         )
 
@@ -132,7 +136,7 @@ class TestMakeAnalysis:
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            settings=ac.PhaseSettingsCIImaging(serial_front_edge_mask_columns=(0, 1)),
+            settings=ac.SettingsPhaseCIImaging(serial_front_edge_mask_columns=(0, 1)),
             search=mock.MockSearch(),
         )
 
@@ -157,7 +161,7 @@ class TestMakeAnalysis:
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            settings=ac.PhaseSettingsCIImaging(serial_trails_mask_columns=(0, 1)),
+            settings=ac.SettingsPhaseCIImaging(serial_trails_mask_columns=(0, 1)),
             search=mock.MockSearch(),
         )
 

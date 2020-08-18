@@ -1,8 +1,7 @@
-from autocti.pipeline.phase.settings import PhaseSettingsCIImaging
-from autocti.charge_injection import ci_mask
+from autocti.pipeline.phase.settings import SettingsPhaseCIImaging
+from autocti.charge_injection import ci_mask, ci_imaging
 from autocti.pipeline.phase.dataset.phase import PhaseDataset
 from autocti.pipeline.phase.ci_imaging.analysis import Analysis
-from autocti.pipeline.phase.ci_imaging.meta_ci_imaging import MetaCIImaging
 from autocti.pipeline.phase.ci_imaging.result import Result
 from autofit.non_linear.paths import convert_paths
 from autofit.tools.phase_property import PhaseProperty
@@ -38,7 +37,7 @@ class PhaseCIImaging(PhaseDataset):
         hyper_noise_scalar_of_parallel_trails=None,
         hyper_noise_scalar_of_serial_trails=None,
         hyper_noise_scalar_of_serial_overscan_no_trails=None,
-        settings=PhaseSettingsCIImaging(),
+        settings=SettingsPhaseCIImaging(),
     ):
 
         """
@@ -73,8 +72,6 @@ class PhaseCIImaging(PhaseDataset):
             hyper_noise_scalar_of_serial_overscan_no_trails
         )
 
-        self.meta_dataset = MetaCIImaging(model=self.model, settings=settings)
-
     def make_analysis(self, datasets, clocker, results=None, pool=None):
         """
         Create an analysis object. Also calls the prior passing and image modifying functions to allow child classes to
@@ -99,27 +96,133 @@ class PhaseCIImaging(PhaseDataset):
         )
 
         masks = [
-            self.meta_dataset.mask_for_analysis_from_dataset(dataset=dataset, mask=mask)
+            self.mask_for_analysis_from_dataset(dataset=dataset, mask=mask)
             for dataset in datasets
         ]
 
-        noise_scaling_maps_list = self.meta_dataset.noise_scaling_maps_list_from_total_images_and_results(
+        noise_scaling_maps_list = self.noise_scaling_maps_list_from_total_images_and_results(
             total_images=len(datasets), results=results
         )
 
-        masked_ci_datasets = [
-            self.meta_dataset.masked_ci_dataset_from_dataset(
-                dataset=dataset, mask=mask, noise_scaling_maps=maps
+        settings_masked_ci_imaging = self.settings.masked_ci_imaging.modify_via_fit_type(
+            is_parallel_fit=self.is_parallel_fit, is_serial_fit=self.is_serial_fit
+        )
+
+        masked_ci_imagings = [
+            ci_imaging.MaskedCIImaging(
+                ci_imaging=dataset,
+                mask=mask,
+                noise_scaling_maps=maps,
+                settings=settings_masked_ci_imaging,
             )
             for dataset, mask, maps in zip(datasets, masks, noise_scaling_maps_list)
         ]
 
         return Analysis(
-            masked_ci_imagings=masked_ci_datasets,
+            masked_ci_imagings=masked_ci_imagings,
             clocker=clocker,
-            parallel_total_density_range=self.meta_dataset.settings.parallel_total_density_range,
-            serial_total_density_range=self.meta_dataset.settings.serial_total_density_range,
+            parallel_total_density_range=self.settings.parallel_total_density_range,
+            serial_total_density_range=self.settings.serial_total_density_range,
             image_path=self.search.paths.image_path,
             results=results,
             pool=pool,
         )
+
+    def mask_for_analysis_from_dataset(self, dataset, mask):
+
+        mask = self.mask_for_analysis_from_cosmic_ray_map(
+            cosmic_ray_map=dataset.cosmic_ray_map, mask=mask
+        )
+
+        if self.settings.parallel_front_edge_mask_rows is not None:
+
+            parallel_front_edge_mask = ci_mask.CIMask.masked_parallel_front_edge_from_ci_frame(
+                ci_frame=dataset.image, rows=self.settings.parallel_front_edge_mask_rows
+            )
+
+            mask = mask + parallel_front_edge_mask
+
+        if self.settings.parallel_trails_mask_rows is not None:
+
+            parallel_trails_mask = ci_mask.CIMask.masked_parallel_trails_from_ci_frame(
+                ci_frame=dataset.image, rows=self.settings.parallel_trails_mask_rows
+            )
+
+            mask = mask + parallel_trails_mask
+
+        if self.settings.serial_front_edge_mask_columns is not None:
+
+            serial_front_edge_mask = ci_mask.CIMask.masked_serial_front_edge_from_ci_frame(
+                ci_frame=dataset.image,
+                columns=self.settings.serial_front_edge_mask_columns,
+            )
+
+            mask = mask + serial_front_edge_mask
+
+        if self.settings.serial_trails_mask_columns is not None:
+
+            serial_trails_mask = ci_mask.CIMask.masked_serial_trails_from_ci_frame(
+                ci_frame=dataset.image, columns=self.settings.serial_trails_mask_columns
+            )
+
+            mask = mask + serial_trails_mask
+
+        return mask
+
+    def noise_scaling_maps_list_from_total_images_and_results(
+        self, total_images, results
+    ):
+
+        if self.model.hyper_noise_scalar_of_ci_regions is not None:
+            noise_scaling_maps_list_of_ci_regions = (
+                results.last.noise_scaling_maps_list_of_ci_regions
+            )
+        else:
+            noise_scaling_maps_list_of_ci_regions = total_images * [None]
+
+        if self.model.hyper_noise_scalar_of_parallel_trails is not None:
+            noise_scaling_maps_list_of_parallel_trails = (
+                results.last.noise_scaling_maps_list_of_parallel_trails
+            )
+        else:
+            noise_scaling_maps_list_of_parallel_trails = total_images * [None]
+
+        if self.model.hyper_noise_scalar_of_serial_trails is not None:
+            noise_scaling_maps_list_of_serial_trails = (
+                results.last.noise_scaling_maps_list_of_serial_trails
+            )
+        else:
+            noise_scaling_maps_list_of_serial_trails = total_images * [None]
+
+        if self.model.hyper_noise_scalar_of_serial_overscan_no_trails is not None:
+            noise_scaling_maps_list_of_serial_overscan_no_trails = (
+                results.last.noise_scaling_maps_list_of_serial_overscan_no_trails
+            )
+        else:
+            noise_scaling_maps_list_of_serial_overscan_no_trails = total_images * [None]
+
+        noise_scaling_maps_list = []
+
+        for image_index in range(total_images):
+            noise_scaling_maps_list.append(
+                [
+                    noise_scaling_maps_list_of_ci_regions[image_index],
+                    noise_scaling_maps_list_of_parallel_trails[image_index],
+                    noise_scaling_maps_list_of_serial_trails[image_index],
+                    noise_scaling_maps_list_of_serial_overscan_no_trails[image_index],
+                ]
+            )
+
+        for image_index in range(total_images):
+            noise_scaling_maps_list[image_index] = [
+                noise_scaling_map
+                for noise_scaling_map in noise_scaling_maps_list[image_index]
+                if noise_scaling_map is not None
+            ]
+
+        noise_scaling_maps_list = list(filter(None, noise_scaling_maps_list))
+
+        if len(noise_scaling_maps_list) == 0:
+            return total_images * [None]
+
+        return noise_scaling_maps_list

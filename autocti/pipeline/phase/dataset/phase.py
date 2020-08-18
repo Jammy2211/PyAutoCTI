@@ -1,4 +1,5 @@
-from autocti.pipeline.phase.settings import PhaseSettingsCIImaging
+from autocti.mask import mask as msk
+from autocti.pipeline.phase.settings import SettingsPhaseCIImaging
 from autocti.pipeline.phase import abstract
 from autocti.pipeline.phase import extensions
 from autocti.pipeline.phase.dataset.result import Result
@@ -26,7 +27,7 @@ class PhaseDataset(abstract.AbstractPhase):
         parallel_ccd=None,
         serial_traps=None,
         serial_ccd=None,
-        settings=PhaseSettingsCIImaging(),
+        settings=SettingsPhaseCIImaging(),
     ):
         """
 
@@ -47,6 +48,7 @@ class PhaseDataset(abstract.AbstractPhase):
         self.parallel_ccd = parallel_ccd
         self.serial_traps = serial_traps or []
         self.serial_ccd = serial_ccd
+        self.settings = settings
 
     def run(self, datasets: Dataset, clocker, results=None, info=None, pool=None):
         """
@@ -108,6 +110,24 @@ class PhaseDataset(abstract.AbstractPhase):
             An lens object that the non-linear search calls to determine the fit of a set of values
         """
         raise NotImplementedError()
+
+    def mask_for_analysis_from_cosmic_ray_map(self, cosmic_ray_map, mask):
+
+        cosmic_ray_mask = (
+            msk.Mask.from_cosmic_ray_map(
+                cosmic_ray_map=cosmic_ray_map,
+                cosmic_ray_parallel_buffer=self.settings.cosmic_ray_parallel_buffer,
+                cosmic_ray_serial_buffer=self.settings.cosmic_ray_serial_buffer,
+                cosmic_ray_diagonal_buffer=self.settings.cosmic_ray_diagonal_buffer,
+            )
+            if cosmic_ray_map is not None
+            else None
+        )
+
+        if cosmic_ray_map is not None:
+            return mask + cosmic_ray_mask
+
+        return mask
 
     def extend_with_hyper_noise_phases(self):
         return extensions.CombinedHyperPhase(

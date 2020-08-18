@@ -35,7 +35,7 @@ class Analysis(abstract_search.Analysis):
 
         if self.parallel_total_density_range is not None:
 
-            total_density = sum([trap.density for trap in instance.parallel_trap])
+            total_density = sum([trap.density for trap in instance.parallel_traps])
 
             if (
                 total_density < self.parallel_total_density_range[0]
