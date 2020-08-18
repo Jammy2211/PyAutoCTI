@@ -11,5 +11,5 @@ from .ci_imaging import (
     MaskedCIImaging,
     SimulatorCIImaging,
 )
-from .ci_mask import CIMask
+from .ci_mask import SettingsCIMask, CIMask
 from .ci_pattern import CIPatternUniform, CIPatternNonUniform

@@ -20,7 +20,7 @@ from .wrap import TrapInstantCapture
 
 from .structures.arrays import Array
 from .structures.frame import Frame
-from .mask.mask import Mask
+from .mask.mask import Mask, SettingsMask
 from .dataset.imaging import Imaging
 from .dataset.imaging import MaskedImaging
 from . import charge_injection as ci

@@ -1,3 +1,4 @@
+from autoconf import conf
 from autoarray.mask import abstract_mask
 from autoarray.structures import abstract_structure
 from autoarray import exc
@@ -5,6 +6,65 @@ from autoarray.structures import region as reg
 from autoarray.util import array_util
 
 import numpy as np
+
+
+class SettingsMask:
+    def __init__(
+        self,
+        cosmic_ray_parallel_buffer=10,
+        cosmic_ray_serial_buffer=10,
+        cosmic_ray_diagonal_buffer=3,
+    ):
+
+        self.cosmic_ray_parallel_buffer = cosmic_ray_parallel_buffer
+        self.cosmic_ray_serial_buffer = cosmic_ray_serial_buffer
+        self.cosmic_ray_diagonal_buffer = cosmic_ray_diagonal_buffer
+
+    @property
+    def mask_tag(self):
+        return self.cosmic_ray_buffer_tag
+
+    @property
+    def cosmic_ray_buffer_tag(self):
+        """Generate a cosmic ray buffer tag, to customize phase names based on the size of the cosmic ray masks in the \
+        parallel, serial and diagonal directions
+
+        This changes the phase settings folder as follows:
+
+        cosmic_ray_parallel_buffer = 1, cosmic_ray_serial_buffer=2, cosmic_ray_diagonal_buffer=3 = -> settings__cr_p1s2d3
+        cosmic_ray_parallel_buffer = 10, cosmic_ray_serial_buffer=5, cosmic_ray_diagonal_buffer=1 = -> settings__cr_p10s5d1
+        """
+
+        if (
+            self.cosmic_ray_diagonal_buffer is None
+            and self.cosmic_ray_serial_buffer is None
+            and self.cosmic_ray_diagonal_buffer is None
+        ):
+            return ""
+
+        if self.cosmic_ray_parallel_buffer is None:
+            cosmic_ray_parallel_buffer_tag = ""
+        else:
+            cosmic_ray_parallel_buffer_tag = f"{conf.instance.tag.get('mask', 'cosmic_ray_parallel_buffer')}{self.cosmic_ray_parallel_buffer}"
+
+        if self.cosmic_ray_serial_buffer is None:
+            cosmic_ray_serial_buffer_tag = ""
+        else:
+            cosmic_ray_serial_buffer_tag = f"{conf.instance.tag.get('mask', 'cosmic_ray_serial_buffer')}{self.cosmic_ray_serial_buffer}"
+
+        if self.cosmic_ray_diagonal_buffer is None:
+            cosmic_ray_diagonal_buffer_tag = ""
+        else:
+            cosmic_ray_diagonal_buffer_tag = f"{conf.instance.tag.get('mask', 'cosmic_ray_diagonal_buffer')}{self.cosmic_ray_diagonal_buffer}"
+
+        return (
+            "__"
+            + conf.instance.tag.get("mask", "cosmic_ray_buffer")
+            + "_"
+            + cosmic_ray_parallel_buffer_tag
+            + cosmic_ray_serial_buffer_tag
+            + cosmic_ray_diagonal_buffer_tag
+        )
 
 
 class Mask(abstract_mask.AbstractMask):
@@ -85,13 +145,7 @@ class Mask(abstract_mask.AbstractMask):
         return mask
 
     @classmethod
-    def from_cosmic_ray_map(
-        cls,
-        cosmic_ray_map,
-        cosmic_ray_parallel_buffer=0,
-        cosmic_ray_serial_buffer=0,
-        cosmic_ray_diagonal_buffer=0,
-    ):
+    def from_cosmic_ray_map_buffed(cls, cosmic_ray_map, settings=SettingsMask()):
         """
         Create the mask used for CTI Calibration, which is all False unless specific regions are input for masking.
 
@@ -114,18 +168,18 @@ class Mask(abstract_mask.AbstractMask):
             for x in range(mask.shape[1]):
                 if cosmic_ray_mask[y, x]:
                     y0, y1 = cosmic_ray_map.parallel_trail_from_y(
-                        y=y, dy=cosmic_ray_parallel_buffer
+                        y=y, dy=settings.cosmic_ray_parallel_buffer
                     )
                     mask[y0:y1, x] = True
                     x0, x1 = cosmic_ray_map.serial_trail_from_x(
-                        x=x, dx=cosmic_ray_serial_buffer
+                        x=x, dx=settings.cosmic_ray_serial_buffer
                     )
                     mask[y, x0:x1] = True
                     y0, y1 = cosmic_ray_map.parallel_trail_from_y(
-                        y=y, dy=cosmic_ray_diagonal_buffer
+                        y=y, dy=settings.cosmic_ray_diagonal_buffer
                     )
                     x0, x1 = cosmic_ray_map.serial_trail_from_x(
-                        x=x, dx=cosmic_ray_diagonal_buffer
+                        x=x, dx=settings.cosmic_ray_diagonal_buffer
                     )
                     mask[y0:y1, x0:x1] = True
 

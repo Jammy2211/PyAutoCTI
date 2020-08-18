@@ -59,9 +59,11 @@ class TestMakeAnalysis:
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
             settings=ac.SettingsPhaseCIImaging(
-                cosmic_ray_serial_buffer=0,
-                cosmic_ray_parallel_buffer=0,
-                cosmic_ray_diagonal_buffer=0,
+                mask=ac.SettingsMask(
+                    cosmic_ray_serial_buffer=0,
+                    cosmic_ray_parallel_buffer=0,
+                    cosmic_ray_diagonal_buffer=0,
+                )
             ),
             search=mock.MockSearch(),
         )
@@ -95,9 +97,11 @@ class TestMakeAnalysis:
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
             settings=ac.SettingsPhaseCIImaging(
-                cosmic_ray_serial_buffer=2,
-                cosmic_ray_parallel_buffer=1,
-                cosmic_ray_diagonal_buffer=1,
+                mask=ac.SettingsMask(
+                    cosmic_ray_serial_buffer=2,
+                    cosmic_ray_parallel_buffer=1,
+                    cosmic_ray_diagonal_buffer=1,
+                )
             ),
             search=mock.MockSearch(),
         )
