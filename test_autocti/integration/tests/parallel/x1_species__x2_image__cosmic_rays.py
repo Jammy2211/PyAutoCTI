@@ -25,7 +25,7 @@ def make_pipeline(name, folders, search=af.DynestyStatic()):
         search=search,
         parallel_traps=[af.PriorModel(ac.TrapInstantCapture)],
         parallel_ccd=parallel_ccd,
-        settings=ac.PhaseSettingsCIImaging(columns=40),
+        settings=ac.SettingsPhaseCIImaging(columns=40),
     )
 
     phase1 = phase1.extend_with_hyper_noise_phases()

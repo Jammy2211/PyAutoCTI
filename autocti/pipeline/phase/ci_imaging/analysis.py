@@ -94,8 +94,8 @@ class Analysis(analysis_dataset.Analysis):
             instance=instance, hyper_noise_scale=hyper_noise_scale
         )
 
-        if len(instance.parallel_trap) > 0:
-            parallel_traps = list(instance.parallel_trap)
+        if len(instance.parallel_traps) > 0:
+            parallel_traps = list(instance.parallel_traps)
         else:
             parallel_traps = None
 
@@ -154,8 +154,8 @@ def pipe_cti(ci_data_masked, instance, clocker, hyper_noise_scalars):
 
     # TODO : Convesions ini pyarctic make this dodgy - will fix but sorting them out in arcticpy.
 
-    if len(instance.parallel_trap) > 0:
-        parallel_traps = list(instance.parallel_trap)
+    if len(instance.parallel_traps) > 0:
+        parallel_traps = list(instance.parallel_traps)
     else:
         parallel_traps = None
 

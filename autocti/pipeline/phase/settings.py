@@ -1,11 +1,12 @@
 from autoconf import conf
 
+from autocti.charge_injection import ci_imaging
 
-class PhaseSettingsCIImaging:
+
+class SettingsPhaseCIImaging:
     def __init__(
         self,
-        columns=None,
-        rows=None,
+        masked_ci_imaging=ci_imaging.SettingsMaskedCIImaging(),
         parallel_front_edge_mask_rows=None,
         parallel_trails_mask_rows=None,
         parallel_total_density_range=None,
@@ -17,8 +18,8 @@ class PhaseSettingsCIImaging:
         cosmic_ray_diagonal_buffer=3,
     ):
 
-        self.columns = columns
-        self.rows = rows
+        self.masked_ci_imaging = masked_ci_imaging
+
         self.parallel_front_edge_mask_rows = parallel_front_edge_mask_rows
         self.parallel_trails_mask_rows = parallel_trails_mask_rows
         self.serial_front_edge_mask_columns = serial_front_edge_mask_columns
@@ -34,8 +35,8 @@ class PhaseSettingsCIImaging:
 
         return (
             conf.instance.tag.get("phase", "settings")
-            + self.columns_tag
-            + self.rows_tag
+            + self.masked_ci_imaging.parallel_columns_tag
+            + self.masked_ci_imaging.serial_rows_tag
             + self.parallel_front_edge_mask_rows_tag
             + self.parallel_trails_mask_rows_tag
             + self.serial_front_edge_mask_columns_tag
@@ -44,42 +45,6 @@ class PhaseSettingsCIImaging:
             + self.serial_total_density_range_tag
             + self.cosmic_ray_buffer_tag
         )
-
-    @property
-    def columns_tag(self):
-        """Generate a columns tag, to customize phase names based on the number of columns of simulator extracted in the fit,
-        which is used to speed up parallel CTI fits.
-
-        This changes the phase settings folder as follows:
-
-        columns = None -> settings
-        columns = 10 -> settings__col_10
-        columns = 60 -> settings__col_60
-        """
-        if self.columns == None:
-            return ""
-        else:
-            x0 = str(self.columns[0])
-            x1 = str(self.columns[1])
-            return f"__{conf.instance.tag.get('phase', 'columns')}_({x0},{x1})"
-
-    @property
-    def rows_tag(self):
-        """Generate a rows tag, to customize phase names based on the number of rows of simulator extracted in the fit,
-        which is used to speed up serial CTI fits.
-
-        This changes the phase settings folder as follows:
-
-        rows = None -> settings
-        rows = (0, 10) -> settings__rows_(0,10)
-        rows = (20, 60) -> settings__rows_(20,60)
-        """
-        if self.rows == None:
-            return ""
-        else:
-            x0 = str(self.rows[0])
-            x1 = str(self.rows[1])
-            return f"__{conf.instance.tag.get('phase', 'rows')}_({x0},{x1})"
 
     @property
     def parallel_front_edge_mask_rows_tag(self):

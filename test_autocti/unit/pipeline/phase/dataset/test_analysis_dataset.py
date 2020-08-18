@@ -21,7 +21,7 @@ class TestCheckDensity:
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            settings=ac.PhaseSettingsCIImaging(parallel_total_density_range=(1.0, 2.0)),
+            settings=ac.SettingsPhaseCIImaging(parallel_total_density_range=(1.0, 2.0)),
             search=mock.MockSearch(),
         )
 
@@ -49,7 +49,7 @@ class TestCheckDensity:
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            settings=ac.PhaseSettingsCIImaging(serial_total_density_range=(1.0, 2.0)),
+            settings=ac.SettingsPhaseCIImaging(serial_total_density_range=(1.0, 2.0)),
             search=mock.MockSearch(),
         )
 

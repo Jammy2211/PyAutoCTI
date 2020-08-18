@@ -21,8 +21,8 @@ class TestChecks:
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            settings=ac.PhaseSettingsCIImaging(parallel_total_density_range=(1.0, 2.0)),
             search=mock.MockSearch(),
+            settings=ac.SettingsPhaseCIImaging(parallel_total_density_range=(1.0, 2.0)),
         )
 
         analysis = phase_ci_imaging_7x7.make_analysis(
@@ -48,8 +48,8 @@ class TestChecks:
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            settings=ac.PhaseSettingsCIImaging(serial_total_density_range=(1.0, 2.0)),
             search=mock.MockSearch(),
+            settings=ac.SettingsPhaseCIImaging(serial_total_density_range=(1.0, 2.0)),
         )
 
         analysis = phase_ci_imaging_7x7.make_analysis(
@@ -112,9 +112,11 @@ class TestFit:
         phase = PhaseCIImaging(
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
-            settings=ac.PhaseSettingsCIImaging(columns=(0, 1)),
             phase_name="test_phase",
             search=mock.MockSearch(),
+            settings=ac.SettingsPhaseCIImaging(
+                masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(parallel_columns=(0, 1))
+            ),
         )
 
         analysis = phase.make_analysis(
@@ -124,12 +126,14 @@ class TestFit:
 
         fits = analysis.fits_from_instance(instance=instance)
 
-        mask_from_phase = phase.meta_dataset.mask_for_analysis_from_dataset(
+        mask_from_phase = phase.mask_for_analysis_from_dataset(
             dataset=ci_imaging_7x7, mask=mask_7x7
         )
 
         masked_ci_imaging = ac.ci.MaskedCIImaging(
-            ci_imaging=ci_imaging_7x7, mask=mask_from_phase, parallel_columns=(0, 1)
+            ci_imaging=ci_imaging_7x7,
+            mask=mask_from_phase,
+            settings=ac.ci.SettingsMaskedCIImaging(parallel_columns=(0, 1)),
         )
 
         ci_post_cti = parallel_clocker.add_cti(
@@ -152,9 +156,11 @@ class TestFit:
         phase = PhaseCIImaging(
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
-            settings=ac.PhaseSettingsCIImaging(columns=(0, 1)),
             phase_name="test_phase",
             search=mock.MockSearch(),
+            settings=ac.SettingsPhaseCIImaging(
+                masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(parallel_columns=(0, 1))
+            ),
         )
 
         analysis = phase.make_analysis(
@@ -183,9 +189,11 @@ class TestFit:
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
             hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
-            settings=ac.PhaseSettingsCIImaging(columns=(0, 1)),
             phase_name="test_phase",
             search=mock.MockSearch(),
+            settings=ac.SettingsPhaseCIImaging(
+                masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(parallel_columns=(0, 1))
+            ),
         )
 
         noise_scaling_maps_list_of_ci_regions = [
@@ -213,7 +221,7 @@ class TestFit:
             ci_imaging=ci_imaging_7x7,
             mask=mask,
             noise_scaling_maps=[noise_scaling_maps_list_of_ci_regions[0]],
-            parallel_columns=(0, 1),
+            settings=ac.ci.SettingsMaskedCIImaging(parallel_columns=(0, 1)),
         )
 
         ci_post_cti = parallel_clocker.add_cti(
@@ -247,9 +255,11 @@ class TestFit:
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
             hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
-            settings=ac.PhaseSettingsCIImaging(columns=(0, 1)),
             phase_name="test_phase",
             search=mock.MockSearch(),
+            settings=ac.SettingsPhaseCIImaging(
+                masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(parallel_columns=(0, 1))
+            ),
         )
 
         noise_scaling_maps_list_of_ci_regions = [

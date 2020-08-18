@@ -207,6 +207,65 @@ class TestCIImaging(object):
         assert (imaging.cosmic_ray_map == 4.0 * np.ones((3, 3))).all()
 
 
+class TestSettingsMaskedCIImaging:
+    def test__parallel_columns_tag(self):
+
+        settings = ac.ci.SettingsMaskedCIImaging(parallel_columns=None)
+        assert settings.parallel_columns_tag == ""
+        settings = ac.ci.SettingsMaskedCIImaging(parallel_columns=(10, 20))
+        assert settings.parallel_columns_tag == "__cols_(10,20)"
+        settings = ac.ci.SettingsMaskedCIImaging(parallel_columns=(60, 65))
+        assert settings.parallel_columns_tag == "__cols_(60,65)"
+
+    def test__serial_rows_tag(self):
+
+        settings = ac.ci.SettingsMaskedCIImaging(serial_rows=None)
+        assert settings.serial_rows_tag == ""
+        settings = ac.ci.SettingsMaskedCIImaging(serial_rows=(0, 5))
+        assert settings.serial_rows_tag == "__rows_(0,5)"
+        settings = ac.ci.SettingsMaskedCIImaging(serial_rows=(10, 20))
+        assert settings.serial_rows_tag == "__rows_(10,20)"
+
+    def test__modify_via_fit_type(self):
+
+        settings = ac.ci.SettingsMaskedCIImaging(
+            parallel_columns=None, serial_rows=None
+        )
+        settings = settings.modify_via_fit_type(
+            is_parallel_fit=False, is_serial_fit=False
+        )
+        assert settings.parallel_columns is None
+        assert settings.serial_rows is None
+
+        settings = ac.ci.SettingsMaskedCIImaging(parallel_columns=1, serial_rows=1)
+        settings = settings.modify_via_fit_type(
+            is_parallel_fit=False, is_serial_fit=False
+        )
+        assert settings.parallel_columns == 1
+        assert settings.serial_rows == 1
+
+        settings = ac.ci.SettingsMaskedCIImaging(parallel_columns=1, serial_rows=1)
+        settings = settings.modify_via_fit_type(
+            is_parallel_fit=True, is_serial_fit=False
+        )
+        assert settings.parallel_columns == 1
+        assert settings.serial_rows is None
+
+        settings = ac.ci.SettingsMaskedCIImaging(parallel_columns=1, serial_rows=1)
+        settings = settings.modify_via_fit_type(
+            is_parallel_fit=False, is_serial_fit=True
+        )
+        assert settings.parallel_columns is None
+        assert settings.serial_rows == 1
+
+        settings = ac.ci.SettingsMaskedCIImaging(parallel_columns=1, serial_rows=1)
+        settings = settings.modify_via_fit_type(
+            is_parallel_fit=True, is_serial_fit=True
+        )
+        assert settings.parallel_columns is None
+        assert settings.serial_rows is None
+
+
 class TestMaskedCIImaging:
     def test__construtor__masks_arrays_correctly(self, ci_imaging_7x7):
 
@@ -245,8 +304,8 @@ class TestMaskedCIImaging:
         masked_ci_imaging = ac.ci.MaskedCIImaging(
             ci_imaging=ci_imaging_7x7,
             mask=mask,
-            parallel_columns=(1, 3),
             noise_scaling_maps=ci_noise_scaling_maps_7x7,
+            settings=ac.ci.SettingsMaskedCIImaging(parallel_columns=(1, 3)),
         )
 
         mask = ac.Mask.unmasked(shape_2d=(7, 2))
@@ -294,8 +353,8 @@ class TestMaskedCIImaging:
         masked_ci_imaging = ac.ci.MaskedCIImaging(
             ci_imaging=ci_imaging_7x7,
             mask=mask,
-            serial_rows=(0, 1),
             noise_scaling_maps=ci_noise_scaling_maps_7x7,
+            settings=ac.ci.SettingsMaskedCIImaging(serial_rows=(0, 1)),
         )
 
         mask = ac.Mask.unmasked(shape_2d=(1, 7))

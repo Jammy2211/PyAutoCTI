@@ -23,8 +23,10 @@ class TestResult:
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             search=mock.MockSearch(samples=samples_with_result),
-            settings=ac.PhaseSettingsCIImaging(columns=(0, 1)),
             phase_name="test_phase_2",
+            settings=ac.SettingsPhaseCIImaging(
+                masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(parallel_columns=(0, 1))
+            ),
         )
 
         result = phase_ci_imaging_7x7.run(

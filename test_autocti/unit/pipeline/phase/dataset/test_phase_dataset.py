@@ -58,7 +58,7 @@ class TestMakeAnalysis:
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            settings=ac.PhaseSettingsCIImaging(
+            settings=ac.SettingsPhaseCIImaging(
                 cosmic_ray_serial_buffer=0,
                 cosmic_ray_parallel_buffer=0,
                 cosmic_ray_diagonal_buffer=0,
@@ -94,7 +94,7 @@ class TestMakeAnalysis:
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            settings=ac.PhaseSettingsCIImaging(
+            settings=ac.SettingsPhaseCIImaging(
                 cosmic_ray_serial_buffer=2,
                 cosmic_ray_parallel_buffer=1,
                 cosmic_ray_diagonal_buffer=1,
