@@ -188,6 +188,10 @@ class SettingsMaskedCIImaging(imaging.AbstractSettingsMaskedImaging):
         self.serial_rows = serial_rows
 
     @property
+    def tag(self):
+        return self.parallel_columns_tag + self.serial_rows_tag
+
+    @property
     def parallel_columns_tag(self):
         """Generate a columns tag, to customize phase names based on the number of columns of simulator extracted in the fit,
         which is used to speed up parallel CTI fits.
@@ -222,10 +226,6 @@ class SettingsMaskedCIImaging(imaging.AbstractSettingsMaskedImaging):
             x0 = str(self.serial_rows[0])
             x1 = str(self.serial_rows[1])
             return f"__{conf.instance.tag.get('ci_imaging', 'serial_rows')}_({x0},{x1})"
-
-    @property
-    def masked_ci_imaging_tag(self):
-        return self.parallel_columns_tag + self.serial_rows_tag
 
     def modify_via_fit_type(self, is_parallel_fit, is_serial_fit):
         """Modify the settings based on the type of fit being performed where:

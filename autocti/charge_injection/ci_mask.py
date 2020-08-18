@@ -18,6 +18,15 @@ class SettingsCIMask:
         self.serial_trails_columns = serial_trails_columns
 
     @property
+    def tag(self):
+        return (
+            self.parallel_front_edge_rows_tag
+            + self.parallel_trails_rows_tag
+            + self.serial_front_edge_columns_tag
+            + self.serial_trails_columns_tag
+        )
+
+    @property
     def parallel_front_edge_rows_tag(self):
         """Generate a parallel_front_edge_rows tag, to customize phase names based on the number of rows in the charge
         injection region at the front edge of the parallel clocking direction are masked during the fit,
@@ -88,15 +97,6 @@ class SettingsCIMask:
             x0 = str(self.serial_trails_columns[0])
             x1 = str(self.serial_trails_columns[1])
             return f"__{conf.instance.tag.get('ci_mask', 'serial_trails_mask_rows')}_({x0},{x1})"
-
-    @property
-    def ci_mask_tag(self):
-        return (
-            self.parallel_front_edge_rows_tag
-            + self.parallel_trails_rows_tag
-            + self.serial_front_edge_columns_tag
-            + self.serial_trails_columns_tag
-        )
 
 
 class CIMask(Mask):

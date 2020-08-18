@@ -24,7 +24,7 @@ from .mask.mask import Mask, SettingsMask
 from .dataset.imaging import Imaging
 from .dataset.imaging import MaskedImaging
 from . import charge_injection as ci
-from .pipeline.phase.settings import SettingsPhaseCIImaging
+from .pipeline.phase.settings import SettingsCTI, SettingsPhaseCIImaging
 from .pipeline.phase.extensions import CombinedHyperPhase
 from .pipeline.phase.ci_imaging.phase import PhaseCIImaging
 from .pipeline.pipeline import Pipeline

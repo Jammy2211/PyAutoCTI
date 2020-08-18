@@ -16,64 +16,6 @@ pytestmark = pytest.mark.filterwarnings(
 directory = path.dirname(path.realpath(__file__))
 
 
-class TestChecks:
-    def test__parallel_and_serial_checks_raise_exception(self, ci_imaging_7x7):
-
-        phase_ci_imaging_7x7 = PhaseCIImaging(
-            phase_name="test_phase",
-            search=mock.MockSearch(),
-            settings=ac.SettingsPhaseCIImaging(parallel_total_density_range=(1.0, 2.0)),
-        )
-
-        analysis = phase_ci_imaging_7x7.make_analysis(
-            datasets=[ci_imaging_7x7], clocker=None
-        )
-
-        instance = model.ModelInstance()
-        instance.parallel_traps = [
-            ac.TrapInstantCapture(density=0.75),
-            ac.TrapInstantCapture(density=0.75),
-        ]
-
-        analysis.check_total_density_within_range(instance=instance)
-
-        instance = model.ModelInstance()
-        instance.parallel_traps = [
-            ac.TrapInstantCapture(density=1.1),
-            ac.TrapInstantCapture(density=1.1),
-        ]
-
-        with pytest.raises(exc.PriorException):
-            analysis.check_total_density_within_range(instance=instance)
-
-        phase_ci_imaging_7x7 = PhaseCIImaging(
-            phase_name="test_phase",
-            search=mock.MockSearch(),
-            settings=ac.SettingsPhaseCIImaging(serial_total_density_range=(1.0, 2.0)),
-        )
-
-        analysis = phase_ci_imaging_7x7.make_analysis(
-            datasets=[ci_imaging_7x7], clocker=None
-        )
-
-        instance = model.ModelInstance()
-        instance.serial_traps = [
-            ac.TrapInstantCapture(density=0.75),
-            ac.TrapInstantCapture(density=0.75),
-        ]
-
-        analysis.check_total_density_within_range(instance=instance)
-
-        instance = model.ModelInstance()
-        instance.serial_traps = [
-            ac.TrapInstantCapture(density=1.1),
-            ac.TrapInstantCapture(density=1.1),
-        ]
-
-        with pytest.raises(exc.PriorException):
-            analysis.check_total_density_within_range(instance=instance)
-
-
 class TestFit:
     def test__log_likelihood_via_analysis__matches_manual_fit(
         self, ci_imaging_7x7, ci_pre_cti_7x7, traps_x1, ccd, parallel_clocker

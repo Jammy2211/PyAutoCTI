@@ -11,8 +11,7 @@ class Analysis(analysis_dataset.Analysis):
         self,
         masked_ci_imagings,
         clocker,
-        serial_total_density_range,
-        parallel_total_density_range,
+        settings_cti,
         image_path=None,
         results=None,
         pool=None,
@@ -21,8 +20,7 @@ class Analysis(analysis_dataset.Analysis):
         super().__init__(
             masked_ci_datasets=masked_ci_imagings,
             clocker=clocker,
-            parallel_total_density_range=parallel_total_density_range,
-            serial_total_density_range=serial_total_density_range,
+            settings_cti=settings_cti,
             results=results,
         )
 
@@ -53,7 +51,9 @@ class Analysis(analysis_dataset.Analysis):
             How fit the model is and the model
         """
 
-        self.check_total_density_within_range(instance=instance)
+        self.settings_cti.check_total_density_within_range(
+            parallel_traps=instance.parallel_traps, serial_traps=instance.serial_traps
+        )
 
         hyper_noise_scalars = self.hyper_noise_scalars_from_instance(instance=instance)
 

@@ -21,7 +21,9 @@ class TestCheckDensity:
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            settings=ac.SettingsPhaseCIImaging(parallel_total_density_range=(1.0, 2.0)),
+            settings=ac.SettingsPhaseCIImaging(
+                cti=ac.SettingsCTI(parallel_total_density_range=(1.0, 2.0))
+            ),
             search=mock.MockSearch(),
         )
 
@@ -31,25 +33,19 @@ class TestCheckDensity:
 
         instance = model.ModelInstance()
         instance.parallel_traps = [
-            ac.TrapInstantCapture(density=0.75),
-            ac.TrapInstantCapture(density=0.75),
+            ac.TrapInstantCapture(density=1.1),
+            ac.TrapInstantCapture(density=1.1),
         ]
         instance.serial_traps = []
 
-        analysis.check_total_density_within_range(instance=instance)
-
-        instance = model.ModelInstance()
-        instance.parallel_traps = [
-            ac.TrapInstantCapture(density=1.1),
-            ac.TrapInstantCapture(density=1.1),
-        ]
-
         with pytest.raises(exc.PriorException):
-            analysis.check_total_density_within_range(instance=instance)
+            analysis.log_likelihood_function(instance=instance)
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            settings=ac.SettingsPhaseCIImaging(serial_total_density_range=(1.0, 2.0)),
+            settings=ac.SettingsPhaseCIImaging(
+                cti=ac.SettingsCTI(serial_total_density_range=(1.0, 2.0))
+            ),
             search=mock.MockSearch(),
         )
 
@@ -60,17 +56,9 @@ class TestCheckDensity:
         instance = model.ModelInstance()
         instance.parallel_traps = []
         instance.serial_traps = [
-            ac.TrapInstantCapture(density=0.75),
-            ac.TrapInstantCapture(density=0.75),
-        ]
-
-        analysis.check_total_density_within_range(instance=instance)
-
-        instance = model.ModelInstance()
-        instance.serial_traps = [
             ac.TrapInstantCapture(density=1.1),
             ac.TrapInstantCapture(density=1.1),
         ]
 
         with pytest.raises(exc.PriorException):
-            analysis.check_total_density_within_range(instance=instance)
+            analysis.log_likelihood_function(instance=instance)
