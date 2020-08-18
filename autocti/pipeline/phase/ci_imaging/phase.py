@@ -121,8 +121,7 @@ class PhaseCIImaging(PhaseDataset):
         return Analysis(
             masked_ci_imagings=masked_ci_imagings,
             clocker=clocker,
-            parallel_total_density_range=self.settings.parallel_total_density_range,
-            serial_total_density_range=self.settings.serial_total_density_range,
+            settings_cti=self.settings.cti,
             image_path=self.search.paths.image_path,
             results=results,
             pool=pool,

@@ -3,35 +3,21 @@ from autoconf import conf
 from autocti.mask import mask as msk
 from autocti.charge_injection import ci_mask as ci_msk
 from autocti.charge_injection import ci_imaging
+from autocti import exc
 
 
-class SettingsPhaseCIImaging:
+class SettingsCTI:
     def __init__(
-        self,
-        mask=msk.SettingsMask(),
-        ci_mask=ci_msk.SettingsCIMask(),
-        masked_ci_imaging=ci_imaging.SettingsMaskedCIImaging(),
-        parallel_total_density_range=None,
-        serial_total_density_range=None,
+        self, parallel_total_density_range=None, serial_total_density_range=None
     ):
-
-        self.mask = mask
-        self.ci_mask = ci_mask
-        self.masked_ci_imaging = masked_ci_imaging
 
         self.parallel_total_density_range = parallel_total_density_range
         self.serial_total_density_range = serial_total_density_range
 
     @property
-    def phase_tag(self):
-
+    def tag(self):
         return (
-            conf.instance.tag.get("phase", "settings")
-            + self.parallel_total_density_range_tag
-            + self.serial_total_density_range_tag
-            + self.mask.mask_tag
-            + self.ci_mask.ci_mask_tag
-            + self.masked_ci_imaging.masked_ci_imaging_tag
+            self.parallel_total_density_range_tag + self.serial_total_density_range_tag
         )
 
     @property
@@ -50,7 +36,7 @@ class SettingsPhaseCIImaging:
         else:
             x0 = str(self.parallel_total_density_range[0])
             x1 = str(self.parallel_total_density_range[1])
-            return f"__{conf.instance.tag.get('phase', 'parallel_total_density_range')}_({x0},{x1})"
+            return f"__{conf.instance.tag.get('cti', 'parallel_total_density_range')}_({x0},{x1})"
 
     @property
     def serial_total_density_range_tag(self):
@@ -68,4 +54,52 @@ class SettingsPhaseCIImaging:
         else:
             x0 = str(self.serial_total_density_range[0])
             x1 = str(self.serial_total_density_range[1])
-            return f"__{conf.instance.tag.get('phase', 'serial_total_density_range')}_({x0},{x1})"
+            return f"__{conf.instance.tag.get('cti', 'serial_total_density_range')}_({x0},{x1})"
+
+    def check_total_density_within_range(self, parallel_traps, serial_traps):
+
+        if self.parallel_total_density_range is not None:
+
+            total_density = sum([trap.density for trap in parallel_traps])
+
+            if (
+                total_density < self.parallel_total_density_range[0]
+                or total_density > self.parallel_total_density_range[1]
+            ):
+                raise exc.PriorException
+
+        if self.serial_total_density_range is not None:
+
+            total_density = sum([trap.density for trap in serial_traps])
+
+            if (
+                total_density < self.serial_total_density_range[0]
+                or total_density > self.serial_total_density_range[1]
+            ):
+                raise exc.PriorException
+
+
+class SettingsPhaseCIImaging:
+    def __init__(
+        self,
+        cti=SettingsCTI(),
+        mask=msk.SettingsMask(),
+        ci_mask=ci_msk.SettingsCIMask(),
+        masked_ci_imaging=ci_imaging.SettingsMaskedCIImaging(),
+    ):
+
+        self.cti = cti
+        self.mask = mask
+        self.ci_mask = ci_mask
+        self.masked_ci_imaging = masked_ci_imaging
+
+    @property
+    def phase_tag(self):
+
+        return (
+            conf.instance.tag.get("phase", "settings")
+            + self.cti.tag
+            + self.mask.tag
+            + self.ci_mask.tag
+            + self.masked_ci_imaging.tag
+        )

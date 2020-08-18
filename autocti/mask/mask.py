@@ -21,7 +21,7 @@ class SettingsMask:
         self.cosmic_ray_diagonal_buffer = cosmic_ray_diagonal_buffer
 
     @property
-    def mask_tag(self):
+    def tag(self):
         return self.cosmic_ray_buffer_tag
 
     @property

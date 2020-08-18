@@ -1,30 +1,82 @@
 import autocti as ac
+from autocti import exc
+
+import pytest
 
 
-class TestTags:
+class TestSettingsCTI:
     def test__parallel_total_density_range_tag(self):
 
-        settings = ac.SettingsPhaseCIImaging(parallel_total_density_range=None)
+        settings = ac.SettingsCTI(parallel_total_density_range=None)
         assert settings.parallel_total_density_range_tag == ""
-        settings = ac.SettingsPhaseCIImaging(parallel_total_density_range=(0, 5))
+        settings = ac.SettingsCTI(parallel_total_density_range=(0, 5))
         assert settings.parallel_total_density_range_tag == "__par_range_(0,5)"
-        settings = ac.SettingsPhaseCIImaging(parallel_total_density_range=(10, 20))
+        settings = ac.SettingsCTI(parallel_total_density_range=(10, 20))
         assert settings.parallel_total_density_range_tag == "__par_range_(10,20)"
 
     def test__serial_total_density_range_tag(self):
 
-        settings = ac.SettingsPhaseCIImaging(serial_total_density_range=None)
+        settings = ac.SettingsCTI(serial_total_density_range=None)
         assert settings.serial_total_density_range_tag == ""
-        settings = ac.SettingsPhaseCIImaging(serial_total_density_range=(0, 5))
+        settings = ac.SettingsCTI(serial_total_density_range=(0, 5))
         assert settings.serial_total_density_range_tag == "__ser_range_(0,5)"
-        settings = ac.SettingsPhaseCIImaging(serial_total_density_range=(10, 20))
+        settings = ac.SettingsCTI(serial_total_density_range=(10, 20))
         assert settings.serial_total_density_range_tag == "__ser_range_(10,20)"
 
+    def test__parallel_and_serial_checks_raise_exception(self, ci_imaging_7x7):
+
+        settings = ac.SettingsCTI(parallel_total_density_range=(1.0, 2.0))
+
+        parallel_traps = [
+            ac.TrapInstantCapture(density=0.75),
+            ac.TrapInstantCapture(density=0.75),
+        ]
+        serial_traps = []
+
+        settings.check_total_density_within_range(
+            parallel_traps=parallel_traps, serial_traps=serial_traps
+        )
+
+        parallel_traps = [
+            ac.TrapInstantCapture(density=1.1),
+            ac.TrapInstantCapture(density=1.1),
+        ]
+
+        with pytest.raises(exc.PriorException):
+            settings.check_total_density_within_range(
+                parallel_traps=parallel_traps, serial_traps=serial_traps
+            )
+
+        settings = ac.SettingsCTI(serial_total_density_range=(1.0, 2.0))
+
+        parallel_traps = []
+        serial_traps = [
+            ac.TrapInstantCapture(density=0.75),
+            ac.TrapInstantCapture(density=0.75),
+        ]
+
+        settings.check_total_density_within_range(
+            parallel_traps=parallel_traps, serial_traps=serial_traps
+        )
+
+        serial_traps = [
+            ac.TrapInstantCapture(density=1.1),
+            ac.TrapInstantCapture(density=1.1),
+        ]
+
+        with pytest.raises(exc.PriorException):
+            settings.check_total_density_within_range(
+                parallel_traps=parallel_traps, serial_traps=serial_traps
+            )
+
+
+class TestTags:
     def test__mixture_of_values(self):
 
         settings = ac.SettingsPhaseCIImaging(
-            parallel_total_density_range=None,
-            serial_total_density_range=None,
+            cti=ac.SettingsCTI(
+                parallel_total_density_range=None, serial_total_density_range=None
+            ),
             mask=ac.SettingsMask(
                 cosmic_ray_parallel_buffer=None,
                 cosmic_ray_serial_buffer=None,
@@ -44,8 +96,9 @@ class TestTags:
         assert settings.phase_tag == "settings__cols_(0,1)__rows_(0,1)"
 
         settings = ac.SettingsPhaseCIImaging(
-            parallel_total_density_range=None,
-            serial_total_density_range=None,
+            cti=ac.SettingsCTI(
+                parallel_total_density_range=None, serial_total_density_range=None
+            ),
             mask=ac.SettingsMask(
                 cosmic_ray_parallel_buffer=None,
                 cosmic_ray_serial_buffer=None,
@@ -68,6 +121,9 @@ class TestTags:
         )
 
         settings = ac.SettingsPhaseCIImaging(
+            cti=ac.SettingsCTI(
+                parallel_total_density_range=None, serial_total_density_range=None
+            ),
             mask=ac.SettingsMask(
                 cosmic_ray_parallel_buffer=1,
                 cosmic_ray_serial_buffer=2,
@@ -82,15 +138,14 @@ class TestTags:
             masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(
                 parallel_columns=None, serial_rows=(0, 1)
             ),
-            parallel_total_density_range=None,
-            serial_total_density_range=None,
         )
 
         assert settings.phase_tag == "settings__cr_p1s2d3__rows_(0,1)"
 
         settings = ac.SettingsPhaseCIImaging(
-            parallel_total_density_range=None,
-            serial_total_density_range=None,
+            cti=ac.SettingsCTI(
+                parallel_total_density_range=None, serial_total_density_range=None
+            ),
             mask=ac.SettingsMask(
                 cosmic_ray_parallel_buffer=4,
                 cosmic_ray_serial_buffer=5,
@@ -110,8 +165,9 @@ class TestTags:
         assert settings.phase_tag == "settings__cr_p4s5d6__rows_(1,2)"
 
         settings = ac.SettingsPhaseCIImaging(
-            parallel_total_density_range=(0, 1),
-            serial_total_density_range=(2, 3),
+            cti=ac.SettingsCTI(
+                parallel_total_density_range=(0, 1), serial_total_density_range=(2, 3)
+            ),
             mask=ac.SettingsMask(
                 cosmic_ray_parallel_buffer=4,
                 cosmic_ray_serial_buffer=5,
@@ -134,8 +190,9 @@ class TestTags:
         )
 
         settings = ac.SettingsPhaseCIImaging(
-            parallel_total_density_range=None,
-            serial_total_density_range=None,
+            cti=ac.SettingsCTI(
+                parallel_total_density_range=None, serial_total_density_range=None
+            ),
             mask=ac.SettingsMask(
                 cosmic_ray_parallel_buffer=4,
                 cosmic_ray_serial_buffer=5,
