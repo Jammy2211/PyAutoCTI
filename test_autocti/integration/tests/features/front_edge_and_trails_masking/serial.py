@@ -35,8 +35,8 @@ def make_pipeline(name, folders, search=):
         search=search,
         serial_traps=[af.PriorModel(ac.TrapInstantCapture)],
         serial_ccd=serial_ccd,
-        serial_front_edge_mask_columns=(0, 1),
-        serial_trails_mask_columns=(0, 1),
+        serial_front_edge_columns=(0, 1),
+        serial_trails_columns=(0, 1),
     )
 
     phase1.search.n_live_points = 60

@@ -31,10 +31,10 @@ def make_pipeline(name, folders, search):
         parallel_ccd=parallel_ccd,
         serial_traps=[af.PriorModel(ac.TrapInstantCapture)],
         serial_ccd=serial_ccd,
-        parallel_front_edge_mask_rows=(0, 1),
-        parallel_trails_mask_rows=(0, 1),
-        serial_front_edge_mask_columns=(0, 1),
-        serial_trails_mask_columns=(0, 1),
+        parallel_front_edge_rows=(0, 1),
+        parallel_trails_rows=(0, 1),
+        serial_front_edge_columns=(0, 1),
+        serial_trails_columns=(0, 1),
     )
 
     phase1.search.n_live_points = 60
