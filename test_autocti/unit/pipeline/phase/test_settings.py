@@ -75,46 +75,14 @@ class TestTags:
         settings = ac.SettingsPhaseCIImaging(serial_total_density_range=(10, 20))
         assert settings.serial_total_density_range_tag == "__ser_range_(10,20)"
 
-    def test__cosmic_ray_buffer_tag(self):
-
-        settings = ac.SettingsPhaseCIImaging(
-            cosmic_ray_parallel_buffer=None,
-            cosmic_ray_serial_buffer=None,
-            cosmic_ray_diagonal_buffer=None,
-        )
-        assert settings.cosmic_ray_buffer_tag == ""
-
-        settings = ac.SettingsPhaseCIImaging(
-            cosmic_ray_parallel_buffer=1,
-            cosmic_ray_serial_buffer=None,
-            cosmic_ray_diagonal_buffer=3,
-        )
-        assert settings.cosmic_ray_buffer_tag == "__cr_p1d3"
-
-        settings = ac.SettingsPhaseCIImaging(
-            cosmic_ray_parallel_buffer=10,
-            cosmic_ray_serial_buffer=20,
-            cosmic_ray_diagonal_buffer=None,
-        )
-        assert settings.cosmic_ray_buffer_tag == "__cr_p10s20"
-
-        settings = ac.SettingsPhaseCIImaging(
-            cosmic_ray_parallel_buffer=1,
-            cosmic_ray_serial_buffer=2,
-            cosmic_ray_diagonal_buffer=3,
-        )
-        assert settings.cosmic_ray_buffer_tag == "__cr_p1s2d3"
-
-        settings = ac.SettingsPhaseCIImaging(
-            cosmic_ray_parallel_buffer=10,
-            cosmic_ray_serial_buffer=5,
-            cosmic_ray_diagonal_buffer=1,
-        )
-        assert settings.cosmic_ray_buffer_tag == "__cr_p10s5d1"
-
     def test__mixture_of_values(self):
 
         settings = ac.SettingsPhaseCIImaging(
+            mask=ac.SettingsMask(
+                cosmic_ray_parallel_buffer=None,
+                cosmic_ray_serial_buffer=None,
+                cosmic_ray_diagonal_buffer=None,
+            ),
             masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(
                 parallel_columns=(0, 1), serial_rows=(0, 1)
             ),
@@ -124,14 +92,16 @@ class TestTags:
             serial_trails_mask_columns=None,
             parallel_total_density_range=None,
             serial_total_density_range=None,
-            cosmic_ray_parallel_buffer=None,
-            cosmic_ray_serial_buffer=None,
-            cosmic_ray_diagonal_buffer=None,
         )
 
         assert settings.phase_tag == "settings__cols_(0,1)__rows_(0,1)"
 
         settings = ac.SettingsPhaseCIImaging(
+            mask=ac.SettingsMask(
+                cosmic_ray_parallel_buffer=None,
+                cosmic_ray_serial_buffer=None,
+                cosmic_ray_diagonal_buffer=None,
+            ),
             masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(
                 parallel_columns=(1, 2), serial_rows=(0, 1)
             ),
@@ -141,9 +111,6 @@ class TestTags:
             serial_trails_mask_columns=(5, 10),
             parallel_total_density_range=None,
             serial_total_density_range=None,
-            cosmic_ray_parallel_buffer=None,
-            cosmic_ray_serial_buffer=None,
-            cosmic_ray_diagonal_buffer=None,
         )
 
         assert (
@@ -152,6 +119,11 @@ class TestTags:
         )
 
         settings = ac.SettingsPhaseCIImaging(
+            mask=ac.SettingsMask(
+                cosmic_ray_parallel_buffer=1,
+                cosmic_ray_serial_buffer=2,
+                cosmic_ray_diagonal_buffer=3,
+            ),
             masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(
                 parallel_columns=None, serial_rows=(0, 1)
             ),
@@ -161,14 +133,16 @@ class TestTags:
             serial_trails_mask_columns=None,
             parallel_total_density_range=None,
             serial_total_density_range=None,
-            cosmic_ray_parallel_buffer=1,
-            cosmic_ray_serial_buffer=2,
-            cosmic_ray_diagonal_buffer=3,
         )
 
-        assert settings.phase_tag == "settings__rows_(0,1)__cr_p1s2d3"
+        assert settings.phase_tag == "settings__cr_p1s2d3__rows_(0,1)"
 
         settings = ac.SettingsPhaseCIImaging(
+            mask=ac.SettingsMask(
+                cosmic_ray_parallel_buffer=4,
+                cosmic_ray_serial_buffer=5,
+                cosmic_ray_diagonal_buffer=6,
+            ),
             masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(
                 parallel_columns=None, serial_rows=(1, 2)
             ),
@@ -178,14 +152,16 @@ class TestTags:
             serial_trails_mask_columns=None,
             parallel_total_density_range=None,
             serial_total_density_range=None,
-            cosmic_ray_parallel_buffer=4,
-            cosmic_ray_serial_buffer=5,
-            cosmic_ray_diagonal_buffer=6,
         )
 
-        assert settings.phase_tag == "settings__rows_(1,2)__cr_p4s5d6"
+        assert settings.phase_tag == "settings__cr_p4s5d6__rows_(1,2)"
 
         settings = ac.SettingsPhaseCIImaging(
+            mask=ac.SettingsMask(
+                cosmic_ray_parallel_buffer=4,
+                cosmic_ray_serial_buffer=5,
+                cosmic_ray_diagonal_buffer=6,
+            ),
             masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(
                 parallel_columns=None, serial_rows=(1, 2)
             ),
@@ -195,17 +171,19 @@ class TestTags:
             serial_trails_mask_columns=None,
             parallel_total_density_range=(0, 1),
             serial_total_density_range=(2, 3),
-            cosmic_ray_parallel_buffer=4,
-            cosmic_ray_serial_buffer=5,
-            cosmic_ray_diagonal_buffer=6,
         )
 
         assert (
             settings.phase_tag
-            == "settings__rows_(1,2)__par_range_(0,1)__ser_range_(2,3)__cr_p4s5d6"
+            == "settings__cr_p4s5d6__rows_(1,2)__par_range_(0,1)__ser_range_(2,3)"
         )
 
         settings = ac.SettingsPhaseCIImaging(
+            mask=ac.SettingsMask(
+                cosmic_ray_parallel_buffer=4,
+                cosmic_ray_serial_buffer=5,
+                cosmic_ray_diagonal_buffer=6,
+            ),
             masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(
                 parallel_columns=None, serial_rows=(0, 1)
             ),
@@ -215,12 +193,9 @@ class TestTags:
             serial_trails_mask_columns=None,
             parallel_total_density_range=None,
             serial_total_density_range=None,
-            cosmic_ray_parallel_buffer=4,
-            cosmic_ray_serial_buffer=5,
-            cosmic_ray_diagonal_buffer=6,
         )
 
         assert (
             settings.phase_tag
-            == "settings__rows_(0,1)__par_trails_mask_rows_(1,2)__ser_front_mask_col_(2,4)__cr_p4s5d6"
+            == "settings__cr_p4s5d6__rows_(0,1)__par_trails_mask_rows_(1,2)__ser_front_mask_col_(2,4)"
         )

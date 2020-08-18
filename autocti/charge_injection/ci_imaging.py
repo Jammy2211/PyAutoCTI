@@ -223,6 +223,10 @@ class SettingsMaskedCIImaging(imaging.AbstractSettingsMaskedImaging):
             x1 = str(self.serial_rows[1])
             return f"__{conf.instance.tag.get('ci_imaging', 'serial_rows')}_({x0},{x1})"
 
+    @property
+    def masked_ci_imaging_tag(self):
+        return self.parallel_columns_tag + self.serial_rows_tag
+
     def modify_via_fit_type(self, is_parallel_fit, is_serial_fit):
         """Modify the settings based on the type of fit being performed where:
 

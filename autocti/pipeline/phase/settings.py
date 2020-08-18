@@ -1,11 +1,15 @@
 from autoconf import conf
 
+from autocti.mask import mask as msk
+from autocti.charge_injection import ci_mask as ci_msk
 from autocti.charge_injection import ci_imaging
 
 
 class SettingsPhaseCIImaging:
     def __init__(
         self,
+        mask=msk.SettingsMask(),
+        ci_mask=ci_msk.SettingsCIMask(),
         masked_ci_imaging=ci_imaging.SettingsMaskedCIImaging(),
         parallel_front_edge_mask_rows=None,
         parallel_trails_mask_rows=None,
@@ -13,11 +17,10 @@ class SettingsPhaseCIImaging:
         serial_front_edge_mask_columns=None,
         serial_trails_mask_columns=None,
         serial_total_density_range=None,
-        cosmic_ray_parallel_buffer=10,
-        cosmic_ray_serial_buffer=10,
-        cosmic_ray_diagonal_buffer=3,
     ):
 
+        self.mask = mask
+        self.ci_mask = ci_mask
         self.masked_ci_imaging = masked_ci_imaging
 
         self.parallel_front_edge_mask_rows = parallel_front_edge_mask_rows
@@ -26,24 +29,20 @@ class SettingsPhaseCIImaging:
         self.serial_trails_mask_columns = serial_trails_mask_columns
         self.parallel_total_density_range = parallel_total_density_range
         self.serial_total_density_range = serial_total_density_range
-        self.cosmic_ray_parallel_buffer = cosmic_ray_parallel_buffer
-        self.cosmic_ray_serial_buffer = cosmic_ray_serial_buffer
-        self.cosmic_ray_diagonal_buffer = cosmic_ray_diagonal_buffer
 
     @property
     def phase_tag(self):
 
         return (
             conf.instance.tag.get("phase", "settings")
-            + self.masked_ci_imaging.parallel_columns_tag
-            + self.masked_ci_imaging.serial_rows_tag
+            + self.mask.mask_tag
+            + self.masked_ci_imaging.masked_ci_imaging_tag
             + self.parallel_front_edge_mask_rows_tag
             + self.parallel_trails_mask_rows_tag
             + self.serial_front_edge_mask_columns_tag
             + self.serial_trails_mask_columns_tag
             + self.parallel_total_density_range_tag
             + self.serial_total_density_range_tag
-            + self.cosmic_ray_buffer_tag
         )
 
     @property
@@ -153,45 +152,3 @@ class SettingsPhaseCIImaging:
             x0 = str(self.serial_total_density_range[0])
             x1 = str(self.serial_total_density_range[1])
             return f"__{conf.instance.tag.get('phase', 'serial_total_density_range')}_({x0},{x1})"
-
-    @property
-    def cosmic_ray_buffer_tag(self):
-        """Generate a cosmic ray buffer tag, to customize phase names based on the size of the cosmic ray masks in the \
-        parallel, serial and diagonal directions
-
-        This changes the phase settings folder as follows:
-
-        cosmic_ray_parallel_buffer = 1, cosmic_ray_serial_buffer=2, cosmic_ray_diagonal_buffer=3 = -> settings__cr_p1s2d3
-        cosmic_ray_parallel_buffer = 10, cosmic_ray_serial_buffer=5, cosmic_ray_diagonal_buffer=1 = -> settings__cr_p10s5d1
-        """
-
-        if (
-            self.cosmic_ray_diagonal_buffer is None
-            and self.cosmic_ray_serial_buffer is None
-            and self.cosmic_ray_diagonal_buffer is None
-        ):
-            return ""
-
-        if self.cosmic_ray_parallel_buffer is None:
-            cosmic_ray_parallel_buffer_tag = ""
-        else:
-            cosmic_ray_parallel_buffer_tag = f"{conf.instance.tag.get('phase', 'cosmic_ray_parallel_buffer')}{self.cosmic_ray_parallel_buffer}"
-
-        if self.cosmic_ray_serial_buffer is None:
-            cosmic_ray_serial_buffer_tag = ""
-        else:
-            cosmic_ray_serial_buffer_tag = f"{conf.instance.tag.get('phase', 'cosmic_ray_serial_buffer')}{self.cosmic_ray_serial_buffer}"
-
-        if self.cosmic_ray_diagonal_buffer is None:
-            cosmic_ray_diagonal_buffer_tag = ""
-        else:
-            cosmic_ray_diagonal_buffer_tag = f"{conf.instance.tag.get('phase', 'cosmic_ray_diagonal_buffer')}{self.cosmic_ray_diagonal_buffer}"
-
-        return (
-            "__"
-            + conf.instance.tag.get("phase", "cosmic_ray_buffer")
-            + "_"
-            + cosmic_ray_parallel_buffer_tag
-            + cosmic_ray_serial_buffer_tag
-            + cosmic_ray_diagonal_buffer_tag
-        )

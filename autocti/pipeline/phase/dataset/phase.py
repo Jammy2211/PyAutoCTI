@@ -114,11 +114,8 @@ class PhaseDataset(abstract.AbstractPhase):
     def mask_for_analysis_from_cosmic_ray_map(self, cosmic_ray_map, mask):
 
         cosmic_ray_mask = (
-            msk.Mask.from_cosmic_ray_map(
-                cosmic_ray_map=cosmic_ray_map,
-                cosmic_ray_parallel_buffer=self.settings.cosmic_ray_parallel_buffer,
-                cosmic_ray_serial_buffer=self.settings.cosmic_ray_serial_buffer,
-                cosmic_ray_diagonal_buffer=self.settings.cosmic_ray_diagonal_buffer,
+            msk.Mask.from_cosmic_ray_map_buffed(
+                cosmic_ray_map=cosmic_ray_map, settings=self.settings.mask
             )
             if cosmic_ray_map is not None
             else None

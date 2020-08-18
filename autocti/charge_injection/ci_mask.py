@@ -1,5 +1,12 @@
 import numpy as np
-from autocti.mask.mask import Mask
+from autoconf import conf
+from autocti.mask.mask import Mask, SettingsMask
+
+
+class SettingsCIMask:
+    def __init__(self):
+
+        pass
 
 
 class CIMask(Mask):

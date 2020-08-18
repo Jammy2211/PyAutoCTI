@@ -1,6 +1,7 @@
 import autocti as ac
 from autofit.mapper.prior_model import prior_model
 from autocti.pipeline.phase.dataset import PhaseDataset
+from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 from test_autocti import mock
 
 import pytest
@@ -112,7 +113,7 @@ class TestSetup:
     # noinspection PyTypeChecker
     def test_assertion_failure(self, ci_imaging_7x7, mask_7x7, parallel_clocker):
 
-        phase_dataset_7x7 = PhaseDataset(
+        phase_dataset_7x7 = PhaseCIImaging(
             phase_name="phase_name",
             parallel_traps=[ac.TrapInstantCapture()],
             parallel_ccd=ac.CCD(),
