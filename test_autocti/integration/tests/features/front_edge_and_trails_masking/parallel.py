@@ -35,8 +35,8 @@ def make_pipeline(name, folders, search):
         parallel_traps=[af.PriorModel(ac.TrapInstantCapture)],
         parallel_ccd=parallel_ccd,
         columns=None,
-        parallel_front_edge_mask_rows=(0, 1),
-        parallel_trails_mask_rows=(0, 1),
+        parallel_front_edge_rows=(0, 1),
+        parallel_trails_rows=(0, 1),
     )
 
     phase1.search.n_live_points = 60

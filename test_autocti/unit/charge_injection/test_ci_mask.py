@@ -8,6 +8,49 @@ class MockPattern(object):
         pass
 
 
+class TestSettingsCIMask:
+    def test__parallel_front_edge_rows_tag(self):
+
+        settings = ac.ci.SettingsCIMask(parallel_front_edge_rows=None)
+        assert settings.parallel_front_edge_rows_tag == ""
+        settings = ac.ci.SettingsCIMask(parallel_front_edge_rows=(0, 5))
+        assert settings.parallel_front_edge_rows_tag == "__par_front_mask_rows_(0,5)"
+        settings = ac.ci.SettingsCIMask(parallel_front_edge_rows=(10, 20))
+        assert settings.parallel_front_edge_rows_tag == "__par_front_mask_rows_(10,20)"
+
+    def test__parallel_trails_rows_tag(self):
+
+        settings = ac.ci.SettingsCIMask(parallel_trails_rows=None)
+        assert settings.parallel_trails_rows_tag == ""
+
+        settings = ac.ci.SettingsCIMask(parallel_trails_rows=(0, 5))
+        assert settings.parallel_trails_rows_tag == "__par_trails_mask_rows_(0,5)"
+        settings = ac.ci.SettingsCIMask(parallel_trails_rows=(10, 20))
+        assert settings.parallel_trails_rows_tag == "__par_trails_mask_rows_(10,20)"
+
+    def test__serial_front_edge_columns_tag(self):
+
+        settings = ac.ci.SettingsCIMask(serial_front_edge_columns=None)
+        assert settings.serial_front_edge_columns_tag == ""
+
+        settings = ac.ci.SettingsCIMask(serial_front_edge_columns=(0, 5))
+        assert settings.serial_front_edge_columns_tag == "__ser_front_mask_col_(0,5)"
+
+        settings = ac.ci.SettingsCIMask(serial_front_edge_columns=(10, 20))
+        assert settings.serial_front_edge_columns_tag == "__ser_front_mask_col_(10,20)"
+
+    def test__serial_trails_columns_tag(self):
+
+        settings = ac.ci.SettingsCIMask(serial_trails_columns=None)
+        assert settings.serial_trails_columns_tag == ""
+
+        settings = ac.ci.SettingsCIMask(serial_trails_columns=(0, 5))
+        assert settings.serial_trails_columns_tag == "__ser_trails_mask_col_(0,5)"
+
+        settings = ac.ci.SettingsCIMask(serial_trails_columns=(10, 20))
+        assert settings.serial_trails_columns_tag == "__ser_trails_mask_col_(10,20)"
+
+
 class TestMaskedParallelFrontEdge:
     def test__mask_only_contains_front_edge(self):
 
@@ -18,7 +61,8 @@ class TestMaskedParallelFrontEdge:
         )
 
         mask = ac.ci.CIMask.masked_parallel_front_edge_from_ci_frame(
-            ci_frame=frame, rows=(0, 2)
+            ci_frame=frame,
+            settings=ac.ci.SettingsCIMask(parallel_front_edge_rows=(0, 2)),
         )
 
         assert type(mask) == ac.ci.CIMask
@@ -54,7 +98,9 @@ class TestMaskedParallelFrontEdge:
         )
 
         mask = ac.ci.CIMask.masked_parallel_front_edge_from_ci_frame(
-            ci_frame=frame, rows=(0, 2), invert=True
+            ci_frame=frame,
+            settings=ac.ci.SettingsCIMask(parallel_front_edge_rows=(0, 2)),
+            invert=True,
         )
 
         assert type(mask) == ac.ci.CIMask
@@ -92,7 +138,8 @@ class TestMaskedParallelFrontEdge:
         )
 
         mask = ac.ci.CIMask.masked_parallel_front_edge_from_ci_frame(
-            ci_frame=frame, rows=(0, 2)
+            ci_frame=frame,
+            settings=ac.ci.SettingsCIMask(parallel_front_edge_rows=(0, 2)),
         )
 
         assert type(mask) == ac.ci.CIMask
@@ -130,7 +177,7 @@ class TestMaskedParallelTrails:
         )
 
         mask = ac.ci.CIMask.masked_parallel_trails_from_ci_frame(
-            ci_frame=frame, rows=(0, 4)
+            ci_frame=frame, settings=ac.ci.SettingsCIMask(parallel_trails_rows=(0, 4))
         )
 
         assert type(mask) == ac.ci.CIMask
@@ -166,7 +213,9 @@ class TestMaskedParallelTrails:
         )
 
         mask = ac.ci.CIMask.masked_parallel_trails_from_ci_frame(
-            ci_frame=frame, rows=(0, 4), invert=True
+            ci_frame=frame,
+            settings=ac.ci.SettingsCIMask(parallel_trails_rows=(0, 4)),
+            invert=True,
         )
 
         assert type(mask) == ac.ci.CIMask
@@ -204,7 +253,7 @@ class TestMaskedParallelTrails:
         )
 
         mask = ac.ci.CIMask.masked_parallel_trails_from_ci_frame(
-            ci_frame=frame, rows=(0, 4)
+            ci_frame=frame, settings=ac.ci.SettingsCIMask(parallel_trails_rows=(0, 4))
         )
 
         assert type(mask) == ac.ci.CIMask
@@ -242,7 +291,8 @@ class TestMaskedSerialFrontEdge:
         )
 
         mask = ac.ci.CIMask.masked_serial_front_edge_from_ci_frame(
-            ci_frame=frame, columns=(0, 2)
+            ci_frame=frame,
+            settings=ac.ci.SettingsCIMask(serial_front_edge_columns=(0, 2)),
         )
 
         assert type(mask) == ac.ci.CIMask
@@ -300,7 +350,9 @@ class TestMaskedSerialFrontEdge:
         )
 
         mask = ac.ci.CIMask.masked_serial_front_edge_from_ci_frame(
-            ci_frame=frame, columns=(0, 2), invert=True
+            ci_frame=frame,
+            settings=ac.ci.SettingsCIMask(serial_front_edge_columns=(0, 2)),
+            invert=True,
         )
 
         assert type(mask) == ac.ci.CIMask
@@ -327,7 +379,8 @@ class TestMaskedSerialFrontEdge:
         )
 
         mask = ac.ci.CIMask.masked_serial_front_edge_from_ci_frame(
-            ci_frame=frame, columns=(0, 3)
+            ci_frame=frame,
+            settings=ac.ci.SettingsCIMask(serial_front_edge_columns=(0, 3)),
         )
 
         assert type(mask) == ac.ci.CIMask
@@ -365,7 +418,7 @@ class TestMaskedSerialTrails:
         )
 
         mask = ac.ci.CIMask.masked_serial_trails_from_ci_frame(
-            ci_frame=frame, columns=(0, 6)
+            ci_frame=frame, settings=ac.ci.SettingsCIMask(serial_trails_columns=(0, 6))
         )
 
         assert type(mask) == ac.ci.CIMask
@@ -390,7 +443,9 @@ class TestMaskedSerialTrails:
         )
 
         mask = ac.ci.CIMask.masked_serial_trails_from_ci_frame(
-            ci_frame=frame, columns=(0, 6), invert=True
+            ci_frame=frame,
+            settings=ac.ci.SettingsCIMask(serial_trails_columns=(0, 6)),
+            invert=True,
         )
 
         assert type(mask) == ac.ci.CIMask
@@ -417,7 +472,7 @@ class TestMaskedSerialTrails:
         )
 
         mask = ac.ci.CIMask.masked_serial_trails_from_ci_frame(
-            ci_frame=frame, columns=(0, 6)
+            ci_frame=frame, settings=ac.ci.SettingsCIMask(serial_trails_columns=(0, 6))
         )
 
         assert type(mask) == ac.ci.CIMask
@@ -440,6 +495,96 @@ class TestMaskedSerialTrails:
                         False,
                     ],
                     [False, False, False, False, True, True, True, True, True, True],
+                ]
+            )
+        ).all()
+
+
+class TestMaskedFrontEdgeTrailsAll:
+    def test__masks_uses_front_edge_and_trails_parameters(self, ci_imaging_7x7):
+
+        mask = ac.ci.CIMask.unmasked(shape_2d=ci_imaging_7x7.shape_2d)
+
+        ci_mask = ac.ci.CIMask.masked_front_edges_and_trails_from_ci_frame(
+            ci_frame=ci_imaging_7x7.image,
+            mask=mask,
+            settings=ac.ci.SettingsCIMask(parallel_front_edge_rows=(0, 1)),
+        )
+
+        assert (
+            ci_mask
+            == np.array(
+                [
+                    [False, False, False, False, False, False, False],
+                    [False, True, True, True, True, False, False],
+                    [False, False, False, False, False, False, False],
+                    [False, False, False, False, False, False, False],
+                    [False, False, False, False, False, False, False],
+                    [False, False, False, False, False, False, False],
+                    [False, False, False, False, False, False, False],
+                ]
+            )
+        ).all()
+
+        ci_mask = ac.ci.CIMask.masked_front_edges_and_trails_from_ci_frame(
+            ci_frame=ci_imaging_7x7.image,
+            mask=mask,
+            settings=ac.ci.SettingsCIMask(parallel_trails_rows=(0, 1)),
+        )
+
+        assert (
+            ci_mask
+            == np.array(
+                [
+                    [False, False, False, False, False, False, False],
+                    [False, False, False, False, False, False, False],
+                    [False, False, False, False, False, False, False],
+                    [False, False, False, False, False, False, False],
+                    [False, False, False, False, False, False, False],
+                    [False, True, True, True, True, False, False],
+                    [False, False, False, False, False, False, False],
+                ]
+            )
+        ).all()
+
+        ci_mask = ac.ci.CIMask.masked_front_edges_and_trails_from_ci_frame(
+            ci_frame=ci_imaging_7x7.image,
+            mask=mask,
+            settings=ac.ci.SettingsCIMask(serial_front_edge_columns=(0, 1)),
+        )
+
+        assert (
+            ci_mask
+            == np.array(
+                [
+                    [False, False, False, False, False, False, False],
+                    [False, True, False, False, False, False, False],
+                    [False, True, False, False, False, False, False],
+                    [False, True, False, False, False, False, False],
+                    [False, True, False, False, False, False, False],
+                    [False, False, False, False, False, False, False],
+                    [False, False, False, False, False, False, False],
+                ]
+            )
+        ).all()
+
+        ci_mask = ac.ci.CIMask.masked_front_edges_and_trails_from_ci_frame(
+            ci_frame=ci_imaging_7x7.image,
+            mask=mask,
+            settings=ac.ci.SettingsCIMask(serial_trails_columns=(0, 1)),
+        )
+
+        assert (
+            ci_mask
+            == np.array(
+                [
+                    [False, False, False, False, False, False, False],
+                    [False, False, False, False, False, True, False],
+                    [False, False, False, False, False, True, False],
+                    [False, False, False, False, False, True, False],
+                    [False, False, False, False, False, True, False],
+                    [False, False, False, False, False, False, False],
+                    [False, False, False, False, False, False, False],
                 ]
             )
         ).all()

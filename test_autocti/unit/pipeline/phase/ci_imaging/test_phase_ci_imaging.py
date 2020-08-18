@@ -82,11 +82,16 @@ class TestMakeAnalysis:
 
     def test__masks_uses_front_edge_and_trails_parameters(self, ci_imaging_7x7):
 
-        ci_imaging_7x7.cosmic_ray_map = None
+        settings_ci_mask = ac.ci.SettingsCIMask(
+            parallel_front_edge_rows=(0, 1),
+            parallel_trails_rows=(0, 4),
+            serial_trails_columns=(1, 2),
+            serial_front_edge_columns=(2, 3),
+        )
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            settings=ac.SettingsPhaseCIImaging(parallel_front_edge_mask_rows=(0, 1)),
+            settings=ac.SettingsPhaseCIImaging(ci_mask=settings_ci_mask),
             search=mock.MockSearch(),
         )
 
@@ -94,95 +99,15 @@ class TestMakeAnalysis:
             datasets=[ci_imaging_7x7], clocker=None
         )
 
-        assert (
-            analysis.masked_ci_datasets[0].mask
-            == np.array(
-                [
-                    [False, False, False, False, False, False, False],
-                    [False, True, True, True, True, False, False],
-                    [False, False, False, False, False, False, False],
-                    [False, False, False, False, False, False, False],
-                    [False, False, False, False, False, False, False],
-                    [False, False, False, False, False, False, False],
-                    [False, False, False, False, False, False, False],
-                ]
-            )
-        ).all()
-
-        phase_ci_imaging_7x7 = PhaseCIImaging(
-            phase_name="test_phase",
-            settings=ac.SettingsPhaseCIImaging(parallel_trails_mask_rows=(0, 1)),
-            search=mock.MockSearch(),
+        mask = ac.Mask.from_cosmic_ray_map_buffed(
+            cosmic_ray_map=ci_imaging_7x7.cosmic_ray_map
         )
 
-        analysis = phase_ci_imaging_7x7.make_analysis(
-            datasets=[ci_imaging_7x7], clocker=None
+        ci_mask = ac.ci.CIMask.masked_front_edges_and_trails_from_ci_frame(
+            mask=mask, settings=settings_ci_mask, ci_frame=ci_imaging_7x7.image
         )
 
-        assert (
-            analysis.masked_ci_datasets[0].mask
-            == np.array(
-                [
-                    [False, False, False, False, False, False, False],
-                    [False, False, False, False, False, False, False],
-                    [False, False, False, False, False, False, False],
-                    [False, False, False, False, False, False, False],
-                    [False, False, False, False, False, False, False],
-                    [False, True, True, True, True, False, False],
-                    [False, False, False, False, False, False, False],
-                ]
-            )
-        ).all()
-
-        phase_ci_imaging_7x7 = PhaseCIImaging(
-            phase_name="test_phase",
-            settings=ac.SettingsPhaseCIImaging(serial_front_edge_mask_columns=(0, 1)),
-            search=mock.MockSearch(),
-        )
-
-        analysis = phase_ci_imaging_7x7.make_analysis(
-            datasets=[ci_imaging_7x7], clocker=None
-        )
-
-        assert (
-            analysis.masked_ci_datasets[0].mask
-            == np.array(
-                [
-                    [False, False, False, False, False, False, False],
-                    [False, True, False, False, False, False, False],
-                    [False, True, False, False, False, False, False],
-                    [False, True, False, False, False, False, False],
-                    [False, True, False, False, False, False, False],
-                    [False, False, False, False, False, False, False],
-                    [False, False, False, False, False, False, False],
-                ]
-            )
-        ).all()
-
-        phase_ci_imaging_7x7 = PhaseCIImaging(
-            phase_name="test_phase",
-            settings=ac.SettingsPhaseCIImaging(serial_trails_mask_columns=(0, 1)),
-            search=mock.MockSearch(),
-        )
-
-        analysis = phase_ci_imaging_7x7.make_analysis(
-            datasets=[ci_imaging_7x7], clocker=None
-        )
-
-        assert (
-            analysis.masked_ci_datasets[0].mask
-            == np.array(
-                [
-                    [False, False, False, False, False, False, False],
-                    [False, False, False, False, False, True, False],
-                    [False, False, False, False, False, True, False],
-                    [False, False, False, False, False, True, False],
-                    [False, False, False, False, False, True, False],
-                    [False, False, False, False, False, False, False],
-                    [False, False, False, False, False, False, False],
-                ]
-            )
-        ).all()
+        assert (analysis.masked_ci_datasets[0].mask == ci_mask).all()
 
     def test__noise_scaling_maps_are_setup_correctly(
         self, ci_imaging_7x7, ci_pattern_7x7, parallel_clocker

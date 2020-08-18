@@ -134,40 +134,9 @@ class PhaseCIImaging(PhaseDataset):
             cosmic_ray_map=dataset.cosmic_ray_map, mask=mask
         )
 
-        if self.settings.parallel_front_edge_mask_rows is not None:
-
-            parallel_front_edge_mask = ci_mask.CIMask.masked_parallel_front_edge_from_ci_frame(
-                ci_frame=dataset.image, rows=self.settings.parallel_front_edge_mask_rows
-            )
-
-            mask = mask + parallel_front_edge_mask
-
-        if self.settings.parallel_trails_mask_rows is not None:
-
-            parallel_trails_mask = ci_mask.CIMask.masked_parallel_trails_from_ci_frame(
-                ci_frame=dataset.image, rows=self.settings.parallel_trails_mask_rows
-            )
-
-            mask = mask + parallel_trails_mask
-
-        if self.settings.serial_front_edge_mask_columns is not None:
-
-            serial_front_edge_mask = ci_mask.CIMask.masked_serial_front_edge_from_ci_frame(
-                ci_frame=dataset.image,
-                columns=self.settings.serial_front_edge_mask_columns,
-            )
-
-            mask = mask + serial_front_edge_mask
-
-        if self.settings.serial_trails_mask_columns is not None:
-
-            serial_trails_mask = ci_mask.CIMask.masked_serial_trails_from_ci_frame(
-                ci_frame=dataset.image, columns=self.settings.serial_trails_mask_columns
-            )
-
-            mask = mask + serial_trails_mask
-
-        return mask
+        return ci_mask.CIMask.masked_front_edges_and_trails_from_ci_frame(
+            mask=mask, ci_frame=dataset.image, settings=self.settings.ci_mask
+        )
 
     def noise_scaling_maps_list_from_total_images_and_results(
         self, total_images, results
