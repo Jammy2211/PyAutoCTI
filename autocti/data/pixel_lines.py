@@ -57,10 +57,13 @@ class PixelLine(object):
         self.flux = flux
         self.n_stacked = n_stacked
 
-        # Set length and default flux
+        # Default flux from data
+        if self.flux is None and self.data is not None:
+            self.flux = np.amax(self.data)
+
+    @property
+    def length(self):
         if self.data is not None:
-            self.length = len(self.data)
-            if self.flux is None:
-                self.flux = np.amax(self.data)
+            return len(self.data)
         else:
-            self.length = None
+            return None
