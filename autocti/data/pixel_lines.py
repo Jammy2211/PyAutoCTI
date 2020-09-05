@@ -70,18 +70,30 @@ class PixelLine(object):
 
 
 class PixelLineCollection(object):
-    def __init__(self, lines):
+    def __init__(
+        self,
+        lines=None,
+        data=None,
+        origins=None,
+        locations=None,
+        dates=None,
+        backgrounds=None,
+        fluxes=None,
+    ):
         """ A collection of 1D lines of pixels with metadata.
         
         Enables convenient analysis e.g. binning and stacking of CTI trails.
+        
+        Either provide a list of existing PixelLine objects, or lists of the 
+        individual parameters for PixelLine objects.
         
         Parameters
         ----------
         lines : [PixelLine]
             A list of the PixelLine objects.
             
-        Attributes
-        ----------
+        # or
+        
         data : [[float]] 
             The pixel counts of each line, in units of electrons.
             
@@ -100,7 +112,9 @@ class PixelLineCollection(object):
             
         fluxes : [float]
             The maximum charge in each line, in units of electrons.
-        
+            
+        Attributes
+        ----------
         lengths : [int] 
             The number of pixels in the data array of each line.
             
@@ -108,15 +122,64 @@ class PixelLineCollection(object):
             The number of lines in the collection.
         """
         # Extract the attributes from each line object
-        self.lines = lines
+        if lines is not None:
+            self.lines = lines
 
-        # Extract the attributes from each line
-        self.data = [line.data for line in lines]
-        self.origins = [line.origin for line in lines]
-        self.locations = [line.location for line in lines]
-        self.dates = [line.date for line in lines]
-        self.backgrounds = [line.background for line in lines]
-        self.fluxes = [line.flux for line in lines]
+            # Extract the attributes from each line
+            self.data = [line.data for line in self.lines]
+            self.origins = [line.origin for line in self.lines]
+            self.locations = [line.location for line in self.lines]
+            self.dates = [line.date for line in self.lines]
+            self.backgrounds = [line.background for line in self.lines]
+            self.fluxes = [line.flux for line in self.lines]
+        # Creat the line objects from the inputs
+        else:
+            self.data = data
+
+            n_lines = len(self.data)
+
+            # Default None if not provided
+            if origins is None:
+                self.origins = [None] * n_lines
+            else:
+                self.origins = origins
+            if locations is None:
+                self.locations = [None] * n_lines
+            else:
+                self.locations = locations
+            if dates is None:
+                self.dates = [None] * n_lines
+            else:
+                self.dates = dates
+            if backgrounds is None:
+                self.backgrounds = [None] * n_lines
+            else:
+                self.backgrounds = backgrounds
+            if fluxes is None:
+                self.fluxes = [None] * n_lines
+            else:
+                self.fluxes = fluxes
+
+            self.lines = [
+                PixelLine(
+                    data=data,
+                    origin=origin,
+                    location=location,
+                    date=date,
+                    background=background,
+                    flux=flux,
+                )
+                for data, origin, location, date, background, flux in zip(
+                    self.data,
+                    self.origins,
+                    self.locations,
+                    self.dates,
+                    self.backgrounds,
+                    self.fluxes,
+                )
+            ]
+
+        self.lengths = [line.length for line in self.lines]
 
     @property
     def n_lines(self):
