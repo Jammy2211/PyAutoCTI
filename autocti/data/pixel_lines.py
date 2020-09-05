@@ -123,64 +123,107 @@ class PixelLineCollection(object):
         """
         # Extract the attributes from each line object
         if lines is not None:
-            self.lines = lines
+            self.lines = np.array(lines)
 
             # Extract the attributes from each line
-            self.data = [line.data for line in self.lines]
-            self.origins = [line.origin for line in self.lines]
-            self.locations = [line.location for line in self.lines]
-            self.dates = [line.date for line in self.lines]
-            self.backgrounds = [line.background for line in self.lines]
-            self.fluxes = [line.flux for line in self.lines]
+            self.data = np.array([line.data for line in self.lines])
+            self.origins = np.array([line.origin for line in self.lines])
+            self.locations = np.array([line.location for line in self.lines])
+            self.dates = np.array([line.date for line in self.lines])
+            self.backgrounds = np.array([line.background for line in self.lines])
+            self.fluxes = np.array([line.flux for line in self.lines])
         # Creat the line objects from the inputs
         else:
-            self.data = data
+            self.data = np.array(data)
 
             n_lines = len(self.data)
 
             # Default None if not provided
             if origins is None:
-                self.origins = [None] * n_lines
+                self.origins = np.array([None] * n_lines)
             else:
-                self.origins = origins
+                self.origins = np.array(origins)
             if locations is None:
-                self.locations = [None] * n_lines
+                self.locations = np.array([None] * n_lines)
             else:
-                self.locations = locations
+                self.locations = np.array(locations)
             if dates is None:
-                self.dates = [None] * n_lines
+                self.dates = np.array([None] * n_lines)
             else:
-                self.dates = dates
+                self.dates = np.array(dates)
             if backgrounds is None:
-                self.backgrounds = [None] * n_lines
+                self.backgrounds = np.array([None] * n_lines)
             else:
-                self.backgrounds = backgrounds
+                self.backgrounds = np.array(backgrounds)
             if fluxes is None:
-                self.fluxes = [None] * n_lines
+                self.fluxes = np.array([None] * n_lines)
             else:
-                self.fluxes = fluxes
+                self.fluxes = np.array(fluxes)
 
-            self.lines = [
-                PixelLine(
-                    data=data,
-                    origin=origin,
-                    location=location,
-                    date=date,
-                    background=background,
-                    flux=flux,
-                )
-                for data, origin, location, date, background, flux in zip(
-                    self.data,
-                    self.origins,
-                    self.locations,
-                    self.dates,
-                    self.backgrounds,
-                    self.fluxes,
-                )
-            ]
+            self.lines = np.array(
+                [
+                    PixelLine(
+                        data=data,
+                        origin=origin,
+                        location=location,
+                        date=date,
+                        background=background,
+                        flux=flux,
+                    )
+                    for data, origin, location, date, background, flux in zip(
+                        self.data,
+                        self.origins,
+                        self.locations,
+                        self.dates,
+                        self.backgrounds,
+                        self.fluxes,
+                    )
+                ]
+            )
 
-        self.lengths = [line.length for line in self.lines]
+        self.lengths = np.array([line.length for line in self.lines])
 
     @property
     def n_lines(self):
         return len(self.lines)
+
+    def find_consistent_lines(self, fraction_present=2 / 3):
+        """ Identify lines that are consistently present across several images.
+        
+        This helps to identify warm pixels by discarding noise peaks.
+        
+        Parameters
+        ----------
+        self : PixelLineCollection
+            Must contain lines from multiple images as identified by their 
+            PixelLine.origin with potentially matching lines with the same 
+            PixelLine.location in their images.
+        
+        fraction_present : float 
+            The minimum fraction of images in which the pixel must be present.
+            
+        Returns
+        -------
+        consistent_lines : [int]
+            The indices of consistently present pixel lines in the attribute 
+            arrays.
+        """
+        # The possible locations of warm pixels
+        unique_locations = np.unique(self.locations, axis=0)
+
+        # Number of separate images
+        n_images = len(np.unique(self.origins))
+
+        # Find consistent lines
+        consistent_lines = []
+        for loc in unique_locations:
+            # Indices of lines with locations matching both the row and column
+            found_indices = np.argwhere(
+                np.sum(self.locations == loc, axis=1) == 2
+            ).flatten()
+
+            # Record line indices if enough warm pixels match that location
+            if len(found_indices) / n_images >= fraction_present:
+                consistent_lines = np.concatenate((consistent_lines, found_indices))
+
+        return np.unique(consistent_lines).astype(int)
