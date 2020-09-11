@@ -1,5 +1,6 @@
 import numpy as np
 import pytest
+import os
 
 from autocti.data.pixel_lines import PixelLine, PixelLineCollection
 
@@ -82,7 +83,7 @@ class TestPixelLineCollection:
         line_4 = PixelLine(data=[0, 0, 0], origin=200)
 
         lines = PixelLineCollection()
-        
+
         assert lines.lines is None
 
         lines.append([line_1, line_2])
@@ -98,6 +99,40 @@ class TestPixelLineCollection:
         assert lines.origins == pytest.approx([100, 100, 200, 200])
 
         assert all(lines.dates == [None, None, None, None])
+
+    def test__pixel_line_collection__save_load(self):
+        line_1 = PixelLine(data=[1, 2, 3], origin=100)
+        line_2 = PixelLine(data=[4, 5, 6], origin=100)
+        line_3 = PixelLine(data=[7, 8, 9], origin=200)
+        line_4 = PixelLine(data=[0, 0, 0], origin=200)
+
+        lines_1 = PixelLineCollection(lines=[line_1, line_2])
+        lines_2 = PixelLineCollection(lines=[line_3, line_4])
+
+        # Path to this file
+        path = os.path.dirname(os.path.realpath(__file__))
+        filename = path + "test__pixel_line_collection__save_load"
+        print(filename)
+
+        lines_2.save(filename=filename)
+
+        # Load and append the saved lines
+        lines_1.load(filename=filename)
+
+        assert lines_1.n_lines == 4
+
+        assert lines_1.data[0] == pytest.approx(line_1.data)
+        assert lines_1.data[1] == pytest.approx(line_2.data)
+        assert lines_1.data[2] == pytest.approx(line_3.data)
+        assert lines_1.data[3] == pytest.approx(line_4.data)
+
+        assert lines_1.origins == pytest.approx([100, 100, 200, 200])
+
+        assert all(lines_1.dates == [None, None, None, None])
+
+        # Remove the file
+        assert os.path.exists(filename + ".pickle")
+        os.remove(filename + ".pickle")
 
     def test__find_consistent_lines(self):
         line_1 = PixelLine(data=[1, 2, 3], location=[0, 0], origin=100)
