@@ -70,30 +70,18 @@ class PixelLine(object):
 
 
 class PixelLineCollection(object):
-    def __init__(
-        self,
-        lines=None,
-        data=None,
-        origins=None,
-        locations=None,
-        dates=None,
-        backgrounds=None,
-        fluxes=None,
-    ):
+    def __init__(self, lines=None):
         """ A collection of 1D lines of pixels with metadata.
         
         Enables convenient analysis e.g. binning and stacking of CTI trails.
-        
-        Either provide a list of existing PixelLine objects, or lists of the 
-        individual parameters for PixelLine objects.
         
         Parameters
         ----------
         lines : [PixelLine]
             A list of the PixelLine objects.
             
-        # or
-        
+        Attributes
+        ----------
         data : [[float]] 
             The pixel counts of each line, in units of electrons.
             
@@ -113,75 +101,44 @@ class PixelLineCollection(object):
         fluxes : [float]
             The maximum charge in each line, in units of electrons.
             
-        Attributes
-        ----------
         lengths : [int] 
             The number of pixels in the data array of each line.
             
         n_lines : int 
             The number of lines in the collection.
         """
-        # Extract the attributes from each line object
-        if lines is not None:
+        if lines is None:
+            self.lines = None
+        else:
             self.lines = np.array(lines)
 
-            # Extract the attributes from each line
-            self.data = np.array([line.data for line in self.lines])
-            self.origins = np.array([line.origin for line in self.lines])
-            self.locations = np.array([line.location for line in self.lines])
-            self.dates = np.array([line.date for line in self.lines])
-            self.backgrounds = np.array([line.background for line in self.lines])
-            self.fluxes = np.array([line.flux for line in self.lines])
-        # Creat the line objects from the inputs
-        else:
-            self.data = np.array(data)
+    @property
+    def data(self):
+        return np.array([line.data for line in self.lines])
 
-            n_lines = len(self.data)
+    @property
+    def origins(self):
+        return np.array([line.origin for line in self.lines])
 
-            # Default None if not provided
-            if origins is None:
-                self.origins = np.array([None] * n_lines)
-            else:
-                self.origins = np.array(origins)
-            if locations is None:
-                self.locations = np.array([None] * n_lines)
-            else:
-                self.locations = np.array(locations)
-            if dates is None:
-                self.dates = np.array([None] * n_lines)
-            else:
-                self.dates = np.array(dates)
-            if backgrounds is None:
-                self.backgrounds = np.array([None] * n_lines)
-            else:
-                self.backgrounds = np.array(backgrounds)
-            if fluxes is None:
-                self.fluxes = np.array([None] * n_lines)
-            else:
-                self.fluxes = np.array(fluxes)
+    @property
+    def locations(self):
+        return np.array([line.location for line in self.lines])
 
-            self.lines = np.array(
-                [
-                    PixelLine(
-                        data=data,
-                        origin=origin,
-                        location=location,
-                        date=date,
-                        background=background,
-                        flux=flux,
-                    )
-                    for data, origin, location, date, background, flux in zip(
-                        self.data,
-                        self.origins,
-                        self.locations,
-                        self.dates,
-                        self.backgrounds,
-                        self.fluxes,
-                    )
-                ]
-            )
+    @property
+    def dates(self):
+        return np.array([line.date for line in self.lines])
 
-        self.lengths = np.array([line.length for line in self.lines])
+    @property
+    def backgrounds(self):
+        return np.array([line.background for line in self.lines])
+
+    @property
+    def fluxes(self):
+        return np.array([line.flux for line in self.lines])
+
+    @property
+    def lengths(self):
+        return np.array([line.length for line in self.lines])
 
     @property
     def n_lines(self):
