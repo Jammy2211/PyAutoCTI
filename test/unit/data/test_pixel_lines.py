@@ -259,3 +259,28 @@ class TestPixelLineCollection:
         assert stack_5.data == pytest.approx([1.5, 1, 0.5])
         assert stack_5.location == pytest.approx([14, 0])
         assert stack_5.flux == 0
+
+        # Also test return_bin_info=True
+        (
+            stacked_lines,
+            row_bin_low,
+            date_bin_low,
+            background_bin_low,
+            flux_bin_low,
+        ) = lines.generate_stacked_lines_from_bins(
+            n_row_bins=3,
+            row_min=None,
+            row_max=None,
+            n_flux_bins=2,
+            flux_min=None,
+            flux_max=None,
+            n_date_bins=1,
+            return_bin_info=True,
+        )
+
+        assert stacked_lines.n_lines == 5
+
+        assert row_bin_low == pytest.approx([0, 7, 14])
+        assert date_bin_low == pytest.approx([0])
+        assert background_bin_low == pytest.approx([0])
+        assert flux_bin_low == pytest.approx([0, 5])
