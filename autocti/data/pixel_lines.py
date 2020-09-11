@@ -227,6 +227,7 @@ class PixelLineCollection(object):
         n_background_bins=1,
         background_min=None,
         background_max=None,
+        return_bin_info=False,
     ):
         """ Create a collection of stacked lines by averaging within bins.
         
@@ -254,11 +255,18 @@ class PixelLineCollection(object):
         n_flux_bins, flux_min, flux_max : int, float, float
             The number, minimum, and maximum of bins, by flux.
             
+        return_bin_info : bool
+            If True, then also return the bin minimum values for each parameter.
+            
         Returns
         -------
         stacked_lines : PixelLineCollection
             A new collection of the stacked pixel lines. Metadata parameters 
             contain the lower edge bin value.
+            
+        row_bin_low, date_bin_low, background_bin_low, flux_bin_low : [float]
+            Returned if return_bin_info is True. The minimum value of the bins
+            for each parameter.
         """
         # Line length
         length = self.lengths[0]
@@ -361,4 +369,13 @@ class PixelLineCollection(object):
         for line in stacked_lines:
             line.data /= line.n_stacked
 
-        return PixelLineCollection(lines=stacked_lines)
+        if return_bin_info:
+            return (
+                PixelLineCollection(lines=stacked_lines),
+                row_bin_low,
+                date_bin_low,
+                background_bin_low,
+                flux_bin_low,
+            )
+        else:
+            return PixelLineCollection(lines=stacked_lines)
