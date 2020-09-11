@@ -1,4 +1,5 @@
 import numpy as np
+import pickle
 
 
 class PixelLine(object):
@@ -150,6 +151,26 @@ class PixelLineCollection(object):
             self.lines = np.array(new_lines)
         else:
             self.lines = np.append(self.lines, new_lines)
+
+    def save(self, filename):
+        """ Save the lines data. """
+        # Check the file extension
+        if filename[-7:] != ".pickle":
+            filename += ".pickle"
+
+        # Save the lines
+        with open(filename, "wb") as f:
+            pickle.dump(self.lines, f)
+
+    def load(self, filename):
+        """ Load and append lines that were previously saved. """
+        # Check the file extension
+        if filename[-7:] != ".pickle":
+            filename += ".pickle"
+
+        # Load the lines
+        with open(filename, "rb") as f:
+            self.append(pickle.load(f))
 
     def find_consistent_lines(self, fraction_present=2 / 3):
         """ Identify lines that are consistently present across several images.
