@@ -144,6 +144,13 @@ class PixelLineCollection(object):
     def n_lines(self):
         return len(self.lines)
 
+    def append(self, new_lines):
+        """ Add new lines to the list. """
+        if self.lines is None:
+            self.lines = np.array(new_lines)
+        else:
+            self.lines = np.append(self.lines, new_lines)
+
     def find_consistent_lines(self, fraction_present=2 / 3):
         """ Identify lines that are consistently present across several images.
         
