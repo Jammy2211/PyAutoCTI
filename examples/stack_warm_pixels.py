@@ -22,6 +22,7 @@ import pytest
 import os
 from autoconf import conf
 import matplotlib.pyplot as plt
+from urllib.request import urlretrieve
 
 from autocti.data.pixel_lines import PixelLine, PixelLineCollection
 from autocti.model.warm_pixels import find_warm_pixels
@@ -33,13 +34,8 @@ path = os.path.dirname(os.path.realpath(__file__))
 # Set up some configuration options for the automatic fits dataset loading
 conf.instance = conf.Config(config_path=f"{path}/config")
 
-# Initialise the collection of warm pixel trails
-warm_pixels = PixelLineCollection()
-
-
-print("1.")
-# Find the warm pixels in each image
-for name in [
+# Download the example image files
+image_names = [
     "j9epn8s6q_raw",
     "j9epqbgjq_raw",
     "j9epr7stq_raw",
@@ -56,7 +52,22 @@ for name in [
     "j9epqbgoq_raw",
     "j9epr7syq_raw",
     "j9epu6c0q_raw",
-]:
+]
+url_path = "http://astro.dur.ac.uk/~cklv53/files/acs/"
+for name in image_names:
+    file = f"{path}/acs/{name}.fits"
+    if not os.path.exists(file):
+        print(f"\rDownloading {name}.fits...", end=" ", flush=True)
+        urlretrieve(f"{url_path}/{name}.fits", file)
+print("")
+
+# Initialise the collection of warm pixel trails
+warm_pixels = PixelLineCollection()
+
+
+print("1.")
+# Find the warm pixels in each image
+for name in image_names:
     # Load the HST ACS dataset
     frame = acs.FrameACS.from_fits(
         file_path=f"{path}/acs/{name}.fits", quadrant_letter="A"
@@ -98,20 +109,14 @@ print("3.")
 n_row_bins = 5
 n_flux_bins = 5
 n_bins = n_row_bins * n_flux_bins
-(
-    stacked_lines,
-    row_bin_low,
-    date_bin_low,
-    background_bin_low,
-    flux_bin_low,
-) = warm_pixels.generate_stacked_lines_from_bins(
-    n_row_bins=n_row_bins, n_flux_bins=n_flux_bins, return_bin_info=True
+stacked_lines = warm_pixels.generate_stacked_lines_from_bins(
+    n_row_bins=n_row_bins, n_flux_bins=n_flux_bins
 )
-
 print(
     "Stacked lines in %d bins with %d empty bins"
     % (n_bins, n_bins - stacked_lines.n_lines)
 )
+
 
 # Plot the stacked trails
 plt.figure()
