@@ -1,4 +1,5 @@
 import numpy as np
+import pickle
 
 
 class PixelLine(object):
@@ -70,30 +71,18 @@ class PixelLine(object):
 
 
 class PixelLineCollection(object):
-    def __init__(
-        self,
-        lines=None,
-        data=None,
-        origins=None,
-        locations=None,
-        dates=None,
-        backgrounds=None,
-        fluxes=None,
-    ):
+    def __init__(self, lines=None):
         """ A collection of 1D lines of pixels with metadata.
         
         Enables convenient analysis e.g. binning and stacking of CTI trails.
-        
-        Either provide a list of existing PixelLine objects, or lists of the 
-        individual parameters for PixelLine objects.
         
         Parameters
         ----------
         lines : [PixelLine]
             A list of the PixelLine objects.
             
-        # or
-        
+        Attributes
+        ----------
         data : [[float]] 
             The pixel counts of each line, in units of electrons.
             
@@ -113,79 +102,75 @@ class PixelLineCollection(object):
         fluxes : [float]
             The maximum charge in each line, in units of electrons.
             
-        Attributes
-        ----------
         lengths : [int] 
             The number of pixels in the data array of each line.
             
         n_lines : int 
             The number of lines in the collection.
         """
-        # Extract the attributes from each line object
-        if lines is not None:
+        if lines is None:
+            self.lines = None
+        else:
             self.lines = np.array(lines)
 
-            # Extract the attributes from each line
-            self.data = np.array([line.data for line in self.lines])
-            self.origins = np.array([line.origin for line in self.lines])
-            self.locations = np.array([line.location for line in self.lines])
-            self.dates = np.array([line.date for line in self.lines])
-            self.backgrounds = np.array([line.background for line in self.lines])
-            self.fluxes = np.array([line.flux for line in self.lines])
-        # Creat the line objects from the inputs
-        else:
-            self.data = np.array(data)
+    @property
+    def data(self):
+        return np.array([line.data for line in self.lines])
 
-            n_lines = len(self.data)
+    @property
+    def origins(self):
+        return np.array([line.origin for line in self.lines])
 
-            # Default None if not provided
-            if origins is None:
-                self.origins = np.array([None] * n_lines)
-            else:
-                self.origins = np.array(origins)
-            if locations is None:
-                self.locations = np.array([None] * n_lines)
-            else:
-                self.locations = np.array(locations)
-            if dates is None:
-                self.dates = np.array([None] * n_lines)
-            else:
-                self.dates = np.array(dates)
-            if backgrounds is None:
-                self.backgrounds = np.array([None] * n_lines)
-            else:
-                self.backgrounds = np.array(backgrounds)
-            if fluxes is None:
-                self.fluxes = np.array([None] * n_lines)
-            else:
-                self.fluxes = np.array(fluxes)
+    @property
+    def locations(self):
+        return np.array([line.location for line in self.lines])
 
-            self.lines = np.array(
-                [
-                    PixelLine(
-                        data=data,
-                        origin=origin,
-                        location=location,
-                        date=date,
-                        background=background,
-                        flux=flux,
-                    )
-                    for data, origin, location, date, background, flux in zip(
-                        self.data,
-                        self.origins,
-                        self.locations,
-                        self.dates,
-                        self.backgrounds,
-                        self.fluxes,
-                    )
-                ]
-            )
+    @property
+    def dates(self):
+        return np.array([line.date for line in self.lines])
 
-        self.lengths = np.array([line.length for line in self.lines])
+    @property
+    def backgrounds(self):
+        return np.array([line.background for line in self.lines])
+
+    @property
+    def fluxes(self):
+        return np.array([line.flux for line in self.lines])
+
+    @property
+    def lengths(self):
+        return np.array([line.length for line in self.lines])
 
     @property
     def n_lines(self):
         return len(self.lines)
+
+    def append(self, new_lines):
+        """ Add new lines to the list. """
+        if self.lines is None:
+            self.lines = np.array(new_lines)
+        else:
+            self.lines = np.append(self.lines, new_lines)
+
+    def save(self, filename):
+        """ Save the lines data. """
+        # Check the file extension
+        if filename[-7:] != ".pickle":
+            filename += ".pickle"
+
+        # Save the lines
+        with open(filename, "wb") as f:
+            pickle.dump(self.lines, f)
+
+    def load(self, filename):
+        """ Load and append lines that were previously saved. """
+        # Check the file extension
+        if filename[-7:] != ".pickle":
+            filename += ".pickle"
+
+        # Load the lines
+        with open(filename, "rb") as f:
+            self.append(pickle.load(f))
 
     def find_consistent_lines(self, fraction_present=2 / 3):
         """ Identify lines that are consistently present across several images.
@@ -208,25 +193,23 @@ class PixelLineCollection(object):
             The indices of consistently present pixel lines in the attribute 
             arrays.
         """
-        # The possible locations of warm pixels
-        unique_locations = np.unique(self.locations, axis=0)
-
         # Number of separate images
         n_images = len(np.unique(self.origins))
 
-        # Find consistent lines
-        consistent_lines = []
-        for loc in unique_locations:
-            # Indices of lines with locations matching both the row and column
-            found_indices = np.argwhere(
-                np.sum(self.locations == loc, axis=1) == 2
-            ).flatten()
+        # Map the 2D locations to a 1D array of single numbers
+        max_column = np.amax(self.locations[:, 1]) + 1
+        locations_1D = self.locations[:, 0] * max_column + self.locations[:, 1]
 
-            # Record line indices if enough warm pixels match that location
-            if len(found_indices) / n_images >= fraction_present:
-                consistent_lines = np.concatenate((consistent_lines, found_indices))
+        # The possible locations of warm pixels and the number at that location
+        unique_locations, counts = np.unique(locations_1D, axis=0, return_counts=True)
 
-        return np.sort(consistent_lines).astype(int)
+        # The unique locations with sufficient numbers of matching pixels
+        consistent_locations = unique_locations[counts / n_images >= fraction_present]
+
+        # Find whether each line is at one of the valid locations
+        consistent_lines = np.argwhere(np.isin(locations_1D, consistent_locations))
+
+        return consistent_lines.flatten()
 
     def generate_stacked_lines_from_bins(
         self,
@@ -242,6 +225,7 @@ class PixelLineCollection(object):
         n_background_bins=1,
         background_min=None,
         background_max=None,
+        return_bin_info=False,
     ):
         """ Create a collection of stacked lines by averaging within bins.
         
@@ -269,11 +253,18 @@ class PixelLineCollection(object):
         n_flux_bins, flux_min, flux_max : int, float, float
             The number, minimum, and maximum of bins, by flux.
             
+        return_bin_info : bool
+            If True, then also return the bin minimum values for each parameter.
+            
         Returns
         -------
         stacked_lines : PixelLineCollection
             A new collection of the stacked pixel lines. Metadata parameters 
             contain the lower edge bin value.
+            
+        row_bin_low, date_bin_low, background_bin_low, flux_bin_low : [float]
+            Returned if return_bin_info is True. The minimum value of the bins
+            for each parameter.
         """
         # Line length
         length = self.lengths[0]
@@ -376,4 +367,13 @@ class PixelLineCollection(object):
         for line in stacked_lines:
             line.data /= line.n_stacked
 
-        return PixelLineCollection(lines=stacked_lines)
+        if return_bin_info:
+            return (
+                PixelLineCollection(lines=stacked_lines),
+                row_bin_low,
+                date_bin_low,
+                background_bin_low,
+                flux_bin_low,
+            )
+        else:
+            return PixelLineCollection(lines=stacked_lines)
