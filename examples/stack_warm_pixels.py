@@ -36,8 +36,6 @@ conf.instance = conf.Config(config_path=f"{path}/config")
 # Initialise the collection of warm pixel trails
 warm_pixels = PixelLineCollection()
 
-image_path = "/home/jacob/c_drive/Data/hst_acs_blank_sky"
-
 
 print("1.")
 # Find the warm pixels in each image
@@ -61,7 +59,7 @@ for name in [
 ]:
     # Load the HST ACS dataset
     frame = acs.FrameACS.from_fits(
-        file_path=f"{image_path}/{name}.fits", quadrant_letter="A"
+        file_path=f"{path}/acs/{name}.fits", quadrant_letter="A"
     )
     date = 2400000.5 + frame.exposure_info.modified_julian_date
 
