@@ -156,7 +156,6 @@ def find_warm_pixels(
         & (image_no_bg > unsharp_masking_factor * np.roll(image_smooth, -1, axis=0))
         & (image_no_bg > unsharp_masking_factor * np.roll(image_smooth, 1, axis=1))
         & (image_no_bg > unsharp_masking_factor * np.roll(image_smooth, -1, axis=1))
-        # & (image_no_bg > 50)  ###
     )
     n_warm_pixels = len(warm_pixel_locations)
 
