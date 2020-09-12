@@ -193,25 +193,23 @@ class PixelLineCollection(object):
             The indices of consistently present pixel lines in the attribute 
             arrays.
         """
-        # The possible locations of warm pixels
-        unique_locations = np.unique(self.locations, axis=0)
-
         # Number of separate images
         n_images = len(np.unique(self.origins))
 
-        # Find consistent lines
-        consistent_lines = []
-        for loc in unique_locations:
-            # Indices of lines with locations matching both the row and column
-            found_indices = np.argwhere(
-                np.sum(self.locations == loc, axis=1) == 2
-            ).flatten()
+        # Map the 2D locations to a 1D array of single numbers
+        max_column = np.amax(self.locations[:, 1]) + 1
+        locations_1D = self.locations[:, 0] * max_column + self.locations[:, 1]
 
-            # Record line indices if enough warm pixels match that location
-            if len(found_indices) / n_images >= fraction_present:
-                consistent_lines = np.concatenate((consistent_lines, found_indices))
+        # The possible locations of warm pixels and the number at that location
+        unique_locations, counts = np.unique(locations_1D, axis=0, return_counts=True)
 
-        return np.sort(consistent_lines).astype(int)
+        # The unique locations with sufficient numbers of matching pixels
+        consistent_locations = unique_locations[counts / n_images >= fraction_present]
+
+        # Find whether each line is at one of the valid locations
+        consistent_lines = np.argwhere(np.isin(locations_1D, consistent_locations))
+
+        return consistent_lines.flatten()
 
     def generate_stacked_lines_from_bins(
         self,
