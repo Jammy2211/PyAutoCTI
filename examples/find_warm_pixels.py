@@ -31,9 +31,7 @@ frame = frame[row_start:row_end, column_start:column_end]
 frame.mask = frame.mask[row_start:row_end, column_start:column_end]
 
 # Find the warm pixel trails and store in a line collection object
-warm_pixels = PixelLineCollection(
-    lines=find_warm_pixels(image=frame, ignore_bad_columns=0)
-)
+warm_pixels = PixelLineCollection(lines=find_warm_pixels(image=frame))
 
 print("Found %d warm pixels" % warm_pixels.n_lines)
 
@@ -45,7 +43,7 @@ plt.scatter(
     warm_pixels.locations[:, 0],
     c="r",
     marker="x",
-    s=8,
+    s=4,
     linewidth=0.2,
 )
 plt.colorbar(im)
