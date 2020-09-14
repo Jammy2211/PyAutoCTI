@@ -8,7 +8,7 @@ from autocti.data.pixel_lines import PixelLine, PixelLineCollection
 from autocti.model.warm_pixels import find_warm_pixels
 from autoarray.instruments import acs
 
-# For other tests related to warm pixels, see also test__find_consistent_lines() 
+# For other tests related to warm pixels, see also test__find_consistent_lines()
 # and test__generate_stacked_lines_from_bins() in test_pixel_lines.py.
 
 
@@ -37,4 +37,4 @@ class TestFindWarmPixels:
         # Find the warm pixel trails
         warm_pixels = find_warm_pixels(image=frame)
 
-        assert len(warm_pixels) == 857
+        assert len(warm_pixels) == 856

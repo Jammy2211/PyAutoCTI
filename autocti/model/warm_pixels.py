@@ -13,6 +13,7 @@ def find_warm_pixels(
     bad_column_loops=5,
     smooth_width=3,
     unsharp_masking_factor=4,
+    flux_min=0,
     origin=None,
     date=None,
 ):
@@ -61,6 +62,11 @@ def find_warm_pixels(
         Pixels must be this many times brighter than their neighbours in the 
         smoothed image to be counted as warm pixels.
         
+    flux_min : float
+        Pixels below this value AFTER background subtraction will be ignored.
+        Set None to not ignore any pixels. Defaults to 0 to ignore pixels below 
+        the background.
+        
     origin : str
         An identifier for the origin (e.g. image name) of the data, for the 
         PixelLine objects' metadata.
@@ -107,6 +113,10 @@ def find_warm_pixels(
         column_means[good_columns]
     )
     image_no_bg = image - background
+
+    # Don't ignore low-flux pixels if requested
+    if flux_min is None:
+        flux_min = np.nanmin(image_no_bg)
 
     # Unsharp mask image
     image_smooth = uniform_filter(image_no_bg, size=smooth_width)
@@ -156,6 +166,8 @@ def find_warm_pixels(
         & (image_no_bg > unsharp_masking_factor * np.roll(image_smooth, -1, axis=0))
         & (image_no_bg > unsharp_masking_factor * np.roll(image_smooth, 1, axis=1))
         & (image_no_bg > unsharp_masking_factor * np.roll(image_smooth, -1, axis=1))
+        # Above the minimum flux above background
+        & (image_no_bg >= flux_min)
     )
     n_warm_pixels = len(warm_pixel_locations)
 
@@ -168,7 +180,7 @@ def find_warm_pixels(
         row, column = location
         warm_pixels.append(
             PixelLine(
-                data=image_no_bg[row : row + trail_length, column],
+                data=image[row : row + trail_length, column],
                 origin=origin,
                 location=[row, column],
                 date=date,

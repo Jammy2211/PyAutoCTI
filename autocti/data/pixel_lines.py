@@ -36,7 +36,7 @@ class PixelLine(object):
             
         background : float
             The background charge count, in units of electrons. It is assumed 
-            that the background has already been subtracted from the data.
+            that the background has not been subtracted from the data.
             
         flux : float
             The maximum charge in the line, or e.g. for a CTI trail the original 
