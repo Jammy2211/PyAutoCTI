@@ -194,8 +194,8 @@ class TestPixelLineCollection:
         line_5 = PixelLine(data=[9, 7, 5], location=[4, 0], date=5, background=0)
         # 3. Mid row, low flux
         line_6 = PixelLine(data=[3, 2, 1], location=[10, 0], date=6, background=0)
-        line_7 = PixelLine(data=[2, 1, 0], location=[11, 0], date=7, background=0)
-        line_8 = PixelLine(data=[1, 0, 0], location=[12, 0], date=8, background=0)
+        line_7 = PixelLine(data=[2.5, 1.5, 0.5], location=[11, 0], date=7, background=0)
+        line_8 = PixelLine(data=[2, 1, 0], location=[12, 0], date=8, background=0)
         # 4. Mid row, high flux
         line_9 = PixelLine(data=[10, 9, 8], location=[10, 0], date=9, background=0)
         line_10 = PixelLine(data=[8, 8, 8], location=[11, 0], date=10, background=0)
@@ -243,31 +243,37 @@ class TestPixelLineCollection:
 
         assert stack_1.n_stacked == 3
         assert stack_1.data == pytest.approx([2.5, 2, 1.5])
+        assert stack_1.error == pytest.approx([np.sqrt(0.5) / 3] * 3)
         assert stack_1.location == pytest.approx([0, 0])
         assert stack_1.flux == 1
 
         assert stack_2.n_stacked == 2
         assert stack_2.data == pytest.approx([9.5, 7.5, 5.5])
+        assert stack_2.error == pytest.approx([np.sqrt(0.5) / 2] * 3)
         assert stack_2.location == pytest.approx([0, 0])
         assert stack_2.flux == 10 ** 0.5
 
         assert stack_3.n_stacked == 3
-        assert stack_3.data == pytest.approx([2, 1, 1 / 3])
+        assert stack_3.data == pytest.approx([2.5, 1.5, 0.5])
+        assert stack_3.error == pytest.approx([np.sqrt(0.5) / 3] * 3)
         assert stack_3.location == pytest.approx([7, 0])
         assert stack_3.flux == 1
 
         assert stack_4.n_stacked == 2
         assert stack_4.data == pytest.approx([9, 8.5, 8])
+        assert stack_4.error == pytest.approx([np.sqrt(0.5), np.sqrt(0.5) / 2, 0])
         assert stack_4.location == pytest.approx([7, 0])
         assert stack_4.flux == 10 ** 0.5
 
         assert stack_5.n_stacked == 1
         assert stack_5.data == pytest.approx([3, 2, 1])
+        assert stack_5.error == pytest.approx([0, 0, 0])
         assert stack_5.location == pytest.approx([14, 0])
         assert stack_5.flux == 1
 
         assert stack_6.n_stacked == 0
         assert stack_6.data == pytest.approx([0, 0, 0])
+        assert stack_6.error == pytest.approx([0, 0, 0])
         assert stack_6.location == pytest.approx([14, 0])
         assert stack_6.flux == 10 ** 0.5
 
@@ -311,8 +317,8 @@ class TestPixelLineCollection:
         line_5 = PixelLine(data=[9, 7, 5], location=[4, 0], date=5, background=0)
         # 3. Mid row, low flux
         line_6 = PixelLine(data=[3, 2, 1], location=[10, 0], date=6, background=0)
-        line_7 = PixelLine(data=[2, 1, 0], location=[11, 0], date=7, background=0)
-        line_8 = PixelLine(data=[1, 0, 0], location=[12, 0], date=8, background=0)
+        line_7 = PixelLine(data=[2.5, 1.5, 0.5], location=[11, 0], date=7, background=0)
+        line_8 = PixelLine(data=[2, 1, 0], location=[12, 0], date=8, background=0)
         # 4. Mid row, high flux
         line_9 = PixelLine(data=[10, 9, 8], location=[10, 0], date=9, background=0)
         line_10 = PixelLine(data=[8, 8, 8], location=[11, 0], date=10, background=0)
@@ -351,32 +357,43 @@ class TestPixelLineCollection:
 
         stack_1, stack_2, stack_3, stack_4, stack_5, stack_6 = stacked_lines.lines
 
+        # for line in stacked_lines.lines:
+        #     print(line.data)
+        #     print(line.error)
+        # exit()
+
         assert stack_1.n_stacked == 3
         assert stack_1.data == pytest.approx([2.5, 2, 1.5])
+        assert stack_1.error == pytest.approx([np.sqrt(0.5) / 3] * 3)
         assert stack_1.location == pytest.approx([0, 0])
         assert stack_1.flux == 1
 
         assert stack_2.n_stacked == 2
         assert stack_2.data == pytest.approx([9.5, 7.5, 5.5])
+        assert stack_2.error == pytest.approx([np.sqrt(0.5) / 2] * 3)
         assert stack_2.location == pytest.approx([0, 0])
         assert stack_2.flux == np.pi
 
         assert stack_3.n_stacked == 3
-        assert stack_3.data == pytest.approx([2, 1, 1 / 3])
+        assert stack_3.data == pytest.approx([2.5, 1.5, 0.5])
+        assert stack_3.error == pytest.approx([np.sqrt(0.5) / 3] * 3)
         assert stack_3.location == pytest.approx([7, 0])
         assert stack_3.flux == 1
 
         assert stack_4.n_stacked == 2
         assert stack_4.data == pytest.approx([9, 8.5, 8])
+        assert stack_4.error == pytest.approx([np.sqrt(0.5), np.sqrt(0.5) / 2, 0])
         assert stack_4.location == pytest.approx([7, 0])
         assert stack_4.flux == np.pi
 
         assert stack_5.n_stacked == 1
         assert stack_5.data == pytest.approx([3, 2, 1])
+        assert stack_5.error == pytest.approx([0, 0, 0])
         assert stack_5.location == pytest.approx([14, 0])
         assert stack_5.flux == 1
 
         assert stack_6.n_stacked == 0
         assert stack_6.data == pytest.approx([0, 0, 0])
+        assert stack_6.error == pytest.approx([0, 0, 0])
         assert stack_6.location == pytest.approx([14, 0])
         assert stack_6.flux == np.pi
