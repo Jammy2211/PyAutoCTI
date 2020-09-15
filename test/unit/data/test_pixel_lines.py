@@ -237,9 +237,9 @@ class TestPixelLineCollection:
             n_date_bins=1,
         )
 
-        assert stacked_lines.n_lines == 5
+        assert stacked_lines.n_lines == 6
 
-        stack_1, stack_2, stack_3, stack_4, stack_5 = stacked_lines.lines
+        stack_1, stack_2, stack_3, stack_4, stack_5, stack_6 = stacked_lines.lines
 
         assert stack_1.n_stacked == 3
         assert stack_1.data == pytest.approx([2.5, 2, 1.5])
@@ -266,6 +266,11 @@ class TestPixelLineCollection:
         assert stack_5.location == pytest.approx([14, 0])
         assert stack_5.flux == 1
 
+        assert stack_6.n_stacked == 0
+        assert stack_6.data == pytest.approx([0, 0, 0])
+        assert stack_6.location == pytest.approx([14, 0])
+        assert stack_6.flux == 10 ** 0.5
+
         # Also test return_bin_info=True
         (
             stacked_lines,
@@ -285,7 +290,7 @@ class TestPixelLineCollection:
             return_bin_info=True,
         )
 
-        assert stacked_lines.n_lines == 5
+        assert stacked_lines.n_lines == 6
 
         assert row_bins == pytest.approx([0, 7, 14, 21])
         assert flux_bins == pytest.approx([1, 10 ** 0.5, 10])
@@ -342,9 +347,9 @@ class TestPixelLineCollection:
             row_bins=[0, 7, 14, 999.9], flux_bins=[1, np.pi, 10], n_date_bins=1,
         )
 
-        assert stacked_lines.n_lines == 5
+        assert stacked_lines.n_lines == 6
 
-        stack_1, stack_2, stack_3, stack_4, stack_5 = stacked_lines.lines
+        stack_1, stack_2, stack_3, stack_4, stack_5, stack_6 = stacked_lines.lines
 
         assert stack_1.n_stacked == 3
         assert stack_1.data == pytest.approx([2.5, 2, 1.5])
@@ -370,3 +375,8 @@ class TestPixelLineCollection:
         assert stack_5.data == pytest.approx([3, 2, 1])
         assert stack_5.location == pytest.approx([14, 0])
         assert stack_5.flux == 1
+
+        assert stack_6.n_stacked == 0
+        assert stack_6.data == pytest.approx([0, 0, 0])
+        assert stack_6.location == pytest.approx([14, 0])
+        assert stack_6.flux == np.pi
