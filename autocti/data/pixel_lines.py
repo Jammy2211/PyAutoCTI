@@ -211,6 +211,30 @@ class PixelLineCollection(object):
 
         return consistent_lines.flatten()
 
+    @staticmethod
+    def stacked_bin_index(
+        i_row=0,
+        n_row_bins=1,
+        i_flux=0,
+        n_flux_bins=1,
+        i_date=0,
+        n_date_bins=1,
+        i_background=0,
+        n_background_bins=1,
+    ):
+        """
+        Return the index for the 1D ordering of stacked lines in bins, given the 
+        index and number of each bin.
+        
+        See generate_stacked_lines_from_bins().
+        """
+        return int(
+            i_row * n_flux_bins * n_date_bins * n_background_bins
+            + i_flux * n_date_bins * n_background_bins
+            + i_date * n_background_bins
+            + i_background
+        )
+
     def generate_stacked_lines_from_bins(
         self,
         n_row_bins=1,
@@ -416,19 +440,23 @@ class PixelLineCollection(object):
         ]
 
         # Add the line data to each stack
-        for i_row, i_date, i_background, i_flux, data in zip(
-            row_indices, date_indices, background_indices, flux_indices, self.data
+        for i_row, i_flux, i_date, i_background, data in zip(
+            row_indices, flux_indices, date_indices, background_indices, self.data
         ):
             # Discard lines with values outside of the bins
-            if -1 in [i_row, i_date, i_background, i_flux]:
+            if -1 in [i_row, i_flux, i_date, i_background]:
                 continue
 
             # Get the index in the 1D array for this bin
-            index = int(
-                i_row * n_date_bins * n_background_bins * n_flux_bins
-                + i_date * n_background_bins * n_flux_bins
-                + i_background * n_flux_bins
-                + i_flux
+            index = self.stacked_bin_index(
+                i_row=i_row,
+                n_row_bins=n_row_bins,
+                i_flux=i_flux,
+                n_flux_bins=n_flux_bins,
+                i_date=i_date,
+                n_date_bins=n_date_bins,
+                i_background=i_background,
+                n_background_bins=n_background_bins,
             )
 
             # Add the line data and increment the number in this stack
