@@ -6,6 +6,7 @@ class PixelLine(object):
     def __init__(
         self,
         data=None,
+        error=None,
         origin=None,
         location=None,
         date=None,
@@ -22,6 +23,9 @@ class PixelLine(object):
         ----------
         data : [float]
             The pixel counts, in units of electrons.
+            
+        error : [float]
+            The standard errors on the pixel counts, in units of electrons.
             
         origin : str
             An identifier for the origin (e.g. image name) of the data.
@@ -51,6 +55,7 @@ class PixelLine(object):
             The number of pixels in the data array.
         """
         self.data = data
+        self.error = error
         self.origin = origin
         self.location = location
         self.date = date
@@ -116,6 +121,10 @@ class PixelLineCollection(object):
     @property
     def data(self):
         return np.array([line.data for line in self.lines])
+
+    @property
+    def errors(self):
+        return np.array([line.error for line in self.lines])
 
     @property
     def origins(self):
@@ -314,8 +323,8 @@ class PixelLineCollection(object):
         Returns
         -------
         stacked_lines : PixelLineCollection
-            A new collection of the stacked pixel lines. Metadata parameters 
-            contain the lower edge bin value.
+            A new collection of the stacked pixel lines, including errors. 
+            Metadata parameters contain the lower edge bin value.
             
         row_bins, flux_bins, date_bins, background_bins : [float]
             Returned if return_bin_info is True. The edge values of the bins for
@@ -426,7 +435,7 @@ class PixelLineCollection(object):
         # Initialise the array of empty lines in each bin, as a long 1D array
         stacked_lines = [
             PixelLine(
-                data=np.zeros(length),
+                data=[np.zeros(length)],
                 location=[row, 0],
                 date=date,
                 background=background,
@@ -459,14 +468,23 @@ class PixelLineCollection(object):
                 n_background_bins=n_background_bins,
             )
 
-            # Add the line data and increment the number in this stack
-            stacked_lines[index].data += data
+            # Append the line data
+            if stacked_lines[index].n_stacked == 0:
+                stacked_lines[index].data = [data]
+            else:
+                stacked_lines[index].data = np.append(
+                    stacked_lines[index].data, [data], axis=0,
+                )
             stacked_lines[index].n_stacked += 1
 
-        # Take the averages
+        # Take the means and standard errors
         for line in stacked_lines:
             if line.n_stacked > 0:
-                line.data /= line.n_stacked
+                line.error = np.std(line.data, axis=0) / np.sqrt(line.n_stacked)
+            else:
+                line.error = np.zeros(length)
+
+            line.data = np.mean(line.data, axis=0)
 
         if return_bin_info:
             return (
