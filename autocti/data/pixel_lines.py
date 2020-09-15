@@ -463,12 +463,10 @@ class PixelLineCollection(object):
             stacked_lines[index].data += data
             stacked_lines[index].n_stacked += 1
 
-        # Remove empty stacks
-        stacked_lines = [line for line in stacked_lines if line.n_stacked > 0]
-
         # Take the averages
         for line in stacked_lines:
-            line.data /= line.n_stacked
+            if line.n_stacked > 0:
+                line.data /= line.n_stacked
 
         if return_bin_info:
             return (
