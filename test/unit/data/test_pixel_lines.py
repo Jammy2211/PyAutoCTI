@@ -290,4 +290,83 @@ class TestPixelLineCollection:
         assert row_bins == pytest.approx([0, 7, 14, 21])
         assert flux_bins == pytest.approx([1, 10 ** 0.5, 10])
         assert date_bins == pytest.approx([1, 13])
-        assert background_bins == pytest.approx([0])
+        assert background_bins == pytest.approx([0, 0])
+
+    def test__generate_stacked_lines_from_bins__custom_bins(self):
+        # Stack lines in 3 row bins and 2 flux bins
+        # Different dates but only 1 bin so ignored
+        # All same backgrounds so ignored
+
+        # 1. Low row, low flux
+        line_1 = PixelLine(data=[3, 2.5, 2], location=[0, 0], date=1, background=0)
+        line_2 = PixelLine(data=[2.5, 2, 1.5], location=[1, 0], date=2, background=0)
+        line_3 = PixelLine(data=[2, 1.5, 1], location=[2, 0], date=3, background=0)
+        # 2. Low row, high flux
+        line_4 = PixelLine(data=[10, 8, 6], location=[3, 0], date=4, background=0)
+        line_5 = PixelLine(data=[9, 7, 5], location=[4, 0], date=5, background=0)
+        # 3. Mid row, low flux
+        line_6 = PixelLine(data=[3, 2, 1], location=[10, 0], date=6, background=0)
+        line_7 = PixelLine(data=[2, 1, 0], location=[11, 0], date=7, background=0)
+        line_8 = PixelLine(data=[1, 0, 0], location=[12, 0], date=8, background=0)
+        # 4. Mid row, high flux
+        line_9 = PixelLine(data=[10, 9, 8], location=[10, 0], date=9, background=0)
+        line_10 = PixelLine(data=[8, 8, 8], location=[11, 0], date=10, background=0)
+        # 5. High row, low flux
+        line_11 = PixelLine(data=[3, 2, 1], location=[20, 0], date=11, background=0)
+        # 6. High row, high flux: no lines, empty bin
+
+        # Below minimum flux, discarded
+        line_12 = PixelLine(data=[0.5, 0, 0], location=[21, 0], date=12, background=0)
+        # Above maximum flux, discarded
+        line_13 = PixelLine(data=[11, 10, 9], location=[0, 0], date=13, background=0)
+
+        lines = PixelLineCollection(
+            lines=[
+                line_1,
+                line_2,
+                line_3,
+                line_4,
+                line_5,
+                line_6,
+                line_7,
+                line_8,
+                line_9,
+                line_10,
+                line_11,
+                line_12,
+                line_13,
+            ]
+        )
+
+        stacked_lines = lines.generate_stacked_lines_from_bins(
+            row_bins=[0, 7, 14, 999.9], flux_bins=[1, np.pi, 10], n_date_bins=1,
+        )
+
+        assert stacked_lines.n_lines == 5
+
+        stack_1, stack_2, stack_3, stack_4, stack_5 = stacked_lines.lines
+
+        assert stack_1.n_stacked == 3
+        assert stack_1.data == pytest.approx([2.5, 2, 1.5])
+        assert stack_1.location == pytest.approx([0, 0])
+        assert stack_1.flux == 1
+
+        assert stack_2.n_stacked == 2
+        assert stack_2.data == pytest.approx([9.5, 7.5, 5.5])
+        assert stack_2.location == pytest.approx([0, 0])
+        assert stack_2.flux == np.pi
+
+        assert stack_3.n_stacked == 3
+        assert stack_3.data == pytest.approx([2, 1, 1 / 3])
+        assert stack_3.location == pytest.approx([7, 0])
+        assert stack_3.flux == 1
+
+        assert stack_4.n_stacked == 2
+        assert stack_4.data == pytest.approx([9, 8.5, 8])
+        assert stack_4.location == pytest.approx([7, 0])
+        assert stack_4.flux == np.pi
+
+        assert stack_5.n_stacked == 1
+        assert stack_5.data == pytest.approx([3, 2, 1])
+        assert stack_5.location == pytest.approx([14, 0])
+        assert stack_5.flux == 1
