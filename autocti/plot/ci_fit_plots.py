@@ -1,4 +1,5 @@
-from autocti.plot import plotters, ci_line_plots
+from autoarray.plot import plotters
+from autocti.plot import ci_line_plots
 
 
 @plotters.set_include_and_sub_plotter

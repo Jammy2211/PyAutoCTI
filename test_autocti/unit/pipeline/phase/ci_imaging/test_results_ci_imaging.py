@@ -25,7 +25,9 @@ class TestResult:
             search=mock.MockSearch(samples=samples_with_result),
             phase_name="test_phase_2",
             settings=ac.SettingsPhaseCIImaging(
-                masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(parallel_columns=(0, 1))
+                settings_masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(
+                    parallel_columns=(0, 1)
+                )
             ),
         )
 

@@ -57,7 +57,9 @@ class TestFit:
             phase_name="test_phase",
             search=mock.MockSearch(),
             settings=ac.SettingsPhaseCIImaging(
-                masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(parallel_columns=(0, 1))
+                settings_masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(
+                    parallel_columns=(0, 1)
+                )
             ),
         )
 
@@ -101,7 +103,9 @@ class TestFit:
             phase_name="test_phase",
             search=mock.MockSearch(),
             settings=ac.SettingsPhaseCIImaging(
-                masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(parallel_columns=(0, 1))
+                settings_masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(
+                    parallel_columns=(0, 1)
+                )
             ),
         )
 
@@ -134,7 +138,9 @@ class TestFit:
             phase_name="test_phase",
             search=mock.MockSearch(),
             settings=ac.SettingsPhaseCIImaging(
-                masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(parallel_columns=(0, 1))
+                settings_masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(
+                    parallel_columns=(0, 1)
+                )
             ),
         )
 
@@ -200,7 +206,9 @@ class TestFit:
             phase_name="test_phase",
             search=mock.MockSearch(),
             settings=ac.SettingsPhaseCIImaging(
-                masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(parallel_columns=(0, 1))
+                settings_masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(
+                    parallel_columns=(0, 1)
+                )
             ),
         )
 

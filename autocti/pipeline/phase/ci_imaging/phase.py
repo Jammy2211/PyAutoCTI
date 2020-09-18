@@ -104,7 +104,7 @@ class PhaseCIImaging(PhaseDataset):
             total_images=len(datasets), results=results
         )
 
-        settings_masked_ci_imaging = self.settings.masked_ci_imaging.modify_via_fit_type(
+        settings_masked_ci_imaging = self.settings.settings_masked_ci_imaging.modify_via_fit_type(
             is_parallel_fit=self.is_parallel_fit, is_serial_fit=self.is_serial_fit
         )
 
@@ -121,7 +121,7 @@ class PhaseCIImaging(PhaseDataset):
         return Analysis(
             masked_ci_imagings=masked_ci_imagings,
             clocker=clocker,
-            settings_cti=self.settings.cti,
+            settings_cti=self.settings.settings_cti,
             image_path=self.search.paths.image_path,
             results=results,
             pool=pool,
@@ -134,7 +134,7 @@ class PhaseCIImaging(PhaseDataset):
         )
 
         return ci_mask.CIMask.masked_front_edges_and_trails_from_ci_frame(
-            mask=mask, ci_frame=dataset.image, settings=self.settings.ci_mask
+            mask=mask, ci_frame=dataset.image, settings=self.settings.settings_ci_mask
         )
 
     def noise_scaling_maps_list_from_total_images_and_results(

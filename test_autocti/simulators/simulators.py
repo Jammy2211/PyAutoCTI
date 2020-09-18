@@ -8,12 +8,12 @@ def simulate__ci_uniform__parallel_x1(resolution, normalizations):
     ci_data_type = "ci_uniform"
     ci_data_model = "parallel_x1"
 
-    parallel_traps = [ac.TrapInstantCapture(density=1.0, release_timescale=3.0)]
-    parallel_ccd = ac.CCD(
+    parallel_traps = [ac.TrapInstantCaptureWrap(density=1.0, release_timescale=3.0)]
+    parallel_ccd = ac.CCDWrap(
         well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
     )
 
-    clocker = ac.Clocker(iterations=1, parallel_express=2)
+    clocker = ac.ClockerWrap(iterations=1, parallel_express=2)
 
     for normalization in normalizations:
 
@@ -39,16 +39,16 @@ def simulate__ci_uniform__parallel_x3(resolution, normalizations):
     ci_data_model = "parallel_x3"
 
     parallel_traps = [
-        ac.TrapInstantCapture(density=0.5, release_timescale=2.0),
-        ac.TrapInstantCapture(density=1.5, release_timescale=5.0),
-        ac.TrapInstantCapture(density=2.5, release_timescale=20.0),
+        ac.TrapInstantCaptureWrap(density=0.5, release_timescale=2.0),
+        ac.TrapInstantCaptureWrap(density=1.5, release_timescale=5.0),
+        ac.TrapInstantCaptureWrap(density=2.5, release_timescale=20.0),
     ]
 
-    parallel_ccd = ac.CCD(
+    parallel_ccd = ac.CCDWrap(
         well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
     )
 
-    clocker = ac.Clocker(iterations=1, parallel_express=2)
+    clocker = ac.ClockerWrap(iterations=1, parallel_express=2)
 
     for normalization in normalizations:
         ci_regions = resolution_util.ci_regions_from_resolution(resolution=resolution)
@@ -72,12 +72,12 @@ def simulate__ci_uniform__serial_x1(resolution, normalizations):
     ci_data_type = "ci_uniform"
     ci_data_model = "serial_x1"
 
-    serial_traps = [ac.TrapInstantCapture(density=1.0, release_timescale=3.0)]
-    serial_ccd = ac.CCD(
+    serial_traps = [ac.TrapInstantCaptureWrap(density=1.0, release_timescale=3.0)]
+    serial_ccd = ac.CCDWrap(
         well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
     )
 
-    clocker = ac.Clocker(iterations=1, serial_express=2)
+    clocker = ac.ClockerWrap(iterations=1, serial_express=2)
 
     for normalization in normalizations:
 
@@ -103,15 +103,15 @@ def simulate__ci_uniform__serial_x3(resolution, normalizations):
     ci_data_model = "serial_x3"
 
     serial_traps = [
-        ac.TrapInstantCapture(density=0.5, release_timescale=2.0),
-        ac.TrapInstantCapture(density=1.5, release_timescale=5.0),
-        ac.TrapInstantCapture(density=2.5, release_timescale=20.0),
+        ac.TrapInstantCaptureWrap(density=0.5, release_timescale=2.0),
+        ac.TrapInstantCaptureWrap(density=1.5, release_timescale=5.0),
+        ac.TrapInstantCaptureWrap(density=2.5, release_timescale=20.0),
     ]
-    serial_ccd = ac.CCD(
+    serial_ccd = ac.CCDWrap(
         well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
     )
 
-    clocker = ac.Clocker(iterations=1, serial_express=2)
+    clocker = ac.ClockerWrap(iterations=1, serial_express=2)
 
     for normalization in normalizations:
         ci_regions = resolution_util.ci_regions_from_resolution(resolution=resolution)
@@ -135,17 +135,17 @@ def simulate__ci_uniform__parallel_x1__serial_x1(resolution, normalizations):
     ci_data_type = "ci_uniform"
     ci_data_model = "parallel_x1__serial_x1"
 
-    parallel_traps = [ac.TrapInstantCapture(density=1.0, release_timescale=3.0)]
-    parallel_ccd = ac.CCD(
+    parallel_traps = [ac.TrapInstantCaptureWrap(density=1.0, release_timescale=3.0)]
+    parallel_ccd = ac.CCDWrap(
         well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
     )
 
-    serial_traps = [ac.TrapInstantCapture(density=1.0, release_timescale=3.0)]
-    serial_ccd = ac.CCD(
+    serial_traps = [ac.TrapInstantCaptureWrap(density=1.0, release_timescale=3.0)]
+    serial_ccd = ac.CCDWrap(
         well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
     )
 
-    clocker = ac.Clocker(iterations=1, parallel_express=2, serial_express=2)
+    clocker = ac.ClockerWrap(iterations=1, parallel_express=2, serial_express=2)
 
     for normalization in normalizations:
 
@@ -173,25 +173,25 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
     ci_data_model = "parallel_x3__serial_x3"
 
     parallel_traps = [
-        ac.TrapInstantCapture(density=0.5, release_timescale=2.0),
-        ac.TrapInstantCapture(density=1.5, release_timescale=5.0),
-        ac.TrapInstantCapture(density=2.5, release_timescale=20.0),
+        ac.TrapInstantCaptureWrap(density=0.5, release_timescale=2.0),
+        ac.TrapInstantCaptureWrap(density=1.5, release_timescale=5.0),
+        ac.TrapInstantCaptureWrap(density=2.5, release_timescale=20.0),
     ]
 
-    parallel_ccd = ac.CCD(
+    parallel_ccd = ac.CCDWrap(
         well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
     )
 
     serial_traps = [
-        ac.TrapInstantCapture(density=0.5, release_timescale=2.0),
-        ac.TrapInstantCapture(density=1.5, release_timescale=5.0),
-        ac.TrapInstantCapture(density=2.5, release_timescale=20.0),
+        ac.TrapInstantCaptureWrap(density=0.5, release_timescale=2.0),
+        ac.TrapInstantCaptureWrap(density=1.5, release_timescale=5.0),
+        ac.TrapInstantCaptureWrap(density=2.5, release_timescale=20.0),
     ]
-    serial_ccd = ac.CCD(
+    serial_ccd = ac.CCDWrap(
         well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
     )
 
-    clocker = ac.Clocker(iterations=1, parallel_express=2, serial_express=2)
+    clocker = ac.ClockerWrap(iterations=1, parallel_express=2, serial_express=2)
 
     for normalization in normalizations:
         ci_regions = resolution_util.ci_regions_from_resolution(resolution=resolution)
@@ -217,12 +217,12 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
 #     ci_data_type = "ci_uniform_cosmic_rays"
 #     ci_data_model = "parallel_x1"
 #
-#     parallel_traps = ac.TrapInstantCapture(density=1.0, release_timescale=3.0)
-#     parallel_ccd = ac.CCD(
+#     parallel_traps = ac.TrapInstantCaptureWrap(density=1.0, release_timescale=3.0)
+#     parallel_ccd = ac.CCDWrap(
 #         well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
 #     )
 #
-#     clocker = ac.Clocker(iterations=1, parallel_express=2)
+#     clocker = ac.ClockerWrap(iterations=1, parallel_express=2)
 #
 #     shape = resolution_util.shape_2d_from_resolution(
 #         resolution=resolution
@@ -258,12 +258,12 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
 #     ci_data_type = "ci_uniform_cosmic_rays"
 #     ci_data_model = "serial_x1"
 #
-#     serial_traps = ac.TrapInstantCapture(density=1.0, release_timescale=3.0)
-#     serial_ccd = ac.CCD(
+#     serial_traps = ac.TrapInstantCaptureWrap(density=1.0, release_timescale=3.0)
+#     serial_ccd = ac.CCDWrap(
 #         well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
 #     )
 #
-#     clocker = ac.Clocker(iterations=1, serial_express=2)
+#     clocker = ac.ClockerWrap(iterations=1, serial_express=2)
 #
 #     shape = resolution_util.shape_2d_from_resolution(
 #         resolution=resolution
@@ -301,17 +301,17 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
 #     ci_data_type = "ci_uniform_cosmic_rays"
 #     ci_data_model = "parallel_x1__serial_x1"
 #
-#     parallel_traps = ac.TrapInstantCapture(density=1.0, release_timescale=3.0)
-#     parallel_ccd = ac.CCD(
+#     parallel_traps = ac.TrapInstantCaptureWrap(density=1.0, release_timescale=3.0)
+#     parallel_ccd = ac.CCDWrap(
 #         well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
 #     )
 #
-#     serial_traps = ac.TrapInstantCapture(density=1.0, release_timescale=3.0)
-#     serial_ccd = ac.CCD(
+#     serial_traps = ac.TrapInstantCaptureWrap(density=1.0, release_timescale=3.0)
+#     serial_ccd = ac.CCDWrap(
 #         well_fill_power=0.8, full_well_depth=8.47e4, well_notch_depth=1e-7
 #     )
 #
-#     clocker = ac.Clocker(iterations=1, parallel_express=1, serial_express=2)
+#     clocker = ac.ClockerWrap(iterations=1, parallel_express=1, serial_express=2)
 #
 #     shape = resolution_util.shape_2d_from_resolution(
 #         resolution=resolution

@@ -22,7 +22,10 @@ class SettingsMask:
 
     @property
     def tag(self):
-        return self.cosmic_ray_buffer_tag
+        return (
+            f"{conf.instance.settings_tag.get('mask', 'mask')}["
+            f"{self.cosmic_ray_buffer_tag}]"
+        )
 
     @property
     def cosmic_ray_buffer_tag(self):
@@ -45,21 +48,21 @@ class SettingsMask:
         if self.cosmic_ray_parallel_buffer is None:
             cosmic_ray_parallel_buffer_tag = ""
         else:
-            cosmic_ray_parallel_buffer_tag = f"{conf.instance.tag.get('mask', 'cosmic_ray_parallel_buffer')}{self.cosmic_ray_parallel_buffer}"
+            cosmic_ray_parallel_buffer_tag = f"{conf.instance.settings_tag.get('mask', 'cosmic_ray_parallel_buffer')}{self.cosmic_ray_parallel_buffer}"
 
         if self.cosmic_ray_serial_buffer is None:
             cosmic_ray_serial_buffer_tag = ""
         else:
-            cosmic_ray_serial_buffer_tag = f"{conf.instance.tag.get('mask', 'cosmic_ray_serial_buffer')}{self.cosmic_ray_serial_buffer}"
+            cosmic_ray_serial_buffer_tag = f"{conf.instance.settings_tag.get('mask', 'cosmic_ray_serial_buffer')}{self.cosmic_ray_serial_buffer}"
 
         if self.cosmic_ray_diagonal_buffer is None:
             cosmic_ray_diagonal_buffer_tag = ""
         else:
-            cosmic_ray_diagonal_buffer_tag = f"{conf.instance.tag.get('mask', 'cosmic_ray_diagonal_buffer')}{self.cosmic_ray_diagonal_buffer}"
+            cosmic_ray_diagonal_buffer_tag = f"{conf.instance.settings_tag.get('mask', 'cosmic_ray_diagonal_buffer')}{self.cosmic_ray_diagonal_buffer}"
 
         return (
             "__"
-            + conf.instance.tag.get("mask", "cosmic_ray_buffer")
+            + conf.instance.settings_tag.get("mask", "cosmic_ray_buffer")
             + "_"
             + cosmic_ray_parallel_buffer_tag
             + cosmic_ray_serial_buffer_tag

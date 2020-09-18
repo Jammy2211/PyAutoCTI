@@ -1,5 +1,6 @@
 from autoconf import conf
-from autocti.plot import ci_imaging_plots, ci_fit_plots, mat_objs, plotters
+from autoarray.plot import mat_objs, plotters
+from autocti.plot import ci_imaging_plots, ci_fit_plots
 
 
 def setting(section, name):

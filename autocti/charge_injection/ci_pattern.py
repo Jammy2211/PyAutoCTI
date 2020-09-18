@@ -11,6 +11,7 @@ import numpy as np
 from autocti import exc
 from autoarray.structures import region
 from autoarray.util import frame_util
+from autocti.charge_injection import ci_frame
 
 
 class AbstractCIPattern(object):
@@ -79,7 +80,7 @@ class CIPatternUniform(AbstractCIPattern):
 
     """
 
-    def ci_pre_cti_from_shape_2d(self, shape_2d):
+    def ci_pre_cti_from_shape_2d(self, shape_2d, pixel_scales=None):
         """Use this charge injection ci_pattern to generate a pre-cti charge injection image. This is performed by \
         going to its charge injection regions and adding the charge injection normalization value.
 
@@ -96,7 +97,9 @@ class CIPatternUniform(AbstractCIPattern):
         for region in self.regions:
             ci_pre_cti[region.slice] += self.normalization
 
-        return ci_pre_cti
+        return ci_frame.CIFrame.manual(
+            array=ci_pre_cti, ci_pattern=self, pixel_scales=pixel_scales
+        )
 
 
 class CIPatternNonUniform(AbstractCIPattern):
@@ -135,7 +138,7 @@ class CIPatternNonUniform(AbstractCIPattern):
         self.column_sigma = column_sigma
         self.maximum_normalization = maximum_normalization
 
-    def ci_pre_cti_from_shape_2d(self, shape_2d, ci_seed=-1):
+    def ci_pre_cti_from_shape_2d(self, shape_2d, pixel_scales=None, ci_seed=-1):
         """Use this charge injection ci_pattern to generate a pre-cti charge injection image. This is performed by going \
         to its charge injection regions and adding its non-uniform charge distribution.
 
@@ -171,7 +174,9 @@ class CIPatternNonUniform(AbstractCIPattern):
                 region_dimensions=region.shape, ci_seed=ci_seed
             )
 
-        return ci_pre_cti
+        return ci_frame.CIFrame.manual(
+            array=ci_pre_cti, ci_pattern=self, pixel_scales=pixel_scales
+        )
 
     def ci_region_from_region(self, region_dimensions, ci_seed):
         """Generate the non-uniform charge distribution of a charge injection region. This includes non-uniformity \

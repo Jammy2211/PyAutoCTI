@@ -2716,6 +2716,7 @@ class TestCIFrameAPI:
         assert ci_frame.scans.serial_prescan == (1, 2, 1, 2)
         assert ci_frame.scans.serial_overscan == (0, 2, 0, 2)
         assert (ci_frame.mask == np.array([[False, False], [False, False]])).all()
+        assert ci_frame.in_2d.ci_pattern.regions == [(0, 1, 0, 1)]
 
         ci_frame = ac.ci.CIFrame.manual(
             array=[[1.0, 2.0], [3.0, 4.0]],

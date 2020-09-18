@@ -189,7 +189,11 @@ class SettingsMaskedCIImaging(imaging.AbstractSettingsMaskedImaging):
 
     @property
     def tag(self):
-        return self.parallel_columns_tag + self.serial_rows_tag
+        return (
+            f"{conf.instance.settings_tag.get('ci_imaging', 'ci_imaging')}["
+            f"{self.parallel_columns_tag}"
+            f"{self.serial_rows_tag}]"
+        )
 
     @property
     def parallel_columns_tag(self):
@@ -207,7 +211,7 @@ class SettingsMaskedCIImaging(imaging.AbstractSettingsMaskedImaging):
         else:
             x0 = str(self.parallel_columns[0])
             x1 = str(self.parallel_columns[1])
-            return f"__{conf.instance.tag.get('ci_imaging', 'parallel_columns')}_({x0},{x1})"
+            return f"__{conf.instance.settings_tag.get('ci_imaging', 'parallel_columns')}_({x0},{x1})"
 
     @property
     def serial_rows_tag(self):
@@ -225,7 +229,7 @@ class SettingsMaskedCIImaging(imaging.AbstractSettingsMaskedImaging):
         else:
             x0 = str(self.serial_rows[0])
             x1 = str(self.serial_rows[1])
-            return f"__{conf.instance.tag.get('ci_imaging', 'serial_rows')}_({x0},{x1})"
+            return f"__{conf.instance.settings_tag.get('ci_imaging', 'serial_rows')}_({x0},{x1})"
 
     def modify_via_fit_type(self, is_parallel_fit, is_serial_fit):
         """Modify the settings based on the type of fit being performed where:
@@ -377,6 +381,7 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
         read_noise=None,
         add_noise=True,
         scans=None,
+        pixel_scales=None,
         noise_if_add_noise_false=0.1,
         noise_seed=-1,
         ci_seed=-1,
@@ -399,6 +404,7 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
 
         self.shape_2d = shape_2d
         self.scans = scans
+        self.pixel_scales = pixel_scales
         self.ci_seed = ci_seed
 
     def from_ci_pattern(
@@ -434,10 +440,14 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
             Seed for the read-noises added to the image.
         """
         if isinstance(ci_pattern, pattern.CIPatternUniform):
-            ci_pre_cti = ci_pattern.ci_pre_cti_from_shape_2d(shape_2d=self.shape_2d)
+            ci_pre_cti = ci_pattern.ci_pre_cti_from_shape_2d(
+                shape_2d=self.shape_2d, pixel_scales=self.pixel_scales
+            )
         else:
             ci_pre_cti = ci_pattern.ci_pre_cti_from_shape_2d(
-                shape_2d=self.shape_2d, ci_seed=self.ci_seed
+                shape_2d=self.shape_2d,
+                ci_seed=self.ci_seed,
+                pixel_scales=self.pixel_scales,
             )
 
         if cosmic_ray_map is not None:
@@ -462,16 +472,28 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
 
         return CIImaging(
             image=ci_frame.CIFrame.manual(
-                array=ci_image, ci_pattern=ci_pattern, scans=self.scans
+                array=ci_image,
+                ci_pattern=ci_pattern,
+                scans=self.scans,
+                pixel_scales=self.pixel_scales,
             ),
             noise_map=ci_frame.CIFrame.manual(
-                array=ci_noise_map, ci_pattern=ci_pattern, scans=self.scans
+                array=ci_noise_map,
+                ci_pattern=ci_pattern,
+                scans=self.scans,
+                pixel_scales=self.pixel_scales,
             ),
             ci_pre_cti=ci_frame.CIFrame.manual(
-                array=ci_pre_cti, ci_pattern=ci_pattern, scans=self.scans
+                array=ci_pre_cti,
+                ci_pattern=ci_pattern,
+                scans=self.scans,
+                pixel_scales=self.pixel_scales,
             ),
             cosmic_ray_map=ci_frame.CIFrame.manual(
-                array=cosmic_ray_map, ci_pattern=ci_pattern, scans=self.scans
+                array=cosmic_ray_map,
+                ci_pattern=ci_pattern,
+                scans=self.scans,
+                pixel_scales=self.pixel_scales,
             ),
             name=name,
         )

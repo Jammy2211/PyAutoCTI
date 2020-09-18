@@ -2,7 +2,7 @@ import numpy as np
 
 from autoarray.structures import abstract_structure
 from autoarray.structures.arrays import abstract_array
-from autoarray.structures.frame import abstract_frame
+from autoarray.structures.frames import abstract_frame
 from autoarray.util import array_util
 from autoarray.util import frame_util
 from autocti.mask import mask as msk
@@ -45,6 +45,7 @@ class Frame(abstract_frame.AbstractFrame):
         obj.mask = mask
         obj.exposure_info = exposure_info
         obj.store_in_1d = False
+        obj.zoom_for_plot = False
         obj.original_roe_corner = original_roe_corner
         obj.scans = scans or abstract_frame.Scans()
         obj.exposure_info = exposure_info
