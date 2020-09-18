@@ -5,7 +5,7 @@ from autoarray.structures import abstract_structure
 from autoarray.structures.arrays import abstract_array
 from autocti.charge_injection import ci_mask
 from autocti.mask.mask import Mask
-from autoarray.structures.frame import abstract_frame
+from autoarray.structures.frames import abstract_frame
 from autoarray.instruments import euclid
 from autoarray.util import array_util, frame_util
 from autocti.structures import frame as f
@@ -40,6 +40,7 @@ class AbstractCIFrame(abstract_frame.AbstractFrame):
         obj = array.view(cls)
         obj.mask = mask
         obj.store_in_1d = False
+        obj.zoom_for_plot = False
         obj.original_roe_corner = original_roe_corner
         obj.exposure_info = exposure_info
         obj.scans = scans or abstract_frame.Scans()
@@ -60,6 +61,16 @@ class AbstractCIFrame(abstract_frame.AbstractFrame):
                 self.ci_pattern = obj.ci_pattern
             if hasattr(obj, "scans"):
                 self.scans = obj.scans
+
+    def _new_structure(self, array, mask, store_in_1d):
+        return self.__class__(
+            array=array,
+            mask=mask,
+            ci_pattern=self.ci_pattern,
+            original_roe_corner=self.original_roe_corner,
+            scans=self.scans,
+            exposure_info=self.exposure_info,
+        )
 
     @property
     def ci_regions_frame(self):

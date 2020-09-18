@@ -11,7 +11,7 @@ config_path = test_path + "config"
 conf.instance = conf.Config(config_path=config_path, output_path=output_path)
 
 
-clocker = ac.Clocker(parallel_express=2, serial_express=2)
+clocker = ac.ClockerWrap(parallel_express=2, serial_express=2)
 
 
 def make_pipeline(name, folders, search):
@@ -27,9 +27,9 @@ def make_pipeline(name, folders, search):
         phase_name="phase_1",
         folders=folders,
         search=search,
-        parallel_traps=[af.PriorModel(ac.TrapInstantCapture)],
+        parallel_traps=[af.PriorModel(ac.TrapInstantCaptureWrap)],
         parallel_ccd=parallel_ccd,
-        serial_traps=[af.PriorModel(ac.TrapInstantCapture)],
+        serial_traps=[af.PriorModel(ac.TrapInstantCaptureWrap)],
         serial_ccd=serial_ccd,
         parallel_front_edge_rows=(0, 1),
         parallel_trails_rows=(0, 1),

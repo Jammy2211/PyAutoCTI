@@ -32,7 +32,7 @@ def make_pipeline(name, folders, search):
         phase_name="phase_1",
         folders=folders,
         search=search,
-        parallel_traps=[af.PriorModel(ac.TrapInstantCapture)],
+        parallel_traps=[af.PriorModel(ac.TrapInstantCaptureWrap)],
         parallel_ccd=parallel_ccd,
         columns=None,
         parallel_front_edge_rows=(0, 1),

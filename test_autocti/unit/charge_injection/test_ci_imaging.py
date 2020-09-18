@@ -226,6 +226,13 @@ class TestSettingsMaskedCIImaging:
         settings = ac.ci.SettingsMaskedCIImaging(serial_rows=(10, 20))
         assert settings.serial_rows_tag == "__rows_(10,20)"
 
+    def test__tag(self):
+
+        settings = ac.ci.SettingsMaskedCIImaging(
+            parallel_columns=(60, 65), serial_rows=(10, 20)
+        )
+        assert settings.tag == "ci_imaging[__cols_(60,65)__rows_(10,20)]"
+
     def test__modify_via_fit_type(self):
 
         settings = ac.ci.SettingsMaskedCIImaging(
@@ -498,11 +505,11 @@ class TestSimulatorCIImaging(object):
     #
     #     # Densities for this seed are [9.6, 8.2, 8.6, 9.6, 9.6]
     #
-    #     parallel_traps = ac.TrapInstantCapture(trap_density=10.0, trap_release_timescale=1.0)
-    #     parallel_traps = ac.TrapInstantCapture.poisson_species(
+    #     parallel_traps = ac.TrapInstantCaptureWrap(trap_density=10.0, trap_release_timescale=1.0)
+    #     parallel_traps = ac.TrapInstantCaptureWrap.poisson_species(
     #         species=[parallel_traps], shape=(5, 5), seed=1
     #     )
-    #     parallel_ccd = ac.CCD(
+    #     parallel_ccd = ac.CCDWrap(
     #         well_notch_depth=1.0e-4,
     #         well_fill_power=0.58,
     #         well_fill_gamma=0.0,

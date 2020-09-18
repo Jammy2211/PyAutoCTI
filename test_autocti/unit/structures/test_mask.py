@@ -47,6 +47,15 @@ class TestSettingsMask:
         )
         assert settings.cosmic_ray_buffer_tag == "__cr_p10s5d1"
 
+    def test__tag(self):
+
+        settings = ac.SettingsMask(
+            cosmic_ray_parallel_buffer=10,
+            cosmic_ray_serial_buffer=5,
+            cosmic_ray_diagonal_buffer=1,
+        )
+        assert settings.tag == "mask[__cr_p10s5d1]"
+
 
 class TestMask:
     def test__mask__makes_mask_without_other_inputs(self):

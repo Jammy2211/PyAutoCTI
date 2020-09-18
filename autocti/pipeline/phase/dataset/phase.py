@@ -72,7 +72,6 @@ class PhaseDataset(abstract.AbstractPhase):
         #    self.save_metadata(dataset=datasets)
         #    self.save_dataset(dataset=datasets)
         #    self.save_mask(masks)
-        self.save_meta_dataset(meta_dataset=self.meta_dataset)
 
         self.model = self.model.populate(results)
 
@@ -115,7 +114,7 @@ class PhaseDataset(abstract.AbstractPhase):
 
         cosmic_ray_mask = (
             msk.Mask.from_cosmic_ray_map_buffed(
-                cosmic_ray_map=cosmic_ray_map, settings=self.settings.mask
+                cosmic_ray_map=cosmic_ray_map, settings=self.settings.settings_mask
             )
             if cosmic_ray_map is not None
             else None

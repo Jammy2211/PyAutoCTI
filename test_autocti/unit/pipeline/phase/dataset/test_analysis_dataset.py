@@ -22,7 +22,7 @@ class TestCheckDensity:
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
             settings=ac.SettingsPhaseCIImaging(
-                cti=ac.SettingsCTI(parallel_total_density_range=(1.0, 2.0))
+                settings_cti=ac.SettingsCTI(parallel_total_density_range=(1.0, 2.0))
             ),
             search=mock.MockSearch(),
         )
@@ -33,8 +33,8 @@ class TestCheckDensity:
 
         instance = model.ModelInstance()
         instance.parallel_traps = [
-            ac.TrapInstantCapture(density=1.1),
-            ac.TrapInstantCapture(density=1.1),
+            ac.TrapInstantCaptureWrap(density=1.1),
+            ac.TrapInstantCaptureWrap(density=1.1),
         ]
         instance.serial_traps = []
 
@@ -44,7 +44,7 @@ class TestCheckDensity:
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
             settings=ac.SettingsPhaseCIImaging(
-                cti=ac.SettingsCTI(serial_total_density_range=(1.0, 2.0))
+                settings_cti=ac.SettingsCTI(serial_total_density_range=(1.0, 2.0))
             ),
             search=mock.MockSearch(),
         )
@@ -56,8 +56,8 @@ class TestCheckDensity:
         instance = model.ModelInstance()
         instance.parallel_traps = []
         instance.serial_traps = [
-            ac.TrapInstantCapture(density=1.1),
-            ac.TrapInstantCapture(density=1.1),
+            ac.TrapInstantCaptureWrap(density=1.1),
+            ac.TrapInstantCaptureWrap(density=1.1),
         ]
 
         with pytest.raises(exc.PriorException):

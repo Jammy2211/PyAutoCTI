@@ -17,7 +17,9 @@ class SettingsCTI:
     @property
     def tag(self):
         return (
-            self.parallel_total_density_range_tag + self.serial_total_density_range_tag
+            f"{conf.instance.settings_tag.get('cti', 'cti')}["
+            f"{self.parallel_total_density_range_tag}"
+            f"{self.serial_total_density_range_tag}]"
         )
 
     @property
@@ -36,7 +38,7 @@ class SettingsCTI:
         else:
             x0 = str(self.parallel_total_density_range[0])
             x1 = str(self.parallel_total_density_range[1])
-            return f"__{conf.instance.tag.get('cti', 'parallel_total_density_range')}_({x0},{x1})"
+            return f"__{conf.instance.settings_tag.get('cti', 'parallel_total_density_range')}_({x0},{x1})"
 
     @property
     def serial_total_density_range_tag(self):
@@ -54,7 +56,7 @@ class SettingsCTI:
         else:
             x0 = str(self.serial_total_density_range[0])
             x1 = str(self.serial_total_density_range[1])
-            return f"__{conf.instance.tag.get('cti', 'serial_total_density_range')}_({x0},{x1})"
+            return f"__{conf.instance.settings_tag.get('cti', 'serial_total_density_range')}_({x0},{x1})"
 
     def check_total_density_within_range(self, parallel_traps, serial_traps):
 
@@ -82,24 +84,24 @@ class SettingsCTI:
 class SettingsPhaseCIImaging:
     def __init__(
         self,
-        cti=SettingsCTI(),
-        mask=msk.SettingsMask(),
-        ci_mask=ci_msk.SettingsCIMask(),
-        masked_ci_imaging=ci_imaging.SettingsMaskedCIImaging(),
+        settings_cti=SettingsCTI(),
+        settings_mask=msk.SettingsMask(),
+        settings_ci_mask=ci_msk.SettingsCIMask(),
+        settings_masked_ci_imaging=ci_imaging.SettingsMaskedCIImaging(),
     ):
 
-        self.cti = cti
-        self.mask = mask
-        self.ci_mask = ci_mask
-        self.masked_ci_imaging = masked_ci_imaging
+        self.settings_cti = settings_cti
+        self.settings_mask = settings_mask
+        self.settings_ci_mask = settings_ci_mask
+        self.settings_masked_ci_imaging = settings_masked_ci_imaging
 
     @property
     def phase_tag(self):
 
         return (
-            conf.instance.tag.get("phase", "settings")
-            + self.cti.tag
-            + self.mask.tag
-            + self.ci_mask.tag
-            + self.masked_ci_imaging.tag
+            f"{conf.instance.settings_tag.get('phase', 'settings')}__"
+            f"{self.settings_cti.tag}_"
+            f"{self.settings_mask.tag}_"
+            f"{self.settings_ci_mask.tag}_"
+            f"{self.settings_masked_ci_imaging.tag}"
         )

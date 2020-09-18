@@ -147,7 +147,7 @@ class Analysis(analysis_dataset.Analysis):
         for fit, visualizer in zip(fits, self.visualizers):
 
             visualizer.visualize_ci_fit(fit=fit, during_analysis=during_analysis)
-            visualizer.visualize_ci_fit_lines(fit=fit, during_analysis=during_analysis)
+        #    visualizer.visualize_ci_fit_lines(fit=fit, line_region="parallel_front_edge", during_analysis=during_analysis)
 
 
 def pipe_cti(ci_data_masked, instance, clocker, hyper_noise_scalars):

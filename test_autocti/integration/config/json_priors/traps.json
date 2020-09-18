@@ -1,5 +1,5 @@
 {
-    "TrapInstantCapture": {
+    "TrapInstantCaptureWrap": {
         "density": {
             "type": "Uniform",
             "lower_limit": 0.0,

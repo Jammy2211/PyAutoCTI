@@ -42,7 +42,9 @@ class TestMakeAnalysis:
             phase_name="test_phase",
             search=mock.MockSearch(),
             settings=ac.SettingsPhaseCIImaging(
-                masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(parallel_columns=(0, 1))
+                settings_masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(
+                    parallel_columns=(0, 1)
+                )
             ),
         )
 
@@ -63,7 +65,9 @@ class TestMakeAnalysis:
             phase_name="test_phase",
             search=mock.MockSearch(),
             settings=ac.SettingsPhaseCIImaging(
-                masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(serial_rows=(0, 1))
+                settings_masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(
+                    serial_rows=(0, 1)
+                )
             ),
         )
 
@@ -91,7 +95,7 @@ class TestMakeAnalysis:
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
             phase_name="test_phase",
-            settings=ac.SettingsPhaseCIImaging(ci_mask=settings_ci_mask),
+            settings=ac.SettingsPhaseCIImaging(settings_ci_mask=settings_ci_mask),
             search=mock.MockSearch(),
         )
 
@@ -146,8 +150,8 @@ class TestMakeAnalysis:
         ]
 
         phase = PhaseCIImaging(
-            parallel_traps=[prior_model.PriorModel(ac.TrapInstantCapture)],
-            parallel_ccd=ac.CCD,
+            parallel_traps=[prior_model.PriorModel(ac.TrapInstantCaptureWrap)],
+            parallel_ccd=ac.CCDWrap,
             hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
             hyper_noise_scalar_of_parallel_trails=ac.ci.CIHyperNoiseScalar,
             phase_name="test_phase",
@@ -177,8 +181,8 @@ class TestMakeAnalysis:
         ).all()
 
         phase = PhaseCIImaging(
-            parallel_traps=[prior_model.PriorModel(ac.TrapInstantCapture)],
-            parallel_ccd=ac.CCD,
+            parallel_traps=[prior_model.PriorModel(ac.TrapInstantCaptureWrap)],
+            parallel_ccd=ac.CCDWrap,
             hyper_noise_scalar_of_parallel_trails=ac.ci.CIHyperNoiseScalar,
             hyper_noise_scalar_of_serial_trails=ac.ci.CIHyperNoiseScalar,
             hyper_noise_scalar_of_serial_overscan_no_trails=ac.ci.CIHyperNoiseScalar,
