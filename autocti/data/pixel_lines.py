@@ -6,6 +6,7 @@ class PixelLine(object):
     def __init__(
         self,
         data=None,
+        error=None,
         origin=None,
         location=None,
         date=None,
@@ -23,6 +24,9 @@ class PixelLine(object):
         data : [float]
             The pixel counts, in units of electrons.
             
+        error : [float]
+            The standard errors on the pixel counts, in units of electrons.
+            
         origin : str
             An identifier for the origin (e.g. image name) of the data.
             
@@ -36,7 +40,7 @@ class PixelLine(object):
             
         background : float
             The background charge count, in units of electrons. It is assumed 
-            that the background has already been subtracted from the data.
+            that the background has not been subtracted from the data.
             
         flux : float
             The maximum charge in the line, or e.g. for a CTI trail the original 
@@ -51,6 +55,7 @@ class PixelLine(object):
             The number of pixels in the data array.
         """
         self.data = data
+        self.error = error
         self.origin = origin
         self.location = location
         self.date = date
@@ -116,6 +121,10 @@ class PixelLineCollection(object):
     @property
     def data(self):
         return np.array([line.data for line in self.lines])
+
+    @property
+    def errors(self):
+        return np.array([line.error for line in self.lines])
 
     @property
     def origins(self):
@@ -211,20 +220,52 @@ class PixelLineCollection(object):
 
         return consistent_lines.flatten()
 
+    @staticmethod
+    def stacked_bin_index(
+        i_row=0,
+        n_row_bins=1,
+        i_flux=0,
+        n_flux_bins=1,
+        i_date=0,
+        n_date_bins=1,
+        i_background=0,
+        n_background_bins=1,
+    ):
+        """
+        Return the index for the 1D ordering of stacked lines in bins, given the 
+        index and number of each bin.
+        
+        See generate_stacked_lines_from_bins().
+        """
+        return int(
+            i_row * n_flux_bins * n_date_bins * n_background_bins
+            + i_flux * n_date_bins * n_background_bins
+            + i_date * n_background_bins
+            + i_background
+        )
+
     def generate_stacked_lines_from_bins(
         self,
         n_row_bins=1,
         row_min=None,
         row_max=None,
+        row_scale="linear",
+        row_bins=None,
         n_flux_bins=1,
         flux_min=None,
         flux_max=None,
+        flux_scale="log",
+        flux_bins=None,
         n_date_bins=1,
         date_min=None,
         date_max=None,
+        date_scale="linear",
+        date_bins=None,
         n_background_bins=1,
         background_min=None,
         background_max=None,
+        background_scale="linear",
+        background_bins=None,
         return_bin_info=False,
     ):
         """ Create a collection of stacked lines by averaging within bins.
@@ -236,144 +277,222 @@ class PixelLineCollection(object):
         
         Lines should all be the same length. 
         
-        Bin minima and maxima default to the extremes of the lines' values.
+        The full bin edge values may be provided, or instead the number and 
+        limits of the bins. Bin minima and maxima default to the extremes of the 
+        lines' values with, by default, logarithmic spacing for the flux bins 
+        and linear for the others.
+        
+        Lines with values outside of the bin minima or maxima are discarded.
         
         Parameters
         ----------
-        n_row_bins, row_min, row_max : int, int, int
-            The number, minimum, and maximum of bins, by row index, i.e. 
-            distance from the readout register (minus one).
+        row_bins : [float]
+            The edge values of the bins for the rows, i.e. distance from the 
+            readout register (minus one). If provided, this overrides the other 
+            bin inputs to allow for uneven bin spacings, for example. If this is 
+            None (default), the other inputs are used to create it.
         
-        n_date_bins, date_min, date_max : int, float, float
-            The number, minimum, and maximum of bins, by Julian date.
+        n_row_bins : int
+            The number of row bins, if row_bins is not provided.
         
-        n_background_bins, background_min, background_max : int, float, float
-            The number, minimum, and maximum of bins, by background.
+        row_min : float 
+            The minimum value for the row bins, if row_bins is not provided.
         
-        n_flux_bins, flux_min, flux_max : int, float, float
-            The number, minimum, and maximum of bins, by flux.
+        row_max : float 
+            The maximum value for the row bins, if row_bins is not provided.
+        
+        row_scale : str
+            The spacing (linear of logarithmic) for the row bins, if row_bins is 
+            not provided.
+        
+        flux_bins, n_flux_bins, flux_min, flux_max, flux_scale : [float], int, 
+        float, float, str
+            As above, for the bins by flux.
+        
+        date_bins, n_date_bins, date_min, date_max, date_scale : [float], int, 
+        float, float, str
+            As above, for the bins by Julian date.
+        
+        background_bins, n_background_bins, background_min, background_max, 
+        background_scale : [float], int, float, float, str
+            As above, for the bins by background.
             
         return_bin_info : bool
-            If True, then also return the bin minimum values for each parameter.
+            If True, then also return the bin values for each parameter.
             
         Returns
         -------
         stacked_lines : PixelLineCollection
-            A new collection of the stacked pixel lines. Metadata parameters 
-            contain the lower edge bin value.
+            A new collection of the stacked pixel lines, including errors. 
+            Metadata parameters contain the lower edge bin value.
             
-        row_bin_low, date_bin_low, background_bin_low, flux_bin_low : [float]
-            Returned if return_bin_info is True. The minimum value of the bins
-            for each parameter.
+        row_bins, flux_bins, date_bins, background_bins : [float]
+            Returned if return_bin_info is True. The edge values of the bins for
+            each parameter.
         """
         # Line length
         length = self.lengths[0]
         assert all(self.lengths == length)
 
-        # Bins default to the min and max values of the lines
-        if row_min is None:
-            row_min = np.amin(self.locations[:, 0])
-        if row_max is None:
-            row_max = np.amax(self.locations[:, 0])
-        if date_min is None:
-            date_min = np.amin(self.dates)
-        if date_max is None:
-            date_max = np.amax(self.dates)
-        if background_min is None:
-            background_min = np.amin(self.backgrounds)
-        if background_max is None:
-            background_max = np.amax(self.backgrounds)
-        if flux_min is None:
-            flux_min = np.amin(self.fluxes)
-        if flux_max is None:
-            flux_max = np.amax(self.fluxes)
+        # Extract values from the bins or create the bins
+        if row_bins is not None:
+            row_min = row_bins[0]
+            row_max = row_bins[-1]
+            n_row_bins = len(row_bins) - 1
+        else:
+            # Bins default to the min and max values of the lines
+            if row_min is None:
+                row_min = np.amin(self.locations[:, 0])
+            if row_max is None:
+                row_max = np.amax(self.locations[:, 0])
 
-        # Bin lower edge values
-        row_bin_low = np.linspace(row_min, row_max, n_row_bins + 1)[:-1]
-        date_bin_low = np.linspace(date_min, date_max, n_date_bins + 1)[:-1]
-        background_bin_low = np.linspace(
-            background_min, background_max, n_background_bins + 1
-        )[:-1]
-        flux_bin_low = np.linspace(flux_min, flux_max, n_flux_bins + 1)[:-1]
+            # Bin lower edge values
+            if row_scale == "linear":
+                row_bins = np.linspace(row_min, row_max, n_row_bins + 1)
+            else:
+                row_bins = np.logspace(
+                    np.log10(row_min), np.log10(row_max), n_row_bins + 1
+                )
+        if flux_bins is not None:
+            flux_min = flux_bins[0]
+            flux_max = flux_bins[-1]
+            n_flux_bins = len(flux_bins) - 1
+        else:
+            if flux_min is None:
+                flux_min = np.amin(self.fluxes)
+            if flux_max is None:
+                flux_max = np.amax(self.fluxes)
 
-        # Bin indices for each parameter for each line
+            if flux_scale == "linear":
+                flux_bins = np.linspace(flux_min, flux_max, n_flux_bins + 1)
+            else:
+                flux_bins = np.logspace(
+                    np.log10(flux_min), np.log10(flux_max), n_flux_bins + 1
+                )
+        if date_bins is not None:
+            date_min = date_bins[0]
+            date_max = date_bins[-1]
+            n_date_bins = len(date_bins) - 1
+        else:
+            if date_min is None:
+                date_min = np.amin(self.dates)
+            if date_max is None:
+                date_max = np.amax(self.dates)
+
+            if date_scale == "linear":
+                date_bins = np.linspace(date_min, date_max, n_date_bins + 1)
+            else:
+                date_bins = np.logspace(
+                    np.log10(date_min), np.log10(date_max), n_date_bins + 1
+                )
+        if background_bins is not None:
+            background_min = background_bins[0]
+            background_max = background_bins[-1]
+            n_background_bins = len(background_bins) - 1
+        else:
+            if background_min is None:
+                background_min = np.amin(self.backgrounds)
+            if background_max is None:
+                background_max = np.amax(self.backgrounds)
+
+            if background_scale == "linear":
+                background_bins = np.linspace(
+                    background_min, background_max, n_background_bins + 1
+                )
+            else:
+                background_bins = np.logspace(
+                    np.log10(background_min),
+                    np.log10(background_max),
+                    n_background_bins + 1,
+                )
+
+        # Find the bin indices for each parameter for each line
         if row_max == row_min or n_row_bins == 1:
             row_indices = np.zeros(self.n_lines)
         else:
-            row_indices = np.floor(
-                n_row_bins * (self.locations[:, 0] - row_min) / (row_max - row_min)
-            )
-            row_indices = np.minimum(row_indices, n_row_bins - 1)
-        if date_max == date_min or n_date_bins == 1:
-            date_indices = np.zeros(self.n_lines)
-        else:
-            date_indices = np.floor(
-                n_date_bins * (self.dates - date_min) / (date_max - date_min)
-            )
-            date_indices = np.minimum(date_indices, n_date_bins - 1)
-        if background_max == background_min or n_background_bins == 1:
-            background_indices = np.zeros(self.n_lines)
-        else:
-            background_indices = np.floor(
-                n_background_bins
-                * (self.backgrounds - background_min)
-                / (background_max - background_min)
-            )
-            background_indices = np.minimum(background_indices, n_background_bins - 1)
+            row_indices = np.digitize(self.locations[:, 0], row_bins[:-1]) - 1
+            # Flag if above the max
+            row_indices[self.locations[:, 0] > row_max] = -1
         if flux_max == flux_min or n_flux_bins == 1:
             flux_indices = np.zeros(self.n_lines)
         else:
-            flux_indices = np.floor(
-                n_flux_bins * (self.fluxes - flux_min) / (flux_max - flux_min)
-            )
-            flux_indices = np.minimum(flux_indices, n_flux_bins - 1)
+            flux_indices = np.digitize(self.fluxes, flux_bins[:-1]) - 1
+            # Flag if above the max
+            flux_indices[self.fluxes > flux_max] = -1
+        if date_max == date_min or n_date_bins == 1:
+            date_indices = np.zeros(self.n_lines)
+        else:
+            date_indices = np.digitize(self.dates, date_bins[:-1]) - 1
+            # Flag if above the max
+            date_indices[self.dates > date_max] = -1
+        if background_max == background_min or n_background_bins == 1:
+            background_indices = np.zeros(self.n_lines)
+        else:
+            background_indices = np.digitize(self.backgrounds, background_bins[:-1]) - 1
+            # Flag if above the max
+            background_indices[self.backgrounds > background_max] = -1
 
         # Initialise the array of empty lines in each bin, as a long 1D array
         stacked_lines = [
             PixelLine(
-                data=np.zeros(length),
+                data=[np.zeros(length)],
                 location=[row, 0],
                 date=date,
                 background=background,
                 flux=flux,
                 n_stacked=0,
             )
-            for row in row_bin_low
-            for date in date_bin_low
-            for background in background_bin_low
-            for flux in flux_bin_low
+            for row in row_bins[:-1]
+            for date in date_bins[:-1]
+            for background in background_bins[:-1]
+            for flux in flux_bins[:-1]
         ]
 
         # Add the line data to each stack
-        for i_row, i_date, i_background, i_flux, data in zip(
-            row_indices, date_indices, background_indices, flux_indices, self.data
+        for i_row, i_flux, i_date, i_background, data in zip(
+            row_indices, flux_indices, date_indices, background_indices, self.data
         ):
+            # Discard lines with values outside of the bins
+            if -1 in [i_row, i_flux, i_date, i_background]:
+                continue
+
             # Get the index in the 1D array for this bin
-            index = int(
-                i_row * n_date_bins * n_background_bins * n_flux_bins
-                + i_date * n_background_bins * n_flux_bins
-                + i_background * n_flux_bins
-                + i_flux
+            index = self.stacked_bin_index(
+                i_row=i_row,
+                n_row_bins=n_row_bins,
+                i_flux=i_flux,
+                n_flux_bins=n_flux_bins,
+                i_date=i_date,
+                n_date_bins=n_date_bins,
+                i_background=i_background,
+                n_background_bins=n_background_bins,
             )
 
-            # Add the line data and increment the number in this stack
-            stacked_lines[index].data += data
+            # Append the line data
+            if stacked_lines[index].n_stacked == 0:
+                stacked_lines[index].data = [data]
+            else:
+                stacked_lines[index].data = np.append(
+                    stacked_lines[index].data, [data], axis=0,
+                )
             stacked_lines[index].n_stacked += 1
 
-        # Remove empty stacks
-        stacked_lines = [line for line in stacked_lines if line.n_stacked > 0]
-
-        # Take the averages
+        # Take the means and standard errors
         for line in stacked_lines:
-            line.data /= line.n_stacked
+            if line.n_stacked > 0:
+                line.error = np.std(line.data, axis=0) / np.sqrt(line.n_stacked)
+            else:
+                line.error = np.zeros(length)
+
+            line.data = np.mean(line.data, axis=0)
 
         if return_bin_info:
             return (
                 PixelLineCollection(lines=stacked_lines),
-                row_bin_low,
-                date_bin_low,
-                background_bin_low,
-                flux_bin_low,
+                row_bins,
+                flux_bins,
+                date_bins,
+                background_bins,
             )
         else:
             return PixelLineCollection(lines=stacked_lines)
