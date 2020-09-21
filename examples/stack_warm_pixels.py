@@ -22,6 +22,7 @@ import pytest
 import os
 from autoconf import conf
 import matplotlib.pyplot as plt
+from matplotlib.gridspec import GridSpec
 from urllib.request import urlretrieve
 
 from autocti.data.pixel_lines import PixelLine, PixelLineCollection
@@ -75,7 +76,9 @@ for name in image_names:
     date = 2400000.5 + frame.exposure_info.modified_julian_date
 
     # Find the warm pixel trails
-    new_warm_pixels = find_warm_pixels(image=frame, origin=name, date=date)
+    new_warm_pixels = find_warm_pixels(
+        image=frame, origin=name, date=date, flux_min=20,
+    )
 
     print("Found %d possible warm pixels in %s" % (len(new_warm_pixels), name))
 
@@ -84,7 +87,7 @@ for name in image_names:
 
 # For reference, could save the lines and then load at a later time to continue
 if not True:
-    Save
+    # Save
     warm_pixels.save("warm_pixel_lines")
 
     # Load
@@ -107,36 +110,111 @@ warm_pixels.lines = warm_pixels.lines[consistent_lines]
 print("3.")
 # Stack the lines in bins by distance from readout and total flux
 n_row_bins = 5
-n_flux_bins = 5
-n_bins = n_row_bins * n_flux_bins
-stacked_lines = warm_pixels.generate_stacked_lines_from_bins(
-    n_row_bins=n_row_bins, n_flux_bins=n_flux_bins
-)
-print(
-    "Stacked lines in %d bins with %d empty bins"
-    % (n_bins, n_bins - stacked_lines.n_lines)
+n_flux_bins = 10
+n_background_bins = 2
+(
+    stacked_lines,
+    row_bins,
+    flux_bins,
+    date_bins,
+    background_bins,
+) = warm_pixels.generate_stacked_lines_from_bins(
+    n_row_bins=n_row_bins,
+    n_flux_bins=n_flux_bins,
+    n_background_bins=n_background_bins,
+    return_bin_info=True,
 )
 
+print("Stacked lines in %d bins" % (n_row_bins * n_flux_bins * n_background_bins))
 
 # Plot the stacked trails
-plt.figure()
-for i, line in enumerate(stacked_lines.lines):
-    if i < 10:
-        ls = "-"
-    elif i < 20:
-        ls = "--"
-    else:
-        ls = ":"
-    plt.plot(
-        np.arange(line.length),
-        line.data,
-        lw=1,
-        ls=ls,
-        label="%d, %.0f" % (line.location[0], line.flux),
-    )
-plt.yscale("log")
-plt.legend(loc="upper right", ncol=3, title="bin start: row, flux", prop={"size": 7})
-plt.ylim(0.2, None)
-plt.savefig(f"{path}/stack_warm_pixels.png", dpi=400)
+plt.figure(figsize=(25, 12))
+plt.subplots_adjust(wspace=0, hspace=0)
+gs = GridSpec(n_row_bins, n_flux_bins)
+axes = [
+    [plt.subplot(gs[i_row, i_flux]) for i_flux in range(n_flux_bins)]
+    for i_row in range(n_row_bins)
+]
+length = np.amax(stacked_lines.lengths)
+pixels = np.arange(length)
+colours = plt.cm.jet(np.linspace(0.05, 0.95, n_background_bins))
+y_min = 1.5 
+y_max = 1.5 * np.amax(stacked_lines.data)
+
+# Plot each stack
+for i_row in range(n_row_bins):
+    for i_flux in range(n_flux_bins):
+        # Furthest row bin at the top
+        ax = axes[n_row_bins - 1 - i_row][i_flux]
+
+        for i_background, c in enumerate(colours):
+            bin_index = PixelLineCollection.stacked_bin_index(
+                i_row=i_row,
+                n_row_bins=n_row_bins,
+                i_flux=i_flux,
+                n_flux_bins=n_flux_bins,
+                i_background=i_background,
+                n_background_bins=n_background_bins,
+            )
+
+            line = stacked_lines.lines[bin_index]
+
+            # Skip empty bins
+            if line.n_stacked == 0:
+                continue
+
+            ax.errorbar(
+                pixels,
+                line.data - line.background,
+                yerr=line.error,
+                c=c,
+                capsize=2,
+                alpha=0.7,
+            )
+
+            # Annotate
+            if i_background == 0:
+                text = "$N=%d$" % line.n_stacked
+            else:
+                text = "\n" * i_background + "$%d$" % line.n_stacked
+            ax.text(
+                length * 0.9, y_max * 0.7, text, ha="right", va="top",
+            )
+
+        ax.set_yscale("log")
+        ax.set_ylim(y_min, y_max)
+        ax.set_xlim(-0.5, length - 0.5)
+
+        # Axis labels
+        if i_flux == 0:
+            ax.set_ylabel("Charge")
+        else:
+            ax.set_yticklabels([])
+        if i_row == 0:
+            ax.set_xlabel("Pixel")
+        else:
+            ax.set_xticklabels([])
+
+        # Bin labels
+        if i_row == n_row_bins - 1:
+            ax.xaxis.set_label_position("top")
+            ax.set_xlabel(
+                "Flux:  %.2g$-$%.2g" % (flux_bins[i_flux], flux_bins[i_flux + 1])
+            )
+        if i_flux == n_flux_bins - 1:
+            ax.yaxis.set_label_position("right")
+            text = "Row:  %d$-$%d" % (row_bins[i_row], row_bins[i_row + 1])
+            if i_row == int(n_row_bins / 2):
+                text += "\n\nBackground:  "
+                for i_background in range(n_background_bins):
+                    text += "%.0f$-$%.0f" % (
+                        background_bins[i_background],
+                        background_bins[i_background + 1],
+                    )
+                    if i_background < n_background_bins - 1:
+                        text += ",  "
+            ax.set_ylabel(text)
+
+plt.savefig(f"{path}/stack_warm_pixels.png", dpi=200)
 plt.close()
 print(f"Saved {path}/stack_warm_pixels.png")
