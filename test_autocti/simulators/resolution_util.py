@@ -73,7 +73,7 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(
 
     shape = shape_2d_from_resolution(resolution=resolution)
 
-    ci_pre_cti = pattern.ci_pre_cti_from_shape_2d(shape_2d=shape)
+    ci_pre_cti = pattern.ci_pre_cti_from(shape_2d=shape)
 
     simulator = ac.ci.SimulatorCIImaging(read_noise=read_noise)
 
