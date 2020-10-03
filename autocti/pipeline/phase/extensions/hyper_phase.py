@@ -3,10 +3,11 @@ import copy
 from autoconf import conf
 from autofit.non_linear import abstract_search
 from autofit.tools.pipeline import ResultsCollection
+from autocti.pipeline.phase import abstract
 
 
 class HyperPhase(object):
-    def __init__(self, phase, hyper_name: str):
+    def __init__(self, phase: abstract.AbstractPhase, hyper_name: str):
         """
         Abstract HyperPhase. Wraps a phase, performing that phase before performing the action
         specified by the run_hyper.
@@ -45,7 +46,7 @@ class HyperPhase(object):
 
         phase = copy.deepcopy(self.phase)
 
-        folders = phase.folders
+        folders = phase.path_prefix
         folders.append(phase.name)
 
         phase.search = phase.search.copy_with_name_extension(
@@ -107,5 +108,5 @@ class HyperPhase(object):
         setattr(result, self.hyper_name, hyper_result)
         return result
 
-    def __getattr__(self, item):
+    def __setattr__(self, item):
         return getattr(self.phase, item)

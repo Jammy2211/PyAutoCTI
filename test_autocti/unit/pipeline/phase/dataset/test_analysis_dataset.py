@@ -33,8 +33,8 @@ class TestCheckDensity:
 
         instance = model.ModelInstance()
         instance.parallel_traps = [
-            ac.TrapInstantCaptureWrap(density=1.1),
-            ac.TrapInstantCaptureWrap(density=1.1),
+            ac.TrapInstantCapture(density=1.1),
+            ac.TrapInstantCapture(density=1.1),
         ]
         instance.serial_traps = []
 
@@ -56,8 +56,8 @@ class TestCheckDensity:
         instance = model.ModelInstance()
         instance.parallel_traps = []
         instance.serial_traps = [
-            ac.TrapInstantCaptureWrap(density=1.1),
-            ac.TrapInstantCaptureWrap(density=1.1),
+            ac.TrapInstantCapture(density=1.1),
+            ac.TrapInstantCapture(density=1.1),
         ]
 
         with pytest.raises(exc.PriorException):

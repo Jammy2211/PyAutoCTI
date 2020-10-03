@@ -11,7 +11,7 @@ config_path = test_path + "config"
 conf.instance = conf.Config(config_path=config_path, output_path=output_path)
 
 
-clocker = ac.ClockerWrap(parallel_express=2, serial_express=2)
+clocker = ac.Clocker(parallel_express=2, serial_express=2)
 
 
 def make_pipeline(name, folders, search=af.DynestyStatic()):
@@ -27,9 +27,9 @@ def make_pipeline(name, folders, search=af.DynestyStatic()):
         phase_name="phase_1",
         folders=folders,
         search=search,
-        parallel_traps=[af.PriorModel(ac.TrapInstantCaptureWrap)],
+        parallel_traps=[af.PriorModel(ac.TrapInstantCapture)],
         parallel_ccd=parallel_ccd,
-        serial_traps=[af.PriorModel(ac.TrapInstantCaptureWrap)],
+        serial_traps=[af.PriorModel(ac.TrapInstantCapture)],
         serial_ccd=serial_ccd,
         parallel_total_density_range=(0.1, 0.3),
         serial_total_density_range=(0.1, 0.3),

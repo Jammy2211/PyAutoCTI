@@ -9,7 +9,7 @@ from autocti.charge_injection import ci_imaging
 Note on the rotations of frames:
 
 The function 'non_uniform_frame_for_ou_sim' returns a frame that is rotated according to the ccd_id and quadrant id,
-which given the quadrant unique define the orientation of the NumPy array necessary to add paralle and serial
+which given the quadrant unique define the orientation of the ndarray necessary to add paralle and serial
 CTI in the correct direction. These are defined accoridng to:
 
     http://euclid.esac.esa.int/dm/dpdd/latest/le1dpd/dpcards/le1_visrawframe.html
@@ -25,7 +25,7 @@ The addition of CTI can then be performed using either the 'add_cti_to_frame_for
 function OU-Sim use to add CTI (I guess they ultimately both flow through arctic in an identical way, albeit our
 code uses SWIG and omits the need to define arCTIc parameter files.
 
-Due to the rotations performed above, this means all images produced will be NumPy arrays oriented in the same way. I 
+Due to the rotations performed above, this means all images produced will be ndarrays oriented in the same way. I 
 am not clear on how standard ELViS data products are oriented, but it may be that we require rotations before writing
 them to fits to oriented them in the way they are observed (VIS_CTI has tools for this, as I'm sure ELViS does too).
 """
@@ -89,30 +89,30 @@ def non_uniform_frame_for_ou_sim(ccd_id, quadrant_id):
 def add_cti_to_frame_for_ou_sim(frames):
 
     """
-    The *ClockerWrap* models the CCD read-out, including CTI.
+    The *Clocker* models the CCD read-out, including CTI.
 
     For parallel clocking, we use 'charge injection mode' which transfers the charge of every pixel over the full CCD.
     """
-    clocker = clock.ClockerWrap(
+    clocker = clock.Clocker(
         parallel_express=2, parallel_charge_injection_mode=True, serial_express=2
     )
 
     """
     The CTI model used by arCTIc to add CTI to the input image in the parallel direction, which contains: 
 
-        - 2 *TrapInstantCaptureWrap* species in the parallel direction.
+        - 2 *TrapInstantCapture* species in the parallel direction.
         - A simple CCD volume beta parametrization.
-        - 3 *TrapInstantCaptureWrap* species in the serial direction.
+        - 3 *TrapInstantCapture* species in the serial direction.
         - A simple CCD volume beta parametrization.
     """
-    parallel_trap_0 = traps.TrapInstantCaptureWrap(density=0.13, release_timescale=1.25)
-    parallel_trap_1 = traps.TrapInstantCaptureWrap(density=0.25, release_timescale=4.4)
+    parallel_trap_0 = traps.TrapInstantCapture(density=0.13, release_timescale=1.25)
+    parallel_trap_1 = traps.TrapInstantCapture(density=0.25, release_timescale=4.4)
     parallel_ccd = model.CCD(
         well_fill_power=0.8, well_notch_depth=0.0, full_well_depth=84700
     )
-    serial_trap_0 = traps.TrapInstantCaptureWrap(density=0.0442, release_timescale=0.8)
-    serial_trap_1 = traps.TrapInstantCaptureWrap(density=0.1326, release_timescale=4.0)
-    serial_trap_2 = traps.TrapInstantCaptureWrap(density=3.9782, release_timescale=20.0)
+    serial_trap_0 = traps.TrapInstantCapture(density=0.0442, release_timescale=0.8)
+    serial_trap_1 = traps.TrapInstantCapture(density=0.1326, release_timescale=4.0)
+    serial_trap_2 = traps.TrapInstantCapture(density=3.9782, release_timescale=20.0)
     serial_ccd = model.CCD(
         well_fill_power=0.8, well_notch_depth=0.0, full_well_depth=84700
     )

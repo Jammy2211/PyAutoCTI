@@ -33,7 +33,7 @@ def make_pipeline(name, folders, search=af.DynestyStatic()):
         phase_name="phase_1",
         folders=folders,
         search=search,
-        serial_traps=[af.PriorModel(ac.TrapInstantCaptureWrap)],
+        serial_traps=[af.PriorModel(ac.TrapInstantCapture)],
         serial_ccd=serial_ccd,
         serial_total_density_range=(0.1, 0.3),
     )

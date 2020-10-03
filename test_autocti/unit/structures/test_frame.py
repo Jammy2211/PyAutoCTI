@@ -12,6 +12,7 @@ class TestFrameAPI:
 
         frame = ac.Frame.manual(
             array=[[1.0, 2.0], [3.0, 4.0]],
+            pixel_scales=1.0,
             roe_corner=(1, 0),
             scans=ac.Scans(
                 parallel_overscan=(0, 1, 0, 1),
@@ -30,6 +31,7 @@ class TestFrameAPI:
 
         frame = ac.Frame.manual(
             array=[[1.0, 2.0], [3.0, 4.0]],
+            pixel_scales=1.0,
             roe_corner=(0, 0),
             scans=ac.Scans(
                 parallel_overscan=(0, 1, 0, 1),
@@ -48,6 +50,7 @@ class TestFrameAPI:
 
         frame = ac.Frame.manual(
             array=[[1.0, 2.0], [3.0, 4.0]],
+            pixel_scales=1.0,
             roe_corner=(1, 1),
             scans=ac.Scans(
                 parallel_overscan=(0, 1, 0, 1),
@@ -66,6 +69,7 @@ class TestFrameAPI:
 
         frame = ac.Frame.manual(
             array=[[1.0, 2.0], [3.0, 4.0]],
+            pixel_scales=1.0,
             roe_corner=(0, 1),
             scans=ac.Scans(
                 parallel_overscan=(0, 1, 0, 1),
@@ -87,6 +91,7 @@ class TestFrameAPI:
         frame = ac.Frame.full(
             fill_value=8.0,
             shape_2d=(2, 2),
+            pixel_scales=1.0,
             roe_corner=(1, 0),
             scans=ac.Scans(
                 parallel_overscan=(0, 1, 0, 1),
@@ -105,6 +110,7 @@ class TestFrameAPI:
         frame = ac.Frame.ones(
             shape_2d=(2, 2),
             roe_corner=(1, 0),
+            pixel_scales=1.0,
             scans=ac.Scans(
                 parallel_overscan=(0, 1, 0, 1),
                 serial_prescan=(1, 2, 1, 2),
@@ -122,6 +128,7 @@ class TestFrameAPI:
         frame = ac.Frame.zeros(
             shape_2d=(2, 2),
             roe_corner=(1, 0),
+            pixel_scales=1.0,
             scans=ac.Scans(
                 parallel_overscan=(0, 1, 0, 1),
                 serial_prescan=(1, 2, 1, 2),
@@ -140,6 +147,7 @@ class TestFrameAPI:
 
         frame = ac.Frame.manual(
             array=[[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]],
+            pixel_scales=1.0,
             roe_corner=(1, 0),
             scans=ac.Scans(
                 parallel_overscan=None,
@@ -163,7 +171,7 @@ class TestFrameAPI:
         self
     ):
 
-        mask = ac.Mask.manual(mask=[[False, True], [False, False]])
+        mask = ac.Mask2D.manual(mask=[[False, True], [False, False]], pixel_scales=1.0)
 
         frame = ac.Frame.manual_mask(
             array=[[1.0, 2.0], [3.0, 4.0]],
@@ -239,10 +247,11 @@ class TestFrameAPI:
 
     def test__from_frame__no_rotation_as_frame_is_correct_orientation(self):
 
-        mask = ac.Mask.manual(mask=[[False, True], [False, False]])
+        mask = ac.Mask2D.manual(mask=[[False, True], [False, False]], pixel_scales=1.0)
 
         frame = ac.Frame.manual(
             array=[[1.0, 2.0], [3.0, 4.0]],
+            pixel_scales=1.0,
             roe_corner=(1, 0),
             scans=ac.Scans(
                 parallel_overscan=(0, 1, 0, 1),
@@ -260,10 +269,11 @@ class TestFrameAPI:
         assert frame.scans.serial_overscan == (0, 2, 0, 2)
         assert (frame.mask == np.array([[False, True], [False, False]])).all()
 
-        mask = ac.Mask.manual(mask=[[False, True], [False, False]])
+        mask = ac.Mask2D.manual(mask=[[False, True], [False, False]], pixel_scales=1.0)
 
         frame = ac.Frame.manual(
             array=[[1.0, 2.0], [3.0, 4.0]],
+            pixel_scales=1.0,
             roe_corner=(0, 0),
             scans=ac.Scans(
                 parallel_overscan=(0, 1, 0, 1),

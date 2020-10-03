@@ -10,12 +10,12 @@ resolution = "patch"
 ci_normalizations = [10000.0, 84700.0]
 
 
-clocker = ac.ClockerWrap(serial_express=2)
+clocker = ac.Clocker(serial_express=2)
 
 
 def make_pipeline(name, folders, search=af.DynestyStatic()):
 
-    serial_ccd = af.PriorModel(ac.CCDWrap)
+    serial_ccd = af.PriorModel(ac.CCD)
 
     serial_ccd.full_well_depth = 8.47e4
     serial_ccd.well_notch_depth = 1e-7
@@ -24,7 +24,7 @@ def make_pipeline(name, folders, search=af.DynestyStatic()):
         phase_name="phase_1",
         folders=folders,
         search=search,
-        serial_traps=3 * [af.PriorModel(ac.TrapInstantCaptureWrap)],
+        serial_traps=3 * [af.PriorModel(ac.TrapInstantCapture)],
         serial_ccd=serial_ccd,
         columns=3,
     )

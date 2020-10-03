@@ -19,7 +19,7 @@ class CombinedHyperPhase(HyperPhase):
         hyper_phase_classes
             The classes of hyper_galaxy phases to be run following the initial phase
         """
-        super().__init__(phase, "hyper_combined")
+        super().__init__(phase=phase, hyper_name="hyper_combined")
         self.hyper_phases = list(map(lambda cls: cls(phase), hyper_phase_classes))
 
     @property

@@ -1,10 +1,3 @@
-from arcticpy.traps import TrapInstantCaptureWrap as TrapInstantCapture
-from arcticpy.traps import TrapInstantCaptureWrap
-from arcticpy.main import ClockerWrap as Clocker
-from arcticpy.main import ClockerWrap
-from arcticpy.ccd import CCDWrap as CCD
-from arcticpy.ccd import CCDWrap
-
 from autoarray.fit.fit import FitImaging
 from autoarray.structures.region import Region
 from autoarray.structures.arrays.abstract_array import ExposureInfo
@@ -15,7 +8,7 @@ from autoarray.dataset import preprocess
 
 from .structures.arrays import Array
 from .structures.frame import Frame
-from .mask.mask import Mask
+from .mask.mask import Mask2D
 from .mask.mask import SettingsMask
 from .dataset.imaging import Imaging
 from .dataset.imaging import MaskedImaging
@@ -25,6 +18,9 @@ from .pipeline.phase.settings import SettingsPhaseCIImaging
 from .pipeline.phase.extensions import CombinedHyperPhase
 from .pipeline.phase.ci_imaging.phase import PhaseCIImaging
 from .pipeline.pipeline import Pipeline
+from .util.wrap import Clocker
+from .util.wrap import CCD
+from .util.wrap import TrapInstantCapture
 from . import util
 from . import plot
 

@@ -44,12 +44,12 @@ def make_plot_patch(monkeypatch):
 
 @pytest.fixture(name="trap_0")
 def make_trap_0():
-    return ac.TrapInstantCaptureWrap(density=10, release_timescale=-1 / np.log(0.5))
+    return ac.TrapInstantCapture(density=10, release_timescale=-1 / np.log(0.5))
 
 
 @pytest.fixture(name="trap_1")
 def make_trap_1():
-    return ac.TrapInstantCaptureWrap(density=8, release_timescale=-1 / np.log(0.2))
+    return ac.TrapInstantCapture(density=8, release_timescale=-1 / np.log(0.2))
 
 
 @pytest.fixture(name="traps_x1")
@@ -64,7 +64,7 @@ def make_traps_x2(trap_0, trap_1):
 
 @pytest.fixture(name="ccd")
 def make_ccd():
-    return ac.CCDWrap(well_fill_power=0.5, full_well_depth=10000, well_notch_depth=1e-7)
+    return ac.CCD(well_fill_power=0.5, full_well_depth=10000, well_notch_depth=1e-7)
 
 
 @pytest.fixture(name="ccd_complex")
@@ -79,14 +79,14 @@ def make_ccd_complex():
 
 @pytest.fixture(name="parallel_clocker")
 def make_parallel_clocker():
-    return ac.ClockerWrap(
+    return ac.Clocker(
         parallel_express=2, parallel_charge_injection_mode=False, parallel_offset=0
     )
 
 
 @pytest.fixture(name="serial_clocker")
 def make_serial_clocker():
-    return ac.ClockerWrap(serial_express=2, serial_offset=0)
+    return ac.Clocker(serial_express=2, serial_offset=0)
 
 
 ### MASK ###
@@ -94,7 +94,7 @@ def make_serial_clocker():
 
 @pytest.fixture(name="mask_7x7")
 def make_mask_7x7():
-    return ac.Mask.unmasked(shape_2d=(7, 7), pixel_scales=(1.0, 1.0))
+    return ac.Mask2D.unmasked(shape_2d=(7, 7), pixel_scales=(1.0, 1.0))
 
 
 ### FRAMES ###
@@ -265,9 +265,9 @@ def make_samples_with_result(trap_0, ccd):
 
     instance = ModelInstance()
 
-    instance.parallel_traps = [ac.TrapInstantCaptureWrap(density=0, release_timescale=1)]
+    instance.parallel_traps = [ac.TrapInstantCapture(density=0, release_timescale=1)]
     instance.parallel_ccd = ccd
-    instance.serial_traps = [ac.TrapInstantCaptureWrap(density=0, release_timescale=1)]
+    instance.serial_traps = [ac.TrapInstantCapture(density=0, release_timescale=1)]
     instance.serial_ccd = ccd
 
     instance.hyper_noise_scalar_of_ci_regions = None
@@ -286,6 +286,7 @@ def make_phase_data(mask_7x7):
 @pytest.fixture(name="phase_ci_imaging_7x7")
 def make_phase_ci_imaging_7x7():
     return PhaseCIImaging(phase_name="test_phase", search=mock.MockSearch())
+
 
 ### EUCLID DATA ####
 

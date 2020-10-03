@@ -1,1 +1,1 @@
-from .mask import Mask
+from .mask import Mask2D

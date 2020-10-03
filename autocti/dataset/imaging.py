@@ -37,7 +37,7 @@ class Imaging(im.AbstractImaging):
     def from_fits(
         cls,
         image_path,
-        pixel_scales=None,
+        pixel_scales,
         image_hdu=0,
         noise_map_path=None,
         noise_map_hdu=0,
@@ -95,7 +95,7 @@ class MaskedImaging(im.MaskedImaging):
         ----------
         imaging: im.Imaging
             The imaging data_type all in 2D (the image, noise-map, PSF, etc.)
-        mask: msk.Mask
+        mask: msk.Mask2D
             The 2D mask that is applied to the image.
         """
 

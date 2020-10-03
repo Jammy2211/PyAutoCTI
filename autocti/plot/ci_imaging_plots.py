@@ -16,11 +16,11 @@ def subplot_ci_imaging(ci_imaging, include=None, sub_plotter=None):
         The imaging data_type, which includes the observed data_type, noise_map, PSF, signal-to-noise_map, etc.
     origin : True
         If true, the origin of the dataset's coordinate system is plotted as a 'x'.
-    image_plane_pix_grid : ndarray or data_type.array.grid_stacks.PixGrid
+    image_plane_pix_grid : np.ndarray or data_type.array.grid_stacks.PixGrid
         If an adaptive pixelization whose pixels are formed by tracing pixels from the dataset, this plots those pixels \
         over the immage.
     ignore_config : bool
-        If *False*, the config file general.ini is used to determine whether the subpot is plotted. If *True*, the \
+        If ``False``, the config file general.ini is used to determine whether the subpot is plotted. If *True*, the \
         config file is ignored.
     """
 
@@ -106,7 +106,7 @@ def image(ci_imaging, include=None, plotter=None):
         The imaging data_type, which includes the observed data_type, noise_map, PSF, signal-to-noise_map, etc.
     include_origin : True
         If true, the include_origin of the dataset's coordinate system is plotted as a 'x'.
-    image_plane_pix_grid : ndarray or data_type.array.grid_stacks.PixGrid
+    image_plane_pix_grid : np.ndarray or data_type.array.grid_stacks.PixGrid
         If an adaptive pixelization whose pixels are formed by tracing pixels from the dataset, this plots those pixels \
         over the immage.
     """
@@ -222,11 +222,11 @@ def subplot_ci_lines(ci_imaging, line_region, include=None, sub_plotter=None):
         The ci simulator, which includes the observed dataset, noise_map, PSF, signal-to-noise_map, etc.
     origin : True
         If true, the origin of the dataset's coordinate system is plotted as a 'x'.
-    image_plane_pix_grid : ndarray or simulator.arrays.grid_lines.PixGrid
+    image_plane_pix_grid : np.ndarray or simulator.arrays.grid_lines.PixGrid
         If an adaptive pixelization whose pixels are formed by tracing pixels from the dataset, this plots those pixels \
         over the immage.
     ignore_config : bool
-        If *False*, the config file general.ini is used to determine whether the subpot is plotted. If *True*, the \
+        If ``False``, the config file general.ini is used to determine whether the subpot is plotted. If *True*, the \
         config file is ignored.
     """
 

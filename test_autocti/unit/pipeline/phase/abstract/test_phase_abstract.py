@@ -15,16 +15,16 @@ pytestmark = pytest.mark.filterwarnings(
 
 class TestModel:
     def test__set_instances(self, phase_dataset_7x7):
-        trap = ac.TrapInstantCaptureWrap()
+        trap = ac.TrapInstantCapture()
         phase_dataset_7x7.parallel_traps = [trap]
         assert phase_dataset_7x7.model.parallel_traps == [trap]
 
     def test__set_models(self, phase_dataset_7x7):
-        trap_model = prior_model.PriorModel(ac.TrapInstantCaptureWrap)
+        trap_model = prior_model.PriorModel(ac.TrapInstantCapture)
         phase_dataset_7x7.parallel_traps = [trap_model]
         assert phase_dataset_7x7.parallel_traps == [trap_model]
 
-        ccd_model = prior_model.PriorModel(ac.CCDWrap)
+        ccd_model = prior_model.PriorModel(ac.CCD)
         phase_dataset_7x7.parallel_ccd = ccd_model
         assert phase_dataset_7x7.parallel_ccd == ccd_model
 
@@ -32,10 +32,10 @@ class TestModel:
 
         phase_dataset_7x7 = PhaseDataset(
             phase_name="test_phase",
-            parallel_traps=[ac.TrapInstantCaptureWrap],
-            parallel_ccd=ac.CCDWrap,
-            serial_traps=[ac.TrapInstantCaptureWrap],
-            serial_ccd=ac.CCDWrap,
+            parallel_traps=[ac.TrapInstantCapture],
+            parallel_ccd=ac.CCD,
+            serial_traps=[ac.TrapInstantCapture],
+            serial_ccd=ac.CCD,
             search=mock.MockSearch(),
         )
 
@@ -74,8 +74,8 @@ class TestModel:
 
         phase_dataset_7x7 = PhaseDataset(
             phase_name="test_phase",
-            parallel_traps=[ac.TrapInstantCaptureWrap],
-            parallel_ccd=ac.CCDWrap,
+            parallel_traps=[ac.TrapInstantCapture],
+            parallel_ccd=ac.CCD,
             search=mock.MockSearch(),
         )
 
@@ -85,8 +85,8 @@ class TestModel:
 
         phase_dataset_7x7 = PhaseDataset(
             phase_name="test_phase",
-            serial_traps=[ac.TrapInstantCaptureWrap],
-            serial_ccd=ac.CCDWrap,
+            serial_traps=[ac.TrapInstantCapture],
+            serial_ccd=ac.CCD,
             search=mock.MockSearch(),
         )
 
@@ -96,10 +96,10 @@ class TestModel:
 
         phase_dataset_7x7 = PhaseDataset(
             phase_name="test_phase",
-            parallel_traps=[ac.TrapInstantCaptureWrap],
-            parallel_ccd=ac.CCDWrap,
-            serial_traps=[ac.TrapInstantCaptureWrap],
-            serial_ccd=ac.CCDWrap,
+            parallel_traps=[ac.TrapInstantCapture],
+            parallel_ccd=ac.CCD,
+            serial_traps=[ac.TrapInstantCapture],
+            serial_ccd=ac.CCD,
             search=mock.MockSearch(),
         )
 
@@ -115,8 +115,8 @@ class TestSetup:
 
         phase_dataset_7x7 = PhaseCIImaging(
             phase_name="phase_name",
-            parallel_traps=[ac.TrapInstantCaptureWrap()],
-            parallel_ccd=ac.CCDWrap(),
+            parallel_traps=[ac.TrapInstantCapture()],
+            parallel_ccd=ac.CCD(),
             search=mock.MockSearch(),
         )
 

@@ -7,7 +7,8 @@ class CIHyperNoiseScalar(float):
         float.__init__(scale_factor)
 
     def scaled_noise_map_from_noise_scaling(self, noise_scaling):
-        """Compute the scaled noises map, by multiplying the noises-scaling image by the ci_hyper-parameter factor."""
+        """
+    Returns the scaled noises map, by multiplying the noises-scaling image by the ci_hyper-parameter factor."""
         return self * noise_scaling
 
     def __repr__(self):

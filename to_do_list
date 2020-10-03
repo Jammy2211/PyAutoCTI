@@ -4,7 +4,6 @@
 
 Features:
 
-    - Make PyAutoCTI use PyAutoArray and set up edenise scripts to handle the dependencies.
     - Mask1D, Line in AutoArray. CTI specific structures using these, for example with overscan / prescans.
     - Implement charge injection line data structure, simulators, example model fits.
     - Implement pipelines + runners for this.

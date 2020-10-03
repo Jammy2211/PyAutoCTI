@@ -57,7 +57,7 @@ class PhaseDataset(abstract.AbstractPhase):
         Parameters
         ----------
         positions
-        mask: Mask
+        mask: Mask2D
             The default masks passed in by the pipeline
         results: autofit.tools.pipeline.ResultsCollection
             An object describing the results of the last phase or None if no phase has been executed
@@ -81,8 +81,8 @@ class PhaseDataset(abstract.AbstractPhase):
             datasets=datasets, clocker=clocker, results=results, pool=pool
         )
 
-        #    phase_attributes = self.make_phase_attributes(analysis=analysis)
-        #    self.save_phase_attributes(phase_attributes=phase_attributes)
+        #    attributes = self.make_attributes(analysis=analysis)
+        #    self.save_attributes(attributes=attributes)
 
         result = self.run_analysis(analysis=analysis, info=info)
 
@@ -90,13 +90,13 @@ class PhaseDataset(abstract.AbstractPhase):
 
     def make_analysis(self, dataset, results=None, pool=None):
         """
-        Create an lens object. Also calls the prior passing and masked_imaging modifying functions to allow child
+        Returns an lens object. Also calls the prior passing and masked_imaging modifying functions to allow child
         classes to change the behaviour of the phase.
 
         Parameters
         ----------
         positions
-        mask: Mask
+        mask: Mask2D
             The default masks passed in by the pipeline
         dataset: im.Imaging
             An masked_imaging that has been masked
@@ -113,7 +113,7 @@ class PhaseDataset(abstract.AbstractPhase):
     def mask_for_analysis_from_cosmic_ray_map(self, cosmic_ray_map, mask):
 
         cosmic_ray_mask = (
-            msk.Mask.from_cosmic_ray_map_buffed(
+            msk.Mask2D.from_cosmic_ray_map_buffed(
                 cosmic_ray_map=cosmic_ray_map, settings=self.settings.settings_mask
             )
             if cosmic_ray_map is not None
