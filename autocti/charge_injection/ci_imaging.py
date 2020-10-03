@@ -115,7 +115,7 @@ class CIImaging(imaging.AbstractImaging):
             )
         else:
             if isinstance(ci_pattern, pattern.CIPatternUniform):
-                ci_pre_cti = ci_pattern.ci_pre_cti_from_shape_2d(
+                ci_pre_cti = ci_pattern.ci_pre_cti_from(
                     shape_2d=ci_image.shape, pixel_scales=pixel_scales
                 )
             else:
@@ -444,11 +444,11 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
             Seed for the read-noises added to the image.
         """
         if isinstance(ci_pattern, pattern.CIPatternUniform):
-            ci_pre_cti = ci_pattern.ci_pre_cti_from_shape_2d(
+            ci_pre_cti = ci_pattern.ci_pre_cti_from(
                 shape_2d=self.shape_2d, pixel_scales=self.pixel_scales
             )
         else:
-            ci_pre_cti = ci_pattern.ci_pre_cti_from_shape_2d(
+            ci_pre_cti = ci_pattern.ci_pre_cti_from(
                 shape_2d=self.shape_2d,
                 ci_seed=self.ci_seed,
                 pixel_scales=self.pixel_scales,
