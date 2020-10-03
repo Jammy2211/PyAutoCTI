@@ -28,7 +28,7 @@ class AbstractPhase(af_phase.AbstractPhase):
 
     @property
     def folders(self):
-        return self.search.folders
+        return self.search.path_prefix
 
     @property
     def phase_property_collections(self):

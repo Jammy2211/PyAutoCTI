@@ -74,7 +74,7 @@ class PhaseCIImaging(PhaseDataset):
 
     def make_analysis(self, datasets, clocker, results=None, pool=None):
         """
-        Create an analysis object. Also calls the prior passing and image modifying functions to allow child classes to
+        Returns an analysis object. Also calls the prior passing and image modifying functions to allow child classes to
         change the behaviour of the phase.
 
         Parameters

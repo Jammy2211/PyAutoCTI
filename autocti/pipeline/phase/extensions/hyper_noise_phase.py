@@ -21,9 +21,9 @@ class HyperNoisePhase(HyperPhase):
             ----------
             masked_imaging: LensData
                 Lens instrument, including an image and noise
-            hyper_noise_scaling_map: ndarray
+            hyper_noise_scaling_map: np.ndarray
                 An image produce of the overall system by a model
-            hyper_noise_image_1d_path_dict: ndarray
+            hyper_noise_image_1d_path_dict: np.ndarray
                 The contribution of one galaxy to the model image
             """
 

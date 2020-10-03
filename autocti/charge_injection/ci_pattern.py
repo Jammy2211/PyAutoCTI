@@ -80,7 +80,7 @@ class CIPatternUniform(AbstractCIPattern):
 
     """
 
-    def ci_pre_cti_from_shape_2d(self, shape_2d, pixel_scales=None):
+    def ci_pre_cti_from_shape_2d(self, shape_2d, pixel_scales):
         """Use this charge injection ci_pattern to generate a pre-cti charge injection image. This is performed by \
         going to its charge injection regions and adding the charge injection normalization value.
 
@@ -138,7 +138,7 @@ class CIPatternNonUniform(AbstractCIPattern):
         self.column_sigma = column_sigma
         self.maximum_normalization = maximum_normalization
 
-    def ci_pre_cti_from_shape_2d(self, shape_2d, pixel_scales=None, ci_seed=-1):
+    def ci_pre_cti_from_shape_2d(self, shape_2d, pixel_scales, ci_seed=-1):
         """Use this charge injection ci_pattern to generate a pre-cti charge injection image. This is performed by going \
         to its charge injection regions and adding its non-uniform charge distribution.
 

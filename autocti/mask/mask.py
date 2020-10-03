@@ -1,5 +1,5 @@
 from autoconf import conf
-from autoarray.mask import abstract_mask
+from autoarray.mask import mask_2d
 from autoarray.structures import abstract_structure
 from autoarray import exc
 from autoarray.structures import region as reg
@@ -70,10 +70,10 @@ class SettingsMask:
         )
 
 
-class Mask(abstract_mask.AbstractMask):
+class Mask2D(mask_2d.AbstractMask2D):
     @classmethod
-    def manual(cls, mask, pixel_scales=None, origin=(0.0, 0.0), invert=False):
-        """Create a Mask (see *Mask.__new__*) by inputting the array values in 2D, for example:
+    def manual(cls, mask, pixel_scales, origin=(0.0, 0.0), invert=False):
+        """Create a Mask2D (see *Mask2D.__new__*) by inputting the array values in 2D, for example:
 
         mask=np.array([[False, False],
                        [True, False]])
@@ -86,14 +86,14 @@ class Mask(abstract_mask.AbstractMask):
         mask : np.ndarray or list
             The bool values of the mask input as an ndarray of shape [total_y_pixels, total_x_pixels ]or a list of
             lists.
-        pixel_scales : (float, float) or float
-            The pixel conversion scale of a pixel in the y and x directions. If input as a float, the pixel_scales
-            are converted to the format (float, float).
+        pixel_scales: (float, float) or float
+            The (y,x) scaled units to pixel units conversion factors of every pixel. If this is input as a ``float``,
+            it is converted to a (float, float) structure.
         origin : (float, float)
-            The origin of the array's mask.
+            The (y,x) scaled units origin of the mask's coordinate system.
         invert : bool
-            If True, the input bools of the mask array are inverted such that previously unmasked entries containing
-            *False* become masked entries with *True*, and visa versa.
+            If ``True``, the ``bool``'s of the input ``mask`` are inverted, for example ``False``'s become ``True``
+            and visa versa.
         """
         if type(mask) is list:
             mask = np.asarray(mask).astype("bool")
@@ -111,22 +111,22 @@ class Mask(abstract_mask.AbstractMask):
         return cls(mask=mask, pixel_scales=pixel_scales, origin=origin)
 
     @classmethod
-    def unmasked(cls, shape_2d, pixel_scales=None, origin=(0.0, 0.0), invert=False):
-        """Create a mask where all pixels are *False* and therefore unmasked.
+    def unmasked(cls, shape_2d, pixel_scales, origin=(0.0, 0.0), invert=False):
+        """Create a mask where all pixels are ``False`` and therefore unmasked.
 
         Parameters
         ----------
         mask : np.ndarray or list
             The bool values of the mask input as an ndarray of shape [total_y_pixels, total_x_pixels ]or a list of
             lists.
-        pixel_scales : (float, float) or float
-            The pixel conversion scale of a pixel in the y and x directions. If input as a float, the pixel_scales
-            are converted to the format (float, float).
+        pixel_scales: (float, float) or float
+            The (y,x) scaled units to pixel units conversion factors of every pixel. If this is input as a ``float``,
+            it is converted to a (float, float) structure.
         origin : (float, float)
-            The origin of the array's mask.
+            The (y,x) scaled units origin of the mask's coordinate system.
         invert : bool
-            If True, the input bools of the mask array are inverted such that previously unmasked entries containing
-            *False* become masked entries with *True*, and visa versa.
+            If ``True``, the ``bool``'s of the input ``mask`` are inverted, for example ``False``'s become ``True``
+            and visa versa.
         """
         return cls.manual(
             mask=np.full(shape=shape_2d, fill_value=False),
@@ -136,9 +136,9 @@ class Mask(abstract_mask.AbstractMask):
         )
 
     @classmethod
-    def from_masked_regions(cls, shape_2d, masked_regions):
+    def from_masked_regions(cls, shape_2d, pixel_scales, masked_regions):
 
-        mask = cls.unmasked(shape_2d=shape_2d)
+        mask = cls.unmasked(shape_2d=shape_2d, pixel_scales=pixel_scales)
         masked_regions = list(
             map(lambda region: reg.Region(region=region), masked_regions)
         )
@@ -150,7 +150,7 @@ class Mask(abstract_mask.AbstractMask):
     @classmethod
     def from_cosmic_ray_map_buffed(cls, cosmic_ray_map, settings=SettingsMask()):
         """
-        Create the mask used for CTI Calibration, which is all False unless specific regions are input for masking.
+        Returns the mask used for CTI Calibration, which is all ``False`` unless specific regions are input for masking.
 
         Parameters
         ----------
@@ -163,7 +163,9 @@ class Mask(abstract_mask.AbstractMask):
         cosmic_ray_diagonal_buffer : int
             The number of pixels from each ray pixels are masked in the digonal up from the parallel + serial direction.
         """
-        mask = cls.unmasked(shape_2d=cosmic_ray_map.shape_2d)
+        mask = cls.unmasked(
+            shape_2d=cosmic_ray_map.shape_2d, pixel_scales=cosmic_ray_map.pixel_scales
+        )
 
         cosmic_ray_mask = (cosmic_ray_map > 0.0).astype("bool")
 

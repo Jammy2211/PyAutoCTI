@@ -68,6 +68,7 @@ class TestCIImaging(object):
     ):
 
         imaging = ac.ci.CIImaging.from_fits(
+            pixel_scales=1.0,
             roe_corner=(1, 0),
             scans=ac.Scans(
                 parallel_overscan=(1, 2, 3, 4),
@@ -100,6 +101,7 @@ class TestCIImaging(object):
     ):
 
         imaging = ac.ci.CIImaging.from_fits(
+            pixel_scales=1.0,
             roe_corner=(1, 0),
             ci_pattern=ci_pattern_7x7,
             image_path=test_data_path + "3x3_multiple_hdu.fits",
@@ -122,6 +124,7 @@ class TestCIImaging(object):
     def test__from_fits__noise_map_from_single_value(self, ci_pattern_7x7):
 
         imaging = ac.ci.CIImaging.from_fits(
+            pixel_scales=1.0,
             roe_corner=(1, 0),
             ci_pattern=ci_pattern_7x7,
             image_path=test_data_path + "3x3_ones.fits",
@@ -143,6 +146,7 @@ class TestCIImaging(object):
         pattern = ac.ci.CIPatternUniform(regions=[(0, 3, 0, 3)], normalization=10.0)
 
         imaging = ac.ci.CIImaging.from_fits(
+            pixel_scales=1.0,
             roe_corner=(1, 0),
             ci_pattern=pattern,
             image_path=test_data_path + "3x3_ones.fits",
@@ -161,6 +165,7 @@ class TestCIImaging(object):
     def test__output_to_fits___all_arrays(self, ci_pattern_7x7):
 
         imaging = ac.ci.CIImaging.from_fits(
+            pixel_scales=1.0,
             roe_corner=(1, 0),
             ci_pattern=ci_pattern_7x7,
             image_path=test_data_path + "3x3_ones.fits",
@@ -189,6 +194,7 @@ class TestCIImaging(object):
         )
 
         imaging = ac.ci.CIImaging.from_fits(
+            pixel_scales=1.0,
             roe_corner=(1, 0),
             ci_pattern=ci_pattern_7x7,
             image_path=output_data_dir + "image.fits",
@@ -276,7 +282,7 @@ class TestSettingsMaskedCIImaging:
 class TestMaskedCIImaging:
     def test__construtor__masks_arrays_correctly(self, ci_imaging_7x7):
 
-        mask = ac.Mask.unmasked(shape_2d=ci_imaging_7x7.shape_2d)
+        mask = ac.Mask2D.unmasked(shape_2d=ci_imaging_7x7.shape_2d, pixel_scales=1.0)
 
         mask[0, 0] = True
 
@@ -305,7 +311,7 @@ class TestMaskedCIImaging:
         self, ci_imaging_7x7, mask_7x7, ci_noise_scaling_maps_7x7
     ):
 
-        mask = ac.Mask.unmasked(shape_2d=ci_imaging_7x7.shape_2d)
+        mask = ac.Mask2D.unmasked(shape_2d=ci_imaging_7x7.shape_2d, pixel_scales=1.0)
         mask[0, 2] = True
 
         masked_ci_imaging = ac.ci.MaskedCIImaging(
@@ -315,7 +321,7 @@ class TestMaskedCIImaging:
             settings=ac.ci.SettingsMaskedCIImaging(parallel_columns=(1, 3)),
         )
 
-        mask = ac.Mask.unmasked(shape_2d=(7, 2))
+        mask = ac.Mask2D.unmasked(shape_2d=(7, 2), pixel_scales=1.0)
         mask[0, 0] = True
 
         assert (masked_ci_imaging.mask == mask).all()
@@ -354,7 +360,7 @@ class TestMaskedCIImaging:
         self, ci_imaging_7x7, mask_7x7, ci_noise_scaling_maps_7x7
     ):
 
-        mask = ac.Mask.unmasked(shape_2d=ci_imaging_7x7.shape_2d)
+        mask = ac.Mask2D.unmasked(shape_2d=ci_imaging_7x7.shape_2d, pixel_scales=1.0)
         mask[1, 0] = True
 
         masked_ci_imaging = ac.ci.MaskedCIImaging(
@@ -364,7 +370,7 @@ class TestMaskedCIImaging:
             settings=ac.ci.SettingsMaskedCIImaging(serial_rows=(0, 1)),
         )
 
-        mask = ac.Mask.unmasked(shape_2d=(1, 7))
+        mask = ac.Mask2D.unmasked(shape_2d=(1, 7), pixel_scales=1.0)
         mask[0, 0] = True
 
         assert (masked_ci_imaging.mask == mask).all()
@@ -409,6 +415,7 @@ class TestSimulatorCIImaging(object):
 
         simulator = ac.ci.SimulatorCIImaging(
             shape_2d=(5, 5),
+            pixel_scales=1.0,
             add_noise=False,
             scans=ac.Scans(serial_overscan=ac.Region((1, 2, 1, 2))),
         )
@@ -434,6 +441,7 @@ class TestSimulatorCIImaging(object):
 
         simulator = ac.ci.SimulatorCIImaging(
             shape_2d=(3, 3),
+            pixel_scales=1.0,
             scans=ac.Scans(serial_overscan=ac.Region((1, 2, 1, 2))),
             read_noise=1.0,
             add_noise=True,
@@ -444,7 +452,9 @@ class TestSimulatorCIImaging(object):
             ci_pattern=pattern, clocker=parallel_clocker
         )
 
-        image_no_noise = pattern.ci_pre_cti_from_shape_2d(shape_2d=(3, 3))
+        image_no_noise = pattern.ci_pre_cti_from_shape_2d(
+            shape_2d=(3, 3), pixel_scales=1.0
+        )
 
         # Use seed to give us a known read noises map we'll test_autocti for
 
@@ -462,6 +472,7 @@ class TestSimulatorCIImaging(object):
 
         simulator = ac.ci.SimulatorCIImaging(
             shape_2d=(5, 5),
+            pixel_scales=1.0,
             scans=ac.Scans(serial_overscan=ac.Region((1, 2, 1, 2))),
             add_noise=False,
         )
@@ -496,41 +507,3 @@ class TestSimulatorCIImaging(object):
             )
         ).all()
         assert imaging.cosmic_ray_map.scans.serial_overscan == (1, 2, 1, 2)
-
-    # def test__include_parallel_poisson_trap_densities(self, arctic_parallel):
-    #
-    #     pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(2, 3, 0, 5)])
-    #
-    #     ci_pre_cti = pattern.simulate_ci_pre_cti(shape=(5, 5))
-    #
-    #     # Densities for this seed are [9.6, 8.2, 8.6, 9.6, 9.6]
-    #
-    #     parallel_traps = ac.TrapInstantCaptureWrap(trap_density=10.0, trap_release_timescale=1.0)
-    #     parallel_traps = ac.TrapInstantCaptureWrap.poisson_species(
-    #         species=[parallel_traps], shape=(5, 5), seed=1
-    #     )
-    #     parallel_ccd = ac.CCDWrap(
-    #         well_notch_depth=1.0e-4,
-    #         well_fill_power=0.58,
-    #         well_fill_gamma=0.0,
-    #         well_fill_alpha=1.0,
-    #     )
-    #
-    #     params_parallel = ac.ArcticParams(
-    #         parallel_traps=parallel_traps, parallel_ccd=parallel_ccd
-    #     )
-    #
-    #     imaging = ac.ci.CIImaging.simulate(
-    #         ci_pre_cti=ci_pre_cti,
-    #         frame_geometry=ac.FrameGeometry.bottom_left(),
-    #         ci_pattern=pattern,
-    #         clocker=arctic_parallel,
-    #         cti_params=params_parallel,
-    #         use_parallel_poisson_densities=True,
-    #     )
-    #
-    #     assert imaging.image[2, 0] == imaging.image[2, 3]
-    #     assert imaging.image[2, 0] == imaging.image[2, 4]
-    #     assert imaging.image[2, 0] < imaging.image[2, 1]
-    #     assert imaging.image[2, 0] < imaging.image[2, 2]
-    #     assert imaging.image[2, 1] > imaging.image[2, 2]

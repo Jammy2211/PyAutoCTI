@@ -70,7 +70,10 @@ class TestMaskedParallelFrontEdge:
         pattern = ac.ci.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
         frame = ac.ci.CIFrame.manual(
-            array=np.ones((10, 3)), roe_corner=(1, 0), ci_pattern=pattern
+            array=np.ones((10, 3)),
+            roe_corner=(1, 0),
+            ci_pattern=pattern,
+            pixel_scales=1.0,
         )
 
         mask = ac.ci.CIMask.masked_parallel_front_edge_from_ci_frame(
@@ -85,12 +88,8 @@ class TestMaskedParallelFrontEdge:
             == np.array(
                 [
                     [False, False, False],
-                    [
-                        True,
-                        True,
-                        True,
-                    ],  # <- Front edge according to region and this frame_geometry
-                    [True, True, True],  # <- Next front edge row.
+                    [True, True, True],
+                    [True, True, True],
                     [False, False, False],
                     [False, False, False],
                     [False, False, False],
@@ -107,7 +106,10 @@ class TestMaskedParallelFrontEdge:
         pattern = ac.ci.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
         frame = ac.ci.CIFrame.manual(
-            array=np.ones((10, 3)), roe_corner=(1, 0), ci_pattern=pattern
+            array=np.ones((10, 3)),
+            roe_corner=(1, 0),
+            ci_pattern=pattern,
+            pixel_scales=1.0,
         )
 
         mask = ac.ci.CIMask.masked_parallel_front_edge_from_ci_frame(
@@ -123,12 +125,8 @@ class TestMaskedParallelFrontEdge:
             == np.array(
                 [
                     [True, True, True],
-                    [
-                        False,
-                        False,
-                        False,
-                    ],  # <- Front edge according to region and this frame_geometry
-                    [False, False, False],  # <- Next front edge row.
+                    [False, False, False],
+                    [False, False, False],
                     [True, True, True],
                     [True, True, True],
                     [True, True, True],
@@ -147,7 +145,10 @@ class TestMaskedParallelFrontEdge:
         )
 
         frame = ac.ci.CIFrame.manual(
-            array=np.ones((10, 3)), roe_corner=(1, 0), ci_pattern=pattern
+            array=np.ones((10, 3)),
+            roe_corner=(1, 0),
+            ci_pattern=pattern,
+            pixel_scales=1.0,
         )
 
         mask = ac.ci.CIMask.masked_parallel_front_edge_from_ci_frame(
@@ -162,12 +163,8 @@ class TestMaskedParallelFrontEdge:
             == np.array(
                 [
                     [False, False, False],
-                    [
-                        True,
-                        False,
-                        True,
-                    ],  # <- Front edge according to region and this frame_geometry
-                    [True, False, True],  # <- Next front edge row.
+                    [True, False, True],
+                    [True, False, True],
                     [False, False, False],
                     [False, False, False],
                     [False, False, False],
@@ -186,7 +183,10 @@ class TestMaskedParallelTrails:
         pattern = ac.ci.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
         frame = ac.ci.CIFrame.manual(
-            array=np.ones((10, 3)), roe_corner=(1, 0), ci_pattern=pattern
+            array=np.ones((10, 3)),
+            roe_corner=(1, 0),
+            ci_pattern=pattern,
+            pixel_scales=1.0,
         )
 
         mask = ac.ci.CIMask.masked_parallel_trails_from_ci_frame(
@@ -203,12 +203,8 @@ class TestMaskedParallelTrails:
                     [False, False, False],
                     [False, False, False],
                     [False, False, False],
-                    [
-                        True,
-                        True,
-                        True,
-                    ],  # <- Frist Trail according to region and this frame_geometry
-                    [True, True, True],  # <- Next trail row.
+                    [True, True, True],
+                    [True, True, True],
                     [True, True, True],
                     [True, True, True],
                     [False, False, False],
@@ -222,7 +218,10 @@ class TestMaskedParallelTrails:
         pattern = ac.ci.CIPatternUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
 
         frame = ac.ci.CIFrame.manual(
-            array=np.ones((10, 3)), roe_corner=(1, 0), ci_pattern=pattern
+            array=np.ones((10, 3)),
+            roe_corner=(1, 0),
+            ci_pattern=pattern,
+            pixel_scales=1.0,
         )
 
         mask = ac.ci.CIMask.masked_parallel_trails_from_ci_frame(
@@ -241,12 +240,8 @@ class TestMaskedParallelTrails:
                     [True, True, True],
                     [True, True, True],
                     [True, True, True],
-                    [
-                        False,
-                        False,
-                        False,
-                    ],  # <- Frist Trail according to region and this frame_geometry
-                    [False, False, False],  # <- Next trail row.
+                    [False, False, False],
+                    [False, False, False],
                     [False, False, False],
                     [False, False, False],
                     [True, True, True],
@@ -262,7 +257,10 @@ class TestMaskedParallelTrails:
         )
 
         frame = ac.ci.CIFrame.manual(
-            array=np.ones((10, 3)), roe_corner=(1, 0), ci_pattern=pattern
+            array=np.ones((10, 3)),
+            roe_corner=(1, 0),
+            ci_pattern=pattern,
+            pixel_scales=1.0,
         )
 
         mask = ac.ci.CIMask.masked_parallel_trails_from_ci_frame(
@@ -279,12 +277,8 @@ class TestMaskedParallelTrails:
                     [False, False, False],
                     [False, False, False],
                     [False, False, False],
-                    [
-                        True,
-                        False,
-                        True,
-                    ],  # <- Frist Trail according to region and this frame_geometry
-                    [True, False, True],  # <- Next trail row.
+                    [True, False, True],
+                    [True, False, True],
                     [True, False, True],
                     [True, False, True],
                     [False, False, False],
@@ -300,7 +294,10 @@ class TestMaskedSerialFrontEdge:
         pattern = ac.ci.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
         frame = ac.ci.CIFrame.manual(
-            array=np.ones((3, 10)), roe_corner=(1, 0), ci_pattern=pattern
+            array=np.ones((3, 10)),
+            roe_corner=(1, 0),
+            ci_pattern=pattern,
+            pixel_scales=1.0,
         )
 
         mask = ac.ci.CIMask.masked_serial_front_edge_from_ci_frame(
@@ -359,7 +356,10 @@ class TestMaskedSerialFrontEdge:
         pattern = ac.ci.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
         frame = ac.ci.CIFrame.manual(
-            array=np.ones((3, 10)), roe_corner=(1, 0), ci_pattern=pattern
+            array=np.ones((3, 10)),
+            roe_corner=(1, 0),
+            ci_pattern=pattern,
+            pixel_scales=1.0,
         )
 
         mask = ac.ci.CIMask.masked_serial_front_edge_from_ci_frame(
@@ -388,7 +388,10 @@ class TestMaskedSerialFrontEdge:
         )
 
         frame = ac.ci.CIFrame.manual(
-            array=np.ones((3, 10)), roe_corner=(1, 0), ci_pattern=pattern
+            array=np.ones((3, 10)),
+            roe_corner=(1, 0),
+            ci_pattern=pattern,
+            pixel_scales=1.0,
         )
 
         mask = ac.ci.CIMask.masked_serial_front_edge_from_ci_frame(
@@ -427,7 +430,10 @@ class TestMaskedSerialTrails:
         pattern = ac.ci.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
         frame = ac.ci.CIFrame.manual(
-            array=np.ones((3, 10)), roe_corner=(1, 0), ci_pattern=pattern
+            array=np.ones((3, 10)),
+            roe_corner=(1, 0),
+            ci_pattern=pattern,
+            pixel_scales=1.0,
         )
 
         mask = ac.ci.CIMask.masked_serial_trails_from_ci_frame(
@@ -452,7 +458,10 @@ class TestMaskedSerialTrails:
         pattern = ac.ci.CIPatternUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
         frame = ac.ci.CIFrame.manual(
-            array=np.ones((3, 10)), roe_corner=(1, 0), ci_pattern=pattern
+            array=np.ones((3, 10)),
+            roe_corner=(1, 0),
+            ci_pattern=pattern,
+            pixel_scales=1.0,
         )
 
         mask = ac.ci.CIMask.masked_serial_trails_from_ci_frame(
@@ -481,7 +490,10 @@ class TestMaskedSerialTrails:
         )
 
         frame = ac.ci.CIFrame.manual(
-            array=np.ones((3, 10)), roe_corner=(1, 0), ci_pattern=pattern
+            array=np.ones((3, 10)),
+            roe_corner=(1, 0),
+            ci_pattern=pattern,
+            pixel_scales=1.0,
         )
 
         mask = ac.ci.CIMask.masked_serial_trails_from_ci_frame(
@@ -516,7 +528,7 @@ class TestMaskedSerialTrails:
 class TestMaskedFrontEdgeTrailsAll:
     def test__masks_uses_front_edge_and_trails_parameters(self, ci_imaging_7x7):
 
-        mask = ac.ci.CIMask.unmasked(shape_2d=ci_imaging_7x7.shape_2d)
+        mask = ac.ci.CIMask.unmasked(shape_2d=ci_imaging_7x7.shape_2d, pixel_scales=1.0)
 
         ci_mask = ac.ci.CIMask.masked_front_edges_and_trails_from_ci_frame(
             ci_frame=ci_imaging_7x7.image,

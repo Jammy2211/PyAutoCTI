@@ -4,11 +4,10 @@ import numpy as np
 from autoarray.structures import abstract_structure
 from autoarray.structures.arrays import abstract_array
 from autocti.charge_injection import ci_mask
-from autocti.mask.mask import Mask
+from autocti.mask.mask import Mask2D
 from autoarray.structures.frames import abstract_frame
 from autoarray.instruments import euclid
 from autoarray.util import array_util, frame_util
-from autocti.structures import frame as f
 
 
 class AbstractCIFrame(abstract_frame.AbstractFrame):
@@ -395,7 +394,9 @@ class AbstractCIFrame(abstract_frame.AbstractFrame):
         extraction_region = self.parallel_side_nearest_read_out_region(
             region=self.ci_pattern.regions[0], columns=columns
         )
-        return ci_mask.CIMask(mask=mask[extraction_region.slice])
+        return ci_mask.CIMask(
+            mask=mask[extraction_region.slice], pixel_scales=mask.pixel_scales
+        )
 
     @property
     def serial_trails_frame(self):
@@ -771,7 +772,10 @@ class AbstractCIFrame(abstract_frame.AbstractFrame):
         calibration_masks = list(
             map(lambda mask: mask[rows[0] : rows[1], :], calibration_masks)
         )
-        return ci_mask.CIMask(mask=np.concatenate(calibration_masks, axis=0))
+        return ci_mask.CIMask(
+            mask=np.concatenate(calibration_masks, axis=0),
+            pixel_scales=mask.pixel_scales,
+        )
 
     @property
     def serial_calibration_sub_arrays(self):
@@ -981,7 +985,8 @@ class AbstractCIFrame(abstract_frame.AbstractFrame):
         return trails_arrays
 
     def parallel_trails_regions(self, rows=None):
-        """Compute the parallel scans of a charge injection ci_frame.
+        """
+    Returns the parallel scans of a charge injection ci_frame.
 
         The diagram below illustrates the region that is calculated from a ci_frame for rows=(0, 1):
 
@@ -1109,7 +1114,8 @@ class AbstractCIFrame(abstract_frame.AbstractFrame):
         return front_arrays
 
     def serial_front_edge_regions(self, columns=None):
-        """Compute a list of the serial front edges scans of a charge injection ci_frame.
+        """
+    Returns a list of the serial front edges scans of a charge injection ci_frame.
 
         The diagram below illustrates the region that is calculated from a ci_frame for columns=(0, 4):
 
@@ -1235,7 +1241,8 @@ class AbstractCIFrame(abstract_frame.AbstractFrame):
         return trails_arrays
 
     def serial_trails_regions(self, columns=None):
-        """Compute a list of the serial trails scans of a charge injection ci_frame.
+        """
+    Returns a list of the serial trails scans of a charge injection ci_frame.
 
         The diagram below illustrates the region is calculated from a ci_frame for columnss=(0, 4):
 
@@ -1314,16 +1321,16 @@ class CIFrame(AbstractCIFrame):
     def manual(
         cls,
         array,
+        pixel_scales,
         ci_pattern,
         roe_corner=(1, 0),
         exposure_info=None,
         scans=None,
-        pixel_scales=None,
     ):
         """Abstract class for the geometry of a CTI Image.
 
-        A FrameArray is stored as a 2D NumPy arrays. When this immage is passed to arctic, clocking goes towards
-        the 'top' of the NumPy arrays (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the arrays
+        A FrameArray is stored as a 2D ndarrays. When this immage is passed to arctic, clocking goes towards
+        the 'top' of the ndarrays (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the arrays
         (e.g. the final row).
 
         Arctic has no in-built functionality for changing the direction of clocking depending on the input
@@ -1353,7 +1360,7 @@ class CIFrame(AbstractCIFrame):
             pixel_scales=pixel_scales
         )
 
-        mask = Mask.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
+        mask = Mask2D.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
 
         scans = abstract_frame.Scans.rotated_from_roe_corner(
             roe_corner=roe_corner, shape_2d=array.shape, scans=scans
@@ -1378,8 +1385,8 @@ class CIFrame(AbstractCIFrame):
     ):
         """Abstract class for the geometry of a CTI Image.
 
-        A FrameArray is stored as a 2D NumPy arrays. When this immage is passed to arctic, clocking goes towards
-        the 'top' of the NumPy arrays (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the arrays
+        A FrameArray is stored as a 2D ndarrays. When this immage is passed to arctic, clocking goes towards
+        the 'top' of the ndarrays (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the arrays
         (e.g. the final row).
 
         Arctic has no in-built functionality for changing the direction of clocking depending on the input
@@ -1431,60 +1438,60 @@ class CIFrame(AbstractCIFrame):
         cls,
         fill_value,
         shape_2d,
+        pixel_scales,
         ci_pattern,
         roe_corner=(1, 0),
         exposure_info=None,
         scans=None,
-        pixel_scales=None,
     ):
 
         return cls.manual(
             array=np.full(fill_value=fill_value, shape=shape_2d),
+            pixel_scales=pixel_scales,
             ci_pattern=ci_pattern,
             roe_corner=roe_corner,
             exposure_info=exposure_info,
             scans=scans,
-            pixel_scales=pixel_scales,
         )
 
     @classmethod
     def ones(
         cls,
         shape_2d,
+        pixel_scales,
         ci_pattern,
         roe_corner=(1, 0),
         exposure_info=None,
         scans=None,
-        pixel_scales=None,
     ):
         return cls.full(
             fill_value=1.0,
             shape_2d=shape_2d,
+            pixel_scales=pixel_scales,
             ci_pattern=ci_pattern,
             roe_corner=roe_corner,
             exposure_info=exposure_info,
             scans=scans,
-            pixel_scales=pixel_scales,
         )
 
     @classmethod
     def zeros(
         cls,
         shape_2d,
+        pixel_scales,
         ci_pattern,
         roe_corner=(1, 0),
         exposure_info=None,
         scans=None,
-        pixel_scales=None,
     ):
         return cls.full(
             fill_value=0.0,
             shape_2d=shape_2d,
+            pixel_scales=pixel_scales,
             ci_pattern=ci_pattern,
             roe_corner=roe_corner,
             exposure_info=exposure_info,
             scans=scans,
-            pixel_scales=pixel_scales,
         )
 
     @classmethod
@@ -1512,11 +1519,11 @@ class CIFrame(AbstractCIFrame):
         cls,
         file_path,
         hdu,
+        pixel_scales,
         ci_pattern,
         roe_corner=(1, 0),
         exposure_info=None,
         scans=None,
-        pixel_scales=None,
     ):
         """Load the image ci_data from a fits file.
 
@@ -1574,7 +1581,7 @@ class CIFrameEuclid(CIFrame):
         serial_overscan_size=20,
         parallel_overscan_size=20,
     ):
-        """Before reading this docstring, read the docstring for the __init__function above.
+        """Before reading this docstring, read the docstring for the ``.nit__function above.
 
         In the Euclid FPA, the quadrant id ('E', 'F', 'G', 'H') depends on whether the CCD is located
         on the left side (rows 1-3) or right side (rows 4-6) of the FPA:
@@ -1589,7 +1596,7 @@ class CIFrameEuclid(CIFrame):
         P   [xxxxxxxxx H xxxxxxxxx] [xxxxxxxxx G xxxxxxxxx]  P         | clocks an image
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | without any rotation
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | (e.g. towards row 0
-                                                                       | of the NumPy arrays)
+                                                                       | of the ndarrays)
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
         P   [xxxxxxxxx E xxxxxxxxx] [xxxxxxxxx F xxxxxxxxx] P          |
@@ -1610,7 +1617,7 @@ class CIFrameEuclid(CIFrame):
         P   [xxxxxxxxx F xxxxxxxxx] [xxxxxxxxx E xxxxxxxxx]  P         | clocks an image
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | without any rotation
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx]  |         | (e.g. towards row 0
-                                                                       | of the NumPy arrays)
+                                                                       | of the ndarrays)
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
         |   [xxxxxxxxxxxxxxxxxxxxx] [xxxxxxxxxxxxxxxxxxxxx] |          |
         P   [xxxxxxxxx G xxxxxxxxx] [xxxxxxxxx H xxxxxxxxx] P          |
@@ -1729,7 +1736,11 @@ class CIFrameEuclid(CIFrame):
         )
 
         return CIFrame.manual(
-            array=array, ci_pattern=ci_pattern, roe_corner=(0, 0), scans=scans
+            array=array,
+            pixel_scales=0.1,
+            ci_pattern=ci_pattern,
+            roe_corner=(0, 0),
+            scans=scans,
         )
 
     @classmethod
@@ -1753,7 +1764,11 @@ class CIFrameEuclid(CIFrame):
         )
 
         return CIFrame.manual(
-            array=array, ci_pattern=ci_pattern, roe_corner=(0, 1), scans=scans
+            array=array,
+            pixel_scales=0.1,
+            ci_pattern=ci_pattern,
+            roe_corner=(0, 1),
+            scans=scans,
         )
 
     @classmethod
@@ -1777,7 +1792,11 @@ class CIFrameEuclid(CIFrame):
         )
 
         return CIFrame.manual(
-            array=array, ci_pattern=ci_pattern, roe_corner=(1, 0), scans=scans
+            array=array,
+            pixel_scales=0.1,
+            ci_pattern=ci_pattern,
+            roe_corner=(1, 0),
+            scans=scans,
         )
 
     @classmethod
@@ -1801,5 +1820,9 @@ class CIFrameEuclid(CIFrame):
         )
 
         return CIFrame.manual(
-            array=array, ci_pattern=ci_pattern, roe_corner=(1, 1), scans=scans
+            array=array,
+            pixel_scales=0.1,
+            ci_pattern=ci_pattern,
+            roe_corner=(1, 1),
+            scans=scans,
         )

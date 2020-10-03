@@ -19,7 +19,9 @@ class CIImaging(imaging.AbstractImaging):
 
     @property
     def mask(self):
-        return msk.Mask.unmasked(shape_2d=self.shape_2d, pixel_scales=self.pixel_scales)
+        return msk.Mask2D.unmasked(
+            shape_2d=self.shape_2d, pixel_scales=self.pixel_scales
+        )
 
     @property
     def ci_pattern(self):
@@ -27,7 +29,7 @@ class CIImaging(imaging.AbstractImaging):
 
     def parallel_calibration_ci_imaging_for_columns(self, columns):
         """
-        Creates a function to extract a parallel section for given columns
+        Returnss a function to extract a parallel section for given columns
         """
 
         cosmic_ray_map = (
@@ -49,7 +51,7 @@ class CIImaging(imaging.AbstractImaging):
 
     def serial_calibration_ci_imaging_for_rows(self, rows):
         """
-        Creates a function to extract a serial section for given rows
+        Returnss a function to extract a serial section for given rows
         """
 
         cosmic_ray_map = (
@@ -71,7 +73,7 @@ class CIImaging(imaging.AbstractImaging):
         roe_corner,
         ci_pattern,
         image_path,
-        pixel_scales=None,
+        pixel_scales,
         scans=None,
         image_hdu=0,
         noise_map_path=None,
@@ -113,7 +115,9 @@ class CIImaging(imaging.AbstractImaging):
             )
         else:
             if isinstance(ci_pattern, pattern.CIPatternUniform):
-                ci_pre_cti = ci_pattern.ci_pre_cti_from_shape_2d(ci_image.shape)
+                ci_pre_cti = ci_pattern.ci_pre_cti_from_shape_2d(
+                    shape_2d=ci_image.shape, pixel_scales=pixel_scales
+                )
             else:
                 raise exc.CIPatternException(
                     "Cannot estimate ci_pre_cti image from non-uniform charge injectiono pattern"
@@ -285,7 +289,7 @@ class MaskedCIImaging(imaging.AbstractMaskedImaging):
         ----------
         image : im.Image
             The 2D observed image and other observed quantities (noise-map, PSF, exposure-time map, etc.)
-        mask: msk.Mask | None
+        mask: msk.Mask2D | None
             The 2D mask that is applied to image simulator.
 
         Attributes
@@ -296,7 +300,7 @@ class MaskedCIImaging(imaging.AbstractMaskedImaging):
         noise_map : NoiseMap
             An arrays describing the RMS standard deviation error in each pixel, preferably in units of electrons per
             second.
-        mask: msk.Mask
+        mask: msk.Mask2D
             The 2D mask that is applied to image simulator.
         """
 
@@ -378,10 +382,10 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
     def __init__(
         self,
         shape_2d,
+        pixel_scales,
         read_noise=None,
         add_noise=True,
         scans=None,
-        pixel_scales=None,
         noise_if_add_noise_false=0.1,
         noise_seed=-1,
         ci_seed=-1,

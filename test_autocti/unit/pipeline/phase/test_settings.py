@@ -34,8 +34,8 @@ class TestSettingsCTI:
         settings = ac.SettingsCTI(parallel_total_density_range=(1.0, 2.0))
 
         parallel_traps = [
-            ac.TrapInstantCaptureWrap(density=0.75),
-            ac.TrapInstantCaptureWrap(density=0.75),
+            ac.TrapInstantCapture(density=0.75),
+            ac.TrapInstantCapture(density=0.75),
         ]
         serial_traps = []
 
@@ -44,8 +44,8 @@ class TestSettingsCTI:
         )
 
         parallel_traps = [
-            ac.TrapInstantCaptureWrap(density=1.1),
-            ac.TrapInstantCaptureWrap(density=1.1),
+            ac.TrapInstantCapture(density=1.1),
+            ac.TrapInstantCapture(density=1.1),
         ]
 
         with pytest.raises(exc.PriorException):
@@ -57,8 +57,8 @@ class TestSettingsCTI:
 
         parallel_traps = []
         serial_traps = [
-            ac.TrapInstantCaptureWrap(density=0.75),
-            ac.TrapInstantCaptureWrap(density=0.75),
+            ac.TrapInstantCapture(density=0.75),
+            ac.TrapInstantCapture(density=0.75),
         ]
 
         settings.check_total_density_within_range(
@@ -66,8 +66,8 @@ class TestSettingsCTI:
         )
 
         serial_traps = [
-            ac.TrapInstantCaptureWrap(density=1.1),
-            ac.TrapInstantCaptureWrap(density=1.1),
+            ac.TrapInstantCapture(density=1.1),
+            ac.TrapInstantCapture(density=1.1),
         ]
 
         with pytest.raises(exc.PriorException):

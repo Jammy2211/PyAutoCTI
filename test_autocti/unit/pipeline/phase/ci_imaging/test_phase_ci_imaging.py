@@ -103,7 +103,7 @@ class TestMakeAnalysis:
             datasets=[ci_imaging_7x7], clocker=None
         )
 
-        mask = ac.Mask.from_cosmic_ray_map_buffed(
+        mask = ac.Mask2D.from_cosmic_ray_map_buffed(
             cosmic_ray_map=ci_imaging_7x7.cosmic_ray_map
         )
 
@@ -150,8 +150,8 @@ class TestMakeAnalysis:
         ]
 
         phase = PhaseCIImaging(
-            parallel_traps=[prior_model.PriorModel(ac.TrapInstantCaptureWrap)],
-            parallel_ccd=ac.CCDWrap,
+            parallel_traps=[prior_model.PriorModel(ac.TrapInstantCapture)],
+            parallel_ccd=ac.CCD,
             hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
             hyper_noise_scalar_of_parallel_trails=ac.ci.CIHyperNoiseScalar,
             phase_name="test_phase",
@@ -181,8 +181,8 @@ class TestMakeAnalysis:
         ).all()
 
         phase = PhaseCIImaging(
-            parallel_traps=[prior_model.PriorModel(ac.TrapInstantCaptureWrap)],
-            parallel_ccd=ac.CCDWrap,
+            parallel_traps=[prior_model.PriorModel(ac.TrapInstantCapture)],
+            parallel_ccd=ac.CCD,
             hyper_noise_scalar_of_parallel_trails=ac.ci.CIHyperNoiseScalar,
             hyper_noise_scalar_of_serial_trails=ac.ci.CIHyperNoiseScalar,
             hyper_noise_scalar_of_serial_overscan_no_trails=ac.ci.CIHyperNoiseScalar,

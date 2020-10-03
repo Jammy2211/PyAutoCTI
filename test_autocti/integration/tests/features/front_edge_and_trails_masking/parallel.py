@@ -1,3 +1,4 @@
+from autoconf import conf
 import autocti as ac
 import autofit as af
 from test_autocti.integration.tests import runner
@@ -32,7 +33,7 @@ def make_pipeline(name, folders, search):
         phase_name="phase_1",
         folders=folders,
         search=search,
-        parallel_traps=[af.PriorModel(ac.TrapInstantCaptureWrap)],
+        parallel_traps=[af.PriorModel(ac.TrapInstantCapture)],
         parallel_ccd=parallel_ccd,
         columns=None,
         parallel_front_edge_rows=(0, 1),

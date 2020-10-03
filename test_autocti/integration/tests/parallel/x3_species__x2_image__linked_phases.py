@@ -10,12 +10,12 @@ resolution = "patch"
 ci_normalizations = [84700.0]
 
 
-clocker = ac.ClockerWrap(parallel_express=2)
+clocker = ac.Clocker(parallel_express=2)
 
 
 def make_pipeline(name, folders, search=af.DynestyStatic()):
 
-    parallel_ccd = af.PriorModel(ac.CCDWrap)
+    parallel_ccd = af.PriorModel(ac.CCD)
 
     parallel_ccd.full_well_depth = 8.47e4
     parallel_ccd.well_notch_depth = 1e-7
@@ -24,13 +24,13 @@ def make_pipeline(name, folders, search=af.DynestyStatic()):
         phase_name="phase_1",
         folders=folders,
         search=search,
-        parallel_traps=[af.PriorModel(ac.TrapInstantCaptureWrap)],
+        parallel_traps=[af.PriorModel(ac.TrapInstantCapture)],
         parallel_ccd=parallel_ccd,
     )
 
     previous_total_density = phase1.result.instance.parallel_trap[0].trap_density
 
-    trap = af.PriorModel(ac.TrapInstantCaptureWrap)
+    trap = af.PriorModel(ac.TrapInstantCapture)
     trap.density = af.UniformPrior(lower_limit=0.0, upper_limit=previous_total_density)
 
     phase2 = ac.PhaseCIImaging(

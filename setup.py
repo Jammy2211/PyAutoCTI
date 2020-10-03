@@ -2,7 +2,7 @@ from codecs import open
 from os.path import abspath, dirname, join
 from subprocess import call
 
-from autocti import __version__
+from autocti import ``.ersion__
 from setuptools import Command, find_packages, setup
 
 this_dir = abspath(dirname(__file__))

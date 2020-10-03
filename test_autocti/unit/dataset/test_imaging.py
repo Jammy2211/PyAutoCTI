@@ -104,7 +104,7 @@ class TestMaskedImaging:
                 fill_value=2.0, shape_2d=(19, 19), pixel_scales=3.0
             ),
         )
-        mask = ac.Mask.unmasked(shape_2d=(19, 19), pixel_scales=1.0, invert=True)
+        mask = ac.Mask2D.unmasked(shape_2d=(19, 19), pixel_scales=1.0, invert=True)
         mask[9, 9] = False
 
         masked_imaging = ac.MaskedImaging(imaging=imaging, mask=mask)
