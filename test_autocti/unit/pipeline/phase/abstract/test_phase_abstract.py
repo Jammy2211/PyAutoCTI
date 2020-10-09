@@ -2,7 +2,7 @@ import autocti as ac
 from autofit.mapper.prior_model import prior_model
 from autocti.pipeline.phase.dataset import PhaseDataset
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
-from test_autocti import mock
+from autocti import mock
 
 import pytest
 
@@ -31,12 +31,11 @@ class TestModel:
     def test__phase_can_receive_model_objects(self):
 
         phase_dataset_7x7 = PhaseDataset(
-            phase_name="test_phase",
+            search=mock.MockSearch(name="test_phase"),
             parallel_traps=[ac.TrapInstantCapture],
             parallel_ccd=ac.CCD,
             serial_traps=[ac.TrapInstantCapture],
             serial_ccd=ac.CCD,
-            search=mock.MockSearch(),
         )
 
         parallel_traps = phase_dataset_7x7.model.parallel_traps[0]
@@ -73,10 +72,9 @@ class TestModel:
     def test__recognises_type_of_fit_correctly(self):
 
         phase_dataset_7x7 = PhaseDataset(
-            phase_name="test_phase",
+            search=mock.MockSearch(name="test_phase"),
             parallel_traps=[ac.TrapInstantCapture],
             parallel_ccd=ac.CCD,
-            search=mock.MockSearch(),
         )
 
         assert phase_dataset_7x7.is_parallel_fit is True
@@ -84,10 +82,9 @@ class TestModel:
         assert phase_dataset_7x7.is_parallel_and_serial_fit is False
 
         phase_dataset_7x7 = PhaseDataset(
-            phase_name="test_phase",
+            search=mock.MockSearch(name="test_phase"),
             serial_traps=[ac.TrapInstantCapture],
             serial_ccd=ac.CCD,
-            search=mock.MockSearch(),
         )
 
         assert phase_dataset_7x7.is_parallel_fit is False
@@ -95,12 +92,11 @@ class TestModel:
         assert phase_dataset_7x7.is_parallel_and_serial_fit is False
 
         phase_dataset_7x7 = PhaseDataset(
-            phase_name="test_phase",
+            search=mock.MockSearch(name="test_phase"),
             parallel_traps=[ac.TrapInstantCapture],
             parallel_ccd=ac.CCD,
             serial_traps=[ac.TrapInstantCapture],
             serial_ccd=ac.CCD,
-            search=mock.MockSearch(),
         )
 
         assert phase_dataset_7x7.is_parallel_fit is False
@@ -114,10 +110,9 @@ class TestSetup:
     def test_assertion_failure(self, ci_imaging_7x7, mask_7x7, parallel_clocker):
 
         phase_dataset_7x7 = PhaseCIImaging(
-            phase_name="phase_name",
+            search=mock.MockSearch(name="name"),
             parallel_traps=[ac.TrapInstantCapture()],
             parallel_ccd=ac.CCD(),
-            search=mock.MockSearch(),
         )
 
         result = phase_dataset_7x7.run(

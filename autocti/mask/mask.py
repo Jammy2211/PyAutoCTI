@@ -23,7 +23,7 @@ class SettingsMask:
     @property
     def tag(self):
         return (
-            f"{conf.instance.settings_tag.get('mask', 'mask')}["
+            f"{conf.instance['notation']['settings_tags']['mask']['mask']}["
             f"{self.cosmic_ray_buffer_tag}]"
         )
 
@@ -48,25 +48,24 @@ class SettingsMask:
         if self.cosmic_ray_parallel_buffer is None:
             cosmic_ray_parallel_buffer_tag = ""
         else:
-            cosmic_ray_parallel_buffer_tag = f"{conf.instance.settings_tag.get('mask', 'cosmic_ray_parallel_buffer')}{self.cosmic_ray_parallel_buffer}"
+            cosmic_ray_parallel_buffer_tag = f"{conf.instance['notation']['settings_tags']['mask']['cosmic_ray_parallel_buffer']}{self.cosmic_ray_parallel_buffer}"
 
         if self.cosmic_ray_serial_buffer is None:
             cosmic_ray_serial_buffer_tag = ""
         else:
-            cosmic_ray_serial_buffer_tag = f"{conf.instance.settings_tag.get('mask', 'cosmic_ray_serial_buffer')}{self.cosmic_ray_serial_buffer}"
+            cosmic_ray_serial_buffer_tag = f"{conf.instance['notation']['settings_tags']['mask']['cosmic_ray_serial_buffer']}{self.cosmic_ray_serial_buffer}"
 
         if self.cosmic_ray_diagonal_buffer is None:
             cosmic_ray_diagonal_buffer_tag = ""
         else:
-            cosmic_ray_diagonal_buffer_tag = f"{conf.instance.settings_tag.get('mask', 'cosmic_ray_diagonal_buffer')}{self.cosmic_ray_diagonal_buffer}"
+            cosmic_ray_diagonal_buffer_tag = f"{conf.instance['notation']['settings_tags']['mask']['cosmic_ray_diagonal_buffer']}{self.cosmic_ray_diagonal_buffer}"
 
         return (
-            "__"
-            + conf.instance.settings_tag.get("mask", "cosmic_ray_buffer")
-            + "_"
-            + cosmic_ray_parallel_buffer_tag
-            + cosmic_ray_serial_buffer_tag
-            + cosmic_ray_diagonal_buffer_tag
+            f"__"
+            f"{conf.instance['notation']['settings_tags']['mask']['cosmic_ray_buffer']}"
+            f"_{cosmic_ray_parallel_buffer_tag}"
+            f"{cosmic_ray_serial_buffer_tag}"
+            f"{cosmic_ray_diagonal_buffer_tag}"
         )
 
 
@@ -92,7 +91,7 @@ class Mask2D(mask_2d.AbstractMask2D):
         origin : (float, float)
             The (y,x) scaled units origin of the mask's coordinate system.
         invert : bool
-            If ``True``, the ``bool``'s of the input ``mask`` are inverted, for example ``False``'s become ``True``
+            If ``True``, the ``bool``'s of the input ``mask`` are inverted, for example `False`'s become ``True``
             and visa versa.
         """
         if type(mask) is list:
@@ -112,7 +111,7 @@ class Mask2D(mask_2d.AbstractMask2D):
 
     @classmethod
     def unmasked(cls, shape_2d, pixel_scales, origin=(0.0, 0.0), invert=False):
-        """Create a mask where all pixels are ``False`` and therefore unmasked.
+        """Create a mask where all pixels are `False` and therefore unmasked.
 
         Parameters
         ----------
@@ -125,7 +124,7 @@ class Mask2D(mask_2d.AbstractMask2D):
         origin : (float, float)
             The (y,x) scaled units origin of the mask's coordinate system.
         invert : bool
-            If ``True``, the ``bool``'s of the input ``mask`` are inverted, for example ``False``'s become ``True``
+            If ``True``, the ``bool``'s of the input ``mask`` are inverted, for example `False`'s become ``True``
             and visa versa.
         """
         return cls.manual(
@@ -150,7 +149,7 @@ class Mask2D(mask_2d.AbstractMask2D):
     @classmethod
     def from_cosmic_ray_map_buffed(cls, cosmic_ray_map, settings=SettingsMask()):
         """
-        Returns the mask used for CTI Calibration, which is all ``False`` unless specific regions are input for masking.
+        Returns the mask used for CTI Calibration, which is all `False` unless specific regions are input for masking.
 
         Parameters
         ----------

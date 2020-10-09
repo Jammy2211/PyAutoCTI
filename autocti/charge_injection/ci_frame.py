@@ -19,6 +19,7 @@ class AbstractCIFrame(abstract_frame.AbstractFrame):
         original_roe_corner=(1, 0),
         exposure_info=None,
         scans=None,
+        readout_offsets: (int, int) = None,
     ):
         """
         Class which represents the CCD quadrant of a charge injection image (e.g. the location of the parallel and
@@ -44,6 +45,7 @@ class AbstractCIFrame(abstract_frame.AbstractFrame):
         obj.exposure_info = exposure_info
         obj.scans = scans or abstract_frame.Scans()
         obj.ci_pattern = ci_pattern
+        obj.readout_offsets = readout_offsets
 
         return obj
 
@@ -60,6 +62,8 @@ class AbstractCIFrame(abstract_frame.AbstractFrame):
                 self.ci_pattern = obj.ci_pattern
             if hasattr(obj, "scans"):
                 self.scans = obj.scans
+            if hasattr(obj, "readout_offsets"):
+                self.readout_offsets = obj.readout_offsets
 
     def _new_structure(self, array, mask, store_in_1d):
         return self.__class__(
@@ -1326,6 +1330,7 @@ class CIFrame(AbstractCIFrame):
         roe_corner=(1, 0),
         exposure_info=None,
         scans=None,
+        readout_offsets: (int, int) = None,
     ):
         """Abstract class for the geometry of a CTI Image.
 
@@ -1377,11 +1382,19 @@ class CIFrame(AbstractCIFrame):
             original_roe_corner=roe_corner,
             exposure_info=exposure_info,
             scans=scans,
+            readout_offsets=readout_offsets,
         )
 
     @classmethod
     def manual_mask(
-        cls, array, mask, ci_pattern, roe_corner=(1, 0), exposure_info=None, scans=None
+        cls,
+        array,
+        mask,
+        ci_pattern,
+        roe_corner=(1, 0),
+        exposure_info=None,
+        scans=None,
+        readout_offsets: (int, int) = None,
     ):
         """Abstract class for the geometry of a CTI Image.
 
@@ -1431,6 +1444,7 @@ class CIFrame(AbstractCIFrame):
             original_roe_corner=roe_corner,
             exposure_info=exposure_info,
             scans=scans,
+            readout_offsets=readout_offsets,
         )
 
     @classmethod
@@ -1443,6 +1457,7 @@ class CIFrame(AbstractCIFrame):
         roe_corner=(1, 0),
         exposure_info=None,
         scans=None,
+        readout_offsets: (int, int) = None,
     ):
 
         return cls.manual(
@@ -1452,6 +1467,7 @@ class CIFrame(AbstractCIFrame):
             roe_corner=roe_corner,
             exposure_info=exposure_info,
             scans=scans,
+            readout_offsets=readout_offsets,
         )
 
     @classmethod
@@ -1463,6 +1479,7 @@ class CIFrame(AbstractCIFrame):
         roe_corner=(1, 0),
         exposure_info=None,
         scans=None,
+        readout_offsets: (int, int) = None,
     ):
         return cls.full(
             fill_value=1.0,
@@ -1472,6 +1489,7 @@ class CIFrame(AbstractCIFrame):
             roe_corner=roe_corner,
             exposure_info=exposure_info,
             scans=scans,
+            readout_offsets=readout_offsets,
         )
 
     @classmethod
@@ -1483,6 +1501,7 @@ class CIFrame(AbstractCIFrame):
         roe_corner=(1, 0),
         exposure_info=None,
         scans=None,
+        readout_offsets: (int, int) = None,
     ):
         return cls.full(
             fill_value=0.0,
@@ -1492,6 +1511,7 @@ class CIFrame(AbstractCIFrame):
             roe_corner=roe_corner,
             exposure_info=exposure_info,
             scans=scans,
+            readout_offsets=readout_offsets,
         )
 
     @classmethod
@@ -1524,6 +1544,7 @@ class CIFrame(AbstractCIFrame):
         roe_corner=(1, 0),
         exposure_info=None,
         scans=None,
+        readout_offsets: (int, int) = None,
     ):
         """Load the image ci_data from a fits file.
 
@@ -1532,7 +1553,7 @@ class CIFrame(AbstractCIFrame):
         path : str
             The path to the ci_data
         filename : str
-            The file phase_name of the fits image ci_data.
+            The file name of the fits image ci_data.
         hdu : int
             The HDU number in the fits file containing the image ci_data.
         frame_geometry : FrameArray.FrameGeometry
@@ -1553,6 +1574,7 @@ class CIFrame(AbstractCIFrame):
             exposure_info=exposure_info,
             scans=scans,
             pixel_scales=pixel_scales,
+            readout_offsets=readout_offsets,
         )
 
     @classmethod

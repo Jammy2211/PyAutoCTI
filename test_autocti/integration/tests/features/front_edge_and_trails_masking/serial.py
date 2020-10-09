@@ -30,7 +30,7 @@ def make_pipeline(name, folders, search=):
             self.serial_ccd.well_fill_gamma = 0.0
 
     phase1 = ac.PhaseCIImaging(
-        phase_name="phase_1",
+        name="phase_1",
         folders=folders,
         search=search,
         serial_traps=[af.PriorModel(ac.TrapInstantCapture)],

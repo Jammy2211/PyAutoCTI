@@ -20,7 +20,7 @@ def make_pipeline(name, folders, search=af.DynestyStatic()):
     serial_ccd.well_notch_depth = 1e-7
 
     phase1 = ac.PhaseCIImaging(
-        phase_name="phase_1",
+        name="phase_1",
         folders=folders,
         search=search,
         serial_traps=[af.PriorModel(ac.TrapInstantCapture)],
@@ -31,7 +31,7 @@ def make_pipeline(name, folders, search=af.DynestyStatic()):
     phase1 = phase1.extend_with_hyper_noise_phases()
 
     phase2 = ac.PhaseCIImaging(
-        phase_name="phase_2",
+        name="phase_2",
         folders=folders,
         serial_traps=phase1.result.model.serial_traps,
         serial_ccd=phase1.result.model.serial_ccd,

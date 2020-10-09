@@ -5,7 +5,7 @@ import autocti as ac
 import pytest
 from autocti import exc
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
-from test_autocti import mock
+from autocti import mock
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of "
@@ -20,11 +20,10 @@ class TestCheckDensity:
     def test__parallel_and_serial_checks_raise_exception(self, ci_imaging_7x7):
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
-            phase_name="test_phase",
+            search=mock.MockSearch(name="test_phase"),
             settings=ac.SettingsPhaseCIImaging(
                 settings_cti=ac.SettingsCTI(parallel_total_density_range=(1.0, 2.0))
             ),
-            search=mock.MockSearch(),
         )
 
         analysis = phase_ci_imaging_7x7.make_analysis(
@@ -42,11 +41,10 @@ class TestCheckDensity:
             analysis.log_likelihood_function(instance=instance)
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
-            phase_name="test_phase",
+            search=mock.MockSearch(name="test_phase"),
             settings=ac.SettingsPhaseCIImaging(
                 settings_cti=ac.SettingsCTI(serial_total_density_range=(1.0, 2.0))
             ),
-            search=mock.MockSearch(),
         )
 
         analysis = phase_ci_imaging_7x7.make_analysis(

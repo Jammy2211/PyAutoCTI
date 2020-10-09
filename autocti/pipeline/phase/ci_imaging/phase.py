@@ -23,10 +23,8 @@ class PhaseCIImaging(PhaseDataset):
     Analysis = Analysis
     Result = Result
 
-    @convert_paths
     def __init__(
         self,
-        paths,
         *,
         search,
         parallel_traps=None,
@@ -54,7 +52,6 @@ class PhaseCIImaging(PhaseDataset):
         """
 
         super().__init__(
-            paths=paths,
             parallel_traps=parallel_traps,
             parallel_ccd=parallel_ccd,
             serial_traps=serial_traps,
@@ -88,7 +85,7 @@ class PhaseCIImaging(PhaseDataset):
         Returns
         -------
         analysis: Analysis
-            An analysis object that the non-linear search calls to determine the fit of a set of values
+            An analysis object that the `NonLinearSearch` calls to determine the fit of a set of values
         """
 
         mask = ci_mask.CIMask.unmasked(

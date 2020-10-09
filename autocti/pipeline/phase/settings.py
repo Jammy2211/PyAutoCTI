@@ -17,7 +17,7 @@ class SettingsCTI:
     @property
     def tag(self):
         return (
-            f"{conf.instance.settings_tag.get('cti', 'cti')}["
+            f"{conf.instance['notation']['settings_tags']['cti']['cti']}["
             f"{self.parallel_total_density_range_tag}"
             f"{self.serial_total_density_range_tag}]"
         )
@@ -25,7 +25,7 @@ class SettingsCTI:
     @property
     def parallel_total_density_range_tag(self):
         """Generate a parallel_total_density_range tag, to customize phase names based on the range of values in total \
-        density that are allowed for the non-linear search in the parallel direction.
+        density that are allowed for the `NonLinearSearch` in the parallel direction.
 
         This changes the phase settings folder as follows:
 
@@ -38,12 +38,12 @@ class SettingsCTI:
         else:
             x0 = str(self.parallel_total_density_range[0])
             x1 = str(self.parallel_total_density_range[1])
-            return f"__{conf.instance.settings_tag.get('cti', 'parallel_total_density_range')}_({x0},{x1})"
+            return f"__{conf.instance['notation']['settings_tags']['cti']['parallel_total_density_range']}_({x0},{x1})"
 
     @property
     def serial_total_density_range_tag(self):
         """Generate a serial_total_density_range tag, to customize phase names based on the range of values in total \
-        density that are allowed for the non-linear search in the serial direction.
+        density that are allowed for the `NonLinearSearch` in the serial direction.
 
         This changes the phase settings folder as follows:
 
@@ -56,7 +56,7 @@ class SettingsCTI:
         else:
             x0 = str(self.serial_total_density_range[0])
             x1 = str(self.serial_total_density_range[1])
-            return f"__{conf.instance.settings_tag.get('cti', 'serial_total_density_range')}_({x0},{x1})"
+            return f"__{conf.instance['notation']['settings_tags']['cti']['serial_total_density_range']}_({x0},{x1})"
 
     def check_total_density_within_range(self, parallel_traps, serial_traps):
 
@@ -99,7 +99,7 @@ class SettingsPhaseCIImaging:
     def phase_tag(self):
 
         return (
-            f"{conf.instance.settings_tag.get('phase', 'settings')}__"
+            f"{conf.instance['notation']['settings_tags']['phase']['settings']}__"
             f"{self.settings_cti.tag}_"
             f"{self.settings_mask.tag}_"
             f"{self.settings_ci_mask.tag}_"

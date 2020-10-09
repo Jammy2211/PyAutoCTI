@@ -194,7 +194,7 @@ class SettingsMaskedCIImaging(imaging.AbstractSettingsMaskedImaging):
     @property
     def tag(self):
         return (
-            f"{conf.instance.settings_tag.get('ci_imaging', 'ci_imaging')}["
+            f"{conf.instance['notation']['settings_tags']['ci_imaging']['ci_imaging']}["
             f"{self.parallel_columns_tag}"
             f"{self.serial_rows_tag}]"
         )
@@ -215,7 +215,7 @@ class SettingsMaskedCIImaging(imaging.AbstractSettingsMaskedImaging):
         else:
             x0 = str(self.parallel_columns[0])
             x1 = str(self.parallel_columns[1])
-            return f"__{conf.instance.settings_tag.get('ci_imaging', 'parallel_columns')}_({x0},{x1})"
+            return f"__{conf.instance['notation']['settings_tags']['ci_imaging']['parallel_columns']}_({x0},{x1})"
 
     @property
     def serial_rows_tag(self):
@@ -233,7 +233,7 @@ class SettingsMaskedCIImaging(imaging.AbstractSettingsMaskedImaging):
         else:
             x0 = str(self.serial_rows[0])
             x1 = str(self.serial_rows[1])
-            return f"__{conf.instance.settings_tag.get('ci_imaging', 'serial_rows')}_({x0},{x1})"
+            return f"__{conf.instance['notation']['settings_tags']['ci_imaging']['serial_rows']}_({x0},{x1})"
 
     def modify_via_fit_type(self, is_parallel_fit, is_serial_fit):
         """Modify the settings based on the type of fit being performed where:
