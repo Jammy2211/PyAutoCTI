@@ -20,7 +20,7 @@ class SettingsCIMask:
     @property
     def tag(self):
         return (
-            f"{conf.instance.settings_tag.get('ci_mask', 'ci_mask')}["
+            f"{conf.instance['notation']['settings_tags']['ci_mask']['ci_mask']}["
             f"{self.parallel_front_edge_rows_tag}"
             f"{self.parallel_trails_rows_tag}"
             f"{self.serial_front_edge_columns_tag}"
@@ -43,7 +43,7 @@ class SettingsCIMask:
         else:
             x0 = str(self.parallel_front_edge_rows[0])
             x1 = str(self.parallel_front_edge_rows[1])
-            return f"__{conf.instance.settings_tag.get('ci_mask', 'parallel_front_edge_rows')}_({x0},{x1})"
+            return f"__{conf.instance['notation']['settings_tags']['ci_mask']['parallel_front_edge_rows']}_({x0},{x1})"
 
     @property
     def parallel_trails_rows_tag(self):
@@ -61,7 +61,7 @@ class SettingsCIMask:
         else:
             x0 = str(self.parallel_trails_rows[0])
             x1 = str(self.parallel_trails_rows[1])
-            return f"__{conf.instance.settings_tag.get('ci_mask', 'parallel_trails_rows')}_({x0},{x1})"
+            return f"__{conf.instance['notation']['settings_tags']['ci_mask']['parallel_trails_rows']}_({x0},{x1})"
 
     @property
     def serial_front_edge_columns_tag(self):
@@ -79,7 +79,7 @@ class SettingsCIMask:
         else:
             x0 = str(self.serial_front_edge_columns[0])
             x1 = str(self.serial_front_edge_columns[1])
-            return f"__{conf.instance.settings_tag.get('ci_mask', 'serial_front_edge_mask_rows')}_({x0},{x1})"
+            return f"__{conf.instance['notation']['settings_tags']['ci_mask']['serial_front_edge_mask_rows']}_({x0},{x1})"
 
     @property
     def serial_trails_columns_tag(self):
@@ -97,7 +97,7 @@ class SettingsCIMask:
         else:
             x0 = str(self.serial_trails_columns[0])
             x1 = str(self.serial_trails_columns[1])
-            return f"__{conf.instance.settings_tag.get('ci_mask', 'serial_trails_mask_rows')}_({x0},{x1})"
+            return f"__{conf.instance['notation']['settings_tags']['ci_mask']['serial_trails_mask_rows']}_({x0},{x1})"
 
 
 class CIMask(Mask2D):

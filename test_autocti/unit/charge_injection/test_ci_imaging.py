@@ -452,9 +452,7 @@ class TestSimulatorCIImaging(object):
             ci_pattern=pattern, clocker=parallel_clocker
         )
 
-        image_no_noise = pattern.ci_pre_cti_from(
-            shape_2d=(3, 3), pixel_scales=1.0
-        )
+        image_no_noise = pattern.ci_pre_cti_from(shape_2d=(3, 3), pixel_scales=1.0)
 
         # Use seed to give us a known read noises map we'll test_autocti for
 

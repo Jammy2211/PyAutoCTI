@@ -18,10 +18,8 @@ class PhaseDataset(abstract.AbstractPhase):
 
     Result = Result
 
-    @convert_paths
     def __init__(
         self,
-        paths,
         search,
         parallel_traps=None,
         parallel_ccd=None,
@@ -40,9 +38,7 @@ class PhaseDataset(abstract.AbstractPhase):
             The class of a non_linear search
         """
 
-        paths.tag = settings.phase_tag
-
-        super().__init__(paths=paths, search=search)
+        super().__init__(search=search)
 
         self.parallel_traps = parallel_traps or []
         self.parallel_ccd = parallel_ccd
@@ -77,6 +73,8 @@ class PhaseDataset(abstract.AbstractPhase):
 
         results = results or ResultsCollection()
 
+        self.modify_search_paths()
+
         analysis = self.make_analysis(
             datasets=datasets, clocker=clocker, results=results, pool=pool
         )
@@ -106,7 +104,7 @@ class PhaseDataset(abstract.AbstractPhase):
         Returns
         -------
         lens : Analysis
-            An lens object that the non-linear search calls to determine the fit of a set of values
+            An lens object that the `NonLinearSearch` calls to determine the fit of a set of values
         """
         raise NotImplementedError()
 
@@ -125,7 +123,11 @@ class PhaseDataset(abstract.AbstractPhase):
 
         return mask
 
+    def modify_search_paths(self):
+
+        self.search.paths.tag = self.settings.phase_tag
+
     def extend_with_hyper_noise_phases(self):
         return extensions.CombinedHyperPhase(
-            phase=self, hyper_phase_classes=(extensions.HyperNoisePhase,)
+            phase=self, hyper_phase_classes=[extensions.HyperNoisePhase]
         )

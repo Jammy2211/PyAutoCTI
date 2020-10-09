@@ -1,11 +1,9 @@
 from os import path
 
-from autofit.mapper import model
 import autocti as ac
 import pytest
-from autocti import exc
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
-from test_autocti import mock
+from autocti import mock
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of "
@@ -22,10 +20,9 @@ class TestFit:
     ):
 
         phase = PhaseCIImaging(
+            search=mock.MockSearch(name="test_phase"),
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
-            phase_name="test_phase",
-            search=mock.MockSearch(),
         )
 
         analysis = phase.make_analysis(
@@ -52,10 +49,9 @@ class TestFit:
     ):
 
         phase = PhaseCIImaging(
+            search=mock.MockSearch(name="test_phase"),
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
-            phase_name="test_phase",
-            search=mock.MockSearch(),
             settings=ac.SettingsPhaseCIImaging(
                 settings_masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(
                     parallel_columns=(0, 1)
@@ -98,10 +94,9 @@ class TestFit:
     ):
 
         phase = PhaseCIImaging(
+            search=mock.MockSearch(name="test_phase"),
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
-            phase_name="test_phase",
-            search=mock.MockSearch(),
             settings=ac.SettingsPhaseCIImaging(
                 settings_masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(
                     parallel_columns=(0, 1)
@@ -132,11 +127,10 @@ class TestFit:
     ):
 
         phase = PhaseCIImaging(
+            search=mock.MockSearch(name="test_phase"),
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
             hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
-            phase_name="test_phase",
-            search=mock.MockSearch(),
             settings=ac.SettingsPhaseCIImaging(
                 settings_masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(
                     parallel_columns=(0, 1)
@@ -200,11 +194,10 @@ class TestFit:
     ):
 
         phase = PhaseCIImaging(
+            search=mock.MockSearch(name="test_phase"),
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
             hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
-            phase_name="test_phase",
-            search=mock.MockSearch(),
             settings=ac.SettingsPhaseCIImaging(
                 settings_masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(
                     parallel_columns=(0, 1)
@@ -281,10 +274,9 @@ class TestFit:
         ]
 
         phase = PhaseCIImaging(
-            phase_name="test_phase",
+            search=mock.MockSearch(name="test_phase"),
             hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
             hyper_noise_scalar_of_parallel_trails=ac.ci.CIHyperNoiseScalar,
-            search=mock.MockSearch(),
         )
 
         analysis = phase.make_analysis(

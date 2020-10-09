@@ -4,7 +4,7 @@ from autocti.plot import ci_imaging_plots, ci_fit_plots
 
 
 def setting(section, name):
-    return conf.instance.visualize_plots.get(section, name, bool)
+    return conf.instance["visualize"]["plots"][section][name]
 
 
 def plot_setting(section, name):

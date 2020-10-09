@@ -3,7 +3,7 @@ from os import path
 from autoconf import conf
 import pytest
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
-from test_autocti import mock
+from autocti import mock
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of "
@@ -26,9 +26,7 @@ class TestGeneric:
         self, ci_imaging_7x7, parallel_clocker
     ):
 
-        phase_ci_imaging_7x7 = PhaseCIImaging(
-            phase_name="test_phase", search=mock.MockSearch()
-        )
+        phase_ci_imaging_7x7 = PhaseCIImaging(search=mock.MockSearch(name="test_phase"))
 
         result = phase_ci_imaging_7x7.run(
             datasets=[ci_imaging_7x7],

@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 from autocti.pipeline.phase.dataset.result import Result
-from test_autocti import mock
+from autocti import mock
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of "
@@ -22,8 +22,7 @@ class TestResult:
     ):
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
-            search=mock.MockSearch(samples=samples_with_result),
-            phase_name="test_phase_2",
+            search=mock.MockSearch(name="test_phase_2", samples=samples_with_result),
             settings=ac.SettingsPhaseCIImaging(
                 settings_masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(
                     parallel_columns=(0, 1)
@@ -84,12 +83,11 @@ class TestResult:
         ]
 
         phase_ci_imaging_7x7 = PhaseCIImaging(
+            search=mock.MockSearch(name="test_phase_2", samples=samples_with_result),
             hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar(),
             hyper_noise_scalar_of_parallel_trails=ac.ci.CIHyperNoiseScalar(),
             hyper_noise_scalar_of_serial_trails=ac.ci.CIHyperNoiseScalar(),
             hyper_noise_scalar_of_serial_overscan_no_trails=ac.ci.CIHyperNoiseScalar(),
-            phase_name="test_phase_2",
-            search=mock.MockSearch(samples=samples_with_result),
         )
 
         result = phase_ci_imaging_7x7.run(

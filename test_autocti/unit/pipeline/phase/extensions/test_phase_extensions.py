@@ -72,7 +72,7 @@
 # class MockOptimizer(af.NonLinearSearch):
 #     def __init__(
 #         self,
-#         phase_name="mock_search",
+#         name="mock_search",
 #         phase_tag="tag",
 #         folders=tuple(),
 #         model_mapper=None,
@@ -80,7 +80,7 @@
 #         super().__init__(
 #             folders=folders,
 #             phase_tag=phase_tag,
-#             phase_name=phase_name,
+#             name=name,
 #             model_mapper=model_mapper,
 #         )
 #
@@ -91,7 +91,7 @@
 #
 # class MockPhase(object):
 #     def __init__(self):
-#         self.phase_name = "phase name"
+#         self.name = "phase name"
 #         self.phase_path = "phase_path"
 #         self.search = MockOptimizer()
 #         self.folders = [""]
