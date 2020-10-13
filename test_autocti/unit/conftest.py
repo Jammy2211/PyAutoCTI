@@ -159,3 +159,21 @@ def make_phase_data():
 @pytest.fixture(name="phase_ci_imaging_7x7")
 def make_phase_ci_imaging_7x7():
     return mock.make_phase_ci_imaging_7x7()
+
+
+# Datasets
+
+
+@pytest.fixture(name="euclid_data")
+def make_euclid_data():
+    return mock.make_euclid_data()
+
+
+@pytest.fixture(name="acs_ccd")
+def make_acs_ccd():
+    return mock.make_acs_ccd()
+
+
+@pytest.fixture(name="acs_quadrant")
+def make_acs_quadrant():
+    return mock.make_acs_quadrant()

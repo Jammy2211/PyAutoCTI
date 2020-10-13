@@ -124,7 +124,7 @@ def add_cti_to_frame_for_ou_sim(frames):
     For use outside Euclid, the Simulator includes effects like adding read-noise to the data. We will disable these
     features given that this is handled by ELViS.
     """
-    simulator = ci_imaging.SimulatorCIImaging(add_noise=False)
+    simulator = ci_imaging.SimulatorCIImaging(add_poisson_noise=False)
 
     ci_datasets = [
         simulator.from_ci_pre_cti(

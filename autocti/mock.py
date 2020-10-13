@@ -1,6 +1,6 @@
 from autofit.tools.pipeline import ResultsCollection
-from test_autofit import mock
-from test_autofit.mock import MockSearch, MockSamples
+from autofit import mock
+from autofit.mock import MockSearch, MockSamples
 
 import numpy as np
 
@@ -299,8 +299,10 @@ def make_noise_map_7x7():
 ### IMAGING ###
 
 
-def make_imaging_7x7(image_7x7, noise_map_7x7):
-    return ac.Imaging(image=image_7x7, noise_map=noise_map_7x7, name="mock_imaging_7x7")
+def make_imaging_7x7():
+    return ac.Imaging(
+        image=make_image_7x7(), noise_map=make_noise_map_7x7(), name="mock_imaging_7x7"
+    )
 
 
 ### CHARGE INJECTION FRAMES ###
