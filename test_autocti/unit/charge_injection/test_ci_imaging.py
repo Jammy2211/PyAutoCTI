@@ -416,7 +416,7 @@ class TestSimulatorCIImaging(object):
         simulator = ac.ci.SimulatorCIImaging(
             shape_2d=(5, 5),
             pixel_scales=1.0,
-            add_noise=False,
+            add_poisson_noise=False,
             scans=ac.Scans(serial_overscan=ac.Region((1, 2, 1, 2))),
         )
 
@@ -444,7 +444,7 @@ class TestSimulatorCIImaging(object):
             pixel_scales=1.0,
             scans=ac.Scans(serial_overscan=ac.Region((1, 2, 1, 2))),
             read_noise=1.0,
-            add_noise=True,
+            add_poisson_noise=True,
             noise_seed=1,
         )
 
@@ -472,7 +472,7 @@ class TestSimulatorCIImaging(object):
             shape_2d=(5, 5),
             pixel_scales=1.0,
             scans=ac.Scans(serial_overscan=ac.Region((1, 2, 1, 2))),
-            add_noise=False,
+            add_poisson_noise=False,
         )
 
         cosmic_ray_map = np.zeros((5, 5))

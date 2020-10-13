@@ -384,7 +384,7 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
         shape_2d,
         pixel_scales,
         read_noise=None,
-        add_noise=True,
+        add_poisson_noise=False,
         scans=None,
         noise_if_add_noise_false=0.1,
         noise_seed=-1,
@@ -401,7 +401,8 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
 
         super(SimulatorCIImaging, self).__init__(
             read_noise=read_noise,
-            add_noise=add_noise,
+            exposure_time=1.0,
+            add_poisson_noise=add_poisson_noise,
             noise_if_add_noise_false=noise_if_add_noise_false,
             noise_seed=noise_seed,
         )

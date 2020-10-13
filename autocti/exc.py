@@ -2,7 +2,7 @@ from autofit import exc
 from autoarray.exc import ArrayException, MaskException, FrameException, RegionException
 
 
-class DataException(Exception):
+class DatasetException(Exception):
     pass
 
 
