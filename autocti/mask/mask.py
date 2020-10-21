@@ -91,7 +91,7 @@ class Mask2D(mask_2d.AbstractMask2D):
         origin : (float, float)
             The (y,x) scaled units origin of the mask's coordinate system.
         invert : bool
-            If ``True``, the ``bool``'s of the input ``mask`` are inverted, for example `False`'s become ``True``
+            If `True`, the ``bool``'s of the input ``mask`` are inverted, for example `False`'s become `True`
             and visa versa.
         """
         if type(mask) is list:
@@ -124,7 +124,7 @@ class Mask2D(mask_2d.AbstractMask2D):
         origin : (float, float)
             The (y,x) scaled units origin of the mask's coordinate system.
         invert : bool
-            If ``True``, the ``bool``'s of the input ``mask`` are inverted, for example `False`'s become ``True``
+            If `True`, the ``bool``'s of the input ``mask`` are inverted, for example `False`'s become `True`
             and visa versa.
         """
         return cls.manual(

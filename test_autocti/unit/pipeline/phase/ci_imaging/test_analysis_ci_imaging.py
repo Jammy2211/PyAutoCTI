@@ -297,5 +297,5 @@ class TestFit:
         assert len(hyper_noise_scalars) == 2
         assert len(phase.model.priors) == 2
 
-        assert instance.hyper_noise_scalar_of_ci_regions == 0.5
-        assert instance.hyper_noise_scalar_of_parallel_trails == 0.5
+        assert instance.hyper_noise_scalar_of_ci_regions == 5.0
+        assert instance.hyper_noise_scalar_of_parallel_trails == 5.0

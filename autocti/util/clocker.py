@@ -99,34 +99,3 @@ class Clocker(object):
             serial_window_range=self.serial_window_range,
             time_window_range=self.time_window_range,
         )
-
-
-class CCD(arcticpy.CCD):
-    def __init__(self, full_well_depth=1e4, well_notch_depth=0.0, well_fill_power=0.58):
-        super().__init__(
-            fraction_of_traps_per_phase=[1],
-            full_well_depth=full_well_depth,
-            well_fill_power=well_fill_power,
-            well_notch_depth=well_notch_depth,
-            well_bloom_level=None,
-        )
-
-
-class TrapInstantCapture(arcticpy.TrapInstantCapture):
-    """ For the old C++ style release-then-instant-capture algorithm. """
-
-    def __init__(self, density=0.13, release_timescale=0.25):
-        """ The parameters for a single trap species.
-        Parameters
-        ----------
-        density : float
-            The density of the trap species in a pixel.
-        release_timescale : float
-            The release timescale of the trap, in the same units as the time
-            spent in each pixel or phase (Clocker sequence).
-        surface : bool
-            ###
-        """
-        super().__init__(
-            density=density, release_timescale=release_timescale, surface=False
-        )

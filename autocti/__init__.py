@@ -20,9 +20,9 @@ from .pipeline.phase.settings import SettingsPhaseCIImaging
 from .pipeline.phase.extensions import CombinedHyperPhase
 from .pipeline.phase.ci_imaging.phase import PhaseCIImaging
 from .pipeline.pipeline import Pipeline
-from .util.wrap import Clocker
-from .util.wrap import CCD
-from .util.wrap import TrapInstantCapture
+from .util.clocker import Clocker
+from .util.ccd import CCD
+from .util.traps import TrapInstantCapture
 from . import util
 from . import plot
 
