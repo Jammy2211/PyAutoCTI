@@ -11,12 +11,7 @@ from autoarray.instruments import acs
 class TestFindWarmPixels:
     def test__find_warm_pixels__hst_acs(self):
 
-        # Path to this file
-        path = os.path.dirname(os.path.realpath(__file__))
-
-        # Set up some configuration options for the automatic fits dataset loading
-        path += "/../../../examples"
-        conf.instance = conf.Config(config_path=f"{path}/config")
+        pass
 
         # # Load the HST ACS dataset
         # path += "/acs"

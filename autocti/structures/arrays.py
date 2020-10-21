@@ -36,7 +36,7 @@ class AbstractArray(abstract_array.AbstractArray):
         |x|x|x|x|x|x|x|x|x|x|
         |x|x|x|x|x|x|x|x|x|x|     This is an example mask.Mask2D, where:
         |x|x|x|x|x|x|x|x|x|x|
-        |x|x|x|x|o|o|x|x|x|x|     x = ``True`` (Pixel is masked and excluded from the array)
+        |x|x|x|x|o|o|x|x|x|x|     x = `True` (Pixel is masked and excluded from the array)
         |x|x|x|o|o|o|o|x|x|x|     o = `False` (Pixel is not masked and included in the array)
         |x|x|x|o|o|o|o|x|x|x|
         |x|x|x|x|x|x|x|x|x|x|
@@ -83,7 +83,7 @@ class AbstractArray(abstract_array.AbstractArray):
         |x|x|x|x|x|x|x|x|x|x|
         |x|x|x|x|x|x|x|x|x|x|     This is an example mask.Mask2D, where:
         |x|x|x|x|x|x|x|x|x|x|
-        |x|x|x|x|x|x|x|x|x|x|     x = ``True`` (Pixel is masked and excluded from lens)
+        |x|x|x|x|x|x|x|x|x|x|     x = `True` (Pixel is masked and excluded from lens)
         |x|x|x|x|o|o|x|x|x|x|     o = `False` (Pixel is not masked and included in lens)
         |x|x|x|x|x|x|x|x|x|x|
         |x|x|x|x|x|x|x|x|x|x|
@@ -144,7 +144,7 @@ class AbstractArray(abstract_array.AbstractArray):
         |x|x|x|x|x|x|x|x|x|x|
         |x|x|x|x|x|x|x|x|x|x|     This is an example mask.Mask2D, where:
         |x|x|x|x|x|x|x|x|x|x|
-        |x|x|x|x|o|o|x|x|x|x|     x = ``True`` (Pixel is masked and excluded from the array)
+        |x|x|x|x|o|o|x|x|x|x|     x = `True` (Pixel is masked and excluded from the array)
         |x|x|x|o|o|o|o|x|x|x|     o = `False` (Pixel is not masked and included in the array)
         |x|x|x|o|o|o|o|x|x|x|
         |x|x|x|x|x|x|x|x|x|x|
@@ -180,7 +180,7 @@ class AbstractArray(abstract_array.AbstractArray):
         """
         if len(array.shape) != 2:
             raise exc.ArrayException(
-                "An array input into the arrays.Array.__new__ method has store_in_1d = ``True`` but"
+                "An array input into the arrays.Array.__new__ method has store_in_1d = `True` but"
                 "the input shape of the array is not 1."
             )
 
