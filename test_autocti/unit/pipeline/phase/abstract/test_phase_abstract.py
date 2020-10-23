@@ -2,7 +2,7 @@ import autocti as ac
 from autofit.mapper.prior_model import prior_model
 from autocti.pipeline.phase.dataset import PhaseDataset
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
-from autocti import mock
+from autocti.mock import mock
 
 import pytest
 

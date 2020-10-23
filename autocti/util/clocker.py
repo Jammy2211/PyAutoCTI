@@ -8,13 +8,11 @@ class Clocker(object):
         parallel_roe=None,
         parallel_express=0,
         parallel_charge_injection_mode=False,
-        parallel_offset=0,
         parallel_window_range=None,
         serial_roe=None,
         serial_express=0,
-        serial_offset=0,
         serial_window_range=None,
-        time_window_range=[0, 1],
+        time_window_range=None,
     ):
         """
         The CTI Clock for arctic clocking.
@@ -39,12 +37,10 @@ class Clocker(object):
         self.parallel_roe = parallel_roe
         self.parallel_express = parallel_express
         self.parallel_charge_injection_mode = parallel_charge_injection_mode
-        self.parallel_offset = parallel_offset
         self.parallel_window_range = parallel_window_range
 
         self.serial_roe = serial_roe
         self.serial_express = serial_express
-        self.serial_offset = serial_offset
         self.serial_window_range = serial_window_range
 
         self.time_window_range = time_window_range
@@ -57,19 +53,20 @@ class Clocker(object):
         serial_ccd=None,
         serial_traps=None,
     ):
+
         return arcticpy.add_cti(
             image=image,
             parallel_ccd=parallel_ccd,
             parallel_roe=self.parallel_roe,
             parallel_traps=parallel_traps,
             parallel_express=self.parallel_express,
-            parallel_offset=self.parallel_offset,
+            parallel_offset=image.readout_offsets[0],
             parallel_window_range=self.parallel_window_range,
             serial_ccd=serial_ccd,
             serial_roe=self.serial_roe,
             serial_traps=serial_traps,
             serial_express=self.serial_express,
-            serial_offset=self.serial_offset,
+            serial_offset=image.readout_offsets[1],
             serial_window_range=self.serial_window_range,
             time_window_range=self.time_window_range,
         )
@@ -89,13 +86,13 @@ class Clocker(object):
             parallel_roe=self.parallel_roe,
             parallel_traps=parallel_traps,
             parallel_express=self.parallel_express,
-            parallel_offset=self.parallel_offset,
+            parallel_offset=image.readout_offsets[0],
             parallel_window_range=self.parallel_window_range,
             serial_ccd=serial_ccd,
             serial_roe=self.serial_roe,
             serial_traps=serial_traps,
             serial_express=self.serial_express,
-            serial_offset=self.serial_offset,
+            serial_offset=image.readout_offsets[1],
             serial_window_range=self.serial_window_range,
             time_window_range=self.time_window_range,
         )

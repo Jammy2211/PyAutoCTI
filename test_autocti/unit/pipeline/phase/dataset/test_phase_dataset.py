@@ -3,9 +3,8 @@ from os import path
 import numpy as np
 import pytest
 import autocti as ac
-from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
 from autocti.pipeline.phase.extensions import HyperNoisePhase
-from autocti import mock
+from autocti.mock import mock
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of "
@@ -19,7 +18,7 @@ directory = path.dirname(path.realpath(__file__))
 class TestPhase:
     def test__extend_with_hyper_noise_phase(self):
 
-        phase = PhaseCIImaging(search=mock.MockSearch(name="test_phase"))
+        phase = ac.PhaseCIImaging(search=mock.MockSearch(name="test_phase"))
 
         phase_extended = phase.extend_with_hyper_noise_phases()
         assert type(phase_extended.hyper_phases[0]) == HyperNoisePhase
@@ -32,7 +31,9 @@ class TestMakeAnalysis:
 
         ci_imaging_7x7.cosmic_ray_map = None
 
-        phase_ci_imaging_7x7 = PhaseCIImaging(search=mock.MockSearch(name="test_phase"))
+        phase_ci_imaging_7x7 = ac.PhaseCIImaging(
+            search=mock.MockSearch(name="test_phase")
+        )
 
         analysis = phase_ci_imaging_7x7.make_analysis(
             datasets=[ci_imaging_7x7], clocker=None
@@ -57,7 +58,7 @@ class TestMakeAnalysis:
 
         ci_imaging_7x7.cosmic_ray_map = cosmic_ray_map
 
-        phase_ci_imaging_7x7 = PhaseCIImaging(
+        phase_ci_imaging_7x7 = ac.PhaseCIImaging(
             search=mock.MockSearch(name="test_phase"),
             settings=ac.SettingsPhaseCIImaging(
                 settings_mask=ac.SettingsMask(
@@ -97,7 +98,7 @@ class TestMakeAnalysis:
 
         ci_imaging_7x7.cosmic_ray_map = cosmic_ray_map
 
-        phase_ci_imaging_7x7 = PhaseCIImaging(
+        phase_ci_imaging_7x7 = ac.PhaseCIImaging(
             search=mock.MockSearch(name="test_phase"),
             settings=ac.SettingsPhaseCIImaging(
                 settings_mask=ac.SettingsMask(
