@@ -3,7 +3,7 @@ from os import path
 import autocti as ac
 import pytest
 from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
-from autocti import mock
+from autocti.mock import mock
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of "
