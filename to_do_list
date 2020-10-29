@@ -8,6 +8,9 @@ Features:
     - Implement charge injection line data structure, simulators, example model fits.
     - Implement pipelines + runners for this.
     - Extend to fitting of CI images.
+    - Redefine conventions so roe_corner=(0,0) is the unrotated case, this may require a flipud to go into
+    EuclidFrame methods (unclear why they are flipped). This is cause arctic clocks towards 0, 0.
+    - Make the input of scans parallel size, overscan etc and derive regions.
 
 Euclid:
 

@@ -1576,9 +1576,9 @@ class CIFrameEuclid(CIFrame):
         quadrant_id,
         ci_pattern,
         parallel_size=2086,
-        serial_size=2119,
+        serial_size=2128,
         serial_prescan_size=51,
-        serial_overscan_size=20,
+        serial_overscan_size=29,
         parallel_overscan_size=20,
     ):
         """Before reading this docstring, read the docstring for the ``.nit__function above.
@@ -1721,9 +1721,9 @@ class CIFrameEuclid(CIFrame):
         array,
         ci_pattern,
         parallel_size=2086,
-        serial_size=2119,
+        serial_size=2128,
         serial_prescan_size=51,
-        serial_overscan_size=20,
+        serial_overscan_size=29,
         parallel_overscan_size=20,
     ):
 
@@ -1749,9 +1749,9 @@ class CIFrameEuclid(CIFrame):
         array,
         ci_pattern,
         parallel_size=2086,
-        serial_size=2119,
+        serial_size=2128,
         serial_prescan_size=51,
-        serial_overscan_size=20,
+        serial_overscan_size=29,
         parallel_overscan_size=20,
     ):
 
@@ -1777,9 +1777,9 @@ class CIFrameEuclid(CIFrame):
         array,
         ci_pattern,
         parallel_size=2086,
-        serial_size=2119,
+        serial_size=2128,
         serial_prescan_size=51,
-        serial_overscan_size=20,
+        serial_overscan_size=29,
         parallel_overscan_size=20,
     ):
 
@@ -1805,9 +1805,9 @@ class CIFrameEuclid(CIFrame):
         array,
         ci_pattern,
         parallel_size=2086,
-        serial_size=2119,
+        serial_size=2128,
         serial_prescan_size=51,
-        serial_overscan_size=20,
+        serial_overscan_size=29,
         parallel_overscan_size=20,
     ):
 

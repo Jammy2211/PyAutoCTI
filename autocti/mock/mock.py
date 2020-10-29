@@ -1,12 +1,12 @@
-import autofit as af
+from autofit.mock import mock
+from autofit.tools.pipeline import ResultsCollection
 from autofit.mock.mock import MockSearch, MockSamples
-
 import numpy as np
 
 ### Mock AutoFit ###
 
 
-class MockResult(af.MockResult):
+class MockResult(mock.MockResult):
     def __init__(
         self,
         samples=None,
@@ -57,7 +57,7 @@ class MockResult(af.MockResult):
         return self
 
 
-class MockResults(af.ResultsCollection):
+class MockResults(ResultsCollection):
     def __init__(
         self,
         samples=None,

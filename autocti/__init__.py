@@ -2,7 +2,8 @@ from autoarray.fit.fit import FitImaging
 from autoarray.structures.region import Region
 from autoarray.structures.arrays.abstract_array import ExposureInfo
 from autoarray.structures.frames.abstract_frame import Scans
-from autoarray.structures.lines.lines import Line, LineCollection
+from autoarray.structures.lines.lines import Line
+from autoarray.structures.lines.lines import LineCollection
 from autoarray.instruments import euclid
 from autoarray.instruments import acs
 from autoarray.dataset import preprocess
