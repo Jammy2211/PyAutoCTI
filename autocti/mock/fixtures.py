@@ -230,7 +230,7 @@ def make_phase_ci_imaging_7x7():
 
 
 def make_euclid_data():
-    return np.zeros((2086, 2119))
+    return np.zeros((2086, 2128))
 
 
 ### ACS DATA ####

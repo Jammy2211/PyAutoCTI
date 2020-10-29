@@ -3000,24 +3000,24 @@ class TestCIFrameEuclid:
         assert isinstance(euclid_ci_frame, ac.ci.CIFrame)
         assert euclid_ci_frame.ci_pattern.regions == [(2085, 2086, 0, 1)]
         assert euclid_ci_frame.original_roe_corner == (0, 0)
-        assert euclid_ci_frame.shape_2d == (2086, 2119)
-        assert (euclid_ci_frame == np.zeros((2086, 2119))).all()
+        assert euclid_ci_frame.shape_2d == (2086, 2128)
+        assert (euclid_ci_frame == np.zeros((2086, 2128))).all()
         assert euclid_ci_frame.scans.parallel_overscan == (2066, 2086, 51, 2099)
         assert euclid_ci_frame.scans.serial_prescan == (0, 2086, 0, 51)
-        assert euclid_ci_frame.scans.serial_overscan == (20, 2086, 2099, 2119)
+        assert euclid_ci_frame.scans.serial_overscan == (20, 2086, 2099, 2128)
 
         euclid_ci_frame = ac.ci.CIFrameEuclid.top_right(
             array=euclid_data, ci_pattern=pattern
         )
 
         assert isinstance(euclid_ci_frame, ac.ci.CIFrame)
-        assert euclid_ci_frame.ci_pattern.regions == [(2085, 2086, 2118, 2119)]
+        assert euclid_ci_frame.ci_pattern.regions == [(2085, 2086, 2127, 2128)]
         assert euclid_ci_frame.original_roe_corner == (0, 1)
-        assert euclid_ci_frame.shape_2d == (2086, 2119)
-        assert (euclid_ci_frame == np.zeros((2086, 2119))).all()
+        assert euclid_ci_frame.shape_2d == (2086, 2128)
+        assert (euclid_ci_frame == np.zeros((2086, 2128))).all()
         assert euclid_ci_frame.scans.parallel_overscan == (2066, 2086, 51, 2099)
         assert euclid_ci_frame.scans.serial_prescan == (0, 2086, 0, 51)
-        assert euclid_ci_frame.scans.serial_overscan == (20, 2086, 2099, 2119)
+        assert euclid_ci_frame.scans.serial_overscan == (20, 2086, 2099, 2128)
 
         euclid_ci_frame = ac.ci.CIFrameEuclid.bottom_left(
             array=euclid_data, ci_pattern=pattern
@@ -3026,24 +3026,24 @@ class TestCIFrameEuclid:
         assert isinstance(euclid_ci_frame, ac.ci.CIFrame)
         assert euclid_ci_frame.ci_pattern.regions == [(0, 1, 0, 1)]
         assert euclid_ci_frame.original_roe_corner == (1, 0)
-        assert euclid_ci_frame.shape_2d == (2086, 2119)
-        assert (euclid_ci_frame == np.zeros((2086, 2119))).all()
+        assert euclid_ci_frame.shape_2d == (2086, 2128)
+        assert (euclid_ci_frame == np.zeros((2086, 2128))).all()
         assert euclid_ci_frame.scans.parallel_overscan == (2066, 2086, 51, 2099)
         assert euclid_ci_frame.scans.serial_prescan == (0, 2086, 0, 51)
-        assert euclid_ci_frame.scans.serial_overscan == (0, 2066, 2099, 2119)
+        assert euclid_ci_frame.scans.serial_overscan == (0, 2066, 2099, 2128)
 
         euclid_ci_frame = ac.ci.CIFrameEuclid.bottom_right(
             array=euclid_data, ci_pattern=pattern
         )
 
         assert isinstance(euclid_ci_frame, ac.ci.CIFrame)
-        assert euclid_ci_frame.ci_pattern.regions == [(0, 1, 2118, 2119)]
+        assert euclid_ci_frame.ci_pattern.regions == [(0, 1, 2127, 2128)]
         assert euclid_ci_frame.original_roe_corner == (1, 1)
-        assert euclid_ci_frame.shape_2d == (2086, 2119)
-        assert (euclid_ci_frame == np.zeros((2086, 2119))).all()
+        assert euclid_ci_frame.shape_2d == (2086, 2128)
+        assert (euclid_ci_frame == np.zeros((2086, 2128))).all()
         assert euclid_ci_frame.scans.parallel_overscan == (2066, 2086, 51, 2099)
         assert euclid_ci_frame.scans.serial_prescan == (0, 2086, 0, 51)
-        assert euclid_ci_frame.scans.serial_overscan == (0, 2066, 2099, 2119)
+        assert euclid_ci_frame.scans.serial_overscan == (0, 2066, 2099, 2128)
 
     def test__left_side__chooses_correct_frame_given_input(self, euclid_data):
 
@@ -3074,42 +3074,42 @@ class TestCIFrameEuclid:
             array=euclid_data, ccd_id="text1", quadrant_id="F", ci_pattern=pattern
         )
 
-        assert euclid_ci_frame.ci_pattern.regions == [(0, 1, 2118, 2119)]
+        assert euclid_ci_frame.ci_pattern.regions == [(0, 1, 2127, 2128)]
         assert euclid_ci_frame.original_roe_corner == (1, 1)
 
         euclid_ci_frame = ac.ci.CIFrameEuclid.from_ccd_and_quadrant_id(
             array=euclid_data, ccd_id="text2", quadrant_id="F", ci_pattern=pattern
         )
 
-        assert euclid_ci_frame.ci_pattern.regions == [(0, 1, 2118, 2119)]
+        assert euclid_ci_frame.ci_pattern.regions == [(0, 1, 2127, 2128)]
         assert euclid_ci_frame.original_roe_corner == (1, 1)
 
         euclid_ci_frame = ac.ci.CIFrameEuclid.from_ccd_and_quadrant_id(
             array=euclid_data, ccd_id="text3", quadrant_id="F", ci_pattern=pattern
         )
 
-        assert euclid_ci_frame.ci_pattern.regions == [(0, 1, 2118, 2119)]
+        assert euclid_ci_frame.ci_pattern.regions == [(0, 1, 2127, 2128)]
         assert euclid_ci_frame.original_roe_corner == (1, 1)
 
         euclid_ci_frame = ac.ci.CIFrameEuclid.from_ccd_and_quadrant_id(
             array=euclid_data, ccd_id="text1", quadrant_id="G", ci_pattern=pattern
         )
 
-        assert euclid_ci_frame.ci_pattern.regions == [(2085, 2086, 2118, 2119)]
+        assert euclid_ci_frame.ci_pattern.regions == [(2085, 2086, 2127, 2128)]
         assert euclid_ci_frame.original_roe_corner == (0, 1)
 
         euclid_ci_frame = ac.ci.CIFrameEuclid.from_ccd_and_quadrant_id(
             array=euclid_data, ccd_id="text2", quadrant_id="G", ci_pattern=pattern
         )
 
-        assert euclid_ci_frame.ci_pattern.regions == [(2085, 2086, 2118, 2119)]
+        assert euclid_ci_frame.ci_pattern.regions == [(2085, 2086, 2127, 2128)]
         assert euclid_ci_frame.original_roe_corner == (0, 1)
 
         euclid_ci_frame = ac.ci.CIFrameEuclid.from_ccd_and_quadrant_id(
             array=euclid_data, ccd_id="text3", quadrant_id="G", ci_pattern=pattern
         )
 
-        assert euclid_ci_frame.ci_pattern.regions == [(2085, 2086, 2118, 2119)]
+        assert euclid_ci_frame.ci_pattern.regions == [(2085, 2086, 2127, 2128)]
         assert euclid_ci_frame.original_roe_corner == (0, 1)
 
         euclid_ci_frame = ac.ci.CIFrameEuclid.from_ccd_and_quadrant_id(
