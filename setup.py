@@ -30,8 +30,9 @@ class RunTests(Command):
         errno = call(["py.test", "--cov=autocti", "--cov-report=term-missing"])
         raise SystemExit(errno)
 
+
 this_dir = abspath(dirname(__file__))
-with open(join(this_dir, "README.md"), encoding="utf-8") as file:
+with open(join(this_dir, "README.rst"), encoding="utf-8") as file:
     long_description = file.read()
 
 with open(join(this_dir, "requirements.txt")) as f:
@@ -40,10 +41,10 @@ with open(join(this_dir, "requirements.txt")) as f:
 setup(
     name="autocti",
     version=version(),
-    description="Automated Charge Transfer Inefficiency Modeling",
+    description="PyAutoCTI: Automated Charge Transfer Inefficiency Modeling",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/Jammy2211/PyAutoCTI",
+    url="https://github.com/jammy2211/PyAutoCTI",
     author="James Nightingale and Richard Hayes",
     author_email="james.w.nightingale@durham.ac.uk",
     include_package_data=True,
@@ -63,7 +64,8 @@ setup(
         "Programming Language :: Python :: 3.7",
     ],
     keywords="cli",
+    packages=find_packages(exclude=["docs"]),
     install_requires=requirements,
     extras_require={"test": ["coverage", "pytest", "pytest-cov"]},
-    cmdclass={"test": RunTests},
+    cmd_class={"test": RunTests},
 )
