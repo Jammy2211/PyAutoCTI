@@ -1,7 +1,6 @@
 import os
 
 import pytest
-from autoconf import conf
 from autocti import plot as aplt
 
 directory = os.path.dirname(os.path.realpath(__file__))
@@ -12,13 +11,6 @@ def make_ci_fit_plotter_setup():
     return "{}/files/plots/fit/".format(os.path.dirname(os.path.realpath(__file__)))
 
 
-@pytest.fixture(autouse=True)
-def set_config_path():
-    conf.instance = conf.Config(
-        os.path.join(directory, "files/plotter"), os.path.join(directory, "output")
-    )
-
-
 def test__individual_attriute_plots__all_plot_correctly(
     ci_fit_7x7, plot_path, plot_patch
 ):
@@ -27,56 +19,56 @@ def test__individual_attriute_plots__all_plot_correctly(
         fit=ci_fit_7x7,
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
-    assert plot_path + "image.png" in plot_patch.paths
+    assert f"{plot_path}/image.png" in plot_patch.paths
 
     aplt.CIFit.noise_map(
         fit=ci_fit_7x7,
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
-    assert plot_path + "noise_map.png" in plot_patch.paths
+    assert f"{plot_path}/noise_map.png" in plot_patch.paths
 
     aplt.CIFit.signal_to_noise_map(
         fit=ci_fit_7x7,
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
-    assert plot_path + "signal_to_noise_map.png" in plot_patch.paths
+    assert f"{plot_path}/signal_to_noise_map.png" in plot_patch.paths
 
     aplt.CIFit.ci_pre_cti(
         fit=ci_fit_7x7,
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
-    assert plot_path + "ci_pre_cti.png" in plot_patch.paths
+    assert f"{plot_path}/ci_pre_cti.png" in plot_patch.paths
 
     aplt.CIFit.ci_post_cti(
         fit=ci_fit_7x7,
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
-    assert plot_path + "ci_post_cti.png" in plot_patch.paths
+    assert f"{plot_path}/ci_post_cti.png" in plot_patch.paths
 
     aplt.CIFit.residual_map(
         fit=ci_fit_7x7,
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
-    assert plot_path + "residual_map.png" in plot_patch.paths
+    assert f"{plot_path}/residual_map.png" in plot_patch.paths
 
     aplt.CIFit.normalized_residual_map(
         fit=ci_fit_7x7,
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
-    assert plot_path + "normalized_residual_map.png" in plot_patch.paths
+    assert f"{plot_path}/normalized_residual_map.png" in plot_patch.paths
 
     aplt.CIFit.chi_squared_map(
         fit=ci_fit_7x7,
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
-    assert plot_path + "chi_squared_map.png" in plot_patch.paths
+    assert f"{plot_path}/chi_squared_map.png" in plot_patch.paths
 
     aplt.CIFit.noise_scaling_maps(
         fit=ci_fit_7x7,
         sub_plotter=aplt.SubPlotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert plot_path + "noise_scaling_maps.png" in plot_patch.paths
+    assert f"{plot_path}/noise_scaling_maps.png" in plot_patch.paths
 
 
 def test__individual_line_attriutes_plot__all_plot_correctly_output(
@@ -89,7 +81,7 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert plot_path + "image_line.png" in plot_patch.paths
+    assert f"{plot_path}/image_line.png" in plot_patch.paths
 
     aplt.CIFit.noise_map_line(
         fit=ci_fit_7x7,
@@ -97,7 +89,7 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert plot_path + "noise_map_line.png" in plot_patch.paths
+    assert f"{plot_path}/noise_map_line.png" in plot_patch.paths
 
     aplt.CIFit.signal_to_noise_map_line(
         fit=ci_fit_7x7,
@@ -105,7 +97,7 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert plot_path + "signal_to_noise_map_line.png" in plot_patch.paths
+    assert f"{plot_path}/signal_to_noise_map_line.png" in plot_patch.paths
 
     aplt.CIFit.ci_pre_cti_line(
         fit=ci_fit_7x7,
@@ -113,7 +105,7 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert plot_path + "ci_pre_cti_line.png" in plot_patch.paths
+    assert f"{plot_path}/ci_pre_cti_line.png" in plot_patch.paths
 
     aplt.CIFit.ci_post_cti_line(
         fit=ci_fit_7x7,
@@ -121,7 +113,7 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert plot_path + "ci_post_cti_line.png" in plot_patch.paths
+    assert f"{plot_path}/ci_post_cti_line.png" in plot_patch.paths
 
     aplt.CIFit.residual_map_line(
         fit=ci_fit_7x7,
@@ -129,7 +121,7 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert plot_path + "residual_map_line.png" in plot_patch.paths
+    assert f"{plot_path}/residual_map_line.png" in plot_patch.paths
 
     aplt.CIFit.normalized_residual_map_line(
         fit=ci_fit_7x7,
@@ -137,7 +129,7 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert plot_path + "normalized_residual_map_line.png" in plot_patch.paths
+    assert f"{plot_path}/normalized_residual_map_line.png" in plot_patch.paths
 
     aplt.CIFit.chi_squared_map_line(
         fit=ci_fit_7x7,
@@ -145,7 +137,7 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert plot_path + "chi_squared_map_line.png" in plot_patch.paths
+    assert f"{plot_path}/chi_squared_map_line.png" in plot_patch.paths
 
 
 def test__ci_fit_subplots_are_output(ci_fit_7x7, plot_path, plot_patch):
@@ -155,28 +147,28 @@ def test__ci_fit_subplots_are_output(ci_fit_7x7, plot_path, plot_patch):
         sub_plotter=aplt.SubPlotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert plot_path + "subplot_ci_fit.png" in plot_patch.paths
+    assert f"{plot_path}/subplot_ci_fit.png" in plot_patch.paths
 
     aplt.CIFit.subplot_residual_maps(
         fits=[ci_fit_7x7],
         sub_plotter=aplt.SubPlotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert plot_path + "subplot_residual_maps.png" in plot_patch.paths
+    assert f"{plot_path}/subplot_residual_maps.png" in plot_patch.paths
 
     aplt.CIFit.subplot_normalized_residual_maps(
         fits=[ci_fit_7x7],
         sub_plotter=aplt.SubPlotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert plot_path + "subplot_normalized_residual_maps.png" in plot_patch.paths
+    assert f"{plot_path}/subplot_normalized_residual_maps.png" in plot_patch.paths
 
     aplt.CIFit.subplot_chi_squared_maps(
         fits=[ci_fit_7x7],
         sub_plotter=aplt.SubPlotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert plot_path + "subplot_chi_squared_maps.png" in plot_patch.paths
+    assert f"{plot_path}/subplot_chi_squared_maps.png" in plot_patch.paths
 
 
 def test__ci_fit_subplots_lines_are_output(ci_fit_7x7, plot_path, plot_patch):
@@ -187,7 +179,7 @@ def test__ci_fit_subplots_lines_are_output(ci_fit_7x7, plot_path, plot_patch):
         sub_plotter=aplt.SubPlotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert plot_path + "subplot_residual_map_lines.png" in plot_patch.paths
+    assert f"{plot_path}/subplot_residual_map_lines.png" in plot_patch.paths
 
     aplt.CIFit.subplot_normalized_residual_map_lines(
         fits=[ci_fit_7x7],
@@ -195,7 +187,7 @@ def test__ci_fit_subplots_lines_are_output(ci_fit_7x7, plot_path, plot_patch):
         sub_plotter=aplt.SubPlotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert plot_path + "subplot_normalized_residual_map_lines.png" in plot_patch.paths
+    assert f"{plot_path}/subplot_normalized_residual_map_lines.png" in plot_patch.paths
 
     aplt.CIFit.subplot_chi_squared_map_lines(
         fits=[ci_fit_7x7],
@@ -203,7 +195,7 @@ def test__ci_fit_subplots_lines_are_output(ci_fit_7x7, plot_path, plot_patch):
         sub_plotter=aplt.SubPlotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert plot_path + "subplot_chi_squared_map_lines.png" in plot_patch.paths
+    assert f"{plot_path}/subplot_chi_squared_map_lines.png" in plot_patch.paths
 
 
 def test__fit_individuals__dependent_on_input(ci_fit_7x7, plot_path, plot_patch):
@@ -219,19 +211,19 @@ def test__fit_individuals__dependent_on_input(ci_fit_7x7, plot_path, plot_patch)
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert plot_path + "image.png" in plot_patch.paths
+    assert f"{plot_path}/image.png" in plot_patch.paths
 
-    assert plot_path + "noise_map.png" not in plot_patch.paths
+    assert f"{plot_path}/noise_map.png" not in plot_patch.paths
 
-    assert plot_path + "signal_to_noise_map.png" not in plot_patch.paths
+    assert f"{plot_path}/signal_to_noise_map.png" not in plot_patch.paths
 
-    assert plot_path + "ci_pre_cti.png" in plot_patch.paths
+    assert f"{plot_path}/ci_pre_cti.png" in plot_patch.paths
 
-    assert plot_path + "ci_post_cti.png" in plot_patch.paths
+    assert f"{plot_path}/ci_post_cti.png" in plot_patch.paths
 
-    assert plot_path + "residual_map.png" not in plot_patch.paths
+    assert f"{plot_path}/residual_map.png" not in plot_patch.paths
 
-    assert plot_path + "chi_squared_map.png" in plot_patch.paths
+    assert f"{plot_path}/chi_squared_map.png" in plot_patch.paths
 
 
 def test__fit_individuals_line__dependent_on_input(ci_fit_7x7, plot_path, plot_patch):
@@ -248,16 +240,16 @@ def test__fit_individuals_line__dependent_on_input(ci_fit_7x7, plot_path, plot_p
         plotter=aplt.Plotter(output=aplt.Output(plot_path, format="png")),
     )
 
-    assert plot_path + "image_line.png" in plot_patch.paths
+    assert f"{plot_path}/image_line.png" in plot_patch.paths
 
-    assert plot_path + "noise_map_line.png" not in plot_patch.paths
+    assert f"{plot_path}/noise_map_line.png" not in plot_patch.paths
 
-    assert plot_path + "signal_to_noise_map_line.png" not in plot_patch.paths
+    assert f"{plot_path}/signal_to_noise_map_line.png" not in plot_patch.paths
 
-    assert plot_path + "ci_pre_cti_line.png" in plot_patch.paths
+    assert f"{plot_path}/ci_pre_cti_line.png" in plot_patch.paths
 
-    assert plot_path + "ci_post_cti_line.png" in plot_patch.paths
+    assert f"{plot_path}/ci_post_cti_line.png" in plot_patch.paths
 
-    assert plot_path + "residual_map_line.png" not in plot_patch.paths
+    assert f"{plot_path}/residual_map_line.png" not in plot_patch.paths
 
-    assert plot_path + "chi_squared_map_line.png" in plot_patch.paths
+    assert f"{plot_path}/chi_squared_map_line.png" in plot_patch.paths

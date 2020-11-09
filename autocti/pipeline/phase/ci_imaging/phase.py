@@ -119,7 +119,6 @@ class PhaseCIImaging(PhaseDataset):
             masked_ci_imagings=masked_ci_imagings,
             clocker=clocker,
             settings_cti=self.settings.settings_cti,
-            image_path=self.search.paths.image_path,
             results=results,
             pool=pool,
         )

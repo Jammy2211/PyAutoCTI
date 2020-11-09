@@ -8,13 +8,7 @@ from autocti.pipeline.phase.dataset import analysis as analysis_dataset
 
 class Analysis(analysis_dataset.Analysis):
     def __init__(
-        self,
-        masked_ci_imagings,
-        clocker,
-        settings_cti,
-        image_path=None,
-        results=None,
-        pool=None,
+        self, masked_ci_imagings, clocker, settings_cti, results=None, pool=None
     ):
 
         super().__init__(
@@ -25,9 +19,7 @@ class Analysis(analysis_dataset.Analysis):
         )
 
         self.visualizers = [
-            visualizer.PhaseCIImagingVisualizer(
-                masked_dataset=masked_ci_imaging, image_path=image_path, results=results
-            )
+            visualizer.PhaseCIImagingVisualizer(masked_dataset=masked_ci_imaging)
             for masked_ci_imaging in masked_ci_imagings
         ]
 
@@ -140,14 +132,17 @@ class Analysis(analysis_dataset.Analysis):
             for masked_ci_imaging in self.masked_ci_imagings
         ]
 
-    def visualize(self, instance, during_analysis):
+    def visualize(self, paths, instance, during_analysis):
 
         fits = self.fits_from_instance(instance=instance)
 
         for fit, visualizer in zip(fits, self.visualizers):
 
-            visualizer.visualize_ci_fit(fit=fit, during_analysis=during_analysis)
-        #    visualizer.visualize_ci_fit_lines(fit=fit, line_region="parallel_front_edge", during_analysis=during_analysis)
+            visualizer.visualize_ci_imaging(paths=paths)
+            visualizer.visualize_ci_fit(
+                paths=paths, fit=fit, during_analysis=during_analysis
+            )
+        #    visualizer.visualize_ci_fit_lines(paths=paths, fit=fit, line_region="parallel_front_edge", during_analysis=during_analysis)
 
 
 def pipe_cti(ci_data_masked, instance, clocker, hyper_noise_scalars):

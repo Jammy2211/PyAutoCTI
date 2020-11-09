@@ -1581,7 +1581,7 @@ class CIFrameEuclid(CIFrame):
         serial_overscan_size=29,
         parallel_overscan_size=20,
     ):
-        """Before reading this docstring, read the docstring for the ``.nit__function above.
+        """Before reading this docstring, read the docstring for the __init__function above.
 
         In the Euclid FPA, the quadrant id ('E', 'F', 'G', 'H') depends on whether the CCD is located
         on the left side (rows 1-3) or right side (rows 4-6) of the FPA:
