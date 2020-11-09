@@ -34,7 +34,7 @@ class HyperNoisePhase(HyperPhase):
             #     "plots", "plot_hyper_noise_subplot", bool
             # )
 
-        def visualize(self, instance, image_path, during_analysis):
+        def visualize(self, paths, instance, during_analysis):
 
             pass
 

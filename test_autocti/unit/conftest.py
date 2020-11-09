@@ -1,6 +1,18 @@
+from pathlib import Path
+
 import pytest
 
+from autoconf import conf
 from autocti.mock import fixtures
+
+
+directory = Path(__file__).parent.parent
+
+
+@pytest.fixture(autouse=True)
+def set_config_path():
+    conf.instance.push(directory / "config", directory / "output")
+
 
 ### Arctic ###
 
