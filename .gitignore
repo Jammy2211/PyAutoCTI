@@ -24,6 +24,10 @@ workspace/
 workspace_jam/
 .coverage
 
+*.png
+*.pickle
+*.fits
+
 autocti.egg-info/
 build/
 dist/
