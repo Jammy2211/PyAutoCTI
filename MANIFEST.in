@@ -1,23 +1,7 @@
 # MANIFEST.in
-exclude .gitignore
-exclude data 
-exclude docs
-exclude paper_plots
-exclude profiling
-exclude results
-exclude scripts
-exclude output
-exclude workspace
-exclude .coverage
-exclude .travis.yml
-include README.rst
-include setup.cfg
-exclude workspace
-exclude workspace_jam
-prune .cache
-prune .git
-prune build
-prune dist
+include requirements.txt
 
-recursive-exclude *.egg-info *
-recursive-include tests *
+recursive-include data *
+recursive-include autocti/config *
+
+include_package_data=True,
