@@ -27,4 +27,4 @@ from .util.traps import TrapInstantCapture
 from . import util
 from . import plot
 
-__version__ = '0.12.2'
+__version__ = '0.12.3'
