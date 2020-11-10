@@ -76,9 +76,7 @@ for name in image_names:
     date = 2400000.5 + frame.exposure_info.modified_julian_date
 
     # Find the warm pixel trails
-    new_warm_pixels = find_warm_pixels(
-        image=frame, origin=name, date=date, flux_min=20,
-    )
+    new_warm_pixels = find_warm_pixels(image=frame, origin=name, date=date, flux_min=20)
 
     print("Found %d possible warm pixels in %s" % (len(new_warm_pixels), name))
 
@@ -138,7 +136,7 @@ axes = [
 length = np.amax(stacked_lines.lengths)
 pixels = np.arange(length)
 colours = plt.cm.jet(np.linspace(0.05, 0.95, n_background_bins))
-y_min = 1.5 
+y_min = 1.5
 y_max = 1.5 * np.amax(stacked_lines.data)
 
 # Plot each stack
@@ -177,9 +175,7 @@ for i_row in range(n_row_bins):
                 text = "$N=%d$" % line.n_stacked
             else:
                 text = "\n" * i_background + "$%d$" % line.n_stacked
-            ax.text(
-                length * 0.9, y_max * 0.7, text, ha="right", va="top",
-            )
+            ax.text(length * 0.9, y_max * 0.7, text, ha="right", va="top")
 
         ax.set_yscale("log")
         ax.set_ylim(y_min, y_max)

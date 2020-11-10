@@ -473,7 +473,7 @@ class PixelLineCollection(object):
                 stacked_lines[index].data = [data]
             else:
                 stacked_lines[index].data = np.append(
-                    stacked_lines[index].data, [data], axis=0,
+                    stacked_lines[index].data, [data], axis=0
                 )
             stacked_lines[index].n_stacked += 1
 
