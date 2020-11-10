@@ -31,4 +31,3 @@ workspace_jam/
 autocti.egg-info/
 build/
 dist/
-node_modules/
