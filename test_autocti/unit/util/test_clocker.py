@@ -2,7 +2,7 @@ import os
 
 import pytest
 import numpy as np
-import arcticpy
+from arcticpy import main, roe as r
 import autocti as ac
 
 
@@ -21,9 +21,9 @@ class TestFrameAPI:
 
         traps = [ac.TrapInstantCapture(density=10, release_timescale=-1 / np.log(0.5))]
         ccd = ac.CCD(well_fill_power=1, full_well_depth=1000, well_notch_depth=0)
-        roe = arcticpy.ROE(empty_traps_for_first_transfers=False)
+        roe = r.ROE(empty_traps_for_first_transfers=False)
 
-        image_via_arctic = arcticpy.add_cti(
+        image_via_arctic = main.add_cti(
             image=frame,
             parallel_traps=traps,
             parallel_ccd=ccd,
@@ -40,7 +40,7 @@ class TestFrameAPI:
 
         assert image_via_arctic == pytest.approx(image_via_clocker, 1.0e-4)
 
-        image_via_arctic = arcticpy.add_cti(
+        image_via_arctic = main.add_cti(
             image=frame,
             serial_traps=traps,
             serial_ccd=ccd,

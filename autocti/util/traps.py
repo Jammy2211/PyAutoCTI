@@ -1,7 +1,7 @@
-import arcticpy
+from arcticpy import traps
 
 
-class TrapInstantCapture(arcticpy.TrapInstantCapture):
+class TrapInstantCapture(traps.TrapInstantCapture):
     """ For the old C++ style release-then-instant-capture algorithm. """
 
     def __init__(self, density=0.13, release_timescale=0.25):

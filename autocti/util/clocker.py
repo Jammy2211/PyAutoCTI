@@ -1,4 +1,4 @@
-import arcticpy
+from arcticpy import main
 
 
 class Clocker(object):
@@ -54,7 +54,7 @@ class Clocker(object):
         serial_traps=None,
     ):
 
-        return arcticpy.add_cti(
+        return main.add_cti(
             image=image,
             parallel_ccd=parallel_ccd,
             parallel_roe=self.parallel_roe,
@@ -79,7 +79,7 @@ class Clocker(object):
         serial_ccd=None,
         serial_traps=None,
     ):
-        return arcticpy.remove_cti(
+        return main.remove_cti(
             image=image,
             iterations=self.iterations,
             parallel_ccd=parallel_ccd,
