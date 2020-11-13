@@ -1,11 +1,14 @@
 import os
+from os import path
 import shutil
 
 import numpy as np
 import pytest
 import autocti as ac
 
-test_data_path = "{}/files/arrays/".format(os.path.dirname(os.path.realpath(__file__)))
+test_data_path = path.join(
+    "{}".format(path.dirname(path.realpath(__file__))), "files", "arrays"
+)
 
 
 class TestCIImaging(object):
@@ -13,8 +16,8 @@ class TestCIImaging(object):
 
         # The ci pattern starts at column 1, so the left most column is removed below
 
-        parallel_calibration_imaging = ci_imaging_7x7.parallel_calibration_ci_imaging_for_columns(
-            columns=(0, 6)
+        parallel_calibration_imaging = (
+            ci_imaging_7x7.parallel_calibration_ci_imaging_for_columns(columns=(0, 6))
         )
 
         assert (
@@ -35,8 +38,8 @@ class TestCIImaging(object):
 
         # The ci pattern spans 2 rows, so two rows are extracted
 
-        serial_calibration_imaging = ci_imaging_7x7.serial_calibration_ci_imaging_for_rows(
-            rows=(0, 2)
+        serial_calibration_imaging = (
+            ci_imaging_7x7.serial_calibration_ci_imaging_for_rows(rows=(0, 2))
         )
 
         assert (serial_calibration_imaging.image == ci_imaging_7x7.image[0:2, :]).all()
@@ -76,13 +79,13 @@ class TestCIImaging(object):
                 serial_overscan=(2, 4, 6, 8),
             ),
             ci_pattern=ci_pattern_7x7,
-            image_path=test_data_path + "3x3_ones.fits",
+            image_path=path.join(test_data_path, "3x3_ones.fits"),
             image_hdu=0,
-            noise_map_path=test_data_path + "3x3_twos.fits",
+            noise_map_path=path.join(test_data_path, "3x3_twos.fits"),
             noise_map_hdu=0,
-            ci_pre_cti_path=test_data_path + "3x3_threes.fits",
+            ci_pre_cti_path=path.join(test_data_path, "3x3_threes.fits"),
             ci_pre_cti_hdu=0,
-            cosmic_ray_map_path=test_data_path + "3x3_fours.fits",
+            cosmic_ray_map_path=path.join(test_data_path, "3x3_fours.fits"),
             cosmic_ray_map_hdu=0,
         )
 
@@ -104,13 +107,13 @@ class TestCIImaging(object):
             pixel_scales=1.0,
             roe_corner=(1, 0),
             ci_pattern=ci_pattern_7x7,
-            image_path=test_data_path + "3x3_multiple_hdu.fits",
+            image_path=path.join(test_data_path, "3x3_multiple_hdu.fits"),
             image_hdu=0,
-            noise_map_path=test_data_path + "3x3_multiple_hdu.fits",
+            noise_map_path=path.join(test_data_path, "3x3_multiple_hdu.fits"),
             noise_map_hdu=1,
-            ci_pre_cti_path=test_data_path + "3x3_multiple_hdu.fits",
+            ci_pre_cti_path=path.join(test_data_path, "3x3_multiple_hdu.fits"),
             ci_pre_cti_hdu=2,
-            cosmic_ray_map_path=test_data_path + "3x3_multiple_hdu.fits",
+            cosmic_ray_map_path=path.join(test_data_path, "3x3_multiple_hdu.fits"),
             cosmic_ray_map_hdu=3,
         )
 
@@ -127,10 +130,10 @@ class TestCIImaging(object):
             pixel_scales=1.0,
             roe_corner=(1, 0),
             ci_pattern=ci_pattern_7x7,
-            image_path=test_data_path + "3x3_ones.fits",
+            image_path=path.join(test_data_path, "3x3_ones.fits"),
             image_hdu=0,
             noise_map_from_single_value=10.0,
-            ci_pre_cti_path=test_data_path + "3x3_threes.fits",
+            ci_pre_cti_path=path.join(test_data_path, "3x3_threes.fits"),
             ci_pre_cti_hdu=0,
         )
 
@@ -149,9 +152,9 @@ class TestCIImaging(object):
             pixel_scales=1.0,
             roe_corner=(1, 0),
             ci_pattern=pattern,
-            image_path=test_data_path + "3x3_ones.fits",
+            image_path=path.join(test_data_path, "3x3_ones.fits"),
             image_hdu=0,
-            noise_map_path=test_data_path + "3x3_twos.fits",
+            noise_map_path=path.join(test_data_path, "3x3_twos.fits"),
             noise_map_hdu=0,
         )
 
@@ -168,42 +171,41 @@ class TestCIImaging(object):
             pixel_scales=1.0,
             roe_corner=(1, 0),
             ci_pattern=ci_pattern_7x7,
-            image_path=test_data_path + "3x3_ones.fits",
+            image_path=path.join(test_data_path, "3x3_ones.fits"),
             image_hdu=0,
-            noise_map_path=test_data_path + "3x3_twos.fits",
+            noise_map_path=path.join(test_data_path, "3x3_twos.fits"),
             noise_map_hdu=0,
-            ci_pre_cti_path=test_data_path + "3x3_threes.fits",
+            ci_pre_cti_path=path.join(test_data_path, "3x3_threes.fits"),
             ci_pre_cti_hdu=0,
-            cosmic_ray_map_path=test_data_path + "3x3_fours.fits",
+            cosmic_ray_map_path=path.join(test_data_path, "3x3_fours.fits"),
             cosmic_ray_map_hdu=0,
         )
 
-        output_data_dir = "{}/files/arrays/output_test/".format(
-            os.path.dirname(os.path.realpath(__file__))
-        )
-        if os.path.exists(output_data_dir):
+        output_data_dir = path.join(test_data_path, "output_test")
+
+        if path.exists(output_data_dir):
             shutil.rmtree(output_data_dir)
 
         os.makedirs(output_data_dir)
 
         imaging.output_to_fits(
-            image_path=output_data_dir + "image.fits",
-            noise_map_path=output_data_dir + "noise_map.fits",
-            ci_pre_cti_path=output_data_dir + "ci_pre_cti.fits",
-            cosmic_ray_map_path=output_data_dir + "cosmic_ray_map.fits",
+            image_path=path.join(output_data_dir, "image.fits"),
+            noise_map_path=path.join(output_data_dir, "noise_map.fits"),
+            ci_pre_cti_path=path.join(output_data_dir, "ci_pre_cti.fits"),
+            cosmic_ray_map_path=path.join(output_data_dir, "cosmic_ray_map.fits"),
         )
 
         imaging = ac.ci.CIImaging.from_fits(
             pixel_scales=1.0,
             roe_corner=(1, 0),
             ci_pattern=ci_pattern_7x7,
-            image_path=output_data_dir + "image.fits",
+            image_path=path.join(output_data_dir, "image.fits"),
             image_hdu=0,
-            noise_map_path=output_data_dir + "noise_map.fits",
+            noise_map_path=path.join(output_data_dir, "noise_map.fits"),
             noise_map_hdu=0,
-            ci_pre_cti_path=output_data_dir + "ci_pre_cti.fits",
+            ci_pre_cti_path=path.join(output_data_dir, "ci_pre_cti.fits"),
             ci_pre_cti_hdu=0,
-            cosmic_ray_map_path=output_data_dir + "cosmic_ray_map.fits",
+            cosmic_ray_map_path=path.join(output_data_dir, "cosmic_ray_map.fits"),
             cosmic_ray_map_hdu=0,
         )
 

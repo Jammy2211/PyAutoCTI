@@ -17,63 +17,63 @@ def find_warm_pixels(
     name=None,
     date=None,
 ):
-    """ Find warm (and hot) pixels in an image.
-    
+    """Find warm (and hot) pixels in an image.
+
     Parameters
     ----------
     image : [[float]]
         The input array of pixel values.
-        
-        The first dimension is the "row" index, the second is the "column" 
-        index. By default (for parallel clocking), charge is transfered "up" 
-        from row n to row 0 along each independent column. i.e. the readout 
+
+        The first dimension is the "row" index, the second is the "column"
+        index. By default (for parallel clocking), charge is transfered "up"
+        from row n to row 0 along each independent column. i.e. the readout
         register is above row 0.
-    
+
     trail_length : int
-        The number of pixels following the warm pixel to save as a trail. The 
+        The number of pixels following the warm pixel to save as a trail. The
         same number of preceeding pixels are also included.
-        
+
     n_parallel_overscan : int
-        The number of rows in the overscan region of the input image. i.e. the 
-        final rows, furthest from the readout register, beyond the physical 
+        The number of rows in the overscan region of the input image. i.e. the
+        final rows, furthest from the readout register, beyond the physical
         image. They should not contain warm pixels so will be ignored.
-        
+
     n_serial_prescan : int
-        The number of rows in the overscan region of the input image. i.e. the 
-        first columns, closest to the readout register, before the physical 
+        The number of rows in the overscan region of the input image. i.e. the
+        first columns, closest to the readout register, before the physical
         image. They should not contain warm pixels so will be ignored.
-        
+
     ignore_bad_columns : bool
         Check for and ignore bad columns wiped out by extremely hot pixels.
-        
+
     bad_column_factor : float
-        Columns with a mean value more than this number of standard deviations 
-        above the overall median will be discarded, to avoid columns wiped out 
+        Columns with a mean value more than this number of standard deviations
+        above the overall median will be discarded, to avoid columns wiped out
         by extremely hot pixels.
-    
+
     bad_column_loops : int
         The number of times to check for columns having means close enough to
         the overall median, updating the median each time.
-    
+
     smooth_width : int
         The width of the window (in pixels) for calculating a smoothed image,
         used to find delta function-like warm pixels.
-        
+
     unsharp_masking_factor : float
-        Pixels must be this many times brighter than their neighbours in the 
+        Pixels must be this many times brighter than their neighbours in the
         smoothed image to be counted as warm pixels.
-        
+
     flux_min : float
         Pixels below this value AFTER background subtraction will be ignored.
-        Set None to not ignore any pixels. Defaults to 0 to ignore pixels below 
+        Set None to not ignore any pixels. Defaults to 0 to ignore pixels below
         the background.
-        
+
     name : str
         The name of the data used to identify it.
-        
+
     date : float
         The Julian date for the image, for the Line objects' metadata.
-    
+
     Returns
     -------
     warm_pixels : [Line]

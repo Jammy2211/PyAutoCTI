@@ -1,4 +1,5 @@
 import os
+from os import path
 import shutil
 
 import numpy as np
@@ -7,7 +8,9 @@ import autocti as ac
 from autocti import exc
 
 
-test_data_path = "{}/files/array/".format(os.path.dirname(os.path.realpath(__file__)))
+test_data_path = path.join(
+    "{}".format(path.dirname(path.realpath(__file__))), "files", "array"
+)
 
 
 class TestAPI:
@@ -53,7 +56,7 @@ class TestAPI:
         assert arr.origin == (0.0, 1.0)
 
     def test__manual_2d__exception_raised_if_input_array_is_2d_and_not_shape_of_mask(
-        self
+        self,
     ):
         with pytest.raises(exc.ArrayException):
             mask = ac.Mask2D.unmasked(shape_2d=(2, 2), pixel_scales=1.0)
@@ -98,14 +101,18 @@ class TestAPI:
     def test__from_fits__makes_array_without_other_inputs(self):
 
         arr = ac.Array.from_fits(
-            file_path=test_data_path + "3x3_ones.fits", hdu=0, pixel_scales=1.0
+            file_path=path.join(test_data_path, "3x3_ones.fits"),
+            hdu=0,
+            pixel_scales=1.0,
         )
 
         assert isinstance(arr, ac.Array)
         assert (arr == np.ones((3, 3))).all()
 
         arr = ac.Array.from_fits(
-            file_path=test_data_path + "4x3_ones.fits", hdu=0, pixel_scales=1.0
+            file_path=path.join(test_data_path, "4x3_ones.fits"),
+            hdu=0,
+            pixel_scales=1.0,
         )
 
         assert isinstance(arr, ac.Array)
@@ -114,7 +121,9 @@ class TestAPI:
     def test__from_fits__makes_scaled_array_with_pixel_scale(self):
 
         arr = ac.Array.from_fits(
-            file_path=test_data_path + "3x3_ones.fits", hdu=0, pixel_scales=1.0
+            file_path=path.join(test_data_path, "3x3_ones.fits"),
+            hdu=0,
+            pixel_scales=1.0,
         )
 
         assert isinstance(arr, ac.Array)
@@ -122,7 +131,7 @@ class TestAPI:
         assert arr.pixel_scales == (1.0, 1.0)
 
         arr = ac.Array.from_fits(
-            file_path=test_data_path + "4x3_ones.fits",
+            file_path=path.join(test_data_path, "4x3_ones.fits"),
             hdu=0,
             pixel_scales=1.0,
             origin=(0.0, 1.0),
@@ -136,21 +145,22 @@ class TestAPI:
     def test__output_to_fits(self):
 
         arr = ac.Array.from_fits(
-            file_path=test_data_path + "3x3_ones.fits", hdu=0, pixel_scales=1.0
+            file_path=path.join(test_data_path, "3x3_ones.fits"),
+            hdu=0,
+            pixel_scales=1.0,
         )
 
-        output_data_dir = "{}/files/array/output_test/".format(
-            os.path.dirname(os.path.realpath(__file__))
-        )
-        if os.path.exists(output_data_dir):
+        output_data_dir = path.join(test_data_path, "output_test")
+
+        if path.exists(output_data_dir):
             shutil.rmtree(output_data_dir)
 
         os.makedirs(output_data_dir)
 
-        arr.output_to_fits(file_path=output_data_dir + "array.fits")
+        arr.output_to_fits(file_path=path.join(output_data_dir, "array.fits"))
 
         array_from_out = ac.Array.from_fits(
-            file_path=output_data_dir + "array.fits", hdu=0, pixel_scales=1.0
+            file_path=path.join(output_data_dir, "array.fits"), hdu=0, pixel_scales=1.0
         )
 
         assert (array_from_out == np.ones((3, 3))).all()
@@ -158,21 +168,23 @@ class TestAPI:
     def test__output_to_fits__shapes_of_arrays_are_2d(self):
 
         arr = ac.Array.from_fits(
-            file_path=test_data_path + "3x3_ones.fits", hdu=0, pixel_scales=1.0
+            file_path=path.join(test_data_path, "3x3_ones.fits"),
+            hdu=0,
+            pixel_scales=1.0,
         )
 
         output_data_dir = "{}/files/array/output_test/".format(
-            os.path.dirname(os.path.realpath(__file__))
+            path.dirname(path.realpath(__file__))
         )
-        if os.path.exists(output_data_dir):
+        if path.exists(output_data_dir):
             shutil.rmtree(output_data_dir)
 
         os.makedirs(output_data_dir)
 
-        arr.output_to_fits(file_path=output_data_dir + "array.fits")
+        arr.output_to_fits(file_path=path.join(output_data_dir, "array.fits"))
 
         array_from_out = ac.util.array.numpy_array_2d_from_fits(
-            file_path=output_data_dir + "array.fits", hdu=0
+            file_path=path.join(output_data_dir, "array.fits"), hdu=0
         )
 
         assert (array_from_out == np.ones((3, 3))).all()

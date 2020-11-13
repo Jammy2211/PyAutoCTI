@@ -1,3 +1,4 @@
+from os import path
 from autoconf import conf
 from autofit.non_linear.paths import Paths
 from autoarray.plot import mat_objs, plotters
@@ -19,13 +20,14 @@ class AbstractVisualizer:
 
     @staticmethod
     def plotter_from_paths(paths: Paths, subfolders=None, format="png"):
+
         if subfolders is None:
             return plotters.Plotter(
-                output=mat_objs.Output(path=f"{paths.image_path}", format=format)
+                output=mat_objs.Output(path=paths.image_path, format=format)
             )
         return plotters.Plotter(
             output=mat_objs.Output(
-                path=f"{paths.image_path}/{subfolders}", format=format
+                path=path.join(paths.image_path, subfolders), format=format
             )
         )
 
@@ -33,7 +35,9 @@ class AbstractVisualizer:
     def sub_plotter_from_paths(paths: Paths):
 
         return plotters.SubPlotter(
-            output=mat_objs.Output(path=f"{paths.image_path}/subplots", format="png")
+            output=mat_objs.Output(
+                path=path.join(paths.image_path, "subplots"), format="png"
+            )
         )
 
 
@@ -300,7 +304,7 @@ class PhaseCIImagingVisualizer(PhaseDatasetVisualizer):
     def visualize_fit_in_fits(self, paths: Paths, fit):
 
         fits_plotter = self.plotter_from_paths(
-            paths=paths, subfolders="fit_imaging/fits", format="fits"
+            paths=paths, subfolders=path.join("fit_imaging", "fits"), format="fits"
         )
 
         ci_fit_plots.individuals(

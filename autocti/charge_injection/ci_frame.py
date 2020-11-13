@@ -986,51 +986,51 @@ class AbstractCIFrame(abstract_frame.AbstractFrame):
 
     def parallel_trails_regions(self, rows=None):
         """
-    Returns the parallel scans of a charge injection ci_frame.
+        Returns the parallel scans of a charge injection ci_frame.
 
-        The diagram below illustrates the region that is calculated from a ci_frame for rows=(0, 1):
+            The diagram below illustrates the region that is calculated from a ci_frame for rows=(0, 1):
 
-        ---KEY---
-        ---------
+            ---KEY---
+            ---------
 
-        [] = read-out electronics   [==========] = read-out register
+            [] = read-out electronics   [==========] = read-out register
 
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci region index)
-        [xxxxxxxxxx]
-        [t#t#t#t#t#] = parallel / serial charge injection region trail (0 / 1 indicates ci region index)
+            [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
+            [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
+            [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci region index)
+            [xxxxxxxxxx]
+            [t#t#t#t#t#] = parallel / serial charge injection region trail (0 / 1 indicates ci region index)
 
-        P = Parallel Direction      S = Serial Direction
+            P = Parallel Direction      S = Serial Direction
 
-               [ppppppppppppppppppppp]
-               [ppppppppppppppppppppp]
-          [...][t1t1t1t1t1t1t1t1t1t1t][sss]
-          [...][c1c1cc1c1cc1cc1ccc1cc][sss]
-        | [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
-        | [...][t0t0t0t0t0t0t0t0t0t0t][sss]    | Direction
-        P [...][0t0t0t0t0t0t0t0t0t0t0][sss]    | of
-        | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
-          [...][cc0ccc0cccc0cccc0cccc][sss]    |
+                   [ppppppppppppppppppppp]
+                   [ppppppppppppppppppppp]
+              [...][t1t1t1t1t1t1t1t1t1t1t][sss]
+              [...][c1c1cc1c1cc1cc1ccc1cc][sss]
+            | [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
+            | [...][t0t0t0t0t0t0t0t0t0t0t][sss]    | Direction
+            P [...][0t0t0t0t0t0t0t0t0t0t0][sss]    | of
+            | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
+              [...][cc0ccc0cccc0cccc0cccc][sss]    |
 
-        []     [=====================]
-               <---------S----------
+            []     [=====================]
+                   <---------S----------
 
-        The extracted ci_frame keeps just the trails following all charge injection scans:
+            The extracted ci_frame keeps just the trails following all charge injection scans:
 
-        list index 0:
+            list index 0:
 
-        [2, 4, 3, 21] (serial prescan is 3 pixels)
+            [2, 4, 3, 21] (serial prescan is 3 pixels)
 
-        list index 1:
+            list index 1:
 
-        [6, 7, 3, 21] (serial prescan is 3 pixels)
+            [6, 7, 3, 21] (serial prescan is 3 pixels)
 
-        Parameters
-        ------------
-        arrays
-        rows : (int, int)
-            The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
+            Parameters
+            ------------
+            arrays
+            rows : (int, int)
+                The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
 
         if rows is None:
@@ -1115,52 +1115,52 @@ class AbstractCIFrame(abstract_frame.AbstractFrame):
 
     def serial_front_edge_regions(self, columns=None):
         """
-    Returns a list of the serial front edges scans of a charge injection ci_frame.
+        Returns a list of the serial front edges scans of a charge injection ci_frame.
 
-        The diagram below illustrates the region that is calculated from a ci_frame for columns=(0, 4):
+            The diagram below illustrates the region that is calculated from a ci_frame for columns=(0, 4):
 
-        ---KEY---
-        ---------
+            ---KEY---
+            ---------
 
-        [] = read-out electronics   [==========] = read-out register
+            [] = read-out electronics   [==========] = read-out register
 
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
-        [xxxxxxxxxx]
-        [tttttttttt] = parallel / serial charge injection region trail ((0 / 1 indicates ci_region index)
+            [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
+            [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
+            [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
+            [xxxxxxxxxx]
+            [tttttttttt] = parallel / serial charge injection region trail ((0 / 1 indicates ci_region index)
 
-        P = Parallel Direction      S = Serial Direction
+            P = Parallel Direction      S = Serial Direction
 
-               [ppppppppppppppppppppp]
-               [ppppppppppppppppppppp]
-          [...][ttttttttttttttttttttt][sss]
-          [...][c1c1cc1c1cc1cc1ccc1cc][sss]
-        | [...][1c1c1cc1c1cc1ccc1cc1c][sss]    |
-        | [...][ttttttttttttttttttttt][sss]    | Direction
-        P [...][ttttttttttttttttttttt][sss]    | of
-        | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
-          [...][cc0ccc0cccc0cccc0cccc][sss]    |
+                   [ppppppppppppppppppppp]
+                   [ppppppppppppppppppppp]
+              [...][ttttttttttttttttttttt][sss]
+              [...][c1c1cc1c1cc1cc1ccc1cc][sss]
+            | [...][1c1c1cc1c1cc1ccc1cc1c][sss]    |
+            | [...][ttttttttttttttttttttt][sss]    | Direction
+            P [...][ttttttttttttttttttttt][sss]    | of
+            | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
+              [...][cc0ccc0cccc0cccc0cccc][sss]    |
 
-        []     [=====================]
-               <---------S----------
+            []     [=====================]
+                   <---------S----------
 
-        The extracted ci_frame keeps just the serial front edges of all charge injection scans.
+            The extracted ci_frame keeps just the serial front edges of all charge injection scans.
 
-        list index 0:
+            list index 0:
 
-        [0, 2, 3, 21] (serial prescan is 3 pixels)
+            [0, 2, 3, 21] (serial prescan is 3 pixels)
 
-        list index 1:
+            list index 1:
 
-        [4, 6, 3, 21] (serial prescan is 3 pixels)
+            [4, 6, 3, 21] (serial prescan is 3 pixels)
 
-        Parameters
-        ------------
-        arrays
-        columns : (int, int)
-            The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
-            columns)
+            Parameters
+            ------------
+            arrays
+            columns : (int, int)
+                The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
+                columns)
         """
         if columns is None:
             columns = (0, self.ci_pattern.total_columns_min)
@@ -1242,51 +1242,51 @@ class AbstractCIFrame(abstract_frame.AbstractFrame):
 
     def serial_trails_regions(self, columns=None):
         """
-    Returns a list of the serial trails scans of a charge injection ci_frame.
+        Returns a list of the serial trails scans of a charge injection ci_frame.
 
-        The diagram below illustrates the region is calculated from a ci_frame for columnss=(0, 4):
+            The diagram below illustrates the region is calculated from a ci_frame for columnss=(0, 4):
 
-        ---KEY---
-        ---------
+            ---KEY---
+            ---------
 
-        [] = read-out electronics   [==========] = read-out register
+            [] = read-out electronics   [==========] = read-out register
 
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
-        [xxxxxxxxxx]
-        [tttttttttt] = parallel / serial charge injection region trail ((0 / 1 indicates ci_region index)
+            [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
+            [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
+            [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
+            [xxxxxxxxxx]
+            [tttttttttt] = parallel / serial charge injection region trail ((0 / 1 indicates ci_region index)
 
-        P = Parallel Direction      S = Serial Direction
+            P = Parallel Direction      S = Serial Direction
 
-               [ppppppppppppppppppppp]
-               [ppppppppppppppppppppp]
-          [...][ttttttttttttttttttttt][sss]
-          [...][c1c1cc1c1cc1cc1ccc1cc][st1]
-        | [...][1c1c1cc1c1cc1ccc1cc1c][ts0]    |
-        | [...][ttttttttttttttttttttt][sss]    | Direction
-        P [...][ttttttttttttttttttttt][sss]    | of
-        | [...][0ccc0cccc0cccc0cccc0c][st1]    | clocking
-          [...][cc0ccc0cccc0cccc0cccc][ts0]    |
+                   [ppppppppppppppppppppp]
+                   [ppppppppppppppppppppp]
+              [...][ttttttttttttttttttttt][sss]
+              [...][c1c1cc1c1cc1cc1ccc1cc][st1]
+            | [...][1c1c1cc1c1cc1ccc1cc1c][ts0]    |
+            | [...][ttttttttttttttttttttt][sss]    | Direction
+            P [...][ttttttttttttttttttttt][sss]    | of
+            | [...][0ccc0cccc0cccc0cccc0c][st1]    | clocking
+              [...][cc0ccc0cccc0cccc0cccc][ts0]    |
 
-        []     [=====================]
-               <---------S----------
+            []     [=====================]
+                   <---------S----------
 
-        The extracted ci_frame keeps just the serial front edges of all charge injection scans.
+            The extracted ci_frame keeps just the serial front edges of all charge injection scans.
 
-        list index 0:
+            list index 0:
 
-        [0, 2, 22, 225 (serial prescan is 3 pixels)
+            [0, 2, 22, 225 (serial prescan is 3 pixels)
 
-        list index 1:
+            list index 1:
 
-        [4, 6, 22, 25] (serial prescan is 3 pixels)
+            [4, 6, 22, 25] (serial prescan is 3 pixels)
 
-        Parameters
-        ------------
-        arrays
-        columns : (int, int)
-            The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd columns)
+            Parameters
+            ------------
+            arrays
+            columns : (int, int)
+                The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd columns)
         """
         if columns is None:
             columns = (0, self.scans.serial_trails_columns)

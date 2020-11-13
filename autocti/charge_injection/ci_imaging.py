@@ -256,7 +256,7 @@ class SettingsMaskedCIImaging(imaging.AbstractSettingsMaskedImaging):
             If True, the CTI model that is used to fit the charge injection data includes a parallel CTI component.
          is_serial_fit : bool
             If True, the CTI model that is used to fit the charge injection data includes a serial CTI component.
-          """
+        """
 
         settings = copy.copy(self)
 
@@ -310,8 +310,10 @@ class MaskedCIImaging(imaging.AbstractMaskedImaging):
 
         if settings.parallel_columns is not None:
 
-            ci_imaging = self.ci_imaging_full.parallel_calibration_ci_imaging_for_columns(
-                columns=settings.parallel_columns
+            ci_imaging = (
+                self.ci_imaging_full.parallel_calibration_ci_imaging_for_columns(
+                    columns=settings.parallel_columns
+                )
             )
 
             mask = self.ci_imaging_full.image.parallel_calibration_mask_from_mask_and_columns(
@@ -332,8 +334,10 @@ class MaskedCIImaging(imaging.AbstractMaskedImaging):
                 rows=settings.serial_rows
             )
 
-            mask = self.ci_imaging_full.image.serial_calibration_mask_from_mask_and_rows(
-                mask=mask, rows=settings.serial_rows
+            mask = (
+                self.ci_imaging_full.image.serial_calibration_mask_from_mask_and_rows(
+                    mask=mask, rows=settings.serial_rows
+                )
             )
 
             if noise_scaling_maps is not None:

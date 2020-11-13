@@ -74,7 +74,7 @@ class TestCIPattern(object):
         assert pattern.rows_between_regions == [2, 3]
 
     def test__check_pattern_dimensions__pattern_has_more_rows_than_image__1_region(
-        self
+        self,
     ):
         pattern = ac.ci.CIPatternUniform(normalization=1.0, regions=([(0, 3, 0, 1)]))
 
@@ -190,7 +190,7 @@ class TestCIPatternUniform(object):
         ).all()
 
     def test__ci_pre_cti_from_shape_2d__pattern_bigger_than_image_dimensions__raises_error(
-        self
+        self,
     ):
         pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 2, 0, 1)])
 
@@ -200,7 +200,7 @@ class TestCIPatternUniform(object):
 
 class TestCIPatternNonUniform(object):
     def test__ci_region_from__uniform_column_and_uniform_row__returns_uniform_charge_region(
-        self
+        self,
     ):
         ci_pattern = ac.ci.CIPatternNonUniform(
             normalization=100.0, regions=[(0, 1, 0, 1)], row_slope=0.0, column_sigma=0.0
@@ -311,7 +311,7 @@ class TestCIPatternNonUniform(object):
         ).all()
 
     def test__ci_region_from__non_uniform_column_and_non_uniform_row__returns_region(
-        self
+        self,
     ):
         ci_pattern = ac.ci.CIPatternNonUniform(
             normalization=100.0,
@@ -354,7 +354,7 @@ class TestCIPatternNonUniform(object):
         ).all()
 
     def test__ci_region_from__non_uniform_columns_with_large_deviation_value__no_negative_charge_columns_are_generated(
-        self
+        self,
     ):
         ci_pattern = ac.ci.CIPatternNonUniform(
             normalization=100.0,
@@ -368,7 +368,7 @@ class TestCIPatternNonUniform(object):
         assert (region > 0).all()
 
     def test__ci_pre_cti_from__no_non_uniformity__identical_to_uniform_image__one_ci_region(
-        self
+        self,
     ):
         ci_pattern_uni = ac.ci.CIPatternUniform(
             normalization=10.0, regions=[(2, 4, 0, 5)]
@@ -410,7 +410,7 @@ class TestCIPatternNonUniform(object):
         assert (image1 == image2).all()
 
     def test__ci_pre_cti_from__non_uniformity_in_columns_only__one_ci_region__image_is_correct(
-        self
+        self,
     ):
         ci_pattern_non_uni = ac.ci.CIPatternNonUniform(
             normalization=100.0, regions=[(0, 3, 0, 3)], row_slope=0.0, column_sigma=1.0
@@ -485,7 +485,7 @@ class TestCIPatternNonUniform(object):
         ).all()
 
     def test__ci_pre_cti_from__non_uniformity_in_columns_only__maximum_normalization_input__does_not_simulate_above(
-        self
+        self,
     ):
         ci_pattern_non_uni = ac.ci.CIPatternNonUniform(
             normalization=100.0,
@@ -505,7 +505,7 @@ class TestCIPatternNonUniform(object):
         assert np.max(image) < 100.0
 
     def test__ci_pre_cti_from__non_uniformity_in_rows_only__one_ci_region__image_is_correct(
-        self
+        self,
     ):
         ci_pattern_non_uni = ac.ci.CIPatternNonUniform(
             normalization=100.0,
@@ -556,7 +556,7 @@ class TestCIPatternNonUniform(object):
         ).all()
 
     def test__ci_pre_cti_from__non_uniformity_in_rows_and_columns__two_ci_regions__image_is_correct(
-        self
+        self,
     ):
         ci_pattern_non_uni = ac.ci.CIPatternNonUniform(
             normalization=100.0,

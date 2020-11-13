@@ -1,10 +1,13 @@
 import os
+from os import path
 import shutil
 
 import numpy as np
 import autocti as ac
 
-test_data_path = "{}/files/array/".format(os.path.dirname(os.path.realpath(__file__)))
+test_data_path = path.join(
+    "{}".format(path.dirname(path.realpath(__file__))), "files", "array"
+)
 
 
 class TestImaging:
@@ -12,8 +15,8 @@ class TestImaging:
 
         imaging = ac.Imaging.from_fits(
             pixel_scales=0.1,
-            image_path=test_data_path + "3x3_ones.fits",
-            noise_map_path=test_data_path + "3x3_threes.fits",
+            image_path=path.join(test_data_path, "3x3_ones.fits"),
+            noise_map_path=path.join(test_data_path, "3x3_threes.fits"),
         )
 
         assert (imaging.image == np.ones((3, 3))).all()
@@ -25,8 +28,8 @@ class TestImaging:
     def test__optional_array_paths_included__loads_optional_array(self):
         imaging = ac.Imaging.from_fits(
             pixel_scales=0.1,
-            image_path=test_data_path + "3x3_ones.fits",
-            noise_map_path=test_data_path + "3x3_threes.fits",
+            image_path=path.join(test_data_path, "3x3_ones.fits"),
+            noise_map_path=path.join(test_data_path, "3x3_threes.fits"),
         )
 
         assert (imaging.image == np.ones((3, 3))).all()
@@ -38,9 +41,9 @@ class TestImaging:
     def test__from_fits__all_files_in_one_fits__load_using_different_hdus(self):
         imaging = ac.Imaging.from_fits(
             pixel_scales=0.1,
-            image_path=test_data_path + "3x3_multiple_hdu.fits",
+            image_path=path.join(test_data_path, "3x3_multiple_hdu.fits"),
             image_hdu=0,
-            noise_map_path=test_data_path + "3x3_multiple_hdu.fits",
+            noise_map_path=path.join(test_data_path, "3x3_multiple_hdu.fits"),
             noise_map_hdu=2,
         )
 
@@ -51,29 +54,29 @@ class TestImaging:
         assert imaging.noise_map.mask.pixel_scales == (0.1, 0.1)
 
     def test__output_to_fits__outputs_all_imaging_arrays(self):
+
         imaging = ac.Imaging.from_fits(
             pixel_scales=0.1,
-            image_path=test_data_path + "3x3_ones.fits",
-            noise_map_path=test_data_path + "3x3_threes.fits",
+            image_path=path.join(test_data_path, "3x3_ones.fits"),
+            noise_map_path=path.join(test_data_path, "3x3_threes.fits"),
         )
 
-        output_data_dir = "{}/files/array/output_test/".format(
-            os.path.dirname(os.path.realpath(__file__))
-        )
-        if os.path.exists(output_data_dir):
+        output_data_dir = path.join(test_data_path, "output_test")
+
+        if path.exists(output_data_dir):
             shutil.rmtree(output_data_dir)
 
         os.makedirs(output_data_dir)
 
         imaging.output_to_fits(
-            image_path=output_data_dir + "image.fits",
-            noise_map_path=output_data_dir + "noise_map.fits",
+            image_path=path.join(output_data_dir, "image.fits"),
+            noise_map_path=path.join(output_data_dir, "noise_map.fits"),
         )
 
         imaging = ac.Imaging.from_fits(
             pixel_scales=0.1,
-            image_path=output_data_dir + "image.fits",
-            noise_map_path=output_data_dir + "noise_map.fits",
+            image_path=path.join(output_data_dir, "image.fits"),
+            noise_map_path=path.join(output_data_dir, "noise_map.fits"),
         )
 
         assert (imaging.image == np.ones((3, 3))).all()
@@ -95,7 +98,7 @@ class TestMaskedImaging:
         ).all()
 
     def test__different_imaging_without_mock_objects__customize_constructor_inputs(
-        self
+        self,
     ):
 
         imaging = ac.Imaging(

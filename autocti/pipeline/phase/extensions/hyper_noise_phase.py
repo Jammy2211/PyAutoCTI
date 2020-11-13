@@ -121,8 +121,10 @@ class HyperNoisePhase(HyperPhase):
 
         masks = phase.mask_for_analysis_from_dataset(dataset=datasets)
 
-        noise_scaling_maps_list = phase.noise_scaling_maps_list_from_total_images_and_results(
-            total_images=len(datasets), results=results
+        noise_scaling_maps_list = (
+            phase.noise_scaling_maps_list_from_total_images_and_results(
+                total_images=len(datasets), results=results
+            )
         )
 
         masked_ci_dataset_full = list(

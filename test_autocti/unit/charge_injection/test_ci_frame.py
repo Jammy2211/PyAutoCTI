@@ -51,7 +51,7 @@ class TestCiRegionsArray:
 
 class TestNonCIRegionFrame:
     def test__1_ci_region__parallel_overscan_is_entire_image__extracts_everything_between_its_columns(
-        self
+        self,
     ):
 
         pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 3)])
@@ -114,7 +114,7 @@ class TestNonCIRegionFrame:
 
 class TestParallelNonCIRegionFrame:
     def test__1_ci_region__parallel_overscan_is_entire_image__extracts_everything_but_removes_serial_scans(
-        self
+        self,
     ):
 
         pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 3)])
@@ -322,7 +322,7 @@ class TestParallelEdgesAndTrailsFrame:
         assert new_ci_frame.ci_pattern.regions == [(0, 4, 0, 3)]
 
     def test__front_edge_and_trails__2_regions__1_row_of_each__new_frame_is_edge_and_trail(
-        self
+        self,
     ):
         pattern = ac.ci.CIPatternUniform(
             normalization=10.0, regions=[(0, 1, 0, 3), (3, 4, 0, 3)]
@@ -517,7 +517,7 @@ class TestSerialEdgesAndTrailsFrame:
         assert new_ci_frame.ci_pattern.regions == [(0, 3, 0, 2)]
 
     def test__front_edge_and_trails__2_columns_of_each__new_frame_is_edge_and_trail(
-        self
+        self,
     ):
         pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 3, 0, 2)])
 
@@ -549,7 +549,7 @@ class TestSerialEdgesAndTrailsFrame:
         assert new_ci_frame.ci_pattern.regions == [(0, 3, 0, 2)]
 
     def test__front_edge_and_trails__2_regions_1_column_of_each__new_frame_is_edge_and_trail(
-        self
+        self,
     ):
         pattern = ac.ci.CIPatternUniform(
             normalization=10.0, regions=[(0, 3, 0, 1), (0, 3, 3, 4)]
@@ -715,7 +715,7 @@ class TestSerialOverScanAboveTrailsFrame:
         assert new_ci_frame.ci_pattern.regions == [(1, 3, 1, 3)]
 
     def test__2_ci_regions__serial_trails_go_over_1_right_hand_column__1_pixel_above_each_kept(
-        self
+        self,
     ):
         pattern = ac.ci.CIPatternUniform(
             normalization=10.0, regions=[(1, 2, 1, 3), (3, 4, 1, 3)]
@@ -2082,7 +2082,7 @@ class TestSerialFrontEdgeArrays:
         ).all()
 
     def test__no_columns_specified_so_uses_smallest_charge_injection_region_column_size(
-        self
+        self,
     ):
 
         pattern = ac.ci.CIPatternUniform(
@@ -2559,7 +2559,7 @@ class TestExtractions:
         assert (ci_frame.parallel_serial_calibration_frame == arr).all()
 
     def test__smallest_parallel_trails_rows_to_frame_edge__x2_ci_region__bottom_frame_geometry(
-        self
+        self,
     ):
 
         pattern = ac.ci.CIPatternUniform(

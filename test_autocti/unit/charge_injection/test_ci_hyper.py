@@ -13,7 +13,7 @@ class TestScaledNoise:
         assert (scaled_noise_map == np.array([[0.0, 0.0], [0.0, 0.0]])).all()
 
     def test__noise_scaling_map_has_values__scaled_noise_is_baseline_noise_plus_values_times_noise_factor(
-        self
+        self,
     ):
         noise_scaling_map = np.array([[1.0, 2.0], [5.0, 3.0]])
 

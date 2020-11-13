@@ -97,12 +97,16 @@ class PhaseCIImaging(PhaseDataset):
             for dataset in datasets
         ]
 
-        noise_scaling_maps_list = self.noise_scaling_maps_list_from_total_images_and_results(
-            total_images=len(datasets), results=results
+        noise_scaling_maps_list = (
+            self.noise_scaling_maps_list_from_total_images_and_results(
+                total_images=len(datasets), results=results
+            )
         )
 
-        settings_masked_ci_imaging = self.settings.settings_masked_ci_imaging.modify_via_fit_type(
-            is_parallel_fit=self.is_parallel_fit, is_serial_fit=self.is_serial_fit
+        settings_masked_ci_imaging = (
+            self.settings.settings_masked_ci_imaging.modify_via_fit_type(
+                is_parallel_fit=self.is_parallel_fit, is_serial_fit=self.is_serial_fit
+            )
         )
 
         masked_ci_imagings = [

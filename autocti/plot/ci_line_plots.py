@@ -3,13 +3,13 @@ from autocti import exc
 
 def plot_line_from_ci_frame(ci_frame, line_region, include=None, plotter=None):
 
-    if line_region is "parallel_front_edge":
+    if line_region == "parallel_front_edge":
         line = ci_frame.parallel_front_edge_line_binned_over_columns()
-    elif line_region is "parallel_trails":
+    elif line_region == "parallel_trails":
         line = ci_frame.parallel_trails_line_binned_over_columns()
-    elif line_region is "serial_front_edge":
+    elif line_region == "serial_front_edge":
         line = ci_frame.serial_front_edge_line_binned_over_rows()
-    elif line_region is "serial_trails":
+    elif line_region == "serial_trails":
         line = ci_frame.serial_trails_line_binned_over_rows()
     else:
         raise exc.PlottingException(

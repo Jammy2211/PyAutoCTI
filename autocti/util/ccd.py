@@ -1,5 +1,6 @@
 from arcticpy import ccd
 
+
 class CCD(ccd.CCD):
     def __init__(self, full_well_depth=1e4, well_notch_depth=0.0, well_fill_power=0.58):
         super().__init__(

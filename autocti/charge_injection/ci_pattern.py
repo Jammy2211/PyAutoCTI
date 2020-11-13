@@ -111,7 +111,7 @@ class CIPatternNonUniform(AbstractCIPattern):
         column_sigma=None,
         maximum_normalization=np.inf,
     ):
-        """ A non-uniform charge injection ci_pattern, which is defined by the regions it appears on a charge injection
+        """A non-uniform charge injection ci_pattern, which is defined by the regions it appears on a charge injection
         ci_frame and its average normalization.
 
         Non-uniformity across the columns of a charge injection ci_pattern is due to spikes / drops in the current that
