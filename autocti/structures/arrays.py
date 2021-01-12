@@ -202,7 +202,7 @@ class Array(AbstractArray):
               [3.0, 4.0]]
 
         The 2D shape of the array and its mask are determined from the input array and the mask is setup as an
-        unmasked *Mask2D* of shape_2d.
+        unmasked `Mask2D` of shape_2d.
 
         Parameters
         ----------
@@ -307,7 +307,7 @@ class Array(AbstractArray):
 
     @classmethod
     def from_fits(cls, file_path, pixel_scales, hdu=0, origin=(0.0, 0.0)):
-        """Create an Array (see *AbstractArray.__new__*) by loaing the array values from a .fits file.
+        """Create an Array (see *AbstractArray.__new__*) by loading the array values from a .fits file.
 
         Parameters
         ----------

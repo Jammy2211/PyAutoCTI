@@ -35,8 +35,8 @@ def make_pipeline(name, folders, search=af.DynestyStatic()):
         folders=folders,
         parallel_traps=phase1.result.model.parallel_trap,
         parallel_ccd=phase1.result.model.parallel_ccd,
-        hyper_noise_scalar_of_ci_regions=phase1.result.hyper_combined.instance.hyper_noise_scalar_of_ci_regions,
-        hyper_noise_scalar_of_parallel_trails=phase1.result.hyper_combined.instance.hyper_noise_scalar_of_parallel_trails,
+        hyper_noise_scalar_of_ci_regions=phase1.result.hyper.instance.hyper_noise_scalar_of_ci_regions,
+        hyper_noise_scalar_of_parallel_trails=phase1.result.hyper.instance.hyper_noise_scalar_of_parallel_trails,
         search=search,
     )
 

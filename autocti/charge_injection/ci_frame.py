@@ -1,13 +1,12 @@
 from copy import deepcopy
 
 import numpy as np
-from autoarray.structures import abstract_structure
 from autoarray.structures.arrays import abstract_array
 from autocti.charge_injection import ci_mask
 from autocti.mask.mask import Mask2D
 from autoarray.structures.frames import abstract_frame
 from autoarray.instruments import euclid
-from autoarray.util import array_util, frame_util
+from autoarray.util import array_util, frame_util, geometry_util
 
 
 class AbstractCIFrame(abstract_frame.AbstractFrame):
@@ -696,9 +695,9 @@ class AbstractCIFrame(abstract_frame.AbstractFrame):
         offset = 0
         new_ci_pattern_regions = []
         for region in self.ci_pattern.regions:
-            ysize = rows[1] - rows[0]
-            new_ci_pattern_regions.append((offset, offset + ysize, x0, x1))
-            offset += ysize
+            labelsize = rows[1] - rows[0]
+            new_ci_pattern_regions.append((offset, offset + labelsize, x0, x1))
+            offset += labelsize
 
         new_ci_pattern = deepcopy(self.ci_pattern)
         new_ci_pattern.regions = new_ci_pattern_regions
@@ -1356,9 +1355,7 @@ class CIFrame(AbstractCIFrame):
 
         array = abstract_array.convert_array(array=array)
 
-        pixel_scales = abstract_structure.convert_pixel_scales(
-            pixel_scales=pixel_scales
-        )
+        pixel_scales = geometry_util.convert_pixel_scales_2d(pixel_scales=pixel_scales)
 
         mask = Mask2D.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
 
@@ -1540,9 +1537,7 @@ class CIFrame(AbstractCIFrame):
             locations of different scans of the CCD (overscans, prescan, etc.)
         """
 
-        pixel_scales = abstract_structure.convert_pixel_scales(
-            pixel_scales=pixel_scales
-        )
+        pixel_scales = geometry_util.convert_pixel_scales_2d(pixel_scales=pixel_scales)
 
         array = array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
 

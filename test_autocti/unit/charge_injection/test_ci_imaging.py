@@ -16,8 +16,8 @@ class TestCIImaging(object):
 
         # The ci pattern starts at column 1, so the left most column is removed below
 
-        parallel_calibration_imaging = (
-            ci_imaging_7x7.parallel_calibration_ci_imaging_for_columns(columns=(0, 6))
+        parallel_calibration_imaging = ci_imaging_7x7.parallel_calibration_ci_imaging_for_columns(
+            columns=(0, 6)
         )
 
         assert (
@@ -27,7 +27,8 @@ class TestCIImaging(object):
             parallel_calibration_imaging.noise_map == ci_imaging_7x7.noise_map[:, 1:7]
         ).all()
         assert (
-            parallel_calibration_imaging.ci_pre_cti == ci_imaging_7x7.ci_pre_cti[:, 1:7]
+            parallel_calibration_imaging.ci_pre_cti
+            == ci_imaging_7x7.figure_ci_pre_cti[:, 1:7]
         ).all()
         assert (
             parallel_calibration_imaging.cosmic_ray_map
@@ -38,8 +39,8 @@ class TestCIImaging(object):
 
         # The ci pattern spans 2 rows, so two rows are extracted
 
-        serial_calibration_imaging = (
-            ci_imaging_7x7.serial_calibration_ci_imaging_for_rows(rows=(0, 2))
+        serial_calibration_imaging = ci_imaging_7x7.serial_calibration_ci_imaging_for_rows(
+            rows=(0, 2)
         )
 
         assert (serial_calibration_imaging.image == ci_imaging_7x7.image[0:2, :]).all()
@@ -47,7 +48,8 @@ class TestCIImaging(object):
             serial_calibration_imaging.noise_map == ci_imaging_7x7.noise_map[0:2, :]
         ).all()
         assert (
-            serial_calibration_imaging.ci_pre_cti == ci_imaging_7x7.ci_pre_cti[0:2, :]
+            serial_calibration_imaging.ci_pre_cti
+            == ci_imaging_7x7.figure_ci_pre_cti[0:2, :]
         ).all()
         assert (
             serial_calibration_imaging.cosmic_ray_map
@@ -302,7 +304,7 @@ class TestMaskedCIImaging:
 
         assert (masked_ci_imaging.noise_map == masked_noise_map).all()
 
-        assert (masked_ci_imaging.ci_pre_cti == ci_imaging_7x7.ci_pre_cti).all()
+        assert (masked_ci_imaging.ci_pre_cti == ci_imaging_7x7.figure_ci_pre_cti).all()
 
         masked_cosmic_ray_map = ci_imaging_7x7.cosmic_ray_map
         masked_cosmic_ray_map[0, 0] = 0.0

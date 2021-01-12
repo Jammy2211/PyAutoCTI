@@ -16,9 +16,8 @@ directory = path.dirname(path.realpath(__file__))
 
 @pytest.fixture(scope="session", autouse=True)
 def do_something():
-    print("{}/config/".format(directory))
 
-    conf.instance = conf.Config("{}/config/".format(directory))
+    conf.instance.push(new_path="config".format(directory))
 
 
 class TestGeneric:

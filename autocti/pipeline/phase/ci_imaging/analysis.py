@@ -160,7 +160,7 @@ def pipe_cti(ci_data_masked, instance, clocker, hyper_noise_scalars):
         serial_traps = None
 
     ci_post_cti = clocker.add_cti(
-        image=ci_data_masked.ci_pre_cti,
+        image=ci_data_masked.figure_ci_pre_cti,
         parallel_traps=parallel_traps,
         parallel_ccd=instance.parallel_ccd,
         serial_traps=serial_traps,

@@ -267,13 +267,13 @@ class TestCIFit:
 
         fit = ac.ci.CIFitImaging(
             masked_ci_imaging=masked_ci_imaging_7x7,
-            ci_post_cti=masked_ci_imaging_7x7.ci_pre_cti,
+            ci_post_cti=masked_ci_imaging_7x7.figure_ci_pre_cti,
             hyper_noise_scalars=[hyper_noise_scalar_0, hyper_noise_scalar_1],
         )
 
         hyper_noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
             noise_map=masked_ci_imaging_7x7.noise_map,
-            noise_scaling_maps=masked_ci_imaging_7x7.noise_scaling_maps,
+            noise_scaling_maps=masked_ci_imaging_7x7.figure_noise_scaling_maps,
             hyper_noise_scalars=[hyper_noise_scalar_0, hyper_noise_scalar_1],
         )
 
@@ -282,7 +282,7 @@ class TestCIFit:
         residual_map = ac.util.fit.residual_map_with_mask_from(
             data=masked_ci_imaging_7x7.image,
             mask=masked_ci_imaging_7x7.mask,
-            model_data=masked_ci_imaging_7x7.ci_pre_cti,
+            model_data=masked_ci_imaging_7x7.figure_ci_pre_cti,
         )
 
         assert (residual_map == fit.residual_map).all()

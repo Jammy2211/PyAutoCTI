@@ -119,12 +119,12 @@ A description of the general.ini visualization config.
         wheel matches the light profile centres so that light and mass profile centres of the same galaxies are colored
         the same.
         
-    inversion_pixelization_grid : bool
+    mapper_source_pixelization_grid : bool
 
         If True, the inversion's pixelization grid (e.g. the centre of every pixel of the pixelization) is plotted
         on figures of the inversion's reconstructed source.
        
-        The inversion_pixelization_grid appearance is specified by the [inversion_pixelization_grid] section of 
+        The mapper_source_pixelization_grid appearance is specified by the [mapper_source_pixelization_grid] section of
         the 'figures.ini' and 'subplots.ini' configs.
         
     inversion_grid : bool
@@ -134,20 +134,11 @@ A description of the general.ini visualization config.
        
         The inversion_grid appearance is specified by the [inversion_grid] section of 
         the 'figures.ini' and 'subplots.ini' configs.
-        
-    inversion_border : bool
 
-        If True, inversion's border (e.g. the ray-traced image pixels of all pixels on the edge of the mask in the 
-        image-plane) is plotted on figures of the inversion's reconstructed source. Image-pixels which trace outside 
-        this border may be relocated here before the inversion.
-       
-        The inversion_border appearance is specified by the [inversion_border] section of 
-        the 'figures.ini' and 'subplots.ini' configs.
-        
-    inversion_image_pixelization_grid : bool
+    mapper_data_pixelization_grid : bool
 
         If True, inversion's pixelizaion grid in the image-plane (e.g. the pixels which are traced to form the centre
         of every pixel of the pixelization) is plotted on fit_imaging figures of the image.
        
-        The inversion_pixelization_grid appearance is specified by the [inversion_pixelization_grid] section of 
+        The mapper_source_pixelization_grid appearance is specified by the [mapper_source_pixelization_grid] section of
         the 'figures.ini' and 'subplots.ini' configs.

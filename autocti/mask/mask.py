@@ -1,9 +1,9 @@
 from autoconf import conf
 from autoarray.mask import mask_2d
-from autoarray.structures import abstract_structure
 from autoarray import exc
 from autoarray.structures import region as reg
 from autoarray.util import array_util
+from autoarray.util import geometry_util
 
 import numpy as np
 
@@ -100,9 +100,7 @@ class Mask2D(mask_2d.AbstractMask2D):
         if invert:
             mask = np.invert(mask)
 
-        pixel_scales = abstract_structure.convert_pixel_scales(
-            pixel_scales=pixel_scales
-        )
+        pixel_scales = geometry_util.convert_pixel_scales_2d(pixel_scales=pixel_scales)
 
         if len(mask.shape) != 2:
             raise exc.MaskException("The input mask is not a two dimensional array")

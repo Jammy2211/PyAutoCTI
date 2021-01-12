@@ -1,10 +1,10 @@
 import numpy as np
 
-from autoarray.structures import abstract_structure
 from autoarray.structures.arrays import abstract_array
 from autoarray.structures.frames import abstract_frame
 from autoarray.util import array_util
 from autoarray.util import frame_util
+from autoarray.util import geometry_util
 from autocti.mask import mask as msk
 
 
@@ -82,9 +82,7 @@ class Frame(abstract_frame.AbstractFrame):
 
         array = abstract_array.convert_array(array=array)
 
-        pixel_scales = abstract_structure.convert_pixel_scales(
-            pixel_scales=pixel_scales
-        )
+        pixel_scales = geometry_util.convert_pixel_scales_2d(pixel_scales=pixel_scales)
 
         mask = msk.Mask2D.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
 
@@ -238,9 +236,7 @@ class Frame(abstract_frame.AbstractFrame):
             locations of different scans of the CCD (overscans, prescan, etc.)
         """
 
-        pixel_scales = abstract_structure.convert_pixel_scales(
-            pixel_scales=pixel_scales
-        )
+        pixel_scales = geometry_util.convert_pixel_scales_2d(pixel_scales=pixel_scales)
 
         array = array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
 

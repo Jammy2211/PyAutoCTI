@@ -1,5 +1,5 @@
 from pathlib import Path
-
+from os import path
 import pytest
 
 from autoconf import conf
@@ -10,8 +10,12 @@ directory = Path(__file__).parent.parent
 
 
 @pytest.fixture(autouse=True)
-def set_config_path():
-    conf.instance.push(directory / "config", directory / "output")
+def set_config_path(request):
+
+    conf.instance.push(
+        new_path=path.join(directory, "config"),
+        output_path=path.join(directory, "output"),
+    )
 
 
 ### Arctic ###

@@ -114,7 +114,7 @@
 #         normal_phase, hyper_phase_classes=(extensions.HyperNoisePhase,)
 #     )
 #
-#     for phase in hyper_combined.hyper_phases:
+#     for phase in hyper.hyper_phases:
 #         phase.run_hyper = run_hyper
 #
 #     return hyper_combined
@@ -122,7 +122,7 @@
 #
 # class TestHyperAPI(object):
 #     def test_combined_result(self, hyper_combined):
-#         result = hyper_combined.run(datasets=None)
+#         result = hyper.run(datasets=None)
 #
 #         assert hasattr(result, "hyper_noise")
 #         assert isinstance(result.hyper_noise, MockResult)
@@ -142,16 +142,16 @@
 #
 #         result.hyper_noise = hyper_noise_result
 #
-#         model = hyper_combined.combine_variables(result)
+#         model = hyper.combine_variables(result)
 #
 #         assert isinstance(model.hyper_noise_scalar_of_ci_regions, af.PriorModel)
 #
 #         assert model.hyper_noise_scalar_of_ci_regions.cls == ci_hyper.CIHyperNoiseScalar
 #
 #     def test_instantiation(self, hyper_combined):
-#         assert len(hyper_combined.hyper_phases) == 1
+#         assert len(hyper.hyper_phases) == 1
 #
-#         noise_phase = hyper_combined.hyper_phases[0]
+#         noise_phase = hyper.hyper_phases[0]
 #
 #         assert noise_phase.hyper_name == "hyper_noise"
 #         assert isinstance(noise_phase, extensions.HyperNoisePhase)

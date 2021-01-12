@@ -4,9 +4,6 @@ import numpy as np
 import autocti as ac
 
 
-path = "{}/".format(os.path.dirname(os.path.realpath(__file__)))
-
-
 class TestFrameAPI:
     def test__manual__makes_frame_using_inputs__include_rotations(self):
 

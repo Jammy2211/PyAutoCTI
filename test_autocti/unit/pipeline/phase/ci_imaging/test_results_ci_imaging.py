@@ -101,7 +101,7 @@ class TestResult:
             ),
         )
 
-        ci_post_cti = parallel_clocker.add_cti(image=ci_imaging_7x7.ci_pre_cti)
+        ci_post_cti = parallel_clocker.add_cti(image=ci_imaging_7x7.figure_ci_pre_cti)
 
         mask = ac.ci.CIMask.unmasked(
             shape_2d=ci_imaging_7x7.shape_2d, pixel_scales=ci_imaging_7x7.pixel_scales

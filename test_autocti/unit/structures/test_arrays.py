@@ -173,9 +173,8 @@ class TestAPI:
             pixel_scales=1.0,
         )
 
-        output_data_dir = "{}/files/array/output_test/".format(
-            path.dirname(path.realpath(__file__))
-        )
+        output_data_dir = path.join(test_data_path, "output_test")
+
         if path.exists(output_data_dir):
             shutil.rmtree(output_data_dir)
 

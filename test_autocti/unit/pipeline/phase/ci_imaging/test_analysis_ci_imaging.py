@@ -86,7 +86,7 @@ class TestFit:
             masked_ci_imaging=masked_ci_imaging, ci_post_cti=ci_post_cti
         )
 
-        assert fits[0].image.shape == (7, 1)
+        assert fits[0].figure_image.shape == (7, 1)
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood)
 
     def test__full_fits_from_instance_and_ci_imaging(
@@ -112,14 +112,16 @@ class TestFit:
         fits = analysis.fits_full_dataset_from_instance(instance=instance)
 
         ci_post_cti = parallel_clocker.add_cti(
-            image=ci_imaging_7x7.ci_pre_cti, parallel_traps=traps_x1, parallel_ccd=ccd
+            image=ci_imaging_7x7.figure_ci_pre_cti,
+            parallel_traps=traps_x1,
+            parallel_ccd=ccd,
         )
 
         fit = ac.ci.CIFitImaging(
             masked_ci_imaging=ci_imaging_7x7, ci_post_cti=ci_post_cti
         )
 
-        assert fits[0].image.shape == (7, 7)
+        assert fits[0].figure_image.shape == (7, 7)
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood)
 
     def test__extracted_fits_from_instance_and_ci_imaging__include_noise_scaling(
@@ -178,7 +180,7 @@ class TestFit:
             hyper_noise_scalars=[instance.hyper_noise_scalar_of_ci_regions],
         )
 
-        assert fits[0].image.shape == (7, 1)
+        assert fits[0].figure_image.shape == (7, 1)
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood, 1.0e-4)
 
         fit = ac.ci.CIFitImaging(
@@ -225,7 +227,9 @@ class TestFit:
         )
 
         ci_post_cti = parallel_clocker.add_cti(
-            image=ci_imaging_7x7.ci_pre_cti, parallel_traps=traps_x1, parallel_ccd=ccd
+            image=ci_imaging_7x7.figure_ci_pre_cti,
+            parallel_traps=traps_x1,
+            parallel_ccd=ccd,
         )
 
         mask = ac.ci.CIMask.unmasked(
@@ -244,7 +248,7 @@ class TestFit:
             hyper_noise_scalars=[instance.hyper_noise_scalar_of_ci_regions],
         )
 
-        assert fits[0].image.shape == (7, 7)
+        assert fits[0].figure_image.shape == (7, 7)
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood, 1.0e-4)
 
         fit = ac.ci.CIFitImaging(

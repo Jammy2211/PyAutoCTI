@@ -70,10 +70,10 @@ class CIImaging(imaging.AbstractImaging):
     @classmethod
     def from_fits(
         cls,
-        roe_corner,
         ci_pattern,
         image_path,
         pixel_scales,
+        roe_corner=(1, 0),
         scans=None,
         image_hdu=0,
         noise_map_path=None,
@@ -305,18 +305,16 @@ class MaskedCIImaging(imaging.AbstractMaskedImaging):
         """
 
         self.ci_imaging_full = copy.deepcopy(ci_imaging)
-        self.ci_imaging_full.noise_scaling_maps = noise_scaling_maps
+        self.ci_imaging_full.figure_noise_scaling_maps = noise_scaling_maps
         self.mask_full = copy.deepcopy(mask)
 
         if settings.parallel_columns is not None:
 
-            ci_imaging = (
-                self.ci_imaging_full.parallel_calibration_ci_imaging_for_columns(
-                    columns=settings.parallel_columns
-                )
+            ci_imaging = self.ci_imaging_full.parallel_calibration_ci_imaging_for_columns(
+                columns=settings.parallel_columns
             )
 
-            mask = self.ci_imaging_full.image.parallel_calibration_mask_from_mask_and_columns(
+            mask = self.ci_imaging_full.figure_image.parallel_calibration_mask_from_mask_and_columns(
                 mask=mask, columns=settings.parallel_columns
             )
 
@@ -334,10 +332,8 @@ class MaskedCIImaging(imaging.AbstractMaskedImaging):
                 rows=settings.serial_rows
             )
 
-            mask = (
-                self.ci_imaging_full.image.serial_calibration_mask_from_mask_and_rows(
-                    mask=mask, rows=settings.serial_rows
-                )
+            mask = self.ci_imaging_full.figure_image.serial_calibration_mask_from_mask_and_rows(
+                mask=mask, rows=settings.serial_rows
             )
 
             if noise_scaling_maps is not None:

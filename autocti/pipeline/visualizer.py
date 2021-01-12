@@ -1,8 +1,9 @@
 from os import path
 from autoconf import conf
-from autofit.non_linear.paths import Paths
-from autoarray.plot import mat_objs, plotters
-from autocti.plot import ci_imaging_plots, ci_fit_plots
+from autoarray.plot.mat_wrap.wrap import wrap_base
+from autoarray.plot.mat_wrap import mat_plot
+from autoarray.plot.mat_wrap import include as inc
+from autocti.plot import ci_imaging_plotters, ci_fit_plotters
 
 
 def setting(section, name):
@@ -13,165 +14,103 @@ def plot_setting(section, name):
     return setting(section, name)
 
 
-class AbstractVisualizer:
-    def __init__(self):
+class Visualizer:
+    def __init__(self, visualize_path):
 
-        self.include = plotters.Include()
+        self.visualize_path = visualize_path
 
-    @staticmethod
-    def plotter_from_paths(paths: Paths, subfolders=None, format="png"):
+        self.include_1d = inc.Include1D()
+        self.include_2d = inc.Include2D()
 
-        if subfolders is None:
-            return plotters.Plotter(
-                output=mat_objs.Output(path=paths.image_path, format=format)
-            )
-        return plotters.Plotter(
-            output=mat_objs.Output(
-                path=path.join(paths.image_path, subfolders), format=format
+    def mat_plot_1d_from(self, subfolders, format="png"):
+        return mat_plot.MatPlot1D(
+            output=wrap_base.Output(
+                path=path.join(self.visualize_path, subfolders), format=format
             )
         )
 
-    @staticmethod
-    def sub_plotter_from_paths(paths: Paths):
-
-        return plotters.SubPlotter(
-            output=mat_objs.Output(
-                path=path.join(paths.image_path, "subplots"), format="png"
+    def mat_plot_2d_from(self, subfolders, format="png"):
+        return mat_plot.MatPlot2D(
+            output=wrap_base.Output(
+                path=path.join(self.visualize_path, subfolders), format=format
             )
         )
 
+    def visualize_ci_imaging(self, ci_imaging):
+        def should_plot(name):
+            return plot_setting(section="dataset", name=name)
 
-class PhaseDatasetVisualizer(AbstractVisualizer):
-    def __init__(self, masked_dataset):
+        mat_plot_2d = self.mat_plot_2d_from(subfolders="ci_imaging")
 
-        super().__init__()
-
-        self.masked_dataset = masked_dataset
-
-        self.plot_subplot_dataset = plot_setting("dataset", "subplot_dataset")
-        self.plot_dataset_data = plot_setting("dataset", "data")
-        self.plot_dataset_noise_map = plot_setting("dataset", "noise_map")
-        self.plot_dataset_signal_to_noise_map = plot_setting(
-            "dataset", "signal_to_noise_map"
-        )
-        self.plot_dataset_ci_pre_cti = plot_setting("dataset", "ci_pre_cti")
-        self.plot_dataset_cosmic_ray_map = plot_setting("dataset", "cosmic_ray_map")
-
-        self.plot_fit_all_at_end_png = plot_setting("fit", "all_at_end_png")
-        self.plot_fit_all_at_end_fits = plot_setting("fit", "all_at_end_fits")
-        self.plot_subplot_fit = plot_setting("fit", "subplot_fit")
-        self.plot_subplot_residual_maps = plot_setting("fit", "subplot_residual_maps")
-        self.plot_subplot_normalized_residual_maps = plot_setting(
-            "fit", "subplot_normalized_residual_maps"
-        )
-        self.plot_subplot_chi_squared_maps = plot_setting(
-            "fit", "subplot_chi_squared_maps"
+        ci_imaging_plotter = ci_imaging_plotters.CIImagingPlotter(
+            imaging=ci_imaging, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
         )
 
-        self.plot_fit_data = plot_setting("fit", "data")
-        self.plot_fit_noise_map = plot_setting("fit", "noise_map")
-        self.plot_fit_signal_to_noise_map = plot_setting("fit", "signal_to_noise_map")
-        self.plot_fit_ci_pre_cti = plot_setting("fit", "ci_pre_cti")
-        self.plot_fit_ci_post_cti = plot_setting("fit", "ci_post_cti")
-        self.plot_fit_residual_map = plot_setting("fit", "residual_map")
-        self.plot_fit_normalized_residual_map = plot_setting(
-            "fit", "normalized_residual_map"
-        )
-        self.plot_fit_chi_squared_map = plot_setting("fit", "chi_squared_map")
-
-
-class PhaseCIImagingVisualizer(PhaseDatasetVisualizer):
-    def __init__(self, masked_dataset):
-
-        super(PhaseCIImagingVisualizer, self).__init__(masked_dataset=masked_dataset)
-
-        self.plot_ci_fit_noise_scaling_maps_list = plot_setting(
-            "fit", "noise_scaling_maps"
+        ci_imaging_plotter.figure_individuals(
+            plot_image=should_plot("data"),
+            plot_noise_map=should_plot("noise_map"),
+            plot_inverse_noise_map=should_plot("inverse_noise_map"),
+            plot_signal_to_noise_map=should_plot("signal_to_noise_map"),
+            plot_absolute_signal_to_noise_map=should_plot(
+                "absolute_signal_to_noise_map"
+            ),
+            plot_potential_chi_squared_map=should_plot("potential_chi_squared_map"),
+            plot_ci_pre_cti=should_plot("ci_pre_cti"),
+            plot_cosmic_ray_map=should_plot("cosmic_ray_map"),
         )
 
-    @property
-    def masked_imaging(self):
-        return self.masked_dataset
+        if should_plot("subplot_dataset"):
 
-    def visualize_ci_imaging(self, paths: Paths):
+            ci_imaging_plotter.subplot_ci_imaging()
 
-        plotter = self.plotter_from_paths(paths=paths, subfolders="ci_imaging")
+    def visualize_ci_imaging_lines(self, ci_imaging, line_region):
+        def should_plot(name):
+            return plot_setting(section="dataset", name=name)
 
-        ci_imaging_plots.individual(
-            ci_imaging=self.masked_imaging.imaging,
-            plot_image=self.plot_dataset_data,
-            plot_noise_map=self.plot_dataset_noise_map,
-            plot_signal_to_noise_map=self.plot_dataset_signal_to_noise_map,
-            plot_ci_pre_cti=self.plot_dataset_ci_pre_cti,
-            plot_cosmic_ray_map=self.plot_dataset_cosmic_ray_map,
-            include=self.include,
-            plotter=plotter,
+        mat_plot_1d = self.mat_plot_1d_from(subfolders="ci_imaging")
+
+        ci_imaging_plotter = ci_imaging_plotters.CIImagingPlotter(
+            imaging=ci_imaging, mat_plot_1d=mat_plot_1d, include_2d=self.include_2d
         )
 
-        sub_plotter = self.sub_plotter_from_paths(paths=paths)
+        if should_plot("plot_subplot_dataset"):
 
-        if self.plot_subplot_dataset:
-            ci_imaging_plots.subplot_ci_imaging(
-                ci_imaging=self.masked_imaging.imaging,
-                include=self.include,
-                sub_plotter=sub_plotter,
-            )
+            ci_imaging_plotter.subplot_ci_lines(line_region=line_region)
 
-    def visualize_ci_imaging_lines(self, paths: Paths, line_region):
-
-        sub_plotter = self.sub_plotter_from_paths(paths=paths)
-
-        if self.plot_subplot_dataset:
-
-            sub_plotter = sub_plotter.plotter_with_new_output(
-                filename=f"subplot_ci_lines_{line_region}"
-            )
-
-            ci_imaging_plots.subplot_ci_lines(
-                ci_imaging=self.masked_imaging.imaging,
-                line_region=line_region,
-                include=self.include,
-                sub_plotter=sub_plotter,
-            )
-
-        plotter = self.plotter_from_paths(
-            paths=paths, subfolders=f"ci_imaging_{line_region}"
-        )
-
-        ci_imaging_plots.individual_ci_lines(
-            ci_imaging=self.masked_imaging.imaging,
+        ci_imaging_plotter.figure_individual_ci_lines(
             line_region=line_region,
-            plot_image=self.plot_dataset_data,
-            plot_noise_map=self.plot_dataset_noise_map,
-            plot_signal_to_noise_map=self.plot_dataset_signal_to_noise_map,
-            plot_ci_pre_cti=self.plot_dataset_ci_pre_cti,
-            include=self.include,
-            plotter=plotter,
+            plot_image=should_plot("data"),
+            plot_noise_map=should_plot("noise_map"),
+            plot_signal_to_noise_map=should_plot("signal_to_noise_map"),
+            plot_ci_pre_cti=should_plot("ci_pre_cti"),
         )
 
-    def visualize_ci_fit(self, paths: Paths, fit, during_analysis):
+    def visualize_ci_fit(self, fit, during_analysis):
+        def should_plot(name):
+            return plot_setting(section="fit", name=name)
 
-        plotter = self.plotter_from_paths(paths=paths, subfolders="fit_ci_imaging")
+        mat_plot_2d = self.mat_plot_2d_from(subfolders="fit_ci_imaging")
 
-        ci_fit_plots.individuals(
-            fit=fit,
-            plot_image=self.plot_fit_data,
-            plot_noise_map=self.plot_fit_noise_map,
-            plot_signal_to_noise_map=self.plot_fit_signal_to_noise_map,
-            plot_ci_pre_cti=self.plot_fit_ci_pre_cti,
-            plot_ci_post_cti=self.plot_fit_ci_post_cti,
-            plot_residual_map=self.plot_fit_residual_map,
-            plot_normalized_residual_map=self.plot_fit_normalized_residual_map,
-            plot_chi_squared_map=self.plot_fit_chi_squared_map,
-            include=self.include,
-            plotter=plotter,
+        ci_fit_plotter = ci_fit_plotters.CIFitPlotter(
+            fit=fit, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
+        )
+
+        ci_fit_plotter.figure_individuals(
+            plot_image=should_plot("data"),
+            plot_noise_map=should_plot("noise_map"),
+            plot_signal_to_noise_map=should_plot("signal_to_noise_map"),
+            plot_ci_pre_cti=should_plot("ci_pre_cti"),
+            plot_ci_post_cti=should_plot("ci_post_cti"),
+            plot_residual_map=should_plot("residual_map"),
+            plot_normalized_residual_map=should_plot("normalized_residual_map"),
+            plot_chi_squared_map=should_plot("chi_squared_map"),
         )
 
         if not during_analysis:
 
-            if self.plot_fit_all_at_end_png:
-                ci_fit_plots.individuals(
-                    fit=fit,
+            if should_plot("all_at_end_png"):
+
+                ci_fit_plotter.figure_individuals(
                     plot_image=True,
                     plot_noise_map=True,
                     plot_signal_to_noise_map=True,
@@ -180,62 +119,45 @@ class PhaseCIImagingVisualizer(PhaseDatasetVisualizer):
                     plot_residual_map=True,
                     plot_normalized_residual_map=True,
                     plot_chi_squared_map=True,
-                    include=self.include,
-                    plotter=plotter,
                 )
 
-            if self.plot_fit_all_at_end_fits:
+            if should_plot("all_at_end_fits"):
 
-                self.visualize_fit_in_fits(paths=paths, fit=fit)
+                self.visualize_fit_in_fits(fit=fit)
 
-        sub_plotter = self.sub_plotter_from_paths(paths=paths)
+        if should_plot("subplot_fit"):
+            ci_fit_plotter.subplot_ci_fit()
 
-        if self.plot_subplot_fit:
-            ci_fit_plots.subplot_ci_fit(
-                fit=fit, include=self.include, sub_plotter=sub_plotter
-            )
+    def visualize_ci_fit_lines(self, fit, line_region, during_analysis):
+        def should_plot(name):
+            return plot_setting(section="fit", name=name)
 
-    def visualize_ci_fit_lines(self, paths: Paths, fit, line_region, during_analysis):
+        mat_plot_1d = self.mat_plot_1d_from(subfolders="fit_ci_imaging")
 
-        sub_plotter = self.sub_plotter_from_paths(paths=paths)
-
-        if self.plot_subplot_fit:
-
-            sub_plotter = sub_plotter.plotter_with_new_output(
-                filename=f"subplot_ci_fit_lines_{line_region}"
-            )
-
-            ci_fit_plots.subplot_fit_lines(
-                fit=fit,
-                line_region=line_region,
-                include=self.include,
-                sub_plotter=sub_plotter,
-            )
-
-        plotter = self.plotter_from_paths(
-            paths=paths, subfolders=f"fit_ci_imaging_{line_region}"
+        ci_fit_plotter = ci_fit_plotters.CIFitPlotter(
+            fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
         )
 
-        ci_fit_plots.individuals_lines(
-            fit=fit,
+        if should_plot("subplot_fit"):
+
+            ci_fit_plotter.subplot_fit_lines(line_region=line_region)
+
+        ci_fit_plotter.figure_individuals_lines(
             line_region=line_region,
-            plot_image=self.plot_fit_data,
-            plot_noise_map=self.plot_fit_noise_map,
-            plot_signal_to_noise_map=self.plot_fit_signal_to_noise_map,
-            plot_ci_pre_cti=self.plot_fit_ci_pre_cti,
-            plot_ci_post_cti=self.plot_fit_ci_post_cti,
-            plot_residual_map=self.plot_fit_residual_map,
-            plot_normalized_residual_map=self.plot_fit_normalized_residual_map,
-            plot_chi_squared_map=self.plot_fit_chi_squared_map,
-            include=self.include,
-            plotter=plotter,
+            plot_image=should_plot("data"),
+            plot_noise_map=should_plot("noise_map"),
+            plot_signal_to_noise_map=should_plot("signal_to_noise_map"),
+            plot_ci_pre_cti=should_plot("ci_pre_cti"),
+            plot_ci_post_cti=should_plot("ci_post_cti"),
+            plot_residual_map=should_plot("residual_map"),
+            plot_normalized_residual_map=should_plot("normalized_residual_map"),
+            plot_chi_squared_map=should_plot("chi_squared_map"),
         )
 
         if not during_analysis:
 
-            if self.plot_fit_all_at_end_png:
-                ci_fit_plots.individuals_lines(
-                    fit=fit,
+            if should_plot("all_at_end_png"):
+                ci_fit_plotter.figure_individuals_lines(
                     line_region=line_region,
                     plot_image=True,
                     plot_noise_map=True,
@@ -245,70 +167,73 @@ class PhaseCIImagingVisualizer(PhaseDatasetVisualizer):
                     plot_residual_map=True,
                     plot_normalized_residual_map=True,
                     plot_chi_squared_map=True,
-                    include=self.include,
-                    plotter=plotter,
                 )
 
-    def visualize_multiple_ci_fits_subplots(self, paths: Paths, fits):
+    # def visualize_multiple_ci_fits_subplots(self, fits):
+    #
+    #     mat_plot_2d = self.mat_plot_2d_from(subfolders="ci_fit_imaging")
+    #
+    #     if should_plot("subplot_residual_maps"):
+    #         ci_fit_plots.subplot_residual_maps(fits=fits, plotter=plotter)
+    #
+    #     if should_plot("subplot_normalized_residual_maps"):
+    #         ci_fit_plots.subplot_normalized_residual_maps(
+    #             fits=fits, plotter=plotter
+    #         )
+    #
+    #     if should_plot("subplot_chi_squared_maps"):
+    #         ci_fit_plots.subplot_chi_squared_maps(fits=fits, plotter=plotter)
 
-        sub_plotter = self.sub_plotter_from_paths(paths=paths)
+    # def visualize_multiple_ci_fits_subplots_lines(
+    #     self, fits, line_region
+    # ):
+    #
+    #     mat_plot_1d = self.mat_plot_1d_from(subfolders="ci_fit_imaging")
+    #
+    #     if should_plot("subplot_residual_maps"):
+    #
+    #         plotter = self.plotter_from_paths(paths=paths)
+    #         plotter = plotter.mat_plot_with_new_output(
+    #             filename=f"subplot_residual_maps_lines_{line_region}"
+    #         )
+    #
+    #         ci_fit_plots.subplot_residual_map_lines(
+    #             fits=fits, line_region=line_region, plotter=plotter
+    #         )
+    #
+    #     if should_plot("subplot_normalized_residual_maps"):
+    #
+    #         plotter = self.plotter_from_paths(paths=paths)
+    #         plotter = plotter.mat_plot_with_new_output(
+    #             filename=f"subplot_normalized_residual_maps_lines_{line_region}"
+    #         )
+    #
+    #         ci_fit_plots.subplot_normalized_residual_map_lines(
+    #             fits=fits, line_region=line_region, plotter=plotter
+    #         )
+    #
+    #     if should_plot("subplot_chi_squared_maps"):
+    #
+    #         plotter = self.plotter_from_paths(paths=paths)
+    #         plotter = plotter.mat_plot_with_new_output(
+    #             filename=f"subplot_chi_squared_maps_lines_{line_region}"
+    #         )
+    #
+    #         ci_fit_plots.subplot_chi_squared_map_lines(
+    #             fits=fits, line_region=line_region, plotter=plotter
+    #         )
 
-        if self.plot_subplot_residual_maps:
-            ci_fit_plots.subplot_residual_maps(fits=fits, sub_plotter=sub_plotter)
+    def visualize_fit_in_fits(self, fit):
 
-        if self.plot_subplot_normalized_residual_maps:
-            ci_fit_plots.subplot_normalized_residual_maps(
-                fits=fits, sub_plotter=sub_plotter
-            )
-
-        if self.plot_subplot_chi_squared_maps:
-            ci_fit_plots.subplot_chi_squared_maps(fits=fits, sub_plotter=sub_plotter)
-
-    def visualize_multiple_ci_fits_subplots_lines(
-        self, paths: Paths, fits, line_region
-    ):
-
-        if self.plot_subplot_residual_maps:
-
-            sub_plotter = self.sub_plotter_from_paths(paths=paths)
-            sub_plotter = sub_plotter.plotter_with_new_output(
-                filename=f"subplot_residual_maps_lines_{line_region}"
-            )
-
-            ci_fit_plots.subplot_residual_map_lines(
-                fits=fits, line_region=line_region, sub_plotter=sub_plotter
-            )
-
-        if self.plot_subplot_normalized_residual_maps:
-
-            sub_plotter = self.sub_plotter_from_paths(paths=paths)
-            sub_plotter = sub_plotter.plotter_with_new_output(
-                filename=f"subplot_normalized_residual_maps_lines_{line_region}"
-            )
-
-            ci_fit_plots.subplot_normalized_residual_map_lines(
-                fits=fits, line_region=line_region, sub_plotter=sub_plotter
-            )
-
-        if self.plot_subplot_chi_squared_maps:
-
-            sub_plotter = self.sub_plotter_from_paths(paths=paths)
-            sub_plotter = sub_plotter.plotter_with_new_output(
-                filename=f"subplot_chi_squared_maps_lines_{line_region}"
-            )
-
-            ci_fit_plots.subplot_chi_squared_map_lines(
-                fits=fits, line_region=line_region, sub_plotter=sub_plotter
-            )
-
-    def visualize_fit_in_fits(self, paths: Paths, fit):
-
-        fits_plotter = self.plotter_from_paths(
-            paths=paths, subfolders=path.join("fit_imaging", "fits"), format="fits"
+        mat_plot_2d = self.mat_plot_2d_from(
+            subfolders="fit_imaging/fits", format="fits"
         )
 
-        ci_fit_plots.individuals(
-            fit=fit,
+        ci_fit_plotter = ci_fit_plotters.CIFitPlotter(
+            fit=fit, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
+        )
+
+        ci_fit_plotter.figure_individuals(
             plot_image=True,
             plot_noise_map=True,
             plot_signal_to_noise_map=True,
@@ -317,6 +242,4 @@ class PhaseCIImagingVisualizer(PhaseDatasetVisualizer):
             plot_residual_map=True,
             plot_normalized_residual_map=True,
             plot_chi_squared_map=True,
-            include=self.include,
-            plotter=fits_plotter,
         )

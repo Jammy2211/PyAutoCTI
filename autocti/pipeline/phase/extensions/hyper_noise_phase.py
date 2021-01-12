@@ -81,7 +81,7 @@ class HyperNoisePhase(HyperPhase):
         ):
 
             hyper_noise_map = ci_fit.hyper_noise_map_from_noise_map_and_noise_scalings(
-                noise_scaling_maps=ci_data.noise_scaling_maps,
+                noise_scaling_maps=ci_data.figure_noise_scaling_maps,
                 hyper_noise_scalars=hyper_noise_scalars,
                 noise_map=ci_data.noise_map,
             )
@@ -121,10 +121,8 @@ class HyperNoisePhase(HyperPhase):
 
         masks = phase.mask_for_analysis_from_dataset(dataset=datasets)
 
-        noise_scaling_maps_list = (
-            phase.noise_scaling_maps_list_from_total_images_and_results(
-                total_images=len(datasets), results=results
-            )
+        noise_scaling_maps_list = phase.noise_scaling_maps_list_from_total_images_and_results(
+            total_images=len(datasets), results=results
         )
 
         masked_ci_dataset_full = list(
@@ -132,7 +130,7 @@ class HyperNoisePhase(HyperPhase):
                 lambda data, mask, maps: ci_imaging.MaskedCIImaging(
                     image=data.image,
                     noise_map=data.noise_map,
-                    ci_pre_cti=data.ci_pre_cti,
+                    ci_pre_cti=data.figure_ci_pre_cti,
                     mask=mask,
                     ci_pattern=data.ci_pattern,
                     ci_frame=data.ci_frame,
@@ -146,7 +144,7 @@ class HyperNoisePhase(HyperPhase):
 
         model_images = list(
             map(
-                lambda max_log_likelihood_fit: max_log_likelihood_fit.model_image,
+                lambda max_log_likelihood_fit: max_log_likelihood_fit.figure_model_image,
                 results.last.max_log_likelihood_full_fits,
             )
         )
