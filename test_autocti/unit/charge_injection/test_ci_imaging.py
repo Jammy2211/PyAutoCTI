@@ -27,8 +27,7 @@ class TestCIImaging(object):
             parallel_calibration_imaging.noise_map == ci_imaging_7x7.noise_map[:, 1:7]
         ).all()
         assert (
-            parallel_calibration_imaging.ci_pre_cti
-            == ci_imaging_7x7.figure_ci_pre_cti[:, 1:7]
+            parallel_calibration_imaging.ci_pre_cti == ci_imaging_7x7.ci_pre_cti[:, 1:7]
         ).all()
         assert (
             parallel_calibration_imaging.cosmic_ray_map
@@ -48,8 +47,7 @@ class TestCIImaging(object):
             serial_calibration_imaging.noise_map == ci_imaging_7x7.noise_map[0:2, :]
         ).all()
         assert (
-            serial_calibration_imaging.ci_pre_cti
-            == ci_imaging_7x7.figure_ci_pre_cti[0:2, :]
+            serial_calibration_imaging.ci_pre_cti == ci_imaging_7x7.ci_pre_cti[0:2, :]
         ).all()
         assert (
             serial_calibration_imaging.cosmic_ray_map
@@ -286,7 +284,9 @@ class TestSettingsMaskedCIImaging:
 class TestMaskedCIImaging:
     def test__construtor__masks_arrays_correctly(self, ci_imaging_7x7):
 
-        mask = ac.Mask2D.unmasked(shape_2d=ci_imaging_7x7.shape_2d, pixel_scales=1.0)
+        mask = ac.Mask2D.unmasked(
+            shape_native=ci_imaging_7x7.shape_native, pixel_scales=1.0
+        )
 
         mask[0, 0] = True
 
@@ -304,7 +304,7 @@ class TestMaskedCIImaging:
 
         assert (masked_ci_imaging.noise_map == masked_noise_map).all()
 
-        assert (masked_ci_imaging.ci_pre_cti == ci_imaging_7x7.figure_ci_pre_cti).all()
+        assert (masked_ci_imaging.ci_pre_cti == ci_imaging_7x7.ci_pre_cti).all()
 
         masked_cosmic_ray_map = ci_imaging_7x7.cosmic_ray_map
         masked_cosmic_ray_map[0, 0] = 0.0
@@ -315,7 +315,9 @@ class TestMaskedCIImaging:
         self, ci_imaging_7x7, mask_7x7, ci_noise_scaling_maps_7x7
     ):
 
-        mask = ac.Mask2D.unmasked(shape_2d=ci_imaging_7x7.shape_2d, pixel_scales=1.0)
+        mask = ac.Mask2D.unmasked(
+            shape_native=ci_imaging_7x7.shape_native, pixel_scales=1.0
+        )
         mask[0, 2] = True
 
         masked_ci_imaging = ac.ci.MaskedCIImaging(
@@ -325,7 +327,7 @@ class TestMaskedCIImaging:
             settings=ac.ci.SettingsMaskedCIImaging(parallel_columns=(1, 3)),
         )
 
-        mask = ac.Mask2D.unmasked(shape_2d=(7, 2), pixel_scales=1.0)
+        mask = ac.Mask2D.unmasked(shape_native=(7, 2), pixel_scales=1.0)
         mask[0, 0] = True
 
         assert (masked_ci_imaging.mask == mask).all()
@@ -364,7 +366,9 @@ class TestMaskedCIImaging:
         self, ci_imaging_7x7, mask_7x7, ci_noise_scaling_maps_7x7
     ):
 
-        mask = ac.Mask2D.unmasked(shape_2d=ci_imaging_7x7.shape_2d, pixel_scales=1.0)
+        mask = ac.Mask2D.unmasked(
+            shape_native=ci_imaging_7x7.shape_native, pixel_scales=1.0
+        )
         mask[1, 0] = True
 
         masked_ci_imaging = ac.ci.MaskedCIImaging(
@@ -374,7 +378,7 @@ class TestMaskedCIImaging:
             settings=ac.ci.SettingsMaskedCIImaging(serial_rows=(0, 1)),
         )
 
-        mask = ac.Mask2D.unmasked(shape_2d=(1, 7), pixel_scales=1.0)
+        mask = ac.Mask2D.unmasked(shape_native=(1, 7), pixel_scales=1.0)
         mask[0, 0] = True
 
         assert (masked_ci_imaging.mask == mask).all()
@@ -418,10 +422,10 @@ class TestSimulatorCIImaging(object):
         pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
 
         simulator = ac.ci.SimulatorCIImaging(
-            shape_2d=(5, 5),
+            shape_native=(5, 5),
             pixel_scales=1.0,
             add_poisson_noise=False,
-            scans=ac.Scans(serial_overscan=ac.Region((1, 2, 1, 2))),
+            scans=ac.Scans(serial_overscan=ac.Region2D((1, 2, 1, 2))),
         )
 
         imaging = simulator.from_ci_pattern(
@@ -444,9 +448,9 @@ class TestSimulatorCIImaging(object):
         pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 3)])
 
         simulator = ac.ci.SimulatorCIImaging(
-            shape_2d=(3, 3),
+            shape_native=(3, 3),
             pixel_scales=1.0,
-            scans=ac.Scans(serial_overscan=ac.Region((1, 2, 1, 2))),
+            scans=ac.Scans(serial_overscan=ac.Region2D((1, 2, 1, 2))),
             read_noise=1.0,
             add_poisson_noise=True,
             noise_seed=1,
@@ -456,7 +460,7 @@ class TestSimulatorCIImaging(object):
             ci_pattern=pattern, clocker=parallel_clocker
         )
 
-        image_no_noise = pattern.ci_pre_cti_from(shape_2d=(3, 3), pixel_scales=1.0)
+        image_no_noise = pattern.ci_pre_cti_from(shape_native=(3, 3), pixel_scales=1.0)
 
         # Use seed to give us a known read noises map we'll test_autocti for
 
@@ -473,9 +477,9 @@ class TestSimulatorCIImaging(object):
         pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
 
         simulator = ac.ci.SimulatorCIImaging(
-            shape_2d=(5, 5),
+            shape_native=(5, 5),
             pixel_scales=1.0,
-            scans=ac.Scans(serial_overscan=ac.Region((1, 2, 1, 2))),
+            scans=ac.Scans(serial_overscan=ac.Region2D((1, 2, 1, 2))),
             add_poisson_noise=False,
         )
 
@@ -509,3 +513,43 @@ class TestSimulatorCIImaging(object):
             )
         ).all()
         assert imaging.cosmic_ray_map.scans.serial_overscan == (1, 2, 1, 2)
+
+    def test__from_ci_pre_cti(self, parallel_clocker, traps_x2, ccd):
+
+        pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
+
+        simulator = ac.ci.SimulatorCIImaging(
+            shape_native=(5, 5),
+            pixel_scales=1.0,
+            read_noise=4.0,
+            scans=ac.Scans(serial_overscan=ac.Region2D((1, 2, 1, 2))),
+            add_poisson_noise=False,
+            noise_seed=1,
+        )
+
+        cosmic_ray_map = np.zeros((5, 5))
+        cosmic_ray_map[2, 2] = 100.0
+
+        imaging = simulator.from_ci_pattern(
+            ci_pattern=pattern,
+            clocker=parallel_clocker,
+            parallel_traps=traps_x2,
+            parallel_ccd=ccd,
+            cosmic_ray_map=cosmic_ray_map,
+        )
+
+        ci_pre_cti = pattern.ci_pre_cti_from(shape_native=(5, 5), pixel_scales=1.0)
+
+        imaging_via_ci_pre_cti = simulator.from_ci_pre_cti(
+            ci_pre_cti=ci_pre_cti,
+            ci_pattern=pattern,
+            clocker=parallel_clocker,
+            parallel_traps=traps_x2,
+            parallel_ccd=ccd,
+            cosmic_ray_map=cosmic_ray_map,
+        )
+
+        assert (imaging.image == imaging_via_ci_pre_cti.image).all()
+        assert (imaging.noise_map == imaging_via_ci_pre_cti.noise_map).all()
+        assert (imaging.ci_pre_cti == imaging_via_ci_pre_cti.ci_pre_cti).all()
+        assert (imaging.cosmic_ray_map == imaging_via_ci_pre_cti.cosmic_ray_map).all()

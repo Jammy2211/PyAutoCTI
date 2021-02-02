@@ -14,7 +14,7 @@ class Imaging(im.AbstractImaging):
 
         Parameters
         ----------
-        image : aa.Array
+        image : aa.Array2D
             The array of the image data, in units of electrons per second.
         noise_map : NoiseMap | float | ndarray
             An array describing the RMS standard deviation error in each pixel, preferably in units of electrons per
@@ -25,7 +25,7 @@ class Imaging(im.AbstractImaging):
         poisson_noise_map : NoiseMap
             An array describing the RMS standard deviation error in each pixel due to the Poisson counts of the source,
             preferably in units of electrons per second.
-        exposure_time_map : aa.Array
+        exposure_time_map : aa.Array2D
             An array describing the effective exposure time in each imaging pixel.
         background_sky_map : aa.Scaled
             An array describing the background sky.
@@ -64,11 +64,11 @@ class Imaging(im.AbstractImaging):
             The hdu the noise_map is contained in the .fits file specified by *noise_map_path*.
         """
 
-        image = arrays.Array.from_fits(
+        image = arrays.Array2D.from_fits(
             file_path=image_path, hdu=image_hdu, pixel_scales=pixel_scales
         )
 
-        noise_map = arrays.Array.from_fits(
+        noise_map = arrays.Array2D.from_fits(
             file_path=noise_map_path, hdu=noise_map_hdu, pixel_scales=pixel_scales
         )
 

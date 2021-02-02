@@ -1,7 +1,7 @@
 from autoarray.instruments import euclid
 from autoarray.util import frame_util
 
-from autocti.util import clocker as clk
+from autocti.util.clocker import Clocker
 from autocti.util import ccd
 from autocti.util import traps
 
@@ -34,7 +34,7 @@ them to fits to oriented them in the way they are observed (VIS_CTI has tools fo
 """
 
 
-def non_uniform_frame_for_ou_sim(
+def non_uniform_frame_from(
     ccd_id,
     quadrant_id,
     ci_normalization,
@@ -79,18 +79,22 @@ def non_uniform_frame_for_ou_sim(
     ndarray
         The charge injection line image oriented to match a given Euclid quadrant.
     """
+    shape_native = (parallel_size, serial_size)
 
-    shape_2d = (parallel_size, serial_size)
-
-    """Specify the charge injection regions on the CCD, which in this case is 3 equally spaced rectangular blocks."""
-
+    """
+    Specify the charge injection regions on the CCD, which in this case is 5 equally spaced rectangular blocks.
+    """
     ci_regions = [
-        (0, 450, 51, shape_2d[1] - serial_overscan_size),
-        (650, 1100, 51, shape_2d[1] - serial_overscan_size),
-        (1300, 1750, 51, shape_2d[1] - serial_overscan_size),
+        (0, 200, 51, shape_native[1] - serial_overscan_size),
+        (400, 600, 51, shape_native[1] - serial_overscan_size),
+        (800, 1000, 51, shape_native[1] - serial_overscan_size),
+        (1200, 1400, 51, shape_native[1] - serial_overscan_size),
+        (1600, 1800, 51, shape_native[1] - serial_overscan_size),
     ]
 
-    """Use the charge injection normalizations and regions to create *CIPatternNonUniform* of every image we'll simulate."""
+    """
+    Use the charge injection normalizations and regions to create `CIPatternNonUniform` of every image we'll simulate.
+    """
     ci_pattern = pattern.CIPatternNonUniform(
         normalization=ci_normalization,
         regions=ci_regions,
@@ -99,42 +103,53 @@ def non_uniform_frame_for_ou_sim(
         maximum_normalization=84700,
     )
 
-    """Create every pre-cti charge injection image using each *CIPattern*"""
+    """
+    Create every pre-cti charge injection image using each `CIPattern`
+    """
     ci_pre_cti = ci_pattern.ci_pre_cti_from(
-        shape_2d=shape_2d, pixel_scales=pixel_scales
+        shape_native=shape_native, pixel_scales=pixel_scales
     )
 
     roe_corner = euclid.roe_corner_from(ccd_id=ccd_id, quadrant_id=quadrant_id)
 
-    """Before passing this image to arCTIc to add CTI, we want to make it a *Frame* object, which:
+    """
+    Before passing this image to arCTIc to add CTI, we want to make it a `Frame` object, which:
 
-        - Uses an input read-out electronics corner to perform all rotations of the image before / after adding CTI.
-        - Also uses this corner to rotate images before outputting to .fits, such that *Frame* objects can be load via
-         .fits with the correct orientation.
-        - Includes information on different regions of the image, such as the serial prescan and overscans.
+    - Uses an input read-out electronics corner to perform all rotations of the image before / after adding CTI.
+    - Also uses this corner to rotate images before outputting to .fits, such that `Frame` objects can be load via
+    .fits with the correct orientation.
+    - Includes information on different regions of the image, such as the serial prescan and overscans.
     """
     return frame_util.rotate_array_from_roe_corner(
         array=ci_pre_cti, roe_corner=roe_corner
     )
 
 
-def add_cti_to_frame_for_ou_sim(frames):
+def add_cti_to_ci_pre_cti(ci_pre_cti, ccd_id, quadrant_id):
+
+    # TODO: DO we need to add rotations into this function, making ccd id and quadrant id input parameters?
+
+    roe_corner = euclid.roe_corner_from(ccd_id=ccd_id, quadrant_id=quadrant_id)
+
+    ci_pre_cti = frame_util.rotate_array_from_roe_corner(
+        array=ci_pre_cti, roe_corner=roe_corner
+    )
 
     """
-    The *Clocker* models the CCD read-out, including CTI.
+    The `Clocker` models the CCD read-out, including CTI.
 
     For parallel clocking, we use 'charge injection mode' which transfers the charge of every pixel over the full CCD.
     """
-    clocker = clk.Clocker(
+    clocker = Clocker(
         parallel_express=2, parallel_charge_injection_mode=True, serial_express=2
     )
 
     """
     The CTI model used by arCTIc to add CTI to the input image in the parallel direction, which contains: 
 
-        - 2 *TrapInstantCapture* species in the parallel direction.
+        - 2 `TrapInstantCapture` species in the parallel direction.
         - A simple CCD volume beta parametrization.
-        - 3 *TrapInstantCapture* species in the serial direction.
+        - 3 `TrapInstantCapture` species in the serial direction.
         - A simple CCD volume beta parametrization.
     """
     parallel_trap_0 = traps.TrapInstantCapture(density=0.13, release_timescale=1.25)
@@ -149,29 +164,14 @@ def add_cti_to_frame_for_ou_sim(frames):
         well_fill_power=0.8, well_notch_depth=0.0, full_well_depth=84700
     )
 
-    """
-    To simulate charge injection image, we pass the pre-cti charge injection images above through a 
-    *SimulatorCIImaging*.
-    
-    For use outside Euclid, the Simulator includes effects like adding read-noise to the data. We will disable these
-    features given that this is handled by ELViS.
-    """
-    simulator = ci_imaging.SimulatorCIImaging(add_poisson_noise=False)
+    ci_post_cti = clocker.add_cti(
+        image=ci_pre_cti,
+        parallel_traps=[parallel_trap_0, parallel_trap_1],
+        parallel_ccd=parallel_ccd,
+        serial_traps=[serial_trap_0, serial_trap_1, serial_trap_2],
+        serial_ccd=serial_ccd,
+    )
 
-    ci_datasets = [
-        simulator.from_ci_pre_cti(
-            clocker=clocker,
-            ci_pre_cti=frame.ci_pre_cti,
-            ci_pattern=frame.ci_pattern,
-            parallel_traps=[parallel_trap_0, parallel_trap_1],
-            parallel_ccd=parallel_ccd,
-            serial_traps=[serial_trap_0, serial_trap_1, serial_trap_2],
-            serial_ccd=serial_ccd,
-        )
-        for frame in zip(frames)
-    ]
-
-    """
-    Finally return the images to ELViS.
-    """
-    return [ci_dataset.image for ci_dataset in ci_datasets]
+    return frame_util.rotate_array_from_roe_corner(
+        array=ci_post_cti, roe_corner=roe_corner
+    )

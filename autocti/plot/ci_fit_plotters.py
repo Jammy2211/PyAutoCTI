@@ -1,6 +1,6 @@
 from autoarray.plot.mat_wrap import visuals as vis
 from autoarray.plot.mat_wrap import include as inc
-from autoarray.plot.mat_wrap import mat_plot
+from autoarray.plot.mat_wrap import mat_plot as mp
 from autoarray.plot.plotters import fit_imaging_plotters
 from autoarray.plot.plotters import abstract_plotters
 from autocti import charge_injection as ci
@@ -11,10 +11,10 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
     def __init__(
         self,
         fit: ci.CIFitImaging,
-        mat_plot_2d: mat_plot.MatPlot2D = mat_plot.MatPlot2D(),
+        mat_plot_2d: mp.MatPlot2D = mp.MatPlot2D(),
         visuals_2d: vis.Visuals2D = vis.Visuals2D(),
         include_2d: inc.Include2D = inc.Include2D(),
-        mat_plot_1d: mat_plot.MatPlot1D = mat_plot.MatPlot1D(),
+        mat_plot_1d: mp.MatPlot1D = mp.MatPlot1D(),
         visuals_1d: vis.Visuals1D = vis.Visuals1D(),
         include_1d: inc.Include1D = inc.Include1D(),
     ):
@@ -49,280 +49,217 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
             ),
         )
 
-    @abstract_plotters.for_figure
-    def figure_ci_pre_cti(self):
-        """Plot the observed ci_pre_cti of the ccd simulator.
-
-        Set *autocti.simulator.plotter.plotter* for a description of all input parameters not described below.
-
-        Parameters
-        -----------
-        ci_pre_cti : CIFrame
-            The ci_pre_cti of the dataset.
-        """
-
-        self.mat_plot_2d.plot_frame(frame=self.fit.ci_pre_cti)
-
-    @abstract_plotters.for_figure
-    def figure_ci_post_cti(self):
-        """Plot the observed ci_post_cti of the ccd simulator.
-
-        Set *autocti.simulator.plotter.plotter* for a description of all input parameters not described below.
-
-        Parameters
-        -----------
-        ci_post_cti : CIFrame
-            The ci_post_cti of the dataset.
-        """
-
-        self.mat_plot_2d.plot_frame(frame=self.fit.ci_post_cti)
-
-    @abstract_plotters.for_figure
-    def figure_noise_scaling_maps(self):
-        """Plot the observed chi_squared_map of the ccd simulator.
-
-        Set *autocti.simulator.plotter.plotter* for a description of all input parameters not described below.
-
-        Parameters
-        -----------
-        chi_squared_map : CIFrame
-            The chi_squared_map of the dataset.
-        """
-
-        number_subplots = len(self.fit.noise_scaling_maps)
-
-        self.open_subplot_figure(number_subplots=number_subplots)
-
-        for index in range(len(self.fit.noise_scaling_maps)):
-
-            self.setup_subplot(number_subplots=number_subplots, subplot_index=index + 1)
-            self.mat_plot_2d.plot_frame(frame=self.fit.noise_scaling_maps[index])
-
-        self.mat_plot_2d.output.subplot_to_figure()
-        self.mat_plot_2d.figure.close()
-
-    @abstract_plotters.for_figure
-    def figure_image_line(self, line_region):
-        """Plot the observed image of the ccd simulator.
-
-        Set *autocti.simulator.plotter.plotter* for a description of all input parameters not described below.
-
-        Parameters
-        -----------
-        image : CIFrame
-            The image of the dataset.
-        """
-        line = extract_line_from(ci_frame=self.fit.image, line_region=line_region)
-
-        self.mat_plot_1d.plot_line(y=line, x=range(len(line)))
-
-    @abstract_plotters.for_figure
-    def figure_noise_map_line(self, line_region):
-        """Plot the observed noise_map of the ccd simulator.
-
-        Set *autocti.simulator.plotter.plotter* for a description of all input parameters not described below.
-
-        Parameters
-        -----------
-        noise_map : CIFrame
-            The noise_map of the dataset.
-        """
-        line = extract_line_from(ci_frame=self.fit.noise_map, line_region=line_region)
-
-        self.mat_plot_1d.plot_line(y=line, x=range(len(line)))
-
-    @abstract_plotters.for_figure
-    def figure_signal_to_noise_map_line(self, line_region):
-        """Plot the observed signal_to_noise_map of the ccd simulator.
-
-        Set *autocti.simulator.plotter.plotter* for a description of all input parameters not described below.
-
-        Parameters
-        -----------
-        signal_to_noise_map : CIFrame
-            The signal_to_noise_map of the dataset.
-        """
-        line = extract_line_from(
-            ci_frame=self.fit.signal_to_noise_map, line_region=line_region
-        )
-
-        self.mat_plot_1d.plot_line(y=line, x=range(len(line)))
-
-    @abstract_plotters.for_figure
-    def figure_ci_pre_cti_line(self, line_region):
-        """Plot the observed ci_pre_cti of the ccd simulator.
-
-        Set *autocti.simulator.plotter.plotter* for a description of all input parameters not described below.
-
-        Parameters
-        -----------
-        ci_pre_cti : CIFrame
-            The ci_pre_cti of the dataset.
-        """
-        line = extract_line_from(ci_frame=self.fit.ci_pre_cti, line_region=line_region)
-
-        self.mat_plot_1d.plot_line(y=line, x=range(len(line)))
-
-    @abstract_plotters.for_figure
-    def figure_ci_post_cti_line(self, line_region):
-        """Plot the observed ci_post_cti of the ccd simulator.
-
-        Set *autocti.simulator.plotter.plotter* for a description of all input parameters not described below.
-
-        Parameters
-        -----------
-        ci_post_cti : CIFrame
-            The ci_post_cti of the dataset.
-        """
-        line = extract_line_from(ci_frame=self.fit.ci_post_cti, line_region=line_region)
-
-        self.mat_plot_1d.plot_line(y=line, x=range(len(line)))
-
-    @abstract_plotters.for_figure
-    def figure_residual_map_line(self, line_region):
-        """Plot the observed residual_map of the ccd simulator.
-
-        Set *autocti.simulator.plotter.plotter* for a description of all input parameters not described below.
-
-        Parameters
-        -----------
-        residual_map : CIFrame
-            The residual_map of the dataset.
-        """
-        line = extract_line_from(
-            ci_frame=self.fit.residual_map, line_region=line_region
-        )
-
-        self.mat_plot_1d.plot_line(y=line, x=range(len(line)))
-
-    @abstract_plotters.for_figure
-    def figure_normalized_residual_map_line(self, line_region):
-        """Plot the observed normalized_residual_map of the ccd simulator.
-
-        Set *autocti.simulator.plotter.plotter* for a description of all input parameters not described below.
-
-        Parameters
-        -----------
-        normalized_residual_map : CIFrame
-            The normalized_residual_map of the dataset.
-        """
-        line = extract_line_from(
-            ci_frame=self.fit.normalized_residual_map, line_region=line_region
-        )
-
-        self.mat_plot_1d.plot_line(y=line, x=range(len(line)))
-
-    @abstract_plotters.for_figure
-    def figure_chi_squared_map_line(self, line_region):
-        """Plot the observed chi_squared_map of the ccd simulator.
-
-        Set *autocti.simulator.plotter.plotter* for a description of all input parameters not described below.
-
-        Parameters
-        -----------
-        chi_squared_map : CIFrame
-            The chi_squared_map of the dataset.
-        """
-        line = extract_line_from(
-            ci_frame=self.fit.chi_squared_map, line_region=line_region
-        )
-
-        self.mat_plot_1d.plot_line(y=line, x=range(len(line)))
-
-    def figure_individuals(
+    def figures(
         self,
-        plot_image=False,
-        plot_noise_map=False,
-        plot_signal_to_noise_map=False,
-        plot_ci_pre_cti=False,
-        plot_ci_post_cti=False,
-        plot_residual_map=False,
-        plot_normalized_residual_map=False,
-        plot_chi_squared_map=False,
+        image=False,
+        noise_map=False,
+        signal_to_noise_map=False,
+        ci_pre_cti=False,
+        ci_post_cti=False,
+        residual_map=False,
+        normalized_residual_map=False,
+        chi_squared_map=False,
     ):
 
-        super().figure_individuals(
-            plot_image=plot_image,
-            plot_noise_map=plot_noise_map,
-            plot_signal_to_noise_map=plot_signal_to_noise_map,
-            plot_residual_map=plot_residual_map,
-            plot_normalized_residual_map=plot_normalized_residual_map,
-            plot_chi_squared_map=plot_chi_squared_map,
+        super().figures(
+            image=image,
+            noise_map=noise_map,
+            signal_to_noise_map=signal_to_noise_map,
+            residual_map=residual_map,
+            normalized_residual_map=normalized_residual_map,
+            chi_squared_map=chi_squared_map,
         )
 
-        if plot_ci_pre_cti:
-            self.figure_ci_pre_cti()
+        if ci_pre_cti:
 
-        if plot_ci_post_cti:
-            self.figure_ci_post_cti()
+            self.mat_plot_2d.plot_array(
+                array=self.fit.ci_pre_cti,
+                visuals_2d=self.visuals_with_include_2d,
+                auto_labels=mp.AutoLabels(
+                    title="CI Pre CTI Image", filename="ci_pre_cti"
+                ),
+            )
 
-    def figure_individuals_lines(
+        if ci_post_cti:
+
+            self.mat_plot_2d.plot_array(
+                array=self.fit.ci_post_cti,
+                visuals_2d=self.visuals_with_include_2d,
+                auto_labels=mp.AutoLabels(
+                    title="CI Post CTI Image", filename="ci_post_cti"
+                ),
+            )
+
+    def figures_1d_ci_line_region(
         self,
         line_region,
-        plot_image=False,
-        plot_noise_map=False,
-        plot_signal_to_noise_map=False,
-        plot_ci_pre_cti=False,
-        plot_ci_post_cti=False,
-        plot_residual_map=False,
-        plot_normalized_residual_map=False,
-        plot_chi_squared_map=False,
+        image=False,
+        noise_map=False,
+        signal_to_noise_map=False,
+        ci_pre_cti=False,
+        ci_post_cti=False,
+        residual_map=False,
+        normalized_residual_map=False,
+        chi_squared_map=False,
     ):
 
-        if plot_image:
-            self.figure_image_line(line_region=line_region)
-        if plot_noise_map:
-            self.figure_noise_map_line(line_region=line_region)
-        if plot_signal_to_noise_map:
-            self.figure_signal_to_noise_map_line(line_region=line_region)
-        if plot_ci_pre_cti:
-            self.figure_ci_pre_cti_line(line_region=line_region)
-        if plot_ci_post_cti:
-            self.figure_ci_post_cti_line(line_region=line_region)
-        if plot_residual_map:
-            self.figure_residual_map_line(line_region=line_region)
-        if plot_normalized_residual_map:
-            self.figure_normalized_residual_map_line(line_region=line_region)
-        if plot_chi_squared_map:
-            self.figure_chi_squared_map_line(line_region=line_region)
+        if image:
 
-    @abstract_plotters.for_subplot
+            line = extract_line_from(ci_frame=self.fit.image, line_region=line_region)
+
+            self.mat_plot_1d.plot_line(
+                y=line,
+                x=range(len(line)),
+                visuals_1d=self.visuals_1d,
+                auto_labels=mp.AutoLabels(
+                    title=f"Image Line {line_region}", filename=f"image_{line_region}"
+                ),
+            )
+
+        if noise_map:
+
+            line = extract_line_from(ci_frame=self.fit.image, line_region=line_region)
+
+            self.mat_plot_1d.plot_line(
+                y=line,
+                x=range(len(line)),
+                visuals_1d=self.visuals_1d,
+                auto_labels=mp.AutoLabels(
+                    title=f"Noise-Map Line {line_region}",
+                    filename=f"noise_map_{line_region}",
+                ),
+            )
+
+        if signal_to_noise_map:
+
+            line = extract_line_from(
+                ci_frame=self.fit.signal_to_noise_map, line_region=line_region
+            )
+
+            self.mat_plot_1d.plot_line(
+                y=line,
+                x=range(len(line)),
+                visuals_1d=self.visuals_1d,
+                auto_labels=mp.AutoLabels(
+                    title=f"Signal-To-Noise Map Line {line_region}",
+                    filename=f"signal_to_noise_map_{line_region}",
+                ),
+            )
+
+        if ci_pre_cti:
+
+            line = extract_line_from(
+                ci_frame=self.fit.ci_pre_cti, line_region=line_region
+            )
+
+            self.mat_plot_1d.plot_line(
+                y=line,
+                x=range(len(line)),
+                visuals_1d=self.visuals_1d,
+                auto_labels=mp.AutoLabels(
+                    title=f"CI Pre CTI Line {line_region}",
+                    filename=f"ci_pre_cti_{line_region}",
+                ),
+            )
+
+        if ci_post_cti:
+
+            line = extract_line_from(
+                ci_frame=self.fit.ci_post_cti, line_region=line_region
+            )
+
+            self.mat_plot_1d.plot_line(
+                y=line,
+                x=range(len(line)),
+                visuals_1d=self.visuals_1d,
+                auto_labels=mp.AutoLabels(
+                    title=f"CI Post CTI Line {line_region}",
+                    filename=f"ci_post_cti_{line_region}",
+                ),
+            )
+
+        if residual_map:
+
+            line = extract_line_from(
+                ci_frame=self.fit.residual_map, line_region=line_region
+            )
+
+            self.mat_plot_1d.plot_line(
+                y=line,
+                x=range(len(line)),
+                visuals_1d=self.visuals_1d,
+                auto_labels=mp.AutoLabels(
+                    title=f"Resdial-Map Line {line_region}",
+                    filename=f"residual_map_{line_region}",
+                ),
+            )
+
+        if normalized_residual_map:
+
+            line = extract_line_from(
+                ci_frame=self.fit.normalized_residual_map, line_region=line_region
+            )
+
+            self.mat_plot_1d.plot_line(
+                y=line,
+                x=range(len(line)),
+                visuals_1d=self.visuals_1d,
+                auto_labels=mp.AutoLabels(
+                    title=f"Normalized Residual Map Line {line_region}",
+                    filename=f"normalized_residual_map_{line_region}",
+                ),
+            )
+
+        if chi_squared_map:
+
+            line = extract_line_from(
+                ci_frame=self.fit.chi_squared_map, line_region=line_region
+            )
+
+            self.mat_plot_1d.plot_line(
+                y=line,
+                x=range(len(line)),
+                visuals_1d=self.visuals_1d,
+                auto_labels=mp.AutoLabels(
+                    title=f"Chi-Squared Map Line {line_region}",
+                    filename=f"chi_squared_map_{line_region}",
+                ),
+            )
+
+    def subplot(
+        self,
+        image=False,
+        noise_map=False,
+        signal_to_noise_map=False,
+        ci_pre_cti=False,
+        ci_post_cti=False,
+        residual_map=False,
+        normalized_residual_map=False,
+        chi_squared_map=False,
+        auto_filename="subplot_ci_fit",
+    ):
+
+        self._subplot_custom_plot(
+            image=image,
+            noise_map=noise_map,
+            signal_to_noise_map=signal_to_noise_map,
+            ci_pre_cti=ci_pre_cti,
+            ci_post_cti=ci_post_cti,
+            residual_map=residual_map,
+            normalized_residual_map=normalized_residual_map,
+            chi_squared_map=chi_squared_map,
+            auto_labels=mp.AutoLabels(filename=auto_filename),
+        )
+
     def subplot_ci_fit(self):
-        """Plot the model datas_ of an analysis, using the *Fitter* class object.
-
-        The visualization and output type can be fully customized.
-
-        Parameters
-        -----------
-        """
-
-        number_subplots = 9
-
-        self.open_subplot_figure(number_subplots=number_subplots)
-
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=1)
-        self.figure_image()
-
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=2)
-        self.figure_noise_map()
-
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=3)
-        self.figure_signal_to_noise_map()
-
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=4)
-        self.figure_ci_pre_cti()
-
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=5)
-        self.figure_ci_post_cti()
-
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=7)
-        self.figure_residual_map()
-
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=8)
-        self.figure_chi_squared_map()
-
-        self.mat_plot_2d.output.subplot_to_figure()
-        self.mat_plot_2d.figure.close()
+        return self.subplot(
+            image=True,
+            signal_to_noise_map=True,
+            ci_pre_cti=True,
+            ci_post_cti=True,
+            normalized_residual_map=True,
+            chi_squared_map=True,
+        )
 
     # @abstract_plotters.for_figure
     # def subplot_residual_maps(self, fits):
@@ -396,40 +333,55 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
     #
     #     self.mat_plot_2d.figure.close()
 
-    @abstract_plotters.for_subplot
-    def subplot_fit_lines(self, line_region):
+    def subplot_1d_ci_line_region(self, line_region):
         """Plot the model datas_ of an analysis, using the *Fitter* class object.
 
         The visualization and output type can be fully customized.
 
         """
 
-        number_subplots = 9
+        self.open_subplot_figure(number_subplots=4)
 
-        self.open_subplot_figure(number_subplots=number_subplots)
+        self.figures_1d_ci_line_region(image=True, line_region=line_region)
+        self.figures_1d_ci_line_region(
+            signal_to_noise_map=True, line_region=line_region
+        )
+        self.figures_1d_ci_line_region(ci_pre_cti=True, line_region=line_region)
+        self.figures_1d_ci_line_region(ci_post_cti=True, line_region=line_region)
+        self.figures_1d_ci_line_region(
+            normalized_residual_map=True, line_region=line_region
+        )
+        self.figures_1d_ci_line_region(chi_squared_map=True, line_region=line_region)
 
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=1)
-        self.figure_image_line(line_region=line_region)
+        self.mat_plot_1d.output.subplot_to_figure(
+            auto_filename=f"subplot_1d_ci_fit_{line_region}"
+        )
+        self.close_subplot_figure()
 
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=2)
-        self.figure_noise_map_line(line_region=line_region)
+    def subplot_noise_scaling_maps(self):
+        """Plot the observed chi_squared_map of the ccd simulator.
 
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=3)
-        self.figure_signal_to_noise_map_line(line_region=line_region)
+        Set *autocti.simulator.plotter.plotter* for a description of all input parameters not described below.
 
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=4)
-        self.figure_ci_pre_cti_line(line_region=line_region)
+        Parameters
+        -----------
+        chi_squared_map : CIFrame
+            The chi_squared_map of the dataset.
+        """
 
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=5)
-        self.figure_ci_post_cti_line(line_region=line_region)
+        self.open_subplot_figure(number_subplots=len(self.fit.noise_scaling_maps))
 
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=7)
-        self.figure_residual_map_line(line_region=line_region)
+        for index in range(len(self.fit.noise_scaling_maps)):
 
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=8)
-        self.figure_chi_squared_map_line(line_region=line_region)
+            self.mat_plot_2d.plot_frame(
+                frame=self.fit.noise_scaling_maps[index],
+                visuals_2d=self.visuals_with_include_2d,
+                auto_labels=mp.AutoLabels(title=f"Noise Scaling Map {index}"),
+            )
 
-        self.mat_plot_2d.output.subplot_to_figure()
+        self.mat_plot_2d.output.subplot_to_figure(
+            auto_filename=f"subplot_noise_scaling_maps"
+        )
         self.mat_plot_2d.figure.close()
 
     #

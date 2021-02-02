@@ -1,6 +1,6 @@
 from autoarray.plot.mat_wrap import visuals as vis
 from autoarray.plot.mat_wrap import include as inc
-from autoarray.plot.mat_wrap import mat_plot
+from autoarray.plot.mat_wrap import mat_plot as mp
 from autoarray.plot.plotters import imaging_plotters
 from autoarray.plot.plotters import abstract_plotters
 from autocti import charge_injection as ci
@@ -11,10 +11,10 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
     def __init__(
         self,
         imaging: ci.CIImaging,
-        mat_plot_2d: mat_plot.MatPlot2D = mat_plot.MatPlot2D(),
+        mat_plot_2d: mp.MatPlot2D = mp.MatPlot2D(),
         visuals_2d: vis.Visuals2D = vis.Visuals2D(),
         include_2d: inc.Include2D = inc.Include2D(),
-        mat_plot_1d: mat_plot.MatPlot1D = mat_plot.MatPlot1D(),
+        mat_plot_1d: mp.MatPlot1D = mp.MatPlot1D(),
         visuals_1d: vis.Visuals1D = vis.Visuals1D(),
         include_1d: inc.Include1D = inc.Include1D(),
     ):
@@ -47,112 +47,16 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
             ),
         )
 
-    @abstract_plotters.for_figure
-    def figure_ci_pre_cti(self):
-        """Plot the observed ci_pre_cti of the ccd simulator.
-
-        Set *autocti.simulator.plotter.plotter* for a description of all input parameters not described below.
-
-        Parameters
-        -----------
-        ci_pre_cti : CIFrame
-            The ci_pre_cti of the dataset.
-        """
-        self.mat_plot_2d.plot_array(
-            array=self.imaging.ci_pre_cti, visuals_2d=self.visuals_with_include_2d
-        )
-
-    @abstract_plotters.for_figure
-    def figure_cosmic_ray_map(self):
-        """Plot the observed ci_pre_cti of the ccd simulator.
-
-        Set *autocti.simulator.plotter.plotter* for a description of all input parameters not described below.
-
-        Parameters
-        -----------
-        ci_pre_cti : CIFrame
-            The ci_pre_cti of the dataset.
-        """
-        self.mat_plot_2d.plot_array(
-            array=self.imaging.cosmic_ray_map, visuals_2d=self.visuals_with_include_2d
-        )
-
-    @abstract_plotters.for_figure
-    def figure_image_line(self, line_region):
-        """Plot the observed image of the ccd simulator.
-
-        Set *autocti.simulator.plotter.plotter* for a description of all input parameters not described below.
-
-        Parameters
-        -----------
-        ci_imaging : CIFrame
-            The image of the dataset.
-        """
-        line = extract_line_from(ci_frame=self.imaging.image, line_region=line_region)
-
-        self.mat_plot_1d.plot_line(y=line, x=range(len(line)))
-
-    @abstract_plotters.for_figure
-    def figure_noise_map_line(self, line_region):
-        """Plot the observed noise_map of the ccd simulator.
-
-        Set *autocti.simulator.plotter.plotter* for a description of all input parameters not described below.
-
-        Parameters
-        -----------
-        ci_imaging : CIFrame
-            The noise_map of the dataset.
-        """
-        line = extract_line_from(
-            ci_frame=self.imaging.noise_map, line_region=line_region
-        )
-
-        self.mat_plot_1d.plot_line(y=line, x=range(len(line)))
-
-    @abstract_plotters.for_figure
-    def figure_ci_pre_cti_line(self, line_region):
-        """Plot the observed ci_pre_cti of the ccd simulator.
-
-        Set *autocti.simulator.plotter.plotter* for a description of all input parameters not described below.
-
-        Parameters
-        -----------
-        ci_imaging : CIFrame
-            The ci_pre_cti of the dataset.
-        """
-        line = extract_line_from(
-            ci_frame=self.imaging.ci_pre_cti, line_region=line_region
-        )
-
-        self.mat_plot_1d.plot_line(y=line, x=range(len(line)))
-
-    @abstract_plotters.for_figure
-    def figure_signal_to_noise_map_line(self, line_region):
-        """Plot the observed signal_to_noise_map of the ccd simulator.
-
-        Set *autocti.simulator.plotter.plotter* for a description of all input parameters not described below.
-
-        Parameters
-        -----------
-        ci_imaging : CIFrame
-            The signal_to_noise_map of the dataset.
-        """
-        line = extract_line_from(
-            ci_frame=self.imaging.signal_to_noise_map, line_region=line_region
-        )
-
-        self.mat_plot_1d.plot_line(y=line, x=range(len(line)))
-
-    def figure_individuals(
+    def figures(
         self,
-        plot_image=False,
-        plot_noise_map=False,
-        plot_inverse_noise_map=False,
-        plot_signal_to_noise_map=False,
-        plot_absolute_signal_to_noise_map=False,
-        plot_potential_chi_squared_map=False,
-        plot_ci_pre_cti=False,
-        plot_cosmic_ray_map=False,
+        image=False,
+        noise_map=False,
+        inverse_noise_map=False,
+        signal_to_noise_map=False,
+        absolute_signal_to_noise_map=False,
+        potential_chi_squared_map=False,
+        ci_pre_cti=False,
+        cosmic_ray_map=False,
     ):
         """
         Plot each attribute of the imaging data_type as individual figures one by one (e.g. the dataset, noise_map, PSF, \
@@ -168,28 +72,42 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
             If true, the origin of the dataset's coordinate system is plotted as a 'x'.
         """
 
-        super().figure_individuals(
-            plot_image=plot_image,
-            plot_noise_map=plot_noise_map,
-            plot_inverse_noise_map=plot_inverse_noise_map,
-            plot_signal_to_noise_map=plot_signal_to_noise_map,
-            plot_absolute_signal_to_noise_map=plot_absolute_signal_to_noise_map,
-            plot_potential_chi_squared_map=plot_potential_chi_squared_map,
+        super().figures(
+            image=image,
+            noise_map=noise_map,
+            inverse_noise_map=inverse_noise_map,
+            signal_to_noise_map=signal_to_noise_map,
+            absolute_signal_to_noise_map=absolute_signal_to_noise_map,
+            potential_chi_squared_map=potential_chi_squared_map,
         )
 
-        if plot_ci_pre_cti:
-            self.figure_ci_pre_cti()
+        if ci_pre_cti:
 
-        if plot_cosmic_ray_map:
-            self.figure_cosmic_ray_map()
+            self.mat_plot_2d.plot_array(
+                array=self.imaging.ci_pre_cti,
+                visuals_2d=self.visuals_with_include_2d,
+                auto_labels=mp.AutoLabels(
+                    title="CI Pre CTI Image", filename="ci_pre_cti"
+                ),
+            )
 
-    def figure_individual_ci_lines(
+        if cosmic_ray_map:
+
+            self.mat_plot_2d.plot_array(
+                array=self.imaging.cosmic_ray_map,
+                visuals_2d=self.visuals_with_include_2d,
+                auto_labels=mp.AutoLabels(
+                    title="Cosmic Ray Map", filename="cosmic_ray_map"
+                ),
+            )
+
+    def figures_1d_ci_line_region(
         self,
         line_region,
-        plot_image=False,
-        plot_noise_map=False,
-        plot_ci_pre_cti=False,
-        plot_signal_to_noise_map=False,
+        image=False,
+        noise_map=False,
+        ci_pre_cti=False,
+        signal_to_noise_map=False,
     ):
         """Plot each attribute of the ci simulator as individual figures one by one (e.g. the dataset, noise_map, PSF, \
          Signal-to_noise-map, etc).
@@ -204,19 +122,92 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
             If true, the origin of the dataset's coordinate system is plotted as a 'x'.
         """
 
-        if plot_image:
-            self.figure_image_line(line_region=line_region)
+        if image:
 
-        if plot_noise_map:
-            self.figure_noise_map_line(line_region=line_region)
+            line = extract_line_from(
+                ci_frame=self.imaging.image, line_region=line_region
+            )
 
-        if plot_ci_pre_cti:
-            self.figure_ci_pre_cti_line(line_region=line_region)
+            self.mat_plot_1d.plot_line(
+                y=line,
+                x=range(len(line)),
+                visuals_1d=self.visuals_1d,
+                auto_labels=mp.AutoLabels(
+                    title=f"Image Line {line_region}", filename=f"image_{line_region}"
+                ),
+            )
 
-        if plot_signal_to_noise_map:
-            self.figure_signal_to_noise_map_line(line_region=line_region)
+        if noise_map:
 
-    @abstract_plotters.for_subplot
+            line = extract_line_from(
+                ci_frame=self.imaging.noise_map, line_region=line_region
+            )
+
+            self.mat_plot_1d.plot_line(
+                y=line,
+                x=range(len(line)),
+                visuals_1d=self.visuals_1d,
+                auto_labels=mp.AutoLabels(
+                    title=f"Noise Map Line {line_region}",
+                    filename=f"noise_map_{line_region}",
+                ),
+            )
+
+        if ci_pre_cti:
+
+            line = extract_line_from(
+                ci_frame=self.imaging.ci_pre_cti, line_region=line_region
+            )
+
+            self.mat_plot_1d.plot_line(
+                y=line,
+                x=range(len(line)),
+                visuals_1d=self.visuals_1d,
+                auto_labels=mp.AutoLabels(
+                    title=f"CI Pre CTI Line {line_region}",
+                    filename=f"ci_pre_cti_{line_region}",
+                ),
+            )
+
+        if signal_to_noise_map:
+
+            line = extract_line_from(
+                ci_frame=self.imaging.signal_to_noise_map, line_region=line_region
+            )
+
+            self.mat_plot_1d.plot_line(
+                y=line,
+                x=range(len(line)),
+                visuals_1d=self.visuals_1d,
+                auto_labels=mp.AutoLabels(
+                    title=f"Signal To Noise Map {line_region}",
+                    filename=f"signal_to_noise_map_{line_region}",
+                ),
+            )
+
+    def subplot(
+        self,
+        image=False,
+        noise_map=False,
+        inverse_noise_map=False,
+        signal_to_noise_map=False,
+        absolute_signal_to_noise_map=False,
+        potential_chi_squared_map=False,
+        ci_pre_cti=False,
+        cosmic_ray_map=False,
+        auto_filename="subplot_ci_imaging",
+    ):
+
+        self._subplot_custom_plot(
+            image=image,
+            noise_map=noise_map,
+            signal_to_noise_map=signal_to_noise_map,
+            inverse_noise_map=inverse_noise_map,
+            ci_pre_cti=ci_pre_cti,
+            cosmic_ray_map=cosmic_ray_map,
+            auto_labels=mp.AutoLabels(filename=auto_filename),
+        )
+
     def subplot_ci_imaging(self):
         """Plot the imaging data_type as a sub-plotter of all its quantites (e.g. the dataset, noise_map, PSF, Signal-to_noise-map, \
          etc).
@@ -237,27 +228,16 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
             config file is ignored.
         """
 
-        number_subplots = 4
+        self.subplot(
+            image=True,
+            noise_map=True,
+            signal_to_noise_map=True,
+            ci_pre_cti=True,
+            inverse_noise_map=True,
+            cosmic_ray_map=True,
+        )
 
-        self.open_subplot_figure(number_subplots=number_subplots)
-
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=1)
-        self.figure_image()
-
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=2)
-        self.figure_noise_map()
-
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=3)
-        self.figure_ci_pre_cti()
-
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=4)
-        self.figure_signal_to_noise_map()
-
-        self.mat_plot_2d.output.subplot_to_figure()
-        self.mat_plot_2d.figure.close()
-
-    @abstract_plotters.for_subplot
-    def subplot_ci_lines(self, line_region):
+    def subplot_1d_ci_line_region(self, line_region):
         """Plot the ci simulator as a sub-plotter of all its quantites (e.g. the dataset, noise_map, PSF, Signal-to_noise-map, \
          etc).
 
@@ -277,24 +257,19 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
             config file is ignored.
         """
 
-        number_subplots = 4
+        self.open_subplot_figure(number_subplots=4)
 
-        self.open_subplot_figure(number_subplots=number_subplots)
+        self.figures_1d_ci_line_region(image=True, line_region=line_region)
+        self.figures_1d_ci_line_region(noise_map=True, line_region=line_region)
+        self.figures_1d_ci_line_region(ci_pre_cti=True, line_region=line_region)
+        self.figures_1d_ci_line_region(
+            signal_to_noise_map=True, line_region=line_region
+        )
 
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=1)
-        self.figure_image_line(line_region=line_region)
-
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=2)
-        self.figure_noise_map_line(line_region=line_region)
-
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=3)
-        self.figure_ci_pre_cti_line(line_region=line_region)
-
-        self.setup_subplot(number_subplots=number_subplots, subplot_index=4)
-        self.figure_signal_to_noise_map_line(line_region=line_region)
-
-        self.mat_plot_1d.output.subplot_to_figure()
-        self.mat_plot_1d.figure.close()
+        self.mat_plot_1d.output.subplot_to_figure(
+            auto_filename=f"subplot_1d_ci_{line_region}"
+        )
+        self.close_subplot_figure()
 
 
 def extract_line_from(ci_frame, line_region):

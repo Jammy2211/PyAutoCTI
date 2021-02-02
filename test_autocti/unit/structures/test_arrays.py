@@ -16,32 +16,32 @@ test_data_path = path.join(
 class TestAPI:
     def test__manual__makes_array_with_pixel_scale(self):
 
-        arr = ac.Array.manual_2d(array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0)
+        arr = ac.Array2D.manual_native(array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0)
 
-        assert isinstance(arr, ac.Array)
+        assert isinstance(arr, ac.Array2D)
         assert (arr == np.array([[1.0, 2.0], [3.0, 4.0]])).all()
         assert arr.pixel_scales == (1.0, 1.0)
 
-        arr = ac.Array.manual_2d(
+        arr = ac.Array2D.manual_native(
             array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0, origin=(0.0, 1.0)
         )
 
-        assert isinstance(arr, ac.Array)
+        assert isinstance(arr, ac.Array2D)
         assert (arr == np.array([[1.0, 2.0], [3.0, 4.0]])).all()
         assert arr.pixel_scales == (1.0, 1.0)
         assert arr.origin == (0.0, 1.0)
 
-        arr = ac.Array.manual_2d(
+        arr = ac.Array2D.manual_native(
             array=[[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], pixel_scales=(2.0, 3.0)
         )
 
-        assert isinstance(arr, ac.Array)
+        assert isinstance(arr, ac.Array2D)
         assert (arr == np.array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])).all()
         assert arr.pixel_scales == (2.0, 3.0)
 
     def test__manual_mask__makes_array_with_pixel_scale(self):
-        mask = ac.Mask2D.unmasked(shape_2d=(2, 2), pixel_scales=1.0)
-        arr = ac.Array.manual_mask(array=[[1.0, 2.0], [3.0, 4.0]], mask=mask)
+        mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
+        arr = ac.Array2D.manual_mask(array=[[1.0, 2.0], [3.0, 4.0]], mask=mask)
 
         assert (arr == np.array([[1.0, 2.0], [3.0, 4.0]])).all()
         assert arr.pixel_scales == (1.0, 1.0)
@@ -49,102 +49,104 @@ class TestAPI:
         mask = ac.Mask2D.manual(
             mask=[[False, False], [True, False]], pixel_scales=1.0, origin=(0.0, 1.0)
         )
-        arr = ac.Array.manual_mask(array=[[1.0, 2.0], [3.0, 4.0]], mask=mask)
+        arr = ac.Array2D.manual_mask(array=[[1.0, 2.0], [3.0, 4.0]], mask=mask)
 
         assert (arr == np.array([[1.0, 2.0], [0.0, 4.0]])).all()
         assert arr.pixel_scales == (1.0, 1.0)
         assert arr.origin == (0.0, 1.0)
 
-    def test__manual_2d__exception_raised_if_input_array_is_2d_and_not_shape_of_mask(
+    def test__manual_native__exception_raised_if_input_array_is_2d_and_not_shape_of_mask(
         self,
     ):
         with pytest.raises(exc.ArrayException):
-            mask = ac.Mask2D.unmasked(shape_2d=(2, 2), pixel_scales=1.0)
-            ac.Array.manual_mask(array=[[1.0], [3.0]], mask=mask)
+            mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
+            ac.Array2D.manual_mask(array=[[1.0], [3.0]], mask=mask)
 
         with pytest.raises(exc.ArrayException):
-            mask = ac.Mask2D.unmasked(shape_2d=(2, 2), pixel_scales=1.0)
-            ac.Array.manual_mask(array=[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]], mask=mask)
+            mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
+            ac.Array2D.manual_mask(
+                array=[[1.0, 2.0], [3.0, 4.0], [5.0, 6.0]], mask=mask
+            )
 
     def test__full__makes_scaled_array_with_pixel_scale(self):
 
-        arr = ac.Array.ones(shape_2d=(2, 2), pixel_scales=1.0)
+        arr = ac.Array2D.ones(shape_native=(2, 2), pixel_scales=1.0)
 
-        assert isinstance(arr, ac.Array)
+        assert isinstance(arr, ac.Array2D)
         assert (arr == np.array([[1.0, 1.0], [1.0, 1.0]])).all()
         assert arr.pixel_scales == (1.0, 1.0)
 
-        arr = ac.Array.full(
-            fill_value=2.0, shape_2d=(2, 2), pixel_scales=1.0, origin=(0.0, 1.0)
+        arr = ac.Array2D.full(
+            fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0, origin=(0.0, 1.0)
         )
 
-        assert isinstance(arr, ac.Array)
+        assert isinstance(arr, ac.Array2D)
         assert (arr == np.array([[2.0, 2.0], [2.0, 2.0]])).all()
         assert arr.pixel_scales == (1.0, 1.0)
         assert arr.origin == (0.0, 1.0)
 
     def test__ones_zeros__makes_scaled_array_with_pixel_scale(self):
 
-        arr = ac.Array.ones(shape_2d=(2, 2), pixel_scales=1.0)
+        arr = ac.Array2D.ones(shape_native=(2, 2), pixel_scales=1.0)
 
-        assert isinstance(arr, ac.Array)
+        assert isinstance(arr, ac.Array2D)
         assert (arr == np.array([[1.0, 1.0], [1.0, 1.0]])).all()
         assert arr.pixel_scales == (1.0, 1.0)
 
-        arr = ac.Array.zeros(shape_2d=(2, 2), pixel_scales=1.0, origin=(0.0, 1.0))
+        arr = ac.Array2D.zeros(shape_native=(2, 2), pixel_scales=1.0, origin=(0.0, 1.0))
 
-        assert isinstance(arr, ac.Array)
+        assert isinstance(arr, ac.Array2D)
         assert (arr == np.array([[0.0, 0.0], [0.0, 0.0]])).all()
         assert arr.pixel_scales == (1.0, 1.0)
         assert arr.origin == (0.0, 1.0)
 
     def test__from_fits__makes_array_without_other_inputs(self):
 
-        arr = ac.Array.from_fits(
+        arr = ac.Array2D.from_fits(
             file_path=path.join(test_data_path, "3x3_ones.fits"),
             hdu=0,
             pixel_scales=1.0,
         )
 
-        assert isinstance(arr, ac.Array)
+        assert isinstance(arr, ac.Array2D)
         assert (arr == np.ones((3, 3))).all()
 
-        arr = ac.Array.from_fits(
+        arr = ac.Array2D.from_fits(
             file_path=path.join(test_data_path, "4x3_ones.fits"),
             hdu=0,
             pixel_scales=1.0,
         )
 
-        assert isinstance(arr, ac.Array)
+        assert isinstance(arr, ac.Array2D)
         assert (arr == np.ones((4, 3))).all()
 
     def test__from_fits__makes_scaled_array_with_pixel_scale(self):
 
-        arr = ac.Array.from_fits(
+        arr = ac.Array2D.from_fits(
             file_path=path.join(test_data_path, "3x3_ones.fits"),
             hdu=0,
             pixel_scales=1.0,
         )
 
-        assert isinstance(arr, ac.Array)
+        assert isinstance(arr, ac.Array2D)
         assert (arr == np.ones((3, 3))).all()
         assert arr.pixel_scales == (1.0, 1.0)
 
-        arr = ac.Array.from_fits(
+        arr = ac.Array2D.from_fits(
             file_path=path.join(test_data_path, "4x3_ones.fits"),
             hdu=0,
             pixel_scales=1.0,
             origin=(0.0, 1.0),
         )
 
-        assert isinstance(arr, ac.Array)
+        assert isinstance(arr, ac.Array2D)
         assert (arr == np.ones((4, 3))).all()
         assert arr.pixel_scales == (1.0, 1.0)
         assert arr.origin == (0.0, 1.0)
 
     def test__output_to_fits(self):
 
-        arr = ac.Array.from_fits(
+        arr = ac.Array2D.from_fits(
             file_path=path.join(test_data_path, "3x3_ones.fits"),
             hdu=0,
             pixel_scales=1.0,
@@ -159,7 +161,7 @@ class TestAPI:
 
         arr.output_to_fits(file_path=path.join(output_data_dir, "array.fits"))
 
-        array_from_out = ac.Array.from_fits(
+        array_from_out = ac.Array2D.from_fits(
             file_path=path.join(output_data_dir, "array.fits"), hdu=0, pixel_scales=1.0
         )
 
@@ -167,7 +169,7 @@ class TestAPI:
 
     def test__output_to_fits__shapes_of_arrays_are_2d(self):
 
-        arr = ac.Array.from_fits(
+        arr = ac.Array2D.from_fits(
             file_path=path.join(test_data_path, "3x3_ones.fits"),
             hdu=0,
             pixel_scales=1.0,

@@ -1,15 +1,16 @@
 from autoarray.fit.fit import FitImaging
-from autoarray.structures.region import Region
+from autoarray.structures.region import Region2D
 from autoarray.structures.arrays.abstract_array import ExposureInfo
 from autoarray.structures.frames.abstract_frame import Scans
-from autoarray.structures.lines.lines import Line
-from autoarray.structures.lines.lines import LineCollection
 from autoarray.instruments import euclid
 from autoarray.instruments import acs
 from autoarray.dataset import preprocess
 
-from .structures.arrays import Array
-from .structures.frames import Frame
+from autocti.structures.lines import Line
+from autocti.structures.lines import LineCollection
+
+from .structures.arrays import Array2D
+from .structures.frames import Frame2D
 from .mask.mask import Mask2D
 from .mask.mask import SettingsMask
 from .dataset.imaging import Imaging

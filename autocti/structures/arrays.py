@@ -10,20 +10,20 @@ logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 
-class AbstractArray(abstract_array.AbstractArray):
+class AbstractArray2D(abstract_array.AbstractArray2D):
     def __new__(cls, array, mask, *args, **kwargs):
         """An array of values, which are paired to a uniform 2D mask of pixels and sub-pixels. Each entry
         on the array corresponds to a value at the centre of a sub-pixel in an unmasked pixel.
 
-        An *Array* is ordered such that pixels begin from the top-row of the corresponding mask and go right and down.
+        An *Array2D* is ordered such that pixels begin from the top-row of the corresponding mask and go right and down.
         The positive y-axis is upwards and positive x-axis to the right.
 
         The array can be stored in 1D or 2D, as detailed below.
 
-        Case 1: [sub-size=1, store_in_1d = True]:
+        Case 1: [sub-size=1, store_slim = True]:
         -----------------------------------------
 
-        The Array is an ndarray of shape [total_unmasked_pixels].
+        The Array2D is an ndarray of shape [total_unmasked_pixels].
 
         The first element of the ndarray corresponds to the pixel index, for example:
 
@@ -62,7 +62,7 @@ class AbstractArray(abstract_array.AbstractArray):
         |x|x|x|x|x|x|x|x|x|x| \/   array[8] = 8
         |x|x|x|x|x|x|x|x|x|x|      array[9] = 9
 
-        Case 2: [sub-size>1, store_in_1d=True]:
+        Case 2: [sub-size>1, store_slim=True]:
         ------------------
 
         If the masks's sub size is > 1, the array is defined as a sub-array where each entry corresponds to the values
@@ -131,10 +131,10 @@ class AbstractArray(abstract_array.AbstractArray):
                  array[7] = value of first sub-pixel in pixel 7.
                  array[8] = value of first sub-pixel in pixel 8.
 
-        Case 3: [sub_size=1 store_in_1d=False]
+        Case 3: [sub_size=1 store_slim=False]
         --------------------------------------
 
-        The Array has the same properties as Case 1, but is stored as an an ndarray of shape
+        The Array2D has the same properties as Case 1, but is stored as an an ndarray of shape
         [total_y_values, total_x_values].
 
         All masked entries on the array have values of 0.0.
@@ -159,7 +159,7 @@ class AbstractArray(abstract_array.AbstractArray):
         - array[3,4] = 0
         - array[3,4] = -1
 
-        Case 4: [sub_size>1 store_in_1d=False]
+        Case 4: [sub_size>1 store_slim=False]
         --------------------------------------
 
         The properties of this array can be derived by combining Case's 2 and 3 above, whereby the array is stored as
@@ -174,26 +174,26 @@ class AbstractArray(abstract_array.AbstractArray):
         mask : msk.Mask2D
             The 2D mask associated with the array, defining the pixels each array value is paired with and
             originates from.
-        store_in_1d : bool
+        store_slim : bool
             If True, the array is stored in 1D as an ndarray of shape [total_unmasked_pixels]. If False, it is
             stored in 2D as an ndarray of shape [total_y_pixels, total_x_pixels].
         """
         if len(array.shape) != 2:
             raise exc.ArrayException(
-                "An array input into the arrays.Array.__new__ method has store_in_1d = `True` but"
+                "An array input into the arrays.Array2D.__new__ method has store_slim = `True` but"
                 "the input shape of the array is not 1."
             )
 
         obj = array.view(cls)
         obj.mask = mask
-        obj.store_in_1d = False
+        obj.store_slim = False
         return obj
 
 
-class Array(AbstractArray):
+class Array2D(AbstractArray2D):
     @classmethod
-    def manual_2d(cls, array, pixel_scales, origin=(0.0, 0.0)):
-        """Create an Array (see *AbstractArray.__new__*) by inputting the array values in 2D, for example:
+    def manual_native(cls, array, pixel_scales, origin=(0.0, 0.0)):
+        """Create an Array2D (see *AbstractArray2D.__new__*) by inputting the array values in 2D, for example:
 
         array=np.ndarray([[1.0, 2.0],
                          [3.0, 4.0]])
@@ -202,7 +202,7 @@ class Array(AbstractArray):
               [3.0, 4.0]]
 
         The 2D shape of the array and its mask are determined from the input array and the mask is setup as an
-        unmasked `Mask2D` of shape_2d.
+        unmasked `Mask2D` of shape_native.
 
         Parameters
         ----------
@@ -215,14 +215,14 @@ class Array(AbstractArray):
         origin : (float, float)
             The (y,x) scaled units origin of the mask's coordinate system.
         """
-        arr = arrays.Array.manual_2d(
-            array=array, pixel_scales=pixel_scales, origin=origin, store_in_1d=False
+        arr = arrays.Array2D.manual_native(
+            array=array, pixel_scales=pixel_scales, origin=origin, store_slim=False
         )
-        return Array(array=arr, mask=arr.mask)
+        return Array2D(array=arr, mask=arr.mask)
 
     @classmethod
     def manual_mask(cls, array, mask, exposure_info=None):
-        """Create a Array (see *AbstractArray.__new__*) by inputting the array values in 1D or 2D with its mask,
+        """Create a Array2D (see *AbstractArray2D.__new__*) by inputting the array values in 1D or 2D with its mask,
         for example:
 
         mask = Mask2D([[True, False, False, False])
@@ -235,25 +235,25 @@ class Array(AbstractArray):
             lists.
         mask : Mask2D
             The mask whose masked pixels are used to setup the sub-pixel grid.
-        store_in_1d : bool
+        store_slim : bool
             If True, the array is stored in 1D as an ndarray of shape [total_unmasked_pixels]. If False, it is
             stored in 2D as an ndarray of shape [total_y_pixels, total_x_pixels].
         """
         array = abstract_array.convert_manual_array(
-            array=array, mask=mask, store_in_1d=False
+            array=array, mask=mask, store_slim=False
         )
-        return Array(array=array, mask=mask, exposure_info=exposure_info)
+        return Array2D(array=array, mask=mask, exposure_info=exposure_info)
 
     @classmethod
-    def full(cls, fill_value, shape_2d, pixel_scales, origin=(0.0, 0.0)):
-        """Create a Array (see *AbstractArray.__new__*) where all values are filled with an input fill value, analogous to
+    def full(cls, fill_value, shape_native, pixel_scales, origin=(0.0, 0.0)):
+        """Create a Array2D (see *AbstractArray2D.__new__*) where all values are filled with an input fill value, analogous to
          the method numpy ndarray.full.
 
         Parameters
         ----------
         fill_value : float
             The value all array elements are filled with.
-        shape_2d : (float, float)
+        shape_native : (float, float)
             The 2D shape of the mask the array is paired with.
         pixel_scales: (float, float) or float
             The (y,x) scaled units to pixel units conversion factors of every pixel. If this is input as a ``float``,
@@ -261,20 +261,20 @@ class Array(AbstractArray):
         origin : (float, float)
             The (y,x) scaled units origin of the mask's coordinate system.
         """
-        return cls.manual_2d(
-            array=np.full(fill_value=fill_value, shape=shape_2d),
+        return cls.manual_native(
+            array=np.full(fill_value=fill_value, shape=shape_native),
             pixel_scales=pixel_scales,
             origin=origin,
         )
 
     @classmethod
-    def ones(cls, shape_2d, pixel_scales, origin=(0.0, 0.0)):
-        """Create an Array (see *AbstractArray.__new__*) where all values are filled with ones, analogous to the method
+    def ones(cls, shape_native, pixel_scales, origin=(0.0, 0.0)):
+        """Create an Array2D (see *AbstractArray2D.__new__*) where all values are filled with ones, analogous to the method
         numpy ndarray.ones.
 
         Parameters
         ----------
-        shape_2d : (float, float)
+        shape_native : (float, float)
             The 2D shape of the mask the array is paired with.
         pixel_scales: (float, float) or float
             The (y,x) scaled units to pixel units conversion factors of every pixel. If this is input as a ``float``,
@@ -283,17 +283,20 @@ class Array(AbstractArray):
             The (y,x) scaled units origin of the mask's coordinate system.
         """
         return cls.full(
-            fill_value=1.0, shape_2d=shape_2d, pixel_scales=pixel_scales, origin=origin
+            fill_value=1.0,
+            shape_native=shape_native,
+            pixel_scales=pixel_scales,
+            origin=origin,
         )
 
     @classmethod
-    def zeros(cls, shape_2d, pixel_scales, origin=(0.0, 0.0)):
-        """Create an Array (see *AbstractArray.__new__*) where all values are filled with zeros, analogous to the method numpy
+    def zeros(cls, shape_native, pixel_scales, origin=(0.0, 0.0)):
+        """Create an Array2D (see *AbstractArray2D.__new__*) where all values are filled with zeros, analogous to the method numpy
         ndarray.ones.
 
         Parameters
         ----------
-        shape_2d : (float, float)
+        shape_native : (float, float)
             The 2D shape of the mask the array is paired with.
         pixel_scales: (float, float) or float
             The (y,x) scaled units to pixel units conversion factors of every pixel. If this is input as a ``float``,
@@ -302,12 +305,15 @@ class Array(AbstractArray):
             The (y,x) scaled units origin of the mask's coordinate system.
         """
         return cls.full(
-            fill_value=0.0, shape_2d=shape_2d, pixel_scales=pixel_scales, origin=origin
+            fill_value=0.0,
+            shape_native=shape_native,
+            pixel_scales=pixel_scales,
+            origin=origin,
         )
 
     @classmethod
     def from_fits(cls, file_path, pixel_scales, hdu=0, origin=(0.0, 0.0)):
-        """Create an Array (see *AbstractArray.__new__*) by loading the array values from a .fits file.
+        """Create an Array2D (see *AbstractArray2D.__new__*) by loading the array values from a .fits file.
 
         Parameters
         ----------
@@ -323,4 +329,6 @@ class Array(AbstractArray):
             The (y,x) scaled units origin of the mask's coordinate system.
         """
         array_2d = array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
-        return cls.manual_2d(array=array_2d, pixel_scales=pixel_scales, origin=origin)
+        return cls.manual_native(
+            array=array_2d, pixel_scales=pixel_scales, origin=origin
+        )

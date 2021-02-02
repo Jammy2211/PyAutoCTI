@@ -1,6 +1,6 @@
 import numpy as np
 from scipy.ndimage import uniform_filter
-from autoarray.structures.lines.lines import Line
+from autocti.structures.lines import Line
 
 
 def find_warm_pixels(

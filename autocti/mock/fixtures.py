@@ -49,7 +49,7 @@ def make_serial_clocker():
 
 
 def make_mask_7x7():
-    return ac.Mask2D.unmasked(shape_2d=(7, 7), pixel_scales=(1.0, 1.0))
+    return ac.Mask2D.unmasked(shape_native=(7, 7), pixel_scales=(1.0, 1.0))
 
 
 ### FRAMES ###
@@ -64,14 +64,20 @@ def make_scans_7x7():
 
 
 def make_image_7x7():
-    return ac.Frame.full(
-        fill_value=1.0, shape_2d=(7, 7), scans=make_scans_7x7(), pixel_scales=(1.0, 1.0)
+    return ac.Frame2D.full(
+        fill_value=1.0,
+        shape_native=(7, 7),
+        scans=make_scans_7x7(),
+        pixel_scales=(1.0, 1.0),
     )
 
 
 def make_noise_map_7x7():
-    return ac.Frame.full(
-        fill_value=2.0, shape_2d=(7, 7), pixel_scales=(1.0, 1.0), scans=make_scans_7x7()
+    return ac.Frame2D.full(
+        fill_value=2.0,
+        shape_native=(7, 7),
+        pixel_scales=(1.0, 1.0),
+        scans=make_scans_7x7(),
     )
 
 
@@ -94,7 +100,7 @@ def make_ci_pattern_7x7():
 def make_ci_image_7x7():
     return ac.ci.CIFrame.full(
         fill_value=1.0,
-        shape_2d=(7, 7),
+        shape_native=(7, 7),
         pixel_scales=(1.0, 1.0),
         ci_pattern=make_ci_pattern_7x7(),
         roe_corner=(1, 0),
@@ -105,7 +111,7 @@ def make_ci_image_7x7():
 def make_ci_noise_map_7x7():
     return ac.ci.CIFrame.full(
         fill_value=2.0,
-        shape_2d=(7, 7),
+        shape_native=(7, 7),
         pixel_scales=(1.0, 1.0),
         roe_corner=(1, 0),
         ci_pattern=make_ci_pattern_7x7(),
@@ -115,7 +121,7 @@ def make_ci_noise_map_7x7():
 
 def make_ci_pre_cti_7x7():
     return ac.ci.CIFrame.full(
-        shape_2d=(7, 7),
+        shape_native=(7, 7),
         fill_value=10.0,
         pixel_scales=(1.0, 1.0),
         roe_corner=(1, 0),
@@ -140,14 +146,14 @@ def make_ci_noise_scaling_maps_7x7():
 
     return [
         ac.ci.CIFrame.ones(
-            shape_2d=(7, 7),
+            shape_native=(7, 7),
             pixel_scales=(1.0, 1.0),
             roe_corner=(1, 0),
             scans=make_scans_7x7(),
             ci_pattern=make_ci_pattern_7x7(),
         ),
         ac.ci.CIFrame.full(
-            shape_2d=(7, 7),
+            shape_native=(7, 7),
             roe_corner=(1, 0),
             fill_value=2.0,
             scans=make_scans_7x7(),

@@ -144,7 +144,7 @@ class CIMask(Mask2D):
         front_edge_regions = ci_frame.parallel_front_edge_regions(
             rows=settings.parallel_front_edge_rows
         )
-        mask = np.full(ci_frame.shape_2d, False)
+        mask = np.full(ci_frame.shape_native, False)
 
         for region in front_edge_regions:
             mask[region.y0 : region.y1, region.x0 : region.x1] = True
@@ -160,7 +160,7 @@ class CIMask(Mask2D):
         trails_regions = ci_frame.parallel_trails_regions(
             rows=settings.parallel_trails_rows
         )
-        mask = np.full(ci_frame.shape_2d, False)
+        mask = np.full(ci_frame.shape_native, False)
 
         for region in trails_regions:
             mask[region.y0 : region.y1, region.x0 : region.x1] = True
@@ -176,7 +176,7 @@ class CIMask(Mask2D):
         front_edge_regions = ci_frame.serial_front_edge_regions(
             columns=settings.serial_front_edge_columns
         )
-        mask = np.full(ci_frame.shape_2d, False)
+        mask = np.full(ci_frame.shape_native, False)
 
         for region in front_edge_regions:
             mask[region.y0 : region.y1, region.x0 : region.x1] = True
@@ -192,7 +192,7 @@ class CIMask(Mask2D):
         trails_regions = ci_frame.serial_trails_regions(
             columns=settings.serial_trails_columns
         )
-        mask = np.full(ci_frame.shape_2d, False)
+        mask = np.full(ci_frame.shape_native, False)
 
         for region in trails_regions:
             mask[region.y0 : region.y1, region.x0 : region.x1] = True

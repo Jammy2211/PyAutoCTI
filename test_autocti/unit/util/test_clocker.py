@@ -12,7 +12,7 @@ path = "{}/".format(os.path.dirname(os.path.realpath(__file__)))
 class TestFrameAPI:
     def test__array_with_offset_through_arctic__same_as_clocker(self):
 
-        frame = ac.Frame.manual(
+        frame = ac.Frame2D.manual(
             array=[[1.0, 2.0], [3.0, 4.0]],
             pixel_scales=1.0,
             roe_corner=(1, 0),

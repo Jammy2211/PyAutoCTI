@@ -9,7 +9,7 @@ from autoarray.instruments import euclid
 from autoarray.util import array_util, frame_util, geometry_util
 
 
-class AbstractCIFrame(abstract_frame.AbstractFrame):
+class AbstractCIFrame(abstract_frame.AbstractFrame2D):
     def __new__(
         cls,
         array,
@@ -37,7 +37,7 @@ class AbstractCIFrame(abstract_frame.AbstractFrame):
 
         obj = array.view(cls)
         obj.mask = mask
-        obj.store_in_1d = False
+        obj.store_slim = False
         obj.zoom_for_plot = False
         obj.original_roe_corner = original_roe_corner
         obj.exposure_info = exposure_info
@@ -60,7 +60,7 @@ class AbstractCIFrame(abstract_frame.AbstractFrame):
             if hasattr(obj, "scans"):
                 self.scans = obj.scans
 
-    def _new_structure(self, array, mask, store_in_1d):
+    def _new_structure(self, array, mask, store_slim):
         return self.__class__(
             array=array,
             mask=mask,
@@ -1310,7 +1310,7 @@ class AbstractCIFrame(abstract_frame.AbstractFrame):
     @property
     def parallel_trail_size_to_frame_edge(self):
 
-        return self.shape_2d[0] - np.max(
+        return self.shape_native[0] - np.max(
             [region.y1 for region in self.ci_pattern.regions]
         )
 
@@ -1342,11 +1342,11 @@ class CIFrame(AbstractCIFrame):
 
         Parameters
         -----------
-        parallel_overscan : frame.Region
+        parallel_overscan : frame.Region2D
             The parallel overscan region of the ci_frame.
-        serial_prescan : frame.Region
+        serial_prescan : frame.Region2D
             The serial prescan region of the ci_frame.
-        serial_overscan : frame.Region
+        serial_overscan : frame.Region2D
             The serial overscan region of the ci_frame.
         """
 
@@ -1357,10 +1357,10 @@ class CIFrame(AbstractCIFrame):
 
         pixel_scales = geometry_util.convert_pixel_scales_2d(pixel_scales=pixel_scales)
 
-        mask = Mask2D.unmasked(shape_2d=array.shape, pixel_scales=pixel_scales)
+        mask = Mask2D.unmasked(shape_native=array.shape, pixel_scales=pixel_scales)
 
         scans = abstract_frame.Scans.rotated_from_roe_corner(
-            roe_corner=roe_corner, shape_2d=array.shape, scans=scans
+            roe_corner=roe_corner, shape_native=array.shape, scans=scans
         )
 
         return CIFrame(
@@ -1369,7 +1369,7 @@ class CIFrame(AbstractCIFrame):
             ),
             mask=mask,
             ci_pattern=frame_util.rotate_ci_pattern_from_roe_corner(
-                ci_pattern=ci_pattern, shape_2d=array.shape, roe_corner=roe_corner
+                ci_pattern=ci_pattern, shape_native=array.shape, roe_corner=roe_corner
             ),
             original_roe_corner=roe_corner,
             exposure_info=exposure_info,
@@ -1396,11 +1396,11 @@ class CIFrame(AbstractCIFrame):
 
         Parameters
         -----------
-        parallel_overscan : Region
+        parallel_overscan : Region2D
             The parallel overscan region of the ci_frame.
-        serial_prescan : Region
+        serial_prescan : Region2D
             The serial prescan region of the ci_frame.
-        serial_overscan : Region
+        serial_overscan : Region2D
             The serial overscan region of the ci_frame.
         """
 
@@ -1416,14 +1416,14 @@ class CIFrame(AbstractCIFrame):
         array[mask == True] = 0.0
 
         scans = abstract_frame.Scans.rotated_from_roe_corner(
-            roe_corner=roe_corner, shape_2d=array.shape, scans=scans
+            roe_corner=roe_corner, shape_native=array.shape, scans=scans
         )
 
         return CIFrame(
             array=array,
             mask=mask,
             ci_pattern=frame_util.rotate_ci_pattern_from_roe_corner(
-                ci_pattern=ci_pattern, shape_2d=array.shape, roe_corner=roe_corner
+                ci_pattern=ci_pattern, shape_native=array.shape, roe_corner=roe_corner
             ),
             original_roe_corner=roe_corner,
             exposure_info=exposure_info,
@@ -1434,7 +1434,7 @@ class CIFrame(AbstractCIFrame):
     def full(
         cls,
         fill_value,
-        shape_2d,
+        shape_native,
         pixel_scales,
         ci_pattern,
         roe_corner=(1, 0),
@@ -1443,7 +1443,7 @@ class CIFrame(AbstractCIFrame):
     ):
 
         return cls.manual(
-            array=np.full(fill_value=fill_value, shape=shape_2d),
+            array=np.full(fill_value=fill_value, shape=shape_native),
             pixel_scales=pixel_scales,
             ci_pattern=ci_pattern,
             roe_corner=roe_corner,
@@ -1454,7 +1454,7 @@ class CIFrame(AbstractCIFrame):
     @classmethod
     def ones(
         cls,
-        shape_2d,
+        shape_native,
         pixel_scales,
         ci_pattern,
         roe_corner=(1, 0),
@@ -1463,7 +1463,7 @@ class CIFrame(AbstractCIFrame):
     ):
         return cls.full(
             fill_value=1.0,
-            shape_2d=shape_2d,
+            shape_native=shape_native,
             pixel_scales=pixel_scales,
             ci_pattern=ci_pattern,
             roe_corner=roe_corner,
@@ -1474,7 +1474,7 @@ class CIFrame(AbstractCIFrame):
     @classmethod
     def zeros(
         cls,
-        shape_2d,
+        shape_native,
         pixel_scales,
         ci_pattern,
         roe_corner=(1, 0),
@@ -1483,7 +1483,7 @@ class CIFrame(AbstractCIFrame):
     ):
         return cls.full(
             fill_value=0.0,
-            shape_2d=shape_2d,
+            shape_native=shape_native,
             pixel_scales=pixel_scales,
             ci_pattern=ci_pattern,
             roe_corner=roe_corner,
@@ -1564,6 +1564,39 @@ class CIFrame(AbstractCIFrame):
 
 class CIFrameEuclid(CIFrame):
     @classmethod
+    def from_fits_header(cls, array, ext_header, ci_pattern):
+        """
+        Use an input array of a Euclid quadrant and its corresponding .fits file header to rotate the quadrant to
+        the correct orientation for arCTIc clocking.
+
+        See the docstring of the `from_ccd_and_quadrant_id` classmethod for a complete description of the Euclid FPA,
+        quadrants and rotations.
+        """
+
+        ccd_id = ext_header["CCDID"]
+        quadrant_id = ext_header["QUADID"]
+
+        parallel_overscan_size = ext_header.get("PAROVRX", default=None)
+        if parallel_overscan_size is None:
+            parallel_overscan_size = 0
+        serial_overscan_size = ext_header.get("OVRSCANX", default=None)
+        serial_prescan_size = ext_header.get("PRESCANX", default=None)
+        serial_size = ext_header.get("NAXIS1", default=None)
+        parallel_size = ext_header.get("NAXIS2", default=None)
+
+        return cls.from_ccd_and_quadrant_id(
+            array=array,
+            ccd_id=ccd_id,
+            quadrant_id=quadrant_id,
+            ci_pattern=ci_pattern,
+            parallel_size=parallel_size,
+            serial_size=serial_size,
+            serial_prescan_size=serial_prescan_size,
+            serial_overscan_size=serial_overscan_size,
+            parallel_overscan_size=parallel_overscan_size,
+        )
+
+    @classmethod
     def from_ccd_and_quadrant_id(
         cls,
         array,
@@ -1576,8 +1609,7 @@ class CIFrameEuclid(CIFrame):
         serial_overscan_size=29,
         parallel_overscan_size=20,
     ):
-        """Before reading this docstring, read the docstring for the __init__function above.
-
+        """
         In the Euclid FPA, the quadrant id ('E', 'F', 'G', 'H') depends on whether the CCD is located
         on the left side (rows 1-3) or right side (rows 4-6) of the FPA:
 

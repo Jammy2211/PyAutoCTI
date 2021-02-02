@@ -528,7 +528,9 @@ class TestMaskedSerialTrails:
 class TestMaskedFrontEdgeTrailsAll:
     def test__masks_uses_front_edge_and_trails_parameters(self, ci_imaging_7x7):
 
-        mask = ac.ci.CIMask.unmasked(shape_2d=ci_imaging_7x7.shape_2d, pixel_scales=1.0)
+        mask = ac.ci.CIMask.unmasked(
+            shape_native=ci_imaging_7x7.shape_native, pixel_scales=1.0
+        )
 
         ci_mask = ac.ci.CIMask.masked_front_edges_and_trails_from_ci_frame(
             ci_frame=ci_imaging_7x7.image,

@@ -108,7 +108,7 @@ class Mask2D(mask_2d.AbstractMask2D):
         return cls(mask=mask, pixel_scales=pixel_scales, origin=origin)
 
     @classmethod
-    def unmasked(cls, shape_2d, pixel_scales, origin=(0.0, 0.0), invert=False):
+    def unmasked(cls, shape_native, pixel_scales, origin=(0.0, 0.0), invert=False):
         """Create a mask where all pixels are `False` and therefore unmasked.
 
         Parameters
@@ -126,18 +126,18 @@ class Mask2D(mask_2d.AbstractMask2D):
             and visa versa.
         """
         return cls.manual(
-            mask=np.full(shape=shape_2d, fill_value=False),
+            mask=np.full(shape=shape_native, fill_value=False),
             pixel_scales=pixel_scales,
             origin=origin,
             invert=invert,
         )
 
     @classmethod
-    def from_masked_regions(cls, shape_2d, pixel_scales, masked_regions):
+    def from_masked_regions(cls, shape_native, pixel_scales, masked_regions):
 
-        mask = cls.unmasked(shape_2d=shape_2d, pixel_scales=pixel_scales)
+        mask = cls.unmasked(shape_native=shape_native, pixel_scales=pixel_scales)
         masked_regions = list(
-            map(lambda region: reg.Region(region=region), masked_regions)
+            map(lambda region: reg.Region2D(region=region), masked_regions)
         )
         for region in masked_regions:
             mask[region.y0 : region.y1, region.x0 : region.x1] = True
@@ -151,7 +151,7 @@ class Mask2D(mask_2d.AbstractMask2D):
 
         Parameters
         ----------
-        cosmic_ray_map : arrays.Array
+        cosmic_ray_map : arrays.Array2D
             2D arrays flagging where cosmic rays on the image.
         cosmic_ray_parallel_buffer : int
             The number of pixels from each ray pixels are masked in the parallel direction.
@@ -161,7 +161,8 @@ class Mask2D(mask_2d.AbstractMask2D):
             The number of pixels from each ray pixels are masked in the digonal up from the parallel + serial direction.
         """
         mask = cls.unmasked(
-            shape_2d=cosmic_ray_map.shape_2d, pixel_scales=cosmic_ray_map.pixel_scales
+            shape_native=cosmic_ray_map.shape_native,
+            pixel_scales=cosmic_ray_map.pixel_scales,
         )
 
         cosmic_ray_mask = (cosmic_ray_map > 0.0).astype("bool")

@@ -40,7 +40,7 @@ from autoarray.plot.mat_wrap.mat_plot import MatPlot2D
 from autoarray.plot.mat_wrap.include import Include2D
 from autoarray.plot.mat_wrap.visuals import Visuals2D
 
-from autoarray.plot.plotters.structure_plotters import ArrayPlotter
-from autoarray.plot.plotters.structure_plotters import FramePlotter
+from autoarray.plot.plotters.structure_plotters import Array2DPlotter
+from autoarray.plot.plotters.structure_plotters import Frame2DPlotter
 from autocti.plot.ci_imaging_plotters import CIImagingPlotter
 from autocti.plot.ci_fit_plotters import CIFitPlotter

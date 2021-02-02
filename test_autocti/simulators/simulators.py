@@ -224,7 +224,7 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
 #
 #     clocker = ac.Clocker(iterations=1, parallel_express=2)
 #
-#     shape = resolution_util.shape_2d_from_resolution(
+#     shape = resolution_util.shape_native_from_resolution(
 #         resolution=resolution
 #     )
 #
@@ -265,7 +265,7 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
 #
 #     clocker = ac.Clocker(iterations=1, serial_express=2)
 #
-#     shape = resolution_util.shape_2d_from_resolution(
+#     shape = resolution_util.shape_native_from_resolution(
 #         resolution=resolution
 #     )
 #
@@ -313,7 +313,7 @@ def simulate__ci_uniform__parallel_x3__serial_x3(resolution, normalizations):
 #
 #     clocker = ac.Clocker(iterations=1, parallel_express=1, serial_express=2)
 #
-#     shape = resolution_util.shape_2d_from_resolution(
+#     shape = resolution_util.shape_native_from_resolution(
 #         resolution=resolution
 #     )
 #

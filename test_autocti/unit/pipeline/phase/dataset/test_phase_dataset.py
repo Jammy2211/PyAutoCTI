@@ -50,7 +50,7 @@ class TestMakeAnalysis:
 
         cosmic_ray_map = ac.ci.CIFrame.full(
             fill_value=False,
-            shape_2d=(7, 7),
+            shape_native=(7, 7),
             ci_pattern=ci_pattern_7x7,
             pixel_scales=1.0,
         )
@@ -90,7 +90,7 @@ class TestMakeAnalysis:
 
         cosmic_ray_map = ac.ci.CIFrame.full(
             fill_value=False,
-            shape_2d=(7, 7),
+            shape_native=(7, 7),
             ci_pattern=ci_pattern_7x7,
             pixel_scales=1.0,
         )

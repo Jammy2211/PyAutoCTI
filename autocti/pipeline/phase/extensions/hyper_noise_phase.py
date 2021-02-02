@@ -81,7 +81,7 @@ class HyperNoisePhase(HyperPhase):
         ):
 
             hyper_noise_map = ci_fit.hyper_noise_map_from_noise_map_and_noise_scalings(
-                noise_scaling_maps=ci_data.figure_noise_scaling_maps,
+                noise_scaling_maps=ci_data.subplot_noise_scaling_maps,
                 hyper_noise_scalars=hyper_noise_scalars,
                 noise_map=ci_data.noise_map,
             )

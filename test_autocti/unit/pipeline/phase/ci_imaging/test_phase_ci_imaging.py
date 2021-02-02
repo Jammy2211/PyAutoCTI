@@ -27,9 +27,7 @@ class TestMakeAnalysis:
             datasets=[ci_imaging_7x7], clocker=None
         )
 
-        assert (
-            analysis.masked_ci_datasets[0].figure_image == np.ones(shape=(7, 7))
-        ).all()
+        assert (analysis.masked_ci_datasets[0].figures == np.ones(shape=(7, 7))).all()
         assert (
             analysis.masked_ci_datasets[0].figure_noise_map
             == 2.0 * np.ones(shape=(7, 7))
@@ -52,9 +50,7 @@ class TestMakeAnalysis:
             datasets=[ci_imaging_7x7], clocker=None
         )
 
-        assert (
-            analysis.masked_ci_datasets[0].figure_image == np.ones(shape=(7, 1))
-        ).all()
+        assert (analysis.masked_ci_datasets[0].figures == np.ones(shape=(7, 1))).all()
         assert (
             analysis.masked_ci_datasets[0].figure_noise_map
             == 2.0 * np.ones(shape=(7, 1))
@@ -77,9 +73,7 @@ class TestMakeAnalysis:
             datasets=[ci_imaging_7x7], clocker=None
         )
 
-        assert (
-            analysis.masked_ci_datasets[0].figure_image == np.ones(shape=(1, 7))
-        ).all()
+        assert (analysis.masked_ci_datasets[0].figures == np.ones(shape=(1, 7))).all()
         assert (
             analysis.masked_ci_datasets[0].figure_noise_map
             == 2.0 * np.ones(shape=(1, 7))
@@ -125,13 +119,13 @@ class TestMakeAnalysis:
 
         noise_scaling_maps_list_of_ci_regions = [
             ac.ci.CIFrame.ones(
-                shape_2d=(7, 7), pixel_scales=1.0, ci_pattern=ci_pattern_7x7
+                shape_native=(7, 7), pixel_scales=1.0, ci_pattern=ci_pattern_7x7
             )
         ]
         noise_scaling_maps_list_of_parallel_trails = [
             ac.ci.CIFrame.full(
                 fill_value=2.0,
-                shape_2d=(7, 7),
+                shape_native=(7, 7),
                 pixel_scales=1.0,
                 ci_pattern=ci_pattern_7x7,
             )
@@ -139,7 +133,7 @@ class TestMakeAnalysis:
         noise_scaling_maps_list_of_serial_trails = [
             ac.ci.CIFrame.full(
                 fill_value=3.0,
-                shape_2d=(7, 7),
+                shape_native=(7, 7),
                 pixel_scales=1.0,
                 ci_pattern=ci_pattern_7x7,
             )
@@ -147,7 +141,7 @@ class TestMakeAnalysis:
         noise_scaling_maps_list_of_serial_overscan_no_trails = [
             ac.ci.CIFrame.full(
                 fill_value=4.0,
-                shape_2d=(7, 7),
+                shape_native=(7, 7),
                 pixel_scales=1.0,
                 ci_pattern=ci_pattern_7x7,
             )
@@ -172,15 +166,15 @@ class TestMakeAnalysis:
             ),
         )
 
-        assert len(analysis.masked_ci_imagings[0].figure_noise_scaling_maps) == 2
+        assert len(analysis.masked_ci_imagings[0].subplot_noise_scaling_maps) == 2
 
         assert (
-            analysis.masked_ci_imagings[0].figure_noise_scaling_maps[0]
+            analysis.masked_ci_imagings[0].subplot_noise_scaling_maps[0]
             == np.ones((7, 7))
         ).all()
 
         assert (
-            analysis.masked_ci_imagings[0].figure_noise_scaling_maps[1]
+            analysis.masked_ci_imagings[0].subplot_noise_scaling_maps[1]
             == 2.0 * np.ones((7, 7))
         ).all()
 
@@ -204,19 +198,19 @@ class TestMakeAnalysis:
             ),
         )
 
-        assert len(analysis.masked_ci_imagings[0].figure_noise_scaling_maps) == 3
+        assert len(analysis.masked_ci_imagings[0].subplot_noise_scaling_maps) == 3
 
         assert (
-            analysis.masked_ci_imagings[0].figure_noise_scaling_maps[0]
+            analysis.masked_ci_imagings[0].subplot_noise_scaling_maps[0]
             == 2.0 * np.ones((7, 7))
         ).all()
 
         assert (
-            analysis.masked_ci_imagings[0].figure_noise_scaling_maps[1]
+            analysis.masked_ci_imagings[0].subplot_noise_scaling_maps[1]
             == 3.0 * np.ones((7, 7))
         ).all()
 
         assert (
-            analysis.masked_ci_imagings[0].figure_noise_scaling_maps[2]
+            analysis.masked_ci_imagings[0].subplot_noise_scaling_maps[2]
             == 4.0 * np.ones((7, 7))
         ).all()

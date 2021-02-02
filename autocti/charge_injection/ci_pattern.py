@@ -28,7 +28,7 @@ class AbstractCIPattern(object):
             (top-row, bottom-row, left-column, right-column).
         """
         self.normalization = normalization
-        self.regions = list(map(region.Region, regions))
+        self.regions = list(map(region.Region2D, regions))
 
     def with_extracted_regions(self, extraction_region):
 
@@ -80,19 +80,19 @@ class CIPatternUniform(AbstractCIPattern):
 
     """
 
-    def ci_pre_cti_from(self, shape_2d, pixel_scales):
+    def ci_pre_cti_from(self, shape_native, pixel_scales):
         """Use this charge injection ci_pattern to generate a pre-cti charge injection image. This is performed by \
         going to its charge injection regions and adding the charge injection normalization value.
 
         Parameters
         -----------
-        shape_2d : (int, int)
+        shape_native : (int, int)
             The image_shape of the ci_pre_ctis to be created.
         """
 
-        self.check_pattern_is_within_image_dimensions(shape_2d)
+        self.check_pattern_is_within_image_dimensions(shape_native)
 
-        ci_pre_cti = np.zeros(shape_2d)
+        ci_pre_cti = np.zeros(shape_native)
 
         for region in self.regions:
             ci_pre_cti[region.slice] += self.normalization
@@ -138,7 +138,7 @@ class CIPatternNonUniform(AbstractCIPattern):
         self.column_sigma = column_sigma
         self.maximum_normalization = maximum_normalization
 
-    def ci_pre_cti_from(self, shape_2d, pixel_scales, ci_seed=-1):
+    def ci_pre_cti_from(self, shape_native, pixel_scales, ci_seed=-1):
         """Use this charge injection ci_pattern to generate a pre-cti charge injection image. This is performed by going \
         to its charge injection regions and adding its non-uniform charge distribution.
 
@@ -150,7 +150,7 @@ class CIPatternNonUniform(AbstractCIPattern):
         Parameters
         -----------
         column_sigma
-        shape_2d
+        shape_native
             The image_shape of the ci_pre_ctis to be created.
         maximum_normalization
 
@@ -159,9 +159,9 @@ class CIPatternNonUniform(AbstractCIPattern):
             ci_pre_ctis, ensuring each non-uniform ci_region has the same column non-uniformity ci_pattern.
         """
 
-        self.check_pattern_is_within_image_dimensions(shape_2d)
+        self.check_pattern_is_within_image_dimensions(shape_native)
 
-        ci_pre_cti = np.zeros(shape_2d)
+        ci_pre_cti = np.zeros(shape_native)
 
         if ci_seed == -1:
             ci_seed = np.random.randint(

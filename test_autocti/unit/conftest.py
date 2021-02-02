@@ -5,8 +5,7 @@ import pytest
 from autoconf import conf
 from autocti.mock import fixtures
 
-
-directory = Path(__file__).parent.parent
+directory = path.dirname(path.realpath(__file__))
 
 
 @pytest.fixture(autouse=True)

@@ -54,13 +54,13 @@ class TestResult:
 
         noise_scaling_maps_list_of_ci_regions = [
             ac.ci.CIFrame.ones(
-                shape_2d=(7, 7), pixel_scales=1.0, ci_pattern=ci_pattern_7x7
+                shape_native=(7, 7), pixel_scales=1.0, ci_pattern=ci_pattern_7x7
             )
         ]
         noise_scaling_maps_list_of_parallel_trails = [
             ac.ci.CIFrame.full(
                 fill_value=2.0,
-                shape_2d=(7, 7),
+                shape_native=(7, 7),
                 pixel_scales=1.0,
                 ci_pattern=ci_pattern_7x7,
             )
@@ -68,7 +68,7 @@ class TestResult:
         noise_scaling_maps_list_of_serial_trails = [
             ac.ci.CIFrame.full(
                 fill_value=3.0,
-                shape_2d=(7, 7),
+                shape_native=(7, 7),
                 pixel_scales=1.0,
                 ci_pattern=ci_pattern_7x7,
             )
@@ -76,7 +76,7 @@ class TestResult:
         noise_scaling_maps_list_of_serial_overscan_no_trails = [
             ac.ci.CIFrame.full(
                 fill_value=4.0,
-                shape_2d=(7, 7),
+                shape_native=(7, 7),
                 pixel_scales=1.0,
                 ci_pattern=ci_pattern_7x7,
             )
@@ -101,10 +101,11 @@ class TestResult:
             ),
         )
 
-        ci_post_cti = parallel_clocker.add_cti(image=ci_imaging_7x7.figure_ci_pre_cti)
+        ci_post_cti = parallel_clocker.add_cti(image=ci_imaging_7x7.ci_pre_cti)
 
         mask = ac.ci.CIMask.unmasked(
-            shape_2d=ci_imaging_7x7.shape_2d, pixel_scales=ci_imaging_7x7.pixel_scales
+            shape_native=ci_imaging_7x7.shape_native,
+            pixel_scales=ci_imaging_7x7.pixel_scales,
         )
         masked_ci_imaging_7x7 = ac.ci.MaskedCIImaging(
             ci_imaging=ci_imaging_7x7,

@@ -92,7 +92,7 @@ class TestMask:
         assert type(mask) == ac.Mask2D
         assert (mask == np.array([[True, True, False], [False, False, True]])).all()
 
-    def test__mask__input_is_1d_mask__no_shape_2d__raises_exception(self):
+    def test__mask__input_is_1d_mask__no_shape_native__raises_exception(self):
 
         with pytest.raises(exc.MaskException):
 
@@ -130,7 +130,7 @@ class TestMask:
 
     def test__unmasked__mask_all_unmasked__5x5__input__all_are_false(self):
 
-        mask = ac.Mask2D.unmasked(shape_2d=(5, 5), pixel_scales=1.0, invert=False)
+        mask = ac.Mask2D.unmasked(shape_native=(5, 5), pixel_scales=1.0, invert=False)
 
         assert mask.shape == (5, 5)
         assert (
@@ -147,7 +147,7 @@ class TestMask:
         ).all()
 
         mask = ac.Mask2D.unmasked(
-            shape_2d=(3, 3), pixel_scales=(1.5, 1.5), invert=False
+            shape_native=(3, 3), pixel_scales=(1.5, 1.5), invert=False
         )
 
         assert mask.shape == (3, 3)
@@ -162,7 +162,7 @@ class TestMask:
         assert mask.origin == (0.0, 0.0)
 
         mask = ac.Mask2D.unmasked(
-            shape_2d=(3, 3), pixel_scales=(2.0, 2.5), invert=True, origin=(1.0, 2.0)
+            shape_native=(3, 3), pixel_scales=(2.0, 2.5), invert=True, origin=(1.0, 2.0)
         )
 
         assert mask.shape == (3, 3)
@@ -184,7 +184,7 @@ class TestMaskRemoveRegions:
     def test__remove_one_region(self):
 
         mask = ac.Mask2D.from_masked_regions(
-            shape_2d=(3, 3), masked_regions=[(0, 3, 2, 3)], pixel_scales=1.0
+            shape_native=(3, 3), masked_regions=[(0, 3, 2, 3)], pixel_scales=1.0
         )
 
         assert (
@@ -197,7 +197,7 @@ class TestMaskRemoveRegions:
     def test__remove_two_regions(self):
 
         mask = ac.Mask2D.from_masked_regions(
-            shape_2d=(3, 3),
+            shape_native=(3, 3),
             masked_regions=[(0, 3, 2, 3), (0, 2, 0, 2)],
             pixel_scales=1.0,
         )
@@ -211,7 +211,7 @@ class TestMaskRemoveRegions:
 class TestCosmicRayMask:
     def test__cosmic_ray_mask_included_in_total_mask(self):
 
-        cosmic_ray_map = ac.Frame.manual(
+        cosmic_ray_map = ac.Frame2D.manual(
             array=np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
             ),
@@ -239,7 +239,7 @@ class TestCosmicRayMask:
 class TestMaskCosmics:
     def test__mask_cosmic_ray_in_different_directions(self):
 
-        cosmic_ray_map = ac.Frame.manual(
+        cosmic_ray_map = ac.Frame2D.manual(
             array=[[False, False, False], [False, True, False], [False, False, False]],
             pixel_scales=1.0,
         )
@@ -260,7 +260,7 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_map = ac.Frame.manual(
+        cosmic_ray_map = ac.Frame2D.manual(
             array=[[False, False, False], [False, False, False], [False, True, False]],
             pixel_scales=1.0,
         )
@@ -281,7 +281,7 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_map = ac.Frame.manual(
+        cosmic_ray_map = ac.Frame2D.manual(
             array=[[False, False, False], [False, True, False], [False, False, False]],
             pixel_scales=1.0,
         )
@@ -302,7 +302,7 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_map = ac.Frame.manual(
+        cosmic_ray_map = ac.Frame2D.manual(
             array=[[False, False, False], [True, False, False], [False, False, False]],
             pixel_scales=1.0,
         )
@@ -323,7 +323,7 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_map = ac.Frame.manual(
+        cosmic_ray_map = ac.Frame2D.manual(
             array=[[False, False, False], [False, True, False], [False, False, False]],
             pixel_scales=1.0,
         )
@@ -344,7 +344,7 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_map = ac.Frame.manual(
+        cosmic_ray_map = ac.Frame2D.manual(
             array=[
                 [False, False, False, False],
                 [False, False, False, False],

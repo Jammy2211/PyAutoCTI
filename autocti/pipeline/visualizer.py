@@ -46,17 +46,15 @@ class Visualizer:
             imaging=ci_imaging, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
         )
 
-        ci_imaging_plotter.figure_individuals(
-            plot_image=should_plot("data"),
-            plot_noise_map=should_plot("noise_map"),
-            plot_inverse_noise_map=should_plot("inverse_noise_map"),
-            plot_signal_to_noise_map=should_plot("signal_to_noise_map"),
-            plot_absolute_signal_to_noise_map=should_plot(
-                "absolute_signal_to_noise_map"
-            ),
-            plot_potential_chi_squared_map=should_plot("potential_chi_squared_map"),
-            plot_ci_pre_cti=should_plot("ci_pre_cti"),
-            plot_cosmic_ray_map=should_plot("cosmic_ray_map"),
+        ci_imaging_plotter.figures(
+            image=should_plot("data"),
+            noise_map=should_plot("noise_map"),
+            inverse_noise_map=should_plot("inverse_noise_map"),
+            signal_to_noise_map=should_plot("signal_to_noise_map"),
+            absolute_signal_to_noise_map=should_plot("absolute_signal_to_noise_map"),
+            potential_chi_squared_map=should_plot("potential_chi_squared_map"),
+            ci_pre_cti=should_plot("ci_pre_cti"),
+            cosmic_ray_map=should_plot("cosmic_ray_map"),
         )
 
         if should_plot("subplot_dataset"):
@@ -75,14 +73,14 @@ class Visualizer:
 
         if should_plot("plot_subplot_dataset"):
 
-            ci_imaging_plotter.subplot_ci_lines(line_region=line_region)
+            ci_imaging_plotter.subplot_1d_ci_line_region(line_region=line_region)
 
-        ci_imaging_plotter.figure_individual_ci_lines(
+        ci_imaging_plotter.figures_1d_ci_line_region(
             line_region=line_region,
-            plot_image=should_plot("data"),
-            plot_noise_map=should_plot("noise_map"),
-            plot_signal_to_noise_map=should_plot("signal_to_noise_map"),
-            plot_ci_pre_cti=should_plot("ci_pre_cti"),
+            image=should_plot("data"),
+            noise_map=should_plot("noise_map"),
+            signal_to_noise_map=should_plot("signal_to_noise_map"),
+            ci_pre_cti=should_plot("ci_pre_cti"),
         )
 
     def visualize_ci_fit(self, fit, during_analysis):
@@ -95,30 +93,30 @@ class Visualizer:
             fit=fit, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
         )
 
-        ci_fit_plotter.figure_individuals(
-            plot_image=should_plot("data"),
-            plot_noise_map=should_plot("noise_map"),
-            plot_signal_to_noise_map=should_plot("signal_to_noise_map"),
-            plot_ci_pre_cti=should_plot("ci_pre_cti"),
-            plot_ci_post_cti=should_plot("ci_post_cti"),
-            plot_residual_map=should_plot("residual_map"),
-            plot_normalized_residual_map=should_plot("normalized_residual_map"),
-            plot_chi_squared_map=should_plot("chi_squared_map"),
+        ci_fit_plotter.figures(
+            image=should_plot("data"),
+            noise_map=should_plot("noise_map"),
+            signal_to_noise_map=should_plot("signal_to_noise_map"),
+            ci_pre_cti=should_plot("ci_pre_cti"),
+            ci_post_cti=should_plot("ci_post_cti"),
+            residual_map=should_plot("residual_map"),
+            normalized_residual_map=should_plot("normalized_residual_map"),
+            chi_squared_map=should_plot("chi_squared_map"),
         )
 
         if not during_analysis:
 
             if should_plot("all_at_end_png"):
 
-                ci_fit_plotter.figure_individuals(
-                    plot_image=True,
-                    plot_noise_map=True,
-                    plot_signal_to_noise_map=True,
-                    plot_ci_pre_cti=True,
-                    plot_ci_post_cti=True,
-                    plot_residual_map=True,
-                    plot_normalized_residual_map=True,
-                    plot_chi_squared_map=True,
+                ci_fit_plotter.figures(
+                    image=True,
+                    noise_map=True,
+                    signal_to_noise_map=True,
+                    ci_pre_cti=True,
+                    ci_post_cti=True,
+                    residual_map=True,
+                    normalized_residual_map=True,
+                    chi_squared_map=True,
                 )
 
             if should_plot("all_at_end_fits"):
@@ -140,33 +138,33 @@ class Visualizer:
 
         if should_plot("subplot_fit"):
 
-            ci_fit_plotter.subplot_fit_lines(line_region=line_region)
+            ci_fit_plotter.subplot_1d_ci_line_region(line_region=line_region)
 
-        ci_fit_plotter.figure_individuals_lines(
+        ci_fit_plotter.figures_1d_ci_line_region(
             line_region=line_region,
-            plot_image=should_plot("data"),
-            plot_noise_map=should_plot("noise_map"),
-            plot_signal_to_noise_map=should_plot("signal_to_noise_map"),
-            plot_ci_pre_cti=should_plot("ci_pre_cti"),
-            plot_ci_post_cti=should_plot("ci_post_cti"),
-            plot_residual_map=should_plot("residual_map"),
-            plot_normalized_residual_map=should_plot("normalized_residual_map"),
-            plot_chi_squared_map=should_plot("chi_squared_map"),
+            image=should_plot("data"),
+            noise_map=should_plot("noise_map"),
+            signal_to_noise_map=should_plot("signal_to_noise_map"),
+            ci_pre_cti=should_plot("ci_pre_cti"),
+            ci_post_cti=should_plot("ci_post_cti"),
+            residual_map=should_plot("residual_map"),
+            normalized_residual_map=should_plot("normalized_residual_map"),
+            chi_squared_map=should_plot("chi_squared_map"),
         )
 
         if not during_analysis:
 
             if should_plot("all_at_end_png"):
-                ci_fit_plotter.figure_individuals_lines(
+                ci_fit_plotter.figures_1d_ci_line_region(
                     line_region=line_region,
-                    plot_image=True,
-                    plot_noise_map=True,
-                    plot_signal_to_noise_map=True,
-                    plot_ci_pre_cti=True,
-                    plot_ci_post_cti=True,
-                    plot_residual_map=True,
-                    plot_normalized_residual_map=True,
-                    plot_chi_squared_map=True,
+                    image=True,
+                    noise_map=True,
+                    signal_to_noise_map=True,
+                    ci_pre_cti=True,
+                    ci_post_cti=True,
+                    residual_map=True,
+                    normalized_residual_map=True,
+                    chi_squared_map=True,
                 )
 
     # def visualize_multiple_ci_fits_subplots(self, fits):
@@ -233,13 +231,13 @@ class Visualizer:
             fit=fit, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
         )
 
-        ci_fit_plotter.figure_individuals(
-            plot_image=True,
-            plot_noise_map=True,
-            plot_signal_to_noise_map=True,
-            plot_ci_pre_cti=True,
-            plot_ci_post_cti=True,
-            plot_residual_map=True,
-            plot_normalized_residual_map=True,
-            plot_chi_squared_map=True,
+        ci_fit_plotter.figures(
+            image=True,
+            noise_map=True,
+            signal_to_noise_map=True,
+            ci_pre_cti=True,
+            ci_post_cti=True,
+            residual_map=True,
+            normalized_residual_map=True,
+            chi_squared_map=True,
         )

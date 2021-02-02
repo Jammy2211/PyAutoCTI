@@ -86,7 +86,7 @@ class TestFit:
             masked_ci_imaging=masked_ci_imaging, ci_post_cti=ci_post_cti
         )
 
-        assert fits[0].figure_image.shape == (7, 1)
+        assert fits[0].figures.shape == (7, 1)
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood)
 
     def test__full_fits_from_instance_and_ci_imaging(
@@ -112,16 +112,14 @@ class TestFit:
         fits = analysis.fits_full_dataset_from_instance(instance=instance)
 
         ci_post_cti = parallel_clocker.add_cti(
-            image=ci_imaging_7x7.figure_ci_pre_cti,
-            parallel_traps=traps_x1,
-            parallel_ccd=ccd,
+            image=ci_imaging_7x7.ci_pre_cti, parallel_traps=traps_x1, parallel_ccd=ccd
         )
 
         fit = ac.ci.CIFitImaging(
             masked_ci_imaging=ci_imaging_7x7, ci_post_cti=ci_post_cti
         )
 
-        assert fits[0].figure_image.shape == (7, 7)
+        assert fits[0].figures.shape == (7, 7)
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood)
 
     def test__extracted_fits_from_instance_and_ci_imaging__include_noise_scaling(
@@ -142,7 +140,7 @@ class TestFit:
 
         noise_scaling_maps_list_of_ci_regions = [
             ac.ci.CIFrame.ones(
-                shape_2d=(7, 7), pixel_scales=1.0, ci_pattern=ci_pattern_7x7
+                shape_native=(7, 7), pixel_scales=1.0, ci_pattern=ci_pattern_7x7
             )
         ]
 
@@ -158,7 +156,8 @@ class TestFit:
         fits = analysis.fits_from_instance(instance=instance, hyper_noise_scale=True)
 
         mask = ac.ci.CIMask.unmasked(
-            shape_2d=ci_imaging_7x7.shape_2d, pixel_scales=ci_imaging_7x7.pixel_scales
+            shape_native=ci_imaging_7x7.shape_native,
+            pixel_scales=ci_imaging_7x7.pixel_scales,
         )
 
         masked_ci_imaging_7x7 = ac.ci.MaskedCIImaging(
@@ -180,7 +179,7 @@ class TestFit:
             hyper_noise_scalars=[instance.hyper_noise_scalar_of_ci_regions],
         )
 
-        assert fits[0].figure_image.shape == (7, 1)
+        assert fits[0].figures.shape == (7, 1)
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood, 1.0e-4)
 
         fit = ac.ci.CIFitImaging(
@@ -209,7 +208,7 @@ class TestFit:
 
         noise_scaling_maps_list_of_ci_regions = [
             ac.ci.CIFrame.ones(
-                shape_2d=(7, 7), pixel_scales=1.0, ci_pattern=ci_pattern_7x7
+                shape_native=(7, 7), pixel_scales=1.0, ci_pattern=ci_pattern_7x7
             )
         ]
 
@@ -227,13 +226,12 @@ class TestFit:
         )
 
         ci_post_cti = parallel_clocker.add_cti(
-            image=ci_imaging_7x7.figure_ci_pre_cti,
-            parallel_traps=traps_x1,
-            parallel_ccd=ccd,
+            image=ci_imaging_7x7.ci_pre_cti, parallel_traps=traps_x1, parallel_ccd=ccd
         )
 
         mask = ac.ci.CIMask.unmasked(
-            shape_2d=ci_imaging_7x7.shape_2d, pixel_scales=ci_imaging_7x7.pixel_scales
+            shape_native=ci_imaging_7x7.shape_native,
+            pixel_scales=ci_imaging_7x7.pixel_scales,
         )
 
         masked_ci_imaging_7x7 = ac.ci.MaskedCIImaging(
@@ -248,7 +246,7 @@ class TestFit:
             hyper_noise_scalars=[instance.hyper_noise_scalar_of_ci_regions],
         )
 
-        assert fits[0].figure_image.shape == (7, 7)
+        assert fits[0].figures.shape == (7, 7)
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood, 1.0e-4)
 
         fit = ac.ci.CIFitImaging(
@@ -265,13 +263,13 @@ class TestFit:
 
         noise_scaling_maps_list_of_ci_regions = [
             ac.ci.CIFrame.ones(
-                shape_2d=(7, 7), pixel_scales=1.0, ci_pattern=ci_pattern_7x7
+                shape_native=(7, 7), pixel_scales=1.0, ci_pattern=ci_pattern_7x7
             )
         ]
         noise_scaling_maps_list_of_parallel_trails = [
             ac.ci.CIFrame.full(
                 fill_value=2.0,
-                shape_2d=(7, 7),
+                shape_native=(7, 7),
                 pixel_scales=1.0,
                 ci_pattern=ci_pattern_7x7,
             )

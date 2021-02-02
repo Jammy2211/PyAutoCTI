@@ -20,7 +20,7 @@ class CIImaging(imaging.AbstractImaging):
     @property
     def mask(self):
         return msk.Mask2D.unmasked(
-            shape_2d=self.shape_2d, pixel_scales=self.pixel_scales
+            shape_native=self.shape_native, pixel_scales=self.pixel_scales
         )
 
     @property
@@ -99,7 +99,7 @@ class CIImaging(imaging.AbstractImaging):
                 file_path=noise_map_path, hdu=noise_map_hdu
             )
         else:
-            ci_noise_map = np.ones(ci_image.shape_2d) * noise_map_from_single_value
+            ci_noise_map = np.ones(ci_image.shape_native) * noise_map_from_single_value
 
         ci_noise_map = ci_frame.CIFrame.manual(
             array=ci_noise_map,
@@ -116,7 +116,7 @@ class CIImaging(imaging.AbstractImaging):
         else:
             if isinstance(ci_pattern, pattern.CIPatternUniform):
                 ci_pre_cti = ci_pattern.ci_pre_cti_from(
-                    shape_2d=ci_image.shape, pixel_scales=pixel_scales
+                    shape_native=ci_image.shape, pixel_scales=pixel_scales
                 )
             else:
                 raise exc.CIPatternException(
@@ -305,7 +305,7 @@ class MaskedCIImaging(imaging.AbstractMaskedImaging):
         """
 
         self.ci_imaging_full = copy.deepcopy(ci_imaging)
-        self.ci_imaging_full.figure_noise_scaling_maps = noise_scaling_maps
+        self.ci_imaging_full.subplot_noise_scaling_maps = noise_scaling_maps
         self.mask_full = copy.deepcopy(mask)
 
         if settings.parallel_columns is not None:
@@ -314,7 +314,7 @@ class MaskedCIImaging(imaging.AbstractMaskedImaging):
                 columns=settings.parallel_columns
             )
 
-            mask = self.ci_imaging_full.figure_image.parallel_calibration_mask_from_mask_and_columns(
+            mask = self.ci_imaging_full.image.parallel_calibration_mask_from_mask_and_columns(
                 mask=mask, columns=settings.parallel_columns
             )
 
@@ -332,7 +332,7 @@ class MaskedCIImaging(imaging.AbstractMaskedImaging):
                 rows=settings.serial_rows
             )
 
-            mask = self.ci_imaging_full.figure_image.serial_calibration_mask_from_mask_and_rows(
+            mask = self.ci_imaging_full.image.serial_calibration_mask_from_mask_and_rows(
                 mask=mask, rows=settings.serial_rows
             )
 
@@ -381,7 +381,7 @@ class MaskedCIImaging(imaging.AbstractMaskedImaging):
 class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
     def __init__(
         self,
-        shape_2d,
+        shape_native,
         pixel_scales,
         read_noise=None,
         add_poisson_noise=False,
@@ -407,7 +407,7 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
             noise_seed=noise_seed,
         )
 
-        self.shape_2d = shape_2d
+        self.shape_native = shape_native
         self.scans = scans
         self.pixel_scales = pixel_scales
         self.ci_seed = ci_seed
@@ -446,14 +446,39 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
         """
         if isinstance(ci_pattern, pattern.CIPatternUniform):
             ci_pre_cti = ci_pattern.ci_pre_cti_from(
-                shape_2d=self.shape_2d, pixel_scales=self.pixel_scales
+                shape_native=self.shape_native, pixel_scales=self.pixel_scales
             )
         else:
             ci_pre_cti = ci_pattern.ci_pre_cti_from(
-                shape_2d=self.shape_2d,
+                shape_native=self.shape_native,
                 ci_seed=self.ci_seed,
                 pixel_scales=self.pixel_scales,
             )
+
+        return self.from_ci_pre_cti(
+            ci_pre_cti=ci_pre_cti,
+            ci_pattern=ci_pattern,
+            clocker=clocker,
+            parallel_traps=parallel_traps,
+            parallel_ccd=parallel_ccd,
+            serial_traps=serial_traps,
+            serial_ccd=serial_ccd,
+            cosmic_ray_map=cosmic_ray_map,
+            name=name,
+        )
+
+    def from_ci_pre_cti(
+        self,
+        ci_pre_cti,
+        ci_pattern,
+        clocker,
+        parallel_traps=None,
+        parallel_ccd=None,
+        serial_traps=None,
+        serial_ccd=None,
+        cosmic_ray_map=None,
+        name=None,
+    ):
 
         if cosmic_ray_map is not None:
             ci_pre_cti += cosmic_ray_map

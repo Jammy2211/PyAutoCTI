@@ -6,7 +6,7 @@ import autofit as af
 test_path = "{}/../".format(os.path.dirname(os.path.realpath(__file__)))
 
 
-def shape_2d_from_resolution(resolution):
+def shape_native_from_resolution(resolution):
 
     if resolution in "patch":
         return (36, 36)
@@ -71,9 +71,9 @@ def simulate_ci_data_from_ci_normalization_region_and_cti_model(
     cosmic_ray_map=None,
 ):
 
-    shape = shape_2d_from_resolution(resolution=resolution)
+    shape = shape_native_from_resolution(resolution=resolution)
 
-    ci_pre_cti = pattern.ci_pre_cti_from(shape_2d=shape)
+    ci_pre_cti = pattern.ci_pre_cti_from(shape_native=shape)
 
     simulator = ac.ci.SimulatorCIImaging(read_noise=read_noise)
 
@@ -127,9 +127,9 @@ def load_test_ci_data(ci_data_type, ci_data_model, resolution, normalization):
         roe_corner=(1, 0),
         ci_pattern=ci_pattern,
         pixel_scales=0.1,
-        parallel_overscan=ac.Region((33, 36, 1, 30)),
-        serial_overscan=ac.Region((0, 33, 30, 36)),
-        serial_prescan=ac.Region((0, 36, 0, 1)),
+        parallel_overscan=ac.Region2D((33, 36, 1, 30)),
+        serial_overscan=ac.Region2D((0, 33, 30, 36)),
+        serial_prescan=ac.Region2D((0, 36, 0, 1)),
         image_path=f"{dataset_path}/image_{normalization}.fits",
         noise_map_path=f"{dataset_path}/noise_map_{normalization}.fits",
         ci_pre_cti_path=f"{dataset_path}/ci_pre_cti_{normalization}.fits",
@@ -145,9 +145,9 @@ def load_test_ci_data(ci_data_type, ci_data_model, resolution, normalization):
 #         """This class represents the quadrant geometry of an integration quadrant."""
 #         return cls.manual(
 #             corner=(0, 0),
-#             parallel_overscan=ac.Region((33, 36, 1, 30)),
-#             serial_overscan=ac.Region((0, 33, 30, 36)),
-#             serial_prescan=ac.Region((0, 36, 0, 1)),
+#             parallel_overscan=ac.Region2D((33, 36, 1, 30)),
+#             serial_overscan=ac.Region2D((0, 33, 30, 36)),
+#             serial_prescan=ac.Region2D((0, 36, 0, 1)),
 #         )
 #
 #     @classmethod
@@ -155,9 +155,9 @@ def load_test_ci_data(ci_data_type, ci_data_model, resolution, normalization):
 #         """This class represents the quadrant geometry of an integration quadrant."""
 #         return cls.manual(
 #             corner=(0, 0),
-#             parallel_overscan=ac.Region((90, 100, 10, 80)),
-#             serial_overscan=ac.Region((0, 90, 80, 100)),
-#             serial_prescan=ac.Region((0, 100, 0, 10)),
+#             parallel_overscan=ac.Region2D((90, 100, 10, 80)),
+#             serial_overscan=ac.Region2D((0, 90, 80, 100)),
+#             serial_prescan=ac.Region2D((0, 100, 0, 10)),
 #         )
 #
 #     @classmethod
@@ -165,9 +165,9 @@ def load_test_ci_data(ci_data_type, ci_data_model, resolution, normalization):
 #         """This class represents the quadrant geometry of an integration quadrant."""
 #         return cls.manual(
 #             corner=(0, 0),
-#             parallel_overscan=ac.Region((280, 300, 10, 280)),
-#             serial_overscan=ac.Region((0, 280, 280, 300)),
-#             serial_prescan=ac.Region((0, 300, 0, 10)),
+#             parallel_overscan=ac.Region2D((280, 300, 10, 280)),
+#             serial_overscan=ac.Region2D((0, 280, 280, 300)),
+#             serial_prescan=ac.Region2D((0, 300, 0, 10)),
 #         )
 #
 #     @classmethod
@@ -175,7 +175,7 @@ def load_test_ci_data(ci_data_type, ci_data_model, resolution, normalization):
 #         """This class represents the quadrant geometry of an integration quadrant."""
 #         return cls.manual(
 #             corner=(0, 0),
-#             parallel_overscan=ac.Region((580, 600, 20, 580)),
-#             serial_overscan=ac.Region((0, 580, 580, 600)),
-#             serial_prescan=ac.Region((0, 600, 20, 1)),
+#             parallel_overscan=ac.Region2D((580, 600, 20, 580)),
+#             serial_overscan=ac.Region2D((0, 580, 580, 600)),
+#             serial_prescan=ac.Region2D((0, 600, 20, 1)),
 #         )
