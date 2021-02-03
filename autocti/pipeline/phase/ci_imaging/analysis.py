@@ -2,7 +2,7 @@ from functools import partial
 
 import numpy as np
 from autocti.charge_injection import ci_fit
-from autocti.pipeline import visualizer
+from autocti.pipeline import visualizer as vis
 from autocti.pipeline.phase.dataset import analysis as analysis_dataset
 
 
@@ -17,11 +17,6 @@ class Analysis(analysis_dataset.Analysis):
             settings_cti=settings_cti,
             results=results,
         )
-
-        self.visualizers = [
-            visualizer.PhaseCIImagingVisualizer(masked_dataset=masked_ci_imaging)
-            for masked_ci_imaging in masked_ci_imagings
-        ]
 
         self.pool = pool or analysis_dataset.ConsecutivePool
 
@@ -136,11 +131,13 @@ class Analysis(analysis_dataset.Analysis):
 
         fits = self.fits_from_instance(instance=instance)
 
-        for fit, visualizer in zip(fits, self.visualizers):
+        for index in range(len(fits)):
 
-            visualizer.visualize_ci_imaging(paths=paths)
+            visualizer = vis.Visualizer(visualize_path=paths.image_path)
+
+            visualizer.visualize_ci_imaging(ci_imaging=self.masked_ci_datasets[index])
             visualizer.visualize_ci_fit(
-                paths=paths, fit=fit, during_analysis=during_analysis
+                fit=fits[index], during_analysis=during_analysis
             )
         #    visualizer.visualize_ci_fit_lines(paths=paths, fit=fit, line_region="parallel_front_edge", during_analysis=during_analysis)
 
@@ -160,7 +157,7 @@ def pipe_cti(ci_data_masked, instance, clocker, hyper_noise_scalars):
         serial_traps = None
 
     ci_post_cti = clocker.add_cti(
-        image=ci_data_masked.figure_ci_pre_cti,
+        image=ci_data_masked.ci_pre_cti,
         parallel_traps=parallel_traps,
         parallel_ccd=instance.parallel_ccd,
         serial_traps=serial_traps,

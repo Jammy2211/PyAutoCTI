@@ -71,7 +71,7 @@ class Visualizer:
             imaging=ci_imaging, mat_plot_1d=mat_plot_1d, include_2d=self.include_2d
         )
 
-        if should_plot("plot_subplot_dataset"):
+        if should_plot("subplot_dataset"):
 
             ci_imaging_plotter.subplot_1d_ci_line_region(line_region=line_region)
 

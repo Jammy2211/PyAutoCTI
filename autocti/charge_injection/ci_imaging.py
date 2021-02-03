@@ -305,7 +305,7 @@ class MaskedCIImaging(imaging.AbstractMaskedImaging):
         """
 
         self.ci_imaging_full = copy.deepcopy(ci_imaging)
-        self.ci_imaging_full.subplot_noise_scaling_maps = noise_scaling_maps
+        self.ci_imaging_full.noise_scaling_maps = noise_scaling_maps
         self.mask_full = copy.deepcopy(mask)
 
         if settings.parallel_columns is not None:

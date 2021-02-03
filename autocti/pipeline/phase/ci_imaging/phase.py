@@ -89,8 +89,8 @@ class PhaseCIImaging(PhaseDataset):
         """
 
         mask = ci_mask.CIMask.unmasked(
-            shape_native=datasets[0].figures.shape_native,
-            pixel_scales=datasets[0].figures.shape_native,
+            shape_native=datasets[0].image.shape_native,
+            pixel_scales=datasets[0].image.shape_native,
         )
 
         masks = [

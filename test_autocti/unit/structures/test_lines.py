@@ -2,12 +2,13 @@ import numpy as np
 import pytest
 import os
 
-import autoarray as aa
+import autocti as ac
 
 
 class TestLine:
     def test___init_etc(self):
-        line = aa.Line1D(
+
+        line = ac.Line(
             line=[1.23, 4.56, 7.89],
             name=None,
             location=[3, 2],
@@ -19,7 +20,7 @@ class TestLine:
         assert line.length == 3
         assert line.flux == 7.89
 
-        line = aa.Line1D(
+        line = ac.Line(
             line=None, name=None, location=None, date=None, background=None, flux=None
         )
 
@@ -32,12 +33,13 @@ class TestLine:
 
 class TestLineCollection:
     def test__collection__init_etc(self):
-        line_1 = aa.Line1D(line=[1, 2, 3], name=100)
-        line_2 = aa.Line1D(line=[4, 5, 6], name=100)
-        line_3 = aa.Line1D(line=[7, 8, 9], name=200)
-        line_4 = aa.Line1D(line=[0, 0, 0], name=200)
 
-        lines = aa.LineCollection(lines=[line_1, line_2, line_3, line_4])
+        line_1 = ac.Line(line=[1, 2, 3], name=100)
+        line_2 = ac.Line(line=[4, 5, 6], name=100)
+        line_3 = ac.Line(line=[7, 8, 9], name=200)
+        line_4 = ac.Line(line=[0, 0, 0], name=200)
+
+        lines = ac.LineCollection(lines=[line_1, line_2, line_3, line_4])
 
         assert lines.n_lines == 4
 
@@ -51,12 +53,13 @@ class TestLineCollection:
         assert all(lines.dates == [None, None, None, None])
 
     def test__collection__append(self):
-        line_1 = aa.Line1D(line=[1, 2, 3], name=100)
-        line_2 = aa.Line1D(line=[4, 5, 6], name=100)
-        line_3 = aa.Line1D(line=[7, 8, 9], name=200)
-        line_4 = aa.Line1D(line=[0, 0, 0], name=200)
 
-        lines = aa.LineCollection(lines=[line_1, line_2])
+        line_1 = ac.Line(line=[1, 2, 3], name=100)
+        line_2 = ac.Line(line=[4, 5, 6], name=100)
+        line_3 = ac.Line(line=[7, 8, 9], name=200)
+        line_4 = ac.Line(line=[0, 0, 0], name=200)
+
+        lines = ac.LineCollection(lines=[line_1, line_2])
 
         lines.append([line_3, line_4])
 
@@ -72,12 +75,13 @@ class TestLineCollection:
         assert all(lines.dates == [None, None, None, None])
 
     def test__collection__append_from_None(self):
-        line_1 = aa.Line1D(line=[1, 2, 3], name=100)
-        line_2 = aa.Line1D(line=[4, 5, 6], name=100)
-        line_3 = aa.Line1D(line=[7, 8, 9], name=200)
-        line_4 = aa.Line1D(line=[0, 0, 0], name=200)
 
-        lines = aa.LineCollection()
+        line_1 = ac.Line(line=[1, 2, 3], name=100)
+        line_2 = ac.Line(line=[4, 5, 6], name=100)
+        line_3 = ac.Line(line=[7, 8, 9], name=200)
+        line_4 = ac.Line(line=[0, 0, 0], name=200)
+
+        lines = ac.LineCollection()
 
         assert lines.lines is None
 
@@ -96,13 +100,14 @@ class TestLineCollection:
         assert all(lines.dates == [None, None, None, None])
 
     def test__collection__save_load(self):
-        line_1 = aa.Line1D(line=[1, 2, 3], name=100)
-        line_2 = aa.Line1D(line=[4, 5, 6], name=100)
-        line_3 = aa.Line1D(line=[7, 8, 9], name=200)
-        line_4 = aa.Line1D(line=[0, 0, 0], name=200)
 
-        lines_1 = aa.LineCollection(lines=[line_1, line_2])
-        lines_2 = aa.LineCollection(lines=[line_3, line_4])
+        line_1 = ac.Line(line=[1, 2, 3], name=100)
+        line_2 = ac.Line(line=[4, 5, 6], name=100)
+        line_3 = ac.Line(line=[7, 8, 9], name=200)
+        line_4 = ac.Line(line=[0, 0, 0], name=200)
+
+        lines_1 = ac.LineCollection(lines=[line_1, line_2])
+        lines_2 = ac.LineCollection(lines=[line_3, line_4])
 
         # Path to this file
         path = os.path.dirname(os.path.realpath(__file__))
@@ -130,17 +135,18 @@ class TestLineCollection:
         os.remove(filename + ".pickle")
 
     def test__find_consistent_lines(self):
-        line_1 = aa.Line1D(line=[1, 2, 3], location=[0, 0], name=100)
-        line_2 = aa.Line1D(line=[4, 5, 6], location=[1, 1], name=100)
-        line_3 = aa.Line1D(line=[7, 8, 9], location=[2, 2], name=100)
-        line_4 = aa.Line1D(line=[0, 0, 0], location=[0, 0], name=200)
-        line_5 = aa.Line1D(line=[3, 2, 1], location=[1, 1], name=200)
-        line_6 = aa.Line1D(line=[3, 1, 0], location=[3, 4], name=200)
-        line_7 = aa.Line1D(line=[2, 1, 0], location=[0, 0], name=300)
-        line_8 = aa.Line1D(line=[1, 1, 0], location=[1, 2], name=300)
-        line_9 = aa.Line1D(line=[1, 0, 0], location=[4, 4], name=300)
 
-        lines = aa.LineCollection(
+        line_1 = ac.Line(line=[1, 2, 3], location=[0, 0], name=100)
+        line_2 = ac.Line(line=[4, 5, 6], location=[1, 1], name=100)
+        line_3 = ac.Line(line=[7, 8, 9], location=[2, 2], name=100)
+        line_4 = ac.Line(line=[0, 0, 0], location=[0, 0], name=200)
+        line_5 = ac.Line(line=[3, 2, 1], location=[1, 1], name=200)
+        line_6 = ac.Line(line=[3, 1, 0], location=[3, 4], name=200)
+        line_7 = ac.Line(line=[2, 1, 0], location=[0, 0], name=300)
+        line_8 = ac.Line(line=[1, 1, 0], location=[1, 2], name=300)
+        line_9 = ac.Line(line=[1, 0, 0], location=[4, 4], name=300)
+
+        lines = ac.LineCollection(
             lines=[
                 line_1,
                 line_2,
@@ -154,56 +160,57 @@ class TestLineCollection:
             ]
         )
 
-        # aa.Lines present in every image
+        # ac.Lines present in every image
         consistent_lines = lines.find_consistent_lines(fraction_present=1)
 
         assert consistent_lines == pytest.approx([0, 3, 6])
         assert lines.names[consistent_lines] == pytest.approx([100, 200, 300])
 
-        # aa.Lines present in at least 2/3 images
+        # ac.Lines present in at least 2/3 images
         consistent_lines = lines.find_consistent_lines(fraction_present=2 / 3)
 
         assert consistent_lines == pytest.approx([0, 1, 3, 4, 6])
 
-        # aa.Lines present in at least 1/2 images
+        # ac.Lines present in at least 1/2 images
         consistent_lines = lines.find_consistent_lines(fraction_present=0.5)
 
         assert consistent_lines == pytest.approx([0, 1, 3, 4, 6])
 
-        # aa.Lines present in at least 1/3 images (in this case, all lines)
+        # ac.Lines present in at least 1/3 images (in this case, all lines)
         consistent_lines = lines.find_consistent_lines(fraction_present=1 / 3)
 
         assert consistent_lines == pytest.approx([0, 1, 2, 3, 4, 5, 6, 7, 8])
 
     def test__generate_stacked_lines_from_bins(self):
+
         # Stack lines in 3 row bins and 2 flux bins
         # Different dates but only 1 bin so ignored
         # All same backgrounds so ignored
 
         # 1. Low row, low flux
-        line_1 = aa.Line1D(line=[3, 2.5, 2], location=[0, 0], date=1, background=0)
-        line_2 = aa.Line1D(line=[2.5, 2, 1.5], location=[1, 0], date=2, background=0)
-        line_3 = aa.Line1D(line=[2, 1.5, 1], location=[2, 0], date=3, background=0)
+        line_1 = ac.Line(line=[3, 2.5, 2], location=[0, 0], date=1, background=0)
+        line_2 = ac.Line(line=[2.5, 2, 1.5], location=[1, 0], date=2, background=0)
+        line_3 = ac.Line(line=[2, 1.5, 1], location=[2, 0], date=3, background=0)
         # 2. Low row, high flux
-        line_4 = aa.Line1D(line=[10, 8, 6], location=[3, 0], date=4, background=0)
-        line_5 = aa.Line1D(line=[9, 7, 5], location=[4, 0], date=5, background=0)
+        line_4 = ac.Line(line=[10, 8, 6], location=[3, 0], date=4, background=0)
+        line_5 = ac.Line(line=[9, 7, 5], location=[4, 0], date=5, background=0)
         # 3. Mid row, low flux
-        line_6 = aa.Line1D(line=[3, 2, 1], location=[10, 0], date=6, background=0)
-        line_7 = aa.Line1D(line=[2.5, 1.5, 0.5], location=[11, 0], date=7, background=0)
-        line_8 = aa.Line1D(line=[2, 1, 0], location=[12, 0], date=8, background=0)
+        line_6 = ac.Line(line=[3, 2, 1], location=[10, 0], date=6, background=0)
+        line_7 = ac.Line(line=[2.5, 1.5, 0.5], location=[11, 0], date=7, background=0)
+        line_8 = ac.Line(line=[2, 1, 0], location=[12, 0], date=8, background=0)
         # 4. Mid row, high flux
-        line_9 = aa.Line1D(line=[10, 9, 8], location=[10, 0], date=9, background=0)
-        line_10 = aa.Line1D(line=[8, 8, 8], location=[11, 0], date=10, background=0)
+        line_9 = ac.Line(line=[10, 9, 8], location=[10, 0], date=9, background=0)
+        line_10 = ac.Line(line=[8, 8, 8], location=[11, 0], date=10, background=0)
         # 5. High row, low flux
-        line_11 = aa.Line1D(line=[3, 2, 1], location=[20, 0], date=11, background=0)
+        line_11 = ac.Line(line=[3, 2, 1], location=[20, 0], date=11, background=0)
         # 6. High row, high flux: no lines, empty bin
 
         # Below minimum flux, discarded
-        line_12 = aa.Line1D(line=[0.5, 0, 0], location=[21, 0], date=12, background=0)
+        line_12 = ac.Line(line=[0.5, 0, 0], location=[21, 0], date=12, background=0)
         # Above maximum flux, discarded
-        line_13 = aa.Line1D(line=[11, 10, 9], location=[0, 0], date=13, background=0)
+        line_13 = ac.Line(line=[11, 10, 9], location=[0, 0], date=13, background=0)
 
-        lines = aa.LineCollection(
+        lines = ac.LineCollection(
             lines=[
                 line_1,
                 line_2,
@@ -304,29 +311,29 @@ class TestLineCollection:
         # All same backgrounds so ignored
 
         # 1. Low row, low flux
-        line_1 = aa.Line1D(line=[3, 2.5, 2], location=[0, 0], date=1, background=0)
-        line_2 = aa.Line1D(line=[2.5, 2, 1.5], location=[1, 0], date=2, background=0)
-        line_3 = aa.Line1D(line=[2, 1.5, 1], location=[2, 0], date=3, background=0)
+        line_1 = ac.Line(line=[3, 2.5, 2], location=[0, 0], date=1, background=0)
+        line_2 = ac.Line(line=[2.5, 2, 1.5], location=[1, 0], date=2, background=0)
+        line_3 = ac.Line(line=[2, 1.5, 1], location=[2, 0], date=3, background=0)
         # 2. Low row, high flux
-        line_4 = aa.Line1D(line=[10, 8, 6], location=[3, 0], date=4, background=0)
-        line_5 = aa.Line1D(line=[9, 7, 5], location=[4, 0], date=5, background=0)
+        line_4 = ac.Line(line=[10, 8, 6], location=[3, 0], date=4, background=0)
+        line_5 = ac.Line(line=[9, 7, 5], location=[4, 0], date=5, background=0)
         # 3. Mid row, low flux
-        line_6 = aa.Line1D(line=[3, 2, 1], location=[10, 0], date=6, background=0)
-        line_7 = aa.Line1D(line=[2.5, 1.5, 0.5], location=[11, 0], date=7, background=0)
-        line_8 = aa.Line1D(line=[2, 1, 0], location=[12, 0], date=8, background=0)
+        line_6 = ac.Line(line=[3, 2, 1], location=[10, 0], date=6, background=0)
+        line_7 = ac.Line(line=[2.5, 1.5, 0.5], location=[11, 0], date=7, background=0)
+        line_8 = ac.Line(line=[2, 1, 0], location=[12, 0], date=8, background=0)
         # 4. Mid row, high flux
-        line_9 = aa.Line1D(line=[10, 9, 8], location=[10, 0], date=9, background=0)
-        line_10 = aa.Line1D(line=[8, 8, 8], location=[11, 0], date=10, background=0)
+        line_9 = ac.Line(line=[10, 9, 8], location=[10, 0], date=9, background=0)
+        line_10 = ac.Line(line=[8, 8, 8], location=[11, 0], date=10, background=0)
         # 5. High row, low flux
-        line_11 = aa.Line1D(line=[3, 2, 1], location=[20, 0], date=11, background=0)
+        line_11 = ac.Line(line=[3, 2, 1], location=[20, 0], date=11, background=0)
         # 6. High row, high flux: no lines, empty bin
 
         # Below minimum flux, discarded
-        line_12 = aa.Line1D(line=[0.5, 0, 0], location=[21, 0], date=12, background=0)
+        line_12 = ac.Line(line=[0.5, 0, 0], location=[21, 0], date=12, background=0)
         # Above maximum flux, discarded
-        line_13 = aa.Line1D(line=[11, 10, 9], location=[0, 0], date=13, background=0)
+        line_13 = ac.Line(line=[11, 10, 9], location=[0, 0], date=13, background=0)
 
-        lines = aa.LineCollection(
+        lines = ac.LineCollection(
             lines=[
                 line_1,
                 line_2,

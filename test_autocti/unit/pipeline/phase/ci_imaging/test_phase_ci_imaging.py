@@ -27,10 +27,9 @@ class TestMakeAnalysis:
             datasets=[ci_imaging_7x7], clocker=None
         )
 
-        assert (analysis.masked_ci_datasets[0].figures == np.ones(shape=(7, 7))).all()
+        assert (analysis.masked_ci_datasets[0].image == np.ones(shape=(7, 7))).all()
         assert (
-            analysis.masked_ci_datasets[0].figure_noise_map
-            == 2.0 * np.ones(shape=(7, 7))
+            analysis.masked_ci_datasets[0].noise_map == 2.0 * np.ones(shape=(7, 7))
         ).all()
         assert (
             analysis.masked_ci_datasets[0].mask
@@ -50,10 +49,9 @@ class TestMakeAnalysis:
             datasets=[ci_imaging_7x7], clocker=None
         )
 
-        assert (analysis.masked_ci_datasets[0].figures == np.ones(shape=(7, 1))).all()
+        assert (analysis.masked_ci_datasets[0].image == np.ones(shape=(7, 1))).all()
         assert (
-            analysis.masked_ci_datasets[0].figure_noise_map
-            == 2.0 * np.ones(shape=(7, 1))
+            analysis.masked_ci_datasets[0].noise_map == 2.0 * np.ones(shape=(7, 1))
         ).all()
         assert (
             analysis.masked_ci_datasets[0].mask
@@ -73,10 +71,9 @@ class TestMakeAnalysis:
             datasets=[ci_imaging_7x7], clocker=None
         )
 
-        assert (analysis.masked_ci_datasets[0].figures == np.ones(shape=(1, 7))).all()
+        assert (analysis.masked_ci_datasets[0].image == np.ones(shape=(1, 7))).all()
         assert (
-            analysis.masked_ci_datasets[0].figure_noise_map
-            == 2.0 * np.ones(shape=(1, 7))
+            analysis.masked_ci_datasets[0].noise_map == 2.0 * np.ones(shape=(1, 7))
         ).all()
         assert (
             analysis.masked_ci_datasets[0].mask
@@ -166,15 +163,14 @@ class TestMakeAnalysis:
             ),
         )
 
-        assert len(analysis.masked_ci_imagings[0].subplot_noise_scaling_maps) == 2
+        assert len(analysis.masked_ci_imagings[0].noise_scaling_maps) == 2
 
         assert (
-            analysis.masked_ci_imagings[0].subplot_noise_scaling_maps[0]
-            == np.ones((7, 7))
+            analysis.masked_ci_imagings[0].noise_scaling_maps[0] == np.ones((7, 7))
         ).all()
 
         assert (
-            analysis.masked_ci_imagings[0].subplot_noise_scaling_maps[1]
+            analysis.masked_ci_imagings[0].noise_scaling_maps[1]
             == 2.0 * np.ones((7, 7))
         ).all()
 
@@ -198,19 +194,19 @@ class TestMakeAnalysis:
             ),
         )
 
-        assert len(analysis.masked_ci_imagings[0].subplot_noise_scaling_maps) == 3
+        assert len(analysis.masked_ci_imagings[0].noise_scaling_maps) == 3
 
         assert (
-            analysis.masked_ci_imagings[0].subplot_noise_scaling_maps[0]
+            analysis.masked_ci_imagings[0].noise_scaling_maps[0]
             == 2.0 * np.ones((7, 7))
         ).all()
 
         assert (
-            analysis.masked_ci_imagings[0].subplot_noise_scaling_maps[1]
+            analysis.masked_ci_imagings[0].noise_scaling_maps[1]
             == 3.0 * np.ones((7, 7))
         ).all()
 
         assert (
-            analysis.masked_ci_imagings[0].subplot_noise_scaling_maps[2]
+            analysis.masked_ci_imagings[0].noise_scaling_maps[2]
             == 4.0 * np.ones((7, 7))
         ).all()

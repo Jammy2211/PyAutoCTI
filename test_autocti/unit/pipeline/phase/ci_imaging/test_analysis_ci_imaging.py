@@ -86,7 +86,7 @@ class TestFit:
             masked_ci_imaging=masked_ci_imaging, ci_post_cti=ci_post_cti
         )
 
-        assert fits[0].figures.shape == (7, 1)
+        assert fits[0].image.shape == (7, 1)
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood)
 
     def test__full_fits_from_instance_and_ci_imaging(
@@ -119,7 +119,7 @@ class TestFit:
             masked_ci_imaging=ci_imaging_7x7, ci_post_cti=ci_post_cti
         )
 
-        assert fits[0].figures.shape == (7, 7)
+        assert fits[0].image.shape == (7, 7)
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood)
 
     def test__extracted_fits_from_instance_and_ci_imaging__include_noise_scaling(
@@ -179,7 +179,7 @@ class TestFit:
             hyper_noise_scalars=[instance.hyper_noise_scalar_of_ci_regions],
         )
 
-        assert fits[0].figures.shape == (7, 1)
+        assert fits[0].image.shape == (7, 1)
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood, 1.0e-4)
 
         fit = ac.ci.CIFitImaging(
@@ -246,7 +246,7 @@ class TestFit:
             hyper_noise_scalars=[instance.hyper_noise_scalar_of_ci_regions],
         )
 
-        assert fits[0].figures.shape == (7, 7)
+        assert fits[0].image.shape == (7, 7)
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood, 1.0e-4)
 
         fit = ac.ci.CIFitImaging(
