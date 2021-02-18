@@ -7,6 +7,8 @@ from autocti.plot import ci_imaging_plotters, ci_fit_plotters
 
 
 def setting(section, name):
+    print(section)
+    print(name)
     return conf.instance["visualize"]["plots"][section][name]
 
 

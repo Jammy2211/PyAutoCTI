@@ -3,26 +3,18 @@ import shutil
 from os import path
 
 import pytest
-import autofit as af
 from autocti.pipeline import visualizer as vis
 from autoconf import conf
 
 directory = path.dirname(path.realpath(__file__))
 
-
 @pytest.fixture(name="plot_path")
 def make_visualizer_plotter_setup():
     return path.join("{}".format(directory), "files", "plot", "visualizer")
 
-
-@pytest.fixture()
-def set_config_path(plot_path):
-
-    conf.instance.push(
-        new_path=path.join(directory, "pipeline", "config"),
-        output_path=path.join(plot_path),
-    )
-
+@pytest.fixture(autouse=True)
+def push_config(plot_path):
+    conf.instance.push(path.join(directory, "config"), output_path=plot_path)
 
 class TestVisualizer:
     def test__visualizes_imaging_using_configs(
