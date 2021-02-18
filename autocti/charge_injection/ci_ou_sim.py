@@ -1,12 +1,11 @@
 from autoarray.instruments import euclid
-from autoarray.util import frame_util
+from autoarray.structures.frames import frame_util
 
 from autocti.util.clocker import Clocker
 from autocti.util import ccd
 from autocti.util import traps
 
-from autocti.charge_injection import ci_frame, ci_pattern as pattern
-from autocti.charge_injection import ci_imaging
+from autocti.charge_injection import ci_pattern as pattern
 
 """
 Note on the rotations of frames:

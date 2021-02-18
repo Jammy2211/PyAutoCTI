@@ -184,7 +184,7 @@ class TestAPI:
 
         arr.output_to_fits(file_path=path.join(output_data_dir, "array.fits"))
 
-        array_from_out = ac.util.array.numpy_array_2d_from_fits(
+        array_from_out = ac.util.array_2d.numpy_array_2d_from_fits(
             file_path=path.join(output_data_dir, "array.fits"), hdu=0
         )
 

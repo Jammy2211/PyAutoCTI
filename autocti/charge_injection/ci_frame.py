@@ -2,11 +2,13 @@ from copy import deepcopy
 
 import numpy as np
 from autoarray.structures.arrays import abstract_array
+from autoarray.structures.arrays.two_d import array_2d_util
 from autocti.charge_injection import ci_mask
+from autocti.charge_injection import ci_pattern as pattern
 from autocti.mask.mask import Mask2D
-from autoarray.structures.frames import abstract_frame
+from autoarray.structures.frames import abstract_frame, frame_util
 from autoarray.instruments import euclid
-from autoarray.util import array_util, frame_util, geometry_util
+from autoarray.geometry import geometry_util
 
 
 class AbstractCIFrame(abstract_frame.AbstractFrame2D):
@@ -1539,7 +1541,7 @@ class CIFrame(AbstractCIFrame):
 
         pixel_scales = geometry_util.convert_pixel_scales_2d(pixel_scales=pixel_scales)
 
-        array = array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
+        array = array_2d_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
 
         return CIFrame.manual(
             array=array,
@@ -1564,7 +1566,7 @@ class CIFrame(AbstractCIFrame):
 
 class CIFrameEuclid(CIFrame):
     @classmethod
-    def from_fits_header(cls, array, ext_header, ci_pattern):
+    def from_fits_header(cls, array, ext_header):
         """
         Use an input array of a Euclid quadrant and its corresponding .fits file header to rotate the quadrant to
         the correct orientation for arCTIc clocking.
@@ -1583,6 +1585,25 @@ class CIFrameEuclid(CIFrame):
         serial_prescan_size = ext_header.get("PRESCANX", default=None)
         serial_size = ext_header.get("NAXIS1", default=None)
         parallel_size = ext_header.get("NAXIS2", default=None)
+
+        injection_on = ext_header["INJON"]
+        injection_off = ext_header["INJOFF"]
+        injection_total = ext_header["INJTOTAL"]
+
+        ci_regions = pattern.ci_regions_from(
+            injection_on=injection_on,
+            injection_off=injection_off,
+            injection_total=injection_total,
+            serial_prescan_size=serial_prescan_size,
+            serial_overscan_size=serial_overscan_size,
+            serial_size=serial_size
+        )
+
+        normalization = ext_header["INJNORM"]
+
+        ci_pattern = pattern.CIPatternUniform(
+            normalization=normalization, regions=ci_regions
+        )
 
         return cls.from_ccd_and_quadrant_id(
             array=array,

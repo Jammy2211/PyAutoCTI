@@ -30,6 +30,7 @@ class CIFitImaging(fit.FitImaging):
         self.hyper_noise_scalars = hyper_noise_scalars
 
         if hyper_noise_scalars is not None and len(hyper_noise_scalars) > 0:
+
             self.noise_scaling_maps = masked_ci_imaging.noise_scaling_maps
 
             noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(

@@ -38,7 +38,7 @@ class TestVisualizer:
 
         visualizer.visualize_ci_imaging(ci_imaging=masked_ci_imaging_7x7)
 
-        plot_path = path.join(plot_path, "ci_imaging")
+        plot_path = path.join(plot_path, "ci_imaging_0")
 
         assert path.join(plot_path, "subplot_ci_imaging.png") in plot_patch.paths
         assert path.join(plot_path, "image.png") in plot_patch.paths
@@ -60,7 +60,7 @@ class TestVisualizer:
             ci_imaging=masked_ci_imaging_7x7, line_region="parallel_front_edge"
         )
 
-        plot_path = path.join(plot_path, "ci_imaging")
+        plot_path = path.join(plot_path, "ci_imaging_0")
 
         assert (
             path.join(plot_path, "subplot_1d_ci_parallel_front_edge.png")
@@ -91,7 +91,7 @@ class TestVisualizer:
 
         visualizer.visualize_ci_fit(fit=ci_fit_7x7, during_analysis=True)
 
-        plot_path = path.join(plot_path, "fit_ci_imaging")
+        plot_path = path.join(plot_path, "fit_ci_imaging_0")
 
         assert path.join(plot_path, "subplot_ci_fit.png") in plot_patch.paths
         assert path.join(plot_path, "image.png") in plot_patch.paths
@@ -130,7 +130,7 @@ class TestVisualizer:
             fit=ci_fit_7x7, line_region="parallel_front_edge", during_analysis=True
         )
 
-        plot_path = path.join(plot_path, "fit_ci_imaging")
+        plot_path = path.join(plot_path, "fit_ci_imaging_0")
 
         assert (
             path.join(plot_path, "subplot_1d_ci_fit_parallel_front_edge.png")

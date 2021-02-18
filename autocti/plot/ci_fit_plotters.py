@@ -111,6 +111,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
+                plot_axis_type="linear",
                 auto_labels=mp.AutoLabels(
                     title=f"Image Line {line_region}", filename=f"image_{line_region}"
                 ),
@@ -124,6 +125,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
+                plot_axis_type="linear",
                 auto_labels=mp.AutoLabels(
                     title=f"Noise-Map Line {line_region}",
                     filename=f"noise_map_{line_region}",
@@ -140,6 +142,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
+                plot_axis_type="linear",
                 auto_labels=mp.AutoLabels(
                     title=f"Signal-To-Noise Map Line {line_region}",
                     filename=f"signal_to_noise_map_{line_region}",
@@ -156,6 +159,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
+                plot_axis_type="linear",
                 auto_labels=mp.AutoLabels(
                     title=f"CI Pre CTI Line {line_region}",
                     filename=f"ci_pre_cti_{line_region}",
@@ -172,6 +176,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
+                plot_axis_type="linear",
                 auto_labels=mp.AutoLabels(
                     title=f"CI Post CTI Line {line_region}",
                     filename=f"ci_post_cti_{line_region}",
@@ -188,6 +193,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
+                plot_axis_type="linear",
                 auto_labels=mp.AutoLabels(
                     title=f"Resdial-Map Line {line_region}",
                     filename=f"residual_map_{line_region}",
@@ -204,6 +210,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
+                plot_axis_type="linear",
                 auto_labels=mp.AutoLabels(
                     title=f"Normalized Residual Map Line {line_region}",
                     filename=f"normalized_residual_map_{line_region}",
@@ -220,6 +227,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
+                plot_axis_type="linear",
                 auto_labels=mp.AutoLabels(
                     title=f"Chi-Squared Map Line {line_region}",
                     filename=f"chi_squared_map_{line_region}",

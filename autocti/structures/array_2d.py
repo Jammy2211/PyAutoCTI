@@ -1,16 +1,17 @@
 import logging
 
 import numpy as np
-from autoarray.structures.arrays import abstract_array
-from autoarray.structures import arrays
+from autoarray.structures.arrays.two_d import abstract_array_2d
+from autoarray.structures.arrays.two_d import array_2d
+from autoarray.structures.arrays.two_d import array_2d_util
 from autoarray import exc
-from autoarray.util import array_util
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 
-class AbstractArray2D(abstract_array.AbstractArray2D):
+class AbstractArray2D(abstract_array_2d.AbstractArray2D):
+
     def __new__(cls, array, mask, *args, **kwargs):
         """An array of values, which are paired to a uniform 2D mask of pixels and sub-pixels. Each entry
         on the array corresponds to a value at the centre of a sub-pixel in an unmasked pixel.
@@ -180,7 +181,7 @@ class AbstractArray2D(abstract_array.AbstractArray2D):
         """
         if len(array.shape) != 2:
             raise exc.ArrayException(
-                "An array input into the arrays.Array2D.__new__ method has store_slim = `True` but"
+                "An array input into the array_2d.Array2D.__new__ method has store_slim = `True` but"
                 "the input shape of the array is not 1."
             )
 
@@ -215,7 +216,7 @@ class Array2D(AbstractArray2D):
         origin : (float, float)
             The (y,x) scaled units origin of the mask's coordinate system.
         """
-        arr = arrays.Array2D.manual_native(
+        arr = array_2d.Array2D.manual_native(
             array=array, pixel_scales=pixel_scales, origin=origin, store_slim=False
         )
         return Array2D(array=arr, mask=arr.mask)
@@ -239,8 +240,8 @@ class Array2D(AbstractArray2D):
             If True, the array is stored in 1D as an ndarray of shape [total_unmasked_pixels]. If False, it is
             stored in 2D as an ndarray of shape [total_y_pixels, total_x_pixels].
         """
-        array = abstract_array.convert_manual_array(
-            array=array, mask=mask, store_slim=False
+        array = abstract_array_2d.convert_manual_array_2d(
+            array_2d=array, mask_2d=mask, store_slim=False
         )
         return Array2D(array=array, mask=mask, exposure_info=exposure_info)
 
@@ -328,7 +329,7 @@ class Array2D(AbstractArray2D):
         origin : (float, float)
             The (y,x) scaled units origin of the mask's coordinate system.
         """
-        array_2d = array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
+        array_2d = array_2d_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
         return cls.manual_native(
             array=array_2d, pixel_scales=pixel_scales, origin=origin
         )

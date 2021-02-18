@@ -5,11 +5,12 @@ from autoconf import conf
 from autocti.charge_injection import ci_frame, ci_pattern as pattern
 from autoarray.dataset import preprocess, imaging
 from autocti.mask import mask as msk
-from autoarray.util import array_util
+from autoarray.structures.arrays.two_d import array_2d_util
 from autocti import exc
 
 
 class CIImaging(imaging.AbstractImaging):
+
     def __init__(self, image, noise_map, ci_pre_cti, cosmic_ray_map=None, name=None):
 
         super().__init__(image=image, noise_map=noise_map, name=name)
@@ -95,7 +96,7 @@ class CIImaging(imaging.AbstractImaging):
         )
 
         if noise_map_path is not None:
-            ci_noise_map = array_util.numpy_array_2d_from_fits(
+            ci_noise_map = array_2d_util.numpy_array_2d_from_fits(
                 file_path=noise_map_path, hdu=noise_map_hdu
             )
         else:
@@ -110,7 +111,7 @@ class CIImaging(imaging.AbstractImaging):
         )
 
         if ci_pre_cti_path is not None:
-            ci_pre_cti = array_util.numpy_array_2d_from_fits(
+            ci_pre_cti = array_2d_util.numpy_array_2d_from_fits(
                 file_path=ci_pre_cti_path, hdu=ci_pre_cti_hdu
             )
         else:
@@ -161,22 +162,22 @@ class CIImaging(imaging.AbstractImaging):
         overwrite=False,
     ):
 
-        array_util.numpy_array_2d_to_fits(
+        array_2d_util.numpy_array_2d_to_fits(
             array_2d=self.image, file_path=image_path, overwrite=overwrite
         )
 
         if self.noise_map is not None and noise_map_path is not None:
-            array_util.numpy_array_2d_to_fits(
+            array_2d_util.numpy_array_2d_to_fits(
                 array_2d=self.noise_map, file_path=noise_map_path, overwrite=overwrite
             )
 
         if self.ci_pre_cti is not None and ci_pre_cti_path is not None:
-            array_util.numpy_array_2d_to_fits(
+            array_2d_util.numpy_array_2d_to_fits(
                 array_2d=self.ci_pre_cti, file_path=ci_pre_cti_path, overwrite=overwrite
             )
 
         if self.cosmic_ray_map is not None and cosmic_ray_map_path is not None:
-            array_util.numpy_array_2d_to_fits(
+            array_2d_util.numpy_array_2d_to_fits(
                 array_2d=self.cosmic_ray_map,
                 file_path=cosmic_ray_map_path,
                 overwrite=overwrite,
@@ -270,6 +271,7 @@ class SettingsMaskedCIImaging(imaging.AbstractSettingsMaskedImaging):
 
 
 class MaskedCIImaging(imaging.AbstractMaskedImaging):
+
     def __init__(
         self,
         ci_imaging,
@@ -490,6 +492,23 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
             serial_traps=serial_traps,
             serial_ccd=serial_ccd,
         )
+
+        return self.from_ci_post_cti(
+            ci_post_cti=ci_post_cti,
+            ci_pre_cti=ci_pre_cti,
+            ci_pattern=ci_pattern,
+            cosmic_ray_map=cosmic_ray_map,
+            name=name,
+        )
+
+    def from_ci_post_cti(
+            self,
+            ci_post_cti,
+            ci_pre_cti,
+            ci_pattern,
+            cosmic_ray_map=None,
+            name=None,
+    ):
 
         if self.read_noise is not None:
             ci_image = preprocess.data_with_gaussian_noise_added(

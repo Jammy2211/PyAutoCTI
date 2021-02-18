@@ -2,8 +2,8 @@ from autoconf import conf
 from autoarray.mask import mask_2d
 from autoarray import exc
 from autoarray.structures import region as reg
-from autoarray.util import array_util
-from autoarray.util import geometry_util
+from autoarray.structures.arrays.two_d import array_2d_util
+from autoarray.geometry import geometry_util
 
 import numpy as np
 
@@ -151,7 +151,7 @@ class Mask2D(mask_2d.AbstractMask2D):
 
         Parameters
         ----------
-        cosmic_ray_map : arrays.Array2D
+        cosmic_ray_map : array_2d.Array2D
             2D arrays flagging where cosmic rays on the image.
         cosmic_ray_parallel_buffer : int
             The number of pixels from each ray pixels are masked in the parallel direction.
@@ -210,7 +210,7 @@ class Mask2D(mask_2d.AbstractMask2D):
                 pixel_scales = (float(pixel_scales), float(pixel_scales))
 
         mask = cls.manual(
-            mask=array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu),
+            mask=array_2d_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu),
             pixel_scales=pixel_scales,
             origin=origin,
         )

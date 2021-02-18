@@ -10,7 +10,7 @@ from copy import deepcopy
 import numpy as np
 from autocti import exc
 from autoarray.structures import region
-from autoarray.util import frame_util
+from autoarray.structures.frames import frame_util
 from autocti.charge_injection import ci_frame
 
 
@@ -245,3 +245,21 @@ class CIPatternNonUniform(AbstractCIPattern):
 
         """
         return normalization * (np.arange(1, size + 1)) ** self.row_slope
+
+
+def ci_regions_from(injection_on : int, injection_off : int, injection_total : int, serial_size : int, serial_prescan_size : int, serial_overscan_size : int):
+
+    ci_regions = []
+
+    injection_start_count = 0
+
+    for index in range(injection_total):
+
+        ci_region = (injection_start_count, injection_start_count + injection_on, serial_prescan_size, serial_size - serial_overscan_size)
+
+        ci_regions.append(ci_region)
+
+        injection_start_count += injection_on + injection_off
+
+    return ci_regions
+

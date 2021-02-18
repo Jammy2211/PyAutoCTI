@@ -3,7 +3,7 @@ import logging
 
 import numpy as np
 from autoarray.dataset import imaging as im
-from autocti.structures import arrays
+from autocti.structures import array_2d
 
 logger = logging.getLogger(__name__)
 
@@ -64,11 +64,11 @@ class Imaging(im.AbstractImaging):
             The hdu the noise_map is contained in the .fits file specified by *noise_map_path*.
         """
 
-        image = arrays.Array2D.from_fits(
+        image = array_2d.Array2D.from_fits(
             file_path=image_path, hdu=image_hdu, pixel_scales=pixel_scales
         )
 
-        noise_map = arrays.Array2D.from_fits(
+        noise_map = array_2d.Array2D.from_fits(
             file_path=noise_map_path, hdu=noise_map_hdu, pixel_scales=pixel_scales
         )
 

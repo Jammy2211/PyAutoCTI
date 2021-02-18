@@ -36,11 +36,12 @@ class Visualizer:
             )
         )
 
-    def visualize_ci_imaging(self, ci_imaging):
+    def visualize_ci_imaging(self, ci_imaging, index=0):
+
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
-        mat_plot_2d = self.mat_plot_2d_from(subfolders="ci_imaging")
+        mat_plot_2d = self.mat_plot_2d_from(subfolders=f"ci_imaging_{index}")
 
         ci_imaging_plotter = ci_imaging_plotters.CIImagingPlotter(
             imaging=ci_imaging, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
@@ -61,11 +62,12 @@ class Visualizer:
 
             ci_imaging_plotter.subplot_ci_imaging()
 
-    def visualize_ci_imaging_lines(self, ci_imaging, line_region):
+    def visualize_ci_imaging_lines(self, ci_imaging, line_region, index=0):
+
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders="ci_imaging")
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"ci_imaging_{index}")
 
         ci_imaging_plotter = ci_imaging_plotters.CIImagingPlotter(
             imaging=ci_imaging, mat_plot_1d=mat_plot_1d, include_2d=self.include_2d
@@ -83,11 +85,12 @@ class Visualizer:
             ci_pre_cti=should_plot("ci_pre_cti"),
         )
 
-    def visualize_ci_fit(self, fit, during_analysis):
+    def visualize_ci_fit(self, fit, during_analysis, index=0):
+
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
-        mat_plot_2d = self.mat_plot_2d_from(subfolders="fit_ci_imaging")
+        mat_plot_2d = self.mat_plot_2d_from(subfolders=f"fit_ci_imaging_{index}")
 
         ci_fit_plotter = ci_fit_plotters.CIFitPlotter(
             fit=fit, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
@@ -126,11 +129,12 @@ class Visualizer:
         if should_plot("subplot_fit"):
             ci_fit_plotter.subplot_ci_fit()
 
-    def visualize_ci_fit_lines(self, fit, line_region, during_analysis):
+    def visualize_ci_fit_lines(self, fit, line_region, during_analysis, index=0):
+
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders="fit_ci_imaging")
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"fit_ci_imaging_{index}")
 
         ci_fit_plotter = ci_fit_plotters.CIFitPlotter(
             fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
@@ -155,6 +159,7 @@ class Visualizer:
         if not during_analysis:
 
             if should_plot("all_at_end_png"):
+
                 ci_fit_plotter.figures_1d_ci_line_region(
                     line_region=line_region,
                     image=True,

@@ -1,10 +1,10 @@
 import numpy as np
 
 from autoarray.structures.arrays import abstract_array
+from autoarray.structures.arrays.two_d import array_2d_util
 from autoarray.structures.frames import abstract_frame
-from autoarray.util import array_util
-from autoarray.util import frame_util
-from autoarray.util import geometry_util
+from autoarray.structures.frames import frame_util
+from autoarray.geometry import geometry_util
 from autocti.mask import mask as msk
 
 
@@ -248,7 +248,7 @@ class Frame2D(abstract_frame.AbstractFrame2D):
 
         pixel_scales = geometry_util.convert_pixel_scales_2d(pixel_scales=pixel_scales)
 
-        array = array_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
+        array = array_2d_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu)
 
         return cls.manual(
             array=array,

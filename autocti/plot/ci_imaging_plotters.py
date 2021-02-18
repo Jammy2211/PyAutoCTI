@@ -132,6 +132,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
+                plot_axis_type="linear",
                 auto_labels=mp.AutoLabels(
                     title=f"Image Line {line_region}", filename=f"image_{line_region}"
                 ),
@@ -147,6 +148,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
+                plot_axis_type="linear",
                 auto_labels=mp.AutoLabels(
                     title=f"Noise Map Line {line_region}",
                     filename=f"noise_map_{line_region}",
@@ -163,6 +165,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
+                plot_axis_type="linear",
                 auto_labels=mp.AutoLabels(
                     title=f"CI Pre CTI Line {line_region}",
                     filename=f"ci_pre_cti_{line_region}",
@@ -179,6 +182,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
+                plot_axis_type="linear",
                 auto_labels=mp.AutoLabels(
                     title=f"Signal To Noise Map {line_region}",
                     filename=f"signal_to_noise_map_{line_region}",

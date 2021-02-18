@@ -9,7 +9,9 @@ from autoarray.dataset import preprocess
 from autocti.structures.lines import Line
 from autocti.structures.lines import LineCollection
 
-from .structures.arrays import Array2D
+from arcticpy.traps import TrapLogNormalLifetimeContinuum
+
+from .structures.array_2d import Array2D
 from .structures.frames import Frame2D
 from .mask.mask import Mask2D
 from .mask.mask import SettingsMask
