@@ -107,5 +107,8 @@ class CombinedHyperPhase(HyperPhase):
         phase.tag = ""
 
         return phase.run(
-            datasets=datasets, results=results, pool=pool, clocker=results.last.clocker
+            dataset_list=datasets,
+            results=results,
+            pool=pool,
+            clocker=results.last.clocker,
         )

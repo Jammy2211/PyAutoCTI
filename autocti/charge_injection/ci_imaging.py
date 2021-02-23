@@ -10,7 +10,6 @@ from autocti import exc
 
 
 class CIImaging(imaging.AbstractImaging):
-
     def __init__(self, image, noise_map, ci_pre_cti, cosmic_ray_map=None, name=None):
 
         super().__init__(image=image, noise_map=noise_map, name=name)
@@ -271,7 +270,6 @@ class SettingsMaskedCIImaging(imaging.AbstractSettingsMaskedImaging):
 
 
 class MaskedCIImaging(imaging.AbstractMaskedImaging):
-
     def __init__(
         self,
         ci_imaging,
@@ -502,12 +500,7 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
         )
 
     def from_ci_post_cti(
-            self,
-            ci_post_cti,
-            ci_pre_cti,
-            ci_pattern,
-            cosmic_ray_map=None,
-            name=None,
+        self, ci_post_cti, ci_pre_cti, ci_pattern, cosmic_ray_map=None, name=None
     ):
 
         if self.read_noise is not None:

@@ -11,7 +11,6 @@ logger = logging.getLogger(__name__)
 
 
 class AbstractArray2D(abstract_array_2d.AbstractArray2D):
-
     def __new__(cls, array, mask, *args, **kwargs):
         """An array of values, which are paired to a uniform 2D mask of pixels and sub-pixels. Each entry
         on the array corresponds to a value at the centre of a sub-pixel in an unmasked pixel.

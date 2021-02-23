@@ -44,3 +44,5 @@ from autoarray.plot.plotters.structure_plotters import Array2DPlotter
 from autoarray.plot.plotters.structure_plotters import Frame2DPlotter
 from autocti.plot.ci_imaging_plotters import CIImagingPlotter
 from autocti.plot.ci_fit_plotters import CIFitPlotter
+
+from autoarray.plot.plotters.abstract_plotters import MultiPlotter

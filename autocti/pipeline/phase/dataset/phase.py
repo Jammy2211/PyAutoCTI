@@ -46,7 +46,7 @@ class PhaseDataset(abstract.AbstractPhase):
         self.serial_ccd = serial_ccd
         self.settings = settings
 
-    def run(self, datasets: Dataset, clocker, results=None, info=None, pool=None):
+    def run(self, dataset_list: Dataset, clocker, results=None, info=None, pool=None):
         """
         Run this phase.
 
@@ -76,7 +76,7 @@ class PhaseDataset(abstract.AbstractPhase):
         self.modify_search_paths()
 
         analysis = self.make_analysis(
-            datasets=datasets, clocker=clocker, results=results, pool=pool
+            datasets=dataset_list, clocker=clocker, results=results, pool=pool
         )
 
         #    attributes = self.make_attributes(analysis=analysis)

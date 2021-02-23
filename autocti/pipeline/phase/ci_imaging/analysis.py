@@ -102,7 +102,7 @@ class Analysis(analysis_dataset.Analysis):
         ci_post_cti = ci_frame.CIFrame.manual(
             array=ci_post_cti,
             pixel_scales=ci_imaging.ci_pre_cti.pixel_scales,
-            ci_pattern=ci_imaging.ci_pre_cti.ci_pattern
+            ci_pattern=ci_imaging.ci_pre_cti.ci_pattern,
         )
 
         return ci_fit.CIFitImaging(
@@ -137,23 +137,47 @@ class Analysis(analysis_dataset.Analysis):
 
         fits = self.fits_from_instance(instance=instance)
 
+        visualizer = vis.Visualizer(visualize_path=paths.image_path)
+
         for index in range(len(fits)):
 
-            visualizer = vis.Visualizer(visualize_path=paths.image_path)
-
-            visualizer.visualize_ci_imaging(ci_imaging=self.masked_ci_datasets[index], index=index)
-            visualizer.visualize_ci_imaging_lines(ci_imaging=self.masked_ci_datasets[index], line_region="parallel_front_edge", index=index)
-            visualizer.visualize_ci_imaging_lines(ci_imaging=self.masked_ci_datasets[index], line_region="parallel_trails", index=index)
+            visualizer.visualize_ci_imaging(
+                ci_imaging=self.masked_ci_datasets[index], index=index
+            )
+            visualizer.visualize_ci_imaging_lines(
+                ci_imaging=self.masked_ci_datasets[index],
+                line_region="parallel_front_edge",
+                index=index,
+            )
+            visualizer.visualize_ci_imaging_lines(
+                ci_imaging=self.masked_ci_datasets[index],
+                line_region="parallel_trails",
+                index=index,
+            )
 
             visualizer.visualize_ci_fit(
                 fit=fits[index], during_analysis=during_analysis, index=index
             )
-            visualizer.visualize_ci_fit_lines(
-                fit=fits[index], during_analysis=during_analysis, line_region="parallel_front_edge", index=index
+            visualizer.visualize_ci_fit_1d_lines(
+                fit=fits[index],
+                during_analysis=during_analysis,
+                line_region="parallel_front_edge",
+                index=index,
             )
-            visualizer.visualize_ci_fit_lines(
-                fit=fits[index], during_analysis=during_analysis, line_region="parallel_trails", index=index
+            visualizer.visualize_ci_fit_1d_lines(
+                fit=fits[index],
+                during_analysis=during_analysis,
+                line_region="parallel_trails",
+                index=index,
             )
+
+        visualizer.visualize_multiple_ci_fits_subplots(fits=fits)
+        visualizer.visualize_multiple_ci_fits_subplots_1d_lines(
+            fits=fits, line_region="parallel_front_edge"
+        )
+        visualizer.visualize_multiple_ci_fits_subplots_1d_lines(
+            fits=fits, line_region="parallel_trails"
+        )
 
 
 def pipe_cti(ci_data_masked, instance, clocker, hyper_noise_scalars):

@@ -31,7 +31,7 @@ class TestResult:
         )
 
         result = phase_ci_imaging_7x7.run(
-            datasets=[ci_imaging_7x7],
+            dataset_list=[ci_imaging_7x7],
             clocker=parallel_clocker,
             results=mock.MockResults(),
         )
@@ -91,7 +91,7 @@ class TestResult:
         )
 
         result = phase_ci_imaging_7x7.run(
-            datasets=[ci_imaging_7x7],
+            dataset_list=[ci_imaging_7x7],
             clocker=parallel_clocker,
             results=mock.MockResults(
                 noise_scaling_maps_list_of_ci_regions=noise_scaling_maps_list_of_ci_regions,

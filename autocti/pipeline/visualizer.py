@@ -3,12 +3,11 @@ from autoconf import conf
 from autoarray.plot.mat_wrap.wrap import wrap_base
 from autoarray.plot.mat_wrap import mat_plot
 from autoarray.plot.mat_wrap import include as inc
+from autocti.plot import MultiPlotter
 from autocti.plot import ci_imaging_plotters, ci_fit_plotters
 
 
 def setting(section, name):
-    print(section)
-    print(name)
     return conf.instance["visualize"]["plots"][section][name]
 
 
@@ -39,7 +38,6 @@ class Visualizer:
         )
 
     def visualize_ci_imaging(self, ci_imaging, index=0):
-
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
@@ -65,7 +63,6 @@ class Visualizer:
             ci_imaging_plotter.subplot_ci_imaging()
 
     def visualize_ci_imaging_lines(self, ci_imaging, line_region, index=0):
-
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
@@ -88,7 +85,6 @@ class Visualizer:
         )
 
     def visualize_ci_fit(self, fit, during_analysis, index=0):
-
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
@@ -131,8 +127,7 @@ class Visualizer:
         if should_plot("subplot_fit"):
             ci_fit_plotter.subplot_ci_fit()
 
-    def visualize_ci_fit_lines(self, fit, line_region, during_analysis, index=0):
-
+    def visualize_ci_fit_1d_lines(self, fit, line_region, during_analysis, index=0):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
@@ -174,59 +169,65 @@ class Visualizer:
                     chi_squared_map=True,
                 )
 
-    # def visualize_multiple_ci_fits_subplots(self, fits):
-    #
-    #     mat_plot_2d = self.mat_plot_2d_from(subfolders="ci_fit_imaging")
-    #
-    #     if should_plot("subplot_residual_maps"):
-    #         ci_fit_plots.subplot_residual_maps(fits=fits, plotter=plotter)
-    #
-    #     if should_plot("subplot_normalized_residual_maps"):
-    #         ci_fit_plots.subplot_normalized_residual_maps(
-    #             fits=fits, plotter=plotter
-    #         )
-    #
-    #     if should_plot("subplot_chi_squared_maps"):
-    #         ci_fit_plots.subplot_chi_squared_maps(fits=fits, plotter=plotter)
+    def visualize_multiple_ci_fits_subplots(self, fits):
+        def should_plot(name):
+            return plot_setting(section="fit", name=name)
 
-    # def visualize_multiple_ci_fits_subplots_lines(
-    #     self, fits, line_region
-    # ):
-    #
-    #     mat_plot_1d = self.mat_plot_1d_from(subfolders="ci_fit_imaging")
-    #
-    #     if should_plot("subplot_residual_maps"):
-    #
-    #         plotter = self.plotter_from_paths(paths=paths)
-    #         plotter = plotter.mat_plot_with_new_output(
-    #             filename=f"subplot_residual_maps_lines_{line_region}"
-    #         )
-    #
-    #         ci_fit_plots.subplot_residual_map_lines(
-    #             fits=fits, line_region=line_region, plotter=plotter
-    #         )
-    #
-    #     if should_plot("subplot_normalized_residual_maps"):
-    #
-    #         plotter = self.plotter_from_paths(paths=paths)
-    #         plotter = plotter.mat_plot_with_new_output(
-    #             filename=f"subplot_normalized_residual_maps_lines_{line_region}"
-    #         )
-    #
-    #         ci_fit_plots.subplot_normalized_residual_map_lines(
-    #             fits=fits, line_region=line_region, plotter=plotter
-    #         )
-    #
-    #     if should_plot("subplot_chi_squared_maps"):
-    #
-    #         plotter = self.plotter_from_paths(paths=paths)
-    #         plotter = plotter.mat_plot_with_new_output(
-    #             filename=f"subplot_chi_squared_maps_lines_{line_region}"
-    #         )
-    #
-    #         ci_fit_plots.subplot_chi_squared_map_lines(
-    #             fits=fits, line_region=line_region, plotter=plotter
-    #         )
+        mat_plot_2d = self.mat_plot_2d_from(subfolders="multiple_ci_fits")
+
+        ci_fit_plotter_list = [
+            ci_fit_plotters.CIFitPlotter(fit=ci_fit, mat_plot_2d=mat_plot_2d)
+            for ci_fit in fits
+        ]
+        multi_plotter = MultiPlotter(plotter_list=ci_fit_plotter_list)
+
+        if should_plot("subplot_residual_maps"):
+            multi_plotter.subplot_of_figure(
+                func_name="figures", figure_name="residual_map"
+            )
+
+        if should_plot("subplot_normalized_residual_maps"):
+            multi_plotter.subplot_of_figure(
+                func_name="figures", figure_name="normalized_residual_map"
+            )
+
+        if should_plot("subplot_chi_squared_maps"):
+            multi_plotter.subplot_of_figure(
+                func_name="figures", figure_name="chi_squared_map"
+            )
+
+    def visualize_multiple_ci_fits_subplots_1d_lines(self, fits, line_region):
+        def should_plot(name):
+            return plot_setting(section="fit", name=name)
+
+        mat_plot_1d = self.mat_plot_1d_from(subfolders="multiple_ci_fits_1d_line")
+
+        ci_fit_plotter_list = [
+            ci_fit_plotters.CIFitPlotter(fit=ci_fit, mat_plot_1d=mat_plot_1d)
+            for ci_fit in fits
+        ]
+        multi_plotter = MultiPlotter(plotter_list=ci_fit_plotter_list)
+
+        if should_plot("subplot_residual_maps"):
+            multi_plotter.subplot_of_figure(
+                func_name="figures_1d_ci_line_region",
+                figure_name="residual_map",
+                line_region=line_region,
+            )
+
+        if should_plot("subplot_normalized_residual_maps"):
+            multi_plotter.subplot_of_figure(
+                func_name="figures_1d_ci_line_region",
+                figure_name="normalized_residual_map",
+                line_region=line_region,
+            )
+
+        if should_plot("subplot_chi_squared_maps"):
+            multi_plotter.subplot_of_figure(
+                func_name="figures_1d_ci_line_region",
+                figure_name="chi_squared_map",
+                line_region=line_region,
+            )
 
     def visualize_fit_in_fits(self, fit):
 

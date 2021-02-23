@@ -112,7 +112,6 @@ class TestLineCollection:
         # Path to this file
         path = os.path.dirname(os.path.realpath(__file__))
         filename = path + "test__collection__save_load"
-        print(filename)
 
         lines_2.save(filename=filename)
 

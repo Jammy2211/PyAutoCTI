@@ -116,6 +116,6 @@ class TestSetup:
         )
 
         result = phase_dataset_7x7.run(
-            datasets=[ci_imaging_7x7], clocker=parallel_clocker, results=None
+            dataset_list=[ci_imaging_7x7], clocker=parallel_clocker, results=None
         )
         assert result is not None

@@ -9,7 +9,7 @@ class Pipeline(pl.Pipeline):
     def run(self, datasets, clocker, info=None, pool=None):
         def runner(phase, results):
             return phase.run(
-                datasets=datasets,
+                dataset_list=datasets,
                 results=results,
                 clocker=clocker,
                 info=info,

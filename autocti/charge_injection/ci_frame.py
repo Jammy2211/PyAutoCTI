@@ -1596,7 +1596,7 @@ class CIFrameEuclid(CIFrame):
             injection_total=injection_total,
             serial_prescan_size=serial_prescan_size,
             serial_overscan_size=serial_overscan_size,
-            serial_size=serial_size
+            serial_size=serial_size,
         )
 
         normalization = ext_header["INJNORM"]

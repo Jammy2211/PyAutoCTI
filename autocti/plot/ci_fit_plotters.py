@@ -2,7 +2,6 @@ from autoarray.plot.mat_wrap import visuals as vis
 from autoarray.plot.mat_wrap import include as inc
 from autoarray.plot.mat_wrap import mat_plot as mp
 from autoarray.plot.plotters import fit_imaging_plotters
-from autoarray.plot.plotters import abstract_plotters
 from autocti import charge_injection as ci
 from autocti.plot.ci_imaging_plotters import extract_line_from
 
@@ -269,86 +268,14 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
             chi_squared_map=True,
         )
 
-    # @abstract_plotters.for_figure
-    # def subplot_residual_maps(self, fits):
-    #     """Plot the model datas_ of an analysis, using the *Fitter* class object.
-    #
-    #     The visualization and output type can be fully customied.
-    #
-    #     """
-    #
-    #     number_subplots = len(fits)
-    #
-    #     self.open_subplot_figure(number_subplots=number_subplots)
-    #
-    #     for index, fit in enumerate(fits):
-    #
-    #         self.setup_subplot(
-    #             number_subplots=number_subplots, subplot_index=index + 1
-    #         )
-    #
-    #         residual_map()
-    #
-    #     self.mat_plot_2d.output.subplot_to_figure()
-    #
-    #     self.mat_plot_2d.figure.close()
-    #
-    # @abstract_plotters.for_figure
-    # def subplot_normalized_residual_maps(fits):
-    #     """Plot the model datas_ of an analysis, using the *Fitter* class object.
-    #
-    #     The visualization and output type can be fully customied.
-    #
-    #     """
-    #
-    #     number_subplots = len(fits)
-    #
-    #     self.open_subplot_figure(number_subplots=number_subplots)
-    #
-    #     for index, fit in enumerate(fits):
-    #
-    #         self.setup_subplot(
-    #             number_subplots=number_subplots, subplot_index=index + 1
-    #         )
-    #
-    #         normalized_residual_map()
-    #
-    #     self.mat_plot_2d.output.subplot_to_figure()
-    #
-    #     self.mat_plot_2d.figure.close()
-    #
-    # @abstract_plotters.for_figure
-    # def subplot_chi_squared_maps(fits):
-    #     """Plot the model datas_ of an analysis, using the *Fitter* class object.
-    #
-    #     The visualization and output type can be fully customized.
-    #
-    #     """
-    #
-    #     number_subplots = len(fits)
-    #
-    #     self.open_subplot_figure(number_subplots=number_subplots)
-    #
-    #     for index, fit in enumerate(fits):
-    #
-    #         self.setup_subplot(
-    #             number_subplots=number_subplots, subplot_index=index + 1
-    #         )
-    #
-    #         chi_squared_map()
-    #
-    #     self.mat_plot_2d.output.subplot_to_figure()
-    #
-    #     self.mat_plot_2d.figure.close()
-
     def subplot_1d_ci_line_region(self, line_region):
-        """Plot the model datas_ of an analysis, using the *Fitter* class object.
+        """
+        Plot the model datas_ of an analysis, using the *Fitter* class object.
 
         The visualization and output type can be fully customized.
-
         """
 
-        self.open_subplot_figure(number_subplots=4)
+        self.open_subplot_figure(number_subplots=6)
 
         self.figures_1d_ci_line_region(image=True, line_region=line_region)
         self.figures_1d_ci_line_region(
@@ -391,79 +318,3 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
             auto_filename=f"subplot_noise_scaling_maps"
         )
         self.mat_plot_2d.figure.close()
-
-    #
-    # @abstract_plotters.for_figure
-    # def subplot_residual_map_lines(self, fits):
-    #     """Plot the model datas_ of an analysis, using the *Fitter* class object.
-    #
-    #     The visualization and output type can be fully customized.
-    #     """
-    #
-    #     number_subplots = len(fits)
-    #
-    #     self.open_subplot_figure(number_subplots=number_subplots)
-    #
-    #     for index, fit in enumerate(fits):
-    #         self.setup_subplot(
-    #             number_subplots=number_subplots, subplot_index=index + 1
-    #         )
-    #
-    #         residual_map_line(
-    #             line_region=line_region
-    #         )
-    #
-    #     self.mat_plot_2d.output.subplot_to_figure()
-    #
-    #     self.mat_plot_2d.figure.close()
-    #
-    # @abstract_plotters.for_figure
-    # def subplot_normalized_residual_map_lines(
-    #     self, fits
-    # ):
-    #     """Plot the model datas_ of an analysis, using the *Fitter* class object.
-    #
-    #     The visualization and output type can be fully customized.
-    #     """
-    #
-    #     number_subplots = len(fits)
-    #
-    #     self.open_subplot_figure(number_subplots=number_subplots)
-    #
-    #     for index, fit in enumerate(fits):
-    #         self.setup_subplot(
-    #             number_subplots=number_subplots, subplot_index=index + 1
-    #         )
-    #
-    #         normalized_residual_map_line(
-    #             line_region=line_region
-    #         )
-    #
-    #     self.mat_plot_2d.output.subplot_to_figure()
-    #
-    #     self.mat_plot_2d.figure.close()
-    #
-    # @abstract_plotters.for_figure
-    # def subplot_chi_squared_map_lines(self, fits):
-    #     """Plot the model datas_ of an analysis, using the *Fitter* class object.
-    #
-    #     The visualization and output type can be fully customized.
-    #     """
-    #
-    #     number_subplots = len(fits)
-    #
-    #     self.open_subplot_figure(number_subplots=number_subplots)
-    #
-    #     for index, fit in enumerate(fits):
-    #
-    #         self.setup_subplot(
-    #             number_subplots=number_subplots, subplot_index=index + 1
-    #         )
-    #
-    #         chi_squared_map_line(
-    #             line_region=line_region
-    #         )
-    #
-    #     self.mat_plot_2d.output.subplot_to_figure()
-    #
-    #     self.mat_plot_2d.figure.close()

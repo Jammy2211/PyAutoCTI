@@ -8,13 +8,16 @@ from autoconf import conf
 
 directory = path.dirname(path.realpath(__file__))
 
+
 @pytest.fixture(name="plot_path")
 def make_visualizer_plotter_setup():
     return path.join("{}".format(directory), "files", "plot", "visualizer")
 
+
 @pytest.fixture(autouse=True)
 def push_config(plot_path):
     conf.instance.push(path.join(directory, "config"), output_path=plot_path)
+
 
 class TestVisualizer:
     def test__visualizes_imaging_using_configs(
@@ -118,7 +121,7 @@ class TestVisualizer:
 
         visualizer = vis.Visualizer(visualize_path=plot_path)
 
-        visualizer.visualize_ci_fit_lines(
+        visualizer.visualize_ci_fit_1d_lines(
             fit=ci_fit_7x7, line_region="parallel_front_edge", during_analysis=True
         )
 
@@ -160,7 +163,7 @@ class TestVisualizer:
 
         plot_patch.paths = []
 
-        visualizer.visualize_ci_fit_lines(
+        visualizer.visualize_ci_fit_1d_lines(
             fit=ci_fit_7x7, line_region="parallel_front_edge", during_analysis=False
         )
 
@@ -198,69 +201,50 @@ class TestVisualizer:
             in plot_patch.paths
         )
 
-    # def test___visualizes_multiple_ci_fits_subplot__using_configs(
-    #     self, masked_ci_imaging_7x7, ci_fit_7x7, plot_path, plot_patch
-    # ):
-    #
-    #     if os.path.exists(plot_path):
-    #         shutil.rmtree(plot_path)
-    #
-    #     visualizer = vis.Visualizer(visualize_path=plot_path)
-    #
-    #     visualizer.visualize_multiple_ci_fits_subplots(fits=[ci_fit_7x7])
-    #
-    #     assert (
-    #         path.join(plot_path, "image", "subplots", "subplot_residual_maps.png")
-    #         in plot_patch.paths
-    #     )
-    #     assert (
-    #         path.join(
-    #             plot_path, "image", "subplots", "subplot_normalized_residual_maps.png"
-    #         )
-    #         in plot_patch.paths
-    #     )
-    #     assert (
-    #         path.join(plot_path, "image", "subplots", "subplot_chi_squared_maps.png")
-    #         in plot_patch.paths
-    #     )
-    #
-    # def test___visualizes_multiple_ci_fits_lines_subplot__using_configs(
-    #     self, masked_ci_imaging_7x7, ci_fit_7x7, plot_path, plot_patch
-    # ):
-    #
-    #     if os.path.exists(plot_path):
-    #         shutil.rmtree(plot_path)
-    #
-    #     visualizer = vis.PhaseCIImagingVisualizer(masked_dataset=masked_ci_imaging_7x7)
-    #
-    #     visualizer.visualize_multiple_ci_fits_subplots_lines(
-    #         paths=af.Paths(), fits=[ci_fit_7x7], line_region="parallel_front_edge"
-    #     )
-    #
-    #     assert (
-    #         path.join(
-    #             plot_path,
-    #             "image",
-    #             "subplots",
-    #             "subplot_residual_maps_lines_parallel_front_edge.png",
-    #         )
-    #         in plot_patch.paths
-    #     )
-    #     assert (
-    #         path.join(
-    #             plot_path,
-    #             "image",
-    #             "subplots",
-    #             "subplot_normalized_residual_maps_lines_parallel_front_edge.png",
-    #         )
-    #         in plot_patch.paths
-    #     )
-    #     assert (
-    #         path.join(
-    #             plot_path,
-    #             "image",
-    #             "subplots",
-    #             "subplot_chi_squared_maps_lines_parallel_front_edge.png",
-    #         )
-    #         in plot_patch.paths
-    #     )
+    def test__visualize_multiple_ci_fits_subplots(
+        self, masked_ci_imaging_7x7, ci_fit_7x7, plot_path, plot_patch
+    ):
+
+        if os.path.exists(plot_path):
+            shutil.rmtree(plot_path)
+
+        visualizer = vis.Visualizer(visualize_path=plot_path)
+
+        visualizer.visualize_multiple_ci_fits_subplots(fits=[ci_fit_7x7, ci_fit_7x7])
+
+        plot_path = path.join(plot_path, "multiple_ci_fits")
+
+        assert path.join(plot_path, "subplot_residual_map_list.png") in plot_patch.paths
+        assert (
+            path.join(plot_path, "subplot_normalized_residual_map_list.png")
+            in plot_patch.paths
+        )
+        assert (
+            path.join(plot_path, "subplot_chi_squared_map_list.png")
+            not in plot_patch.paths
+        )
+
+    def test__visualize_multiple_ci_fits_1d_line_subplots(
+        self, masked_ci_imaging_7x7, ci_fit_7x7, plot_path, plot_patch
+    ):
+
+        if os.path.exists(plot_path):
+            shutil.rmtree(plot_path)
+
+        visualizer = vis.Visualizer(visualize_path=plot_path)
+
+        visualizer.visualize_multiple_ci_fits_subplots_1d_lines(
+            fits=[ci_fit_7x7, ci_fit_7x7], line_region="parallel_front_edge"
+        )
+
+        plot_path = path.join(plot_path, "multiple_ci_fits_1d_line")
+
+        assert path.join(plot_path, "subplot_residual_map_list.png") in plot_patch.paths
+        assert (
+            path.join(plot_path, "subplot_normalized_residual_map_list.png")
+            in plot_patch.paths
+        )
+        assert (
+            path.join(plot_path, "subplot_chi_squared_map_list.png")
+            not in plot_patch.paths
+        )

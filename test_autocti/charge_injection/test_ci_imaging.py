@@ -582,16 +582,14 @@ class TestSimulatorCIImaging(object):
         ci_pre_cti += cosmic_ray_map
 
         ci_post_cti = parallel_clocker.add_cti(
-            image=ci_pre_cti,
-            parallel_traps=traps_x2,
-            parallel_ccd=ccd,
+            image=ci_pre_cti, parallel_traps=traps_x2, parallel_ccd=ccd
         )
 
         imaging_via_ci_post_cti = simulator.from_ci_post_cti(
             ci_post_cti=ci_post_cti,
             ci_pre_cti=ci_pre_cti,
             ci_pattern=pattern,
-            cosmic_ray_map=cosmic_ray_map
+            cosmic_ray_map=cosmic_ray_map,
         )
 
         assert (imaging.image == imaging_via_ci_post_cti.image).all()
