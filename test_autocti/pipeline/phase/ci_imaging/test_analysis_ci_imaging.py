@@ -2,7 +2,7 @@ from os import path
 
 import autocti as ac
 import pytest
-from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
+from autocti.pipeline.phase.ci_imaging.phase import PhaseCIImaging
 from autocti.mock import mock
 
 pytestmark = pytest.mark.filterwarnings(
@@ -45,7 +45,7 @@ class TestFit:
         assert fit.log_likelihood == log_likelihood_via_analysis
 
     def test__extracted_fits_from_instance_and_ci_imaging(
-        self, ci_imaging_7x7, mask_7x7, traps_x1, ccd, parallel_clocker
+        self, ci_imaging_7x7, mask_7x7_unmasked, traps_x1, ccd, parallel_clocker
     ):
 
         phase = PhaseCIImaging(
@@ -67,7 +67,7 @@ class TestFit:
         fits = analysis.fits_from_instance(instance=instance)
 
         mask_from_phase = phase.mask_for_analysis_from_dataset(
-            dataset=ci_imaging_7x7, mask=mask_7x7
+            dataset=ci_imaging_7x7, mask=mask_7x7_unmasked
         )
 
         masked_ci_imaging = ac.ci.MaskedCIImaging(
@@ -90,7 +90,7 @@ class TestFit:
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood)
 
     def test__full_fits_from_instance_and_ci_imaging(
-        self, ci_imaging_7x7, mask_7x7, traps_x1, ccd, parallel_clocker
+        self, ci_imaging_7x7, mask_7x7_unmasked, traps_x1, ccd, parallel_clocker
     ):
 
         phase = PhaseCIImaging(
@@ -123,7 +123,13 @@ class TestFit:
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood)
 
     def test__extracted_fits_from_instance_and_ci_imaging__include_noise_scaling(
-        self, ci_imaging_7x7, mask_7x7, traps_x1, ccd, parallel_clocker, ci_pattern_7x7
+        self,
+        ci_imaging_7x7,
+        mask_7x7_unmasked,
+        traps_x1,
+        ccd,
+        parallel_clocker,
+        ci_pattern_7x7,
     ):
 
         phase = PhaseCIImaging(
@@ -155,7 +161,7 @@ class TestFit:
 
         fits = analysis.fits_from_instance(instance=instance, hyper_noise_scale=True)
 
-        mask = ac.ci.CIMask.unmasked(
+        mask = ac.ci.CIMask2D.unmasked(
             shape_native=ci_imaging_7x7.shape_native,
             pixel_scales=ci_imaging_7x7.pixel_scales,
         )
@@ -191,7 +197,13 @@ class TestFit:
         assert fit.log_likelihood != pytest.approx(fits[0].log_likelihood, 1.0e-4)
 
     def test__full_fits_from_instance_and_ci_imaging__include_noise_scaling(
-        self, ci_imaging_7x7, mask_7x7, traps_x1, ccd, parallel_clocker, ci_pattern_7x7
+        self,
+        ci_imaging_7x7,
+        mask_7x7_unmasked,
+        traps_x1,
+        ccd,
+        parallel_clocker,
+        ci_pattern_7x7,
     ):
 
         phase = PhaseCIImaging(
@@ -229,7 +241,7 @@ class TestFit:
             image=ci_imaging_7x7.ci_pre_cti, parallel_traps=traps_x1, parallel_ccd=ccd
         )
 
-        mask = ac.ci.CIMask.unmasked(
+        mask = ac.ci.CIMask2D.unmasked(
             shape_native=ci_imaging_7x7.shape_native,
             pixel_scales=ci_imaging_7x7.pixel_scales,
         )

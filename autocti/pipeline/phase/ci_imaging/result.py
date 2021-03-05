@@ -1,4 +1,4 @@
-from autocti.pipeline.phase.dataset import Result as DatasetResult
+from autocti.pipeline.phase.dataset.result import Result as DatasetResult
 
 
 class Result(DatasetResult):

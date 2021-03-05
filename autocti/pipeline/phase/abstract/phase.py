@@ -1,5 +1,4 @@
 from autocti.pipeline.phase.abstract.result import Result
-from autofit.non_linear.paths import convert_paths
 from autofit.tools import phase as af_phase
 
 

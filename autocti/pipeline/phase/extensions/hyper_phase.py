@@ -3,11 +3,11 @@ import copy
 from autoconf import conf
 from autofit.non_linear import abstract_search
 from autofit.tools.pipeline import ResultsCollection
-from autocti.pipeline.phase import abstract
+from autocti.pipeline.phase.abstract import phase as abstract_phase
 
 
 class HyperPhase:
-    def __init__(self, phase: abstract.AbstractPhase, hyper_name: str):
+    def __init__(self, phase: abstract_phase.AbstractPhase, hyper_name: str):
         """
         Abstract HyperPhase. Wraps a phase, performing that phase before performing the action
         specified by the run_hyper.

@@ -428,7 +428,7 @@ class TestParallelCalibrationFrame:
             pixel_scales=1.0,
         )
 
-        mask = ac.ci.CIMask.unmasked(shape_native=(5, 3), pixel_scales=1.0)
+        mask = ac.ci.CIMask2D.unmasked(shape_native=(5, 3), pixel_scales=1.0)
 
         mask[0, 1] = True
 
@@ -934,7 +934,7 @@ class TestSerialCalibrationFrame:
             pixel_scales=1.0,
         )
 
-        mask = ac.ci.CIMask.unmasked(shape_native=(5, 5), pixel_scales=1.0)
+        mask = ac.ci.CIMask2D.unmasked(shape_native=(5, 5), pixel_scales=1.0)
 
         mask[1, 1] = True
         mask[4, 3] = True

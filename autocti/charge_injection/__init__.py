@@ -10,6 +10,6 @@ from .ci_imaging import SettingsMaskedCIImaging
 from .ci_imaging import MaskedCIImaging
 from .ci_imaging import SimulatorCIImaging
 from .ci_mask import SettingsCIMask
-from .ci_mask import CIMask
+from .ci_mask import CIMask2D
 from .ci_pattern import CIPatternUniform
 from .ci_pattern import CIPatternNonUniform

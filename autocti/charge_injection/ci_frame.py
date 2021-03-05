@@ -395,7 +395,7 @@ class AbstractCIFrame(abstract_frame.AbstractFrame2D):
         extraction_region = self.parallel_side_nearest_read_out_region(
             region=self.ci_pattern.regions[0], columns=columns
         )
-        return ci_mask.CIMask(
+        return ci_mask.CIMask2D(
             mask=mask[extraction_region.slice], pixel_scales=mask.pixel_scales
         )
 
@@ -773,7 +773,7 @@ class AbstractCIFrame(abstract_frame.AbstractFrame2D):
         calibration_masks = list(
             map(lambda mask: mask[rows[0] : rows[1], :], calibration_masks)
         )
-        return ci_mask.CIMask(
+        return ci_mask.CIMask2D(
             mask=np.concatenate(calibration_masks, axis=0),
             pixel_scales=mask.pixel_scales,
         )

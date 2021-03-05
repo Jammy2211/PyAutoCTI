@@ -76,12 +76,12 @@ class TestMaskedParallelFrontEdge:
             pixel_scales=1.0,
         )
 
-        mask = ac.ci.CIMask.masked_parallel_front_edge_from_ci_frame(
+        mask = ac.ci.CIMask2D.masked_parallel_front_edge_from_ci_frame(
             ci_frame=frame,
             settings=ac.ci.SettingsCIMask(parallel_front_edge_rows=(0, 2)),
         )
 
-        assert type(mask) == ac.ci.CIMask
+        assert type(mask) == ac.ci.CIMask2D
 
         assert (
             mask
@@ -112,13 +112,13 @@ class TestMaskedParallelFrontEdge:
             pixel_scales=1.0,
         )
 
-        mask = ac.ci.CIMask.masked_parallel_front_edge_from_ci_frame(
+        mask = ac.ci.CIMask2D.masked_parallel_front_edge_from_ci_frame(
             ci_frame=frame,
             settings=ac.ci.SettingsCIMask(parallel_front_edge_rows=(0, 2)),
             invert=True,
         )
 
-        assert type(mask) == ac.ci.CIMask
+        assert type(mask) == ac.ci.CIMask2D
 
         assert (
             mask
@@ -151,12 +151,12 @@ class TestMaskedParallelFrontEdge:
             pixel_scales=1.0,
         )
 
-        mask = ac.ci.CIMask.masked_parallel_front_edge_from_ci_frame(
+        mask = ac.ci.CIMask2D.masked_parallel_front_edge_from_ci_frame(
             ci_frame=frame,
             settings=ac.ci.SettingsCIMask(parallel_front_edge_rows=(0, 2)),
         )
 
-        assert type(mask) == ac.ci.CIMask
+        assert type(mask) == ac.ci.CIMask2D
 
         assert (
             mask
@@ -189,11 +189,11 @@ class TestMaskedParallelTrails:
             pixel_scales=1.0,
         )
 
-        mask = ac.ci.CIMask.masked_parallel_trails_from_ci_frame(
+        mask = ac.ci.CIMask2D.masked_parallel_trails_from_ci_frame(
             ci_frame=frame, settings=ac.ci.SettingsCIMask(parallel_trails_rows=(0, 4))
         )
 
-        assert type(mask) == ac.ci.CIMask
+        assert type(mask) == ac.ci.CIMask2D
 
         assert (
             mask
@@ -224,13 +224,13 @@ class TestMaskedParallelTrails:
             pixel_scales=1.0,
         )
 
-        mask = ac.ci.CIMask.masked_parallel_trails_from_ci_frame(
+        mask = ac.ci.CIMask2D.masked_parallel_trails_from_ci_frame(
             ci_frame=frame,
             settings=ac.ci.SettingsCIMask(parallel_trails_rows=(0, 4)),
             invert=True,
         )
 
-        assert type(mask) == ac.ci.CIMask
+        assert type(mask) == ac.ci.CIMask2D
 
         assert (
             mask
@@ -263,11 +263,11 @@ class TestMaskedParallelTrails:
             pixel_scales=1.0,
         )
 
-        mask = ac.ci.CIMask.masked_parallel_trails_from_ci_frame(
+        mask = ac.ci.CIMask2D.masked_parallel_trails_from_ci_frame(
             ci_frame=frame, settings=ac.ci.SettingsCIMask(parallel_trails_rows=(0, 4))
         )
 
-        assert type(mask) == ac.ci.CIMask
+        assert type(mask) == ac.ci.CIMask2D
 
         assert (
             mask
@@ -300,12 +300,12 @@ class TestMaskedSerialFrontEdge:
             pixel_scales=1.0,
         )
 
-        mask = ac.ci.CIMask.masked_serial_front_edge_from_ci_frame(
+        mask = ac.ci.CIMask2D.masked_serial_front_edge_from_ci_frame(
             ci_frame=frame,
             settings=ac.ci.SettingsCIMask(serial_front_edge_columns=(0, 2)),
         )
 
-        assert type(mask) == ac.ci.CIMask
+        assert type(mask) == ac.ci.CIMask2D
 
         assert (
             mask
@@ -362,13 +362,13 @@ class TestMaskedSerialFrontEdge:
             pixel_scales=1.0,
         )
 
-        mask = ac.ci.CIMask.masked_serial_front_edge_from_ci_frame(
+        mask = ac.ci.CIMask2D.masked_serial_front_edge_from_ci_frame(
             ci_frame=frame,
             settings=ac.ci.SettingsCIMask(serial_front_edge_columns=(0, 2)),
             invert=True,
         )
 
-        assert type(mask) == ac.ci.CIMask
+        assert type(mask) == ac.ci.CIMask2D
 
         assert (
             mask
@@ -394,12 +394,12 @@ class TestMaskedSerialFrontEdge:
             pixel_scales=1.0,
         )
 
-        mask = ac.ci.CIMask.masked_serial_front_edge_from_ci_frame(
+        mask = ac.ci.CIMask2D.masked_serial_front_edge_from_ci_frame(
             ci_frame=frame,
             settings=ac.ci.SettingsCIMask(serial_front_edge_columns=(0, 3)),
         )
 
-        assert type(mask) == ac.ci.CIMask
+        assert type(mask) == ac.ci.CIMask2D
 
         assert (
             mask
@@ -436,11 +436,11 @@ class TestMaskedSerialTrails:
             pixel_scales=1.0,
         )
 
-        mask = ac.ci.CIMask.masked_serial_trails_from_ci_frame(
+        mask = ac.ci.CIMask2D.masked_serial_trails_from_ci_frame(
             ci_frame=frame, settings=ac.ci.SettingsCIMask(serial_trails_columns=(0, 6))
         )
 
-        assert type(mask) == ac.ci.CIMask
+        assert type(mask) == ac.ci.CIMask2D
 
         assert (
             mask
@@ -464,13 +464,13 @@ class TestMaskedSerialTrails:
             pixel_scales=1.0,
         )
 
-        mask = ac.ci.CIMask.masked_serial_trails_from_ci_frame(
+        mask = ac.ci.CIMask2D.masked_serial_trails_from_ci_frame(
             ci_frame=frame,
             settings=ac.ci.SettingsCIMask(serial_trails_columns=(0, 6)),
             invert=True,
         )
 
-        assert type(mask) == ac.ci.CIMask
+        assert type(mask) == ac.ci.CIMask2D
 
         assert (
             mask
@@ -496,11 +496,11 @@ class TestMaskedSerialTrails:
             pixel_scales=1.0,
         )
 
-        mask = ac.ci.CIMask.masked_serial_trails_from_ci_frame(
+        mask = ac.ci.CIMask2D.masked_serial_trails_from_ci_frame(
             ci_frame=frame, settings=ac.ci.SettingsCIMask(serial_trails_columns=(0, 6))
         )
 
-        assert type(mask) == ac.ci.CIMask
+        assert type(mask) == ac.ci.CIMask2D
 
         assert (
             mask
@@ -528,11 +528,11 @@ class TestMaskedSerialTrails:
 class TestMaskedFrontEdgeTrailsAll:
     def test__masks_uses_front_edge_and_trails_parameters(self, ci_imaging_7x7):
 
-        mask = ac.ci.CIMask.unmasked(
+        mask = ac.ci.CIMask2D.unmasked(
             shape_native=ci_imaging_7x7.shape_native, pixel_scales=1.0
         )
 
-        ci_mask = ac.ci.CIMask.masked_front_edges_and_trails_from_ci_frame(
+        ci_mask = ac.ci.CIMask2D.masked_front_edges_and_trails_from_ci_frame(
             ci_frame=ci_imaging_7x7.image,
             mask=mask,
             settings=ac.ci.SettingsCIMask(parallel_front_edge_rows=(0, 1)),
@@ -553,7 +553,7 @@ class TestMaskedFrontEdgeTrailsAll:
             )
         ).all()
 
-        ci_mask = ac.ci.CIMask.masked_front_edges_and_trails_from_ci_frame(
+        ci_mask = ac.ci.CIMask2D.masked_front_edges_and_trails_from_ci_frame(
             ci_frame=ci_imaging_7x7.image,
             mask=mask,
             settings=ac.ci.SettingsCIMask(parallel_trails_rows=(0, 1)),
@@ -574,7 +574,7 @@ class TestMaskedFrontEdgeTrailsAll:
             )
         ).all()
 
-        ci_mask = ac.ci.CIMask.masked_front_edges_and_trails_from_ci_frame(
+        ci_mask = ac.ci.CIMask2D.masked_front_edges_and_trails_from_ci_frame(
             ci_frame=ci_imaging_7x7.image,
             mask=mask,
             settings=ac.ci.SettingsCIMask(serial_front_edge_columns=(0, 1)),
@@ -595,7 +595,7 @@ class TestMaskedFrontEdgeTrailsAll:
             )
         ).all()
 
-        ci_mask = ac.ci.CIMask.masked_front_edges_and_trails_from_ci_frame(
+        ci_mask = ac.ci.CIMask2D.masked_front_edges_and_trails_from_ci_frame(
             ci_frame=ci_imaging_7x7.image,
             mask=mask,
             settings=ac.ci.SettingsCIMask(serial_trails_columns=(0, 1)),

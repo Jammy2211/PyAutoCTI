@@ -2,7 +2,7 @@ from os import path
 
 import numpy as np
 import pytest
-from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
+from autocti.pipeline.phase.ci_imaging.phase import PhaseCIImaging
 from autocti.pipeline.phase.dataset.result import Result
 from autocti.mock import mock
 

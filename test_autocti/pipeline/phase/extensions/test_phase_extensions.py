@@ -35,14 +35,14 @@
 #
 #
 # @pytest.fixture(name="result")
-# def make_result(masked_imaging_7x7, instance):
+# def make_result(masked_imaging_7x7_frame, instance):
 #     return phase_imaging.PhaseImaging.Result(
 #         constant=instance,
 #         figure_of_merit=1.0,
 #         previous_model=af.ModelMapper(),
 #         gaussian_tuples=None,
 #         analysis=phase_imaging.PhaseImaging.Analysis(
-#             masked_imaging=masked_imaging_7x7,
+#             masked_imaging=masked_imaging_7x7_frame,
 #             cosmology=cosmo.Planck15,
 #             positions_threshold=1.0,
 #         ),

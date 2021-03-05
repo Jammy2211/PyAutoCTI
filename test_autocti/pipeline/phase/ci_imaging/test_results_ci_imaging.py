@@ -3,7 +3,7 @@ from os import path
 import autocti as ac
 import numpy as np
 import pytest
-from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
+from autocti.pipeline.phase.ci_imaging.phase import PhaseCIImaging
 from autocti.pipeline.phase.dataset.result import Result
 from autocti.mock import mock
 
@@ -103,7 +103,7 @@ class TestResult:
 
         ci_post_cti = parallel_clocker.add_cti(image=ci_imaging_7x7.ci_pre_cti)
 
-        mask = ac.ci.CIMask.unmasked(
+        mask = ac.ci.CIMask2D.unmasked(
             shape_native=ci_imaging_7x7.shape_native,
             pixel_scales=ci_imaging_7x7.pixel_scales,
         )

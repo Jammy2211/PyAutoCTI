@@ -200,7 +200,9 @@ class Visualizer:
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders="multiple_ci_fits_1d_line")
+        mat_plot_1d = self.mat_plot_1d_from(
+            subfolders=f"multiple_ci_fits_1d_line_{line_region}"
+        )
 
         ci_fit_plotter_list = [
             ci_fit_plotters.CIFitPlotter(fit=ci_fit, mat_plot_1d=mat_plot_1d)

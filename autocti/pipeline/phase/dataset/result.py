@@ -1,4 +1,4 @@
-from autocti.pipeline.phase.abstract import Result as AbstractResult
+from autocti.pipeline.phase.abstract.result import Result as AbstractResult
 
 
 class Result(AbstractResult):

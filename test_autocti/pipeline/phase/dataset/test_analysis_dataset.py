@@ -4,7 +4,7 @@ from autofit.mapper import model
 import autocti as ac
 import pytest
 from autocti import exc
-from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
+from autocti.pipeline.phase.ci_imaging.phase import PhaseCIImaging
 from autocti.mock import mock
 
 pytestmark = pytest.mark.filterwarnings(

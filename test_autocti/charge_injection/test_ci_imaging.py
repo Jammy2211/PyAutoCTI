@@ -312,7 +312,7 @@ class TestMaskedCIImaging:
         assert (masked_ci_imaging.cosmic_ray_map == masked_cosmic_ray_map).all()
 
     def test__include_parallel_columns_extraction(
-        self, ci_imaging_7x7, mask_7x7, ci_noise_scaling_maps_7x7
+        self, ci_imaging_7x7, mask_7x7_unmasked, ci_noise_scaling_maps_7x7
     ):
 
         mask = ac.Mask2D.unmasked(
@@ -363,7 +363,7 @@ class TestMaskedCIImaging:
         )
 
     def test__serial_masked_ci_imaging(
-        self, ci_imaging_7x7, mask_7x7, ci_noise_scaling_maps_7x7
+        self, ci_imaging_7x7, mask_7x7_unmasked, ci_noise_scaling_maps_7x7
     ):
 
         mask = ac.Mask2D.unmasked(

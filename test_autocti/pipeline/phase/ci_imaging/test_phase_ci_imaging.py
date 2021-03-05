@@ -4,7 +4,7 @@ from autofit.mapper.prior_model import prior_model
 import autocti as ac
 import numpy as np
 import pytest
-from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
+from autocti.pipeline.phase.ci_imaging.phase import PhaseCIImaging
 from autocti.mock import mock
 
 pytestmark = pytest.mark.filterwarnings(
@@ -102,7 +102,7 @@ class TestMakeAnalysis:
             cosmic_ray_map=ci_imaging_7x7.cosmic_ray_map
         )
 
-        ci_mask = ac.ci.CIMask.masked_front_edges_and_trails_from_ci_frame(
+        ci_mask = ac.ci.CIMask2D.masked_front_edges_and_trails_from_ci_frame(
             mask=mask, settings=settings_ci_mask, ci_frame=ci_imaging_7x7.image
         )
 

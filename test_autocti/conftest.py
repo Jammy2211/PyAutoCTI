@@ -78,9 +78,9 @@ def make_serial_clocker():
 ### MASK ###
 
 
-@pytest.fixture(name="mask_7x7")
-def make_mask_7x7():
-    return fixtures.make_mask_7x7()
+@pytest.fixture(name="mask_7x7_unmasked")
+def make_mask_7x7_unmasked():
+    return fixtures.make_mask_7x7_unmasked()
 
 
 ### FRAMES ###
@@ -91,22 +91,22 @@ def make_scans_7x7():
     return fixtures.make_scans_7x7()
 
 
-@pytest.fixture(name="image_7x7")
-def make_image_7x7():
-    return fixtures.make_image_7x7()
+@pytest.fixture(name="image_7x7_frame")
+def make_image_7x7_frame():
+    return fixtures.make_image_7x7_frame()
 
 
-@pytest.fixture(name="noise_map_7x7")
-def make_noise_map_7x7():
-    return fixtures.make_noise_map_7x7()
+@pytest.fixture(name="noise_map_7x7_frame")
+def make_noise_map_7x7_frame():
+    return fixtures.make_noise_map_7x7_frame()
 
 
 ### IMAGING ###
 
 
-@pytest.fixture(name="imaging_7x7")
-def make_imaging_7x7():
-    return fixtures.make_imaging_7x7()
+@pytest.fixture(name="imaging_7x7_frame")
+def make_imaging_7x7_frame():
+    return fixtures.make_imaging_7x7_frame()
 
 
 ### CHARGE INJECTION FRAMES ###

@@ -2,7 +2,7 @@ from os import path
 
 from autoconf import conf
 import pytest
-from autocti.pipeline.phase.ci_imaging import PhaseCIImaging
+from autocti.pipeline.phase.ci_imaging.phase import PhaseCIImaging
 from autocti.mock import mock
 
 pytestmark = pytest.mark.filterwarnings(

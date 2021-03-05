@@ -3,7 +3,6 @@ from autocti.charge_injection import ci_mask, ci_imaging
 from autocti.pipeline.phase.dataset.phase import PhaseDataset
 from autocti.pipeline.phase.ci_imaging.analysis import Analysis
 from autocti.pipeline.phase.ci_imaging.result import Result
-from autofit.non_linear.paths import convert_paths
 from autofit.tools.phase_property import PhaseProperty
 
 
@@ -88,7 +87,7 @@ class PhaseCIImaging(PhaseDataset):
             An analysis object that the `NonLinearSearch` calls to determine the fit of a set of values
         """
 
-        mask = ci_mask.CIMask.unmasked(
+        mask = ci_mask.CIMask2D.unmasked(
             shape_native=datasets[0].image.shape_native,
             pixel_scales=datasets[0].image.shape_native,
         )
@@ -130,7 +129,7 @@ class PhaseCIImaging(PhaseDataset):
             cosmic_ray_map=dataset.cosmic_ray_map, mask=mask
         )
 
-        return ci_mask.CIMask.masked_front_edges_and_trails_from_ci_frame(
+        return ci_mask.CIMask2D.masked_front_edges_and_trails_from_ci_frame(
             mask=mask, ci_frame=dataset.image, settings=self.settings.settings_ci_mask
         )
 

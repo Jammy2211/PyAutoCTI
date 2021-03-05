@@ -113,43 +113,43 @@ class TestCIPattern(object):
         with pytest.raises(exc.RegionException):
             ac.ci.CIPatternUniform(normalization=1.0, regions=([(0, 0, 0, -1)]))
 
-        def test__with_extracted_regions__regions_are_extracted_correctly(self):
+    def test__with_extracted_regions__regions_are_extracted_correctly(self):
 
-            pattern = ac.ci.CIPatternUniform(normalization=1.0, regions=[(0, 2, 0, 2)])
+        pattern = ac.ci.CIPatternUniform(normalization=1.0, regions=[(0, 2, 0, 2)])
 
-            pattern_extracted = pattern.with_extracted_regions(
-                extraction_region=ac.Region2D((0, 2, 0, 2))
-            )
+        pattern_extracted = pattern.with_extracted_regions(
+            extraction_region=ac.Region2D((0, 2, 0, 2))
+        )
 
-            assert pattern_extracted.regions == [(0, 2, 0, 2)]
+        assert pattern_extracted.regions == [(0, 2, 0, 2)]
 
-            pattern_extracted = pattern.with_extracted_regions(
-                extraction_region=ac.Region2D((0, 1, 0, 1))
-            )
+        pattern_extracted = pattern.with_extracted_regions(
+            extraction_region=ac.Region2D((0, 1, 0, 1))
+        )
 
-            assert pattern_extracted.regions == [(0, 1, 0, 1)]
+        assert pattern_extracted.regions == [(0, 1, 0, 1)]
 
-            pattern = ac.ci.CIPatternUniform(
-                normalization=1.0, regions=[(2, 4, 2, 4), (0, 1, 0, 1)]
-            )
+        pattern = ac.ci.CIPatternUniform(
+            normalization=1.0, regions=[(2, 4, 2, 4), (0, 1, 0, 1)]
+        )
 
-            pattern_extracted = pattern.with_extracted_regions(
-                extraction_region=ac.Region2D((0, 3, 0, 3))
-            )
+        pattern_extracted = pattern.with_extracted_regions(
+            extraction_region=ac.Region2D((0, 3, 0, 3))
+        )
 
-            assert pattern_extracted.regions == [(2, 3, 2, 3), (0, 1, 0, 1)]
+        assert pattern_extracted.regions == [(2, 3, 2, 3), (0, 1, 0, 1)]
 
-            pattern_extracted = pattern.with_extracted_regions(
-                extraction_region=ac.Region2D((2, 5, 2, 5))
-            )
+        pattern_extracted = pattern.with_extracted_regions(
+            extraction_region=ac.Region2D((2, 5, 2, 5))
+        )
 
-            assert pattern_extracted.regions == [(0, 2, 0, 2)]
+        assert pattern_extracted.regions == [(0, 2, 0, 2)]
 
-            pattern_extracted = pattern.with_extracted_regions(
-                extraction_region=ac.Region2D((8, 9, 8, 9))
-            )
+        pattern_extracted = pattern.with_extracted_regions(
+            extraction_region=ac.Region2D((8, 9, 8, 9))
+        )
 
-            assert pattern_extracted.regions == None
+        assert pattern_extracted.regions == None
 
 
 class TestCIPatternUniform(object):

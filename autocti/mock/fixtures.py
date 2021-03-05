@@ -28,15 +28,6 @@ def make_ccd():
     return ac.CCD(well_fill_power=0.5, full_well_depth=10000, well_notch_depth=1e-7)
 
 
-def make_ccd_complex():
-    return ac.CCDComplex(
-        well_fill_alpha=1.0,
-        well_fill_power=0.5,
-        full_well_depth=10000,
-        well_notch_depth=1e-7,
-    )
-
-
 def make_parallel_clocker():
     return ac.Clocker(parallel_express=2, parallel_charge_injection_mode=False)
 
@@ -48,7 +39,7 @@ def make_serial_clocker():
 ### MASK ###
 
 
-def make_mask_7x7():
+def make_mask_7x7_unmasked():
     return ac.Mask2D.unmasked(shape_native=(7, 7), pixel_scales=(1.0, 1.0))
 
 
@@ -63,7 +54,7 @@ def make_scans_7x7():
     )
 
 
-def make_image_7x7():
+def make_image_7x7_frame():
     return ac.Frame2D.full(
         fill_value=1.0,
         shape_native=(7, 7),
@@ -72,7 +63,7 @@ def make_image_7x7():
     )
 
 
-def make_noise_map_7x7():
+def make_noise_map_7x7_frame():
     return ac.Frame2D.full(
         fill_value=2.0,
         shape_native=(7, 7),
@@ -84,9 +75,11 @@ def make_noise_map_7x7():
 ### IMAGING ###
 
 
-def make_imaging_7x7():
+def make_imaging_7x7_frame():
     return ac.Imaging(
-        image=make_image_7x7(), noise_map=make_noise_map_7x7(), name="mock_imaging_7x7"
+        image=make_image_7x7_frame(),
+        noise_map=make_noise_map_7x7_frame(),
+        name="mock_imaging_7x7_frame",
     )
 
 
@@ -179,7 +172,7 @@ def make_ci_imaging_7x7():
 def make_masked_ci_imaging_7x7():
     return ac.ci.MaskedCIImaging(
         ci_imaging=make_ci_imaging_7x7(),
-        mask=make_mask_7x7(),
+        mask=make_mask_7x7_unmasked(),
         noise_scaling_maps=make_ci_noise_scaling_maps_7x7(),
     )
 
@@ -223,7 +216,7 @@ def make_samples_with_result():
 
 
 def make_phase_data():
-    from autocti.pipeline.phase.dataset import PhaseDataset
+    from autocti.pipeline.phase.dataset.phase import PhaseDataset
 
     return PhaseDataset(search=MockSearch(name="test_phase"))
 

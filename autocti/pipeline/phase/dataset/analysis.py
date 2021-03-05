@@ -1,4 +1,3 @@
-from autocti import exc
 from autofit.non_linear import abstract_search
 
 

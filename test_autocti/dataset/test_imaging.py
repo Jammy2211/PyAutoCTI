@@ -87,14 +87,20 @@ class TestImaging:
 
 
 class TestMaskedImaging:
-    def test__masked_dataset(self, imaging_7x7, mask_7x7):
+    def test__masked_dataset(self, imaging_7x7_frame, mask_7x7_unmasked):
 
-        masked_imaging_7x7 = ac.MaskedImaging(imaging=imaging_7x7, mask=mask_7x7)
-
-        assert (masked_imaging_7x7.image == np.ones((7, 7)) * np.invert(mask_7x7)).all()
+        masked_imaging_7x7_frame = ac.MaskedImaging(
+            imaging=imaging_7x7_frame, mask=mask_7x7_unmasked
+        )
 
         assert (
-            masked_imaging_7x7.noise_map == 2.0 * np.ones((7, 7)) * np.invert(mask_7x7)
+            masked_imaging_7x7_frame.image
+            == np.ones((7, 7)) * np.invert(mask_7x7_unmasked)
+        ).all()
+
+        assert (
+            masked_imaging_7x7_frame.noise_map
+            == 2.0 * np.ones((7, 7)) * np.invert(mask_7x7_unmasked)
         ).all()
 
     def test__different_imaging_without_mock_objects__customize_constructor_inputs(

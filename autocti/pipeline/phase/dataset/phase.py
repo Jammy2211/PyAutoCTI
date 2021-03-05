@@ -1,15 +1,14 @@
 from autocti.mask import mask as msk
 from autocti.pipeline.phase.settings import SettingsPhaseCIImaging
-from autocti.pipeline.phase import abstract
+from autocti.pipeline.phase.abstract import phase as abstract_phase
 from autocti.pipeline.phase import extensions
 from autocti.pipeline.phase.dataset.result import Result
-from autofit.non_linear.paths import convert_paths
 from autofit.tools.phase import Dataset
 from autofit.tools.phase_property import PhaseProperty
 from autofit.tools.pipeline import ResultsCollection
 
 
-class PhaseDataset(abstract.AbstractPhase):
+class PhaseDataset(abstract_phase.AbstractPhase):
 
     parallel_traps = PhaseProperty("parallel_traps")
     serial_traps = PhaseProperty("serial_traps")

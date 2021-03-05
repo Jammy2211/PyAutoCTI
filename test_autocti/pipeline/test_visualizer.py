@@ -237,7 +237,7 @@ class TestVisualizer:
             fits=[ci_fit_7x7, ci_fit_7x7], line_region="parallel_front_edge"
         )
 
-        plot_path = path.join(plot_path, "multiple_ci_fits_1d_line")
+        plot_path = path.join(plot_path, "multiple_ci_fits_1d_line_parallel_front_edge")
 
         assert path.join(plot_path, "subplot_residual_map_list.png") in plot_patch.paths
         assert (
