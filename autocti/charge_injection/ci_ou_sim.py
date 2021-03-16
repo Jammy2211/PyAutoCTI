@@ -174,3 +174,42 @@ def add_cti_to_ci_pre_cti(ci_pre_cti, ccd_id, quadrant_id):
     return frame_util.rotate_array_from_roe_corner(
         array=ci_post_cti, roe_corner=roe_corner
     )
+
+
+def add_cti_simple_to_ci_pre_cti(ci_pre_cti, ccd_id, quadrant_id):
+
+    # TODO: DO we need to add rotations into this function, making ccd id and quadrant id input parameters?
+
+    roe_corner = euclid.roe_corner_from(ccd_id=ccd_id, quadrant_id=quadrant_id)
+
+    ci_pre_cti = frame_util.rotate_array_from_roe_corner(
+        array=ci_pre_cti, roe_corner=roe_corner
+    )
+
+    """
+    The `Clocker` models the CCD read-out, including CTI.
+
+    For parallel clocking, we use 'charge injection mode' which transfers the charge of every pixel over the full CCD.
+    """
+    clocker = Clocker(parallel_express=2, parallel_charge_injection_mode=False)
+
+    """
+    The CTI model used by arCTIc to add CTI to the input image in the parallel direction, which contains: 
+
+        - 2 `TrapInstantCapture` species in the parallel direction.
+        - A simple CCD volume beta parametrization.
+        - 3 `TrapInstantCapture` species in the serial direction.
+        - A simple CCD volume beta parametrization.
+    """
+    parallel_trap_0 = traps.TrapInstantCapture(density=1.0, release_timescale=5.0)
+    parallel_ccd = ccd.CCD(
+        well_fill_power=0.8, well_notch_depth=0.0, full_well_depth=84700
+    )
+
+    ci_post_cti = clocker.add_cti(
+        image=ci_pre_cti, parallel_traps=[parallel_trap_0], parallel_ccd=parallel_ccd
+    )
+
+    return frame_util.rotate_array_from_roe_corner(
+        array=ci_post_cti, roe_corner=roe_corner
+    )

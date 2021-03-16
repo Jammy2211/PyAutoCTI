@@ -251,9 +251,11 @@ def ci_regions_from(
     injection_on: int,
     injection_off: int,
     injection_total: int,
+    parallel_size: int,
     serial_size: int,
     serial_prescan_size: int,
     serial_overscan_size: int,
+    roe_corner: (int, int),
 ):
 
     ci_regions = []
@@ -262,12 +264,41 @@ def ci_regions_from(
 
     for index in range(injection_total):
 
-        ci_region = (
-            injection_start_count,
-            injection_start_count + injection_on,
-            serial_prescan_size,
-            serial_size - serial_overscan_size,
-        )
+        if roe_corner == (0, 0):
+
+            ci_region = (
+                parallel_size - (injection_start_count + injection_on),
+                parallel_size - injection_start_count,
+                serial_prescan_size,
+                serial_size - serial_overscan_size,
+            )
+
+        elif roe_corner == (1, 0):
+
+            ci_region = (
+                injection_start_count,
+                injection_start_count + injection_on,
+                serial_prescan_size,
+                serial_size - serial_overscan_size,
+            )
+
+        elif roe_corner == (0, 1):
+
+            ci_region = (
+                parallel_size - (injection_start_count + injection_on),
+                parallel_size - injection_start_count,
+                serial_overscan_size,
+                serial_size - serial_prescan_size,
+            )
+
+        elif roe_corner == (1, 1):
+
+            ci_region = (
+                injection_start_count,
+                injection_start_count + injection_on,
+                serial_overscan_size,
+                serial_size - serial_prescan_size,
+            )
 
         ci_regions.append(ci_region)
 

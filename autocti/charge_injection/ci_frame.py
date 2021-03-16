@@ -338,7 +338,8 @@ class AbstractCIFrame(abstract_frame.AbstractFrame2D):
         return new_frame
 
     def parallel_calibration_frame_from_columns(self, columns):
-        """Extract an parallel calibration array from a charge injection ci_frame, where this arrays is a sub-set of
+        """
+        Extract an parallel calibration array from a charge injection ci_frame, where this arrays is a sub-set of
         the ci_frame which be used for just parallel calibration. Specifically, this ci_frame is a specified number
         of columns closest to the read-out electronics.
 
@@ -1494,26 +1495,6 @@ class CIFrame(AbstractCIFrame):
         )
 
     @classmethod
-    def extracted_ci_frame_from_ci_frame_and_extraction_region(
-        cls, ci_frame, extraction_region
-    ):
-
-        scans = abstract_frame.Scans.after_extraction(
-            frame=ci_frame, extraction_region=extraction_region
-        )
-
-        return cls.manual(
-            array=ci_frame[extraction_region.slice],
-            ci_pattern=ci_frame.ci_pattern.with_extracted_regions(
-                extraction_region=extraction_region
-            ),
-            exposure_info=ci_frame.exposure_info,
-            scans=scans,
-            roe_corner=ci_frame.original_roe_corner,
-            pixel_scales=ci_frame.pixel_scales,
-        )
-
-    @classmethod
     def from_fits(
         cls,
         file_path,
@@ -1550,6 +1531,32 @@ class CIFrame(AbstractCIFrame):
             exposure_info=exposure_info,
             scans=scans,
             pixel_scales=pixel_scales,
+        )
+
+    @classmethod
+    def extracted_ci_frame_from_ci_frame_and_extraction_region(
+        cls, ci_frame, extraction_region
+    ):
+
+        scans = abstract_frame.Scans.after_extraction(
+            frame=ci_frame, extraction_region=extraction_region
+        )
+
+        array = ci_frame[extraction_region.slice]
+
+        mask = Mask2D.unmasked(
+            shape_native=array.shape, pixel_scales=ci_frame.pixel_scales
+        )
+
+        return CIFrame(
+            array=ci_frame[extraction_region.slice],
+            mask=mask,
+            ci_pattern=ci_frame.ci_pattern.with_extracted_regions(
+                extraction_region=extraction_region
+            ),
+            exposure_info=ci_frame.exposure_info,
+            scans=scans,
+            original_roe_corner=ci_frame.original_roe_corner,
         )
 
     @classmethod
@@ -1590,13 +1597,17 @@ class CIFrameEuclid(CIFrame):
         injection_off = ext_header["INJOFF"]
         injection_total = ext_header["INJTOTAL"]
 
+        roe_corner = euclid.roe_corner_from(ccd_id=ccd_id, quadrant_id=quadrant_id)
+
         ci_regions = pattern.ci_regions_from(
             injection_on=injection_on,
             injection_off=injection_off,
             injection_total=injection_total,
+            parallel_size=parallel_size,
             serial_prescan_size=serial_prescan_size,
             serial_overscan_size=serial_overscan_size,
             serial_size=serial_size,
+            roe_corner=roe_corner,
         )
 
         normalization = ext_header["INJNORM"]

@@ -6,12 +6,12 @@ import pytest
 from autocti.pipeline import visualizer as vis
 from autoconf import conf
 
-directory = path.dirname(path.realpath(__file__))
+directory = path.dirname(path.abspath(__file__))
 
 
 @pytest.fixture(name="plot_path")
 def make_visualizer_plotter_setup():
-    return path.join("{}".format(directory), "files", "plot", "visualizer")
+    return path.join("{}".format(directory), "files")
 
 
 @pytest.fixture(autouse=True)
@@ -227,6 +227,8 @@ class TestVisualizer:
     def test__visualize_multiple_ci_fits_1d_line_subplots(
         self, masked_ci_imaging_7x7, ci_fit_7x7, plot_path, plot_patch
     ):
+
+        print(conf.instance.paths)
 
         if os.path.exists(plot_path):
             shutil.rmtree(plot_path)

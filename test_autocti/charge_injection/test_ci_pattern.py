@@ -618,9 +618,11 @@ class TestCIRegionFrom:
             injection_on=10,
             injection_off=10,
             injection_total=1,
+            parallel_size=10,
             serial_prescan_size=1,
             serial_size=10,
             serial_overscan_size=1,
+            roe_corner=(1, 0),
         )
 
         assert ci_regions == [(0, 10, 1, 9)]
@@ -629,9 +631,11 @@ class TestCIRegionFrom:
             injection_on=10,
             injection_off=10,
             injection_total=2,
+            parallel_size=30,
             serial_prescan_size=2,
             serial_size=11,
             serial_overscan_size=4,
+            roe_corner=(1, 0),
         )
 
         assert ci_regions == [(0, 10, 2, 7), (20, 30, 2, 7)]
@@ -640,9 +644,11 @@ class TestCIRegionFrom:
             injection_on=5,
             injection_off=10,
             injection_total=3,
+            parallel_size=35,
             serial_prescan_size=2,
             serial_size=11,
             serial_overscan_size=4,
+            roe_corner=(1, 0),
         )
 
         assert ci_regions == [(0, 5, 2, 7), (15, 20, 2, 7), (30, 35, 2, 7)]
@@ -651,9 +657,11 @@ class TestCIRegionFrom:
             injection_on=200,
             injection_off=200,
             injection_total=5,
+            parallel_size=2000,
             serial_prescan_size=51,
             serial_size=2128,
             serial_overscan_size=29,
+            roe_corner=(1, 0),
         )
 
         assert ci_regions == [
