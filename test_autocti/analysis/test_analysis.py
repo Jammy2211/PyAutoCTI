@@ -123,15 +123,10 @@ class TestAnalysisCIImaging:
         ci_pattern_7x7,
     ):
 
-        phase = PhaseCIImaging(
-            search=mock.MockSearch(name="test_phase"),
-            parallel_traps=traps_x1,
-            parallel_ccd=ccd,
-            hyper_noise_scalar_of_ci_regions=ac.ci.CIHyperNoiseScalar,
-            settings=ac.SettingsPhaseCIImaging(
-                settings_masked_ci_imaging=ac.ci.SettingsMaskedCIImaging(
-                    parallel_columns=(0, 1)
-                )
+        model = af.CollectionPriorModel(
+            cti=af.Model(ac.CTI, parallel_traps=traps_x1, parallel_ccd=ccd),
+            hyper_noise=af.Model(
+                ac.ci.CIHyperNoiseCollection, ci_regions=ac.ci.CIHyperNoiseScalar
             ),
         )
 
@@ -140,6 +135,12 @@ class TestAnalysisCIImaging:
                 shape_native=(7, 7), pixel_scales=1.0, ci_pattern=ci_pattern_7x7
             )
         ]
+
+        masked_ci_imaging = ac.ci.MaskedCIImaging(
+            ci_imaging=ci_imaging_7x7,
+            mask=mask_7x7_unmasked,
+            settings=ac.ci.SettingsMaskedCIImaging(parallel_columns=(0, 1)),
+        )
 
         analysis = phase.make_analysis(
             datasets=[ci_imaging_7x7],

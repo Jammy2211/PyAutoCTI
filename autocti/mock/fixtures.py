@@ -1,3 +1,4 @@
+import autofit as af
 from autoarray.mock.fixtures import *
 from autofit.mapper.model import ModelInstance
 from autofit.mock.mock import MockSearch, MockSamples
@@ -10,6 +11,7 @@ from autocti.util.clocker import Clocker
 from autocti.util import ccd
 from autocti.analysis import analysis
 from autocti.analysis import result as res
+from autocti.analysis.model_util import CTI
 from autocti.pipeline.phase.ci_imaging import phase
 
 import numpy as np
@@ -201,24 +203,24 @@ def make_ci_fit_7x7():
 
 def make_samples_with_result():
 
-    instance = ModelInstance()
+    model = af.CollectionPriorModel(
+        cti=af.Model(
+            CTI,
+            parallel_traps=[traps.TrapInstantCapture],
+            parallel_ccd=make_ccd(),
+            serial_traps=[traps.TrapInstantCapture],
+            serial_ccd=make_ccd(),
+        )
+    )
 
-    instance.parallel_traps = [traps.TrapInstantCapture(density=0, release_timescale=1)]
-    instance.parallel_ccd = make_ccd()
-    instance.serial_traps = [traps.TrapInstantCapture(density=0, release_timescale=1)]
-    instance.serial_ccd = make_ccd()
-
-    instance.hyper_noise_scalar_of_ci_regions = None
-    instance.hyper_noise_scalar_of_parallel_trails = None
-    instance.hyper_noise_scalar_of_serial_trails = None
-    instance.hyper_noise_scalar_of_serial_overscan_no_trails = None
+    instance = model.instance_from_prior_medians()
 
     return MockSamples(max_log_likelihood_instance=instance)
 
 
 def make_analysis_ci_imaging_7x7():
     return analysis.AnalysisCIImaging(
-        ci_imagings=make_masked_ci_imaging_7x7(), clocker=make_parallel_clocker()
+        ci_imagings=[make_masked_ci_imaging_7x7()], clocker=make_parallel_clocker()
     )
 
 

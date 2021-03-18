@@ -91,6 +91,9 @@ class AnalysisCIImaging(Analysis):
 
     def hyper_noise_scalars_from_instance(self, instance, hyper_noise_scale=True):
 
+        if not hasattr(instance, "hyper_noise"):
+            return None
+
         if not hyper_noise_scale:
             return None
 
