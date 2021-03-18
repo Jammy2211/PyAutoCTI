@@ -11,11 +11,7 @@ class TestResult:
     ):
 
         model = af.Model(
-            ac.CTI,
-            parallel_traps=[ac.TrapInstantCapture],
-            parallel_ccd=ac.CCD,
-            serial_traps=[ac.TrapInstantCapture],
-            serial_ccd=ac.CCD,
+            ac.CTI, parallel_traps=[ac.TrapInstantCapture], parallel_ccd=ac.CCD
         )
 
         result = res.Result(
@@ -33,11 +29,7 @@ class TestResult:
     ):
 
         model = af.Model(
-            ac.CTI,
-            parallel_traps=[ac.TrapInstantCapture],
-            parallel_ccd=ac.CCD,
-            serial_traps=[ac.TrapInstantCapture],
-            serial_ccd=ac.CCD,
+            ac.CTI, parallel_traps=[ac.TrapInstantCapture], parallel_ccd=ac.CCD
         )
 
         result = res.Result(

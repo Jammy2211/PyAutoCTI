@@ -10,9 +10,9 @@ class CTI:
     def __init__(
         self,
         parallel_traps: Optional[List[traps.TrapInstantCapture]] = None,
-        parallel_ccd: ccd.CCD = None,
+        parallel_ccd: Optional[ccd.CCD] = None,
         serial_traps: Optional[List[traps.TrapInstantCapture]] = None,
-        serial_ccd: ccd.CCD = None,
+        serial_ccd: Optional[ccd.CCD] = None,
     ):
 
         self.parallel_traps = parallel_traps

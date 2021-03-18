@@ -74,7 +74,8 @@ class AnalysisCIImaging(Analysis):
         """
 
         self.settings_cti.check_total_density_within_range(
-            parallel_traps=instance.parallel_traps, serial_traps=instance.serial_traps
+            parallel_traps=instance.cti.parallel_traps,
+            serial_traps=instance.cti.serial_traps,
         )
 
         hyper_noise_scalars = self.hyper_noise_scalars_from_instance(instance=instance)
@@ -97,10 +98,10 @@ class AnalysisCIImaging(Analysis):
             filter(
                 None,
                 [
-                    instance.hyper_noise_scalar_of_ci_regions,
-                    instance.hyper_noise_scalar_of_parallel_trails,
-                    instance.hyper_noise_scalar_of_serial_trails,
-                    instance.hyper_noise_scalar_of_serial_overscan_no_trails,
+                    instance.hyper_noise.ci_regions,
+                    instance.hyper_noise.parallel_trails,
+                    instance.hyper_noise.serial_trails,
+                    instance.hyper_noise.serial_overscan_no_trails,
                 ],
             )
         )
@@ -116,22 +117,22 @@ class AnalysisCIImaging(Analysis):
             instance=instance, hyper_noise_scale=hyper_noise_scale
         )
 
-        if len(instance.parallel_traps) > 0:
-            parallel_traps = list(instance.parallel_traps)
+        if instance.cti.parallel_traps is not None:
+            parallel_traps = list(instance.cti.parallel_traps)
         else:
             parallel_traps = None
 
-        if len(instance.serial_traps) > 0:
-            serial_traps = list(instance.serial_traps)
+        if instance.cti.serial_traps is not None:
+            serial_traps = list(instance.cti.serial_traps)
         else:
             serial_traps = None
 
         ci_post_cti = self.clocker.add_cti(
             image=ci_imaging.ci_pre_cti,
             parallel_traps=parallel_traps,
-            parallel_ccd=instance.parallel_ccd,
+            parallel_ccd=instance.cti.parallel_ccd,
             serial_traps=serial_traps,
-            serial_ccd=instance.serial_ccd,
+            serial_ccd=instance.cti.serial_ccd,
         )
 
         ci_post_cti = ci_frame.CIFrame.manual(
@@ -141,7 +142,7 @@ class AnalysisCIImaging(Analysis):
         )
 
         return ci_fit.CIFitImaging(
-            ci_imaging=ci_imaging,
+            masked_ci_imaging=ci_imaging,
             ci_post_cti=ci_post_cti,
             hyper_noise_scalars=hyper_noise_scalars,
         )
@@ -219,26 +220,26 @@ def pipe_cti(ci_data_masked, instance, clocker, hyper_noise_scalars):
 
     # TODO : Convesions ini pyarctic make this dodgy - will fix but sorting them out in arcticpy.
 
-    if len(instance.parallel_traps) > 0:
-        parallel_traps = list(instance.parallel_traps)
+    if instance.cti.parallel_traps is not None:
+        parallel_traps = list(instance.cti.parallel_traps)
     else:
         parallel_traps = None
 
-    if len(instance.serial_traps) > 0:
-        serial_traps = list(instance.serial_traps)
+    if instance.cti.serial_traps is not None:
+        serial_traps = list(instance.cti.serial_traps)
     else:
         serial_traps = None
 
     ci_post_cti = clocker.add_cti(
         image=ci_data_masked.ci_pre_cti,
         parallel_traps=parallel_traps,
-        parallel_ccd=instance.parallel_ccd,
+        parallel_ccd=instance.cti.parallel_ccd,
         serial_traps=serial_traps,
-        serial_ccd=instance.serial_ccd,
+        serial_ccd=instance.cti.serial_ccd,
     )
 
     fit = ci_fit.CIFitImaging(
-        ci_imaging=ci_data_masked,
+        masked_ci_imaging=ci_data_masked,
         ci_post_cti=ci_post_cti,
         hyper_noise_scalars=hyper_noise_scalars,
     )

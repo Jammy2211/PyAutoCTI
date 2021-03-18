@@ -1,3 +1,6 @@
+from typing import Optional
+
+
 class CIHyperNoiseScalar(float):
     def __new__(cls, scale_factor=0.0):
         return super().__new__(cls, scale_factor)
@@ -13,3 +16,18 @@ class CIHyperNoiseScalar(float):
 
     def __repr__(self):
         return "Noise Scale Factor: {}".format(self) + "\n"
+
+
+class CIHyperNoiseCollection:
+    def __init__(
+        self,
+        ci_regions: Optional[CIHyperNoiseScalar] = None,
+        parallel_trails: Optional[CIHyperNoiseScalar] = None,
+        serial_trails: Optional[CIHyperNoiseScalar] = None,
+        serial_overscan_no_trails: Optional[CIHyperNoiseScalar] = None,
+    ):
+
+        self.ci_regions = ci_regions
+        self.parallel_trails = parallel_trails
+        self.serial_trails = serial_trails
+        self.serial_overscan_no_trails = serial_overscan_no_trails

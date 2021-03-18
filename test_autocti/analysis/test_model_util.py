@@ -47,24 +47,14 @@ def test__cti_model__creates_correct_model_from_inputs():
 def test__recognises_type_of_fit_from_model():
 
     model = af.Model(
-        ac.CTI,
-        parallel_traps=[ac.TrapInstantCapture],
-        parallel_ccd=ac.CCD,
-        serial_traps=None,
-        serial_ccd=None,
+        ac.CTI, parallel_traps=[ac.TrapInstantCapture], parallel_ccd=ac.CCD
     )
 
     assert ac.util.model.is_parallel_fit(model=model) is True
     assert ac.util.model.is_serial_fit(model=model) is False
     assert ac.util.model.is_parallel_and_serial_fit(model=model) is False
 
-    model = af.Model(
-        ac.CTI,
-        parallel_traps=None,
-        parallel_ccd=None,
-        serial_traps=[ac.TrapInstantCapture],
-        serial_ccd=ac.CCD,
-    )
+    model = af.Model(ac.CTI, serial_traps=[ac.TrapInstantCapture], serial_ccd=ac.CCD)
 
     assert ac.util.model.is_parallel_fit(model=model) is False
     assert ac.util.model.is_serial_fit(model=model) is True
