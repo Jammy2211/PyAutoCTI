@@ -11,6 +11,7 @@ from autocti.structures.lines import LineCollection
 
 from arcticpy.traps import TrapLogNormalLifetimeContinuum
 
+from .analysis.analysis import AnalysisCIImaging
 from .structures.array_2d import Array2D
 from .structures.frames import Frame2D
 from .mask.mask import Mask2D
@@ -19,6 +20,7 @@ from .dataset.imaging import Imaging
 from .dataset.imaging import MaskedImaging
 from .dataset.warm_pixels import find_warm_pixels
 from . import charge_injection as ci
+from .analysis.model_util import CTI
 from .pipeline.phase.settings import SettingsCTI
 from .pipeline.phase.settings import SettingsPhaseCIImaging
 from .pipeline.phase.extensions import CombinedHyperPhase

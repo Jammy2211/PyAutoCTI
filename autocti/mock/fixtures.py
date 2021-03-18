@@ -8,6 +8,8 @@ from autocti.mask import mask as msk
 from autocti.util import traps
 from autocti.util.clocker import Clocker
 from autocti.util import ccd
+from autocti.analysis import analysis
+from autocti.analysis import result as res
 from autocti.pipeline.phase.ci_imaging import phase
 
 import numpy as np
@@ -212,6 +214,12 @@ def make_samples_with_result():
     instance.hyper_noise_scalar_of_serial_overscan_no_trails = None
 
     return MockSamples(max_log_likelihood_instance=instance)
+
+
+def make_analysis_ci_imaging_7x7():
+    return analysis.AnalysisCIImaging(
+        ci_imagings=make_masked_ci_imaging_7x7(), clocker=make_parallel_clocker()
+    )
 
 
 def make_phase_data():
