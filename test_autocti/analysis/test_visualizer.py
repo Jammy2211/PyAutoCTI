@@ -3,7 +3,7 @@ import shutil
 from os import path
 
 import pytest
-from autocti.pipeline import visualizer as vis
+from autocti.analysis import visualizer as vis
 from autoconf import conf
 
 directory = path.dirname(path.abspath(__file__))
@@ -227,8 +227,6 @@ class TestVisualizer:
     def test__visualize_multiple_ci_fits_1d_line_subplots(
         self, masked_ci_imaging_7x7, ci_fit_7x7, plot_path, plot_patch
     ):
-
-        print(conf.instance.paths)
 
         if os.path.exists(plot_path):
             shutil.rmtree(plot_path)

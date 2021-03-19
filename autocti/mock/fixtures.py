@@ -12,7 +12,6 @@ from autocti.util import ccd
 from autocti.analysis import analysis
 from autocti.analysis import result as res
 from autocti.analysis.model_util import CTI
-from autocti.pipeline.phase.ci_imaging import phase
 
 import numpy as np
 
@@ -222,16 +221,6 @@ def make_analysis_ci_imaging_7x7():
     return analysis.AnalysisCIImaging(
         ci_imagings=[make_masked_ci_imaging_7x7()], clocker=make_parallel_clocker()
     )
-
-
-def make_phase_data():
-    from autocti.pipeline.phase.dataset.phase import PhaseDataset
-
-    return PhaseDataset(search=MockSearch(name="test_phase"))
-
-
-def make_phase_ci_imaging_7x7():
-    return phase.PhaseCIImaging(search=MockSearch(name="test_phase"))
 
 
 ### EUCLID DATA ####
