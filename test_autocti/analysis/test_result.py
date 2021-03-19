@@ -217,3 +217,67 @@ class TestResultCIImaging:
         ] != pytest.approx(
             fit_list[0].chi_squared_map.serial_overscan_no_trails_frame, 1.0e-2
         )
+
+    def test__noise_scaling_maps_are_setup_correctly(
+        self,
+        ci_imaging_7x7,
+        mask_7x7_unmasked,
+        ci_pattern_7x7,
+        parallel_clocker,
+        samples_with_result,
+    ):
+
+        ci_imaging_7x7.cosmic_ray_map = None
+
+        masked_ci_imaging_7x7 = ac.ci.MaskedCIImaging(
+            ci_imaging=ci_imaging_7x7, mask=mask_7x7_unmasked
+        )
+
+        analysis = ac.AnalysisCIImaging(
+            ci_imagings=[masked_ci_imaging_7x7, masked_ci_imaging_7x7],
+            clocker=parallel_clocker,
+        )
+
+        result = res.ResultCIImaging(
+            samples=samples_with_result, analysis=analysis, model=None, search=None
+        )
+
+        assert (
+            result.noise_scaling_maps_list[0][0]
+            == result.noise_scaling_maps_list_of_ci_regions[0]
+        ).all()
+
+        assert (
+            result.noise_scaling_maps_list[0][1]
+            == result.noise_scaling_maps_list_of_parallel_trails[0]
+        ).all()
+
+        assert (
+            result.noise_scaling_maps_list[0][2]
+            == result.noise_scaling_maps_list_of_serial_trails[0]
+        ).all()
+
+        assert (
+            result.noise_scaling_maps_list[0][3]
+            == result.noise_scaling_maps_list_of_serial_overscan_no_trails[0]
+        ).all()
+
+        assert (
+            result.noise_scaling_maps_list[1][0]
+            == result.noise_scaling_maps_list_of_ci_regions[1]
+        ).all()
+
+        assert (
+            result.noise_scaling_maps_list[1][1]
+            == result.noise_scaling_maps_list_of_parallel_trails[1]
+        ).all()
+
+        assert (
+            result.noise_scaling_maps_list[1][2]
+            == result.noise_scaling_maps_list_of_serial_trails[1]
+        ).all()
+
+        assert (
+            result.noise_scaling_maps_list[1][3]
+            == result.noise_scaling_maps_list_of_serial_overscan_no_trails[1]
+        ).all()

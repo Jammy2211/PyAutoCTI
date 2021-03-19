@@ -80,47 +80,22 @@ class ResultCIImaging(ResultDataset):
             )
         )
 
-    def noise_scaling_maps_list_from_total_images_and_results(
-        self, total_images, results
-    ):
+    @property
+    def noise_scaling_maps_list(self,):
 
-        if self.model.hyper_noise_scalar_of_ci_regions is not None:
-            noise_scaling_maps_list_of_ci_regions = (
-                results.last.noise_scaling_maps_list_of_ci_regions
-            )
-        else:
-            noise_scaling_maps_list_of_ci_regions = total_images * [None]
-
-        if self.model.hyper_noise_scalar_of_parallel_trails is not None:
-            noise_scaling_maps_list_of_parallel_trails = (
-                results.last.noise_scaling_maps_list_of_parallel_trails
-            )
-        else:
-            noise_scaling_maps_list_of_parallel_trails = total_images * [None]
-
-        if self.model.hyper_noise_scalar_of_serial_trails is not None:
-            noise_scaling_maps_list_of_serial_trails = (
-                results.last.noise_scaling_maps_list_of_serial_trails
-            )
-        else:
-            noise_scaling_maps_list_of_serial_trails = total_images * [None]
-
-        if self.model.hyper_noise_scalar_of_serial_overscan_no_trails is not None:
-            noise_scaling_maps_list_of_serial_overscan_no_trails = (
-                results.last.noise_scaling_maps_list_of_serial_overscan_no_trails
-            )
-        else:
-            noise_scaling_maps_list_of_serial_overscan_no_trails = total_images * [None]
+        total_images = len(self.analysis.ci_imagings)
 
         noise_scaling_maps_list = []
 
         for image_index in range(total_images):
             noise_scaling_maps_list.append(
                 [
-                    noise_scaling_maps_list_of_ci_regions[image_index],
-                    noise_scaling_maps_list_of_parallel_trails[image_index],
-                    noise_scaling_maps_list_of_serial_trails[image_index],
-                    noise_scaling_maps_list_of_serial_overscan_no_trails[image_index],
+                    self.noise_scaling_maps_list_of_ci_regions[image_index],
+                    self.noise_scaling_maps_list_of_parallel_trails[image_index],
+                    self.noise_scaling_maps_list_of_serial_trails[image_index],
+                    self.noise_scaling_maps_list_of_serial_overscan_no_trails[
+                        image_index
+                    ],
                 ]
             )
 
@@ -128,12 +103,6 @@ class ResultCIImaging(ResultDataset):
             noise_scaling_maps_list[image_index] = [
                 noise_scaling_map
                 for noise_scaling_map in noise_scaling_maps_list[image_index]
-                if noise_scaling_map is not None
             ]
-
-        noise_scaling_maps_list = list(filter(None, noise_scaling_maps_list))
-
-        if len(noise_scaling_maps_list) == 0:
-            return total_images * [None]
 
         return noise_scaling_maps_list
