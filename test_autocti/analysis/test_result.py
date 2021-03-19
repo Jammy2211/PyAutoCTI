@@ -1,8 +1,6 @@
 import autofit as af
 import autocti as ac
-from autocti.pipeline.phase.ci_imaging.phase import PhaseCIImaging
 from autocti.analysis import result as res
-from autocti.mock import mock
 
 from os import path
 import numpy as np

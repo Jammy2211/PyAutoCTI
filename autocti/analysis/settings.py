@@ -14,7 +14,6 @@ class SettingsCTI:
         self.parallel_total_density_range = parallel_total_density_range
         self.serial_total_density_range = serial_total_density_range
 
-
     def check_total_density_within_range(self, parallel_traps, serial_traps):
 
         if self.parallel_total_density_range is not None:

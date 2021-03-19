@@ -11,6 +11,7 @@ test_data_path = path.join(
     "{}".format(path.dirname(path.realpath(__file__))), "files", "array"
 )
 
+
 class TestMask:
     def test__mask__makes_mask_with_pixel_scale(self):
 
