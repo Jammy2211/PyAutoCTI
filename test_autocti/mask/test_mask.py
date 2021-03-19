@@ -11,55 +11,6 @@ test_data_path = path.join(
     "{}".format(path.dirname(path.realpath(__file__))), "files", "array"
 )
 
-
-class TestSettingsMask:
-    def test__cosmic_ray_buffer_tag(self):
-
-        settings = ac.SettingsMask(
-            cosmic_ray_parallel_buffer=None,
-            cosmic_ray_serial_buffer=None,
-            cosmic_ray_diagonal_buffer=None,
-        )
-        assert settings.cosmic_ray_buffer_tag == ""
-
-        settings = ac.SettingsMask(
-            cosmic_ray_parallel_buffer=1,
-            cosmic_ray_serial_buffer=None,
-            cosmic_ray_diagonal_buffer=3,
-        )
-        assert settings.cosmic_ray_buffer_tag == "__cr_p1d3"
-
-        settings = ac.SettingsMask(
-            cosmic_ray_parallel_buffer=10,
-            cosmic_ray_serial_buffer=20,
-            cosmic_ray_diagonal_buffer=None,
-        )
-        assert settings.cosmic_ray_buffer_tag == "__cr_p10s20"
-
-        settings = ac.SettingsMask(
-            cosmic_ray_parallel_buffer=1,
-            cosmic_ray_serial_buffer=2,
-            cosmic_ray_diagonal_buffer=3,
-        )
-        assert settings.cosmic_ray_buffer_tag == "__cr_p1s2d3"
-
-        settings = ac.SettingsMask(
-            cosmic_ray_parallel_buffer=10,
-            cosmic_ray_serial_buffer=5,
-            cosmic_ray_diagonal_buffer=1,
-        )
-        assert settings.cosmic_ray_buffer_tag == "__cr_p10s5d1"
-
-    def test__tag(self):
-
-        settings = ac.SettingsMask(
-            cosmic_ray_parallel_buffer=10,
-            cosmic_ray_serial_buffer=5,
-            cosmic_ray_diagonal_buffer=1,
-        )
-        assert settings.tag == "mask[__cr_p10s5d1]"
-
-
 class TestMask:
     def test__mask__makes_mask_with_pixel_scale(self):
 

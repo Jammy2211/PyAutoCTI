@@ -191,50 +191,6 @@ class SettingsMaskedCIImaging(imaging.AbstractSettingsMaskedImaging):
         self.parallel_columns = parallel_columns
         self.serial_rows = serial_rows
 
-    @property
-    def tag(self):
-        return (
-            f"{conf.instance['notation']['settings_tags']['ci_imaging']['ci_imaging']}["
-            f"{self.parallel_columns_tag}"
-            f"{self.serial_rows_tag}]"
-        )
-
-    @property
-    def parallel_columns_tag(self):
-        """Generate a columns tag, to customize phase names based on the number of columns of simulator extracted in the fit,
-        which is used to speed up parallel CTI fits.
-
-        This changes the phase settings folder as follows:
-
-        columns = None -> settings
-        columns = 10 -> settings__col_10
-        columns = 60 -> settings__col_60
-        """
-        if self.parallel_columns == None:
-            return ""
-        else:
-            x0 = str(self.parallel_columns[0])
-            x1 = str(self.parallel_columns[1])
-            return f"__{conf.instance['notation']['settings_tags']['ci_imaging']['parallel_columns']}_({x0},{x1})"
-
-    @property
-    def serial_rows_tag(self):
-        """Generate a rows tag, to customize phase names based on the number of rows of simulator extracted in the fit,
-        which is used to speed up serial CTI fits.
-
-        This changes the phase settings folder as follows:
-
-        rows = None -> settings
-        rows = (0, 10) -> settings__rows_(0,10)
-        rows = (20, 60) -> settings__rows_(20,60)
-        """
-        if self.serial_rows == None:
-            return ""
-        else:
-            x0 = str(self.serial_rows[0])
-            x1 = str(self.serial_rows[1])
-            return f"__{conf.instance['notation']['settings_tags']['ci_imaging']['serial_rows']}_({x0},{x1})"
-
     def modify_via_fit_type(self, is_parallel_fit, is_serial_fit):
         """Modify the settings based on the type of fit being performed where:
 

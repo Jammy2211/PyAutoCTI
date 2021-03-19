@@ -8,62 +8,6 @@ class MockPattern(object):
         pass
 
 
-class TestSettingsCIMask:
-    def test__parallel_front_edge_rows_tag(self):
-
-        settings = ac.ci.SettingsCIMask(parallel_front_edge_rows=None)
-        assert settings.parallel_front_edge_rows_tag == ""
-        settings = ac.ci.SettingsCIMask(parallel_front_edge_rows=(0, 5))
-        assert settings.parallel_front_edge_rows_tag == "__par_front_mask_rows_(0,5)"
-        settings = ac.ci.SettingsCIMask(parallel_front_edge_rows=(10, 20))
-        assert settings.parallel_front_edge_rows_tag == "__par_front_mask_rows_(10,20)"
-
-    def test__parallel_trails_rows_tag(self):
-
-        settings = ac.ci.SettingsCIMask(parallel_trails_rows=None)
-        assert settings.parallel_trails_rows_tag == ""
-
-        settings = ac.ci.SettingsCIMask(parallel_trails_rows=(0, 5))
-        assert settings.parallel_trails_rows_tag == "__par_trails_mask_rows_(0,5)"
-        settings = ac.ci.SettingsCIMask(parallel_trails_rows=(10, 20))
-        assert settings.parallel_trails_rows_tag == "__par_trails_mask_rows_(10,20)"
-
-    def test__serial_front_edge_columns_tag(self):
-
-        settings = ac.ci.SettingsCIMask(serial_front_edge_columns=None)
-        assert settings.serial_front_edge_columns_tag == ""
-
-        settings = ac.ci.SettingsCIMask(serial_front_edge_columns=(0, 5))
-        assert settings.serial_front_edge_columns_tag == "__ser_front_mask_col_(0,5)"
-
-        settings = ac.ci.SettingsCIMask(serial_front_edge_columns=(10, 20))
-        assert settings.serial_front_edge_columns_tag == "__ser_front_mask_col_(10,20)"
-
-    def test__serial_trails_columns_tag(self):
-
-        settings = ac.ci.SettingsCIMask(serial_trails_columns=None)
-        assert settings.serial_trails_columns_tag == ""
-
-        settings = ac.ci.SettingsCIMask(serial_trails_columns=(0, 5))
-        assert settings.serial_trails_columns_tag == "__ser_trails_mask_col_(0,5)"
-
-        settings = ac.ci.SettingsCIMask(serial_trails_columns=(10, 20))
-        assert settings.serial_trails_columns_tag == "__ser_trails_mask_col_(10,20)"
-
-    def test__tag(self):
-
-        settings = ac.ci.SettingsCIMask(
-            parallel_front_edge_rows=(10, 20),
-            parallel_trails_rows=(10, 20),
-            serial_front_edge_columns=(10, 20),
-        )
-
-        assert (
-            settings.tag
-            == "ci_mask[__par_front_mask_rows_(10,20)__par_trails_mask_rows_(10,20)__ser_front_mask_col_(10,20)]"
-        )
-
-
 class TestMaskedParallelFrontEdge:
     def test__mask_only_contains_front_edge(self):
 

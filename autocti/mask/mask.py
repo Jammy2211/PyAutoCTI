@@ -20,54 +20,6 @@ class SettingsMask:
         self.cosmic_ray_serial_buffer = cosmic_ray_serial_buffer
         self.cosmic_ray_diagonal_buffer = cosmic_ray_diagonal_buffer
 
-    @property
-    def tag(self):
-        return (
-            f"{conf.instance['notation']['settings_tags']['mask']['mask']}["
-            f"{self.cosmic_ray_buffer_tag}]"
-        )
-
-    @property
-    def cosmic_ray_buffer_tag(self):
-        """Generate a cosmic ray buffer tag, to customize phase names based on the size of the cosmic ray masks in the \
-        parallel, serial and diagonal directions
-
-        This changes the phase settings folder as follows:
-
-        cosmic_ray_parallel_buffer = 1, cosmic_ray_serial_buffer=2, cosmic_ray_diagonal_buffer=3 = -> settings__cr_p1s2d3
-        cosmic_ray_parallel_buffer = 10, cosmic_ray_serial_buffer=5, cosmic_ray_diagonal_buffer=1 = -> settings__cr_p10s5d1
-        """
-
-        if (
-            self.cosmic_ray_diagonal_buffer is None
-            and self.cosmic_ray_serial_buffer is None
-            and self.cosmic_ray_diagonal_buffer is None
-        ):
-            return ""
-
-        if self.cosmic_ray_parallel_buffer is None:
-            cosmic_ray_parallel_buffer_tag = ""
-        else:
-            cosmic_ray_parallel_buffer_tag = f"{conf.instance['notation']['settings_tags']['mask']['cosmic_ray_parallel_buffer']}{self.cosmic_ray_parallel_buffer}"
-
-        if self.cosmic_ray_serial_buffer is None:
-            cosmic_ray_serial_buffer_tag = ""
-        else:
-            cosmic_ray_serial_buffer_tag = f"{conf.instance['notation']['settings_tags']['mask']['cosmic_ray_serial_buffer']}{self.cosmic_ray_serial_buffer}"
-
-        if self.cosmic_ray_diagonal_buffer is None:
-            cosmic_ray_diagonal_buffer_tag = ""
-        else:
-            cosmic_ray_diagonal_buffer_tag = f"{conf.instance['notation']['settings_tags']['mask']['cosmic_ray_diagonal_buffer']}{self.cosmic_ray_diagonal_buffer}"
-
-        return (
-            f"__"
-            f"{conf.instance['notation']['settings_tags']['mask']['cosmic_ray_buffer']}"
-            f"_{cosmic_ray_parallel_buffer_tag}"
-            f"{cosmic_ray_serial_buffer_tag}"
-            f"{cosmic_ray_diagonal_buffer_tag}"
-        )
-
 
 class Mask2D(mask_2d.AbstractMask2D):
     @classmethod
