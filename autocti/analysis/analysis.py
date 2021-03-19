@@ -3,8 +3,7 @@ import numpy as np
 
 from autofit.non_linear import abstract_search
 from autocti.charge_injection import ci_fit, ci_frame
-from autocti.analysis import visualizer as vis
-from autocti.pipeline.phase import settings
+from autocti.analysis import visualizer as vis, settings
 
 
 class ConsecutivePool(object):

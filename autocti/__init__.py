@@ -1,15 +1,5 @@
-from autoarray.fit.fit import FitImaging
-from autoarray.structures.region import Region2D
-from autoarray.structures.arrays.abstract_array import ExposureInfo
-from autoarray.structures.frames.abstract_frame import Scans
-from autoarray.instruments import euclid
-from autoarray.instruments import acs
-from autoarray.dataset import preprocess
-
 from autocti.structures.lines import Line
 from autocti.structures.lines import LineCollection
-
-from arcticpy.traps import TrapLogNormalLifetimeContinuum
 
 from .analysis.analysis import AnalysisCIImaging
 from .structures.array_2d import Array2D
@@ -21,8 +11,8 @@ from .dataset.imaging import MaskedImaging
 from .dataset.warm_pixels import find_warm_pixels
 from . import charge_injection as ci
 from .analysis.model_util import CTI
-from .pipeline.phase.settings import SettingsCTI
-from .pipeline.phase.settings import SettingsPhaseCIImaging
+from autocti.analysis.settings import SettingsCTI
+from autocti.analysis.settings import SettingsPhaseCIImaging
 from .pipeline.phase.extensions import CombinedHyperPhase
 from .pipeline.phase.ci_imaging.phase import PhaseCIImaging
 from .pipeline.pipeline import Pipeline

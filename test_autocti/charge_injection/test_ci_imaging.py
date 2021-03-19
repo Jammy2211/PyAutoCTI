@@ -216,31 +216,6 @@ class TestCIImaging(object):
 
 
 class TestSettingsMaskedCIImaging:
-    def test__parallel_columns_tag(self):
-
-        settings = ac.ci.SettingsMaskedCIImaging(parallel_columns=None)
-        assert settings.parallel_columns_tag == ""
-        settings = ac.ci.SettingsMaskedCIImaging(parallel_columns=(10, 20))
-        assert settings.parallel_columns_tag == "__cols_(10,20)"
-        settings = ac.ci.SettingsMaskedCIImaging(parallel_columns=(60, 65))
-        assert settings.parallel_columns_tag == "__cols_(60,65)"
-
-    def test__serial_rows_tag(self):
-
-        settings = ac.ci.SettingsMaskedCIImaging(serial_rows=None)
-        assert settings.serial_rows_tag == ""
-        settings = ac.ci.SettingsMaskedCIImaging(serial_rows=(0, 5))
-        assert settings.serial_rows_tag == "__rows_(0,5)"
-        settings = ac.ci.SettingsMaskedCIImaging(serial_rows=(10, 20))
-        assert settings.serial_rows_tag == "__rows_(10,20)"
-
-    def test__tag(self):
-
-        settings = ac.ci.SettingsMaskedCIImaging(
-            parallel_columns=(60, 65), serial_rows=(10, 20)
-        )
-        assert settings.tag == "ci_imaging[__cols_(60,65)__rows_(10,20)]"
-
     def test__modify_via_fit_type(self):
 
         settings = ac.ci.SettingsMaskedCIImaging(
