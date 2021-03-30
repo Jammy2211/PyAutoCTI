@@ -21,7 +21,7 @@ class TestAnalysis:
         )
 
         analysis = ac.AnalysisCIImaging(
-            ci_imagings=[ci_imaging_7x7],
+            dataset_list=[ci_imaging_7x7],
             clocker=None,
             settings_cti=ac.SettingsCTI(parallel_total_density_range=(1.0, 2.0)),
         )
@@ -43,7 +43,7 @@ class TestAnalysis:
         )
 
         analysis = ac.AnalysisCIImaging(
-            ci_imagings=[ci_imaging_7x7],
+            dataset_list=[ci_imaging_7x7],
             clocker=None,
             settings_cti=ac.SettingsCTI(serial_total_density_range=(1.0, 2.0)),
         )
@@ -65,7 +65,7 @@ class TestAnalysisCIImaging:
         )
 
         analysis = ac.AnalysisCIImaging(
-            ci_imagings=[ci_imaging_7x7], clocker=parallel_clocker
+            dataset_list=[ci_imaging_7x7], clocker=parallel_clocker
         )
 
         instance = model.instance_from_unit_vector([])
@@ -106,7 +106,7 @@ class TestAnalysisCIImaging:
         )
 
         analysis = ac.AnalysisCIImaging(
-            ci_imagings=[masked_ci_imaging], clocker=parallel_clocker
+            dataset_list=[masked_ci_imaging], clocker=parallel_clocker
         )
 
         instance = model.instance_from_unit_vector([])
@@ -160,7 +160,7 @@ class TestAnalysisCIImaging:
         )
 
         analysis = ac.AnalysisCIImaging(
-            ci_imagings=[masked_ci_imaging], clocker=parallel_clocker
+            dataset_list=[masked_ci_imaging], clocker=parallel_clocker
         )
 
         instance = model.instance_from_prior_medians()

@@ -1,5 +1,5 @@
 from autofit.mock import mock
-from autofit.tools.pipeline import ResultsCollection
+from autofit.search.result import ResultsCollection
 from autofit.mock.mock import MockSearch, MockSamples
 import numpy as np
 

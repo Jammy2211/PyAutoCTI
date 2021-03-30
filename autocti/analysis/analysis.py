@@ -38,7 +38,7 @@ class Analysis(abstract_search.Analysis):
 class AnalysisCIImaging(Analysis):
     def __init__(
         self,
-        ci_imagings,
+        dataset_list,
         clocker,
         settings_cti=settings.SettingsCTI(),
         results=None,
@@ -46,7 +46,7 @@ class AnalysisCIImaging(Analysis):
     ):
 
         super().__init__(
-            ci_datasets=ci_imagings,
+            ci_datasets=dataset_list,
             clocker=clocker,
             settings_cti=settings_cti,
             results=results,

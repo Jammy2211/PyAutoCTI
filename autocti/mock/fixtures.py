@@ -219,7 +219,7 @@ def make_samples_with_result():
 
 def make_analysis_ci_imaging_7x7():
     return analysis.AnalysisCIImaging(
-        ci_imagings=[make_masked_ci_imaging_7x7()], clocker=make_parallel_clocker()
+        dataset_list=[make_masked_ci_imaging_7x7()], clocker=make_parallel_clocker()
     )
 
 

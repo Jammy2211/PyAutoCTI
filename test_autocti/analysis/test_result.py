@@ -71,7 +71,7 @@ class TestResultCIImaging:
         )
 
         analysis = ac.AnalysisCIImaging(
-            ci_imagings=[masked_ci_imaging], clocker=parallel_clocker
+            dataset_list=[masked_ci_imaging], clocker=parallel_clocker
         )
 
         result = res.ResultCIImaging(
@@ -141,7 +141,7 @@ class TestResultCIImaging:
         )
 
         analysis = ac.AnalysisCIImaging(
-            ci_imagings=[masked_ci_imaging_7x7], clocker=parallel_clocker
+            dataset_list=[masked_ci_imaging_7x7], clocker=parallel_clocker
         )
 
         fit_list = analysis.fits_from_instance(
@@ -232,7 +232,7 @@ class TestResultCIImaging:
         )
 
         analysis = ac.AnalysisCIImaging(
-            ci_imagings=[masked_ci_imaging_7x7, masked_ci_imaging_7x7],
+            dataset_list=[masked_ci_imaging_7x7, masked_ci_imaging_7x7],
             clocker=parallel_clocker,
         )
 

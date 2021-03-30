@@ -30,6 +30,24 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
         self.mat_plot_1d = mat_plot_1d
 
     @property
+    def visuals_with_include_1d(self) -> vis.Visuals1D:
+        """
+        Extracts from the `CIImaging` attributes that can be plotted in 1D and return them in a `Visuals1D` object.
+
+        Only attributes with `True` entries in the `Include1D` object are extracted for plotting.
+
+        From a `CIImaging` the following 1D attributes can be extracted for plotting:
+
+        - N/A
+
+        Returns
+        -------
+        vis.Visuals1D
+            The collection of attributes that can be plotted by a `Plotter1D` object.
+        """
+        return self.visuals_1d + self.visuals_1d.__class__()
+
+    @property
     def visuals_with_include_2d(self):
 
         visuals_2d = super().visuals_with_include_2d
@@ -127,13 +145,15 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
                 ci_frame=self.imaging.image, line_region=line_region
             )
 
-            self.mat_plot_1d.plot_line(
+            self.mat_plot_1d.plot_yx(
                 y=line,
                 x=range(len(line)),
-                visuals_1d=self.visuals_1d,
-                plot_axis_type="linear",
+                visuals_1d=self.visuals_with_include_1d,
                 auto_labels=mp.AutoLabels(
-                    title=f"Image Line {line_region}", filename=f"image_{line_region}"
+                    title=f"Image Line {line_region}",
+                    ylabel="Image",
+                    xlabel="Pixel No.",
+                    filename=f"image_{line_region}",
                 ),
             )
 
@@ -143,13 +163,14 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
                 ci_frame=self.imaging.noise_map, line_region=line_region
             )
 
-            self.mat_plot_1d.plot_line(
+            self.mat_plot_1d.plot_yx(
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
-                plot_axis_type="linear",
                 auto_labels=mp.AutoLabels(
                     title=f"Noise Map Line {line_region}",
+                    ylabel="Image",
+                    xlabel="Pixel No.",
                     filename=f"noise_map_{line_region}",
                 ),
             )
@@ -160,13 +181,14 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
                 ci_frame=self.imaging.ci_pre_cti, line_region=line_region
             )
 
-            self.mat_plot_1d.plot_line(
+            self.mat_plot_1d.plot_yx(
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
-                plot_axis_type="linear",
                 auto_labels=mp.AutoLabels(
                     title=f"CI Pre CTI Line {line_region}",
+                    ylabel="Image",
+                    xlabel="Pixel No.",
                     filename=f"ci_pre_cti_{line_region}",
                 ),
             )
@@ -177,13 +199,14 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
                 ci_frame=self.imaging.signal_to_noise_map, line_region=line_region
             )
 
-            self.mat_plot_1d.plot_line(
+            self.mat_plot_1d.plot_yx(
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
-                plot_axis_type="linear",
                 auto_labels=mp.AutoLabels(
                     title=f"Signal To Noise Map {line_region}",
+                    ylabel="Image",
+                    xlabel="Pixel No.",
                     filename=f"signal_to_noise_map_{line_region}",
                 ),
             )
