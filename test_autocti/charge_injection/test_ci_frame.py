@@ -2955,6 +2955,7 @@ class TestCIFrameAPI:
         ci_frame = ac.ci.CIFrame.from_ci_frame(ci_frame=ci_frame, mask=mask)
 
         assert (ci_frame == np.array([[8.0, 0.0], [8.0, 8.0]])).all()
+        assert (ci_frame.native == np.array([[8.0, 0.0], [8.0, 8.0]])).all()
         assert ci_frame.ci_pattern.regions == [(0, 1, 0, 1)]
         assert ci_frame.original_roe_corner == (1, 0)
         assert ci_frame.scans.parallel_overscan == (0, 1, 0, 1)

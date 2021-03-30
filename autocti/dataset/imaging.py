@@ -3,7 +3,7 @@ import logging
 
 import numpy as np
 from autoarray.dataset import imaging as im
-from autocti.structures import array_2d
+from autoarray.structures.arrays.two_d import array_2d
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +31,7 @@ class Imaging(im.AbstractImaging):
             An array describing the background sky.
         """
 
-        super(Imaging, self).__init__(image=image, noise_map=noise_map, name=name)
+        super().__init__(image=image.native, noise_map=noise_map.native, name=name)
 
     @classmethod
     def from_fits(

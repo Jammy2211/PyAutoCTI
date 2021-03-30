@@ -4,13 +4,12 @@ from autofit.mapper.model import ModelInstance
 from autofit.mock.mock import MockSearch, MockSamples
 from autocti import charge_injection as ci
 from autocti.dataset import imaging
-from autocti.structures import frames
+from autoarray.structures.frames import frames
 from autocti.mask import mask as msk
 from autocti.util import traps
 from autocti.util.clocker import Clocker
 from autocti.util import ccd
 from autocti.analysis import analysis
-from autocti.analysis import result as res
 from autocti.analysis.model_util import CTI
 
 import numpy as np

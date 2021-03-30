@@ -35,11 +35,8 @@ class AbstractCIFrame(abstract_frame.AbstractFrame2D):
         if type(array) is list:
             array = np.asarray(array)
 
-        array[mask == True] = 0.0
-
         obj = array.view(cls)
         obj.mask = mask
-        obj.store_slim = False
         obj.zoom_for_plot = False
         obj.original_roe_corner = original_roe_corner
         obj.exposure_info = exposure_info
@@ -50,7 +47,7 @@ class AbstractCIFrame(abstract_frame.AbstractFrame2D):
 
     def __array_finalize__(self, obj):
 
-        super(AbstractCIFrame, self).__array_finalize__(obj)
+        super().__array_finalize__(obj)
 
         if isinstance(obj, AbstractCIFrame):
             if hasattr(obj, "mask"):
@@ -62,7 +59,7 @@ class AbstractCIFrame(abstract_frame.AbstractFrame2D):
             if hasattr(obj, "scans"):
                 self.scans = obj.scans
 
-    def _new_structure(self, array, mask, store_slim):
+    def _new_structure(self, array, mask):
         return self.__class__(
             array=array,
             mask=mask,
@@ -1329,7 +1326,8 @@ class CIFrame(AbstractCIFrame):
         exposure_info=None,
         scans=None,
     ):
-        """Abstract class for the geometry of a CTI Image.
+        """
+        Abstract class for the geometry of a CTI Image.
 
         A FrameArray is stored as a 2D ndarrays. When this immage is passed to arctic, clocking goes towards
         the 'top' of the ndarrays (e.g. towards row 0). Trails therefore appear towards the 'bottom' of the arrays
@@ -1561,6 +1559,9 @@ class CIFrame(AbstractCIFrame):
 
     @classmethod
     def from_ci_frame(cls, ci_frame, mask):
+
+        ci_frame[mask == True] = 0.0
+
         return CIFrame(
             array=ci_frame,
             mask=mask,
