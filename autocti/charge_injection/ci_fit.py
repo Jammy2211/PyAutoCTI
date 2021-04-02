@@ -41,7 +41,7 @@ class CIFitImaging(fit.FitImaging):
 
             masked_ci_imaging = masked_ci_imaging.modify_noise_map(noise_map=noise_map)
 
-        super().__init__(masked_imaging=masked_ci_imaging, model_image=ci_post_cti)
+        super().__init__(imaging=masked_ci_imaging, model_image=ci_post_cti)
 
     @property
     def masked_ci_imaging(self):

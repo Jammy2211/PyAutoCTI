@@ -9,7 +9,7 @@ from autoarray.structures.arrays.two_d import array_2d_util
 from autocti import exc
 
 
-class CIImaging(imaging.AbstractImaging):
+class CIImaging(imaging.Imaging):
     def __init__(self, image, noise_map, ci_pre_cti, cosmic_ray_map=None, name=None):
 
         super().__init__(image=image, noise_map=noise_map, name=name)
@@ -183,7 +183,7 @@ class CIImaging(imaging.AbstractImaging):
             )
 
 
-class SettingsMaskedCIImaging(imaging.AbstractSettingsMaskedImaging):
+class SettingsMaskedCIImaging(imaging.SettingsImaging):
     def __init__(self, parallel_columns=None, serial_rows=None):
 
         super().__init__()

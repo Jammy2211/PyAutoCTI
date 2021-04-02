@@ -118,7 +118,7 @@ class TestMaskedImaging:
 
         masked_imaging = ac.MaskedImaging(imaging=imaging, mask=mask)
 
-        assert (masked_imaging.imaging.image == np.ones((19, 19))).all()
-        assert (masked_imaging.imaging.noise_map == 2.0 * np.ones((19, 19))).all()
+        assert (masked_imaging.image == np.ones((19, 19))).all()
+        assert (masked_imaging.noise_map == 2.0 * np.ones((19, 19))).all()
         assert (masked_imaging.image[9, 9] == np.array([1.0])).all()
         assert (masked_imaging.noise_map[9, 9] == np.array([2.0])).all()

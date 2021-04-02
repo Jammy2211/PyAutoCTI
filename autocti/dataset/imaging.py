@@ -8,7 +8,7 @@ from autoarray.structures.arrays.two_d import array_2d
 logger = logging.getLogger(__name__)
 
 
-class Imaging(im.AbstractImaging):
+class Imaging(im.Imaging):
     def __init__(self, image, noise_map, name=None):
         """A collection of 2D imaging dataset(an image, noise-map, psf, etc.)
 
