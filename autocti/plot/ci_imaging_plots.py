@@ -46,7 +46,7 @@ def subplot_ci_imaging(ci_imaging, include=None, sub_plotter=None):
 
     sub_plotter.output.subplot_to_figure()
 
-    sub_plotter.figure.close()
+    sub_plotter.figure_2d.close()
 
 
 def individual(
@@ -272,7 +272,7 @@ def subplot_ci_lines(ci_imaging, line_region, include=None, sub_plotter=None):
 
     sub_plotter.output.subplot_to_figure()
 
-    sub_plotter.figure.close()
+    sub_plotter.figure_2d.close()
 
 
 def individual_ci_lines(

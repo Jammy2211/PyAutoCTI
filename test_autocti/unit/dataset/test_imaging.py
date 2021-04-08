@@ -8,7 +8,7 @@ test_data_path = "{}/files/array/".format(os.path.dirname(os.path.realpath(__fil
 
 
 class TestImaging:
-    def test__from_fits__loads_arrays_and_psf_is_renormalized(self):
+    def test__from_fits__loads_arrays_and_psf_is_normalized(self):
 
         imaging = ac.Imaging.from_fits(
             pixel_scales=0.1,

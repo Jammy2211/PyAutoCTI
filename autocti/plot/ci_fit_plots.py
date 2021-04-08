@@ -73,7 +73,7 @@ def subplot_ci_fit(fit, include=None, sub_plotter=None):
 
     sub_plotter.output.subplot_to_figure()
 
-    sub_plotter.figure.close()
+    sub_plotter.figure_2d.close()
 
 
 @plotters.set_include_and_sub_plotter
@@ -99,7 +99,7 @@ def subplot_residual_maps(fits, include=None, sub_plotter=None):
 
     sub_plotter.output.subplot_to_figure()
 
-    sub_plotter.figure.close()
+    sub_plotter.figure_2d.close()
 
 
 @plotters.set_include_and_sub_plotter
@@ -125,7 +125,7 @@ def subplot_normalized_residual_maps(fits, include=None, sub_plotter=None):
 
     sub_plotter.output.subplot_to_figure()
 
-    sub_plotter.figure.close()
+    sub_plotter.figure_2d.close()
 
 
 @plotters.set_include_and_sub_plotter
@@ -151,7 +151,7 @@ def subplot_chi_squared_maps(fits, include=None, sub_plotter=None):
 
     sub_plotter.output.subplot_to_figure()
 
-    sub_plotter.figure.close()
+    sub_plotter.figure_2d.close()
 
 
 def individuals(
@@ -248,7 +248,7 @@ def subplot_fit_lines(fit, line_region, include=None, sub_plotter=None):
 
     sub_plotter.output.subplot_to_figure()
 
-    sub_plotter.figure.close()
+    sub_plotter.figure_2d.close()
 
 
 @plotters.set_include_and_sub_plotter
@@ -274,7 +274,7 @@ def subplot_residual_map_lines(fits, line_region, include=None, sub_plotter=None
 
     sub_plotter.output.subplot_to_figure()
 
-    sub_plotter.figure.close()
+    sub_plotter.figure_2d.close()
 
 
 @plotters.set_include_and_sub_plotter
@@ -302,7 +302,7 @@ def subplot_normalized_residual_map_lines(
 
     sub_plotter.output.subplot_to_figure()
 
-    sub_plotter.figure.close()
+    sub_plotter.figure_2d.close()
 
 
 @plotters.set_include_and_sub_plotter
@@ -329,7 +329,7 @@ def subplot_chi_squared_map_lines(fits, line_region, include=None, sub_plotter=N
 
     sub_plotter.output.subplot_to_figure()
 
-    sub_plotter.figure.close()
+    sub_plotter.figure_2d.close()
 
 
 def individuals_lines(
@@ -595,7 +595,7 @@ def noise_scaling_maps(fit, include=None, sub_plotter=None):
 
     sub_plotter.output.subplot_to_figure()
 
-    sub_plotter.figure.close()
+    sub_plotter.figure_2d.close()
 
 
 @plotters.set_include_and_plotter

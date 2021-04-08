@@ -10,13 +10,13 @@
 # @pytest.fixture(name="lens_galaxy")
 # def simulate_lens_galaxy():
 #     return ac.Galaxy(
-#         redshift=1.0, light=ac.lp.SphericalSersic(), mass=ac.mp.SphericalIsothermal()
+#         redshift=1.0, light=ac.lp.SphSersic(), mass=ac.mp.SphIsothermal()
 #     )
 #
 #
 # @pytest.fixture(name="source_galaxy")
 # def make_source_galaxy():
-#     return ac.Galaxy(redshift=2.0, light=ac.lp.SphericalSersic())
+#     return ac.Galaxy(redshift=2.0, light=ac.lp.SphSersic())
 #
 #
 # @pytest.fixture(name="all_galaxies")
