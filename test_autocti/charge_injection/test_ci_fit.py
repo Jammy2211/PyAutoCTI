@@ -8,8 +8,10 @@ from autocti.charge_injection.ci_fit import (
 
 class TestCIFit:
     def test__fit_quantities_same_as_calculated_individually(
-        self, masked_ci_imaging_7x7, ci_pattern_7x7
+        self, ci_imaging_7x7, ci_pattern_7x7, mask_7x7_unmasked
     ):
+
+        masked_ci_imaging_7x7 = ci_imaging_7x7.apply_mask(mask=mask_7x7_unmasked)
 
         ci_post_cti = ac.ci.CIFrame.ones(
             shape_native=masked_ci_imaging_7x7.image.shape_native,
@@ -18,12 +20,12 @@ class TestCIFit:
         )
 
         fit = ac.ci.CIFitImaging(
-            masked_ci_imaging=masked_ci_imaging_7x7, ci_post_cti=ci_post_cti
+            ci_imaging=masked_ci_imaging_7x7, ci_post_cti=ci_post_cti
         )
 
         residual_map = ac.util.fit.residual_map_with_mask_from(
             data=masked_ci_imaging_7x7.image,
-            mask=masked_ci_imaging_7x7.mask,
+            mask=mask_7x7_unmasked,
             model_data=ci_post_cti,
         )
 
@@ -32,17 +34,17 @@ class TestCIFit:
         chi_squared_map = ac.util.fit.chi_squared_map_with_mask_from(
             residual_map=residual_map,
             noise_map=masked_ci_imaging_7x7.noise_map,
-            mask=masked_ci_imaging_7x7.mask,
+            mask=mask_7x7_unmasked,
         )
 
         assert (fit.chi_squared_map == chi_squared_map).all()
 
         chi_squared = ac.util.fit.chi_squared_with_mask_from(
-            chi_squared_map=chi_squared_map, mask=masked_ci_imaging_7x7.mask
+            chi_squared_map=chi_squared_map, mask=mask_7x7_unmasked
         )
 
         noise_normalization = ac.util.fit.noise_normalization_with_mask_from(
-            noise_map=masked_ci_imaging_7x7.noise_map, mask=masked_ci_imaging_7x7.mask
+            noise_map=masked_ci_imaging_7x7.noise_map, mask=mask_7x7_unmasked
         )
 
         log_likelihood = ac.util.fit.log_likelihood_from(
@@ -68,11 +70,6 @@ class TestCIFit:
             shape_native=(2, 2), ci_pattern=ci_pattern_7x7, pixel_scales=1.0
         )
 
-        imaging = ac.ci.CIImaging(
-            image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti
-        )
-
-        mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
         noise_scaling_maps = [
             ac.ci.CIFrame.zeros(
                 shape_native=(2, 2), ci_pattern=ci_pattern_7x7, pixel_scales=1.0
@@ -82,14 +79,21 @@ class TestCIFit:
             ),
         ]
 
-        masked_imaging = ac.ci.MaskedCIImaging(
-            ci_imaging=imaging, mask=mask, noise_scaling_maps=noise_scaling_maps
+        imaging = ac.ci.CIImaging(
+            image=image,
+            noise_map=noise_map,
+            ci_pre_cti=ci_pre_cti,
+            noise_scaling_maps=noise_scaling_maps,
         )
+
+        mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
+
+        masked_imaging = imaging.apply_mask(mask=mask)
 
         hyper_noise_scalar = ac.ci.CIHyperNoiseScalar(scale_factor=1.0)
 
         fit = ac.ci.CIFitImaging(
-            masked_ci_imaging=masked_imaging,
+            ci_imaging=masked_imaging,
             ci_post_cti=ci_pre_cti,
             hyper_noise_scalars=[hyper_noise_scalar],
         )
@@ -121,11 +125,6 @@ class TestCIFit:
             pixel_scales=1.0,
         )
 
-        imaging = ac.ci.CIImaging(
-            image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti
-        )
-
-        mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
         noise_scaling_maps = [
             ac.ci.CIFrame.manual(
                 array=[[0.0, 0.0], [0.0, 0.0]],
@@ -134,14 +133,21 @@ class TestCIFit:
             )
         ]
 
-        masked_imaging = ac.ci.MaskedCIImaging(
-            ci_imaging=imaging, mask=mask, noise_scaling_maps=noise_scaling_maps
+        imaging = ac.ci.CIImaging(
+            image=image,
+            noise_map=noise_map,
+            ci_pre_cti=ci_pre_cti,
+            noise_scaling_maps=noise_scaling_maps,
         )
+
+        mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
+
+        masked_imaging = imaging.apply_mask(mask=mask)
 
         hyper_noise_scalar = ac.ci.CIHyperNoiseScalar(scale_factor=1.0)
 
         fit = ac.ci.CIFitImaging(
-            masked_ci_imaging=masked_imaging,
+            ci_imaging=masked_imaging,
             ci_post_cti=ci_pre_cti,
             hyper_noise_scalars=[hyper_noise_scalar],
         )
@@ -172,12 +178,6 @@ class TestCIFit:
             pixel_scales=1.0,
         )
 
-        imaging = ac.ci.CIImaging(
-            image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti
-        )
-
-        mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
-
         noise_scaling_maps = [
             ac.ci.CIFrame.manual(
                 array=[[1.0, 2.0], [3.0, 4.0]],
@@ -191,14 +191,21 @@ class TestCIFit:
             ),
         ]
 
-        masked_imaging = ac.ci.MaskedCIImaging(
-            ci_imaging=imaging, mask=mask, noise_scaling_maps=noise_scaling_maps
+        imaging = ac.ci.CIImaging(
+            image=image,
+            noise_map=noise_map,
+            ci_pre_cti=ci_pre_cti,
+            noise_scaling_maps=noise_scaling_maps,
         )
+
+        mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
+
+        masked_imaging = imaging.apply_mask(mask=mask)
 
         hyper_noise_scalar = ac.ci.CIHyperNoiseScalar(scale_factor=1.0)
 
         fit = ac.ci.CIFitImaging(
-            masked_ci_imaging=masked_imaging,
+            ci_imaging=masked_imaging,
             ci_post_cti=ci_pre_cti,
             hyper_noise_scalars=[hyper_noise_scalar],
         )
@@ -229,12 +236,6 @@ class TestCIFit:
             pixel_scales=1.0,
         )
 
-        imaging = ac.ci.CIImaging(
-            image=image, noise_map=noise_map, ci_pre_cti=ci_pre_cti
-        )
-
-        mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
-
         noise_scaling_maps = [
             ac.ci.CIFrame.manual(
                 array=[[1.0, 2.0], [3.0, 4.0]],
@@ -248,15 +249,22 @@ class TestCIFit:
             ),
         ]
 
-        masked_imaging = ac.ci.MaskedCIImaging(
-            ci_imaging=imaging, mask=mask, noise_scaling_maps=noise_scaling_maps
+        imaging = ac.ci.CIImaging(
+            image=image,
+            noise_map=noise_map,
+            ci_pre_cti=ci_pre_cti,
+            noise_scaling_maps=noise_scaling_maps,
         )
+
+        mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
+
+        masked_imaging = imaging.apply_mask(mask=mask)
 
         hyper_noise_scalar_0 = ac.ci.CIHyperNoiseScalar(scale_factor=1.0)
         hyper_noise_scalar_1 = ac.ci.CIHyperNoiseScalar(scale_factor=2.0)
 
         fit = ac.ci.CIFitImaging(
-            masked_ci_imaging=masked_imaging,
+            ci_imaging=masked_imaging,
             ci_post_cti=ci_pre_cti,
             hyper_noise_scalars=[hyper_noise_scalar_0, hyper_noise_scalar_1],
         )
@@ -272,13 +280,16 @@ class TestCIFit:
         assert fit.log_likelihood == -0.5 * (chi_squared + noise_normalization)
 
     def test__all_quantities_are_same_as_calculated_individually(
-        self, masked_ci_imaging_7x7, ci_pattern_7x7
+        self, ci_imaging_7x7, ci_pattern_7x7, mask_7x7_unmasked
     ):
+
+        masked_ci_imaging_7x7 = ci_imaging_7x7.apply_mask(mask=mask_7x7_unmasked)
+
         hyper_noise_scalar_0 = ac.ci.CIHyperNoiseScalar(scale_factor=1.0)
         hyper_noise_scalar_1 = ac.ci.CIHyperNoiseScalar(scale_factor=2.0)
 
         fit = ac.ci.CIFitImaging(
-            masked_ci_imaging=masked_ci_imaging_7x7,
+            ci_imaging=masked_ci_imaging_7x7,
             ci_post_cti=masked_ci_imaging_7x7.ci_pre_cti,
             hyper_noise_scalars=[hyper_noise_scalar_0, hyper_noise_scalar_1],
         )
@@ -293,26 +304,24 @@ class TestCIFit:
 
         residual_map = ac.util.fit.residual_map_with_mask_from(
             data=masked_ci_imaging_7x7.image,
-            mask=masked_ci_imaging_7x7.mask,
+            mask=mask_7x7_unmasked,
             model_data=masked_ci_imaging_7x7.ci_pre_cti,
         )
 
         assert (residual_map == fit.residual_map).all()
 
         chi_squared_map = ac.util.fit.chi_squared_map_with_mask_from(
-            residual_map=residual_map,
-            noise_map=hyper_noise_map,
-            mask=masked_ci_imaging_7x7.mask,
+            residual_map=residual_map, noise_map=hyper_noise_map, mask=mask_7x7_unmasked
         )
 
         assert (chi_squared_map == fit.chi_squared_map).all()
 
         chi_squared = ac.util.fit.chi_squared_with_mask_from(
-            chi_squared_map=chi_squared_map, mask=masked_ci_imaging_7x7.mask
+            chi_squared_map=chi_squared_map, mask=mask_7x7_unmasked
         )
 
         noise_normalization = ac.util.fit.noise_normalization_with_mask_from(
-            noise_map=hyper_noise_map, mask=masked_ci_imaging_7x7.mask
+            noise_map=hyper_noise_map, mask=mask_7x7_unmasked
         )
 
         log_likelihood = ac.util.fit.log_likelihood_from(
@@ -459,11 +468,9 @@ class TestChiSquaredMapsOfRegions:
 
         mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
 
-        masked_imaging = ac.ci.MaskedCIImaging(ci_imaging=imaging, mask=mask)
+        masked_imaging = imaging.apply_mask(mask=mask)
 
-        fit = ac.ci.CIFitImaging(
-            masked_ci_imaging=masked_imaging, ci_post_cti=ci_pre_cti
-        )
+        fit = ac.ci.CIFitImaging(ci_imaging=masked_imaging, ci_post_cti=ci_pre_cti)
 
         assert (
             fit.chi_squared_map_of_ci_regions == np.array([[4.0, 0.0], [0.0, 0.0]])
@@ -501,11 +508,9 @@ class TestChiSquaredMapsOfRegions:
 
         mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
 
-        masked_imaging = ac.ci.MaskedCIImaging(ci_imaging=imaging, mask=mask)
+        masked_imaging = imaging.apply_mask(mask=mask)
 
-        fit = ac.ci.CIFitImaging(
-            masked_ci_imaging=masked_imaging, ci_post_cti=ci_pre_cti
-        )
+        fit = ac.ci.CIFitImaging(ci_imaging=masked_imaging, ci_post_cti=ci_pre_cti)
 
         assert (
             fit.chi_squared_map_of_parallel_trails == np.array([[0.0, 0.0], [4.0, 0.0]])
@@ -543,11 +548,9 @@ class TestChiSquaredMapsOfRegions:
 
         mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
 
-        masked_imaging = ac.ci.MaskedCIImaging(ci_imaging=imaging, mask=mask)
+        masked_imaging = imaging.apply_mask(mask=mask)
 
-        fit = ac.ci.CIFitImaging(
-            masked_ci_imaging=masked_imaging, ci_post_cti=ci_pre_cti
-        )
+        fit = ac.ci.CIFitImaging(ci_imaging=masked_imaging, ci_post_cti=ci_pre_cti)
 
         assert (
             fit.chi_squared_map_of_serial_trails == np.array([[0.0, 4.0], [0.0, 4.0]])
@@ -584,11 +587,9 @@ class TestChiSquaredMapsOfRegions:
 
         mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
 
-        masked_imaging = ac.ci.MaskedCIImaging(ci_imaging=imaging, mask=mask)
+        masked_imaging = imaging.apply_mask(mask=mask)
 
-        fit = ac.ci.CIFitImaging(
-            masked_ci_imaging=masked_imaging, ci_post_cti=ci_pre_cti
-        )
+        fit = ac.ci.CIFitImaging(ci_imaging=masked_imaging, ci_post_cti=ci_pre_cti)
 
         assert (
             fit.chi_squared_map_of_serial_overscan_no_trails

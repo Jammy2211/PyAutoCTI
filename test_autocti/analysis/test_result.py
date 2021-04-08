@@ -64,10 +64,9 @@ class TestResultCIImaging:
         self, ci_imaging_7x7, mask_7x7_unmasked, parallel_clocker, samples_with_result
     ):
 
-        masked_ci_imaging = ac.ci.MaskedCIImaging(
-            ci_imaging=ci_imaging_7x7,
-            mask=mask_7x7_unmasked,
-            settings=ac.ci.SettingsMaskedCIImaging(parallel_columns=(0, 1)),
+        masked_ci_imaging = ci_imaging_7x7.apply_mask(mask=mask_7x7_unmasked)
+        masked_ci_imaging = masked_ci_imaging.apply_settings(
+            settings=ac.ci.SettingsCIImaging(parallel_columns=(0, 1))
         )
 
         analysis = ac.AnalysisCIImaging(
@@ -129,16 +128,14 @@ class TestResultCIImaging:
             )
         ]
 
-        masked_ci_imaging_7x7 = ac.ci.MaskedCIImaging(
-            ci_imaging=ci_imaging_7x7,
-            mask=mask_7x7_unmasked,
-            noise_scaling_maps=[
-                noise_scaling_maps_list_of_ci_regions[0],
-                noise_scaling_maps_list_of_parallel_trails[0],
-                noise_scaling_maps_list_of_serial_trails[0],
-                noise_scaling_maps_list_of_serial_overscan_no_trails[0],
-            ],
-        )
+        ci_imaging_7x7.noise_scaling_maps = [
+            noise_scaling_maps_list_of_ci_regions[0],
+            noise_scaling_maps_list_of_parallel_trails[0],
+            noise_scaling_maps_list_of_serial_trails[0],
+            noise_scaling_maps_list_of_serial_overscan_no_trails[0],
+        ]
+
+        masked_ci_imaging_7x7 = ci_imaging_7x7.apply_mask(mask=mask_7x7_unmasked)
 
         analysis = ac.AnalysisCIImaging(
             dataset_list=[masked_ci_imaging_7x7], clocker=parallel_clocker
@@ -227,9 +224,7 @@ class TestResultCIImaging:
 
         ci_imaging_7x7.cosmic_ray_map = None
 
-        masked_ci_imaging_7x7 = ac.ci.MaskedCIImaging(
-            ci_imaging=ci_imaging_7x7, mask=mask_7x7_unmasked
-        )
+        masked_ci_imaging_7x7 = ci_imaging_7x7.apply_mask(mask=mask_7x7_unmasked)
 
         analysis = ac.AnalysisCIImaging(
             dataset_list=[masked_ci_imaging_7x7, masked_ci_imaging_7x7],

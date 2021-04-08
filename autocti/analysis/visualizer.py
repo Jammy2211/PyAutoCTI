@@ -47,7 +47,7 @@ class Visualizer:
             imaging=ci_imaging, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
         )
 
-        ci_imaging_plotter.figures(
+        ci_imaging_plotter.figures_2d(
             image=should_plot("data"),
             noise_map=should_plot("noise_map"),
             inverse_noise_map=should_plot("inverse_noise_map"),
@@ -94,7 +94,7 @@ class Visualizer:
             fit=fit, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
         )
 
-        ci_fit_plotter.figures(
+        ci_fit_plotter.figures_2d(
             image=should_plot("data"),
             noise_map=should_plot("noise_map"),
             signal_to_noise_map=should_plot("signal_to_noise_map"),
@@ -109,7 +109,7 @@ class Visualizer:
 
             if should_plot("all_at_end_png"):
 
-                ci_fit_plotter.figures(
+                ci_fit_plotter.figures_2d(
                     image=True,
                     noise_map=True,
                     signal_to_noise_map=True,
@@ -183,17 +183,17 @@ class Visualizer:
 
         if should_plot("subplot_residual_maps"):
             multi_plotter.subplot_of_figure(
-                func_name="figures", figure_name="residual_map"
+                func_name="figures_2d", figure_name="residual_map"
             )
 
         if should_plot("subplot_normalized_residual_maps"):
             multi_plotter.subplot_of_figure(
-                func_name="figures", figure_name="normalized_residual_map"
+                func_name="figures_2d", figure_name="normalized_residual_map"
             )
 
         if should_plot("subplot_chi_squared_maps"):
             multi_plotter.subplot_of_figure(
-                func_name="figures", figure_name="chi_squared_map"
+                func_name="figures_2d", figure_name="chi_squared_map"
             )
 
     def visualize_multiple_ci_fits_subplots_1d_lines(self, fits, line_region):
@@ -241,7 +241,7 @@ class Visualizer:
             fit=fit, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
         )
 
-        ci_fit_plotter.figures(
+        ci_fit_plotter.figures_2d(
             image=True,
             noise_map=True,
             signal_to_noise_map=True,

@@ -22,7 +22,7 @@ def test__individual_attribute_plots__all_plot_correctly(
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
     )
 
-    ci_fit_plotter.figures(
+    ci_fit_plotter.figures_2d(
         image=True,
         noise_map=True,
         signal_to_noise_map=True,
@@ -44,7 +44,7 @@ def test__individual_attribute_plots__all_plot_correctly(
 
     plot_patch.paths = []
 
-    ci_fit_plotter.figures(
+    ci_fit_plotter.figures_2d(
         image=True,
         noise_map=False,
         signal_to_noise_map=False,

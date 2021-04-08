@@ -64,7 +64,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
             ),
         )
 
-    def figures(
+    def figures_2d(
         self,
         image=False,
         noise_map=False,
@@ -89,7 +89,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
             If true, the origin of the dataset's coordinate system is plotted as a 'x'.
         """
 
-        super().figures(
+        super().figures_2d(
             image=image,
             noise_map=noise_map,
             inverse_noise_map=inverse_noise_map,

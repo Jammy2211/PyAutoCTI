@@ -21,17 +21,17 @@ def push_config(plot_path):
 
 class TestVisualizer:
     def test__visualizes_imaging_using_configs(
-        self, masked_ci_imaging_7x7, plot_path, plot_patch
+        self, ci_imaging_7x7, plot_path, plot_patch
     ):
 
         if path.exists(plot_path):
             shutil.rmtree(plot_path)
 
-        masked_ci_imaging_7x7.cosmic_ray_map[0, 0] = 1
+        ci_imaging_7x7.cosmic_ray_map[0, 0] = 1
 
         visualizer = vis.Visualizer(visualize_path=plot_path)
 
-        visualizer.visualize_ci_imaging(ci_imaging=masked_ci_imaging_7x7)
+        visualizer.visualize_ci_imaging(ci_imaging=ci_imaging_7x7)
 
         plot_path = path.join(plot_path, "ci_imaging_0")
 
@@ -43,7 +43,7 @@ class TestVisualizer:
         assert path.join(plot_path, "cosmic_ray_map.png") in plot_patch.paths
 
     def test__visualizes_imaging_lines_using_configs(
-        self, masked_ci_imaging_7x7, plot_path, plot_patch
+        self, ci_imaging_7x7, plot_path, plot_patch
     ):
 
         if os.path.exists(plot_path):
@@ -52,7 +52,7 @@ class TestVisualizer:
         visualizer = vis.Visualizer(visualize_path=plot_path)
 
         visualizer.visualize_ci_imaging_lines(
-            ci_imaging=masked_ci_imaging_7x7, line_region="parallel_front_edge"
+            ci_imaging=ci_imaging_7x7, line_region="parallel_front_edge"
         )
 
         plot_path = path.join(plot_path, "ci_imaging_0")
@@ -76,7 +76,7 @@ class TestVisualizer:
         )
 
     def test___visualizes_fit_using_configs(
-        self, masked_ci_imaging_7x7, ci_fit_7x7, plot_path, plot_patch
+        self, ci_imaging_7x7, ci_fit_7x7, plot_path, plot_patch
     ):
 
         if os.path.exists(plot_path):
@@ -113,7 +113,7 @@ class TestVisualizer:
         assert path.join(plot_path, "chi_squared_map.png") in plot_patch.paths
 
     def test___visualizes_fit_lines_using_configs(
-        self, masked_ci_imaging_7x7, ci_fit_7x7, plot_path, plot_patch
+        self, ci_imaging_7x7, ci_fit_7x7, plot_path, plot_patch
     ):
 
         if os.path.exists(plot_path):
@@ -202,7 +202,7 @@ class TestVisualizer:
         )
 
     def test__visualize_multiple_ci_fits_subplots(
-        self, masked_ci_imaging_7x7, ci_fit_7x7, plot_path, plot_patch
+        self, ci_imaging_7x7, ci_fit_7x7, plot_path, plot_patch
     ):
 
         if os.path.exists(plot_path):
@@ -225,7 +225,7 @@ class TestVisualizer:
         )
 
     def test__visualize_multiple_ci_fits_1d_line_subplots(
-        self, masked_ci_imaging_7x7, ci_fit_7x7, plot_path, plot_patch
+        self, ci_imaging_7x7, ci_fit_7x7, plot_path, plot_patch
     ):
 
         if os.path.exists(plot_path):

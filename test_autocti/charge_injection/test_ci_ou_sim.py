@@ -1,6 +1,4 @@
 import numpy as np
-import pytest
-import autocti as ac
 from autocti.charge_injection import ci_ou_sim
 
 

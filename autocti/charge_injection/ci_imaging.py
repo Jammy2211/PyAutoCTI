@@ -9,19 +9,139 @@ from autoarray.structures.arrays.two_d import array_2d_util
 from autocti import exc
 
 
+class SettingsCIImaging(imaging.SettingsImaging):
+    def __init__(self, parallel_columns=None, serial_rows=None):
+
+        super().__init__()
+
+        self.parallel_columns = parallel_columns
+        self.serial_rows = serial_rows
+
+    def modify_via_fit_type(self, is_parallel_fit, is_serial_fit):
+        """Modify the settings based on the type of fit being performed where:
+
+        - If the fit is a parallel only fit (is_parallel_fit=True, is_serial_fit=False) the serial_rows are set to None
+          and all other settings remain the same.
+
+        - If the fit is a serial only fit (is_parallel_fit=False, is_serial_fit=True) the parallel_columns are set to
+          None and all other settings remain the same.
+
+        - If the fit is a parallel and serial fit (is_parallel_fit=True, is_serial_fit=True) the *parallel_columns* and
+          *serial_rows* are set to None and all other settings remain the same.
+
+         These settings reflect the appropriate way to extract the charge injection imaging data for fits which use a
+         parallel only CTI model, serial only CTI model or fit both.
+
+         Parameters
+         ----------
+         is_parallel_fit : bool
+            If True, the CTI model that is used to fit the charge injection data includes a parallel CTI component.
+         is_serial_fit : bool
+            If True, the CTI model that is used to fit the charge injection data includes a serial CTI component.
+        """
+
+        settings = copy.copy(self)
+
+        if is_parallel_fit:
+            settings.serial_rows = None
+
+        if is_serial_fit:
+            settings.parallel_columns = None
+
+        return settings
+
+
 class CIImaging(imaging.Imaging):
-    def __init__(self, image, noise_map, ci_pre_cti, cosmic_ray_map=None, name=None):
+    def __init__(
+        self,
+        image,
+        noise_map,
+        ci_pre_cti,
+        cosmic_ray_map=None,
+        noise_scaling_maps=None,
+        name=None,
+    ):
 
         super().__init__(image=image, noise_map=noise_map, name=name)
 
         self.ci_pre_cti = ci_pre_cti
         self.cosmic_ray_map = cosmic_ray_map
+        self.noise_scaling_maps = noise_scaling_maps
+
+        self.ci_imaging_full = self
+
+    def apply_mask(self, mask):
+
+        image = ci_frame.CIFrame.from_ci_frame(ci_frame=self.image, mask=mask)
+        noise_map = ci_frame.CIFrame.from_ci_frame(ci_frame=self.noise_map, mask=mask)
+
+        if self.cosmic_ray_map is not None:
+
+            cosmic_ray_map = ci_frame.CIFrame.from_ci_frame(
+                ci_frame=self.cosmic_ray_map, mask=mask
+            )
+
+        else:
+
+            cosmic_ray_map = None
+
+        if self.noise_scaling_maps is not None:
+            noise_scaling_maps = [
+                ci_frame.CIFrame.from_ci_frame(ci_frame=noise_scaling_map, mask=mask)
+                for noise_scaling_map in self.noise_scaling_maps
+            ]
+        else:
+            noise_scaling_maps = None
+
+        return CIImaging(
+            image=image,
+            noise_map=noise_map,
+            ci_pre_cti=self.ci_pre_cti,
+            cosmic_ray_map=cosmic_ray_map,
+            noise_scaling_maps=noise_scaling_maps,
+        )
+
+    def apply_settings(self, settings):
+
+        ci_imaging_full = copy.deepcopy(self)
+
+        if settings.parallel_columns is not None:
+
+            ci_imaging = self.parallel_calibration_ci_imaging_for_columns(
+                columns=settings.parallel_columns
+            )
+
+            mask = self.image.parallel_calibration_mask_from_mask_and_columns(
+                mask=self.mask, columns=settings.parallel_columns
+            )
+
+        elif settings.serial_rows is not None:
+
+            ci_imaging = self.serial_calibration_ci_imaging_for_rows(
+                rows=settings.serial_rows
+            )
+
+            mask = self.image.serial_calibration_mask_from_mask_and_rows(
+                mask=self.mask, rows=settings.serial_rows
+            )
+
+        else:
+
+            return self
+
+        ci_imaging = ci_imaging.apply_mask(mask=mask)
+
+        ci_imaging.ci_imaging_full = ci_imaging_full
+
+        return ci_imaging
+
+    @property
+    def ci_imaging(self):
+        return self.imaging
 
     @property
     def mask(self):
-        return msk.Mask2D.unmasked(
-            shape_native=self.shape_native, pixel_scales=self.pixel_scales
-        )
+        return self.image.mask
 
     @property
     def ci_pattern(self):
@@ -38,6 +158,19 @@ class CIImaging(imaging.Imaging):
             else None
         )
 
+        if self.noise_scaling_maps is not None:
+
+            noise_scaling_maps = [
+                noise_scaling_map.parallel_calibration_frame_from_columns(
+                    columns=columns
+                )
+                for noise_scaling_map in self.noise_scaling_maps
+            ]
+
+        else:
+
+            noise_scaling_maps = None
+
         return CIImaging(
             image=self.image.parallel_calibration_frame_from_columns(columns=columns),
             noise_map=self.noise_map.parallel_calibration_frame_from_columns(
@@ -47,6 +180,7 @@ class CIImaging(imaging.Imaging):
                 columns=columns
             ),
             cosmic_ray_map=cosmic_ray_map,
+            noise_scaling_maps=noise_scaling_maps,
         )
 
     def serial_calibration_ci_imaging_for_rows(self, rows):
@@ -60,11 +194,23 @@ class CIImaging(imaging.Imaging):
             else None
         )
 
+        if self.noise_scaling_maps is not None:
+
+            noise_scaling_maps = [
+                noise_scaling_map.serial_calibration_frame_from_rows(rows=rows)
+                for noise_scaling_map in self.noise_scaling_maps
+            ]
+
+        else:
+
+            noise_scaling_maps = None
+
         return CIImaging(
             image=self.image.serial_calibration_frame_from_rows(rows=rows),
             noise_map=self.noise_map.serial_calibration_frame_from_rows(rows=rows),
             ci_pre_cti=self.ci_pre_cti.serial_calibration_frame_from_rows(rows=rows),
             cosmic_ray_map=cosmic_ray_map,
+            noise_scaling_maps=noise_scaling_maps,
         )
 
     @classmethod
@@ -181,157 +327,6 @@ class CIImaging(imaging.Imaging):
                 file_path=cosmic_ray_map_path,
                 overwrite=overwrite,
             )
-
-
-class SettingsMaskedCIImaging(imaging.SettingsImaging):
-    def __init__(self, parallel_columns=None, serial_rows=None):
-
-        super().__init__()
-
-        self.parallel_columns = parallel_columns
-        self.serial_rows = serial_rows
-
-    def modify_via_fit_type(self, is_parallel_fit, is_serial_fit):
-        """Modify the settings based on the type of fit being performed where:
-
-        - If the fit is a parallel only fit (is_parallel_fit=True, is_serial_fit=False) the serial_rows are set to None
-          and all other settings remain the same.
-
-        - If the fit is a serial only fit (is_parallel_fit=False, is_serial_fit=True) the parallel_columns are set to
-          None and all other settings remain the same.
-
-        - If the fit is a parallel and serial fit (is_parallel_fit=True, is_serial_fit=True) the *parallel_columns* and
-          *serial_rows* are set to None and all other settings remain the same.
-
-         These settings reflect the appropriate way to extract the charge injection imaging data for fits which use a
-         parallel only CTI model, serial only CTI model or fit both.
-
-         Parameters
-         ----------
-         is_parallel_fit : bool
-            If True, the CTI model that is used to fit the charge injection data includes a parallel CTI component.
-         is_serial_fit : bool
-            If True, the CTI model that is used to fit the charge injection data includes a serial CTI component.
-        """
-
-        settings = copy.copy(self)
-
-        if is_parallel_fit:
-            settings.serial_rows = None
-
-        if is_serial_fit:
-            settings.parallel_columns = None
-
-        return settings
-
-
-class MaskedCIImaging(imaging.AbstractMaskedImaging):
-    def __init__(
-        self,
-        ci_imaging,
-        mask,
-        noise_scaling_maps=None,
-        settings=SettingsMaskedCIImaging(),
-    ):
-        """A data is the collection of simulator components (e.g. the image, noise-maps, PSF, etc.) which are used \
-        to generate and fit it with a model image.
-
-        The data is in 2D and masked, primarily to remove cosmic rays.
-
-        The data also includes a number of attributes which are used to performt the fit, including (y,x) \
-        grids of coordinates, convolvers and other utilities.
-
-        Parameters
-        ----------
-        image : im.Image
-            The 2D observed image and other observed quantities (noise-map, PSF, exposure-time map, etc.)
-        mask: msk.Mask2D | None
-            The 2D mask that is applied to image simulator.
-
-        Attributes
-        ----------
-        image : ScaledSquarePixelArray
-            The 2D observed image simulator (not an instance of im.Image, so does not include the other simulator attributes,
-            which are explicitly made as new attributes of the data).
-        noise_map : NoiseMap
-            An arrays describing the RMS standard deviation error in each pixel, preferably in units of electrons per
-            second.
-        mask: msk.Mask2D
-            The 2D mask that is applied to image simulator.
-        """
-
-        self.ci_imaging_full = copy.deepcopy(ci_imaging)
-        self.ci_imaging_full.noise_scaling_maps = noise_scaling_maps
-        self.mask_full = copy.deepcopy(mask)
-
-        if settings.parallel_columns is not None:
-
-            ci_imaging = self.ci_imaging_full.parallel_calibration_ci_imaging_for_columns(
-                columns=settings.parallel_columns
-            )
-
-            mask = self.ci_imaging_full.image.parallel_calibration_mask_from_mask_and_columns(
-                mask=mask, columns=settings.parallel_columns
-            )
-
-            if noise_scaling_maps is not None:
-                noise_scaling_maps = [
-                    noise_scaling_map.parallel_calibration_frame_from_columns(
-                        columns=settings.parallel_columns
-                    )
-                    for noise_scaling_map in noise_scaling_maps
-                ]
-
-        if settings.serial_rows is not None:
-
-            ci_imaging = self.ci_imaging_full.serial_calibration_ci_imaging_for_rows(
-                rows=settings.serial_rows
-            )
-
-            mask = self.ci_imaging_full.image.serial_calibration_mask_from_mask_and_rows(
-                mask=mask, rows=settings.serial_rows
-            )
-
-            if noise_scaling_maps is not None:
-
-                noise_scaling_maps = [
-                    noise_scaling_map.serial_calibration_frame_from_rows(
-                        rows=settings.serial_rows
-                    )
-                    for noise_scaling_map in noise_scaling_maps
-                ]
-
-        super().__init__(imaging=ci_imaging, mask=mask, settings=settings)
-
-        self.image = ci_frame.CIFrame.from_ci_frame(
-            ci_frame=ci_imaging.image, mask=mask
-        )
-        self.noise_map = ci_frame.CIFrame.from_ci_frame(
-            ci_frame=ci_imaging.noise_map, mask=mask
-        )
-        self.ci_pre_cti = ci_imaging.ci_pre_cti
-
-        if ci_imaging.cosmic_ray_map is not None:
-
-            self.cosmic_ray_map = ci_frame.CIFrame.from_ci_frame(
-                ci_frame=ci_imaging.cosmic_ray_map, mask=mask
-            )
-
-        else:
-
-            self.cosmic_ray_map = None
-
-        if noise_scaling_maps is not None:
-            self.noise_scaling_maps = [
-                ci_frame.CIFrame.from_ci_frame(ci_frame=noise_scaling_map, mask=mask)
-                for noise_scaling_map in noise_scaling_maps
-            ]
-        else:
-            self.noise_scaling_maps = None
-
-    @property
-    def ci_imaging(self):
-        return self.imaging
 
 
 class SimulatorCIImaging(imaging.AbstractSimulatorImaging):

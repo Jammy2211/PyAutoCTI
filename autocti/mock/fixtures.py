@@ -3,7 +3,7 @@ from autoarray.mock.fixtures import *
 from autofit.mapper.model import ModelInstance
 from autofit.mock.mock import MockSearch, MockSamples
 from autocti import charge_injection as ci
-from autocti.dataset import imaging
+from autoarray.dataset import imaging
 from autoarray.structures.frames import frames
 from autocti.mask import mask as msk
 from autocti.util import traps
@@ -167,13 +167,6 @@ def make_ci_imaging_7x7():
         noise_map=make_ci_noise_map_7x7(),
         ci_pre_cti=make_ci_pre_cti_7x7(),
         cosmic_ray_map=make_ci_cosmic_ray_map_7x7(),
-    )
-
-
-def make_masked_ci_imaging_7x7():
-    return ci.MaskedCIImaging(
-        ci_imaging=make_ci_imaging_7x7(),
-        mask=make_mask_7x7_unmasked(),
         noise_scaling_maps=make_ci_noise_scaling_maps_7x7(),
     )
 
@@ -190,8 +183,8 @@ def make_hyper_noise_scalars():
 
 def make_ci_fit_7x7():
     return ci.CIFitImaging(
-        masked_ci_imaging=make_masked_ci_imaging_7x7(),
-        ci_post_cti=make_masked_ci_imaging_7x7().ci_pre_cti,
+        ci_imaging=make_ci_imaging_7x7(),
+        ci_post_cti=make_ci_imaging_7x7().ci_pre_cti,
         hyper_noise_scalars=make_hyper_noise_scalars(),
     )
 
@@ -218,7 +211,7 @@ def make_samples_with_result():
 
 def make_analysis_ci_imaging_7x7():
     return analysis.AnalysisCIImaging(
-        dataset_list=[make_masked_ci_imaging_7x7()], clocker=make_parallel_clocker()
+        dataset_list=[make_ci_imaging_7x7()], clocker=make_parallel_clocker()
     )
 
 

@@ -27,7 +27,7 @@ def test__individual_attributes_are_output(ci_imaging_7x7, plot_path, plot_patch
 
     ci_imaging_7x7.cosmic_ray_map[0, 0] = 1.0
 
-    ci_imaging_plotter.figures(
+    ci_imaging_plotter.figures_2d(
         image=True,
         noise_map=True,
         ci_pre_cti=True,
@@ -43,7 +43,7 @@ def test__individual_attributes_are_output(ci_imaging_7x7, plot_path, plot_patch
 
     plot_patch.paths = []
 
-    ci_imaging_plotter.figures(image=True, ci_pre_cti=True)
+    ci_imaging_plotter.figures_2d(image=True, ci_pre_cti=True)
 
     assert path.join(plot_path, "image.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map.png") not in plot_patch.paths

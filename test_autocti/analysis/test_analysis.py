@@ -79,7 +79,7 @@ class TestAnalysisCIImaging:
         )
 
         fit = ac.ci.CIFitImaging(
-            masked_ci_imaging=analysis.ci_imagings[0], ci_post_cti=ci_post_cti
+            ci_imaging=analysis.ci_imagings[0], ci_post_cti=ci_post_cti
         )
 
         assert fit.log_likelihood == log_likelihood_via_analysis
@@ -93,10 +93,9 @@ class TestAnalysisCIImaging:
             hyper_noise=af.Model(ac.ci.CIHyperNoiseCollection),
         )
 
-        masked_ci_imaging = ac.ci.MaskedCIImaging(
-            ci_imaging=ci_imaging_7x7,
-            mask=mask_7x7_unmasked,
-            settings=ac.ci.SettingsMaskedCIImaging(parallel_columns=(0, 1)),
+        masked_ci_imaging = ci_imaging_7x7.apply_mask(mask=mask_7x7_unmasked)
+        masked_ci_imaging = masked_ci_imaging.apply_settings(
+            settings=ac.ci.SettingsCIImaging(parallel_columns=(0, 1))
         )
 
         ci_post_cti = parallel_clocker.add_cti(
@@ -113,18 +112,14 @@ class TestAnalysisCIImaging:
 
         fits = analysis.fits_from_instance(instance=instance)
 
-        fit = ac.ci.CIFitImaging(
-            masked_ci_imaging=masked_ci_imaging, ci_post_cti=ci_post_cti
-        )
+        fit = ac.ci.CIFitImaging(ci_imaging=masked_ci_imaging, ci_post_cti=ci_post_cti)
 
         assert fits[0].image.shape == (7, 1)
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood)
 
         fits = analysis.fits_full_dataset_from_instance(instance=instance)
 
-        fit = ac.ci.CIFitImaging(
-            masked_ci_imaging=ci_imaging_7x7, ci_post_cti=ci_post_cti
-        )
+        fit = ac.ci.CIFitImaging(ci_imaging=ci_imaging_7x7, ci_post_cti=ci_post_cti)
 
         assert fits[0].image.shape == (7, 7)
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood)
@@ -152,11 +147,11 @@ class TestAnalysisCIImaging:
             )
         ]
 
-        masked_ci_imaging = ac.ci.MaskedCIImaging(
-            ci_imaging=ci_imaging_7x7,
-            mask=mask_7x7_unmasked,
-            settings=ac.ci.SettingsMaskedCIImaging(parallel_columns=(0, 1)),
-            noise_scaling_maps=[noise_scaling_maps_list_of_ci_regions[0]],
+        ci_imaging_7x7.noise_scaling_maps = [noise_scaling_maps_list_of_ci_regions[0]]
+
+        masked_ci_imaging = ci_imaging_7x7.apply_mask(mask=mask_7x7_unmasked)
+        masked_ci_imaging = masked_ci_imaging.apply_settings(
+            settings=ac.ci.SettingsCIImaging(parallel_columns=(0, 1))
         )
 
         analysis = ac.AnalysisCIImaging(
@@ -174,7 +169,7 @@ class TestAnalysisCIImaging:
         )
 
         fit = ac.ci.CIFitImaging(
-            masked_ci_imaging=masked_ci_imaging,
+            ci_imaging=masked_ci_imaging,
             ci_post_cti=ci_post_cti,
             hyper_noise_scalars=[instance.hyper_noise.ci_regions],
         )
@@ -183,7 +178,7 @@ class TestAnalysisCIImaging:
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood, 1.0e-4)
 
         fit = ac.ci.CIFitImaging(
-            masked_ci_imaging=masked_ci_imaging,
+            ci_imaging=masked_ci_imaging,
             ci_post_cti=ci_post_cti,
             hyper_noise_scalars=[ac.ci.CIHyperNoiseScalar(scale_factor=0.0)],
         )
@@ -194,14 +189,10 @@ class TestAnalysisCIImaging:
             instance=instance, hyper_noise_scale=True
         )
 
-        masked_ci_imaging = ac.ci.MaskedCIImaging(
-            ci_imaging=ci_imaging_7x7,
-            mask=mask_7x7_unmasked,
-            noise_scaling_maps=[noise_scaling_maps_list_of_ci_regions[0]],
-        )
+        masked_ci_imaging = ci_imaging_7x7.apply_mask(mask=mask_7x7_unmasked)
 
         fit = ac.ci.CIFitImaging(
-            masked_ci_imaging=masked_ci_imaging,
+            ci_imaging=masked_ci_imaging,
             ci_post_cti=ci_post_cti,
             hyper_noise_scalars=[instance.hyper_noise.ci_regions],
         )
@@ -210,7 +201,7 @@ class TestAnalysisCIImaging:
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood, 1.0e-4)
 
         fit = ac.ci.CIFitImaging(
-            masked_ci_imaging=masked_ci_imaging,
+            ci_imaging=masked_ci_imaging,
             ci_post_cti=ci_post_cti,
             hyper_noise_scalars=[ac.ci.CIHyperNoiseScalar(scale_factor=0.0)],
         )

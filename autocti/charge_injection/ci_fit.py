@@ -6,17 +6,14 @@ from autoarray.fit import fit
 
 class CIFitImaging(fit.FitImaging):
     def __init__(
-        self,
-        masked_ci_imaging: ci_imaging.MaskedCIImaging,
-        ci_post_cti,
-        hyper_noise_scalars=None,
+        self, ci_imaging: ci_imaging.CIImaging, ci_post_cti, hyper_noise_scalars=None
     ):
         """Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian
         framework.
 
         Parameters
         -----------
-        masked_ci_imaging
+        ci_imaging
             The charge injection image that is fitted.
         cti_params : arctic_params.ArcticParams
             The cti model parameters which describe how CTI during clocking.
@@ -26,22 +23,22 @@ class CIFitImaging(fit.FitImaging):
             The ci_hyper-parameter(s) which the noise_scaling_maps_list is multiplied by to scale the noise-map.
         """
 
-        self.ci_masked_data = masked_ci_imaging
+        self.ci_masked_data = ci_imaging
         self.hyper_noise_scalars = hyper_noise_scalars
 
         if hyper_noise_scalars is not None and len(hyper_noise_scalars) > 0:
 
-            self.noise_scaling_maps = masked_ci_imaging.noise_scaling_maps
+            self.noise_scaling_maps = ci_imaging.noise_scaling_maps
 
             noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
                 hyper_noise_scalars=hyper_noise_scalars,
-                noise_scaling_maps=masked_ci_imaging.noise_scaling_maps,
-                noise_map=masked_ci_imaging.noise_map,
+                noise_scaling_maps=ci_imaging.noise_scaling_maps,
+                noise_map=ci_imaging.noise_map,
             )
 
-            masked_ci_imaging = masked_ci_imaging.modify_noise_map(noise_map=noise_map)
+            ci_imaging = ci_imaging.modify_noise_map(noise_map=noise_map)
 
-        super().__init__(imaging=masked_ci_imaging, model_image=ci_post_cti)
+        super().__init__(imaging=ci_imaging, model_image=ci_post_cti)
 
     @property
     def masked_ci_imaging(self):

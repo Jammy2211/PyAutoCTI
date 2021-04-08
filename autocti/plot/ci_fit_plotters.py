@@ -48,7 +48,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
             ),
         )
 
-    def figures(
+    def figures_2d(
         self,
         image=False,
         noise_map=False,
@@ -60,7 +60,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         chi_squared_map=False,
     ):
 
-        super().figures(
+        super().figures_2d(
             image=image,
             noise_map=noise_map,
             signal_to_noise_map=signal_to_noise_map,

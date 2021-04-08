@@ -144,7 +144,7 @@ class AnalysisCIImaging(Analysis):
         )
 
         return ci_fit.CIFitImaging(
-            masked_ci_imaging=ci_imaging,
+            ci_imaging=ci_imaging,
             ci_post_cti=ci_post_cti,
             hyper_noise_scalars=hyper_noise_scalars,
         )
@@ -241,7 +241,7 @@ def pipe_cti(ci_data_masked, instance, clocker, hyper_noise_scalars):
     )
 
     fit = ci_fit.CIFitImaging(
-        masked_ci_imaging=ci_data_masked,
+        ci_imaging=ci_data_masked,
         ci_post_cti=ci_post_cti,
         hyper_noise_scalars=hyper_noise_scalars,
     )
