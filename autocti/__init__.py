@@ -9,12 +9,12 @@ from autoarray.instruments import acs
 from autoarray.dataset import preprocess
 from autoarray.dataset.imaging import Imaging
 
-from autocti.structures.lines import Line
-from autocti.structures.lines import LineCollection
+from autocti.warm_pixels.lines import Line
+from autocti.warm_pixels.lines import LineCollection
 
 from .mask.mask import Mask2D
 from .mask.mask import SettingsMask
-from .dataset.warm_pixels import find_warm_pixels
+from autocti.warm_pixels.warm_pixels import find_warm_pixels
 from . import charge_injection as ci
 from .analysis.analysis import AnalysisCIImaging
 from .analysis.model_util import CTI

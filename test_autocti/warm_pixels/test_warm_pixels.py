@@ -1,9 +1,3 @@
-import os
-from autoconf import conf
-
-from autocti.dataset.warm_pixels import find_warm_pixels
-from autoarray.instruments import acs
-
 # For other tests related to warm pixels, see also test__find_consistent_lines()
 # and test__generate_stacked_lines_from_bins() in test_pixel_lines.py.
 
