@@ -1,5 +1,5 @@
 import numpy as np
-from autocti.charge_injection import ci_ou_sim
+from autocti.charge_injection import ou_sim_ci
 
 
 class TestCIOUSim:
@@ -7,7 +7,7 @@ class TestCIOUSim:
 
         # bottom left
 
-        frame = ci_ou_sim.non_uniform_frame_from(
+        frame = ou_sim_ci.non_uniform_frame_from(
             ccd_id="123", quadrant_id="E", ci_normalization=50000.0
         )
 
@@ -19,7 +19,7 @@ class TestCIOUSim:
 
         # top left
 
-        frame = ci_ou_sim.non_uniform_frame_from(
+        frame = ou_sim_ci.non_uniform_frame_from(
             ccd_id="123", quadrant_id="H", ci_normalization=50000.0
         )
 
@@ -30,7 +30,7 @@ class TestCIOUSim:
 
         # bottom right
 
-        frame = ci_ou_sim.non_uniform_frame_from(
+        frame = ou_sim_ci.non_uniform_frame_from(
             ccd_id="123", quadrant_id="F", ci_normalization=50000.0
         )
 
@@ -42,7 +42,7 @@ class TestCIOUSim:
 
         # top right
 
-        frame = ci_ou_sim.non_uniform_frame_from(
+        frame = ou_sim_ci.non_uniform_frame_from(
             ccd_id="123", quadrant_id="G", ci_normalization=50000.0
         )
 
@@ -56,14 +56,14 @@ class TestCIOUSim:
 
         # bottom left
 
-        frame = ci_ou_sim.non_uniform_frame_from(
+        frame = ou_sim_ci.non_uniform_frame_from(
             ccd_id="123", quadrant_id="E", ci_normalization=50000.0
         )
 
         assert frame[199, 100] > 0.0
         assert frame[200, 100] == 0.0
 
-        post_cti_ci = ci_ou_sim.add_cti_to_pre_cti_ci(
+        post_cti_ci = ou_sim_ci.add_cti_to_pre_cti_ci(
             pre_cti_ci=frame[:, 100:101], ccd_id="123", quadrant_id="E"
         )
 
@@ -71,14 +71,14 @@ class TestCIOUSim:
 
         # top left
 
-        frame = ci_ou_sim.non_uniform_frame_from(
+        frame = ou_sim_ci.non_uniform_frame_from(
             ccd_id="123", quadrant_id="H", ci_normalization=50000.0
         )
 
         assert frame[1886, 100] > 0.0
         assert frame[1885, 100] == 0.0
 
-        post_cti_ci = ci_ou_sim.add_cti_to_pre_cti_ci(
+        post_cti_ci = ou_sim_ci.add_cti_to_pre_cti_ci(
             pre_cti_ci=frame[:, 100:101], ccd_id="123", quadrant_id="H"
         )
 
@@ -86,14 +86,14 @@ class TestCIOUSim:
 
         # bottom right
 
-        frame = ci_ou_sim.non_uniform_frame_from(
+        frame = ou_sim_ci.non_uniform_frame_from(
             ccd_id="123", quadrant_id="F", ci_normalization=50000.0
         )
 
         assert frame[199, 100] > 0.0
         assert frame[200, 100] == 0.0
 
-        post_cti_ci = ci_ou_sim.add_cti_to_pre_cti_ci(
+        post_cti_ci = ou_sim_ci.add_cti_to_pre_cti_ci(
             pre_cti_ci=frame[:, 100:101], ccd_id="123", quadrant_id="F"
         )
 
@@ -101,14 +101,14 @@ class TestCIOUSim:
 
         # top right
 
-        frame = ci_ou_sim.non_uniform_frame_from(
+        frame = ou_sim_ci.non_uniform_frame_from(
             ccd_id="123", quadrant_id="G", ci_normalization=50000.0
         )
 
         assert frame[1886, 100] > 0.0
         assert frame[1885, 100] == 0.0
 
-        post_cti_ci = ci_ou_sim.add_cti_to_pre_cti_ci(
+        post_cti_ci = ou_sim_ci.add_cti_to_pre_cti_ci(
             pre_cti_ci=frame[:, 100:101], ccd_id="123", quadrant_id="G"
         )
 

@@ -2,7 +2,7 @@ from functools import partial
 import numpy as np
 
 from autofit.non_linear import abstract_search
-from autocti.charge_injection import ci_fit, ci_frame
+from autocti.charge_injection import fit_ci, frame_ci
 from autocti.analysis import visualizer as vis, settings
 
 
@@ -55,7 +55,7 @@ class AnalysisCIImaging(Analysis):
         self.pool = pool or ConsecutivePool
 
     @property
-    def ci_imagings(self):
+    def imaging_cis(self):
         return self.ci_datasets
 
     def log_likelihood_function(self, instance):
@@ -68,7 +68,7 @@ class AnalysisCIImaging(Analysis):
 
         Returns
         -------
-        fit: ci_fit.Fit
+        fit: fit_ci.Fit
             How fit the model is and the model
         """
 
@@ -111,8 +111,8 @@ class AnalysisCIImaging(Analysis):
         if hyper_noise_scalars:
             return hyper_noise_scalars
 
-    def fit_from_instance_and_ci_imaging(
-        self, instance, ci_imaging, hyper_noise_scale=True
+    def fit_from_instance_and_imaging_ci(
+        self, instance, imaging_ci, hyper_noise_scale=True
     ):
 
         hyper_noise_scalars = self.hyper_noise_scalars_from_instance(
@@ -130,21 +130,21 @@ class AnalysisCIImaging(Analysis):
             serial_traps = None
 
         post_cti_ci = self.clocker.add_cti(
-            image=ci_imaging.pre_cti_ci,
+            image=imaging_ci.pre_cti_ci,
             parallel_traps=parallel_traps,
             parallel_ccd=instance.cti.parallel_ccd,
             serial_traps=serial_traps,
             serial_ccd=instance.cti.serial_ccd,
         )
 
-        post_cti_ci = ci_frame.CIFrame.manual(
+        post_cti_ci = frame_ci.CIFrame.manual(
             array=post_cti_ci,
-            pixel_scales=ci_imaging.pre_cti_ci.pixel_scales,
-            ci_pattern=ci_imaging.pre_cti_ci.ci_pattern,
+            pixel_scales=imaging_ci.pre_cti_ci.pixel_scales,
+            pattern_ci=imaging_ci.pre_cti_ci.pattern_ci,
         )
 
-        return ci_fit.CIFitImaging(
-            ci_imaging=ci_imaging,
+        return fit_ci.CIFitImaging(
+            imaging_ci=imaging_ci,
             post_cti_ci=post_cti_ci,
             hyper_noise_scalars=hyper_noise_scalars,
         )
@@ -152,23 +152,23 @@ class AnalysisCIImaging(Analysis):
     def fits_from_instance(self, instance, hyper_noise_scale=True):
 
         return [
-            self.fit_from_instance_and_ci_imaging(
+            self.fit_from_instance_and_imaging_ci(
                 instance=instance,
-                ci_imaging=ci_imaging,
+                imaging_ci=imaging_ci,
                 hyper_noise_scale=hyper_noise_scale,
             )
-            for ci_imaging in self.ci_imagings
+            for imaging_ci in self.imaging_cis
         ]
 
     def fits_full_dataset_from_instance(self, instance, hyper_noise_scale=True):
 
         return [
-            self.fit_from_instance_and_ci_imaging(
+            self.fit_from_instance_and_imaging_ci(
                 instance=instance,
-                ci_imaging=ci_imaging.ci_imaging_full,
+                imaging_ci=imaging_ci.imaging_ci_full,
                 hyper_noise_scale=hyper_noise_scale,
             )
-            for ci_imaging in self.ci_imagings
+            for imaging_ci in self.imaging_cis
         ]
 
     def visualize(self, paths, instance, during_analysis):
@@ -179,41 +179,41 @@ class AnalysisCIImaging(Analysis):
 
         for index in range(len(fits)):
 
-            visualizer.visualize_ci_imaging(
-                ci_imaging=self.ci_datasets[index], index=index
+            visualizer.visualize_imaging_ci(
+                imaging_ci=self.ci_datasets[index], index=index
             )
-            visualizer.visualize_ci_imaging_lines(
-                ci_imaging=self.ci_datasets[index],
+            visualizer.visualize_imaging_ci_lines(
+                imaging_ci=self.ci_datasets[index],
                 line_region="parallel_front_edge",
                 index=index,
             )
-            visualizer.visualize_ci_imaging_lines(
-                ci_imaging=self.ci_datasets[index],
+            visualizer.visualize_imaging_ci_lines(
+                imaging_ci=self.ci_datasets[index],
                 line_region="parallel_trails",
                 index=index,
             )
 
-            visualizer.visualize_ci_fit(
+            visualizer.visualize_fit_ci(
                 fit=fits[index], during_analysis=during_analysis, index=index
             )
-            visualizer.visualize_ci_fit_1d_lines(
+            visualizer.visualize_fit_ci_1d_lines(
                 fit=fits[index],
                 during_analysis=during_analysis,
                 line_region="parallel_front_edge",
                 index=index,
             )
-            visualizer.visualize_ci_fit_1d_lines(
+            visualizer.visualize_fit_ci_1d_lines(
                 fit=fits[index],
                 during_analysis=during_analysis,
                 line_region="parallel_trails",
                 index=index,
             )
 
-        visualizer.visualize_multiple_ci_fits_subplots(fits=fits)
-        visualizer.visualize_multiple_ci_fits_subplots_1d_lines(
+        visualizer.visualize_multiple_fit_cis_subplots(fits=fits)
+        visualizer.visualize_multiple_fit_cis_subplots_1d_lines(
             fits=fits, line_region="parallel_front_edge"
         )
-        visualizer.visualize_multiple_ci_fits_subplots_1d_lines(
+        visualizer.visualize_multiple_fit_cis_subplots_1d_lines(
             fits=fits, line_region="parallel_trails"
         )
 
@@ -240,8 +240,8 @@ def pipe_cti(ci_data_masked, instance, clocker, hyper_noise_scalars):
         serial_ccd=instance.cti.serial_ccd,
     )
 
-    fit = ci_fit.CIFitImaging(
-        ci_imaging=ci_data_masked,
+    fit = fit_ci.CIFitImaging(
+        imaging_ci=ci_data_masked,
         post_cti_ci=post_cti_ci,
         hyper_noise_scalars=hyper_noise_scalars,
     )

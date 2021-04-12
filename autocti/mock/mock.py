@@ -156,7 +156,7 @@ class MockFrameGeometry(object):
 class MockCIFrame(object):
     def __init__(self, value=1.0):
 
-        self.ci_pattern = MockPattern()
+        self.pattern_ci = MockPattern()
         self.frame_geometry = MockFrameGeometry(value=value)
         self.value = value
 
@@ -198,14 +198,14 @@ class MockCIPreCTI(np.ndarray):
         cls,
         array,
         frame_geometry=MockGeometry(),
-        ci_pattern=MockPattern(),
+        pattern_ci=MockPattern(),
         value=1.0,
         *args,
         **kwargs
     ):
         ci = np.array(array).view(cls)
         ci.frame_geometry = frame_geometry
-        ci.ci_pattern = ci_pattern
+        ci.pattern_ci = pattern_ci
         ci.value = value
         return ci
 
@@ -214,8 +214,8 @@ class MockCIPreCTI(np.ndarray):
 
 
 class MockChInj(np.ndarray):
-    def __new__(cls, array, geometry=None, ci_pattern=None, *args, **kwargs):
+    def __new__(cls, array, geometry=None, pattern_ci=None, *args, **kwargs):
         ci = np.array(array).view(cls)
         ci.frame_geometry = geometry
-        ci.ci_pattern = ci_pattern
+        ci.pattern_ci = pattern_ci
         return ci

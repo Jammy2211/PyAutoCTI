@@ -83,7 +83,7 @@ class ResultCIImaging(ResultDataset):
     @property
     def noise_scaling_maps_list(self,):
 
-        total_images = len(self.analysis.ci_imagings)
+        total_images = len(self.analysis.imaging_cis)
 
         noise_scaling_maps_list = []
 

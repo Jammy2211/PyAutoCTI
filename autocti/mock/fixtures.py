@@ -113,7 +113,7 @@ def make_dataset_line_7():
 ### CHARGE INJECTION FRAMES ###
 
 
-def make_ci_pattern_7x7():
+def make_pattern_ci_7x7():
     return ci.CIPatternUniform(normalization=10.0, regions=[(1, 5, 1, 5)])
 
 
@@ -122,7 +122,7 @@ def make_ci_image_7x7():
         fill_value=1.0,
         shape_native=(7, 7),
         pixel_scales=(1.0, 1.0),
-        ci_pattern=make_ci_pattern_7x7(),
+        pattern_ci=make_pattern_ci_7x7(),
         roe_corner=(1, 0),
         scans=make_scans_7x7(),
     )
@@ -134,7 +134,7 @@ def make_ci_noise_map_7x7():
         shape_native=(7, 7),
         pixel_scales=(1.0, 1.0),
         roe_corner=(1, 0),
-        ci_pattern=make_ci_pattern_7x7(),
+        pattern_ci=make_pattern_ci_7x7(),
         scans=make_scans_7x7(),
     )
 
@@ -145,7 +145,7 @@ def make_pre_cti_ci_7x7():
         fill_value=10.0,
         pixel_scales=(1.0, 1.0),
         roe_corner=(1, 0),
-        ci_pattern=make_ci_pattern_7x7(),
+        pattern_ci=make_pattern_ci_7x7(),
         scans=make_scans_7x7(),
     )
 
@@ -157,7 +157,7 @@ def make_ci_cosmic_ray_map_7x7():
         array=cosmic_ray_map,
         pixel_scales=(1.0, 1.0),
         roe_corner=(1, 0),
-        ci_pattern=make_ci_pattern_7x7(),
+        pattern_ci=make_pattern_ci_7x7(),
         scans=make_scans_7x7(),
     )
 
@@ -170,7 +170,7 @@ def make_ci_noise_scaling_maps_7x7():
             pixel_scales=(1.0, 1.0),
             roe_corner=(1, 0),
             scans=make_scans_7x7(),
-            ci_pattern=make_ci_pattern_7x7(),
+            pattern_ci=make_pattern_ci_7x7(),
         ),
         ci.CIFrame.full(
             shape_native=(7, 7),
@@ -178,7 +178,7 @@ def make_ci_noise_scaling_maps_7x7():
             fill_value=2.0,
             scans=make_scans_7x7(),
             pixel_scales=(1.0, 1.0),
-            ci_pattern=make_ci_pattern_7x7(),
+            pattern_ci=make_pattern_ci_7x7(),
         ),
     ]
 
@@ -186,7 +186,7 @@ def make_ci_noise_scaling_maps_7x7():
 ### CHARGE INJECTION IMAGING ###
 
 
-def make_ci_imaging_7x7():
+def make_imaging_ci_7x7():
 
     return ci.CIImaging(
         image=make_ci_image_7x7(),
@@ -207,10 +207,10 @@ def make_hyper_noise_scalars():
     ]
 
 
-def make_ci_fit_7x7():
+def make_fit_ci_7x7():
     return ci.CIFitImaging(
-        ci_imaging=make_ci_imaging_7x7(),
-        post_cti_ci=make_ci_imaging_7x7().pre_cti_ci,
+        imaging_ci=make_imaging_ci_7x7(),
+        post_cti_ci=make_imaging_ci_7x7().pre_cti_ci,
         hyper_noise_scalars=make_hyper_noise_scalars(),
     )
 
@@ -235,9 +235,9 @@ def make_samples_with_result():
     return MockSamples(max_log_likelihood_instance=instance)
 
 
-def make_analysis_ci_imaging_7x7():
+def make_analysis_imaging_ci_7x7():
     return analysis.AnalysisCIImaging(
-        dataset_list=[make_ci_imaging_7x7()], clocker=make_parallel_clocker()
+        dataset_list=[make_imaging_ci_7x7()], clocker=make_parallel_clocker()
     )
 
 

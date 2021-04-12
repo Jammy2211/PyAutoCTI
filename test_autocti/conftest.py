@@ -139,9 +139,9 @@ def make_line_dataset_7():
 ### CHARGE INJECTION FRAMES ###
 
 
-@pytest.fixture(name="ci_pattern_7x7")
-def make_ci_pattern_7x7():
-    return fixtures.make_ci_pattern_7x7()
+@pytest.fixture(name="pattern_ci_7x7")
+def make_pattern_ci_7x7():
+    return fixtures.make_pattern_ci_7x7()
 
 
 @pytest.fixture(name="ci_image_7x7")
@@ -173,10 +173,10 @@ def make_ci_noise_scaling_maps_7x7():
 ### CHARGE INJECTION IMAGING ###
 
 
-@pytest.fixture(name="ci_imaging_7x7")
-def make_ci_imaging_7x7():
+@pytest.fixture(name="imaging_ci_7x7")
+def make_imaging_ci_7x7():
 
-    return fixtures.make_ci_imaging_7x7()
+    return fixtures.make_imaging_ci_7x7()
 
 
 ### CHARGE INJECTION FITS ###
@@ -187,9 +187,9 @@ def make_hyper_noise_scalars():
     return fixtures.make_hyper_noise_scalars()
 
 
-@pytest.fixture(name="ci_fit_7x7")
-def make_ci_fit_7x7():
-    return fixtures.make_ci_fit_7x7()
+@pytest.fixture(name="fit_ci_7x7")
+def make_fit_ci_7x7():
+    return fixtures.make_fit_ci_7x7()
 
 
 # ### PHASES ###
@@ -202,9 +202,9 @@ def make_samples_with_result():
     return fixtures.make_samples_with_result()
 
 
-@pytest.fixture(name="analysis_ci_imaging_7x7")
-def make_analysis_ci_imaging_7x7():
-    return fixtures.make_analysis_ci_imaging_7x7()
+@pytest.fixture(name="analysis_imaging_ci_7x7")
+def make_analysis_imaging_ci_7x7():
+    return fixtures.make_analysis_imaging_ci_7x7()
 
 
 # Datasets

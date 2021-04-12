@@ -5,7 +5,7 @@ import pytest
 
 
 class TestSettingsCTI:
-    def test__parallel_and_serial_checks_raise_exception(self, ci_imaging_7x7):
+    def test__parallel_and_serial_checks_raise_exception(self, imaging_ci_7x7):
 
         settings = ac.SettingsCTI(parallel_total_density_range=(1.0, 2.0))
 

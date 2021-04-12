@@ -5,7 +5,7 @@ from autocti.util.clocker import Clocker
 from autocti.util import ccd
 from autocti.util import traps
 
-from autocti.charge_injection import ci_pattern as pattern
+from autocti.charge_injection import pattern_ci as pattern
 
 """
 Note on the rotations of frames:
@@ -94,7 +94,7 @@ def non_uniform_frame_from(
     """
     Use the charge injection normalizations and regions to create `CIPatternNonUniform` of every image we'll simulate.
     """
-    ci_pattern = pattern.CIPatternNonUniform(
+    pattern_ci = pattern.CIPatternNonUniform(
         normalization=ci_normalization,
         regions=ci_regions,
         row_slope=0.0,
@@ -105,7 +105,7 @@ def non_uniform_frame_from(
     """
     Create every pre-cti charge injection image using each `CIPattern`
     """
-    pre_cti_ci = ci_pattern.pre_cti_ci_from(
+    pre_cti_ci = pattern_ci.pre_cti_ci_from(
         shape_native=shape_native, pixel_scales=pixel_scales
     )
 

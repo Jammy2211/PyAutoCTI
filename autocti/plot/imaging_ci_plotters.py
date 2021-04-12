@@ -83,7 +83,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
 
         Parameters
         -----------
-        ci_imaging : data_type.ImagingData
+        imaging_ci : data_type.ImagingData
             The imaging data_type, which includes the observed data_type, noise_map, PSF, signal-to-noise_map, etc.
         origin : True
             If true, the origin of the dataset's coordinate system is plotted as a 'x'.
@@ -133,7 +133,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
 
         Parameters
         -----------
-        ci_imaging : simulator.CCDData
+        imaging_ci : simulator.CCDData
             The ci simulator, which includes the observed dataset, noise_map, PSF, signal-to-noise_map, etc.
         origin : True
             If true, the origin of the dataset's coordinate system is plotted as a 'x'.
@@ -142,7 +142,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
         if image:
 
             line = extract_line_from(
-                ci_frame=self.imaging.image, line_region=line_region
+                frame_ci=self.imaging.image, line_region=line_region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -160,7 +160,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
         if noise_map:
 
             line = extract_line_from(
-                ci_frame=self.imaging.noise_map, line_region=line_region
+                frame_ci=self.imaging.noise_map, line_region=line_region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -178,7 +178,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
         if pre_cti_ci:
 
             line = extract_line_from(
-                ci_frame=self.imaging.pre_cti_ci, line_region=line_region
+                frame_ci=self.imaging.pre_cti_ci, line_region=line_region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -196,7 +196,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
         if signal_to_noise_map:
 
             line = extract_line_from(
-                ci_frame=self.imaging.signal_to_noise_map, line_region=line_region
+                frame_ci=self.imaging.signal_to_noise_map, line_region=line_region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -221,7 +221,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
         potential_chi_squared_map=False,
         pre_cti_ci=False,
         cosmic_ray_map=False,
-        auto_filename="subplot_ci_imaging",
+        auto_filename="subplot_imaging_ci",
     ):
 
         self._subplot_custom_plot(
@@ -234,7 +234,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
             auto_labels=mp.AutoLabels(filename=auto_filename),
         )
 
-    def subplot_ci_imaging(self):
+    def subplot_imaging_ci(self):
         """Plot the imaging data_type as a sub-plotter of all its quantites (e.g. the dataset, noise_map, PSF, Signal-to_noise-map, \
          etc).
 
@@ -242,7 +242,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
 
         Parameters
         -----------
-        ci_imaging : data_type.ImagingData
+        imaging_ci : data_type.ImagingData
             The imaging data_type, which includes the observed data_type, noise_map, PSF, signal-to-noise_map, etc.
         origin : True
             If true, the origin of the dataset's coordinate system is plotted as a 'x'.
@@ -271,7 +271,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
 
         Parameters
         -----------
-        ci_imaging : simulator.CCDData
+        imaging_ci : simulator.CCDData
             The ci simulator, which includes the observed dataset, noise_map, PSF, signal-to-noise_map, etc.
         origin : True
             If true, the origin of the dataset's coordinate system is plotted as a 'x'.
@@ -298,16 +298,16 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
         self.close_subplot_figure()
 
 
-def extract_line_from(ci_frame, line_region):
+def extract_line_from(frame_ci, line_region):
 
     if line_region == "parallel_front_edge":
-        return ci_frame.parallel_front_edge_line_binned_over_columns()
+        return frame_ci.parallel_front_edge_line_binned_over_columns()
     elif line_region == "parallel_trails":
-        return ci_frame.parallel_trails_line_binned_over_columns()
+        return frame_ci.parallel_trails_line_binned_over_columns()
     elif line_region == "serial_front_edge":
-        return ci_frame.serial_front_edge_line_binned_over_rows()
+        return frame_ci.serial_front_edge_line_binned_over_rows()
     elif line_region == "serial_trails":
-        return ci_frame.serial_trails_line_binned_over_rows()
+        return frame_ci.serial_trails_line_binned_over_rows()
     else:
         raise exc.PlottingException(
             "The line region specified for the plotting of a line was invalid"

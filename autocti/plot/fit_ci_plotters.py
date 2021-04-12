@@ -3,7 +3,7 @@ from autoarray.plot.mat_wrap import include as inc
 from autoarray.plot.mat_wrap import mat_plot as mp
 from autoarray.plot import fit_imaging_plotters
 from autocti import charge_injection as ci
-from autocti.plot.ci_imaging_plotters import extract_line_from
+from autocti.plot.imaging_ci_plotters import extract_line_from
 
 
 class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
@@ -37,14 +37,14 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         return visuals_2d + self.visuals_2d.__class__(
             parallel_overscan=self.extract_2d(
                 "parallel_overscan",
-                self.fit.masked_ci_imaging.image.scans.parallel_overscan,
+                self.fit.masked_imaging_ci.image.scans.parallel_overscan,
             ),
             serial_prescan=self.extract_2d(
-                "serial_prescan", self.fit.masked_ci_imaging.image.scans.serial_prescan
+                "serial_prescan", self.fit.masked_imaging_ci.image.scans.serial_prescan
             ),
             serial_overscan=self.extract_2d(
                 "serial_overscan",
-                self.fit.masked_ci_imaging.image.scans.serial_overscan,
+                self.fit.masked_imaging_ci.image.scans.serial_overscan,
             ),
         )
 
@@ -104,7 +104,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
 
         if image:
 
-            line = extract_line_from(ci_frame=self.fit.image, line_region=line_region)
+            line = extract_line_from(frame_ci=self.fit.image, line_region=line_region)
 
             self.mat_plot_1d.plot_yx(
                 y=line,
@@ -120,7 +120,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
 
         if noise_map:
 
-            line = extract_line_from(ci_frame=self.fit.image, line_region=line_region)
+            line = extract_line_from(frame_ci=self.fit.image, line_region=line_region)
 
             self.mat_plot_1d.plot_yx(
                 y=line,
@@ -137,7 +137,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         if signal_to_noise_map:
 
             line = extract_line_from(
-                ci_frame=self.fit.signal_to_noise_map, line_region=line_region
+                frame_ci=self.fit.signal_to_noise_map, line_region=line_region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -155,7 +155,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         if pre_cti_ci:
 
             line = extract_line_from(
-                ci_frame=self.fit.pre_cti_ci, line_region=line_region
+                frame_ci=self.fit.pre_cti_ci, line_region=line_region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -173,7 +173,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         if post_cti_ci:
 
             line = extract_line_from(
-                ci_frame=self.fit.post_cti_ci, line_region=line_region
+                frame_ci=self.fit.post_cti_ci, line_region=line_region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -191,7 +191,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         if residual_map:
 
             line = extract_line_from(
-                ci_frame=self.fit.residual_map, line_region=line_region
+                frame_ci=self.fit.residual_map, line_region=line_region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -209,7 +209,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         if normalized_residual_map:
 
             line = extract_line_from(
-                ci_frame=self.fit.normalized_residual_map, line_region=line_region
+                frame_ci=self.fit.normalized_residual_map, line_region=line_region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -227,7 +227,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         if chi_squared_map:
 
             line = extract_line_from(
-                ci_frame=self.fit.chi_squared_map, line_region=line_region
+                frame_ci=self.fit.chi_squared_map, line_region=line_region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -252,7 +252,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         residual_map=False,
         normalized_residual_map=False,
         chi_squared_map=False,
-        auto_filename="subplot_ci_fit",
+        auto_filename="subplot_fit_ci",
     ):
 
         self._subplot_custom_plot(
@@ -267,7 +267,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
             auto_labels=mp.AutoLabels(filename=auto_filename),
         )
 
-    def subplot_ci_fit(self):
+    def subplot_fit_ci(self):
         return self.subplot(
             image=True,
             signal_to_noise_map=True,
@@ -298,7 +298,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         self.figures_1d_ci_line_region(chi_squared_map=True, line_region=line_region)
 
         self.mat_plot_1d.output.subplot_to_figure(
-            auto_filename=f"subplot_1d_ci_fit_{line_region}"
+            auto_filename=f"subplot_1d_fit_ci_{line_region}"
         )
         self.close_subplot_figure()
 

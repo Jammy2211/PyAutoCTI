@@ -1,47 +1,47 @@
 import numpy as np
 
-from autocti.charge_injection import ci_imaging
+from autocti.charge_injection import imaging_ci
 from autoarray.fit import fit
 
 
 class CIFitImaging(fit.FitImaging):
     def __init__(
-        self, ci_imaging: ci_imaging.CIImaging, post_cti_ci, hyper_noise_scalars=None
+        self, imaging_ci: imaging_ci.CIImaging, post_cti_ci, hyper_noise_scalars=None
     ):
         """Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian
         framework.
 
         Parameters
         -----------
-        ci_imaging
+        imaging_ci
             The charge injection image that is fitted.
         cti_params : arctic_params.ArcticParams
             The cti model parameters which describe how CTI during clocking.
         clocker : arctic_settings.ArcticSettings
             The settings that control how arctic models CTI.
         hyper_noise_scalars :
-            The ci_hyper-parameter(s) which the noise_scaling_maps_list is multiplied by to scale the noise-map.
+            The hyper_ci-parameter(s) which the noise_scaling_maps_list is multiplied by to scale the noise-map.
         """
 
-        self.ci_masked_data = ci_imaging
+        self.ci_masked_data = imaging_ci
         self.hyper_noise_scalars = hyper_noise_scalars
 
         if hyper_noise_scalars is not None and len(hyper_noise_scalars) > 0:
 
-            self.noise_scaling_maps = ci_imaging.noise_scaling_maps
+            self.noise_scaling_maps = imaging_ci.noise_scaling_maps
 
             noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
                 hyper_noise_scalars=hyper_noise_scalars,
-                noise_scaling_maps=ci_imaging.noise_scaling_maps,
-                noise_map=ci_imaging.noise_map,
+                noise_scaling_maps=imaging_ci.noise_scaling_maps,
+                noise_map=imaging_ci.noise_map,
             )
 
-            ci_imaging = ci_imaging.modify_noise_map(noise_map=noise_map)
+            imaging_ci = imaging_ci.modify_noise_map(noise_map=noise_map)
 
-        super().__init__(imaging=ci_imaging, model_image=post_cti_ci)
+        super().__init__(imaging=imaging_ci, model_image=post_cti_ci)
 
     @property
-    def masked_ci_imaging(self):
+    def masked_imaging_ci(self):
         return self.ci_masked_data
 
     @property

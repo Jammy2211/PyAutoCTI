@@ -9,12 +9,12 @@ import pytest
 
 class TestResult:
     def test__result_contains_instance_with_cti_model(
-        self, analysis_ci_imaging_7x7, samples_with_result
+        self, analysis_imaging_ci_7x7, samples_with_result
     ):
 
         result = res.Result(
             samples=samples_with_result,
-            analysis=analysis_ci_imaging_7x7,
+            analysis=analysis_imaging_ci_7x7,
             model=None,
             search=None,
         )
@@ -23,12 +23,12 @@ class TestResult:
         assert isinstance(result.instance.cti.parallel_ccd, ac.CCD)
 
     def test__clocker_passed_as_result_correctly(
-        self, analysis_ci_imaging_7x7, samples_with_result, parallel_clocker
+        self, analysis_imaging_ci_7x7, samples_with_result, parallel_clocker
     ):
 
         result = res.Result(
             samples=samples_with_result,
-            analysis=analysis_ci_imaging_7x7,
+            analysis=analysis_imaging_ci_7x7,
             model=None,
             search=None,
         )
@@ -40,7 +40,7 @@ class TestResult:
 class TestResultDataset:
     def test__masks_available_as_property(
         self,
-        analysis_ci_imaging_7x7,
+        analysis_imaging_ci_7x7,
         samples_with_result,
         parallel_clocker,
         traps_x1,
@@ -51,7 +51,7 @@ class TestResultDataset:
         )
         result = res.ResultDataset(
             samples=samples_with_result,
-            analysis=analysis_ci_imaging_7x7,
+            analysis=analysis_imaging_ci_7x7,
             model=model,
             search=None,
         )
@@ -61,16 +61,16 @@ class TestResultDataset:
 
 class TestResultCIImaging:
     def test__fits_to_extracted_and_full_datasets_available(
-        self, ci_imaging_7x7, mask_7x7_unmasked, parallel_clocker, samples_with_result
+        self, imaging_ci_7x7, mask_7x7_unmasked, parallel_clocker, samples_with_result
     ):
 
-        masked_ci_imaging = ci_imaging_7x7.apply_mask(mask=mask_7x7_unmasked)
-        masked_ci_imaging = masked_ci_imaging.apply_settings(
+        masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_7x7_unmasked)
+        masked_imaging_ci = masked_imaging_ci.apply_settings(
             settings=ac.ci.SettingsCIImaging(parallel_columns=(0, 1))
         )
 
         analysis = ac.AnalysisCIImaging(
-            dataset_list=[masked_ci_imaging], clocker=parallel_clocker
+            dataset_list=[masked_imaging_ci], clocker=parallel_clocker
         )
 
         result = res.ResultCIImaging(
@@ -89,10 +89,10 @@ class TestResultCIImaging:
 
     def test__noise_scaling_maps_list_of_result__are_correct(
         self,
-        ci_imaging_7x7,
+        imaging_ci_7x7,
         mask_7x7_unmasked,
         parallel_clocker,
-        ci_pattern_7x7,
+        pattern_ci_7x7,
         samples_with_result,
         traps_x1,
         ccd,
@@ -100,7 +100,7 @@ class TestResultCIImaging:
 
         noise_scaling_maps_list_of_ci_regions = [
             ac.ci.CIFrame.ones(
-                shape_native=(7, 7), pixel_scales=1.0, ci_pattern=ci_pattern_7x7
+                shape_native=(7, 7), pixel_scales=1.0, pattern_ci=pattern_ci_7x7
             )
         ]
         noise_scaling_maps_list_of_parallel_trails = [
@@ -108,7 +108,7 @@ class TestResultCIImaging:
                 fill_value=2.0,
                 shape_native=(7, 7),
                 pixel_scales=1.0,
-                ci_pattern=ci_pattern_7x7,
+                pattern_ci=pattern_ci_7x7,
             )
         ]
         noise_scaling_maps_list_of_serial_trails = [
@@ -116,7 +116,7 @@ class TestResultCIImaging:
                 fill_value=3.0,
                 shape_native=(7, 7),
                 pixel_scales=1.0,
-                ci_pattern=ci_pattern_7x7,
+                pattern_ci=pattern_ci_7x7,
             )
         ]
         noise_scaling_maps_list_of_serial_overscan_no_trails = [
@@ -124,21 +124,21 @@ class TestResultCIImaging:
                 fill_value=4.0,
                 shape_native=(7, 7),
                 pixel_scales=1.0,
-                ci_pattern=ci_pattern_7x7,
+                pattern_ci=pattern_ci_7x7,
             )
         ]
 
-        ci_imaging_7x7.noise_scaling_maps = [
+        imaging_ci_7x7.noise_scaling_maps = [
             noise_scaling_maps_list_of_ci_regions[0],
             noise_scaling_maps_list_of_parallel_trails[0],
             noise_scaling_maps_list_of_serial_trails[0],
             noise_scaling_maps_list_of_serial_overscan_no_trails[0],
         ]
 
-        masked_ci_imaging_7x7 = ci_imaging_7x7.apply_mask(mask=mask_7x7_unmasked)
+        masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_7x7_unmasked)
 
         analysis = ac.AnalysisCIImaging(
-            dataset_list=[masked_ci_imaging_7x7], clocker=parallel_clocker
+            dataset_list=[masked_imaging_ci_7x7], clocker=parallel_clocker
         )
 
         fit_list = analysis.fits_from_instance(
@@ -215,19 +215,19 @@ class TestResultCIImaging:
 
     def test__noise_scaling_maps_are_setup_correctly(
         self,
-        ci_imaging_7x7,
+        imaging_ci_7x7,
         mask_7x7_unmasked,
-        ci_pattern_7x7,
+        pattern_ci_7x7,
         parallel_clocker,
         samples_with_result,
     ):
 
-        ci_imaging_7x7.cosmic_ray_map = None
+        imaging_ci_7x7.cosmic_ray_map = None
 
-        masked_ci_imaging_7x7 = ci_imaging_7x7.apply_mask(mask=mask_7x7_unmasked)
+        masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_7x7_unmasked)
 
         analysis = ac.AnalysisCIImaging(
-            dataset_list=[masked_ci_imaging_7x7, masked_ci_imaging_7x7],
+            dataset_list=[masked_imaging_ci_7x7, masked_imaging_ci_7x7],
             clocker=parallel_clocker,
         )
 

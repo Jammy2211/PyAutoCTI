@@ -11,13 +11,13 @@ import numpy as np
 from autocti import exc
 from autoarray.structures import region
 from autoarray.structures.frames import frame_util
-from autocti.charge_injection import ci_frame
+from autocti.charge_injection import frame_ci
 
 
 class AbstractCIPattern(object):
     def __init__(self, normalization, regions):
-        """ Abstract base class for a charge injection ci_pattern, which defines the regions charge injections appears \
-         on a charge-injection ci_frame, the input normalization and other properties.
+        """ Abstract base class for a charge injection pattern_ci, which defines the regions charge injections appears \
+         on a charge-injection frame_ci, the input normalization and other properties.
 
         Parameters
         -----------
@@ -32,7 +32,7 @@ class AbstractCIPattern(object):
 
     def with_extracted_regions(self, extraction_region):
 
-        ci_pattern = deepcopy(self)
+        pattern_ci = deepcopy(self)
 
         extracted_regions = list(
             map(
@@ -46,8 +46,8 @@ class AbstractCIPattern(object):
         if not extracted_regions:
             extracted_regions = None
 
-        ci_pattern.regions = extracted_regions
-        return ci_pattern
+        pattern_ci.regions = extracted_regions
+        return pattern_ci
 
     def check_pattern_is_within_image_dimensions(self, dimensions):
 
@@ -55,7 +55,7 @@ class AbstractCIPattern(object):
 
             if region.y1 > dimensions[0] or region.x1 > dimensions[1]:
                 raise exc.CIPatternException(
-                    "The charge injection ci_pattern regions are bigger than the image image_shape"
+                    "The charge injection pattern_ci regions are bigger than the image image_shape"
                 )
 
     @property
@@ -75,13 +75,13 @@ class AbstractCIPattern(object):
 
 
 class CIPatternUniform(AbstractCIPattern):
-    """ A uniform charge injection ci_pattern, which is defined by the regions it appears on the charge injection \
-        ci_frame and its normalization.
+    """ A uniform charge injection pattern_ci, which is defined by the regions it appears on the charge injection \
+        frame_ci and its normalization.
 
     """
 
     def pre_cti_ci_from(self, shape_native, pixel_scales):
-        """Use this charge injection ci_pattern to generate a pre-cti charge injection image. This is performed by \
+        """Use this charge injection pattern_ci to generate a pre-cti charge injection image. This is performed by \
         going to its charge injection regions and adding the charge injection normalization value.
 
         Parameters
@@ -97,8 +97,8 @@ class CIPatternUniform(AbstractCIPattern):
         for region in self.regions:
             pre_cti_ci[region.slice] += self.normalization
 
-        return ci_frame.CIFrame.manual(
-            array=pre_cti_ci, ci_pattern=self, pixel_scales=pixel_scales
+        return frame_ci.CIFrame.manual(
+            array=pre_cti_ci, pattern_ci=self, pixel_scales=pixel_scales
         )
 
 
@@ -111,15 +111,15 @@ class CIPatternNonUniform(AbstractCIPattern):
         column_sigma=None,
         maximum_normalization=np.inf,
     ):
-        """A non-uniform charge injection ci_pattern, which is defined by the regions it appears on a charge injection
-        ci_frame and its average normalization.
+        """A non-uniform charge injection pattern_ci, which is defined by the regions it appears on a charge injection
+        frame_ci and its average normalization.
 
-        Non-uniformity across the columns of a charge injection ci_pattern is due to spikes / drops in the current that
+        Non-uniformity across the columns of a charge injection pattern_ci is due to spikes / drops in the current that
         injects the charge. This is a noisy process, leading to non-uniformity with no regularity / smoothness. Thus,
         it cannot be modeled with an analytic profile, and must be assumed as prior-knowledge about the charge
         injection electronics or estimated from the observed charge injection ci_data.
 
-        Non-uniformity across the rows of a charge injection ci_pattern is due to a drop-off in voltage in the current.
+        Non-uniformity across the rows of a charge injection pattern_ci is due to a drop-off in voltage in the current.
         Therefore, it appears smooth and be modeled as an analytic function, which this code assumes is a
         power-law with slope row_slope.
 
@@ -139,7 +139,7 @@ class CIPatternNonUniform(AbstractCIPattern):
         self.maximum_normalization = maximum_normalization
 
     def pre_cti_ci_from(self, shape_native, pixel_scales, ci_seed=-1):
-        """Use this charge injection ci_pattern to generate a pre-cti charge injection image. This is performed by going \
+        """Use this charge injection pattern_ci to generate a pre-cti charge injection image. This is performed by going \
         to its charge injection regions and adding its non-uniform charge distribution.
 
         For one column of a non-uniform charge injection pre_cti_cis, it is assumed that each non-uniform charge \
@@ -156,7 +156,7 @@ class CIPatternNonUniform(AbstractCIPattern):
 
         ci_seed : int
             Input ci_seed for the random number generator to give reproducible results. A new ci_seed is always used for each \
-            pre_cti_cis, ensuring each non-uniform ci_region has the same column non-uniformity ci_pattern.
+            pre_cti_cis, ensuring each non-uniform ci_region has the same column non-uniformity pattern_ci.
         """
 
         self.check_pattern_is_within_image_dimensions(shape_native)
@@ -174,8 +174,8 @@ class CIPatternNonUniform(AbstractCIPattern):
                 region_dimensions=region.shape, ci_seed=ci_seed
             )
 
-        return ci_frame.CIFrame.manual(
-            array=pre_cti_ci, ci_pattern=self, pixel_scales=pixel_scales
+        return frame_ci.CIFrame.manual(
+            array=pre_cti_ci, pattern_ci=self, pixel_scales=pixel_scales
         )
 
     def ci_region_from_region(self, region_dimensions, ci_seed):
