@@ -15,15 +15,12 @@ class FitImagingCI(fit.FitImaging):
         -----------
         imaging_ci
             The charge injection image that is fitted.
-        cti_params : arctic_params.ArcticParams
-            The cti model parameters which describe how CTI during clocking.
-        clocker : arctic_settings.ArcticSettings
-            The settings that control how arctic models CTI.
+        post_cti_ci
+            The `pre_cti_ci` with cti added to it via the clocker and a CTI model.
         hyper_noise_scalars :
             The hyper_ci-parameter(s) which the noise_scaling_maps_list is multiplied by to scale the noise-map.
         """
 
-        self.ci_masked_data = imaging_ci
         self.hyper_noise_scalars = hyper_noise_scalars
 
         if hyper_noise_scalars is not None and len(hyper_noise_scalars) > 0:
@@ -41,8 +38,8 @@ class FitImagingCI(fit.FitImaging):
         super().__init__(imaging=imaging_ci, model_image=post_cti_ci)
 
     @property
-    def masked_imaging_ci(self):
-        return self.ci_masked_data
+    def imaging_ci(self):
+        return self.dataset
 
     @property
     def post_cti_ci(self):
@@ -50,7 +47,7 @@ class FitImagingCI(fit.FitImaging):
 
     @property
     def pre_cti_ci(self):
-        return self.ci_masked_data.pre_cti_ci
+        return self.dataset.pre_cti_ci
 
     @property
     def chi_squared_map_of_regions_ci(self):
