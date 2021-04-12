@@ -6,7 +6,7 @@ class DatasetException(Exception):
     pass
 
 
-class CIPatternException(Exception):
+class PatternCIException(Exception):
     pass
 
 

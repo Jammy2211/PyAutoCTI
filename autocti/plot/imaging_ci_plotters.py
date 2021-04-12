@@ -6,10 +6,10 @@ from autocti import charge_injection as ci
 from autocti import exc
 
 
-class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
+class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
     def __init__(
         self,
-        imaging: ci.CIImaging,
+        imaging: ci.ImagingCI,
         mat_plot_2d: mp.MatPlot2D = mp.MatPlot2D(),
         visuals_2d: vis.Visuals2D = vis.Visuals2D(),
         include_2d: inc.Include2D = inc.Include2D(),
@@ -32,11 +32,11 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
     @property
     def visuals_with_include_1d(self) -> vis.Visuals1D:
         """
-        Extracts from the `CIImaging` attributes that can be plotted in 1D and return them in a `Visuals1D` object.
+        Extracts from the `ImagingCI` attributes that can be plotted in 1D and return them in a `Visuals1D` object.
 
         Only attributes with `True` entries in the `Include1D` object are extracted for plotting.
 
-        From a `CIImaging` the following 1D attributes can be extracted for plotting:
+        From a `ImagingCI` the following 1D attributes can be extracted for plotting:
 
         - N/A
 

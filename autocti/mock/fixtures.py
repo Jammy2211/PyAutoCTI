@@ -114,7 +114,7 @@ def make_dataset_line_7():
 
 
 def make_pattern_ci_7x7():
-    return ci.CIPatternUniform(normalization=10.0, regions=[(1, 5, 1, 5)])
+    return ci.PatternCIUniform(normalization=10.0, regions=[(1, 5, 1, 5)])
 
 
 def make_ci_image_7x7():
@@ -188,7 +188,7 @@ def make_ci_noise_scaling_maps_7x7():
 
 def make_imaging_ci_7x7():
 
-    return ci.CIImaging(
+    return ci.ImagingCI(
         image=make_ci_image_7x7(),
         noise_map=make_ci_noise_map_7x7(),
         pre_cti_ci=make_pre_cti_ci_7x7(),
@@ -202,13 +202,13 @@ def make_imaging_ci_7x7():
 
 def make_hyper_noise_scalars():
     return [
-        ci.CIHyperNoiseScalar(scale_factor=1.0),
-        ci.CIHyperNoiseScalar(scale_factor=2.0),
+        ci.HyperCINoiseScalar(scale_factor=1.0),
+        ci.HyperCINoiseScalar(scale_factor=2.0),
     ]
 
 
 def make_fit_ci_7x7():
-    return ci.CIFitImaging(
+    return ci.FitImagingCI(
         imaging_ci=make_imaging_ci_7x7(),
         post_cti_ci=make_imaging_ci_7x7().pre_cti_ci,
         hyper_noise_scalars=make_hyper_noise_scalars(),
@@ -236,7 +236,7 @@ def make_samples_with_result():
 
 
 def make_analysis_imaging_ci_7x7():
-    return analysis.AnalysisCIImaging(
+    return analysis.AnalysisImagingCI(
         dataset_list=[make_imaging_ci_7x7()], clocker=make_parallel_clocker()
     )
 

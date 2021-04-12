@@ -43,7 +43,7 @@ class Visualizer:
 
         mat_plot_2d = self.mat_plot_2d_from(subfolders=f"imaging_ci_{index}")
 
-        imaging_ci_plotter = imaging_ci_plotters.CIImagingPlotter(
+        imaging_ci_plotter = imaging_ci_plotters.ImagingCIPlotter(
             imaging=imaging_ci, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
         )
 
@@ -68,7 +68,7 @@ class Visualizer:
 
         mat_plot_1d = self.mat_plot_1d_from(subfolders=f"imaging_ci_{index}")
 
-        imaging_ci_plotter = imaging_ci_plotters.CIImagingPlotter(
+        imaging_ci_plotter = imaging_ci_plotters.ImagingCIPlotter(
             imaging=imaging_ci, mat_plot_1d=mat_plot_1d, include_2d=self.include_2d
         )
 

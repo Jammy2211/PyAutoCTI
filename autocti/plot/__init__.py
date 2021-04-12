@@ -43,5 +43,5 @@ from autoarray.plot.mat_wrap.visuals import Visuals2D
 from autoarray.plot.structure_plotters import Array2DPlotter
 from autoarray.plot.structure_plotters import Frame2DPlotter
 
-from autocti.plot.imaging_ci_plotters import CIImagingPlotter
+from autocti.plot.imaging_ci_plotters import ImagingCIPlotter
 from autocti.plot.fit_ci_plotters import CIFitPlotter

@@ -59,21 +59,21 @@ class TestResultDataset:
         assert (result.masks[0] == np.full(fill_value=False, shape=(7, 7))).all()
 
 
-class TestResultCIImaging:
+class TestResultImagingCI:
     def test__fits_to_extracted_and_full_datasets_available(
         self, imaging_ci_7x7, mask_7x7_unmasked, parallel_clocker, samples_with_result
     ):
 
         masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_7x7_unmasked)
         masked_imaging_ci = masked_imaging_ci.apply_settings(
-            settings=ac.ci.SettingsCIImaging(parallel_columns=(0, 1))
+            settings=ac.ci.SettingsImagingCI(parallel_columns=(0, 1))
         )
 
-        analysis = ac.AnalysisCIImaging(
+        analysis = ac.AnalysisImagingCI(
             dataset_list=[masked_imaging_ci], clocker=parallel_clocker
         )
 
-        result = res.ResultCIImaging(
+        result = res.ResultImagingCI(
             samples=samples_with_result, analysis=analysis, model=None, search=None
         )
 
@@ -98,7 +98,7 @@ class TestResultCIImaging:
         ccd,
     ):
 
-        noise_scaling_maps_list_of_ci_regions = [
+        noise_scaling_maps_list_of_regions_ci = [
             ac.ci.CIFrame.ones(
                 shape_native=(7, 7), pixel_scales=1.0, pattern_ci=pattern_ci_7x7
             )
@@ -129,7 +129,7 @@ class TestResultCIImaging:
         ]
 
         imaging_ci_7x7.noise_scaling_maps = [
-            noise_scaling_maps_list_of_ci_regions[0],
+            noise_scaling_maps_list_of_regions_ci[0],
             noise_scaling_maps_list_of_parallel_trails[0],
             noise_scaling_maps_list_of_serial_trails[0],
             noise_scaling_maps_list_of_serial_overscan_no_trails[0],
@@ -137,7 +137,7 @@ class TestResultCIImaging:
 
         masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_7x7_unmasked)
 
-        analysis = ac.AnalysisCIImaging(
+        analysis = ac.AnalysisImagingCI(
             dataset_list=[masked_imaging_ci_7x7], clocker=parallel_clocker
         )
 
@@ -145,15 +145,15 @@ class TestResultCIImaging:
             instance=samples_with_result.max_log_likelihood_instance
         )
 
-        result = res.ResultCIImaging(
+        result = res.ResultImagingCI(
             samples=samples_with_result, analysis=analysis, model=None, search=None
         )
 
-        assert result.noise_scaling_maps_list_of_ci_regions[0] == pytest.approx(
-            fit_list[0].chi_squared_map.ci_regions_frame, 1.0e-2
+        assert result.noise_scaling_maps_list_of_regions_ci[0] == pytest.approx(
+            fit_list[0].chi_squared_map.regions_ci_frame, 1.0e-2
         )
         assert result.noise_scaling_maps_list_of_parallel_trails[0] == pytest.approx(
-            fit_list[0].chi_squared_map.parallel_non_ci_regions_frame, 1.0e-2
+            fit_list[0].chi_squared_map.parallel_non_regions_ci_frame, 1.0e-2
         )
         assert result.noise_scaling_maps_list_of_serial_trails[0] == pytest.approx(
             fit_list[0].chi_squared_map.serial_trails_frame, 1.0e-2
@@ -164,7 +164,7 @@ class TestResultCIImaging:
             fit_list[0].chi_squared_map.serial_overscan_no_trails_frame, 1.0e-2
         )
 
-        assert result.noise_scaling_maps_list_of_ci_regions[0][1, 1] == pytest.approx(
+        assert result.noise_scaling_maps_list_of_regions_ci[0][1, 1] == pytest.approx(
             16.25, 1.0e-1
         )
         assert result.noise_scaling_maps_list_of_parallel_trails[0][
@@ -186,11 +186,11 @@ class TestResultCIImaging:
                 serial_ccd=ccd,
             ),
             hyper_noise=af.Model(
-                ac.ci.CIHyperNoiseCollection,
-                ci_regions=ac.ci.CIHyperNoiseScalar(scale_factor=1.0),
-                parallel_trails=ac.ci.CIHyperNoiseScalar(scale_factor=1.0),
-                serial_trails=ac.ci.CIHyperNoiseScalar(scale_factor=1.0),
-                serial_overscan_no_trails=ac.ci.CIHyperNoiseScalar(scale_factor=1.0),
+                ac.ci.HyperCINoiseCollection,
+                regions_ci=ac.ci.HyperCINoiseScalar(scale_factor=1.0),
+                parallel_trails=ac.ci.HyperCINoiseScalar(scale_factor=1.0),
+                serial_trails=ac.ci.HyperCINoiseScalar(scale_factor=1.0),
+                serial_overscan_no_trails=ac.ci.HyperCINoiseScalar(scale_factor=1.0),
             ),
         )
 
@@ -198,11 +198,11 @@ class TestResultCIImaging:
 
         fit_list = analysis.fits_from_instance(instance=instance)
 
-        assert result.noise_scaling_maps_list_of_ci_regions[0] != pytest.approx(
-            fit_list[0].chi_squared_map.ci_regions_frame, 1.0e-2
+        assert result.noise_scaling_maps_list_of_regions_ci[0] != pytest.approx(
+            fit_list[0].chi_squared_map.regions_ci_frame, 1.0e-2
         )
         assert result.noise_scaling_maps_list_of_parallel_trails[0] != pytest.approx(
-            fit_list[0].chi_squared_map.parallel_non_ci_regions_frame, 1.0e-2
+            fit_list[0].chi_squared_map.parallel_non_regions_ci_frame, 1.0e-2
         )
         assert result.noise_scaling_maps_list_of_serial_trails[0] != pytest.approx(
             fit_list[0].chi_squared_map.serial_trails_frame, 1.0e-2
@@ -226,18 +226,18 @@ class TestResultCIImaging:
 
         masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_7x7_unmasked)
 
-        analysis = ac.AnalysisCIImaging(
+        analysis = ac.AnalysisImagingCI(
             dataset_list=[masked_imaging_ci_7x7, masked_imaging_ci_7x7],
             clocker=parallel_clocker,
         )
 
-        result = res.ResultCIImaging(
+        result = res.ResultImagingCI(
             samples=samples_with_result, analysis=analysis, model=None, search=None
         )
 
         assert (
             result.noise_scaling_maps_list[0][0]
-            == result.noise_scaling_maps_list_of_ci_regions[0]
+            == result.noise_scaling_maps_list_of_regions_ci[0]
         ).all()
 
         assert (
@@ -257,7 +257,7 @@ class TestResultCIImaging:
 
         assert (
             result.noise_scaling_maps_list[1][0]
-            == result.noise_scaling_maps_list_of_ci_regions[1]
+            == result.noise_scaling_maps_list_of_regions_ci[1]
         ).all()
 
         assert (

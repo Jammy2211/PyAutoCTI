@@ -11,38 +11,38 @@ test_data_path = path.join(
 )
 
 
-class TestSettingsCIImaging:
+class TestSettingsImagingCI:
     def test__modify_via_fit_type(self):
 
-        settings = ac.ci.SettingsCIImaging(parallel_columns=None, serial_rows=None)
+        settings = ac.ci.SettingsImagingCI(parallel_columns=None, serial_rows=None)
         settings = settings.modify_via_fit_type(
             is_parallel_fit=False, is_serial_fit=False
         )
         assert settings.parallel_columns is None
         assert settings.serial_rows is None
 
-        settings = ac.ci.SettingsCIImaging(parallel_columns=1, serial_rows=1)
+        settings = ac.ci.SettingsImagingCI(parallel_columns=1, serial_rows=1)
         settings = settings.modify_via_fit_type(
             is_parallel_fit=False, is_serial_fit=False
         )
         assert settings.parallel_columns == 1
         assert settings.serial_rows == 1
 
-        settings = ac.ci.SettingsCIImaging(parallel_columns=1, serial_rows=1)
+        settings = ac.ci.SettingsImagingCI(parallel_columns=1, serial_rows=1)
         settings = settings.modify_via_fit_type(
             is_parallel_fit=True, is_serial_fit=False
         )
         assert settings.parallel_columns == 1
         assert settings.serial_rows is None
 
-        settings = ac.ci.SettingsCIImaging(parallel_columns=1, serial_rows=1)
+        settings = ac.ci.SettingsImagingCI(parallel_columns=1, serial_rows=1)
         settings = settings.modify_via_fit_type(
             is_parallel_fit=False, is_serial_fit=True
         )
         assert settings.parallel_columns is None
         assert settings.serial_rows == 1
 
-        settings = ac.ci.SettingsCIImaging(parallel_columns=1, serial_rows=1)
+        settings = ac.ci.SettingsImagingCI(parallel_columns=1, serial_rows=1)
         settings = settings.modify_via_fit_type(
             is_parallel_fit=True, is_serial_fit=True
         )
@@ -50,7 +50,7 @@ class TestSettingsCIImaging:
         assert settings.serial_rows is None
 
 
-class TestCIImaging:
+class TestImagingCI:
     def test__parallel_calibration_imaging_ci_from_columns(self, imaging_ci_7x7):
 
         # The ci pattern starts at column 1, so the left most column is removed below
@@ -98,7 +98,7 @@ class TestCIImaging:
         image = ac.Array2D.ones(shape_native=(2, 2), pixel_scales=0.1).native
         image[0, 0] = 6.0
 
-        imaging = ac.ci.CIImaging(
+        imaging = ac.ci.ImagingCI(
             image=image, noise_map=2.0 * np.ones((2, 2)), pre_cti_ci=None
         )
 
@@ -110,7 +110,7 @@ class TestCIImaging:
         self, pattern_ci_7x7
     ):
 
-        imaging = ac.ci.CIImaging.from_fits(
+        imaging = ac.ci.ImagingCI.from_fits(
             pixel_scales=1.0,
             roe_corner=(1, 0),
             scans=ac.Scans(
@@ -143,7 +143,7 @@ class TestCIImaging:
         self, pattern_ci_7x7
     ):
 
-        imaging = ac.ci.CIImaging.from_fits(
+        imaging = ac.ci.ImagingCI.from_fits(
             pixel_scales=1.0,
             roe_corner=(1, 0),
             pattern_ci=pattern_ci_7x7,
@@ -166,7 +166,7 @@ class TestCIImaging:
 
     def test__from_fits__noise_map_from_single_value(self, pattern_ci_7x7):
 
-        imaging = ac.ci.CIImaging.from_fits(
+        imaging = ac.ci.ImagingCI.from_fits(
             pixel_scales=1.0,
             roe_corner=(1, 0),
             pattern_ci=pattern_ci_7x7,
@@ -186,9 +186,9 @@ class TestCIImaging:
 
     def test__from_fits__load_pre_cti_ci_image_from_the_pattern_and_image(self):
 
-        pattern = ac.ci.CIPatternUniform(regions=[(0, 3, 0, 3)], normalization=10.0)
+        pattern = ac.ci.PatternCIUniform(regions=[(0, 3, 0, 3)], normalization=10.0)
 
-        imaging = ac.ci.CIImaging.from_fits(
+        imaging = ac.ci.ImagingCI.from_fits(
             pixel_scales=1.0,
             roe_corner=(1, 0),
             pattern_ci=pattern,
@@ -207,7 +207,7 @@ class TestCIImaging:
 
     def test__output_to_fits___all_arrays(self, pattern_ci_7x7):
 
-        imaging = ac.ci.CIImaging.from_fits(
+        imaging = ac.ci.ImagingCI.from_fits(
             pixel_scales=1.0,
             roe_corner=(1, 0),
             pattern_ci=pattern_ci_7x7,
@@ -235,7 +235,7 @@ class TestCIImaging:
             cosmic_ray_map_path=path.join(output_data_dir, "cosmic_ray_map.fits"),
         )
 
-        imaging = ac.ci.CIImaging.from_fits(
+        imaging = ac.ci.ImagingCI.from_fits(
             pixel_scales=1.0,
             roe_corner=(1, 0),
             pattern_ci=pattern_ci_7x7,
@@ -296,7 +296,7 @@ class TestApplyMask:
 
         masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask)
         masked_imaging_ci = masked_imaging_ci.apply_settings(
-            settings=ac.ci.SettingsCIImaging(parallel_columns=(1, 3))
+            settings=ac.ci.SettingsImagingCI(parallel_columns=(1, 3))
         )
 
         mask = ac.Mask2D.unmasked(shape_native=(7, 2), pixel_scales=1.0)
@@ -345,7 +345,7 @@ class TestApplyMask:
 
         masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask)
         masked_imaging_ci = masked_imaging_ci.apply_settings(
-            settings=ac.ci.SettingsCIImaging(serial_rows=(0, 1))
+            settings=ac.ci.SettingsImagingCI(serial_rows=(0, 1))
         )
 
         mask = ac.Mask2D.unmasked(shape_native=(1, 7), pixel_scales=1.0)
@@ -384,14 +384,14 @@ class TestApplyMask:
         )
 
 
-class TestSimulatorCIImaging(object):
+class TestSimulatorImagingCI(object):
     def test__no_instrumental_effects_input__only_cti_simulated(
         self, parallel_clocker, traps_x2, ccd
     ):
 
-        pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
+        pattern = ac.ci.PatternCIUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
 
-        simulator = ac.ci.SimulatorCIImaging(
+        simulator = ac.ci.SimulatorImagingCI(
             shape_native=(5, 5),
             pixel_scales=1.0,
             add_poisson_noise=False,
@@ -415,9 +415,9 @@ class TestSimulatorCIImaging(object):
         self, parallel_clocker, traps_x2, ccd
     ):
 
-        pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 3)])
+        pattern = ac.ci.PatternCIUniform(normalization=10.0, regions=[(0, 1, 0, 3)])
 
-        simulator = ac.ci.SimulatorCIImaging(
+        simulator = ac.ci.SimulatorImagingCI(
             shape_native=(3, 3),
             pixel_scales=1.0,
             scans=ac.Scans(serial_overscan=ac.Region2D((1, 2, 1, 2))),
@@ -444,9 +444,9 @@ class TestSimulatorCIImaging(object):
         self, parallel_clocker, traps_x2, ccd
     ):
 
-        pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
+        pattern = ac.ci.PatternCIUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
 
-        simulator = ac.ci.SimulatorCIImaging(
+        simulator = ac.ci.SimulatorImagingCI(
             shape_native=(5, 5),
             pixel_scales=1.0,
             scans=ac.Scans(serial_overscan=ac.Region2D((1, 2, 1, 2))),
@@ -486,9 +486,9 @@ class TestSimulatorCIImaging(object):
 
     def test__from_pre_cti_ci(self, parallel_clocker, traps_x2, ccd):
 
-        pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
+        pattern = ac.ci.PatternCIUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
 
-        simulator = ac.ci.SimulatorCIImaging(
+        simulator = ac.ci.SimulatorImagingCI(
             shape_native=(5, 5),
             pixel_scales=1.0,
             read_noise=4.0,
@@ -526,9 +526,9 @@ class TestSimulatorCIImaging(object):
 
     def test__from_post_cti_ci(self, parallel_clocker, traps_x2, ccd):
 
-        pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
+        pattern = ac.ci.PatternCIUniform(normalization=10.0, regions=[(0, 1, 0, 5)])
 
-        simulator = ac.ci.SimulatorCIImaging(
+        simulator = ac.ci.SimulatorImagingCI(
             shape_native=(5, 5),
             pixel_scales=1.0,
             read_noise=4.0,

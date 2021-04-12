@@ -83,7 +83,7 @@ def non_uniform_frame_from(
     """
     Specify the charge injection regions on the CCD, which in this case is 5 equally spaced rectangular blocks.
     """
-    ci_regions = [
+    regions_ci = [
         (0, 200, 51, shape_native[1] - serial_overscan_size),
         (400, 600, 51, shape_native[1] - serial_overscan_size),
         (800, 1000, 51, shape_native[1] - serial_overscan_size),
@@ -92,18 +92,18 @@ def non_uniform_frame_from(
     ]
 
     """
-    Use the charge injection normalizations and regions to create `CIPatternNonUniform` of every image we'll simulate.
+    Use the charge injection normalizations and regions to create `PatternCINonUniform` of every image we'll simulate.
     """
-    pattern_ci = pattern.CIPatternNonUniform(
+    pattern_ci = pattern.PatternCINonUniform(
         normalization=ci_normalization,
-        regions=ci_regions,
+        regions=regions_ci,
         row_slope=0.0,
         column_sigma=100.0,
         maximum_normalization=84700,
     )
 
     """
-    Create every pre-cti charge injection image using each `CIPattern`
+    Create every pre-cti charge injection image using each `PatternCI`
     """
     pre_cti_ci = pattern_ci.pre_cti_ci_from(
         shape_native=shape_native, pixel_scales=pixel_scales

@@ -2,7 +2,7 @@ import numpy as np
 from autocti.mask.mask_2d import Mask2D
 
 
-class SettingsCIMask2D:
+class SettingsMask2DCI:
     def __init__(
         self,
         parallel_front_edge_rows=None,
@@ -17,7 +17,7 @@ class SettingsCIMask2D:
         self.serial_trails_columns = serial_trails_columns
 
 
-class CIMask2D(Mask2D):
+class Mask2DCI(Mask2D):
     @classmethod
     def masked_front_edges_and_trails_from_frame_ci(cls, mask, frame_ci, settings):
 
@@ -69,7 +69,7 @@ class CIMask2D(Mask2D):
         if invert:
             mask = np.invert(mask)
 
-        return CIMask2D(mask=mask.astype("bool"), pixel_scales=frame_ci.pixel_scales)
+        return Mask2DCI(mask=mask.astype("bool"), pixel_scales=frame_ci.pixel_scales)
 
     @classmethod
     def masked_parallel_trails_from_frame_ci(cls, frame_ci, settings, invert=False):
@@ -85,7 +85,7 @@ class CIMask2D(Mask2D):
         if invert:
             mask = np.invert(mask)
 
-        return CIMask2D(mask=mask.astype("bool"), pixel_scales=frame_ci.pixel_scales)
+        return Mask2DCI(mask=mask.astype("bool"), pixel_scales=frame_ci.pixel_scales)
 
     @classmethod
     def masked_serial_front_edge_from_frame_ci(cls, frame_ci, settings, invert=False):
@@ -101,7 +101,7 @@ class CIMask2D(Mask2D):
         if invert:
             mask = np.invert(mask)
 
-        return CIMask2D(mask=mask.astype("bool"), pixel_scales=frame_ci.pixel_scales)
+        return Mask2DCI(mask=mask.astype("bool"), pixel_scales=frame_ci.pixel_scales)
 
     @classmethod
     def masked_serial_trails_from_frame_ci(cls, frame_ci, settings, invert=False):
@@ -117,4 +117,4 @@ class CIMask2D(Mask2D):
         if invert:
             mask = np.invert(mask)
 
-        return CIMask2D(mask=mask.astype("bool"), pixel_scales=frame_ci.pixel_scales)
+        return Mask2DCI(mask=mask.astype("bool"), pixel_scales=frame_ci.pixel_scales)

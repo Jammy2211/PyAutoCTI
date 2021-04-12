@@ -27,7 +27,7 @@ class ResultDataset(Result):
         return [fit.mask for fit in self.max_log_likelihood_fits]
 
 
-class ResultCIImaging(ResultDataset):
+class ResultImagingCI(ResultDataset):
     @property
     def max_log_likelihood_full_fits(self):
         return self.analysis.fits_full_dataset_from_instance(
@@ -41,11 +41,11 @@ class ResultCIImaging(ResultDataset):
         )
 
     @property
-    def noise_scaling_maps_list_of_ci_regions(self):
+    def noise_scaling_maps_list_of_regions_ci(self):
 
         return list(
             map(
-                lambda fit: fit.chi_squared_map_of_ci_regions,
+                lambda fit: fit.chi_squared_map_of_regions_ci,
                 self.max_log_likelihood_full_fits_no_hyper_scaling,
             )
         )
@@ -90,7 +90,7 @@ class ResultCIImaging(ResultDataset):
         for image_index in range(total_images):
             noise_scaling_maps_list.append(
                 [
-                    self.noise_scaling_maps_list_of_ci_regions[image_index],
+                    self.noise_scaling_maps_list_of_regions_ci[image_index],
                     self.noise_scaling_maps_list_of_parallel_trails[image_index],
                     self.noise_scaling_maps_list_of_serial_trails[image_index],
                     self.noise_scaling_maps_list_of_serial_overscan_no_trails[

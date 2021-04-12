@@ -1,7 +1,6 @@
 import copy
 
 import numpy as np
-from autoconf import conf
 from autocti.charge_injection import frame_ci, pattern_ci as pattern
 from autoarray.dataset import preprocess, imaging
 from autocti.mask import mask_2d
@@ -9,7 +8,7 @@ from autoarray.structures.arrays.two_d import array_2d_util
 from autocti import exc
 
 
-class SettingsCIImaging(imaging.SettingsImaging):
+class SettingsImagingCI(imaging.SettingsImaging):
     def __init__(self, parallel_columns=None, serial_rows=None):
 
         super().__init__()
@@ -52,7 +51,7 @@ class SettingsCIImaging(imaging.SettingsImaging):
         return settings
 
 
-class CIImaging(imaging.Imaging):
+class ImagingCI(imaging.Imaging):
     def __init__(
         self,
         image,
@@ -94,7 +93,7 @@ class CIImaging(imaging.Imaging):
         else:
             noise_scaling_maps = None
 
-        return CIImaging(
+        return ImagingCI(
             image=image,
             noise_map=noise_map,
             pre_cti_ci=self.pre_cti_ci,
@@ -172,7 +171,7 @@ class CIImaging(imaging.Imaging):
 
             noise_scaling_maps = None
 
-        return CIImaging(
+        return ImagingCI(
             image=self.image.parallel_calibration_frame_from_columns(columns=columns),
             noise_map=self.noise_map.parallel_calibration_frame_from_columns(
                 columns=columns
@@ -206,7 +205,7 @@ class CIImaging(imaging.Imaging):
 
             noise_scaling_maps = None
 
-        return CIImaging(
+        return ImagingCI(
             image=self.image.serial_calibration_frame_from_rows(rows=rows),
             noise_map=self.noise_map.serial_calibration_frame_from_rows(rows=rows),
             pre_cti_ci=self.pre_cti_ci.serial_calibration_frame_from_rows(rows=rows),
@@ -261,12 +260,12 @@ class CIImaging(imaging.Imaging):
                 file_path=pre_cti_ci_path, hdu=pre_cti_ci_hdu
             )
         else:
-            if isinstance(pattern_ci, pattern.CIPatternUniform):
+            if isinstance(pattern_ci, pattern.PatternCIUniform):
                 pre_cti_ci = pattern_ci.pre_cti_ci_from(
                     shape_native=ci_image.shape, pixel_scales=pixel_scales
                 )
             else:
-                raise exc.CIPatternException(
+                raise exc.PatternCIException(
                     "Cannot estimate pre_cti_ci image from non-uniform charge injectiono pattern"
                 )
 
@@ -292,7 +291,7 @@ class CIImaging(imaging.Imaging):
         else:
             cosmic_ray_map = None
 
-        return CIImaging(
+        return ImagingCI(
             image=ci_image,
             noise_map=ci_noise_map,
             pre_cti_ci=pre_cti_ci,
@@ -330,7 +329,7 @@ class CIImaging(imaging.Imaging):
             )
 
 
-class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
+class SimulatorImagingCI(imaging.AbstractSimulatorImaging):
     def __init__(
         self,
         shape_native,
@@ -351,7 +350,7 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
             The exposure time of an observation using this data_type.
         """
 
-        super(SimulatorCIImaging, self).__init__(
+        super(SimulatorImagingCI, self).__init__(
             read_noise=read_noise,
             exposure_time=1.0,
             add_poisson_noise=add_poisson_noise,
@@ -385,7 +384,7 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
         frame_geometry : frame_ci.CIQuadGeometry
             The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
             therefore the direction of clocking and rotations before input into the cti algorithm.
-        pattern_ci : pattern_ci.CIPatternSimulate
+        pattern_ci : pattern_ci.PatternCISimulate
             The charge injection pattern_ci (regions, normalization, etc.) of the charge injection image.
         cti_params : ArcticParams.ArcticParams
             The CTI model parameters (trap density, trap release_timescales etc.).
@@ -396,7 +395,7 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
         noise_seed : int
             Seed for the read-noises added to the image.
         """
-        if isinstance(pattern_ci, pattern.CIPatternUniform):
+        if isinstance(pattern_ci, pattern.PatternCIUniform):
             pre_cti_ci = pattern_ci.pre_cti_ci_from(
                 shape_native=self.shape_native, pixel_scales=self.pixel_scales
             )
@@ -464,7 +463,7 @@ class SimulatorCIImaging(imaging.AbstractSimulatorImaging):
             ci_image = post_cti_ci
             ci_noise_map = None
 
-        return CIImaging(
+        return ImagingCI(
             image=frame_ci.CIFrame.manual(
                 array=ci_image,
                 pattern_ci=pattern_ci,

@@ -19,7 +19,7 @@ def make_imaging_ci_plotter_setup():
 
 def test__individual_attributes_are_output(imaging_ci_7x7, plot_path, plot_patch):
 
-    imaging_ci_plotter = aplt.CIImagingPlotter(
+    imaging_ci_plotter = aplt.ImagingCIPlotter(
         imaging=imaging_ci_7x7,
         mat_plot_2d=aplt.MatPlot2D(output=aplt.Output(plot_path, format="png")),
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
@@ -53,7 +53,7 @@ def test__individual_attributes_are_output(imaging_ci_7x7, plot_path, plot_patch
 
 def test__individual_lines_are_output(imaging_ci_7x7, plot_path, plot_patch):
 
-    imaging_ci_plotter = aplt.CIImagingPlotter(
+    imaging_ci_plotter = aplt.ImagingCIPlotter(
         imaging=imaging_ci_7x7,
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
     )
@@ -98,7 +98,7 @@ def test__individual_lines_are_output(imaging_ci_7x7, plot_path, plot_patch):
 
 def test__subplot_ci_lines__is_output(imaging_ci_7x7, plot_path, plot_patch):
 
-    imaging_ci_plotter = aplt.CIImagingPlotter(
+    imaging_ci_plotter = aplt.ImagingCIPlotter(
         imaging=imaging_ci_7x7,
         mat_plot_2d=aplt.MatPlot2D(output=aplt.Output(plot_path, format="png")),
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),

@@ -16,7 +16,7 @@ class MockResult(mock.MockResult):
         search=None,
         mask=None,
         model_image=None,
-        noise_scaling_maps_list_of_ci_regions=None,
+        noise_scaling_maps_list_of_regions_ci=None,
         noise_scaling_maps_list_of_parallel_trails=None,
         noise_scaling_maps_list_of_serial_trails=None,
         noise_scaling_maps_list_of_serial_overscan_no_trails=None,
@@ -37,8 +37,8 @@ class MockResult(mock.MockResult):
         self.positions = None
         self.mask = mask
         self.model_image = model_image
-        self.noise_scaling_maps_list_of_ci_regions = (
-            noise_scaling_maps_list_of_ci_regions
+        self.noise_scaling_maps_list_of_regions_ci = (
+            noise_scaling_maps_list_of_regions_ci
         )
         self.noise_scaling_maps_list_of_parallel_trails = (
             noise_scaling_maps_list_of_parallel_trails
@@ -67,7 +67,7 @@ class MockResults(ResultsCollection):
         search=None,
         mask=None,
         model_image=None,
-        noise_scaling_maps_list_of_ci_regions=None,
+        noise_scaling_maps_list_of_regions_ci=None,
         noise_scaling_maps_list_of_parallel_trails=None,
         noise_scaling_maps_list_of_serial_trails=None,
         noise_scaling_maps_list_of_serial_overscan_no_trails=None,
@@ -88,7 +88,7 @@ class MockResults(ResultsCollection):
             search=search,
             mask=mask,
             model_image=model_image,
-            noise_scaling_maps_list_of_ci_regions=noise_scaling_maps_list_of_ci_regions,
+            noise_scaling_maps_list_of_regions_ci=noise_scaling_maps_list_of_regions_ci,
             noise_scaling_maps_list_of_parallel_trails=noise_scaling_maps_list_of_parallel_trails,
             noise_scaling_maps_list_of_serial_trails=noise_scaling_maps_list_of_serial_trails,
             noise_scaling_maps_list_of_serial_overscan_no_trails=noise_scaling_maps_list_of_serial_overscan_no_trails,
@@ -160,10 +160,10 @@ class MockCIFrame(object):
         self.frame_geometry = MockFrameGeometry(value=value)
         self.value = value
 
-    def ci_regions_from_array(self, array):
+    def regions_ci_from_array(self, array):
         return array[0:2, 0]
 
-    def parallel_non_ci_regions_frame_from_frame(self, array):
+    def parallel_non_regions_ci_frame_from_frame(self, array):
         return array[0:2, 1]
 
     def serial_all_trails_frame_from_frame(self, array):

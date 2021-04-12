@@ -19,7 +19,7 @@ from .mask.mask_2d import SettingsMask2D
 from .line.dataset_line import SettingsDatasetLine
 from .line.dataset_line import DatasetLine
 from . import charge_injection as ci
-from .analysis.analysis import AnalysisCIImaging
+from .analysis.analysis import AnalysisImagingCI
 from .analysis.model_util import CTI
 from .analysis.settings import SettingsCTI
 from .util.clocker import Clocker

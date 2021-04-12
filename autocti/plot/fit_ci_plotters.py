@@ -9,7 +9,7 @@ from autocti.plot.imaging_ci_plotters import extract_line_from
 class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
     def __init__(
         self,
-        fit: ci.CIFitImaging,
+        fit: ci.FitImagingCI,
         mat_plot_2d: mp.MatPlot2D = mp.MatPlot2D(),
         visuals_2d: vis.Visuals2D = vis.Visuals2D(),
         include_2d: inc.Include2D = inc.Include2D(),

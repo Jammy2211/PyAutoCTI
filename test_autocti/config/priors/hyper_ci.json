@@ -1,5 +1,5 @@
 {
-    "CIHyperNoiseScalar": {
+    "HyperCINoiseScalar": {
         "scale_factor": {
             "type": "Uniform",
             "lower_limit": 0.0,

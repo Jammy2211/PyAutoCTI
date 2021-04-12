@@ -1,7 +1,7 @@
 from typing import Optional
 
 
-class CIHyperNoiseScalar(float):
+class HyperCINoiseScalar(float):
     def __new__(cls, scale_factor=0.0):
         return super().__new__(cls, scale_factor)
 
@@ -18,16 +18,16 @@ class CIHyperNoiseScalar(float):
         return "Noise Scale Factor: {}".format(self) + "\n"
 
 
-class CIHyperNoiseCollection:
+class HyperCINoiseCollection:
     def __init__(
         self,
-        ci_regions: Optional[CIHyperNoiseScalar] = None,
-        parallel_trails: Optional[CIHyperNoiseScalar] = None,
-        serial_trails: Optional[CIHyperNoiseScalar] = None,
-        serial_overscan_no_trails: Optional[CIHyperNoiseScalar] = None,
+        regions_ci: Optional[HyperCINoiseScalar] = None,
+        parallel_trails: Optional[HyperCINoiseScalar] = None,
+        serial_trails: Optional[HyperCINoiseScalar] = None,
+        serial_overscan_no_trails: Optional[HyperCINoiseScalar] = None,
     ):
 
-        self.ci_regions = ci_regions
+        self.regions_ci = regions_ci
         self.parallel_trails = parallel_trails
         self.serial_trails = serial_trails
         self.serial_overscan_no_trails = serial_overscan_no_trails

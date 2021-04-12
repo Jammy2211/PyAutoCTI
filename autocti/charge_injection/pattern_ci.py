@@ -14,7 +14,7 @@ from autoarray.structures.frames import frame_util
 from autocti.charge_injection import frame_ci
 
 
-class AbstractCIPattern(object):
+class AbstractPatternCI(object):
     def __init__(self, normalization, regions):
         """ Abstract base class for a charge injection pattern_ci, which defines the regions charge injections appears \
          on a charge-injection frame_ci, the input normalization and other properties.
@@ -54,7 +54,7 @@ class AbstractCIPattern(object):
         for region in self.regions:
 
             if region.y1 > dimensions[0] or region.x1 > dimensions[1]:
-                raise exc.CIPatternException(
+                raise exc.PatternCIException(
                     "The charge injection pattern_ci regions are bigger than the image image_shape"
                 )
 
@@ -74,7 +74,7 @@ class AbstractCIPattern(object):
         ]
 
 
-class CIPatternUniform(AbstractCIPattern):
+class PatternCIUniform(AbstractPatternCI):
     """ A uniform charge injection pattern_ci, which is defined by the regions it appears on the charge injection \
         frame_ci and its normalization.
 
@@ -102,7 +102,7 @@ class CIPatternUniform(AbstractCIPattern):
         )
 
 
-class CIPatternNonUniform(AbstractCIPattern):
+class PatternCINonUniform(AbstractPatternCI):
     def __init__(
         self,
         normalization,
@@ -133,7 +133,7 @@ class CIPatternNonUniform(AbstractCIPattern):
         row_slope : float
             The power-law slope of non-uniformity in the row charge injection profile.
         """
-        super(CIPatternNonUniform, self).__init__(normalization, regions)
+        super(PatternCINonUniform, self).__init__(normalization, regions)
         self.row_slope = row_slope
         self.column_sigma = column_sigma
         self.maximum_normalization = maximum_normalization
@@ -247,7 +247,7 @@ class CIPatternNonUniform(AbstractCIPattern):
         return normalization * (np.arange(1, size + 1)) ** self.row_slope
 
 
-def ci_regions_from(
+def regions_ci_from(
     injection_on: int,
     injection_off: int,
     injection_total: int,
@@ -258,7 +258,7 @@ def ci_regions_from(
     roe_corner: (int, int),
 ):
 
-    ci_regions = []
+    regions_ci = []
 
     injection_start_count = 0
 
@@ -300,8 +300,8 @@ def ci_regions_from(
                 serial_size - serial_prescan_size,
             )
 
-        ci_regions.append(ci_region)
+        regions_ci.append(ci_region)
 
         injection_start_count += injection_on + injection_off
 
-    return ci_regions
+    return regions_ci

@@ -35,7 +35,7 @@ class Analysis(abstract_search.Analysis):
         self.pool = pool or ConsecutivePool
 
 
-class AnalysisCIImaging(Analysis):
+class AnalysisImagingCI(Analysis):
     def __init__(
         self,
         dataset_list,
@@ -100,7 +100,7 @@ class AnalysisCIImaging(Analysis):
             filter(
                 None,
                 [
-                    instance.hyper_noise.ci_regions,
+                    instance.hyper_noise.regions_ci,
                     instance.hyper_noise.parallel_trails,
                     instance.hyper_noise.serial_trails,
                     instance.hyper_noise.serial_overscan_no_trails,
@@ -143,7 +143,7 @@ class AnalysisCIImaging(Analysis):
             pattern_ci=imaging_ci.pre_cti_ci.pattern_ci,
         )
 
-        return fit_ci.CIFitImaging(
+        return fit_ci.FitImagingCI(
             imaging_ci=imaging_ci,
             post_cti_ci=post_cti_ci,
             hyper_noise_scalars=hyper_noise_scalars,
@@ -240,7 +240,7 @@ def pipe_cti(ci_data_masked, instance, clocker, hyper_noise_scalars):
         serial_ccd=instance.cti.serial_ccd,
     )
 
-    fit = fit_ci.CIFitImaging(
+    fit = fit_ci.FitImagingCI(
         imaging_ci=ci_data_masked,
         post_cti_ci=post_cti_ci,
         hyper_noise_scalars=hyper_noise_scalars,

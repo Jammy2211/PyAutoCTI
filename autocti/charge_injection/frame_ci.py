@@ -28,7 +28,7 @@ class AbstractCIFrame(abstract_frame.AbstractFrame2D):
         frame_geometry : CIFrame.CIQuadGeometry
             The quadrant geometry of the image, defining where the parallel / serial overscans are and
             therefore the direction of clocking and rotations before input into the cti algorithm.
-        pattern_ci : CIPattern.CIPattern
+        pattern_ci : PatternCI.PatternCI
             The charge injection pattern_ci (scans, normalization, etc.) of the charge injection image.
         """
 
@@ -70,7 +70,7 @@ class AbstractCIFrame(abstract_frame.AbstractFrame2D):
         )
 
     @property
-    def ci_regions_frame(self):
+    def regions_ci_frame(self):
         """Extract an arrays of all of the charge-injection scans from a charge injection frame_ci.
 
         The diagram below illustrates the arrays that is extracted from a frame_ci:
@@ -126,7 +126,7 @@ class AbstractCIFrame(abstract_frame.AbstractFrame2D):
         return new_array
 
     @property
-    def non_ci_regions_frame(self):
+    def non_regions_ci_frame(self):
         """Extract an arrays of all of the parallel trails following the charge-injection scans from a charge
         injection frame_ci.
 
@@ -173,15 +173,15 @@ class AbstractCIFrame(abstract_frame.AbstractFrame2D):
                <---------S----------
         """
 
-        non_ci_regions_array = self.copy()
+        non_regions_ci_array = self.copy()
 
         for region in self.pattern_ci.regions:
-            non_ci_regions_array[region.slice] = 0.0
+            non_regions_ci_array[region.slice] = 0.0
 
-        return non_ci_regions_array
+        return non_regions_ci_array
 
     @property
-    def parallel_non_ci_regions_frame(self):
+    def parallel_non_regions_ci_frame(self):
         """Extract an arrays of all of the parallel trails following the charge-injection scans from a charge
         injection frame_ci.
 
@@ -228,7 +228,7 @@ class AbstractCIFrame(abstract_frame.AbstractFrame2D):
                <---------S----------
         """
 
-        parallel_frame = self.non_ci_regions_frame
+        parallel_frame = self.non_regions_ci_frame
 
         parallel_frame[self.scans.serial_prescan.slice] = 0.0
         parallel_frame[self.scans.serial_overscan.slice] = 0.0
@@ -393,7 +393,7 @@ class AbstractCIFrame(abstract_frame.AbstractFrame2D):
         extraction_region = self.parallel_side_nearest_read_out_region(
             region=self.pattern_ci.regions[0], columns=columns
         )
-        return mask_2d_ci.CIMask2D(
+        return mask_2d_ci.Mask2DCI(
             mask=mask[extraction_region.slice], pixel_scales=mask.pixel_scales
         )
 
@@ -693,14 +693,14 @@ class AbstractCIFrame(abstract_frame.AbstractFrame2D):
         x0 = self.pattern_ci.regions[0][2]
         x1 = self.pattern_ci.regions[0][3]
         offset = 0
-        new_pattern_ci_regions = []
+        new_pattern_regions_ci = []
         for region in self.pattern_ci.regions:
             labelsize = rows[1] - rows[0]
-            new_pattern_ci_regions.append((offset, offset + labelsize, x0, x1))
+            new_pattern_regions_ci.append((offset, offset + labelsize, x0, x1))
             offset += labelsize
 
         new_pattern_ci = deepcopy(self.pattern_ci)
-        new_pattern_ci.regions = new_pattern_ci_regions
+        new_pattern_ci.regions = new_pattern_regions_ci
 
         return CIFrame.manual(
             array=array,
@@ -771,7 +771,7 @@ class AbstractCIFrame(abstract_frame.AbstractFrame2D):
         calibration_masks = list(
             map(lambda mask: mask[rows[0] : rows[1], :], calibration_masks)
         )
-        return mask_2d_ci.CIMask2D(
+        return mask_2d_ci.Mask2DCI(
             mask=np.concatenate(calibration_masks, axis=0),
             pixel_scales=mask.pixel_scales,
         )
@@ -1600,7 +1600,7 @@ class CIFrameEuclid(CIFrame):
 
         roe_corner = euclid.roe_corner_from(ccd_id=ccd_id, quadrant_id=quadrant_id)
 
-        ci_regions = pattern.ci_regions_from(
+        regions_ci = pattern.regions_ci_from(
             injection_on=injection_on,
             injection_off=injection_off,
             injection_total=injection_total,
@@ -1613,8 +1613,8 @@ class CIFrameEuclid(CIFrame):
 
         normalization = ext_header["INJNORM"]
 
-        pattern_ci = pattern.CIPatternUniform(
-            normalization=normalization, regions=ci_regions
+        pattern_ci = pattern.PatternCIUniform(
+            normalization=normalization, regions=regions_ci
         )
 
         return cls.from_ccd_and_quadrant_id(

@@ -4,9 +4,9 @@ from autocti.charge_injection import imaging_ci
 from autoarray.fit import fit
 
 
-class CIFitImaging(fit.FitImaging):
+class FitImagingCI(fit.FitImaging):
     def __init__(
-        self, imaging_ci: imaging_ci.CIImaging, post_cti_ci, hyper_noise_scalars=None
+        self, imaging_ci: imaging_ci.ImagingCI, post_cti_ci, hyper_noise_scalars=None
     ):
         """Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian
         framework.
@@ -53,12 +53,12 @@ class CIFitImaging(fit.FitImaging):
         return self.ci_masked_data.pre_cti_ci
 
     @property
-    def chi_squared_map_of_ci_regions(self):
-        return self.chi_squared_map.ci_regions_frame
+    def chi_squared_map_of_regions_ci(self):
+        return self.chi_squared_map.regions_ci_frame
 
     @property
     def chi_squared_map_of_parallel_trails(self):
-        return self.chi_squared_map.parallel_non_ci_regions_frame
+        return self.chi_squared_map.parallel_non_regions_ci_frame
 
     @property
     def chi_squared_map_of_serial_trails(self):
