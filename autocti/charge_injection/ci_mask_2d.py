@@ -1,9 +1,8 @@
 import numpy as np
-from autoconf import conf
-from autocti.mask.mask import Mask2D
+from autocti.mask.mask_2d import Mask2D
 
 
-class SettingsCIMask:
+class SettingsCIMask2D:
     def __init__(
         self,
         parallel_front_edge_rows=None,

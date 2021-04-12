@@ -3,9 +3,9 @@ from copy import deepcopy
 import numpy as np
 from autoarray.structures.arrays import abstract_array
 from autoarray.structures.arrays.two_d import array_2d_util
-from autocti.charge_injection import ci_mask
+from autocti.charge_injection import ci_mask_2d
 from autocti.charge_injection import ci_pattern as pattern
-from autocti.mask.mask import Mask2D
+from autocti.mask.mask_2d import Mask2D
 from autoarray.structures.frames import abstract_frame, frame_util
 from autoarray.instruments import euclid
 from autoarray.geometry import geometry_util
@@ -393,7 +393,7 @@ class AbstractCIFrame(abstract_frame.AbstractFrame2D):
         extraction_region = self.parallel_side_nearest_read_out_region(
             region=self.ci_pattern.regions[0], columns=columns
         )
-        return ci_mask.CIMask2D(
+        return ci_mask_2d.CIMask2D(
             mask=mask[extraction_region.slice], pixel_scales=mask.pixel_scales
         )
 
@@ -771,7 +771,7 @@ class AbstractCIFrame(abstract_frame.AbstractFrame2D):
         calibration_masks = list(
             map(lambda mask: mask[rows[0] : rows[1], :], calibration_masks)
         )
-        return ci_mask.CIMask2D(
+        return ci_mask_2d.CIMask2D(
             mask=np.concatenate(calibration_masks, axis=0),
             pixel_scales=mask.pixel_scales,
         )

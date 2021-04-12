@@ -3,9 +3,11 @@ from autoarray.mock.fixtures import *
 from autofit.mapper.model import ModelInstance
 from autofit.mock.mock import MockSearch, MockSamples
 from autocti import charge_injection as ci
+from autoarray.structures.arrays.one_d import array_1d
 from autoarray.dataset import imaging
 from autoarray.structures.frames import frames
-from autocti.mask import mask as msk
+from autocti.line import dataset_line
+from autocti.mask import mask_2d
 from autocti.util import traps
 from autocti.util.clocker import Clocker
 from autocti.util import ccd
@@ -49,7 +51,7 @@ def make_serial_clocker():
 
 
 def make_mask_7x7_unmasked():
-    return msk.Mask2D.unmasked(shape_native=(7, 7), pixel_scales=(1.0, 1.0))
+    return mask_2d.Mask2D.unmasked(shape_native=(7, 7), pixel_scales=(1.0, 1.0))
 
 
 ### FRAMES ###
@@ -81,6 +83,30 @@ def make_imaging_7x7_frame():
         image=make_image_7x7_frame(),
         noise_map=make_noise_map_7x7_frame(),
         name="mock_imaging_7x7_frame",
+    )
+
+
+### LINE DATASET ###
+
+
+def make_data_7():
+    return array_1d.Array1D.full(fill_value=1.0, shape_native=(7,), pixel_scales=1.0)
+
+
+def make_noise_map_7():
+    return array_1d.Array1D.full(fill_value=2.0, shape_native=(7,), pixel_scales=1.0)
+
+
+def make_line_pre_cti_7():
+    return array_1d.Array1D.full(fill_value=1.0, shape_native=(7,), pixel_scales=1.0)
+
+
+def make_dataset_line_7():
+
+    return dataset_line.DatasetLine(
+        data=make_data_7(),
+        noise_map=make_noise_map_7(),
+        line_pre_cti=make_line_pre_cti_7(),
     )
 
 

@@ -61,11 +61,6 @@ def make_ccd():
     return fixtures.make_ccd()
 
 
-@pytest.fixture(name="ccd_complex")
-def make_ccd_complex():
-    return fixtures.make_ccd_complex()
-
-
 @pytest.fixture(name="parallel_clocker")
 def make_parallel_clocker():
     return fixtures.make_parallel_clocker()
@@ -82,6 +77,29 @@ def make_serial_clocker():
 @pytest.fixture(name="mask_7x7_unmasked")
 def make_mask_7x7_unmasked():
     return fixtures.make_mask_7x7_unmasked()
+
+
+### LINES ###
+
+
+@pytest.fixture(name="data_7")
+def make_data_7():
+    return fixtures.make_data_7()
+
+
+@pytest.fixture(name="noise_map_7")
+def make_noise_map_7():
+    return fixtures.make_noise_map_7()
+
+
+@pytest.fixture(name="line_pre_cti_7")
+def make_line_pre_cti():
+    return fixtures.make_line_pre_cti_7()
+
+
+@pytest.fixture(name="dataset_line_7")
+def make_dataset_line_7():
+    return fixtures.make_dataset_line_7()
 
 
 ### FRAMES ###
@@ -108,6 +126,14 @@ def make_noise_map_7x7_frame():
 @pytest.fixture(name="imaging_7x7_frame")
 def make_imaging_7x7_frame():
     return fixtures.make_imaging_7x7_frame()
+
+
+### LINEDATASET ###
+
+
+@pytest.fixture(name="line_dataset_7")
+def make_line_dataset_7():
+    return fixtures.make_line_dataset_7()
 
 
 ### CHARGE INJECTION FRAMES ###
@@ -179,16 +205,6 @@ def make_samples_with_result():
 @pytest.fixture(name="analysis_ci_imaging_7x7")
 def make_analysis_ci_imaging_7x7():
     return fixtures.make_analysis_ci_imaging_7x7()
-
-
-@pytest.fixture(name="phase_dataset_7x7")
-def make_phase_data():
-    return fixtures.make_phase_data()
-
-
-@pytest.fixture(name="phase_ci_imaging_7x7")
-def make_phase_ci_imaging_7x7():
-    return fixtures.make_phase_ci_imaging_7x7()
 
 
 # Datasets

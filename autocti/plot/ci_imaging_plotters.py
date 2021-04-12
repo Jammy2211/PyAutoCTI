@@ -1,7 +1,7 @@
 from autoarray.plot.mat_wrap import visuals as vis
 from autoarray.plot.mat_wrap import include as inc
 from autoarray.plot.mat_wrap import mat_plot as mp
-from autoarray.plot.plotters import imaging_plotters
+from autoarray.plot import imaging_plotters
 from autocti import charge_injection as ci
 from autocti import exc
 

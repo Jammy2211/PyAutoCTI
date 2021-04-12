@@ -1,7 +1,7 @@
 from autoarray.plot.mat_wrap import visuals as vis
 from autoarray.plot.mat_wrap import include as inc
 from autoarray.plot.mat_wrap import mat_plot as mp
-from autoarray.plot.plotters import fit_imaging_plotters
+from autoarray.plot import fit_imaging_plotters
 from autocti import charge_injection as ci
 from autocti.plot.ci_imaging_plotters import extract_line_from
 

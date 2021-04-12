@@ -4,7 +4,7 @@ import numpy as np
 from autoconf import conf
 from autocti.charge_injection import ci_frame, ci_pattern as pattern
 from autoarray.dataset import preprocess, imaging
-from autocti.mask import mask as msk
+from autocti.mask import mask_2d
 from autoarray.structures.arrays.two_d import array_2d_util
 from autocti import exc
 
@@ -18,7 +18,8 @@ class SettingsCIImaging(imaging.SettingsImaging):
         self.serial_rows = serial_rows
 
     def modify_via_fit_type(self, is_parallel_fit, is_serial_fit):
-        """Modify the settings based on the type of fit being performed where:
+        """
+        Modify the settings based on the type of fit being performed where:
 
         - If the fit is a parallel only fit (is_parallel_fit=True, is_serial_fit=False) the serial_rows are set to None
           and all other settings remain the same.
@@ -70,7 +71,7 @@ class CIImaging(imaging.Imaging):
 
         self.ci_imaging_full = self
 
-    def apply_mask(self, mask):
+    def apply_mask(self, mask: mask_2d.Mask2D):
 
         image = ci_frame.CIFrame.from_ci_frame(ci_frame=self.image, mask=mask)
         noise_map = ci_frame.CIFrame.from_ci_frame(ci_frame=self.noise_map, mask=mask)

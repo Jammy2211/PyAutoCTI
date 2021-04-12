@@ -3,7 +3,7 @@ from autoconf import conf
 from autoarray.plot.mat_wrap.wrap import wrap_base
 from autoarray.plot.mat_wrap import mat_plot
 from autoarray.plot.mat_wrap import include as inc
-from autocti.plot import MultiPlotter
+from autoarray.plot import multi_plotters
 from autocti.plot import ci_imaging_plotters, ci_fit_plotters
 
 
@@ -179,7 +179,9 @@ class Visualizer:
             ci_fit_plotters.CIFitPlotter(fit=ci_fit, mat_plot_2d=mat_plot_2d)
             for ci_fit in fits
         ]
-        multi_plotter = MultiPlotter(plotter_list=ci_fit_plotter_list)
+        multi_plotter = multi_plotters.MultiFigurePlotter(
+            plotter_list=ci_fit_plotter_list
+        )
 
         if should_plot("subplot_residual_maps"):
             multi_plotter.subplot_of_figure(
@@ -208,7 +210,9 @@ class Visualizer:
             ci_fit_plotters.CIFitPlotter(fit=ci_fit, mat_plot_1d=mat_plot_1d)
             for ci_fit in fits
         ]
-        multi_plotter = MultiPlotter(plotter_list=ci_fit_plotter_list)
+        multi_plotter = multi_plotters.MultiFigurePlotter(
+            plotter_list=ci_fit_plotter_list
+        )
 
         if should_plot("subplot_residual_maps"):
             multi_plotter.subplot_of_figure(

@@ -173,7 +173,7 @@ class TestCosmicRayMask:
 
         mask = ac.Mask2D.from_cosmic_ray_map_buffed(
             cosmic_ray_map=cosmic_ray_map,
-            settings=ac.SettingsMask(
+            settings=ac.SettingsMask2D(
                 cosmic_ray_parallel_buffer=0,
                 cosmic_ray_serial_buffer=0,
                 cosmic_ray_diagonal_buffer=0,
@@ -198,7 +198,7 @@ class TestMaskCosmics:
 
         mask = ac.Mask2D.from_cosmic_ray_map_buffed(
             cosmic_ray_map=cosmic_ray_map,
-            settings=ac.SettingsMask(
+            settings=ac.SettingsMask2D(
                 cosmic_ray_parallel_buffer=1,
                 cosmic_ray_serial_buffer=0,
                 cosmic_ray_diagonal_buffer=0,
@@ -219,7 +219,7 @@ class TestMaskCosmics:
 
         mask = ac.Mask2D.from_cosmic_ray_map_buffed(
             cosmic_ray_map=cosmic_ray_map,
-            settings=ac.SettingsMask(
+            settings=ac.SettingsMask2D(
                 cosmic_ray_parallel_buffer=2,
                 cosmic_ray_serial_buffer=0,
                 cosmic_ray_diagonal_buffer=0,
@@ -240,7 +240,7 @@ class TestMaskCosmics:
 
         mask = ac.Mask2D.from_cosmic_ray_map_buffed(
             cosmic_ray_map=cosmic_ray_map,
-            settings=ac.SettingsMask(
+            settings=ac.SettingsMask2D(
                 cosmic_ray_serial_buffer=1,
                 cosmic_ray_parallel_buffer=0,
                 cosmic_ray_diagonal_buffer=0,
@@ -261,7 +261,7 @@ class TestMaskCosmics:
 
         mask = ac.Mask2D.from_cosmic_ray_map_buffed(
             cosmic_ray_map=cosmic_ray_map,
-            settings=ac.SettingsMask(
+            settings=ac.SettingsMask2D(
                 cosmic_ray_serial_buffer=2,
                 cosmic_ray_parallel_buffer=0,
                 cosmic_ray_diagonal_buffer=0,
@@ -282,7 +282,7 @@ class TestMaskCosmics:
 
         mask = ac.Mask2D.from_cosmic_ray_map_buffed(
             cosmic_ray_map=cosmic_ray_map,
-            settings=ac.SettingsMask(
+            settings=ac.SettingsMask2D(
                 cosmic_ray_diagonal_buffer=1,
                 cosmic_ray_parallel_buffer=0,
                 cosmic_ray_serial_buffer=0,
@@ -308,7 +308,7 @@ class TestMaskCosmics:
 
         mask = ac.Mask2D.from_cosmic_ray_map_buffed(
             cosmic_ray_map=cosmic_ray_map,
-            settings=ac.SettingsMask(
+            settings=ac.SettingsMask2D(
                 cosmic_ray_diagonal_buffer=2,
                 cosmic_ray_parallel_buffer=0,
                 cosmic_ray_serial_buffer=0,

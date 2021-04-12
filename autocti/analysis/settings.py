@@ -1,8 +1,3 @@
-from autoconf import conf
-
-from autocti.mask import mask as msk
-from autocti.charge_injection import ci_mask as ci_msk
-from autocti.charge_injection import ci_imaging
 from autocti import exc
 
 

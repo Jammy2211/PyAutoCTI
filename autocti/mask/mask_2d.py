@@ -8,7 +8,7 @@ from autoarray.geometry import geometry_util
 import numpy as np
 
 
-class SettingsMask:
+class SettingsMask2D:
     def __init__(
         self,
         cosmic_ray_parallel_buffer=10,
@@ -97,7 +97,7 @@ class Mask2D(mask_2d.AbstractMask2D):
         return mask
 
     @classmethod
-    def from_cosmic_ray_map_buffed(cls, cosmic_ray_map, settings=SettingsMask()):
+    def from_cosmic_ray_map_buffed(cls, cosmic_ray_map, settings=SettingsMask2D()):
         """
         Returns the mask used for CTI Calibration, which is all `False` unless specific regions are input for masking.
 
