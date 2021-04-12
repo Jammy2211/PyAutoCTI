@@ -56,7 +56,7 @@ class TestAnalysis:
 
 class TestAnalysisCIImaging:
     def test__log_likelihood_via_analysis__matches_manual_fit(
-        self, ci_imaging_7x7, ci_pre_cti_7x7, traps_x1, ccd, parallel_clocker
+        self, ci_imaging_7x7, pre_cti_ci_7x7, traps_x1, ccd, parallel_clocker
     ):
 
         model = af.CollectionPriorModel(
@@ -75,7 +75,7 @@ class TestAnalysisCIImaging:
         )
 
         post_cti_ci = parallel_clocker.add_cti(
-            image=ci_pre_cti_7x7, parallel_traps=traps_x1, parallel_ccd=ccd
+            image=pre_cti_ci_7x7, parallel_traps=traps_x1, parallel_ccd=ccd
         )
 
         fit = ac.ci.CIFitImaging(

@@ -91,10 +91,10 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
         in plot_patch.paths
     )
     assert (
-        path.join(plot_path, "ci_pre_cti_parallel_front_edge.png") in plot_patch.paths
+        path.join(plot_path, "pre_cti_ci_parallel_front_edge.png") in plot_patch.paths
     )
     assert (
-        path.join(plot_path, "ci_post_cti_parallel_front_edge.png") in plot_patch.paths
+        path.join(plot_path, "post_cti_ci_parallel_front_edge.png") in plot_patch.paths
     )
     assert (
         path.join(plot_path, "residual_map_parallel_front_edge.png") in plot_patch.paths
@@ -130,10 +130,10 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
         not in plot_patch.paths
     )
     assert (
-        path.join(plot_path, "ci_pre_cti_parallel_front_edge.png") in plot_patch.paths
+        path.join(plot_path, "pre_cti_ci_parallel_front_edge.png") in plot_patch.paths
     )
     assert (
-        path.join(plot_path, "ci_post_cti_parallel_front_edge.png") in plot_patch.paths
+        path.join(plot_path, "post_cti_ci_parallel_front_edge.png") in plot_patch.paths
     )
     assert (
         path.join(plot_path, "residual_map_parallel_front_edge.png")

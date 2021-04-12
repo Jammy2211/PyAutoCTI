@@ -189,7 +189,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
                     title=f"CI Pre CTI Line {line_region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
-                    filename=f"ci_pre_cti_{line_region}",
+                    filename=f"pre_cti_ci_{line_region}",
                 ),
             )
 

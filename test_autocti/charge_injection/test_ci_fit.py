@@ -53,7 +53,7 @@ class TestCIFit:
 
         assert fit.log_likelihood == log_likelihood
 
-    def test__image_and_ci_post_cti_the_same__noise_scaling_all_0s__likelihood_is_noise_normalization(
+    def test__image_and_post_cti_ci_the_same__noise_scaling_all_0s__likelihood_is_noise_normalization(
         self, ci_pattern_7x7
     ):
 
@@ -159,7 +159,7 @@ class TestCIFit:
             -0.5 * (chi_squared + noise_normalization), 1e-4
         )
 
-    def test__image_and_ci_post_cti_the_same__noise_scaling_non_0s__likelihood_is_noise_normalization(
+    def test__image_and_post_cti_ci_the_same__noise_scaling_non_0s__likelihood_is_noise_normalization(
         self, ci_pattern_7x7
     ):
         image = 10.0 * ac.ci.CIFrame.ones(

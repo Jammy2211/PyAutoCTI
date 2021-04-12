@@ -92,9 +92,9 @@ def make_noise_map_7():
     return fixtures.make_noise_map_7()
 
 
-@pytest.fixture(name="line_pre_cti_7")
-def make_line_pre_cti():
-    return fixtures.make_line_pre_cti_7()
+@pytest.fixture(name="pre_cti_line_7")
+def make_pre_cti_line():
+    return fixtures.make_pre_cti_line_7()
 
 
 @pytest.fixture(name="dataset_line_7")
@@ -154,9 +154,9 @@ def make_ci_noise_map_7x7():
     return fixtures.make_ci_noise_map_7x7()
 
 
-@pytest.fixture(name="ci_pre_cti_7x7")
-def make_ci_pre_cti_7x7():
-    return fixtures.make_ci_pre_cti_7x7()
+@pytest.fixture(name="pre_cti_ci_7x7")
+def make_pre_cti_ci_7x7():
+    return fixtures.make_pre_cti_ci_7x7()
 
 
 @pytest.fixture(name="ci_cosmic_ray_map_7x7")

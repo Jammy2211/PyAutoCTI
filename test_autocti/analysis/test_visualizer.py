@@ -71,7 +71,7 @@ class TestVisualizer:
             not in plot_patch.paths
         )
         assert (
-            path.join(plot_path, "ci_pre_cti_parallel_front_edge.png")
+            path.join(plot_path, "pre_cti_ci_parallel_front_edge.png")
             in plot_patch.paths
         )
 
@@ -141,11 +141,11 @@ class TestVisualizer:
             not in plot_patch.paths
         )
         assert (
-            path.join(plot_path, "ci_pre_cti_parallel_front_edge.png")
+            path.join(plot_path, "pre_cti_ci_parallel_front_edge.png")
             in plot_patch.paths
         )
         assert (
-            path.join(plot_path, "ci_post_cti_parallel_front_edge.png")
+            path.join(plot_path, "post_cti_ci_parallel_front_edge.png")
             in plot_patch.paths
         )
         assert (
@@ -181,11 +181,11 @@ class TestVisualizer:
             in plot_patch.paths
         )
         assert (
-            path.join(plot_path, "ci_pre_cti_parallel_front_edge.png")
+            path.join(plot_path, "pre_cti_ci_parallel_front_edge.png")
             in plot_patch.paths
         )
         assert (
-            path.join(plot_path, "ci_post_cti_parallel_front_edge.png")
+            path.join(plot_path, "post_cti_ci_parallel_front_edge.png")
             in plot_patch.paths
         )
         assert (

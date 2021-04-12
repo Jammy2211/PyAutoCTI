@@ -166,7 +166,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                     title=f"CI Pre CTI Line {line_region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
-                    filename=f"ci_pre_cti_{line_region}",
+                    filename=f"pre_cti_ci_{line_region}",
                 ),
             )
 
@@ -184,7 +184,7 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                     title=f"CI Post CTI Line {line_region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
-                    filename=f"ci_post_cti_{line_region}",
+                    filename=f"post_cti_ci_{line_region}",
                 ),
             )
 

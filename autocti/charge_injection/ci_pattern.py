@@ -80,14 +80,14 @@ class CIPatternUniform(AbstractCIPattern):
 
     """
 
-    def ci_pre_cti_from(self, shape_native, pixel_scales):
+    def pre_cti_ci_from(self, shape_native, pixel_scales):
         """Use this charge injection ci_pattern to generate a pre-cti charge injection image. This is performed by \
         going to its charge injection regions and adding the charge injection normalization value.
 
         Parameters
         -----------
         shape_native : (int, int)
-            The image_shape of the ci_pre_ctis to be created.
+            The image_shape of the pre_cti_cis to be created.
         """
 
         self.check_pattern_is_within_image_dimensions(shape_native)
@@ -138,11 +138,11 @@ class CIPatternNonUniform(AbstractCIPattern):
         self.column_sigma = column_sigma
         self.maximum_normalization = maximum_normalization
 
-    def ci_pre_cti_from(self, shape_native, pixel_scales, ci_seed=-1):
+    def pre_cti_ci_from(self, shape_native, pixel_scales, ci_seed=-1):
         """Use this charge injection ci_pattern to generate a pre-cti charge injection image. This is performed by going \
         to its charge injection regions and adding its non-uniform charge distribution.
 
-        For one column of a non-uniform charge injection ci_pre_ctis, it is assumed that each non-uniform charge \
+        For one column of a non-uniform charge injection pre_cti_cis, it is assumed that each non-uniform charge \
         injection region has the same overall normalization value (after drawing this value randomly from a Gaussian \
         distribution). Physically, this is true provided the spikes / troughs in the current that cause \
         non-uniformity occur in an identical fashion for the generation of each charge injection region.
@@ -151,12 +151,12 @@ class CIPatternNonUniform(AbstractCIPattern):
         -----------
         column_sigma
         shape_native
-            The image_shape of the ci_pre_ctis to be created.
+            The image_shape of the pre_cti_cis to be created.
         maximum_normalization
 
         ci_seed : int
             Input ci_seed for the random number generator to give reproducible results. A new ci_seed is always used for each \
-            ci_pre_ctis, ensuring each non-uniform ci_region has the same column non-uniformity ci_pattern.
+            pre_cti_cis, ensuring each non-uniform ci_region has the same column non-uniformity ci_pattern.
         """
 
         self.check_pattern_is_within_image_dimensions(shape_native)
@@ -188,7 +188,7 @@ class CIPatternNonUniform(AbstractCIPattern):
         Non-uniformity in the columns is caused by sharp peaks and troughs in the input charge current. To simulator  \
         this, we change the normalization of each column by drawing its normalization value from a Gaussian \
         distribution which has a mean of the input normalization and standard deviation *column_sigma*. The seed \
-        of the random number generator ensures that the non-uniform charge injection update_via_regions of each ci_pre_ctis \
+        of the random number generator ensures that the non-uniform charge injection update_via_regions of each pre_cti_cis \
         are identical.
 
         Non-uniformity in the rows is caused by the charge smoothly decreasing as the injection is switched off. To \

@@ -105,7 +105,7 @@ def non_uniform_frame_from(
     """
     Create every pre-cti charge injection image using each `CIPattern`
     """
-    pre_cti_ci = ci_pattern.ci_pre_cti_from(
+    pre_cti_ci = ci_pattern.pre_cti_ci_from(
         shape_native=shape_native, pixel_scales=pixel_scales
     )
 
@@ -124,7 +124,7 @@ def non_uniform_frame_from(
     )
 
 
-def add_cti_to_ci_pre_cti(pre_cti_ci, ccd_id, quadrant_id):
+def add_cti_to_pre_cti_ci(pre_cti_ci, ccd_id, quadrant_id):
 
     # TODO: DO we need to add rotations into this function, making ccd id and quadrant id input parameters?
 
@@ -176,7 +176,7 @@ def add_cti_to_ci_pre_cti(pre_cti_ci, ccd_id, quadrant_id):
     )
 
 
-def add_cti_simple_to_ci_pre_cti(pre_cti_ci, ccd_id, quadrant_id):
+def add_cti_simple_to_pre_cti_ci(pre_cti_ci, ccd_id, quadrant_id):
 
     # TODO: DO we need to add rotations into this function, making ccd id and quadrant id input parameters?
 
