@@ -106,7 +106,7 @@ def make_dataset_line_7():
     return dataset_line.DatasetLine(
         data=make_data_7(),
         noise_map=make_noise_map_7(),
-        line_pre_cti=make_line_pre_cti_7(),
+        pre_cti_line=make_line_pre_cti_7(),
     )
 
 
@@ -191,7 +191,7 @@ def make_ci_imaging_7x7():
     return ci.CIImaging(
         image=make_ci_image_7x7(),
         noise_map=make_ci_noise_map_7x7(),
-        ci_pre_cti=make_ci_pre_cti_7x7(),
+        pre_cti_ci=make_ci_pre_cti_7x7(),
         cosmic_ray_map=make_ci_cosmic_ray_map_7x7(),
         noise_scaling_maps=make_ci_noise_scaling_maps_7x7(),
     )
@@ -210,7 +210,7 @@ def make_hyper_noise_scalars():
 def make_ci_fit_7x7():
     return ci.CIFitImaging(
         ci_imaging=make_ci_imaging_7x7(),
-        ci_post_cti=make_ci_imaging_7x7().ci_pre_cti,
+        post_cti_ci=make_ci_imaging_7x7().pre_cti_ci,
         hyper_noise_scalars=make_hyper_noise_scalars(),
     )
 

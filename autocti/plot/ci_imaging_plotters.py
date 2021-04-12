@@ -72,7 +72,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
         signal_to_noise_map=False,
         absolute_signal_to_noise_map=False,
         potential_chi_squared_map=False,
-        ci_pre_cti=False,
+        pre_cti_ci=False,
         cosmic_ray_map=False,
     ):
         """
@@ -98,13 +98,13 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
             potential_chi_squared_map=potential_chi_squared_map,
         )
 
-        if ci_pre_cti:
+        if pre_cti_ci:
 
             self.mat_plot_2d.plot_array(
-                array=self.imaging.ci_pre_cti,
+                array=self.imaging.pre_cti_ci,
                 visuals_2d=self.visuals_with_include_2d,
                 auto_labels=mp.AutoLabels(
-                    title="CI Pre CTI Image", filename="ci_pre_cti"
+                    title="CI Pre CTI Image", filename="pre_cti_ci"
                 ),
             )
 
@@ -123,7 +123,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
         line_region,
         image=False,
         noise_map=False,
-        ci_pre_cti=False,
+        pre_cti_ci=False,
         signal_to_noise_map=False,
     ):
         """Plot each attribute of the ci simulator as individual figures one by one (e.g. the dataset, noise_map, PSF, \
@@ -175,10 +175,10 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
                 ),
             )
 
-        if ci_pre_cti:
+        if pre_cti_ci:
 
             line = extract_line_from(
-                ci_frame=self.imaging.ci_pre_cti, line_region=line_region
+                ci_frame=self.imaging.pre_cti_ci, line_region=line_region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -219,7 +219,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
         signal_to_noise_map=False,
         absolute_signal_to_noise_map=False,
         potential_chi_squared_map=False,
-        ci_pre_cti=False,
+        pre_cti_ci=False,
         cosmic_ray_map=False,
         auto_filename="subplot_ci_imaging",
     ):
@@ -229,7 +229,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
             noise_map=noise_map,
             signal_to_noise_map=signal_to_noise_map,
             inverse_noise_map=inverse_noise_map,
-            ci_pre_cti=ci_pre_cti,
+            pre_cti_ci=pre_cti_ci,
             cosmic_ray_map=cosmic_ray_map,
             auto_labels=mp.AutoLabels(filename=auto_filename),
         )
@@ -258,7 +258,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
             image=True,
             noise_map=True,
             signal_to_noise_map=True,
-            ci_pre_cti=True,
+            pre_cti_ci=True,
             inverse_noise_map=True,
             cosmic_ray_map=True,
         )
@@ -287,7 +287,7 @@ class CIImagingPlotter(imaging_plotters.AbstractImagingPlotter):
 
         self.figures_1d_ci_line_region(image=True, line_region=line_region)
         self.figures_1d_ci_line_region(noise_map=True, line_region=line_region)
-        self.figures_1d_ci_line_region(ci_pre_cti=True, line_region=line_region)
+        self.figures_1d_ci_line_region(pre_cti_ci=True, line_region=line_region)
         self.figures_1d_ci_line_region(
             signal_to_noise_map=True, line_region=line_region
         )

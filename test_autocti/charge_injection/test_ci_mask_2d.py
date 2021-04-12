@@ -381,7 +381,8 @@ class TestMaskedSerialTrails:
         )
 
         mask = ac.ci.CIMask2D.masked_serial_trails_from_ci_frame(
-            ci_frame=frame, settings=ac.ci.SettingsCIMask2D(serial_trails_columns=(0, 6))
+            ci_frame=frame,
+            settings=ac.ci.SettingsCIMask2D(serial_trails_columns=(0, 6)),
         )
 
         assert type(mask) == ac.ci.CIMask2D
@@ -441,7 +442,8 @@ class TestMaskedSerialTrails:
         )
 
         mask = ac.ci.CIMask2D.masked_serial_trails_from_ci_frame(
-            ci_frame=frame, settings=ac.ci.SettingsCIMask2D(serial_trails_columns=(0, 6))
+            ci_frame=frame,
+            settings=ac.ci.SettingsCIMask2D(serial_trails_columns=(0, 6)),
         )
 
         assert type(mask) == ac.ci.CIMask2D

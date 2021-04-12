@@ -156,10 +156,10 @@ class TestCIPatternUniform(object):
     def test__ci_pre_cti_from_shape_native__image_3x3__1_ci_region(self):
         pattern = ac.ci.CIPatternUniform(normalization=10.0, regions=[(0, 2, 0, 2)])
 
-        ci_pre_cti = pattern.ci_pre_cti_from(shape_native=(3, 3), pixel_scales=1.0)
+        pre_cti_ci = pattern.ci_pre_cti_from(shape_native=(3, 3), pixel_scales=1.0)
 
         assert (
-            ci_pre_cti
+            pre_cti_ci
             == np.array([[10.0, 10.0, 0.0], [10.0, 10.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 

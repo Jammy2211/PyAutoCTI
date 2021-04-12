@@ -92,13 +92,13 @@ class CIPatternUniform(AbstractCIPattern):
 
         self.check_pattern_is_within_image_dimensions(shape_native)
 
-        ci_pre_cti = np.zeros(shape_native)
+        pre_cti_ci = np.zeros(shape_native)
 
         for region in self.regions:
-            ci_pre_cti[region.slice] += self.normalization
+            pre_cti_ci[region.slice] += self.normalization
 
         return ci_frame.CIFrame.manual(
-            array=ci_pre_cti, ci_pattern=self, pixel_scales=pixel_scales
+            array=pre_cti_ci, ci_pattern=self, pixel_scales=pixel_scales
         )
 
 
@@ -161,7 +161,7 @@ class CIPatternNonUniform(AbstractCIPattern):
 
         self.check_pattern_is_within_image_dimensions(shape_native)
 
-        ci_pre_cti = np.zeros(shape_native)
+        pre_cti_ci = np.zeros(shape_native)
 
         if ci_seed == -1:
             ci_seed = np.random.randint(
@@ -170,12 +170,12 @@ class CIPatternNonUniform(AbstractCIPattern):
             # non-uniformity.
 
         for region in self.regions:
-            ci_pre_cti[region.slice] += self.ci_region_from_region(
+            pre_cti_ci[region.slice] += self.ci_region_from_region(
                 region_dimensions=region.shape, ci_seed=ci_seed
             )
 
         return ci_frame.CIFrame.manual(
-            array=ci_pre_cti, ci_pattern=self, pixel_scales=pixel_scales
+            array=pre_cti_ci, ci_pattern=self, pixel_scales=pixel_scales
         )
 
     def ci_region_from_region(self, region_dimensions, ci_seed):

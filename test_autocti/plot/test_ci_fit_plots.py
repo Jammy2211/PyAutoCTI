@@ -26,8 +26,8 @@ def test__individual_attribute_plots__all_plot_correctly(
         image=True,
         noise_map=True,
         signal_to_noise_map=True,
-        ci_pre_cti=True,
-        ci_post_cti=True,
+        pre_cti_ci=True,
+        post_cti_ci=True,
         residual_map=True,
         normalized_residual_map=True,
         chi_squared_map=True,
@@ -36,8 +36,8 @@ def test__individual_attribute_plots__all_plot_correctly(
     assert path.join(plot_path, "image.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map.png") in plot_patch.paths
     assert path.join(plot_path, "signal_to_noise_map.png") in plot_patch.paths
-    assert path.join(plot_path, "ci_pre_cti.png") in plot_patch.paths
-    assert path.join(plot_path, "ci_post_cti.png") in plot_patch.paths
+    assert path.join(plot_path, "pre_cti_ci.png") in plot_patch.paths
+    assert path.join(plot_path, "post_cti_ci.png") in plot_patch.paths
     assert path.join(plot_path, "residual_map.png") in plot_patch.paths
     assert path.join(plot_path, "normalized_residual_map.png") in plot_patch.paths
     assert path.join(plot_path, "chi_squared_map.png") in plot_patch.paths
@@ -48,16 +48,16 @@ def test__individual_attribute_plots__all_plot_correctly(
         image=True,
         noise_map=False,
         signal_to_noise_map=False,
-        ci_pre_cti=True,
-        ci_post_cti=True,
+        pre_cti_ci=True,
+        post_cti_ci=True,
         chi_squared_map=True,
     )
 
     assert path.join(plot_path, "image.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map.png") not in plot_patch.paths
     assert path.join(plot_path, "signal_to_noise_map.png") not in plot_patch.paths
-    assert path.join(plot_path, "ci_pre_cti.png") in plot_patch.paths
-    assert path.join(plot_path, "ci_post_cti.png") in plot_patch.paths
+    assert path.join(plot_path, "pre_cti_ci.png") in plot_patch.paths
+    assert path.join(plot_path, "post_cti_ci.png") in plot_patch.paths
     assert path.join(plot_path, "residual_map.png") not in plot_patch.paths
     assert path.join(plot_path, "chi_squared_map.png") in plot_patch.paths
 
@@ -77,8 +77,8 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
         image=True,
         noise_map=True,
         signal_to_noise_map=True,
-        ci_pre_cti=True,
-        ci_post_cti=True,
+        pre_cti_ci=True,
+        post_cti_ci=True,
         residual_map=True,
         normalized_residual_map=True,
         chi_squared_map=True,
@@ -115,8 +115,8 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
         image=True,
         noise_map=False,
         signal_to_noise_map=False,
-        ci_pre_cti=True,
-        ci_post_cti=True,
+        pre_cti_ci=True,
+        post_cti_ci=True,
         chi_squared_map=True,
     )
 

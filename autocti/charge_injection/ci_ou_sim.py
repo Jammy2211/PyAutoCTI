@@ -105,7 +105,7 @@ def non_uniform_frame_from(
     """
     Create every pre-cti charge injection image using each `CIPattern`
     """
-    ci_pre_cti = ci_pattern.ci_pre_cti_from(
+    pre_cti_ci = ci_pattern.ci_pre_cti_from(
         shape_native=shape_native, pixel_scales=pixel_scales
     )
 
@@ -120,18 +120,18 @@ def non_uniform_frame_from(
     - Includes information on different regions of the image, such as the serial prescan and overscans.
     """
     return frame_util.rotate_array_from_roe_corner(
-        array=ci_pre_cti, roe_corner=roe_corner
+        array=pre_cti_ci, roe_corner=roe_corner
     )
 
 
-def add_cti_to_ci_pre_cti(ci_pre_cti, ccd_id, quadrant_id):
+def add_cti_to_ci_pre_cti(pre_cti_ci, ccd_id, quadrant_id):
 
     # TODO: DO we need to add rotations into this function, making ccd id and quadrant id input parameters?
 
     roe_corner = euclid.roe_corner_from(ccd_id=ccd_id, quadrant_id=quadrant_id)
 
-    ci_pre_cti = frame_util.rotate_array_from_roe_corner(
-        array=ci_pre_cti, roe_corner=roe_corner
+    pre_cti_ci = frame_util.rotate_array_from_roe_corner(
+        array=pre_cti_ci, roe_corner=roe_corner
     )
 
     """
@@ -163,8 +163,8 @@ def add_cti_to_ci_pre_cti(ci_pre_cti, ccd_id, quadrant_id):
         well_fill_power=0.8, well_notch_depth=0.0, full_well_depth=84700
     )
 
-    ci_post_cti = clocker.add_cti(
-        image=ci_pre_cti,
+    post_cti_ci = clocker.add_cti(
+        image=pre_cti_ci,
         parallel_traps=[parallel_trap_0, parallel_trap_1],
         parallel_ccd=parallel_ccd,
         serial_traps=[serial_trap_0, serial_trap_1, serial_trap_2],
@@ -172,18 +172,18 @@ def add_cti_to_ci_pre_cti(ci_pre_cti, ccd_id, quadrant_id):
     )
 
     return frame_util.rotate_array_from_roe_corner(
-        array=ci_post_cti, roe_corner=roe_corner
+        array=post_cti_ci, roe_corner=roe_corner
     )
 
 
-def add_cti_simple_to_ci_pre_cti(ci_pre_cti, ccd_id, quadrant_id):
+def add_cti_simple_to_ci_pre_cti(pre_cti_ci, ccd_id, quadrant_id):
 
     # TODO: DO we need to add rotations into this function, making ccd id and quadrant id input parameters?
 
     roe_corner = euclid.roe_corner_from(ccd_id=ccd_id, quadrant_id=quadrant_id)
 
-    ci_pre_cti = frame_util.rotate_array_from_roe_corner(
-        array=ci_pre_cti, roe_corner=roe_corner
+    pre_cti_ci = frame_util.rotate_array_from_roe_corner(
+        array=pre_cti_ci, roe_corner=roe_corner
     )
 
     """
@@ -206,10 +206,10 @@ def add_cti_simple_to_ci_pre_cti(ci_pre_cti, ccd_id, quadrant_id):
         well_fill_power=0.8, well_notch_depth=0.0, full_well_depth=84700
     )
 
-    ci_post_cti = clocker.add_cti(
-        image=ci_pre_cti, parallel_traps=[parallel_trap_0], parallel_ccd=parallel_ccd
+    post_cti_ci = clocker.add_cti(
+        image=pre_cti_ci, parallel_traps=[parallel_trap_0], parallel_ccd=parallel_ccd
     )
 
     return frame_util.rotate_array_from_roe_corner(
-        array=ci_post_cti, roe_corner=roe_corner
+        array=post_cti_ci, roe_corner=roe_corner
     )

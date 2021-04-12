@@ -74,12 +74,12 @@ class TestAnalysisCIImaging:
             instance=instance
         )
 
-        ci_post_cti = parallel_clocker.add_cti(
+        post_cti_ci = parallel_clocker.add_cti(
             image=ci_pre_cti_7x7, parallel_traps=traps_x1, parallel_ccd=ccd
         )
 
         fit = ac.ci.CIFitImaging(
-            ci_imaging=analysis.ci_imagings[0], ci_post_cti=ci_post_cti
+            ci_imaging=analysis.ci_imagings[0], post_cti_ci=post_cti_ci
         )
 
         assert fit.log_likelihood == log_likelihood_via_analysis
@@ -98,8 +98,8 @@ class TestAnalysisCIImaging:
             settings=ac.ci.SettingsCIImaging(parallel_columns=(0, 1))
         )
 
-        ci_post_cti = parallel_clocker.add_cti(
-            image=masked_ci_imaging.ci_pre_cti,
+        post_cti_ci = parallel_clocker.add_cti(
+            image=masked_ci_imaging.pre_cti_ci,
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
         )
@@ -112,14 +112,14 @@ class TestAnalysisCIImaging:
 
         fits = analysis.fits_from_instance(instance=instance)
 
-        fit = ac.ci.CIFitImaging(ci_imaging=masked_ci_imaging, ci_post_cti=ci_post_cti)
+        fit = ac.ci.CIFitImaging(ci_imaging=masked_ci_imaging, post_cti_ci=post_cti_ci)
 
         assert fits[0].image.shape == (7, 1)
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood)
 
         fits = analysis.fits_full_dataset_from_instance(instance=instance)
 
-        fit = ac.ci.CIFitImaging(ci_imaging=ci_imaging_7x7, ci_post_cti=ci_post_cti)
+        fit = ac.ci.CIFitImaging(ci_imaging=ci_imaging_7x7, post_cti_ci=post_cti_ci)
 
         assert fits[0].image.shape == (7, 7)
         assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood)
@@ -162,15 +162,15 @@ class TestAnalysisCIImaging:
 
         fits = analysis.fits_from_instance(instance=instance, hyper_noise_scale=True)
 
-        ci_post_cti = parallel_clocker.add_cti(
-            image=masked_ci_imaging.ci_pre_cti,
+        post_cti_ci = parallel_clocker.add_cti(
+            image=masked_ci_imaging.pre_cti_ci,
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
         )
 
         fit = ac.ci.CIFitImaging(
             ci_imaging=masked_ci_imaging,
-            ci_post_cti=ci_post_cti,
+            post_cti_ci=post_cti_ci,
             hyper_noise_scalars=[instance.hyper_noise.ci_regions],
         )
 
@@ -179,7 +179,7 @@ class TestAnalysisCIImaging:
 
         fit = ac.ci.CIFitImaging(
             ci_imaging=masked_ci_imaging,
-            ci_post_cti=ci_post_cti,
+            post_cti_ci=post_cti_ci,
             hyper_noise_scalars=[ac.ci.CIHyperNoiseScalar(scale_factor=0.0)],
         )
 
@@ -193,7 +193,7 @@ class TestAnalysisCIImaging:
 
         fit = ac.ci.CIFitImaging(
             ci_imaging=masked_ci_imaging,
-            ci_post_cti=ci_post_cti,
+            post_cti_ci=post_cti_ci,
             hyper_noise_scalars=[instance.hyper_noise.ci_regions],
         )
 
@@ -202,7 +202,7 @@ class TestAnalysisCIImaging:
 
         fit = ac.ci.CIFitImaging(
             ci_imaging=masked_ci_imaging,
-            ci_post_cti=ci_post_cti,
+            post_cti_ci=post_cti_ci,
             hyper_noise_scalars=[ac.ci.CIHyperNoiseScalar(scale_factor=0.0)],
         )
 

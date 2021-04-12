@@ -13,7 +13,7 @@ class DatasetLine(abstract_dataset.AbstractDataset):
         self,
         data: array_1d.Array1D,
         noise_map: array_1d.Array1D,
-        line_pre_cti: array_1d.Array1D,
+        pre_cti_line: array_1d.Array1D,
         settings: SettingsDatasetLine = SettingsDatasetLine(),
     ):
 
@@ -21,7 +21,7 @@ class DatasetLine(abstract_dataset.AbstractDataset):
 
         self.data = data
         self.noise_map = noise_map
-        self.line_pre_cti = line_pre_cti
+        self.pre_cti_line = pre_cti_line
 
     def apply_mask(self, mask: mask_1d.Mask1D) -> "DatasetLine":
 
@@ -29,7 +29,7 @@ class DatasetLine(abstract_dataset.AbstractDataset):
         noise_map = array_1d.Array1D.manual_mask(array=self.noise_map, mask=mask).native
 
         return DatasetLine(
-            data=data, noise_map=noise_map, line_pre_cti=self.line_pre_cti
+            data=data, noise_map=noise_map, pre_cti_line=self.pre_cti_line
         )
 
     def apply_settings(self, settings: SettingsDatasetLine) -> "DatasetLine":

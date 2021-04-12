@@ -129,23 +129,23 @@ class AnalysisCIImaging(Analysis):
         else:
             serial_traps = None
 
-        ci_post_cti = self.clocker.add_cti(
-            image=ci_imaging.ci_pre_cti,
+        post_cti_ci = self.clocker.add_cti(
+            image=ci_imaging.pre_cti_ci,
             parallel_traps=parallel_traps,
             parallel_ccd=instance.cti.parallel_ccd,
             serial_traps=serial_traps,
             serial_ccd=instance.cti.serial_ccd,
         )
 
-        ci_post_cti = ci_frame.CIFrame.manual(
-            array=ci_post_cti,
-            pixel_scales=ci_imaging.ci_pre_cti.pixel_scales,
-            ci_pattern=ci_imaging.ci_pre_cti.ci_pattern,
+        post_cti_ci = ci_frame.CIFrame.manual(
+            array=post_cti_ci,
+            pixel_scales=ci_imaging.pre_cti_ci.pixel_scales,
+            ci_pattern=ci_imaging.pre_cti_ci.ci_pattern,
         )
 
         return ci_fit.CIFitImaging(
             ci_imaging=ci_imaging,
-            ci_post_cti=ci_post_cti,
+            post_cti_ci=post_cti_ci,
             hyper_noise_scalars=hyper_noise_scalars,
         )
 
@@ -232,8 +232,8 @@ def pipe_cti(ci_data_masked, instance, clocker, hyper_noise_scalars):
     else:
         serial_traps = None
 
-    ci_post_cti = clocker.add_cti(
-        image=ci_data_masked.ci_pre_cti,
+    post_cti_ci = clocker.add_cti(
+        image=ci_data_masked.pre_cti_ci,
         parallel_traps=parallel_traps,
         parallel_ccd=instance.cti.parallel_ccd,
         serial_traps=serial_traps,
@@ -242,7 +242,7 @@ def pipe_cti(ci_data_masked, instance, clocker, hyper_noise_scalars):
 
     fit = ci_fit.CIFitImaging(
         ci_imaging=ci_data_masked,
-        ci_post_cti=ci_post_cti,
+        post_cti_ci=post_cti_ci,
         hyper_noise_scalars=hyper_noise_scalars,
     )
 

@@ -30,24 +30,24 @@ def test__individual_attributes_are_output(ci_imaging_7x7, plot_path, plot_patch
     ci_imaging_plotter.figures_2d(
         image=True,
         noise_map=True,
-        ci_pre_cti=True,
+        pre_cti_ci=True,
         signal_to_noise_map=True,
         cosmic_ray_map=True,
     )
 
     assert path.join(plot_path, "image.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map.png") in plot_patch.paths
-    assert path.join(plot_path, "ci_pre_cti.png") in plot_patch.paths
+    assert path.join(plot_path, "pre_cti_ci.png") in plot_patch.paths
     assert path.join(plot_path, "signal_to_noise_map.png") in plot_patch.paths
     assert path.join(plot_path, "cosmic_ray_map.png") in plot_patch.paths
 
     plot_patch.paths = []
 
-    ci_imaging_plotter.figures_2d(image=True, ci_pre_cti=True)
+    ci_imaging_plotter.figures_2d(image=True, pre_cti_ci=True)
 
     assert path.join(plot_path, "image.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map.png") not in plot_patch.paths
-    assert path.join(plot_path, "ci_pre_cti.png") in plot_patch.paths
+    assert path.join(plot_path, "pre_cti_ci.png") in plot_patch.paths
     assert path.join(plot_path, "signal_to_noise_map.png") not in plot_patch.paths
 
 
@@ -62,7 +62,7 @@ def test__individual_lines_are_output(ci_imaging_7x7, plot_path, plot_patch):
         line_region="parallel_front_edge",
         image=True,
         noise_map=True,
-        ci_pre_cti=True,
+        pre_cti_ci=True,
         signal_to_noise_map=True,
     )
 
@@ -79,7 +79,7 @@ def test__individual_lines_are_output(ci_imaging_7x7, plot_path, plot_patch):
     plot_patch.paths = []
 
     ci_imaging_plotter.figures_1d_ci_line_region(
-        line_region="parallel_front_edge", image=True, ci_pre_cti=True
+        line_region="parallel_front_edge", image=True, pre_cti_ci=True
     )
 
     assert path.join(plot_path, "image_parallel_front_edge.png") in plot_patch.paths

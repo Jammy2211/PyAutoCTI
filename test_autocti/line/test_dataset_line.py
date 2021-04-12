@@ -25,4 +25,4 @@ class TestApplyMask:
 
         assert (masked_dataset_line.noise_map == masked_noise_map).all()
 
-        assert (masked_dataset_line.line_pre_cti == dataset_line_7.line_pre_cti).all()
+        assert (masked_dataset_line.pre_cti_line == dataset_line_7.pre_cti_line).all()

@@ -63,11 +63,11 @@ class TestCIOUSim:
         assert frame[199, 100] > 0.0
         assert frame[200, 100] == 0.0
 
-        ci_post_cti = ci_ou_sim.add_cti_to_ci_pre_cti(
-            ci_pre_cti=frame[:, 100:101], ccd_id="123", quadrant_id="E"
+        post_cti_ci = ci_ou_sim.add_cti_to_ci_pre_cti(
+            pre_cti_ci=frame[:, 100:101], ccd_id="123", quadrant_id="E"
         )
 
-        assert ci_post_cti[200, 0] > 0.0
+        assert post_cti_ci[200, 0] > 0.0
 
         # top left
 
@@ -78,11 +78,11 @@ class TestCIOUSim:
         assert frame[1886, 100] > 0.0
         assert frame[1885, 100] == 0.0
 
-        ci_post_cti = ci_ou_sim.add_cti_to_ci_pre_cti(
-            ci_pre_cti=frame[:, 100:101], ccd_id="123", quadrant_id="H"
+        post_cti_ci = ci_ou_sim.add_cti_to_ci_pre_cti(
+            pre_cti_ci=frame[:, 100:101], ccd_id="123", quadrant_id="H"
         )
 
-        assert ci_post_cti[1885, 0] > 0.0
+        assert post_cti_ci[1885, 0] > 0.0
 
         # bottom right
 
@@ -93,11 +93,11 @@ class TestCIOUSim:
         assert frame[199, 100] > 0.0
         assert frame[200, 100] == 0.0
 
-        ci_post_cti = ci_ou_sim.add_cti_to_ci_pre_cti(
-            ci_pre_cti=frame[:, 100:101], ccd_id="123", quadrant_id="F"
+        post_cti_ci = ci_ou_sim.add_cti_to_ci_pre_cti(
+            pre_cti_ci=frame[:, 100:101], ccd_id="123", quadrant_id="F"
         )
 
-        assert ci_post_cti[200, 0] > 0.0
+        assert post_cti_ci[200, 0] > 0.0
 
         # top right
 
@@ -108,8 +108,8 @@ class TestCIOUSim:
         assert frame[1886, 100] > 0.0
         assert frame[1885, 100] == 0.0
 
-        ci_post_cti = ci_ou_sim.add_cti_to_ci_pre_cti(
-            ci_pre_cti=frame[:, 100:101], ccd_id="123", quadrant_id="G"
+        post_cti_ci = ci_ou_sim.add_cti_to_ci_pre_cti(
+            pre_cti_ci=frame[:, 100:101], ccd_id="123", quadrant_id="G"
         )
 
-        assert ci_post_cti[1885, 0] > 0.0
+        assert post_cti_ci[1885, 0] > 0.0

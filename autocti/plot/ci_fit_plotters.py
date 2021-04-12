@@ -53,8 +53,8 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         image=False,
         noise_map=False,
         signal_to_noise_map=False,
-        ci_pre_cti=False,
-        ci_post_cti=False,
+        pre_cti_ci=False,
+        post_cti_ci=False,
         residual_map=False,
         normalized_residual_map=False,
         chi_squared_map=False,
@@ -69,23 +69,23 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
             chi_squared_map=chi_squared_map,
         )
 
-        if ci_pre_cti:
+        if pre_cti_ci:
 
             self.mat_plot_2d.plot_array(
-                array=self.fit.ci_pre_cti,
+                array=self.fit.pre_cti_ci,
                 visuals_2d=self.visuals_with_include_2d,
                 auto_labels=mp.AutoLabels(
-                    title="CI Pre CTI Image", filename="ci_pre_cti"
+                    title="CI Pre CTI Image", filename="pre_cti_ci"
                 ),
             )
 
-        if ci_post_cti:
+        if post_cti_ci:
 
             self.mat_plot_2d.plot_array(
-                array=self.fit.ci_post_cti,
+                array=self.fit.post_cti_ci,
                 visuals_2d=self.visuals_with_include_2d,
                 auto_labels=mp.AutoLabels(
-                    title="CI Post CTI Image", filename="ci_post_cti"
+                    title="CI Post CTI Image", filename="post_cti_ci"
                 ),
             )
 
@@ -95,8 +95,8 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         image=False,
         noise_map=False,
         signal_to_noise_map=False,
-        ci_pre_cti=False,
-        ci_post_cti=False,
+        pre_cti_ci=False,
+        post_cti_ci=False,
         residual_map=False,
         normalized_residual_map=False,
         chi_squared_map=False,
@@ -152,10 +152,10 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                 ),
             )
 
-        if ci_pre_cti:
+        if pre_cti_ci:
 
             line = extract_line_from(
-                ci_frame=self.fit.ci_pre_cti, line_region=line_region
+                ci_frame=self.fit.pre_cti_ci, line_region=line_region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -170,10 +170,10 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                 ),
             )
 
-        if ci_post_cti:
+        if post_cti_ci:
 
             line = extract_line_from(
-                ci_frame=self.fit.ci_post_cti, line_region=line_region
+                ci_frame=self.fit.post_cti_ci, line_region=line_region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -247,8 +247,8 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         image=False,
         noise_map=False,
         signal_to_noise_map=False,
-        ci_pre_cti=False,
-        ci_post_cti=False,
+        pre_cti_ci=False,
+        post_cti_ci=False,
         residual_map=False,
         normalized_residual_map=False,
         chi_squared_map=False,
@@ -259,8 +259,8 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
             image=image,
             noise_map=noise_map,
             signal_to_noise_map=signal_to_noise_map,
-            ci_pre_cti=ci_pre_cti,
-            ci_post_cti=ci_post_cti,
+            pre_cti_ci=pre_cti_ci,
+            post_cti_ci=post_cti_ci,
             residual_map=residual_map,
             normalized_residual_map=normalized_residual_map,
             chi_squared_map=chi_squared_map,
@@ -271,8 +271,8 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         return self.subplot(
             image=True,
             signal_to_noise_map=True,
-            ci_pre_cti=True,
-            ci_post_cti=True,
+            pre_cti_ci=True,
+            post_cti_ci=True,
             normalized_residual_map=True,
             chi_squared_map=True,
         )
@@ -290,8 +290,8 @@ class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         self.figures_1d_ci_line_region(
             signal_to_noise_map=True, line_region=line_region
         )
-        self.figures_1d_ci_line_region(ci_pre_cti=True, line_region=line_region)
-        self.figures_1d_ci_line_region(ci_post_cti=True, line_region=line_region)
+        self.figures_1d_ci_line_region(pre_cti_ci=True, line_region=line_region)
+        self.figures_1d_ci_line_region(post_cti_ci=True, line_region=line_region)
         self.figures_1d_ci_line_region(
             normalized_residual_map=True, line_region=line_region
         )
