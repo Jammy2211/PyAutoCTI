@@ -151,6 +151,112 @@ class TestPatternCI(object):
 
         assert pattern_extracted.regions == None
 
+    def test__frame_with_extracted_regions_ci_from(self):
+
+        pattern = ac.ci.PatternCIUniform(normalization=10.0, regions=[(0, 3, 0, 3)])
+
+        frame = ac.Frame2D.manual(
+            array=[
+                [0.0, 1.0, 2.0],
+                [3.0, 4.0, 5.0],
+                [6.0, 7.0, 8.0],
+                [9.0, 10.0, 11.0],
+            ],
+            roe_corner=(1, 0),
+            pixel_scales=1.0,
+        )
+
+        frame_extracted = pattern.frame_with_extracted_regions_ci_from(frame=frame)
+
+        assert (
+            frame_extracted
+            == np.array(
+                [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [0.0, 0.0, 0.0]]
+            )
+        ).all()
+
+        pattern = ac.ci.PatternCIUniform(
+            normalization=10.0, regions=[(0, 1, 1, 2), (2, 3, 1, 3)]
+        )
+
+        frame = ac.Frame2D.manual(
+            array=[
+                [0.0, 1.0, 2.0],
+                [3.0, 4.0, 5.0],
+                [6.0, 7.0, 8.0],
+                [9.0, 10.0, 11.0],
+            ],
+            roe_corner=(1, 0),
+            pixel_scales=1.0,
+        )
+
+        frame_extracted = pattern.frame_with_extracted_regions_ci_from(frame=frame)
+
+        assert (
+            frame_extracted
+            == np.array(
+                [[0.0, 1.0, 0.0], [0.0, 0.0, 0.0], [0.0, 7.0, 8.0], [0.0, 0.0, 0.0]]
+            )
+        ).all()
+
+    def test__frame_with_extracted_non_regions_ci_from(self,):
+
+        pattern = ac.ci.PatternCIUniform(normalization=10.0, regions=[(0, 3, 0, 3)])
+
+        frame = ac.Frame2D.manual(
+            array=[
+                [0.0, 1.0, 2.0],
+                [3.0, 4.0, 5.0],
+                [6.0, 7.0, 8.0],
+                [9.0, 10.0, 11.0],
+            ],
+            roe_corner=(1, 0),
+            scans=ac.Scans(serial_prescan=(3, 4, 2, 3), serial_overscan=(3, 4, 0, 1)),
+            pixel_scales=1.0,
+        )
+
+        frame_extracted = pattern.frame_with_extracted_non_regions_ci_from(frame=frame)
+
+        print(frame_extracted)
+
+        assert (
+            frame_extracted
+            == np.array(
+                [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [9.0, 10.0, 11.0]]
+            )
+        ).all()
+
+        pattern = ac.ci.PatternCIUniform(
+            normalization=10.0, regions=[(0, 1, 0, 3), (3, 4, 0, 3)]
+        )
+
+        frame = ac.Frame2D.manual(
+            array=[
+                [0.0, 1.0, 2.0],
+                [3.0, 4.0, 5.0],
+                [6.0, 7.0, 8.0],
+                [9.0, 10.0, 11.0],
+                [12.0, 13.0, 14.0],
+            ],
+            scans=ac.Scans(serial_prescan=(1, 2, 0, 3), serial_overscan=(0, 1, 0, 1)),
+            pixel_scales=1.0,
+        )
+
+        frame_extracted = pattern.frame_with_extracted_non_regions_ci_from(frame=frame)
+
+        assert (
+            frame_extracted
+            == np.array(
+                [
+                    [0.0, 0.0, 0.0],
+                    [3.0, 4.0, 5.0],
+                    [6.0, 7.0, 8.0],
+                    [0.0, 0.0, 0.0],
+                    [12.0, 13.0, 14.0],
+                ]
+            )
+        ).all()
+
 
 class TestPatternCIUniform(object):
     def test__pre_cti_ci_from_shape_native__image_3x3__1_ci_region(self):

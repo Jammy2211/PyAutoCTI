@@ -13,6 +13,17 @@ from autoarray.structures import region
 from autoarray.structures.frames import frame_util
 from autocti.charge_injection import frame_ci
 
+from copy import deepcopy
+
+import numpy as np
+from autoarray.structures.arrays import abstract_array
+from autoarray.structures.arrays.two_d import array_2d_util
+from autocti.charge_injection import mask_2d_ci
+from autocti.mask.mask_2d import Mask2D
+from autoarray.structures.frames import abstract_frame, frames, frame_util
+from autoarray.instruments import euclid
+from autoarray.geometry import geometry_util
+
 
 class AbstractPatternCI(object):
     def __init__(self, normalization, regions):
@@ -72,6 +83,121 @@ class AbstractPatternCI(object):
             self.regions[i + 1].y0 - self.regions[i].y1
             for i in range(len(self.regions) - 1)
         ]
+
+    def frame_with_extracted_regions_ci_from(
+        self, frame: frames.Frame2D
+    ) -> frames.Frame2D:
+        """
+        Extract all of the charge-injection regions from an input `Frame2D` object and returns them as a new `Frame2D`
+        object where these extracted regions are included and all other entries are zeros.
+
+        The diagram below illustrates the regions that are extracted from the input frame:
+
+        ---KEY---
+        ---------
+
+        [] = read-out electronics   [==========] = read-out register
+
+        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
+        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
+        [xxxxxxxxxx]
+
+        P = Parallel Direction      S = Serial Direction
+
+               [ppppppppppppppppppppp]
+               [ppppppppppppppppppppp]
+          [...][xxxxxxxxxxxxxxxxxxxxx][sss]
+          [...][ccccccccccccccccccccc][sss]
+        | [...][ccccccccccccccccccccc][sss]    |
+        | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
+        P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
+        | [...][ccccccccccccccccccccc][sss]    | clocking
+          [...][ccccccccccccccccccccc][sss]    |
+
+        []     [=====================]
+               <---------S----------
+
+        The extracted frame_ci keeps just the charge injection region and replaces all other values with 0s:
+
+               [000000000000000000000]
+               [000000000000000000000]
+          [000][000000000000000000000][000]
+          [000][ccccccccccccccccccccc][000]
+        | [000][ccccccccccccccccccccc][000]    |
+        | [000][000000000000000000000][000]    | Direction
+        P [000][000000000000000000000][000]    | of
+        | [000][ccccccccccccccccccccc][000]    | clocking
+          [000][ccccccccccccccccccccc][000]    |
+
+        []     [=====================]
+               <---------S----------
+
+        """
+
+        new_array = frame.copy() * 0.0
+
+        for region in self.regions:
+            new_array[region.slice] += frame[region.slice]
+
+        return new_array
+
+    def frame_with_extracted_non_regions_ci_from(
+        self, frame: frames.Frame2D
+    ) -> frames.Frame2D:
+        """
+        Extract all of the data values in an input `Frame2D` that do not overlap the charge injection regions. This
+        includes many areas of the image (e.g. the serial prescan, serial overscan) but is typically used to extract
+        a `Frame2D` that contains the parallel trails that follow the charge-injection regions.
+
+        The diagram below illustrates the `Frame2D` that is extracted from the input frame:
+
+        ---KEY---
+        ---------
+
+        [] = read-out electronics   [==========] = read-out register
+
+        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
+        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
+        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
+
+        P = Parallel Direction      S = Serial Direction
+
+               [tptpptptptpptpptpptpt]
+               [tptptptpptpttptptptpt]
+          [...][ttttttttttttttttttttt][sss]
+          [...][ccccccccccccccccccccc][sss]
+        | [...][ccccccccccccccccccccc][sss]    |
+        | [...][ttttttttttttttttttttt][sss]    | Direction
+        P [...][ttttttttttttttttttttt][sss]    | of
+        | [...][ccccccccccccccccccccc][sss]    | clocking
+          [...][ccccccccccccccccccccc][sss]    |
+
+        []     [=====================]
+               <---------S----------
+
+        The extracted frame_ci keeps just the trails following all charge injection scans and replaces all other
+        values with 0s:
+
+               [tptpptptptpptpptpptpt]
+               [tptptptpptpttptptptpt]
+          [000][ttttttttttttttttttttt][000]
+          [000][000000000000000000000][000]
+        | [000][000000000000000000000][000]    |
+        | [000][ttttttttttttttttttttt][000]    | Direction
+        P [000][ttttttttttttttttttttt][000]    | of
+        | [000][000000000000000000000][000]    | clocking
+          [000][000000000000000000000][000]    |
+
+        []     [=====================]
+               <---------S----------
+        """
+
+        non_regions_ci_array = frame.copy()
+
+        for region in self.regions:
+            non_regions_ci_array[region.slice] = 0.0
+
+        return non_regions_ci_array
 
 
 class PatternCIUniform(AbstractPatternCI):

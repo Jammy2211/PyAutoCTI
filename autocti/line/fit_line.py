@@ -51,11 +51,11 @@ class FitImagingCI(fit.FitImaging):
 
     @property
     def chi_squared_map_of_regions_ci(self):
-        return self.chi_squared_map.regions_ci_frame
+        return self.chi_squared_map.frame_with_extracted_regions_ci_from
 
     @property
     def chi_squared_map_of_parallel_trails(self):
-        return self.chi_squared_map.parallel_non_regions_ci_frame
+        return self.chi_squared_map.parallel_non_frame_with_extracted_regions_ci_from
 
     @property
     def chi_squared_map_of_serial_trails(self):

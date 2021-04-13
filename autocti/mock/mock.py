@@ -163,7 +163,7 @@ class MockCIFrame(object):
     def regions_ci_from_array(self, array):
         return array[0:2, 0]
 
-    def parallel_non_regions_ci_frame_from_frame(self, array):
+    def parallel_non_frame_with_extracted_regions_ci_from_from_frame(self, array):
         return array[0:2, 1]
 
     def serial_all_trails_frame_from_frame(self, array):
