@@ -6,7 +6,7 @@ from autocti import charge_injection as ci
 from autocti.plot.imaging_ci_plotters import extract_line_from
 
 
-class CIFitPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
+class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
     def __init__(
         self,
         fit: ci.FitImagingCI,

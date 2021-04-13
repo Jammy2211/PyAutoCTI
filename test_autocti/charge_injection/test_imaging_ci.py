@@ -285,6 +285,8 @@ class TestApplyMask:
 
         assert (masked_imaging_ci.cosmic_ray_map == masked_cosmic_ray_map).all()
 
+
+class TestApplySettings:
     def test__include_parallel_columns_extraction(
         self, imaging_ci_7x7, mask_7x7_unmasked, ci_noise_scaling_maps_7x7
     ):

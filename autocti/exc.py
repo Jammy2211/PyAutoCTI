@@ -6,6 +6,10 @@ class DatasetException(Exception):
     pass
 
 
+class PatternLineException(Exception):
+    pass
+
+
 class PatternCIException(Exception):
     pass
 

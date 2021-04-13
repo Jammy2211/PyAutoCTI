@@ -16,7 +16,7 @@ def test__individual_attribute_plots__all_plot_correctly(
     fit_ci_7x7, plot_path, plot_patch
 ):
 
-    fit_ci_plotter = aplt.CIFitPlotter(
+    fit_ci_plotter = aplt.FitImagingCIPlotter(
         fit=fit_ci_7x7,
         mat_plot_2d=aplt.MatPlot2D(output=aplt.Output(plot_path, format="png")),
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
@@ -66,7 +66,7 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
     fit_ci_7x7, plot_path, plot_patch
 ):
 
-    fit_ci_plotter = aplt.CIFitPlotter(
+    fit_ci_plotter = aplt.FitImagingCIPlotter(
         fit=fit_ci_7x7,
         mat_plot_2d=aplt.MatPlot2D(output=aplt.Output(plot_path, format="png")),
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
@@ -147,7 +147,7 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
 
 def test__fit_ci_subplots_are_output(fit_ci_7x7, plot_path, plot_patch):
 
-    fit_ci_plotter = aplt.CIFitPlotter(
+    fit_ci_plotter = aplt.FitImagingCIPlotter(
         fit=fit_ci_7x7,
         mat_plot_2d=aplt.MatPlot2D(output=aplt.Output(plot_path, format="png")),
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
@@ -191,7 +191,7 @@ def test__fit_ci_subplots_are_output(fit_ci_7x7, plot_path, plot_patch):
 
 # def test__fit_ci_subplots_lines_are_output(fit_ci_7x7, plot_path, plot_patch):
 #
-#     fit_ci_plotter = aplt.CIFitPlotter(fit=fit_ci_7x7,
+#     fit_ci_plotter = aplt.FitImagingCIPlotter(fit=fit_ci_7x7,
 #                                         mat_plot_2d=aplt.MatPlot2D(output=aplt.Output(plot_path, format="png")),
 #                                         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
 #                                         )
