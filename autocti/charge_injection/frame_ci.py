@@ -69,61 +69,6 @@ class AbstractCIFrame(abstract_frame.AbstractFrame2D):
             exposure_info=self.exposure_info,
         )
 
-    @property
-    def parallel_non_frame_with_extracted_regions_ci_from(self):
-        """Extract an arrays of all of the parallel trails following the charge-injection scans from a charge
-        injection frame_ci.
-
-        The diagram below illustrates the arrays that is extracted from a frame_ci:
-
-        ---KEY---
-        ---------
-
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
-        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
-
-        P = Parallel Direction      S = Serial Direction
-
-               [tptpptptptpptpptpptpt]
-               [tptptptpptpttptptptpt]
-          [...][ttttttttttttttttttttt][sss]
-          [...][ccccccccccccccccccccc][sss]
-        | [...][ccccccccccccccccccccc][sss]    |
-        | [...][ttttttttttttttttttttt][sss]    | Direction
-        P [...][ttttttttttttttttttttt][sss]    | of
-        | [...][ccccccccccccccccccccc][sss]    | clocking
-          [...][ccccccccccccccccccccc][sss]    |
-
-        []     [=====================]
-               <---------S----------
-
-        The extracted frame_ci keeps just the trails following all charge injection scans and replaces all other
-        values with 0s:
-
-               [tptpptptptpptpptpptpt]
-               [tptptptpptpttptptptpt]
-          [000][ttttttttttttttttttttt][000]
-          [000][000000000000000000000][000]
-        | [000][000000000000000000000][000]    |
-        | [000][ttttttttttttttttttttt][000]    | Direction
-        P [000][ttttttttttttttttttttt][000]    | of
-        | [000][000000000000000000000][000]    | clocking
-          [000][000000000000000000000][000]    |
-
-        []     [=====================]
-               <---------S----------
-        """
-
-        parallel_frame = self.frame_with_extracted_non_regions_ci_from
-
-        parallel_frame[self.scans.serial_prescan.slice] = 0.0
-        parallel_frame[self.scans.serial_overscan.slice] = 0.0
-
-        return parallel_frame
-
     def parallel_edges_and_trails_frame(self, front_edge_rows=None, trails_rows=None):
         """Extract an arrays of all of the parallel front edges and trails of each the charge-injection scans from
         a charge injection frame_ci.

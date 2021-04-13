@@ -153,9 +153,7 @@ class TestResultImagingCI:
             fit_list[0].chi_squared_map.frame_with_extracted_regions_ci_from, 1.0e-2
         )
         assert result.noise_scaling_maps_list_of_parallel_trails[0] == pytest.approx(
-            fit_list[
-                0
-            ].chi_squared_map.parallel_non_frame_with_extracted_regions_ci_from,
+            fit_list[0].chi_squared_map.frame_with_extracted_parallel_trails_from,
             1.0e-2,
         )
         assert result.noise_scaling_maps_list_of_serial_trails[0] == pytest.approx(
@@ -205,9 +203,7 @@ class TestResultImagingCI:
             fit_list[0].chi_squared_map.frame_with_extracted_regions_ci_from, 1.0e-2
         )
         assert result.noise_scaling_maps_list_of_parallel_trails[0] != pytest.approx(
-            fit_list[
-                0
-            ].chi_squared_map.parallel_non_frame_with_extracted_regions_ci_from,
+            fit_list[0].chi_squared_map.frame_with_extracted_parallel_trails_from,
             1.0e-2,
         )
         assert result.noise_scaling_maps_list_of_serial_trails[0] != pytest.approx(

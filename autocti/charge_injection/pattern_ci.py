@@ -199,6 +199,66 @@ class AbstractPatternCI(object):
 
         return non_regions_ci_array
 
+    def frame_with_extracted_parallel_trails_from(
+        self, frame: frames.Frame2D
+    ) -> frames.Frame2D:
+        """
+        Extract all of the data values in an input `Frame2D` that do not overlap the charge injection regions or the
+        serial prescan / serial overscan regions.
+
+        This  extracts a `Frame2D` that contains only regions of the data where there are parallel trails (e.g. those
+        that follow the charge-injection regions).
+
+        The diagram below illustrates the `Frame2D` that is extracted from the input frame:
+
+        ---KEY---
+        ---------
+
+        [] = read-out electronics   [==========] = read-out register
+
+        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
+        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
+        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
+
+        P = Parallel Direction      S = Serial Direction
+
+               [tptpptptptpptpptpptpt]
+               [tptptptpptpttptptptpt]
+          [...][ttttttttttttttttttttt][sss]
+          [...][ccccccccccccccccccccc][sss]
+        | [...][ccccccccccccccccccccc][sss]    |
+        | [...][ttttttttttttttttttttt][sss]    | Direction
+        P [...][ttttttttttttttttttttt][sss]    | of
+        | [...][ccccccccccccccccccccc][sss]    | clocking
+          [...][ccccccccccccccccccccc][sss]    |
+
+        []     [=====================]
+               <---------S----------
+
+        The extracted frame_ci keeps just the trails following all charge injection scans and replaces all other
+        values with 0s:
+
+               [tptpptptptpptpptpptpt]
+               [tptptptpptpttptptptpt]
+          [000][ttttttttttttttttttttt][000]
+          [000][000000000000000000000][000]
+        | [000][000000000000000000000][000]    |
+        | [000][ttttttttttttttttttttt][000]    | Direction
+        P [000][ttttttttttttttttttttt][000]    | of
+        | [000][000000000000000000000][000]    | clocking
+          [000][000000000000000000000][000]    |
+
+        []     [=====================]
+               <---------S----------
+        """
+
+        parallel_frame = self.frame_with_extracted_non_regions_ci_from(frame=frame)
+
+        parallel_frame[frame.scans.serial_prescan.slice] = 0.0
+        parallel_frame[frame.scans.serial_overscan.slice] = 0.0
+
+        return parallel_frame
+
 
 class PatternCIUniform(AbstractPatternCI):
     """ A uniform charge injection pattern_ci, which is defined by the regions it appears on the charge injection \
