@@ -36,7 +36,7 @@ class TestVisualizer:
         plot_path = path.join(plot_path, "imaging_ci_0")
 
         assert path.join(plot_path, "subplot_imaging_ci.png") in plot_patch.paths
-        assert path.join(plot_path, "image.png") in plot_patch.paths
+        assert path.join(plot_path, "image_2d.png") in plot_patch.paths
         assert path.join(plot_path, "noise_map.png") not in plot_patch.paths
         assert path.join(plot_path, "signal_to_noise_map.png") not in plot_patch.paths
         assert path.join(plot_path, "pre_cti_ci.png") in plot_patch.paths
@@ -89,7 +89,7 @@ class TestVisualizer:
         plot_path = path.join(plot_path, "fit_imaging_ci_0")
 
         assert path.join(plot_path, "subplot_fit_ci.png") in plot_patch.paths
-        assert path.join(plot_path, "image.png") in plot_patch.paths
+        assert path.join(plot_path, "image_2d.png") in plot_patch.paths
         assert path.join(plot_path, "noise_map.png") not in plot_patch.paths
         assert path.join(plot_path, "signal_to_noise_map.png") not in plot_patch.paths
         assert path.join(plot_path, "pre_cti_ci.png") in plot_patch.paths
@@ -103,7 +103,7 @@ class TestVisualizer:
         visualizer.visualize_fit_ci(fit=fit_ci_7x7, during_analysis=False)
 
         assert path.join(plot_path, "subplot_fit_ci.png") in plot_patch.paths
-        assert path.join(plot_path, "image.png") in plot_patch.paths
+        assert path.join(plot_path, "image_2d.png") in plot_patch.paths
         assert path.join(plot_path, "noise_map.png") in plot_patch.paths
         assert path.join(plot_path, "signal_to_noise_map.png") in plot_patch.paths
         assert path.join(plot_path, "pre_cti_ci.png") in plot_patch.paths

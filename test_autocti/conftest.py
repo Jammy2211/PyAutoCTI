@@ -74,9 +74,9 @@ def make_serial_clocker():
 ### MASK ###
 
 
-@pytest.fixture(name="mask_7x7_unmasked")
-def make_mask_7x7_unmasked():
-    return fixtures.make_mask_7x7_unmasked()
+@pytest.fixture(name="mask_2d_7x7_unmasked")
+def make_mask_2d_7x7_unmasked():
+    return fixtures.make_mask_2d_7x7_unmasked()
 
 
 ### LINES ###
@@ -110,14 +110,14 @@ def make_scans_7x7():
     return fixtures.make_scans_7x7()
 
 
-@pytest.fixture(name="image_7x7_frame")
-def make_image_7x7_frame():
-    return fixtures.make_image_7x7_frame()
+@pytest.fixture(name="image_7x7_native")
+def make_image_7x7_native():
+    return fixtures.make_image_7x7_native()
 
 
-@pytest.fixture(name="noise_map_7x7_frame")
-def make_noise_map_7x7_frame():
-    return fixtures.make_noise_map_7x7_frame()
+@pytest.fixture(name="noise_map_7x7_native")
+def make_noise_map_7x7_native():
+    return fixtures.make_noise_map_7x7_native()
 
 
 ### IMAGING ###
@@ -139,9 +139,9 @@ def make_line_dataset_7():
 ### CHARGE INJECTION FRAMES ###
 
 
-@pytest.fixture(name="pattern_ci_7x7")
-def make_pattern_ci_7x7():
-    return fixtures.make_pattern_ci_7x7()
+@pytest.fixture(name="layout_ci_7x7")
+def make_layout_ci_7x7():
+    return fixtures.make_layout_ci_7x7()
 
 
 @pytest.fixture(name="ci_image_7x7")

@@ -1,10 +1,11 @@
 import copy
-
 import numpy as np
-from autocti.charge_injection import frame_ci, pattern_ci as pattern
-from autoarray.dataset import preprocess, imaging
-from autocti.mask import mask_2d
+
+from autoarray.structures.arrays.two_d import array_2d
 from autoarray.structures.arrays.two_d import array_2d_util
+from autoarray.dataset import preprocess, imaging
+from autocti.charge_injection import layout_ci as pattern
+from autocti.mask import mask_2d
 from autocti import exc
 
 
@@ -72,12 +73,12 @@ class ImagingCI(imaging.Imaging):
 
     def apply_mask(self, mask: mask_2d.Mask2D):
 
-        image = frame_ci.CIFrame.from_frame_ci(frame_ci=self.image, mask=mask)
-        noise_map = frame_ci.CIFrame.from_frame_ci(frame_ci=self.noise_map, mask=mask)
+        image = array_2d.Array2D.from_frame_ci(frame_ci=self.image, mask=mask)
+        noise_map = array_2d.Array2D.from_frame_ci(frame_ci=self.noise_map, mask=mask)
 
         if self.cosmic_ray_map is not None:
 
-            cosmic_ray_map = frame_ci.CIFrame.from_frame_ci(
+            cosmic_ray_map = array_2d.Array2D.from_frame_ci(
                 frame_ci=self.cosmic_ray_map, mask=mask
             )
 
@@ -87,7 +88,7 @@ class ImagingCI(imaging.Imaging):
 
         if self.noise_scaling_maps is not None:
             noise_scaling_maps = [
-                frame_ci.CIFrame.from_frame_ci(frame_ci=noise_scaling_map, mask=mask)
+                array_2d.Array2D.from_frame_ci(frame_ci=noise_scaling_map, mask=mask)
                 for noise_scaling_map in self.noise_scaling_maps
             ]
         else:
@@ -111,7 +112,7 @@ class ImagingCI(imaging.Imaging):
                 columns=settings.parallel_columns
             )
 
-            mask = self.image.parallel_calibration_mask_from_mask_and_columns(
+            mask = self.image.mask_for_parallel_calibration_from(
                 mask=self.mask, columns=settings.parallel_columns
             )
 
@@ -144,8 +145,8 @@ class ImagingCI(imaging.Imaging):
         return self.image.mask
 
     @property
-    def pattern_ci(self):
-        return self.image.pattern_ci
+    def layout_ci(self):
+        return self.image.layout_ci
 
     def parallel_calibration_imaging_ci_for_columns(self, columns):
         """
@@ -153,7 +154,7 @@ class ImagingCI(imaging.Imaging):
         """
 
         cosmic_ray_map = (
-            self.cosmic_ray_map.parallel_calibration_frame_from_columns(columns=columns)
+            self.cosmic_ray_map.extract_parallel_calibration_frame_from(columns=columns)
             if self.cosmic_ray_map is not None
             else None
         )
@@ -161,7 +162,7 @@ class ImagingCI(imaging.Imaging):
         if self.noise_scaling_maps is not None:
 
             noise_scaling_maps = [
-                noise_scaling_map.parallel_calibration_frame_from_columns(
+                noise_scaling_map.extract_parallel_calibration_frame_from(
                     columns=columns
                 )
                 for noise_scaling_map in self.noise_scaling_maps
@@ -172,11 +173,11 @@ class ImagingCI(imaging.Imaging):
             noise_scaling_maps = None
 
         return ImagingCI(
-            image=self.image.parallel_calibration_frame_from_columns(columns=columns),
+            image=self.image.extract_parallel_calibration_frame_from(columns=columns),
             noise_map=self.noise_map.parallel_calibration_frame_from_columns(
                 columns=columns
             ),
-            pre_cti_ci=self.pre_cti_ci.parallel_calibration_frame_from_columns(
+            pre_cti_ci=self.pre_cti_ci.extract_parallel_calibration_frame_from(
                 columns=columns
             ),
             cosmic_ray_map=cosmic_ray_map,
@@ -189,7 +190,7 @@ class ImagingCI(imaging.Imaging):
         """
 
         cosmic_ray_map = (
-            self.cosmic_ray_map.serial_calibration_frame_from_rows(rows=rows)
+            self.cosmic_ray_map.serial_calibration_frame_from(rows=rows)
             if self.cosmic_ray_map is not None
             else None
         )
@@ -197,7 +198,7 @@ class ImagingCI(imaging.Imaging):
         if self.noise_scaling_maps is not None:
 
             noise_scaling_maps = [
-                noise_scaling_map.serial_calibration_frame_from_rows(rows=rows)
+                noise_scaling_map.serial_calibration_frame_from(rows=rows)
                 for noise_scaling_map in self.noise_scaling_maps
             ]
 
@@ -206,9 +207,9 @@ class ImagingCI(imaging.Imaging):
             noise_scaling_maps = None
 
         return ImagingCI(
-            image=self.image.serial_calibration_frame_from_rows(rows=rows),
-            noise_map=self.noise_map.serial_calibration_frame_from_rows(rows=rows),
-            pre_cti_ci=self.pre_cti_ci.serial_calibration_frame_from_rows(rows=rows),
+            image=self.image.serial_calibration_frame_from(rows=rows),
+            noise_map=self.noise_map.serial_calibration_frame_from(rows=rows),
+            pre_cti_ci=self.pre_cti_ci.serial_calibration_frame_from(rows=rows),
             cosmic_ray_map=cosmic_ray_map,
             noise_scaling_maps=noise_scaling_maps,
         )
@@ -216,7 +217,7 @@ class ImagingCI(imaging.Imaging):
     @classmethod
     def from_fits(
         cls,
-        pattern_ci,
+        layout_ci,
         image_path,
         pixel_scales,
         roe_corner=(1, 0),
@@ -231,11 +232,11 @@ class ImagingCI(imaging.Imaging):
         cosmic_ray_map_hdu=0,
     ):
 
-        ci_image = frame_ci.CIFrame.from_fits(
+        ci_image = array_2d.Array2D.from_fits(
             file_path=image_path,
             hdu=image_hdu,
             roe_corner=roe_corner,
-            pattern_ci=pattern_ci,
+            layout_ci=layout_ci,
             pixel_scales=pixel_scales,
             scans=scans,
         )
@@ -247,10 +248,10 @@ class ImagingCI(imaging.Imaging):
         else:
             ci_noise_map = np.ones(ci_image.shape_native) * noise_map_from_single_value
 
-        ci_noise_map = frame_ci.CIFrame.manual(
+        ci_noise_map = array_2d.Array2D.manual(
             array=ci_noise_map,
             roe_corner=roe_corner,
-            pattern_ci=pattern_ci,
+            layout_ci=layout_ci,
             pixel_scales=pixel_scales,
             scans=scans,
         )
@@ -260,30 +261,30 @@ class ImagingCI(imaging.Imaging):
                 file_path=pre_cti_ci_path, hdu=pre_cti_ci_hdu
             )
         else:
-            if isinstance(pattern_ci, pattern.PatternCIUniform):
-                pre_cti_ci = pattern_ci.pre_cti_ci_from(
+            if isinstance(layout_ci, pattern.Layout2DCIUniform):
+                pre_cti_ci = layout_ci.pre_cti_ci_from(
                     shape_native=ci_image.shape, pixel_scales=pixel_scales
                 )
             else:
-                raise exc.PatternCIException(
+                raise exc.Layout2DCIException(
                     "Cannot estimate pre_cti_ci image from non-uniform charge injectiono pattern"
                 )
 
-        pre_cti_ci = frame_ci.CIFrame.manual(
+        pre_cti_ci = array_2d.Array2D.manual(
             array=pre_cti_ci,
             roe_corner=roe_corner,
-            pattern_ci=pattern_ci,
+            layout_ci=layout_ci,
             pixel_scales=pixel_scales,
             scans=scans,
         )
 
         if cosmic_ray_map_path is not None:
 
-            cosmic_ray_map = frame_ci.CIFrame.from_fits(
+            cosmic_ray_map = array_2d.Array2D.from_fits(
                 file_path=cosmic_ray_map_path,
                 hdu=cosmic_ray_map_hdu,
                 roe_corner=roe_corner,
-                pattern_ci=pattern_ci,
+                layout_ci=layout_ci,
                 pixel_scales=pixel_scales,
                 scans=scans,
             )
@@ -363,9 +364,9 @@ class SimulatorImagingCI(imaging.AbstractSimulatorImaging):
         self.pixel_scales = pixel_scales
         self.ci_seed = ci_seed
 
-    def from_pattern_ci(
+    def from_layout_ci(
         self,
-        pattern_ci,
+        layout_ci,
         clocker,
         parallel_traps=None,
         parallel_ccd=None,
@@ -381,11 +382,11 @@ class SimulatorImagingCI(imaging.AbstractSimulatorImaging):
         pre_cti_ci
         cosmic_ray_map
             The dimensions of the output simulated charge injection image.
-        frame_geometry : frame_ci.CIQuadGeometry
+        frame_geometry : array_2d.CIQuadGeometry
             The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
             therefore the direction of clocking and rotations before input into the cti algorithm.
-        pattern_ci : pattern_ci.PatternCISimulate
-            The charge injection pattern_ci (regions, normalization, etc.) of the charge injection image.
+        layout_ci : layout_ci.Layout2DCISimulate
+            The charge injection layout_ci (regions, normalization, etc.) of the charge injection image.
         cti_params : ArcticParams.ArcticParams
             The CTI model parameters (trap density, trap release_timescales etc.).
         clocker : ArcticSettings.ArcticSettings
@@ -395,12 +396,12 @@ class SimulatorImagingCI(imaging.AbstractSimulatorImaging):
         noise_seed : int
             Seed for the read-noises added to the image.
         """
-        if isinstance(pattern_ci, pattern.PatternCIUniform):
-            pre_cti_ci = pattern_ci.pre_cti_ci_from(
+        if isinstance(layout_ci, pattern.Layout2DCIUniform):
+            pre_cti_ci = layout_ci.pre_cti_ci_from(
                 shape_native=self.shape_native, pixel_scales=self.pixel_scales
             )
         else:
-            pre_cti_ci = pattern_ci.pre_cti_ci_from(
+            pre_cti_ci = layout_ci.pre_cti_ci_from(
                 shape_native=self.shape_native,
                 ci_seed=self.ci_seed,
                 pixel_scales=self.pixel_scales,
@@ -408,7 +409,7 @@ class SimulatorImagingCI(imaging.AbstractSimulatorImaging):
 
         return self.from_pre_cti_ci(
             pre_cti_ci=pre_cti_ci,
-            pattern_ci=pattern_ci,
+            layout_ci=layout_ci,
             clocker=clocker,
             parallel_traps=parallel_traps,
             parallel_ccd=parallel_ccd,
@@ -421,7 +422,7 @@ class SimulatorImagingCI(imaging.AbstractSimulatorImaging):
     def from_pre_cti_ci(
         self,
         pre_cti_ci,
-        pattern_ci,
+        layout_ci,
         clocker,
         parallel_traps=None,
         parallel_ccd=None,
@@ -445,13 +446,13 @@ class SimulatorImagingCI(imaging.AbstractSimulatorImaging):
         return self.from_post_cti_ci(
             post_cti_ci=post_cti_ci,
             pre_cti_ci=pre_cti_ci,
-            pattern_ci=pattern_ci,
+            layout_ci=layout_ci,
             cosmic_ray_map=cosmic_ray_map,
             name=name,
         )
 
     def from_post_cti_ci(
-        self, post_cti_ci, pre_cti_ci, pattern_ci, cosmic_ray_map=None, name=None
+        self, post_cti_ci, pre_cti_ci, layout_ci, cosmic_ray_map=None, name=None
     ):
 
         if self.read_noise is not None:
@@ -464,27 +465,27 @@ class SimulatorImagingCI(imaging.AbstractSimulatorImaging):
             ci_noise_map = None
 
         return ImagingCI(
-            image=frame_ci.CIFrame.manual(
+            image=array_2d.Array2D.manual(
                 array=ci_image,
-                pattern_ci=pattern_ci,
+                layout_ci=layout_ci,
                 scans=self.scans,
                 pixel_scales=self.pixel_scales,
             ),
-            noise_map=frame_ci.CIFrame.manual(
+            noise_map=array_2d.Array2D.manual(
                 array=ci_noise_map,
-                pattern_ci=pattern_ci,
+                layout_ci=layout_ci,
                 scans=self.scans,
                 pixel_scales=self.pixel_scales,
             ),
-            pre_cti_ci=frame_ci.CIFrame.manual(
+            pre_cti_ci=array_2d.Array2D.manual(
                 array=pre_cti_ci,
-                pattern_ci=pattern_ci,
+                layout_ci=layout_ci,
                 scans=self.scans,
                 pixel_scales=self.pixel_scales,
             ),
-            cosmic_ray_map=frame_ci.CIFrame.manual(
+            cosmic_ray_map=array_2d.Array2D.manual(
                 array=cosmic_ray_map,
-                pattern_ci=pattern_ci,
+                layout_ci=layout_ci,
                 scans=self.scans,
                 pixel_scales=self.pixel_scales,
             ),

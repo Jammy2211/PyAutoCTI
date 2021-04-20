@@ -2,7 +2,8 @@ from functools import partial
 import numpy as np
 
 from autofit.non_linear import abstract_search
-from autocti.charge_injection import fit_ci, frame_ci
+from autoarray.structures.arrays.two_d import array_2d
+from autocti.charge_injection import fit_ci
 from autocti.analysis import visualizer as vis, settings
 
 
@@ -137,10 +138,10 @@ class AnalysisImagingCI(Analysis):
             serial_ccd=instance.cti.serial_ccd,
         )
 
-        post_cti_ci = frame_ci.CIFrame.manual(
+        post_cti_ci = array_2d.Array2D.manual(
             array=post_cti_ci,
             pixel_scales=imaging_ci.pre_cti_ci.pixel_scales,
-            pattern_ci=imaging_ci.pre_cti_ci.pattern_ci,
+            layout_ci=imaging_ci.pre_cti_ci.layout_ci,
         )
 
         return fit_ci.FitImagingCI(

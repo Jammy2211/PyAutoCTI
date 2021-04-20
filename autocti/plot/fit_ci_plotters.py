@@ -36,13 +36,13 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
 
         return visuals_2d + self.visuals_2d.__class__(
             parallel_overscan=self.extract_2d(
-                "parallel_overscan", self.fit.imaging_ci.image.scans.parallel_overscan
+                "parallel_overscan", self.fit.imaging_ci.image.layout.parallel_overscan
             ),
             serial_prescan=self.extract_2d(
-                "serial_prescan", self.fit.imaging_ci.image.scans.serial_prescan
+                "serial_prescan", self.fit.imaging_ci.image.layout.serial_prescan
             ),
             serial_overscan=self.extract_2d(
-                "serial_overscan", self.fit.imaging_ci.image.scans.serial_overscan
+                "serial_overscan", self.fit.imaging_ci.image.layout.serial_overscan
             ),
         )
 

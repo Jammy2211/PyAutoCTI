@@ -10,7 +10,7 @@ class PatternLineException(Exception):
     pass
 
 
-class PatternCIException(Exception):
+class Layout2DCIException(Exception):
     pass
 
 

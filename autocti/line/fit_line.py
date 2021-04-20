@@ -59,11 +59,11 @@ class FitImagingCI(fit.FitImaging):
 
     @property
     def chi_squared_map_of_serial_trails(self):
-        return self.chi_squared_map.serial_trails_frame
+        return self.chi_squared_map.serial_trails_frame_from
 
     @property
     def chi_squared_map_of_serial_overscan_no_trails(self):
-        return self.chi_squared_map.serial_overscan_no_trails_frame
+        return self.chi_squared_map.serial_overscan_no_trails_frame_from
 
 
 def hyper_noise_map_from_noise_map_and_noise_scalings(

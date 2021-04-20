@@ -155,7 +155,7 @@ def find_warm_pixels(
 
     # Identify warm pixels
     warm_pixel_locations = np.argwhere(
-        # Not in ignored regions
+        # Not in ignored region_list
         (where_not_ignored.astype(bool))
         # Local maximum
         & (image_no_bg > nearby_maxima)

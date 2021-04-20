@@ -33,7 +33,7 @@ def test__individual_attribute_plots__all_plot_correctly(
         chi_squared_map=True,
     )
 
-    assert path.join(plot_path, "image.png") in plot_patch.paths
+    assert path.join(plot_path, "image_2d.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map.png") in plot_patch.paths
     assert path.join(plot_path, "signal_to_noise_map.png") in plot_patch.paths
     assert path.join(plot_path, "pre_cti_ci.png") in plot_patch.paths
@@ -53,7 +53,7 @@ def test__individual_attribute_plots__all_plot_correctly(
         chi_squared_map=True,
     )
 
-    assert path.join(plot_path, "image.png") in plot_patch.paths
+    assert path.join(plot_path, "image_2d.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map.png") not in plot_patch.paths
     assert path.join(plot_path, "signal_to_noise_map.png") not in plot_patch.paths
     assert path.join(plot_path, "pre_cti_ci.png") in plot_patch.paths

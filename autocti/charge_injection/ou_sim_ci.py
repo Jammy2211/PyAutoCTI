@@ -1,11 +1,11 @@
 from autoarray.instruments import euclid
-from autoarray.structures.frames import frame_util
+from autoarray.structures.frames import layout_util
 
 from autocti.util.clocker import Clocker
 from autocti.util import ccd
 from autocti.util import traps
 
-from autocti.charge_injection import pattern_ci as pattern
+from autocti.charge_injection import layout_ci as pattern
 
 """
 Note on the rotations of frames:
@@ -92,20 +92,20 @@ def non_uniform_frame_from(
     ]
 
     """
-    Use the charge injection normalizations and regions to create `PatternCINonUniform` of every image we'll simulate.
+    Use the charge injection normalizations and regions to create `Layout2DCINonUniform` of every image we'll simulate.
     """
-    pattern_ci = pattern.PatternCINonUniform(
+    layout_ci = pattern.Layout2DCINonUniform(
         normalization=ci_normalization,
-        regions=regions_ci,
+        region_list=regions_ci,
         row_slope=0.0,
         column_sigma=100.0,
         maximum_normalization=84700,
     )
 
     """
-    Create every pre-cti charge injection image using each `PatternCI`
+    Create every pre-cti charge injection image using each `Layout2DCI`
     """
-    pre_cti_ci = pattern_ci.pre_cti_ci_from(
+    pre_cti_ci = layout_ci.pre_cti_ci_from(
         shape_native=shape_native, pixel_scales=pixel_scales
     )
 
@@ -119,7 +119,7 @@ def non_uniform_frame_from(
     .fits with the correct orientation.
     - Includes information on different regions of the image, such as the serial prescan and overscans.
     """
-    return frame_util.rotate_array_from_roe_corner(
+    return layout_util.rotate_array_from_roe_corner(
         array=pre_cti_ci, roe_corner=roe_corner
     )
 
@@ -130,7 +130,7 @@ def add_cti_to_pre_cti_ci(pre_cti_ci, ccd_id, quadrant_id):
 
     roe_corner = euclid.roe_corner_from(ccd_id=ccd_id, quadrant_id=quadrant_id)
 
-    pre_cti_ci = frame_util.rotate_array_from_roe_corner(
+    pre_cti_ci = layout_util.rotate_array_from_roe_corner(
         array=pre_cti_ci, roe_corner=roe_corner
     )
 
@@ -171,7 +171,7 @@ def add_cti_to_pre_cti_ci(pre_cti_ci, ccd_id, quadrant_id):
         serial_ccd=serial_ccd,
     )
 
-    return frame_util.rotate_array_from_roe_corner(
+    return layout_util.rotate_array_from_roe_corner(
         array=post_cti_ci, roe_corner=roe_corner
     )
 
@@ -182,7 +182,7 @@ def add_cti_simple_to_pre_cti_ci(pre_cti_ci, ccd_id, quadrant_id):
 
     roe_corner = euclid.roe_corner_from(ccd_id=ccd_id, quadrant_id=quadrant_id)
 
-    pre_cti_ci = frame_util.rotate_array_from_roe_corner(
+    pre_cti_ci = layout_util.rotate_array_from_roe_corner(
         array=pre_cti_ci, roe_corner=roe_corner
     )
 
@@ -210,6 +210,6 @@ def add_cti_simple_to_pre_cti_ci(pre_cti_ci, ccd_id, quadrant_id):
         image=pre_cti_ci, parallel_traps=[parallel_trap_0], parallel_ccd=parallel_ccd
     )
 
-    return frame_util.rotate_array_from_roe_corner(
+    return layout_util.rotate_array_from_roe_corner(
         array=post_cti_ci, roe_corner=roe_corner
     )

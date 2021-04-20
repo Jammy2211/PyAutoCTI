@@ -1,28 +1,28 @@
 import numpy as np
 import pytest
 import autocti as ac
-from autocti.charge_injection.pattern_ci import regions_ci_from
+from autocti.charge_injection.layout_ci import regions_ci_from
 from autocti import exc
 
 
-class TestPatternCI(object):
+class TestLayout2DCI(object):
     def test__total_rows_minimum(self):
 
-        pattern = ac.ci.PatternCIUniform(normalization=1.0, regions=[(1, 2, 0, 1)])
+        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, region_list=[(1, 2, 0, 1)])
 
         assert pattern.total_rows_min == 1
 
-        pattern = ac.ci.PatternCIUniform(normalization=1.0, regions=[(1, 3, 0, 1)])
+        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, region_list=[(1, 3, 0, 1)])
 
         assert pattern.total_rows_min == 2
 
-        pattern = ac.ci.PatternCIUniform(
+        pattern = ac.ci.Layout2DCIUniform(
             normalization=1.0, regions=[(1, 2, 0, 1), (3, 4, 0, 1)]
         )
 
         assert pattern.total_rows_min == 1
 
-        pattern = ac.ci.PatternCIUniform(
+        pattern = ac.ci.Layout2DCIUniform(
             normalization=1.0, regions=[(1, 2, 0, 1), (3, 5, 0, 1)]
         )
 
@@ -30,21 +30,21 @@ class TestPatternCI(object):
 
     def test__total_columns_minimum(self):
 
-        pattern = ac.ci.PatternCIUniform(normalization=1.0, regions=[(0, 1, 1, 2)])
+        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, regions=[(0, 1, 1, 2)])
 
         assert pattern.total_columns_min == 1
 
-        pattern = ac.ci.PatternCIUniform(normalization=1.0, regions=[(0, 1, 1, 3)])
+        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, regions=[(0, 1, 1, 3)])
 
         assert pattern.total_columns_min == 2
 
-        pattern = ac.ci.PatternCIUniform(
+        pattern = ac.ci.Layout2DCIUniform(
             normalization=1.0, regions=[(0, 1, 1, 2), (0, 1, 3, 4)]
         )
 
         assert pattern.total_columns_min == 1
 
-        pattern = ac.ci.PatternCIUniform(
+        pattern = ac.ci.Layout2DCIUniform(
             normalization=1.0, regions=[(0, 1, 1, 2), (0, 1, 3, 5)]
         )
 
@@ -52,23 +52,23 @@ class TestPatternCI(object):
 
     def test__rows_between_regions(self):
 
-        pattern = ac.ci.PatternCIUniform(normalization=1.0, regions=[(1, 2, 1, 2)])
+        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, regions=[(1, 2, 1, 2)])
 
         assert pattern.rows_between_regions == []
 
-        pattern = ac.ci.PatternCIUniform(
+        pattern = ac.ci.Layout2DCIUniform(
             normalization=1.0, regions=[(1, 2, 1, 2), (3, 4, 3, 4)]
         )
 
         assert pattern.rows_between_regions == [1]
 
-        pattern = ac.ci.PatternCIUniform(
+        pattern = ac.ci.Layout2DCIUniform(
             normalization=1.0, regions=[(1, 2, 1, 2), (4, 5, 3, 4)]
         )
 
         assert pattern.rows_between_regions == [2]
 
-        pattern = ac.ci.PatternCIUniform(
+        pattern = ac.ci.Layout2DCIUniform(
             normalization=1.0, regions=[(1, 2, 1, 2), (4, 5, 3, 4), (8, 9, 3, 4)]
         )
 
@@ -77,45 +77,45 @@ class TestPatternCI(object):
     def test__check_pattern_dimensions__pattern_has_more_rows_than_image__1_region(
         self,
     ):
-        pattern = ac.ci.PatternCIUniform(normalization=1.0, regions=([(0, 3, 0, 1)]))
+        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, regions=([(0, 3, 0, 1)]))
 
-        with pytest.raises(exc.PatternCIException):
+        with pytest.raises(exc.Layout2DCIException):
             pattern.check_pattern_is_within_image_dimensions(dimensions=(2, 6))
 
-        pattern = ac.ci.PatternCIUniform(normalization=1.0, regions=([(0, 1, 0, 3)]))
+        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, regions=([(0, 1, 0, 3)]))
 
-        with pytest.raises(exc.PatternCIException):
+        with pytest.raises(exc.Layout2DCIException):
             pattern.check_pattern_is_within_image_dimensions(dimensions=(6, 2))
 
-        pattern = ac.ci.PatternCIUniform(
+        pattern = ac.ci.Layout2DCIUniform(
             normalization=1.0, regions=([(0, 3, 0, 1), (0, 1, 0, 3)])
         )
 
-        with pytest.raises(exc.PatternCIException):
+        with pytest.raises(exc.Layout2DCIException):
             pattern.check_pattern_is_within_image_dimensions(dimensions=(2, 6))
 
-        pattern = ac.ci.PatternCIUniform(
+        pattern = ac.ci.Layout2DCIUniform(
             normalization=1.0, regions=([(0, 3, 0, 1), (0, 1, 0, 3)])
         )
 
-        with pytest.raises(exc.PatternCIException):
+        with pytest.raises(exc.Layout2DCIException):
             pattern.check_pattern_is_within_image_dimensions(dimensions=(6, 2))
 
         with pytest.raises(exc.RegionException):
-            ac.ci.PatternCIUniform(normalization=1.0, regions=([(-1, 0, 0, 0)]))
+            ac.ci.Layout2DCIUniform(normalization=1.0, regions=([(-1, 0, 0, 0)]))
 
         with pytest.raises(exc.RegionException):
-            ac.ci.PatternCIUniform(normalization=1.0, regions=([(0, -1, 0, 0)]))
+            ac.ci.Layout2DCIUniform(normalization=1.0, regions=([(0, -1, 0, 0)]))
 
         with pytest.raises(exc.RegionException):
-            ac.ci.PatternCIUniform(normalization=1.0, regions=([(0, 0, -1, 0)]))
+            ac.ci.Layout2DCIUniform(normalization=1.0, regions=([(0, 0, -1, 0)]))
 
         with pytest.raises(exc.RegionException):
-            ac.ci.PatternCIUniform(normalization=1.0, regions=([(0, 0, 0, -1)]))
+            ac.ci.Layout2DCIUniform(normalization=1.0, regions=([(0, 0, 0, -1)]))
 
     def test__with_extracted_regions__regions_are_extracted_correctly(self):
 
-        pattern = ac.ci.PatternCIUniform(normalization=1.0, regions=[(0, 2, 0, 2)])
+        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, regions=[(0, 2, 0, 2)])
 
         pattern_extracted = pattern.with_extracted_regions(
             extraction_region=ac.Region2D((0, 2, 0, 2))
@@ -129,7 +129,7 @@ class TestPatternCI(object):
 
         assert pattern_extracted.regions == [(0, 1, 0, 1)]
 
-        pattern = ac.ci.PatternCIUniform(
+        pattern = ac.ci.Layout2DCIUniform(
             normalization=1.0, regions=[(2, 4, 2, 4), (0, 1, 0, 1)]
         )
 
@@ -152,9 +152,9 @@ class TestPatternCI(object):
         assert pattern_extracted.regions == None
 
 
-class TestPatternCIUniform(object):
+class TestLayout2DCIUniform(object):
     def test__pre_cti_ci_from_shape_native__image_3x3__1_ci_region(self):
-        pattern = ac.ci.PatternCIUniform(normalization=10.0, regions=[(0, 2, 0, 2)])
+        pattern = ac.ci.Layout2DCIUniform(normalization=10.0, regions=[(0, 2, 0, 2)])
 
         pre_cti_ci = pattern.pre_cti_ci_from(shape_native=(3, 3), pixel_scales=1.0)
 
@@ -164,19 +164,19 @@ class TestPatternCIUniform(object):
         ).all()
 
     def test__pre_cti_ci_from_shape_native__image_3x3__2_regions_ci(self):
-        pattern_ci_uni = ac.ci.PatternCIUniform(
+        layout_ci_uni = ac.ci.Layout2DCIUniform(
             normalization=20.0, regions=[(0, 2, 0, 2), (2, 3, 2, 3)]
         )
-        image1 = pattern_ci_uni.pre_cti_ci_from(shape_native=(3, 3), pixel_scales=1.0)
+        image1 = layout_ci_uni.pre_cti_ci_from(shape_native=(3, 3), pixel_scales=1.0)
 
         assert (
             image1 == np.array([[20.0, 20.0, 0.0], [20.0, 20.0, 0.0], [0.0, 0.0, 20.0]])
         ).all()
 
-        pattern_ci_uni = ac.ci.PatternCIUniform(
+        layout_ci_uni = ac.ci.Layout2DCIUniform(
             normalization=30.0, regions=[(0, 3, 0, 2), (2, 3, 2, 3)]
         )
-        image1 = pattern_ci_uni.pre_cti_ci_from(shape_native=(4, 3), pixel_scales=1.0)
+        image1 = layout_ci_uni.pre_cti_ci_from(shape_native=(4, 3), pixel_scales=1.0)
 
         assert (
             image1
@@ -193,21 +193,21 @@ class TestPatternCIUniform(object):
     def test__pre_cti_ci_from_shape_native__pattern_bigger_than_image_dimensions__raises_error(
         self,
     ):
-        pattern = ac.ci.PatternCIUniform(normalization=10.0, regions=[(0, 2, 0, 1)])
+        pattern = ac.ci.Layout2DCIUniform(normalization=10.0, regions=[(0, 2, 0, 1)])
 
-        with pytest.raises(exc.PatternCIException):
+        with pytest.raises(exc.Layout2DCIException):
             pattern.pre_cti_ci_from(shape_native=(1, 1), pixel_scales=1.0)
 
 
-class TestPatternCINonUniform(object):
+class TestLayout2DCINonUniform(object):
     def test__ci_region_from__uniform_column_and_uniform_row__returns_uniform_charge_region(
         self,
     ):
-        pattern_ci = ac.ci.PatternCINonUniform(
+        layout_ci = ac.ci.Layout2DCINonUniform(
             normalization=100.0, regions=[(0, 1, 0, 1)], row_slope=0.0, column_sigma=0.0
         )
 
-        region = pattern_ci.ci_region_from_region(region_dimensions=(3, 3), ci_seed=1)
+        region = layout_ci.ci_region_from_region(region_dimensions=(3, 3), ci_seed=1)
 
         assert (
             region
@@ -216,11 +216,11 @@ class TestPatternCINonUniform(object):
             )
         ).all()
 
-        pattern_ci = ac.ci.PatternCINonUniform(
+        layout_ci = ac.ci.Layout2DCINonUniform(
             normalization=500.0, regions=[(0, 1, 0, 1)], row_slope=0.0, column_sigma=0.0
         )
 
-        region = pattern_ci.ci_region_from_region(region_dimensions=(5, 3), ci_seed=1)
+        region = layout_ci.ci_region_from_region(region_dimensions=(5, 3), ci_seed=1)
 
         assert (
             region
@@ -236,11 +236,11 @@ class TestPatternCINonUniform(object):
         ).all()
 
     def test__ci_region_from__non_uniform_column_and_uniform_row__returns_region(self):
-        pattern_ci = ac.ci.PatternCINonUniform(
+        layout_ci = ac.ci.Layout2DCINonUniform(
             normalization=100.0, regions=[(0, 1, 0, 1)], row_slope=0.0, column_sigma=1.0
         )
 
-        region = pattern_ci.ci_region_from_region(region_dimensions=(3, 3), ci_seed=1)
+        region = layout_ci.ci_region_from_region(region_dimensions=(3, 3), ci_seed=1)
 
         region = np.round(region, 1)
 
@@ -249,11 +249,11 @@ class TestPatternCINonUniform(object):
             == np.array([[101.6, 99.4, 99.5], [101.6, 99.4, 99.5], [101.6, 99.4, 99.5]])
         ).all()
 
-        pattern_ci = ac.ci.PatternCINonUniform(
+        layout_ci = ac.ci.Layout2DCINonUniform(
             normalization=500.0, regions=[(0, 1, 0, 1)], row_slope=0.0, column_sigma=1.0
         )
 
-        region = pattern_ci.ci_region_from_region(region_dimensions=(5, 3), ci_seed=1)
+        region = layout_ci.ci_region_from_region(region_dimensions=(5, 3), ci_seed=1)
 
         region = np.round(region, 1)
 
@@ -271,14 +271,14 @@ class TestPatternCINonUniform(object):
         ).all()
 
     def test__ci_region_from__uniform_column_and_non_uniform_row__returns_region(self):
-        pattern_ci = ac.ci.PatternCINonUniform(
+        layout_ci = ac.ci.Layout2DCINonUniform(
             normalization=100.0,
             regions=[(0, 1, 0, 1)],
             row_slope=-0.01,
             column_sigma=0.0,
         )
 
-        region = pattern_ci.ci_region_from_region(region_dimensions=(3, 3), ci_seed=1)
+        region = layout_ci.ci_region_from_region(region_dimensions=(3, 3), ci_seed=1)
 
         region = np.round(region, 1)
 
@@ -287,14 +287,14 @@ class TestPatternCINonUniform(object):
             == np.array([[100.0, 100.0, 100.0], [99.3, 99.3, 99.3], [98.9, 98.9, 98.9]])
         ).all()
 
-        pattern_ci = ac.ci.PatternCINonUniform(
+        layout_ci = ac.ci.Layout2DCINonUniform(
             normalization=500.0,
             regions=[(0, 1, 0, 1)],
             row_slope=-0.01,
             column_sigma=0.0,
         )
 
-        region = pattern_ci.ci_region_from_region(region_dimensions=(5, 3), ci_seed=1)
+        region = layout_ci.ci_region_from_region(region_dimensions=(5, 3), ci_seed=1)
 
         region = np.round(region, 1)
 
@@ -314,14 +314,14 @@ class TestPatternCINonUniform(object):
     def test__ci_region_from__non_uniform_column_and_non_uniform_row__returns_region(
         self,
     ):
-        pattern_ci = ac.ci.PatternCINonUniform(
+        layout_ci = ac.ci.Layout2DCINonUniform(
             normalization=100.0,
             regions=[(0, 1, 0, 1)],
             row_slope=-0.01,
             column_sigma=1.0,
         )
 
-        region = pattern_ci.ci_region_from_region(region_dimensions=(3, 3), ci_seed=1)
+        region = layout_ci.ci_region_from_region(region_dimensions=(3, 3), ci_seed=1)
 
         region = np.round(region, 1)
 
@@ -330,14 +330,14 @@ class TestPatternCINonUniform(object):
             == np.array([[101.6, 99.4, 99.5], [100.9, 98.7, 98.8], [100.5, 98.3, 98.4]])
         ).all()
 
-        pattern_ci = ac.ci.PatternCINonUniform(
+        layout_ci = ac.ci.Layout2DCINonUniform(
             normalization=500.0,
             regions=[(0, 1, 0, 1)],
             row_slope=-0.01,
             column_sigma=1.0,
         )
 
-        region = pattern_ci.ci_region_from_region(region_dimensions=(5, 3), ci_seed=1)
+        region = layout_ci.ci_region_from_region(region_dimensions=(5, 3), ci_seed=1)
 
         region = np.round(region, 1)
 
@@ -357,60 +357,60 @@ class TestPatternCINonUniform(object):
     def test__ci_region_from__non_uniform_columns_with_large_deviation_value__no_negative_charge_columns_are_generated(
         self,
     ):
-        pattern_ci = ac.ci.PatternCINonUniform(
+        layout_ci = ac.ci.Layout2DCINonUniform(
             normalization=100.0,
             regions=[(0, 1, 0, 1)],
             row_slope=0.0,
             column_sigma=100.0,
         )
 
-        region = pattern_ci.ci_region_from_region(region_dimensions=(10, 10), ci_seed=1)
+        region = layout_ci.ci_region_from_region(region_dimensions=(10, 10), ci_seed=1)
 
         assert (region > 0).all()
 
     def test__pre_cti_ci_from__no_non_uniformity__identical_to_uniform_image__one_ci_region(
         self,
     ):
-        pattern_ci_uni = ac.ci.PatternCIUniform(
+        layout_ci_uni = ac.ci.Layout2DCIUniform(
             normalization=10.0, regions=[(2, 4, 0, 5)]
         )
-        image1 = pattern_ci_uni.pre_cti_ci_from(shape_native=(5, 5), pixel_scales=1.0)
+        image1 = layout_ci_uni.pre_cti_ci_from(shape_native=(5, 5), pixel_scales=1.0)
 
-        pattern_ci_non_uni = ac.ci.PatternCINonUniform(
+        layout_ci_non_uni = ac.ci.Layout2DCINonUniform(
             normalization=10.0, regions=[(2, 4, 0, 5)], row_slope=0.0, column_sigma=0.0
         )
-        image2 = pattern_ci_non_uni.pre_cti_ci_from(
+        image2 = layout_ci_non_uni.pre_cti_ci_from(
             shape_native=(5, 5), pixel_scales=1.0
         )
 
         assert (image1 == image2).all()
 
-        pattern_ci_uni = ac.ci.PatternCIUniform(
+        layout_ci_uni = ac.ci.Layout2DCIUniform(
             normalization=100.0, regions=[(1, 4, 2, 5)]
         )
-        image1 = pattern_ci_uni.pre_cti_ci_from(shape_native=(5, 7), pixel_scales=1.0)
+        image1 = layout_ci_uni.pre_cti_ci_from(shape_native=(5, 7), pixel_scales=1.0)
 
-        pattern_ci_non_uni = ac.ci.PatternCINonUniform(
+        layout_ci_non_uni = ac.ci.Layout2DCINonUniform(
             normalization=100.0, regions=[(1, 4, 2, 5)], row_slope=0.0, column_sigma=0.0
         )
-        image2 = pattern_ci_non_uni.pre_cti_ci_from(
+        image2 = layout_ci_non_uni.pre_cti_ci_from(
             shape_native=(5, 7), pixel_scales=1.0
         )
 
         assert (image1 == image2).all()
 
-        pattern_ci_uni = ac.ci.PatternCIUniform(
+        layout_ci_uni = ac.ci.Layout2DCIUniform(
             normalization=100.0, regions=[(0, 2, 0, 2), (2, 3, 0, 5)]
         )
-        image1 = pattern_ci_uni.pre_cti_ci_from(shape_native=(5, 5), pixel_scales=1.0)
+        image1 = layout_ci_uni.pre_cti_ci_from(shape_native=(5, 5), pixel_scales=1.0)
 
-        pattern_ci_non_uni = ac.ci.PatternCINonUniform(
+        layout_ci_non_uni = ac.ci.Layout2DCINonUniform(
             normalization=100.0,
             regions=[(0, 2, 0, 2), (2, 3, 0, 5)],
             row_slope=0.0,
             column_sigma=0.0,
         )
-        image2 = pattern_ci_non_uni.pre_cti_ci_from(
+        image2 = layout_ci_non_uni.pre_cti_ci_from(
             shape_native=(5, 5), pixel_scales=1.0
         )
 
@@ -419,11 +419,11 @@ class TestPatternCINonUniform(object):
     def test__pre_cti_ci_from__non_uniformity_in_columns_only__one_ci_region__image_is_correct(
         self,
     ):
-        pattern_ci_non_uni = ac.ci.PatternCINonUniform(
+        layout_ci_non_uni = ac.ci.Layout2DCINonUniform(
             normalization=100.0, regions=[(0, 3, 0, 3)], row_slope=0.0, column_sigma=1.0
         )
 
-        image = pattern_ci_non_uni.pre_cti_ci_from(
+        image = layout_ci_non_uni.pre_cti_ci_from(
             shape_native=(5, 5), pixel_scales=1.0, ci_seed=1
         )
 
@@ -442,11 +442,11 @@ class TestPatternCINonUniform(object):
             )
         ).all()
 
-        pattern_ci_non_uni = ac.ci.PatternCINonUniform(
+        layout_ci_non_uni = ac.ci.Layout2DCINonUniform(
             normalization=100.0, regions=[(1, 4, 1, 4)], row_slope=0.0, column_sigma=1.0
         )
 
-        image = pattern_ci_non_uni.pre_cti_ci_from(
+        image = layout_ci_non_uni.pre_cti_ci_from(
             shape_native=(5, 5), pixel_scales=1.0, ci_seed=1
         )
 
@@ -465,14 +465,14 @@ class TestPatternCINonUniform(object):
             )
         ).all()
 
-        pattern_ci_non_uni = ac.ci.PatternCINonUniform(
+        layout_ci_non_uni = ac.ci.Layout2DCINonUniform(
             normalization=100.0,
             regions=[(1, 4, 1, 3), (1, 4, 4, 5)],
             row_slope=0.0,
             column_sigma=1.0,
         )
 
-        image = pattern_ci_non_uni.pre_cti_ci_from(
+        image = layout_ci_non_uni.pre_cti_ci_from(
             shape_native=(5, 5), pixel_scales=1.0, ci_seed=1
         )
 
@@ -494,7 +494,7 @@ class TestPatternCINonUniform(object):
     def test__pre_cti_ci_from__non_uniformity_in_columns_only__maximum_normalization_input__does_not_simulate_above(
         self,
     ):
-        pattern_ci_non_uni = ac.ci.PatternCINonUniform(
+        layout_ci_non_uni = ac.ci.Layout2DCINonUniform(
             normalization=100.0,
             regions=[(0, 5, 0, 5)],
             row_slope=0.0,
@@ -502,7 +502,7 @@ class TestPatternCINonUniform(object):
             maximum_normalization=100.0,
         )
 
-        image = pattern_ci_non_uni.pre_cti_ci_from(
+        image = layout_ci_non_uni.pre_cti_ci_from(
             shape_native=(5, 5), pixel_scales=1.0, ci_seed=1
         )
 
@@ -514,16 +514,14 @@ class TestPatternCINonUniform(object):
     def test__pre_cti_ci_from__non_uniformity_in_rows_only__one_ci_region__image_is_correct(
         self,
     ):
-        pattern_ci_non_uni = ac.ci.PatternCINonUniform(
+        layout_ci_non_uni = ac.ci.Layout2DCINonUniform(
             normalization=100.0,
             regions=[(0, 3, 0, 3)],
             row_slope=-0.01,
             column_sigma=0.0,
         )
 
-        image = pattern_ci_non_uni.pre_cti_ci_from(
-            shape_native=(5, 5), pixel_scales=1.0
-        )
+        image = layout_ci_non_uni.pre_cti_ci_from(shape_native=(5, 5), pixel_scales=1.0)
 
         image = np.round(image, 1)
 
@@ -540,16 +538,14 @@ class TestPatternCINonUniform(object):
             )
         ).all()
 
-        pattern_ci_non_uni = ac.ci.PatternCINonUniform(
+        layout_ci_non_uni = ac.ci.Layout2DCINonUniform(
             normalization=100.0,
             regions=[(1, 5, 1, 4), (0, 5, 4, 5)],
             row_slope=-0.01,
             column_sigma=0.0,
         )
 
-        image = pattern_ci_non_uni.pre_cti_ci_from(
-            shape_native=(5, 5), pixel_scales=1.0
-        )
+        image = layout_ci_non_uni.pre_cti_ci_from(shape_native=(5, 5), pixel_scales=1.0)
 
         image = np.round(image, 1)
 
@@ -569,14 +565,14 @@ class TestPatternCINonUniform(object):
     def test__pre_cti_ci_from__non_uniformity_in_rows_and_columns__two_regions_ci__image_is_correct(
         self,
     ):
-        pattern_ci_non_uni = ac.ci.PatternCINonUniform(
+        layout_ci_non_uni = ac.ci.Layout2DCINonUniform(
             normalization=100.0,
             regions=[(1, 5, 1, 4), (0, 5, 4, 5)],
             row_slope=-0.01,
             column_sigma=1.0,
         )
 
-        image = pattern_ci_non_uni.pre_cti_ci_from(
+        image = layout_ci_non_uni.pre_cti_ci_from(
             shape_native=(5, 5), pixel_scales=1.0, ci_seed=1
         )
 
@@ -595,16 +591,14 @@ class TestPatternCINonUniform(object):
             )
         ).all()
 
-        pattern_ci_non_uni = ac.ci.PatternCINonUniform(
+        layout_ci_non_uni = ac.ci.Layout2DCINonUniform(
             normalization=100.0,
             regions=[(0, 2, 0, 5), (3, 5, 0, 5)],
             row_slope=-0.01,
             column_sigma=1.0,
         )
 
-        image = pattern_ci_non_uni.pre_cti_ci_from(
-            shape_native=(5, 5), pixel_scales=1.0
-        )
+        image = layout_ci_non_uni.pre_cti_ci_from(shape_native=(5, 5), pixel_scales=1.0)
 
         image = np.round(image, 1)
 

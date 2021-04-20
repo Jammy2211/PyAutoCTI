@@ -5,18 +5,16 @@ Created on: 02/14/18
 Author: James Nightingale
 """
 
-from copy import deepcopy
-
 import numpy as np
 from autocti import exc
 from autoarray.structures.arrays.one_d import array_1d
-from autoarray.structures import region
+from autoarray.layout import region
 
 from typing import List, Tuple
 
 
 class PatternLine(object):
-    def __init__(self, normalization: float, regions: List[region.Region1D]):
+    def __init__(self, normalization: float, region_list: List[region.Region1D]):
         """ 
         Class for the pattern of a `Line` data structure, which defines the 1D regions the line charge appears
         on a CTI line dataset, e input normalization and other properties.
@@ -25,16 +23,16 @@ class PatternLine(object):
         -----------
         normalization
             The normalization of the line.
-        regions:
+        region_list:
             A list of the integer coordinates specifying the (x0, x1) left and right pixel coordinates of each line 
             region.
         """
         self.normalization = normalization
-        self.regions = list(map(region.Region2D, regions))
+        self.region_list = list(map(region.Region2D, region_list))
 
     def check_pattern_is_within_image_dimensions(self, dimensions: Tuple[int]):
 
-        for region in self.regions:
+        for region in self.region_list:
 
             if region.x1 > dimensions[1]:
                 raise exc.PatternLineException(
@@ -43,13 +41,13 @@ class PatternLine(object):
 
     @property
     def total_pixels_min(self) -> int:
-        return np.min(list(map(lambda region: region.total_pixels, self.regions)))
+        return np.min(list(map(lambda region: region.total_pixels, self.region_list)))
 
     @property
     def pixels_between_regions(self) -> List[int]:
         return [
-            self.regions[i + 1].x0 - self.regions[i].x1
-            for i in range(len(self.regions) - 1)
+            self.region_list[i + 1].x0 - self.region_list[i].x1
+            for i in range(len(self.region_list) - 1)
         ]
 
     def pre_cti_line_from(
@@ -69,7 +67,7 @@ class PatternLine(object):
 
         pre_cti_line = np.zeros(shape_native)
 
-        for region in self.regions:
+        for region in self.region_list:
             pre_cti_line[region.slice] += self.normalization
 
         return array_1d.Array1D(
@@ -81,7 +79,7 @@ class PatternLineNonUniform(AbstractPatternLine):
     def __init__(
         self,
         normalization,
-        regions,
+        region_list,
         row_slope,
         column_sigma=None,
         maximum_normalization=np.inf,
@@ -102,13 +100,13 @@ class PatternLineNonUniform(AbstractPatternLine):
         -----------
         normalization : float
             The normalization of the line region.
-        regions : [(int,)]
+        region_list : [(int,)]
             A list of the integer coordinates specifying the corners of each line region
             (top-row, bottom-row, left-column, right-column).
         row_slope : float
             The power-law slope of non-uniformity in the row line profile.
         """
-        super(PatternLineNonUniform, self).__init__(normalization, regions)
+        super(PatternLineNonUniform, self).__init__(normalization, region_list)
         self.row_slope = row_slope
         self.column_sigma = column_sigma
         self.maximum_normalization = maximum_normalization

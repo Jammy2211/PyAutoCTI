@@ -66,19 +66,19 @@ class TestMask:
 
         mask = ac.Mask2D.manual(mask=[[False, False], [False, False]], pixel_scales=1.0)
 
-        assert mask.is_all_false == True
+        assert mask.is_all_false is True
 
         mask = ac.Mask2D.manual(mask=[[False, False]], pixel_scales=1.0)
 
-        assert mask.is_all_false == True
+        assert mask.is_all_false is True
 
         mask = ac.Mask2D.manual(mask=[[False, True], [False, False]], pixel_scales=1.0)
 
-        assert mask.is_all_false == False
+        assert mask.is_all_false is False
 
         mask = ac.Mask2D.manual(mask=[[True, True], [False, False]], pixel_scales=1.0)
 
-        assert mask.is_all_false == False
+        assert mask.is_all_false is False
 
     def test__unmasked__mask_all_unmasked__5x5__input__all_are_false(self):
 
@@ -163,7 +163,7 @@ class TestMaskRemoveRegions:
 class TestCosmicRayMask:
     def test__cosmic_ray_mask_included_in_total_mask(self):
 
-        cosmic_ray_map = ac.Frame2D.manual(
+        cosmic_ray_map = ac.Array2D.manual(
             array=np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
             ),
@@ -191,7 +191,7 @@ class TestCosmicRayMask:
 class TestMaskCosmics:
     def test__mask_cosmic_ray_in_different_directions(self):
 
-        cosmic_ray_map = ac.Frame2D.manual(
+        cosmic_ray_map = ac.Array2D.manual(
             array=[[False, False, False], [False, True, False], [False, False, False]],
             pixel_scales=1.0,
         )
@@ -212,7 +212,7 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_map = ac.Frame2D.manual(
+        cosmic_ray_map = ac.Array2D.manual(
             array=[[False, False, False], [False, False, False], [False, True, False]],
             pixel_scales=1.0,
         )
@@ -233,7 +233,7 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_map = ac.Frame2D.manual(
+        cosmic_ray_map = ac.Array2D.manual(
             array=[[False, False, False], [False, True, False], [False, False, False]],
             pixel_scales=1.0,
         )
@@ -254,7 +254,7 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_map = ac.Frame2D.manual(
+        cosmic_ray_map = ac.Array2D.manual(
             array=[[False, False, False], [True, False, False], [False, False, False]],
             pixel_scales=1.0,
         )
@@ -275,7 +275,7 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_map = ac.Frame2D.manual(
+        cosmic_ray_map = ac.Array2D.manual(
             array=[[False, False, False], [False, True, False], [False, False, False]],
             pixel_scales=1.0,
         )
@@ -296,7 +296,7 @@ class TestMaskCosmics:
             )
         ).all()
 
-        cosmic_ray_map = ac.Frame2D.manual(
+        cosmic_ray_map = ac.Array2D.manual(
             array=[
                 [False, False, False, False],
                 [False, False, False, False],

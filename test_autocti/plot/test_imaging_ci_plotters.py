@@ -35,7 +35,7 @@ def test__individual_attributes_are_output(imaging_ci_7x7, plot_path, plot_patch
         cosmic_ray_map=True,
     )
 
-    assert path.join(plot_path, "image.png") in plot_patch.paths
+    assert path.join(plot_path, "image_2d.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map.png") in plot_patch.paths
     assert path.join(plot_path, "pre_cti_ci.png") in plot_patch.paths
     assert path.join(plot_path, "signal_to_noise_map.png") in plot_patch.paths
@@ -45,7 +45,7 @@ def test__individual_attributes_are_output(imaging_ci_7x7, plot_path, plot_patch
 
     imaging_ci_plotter.figures_2d(image=True, pre_cti_ci=True)
 
-    assert path.join(plot_path, "image.png") in plot_patch.paths
+    assert path.join(plot_path, "image_2d.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map.png") not in plot_patch.paths
     assert path.join(plot_path, "pre_cti_ci.png") in plot_patch.paths
     assert path.join(plot_path, "signal_to_noise_map.png") not in plot_patch.paths

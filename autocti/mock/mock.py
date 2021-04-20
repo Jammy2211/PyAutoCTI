@@ -132,10 +132,10 @@ class MockHyperCombinedPhase:
 
 
 class MockPattern(object):
-    def __init__(self, regions=None):
+    def __init__(self, region_list=None):
 
         self.normalization = 10
-        self.regions = regions
+        self.region_list = region_list
         self.total_rows = 2
         self.total_columns = 2
 
@@ -156,7 +156,7 @@ class MockFrameGeometry(object):
 class MockCIFrame(object):
     def __init__(self, value=1.0):
 
-        self.pattern_ci = MockPattern()
+        self.layout_ci = MockPattern()
         self.frame_geometry = MockFrameGeometry(value=value)
         self.value = value
 
@@ -198,14 +198,14 @@ class MockCIPreCTI(np.ndarray):
         cls,
         array,
         frame_geometry=MockGeometry(),
-        pattern_ci=MockPattern(),
+        layout_ci=MockPattern(),
         value=1.0,
         *args,
         **kwargs
     ):
         ci = np.array(array).view(cls)
         ci.frame_geometry = frame_geometry
-        ci.pattern_ci = pattern_ci
+        ci.layout_ci = layout_ci
         ci.value = value
         return ci
 
@@ -214,8 +214,8 @@ class MockCIPreCTI(np.ndarray):
 
 
 class MockChInj(np.ndarray):
-    def __new__(cls, array, geometry=None, pattern_ci=None, *args, **kwargs):
+    def __new__(cls, array, geometry=None, layout_ci=None, *args, **kwargs):
         ci = np.array(array).view(cls)
         ci.frame_geometry = geometry
-        ci.pattern_ci = pattern_ci
+        ci.layout_ci = layout_ci
         return ci

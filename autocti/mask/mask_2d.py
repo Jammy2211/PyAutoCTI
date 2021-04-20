@@ -1,7 +1,6 @@
-from autoconf import conf
 from autoarray.mask import mask_2d
 from autoarray import exc
-from autoarray.structures import region as reg
+from autoarray.layout import region as reg
 from autoarray.structures.arrays.two_d import array_2d_util
 from autoarray.geometry import geometry_util
 
@@ -117,25 +116,23 @@ class Mask2D(mask_2d.AbstractMask2D):
             pixel_scales=cosmic_ray_map.pixel_scales,
         )
 
-        cosmic_ray_mask = (cosmic_ray_map > 0.0).astype("bool")
+        cosmic_ray_mask = (cosmic_ray_map.native > 0.0).astype("bool")
 
         for y in range(mask.shape[0]):
             for x in range(mask.shape[1]):
                 if cosmic_ray_mask[y, x]:
-                    y0, y1 = cosmic_ray_map.parallel_trail_from_y(
-                        y=y, dy=settings.cosmic_ray_parallel_buffer
-                    )
+
+                    y1 = int(y + 1)
+                    x0 = int(x)
+
+                    y0 = int(y - settings.cosmic_ray_parallel_buffer)
                     mask[y0:y1, x] = True
-                    x0, x1 = cosmic_ray_map.serial_trail_from_x(
-                        x=x, dx=settings.cosmic_ray_serial_buffer
-                    )
+
+                    x1 = int(x + 1 + settings.cosmic_ray_serial_buffer)
                     mask[y, x0:x1] = True
-                    y0, y1 = cosmic_ray_map.parallel_trail_from_y(
-                        y=y, dy=settings.cosmic_ray_diagonal_buffer
-                    )
-                    x0, x1 = cosmic_ray_map.serial_trail_from_x(
-                        x=x, dx=settings.cosmic_ray_diagonal_buffer
-                    )
+
+                    y0 = int(y - settings.cosmic_ray_diagonal_buffer)
+                    x1 = int(x + 1 + settings.cosmic_ray_diagonal_buffer)
                     mask[y0:y1, x0:x1] = True
 
         return mask

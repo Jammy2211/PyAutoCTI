@@ -61,10 +61,14 @@ class TestResultDataset:
 
 class TestResultImagingCI:
     def test__fits_to_extracted_and_full_datasets_available(
-        self, imaging_ci_7x7, mask_7x7_unmasked, parallel_clocker, samples_with_result
+        self,
+        imaging_ci_7x7,
+        mask_2d_7x7_unmasked,
+        parallel_clocker,
+        samples_with_result,
     ):
 
-        masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_7x7_unmasked)
+        masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
         masked_imaging_ci = masked_imaging_ci.apply_settings(
             settings=ac.ci.SettingsImagingCI(parallel_columns=(0, 1))
         )
@@ -90,9 +94,9 @@ class TestResultImagingCI:
     def test__noise_scaling_maps_list_of_result__are_correct(
         self,
         imaging_ci_7x7,
-        mask_7x7_unmasked,
+        mask_2d_7x7_unmasked,
         parallel_clocker,
-        pattern_ci_7x7,
+        layout_ci_7x7,
         samples_with_result,
         traps_x1,
         ccd,
@@ -100,7 +104,7 @@ class TestResultImagingCI:
 
         noise_scaling_maps_list_of_regions_ci = [
             ac.ci.CIFrame.ones(
-                shape_native=(7, 7), pixel_scales=1.0, pattern_ci=pattern_ci_7x7
+                shape_native=(7, 7), pixel_scales=1.0, layout_ci=layout_ci_7x7
             )
         ]
         noise_scaling_maps_list_of_parallel_trails = [
@@ -108,7 +112,7 @@ class TestResultImagingCI:
                 fill_value=2.0,
                 shape_native=(7, 7),
                 pixel_scales=1.0,
-                pattern_ci=pattern_ci_7x7,
+                layout_ci=layout_ci_7x7,
             )
         ]
         noise_scaling_maps_list_of_serial_trails = [
@@ -116,7 +120,7 @@ class TestResultImagingCI:
                 fill_value=3.0,
                 shape_native=(7, 7),
                 pixel_scales=1.0,
-                pattern_ci=pattern_ci_7x7,
+                layout_ci=layout_ci_7x7,
             )
         ]
         noise_scaling_maps_list_of_serial_overscan_no_trails = [
@@ -124,7 +128,7 @@ class TestResultImagingCI:
                 fill_value=4.0,
                 shape_native=(7, 7),
                 pixel_scales=1.0,
-                pattern_ci=pattern_ci_7x7,
+                layout_ci=layout_ci_7x7,
             )
         ]
 
@@ -135,7 +139,7 @@ class TestResultImagingCI:
             noise_scaling_maps_list_of_serial_overscan_no_trails[0],
         ]
 
-        masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_7x7_unmasked)
+        masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
 
         analysis = ac.AnalysisImagingCI(
             dataset_list=[masked_imaging_ci_7x7], clocker=parallel_clocker
@@ -150,19 +154,18 @@ class TestResultImagingCI:
         )
 
         assert result.noise_scaling_maps_list_of_regions_ci[0] == pytest.approx(
-            fit_list[0].chi_squared_map.frame_with_extracted_regions_ci_from, 1.0e-2
+            fit_list[0].chi_squared_map.extract_frame_of_regions_ci_from, 1.0e-2
         )
         assert result.noise_scaling_maps_list_of_parallel_trails[0] == pytest.approx(
-            fit_list[0].chi_squared_map.frame_with_extracted_parallel_trails_from,
-            1.0e-2,
+            fit_list[0].chi_squared_map.extract_frame_of_parallel_trails_from, 1.0e-2
         )
         assert result.noise_scaling_maps_list_of_serial_trails[0] == pytest.approx(
-            fit_list[0].chi_squared_map.serial_trails_frame, 1.0e-2
+            fit_list[0].chi_squared_map.serial_trails_frame_from, 1.0e-2
         )
         assert result.noise_scaling_maps_list_of_serial_overscan_no_trails[
             0
         ] == pytest.approx(
-            fit_list[0].chi_squared_map.serial_overscan_no_trails_frame, 1.0e-2
+            fit_list[0].chi_squared_map.serial_overscan_no_trails_frame_from, 1.0e-2
         )
 
         assert result.noise_scaling_maps_list_of_regions_ci[0][1, 1] == pytest.approx(
@@ -200,33 +203,32 @@ class TestResultImagingCI:
         fit_list = analysis.fits_from_instance(instance=instance)
 
         assert result.noise_scaling_maps_list_of_regions_ci[0] != pytest.approx(
-            fit_list[0].chi_squared_map.frame_with_extracted_regions_ci_from, 1.0e-2
+            fit_list[0].chi_squared_map.extract_frame_of_regions_ci_from, 1.0e-2
         )
         assert result.noise_scaling_maps_list_of_parallel_trails[0] != pytest.approx(
-            fit_list[0].chi_squared_map.frame_with_extracted_parallel_trails_from,
-            1.0e-2,
+            fit_list[0].chi_squared_map.extract_frame_of_parallel_trails_from, 1.0e-2
         )
         assert result.noise_scaling_maps_list_of_serial_trails[0] != pytest.approx(
-            fit_list[0].chi_squared_map.serial_trails_frame, 1.0e-2
+            fit_list[0].chi_squared_map.serial_trails_frame_from, 1.0e-2
         )
         assert result.noise_scaling_maps_list_of_serial_overscan_no_trails[
             0
         ] != pytest.approx(
-            fit_list[0].chi_squared_map.serial_overscan_no_trails_frame, 1.0e-2
+            fit_list[0].chi_squared_map.serial_overscan_no_trails_frame_from, 1.0e-2
         )
 
     def test__noise_scaling_maps_are_setup_correctly(
         self,
         imaging_ci_7x7,
-        mask_7x7_unmasked,
-        pattern_ci_7x7,
+        mask_2d_7x7_unmasked,
+        layout_ci_7x7,
         parallel_clocker,
         samples_with_result,
     ):
 
         imaging_ci_7x7.cosmic_ray_map = None
 
-        masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_7x7_unmasked)
+        masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
 
         analysis = ac.AnalysisImagingCI(
             dataset_list=[masked_imaging_ci_7x7, masked_imaging_ci_7x7],

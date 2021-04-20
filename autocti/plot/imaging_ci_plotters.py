@@ -54,13 +54,13 @@ class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
 
         return visuals_2d + self.visuals_2d.__class__(
             parallel_overscan=self.extract_2d(
-                "parallel_overscan", self.imaging.image.scans.parallel_overscan
+                "parallel_overscan", self.imaging.image.layout.parallel_overscan
             ),
             serial_prescan=self.extract_2d(
-                "serial_prescan", self.imaging.image.scans.serial_prescan
+                "serial_prescan", self.imaging.image.layout.serial_prescan
             ),
             serial_overscan=self.extract_2d(
-                "serial_overscan", self.imaging.image.scans.serial_overscan
+                "serial_overscan", self.imaging.image.layout.serial_overscan
             ),
         )
 
@@ -301,13 +301,13 @@ class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
 def extract_line_from(frame_ci, line_region):
 
     if line_region == "parallel_front_edge":
-        return frame_ci.parallel_front_edge_line_binned_over_columns()
+        return frame_ci.parallel_front_edge_line_binned_over_columns_from()
     elif line_region == "parallel_trails":
-        return frame_ci.parallel_trails_line_binned_over_columns()
+        return frame_ci.parallel_trails_line_binned_over_columns_from()
     elif line_region == "serial_front_edge":
-        return frame_ci.serial_front_edge_line_binned_over_rows()
+        return frame_ci.serial_front_edge_line_binned_over_rows_from()
     elif line_region == "serial_trails":
-        return frame_ci.serial_trails_line_binned_over_rows()
+        return frame_ci.serial_trails_line_binned_over_rows_from()
     else:
         raise exc.PlottingException(
             "The line region specified for the plotting of a line was invalid"

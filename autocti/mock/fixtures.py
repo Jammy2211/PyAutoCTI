@@ -1,11 +1,9 @@
 import autofit as af
 from autoarray.mock.fixtures import *
-from autofit.mapper.model import ModelInstance
-from autofit.mock.mock import MockSearch, MockSamples
+from autofit.mock.mock import MockSamples
 from autocti import charge_injection as ci
 from autoarray.structures.arrays.one_d import array_1d
 from autoarray.dataset import imaging
-from autoarray.structures.frames import frames
 from autocti.line import dataset_line
 from autocti.mask import mask_2d
 from autocti.util import traps
@@ -50,29 +48,29 @@ def make_serial_clocker():
 ### MASK ###
 
 
-def make_mask_7x7_unmasked():
+def make_mask_2d_7x7_unmasked():
     return mask_2d.Mask2D.unmasked(shape_native=(7, 7), pixel_scales=(1.0, 1.0))
 
 
 ### FRAMES ###
 
 
-def make_image_7x7_frame():
-    return frames.Frame2D.full(
+def make_image_7x7_native():
+    return array_2d.Array2D.full(
         fill_value=1.0,
         shape_native=(7, 7),
-        scans=make_scans_7x7(),
+        layout=make_array_2d_layout_7x7(),
         pixel_scales=(1.0, 1.0),
-    )
+    ).native
 
 
-def make_noise_map_7x7_frame():
-    return frames.Frame2D.full(
+def make_noise_map_7x7_native():
+    return array_2d.Array2D.full(
         fill_value=2.0,
         shape_native=(7, 7),
+        layout=make_array_2d_layout_7x7(),
         pixel_scales=(1.0, 1.0),
-        scans=make_scans_7x7(),
-    )
+    ).native
 
 
 ### IMAGING ###
@@ -80,8 +78,8 @@ def make_noise_map_7x7_frame():
 
 def make_imaging_7x7_frame():
     return imaging.Imaging(
-        image=make_image_7x7_frame(),
-        noise_map=make_noise_map_7x7_frame(),
+        image=make_image_7x7_native(),
+        noise_map=make_noise_map_7x7_native(),
         name="mock_imaging_7x7_frame",
     )
 
@@ -113,72 +111,64 @@ def make_dataset_line_7():
 ### CHARGE INJECTION FRAMES ###
 
 
-def make_pattern_ci_7x7():
-    return ci.PatternCIUniform(normalization=10.0, regions=[(1, 5, 1, 5)])
+def make_layout_ci_7x7():
+    return ci.Layout2DCIUniform(
+        shape_2d=(7, 7),
+        normalization=10.0,
+        region_list=[(1, 5, 1, 5)],
+        original_roe_corner=(1, 0),
+        serial_overscan=(0, 6, 6, 7),
+        serial_prescan=(0, 7, 0, 1),
+        parallel_overscan=(6, 7, 1, 6),
+    )
 
 
 def make_ci_image_7x7():
-    return ci.CIFrame.full(
+    return array_2d.Array2D.full(
         fill_value=1.0,
         shape_native=(7, 7),
         pixel_scales=(1.0, 1.0),
-        pattern_ci=make_pattern_ci_7x7(),
-        roe_corner=(1, 0),
-        scans=make_scans_7x7(),
+        layout=make_layout_ci_7x7(),
     )
 
 
 def make_ci_noise_map_7x7():
-    return ci.CIFrame.full(
+    return array_2d.Array2D.full(
         fill_value=2.0,
         shape_native=(7, 7),
         pixel_scales=(1.0, 1.0),
-        roe_corner=(1, 0),
-        pattern_ci=make_pattern_ci_7x7(),
-        scans=make_scans_7x7(),
+        layout=make_layout_ci_7x7(),
     )
 
 
 def make_pre_cti_ci_7x7():
-    return ci.CIFrame.full(
+    return array_2d.Array2D.full(
         shape_native=(7, 7),
         fill_value=10.0,
         pixel_scales=(1.0, 1.0),
-        roe_corner=(1, 0),
-        pattern_ci=make_pattern_ci_7x7(),
-        scans=make_scans_7x7(),
+        layout=make_layout_ci_7x7(),
     )
 
 
 def make_ci_cosmic_ray_map_7x7():
     cosmic_ray_map = np.zeros(shape=(7, 7))
 
-    return ci.CIFrame.manual(
-        array=cosmic_ray_map,
-        pixel_scales=(1.0, 1.0),
-        roe_corner=(1, 0),
-        pattern_ci=make_pattern_ci_7x7(),
-        scans=make_scans_7x7(),
+    return array_2d.Array2D.manual(
+        array=cosmic_ray_map, pixel_scales=(1.0, 1.0), layout=make_layout_ci_7x7()
     )
 
 
 def make_ci_noise_scaling_maps_7x7():
 
     return [
-        ci.CIFrame.ones(
-            shape_native=(7, 7),
-            pixel_scales=(1.0, 1.0),
-            roe_corner=(1, 0),
-            scans=make_scans_7x7(),
-            pattern_ci=make_pattern_ci_7x7(),
+        array_2d.Array2D.ones(
+            shape_native=(7, 7), pixel_scales=(1.0, 1.0), layout=make_layout_ci_7x7()
         ),
-        ci.CIFrame.full(
+        array_2d.Array2D.full(
             shape_native=(7, 7),
-            roe_corner=(1, 0),
             fill_value=2.0,
-            scans=make_scans_7x7(),
             pixel_scales=(1.0, 1.0),
-            pattern_ci=make_pattern_ci_7x7(),
+            layout=make_layout_ci_7x7(),
         ),
     ]
 

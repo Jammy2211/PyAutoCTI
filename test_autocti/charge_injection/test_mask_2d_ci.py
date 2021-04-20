@@ -11,12 +11,12 @@ class MockPattern(object):
 class TestMaskedParallelFrontEdge:
     def test__mask_only_contains_front_edge(self):
 
-        pattern = ac.ci.PatternCIUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
+        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, region_list=[(1, 4, 0, 3)])
 
         frame = ac.ci.CIFrame.manual(
             array=np.ones((10, 3)),
             roe_corner=(1, 0),
-            pattern_ci=pattern,
+            layout_ci=pattern,
             pixel_scales=1.0,
         )
 
@@ -47,12 +47,12 @@ class TestMaskedParallelFrontEdge:
 
     def test__same_as_above_but_uses_invert(self):
 
-        pattern = ac.ci.PatternCIUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
+        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, region_list=[(1, 4, 0, 3)])
 
         frame = ac.ci.CIFrame.manual(
             array=np.ones((10, 3)),
             roe_corner=(1, 0),
-            pattern_ci=pattern,
+            layout_ci=pattern,
             pixel_scales=1.0,
         )
 
@@ -84,14 +84,14 @@ class TestMaskedParallelFrontEdge:
 
     def test__2_regions__extracts_rows_correctly(self):
 
-        pattern = ac.ci.PatternCIUniform(
-            normalization=1.0, regions=[(1, 4, 0, 1), (1, 4, 2, 3)]
+        pattern = ac.ci.Layout2DCIUniform(
+            normalization=1.0, region_list=[(1, 4, 0, 1), (1, 4, 2, 3)]
         )
 
         frame = ac.ci.CIFrame.manual(
             array=np.ones((10, 3)),
             roe_corner=(1, 0),
-            pattern_ci=pattern,
+            layout_ci=pattern,
             pixel_scales=1.0,
         )
 
@@ -124,12 +124,12 @@ class TestMaskedParallelFrontEdge:
 class TestMaskedParallelTrails:
     def test___mask_only_contains_trails(self):
 
-        pattern = ac.ci.PatternCIUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
+        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, region_list=[(1, 4, 0, 3)])
 
         frame = ac.ci.CIFrame.manual(
             array=np.ones((10, 3)),
             roe_corner=(1, 0),
-            pattern_ci=pattern,
+            layout_ci=pattern,
             pixel_scales=1.0,
         )
 
@@ -159,12 +159,12 @@ class TestMaskedParallelTrails:
 
     def test__same_as_above_but_uses_invert(self):
 
-        pattern = ac.ci.PatternCIUniform(normalization=1.0, regions=[(1, 4, 0, 3)])
+        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, region_list=[(1, 4, 0, 3)])
 
         frame = ac.ci.CIFrame.manual(
             array=np.ones((10, 3)),
             roe_corner=(1, 0),
-            pattern_ci=pattern,
+            layout_ci=pattern,
             pixel_scales=1.0,
         )
 
@@ -196,14 +196,14 @@ class TestMaskedParallelTrails:
 
     def test__pattern_bottom__2_regions__extracts_rows_correctly(self):
 
-        pattern = ac.ci.PatternCIUniform(
-            normalization=1.0, regions=[(1, 4, 0, 1), (1, 4, 2, 3)]
+        pattern = ac.ci.Layout2DCIUniform(
+            normalization=1.0, region_list=[(1, 4, 0, 1), (1, 4, 2, 3)]
         )
 
         frame = ac.ci.CIFrame.manual(
             array=np.ones((10, 3)),
             roe_corner=(1, 0),
-            pattern_ci=pattern,
+            layout_ci=pattern,
             pixel_scales=1.0,
         )
 
@@ -235,12 +235,12 @@ class TestMaskedParallelTrails:
 class TestMaskedSerialFrontEdge:
     def test__mask_only_contains_front_edge(self):
 
-        pattern = ac.ci.PatternCIUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
+        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, region_list=[(0, 3, 1, 4)])
 
         frame = ac.ci.CIFrame.manual(
             array=np.ones((3, 10)),
             roe_corner=(1, 0),
-            pattern_ci=pattern,
+            layout_ci=pattern,
             pixel_scales=1.0,
         )
 
@@ -297,12 +297,12 @@ class TestMaskedSerialFrontEdge:
 
     def test__same_as_above_but_uses_invert(self):
 
-        pattern = ac.ci.PatternCIUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
+        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, region_list=[(0, 3, 1, 4)])
 
         frame = ac.ci.CIFrame.manual(
             array=np.ones((3, 10)),
             roe_corner=(1, 0),
-            pattern_ci=pattern,
+            layout_ci=pattern,
             pixel_scales=1.0,
         )
 
@@ -327,14 +327,14 @@ class TestMaskedSerialFrontEdge:
 
     def test__2_regions__extracts_columns_correctly(self):
 
-        pattern = ac.ci.PatternCIUniform(
-            normalization=1.0, regions=[(0, 1, 1, 4), (2, 3, 1, 4)]
+        pattern = ac.ci.Layout2DCIUniform(
+            normalization=1.0, region_list=[(0, 1, 1, 4), (2, 3, 1, 4)]
         )
 
         frame = ac.ci.CIFrame.manual(
             array=np.ones((3, 10)),
             roe_corner=(1, 0),
-            pattern_ci=pattern,
+            layout_ci=pattern,
             pixel_scales=1.0,
         )
 
@@ -371,12 +371,12 @@ class TestMaskedSerialFrontEdge:
 class TestMaskedSerialTrails:
     def test__mask_only_contains_trails(self):
 
-        pattern = ac.ci.PatternCIUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
+        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
         frame = ac.ci.CIFrame.manual(
             array=np.ones((3, 10)),
             roe_corner=(1, 0),
-            pattern_ci=pattern,
+            layout_ci=pattern,
             pixel_scales=1.0,
         )
 
@@ -400,12 +400,12 @@ class TestMaskedSerialTrails:
 
     def test__same_as_above_but_uses_invert(self):
 
-        pattern = ac.ci.PatternCIUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
+        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
 
         frame = ac.ci.CIFrame.manual(
             array=np.ones((3, 10)),
             roe_corner=(1, 0),
-            pattern_ci=pattern,
+            layout_ci=pattern,
             pixel_scales=1.0,
         )
 
@@ -430,14 +430,14 @@ class TestMaskedSerialTrails:
 
     def test__2_regions__extracts_columns_correctly(self):
 
-        pattern = ac.ci.PatternCIUniform(
+        pattern = ac.ci.Layout2DCIUniform(
             normalization=1.0, regions=[(0, 1, 1, 4), (2, 3, 1, 4)]
         )
 
         frame = ac.ci.CIFrame.manual(
             array=np.ones((3, 10)),
             roe_corner=(1, 0),
-            pattern_ci=pattern,
+            layout_ci=pattern,
             pixel_scales=1.0,
         )
 

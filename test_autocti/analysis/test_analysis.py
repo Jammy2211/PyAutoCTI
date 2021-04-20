@@ -85,7 +85,7 @@ class TestAnalysisImagingCI:
         assert fit.log_likelihood == log_likelihood_via_analysis
 
     def test__full_and_extracted_fits_from_instance_and_imaging_ci(
-        self, imaging_ci_7x7, mask_7x7_unmasked, traps_x1, ccd, parallel_clocker
+        self, imaging_ci_7x7, mask_2d_7x7_unmasked, traps_x1, ccd, parallel_clocker
     ):
 
         model = af.CollectionPriorModel(
@@ -93,7 +93,7 @@ class TestAnalysisImagingCI:
             hyper_noise=af.Model(ac.ci.HyperCINoiseCollection),
         )
 
-        masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_7x7_unmasked)
+        masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
         masked_imaging_ci = masked_imaging_ci.apply_settings(
             settings=ac.ci.SettingsImagingCI(parallel_columns=(0, 1))
         )
@@ -127,11 +127,11 @@ class TestAnalysisImagingCI:
     def test__extracted_fits_from_instance_and_imaging_ci__include_noise_scaling(
         self,
         imaging_ci_7x7,
-        mask_7x7_unmasked,
+        mask_2d_7x7_unmasked,
         traps_x1,
         ccd,
         parallel_clocker,
-        pattern_ci_7x7,
+        layout_ci_7x7,
     ):
 
         model = af.CollectionPriorModel(
@@ -143,13 +143,13 @@ class TestAnalysisImagingCI:
 
         noise_scaling_maps_list_of_regions_ci = [
             ac.ci.CIFrame.ones(
-                shape_native=(7, 7), pixel_scales=1.0, pattern_ci=pattern_ci_7x7
+                shape_native=(7, 7), pixel_scales=1.0, layout_ci=layout_ci_7x7
             )
         ]
 
         imaging_ci_7x7.noise_scaling_maps = [noise_scaling_maps_list_of_regions_ci[0]]
 
-        masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_7x7_unmasked)
+        masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
         masked_imaging_ci = masked_imaging_ci.apply_settings(
             settings=ac.ci.SettingsImagingCI(parallel_columns=(0, 1))
         )
@@ -189,7 +189,7 @@ class TestAnalysisImagingCI:
             instance=instance, hyper_noise_scale=True
         )
 
-        masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_7x7_unmasked)
+        masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
 
         fit = ac.ci.FitImagingCI(
             imaging_ci=masked_imaging_ci,
