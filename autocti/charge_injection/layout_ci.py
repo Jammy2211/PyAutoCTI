@@ -38,7 +38,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         -----------
         normalization : float
             The normalization of the charge injection lines.
-        regions: [(int,)]
+        region_list: [(int,)]
             A list of the integer coordinates specifying the corners of each charge injection region \
             (top-row, bottom-row, left-column, right-column).
         """
@@ -146,7 +146,7 @@ class AbstractLayout2DCI(lo.Layout2D):
 
         """
 
-        new_array = array.copy() * 0.0
+        new_array = array.native.copy() * 0.0
 
         for region in self.region_list:
             new_array[region.slice] += array[region.slice]
@@ -202,9 +202,9 @@ class AbstractLayout2DCI(lo.Layout2D):
                <---------S----------
         """
 
-        non_regions_ci_array = array.copy()
+        non_regions_ci_array = array.native.copy()
 
-        for region in self.regions:
+        for region in self.region_list:
             non_regions_ci_array[region.slice] = 0.0
 
         return non_regions_ci_array
@@ -264,8 +264,8 @@ class AbstractLayout2DCI(lo.Layout2D):
 
         parallel_array = self.array_of_non_regions_ci_from(array=array)
 
-        parallel_array[array.layout.serial_prescan.slice] = 0.0
-        parallel_array[array.layout.serial_overscan.slice] = 0.0
+        parallel_array.native[array.layout.serial_prescan.slice] = 0.0
+        parallel_array.native[array.layout.serial_overscan.slice] = 0.0
 
         return parallel_array
 
@@ -339,12 +339,12 @@ class AbstractLayout2DCI(lo.Layout2D):
 
         if front_edge_rows is not None:
 
-            front_regions = list(
+            front_region_list = list(
                 map(
                     lambda ci_region: ci_region.parallel_front_edge_region_from(
                         rows=front_edge_rows
                     ),
-                    self.regions,
+                    self.region_list,
                 )
             )
 
@@ -352,19 +352,19 @@ class AbstractLayout2DCI(lo.Layout2D):
                 array=array, rows=front_edge_rows
             )
 
-            for i, region in enumerate(front_regions):
+            for i, region in enumerate(front_region_list):
                 new_array[region.y0 : region.y1, region.x0 : region.x1] += front_edges[
                     i
                 ]
 
         if trails_rows is not None:
 
-            trails_regions = list(
+            trails_region_list = list(
                 map(
                     lambda ci_region: ci_region.parallel_front_edge_region_from(
                         rows=trails_rows
                     ),
-                    self.regions,
+                    self.region_list,
                 )
             )
 
@@ -372,7 +372,7 @@ class AbstractLayout2DCI(lo.Layout2D):
                 array=array, rows=trails_rows
             )
 
-            for i, region in enumerate(trails_regions):
+            for i, region in enumerate(trails_region_list):
                 new_array[region.y0 : region.y1, region.x0 : region.x1] += trails[i]
 
         return new_array
@@ -498,9 +498,13 @@ class AbstractLayout2DCI(lo.Layout2D):
         rows : (int, int)
             The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
-        front_regions = self.parallel_front_edge_regions(rows=rows)
-        front_arrays = list(map(lambda region: array[region.slice], front_regions))
-        front_masks = list(map(lambda region: array.mask[region.slice], front_regions))
+        front_region_list = self.parallel_front_edge_region_list(rows=rows)
+        front_arrays = list(
+            map(lambda region: array.native[region.slice], front_region_list)
+        )
+        front_masks = list(
+            map(lambda region: array.mask[region.slice], front_region_list)
+        )
         front_arrays = list(
             map(
                 lambda front_array, front_mask: np.ma.array(
@@ -561,10 +565,12 @@ class AbstractLayout2DCI(lo.Layout2D):
             The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
 
-        trails_regions = self.parallel_trails_regions(array=array, rows=rows)
-        trails_arrays = list(map(lambda region: array[region.slice], trails_regions))
+        trails_region_list = self.parallel_trails_region_list(array=array, rows=rows)
+        trails_arrays = list(
+            map(lambda region: array.native[region.slice], trails_region_list)
+        )
         trails_masks = list(
-            map(lambda region: array.mask[region.slice], trails_regions)
+            map(lambda region: array.mask[region.slice], trails_region_list)
         )
         trails_arrays = list(
             map(
@@ -675,21 +681,21 @@ class AbstractLayout2DCI(lo.Layout2D):
         []     [=====================]
                <---------S----------
         """
-        new_array = array.copy() * 0.0
+        new_array = array.native.copy() * 0.0
         overscan_slice = array.layout.serial_overscan.slice
 
         new_array[overscan_slice] = array[overscan_slice]
 
-        trails_regions = list(
+        trails_region_list = list(
             map(
                 lambda ci_region: array.serial_trails_of_region(
                     ci_region, (0, array.layout.serial_overscan.total_columns)
                 ),
-                self.regions,
+                self.region_list,
             )
         )
 
-        for region in trails_regions:
+        for region in trails_region_list:
             new_array[region.slice] = 0
 
         return new_array
@@ -762,36 +768,36 @@ class AbstractLayout2DCI(lo.Layout2D):
 
         if front_edge_columns is not None:
 
-            front_regions = list(
+            front_region_list = list(
                 map(
                     lambda ci_region: array.serial_front_edge_of_region(
                         ci_region, front_edge_columns
                     ),
-                    self.regions,
+                    self.region_list,
                 )
             )
 
             front_edges = self.serial_front_edge_arrays_from(columns=front_edge_columns)
 
-            for i, region in enumerate(front_regions):
+            for i, region in enumerate(front_region_list):
                 new_array[region.y0 : region.y1, region.x0 : region.x1] += front_edges[
                     i
                 ]
 
         if trails_columns is not None:
 
-            trails_regions = list(
+            trails_region_list = list(
                 map(
                     lambda ci_region: array.serial_trails_of_region(
                         ci_region, trails_columns
                     ),
-                    self.regions,
+                    self.region_list,
                 )
             )
 
             trails = self.serial_trails_arrays_from(columns=trails_columns)
 
-            for i, region in enumerate(trails_regions):
+            for i, region in enumerate(trails_region_list):
                 new_array[region.y0 : region.y1, region.x0 : region.x1] += trails[i]
 
         return new_array
@@ -873,19 +879,19 @@ class AbstractLayout2DCI(lo.Layout2D):
             else None
         )
 
-        x0 = self.regions[0][2]
-        x1 = self.regions[0][3]
+        x0 = self.region_list[0][2]
+        x1 = self.region_list[0][3]
         offset = 0
-        new_pattern_regions_ci = []
+        new_pattern_region_list_ci = []
 
-        for region in self.regions:
+        for region in self.region_list:
 
             labelsize = rows[1] - rows[0]
-            new_pattern_regions_ci.append((offset, offset + labelsize, x0, x1))
+            new_pattern_region_list_ci.append((offset, offset + labelsize, x0, x1))
             offset += labelsize
 
         new_layout_ci = deepcopy(self)
-        new_layout_ci.regions = new_pattern_regions_ci
+        new_layout_ci.region_list = new_pattern_region_list_ci
 
         return array_2d.Array2D.manual(
             array=array,
@@ -945,14 +951,14 @@ class AbstractLayout2DCI(lo.Layout2D):
                <---------S----------
         """
 
-        calibration_regions = list(
+        calibration_region_list = list(
             map(
                 lambda ci_region: array.serial_entire_rows_of_region(region=ci_region),
-                self.regions,
+                self.region_list,
             )
         )
         calibration_masks = list(
-            map(lambda region: mask[region.slice], calibration_regions)
+            map(lambda region: mask[region.slice], calibration_region_list)
         )
 
         calibration_masks = list(
@@ -968,13 +974,13 @@ class AbstractLayout2DCI(lo.Layout2D):
         Extract each charge injection region image for the serial calibration arrays above.
         """
 
-        calibration_regions = list(
+        calibration_region_list = list(
             map(
                 lambda ci_region: array.serial_entire_rows_of_region(region=ci_region),
-                self.regions,
+                self.region_list,
             )
         )
-        return list(map(lambda region: array[region.slice], calibration_regions))
+        return list(map(lambda region: array[region.slice], calibration_region_list))
 
     def parallel_front_edge_line_binned_over_columns_from(
         self, array: array_2d.Array2D, rows=None
@@ -1067,9 +1073,13 @@ class AbstractLayout2DCI(lo.Layout2D):
             The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
             columns)
         """
-        front_regions = self.serial_front_edge_regions(array=array, columns=columns)
-        front_arrays = list(map(lambda region: array[region.slice], front_regions))
-        front_masks = list(map(lambda region: array.mask[region.slice], front_regions))
+        front_region_list = self.serial_front_edge_region_list(
+            array=array, columns=columns
+        )
+        front_arrays = list(map(lambda region: array[region.slice], front_region_list))
+        front_masks = list(
+            map(lambda region: array.mask[region.slice], front_region_list)
+        )
         front_arrays = list(
             map(
                 lambda front_array, front_mask: np.ma.array(
@@ -1143,10 +1153,14 @@ class AbstractLayout2DCI(lo.Layout2D):
         columns : (int, int)
             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd columns)
         """
-        trails_regions = self.serial_trails_regions_from(array=array, columns=columns)
-        trails_arrays = list(map(lambda region: array[region.slice], trails_regions))
+        trails_region_list = self.serial_trails_region_list_from(
+            array=array, columns=columns
+        )
+        trails_arrays = list(
+            map(lambda region: array[region.slice], trails_region_list)
+        )
         trails_masks = list(
-            map(lambda region: array.mask[region.slice], trails_regions)
+            map(lambda region: array.mask[region.slice], trails_region_list)
         )
         trails_arrays = list(
             map(
@@ -1159,7 +1173,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         )
         return trails_arrays
 
-    def parallel_front_edge_regions(self, rows=None):
+    def parallel_front_edge_region_list(self, rows=None):
         """
         Calculate a list of the parallel front edge scans of a charge injection array_ci.
 
@@ -1211,11 +1225,11 @@ class AbstractLayout2DCI(lo.Layout2D):
         return list(
             map(
                 lambda ci_region: ci_region.parallel_front_edge_region_from(rows=rows),
-                self.regions,
+                self.region_list,
             )
         )
 
-    def parallel_trails_regions(self, rows=None):
+    def parallel_trails_region_list(self, rows=None):
         """
         Returns the parallel scans of a charge injection array_ci.
 
@@ -1270,11 +1284,11 @@ class AbstractLayout2DCI(lo.Layout2D):
         return list(
             map(
                 lambda ci_region: ci_region.parallel_trails_of_region_from(rows=rows),
-                self.regions,
+                self.region_list,
             )
         )
 
-    def serial_front_edge_regions(self, array: array_2d.Array2D, columns=None):
+    def serial_front_edge_region_list(self, array: array_2d.Array2D, columns=None):
         """
         Returns a list of the serial front edges scans of a charge injection array_ci.
 
@@ -1328,11 +1342,11 @@ class AbstractLayout2DCI(lo.Layout2D):
         return list(
             map(
                 lambda ci_region: array.serial_front_edge_of_region(ci_region, columns),
-                self.regions,
+                self.region_list,
             )
         )
 
-    def serial_trails_regions_from(self, array: array_2d.Array2D, columns=None):
+    def serial_trails_region_list_from(self, array: array_2d.Array2D, columns=None):
         """
         Returns a list of the serial trails scans of a charge injection array_ci.
 
@@ -1385,7 +1399,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         return list(
             map(
                 lambda ci_region: array.serial_trails_of_region(ci_region, columns),
-                self.regions,
+                self.region_list,
             )
         )
 
@@ -1399,25 +1413,25 @@ class AbstractLayout2DCI(lo.Layout2D):
     @property
     def parallel_trail_size_to_array_edge(self):
 
-        return self.shape_2d[0] - np.max([region.y1 for region in self.regions])
+        return self.shape_2d[0] - np.max([region.y1 for region in self.region_list])
 
     def with_extracted_regions(self, extraction_region):
 
         layout_ci = deepcopy(self)
 
-        extracted_regions = list(
+        extracted_region_list = list(
             map(
                 lambda region: layout_util.region_after_extraction(
                     original_region=region, extraction_region=extraction_region
                 ),
-                self.regions,
+                self.region_list,
             )
         )
-        extracted_regions = list(filter(None, extracted_regions))
-        if not extracted_regions:
-            extracted_regions = None
+        extracted_region_list = list(filter(None, extracted_region_list))
+        if not extracted_region_list:
+            extracted_region_list = None
 
-        layout_ci.regions = extracted_regions
+        layout_ci.region_list = extracted_region_list
         return layout_ci
 
 
@@ -1439,7 +1453,7 @@ class Layout2DCIUniform(AbstractLayout2DCI):
 
         pre_cti_ci = np.zeros(shape_native)
 
-        for region in self.regions:
+        for region in self.region_list:
             pre_cti_ci[region.slice] += self.normalization
 
         return array_ci.CIarray.manual(
@@ -1451,7 +1465,7 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
     def __init__(
         self,
         normalization,
-        regions,
+        region_list,
         row_slope,
         column_sigma=None,
         maximum_normalization=np.inf,
@@ -1472,13 +1486,13 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
         -----------
         normalization : float
             The normalization of the charge injection region.
-        regions : [(int,)]
+        region_list : [(int,)]
             A list of the integer coordinates specifying the corners of each charge injection region
             (top-row, bottom-row, left-column, right-column).
         row_slope : float
             The power-law slope of non-uniformity in the row charge injection profile.
         """
-        super(Layout2DCINonUniform, self).__init__(normalization, regions)
+        super(Layout2DCINonUniform, self).__init__(normalization, region_list)
         self.row_slope = row_slope
         self.column_sigma = column_sigma
         self.maximum_normalization = maximum_normalization
@@ -1512,7 +1526,7 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
             )  # Use one ci_seed, so all regions have identical column
             # non-uniformity.
 
-        for region in self.regions:
+        for region in self.region_list:
             pre_cti_ci[region.slice] += self.ci_region_from_region(
                 region_dimensions=region.shape, ci_seed=ci_seed
             )
@@ -1590,7 +1604,7 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
         return normalization * (np.arange(1, size + 1)) ** self.row_slope
 
 
-def regions_ci_from(
+def region_list_ci_from(
     injection_on: int,
     injection_off: int,
     injection_total: int,
@@ -1601,7 +1615,7 @@ def regions_ci_from(
     roe_corner: (int, int),
 ):
 
-    regions_ci = []
+    region_list_ci = []
 
     injection_start_count = 0
 
@@ -1643,8 +1657,8 @@ def regions_ci_from(
                 serial_size - serial_prescan_size,
             )
 
-        regions_ci.append(ci_region)
+        region_list_ci.append(ci_region)
 
         injection_start_count += injection_on + injection_off
 
-    return regions_ci
+    return region_list_ci
