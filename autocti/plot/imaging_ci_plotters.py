@@ -301,13 +301,13 @@ class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
 def extract_line_from(frame_ci, line_region):
 
     if line_region == "parallel_front_edge":
-        return frame_ci.binned_over_columns_array_1d_from()
+        return frame_ci.binned_array_1d_from()
     elif line_region == "parallel_trails":
-        return frame_ci.binned_over_columns_array_1d_from()
+        return frame_ci.binned_array_1d_from()
     elif line_region == "serial_front_edge":
-        return frame_ci.serial_front_edge_line_binned_over_rows_from()
+        return frame_ci.binned_array_1d_from()
     elif line_region == "serial_trails":
-        return frame_ci.serial_trails_line_binned_over_rows_from()
+        return frame_ci.binned_array_1d_from()
     else:
         raise exc.PlottingException(
             "The line region specified for the plotting of a line was invalid"

@@ -15,6 +15,7 @@ from autocti.warm_pixels.warm_pixels import find_warm_pixels
 from .charge_injection.layout_ci import ExtractorParallelFrontEdge
 from .charge_injection.layout_ci import ExtractorParallelTrails
 from .charge_injection.layout_ci import ExtractorSerialFrontEdge
+from .charge_injection.layout_ci import ExtractorSerialTrails
 from .mask.mask_2d import Mask2D
 from .mask.mask_2d import SettingsMask2D
 from .line.dataset_line import SettingsDatasetLine

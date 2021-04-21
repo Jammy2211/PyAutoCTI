@@ -88,7 +88,7 @@ class Mask2DCI(Mask2D):
     @classmethod
     def masked_serial_front_edge_from_frame_ci(cls, frame_ci, settings, invert=False):
 
-        front_edge_regions = frame_ci.serial_front_edge_region_list(
+        front_edge_regions = frame_ci.region_list_from(
             columns=settings.serial_front_edge_columns
         )
         mask = np.full(frame_ci.shape_native, False)
@@ -104,7 +104,7 @@ class Mask2DCI(Mask2D):
     @classmethod
     def masked_serial_trails_from_frame_ci(cls, frame_ci, settings, invert=False):
 
-        trails_regions = frame_ci.serial_trails_region_list_from(
+        trails_regions = frame_ci.region_list_from(
             columns=settings.serial_trails_columns
         )
         mask = np.full(frame_ci.shape_native, False)
