@@ -301,9 +301,9 @@ class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
 def extract_line_from(frame_ci, line_region):
 
     if line_region == "parallel_front_edge":
-        return frame_ci.parallel_front_edge_line_binned_over_columns_from()
+        return frame_ci.binned_over_columns_array_1d_from()
     elif line_region == "parallel_trails":
-        return frame_ci.parallel_trails_line_binned_over_columns_from()
+        return frame_ci.binned_over_columns_array_1d_from()
     elif line_region == "serial_front_edge":
         return frame_ci.serial_front_edge_line_binned_over_rows_from()
     elif line_region == "serial_trails":

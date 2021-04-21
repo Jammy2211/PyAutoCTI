@@ -58,7 +58,7 @@ class Mask2DCI(Mask2D):
     @classmethod
     def masked_parallel_front_edge_from_frame_ci(cls, frame_ci, settings, invert=False):
 
-        front_edge_regions = frame_ci.parallel_front_edge_region_list(
+        front_edge_regions = frame_ci.region_list(
             rows=settings.parallel_front_edge_rows
         )
         mask = np.full(frame_ci.shape_native, False)
@@ -74,9 +74,7 @@ class Mask2DCI(Mask2D):
     @classmethod
     def masked_parallel_trails_from_frame_ci(cls, frame_ci, settings, invert=False):
 
-        trails_regions = frame_ci.parallel_trails_region_list(
-            rows=settings.parallel_trails_rows
-        )
+        trails_regions = frame_ci.region_list_from(rows=settings.parallel_trails_rows)
         mask = np.full(frame_ci.shape_native, False)
 
         for region in trails_regions:

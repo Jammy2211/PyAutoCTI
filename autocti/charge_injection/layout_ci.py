@@ -19,6 +19,428 @@ from autocti.charge_injection import mask_2d_ci
 from typing import Tuple
 
 
+class Extractor:
+    def __init__(self, region_list):
+
+        self.region_list = list(map(reg.Region2D, region_list))
+
+    @property
+    def total_rows_min(self):
+        return np.min(list(map(lambda region: region.total_rows, self.region_list)))
+
+    @property
+    def total_columns_min(self):
+        return np.min(list(map(lambda region: region.total_columns, self.region_list)))
+
+
+class ExtractorParallelFrontEdge(Extractor):
+    def array_2d_list_from(self, array: array_2d.Array2D, rows=None):
+        """
+        Extract a list of structures of the parallel front edge scans of a charge injection array_ci.
+
+        The diagram below illustrates the arrays that is extracted from a array_ci for rows=(0, 1):
+
+        ---KEY---
+        ---------
+
+        [] = read-out electronics   [==========] = read-out register
+
+        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
+        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
+        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
+
+        P = Parallel Direction      S = Serial Direction
+
+               [ppppppppppppppppppppp]
+               [ppppppppppppppppppppp]
+          [...][ttttttttttttttttttttt][sss]
+          [...][c1c1cc1c1cc1cc1ccc1cc][sss]
+        | [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
+        | [...][ttttttttttttttttttttt][sss]    | Direction
+        P [...][ttttttttttttttttttttt][sss]    | of
+        | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
+          [...][cc0ccc0cccc0cccc0cccc][sss]    |
+
+        []     [=====================]
+               <---------S----------
+
+        The extracted array_ci keeps just the front edges of all charge injection scans.
+
+        list index 0:
+
+        [c0c0c0cc0c0c0c0c0c0c0]
+
+        list index 1:
+
+        [1c1c1c1c1c1c1c1c1c1c1]
+
+        Parameters
+        ------------
+        array
+        rows : (int, int)
+            The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
+        """
+        front_region_list = self.region_list_from(rows=rows)
+        front_arrays = list(
+            map(lambda region: array.native[region.slice], front_region_list)
+        )
+        front_masks = list(
+            map(lambda region: array.mask[region.slice], front_region_list)
+        )
+        front_arrays = list(
+            map(
+                lambda front_array, front_mask: np.ma.array(
+                    front_array, mask=front_mask
+                ),
+                front_arrays,
+                front_masks,
+            )
+        )
+        return front_arrays
+
+    def stacked_array_2d_from(self, array: array_2d.Array2D, rows=None):
+        front_arrays = self.array_2d_list_from(array=array, rows=rows)
+        return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
+
+    def binned_over_columns_array_1d_from(self, array: array_2d.Array2D, rows=None):
+        front_stacked_array = self.stacked_array_2d_from(array=array, rows=rows)
+        return np.ma.mean(np.ma.asarray(front_stacked_array), axis=1)
+
+    def region_list_from(self, rows=None):
+        """
+        Calculate a list of the parallel front edge scans of a charge injection array_ci.
+
+        The diagram below illustrates the region that calculaed from a array_ci for rows=(0, 1):
+
+        ---KEY---
+        ---------
+
+        [] = read-out electronics   [==========] = read-out register
+
+        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
+        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
+        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
+
+        P = Parallel Direction      S = Serial Direction
+
+               [ppppppppppppppppppppp]
+               [ppppppppppppppppppppp]
+          [...][ttttttttttttttttttttt][sss]
+          [...][c1c1cc1c1cc1cc1ccc1cc][sss]
+        | [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
+        | [...][ttttttttttttttttttttt][sss]    | Direction
+        P [...][ttttttttttttttttttttt][sss]    | of
+        | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
+          [...][cc0ccc0cccc0cccc0cccc][sss]    |
+
+        []     [=====================]
+               <---------S----------
+
+        The extracted array_ci keeps just the front edges of all charge injection scans.
+
+        list index 0:
+
+        [0, 1, 3, 21] (serial prescan is 3 pixels)
+
+        list index 1:
+
+        [3, 4, 3, 21] (serial prescan is 3 pixels)
+
+        Parameters
+        ------------
+        arrays
+        rows : (int, int)
+            The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
+        """
+        if rows is None:
+            rows = (0, self.total_rows_min)
+        return list(
+            map(
+                lambda ci_region: ci_region.parallel_front_edge_region_from(rows=rows),
+                self.region_list,
+            )
+        )
+
+
+class ExtractorParallelTrails(Extractor):
+    def array_2d_list_from(self, array: array_2d.Array2D, rows=None):
+        """Extract the parallel trails of a charge injection array_ci.
+
+
+        The diagram below illustrates the arrays that is extracted from a array_ci for rows=(0, 1):
+
+        ---KEY---
+        ---------
+
+        [] = read-out electronics   [==========] = read-out register
+
+        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
+        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci region index)
+        [xxxxxxxxxx]
+        [t#t#t#t#t#] = parallel / serial charge injection region trail (0 / 1 indicates ci region index)
+
+        P = Parallel Direction      S = Serial Direction
+
+               [ppppppppppppppppppppp]
+               [ppppppppppppppppppppp]
+          [...][t1t1t1t1t1t1t1t1t1t1t][sss]
+          [...][c1c1cc1c1cc1cc1ccc1cc][sss]
+        | [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
+        | [...][t0t0t0t0t0t0t0t0t0t0t][sss]    | Direction
+        P [...][0t0t0t0t0t0t0t0t0t0t0][sss]    | of
+        | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
+          [...][cc0ccc0cccc0cccc0cccc][sss]    |
+
+        []     [=====================]
+               <---------S----------
+
+        The extracted array_ci keeps just the trails following all charge injection scans:
+
+        list index 0:
+
+        [t0t0t0tt0t0t0t0t0t0t0]
+
+        list index 1:
+
+        [1t1t1t1t1t1t1t1t1t1t1]
+
+        Parameters
+        ------------
+        array
+        rows : (int, int)
+            The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
+        """
+
+        trails_region_list = self.region_list_from(rows=rows)
+        trails_arrays = list(
+            map(lambda region: array.native[region.slice], trails_region_list)
+        )
+        trails_masks = list(
+            map(lambda region: array.mask[region.slice], trails_region_list)
+        )
+        trails_arrays = list(
+            map(
+                lambda trails_array, front_mask: np.ma.array(
+                    trails_array, mask=front_mask
+                ),
+                trails_arrays,
+                trails_masks,
+            )
+        )
+        return trails_arrays
+
+    def stacked_array_2d_from(self, array: array_2d.Array2D, rows=None):
+        trails_arrays = self.array_2d_list_from(array=array, rows=rows)
+        return np.ma.mean(np.ma.asarray(trails_arrays), axis=0)
+
+    def binned_over_columns_array_1d_from(self, array: array_2d.Array2D, rows=None):
+        trails_stacked_array = self.stacked_array_2d_from(array=array, rows=rows)
+        return np.ma.mean(np.ma.asarray(trails_stacked_array), axis=1)
+
+    def region_list_from(self, rows=None):
+        """
+        Returns the parallel scans of a charge injection array_ci.
+
+            The diagram below illustrates the region that is calculated from a array_ci for rows=(0, 1):
+
+            ---KEY---
+            ---------
+
+            [] = read-out electronics   [==========] = read-out register
+
+            [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
+            [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
+            [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci region index)
+            [xxxxxxxxxx]
+            [t#t#t#t#t#] = parallel / serial charge injection region trail (0 / 1 indicates ci region index)
+
+            P = Parallel Direction      S = Serial Direction
+
+                   [ppppppppppppppppppppp]
+                   [ppppppppppppppppppppp]
+              [...][t1t1t1t1t1t1t1t1t1t1t][sss]
+              [...][c1c1cc1c1cc1cc1ccc1cc][sss]
+            | [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
+            | [...][t0t0t0t0t0t0t0t0t0t0t][sss]    | Direction
+            P [...][0t0t0t0t0t0t0t0t0t0t0][sss]    | of
+            | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
+              [...][cc0ccc0cccc0cccc0cccc][sss]    |
+
+            []     [=====================]
+                   <---------S----------
+
+            The extracted array_ci keeps just the trails following all charge injection scans:
+
+            list index 0:
+
+            [2, 4, 3, 21] (serial prescan is 3 pixels)
+
+            list index 1:
+
+            [6, 7, 3, 21] (serial prescan is 3 pixels)
+
+            Parameters
+            ------------
+            arrays
+            rows : (int, int)
+                The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
+        """
+
+        if rows is None:
+            rows = (0, self.smallest_parallel_trails_rows_to_array_edge)
+
+        return list(
+            map(
+                lambda ci_region: ci_region.parallel_trails_of_region_from(rows=rows),
+                self.region_list,
+            )
+        )
+
+
+class ExtractorSerialFrontEdge(Extractor):
+    def serial_front_edge_line_binned_over_rows_from(
+        self, array: array_2d.Array2D, columns=None
+    ):
+        front_stacked_array = self.serial_front_edge_stacked_array_from(
+            array=array, columns=columns
+        )
+        return np.ma.mean(np.ma.asarray(front_stacked_array), axis=0)
+
+    def serial_front_edge_stacked_array_from(
+        self, array: array_2d.Array2D, columns=None
+    ):
+        front_arrays = self.serial_front_edge_arrays_from(array=array, columns=columns)
+        return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
+
+    def serial_front_edge_arrays_from(self, array: array_2d.Array2D, columns=None):
+        """
+        Extract a list of the serial front edge structures of a charge injection array_ci.
+
+        The diagram below illustrates the arrays that is extracted from a array_ci for columnss=(0, 3):
+
+        ---KEY---
+        ---------
+
+        [] = read-out electronics   [==========] = read-out register
+
+        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
+        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
+        [xxxxxxxxxx]
+        [tttttttttt] = parallel / serial charge injection region trail ((0 / 1 indicates ci_region index)
+
+        P = Parallel Direction      S = Serial Direction
+
+               [ppppppppppppppppppppp]
+               [ppppppppppppppppppppp]
+          [...][ttttttttttttttttttttt][sss]
+          [...][c1c1cc1c1cc1cc1ccc1cc][sss]
+        | [...][1c1c1cc1c1cc1ccc1cc1c][sss]    |
+        | [...][ttttttttttttttttttttt][sss]    | Direction
+        P [...][ttttttttttttttttttttt][sss]    | of
+        | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
+          [...][cc0ccc0cccc0cccc0cccc][sss]    |
+
+        []     [=====================]
+               <---------S----------
+
+        The extracted array_ci keeps just the serial front edges of all charge injection scans.
+
+        list index 0:
+
+        [c0c0]
+
+        list index 1:
+
+        [1c1c]
+
+        Parameters
+        ------------
+        array
+        columns : (int, int)
+            The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
+            columns)
+        """
+        front_region_list = self.serial_front_edge_region_list(columns=columns)
+        front_arrays = list(
+            map(lambda region: array.native[region.slice], front_region_list)
+        )
+        front_masks = list(
+            map(lambda region: array.mask[region.slice], front_region_list)
+        )
+        front_arrays = list(
+            map(
+                lambda front_array, front_mask: np.ma.array(
+                    front_array, mask=front_mask
+                ),
+                front_arrays,
+                front_masks,
+            )
+        )
+        return front_arrays
+
+    def serial_front_edge_region_list(self, columns=None):
+        """
+        Returns a list of the serial front edges scans of a charge injection array_ci.
+
+        The diagram below illustrates the region that is calculated from a array_ci for columns=(0, 4):
+
+        ---KEY---
+        ---------
+
+        [] = read-out electronics   [==========] = read-out register
+
+        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
+        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
+        [xxxxxxxxxx]
+        [tttttttttt] = parallel / serial charge injection region trail ((0 / 1 indicates ci_region index)
+
+        P = Parallel Direction      S = Serial Direction
+
+               [ppppppppppppppppppppp]
+               [ppppppppppppppppppppp]
+          [...][ttttttttttttttttttttt][sss]
+          [...][c1c1cc1c1cc1cc1ccc1cc][sss]
+        | [...][1c1c1cc1c1cc1ccc1cc1c][sss]    |
+        | [...][ttttttttttttttttttttt][sss]    | Direction
+        P [...][ttttttttttttttttttttt][sss]    | of
+        | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
+          [...][cc0ccc0cccc0cccc0cccc][sss]    |
+
+        []     [=====================]
+               <---------S----------
+
+        The extracted array_ci keeps just the serial front edges of all charge injection scans.
+
+        list index 0:
+
+        [0, 2, 3, 21] (serial prescan is 3 pixels)
+
+        list index 1:
+
+        [4, 6, 3, 21] (serial prescan is 3 pixels)
+
+        Parameters
+        ------------
+        arrays
+        columns : (int, int)
+            The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
+            columns)
+        """
+        if columns is None:
+            columns = (0, self.total_columns_min)
+        return list(
+            map(
+                lambda ci_region: ci_region.serial_front_edge_of_region_from(columns),
+                self.region_list,
+            )
+        )
+
+
 class AbstractLayout2DCI(lo.Layout2D):
     def __init__(
         self,
@@ -82,14 +504,6 @@ class AbstractLayout2DCI(lo.Layout2D):
             serial_prescan=layout.serial_prescan,
             serial_overscan=layout.serial_overscan,
         )
-
-    @property
-    def total_rows_min(self):
-        return np.min(list(map(lambda region: region.total_rows, self.region_list)))
-
-    @property
-    def total_columns_min(self):
-        return np.min(list(map(lambda region: region.total_columns, self.region_list)))
 
     @property
     def rows_between_regions(self):
@@ -449,140 +863,6 @@ class AbstractLayout2DCI(lo.Layout2D):
             mask=mask[extraction_region.slice], pixel_scales=mask.pixel_scales
         )
 
-    def extract_parallel_front_edge_arrays_from(
-        self, array: array_2d.Array2D, rows=None
-    ):
-        """
-        Extract a list of structures of the parallel front edge scans of a charge injection array_ci.
-
-        The diagram below illustrates the arrays that is extracted from a array_ci for rows=(0, 1):
-
-        ---KEY---
-        ---------
-
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
-        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
-
-        P = Parallel Direction      S = Serial Direction
-
-               [ppppppppppppppppppppp]
-               [ppppppppppppppppppppp]
-          [...][ttttttttttttttttttttt][sss]
-          [...][c1c1cc1c1cc1cc1ccc1cc][sss]
-        | [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
-        | [...][ttttttttttttttttttttt][sss]    | Direction
-        P [...][ttttttttttttttttttttt][sss]    | of
-        | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
-          [...][cc0ccc0cccc0cccc0cccc][sss]    |
-
-        []     [=====================]
-               <---------S----------
-
-        The extracted array_ci keeps just the front edges of all charge injection scans.
-
-        list index 0:
-
-        [c0c0c0cc0c0c0c0c0c0c0]
-
-        list index 1:
-
-        [1c1c1c1c1c1c1c1c1c1c1]
-
-        Parameters
-        ------------
-        array
-        rows : (int, int)
-            The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
-        """
-        front_region_list = self.parallel_front_edge_region_list(rows=rows)
-        front_arrays = list(
-            map(lambda region: array.native[region.slice], front_region_list)
-        )
-        front_masks = list(
-            map(lambda region: array.mask[region.slice], front_region_list)
-        )
-        front_arrays = list(
-            map(
-                lambda front_array, front_mask: np.ma.array(
-                    front_array, mask=front_mask
-                ),
-                front_arrays,
-                front_masks,
-            )
-        )
-        return front_arrays
-
-    def extract_parallel_trails_arrays_from(self, array: array_2d.Array2D, rows=None):
-        """Extract the parallel trails of a charge injection array_ci.
-
-
-        The diagram below illustrates the arrays that is extracted from a array_ci for rows=(0, 1):
-
-        ---KEY---
-        ---------
-
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci region index)
-        [xxxxxxxxxx]
-        [t#t#t#t#t#] = parallel / serial charge injection region trail (0 / 1 indicates ci region index)
-
-        P = Parallel Direction      S = Serial Direction
-
-               [ppppppppppppppppppppp]
-               [ppppppppppppppppppppp]
-          [...][t1t1t1t1t1t1t1t1t1t1t][sss]
-          [...][c1c1cc1c1cc1cc1ccc1cc][sss]
-        | [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
-        | [...][t0t0t0t0t0t0t0t0t0t0t][sss]    | Direction
-        P [...][0t0t0t0t0t0t0t0t0t0t0][sss]    | of
-        | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
-          [...][cc0ccc0cccc0cccc0cccc][sss]    |
-
-        []     [=====================]
-               <---------S----------
-
-        The extracted array_ci keeps just the trails following all charge injection scans:
-
-        list index 0:
-
-        [t0t0t0tt0t0t0t0t0t0t0]
-
-        list index 1:
-
-        [1t1t1t1t1t1t1t1t1t1t1]
-
-        Parameters
-        ------------
-        array
-        rows : (int, int)
-            The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
-        """
-
-        trails_region_list = self.parallel_trails_region_list(array=array, rows=rows)
-        trails_arrays = list(
-            map(lambda region: array.native[region.slice], trails_region_list)
-        )
-        trails_masks = list(
-            map(lambda region: array.mask[region.slice], trails_region_list)
-        )
-        trails_arrays = list(
-            map(
-                lambda trails_array, front_mask: np.ma.array(
-                    trails_array, mask=front_mask
-                ),
-                trails_arrays,
-                trails_masks,
-            )
-        )
-        return trails_arrays
-
     def extract_serial_trails_array_from(self, array: array_2d.Array2D):
         """Extract an arrays of all of the serial trails in the serial overscan region, that are to the side of a
         charge-injection scans from a charge injection array_ci.
@@ -770,7 +1050,7 @@ class AbstractLayout2DCI(lo.Layout2D):
 
             front_region_list = list(
                 map(
-                    lambda ci_region: array.serial_front_edge_of_region(
+                    lambda ci_region: array.serial_front_edge_of_region_from(
                         ci_region, front_edge_columns
                     ),
                     self.region_list,
@@ -982,115 +1262,6 @@ class AbstractLayout2DCI(lo.Layout2D):
         )
         return list(map(lambda region: array[region.slice], calibration_region_list))
 
-    def parallel_front_edge_line_binned_over_columns_from(
-        self, array: array_2d.Array2D, rows=None
-    ):
-        front_stacked_array = self.parallel_front_edge_stacked_array_from(
-            array=array, rows=rows
-        )
-        return np.ma.mean(np.ma.asarray(front_stacked_array), axis=1)
-
-    def parallel_front_edge_stacked_array_from(
-        self, array: array_2d.Array2D, rows=None
-    ):
-        front_arrays = self.extract_parallel_front_edge_arrays_from(
-            array=array, rows=rows
-        )
-        return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
-
-    def parallel_trails_line_binned_over_columns_from(
-        self, array: array_2d.Array2D, rows=None
-    ):
-        trails_stacked_array = self.parallel_trails_stacked_array_from(
-            array=array, rows=rows
-        )
-        return np.ma.mean(np.ma.asarray(trails_stacked_array), axis=1)
-
-    def parallel_trails_stacked_array_from(self, array: array_2d.Array2D, rows=None):
-        trails_arrays = self.extract_parallel_trails_arrays_from(array=array, rows=rows)
-        return np.ma.mean(np.ma.asarray(trails_arrays), axis=0)
-
-    def serial_front_edge_line_binned_over_rows_from(
-        self, array: array_2d.Array2D, columns=None
-    ):
-        front_stacked_array = self.serial_front_edge_stacked_array_from(
-            arrays=array, columns=columns
-        )
-        return np.ma.mean(np.ma.asarray(front_stacked_array), axis=0)
-
-    def serial_front_edge_stacked_array_from(
-        self, array: array_2d.Array2D, columns=None
-    ):
-        front_arrays = self.serial_front_edge_arrays_from(array=array, columns=columns)
-        return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
-
-    def serial_front_edge_arrays_from(self, array: array_2d.Array2D, columns=None):
-        """
-        Extract a list of the serial front edge structures of a charge injection array_ci.
-
-        The diagram below illustrates the arrays that is extracted from a array_ci for columnss=(0, 3):
-
-        ---KEY---
-        ---------
-
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
-        [xxxxxxxxxx]
-        [tttttttttt] = parallel / serial charge injection region trail ((0 / 1 indicates ci_region index)
-
-        P = Parallel Direction      S = Serial Direction
-
-               [ppppppppppppppppppppp]
-               [ppppppppppppppppppppp]
-          [...][ttttttttttttttttttttt][sss]
-          [...][c1c1cc1c1cc1cc1ccc1cc][sss]
-        | [...][1c1c1cc1c1cc1ccc1cc1c][sss]    |
-        | [...][ttttttttttttttttttttt][sss]    | Direction
-        P [...][ttttttttttttttttttttt][sss]    | of
-        | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
-          [...][cc0ccc0cccc0cccc0cccc][sss]    |
-
-        []     [=====================]
-               <---------S----------
-
-        The extracted array_ci keeps just the serial front edges of all charge injection scans.
-
-        list index 0:
-
-        [c0c0]
-
-        list index 1:
-
-        [1c1c]
-
-        Parameters
-        ------------
-        array
-        columns : (int, int)
-            The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
-            columns)
-        """
-        front_region_list = self.serial_front_edge_region_list(
-            array=array, columns=columns
-        )
-        front_arrays = list(map(lambda region: array[region.slice], front_region_list))
-        front_masks = list(
-            map(lambda region: array.mask[region.slice], front_region_list)
-        )
-        front_arrays = list(
-            map(
-                lambda front_array, front_mask: np.ma.array(
-                    front_array, mask=front_mask
-                ),
-                front_arrays,
-                front_masks,
-            )
-        )
-        return front_arrays
-
     def serial_trails_line_binned_over_rows_from(
         self, array: array_2d.Array2D, columns: Tuple[int, int] = None
     ):
@@ -1172,179 +1343,6 @@ class AbstractLayout2DCI(lo.Layout2D):
             )
         )
         return trails_arrays
-
-    def parallel_front_edge_region_list(self, rows=None):
-        """
-        Calculate a list of the parallel front edge scans of a charge injection array_ci.
-
-        The diagram below illustrates the region that calculaed from a array_ci for rows=(0, 1):
-
-        ---KEY---
-        ---------
-
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
-        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
-
-        P = Parallel Direction      S = Serial Direction
-
-               [ppppppppppppppppppppp]
-               [ppppppppppppppppppppp]
-          [...][ttttttttttttttttttttt][sss]
-          [...][c1c1cc1c1cc1cc1ccc1cc][sss]
-        | [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
-        | [...][ttttttttttttttttttttt][sss]    | Direction
-        P [...][ttttttttttttttttttttt][sss]    | of
-        | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
-          [...][cc0ccc0cccc0cccc0cccc][sss]    |
-
-        []     [=====================]
-               <---------S----------
-
-        The extracted array_ci keeps just the front edges of all charge injection scans.
-
-        list index 0:
-
-        [0, 1, 3, 21] (serial prescan is 3 pixels)
-
-        list index 1:
-
-        [3, 4, 3, 21] (serial prescan is 3 pixels)
-
-        Parameters
-        ------------
-        arrays
-        rows : (int, int)
-            The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
-        """
-        if rows is None:
-            rows = (0, self.total_rows_min)
-        return list(
-            map(
-                lambda ci_region: ci_region.parallel_front_edge_region_from(rows=rows),
-                self.region_list,
-            )
-        )
-
-    def parallel_trails_region_list(self, rows=None):
-        """
-        Returns the parallel scans of a charge injection array_ci.
-
-            The diagram below illustrates the region that is calculated from a array_ci for rows=(0, 1):
-
-            ---KEY---
-            ---------
-
-            [] = read-out electronics   [==========] = read-out register
-
-            [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-            [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
-            [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci region index)
-            [xxxxxxxxxx]
-            [t#t#t#t#t#] = parallel / serial charge injection region trail (0 / 1 indicates ci region index)
-
-            P = Parallel Direction      S = Serial Direction
-
-                   [ppppppppppppppppppppp]
-                   [ppppppppppppppppppppp]
-              [...][t1t1t1t1t1t1t1t1t1t1t][sss]
-              [...][c1c1cc1c1cc1cc1ccc1cc][sss]
-            | [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
-            | [...][t0t0t0t0t0t0t0t0t0t0t][sss]    | Direction
-            P [...][0t0t0t0t0t0t0t0t0t0t0][sss]    | of
-            | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
-              [...][cc0ccc0cccc0cccc0cccc][sss]    |
-
-            []     [=====================]
-                   <---------S----------
-
-            The extracted array_ci keeps just the trails following all charge injection scans:
-
-            list index 0:
-
-            [2, 4, 3, 21] (serial prescan is 3 pixels)
-
-            list index 1:
-
-            [6, 7, 3, 21] (serial prescan is 3 pixels)
-
-            Parameters
-            ------------
-            arrays
-            rows : (int, int)
-                The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
-        """
-
-        if rows is None:
-            rows = (0, self.smallest_parallel_trails_rows_to_array_edge)
-
-        return list(
-            map(
-                lambda ci_region: ci_region.parallel_trails_of_region_from(rows=rows),
-                self.region_list,
-            )
-        )
-
-    def serial_front_edge_region_list(self, array: array_2d.Array2D, columns=None):
-        """
-        Returns a list of the serial front edges scans of a charge injection array_ci.
-
-        The diagram below illustrates the region that is calculated from a array_ci for columns=(0, 4):
-
-        ---KEY---
-        ---------
-
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
-        [xxxxxxxxxx]
-        [tttttttttt] = parallel / serial charge injection region trail ((0 / 1 indicates ci_region index)
-
-        P = Parallel Direction      S = Serial Direction
-
-               [ppppppppppppppppppppp]
-               [ppppppppppppppppppppp]
-          [...][ttttttttttttttttttttt][sss]
-          [...][c1c1cc1c1cc1cc1ccc1cc][sss]
-        | [...][1c1c1cc1c1cc1ccc1cc1c][sss]    |
-        | [...][ttttttttttttttttttttt][sss]    | Direction
-        P [...][ttttttttttttttttttttt][sss]    | of
-        | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
-          [...][cc0ccc0cccc0cccc0cccc][sss]    |
-
-        []     [=====================]
-               <---------S----------
-
-        The extracted array_ci keeps just the serial front edges of all charge injection scans.
-
-        list index 0:
-
-        [0, 2, 3, 21] (serial prescan is 3 pixels)
-
-        list index 1:
-
-        [4, 6, 3, 21] (serial prescan is 3 pixels)
-
-        Parameters
-        ------------
-        arrays
-        columns : (int, int)
-            The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
-            columns)
-        """
-        if columns is None:
-            columns = (0, self.total_columns_min)
-        return list(
-            map(
-                lambda ci_region: array.serial_front_edge_of_region(ci_region, columns),
-                self.region_list,
-            )
-        )
 
     def serial_trails_region_list_from(self, array: array_2d.Array2D, columns=None):
         """
