@@ -73,6 +73,44 @@ def make_serial_masked_array(serial_array):
     return ac.Array2D.manual_mask(array=serial_array.native, mask=mask)
 
 
+class TestAbstractExtractor:
+    def test__total_rows_minimum(self):
+
+        layout = ac.ExtractorParallelFrontEdge(region_list=[(1, 2, 0, 1)])
+
+        assert layout.total_rows_min == 1
+
+        layout = ac.ExtractorParallelFrontEdge(region_list=[(1, 3, 0, 1)])
+
+        assert layout.total_rows_min == 2
+
+        layout = ac.ExtractorParallelFrontEdge(region_list=[(1, 2, 0, 1), (3, 4, 0, 1)])
+
+        assert layout.total_rows_min == 1
+
+        layout = ac.ExtractorParallelFrontEdge(region_list=[(1, 2, 0, 1), (3, 5, 0, 1)])
+
+        assert layout.total_rows_min == 1
+
+    def test__total_columns_minimum(self):
+
+        layout = ac.ExtractorParallelFrontEdge(region_list=[(0, 1, 1, 2)])
+
+        assert layout.total_columns_min == 1
+
+        layout = ac.ExtractorParallelFrontEdge(region_list=[(0, 1, 1, 3)])
+
+        assert layout.total_columns_min == 2
+
+        layout = ac.ExtractorParallelFrontEdge(region_list=[(0, 1, 1, 2), (0, 1, 3, 4)])
+
+        assert layout.total_columns_min == 1
+
+        layout = ac.ExtractorParallelFrontEdge(region_list=[(0, 1, 1, 2), (0, 1, 3, 5)])
+
+        assert layout.total_columns_min == 1
+
+
 class TestExtractorParallelFrontEdge:
     def test__array_2d_list_from(self, parallel_array, parallel_masked_array):
 
@@ -514,58 +552,6 @@ class TestExtractorSerialTrails:
 
 
 class TestAbstractLayout2DCI(object):
-    def test__total_rows_minimum(self):
-
-        layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 3), normalization=1.0, region_list=[(1, 2, 0, 1)]
-        )
-
-        assert layout.total_rows_min == 1
-
-        layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 3), normalization=1.0, region_list=[(1, 3, 0, 1)]
-        )
-
-        assert layout.total_rows_min == 2
-
-        layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 3), normalization=1.0, region_list=[(1, 2, 0, 1), (3, 4, 0, 1)]
-        )
-
-        assert layout.total_rows_min == 1
-
-        layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 3), normalization=1.0, region_list=[(1, 2, 0, 1), (3, 5, 0, 1)]
-        )
-
-        assert layout.total_rows_min == 1
-
-    def test__total_columns_minimum(self):
-
-        layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 3), normalization=1.0, region_list=[(0, 1, 1, 2)]
-        )
-
-        assert layout.total_columns_min == 1
-
-        layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 3), normalization=1.0, region_list=[(0, 1, 1, 3)]
-        )
-
-        assert layout.total_columns_min == 2
-
-        layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 5), normalization=1.0, region_list=[(0, 1, 1, 2), (0, 1, 3, 4)]
-        )
-
-        assert layout.total_columns_min == 1
-
-        layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 5), normalization=1.0, region_list=[(0, 1, 1, 2), (0, 1, 3, 5)]
-        )
-
-        assert layout.total_columns_min == 1
-
     def test__rows_between_region_list(self):
 
         layout = ac.ci.Layout2DCIUniform(
@@ -640,19 +626,19 @@ class TestAbstractLayout2DCI(object):
                 shape_2d=(3, 3), normalization=1.0, region_list=([(0, 0, 0, -1)])
             )
 
-    def test__with_extracted_region_list__region_list_are_extracted_correctly(self):
+    def test__with_extracted_regions__region_list_are_extracted_correctly(self):
 
         layout = ac.ci.Layout2DCIUniform(
             shape_2d=(5, 3), normalization=1.0, region_list=[(0, 2, 0, 2)]
         )
 
-        layout_extracted = layout.with_extracted_region_list(
+        layout_extracted = layout.with_extracted_regions(
             extraction_region=ac.Region2D((0, 2, 0, 2))
         )
 
         assert layout_extracted.region_list == [(0, 2, 0, 2)]
 
-        layout_extracted = layout.with_extracted_region_list(
+        layout_extracted = layout.with_extracted_regions(
             extraction_region=ac.Region2D((0, 1, 0, 1))
         )
 
@@ -664,31 +650,31 @@ class TestAbstractLayout2DCI(object):
             region_list=[(2, 4, 2, 4), (0, 1, 0, 1)],
         )
 
-        layout_extracted = layout.with_extracted_region_list(
+        layout_extracted = layout.with_extracted_regions(
             extraction_region=ac.Region2D((0, 3, 0, 3))
         )
 
         assert layout_extracted.region_list == [(2, 3, 2, 3), (0, 1, 0, 1)]
 
-        layout_extracted = layout.with_extracted_region_list(
+        layout_extracted = layout.with_extracted_regions(
             extraction_region=ac.Region2D((2, 5, 2, 5))
         )
 
         assert layout_extracted.region_list == [(0, 2, 0, 2)]
 
-        layout_extracted = layout.with_extracted_region_list(
+        layout_extracted = layout.with_extracted_regions(
             extraction_region=ac.Region2D((8, 9, 8, 9))
         )
 
         assert layout_extracted.region_list == None
 
-    def test__frame_with_extracted_region_list_ci_from(self):
+    def test__array_2d_of_regions_from(self):
 
         layout = ac.ci.Layout2DCIUniform(
             shape_2d=(5, 3), normalization=10.0, region_list=[(0, 3, 0, 3)]
         )
 
-        frame = ac.Array2D.manual(
+        array = ac.Array2D.manual(
             array=[
                 [0.0, 1.0, 2.0],
                 [3.0, 4.0, 5.0],
@@ -698,10 +684,10 @@ class TestAbstractLayout2DCI(object):
             pixel_scales=1.0,
         )
 
-        frame_extracted = layout.extract_frame_of_region_list_ci_from(frame=frame)
+        array_extracted = layout.array_2d_of_regions_from(array=array)
 
         assert (
-            frame_extracted
+            array_extracted
             == np.array(
                 [[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [0.0, 0.0, 0.0]]
             )
@@ -713,7 +699,7 @@ class TestAbstractLayout2DCI(object):
             region_list=[(0, 1, 1, 2), (2, 3, 1, 3)],
         )
 
-        frame = ac.Array2D.manual(
+        array = ac.Array2D.manual(
             array=[
                 [0.0, 1.0, 2.0],
                 [3.0, 4.0, 5.0],
@@ -723,22 +709,22 @@ class TestAbstractLayout2DCI(object):
             pixel_scales=1.0,
         )
 
-        frame_extracted = layout.extract_frame_of_region_list_ci_from(frame=frame)
+        array_extracted = layout.array_2d_of_regions_from(array=array)
 
         assert (
-            frame_extracted
+            array_extracted
             == np.array(
                 [[0.0, 1.0, 0.0], [0.0, 0.0, 0.0], [0.0, 7.0, 8.0], [0.0, 0.0, 0.0]]
             )
         ).all()
 
-    def test__frame_with_extracted_non_region_list_ci_from(self,):
+    def test__array_2d_of_non_regions_from(self):
 
         layout = ac.ci.Layout2DCIUniform(
             shape_2d=(5, 3), normalization=10.0, region_list=[(0, 3, 0, 3)]
         )
 
-        frame = ac.Array2D.manual(
+        array = ac.Array2D.manual(
             array=[
                 [0.0, 1.0, 2.0],
                 [3.0, 4.0, 5.0],
@@ -748,12 +734,10 @@ class TestAbstractLayout2DCI(object):
             pixel_scales=1.0,
         )
 
-        frame_extracted = layout.extract_frame_of_non_region_list_ci_from(frame=frame)
-
-        print(frame_extracted)
+        array_extracted = layout.array_2d_of_non_regions_from(array=array)
 
         assert (
-            frame_extracted
+            array_extracted
             == np.array(
                 [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [9.0, 10.0, 11.0]]
             )
@@ -765,7 +749,7 @@ class TestAbstractLayout2DCI(object):
             region_list=[(0, 1, 0, 3), (3, 4, 0, 3)],
         )
 
-        frame = ac.Array2D.manual(
+        array = ac.Array2D.manual(
             array=[
                 [0.0, 1.0, 2.0],
                 [3.0, 4.0, 5.0],
@@ -776,10 +760,10 @@ class TestAbstractLayout2DCI(object):
             pixel_scales=1.0,
         )
 
-        frame_extracted = layout.extract_frame_of_non_region_list_ci_from(frame=frame)
+        array_extracted = layout.array_2d_of_non_regions_from(array=array)
 
         assert (
-            frame_extracted
+            array_extracted
             == np.array(
                 [
                     [0.0, 0.0, 0.0],
@@ -791,39 +775,17 @@ class TestAbstractLayout2DCI(object):
             )
         ).all()
 
-    def test__frame_with_extracted_parallel_trails_from(self,):
-
-        layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 3), normalization=10.0, region_list=[(0, 3, 0, 3)]
-        )
-
-        frame = ac.Array2D.manual(
-            array=[
-                [0.0, 1.0, 2.0],
-                [3.0, 4.0, 5.0],
-                [6.0, 7.0, 8.0],
-                [9.0, 10.0, 11.0],
-            ],
-            scans=ac.Scans(serial_prescan=(3, 4, 2, 3), serial_overscan=(3, 4, 0, 1)),
-            pixel_scales=1.0,
-        )
-
-        frame_extracted = layout.extract_frame_of_parallel_trails_from(frame=frame)
-
-        assert (
-            frame_extracted
-            == np.array(
-                [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 10.0, 0.0]]
-            )
-        ).all()
+    def test__array_2d_of_parallel_trails_from(self):
 
         layout = ac.ci.Layout2DCIUniform(
             shape_2d=(5, 3),
             normalization=10.0,
-            region_list=[(0, 1, 0, 3), (3, 4, 0, 3)],
+            region_list=[(0, 3, 0, 3)],
+            serial_prescan=(3, 5, 2, 3),
+            serial_overscan=(3, 5, 0, 1),
         )
 
-        frame = ac.Array2D.manual(
+        array = ac.Array2D.manual(
             array=[
                 [0.0, 1.0, 2.0],
                 [3.0, 4.0, 5.0],
@@ -831,14 +793,36 @@ class TestAbstractLayout2DCI(object):
                 [9.0, 10.0, 11.0],
                 [12.0, 13.0, 14.0],
             ],
-            scans=ac.Scans(serial_prescan=(1, 2, 0, 3), serial_overscan=(0, 1, 0, 1)),
             pixel_scales=1.0,
         )
 
-        frame_extracted = layout.extract_frame_of_parallel_trails_from(frame=frame)
+        array_extracted = layout.array_2d_of_parallel_trails_from(array=array)
 
         assert (
-            frame_extracted
+            array_extracted
+            == np.array(
+                [
+                    [0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0],
+                    [0.0, 10.0, 0.0],
+                    [0.0, 13.0, 0.0],
+                ]
+            )
+        ).all()
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(5, 3),
+            normalization=10.0,
+            region_list=[(0, 1, 0, 3), (3, 4, 0, 3)],
+            serial_prescan=(1, 2, 0, 3),
+            serial_overscan=(0, 1, 0, 1),
+        )
+
+        array_extracted = layout.array_2d_of_parallel_trails_from(array=array)
+
+        assert (
+            array_extracted.native
             == np.array(
                 [
                     [0.0, 0.0, 0.0],
@@ -850,13 +834,13 @@ class TestAbstractLayout2DCI(object):
             )
         ).all()
 
-    def test__parallel_calibration_frame_from(self):
+    def test__parallel_calibration_array_from(self):
 
         layout = ac.ci.Layout2DCIUniform(
             shape_2d=(5, 3), normalization=10.0, region_list=[(0, 3, 0, 3)]
         )
 
-        frame = ac.Array2D.manual(
+        array = ac.Array2D.manual(
             array=[
                 [0.0, 1.0, 2.0],
                 [3.0, 4.0, 5.0],
@@ -866,8 +850,8 @@ class TestAbstractLayout2DCI(object):
             pixel_scales=1.0,
         )
 
-        new_array = layout.extract_frame_of_parallel_edges_and_trails_from(
-            frame=frame, front_edge_rows=(0, 1)
+        new_array = layout.extract_array_of_parallel_edges_and_trails_from(
+            array=array, front_edge_rows=(0, 1)
         )
 
         assert (
@@ -892,8 +876,8 @@ class TestAbstractLayout2DCI(object):
             pixel_scales=1.0,
         )
 
-        new_array = layout.extract_frame_of_parallel_edges_and_trails_from(
-            frame=array, trails_rows=(0, 1)
+        new_array = layout.extract_array_of_parallel_edges_and_trails_from(
+            array=array, trails_rows=(0, 1)
         )
 
         assert (
@@ -909,9 +893,10 @@ class TestAbstractLayout2DCI(object):
             )
         ).all()
 
-    def test__front_edge_and_trails__2_rows_of_each__new_frame_is_edge_and_trail(self):
+    def test__array_2d_of_parallel_edges_and_trails_from(self):
+
         layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 3), normalization=10.0, region_list=[(0, 4, 0, 3)]
+            shape_2d=(6, 3), normalization=10.0, region_list=[(0, 4, 0, 3)]
         )
 
         array = ac.Array2D.manual(
@@ -923,13 +908,14 @@ class TestAbstractLayout2DCI(object):
                 [12.0, 13.0, 14.0],
                 [15.0, 16.0, 17.0],
             ],
-            layout=layout,
             pixel_scales=1.0,
         )
 
-        new_array = layout.extract_frame_of_parallel_edges_and_trails_from(
-            front_edge_rows=(0, 2), trails_rows=(0, 2)
+        new_array = layout.array_2d_of_parallel_edges_and_trails_from(
+            array=array, front_edge_rows=(0, 2), trails_rows=(0, 2)
         )
+
+        print(new_array)
 
         assert (
             new_array
@@ -944,9 +930,8 @@ class TestAbstractLayout2DCI(object):
                 ]
             )
         ).all()
-        assert new_layout.layout.region_list == [(0, 4, 0, 3)]
 
-    def test__front_edge_and_trails__2_region_list__1_row_of_each__new_frame_is_edge_and_trail(
+    def test__front_edge_and_trails__2_region_list__1_row_of_each__new_array_is_edge_and_trail(
         self,
     ):
         layout = ac.ci.Layout2DCIUniform(
@@ -968,7 +953,7 @@ class TestAbstractLayout2DCI(object):
             pixel_scales=1.0,
         )
 
-        new_array = layout.extract_frame_of_parallel_edges_and_trails_from(
+        new_array = layout.extract_array_of_parallel_edges_and_trails_from(
             front_edge_rows=(0, 1), trails_rows=(0, 1)
         )
 
@@ -1539,7 +1524,7 @@ class TestCIRegionFrom:
         ]
 
 
-class TestParallelCalibrationFrame:
+class TestParallelCalibrationarray:
     def test__columns_0_to_1__extracts_1_column_left_hand_side_of_array(self):
 
         layout = ac.ci.Layout2DCIUniform(

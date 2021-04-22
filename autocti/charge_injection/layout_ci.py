@@ -163,6 +163,20 @@ class ExtractorParallelFrontEdge(Extractor):
             )
         )
 
+    def add_to_array(self, new_array, array, rows):
+
+        region_list = [
+            region.parallel_front_edge_region_from(rows=rows)
+            for region in self.region_list
+        ]
+
+        array_2d_list = self.array_2d_list_from(array=array, rows=rows)
+
+        for arr, region in zip(array_2d_list, region_list):
+            new_array[region.y0 : region.y1, region.x0 : region.x1] += arr
+
+        return new_array
+
 
 class ExtractorParallelTrails(Extractor):
     def array_2d_list_from(self, array: array_2d.Array2D, rows=None):
@@ -294,10 +308,23 @@ class ExtractorParallelTrails(Extractor):
 
         return list(
             map(
-                lambda ci_region: ci_region.parallel_trails_of_region_from(rows=rows),
+                lambda ci_region: ci_region.parallel_trails_region_from(rows=rows),
                 self.region_list,
             )
         )
+
+    def add_to_array(self, new_array, array, rows):
+
+        region_list = [
+            region.parallel_trails_region_from(rows=rows) for region in self.region_list
+        ]
+
+        array_2d_list = self.array_2d_list_from(array=array, rows=rows)
+
+        for arr, region in zip(array_2d_list, region_list):
+            new_array[region.y0 : region.y1, region.x0 : region.x1] += arr
+
+        return new_array
 
 
 class ExtractorSerialFrontEdge(Extractor):
@@ -429,7 +456,7 @@ class ExtractorSerialFrontEdge(Extractor):
             columns = (0, self.total_columns_min)
         return list(
             map(
-                lambda ci_region: ci_region.serial_front_edge_of_region_from(columns),
+                lambda ci_region: ci_region.serial_front_edge_region_from(columns),
                 self.region_list,
             )
         )
@@ -566,7 +593,7 @@ class ExtractorSerialTrails(Extractor):
             columns = (0, array.layout.serial_trails_columns)
         return list(
             map(
-                lambda ci_region: ci_region.serial_trails_of_region_from(columns),
+                lambda ci_region: ci_region.serial_trails_region_from(columns),
                 self.region_list,
             )
         )
@@ -604,6 +631,17 @@ class AbstractLayout2DCI(lo.Layout2D):
                 raise exc.Layout2DCIException(
                     "The charge injection layout_ci regions are bigger than the image image_shape"
                 )
+
+        self.extractor_parallel_front_edge = ExtractorParallelFrontEdge(
+            region_list=region_list
+        )
+        self.extractor_parallel_trails = ExtractorParallelTrails(
+            region_list=region_list
+        )
+        self.extractor_serial_front_edge = ExtractorSerialFrontEdge(
+            region_list=region_list
+        )
+        self.extractor_serial_trails = ExtractorSerialTrails(region_list=region_list)
 
         super().__init__(
             shape_2d=shape_2d,
@@ -643,7 +681,7 @@ class AbstractLayout2DCI(lo.Layout2D):
             for i in range(len(self.region_list) - 1)
         ]
 
-    def array_of_regions_ci_from(self, array: array_2d.Array2D) -> array_2d.Array2D:
+    def array_2d_of_regions_from(self, array: array_2d.Array2D) -> array_2d.Array2D:
         """
         Extract all of the charge-injection regions from an input `array2D` object and returns them as a new `array2D`
         object where these extracted regions are included and all other entries are zeros.
@@ -694,11 +732,11 @@ class AbstractLayout2DCI(lo.Layout2D):
         new_array = array.native.copy() * 0.0
 
         for region in self.region_list:
-            new_array[region.slice] += array[region.slice]
+            new_array[region.slice] += array.native[region.slice]
 
         return new_array
 
-    def array_of_non_regions_ci_from(self, array: array_2d.Array2D) -> array_2d.Array2D:
+    def array_2d_of_non_regions_from(self, array: array_2d.Array2D) -> array_2d.Array2D:
         """
         Extract all of the data values in an input `array2D` that do not overlap the charge injection regions. This
         includes many areas of the image (e.g. the serial prescan, serial overscan) but is typically used to extract
@@ -754,7 +792,7 @@ class AbstractLayout2DCI(lo.Layout2D):
 
         return non_regions_ci_array
 
-    def array_of_parallel_trails_from(
+    def array_2d_of_parallel_trails_from(
         self, array: array_2d.Array2D
     ) -> array_2d.Array2D:
         """
@@ -807,14 +845,14 @@ class AbstractLayout2DCI(lo.Layout2D):
                <---------S----------
         """
 
-        parallel_array = self.array_of_non_regions_ci_from(array=array)
+        parallel_array = self.array_2d_of_non_regions_from(array=array)
 
-        parallel_array.native[array.layout.serial_prescan.slice] = 0.0
-        parallel_array.native[array.layout.serial_overscan.slice] = 0.0
+        parallel_array.native[self.serial_prescan.slice] = 0.0
+        parallel_array.native[self.serial_overscan.slice] = 0.0
 
         return parallel_array
 
-    def array_of_parallel_edges_and_trails_from(
+    def array_2d_of_parallel_edges_and_trails_from(
         self,
         array: array_2d.Array2D,
         front_edge_rows: Tuple[int, int] = None,
@@ -880,45 +918,19 @@ class AbstractLayout2DCI(lo.Layout2D):
         trails_rows
             The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
-        new_array = array.copy() * 0.0
+        new_array = array.native.copy() * 0.0
 
         if front_edge_rows is not None:
 
-            front_region_list = list(
-                map(
-                    lambda ci_region: ci_region.parallel_front_edge_region_from(
-                        rows=front_edge_rows
-                    ),
-                    self.region_list,
-                )
+            new_array = self.extractor_parallel_front_edge.add_to_array(
+                new_array=new_array, array=array, rows=front_edge_rows
             )
-
-            front_edges = self.extract_parallel_front_edge_arrays_from(
-                array=array, rows=front_edge_rows
-            )
-
-            for i, region in enumerate(front_region_list):
-                new_array[region.y0 : region.y1, region.x0 : region.x1] += front_edges[
-                    i
-                ]
 
         if trails_rows is not None:
 
-            trails_region_list = list(
-                map(
-                    lambda ci_region: ci_region.parallel_front_edge_region_from(
-                        rows=trails_rows
-                    ),
-                    self.region_list,
-                )
+            new_array = self.extractor_parallel_trails.add_to_array(
+                new_array=new_array, array=array, rows=trails_rows
             )
-
-            trails = self.extract_parallel_trails_arrays_from(
-                array=array, rows=trails_rows
-            )
-
-            for i, region in enumerate(trails_region_list):
-                new_array[region.y0 : region.y1, region.x0 : region.x1] += trails[i]
 
         return new_array
 
