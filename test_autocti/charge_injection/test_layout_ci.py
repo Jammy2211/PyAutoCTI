@@ -834,50 +834,14 @@ class TestAbstractLayout2DCI(object):
             )
         ).all()
 
-    def test__parallel_calibration_array_from(self):
+    def test__array_2d_of_parallel_edges_and_trails_from(self, parallel_array):
 
         layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 3), normalization=10.0, region_list=[(0, 3, 0, 3)]
+            shape_2d=(10, 3), normalization=10.0, region_list=[(0, 4, 0, 3)]
         )
 
-        array = ac.Array2D.manual(
-            array=[
-                [0.0, 1.0, 2.0],
-                [3.0, 4.0, 5.0],
-                [6.0, 7.0, 8.0],
-                [9.0, 10.0, 11.0],
-            ],
-            pixel_scales=1.0,
-        )
-
-        new_array = layout.extract_array_of_parallel_edges_and_trails_from(
-            array=array, front_edge_rows=(0, 1)
-        )
-
-        assert (
-            new_array
-            == np.array(
-                [[0.0, 1.0, 2.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]
-            )
-        ).all()
-
-        layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 3), normalization=10.0, region_list=[(0, 4, 0, 3)]
-        )
-
-        array = ac.Array2D.manual(
-            array=[
-                [0.0, 1.0, 2.0],
-                [3.0, 4.0, 5.0],
-                [6.0, 7.0, 8.0],
-                [9.0, 10.0, 11.0],
-                [12.0, 13.0, 14.0],
-            ],
-            pixel_scales=1.0,
-        )
-
-        new_array = layout.extract_array_of_parallel_edges_and_trails_from(
-            array=array, trails_rows=(0, 1)
+        new_array = layout.array_2d_of_parallel_edges_and_trails_from(
+            array=parallel_array, front_edge_rows=(0, 2), trails_rows=(0, 2)
         )
 
         assert (
@@ -885,34 +849,27 @@ class TestAbstractLayout2DCI(object):
             == np.array(
                 [
                     [0.0, 0.0, 0.0],
+                    [1.0, 1.0, 1.0],
+                    [0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0],
+                    [4.0, 4.0, 4.0],
+                    [5.0, 5.0, 5.0],
                     [0.0, 0.0, 0.0],
                     [0.0, 0.0, 0.0],
                     [0.0, 0.0, 0.0],
-                    [12.0, 13.0, 14.0],
+                    [0.0, 0.0, 0.0],
                 ]
             )
         ).all()
 
-    def test__array_2d_of_parallel_edges_and_trails_from(self):
-
         layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(6, 3), normalization=10.0, region_list=[(0, 4, 0, 3)]
-        )
-
-        array = ac.Array2D.manual(
-            array=[
-                [0.0, 1.0, 2.0],
-                [3.0, 4.0, 5.0],
-                [6.0, 7.0, 8.0],
-                [9.0, 10.0, 11.0],
-                [12.0, 13.0, 14.0],
-                [15.0, 16.0, 17.0],
-            ],
-            pixel_scales=1.0,
+            shape_2d=(10, 3),
+            normalization=10.0,
+            region_list=[(0, 1, 0, 3), (3, 4, 0, 3)],
         )
 
         new_array = layout.array_2d_of_parallel_edges_and_trails_from(
-            array=array, front_edge_rows=(0, 2), trails_rows=(0, 2)
+            array=parallel_array, front_edge_rows=(0, 1), trails_rows=(0, 1)
         )
 
         print(new_array)
@@ -922,55 +879,84 @@ class TestAbstractLayout2DCI(object):
             == np.array(
                 [
                     [0.0, 1.0, 2.0],
-                    [3.0, 4.0, 5.0],
+                    [1.0, 1.0, 1.0],
+                    [0.0, 0.0, 0.0],
+                    [3.0, 3.0, 3.0],
+                    [4.0, 4.0, 4.0],
                     [0.0, 0.0, 0.0],
                     [0.0, 0.0, 0.0],
-                    [12.0, 13.0, 14.0],
-                    [15.0, 16.0, 17.0],
+                    [0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0],
                 ]
             )
         ).all()
 
-    def test__front_edge_and_trails__2_region_list__1_row_of_each__new_array_is_edge_and_trail(
-        self,
-    ):
+    def test__array_2d_for_parallel_calibration_from(self):
+
         layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 3),
-            normalization=10.0,
-            region_list=[(0, 1, 0, 3), (3, 4, 0, 3)],
+            shape_2d=(5, 3), normalization=1.0, region_list=[(0, 3, 0, 3)]
         )
 
         array = ac.Array2D.manual(
             array=[
                 [0.0, 1.0, 2.0],
-                [3.0, 4.0, 5.0],
-                [6.0, 7.0, 8.0],
-                [9.0, 10.0, 11.0],
-                [12.0, 13.0, 14.0],
-                [15.0, 16.0, 17.0],
+                [0.0, 1.0, 2.0],
+                [0.0, 1.0, 2.0],
+                [0.0, 1.0, 2.0],
+                [0.0, 1.0, 2.0],
             ],
             layout=layout,
             pixel_scales=1.0,
         )
 
-        new_array = layout.extract_array_of_parallel_edges_and_trails_from(
-            front_edge_rows=(0, 1), trails_rows=(0, 1)
+        extracted_array = layout.array_2d_for_parallel_calibration_from(
+            array=array, columns=(0, 1)
+        )
+
+        assert (extracted_array == np.array([[0.0], [0.0], [0.0], [0.0], [0.0]])).all()
+        assert extracted_array.layout.region_list == [(0, 3, 0, 1)]
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(5, 3), normalization=1.0, region_list=[(0, 5, 0, 3)]
+        )
+
+        extracted_array = layout.array_2d_for_parallel_calibration_from(
+            array=array, columns=(1, 3)
         )
 
         assert (
-            new_array
+            extracted_array.native
+            == np.array([[1.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0]])
+        ).all()
+        assert extracted_array.layout.region_list == [(0, 5, 0, 2)]
+
+    def test__mask_for_parallel_calibration_from(self):
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(5, 3), normalization=1.0, region_list=[(0, 5, 0, 3)]
+        )
+
+        mask = ac.ci.Mask2DCI.unmasked(shape_native=(5, 3), pixel_scales=1.0)
+
+        mask[0, 1] = True
+
+        extracted_mask = layout.mask_for_parallel_calibration_from(
+            mask=mask, columns=(1, 3)
+        )
+
+        assert (
+            extracted_mask
             == np.array(
                 [
-                    [0.0, 1.0, 2.0],
-                    [3.0, 4.0, 5.0],
-                    [0.0, 0.0, 0.0],
-                    [9.0, 10.0, 11.0],
-                    [12.0, 13.0, 14.0],
-                    [0.0, 0.0, 0.0],
+                    [True, False],
+                    [False, False],
+                    [False, False],
+                    [False, False],
+                    [False, False],
                 ]
             )
         ).all()
-        assert new_layout.layout.region_list == [(0, 1, 0, 3), (3, 4, 0, 3)]
 
 
 class TestLayout2DCIUniform(object):
@@ -1522,92 +1508,3 @@ class TestCIRegionFrom:
             (1200, 1400, 51, 2099),
             (1600, 1800, 51, 2099),
         ]
-
-
-class TestParallelCalibrationarray:
-    def test__columns_0_to_1__extracts_1_column_left_hand_side_of_array(self):
-
-        layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 3), normalization=1.0, region_list=[(0, 3, 0, 3)]
-        )
-
-        array = ac.Array2D.manual(
-            array=[
-                [0.0, 1.0, 2.0],
-                [0.0, 1.0, 2.0],
-                [0.0, 1.0, 2.0],
-                [0.0, 1.0, 2.0],
-                [0.0, 1.0, 2.0],
-            ],
-            layout=layout,
-            pixel_scales=1.0,
-        )
-
-        extracted_array = layout.array_for_parallel_calibration_from(
-            array=array, columns=(0, 1)
-        )
-
-        assert (extracted_array == np.array([[0.0], [0.0], [0.0], [0.0], [0.0]])).all()
-        assert extracted_layout.layout.region_list == [(0, 3, 0, 1)]
-
-    def test__columns_1_to_3__extracts_2_columns_middle_and_right_of_array(self):
-
-        layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 3), normalization=1.0, region_list=[(0, 5, 0, 3)]
-        )
-
-        array = ac.Array2D.manual(
-            array=[
-                [0.0, 1.0, 2.0],
-                [0.0, 1.0, 2.0],
-                [0.0, 1.0, 2.0],
-                [0.0, 1.0, 2.0],
-                [0.0, 1.0, 2.0],
-            ],
-            layout=layout,
-            pixel_scales=1.0,
-        )
-
-        extracted_array = layout.array_for_parallel_calibration_from(columns=(1, 3))
-
-        assert (
-            extracted_array
-            == np.array([[1.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0]])
-        ).all()
-        assert extracted_layout.layout.region_list == [(0, 5, 0, 2)]
-
-    def test__parallel_extracted_mask(self):
-        layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 3), normalization=1.0, region_list=[(0, 5, 0, 3)]
-        )
-
-        array = ac.Array2D.manual(
-            array=[
-                [0.0, 1.0, 2.0],
-                [0.0, 1.0, 2.0],
-                [0.0, 1.0, 2.0],
-                [0.0, 1.0, 2.0],
-                [0.0, 1.0, 2.0],
-            ],
-            layout=layout,
-            pixel_scales=1.0,
-        )
-
-        mask = ac.ci.Mask2DCI.unmasked(shape_native=(5, 3), pixel_scales=1.0)
-
-        mask[0, 1] = True
-
-        extracted_mask = layout.mask_for_parallel_calibration_from(mask, columns=(1, 3))
-
-        assert (
-            extracted_mask
-            == np.array(
-                [
-                    [True, False],
-                    [False, False],
-                    [False, False],
-                    [False, False],
-                    [False, False],
-                ]
-            )
-        ).all()

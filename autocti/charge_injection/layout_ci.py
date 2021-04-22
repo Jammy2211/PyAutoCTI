@@ -934,7 +934,7 @@ class AbstractLayout2DCI(lo.Layout2D):
 
         return new_array
 
-    def array_for_parallel_calibration_from(
+    def array_2d_for_parallel_calibration_from(
         self, array: array_2d.Array2D, columns: Tuple[int, int]
     ):
         """
