@@ -1006,7 +1006,7 @@ class AbstractLayout2DCI(lo.Layout2D):
             mask=mask[extraction_region.slice], pixel_scales=mask.pixel_scales
         )
 
-    def extract_serial_trails_array_from(self, array: array_2d.Array2D):
+    def array_2d_of_serial_trails_from(self, array: array_2d.Array2D):
         """Extract an arrays of all of the serial trails in the serial overscan region, that are to the side of a
         charge-injection scans from a charge injection array_ci.
 
@@ -1053,11 +1053,11 @@ class AbstractLayout2DCI(lo.Layout2D):
                <---------S----------
         """
         array = self.serial_edges_and_trails_array(
-            array=array, trails_columns=(0, array.layout.serial_overscan.total_columns)
+            array=array, trails_columns=(0, self.serial_overscan.total_columns)
         )
         return array
 
-    def serial_overscan_no_trails_array_from(self, array: array_2d.Array2D):
+    def array_2d_of_serial_overscan_above_trails_from(self, array: array_2d.Array2D):
         """
         Extract an arrays of all of the scans of the serial overscan that don't contain trails from a
         charge injection region (i.e. are not to the side of one).
@@ -1105,14 +1105,13 @@ class AbstractLayout2DCI(lo.Layout2D):
                <---------S----------
         """
         new_array = array.native.copy() * 0.0
-        overscan_slice = array.layout.serial_overscan.slice
 
-        new_array[overscan_slice] = array[overscan_slice]
+        new_array[self.serial_overscan.slice] = array.native[self.serial_overscan.slice]
 
         trails_region_list = list(
             map(
-                lambda ci_region: array.serial_trails_of_region(
-                    ci_region, (0, array.layout.serial_overscan.total_columns)
+                lambda ci_region: ci_region.serial_trails_region_from(
+                    (0, self.serial_overscan.total_columns)
                 ),
                 self.region_list,
             )
@@ -1187,7 +1186,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         trails_columns : (int, int)
             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
-        new_array = array.copy() * 0.0
+        new_array = array.native.copy() * 0.0
 
         if front_edge_columns is not None:
 
@@ -1211,14 +1210,16 @@ class AbstractLayout2DCI(lo.Layout2D):
 
             trails_region_list = list(
                 map(
-                    lambda ci_region: array.serial_trails_of_region(
-                        ci_region, trails_columns
+                    lambda ci_region: ci_region.serial_trails_region_from(
+                        trails_columns
                     ),
                     self.region_list,
                 )
             )
 
-            trails = self.serial_trails_arrays_from(columns=trails_columns)
+            trails = self.extractor_serial_trails.array_2d_list_from(
+                array=array, columns=trails_columns
+            )
 
             for i, region in enumerate(trails_region_list):
                 new_array[region.y0 : region.y1, region.x0 : region.x1] += trails[i]
@@ -1282,23 +1283,13 @@ class AbstractLayout2DCI(lo.Layout2D):
         # TODO : specific case for now.
 
         serial_prescan = (
-            (
-                0,
-                array.shape[0],
-                array.layout.serial_prescan[2],
-                array.layout.serial_prescan[3],
-            )
-            if array.layout.serial_prescan is not None
+            (0, array.shape[0], self.serial_prescan[2], self.serial_prescan[3])
+            if self.serial_prescan is not None
             else None
         )
         serial_overscan = (
-            (
-                0,
-                array.shape[0],
-                array.layout.serial_overscan[2],
-                array.layout.serial_overscan[3],
-            )
-            if array.layout.serial_overscan is not None
+            (0, array.shape[0], self.serial_overscan[2], self.serial_overscan[3])
+            if self.serial_overscan is not None
             else None
         )
 

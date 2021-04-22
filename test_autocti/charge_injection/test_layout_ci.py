@@ -958,6 +958,170 @@ class TestAbstractLayout2DCI(object):
             )
         ).all()
 
+    def test__array_2d_of_serial_trails_from(self):
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(4, 3),
+            normalization=10.0,
+            region_list=[(0, 4, 0, 2)],
+            serial_overscan=(0, 4, 2, 3),
+        )
+
+        array = ac.Array2D.manual(
+            array=[
+                [0.0, 1.0, 2.0],
+                [3.0, 4.0, 5.0],
+                [6.0, 7.0, 8.0],
+                [9.0, 10.0, 11.0],
+            ],
+            pixel_scales=1.0,
+        )
+
+        new_array = layout.array_2d_of_serial_trails_from(array=array)
+
+        assert (
+            new_array
+            == np.array(
+                [[0.0, 0.0, 2.0], [0.0, 0.0, 5.0], [0.0, 0.0, 8.0], [0.0, 0.0, 11.0]]
+            )
+        ).all()
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(4, 4),
+            normalization=10.0,
+            region_list=[(0, 4, 0, 2)],
+            serial_overscan=(0, 4, 2, 4),
+        )
+
+        array = ac.Array2D.manual(
+            array=[
+                [0.0, 1.0, 2.0, 0.5],
+                [3.0, 4.0, 5.0, 0.5],
+                [6.0, 7.0, 8.0, 0.5],
+                [9.0, 10.0, 11.0, 0.5],
+            ],
+            pixel_scales=1.0,
+        )
+
+        new_array = layout.array_2d_of_serial_trails_from(array=array)
+
+        assert (
+            new_array
+            == np.array(
+                [
+                    [0.0, 0.0, 2.0, 0.5],
+                    [0.0, 0.0, 5.0, 0.5],
+                    [0.0, 0.0, 8.0, 0.5],
+                    [0.0, 0.0, 11.0, 0.5],
+                ]
+            )
+        ).all()
+
+    def test__array_2d_of_serial_overscan_above_trails_from(self,):
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(5, 4),
+            normalization=10.0,
+            region_list=[(1, 2, 1, 3), (3, 4, 1, 3)],
+            serial_prescan=(0, 5, 0, 1),
+            serial_overscan=(0, 5, 3, 4),
+        )
+
+        array = ac.Array2D.manual(
+            array=[
+                [0.0, 1.0, 2.0, 3.0],
+                [4.0, 5.0, 6.0, 7.0],
+                [8.0, 9.0, 10.0, 11.0],
+                [12.0, 13.0, 14.0, 15.0],
+                [16.0, 17.0, 18.0, 19.0],
+            ],
+            pixel_scales=1.0,
+        )
+
+        new_array = layout.array_2d_of_serial_overscan_above_trails_from(array=array)
+
+        assert (
+            new_array
+            == np.array(
+                [
+                    [0.0, 0.0, 0.0, 3.0],
+                    [0.0, 0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0, 11.0],
+                    [0.0, 0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0, 19.0],
+                ]
+            )
+        ).all()
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(4, 4),
+            normalization=10.0,
+            region_list=[(0, 1, 0, 2), (2, 3, 0, 2)],
+            serial_overscan=(0, 4, 2, 4),
+        )
+
+        array = ac.Array2D.manual(
+            array=[
+                [0.0, 1.0, 2.0, 0.5],
+                [3.0, 4.0, 5.0, 0.5],
+                [6.0, 7.0, 8.0, 0.5],
+                [9.0, 10.0, 11.0, 0.5],
+            ],
+            pixel_scales=1.0,
+        )
+
+        new_array = layout.array_2d_of_serial_overscan_above_trails_from(array=array)
+
+        assert (
+            new_array
+            == np.array(
+                [
+                    [0.0, 0.0, 0.0, 0.0],
+                    [0.0, 0.0, 5.0, 0.5],
+                    [0.0, 0.0, 0.0, 0.0],
+                    [0.0, 0.0, 11.0, 0.5],
+                ]
+            )
+        ).all()
+
+    def test__1_ci_region__serial_trails_go_over_hand_columns(self):
+        layout = ac.ci.Layout2DCIUniform(normalization=10.0, region_list=[(1, 3, 1, 2)])
+
+        array = ac.Array2D.manual(
+            array=[[0.0, 1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0], [8.0, 9.0, 10.0, 11.0]],
+            layout_ci=layout,
+            scans=ac.Scans(serial_prescan=(0, 3, 0, 1), serial_overscan=(0, 3, 2, 4)),
+            pixel_scales=1.0,
+        )
+
+        new_array = layout.serial_overscan_no_trails_frame_from
+
+        assert (
+            new_array
+            == np.array(
+                [[0.0, 0.0, 2.0, 3.0], [0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0]]
+            )
+        ).all()
+        assert new_layout.layout_ci.region_list == [(1, 3, 1, 2)]
+
+        layout = ac.ci.Layout2DCIUniform(normalization=10.0, region_list=[(1, 3, 1, 3)])
+
+        array = ac.Array2D.manual(
+            array=[[0.0, 1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0], [8.0, 9.0, 10.0, 11.0]],
+            layout_ci=layout,
+            scans=ac.Scans(serial_prescan=(0, 3, 0, 1), serial_overscan=(0, 3, 3, 4)),
+            pixel_scales=1.0,
+        )
+
+        new_array = layout.serial_overscan_no_trails_frame_from
+
+        assert (
+            new_array
+            == np.array(
+                [[0.0, 0.0, 0.0, 3.0], [0.0, 0.0, 0.0, 0.0], [0.0, 0.0, 0.0, 0.0]]
+            )
+        ).all()
+        assert new_layout.layout_ci.region_list == [(1, 3, 1, 3)]
+
 
 class TestLayout2DCIUniform(object):
     def test__pre_cti_ci_from_shape_native__image_3x3__1_ci_region(self):
