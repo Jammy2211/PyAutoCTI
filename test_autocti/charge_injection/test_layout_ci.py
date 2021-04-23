@@ -942,7 +942,7 @@ class TestAbstractLayout2DCI(object):
             new_array
             == np.array(
                 [
-                    [0.0, 1.0, 2.0],
+                    [0.0, 0.0, 0.0],
                     [1.0, 1.0, 1.0],
                     [0.0, 0.0, 0.0],
                     [3.0, 3.0, 3.0],
@@ -1789,6 +1789,7 @@ class TestRegionCIFrom:
             serial_prescan_size=1,
             serial_size=10,
             serial_overscan_size=1,
+            roe_corner=(1, 0),
         )
 
         assert region_list_ci == [(0, 10, 1, 9)]
@@ -1801,6 +1802,7 @@ class TestRegionCIFrom:
             serial_prescan_size=2,
             serial_size=11,
             serial_overscan_size=4,
+            roe_corner=(1, 0),
         )
 
         assert region_list_ci == [(0, 10, 2, 7), (20, 30, 2, 7)]
@@ -1813,6 +1815,7 @@ class TestRegionCIFrom:
             serial_prescan_size=2,
             serial_size=11,
             serial_overscan_size=4,
+            roe_corner=(1, 0),
         )
 
         assert region_list_ci == [(0, 5, 2, 7), (15, 20, 2, 7), (30, 35, 2, 7)]
@@ -1825,6 +1828,7 @@ class TestRegionCIFrom:
             serial_prescan_size=51,
             serial_size=2128,
             serial_overscan_size=29,
+            roe_corner=(1, 0),
         )
 
         assert region_list_ci == [
