@@ -158,7 +158,7 @@ def make_ci_cosmic_ray_map_7x7():
     )
 
 
-def make_ci_noise_scaling_maps_7x7():
+def make_ci_noise_scaling_map_list_7x7():
 
     return [
         array_2d.Array2D.ones(
@@ -183,7 +183,7 @@ def make_imaging_ci_7x7():
         noise_map=make_ci_noise_map_7x7(),
         pre_cti_ci=make_pre_cti_ci_7x7(),
         cosmic_ray_map=make_ci_cosmic_ray_map_7x7(),
-        noise_scaling_maps=make_ci_noise_scaling_maps_7x7(),
+        noise_scaling_map_list=make_ci_noise_scaling_map_list_7x7(),
         layout_ci=make_layout_ci_7x7(),
     )
 

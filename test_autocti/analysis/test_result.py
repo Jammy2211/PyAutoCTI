@@ -91,7 +91,7 @@ class TestResultImagingCI:
             == np.full(fill_value=False, shape=(7, 7))
         ).all()
 
-    def test__noise_scaling_maps_list_of_result__are_correct(
+    def test__noise_scaling_map_list_list_of_result__are_correct(
         self,
         imaging_ci_7x7,
         mask_2d_7x7_unmasked,
@@ -102,12 +102,12 @@ class TestResultImagingCI:
         ccd,
     ):
 
-        noise_scaling_maps_list_of_regions_ci = [
+        noise_scaling_map_list_list_of_regions_ci = [
             ac.ci.CIFrame.ones(
                 shape_native=(7, 7), pixel_scales=1.0, layout_ci=layout_ci_7x7
             )
         ]
-        noise_scaling_maps_list_of_parallel_trails = [
+        noise_scaling_map_list_list_of_parallel_trails = [
             ac.ci.CIFrame.full(
                 fill_value=2.0,
                 shape_native=(7, 7),
@@ -115,7 +115,7 @@ class TestResultImagingCI:
                 layout_ci=layout_ci_7x7,
             )
         ]
-        noise_scaling_maps_list_of_serial_trails = [
+        noise_scaling_map_list_list_of_serial_trails = [
             ac.ci.CIFrame.full(
                 fill_value=3.0,
                 shape_native=(7, 7),
@@ -123,7 +123,7 @@ class TestResultImagingCI:
                 layout_ci=layout_ci_7x7,
             )
         ]
-        noise_scaling_maps_list_of_serial_overscan_no_trails = [
+        noise_scaling_map_list_list_of_serial_overscan_no_trails = [
             ac.ci.CIFrame.full(
                 fill_value=4.0,
                 shape_native=(7, 7),
@@ -132,11 +132,11 @@ class TestResultImagingCI:
             )
         ]
 
-        imaging_ci_7x7.noise_scaling_maps = [
-            noise_scaling_maps_list_of_regions_ci[0],
-            noise_scaling_maps_list_of_parallel_trails[0],
-            noise_scaling_maps_list_of_serial_trails[0],
-            noise_scaling_maps_list_of_serial_overscan_no_trails[0],
+        imaging_ci_7x7.noise_scaling_map_list = [
+            noise_scaling_map_list_list_of_regions_ci[0],
+            noise_scaling_map_list_list_of_parallel_trails[0],
+            noise_scaling_map_list_list_of_serial_trails[0],
+            noise_scaling_map_list_list_of_serial_overscan_no_trails[0],
         ]
 
         masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
@@ -153,31 +153,33 @@ class TestResultImagingCI:
             samples=samples_with_result, analysis=analysis, model=None, search=None
         )
 
-        assert result.noise_scaling_maps_list_of_regions_ci[0] == pytest.approx(
+        assert result.noise_scaling_map_list_list_of_regions_ci[0] == pytest.approx(
             fit_list[0].chi_squared_map.extract_frame_of_regions_ci_from, 1.0e-2
         )
-        assert result.noise_scaling_maps_list_of_parallel_trails[0] == pytest.approx(
+        assert result.noise_scaling_map_list_list_of_parallel_trails[
+            0
+        ] == pytest.approx(
             fit_list[0].chi_squared_map.extract_frame_of_parallel_trails_from, 1.0e-2
         )
-        assert result.noise_scaling_maps_list_of_serial_trails[0] == pytest.approx(
+        assert result.noise_scaling_map_list_list_of_serial_trails[0] == pytest.approx(
             fit_list[0].chi_squared_map.serial_trails_frame_from, 1.0e-2
         )
-        assert result.noise_scaling_maps_list_of_serial_overscan_no_trails[
+        assert result.noise_scaling_map_list_list_of_serial_overscan_no_trails[
             0
         ] == pytest.approx(
             fit_list[0].chi_squared_map.serial_overscan_no_trails_frame_from, 1.0e-2
         )
 
-        assert result.noise_scaling_maps_list_of_regions_ci[0][1, 1] == pytest.approx(
-            16.25, 1.0e-1
-        )
-        assert result.noise_scaling_maps_list_of_parallel_trails[0][
+        assert result.noise_scaling_map_list_list_of_regions_ci[0][
+            1, 1
+        ] == pytest.approx(16.25, 1.0e-1)
+        assert result.noise_scaling_map_list_list_of_parallel_trails[0][
             1, 1
         ] == pytest.approx(0.0, 1.0e-4)
-        assert result.noise_scaling_maps_list_of_serial_trails[0][
+        assert result.noise_scaling_map_list_list_of_serial_trails[0][
             1, 1
         ] == pytest.approx(0.0, 1.0e-4)
-        assert result.noise_scaling_maps_list_of_serial_overscan_no_trails[0][
+        assert result.noise_scaling_map_list_list_of_serial_overscan_no_trails[0][
             1, 1
         ] == pytest.approx(0.0, 1.0e-4)
 
@@ -202,22 +204,24 @@ class TestResultImagingCI:
 
         fit_list = analysis.fits_from_instance(instance=instance)
 
-        assert result.noise_scaling_maps_list_of_regions_ci[0] != pytest.approx(
+        assert result.noise_scaling_map_list_list_of_regions_ci[0] != pytest.approx(
             fit_list[0].chi_squared_map.extract_frame_of_regions_ci_from, 1.0e-2
         )
-        assert result.noise_scaling_maps_list_of_parallel_trails[0] != pytest.approx(
+        assert result.noise_scaling_map_list_list_of_parallel_trails[
+            0
+        ] != pytest.approx(
             fit_list[0].chi_squared_map.extract_frame_of_parallel_trails_from, 1.0e-2
         )
-        assert result.noise_scaling_maps_list_of_serial_trails[0] != pytest.approx(
+        assert result.noise_scaling_map_list_list_of_serial_trails[0] != pytest.approx(
             fit_list[0].chi_squared_map.serial_trails_frame_from, 1.0e-2
         )
-        assert result.noise_scaling_maps_list_of_serial_overscan_no_trails[
+        assert result.noise_scaling_map_list_list_of_serial_overscan_no_trails[
             0
         ] != pytest.approx(
             fit_list[0].chi_squared_map.serial_overscan_no_trails_frame_from, 1.0e-2
         )
 
-    def test__noise_scaling_maps_are_setup_correctly(
+    def test__noise_scaling_map_list_are_setup_correctly(
         self,
         imaging_ci_7x7,
         mask_2d_7x7_unmasked,
@@ -240,41 +244,41 @@ class TestResultImagingCI:
         )
 
         assert (
-            result.noise_scaling_maps_list[0][0]
-            == result.noise_scaling_maps_list_of_regions_ci[0]
+            result.noise_scaling_map_list_list[0][0]
+            == result.noise_scaling_map_list_list_of_regions_ci[0]
         ).all()
 
         assert (
-            result.noise_scaling_maps_list[0][1]
-            == result.noise_scaling_maps_list_of_parallel_trails[0]
+            result.noise_scaling_map_list_list[0][1]
+            == result.noise_scaling_map_list_list_of_parallel_trails[0]
         ).all()
 
         assert (
-            result.noise_scaling_maps_list[0][2]
-            == result.noise_scaling_maps_list_of_serial_trails[0]
+            result.noise_scaling_map_list_list[0][2]
+            == result.noise_scaling_map_list_list_of_serial_trails[0]
         ).all()
 
         assert (
-            result.noise_scaling_maps_list[0][3]
-            == result.noise_scaling_maps_list_of_serial_overscan_no_trails[0]
+            result.noise_scaling_map_list_list[0][3]
+            == result.noise_scaling_map_list_list_of_serial_overscan_no_trails[0]
         ).all()
 
         assert (
-            result.noise_scaling_maps_list[1][0]
-            == result.noise_scaling_maps_list_of_regions_ci[1]
+            result.noise_scaling_map_list_list[1][0]
+            == result.noise_scaling_map_list_list_of_regions_ci[1]
         ).all()
 
         assert (
-            result.noise_scaling_maps_list[1][1]
-            == result.noise_scaling_maps_list_of_parallel_trails[1]
+            result.noise_scaling_map_list_list[1][1]
+            == result.noise_scaling_map_list_list_of_parallel_trails[1]
         ).all()
 
         assert (
-            result.noise_scaling_maps_list[1][2]
-            == result.noise_scaling_maps_list_of_serial_trails[1]
+            result.noise_scaling_map_list_list[1][2]
+            == result.noise_scaling_map_list_list_of_serial_trails[1]
         ).all()
 
         assert (
-            result.noise_scaling_maps_list[1][3]
-            == result.noise_scaling_maps_list_of_serial_overscan_no_trails[1]
+            result.noise_scaling_map_list_list[1][3]
+            == result.noise_scaling_map_list_list_of_serial_overscan_no_trails[1]
         ).all()

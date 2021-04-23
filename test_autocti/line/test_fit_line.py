@@ -70,7 +70,7 @@ class TestFitImagingCI:
             shape_native=(2, 2), layout_ci=layout_ci_7x7, pixel_scales=1.0
         )
 
-        noise_scaling_maps = [
+        noise_scaling_map_list = [
             ac.ci.CIFrame.zeros(
                 shape_native=(2, 2), layout_ci=layout_ci_7x7, pixel_scales=1.0
             ),
@@ -83,7 +83,7 @@ class TestFitImagingCI:
             image=image,
             noise_map=noise_map,
             pre_cti_ci=pre_cti_ci,
-            noise_scaling_maps=noise_scaling_maps,
+            noise_scaling_map_list=noise_scaling_map_list,
         )
 
         mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
@@ -125,7 +125,7 @@ class TestFitImagingCI:
             pixel_scales=1.0,
         )
 
-        noise_scaling_maps = [
+        noise_scaling_map_list = [
             ac.ci.CIFrame.manual(
                 array=[[0.0, 0.0], [0.0, 0.0]],
                 layout_ci=layout_ci_7x7,
@@ -137,7 +137,7 @@ class TestFitImagingCI:
             image=image,
             noise_map=noise_map,
             pre_cti_ci=pre_cti_ci,
-            noise_scaling_maps=noise_scaling_maps,
+            noise_scaling_map_list=noise_scaling_map_list,
         )
 
         mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
@@ -176,7 +176,7 @@ class TestFitImagingCI:
 
         hyper_noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
             noise_map=masked_imaging_ci_7x7.noise_map,
-            noise_scaling_maps=masked_imaging_ci_7x7.noise_scaling_maps,
+            noise_scaling_map_list=masked_imaging_ci_7x7.noise_scaling_map_list,
             hyper_noise_scalars=[hyper_noise_scalar_0, hyper_noise_scalar_1],
         )
 
@@ -214,7 +214,7 @@ class TestFitImagingCI:
 
 
 class TestHyperNoiseMap:
-    def test__image_and_pre_cti_not_identical__noise_scaling_maps_ares__no_noise_map_scaling(
+    def test__image_and_pre_cti_not_identical__noise_scaling_map_list_ares__no_noise_map_scaling(
         self, layout_ci_7x7
     ):
         noise_map = ac.ci.CIFrame.full(
@@ -223,7 +223,7 @@ class TestHyperNoiseMap:
             layout_ci=layout_ci_7x7,
             pixel_scales=1.0,
         )
-        noise_scaling_maps = [
+        noise_scaling_map_list = [
             ac.ci.CIFrame.manual(
                 array=[[0.0, 0.0], [0.0, 0.0]],
                 layout_ci=layout_ci_7x7,
@@ -235,7 +235,7 @@ class TestHyperNoiseMap:
         noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
             hyper_noise_scalars=hyper_noise_scalars,
             noise_map=noise_map,
-            noise_scaling_maps=noise_scaling_maps,
+            noise_scaling_map_list=noise_scaling_map_list,
         )
 
         assert (noise_map == (np.array([[2.0, 2.0], [2.0, 2.0]]))).all()
@@ -249,7 +249,7 @@ class TestHyperNoiseMap:
             layout_ci=layout_ci_7x7,
             pixel_scales=1.0,
         )
-        noise_scaling_maps = [
+        noise_scaling_map_list = [
             ac.ci.CIFrame.manual(
                 array=[[1.0, 2.0], [3.0, 4.0]],
                 layout_ci=layout_ci_7x7,
@@ -261,7 +261,7 @@ class TestHyperNoiseMap:
         noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
             hyper_noise_scalars=hyper_noise_scalars,
             noise_map=noise_map,
-            noise_scaling_maps=noise_scaling_maps,
+            noise_scaling_map_list=noise_scaling_map_list,
         )
 
         assert (noise_map == (np.array([[2.0, 2.0], [2.0, 2.0]]))).all()
@@ -275,7 +275,7 @@ class TestHyperNoiseMap:
             layout_ci=layout_ci_7x7,
             pixel_scales=1.0,
         )
-        noise_scaling_maps = [
+        noise_scaling_map_list = [
             ac.ci.CIFrame.manual(
                 array=[[1.0, 2.0], [3.0, 4.0]],
                 layout_ci=layout_ci_7x7,
@@ -287,7 +287,7 @@ class TestHyperNoiseMap:
         noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
             hyper_noise_scalars=hyper_noise_scalars,
             noise_map=noise_map,
-            noise_scaling_maps=noise_scaling_maps,
+            noise_scaling_map_list=noise_scaling_map_list,
         )
 
         assert (noise_map == (np.array([[3.0, 4.0], [5.0, 6.0]]))).all()
@@ -301,7 +301,7 @@ class TestHyperNoiseMap:
             layout_ci=layout_ci_7x7,
             pixel_scales=1.0,
         )
-        noise_scaling_maps = [
+        noise_scaling_map_list = [
             ac.ci.CIFrame.manual(
                 array=[[1.0, 2.0], [3.0, 4.0]],
                 layout_ci=layout_ci_7x7,
@@ -321,7 +321,7 @@ class TestHyperNoiseMap:
         noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
             hyper_noise_scalars=hyper_noise_scalars,
             noise_map=noise_map,
-            noise_scaling_maps=noise_scaling_maps,
+            noise_scaling_map_list=noise_scaling_map_list,
         )
 
         assert (noise_map == (np.array([[5.0, 8.0], [11.0, 14.0]]))).all()

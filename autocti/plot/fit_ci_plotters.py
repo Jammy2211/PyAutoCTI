@@ -300,7 +300,7 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         )
         self.close_subplot_figure()
 
-    def subplot_noise_scaling_maps(self):
+    def subplot_noise_scaling_map_list(self):
         """Plot the observed chi_squared_map of the ccd simulator.
 
         Set *autocti.simulator.plotter.plotter* for a description of all input parameters not described below.
@@ -311,17 +311,17 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
             The chi_squared_map of the dataset.
         """
 
-        self.open_subplot_figure(number_subplots=len(self.fit.noise_scaling_maps))
+        self.open_subplot_figure(number_subplots=len(self.fit.noise_scaling_map_list))
 
-        for index in range(len(self.fit.noise_scaling_maps)):
+        for index in range(len(self.fit.noise_scaling_map_list)):
 
             self.mat_plot_2d.plot_frame(
-                frame=self.fit.noise_scaling_maps[index],
+                frame=self.fit.noise_scaling_map_list[index],
                 visuals_2d=self.visuals_with_include_2d,
                 auto_labels=mp.AutoLabels(title=f"Noise Scaling Map {index}"),
             )
 
         self.mat_plot_2d.output.subplot_to_figure(
-            auto_filename=f"subplot_noise_scaling_maps"
+            auto_filename=f"subplot_noise_scaling_map_list"
         )
         self.mat_plot_2d.figure.close()

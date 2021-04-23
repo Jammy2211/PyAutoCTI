@@ -62,7 +62,7 @@ class ImagingCI(imaging.Imaging):
         pre_cti_ci: array_2d.Array2D,
         layout_ci: Union[lo.Layout2DCIUniform, lo.Layout2DCINonUniform],
         cosmic_ray_map: Optional[array_2d.Array2D] = None,
-        noise_scaling_maps: Optional[List[array_2d.Array2D]] = None,
+        noise_scaling_map_list: Optional[List[array_2d.Array2D]] = None,
         name=None,
     ):
 
@@ -71,8 +71,18 @@ class ImagingCI(imaging.Imaging):
         self.data = self.image.native
         self.noise_map = self.noise_map.native
         self.pre_cti_ci = pre_cti_ci.native
-        self.cosmic_ray_map = cosmic_ray_map.native
-        self.noise_scaling_maps = noise_scaling_maps
+
+        if cosmic_ray_map is not None:
+            cosmic_ray_map = cosmic_ray_map.native
+
+        self.cosmic_ray_map = cosmic_ray_map
+
+        if noise_scaling_map_list is not None:
+            noise_scaling_map_list = [
+                noise_scaling_map.native for noise_scaling_map in noise_scaling_map_list
+            ]
+
+        self.noise_scaling_map_list = noise_scaling_map_list
 
         self.layout_ci = layout_ci
 
@@ -94,14 +104,14 @@ class ImagingCI(imaging.Imaging):
 
             cosmic_ray_map = None
 
-        if self.noise_scaling_maps is not None:
+        if self.noise_scaling_map_list is not None:
 
-            noise_scaling_maps = [
+            noise_scaling_map_list = [
                 array_2d.Array2D.manual_mask(array=noise_scaling_map.native, mask=mask)
-                for noise_scaling_map in self.noise_scaling_maps
+                for noise_scaling_map in self.noise_scaling_map_list
             ]
         else:
-            noise_scaling_maps = None
+            noise_scaling_map_list = None
 
         return ImagingCI(
             image=image,
@@ -109,7 +119,7 @@ class ImagingCI(imaging.Imaging):
             pre_cti_ci=self.pre_cti_ci,
             layout_ci=self.layout_ci,
             cosmic_ray_map=cosmic_ray_map,
-            noise_scaling_maps=noise_scaling_maps,
+            noise_scaling_map_list=noise_scaling_map_list,
         )
 
     def apply_settings(self, settings):
@@ -122,7 +132,7 @@ class ImagingCI(imaging.Imaging):
                 columns=settings.parallel_columns
             )
 
-            mask = self.image.mask_for_parallel_calibration_from(
+            mask = self.layout_ci.mask_for_parallel_calibration_from(
                 mask=self.mask, columns=settings.parallel_columns
             )
 
@@ -132,7 +142,7 @@ class ImagingCI(imaging.Imaging):
                 rows=settings.serial_rows
             )
 
-            mask = self.image.mask_for_serial_calibration_from(
+            mask = self.layout_ci.mask_for_serial_calibration_from(
                 mask=self.mask, rows=settings.serial_rows
             )
 
@@ -167,18 +177,18 @@ class ImagingCI(imaging.Imaging):
             else None
         )
 
-        if self.noise_scaling_maps is not None:
+        if self.noise_scaling_map_list is not None:
 
-            noise_scaling_maps = [
+            noise_scaling_map_list = [
                 self.layout_ci.array_2d_for_parallel_calibration_from(
                     array=noise_scaling_map, columns=columns
                 )
-                for noise_scaling_map in self.noise_scaling_maps
+                for noise_scaling_map in self.noise_scaling_map_list
             ]
 
         else:
 
-            noise_scaling_maps = None
+            noise_scaling_map_list = None
 
         extraction_region = self.layout_ci.extraction_region_for_parallel_calibration_from(
             columns=columns
@@ -198,7 +208,7 @@ class ImagingCI(imaging.Imaging):
                 extraction_region=extraction_region
             ),
             cosmic_ray_map=cosmic_ray_map,
-            noise_scaling_maps=noise_scaling_maps,
+            noise_scaling_map_list=noise_scaling_map_list,
         )
 
     def serial_calibration_imaging_ci_for_rows(self, rows):
@@ -214,18 +224,18 @@ class ImagingCI(imaging.Imaging):
             else None
         )
 
-        if self.noise_scaling_maps is not None:
+        if self.noise_scaling_map_list is not None:
 
-            noise_scaling_maps = [
+            noise_scaling_map_list = [
                 self.layout_ci.array_2d_for_serial_calibration_from(
                     array=noise_scaling_map, rows=rows
                 )
-                for noise_scaling_map in self.noise_scaling_maps
+                for noise_scaling_map in self.noise_scaling_map_list
             ]
 
         else:
 
-            noise_scaling_maps = None
+            noise_scaling_map_list = None
 
         image = self.layout_ci.array_2d_for_serial_calibration_from(
             array=self.image, rows=rows
@@ -243,7 +253,7 @@ class ImagingCI(imaging.Imaging):
                 new_shape_2d=image.shape, rows=rows
             ),
             cosmic_ray_map=cosmic_ray_map,
-            noise_scaling_maps=noise_scaling_maps,
+            noise_scaling_map_list=noise_scaling_map_list,
         )
 
     @classmethod
@@ -337,11 +347,9 @@ class ImagingCI(imaging.Imaging):
 class SimulatorImagingCI(imaging.AbstractSimulatorImaging):
     def __init__(
         self,
-        shape_native,
         pixel_scales,
         read_noise=None,
         add_poisson_noise=False,
-        scans=None,
         noise_if_add_noise_false=0.1,
         noise_seed=-1,
         ci_seed=-1,
@@ -355,7 +363,7 @@ class SimulatorImagingCI(imaging.AbstractSimulatorImaging):
             The exposure time of an observation using this data_type.
         """
 
-        super(SimulatorImagingCI, self).__init__(
+        super().__init__(
             read_noise=read_noise,
             exposure_time=1.0,
             add_poisson_noise=add_poisson_noise,
@@ -363,8 +371,6 @@ class SimulatorImagingCI(imaging.AbstractSimulatorImaging):
             noise_seed=noise_seed,
         )
 
-        self.shape_native = shape_native
-        self.scans = scans
         self.pixel_scales = pixel_scales
         self.ci_seed = ci_seed
 
@@ -400,19 +406,19 @@ class SimulatorImagingCI(imaging.AbstractSimulatorImaging):
         noise_seed : int
             Seed for the read-noises added to the image.
         """
-        if isinstance(layout_ci, pattern.Layout2DCIUniform):
+        if isinstance(layout_ci, lo.Layout2DCIUniform):
             pre_cti_ci = layout_ci.pre_cti_ci_from(
-                shape_native=self.shape_native, pixel_scales=self.pixel_scales
+                shape_native=layout_ci.shape_2d, pixel_scales=self.pixel_scales
             )
         else:
             pre_cti_ci = layout_ci.pre_cti_ci_from(
-                shape_native=self.shape_native,
+                shape_native=layout_ci.shape_native,
                 ci_seed=self.ci_seed,
                 pixel_scales=self.pixel_scales,
             )
 
         return self.from_pre_cti_ci(
-            pre_cti_ci=pre_cti_ci,
+            pre_cti_ci=pre_cti_ci.native,
             layout_ci=layout_ci,
             clocker=clocker,
             parallel_traps=parallel_traps,
@@ -440,7 +446,7 @@ class SimulatorImagingCI(imaging.AbstractSimulatorImaging):
             pre_cti_ci += cosmic_ray_map
 
         post_cti_ci = clocker.add_cti(
-            image=pre_cti_ci,
+            image=pre_cti_ci.native,
             parallel_traps=parallel_traps,
             parallel_ccd=parallel_ccd,
             serial_traps=serial_traps,
@@ -463,35 +469,37 @@ class SimulatorImagingCI(imaging.AbstractSimulatorImaging):
             ci_image = preprocess.data_with_gaussian_noise_added(
                 data=post_cti_ci, sigma=self.read_noise, seed=self.noise_seed
             )
-            ci_noise_map = self.read_noise * np.ones(post_cti_ci.shape)
+            ci_noise_map = (
+                self.read_noise
+                * array_2d.Array2D.ones(
+                    shape_native=layout_ci.shape_2d, pixel_scales=self.pixel_scales
+                ).native
+            )
         else:
             ci_image = post_cti_ci
-            ci_noise_map = None
+            ci_noise_map = array_2d.Array2D.full(
+                fill_value=self.noise_if_add_noise_false,
+                shape_native=layout_ci.shape_2d,
+                pixel_scales=self.pixel_scales,
+            ).native
+
+        if cosmic_ray_map is not None:
+
+            cosmic_ray_map = array_2d.Array2D.manual(
+                array=cosmic_ray_map, pixel_scales=self.pixel_scales
+            )
 
         return ImagingCI(
             image=array_2d.Array2D.manual(
-                array=ci_image,
-                layout_ci=layout_ci,
-                scans=self.scans,
-                pixel_scales=self.pixel_scales,
+                array=ci_image.native, pixel_scales=self.pixel_scales
             ),
             noise_map=array_2d.Array2D.manual(
-                array=ci_noise_map,
-                layout_ci=layout_ci,
-                scans=self.scans,
-                pixel_scales=self.pixel_scales,
+                array=ci_noise_map, pixel_scales=self.pixel_scales
             ),
             pre_cti_ci=array_2d.Array2D.manual(
-                array=pre_cti_ci,
-                layout_ci=layout_ci,
-                scans=self.scans,
-                pixel_scales=self.pixel_scales,
+                array=pre_cti_ci.native, pixel_scales=self.pixel_scales
             ),
-            cosmic_ray_map=array_2d.Array2D.manual(
-                array=cosmic_ray_map,
-                layout_ci=layout_ci,
-                scans=self.scans,
-                pixel_scales=self.pixel_scales,
-            ),
+            cosmic_ray_map=cosmic_ray_map,
+            layout_ci=layout_ci,
             name=name,
         )

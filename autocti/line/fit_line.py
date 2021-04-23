@@ -18,18 +18,18 @@ class FitImagingCI(fit.FitImaging):
         post_cti_ci
             The `pre_cti_ci` with cti added to it via the clocker and a CTI model.
         hyper_noise_scalars :
-            The hyper_ci-parameter(s) which the noise_scaling_maps_list is multiplied by to scale the noise-map.
+            The hyper_ci-parameter(s) which the noise_scaling_map_list_list is multiplied by to scale the noise-map.
         """
 
         self.hyper_noise_scalars = hyper_noise_scalars
 
         if hyper_noise_scalars is not None and len(hyper_noise_scalars) > 0:
 
-            self.noise_scaling_maps = imaging_ci.noise_scaling_maps
+            self.noise_scaling_map_list = imaging_ci.noise_scaling_map_list
 
             noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
                 hyper_noise_scalars=hyper_noise_scalars,
-                noise_scaling_maps=imaging_ci.noise_scaling_maps,
+                noise_scaling_map_list=imaging_ci.noise_scaling_map_list,
                 noise_map=imaging_ci.noise_map,
             )
 
@@ -67,14 +67,14 @@ class FitImagingCI(fit.FitImaging):
 
 
 def hyper_noise_map_from_noise_map_and_noise_scalings(
-    hyper_noise_scalars, noise_scaling_maps, noise_map
+    hyper_noise_scalars, noise_scaling_map_list, noise_map
 ):
     """For a noise-map, use the model hyper noise and noise-scaling maps to compute a scaled noise-map.
 
     Parameters
     -----------
     hyper_noise_scalars
-    noise_scaling_maps
+    noise_scaling_map_list
     noise_map : imaging.NoiseMap or ndarray
         An arrays describing the RMS standard deviation error in each pixel, preferably in units of electrons per
         second.
@@ -85,7 +85,7 @@ def hyper_noise_map_from_noise_map_and_noise_scalings(
                 noise_scaling_map
             ),
             hyper_noise_scalars,
-            noise_scaling_maps,
+            noise_scaling_map_list,
         )
     )
 

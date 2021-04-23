@@ -141,13 +141,15 @@ class TestAnalysisImagingCI:
             ),
         )
 
-        noise_scaling_maps_list_of_regions_ci = [
+        noise_scaling_map_list_list_of_regions_ci = [
             ac.ci.CIFrame.ones(
                 shape_native=(7, 7), pixel_scales=1.0, layout_ci=layout_ci_7x7
             )
         ]
 
-        imaging_ci_7x7.noise_scaling_maps = [noise_scaling_maps_list_of_regions_ci[0]]
+        imaging_ci_7x7.noise_scaling_map_list = [
+            noise_scaling_map_list_list_of_regions_ci[0]
+        ]
 
         masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
         masked_imaging_ci = masked_imaging_ci.apply_settings(

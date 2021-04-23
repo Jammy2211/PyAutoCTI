@@ -162,8 +162,10 @@ def test__fit_ci_subplots_are_output(fit_ci_7x7, plot_path, plot_patch):
         in plot_patch.paths
     )
 
-    fit_ci_plotter.subplot_noise_scaling_maps()
-    assert path.join(plot_path, "subplot_noise_scaling_maps.png") in plot_patch.paths
+    fit_ci_plotter.subplot_noise_scaling_map_list()
+    assert (
+        path.join(plot_path, "subplot_noise_scaling_map_list.png") in plot_patch.paths
+    )
 
     # fit_ci_plotter.subplot_residual_maps(
     #     fits=[fit_ci_7x7],

@@ -16,10 +16,10 @@ class MockResult(mock.MockResult):
         search=None,
         mask=None,
         model_image=None,
-        noise_scaling_maps_list_of_regions_ci=None,
-        noise_scaling_maps_list_of_parallel_trails=None,
-        noise_scaling_maps_list_of_serial_trails=None,
-        noise_scaling_maps_list_of_serial_overscan_no_trails=None,
+        noise_scaling_map_list_list_of_regions_ci=None,
+        noise_scaling_map_list_list_of_parallel_trails=None,
+        noise_scaling_map_list_list_of_serial_trails=None,
+        noise_scaling_map_list_list_of_serial_overscan_no_trails=None,
         use_as_hyper_dataset=False,
     ):
 
@@ -37,17 +37,17 @@ class MockResult(mock.MockResult):
         self.positions = None
         self.mask = mask
         self.model_image = model_image
-        self.noise_scaling_maps_list_of_regions_ci = (
-            noise_scaling_maps_list_of_regions_ci
+        self.noise_scaling_map_list_list_of_regions_ci = (
+            noise_scaling_map_list_list_of_regions_ci
         )
-        self.noise_scaling_maps_list_of_parallel_trails = (
-            noise_scaling_maps_list_of_parallel_trails
+        self.noise_scaling_map_list_list_of_parallel_trails = (
+            noise_scaling_map_list_list_of_parallel_trails
         )
-        self.noise_scaling_maps_list_of_serial_trails = (
-            noise_scaling_maps_list_of_serial_trails
+        self.noise_scaling_map_list_list_of_serial_trails = (
+            noise_scaling_map_list_list_of_serial_trails
         )
-        self.noise_scaling_maps_list_of_serial_overscan_no_trails = (
-            noise_scaling_maps_list_of_serial_overscan_no_trails
+        self.noise_scaling_map_list_list_of_serial_overscan_no_trails = (
+            noise_scaling_map_list_list_of_serial_overscan_no_trails
         )
         self.hyper_combined = MockHyperCombinedPhase()
         self.use_as_hyper_dataset = use_as_hyper_dataset
@@ -67,10 +67,10 @@ class MockResults(ResultsCollection):
         search=None,
         mask=None,
         model_image=None,
-        noise_scaling_maps_list_of_regions_ci=None,
-        noise_scaling_maps_list_of_parallel_trails=None,
-        noise_scaling_maps_list_of_serial_trails=None,
-        noise_scaling_maps_list_of_serial_overscan_no_trails=None,
+        noise_scaling_map_list_list_of_regions_ci=None,
+        noise_scaling_map_list_list_of_parallel_trails=None,
+        noise_scaling_map_list_list_of_serial_trails=None,
+        noise_scaling_map_list_list_of_serial_overscan_no_trails=None,
         use_as_hyper_dataset=False,
     ):
         """
@@ -88,10 +88,10 @@ class MockResults(ResultsCollection):
             search=search,
             mask=mask,
             model_image=model_image,
-            noise_scaling_maps_list_of_regions_ci=noise_scaling_maps_list_of_regions_ci,
-            noise_scaling_maps_list_of_parallel_trails=noise_scaling_maps_list_of_parallel_trails,
-            noise_scaling_maps_list_of_serial_trails=noise_scaling_maps_list_of_serial_trails,
-            noise_scaling_maps_list_of_serial_overscan_no_trails=noise_scaling_maps_list_of_serial_overscan_no_trails,
+            noise_scaling_map_list_list_of_regions_ci=noise_scaling_map_list_list_of_regions_ci,
+            noise_scaling_map_list_list_of_parallel_trails=noise_scaling_map_list_list_of_parallel_trails,
+            noise_scaling_map_list_list_of_serial_trails=noise_scaling_map_list_list_of_serial_trails,
+            noise_scaling_map_list_list_of_serial_overscan_no_trails=noise_scaling_map_list_list_of_serial_overscan_no_trails,
             use_as_hyper_dataset=use_as_hyper_dataset,
         )
 
