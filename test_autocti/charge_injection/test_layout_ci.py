@@ -552,34 +552,6 @@ class TestExtractorSerialTrails:
 
 
 class TestAbstractLayout2DCI(object):
-    def test__rows_between_region_list(self):
-
-        layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 5), normalization=1.0, region_list=[(1, 2, 1, 2)]
-        )
-
-        assert layout.rows_between_regions == []
-
-        layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 5), normalization=1.0, region_list=[(1, 2, 1, 2), (3, 4, 3, 4)]
-        )
-
-        assert layout.rows_between_regions == [1]
-
-        layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 5), normalization=1.0, region_list=[(1, 2, 1, 2), (4, 5, 3, 4)]
-        )
-
-        assert layout.rows_between_regions == [2]
-
-        layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(10, 10),
-            normalization=1.0,
-            region_list=[(1, 2, 1, 2), (4, 5, 3, 4), (8, 9, 3, 4)],
-        )
-
-        assert layout.rows_between_regions == [2, 3]
-
     def test__check_layout_dimensions__layout_has_more_rows_than_image__1_region(self):
 
         with pytest.raises(exc.Layout2DCIException):
@@ -625,6 +597,100 @@ class TestAbstractLayout2DCI(object):
             ac.ci.Layout2DCIUniform(
                 shape_2d=(3, 3), normalization=1.0, region_list=([(0, 0, 0, -1)])
             )
+
+    def test__rows_between_region_list(self):
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(5, 5), normalization=1.0, region_list=[(1, 2, 1, 2)]
+        )
+
+        assert layout.rows_between_regions == []
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(5, 5), normalization=1.0, region_list=[(1, 2, 1, 2), (3, 4, 3, 4)]
+        )
+
+        assert layout.rows_between_regions == [1]
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(5, 5), normalization=1.0, region_list=[(1, 2, 1, 2), (4, 5, 3, 4)]
+        )
+
+        assert layout.rows_between_regions == [2]
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(10, 10),
+            normalization=1.0,
+            region_list=[(1, 2, 1, 2), (4, 5, 3, 4), (8, 9, 3, 4)],
+        )
+
+        assert layout.rows_between_regions == [2, 3]
+
+    def test__serial_trails_columns(self, layout_ci_7x7):
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(10, 10),
+            normalization=10.0,
+            region_list=[(1, 2, 1, 2)],
+            serial_overscan=ac.Region2D((0, 1, 0, 10)),
+            serial_prescan=ac.Region2D((0, 1, 0, 1)),
+            parallel_overscan=ac.Region2D((0, 1, 0, 1)),
+        )
+
+        assert layout.serial_trails_columns == 10
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(50, 50),
+            normalization=10.0,
+            region_list=[(1, 2, 1, 2)],
+            serial_overscan=ac.Region2D((0, 1, 0, 50)),
+            serial_prescan=ac.Region2D((0, 1, 0, 1)),
+            parallel_overscan=ac.Region2D((0, 1, 0, 1)),
+        )
+
+        assert layout.serial_trails_columns == 50
+
+    def test__parallel_trail_size_to_array_edge(self):
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(5, 100),
+            normalization=1.0,
+            region_list=[ac.Region2D(region=(0, 3, 0, 3))],
+        )
+
+        assert layout.parallel_trail_size_to_array_edge == 2
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(7, 100),
+            normalization=1.0,
+            region_list=[ac.Region2D(region=(0, 3, 0, 3))],
+        )
+
+        assert layout.parallel_trail_size_to_array_edge == 4
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(15, 100),
+            normalization=1.0,
+            region_list=[
+                ac.Region2D(region=(0, 2, 0, 3)),
+                ac.Region2D(region=(5, 8, 0, 3)),
+                ac.Region2D(region=(11, 14, 0, 3)),
+            ],
+        )
+
+        assert layout.parallel_trail_size_to_array_edge == 1
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(20, 100),
+            normalization=1.0,
+            region_list=[
+                ac.Region2D(region=(0, 2, 0, 3)),
+                ac.Region2D(region=(5, 8, 0, 3)),
+                ac.Region2D(region=(11, 14, 0, 3)),
+            ],
+        )
+
+        assert layout.parallel_trail_size_to_array_edge == 6
 
     def test__with_extracted_regions__region_list_are_extracted_correctly(self):
 
@@ -1357,6 +1423,24 @@ class TestAbstractLayout2DCI(object):
                 [[False, True, False, False, False], [False, False, False, True, False]]
             )
         ).all()
+
+    def test__smallest_parallel_trails_rows_to_frame_edge(self,):
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(10, 5),
+            normalization=10.0,
+            region_list=[(0, 3, 0, 3), (5, 7, 0, 3)],
+        )
+
+        assert layout.smallest_parallel_trails_rows_to_array_edge == 2
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(8, 5),
+            normalization=10.0,
+            region_list=[(0, 3, 0, 3), (5, 7, 0, 3)],
+        )
+
+        assert layout.smallest_parallel_trails_rows_to_array_edge == 1
 
 
 class TestLayout2DCIUniform(object):

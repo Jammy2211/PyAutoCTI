@@ -709,6 +709,18 @@ class AbstractLayout2DCI(lo.Layout2D):
             for i in range(len(self.region_list) - 1)
         ]
 
+    @property
+    def smallest_parallel_trails_rows_to_array_edge(self):
+
+        rows_between_regions = self.rows_between_regions
+        rows_between_regions.append(self.parallel_trail_size_to_array_edge)
+        return np.min(rows_between_regions)
+
+    @property
+    def parallel_trail_size_to_array_edge(self):
+
+        return self.shape_2d[0] - np.max([region.y1 for region in self.region_list])
+
     def array_2d_of_regions_from(self, array: array_2d.Array2D) -> array_2d.Array2D:
         """
         Extract all of the charge-injection regions from an input `array2D` object and returns them as a new `array2D`
@@ -1401,18 +1413,6 @@ class AbstractLayout2DCI(lo.Layout2D):
             mask=np.concatenate(calibration_masks, axis=0),
             pixel_scales=mask.pixel_scales,
         )
-
-    @property
-    def smallest_parallel_trails_rows_to_array_edge(self):
-
-        rows_between_regions = self.rows_between_regions
-        rows_between_regions.append(self.parallel_trail_size_to_array_edge)
-        return np.min(rows_between_regions)
-
-    @property
-    def parallel_trail_size_to_array_edge(self):
-
-        return self.shape_2d[0] - np.max([region.y1 for region in self.region_list])
 
     def with_extracted_regions(self, extraction_region):
 
