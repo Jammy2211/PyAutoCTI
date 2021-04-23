@@ -184,6 +184,7 @@ def make_imaging_ci_7x7():
         pre_cti_ci=make_pre_cti_ci_7x7(),
         cosmic_ray_map=make_ci_cosmic_ray_map_7x7(),
         noise_scaling_maps=make_ci_noise_scaling_maps_7x7(),
+        layout_ci=make_layout_ci_7x7(),
     )
 
 

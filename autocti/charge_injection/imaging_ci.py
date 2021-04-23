@@ -4,9 +4,11 @@ import numpy as np
 from autoarray.structures.arrays.two_d import array_2d
 from autoarray.structures.arrays.two_d import array_2d_util
 from autoarray.dataset import preprocess, imaging
-from autocti.charge_injection import layout_ci as pattern
+from autocti.charge_injection import layout_ci as lo
 from autocti.mask import mask_2d
 from autocti import exc
+
+from typing import Union, Optional, List
 
 
 class SettingsImagingCI(imaging.SettingsImaging):
@@ -55,11 +57,12 @@ class SettingsImagingCI(imaging.SettingsImaging):
 class ImagingCI(imaging.Imaging):
     def __init__(
         self,
-        image,
-        noise_map,
-        pre_cti_ci,
-        cosmic_ray_map=None,
-        noise_scaling_maps=None,
+        image: array_2d.Array2D,
+        noise_map: array_2d.Array2D,
+        pre_cti_ci: array_2d.Array2D,
+        layout_ci: Union[lo.Layout2DCIUniform, lo.Layout2DCINonUniform],
+        cosmic_ray_map: Optional[array_2d.Array2D] = None,
+        noise_scaling_maps: Optional[List[array_2d.Array2D]] = None,
         name=None,
     ):
 
@@ -69,9 +72,11 @@ class ImagingCI(imaging.Imaging):
         self.cosmic_ray_map = cosmic_ray_map
         self.noise_scaling_maps = noise_scaling_maps
 
+        self.layout_ci = layout_ci
+
         self.imaging_ci_full = self
 
-    def apply_mask(self, mask: mask_2d.Mask2D):
+    def apply_mask(self, mask: mask_2d.Mask2D) -> "ImagingCI":
 
         image = array_2d.Array2D.from_frame_ci(frame_ci=self.image, mask=mask)
         noise_map = array_2d.Array2D.from_frame_ci(frame_ci=self.noise_map, mask=mask)
@@ -98,6 +103,7 @@ class ImagingCI(imaging.Imaging):
             image=image,
             noise_map=noise_map,
             pre_cti_ci=self.pre_cti_ci,
+            layout_ci=self.layout_ci,
             cosmic_ray_map=cosmic_ray_map,
             noise_scaling_maps=noise_scaling_maps,
         )
@@ -108,7 +114,7 @@ class ImagingCI(imaging.Imaging):
 
         if settings.parallel_columns is not None:
 
-            imaging_ci = self.parallel_calibration_imaging_ci_for_columns(
+            imaging_ci = self.parallel_calibration_imaging_ci_from(
                 columns=settings.parallel_columns
             )
 
@@ -144,17 +150,15 @@ class ImagingCI(imaging.Imaging):
     def mask(self):
         return self.image.mask
 
-    @property
-    def layout_ci(self):
-        return self.image.layout_ci
-
-    def parallel_calibration_imaging_ci_for_columns(self, columns):
+    def parallel_calibration_imaging_ci_from(self, columns):
         """
         Returnss a function to extract a parallel section for given columns
         """
 
         cosmic_ray_map = (
-            self.cosmic_ray_map.extract_parallel_calibration_frame_from(columns=columns)
+            self.layout_ci.array_2d_for_parallel_calibration_from(
+                array=self.cosmic_ray_map, columns=columns
+            )
             if self.cosmic_ray_map is not None
             else None
         )
@@ -162,8 +166,8 @@ class ImagingCI(imaging.Imaging):
         if self.noise_scaling_maps is not None:
 
             noise_scaling_maps = [
-                noise_scaling_map.extract_parallel_calibration_frame_from(
-                    columns=columns
+                self.layout_ci.array_2d_for_parallel_calibration_from(
+                    array=noise_scaling_map, columns=columns
                 )
                 for noise_scaling_map in self.noise_scaling_maps
             ]
@@ -172,13 +176,22 @@ class ImagingCI(imaging.Imaging):
 
             noise_scaling_maps = None
 
+        extraction_region = self.layout_ci.extraction_region_for_parallel_calibration_from(
+            columns=columns
+        )
+
         return ImagingCI(
-            image=self.image.extract_parallel_calibration_frame_from(columns=columns),
-            noise_map=self.noise_map.parallel_calibration_frame_from_columns(
-                columns=columns
+            image=self.layout_ci.array_2d_for_parallel_calibration_from(
+                array=self.image, columns=columns
             ),
-            pre_cti_ci=self.pre_cti_ci.extract_parallel_calibration_frame_from(
-                columns=columns
+            noise_map=self.layout_ci.array_2d_for_parallel_calibration_from(
+                array=self.noise_map, columns=columns
+            ),
+            pre_cti_ci=self.layout_ci.array_2d_for_parallel_calibration_from(
+                array=self.pre_cti_ci, columns=columns
+            ),
+            layout_ci=self.layout_ci.after_extraction(
+                extraction_region=extraction_region
             ),
             cosmic_ray_map=cosmic_ray_map,
             noise_scaling_maps=noise_scaling_maps,
@@ -190,7 +203,9 @@ class ImagingCI(imaging.Imaging):
         """
 
         cosmic_ray_map = (
-            self.cosmic_ray_map.serial_calibration_frame_from(rows=rows)
+            self.layout_ci.array_2d_for_serial_calibration_from(
+                array=self.cosmic_ray_map, rows=rows
+            )
             if self.cosmic_ray_map is not None
             else None
         )
@@ -198,7 +213,9 @@ class ImagingCI(imaging.Imaging):
         if self.noise_scaling_maps is not None:
 
             noise_scaling_maps = [
-                noise_scaling_map.serial_calibration_frame_from(rows=rows)
+                self.layout_ci.array_2d_for_serial_calibration_from(
+                    array=noise_scaling_map, rows=rows
+                )
                 for noise_scaling_map in self.noise_scaling_maps
             ]
 
@@ -206,10 +223,21 @@ class ImagingCI(imaging.Imaging):
 
             noise_scaling_maps = None
 
+        image = self.layout_ci.array_2d_for_serial_calibration_from(
+            array=self.image, rows=rows
+        )
+
         return ImagingCI(
-            image=self.image.serial_calibration_frame_from(rows=rows),
-            noise_map=self.noise_map.serial_calibration_frame_from(rows=rows),
-            pre_cti_ci=self.pre_cti_ci.serial_calibration_frame_from(rows=rows),
+            image=image,
+            noise_map=self.layout_ci.array_2d_for_serial_calibration_from(
+                array=self.noise_map, rows=rows
+            ),
+            pre_cti_ci=self.layout_ci.array_2d_for_serial_calibration_from(
+                array=self.pre_cti_ci, rows=rows
+            ),
+            layout_ci=self.layout_ci.extracted_layout_for_serial_calibration_from(
+                new_shape_2d=image.shape, rows=rows
+            ),
             cosmic_ray_map=cosmic_ray_map,
             noise_scaling_maps=noise_scaling_maps,
         )

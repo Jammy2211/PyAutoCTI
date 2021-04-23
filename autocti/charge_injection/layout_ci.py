@@ -974,6 +974,58 @@ class AbstractLayout2DCI(lo.Layout2D):
 
         return new_array
 
+    def extraction_region_for_parallel_calibration_from(self, columns: Tuple[int, int]):
+        """
+        Extract a parallel calibration array from an input array, where this array contains a sub-set of the input
+        array which is specifically used for only parallel CTI calibration. This array is simply a specified number
+        of columns that are closest to the read-out electronics.
+
+        The diagram below illustrates the arrays that is extracted from a array_ci with columns=(0, 3):
+
+        ---KEY---
+        ---------
+
+        [] = read-out electronics   [==========] = read-out register
+
+        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
+        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
+        [xxxxxxxxxx]                [tttttttttt] = parallel / parallel charge injection region trail
+
+        P = Parallel Direction      S = Serial Direction
+
+               [ptptptptptptptptptptp]
+               [tptptptptptptptptptpt]
+          [...][xxxxxxxxxxxxxxxxxxxxx][sss]
+          [...][ccccccccccccccccccccc][sss]
+        | [...][ccccccccccccccccccccc][sts]    |
+        | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
+        P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
+        | [...][ccccccccccccccccccccc][sss]    | clocking
+          [...][ccccccccccccccccccccc][sss]    |
+
+        []     [=====================]
+               <---------S----------
+
+        The extracted array_ci keeps just the trails following all charge injection scans and replaces all other
+        values with 0s:
+
+               [ptp]
+               [tpt]
+               [xxx]
+               [ccc]
+        |      [ccc]                           |
+        |      [xxx]                           | Direction
+        P      [xxx]                           | of
+        |      [ccc]                           | clocking
+               [ccc]                           |
+
+        []     [=====================]
+               <---------S----------
+        """
+        return self.region_list[0].parallel_side_nearest_read_out_region_from(
+            shape_2d=self.shape_2d, columns=columns
+        )
+
     def array_2d_for_parallel_calibration_from(
         self, array: array_2d.Array2D, columns: Tuple[int, int]
     ):
@@ -1024,10 +1076,8 @@ class AbstractLayout2DCI(lo.Layout2D):
         []     [=====================]
                <---------S----------
         """
-        extraction_region = self.region_list[
-            0
-        ].parallel_side_nearest_read_out_region_from(
-            shape_2d=self.shape_2d, columns=columns
+        extraction_region = self.extraction_region_for_parallel_calibration_from(
+            columns=columns
         )
         return array_2d.Array2D.manual_native(
             array=array.native[extraction_region.slice],
@@ -1259,6 +1309,38 @@ class AbstractLayout2DCI(lo.Layout2D):
             map(lambda region: array.native[region.slice], calibration_region_list)
         )
 
+    def extracted_layout_for_serial_calibration_from(self, new_shape_2d, rows):
+
+        serial_prescan = (
+            (0, new_shape_2d[0], self.serial_prescan[2], self.serial_prescan[3])
+            if self.serial_prescan is not None
+            else None
+        )
+        serial_overscan = (
+            (0, new_shape_2d[0], self.serial_overscan[2], self.serial_overscan[3])
+            if self.serial_overscan is not None
+            else None
+        )
+
+        x0 = self.region_list[0][2]
+        x1 = self.region_list[0][3]
+        offset = 0
+
+        new_pattern_region_list_ci = []
+
+        for region in self.region_list:
+
+            labelsize = rows[1] - rows[0]
+            new_pattern_region_list_ci.append((offset, offset + labelsize, x0, x1))
+            offset += labelsize
+
+        new_layout_ci = deepcopy(self)
+        new_layout_ci.region_list = new_pattern_region_list_ci
+        new_layout_ci.serial_prescan = serial_prescan
+        new_layout_ci.serial_overscan = serial_overscan
+
+        return new_layout_ci
+
     def array_2d_for_serial_calibration_from(
         self, array: array_2d.Array2D, rows: Tuple[int, int]
     ):
@@ -1315,32 +1397,9 @@ class AbstractLayout2DCI(lo.Layout2D):
         # TODO : can we generalize this method for multiple extracts? Feels too complicated so just doing it for this
         # TODO : specific case for now.
 
-        serial_prescan = (
-            (0, new_array.shape[0], self.serial_prescan[2], self.serial_prescan[3])
-            if self.serial_prescan is not None
-            else None
+        new_layout_ci = self.extracted_layout_for_serial_calibration_from(
+            new_shape_2d=new_array.shape, rows=rows
         )
-        serial_overscan = (
-            (0, new_array.shape[0], self.serial_overscan[2], self.serial_overscan[3])
-            if self.serial_overscan is not None
-            else None
-        )
-
-        x0 = self.region_list[0][2]
-        x1 = self.region_list[0][3]
-        offset = 0
-        new_pattern_region_list_ci = []
-
-        for region in self.region_list:
-
-            labelsize = rows[1] - rows[0]
-            new_pattern_region_list_ci.append((offset, offset + labelsize, x0, x1))
-            offset += labelsize
-
-        new_layout_ci = deepcopy(self)
-        new_layout_ci.region_list = new_pattern_region_list_ci
-        new_layout_ci.serial_prescan = serial_prescan
-        new_layout_ci.serial_overscan = serial_overscan
 
         return array_2d.Array2D.manual(
             array=new_array,

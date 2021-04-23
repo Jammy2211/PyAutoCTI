@@ -51,27 +51,32 @@ class TestSettingsImagingCI:
 
 
 class TestImagingCI:
-    def test__parallel_calibration_imaging_ci_from_columns(self, imaging_ci_7x7):
+    def test__parallel_calibration_imaging_ci_from(self, imaging_ci_7x7):
 
         # The ci pattern starts at column 1, so the left most column is removed below
 
-        parallel_calibration_imaging = imaging_ci_7x7.parallel_calibration_imaging_ci_for_columns(
+        parallel_calibration_imaging = imaging_ci_7x7.parallel_calibration_imaging_ci_from(
             columns=(0, 6)
         )
 
         assert (
-            parallel_calibration_imaging.image == imaging_ci_7x7.image[:, 1:7]
+            parallel_calibration_imaging.image.native
+            == imaging_ci_7x7.image.native[:, 1:7]
         ).all()
         assert (
-            parallel_calibration_imaging.noise_map == imaging_ci_7x7.noise_map[:, 1:7]
+            parallel_calibration_imaging.noise_map.native
+            == imaging_ci_7x7.noise_map.native[:, 1:7]
         ).all()
         assert (
-            parallel_calibration_imaging.pre_cti_ci == imaging_ci_7x7.pre_cti_ci[:, 1:7]
+            parallel_calibration_imaging.pre_cti_ci.native
+            == imaging_ci_7x7.pre_cti_ci.native[:, 1:7]
         ).all()
         assert (
-            parallel_calibration_imaging.cosmic_ray_map
-            == imaging_ci_7x7.cosmic_ray_map[:, 1:7]
+            parallel_calibration_imaging.cosmic_ray_map.native
+            == imaging_ci_7x7.cosmic_ray_map.native[:, 1:7]
         ).all()
+
+        assert parallel_calibration_imaging.layout_ci.region_list == [(1, 5, 0, 4)]
 
     def test__serial_calibration_imaging_ci_from_rows(self, imaging_ci_7x7):
 
@@ -81,17 +86,24 @@ class TestImagingCI:
             rows=(0, 2)
         )
 
-        assert (serial_calibration_imaging.image == imaging_ci_7x7.image[0:2, :]).all()
         assert (
-            serial_calibration_imaging.noise_map == imaging_ci_7x7.noise_map[0:2, :]
+            serial_calibration_imaging.image.native
+            == imaging_ci_7x7.image.native[0:2, :]
         ).all()
         assert (
-            serial_calibration_imaging.pre_cti_ci == imaging_ci_7x7.pre_cti_ci[0:2, :]
+            serial_calibration_imaging.noise_map.native
+            == imaging_ci_7x7.noise_map.native[0:2, :]
         ).all()
         assert (
-            serial_calibration_imaging.cosmic_ray_map
-            == imaging_ci_7x7.cosmic_ray_map[1:3, :]
+            serial_calibration_imaging.pre_cti_ci.native
+            == imaging_ci_7x7.pre_cti_ci.native[0:2, :]
         ).all()
+        assert (
+            serial_calibration_imaging.cosmic_ray_map.native
+            == imaging_ci_7x7.cosmic_ray_map.native[1:3, :]
+        ).all()
+
+        assert serial_calibration_imaging.layout_ci.region_list == [(0, 2, 1, 5)]
 
     def test__signal_to_noise_map_and_max(self):
 
