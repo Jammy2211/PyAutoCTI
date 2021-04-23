@@ -105,31 +105,12 @@ class TestImagingCI:
 
         assert serial_calibration_imaging.layout_ci.region_list == [(0, 2, 1, 5)]
 
-    def test__signal_to_noise_map_and_max(self):
-
-        image = ac.Array2D.ones(shape_native=(2, 2), pixel_scales=0.1).native
-        image[0, 0] = 6.0
-
-        imaging = ac.ci.ImagingCI(
-            image=image, noise_map=2.0 * np.ones((2, 2)), pre_cti_ci=None
-        )
-
-        assert (imaging.signal_to_noise_map == np.array([[3.0, 0.5], [0.5, 0.5]])).all()
-
-        assert imaging.signal_to_noise_max == 3.0
-
     def test__from_fits__load_all_data_components__has_correct_attributes(
         self, layout_ci_7x7
     ):
 
         imaging = ac.ci.ImagingCI.from_fits(
             pixel_scales=1.0,
-            roe_corner=(1, 0),
-            scans=ac.Scans(
-                parallel_overscan=(1, 2, 3, 4),
-                serial_prescan=(5, 6, 7, 8),
-                serial_overscan=(2, 4, 6, 8),
-            ),
             layout_ci=layout_ci_7x7,
             image_path=path.join(test_data_path, "3x3_ones.fits"),
             image_hdu=0,
@@ -141,15 +122,12 @@ class TestImagingCI:
             cosmic_ray_map_hdu=0,
         )
 
-        assert imaging.image.original_roe_corner == (1, 0)
-        assert imaging.layout_ci.region_list == layout_ci_7x7.region_list
-        assert imaging.image.layout.parallel_overscan == (1, 2, 3, 4)
-        assert imaging.image.layout.serial_prescan == (5, 6, 7, 8)
-        assert imaging.image.layout.serial_overscan == (2, 4, 6, 8)
-        assert (imaging.image == np.ones((3, 3))).all()
-        assert (imaging.noise_map == 2.0 * np.ones((3, 3))).all()
-        assert (imaging.pre_cti_ci == 3.0 * np.ones((3, 3))).all()
-        assert (imaging.cosmic_ray_map == 4.0 * np.ones((3, 3))).all()
+        assert (imaging.image.native == np.ones((3, 3))).all()
+        assert (imaging.noise_map.native == 2.0 * np.ones((3, 3))).all()
+        assert (imaging.pre_cti_ci.native == 3.0 * np.ones((3, 3))).all()
+        assert (imaging.cosmic_ray_map.native == 4.0 * np.ones((3, 3))).all()
+
+        assert imaging.layout_ci == layout_ci_7x7
 
     def test__from_fits__load_all_image_components__load_from_multi_hdu_fits(
         self, layout_ci_7x7
@@ -157,7 +135,6 @@ class TestImagingCI:
 
         imaging = ac.ci.ImagingCI.from_fits(
             pixel_scales=1.0,
-            roe_corner=(1, 0),
             layout_ci=layout_ci_7x7,
             image_path=path.join(test_data_path, "3x3_multiple_hdu.fits"),
             image_hdu=0,
@@ -169,18 +146,17 @@ class TestImagingCI:
             cosmic_ray_map_hdu=3,
         )
 
-        assert imaging.image.original_roe_corner == (1, 0)
-        assert imaging.layout_ci.region_list == layout_ci_7x7.region_list
-        assert (imaging.image == np.ones((3, 3))).all()
-        assert (imaging.noise_map == 2.0 * np.ones((3, 3))).all()
-        assert (imaging.pre_cti_ci == 3.0 * np.ones((3, 3))).all()
-        assert (imaging.cosmic_ray_map == 4.0 * np.ones((3, 3))).all()
+        assert (imaging.image.native == np.ones((3, 3))).all()
+        assert (imaging.noise_map.native == 2.0 * np.ones((3, 3))).all()
+        assert (imaging.pre_cti_ci.native == 3.0 * np.ones((3, 3))).all()
+        assert (imaging.cosmic_ray_map.native == 4.0 * np.ones((3, 3))).all()
+
+        assert imaging.layout_ci == layout_ci_7x7
 
     def test__from_fits__noise_map_from_single_value(self, layout_ci_7x7):
 
         imaging = ac.ci.ImagingCI.from_fits(
             pixel_scales=1.0,
-            roe_corner=(1, 0),
             layout_ci=layout_ci_7x7,
             image_path=path.join(test_data_path, "3x3_ones.fits"),
             image_hdu=0,
@@ -189,41 +165,39 @@ class TestImagingCI:
             pre_cti_ci_hdu=0,
         )
 
-        assert imaging.image.original_roe_corner == (1, 0)
-        assert imaging.layout_ci.region_list == layout_ci_7x7.region_list
-        assert (imaging.image == np.ones((3, 3))).all()
-        assert (imaging.noise_map == 10.0 * np.ones((3, 3))).all()
-        assert (imaging.pre_cti_ci == 3.0 * np.ones((3, 3))).all()
+        assert (imaging.image.native == np.ones((3, 3))).all()
+        assert (imaging.noise_map.native == 10.0 * np.ones((3, 3))).all()
+        assert (imaging.pre_cti_ci.native == 3.0 * np.ones((3, 3))).all()
         assert imaging.cosmic_ray_map == None
+
+        assert imaging.layout_ci == layout_ci_7x7
 
     def test__from_fits__load_pre_cti_ci_image_from_the_pattern_and_image(self):
 
-        pattern = ac.ci.Layout2DCIUniform(
-            region_list=[(0, 3, 0, 3)], normalization=10.0
+        layout_ci = ac.ci.Layout2DCIUniform(
+            shape_2d=(3, 3), region_list=[(0, 3, 0, 3)], normalization=10.0
         )
 
         imaging = ac.ci.ImagingCI.from_fits(
             pixel_scales=1.0,
-            roe_corner=(1, 0),
-            layout_ci=pattern,
+            layout_ci=layout_ci,
             image_path=path.join(test_data_path, "3x3_ones.fits"),
             image_hdu=0,
             noise_map_path=path.join(test_data_path, "3x3_twos.fits"),
             noise_map_hdu=0,
         )
 
-        assert imaging.image.original_roe_corner == (1, 0)
-        assert imaging.layout_ci.region_list == pattern.region_list
-        assert (imaging.image == np.ones((3, 3))).all()
-        assert (imaging.noise_map == 2.0 * np.ones((3, 3))).all()
-        assert (imaging.pre_cti_ci == 10.0 * np.ones((3, 3))).all()
+        assert (imaging.image.native == np.ones((3, 3))).all()
+        assert (imaging.noise_map.native == 2.0 * np.ones((3, 3))).all()
+        assert (imaging.pre_cti_ci.native == 10.0 * np.ones((3, 3))).all()
         assert imaging.cosmic_ray_map == None
+
+        assert imaging.layout_ci == layout_ci
 
     def test__output_to_fits___all_arrays(self, layout_ci_7x7):
 
         imaging = ac.ci.ImagingCI.from_fits(
             pixel_scales=1.0,
-            roe_corner=(1, 0),
             layout_ci=layout_ci_7x7,
             image_path=path.join(test_data_path, "3x3_ones.fits"),
             image_hdu=0,
@@ -251,7 +225,6 @@ class TestImagingCI:
 
         imaging = ac.ci.ImagingCI.from_fits(
             pixel_scales=1.0,
-            roe_corner=(1, 0),
             layout_ci=layout_ci_7x7,
             image_path=path.join(output_data_dir, "image.fits"),
             image_hdu=0,
@@ -263,10 +236,10 @@ class TestImagingCI:
             cosmic_ray_map_hdu=0,
         )
 
-        assert (imaging.image == np.ones((3, 3))).all()
-        assert (imaging.noise_map == 2.0 * np.ones((3, 3))).all()
-        assert (imaging.pre_cti_ci == 3.0 * np.ones((3, 3))).all()
-        assert (imaging.cosmic_ray_map == 4.0 * np.ones((3, 3))).all()
+        assert (imaging.image.native == np.ones((3, 3))).all()
+        assert (imaging.noise_map.native == 2.0 * np.ones((3, 3))).all()
+        assert (imaging.pre_cti_ci.native == 3.0 * np.ones((3, 3))).all()
+        assert (imaging.cosmic_ray_map.native == 4.0 * np.ones((3, 3))).all()
 
 
 class TestApplyMask:

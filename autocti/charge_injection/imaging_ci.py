@@ -68,8 +68,10 @@ class ImagingCI(imaging.Imaging):
 
         super().__init__(image=image, noise_map=noise_map, name=name)
 
-        self.pre_cti_ci = pre_cti_ci
-        self.cosmic_ray_map = cosmic_ray_map
+        self.data = self.image.native
+        self.noise_map = self.noise_map.native
+        self.pre_cti_ci = pre_cti_ci.native
+        self.cosmic_ray_map = cosmic_ray_map.native
         self.noise_scaling_maps = noise_scaling_maps
 
         self.layout_ci = layout_ci
@@ -78,13 +80,14 @@ class ImagingCI(imaging.Imaging):
 
     def apply_mask(self, mask: mask_2d.Mask2D) -> "ImagingCI":
 
-        image = array_2d.Array2D.from_frame_ci(frame_ci=self.image, mask=mask)
-        noise_map = array_2d.Array2D.from_frame_ci(frame_ci=self.noise_map, mask=mask)
+        image = array_2d.Array2D.manual_mask(array=self.image.native, mask=mask)
+
+        noise_map = array_2d.Array2D.manual_mask(array=self.noise_map.native, mask=mask)
 
         if self.cosmic_ray_map is not None:
 
-            cosmic_ray_map = array_2d.Array2D.from_frame_ci(
-                frame_ci=self.cosmic_ray_map, mask=mask
+            cosmic_ray_map = array_2d.Array2D.manual_mask(
+                array=self.cosmic_ray_map.native, mask=mask
             )
 
         else:
@@ -92,8 +95,9 @@ class ImagingCI(imaging.Imaging):
             cosmic_ray_map = None
 
         if self.noise_scaling_maps is not None:
+
             noise_scaling_maps = [
-                array_2d.Array2D.from_frame_ci(frame_ci=noise_scaling_map, mask=mask)
+                array_2d.Array2D.manual_mask(array=noise_scaling_map.native, mask=mask)
                 for noise_scaling_map in self.noise_scaling_maps
             ]
         else:
@@ -248,8 +252,6 @@ class ImagingCI(imaging.Imaging):
         layout_ci,
         image_path,
         pixel_scales,
-        roe_corner=(1, 0),
-        scans=None,
         image_hdu=0,
         noise_map_path=None,
         noise_map_hdu=0,
@@ -261,12 +263,7 @@ class ImagingCI(imaging.Imaging):
     ):
 
         ci_image = array_2d.Array2D.from_fits(
-            file_path=image_path,
-            hdu=image_hdu,
-            roe_corner=roe_corner,
-            layout_ci=layout_ci,
-            pixel_scales=pixel_scales,
-            scans=scans,
+            file_path=image_path, hdu=image_hdu, pixel_scales=pixel_scales
         )
 
         if noise_map_path is not None:
@@ -277,21 +274,17 @@ class ImagingCI(imaging.Imaging):
             ci_noise_map = np.ones(ci_image.shape_native) * noise_map_from_single_value
 
         ci_noise_map = array_2d.Array2D.manual(
-            array=ci_noise_map,
-            roe_corner=roe_corner,
-            layout_ci=layout_ci,
-            pixel_scales=pixel_scales,
-            scans=scans,
+            array=ci_noise_map, pixel_scales=pixel_scales
         )
 
         if pre_cti_ci_path is not None:
-            pre_cti_ci = array_2d_util.numpy_array_2d_from_fits(
-                file_path=pre_cti_ci_path, hdu=pre_cti_ci_hdu
+            pre_cti_ci = array_2d.Array2D.from_fits(
+                file_path=pre_cti_ci_path, hdu=pre_cti_ci_hdu, pixel_scales=pixel_scales
             )
         else:
-            if isinstance(layout_ci, pattern.Layout2DCIUniform):
+            if isinstance(layout_ci, lo.Layout2DCIUniform):
                 pre_cti_ci = layout_ci.pre_cti_ci_from(
-                    shape_native=ci_image.shape, pixel_scales=pixel_scales
+                    shape_native=ci_image.shape_native, pixel_scales=pixel_scales
                 )
             else:
                 raise exc.Layout2DCIException(
@@ -299,11 +292,7 @@ class ImagingCI(imaging.Imaging):
                 )
 
         pre_cti_ci = array_2d.Array2D.manual(
-            array=pre_cti_ci,
-            roe_corner=roe_corner,
-            layout_ci=layout_ci,
-            pixel_scales=pixel_scales,
-            scans=scans,
+            array=pre_cti_ci.native, pixel_scales=pixel_scales
         )
 
         if cosmic_ray_map_path is not None:
@@ -311,10 +300,7 @@ class ImagingCI(imaging.Imaging):
             cosmic_ray_map = array_2d.Array2D.from_fits(
                 file_path=cosmic_ray_map_path,
                 hdu=cosmic_ray_map_hdu,
-                roe_corner=roe_corner,
-                layout_ci=layout_ci,
                 pixel_scales=pixel_scales,
-                scans=scans,
             )
 
         else:
@@ -325,6 +311,7 @@ class ImagingCI(imaging.Imaging):
             noise_map=ci_noise_map,
             pre_cti_ci=pre_cti_ci,
             cosmic_ray_map=cosmic_ray_map,
+            layout_ci=layout_ci,
         )
 
     def output_to_fits(
@@ -336,25 +323,14 @@ class ImagingCI(imaging.Imaging):
         overwrite=False,
     ):
 
-        array_2d_util.numpy_array_2d_to_fits(
-            array_2d=self.image, file_path=image_path, overwrite=overwrite
-        )
-
-        if self.noise_map is not None and noise_map_path is not None:
-            array_2d_util.numpy_array_2d_to_fits(
-                array_2d=self.noise_map, file_path=noise_map_path, overwrite=overwrite
-            )
-
-        if self.pre_cti_ci is not None and pre_cti_ci_path is not None:
-            array_2d_util.numpy_array_2d_to_fits(
-                array_2d=self.pre_cti_ci, file_path=pre_cti_ci_path, overwrite=overwrite
-            )
+        self.image.output_to_fits(file_path=image_path, overwrite=overwrite)
+        self.noise_map.output_to_fits(file_path=noise_map_path, overwrite=overwrite)
+        self.pre_cti_ci.output_to_fits(file_path=pre_cti_ci_path, overwrite=overwrite)
 
         if self.cosmic_ray_map is not None and cosmic_ray_map_path is not None:
-            array_2d_util.numpy_array_2d_to_fits(
-                array_2d=self.cosmic_ray_map,
-                file_path=cosmic_ray_map_path,
-                overwrite=overwrite,
+
+            self.cosmic_ray_map.output_to_fits(
+                file_path=cosmic_ray_map_path, overwrite=overwrite
             )
 
 
