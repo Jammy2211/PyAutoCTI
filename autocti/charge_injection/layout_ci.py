@@ -26,11 +26,11 @@ class Extractor:
 
     @property
     def total_rows_min(self):
-        return np.min(list(map(lambda region: region.total_rows, self.region_list)))
+        return np.min([region.total_rows for region in self.region_list])
 
     @property
     def total_columns_min(self):
-        return np.min(list(map(lambda region: region.total_columns, self.region_list)))
+        return np.min([region.total_columns for region in self.region_list])
 
 
 class ExtractorParallelFrontEdge(Extractor):
@@ -461,6 +461,20 @@ class ExtractorSerialFrontEdge(Extractor):
             )
         )
 
+    def add_to_array(self, new_array, array, columns):
+
+        region_list = [
+            region.serial_front_edge_region_from(columns=columns)
+            for region in self.region_list
+        ]
+
+        array_2d_list = self.array_2d_list_from(array=array, columns=columns)
+
+        for arr, region in zip(array_2d_list, region_list):
+            new_array[region.y0 : region.y1, region.x0 : region.x1] += arr
+
+        return new_array
+
 
 class ExtractorSerialTrails(Extractor):
     def array_2d_list_from(self, array: array_2d.Array2D, columns=None):
@@ -597,6 +611,20 @@ class ExtractorSerialTrails(Extractor):
                 self.region_list,
             )
         )
+
+    def add_to_array(self, new_array, array, columns):
+
+        region_list = [
+            region.serial_trails_region_from(columns=columns)
+            for region in self.region_list
+        ]
+
+        array_2d_list = self.array_2d_list_from(array=array, columns=columns)
+
+        for arr, region in zip(array_2d_list, region_list):
+            new_array[region.y0 : region.y1, region.x0 : region.x1] += arr
+
+        return new_array
 
 
 class AbstractLayout2DCI(lo.Layout2D):
@@ -1052,7 +1080,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         []     [=====================]
                <---------S----------
         """
-        array = self.serial_edges_and_trails_array(
+        array = self.array_2d_of_serial_edges_and_trails_array(
             array=array, trails_columns=(0, self.serial_overscan.total_columns)
         )
         return array
@@ -1122,7 +1150,7 @@ class AbstractLayout2DCI(lo.Layout2D):
 
         return new_array
 
-    def serial_edges_and_trails_array(
+    def array_2d_of_serial_edges_and_trails_array(
         self, array: array_2d.Array2D, front_edge_columns=None, trails_columns=None
     ):
         """
@@ -1190,43 +1218,36 @@ class AbstractLayout2DCI(lo.Layout2D):
 
         if front_edge_columns is not None:
 
-            front_region_list = list(
-                map(
-                    lambda ci_region: array.serial_front_edge_of_region_from(
-                        ci_region, front_edge_columns
-                    ),
-                    self.region_list,
-                )
+            new_array = self.extractor_serial_front_edge.add_to_array(
+                new_array=new_array, array=array, columns=front_edge_columns
             )
-
-            front_edges = self.serial_front_edge_arrays_from(columns=front_edge_columns)
-
-            for i, region in enumerate(front_region_list):
-                new_array[region.y0 : region.y1, region.x0 : region.x1] += front_edges[
-                    i
-                ]
 
         if trails_columns is not None:
 
-            trails_region_list = list(
-                map(
-                    lambda ci_region: ci_region.serial_trails_region_from(
-                        trails_columns
-                    ),
-                    self.region_list,
-                )
+            new_array = self.extractor_serial_trails.add_to_array(
+                new_array=new_array, array=array, columns=trails_columns
             )
-
-            trails = self.extractor_serial_trails.array_2d_list_from(
-                array=array, columns=trails_columns
-            )
-
-            for i, region in enumerate(trails_region_list):
-                new_array[region.y0 : region.y1, region.x0 : region.x1] += trails[i]
 
         return new_array
 
-    def serial_calibration_array_from(
+    def array_2d_list_for_serial_calibration(self, array: array_2d.Array2D):
+        """
+        Extract each charge injection region image for the serial calibration arrays above.
+        """
+
+        calibration_region_list = list(
+            map(
+                lambda ci_region: ci_region.serial_entire_rows_of_region_from(
+                    shape_2d=self.shape_2d
+                ),
+                self.region_list,
+            )
+        )
+        return list(
+            map(lambda region: array.native[region.slice], calibration_region_list)
+        )
+
+    def array_2d_for_serial_calibration_from(
         self, array: array_2d.Array2D, rows: Tuple[int, int]
     ):
         """
@@ -1272,23 +1293,23 @@ class AbstractLayout2DCI(lo.Layout2D):
         []     [=====================]
                <---------S----------
         """
-        calibration_images = self.serial_calibration_sub_arrays_from
+        calibration_images = self.array_2d_list_for_serial_calibration(array=array)
         calibration_images = list(
             map(lambda image: image[rows[0] : rows[1], :], calibration_images)
         )
 
-        array = np.concatenate(calibration_images, axis=0)
+        new_array = np.concatenate(calibration_images, axis=0)
 
         # TODO : can we generalize this method for multiple extracts? Feels too complicated so just doing it for this
         # TODO : specific case for now.
 
         serial_prescan = (
-            (0, array.shape[0], self.serial_prescan[2], self.serial_prescan[3])
+            (0, new_array.shape[0], self.serial_prescan[2], self.serial_prescan[3])
             if self.serial_prescan is not None
             else None
         )
         serial_overscan = (
-            (0, array.shape[0], self.serial_overscan[2], self.serial_overscan[3])
+            (0, new_array.shape[0], self.serial_overscan[2], self.serial_overscan[3])
             if self.serial_overscan is not None
             else None
         )
@@ -1306,21 +1327,17 @@ class AbstractLayout2DCI(lo.Layout2D):
 
         new_layout_ci = deepcopy(self)
         new_layout_ci.region_list = new_pattern_region_list_ci
+        new_layout_ci.serial_prescan = serial_prescan
+        new_layout_ci.serial_overscan = serial_overscan
 
         return array_2d.Array2D.manual(
-            array=array,
-            roe_corner=array.original_roe_corner,
-            scans=abstract_array.Scans(
-                parallel_overscan=None,
-                serial_prescan=serial_prescan,
-                serial_overscan=serial_overscan,
-            ),
+            array=new_array,
+            exposure_info=array.exposure_info,
+            layout=new_layout_ci,
             pixel_scales=array.pixel_scales,
         )
 
-    def serial_calibration_mask_from_mask_and_rows(
-        self, array: array_2d.Array2D, mask, rows: Tuple[int, int]
-    ):
+    def mask_for_serial_calibration_from(self, mask, rows: Tuple[int, int]):
         """
         Extract a serial calibration array from a charge injection array_ci, where this arrays is a sub-set of the
         array_ci which can be used for serial-only calibration. Specifically, this array_ci is all charge injection
@@ -1367,7 +1384,9 @@ class AbstractLayout2DCI(lo.Layout2D):
 
         calibration_region_list = list(
             map(
-                lambda ci_region: array.serial_entire_rows_of_region(region=ci_region),
+                lambda ci_region: ci_region.serial_entire_rows_of_region_from(
+                    shape_2d=self.shape_2d
+                ),
                 self.region_list,
             )
         )
@@ -1382,19 +1401,6 @@ class AbstractLayout2DCI(lo.Layout2D):
             mask=np.concatenate(calibration_masks, axis=0),
             pixel_scales=mask.pixel_scales,
         )
-
-    def serial_calibration_sub_arrays_from(self, array: array_2d.Array2D):
-        """
-        Extract each charge injection region image for the serial calibration arrays above.
-        """
-
-        calibration_region_list = list(
-            map(
-                lambda ci_region: array.serial_entire_rows_of_region(region=ci_region),
-                self.region_list,
-            )
-        )
-        return list(map(lambda region: array[region.slice], calibration_region_list))
 
     @property
     def smallest_parallel_trails_rows_to_array_edge(self):

@@ -122,7 +122,7 @@ class ImagingCI(imaging.Imaging):
                 rows=settings.serial_rows
             )
 
-            mask = self.image.serial_calibration_mask_from_mask_and_rows(
+            mask = self.image.mask_for_serial_calibration_from(
                 mask=self.mask, rows=settings.serial_rows
             )
 
