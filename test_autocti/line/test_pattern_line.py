@@ -207,7 +207,7 @@ class TestLayout2DCINonUniform(object):
             normalization=100.0, regions=[(0, 1, 0, 1)], row_slope=0.0, column_sigma=0.0
         )
 
-        region = layout_ci.ci_region_from_region(region_dimensions=(3, 3), ci_seed=1)
+        region = layout_ci.region_ci_from(region_dimensions=(3, 3), ci_seed=1)
 
         assert (
             region
@@ -220,7 +220,7 @@ class TestLayout2DCINonUniform(object):
             normalization=500.0, regions=[(0, 1, 0, 1)], row_slope=0.0, column_sigma=0.0
         )
 
-        region = layout_ci.ci_region_from_region(region_dimensions=(5, 3), ci_seed=1)
+        region = layout_ci.region_ci_from(region_dimensions=(5, 3), ci_seed=1)
 
         assert (
             region
@@ -240,7 +240,7 @@ class TestLayout2DCINonUniform(object):
             normalization=100.0, regions=[(0, 1, 0, 1)], row_slope=0.0, column_sigma=1.0
         )
 
-        region = layout_ci.ci_region_from_region(region_dimensions=(3, 3), ci_seed=1)
+        region = layout_ci.region_ci_from(region_dimensions=(3, 3), ci_seed=1)
 
         region = np.round(region, 1)
 
@@ -253,7 +253,7 @@ class TestLayout2DCINonUniform(object):
             normalization=500.0, regions=[(0, 1, 0, 1)], row_slope=0.0, column_sigma=1.0
         )
 
-        region = layout_ci.ci_region_from_region(region_dimensions=(5, 3), ci_seed=1)
+        region = layout_ci.region_ci_from(region_dimensions=(5, 3), ci_seed=1)
 
         region = np.round(region, 1)
 
@@ -278,7 +278,7 @@ class TestLayout2DCINonUniform(object):
             column_sigma=0.0,
         )
 
-        region = layout_ci.ci_region_from_region(region_dimensions=(3, 3), ci_seed=1)
+        region = layout_ci.region_ci_from(region_dimensions=(3, 3), ci_seed=1)
 
         region = np.round(region, 1)
 
@@ -294,7 +294,7 @@ class TestLayout2DCINonUniform(object):
             column_sigma=0.0,
         )
 
-        region = layout_ci.ci_region_from_region(region_dimensions=(5, 3), ci_seed=1)
+        region = layout_ci.region_ci_from(region_dimensions=(5, 3), ci_seed=1)
 
         region = np.round(region, 1)
 
@@ -321,7 +321,7 @@ class TestLayout2DCINonUniform(object):
             column_sigma=1.0,
         )
 
-        region = layout_ci.ci_region_from_region(region_dimensions=(3, 3), ci_seed=1)
+        region = layout_ci.region_ci_from(region_dimensions=(3, 3), ci_seed=1)
 
         region = np.round(region, 1)
 
@@ -337,7 +337,7 @@ class TestLayout2DCINonUniform(object):
             column_sigma=1.0,
         )
 
-        region = layout_ci.ci_region_from_region(region_dimensions=(5, 3), ci_seed=1)
+        region = layout_ci.region_ci_from(region_dimensions=(5, 3), ci_seed=1)
 
         region = np.round(region, 1)
 
@@ -364,7 +364,7 @@ class TestLayout2DCINonUniform(object):
             column_sigma=100.0,
         )
 
-        region = layout_ci.ci_region_from_region(region_dimensions=(10, 10), ci_seed=1)
+        region = layout_ci.region_ci_from(region_dimensions=(10, 10), ci_seed=1)
 
         assert (region > 0).all()
 

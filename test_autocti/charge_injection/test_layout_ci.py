@@ -1444,7 +1444,8 @@ class TestAbstractLayout2DCI(object):
 
 
 class TestLayout2DCIUniform(object):
-    def test__pre_cti_ci_from_shape_native__image_3x3__1_ci_region(self):
+    def test__pre_cti_ci_from(self):
+
         layout = ac.ci.Layout2DCIUniform(
             shape_2d=(5, 3), normalization=10.0, region_list=[(0, 2, 0, 2)]
         )
@@ -1452,31 +1453,31 @@ class TestLayout2DCIUniform(object):
         pre_cti_ci = layout.pre_cti_ci_from(shape_native=(3, 3), pixel_scales=1.0)
 
         assert (
-            pre_cti_ci
+            pre_cti_ci.native
             == np.array([[10.0, 10.0, 0.0], [10.0, 10.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
-    def test__pre_cti_ci_from_shape_native__image_3x3__2_region_list_ci(self):
-        layout_uni = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCIUniform(
             shape_2d=(5, 3),
             normalization=20.0,
             region_list=[(0, 2, 0, 2), (2, 3, 2, 3)],
         )
-        image1 = layout_uni.pre_cti_ci_from(shape_native=(3, 3), pixel_scales=1.0)
+        pre_cti_ci = layout.pre_cti_ci_from(shape_native=(3, 3), pixel_scales=1.0)
 
         assert (
-            image1 == np.array([[20.0, 20.0, 0.0], [20.0, 20.0, 0.0], [0.0, 0.0, 20.0]])
+            pre_cti_ci.native
+            == np.array([[20.0, 20.0, 0.0], [20.0, 20.0, 0.0], [0.0, 0.0, 20.0]])
         ).all()
 
-        layout_uni = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCIUniform(
             shape_2d=(5, 3),
             normalization=30.0,
             region_list=[(0, 3, 0, 2), (2, 3, 2, 3)],
         )
-        image1 = layout_uni.pre_cti_ci_from(shape_native=(4, 3), pixel_scales=1.0)
+        pre_cti_ci = layout.pre_cti_ci_from(shape_native=(4, 3), pixel_scales=1.0)
 
         assert (
-            image1
+            pre_cti_ci.native
             == np.array(
                 [
                     [30.0, 30.0, 0.0],
@@ -1487,21 +1488,10 @@ class TestLayout2DCIUniform(object):
             )
         ).all()
 
-    def test__pre_cti_ci_from_shape_native__layout_bigger_than_image_dimensions__raises_error(
-        self,
-    ):
-        layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 3), normalization=10.0, region_list=[(0, 2, 0, 1)]
-        )
-
-        with pytest.raises(exc.Layout2DCIException):
-            layout.pre_cti_ci_from(shape_native=(1, 1), pixel_scales=1.0)
-
 
 class TestLayout2DCINonUniform(object):
-    def test__ci_region_from__uniform_column_and_uniform_row__returns_uniform_charge_region(
-        self,
-    ):
+    def test__region_ci_from(self,):
+
         layout = ac.ci.Layout2DCINonUniform(
             shape_2d=(5, 3),
             normalization=100.0,
@@ -1510,7 +1500,7 @@ class TestLayout2DCINonUniform(object):
             column_sigma=0.0,
         )
 
-        region = layout.ci_region_from_region(region_dimensions=(3, 3), ci_seed=1)
+        region = layout.region_ci_from(region_dimensions=(3, 3), ci_seed=1)
 
         assert (
             region
@@ -1520,29 +1510,6 @@ class TestLayout2DCINonUniform(object):
         ).all()
 
         layout = ac.ci.Layout2DCINonUniform(
-            normalization=500.0,
-            region_list=[(0, 1, 0, 1)],
-            row_slope=0.0,
-            column_sigma=0.0,
-        )
-
-        region = layout.ci_region_from_region(region_dimensions=(5, 3), ci_seed=1)
-
-        assert (
-            region
-            == np.array(
-                [
-                    [500.0, 500.0, 500.0],
-                    [500.0, 500.0, 500.0],
-                    [500.0, 500.0, 500.0],
-                    [500.0, 500.0, 500.0],
-                    [500.0, 500.0, 500.0],
-                ]
-            )
-        ).all()
-
-    def test__ci_region_from__non_uniform_column_and_uniform_row__returns_region(self):
-        layout = ac.ci.Layout2DCINonUniform(
             shape_2d=(5, 3),
             normalization=100.0,
             region_list=[(0, 1, 0, 1)],
@@ -1550,7 +1517,7 @@ class TestLayout2DCINonUniform(object):
             column_sigma=1.0,
         )
 
-        region = layout.ci_region_from_region(region_dimensions=(3, 3), ci_seed=1)
+        region = layout.region_ci_from(region_dimensions=(3, 3), ci_seed=1)
 
         region = np.round(region, 1)
 
@@ -1560,31 +1527,6 @@ class TestLayout2DCINonUniform(object):
         ).all()
 
         layout = ac.ci.Layout2DCINonUniform(
-            normalization=500.0,
-            region_list=[(0, 1, 0, 1)],
-            row_slope=0.0,
-            column_sigma=1.0,
-        )
-
-        region = layout.ci_region_from_region(region_dimensions=(5, 3), ci_seed=1)
-
-        region = np.round(region, 1)
-
-        assert (
-            region
-            == np.array(
-                [
-                    [501.6, 499.4, 499.5],
-                    [501.6, 499.4, 499.5],
-                    [501.6, 499.4, 499.5],
-                    [501.6, 499.4, 499.5],
-                    [501.6, 499.4, 499.5],
-                ]
-            )
-        ).all()
-
-    def test__ci_region_from__uniform_column_and_non_uniform_row__returns_region(self):
-        layout = ac.ci.Layout2DCINonUniform(
             shape_2d=(5, 3),
             normalization=100.0,
             region_list=[(0, 1, 0, 1)],
@@ -1592,7 +1534,7 @@ class TestLayout2DCINonUniform(object):
             column_sigma=0.0,
         )
 
-        region = layout.ci_region_from_region(region_dimensions=(3, 3), ci_seed=1)
+        region = layout.region_ci_from(region_dimensions=(3, 3), ci_seed=1)
 
         region = np.round(region, 1)
 
@@ -1602,40 +1544,14 @@ class TestLayout2DCINonUniform(object):
         ).all()
 
         layout = ac.ci.Layout2DCINonUniform(
-            normalization=500.0,
-            region_list=[(0, 1, 0, 1)],
-            row_slope=-0.01,
-            column_sigma=0.0,
-        )
-
-        region = layout.ci_region_from_region(region_dimensions=(5, 3), ci_seed=1)
-
-        region = np.round(region, 1)
-
-        assert (
-            region
-            == np.array(
-                [
-                    [500.0, 500.0, 500.0],
-                    [496.5, 496.5, 496.5],
-                    [494.5, 494.5, 494.5],
-                    [493.1, 493.1, 493.1],
-                    [492.0, 492.0, 492.0],
-                ]
-            )
-        ).all()
-
-    def test__ci_region_from__non_uniform_column_and_non_uniform_row__returns_region(
-        self,
-    ):
-        layout = ac.ci.Layout2DCINonUniform(
+            shape_2d=(5, 3),
             normalization=100.0,
             region_list=[(0, 1, 0, 1)],
             row_slope=-0.01,
             column_sigma=1.0,
         )
 
-        region = layout.ci_region_from_region(region_dimensions=(3, 3), ci_seed=1)
+        region = layout.region_ci_from(region_dimensions=(3, 3), ci_seed=1)
 
         region = np.round(region, 1)
 
@@ -1646,98 +1562,57 @@ class TestLayout2DCINonUniform(object):
 
         layout = ac.ci.Layout2DCINonUniform(
             shape_2d=(5, 3),
-            normalization=500.0,
-            region_list=[(0, 1, 0, 1)],
-            row_slope=-0.01,
-            column_sigma=1.0,
-        )
-
-        region = layout.ci_region_from_region(region_dimensions=(5, 3), ci_seed=1)
-
-        region = np.round(region, 1)
-
-        assert (
-            region
-            == np.array(
-                [
-                    [501.6, 499.4, 499.5],
-                    [498.2, 495.9, 496.0],
-                    [496.1, 493.9, 494.0],
-                    [494.7, 492.5, 492.6],
-                    [493.6, 491.4, 491.5],
-                ]
-            )
-        ).all()
-
-    def test__ci_region_from__non_uniform_columns_with_large_deviation_value__no_negative_charge_columns_are_generated(
-        self,
-    ):
-        layout = ac.ci.Layout2DCINonUniform(
-            shape_2d=(5, 3),
             normalization=100.0,
             region_list=[(0, 1, 0, 1)],
             row_slope=0.0,
             column_sigma=100.0,
         )
 
-        region = layout.ci_region_from_region(region_dimensions=(10, 10), ci_seed=1)
+        region = layout.region_ci_from(region_dimensions=(10, 10), ci_seed=1)
 
         assert (region > 0).all()
 
-    def test__pre_cti_ci_from__no_non_uniformity__identical_to_uniform_image__one_ci_region(
-        self,
-    ):
-        layout_uni = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 3), normalization=10.0, region_list=[(2, 4, 0, 5)]
+    def test__pre_cti_ci_from__compare_uniform_to_non_uniform(self,):
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(5, 5), normalization=10.0, region_list=[(2, 4, 0, 5)]
         )
-        image1 = layout_uni.pre_cti_ci_from(shape_native=(5, 5), pixel_scales=1.0)
+        pre_cti_ci_0 = layout.pre_cti_ci_from(shape_native=(5, 5), pixel_scales=1.0)
 
         layout_non_uni = ac.ci.Layout2DCINonUniform(
+            shape_2d=(5, 5),
             normalization=10.0,
             region_list=[(2, 4, 0, 5)],
             row_slope=0.0,
             column_sigma=0.0,
         )
-        image2 = layout_non_uni.pre_cti_ci_from(shape_native=(5, 5), pixel_scales=1.0)
-
-        assert (image1 == image2).all()
-
-        layout_uni = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 3), normalization=100.0, region_list=[(1, 4, 2, 5)]
+        pre_cti_ci_1 = layout_non_uni.pre_cti_ci_from(
+            shape_native=(5, 5), pixel_scales=1.0
         )
-        image1 = layout_uni.pre_cti_ci_from(shape_native=(5, 7), pixel_scales=1.0)
 
-        layout_non_uni = ac.ci.Layout2DCINonUniform(
-            normalization=100.0,
-            region_list=[(1, 4, 2, 5)],
-            row_slope=0.0,
-            column_sigma=0.0,
-        )
-        image2 = layout_non_uni.pre_cti_ci_from(shape_native=(5, 7), pixel_scales=1.0)
+        assert (pre_cti_ci_0 == pre_cti_ci_1).all()
 
-        assert (image1 == image2).all()
-
-        layout_uni = ac.ci.Layout2DCIUniform(
-            shape_2d=(5, 3),
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(5, 5),
             normalization=100.0,
             region_list=[(0, 2, 0, 2), (2, 3, 0, 5)],
         )
-        image1 = layout_uni.pre_cti_ci_from(shape_native=(5, 5), pixel_scales=1.0)
+        pre_cti_ci_0 = layout.pre_cti_ci_from(shape_native=(5, 5), pixel_scales=1.0)
 
         layout_non_uni = ac.ci.Layout2DCINonUniform(
-            shape_2d=(5, 3),
+            shape_2d=(5, 5),
             normalization=100.0,
             region_list=[(0, 2, 0, 2), (2, 3, 0, 5)],
             row_slope=0.0,
             column_sigma=0.0,
         )
-        image2 = layout_non_uni.pre_cti_ci_from(shape_native=(5, 5), pixel_scales=1.0)
+        pre_cti_ci_1 = layout_non_uni.pre_cti_ci_from(
+            shape_native=(5, 5), pixel_scales=1.0
+        )
 
-        assert (image1 == image2).all()
+        assert (pre_cti_ci_0 == pre_cti_ci_1).all()
 
-    def test__pre_cti_ci_from__non_uniformity_in_columns_only__one_ci_region__image_is_correct(
-        self,
-    ):
+    def test__pre_cti_ci_from__non_uniformity_in_columns(self,):
         layout_non_uni = ac.ci.Layout2DCINonUniform(
             shape_2d=(5, 3),
             normalization=100.0,
@@ -1750,10 +1625,10 @@ class TestLayout2DCINonUniform(object):
             shape_native=(5, 5), pixel_scales=1.0, ci_seed=1
         )
 
-        image = np.round(image, 1)
+        image[:] = np.round(image[:], 1)
 
         assert (
-            image
+            image.native
             == np.array(
                 [
                     [101.6, 99.4, 99.5, 0.0, 0.0],
@@ -1766,33 +1641,7 @@ class TestLayout2DCINonUniform(object):
         ).all()
 
         layout_non_uni = ac.ci.Layout2DCINonUniform(
-            shape_2d=(5, 3),
-            normalization=100.0,
-            region_list=[(1, 4, 1, 4)],
-            row_slope=0.0,
-            column_sigma=1.0,
-        )
-
-        image = layout_non_uni.pre_cti_ci_from(
-            shape_native=(5, 5), pixel_scales=1.0, ci_seed=1
-        )
-
-        image = np.round(image, 1)
-
-        assert (
-            image
-            == np.array(
-                [
-                    [0.0, 0.0, 0.0, 0.0, 0.0],
-                    [0.0, 101.6, 99.4, 99.5, 0.0],
-                    [0.0, 101.6, 99.4, 99.5, 0.0],
-                    [0.0, 101.6, 99.4, 99.5, 0.0],
-                    [0.0, 0.0, 0.0, 0.0, 0.0],
-                ]
-            )
-        ).all()
-
-        layout_non_uni = ac.ci.Layout2DCINonUniform(
+            shape_2d=(5, 5),
             normalization=100.0,
             region_list=[(1, 4, 1, 3), (1, 4, 4, 5)],
             row_slope=0.0,
@@ -1803,10 +1652,10 @@ class TestLayout2DCINonUniform(object):
             shape_native=(5, 5), pixel_scales=1.0, ci_seed=1
         )
 
-        image = np.round(image, 1)
+        image[:] = np.round(image[:], 1)
 
         assert (
-            image
+            image.native
             == np.array(
                 [
                     [0.0, 0.0, 0.0, 0.0, 0.0],
@@ -1818,11 +1667,8 @@ class TestLayout2DCINonUniform(object):
             )
         ).all()
 
-    def test__pre_cti_ci_from__non_uniformity_in_columns_only__maximum_normalization_input__does_not_simulate_above(
-        self,
-    ):
         layout_non_uni = ac.ci.Layout2DCINonUniform(
-            shape_2d=(5, 3),
+            shape_2d=(5, 5),
             normalization=100.0,
             region_list=[(0, 5, 0, 5)],
             row_slope=0.0,
@@ -1839,11 +1685,9 @@ class TestLayout2DCINonUniform(object):
         # Checked ci_seed to ensure the max is above 100.0 without a maximum_normalization
         assert np.max(image) < 100.0
 
-    def test__pre_cti_ci_from__non_uniformity_in_rows_only__one_ci_region__image_is_correct(
-        self,
-    ):
+    def test__pre_cti_ci_from__non_uniformity_in_rows(self,):
         layout_non_uni = ac.ci.Layout2DCINonUniform(
-            shape_2d=(5, 3),
+            shape_2d=(5, 5),
             normalization=100.0,
             region_list=[(0, 3, 0, 3)],
             row_slope=-0.01,
@@ -1852,10 +1696,10 @@ class TestLayout2DCINonUniform(object):
 
         image = layout_non_uni.pre_cti_ci_from(shape_native=(5, 5), pixel_scales=1.0)
 
-        image = np.round(image, 1)
+        image[:] = np.round(image[:], 1)
 
         assert (
-            image
+            image.native
             == np.array(
                 [
                     [100.0, 100.0, 100.0, 0.0, 0.0],
@@ -1868,7 +1712,7 @@ class TestLayout2DCINonUniform(object):
         ).all()
 
         layout_non_uni = ac.ci.Layout2DCINonUniform(
-            shape_2d=(5, 3),
+            shape_2d=(5, 5),
             normalization=100.0,
             region_list=[(1, 5, 1, 4), (0, 5, 4, 5)],
             row_slope=-0.01,
@@ -1877,10 +1721,10 @@ class TestLayout2DCINonUniform(object):
 
         image = layout_non_uni.pre_cti_ci_from(shape_native=(5, 5), pixel_scales=1.0)
 
-        image = np.round(image, 1)
+        image[:] = np.round(image[:], 1)
 
         assert (
-            image
+            image.native
             == np.array(
                 [
                     [0.0, 0.0, 0.0, 0.0, 100.0],
@@ -1892,11 +1736,8 @@ class TestLayout2DCINonUniform(object):
             )
         ).all()
 
-    def test__pre_cti_ci_from__non_uniformity_in_rows_and_columns__two_region_list_ci__image_is_correct(
-        self,
-    ):
         layout_non_uni = ac.ci.Layout2DCINonUniform(
-            shape_2d=(5, 3),
+            shape_2d=(5, 5),
             normalization=100.0,
             region_list=[(1, 5, 1, 4), (0, 5, 4, 5)],
             row_slope=-0.01,
@@ -1907,10 +1748,10 @@ class TestLayout2DCINonUniform(object):
             shape_native=(5, 5), pixel_scales=1.0, ci_seed=1
         )
 
-        image = np.round(image, 1)
+        image[:] = np.round(image[:], 1)
 
         assert (
-            image
+            image.native
             == np.array(
                 [
                     [0.0, 0.0, 0.0, 0.0, 101.6],
@@ -1923,6 +1764,7 @@ class TestLayout2DCINonUniform(object):
         ).all()
 
         layout_non_uni = ac.ci.Layout2DCINonUniform(
+            shape_2d=(5, 5),
             normalization=100.0,
             region_list=[(0, 2, 0, 5), (3, 5, 0, 5)],
             row_slope=-0.01,
@@ -1931,12 +1773,12 @@ class TestLayout2DCINonUniform(object):
 
         image = layout_non_uni.pre_cti_ci_from(shape_native=(5, 5), pixel_scales=1.0)
 
-        image = np.round(image, 1)
+        image[:] = np.round(image[:], 1)
 
-        assert (image[0:2, 0:5] == image[3:5, 0:5]).all()
+        assert (image.native[0:2, 0:5] == image.native[3:5, 0:5]).all()
 
 
-class TestCIRegionFrom:
+class TestRegionCIFrom:
     def test__region_list_ci_from(self):
 
         region_list_ci = region_list_ci_from(
