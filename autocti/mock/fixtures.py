@@ -57,19 +57,13 @@ def make_mask_2d_7x7_unmasked():
 
 def make_image_7x7_native():
     return array_2d.Array2D.full(
-        fill_value=1.0,
-        shape_native=(7, 7),
-        layout=make_array_2d_layout_7x7(),
-        pixel_scales=(1.0, 1.0),
+        fill_value=1.0, shape_native=(7, 7), pixel_scales=(1.0, 1.0)
     ).native
 
 
 def make_noise_map_7x7_native():
     return array_2d.Array2D.full(
-        fill_value=2.0,
-        shape_native=(7, 7),
-        layout=make_array_2d_layout_7x7(),
-        pixel_scales=(1.0, 1.0),
+        fill_value=2.0, shape_native=(7, 7), pixel_scales=(1.0, 1.0)
     ).native
 
 
@@ -125,50 +119,34 @@ def make_layout_ci_7x7():
 
 def make_ci_image_7x7():
     return array_2d.Array2D.full(
-        fill_value=1.0,
-        shape_native=(7, 7),
-        pixel_scales=(1.0, 1.0),
-        layout=make_layout_ci_7x7(),
+        fill_value=1.0, shape_native=(7, 7), pixel_scales=(1.0, 1.0)
     )
 
 
 def make_ci_noise_map_7x7():
     return array_2d.Array2D.full(
-        fill_value=2.0,
-        shape_native=(7, 7),
-        pixel_scales=(1.0, 1.0),
-        layout=make_layout_ci_7x7(),
+        fill_value=2.0, shape_native=(7, 7), pixel_scales=(1.0, 1.0)
     )
 
 
 def make_pre_cti_ci_7x7():
     return array_2d.Array2D.full(
-        shape_native=(7, 7),
-        fill_value=10.0,
-        pixel_scales=(1.0, 1.0),
-        layout=make_layout_ci_7x7(),
+        shape_native=(7, 7), fill_value=10.0, pixel_scales=(1.0, 1.0)
     )
 
 
 def make_ci_cosmic_ray_map_7x7():
     cosmic_ray_map = np.zeros(shape=(7, 7))
 
-    return array_2d.Array2D.manual(
-        array=cosmic_ray_map, pixel_scales=(1.0, 1.0), layout=make_layout_ci_7x7()
-    )
+    return array_2d.Array2D.manual(array=cosmic_ray_map, pixel_scales=(1.0, 1.0))
 
 
 def make_ci_noise_scaling_map_list_7x7():
 
     return [
-        array_2d.Array2D.ones(
-            shape_native=(7, 7), pixel_scales=(1.0, 1.0), layout=make_layout_ci_7x7()
-        ),
+        array_2d.Array2D.ones(shape_native=(7, 7), pixel_scales=(1.0, 1.0)),
         array_2d.Array2D.full(
-            shape_native=(7, 7),
-            fill_value=2.0,
-            pixel_scales=(1.0, 1.0),
-            layout=make_layout_ci_7x7(),
+            shape_native=(7, 7), fill_value=2.0, pixel_scales=(1.0, 1.0)
         ),
     ]
 

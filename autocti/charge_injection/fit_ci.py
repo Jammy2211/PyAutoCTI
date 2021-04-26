@@ -42,6 +42,10 @@ class FitImagingCI(fit.FitImaging):
         return self.dataset
 
     @property
+    def layout(self):
+        return self.imaging_ci.layout_ci
+
+    @property
     def post_cti_ci(self):
         return self.model_data
 
@@ -51,19 +55,21 @@ class FitImagingCI(fit.FitImaging):
 
     @property
     def chi_squared_map_of_regions_ci(self):
-        return self.chi_squared_map.frame_with_extracted_regions_ci_from
+        return self.layout.array_2d_of_regions_from(array=self.chi_squared_map)
 
     @property
     def chi_squared_map_of_parallel_trails(self):
-        return self.chi_squared_map.parallel_non_frame_with_extracted_regions_ci_from
+        return self.layout.array_2d_of_parallel_trails_from(array=self.chi_squared_map)
 
     @property
     def chi_squared_map_of_serial_trails(self):
-        return self.chi_squared_map.serial_trails_frame_from
+        return self.layout.array_2d_of_serial_trails_from(array=self.chi_squared_map)
 
     @property
     def chi_squared_map_of_serial_overscan_no_trails(self):
-        return self.chi_squared_map.serial_overscan_no_trails_frame_from
+        return self.layout.array_2d_of_serial_overscan_above_trails_from(
+            array=self.chi_squared_map
+        )
 
 
 def hyper_noise_map_from_noise_map_and_noise_scalings(

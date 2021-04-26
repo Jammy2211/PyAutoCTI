@@ -8,16 +8,14 @@ from autocti.charge_injection.fit_ci import (
 
 class TestFitImagingCI:
     def test__fit_quantities_same_as_calculated_individually(
-        self, imaging_ci_7x7, layout_ci_7x7, mask_2d_7x7_unmasked
+        self, imaging_ci_7x7, mask_2d_7x7_unmasked
     ):
 
         masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
 
-        post_cti_ci = ac.ci.CIFrame.ones(
-            shape_native=masked_imaging_ci_7x7.image.shape_native,
-            layout_ci=layout_ci_7x7,
-            pixel_scales=1.0,
-        )
+        post_cti_ci = ac.Array2D.ones(
+            shape_native=masked_imaging_ci_7x7.image.shape_native, pixel_scales=1.0
+        ).native
 
         fit = ac.ci.FitImagingCI(
             imaging_ci=masked_imaging_ci_7x7, post_cti_ci=post_cti_ci
@@ -57,24 +55,24 @@ class TestFitImagingCI:
         self, layout_ci_7x7
     ):
 
-        image = 10.0 * ac.ci.CIFrame.ones(
+        image = 10.0 * ac.Array2D.ones(
             shape_native=(2, 2), layout_ci=layout_ci_7x7, pixel_scales=1.0
         )
-        noise_map = ac.ci.CIFrame.full(
+        noise_map = ac.Array2D.full(
             fill_value=2.0,
             shape_native=(2, 2),
             layout_ci=layout_ci_7x7,
             pixel_scales=1.0,
         )
-        pre_cti_ci = 10.0 * ac.ci.CIFrame.ones(
+        pre_cti_ci = 10.0 * ac.Array2D.ones(
             shape_native=(2, 2), layout_ci=layout_ci_7x7, pixel_scales=1.0
         )
 
         noise_scaling_map_list = [
-            ac.ci.CIFrame.zeros(
+            ac.Array2D.zeros(
                 shape_native=(2, 2), layout_ci=layout_ci_7x7, pixel_scales=1.0
             ),
-            ac.ci.CIFrame.zeros(
+            ac.Array2D.zeros(
                 shape_native=(2, 2), layout_ci=layout_ci_7x7, pixel_scales=1.0
             ),
         ]
@@ -106,19 +104,19 @@ class TestFitImagingCI:
     def test__image_and_post_cti_different__noise_scaling_all_0s__likelihood_chi_squared_and_noise_normalization(
         self, layout_ci_7x7
     ):
-        image = ac.ci.CIFrame.full(
+        image = ac.Array2D.full(
             fill_value=9.0,
             shape_native=(2, 2),
             layout_ci=layout_ci_7x7,
             pixel_scales=1.0,
         )
-        noise_map = ac.ci.CIFrame.full(
+        noise_map = ac.Array2D.full(
             fill_value=2.0,
             shape_native=(2, 2),
             layout_ci=layout_ci_7x7,
             pixel_scales=1.0,
         )
-        pre_cti_ci = ac.ci.CIFrame.full(
+        pre_cti_ci = ac.Array2D.full(
             fill_value=10.0,
             shape_native=(2, 2),
             layout_ci=layout_ci_7x7,
@@ -126,7 +124,7 @@ class TestFitImagingCI:
         )
 
         noise_scaling_map_list = [
-            ac.ci.CIFrame.manual(
+            ac.Array2D.manual(
                 array=[[0.0, 0.0], [0.0, 0.0]],
                 layout_ci=layout_ci_7x7,
                 pixel_scales=1.0,
@@ -162,16 +160,16 @@ class TestFitImagingCI:
     def test__image_and_post_cti_ci_the_same__noise_scaling_non_0s__likelihood_is_noise_normalization(
         self, layout_ci_7x7
     ):
-        image = 10.0 * ac.ci.CIFrame.ones(
+        image = 10.0 * ac.Array2D.ones(
             shape_native=(2, 2), layout_ci=layout_ci_7x7, pixel_scales=1.0
         )
-        noise_map = ac.ci.CIFrame.full(
+        noise_map = ac.Array2D.full(
             fill_value=2.0,
             shape_native=(2, 2),
             layout_ci=layout_ci_7x7,
             pixel_scales=1.0,
         )
-        pre_cti_ci = ac.ci.CIFrame.full(
+        pre_cti_ci = ac.Array2D.full(
             fill_value=10.0,
             shape_native=(2, 2),
             layout_ci=layout_ci_7x7,
@@ -179,12 +177,12 @@ class TestFitImagingCI:
         )
 
         noise_scaling_map_list = [
-            ac.ci.CIFrame.manual(
+            ac.Array2D.manual(
                 array=[[1.0, 2.0], [3.0, 4.0]],
                 layout_ci=layout_ci_7x7,
                 pixel_scales=1.0,
             ),
-            ac.ci.CIFrame.manual(
+            ac.Array2D.manual(
                 array=[[5.0, 6.0], [7.0, 8.0]],
                 layout_ci=layout_ci_7x7,
                 pixel_scales=1.0,
@@ -223,13 +221,13 @@ class TestFitImagingCI:
     def test__x2_noise_map_scaling_and_hyper_params__noise_map_term_comes_out_correct(
         self, layout_ci_7x7
     ):
-        image = 10.0 * ac.ci.CIFrame.ones(
+        image = 10.0 * ac.Array2D.ones(
             shape_native=(2, 2), layout_ci=layout_ci_7x7, pixel_scales=1.0
         )
-        noise_map = 3.0 * ac.ci.CIFrame.ones(
+        noise_map = 3.0 * ac.Array2D.ones(
             shape_native=(2, 2), layout_ci=layout_ci_7x7, pixel_scales=1.0
         )
-        pre_cti_ci = ac.ci.CIFrame.full(
+        pre_cti_ci = ac.Array2D.full(
             fill_value=10.0,
             shape_native=(2, 2),
             layout_ci=layout_ci_7x7,
@@ -237,12 +235,12 @@ class TestFitImagingCI:
         )
 
         noise_scaling_map_list = [
-            ac.ci.CIFrame.manual(
+            ac.Array2D.manual(
                 array=[[1.0, 2.0], [3.0, 4.0]],
                 layout_ci=layout_ci_7x7,
                 pixel_scales=1.0,
             ),
-            ac.ci.CIFrame.manual(
+            ac.Array2D.manual(
                 array=[[5.0, 6.0], [7.0, 8.0]],
                 layout_ci=layout_ci_7x7,
                 pixel_scales=1.0,
@@ -334,21 +332,12 @@ class TestFitImagingCI:
 
 
 class TestHyperNoiseMap:
-    def test__image_and_pre_cti_not_identical__noise_scaling_map_list_ares__no_noise_map_scaling(
-        self, layout_ci_7x7
-    ):
-        noise_map = ac.ci.CIFrame.full(
-            fill_value=2.0,
-            shape_native=(2, 2),
-            layout_ci=layout_ci_7x7,
-            pixel_scales=1.0,
+    def test__hyper_noise_map_from_noise_map_and_noise_scalings(self,):
+        noise_map = ac.Array2D.full(
+            fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0
         )
         noise_scaling_map_list = [
-            ac.ci.CIFrame.manual(
-                array=[[0.0, 0.0], [0.0, 0.0]],
-                layout_ci=layout_ci_7x7,
-                pixel_scales=1.0,
-            )
+            ac.Array2D.manual(array=[[0.0, 0.0], [0.0, 0.0]], pixel_scales=1.0)
         ]
         hyper_noise_scalars = [ac.ci.HyperCINoiseScalar(scale_factor=1.0)]
 
@@ -358,23 +347,13 @@ class TestHyperNoiseMap:
             noise_scaling_map_list=noise_scaling_map_list,
         )
 
-        assert (noise_map == (np.array([[2.0, 2.0], [2.0, 2.0]]))).all()
+        assert (noise_map.native == (np.array([[2.0, 2.0], [2.0, 2.0]]))).all()
 
-    def test__image_and_pre_cti_not_identical__factor_is__no_noise_map_scaling(
-        self, layout_ci_7x7
-    ):
-        noise_map = ac.ci.CIFrame.full(
-            fill_value=2.0,
-            shape_native=(2, 2),
-            layout_ci=layout_ci_7x7,
-            pixel_scales=1.0,
+        noise_map = ac.Array2D.full(
+            fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0
         )
         noise_scaling_map_list = [
-            ac.ci.CIFrame.manual(
-                array=[[1.0, 2.0], [3.0, 4.0]],
-                layout_ci=layout_ci_7x7,
-                pixel_scales=1.0,
-            )
+            ac.Array2D.manual(array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0)
         ]
         hyper_noise_scalars = [ac.ci.HyperCINoiseScalar(scale_factor=0.0)]
 
@@ -384,23 +363,13 @@ class TestHyperNoiseMap:
             noise_scaling_map_list=noise_scaling_map_list,
         )
 
-        assert (noise_map == (np.array([[2.0, 2.0], [2.0, 2.0]]))).all()
+        assert (noise_map.native == (np.array([[2.0, 2.0], [2.0, 2.0]]))).all()
 
-    def test__image_and_pre_cti_not_identical__chi_sq_is_by_noise_map(
-        self, layout_ci_7x7
-    ):
-        noise_map = ac.ci.CIFrame.full(
-            fill_value=2.0,
-            shape_native=(2, 2),
-            layout_ci=layout_ci_7x7,
-            pixel_scales=1.0,
+        noise_map = ac.Array2D.full(
+            fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0
         )
         noise_scaling_map_list = [
-            ac.ci.CIFrame.manual(
-                array=[[1.0, 2.0], [3.0, 4.0]],
-                layout_ci=layout_ci_7x7,
-                pixel_scales=1.0,
-            )
+            ac.Array2D.manual(array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0)
         ]
         hyper_noise_scalars = [ac.ci.HyperCINoiseScalar(scale_factor=1.0)]
 
@@ -410,28 +379,14 @@ class TestHyperNoiseMap:
             noise_scaling_map_list=noise_scaling_map_list,
         )
 
-        assert (noise_map == (np.array([[3.0, 4.0], [5.0, 6.0]]))).all()
+        assert (noise_map.native == (np.array([[3.0, 4.0], [5.0, 6.0]]))).all()
 
-    def test__x2_noise_map_scaling_and_hyper_params__noise_map_term_comes_out_correct(
-        self, layout_ci_7x7
-    ):
-        noise_map = ac.ci.CIFrame.full(
-            fill_value=2.0,
-            shape_native=(2, 2),
-            layout_ci=layout_ci_7x7,
-            pixel_scales=1.0,
+        noise_map = ac.Array2D.full(
+            fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0
         )
         noise_scaling_map_list = [
-            ac.ci.CIFrame.manual(
-                array=[[1.0, 2.0], [3.0, 4.0]],
-                layout_ci=layout_ci_7x7,
-                pixel_scales=1.0,
-            ),
-            ac.ci.CIFrame.manual(
-                array=[[1.0, 2.0], [3.0, 4.0]],
-                layout_ci=layout_ci_7x7,
-                pixel_scales=1.0,
-            ),
+            ac.Array2D.manual(array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0),
+            ac.Array2D.manual(array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0),
         ]
         hyper_noise_scalars = [
             ac.ci.HyperCINoiseScalar(scale_factor=1.0),
@@ -444,7 +399,7 @@ class TestHyperNoiseMap:
             noise_scaling_map_list=noise_scaling_map_list,
         )
 
-        assert (noise_map == (np.array([[5.0, 8.0], [11.0, 14.0]]))).all()
+        assert (noise_map.native == (np.array([[5.0, 8.0], [11.0, 14.0]]))).all()
 
 
 class TestChiSquaredMapsOfRegions:
@@ -452,20 +407,18 @@ class TestChiSquaredMapsOfRegions:
         self,
     ):
 
-        pattern = ac.ci.Layout2DCIUniform(regions=[(0, 1, 0, 1)], normalization=1.0)
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(2, 2), region_list=[(0, 1, 0, 1)], normalization=1.0
+        )
 
-        image = 3.0 * ac.ci.CIFrame.ones(
-            shape_native=(2, 2), layout_ci=pattern, pixel_scales=1.0
-        )
-        noise_map = ac.ci.CIFrame.ones(
-            shape_native=(2, 2), layout_ci=pattern, pixel_scales=1.0
-        )
-        pre_cti_ci = ac.ci.CIFrame.full(
-            fill_value=1.0, shape_native=(2, 2), layout_ci=pattern, pixel_scales=1.0
-        )
+        image = 3.0 * ac.Array2D.ones(shape_native=(2, 2), pixel_scales=1.0)
+        noise_map = ac.Array2D.ones(shape_native=(2, 2), pixel_scales=1.0)
+        pre_cti_ci = ac.Array2D.full(
+            fill_value=1.0, shape_native=(2, 2), pixel_scales=1.0
+        ).native
 
         imaging = ac.ci.ImagingCI(
-            image=image, noise_map=noise_map, pre_cti_ci=pre_cti_ci
+            image=image, noise_map=noise_map, pre_cti_ci=pre_cti_ci, layout_ci=layout
         )
 
         mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
@@ -482,30 +435,22 @@ class TestChiSquaredMapsOfRegions:
         self,
     ):
 
-        pattern = ac.ci.Layout2DCIUniform(regions=[(0, 1, 0, 1)], normalization=1.0)
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(2, 2),
+            region_list=[(0, 1, 0, 1)],
+            normalization=1.0,
+            serial_prescan=(1, 2, 1, 2),
+            serial_overscan=(0, 1, 1, 2),
+        )
 
-        image = 3.0 * ac.ci.CIFrame.ones(
-            shape_native=(2, 2),
-            layout_ci=pattern,
-            scans=ac.Scans(serial_prescan=(1, 2, 1, 2), serial_overscan=(0, 1, 1, 2)),
-            pixel_scales=1.0,
-        )
-        noise_map = ac.ci.CIFrame.ones(
-            shape_native=(2, 2),
-            layout_ci=pattern,
-            scans=ac.Scans(serial_prescan=(1, 2, 1, 2), serial_overscan=(0, 1, 1, 2)),
-            pixel_scales=1.0,
-        )
-        pre_cti_ci = ac.ci.CIFrame.full(
-            fill_value=1.0,
-            shape_native=(2, 2),
-            layout_ci=pattern,
-            scans=ac.Scans(serial_prescan=(1, 2, 1, 2), serial_overscan=(0, 1, 1, 2)),
-            pixel_scales=1.0,
-        )
+        image = 3.0 * ac.Array2D.ones(shape_native=(2, 2), pixel_scales=1.0)
+        noise_map = ac.Array2D.ones(shape_native=(2, 2), pixel_scales=1.0)
+        pre_cti_ci = ac.Array2D.full(
+            fill_value=1.0, shape_native=(2, 2), pixel_scales=1.0
+        ).native
 
         imaging = ac.ci.ImagingCI(
-            image=image, noise_map=noise_map, pre_cti_ci=pre_cti_ci
+            image=image, noise_map=noise_map, pre_cti_ci=pre_cti_ci, layout_ci=layout
         )
 
         mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
@@ -522,30 +467,21 @@ class TestChiSquaredMapsOfRegions:
         self,
     ):
 
-        pattern = ac.ci.Layout2DCIUniform(regions=[(0, 2, 0, 1)], normalization=1.0)
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(2, 2),
+            region_list=[(0, 2, 0, 1)],
+            normalization=1.0,
+            serial_overscan=(1, 2, 0, 2),
+        )
 
-        image = 3.0 * ac.ci.CIFrame.ones(
-            shape_native=(2, 2),
-            layout_ci=pattern,
-            scans=ac.Scans(serial_overscan=(1, 2, 0, 2)),
-            pixel_scales=1.0,
-        )
-        noise_map = ac.ci.CIFrame.ones(
-            shape_native=(2, 2),
-            layout_ci=pattern,
-            scans=ac.Scans(serial_overscan=(1, 2, 0, 2)),
-            pixel_scales=1.0,
-        )
-        pre_cti_ci = ac.ci.CIFrame.full(
-            fill_value=1.0,
-            shape_native=(2, 2),
-            layout_ci=pattern,
-            scans=ac.Scans(serial_overscan=(1, 2, 0, 2)),
-            pixel_scales=1.0,
-        )
+        image = 3.0 * ac.Array2D.ones(shape_native=(2, 2), pixel_scales=1.0)
+        noise_map = ac.Array2D.ones(shape_native=(2, 2), pixel_scales=1.0)
+        pre_cti_ci = ac.Array2D.full(
+            fill_value=1.0, shape_native=(2, 2), pixel_scales=1.0
+        ).native
 
         imaging = ac.ci.ImagingCI(
-            image=image, noise_map=noise_map, pre_cti_ci=pre_cti_ci
+            image=image, noise_map=noise_map, pre_cti_ci=pre_cti_ci, layout_ci=layout
         )
 
         mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
@@ -561,30 +497,21 @@ class TestChiSquaredMapsOfRegions:
     def test__chi_squared_map_of_overscan_above_serial_trails__extracts_correctly_from_chi_squard_map(
         self,
     ):
-        pattern = ac.ci.Layout2DCIUniform(regions=[(0, 1, 0, 1)], normalization=1.0)
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(2, 2),
+            region_list=[(0, 1, 0, 1)],
+            normalization=1.0,
+            serial_overscan=(0, 2, 1, 2),
+        )
 
-        image = 3.0 * ac.ci.CIFrame.ones(
-            shape_native=(2, 2),
-            layout_ci=pattern,
-            scans=ac.Scans(serial_overscan=(0, 2, 1, 2)),
-            pixel_scales=1.0,
-        )
-        noise_map = ac.ci.CIFrame.ones(
-            shape_native=(2, 2),
-            layout_ci=pattern,
-            scans=ac.Scans(serial_overscan=(0, 2, 1, 2)),
-            pixel_scales=1.0,
-        )
-        pre_cti_ci = ac.ci.CIFrame.full(
-            fill_value=1.0,
-            shape_native=(2, 2),
-            layout_ci=pattern,
-            scans=ac.Scans(serial_overscan=(0, 2, 1, 2)),
-            pixel_scales=1.0,
-        )
+        image = 3.0 * ac.Array2D.ones(shape_native=(2, 2), pixel_scales=1.0)
+        noise_map = ac.Array2D.ones(shape_native=(2, 2), pixel_scales=1.0)
+        pre_cti_ci = ac.Array2D.full(
+            fill_value=1.0, shape_native=(2, 2), pixel_scales=1.0
+        ).native
 
         imaging = ac.ci.ImagingCI(
-            image=image, noise_map=noise_map, pre_cti_ci=pre_cti_ci
+            image=image, noise_map=noise_map, pre_cti_ci=pre_cti_ci, layout_ci=layout
         )
 
         mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
