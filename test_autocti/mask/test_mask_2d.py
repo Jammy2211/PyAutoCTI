@@ -167,7 +167,6 @@ class TestCosmicRayMask:
             array=np.array(
                 [[False, False, False], [False, True, False], [False, False, False]]
             ),
-            roe_corner=(1, 0),
             pixel_scales=1.0,
         )
 
