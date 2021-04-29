@@ -181,7 +181,9 @@ class TestExtractorParallelFrontEdge:
             region_list=[(1, 3, 0, 3), (5, 8, 0, 3)]
         )
 
-        stacked_front_edges = extractor.stacked_array_2d_from(array=parallel_array)
+        stacked_front_edges = extractor.stacked_array_2d_from(
+            array=parallel_array, rows=(0, 2)
+        )
 
         assert (
             stacked_front_edges == np.array([[3.0, 3.0, 3.0], [4.0, 4.0, 4.0]])
@@ -218,7 +220,9 @@ class TestExtractorParallelFrontEdge:
             region_list=[(1, 3, 0, 3), (5, 8, 0, 3)]
         )
 
-        front_edge_line = extractor.binned_array_1d_from(array=parallel_array)
+        front_edge_line = extractor.binned_array_1d_from(
+            array=parallel_array, rows=(0, 2)
+        )
 
         assert (front_edge_line == np.array([3.0, 4.0])).all()
 
@@ -970,7 +974,6 @@ class TestAbstractLayout2DCI(object):
                 [0.0, 1.0, 2.0],
                 [0.0, 1.0, 2.0],
             ],
-            layout=layout,
             pixel_scales=1.0,
         )
 
@@ -979,7 +982,6 @@ class TestAbstractLayout2DCI(object):
         )
 
         assert (extracted_array == np.array([[0.0], [0.0], [0.0], [0.0], [0.0]])).all()
-        assert extracted_array.layout.region_list == [(0, 3, 0, 1)]
 
         layout = ac.ci.Layout2DCIUniform(
             shape_2d=(5, 3), normalization=1.0, region_list=[(0, 5, 0, 3)]
@@ -993,7 +995,6 @@ class TestAbstractLayout2DCI(object):
             extracted_array.native
             == np.array([[1.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0]])
         ).all()
-        assert extracted_array.layout.region_list == [(0, 5, 0, 2)]
 
     def test__mask_for_parallel_calibration_from(self):
 
@@ -1021,6 +1022,28 @@ class TestAbstractLayout2DCI(object):
                 ]
             )
         ).all()
+
+    def test__extracted_layout_2d_for_parallel_calibration_from(self):
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(5, 3), normalization=1.0, region_list=[(0, 3, 0, 3)]
+        )
+
+        extracted_layout = layout.extracted_layout_for_parallel_calibration_from(
+            columns=(0, 1)
+        )
+
+        assert extracted_layout.region_list == [(0, 3, 0, 1)]
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(5, 3), normalization=1.0, region_list=[(0, 5, 0, 3)]
+        )
+
+        extracted_layout = layout.extracted_layout_for_parallel_calibration_from(
+            columns=(1, 3)
+        )
+
+        assert extracted_layout.region_list == [(0, 5, 0, 2)]
 
     def test__array_2d_of_serial_trails_from(self):
 
@@ -1306,11 +1329,6 @@ class TestAbstractLayout2DCI(object):
             )
         ).all()
 
-        assert new_array.layout.original_roe_corner == (1, 0)
-        assert new_array.layout.region_list == [(0, 3, 1, 5)]
-        assert new_array.layout.parallel_overscan == None
-        assert new_array.layout.serial_prescan == (0, 3, 0, 1)
-        assert new_array.layout.serial_overscan == None
         assert new_array.pixel_scales == (1.0, 1.0)
 
         layout = ac.ci.Layout2DCIUniform(
@@ -1325,17 +1343,11 @@ class TestAbstractLayout2DCI(object):
             array=array, rows=(0, 2)
         )
 
-        print(new_array.native)
-
         assert (
             new_array.native
             == np.array([[0.0, 1.0, 2.0, 3.0, 4.0], [0.0, 1.0, 2.0, 3.0, 4.0]])
         ).all()
-        assert new_array.layout.original_roe_corner == (1, 0)
-        assert new_array.layout.region_list == [(0, 2, 1, 4)]
-        assert new_array.layout.parallel_overscan == None
-        assert new_array.layout.serial_prescan == (0, 2, 0, 1)
-        assert new_array.layout.serial_overscan == (0, 2, 3, 4)
+
         assert new_array.pixel_scales == (1.0, 1.0)
 
         array = ac.Array2D.manual(
@@ -1363,11 +1375,7 @@ class TestAbstractLayout2DCI(object):
             new_array.native
             == np.array([[0.0, 1.0, 2.0, 2.0, 2.0], [0.0, 1.0, 4.0, 4.0, 4.0]])
         ).all()
-        assert new_array.layout.original_roe_corner == (1, 0)
-        assert new_array.layout.region_list == [(0, 1, 1, 3), (1, 2, 1, 3)]
-        assert new_array.layout.parallel_overscan == None
-        assert new_array.layout.serial_prescan == (0, 2, 0, 1)
-        assert new_array.layout.serial_overscan == (0, 2, 3, 4)
+
         assert new_array.pixel_scales == (1.0, 1.0)
 
         layout = ac.ci.Layout2DCIUniform(
@@ -1397,11 +1405,7 @@ class TestAbstractLayout2DCI(object):
             new_array.native
             == np.array([[0.0, 1.0, 3.0, 3.0, 3.0], [0.0, 1.0, 6.0, 6.0, 6.0]])
         ).all()
-        assert new_array.layout.original_roe_corner == (1, 0)
-        assert new_array.layout.region_list == [(0, 1, 1, 4), (1, 2, 1, 4)]
-        assert new_array.layout.parallel_overscan == None
-        assert new_array.layout.serial_prescan == (0, 2, 0, 1)
-        assert new_array.layout.serial_overscan == (0, 2, 3, 4)
+
         assert new_array.pixel_scales == (1.0, 1.0)
 
     def test__maks_for_serial_calibration_from(self):
@@ -1423,6 +1427,99 @@ class TestAbstractLayout2DCI(object):
                 [[False, True, False, False, False], [False, False, False, True, False]]
             )
         ).all()
+
+    def test__extracted_layout_for_serial_calibration_from(self):
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(3, 5),
+            normalization=1.0,
+            region_list=[(0, 3, 1, 5)],
+            serial_prescan=(0, 3, 0, 1),
+        )
+
+        extracted_layout = layout.extracted_layout_for_serial_calibration_from(
+            new_shape_2d=(3, 5), rows=(0, 3)
+        )
+
+        assert extracted_layout.original_roe_corner == (1, 0)
+        assert extracted_layout.region_list == [(0, 3, 1, 5)]
+        assert extracted_layout.parallel_overscan == None
+        assert extracted_layout.serial_prescan == (0, 3, 0, 1)
+        assert extracted_layout.serial_overscan == None
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(3, 5),
+            normalization=1.0,
+            region_list=[(0, 2, 1, 4)],
+            serial_prescan=(0, 3, 0, 1),
+            serial_overscan=(0, 3, 3, 4),
+        )
+
+        extracted_layout = layout.extracted_layout_for_serial_calibration_from(
+            new_shape_2d=(2, 5), rows=(0, 2)
+        )
+
+        assert extracted_layout.original_roe_corner == (1, 0)
+        assert extracted_layout.region_list == [(0, 2, 1, 4)]
+        assert extracted_layout.parallel_overscan == None
+        assert extracted_layout.serial_prescan == (0, 2, 0, 1)
+        assert extracted_layout.serial_overscan == (0, 2, 3, 4)
+
+        array = ac.Array2D.manual(
+            array=[
+                [0.0, 1.0, 2.0, 2.0, 2.0],
+                [0.0, 1.0, 3.0, 3.0, 3.0],
+                [0.0, 1.0, 4.0, 4.0, 4.0],
+            ],
+            pixel_scales=1.0,
+        )
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(3, 5),
+            normalization=1.0,
+            region_list=[(0, 1, 1, 3), (2, 3, 1, 3)],
+            serial_prescan=(0, 3, 0, 1),
+            serial_overscan=(0, 3, 3, 4),
+        )
+
+        extracted_layout = layout.extracted_layout_for_serial_calibration_from(
+            new_shape_2d=(2, 5), rows=(0, 1)
+        )
+
+        assert extracted_layout.original_roe_corner == (1, 0)
+        assert extracted_layout.region_list == [(0, 1, 1, 3), (1, 2, 1, 3)]
+        assert extracted_layout.parallel_overscan == None
+        assert extracted_layout.serial_prescan == (0, 2, 0, 1)
+        assert extracted_layout.serial_overscan == (0, 2, 3, 4)
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(5, 5),
+            normalization=1.0,
+            region_list=[(0, 2, 1, 4), (3, 5, 1, 4)],
+            serial_prescan=(0, 3, 0, 1),
+            serial_overscan=(0, 3, 3, 4),
+        )
+
+        array = ac.Array2D.manual(
+            array=[
+                [0.0, 1.0, 2.0, 2.0, 2.0],
+                [0.0, 1.0, 3.0, 3.0, 3.0],
+                [0.0, 1.0, 4.0, 4.0, 4.0],
+                [0.0, 1.0, 5.0, 5.0, 5.0],
+                [0.0, 1.0, 6.0, 6.0, 6.0],
+            ],
+            pixel_scales=1.0,
+        )
+
+        extracted_layout = layout.extracted_layout_for_serial_calibration_from(
+            new_shape_2d=(2, 5), rows=(1, 2)
+        )
+
+        assert extracted_layout.original_roe_corner == (1, 0)
+        assert extracted_layout.region_list == [(0, 1, 1, 4), (1, 2, 1, 4)]
+        assert extracted_layout.parallel_overscan == None
+        assert extracted_layout.serial_prescan == (0, 2, 0, 1)
+        assert extracted_layout.serial_overscan == (0, 2, 3, 4)
 
     def test__smallest_parallel_trails_rows_to_frame_edge(self,):
 
