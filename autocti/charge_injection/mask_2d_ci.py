@@ -118,8 +118,7 @@ class Mask2DCI(Mask2D):
     ):
 
         trails_regions = layout.extractor_serial_trails.region_list_from(
-            serial_trails_columns=layout.serial_trails_columns,
-            columns=settings.serial_trails_columns,
+            columns=settings.serial_trails_columns
         )
         mask = np.full(layout.shape_2d, False)
 

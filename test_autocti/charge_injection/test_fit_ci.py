@@ -55,26 +55,15 @@ class TestFitImagingCI:
         self, layout_ci_7x7
     ):
 
-        image = 10.0 * ac.Array2D.ones(
-            shape_native=(2, 2), layout_ci=layout_ci_7x7, pixel_scales=1.0
-        )
+        image = 10.0 * ac.Array2D.ones(shape_native=(2, 2), pixel_scales=1.0)
         noise_map = ac.Array2D.full(
-            fill_value=2.0,
-            shape_native=(2, 2),
-            layout_ci=layout_ci_7x7,
-            pixel_scales=1.0,
+            fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0
         )
-        pre_cti_ci = 10.0 * ac.Array2D.ones(
-            shape_native=(2, 2), layout_ci=layout_ci_7x7, pixel_scales=1.0
-        )
+        pre_cti_ci = 10.0 * ac.Array2D.ones(shape_native=(2, 2), pixel_scales=1.0)
 
         noise_scaling_map_list = [
-            ac.Array2D.zeros(
-                shape_native=(2, 2), layout_ci=layout_ci_7x7, pixel_scales=1.0
-            ),
-            ac.Array2D.zeros(
-                shape_native=(2, 2), layout_ci=layout_ci_7x7, pixel_scales=1.0
-            ),
+            ac.Array2D.zeros(shape_native=(2, 2), pixel_scales=1.0),
+            ac.Array2D.zeros(shape_native=(2, 2), pixel_scales=1.0),
         ]
 
         imaging = ac.ci.ImagingCI(
@@ -82,6 +71,7 @@ class TestFitImagingCI:
             noise_map=noise_map,
             pre_cti_ci=pre_cti_ci,
             noise_scaling_map_list=noise_scaling_map_list,
+            layout_ci=layout_ci_7x7,
         )
 
         mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
@@ -92,7 +82,7 @@ class TestFitImagingCI:
 
         fit = ac.ci.FitImagingCI(
             imaging_ci=masked_imaging,
-            post_cti_ci=pre_cti_ci,
+            post_cti_ci=masked_imaging.pre_cti_ci,
             hyper_noise_scalars=[hyper_noise_scalar],
         )
 
@@ -104,31 +94,16 @@ class TestFitImagingCI:
     def test__image_and_post_cti_different__noise_scaling_all_0s__likelihood_chi_squared_and_noise_normalization(
         self, layout_ci_7x7
     ):
-        image = ac.Array2D.full(
-            fill_value=9.0,
-            shape_native=(2, 2),
-            layout_ci=layout_ci_7x7,
-            pixel_scales=1.0,
-        )
+        image = ac.Array2D.full(fill_value=9.0, shape_native=(2, 2), pixel_scales=1.0)
         noise_map = ac.Array2D.full(
-            fill_value=2.0,
-            shape_native=(2, 2),
-            layout_ci=layout_ci_7x7,
-            pixel_scales=1.0,
+            fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0
         )
         pre_cti_ci = ac.Array2D.full(
-            fill_value=10.0,
-            shape_native=(2, 2),
-            layout_ci=layout_ci_7x7,
-            pixel_scales=1.0,
+            fill_value=10.0, shape_native=(2, 2), pixel_scales=1.0
         )
 
         noise_scaling_map_list = [
-            ac.Array2D.manual(
-                array=[[0.0, 0.0], [0.0, 0.0]],
-                layout_ci=layout_ci_7x7,
-                pixel_scales=1.0,
-            )
+            ac.Array2D.manual(array=[[0.0, 0.0], [0.0, 0.0]], pixel_scales=1.0)
         ]
 
         imaging = ac.ci.ImagingCI(
@@ -136,6 +111,7 @@ class TestFitImagingCI:
             noise_map=noise_map,
             pre_cti_ci=pre_cti_ci,
             noise_scaling_map_list=noise_scaling_map_list,
+            layout_ci=layout_ci_7x7,
         )
 
         mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
@@ -146,7 +122,7 @@ class TestFitImagingCI:
 
         fit = ac.ci.FitImagingCI(
             imaging_ci=masked_imaging,
-            post_cti_ci=pre_cti_ci,
+            post_cti_ci=masked_imaging.pre_cti_ci,
             hyper_noise_scalars=[hyper_noise_scalar],
         )
 
@@ -160,33 +136,17 @@ class TestFitImagingCI:
     def test__image_and_post_cti_ci_the_same__noise_scaling_non_0s__likelihood_is_noise_normalization(
         self, layout_ci_7x7
     ):
-        image = 10.0 * ac.Array2D.ones(
-            shape_native=(2, 2), layout_ci=layout_ci_7x7, pixel_scales=1.0
-        )
+        image = 10.0 * ac.Array2D.ones(shape_native=(2, 2), pixel_scales=1.0)
         noise_map = ac.Array2D.full(
-            fill_value=2.0,
-            shape_native=(2, 2),
-            layout_ci=layout_ci_7x7,
-            pixel_scales=1.0,
+            fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0
         )
         pre_cti_ci = ac.Array2D.full(
-            fill_value=10.0,
-            shape_native=(2, 2),
-            layout_ci=layout_ci_7x7,
-            pixel_scales=1.0,
+            fill_value=10.0, shape_native=(2, 2), pixel_scales=1.0
         )
 
         noise_scaling_map_list = [
-            ac.Array2D.manual(
-                array=[[1.0, 2.0], [3.0, 4.0]],
-                layout_ci=layout_ci_7x7,
-                pixel_scales=1.0,
-            ),
-            ac.Array2D.manual(
-                array=[[5.0, 6.0], [7.0, 8.0]],
-                layout_ci=layout_ci_7x7,
-                pixel_scales=1.0,
-            ),
+            ac.Array2D.manual(array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0),
+            ac.Array2D.manual(array=[[5.0, 6.0], [7.0, 8.0]], pixel_scales=1.0),
         ]
 
         imaging = ac.ci.ImagingCI(
@@ -194,6 +154,7 @@ class TestFitImagingCI:
             noise_map=noise_map,
             pre_cti_ci=pre_cti_ci,
             noise_scaling_map_list=noise_scaling_map_list,
+            layout_ci=layout_ci_7x7,
         )
 
         mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
@@ -204,7 +165,7 @@ class TestFitImagingCI:
 
         fit = ac.ci.FitImagingCI(
             imaging_ci=masked_imaging,
-            post_cti_ci=pre_cti_ci,
+            post_cti_ci=masked_imaging.pre_cti_ci,
             hyper_noise_scalars=[hyper_noise_scalar],
         )
 
@@ -221,36 +182,22 @@ class TestFitImagingCI:
     def test__x2_noise_map_scaling_and_hyper_params__noise_map_term_comes_out_correct(
         self, layout_ci_7x7
     ):
-        image = 10.0 * ac.Array2D.ones(
-            shape_native=(2, 2), layout_ci=layout_ci_7x7, pixel_scales=1.0
-        )
-        noise_map = 3.0 * ac.Array2D.ones(
-            shape_native=(2, 2), layout_ci=layout_ci_7x7, pixel_scales=1.0
-        )
+        image = 10.0 * ac.Array2D.ones(shape_native=(2, 2), pixel_scales=1.0)
+        noise_map = 3.0 * ac.Array2D.ones(shape_native=(2, 2), pixel_scales=1.0)
         pre_cti_ci = ac.Array2D.full(
-            fill_value=10.0,
-            shape_native=(2, 2),
-            layout_ci=layout_ci_7x7,
-            pixel_scales=1.0,
+            fill_value=10.0, shape_native=(2, 2), pixel_scales=1.0
         )
 
         noise_scaling_map_list = [
-            ac.Array2D.manual(
-                array=[[1.0, 2.0], [3.0, 4.0]],
-                layout_ci=layout_ci_7x7,
-                pixel_scales=1.0,
-            ),
-            ac.Array2D.manual(
-                array=[[5.0, 6.0], [7.0, 8.0]],
-                layout_ci=layout_ci_7x7,
-                pixel_scales=1.0,
-            ),
+            ac.Array2D.manual(array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0),
+            ac.Array2D.manual(array=[[5.0, 6.0], [7.0, 8.0]], pixel_scales=1.0),
         ]
 
         imaging = ac.ci.ImagingCI(
             image=image,
             noise_map=noise_map,
             pre_cti_ci=pre_cti_ci,
+            layout_ci=layout_ci_7x7,
             noise_scaling_map_list=noise_scaling_map_list,
         )
 
@@ -263,7 +210,7 @@ class TestFitImagingCI:
 
         fit = ac.ci.FitImagingCI(
             imaging_ci=masked_imaging,
-            post_cti_ci=pre_cti_ci,
+            post_cti_ci=masked_imaging.pre_cti_ci,
             hyper_noise_scalars=[hyper_noise_scalar_0, hyper_noise_scalar_1],
         )
 

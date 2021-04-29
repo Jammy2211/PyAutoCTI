@@ -320,10 +320,7 @@ class TestMask2DCI:
     def test__masked_serial_trails_from_layout(self):
 
         layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(3, 10),
-            normalization=1.0,
-            region_list=[(0, 3, 1, 4)],
-            serial_overscan=(0, 3, 8, 10),
+            shape_2d=(3, 10), normalization=1.0, region_list=[(0, 3, 1, 4)]
         )
 
         mask = ac.ci.Mask2DCI.masked_serial_trails_from_layout(
@@ -369,7 +366,6 @@ class TestMask2DCI:
             shape_2d=(3, 10),
             normalization=1.0,
             region_list=[(0, 1, 1, 4), (2, 3, 1, 4)],
-            serial_overscan=(0, 3, 8, 10),
         )
 
         mask = ac.ci.Mask2DCI.masked_serial_trails_from_layout(
@@ -409,10 +405,7 @@ class TestMask2DCI:
         )
 
         layout = ac.ci.Layout2DCIUniform(
-            shape_2d=(7, 7),
-            normalization=1.0,
-            region_list=[(1, 5, 1, 5)],
-            serial_overscan=(0, 7, 6, 7),
+            shape_2d=(7, 7), normalization=1.0, region_list=[(1, 5, 1, 5)]
         )
 
         mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_frame_ci(

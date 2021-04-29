@@ -116,7 +116,7 @@ class ImagingCI(imaging.Imaging):
         return ImagingCI(
             image=image,
             noise_map=noise_map,
-            pre_cti_ci=self.pre_cti_ci,
+            pre_cti_ci=self.pre_cti_ci.native,
             layout_ci=self.layout_ci,
             cosmic_ray_map=cosmic_ray_map,
             noise_scaling_map_list=noise_scaling_map_list,
