@@ -555,7 +555,7 @@ class ExtractorSerialTrails(Extractor):
         trails_stacked_array = self.stacked_array_2d_from(array=array, columns=columns)
         return np.ma.mean(np.ma.asarray(trails_stacked_array), axis=0)
 
-    def region_list_from(self, array: array_2d.Array2D, columns=None):
+    def region_list_from(self, serial_trails_columns, columns=None):
         """
         Returns a list of the serial trails scans of a charge injection array_ci.
 
@@ -604,7 +604,7 @@ class ExtractorSerialTrails(Extractor):
             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd columns)
         """
         if columns is None:
-            columns = (0, array.layout.serial_trails_columns)
+            columns = (0, serial_trails_columns)
         return list(
             map(
                 lambda ci_region: ci_region.serial_trails_region_from(columns),
@@ -1082,7 +1082,6 @@ class AbstractLayout2DCI(lo.Layout2D):
         return array_2d.Array2D.manual_native(
             array=array.native[extraction_region.slice],
             exposure_info=array.exposure_info,
-            layout=self.after_extraction(extraction_region=extraction_region),
             pixel_scales=array.pixel_scales,
         )
 
@@ -1514,9 +1513,7 @@ class Layout2DCIUniform(AbstractLayout2DCI):
         for region in self.region_list:
             pre_cti_ci[region.slice] += self.normalization
 
-        return array_2d.Array2D.manual(
-            array=pre_cti_ci, layout=self, pixel_scales=pixel_scales
-        )
+        return array_2d.Array2D.manual(array=pre_cti_ci, pixel_scales=pixel_scales)
 
 
 class Layout2DCINonUniform(AbstractLayout2DCI):
@@ -1647,9 +1644,7 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
                 region_dimensions=region.shape, ci_seed=ci_seed
             )
 
-        return array_2d.Array2D.manual(
-            array=pre_cti_ci, layout=self, pixel_scales=pixel_scales
-        )
+        return array_2d.Array2D.manual(array=pre_cti_ci, pixel_scales=pixel_scales)
 
     def generate_column(self, size, normalization):
         """Generate a column of non-uniform charge, including row non-uniformity.

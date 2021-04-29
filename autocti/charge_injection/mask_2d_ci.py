@@ -19,36 +19,38 @@ class SettingsMask2DCI:
 
 class Mask2DCI(Mask2D):
     @classmethod
-    def masked_front_edges_and_trails_from_frame_ci(cls, mask, frame_ci, settings):
+    def masked_front_edges_and_trails_from_frame_ci(
+        cls, mask, layout, settings, pixel_scales
+    ):
 
         if settings.parallel_front_edge_rows is not None:
 
-            parallel_front_edge_mask = cls.masked_parallel_front_edge_from_frame_ci(
-                frame_ci=frame_ci, settings=settings
+            parallel_front_edge_mask = cls.masked_parallel_front_edge_from_layout(
+                layout=layout, settings=settings, pixel_scales=pixel_scales
             )
 
             mask = mask + parallel_front_edge_mask
 
         if settings.parallel_trails_rows is not None:
 
-            parallel_trails_mask = cls.masked_parallel_trails_from_frame_ci(
-                frame_ci=frame_ci, settings=settings
+            parallel_trails_mask = cls.masked_parallel_trails_from_layout(
+                layout=layout, settings=settings, pixel_scales=pixel_scales
             )
 
             mask = mask + parallel_trails_mask
 
         if settings.serial_front_edge_columns is not None:
 
-            serial_front_edge_mask = cls.masked_serial_front_edge_from_frame_ci(
-                frame_ci=frame_ci, settings=settings
+            serial_front_edge_mask = cls.masked_serial_front_edge_from_layout(
+                layout=layout, settings=settings, pixel_scales=pixel_scales
             )
 
             mask = mask + serial_front_edge_mask
 
         if settings.serial_trails_columns is not None:
 
-            serial_trails_mask = cls.masked_serial_trails_from_frame_ci(
-                frame_ci=frame_ci, settings=settings
+            serial_trails_mask = cls.masked_serial_trails_from_layout(
+                layout=layout, settings=settings, pixel_scales=pixel_scales
             )
 
             mask = mask + serial_trails_mask
@@ -56,12 +58,14 @@ class Mask2DCI(Mask2D):
         return mask
 
     @classmethod
-    def masked_parallel_front_edge_from_frame_ci(cls, frame_ci, settings, invert=False):
+    def masked_parallel_front_edge_from_layout(
+        cls, layout, settings, pixel_scales, invert=False
+    ):
 
-        front_edge_regions = frame_ci.region_list(
+        front_edge_regions = layout.extractor_parallel_front_edge.region_list_from(
             rows=settings.parallel_front_edge_rows
         )
-        mask = np.full(frame_ci.shape_native, False)
+        mask = np.full(layout.shape_2d, False)
 
         for region in front_edge_regions:
             mask[region.y0 : region.y1, region.x0 : region.x1] = True
@@ -69,13 +73,18 @@ class Mask2DCI(Mask2D):
         if invert:
             mask = np.invert(mask)
 
-        return Mask2DCI(mask=mask.astype("bool"), pixel_scales=frame_ci.pixel_scales)
+        return Mask2DCI(mask=mask.astype("bool"), pixel_scales=pixel_scales)
 
     @classmethod
-    def masked_parallel_trails_from_frame_ci(cls, frame_ci, settings, invert=False):
+    def masked_parallel_trails_from_layout(
+        cls, layout, settings, pixel_scales, invert=False
+    ):
 
-        trails_regions = frame_ci.region_list_from(rows=settings.parallel_trails_rows)
-        mask = np.full(frame_ci.shape_native, False)
+        trails_regions = layout.extractor_parallel_trails.region_list_from(
+            rows=settings.parallel_trails_rows
+        )
+
+        mask = np.full(layout.shape_2d, False)
 
         for region in trails_regions:
             mask[region.y0 : region.y1, region.x0 : region.x1] = True
@@ -83,15 +92,17 @@ class Mask2DCI(Mask2D):
         if invert:
             mask = np.invert(mask)
 
-        return Mask2DCI(mask=mask.astype("bool"), pixel_scales=frame_ci.pixel_scales)
+        return Mask2DCI(mask=mask.astype("bool"), pixel_scales=pixel_scales)
 
     @classmethod
-    def masked_serial_front_edge_from_frame_ci(cls, frame_ci, settings, invert=False):
+    def masked_serial_front_edge_from_layout(
+        cls, layout, settings, pixel_scales, invert=False
+    ):
 
-        front_edge_regions = frame_ci.region_list_from(
+        front_edge_regions = layout.extractor_serial_front_edge.region_list_from(
             columns=settings.serial_front_edge_columns
         )
-        mask = np.full(frame_ci.shape_native, False)
+        mask = np.full(layout.shape_2d, False)
 
         for region in front_edge_regions:
             mask[region.y0 : region.y1, region.x0 : region.x1] = True
@@ -99,15 +110,18 @@ class Mask2DCI(Mask2D):
         if invert:
             mask = np.invert(mask)
 
-        return Mask2DCI(mask=mask.astype("bool"), pixel_scales=frame_ci.pixel_scales)
+        return Mask2DCI(mask=mask.astype("bool"), pixel_scales=pixel_scales)
 
     @classmethod
-    def masked_serial_trails_from_frame_ci(cls, frame_ci, settings, invert=False):
+    def masked_serial_trails_from_layout(
+        cls, layout, settings, pixel_scales, invert=False
+    ):
 
-        trails_regions = frame_ci.region_list_from(
-            columns=settings.serial_trails_columns
+        trails_regions = layout.extractor_serial_trails.region_list_from(
+            serial_trails_columns=layout.serial_trails_columns,
+            columns=settings.serial_trails_columns,
         )
-        mask = np.full(frame_ci.shape_native, False)
+        mask = np.full(layout.shape_2d, False)
 
         for region in trails_regions:
             mask[region.y0 : region.y1, region.x0 : region.x1] = True
@@ -115,4 +129,4 @@ class Mask2DCI(Mask2D):
         if invert:
             mask = np.invert(mask)
 
-        return Mask2DCI(mask=mask.astype("bool"), pixel_scales=frame_ci.pixel_scales)
+        return Mask2DCI(mask=mask.astype("bool"), pixel_scales=pixel_scales)

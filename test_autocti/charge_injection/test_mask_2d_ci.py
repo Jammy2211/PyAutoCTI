@@ -8,21 +8,17 @@ class MockPattern(object):
         pass
 
 
-class TestMaskedParallelFrontEdge:
-    def test__mask_only_contains_front_edge(self):
+class TestMask2DCI:
+    def test__masked_parallel_front_edge_from_layout(self):
 
-        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, region_list=[(1, 4, 0, 3)])
-
-        frame = ac.ci.CIFrame.manual(
-            array=np.ones((10, 3)),
-            roe_corner=(1, 0),
-            layout_ci=pattern,
-            pixel_scales=1.0,
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(10, 3), normalization=1.0, region_list=[(1, 4, 0, 3)]
         )
 
-        mask = ac.ci.Mask2DCI.masked_parallel_front_edge_from_frame_ci(
-            frame_ci=frame,
+        mask = ac.ci.Mask2DCI.masked_parallel_front_edge_from_layout(
+            layout=layout,
             settings=ac.ci.SettingsMask2DCI(parallel_front_edge_rows=(0, 2)),
+            pixel_scales=0.1,
         )
 
         assert type(mask) == ac.ci.Mask2DCI
@@ -45,20 +41,14 @@ class TestMaskedParallelFrontEdge:
             )
         ).all()
 
-    def test__same_as_above_but_uses_invert(self):
-
-        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, region_list=[(1, 4, 0, 3)])
-
-        frame = ac.ci.CIFrame.manual(
-            array=np.ones((10, 3)),
-            roe_corner=(1, 0),
-            layout_ci=pattern,
-            pixel_scales=1.0,
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(10, 3), normalization=1.0, region_list=[(1, 4, 0, 3)]
         )
 
-        mask = ac.ci.Mask2DCI.masked_parallel_front_edge_from_frame_ci(
-            frame_ci=frame,
+        mask = ac.ci.Mask2DCI.masked_parallel_front_edge_from_layout(
+            layout=layout,
             settings=ac.ci.SettingsMask2DCI(parallel_front_edge_rows=(0, 2)),
+            pixel_scales=0.1,
             invert=True,
         )
 
@@ -82,22 +72,16 @@ class TestMaskedParallelFrontEdge:
             )
         ).all()
 
-    def test__2_regions__extracts_rows_correctly(self):
-
-        pattern = ac.ci.Layout2DCIUniform(
-            normalization=1.0, region_list=[(1, 4, 0, 1), (1, 4, 2, 3)]
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(10, 3),
+            normalization=1.0,
+            region_list=[(1, 4, 0, 1), (1, 4, 2, 3)],
         )
 
-        frame = ac.ci.CIFrame.manual(
-            array=np.ones((10, 3)),
-            roe_corner=(1, 0),
-            layout_ci=pattern,
-            pixel_scales=1.0,
-        )
-
-        mask = ac.ci.Mask2DCI.masked_parallel_front_edge_from_frame_ci(
-            frame_ci=frame,
+        mask = ac.ci.Mask2DCI.masked_parallel_front_edge_from_layout(
+            layout=layout,
             settings=ac.ci.SettingsMask2DCI(parallel_front_edge_rows=(0, 2)),
+            pixel_scales=0.1,
         )
 
         assert type(mask) == ac.ci.Mask2DCI
@@ -120,57 +104,46 @@ class TestMaskedParallelFrontEdge:
             )
         ).all()
 
+    def test__masked_parallel_trails_from_layout(self):
 
-class TestMaskedParallelTrails:
-    def test___mask_only_contains_trails(self):
-
-        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, region_list=[(1, 4, 0, 3)])
-
-        frame = ac.ci.CIFrame.manual(
-            array=np.ones((10, 3)),
-            roe_corner=(1, 0),
-            layout_ci=pattern,
-            pixel_scales=1.0,
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(10, 3), normalization=1.0, region_list=[(1, 4, 0, 3)]
         )
 
-        mask = ac.ci.Mask2DCI.masked_parallel_trails_from_frame_ci(
-            frame_ci=frame, settings=ac.ci.SettingsMask2DCI(parallel_trails_rows=(0, 4))
-        )
-
-        assert type(mask) == ac.ci.Mask2DCI
-
-        assert (
-            mask
-            == np.array(
-                [
-                    [False, False, False],
-                    [False, False, False],
-                    [False, False, False],
-                    [False, False, False],
-                    [True, True, True],
-                    [True, True, True],
-                    [True, True, True],
-                    [True, True, True],
-                    [False, False, False],
-                    [False, False, False],
-                ]
-            )
-        ).all()
-
-    def test__same_as_above_but_uses_invert(self):
-
-        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, region_list=[(1, 4, 0, 3)])
-
-        frame = ac.ci.CIFrame.manual(
-            array=np.ones((10, 3)),
-            roe_corner=(1, 0),
-            layout_ci=pattern,
-            pixel_scales=1.0,
-        )
-
-        mask = ac.ci.Mask2DCI.masked_parallel_trails_from_frame_ci(
-            frame_ci=frame,
+        mask = ac.ci.Mask2DCI.masked_parallel_trails_from_layout(
+            layout=layout,
             settings=ac.ci.SettingsMask2DCI(parallel_trails_rows=(0, 4)),
+            pixel_scales=0.1,
+        )
+
+        assert type(mask) == ac.ci.Mask2DCI
+
+        assert (
+            mask
+            == np.array(
+                [
+                    [False, False, False],
+                    [False, False, False],
+                    [False, False, False],
+                    [False, False, False],
+                    [True, True, True],
+                    [True, True, True],
+                    [True, True, True],
+                    [True, True, True],
+                    [False, False, False],
+                    [False, False, False],
+                ]
+            )
+        ).all()
+
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(10, 3), normalization=1.0, region_list=[(1, 4, 0, 3)]
+        )
+
+        mask = ac.ci.Mask2DCI.masked_parallel_trails_from_layout(
+            layout=layout,
+            settings=ac.ci.SettingsMask2DCI(parallel_trails_rows=(0, 4)),
+            pixel_scales=0.1,
             invert=True,
         )
 
@@ -194,21 +167,16 @@ class TestMaskedParallelTrails:
             )
         ).all()
 
-    def test__pattern_bottom__2_regions__extracts_rows_correctly(self):
-
-        pattern = ac.ci.Layout2DCIUniform(
-            normalization=1.0, region_list=[(1, 4, 0, 1), (1, 4, 2, 3)]
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(10, 3),
+            normalization=1.0,
+            region_list=[(1, 4, 0, 1), (1, 4, 2, 3)],
         )
 
-        frame = ac.ci.CIFrame.manual(
-            array=np.ones((10, 3)),
-            roe_corner=(1, 0),
-            layout_ci=pattern,
-            pixel_scales=1.0,
-        )
-
-        mask = ac.ci.Mask2DCI.masked_parallel_trails_from_frame_ci(
-            frame_ci=frame, settings=ac.ci.SettingsMask2DCI(parallel_trails_rows=(0, 4))
+        mask = ac.ci.Mask2DCI.masked_parallel_trails_from_layout(
+            layout=layout,
+            settings=ac.ci.SettingsMask2DCI(parallel_trails_rows=(0, 4)),
+            pixel_scales=0.1,
         )
 
         assert type(mask) == ac.ci.Mask2DCI
@@ -231,22 +199,16 @@ class TestMaskedParallelTrails:
             )
         ).all()
 
+    def test__masked_serial_front_edge_from_layout(self):
 
-class TestMaskedSerialFrontEdge:
-    def test__mask_only_contains_front_edge(self):
-
-        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, region_list=[(0, 3, 1, 4)])
-
-        frame = ac.ci.CIFrame.manual(
-            array=np.ones((3, 10)),
-            roe_corner=(1, 0),
-            layout_ci=pattern,
-            pixel_scales=1.0,
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(3, 10), normalization=1.0, region_list=[(0, 3, 1, 4)]
         )
 
-        mask = ac.ci.Mask2DCI.masked_serial_front_edge_from_frame_ci(
-            frame_ci=frame,
+        mask = ac.ci.Mask2DCI.masked_serial_front_edge_from_layout(
+            layout=layout,
             settings=ac.ci.SettingsMask2DCI(serial_front_edge_columns=(0, 2)),
+            pixel_scales=0.1,
         )
 
         assert type(mask) == ac.ci.Mask2DCI
@@ -295,20 +257,14 @@ class TestMaskedSerialFrontEdge:
             )
         ).all()
 
-    def test__same_as_above_but_uses_invert(self):
-
-        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, region_list=[(0, 3, 1, 4)])
-
-        frame = ac.ci.CIFrame.manual(
-            array=np.ones((3, 10)),
-            roe_corner=(1, 0),
-            layout_ci=pattern,
-            pixel_scales=1.0,
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(3, 10), normalization=1.0, region_list=[(0, 3, 1, 4)]
         )
 
-        mask = ac.ci.Mask2DCI.masked_serial_front_edge_from_frame_ci(
-            frame_ci=frame,
+        mask = ac.ci.Mask2DCI.masked_serial_front_edge_from_layout(
+            layout=layout,
             settings=ac.ci.SettingsMask2DCI(serial_front_edge_columns=(0, 2)),
+            pixel_scales=0.1,
             invert=True,
         )
 
@@ -325,22 +281,16 @@ class TestMaskedSerialFrontEdge:
             )
         ).all()
 
-    def test__2_regions__extracts_columns_correctly(self):
-
-        pattern = ac.ci.Layout2DCIUniform(
-            normalization=1.0, region_list=[(0, 1, 1, 4), (2, 3, 1, 4)]
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(3, 10),
+            normalization=1.0,
+            region_list=[(0, 1, 1, 4), (2, 3, 1, 4)],
         )
 
-        frame = ac.ci.CIFrame.manual(
-            array=np.ones((3, 10)),
-            roe_corner=(1, 0),
-            layout_ci=pattern,
-            pixel_scales=1.0,
-        )
-
-        mask = ac.ci.Mask2DCI.masked_serial_front_edge_from_frame_ci(
-            frame_ci=frame,
+        mask = ac.ci.Mask2DCI.masked_serial_front_edge_from_layout(
+            layout=layout,
             settings=ac.ci.SettingsMask2DCI(serial_front_edge_columns=(0, 3)),
+            pixel_scales=0.1,
         )
 
         assert type(mask) == ac.ci.Mask2DCI
@@ -367,22 +317,19 @@ class TestMaskedSerialFrontEdge:
             )
         ).all()
 
+    def test__masked_serial_trails_from_layout(self):
 
-class TestMaskedSerialTrails:
-    def test__mask_only_contains_trails(self):
-
-        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
-
-        frame = ac.ci.CIFrame.manual(
-            array=np.ones((3, 10)),
-            roe_corner=(1, 0),
-            layout_ci=pattern,
-            pixel_scales=1.0,
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(3, 10),
+            normalization=1.0,
+            region_list=[(0, 3, 1, 4)],
+            serial_overscan=(0, 3, 8, 10),
         )
 
-        mask = ac.ci.Mask2DCI.masked_serial_trails_from_frame_ci(
-            frame_ci=frame,
+        mask = ac.ci.Mask2DCI.masked_serial_trails_from_layout(
+            layout=layout,
             settings=ac.ci.SettingsMask2DCI(serial_trails_columns=(0, 6)),
+            pixel_scales=0.1,
         )
 
         assert type(mask) == ac.ci.Mask2DCI
@@ -398,20 +345,10 @@ class TestMaskedSerialTrails:
             )
         ).all()
 
-    def test__same_as_above_but_uses_invert(self):
-
-        pattern = ac.ci.Layout2DCIUniform(normalization=1.0, regions=[(0, 3, 1, 4)])
-
-        frame = ac.ci.CIFrame.manual(
-            array=np.ones((3, 10)),
-            roe_corner=(1, 0),
-            layout_ci=pattern,
-            pixel_scales=1.0,
-        )
-
-        mask = ac.ci.Mask2DCI.masked_serial_trails_from_frame_ci(
-            frame_ci=frame,
+        mask = ac.ci.Mask2DCI.masked_serial_trails_from_layout(
+            layout=layout,
             settings=ac.ci.SettingsMask2DCI(serial_trails_columns=(0, 6)),
+            pixel_scales=0.1,
             invert=True,
         )
 
@@ -428,22 +365,17 @@ class TestMaskedSerialTrails:
             )
         ).all()
 
-    def test__2_regions__extracts_columns_correctly(self):
-
-        pattern = ac.ci.Layout2DCIUniform(
-            normalization=1.0, regions=[(0, 1, 1, 4), (2, 3, 1, 4)]
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(3, 10),
+            normalization=1.0,
+            region_list=[(0, 1, 1, 4), (2, 3, 1, 4)],
+            serial_overscan=(0, 3, 8, 10),
         )
 
-        frame = ac.ci.CIFrame.manual(
-            array=np.ones((3, 10)),
-            roe_corner=(1, 0),
-            layout_ci=pattern,
-            pixel_scales=1.0,
-        )
-
-        mask = ac.ci.Mask2DCI.masked_serial_trails_from_frame_ci(
-            frame_ci=frame,
+        mask = ac.ci.Mask2DCI.masked_serial_trails_from_layout(
+            layout=layout,
             settings=ac.ci.SettingsMask2DCI(serial_trails_columns=(0, 6)),
+            pixel_scales=0.1,
         )
 
         assert type(mask) == ac.ci.Mask2DCI
@@ -470,22 +402,28 @@ class TestMaskedSerialTrails:
             )
         ).all()
 
+    def test__masked_front_edges_and_trails_from_frame_ci(self, imaging_ci_7x7):
 
-class TestMaskedFrontEdgeTrailsAll:
-    def test__masks_uses_front_edge_and_trails_parameters(self, imaging_ci_7x7):
-
-        mask = ac.ci.Mask2DCI.unmasked(
+        unmasked = ac.ci.Mask2DCI.unmasked(
             shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
         )
 
-        ci_mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_frame_ci(
-            frame_ci=imaging_ci_7x7.image,
-            mask=mask,
+        layout = ac.ci.Layout2DCIUniform(
+            shape_2d=(7, 7),
+            normalization=1.0,
+            region_list=[(1, 5, 1, 5)],
+            serial_overscan=(0, 7, 6, 7),
+        )
+
+        mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_frame_ci(
+            layout=layout,
+            mask=unmasked,
             settings=ac.ci.SettingsMask2DCI(parallel_front_edge_rows=(0, 1)),
+            pixel_scales=0.1,
         )
 
         assert (
-            ci_mask
+            mask
             == np.array(
                 [
                     [False, False, False, False, False, False, False],
@@ -499,14 +437,15 @@ class TestMaskedFrontEdgeTrailsAll:
             )
         ).all()
 
-        ci_mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_frame_ci(
-            frame_ci=imaging_ci_7x7.image,
-            mask=mask,
+        mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_frame_ci(
+            layout=layout,
+            mask=unmasked,
             settings=ac.ci.SettingsMask2DCI(parallel_trails_rows=(0, 1)),
+            pixel_scales=0.1,
         )
 
         assert (
-            ci_mask
+            mask
             == np.array(
                 [
                     [False, False, False, False, False, False, False],
@@ -520,14 +459,15 @@ class TestMaskedFrontEdgeTrailsAll:
             )
         ).all()
 
-        ci_mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_frame_ci(
-            frame_ci=imaging_ci_7x7.image,
-            mask=mask,
+        mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_frame_ci(
+            layout=layout,
+            mask=unmasked,
             settings=ac.ci.SettingsMask2DCI(serial_front_edge_columns=(0, 1)),
+            pixel_scales=0.1,
         )
 
         assert (
-            ci_mask
+            mask
             == np.array(
                 [
                     [False, False, False, False, False, False, False],
@@ -541,14 +481,15 @@ class TestMaskedFrontEdgeTrailsAll:
             )
         ).all()
 
-        ci_mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_frame_ci(
-            frame_ci=imaging_ci_7x7.image,
-            mask=mask,
+        mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_frame_ci(
+            layout=layout,
+            mask=unmasked,
             settings=ac.ci.SettingsMask2DCI(serial_trails_columns=(0, 1)),
+            pixel_scales=0.1,
         )
 
         assert (
-            ci_mask
+            mask
             == np.array(
                 [
                     [False, False, False, False, False, False, False],

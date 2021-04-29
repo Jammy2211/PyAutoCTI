@@ -1,5 +1,5 @@
 from autoarray.instruments import euclid
-from autoarray.structures.frames import layout_util
+from autoarray.layout import layout_util
 
 from autocti.util.clocker import Clocker
 from autocti.util import ccd
@@ -8,22 +8,22 @@ from autocti.util import traps
 from autocti.charge_injection import layout_ci as pattern
 
 """
-Note on the rotations of frames:
+Note on the rotations of arrays:
 
-The function 'non_uniform_frame_for_ou_sim' returns a frame that is rotated according to the ccd_id and quadrant id,
+The function 'non_uniform_array_for_ou_sim' returns a array that is rotated according to the ccd_id and quadrant id,
 which given the quadrant unique define the orientation of the ndarray necessary to add paralle and serial
 CTI in the correct direction. These are defined accoridng to:
 
     http://euclid.esac.esa.int/dm/dpdd/latest/le1dpd/dpcards/le1_visrawframe.html
 
-This function will return a frame, which OU-Sim will then add the following effects too:
+This function will return a array, which OU-Sim will then add the following effects too:
 
     - Add cosmic rays.
     - Bias.
     - Non-linearity.
     - Crosstalk?
 
-The addition of CTI can then be performed using either the 'add_cti_to_frame_for_ou_sim' function, or the standard
+The addition of CTI can then be performed using either the 'add_cti_to_array_for_ou_sim' function, or the standard
 function OU-Sim use to add CTI (I guess they ultimately both flow through arctic in an identical way, albeit our
 code uses SWIG and omits the need to define arCTIc parameter files.
 
@@ -33,7 +33,7 @@ them to fits to oriented them in the way they are observed (VIS_CTI has tools fo
 """
 
 
-def non_uniform_frame_from(
+def non_uniform_array_from(
     ccd_id,
     quadrant_id,
     ci_normalization,
@@ -45,7 +45,7 @@ def non_uniform_frame_from(
     """
     Returns a charge injection line image suitable for OU-SIM to run through the ElVIS simulator.
 
-    By default, this frame has dimensions (2086, 2128), representing a Euclid quadrant with a serial prescan of
+    By default, this array has dimensions (2086, 2128), representing a Euclid quadrant with a serial prescan of
     size 51 pixels, a serial overscan with 29 pixels and parallel overscan with 20 pixels.
 
     The charge injection line pattern is simulated using the VIS_CTI Processing element, and includes
@@ -95,6 +95,7 @@ def non_uniform_frame_from(
     Use the charge injection normalizations and regions to create `Layout2DCINonUniform` of every image we'll simulate.
     """
     layout_ci = pattern.Layout2DCINonUniform(
+        shape_2d=shape_native,
         normalization=ci_normalization,
         region_list=regions_ci,
         row_slope=0.0,
@@ -107,15 +108,15 @@ def non_uniform_frame_from(
     """
     pre_cti_ci = layout_ci.pre_cti_ci_from(
         shape_native=shape_native, pixel_scales=pixel_scales
-    )
+    ).native
 
     roe_corner = euclid.roe_corner_from(ccd_id=ccd_id, quadrant_id=quadrant_id)
 
     """
-    Before passing this image to arCTIc to add CTI, we want to make it a `Frame` object, which:
+    Before passing this image to arCTIc to add CTI, we want to make it a `Array2D` object, which:
 
     - Uses an input read-out electronics corner to perform all rotations of the image before / after adding CTI.
-    - Also uses this corner to rotate images before outputting to .fits, such that `Frame` objects can be load via
+    - Also uses this corner to rotate images before outputting to .fits, such that `Array2D` objects can be load via
     .fits with the correct orientation.
     - Includes information on different regions of the image, such as the serial prescan and overscans.
     """
@@ -131,8 +132,8 @@ def add_cti_to_pre_cti_ci(pre_cti_ci, ccd_id, quadrant_id):
     roe_corner = euclid.roe_corner_from(ccd_id=ccd_id, quadrant_id=quadrant_id)
 
     pre_cti_ci = layout_util.rotate_array_from_roe_corner(
-        array=pre_cti_ci, roe_corner=roe_corner
-    )
+        array=pre_cti_ci.native, roe_corner=roe_corner
+    ).native
 
     """
     The `Clocker` models the CCD read-out, including CTI.
