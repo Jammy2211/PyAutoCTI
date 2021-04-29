@@ -154,9 +154,9 @@ def make_ci_noise_map_7x7():
     return fixtures.make_ci_noise_map_7x7()
 
 
-@pytest.fixture(name="pre_cti_ci_7x7")
-def make_pre_cti_ci_7x7():
-    return fixtures.make_pre_cti_ci_7x7()
+@pytest.fixture(name="pre_cti_image_7x7")
+def make_pre_cti_image_7x7():
+    return fixtures.make_pre_cti_image_7x7()
 
 
 @pytest.fixture(name="ci_cosmic_ray_map_7x7")

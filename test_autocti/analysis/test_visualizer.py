@@ -39,7 +39,7 @@ class TestVisualizer:
         assert path.join(plot_path, "image_2d.png") in plot_patch.paths
         assert path.join(plot_path, "noise_map.png") not in plot_patch.paths
         assert path.join(plot_path, "signal_to_noise_map.png") not in plot_patch.paths
-        assert path.join(plot_path, "pre_cti_ci.png") in plot_patch.paths
+        assert path.join(plot_path, "pre_cti_image.png") in plot_patch.paths
         assert path.join(plot_path, "cosmic_ray_map.png") in plot_patch.paths
 
     def test__visualizes_imaging_lines_using_configs(
@@ -71,7 +71,7 @@ class TestVisualizer:
             not in plot_patch.paths
         )
         assert (
-            path.join(plot_path, "pre_cti_ci_parallel_front_edge.png")
+            path.join(plot_path, "pre_cti_image_parallel_front_edge.png")
             in plot_patch.paths
         )
 
@@ -92,8 +92,8 @@ class TestVisualizer:
         assert path.join(plot_path, "image_2d.png") in plot_patch.paths
         assert path.join(plot_path, "noise_map.png") not in plot_patch.paths
         assert path.join(plot_path, "signal_to_noise_map.png") not in plot_patch.paths
-        assert path.join(plot_path, "pre_cti_ci.png") in plot_patch.paths
-        assert path.join(plot_path, "post_cti_ci.png") in plot_patch.paths
+        assert path.join(plot_path, "pre_cti_image.png") in plot_patch.paths
+        assert path.join(plot_path, "post_cti_image.png") in plot_patch.paths
         assert path.join(plot_path, "residual_map.png") not in plot_patch.paths
         assert path.join(plot_path, "normalized_residual_map.png") in plot_patch.paths
         assert path.join(plot_path, "chi_squared_map.png") in plot_patch.paths
@@ -106,8 +106,8 @@ class TestVisualizer:
         assert path.join(plot_path, "image_2d.png") in plot_patch.paths
         assert path.join(plot_path, "noise_map.png") in plot_patch.paths
         assert path.join(plot_path, "signal_to_noise_map.png") in plot_patch.paths
-        assert path.join(plot_path, "pre_cti_ci.png") in plot_patch.paths
-        assert path.join(plot_path, "post_cti_ci.png") in plot_patch.paths
+        assert path.join(plot_path, "pre_cti_image.png") in plot_patch.paths
+        assert path.join(plot_path, "post_cti_image.png") in plot_patch.paths
         assert path.join(plot_path, "residual_map.png") in plot_patch.paths
         assert path.join(plot_path, "normalized_residual_map.png") in plot_patch.paths
         assert path.join(plot_path, "chi_squared_map.png") in plot_patch.paths
@@ -141,11 +141,11 @@ class TestVisualizer:
             not in plot_patch.paths
         )
         assert (
-            path.join(plot_path, "pre_cti_ci_parallel_front_edge.png")
+            path.join(plot_path, "pre_cti_image_parallel_front_edge.png")
             in plot_patch.paths
         )
         assert (
-            path.join(plot_path, "post_cti_ci_parallel_front_edge.png")
+            path.join(plot_path, "post_cti_image_parallel_front_edge.png")
             in plot_patch.paths
         )
         assert (
@@ -181,11 +181,11 @@ class TestVisualizer:
             in plot_patch.paths
         )
         assert (
-            path.join(plot_path, "pre_cti_ci_parallel_front_edge.png")
+            path.join(plot_path, "pre_cti_image_parallel_front_edge.png")
             in plot_patch.paths
         )
         assert (
-            path.join(plot_path, "post_cti_ci_parallel_front_edge.png")
+            path.join(plot_path, "post_cti_image_parallel_front_edge.png")
             in plot_patch.paths
         )
         assert (

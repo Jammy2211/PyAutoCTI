@@ -6,17 +6,17 @@ from autoarray.fit import fit
 
 class FitImagingCI(fit.FitImaging):
     def __init__(
-        self, imaging_ci: imaging_ci.ImagingCI, post_cti_ci, hyper_noise_scalars=None
+        self, imaging: imaging_ci.ImagingCI, post_cti_image, hyper_noise_scalars=None
     ):
         """Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian
         framework.
 
         Parameters
         -----------
-        imaging_ci
+        imaging
             The charge injection image that is fitted.
-        post_cti_ci
-            The `pre_cti_ci` with cti added to it via the clocker and a CTI model.
+        post_cti_image
+            The `pre_cti_image` with cti added to it via the clocker and a CTI model.
         hyper_noise_scalars :
             The hyper_ci-parameter(s) which the noise_scaling_map_list_list is multiplied by to scale the noise-map.
         """
@@ -25,17 +25,17 @@ class FitImagingCI(fit.FitImaging):
 
         if hyper_noise_scalars is not None and len(hyper_noise_scalars) > 0:
 
-            self.noise_scaling_map_list = imaging_ci.noise_scaling_map_list
+            self.noise_scaling_map_list = imaging.noise_scaling_map_list
 
             noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
                 hyper_noise_scalars=hyper_noise_scalars,
-                noise_scaling_map_list=imaging_ci.noise_scaling_map_list,
-                noise_map=imaging_ci.noise_map,
+                noise_scaling_map_list=imaging.noise_scaling_map_list,
+                noise_map=imaging.noise_map,
             )
 
-            imaging_ci = imaging_ci.modify_noise_map(noise_map=noise_map)
+            imaging = imaging.modify_noise_map(noise_map=noise_map)
 
-        super().__init__(imaging=imaging_ci, model_image=post_cti_ci)
+        super().__init__(imaging=imaging, model_image=post_cti_image)
 
     @property
     def imaging_ci(self):
@@ -43,15 +43,15 @@ class FitImagingCI(fit.FitImaging):
 
     @property
     def layout(self):
-        return self.imaging_ci.layout_ci
+        return self.imaging_ci.layout
 
     @property
-    def post_cti_ci(self):
+    def post_cti_image(self):
         return self.model_data
 
     @property
-    def pre_cti_ci(self):
-        return self.dataset.pre_cti_ci
+    def pre_cti_image(self):
+        return self.dataset.pre_cti_image
 
     @property
     def chi_squared_map_of_regions_ci(self):

@@ -129,7 +129,7 @@ def make_ci_noise_map_7x7():
     )
 
 
-def make_pre_cti_ci_7x7():
+def make_pre_cti_image_7x7():
     return array_2d.Array2D.full(
         shape_native=(7, 7), fill_value=10.0, pixel_scales=(1.0, 1.0)
     )
@@ -159,10 +159,10 @@ def make_imaging_ci_7x7():
     return ci.ImagingCI(
         image=make_ci_image_7x7(),
         noise_map=make_ci_noise_map_7x7(),
-        pre_cti_ci=make_pre_cti_ci_7x7(),
+        pre_cti_image=make_pre_cti_image_7x7(),
         cosmic_ray_map=make_ci_cosmic_ray_map_7x7(),
         noise_scaling_map_list=make_ci_noise_scaling_map_list_7x7(),
-        layout_ci=make_layout_ci_7x7(),
+        layout=make_layout_ci_7x7(),
     )
 
 
@@ -178,8 +178,8 @@ def make_hyper_noise_scalars():
 
 def make_fit_ci_7x7():
     return ci.FitImagingCI(
-        imaging_ci=make_imaging_ci_7x7(),
-        post_cti_ci=make_imaging_ci_7x7().pre_cti_ci,
+        imaging=make_imaging_ci_7x7(),
+        post_cti_image=make_imaging_ci_7x7().pre_cti_image,
         hyper_noise_scalars=make_hyper_noise_scalars(),
     )
 
@@ -206,7 +206,7 @@ def make_samples_with_result():
 
 def make_analysis_imaging_ci_7x7():
     return analysis.AnalysisImagingCI(
-        ci_dataset_list=[make_imaging_ci_7x7()], clocker=make_parallel_clocker()
+        dataset_ci_list=[make_imaging_ci_7x7()], clocker=make_parallel_clocker()
     )
 
 

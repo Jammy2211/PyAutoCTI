@@ -20,7 +20,7 @@ class ConsecutivePool(object):
 class AnalysisImagingCI(abstract_search.Analysis):
     def __init__(
         self,
-        ci_dataset_list,
+        dataset_ci_list,
         clocker,
         settings_cti=settings.SettingsCTI(),
         results=None,
@@ -29,7 +29,7 @@ class AnalysisImagingCI(abstract_search.Analysis):
 
         super().__init__()
 
-        self.ci_dataset_list = ci_dataset_list
+        self.dataset_ci_list = dataset_ci_list
         self.clocker = clocker
         self.settings_cti = settings_cti
         self.results = results
@@ -37,7 +37,7 @@ class AnalysisImagingCI(abstract_search.Analysis):
 
     @property
     def imaging_ci_list(self):
-        return self.ci_dataset_list
+        return self.dataset_ci_list
 
     def log_likelihood_function(self, instance):
         """
@@ -67,7 +67,7 @@ class AnalysisImagingCI(abstract_search.Analysis):
             hyper_noise_scalars=hyper_noise_scalars,
         )
 
-        return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_dataset_list)))
+        return np.sum(list(self.pool.map(pipe_cti_pass, self.dataset_ci_list)))
 
     def hyper_noise_scalars_from_instance(self, instance, hyper_noise_scale=True):
 
@@ -110,8 +110,8 @@ class AnalysisImagingCI(abstract_search.Analysis):
         else:
             serial_traps = None
 
-        post_cti_ci = self.clocker.add_cti(
-            image=imaging_ci.pre_cti_ci,
+        post_cti_image = self.clocker.add_cti(
+            image=imaging_ci.pre_cti_image,
             parallel_traps=parallel_traps,
             parallel_ccd=instance.cti.parallel_ccd,
             serial_traps=serial_traps,
@@ -119,8 +119,8 @@ class AnalysisImagingCI(abstract_search.Analysis):
         )
 
         return fit_ci.FitImagingCI(
-            imaging_ci=imaging_ci,
-            post_cti_ci=post_cti_ci,
+            imaging=imaging_ci,
+            post_cti_image=post_cti_image,
             hyper_noise_scalars=hyper_noise_scalars,
         )
 
@@ -140,7 +140,7 @@ class AnalysisImagingCI(abstract_search.Analysis):
         return [
             self.fit_from_instance_and_imaging_ci(
                 instance=instance,
-                imaging_ci=imaging_ci.imaging_ci_full,
+                imaging_ci=imaging_ci.imaging_full,
                 hyper_noise_scale=hyper_noise_scale,
             )
             for imaging_ci in self.imaging_ci_list
@@ -155,15 +155,15 @@ class AnalysisImagingCI(abstract_search.Analysis):
         for index in range(len(fits)):
 
             visualizer.visualize_imaging_ci(
-                imaging_ci=self.ci_dataset_list[index], index=index
+                imaging_ci=self.dataset_ci_list[index], index=index
             )
             visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.ci_dataset_list[index],
+                imaging_ci=self.dataset_ci_list[index],
                 line_region="parallel_front_edge",
                 index=index,
             )
             visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.ci_dataset_list[index],
+                imaging_ci=self.dataset_ci_list[index],
                 line_region="parallel_trails",
                 index=index,
             )
@@ -207,8 +207,8 @@ def pipe_cti(ci_data_masked, instance, clocker, hyper_noise_scalars):
     else:
         serial_traps = None
 
-    post_cti_ci = clocker.add_cti(
-        image=ci_data_masked.pre_cti_ci,
+    post_cti_image = clocker.add_cti(
+        image=ci_data_masked.pre_cti_image,
         parallel_traps=parallel_traps,
         parallel_ccd=instance.cti.parallel_ccd,
         serial_traps=serial_traps,
@@ -216,8 +216,8 @@ def pipe_cti(ci_data_masked, instance, clocker, hyper_noise_scalars):
     )
 
     fit = fit_ci.FitImagingCI(
-        imaging_ci=ci_data_masked,
-        post_cti_ci=post_cti_ci,
+        imaging=ci_data_masked,
+        post_cti_image=post_cti_image,
         hyper_noise_scalars=hyper_noise_scalars,
     )
 

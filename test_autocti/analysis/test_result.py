@@ -74,7 +74,7 @@ class TestResultImagingCI:
         )
 
         analysis = ac.AnalysisImagingCI(
-            ci_dataset_list=[masked_imaging_ci], clocker=parallel_clocker
+            dataset_ci_list=[masked_imaging_ci], clocker=parallel_clocker
         )
 
         result = res.ResultImagingCI(
@@ -125,7 +125,7 @@ class TestResultImagingCI:
         masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
 
         analysis = ac.AnalysisImagingCI(
-            ci_dataset_list=[masked_imaging_ci_7x7], clocker=parallel_clocker
+            dataset_ci_list=[masked_imaging_ci_7x7], clocker=parallel_clocker
         )
 
         fit_list = analysis.fit_list_from_instance(
@@ -214,7 +214,7 @@ class TestResultImagingCI:
         masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
 
         analysis = ac.AnalysisImagingCI(
-            ci_dataset_list=[masked_imaging_ci_7x7, masked_imaging_ci_7x7],
+            dataset_ci_list=[masked_imaging_ci_7x7, masked_imaging_ci_7x7],
             clocker=parallel_clocker,
         )
 

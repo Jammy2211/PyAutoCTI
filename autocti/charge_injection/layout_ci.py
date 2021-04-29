@@ -36,9 +36,9 @@ class Extractor:
 class ExtractorParallelFrontEdge(Extractor):
     def array_2d_list_from(self, array: array_2d.Array2D, rows):
         """
-        Extract a list of structures of the parallel front edge scans of a charge injection array_ci.
+        Extract a list of structures of the parallel front edge scans of a charge injection array.
 
-        The diagram below illustrates the arrays that is extracted from a array_ci for rows=(0, 1):
+        The diagram below illustrates the arrays that is extracted from a array for rows=(0, 1):
 
         ---KEY---
         ---------
@@ -65,7 +65,7 @@ class ExtractorParallelFrontEdge(Extractor):
         []     [=====================]
                <---------S----------
 
-        The extracted array_ci keeps just the front edges of all charge injection scans.
+        The extracted array keeps just the front edges of all charge injection scans.
 
         list index 0:
 
@@ -109,9 +109,9 @@ class ExtractorParallelFrontEdge(Extractor):
 
     def region_list_from(self, rows):
         """
-        Calculate a list of the parallel front edge scans of a charge injection array_ci.
+        Calculate a list of the parallel front edge scans of a charge injection array.
 
-        The diagram below illustrates the region that calculaed from a array_ci for rows=(0, 1):
+        The diagram below illustrates the region that calculaed from a array for rows=(0, 1):
 
         ---KEY---
         ---------
@@ -138,7 +138,7 @@ class ExtractorParallelFrontEdge(Extractor):
         []     [=====================]
                <---------S----------
 
-        The extracted array_ci keeps just the front edges of all charge injection scans.
+        The extracted array keeps just the front edges of all charge injection scans.
 
         list index 0:
 
@@ -178,10 +178,11 @@ class ExtractorParallelFrontEdge(Extractor):
 
 class ExtractorParallelTrails(Extractor):
     def array_2d_list_from(self, array: array_2d.Array2D, rows):
-        """Extract the parallel trails of a charge injection array_ci.
+        """
+        Extract the parallel trails of a charge injection array.
 
 
-        The diagram below illustrates the arrays that is extracted from a array_ci for rows=(0, 1):
+        The diagram below illustrates the arrays that is extracted from a array for rows=(0, 1):
 
         ---KEY---
         ---------
@@ -209,7 +210,7 @@ class ExtractorParallelTrails(Extractor):
         []     [=====================]
                <---------S----------
 
-        The extracted array_ci keeps just the trails following all charge injection scans:
+        The extracted array keeps just the trails following all charge injection scans:
 
         list index 0:
 
@@ -254,9 +255,9 @@ class ExtractorParallelTrails(Extractor):
 
     def region_list_from(self, rows):
         """
-        Returns the parallel scans of a charge injection array_ci.
+        Returns the parallel scans of a charge injection array.
 
-            The diagram below illustrates the region that is calculated from a array_ci for rows=(0, 1):
+            The diagram below illustrates the region that is calculated from a array for rows=(0, 1):
 
             ---KEY---
             ---------
@@ -284,7 +285,7 @@ class ExtractorParallelTrails(Extractor):
             []     [=====================]
                    <---------S----------
 
-            The extracted array_ci keeps just the trails following all charge injection scans:
+            The extracted array keeps just the trails following all charge injection scans:
 
             list index 0:
 
@@ -325,9 +326,9 @@ class ExtractorParallelTrails(Extractor):
 class ExtractorSerialFrontEdge(Extractor):
     def array_2d_list_from(self, array: array_2d.Array2D, columns):
         """
-        Extract a list of the serial front edge structures of a charge injection array_ci.
+        Extract a list of the serial front edge structures of a charge injection array.
 
-        The diagram below illustrates the arrays that is extracted from a array_ci for columnss=(0, 3):
+        The diagram below illustrates the arrays that is extracted from a array for columnss=(0, 3):
 
         ---KEY---
         ---------
@@ -355,7 +356,7 @@ class ExtractorSerialFrontEdge(Extractor):
         []     [=====================]
                <---------S----------
 
-        The extracted array_ci keeps just the serial front edges of all charge injection scans.
+        The extracted array keeps just the serial front edges of all charge injection scans.
 
         list index 0:
 
@@ -400,9 +401,9 @@ class ExtractorSerialFrontEdge(Extractor):
 
     def region_list_from(self, columns):
         """
-        Returns a list of the serial front edges scans of a charge injection array_ci.
+        Returns a list of the serial front edges scans of a charge injection array.
 
-        The diagram below illustrates the region that is calculated from a array_ci for columns=(0, 4):
+        The diagram below illustrates the region that is calculated from a array for columns=(0, 4):
 
         ---KEY---
         ---------
@@ -430,7 +431,7 @@ class ExtractorSerialFrontEdge(Extractor):
         []     [=====================]
                <---------S----------
 
-        The extracted array_ci keeps just the serial front edges of all charge injection scans.
+        The extracted array keeps just the serial front edges of all charge injection scans.
 
         list index 0:
 
@@ -472,9 +473,9 @@ class ExtractorSerialFrontEdge(Extractor):
 class ExtractorSerialTrails(Extractor):
     def array_2d_list_from(self, array: array_2d.Array2D, columns):
         """
-        Extract a list of the serial trails of a charge injection array_ci.
+        Extract a list of the serial trails of a charge injection array.
 
-        The diagram below illustrates the arrays that is extracted from a array_ci for columnss=(0, 3):
+        The diagram below illustrates the arrays that is extracted from a array for columnss=(0, 3):
 
         ---KEY---
         ---------
@@ -502,7 +503,7 @@ class ExtractorSerialTrails(Extractor):
         []     [=====================]
                <---------S----------
 
-        The extracted array_ci keeps just the serial front edges of all charge injection scans.
+        The extracted array keeps just the serial front edges of all charge injection scans.
 
         list index 0:
 
@@ -546,9 +547,9 @@ class ExtractorSerialTrails(Extractor):
 
     def region_list_from(self, columns):
         """
-        Returns a list of the serial trails scans of a charge injection array_ci.
+        Returns a list of the serial trails scans of a charge injection array.
 
-        The diagram below illustrates the region is calculated from a array_ci for columnss=(0, 4):
+        The diagram below illustrates the region is calculated from a array for columnss=(0, 4):
 
         ---KEY---
         ---------
@@ -576,7 +577,7 @@ class ExtractorSerialTrails(Extractor):
         []     [=====================]
                <---------S----------
 
-        The extracted array_ci keeps just the serial front edges of all charge injection scans.
+        The extracted array keeps just the serial front edges of all charge injection scans.
 
         list index 0:
 
@@ -628,7 +629,7 @@ class AbstractLayout2DCI(lo.Layout2D):
     ):
         """
         Abstract base class for a charge injection layout_ci, which defines the regions charge injections appears \
-         on a charge-injection array_ci, the input normalization and other properties.
+         on a charge-injection array, the input normalization and other properties.
 
         Parameters
         -----------
@@ -740,7 +741,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         []     [=====================]
                <---------S----------
 
-        The extracted array_ci keeps just the charge injection region and replaces all other values with 0s:
+        The extracted array keeps just the charge injection region and replaces all other values with 0s:
 
                [000000000000000000000]
                [000000000000000000000]
@@ -796,7 +797,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         []     [=====================]
                <---------S----------
 
-        The extracted array_ci keeps just the trails following all charge injection scans and replaces all other
+        The extracted array keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
 
                [tptpptptptpptpptpptpt]
@@ -856,7 +857,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         []     [=====================]
                <---------S----------
 
-        The extracted array_ci keeps just the trails following all charge injection scans and replaces all other
+        The extracted array keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
 
                [tptpptptptpptpptpptpt]
@@ -923,7 +924,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         []     [=====================]
                <---------S----------
 
-        The extracted array_ci keeps just the leading edges and trails following all charge injection scans and
+        The extracted array keeps just the leading edges and trails following all charge injection scans and
         replaces all other values with 0s:
 
                [000000000000000000000]
@@ -968,7 +969,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         array which is specifically used for only parallel CTI calibration. This array is simply a specified number
         of columns that are closest to the read-out electronics.
 
-        The diagram below illustrates the arrays that is extracted from a array_ci with columns=(0, 3):
+        The diagram below illustrates the arrays that is extracted from a array with columns=(0, 3):
 
         ---KEY---
         ---------
@@ -994,7 +995,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         []     [=====================]
                <---------S----------
 
-        The extracted array_ci keeps just the trails following all charge injection scans and replaces all other
+        The extracted array keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
 
                [ptp]
@@ -1022,7 +1023,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         array which is specifically used for only parallel CTI calibration. This array is simply a specified number
         of columns that are closest to the read-out electronics.
 
-        The diagram below illustrates the arrays that is extracted from a array_ci with columns=(0, 3):
+        The diagram below illustrates the arrays that is extracted from a array with columns=(0, 3):
 
         ---KEY---
         ---------
@@ -1048,7 +1049,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         []     [=====================]
                <---------S----------
 
-        The extracted array_ci keeps just the trails following all charge injection scans and replaces all other
+        The extracted array keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
 
                [ptp]
@@ -1079,7 +1080,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         array which is specifically used for only parallel CTI calibration. This array is simply a specified number
         of columns that are closest to the read-out electronics.
 
-        The diagram below illustrates the arrays that is extracted from a array_ci with columns=(0, 3):
+        The diagram below illustrates the arrays that is extracted from a array with columns=(0, 3):
 
         ---KEY---
         ---------
@@ -1105,7 +1106,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         []     [=====================]
                <---------S----------
 
-        The extracted array_ci keeps just the trails following all charge injection scans and replaces all other
+        The extracted array keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
 
                [ptp]
@@ -1140,9 +1141,9 @@ class AbstractLayout2DCI(lo.Layout2D):
 
     def array_2d_of_serial_trails_from(self, array: array_2d.Array2D):
         """Extract an arrays of all of the serial trails in the serial overscan region, that are to the side of a
-        charge-injection scans from a charge injection array_ci.
+        charge-injection scans from a charge injection array.
 
-        The diagram below illustrates the arrays that is extracted from a array_ci:
+        The diagram below illustrates the arrays that is extracted from a array:
 
         ---KEY---
         ---------
@@ -1168,7 +1169,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         []     [=====================]
                <---------S----------
 
-        The extracted array_ci keeps just the trails following all charge injection scans and replaces all other
+        The extracted array keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
 
                [000000000000000000000]
@@ -1194,7 +1195,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         Extract an arrays of all of the scans of the serial overscan that don't contain trails from a
         charge injection region (i.e. are not to the side of one).
 
-        The diagram below illustrates the arrays that is extracted from a array_ci:
+        The diagram below illustrates the arrays that is extracted from a array:
 
         ---KEY---
         ---------
@@ -1220,7 +1221,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         []     [=====================]
                <---------S----------
 
-        The extracted array_ci keeps just the trails following all charge injection scans and replaces all other
+        The extracted array keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
 
                [000000000000000000000]
@@ -1259,7 +1260,7 @@ class AbstractLayout2DCI(lo.Layout2D):
     ):
         """
         Extract an arrays of all of the serial front edges and trails of each the charge-injection scans from
-        a charge injection array_ci.
+        a charge injection array.
 
         One can specify the range of columns that are extracted, for example:
 
@@ -1267,7 +1268,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         front_edge_columns = (0, 2) will extract the leading two front edge columns.
         trails_columns = (0, 1) will extract the first column of trails closest to the charge injection region.
 
-        The diagram below illustrates the arrays that is extracted from a array_ci for front_edge_columns=(0,2) and
+        The diagram below illustrates the arrays that is extracted from a array for front_edge_columns=(0,2) and
         trails_columns=(0,2):
 
         ---KEY---
@@ -1294,7 +1295,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         []     [=====================]
                <---------S----------
 
-        The extracted array_ci keeps just the leading edge and trails following all charge injection scans and
+        The extracted array keeps just the leading edge and trails following all charge injection scans and
         replaces all other values with 0s:
 
                [000000000000000000000]
@@ -1387,11 +1388,11 @@ class AbstractLayout2DCI(lo.Layout2D):
         self, array: array_2d.Array2D, rows: Tuple[int, int]
     ):
         """
-        Extract a serial calibration array from a charge injection array_ci, where this arrays is a sub-set of the
-        array_ci which can be used for serial-only calibration. Specifically, this array_ci is all charge injection
+        Extract a serial calibration array from a charge injection array, where this arrays is a sub-set of the
+        array which can be used for serial-only calibration. Specifically, this array is all charge injection
         scans and their serial over-scan trails.
 
-        The diagram below illustrates the arrays that is extracted from a array_ci with column=5:
+        The diagram below illustrates the arrays that is extracted from a array with column=5:
 
         ---KEY---
         ---------
@@ -1417,7 +1418,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         []     [=====================]
                <---------S----------
 
-        The extracted array_ci keeps just the trails following all charge injection scans and replaces all other
+        The extracted array keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
 
         |                                      |
@@ -1444,11 +1445,11 @@ class AbstractLayout2DCI(lo.Layout2D):
 
     def mask_for_serial_calibration_from(self, mask, rows: Tuple[int, int]):
         """
-        Extract a serial calibration array from a charge injection array_ci, where this arrays is a sub-set of the
-        array_ci which can be used for serial-only calibration. Specifically, this array_ci is all charge injection
+        Extract a serial calibration array from a charge injection array, where this arrays is a sub-set of the
+        array which can be used for serial-only calibration. Specifically, this array is all charge injection
         scans and their serial over-scan trails.
 
-        The diagram below illustrates the arrays that is extracted from a array_ci with column=5:
+        The diagram below illustrates the arrays that is extracted from a array with column=5:
 
         ---KEY---
         ---------
@@ -1474,7 +1475,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         []     [=====================]
                <---------S----------
 
-        The extracted array_ci keeps just the trails following all charge injection scans and replaces all other
+        The extracted array keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
 
         |                                      |
@@ -1509,7 +1510,7 @@ class AbstractLayout2DCI(lo.Layout2D):
 
     def with_extracted_regions(self, extraction_region):
 
-        layout_ci = deepcopy(self)
+        layout = deepcopy(self)
 
         extracted_region_list = list(
             map(
@@ -1523,8 +1524,8 @@ class AbstractLayout2DCI(lo.Layout2D):
         if not extracted_region_list:
             extracted_region_list = None
 
-        layout_ci.region_list = extracted_region_list
-        return layout_ci
+        layout.region_list = extracted_region_list
+        return layout
 
     def extract_line_from(self, array: array_2d.Array2D, line_region: str):
 
@@ -1554,25 +1555,25 @@ class AbstractLayout2DCI(lo.Layout2D):
 class Layout2DCIUniform(AbstractLayout2DCI):
     """
     A uniform charge injection layout_ci, which is defined by the regions it appears on the charge injection \
-    array_ci and its normalization.
+    array and its normalization.
     """
 
-    def pre_cti_ci_from(self, shape_native, pixel_scales):
+    def pre_cti_image_from(self, shape_native, pixel_scales):
         """Use this charge injection layout_ci to generate a pre-cti charge injection image. This is performed by \
         going to its charge injection regions and adding the charge injection normalization value.
 
         Parameters
         -----------
         shape_native : (int, int)
-            The image_shape of the pre_cti_cis to be created.
+            The image_shape of the pre_cti_images to be created.
         """
 
-        pre_cti_ci = np.zeros(shape_native)
+        pre_cti_image = np.zeros(shape_native)
 
         for region in self.region_list:
-            pre_cti_ci[region.slice] += self.normalization
+            pre_cti_image[region.slice] += self.normalization
 
-        return array_2d.Array2D.manual(array=pre_cti_ci, pixel_scales=pixel_scales)
+        return array_2d.Array2D.manual(array=pre_cti_image, pixel_scales=pixel_scales)
 
 
 class Layout2DCINonUniform(AbstractLayout2DCI):
@@ -1586,7 +1587,7 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
         maximum_normalization=np.inf,
     ):
         """A non-uniform charge injection layout_ci, which is defined by the regions it appears on a charge injection
-        array_ci and its average normalization.
+        array and its average normalization.
 
         Non-uniformity across the columns of a charge injection layout_ci is due to spikes / drops in the current that
         injects the charge. This is a noisy process, leading to non-uniformity with no regularity / smoothness. Thus,
@@ -1626,7 +1627,7 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
         Non-uniformity in the columns is caused by sharp peaks and troughs in the input charge current. To simulator  \
         this, we change the normalization of each column by drawing its normalization value from a Gaussian \
         distribution which has a mean of the input normalization and standard deviation *column_sigma*. The seed \
-        of the random number generator ensures that the non-uniform charge injection update_via_regions of each pre_cti_cis \
+        of the random number generator ensures that the non-uniform charge injection update_via_regions of each pre_cti_images \
         are identical.
 
         Non-uniformity in the rows is caused by the charge smoothly decreasing as the injection is switched off. To \
@@ -1669,11 +1670,11 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
 
         return ci_region
 
-    def pre_cti_ci_from(self, shape_native, pixel_scales, ci_seed=-1):
+    def pre_cti_image_from(self, shape_native, pixel_scales, ci_seed=-1):
         """Use this charge injection layout_ci to generate a pre-cti charge injection image. This is performed by going \
         to its charge injection regions and adding its non-uniform charge distribution.
 
-        For one column of a non-uniform charge injection pre_cti_cis, it is assumed that each non-uniform charge \
+        For one column of a non-uniform charge injection pre_cti_images, it is assumed that each non-uniform charge \
         injection region has the same overall normalization value (after drawing this value randomly from a Gaussian \
         distribution). Physically, this is true provided the spikes / troughs in the current that cause \
         non-uniformity occur in an identical fashion for the generation of each charge injection region.
@@ -1682,15 +1683,15 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
         -----------
         column_sigma
         shape_native
-            The image_shape of the pre_cti_cis to be created.
+            The image_shape of the pre_cti_images to be created.
         maximum_normalization
 
         ci_seed : int
             Input ci_seed for the random number generator to give reproducible results. A new ci_seed is always used for each \
-            pre_cti_cis, ensuring each non-uniform ci_region has the same column non-uniformity layout_ci.
+            pre_cti_images, ensuring each non-uniform ci_region has the same column non-uniformity layout_ci.
         """
 
-        pre_cti_ci = np.zeros(shape_native)
+        pre_cti_image = np.zeros(shape_native)
 
         if ci_seed == -1:
             ci_seed = np.random.randint(
@@ -1699,11 +1700,11 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
             # non-uniformity.
 
         for region in self.region_list:
-            pre_cti_ci[region.slice] += self.region_ci_from(
+            pre_cti_image[region.slice] += self.region_ci_from(
                 region_dimensions=region.shape, ci_seed=ci_seed
             )
 
-        return array_2d.Array2D.manual(array=pre_cti_ci, pixel_scales=pixel_scales)
+        return array_2d.Array2D.manual(array=pre_cti_image, pixel_scales=pixel_scales)
 
     def generate_column(self, size, normalization):
         """Generate a column of non-uniform charge, including row non-uniformity.

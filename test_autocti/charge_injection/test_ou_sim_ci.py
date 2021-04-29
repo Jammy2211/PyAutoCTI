@@ -52,7 +52,7 @@ class TestCIOUSim:
         assert (array[1928:2128, 29:2077] > 0).all()
         assert 49000.0 < np.mean(array[1928:2128, 29:2077]) < 51000.0
 
-    def test__add_cti_to_pre_cti_ci(self):
+    def test__add_cti_to_pre_cti_image(self):
 
         # bottom left
 
@@ -63,11 +63,11 @@ class TestCIOUSim:
         assert array[199, 100] > 0.0
         assert array[200, 100] == 0.0
 
-        post_cti_ci = ou_sim_ci.add_cti_to_pre_cti_ci(
-            pre_cti_ci=array[:, 100:101], ccd_id="123", quadrant_id="E"
+        post_cti_image = ou_sim_ci.add_cti_to_pre_cti_image(
+            pre_cti_image=array[:, 100:101], ccd_id="123", quadrant_id="E"
         )
 
-        assert post_cti_ci[200, 0] > 0.0
+        assert post_cti_image[200, 0] > 0.0
 
         # top left
 
@@ -78,11 +78,11 @@ class TestCIOUSim:
         assert array[1886, 100] > 0.0
         assert array[1885, 100] == 0.0
 
-        post_cti_ci = ou_sim_ci.add_cti_to_pre_cti_ci(
-            pre_cti_ci=array[:, 100:101], ccd_id="123", quadrant_id="H"
+        post_cti_image = ou_sim_ci.add_cti_to_pre_cti_image(
+            pre_cti_image=array[:, 100:101], ccd_id="123", quadrant_id="H"
         )
 
-        assert post_cti_ci[1885, 0] > 0.0
+        assert post_cti_image[1885, 0] > 0.0
 
         # bottom right
 
@@ -93,11 +93,11 @@ class TestCIOUSim:
         assert array[199, 100] > 0.0
         assert array[200, 100] == 0.0
 
-        post_cti_ci = ou_sim_ci.add_cti_to_pre_cti_ci(
-            pre_cti_ci=array[:, 100:101], ccd_id="123", quadrant_id="F"
+        post_cti_image = ou_sim_ci.add_cti_to_pre_cti_image(
+            pre_cti_image=array[:, 100:101], ccd_id="123", quadrant_id="F"
         )
 
-        assert post_cti_ci[200, 0] > 0.0
+        assert post_cti_image[200, 0] > 0.0
 
         # top right
 
@@ -108,8 +108,8 @@ class TestCIOUSim:
         assert array[1886, 100] > 0.0
         assert array[1885, 100] == 0.0
 
-        post_cti_ci = ou_sim_ci.add_cti_to_pre_cti_ci(
-            pre_cti_ci=array[:, 100:101], ccd_id="123", quadrant_id="G"
+        post_cti_image = ou_sim_ci.add_cti_to_pre_cti_image(
+            pre_cti_image=array[:, 100:101], ccd_id="123", quadrant_id="G"
         )
 
-        assert post_cti_ci[1885, 0] > 0.0
+        assert post_cti_image[1885, 0] > 0.0
