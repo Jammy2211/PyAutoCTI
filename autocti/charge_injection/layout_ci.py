@@ -1526,6 +1526,30 @@ class AbstractLayout2DCI(lo.Layout2D):
         layout_ci.region_list = extracted_region_list
         return layout_ci
 
+    def extract_line_from(self, array: array_2d.Array2D, line_region: str):
+
+        if line_region == "parallel_front_edge":
+            return self.extractor_parallel_front_edge.binned_array_1d_from(
+                array=array, rows=(0, self.extractor_parallel_front_edge.total_rows_min)
+            )
+        elif line_region == "parallel_trails":
+            return self.extractor_parallel_trails.binned_array_1d_from(
+                array=array, rows=(0, self.smallest_parallel_trails_rows_to_array_edge)
+            )
+        elif line_region == "serial_front_edge":
+            return self.extractor_serial_front_edge.binned_array_1d_from(
+                array=array,
+                columns=(0, self.extractor_serial_front_edge.total_columns_min),
+            )
+        elif line_region == "serial_trails":
+            return self.extractor_serial_trails.binned_array_1d_from(
+                array=array, columns=(0, self.serial_trails_columns)
+            )
+        else:
+            raise exc.PlottingException(
+                "The line region specified for the plotting of a line was invalid"
+            )
+
 
 class Layout2DCIUniform(AbstractLayout2DCI):
     """

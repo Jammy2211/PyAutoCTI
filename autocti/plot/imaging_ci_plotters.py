@@ -2,8 +2,11 @@ from autoarray.plot.mat_wrap import visuals as vis
 from autoarray.plot.mat_wrap import include as inc
 from autoarray.plot.mat_wrap import mat_plot as mp
 from autoarray.plot import imaging_plotters
+from autoarray.structures.arrays.two_d.array_2d import Array2D
 from autocti import charge_injection as ci
 from autocti import exc
+
+from typing import Union
 
 
 class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
@@ -54,15 +57,19 @@ class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
 
         return visuals_2d + self.visuals_2d.__class__(
             parallel_overscan=self.extract_2d(
-                "parallel_overscan", self.imaging.image.layout.parallel_overscan
+                "parallel_overscan", self.imaging.layout_ci.parallel_overscan
             ),
             serial_prescan=self.extract_2d(
-                "serial_prescan", self.imaging.image.layout.serial_prescan
+                "serial_prescan", self.imaging.layout_ci.serial_prescan
             ),
             serial_overscan=self.extract_2d(
-                "serial_overscan", self.imaging.image.layout.serial_overscan
+                "serial_overscan", self.imaging.layout_ci.serial_overscan
             ),
         )
+
+    @property
+    def extract_line_from(self):
+        return self.imaging.layout_ci.extract_line_from
 
     def figures_2d(
         self,
@@ -141,8 +148,8 @@ class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
 
         if image:
 
-            line = extract_line_from(
-                frame_ci=self.imaging.image, line_region=line_region
+            line = self.extract_line_from(
+                array=self.imaging.image, line_region=line_region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -159,8 +166,8 @@ class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
 
         if noise_map:
 
-            line = extract_line_from(
-                frame_ci=self.imaging.noise_map, line_region=line_region
+            line = self.extract_line_from(
+                array=self.imaging.noise_map, line_region=line_region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -177,8 +184,8 @@ class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
 
         if pre_cti_ci:
 
-            line = extract_line_from(
-                frame_ci=self.imaging.pre_cti_ci, line_region=line_region
+            line = self.extract_line_from(
+                array=self.imaging.pre_cti_ci, line_region=line_region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -195,8 +202,8 @@ class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
 
         if signal_to_noise_map:
 
-            line = extract_line_from(
-                frame_ci=self.imaging.signal_to_noise_map, line_region=line_region
+            line = self.extract_line_from(
+                array=self.imaging.signal_to_noise_map, line_region=line_region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -296,19 +303,3 @@ class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
             auto_filename=f"subplot_1d_ci_{line_region}"
         )
         self.close_subplot_figure()
-
-
-def extract_line_from(frame_ci, line_region):
-
-    if line_region == "parallel_front_edge":
-        return frame_ci.binned_array_1d_from()
-    elif line_region == "parallel_trails":
-        return frame_ci.binned_array_1d_from()
-    elif line_region == "serial_front_edge":
-        return frame_ci.binned_array_1d_from()
-    elif line_region == "serial_trails":
-        return frame_ci.binned_array_1d_from()
-    else:
-        raise exc.PlottingException(
-            "The line region specified for the plotting of a line was invalid"
-        )
