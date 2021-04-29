@@ -20,7 +20,7 @@ class ResultDataset(Result):
     @property
     def max_log_likelihood_fits(self):
         print(self.instance.cti)
-        return self.analysis.fits_from_instance(instance=self.instance)
+        return self.analysis.fit_list_from_instance(instance=self.instance)
 
     @property
     def masks(self):
@@ -83,7 +83,7 @@ class ResultImagingCI(ResultDataset):
     @property
     def noise_scaling_map_list_list(self,):
 
-        total_images = len(self.analysis.imaging_cis)
+        total_images = len(self.analysis.imaging_ci_list)
 
         noise_scaling_map_list_list = []
 

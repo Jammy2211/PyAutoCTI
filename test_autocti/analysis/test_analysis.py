@@ -21,7 +21,7 @@ class TestAnalysis:
         )
 
         analysis = ac.AnalysisImagingCI(
-            dataset_list=[imaging_ci_7x7],
+            ci_dataset_list=[imaging_ci_7x7],
             clocker=None,
             settings_cti=ac.SettingsCTI(parallel_total_density_range=(1.0, 2.0)),
         )
@@ -43,7 +43,7 @@ class TestAnalysis:
         )
 
         analysis = ac.AnalysisImagingCI(
-            dataset_list=[imaging_ci_7x7],
+            ci_dataset_list=[imaging_ci_7x7],
             clocker=None,
             settings_cti=ac.SettingsCTI(serial_total_density_range=(1.0, 2.0)),
         )
@@ -65,7 +65,7 @@ class TestAnalysisImagingCI:
         )
 
         analysis = ac.AnalysisImagingCI(
-            dataset_list=[imaging_ci_7x7], clocker=parallel_clocker
+            ci_dataset_list=[imaging_ci_7x7], clocker=parallel_clocker
         )
 
         instance = model.instance_from_unit_vector([])
@@ -75,11 +75,11 @@ class TestAnalysisImagingCI:
         )
 
         post_cti_ci = parallel_clocker.add_cti(
-            image=pre_cti_ci_7x7, parallel_traps=traps_x1, parallel_ccd=ccd
+            image=pre_cti_ci_7x7.native, parallel_traps=traps_x1, parallel_ccd=ccd
         )
 
         fit = ac.ci.FitImagingCI(
-            imaging_ci=analysis.imaging_cis[0], post_cti_ci=post_cti_ci
+            imaging_ci=analysis.imaging_ci_list[0], post_cti_ci=post_cti_ci
         )
 
         assert fit.log_likelihood == log_likelihood_via_analysis
@@ -105,24 +105,24 @@ class TestAnalysisImagingCI:
         )
 
         analysis = ac.AnalysisImagingCI(
-            dataset_list=[masked_imaging_ci], clocker=parallel_clocker
+            ci_dataset_list=[masked_imaging_ci], clocker=parallel_clocker
         )
 
         instance = model.instance_from_unit_vector([])
 
-        fits = analysis.fits_from_instance(instance=instance)
+        fit_list = analysis.fit_list_from_instance(instance=instance)
 
         fit = ac.ci.FitImagingCI(imaging_ci=masked_imaging_ci, post_cti_ci=post_cti_ci)
 
-        assert fits[0].image.shape == (7, 1)
-        assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood)
+        assert fit_list[0].image.shape == (7, 1)
+        assert fit.log_likelihood == pytest.approx(fit_list[0].log_likelihood)
 
-        fits = analysis.fits_full_dataset_from_instance(instance=instance)
+        fit_list = analysis.fits_full_dataset_from_instance(instance=instance)
 
         fit = ac.ci.FitImagingCI(imaging_ci=imaging_ci_7x7, post_cti_ci=post_cti_ci)
 
-        assert fits[0].image.shape == (7, 7)
-        assert fit.log_likelihood == pytest.approx(fits[0].log_likelihood)
+        assert fit_list[0].image.shape == (7, 7)
+        assert fit.log_likelihood == pytest.approx(fit_list[0].log_likelihood)
 
     def test__extracted_fits_from_instance_and_imaging_ci__include_noise_scaling(
         self,
@@ -142,9 +142,7 @@ class TestAnalysisImagingCI:
         )
 
         noise_scaling_map_list_list_of_regions_ci = [
-            ac.ci.CIFrame.ones(
-                shape_native=(7, 7), pixel_scales=1.0, layout_ci=layout_ci_7x7
-            )
+            ac.Array2D.ones(shape_native=(7, 7), pixel_scales=1.0)
         ]
 
         imaging_ci_7x7.noise_scaling_map_list = [
@@ -157,12 +155,14 @@ class TestAnalysisImagingCI:
         )
 
         analysis = ac.AnalysisImagingCI(
-            dataset_list=[masked_imaging_ci], clocker=parallel_clocker
+            ci_dataset_list=[masked_imaging_ci], clocker=parallel_clocker
         )
 
         instance = model.instance_from_prior_medians()
 
-        fits = analysis.fits_from_instance(instance=instance, hyper_noise_scale=True)
+        fits = analysis.fit_list_from_instance(
+            instance=instance, hyper_noise_scale=True
+        )
 
         post_cti_ci = parallel_clocker.add_cti(
             image=masked_imaging_ci.pre_cti_ci,

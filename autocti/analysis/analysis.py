@@ -17,10 +17,10 @@ class ConsecutivePool(object):
         return map(func, ls)
 
 
-class Analysis(abstract_search.Analysis):
+class AnalysisImagingCI(abstract_search.Analysis):
     def __init__(
         self,
-        ci_datasets,
+        ci_dataset_list,
         clocker,
         settings_cti=settings.SettingsCTI(),
         results=None,
@@ -29,35 +29,15 @@ class Analysis(abstract_search.Analysis):
 
         super().__init__()
 
-        self.ci_datasets = ci_datasets
+        self.ci_dataset_list = ci_dataset_list
         self.clocker = clocker
         self.settings_cti = settings_cti
         self.results = results
         self.pool = pool or ConsecutivePool
 
-
-class AnalysisImagingCI(Analysis):
-    def __init__(
-        self,
-        dataset_list,
-        clocker,
-        settings_cti=settings.SettingsCTI(),
-        results=None,
-        pool=None,
-    ):
-
-        super().__init__(
-            ci_datasets=dataset_list,
-            clocker=clocker,
-            settings_cti=settings_cti,
-            results=results,
-        )
-
-        self.pool = pool or ConsecutivePool
-
     @property
-    def imaging_cis(self):
-        return self.ci_datasets
+    def imaging_ci_list(self):
+        return self.ci_dataset_list
 
     def log_likelihood_function(self, instance):
         """
@@ -87,7 +67,7 @@ class AnalysisImagingCI(Analysis):
             hyper_noise_scalars=hyper_noise_scalars,
         )
 
-        return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_datasets)))
+        return np.sum(list(self.pool.map(pipe_cti_pass, self.ci_dataset_list)))
 
     def hyper_noise_scalars_from_instance(self, instance, hyper_noise_scale=True):
 
@@ -138,19 +118,13 @@ class AnalysisImagingCI(Analysis):
             serial_ccd=instance.cti.serial_ccd,
         )
 
-        post_cti_ci = array_2d.Array2D.manual(
-            array=post_cti_ci,
-            pixel_scales=imaging_ci.pre_cti_ci.pixel_scales,
-            layout_ci=imaging_ci.pre_cti_ci.layout_ci,
-        )
-
         return fit_ci.FitImagingCI(
             imaging_ci=imaging_ci,
             post_cti_ci=post_cti_ci,
             hyper_noise_scalars=hyper_noise_scalars,
         )
 
-    def fits_from_instance(self, instance, hyper_noise_scale=True):
+    def fit_list_from_instance(self, instance, hyper_noise_scale=True):
 
         return [
             self.fit_from_instance_and_imaging_ci(
@@ -158,7 +132,7 @@ class AnalysisImagingCI(Analysis):
                 imaging_ci=imaging_ci,
                 hyper_noise_scale=hyper_noise_scale,
             )
-            for imaging_ci in self.imaging_cis
+            for imaging_ci in self.imaging_ci_list
         ]
 
     def fits_full_dataset_from_instance(self, instance, hyper_noise_scale=True):
@@ -169,27 +143,27 @@ class AnalysisImagingCI(Analysis):
                 imaging_ci=imaging_ci.imaging_ci_full,
                 hyper_noise_scale=hyper_noise_scale,
             )
-            for imaging_ci in self.imaging_cis
+            for imaging_ci in self.imaging_ci_list
         ]
 
     def visualize(self, paths, instance, during_analysis):
 
-        fits = self.fits_from_instance(instance=instance)
+        fits = self.fit_list_from_instance(instance=instance)
 
         visualizer = vis.Visualizer(visualize_path=paths.image_path)
 
         for index in range(len(fits)):
 
             visualizer.visualize_imaging_ci(
-                imaging_ci=self.ci_datasets[index], index=index
+                imaging_ci=self.ci_dataset_list[index], index=index
             )
             visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.ci_datasets[index],
+                imaging_ci=self.ci_dataset_list[index],
                 line_region="parallel_front_edge",
                 index=index,
             )
             visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.ci_datasets[index],
+                imaging_ci=self.ci_dataset_list[index],
                 line_region="parallel_trails",
                 index=index,
             )
