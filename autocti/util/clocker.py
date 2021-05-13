@@ -15,7 +15,7 @@ class Clocker(object):
         serial_express=0,
         serial_window_start=0,
         serial_window_stop=-1,
-        verbosity=1,
+        verbosity=0,
     ):
         """
         The CTI Clock for arctic clocking.

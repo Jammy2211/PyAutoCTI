@@ -29,7 +29,7 @@
     "full_well_depth": {
       "type": "Uniform",
       "lower_limit": 0.0,
-      "upper_limit": 1.0,
+      "upper_limit": 84700.0,
       "width_modifier": {
         "type": "Absolute",
         "value": 0.2
