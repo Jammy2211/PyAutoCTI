@@ -1,7 +1,5 @@
-import autofit as af
-
-from autocti.util import ccd
-from autocti.util import traps
+from arcticwrap import ccd
+from arcticwrap import traps
 
 from typing import Optional, List
 
@@ -10,9 +8,9 @@ class CTI:
     def __init__(
         self,
         parallel_traps: Optional[List[traps.TrapInstantCapture]] = None,
-        parallel_ccd: Optional[ccd.CCD] = None,
+        parallel_ccd: Optional[ccd.CCDPhase] = None,
         serial_traps: Optional[List[traps.TrapInstantCapture]] = None,
-        serial_ccd: Optional[ccd.CCD] = None,
+        serial_ccd: Optional[ccd.CCDPhase] = None,
     ):
 
         self.parallel_traps = parallel_traps

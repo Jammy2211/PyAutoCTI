@@ -69,7 +69,8 @@ def test__individual_lines_are_output(imaging_ci_7x7, plot_path, plot_patch):
     assert path.join(plot_path, "image_parallel_front_edge.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map_parallel_front_edge.png") in plot_patch.paths
     assert (
-        path.join(plot_path, "pre_cti_image_parallel_front_edge.png") in plot_patch.paths
+        path.join(plot_path, "pre_cti_image_parallel_front_edge.png")
+        in plot_patch.paths
     )
     assert (
         path.join(plot_path, "signal_to_noise_map_parallel_front_edge.png")
@@ -88,7 +89,8 @@ def test__individual_lines_are_output(imaging_ci_7x7, plot_path, plot_patch):
         not in plot_patch.paths
     )
     assert (
-        path.join(plot_path, "pre_cti_image_parallel_front_edge.png") in plot_patch.paths
+        path.join(plot_path, "pre_cti_image_parallel_front_edge.png")
+        in plot_patch.paths
     )
     assert (
         path.join(plot_path, "signal_to_noise_map_parallel_front_edge.png")

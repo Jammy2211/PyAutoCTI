@@ -8,6 +8,9 @@ from autoarray.instruments import acs
 from autoarray.dataset import preprocess
 from autoarray.dataset.imaging import Imaging
 
+from arcticwrap.ccd import ROE, CCDPhase, CCD
+from arcticwrap.traps import Trap, TrapInstantCapture
+
 from autocti.warm_pixels.lines import Line
 from autocti.warm_pixels.lines import LineCollection
 from autocti.warm_pixels.warm_pixels import find_warm_pixels
@@ -25,8 +28,6 @@ from .analysis.analysis import AnalysisImagingCI
 from .analysis.model_util import CTI
 from .analysis.settings import SettingsCTI
 from .util.clocker import Clocker
-from .util.ccd import CCD
-from .util.traps import TrapInstantCapture
 from . import util
 from . import plot
 

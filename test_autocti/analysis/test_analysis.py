@@ -16,7 +16,7 @@ class TestAnalysis:
                     ac.TrapInstantCapture(density=1.1),
                     ac.TrapInstantCapture(density=1.1),
                 ],
-                parallel_ccd=ac.CCD(),
+                parallel_ccd=ac.CCDPhase(),
             )
         )
 
@@ -38,7 +38,7 @@ class TestAnalysis:
                     ac.TrapInstantCapture(density=1.1),
                     ac.TrapInstantCapture(density=1.1),
                 ],
-                serial_ccd=ac.CCD(),
+                serial_ccd=ac.CCDPhase(),
             )
         )
 
@@ -75,7 +75,9 @@ class TestAnalysisImagingCI:
         )
 
         post_cti_image = parallel_clocker.add_cti(
-            image=pre_cti_image_7x7.native, parallel_traps=traps_x1, parallel_ccd=ccd
+            image_pre_cti=pre_cti_image_7x7.native,
+            parallel_traps=traps_x1,
+            parallel_ccd=ccd,
         )
 
         fit = ac.ci.FitImagingCI(
@@ -99,7 +101,7 @@ class TestAnalysisImagingCI:
         )
 
         post_cti_image = parallel_clocker.add_cti(
-            image=masked_imaging_ci.pre_cti_image,
+            image_pre_cti=masked_imaging_ci.pre_cti_image,
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
         )
@@ -112,7 +114,9 @@ class TestAnalysisImagingCI:
 
         fit_list = analysis.fit_list_from_instance(instance=instance)
 
-        fit = ac.ci.FitImagingCI(imaging=masked_imaging_ci, post_cti_image=post_cti_image)
+        fit = ac.ci.FitImagingCI(
+            imaging=masked_imaging_ci, post_cti_image=post_cti_image
+        )
 
         assert fit_list[0].image.shape == (7, 1)
         assert fit.log_likelihood == pytest.approx(fit_list[0].log_likelihood)
@@ -165,7 +169,7 @@ class TestAnalysisImagingCI:
         )
 
         post_cti_image = parallel_clocker.add_cti(
-            image=masked_imaging_ci.pre_cti_image,
+            image_pre_cti=masked_imaging_ci.pre_cti_image,
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
         )

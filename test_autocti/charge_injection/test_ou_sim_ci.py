@@ -1,4 +1,5 @@
 import numpy as np
+import autocti as ac
 from autocti.charge_injection import ou_sim_ci
 
 
@@ -63,8 +64,10 @@ class TestCIOUSim:
         assert array[199, 100] > 0.0
         assert array[200, 100] == 0.0
 
+        pre_cti_image = ac.Array2D.manual_native(array[:, 100:101], pixel_scales=0.1)
+
         post_cti_image = ou_sim_ci.add_cti_to_pre_cti_image(
-            pre_cti_image=array[:, 100:101], ccd_id="123", quadrant_id="E"
+            pre_cti_image=pre_cti_image, ccd_id="123", quadrant_id="E"
         )
 
         assert post_cti_image[200, 0] > 0.0
@@ -78,8 +81,10 @@ class TestCIOUSim:
         assert array[1886, 100] > 0.0
         assert array[1885, 100] == 0.0
 
+        pre_cti_image = ac.Array2D.manual_native(array[:, 100:101], pixel_scales=0.1)
+
         post_cti_image = ou_sim_ci.add_cti_to_pre_cti_image(
-            pre_cti_image=array[:, 100:101], ccd_id="123", quadrant_id="H"
+            pre_cti_image=pre_cti_image, ccd_id="123", quadrant_id="H"
         )
 
         assert post_cti_image[1885, 0] > 0.0
@@ -93,8 +98,10 @@ class TestCIOUSim:
         assert array[199, 100] > 0.0
         assert array[200, 100] == 0.0
 
+        pre_cti_image = ac.Array2D.manual_native(array[:, 100:101], pixel_scales=0.1)
+
         post_cti_image = ou_sim_ci.add_cti_to_pre_cti_image(
-            pre_cti_image=array[:, 100:101], ccd_id="123", quadrant_id="F"
+            pre_cti_image=pre_cti_image, ccd_id="123", quadrant_id="F"
         )
 
         assert post_cti_image[200, 0] > 0.0
@@ -108,8 +115,10 @@ class TestCIOUSim:
         assert array[1886, 100] > 0.0
         assert array[1885, 100] == 0.0
 
+        pre_cti_image = ac.Array2D.manual_native(array[:, 100:101], pixel_scales=0.1)
+
         post_cti_image = ou_sim_ci.add_cti_to_pre_cti_image(
-            pre_cti_image=array[:, 100:101], ccd_id="123", quadrant_id="G"
+            pre_cti_image=pre_cti_image, ccd_id="123", quadrant_id="G"
         )
 
         assert post_cti_image[1885, 0] > 0.0

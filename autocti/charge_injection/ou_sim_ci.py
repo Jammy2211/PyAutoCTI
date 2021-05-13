@@ -2,8 +2,8 @@ from autoarray.instruments import euclid
 from autoarray.layout import layout_util
 
 from autocti.util.clocker import Clocker
-from autocti.util import ccd
-from autocti.util import traps
+from arcticwrap import ccd
+from arcticwrap import traps
 
 from autocti.charge_injection import layout_ci as lo
 
@@ -53,13 +53,13 @@ def non_uniform_array_from(
     regions on the quadrant.
 
     This function assumes the same orientation for the charge injection line image, irrespective of the Euclid
-    CCD ID and Quadrant ID. The orientation that it assumes has arctic clock the ndarray towards [0, 0]. However,
-    based on an input CCD ID and Quadrant ID, the array is rotated to match Euclid clocking.
+    CCDPhase ID and Quadrant ID. The orientation that it assumes has arctic clock the ndarray towards [0, 0]. However,
+    based on an input CCDPhase ID and Quadrant ID, the array is rotated to match Euclid clocking.
 
     Parameters
     ----------
     ccd_id : str
-        The CCD ID of Euclid (runs 1 through 6)
+        The CCDPhase ID of Euclid (runs 1 through 6)
     quadrant_id : str
         The quadrant id (E, F, G, H)
     ci_normalization : float
@@ -81,7 +81,7 @@ def non_uniform_array_from(
     shape_native = (parallel_size, serial_size)
 
     """
-    Specify the charge injection regions on the CCD, which in this case is 5 equally spaced rectangular blocks.
+    Specify the charge injection regions on the CCDPhase, which in this case is 5 equally spaced rectangular blocks.
     """
     regions_ci = [
         (0, 200, 51, shape_native[1] - serial_overscan_size),
@@ -136,9 +136,9 @@ def add_cti_to_pre_cti_image(pre_cti_image, ccd_id, quadrant_id):
     ).native
 
     """
-    The `Clocker` models the CCD read-out, including CTI.
+    The `Clocker` models the CCDPhase read-out, including CTI.
 
-    For parallel clocking, we use 'charge injection mode' which transfers the charge of every pixel over the full CCD.
+    For parallel clocking, we use 'charge injection mode' which transfers the charge of every pixel over the full CCDPhase.
     """
     clocker = Clocker(
         parallel_express=2, parallel_charge_injection_mode=True, serial_express=2
@@ -148,24 +148,24 @@ def add_cti_to_pre_cti_image(pre_cti_image, ccd_id, quadrant_id):
     The CTI model used by arCTIc to add CTI to the input image in the parallel direction, which contains: 
 
         - 2 `TrapInstantCapture` species in the parallel direction.
-        - A simple CCD volume beta parametrization.
+        - A simple CCDPhase volume beta parametrization.
         - 3 `TrapInstantCapture` species in the serial direction.
-        - A simple CCD volume beta parametrization.
+        - A simple CCDPhase volume beta parametrization.
     """
     parallel_trap_0 = traps.TrapInstantCapture(density=0.13, release_timescale=1.25)
     parallel_trap_1 = traps.TrapInstantCapture(density=0.25, release_timescale=4.4)
-    parallel_ccd = ccd.CCD(
-        well_fill_power=0.8, well_notch_depth=0.0, full_well_depth=84700
+    parallel_ccd = ccd.CCDPhase(
+        well_fill_power=0.8, well_notch_depth=0.0, full_well_depth=84700.0
     )
     serial_trap_0 = traps.TrapInstantCapture(density=0.0442, release_timescale=0.8)
     serial_trap_1 = traps.TrapInstantCapture(density=0.1326, release_timescale=4.0)
     serial_trap_2 = traps.TrapInstantCapture(density=3.9782, release_timescale=20.0)
-    serial_ccd = ccd.CCD(
-        well_fill_power=0.8, well_notch_depth=0.0, full_well_depth=84700
+    serial_ccd = ccd.CCDPhase(
+        well_fill_power=0.8, well_notch_depth=0.0, full_well_depth=84700.0
     )
 
     post_cti_image = clocker.add_cti(
-        image=pre_cti_image,
+        image_pre_cti=pre_cti_image,
         parallel_traps=[parallel_trap_0, parallel_trap_1],
         parallel_ccd=parallel_ccd,
         serial_traps=[serial_trap_0, serial_trap_1, serial_trap_2],
@@ -188,9 +188,9 @@ def add_cti_simple_to_pre_cti_image(pre_cti_image, ccd_id, quadrant_id):
     )
 
     """
-    The `Clocker` models the CCD read-out, including CTI.
+    The `Clocker` models the CCDPhase read-out, including CTI.
 
-    For parallel clocking, we use 'charge injection mode' which transfers the charge of every pixel over the full CCD.
+    For parallel clocking, we use 'charge injection mode' which transfers the charge of every pixel over the full CCDPhase.
     """
     clocker = Clocker(parallel_express=2, parallel_charge_injection_mode=False)
 
@@ -198,17 +198,19 @@ def add_cti_simple_to_pre_cti_image(pre_cti_image, ccd_id, quadrant_id):
     The CTI model used by arCTIc to add CTI to the input image in the parallel direction, which contains: 
 
         - 2 `TrapInstantCapture` species in the parallel direction.
-        - A simple CCD volume beta parametrization.
+        - A simple CCDPhase volume beta parametrization.
         - 3 `TrapInstantCapture` species in the serial direction.
-        - A simple CCD volume beta parametrization.
+        - A simple CCDPhase volume beta parametrization.
     """
     parallel_trap_0 = traps.TrapInstantCapture(density=1.0, release_timescale=5.0)
-    parallel_ccd = ccd.CCD(
-        well_fill_power=0.8, well_notch_depth=0.0, full_well_depth=84700
+    parallel_ccd = ccd.CCDPhase(
+        well_fill_power=0.8, well_notch_depth=0.0, full_well_depth=84700.0
     )
 
     post_cti_image = clocker.add_cti(
-        image=pre_cti_image, parallel_traps=[parallel_trap_0], parallel_ccd=parallel_ccd
+        image_pre_cti=pre_cti_image,
+        parallel_traps=[parallel_trap_0],
+        parallel_ccd=parallel_ccd,
     )
 
     return layout_util.rotate_array_from_roe_corner(

@@ -46,7 +46,7 @@ class ExtractorParallelFrontEdge(Extractor):
         [] = read-out electronics   [==========] = read-out register
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan
         [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
         [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
 
@@ -119,7 +119,7 @@ class ExtractorParallelFrontEdge(Extractor):
         [] = read-out electronics   [==========] = read-out register
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan
         [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
         [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
 
@@ -190,7 +190,7 @@ class ExtractorParallelTrails(Extractor):
         [] = read-out electronics   [==========] = read-out register
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan
         [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci region index)
         [xxxxxxxxxx]
         [t#t#t#t#t#] = parallel / serial charge injection region trail (0 / 1 indicates ci region index)
@@ -265,7 +265,7 @@ class ExtractorParallelTrails(Extractor):
             [] = read-out electronics   [==========] = read-out register
 
             [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-            [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
+            [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan
             [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci region index)
             [xxxxxxxxxx]
             [t#t#t#t#t#] = parallel / serial charge injection region trail (0 / 1 indicates ci region index)
@@ -336,7 +336,7 @@ class ExtractorSerialFrontEdge(Extractor):
         [] = read-out electronics   [==========] = read-out register
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan
         [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
         [xxxxxxxxxx]
         [tttttttttt] = parallel / serial charge injection region trail ((0 / 1 indicates ci_region index)
@@ -411,7 +411,7 @@ class ExtractorSerialFrontEdge(Extractor):
         [] = read-out electronics   [==========] = read-out register
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan
         [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
         [xxxxxxxxxx]
         [tttttttttt] = parallel / serial charge injection region trail ((0 / 1 indicates ci_region index)
@@ -483,7 +483,7 @@ class ExtractorSerialTrails(Extractor):
         [] = read-out electronics   [==========] = read-out register
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan
         [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
         [xxxxxxxxxx]
         [tttttttttt] = parallel / serial charge injection region trail ((0 / 1 indicates ci_region index)
@@ -557,7 +557,7 @@ class ExtractorSerialTrails(Extractor):
         [] = read-out electronics   [==========] = read-out register
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan
         [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
         [xxxxxxxxxx]
         [tttttttttt] = parallel / serial charge injection region trail ((0 / 1 indicates ci_region index)
@@ -723,7 +723,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         [] = read-out electronics   [==========] = read-out register
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
         [xxxxxxxxxx]
 
         P = Parallel Direction      S = Serial Direction
@@ -779,7 +779,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         [] = read-out electronics   [==========] = read-out register
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
         [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
 
         P = Parallel Direction      S = Serial Direction
@@ -839,7 +839,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         [] = read-out electronics   [==========] = read-out register
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
         [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
 
         P = Parallel Direction      S = Serial Direction
@@ -906,7 +906,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         [] = read-out electronics   [==========] = read-out register
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
         [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
 
         P = Parallel Direction      S = Serial Direction
@@ -977,7 +977,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         [] = read-out electronics   [==========] = read-out register
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
         [xxxxxxxxxx]                [tttttttttt] = parallel / parallel charge injection region trail
 
         P = Parallel Direction      S = Serial Direction
@@ -1031,7 +1031,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         [] = read-out electronics   [==========] = read-out register
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
         [xxxxxxxxxx]                [tttttttttt] = parallel / parallel charge injection region trail
 
         P = Parallel Direction      S = Serial Direction
@@ -1088,7 +1088,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         [] = read-out electronics   [==========] = read-out register
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
         [xxxxxxxxxx]                [tttttttttt] = parallel / parallel charge injection region trail
 
         P = Parallel Direction      S = Serial Direction
@@ -1151,7 +1151,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         [] = read-out electronics   [==========] = read-out register
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
         [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
 
         P = Parallel Direction      S = Serial Direction
@@ -1203,7 +1203,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         [] = read-out electronics   [==========] = read-out register
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
         [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
 
         P = Parallel Direction      S = Serial Direction
@@ -1277,7 +1277,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         [] = read-out electronics   [==========] = read-out register
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
         [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
 
         P = Parallel Direction      S = Serial Direction
@@ -1400,7 +1400,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         [] = read-out electronics   [==========] = read-out register
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
         [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
 
         P = Parallel Direction      S = Serial Direction
@@ -1457,7 +1457,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         [] = read-out electronics   [==========] = read-out register
 
         [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCD panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
         [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
 
         P = Parallel Direction      S = Serial Direction
@@ -1585,6 +1585,9 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
         row_slope,
         column_sigma=None,
         maximum_normalization=np.inf,
+        parallel_overscan=None,
+        serial_prescan=None,
+        serial_overscan=None,
     ):
         """A non-uniform charge injection layout_ci, which is defined by the regions it appears on a charge injection
         array and its average normalization.
@@ -1610,7 +1613,12 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
         """
 
         super().__init__(
-            shape_2d=shape_2d, normalization=normalization, region_list=region_list
+            shape_2d=shape_2d,
+            normalization=normalization,
+            region_list=region_list,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
         )
 
         self.row_slope = row_slope

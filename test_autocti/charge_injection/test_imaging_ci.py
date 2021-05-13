@@ -414,9 +414,7 @@ class TestSimulatorImagingCI(object):
             pixel_scales=1.0, read_noise=1.0, add_poisson_noise=True, noise_seed=1
         )
 
-        imaging = simulator.from_layout(
-            layout=layout_ci, clocker=parallel_clocker
-        )
+        imaging = simulator.from_layout(layout=layout_ci, clocker=parallel_clocker)
 
         image_no_noise = layout_ci.pre_cti_image_from(
             shape_native=(3, 3), pixel_scales=1.0
@@ -498,7 +496,9 @@ class TestSimulatorImagingCI(object):
             cosmic_ray_map=cosmic_ray_map,
         )
 
-        pre_cti_image = layout_ci.pre_cti_image_from(shape_native=(5, 5), pixel_scales=1.0)
+        pre_cti_image = layout_ci.pre_cti_image_from(
+            shape_native=(5, 5), pixel_scales=1.0
+        )
 
         imaging_via_pre_cti_image = simulator.from_pre_cti_image(
             pre_cti_image=pre_cti_image.native,
@@ -512,7 +512,9 @@ class TestSimulatorImagingCI(object):
         assert (imaging.image == imaging_via_pre_cti_image.image).all()
         assert (imaging.noise_map == imaging_via_pre_cti_image.noise_map).all()
         assert (imaging.pre_cti_image == imaging_via_pre_cti_image.pre_cti_image).all()
-        assert (imaging.cosmic_ray_map == imaging_via_pre_cti_image.cosmic_ray_map).all()
+        assert (
+            imaging.cosmic_ray_map == imaging_via_pre_cti_image.cosmic_ray_map
+        ).all()
 
     def test__from_post_cti_image(self, parallel_clocker, traps_x2, ccd):
 
@@ -544,7 +546,7 @@ class TestSimulatorImagingCI(object):
         pre_cti_image += cosmic_ray_map
 
         post_cti_image = parallel_clocker.add_cti(
-            image=pre_cti_image, parallel_traps=traps_x2, parallel_ccd=ccd
+            image_pre_cti=pre_cti_image, parallel_traps=traps_x2, parallel_ccd=ccd
         )
 
         imaging_via_post_cti_image = simulator.from_post_cti_image(
@@ -557,4 +559,6 @@ class TestSimulatorImagingCI(object):
         assert (imaging.image == imaging_via_post_cti_image.image).all()
         assert (imaging.noise_map == imaging_via_post_cti_image.noise_map).all()
         assert (imaging.pre_cti_image == imaging_via_post_cti_image.pre_cti_image).all()
-        assert (imaging.cosmic_ray_map == imaging_via_post_cti_image.cosmic_ray_map).all()
+        assert (
+            imaging.cosmic_ray_map == imaging_via_post_cti_image.cosmic_ray_map
+        ).all()

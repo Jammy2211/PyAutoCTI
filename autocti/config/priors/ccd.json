@@ -1,5 +1,5 @@
 {
-  "CCD": {
+  "CCDPhase": {
     "well_fill_power": {
       "type": "Uniform",
       "lower_limit": 0.0,

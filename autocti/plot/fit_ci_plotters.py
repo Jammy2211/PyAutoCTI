@@ -280,7 +280,7 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
 
     def subplot_1d_ci_line_region(self, line_region):
         """
-        Plot the model datas_ of an analysis, using the *Fitter* class object.
+        Plot the model data of an analysis, using the *Fitter* class object.
 
         The visualization and output type can be fully customized.
         """

@@ -1674,7 +1674,9 @@ class TestLayout2DCINonUniform(object):
         layout = ac.ci.Layout2DCIUniform(
             shape_2d=(5, 5), normalization=10.0, region_list=[(2, 4, 0, 5)]
         )
-        pre_cti_image_0 = layout.pre_cti_image_from(shape_native=(5, 5), pixel_scales=1.0)
+        pre_cti_image_0 = layout.pre_cti_image_from(
+            shape_native=(5, 5), pixel_scales=1.0
+        )
 
         layout_non_uni = ac.ci.Layout2DCINonUniform(
             shape_2d=(5, 5),
@@ -1694,7 +1696,9 @@ class TestLayout2DCINonUniform(object):
             normalization=100.0,
             region_list=[(0, 2, 0, 2), (2, 3, 0, 5)],
         )
-        pre_cti_image_0 = layout.pre_cti_image_from(shape_native=(5, 5), pixel_scales=1.0)
+        pre_cti_image_0 = layout.pre_cti_image_from(
+            shape_native=(5, 5), pixel_scales=1.0
+        )
 
         layout_non_uni = ac.ci.Layout2DCINonUniform(
             shape_2d=(5, 5),

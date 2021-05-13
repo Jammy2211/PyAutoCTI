@@ -111,7 +111,7 @@ class AnalysisImagingCI(abstract_search.Analysis):
             serial_traps = None
 
         post_cti_image = self.clocker.add_cti(
-            image=imaging_ci.pre_cti_image,
+            image_pre_cti=imaging_ci.pre_cti_image,
             parallel_traps=parallel_traps,
             parallel_ccd=instance.cti.parallel_ccd,
             serial_traps=serial_traps,
@@ -208,7 +208,7 @@ def pipe_cti(ci_data_masked, instance, clocker, hyper_noise_scalars):
         serial_traps = None
 
     post_cti_image = clocker.add_cti(
-        image=ci_data_masked.pre_cti_image,
+        image_pre_cti=ci_data_masked.pre_cti_image,
         parallel_traps=parallel_traps,
         parallel_ccd=instance.cti.parallel_ccd,
         serial_traps=serial_traps,

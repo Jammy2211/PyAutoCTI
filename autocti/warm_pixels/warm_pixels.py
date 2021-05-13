@@ -121,7 +121,7 @@ def find_warm_pixels(
     # Unsharp mask image
     image_smooth = uniform_filter(image_no_bg, size=smooth_width)
 
-    # Ignore the very top of the CCD since we can't get full trails
+    # Ignore the very top of the CCDPhase since we can't get full trails
     where_not_ignored[:trail_length, :] = 0
     # Ignore parallel overscan
     where_not_ignored[-(n_parallel_overscan + trail_length) :, :] = 0

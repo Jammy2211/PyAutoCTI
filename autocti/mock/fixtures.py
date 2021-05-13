@@ -4,11 +4,11 @@ from autofit.mock.mock import MockSamples
 from autocti import charge_injection as ci
 from autoarray.structures.arrays.one_d import array_1d
 from autoarray.dataset import imaging
+
+from arcticwrap import traps, ccd
 from autocti.line import dataset_line
 from autocti.mask import mask_2d
-from autocti.util import traps
 from autocti.util.clocker import Clocker
-from autocti.util import ccd
 from autocti.analysis import analysis
 from autocti.analysis.model_util import CTI
 
@@ -18,11 +18,11 @@ import numpy as np
 
 
 def make_trap_0():
-    return traps.TrapInstantCapture(density=10, release_timescale=-1 / np.log(0.5))
+    return traps.TrapInstantCapture(density=10.0, release_timescale=-1 / np.log(0.5))
 
 
 def make_trap_1():
-    return traps.TrapInstantCapture(density=8, release_timescale=-1 / np.log(0.2))
+    return traps.TrapInstantCapture(density=8.0, release_timescale=-1 / np.log(0.2))
 
 
 def make_traps_x1():
@@ -34,7 +34,9 @@ def make_traps_x2():
 
 
 def make_ccd():
-    return ccd.CCD(well_fill_power=0.5, full_well_depth=10000, well_notch_depth=1e-7)
+    return ccd.CCDPhase(
+        well_fill_power=0.5, full_well_depth=10000.0, well_notch_depth=1e-7
+    )
 
 
 def make_parallel_clocker():

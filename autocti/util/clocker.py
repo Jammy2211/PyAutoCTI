@@ -1,18 +1,21 @@
-from arcticpy import main
+from autoarray.structures.arrays.two_d import array_2d
+from arcticwrap import main, ccd
 
 
 class Clocker(object):
     def __init__(
         self,
         iterations=1,
-        parallel_roe=None,
+        parallel_roe=ccd.ROE(),
         parallel_express=0,
         parallel_charge_injection_mode=False,
-        parallel_window_range=None,
-        serial_roe=None,
+        parallel_window_start=0,
+        parallel_window_stop=-1,
+        serial_roe=ccd.ROE(),
         serial_express=0,
-        serial_window_range=None,
-        time_window_range=None,
+        serial_window_start=0,
+        serial_window_stop=-1,
+        verbosity=1,
     ):
         """
         The CTI Clock for arctic clocking.
@@ -27,7 +30,7 @@ class Clocker(object):
             The factor by which pixel-to-pixel transfers are combined for efficiency.
         parallel_charge_injection_mode : bool
             If True, clocking is performed in charge injection line mode, where each pixel is clocked and therefore \
-             trailed by traps over the entire CCD (as opposed to its distance from the CCD register).
+             trailed by traps over the entire CCDPhase (as opposed to its distance from the CCDPhase register).
         parallel_readout_offset : int
             Introduces an offset which increases the number of transfers each pixel takes in the parallel direction.
         """
@@ -37,39 +40,55 @@ class Clocker(object):
         self.parallel_roe = parallel_roe
         self.parallel_express = parallel_express
         self.parallel_charge_injection_mode = parallel_charge_injection_mode
-        self.parallel_window_range = parallel_window_range
+        self.parallel_window_start = parallel_window_start
+        self.parallel_window_stop = parallel_window_stop
 
         self.serial_roe = serial_roe
         self.serial_express = serial_express
-        self.serial_window_range = serial_window_range
+        self.serial_window_start = serial_window_start
+        self.serial_window_stop = serial_window_stop
 
-        self.time_window_range = time_window_range
+        self.verbosity = verbosity
 
     def add_cti(
         self,
-        image,
+        image_pre_cti,
         parallel_ccd=None,
         parallel_traps=None,
         serial_ccd=None,
         serial_traps=None,
     ):
 
-        return main.add_cti(
-            image=image,
+        if parallel_ccd is not None:
+            parallel_ccd = ccd.CCD(
+                phases=[parallel_ccd], fraction_of_traps_per_phase=[1.0]
+            )
+
+        if serial_ccd is not None:
+            serial_ccd = ccd.CCD(phases=[serial_ccd], fraction_of_traps_per_phase=[1.0])
+
+        image_post_cti = main.add_cti(
+            image_pre_cti=image_pre_cti,
             parallel_ccd=parallel_ccd,
             parallel_roe=self.parallel_roe,
             parallel_traps=parallel_traps,
             parallel_express=self.parallel_express,
-            parallel_offset=image.readout_offsets[0],
-            parallel_window_range=self.parallel_window_range,
+            parallel_offset=image_pre_cti.readout_offsets[0],
+            parallel_window_start=self.parallel_window_start,
+            parallel_window_stop=self.parallel_window_stop,
             serial_ccd=serial_ccd,
             serial_roe=self.serial_roe,
             serial_traps=serial_traps,
             serial_express=self.serial_express,
-            serial_offset=image.readout_offsets[1],
-            serial_window_range=self.serial_window_range,
-            time_window_range=self.time_window_range,
+            serial_offset=image_pre_cti.readout_offsets[1],
+            serial_window_start=self.serial_window_start,
+            serial_window_stop=self.serial_window_stop,
+            verbosity=self.verbosity,
         )
+
+        return array_2d.Array2D.manual_mask(
+            array=image_post_cti, mask=image_pre_cti.mask
+        ).native
 
     def remove_cti(
         self,

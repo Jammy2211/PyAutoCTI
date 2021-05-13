@@ -200,9 +200,7 @@ class ImagingCI(imaging.Imaging):
             pre_cti_image=self.layout.array_2d_for_parallel_calibration_from(
                 array=self.pre_cti_image, columns=columns
             ),
-            layout=self.layout.after_extraction(
-                extraction_region=extraction_region
-            ),
+            layout=self.layout.after_extraction(extraction_region=extraction_region),
             cosmic_ray_map=cosmic_ray_map,
             noise_scaling_map_list=noise_scaling_map_list,
         )
@@ -285,7 +283,9 @@ class ImagingCI(imaging.Imaging):
 
         if pre_cti_image_path is not None:
             pre_cti_image = array_2d.Array2D.from_fits(
-                file_path=pre_cti_image_path, hdu=pre_cti_image_hdu, pixel_scales=pixel_scales
+                file_path=pre_cti_image_path,
+                hdu=pre_cti_image_hdu,
+                pixel_scales=pixel_scales,
             )
         else:
             if isinstance(layout, lo.Layout2DCIUniform):
@@ -331,7 +331,9 @@ class ImagingCI(imaging.Imaging):
 
         self.image.output_to_fits(file_path=image_path, overwrite=overwrite)
         self.noise_map.output_to_fits(file_path=noise_map_path, overwrite=overwrite)
-        self.pre_cti_image.output_to_fits(file_path=pre_cti_image_path, overwrite=overwrite)
+        self.pre_cti_image.output_to_fits(
+            file_path=pre_cti_image_path, overwrite=overwrite
+        )
 
         if self.cosmic_ray_map is not None and cosmic_ray_map_path is not None:
 
@@ -442,7 +444,7 @@ class SimulatorImagingCI(imaging.AbstractSimulatorImaging):
             pre_cti_image += cosmic_ray_map
 
         post_cti_image = clocker.add_cti(
-            image=pre_cti_image.native,
+            image_pre_cti=pre_cti_image.native,
             parallel_traps=parallel_traps,
             parallel_ccd=parallel_ccd,
             serial_traps=serial_traps,
