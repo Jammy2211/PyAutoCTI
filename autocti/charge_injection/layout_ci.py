@@ -19,7 +19,7 @@ from autocti.charge_injection import mask_2d_ci
 from typing import Tuple
 
 
-class Extractor:
+class Extractor2D:
     def __init__(self, region_list):
 
         self.region_list = list(map(reg.Region2D, region_list))
@@ -33,7 +33,7 @@ class Extractor:
         return np.min([region.total_columns for region in self.region_list])
 
 
-class ExtractorParallelFrontEdge(Extractor):
+class Extractor2DParallelFrontEdge(Extractor2D):
     def array_2d_list_from(self, array: array_2d.Array2D, rows):
         """
         Extract a list of structures of the parallel front edge scans of a charge injection array.
@@ -176,7 +176,7 @@ class ExtractorParallelFrontEdge(Extractor):
         return new_array
 
 
-class ExtractorParallelTrails(Extractor):
+class Extractor2DParallelTrails(Extractor2D):
     def array_2d_list_from(self, array: array_2d.Array2D, rows):
         """
         Extract the parallel trails of a charge injection array.
@@ -323,7 +323,7 @@ class ExtractorParallelTrails(Extractor):
         return new_array
 
 
-class ExtractorSerialFrontEdge(Extractor):
+class Extractor2DSerialFrontEdge(Extractor2D):
     def array_2d_list_from(self, array: array_2d.Array2D, columns):
         """
         Extract a list of the serial front edge structures of a charge injection array.
@@ -470,7 +470,7 @@ class ExtractorSerialFrontEdge(Extractor):
         return new_array
 
 
-class ExtractorSerialTrails(Extractor):
+class Extractor2DSerialTrails(Extractor2D):
     def array_2d_list_from(self, array: array_2d.Array2D, columns):
         """
         Extract a list of the serial trails of a charge injection array.
@@ -649,16 +649,16 @@ class AbstractLayout2DCI(lo.Layout2D):
                     "The charge injection layout_ci regions are bigger than the image image_shape"
                 )
 
-        self.extractor_parallel_front_edge = ExtractorParallelFrontEdge(
+        self.extractor_parallel_front_edge = Extractor2DParallelFrontEdge(
             region_list=region_list
         )
-        self.extractor_parallel_trails = ExtractorParallelTrails(
+        self.extractor_parallel_trails = Extractor2DParallelTrails(
             region_list=region_list
         )
-        self.extractor_serial_front_edge = ExtractorSerialFrontEdge(
+        self.extractor_serial_front_edge = Extractor2DSerialFrontEdge(
             region_list=region_list
         )
-        self.extractor_serial_trails = ExtractorSerialTrails(region_list=region_list)
+        self.extractor_serial_trails = Extractor2DSerialTrails(region_list=region_list)
 
         super().__init__(
             shape_2d=shape_2d,
@@ -1070,7 +1070,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         )
         return array_2d.Array2D.manual_native(
             array=array.native[extraction_region.slice],
-            exposure_info=array.exposure_info,
+            header=array.header,
             pixel_scales=array.pixel_scales,
         )
 
@@ -1438,9 +1438,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         new_array = np.concatenate(calibration_images, axis=0)
 
         return array_2d.Array2D.manual(
-            array=new_array,
-            exposure_info=array.exposure_info,
-            pixel_scales=array.pixel_scales,
+            array=new_array, header=array.header, pixel_scales=array.pixel_scales
         )
 
     def mask_for_serial_calibration_from(self, mask, rows: Tuple[int, int]):

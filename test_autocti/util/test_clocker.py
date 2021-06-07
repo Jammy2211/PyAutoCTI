@@ -15,7 +15,9 @@ class TestClocker:
         arr = ac.Array2D.manual(
             array=[[1.0, 2.0], [3.0, 4.0]],
             pixel_scales=1.0,
-            exposure_info=ac.ExposureInfo(readout_offsets=(3, 5)),
+            header=ac.Header(
+                header_sci_obj=None, header_hdu_obj=None, readout_offsets=(3, 5)
+            ),
         ).native
 
         roe = ac.ROE(

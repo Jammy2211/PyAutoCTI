@@ -76,37 +76,45 @@ def make_serial_masked_array(serial_array):
 class TestAbstractExtractor:
     def test__total_rows_minimum(self):
 
-        layout = ac.ExtractorParallelFrontEdge(region_list=[(1, 2, 0, 1)])
+        layout = ac.Extractor2DParallelFrontEdge(region_list=[(1, 2, 0, 1)])
 
         assert layout.total_rows_min == 1
 
-        layout = ac.ExtractorParallelFrontEdge(region_list=[(1, 3, 0, 1)])
+        layout = ac.Extractor2DParallelFrontEdge(region_list=[(1, 3, 0, 1)])
 
         assert layout.total_rows_min == 2
 
-        layout = ac.ExtractorParallelFrontEdge(region_list=[(1, 2, 0, 1), (3, 4, 0, 1)])
+        layout = ac.Extractor2DParallelFrontEdge(
+            region_list=[(1, 2, 0, 1), (3, 4, 0, 1)]
+        )
 
         assert layout.total_rows_min == 1
 
-        layout = ac.ExtractorParallelFrontEdge(region_list=[(1, 2, 0, 1), (3, 5, 0, 1)])
+        layout = ac.Extractor2DParallelFrontEdge(
+            region_list=[(1, 2, 0, 1), (3, 5, 0, 1)]
+        )
 
         assert layout.total_rows_min == 1
 
     def test__total_columns_minimum(self):
 
-        layout = ac.ExtractorParallelFrontEdge(region_list=[(0, 1, 1, 2)])
+        layout = ac.Extractor2DParallelFrontEdge(region_list=[(0, 1, 1, 2)])
 
         assert layout.total_columns_min == 1
 
-        layout = ac.ExtractorParallelFrontEdge(region_list=[(0, 1, 1, 3)])
+        layout = ac.Extractor2DParallelFrontEdge(region_list=[(0, 1, 1, 3)])
 
         assert layout.total_columns_min == 2
 
-        layout = ac.ExtractorParallelFrontEdge(region_list=[(0, 1, 1, 2), (0, 1, 3, 4)])
+        layout = ac.Extractor2DParallelFrontEdge(
+            region_list=[(0, 1, 1, 2), (0, 1, 3, 4)]
+        )
 
         assert layout.total_columns_min == 1
 
-        layout = ac.ExtractorParallelFrontEdge(region_list=[(0, 1, 1, 2), (0, 1, 3, 5)])
+        layout = ac.Extractor2DParallelFrontEdge(
+            region_list=[(0, 1, 1, 2), (0, 1, 3, 5)]
+        )
 
         assert layout.total_columns_min == 1
 
@@ -114,7 +122,7 @@ class TestAbstractExtractor:
 class TestExtractorParallelFrontEdge:
     def test__array_2d_list_from(self, parallel_array, parallel_masked_array):
 
-        extractor = ac.ExtractorParallelFrontEdge(region_list=[(1, 4, 0, 3)])
+        extractor = ac.Extractor2DParallelFrontEdge(region_list=[(1, 4, 0, 3)])
 
         front_edge = extractor.array_2d_list_from(array=parallel_array, rows=(0, 1))
         assert (front_edge[0] == np.array([[1.0, 1.0, 1.0]])).all()
@@ -122,7 +130,7 @@ class TestExtractorParallelFrontEdge:
         front_edge = extractor.array_2d_list_from(array=parallel_array, rows=(2, 3))
         assert (front_edge[0] == np.array([[3.0, 3.0, 3.0]])).all()
 
-        extractor = ac.ExtractorParallelFrontEdge(
+        extractor = ac.Extractor2DParallelFrontEdge(
             region_list=[(1, 4, 0, 3), (5, 8, 0, 3)]
         )
 
@@ -164,7 +172,7 @@ class TestExtractorParallelFrontEdge:
 
     def test__stacked_array_2d_from(self, parallel_array, parallel_masked_array):
 
-        extractor = ac.ExtractorParallelFrontEdge(
+        extractor = ac.Extractor2DParallelFrontEdge(
             region_list=[(1, 4, 0, 3), (5, 8, 0, 3)]
         )
 
@@ -177,7 +185,7 @@ class TestExtractorParallelFrontEdge:
             == np.array([[3.0, 3.0, 3.0], [4.0, 4.0, 4.0], [5.0, 5.0, 5.0]])
         ).all()
 
-        extractor = ac.ExtractorParallelFrontEdge(
+        extractor = ac.Extractor2DParallelFrontEdge(
             region_list=[(1, 3, 0, 3), (5, 8, 0, 3)]
         )
 
@@ -206,7 +214,7 @@ class TestExtractorParallelFrontEdge:
 
     def test__binned_array_1d_from(self, parallel_array, parallel_masked_array):
 
-        extractor = ac.ExtractorParallelFrontEdge(
+        extractor = ac.Extractor2DParallelFrontEdge(
             region_list=[(1, 3, 0, 3), (5, 8, 0, 3)]
         )
 
@@ -216,7 +224,7 @@ class TestExtractorParallelFrontEdge:
 
         assert (front_edge_line == np.array([3.0, 4.0, 5.0])).all()
 
-        extractor = ac.ExtractorParallelFrontEdge(
+        extractor = ac.Extractor2DParallelFrontEdge(
             region_list=[(1, 3, 0, 3), (5, 8, 0, 3)]
         )
 
@@ -236,7 +244,7 @@ class TestExtractorParallelFrontEdge:
 class TestExtractorParallelTrails:
     def test__array_2d_list_from(self, parallel_array, parallel_masked_array):
 
-        extractor = ac.ExtractorParallelTrails(region_list=[(1, 3, 0, 3)])
+        extractor = ac.Extractor2DParallelTrails(region_list=[(1, 3, 0, 3)])
 
         trails = extractor.array_2d_list_from(array=parallel_array, rows=(0, 1))
         assert (trails == np.array([[3.0, 3.0, 3.0]])).all()
@@ -255,7 +263,9 @@ class TestExtractorParallelTrails:
             trails == np.array([[4.0, 4.0, 4.0], [5.0, 5.0, 5.0], [6.0, 6.0, 6.0]])
         ).all()
 
-        extractor = ac.ExtractorParallelTrails(region_list=[(1, 3, 0, 3), (4, 6, 0, 3)])
+        extractor = ac.Extractor2DParallelTrails(
+            region_list=[(1, 3, 0, 3), (4, 6, 0, 3)]
+        )
 
         trails = extractor.array_2d_list_from(array=parallel_array, rows=(0, 1))
         assert (trails[0] == np.array([[3.0, 3.0, 3.0]])).all()
@@ -285,7 +295,9 @@ class TestExtractorParallelTrails:
 
     def test__stacked_array_2d_from(self, parallel_array, parallel_masked_array):
 
-        extractor = ac.ExtractorParallelTrails(region_list=[(1, 3, 0, 3), (4, 6, 0, 3)])
+        extractor = ac.Extractor2DParallelTrails(
+            region_list=[(1, 3, 0, 3), (4, 6, 0, 3)]
+        )
 
         stacked_trails = extractor.stacked_array_2d_from(
             array=parallel_array, rows=(0, 2)
@@ -305,7 +317,9 @@ class TestExtractorParallelTrails:
 
     def test__binned_array_1d_from(self, parallel_array, parallel_masked_array):
 
-        extractor = ac.ExtractorParallelTrails(region_list=[(1, 3, 0, 3), (4, 6, 0, 3)])
+        extractor = ac.Extractor2DParallelTrails(
+            region_list=[(1, 3, 0, 3), (4, 6, 0, 3)]
+        )
 
         trails_line = extractor.binned_array_1d_from(array=parallel_array, rows=(0, 2))
 
@@ -321,7 +335,7 @@ class TestExtractorParallelTrails:
 class TestExtractorSerialFrontEdge:
     def test__array_2d_list_from(self, serial_array, serial_masked_array):
 
-        extractor = ac.ExtractorSerialFrontEdge(region_list=[(0, 3, 1, 4)])
+        extractor = ac.Extractor2DSerialFrontEdge(region_list=[(0, 3, 1, 4)])
 
         front_edge = extractor.array_2d_list_from(array=serial_array, columns=(0, 1))
 
@@ -335,7 +349,7 @@ class TestExtractorSerialFrontEdge:
 
         assert (front_edge == np.array([[3.0], [3.0], [3.0]])).all()
 
-        extractor = ac.ExtractorSerialFrontEdge(region_list=[(0, 3, 1, 5)])
+        extractor = ac.Extractor2DSerialFrontEdge(region_list=[(0, 3, 1, 5)])
 
         front_edge = extractor.array_2d_list_from(array=serial_array, columns=(0, 2))
 
@@ -347,7 +361,7 @@ class TestExtractorSerialFrontEdge:
             front_edge == np.array([[2.0, 3.0, 4.0], [2.0, 3.0, 4.0], [2.0, 3.0, 4.0]])
         ).all()
 
-        extractor = ac.ExtractorSerialFrontEdge(
+        extractor = ac.Extractor2DSerialFrontEdge(
             region_list=[(0, 3, 1, 4), (0, 3, 5, 8)]
         )
 
@@ -398,7 +412,7 @@ class TestExtractorSerialFrontEdge:
 
     def test__stacked_array_2d_from(self, serial_array, serial_masked_array):
 
-        extractor = ac.ExtractorSerialFrontEdge(
+        extractor = ac.Extractor2DSerialFrontEdge(
             region_list=[(0, 3, 1, 4), (0, 3, 5, 8)]
         )
 
@@ -436,7 +450,7 @@ class TestExtractorSerialFrontEdge:
 
     def test__binned_array_1d_from(self, serial_array, serial_masked_array):
 
-        extractor = ac.ExtractorSerialFrontEdge(
+        extractor = ac.Extractor2DSerialFrontEdge(
             region_list=[(0, 3, 1, 4), (0, 3, 5, 8)]
         )
 
@@ -456,7 +470,7 @@ class TestExtractorSerialFrontEdge:
 class TestExtractorSerialTrails:
     def test__array_2d_list_from(self, serial_array, serial_masked_array):
 
-        extractor = ac.ExtractorSerialTrails(region_list=[(0, 3, 1, 4)])
+        extractor = ac.Extractor2DSerialTrails(region_list=[(0, 3, 1, 4)])
 
         trails = extractor.array_2d_list_from(array=serial_array, columns=(0, 1))
 
@@ -480,7 +494,7 @@ class TestExtractorSerialTrails:
             trails == np.array([[5.0, 6.0, 7.0], [5.0, 6.0, 7.0], [5.0, 6.0, 7.0]])
         ).all()
 
-        extractor = ac.ExtractorSerialTrails(region_list=[(0, 3, 1, 4), (0, 3, 5, 8)])
+        extractor = ac.Extractor2DSerialTrails(region_list=[(0, 3, 1, 4), (0, 3, 5, 8)])
 
         trails = extractor.array_2d_list_from(array=serial_array, columns=(0, 1))
 
@@ -520,7 +534,7 @@ class TestExtractorSerialTrails:
 
     def test__stacked_array_2d_from(self, serial_array, serial_masked_array):
 
-        extractor = ac.ExtractorSerialTrails(region_list=[(0, 3, 1, 4), (0, 3, 5, 8)])
+        extractor = ac.Extractor2DSerialTrails(region_list=[(0, 3, 1, 4), (0, 3, 5, 8)])
 
         stacked_trails = extractor.stacked_array_2d_from(
             array=serial_array, columns=(0, 2)
@@ -540,13 +554,13 @@ class TestExtractorSerialTrails:
 
     def test__binned_array_1d_from(self, serial_array, serial_masked_array):
 
-        extractor = ac.ExtractorSerialTrails(region_list=[(0, 3, 1, 4), (0, 3, 5, 8)])
+        extractor = ac.Extractor2DSerialTrails(region_list=[(0, 3, 1, 4), (0, 3, 5, 8)])
 
         trails_line = extractor.binned_array_1d_from(array=serial_array, columns=(0, 2))
 
         assert (trails_line == np.array([6.0, 7.0])).all()
 
-        extractor = ac.ExtractorSerialTrails(region_list=[(0, 3, 1, 4), (0, 3, 5, 8)])
+        extractor = ac.Extractor2DSerialTrails(region_list=[(0, 3, 1, 4), (0, 3, 5, 8)])
 
         trails_line = extractor.binned_array_1d_from(
             array=serial_masked_array, columns=(0, 2)
