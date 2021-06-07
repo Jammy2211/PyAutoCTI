@@ -5,7 +5,7 @@ from autocti import charge_injection as ci
 from autoarray.structures.arrays.one_d import array_1d
 from autoarray.dataset import imaging
 
-from arcticwrap import traps, ccd
+from arcticpy.src import traps, ccd
 from autocti.line import dataset_line
 from autocti.mask import mask_2d
 from autocti.util.clocker import Clocker

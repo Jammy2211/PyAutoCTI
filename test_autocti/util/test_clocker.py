@@ -2,7 +2,7 @@ import os
 
 import pytest
 import numpy as np
-import arcticwrap as aw
+from arcticpy.src import cti
 import autocti as ac
 
 
@@ -33,8 +33,8 @@ class TestClocker:
         ccd = ac.CCD(phases=[ccd_phase], fraction_of_traps_per_phase=[1.0])
         traps = [ac.TrapInstantCapture(10.0, -1.0 / np.log(0.5))]
 
-        image_via_arctic = aw.add_cti(
-            image_pre_cti=arr,
+        image_via_arctic = cti.add_cti(
+            image=arr,
             parallel_traps=traps,
             parallel_ccd=ccd,
             parallel_roe=roe,
@@ -50,8 +50,8 @@ class TestClocker:
 
         assert image_via_arctic == pytest.approx(image_via_clocker, 1.0e-4)
 
-        image_via_arctic = aw.add_cti(
-            image_pre_cti=arr,
+        image_via_arctic = cti.add_cti(
+            image=arr,
             serial_traps=traps,
             serial_ccd=ccd,
             serial_roe=roe,

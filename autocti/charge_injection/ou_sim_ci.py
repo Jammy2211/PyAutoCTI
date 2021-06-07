@@ -2,8 +2,8 @@ from autoarray.instruments import euclid
 from autoarray.layout import layout_util
 
 from autocti.util.clocker import Clocker
-from arcticwrap import ccd
-from arcticwrap import traps
+from arcticpy.src import ccd
+from arcticpy.src import traps
 
 from autocti.charge_injection import layout_ci as lo
 

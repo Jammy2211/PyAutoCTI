@@ -8,8 +8,9 @@ from autoarray.instruments import acs
 from autoarray.dataset import preprocess
 from autoarray.dataset.imaging import Imaging
 
-from arcticwrap.ccd import ROE, CCDPhase, CCD
-from arcticwrap.traps import Trap, TrapInstantCapture
+from arcticpy.src.roe import ROE
+from arcticpy.src.ccd import CCDPhase, CCD
+from arcticpy.src.traps import TrapInstantCapture, TrapSlowCapture, TrapContinuum
 
 from autocti.warm_pixels.lines import Line
 from autocti.warm_pixels.lines import LineCollection

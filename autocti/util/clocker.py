@@ -1,17 +1,17 @@
 from autoarray.structures.arrays.two_d import array_2d
-from arcticwrap import main, ccd
+from arcticpy.src import cti, ccd, roe
 
 
 class Clocker(object):
     def __init__(
         self,
         iterations=1,
-        parallel_roe=ccd.ROE(),
+        parallel_roe=roe.ROE(),
         parallel_express=0,
         parallel_charge_injection_mode=False,
         parallel_window_start=0,
         parallel_window_stop=-1,
-        serial_roe=ccd.ROE(),
+        serial_roe=roe.ROE(),
         serial_express=0,
         serial_window_start=0,
         serial_window_stop=-1,
@@ -67,8 +67,8 @@ class Clocker(object):
         if serial_ccd is not None:
             serial_ccd = ccd.CCD(phases=[serial_ccd], fraction_of_traps_per_phase=[1.0])
 
-        image_post_cti = main.add_cti(
-            image_pre_cti=image_pre_cti,
+        image_post_cti = cti.add_cti(
+            image=image_pre_cti,
             parallel_ccd=parallel_ccd,
             parallel_roe=self.parallel_roe,
             parallel_traps=parallel_traps,
@@ -98,20 +98,21 @@ class Clocker(object):
         serial_ccd=None,
         serial_traps=None,
     ):
-        return main.remove_cti(
+        return cti.remove_cti(
             image=image,
-            iterations=self.iterations,
+            n_iterations=self.iterations,
             parallel_ccd=parallel_ccd,
             parallel_roe=self.parallel_roe,
             parallel_traps=parallel_traps,
             parallel_express=self.parallel_express,
             parallel_offset=image.readout_offsets[0],
-            parallel_window_range=self.parallel_window_range,
+            parallel_window_start=self.parallel_window_start,
+            parallel_window_stop=self.parallel_window_stop,
             serial_ccd=serial_ccd,
             serial_roe=self.serial_roe,
             serial_traps=serial_traps,
             serial_express=self.serial_express,
             serial_offset=image.readout_offsets[1],
-            serial_window_range=self.serial_window_range,
-            time_window_range=self.time_window_range,
+            serial_window_start=self.serial_window_start,
+            serial_window_stop=self.serial_window_stop,
         )

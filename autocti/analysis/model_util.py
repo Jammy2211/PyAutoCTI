@@ -1,5 +1,5 @@
-from arcticwrap import ccd
-from arcticwrap import traps
+from arcticpy.src import ccd
+from arcticpy.src import traps
 
 from typing import Optional, List
 
