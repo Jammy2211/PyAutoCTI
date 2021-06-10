@@ -18,91 +18,57 @@ class Result(res.Result):
 
 class ResultDataset(Result):
     @property
-    def max_log_likelihood_fits(self):
-        print(self.instance.cti)
-        return self.analysis.fit_list_from_instance(instance=self.instance)
+    def max_log_likelihood_fit(self):
+        return self.analysis.fit_from_instance(instance=self.instance)
 
     @property
-    def masks(self):
-        return [fit.mask for fit in self.max_log_likelihood_fits]
+    def mask(self):
+        return self.max_log_likelihood_fit.mask
 
 
 class ResultImagingCI(ResultDataset):
     @property
-    def max_log_likelihood_full_fits(self):
-        return self.analysis.fits_full_dataset_from_instance(
+    def max_log_likelihood_full_fit(self):
+        return self.analysis.fit_full_dataset_from_instance(
             instance=self.instance, hyper_noise_scale=True
         )
 
     @property
-    def max_log_likelihood_full_fits_no_hyper_scaling(self):
-        return self.analysis.fits_full_dataset_from_instance(
+    def max_log_likelihood_full_fit_no_hyper_scaling(self):
+        return self.analysis.fit_full_dataset_from_instance(
             instance=self.instance, hyper_noise_scale=False
         )
 
     @property
-    def noise_scaling_map_list_list_of_regions_ci(self):
-
-        return list(
-            map(
-                lambda fit: fit.chi_squared_map_of_regions_ci,
-                self.max_log_likelihood_full_fits_no_hyper_scaling,
-            )
+    def noise_scaling_map_of_regions_ci(self):
+        return (
+            self.max_log_likelihood_full_fit_no_hyper_scaling.chi_squared_map_of_regions_ci
         )
 
     @property
-    def noise_scaling_map_list_list_of_parallel_trails(self):
-
-        return list(
-            map(
-                lambda max_log_likelihood_full_fit: max_log_likelihood_full_fit.chi_squared_map_of_parallel_trails,
-                self.max_log_likelihood_full_fits_no_hyper_scaling,
-            )
+    def noise_scaling_map_of_parallel_trails(self):
+        return (
+            self.max_log_likelihood_full_fit_no_hyper_scaling.chi_squared_map_of_parallel_trails
         )
 
     @property
-    def noise_scaling_map_list_list_of_serial_trails(self):
-
-        return list(
-            map(
-                lambda max_log_likelihood_full_fit: max_log_likelihood_full_fit.chi_squared_map_of_serial_trails,
-                self.max_log_likelihood_full_fits_no_hyper_scaling,
-            )
+    def noise_scaling_map_of_serial_trails(self):
+        return (
+            self.max_log_likelihood_full_fit_no_hyper_scaling.chi_squared_map_of_serial_trails
         )
 
     @property
-    def noise_scaling_map_list_list_of_serial_overscan_no_trails(self):
-
-        return list(
-            map(
-                lambda max_log_likelihood_full_fit: max_log_likelihood_full_fit.chi_squared_map_of_serial_overscan_no_trails,
-                self.max_log_likelihood_full_fits_no_hyper_scaling,
-            )
+    def noise_scaling_map_of_serial_overscan_no_trails(self):
+        return (
+            self.max_log_likelihood_full_fit_no_hyper_scaling.chi_squared_map_of_serial_overscan_no_trails
         )
 
     @property
-    def noise_scaling_map_list_list(self,):
+    def noise_scaling_map_list(self):
 
-        total_images = len(self.analysis.imaging_ci_list)
-
-        noise_scaling_map_list_list = []
-
-        for image_index in range(total_images):
-            noise_scaling_map_list_list.append(
-                [
-                    self.noise_scaling_map_list_list_of_regions_ci[image_index],
-                    self.noise_scaling_map_list_list_of_parallel_trails[image_index],
-                    self.noise_scaling_map_list_list_of_serial_trails[image_index],
-                    self.noise_scaling_map_list_list_of_serial_overscan_no_trails[
-                        image_index
-                    ],
-                ]
-            )
-
-        for image_index in range(total_images):
-            noise_scaling_map_list_list[image_index] = [
-                noise_scaling_map
-                for noise_scaling_map in noise_scaling_map_list_list[image_index]
-            ]
-
-        return noise_scaling_map_list_list
+        return [
+            self.noise_scaling_map_of_regions_ci,
+            self.noise_scaling_map_of_parallel_trails,
+            self.noise_scaling_map_of_serial_trails,
+            self.noise_scaling_map_of_serial_overscan_no_trails,
+        ]

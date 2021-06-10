@@ -37,11 +37,11 @@ class Visualizer:
             )
         )
 
-    def visualize_imaging_ci(self, imaging_ci, index=0):
+    def visualize_imaging_ci(self, imaging_ci):
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
-        mat_plot_2d = self.mat_plot_2d_from(subfolders=f"imaging_ci_{index}")
+        mat_plot_2d = self.mat_plot_2d_from(subfolders=f"imaging_ci")
 
         imaging_ci_plotter = imaging_ci_plotters.ImagingCIPlotter(
             imaging=imaging_ci, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
@@ -62,11 +62,11 @@ class Visualizer:
 
             imaging_ci_plotter.subplot_imaging_ci()
 
-    def visualize_imaging_ci_lines(self, imaging_ci, line_region, index=0):
+    def visualize_imaging_ci_lines(self, imaging_ci, line_region):
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"imaging_ci_{index}")
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"imaging_ci")
 
         imaging_ci_plotter = imaging_ci_plotters.ImagingCIPlotter(
             imaging=imaging_ci, mat_plot_1d=mat_plot_1d, include_2d=self.include_2d
@@ -84,11 +84,11 @@ class Visualizer:
             pre_cti_image=should_plot("pre_cti_image"),
         )
 
-    def visualize_fit_ci(self, fit, during_analysis, index=0):
+    def visualize_fit_ci(self, fit, during_analysis):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
-        mat_plot_2d = self.mat_plot_2d_from(subfolders=f"fit_imaging_ci_{index}")
+        mat_plot_2d = self.mat_plot_2d_from(subfolders=f"fit_imaging_ci")
 
         fit_ci_plotter = fit_ci_plotters.FitImagingCIPlotter(
             fit=fit, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
@@ -122,16 +122,16 @@ class Visualizer:
 
             if should_plot("all_at_end_fits"):
 
-                self.visualize_fit_in_fits(fit=fit)
+                self.visualize_fit_in_fit(fit=fit)
 
         if should_plot("subplot_fit"):
             fit_ci_plotter.subplot_fit_ci()
 
-    def visualize_fit_ci_1d_lines(self, fit, line_region, during_analysis, index=0):
+    def visualize_fit_ci_1d_lines(self, fit, line_region, during_analysis):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"fit_imaging_ci_{index}")
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"fit_imaging_ci")
 
         fit_ci_plotter = fit_ci_plotters.FitImagingCIPlotter(
             fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
@@ -169,7 +169,7 @@ class Visualizer:
                     chi_squared_map=True,
                 )
 
-    def visualize_multiple_fit_cis_subplots(self, fits):
+    def visualize_multiple_fit_cis_subplots(self, fit):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
@@ -177,7 +177,7 @@ class Visualizer:
 
         fit_ci_plotter_list = [
             fit_ci_plotters.FitImagingCIPlotter(fit=fit_ci, mat_plot_2d=mat_plot_2d)
-            for fit_ci in fits
+            for fit_ci in fit
         ]
         multi_plotter = multi_plotters.MultiFigurePlotter(
             plotter_list=fit_ci_plotter_list
@@ -198,7 +198,7 @@ class Visualizer:
                 func_name="figures_2d", figure_name="chi_squared_map"
             )
 
-    def visualize_multiple_fit_cis_subplots_1d_lines(self, fits, line_region):
+    def visualize_multiple_fit_cis_subplots_1d_lines(self, fit, line_region):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
@@ -208,7 +208,7 @@ class Visualizer:
 
         fit_ci_plotter_list = [
             fit_ci_plotters.FitImagingCIPlotter(fit=fit_ci, mat_plot_1d=mat_plot_1d)
-            for fit_ci in fits
+            for fit_ci in fit
         ]
         multi_plotter = multi_plotters.MultiFigurePlotter(
             plotter_list=fit_ci_plotter_list
@@ -235,11 +235,9 @@ class Visualizer:
                 line_region=line_region,
             )
 
-    def visualize_fit_in_fits(self, fit):
+    def visualize_fit_in_fit(self, fit):
 
-        mat_plot_2d = self.mat_plot_2d_from(
-            subfolders="fit_imaging/fits", format="fits"
-        )
+        mat_plot_2d = self.mat_plot_2d_from(subfolders="fit_imaging/fit", format="fit")
 
         fit_ci_plotter = fit_ci_plotters.FitImagingCIPlotter(
             fit=fit, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
