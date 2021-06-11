@@ -645,7 +645,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         for region in self.region_list:
 
             if region.y1 > shape_2d[0] or region.x1 > shape_2d[1]:
-                raise exc.Layout2DCIException(
+                raise exc.LayoutException(
                     "The charge injection layout_ci regions are bigger than the image image_shape"
                 )
 
@@ -699,16 +699,15 @@ class AbstractLayout2DCI(lo.Layout2D):
         ]
 
     @property
+    def parallel_trail_size_to_array_edge(self):
+        return self.shape_2d[0] - np.max([region.y1 for region in self.region_list])
+
+    @property
     def smallest_parallel_trails_rows_to_array_edge(self):
 
         rows_between_regions = self.rows_between_regions
         rows_between_regions.append(self.parallel_trail_size_to_array_edge)
         return np.min(rows_between_regions)
-
-    @property
-    def parallel_trail_size_to_array_edge(self):
-
-        return self.shape_2d[0] - np.max([region.y1 for region in self.region_list])
 
     def array_2d_of_regions_from(self, array: array_2d.Array2D) -> array_2d.Array2D:
         """

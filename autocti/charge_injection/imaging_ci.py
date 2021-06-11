@@ -293,7 +293,7 @@ class ImagingCI(imaging.Imaging):
                     shape_native=ci_image.shape_native, pixel_scales=pixel_scales
                 )
             else:
-                raise exc.Layout2DCIException(
+                raise exc.LayoutException(
                     "Cannot estimate pre_cti_image image from non-uniform charge injectiono pattern"
                 )
 

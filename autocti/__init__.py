@@ -1,5 +1,6 @@
 from autoarray.fit.fit import FitImaging
 from autoarray.mask.mask_1d import Mask1D
+from autoarray.layout.region import Region1D
 from autoarray.layout.region import Region2D
 from autoarray.structures.arrays.one_d.array_1d import Array1D
 from autoarray.structures.arrays.two_d.array_2d import Array2D
@@ -10,7 +11,8 @@ from autoarray.dataset import preprocess
 from autoarray.dataset.imaging import Imaging
 
 from arcticpy.src.roe import ROE
-from arcticpy.src.ccd import CCDPhase, CCD
+from arcticpy.src.ccd import CCDPhase
+from arcticpy.src.ccd import CCD
 from arcticpy.src.traps import TrapInstantCapture, TrapSlowCapture, TrapContinuum
 
 from autocti.warm_pixels.lines import Line
@@ -25,6 +27,7 @@ from .mask.mask_2d import Mask2D
 from .mask.mask_2d import SettingsMask2D
 from .line.layout_line import Extractor1DFrontEdge
 from .line.layout_line import Extractor1DTrails
+from .line.layout_line import Layout1DLineUniform
 from .line.dataset_line import SettingsDatasetLine
 from .line.dataset_line import DatasetLine
 from . import charge_injection as ci

@@ -600,24 +600,24 @@ class TestExtractorSerialTrails:
 class TestAbstractLayout2DCI(object):
     def test__check_layout_dimensions__layout_has_more_rows_than_image__1_region(self):
 
-        with pytest.raises(exc.Layout2DCIException):
+        with pytest.raises(exc.LayoutException):
             ac.ci.Layout2DCIUniform(
                 shape_2d=(2, 6), normalization=1.0, region_list=([(0, 3, 0, 1)])
             )
 
-        with pytest.raises(exc.Layout2DCIException):
+        with pytest.raises(exc.LayoutException):
             ac.ci.Layout2DCIUniform(
                 shape_2d=(6, 2), normalization=1.0, region_list=([(0, 1, 0, 3)])
             )
 
-        with pytest.raises(exc.Layout2DCIException):
+        with pytest.raises(exc.LayoutException):
             ac.ci.Layout2DCIUniform(
                 shape_2d=(2, 6),
                 normalization=1.0,
                 region_list=([(0, 3, 0, 1), (0, 1, 0, 3)]),
             )
 
-        with pytest.raises(exc.Layout2DCIException):
+        with pytest.raises(exc.LayoutException):
             ac.ci.Layout2DCIUniform(
                 shape_2d=(6, 2),
                 normalization=1.0,

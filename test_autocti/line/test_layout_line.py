@@ -41,6 +41,12 @@ class TestAbstractExtractor:
 
         assert layout.total_pixels_min == 1
 
+    def test__total_pixel_spacing_min(self):
+
+        layout = ac.Extractor1DFrontEdge(region_list=[(1, 2)])
+
+        assert layout.total_pixels_min == 1
+
 
 class TestExtractorFrontEdge:
     def test__array_1d_list_from(self, array, masked_array):
@@ -143,3 +149,43 @@ class TestExtractorTrails:
 
         assert (stacked_trails == np.array([5.0, 4.0])).all()
         assert (stacked_trails.mask == np.array([False, False])).all()
+
+
+class TestAbstractLayout1DLine:
+    def test__trail_size_to_array_edge(self):
+
+        layout = ac.Layout1DLineUniform(
+            shape_1d=(5,), normalization=1.0, region_list=[ac.Region1D(region=(0, 3))]
+        )
+
+        assert layout.trail_size_to_array_edge == 2
+
+        layout = ac.Layout1DLineUniform(
+            shape_1d=(7,), normalization=1.0, region_list=[ac.Region1D(region=(0, 3))]
+        )
+
+        assert layout.trail_size_to_array_edge == 4
+
+        layout = ac.Layout1DLineUniform(
+            shape_1d=(15,),
+            normalization=1.0,
+            region_list=[
+                ac.Region1D(region=(0, 2)),
+                ac.Region1D(region=(5, 8)),
+                ac.Region1D(region=(11, 14)),
+            ],
+        )
+
+        assert layout.trail_size_to_array_edge == 1
+
+        layout = ac.Layout1DLineUniform(
+            shape_1d=(20,),
+            normalization=1.0,
+            region_list=[
+                ac.Region1D(region=(0, 2)),
+                ac.Region1D(region=(5, 8)),
+                ac.Region1D(region=(11, 14)),
+            ],
+        )
+
+        assert layout.trail_size_to_array_edge == 6
