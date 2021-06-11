@@ -64,10 +64,6 @@ class Extractor1DFrontEdge(Extractor1D):
         front_arrays = self.array_1d_list_from(array=array, pixels=pixels)
         return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
 
-    def binned_array_1d_from(self, array: array_1d.Array1D, pixels):
-        front_stacked_array = self.stacked_array_1d_from(array=array, pixels=pixels)
-        return np.ma.mean(np.ma.asarray(front_stacked_array), axis=1)
-
     def region_list_from(self, pixels):
         """
         Calculate a list of the front edge regions of a line dataset
@@ -181,10 +177,6 @@ class Extractor1DTrails(Extractor1D):
         trails_arrays = self.array_1d_list_from(array=array, pixels=pixels)
         return np.ma.mean(np.ma.asarray(trails_arrays), axis=0)
 
-    def binned_array_1d_from(self, array: array_1d.Array1D, pixels):
-        trails_stacked_array = self.stacked_array_1d_from(array=array, pixels=pixels)
-        return np.ma.mean(np.ma.asarray(trails_stacked_array), axis=1)
-
     def region_list_from(self, pixels):
         """
         Returns the parallel scans of a charge injection array.
@@ -236,7 +228,7 @@ class Extractor1DTrails(Extractor1D):
 
         return list(
             map(
-                lambda ci_region: ci_region.parallel_trails_region_from(pixels=pixels),
+                lambda region: region.trails_region_from(pixels=pixels),
                 self.region_list,
             )
         )
@@ -244,8 +236,7 @@ class Extractor1DTrails(Extractor1D):
     def add_to_array(self, new_array, array, pixels):
 
         region_list = [
-            region.parallel_trails_region_from(pixels=pixels)
-            for region in self.region_list
+            region.trails_region_from(pixels=pixels) for region in self.region_list
         ]
 
         array_1d_list = self.array_1d_list_from(array=array, pixels=pixels)
