@@ -3,6 +3,7 @@ from autocti import exc
 
 from arcticpy.src import cti, ccd, roe
 
+
 class Clocker(object):
     def __init__(
         self,
@@ -61,10 +62,14 @@ class Clocker(object):
     ):
 
         if not any([parallel_traps, serial_traps]):
-            raise exc.ClockerException("No Trap species (parallel or serial) were passed to the add_cti method")
+            raise exc.ClockerException(
+                "No Trap species (parallel or serial) were passed to the add_cti method"
+            )
 
         if not any([parallel_ccd, serial_ccd]):
-            raise exc.ClockerException("No CCD object(parallel or serial) was passed to the add_cti method")
+            raise exc.ClockerException(
+                "No CCD object(parallel or serial) was passed to the add_cti method"
+            )
 
         if parallel_ccd is not None:
             parallel_ccd = ccd.CCD(
@@ -107,10 +112,14 @@ class Clocker(object):
     ):
 
         if not any([parallel_traps, serial_traps]):
-            raise exc.ClockerException("No Trap species (parallel or serial) were passed to the add_cti method")
+            raise exc.ClockerException(
+                "No Trap species (parallel or serial) were passed to the add_cti method"
+            )
 
         if not any([parallel_ccd, serial_ccd]):
-            raise exc.ClockerException("No CCD object(parallel or serial) was passed to the add_cti method")
+            raise exc.ClockerException(
+                "No CCD object(parallel or serial) was passed to the add_cti method"
+            )
 
         return cti.remove_cti(
             image=image,

@@ -97,7 +97,7 @@ class TestClocker:
 
         with pytest.raises(exc.ClockerException):
             clocker.add_cti(image_pre_cti=arr, parallel_traps=traps, serial_traps=traps)
-            
+
         with pytest.raises(exc.ClockerException):
             clocker.add_cti(image_pre_cti=arr, parallel_ccd=ccd)
 
@@ -106,3 +106,24 @@ class TestClocker:
 
         with pytest.raises(exc.ClockerException):
             clocker.add_cti(image_pre_cti=arr, parallel_ccd=ccd, serial_ccd=ccd)
+
+        with pytest.raises(exc.ClockerException):
+            clocker.remove_cti(image=arr)
+
+        with pytest.raises(exc.ClockerException):
+            clocker.remove_cti(image=arr, parallel_traps=traps)
+
+        with pytest.raises(exc.ClockerException):
+            clocker.remove_cti(image=arr, serial_traps=traps)
+
+        with pytest.raises(exc.ClockerException):
+            clocker.remove_cti(image=arr, parallel_traps=traps, serial_traps=traps)
+
+        with pytest.raises(exc.ClockerException):
+            clocker.remove_cti(image=arr, parallel_ccd=ccd)
+
+        with pytest.raises(exc.ClockerException):
+            clocker.remove_cti(image=arr, serial_ccd=ccd)
+
+        with pytest.raises(exc.ClockerException):
+            clocker.remove_cti(image=arr, parallel_ccd=ccd, serial_ccd=ccd)

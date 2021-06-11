@@ -22,6 +22,8 @@ from .charge_injection.layout_ci import Extractor2DSerialFrontEdge
 from .charge_injection.layout_ci import Extractor2DSerialTrails
 from .mask.mask_2d import Mask2D
 from .mask.mask_2d import SettingsMask2D
+from .line.layout_line import Extractor1DFrontEdge
+from .line.layout_line import Extractor1DTrails
 from .line.dataset_line import SettingsDatasetLine
 from .line.dataset_line import DatasetLine
 from . import charge_injection as ci

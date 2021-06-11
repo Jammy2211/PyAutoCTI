@@ -55,9 +55,8 @@ class TestAnalysis:
 
 
 class TestAnalysisImagingCI:
-
     def test__make_result__result_imaging_is_returned(
-            self, imaging_ci_7x7, pre_cti_image_7x7, traps_x1, ccd, parallel_clocker
+        self, imaging_ci_7x7, pre_cti_image_7x7, traps_x1, ccd, parallel_clocker
     ):
         model = af.CollectionPriorModel(
             cti=af.Model(ac.CTI, parallel_traps=traps_x1, parallel_ccd=ccd),
@@ -67,7 +66,6 @@ class TestAnalysisImagingCI:
         analysis = ac.AnalysisImagingCI(
             dataset_ci=imaging_ci_7x7, clocker=parallel_clocker
         )
-
 
         search = mock.MockSearch(name="test_search")
 
