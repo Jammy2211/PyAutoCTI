@@ -40,7 +40,7 @@ class Extractor1DFrontEdge(Extractor1D):
         array
             A 1D array of data containing a CTI line.
         pixels
-            The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
+            The row indexes to extract the front edge between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
         """
         front_region_list = self.region_list_from(pixels=pixels)
         front_array_list = list(
@@ -60,12 +60,12 @@ class Extractor1DFrontEdge(Extractor1D):
         )
         return front_array_list
 
-    def stacked_array_1d_from(self, array: array_1d.Array1D, rows):
-        front_arrays = self.array_1d_list_from(array=array, pixels=rows)
+    def stacked_array_1d_from(self, array: array_1d.Array1D, pixels):
+        front_arrays = self.array_1d_list_from(array=array, pixels=pixels)
         return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
 
-    def binned_array_1d_from(self, array: array_1d.Array1D, rows):
-        front_stacked_array = self.stacked_array_1d_from(array=array, rows=rows)
+    def binned_array_1d_from(self, array: array_1d.Array1D, pixels):
+        front_stacked_array = self.stacked_array_1d_from(array=array, pixels=pixels)
         return np.ma.mean(np.ma.asarray(front_stacked_array), axis=1)
 
     def region_list_from(self, pixels):
@@ -85,7 +85,7 @@ class Extractor1DFrontEdge(Extractor1D):
         array
             A 1D array of data containing a CTI line.
         pixels
-            The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
+            The row indexes to extract the front edge between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
         """
         return list(
             map(
@@ -94,13 +94,13 @@ class Extractor1DFrontEdge(Extractor1D):
             )
         )
 
-    def add_to_array(self, new_array, array, rows):
+    def add_to_array(self, new_array, array, pixels):
 
         region_list = [
-            region.front_edge_region_from(pixels=rows) for region in self.region_list
+            region.front_edge_region_from(pixels=pixels) for region in self.region_list
         ]
 
-        array_1d_list = self.array_1d_list_from(array=array, pixels=rows)
+        array_1d_list = self.array_1d_list_from(array=array, pixels=pixels)
 
         for arr, region in zip(array_1d_list, region_list):
             new_array[region.y0 : region.y1, region.x0 : region.x1] += arr
@@ -109,12 +109,12 @@ class Extractor1DFrontEdge(Extractor1D):
 
 
 class Extractor1DTrails(Extractor1D):
-    def array_1d_list_from(self, array: array_1d.Array1D, rows):
+    def array_1d_list_from(self, array: array_1d.Array1D, pixels):
         """
         Extract the parallel trails of a charge injection array.
 
 
-        The diagram below illustrates the arrays that is extracted from a array for rows=(0, 1):
+        The diagram below illustrates the arrays that is extracted from a array for pixels=(0, 1):
 
         ---KEY---
         ---------
@@ -155,11 +155,11 @@ class Extractor1DTrails(Extractor1D):
         Parameters
         ------------
         array
-        rows : (int, int)
-            The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
+        pixels : (int, int)
+            The row indexes to extract the trails between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
         """
 
-        trails_region_list = self.region_list_from(rows=rows)
+        trails_region_list = self.region_list_from(pixels=pixels)
         trails_arrays = list(
             map(lambda region: array.native[region.slice], trails_region_list)
         )
@@ -177,19 +177,19 @@ class Extractor1DTrails(Extractor1D):
         )
         return trails_arrays
 
-    def stacked_array_1d_from(self, array: array_1d.Array1D, rows):
-        trails_arrays = self.array_1d_list_from(array=array, rows=rows)
+    def stacked_array_1d_from(self, array: array_1d.Array1D, pixels):
+        trails_arrays = self.array_1d_list_from(array=array, pixels=pixels)
         return np.ma.mean(np.ma.asarray(trails_arrays), axis=0)
 
-    def binned_array_1d_from(self, array: array_1d.Array1D, rows):
-        trails_stacked_array = self.stacked_array_1d_from(array=array, rows=rows)
+    def binned_array_1d_from(self, array: array_1d.Array1D, pixels):
+        trails_stacked_array = self.stacked_array_1d_from(array=array, pixels=pixels)
         return np.ma.mean(np.ma.asarray(trails_stacked_array), axis=1)
 
-    def region_list_from(self, rows):
+    def region_list_from(self, pixels):
         """
         Returns the parallel scans of a charge injection array.
 
-            The diagram below illustrates the region that is calculated from a array for rows=(0, 1):
+            The diagram below illustrates the region that is calculated from a array for pixels=(0, 1):
 
             ---KEY---
             ---------
@@ -230,24 +230,25 @@ class Extractor1DTrails(Extractor1D):
             Parameters
             ------------
             arrays
-            rows : (int, int)
-                The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
+            pixels : (int, int)
+                The row indexes to extract the trails between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
         """
 
         return list(
             map(
-                lambda ci_region: ci_region.parallel_trails_region_from(rows=rows),
+                lambda ci_region: ci_region.parallel_trails_region_from(pixels=pixels),
                 self.region_list,
             )
         )
 
-    def add_to_array(self, new_array, array, rows):
+    def add_to_array(self, new_array, array, pixels):
 
         region_list = [
-            region.parallel_trails_region_from(rows=rows) for region in self.region_list
+            region.parallel_trails_region_from(pixels=pixels)
+            for region in self.region_list
         ]
 
-        array_1d_list = self.array_1d_list_from(array=array, rows=rows)
+        array_1d_list = self.array_1d_list_from(array=array, pixels=pixels)
 
         for arr, region in zip(array_1d_list, region_list):
             new_array[region.y0 : region.y1, region.x0 : region.x1] += arr

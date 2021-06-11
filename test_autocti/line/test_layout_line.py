@@ -71,52 +71,33 @@ class TestExtractorFrontEdge:
             array=masked_array, pixels=(0, 3)
         )
 
-        assert (
-            front_edge_list[0].mask
-            == np.array([False, True, False])
-        ).all()
+        assert (front_edge_list[0].mask == np.array([False, True, False])).all()
 
-    # def test__stacked_array_1d_from(self, array, masked_array):
-    #
-    #     extractor = ac.Extractor1DFrontEdge(
-    #         region_list=[(1, 4, 0, 3), (5, 8, 0, 3)]
-    #     )
-    #
-    #     stacked_front_edges = extractor.stacked_array_1d_from(
-    #         array=array, pixels=(0, 3)
-    #     )
-    #
-    #     assert (
-    #         stacked_front_edges
-    #         == np.array([[3.0, 3.0, 3.0], [4.0, 4.0, 4.0], [5.0, 5.0, 5.0]])
-    #     ).all()
-    #
-    #     extractor = ac.Extractor1DFrontEdge(
-    #         region_list=[(1, 3, 0, 3), (5, 8, 0, 3)]
-    #     )
-    #
-    #     stacked_front_edges = extractor.stacked_array_1d_from(
-    #         array=array, pixels=(0, 2)
-    #     )
-    #
-    #     assert (
-    #         stacked_front_edges == np.array([[3.0, 3.0, 3.0], [4.0, 4.0, 4.0]])
-    #     ).all()
-    #
-    #     stacked_front_edges = extractor.stacked_array_1d_from(
-    #         array=masked_array, pixels=(0, 3)
-    #     )
-    #
-    #     assert (
-    #         stacked_front_edges
-    #         == np.ma.array([[3.0, 3.0, 3.0], [4.0, 6.0, 4.0], [3.0, 5.0, 7.0]])
-    #     ).all()
-    #     assert (
-    #         stacked_front_edges.mask
-    #         == np.ma.array(
-    #             [[False, False, False], [False, False, False], [False, False, False]]
-    #         )
-    #     ).all()
+    def test__stacked_array_1d_from(self, array, masked_array):
+
+        extractor = ac.Extractor1DFrontEdge(region_list=[(1, 4), (5, 8)])
+
+        stacked_front_edges = extractor.stacked_array_1d_from(
+            array=array, pixels=(0, 3)
+        )
+
+        assert (stacked_front_edges == np.array([3.0, 4.0, 5.0])).all()
+
+        extractor = ac.Extractor1DFrontEdge(region_list=[(1, 3), (5, 8)])
+
+        stacked_front_edges = extractor.stacked_array_1d_from(
+            array=array, pixels=(0, 2)
+        )
+
+        assert (stacked_front_edges == np.array([3.0, 4.0])).all()
+
+        stacked_front_edges = extractor.stacked_array_1d_from(
+            array=masked_array, pixels=(0, 2)
+        )
+
+        assert (stacked_front_edges == np.ma.array([1.0, 6.0])).all()
+        assert (stacked_front_edges.mask == np.ma.array([False, False])).all()
+
     #
     # def test__binned_array_1d_from(self, array, masked_array):
     #
