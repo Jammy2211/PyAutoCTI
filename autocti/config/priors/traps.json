@@ -3,7 +3,7 @@
         "density": {
             "type": "Uniform",
             "lower_limit": 0.0,
-            "upper_limit": 30.0,
+            "upper_limit": 10.0,
             "width_modifier": {
                 "type": "Relative",
                 "value": 0.5
@@ -16,7 +16,48 @@
         "release_timescale": {
             "type": "Uniform",
             "lower_limit": 0.0,
-            "upper_limit": 30.0,
+            "upper_limit": 50.0,
+            "width_modifier": {
+                "type": "Relative",
+                "value": 0.5
+            },
+            "gaussian_limits": {
+                "lower": 0.0,
+                "upper": "inf"
+            }
+        }
+    },
+    "TrapContinuum": {
+        "density": {
+            "type": "Uniform",
+            "lower_limit": 0.0,
+            "upper_limit": 10.0,
+            "width_modifier": {
+                "type": "Relative",
+                "value": 0.5
+            },
+            "gaussian_limits": {
+                "lower": 0.0,
+                "upper": "inf"
+            }
+        },
+        "release_timescale": {
+            "type": "Uniform",
+            "lower_limit": 0.0,
+            "upper_limit": 50.0,
+            "width_modifier": {
+                "type": "Relative",
+                "value": 0.5
+            },
+            "gaussian_limits": {
+                "lower": 0.0,
+                "upper": "inf"
+            }
+          },
+          "release_timescale_sigma": {
+            "type": "Uniform",
+            "lower_limit": 0.0,
+            "upper_limit": 10.0,
             "width_modifier": {
                 "type": "Relative",
                 "value": 0.5

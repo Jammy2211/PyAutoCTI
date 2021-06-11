@@ -1,8 +1,7 @@
-from functools import partial
-import numpy as np
+import autofit as af
 
 from autofit.non_linear import abstract_search
-from autoarray.structures.arrays.two_d import array_2d
+from autocti.analysis import result as res
 from autocti.charge_injection import fit_ci
 from autocti.analysis import visualizer as vis, settings
 
@@ -180,3 +179,10 @@ class AnalysisImagingCI(abstract_search.Analysis):
         # visualizer.visualize_multiple_fit_cis_subplots_1d_lines(
         #     fits=fit, line_region="parallel_trails"
         # )
+
+    def make_result(
+        self, samples: af.PDFSamples, model: af.Collection, search: af.NonLinearSearch
+    ):
+        return res.ResultImagingCI(
+            samples=samples, model=model, analysis=self, search=search
+        )

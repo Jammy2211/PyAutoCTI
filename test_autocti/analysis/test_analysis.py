@@ -1,9 +1,9 @@
-from os import path
-
 import autofit as af
 import autocti as ac
 import pytest
 from autocti import exc
+from autocti.mock import mock
+from autocti.analysis import result as res
 
 
 class TestAnalysis:
@@ -55,6 +55,26 @@ class TestAnalysis:
 
 
 class TestAnalysisImagingCI:
+
+    def test__make_result__result_imaging_is_returned(
+            self, imaging_ci_7x7, pre_cti_image_7x7, traps_x1, ccd, parallel_clocker
+    ):
+        model = af.CollectionPriorModel(
+            cti=af.Model(ac.CTI, parallel_traps=traps_x1, parallel_ccd=ccd),
+            hyper_noise=af.Model(ac.ci.HyperCINoiseCollection),
+        )
+
+        analysis = ac.AnalysisImagingCI(
+            dataset_ci=imaging_ci_7x7, clocker=parallel_clocker
+        )
+
+
+        search = mock.MockSearch(name="test_search")
+
+        result = search.fit(model=model, analysis=analysis)
+
+        assert isinstance(result, res.ResultImagingCI)
+
     def test__log_likelihood_via_analysis__matches_manual_fit(
         self, imaging_ci_7x7, pre_cti_image_7x7, traps_x1, ccd, parallel_clocker
     ):

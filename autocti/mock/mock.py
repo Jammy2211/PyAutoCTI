@@ -1,5 +1,5 @@
 from autofit.mock import mock
-from autofit.search.result import ResultsCollection
+from autofit.non_linear.result import ResultsCollection
 from autofit.mock.mock import MockSearch, MockSamples
 import numpy as np
 
