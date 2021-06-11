@@ -24,3 +24,7 @@ class FittingException(Exception):
 
 class PriorException(exc.FitException):
     pass
+
+
+class ClockerException(Exception):
+    pass

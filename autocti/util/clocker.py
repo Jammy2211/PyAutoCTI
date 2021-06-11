@@ -1,6 +1,7 @@
 from autoarray.structures.arrays.two_d import array_2d
-from arcticpy.src import cti, ccd, roe
+from autocti import exc
 
+from arcticpy.src import cti, ccd, roe
 
 class Clocker(object):
     def __init__(
@@ -59,6 +60,12 @@ class Clocker(object):
         serial_traps=None,
     ):
 
+        if not any([parallel_traps, serial_traps]):
+            raise exc.ClockerException("No Trap species (parallel or serial) were passed to the add_cti method")
+
+        if not any([parallel_ccd, serial_ccd]):
+            raise exc.ClockerException("No CCD object(parallel or serial) was passed to the add_cti method")
+
         if parallel_ccd is not None:
             parallel_ccd = ccd.CCD(
                 phases=[parallel_ccd], fraction_of_traps_per_phase=[1.0]
@@ -98,6 +105,13 @@ class Clocker(object):
         serial_ccd=None,
         serial_traps=None,
     ):
+
+        if not any([parallel_traps, serial_traps]):
+            raise exc.ClockerException("No Trap species (parallel or serial) were passed to the add_cti method")
+
+        if not any([parallel_ccd, serial_ccd]):
+            raise exc.ClockerException("No CCD object(parallel or serial) was passed to the add_cti method")
+
         return cti.remove_cti(
             image=image,
             n_iterations=self.iterations,
