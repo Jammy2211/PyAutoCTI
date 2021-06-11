@@ -1,6 +1,7 @@
 from autoarray.fit.fit import FitImaging
 from autoarray.mask.mask_1d import Mask1D
 from autoarray.layout.region import Region2D
+from autoarray.structures.arrays.one_d.array_1d import Array1D
 from autoarray.structures.arrays.two_d.array_2d import Array2D
 from autoarray.structures.arrays.abstract_array import Header
 from autoarray.instruments import euclid

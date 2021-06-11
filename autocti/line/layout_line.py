@@ -26,7 +26,7 @@ class Extractor1D:
 class Extractor1DFrontEdge(Extractor1D):
     def array_1d_list_from(self, array: array_1d.Array1D, pixels):
         """
-        Extract a list of the parallel front edges of a 1D line  array.
+        Extract a list of the front edges of a 1D line array.
 
         The diagram below illustrates the arrays that is extracted from a array for pixels=(0, 1):
 
@@ -43,22 +43,22 @@ class Extractor1DFrontEdge(Extractor1D):
             The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
         front_region_list = self.region_list_from(pixels=pixels)
-        front_arrays = list(
+        front_array_list = list(
             map(lambda region: array.native[region.slice], front_region_list)
         )
-        front_masks = list(
+        front_mask_list = list(
             map(lambda region: array.mask[region.slice], front_region_list)
         )
-        front_arrays = list(
+        front_array_list = list(
             map(
                 lambda front_array, front_mask: np.ma.array(
                     front_array, mask=front_mask
                 ),
-                front_arrays,
-                front_masks,
+                front_array_list,
+                front_mask_list,
             )
         )
-        return front_arrays
+        return front_array_list
 
     def stacked_array_1d_from(self, array: array_1d.Array1D, rows):
         front_arrays = self.array_1d_list_from(array=array, pixels=rows)
@@ -89,9 +89,7 @@ class Extractor1DFrontEdge(Extractor1D):
         """
         return list(
             map(
-                lambda ci_region: ci_region.parallel_front_edge_region_from(
-                    rows=pixels
-                ),
+                lambda region: region.front_edge_region_from(pixels=pixels),
                 self.region_list,
             )
         )
