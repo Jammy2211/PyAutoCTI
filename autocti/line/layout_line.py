@@ -100,7 +100,7 @@ class Extractor1DFrontEdge(Extractor1D):
         array_1d_list = self.array_1d_list_from(array=array, pixels=pixels)
 
         for arr, region in zip(array_1d_list, region_list):
-            new_array[region.y0 : region.y1, region.x0 : region.x1] += arr
+            new_array[region.x0 : region.x1] += arr
 
         return new_array
 
@@ -243,7 +243,7 @@ class Extractor1DTrails(Extractor1D):
         array_1d_list = self.array_1d_list_from(array=array, pixels=pixels)
 
         for arr, region in zip(array_1d_list, region_list):
-            new_array[region.y0 : region.y1, region.x0 : region.x1] += arr
+            new_array[region.x0 : region.x1] += arr
 
         return new_array
 
