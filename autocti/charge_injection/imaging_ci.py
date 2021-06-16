@@ -404,6 +404,9 @@ class SimulatorImagingCI(imaging.AbstractSimulatorImaging):
         noise_seed : int
             Seed for the read-noises added to the image.
         """
+
+        print(parallel_traps, serial_traps)
+
         if isinstance(layout, lo.Layout2DCIUniform):
             pre_cti_image = layout.pre_cti_image_from(
                 shape_native=layout.shape_2d, pixel_scales=self.pixel_scales

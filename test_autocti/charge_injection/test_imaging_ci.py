@@ -414,7 +414,12 @@ class TestSimulatorImagingCI(object):
             pixel_scales=1.0, read_noise=1.0, add_poisson_noise=True, noise_seed=1
         )
 
-        imaging = simulator.from_layout(layout=layout_ci, clocker=parallel_clocker)
+        imaging = simulator.from_layout(
+            layout=layout_ci,
+            clocker=parallel_clocker,
+            parallel_traps=traps_x2,
+            parallel_ccd=ccd,
+        )
 
         image_no_noise = layout_ci.pre_cti_image_from(
             shape_native=(3, 3), pixel_scales=1.0
@@ -423,7 +428,13 @@ class TestSimulatorImagingCI(object):
         # Use seed to give us a known read noises map we'll test_autocti for
 
         assert imaging.image - image_no_noise.native == pytest.approx(
-            np.array([[1.62, -0.61, -0.53], [-1.07, 0.87, -2.30], [1.74, -0.76, 0.32]]),
+            np.array(
+                [
+                    [1.055, -1.180, -1.097],
+                    [-0.780, 1.1574, -2.009],
+                    [1.863, -0.642, 0.437],
+                ]
+            ),
             1e-2,
         )
         assert imaging.layout == layout_ci
