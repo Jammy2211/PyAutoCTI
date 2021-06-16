@@ -368,12 +368,13 @@ class AbstractLayout1DLine(lo.Layout1D):
 
         """
 
-        new_array = array.native.copy() * 0.0
+        array_1d_of_regions = array.native.copy() * 0.0
 
         for region in self.region_list:
-            new_array[region.slice] += array.native[region.slice]
 
-        return new_array
+            array_1d_of_regions[region.slice] += array.native[region.slice]
+
+        return array_1d_of_regions
 
     def array_1d_of_non_regions_from(self, array: array_1d.Array1D) -> array_1d.Array1D:
         """
@@ -424,12 +425,12 @@ class AbstractLayout1DLine(lo.Layout1D):
                <---------S----------
         """
 
-        non_regions_ci_array = array.native.copy()
+        array_1d_non_regions_ci = array.native.copy()
 
         for region in self.region_list:
-            non_regions_ci_array[region.slice] = 0.0
+            array_1d_non_regions_ci[region.slice] = 0.0
 
-        return non_regions_ci_array
+        return array_1d_non_regions_ci
 
     def array_1d_of_trails_from(self, array: array_1d.Array1D) -> array_1d.Array1D:
         """
@@ -482,12 +483,12 @@ class AbstractLayout1DLine(lo.Layout1D):
                <---------S----------
         """
 
-        parallel_array = self.array_1d_of_non_regions_from(array=array)
+        array_1d_trails = self.array_1d_of_non_regions_from(array=array)
 
-        parallel_array.native[self.prescan.slice] = 0.0
-        parallel_array.native[self.overscan.slice] = 0.0
+        array_1d_trails.native[self.prescan.slice] = 0.0
+        array_1d_trails.native[self.overscan.slice] = 0.0
 
-        return parallel_array
+        return array_1d_trails
 
     def array_1d_of_edges_and_trails_from(
         self,
@@ -555,21 +556,23 @@ class AbstractLayout1DLine(lo.Layout1D):
         trails_rows
             The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
-        new_array = array.native.copy() * 0.0
+        array_1d_of_edges_and_trails = array.native.copy() * 0.0
 
         if front_edge_rows is not None:
 
-            new_array = self.extractor_front_edge.add_to_array(
-                new_array=new_array, array=array, pixels=front_edge_rows
+            array_1d_of_edges_and_trails = self.extractor_front_edge.add_to_array(
+                new_array=array_1d_of_edges_and_trails,
+                array=array,
+                pixels=front_edge_rows,
             )
 
         if trails_rows is not None:
 
-            new_array = self.extractor_trails.add_to_array(
-                new_array=new_array, array=array, pixels=trails_rows
+            array_1d_of_edges_and_trails = self.extractor_trails.add_to_array(
+                new_array=array_1d_of_edges_and_trails, array=array, pixels=trails_rows
             )
 
-        return new_array
+        return array_1d_of_edges_and_trails
 
     def extract_line_from(self, array: array_1d.Array1D, line_region: str):
 
@@ -611,7 +614,7 @@ class Layout1DLineUniform(AbstractLayout1DLine):
         return array_1d.Array1D.manual(array=pre_cti_image, pixel_scales=pixel_scales)
 
 
-def regions_Line_from(
+def regions_line_from(
     injection_on: int,
     injection_off: int,
     injection_total: int,
@@ -622,7 +625,7 @@ def regions_Line_from(
     roe_corner: (int, int),
 ):
 
-    regions_Line = []
+    regions_line = []
 
     injection_start_count = 0
 
@@ -664,8 +667,8 @@ def regions_Line_from(
                 serial_size - serial_prescan_size,
             )
 
-        regions_Line.append(Line_region)
+        regions_line.append(Line_region)
 
         injection_start_count += injection_on + injection_off
 
-    return regions_Line
+    return regions_line
