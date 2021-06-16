@@ -596,13 +596,13 @@ class Layout1DLineUniform(AbstractLayout1DLine):
     array and its normalization.
     """
 
-    def pre_cti_image_from(self, shape_native, pixel_scales):
+    def pre_cti_image_from(self, shape_native: Tuple[int, int], pixel_scales):
         """Use this charge injection layout_ci to generate a pre-cti charge injection image. This is performed by \
         going to its charge injection regions and adding the charge injection normalization value.
 
         Parameters
         -----------
-        shape_native : (int, int)
+        shape_native
             The image_shape of the pre_cti_images to be created.
         """
 
@@ -611,7 +611,9 @@ class Layout1DLineUniform(AbstractLayout1DLine):
         for region in self.region_list:
             pre_cti_image[region.slice] += self.normalization
 
-        return array_1d.Array1D.manual(array=pre_cti_image, pixel_scales=pixel_scales)
+        return array_1d.Array1D.manual_native(
+            array=pre_cti_image, pixel_scales=pixel_scales
+        )
 
 
 def regions_line_from(

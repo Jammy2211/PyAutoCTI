@@ -293,9 +293,19 @@ class TestAbstractLayout1DLine:
             array=array, front_edge_rows=(0, 1), trails_rows=(0, 1)
         )
 
-        print(extracted_array)
-
         assert (
             extracted_array
             == np.array([0.0, 1.0, 0.0, 3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0])
         ).all()
+
+
+class TestLayout2DCIUniform(object):
+    def test__pre_cti_image_from(self):
+
+        layout = ac.Layout1DLineUniform(
+            shape_1d=(5,), normalization=10.0, region_list=[(0, 2)]
+        )
+
+        pre_cti_image = layout.pre_cti_image_from(shape_native=(3,), pixel_scales=1.0)
+
+        assert (pre_cti_image.native == np.array([10.0, 10.0, 0.0])).all()
