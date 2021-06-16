@@ -212,63 +212,28 @@ class TestAbstractLayout1DLine:
 
         assert (array_extracted == np.array([0.0, 0.0, 2.0, 0.0])).all()
 
-    # def test__array_1d_of_non_regions_from(self):
-    #
-    #     layout = ac.Layout1DLineUniform(
-    #         shape_1d=(5, 3), normalization=10.0, region_list=[(0, 3, 0, 3)]
-    #     )
-    #
-    #     array = ac.Array2D.manual(
-    #         array=[
-    #             [0.0, 1.0, 2.0],
-    #             [3.0, 4.0, 5.0],
-    #             [6.0, 7.0, 8.0],
-    #             [9.0, 10.0, 11.0],
-    #         ],
-    #         pixel_scales=1.0,
-    #     )
-    #
-    #     array_extracted = layout.array_1d_of_non_regions_from(array=array)
-    #
-    #     assert (
-    #         array_extracted
-    #         == np.array(
-    #             [[0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0], [9.0, 10.0, 11.0]]
-    #         )
-    #     ).all()
-    #
-    #     layout = ac.Layout1DLineUniform(
-    #         shape_1d=(5, 3),
-    #         normalization=10.0,
-    #         region_list=[(0, 1, 0, 3), (3, 4, 0, 3)],
-    #     )
-    #
-    #     array = ac.Array2D.manual(
-    #         array=[
-    #             [0.0, 1.0, 2.0],
-    #             [3.0, 4.0, 5.0],
-    #             [6.0, 7.0, 8.0],
-    #             [9.0, 10.0, 11.0],
-    #             [12.0, 13.0, 14.0],
-    #         ],
-    #         pixel_scales=1.0,
-    #     )
-    #
-    #     array_extracted = layout.array_1d_of_non_regions_from(array=array)
-    #
-    #     assert (
-    #         array_extracted
-    #         == np.array(
-    #             [
-    #                 [0.0, 0.0, 0.0],
-    #                 [3.0, 4.0, 5.0],
-    #                 [6.0, 7.0, 8.0],
-    #                 [0.0, 0.0, 0.0],
-    #                 [12.0, 13.0, 14.0],
-    #             ]
-    #         )
-    #     ).all()
-    #
+    def test__array_1d_of_non_regions_from(self):
+
+        layout = ac.Layout1DLineUniform(
+            shape_1d=(5,), normalization=10.0, region_list=[(0, 3)]
+        )
+
+        array = ac.Array1D.manual_native(array=[0.0, 1.0, 2.0, 3.0], pixel_scales=1.0)
+
+        array_extracted = layout.array_1d_of_non_regions_from(array=array)
+
+        assert (array_extracted == np.array([0.0, 0.0, 0.0, 3.0])).all()
+
+        layout = ac.Layout1DLineUniform(
+            shape_1d=(5,), normalization=10.0, region_list=[(0, 1), (3, 4)]
+        )
+
+        array = ac.Array1D.manual_native(array=[0.0, 1.0, 2.0, 3.0], pixel_scales=1.0)
+
+        array_extracted = layout.array_1d_of_non_regions_from(array=array)
+
+        assert (array_extracted == np.array([0.0, 1.0, 2.0, 0.0])).all()
+
     # def test__array_1d_of_trails_from(self):
     #
     #     layout = ac.Layout1DLineUniform(
