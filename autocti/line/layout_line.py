@@ -11,7 +11,7 @@ from autoarray.structures.arrays.one_d import array_1d
 from autoarray.layout import region as reg
 from autoarray.layout import layout as lo
 
-from typing import List, Tuple
+from typing import Tuple
 
 
 class Extractor1D:
@@ -152,7 +152,7 @@ class Extractor1DTrails(Extractor1D):
         Parameters
         ------------
         array
-        pixels : (int, int)
+        pixels
             The row indexes to extract the trails between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
         """
 
@@ -223,7 +223,7 @@ class Extractor1DTrails(Extractor1D):
             Parameters
             ------------
             arrays
-            pixels : (int, int)
+            pixels
                 The row indexes to extract the trails between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
         """
 
@@ -624,7 +624,7 @@ def regions_line_from(
     serial_size: int,
     serial_prescan_size: int,
     serial_overscan_size: int,
-    roe_corner: (int, int),
+    roe_corner: Tuple[int, int],
 ):
 
     regions_line = []

@@ -3,7 +3,8 @@ import numpy as np
 
 from autoarray.structures.arrays.two_d import array_2d
 from autoarray.structures.arrays.two_d import array_2d_util
-from autoarray.dataset import preprocess, imaging
+from autoarray.dataset import preprocess
+from autoarray.dataset import imaging
 from autocti.charge_injection import layout_ci as lo
 from autocti.mask import mask_2d
 from autocti import exc
@@ -405,15 +406,13 @@ class SimulatorImagingCI(imaging.AbstractSimulatorImaging):
             Seed for the read-noises added to the image.
         """
 
-        print(parallel_traps, serial_traps)
-
         if isinstance(layout, lo.Layout2DCIUniform):
             pre_cti_image = layout.pre_cti_image_from(
                 shape_native=layout.shape_2d, pixel_scales=self.pixel_scales
             )
         else:
             pre_cti_image = layout.pre_cti_image_from(
-                shape_native=layout.shape_native,
+                shape_native=layout.shape_2d,
                 ci_seed=self.ci_seed,
                 pixel_scales=self.pixel_scales,
             )

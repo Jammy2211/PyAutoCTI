@@ -13,12 +13,15 @@ from autoarray.dataset.imaging import Imaging
 from arcticpy.src.roe import ROE
 from arcticpy.src.ccd import CCDPhase
 from arcticpy.src.ccd import CCD
-from arcticpy.src.traps import TrapInstantCapture, TrapSlowCapture, TrapContinuum
+from arcticpy.src.traps import TrapInstantCapture
+from arcticpy.src.traps import TrapSlowCapture
+from arcticpy.src.traps import TrapInstantCaptureContinuum
 
 from autocti.warm_pixels.lines import Line
 from autocti.warm_pixels.lines import LineCollection
 from autocti.warm_pixels.warm_pixels import find_warm_pixels
 
+from .cosmics.cosmics import CosmicRays
 from .charge_injection.layout_ci import Extractor2DParallelFrontEdge
 from .charge_injection.layout_ci import Extractor2DParallelTrails
 from .charge_injection.layout_ci import Extractor2DSerialFrontEdge
@@ -30,6 +33,7 @@ from .line.layout_line import Extractor1DTrails
 from .line.layout_line import Layout1DLineUniform
 from .line.dataset_line import SettingsDatasetLine
 from .line.dataset_line import DatasetLine
+from .line.fit_line import FitDatasetLine
 from . import charge_injection as ci
 from .analysis.analysis import AnalysisImagingCI
 from .analysis.model_util import CTI

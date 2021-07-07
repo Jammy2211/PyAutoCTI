@@ -6,12 +6,15 @@ class HyperCINoiseScalar(float):
         return super().__new__(cls, scale_factor)
 
     def __init__(self, scale_factor=0.0):
-        """The hyper_ci-parameter factor by which the noises is scaled when included in the model-fitting process"""
+        """
+        The hyper_ci-parameter factor by which the noises is scaled when included in the model-fitting process.
+        """
         float.__init__(scale_factor)
 
     def scaled_noise_map_from_noise_scaling(self, noise_scaling):
         """
-        Returns the scaled noises map, by multiplying the noises-scaling image by the hyper_ci-parameter factor."""
+        Returns the scaled noises map, by multiplying the noises-scaling image by the hyper_ci-parameter factor.
+        """
         return self * noise_scaling
 
     def __repr__(self):

@@ -2,11 +2,7 @@ from autoarray.plot.mat_wrap import visuals as vis
 from autoarray.plot.mat_wrap import include as inc
 from autoarray.plot.mat_wrap import mat_plot as mp
 from autoarray.plot import imaging_plotters
-from autoarray.structures.arrays.two_d.array_2d import Array2D
 from autocti import charge_injection as ci
-from autocti import exc
-
-from typing import Union
 
 
 class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):

@@ -1,4 +1,5 @@
-import autofit as af
+from autofit.mapper.prior_model.prior_model import PriorModel
+from autofit.mapper.prior_model.collection import CollectionPriorModel
 from autoarray.mock.fixtures import *
 from autofit.mock.mock import MockSamples
 from autocti import charge_injection as ci
@@ -48,6 +49,10 @@ def make_serial_clocker():
 
 
 ### MASK ###
+
+
+def make_mask_1d_7_unmasked():
+    return mask_1d.Mask1D.unmasked(shape_slim=(7,), pixel_scales=(1.0,))
 
 
 def make_mask_2d_7x7_unmasked():
@@ -191,8 +196,8 @@ def make_fit_ci_7x7():
 
 def make_samples_with_result():
 
-    model = af.CollectionPriorModel(
-        cti=af.Model(
+    model = CollectionPriorModel(
+        cti=PriorModel(
             CTI,
             parallel_traps=[traps.TrapInstantCapture],
             parallel_ccd=make_ccd(),

@@ -4,7 +4,8 @@ from autoarray.plot.mat_wrap.wrap import wrap_base
 from autoarray.plot.mat_wrap import mat_plot
 from autoarray.plot.mat_wrap import include as inc
 from autoarray.plot import multi_plotters
-from autocti.plot import imaging_ci_plotters, fit_ci_plotters
+from autocti.plot import imaging_ci_plotters
+from autocti.plot import fit_ci_plotters
 
 
 def setting(section, name):

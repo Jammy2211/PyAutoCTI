@@ -299,7 +299,7 @@ class TestAbstractLayout1DLine:
         ).all()
 
 
-class TestLayout2DCIUniform(object):
+class TestLayout1DCIUniform(object):
     def test__pre_cti_image_from(self):
 
         layout = ac.Layout1DLineUniform(

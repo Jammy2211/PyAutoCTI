@@ -1,7 +1,9 @@
 from autoarray.structures.arrays.two_d import array_2d
 from autocti import exc
 
-from arcticpy.src import cti, ccd, roe
+from arcticpy.src import cti
+from arcticpy.src import ccd
+from arcticpy.src import roe
 
 
 class Clocker(object):

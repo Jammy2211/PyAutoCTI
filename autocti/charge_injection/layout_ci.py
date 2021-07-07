@@ -78,7 +78,7 @@ class Extractor2DParallelFrontEdge(Extractor2D):
         Parameters
         ------------
         array
-        rows : (int, int)
+        rows
             The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
         front_region_list = self.region_list_from(rows=rows)
@@ -151,7 +151,7 @@ class Extractor2DParallelFrontEdge(Extractor2D):
         Parameters
         ------------
         arrays
-        rows : (int, int)
+        rows
             The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
         return list(
@@ -223,7 +223,7 @@ class Extractor2DParallelTrails(Extractor2D):
         Parameters
         ------------
         array
-        rows : (int, int)
+        rows
             The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
 
@@ -257,49 +257,48 @@ class Extractor2DParallelTrails(Extractor2D):
         """
         Returns the parallel scans of a charge injection array.
 
-            The diagram below illustrates the region that is calculated from a array for rows=(0, 1):
+        The diagram below illustrates the region that is calculated from a array for rows=(0, 1):
 
-            ---KEY---
-            ---------
+        ---KEY---
+        ---------
 
-            [] = read-out electronics   [==========] = read-out register
+        [] = read-out electronics   [==========] = read-out register
 
-            [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-            [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan
-            [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci region index)
-            [xxxxxxxxxx]
-            [t#t#t#t#t#] = parallel / serial charge injection region trail (0 / 1 indicates ci region index)
+        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci region index)
+        [xxxxxxxxxx]
+        [t#t#t#t#t#] = parallel / serial charge injection region trail (0 / 1 indicates ci region index)
 
-            P = Parallel Direction      S = Serial Direction
+        P = Parallel Direction      S = Serial Direction
 
-                   [ppppppppppppppppppppp]
-                   [ppppppppppppppppppppp]
-              [...][t1t1t1t1t1t1t1t1t1t1t][sss]
-              [...][c1c1cc1c1cc1cc1ccc1cc][sss]
-            | [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
-            | [...][t0t0t0t0t0t0t0t0t0t0t][sss]    | Direction
-            P [...][0t0t0t0t0t0t0t0t0t0t0][sss]    | of
-            | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
-              [...][cc0ccc0cccc0cccc0cccc][sss]    |
+               [ppppppppppppppppppppp]
+               [ppppppppppppppppppppp]
+          [...][t1t1t1t1t1t1t1t1t1t1t][sss]
+          [...][c1c1cc1c1cc1cc1ccc1cc][sss]
+        | [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
+        | [...][t0t0t0t0t0t0t0t0t0t0t][sss]    | Direction
+        P [...][0t0t0t0t0t0t0t0t0t0t0][sss]    | of
+        | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
+          [...][cc0ccc0cccc0cccc0cccc][sss]    |
 
-            []     [=====================]
-                   <---------S----------
+        []     [=====================]
+               <---------S----------
 
-            The extracted array keeps just the trails following all charge injection scans:
+        The extracted array keeps just the trails following all charge injection scans:
 
-            list index 0:
+        list index 0:
 
-            [2, 4, 3, 21] (serial prescan is 3 pixels)
+        [2, 4, 3, 21] (serial prescan is 3 pixels)
 
-            list index 1:
+        list index 1:
 
-            [6, 7, 3, 21] (serial prescan is 3 pixels)
+        [6, 7, 3, 21] (serial prescan is 3 pixels)
 
-            Parameters
-            ------------
-            arrays
-            rows : (int, int)
-                The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
+        Parameters
+        ----------
+        rows
+            The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
 
         return list(
@@ -339,7 +338,7 @@ class Extractor2DSerialFrontEdge(Extractor2D):
         [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan
         [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
         [xxxxxxxxxx]
-        [tttttttttt] = parallel / serial charge injection region trail ((0 / 1 indicates ci_region index)
+        [tttttttttt] = parallel / serial charge injection region trail (0 / 1 indicates ci_region index)
 
         P = Parallel Direction      S = Serial Direction
 
@@ -367,9 +366,8 @@ class Extractor2DSerialFrontEdge(Extractor2D):
         [1c1c]
 
         Parameters
-        ------------
-        array
-        columns : (int, int)
+        ----------
+        columns
             The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
             columns)
         """
@@ -444,7 +442,7 @@ class Extractor2DSerialFrontEdge(Extractor2D):
         Parameters
         ------------
         arrays
-        columns : (int, int)
+        columns
             The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
             columns)
         """
@@ -516,7 +514,7 @@ class Extractor2DSerialTrails(Extractor2D):
         Parameters
         ------------
         array
-        columns : (int, int)
+        columns
             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd columns)
         """
         trails_region_list = self.region_list_from(columns=columns)
@@ -590,7 +588,7 @@ class Extractor2DSerialTrails(Extractor2D):
         Parameters
         ------------
         arrays
-        columns : (int, int)
+        columns
             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd columns)
         """
 
@@ -1313,9 +1311,9 @@ class AbstractLayout2DCI(lo.Layout2D):
         Parameters
         ------------
         array
-        front_edge_columns : (int, int)
+        front_edge_columns
             The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd rows)
-        trails_columns : (int, int)
+        trails_columns
             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
         new_array = array.native.copy() * 0.0
@@ -1561,7 +1559,7 @@ class Layout2DCIUniform(AbstractLayout2DCI):
 
         Parameters
         -----------
-        shape_native : (int, int)
+        shape_native
             The image_shape of the pre_cti_images to be created.
         """
 
@@ -1646,7 +1644,7 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
         -----------
         maximum_normalization
         column_sigma
-        region_dimensions : (int, int)
+        region_dimensions
             The size of the non-uniform charge injection region.
         ci_seed : int
             Input seed for the random number generator to give reproducible results.
@@ -1735,7 +1733,7 @@ def region_list_ci_from(
     serial_size: int,
     serial_prescan_size: int,
     serial_overscan_size: int,
-    roe_corner: (int, int),
+    roe_corner: Tuple[int, int],
 ):
 
     region_list_ci = []

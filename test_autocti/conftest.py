@@ -74,6 +74,11 @@ def make_serial_clocker():
 ### MASK ###
 
 
+@pytest.fixture(name="mask_1d_7_unmasked")
+def make_mask_1d_7_unmasked():
+    return fixtures.make_mask_1d_7_unmasked()
+
+
 @pytest.fixture(name="mask_2d_7x7_unmasked")
 def make_mask_2d_7x7_unmasked():
     return fixtures.make_mask_2d_7x7_unmasked()
