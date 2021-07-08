@@ -26,6 +26,11 @@ class ResultDataset(Result):
         return self.max_log_likelihood_fit.mask
 
 
+class ResultDatasetLine(ResultDataset):
+
+    pass
+
+
 class ResultImagingCI(ResultDataset):
     @property
     def max_log_likelihood_full_fit(self):

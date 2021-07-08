@@ -9,7 +9,7 @@ from autoarray.dataset import imaging
 from arcticpy.src import traps, ccd
 from autocti.line import dataset_line
 from autocti.mask import mask_2d
-from autocti.util.clocker import Clocker
+from autocti.util.clocker import Clocker2D
 from autocti.analysis import analysis
 from autocti.analysis.model_util import CTI
 
@@ -41,11 +41,11 @@ def make_ccd():
 
 
 def make_parallel_clocker():
-    return Clocker(parallel_express=2, parallel_charge_injection_mode=False)
+    return Clocker2D(parallel_express=2, parallel_charge_injection_mode=False)
 
 
 def make_serial_clocker():
-    return Clocker(serial_express=2)
+    return Clocker2D(serial_express=2)
 
 
 ### MASK ###

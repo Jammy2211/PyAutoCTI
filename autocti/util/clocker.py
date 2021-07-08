@@ -1,12 +1,88 @@
+from autoarray.structures.arrays.one_d import array_1d
 from autoarray.structures.arrays.two_d import array_2d
 from autocti import exc
 
 from arcticpy.src import cti
-from arcticpy.src import ccd
+from arcticpy.src.ccd import CCD
 from arcticpy.src import roe
 
 
-class Clocker(object):
+class Clocker1D:
+    def __init__(
+        self,
+        iterations=1,
+        roe=roe.ROE(),
+        express=0,
+        charge_injection_mode=False,
+        window_start=0,
+        window_stop=-1,
+        verbosity=0,
+    ):
+        """
+        The CTI Clock for arctic clocking.
+        Parameters
+        ----------
+        parallel_sequence
+            The array or single value of the time between clock shifts.
+        iterations
+            If CTI is being corrected, iterations determines the number of times clocking is run to perform the \
+            correction via forward modeling. For adding CTI only one run is required and iterations is ignored.
+        parallel_express
+            The factor by which pixel-to-pixel transfers are combined for efficiency.
+        parallel_charge_injection_mode
+            If True, clocking is performed in charge injection line mode, where each pixel is clocked and therefore \
+             trailed by traps over the entire CCDPhase (as opposed to its distance from the CCDPhase register).
+        parallel_readout_offset
+            Introduces an offset which increases the number of transfers each pixel takes in the parallel direction.
+        """
+
+        self.iterations = iterations
+
+        self.roe = roe
+        self.express = express
+        self.charge_injection_mode = charge_injection_mode
+        self.window_start = window_start
+        self.window_stop = window_stop
+        self.verbosity = verbosity
+
+    def add_cti(self, image_pre_cti, ccd=None, traps=None):
+
+        if not any([traps]):
+            raise exc.ClockerException(
+                "No Trap species were passed to the add_cti method"
+            )
+
+        if not any([ccd]):
+            raise exc.ClockerException("No CCD object was passed to the add_cti method")
+
+        image_pre_cti_2d = array_2d.Array2D.zeros(
+            shape_native=(image_pre_cti.shape_native[0], 1),
+            pixel_scales=image_pre_cti.pixel_scales,
+        ).native
+
+        image_pre_cti_2d[:, 0] = image_pre_cti
+
+        if ccd is not None:
+            ccd = CCD(phases=[ccd], fraction_of_traps_per_phase=[1.0])
+
+        image_post_cti = cti.add_cti(
+            image=image_pre_cti_2d,
+            parallel_ccd=ccd,
+            parallel_roe=self.roe,
+            parallel_traps=traps,
+            parallel_express=self.express,
+            parallel_offset=image_pre_cti.readout_offsets[0],
+            parallel_window_start=self.window_start,
+            parallel_window_stop=self.window_stop,
+            verbosity=self.verbosity,
+        )
+
+        return array_1d.Array1D.manual_native(
+            array=image_post_cti.flatten(), pixel_scales=image_pre_cti.pixel_scales
+        )
+
+
+class Clocker2D:
     def __init__(
         self,
         iterations=1,
@@ -74,12 +150,10 @@ class Clocker(object):
             )
 
         if parallel_ccd is not None:
-            parallel_ccd = ccd.CCD(
-                phases=[parallel_ccd], fraction_of_traps_per_phase=[1.0]
-            )
+            parallel_ccd = CCD(phases=[parallel_ccd], fraction_of_traps_per_phase=[1.0])
 
         if serial_ccd is not None:
-            serial_ccd = ccd.CCD(phases=[serial_ccd], fraction_of_traps_per_phase=[1.0])
+            serial_ccd = CCD(phases=[serial_ccd], fraction_of_traps_per_phase=[1.0])
 
         image_post_cti = cti.add_cti(
             image=image_pre_cti,

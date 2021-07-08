@@ -453,6 +453,9 @@ class SimulatorImagingCI(imaging.AbstractSimulatorImaging):
             serial_ccd=serial_ccd,
         )
 
+        if cosmic_ray_map is not None:
+            pre_cti_image -= cosmic_ray_map
+
         return self.from_post_cti_image(
             post_cti_image=post_cti_image,
             pre_cti_image=pre_cti_image,

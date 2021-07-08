@@ -1,7 +1,7 @@
 from autoarray.instruments import euclid
 from autoarray.layout import layout_util
 
-from autocti.util.clocker import Clocker
+from autocti.util.clocker import Clocker2D
 from arcticpy.src import ccd
 from arcticpy.src import traps
 
@@ -140,7 +140,7 @@ def add_cti_to_pre_cti_image(pre_cti_image, ccd_id, quadrant_id):
 
     For parallel clocking, we use 'charge injection mode' which transfers the charge of every pixel over the full CCDPhase.
     """
-    clocker = Clocker(
+    clocker = Clocker2D(
         parallel_express=2, parallel_charge_injection_mode=True, serial_express=2
     )
 
@@ -192,7 +192,7 @@ def add_cti_simple_to_pre_cti_image(pre_cti_image, ccd_id, quadrant_id):
 
     For parallel clocking, we use 'charge injection mode' which transfers the charge of every pixel over the full CCDPhase.
     """
-    clocker = Clocker(parallel_express=2, parallel_charge_injection_mode=False)
+    clocker = Clocker2D(parallel_express=2, parallel_charge_injection_mode=False)
 
     """
     The CTI model used by arCTIc to add CTI to the input image in the parallel direction, which contains: 

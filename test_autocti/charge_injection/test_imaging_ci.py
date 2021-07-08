@@ -373,7 +373,7 @@ class TestApplySettings:
         )
 
 
-class TestSimulatorImagingCI(object):
+class TestSimulatorImagingCI:
     def test__no_instrumental_effects_input__only_cti_simulated(
         self, parallel_clocker, traps_x2, ccd
     ):
@@ -559,6 +559,8 @@ class TestSimulatorImagingCI(object):
         post_cti_image = parallel_clocker.add_cti(
             image_pre_cti=pre_cti_image, parallel_traps=traps_x2, parallel_ccd=ccd
         )
+
+        pre_cti_image -= cosmic_ray_map
 
         imaging_via_post_cti_image = simulator.from_post_cti_image(
             post_cti_image=post_cti_image,

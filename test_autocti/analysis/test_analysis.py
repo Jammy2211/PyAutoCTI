@@ -54,6 +54,89 @@ class TestAnalysis:
             analysis.log_likelihood_function(instance=instance)
 
 
+class TestAnalysisDatasetLine:
+    def test__make_result__result_line_is_returned(
+        self, dataset_line_7, pre_cti_line_7, traps_x1, ccd, parallel_clocker
+    ):
+        model = af.CollectionPriorModel(
+            cti=af.Model(ac.CTI, parallel_traps=traps_x1, parallel_ccd=ccd),
+            hyper_noise=af.Model(ac.ci.HyperCINoiseCollection),
+        )
+
+        analysis = ac.AnalysisDatasetLine(
+            dataset_line=dataset_line_7, clocker=parallel_clocker
+        )
+
+        search = mock.MockSearch(name="test_search")
+
+        result = search.fit(model=model, analysis=analysis)
+
+        assert isinstance(result, res.ResultDatasetLine)
+
+    def test__log_likelihood_via_analysis__matches_manual_fit(
+        self, dataset_line_7, pre_cti_line_7, traps_x1, ccd, parallel_clocker
+    ):
+
+        model = af.CollectionPriorModel(
+            cti=af.Model(ac.CTI, parallel_traps=traps_x1, parallel_ccd=ccd),
+            hyper_noise=af.Model(ac.ci.HyperCINoiseCollection),
+        )
+
+        analysis = ac.AnalysisDatasetLine(
+            dataset_line=dataset_line_7, clocker=parallel_clocker
+        )
+
+        instance = model.instance_from_unit_vector([])
+
+        log_likelihood_via_analysis = analysis.log_likelihood_function(
+            instance=instance
+        )
+
+        post_cti_line = parallel_clocker.add_cti(
+            line_pre_cti=pre_cti_line_7.native,
+            parallel_traps=traps_x1,
+            parallel_ccd=ccd,
+        )
+
+        fit = ac.FitDatasetLine(
+            dataset_line=analysis.dataset_line, post_cti_line=post_cti_line
+        )
+
+        assert fit.log_likelihood == log_likelihood_via_analysis
+
+    def test__extracted_fits_from_instance_and_line_ci(
+        self, dataset_line_7, mask_1d_7_unmasked, traps_x1, ccd, parallel_clocker
+    ):
+
+        model = af.CollectionPriorModel(
+            cti=af.Model(ac.CTI, parallel_traps=traps_x1, parallel_ccd=ccd),
+            hyper_noise=af.Model(ac.ci.HyperCINoiseCollection),
+        )
+
+        masked_line_ci = dataset_line_7.apply_mask(mask=mask_1d_7_unmasked)
+
+        post_cti_line = parallel_clocker.add_cti(
+            line_pre_cti=masked_line_ci.pre_cti_line,
+            parallel_traps=traps_x1,
+            parallel_ccd=ccd,
+        )
+
+        analysis = ac.AnalysisDatasetLine(
+            dataset_line=masked_line_ci, clocker=parallel_clocker
+        )
+
+        instance = model.instance_from_unit_vector([])
+
+        fit_analysis = analysis.fit_from_instance(instance=instance)
+
+        fit = ac.FitDatasetLine(
+            dataset_line=masked_line_ci, post_cti_line=post_cti_line
+        )
+
+        assert fit.dataset.data.shape == (7, 1)
+        assert fit_analysis.log_likelihood == pytest.approx(fit.log_likelihood)
+
+
 class TestAnalysisImagingCI:
     def test__make_result__result_imaging_is_returned(
         self, imaging_ci_7x7, pre_cti_image_7x7, traps_x1, ccd, parallel_clocker

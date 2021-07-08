@@ -33,7 +33,7 @@ class TestResult:
             search=None,
         )
 
-        assert isinstance(result.clocker, ac.Clocker)
+        assert isinstance(result.clocker, ac.Clocker2D)
         assert result.clocker.parallel_express == parallel_clocker.parallel_express
 
 

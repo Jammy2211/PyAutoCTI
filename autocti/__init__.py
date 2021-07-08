@@ -35,10 +35,12 @@ from .line.dataset_line import SettingsDatasetLine
 from .line.dataset_line import DatasetLine
 from .line.fit_line import FitDatasetLine
 from . import charge_injection as ci
+from .analysis.analysis import AnalysisDatasetLine
 from .analysis.analysis import AnalysisImagingCI
 from .analysis.model_util import CTI
 from .analysis.settings import SettingsCTI
-from .util.clocker import Clocker
+from .util.clocker import Clocker1D
+from .util.clocker import Clocker2D
 from . import util
 from . import plot
 
