@@ -49,26 +49,18 @@ class AnalysisDatasetLine(abstract_search.Analysis):
         """
 
         self.settings_cti.check_total_density_within_range(
-            parallel_traps=instance.cti.parallel_traps,
-            serial_traps=instance.cti.serial_traps,
+            parallel_traps=instance.cti.parallel_traps, serial_traps=None
         )
 
         if instance.cti.parallel_traps is not None:
-            parallel_traps = list(instance.cti.parallel_traps)
+            traps = list(instance.cti.parallel_traps)
         else:
-            parallel_traps = None
-
-        if instance.cti.serial_traps is not None:
-            serial_traps = list(instance.cti.serial_traps)
-        else:
-            serial_traps = None
+            traps = None
 
         post_cti_line = self.clocker.add_cti(
             image_pre_cti=self.dataset_line.pre_cti_line,
-            parallel_traps=parallel_traps,
-            parallel_ccd=instance.cti.parallel_ccd,
-            serial_traps=serial_traps,
-            serial_ccd=instance.cti.serial_ccd,
+            traps=traps,
+            ccd=instance.cti.parallel_ccd,
         )
 
         fit = fit_line.FitDatasetLine(
@@ -80,21 +72,14 @@ class AnalysisDatasetLine(abstract_search.Analysis):
     def fit_from_instance_and_dataset_line(self, instance, dataset_line):
 
         if instance.cti.parallel_traps is not None:
-            parallel_traps = list(instance.cti.parallel_traps)
+            traps = list(instance.cti.parallel_traps)
         else:
-            parallel_traps = None
-
-        if instance.cti.serial_traps is not None:
-            serial_traps = list(instance.cti.serial_traps)
-        else:
-            serial_traps = None
+            traps = None
 
         post_cti_line = self.clocker.add_cti(
             image_pre_cti=dataset_line.pre_cti_line,
-            parallel_traps=parallel_traps,
-            parallel_ccd=instance.cti.parallel_ccd,
-            serial_traps=serial_traps,
-            serial_ccd=instance.cti.serial_ccd,
+            traps=traps,
+            ccd=instance.cti.parallel_ccd,
         )
 
         return fit_line.FitDatasetLine(

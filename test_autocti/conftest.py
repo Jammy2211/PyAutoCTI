@@ -61,14 +61,19 @@ def make_ccd():
     return fixtures.make_ccd()
 
 
-@pytest.fixture(name="parallel_clocker")
+@pytest.fixture(name="clocker_1d")
+def make_clocker_1d():
+    return fixtures.make_clocker_1d()
+
+
+@pytest.fixture(name="parallel_clocker_2d")
 def make_parallel_clocker():
-    return fixtures.make_parallel_clocker()
+    return fixtures.make_parallel_clocker_2d()
 
 
-@pytest.fixture(name="serial_clocker")
+@pytest.fixture(name="serial_clocker_2d")
 def make_serial_clocker():
-    return fixtures.make_serial_clocker()
+    return fixtures.make_serial_clocker_2d()
 
 
 ### MASK ###

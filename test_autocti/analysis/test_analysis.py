@@ -56,7 +56,7 @@ class TestAnalysis:
 
 class TestAnalysisDatasetLine:
     def test__make_result__result_line_is_returned(
-        self, dataset_line_7, pre_cti_line_7, traps_x1, ccd, parallel_clocker
+        self, dataset_line_7, pre_cti_line_7, traps_x1, ccd, clocker_1d
     ):
         model = af.CollectionPriorModel(
             cti=af.Model(ac.CTI, parallel_traps=traps_x1, parallel_ccd=ccd),
@@ -64,7 +64,7 @@ class TestAnalysisDatasetLine:
         )
 
         analysis = ac.AnalysisDatasetLine(
-            dataset_line=dataset_line_7, clocker=parallel_clocker
+            dataset_line=dataset_line_7, clocker=clocker_1d
         )
 
         search = mock.MockSearch(name="test_search")
@@ -74,7 +74,7 @@ class TestAnalysisDatasetLine:
         assert isinstance(result, res.ResultDatasetLine)
 
     def test__log_likelihood_via_analysis__matches_manual_fit(
-        self, dataset_line_7, pre_cti_line_7, traps_x1, ccd, parallel_clocker
+        self, dataset_line_7, pre_cti_line_7, traps_x1, ccd, clocker_1d
     ):
 
         model = af.CollectionPriorModel(
@@ -83,7 +83,7 @@ class TestAnalysisDatasetLine:
         )
 
         analysis = ac.AnalysisDatasetLine(
-            dataset_line=dataset_line_7, clocker=parallel_clocker
+            dataset_line=dataset_line_7, clocker=clocker_1d
         )
 
         instance = model.instance_from_unit_vector([])
@@ -92,10 +92,8 @@ class TestAnalysisDatasetLine:
             instance=instance
         )
 
-        post_cti_line = parallel_clocker.add_cti(
-            line_pre_cti=pre_cti_line_7.native,
-            parallel_traps=traps_x1,
-            parallel_ccd=ccd,
+        post_cti_line = clocker_1d.add_cti(
+            image_pre_cti=pre_cti_line_7.native, traps=traps_x1, ccd=ccd
         )
 
         fit = ac.FitDatasetLine(
@@ -105,7 +103,7 @@ class TestAnalysisDatasetLine:
         assert fit.log_likelihood == log_likelihood_via_analysis
 
     def test__extracted_fits_from_instance_and_line_ci(
-        self, dataset_line_7, mask_1d_7_unmasked, traps_x1, ccd, parallel_clocker
+        self, dataset_line_7, mask_1d_7_unmasked, traps_x1, ccd, clocker_1d
     ):
 
         model = af.CollectionPriorModel(
@@ -115,14 +113,12 @@ class TestAnalysisDatasetLine:
 
         masked_line_ci = dataset_line_7.apply_mask(mask=mask_1d_7_unmasked)
 
-        post_cti_line = parallel_clocker.add_cti(
-            line_pre_cti=masked_line_ci.pre_cti_line,
-            parallel_traps=traps_x1,
-            parallel_ccd=ccd,
+        post_cti_line = clocker_1d.add_cti(
+            image_pre_cti=masked_line_ci.pre_cti_line, traps=traps_x1, ccd=ccd
         )
 
         analysis = ac.AnalysisDatasetLine(
-            dataset_line=masked_line_ci, clocker=parallel_clocker
+            dataset_line=masked_line_ci, clocker=clocker_1d
         )
 
         instance = model.instance_from_unit_vector([])
@@ -133,13 +129,13 @@ class TestAnalysisDatasetLine:
             dataset_line=masked_line_ci, post_cti_line=post_cti_line
         )
 
-        assert fit.dataset.data.shape == (7, 1)
+        assert fit.dataset.data.shape == (7,)
         assert fit_analysis.log_likelihood == pytest.approx(fit.log_likelihood)
 
 
 class TestAnalysisImagingCI:
     def test__make_result__result_imaging_is_returned(
-        self, imaging_ci_7x7, pre_cti_image_7x7, traps_x1, ccd, parallel_clocker
+        self, imaging_ci_7x7, pre_cti_image_7x7, traps_x1, ccd, parallel_clocker_2d
     ):
         model = af.CollectionPriorModel(
             cti=af.Model(ac.CTI, parallel_traps=traps_x1, parallel_ccd=ccd),
@@ -147,7 +143,7 @@ class TestAnalysisImagingCI:
         )
 
         analysis = ac.AnalysisImagingCI(
-            dataset_ci=imaging_ci_7x7, clocker=parallel_clocker
+            dataset_ci=imaging_ci_7x7, clocker=parallel_clocker_2d
         )
 
         search = mock.MockSearch(name="test_search")
@@ -157,7 +153,7 @@ class TestAnalysisImagingCI:
         assert isinstance(result, res.ResultImagingCI)
 
     def test__log_likelihood_via_analysis__matches_manual_fit(
-        self, imaging_ci_7x7, pre_cti_image_7x7, traps_x1, ccd, parallel_clocker
+        self, imaging_ci_7x7, pre_cti_image_7x7, traps_x1, ccd, parallel_clocker_2d
     ):
 
         model = af.CollectionPriorModel(
@@ -166,7 +162,7 @@ class TestAnalysisImagingCI:
         )
 
         analysis = ac.AnalysisImagingCI(
-            dataset_ci=imaging_ci_7x7, clocker=parallel_clocker
+            dataset_ci=imaging_ci_7x7, clocker=parallel_clocker_2d
         )
 
         instance = model.instance_from_unit_vector([])
@@ -175,7 +171,7 @@ class TestAnalysisImagingCI:
             instance=instance
         )
 
-        post_cti_image = parallel_clocker.add_cti(
+        post_cti_image = parallel_clocker_2d.add_cti(
             image_pre_cti=pre_cti_image_7x7.native,
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
@@ -188,7 +184,7 @@ class TestAnalysisImagingCI:
         assert fit.log_likelihood == log_likelihood_via_analysis
 
     def test__full_and_extracted_fits_from_instance_and_imaging_ci(
-        self, imaging_ci_7x7, mask_2d_7x7_unmasked, traps_x1, ccd, parallel_clocker
+        self, imaging_ci_7x7, mask_2d_7x7_unmasked, traps_x1, ccd, parallel_clocker_2d
     ):
 
         model = af.CollectionPriorModel(
@@ -201,14 +197,14 @@ class TestAnalysisImagingCI:
             settings=ac.ci.SettingsImagingCI(parallel_columns=(0, 1))
         )
 
-        post_cti_image = parallel_clocker.add_cti(
+        post_cti_image = parallel_clocker_2d.add_cti(
             image_pre_cti=masked_imaging_ci.pre_cti_image,
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
         )
 
         analysis = ac.AnalysisImagingCI(
-            dataset_ci=masked_imaging_ci, clocker=parallel_clocker
+            dataset_ci=masked_imaging_ci, clocker=parallel_clocker_2d
         )
 
         instance = model.instance_from_unit_vector([])
@@ -235,7 +231,7 @@ class TestAnalysisImagingCI:
         mask_2d_7x7_unmasked,
         traps_x1,
         ccd,
-        parallel_clocker,
+        parallel_clocker_2d,
         layout_ci_7x7,
     ):
 
@@ -260,7 +256,7 @@ class TestAnalysisImagingCI:
         )
 
         analysis = ac.AnalysisImagingCI(
-            dataset_ci=masked_imaging_ci, clocker=parallel_clocker
+            dataset_ci=masked_imaging_ci, clocker=parallel_clocker_2d
         )
 
         instance = model.instance_from_prior_medians()
@@ -269,7 +265,7 @@ class TestAnalysisImagingCI:
             instance=instance, hyper_noise_scale=True
         )
 
-        post_cti_image = parallel_clocker.add_cti(
+        post_cti_image = parallel_clocker_2d.add_cti(
             image_pre_cti=masked_imaging_ci.pre_cti_image,
             parallel_traps=traps_x1,
             parallel_ccd=ccd,

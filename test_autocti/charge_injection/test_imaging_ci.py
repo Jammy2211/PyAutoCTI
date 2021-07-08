@@ -375,7 +375,7 @@ class TestApplySettings:
 
 class TestSimulatorImagingCI:
     def test__no_instrumental_effects_input__only_cti_simulated(
-        self, parallel_clocker, traps_x2, ccd
+        self, parallel_clocker_2d, traps_x2, ccd
     ):
 
         layout_ci = ac.ci.Layout2DCIUniform(
@@ -389,7 +389,7 @@ class TestSimulatorImagingCI:
 
         imaging = simulator.from_layout(
             layout=layout_ci,
-            clocker=parallel_clocker,
+            clocker=parallel_clocker_2d,
             parallel_traps=traps_x2,
             parallel_ccd=ccd,
         )
@@ -400,7 +400,7 @@ class TestSimulatorImagingCI:
         assert imaging.layout == layout_ci
 
     def test__include_read_noise__is_added_after_cti(
-        self, parallel_clocker, traps_x2, ccd
+        self, parallel_clocker_2d, traps_x2, ccd
     ):
 
         layout_ci = ac.ci.Layout2DCIUniform(
@@ -416,7 +416,7 @@ class TestSimulatorImagingCI:
 
         imaging = simulator.from_layout(
             layout=layout_ci,
-            clocker=parallel_clocker,
+            clocker=parallel_clocker_2d,
             parallel_traps=traps_x2,
             parallel_ccd=ccd,
         )
@@ -440,7 +440,7 @@ class TestSimulatorImagingCI:
         assert imaging.layout == layout_ci
 
     def test__include_cosmics__is_added_to_image_and_trailed(
-        self, parallel_clocker, traps_x2, ccd
+        self, parallel_clocker_2d, traps_x2, ccd
     ):
 
         layout_ci = ac.ci.Layout2DCIUniform(
@@ -457,7 +457,7 @@ class TestSimulatorImagingCI:
 
         imaging = simulator.from_layout(
             layout=layout_ci,
-            clocker=parallel_clocker,
+            clocker=parallel_clocker_2d,
             parallel_traps=traps_x2,
             parallel_ccd=ccd,
             cosmic_ray_map=cosmic_ray_map,
@@ -483,7 +483,7 @@ class TestSimulatorImagingCI:
         ).all()
         assert imaging.layout == layout_ci
 
-    def test__from_pre_cti_image(self, parallel_clocker, traps_x2, ccd):
+    def test__from_pre_cti_image(self, parallel_clocker_2d, traps_x2, ccd):
 
         layout_ci = ac.ci.Layout2DCIUniform(
             shape_2d=(5, 5),
@@ -501,7 +501,7 @@ class TestSimulatorImagingCI:
 
         imaging = simulator.from_layout(
             layout=layout_ci,
-            clocker=parallel_clocker,
+            clocker=parallel_clocker_2d,
             parallel_traps=traps_x2,
             parallel_ccd=ccd,
             cosmic_ray_map=cosmic_ray_map,
@@ -514,7 +514,7 @@ class TestSimulatorImagingCI:
         imaging_via_pre_cti_image = simulator.from_pre_cti_image(
             pre_cti_image=pre_cti_image.native,
             layout=layout_ci,
-            clocker=parallel_clocker,
+            clocker=parallel_clocker_2d,
             parallel_traps=traps_x2,
             parallel_ccd=ccd,
             cosmic_ray_map=cosmic_ray_map,
@@ -527,7 +527,7 @@ class TestSimulatorImagingCI:
             imaging.cosmic_ray_map == imaging_via_pre_cti_image.cosmic_ray_map
         ).all()
 
-    def test__from_post_cti_image(self, parallel_clocker, traps_x2, ccd):
+    def test__from_post_cti_image(self, parallel_clocker_2d, traps_x2, ccd):
 
         layout_ci = ac.ci.Layout2DCIUniform(
             shape_2d=(5, 5),
@@ -545,7 +545,7 @@ class TestSimulatorImagingCI:
 
         imaging = simulator.from_layout(
             layout=layout_ci,
-            clocker=parallel_clocker,
+            clocker=parallel_clocker_2d,
             parallel_traps=traps_x2,
             parallel_ccd=ccd,
             cosmic_ray_map=cosmic_ray_map,
@@ -556,7 +556,7 @@ class TestSimulatorImagingCI:
         ).native
         pre_cti_image += cosmic_ray_map
 
-        post_cti_image = parallel_clocker.add_cti(
+        post_cti_image = parallel_clocker_2d.add_cti(
             image_pre_cti=pre_cti_image, parallel_traps=traps_x2, parallel_ccd=ccd
         )
 

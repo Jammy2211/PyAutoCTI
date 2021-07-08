@@ -2,7 +2,6 @@ import autofit as af
 import autocti as ac
 from autocti.analysis import result as res
 
-from os import path
 import numpy as np
 import pytest
 
@@ -23,7 +22,7 @@ class TestResult:
         assert isinstance(result.instance.cti.parallel_ccd, ac.CCDPhase)
 
     def test__clocker_passed_as_result_correctly(
-        self, analysis_imaging_ci_7x7, samples_with_result, parallel_clocker
+        self, analysis_imaging_ci_7x7, samples_with_result, parallel_clocker_2d
     ):
 
         result = res.Result(
@@ -34,7 +33,7 @@ class TestResult:
         )
 
         assert isinstance(result.clocker, ac.Clocker2D)
-        assert result.clocker.parallel_express == parallel_clocker.parallel_express
+        assert result.clocker.parallel_express == parallel_clocker_2d.parallel_express
 
 
 class TestResultDataset:
@@ -42,7 +41,7 @@ class TestResultDataset:
         self,
         analysis_imaging_ci_7x7,
         samples_with_result,
-        parallel_clocker,
+        parallel_clocker_2d,
         traps_x1,
         ccd,
     ):
@@ -64,7 +63,7 @@ class TestResultImagingCI:
         self,
         imaging_ci_7x7,
         mask_2d_7x7_unmasked,
-        parallel_clocker,
+        parallel_clocker_2d,
         samples_with_result,
     ):
 
@@ -74,7 +73,7 @@ class TestResultImagingCI:
         )
 
         analysis = ac.AnalysisImagingCI(
-            dataset_ci=masked_imaging_ci, clocker=parallel_clocker
+            dataset_ci=masked_imaging_ci, clocker=parallel_clocker_2d
         )
 
         result = res.ResultImagingCI(
@@ -95,7 +94,7 @@ class TestResultImagingCI:
         self,
         imaging_ci_7x7,
         mask_2d_7x7_unmasked,
-        parallel_clocker,
+        parallel_clocker_2d,
         layout_ci_7x7,
         samples_with_result,
         traps_x1,
@@ -125,7 +124,7 @@ class TestResultImagingCI:
         masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
 
         analysis = ac.AnalysisImagingCI(
-            dataset_ci=masked_imaging_ci_7x7, clocker=parallel_clocker
+            dataset_ci=masked_imaging_ci_7x7, clocker=parallel_clocker_2d
         )
 
         fit_analysis = analysis.fit_from_instance(
@@ -201,7 +200,7 @@ class TestResultImagingCI:
         imaging_ci_7x7,
         mask_2d_7x7_unmasked,
         layout_ci_7x7,
-        parallel_clocker,
+        parallel_clocker_2d,
         samples_with_result,
     ):
 
@@ -210,7 +209,7 @@ class TestResultImagingCI:
         masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
 
         analysis = ac.AnalysisImagingCI(
-            dataset_ci=masked_imaging_ci_7x7, clocker=parallel_clocker
+            dataset_ci=masked_imaging_ci_7x7, clocker=parallel_clocker_2d
         )
 
         result = res.ResultImagingCI(
