@@ -174,7 +174,7 @@ class TestImagingCI:
 
     def test__from_fits__load_pre_cti_image_image_from_the_layout_ci_and_image(self):
 
-        layout_ci = ac.ci.Layout2DCIUniform(
+        layout_ci = ac.ci.Layout2DCI(
             shape_2d=(3, 3), region_list=[(0, 3, 0, 3)], normalization=10.0
         )
 
@@ -378,7 +378,7 @@ class TestSimulatorImagingCI:
         self, parallel_clocker_2d, traps_x2, ccd
     ):
 
-        layout_ci = ac.ci.Layout2DCIUniform(
+        layout_ci = ac.ci.Layout2DCI(
             shape_2d=(5, 5),
             normalization=10.0,
             region_list=[(0, 1, 0, 5)],
@@ -403,7 +403,7 @@ class TestSimulatorImagingCI:
         self, parallel_clocker_2d, traps_x2, ccd
     ):
 
-        layout_ci = ac.ci.Layout2DCIUniform(
+        layout_ci = ac.ci.Layout2DCI(
             shape_2d=(3, 3),
             normalization=10.0,
             region_list=[(0, 1, 0, 3)],
@@ -443,7 +443,7 @@ class TestSimulatorImagingCI:
         self, parallel_clocker_2d, traps_x2, ccd
     ):
 
-        layout_ci = ac.ci.Layout2DCIUniform(
+        layout_ci = ac.ci.Layout2DCI(
             shape_2d=(5, 5),
             normalization=10.0,
             region_list=[(0, 1, 0, 5)],
@@ -485,7 +485,7 @@ class TestSimulatorImagingCI:
 
     def test__from_pre_cti_image(self, parallel_clocker_2d, traps_x2, ccd):
 
-        layout_ci = ac.ci.Layout2DCIUniform(
+        layout_ci = ac.ci.Layout2DCI(
             shape_2d=(5, 5),
             normalization=10.0,
             region_list=[(0, 1, 0, 5)],
@@ -529,7 +529,7 @@ class TestSimulatorImagingCI:
 
     def test__from_post_cti_image(self, parallel_clocker_2d, traps_x2, ccd):
 
-        layout_ci = ac.ci.Layout2DCIUniform(
+        layout_ci = ac.ci.Layout2DCI(
             shape_2d=(5, 5),
             normalization=10.0,
             region_list=[(0, 1, 0, 5)],

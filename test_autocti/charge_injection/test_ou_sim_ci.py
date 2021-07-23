@@ -8,7 +8,7 @@ class TestCIOUSim:
 
         # bottom left
 
-        array = ou_sim_ci.non_uniform_array_from(
+        array = ou_sim_ci.charge_injection_array_from(
             ccd_id="123", quadrant_id="E", ci_normalization=50000.0
         )
 
@@ -20,7 +20,7 @@ class TestCIOUSim:
 
         # top left
 
-        array = ou_sim_ci.non_uniform_array_from(
+        array = ou_sim_ci.charge_injection_array_from(
             ccd_id="123", quadrant_id="H", ci_normalization=50000.0
         )
 
@@ -31,7 +31,7 @@ class TestCIOUSim:
 
         # bottom right
 
-        array = ou_sim_ci.non_uniform_array_from(
+        array = ou_sim_ci.charge_injection_array_from(
             ccd_id="123", quadrant_id="F", ci_normalization=50000.0
         )
 
@@ -43,7 +43,7 @@ class TestCIOUSim:
 
         # top right
 
-        array = ou_sim_ci.non_uniform_array_from(
+        array = ou_sim_ci.charge_injection_array_from(
             ccd_id="123", quadrant_id="G", ci_normalization=50000.0
         )
 
@@ -57,7 +57,7 @@ class TestCIOUSim:
 
         # bottom left
 
-        array = ou_sim_ci.non_uniform_array_from(
+        array = ou_sim_ci.charge_injection_array_from(
             ccd_id="123", quadrant_id="E", ci_normalization=50000.0
         )
 
@@ -74,7 +74,7 @@ class TestCIOUSim:
 
         # top left
 
-        array = ou_sim_ci.non_uniform_array_from(
+        array = ou_sim_ci.charge_injection_array_from(
             ccd_id="123", quadrant_id="H", ci_normalization=50000.0
         )
 
@@ -91,7 +91,7 @@ class TestCIOUSim:
 
         # bottom right
 
-        array = ou_sim_ci.non_uniform_array_from(
+        array = ou_sim_ci.charge_injection_array_from(
             ccd_id="123", quadrant_id="F", ci_normalization=50000.0
         )
 
@@ -108,7 +108,7 @@ class TestCIOUSim:
 
         # top right
 
-        array = ou_sim_ci.non_uniform_array_from(
+        array = ou_sim_ci.charge_injection_array_from(
             ccd_id="123", quadrant_id="G", ci_normalization=50000.0
         )
 

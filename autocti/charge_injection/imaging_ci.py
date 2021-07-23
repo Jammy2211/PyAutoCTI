@@ -61,7 +61,7 @@ class ImagingCI(imaging.Imaging):
         image: array_2d.Array2D,
         noise_map: array_2d.Array2D,
         pre_cti_image: array_2d.Array2D,
-        layout: Union[lo.Layout2DCIUniform, lo.Layout2DCINonUniform],
+        layout: Union[lo.Layout2DCI, lo.Layout2DCINonUniform],
         cosmic_ray_map: Optional[array_2d.Array2D] = None,
         noise_scaling_map_list: Optional[List[array_2d.Array2D]] = None,
         name=None,
@@ -289,7 +289,7 @@ class ImagingCI(imaging.Imaging):
                 pixel_scales=pixel_scales,
             )
         else:
-            if isinstance(layout, lo.Layout2DCIUniform):
+            if isinstance(layout, lo.Layout2DCI):
                 pre_cti_image = layout.pre_cti_image_from(
                     shape_native=ci_image.shape_native, pixel_scales=pixel_scales
                 )
@@ -406,7 +406,7 @@ class SimulatorImagingCI(imaging.AbstractSimulatorImaging):
             Seed for the read-noises added to the image.
         """
 
-        if isinstance(layout, lo.Layout2DCIUniform):
+        if isinstance(layout, lo.Layout2DCI):
             pre_cti_image = layout.pre_cti_image_from(
                 shape_native=layout.shape_2d, pixel_scales=self.pixel_scales
             )

@@ -33,7 +33,7 @@ them to fits to oriented them in the way they are observed (VIS_CTI has tools fo
 """
 
 
-def non_uniform_array_from(
+def charge_injection_array_from(
     ccd_id,
     quadrant_id,
     ci_normalization,
@@ -41,6 +41,7 @@ def non_uniform_array_from(
     serial_size=2128,
     serial_overscan_size=29,
     pixel_scales=0.1,
+    use_non_uniform_pattern=True
 ):
     """
     Returns a charge injection line image suitable for OU-SIM to run through the ElVIS simulator.
@@ -94,14 +95,21 @@ def non_uniform_array_from(
     """
     Use the charge injection normalization_list and regions to create `Layout2DCINonUniform` of every image we'll simulate.
     """
-    layout = lo.Layout2DCINonUniform(
-        shape_2d=shape_native,
-        normalization=ci_normalization,
-        region_list=regions_ci,
-        row_slope=0.0,
-        column_sigma=100.0,
-        maximum_normalization=84700,
-    )
+    if use_non_uniform_pattern:
+        layout = lo.Layout2DCINonUniform(
+            shape_2d=shape_native,
+            normalization=ci_normalization,
+            region_list=regions_ci,
+            row_slope=0.0,
+            column_sigma=100.0,
+            maximum_normalization=84700,
+        )
+    else:
+        layout = lo.Layout2DCI(
+            shape_2d=shape_native,
+            normalization=ci_normalization,
+            region_list=regions_ci,
+        )
 
     """
     Create every pre-cti charge injection image using each `Layout2DCI`

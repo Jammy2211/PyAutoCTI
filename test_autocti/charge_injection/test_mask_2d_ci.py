@@ -11,7 +11,7 @@ class MockPattern(object):
 class TestMask2DCI:
     def test__masked_parallel_front_edge_from_layout(self):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(10, 3), normalization=1.0, region_list=[(1, 4, 0, 3)]
         )
 
@@ -41,7 +41,7 @@ class TestMask2DCI:
             )
         ).all()
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(10, 3), normalization=1.0, region_list=[(1, 4, 0, 3)]
         )
 
@@ -72,7 +72,7 @@ class TestMask2DCI:
             )
         ).all()
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(10, 3),
             normalization=1.0,
             region_list=[(1, 4, 0, 1), (1, 4, 2, 3)],
@@ -106,7 +106,7 @@ class TestMask2DCI:
 
     def test__masked_parallel_trails_from_layout(self):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(10, 3), normalization=1.0, region_list=[(1, 4, 0, 3)]
         )
 
@@ -136,7 +136,7 @@ class TestMask2DCI:
             )
         ).all()
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(10, 3), normalization=1.0, region_list=[(1, 4, 0, 3)]
         )
 
@@ -167,7 +167,7 @@ class TestMask2DCI:
             )
         ).all()
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(10, 3),
             normalization=1.0,
             region_list=[(1, 4, 0, 1), (1, 4, 2, 3)],
@@ -201,7 +201,7 @@ class TestMask2DCI:
 
     def test__masked_serial_front_edge_from_layout(self):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(3, 10), normalization=1.0, region_list=[(0, 3, 1, 4)]
         )
 
@@ -257,7 +257,7 @@ class TestMask2DCI:
             )
         ).all()
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(3, 10), normalization=1.0, region_list=[(0, 3, 1, 4)]
         )
 
@@ -281,7 +281,7 @@ class TestMask2DCI:
             )
         ).all()
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(3, 10),
             normalization=1.0,
             region_list=[(0, 1, 1, 4), (2, 3, 1, 4)],
@@ -319,7 +319,7 @@ class TestMask2DCI:
 
     def test__masked_serial_trails_from_layout(self):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(3, 10), normalization=1.0, region_list=[(0, 3, 1, 4)]
         )
 
@@ -362,7 +362,7 @@ class TestMask2DCI:
             )
         ).all()
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(3, 10),
             normalization=1.0,
             region_list=[(0, 1, 1, 4), (2, 3, 1, 4)],
@@ -398,17 +398,17 @@ class TestMask2DCI:
             )
         ).all()
 
-    def test__masked_front_edges_and_trails_from_frame_ci(self, imaging_ci_7x7):
+    def test__masked_front_edges_and_trails_from_layout(self, imaging_ci_7x7):
 
         unmasked = ac.ci.Mask2DCI.unmasked(
             shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
         )
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(7, 7), normalization=1.0, region_list=[(1, 5, 1, 5)]
         )
 
-        mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_frame_ci(
+        mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_layout(
             layout=layout,
             mask=unmasked,
             settings=ac.ci.SettingsMask2DCI(parallel_front_edge_rows=(0, 1)),
@@ -430,7 +430,7 @@ class TestMask2DCI:
             )
         ).all()
 
-        mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_frame_ci(
+        mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_layout(
             layout=layout,
             mask=unmasked,
             settings=ac.ci.SettingsMask2DCI(parallel_trails_rows=(0, 1)),
@@ -452,7 +452,7 @@ class TestMask2DCI:
             )
         ).all()
 
-        mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_frame_ci(
+        mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_layout(
             layout=layout,
             mask=unmasked,
             settings=ac.ci.SettingsMask2DCI(serial_front_edge_columns=(0, 1)),
@@ -474,7 +474,7 @@ class TestMask2DCI:
             )
         ).all()
 
-        mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_frame_ci(
+        mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_layout(
             layout=layout,
             mask=unmasked,
             settings=ac.ci.SettingsMask2DCI(serial_trails_columns=(0, 1)),

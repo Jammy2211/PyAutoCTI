@@ -149,7 +149,7 @@ class TestResultImagingCI:
         )
 
         assert result.noise_scaling_map_of_regions_ci[1, 1] == pytest.approx(
-            16.25, 1.0e-1
+            18.16, 1.0e-1
         )
         assert result.noise_scaling_map_of_parallel_trails[1, 1] == pytest.approx(
             0.0, 1.0e-4

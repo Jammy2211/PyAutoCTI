@@ -11,5 +11,5 @@ from .imaging_ci import ImagingCI
 from .imaging_ci import SimulatorImagingCI
 from .mask_2d_ci import SettingsMask2DCI
 from .mask_2d_ci import Mask2DCI
-from .layout_ci import Layout2DCIUniform
+from .layout_ci import Layout2DCI
 from .layout_ci import Layout2DCINonUniform

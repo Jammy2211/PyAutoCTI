@@ -601,70 +601,70 @@ class TestAbstractLayout2DCI(object):
     def test__check_layout_dimensions__layout_has_more_rows_than_image__1_region(self):
 
         with pytest.raises(exc.LayoutException):
-            ac.ci.Layout2DCIUniform(
+            ac.ci.Layout2DCI(
                 shape_2d=(2, 6), normalization=1.0, region_list=([(0, 3, 0, 1)])
             )
 
         with pytest.raises(exc.LayoutException):
-            ac.ci.Layout2DCIUniform(
+            ac.ci.Layout2DCI(
                 shape_2d=(6, 2), normalization=1.0, region_list=([(0, 1, 0, 3)])
             )
 
         with pytest.raises(exc.LayoutException):
-            ac.ci.Layout2DCIUniform(
+            ac.ci.Layout2DCI(
                 shape_2d=(2, 6),
                 normalization=1.0,
                 region_list=([(0, 3, 0, 1), (0, 1, 0, 3)]),
             )
 
         with pytest.raises(exc.LayoutException):
-            ac.ci.Layout2DCIUniform(
+            ac.ci.Layout2DCI(
                 shape_2d=(6, 2),
                 normalization=1.0,
                 region_list=([(0, 3, 0, 1), (0, 1, 0, 3)]),
             )
 
         with pytest.raises(exc.RegionException):
-            ac.ci.Layout2DCIUniform(
+            ac.ci.Layout2DCI(
                 shape_2d=(3, 3), normalization=1.0, region_list=([(-1, 0, 0, 0)])
             )
 
         with pytest.raises(exc.RegionException):
-            ac.ci.Layout2DCIUniform(
+            ac.ci.Layout2DCI(
                 shape_2d=(3, 3), normalization=1.0, region_list=([(0, -1, 0, 0)])
             )
 
         with pytest.raises(exc.RegionException):
-            ac.ci.Layout2DCIUniform(
+            ac.ci.Layout2DCI(
                 shape_2d=(3, 3), normalization=1.0, region_list=([(0, 0, -1, 0)])
             )
 
         with pytest.raises(exc.RegionException):
-            ac.ci.Layout2DCIUniform(
+            ac.ci.Layout2DCI(
                 shape_2d=(3, 3), normalization=1.0, region_list=([(0, 0, 0, -1)])
             )
 
     def test__rows_between_region_list(self):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 5), normalization=1.0, region_list=[(1, 2, 1, 2)]
         )
 
         assert layout.rows_between_regions == []
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 5), normalization=1.0, region_list=[(1, 2, 1, 2), (3, 4, 3, 4)]
         )
 
         assert layout.rows_between_regions == [1]
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 5), normalization=1.0, region_list=[(1, 2, 1, 2), (4, 5, 3, 4)]
         )
 
         assert layout.rows_between_regions == [2]
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(10, 10),
             normalization=1.0,
             region_list=[(1, 2, 1, 2), (4, 5, 3, 4), (8, 9, 3, 4)],
@@ -674,7 +674,7 @@ class TestAbstractLayout2DCI(object):
 
     def test__serial_trails_columns(self, layout_ci_7x7):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(10, 10),
             normalization=10.0,
             region_list=[(1, 2, 1, 2)],
@@ -685,7 +685,7 @@ class TestAbstractLayout2DCI(object):
 
         assert layout.serial_trails_columns == 10
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(50, 50),
             normalization=10.0,
             region_list=[(1, 2, 1, 2)],
@@ -698,7 +698,7 @@ class TestAbstractLayout2DCI(object):
 
     def test__parallel_trail_size_to_array_edge(self):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 100),
             normalization=1.0,
             region_list=[ac.Region2D(region=(0, 3, 0, 3))],
@@ -706,7 +706,7 @@ class TestAbstractLayout2DCI(object):
 
         assert layout.parallel_trail_size_to_array_edge == 2
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(7, 100),
             normalization=1.0,
             region_list=[ac.Region2D(region=(0, 3, 0, 3))],
@@ -714,7 +714,7 @@ class TestAbstractLayout2DCI(object):
 
         assert layout.parallel_trail_size_to_array_edge == 4
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(15, 100),
             normalization=1.0,
             region_list=[
@@ -726,7 +726,7 @@ class TestAbstractLayout2DCI(object):
 
         assert layout.parallel_trail_size_to_array_edge == 1
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(20, 100),
             normalization=1.0,
             region_list=[
@@ -740,7 +740,7 @@ class TestAbstractLayout2DCI(object):
 
     def test__with_extracted_regions__region_list_are_extracted_correctly(self):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 3), normalization=1.0, region_list=[(0, 2, 0, 2)]
         )
 
@@ -756,7 +756,7 @@ class TestAbstractLayout2DCI(object):
 
         assert layout_extracted.region_list == [(0, 1, 0, 1)]
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(10, 5),
             normalization=1.0,
             region_list=[(2, 4, 2, 4), (0, 1, 0, 1)],
@@ -782,7 +782,7 @@ class TestAbstractLayout2DCI(object):
 
     def test__array_2d_of_regions_from(self):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 3), normalization=10.0, region_list=[(0, 3, 0, 3)]
         )
 
@@ -805,7 +805,7 @@ class TestAbstractLayout2DCI(object):
             )
         ).all()
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 3),
             normalization=10.0,
             region_list=[(0, 1, 1, 2), (2, 3, 1, 3)],
@@ -832,7 +832,7 @@ class TestAbstractLayout2DCI(object):
 
     def test__array_2d_of_non_regions_from(self):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 3), normalization=10.0, region_list=[(0, 3, 0, 3)]
         )
 
@@ -855,7 +855,7 @@ class TestAbstractLayout2DCI(object):
             )
         ).all()
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 3),
             normalization=10.0,
             region_list=[(0, 1, 0, 3), (3, 4, 0, 3)],
@@ -889,7 +889,7 @@ class TestAbstractLayout2DCI(object):
 
     def test__array_2d_of_parallel_trails_from(self):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 3),
             normalization=10.0,
             region_list=[(0, 3, 0, 3)],
@@ -923,7 +923,7 @@ class TestAbstractLayout2DCI(object):
             )
         ).all()
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 3),
             normalization=10.0,
             region_list=[(0, 1, 0, 3), (3, 4, 0, 3)],
@@ -948,7 +948,7 @@ class TestAbstractLayout2DCI(object):
 
     def test__array_2d_of_parallel_edges_and_trails_from(self, parallel_array):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(10, 3), normalization=10.0, region_list=[(0, 4, 0, 3)]
         )
 
@@ -974,7 +974,7 @@ class TestAbstractLayout2DCI(object):
             )
         ).all()
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(10, 3),
             normalization=10.0,
             region_list=[(0, 1, 0, 3), (3, 4, 0, 3)],
@@ -1004,7 +1004,7 @@ class TestAbstractLayout2DCI(object):
 
     def test__array_2d_for_parallel_calibration_from(self):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 3), normalization=1.0, region_list=[(0, 3, 0, 3)]
         )
 
@@ -1025,7 +1025,7 @@ class TestAbstractLayout2DCI(object):
 
         assert (extracted_array == np.array([[0.0], [0.0], [0.0], [0.0], [0.0]])).all()
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 3), normalization=1.0, region_list=[(0, 5, 0, 3)]
         )
 
@@ -1040,7 +1040,7 @@ class TestAbstractLayout2DCI(object):
 
     def test__mask_for_parallel_calibration_from(self):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 3), normalization=1.0, region_list=[(0, 5, 0, 3)]
         )
 
@@ -1067,7 +1067,7 @@ class TestAbstractLayout2DCI(object):
 
     def test__extracted_layout_2d_for_parallel_calibration_from(self):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 3), normalization=1.0, region_list=[(0, 3, 0, 3)]
         )
 
@@ -1077,7 +1077,7 @@ class TestAbstractLayout2DCI(object):
 
         assert extracted_layout.region_list == [(0, 3, 0, 1)]
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 3), normalization=1.0, region_list=[(0, 5, 0, 3)]
         )
 
@@ -1089,7 +1089,7 @@ class TestAbstractLayout2DCI(object):
 
     def test__array_2d_of_serial_trails_from(self):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(4, 3),
             normalization=10.0,
             region_list=[(0, 4, 0, 2)],
@@ -1115,7 +1115,7 @@ class TestAbstractLayout2DCI(object):
             )
         ).all()
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(4, 4),
             normalization=10.0,
             region_list=[(0, 4, 0, 2)],
@@ -1147,7 +1147,7 @@ class TestAbstractLayout2DCI(object):
         ).all()
 
     def test__array_2d_of_serial_overscan_above_trails_from(self):
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 4),
             normalization=10.0,
             region_list=[(1, 2, 1, 3), (3, 4, 1, 3)],
@@ -1181,7 +1181,7 @@ class TestAbstractLayout2DCI(object):
             )
         ).all()
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(4, 4),
             normalization=10.0,
             region_list=[(0, 1, 0, 2), (2, 3, 0, 2)],
@@ -1214,7 +1214,7 @@ class TestAbstractLayout2DCI(object):
 
     def test__array_2d_of_serial_edges_and_trails_array(self):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(3, 4), normalization=10.0, region_list=[(0, 3, 0, 3)]
         )
 
@@ -1245,7 +1245,7 @@ class TestAbstractLayout2DCI(object):
             )
         ).all()
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(3, 4), normalization=10.0, region_list=[(0, 3, 0, 2)]
         )
 
@@ -1271,7 +1271,7 @@ class TestAbstractLayout2DCI(object):
             )
         ).all()
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(3, 5),
             normalization=10.0,
             region_list=[(0, 3, 0, 1), (0, 3, 3, 4)],
@@ -1303,7 +1303,7 @@ class TestAbstractLayout2DCI(object):
 
     def test__array_2d_list_for_serial_calibration(self):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(3, 5), normalization=1.0, region_list=[(0, 3, 0, 5)]
         )
 
@@ -1329,7 +1329,7 @@ class TestAbstractLayout2DCI(object):
             )
         ).all()
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(3, 5), normalization=1.0, region_list=[(0, 1, 1, 4), (2, 3, 1, 4)]
         )
 
@@ -1340,7 +1340,7 @@ class TestAbstractLayout2DCI(object):
 
     def test__array_2d_for_serial_calibration_from(self):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(3, 5),
             normalization=1.0,
             region_list=[(0, 3, 1, 5)],
@@ -1373,7 +1373,7 @@ class TestAbstractLayout2DCI(object):
 
         assert new_array.pixel_scales == (1.0, 1.0)
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(3, 5),
             normalization=1.0,
             region_list=[(0, 2, 1, 4)],
@@ -1401,7 +1401,7 @@ class TestAbstractLayout2DCI(object):
             pixel_scales=1.0,
         )
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(3, 5),
             normalization=1.0,
             region_list=[(0, 1, 1, 3), (2, 3, 1, 3)],
@@ -1420,7 +1420,7 @@ class TestAbstractLayout2DCI(object):
 
         assert new_array.pixel_scales == (1.0, 1.0)
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 5),
             normalization=1.0,
             region_list=[(0, 2, 1, 4), (3, 5, 1, 4)],
@@ -1452,7 +1452,7 @@ class TestAbstractLayout2DCI(object):
 
     def test__maks_for_serial_calibration_from(self):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 5), normalization=1.0, region_list=[(0, 2, 1, 4), (3, 5, 1, 4)]
         )
 
@@ -1472,7 +1472,7 @@ class TestAbstractLayout2DCI(object):
 
     def test__extracted_layout_for_serial_calibration_from(self):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(3, 5),
             normalization=1.0,
             region_list=[(0, 3, 1, 5)],
@@ -1489,7 +1489,7 @@ class TestAbstractLayout2DCI(object):
         assert extracted_layout.serial_prescan == (0, 3, 0, 1)
         assert extracted_layout.serial_overscan == None
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(3, 5),
             normalization=1.0,
             region_list=[(0, 2, 1, 4)],
@@ -1516,7 +1516,7 @@ class TestAbstractLayout2DCI(object):
             pixel_scales=1.0,
         )
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(3, 5),
             normalization=1.0,
             region_list=[(0, 1, 1, 3), (2, 3, 1, 3)],
@@ -1534,7 +1534,7 @@ class TestAbstractLayout2DCI(object):
         assert extracted_layout.serial_prescan == (0, 2, 0, 1)
         assert extracted_layout.serial_overscan == (0, 2, 3, 4)
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 5),
             normalization=1.0,
             region_list=[(0, 2, 1, 4), (3, 5, 1, 4)],
@@ -1565,7 +1565,7 @@ class TestAbstractLayout2DCI(object):
 
     def test__smallest_parallel_trails_rows_to_frame_edge(self,):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(10, 5),
             normalization=10.0,
             region_list=[(0, 3, 0, 3), (5, 7, 0, 3)],
@@ -1573,7 +1573,7 @@ class TestAbstractLayout2DCI(object):
 
         assert layout.smallest_parallel_trails_rows_to_array_edge == 2
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(8, 5),
             normalization=10.0,
             region_list=[(0, 3, 0, 3), (5, 7, 0, 3)],
@@ -1582,10 +1582,10 @@ class TestAbstractLayout2DCI(object):
         assert layout.smallest_parallel_trails_rows_to_array_edge == 1
 
 
-class TestLayout2DCIUniform(object):
+class TestLayout2DCI(object):
     def test__pre_cti_image_from(self):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 3), normalization=10.0, region_list=[(0, 2, 0, 2)]
         )
 
@@ -1596,7 +1596,7 @@ class TestLayout2DCIUniform(object):
             == np.array([[10.0, 10.0, 0.0], [10.0, 10.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 3),
             normalization=20.0,
             region_list=[(0, 2, 0, 2), (2, 3, 2, 3)],
@@ -1608,7 +1608,7 @@ class TestLayout2DCIUniform(object):
             == np.array([[20.0, 20.0, 0.0], [20.0, 20.0, 0.0], [0.0, 0.0, 20.0]])
         ).all()
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 3),
             normalization=30.0,
             region_list=[(0, 3, 0, 2), (2, 3, 2, 3)],
@@ -1713,7 +1713,7 @@ class TestLayout2DCINonUniform(object):
 
     def test__pre_cti_image_from__compare_uniform_to_non_uniform(self,):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 5), normalization=10.0, region_list=[(2, 4, 0, 5)]
         )
         pre_cti_image_0 = layout.pre_cti_image_from(
@@ -1733,7 +1733,7 @@ class TestLayout2DCINonUniform(object):
 
         assert (pre_cti_image_0 == pre_cti_image_1).all()
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(5, 5),
             normalization=100.0,
             region_list=[(0, 2, 0, 2), (2, 3, 0, 5)],

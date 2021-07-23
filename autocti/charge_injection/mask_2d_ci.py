@@ -19,7 +19,7 @@ class SettingsMask2DCI:
 
 class Mask2DCI(Mask2D):
     @classmethod
-    def masked_front_edges_and_trails_from_frame_ci(
+    def masked_front_edges_and_trails_from_layout(
         cls, mask, layout, settings, pixel_scales
     ):
 

@@ -6,6 +6,7 @@ Author: James Nightingale
 """
 
 from autocti import exc
+from autoarray.instruments import euclid
 from autoarray.structures.arrays.two_d import array_2d
 from autoarray.layout import layout_util
 from autoarray.layout import layout as lo
@@ -1547,11 +1548,52 @@ class AbstractLayout2DCI(lo.Layout2D):
             )
 
 
-class Layout2DCIUniform(AbstractLayout2DCI):
+class Layout2DCI(AbstractLayout2DCI):
     """
     A uniform charge injection layout_ci, which is defined by the regions it appears on the charge injection \
     array and its normalization.
     """
+
+    @classmethod
+    def from_euclid_fits_header(cls, ext_header):
+
+        parallel_overscan_size = ext_header.get("PAROVRX", default=None)
+        if parallel_overscan_size is None:
+            parallel_overscan_size = 0
+        serial_overscan_size = ext_header.get("OVRSCANX", default=None)
+        serial_prescan_size = ext_header.get("PRESCANX", default=None)
+        serial_size = ext_header.get("NAXIS1", default=None)
+        parallel_size = ext_header.get("NAXIS2", default=None)
+
+        injection_on = ext_header["INJON"]
+        injection_off = ext_header["INJOFF"]
+        injection_total = ext_header["INJTOTAL"]
+
+        layout = euclid.Layout2DEuclid.from_fits_header(ext_header=ext_header)
+
+        region_ci_list = region_list_ci_from(
+            serial_prescan_size=serial_prescan_size,
+            serial_overscan_size=serial_overscan_size,
+            serial_size=serial_size,
+            parallel_size=parallel_size,
+            injection_on=injection_on,
+            injection_off=injection_off,
+            injection_total=injection_total,
+            roe_corner=layout.original_roe_corner
+        )
+
+        normalization = ext_header["INJNORM"]
+
+        return cls(
+            shape_2d=(parallel_size, serial_size),
+            normalization=normalization,
+            region_list=region_ci_list,
+            original_roe_corner=layout.original_roe_corner,
+            parallel_overscan=layout.parallel_overscan,
+            serial_prescan=layout.serial_prescan,
+            serial_overscan=layout.serial_overscan
+
+        )
 
     def pre_cti_image_from(self, shape_native, pixel_scales):
         """Use this charge injection layout_ci to generate a pre-cti charge injection image. This is performed by \

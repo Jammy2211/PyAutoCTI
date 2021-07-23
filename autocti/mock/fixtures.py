@@ -6,7 +6,7 @@ from autocti import charge_injection as ci
 from autoarray.structures.arrays.one_d import array_1d
 from autoarray.dataset import imaging
 
-from arcticpy.src import traps, ccd
+from arcticpy.src import traps, ccd, roe
 from autocti.line import dataset_line
 from autocti.mask import mask_2d
 from autocti.util.clocker import Clocker1D
@@ -46,7 +46,7 @@ def make_clocker_1d():
 
 
 def make_parallel_clocker_2d():
-    return Clocker2D(parallel_express=2)
+    return Clocker2D(parallel_express=2, parallel_roe=roe.ROE(empty_traps_for_first_transfers=True))
 
 
 def make_serial_clocker_2d():
@@ -118,7 +118,7 @@ def make_dataset_line_7():
 
 
 def make_layout_ci_7x7():
-    return ci.Layout2DCIUniform(
+    return ci.Layout2DCI(
         shape_2d=(7, 7),
         normalization=10.0,
         region_list=[(1, 5, 1, 5)],

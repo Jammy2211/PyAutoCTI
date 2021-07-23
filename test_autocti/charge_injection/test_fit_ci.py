@@ -354,7 +354,7 @@ class TestChiSquaredMapsOfRegions:
         self,
     ):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(2, 2), region_list=[(0, 1, 0, 1)], normalization=1.0
         )
 
@@ -382,7 +382,7 @@ class TestChiSquaredMapsOfRegions:
         self,
     ):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(2, 2),
             region_list=[(0, 1, 0, 1)],
             normalization=1.0,
@@ -414,7 +414,7 @@ class TestChiSquaredMapsOfRegions:
         self,
     ):
 
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(2, 2),
             region_list=[(0, 2, 0, 1)],
             normalization=1.0,
@@ -444,7 +444,7 @@ class TestChiSquaredMapsOfRegions:
     def test__chi_squared_map_of_overscan_above_serial_trails__extracts_correctly_from_chi_squard_map(
         self,
     ):
-        layout = ac.ci.Layout2DCIUniform(
+        layout = ac.ci.Layout2DCI(
             shape_2d=(2, 2),
             region_list=[(0, 1, 0, 1)],
             normalization=1.0,
