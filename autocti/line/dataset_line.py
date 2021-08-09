@@ -86,7 +86,6 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
         clocker: Clocker1D,
         traps: Optional[List[AbstractTrap]] = None,
         ccd: Optional[CCDPhase] = None,
-        name: Optional[str] = None,
     ) -> DatasetLine:
         """Simulate a charge injection image, including effects like noises.
 
@@ -110,47 +109,37 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
             Seed for the read-noises added to the image.
         """
 
-        pre_cti_image = layout.pre_cti_image_from(
+        pre_cti_data = layout.pre_cti_data_from(
             shape_native=layout.shape_1d, pixel_scales=self.pixel_scales
         )
 
-        return self.from_pre_cti_image(
-            pre_cti_image=pre_cti_image.native,
+        return self.from_pre_cti_data(
+            pre_cti_data=pre_cti_data.native,
             layout=layout,
             clocker=clocker,
             traps=traps,
             ccd=ccd,
-            name=name,
         )
 
-    def from_pre_cti_image(
+    def from_pre_cti_data(
         self,
-        pre_cti_image: Array1D,
+        pre_cti_data: Array1D,
         layout: Layout1DLine,
         clocker: Clocker1D,
         traps: Optional[List[AbstractTrap]] = None,
         ccd: Optional[CCDPhase] = None,
-        name: Optional[str] = None,
     ) -> DatasetLine:
 
-        post_cti_image = clocker.add_cti(
-            image_pre_cti=pre_cti_image.native, traps=traps, ccd=ccd
+        post_cti_data = clocker.add_cti(
+            pre_cti_data=pre_cti_data.native, traps=traps, ccd=ccd
         )
 
         return self.from_post_cti_image(
-            post_cti_image=post_cti_image,
-            pre_cti_image=pre_cti_image,
-            layout=layout,
-            name=name,
+            post_cti_image=post_cti_data, pre_cti_image=pre_cti_data, layout=layout
         )
 
     def from_post_cti_image(
-        self,
-        post_cti_image: Array1D,
-        pre_cti_image: Array1D,
-        layout: Layout1DLine,
-        cosmic_ray_map: Optional[Array1D] = None,
-        name: Optional[str] = None,
+        self, post_cti_image: Array1D, pre_cti_image: Array1D, layout: Layout1DLine
     ) -> DatasetLine:
 
         if self.read_noise is not None:

@@ -350,7 +350,6 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         self,
         pixel_scales: Union[float, Tuple[float, float]],
         read_noise: Optional[float] = None,
-        add_poisson_noise: bool = False,
         noise_if_add_noise_false: float = 0.1,
         noise_seed: int = -1,
         ci_seed: int = -1,
@@ -367,7 +366,6 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         super().__init__(
             read_noise=read_noise,
             exposure_time=1.0,
-            add_poisson_noise=add_poisson_noise,
             noise_if_add_noise_false=noise_if_add_noise_false,
             noise_seed=noise_seed,
         )
@@ -383,7 +381,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         parallel_ccd: Optional[CCDPhase] = None,
         serial_traps: Optional[List[AbstractTrap]] = None,
         serial_ccd: Optional[CCDPhase] = None,
-        cosmic_ray_map: Optional[Array2D] = None,
+        cosmic_ray_map: Optional[Union[np.ndarray, Array2D]] = None,
         name: Optional[str] = None,
     ) -> ImagingCI:
         """Simulate a charge injection image, including effects like noises.
@@ -440,7 +438,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         parallel_ccd: Optional[CCDPhase] = None,
         serial_traps: Optional[List[AbstractTrap]] = None,
         serial_ccd: Optional[CCDPhase] = None,
-        cosmic_ray_map: Optional[Array2D] = None,
+        cosmic_ray_map: Optional[Union[np.ndarray, Array2D]] = None,
         name: Optional[str] = None,
     ) -> ImagingCI:
 
@@ -471,7 +469,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         post_cti_image: Array2D,
         pre_cti_image: Array2D,
         layout: Union[Layout2DCI, Layout2DCINonUniform],
-        cosmic_ray_map: Optional[Array2D] = None,
+        cosmic_ray_map: Optional[Union[np.ndarray, Array2D]] = None,
         name: Optional[str] = None,
     ) -> ImagingCI:
 

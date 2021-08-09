@@ -93,7 +93,7 @@ class TestAnalysisDatasetLine:
         )
 
         post_cti_line = clocker_1d.add_cti(
-            image_pre_cti=pre_cti_line_7.native, traps=traps_x1, ccd=ccd
+            pre_cti_data=pre_cti_line_7.native, traps=traps_x1, ccd=ccd
         )
 
         fit = ac.FitDatasetLine(
@@ -114,7 +114,7 @@ class TestAnalysisDatasetLine:
         masked_line_ci = dataset_line_7.apply_mask(mask=mask_1d_7_unmasked)
 
         post_cti_line = clocker_1d.add_cti(
-            image_pre_cti=masked_line_ci.pre_cti_line, traps=traps_x1, ccd=ccd
+            pre_cti_data=masked_line_ci.pre_cti_line, traps=traps_x1, ccd=ccd
         )
 
         analysis = ac.AnalysisDatasetLine(
@@ -172,7 +172,7 @@ class TestAnalysisImagingCI:
         )
 
         post_cti_image = parallel_clocker_2d.add_cti(
-            image_pre_cti=pre_cti_image_7x7.native,
+            pre_cti_data=pre_cti_image_7x7.native,
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
         )
@@ -198,7 +198,7 @@ class TestAnalysisImagingCI:
         )
 
         post_cti_image = parallel_clocker_2d.add_cti(
-            image_pre_cti=masked_imaging_ci.pre_cti_image,
+            pre_cti_data=masked_imaging_ci.pre_cti_image,
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
         )
@@ -266,7 +266,7 @@ class TestAnalysisImagingCI:
         )
 
         post_cti_image = parallel_clocker_2d.add_cti(
-            image_pre_cti=masked_imaging_ci.pre_cti_image,
+            pre_cti_data=masked_imaging_ci.pre_cti_image,
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
         )

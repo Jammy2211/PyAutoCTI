@@ -306,6 +306,6 @@ class TestLayout1DCIUniform(object):
             shape_1d=(5,), normalization=10.0, region_list=[(0, 2)]
         )
 
-        pre_cti_image = layout.pre_cti_image_from(shape_native=(3,), pixel_scales=1.0)
+        pre_cti_image = layout.pre_cti_data_from(shape_native=(3,), pixel_scales=1.0)
 
         assert (pre_cti_image.native == np.array([10.0, 10.0, 0.0])).all()

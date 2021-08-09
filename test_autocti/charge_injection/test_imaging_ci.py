@@ -385,7 +385,7 @@ class TestSimulatorImagingCI:
             serial_overscan=ac.Region2D((1, 2, 1, 2)),
         )
 
-        simulator = ac.ci.SimulatorImagingCI(pixel_scales=1.0, add_poisson_noise=False)
+        simulator = ac.ci.SimulatorImagingCI(pixel_scales=1.0)
 
         imaging = simulator.from_layout(
             layout=layout_ci,
@@ -411,7 +411,7 @@ class TestSimulatorImagingCI:
         )
 
         simulator = ac.ci.SimulatorImagingCI(
-            pixel_scales=1.0, read_noise=1.0, add_poisson_noise=True, noise_seed=1
+            pixel_scales=1.0, read_noise=1.0, noise_seed=1
         )
 
         imaging = simulator.from_layout(
@@ -450,7 +450,7 @@ class TestSimulatorImagingCI:
             serial_overscan=ac.Region2D((1, 2, 1, 2)),
         )
 
-        simulator = ac.ci.SimulatorImagingCI(pixel_scales=1.0, add_poisson_noise=False)
+        simulator = ac.ci.SimulatorImagingCI(pixel_scales=1.0)
 
         cosmic_ray_map = np.zeros((5, 5))
         cosmic_ray_map[2, 2] = 100.0
@@ -493,7 +493,7 @@ class TestSimulatorImagingCI:
         )
 
         simulator = ac.ci.SimulatorImagingCI(
-            pixel_scales=1.0, read_noise=4.0, add_poisson_noise=False, noise_seed=1
+            pixel_scales=1.0, read_noise=4.0, noise_seed=1
         )
 
         cosmic_ray_map = np.zeros((5, 5))
@@ -537,7 +537,7 @@ class TestSimulatorImagingCI:
         )
 
         simulator = ac.ci.SimulatorImagingCI(
-            pixel_scales=1.0, read_noise=4.0, add_poisson_noise=False, noise_seed=1
+            pixel_scales=1.0, read_noise=4.0, noise_seed=1
         )
 
         cosmic_ray_map = np.zeros((5, 5))
@@ -557,7 +557,7 @@ class TestSimulatorImagingCI:
         pre_cti_image += cosmic_ray_map
 
         post_cti_image = parallel_clocker_2d.add_cti(
-            image_pre_cti=pre_cti_image, parallel_traps=traps_x2, parallel_ccd=ccd
+            pre_cti_data=pre_cti_image, parallel_traps=traps_x2, parallel_ccd=ccd
         )
 
         pre_cti_image -= cosmic_ray_map

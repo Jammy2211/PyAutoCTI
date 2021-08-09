@@ -45,7 +45,7 @@ class Clocker1D:
         self.window_stop = window_stop
         self.verbosity = verbosity
 
-    def add_cti(self, image_pre_cti, ccd=None, traps=None):
+    def add_cti(self, pre_cti_data, ccd=None, traps=None):
 
         if not any([traps]):
             raise exc.ClockerException(
@@ -56,11 +56,11 @@ class Clocker1D:
             raise exc.ClockerException("No CCD object was passed to the add_cti method")
 
         image_pre_cti_2d = array_2d.Array2D.zeros(
-            shape_native=(image_pre_cti.shape_native[0], 1),
-            pixel_scales=image_pre_cti.pixel_scales,
+            shape_native=(pre_cti_data.shape_native[0], 1),
+            pixel_scales=pre_cti_data.pixel_scales,
         ).native
 
-        image_pre_cti_2d[:, 0] = image_pre_cti
+        image_pre_cti_2d[:, 0] = pre_cti_data
 
         if ccd is not None:
             ccd = CCD(phases=[ccd], fraction_of_traps_per_phase=[1.0])
@@ -71,14 +71,14 @@ class Clocker1D:
             parallel_roe=self.roe,
             parallel_traps=traps,
             parallel_express=self.express,
-            parallel_offset=image_pre_cti.readout_offsets[0],
+            parallel_offset=pre_cti_data.readout_offsets[0],
             parallel_window_start=self.window_start,
             parallel_window_stop=self.window_stop,
             verbosity=self.verbosity,
         )
 
         return array_1d.Array1D.manual_native(
-            array=image_post_cti.flatten(), pixel_scales=image_pre_cti.pixel_scales
+            array=image_post_cti.flatten(), pixel_scales=pre_cti_data.pixel_scales
         )
 
 

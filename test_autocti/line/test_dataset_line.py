@@ -37,10 +37,7 @@ class TestSimulatorLineDataset:
     ):
 
         layout = ac.Layout1DLine(
-            shape_1d=(5,),
-            normalization=10.0,
-            region_list=[(0, 5)],
-            overscan=ac.Region1D((4, 5)),
+            shape_1d=(5,), normalization=10.0, region_list=[(0, 5)]
         )
 
         simulator = ac.SimulatorDatasetLine(pixel_scales=1.0, add_poisson_noise=False)
@@ -49,98 +46,33 @@ class TestSimulatorLineDataset:
             layout=layout, clocker=clocker_1d, traps=traps_x2, ccd=ccd
         )
 
-        print(dataset_line.data)
-
         assert dataset_line.data == pytest.approx(
             np.array([9.43, 9.43, 9.43, 9.43, 9.43]), 1e-1
         )
         assert dataset_line.layout == layout
 
+    def test__include_read_noise__is_added_after_cti(self, clocker_1d, traps_x2, ccd):
 
-#
-#     def test__include_read_noise__is_added_after_cti(
-#         self, clocker_1d, traps_x2, ccd
-#     ):
-#
-#         layout = ac.Layout1DLine(
-#             shape_2d=(3, 3),
-#             normalization=10.0,
-#             region_list=[(0, 1, 0, 3)],
-#             serial_overscan=ac.Region2D((1, 2, 1, 2)),
-#         )
-#
-#         simulator = ac.SimulatorDatasetLine(
-#             pixel_scales=1.0, read_noise=1.0, add_poisson_noise=True, noise_seed=1
-#         )
-#
-#         dataset_line = simulator.from_layout(
-#             layout=layout,
-#             clocker=clocker_1d,
-#             parallel_traps=traps_x2,
-#             parallel_ccd=ccd,
-#         )
-#
-#         data_no_noise = layout.pre_cti_data_from(
-#             shape_native=(3, 3), pixel_scales=1.0
-#         )
-#
-#         # Use seed to give us a known read noises map we'll test_autocti for
-#
-#         assert dataset_line.data - data_no_noise.native == pytest.approx(
-#             np.array(
-#                 [
-#                     [1.055, -1.180, -1.097],
-#                     [-0.780, 1.1574, -2.009],
-#                     [1.863, -0.642, 0.437],
-#                 ]
-#             ),
-#             1e-2,
-#         )
-#         assert dataset_line.layout == layout
-#
-#     def test__include_cosmics__is_added_to_data_and_trailed(
-#         self, clocker_1d, traps_x2, ccd
-#     ):
-#
-#         layout = ac.Layout1DLine(
-#             shape_2d=(5, 5),
-#             normalization=10.0,
-#             region_list=[(0, 1, 0, 5)],
-#             serial_overscan=ac.Region2D((1, 2, 1, 2)),
-#         )
-#
-#         simulator = ac.SimulatorDatasetLine(pixel_scales=1.0, add_poisson_noise=False)
-#
-#         cosmic_ray_map = np.zeros((5, 5))
-#         cosmic_ray_map[2, 2] = 100.0
-#
-#         dataset_line = simulator.from_layout(
-#             layout=layout,
-#             clocker=clocker_1d,
-#             parallel_traps=traps_x2,
-#             parallel_ccd=ccd,
-#             cosmic_ray_map=cosmic_ray_map,
-#         )
-#
-#         assert dataset_line.data[0, 0:5] == pytest.approx(
-#             np.array([9.43, 9.43, 9.43, 9.43, 9.43]), 1e-1
-#         )
-#         assert 0.0 < dataset_line.data[1, 1] < 100.0
-#         assert dataset_line.data[2, 2] > 94.0
-#         assert (dataset_line.data[1, 1:4] > 0.0).all()
-#         assert (
-#             dataset_line.cosmic_ray_map
-#             == np.array(
-#                 [
-#                     [0.0, 0.0, 0.0, 0.0, 0.0],
-#                     [0.0, 0.0, 0.0, 0.0, 0.0],
-#                     [0.0, 0.0, 100.0, 0.0, 0.0],
-#                     [0.0, 0.0, 0.0, 0.0, 0.0],
-#                     [0.0, 0.0, 0.0, 0.0, 0.0],
-#                 ]
-#             )
-#         ).all()
-#         assert dataset_line.layout == layout
+        layout = ac.Layout1DLine(
+            shape_1d=(5,), normalization=10.0, region_list=[(0, 5)]
+        )
+
+        simulator = ac.SimulatorDatasetLine(
+            pixel_scales=1.0, read_noise=1.0, add_poisson_noise=False, noise_seed=1
+        )
+
+        dataset_line = simulator.from_layout(
+            layout=layout, clocker=clocker_1d, traps=traps_x2, ccd=ccd
+        )
+
+        # Use seed to give us a known read noises map we'll test_autocti for
+
+        assert dataset_line.data == pytest.approx(
+            np.array([11.05513, 9.36790, 9.47129, 8.92700, 10.8654]), 1e-2
+        )
+        assert dataset_line.layout == layout
+
+
 #
 #     def test__from_pre_cti_data(self, clocker_1d, traps_x2, ccd):
 #

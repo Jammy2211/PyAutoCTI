@@ -58,7 +58,7 @@ class AnalysisDatasetLine(abstract_search.Analysis):
             traps = None
 
         post_cti_line = self.clocker.add_cti(
-            image_pre_cti=self.dataset_line.pre_cti_line,
+            pre_cti_data=self.dataset_line.pre_cti_line,
             traps=traps,
             ccd=instance.cti.parallel_ccd,
         )
@@ -77,7 +77,7 @@ class AnalysisDatasetLine(abstract_search.Analysis):
             traps = None
 
         post_cti_line = self.clocker.add_cti(
-            image_pre_cti=dataset_line.pre_cti_line,
+            pre_cti_data=dataset_line.pre_cti_line,
             traps=traps,
             ccd=instance.cti.parallel_ccd,
         )
@@ -154,7 +154,7 @@ class AnalysisImagingCI(abstract_search.Analysis):
             serial_traps = None
 
         post_cti_image = self.clocker.add_cti(
-            image_pre_cti=self.dataset_ci.pre_cti_image,
+            pre_cti_data=self.dataset_ci.pre_cti_image,
             parallel_traps=parallel_traps,
             parallel_ccd=instance.cti.parallel_ccd,
             serial_traps=serial_traps,
@@ -211,7 +211,7 @@ class AnalysisImagingCI(abstract_search.Analysis):
             serial_traps = None
 
         post_cti_image = self.clocker.add_cti(
-            image_pre_cti=imaging_ci.pre_cti_image,
+            pre_cti_data=imaging_ci.pre_cti_image,
             parallel_traps=parallel_traps,
             parallel_ccd=instance.cti.parallel_ccd,
             serial_traps=serial_traps,

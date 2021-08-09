@@ -110,7 +110,7 @@ class TestClocker:
         clocker_1d = ac.Clocker1D(express=3, roe=roe)
 
         image_via_clocker = clocker_1d.add_cti(
-            image_pre_cti=arr_1d, traps=traps, ccd=ccd_phase
+            pre_cti_data=arr_1d, traps=traps, ccd=ccd_phase
         )
 
         assert image_via_arctic.flatten() == pytest.approx(image_via_clocker, 1.0e-4)
