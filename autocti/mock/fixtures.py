@@ -46,7 +46,9 @@ def make_clocker_1d():
 
 
 def make_parallel_clocker_2d():
-    return Clocker2D(parallel_express=2, parallel_roe=roe.ROE(empty_traps_for_first_transfers=True))
+    return Clocker2D(
+        parallel_express=2, parallel_roe=roe.ROE(empty_traps_for_first_transfers=True)
+    )
 
 
 def make_serial_clocker_2d():

@@ -125,8 +125,6 @@ class ImagingCI(imaging.Imaging):
 
     def apply_settings(self, settings):
 
-        imaging_full = copy.deepcopy(self)
-
         if settings.parallel_columns is not None:
 
             imaging = self.parallel_calibration_imaging_from(
@@ -153,7 +151,7 @@ class ImagingCI(imaging.Imaging):
 
         imaging = imaging.apply_mask(mask=mask)
 
-        imaging.imaging_full = imaging_full
+        imaging.imaging_full = self.imaging_full
 
         return imaging
 

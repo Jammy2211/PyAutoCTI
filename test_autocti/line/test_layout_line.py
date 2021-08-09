@@ -154,19 +154,19 @@ class TestExtractorTrails:
 class TestAbstractLayout1DLine:
     def test__trail_size_to_array_edge(self):
 
-        layout = ac.Layout1DLineUniform(
+        layout = ac.Layout1DLine(
             shape_1d=(5,), normalization=1.0, region_list=[ac.Region1D(region=(0, 3))]
         )
 
         assert layout.trail_size_to_array_edge == 2
 
-        layout = ac.Layout1DLineUniform(
+        layout = ac.Layout1DLine(
             shape_1d=(7,), normalization=1.0, region_list=[ac.Region1D(region=(0, 3))]
         )
 
         assert layout.trail_size_to_array_edge == 4
 
-        layout = ac.Layout1DLineUniform(
+        layout = ac.Layout1DLine(
             shape_1d=(15,),
             normalization=1.0,
             region_list=[
@@ -178,7 +178,7 @@ class TestAbstractLayout1DLine:
 
         assert layout.trail_size_to_array_edge == 1
 
-        layout = ac.Layout1DLineUniform(
+        layout = ac.Layout1DLine(
             shape_1d=(20,),
             normalization=1.0,
             region_list=[
@@ -192,7 +192,7 @@ class TestAbstractLayout1DLine:
 
     def test__array_1d_of_regions_from(self):
 
-        layout = ac.Layout1DLineUniform(
+        layout = ac.Layout1DLine(
             shape_1d=(5,), normalization=10.0, region_list=[(0, 3)]
         )
 
@@ -202,7 +202,7 @@ class TestAbstractLayout1DLine:
 
         assert (array_extracted == np.array([0.0, 1.0, 2.0, 0.0])).all()
 
-        layout = ac.Layout1DLineUniform(
+        layout = ac.Layout1DLine(
             shape_1d=(5,), normalization=10.0, region_list=[(0, 1), (2, 3)]
         )
 
@@ -212,7 +212,7 @@ class TestAbstractLayout1DLine:
 
     def test__array_1d_of_non_regions_from(self):
 
-        layout = ac.Layout1DLineUniform(
+        layout = ac.Layout1DLine(
             shape_1d=(5,), normalization=10.0, region_list=[(0, 3)]
         )
 
@@ -222,7 +222,7 @@ class TestAbstractLayout1DLine:
 
         assert (array_extracted == np.array([0.0, 0.0, 0.0, 3.0])).all()
 
-        layout = ac.Layout1DLineUniform(
+        layout = ac.Layout1DLine(
             shape_1d=(5,), normalization=10.0, region_list=[(0, 1), (3, 4)]
         )
 
@@ -232,7 +232,7 @@ class TestAbstractLayout1DLine:
 
     def test__array_1d_of_trails_from(self):
 
-        layout = ac.Layout1DLineUniform(
+        layout = ac.Layout1DLine(
             shape_1d=(4,),
             normalization=10.0,
             region_list=[(0, 2)],
@@ -246,7 +246,7 @@ class TestAbstractLayout1DLine:
 
         assert (array_extracted == np.array([0.0, 0.0, 2.0, 3.0])).all()
 
-        layout = ac.Layout1DLineUniform(
+        layout = ac.Layout1DLine(
             shape_1d=(5,),
             normalization=10.0,
             region_list=[(0, 2)],
@@ -258,7 +258,7 @@ class TestAbstractLayout1DLine:
 
         assert (array_extracted == np.array([0.0, 0.0, 0.0, 0.0])).all()
 
-        layout = ac.Layout1DLineUniform(
+        layout = ac.Layout1DLine(
             shape_1d=(4,),
             normalization=10.0,
             region_list=[(0, 1), (2, 3)],
@@ -272,7 +272,7 @@ class TestAbstractLayout1DLine:
 
     def test__array_1d_of_edges_and_trails_from(self, array):
 
-        layout = ac.Layout1DLineUniform(
+        layout = ac.Layout1DLine(
             shape_1d=(10,), normalization=10.0, region_list=[(0, 4)]
         )
 
@@ -285,7 +285,7 @@ class TestAbstractLayout1DLine:
             == np.array([0.0, 1.0, 0.0, 0.0, 4.0, 5.0, 0.0, 0.0, 0.0, 0.0])
         ).all()
 
-        layout = ac.Layout1DLineUniform(
+        layout = ac.Layout1DLine(
             shape_1d=(10,), normalization=10.0, region_list=[(0, 1), (3, 4)]
         )
 
@@ -302,10 +302,72 @@ class TestAbstractLayout1DLine:
 class TestLayout1DCIUniform(object):
     def test__pre_cti_image_from(self):
 
-        layout = ac.Layout1DLineUniform(
+        layout = ac.Layout1DLine(
             shape_1d=(5,), normalization=10.0, region_list=[(0, 2)]
         )
 
         pre_cti_image = layout.pre_cti_image_from(shape_native=(3,), pixel_scales=1.0)
 
         assert (pre_cti_image.native == np.array([10.0, 10.0, 0.0])).all()
+
+
+class TestRegionLineFrom:
+    def test__region_list_ci_from(self):
+
+        region_list_ci = region_list_ci_from(
+            injection_on=10,
+            injection_off=10,
+            injection_total=1,
+            parallel_size=10,
+            serial_prescan_size=1,
+            serial_size=10,
+            serial_overscan_size=1,
+            roe_corner=(1, 0),
+        )
+
+        assert region_list_ci == [(0, 10, 1, 9)]
+
+        region_list_ci = region_list_ci_from(
+            injection_on=10,
+            injection_off=10,
+            injection_total=2,
+            parallel_size=30,
+            serial_prescan_size=2,
+            serial_size=11,
+            serial_overscan_size=4,
+            roe_corner=(1, 0),
+        )
+
+        assert region_list_ci == [(0, 10, 2, 7), (20, 30, 2, 7)]
+
+        region_list_ci = region_list_ci_from(
+            injection_on=5,
+            injection_off=10,
+            injection_total=3,
+            parallel_size=35,
+            serial_prescan_size=2,
+            serial_size=11,
+            serial_overscan_size=4,
+            roe_corner=(1, 0),
+        )
+
+        assert region_list_ci == [(0, 5, 2, 7), (15, 20, 2, 7), (30, 35, 2, 7)]
+
+        region_list_ci = region_list_ci_from(
+            injection_on=200,
+            injection_off=200,
+            injection_total=5,
+            parallel_size=2000,
+            serial_prescan_size=51,
+            serial_size=2128,
+            serial_overscan_size=29,
+            roe_corner=(1, 0),
+        )
+
+        assert region_list_ci == [
+            (0, 200, 51, 2099),
+            (400, 600, 51, 2099),
+            (800, 1000, 51, 2099),
+            (1200, 1400, 51, 2099),
+            (1600, 1800, 51, 2099),
+        ]

@@ -1579,7 +1579,7 @@ class Layout2DCI(AbstractLayout2DCI):
             injection_on=injection_on,
             injection_off=injection_off,
             injection_total=injection_total,
-            roe_corner=layout.original_roe_corner
+            roe_corner=layout.original_roe_corner,
         )
 
         normalization = ext_header["INJNORM"]
@@ -1591,8 +1591,7 @@ class Layout2DCI(AbstractLayout2DCI):
             original_roe_corner=layout.original_roe_corner,
             parallel_overscan=layout.parallel_overscan,
             serial_prescan=layout.serial_prescan,
-            serial_overscan=layout.serial_overscan
-
+            serial_overscan=layout.serial_overscan,
         )
 
     def pre_cti_image_from(self, shape_native, pixel_scales):

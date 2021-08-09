@@ -281,27 +281,6 @@ class AbstractLayout1DLine(lo.Layout1D):
 
         self.normalization = normalization
 
-    def after_extraction(self, extraction_region):
-
-        layout = super().after_extraction(extraction_region=extraction_region)
-
-        region_list = [
-            layout_util.region_after_extraction(
-                original_region=region, extraction_region=extraction_region
-            )
-            for region in self.region_list
-        ]
-
-        return self.__class__(
-            original_roe_corner=self.original_roe_corner,
-            shape_1d=self.shape_1d,
-            normalization=self.normalization,
-            region_list=region_list,
-            parallel_overscan=layout.parallel_overscan,
-            serial_prescan=layout.serial_prescan,
-            serial_overscan=layout.serial_overscan,
-        )
-
     @property
     def pixels_between_regions(self):
         return [
@@ -590,7 +569,7 @@ class AbstractLayout1DLine(lo.Layout1D):
             )
 
 
-class Layout1DLineUniform(AbstractLayout1DLine):
+class Layout1DLine(AbstractLayout1DLine):
     """
     A uniform charge injection layout_ci, which is defined by the regions it appears on the charge injection \
     array and its normalization.
@@ -614,63 +593,3 @@ class Layout1DLineUniform(AbstractLayout1DLine):
         return array_1d.Array1D.manual_native(
             array=pre_cti_image, pixel_scales=pixel_scales
         )
-
-
-def regions_line_from(
-    injection_on: int,
-    injection_off: int,
-    injection_total: int,
-    parallel_size: int,
-    serial_size: int,
-    serial_prescan_size: int,
-    serial_overscan_size: int,
-    roe_corner: Tuple[int, int],
-):
-
-    regions_line = []
-
-    injection_start_count = 0
-
-    for index in range(injection_total):
-
-        if roe_corner == (0, 0):
-
-            Line_region = (
-                parallel_size - (injection_start_count + injection_on),
-                parallel_size - injection_start_count,
-                serial_prescan_size,
-                serial_size - serial_overscan_size,
-            )
-
-        elif roe_corner == (1, 0):
-
-            Line_region = (
-                injection_start_count,
-                injection_start_count + injection_on,
-                serial_prescan_size,
-                serial_size - serial_overscan_size,
-            )
-
-        elif roe_corner == (0, 1):
-
-            Line_region = (
-                parallel_size - (injection_start_count + injection_on),
-                parallel_size - injection_start_count,
-                serial_overscan_size,
-                serial_size - serial_prescan_size,
-            )
-
-        elif roe_corner == (1, 1):
-
-            Line_region = (
-                injection_start_count,
-                injection_start_count + injection_on,
-                serial_overscan_size,
-                serial_size - serial_prescan_size,
-            )
-
-        regions_line.append(Line_region)
-
-        injection_start_count += injection_on + injection_off
-
-    return regions_line

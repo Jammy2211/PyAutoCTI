@@ -30,7 +30,7 @@ from .mask.mask_2d import Mask2D
 from .mask.mask_2d import SettingsMask2D
 from .line.layout_line import Extractor1DFrontEdge
 from .line.layout_line import Extractor1DTrails
-from .line.layout_line import Layout1DLineUniform
+from .line.layout_line import Layout1DLine
 from .line.dataset_line import SettingsDatasetLine
 from .line.dataset_line import DatasetLine
 from .line.fit_line import FitDatasetLine

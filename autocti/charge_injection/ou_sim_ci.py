@@ -41,7 +41,7 @@ def charge_injection_array_from(
     serial_size=2128,
     serial_overscan_size=29,
     pixel_scales=0.1,
-    use_non_uniform_pattern=True
+    use_non_uniform_pattern=True,
 ):
     """
     Returns a charge injection line image suitable for OU-SIM to run through the ElVIS simulator.
