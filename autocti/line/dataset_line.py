@@ -1,17 +1,18 @@
+import numpy as np
+from typing import Union, Optional, List, Tuple
+
 from autoarray.mask import mask_1d
-from autoarray.structures.arrays.one_d import array_1d
 from autoarray.dataset import abstract_dataset
 
 from arcticpy.src.ccd import CCDPhase
 from arcticpy.src.traps import AbstractTrap
+from autoarray.structures.arrays.one_d.array_1d import array_1d_util
 from autoarray.structures.arrays.one_d.array_1d import Array1D
 from autoarray.dataset import preprocess
 from autoarray.dataset.imaging import AbstractSimulatorImaging
 from autocti.line.layout_line import Layout1DLine
 from autocti.util.clocker import Clocker1D
-
-from typing import Union, Optional, List, Tuple
-
+from autocti import exc
 
 class SettingsDatasetLine(abstract_dataset.AbstractSettingsDataset):
 
@@ -21,9 +22,9 @@ class SettingsDatasetLine(abstract_dataset.AbstractSettingsDataset):
 class DatasetLine(abstract_dataset.AbstractDataset):
     def __init__(
         self,
-        data: array_1d.Array1D,
-        noise_map: array_1d.Array1D,
-        pre_cti_line: array_1d.Array1D,
+        data: Array1D,
+        noise_map: Array1D,
+        pre_cti_line: Array1D,
         layout: Layout1DLine,
         settings: SettingsDatasetLine = SettingsDatasetLine(),
     ):
@@ -37,8 +38,8 @@ class DatasetLine(abstract_dataset.AbstractDataset):
 
     def apply_mask(self, mask: mask_1d.Mask1D) -> "DatasetLine":
 
-        data = array_1d.Array1D.manual_mask(array=self.data, mask=mask).native
-        noise_map = array_1d.Array1D.manual_mask(array=self.noise_map, mask=mask).native
+        data = Array1D.manual_mask(array=self.data, mask=mask).native
+        noise_map = Array1D.manual_mask(array=self.noise_map, mask=mask).native
 
         return DatasetLine(
             data=data,
@@ -51,6 +52,75 @@ class DatasetLine(abstract_dataset.AbstractDataset):
 
         return self
 
+    @classmethod
+    def from_fits(
+        cls,
+        layout,
+        data_path,
+        pixel_scales,
+        data_hdu=0,
+        noise_map_path=None,
+        noise_map_hdu=0,
+        noise_map_from_single_value=None,
+        pre_cti_data_path=None,
+        pre_cti_data_hdu=0,
+    ):
+
+        data = Array1D.from_fits(
+            file_path=data_path, hdu=data_hdu, pixel_scales=pixel_scales
+        )
+
+        if noise_map_path is not None:
+            noise_map = array_1d_util.numpy_array_1d_from_fits(
+                file_path=noise_map_path, hdu=noise_map_hdu
+            )
+        else:
+            noise_map = np.ones(data.shape_native) * noise_map_from_single_value
+
+        noise_map = Array1D.manual_native(array=noise_map, pixel_scales=pixel_scales)
+
+        if pre_cti_data_path is not None:
+            pre_cti_data = Array1D.from_fits(
+                file_path=pre_cti_data_path,
+                hdu=pre_cti_data_hdu,
+                pixel_scales=pixel_scales,
+            )
+        else:
+            if isinstance(layout, Layout1DLine):
+                pre_cti_data = layout.pre_cti_data_from(
+                    shape_native=data.shape_native, pixel_scales=pixel_scales
+                )
+            else:
+                raise exc.LayoutException(
+                    "Cannot estimate pre_cti_data data from non-uniform charge injectiono pattern"
+                )
+
+        pre_cti_data = Array1D.manual_native(
+            array=pre_cti_data.native, pixel_scales=pixel_scales
+        )
+
+        return DatasetLine(
+            data=data,
+            noise_map=noise_map,
+            pre_cti_line=pre_cti_data,
+            layout=layout,
+        )
+
+    def output_to_fits(
+        self,
+        data_path,
+        noise_map_path=None,
+        pre_cti_data_path=None,
+        cosmic_ray_map_path=None,
+        overwrite=False,
+    ):
+
+        self.data.output_to_fits(file_path=data_path, overwrite=overwrite)
+        self.noise_map.output_to_fits(file_path=noise_map_path, overwrite=overwrite)
+        self.pre_cti_data.output_to_fits(
+            file_path=pre_cti_data_path, overwrite=overwrite
+        )
+
 
 class SimulatorDatasetLine(AbstractSimulatorImaging):
     def __init__(
@@ -61,7 +131,7 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
         noise_if_add_noise_false: float = 0.1,
         noise_seed: int = -1,
     ):
-        """A class representing a Imaging observation, using the shape of the image, the pixel scale,
+        """A class representing a Imaging observation, using the shape of the data, the pixel scale,
         psf, exposure time, etc.
 
         Parameters
@@ -87,26 +157,26 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
         traps: Optional[List[AbstractTrap]] = None,
         ccd: Optional[CCDPhase] = None,
     ) -> DatasetLine:
-        """Simulate a charge injection image, including effects like noises.
+        """Simulate a charge injection data, including effects like noises.
 
         Parameters
         -----------
-        pre_cti_image
+        pre_cti_data
         cosmic_ray_map
-            The dimensions of the output simulated charge injection image.
+            The dimensions of the output simulated charge injection data.
         frame_geometry : CIQuadGeometry
-            The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
+            The quadrant geometry of the simulated data, defining where the parallel / serial overscans are and \
             therefore the direction of clocking and rotations before input into the cti algorithm.
         layout : layout_ci.Layout1DLineSimulate
-            The charge injection layout_ci (regions, normalization, etc.) of the charge injection image.
+            The charge injection layout_ci (regions, normalization, etc.) of the charge injection data.
         cti_params : ArcticParams.ArcticParams
             The CTI model parameters (trap density, trap release_timescales etc.).
         clocker : ArcticSettings.ArcticSettings
             The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
         read_noise : None or float
-            The FWHM of the Gaussian read-noises added to the image.
+            The FWHM of the Gaussian read-noises added to the data.
         noise_seed : int
-            Seed for the read-noises added to the image.
+            Seed for the read-noises added to the data.
         """
 
         pre_cti_data = layout.pre_cti_data_from(

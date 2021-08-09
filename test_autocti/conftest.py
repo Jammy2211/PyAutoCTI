@@ -92,6 +92,11 @@ def make_mask_2d_7x7_unmasked():
 ### LINES ###
 
 
+@pytest.fixture(name="layout_7")
+def make_layout_7():
+    return fixtures.make_layout_7()
+
+
 @pytest.fixture(name="data_7")
 def make_data_7():
     return fixtures.make_data_7()
@@ -115,11 +120,6 @@ def make_dataset_line_7():
 ### FRAMES ###
 
 
-@pytest.fixture(name="scans_7x7")
-def make_scans_7x7():
-    return fixtures.make_scans_7x7()
-
-
 @pytest.fixture(name="image_7x7_native")
 def make_image_7x7_native():
     return fixtures.make_image_7x7_native()
@@ -136,14 +136,6 @@ def make_noise_map_7x7_native():
 @pytest.fixture(name="imaging_7x7_frame")
 def make_imaging_7x7_frame():
     return fixtures.make_imaging_7x7_frame()
-
-
-### LINEDATASET ###
-
-
-@pytest.fixture(name="line_dataset_7")
-def make_line_dataset_7():
-    return fixtures.make_line_dataset_7()
 
 
 ### CHARGE INJECTION FRAMES ###
