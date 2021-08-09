@@ -134,17 +134,17 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
             pre_cti_data=pre_cti_data.native, traps=traps, ccd=ccd
         )
 
-        return self.from_post_cti_image(
-            post_cti_image=post_cti_data, pre_cti_image=pre_cti_data, layout=layout
+        return self.from_post_cti_data(
+            post_cti_data=post_cti_data, pre_cti_data=pre_cti_data, layout=layout
         )
 
-    def from_post_cti_image(
-        self, post_cti_image: Array1D, pre_cti_image: Array1D, layout: Layout1DLine
+    def from_post_cti_data(
+        self, post_cti_data: Array1D, pre_cti_data: Array1D, layout: Layout1DLine
     ) -> DatasetLine:
 
         if self.read_noise is not None:
             data = preprocess.data_with_gaussian_noise_added(
-                data=post_cti_image, sigma=self.read_noise, seed=self.noise_seed
+                data=post_cti_data, sigma=self.read_noise, seed=self.noise_seed
             )
             noise_map = (
                 self.read_noise
@@ -153,7 +153,7 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
                 ).native
             )
         else:
-            data = post_cti_image
+            data = post_cti_data
             noise_map = Array1D.full(
                 fill_value=self.noise_if_add_noise_false,
                 shape_native=layout.shape_1d,
@@ -168,7 +168,7 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
                 array=noise_map, pixel_scales=self.pixel_scales
             ),
             pre_cti_line=Array1D.manual_native(
-                array=pre_cti_image.native, pixel_scales=self.pixel_scales
+                array=pre_cti_data.native, pixel_scales=self.pixel_scales
             ),
             layout=layout,
         )
