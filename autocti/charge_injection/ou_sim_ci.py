@@ -173,7 +173,7 @@ def add_cti_to_pre_cti_image(pre_cti_image, ccd_id, quadrant_id):
     )
 
     post_cti_image = clocker.add_cti(
-        image_pre_cti=pre_cti_image,
+        pre_cti_data=pre_cti_image,
         parallel_traps=[parallel_trap_0, parallel_trap_1],
         parallel_ccd=parallel_ccd,
         serial_traps=[serial_trap_0, serial_trap_1, serial_trap_2],
@@ -216,7 +216,7 @@ def add_cti_simple_to_pre_cti_image(pre_cti_image, ccd_id, quadrant_id):
     )
 
     post_cti_image = clocker.add_cti(
-        image_pre_cti=pre_cti_image,
+        pre_cti_data=pre_cti_image,
         parallel_traps=[parallel_trap_0],
         parallel_ccd=parallel_ccd,
     )

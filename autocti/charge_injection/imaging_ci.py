@@ -446,7 +446,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
             pre_cti_image += cosmic_ray_map
 
         post_cti_image = clocker.add_cti(
-            image_pre_cti=pre_cti_image.native,
+            pre_cti_data=pre_cti_image.native,
             parallel_traps=parallel_traps,
             parallel_ccd=parallel_ccd,
             serial_traps=serial_traps,

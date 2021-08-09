@@ -11,9 +11,8 @@ fits_path = path.join(
     "{}".format(path.dirname(path.realpath(__file__))), "files", "arrays"
 )
 
-def create_fits(
-    fits_path, shape_1d=(7,)
-):
+
+def create_fits(fits_path, shape_1d=(7,)):
 
     if path.exists(fits_path):
         shutil.rmtree(fits_path)
@@ -21,22 +20,23 @@ def create_fits(
     os.makedirs(fits_path)
 
     hdu_list = fits.HDUList()
-    hdu_list.append(fits.ImageHDU(np.ones(shape_1d,)))
+    hdu_list.append(fits.ImageHDU(np.ones(shape_1d)))
     hdu_list.writeto(path.join(fits_path, "3_ones.fits"))
 
     hdu_list = fits.HDUList()
-    hdu_list.append(fits.ImageHDU(2.0*np.ones(shape_1d,)))
+    hdu_list.append(fits.ImageHDU(2.0 * np.ones(shape_1d)))
     hdu_list.writeto(path.join(fits_path, "3_twos.fits"))
 
     hdu_list = fits.HDUList()
-    hdu_list.append(fits.ImageHDU(3.0*np.ones(shape_1d,)))
+    hdu_list.append(fits.ImageHDU(3.0 * np.ones(shape_1d)))
     hdu_list.writeto(path.join(fits_path, "3_threes.fits"))
 
     hdu_list = fits.HDUList()
-    hdu_list.append(fits.ImageHDU(np.ones(shape_1d,)))
-    hdu_list.append(fits.ImageHDU(2.0*np.ones(shape_1d,)))
-    hdu_list.append(fits.ImageHDU(3.0*np.ones(shape_1d,)))
+    hdu_list.append(fits.ImageHDU(np.ones(shape_1d)))
+    hdu_list.append(fits.ImageHDU(2.0 * np.ones(shape_1d)))
+    hdu_list.append(fits.ImageHDU(3.0 * np.ones(shape_1d)))
     hdu_list.writeto(path.join(fits_path, "3_multiple_hdu.fits"))
+
 
 def clean_fits(fits_path):
 
@@ -72,7 +72,6 @@ class TestApplyMask:
 
 
 class TestDatasetLine:
-    
     def test__from_fits__load_all_data_components__has_correct_attributes(
         self, layout_7
     ):
@@ -170,46 +169,50 @@ class TestDatasetLine:
 
         clean_fits(fits_path=fits_path)
 
-    # def test__output_to_fits___all_arrays(self, layout_7):
-    #
-    #     imaging = ac.DatasetLine.from_fits(
-    #         pixel_scales=1.0,
-    #         layout=layout_7,
-    #         data_path=path.join(fits_path, "3x3_ones.fits"),
-    #         data_hdu=0,
-    #         noise_map_path=path.join(fits_path, "3x3_twos.fits"),
-    #         noise_map_hdu=0,
-    #         pre_cti_data_path=path.join(fits_path, "3x3_threes.fits"),
-    #         pre_cti_data_hdu=0,
-    #     )
-    #
-    #     output_data_dir = path.join(fits_path, "output_test")
-    #
-    #     if path.exists(output_data_dir):
-    #         shutil.rmtree(output_data_dir)
-    #
-    #     os.makedirs(output_data_dir)
-    #
-    #     imaging.output_to_fits(
-    #         data_path=path.join(output_data_dir, "data.fits"),
-    #         noise_map_path=path.join(output_data_dir, "noise_map.fits"),
-    #         pre_cti_data_path=path.join(output_data_dir, "pre_cti_data.fits"),
-    #     )
-    #
-    #     imaging = ac.DatasetLine.from_fits(
-    #         pixel_scales=1.0,
-    #         layout=layout_7,
-    #         data_path=path.join(output_data_dir, "data.fits"),
-    #         data_hdu=0,
-    #         noise_map_path=path.join(output_data_dir, "noise_map.fits"),
-    #         noise_map_hdu=0,
-    #         pre_cti_data_path=path.join(output_data_dir, "pre_cti_data.fits"),
-    #         pre_cti_data_hdu=0,
-    #     )
-    #
-    #     assert (imaging.data.native == np.ones((3, 3))).all()
-    #     assert (imaging.noise_map.native == 2.0 * np.ones((3, 3))).all()
-    #     assert (imaging.pre_cti_data.native == 3.0 * np.ones((3, 3))).all()
+    def test__output_to_fits___all_arrays(self, layout_7):
+
+        create_fits(fits_path=fits_path)
+
+        imaging = ac.DatasetLine.from_fits(
+            pixel_scales=1.0,
+            layout=layout_7,
+            data_path=path.join(fits_path, "3_ones.fits"),
+            data_hdu=0,
+            noise_map_path=path.join(fits_path, "3_twos.fits"),
+            noise_map_hdu=0,
+            pre_cti_data_path=path.join(fits_path, "3_threes.fits"),
+            pre_cti_data_hdu=0,
+        )
+
+        output_data_dir = path.join(fits_path, "output_test")
+
+        if path.exists(output_data_dir):
+            shutil.rmtree(output_data_dir)
+
+        os.makedirs(output_data_dir)
+
+        imaging.output_to_fits(
+            data_path=path.join(output_data_dir, "data.fits"),
+            noise_map_path=path.join(output_data_dir, "noise_map.fits"),
+            pre_cti_data_path=path.join(output_data_dir, "pre_cti_data.fits"),
+        )
+
+        imaging = ac.DatasetLine.from_fits(
+            pixel_scales=1.0,
+            layout=layout_7,
+            data_path=path.join(output_data_dir, "data.fits"),
+            data_hdu=0,
+            noise_map_path=path.join(output_data_dir, "noise_map.fits"),
+            noise_map_hdu=0,
+            pre_cti_data_path=path.join(output_data_dir, "pre_cti_data.fits"),
+            pre_cti_data_hdu=0,
+        )
+
+        assert (imaging.data.native == np.ones((7,))).all()
+        assert (imaging.noise_map.native == 2.0 * np.ones((7,))).all()
+        assert (imaging.pre_cti_line.native == 3.0 * np.ones((7,))).all()
+
+        clean_fits(fits_path=fits_path)
 
 
 class TestSimulatorLineDataset:

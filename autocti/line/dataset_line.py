@@ -14,6 +14,7 @@ from autocti.line.layout_line import Layout1DLine
 from autocti.util.clocker import Clocker1D
 from autocti import exc
 
+
 class SettingsDatasetLine(abstract_dataset.AbstractSettingsDataset):
 
     pass
@@ -100,24 +101,16 @@ class DatasetLine(abstract_dataset.AbstractDataset):
         )
 
         return DatasetLine(
-            data=data,
-            noise_map=noise_map,
-            pre_cti_line=pre_cti_data,
-            layout=layout,
+            data=data, noise_map=noise_map, pre_cti_line=pre_cti_data, layout=layout
         )
 
     def output_to_fits(
-        self,
-        data_path,
-        noise_map_path=None,
-        pre_cti_data_path=None,
-        cosmic_ray_map_path=None,
-        overwrite=False,
+        self, data_path, noise_map_path=None, pre_cti_data_path=None, overwrite=False
     ):
 
         self.data.output_to_fits(file_path=data_path, overwrite=overwrite)
         self.noise_map.output_to_fits(file_path=noise_map_path, overwrite=overwrite)
-        self.pre_cti_data.output_to_fits(
+        self.pre_cti_line.output_to_fits(
             file_path=pre_cti_data_path, overwrite=overwrite
         )
 

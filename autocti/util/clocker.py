@@ -132,7 +132,7 @@ class Clocker2D:
 
     def add_cti(
         self,
-        image_pre_cti,
+        pre_cti_data,
         parallel_ccd=None,
         parallel_traps=None,
         serial_ccd=None,
@@ -156,26 +156,26 @@ class Clocker2D:
             serial_ccd = CCD(phases=[serial_ccd], fraction_of_traps_per_phase=[1.0])
 
         image_post_cti = cti.add_cti(
-            image=image_pre_cti,
+            image=pre_cti_data,
             parallel_ccd=parallel_ccd,
             parallel_roe=self.parallel_roe,
             parallel_traps=parallel_traps,
             parallel_express=self.parallel_express,
-            parallel_offset=image_pre_cti.readout_offsets[0],
+            parallel_offset=pre_cti_data.readout_offsets[0],
             parallel_window_start=self.parallel_window_start,
             parallel_window_stop=self.parallel_window_stop,
             serial_ccd=serial_ccd,
             serial_roe=self.serial_roe,
             serial_traps=serial_traps,
             serial_express=self.serial_express,
-            serial_offset=image_pre_cti.readout_offsets[1],
+            serial_offset=pre_cti_data.readout_offsets[1],
             serial_window_start=self.serial_window_start,
             serial_window_stop=self.serial_window_stop,
             verbosity=self.verbosity,
         )
 
         return array_2d.Array2D.manual_mask(
-            array=image_post_cti, mask=image_pre_cti.mask
+            array=image_post_cti, mask=pre_cti_data.mask
         ).native
 
     def remove_cti(

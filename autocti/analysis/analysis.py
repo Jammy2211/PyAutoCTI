@@ -1,26 +1,28 @@
+from typing import Optional, List
+
 import autofit as af
-
-from autofit.non_linear import abstract_search
-from autocti.analysis import result as res
-from autocti.charge_injection import fit_ci
-from autocti.line import fit_line
+from autofit.non_linear.abstract_search import Analysis
+from autocti.charge_injection.imaging_ci import ImagingCI
+from autocti.charge_injection.fit_ci import FitImagingCI
+from autocti.charge_injection.hyper_ci import HyperCINoiseScalar
+from autocti.line.dataset_line import DatasetLine
+from autocti.line.fit_line import FitDatasetLine
 from autocti.analysis import visualizer as vis
-from autocti.analysis import settings
+from autocti.analysis.result import ResultDataset
+from autocti.analysis.result import ResultDatasetLine
+from autocti.analysis.result import ResultImagingCI
+from autocti.analysis.settings import SettingsCTI
+from autocti.util.clocker import Clocker1D
+from autocti.util.clocker import Clocker2D
 
 
-class ConsecutivePool(object):
-    """
-    Replicates the interface of a multithread pool but performs computations consecutively
-    """
-
-    @staticmethod
-    def map(func, ls):
-        return map(func, ls)
-
-
-class AnalysisDatasetLine(abstract_search.Analysis):
+class AnalysisDatasetLine(Analysis):
     def __init__(
-        self, dataset_line, clocker, settings_cti=settings.SettingsCTI(), results=None
+        self,
+        dataset_line: DatasetLine,
+        clocker: Clocker1D,
+        settings_cti: SettingsCTI = SettingsCTI(),
+        results: List[ResultDataset] = None,
     ):
 
         super().__init__()
@@ -30,11 +32,7 @@ class AnalysisDatasetLine(abstract_search.Analysis):
         self.settings_cti = settings_cti
         self.results = results
 
-    @property
-    def dataset_line_list(self):
-        return self.dataset_line
-
-    def log_likelihood_function(self, instance):
+    def log_likelihood_function(self, instance: af.ModelInstance) -> float:
         """
         Determine the fitness of a particular model
 
@@ -44,7 +42,7 @@ class AnalysisDatasetLine(abstract_search.Analysis):
 
         Returns
         -------
-        fit: fit_ci.Fit
+        fit: Fit
             How fit the model is and the model
         """
 
@@ -63,13 +61,15 @@ class AnalysisDatasetLine(abstract_search.Analysis):
             ccd=instance.cti.parallel_ccd,
         )
 
-        fit = fit_line.FitDatasetLine(
+        fit = FitDatasetLine(
             dataset_line=self.dataset_line, post_cti_line=post_cti_line
         )
 
         return fit.log_likelihood
 
-    def fit_from_instance_and_dataset_line(self, instance, dataset_line):
+    def fit_from_instance_and_dataset_line(
+        self, instance: af.ModelInstance, dataset_line: DatasetLine
+    ) -> FitDatasetLine:
 
         if instance.cti.parallel_traps is not None:
             traps = list(instance.cti.parallel_traps)
@@ -82,17 +82,20 @@ class AnalysisDatasetLine(abstract_search.Analysis):
             ccd=instance.cti.parallel_ccd,
         )
 
-        return fit_line.FitDatasetLine(
-            dataset_line=dataset_line, post_cti_line=post_cti_line
-        )
+        return FitDatasetLine(dataset_line=dataset_line, post_cti_line=post_cti_line)
 
-    def fit_from_instance(self, instance):
+    def fit_from_instance(self, instance: af.ModelInstance) -> FitDatasetLine:
 
         return self.fit_from_instance_and_dataset_line(
             instance=instance, dataset_line=self.dataset_line
         )
 
-    def visualize(self, paths, instance, during_analysis):
+    def visualize(
+        self,
+        paths: af.DirectoryPaths,
+        instance: af.ModelInstance,
+        during_analysis: bool,
+    ):
 
         fit = self.fit_from_instance(instance=instance)
 
@@ -100,15 +103,19 @@ class AnalysisDatasetLine(abstract_search.Analysis):
 
     def make_result(
         self, samples: af.PDFSamples, model: af.Collection, search: af.NonLinearSearch
-    ):
-        return res.ResultDatasetLine(
+    ) -> ResultDatasetLine:
+        return ResultDatasetLine(
             samples=samples, model=model, analysis=self, search=search
         )
 
 
-class AnalysisImagingCI(abstract_search.Analysis):
+class AnalysisImagingCI(Analysis):
     def __init__(
-        self, dataset_ci, clocker, settings_cti=settings.SettingsCTI(), results=None
+        self,
+        dataset_ci: ImagingCI,
+        clocker: Clocker2D,
+        settings_cti=SettingsCTI(),
+        results: List[ResultDataset] = None,
     ):
 
         super().__init__()
@@ -118,11 +125,7 @@ class AnalysisImagingCI(abstract_search.Analysis):
         self.settings_cti = settings_cti
         self.results = results
 
-    @property
-    def imaging_ci_list(self):
-        return self.dataset_ci
-
-    def log_likelihood_function(self, instance):
+    def log_likelihood_function(self, instance: af.ModelInstance) -> float:
         """
         Determine the fitness of a particular model
 
@@ -132,7 +135,7 @@ class AnalysisImagingCI(abstract_search.Analysis):
 
         Returns
         -------
-        fit: fit_ci.Fit
+        fit: Fit
             How fit the model is and the model
         """
 
@@ -161,7 +164,7 @@ class AnalysisImagingCI(abstract_search.Analysis):
             serial_ccd=instance.cti.serial_ccd,
         )
 
-        fit = fit_ci.FitImagingCI(
+        fit = FitImagingCI(
             imaging=self.dataset_ci,
             post_cti_image=post_cti_image,
             hyper_noise_scalars=hyper_noise_scalars,
@@ -169,7 +172,9 @@ class AnalysisImagingCI(abstract_search.Analysis):
 
         return fit.log_likelihood
 
-    def hyper_noise_scalars_from_instance(self, instance, hyper_noise_scale=True):
+    def hyper_noise_scalars_from_instance(
+        self, instance: af.ModelInstance, hyper_noise_scale: bool = True
+    ) -> Optional[List[HyperCINoiseScalar]]:
 
         if not hasattr(instance, "hyper_noise"):
             return None
@@ -193,8 +198,11 @@ class AnalysisImagingCI(abstract_search.Analysis):
             return hyper_noise_scalars
 
     def fit_from_instance_and_imaging_ci(
-        self, instance, imaging_ci, hyper_noise_scale=True
-    ):
+        self,
+        instance: af.ModelInstance,
+        imaging_ci: ImagingCI,
+        hyper_noise_scale: bool = True,
+    ) -> FitImagingCI:
 
         hyper_noise_scalars = self.hyper_noise_scalars_from_instance(
             instance=instance, hyper_noise_scale=hyper_noise_scale
@@ -218,13 +226,15 @@ class AnalysisImagingCI(abstract_search.Analysis):
             serial_ccd=instance.cti.serial_ccd,
         )
 
-        return fit_ci.FitImagingCI(
+        return FitImagingCI(
             imaging=imaging_ci,
             post_cti_image=post_cti_image,
             hyper_noise_scalars=hyper_noise_scalars,
         )
 
-    def fit_from_instance(self, instance, hyper_noise_scale=True):
+    def fit_from_instance(
+        self, instance: af.ModelInstance, hyper_noise_scale: bool = True
+    ) -> FitImagingCI:
 
         return self.fit_from_instance_and_imaging_ci(
             instance=instance,
@@ -232,7 +242,9 @@ class AnalysisImagingCI(abstract_search.Analysis):
             hyper_noise_scale=hyper_noise_scale,
         )
 
-    def fit_full_dataset_from_instance(self, instance, hyper_noise_scale=True):
+    def fit_full_dataset_from_instance(
+        self, instance: af.ModelInstance, hyper_noise_scale: bool = True
+    ) -> FitImagingCI:
 
         return self.fit_from_instance_and_imaging_ci(
             instance=instance,
@@ -240,7 +252,12 @@ class AnalysisImagingCI(abstract_search.Analysis):
             hyper_noise_scale=hyper_noise_scale,
         )
 
-    def visualize(self, paths, instance, during_analysis):
+    def visualize(
+        self,
+        paths: af.DirectoryPaths,
+        instance: af.ModelInstance,
+        during_analysis: bool,
+    ):
 
         fit = self.fit_from_instance(instance=instance)
 
@@ -272,7 +289,7 @@ class AnalysisImagingCI(abstract_search.Analysis):
 
     def make_result(
         self, samples: af.PDFSamples, model: af.Collection, search: af.NonLinearSearch
-    ):
-        return res.ResultImagingCI(
+    ) -> ResultImagingCI:
+        return ResultImagingCI(
             samples=samples, model=model, analysis=self, search=search
         )
