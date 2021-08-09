@@ -412,7 +412,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
             pre_cti_image = layout.pre_cti_image_from(
                 shape_native=layout.shape_2d, pixel_scales=self.pixel_scales
             )
-        else:
+        elif isinstance(layout, Layout2DCINonUniform):
             pre_cti_image = layout.pre_cti_image_from(
                 shape_native=layout.shape_2d,
                 ci_seed=self.ci_seed,

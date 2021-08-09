@@ -84,11 +84,8 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
         self,
         layout: Layout1DLine,
         clocker: Clocker1D,
-        parallel_traps: Optional[List[AbstractTrap]] = None,
-        parallel_ccd: Optional[CCDPhase] = None,
-        serial_traps: Optional[List[AbstractTrap]] = None,
-        serial_ccd: Optional[CCDPhase] = None,
-        cosmic_ray_map: Optional[Array1D] = None,
+        traps: Optional[List[AbstractTrap]] = None,
+        ccd: Optional[CCDPhase] = None,
         name: Optional[str] = None,
     ) -> DatasetLine:
         """Simulate a charge injection image, including effects like noises.
@@ -113,26 +110,16 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
             Seed for the read-noises added to the image.
         """
 
-        if isinstance(layout, Layout1DLine):
-            pre_cti_image = layout.pre_cti_image_from(
-                shape_native=layout.shape_2d, pixel_scales=self.pixel_scales
-            )
-        else:
-            pre_cti_image = layout.pre_cti_image_from(
-                shape_native=layout.shape_2d,
-                ci_seed=self.ci_seed,
-                pixel_scales=self.pixel_scales,
-            )
+        pre_cti_image = layout.pre_cti_image_from(
+            shape_native=layout.shape_1d, pixel_scales=self.pixel_scales
+        )
 
         return self.from_pre_cti_image(
             pre_cti_image=pre_cti_image.native,
             layout=layout,
             clocker=clocker,
-            parallel_traps=parallel_traps,
-            parallel_ccd=parallel_ccd,
-            serial_traps=serial_traps,
-            serial_ccd=serial_ccd,
-            cosmic_ray_map=cosmic_ray_map,
+            traps=traps,
+            ccd=ccd,
             name=name,
         )
 
@@ -141,33 +128,19 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
         pre_cti_image: Array1D,
         layout: Layout1DLine,
         clocker: Clocker1D,
-        parallel_traps: Optional[List[AbstractTrap]] = None,
-        parallel_ccd: Optional[CCDPhase] = None,
-        serial_traps: Optional[List[AbstractTrap]] = None,
-        serial_ccd: Optional[CCDPhase] = None,
-        cosmic_ray_map: Optional[Array1D] = None,
+        traps: Optional[List[AbstractTrap]] = None,
+        ccd: Optional[CCDPhase] = None,
         name: Optional[str] = None,
     ) -> DatasetLine:
 
-        if cosmic_ray_map is not None:
-            pre_cti_image += cosmic_ray_map
-
         post_cti_image = clocker.add_cti(
-            image_pre_cti=pre_cti_image.native,
-            parallel_traps=parallel_traps,
-            parallel_ccd=parallel_ccd,
-            serial_traps=serial_traps,
-            serial_ccd=serial_ccd,
+            image_pre_cti=pre_cti_image.native, traps=traps, ccd=ccd
         )
-
-        if cosmic_ray_map is not None:
-            pre_cti_image -= cosmic_ray_map
 
         return self.from_post_cti_image(
             post_cti_image=post_cti_image,
             pre_cti_image=pre_cti_image,
             layout=layout,
-            cosmic_ray_map=cosmic_ray_map,
             name=name,
         )
 
@@ -181,38 +154,32 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
     ) -> DatasetLine:
 
         if self.read_noise is not None:
-            ci_image = preprocess.data_with_gaussian_noise_added(
+            data = preprocess.data_with_gaussian_noise_added(
                 data=post_cti_image, sigma=self.read_noise, seed=self.noise_seed
             )
-            ci_noise_map = (
+            noise_map = (
                 self.read_noise
                 * Array1D.ones(
-                    shape_native=layout.shape_2d, pixel_scales=self.pixel_scales
+                    shape_native=layout.shape_1d, pixel_scales=self.pixel_scales
                 ).native
             )
         else:
-            ci_image = post_cti_image
-            ci_noise_map = Array1D.full(
+            data = post_cti_image
+            noise_map = Array1D.full(
                 fill_value=self.noise_if_add_noise_false,
-                shape_native=layout.shape_2d,
+                shape_native=layout.shape_1d,
                 pixel_scales=self.pixel_scales,
             ).native
 
-        if cosmic_ray_map is not None:
-
-            cosmic_ray_map = Array1D.manual(
-                array=cosmic_ray_map, pixel_scales=self.pixel_scales
-            )
-
         return DatasetLine(
-            image=Array1D.manual(array=ci_image.native, pixel_scales=self.pixel_scales),
-            noise_map=Array1D.manual(
-                array=ci_noise_map, pixel_scales=self.pixel_scales
+            data=Array1D.manual_native(
+                array=data.native, pixel_scales=self.pixel_scales
             ),
-            pre_cti_image=Array1D.manual(
+            noise_map=Array1D.manual_native(
+                array=noise_map, pixel_scales=self.pixel_scales
+            ),
+            pre_cti_line=Array1D.manual_native(
                 array=pre_cti_image.native, pixel_scales=self.pixel_scales
             ),
-            cosmic_ray_map=cosmic_ray_map,
             layout=layout,
-            name=name,
         )

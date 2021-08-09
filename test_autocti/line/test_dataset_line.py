@@ -31,31 +31,32 @@ class TestApplyMask:
         assert (masked_dataset_line.pre_cti_line == dataset_line_7.pre_cti_line).all()
 
 
-# class TestSimulatorLineDataset:
-#     def test__no_instrumental_effects_input__only_cti_simulated(
-#         self, clocker_1d, traps_x2, ccd
-#     ):
-#
-#         layout = ac.Layout1DLine(
-#             shape_1d=(5,),
-#             normalization=10.0,
-#             region_list=[(0, 1)],
-#             overscan=ac.Region1D((4,5)),
-#         )
-#
-#         simulator = ac.SimulatorDatasetLine(pixel_scales=1.0, add_poisson_noise=False)
-#
-#         dataset_line = simulator.from_layout(
-#             layout=layout,
-#             clocker=clocker_1d,
-#             parallel_traps=traps_x2,
-#             parallel_ccd=ccd,
-#         )
-#
-#         assert dataset_line.data[0, 0:5] == pytest.approx(
-#             np.array([9.43, 9.43, 9.43, 9.43, 9.43]), 1e-1
-#         )
-#         assert dataset_line.layout == layout
+class TestSimulatorLineDataset:
+    def test__no_instrumental_effects_input__only_cti_simulated(
+        self, clocker_1d, traps_x2, ccd
+    ):
+
+        layout = ac.Layout1DLine(
+            shape_1d=(5,),
+            normalization=10.0,
+            region_list=[(0, 5)],
+            overscan=ac.Region1D((4, 5)),
+        )
+
+        simulator = ac.SimulatorDatasetLine(pixel_scales=1.0, add_poisson_noise=False)
+
+        dataset_line = simulator.from_layout(
+            layout=layout, clocker=clocker_1d, traps=traps_x2, ccd=ccd
+        )
+
+        print(dataset_line.data)
+
+        assert dataset_line.data == pytest.approx(
+            np.array([9.43, 9.43, 9.43, 9.43, 9.43]), 1e-1
+        )
+        assert dataset_line.layout == layout
+
+
 #
 #     def test__include_read_noise__is_added_after_cti(
 #         self, clocker_1d, traps_x2, ccd
