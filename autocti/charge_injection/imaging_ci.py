@@ -6,7 +6,9 @@ from arcticpy.src.traps import AbstractTrap
 from autoarray.structures.arrays.two_d.array_2d import Array2D
 from autoarray.structures.arrays.two_d import array_2d_util
 from autoarray.dataset import preprocess
-from autoarray.dataset import imaging
+from autoarray.dataset.imaging import SettingsImaging
+from autoarray.dataset.imaging import Imaging
+from autoarray.dataset.imaging import AbstractSimulatorImaging
 from autocti.charge_injection.layout_ci import Layout2DCI
 from autocti.charge_injection.layout_ci import Layout2DCINonUniform
 from autocti.mask import mask_2d
@@ -16,7 +18,7 @@ from autocti import exc
 from typing import Union, Optional, List, Tuple
 
 
-class SettingsImagingCI(imaging.SettingsImaging):
+class SettingsImagingCI(SettingsImaging):
     def __init__(self, parallel_columns=None, serial_rows=None):
 
         super().__init__()
@@ -59,7 +61,7 @@ class SettingsImagingCI(imaging.SettingsImaging):
         return settings
 
 
-class ImagingCI(imaging.Imaging):
+class ImagingCI(Imaging):
     def __init__(
         self,
         image: Array2D,
@@ -343,7 +345,7 @@ class ImagingCI(imaging.Imaging):
             )
 
 
-class SimulatorImagingCI(imaging.AbstractSimulatorImaging):
+class SimulatorImagingCI(AbstractSimulatorImaging):
     def __init__(
         self,
         pixel_scales: Union[float, Tuple[float, float]],

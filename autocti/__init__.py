@@ -33,6 +33,7 @@ from .line.layout_line import Extractor1DTrails
 from .line.layout_line import Layout1DLine
 from .line.dataset_line import SettingsDatasetLine
 from .line.dataset_line import DatasetLine
+from .line.dataset_line import SimulatorDatasetLine
 from .line.fit_line import FitDatasetLine
 from . import charge_injection as ci
 from .analysis.analysis import AnalysisDatasetLine

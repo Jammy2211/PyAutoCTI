@@ -8,6 +8,7 @@ from autoarray.dataset import imaging
 
 from arcticpy.src import traps, ccd, roe
 from autocti.line import dataset_line
+from autocti.line import layout_line
 from autocti.mask import mask_2d
 from autocti.util.clocker import Clocker1D
 from autocti.util.clocker import Clocker2D
@@ -95,6 +96,16 @@ def make_imaging_7x7_frame():
 ### LINE DATASET ###
 
 
+def make_layout_7():
+    return layout_line.Layout1DLine(
+        shape_1d=(7,),
+        normalization=10.0,
+        region_list=[(1, 5)],
+        prescan=(0, 1),
+        overscan=(6, 7),
+    )
+
+
 def make_data_7():
     return array_1d.Array1D.full(fill_value=1.0, shape_native=(7,), pixel_scales=1.0)
 
@@ -113,6 +124,7 @@ def make_dataset_line_7():
         data=make_data_7(),
         noise_map=make_noise_map_7(),
         pre_cti_line=make_pre_cti_line_7(),
+        layout=make_layout_7(),
     )
 
 
