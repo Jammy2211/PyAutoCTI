@@ -309,5 +309,3 @@ class TestLayout1DCIUniform(object):
         pre_cti_image = layout.pre_cti_image_from(shape_native=(3,), pixel_scales=1.0)
 
         assert (pre_cti_image.native == np.array([10.0, 10.0, 0.0])).all()
-
-
