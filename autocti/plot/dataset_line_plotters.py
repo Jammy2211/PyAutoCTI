@@ -1,3 +1,5 @@
+import numpy as np
+
 from autoarray.plot.mat_wrap import visuals as vis
 from autoarray.plot.mat_wrap import include as inc
 from autoarray.plot.mat_wrap import mat_plot as mp
@@ -38,24 +40,6 @@ class DatasetLinePlotter(abstract_plotters.AbstractPlotter):
         """
         return self.visuals_1d + self.visuals_1d.__class__()
 
-    @property
-    def visuals_with_include_2d(self) -> vis.Visuals2D:
-        """
-        Extracts from the `ImagingCI` attributes that can be plotted in 1D and return them in a `Visuals1D` object.
-
-        Only attributes with `True` entries in the `Include1D` object are extracted for plotting.
-
-        From a `ImagingCI` the following 1D attributes can be extracted for plotting:
-
-        - N/A
-
-        Returns
-        -------
-        vis.Visuals1D
-            The collection of attributes that can be plotted by a `Plotter1D` object.
-        """
-        return self.visuals_2d + self.visuals_2d.__class__()
-
     def figures_1d(
         self, line=False, noise_map=False, signal_to_noise_map=False, pre_cti_line=False
     ):
@@ -77,6 +61,7 @@ class DatasetLinePlotter(abstract_plotters.AbstractPlotter):
 
             self.mat_plot_1d.plot_yx(
                 y=self.dataset_line.data,
+                x=np.arange(len(self.dataset_line.data)),
                 visuals_1d=self.visuals_with_include_1d,
                 auto_labels=mp.AutoLabels(title="Line Dataset Line", filename="line"),
             )
@@ -85,6 +70,7 @@ class DatasetLinePlotter(abstract_plotters.AbstractPlotter):
 
             self.mat_plot_1d.plot_yx(
                 y=self.dataset_line.noise_map,
+                x=np.arange(len(self.dataset_line.noise_map)),
                 visuals_1d=self.visuals_with_include_1d,
                 auto_labels=mp.AutoLabels(
                     title="Line Dataset Noise Map", filename="noise_map"
@@ -95,6 +81,7 @@ class DatasetLinePlotter(abstract_plotters.AbstractPlotter):
 
             self.mat_plot_1d.plot_yx(
                 y=self.dataset_line.signal_to_noise_map,
+                x=np.arange(len(self.dataset_line.signal_to_noise_map)),
                 visuals_1d=self.visuals_with_include_1d,
                 auto_labels=mp.AutoLabels(
                     title="Line Dataset Signal-To-Noise Map",
@@ -106,6 +93,7 @@ class DatasetLinePlotter(abstract_plotters.AbstractPlotter):
 
             self.mat_plot_1d.plot_yx(
                 y=self.dataset_line.pre_cti_line,
+                x=np.arange(len(self.dataset_line.pre_cti_line)),
                 visuals_1d=self.visuals_with_include_1d,
                 auto_labels=mp.AutoLabels(
                     title="Line Dataset Pre CTI Line", filename="pre_cti_line"

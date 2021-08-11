@@ -3,6 +3,7 @@ from autofit.mapper.prior_model.collection import CollectionPriorModel
 from autoarray.mock.fixtures import *
 from autofit.mock.mock import MockSamples
 from autocti import charge_injection as ci
+from autocti.line.fit_line import FitDatasetLine
 from autoarray.structures.arrays.one_d import array_1d
 from autoarray.dataset import imaging
 
@@ -175,6 +176,15 @@ def make_ci_noise_scaling_map_list_7x7():
             shape_native=(7, 7), fill_value=2.0, pixel_scales=(1.0, 1.0)
         ),
     ]
+
+
+### LINE DATASET FITS ###
+
+def make_fit_line_7():
+    return FitDatasetLine(
+        dataset_line=make_dataset_line_7(),
+        post_cti_line=make_dataset_line_7().pre_cti_line + 1,
+    )
 
 
 ### CHARGE INJECTION IMAGING ###

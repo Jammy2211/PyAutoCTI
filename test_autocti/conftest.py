@@ -117,6 +117,11 @@ def make_dataset_line_7():
     return fixtures.make_dataset_line_7()
 
 
+@pytest.fixture(name="fit_line_7")
+def make_fit_line_7():
+    return fixtures.make_fit_line_7()
+
+
 ### FRAMES ###
 
 

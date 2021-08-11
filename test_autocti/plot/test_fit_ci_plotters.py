@@ -171,29 +171,6 @@ def test__fit_ci_subplots_are_output(fit_ci_7x7, plot_path, plot_patch):
         path.join(plot_path, "subplot_noise_scaling_map_list.png") in plot_patch.paths
     )
 
-    # fit_ci_plotter.subplot_residual_maps(
-    #     fits=[fit_ci_7x7],
-    #     plotter=aplt.MatPlot2D(output=aplt.Output(plot_path, format="png")),
-    # )
-    #
-    # assert path.join(plot_path, "subplot_residual_maps.png") in plot_patch.paths
-    #
-    # fit_ci_plotter.subplot_normalized_residual_maps(
-    #     fits=[fit_ci_7x7],
-    #     plotter=aplt.MatPlot2D(output=aplt.Output(plot_path, format="png")),
-    # )
-    #
-    # assert (
-    #     path.join(plot_path, "subplot_normalized_residual_maps.png") in plot_patch.paths
-    # )
-    #
-    # fit_ci_plotter.subplot_chi_squared_maps(
-    #     fits=[fit_ci_7x7],
-    #     plotter=aplt.MatPlot2D(output=aplt.Output(plot_path, format="png")),
-    # )
-    #
-    # assert path.join(plot_path, "subplot_chi_squared_maps.png") in plot_patch.paths
-
 
 # def test__fit_ci_subplots_lines_are_output(fit_ci_7x7, plot_path, plot_patch):
 #

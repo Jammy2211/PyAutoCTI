@@ -29,5 +29,5 @@ class FitDatasetLine(fit.FitDataset):
         return self.model_data
 
     @property
-    def pre_cti_image(self):
-        return self.dataset.pre_cti_image
+    def pre_cti_line(self):
+        return self.dataset.pre_cti_line
