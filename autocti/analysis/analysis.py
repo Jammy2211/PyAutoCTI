@@ -11,7 +11,7 @@ from autocti.analysis import visualizer as vis
 from autocti.analysis.result import ResultDataset
 from autocti.analysis.result import ResultDatasetLine
 from autocti.analysis.result import ResultImagingCI
-from autocti.analysis.settings import SettingsCTI
+from autocti.analysis.settings import SettingsCTI2D
 from autocti.util.clocker import Clocker1D
 from autocti.util.clocker import Clocker2D
 
@@ -21,7 +21,7 @@ class AnalysisDatasetLine(Analysis):
         self,
         dataset_line: DatasetLine,
         clocker: Clocker1D,
-        settings_cti: SettingsCTI = SettingsCTI(),
+        settings_cti: SettingsCTI2D = SettingsCTI2D(),
         results: List[ResultDataset] = None,
     ):
 
@@ -114,7 +114,7 @@ class AnalysisImagingCI(Analysis):
         self,
         dataset_ci: ImagingCI,
         clocker: Clocker2D,
-        settings_cti=SettingsCTI(),
+        settings_cti=SettingsCTI2D(),
         results: List[ResultDataset] = None,
     ):
 

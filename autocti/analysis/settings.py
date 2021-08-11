@@ -1,7 +1,37 @@
+from typing import List, Tuple
+
+from arcticpy.src.traps import AbstractTrap
 from autocti import exc
 
 
-class SettingsCTI:
+class AbstractSettingsCTI:
+    def check_total_density_within_range_of_traps(
+        self, total_density_range: Tuple[float, float], traps: List[AbstractTrap]
+    ):
+
+        if total_density_range is not None:
+
+            total_density = sum([trap.density for trap in traps])
+
+            if (
+                total_density < total_density_range[0]
+                or total_density > total_density_range[1]
+            ):
+                raise exc.PriorException
+
+
+class SettingsCTI1D(AbstractSettingsCTI):
+    def __init__(self, total_density_range=None):
+        self.total_density_range = total_density_range
+
+    def check_total_density_within_range(self, traps):
+
+        self.check_total_density_within_range_of_traps(
+            total_density_range=self.total_density_range, traps=traps
+        )
+
+
+class SettingsCTI2D(AbstractSettingsCTI):
     def __init__(
         self, parallel_total_density_range=None, serial_total_density_range=None
     ):
@@ -11,22 +41,10 @@ class SettingsCTI:
 
     def check_total_density_within_range(self, parallel_traps, serial_traps):
 
-        if self.parallel_total_density_range is not None:
+        self.check_total_density_within_range_of_traps(
+            total_density_range=self.parallel_total_density_range, traps=parallel_traps
+        )
 
-            total_density = sum([trap.density for trap in parallel_traps])
-
-            if (
-                total_density < self.parallel_total_density_range[0]
-                or total_density > self.parallel_total_density_range[1]
-            ):
-                raise exc.PriorException
-
-        if self.serial_total_density_range is not None:
-
-            total_density = sum([trap.density for trap in serial_traps])
-
-            if (
-                total_density < self.serial_total_density_range[0]
-                or total_density > self.serial_total_density_range[1]
-            ):
-                raise exc.PriorException
+        self.check_total_density_within_range_of_traps(
+            total_density_range=self.serial_total_density_range, traps=serial_traps
+        )

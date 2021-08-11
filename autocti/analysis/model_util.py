@@ -4,7 +4,18 @@ from arcticpy.src import traps
 from typing import Optional, List
 
 
-class CTI:
+class CTI1D:
+    def __init__(
+        self,
+        traps: Optional[List[traps.TrapInstantCapture]] = None,
+        ccd: Optional[ccd.CCDPhase] = None,
+    ):
+
+        self.traps = traps
+        self.ccd = ccd
+
+
+class CTI2D:
     def __init__(
         self,
         parallel_traps: Optional[List[traps.TrapInstantCapture]] = None,

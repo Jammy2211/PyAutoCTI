@@ -14,7 +14,7 @@ from autocti.mask import mask_2d
 from autocti.util.clocker import Clocker1D
 from autocti.util.clocker import Clocker2D
 from autocti.analysis import analysis
-from autocti.analysis.model_util import CTI
+from autocti.analysis.model_util import CTI2D
 
 import numpy as np
 
@@ -228,7 +228,7 @@ def make_samples_with_result():
 
     model = CollectionPriorModel(
         cti=PriorModel(
-            CTI,
+            CTI2D,
             parallel_traps=[traps.TrapInstantCapture],
             parallel_ccd=make_ccd(),
             serial_traps=[traps.TrapInstantCapture],

@@ -215,7 +215,7 @@ class TestDatasetLine:
         clean_fits(fits_path=fits_path)
 
 
-class TestSimulatorLineDataset:
+class TestSimulatorDatasetLine:
     def test__no_instrumental_effects_input__only_cti_simulated(
         self, clocker_1d, traps_x2, ccd
     ):

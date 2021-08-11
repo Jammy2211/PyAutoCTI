@@ -46,7 +46,7 @@ class TestResultDataset:
         ccd,
     ):
         model = af.CollectionPriorModel(
-            cti=af.Model(ac.CTI, parallel_traps=traps_x1, parallel_ccd=ccd)
+            cti=af.Model(ac.CTI2D, parallel_traps=traps_x1, parallel_ccd=ccd)
         )
         result = res.ResultDataset(
             samples=samples_with_result,
@@ -163,7 +163,7 @@ class TestResultImagingCI:
 
         model = af.CollectionPriorModel(
             cti=af.Model(
-                ac.CTI,
+                ac.CTI2D,
                 parallel_traps=traps_x1,
                 parallel_ccd=ccd,
                 serial_traps=traps_x1,

@@ -11,7 +11,7 @@ class TestAnalysis:
 
         model = af.CollectionPriorModel(
             cti=af.Model(
-                ac.CTI,
+                ac.CTI2D,
                 parallel_traps=[
                     ac.TrapInstantCapture(density=1.1),
                     ac.TrapInstantCapture(density=1.1),
@@ -23,7 +23,7 @@ class TestAnalysis:
         analysis = ac.AnalysisImagingCI(
             dataset_ci=imaging_ci_7x7,
             clocker=None,
-            settings_cti=ac.SettingsCTI(parallel_total_density_range=(1.0, 2.0)),
+            settings_cti=ac.SettingsCTI2D(parallel_total_density_range=(1.0, 2.0)),
         )
 
         instance = model.instance_from_prior_medians()
@@ -33,7 +33,7 @@ class TestAnalysis:
 
         model = af.CollectionPriorModel(
             cti=af.Model(
-                ac.CTI,
+                ac.CTI2D,
                 serial_traps=[
                     ac.TrapInstantCapture(density=1.1),
                     ac.TrapInstantCapture(density=1.1),
@@ -45,7 +45,7 @@ class TestAnalysis:
         analysis = ac.AnalysisImagingCI(
             dataset_ci=[imaging_ci_7x7],
             clocker=None,
-            settings_cti=ac.SettingsCTI(serial_total_density_range=(1.0, 2.0)),
+            settings_cti=ac.SettingsCTI2D(serial_total_density_range=(1.0, 2.0)),
         )
 
         instance = model.instance_from_prior_medians()
@@ -59,7 +59,7 @@ class TestAnalysisDatasetLine:
         self, dataset_line_7, pre_cti_line_7, traps_x1, ccd, clocker_1d
     ):
         model = af.CollectionPriorModel(
-            cti=af.Model(ac.CTI, parallel_traps=traps_x1, parallel_ccd=ccd),
+            cti=af.Model(ac.CTI2D, parallel_traps=traps_x1, parallel_ccd=ccd),
             hyper_noise=af.Model(ac.ci.HyperCINoiseCollection),
         )
 
@@ -78,7 +78,7 @@ class TestAnalysisDatasetLine:
     ):
 
         model = af.CollectionPriorModel(
-            cti=af.Model(ac.CTI, parallel_traps=traps_x1, parallel_ccd=ccd),
+            cti=af.Model(ac.CTI2D, parallel_traps=traps_x1, parallel_ccd=ccd),
             hyper_noise=af.Model(ac.ci.HyperCINoiseCollection),
         )
 
@@ -107,7 +107,7 @@ class TestAnalysisDatasetLine:
     ):
 
         model = af.CollectionPriorModel(
-            cti=af.Model(ac.CTI, parallel_traps=traps_x1, parallel_ccd=ccd),
+            cti=af.Model(ac.CTI2D, parallel_traps=traps_x1, parallel_ccd=ccd),
             hyper_noise=af.Model(ac.ci.HyperCINoiseCollection),
         )
 
@@ -138,7 +138,7 @@ class TestAnalysisImagingCI:
         self, imaging_ci_7x7, pre_cti_image_7x7, traps_x1, ccd, parallel_clocker_2d
     ):
         model = af.CollectionPriorModel(
-            cti=af.Model(ac.CTI, parallel_traps=traps_x1, parallel_ccd=ccd),
+            cti=af.Model(ac.CTI2D, parallel_traps=traps_x1, parallel_ccd=ccd),
             hyper_noise=af.Model(ac.ci.HyperCINoiseCollection),
         )
 
@@ -157,7 +157,7 @@ class TestAnalysisImagingCI:
     ):
 
         model = af.CollectionPriorModel(
-            cti=af.Model(ac.CTI, parallel_traps=traps_x1, parallel_ccd=ccd),
+            cti=af.Model(ac.CTI2D, parallel_traps=traps_x1, parallel_ccd=ccd),
             hyper_noise=af.Model(ac.ci.HyperCINoiseCollection),
         )
 
@@ -188,7 +188,7 @@ class TestAnalysisImagingCI:
     ):
 
         model = af.CollectionPriorModel(
-            cti=af.Model(ac.CTI, parallel_traps=traps_x1, parallel_ccd=ccd),
+            cti=af.Model(ac.CTI2D, parallel_traps=traps_x1, parallel_ccd=ccd),
             hyper_noise=af.Model(ac.ci.HyperCINoiseCollection),
         )
 
@@ -236,7 +236,7 @@ class TestAnalysisImagingCI:
     ):
 
         model = af.CollectionPriorModel(
-            cti=af.Model(ac.CTI, parallel_traps=traps_x1, parallel_ccd=ccd),
+            cti=af.Model(ac.CTI2D, parallel_traps=traps_x1, parallel_ccd=ccd),
             hyper_noise=af.Model(
                 ac.ci.HyperCINoiseCollection, regions_ci=ac.ci.HyperCINoiseScalar
             ),
