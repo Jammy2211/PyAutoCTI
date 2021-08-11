@@ -180,6 +180,7 @@ def make_ci_noise_scaling_map_list_7x7():
 
 ### LINE DATASET FITS ###
 
+
 def make_fit_line_7():
     return FitDatasetLine(
         dataset_line=make_dataset_line_7(),
