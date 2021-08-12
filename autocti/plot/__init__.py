@@ -43,7 +43,7 @@ from autoarray.plot.mat_wrap.visuals import Visuals2D
 from autoarray.plot.structure_plotters import Array2DPlotter
 from autoarray.plot.multi_plotters import MultiFigurePlotter
 
-from autocti.plot.dataset_line_plotters import DatasetLinePlotter
-from autocti.plot.fit_line_plotters import FitDatasetLinePlotter
-from autocti.plot.imaging_ci_plotters import ImagingCIPlotter
-from autocti.plot.fit_ci_plotters import FitImagingCIPlotter
+from autocti.line.plot.dataset_line_plotters import DatasetLinePlotter
+from autocti.line.plot.fit_line_plotters import FitDatasetLinePlotter
+from autocti.charge_injection.plot.imaging_ci_plotters import ImagingCIPlotter
+from autocti.charge_injection.plot.fit_ci_plotters import FitImagingCIPlotter

@@ -1,11 +1,9 @@
-import numpy as np
-
-from autocti.line import dataset_line
-from autoarray.fit import fit
+from autocti.line.dataset import DatasetLine
+from autoarray.fit.fit import FitDataset
 
 
-class FitDatasetLine(fit.FitDataset):
-    def __init__(self, dataset_line: dataset_line.DatasetLine, post_cti_data):
+class FitDatasetLine(FitDataset):
+    def __init__(self, dataset_line: DatasetLine, post_cti_data):
         """Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian
         framework.
 

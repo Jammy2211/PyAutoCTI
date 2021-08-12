@@ -2,19 +2,19 @@ from autofit.mapper.prior_model.prior_model import PriorModel
 from autofit.mapper.prior_model.collection import CollectionPriorModel
 from autoarray.mock.fixtures import *
 from autofit.mock.mock import MockSamples
-from autocti import charge_injection as ci
-from autocti.line.fit_line import FitDatasetLine
+from autocti.line.fit import FitDatasetLine
 from autoarray.structures.arrays.one_d import array_1d
 from autoarray.dataset import imaging
 
 from arcticpy.src import traps, ccd, roe
-from autocti.line import dataset_line
-from autocti.line import layout_line
+from autocti.line.dataset import DatasetLine
+from autocti.line.layout import Layout1DLine
+from autocti import charge_injection as ci
+from autocti.charge_injection.model.analysis import AnalysisImagingCI
 from autocti.mask import mask_2d
 from autocti.util.clocker import Clocker1D
 from autocti.util.clocker import Clocker2D
-from autocti.analysis import analysis
-from autocti.analysis.model_util import CTI2D
+from autocti.model.model_util import CTI2D
 
 import numpy as np
 
@@ -98,7 +98,7 @@ def make_imaging_7x7_frame():
 
 
 def make_layout_7():
-    return layout_line.Layout1DLine(
+    return Layout1DLine(
         shape_1d=(7,),
         normalization=10.0,
         region_list=[(1, 5)],
@@ -121,7 +121,7 @@ def make_pre_cti_data_7():
 
 def make_dataset_line_7():
 
-    return dataset_line.DatasetLine(
+    return DatasetLine(
         data=make_data_7(),
         noise_map=make_noise_map_7(),
         pre_cti_data=make_pre_cti_data_7(),
@@ -242,7 +242,7 @@ def make_samples_with_result():
 
 
 def make_analysis_imaging_ci_7x7():
-    return analysis.AnalysisImagingCI(
+    return AnalysisImagingCI(
         dataset_ci=make_imaging_ci_7x7(), clocker=make_parallel_clocker_2d()
     )
 

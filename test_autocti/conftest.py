@@ -1,5 +1,4 @@
 from os import path
-from os.path import dirname, realpath
 import pytest
 from matplotlib import pyplot
 from autocti.mock import fixtures

@@ -3,7 +3,7 @@ from autoarray.plot.mat_wrap import visuals as vis
 from autoarray.plot.mat_wrap import include as inc
 from autoarray.plot.mat_wrap import mat_plot as mp
 from autoarray.plot import abstract_plotters
-from autocti.line.fit_line import FitDatasetLine
+from autocti.line.fit import FitDatasetLine
 
 
 class FitDatasetLinePlotter(abstract_plotters.AbstractPlotter):
