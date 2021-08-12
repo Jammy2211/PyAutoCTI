@@ -1,13 +1,11 @@
 import numpy as np
 
-from autocti.charge_injection import imaging_ci
-from autoarray.fit import fit
+from autocti.charge_injection.imaging import ImagingCI
+from autoarray.fit.fit import FitImaging
 
 
-class FitImagingCI(fit.FitImaging):
-    def __init__(
-        self, imaging: imaging_ci.ImagingCI, post_cti_data, hyper_noise_scalars=None
-    ):
+class FitImagingCI(FitImaging):
+    def __init__(self, imaging: ImagingCI, post_cti_data, hyper_noise_scalars=None):
         """Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian
         framework.
 

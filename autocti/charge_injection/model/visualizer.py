@@ -145,7 +145,7 @@ class VisualizerImagingCI(Visualizer):
         mat_plot_2d = self.mat_plot_2d_from(subfolders="multiple_fit_cis")
 
         fit_ci_plotter_list = [
-            FitImagingCIPlotter(fit=fit_ci, mat_plot_2d=mat_plot_2d) for fit_ci in fit
+            FitImagingCIPlotter(fit=fit, mat_plot_2d=mat_plot_2d) for fit in fit
         ]
         multi_plotter = MultiFigurePlotter(plotter_list=fit_ci_plotter_list)
 
@@ -173,7 +173,7 @@ class VisualizerImagingCI(Visualizer):
         )
 
         fit_ci_plotter_list = [
-            FitImagingCIPlotter(fit=fit_ci, mat_plot_1d=mat_plot_1d) for fit_ci in fit
+            FitImagingCIPlotter(fit=fit, mat_plot_1d=mat_plot_1d) for fit in fit
         ]
         multi_plotter = MultiFigurePlotter(plotter_list=fit_ci_plotter_list)
 

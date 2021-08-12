@@ -9,8 +9,8 @@ from autoarray.dataset import preprocess
 from autoarray.dataset.imaging import SettingsImaging
 from autoarray.dataset.imaging import Imaging
 from autoarray.dataset.imaging import AbstractSimulatorImaging
-from autocti.charge_injection.layout_ci import Layout2DCI
-from autocti.charge_injection.layout_ci import Layout2DCINonUniform
+from autocti.charge_injection.layout import Layout2DCI
+from autocti.charge_injection.layout import Layout2DCINonUniform
 from autocti.mask import mask_2d
 from autocti.util.clocker import Clocker2D
 from autocti import exc

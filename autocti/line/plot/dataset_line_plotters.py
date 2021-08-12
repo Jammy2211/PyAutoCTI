@@ -1,19 +1,20 @@
 import numpy as np
 
-from autoarray.plot.mat_wrap import visuals as vis
-from autoarray.plot.mat_wrap import include as inc
-from autoarray.plot.mat_wrap import mat_plot as mp
-from autoarray.plot import abstract_plotters
+from autoarray.plot.mat_wrap.visuals import Visuals1D
+from autoarray.plot.mat_wrap.include import Include1D
+from autoarray.plot.mat_wrap.mat_plot import MatPlot1D
+from autoarray.plot.mat_wrap.mat_plot import AutoLabels
+from autoarray.plot.abstract_plotters import AbstractPlotter
 from autocti.line.dataset import DatasetLine
 
 
-class DatasetLinePlotter(abstract_plotters.AbstractPlotter):
+class DatasetLinePlotter(AbstractPlotter):
     def __init__(
         self,
         dataset_line: DatasetLine,
-        mat_plot_1d: mp.MatPlot1D = mp.MatPlot1D(),
-        visuals_1d: vis.Visuals1D = vis.Visuals1D(),
-        include_1d: inc.Include1D = inc.Include1D(),
+        mat_plot_1d: MatPlot1D = MatPlot1D(),
+        visuals_1d: Visuals1D = Visuals1D(),
+        include_1d: Include1D = Include1D(),
     ):
 
         super().__init__(
@@ -23,7 +24,7 @@ class DatasetLinePlotter(abstract_plotters.AbstractPlotter):
         self.dataset_line = dataset_line
 
     @property
-    def visuals_with_include_1d(self) -> vis.Visuals1D:
+    def visuals_with_include_1d(self) -> Visuals1D:
         """
         Extracts from the `ImagingCI` attributes that can be plotted in 1D and return them in a `Visuals1D` object.
 
@@ -35,7 +36,7 @@ class DatasetLinePlotter(abstract_plotters.AbstractPlotter):
 
         Returns
         -------
-        vis.Visuals1D
+        Visuals1D
             The collection of attributes that can be plotted by a `Plotter1D` object.
         """
         return self.visuals_1d + self.visuals_1d.__class__()
@@ -63,7 +64,7 @@ class DatasetLinePlotter(abstract_plotters.AbstractPlotter):
                 y=self.dataset_line.data,
                 x=np.arange(len(self.dataset_line.data)),
                 visuals_1d=self.visuals_with_include_1d,
-                auto_labels=mp.AutoLabels(title="Line Dataset Line", filename="data"),
+                auto_labels=AutoLabels(title="Line Dataset Line", filename="data"),
             )
 
         if noise_map:
@@ -72,7 +73,7 @@ class DatasetLinePlotter(abstract_plotters.AbstractPlotter):
                 y=self.dataset_line.noise_map,
                 x=np.arange(len(self.dataset_line.noise_map)),
                 visuals_1d=self.visuals_with_include_1d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title="Line Dataset Noise Map", filename="noise_map"
                 ),
             )
@@ -83,7 +84,7 @@ class DatasetLinePlotter(abstract_plotters.AbstractPlotter):
                 y=self.dataset_line.signal_to_noise_map,
                 x=np.arange(len(self.dataset_line.signal_to_noise_map)),
                 visuals_1d=self.visuals_with_include_1d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title="Line Dataset Signal-To-Noise Map",
                     filename="signal_to_noise_map",
                 ),
@@ -95,7 +96,7 @@ class DatasetLinePlotter(abstract_plotters.AbstractPlotter):
                 y=self.dataset_line.pre_cti_data,
                 x=np.arange(len(self.dataset_line.pre_cti_data)),
                 visuals_1d=self.visuals_with_include_1d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title="Line Dataset Pre CTI Line", filename="pre_cti_data"
                 ),
             )
@@ -114,7 +115,7 @@ class DatasetLinePlotter(abstract_plotters.AbstractPlotter):
             noise_map=noise_map,
             signal_to_noise_map=signal_to_noise_map,
             pre_cti_data=pre_cti_data,
-            auto_labels=mp.AutoLabels(filename=auto_filename),
+            auto_labels=AutoLabels(filename=auto_filename),
         )
 
     def subplot_dataset_line(self):

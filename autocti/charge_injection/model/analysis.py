@@ -2,9 +2,9 @@ from typing import Optional, List
 
 import autofit as af
 from autofit.non_linear.abstract_search import Analysis
-from autocti.charge_injection.imaging_ci import ImagingCI
-from autocti.charge_injection.fit_ci import FitImagingCI
-from autocti.charge_injection.hyper_ci import HyperCINoiseScalar
+from autocti.charge_injection.imaging import ImagingCI
+from autocti.charge_injection.fit import FitImagingCI
+from autocti.charge_injection.hyper import HyperCINoiseScalar
 from autocti.charge_injection.model.visualizer import VisualizerImagingCI
 from autocti.model.result import ResultDataset
 from autocti.charge_injection.model.result import ResultImagingCI

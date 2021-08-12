@@ -1,5 +1,5 @@
-from autoarray.structures.arrays.one_d import array_1d
-from autoarray.structures.arrays.two_d import array_2d
+from autoarray.structures.arrays.one_d.array_1d import Array1D
+from autoarray.structures.arrays.two_d.array_2d import Array2D
 from autocti import exc
 
 from arcticpy.src import cti
@@ -55,7 +55,7 @@ class Clocker1D:
         if not any([ccd]):
             raise exc.ClockerException("No CCD object was passed to the add_cti method")
 
-        image_pre_cti_2d = array_2d.Array2D.zeros(
+        image_pre_cti_2d = Array2D.zeros(
             shape_native=(pre_cti_data.shape_native[0], 1),
             pixel_scales=pre_cti_data.pixel_scales,
         ).native
@@ -77,7 +77,7 @@ class Clocker1D:
             verbosity=self.verbosity,
         )
 
-        return array_1d.Array1D.manual_native(
+        return Array1D.manual_native(
             array=image_post_cti.flatten(), pixel_scales=pre_cti_data.pixel_scales
         )
 
@@ -174,9 +174,7 @@ class Clocker2D:
             verbosity=self.verbosity,
         )
 
-        return array_2d.Array2D.manual_mask(
-            array=image_post_cti, mask=pre_cti_data.mask
-        ).native
+        return Array2D.manual_mask(array=image_post_cti, mask=pre_cti_data.mask).native
 
     def remove_cti(
         self,

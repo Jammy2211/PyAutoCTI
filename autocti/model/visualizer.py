@@ -1,8 +1,10 @@
 from os import path
 from autoconf import conf
-from autoarray.plot.mat_wrap.wrap import wrap_base
-from autoarray.plot.mat_wrap import mat_plot
-from autoarray.plot.mat_wrap import include as inc
+from autoarray.plot.mat_wrap.wrap.wrap_base import Output
+from autoarray.plot.mat_wrap.mat_plot import MatPlot1D
+from autoarray.plot.mat_wrap.mat_plot import MatPlot2D
+from autoarray.plot.mat_wrap.include import Include1D
+from autoarray.plot.mat_wrap.include import Include2D
 
 
 def setting(section, name):
@@ -18,19 +20,19 @@ class Visualizer:
 
         self.visualize_path = visualize_path
 
-        self.include_1d = inc.Include1D()
-        self.include_2d = inc.Include2D()
+        self.include_1d = Include1D()
+        self.include_2d = Include2D()
 
     def mat_plot_1d_from(self, subfolders, format="png"):
-        return mat_plot.MatPlot1D(
-            output=wrap_base.Output(
+        return MatPlot1D(
+            output=Output(
                 path=path.join(self.visualize_path, subfolders), format=format
             )
         )
 
     def mat_plot_2d_from(self, subfolders, format="png"):
-        return mat_plot.MatPlot2D(
-            output=wrap_base.Output(
+        return MatPlot2D(
+            output=Output(
                 path=path.join(self.visualize_path, subfolders), format=format
             )
         )

@@ -1,17 +1,19 @@
 import numpy as np
 from typing import Union, Optional, List, Tuple
 
-from autoarray.mask import mask_1d
-from autoarray.dataset import abstract_dataset
-
 from arcticpy.src.ccd import CCDPhase
 from arcticpy.src.traps import AbstractTrap
-from autoarray.structures.arrays.one_d.array_1d import array_1d_util
+
+from autoarray.mask import mask_1d
+from autoarray.dataset import abstract_dataset
 from autoarray.structures.arrays.one_d.array_1d import Array1D
-from autoarray.dataset import preprocess
 from autoarray.dataset.imaging import AbstractSimulatorImaging
+from autoarray.dataset import preprocess
+from autoarray.structures.arrays.one_d.array_1d import array_1d_util
+
 from autocti.line.layout import Layout1DLine
 from autocti.util.clocker import Clocker1D
+
 from autocti import exc
 
 

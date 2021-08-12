@@ -1,20 +1,24 @@
-from autoarray.plot.mat_wrap import visuals as vis
-from autoarray.plot.mat_wrap import include as inc
-from autoarray.plot.mat_wrap import mat_plot as mp
+from autoarray.plot.mat_wrap.visuals import Visuals1D
+from autoarray.plot.mat_wrap.visuals import Visuals2D
+from autoarray.plot.mat_wrap.include import Include1D
+from autoarray.plot.mat_wrap.include import Include2D
+from autoarray.plot.mat_wrap.mat_plot import MatPlot1D
+from autoarray.plot.mat_wrap.mat_plot import MatPlot2D
+from autoarray.plot.mat_wrap.mat_plot import AutoLabels
 from autoarray.plot import fit_imaging_plotters
-from autocti import charge_injection as ci
+from autocti.charge_injection.fit import FitImagingCI
 
 
 class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
     def __init__(
         self,
-        fit: ci.FitImagingCI,
-        mat_plot_2d: mp.MatPlot2D = mp.MatPlot2D(),
-        visuals_2d: vis.Visuals2D = vis.Visuals2D(),
-        include_2d: inc.Include2D = inc.Include2D(),
-        mat_plot_1d: mp.MatPlot1D = mp.MatPlot1D(),
-        visuals_1d: vis.Visuals1D = vis.Visuals1D(),
-        include_1d: inc.Include1D = inc.Include1D(),
+        fit: FitImagingCI,
+        mat_plot_2d: MatPlot2D = MatPlot2D(),
+        visuals_2d: Visuals2D = Visuals2D(),
+        include_2d: Include2D = Include2D(),
+        mat_plot_1d: MatPlot1D = MatPlot1D(),
+        visuals_1d: Visuals1D = Visuals1D(),
+        include_1d: Include1D = Include1D(),
     ):
 
         super().__init__(
@@ -75,7 +79,7 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
             self.mat_plot_2d.plot_array(
                 array=self.fit.pre_cti_data,
                 visuals_2d=self.visuals_with_include_2d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title="CI Pre CTI Image", filename="pre_cti_data"
                 ),
             )
@@ -85,7 +89,7 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
             self.mat_plot_2d.plot_array(
                 array=self.fit.post_cti_data,
                 visuals_2d=self.visuals_with_include_2d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title="CI Post CTI Image", filename="post_cti_data"
                 ),
             )
@@ -111,7 +115,7 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title=f"Image Line {line_region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
@@ -127,7 +131,7 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title=f"Noise-Map Line {line_region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
@@ -145,7 +149,7 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title=f"Signal-To-Noise Map Line {line_region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
@@ -163,7 +167,7 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title=f"CI Pre CTI Line {line_region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
@@ -181,7 +185,7 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title=f"CI Post CTI Line {line_region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
@@ -199,7 +203,7 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title=f"Resdial-Map Line {line_region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
@@ -217,7 +221,7 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title=f"Normalized Residual Map Line {line_region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
@@ -235,7 +239,7 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title=f"Chi-Squared Map Line {line_region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
@@ -265,7 +269,7 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
             residual_map=residual_map,
             normalized_residual_map=normalized_residual_map,
             chi_squared_map=chi_squared_map,
-            auto_labels=mp.AutoLabels(filename=auto_filename),
+            auto_labels=AutoLabels(filename=auto_filename),
         )
 
     def subplot_fit_ci(self):
@@ -321,7 +325,7 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
             self.mat_plot_2d.plot_array(
                 array=self.fit.noise_scaling_map_list[index],
                 visuals_2d=self.visuals_with_include_2d,
-                auto_labels=mp.AutoLabels(title=f"Noise Scaling Map {index}"),
+                auto_labels=AutoLabels(title=f"Noise Scaling Map {index}"),
             )
 
         self.mat_plot_2d.output.subplot_to_figure(

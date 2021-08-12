@@ -1,10 +1,10 @@
-from autoarray.mask import mask_2d
-from autoarray import exc
-from autoarray.layout import region as reg
-from autoarray.structures.arrays.two_d import array_2d_util
-from autoarray.geometry import geometry_util
-
 import numpy as np
+
+from autoarray.mask.mask_2d import AbstractMask2D
+from autoarray.layout.region import Region2D
+from autoarray.geometry import geometry_util
+from autoarray.structures.arrays.two_d import array_2d_util
+from autoarray import exc
 
 
 class SettingsMask2D:
@@ -20,7 +20,7 @@ class SettingsMask2D:
         self.cosmic_ray_diagonal_buffer = cosmic_ray_diagonal_buffer
 
 
-class Mask2D(mask_2d.AbstractMask2D):
+class Mask2D(AbstractMask2D):
     @classmethod
     def manual(cls, mask, pixel_scales, origin=(0.0, 0.0), invert=False):
         """Create a Mask2D (see *Mask2D.__new__*) by inputting the array values in 2D, for example:
@@ -88,7 +88,7 @@ class Mask2D(mask_2d.AbstractMask2D):
 
         mask = cls.unmasked(shape_native=shape_native, pixel_scales=pixel_scales)
         masked_regions = list(
-            map(lambda region: reg.Region2D(region=region), masked_regions)
+            map(lambda region: Region2D(region=region), masked_regions)
         )
         for region in masked_regions:
             mask[region.y0 : region.y1, region.x0 : region.x1] = True

@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 import autocti as ac
-from autocti.charge_injection.layout_ci import region_list_ci_from
+from autocti.charge_injection.layout import region_list_ci_from
 from autocti import exc
 
 

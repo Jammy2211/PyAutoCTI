@@ -5,25 +5,23 @@ Created on: 02/14/18
 Author: James Nightingale
 """
 
-from autocti import exc
-from autoarray.instruments import euclid
-from autoarray.structures.arrays.two_d import array_2d
-from autoarray.layout import layout_util
-from autoarray.layout import layout as lo
-from autoarray.layout import region as reg
-
 from copy import deepcopy
-
 import numpy as np
-from autocti.charge_injection import mask_2d_ci
-
 from typing import Tuple
+
+from autocti import exc
+from autoarray.instruments.euclid import Layout2DEuclid
+from autoarray.structures.arrays.two_d.array_2d import Array2D
+from autoarray.layout.layout import Layout2D
+from autoarray.layout.region import Region2D
+from autoarray.layout import layout_util
+from autocti.charge_injection.mask_2d import Mask2DCI
 
 
 class Extractor2D:
     def __init__(self, region_list):
 
-        self.region_list = list(map(reg.Region2D, region_list))
+        self.region_list = list(map(Region2D, region_list))
 
     @property
     def total_rows_min(self):
@@ -35,7 +33,7 @@ class Extractor2D:
 
 
 class Extractor2DParallelFrontEdge(Extractor2D):
-    def array_2d_list_from(self, array: array_2d.Array2D, rows):
+    def array_2d_list_from(self, array: Array2D, rows):
         """
         Extract a list of structures of the parallel front edge scans of a charge injection array.
 
@@ -100,11 +98,11 @@ class Extractor2DParallelFrontEdge(Extractor2D):
         )
         return front_arrays
 
-    def stacked_array_2d_from(self, array: array_2d.Array2D, rows):
+    def stacked_array_2d_from(self, array: Array2D, rows):
         front_arrays = self.array_2d_list_from(array=array, rows=rows)
         return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
 
-    def binned_array_1d_from(self, array: array_2d.Array2D, rows):
+    def binned_array_1d_from(self, array: Array2D, rows):
         front_stacked_array = self.stacked_array_2d_from(array=array, rows=rows)
         return np.ma.mean(np.ma.asarray(front_stacked_array), axis=1)
 
@@ -178,7 +176,7 @@ class Extractor2DParallelFrontEdge(Extractor2D):
 
 
 class Extractor2DParallelTrails(Extractor2D):
-    def array_2d_list_from(self, array: array_2d.Array2D, rows):
+    def array_2d_list_from(self, array: Array2D, rows):
         """
         Extract the parallel trails of a charge injection array.
 
@@ -246,11 +244,11 @@ class Extractor2DParallelTrails(Extractor2D):
         )
         return trails_arrays
 
-    def stacked_array_2d_from(self, array: array_2d.Array2D, rows):
+    def stacked_array_2d_from(self, array: Array2D, rows):
         trails_arrays = self.array_2d_list_from(array=array, rows=rows)
         return np.ma.mean(np.ma.asarray(trails_arrays), axis=0)
 
-    def binned_array_1d_from(self, array: array_2d.Array2D, rows):
+    def binned_array_1d_from(self, array: Array2D, rows):
         trails_stacked_array = self.stacked_array_2d_from(array=array, rows=rows)
         return np.ma.mean(np.ma.asarray(trails_stacked_array), axis=1)
 
@@ -324,7 +322,7 @@ class Extractor2DParallelTrails(Extractor2D):
 
 
 class Extractor2DSerialFrontEdge(Extractor2D):
-    def array_2d_list_from(self, array: array_2d.Array2D, columns):
+    def array_2d_list_from(self, array: Array2D, columns):
         """
         Extract a list of the serial front edge structures of a charge injection array.
 
@@ -390,11 +388,11 @@ class Extractor2DSerialFrontEdge(Extractor2D):
         )
         return front_arrays
 
-    def stacked_array_2d_from(self, array: array_2d.Array2D, columns):
+    def stacked_array_2d_from(self, array: Array2D, columns):
         front_arrays = self.array_2d_list_from(array=array, columns=columns)
         return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
 
-    def binned_array_1d_from(self, array: array_2d.Array2D, columns):
+    def binned_array_1d_from(self, array: Array2D, columns):
         front_stacked_array = self.stacked_array_2d_from(array=array, columns=columns)
         return np.ma.mean(np.ma.asarray(front_stacked_array), axis=0)
 
@@ -470,7 +468,7 @@ class Extractor2DSerialFrontEdge(Extractor2D):
 
 
 class Extractor2DSerialTrails(Extractor2D):
-    def array_2d_list_from(self, array: array_2d.Array2D, columns):
+    def array_2d_list_from(self, array: Array2D, columns):
         """
         Extract a list of the serial trails of a charge injection array.
 
@@ -536,11 +534,11 @@ class Extractor2DSerialTrails(Extractor2D):
         )
         return trails_arrays
 
-    def stacked_array_2d_from(self, array: array_2d.Array2D, columns: Tuple[int, int]):
+    def stacked_array_2d_from(self, array: Array2D, columns: Tuple[int, int]):
         front_arrays = self.array_2d_list_from(array=array, columns=columns)
         return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
 
-    def binned_array_1d_from(self, array: array_2d.Array2D, columns: Tuple[int, int]):
+    def binned_array_1d_from(self, array: Array2D, columns: Tuple[int, int]):
         trails_stacked_array = self.stacked_array_2d_from(array=array, columns=columns)
         return np.ma.mean(np.ma.asarray(trails_stacked_array), axis=0)
 
@@ -615,7 +613,7 @@ class Extractor2DSerialTrails(Extractor2D):
         return new_array
 
 
-class AbstractLayout2DCI(lo.Layout2D):
+class AbstractLayout2DCI(Layout2D):
     def __init__(
         self,
         shape_2d,
@@ -639,7 +637,7 @@ class AbstractLayout2DCI(lo.Layout2D):
             (top-row, bottom-row, left-column, right-column).
         """
 
-        self.region_list = list(map(reg.Region2D, region_list))
+        self.region_list = list(map(Region2D, region_list))
 
         for region in self.region_list:
 
@@ -708,7 +706,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         rows_between_regions.append(self.parallel_trail_size_to_array_edge)
         return np.min(rows_between_regions)
 
-    def array_2d_of_regions_from(self, array: array_2d.Array2D) -> array_2d.Array2D:
+    def array_2d_of_regions_from(self, array: Array2D) -> Array2D:
         """
         Extract all of the charge-injection regions from an input `array2D` object and returns them as a new `array2D`
         object where these extracted regions are included and all other entries are zeros.
@@ -763,7 +761,7 @@ class AbstractLayout2DCI(lo.Layout2D):
 
         return new_array
 
-    def array_2d_of_non_regions_from(self, array: array_2d.Array2D) -> array_2d.Array2D:
+    def array_2d_of_non_regions_from(self, array: Array2D) -> Array2D:
         """
         Extract all of the data values in an input `array2D` that do not overlap the charge injection regions. This
         includes many areas of the image (e.g. the serial prescan, serial overscan) but is typically used to extract
@@ -819,9 +817,7 @@ class AbstractLayout2DCI(lo.Layout2D):
 
         return non_regions_ci_array
 
-    def array_2d_of_parallel_trails_from(
-        self, array: array_2d.Array2D
-    ) -> array_2d.Array2D:
+    def array_2d_of_parallel_trails_from(self, array: Array2D) -> Array2D:
         """
         Extract all of the data values in an input `array2D` that do not overlap the charge injection regions or the
         serial prescan / serial overscan regions.
@@ -881,10 +877,10 @@ class AbstractLayout2DCI(lo.Layout2D):
 
     def array_2d_of_parallel_edges_and_trails_from(
         self,
-        array: array_2d.Array2D,
+        array: Array2D,
         front_edge_rows: Tuple[int, int] = None,
         trails_rows: Tuple[int, int] = None,
-    ) -> array_2d.Array2D:
+    ) -> Array2D:
         """
         Extract all of the data values in an input `array2D` corresponding to the parallel front edges and trails of
         each the charge-injection region.
@@ -1014,7 +1010,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         )
 
     def array_2d_for_parallel_calibration_from(
-        self, array: array_2d.Array2D, columns: Tuple[int, int]
+        self, array: Array2D, columns: Tuple[int, int]
     ):
         """
         Extract a parallel calibration array from an input array, where this array contains a sub-set of the input
@@ -1066,7 +1062,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         extraction_region = self.extraction_region_for_parallel_calibration_from(
             columns=columns
         )
-        return array_2d.Array2D.manual_native(
+        return Array2D.manual_native(
             array=array.native[extraction_region.slice],
             header=array.header,
             pixel_scales=array.pixel_scales,
@@ -1133,11 +1129,11 @@ class AbstractLayout2DCI(lo.Layout2D):
         ].parallel_side_nearest_read_out_region_from(
             shape_2d=self.shape_2d, columns=columns
         )
-        return mask_2d_ci.Mask2DCI(
+        return Mask2DCI(
             mask=mask[extraction_region.slice], pixel_scales=mask.pixel_scales
         )
 
-    def array_2d_of_serial_trails_from(self, array: array_2d.Array2D):
+    def array_2d_of_serial_trails_from(self, array: Array2D):
         """Extract an arrays of all of the serial trails in the serial overscan region, that are to the side of a
         charge-injection scans from a charge injection array.
 
@@ -1188,7 +1184,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         )
         return array
 
-    def array_2d_of_serial_overscan_above_trails_from(self, array: array_2d.Array2D):
+    def array_2d_of_serial_overscan_above_trails_from(self, array: Array2D):
         """
         Extract an arrays of all of the scans of the serial overscan that don't contain trails from a
         charge injection region (i.e. are not to the side of one).
@@ -1254,7 +1250,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         return new_array
 
     def array_2d_of_serial_edges_and_trails_array(
-        self, array: array_2d.Array2D, front_edge_columns=None, trails_columns=None
+        self, array: Array2D, front_edge_columns=None, trails_columns=None
     ):
         """
         Extract an arrays of all of the serial front edges and trails of each the charge-injection scans from
@@ -1333,7 +1329,7 @@ class AbstractLayout2DCI(lo.Layout2D):
 
         return new_array
 
-    def array_2d_list_for_serial_calibration(self, array: array_2d.Array2D):
+    def array_2d_list_for_serial_calibration(self, array: Array2D):
         """
         Extract each charge injection region image for the serial calibration arrays above.
         """
@@ -1383,7 +1379,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         return new_layout_ci
 
     def array_2d_for_serial_calibration_from(
-        self, array: array_2d.Array2D, rows: Tuple[int, int]
+        self, array: Array2D, rows: Tuple[int, int]
     ):
         """
         Extract a serial calibration array from a charge injection array, where this arrays is a sub-set of the
@@ -1435,7 +1431,7 @@ class AbstractLayout2DCI(lo.Layout2D):
 
         new_array = np.concatenate(calibration_images, axis=0)
 
-        return array_2d.Array2D.manual(
+        return Array2D.manual(
             array=new_array, header=array.header, pixel_scales=array.pixel_scales
         )
 
@@ -1499,7 +1495,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         calibration_masks = list(
             map(lambda mask: mask[rows[0] : rows[1], :], calibration_masks)
         )
-        return mask_2d_ci.Mask2DCI(
+        return Mask2DCI(
             mask=np.concatenate(calibration_masks, axis=0),
             pixel_scales=mask.pixel_scales,
         )
@@ -1523,7 +1519,7 @@ class AbstractLayout2DCI(lo.Layout2D):
         layout.region_list = extracted_region_list
         return layout
 
-    def extract_line_from(self, array: array_2d.Array2D, line_region: str):
+    def extract_line_from(self, array: Array2D, line_region: str):
 
         if line_region == "parallel_front_edge":
             return self.extractor_parallel_front_edge.binned_array_1d_from(
@@ -1569,7 +1565,7 @@ class Layout2DCI(AbstractLayout2DCI):
         injection_off = ext_header["INJOFF"]
         injection_total = ext_header["INJTOTAL"]
 
-        layout = euclid.Layout2DEuclid.from_fits_header(ext_header=ext_header)
+        layout = Layout2DEuclid.from_fits_header(ext_header=ext_header)
 
         region_ci_list = region_list_ci_from(
             serial_prescan_size=serial_prescan_size,
@@ -1609,7 +1605,7 @@ class Layout2DCI(AbstractLayout2DCI):
         for region in self.region_list:
             pre_cti_data[region.slice] += self.normalization
 
-        return array_2d.Array2D.manual(array=pre_cti_data, pixel_scales=pixel_scales)
+        return Array2D.manual(array=pre_cti_data, pixel_scales=pixel_scales)
 
 
 class Layout2DCINonUniform(AbstractLayout2DCI):
@@ -1748,7 +1744,7 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
                 region_dimensions=region.shape, ci_seed=ci_seed
             )
 
-        return array_2d.Array2D.manual(array=pre_cti_data, pixel_scales=pixel_scales)
+        return Array2D.manual(array=pre_cti_data, pixel_scales=pixel_scales)
 
     def generate_column(self, size, normalization):
         """Generate a column of non-uniform charge, including row non-uniformity.

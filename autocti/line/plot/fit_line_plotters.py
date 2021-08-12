@@ -1,18 +1,19 @@
 import numpy as np
-from autoarray.plot.mat_wrap import visuals as vis
-from autoarray.plot.mat_wrap import include as inc
-from autoarray.plot.mat_wrap import mat_plot as mp
-from autoarray.plot import abstract_plotters
+from autoarray.plot.mat_wrap.visuals import Visuals1D
+from autoarray.plot.mat_wrap.include import Include1D
+from autoarray.plot.mat_wrap.mat_plot import MatPlot1D
+from autoarray.plot.mat_wrap.mat_plot import AutoLabels
+from autoarray.plot.abstract_plotters import AbstractPlotter
 from autocti.line.fit import FitDatasetLine
 
 
-class FitDatasetLinePlotter(abstract_plotters.AbstractPlotter):
+class FitDatasetLinePlotter(AbstractPlotter):
     def __init__(
         self,
         fit: FitDatasetLine,
-        mat_plot_1d: mp.MatPlot1D = mp.MatPlot1D(),
-        visuals_1d: vis.Visuals1D = vis.Visuals1D(),
-        include_1d: inc.Include1D = inc.Include1D(),
+        mat_plot_1d: MatPlot1D = MatPlot1D(),
+        visuals_1d: Visuals1D = Visuals1D(),
+        include_1d: Include1D = Include1D(),
     ):
 
         self.fit = fit
@@ -43,7 +44,7 @@ class FitDatasetLinePlotter(abstract_plotters.AbstractPlotter):
                 y=self.fit.data,
                 x=np.arange(len(self.fit.data)),
                 visuals_1d=self.visuals_with_include_1d,
-                auto_labels=mp.AutoLabels(title="Image", filename="data"),
+                auto_labels=AutoLabels(title="Image", filename="data"),
             )
 
         if noise_map:
@@ -52,7 +53,7 @@ class FitDatasetLinePlotter(abstract_plotters.AbstractPlotter):
                 y=self.fit.noise_map,
                 x=np.arange(len(self.fit.noise_map)),
                 visuals_1d=self.visuals_with_include_1d,
-                auto_labels=mp.AutoLabels(title="Noise-Map", filename="noise_map"),
+                auto_labels=AutoLabels(title="Noise-Map", filename="noise_map"),
             )
 
         if signal_to_noise_map:
@@ -61,7 +62,7 @@ class FitDatasetLinePlotter(abstract_plotters.AbstractPlotter):
                 y=self.fit.signal_to_noise_map,
                 x=np.arange(len(self.fit.signal_to_noise_map)),
                 visuals_1d=self.visuals_with_include_1d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title="Signal-To-Noise Map", filename="signal_to_noise_map"
                 ),
             )
@@ -72,9 +73,7 @@ class FitDatasetLinePlotter(abstract_plotters.AbstractPlotter):
                 y=self.fit.residual_map,
                 x=np.arange(len(self.fit.residual_map)),
                 visuals_1d=self.visuals_with_include_1d,
-                auto_labels=mp.AutoLabels(
-                    title="Residual Map", filename="residual_map"
-                ),
+                auto_labels=AutoLabels(title="Residual Map", filename="residual_map"),
             )
 
         if normalized_residual_map:
@@ -83,7 +82,7 @@ class FitDatasetLinePlotter(abstract_plotters.AbstractPlotter):
                 y=self.fit.normalized_residual_map,
                 x=np.arange(len(self.fit.normalized_residual_map)),
                 visuals_1d=self.visuals_with_include_1d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title="Normalized Residual Map", filename="normalized_residual_map"
                 ),
             )
@@ -94,7 +93,7 @@ class FitDatasetLinePlotter(abstract_plotters.AbstractPlotter):
                 y=self.fit.chi_squared_map,
                 x=np.arange(len(self.fit.chi_squared_map)),
                 visuals_1d=self.visuals_with_include_1d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title="Chi-Squared Map", filename="chi_squared_map"
                 ),
             )
@@ -104,7 +103,7 @@ class FitDatasetLinePlotter(abstract_plotters.AbstractPlotter):
             self.mat_plot_1d.plot_yx(
                 y=self.fit.pre_cti_data,
                 visuals_1d=self.visuals_with_include_1d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title="CI Pre CTI Image", filename="pre_cti_data"
                 ),
             )
@@ -114,7 +113,7 @@ class FitDatasetLinePlotter(abstract_plotters.AbstractPlotter):
             self.mat_plot_1d.plot_yx(
                 y=self.fit.post_cti_data,
                 visuals_1d=self.visuals_with_include_1d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title="CI Post CTI Image", filename="post_cti_data"
                 ),
             )
@@ -141,7 +140,7 @@ class FitDatasetLinePlotter(abstract_plotters.AbstractPlotter):
             residual_map=residual_map,
             normalized_residual_map=normalized_residual_map,
             chi_squared_map=chi_squared_map,
-            auto_labels=mp.AutoLabels(filename=auto_filename),
+            auto_labels=AutoLabels(filename=auto_filename),
         )
 
     def subplot_fit_dataset_line(self):

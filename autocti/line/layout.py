@@ -1,23 +1,17 @@
-"""
-File: python/VIS_CTICalibrate/LinePattern.py
-
-Created on: 02/14/18
-Author: James Nightingale
-"""
-
 import numpy as np
-from autocti import exc
-from autoarray.structures.arrays.one_d import array_1d
-from autoarray.layout import region as reg
-from autoarray.layout import layout as lo
-
 from typing import Tuple
+
+from autoarray.structures.arrays.one_d.array_1d import Array1D
+from autoarray.layout.region import Region1D
+from autoarray.layout.layout import Layout1D
+
+from autocti import exc
 
 
 class Extractor1D:
     def __init__(self, region_list):
 
-        self.region_list = list(map(reg.Region1D, region_list))
+        self.region_list = list(map(Region1D, region_list))
 
     @property
     def total_pixels_min(self):
@@ -25,7 +19,7 @@ class Extractor1D:
 
 
 class Extractor1DFrontEdge(Extractor1D):
-    def array_1d_list_from(self, array: array_1d.Array1D, pixels):
+    def array_1d_list_from(self, array: Array1D, pixels):
         """
         Extract a list of the front edges of a 1D line array.
 
@@ -61,7 +55,7 @@ class Extractor1DFrontEdge(Extractor1D):
         )
         return front_array_list
 
-    def stacked_array_1d_from(self, array: array_1d.Array1D, pixels):
+    def stacked_array_1d_from(self, array: Array1D, pixels):
         front_arrays = self.array_1d_list_from(array=array, pixels=pixels)
         return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
 
@@ -106,7 +100,7 @@ class Extractor1DFrontEdge(Extractor1D):
 
 
 class Extractor1DTrails(Extractor1D):
-    def array_1d_list_from(self, array: array_1d.Array1D, pixels):
+    def array_1d_list_from(self, array: Array1D, pixels):
         """
         Extract the parallel trails of a charge injection array.
 
@@ -174,7 +168,7 @@ class Extractor1DTrails(Extractor1D):
         )
         return trails_arrays
 
-    def stacked_array_1d_from(self, array: array_1d.Array1D, pixels):
+    def stacked_array_1d_from(self, array: Array1D, pixels):
         trails_arrays = self.array_1d_list_from(array=array, pixels=pixels)
         return np.ma.mean(np.ma.asarray(trails_arrays), axis=0)
 
@@ -248,7 +242,7 @@ class Extractor1DTrails(Extractor1D):
         return new_array
 
 
-class AbstractLayout1DLine(lo.Layout1D):
+class AbstractLayout1DLine(Layout1D):
     def __init__(
         self, shape_1d, normalization, region_list, prescan=None, overscan=None
     ):
@@ -265,7 +259,7 @@ class AbstractLayout1DLine(lo.Layout1D):
             (top-row, bottom-row, left-column, right-column).
         """
 
-        self.region_list = list(map(reg.Region1D, region_list))
+        self.region_list = list(map(Region1D, region_list))
 
         for region in self.region_list:
 
@@ -299,7 +293,7 @@ class AbstractLayout1DLine(lo.Layout1D):
         rows_between_regions.append(self.trail_size_to_array_edge)
         return np.min(rows_between_regions)
 
-    def array_1d_of_regions_from(self, array: array_1d.Array1D) -> array_1d.Array1D:
+    def array_1d_of_regions_from(self, array: Array1D) -> Array1D:
         """
         Extract all of the charge-injection regions from an input `array1D` object and returns them as a new `array1D`
         object where these extracted regions are included and all other entries are zeros.
@@ -355,7 +349,7 @@ class AbstractLayout1DLine(lo.Layout1D):
 
         return array_1d_of_regions
 
-    def array_1d_of_non_regions_from(self, array: array_1d.Array1D) -> array_1d.Array1D:
+    def array_1d_of_non_regions_from(self, array: Array1D) -> Array1D:
         """
         Extract all of the data values in an input `array1D` that do not overlap the charge injection regions. This
         includes many areas of the image (e.g. the serial prescan, serial overscan) but is typically used to extract
@@ -411,7 +405,7 @@ class AbstractLayout1DLine(lo.Layout1D):
 
         return array_1d_non_regions_ci
 
-    def array_1d_of_trails_from(self, array: array_1d.Array1D) -> array_1d.Array1D:
+    def array_1d_of_trails_from(self, array: Array1D) -> Array1D:
         """
         Extract all of the data values in an input `array1D` that do not overlap the charge injection regions or the
         serial prescan / serial overscan regions.
@@ -471,10 +465,10 @@ class AbstractLayout1DLine(lo.Layout1D):
 
     def array_1d_of_edges_and_trails_from(
         self,
-        array: array_1d.Array1D,
+        array: Array1D,
         front_edge_rows: Tuple[int, int] = None,
         trails_rows: Tuple[int, int] = None,
-    ) -> array_1d.Array1D:
+    ) -> Array1D:
         """
         Extract all of the data values in an input `array1D` corresponding to the parallel front edges and trails of
         each the charge-injection region.
@@ -553,7 +547,7 @@ class AbstractLayout1DLine(lo.Layout1D):
 
         return array_1d_of_edges_and_trails
 
-    def extract_line_from(self, array: array_1d.Array1D, line_region: str):
+    def extract_line_from(self, array: Array1D, line_region: str):
 
         if line_region == "front_edge":
             return self.extractor_front_edge.stacked_array_1d_from(
@@ -590,6 +584,4 @@ class Layout1DLine(AbstractLayout1DLine):
         for region in self.region_list:
             pre_cti_data[region.slice] += self.normalization
 
-        return array_1d.Array1D.manual_native(
-            array=pre_cti_data, pixel_scales=pixel_scales
-        )
+        return Array1D.manual_native(array=pre_cti_data, pixel_scales=pixel_scales)

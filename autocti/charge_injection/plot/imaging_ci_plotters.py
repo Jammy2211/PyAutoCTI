@@ -1,20 +1,24 @@
-from autoarray.plot.mat_wrap import visuals as vis
-from autoarray.plot.mat_wrap import include as inc
-from autoarray.plot.mat_wrap import mat_plot as mp
-from autoarray.plot import imaging_plotters
-from autocti import charge_injection as ci
+from autoarray.plot.mat_wrap.visuals import Visuals1D
+from autoarray.plot.mat_wrap.visuals import Visuals2D
+from autoarray.plot.mat_wrap.include import Include1D
+from autoarray.plot.mat_wrap.include import Include2D
+from autoarray.plot.mat_wrap.mat_plot import MatPlot1D
+from autoarray.plot.mat_wrap.mat_plot import MatPlot2D
+from autoarray.plot.mat_wrap.mat_plot import AutoLabels
+from autoarray.plot.imaging_plotters import AbstractImagingPlotter
+from autocti.charge_injection.imaging import ImagingCI
 
 
-class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
+class ImagingCIPlotter(AbstractImagingPlotter):
     def __init__(
         self,
-        imaging: ci.ImagingCI,
-        mat_plot_2d: mp.MatPlot2D = mp.MatPlot2D(),
-        visuals_2d: vis.Visuals2D = vis.Visuals2D(),
-        include_2d: inc.Include2D = inc.Include2D(),
-        mat_plot_1d: mp.MatPlot1D = mp.MatPlot1D(),
-        visuals_1d: vis.Visuals1D = vis.Visuals1D(),
-        include_1d: inc.Include1D = inc.Include1D(),
+        imaging: ImagingCI,
+        mat_plot_2d: MatPlot2D = MatPlot2D(),
+        visuals_2d: Visuals2D = Visuals2D(),
+        include_2d: Include2D = Include2D(),
+        mat_plot_1d: MatPlot1D = MatPlot1D(),
+        visuals_1d: Visuals1D = Visuals1D(),
+        include_1d: Include1D = Include1D(),
     ):
 
         super().__init__(
@@ -29,7 +33,7 @@ class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
         self.mat_plot_1d = mat_plot_1d
 
     @property
-    def visuals_with_include_1d(self) -> vis.Visuals1D:
+    def visuals_with_include_1d(self) -> Visuals1D:
         """
         Extracts from the `ImagingCI` attributes that can be plotted in 1D and return them in a `Visuals1D` object.
 
@@ -41,7 +45,7 @@ class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
 
         Returns
         -------
-        vis.Visuals1D
+        Visuals1D
             The collection of attributes that can be plotted by a `Plotter1D` object.
         """
         return self.visuals_1d + self.visuals_1d.__class__()
@@ -106,7 +110,7 @@ class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
             self.mat_plot_2d.plot_array(
                 array=self.imaging.pre_cti_data,
                 visuals_2d=self.visuals_with_include_2d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title="CI Pre CTI Image", filename="pre_cti_data"
                 ),
             )
@@ -116,7 +120,7 @@ class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
             self.mat_plot_2d.plot_array(
                 array=self.imaging.cosmic_ray_map,
                 visuals_2d=self.visuals_with_include_2d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title="Cosmic Ray Map", filename="cosmic_ray_map"
                 ),
             )
@@ -152,7 +156,7 @@ class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_with_include_1d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title=f"Image Line {line_region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
@@ -170,7 +174,7 @@ class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title=f"Noise Map Line {line_region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
@@ -188,7 +192,7 @@ class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title=f"CI Pre CTI Line {line_region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
@@ -206,7 +210,7 @@ class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
-                auto_labels=mp.AutoLabels(
+                auto_labels=AutoLabels(
                     title=f"Signal To Noise Map {line_region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
@@ -234,7 +238,7 @@ class ImagingCIPlotter(imaging_plotters.AbstractImagingPlotter):
             inverse_noise_map=inverse_noise_map,
             pre_cti_data=pre_cti_data,
             cosmic_ray_map=cosmic_ray_map,
-            auto_labels=mp.AutoLabels(filename=auto_filename),
+            auto_labels=AutoLabels(filename=auto_filename),
         )
 
     def subplot_imaging_ci(self):

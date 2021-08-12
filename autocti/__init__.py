@@ -22,10 +22,10 @@ from autocti.warm_pixels.lines import LineCollection
 from autocti.warm_pixels.warm_pixels import find_warm_pixels
 
 from .cosmics.cosmics import CosmicRays
-from .charge_injection.layout_ci import Extractor2DParallelFrontEdge
-from .charge_injection.layout_ci import Extractor2DParallelTrails
-from .charge_injection.layout_ci import Extractor2DSerialFrontEdge
-from .charge_injection.layout_ci import Extractor2DSerialTrails
+from .charge_injection.layout import Extractor2DParallelFrontEdge
+from .charge_injection.layout import Extractor2DParallelTrails
+from .charge_injection.layout import Extractor2DSerialFrontEdge
+from .charge_injection.layout import Extractor2DSerialTrails
 from .mask.mask_2d import Mask2D
 from .mask.mask_2d import SettingsMask2D
 from .line.layout import Extractor1DFrontEdge

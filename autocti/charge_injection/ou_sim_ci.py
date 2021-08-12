@@ -5,7 +5,8 @@ from autocti.util.clocker import Clocker2D
 from arcticpy.src import ccd
 from arcticpy.src import traps
 
-from autocti.charge_injection import layout_ci as lo
+from autocti.charge_injection.layout import Layout2DCI
+from autocti.charge_injection.layout import Layout2DCINonUniform
 
 """
 Note on the rotations of arrays:
@@ -96,7 +97,7 @@ def charge_injection_array_from(
     Use the charge injection normalization_list and regions to create `Layout2DCINonUniform` of every image we'll simulate.
     """
     if use_non_uniform_pattern:
-        layout = lo.Layout2DCINonUniform(
+        layout = Layout2DCINonUniform(
             shape_2d=shape_native,
             normalization=ci_normalization,
             region_list=regions_ci,
@@ -105,7 +106,7 @@ def charge_injection_array_from(
             maximum_normalization=84700,
         )
     else:
-        layout = lo.Layout2DCI(
+        layout = Layout2DCI(
             shape_2d=shape_native,
             normalization=ci_normalization,
             region_list=regions_ci,

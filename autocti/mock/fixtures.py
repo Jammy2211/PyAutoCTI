@@ -1,17 +1,20 @@
+from arcticpy.src import traps, ccd, roe
+
 from autofit.mapper.prior_model.prior_model import PriorModel
 from autofit.mapper.prior_model.collection import CollectionPriorModel
-from autoarray.mock.fixtures import *
 from autofit.mock.mock import MockSamples
-from autocti.line.fit import FitDatasetLine
-from autoarray.structures.arrays.one_d import array_1d
-from autoarray.dataset import imaging
 
-from arcticpy.src import traps, ccd, roe
+from autocti.line.fit import FitDatasetLine
+
+from autoarray.mock.fixtures import *
+from autoarray.structures.arrays.one_d.array_1d import Array1D
+from autoarray.dataset.imaging import Imaging
+
 from autocti.line.dataset import DatasetLine
 from autocti.line.layout import Layout1DLine
 from autocti import charge_injection as ci
 from autocti.charge_injection.model.analysis import AnalysisImagingCI
-from autocti.mask import mask_2d
+from autocti.mask.mask_2d import Mask2D
 from autocti.util.clocker import Clocker1D
 from autocti.util.clocker import Clocker2D
 from autocti.model.model_util import CTI2D
@@ -65,7 +68,7 @@ def make_mask_1d_7_unmasked():
 
 
 def make_mask_2d_7x7_unmasked():
-    return mask_2d.Mask2D.unmasked(shape_native=(7, 7), pixel_scales=(1.0, 1.0))
+    return Mask2D.unmasked(shape_native=(7, 7), pixel_scales=(1.0, 1.0))
 
 
 ### FRAMES ###
@@ -87,7 +90,7 @@ def make_noise_map_7x7_native():
 
 
 def make_imaging_7x7_frame():
-    return imaging.Imaging(
+    return Imaging(
         image=make_image_7x7_native(),
         noise_map=make_noise_map_7x7_native(),
         name="mock_imaging_7x7_frame",
@@ -108,15 +111,15 @@ def make_layout_7():
 
 
 def make_data_7():
-    return array_1d.Array1D.full(fill_value=1.0, shape_native=(7,), pixel_scales=1.0)
+    return Array1D.full(fill_value=1.0, shape_native=(7,), pixel_scales=1.0)
 
 
 def make_noise_map_7():
-    return array_1d.Array1D.full(fill_value=2.0, shape_native=(7,), pixel_scales=1.0)
+    return Array1D.full(fill_value=2.0, shape_native=(7,), pixel_scales=1.0)
 
 
 def make_pre_cti_data_7():
-    return array_1d.Array1D.full(fill_value=1.0, shape_native=(7,), pixel_scales=1.0)
+    return Array1D.full(fill_value=1.0, shape_native=(7,), pixel_scales=1.0)
 
 
 def make_dataset_line_7():
