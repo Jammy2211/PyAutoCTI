@@ -390,7 +390,7 @@ class TestSimulatorImagingCI:
         imaging = simulator.from_layout(
             layout=layout_ci,
             clocker=parallel_clocker_2d,
-            parallel_traps=traps_x2,
+            parallel_trap_list=traps_x2,
             parallel_ccd=ccd,
         )
 
@@ -417,7 +417,7 @@ class TestSimulatorImagingCI:
         imaging = simulator.from_layout(
             layout=layout_ci,
             clocker=parallel_clocker_2d,
-            parallel_traps=traps_x2,
+            parallel_trap_list=traps_x2,
             parallel_ccd=ccd,
         )
 
@@ -458,7 +458,7 @@ class TestSimulatorImagingCI:
         imaging = simulator.from_layout(
             layout=layout_ci,
             clocker=parallel_clocker_2d,
-            parallel_traps=traps_x2,
+            parallel_trap_list=traps_x2,
             parallel_ccd=ccd,
             cosmic_ray_map=cosmic_ray_map,
         )
@@ -502,7 +502,7 @@ class TestSimulatorImagingCI:
         imaging = simulator.from_layout(
             layout=layout_ci,
             clocker=parallel_clocker_2d,
-            parallel_traps=traps_x2,
+            parallel_trap_list=traps_x2,
             parallel_ccd=ccd,
             cosmic_ray_map=cosmic_ray_map,
         )
@@ -515,7 +515,7 @@ class TestSimulatorImagingCI:
             pre_cti_data=pre_cti_data.native,
             layout=layout_ci,
             clocker=parallel_clocker_2d,
-            parallel_traps=traps_x2,
+            parallel_trap_list=traps_x2,
             parallel_ccd=ccd,
             cosmic_ray_map=cosmic_ray_map,
         )
@@ -544,7 +544,7 @@ class TestSimulatorImagingCI:
         imaging = simulator.from_layout(
             layout=layout_ci,
             clocker=parallel_clocker_2d,
-            parallel_traps=traps_x2,
+            parallel_trap_list=traps_x2,
             parallel_ccd=ccd,
             cosmic_ray_map=cosmic_ray_map,
         )
@@ -555,7 +555,7 @@ class TestSimulatorImagingCI:
         pre_cti_data += cosmic_ray_map
 
         post_cti_data = parallel_clocker_2d.add_cti(
-            pre_cti_data=pre_cti_data, parallel_traps=traps_x2, parallel_ccd=ccd
+            data=pre_cti_data, parallel_trap_list=traps_x2, parallel_ccd=ccd
         )
 
         pre_cti_data -= cosmic_ray_map

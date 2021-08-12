@@ -149,7 +149,7 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
         self,
         layout: Layout1DLine,
         clocker: Clocker1D,
-        traps: Optional[List[AbstractTrap]] = None,
+        trap_list: Optional[List[AbstractTrap]] = None,
         ccd: Optional[CCDPhase] = None,
     ) -> DatasetLine:
         """Simulate a charge injection data, including effects like noises.
@@ -182,7 +182,7 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
             pre_cti_data=pre_cti_data.native,
             layout=layout,
             clocker=clocker,
-            traps=traps,
+            trap_list=trap_list,
             ccd=ccd,
         )
 
@@ -191,12 +191,12 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
         pre_cti_data: Array1D,
         layout: Layout1DLine,
         clocker: Clocker1D,
-        traps: Optional[List[AbstractTrap]] = None,
+        trap_list: Optional[List[AbstractTrap]] = None,
         ccd: Optional[CCDPhase] = None,
     ) -> DatasetLine:
 
         post_cti_data = clocker.add_cti(
-            pre_cti_data=pre_cti_data.native, traps=traps, ccd=ccd
+            data=pre_cti_data.native, trap_list=trap_list, ccd=ccd
         )
 
         return self.from_post_cti_data(

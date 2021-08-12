@@ -227,7 +227,7 @@ class TestSimulatorDatasetLine:
         simulator = ac.SimulatorDatasetLine(pixel_scales=1.0, add_poisson_noise=False)
 
         dataset_line = simulator.from_layout(
-            layout=layout, clocker=clocker_1d, traps=traps_x2, ccd=ccd
+            layout=layout, clocker=clocker_1d, trap_list=traps_x2, ccd=ccd
         )
 
         assert dataset_line.data == pytest.approx(
@@ -246,7 +246,7 @@ class TestSimulatorDatasetLine:
         )
 
         dataset_line = simulator.from_layout(
-            layout=layout, clocker=clocker_1d, traps=traps_x2, ccd=ccd
+            layout=layout, clocker=clocker_1d, trap_list=traps_x2, ccd=ccd
         )
 
         # Use seed to give us a known read noises map we'll test_autocti for
@@ -267,7 +267,7 @@ class TestSimulatorDatasetLine:
         )
 
         dataset_line = simulator.from_layout(
-            layout=layout, clocker=clocker_1d, traps=traps_x2, ccd=ccd
+            layout=layout, clocker=clocker_1d, trap_list=traps_x2, ccd=ccd
         )
 
         pre_cti_data = layout.pre_cti_data_from(shape_native=(5,), pixel_scales=1.0)
@@ -276,7 +276,7 @@ class TestSimulatorDatasetLine:
             pre_cti_data=pre_cti_data.native,
             layout=layout,
             clocker=clocker_1d,
-            traps=traps_x2,
+            trap_list=traps_x2,
             ccd=ccd,
         )
 
@@ -296,7 +296,7 @@ class TestSimulatorDatasetLine:
         )
 
         dataset_line = simulator.from_layout(
-            layout=layout, clocker=clocker_1d, traps=traps_x2, ccd=ccd
+            layout=layout, clocker=clocker_1d, trap_list=traps_x2, ccd=ccd
         )
 
         pre_cti_data = layout.pre_cti_data_from(
@@ -304,7 +304,7 @@ class TestSimulatorDatasetLine:
         ).native
 
         post_cti_data = clocker_1d.add_cti(
-            pre_cti_data=pre_cti_data, traps=traps_x2, ccd=ccd
+            data=pre_cti_data, trap_list=traps_x2, ccd=ccd
         )
 
         dataset_line_via_post_cti_data = simulator.from_post_cti_data(

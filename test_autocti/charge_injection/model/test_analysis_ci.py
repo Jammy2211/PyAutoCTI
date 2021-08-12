@@ -44,9 +44,7 @@ class TestAnalysisImagingCI:
         )
 
         post_cti_data = parallel_clocker_2d.add_cti(
-            pre_cti_data=pre_cti_data_7x7.native,
-            parallel_traps=traps_x1,
-            parallel_ccd=ccd,
+            data=pre_cti_data_7x7.native, parallel_trap_list=traps_x1, parallel_ccd=ccd
         )
 
         fit = ac.ci.FitImagingCI(
@@ -70,8 +68,8 @@ class TestAnalysisImagingCI:
         )
 
         post_cti_data = parallel_clocker_2d.add_cti(
-            pre_cti_data=masked_imaging_ci.pre_cti_data,
-            parallel_traps=traps_x1,
+            data=masked_imaging_ci.pre_cti_data,
+            parallel_trap_list=traps_x1,
             parallel_ccd=ccd,
         )
 
@@ -136,8 +134,8 @@ class TestAnalysisImagingCI:
         )
 
         post_cti_data = parallel_clocker_2d.add_cti(
-            pre_cti_data=masked_imaging_ci.pre_cti_data,
-            parallel_traps=traps_x1,
+            data=masked_imaging_ci.pre_cti_data,
+            parallel_trap_list=traps_x1,
             parallel_ccd=ccd,
         )
 

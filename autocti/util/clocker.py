@@ -45,9 +45,9 @@ class Clocker1D:
         self.window_stop = window_stop
         self.verbosity = verbosity
 
-    def add_cti(self, pre_cti_data, ccd=None, traps=None):
+    def add_cti(self, data, ccd=None, trap_list=None):
 
-        if not any([traps]):
+        if not any([trap_list]):
             raise exc.ClockerException(
                 "No Trap species were passed to the add_cti method"
             )
@@ -56,11 +56,10 @@ class Clocker1D:
             raise exc.ClockerException("No CCD object was passed to the add_cti method")
 
         image_pre_cti_2d = Array2D.zeros(
-            shape_native=(pre_cti_data.shape_native[0], 1),
-            pixel_scales=pre_cti_data.pixel_scales,
+            shape_native=(data.shape_native[0], 1), pixel_scales=data.pixel_scales
         ).native
 
-        image_pre_cti_2d[:, 0] = pre_cti_data
+        image_pre_cti_2d[:, 0] = data
 
         if ccd is not None:
             ccd = CCD(phases=[ccd], fraction_of_traps_per_phase=[1.0])
@@ -69,16 +68,16 @@ class Clocker1D:
             image=image_pre_cti_2d,
             parallel_ccd=ccd,
             parallel_roe=self.roe,
-            parallel_traps=traps,
+            parallel_traps=trap_list,
             parallel_express=self.express,
-            parallel_offset=pre_cti_data.readout_offsets[0],
+            parallel_offset=data.readout_offsets[0],
             parallel_window_start=self.window_start,
             parallel_window_stop=self.window_stop,
             verbosity=self.verbosity,
         )
 
         return Array1D.manual_native(
-            array=image_post_cti.flatten(), pixel_scales=pre_cti_data.pixel_scales
+            array=image_post_cti.flatten(), pixel_scales=data.pixel_scales
         )
 
 
@@ -132,14 +131,14 @@ class Clocker2D:
 
     def add_cti(
         self,
-        pre_cti_data,
+        data,
         parallel_ccd=None,
-        parallel_traps=None,
+        parallel_trap_list=None,
         serial_ccd=None,
-        serial_traps=None,
+        serial_trap_list=None,
     ):
 
-        if not any([parallel_traps, serial_traps]):
+        if not any([parallel_trap_list, serial_trap_list]):
             raise exc.ClockerException(
                 "No Trap species (parallel or serial) were passed to the add_cti method"
             )
@@ -156,36 +155,36 @@ class Clocker2D:
             serial_ccd = CCD(phases=[serial_ccd], fraction_of_traps_per_phase=[1.0])
 
         image_post_cti = cti.add_cti(
-            image=pre_cti_data,
+            image=data,
             parallel_ccd=parallel_ccd,
             parallel_roe=self.parallel_roe,
-            parallel_traps=parallel_traps,
+            parallel_traps=parallel_trap_list,
             parallel_express=self.parallel_express,
-            parallel_offset=pre_cti_data.readout_offsets[0],
+            parallel_offset=data.readout_offsets[0],
             parallel_window_start=self.parallel_window_start,
             parallel_window_stop=self.parallel_window_stop,
             serial_ccd=serial_ccd,
             serial_roe=self.serial_roe,
-            serial_traps=serial_traps,
+            serial_traps=serial_trap_list,
             serial_express=self.serial_express,
-            serial_offset=pre_cti_data.readout_offsets[1],
+            serial_offset=data.readout_offsets[1],
             serial_window_start=self.serial_window_start,
             serial_window_stop=self.serial_window_stop,
             verbosity=self.verbosity,
         )
 
-        return Array2D.manual_mask(array=image_post_cti, mask=pre_cti_data.mask).native
+        return Array2D.manual_mask(array=image_post_cti, mask=data.mask).native
 
     def remove_cti(
         self,
-        image,
+        data,
         parallel_ccd=None,
-        parallel_traps=None,
+        parallel_trap_list=None,
         serial_ccd=None,
-        serial_traps=None,
+        serial_trap_list=None,
     ):
 
-        if not any([parallel_traps, serial_traps]):
+        if not any([parallel_trap_list, serial_trap_list]):
             raise exc.ClockerException(
                 "No Trap species (parallel or serial) were passed to the add_cti method"
             )
@@ -196,20 +195,20 @@ class Clocker2D:
             )
 
         return cti.remove_cti(
-            image=image,
+            image=data,
             n_iterations=self.iterations,
             parallel_ccd=parallel_ccd,
             parallel_roe=self.parallel_roe,
-            parallel_traps=parallel_traps,
+            parallel_traps=parallel_trap_list,
             parallel_express=self.parallel_express,
-            parallel_offset=image.readout_offsets[0],
+            parallel_offset=data.readout_offsets[0],
             parallel_window_start=self.parallel_window_start,
             parallel_window_stop=self.parallel_window_stop,
             serial_ccd=serial_ccd,
             serial_roe=self.serial_roe,
-            serial_traps=serial_traps,
+            serial_traps=serial_trap_list,
             serial_express=self.serial_express,
-            serial_offset=image.readout_offsets[1],
+            serial_offset=data.readout_offsets[1],
             serial_window_start=self.serial_window_start,
             serial_window_stop=self.serial_window_stop,
         )

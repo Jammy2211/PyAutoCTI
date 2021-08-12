@@ -45,7 +45,7 @@ class TestClocker:
         clocker = ac.Clocker2D(parallel_express=3, parallel_roe=roe)
 
         image_via_clocker = clocker.add_cti(
-            pre_cti_data=arr, parallel_traps=traps, parallel_ccd=ccd_phase
+            data=arr, parallel_trap_list=traps, parallel_ccd=ccd_phase
         )
 
         assert image_via_arctic == pytest.approx(image_via_clocker, 1.0e-4)
@@ -62,7 +62,7 @@ class TestClocker:
         clocker = ac.Clocker2D(serial_express=2, serial_roe=roe)
 
         image_via_clocker = clocker.add_cti(
-            pre_cti_data=arr, serial_traps=traps, serial_ccd=ccd_phase
+            data=arr, serial_trap_list=traps, serial_ccd=ccd_phase
         )
 
         assert image_via_arctic == pytest.approx(image_via_clocker, 1.0e-4)
@@ -110,7 +110,7 @@ class TestClocker:
         clocker_1d = ac.Clocker1D(express=3, roe=roe)
 
         image_via_clocker = clocker_1d.add_cti(
-            pre_cti_data=arr_1d, traps=traps, ccd=ccd_phase
+            data=arr_1d, trap_list=traps, ccd=ccd_phase
         )
 
         assert image_via_arctic.flatten() == pytest.approx(image_via_clocker, 1.0e-4)
@@ -135,43 +135,45 @@ class TestClocker:
         clocker = ac.Clocker2D(parallel_express=3)
 
         with pytest.raises(exc.ClockerException):
-            clocker.add_cti(pre_cti_data=arr)
+            clocker.add_cti(data=arr)
 
         with pytest.raises(exc.ClockerException):
-            clocker.add_cti(pre_cti_data=arr, parallel_traps=traps)
+            clocker.add_cti(data=arr, parallel_trap_list=traps)
 
         with pytest.raises(exc.ClockerException):
-            clocker.add_cti(pre_cti_data=arr, serial_traps=traps)
+            clocker.add_cti(data=arr, serial_trap_list=traps)
 
         with pytest.raises(exc.ClockerException):
-            clocker.add_cti(pre_cti_data=arr, parallel_traps=traps, serial_traps=traps)
+            clocker.add_cti(data=arr, parallel_trap_list=traps, serial_trap_list=traps)
 
         with pytest.raises(exc.ClockerException):
-            clocker.add_cti(pre_cti_data=arr, parallel_ccd=ccd)
+            clocker.add_cti(data=arr, parallel_ccd=ccd)
 
         with pytest.raises(exc.ClockerException):
-            clocker.add_cti(pre_cti_data=arr, serial_ccd=ccd)
+            clocker.add_cti(data=arr, serial_ccd=ccd)
 
         with pytest.raises(exc.ClockerException):
-            clocker.add_cti(pre_cti_data=arr, parallel_ccd=ccd, serial_ccd=ccd)
+            clocker.add_cti(data=arr, parallel_ccd=ccd, serial_ccd=ccd)
 
         with pytest.raises(exc.ClockerException):
-            clocker.remove_cti(image=arr)
+            clocker.remove_cti(data=arr)
 
         with pytest.raises(exc.ClockerException):
-            clocker.remove_cti(image=arr, parallel_traps=traps)
+            clocker.remove_cti(data=arr, parallel_trap_list=traps)
 
         with pytest.raises(exc.ClockerException):
-            clocker.remove_cti(image=arr, serial_traps=traps)
+            clocker.remove_cti(data=arr, serial_trap_list=traps)
 
         with pytest.raises(exc.ClockerException):
-            clocker.remove_cti(image=arr, parallel_traps=traps, serial_traps=traps)
+            clocker.remove_cti(
+                data=arr, parallel_trap_list=traps, serial_trap_list=traps
+            )
 
         with pytest.raises(exc.ClockerException):
-            clocker.remove_cti(image=arr, parallel_ccd=ccd)
+            clocker.remove_cti(data=arr, parallel_ccd=ccd)
 
         with pytest.raises(exc.ClockerException):
-            clocker.remove_cti(image=arr, serial_ccd=ccd)
+            clocker.remove_cti(data=arr, serial_ccd=ccd)
 
         with pytest.raises(exc.ClockerException):
-            clocker.remove_cti(image=arr, parallel_ccd=ccd, serial_ccd=ccd)
+            clocker.remove_cti(data=arr, parallel_ccd=ccd, serial_ccd=ccd)

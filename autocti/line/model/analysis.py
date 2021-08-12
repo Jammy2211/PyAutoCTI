@@ -57,7 +57,7 @@ class AnalysisDatasetLine(Analysis):
             traps = None
 
         post_cti_data = self.clocker.add_cti(
-            pre_cti_data=dataset_line.pre_cti_data, traps=traps, ccd=instance.cti.ccd
+            data=dataset_line.pre_cti_data, trap_list=traps, ccd=instance.cti.ccd
         )
 
         return FitDatasetLine(dataset_line=dataset_line, post_cti_data=post_cti_data)
@@ -78,6 +78,10 @@ class AnalysisDatasetLine(Analysis):
         fit = self.fit_from_instance(instance=instance)
 
         visualizer = VisualizerDatasetLine(visualize_path=paths.image_path)
+
+        visualizer.visualize_dataset_line(dataset_line=self.dataset_line)
+
+        visualizer.visualize_fit_line(fit=fit, during_analysis=during_analysis)
 
     def make_result(
         self, samples: af.PDFSamples, model: af.Collection, search: af.NonLinearSearch

@@ -102,6 +102,7 @@ class FitDatasetLinePlotter(AbstractPlotter):
 
             self.mat_plot_1d.plot_yx(
                 y=self.fit.pre_cti_data,
+                x=np.arange(len(self.fit.pre_cti_data)),
                 visuals_1d=self.visuals_with_include_1d,
                 auto_labels=AutoLabels(
                     title="CI Pre CTI Image", filename="pre_cti_data"
@@ -112,6 +113,7 @@ class FitDatasetLinePlotter(AbstractPlotter):
 
             self.mat_plot_1d.plot_yx(
                 y=self.fit.post_cti_data,
+                x=np.arange(len(self.fit.post_cti_data)),
                 visuals_1d=self.visuals_with_include_1d,
                 auto_labels=AutoLabels(
                     title="CI Post CTI Image", filename="post_cti_data"

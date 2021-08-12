@@ -174,10 +174,10 @@ def add_cti_to_pre_cti_data(pre_cti_data, ccd_id, quadrant_id):
     )
 
     post_cti_data = clocker.add_cti(
-        pre_cti_data=pre_cti_data,
-        parallel_traps=[parallel_trap_0, parallel_trap_1],
+        data=pre_cti_data,
+        parallel_trap_list=[parallel_trap_0, parallel_trap_1],
         parallel_ccd=parallel_ccd,
-        serial_traps=[serial_trap_0, serial_trap_1, serial_trap_2],
+        serial_trap_list=[serial_trap_0, serial_trap_1, serial_trap_2],
         serial_ccd=serial_ccd,
     )
 
@@ -217,8 +217,8 @@ def add_cti_simple_to_pre_cti_data(pre_cti_data, ccd_id, quadrant_id):
     )
 
     post_cti_data = clocker.add_cti(
-        pre_cti_data=pre_cti_data,
-        parallel_traps=[parallel_trap_0],
+        data=pre_cti_data,
+        parallel_trap_list=[parallel_trap_0],
         parallel_ccd=parallel_ccd,
     )
 

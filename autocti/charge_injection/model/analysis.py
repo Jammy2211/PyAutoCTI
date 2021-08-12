@@ -60,10 +60,10 @@ class AnalysisImagingCI(Analysis):
             serial_traps = None
 
         post_cti_data = self.clocker.add_cti(
-            pre_cti_data=self.dataset_ci.pre_cti_data,
-            parallel_traps=parallel_traps,
+            data=self.dataset_ci.pre_cti_data,
+            parallel_trap_list=parallel_traps,
             parallel_ccd=instance.cti.parallel_ccd,
-            serial_traps=serial_traps,
+            serial_trap_list=serial_traps,
             serial_ccd=instance.cti.serial_ccd,
         )
 
@@ -122,10 +122,10 @@ class AnalysisImagingCI(Analysis):
             serial_traps = None
 
         post_cti_data = self.clocker.add_cti(
-            pre_cti_data=imaging_ci.pre_cti_data,
-            parallel_traps=parallel_traps,
+            data=imaging_ci.pre_cti_data,
+            parallel_trap_list=parallel_traps,
             parallel_ccd=instance.cti.parallel_ccd,
-            serial_traps=serial_traps,
+            serial_trap_list=serial_traps,
             serial_ccd=instance.cti.serial_ccd,
         )
 

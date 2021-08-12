@@ -44,7 +44,7 @@ class TestAnalysisDatasetLine:
         )
 
         post_cti_data = clocker_1d.add_cti(
-            pre_cti_data=pre_cti_data_7.native, traps=traps_x1, ccd=ccd
+            data=pre_cti_data_7.native, trap_list=traps_x1, ccd=ccd
         )
 
         fit = ac.FitDatasetLine(
@@ -65,7 +65,7 @@ class TestAnalysisDatasetLine:
         masked_line_ci = dataset_line_7.apply_mask(mask=mask_1d_7_unmasked)
 
         post_cti_data = clocker_1d.add_cti(
-            pre_cti_data=masked_line_ci.pre_cti_data, traps=traps_x1, ccd=ccd
+            data=masked_line_ci.pre_cti_data, trap_list=traps_x1, ccd=ccd
         )
 
         analysis = ac.AnalysisDatasetLine(
