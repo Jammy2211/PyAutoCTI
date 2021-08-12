@@ -20,7 +20,26 @@ def push_config(plot_path):
 
 
 class TestVisualizer:
-    def test__visualizes_imaging_using_configs(
+    def test__visualizes_dataset_line_using_configs(
+        self, dataset_line_7, plot_path, plot_patch
+    ):
+
+        if path.exists(plot_path):
+            shutil.rmtree(plot_path)
+
+        visualizer = vis.Visualizer(visualize_path=plot_path)
+
+        visualizer.visualize_dataset_line(dataset_line=dataset_line_7)
+
+        plot_path = path.join(plot_path, "dataset_line")
+
+        assert path.join(plot_path, "subplot_dataset_line.png") in plot_patch.paths
+        assert path.join(plot_path, "line.png") in plot_patch.paths
+        assert path.join(plot_path, "noise_map.png") not in plot_patch.paths
+        assert path.join(plot_path, "signal_to_noise_map.png") not in plot_patch.paths
+        assert path.join(plot_path, "pre_cti_line.png") in plot_patch.paths
+
+    def test__visualizes_imaging_ci_using_configs(
         self, imaging_ci_7x7, plot_path, plot_patch
     ):
 
@@ -42,7 +61,7 @@ class TestVisualizer:
         assert path.join(plot_path, "pre_cti_image.png") in plot_patch.paths
         assert path.join(plot_path, "cosmic_ray_map.png") in plot_patch.paths
 
-    def test__visualizes_imaging_lines_using_configs(
+    def test__visualizes_imaging_ci_lines_using_configs(
         self, imaging_ci_7x7, plot_path, plot_patch
     ):
 
@@ -75,7 +94,7 @@ class TestVisualizer:
             in plot_patch.paths
         )
 
-    def test___visualizes_fit_using_configs(
+    def test___visualizes_fit_ci_using_configs(
         self, imaging_ci_7x7, fit_ci_7x7, plot_path, plot_patch
     ):
 
@@ -112,7 +131,7 @@ class TestVisualizer:
         assert path.join(plot_path, "normalized_residual_map.png") in plot_patch.paths
         assert path.join(plot_path, "chi_squared_map.png") in plot_patch.paths
 
-    def test___visualizes_fit_lines_using_configs(
+    def test___visualizes_fit_ci_lines_using_configs(
         self, imaging_ci_7x7, fit_ci_7x7, plot_path, plot_patch
     ):
 

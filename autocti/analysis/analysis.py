@@ -11,6 +11,7 @@ from autocti.analysis import visualizer as vis
 from autocti.analysis.result import ResultDataset
 from autocti.analysis.result import ResultDatasetLine
 from autocti.analysis.result import ResultImagingCI
+from autocti.analysis.settings import SettingsCTI1D
 from autocti.analysis.settings import SettingsCTI2D
 from autocti.util.clocker import Clocker1D
 from autocti.util.clocker import Clocker2D
@@ -21,7 +22,7 @@ class AnalysisDatasetLine(Analysis):
         self,
         dataset_line: DatasetLine,
         clocker: Clocker1D,
-        settings_cti: SettingsCTI2D = SettingsCTI2D(),
+        settings_cti: SettingsCTI1D = SettingsCTI1D(),
         results: List[ResultDataset] = None,
     ):
 
@@ -46,24 +47,9 @@ class AnalysisDatasetLine(Analysis):
             How fit the model is and the model
         """
 
-        self.settings_cti.check_total_density_within_range(
-            parallel_traps=instance.cti.parallel_traps, serial_traps=None
-        )
+        self.settings_cti.check_total_density_within_range(traps=instance.cti.traps)
 
-        if instance.cti.parallel_traps is not None:
-            traps = list(instance.cti.parallel_traps)
-        else:
-            traps = None
-
-        post_cti_line = self.clocker.add_cti(
-            pre_cti_data=self.dataset_line.pre_cti_line,
-            traps=traps,
-            ccd=instance.cti.parallel_ccd,
-        )
-
-        fit = FitDatasetLine(
-            dataset_line=self.dataset_line, post_cti_line=post_cti_line
-        )
+        fit = self.fit_from_instance(instance=instance)
 
         return fit.log_likelihood
 
@@ -71,15 +57,13 @@ class AnalysisDatasetLine(Analysis):
         self, instance: af.ModelInstance, dataset_line: DatasetLine
     ) -> FitDatasetLine:
 
-        if instance.cti.parallel_traps is not None:
-            traps = list(instance.cti.parallel_traps)
+        if instance.cti.traps is not None:
+            traps = list(instance.cti.traps)
         else:
             traps = None
 
         post_cti_line = self.clocker.add_cti(
-            pre_cti_data=dataset_line.pre_cti_line,
-            traps=traps,
-            ccd=instance.cti.parallel_ccd,
+            pre_cti_data=dataset_line.pre_cti_line, traps=traps, ccd=instance.cti.ccd
         )
 
         return FitDatasetLine(dataset_line=dataset_line, post_cti_line=post_cti_line)

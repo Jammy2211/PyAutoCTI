@@ -4,6 +4,8 @@ from autoarray.plot.mat_wrap.wrap import wrap_base
 from autoarray.plot.mat_wrap import mat_plot
 from autoarray.plot.mat_wrap import include as inc
 from autoarray.plot import multi_plotters
+from autocti.plot import dataset_line_plotters
+from autocti.plot import fit_line_plotters
 from autocti.plot import imaging_ci_plotters
 from autocti.plot import fit_ci_plotters
 
@@ -37,6 +39,29 @@ class Visualizer:
                 path=path.join(self.visualize_path, subfolders), format=format
             )
         )
+
+    def visualize_dataset_line(self, dataset_line):
+        def should_plot(name):
+            return plot_setting(section="dataset", name=name)
+
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset_line")
+
+        imaging_ci_plotter = dataset_line_plotters.DatasetLinePlotter(
+            dataset_line=dataset_line,
+            mat_plot_1d=mat_plot_1d,
+            include_1d=self.include_1d,
+        )
+
+        imaging_ci_plotter.figures_1d(
+            line=should_plot("data"),
+            noise_map=should_plot("noise_map"),
+            signal_to_noise_map=should_plot("signal_to_noise_map"),
+            pre_cti_line=should_plot("pre_cti_image"),
+        )
+
+        if should_plot("subplot_dataset"):
+
+            imaging_ci_plotter.subplot_dataset_line()
 
     def visualize_imaging_ci(self, imaging_ci):
         def should_plot(name):
