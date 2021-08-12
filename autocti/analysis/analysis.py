@@ -62,11 +62,11 @@ class AnalysisDatasetLine(Analysis):
         else:
             traps = None
 
-        post_cti_line = self.clocker.add_cti(
-            pre_cti_data=dataset_line.pre_cti_line, traps=traps, ccd=instance.cti.ccd
+        post_cti_data = self.clocker.add_cti(
+            pre_cti_data=dataset_line.pre_cti_data, traps=traps, ccd=instance.cti.ccd
         )
 
-        return FitDatasetLine(dataset_line=dataset_line, post_cti_line=post_cti_line)
+        return FitDatasetLine(dataset_line=dataset_line, post_cti_data=post_cti_data)
 
     def fit_from_instance(self, instance: af.ModelInstance) -> FitDatasetLine:
 
@@ -140,8 +140,8 @@ class AnalysisImagingCI(Analysis):
         else:
             serial_traps = None
 
-        post_cti_image = self.clocker.add_cti(
-            pre_cti_data=self.dataset_ci.pre_cti_image,
+        post_cti_data = self.clocker.add_cti(
+            pre_cti_data=self.dataset_ci.pre_cti_data,
             parallel_traps=parallel_traps,
             parallel_ccd=instance.cti.parallel_ccd,
             serial_traps=serial_traps,
@@ -150,7 +150,7 @@ class AnalysisImagingCI(Analysis):
 
         fit = FitImagingCI(
             imaging=self.dataset_ci,
-            post_cti_image=post_cti_image,
+            post_cti_data=post_cti_data,
             hyper_noise_scalars=hyper_noise_scalars,
         )
 
@@ -202,8 +202,8 @@ class AnalysisImagingCI(Analysis):
         else:
             serial_traps = None
 
-        post_cti_image = self.clocker.add_cti(
-            pre_cti_data=imaging_ci.pre_cti_image,
+        post_cti_data = self.clocker.add_cti(
+            pre_cti_data=imaging_ci.pre_cti_data,
             parallel_traps=parallel_traps,
             parallel_ccd=instance.cti.parallel_ccd,
             serial_traps=serial_traps,
@@ -212,7 +212,7 @@ class AnalysisImagingCI(Analysis):
 
         return FitImagingCI(
             imaging=imaging_ci,
-            post_cti_image=post_cti_image,
+            post_cti_data=post_cti_data,
             hyper_noise_scalars=hyper_noise_scalars,
         )
 

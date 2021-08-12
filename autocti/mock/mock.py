@@ -210,7 +210,7 @@ class MockCIPreCTI(np.ndarray):
         ci.value = value
         return ci
 
-    def post_cti_image_from_cti_params_and_settings(self, cti_params, clocker):
+    def post_cti_data_from_cti_params_and_settings(self, cti_params, clocker):
         return self.value * np.ones((2, 2))
 
 

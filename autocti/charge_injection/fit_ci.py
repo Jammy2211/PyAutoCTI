@@ -6,7 +6,7 @@ from autoarray.fit import fit
 
 class FitImagingCI(fit.FitImaging):
     def __init__(
-        self, imaging: imaging_ci.ImagingCI, post_cti_image, hyper_noise_scalars=None
+        self, imaging: imaging_ci.ImagingCI, post_cti_data, hyper_noise_scalars=None
     ):
         """Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian
         framework.
@@ -15,8 +15,8 @@ class FitImagingCI(fit.FitImaging):
         -----------
         imaging
             The charge injection image that is fitted.
-        post_cti_image
-            The `pre_cti_image` with cti added to it via the clocker and a CTI model.
+        post_cti_data
+            The `pre_cti_data` with cti added to it via the clocker and a CTI model.
         hyper_noise_scalars :
             The hyper_ci-parameter(s) which the noise_scaling_map_list_list is multiplied by to scale the noise-map.
         """
@@ -35,7 +35,7 @@ class FitImagingCI(fit.FitImaging):
 
             imaging = imaging.modify_noise_map(noise_map=noise_map)
 
-        super().__init__(imaging=imaging, model_image=post_cti_image)
+        super().__init__(imaging=imaging, model_image=post_cti_data)
 
     @property
     def imaging_ci(self):
@@ -46,12 +46,12 @@ class FitImagingCI(fit.FitImaging):
         return self.imaging_ci.layout
 
     @property
-    def post_cti_image(self):
+    def post_cti_data(self):
         return self.model_data
 
     @property
-    def pre_cti_image(self):
-        return self.dataset.pre_cti_image
+    def pre_cti_data(self):
+        return self.dataset.pre_cti_data
 
     @property
     def chi_squared_map_of_regions_ci(self):

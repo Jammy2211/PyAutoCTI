@@ -68,7 +68,7 @@ class TestApplyMask:
 
         assert (masked_dataset_line.noise_map == masked_noise_map).all()
 
-        assert (masked_dataset_line.pre_cti_line == dataset_line_7.pre_cti_line).all()
+        assert (masked_dataset_line.pre_cti_data == dataset_line_7.pre_cti_data).all()
 
 
 class TestDatasetLine:
@@ -91,7 +91,7 @@ class TestDatasetLine:
 
         assert (imaging.data.native == np.ones((7,))).all()
         assert (imaging.noise_map.native == 2.0 * np.ones((7,))).all()
-        assert (imaging.pre_cti_line.native == 3.0 * np.ones((7,))).all()
+        assert (imaging.pre_cti_data.native == 3.0 * np.ones((7,))).all()
 
         assert imaging.layout == layout_7
 
@@ -116,7 +116,7 @@ class TestDatasetLine:
 
         assert (imaging.data.native == np.ones((7,))).all()
         assert (imaging.noise_map.native == 2.0 * np.ones((7,))).all()
-        assert (imaging.pre_cti_line.native == 3.0 * np.ones((7,))).all()
+        assert (imaging.pre_cti_data.native == 3.0 * np.ones((7,))).all()
 
         assert imaging.layout == layout_7
 
@@ -138,7 +138,7 @@ class TestDatasetLine:
 
         assert (imaging.data.native == np.ones((7,))).all()
         assert (imaging.noise_map.native == 10.0 * np.ones((7,))).all()
-        assert (imaging.pre_cti_line.native == 3.0 * np.ones((7,))).all()
+        assert (imaging.pre_cti_data.native == 3.0 * np.ones((7,))).all()
 
         assert imaging.layout == layout_7
 
@@ -163,7 +163,7 @@ class TestDatasetLine:
 
         assert (imaging.data.native == np.ones((7,))).all()
         assert (imaging.noise_map.native == 2.0 * np.ones((7,))).all()
-        assert (imaging.pre_cti_line.native == 10.0 * np.ones((7,))).all()
+        assert (imaging.pre_cti_data.native == 10.0 * np.ones((7,))).all()
 
         assert imaging.layout == layout_ci
 
@@ -210,7 +210,7 @@ class TestDatasetLine:
 
         assert (imaging.data.native == np.ones((7,))).all()
         assert (imaging.noise_map.native == 2.0 * np.ones((7,))).all()
-        assert (imaging.pre_cti_line.native == 3.0 * np.ones((7,))).all()
+        assert (imaging.pre_cti_data.native == 3.0 * np.ones((7,))).all()
 
         clean_fits(fits_path=fits_path)
 
@@ -283,7 +283,7 @@ class TestSimulatorDatasetLine:
         assert (dataset_line.data == dataset_line_via_pre_cti_data.data).all()
         assert (dataset_line.noise_map == dataset_line_via_pre_cti_data.noise_map).all()
         assert (
-            dataset_line.pre_cti_line == dataset_line_via_pre_cti_data.pre_cti_line
+            dataset_line.pre_cti_data == dataset_line_via_pre_cti_data.pre_cti_data
         ).all()
 
     def test__from_post_cti_data(self, clocker_1d, traps_x2, ccd):
@@ -316,5 +316,5 @@ class TestSimulatorDatasetLine:
             dataset_line.noise_map == dataset_line_via_post_cti_data.noise_map
         ).all()
         assert (
-            dataset_line.pre_cti_line == dataset_line_via_post_cti_data.pre_cti_line
+            dataset_line.pre_cti_data == dataset_line_via_post_cti_data.pre_cti_data
         ).all()

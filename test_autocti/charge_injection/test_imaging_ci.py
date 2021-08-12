@@ -68,8 +68,8 @@ class TestImagingCI:
             == imaging_ci_7x7.noise_map.native[:, 1:7]
         ).all()
         assert (
-            parallel_calibration_imaging.pre_cti_image.native
-            == imaging_ci_7x7.pre_cti_image.native[:, 1:7]
+            parallel_calibration_imaging.pre_cti_data.native
+            == imaging_ci_7x7.pre_cti_data.native[:, 1:7]
         ).all()
         assert (
             parallel_calibration_imaging.cosmic_ray_map.native
@@ -95,8 +95,8 @@ class TestImagingCI:
             == imaging_ci_7x7.noise_map.native[0:2, :]
         ).all()
         assert (
-            serial_calibration_imaging.pre_cti_image.native
-            == imaging_ci_7x7.pre_cti_image.native[0:2, :]
+            serial_calibration_imaging.pre_cti_data.native
+            == imaging_ci_7x7.pre_cti_data.native[0:2, :]
         ).all()
         assert (
             serial_calibration_imaging.cosmic_ray_map.native
@@ -116,15 +116,15 @@ class TestImagingCI:
             image_hdu=0,
             noise_map_path=path.join(test_data_path, "3x3_twos.fits"),
             noise_map_hdu=0,
-            pre_cti_image_path=path.join(test_data_path, "3x3_threes.fits"),
-            pre_cti_image_hdu=0,
+            pre_cti_data_path=path.join(test_data_path, "3x3_threes.fits"),
+            pre_cti_data_hdu=0,
             cosmic_ray_map_path=path.join(test_data_path, "3x3_fours.fits"),
             cosmic_ray_map_hdu=0,
         )
 
         assert (imaging.image.native == np.ones((3, 3))).all()
         assert (imaging.noise_map.native == 2.0 * np.ones((3, 3))).all()
-        assert (imaging.pre_cti_image.native == 3.0 * np.ones((3, 3))).all()
+        assert (imaging.pre_cti_data.native == 3.0 * np.ones((3, 3))).all()
         assert (imaging.cosmic_ray_map.native == 4.0 * np.ones((3, 3))).all()
 
         assert imaging.layout == layout_ci_7x7
@@ -140,15 +140,15 @@ class TestImagingCI:
             image_hdu=0,
             noise_map_path=path.join(test_data_path, "3x3_multiple_hdu.fits"),
             noise_map_hdu=1,
-            pre_cti_image_path=path.join(test_data_path, "3x3_multiple_hdu.fits"),
-            pre_cti_image_hdu=2,
+            pre_cti_data_path=path.join(test_data_path, "3x3_multiple_hdu.fits"),
+            pre_cti_data_hdu=2,
             cosmic_ray_map_path=path.join(test_data_path, "3x3_multiple_hdu.fits"),
             cosmic_ray_map_hdu=3,
         )
 
         assert (imaging.image.native == np.ones((3, 3))).all()
         assert (imaging.noise_map.native == 2.0 * np.ones((3, 3))).all()
-        assert (imaging.pre_cti_image.native == 3.0 * np.ones((3, 3))).all()
+        assert (imaging.pre_cti_data.native == 3.0 * np.ones((3, 3))).all()
         assert (imaging.cosmic_ray_map.native == 4.0 * np.ones((3, 3))).all()
 
         assert imaging.layout == layout_ci_7x7
@@ -161,18 +161,18 @@ class TestImagingCI:
             image_path=path.join(test_data_path, "3x3_ones.fits"),
             image_hdu=0,
             noise_map_from_single_value=10.0,
-            pre_cti_image_path=path.join(test_data_path, "3x3_threes.fits"),
-            pre_cti_image_hdu=0,
+            pre_cti_data_path=path.join(test_data_path, "3x3_threes.fits"),
+            pre_cti_data_hdu=0,
         )
 
         assert (imaging.image.native == np.ones((3, 3))).all()
         assert (imaging.noise_map.native == 10.0 * np.ones((3, 3))).all()
-        assert (imaging.pre_cti_image.native == 3.0 * np.ones((3, 3))).all()
+        assert (imaging.pre_cti_data.native == 3.0 * np.ones((3, 3))).all()
         assert imaging.cosmic_ray_map == None
 
         assert imaging.layout == layout_ci_7x7
 
-    def test__from_fits__load_pre_cti_image_image_from_the_layout_ci_and_image(self):
+    def test__from_fits__load_pre_cti_data_image_from_the_layout_ci_and_image(self):
 
         layout_ci = ac.ci.Layout2DCI(
             shape_2d=(3, 3), region_list=[(0, 3, 0, 3)], normalization=10.0
@@ -189,7 +189,7 @@ class TestImagingCI:
 
         assert (imaging.image.native == np.ones((3, 3))).all()
         assert (imaging.noise_map.native == 2.0 * np.ones((3, 3))).all()
-        assert (imaging.pre_cti_image.native == 10.0 * np.ones((3, 3))).all()
+        assert (imaging.pre_cti_data.native == 10.0 * np.ones((3, 3))).all()
         assert imaging.cosmic_ray_map == None
 
         assert imaging.layout == layout_ci
@@ -203,8 +203,8 @@ class TestImagingCI:
             image_hdu=0,
             noise_map_path=path.join(test_data_path, "3x3_twos.fits"),
             noise_map_hdu=0,
-            pre_cti_image_path=path.join(test_data_path, "3x3_threes.fits"),
-            pre_cti_image_hdu=0,
+            pre_cti_data_path=path.join(test_data_path, "3x3_threes.fits"),
+            pre_cti_data_hdu=0,
             cosmic_ray_map_path=path.join(test_data_path, "3x3_fours.fits"),
             cosmic_ray_map_hdu=0,
         )
@@ -219,7 +219,7 @@ class TestImagingCI:
         imaging.output_to_fits(
             image_path=path.join(output_data_dir, "image.fits"),
             noise_map_path=path.join(output_data_dir, "noise_map.fits"),
-            pre_cti_image_path=path.join(output_data_dir, "pre_cti_image.fits"),
+            pre_cti_data_path=path.join(output_data_dir, "pre_cti_data.fits"),
             cosmic_ray_map_path=path.join(output_data_dir, "cosmic_ray_map.fits"),
         )
 
@@ -230,15 +230,15 @@ class TestImagingCI:
             image_hdu=0,
             noise_map_path=path.join(output_data_dir, "noise_map.fits"),
             noise_map_hdu=0,
-            pre_cti_image_path=path.join(output_data_dir, "pre_cti_image.fits"),
-            pre_cti_image_hdu=0,
+            pre_cti_data_path=path.join(output_data_dir, "pre_cti_data.fits"),
+            pre_cti_data_hdu=0,
             cosmic_ray_map_path=path.join(output_data_dir, "cosmic_ray_map.fits"),
             cosmic_ray_map_hdu=0,
         )
 
         assert (imaging.image.native == np.ones((3, 3))).all()
         assert (imaging.noise_map.native == 2.0 * np.ones((3, 3))).all()
-        assert (imaging.pre_cti_image.native == 3.0 * np.ones((3, 3))).all()
+        assert (imaging.pre_cti_data.native == 3.0 * np.ones((3, 3))).all()
         assert (imaging.cosmic_ray_map.native == 4.0 * np.ones((3, 3))).all()
 
 
@@ -265,7 +265,7 @@ class TestApplyMask:
 
         assert (masked_imaging_ci.noise_map == masked_noise_map).all()
 
-        assert (masked_imaging_ci.pre_cti_image == imaging_ci_7x7.pre_cti_image).all()
+        assert (masked_imaging_ci.pre_cti_data == imaging_ci_7x7.pre_cti_data).all()
 
         masked_cosmic_ray_map = imaging_ci_7x7.cosmic_ray_map
         masked_cosmic_ray_map[0, 0] = 0.0
@@ -303,9 +303,9 @@ class TestApplySettings:
 
         assert masked_imaging_ci.noise_map == pytest.approx(noise_map, 1.0e-4)
 
-        pre_cti_image = 10.0 * np.ones((7, 2))
+        pre_cti_data = 10.0 * np.ones((7, 2))
 
-        assert masked_imaging_ci.pre_cti_image == pytest.approx(pre_cti_image, 1.0e-4)
+        assert masked_imaging_ci.pre_cti_data == pytest.approx(pre_cti_data, 1.0e-4)
 
         assert masked_imaging_ci.cosmic_ray_map.shape == (7, 2)
 
@@ -352,9 +352,9 @@ class TestApplySettings:
 
         assert masked_imaging_ci.noise_map == pytest.approx(noise_map, 1.0e-4)
 
-        pre_cti_image = 10.0 * np.ones((1, 7))
+        pre_cti_data = 10.0 * np.ones((1, 7))
 
-        assert masked_imaging_ci.pre_cti_image == pytest.approx(pre_cti_image, 1.0e-4)
+        assert masked_imaging_ci.pre_cti_data == pytest.approx(pre_cti_data, 1.0e-4)
 
         assert masked_imaging_ci.cosmic_ray_map.shape == (1, 7)
 
@@ -421,7 +421,7 @@ class TestSimulatorImagingCI:
             parallel_ccd=ccd,
         )
 
-        image_no_noise = layout_ci.pre_cti_image_from(
+        image_no_noise = layout_ci.pre_cti_data_from(
             shape_native=(3, 3), pixel_scales=1.0
         )
 
@@ -483,7 +483,7 @@ class TestSimulatorImagingCI:
         ).all()
         assert imaging.layout == layout_ci
 
-    def test__from_pre_cti_image(self, parallel_clocker_2d, traps_x2, ccd):
+    def test__from_pre_cti_data(self, parallel_clocker_2d, traps_x2, ccd):
 
         layout_ci = ac.ci.Layout2DCI(
             shape_2d=(5, 5),
@@ -507,12 +507,12 @@ class TestSimulatorImagingCI:
             cosmic_ray_map=cosmic_ray_map,
         )
 
-        pre_cti_image = layout_ci.pre_cti_image_from(
+        pre_cti_data = layout_ci.pre_cti_data_from(
             shape_native=(5, 5), pixel_scales=1.0
         )
 
-        imaging_via_pre_cti_image = simulator.from_pre_cti_image(
-            pre_cti_image=pre_cti_image.native,
+        imaging_via_pre_cti_data = simulator.from_pre_cti_data(
+            pre_cti_data=pre_cti_data.native,
             layout=layout_ci,
             clocker=parallel_clocker_2d,
             parallel_traps=traps_x2,
@@ -520,14 +520,12 @@ class TestSimulatorImagingCI:
             cosmic_ray_map=cosmic_ray_map,
         )
 
-        assert (imaging.image == imaging_via_pre_cti_image.image).all()
-        assert (imaging.noise_map == imaging_via_pre_cti_image.noise_map).all()
-        assert (imaging.pre_cti_image == imaging_via_pre_cti_image.pre_cti_image).all()
-        assert (
-            imaging.cosmic_ray_map == imaging_via_pre_cti_image.cosmic_ray_map
-        ).all()
+        assert (imaging.image == imaging_via_pre_cti_data.image).all()
+        assert (imaging.noise_map == imaging_via_pre_cti_data.noise_map).all()
+        assert (imaging.pre_cti_data == imaging_via_pre_cti_data.pre_cti_data).all()
+        assert (imaging.cosmic_ray_map == imaging_via_pre_cti_data.cosmic_ray_map).all()
 
-    def test__from_post_cti_image(self, parallel_clocker_2d, traps_x2, ccd):
+    def test__from_post_cti_data(self, parallel_clocker_2d, traps_x2, ccd):
 
         layout_ci = ac.ci.Layout2DCI(
             shape_2d=(5, 5),
@@ -551,27 +549,27 @@ class TestSimulatorImagingCI:
             cosmic_ray_map=cosmic_ray_map,
         )
 
-        pre_cti_image = layout_ci.pre_cti_image_from(
+        pre_cti_data = layout_ci.pre_cti_data_from(
             shape_native=(5, 5), pixel_scales=1.0
         ).native
-        pre_cti_image += cosmic_ray_map
+        pre_cti_data += cosmic_ray_map
 
-        post_cti_image = parallel_clocker_2d.add_cti(
-            pre_cti_data=pre_cti_image, parallel_traps=traps_x2, parallel_ccd=ccd
+        post_cti_data = parallel_clocker_2d.add_cti(
+            pre_cti_data=pre_cti_data, parallel_traps=traps_x2, parallel_ccd=ccd
         )
 
-        pre_cti_image -= cosmic_ray_map
+        pre_cti_data -= cosmic_ray_map
 
-        imaging_via_post_cti_image = simulator.from_post_cti_image(
-            post_cti_image=post_cti_image,
-            pre_cti_image=pre_cti_image.native,
+        imaging_via_post_cti_data = simulator.from_post_cti_data(
+            post_cti_data=post_cti_data,
+            pre_cti_data=pre_cti_data.native,
             layout=layout_ci,
             cosmic_ray_map=cosmic_ray_map,
         )
 
-        assert (imaging.image == imaging_via_post_cti_image.image).all()
-        assert (imaging.noise_map == imaging_via_post_cti_image.noise_map).all()
-        assert (imaging.pre_cti_image == imaging_via_post_cti_image.pre_cti_image).all()
+        assert (imaging.image == imaging_via_post_cti_data.image).all()
+        assert (imaging.noise_map == imaging_via_post_cti_data.noise_map).all()
+        assert (imaging.pre_cti_data == imaging_via_post_cti_data.pre_cti_data).all()
         assert (
-            imaging.cosmic_ray_map == imaging_via_post_cti_image.cosmic_ray_map
+            imaging.cosmic_ray_map == imaging_via_post_cti_data.cosmic_ray_map
         ).all()

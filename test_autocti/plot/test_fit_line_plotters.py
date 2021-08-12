@@ -22,21 +22,21 @@ def test__individual_attribute_plots__all_plot_correctly(
     )
 
     fit_ci_plotter.figures_1d(
-        line=True,
+        data=True,
         noise_map=True,
         signal_to_noise_map=True,
-        pre_cti_line=True,
-        post_cti_line=True,
+        pre_cti_data=True,
+        post_cti_data=True,
         residual_map=True,
         normalized_residual_map=True,
         chi_squared_map=True,
     )
 
-    assert path.join(plot_path, "line_1d.png") in plot_patch.paths
+    assert path.join(plot_path, "data.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map.png") in plot_patch.paths
     assert path.join(plot_path, "signal_to_noise_map.png") in plot_patch.paths
-    assert path.join(plot_path, "pre_cti_line.png") in plot_patch.paths
-    assert path.join(plot_path, "post_cti_line.png") in plot_patch.paths
+    assert path.join(plot_path, "pre_cti_data.png") in plot_patch.paths
+    assert path.join(plot_path, "post_cti_data.png") in plot_patch.paths
     assert path.join(plot_path, "residual_map.png") in plot_patch.paths
     assert path.join(plot_path, "normalized_residual_map.png") in plot_patch.paths
     assert path.join(plot_path, "chi_squared_map.png") in plot_patch.paths
@@ -44,19 +44,19 @@ def test__individual_attribute_plots__all_plot_correctly(
     plot_patch.paths = []
 
     fit_ci_plotter.figures_1d(
-        line=True,
+        data=True,
         noise_map=False,
         signal_to_noise_map=False,
-        pre_cti_line=True,
-        post_cti_line=True,
+        pre_cti_data=True,
+        post_cti_data=True,
         chi_squared_map=True,
     )
 
-    assert path.join(plot_path, "line_1d.png") in plot_patch.paths
+    assert path.join(plot_path, "data.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map.png") not in plot_patch.paths
     assert path.join(plot_path, "signal_to_noise_map.png") not in plot_patch.paths
-    assert path.join(plot_path, "pre_cti_line.png") in plot_patch.paths
-    assert path.join(plot_path, "post_cti_line.png") in plot_patch.paths
+    assert path.join(plot_path, "pre_cti_data.png") in plot_patch.paths
+    assert path.join(plot_path, "post_cti_data.png") in plot_patch.paths
     assert path.join(plot_path, "residual_map.png") not in plot_patch.paths
     assert path.join(plot_path, "chi_squared_map.png") in plot_patch.paths
 

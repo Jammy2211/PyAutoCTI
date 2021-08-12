@@ -1594,22 +1594,22 @@ class Layout2DCI(AbstractLayout2DCI):
             serial_overscan=layout.serial_overscan,
         )
 
-    def pre_cti_image_from(self, shape_native, pixel_scales):
+    def pre_cti_data_from(self, shape_native, pixel_scales):
         """Use this charge injection layout_ci to generate a pre-cti charge injection image. This is performed by \
         going to its charge injection regions and adding the charge injection normalization value.
 
         Parameters
         -----------
         shape_native
-            The image_shape of the pre_cti_images to be created.
+            The image_shape of the pre_cti_datas to be created.
         """
 
-        pre_cti_image = np.zeros(shape_native)
+        pre_cti_data = np.zeros(shape_native)
 
         for region in self.region_list:
-            pre_cti_image[region.slice] += self.normalization
+            pre_cti_data[region.slice] += self.normalization
 
-        return array_2d.Array2D.manual(array=pre_cti_image, pixel_scales=pixel_scales)
+        return array_2d.Array2D.manual(array=pre_cti_data, pixel_scales=pixel_scales)
 
 
 class Layout2DCINonUniform(AbstractLayout2DCI):
@@ -1671,7 +1671,7 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
         Non-uniformity in the columns is caused by sharp peaks and troughs in the input charge current. To simulator  \
         this, we change the normalization of each column by drawing its normalization value from a Gaussian \
         distribution which has a mean of the input normalization and standard deviation *column_sigma*. The seed \
-        of the random number generator ensures that the non-uniform charge injection update_via_regions of each pre_cti_images \
+        of the random number generator ensures that the non-uniform charge injection update_via_regions of each pre_cti_datas \
         are identical.
 
         Non-uniformity in the rows is caused by the charge smoothly decreasing as the injection is switched off. To \
@@ -1714,11 +1714,11 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
 
         return ci_region
 
-    def pre_cti_image_from(self, shape_native, pixel_scales, ci_seed=-1):
+    def pre_cti_data_from(self, shape_native, pixel_scales, ci_seed=-1):
         """Use this charge injection layout_ci to generate a pre-cti charge injection image. This is performed by going \
         to its charge injection regions and adding its non-uniform charge distribution.
 
-        For one column of a non-uniform charge injection pre_cti_images, it is assumed that each non-uniform charge \
+        For one column of a non-uniform charge injection pre_cti_datas, it is assumed that each non-uniform charge \
         injection region has the same overall normalization value (after drawing this value randomly from a Gaussian \
         distribution). Physically, this is true provided the spikes / troughs in the current that cause \
         non-uniformity occur in an identical fashion for the generation of each charge injection region.
@@ -1727,15 +1727,15 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
         -----------
         column_sigma
         shape_native
-            The image_shape of the pre_cti_images to be created.
+            The image_shape of the pre_cti_datas to be created.
         maximum_normalization
 
         ci_seed : int
             Input ci_seed for the random number generator to give reproducible results. A new ci_seed is always used for each \
-            pre_cti_images, ensuring each non-uniform ci_region has the same column non-uniformity layout_ci.
+            pre_cti_datas, ensuring each non-uniform ci_region has the same column non-uniformity layout_ci.
         """
 
-        pre_cti_image = np.zeros(shape_native)
+        pre_cti_data = np.zeros(shape_native)
 
         if ci_seed == -1:
             ci_seed = np.random.randint(
@@ -1744,11 +1744,11 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
             # non-uniformity.
 
         for region in self.region_list:
-            pre_cti_image[region.slice] += self.region_ci_from(
+            pre_cti_data[region.slice] += self.region_ci_from(
                 region_dimensions=region.shape, ci_seed=ci_seed
             )
 
-        return array_2d.Array2D.manual(array=pre_cti_image, pixel_scales=pixel_scales)
+        return array_2d.Array2D.manual(array=pre_cti_data, pixel_scales=pixel_scales)
 
     def generate_column(self, size, normalization):
         """Generate a column of non-uniform charge, including row non-uniformity.

@@ -56,10 +56,10 @@ class TestAnalysis:
 
 class TestAnalysisDatasetLine:
     def test__make_result__result_line_is_returned(
-        self, dataset_line_7, pre_cti_line_7, traps_x1, ccd, clocker_1d
+        self, dataset_line_7, pre_cti_data_7, traps_x1, ccd, clocker_1d
     ):
         model = af.CollectionPriorModel(
-            cti=af.Model(ac.CTI2D, parallel_traps=traps_x1, parallel_ccd=ccd),
+            cti=af.Model(ac.CTI1D, traps=traps_x1, ccd=ccd),
             hyper_noise=af.Model(ac.ci.HyperCINoiseCollection),
         )
 
@@ -74,11 +74,11 @@ class TestAnalysisDatasetLine:
         assert isinstance(result, res.ResultDatasetLine)
 
     def test__log_likelihood_via_analysis__matches_manual_fit(
-        self, dataset_line_7, pre_cti_line_7, traps_x1, ccd, clocker_1d
+        self, dataset_line_7, pre_cti_data_7, traps_x1, ccd, clocker_1d
     ):
 
         model = af.CollectionPriorModel(
-            cti=af.Model(ac.CTI2D, parallel_traps=traps_x1, parallel_ccd=ccd),
+            cti=af.Model(ac.CTI1D, traps=traps_x1, ccd=ccd),
             hyper_noise=af.Model(ac.ci.HyperCINoiseCollection),
         )
 
@@ -92,12 +92,12 @@ class TestAnalysisDatasetLine:
             instance=instance
         )
 
-        post_cti_line = clocker_1d.add_cti(
-            pre_cti_data=pre_cti_line_7.native, traps=traps_x1, ccd=ccd
+        post_cti_data = clocker_1d.add_cti(
+            pre_cti_data=pre_cti_data_7.native, traps=traps_x1, ccd=ccd
         )
 
         fit = ac.FitDatasetLine(
-            dataset_line=analysis.dataset_line, post_cti_line=post_cti_line
+            dataset_line=analysis.dataset_line, post_cti_data=post_cti_data
         )
 
         assert fit.log_likelihood == log_likelihood_via_analysis
@@ -107,14 +107,14 @@ class TestAnalysisDatasetLine:
     ):
 
         model = af.CollectionPriorModel(
-            cti=af.Model(ac.CTI2D, parallel_traps=traps_x1, parallel_ccd=ccd),
+            cti=af.Model(ac.CTI1D, traps=traps_x1, ccd=ccd),
             hyper_noise=af.Model(ac.ci.HyperCINoiseCollection),
         )
 
         masked_line_ci = dataset_line_7.apply_mask(mask=mask_1d_7_unmasked)
 
-        post_cti_line = clocker_1d.add_cti(
-            pre_cti_data=masked_line_ci.pre_cti_line, traps=traps_x1, ccd=ccd
+        post_cti_data = clocker_1d.add_cti(
+            pre_cti_data=masked_line_ci.pre_cti_data, traps=traps_x1, ccd=ccd
         )
 
         analysis = ac.AnalysisDatasetLine(
@@ -126,7 +126,7 @@ class TestAnalysisDatasetLine:
         fit_analysis = analysis.fit_from_instance(instance=instance)
 
         fit = ac.FitDatasetLine(
-            dataset_line=masked_line_ci, post_cti_line=post_cti_line
+            dataset_line=masked_line_ci, post_cti_data=post_cti_data
         )
 
         assert fit.dataset.data.shape == (7,)
@@ -135,7 +135,7 @@ class TestAnalysisDatasetLine:
 
 class TestAnalysisImagingCI:
     def test__make_result__result_imaging_is_returned(
-        self, imaging_ci_7x7, pre_cti_image_7x7, traps_x1, ccd, parallel_clocker_2d
+        self, imaging_ci_7x7, pre_cti_data_7x7, traps_x1, ccd, parallel_clocker_2d
     ):
         model = af.CollectionPriorModel(
             cti=af.Model(ac.CTI2D, parallel_traps=traps_x1, parallel_ccd=ccd),
@@ -153,7 +153,7 @@ class TestAnalysisImagingCI:
         assert isinstance(result, res.ResultImagingCI)
 
     def test__log_likelihood_via_analysis__matches_manual_fit(
-        self, imaging_ci_7x7, pre_cti_image_7x7, traps_x1, ccd, parallel_clocker_2d
+        self, imaging_ci_7x7, pre_cti_data_7x7, traps_x1, ccd, parallel_clocker_2d
     ):
 
         model = af.CollectionPriorModel(
@@ -171,14 +171,14 @@ class TestAnalysisImagingCI:
             instance=instance
         )
 
-        post_cti_image = parallel_clocker_2d.add_cti(
-            pre_cti_data=pre_cti_image_7x7.native,
+        post_cti_data = parallel_clocker_2d.add_cti(
+            pre_cti_data=pre_cti_data_7x7.native,
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
         )
 
         fit = ac.ci.FitImagingCI(
-            imaging=analysis.dataset_ci, post_cti_image=post_cti_image
+            imaging=analysis.dataset_ci, post_cti_data=post_cti_data
         )
 
         assert fit.log_likelihood == log_likelihood_via_analysis
@@ -197,8 +197,8 @@ class TestAnalysisImagingCI:
             settings=ac.ci.SettingsImagingCI(parallel_columns=(0, 1))
         )
 
-        post_cti_image = parallel_clocker_2d.add_cti(
-            pre_cti_data=masked_imaging_ci.pre_cti_image,
+        post_cti_data = parallel_clocker_2d.add_cti(
+            pre_cti_data=masked_imaging_ci.pre_cti_data,
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
         )
@@ -211,16 +211,14 @@ class TestAnalysisImagingCI:
 
         fit_analysis = analysis.fit_from_instance(instance=instance)
 
-        fit = ac.ci.FitImagingCI(
-            imaging=masked_imaging_ci, post_cti_image=post_cti_image
-        )
+        fit = ac.ci.FitImagingCI(imaging=masked_imaging_ci, post_cti_data=post_cti_data)
 
         assert fit.image.shape == (7, 1)
         assert fit_analysis.log_likelihood == pytest.approx(fit.log_likelihood)
 
         fit_full_analysis = analysis.fit_full_dataset_from_instance(instance=instance)
 
-        fit = ac.ci.FitImagingCI(imaging=imaging_ci_7x7, post_cti_image=post_cti_image)
+        fit = ac.ci.FitImagingCI(imaging=imaging_ci_7x7, post_cti_data=post_cti_data)
 
         assert fit.image.shape == (7, 7)
         assert fit_full_analysis.log_likelihood == pytest.approx(fit.log_likelihood)
@@ -265,15 +263,15 @@ class TestAnalysisImagingCI:
             instance=instance, hyper_noise_scale=True
         )
 
-        post_cti_image = parallel_clocker_2d.add_cti(
-            pre_cti_data=masked_imaging_ci.pre_cti_image,
+        post_cti_data = parallel_clocker_2d.add_cti(
+            pre_cti_data=masked_imaging_ci.pre_cti_data,
             parallel_traps=traps_x1,
             parallel_ccd=ccd,
         )
 
         fit = ac.ci.FitImagingCI(
             imaging=masked_imaging_ci,
-            post_cti_image=post_cti_image,
+            post_cti_data=post_cti_data,
             hyper_noise_scalars=[instance.hyper_noise.regions_ci],
         )
 
@@ -282,7 +280,7 @@ class TestAnalysisImagingCI:
 
         fit = ac.ci.FitImagingCI(
             imaging=masked_imaging_ci,
-            post_cti_image=post_cti_image,
+            post_cti_data=post_cti_data,
             hyper_noise_scalars=[ac.ci.HyperCINoiseScalar(scale_factor=0.0)],
         )
 
@@ -296,7 +294,7 @@ class TestAnalysisImagingCI:
 
         fit = ac.ci.FitImagingCI(
             imaging=masked_imaging_ci,
-            post_cti_image=post_cti_image,
+            post_cti_data=post_cti_data,
             hyper_noise_scalars=[instance.hyper_noise.regions_ci],
         )
 
@@ -307,7 +305,7 @@ class TestAnalysisImagingCI:
 
         fit = ac.ci.FitImagingCI(
             imaging=masked_imaging_ci,
-            post_cti_image=post_cti_image,
+            post_cti_data=post_cti_data,
             hyper_noise_scalars=[ac.ci.HyperCINoiseScalar(scale_factor=0.0)],
         )
 

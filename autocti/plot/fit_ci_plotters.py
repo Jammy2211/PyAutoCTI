@@ -54,8 +54,8 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         image=False,
         noise_map=False,
         signal_to_noise_map=False,
-        pre_cti_image=False,
-        post_cti_image=False,
+        pre_cti_data=False,
+        post_cti_data=False,
         residual_map=False,
         normalized_residual_map=False,
         chi_squared_map=False,
@@ -70,23 +70,23 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
             chi_squared_map=chi_squared_map,
         )
 
-        if pre_cti_image:
+        if pre_cti_data:
 
             self.mat_plot_2d.plot_array(
-                array=self.fit.pre_cti_image,
+                array=self.fit.pre_cti_data,
                 visuals_2d=self.visuals_with_include_2d,
                 auto_labels=mp.AutoLabels(
-                    title="CI Pre CTI Image", filename="pre_cti_image"
+                    title="CI Pre CTI Image", filename="pre_cti_data"
                 ),
             )
 
-        if post_cti_image:
+        if post_cti_data:
 
             self.mat_plot_2d.plot_array(
-                array=self.fit.post_cti_image,
+                array=self.fit.post_cti_data,
                 visuals_2d=self.visuals_with_include_2d,
                 auto_labels=mp.AutoLabels(
-                    title="CI Post CTI Image", filename="post_cti_image"
+                    title="CI Post CTI Image", filename="post_cti_data"
                 ),
             )
 
@@ -96,8 +96,8 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         image=False,
         noise_map=False,
         signal_to_noise_map=False,
-        pre_cti_image=False,
-        post_cti_image=False,
+        pre_cti_data=False,
+        post_cti_data=False,
         residual_map=False,
         normalized_residual_map=False,
         chi_squared_map=False,
@@ -153,10 +153,10 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                 ),
             )
 
-        if pre_cti_image:
+        if pre_cti_data:
 
             line = self.extract_line_from(
-                array=self.fit.pre_cti_image, line_region=line_region
+                array=self.fit.pre_cti_data, line_region=line_region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -167,14 +167,14 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                     title=f"CI Pre CTI Line {line_region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
-                    filename=f"pre_cti_image_{line_region}",
+                    filename=f"pre_cti_data_{line_region}",
                 ),
             )
 
-        if post_cti_image:
+        if post_cti_data:
 
             line = self.extract_line_from(
-                array=self.fit.post_cti_image, line_region=line_region
+                array=self.fit.post_cti_data, line_region=line_region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -185,7 +185,7 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
                     title=f"CI Post CTI Line {line_region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
-                    filename=f"post_cti_image_{line_region}",
+                    filename=f"post_cti_data_{line_region}",
                 ),
             )
 
@@ -248,8 +248,8 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         image=False,
         noise_map=False,
         signal_to_noise_map=False,
-        pre_cti_image=False,
-        post_cti_image=False,
+        pre_cti_data=False,
+        post_cti_data=False,
         residual_map=False,
         normalized_residual_map=False,
         chi_squared_map=False,
@@ -260,8 +260,8 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
             image=image,
             noise_map=noise_map,
             signal_to_noise_map=signal_to_noise_map,
-            pre_cti_image=pre_cti_image,
-            post_cti_image=post_cti_image,
+            pre_cti_data=pre_cti_data,
+            post_cti_data=post_cti_data,
             residual_map=residual_map,
             normalized_residual_map=normalized_residual_map,
             chi_squared_map=chi_squared_map,
@@ -272,8 +272,8 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         return self.subplot(
             image=True,
             signal_to_noise_map=True,
-            pre_cti_image=True,
-            post_cti_image=True,
+            pre_cti_data=True,
+            post_cti_data=True,
             normalized_residual_map=True,
             chi_squared_map=True,
         )
@@ -291,8 +291,8 @@ class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
         self.figures_1d_ci_line_region(
             signal_to_noise_map=True, line_region=line_region
         )
-        self.figures_1d_ci_line_region(pre_cti_image=True, line_region=line_region)
-        self.figures_1d_ci_line_region(post_cti_image=True, line_region=line_region)
+        self.figures_1d_ci_line_region(pre_cti_data=True, line_region=line_region)
+        self.figures_1d_ci_line_region(post_cti_data=True, line_region=line_region)
         self.figures_1d_ci_line_region(
             normalized_residual_map=True, line_region=line_region
         )

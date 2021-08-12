@@ -41,7 +41,7 @@ class DatasetLinePlotter(abstract_plotters.AbstractPlotter):
         return self.visuals_1d + self.visuals_1d.__class__()
 
     def figures_1d(
-        self, line=False, noise_map=False, signal_to_noise_map=False, pre_cti_line=False
+        self, data=False, noise_map=False, signal_to_noise_map=False, pre_cti_data=False
     ):
         """
         Plot each attribute of the line data_type as individual figures one by one (e.g. the dataset, noise_map, PSF, \
@@ -57,13 +57,13 @@ class DatasetLinePlotter(abstract_plotters.AbstractPlotter):
             If true, the origin of the dataset's coordinate system is plotted as a 'x'.
         """
 
-        if line:
+        if data:
 
             self.mat_plot_1d.plot_yx(
                 y=self.dataset_line.data,
                 x=np.arange(len(self.dataset_line.data)),
                 visuals_1d=self.visuals_with_include_1d,
-                auto_labels=mp.AutoLabels(title="Line Dataset Line", filename="line"),
+                auto_labels=mp.AutoLabels(title="Line Dataset Line", filename="data"),
             )
 
         if noise_map:
@@ -89,31 +89,31 @@ class DatasetLinePlotter(abstract_plotters.AbstractPlotter):
                 ),
             )
 
-        if pre_cti_line:
+        if pre_cti_data:
 
             self.mat_plot_1d.plot_yx(
-                y=self.dataset_line.pre_cti_line,
-                x=np.arange(len(self.dataset_line.pre_cti_line)),
+                y=self.dataset_line.pre_cti_data,
+                x=np.arange(len(self.dataset_line.pre_cti_data)),
                 visuals_1d=self.visuals_with_include_1d,
                 auto_labels=mp.AutoLabels(
-                    title="Line Dataset Pre CTI Line", filename="pre_cti_line"
+                    title="Line Dataset Pre CTI Line", filename="pre_cti_data"
                 ),
             )
 
     def subplot(
         self,
-        line=False,
+        data=False,
         noise_map=False,
         signal_to_noise_map=False,
-        pre_cti_line=False,
+        pre_cti_data=False,
         auto_filename="subplot_dataset_line",
     ):
 
         self._subplot_custom_plot(
-            line=line,
+            data=data,
             noise_map=noise_map,
             signal_to_noise_map=signal_to_noise_map,
-            pre_cti_line=pre_cti_line,
+            pre_cti_data=pre_cti_data,
             auto_labels=mp.AutoLabels(filename=auto_filename),
         )
 
@@ -138,5 +138,5 @@ class DatasetLinePlotter(abstract_plotters.AbstractPlotter):
         """
 
         self.subplot(
-            line=True, noise_map=True, signal_to_noise_map=True, pre_cti_line=True
+            data=True, noise_map=True, signal_to_noise_map=True, pre_cti_data=True
         )

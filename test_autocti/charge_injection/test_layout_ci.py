@@ -1583,16 +1583,16 @@ class TestAbstractLayout2DCI(object):
 
 
 class TestLayout2DCI(object):
-    def test__pre_cti_image_from(self):
+    def test__pre_cti_data_from(self):
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(5, 3), normalization=10.0, region_list=[(0, 2, 0, 2)]
         )
 
-        pre_cti_image = layout.pre_cti_image_from(shape_native=(3, 3), pixel_scales=1.0)
+        pre_cti_data = layout.pre_cti_data_from(shape_native=(3, 3), pixel_scales=1.0)
 
         assert (
-            pre_cti_image.native
+            pre_cti_data.native
             == np.array([[10.0, 10.0, 0.0], [10.0, 10.0, 0.0], [0.0, 0.0, 0.0]])
         ).all()
 
@@ -1601,10 +1601,10 @@ class TestLayout2DCI(object):
             normalization=20.0,
             region_list=[(0, 2, 0, 2), (2, 3, 2, 3)],
         )
-        pre_cti_image = layout.pre_cti_image_from(shape_native=(3, 3), pixel_scales=1.0)
+        pre_cti_data = layout.pre_cti_data_from(shape_native=(3, 3), pixel_scales=1.0)
 
         assert (
-            pre_cti_image.native
+            pre_cti_data.native
             == np.array([[20.0, 20.0, 0.0], [20.0, 20.0, 0.0], [0.0, 0.0, 20.0]])
         ).all()
 
@@ -1613,10 +1613,10 @@ class TestLayout2DCI(object):
             normalization=30.0,
             region_list=[(0, 3, 0, 2), (2, 3, 2, 3)],
         )
-        pre_cti_image = layout.pre_cti_image_from(shape_native=(4, 3), pixel_scales=1.0)
+        pre_cti_data = layout.pre_cti_data_from(shape_native=(4, 3), pixel_scales=1.0)
 
         assert (
-            pre_cti_image.native
+            pre_cti_data.native
             == np.array(
                 [
                     [30.0, 30.0, 0.0],
@@ -1711,14 +1711,12 @@ class TestLayout2DCINonUniform(object):
 
         assert (region > 0).all()
 
-    def test__pre_cti_image_from__compare_uniform_to_non_uniform(self,):
+    def test__pre_cti_data_from__compare_uniform_to_non_uniform(self,):
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(5, 5), normalization=10.0, region_list=[(2, 4, 0, 5)]
         )
-        pre_cti_image_0 = layout.pre_cti_image_from(
-            shape_native=(5, 5), pixel_scales=1.0
-        )
+        pre_cti_data_0 = layout.pre_cti_data_from(shape_native=(5, 5), pixel_scales=1.0)
 
         layout_non_uni = ac.ci.Layout2DCINonUniform(
             shape_2d=(5, 5),
@@ -1727,20 +1725,18 @@ class TestLayout2DCINonUniform(object):
             row_slope=0.0,
             column_sigma=0.0,
         )
-        pre_cti_image_1 = layout_non_uni.pre_cti_image_from(
+        pre_cti_data_1 = layout_non_uni.pre_cti_data_from(
             shape_native=(5, 5), pixel_scales=1.0
         )
 
-        assert (pre_cti_image_0 == pre_cti_image_1).all()
+        assert (pre_cti_data_0 == pre_cti_data_1).all()
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(5, 5),
             normalization=100.0,
             region_list=[(0, 2, 0, 2), (2, 3, 0, 5)],
         )
-        pre_cti_image_0 = layout.pre_cti_image_from(
-            shape_native=(5, 5), pixel_scales=1.0
-        )
+        pre_cti_data_0 = layout.pre_cti_data_from(shape_native=(5, 5), pixel_scales=1.0)
 
         layout_non_uni = ac.ci.Layout2DCINonUniform(
             shape_2d=(5, 5),
@@ -1749,13 +1745,13 @@ class TestLayout2DCINonUniform(object):
             row_slope=0.0,
             column_sigma=0.0,
         )
-        pre_cti_image_1 = layout_non_uni.pre_cti_image_from(
+        pre_cti_data_1 = layout_non_uni.pre_cti_data_from(
             shape_native=(5, 5), pixel_scales=1.0
         )
 
-        assert (pre_cti_image_0 == pre_cti_image_1).all()
+        assert (pre_cti_data_0 == pre_cti_data_1).all()
 
-    def test__pre_cti_image_from__non_uniformity_in_columns(self,):
+    def test__pre_cti_data_from__non_uniformity_in_columns(self,):
         layout_non_uni = ac.ci.Layout2DCINonUniform(
             shape_2d=(5, 3),
             normalization=100.0,
@@ -1764,7 +1760,7 @@ class TestLayout2DCINonUniform(object):
             column_sigma=1.0,
         )
 
-        image = layout_non_uni.pre_cti_image_from(
+        image = layout_non_uni.pre_cti_data_from(
             shape_native=(5, 5), pixel_scales=1.0, ci_seed=1
         )
 
@@ -1791,7 +1787,7 @@ class TestLayout2DCINonUniform(object):
             column_sigma=1.0,
         )
 
-        image = layout_non_uni.pre_cti_image_from(
+        image = layout_non_uni.pre_cti_data_from(
             shape_native=(5, 5), pixel_scales=1.0, ci_seed=1
         )
 
@@ -1819,7 +1815,7 @@ class TestLayout2DCINonUniform(object):
             maximum_normalization=100.0,
         )
 
-        image = layout_non_uni.pre_cti_image_from(
+        image = layout_non_uni.pre_cti_data_from(
             shape_native=(5, 5), pixel_scales=1.0, ci_seed=1
         )
 
@@ -1828,7 +1824,7 @@ class TestLayout2DCINonUniform(object):
         # Checked ci_seed to ensure the max is above 100.0 without a maximum_normalization
         assert np.max(image) < 100.0
 
-    def test__pre_cti_image_from__non_uniformity_in_rows(self,):
+    def test__pre_cti_data_from__non_uniformity_in_rows(self,):
         layout_non_uni = ac.ci.Layout2DCINonUniform(
             shape_2d=(5, 5),
             normalization=100.0,
@@ -1837,7 +1833,7 @@ class TestLayout2DCINonUniform(object):
             column_sigma=0.0,
         )
 
-        image = layout_non_uni.pre_cti_image_from(shape_native=(5, 5), pixel_scales=1.0)
+        image = layout_non_uni.pre_cti_data_from(shape_native=(5, 5), pixel_scales=1.0)
 
         image[:] = np.round(image[:], 1)
 
@@ -1862,7 +1858,7 @@ class TestLayout2DCINonUniform(object):
             column_sigma=0.0,
         )
 
-        image = layout_non_uni.pre_cti_image_from(shape_native=(5, 5), pixel_scales=1.0)
+        image = layout_non_uni.pre_cti_data_from(shape_native=(5, 5), pixel_scales=1.0)
 
         image[:] = np.round(image[:], 1)
 
@@ -1887,7 +1883,7 @@ class TestLayout2DCINonUniform(object):
             column_sigma=1.0,
         )
 
-        image = layout_non_uni.pre_cti_image_from(
+        image = layout_non_uni.pre_cti_data_from(
             shape_native=(5, 5), pixel_scales=1.0, ci_seed=1
         )
 
@@ -1914,7 +1910,7 @@ class TestLayout2DCINonUniform(object):
             column_sigma=1.0,
         )
 
-        image = layout_non_uni.pre_cti_image_from(shape_native=(5, 5), pixel_scales=1.0)
+        image = layout_non_uni.pre_cti_data_from(shape_native=(5, 5), pixel_scales=1.0)
 
         image[:] = np.round(image[:], 1)
 

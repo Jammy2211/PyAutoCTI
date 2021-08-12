@@ -8,20 +8,20 @@ class TestFitDatasetLine:
 
         masked_dataset_line_7 = dataset_line_7.apply_mask(mask=mask_1d_7_unmasked)
 
-        post_cti_line = ac.Array1D.full(
+        post_cti_data = ac.Array1D.full(
             fill_value=1.0,
             shape_native=masked_dataset_line_7.data.shape_native,
             pixel_scales=1.0,
         ).native
 
         fit = ac.FitDatasetLine(
-            dataset_line=masked_dataset_line_7, post_cti_line=post_cti_line
+            dataset_line=masked_dataset_line_7, post_cti_data=post_cti_data
         )
 
         residual_map = ac.util.fit.residual_map_with_mask_from(
             data=masked_dataset_line_7.data,
             mask=mask_1d_7_unmasked,
-            model_data=post_cti_line,
+            model_data=post_cti_data,
         )
 
         assert (fit.residual_map == residual_map).all()

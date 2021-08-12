@@ -115,7 +115,7 @@ def make_noise_map_7():
     return array_1d.Array1D.full(fill_value=2.0, shape_native=(7,), pixel_scales=1.0)
 
 
-def make_pre_cti_line_7():
+def make_pre_cti_data_7():
     return array_1d.Array1D.full(fill_value=1.0, shape_native=(7,), pixel_scales=1.0)
 
 
@@ -124,7 +124,7 @@ def make_dataset_line_7():
     return dataset_line.DatasetLine(
         data=make_data_7(),
         noise_map=make_noise_map_7(),
-        pre_cti_line=make_pre_cti_line_7(),
+        pre_cti_data=make_pre_cti_data_7(),
         layout=make_layout_7(),
     )
 
@@ -156,7 +156,7 @@ def make_ci_noise_map_7x7():
     )
 
 
-def make_pre_cti_image_7x7():
+def make_pre_cti_data_7x7():
     return array_2d.Array2D.full(
         shape_native=(7, 7), fill_value=10.0, pixel_scales=(1.0, 1.0)
     )
@@ -184,7 +184,7 @@ def make_ci_noise_scaling_map_list_7x7():
 def make_fit_line_7():
     return FitDatasetLine(
         dataset_line=make_dataset_line_7(),
-        post_cti_line=make_dataset_line_7().pre_cti_line + 1,
+        post_cti_data=make_dataset_line_7().pre_cti_data + 1,
     )
 
 
@@ -196,7 +196,7 @@ def make_imaging_ci_7x7():
     return ci.ImagingCI(
         image=make_ci_image_7x7(),
         noise_map=make_ci_noise_map_7x7(),
-        pre_cti_image=make_pre_cti_image_7x7(),
+        pre_cti_data=make_pre_cti_data_7x7(),
         cosmic_ray_map=make_ci_cosmic_ray_map_7x7(),
         noise_scaling_map_list=make_ci_noise_scaling_map_list_7x7(),
         layout=make_layout_ci_7x7(),
@@ -216,7 +216,7 @@ def make_hyper_noise_scalars():
 def make_fit_ci_7x7():
     return ci.FitImagingCI(
         imaging=make_imaging_ci_7x7(),
-        post_cti_image=make_imaging_ci_7x7().pre_cti_image,
+        post_cti_data=make_imaging_ci_7x7().pre_cti_data,
         hyper_noise_scalars=make_hyper_noise_scalars(),
     )
 

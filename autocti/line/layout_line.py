@@ -582,14 +582,14 @@ class Layout1DLine(AbstractLayout1DLine):
         Parameters
         -----------
         shape_native
-            The image_shape of the pre_cti_images to be created.
+            The image_shape of the pre_cti_datas to be created.
         """
 
-        pre_cti_image = np.zeros(shape_native)
+        pre_cti_data = np.zeros(shape_native)
 
         for region in self.region_list:
-            pre_cti_image[region.slice] += self.normalization
+            pre_cti_data[region.slice] += self.normalization
 
         return array_1d.Array1D.manual_native(
-            array=pre_cti_image, pixel_scales=pixel_scales
+            array=pre_cti_data, pixel_scales=pixel_scales
         )

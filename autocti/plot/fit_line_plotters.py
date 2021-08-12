@@ -27,23 +27,23 @@ class FitDatasetLinePlotter(abstract_plotters.AbstractPlotter):
 
     def figures_1d(
         self,
-        line=False,
+        data=False,
         noise_map=False,
         signal_to_noise_map=False,
-        pre_cti_line=False,
-        post_cti_line=False,
+        pre_cti_data=False,
+        post_cti_data=False,
         residual_map=False,
         normalized_residual_map=False,
         chi_squared_map=False,
     ):
 
-        if line:
+        if data:
 
             self.mat_plot_1d.plot_yx(
                 y=self.fit.data,
                 x=np.arange(len(self.fit.data)),
                 visuals_1d=self.visuals_with_include_1d,
-                auto_labels=mp.AutoLabels(title="Image", filename="line_1d"),
+                auto_labels=mp.AutoLabels(title="Image", filename="data"),
             )
 
         if noise_map:
@@ -99,33 +99,33 @@ class FitDatasetLinePlotter(abstract_plotters.AbstractPlotter):
                 ),
             )
 
-        if pre_cti_line:
+        if pre_cti_data:
 
             self.mat_plot_1d.plot_yx(
-                y=self.fit.pre_cti_line,
+                y=self.fit.pre_cti_data,
                 visuals_1d=self.visuals_with_include_1d,
                 auto_labels=mp.AutoLabels(
-                    title="CI Pre CTI Image", filename="pre_cti_line"
+                    title="CI Pre CTI Image", filename="pre_cti_data"
                 ),
             )
 
-        if post_cti_line:
+        if post_cti_data:
 
             self.mat_plot_1d.plot_yx(
-                y=self.fit.post_cti_line,
+                y=self.fit.post_cti_data,
                 visuals_1d=self.visuals_with_include_1d,
                 auto_labels=mp.AutoLabels(
-                    title="CI Post CTI Image", filename="post_cti_line"
+                    title="CI Post CTI Image", filename="post_cti_data"
                 ),
             )
 
     def subplot(
         self,
-        line=False,
+        data=False,
         noise_map=False,
         signal_to_noise_map=False,
-        pre_cti_line=False,
-        post_cti_line=False,
+        pre_cti_data=False,
+        post_cti_data=False,
         residual_map=False,
         normalized_residual_map=False,
         chi_squared_map=False,
@@ -133,11 +133,11 @@ class FitDatasetLinePlotter(abstract_plotters.AbstractPlotter):
     ):
 
         self._subplot_custom_plot(
-            line=line,
+            data=data,
             noise_map=noise_map,
             signal_to_noise_map=signal_to_noise_map,
-            pre_cti_line=pre_cti_line,
-            post_cti_line=post_cti_line,
+            pre_cti_data=pre_cti_data,
+            post_cti_data=post_cti_data,
             residual_map=residual_map,
             normalized_residual_map=normalized_residual_map,
             chi_squared_map=chi_squared_map,
@@ -146,10 +146,10 @@ class FitDatasetLinePlotter(abstract_plotters.AbstractPlotter):
 
     def subplot_fit_dataset_line(self):
         return self.subplot(
-            line=True,
+            data=True,
             signal_to_noise_map=True,
-            pre_cti_line=True,
-            post_cti_line=True,
+            pre_cti_data=True,
+            post_cti_data=True,
             normalized_residual_map=True,
             chi_squared_map=True,
         )

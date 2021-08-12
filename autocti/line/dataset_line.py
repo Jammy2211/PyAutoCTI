@@ -25,7 +25,7 @@ class DatasetLine(abstract_dataset.AbstractDataset):
         self,
         data: Array1D,
         noise_map: Array1D,
-        pre_cti_line: Array1D,
+        pre_cti_data: Array1D,
         layout: Layout1DLine,
         settings: SettingsDatasetLine = SettingsDatasetLine(),
     ):
@@ -34,7 +34,7 @@ class DatasetLine(abstract_dataset.AbstractDataset):
 
         self.data = data
         self.noise_map = noise_map
-        self.pre_cti_line = pre_cti_line
+        self.pre_cti_data = pre_cti_data
         self.layout = layout
 
     def apply_mask(self, mask: mask_1d.Mask1D) -> "DatasetLine":
@@ -45,7 +45,7 @@ class DatasetLine(abstract_dataset.AbstractDataset):
         return DatasetLine(
             data=data,
             noise_map=noise_map,
-            pre_cti_line=self.pre_cti_line,
+            pre_cti_data=self.pre_cti_data,
             layout=self.layout,
         )
 
@@ -101,7 +101,7 @@ class DatasetLine(abstract_dataset.AbstractDataset):
         )
 
         return DatasetLine(
-            data=data, noise_map=noise_map, pre_cti_line=pre_cti_data, layout=layout
+            data=data, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
         )
 
     def output_to_fits(
@@ -110,7 +110,7 @@ class DatasetLine(abstract_dataset.AbstractDataset):
 
         self.data.output_to_fits(file_path=data_path, overwrite=overwrite)
         self.noise_map.output_to_fits(file_path=noise_map_path, overwrite=overwrite)
-        self.pre_cti_line.output_to_fits(
+        self.pre_cti_data.output_to_fits(
             file_path=pre_cti_data_path, overwrite=overwrite
         )
 
@@ -230,7 +230,7 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
             noise_map=Array1D.manual_native(
                 array=noise_map, pixel_scales=self.pixel_scales
             ),
-            pre_cti_line=Array1D.manual_native(
+            pre_cti_data=Array1D.manual_native(
                 array=pre_cti_data.native, pixel_scales=self.pixel_scales
             ),
             layout=layout,

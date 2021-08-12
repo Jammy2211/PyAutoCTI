@@ -30,24 +30,24 @@ def test__individual_attributes_are_output(imaging_ci_7x7, plot_path, plot_patch
     imaging_ci_plotter.figures_2d(
         image=True,
         noise_map=True,
-        pre_cti_image=True,
+        pre_cti_data=True,
         signal_to_noise_map=True,
         cosmic_ray_map=True,
     )
 
     assert path.join(plot_path, "image_2d.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map.png") in plot_patch.paths
-    assert path.join(plot_path, "pre_cti_image.png") in plot_patch.paths
+    assert path.join(plot_path, "pre_cti_data.png") in plot_patch.paths
     assert path.join(plot_path, "signal_to_noise_map.png") in plot_patch.paths
     assert path.join(plot_path, "cosmic_ray_map.png") in plot_patch.paths
 
     plot_patch.paths = []
 
-    imaging_ci_plotter.figures_2d(image=True, pre_cti_image=True)
+    imaging_ci_plotter.figures_2d(image=True, pre_cti_data=True)
 
     assert path.join(plot_path, "image_2d.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map.png") not in plot_patch.paths
-    assert path.join(plot_path, "pre_cti_image.png") in plot_patch.paths
+    assert path.join(plot_path, "pre_cti_data.png") in plot_patch.paths
     assert path.join(plot_path, "signal_to_noise_map.png") not in plot_patch.paths
 
 
@@ -62,15 +62,14 @@ def test__individual_lines_are_output(imaging_ci_7x7, plot_path, plot_patch):
         line_region="parallel_front_edge",
         image=True,
         noise_map=True,
-        pre_cti_image=True,
+        pre_cti_data=True,
         signal_to_noise_map=True,
     )
 
     assert path.join(plot_path, "image_parallel_front_edge.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map_parallel_front_edge.png") in plot_patch.paths
     assert (
-        path.join(plot_path, "pre_cti_image_parallel_front_edge.png")
-        in plot_patch.paths
+        path.join(plot_path, "pre_cti_data_parallel_front_edge.png") in plot_patch.paths
     )
     assert (
         path.join(plot_path, "signal_to_noise_map_parallel_front_edge.png")
@@ -80,7 +79,7 @@ def test__individual_lines_are_output(imaging_ci_7x7, plot_path, plot_patch):
     plot_patch.paths = []
 
     imaging_ci_plotter.figures_1d_ci_line_region(
-        line_region="parallel_front_edge", image=True, pre_cti_image=True
+        line_region="parallel_front_edge", image=True, pre_cti_data=True
     )
 
     assert path.join(plot_path, "image_parallel_front_edge.png") in plot_patch.paths
@@ -89,8 +88,7 @@ def test__individual_lines_are_output(imaging_ci_7x7, plot_path, plot_patch):
         not in plot_patch.paths
     )
     assert (
-        path.join(plot_path, "pre_cti_image_parallel_front_edge.png")
-        in plot_patch.paths
+        path.join(plot_path, "pre_cti_data_parallel_front_edge.png") in plot_patch.paths
     )
     assert (
         path.join(plot_path, "signal_to_noise_map_parallel_front_edge.png")
