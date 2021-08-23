@@ -5,7 +5,7 @@ from autoarray.plot.mat_wrap.include import Include2D
 from autoarray.plot.mat_wrap.mat_plot import MatPlot1D
 from autoarray.plot.mat_wrap.mat_plot import MatPlot2D
 from autoarray.plot.mat_wrap.mat_plot import AutoLabels
-from autoarray.plot.imaging_plotters import AbstractImagingPlotter
+from autoarray.dataset.plot.imaging_plotters import AbstractImagingPlotter
 from autocti.charge_injection.imaging import ImagingCI
 
 

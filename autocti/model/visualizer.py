@@ -1,6 +1,6 @@
 from os import path
 from autoconf import conf
-from autoarray.plot.mat_wrap.wrap.wrap_base import Output
+from autoarray.plot.wrap.wrap_base import Output
 from autoarray.plot.mat_wrap.mat_plot import MatPlot1D
 from autoarray.plot.mat_wrap.mat_plot import MatPlot2D
 from autoarray.plot.mat_wrap.include import Include1D

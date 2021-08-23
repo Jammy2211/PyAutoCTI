@@ -1,8 +1,8 @@
+import autoarray as aa
 from autocti.line.dataset import DatasetLine
-from autoarray.fit.fit import FitDataset
 
 
-class FitDatasetLine(FitDataset):
+class FitDatasetLine(aa.FitDataset):
     def __init__(self, dataset_line: DatasetLine, post_cti_data):
         """Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian
         framework.
@@ -16,7 +16,16 @@ class FitDatasetLine(FitDataset):
         hyper_noise_scalars :
             The hyper_ci-parameter(s) which the noise_scaling_map_list_list is multiplied by to scale the noise-map.
         """
-        super().__init__(dataset=dataset_line, model_data=post_cti_data)
+
+        fit = aa.FitData(
+            data=dataset_line.data,
+            noise_map=dataset_line.noise_map,
+            model_data=post_cti_data,
+            mask=dataset_line.mask,
+            use_mask_in_fit=True,
+        )
+
+        super().__init__(dataset=dataset_line, fit=fit)
 
     @property
     def dataset_line(self):

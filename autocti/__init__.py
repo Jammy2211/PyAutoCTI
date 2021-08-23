@@ -1,4 +1,3 @@
-from autoarray.fit.fit import FitImaging
 from autoarray.mask.mask_1d import Mask1D
 from autoarray.layout.region import Region1D
 from autoarray.layout.region import Region2D

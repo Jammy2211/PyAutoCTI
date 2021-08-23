@@ -1,8 +1,10 @@
 from os import path
 import pytest
 from matplotlib import pyplot
-from autocti.mock import fixtures
+
 from autofit import conf
+
+from autocti.mock import fixtures
 
 
 class PlotPatch:
