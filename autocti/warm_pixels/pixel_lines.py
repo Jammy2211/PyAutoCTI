@@ -35,14 +35,14 @@ class PixelLine(object):
             image. The row index is the distance in pixels to the readout
             register minus one.
 
-        date : float
+        date
             The Julian date.
 
-        background : float
+        background
             The background charge count, in units of electrons. It is assumed
             that the background has not been subtracted from the data.
 
-        flux : float
+        flux
             The maximum charge in the line, or e.g. for a CTI trail the original
             flux before trailing, in units of electrons.
 
@@ -193,7 +193,7 @@ class PixelLineCollection(object):
             PixelLine.origin with potentially matching lines with the same
             PixelLine.location in their images.
 
-        fraction_present : float
+        fraction_present
             The minimum fraction of images in which the pixel must be present.
 
         Returns
@@ -295,10 +295,10 @@ class PixelLineCollection(object):
         n_row_bins : int
             The number of row bins, if row_bins is not provided.
 
-        row_min : float
+        row_min
             The minimum value for the row bins, if row_bins is not provided.
 
-        row_max : float
+        row_max
             The maximum value for the row bins, if row_bins is not provided.
 
         row_scale : str

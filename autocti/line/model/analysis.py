@@ -1,7 +1,12 @@
 from typing import List
 
-import autofit as af
+from autofit.non_linear.samples import PDFSamples
+from autofit.mapper.prior_model.collection import CollectionPriorModel as Collection
+from autofit.mapper.model import ModelInstance
 from autofit.non_linear.abstract_search import Analysis
+from autofit.non_linear.paths.directory import DirectoryPaths
+from autofit.non_linear.abstract_search import NonLinearSearch
+
 from autocti.line.dataset import DatasetLine
 from autocti.line.fit import FitDatasetLine
 from autocti.line.model.visualizer import VisualizerDatasetLine
@@ -27,7 +32,7 @@ class AnalysisDatasetLine(Analysis):
         self.settings_cti = settings_cti
         self.results = results
 
-    def log_likelihood_function(self, instance: af.ModelInstance) -> float:
+    def log_likelihood_function(self, instance: ModelInstance) -> float:
         """
         Determine the fitness of a particular model
 
@@ -48,7 +53,7 @@ class AnalysisDatasetLine(Analysis):
         return fit.log_likelihood
 
     def fit_from_instance_and_dataset_line(
-        self, instance: af.ModelInstance, dataset_line: DatasetLine
+        self, instance: ModelInstance, dataset_line: DatasetLine
     ) -> FitDatasetLine:
 
         if instance.cti.traps is not None:
@@ -62,7 +67,7 @@ class AnalysisDatasetLine(Analysis):
 
         return FitDatasetLine(dataset_line=dataset_line, post_cti_data=post_cti_data)
 
-    def fit_from_instance(self, instance: af.ModelInstance) -> FitDatasetLine:
+    def fit_from_instance(self, instance: ModelInstance) -> FitDatasetLine:
 
         return self.fit_from_instance_and_dataset_line(
             instance=instance, dataset_line=self.dataset_line
@@ -70,8 +75,8 @@ class AnalysisDatasetLine(Analysis):
 
     def visualize(
         self,
-        paths: af.DirectoryPaths,
-        instance: af.ModelInstance,
+        paths: DirectoryPaths,
+        instance: ModelInstance,
         during_analysis: bool,
     ):
 
@@ -84,7 +89,7 @@ class AnalysisDatasetLine(Analysis):
         visualizer.visualize_fit_line(fit=fit, during_analysis=during_analysis)
 
     def make_result(
-        self, samples: af.PDFSamples, model: af.Collection, search: af.NonLinearSearch
+        self, samples: PDFSamples, model: Collection, search: NonLinearSearch
     ) -> ResultDatasetLine:
         return ResultDatasetLine(
             samples=samples, model=model, analysis=self, search=search

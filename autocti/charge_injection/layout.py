@@ -630,7 +630,7 @@ class AbstractLayout2DCI(Layout2D):
 
         Parameters
         -----------
-        normalization : float
+        normalization
             The normalization of the charge injection lines.
         region_list: [(int,)]
             A list of the integer coordinates specifying the corners of each charge injection region \
@@ -1635,12 +1635,12 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
 
         Parameters
         -----------
-        normalization : float
+        normalization
             The normalization of the charge injection region.
         region_list : [(int,)]
             A list of the integer coordinates specifying the corners of each charge injection region
             (top-row, bottom-row, left-column, right-column).
-        row_slope : float
+        row_slope
             The power-law slope of non-uniformity in the row charge injection profile.
         """
 
@@ -1755,7 +1755,7 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
         -----------
         size : int
             The size of the non-uniform column of charge
-        normalization : float
+        normalization
             The input normalization of the column's charge e.g. the level of charge injected.
 
         """

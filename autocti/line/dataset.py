@@ -131,7 +131,7 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
 
         Parameters
         ----------
-        exposure_time_map : float
+        exposure_time_map
             The exposure time of an observation using this data_type.
         """
 

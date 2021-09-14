@@ -1,7 +1,12 @@
 from typing import Optional, List
 
-import autofit as af
+from autofit.non_linear.samples import PDFSamples
+from autofit.mapper.prior_model.collection import CollectionPriorModel as Collection
+from autofit.mapper.model import ModelInstance
 from autofit.non_linear.abstract_search import Analysis
+from autofit.non_linear.paths.directory import DirectoryPaths
+from autofit.non_linear.abstract_search import NonLinearSearch
+
 from autocti.charge_injection.imaging import ImagingCI
 from autocti.charge_injection.fit import FitImagingCI
 from autocti.charge_injection.hyper import HyperCINoiseScalar
@@ -28,7 +33,7 @@ class AnalysisImagingCI(Analysis):
         self.settings_cti = settings_cti
         self.results = results
 
-    def log_likelihood_function(self, instance: af.ModelInstance) -> float:
+    def log_likelihood_function(self, instance: ModelInstance) -> float:
         """
         Determine the fitness of a particular model
 
@@ -76,7 +81,7 @@ class AnalysisImagingCI(Analysis):
         return fit.log_likelihood
 
     def hyper_noise_scalars_from_instance(
-        self, instance: af.ModelInstance, hyper_noise_scale: bool = True
+        self, instance: ModelInstance, hyper_noise_scale: bool = True
     ) -> Optional[List[HyperCINoiseScalar]]:
 
         if not hasattr(instance, "hyper_noise"):
@@ -102,7 +107,7 @@ class AnalysisImagingCI(Analysis):
 
     def fit_from_instance_and_imaging_ci(
         self,
-        instance: af.ModelInstance,
+        instance: ModelInstance,
         imaging_ci: ImagingCI,
         hyper_noise_scale: bool = True,
     ) -> FitImagingCI:
@@ -136,7 +141,7 @@ class AnalysisImagingCI(Analysis):
         )
 
     def fit_from_instance(
-        self, instance: af.ModelInstance, hyper_noise_scale: bool = True
+        self, instance: ModelInstance, hyper_noise_scale: bool = True
     ) -> FitImagingCI:
 
         return self.fit_from_instance_and_imaging_ci(
@@ -146,7 +151,7 @@ class AnalysisImagingCI(Analysis):
         )
 
     def fit_full_dataset_from_instance(
-        self, instance: af.ModelInstance, hyper_noise_scale: bool = True
+        self, instance: ModelInstance, hyper_noise_scale: bool = True
     ) -> FitImagingCI:
 
         return self.fit_from_instance_and_imaging_ci(
@@ -157,8 +162,8 @@ class AnalysisImagingCI(Analysis):
 
     def visualize(
         self,
-        paths: af.DirectoryPaths,
-        instance: af.ModelInstance,
+        paths: DirectoryPaths,
+        instance: ModelInstance,
         during_analysis: bool,
     ):
 
@@ -191,7 +196,7 @@ class AnalysisImagingCI(Analysis):
         # )
 
     def make_result(
-        self, samples: af.PDFSamples, model: af.Collection, search: af.NonLinearSearch
+        self, samples: PDFSamples, model: Collection, search: NonLinearSearch
     ) -> ResultImagingCI:
         return ResultImagingCI(
             samples=samples, model=model, analysis=self, search=search

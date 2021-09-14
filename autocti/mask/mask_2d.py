@@ -150,7 +150,7 @@ class Mask2D(AbstractMask2D):
             The full path of the fits file.
         hdu : int
             The HDU number in the fits file containing the image image.
-        pixel_scales : float or (float, float)
+        pixel_scales or (float, float)
             The arc-second to pixel conversion factor of each pixel.
         """
 

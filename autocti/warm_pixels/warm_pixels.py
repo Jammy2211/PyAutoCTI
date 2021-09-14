@@ -46,7 +46,7 @@ def find_warm_pixels(
     ignore_bad_columns : bool
         Check for and ignore bad columns wiped out by extremely hot pixels.
 
-    bad_column_factor : float
+    bad_column_factor
         Columns with a mean value more than this number of standard deviations
         above the overall median will be discarded, to avoid columns wiped out
         by extremely hot pixels.
@@ -59,11 +59,11 @@ def find_warm_pixels(
         The width of the window (in pixels) for calculating a smoothed image,
         used to find delta function-like warm pixels.
 
-    unsharp_masking_factor : float
+    unsharp_masking_factor
         Pixels must be this many times brighter than their neighbours in the
         smoothed image to be counted as warm pixels.
 
-    flux_min : float
+    flux_min
         Pixels below this value AFTER background subtraction will be ignored.
         Set None to not ignore any pixels. Defaults to 0 to ignore pixels below
         the background.
@@ -71,7 +71,7 @@ def find_warm_pixels(
     name : str
         The name of the data used to identify it.
 
-    date : float
+    date
         The Julian date for the image, for the Line objects' metadata.
 
     Returns

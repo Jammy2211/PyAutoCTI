@@ -64,7 +64,7 @@ def charge_injection_array_from(
         The CCDPhase ID of Euclid (runs 1 through 6)
     quadrant_id : str
         The quadrant id (E, F, G, H)
-    ci_normalization : float
+    ci_normalization
         The normalization of the charge injection region.
     parallel_size : int
         The size of the image in the parallel clocking direction (e.g. number of rows).
