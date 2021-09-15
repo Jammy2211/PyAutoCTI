@@ -74,10 +74,7 @@ class AnalysisDatasetLine(Analysis):
         )
 
     def visualize(
-        self,
-        paths: DirectoryPaths,
-        instance: ModelInstance,
-        during_analysis: bool,
+        self, paths: DirectoryPaths, instance: ModelInstance, during_analysis: bool
     ):
 
         fit = self.fit_from_instance(instance=instance)

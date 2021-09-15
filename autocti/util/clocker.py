@@ -7,7 +7,18 @@ from arcticpy.src.ccd import CCD
 from arcticpy.src import roe
 
 
-class Clocker1D:
+class AbstractClocker:
+    def __init__(self, iterations=1, verbosity=0):
+
+        self.iterations = iterations
+        self.verbosity = verbosity
+
+    def ccd_from(self, ccd_phase):
+        if ccd_phase is not None:
+            return CCD(phases=[ccd_phase], fraction_of_traps_per_phase=[1.0])
+
+
+class Clocker1D(AbstractClocker):
     def __init__(
         self,
         iterations=1,
@@ -36,14 +47,13 @@ class Clocker1D:
             Introduces an offset which increases the number of transfers each pixel takes in the parallel direction.
         """
 
-        self.iterations = iterations
+        super().__init__(iterations=iterations, verbosity=verbosity)
 
         self.roe = roe
         self.express = express
         self.charge_injection_mode = charge_injection_mode
         self.window_start = window_start
         self.window_stop = window_stop
-        self.verbosity = verbosity
 
     def add_cti(self, data, ccd=None, trap_list=None):
 
@@ -61,8 +71,7 @@ class Clocker1D:
 
         image_pre_cti_2d[:, 0] = data
 
-        if ccd is not None:
-            ccd = CCD(phases=[ccd], fraction_of_traps_per_phase=[1.0])
+        ccd = self.ccd_from(ccd_phase=ccd)
 
         image_post_cti = cti.add_cti(
             image=image_pre_cti_2d,
@@ -81,7 +90,7 @@ class Clocker1D:
         )
 
 
-class Clocker2D:
+class Clocker2D(AbstractClocker):
     def __init__(
         self,
         iterations=1,
@@ -114,7 +123,7 @@ class Clocker2D:
             Introduces an offset which increases the number of transfers each pixel takes in the parallel direction.
         """
 
-        self.iterations = iterations
+        super().__init__(iterations=iterations, verbosity=verbosity)
 
         self.parallel_roe = parallel_roe
         self.parallel_express = parallel_express
@@ -126,8 +135,6 @@ class Clocker2D:
         self.serial_express = serial_express
         self.serial_window_start = serial_window_start
         self.serial_window_stop = serial_window_stop
-
-        self.verbosity = verbosity
 
     def add_cti(
         self,
@@ -148,11 +155,8 @@ class Clocker2D:
                 "No CCD object(parallel or serial) was passed to the add_cti method"
             )
 
-        if parallel_ccd is not None:
-            parallel_ccd = CCD(phases=[parallel_ccd], fraction_of_traps_per_phase=[1.0])
-
-        if serial_ccd is not None:
-            serial_ccd = CCD(phases=[serial_ccd], fraction_of_traps_per_phase=[1.0])
+        parallel_ccd = self.ccd_from(ccd_phase=parallel_ccd)
+        serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
 
         image_post_cti = cti.add_cti(
             image=data,
@@ -193,6 +197,9 @@ class Clocker2D:
             raise exc.ClockerException(
                 "No CCD object(parallel or serial) was passed to the add_cti method"
             )
+
+        parallel_ccd = self.ccd_from(ccd_phase=parallel_ccd)
+        serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
 
         return cti.remove_cti(
             image=data,

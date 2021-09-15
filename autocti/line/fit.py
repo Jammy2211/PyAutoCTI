@@ -1,4 +1,3 @@
-
 from autoarray.fit.fit_data import FitData
 from autoarray.fit.fit_dataset import FitDataset
 

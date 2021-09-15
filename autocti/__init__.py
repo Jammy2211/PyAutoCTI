@@ -46,4 +46,8 @@ from .util.clocker import Clocker2D
 from . import util
 from . import plot
 
+from autoconf import conf
+
+conf.instance.register(__file__)
+
 __version__ = "0.12.4"
