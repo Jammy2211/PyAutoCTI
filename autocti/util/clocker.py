@@ -201,7 +201,7 @@ class Clocker2D(AbstractClocker):
         parallel_ccd = self.ccd_from(ccd_phase=parallel_ccd)
         serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
 
-        return cti.remove_cti(
+        image_cti_removed = cti.remove_cti(
             image=data,
             n_iterations=self.iterations,
             parallel_ccd=parallel_ccd,
@@ -219,3 +219,7 @@ class Clocker2D(AbstractClocker):
             serial_window_start=self.serial_window_start,
             serial_window_stop=self.serial_window_stop,
         )
+
+        return Array2D.manual_mask(
+            array=image_cti_removed, mask=data.mask, header=data.header
+        ).native
