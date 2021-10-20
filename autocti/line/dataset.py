@@ -42,7 +42,7 @@ class DatasetLine(abstract_dataset.AbstractDataset):
     def apply_mask(self, mask: mask_1d.Mask1D) -> "DatasetLine":
 
         data = Array1D.manual_mask(array=self.data, mask=mask).native
-        noise_map = Array1D.manual_mask(array=self.noise_map, mask=mask).native
+        noise_map = Array1D.manual_mask(array=self.noise_map.astype("float"), mask=mask).native
 
         return DatasetLine(
             data=data,
@@ -74,7 +74,7 @@ class DatasetLine(abstract_dataset.AbstractDataset):
         )
 
         if noise_map_path is not None:
-            noise_map = array_1d_util.numpy_array_1d_from_fits(
+            noise_map = array_1d_util.numpy_array_1d_via_fits_from(
                 file_path=noise_map_path, hdu=noise_map_hdu
             )
         else:

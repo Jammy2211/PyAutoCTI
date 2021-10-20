@@ -158,26 +158,36 @@ class Clocker2D(AbstractClocker):
         parallel_ccd = self.ccd_from(ccd_phase=parallel_ccd)
         serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
 
+        try:
+            parallel_offset = data.readout_offsets[0]
+            serial_offset = data.readout_offsets[1]
+        except AttributeError:
+            parallel_offset = 0
+            serial_offset = 0
+
         image_post_cti = cti.add_cti(
             image=data,
             parallel_ccd=parallel_ccd,
             parallel_roe=self.parallel_roe,
             parallel_traps=parallel_trap_list,
             parallel_express=self.parallel_express,
-            parallel_offset=data.readout_offsets[0],
+            parallel_offset=parallel_offset,
             parallel_window_start=self.parallel_window_start,
             parallel_window_stop=self.parallel_window_stop,
             serial_ccd=serial_ccd,
             serial_roe=self.serial_roe,
             serial_traps=serial_trap_list,
             serial_express=self.serial_express,
-            serial_offset=data.readout_offsets[1],
+            serial_offset=serial_offset,
             serial_window_start=self.serial_window_start,
             serial_window_stop=self.serial_window_stop,
             verbosity=self.verbosity,
         )
 
-        return Array2D.manual_mask(array=image_post_cti, mask=data.mask).native
+        try:
+            return Array2D.manual_mask(array=image_post_cti, mask=data.mask).native
+        except AttributeError:
+            return image_post_cti
 
     def remove_cti(
         self,

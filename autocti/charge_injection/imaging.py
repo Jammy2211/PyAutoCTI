@@ -276,7 +276,7 @@ class ImagingCI(Imaging):
         )
 
         if noise_map_path is not None:
-            ci_noise_map = array_2d_util.numpy_array_2d_from_fits(
+            ci_noise_map = array_2d_util.numpy_array_2d_via_fits_from(
                 file_path=noise_map_path, hdu=noise_map_hdu
             )
         else:

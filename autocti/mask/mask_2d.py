@@ -159,12 +159,12 @@ class Mask2D(AbstractMask2D):
                 pixel_scales = (float(pixel_scales), float(pixel_scales))
 
         mask = cls.manual(
-            mask=array_2d_util.numpy_array_2d_from_fits(file_path=file_path, hdu=hdu),
+            mask=array_2d_util.numpy_array_2d_via_fits_from(file_path=file_path, hdu=hdu),
             pixel_scales=pixel_scales,
             origin=origin,
         )
 
         if resized_mask_shape is not None:
-            mask = mask.resized_mask_from_new_shape(new_shape=resized_mask_shape)
+            mask = mask.resized_mask_from(new_shape=resized_mask_shape)
 
         return mask

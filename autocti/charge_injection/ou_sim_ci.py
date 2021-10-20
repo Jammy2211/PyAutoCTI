@@ -11,9 +11,9 @@ from autocti.charge_injection.layout import Layout2DCINonUniform
 """
 Note on the rotations of arrays:
 
-The function 'non_uniform_array_for_ou_sim' returns a array that is rotated according to the ccd_id and quadrant id,
-which given the quadrant unique define the orientation of the ndarray necessary to add paralle and serial
-CTI in the correct direction. These are defined accoridng to:
+The function 'non_uniform_array_for_ou_sim' returns an array that is rotated according to the iquad parameter
+(which ELVIS uses to define which quadrant the data corresponds to). This uniquely defines the orientation of the 
+ndarray necessary to add parallel and serial CTI in the correct direction. These are defined accoridng to:
 
     http://euclid.esac.esa.int/dm/dpdd/latest/le1dpd/dpcards/le1_visrawframe.html
 
@@ -34,9 +34,39 @@ them to fits to oriented them in the way they are observed (VIS_CTI has tools fo
 """
 
 
+def quadrant_id_from(iquad: int) -> str:
+    """
+    The ELVIS simulator uses the `iquad` parameter to determine how images are rotated before clocking via arctic.
+
+    This script converts this parameter to the the `quadrant_id` used by PyAutoCTI, which in turn gives the appropriate
+    `roe_corner` for rotation.
+
+    The mapping of `iquad` to `quadrant_id` does not depend on the CCD id, because ELVIS has already performed
+    extractions / rotations on the quadrant data beforehand.
+
+    Parameters
+    ----------
+    iquad
+        The ELVIS parameter defining the quadrant of the data and therefore the rotateion before arctic clocking.
+
+    Returns
+    -------
+    str
+        The quadrant ID string, which is either E, G, H or G
+    """
+
+    if iquad == 0:
+        return "E"
+    elif iquad == 1:
+        return "F"
+    elif iquad == 2:
+        return "H"
+    elif iquad == 3:
+        return "G"
+
+
 def charge_injection_array_from(
-    ccd_id,
-    quadrant_id,
+    iquad: int,
     ci_normalization,
     parallel_size=2086,
     serial_size=2128,
@@ -119,7 +149,9 @@ def charge_injection_array_from(
         shape_native=shape_native, pixel_scales=pixel_scales
     ).native
 
-    roe_corner = euclid.roe_corner_from(ccd_id=ccd_id, quadrant_id=quadrant_id)
+    quadrant_id = quadrant_id_from(iquad=iquad)
+
+    roe_corner = euclid.roe_corner_from(ccd_id="1", quadrant_id=quadrant_id)
 
     """
     Before passing this image to arCTIc to add CTI, we want to make it a `Array2D` object, which:
@@ -129,20 +161,20 @@ def charge_injection_array_from(
     .fits with the correct orientation.
     - Includes information on different regions of the image, such as the serial prescan and overscans.
     """
-    return layout_util.rotate_array_from_roe_corner(
+    return layout_util.rotate_array_via_roe_corner_from(
         array=pre_cti_data, roe_corner=roe_corner
     )
 
 
-def add_cti_to_pre_cti_data(pre_cti_data, ccd_id, quadrant_id):
+def add_cti_to_pre_cti_data(pre_cti_data, iquad: int):
 
-    # TODO: DO we need to add rotations into this function, making ccd id and quadrant id input parameters?
+    quadrant_id = quadrant_id_from(iquad=iquad)
 
-    roe_corner = euclid.roe_corner_from(ccd_id=ccd_id, quadrant_id=quadrant_id)
+    roe_corner = euclid.roe_corner_from(ccd_id="1", quadrant_id=quadrant_id)
 
-    pre_cti_data = layout_util.rotate_array_from_roe_corner(
-        array=pre_cti_data.native, roe_corner=roe_corner
-    ).native
+    pre_cti_data = layout_util.rotate_array_via_roe_corner_from(
+        array=pre_cti_data, roe_corner=roe_corner
+    )
 
     """
     The `Clocker` models the CCDPhase read-out, including CTI.
@@ -181,18 +213,18 @@ def add_cti_to_pre_cti_data(pre_cti_data, ccd_id, quadrant_id):
         serial_ccd=serial_ccd,
     )
 
-    return layout_util.rotate_array_from_roe_corner(
+    return layout_util.rotate_array_via_roe_corner_from(
         array=post_cti_data, roe_corner=roe_corner
     )
 
 
-def add_cti_simple_to_pre_cti_data(pre_cti_data, ccd_id, quadrant_id):
+def add_cti_simple_to_pre_cti_data(pre_cti_data, iquad: int):
 
-    # TODO: DO we need to add rotations into this function, making ccd id and quadrant id input parameters?
+    quadrant_id = quadrant_id_from(iquad=iquad)
 
-    roe_corner = euclid.roe_corner_from(ccd_id=ccd_id, quadrant_id=quadrant_id)
+    roe_corner = euclid.roe_corner_from(ccd_id="1", quadrant_id=quadrant_id)
 
-    pre_cti_data = layout_util.rotate_array_from_roe_corner(
+    pre_cti_data = layout_util.rotate_array_via_roe_corner_from(
         array=pre_cti_data, roe_corner=roe_corner
     )
 
@@ -222,6 +254,6 @@ def add_cti_simple_to_pre_cti_data(pre_cti_data, ccd_id, quadrant_id):
         parallel_ccd=parallel_ccd,
     )
 
-    return layout_util.rotate_array_from_roe_corner(
+    return layout_util.rotate_array_via_roe_corner_from(
         array=post_cti_data, roe_corner=roe_corner
     )
