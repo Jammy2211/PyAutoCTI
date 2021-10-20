@@ -42,7 +42,9 @@ class DatasetLine(abstract_dataset.AbstractDataset):
     def apply_mask(self, mask: mask_1d.Mask1D) -> "DatasetLine":
 
         data = Array1D.manual_mask(array=self.data, mask=mask).native
-        noise_map = Array1D.manual_mask(array=self.noise_map.astype("float"), mask=mask).native
+        noise_map = Array1D.manual_mask(
+            array=self.noise_map.astype("float"), mask=mask
+        ).native
 
         return DatasetLine(
             data=data,

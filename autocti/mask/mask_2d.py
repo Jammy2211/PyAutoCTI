@@ -159,7 +159,9 @@ class Mask2D(AbstractMask2D):
                 pixel_scales = (float(pixel_scales), float(pixel_scales))
 
         mask = cls.manual(
-            mask=array_2d_util.numpy_array_2d_via_fits_from(file_path=file_path, hdu=hdu),
+            mask=array_2d_util.numpy_array_2d_via_fits_from(
+                file_path=file_path, hdu=hdu
+            ),
             pixel_scales=pixel_scales,
             origin=origin,
         )

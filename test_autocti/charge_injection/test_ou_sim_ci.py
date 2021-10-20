@@ -6,9 +6,7 @@ def test__non_uniform_array_is_correct_with_rotation():
 
     # bottom left
 
-    array = ou_sim_ci.charge_injection_array_from(
-        iquad=0, ci_normalization=50000.0
-    )
+    array = ou_sim_ci.charge_injection_array_from(iquad=0, ci_normalization=50000.0)
 
     assert array.shape == (2086, 2128)
     assert array[0, 50] == 0
@@ -18,9 +16,7 @@ def test__non_uniform_array_is_correct_with_rotation():
 
     # top left
 
-    array = ou_sim_ci.charge_injection_array_from(
-        iquad=2, ci_normalization=50000.0
-    )
+    array = ou_sim_ci.charge_injection_array_from(iquad=2, ci_normalization=50000.0)
 
     assert array[1938, 50] == 0
     assert array[1938, 2099] == 0
@@ -29,9 +25,7 @@ def test__non_uniform_array_is_correct_with_rotation():
 
     # bottom right
 
-    array = ou_sim_ci.charge_injection_array_from(
-        iquad=1, ci_normalization=50000.0
-    )
+    array = ou_sim_ci.charge_injection_array_from(iquad=1, ci_normalization=50000.0)
 
     assert array.shape == (2086, 2128)
     assert array[0, 28] == 0
@@ -41,9 +35,7 @@ def test__non_uniform_array_is_correct_with_rotation():
 
     # top right
 
-    array = ou_sim_ci.charge_injection_array_from(
-        iquad=3, ci_normalization=50000.0
-    )
+    array = ou_sim_ci.charge_injection_array_from(iquad=3, ci_normalization=50000.0)
 
     assert array.shape == (2086, 2128)
     assert array[1938, 28] == 0
@@ -51,13 +43,12 @@ def test__non_uniform_array_is_correct_with_rotation():
     assert (array[1928:2128, 29:2077] > 0).all()
     assert 49000.0 < np.mean(array[1928:2128, 29:2077]) < 51000.0
 
+
 def test__add_cti_to_pre_cti_data():
 
     # bottom left
 
-    array = ou_sim_ci.charge_injection_array_from(
-        iquad=0, ci_normalization=50000.0
-    )
+    array = ou_sim_ci.charge_injection_array_from(iquad=0, ci_normalization=50000.0)
 
     assert array[199, 100] > 0.0
     assert array[200, 100] == 0.0
@@ -72,9 +63,7 @@ def test__add_cti_to_pre_cti_data():
 
     # top left
 
-    array = ou_sim_ci.charge_injection_array_from(
-        iquad=2, ci_normalization=50000.0
-    )
+    array = ou_sim_ci.charge_injection_array_from(iquad=2, ci_normalization=50000.0)
 
     assert array[1886, 100] > 0.0
     assert array[1885, 100] == 0.0
@@ -89,9 +78,7 @@ def test__add_cti_to_pre_cti_data():
 
     # bottom right
 
-    array = ou_sim_ci.charge_injection_array_from(
-        iquad=1, ci_normalization=50000.0
-    )
+    array = ou_sim_ci.charge_injection_array_from(iquad=1, ci_normalization=50000.0)
 
     assert array[199, 100] > 0.0
     assert array[200, 100] == 0.0
@@ -106,9 +93,7 @@ def test__add_cti_to_pre_cti_data():
 
     # top right
 
-    array = ou_sim_ci.charge_injection_array_from(
-        iquad=3, ci_normalization=50000.0
-    )
+    array = ou_sim_ci.charge_injection_array_from(iquad=3, ci_normalization=50000.0)
 
     assert array[1886, 100] > 0.0
     assert array[1885, 100] == 0.0
