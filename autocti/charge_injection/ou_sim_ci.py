@@ -1,12 +1,14 @@
 from autoarray.instruments import euclid
 from autoarray.layout import layout_util
 
-from autocti.util.clocker import Clocker2D
 from arcticpy.src import ccd
 from arcticpy.src import traps
+from autocti.util.clocker import Clocker2D
 
 from autocti.charge_injection.layout import Layout2DCI
 from autocti.charge_injection.layout import Layout2DCINonUniform
+
+from autocti.charge_injection.layout import region_list_ci_from
 
 """
 Note on the rotations of arrays:
@@ -67,9 +69,13 @@ def quadrant_id_from(iquad: int) -> str:
 
 def charge_injection_array_from(
     iquad: int,
-    ci_normalization,
+    injection_normalization,
+    injection_total=5,
+    injection_on=200,
+    injection_off=200,
     parallel_size=2086,
     serial_size=2128,
+    serial_prescan_size=51,
     serial_overscan_size=29,
     pixel_scales=0.1,
     use_non_uniform_pattern=True,
@@ -94,7 +100,7 @@ def charge_injection_array_from(
         The CCDPhase ID of Euclid (runs 1 through 6)
     quadrant_id : str
         The quadrant id (E, F, G, H)
-    ci_normalization
+    injection_normalization
         The normalization of the charge injection region.
     parallel_size : int
         The size of the image in the parallel clocking direction (e.g. number of rows).
@@ -114,14 +120,22 @@ def charge_injection_array_from(
 
     """
     Specify the charge injection regions on the CCDPhase, which in this case is 5 equally spaced rectangular blocks.
+    
+    At the end of this function the ndarray containing the charge injection data is rotated based on the quadrant_id.
+    We therefore do not need rotated `regions_ci`'s from the function below, and input `roe_corner=(1,0)`, which 
+    corresponds to quadrant E which is never rotated.
     """
-    regions_ci = [
-        (0, 200, 51, shape_native[1] - serial_overscan_size),
-        (400, 600, 51, shape_native[1] - serial_overscan_size),
-        (800, 1000, 51, shape_native[1] - serial_overscan_size),
-        (1200, 1400, 51, shape_native[1] - serial_overscan_size),
-        (1600, 1800, 51, shape_native[1] - serial_overscan_size),
-    ]
+
+    regions_ci = region_list_ci_from(
+        injection_on=injection_on,
+        injection_off=injection_off,
+        injection_total=injection_total,
+        parallel_size=parallel_size,
+        serial_size=serial_size,
+        serial_prescan_size=serial_prescan_size,
+        serial_overscan_size=serial_overscan_size,
+        roe_corner=(1, 0),
+    )
 
     """
     Use the charge injection normalization_list and regions to create `Layout2DCINonUniform` of every image we'll simulate.
@@ -129,7 +143,7 @@ def charge_injection_array_from(
     if use_non_uniform_pattern:
         layout = Layout2DCINonUniform(
             shape_2d=shape_native,
-            normalization=ci_normalization,
+            normalization=injection_normalization,
             region_list=regions_ci,
             row_slope=0.0,
             column_sigma=100.0,
@@ -138,7 +152,7 @@ def charge_injection_array_from(
     else:
         layout = Layout2DCI(
             shape_2d=shape_native,
-            normalization=ci_normalization,
+            normalization=injection_normalization,
             region_list=regions_ci,
         )
 
@@ -147,26 +161,33 @@ def charge_injection_array_from(
     """
     pre_cti_data = layout.pre_cti_data_from(
         shape_native=shape_native, pixel_scales=pixel_scales
-    ).native
+    )
 
+    """
+    The OU-SIM parameter iquad defines the quadrant_id of the data (e.g. "E", "F", "G" or "H").
+    """
     quadrant_id = quadrant_id_from(iquad=iquad)
 
     roe_corner = euclid.roe_corner_from(ccd_id="1", quadrant_id=quadrant_id)
 
     """
-    Before passing this image to arCTIc to add CTI, we want to make it a `Array2D` object, which:
-
-    - Uses an input read-out electronics corner to perform all rotations of the image before / after adding CTI.
-    - Also uses this corner to rotate images before outputting to .fits, such that `Array2D` objects can be load via
-    .fits with the correct orientation.
-    - Includes information on different regions of the image, such as the serial prescan and overscans.
+    The array is rotated back to its original reference frame via the roe_corner, so other OU-Sim processing 
+    works correctly.
     """
     return layout_util.rotate_array_via_roe_corner_from(
         array=pre_cti_data, roe_corner=roe_corner
     )
 
 
-def add_cti_to_pre_cti_data(pre_cti_data, iquad: int):
+def add_cti_to_pre_cti_data(
+    pre_cti_data,
+    iquad: int,
+    clocker,
+    parallel_trap_list,
+    parallel_ccd,
+    serial_trap_list,
+    serial_ccd,
+):
 
     quadrant_id = quadrant_id_from(iquad=iquad)
 
@@ -181,9 +202,6 @@ def add_cti_to_pre_cti_data(pre_cti_data, iquad: int):
 
     For parallel clocking, we use 'charge injection mode' which transfers the charge of every pixel over the full CCDPhase.
     """
-    clocker = Clocker2D(
-        parallel_express=2, parallel_charge_injection_mode=True, serial_express=2
-    )
 
     """
     The CTI model used by arCTIc to add CTI to the input image in the parallel direction, which contains: 
@@ -193,65 +211,13 @@ def add_cti_to_pre_cti_data(pre_cti_data, iquad: int):
         - 3 `TrapInstantCapture` species in the serial direction.
         - A simple CCDPhase volume beta parametrization.
     """
-    parallel_trap_0 = traps.TrapInstantCapture(density=0.13, release_timescale=1.25)
-    parallel_trap_1 = traps.TrapInstantCapture(density=0.25, release_timescale=4.4)
-    parallel_ccd = ccd.CCDPhase(
-        well_fill_power=0.8, well_notch_depth=0.0, full_well_depth=84700.0
-    )
-    serial_trap_0 = traps.TrapInstantCapture(density=0.0442, release_timescale=0.8)
-    serial_trap_1 = traps.TrapInstantCapture(density=0.1326, release_timescale=4.0)
-    serial_trap_2 = traps.TrapInstantCapture(density=3.9782, release_timescale=20.0)
-    serial_ccd = ccd.CCDPhase(
-        well_fill_power=0.8, well_notch_depth=0.0, full_well_depth=84700.0
-    )
 
     post_cti_data = clocker.add_cti(
         data=pre_cti_data,
-        parallel_trap_list=[parallel_trap_0, parallel_trap_1],
+        parallel_trap_list=parallel_trap_list,
         parallel_ccd=parallel_ccd,
-        serial_trap_list=[serial_trap_0, serial_trap_1, serial_trap_2],
+        serial_trap_list=serial_trap_list,
         serial_ccd=serial_ccd,
-    )
-
-    return layout_util.rotate_array_via_roe_corner_from(
-        array=post_cti_data, roe_corner=roe_corner
-    )
-
-
-def add_cti_simple_to_pre_cti_data(pre_cti_data, iquad: int):
-
-    quadrant_id = quadrant_id_from(iquad=iquad)
-
-    roe_corner = euclid.roe_corner_from(ccd_id="1", quadrant_id=quadrant_id)
-
-    pre_cti_data = layout_util.rotate_array_via_roe_corner_from(
-        array=pre_cti_data, roe_corner=roe_corner
-    )
-
-    """
-    The `Clocker` models the CCDPhase read-out, including CTI.
-
-    For parallel clocking, we use 'charge injection mode' which transfers the charge of every pixel over the full CCDPhase.
-    """
-    clocker = Clocker2D(parallel_express=2, parallel_charge_injection_mode=False)
-
-    """
-    The CTI model used by arCTIc to add CTI to the input image in the parallel direction, which contains: 
-
-        - 2 `TrapInstantCapture` species in the parallel direction.
-        - A simple CCDPhase volume beta parametrization.
-        - 3 `TrapInstantCapture` species in the serial direction.
-        - A simple CCDPhase volume beta parametrization.
-    """
-    parallel_trap_0 = traps.TrapInstantCapture(density=1.0, release_timescale=5.0)
-    parallel_ccd = ccd.CCDPhase(
-        well_fill_power=0.8, well_notch_depth=0.0, full_well_depth=84700.0
-    )
-
-    post_cti_data = clocker.add_cti(
-        data=pre_cti_data,
-        parallel_trap_list=[parallel_trap_0],
-        parallel_ccd=parallel_ccd,
     )
 
     return layout_util.rotate_array_via_roe_corner_from(

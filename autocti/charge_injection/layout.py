@@ -1744,7 +1744,10 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
                 region_dimensions=region.shape, ci_seed=ci_seed
             )
 
-        return Array2D.manual(array=pre_cti_data, pixel_scales=pixel_scales)
+        try:
+            return Array2D.manual(array=pre_cti_data, pixel_scales=pixel_scales)
+        except KeyError:
+            return pre_cti_data
 
     def generate_column(self, size, normalization):
         """Generate a column of non-uniform charge, including row non-uniformity.
