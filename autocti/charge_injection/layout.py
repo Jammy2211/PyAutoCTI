@@ -1573,7 +1573,7 @@ class Layout2DCI(AbstractLayout2DCI):
         if do_rotation:
             roe_corner = layout.original_roe_corner
         else:
-            roe_corner = (1,0)
+            roe_corner = (1, 0)
 
         region_ci_list = region_list_ci_from(
             serial_prescan_size=serial_prescan_size,

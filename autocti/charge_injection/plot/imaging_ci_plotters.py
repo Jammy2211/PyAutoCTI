@@ -1,6 +1,5 @@
 from typing import Callable
 
-import autoarray as aa
 import autoarray.plot as aplt
 
 from autoarray.plot.abstract_plotters import Plotter
@@ -53,7 +52,7 @@ class ImagingCIPlotter(Plotter):
         super().__init__(
             mat_plot_2d=mat_plot_2d, include_2d=include_2d, visuals_2d=visuals_2d
         )
-        
+
         self.visuals_1d = visuals_1d
         self.include_1d = include_1d
         self.mat_plot_1d = mat_plot_1d
@@ -272,7 +271,9 @@ class ImagingCIPlotter(Plotter):
         potential_chi_squared_map
             Whether or not to include a 2D plot (via `imshow`) of the potential chi squared map.
         pre_cti_data
-            Whether or not to include a 2D plot (via `imshow`) of the potential chi squared map.
+            Whether or not to include a 2D plot (via `imshow`) of the pre-cti data.
+        cosmic_ray_map
+            Whether or not to include a 2D plot (via `imshow`) of the cosmic ray map.
         auto_filename
             The default filename of the output subplot if written to hard-disk.
         """
