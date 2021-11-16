@@ -129,7 +129,7 @@ class ImagingCI(Imaging):
             noise_scaling_map_list=noise_scaling_map_list,
         )
 
-    def apply_settings(self, settings):
+    def apply_settings(self, settings: SettingsImagingCI):
 
         if settings.parallel_columns is not None:
 

@@ -9,7 +9,7 @@ from autoarray.fit.plot import fit_imaging_plotters
 from autocti.charge_injection.fit import FitImagingCI
 
 
-class FitImagingCIPlotter(fit_imaging_plotters.AbstractFitImagingPlotter):
+class FitImagingCIPlotter(fit_imaging_plotters.FitImagingMetaPlotter):
     def __init__(
         self,
         fit: FitImagingCI,

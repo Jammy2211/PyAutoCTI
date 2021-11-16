@@ -7,13 +7,13 @@ from autocti.charge_injection.imaging import ImagingCI
 
 
 class FitImagingCI(FitImaging):
-    def __init__(self, imaging: ImagingCI, post_cti_data, hyper_noise_scalars=None):
+    def __init__(self, dataset: ImagingCI, post_cti_data, hyper_noise_scalars=None):
         """Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian
         framework.
 
         Parameters
         -----------
-        imaging
+        dataset
             The charge injection image that is fitted.
         post_cti_data
             The `pre_cti_data` with cti added to it via the clocker and a CTI model.
@@ -25,27 +25,27 @@ class FitImagingCI(FitImaging):
 
         if hyper_noise_scalars is not None and len(hyper_noise_scalars) > 0:
 
-            self.noise_scaling_map_list = imaging.noise_scaling_map_list
+            self.noise_scaling_map_list = dataset.noise_scaling_map_list
 
             noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
                 hyper_noise_scalars=hyper_noise_scalars,
-                noise_scaling_map_list=imaging.noise_scaling_map_list,
-                noise_map=imaging.noise_map,
+                noise_scaling_map_list=dataset.noise_scaling_map_list,
+                noise_map=dataset.noise_map,
             )
 
         else:
 
-            noise_map = imaging.noise_map
+            noise_map = dataset.noise_map
 
         fit = FitData(
-            data=imaging.data,
+            data=dataset.data,
             noise_map=noise_map,
             model_data=post_cti_data,
-            mask=imaging.mask,
+            mask=dataset.mask,
             use_mask_in_fit=True,
         )
 
-        super().__init__(imaging=imaging, fit=fit)
+        super().__init__(dataset=dataset, fit=fit)
 
     @property
     def imaging_ci(self):

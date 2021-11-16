@@ -79,6 +79,7 @@ def charge_injection_array_from(
     serial_overscan_size=29,
     pixel_scales=0.1,
     use_non_uniform_pattern=True,
+    ci_seed=-1
 ):
     """
     Returns a charge injection line image suitable for OU-SIM to run through the ElVIS simulator.
@@ -160,7 +161,7 @@ def charge_injection_array_from(
     Create every pre-cti charge injection image using each `Layout2DCI`
     """
     pre_cti_data = layout.pre_cti_data_from(
-        shape_native=shape_native, pixel_scales=pixel_scales
+        shape_native=shape_native, pixel_scales=pixel_scales, ci_seed=ci_seed
     )
 
     """

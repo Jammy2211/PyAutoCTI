@@ -9,12 +9,15 @@ from copy import deepcopy
 import numpy as np
 from typing import Tuple
 
-from autocti import exc
+import autoarray as aa
+
 from autoarray.instruments.euclid import Layout2DEuclid
 from autoarray.structures.arrays.two_d.array_2d import Array2D
 from autoarray.layout.layout import Layout2D
 from autoarray.layout.region import Region2D
 from autoarray.layout import layout_util
+
+from autocti import exc
 from autocti.charge_injection.mask_2d import Mask2DCI
 
 
@@ -1519,7 +1522,7 @@ class AbstractLayout2DCI(Layout2D):
         layout.region_list = extracted_region_list
         return layout
 
-    def extract_line_from(self, array: Array2D, line_region: str):
+    def extract_line_from(self, array: Array2D, line_region: str) -> aa.Array1D:
 
         if line_region == "parallel_front_edge":
             return self.extractor_parallel_front_edge.binned_array_1d_from(
@@ -1551,7 +1554,7 @@ class Layout2DCI(AbstractLayout2DCI):
     """
 
     @classmethod
-    def from_euclid_fits_header(cls, ext_header):
+    def from_euclid_fits_header(cls, ext_header, do_rotation):
 
         parallel_overscan_size = ext_header.get("PAROVRX", default=None)
         if parallel_overscan_size is None:
@@ -1561,11 +1564,16 @@ class Layout2DCI(AbstractLayout2DCI):
         serial_size = ext_header.get("NAXIS1", default=None)
         parallel_size = ext_header.get("NAXIS2", default=None)
 
-        injection_on = ext_header["INJON"]
-        injection_off = ext_header["INJOFF"]
-        injection_total = ext_header["INJTOTAL"]
+        injection_on = ext_header["INJ_ON"]
+        injection_off = ext_header["INJ_OFF"]
+        injection_total = ext_header["INJ_TOT"]
 
         layout = Layout2DEuclid.from_fits_header(ext_header=ext_header)
+
+        if do_rotation:
+            roe_corner = layout.original_roe_corner
+        else:
+            roe_corner = (1,0)
 
         region_ci_list = region_list_ci_from(
             serial_prescan_size=serial_prescan_size,
@@ -1575,10 +1583,10 @@ class Layout2DCI(AbstractLayout2DCI):
             injection_on=injection_on,
             injection_off=injection_off,
             injection_total=injection_total,
-            roe_corner=layout.original_roe_corner,
+            roe_corner=roe_corner,
         )
 
-        normalization = ext_header["INJNORM"]
+        normalization = ext_header["INJ_NORM"]
 
         return cls(
             shape_2d=(parallel_size, serial_size),
@@ -1590,7 +1598,7 @@ class Layout2DCI(AbstractLayout2DCI):
             serial_overscan=layout.serial_overscan,
         )
 
-    def pre_cti_data_from(self, shape_native, pixel_scales):
+    def pre_cti_data_from(self, shape_native, pixel_scales, ci_seed=-1):
         """Use this charge injection layout_ci to generate a pre-cti charge injection image. This is performed by \
         going to its charge injection regions and adding the charge injection normalization value.
 

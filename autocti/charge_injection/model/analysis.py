@@ -73,7 +73,7 @@ class AnalysisImagingCI(Analysis):
         )
 
         fit = FitImagingCI(
-            imaging=self.dataset_ci,
+            dataset=self.dataset_ci,
             post_cti_data=post_cti_data,
             hyper_noise_scalars=hyper_noise_scalars,
         )
@@ -135,7 +135,7 @@ class AnalysisImagingCI(Analysis):
         )
 
         return FitImagingCI(
-            imaging=imaging_ci,
+            dataset=imaging_ci,
             post_cti_data=post_cti_data,
             hyper_noise_scalars=hyper_noise_scalars,
         )

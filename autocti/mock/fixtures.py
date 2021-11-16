@@ -212,7 +212,7 @@ def make_hyper_noise_scalars():
 
 def make_fit_ci_7x7():
     return ci.FitImagingCI(
-        imaging=make_imaging_ci_7x7(),
+        dataset=make_imaging_ci_7x7(),
         post_cti_data=make_imaging_ci_7x7().pre_cti_data,
         hyper_noise_scalars=make_hyper_noise_scalars(),
     )
