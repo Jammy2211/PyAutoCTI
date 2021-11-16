@@ -1,61 +1,72 @@
 import numpy as np
 
-from autoarray.plot.mat_wrap.visuals import Visuals1D
-from autoarray.plot.mat_wrap.include import Include1D
-from autoarray.plot.mat_wrap.mat_plot import MatPlot1D
+import autoarray.plot as aplt
+
 from autoarray.plot.mat_wrap.mat_plot import AutoLabels
-from autoarray.plot.abstract_plotters import AbstractPlotter
+
+from autocti.plot.abstract_plotters import Plotter
 from autocti.line.dataset import DatasetLine
 
 
-class DatasetLinePlotter(AbstractPlotter):
+class DatasetLinePlotter(Plotter):
     def __init__(
         self,
         dataset_line: DatasetLine,
-        mat_plot_1d: MatPlot1D = MatPlot1D(),
-        visuals_1d: Visuals1D = Visuals1D(),
-        include_1d: Include1D = Include1D(),
+        mat_plot_1d: aplt.MatPlot1D = aplt.MatPlot1D(),
+        visuals_1d: aplt.Visuals1D = aplt.Visuals1D(),
+        include_1d: aplt.Include1D = aplt.Include1D(),
     ):
+        """
+        Plots the attributes of `DatasetLine` objects using the matplotlib method `line()` and many other matplotlib
+        functions which customize the plot's appearance.
 
+        The `mat_plot_1d` attribute wraps matplotlib function calls to make the figure. By default, the settings
+        passed to every matplotlib function called are those specified in the `config/visualize/mat_wrap/*.ini` files,
+        but a user can manually input values into `MatPlot1d` to customize the figure's appearance.
+
+        Overlaid on the figure are visuals, contained in the `Visuals1D` object. Attributes may be extracted from
+        the `Imaging` and plotted via the visuals object, if the corresponding entry is `True` in the `Include1D`
+        object or the `config/visualize/include.ini` file.
+
+        Parameters
+        ----------
+        imaging
+            The charge injection line imaging dataset the plotter plots.
+        mat_plot_1d
+            Contains objects which wrap the matplotlib function calls that make 1D plots.
+        visuals_1d
+            Contains 1D visuals that can be overlaid on 1D plots.
+        include_1d
+            Specifies which attributes of the `ImagingCI` are extracted and plotted as visuals for 1D plots.
+        """
         super().__init__(
             mat_plot_1d=mat_plot_1d, include_1d=include_1d, visuals_1d=visuals_1d
         )
 
         self.dataset_line = dataset_line
 
-    @property
-    def visuals_with_include_1d(self) -> Visuals1D:
-        """
-        Extracts from the `ImagingCI` attributes that can be plotted in 1D and return them in a `Visuals1D` object.
-
-        Only attributes with `True` entries in the `Include1D` object are extracted for plotting.
-
-        From a `ImagingCI` the following 1D attributes can be extracted for plotting:
-
-        - N/A
-
-        Returns
-        -------
-        Visuals1D
-            The collection of attributes that can be plotted by a `Plotter1D` object.
-        """
-        return self.visuals_1d + self.visuals_1d.__class__()
+    def get_visuals_1d(self) -> aplt.Visuals1D:
+        return self.visuals_1d
 
     def figures_1d(
         self, data=False, noise_map=False, signal_to_noise_map=False, pre_cti_data=False
     ):
         """
-        Plot each attribute of the line data_type as individual figures one by one (e.g. the dataset, noise_map, PSF, \
-         Signal-to_noise-map, etc).
+        Plots the individual attributes of the plotter's `DatasetLine` object in 1D.
 
-        Set *autocti.data_type.array.plotter.plotter* for a description of all innput parameters not described below.
+        The API is such that every plottable attribute of the `Imaging` object is an input parameter of type bool of
+        the function, which if switched to `True` means that it is plotted.
 
         Parameters
-        -----------
-        imaging_ci : data_type.ImagingData
-            The line data_type, which includes the observed data_type, noise_map, PSF, signal-to-noise_map, etc.
-        origin : True
-            If true, the origin of the dataset's coordinate system is plotted as a 'x'.
+        ----------
+        image
+            Whether or not to make a 1D plot (via `plot`) of the data.
+        noise_map
+            Whether or not to make a 1D plot (via `plot`) of the noise map.
+        signal_to_noise_map
+            Whether or not to make a 1D plot (via `plot`) of the signal-to-noise map.
+        pre_cti_data
+            Whether or not to make a 1D plot (via `plot`) of the pre-cti data.
         """
 
         if data:
@@ -63,7 +74,7 @@ class DatasetLinePlotter(AbstractPlotter):
             self.mat_plot_1d.plot_yx(
                 y=self.dataset_line.data,
                 x=np.arange(len(self.dataset_line.data)),
-                visuals_1d=self.visuals_with_include_1d,
+                visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(title="Line Dataset Line", filename="data"),
             )
 
@@ -72,7 +83,7 @@ class DatasetLinePlotter(AbstractPlotter):
             self.mat_plot_1d.plot_yx(
                 y=self.dataset_line.noise_map,
                 x=np.arange(len(self.dataset_line.noise_map)),
-                visuals_1d=self.visuals_with_include_1d,
+                visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="Line Dataset Noise Map", filename="noise_map"
                 ),
@@ -83,7 +94,7 @@ class DatasetLinePlotter(AbstractPlotter):
             self.mat_plot_1d.plot_yx(
                 y=self.dataset_line.signal_to_noise_map,
                 x=np.arange(len(self.dataset_line.signal_to_noise_map)),
-                visuals_1d=self.visuals_with_include_1d,
+                visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="Line Dataset Signal-To-Noise Map",
                     filename="signal_to_noise_map",
@@ -95,7 +106,7 @@ class DatasetLinePlotter(AbstractPlotter):
             self.mat_plot_1d.plot_yx(
                 y=self.dataset_line.pre_cti_data,
                 x=np.arange(len(self.dataset_line.pre_cti_data)),
-                visuals_1d=self.visuals_with_include_1d,
+                visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="Line Dataset Pre CTI Line", filename="pre_cti_data"
                 ),
@@ -109,7 +120,23 @@ class DatasetLinePlotter(AbstractPlotter):
         pre_cti_data=False,
         auto_filename="subplot_dataset_line",
     ):
+        """
+        Plots the individual attributes of the plotter's `DatasetLine` object in 1D on a subplot.
 
+        The API is such that every plottable attribute of the `Imaging` object is an input parameter of type bool of
+        the function, which if switched to `True` means that it is included on the subplot.
+
+        Parameters
+        ----------
+        image
+            Whether or not to include a 1D plot (via `plot`) of the data.
+        noise_map
+            Whether or not to include a 1D plot (via `plot`) of the noise map.
+        signal_to_noise_map
+            Whether or not to include a 1D plot (via `plot`) of the signal-to-noise map.
+        pre_cti_data
+            Whether or not to include a 1D plot (via `plot`) of the pre-cti data.
+        """
         self._subplot_custom_plot(
             data=data,
             noise_map=noise_map,
@@ -119,25 +146,9 @@ class DatasetLinePlotter(AbstractPlotter):
         )
 
     def subplot_dataset_line(self):
-        """Plot the line data_type as a sub-plotter of all its quantites (e.g. the dataset, noise_map, PSF, Signal-to_noise-map, \
-         etc).
-
-        Set *autocti.data_type.array.plotter.plotter* for a description of all innput parameters not described below.
-
-        Parameters
-        -----------
-        imaging_ci : data_type.ImagingData
-            The line data_type, which includes the observed data_type, noise_map, PSF, signal-to-noise_map, etc.
-        origin : True
-            If true, the origin of the dataset's coordinate system is plotted as a 'x'.
-        image_plane_pix_grid : np.ndarray or data_type.array.grid_stacks.PixGrid
-            If an adaptive pixelization whose pixels are formed by tracing pixels from the dataset, this plots those pixels \
-            over the immage.
-        ignore_config : bool
-            If `False`, the config file general.ini is used to determine whether the subpot is plotted. If `True`, the \
-            config file is ignored.
         """
-
+        Standard subplot of the attributes of the plotter's `DatasetLine` object.
+        """
         self.subplot(
             data=True, noise_map=True, signal_to_noise_map=True, pre_cti_data=True
         )

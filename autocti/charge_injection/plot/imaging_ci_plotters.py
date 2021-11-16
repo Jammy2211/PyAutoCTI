@@ -89,17 +89,29 @@ class ImagingCIPlotter(Plotter):
         cosmic_ray_map=False,
     ):
         """
-        Plot each attribute of the imaging data_type as individual figures one by one (e.g. the dataset, noise_map, PSF, \
-         Signal-to_noise-map, etc).
+        Plots the individual attributes of the plotter's `ImagingCI` object in 2D.
 
-        Set *autocti.data_type.array.plotter.plotter* for a description of all innput parameters not described below.
+        The API is such that every plottable attribute of the `Imaging` object is an input parameter of type bool of
+        the function, which if switched to `True` means that it is plotted.
 
         Parameters
-        -----------
-        imaging_ci : data_type.ImagingData
-            The imaging data_type, which includes the observed data_type, noise_map, PSF, signal-to-noise_map, etc.
-        origin : True
-            If true, the origin of the dataset's coordinate system is plotted as a 'x'.
+        ----------
+        image
+            Whether or not to make a 2D plot (via `imshow`) of the image data.
+        noise_map
+            Whether or not to make a 2D plot (via `imshow`) of the noise map.
+        inverse_noise_map
+            Whether or not to make a 2D plot (via `imshow`) of the inverse noise map.
+        signal_to_noise_map
+            Whether or not to make a 2D plot (via `imshow`) of the signal-to-noise map.
+        absolute_signal_to_noise_map
+            Whether or not to make a 2D plot (via `imshow`) of the absolute signal to noise map.
+        potential_chi_squared_map
+            Whether or not to make a 2D plot (via `imshow`) of the potential chi squared map.
+        pre_cti_data
+            Whether or not to make a 2D plot (via `imshow`) of the pre-cti data.
+        cosmic_ray_map
+            Whether or not to make a 2D plot (via `imshow`) of the cosmic ray map.
         """
 
         self._imaging_meta_plotter.figures_2d(
