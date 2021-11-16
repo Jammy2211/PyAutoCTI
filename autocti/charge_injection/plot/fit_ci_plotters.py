@@ -3,9 +3,9 @@ from typing import Callable
 import autoarray.plot as aplt
 
 from autoarray.fit.plot.fit_imaging_plotters import FitImagingPlotterMeta
-from autoarray.plot.abstract_plotters import Plotter
 from autoarray.plot.mat_wrap.mat_plot import AutoLabels
 
+from autocti.plot.abstract_plotters import Plotter
 from autocti.charge_injection.fit import FitImagingCI
 
 
@@ -71,18 +71,7 @@ class FitImagingCIPlotter(Plotter):
         )
 
     def get_visuals_2d(self):
-
-        return self.visuals_2d + self.visuals_2d.__class__(
-            parallel_overscan=self.get_2d.get(
-                "parallel_overscan", self.fit.imaging_ci.layout.parallel_overscan
-            ),
-            serial_prescan=self.get_2d.get(
-                "serial_prescan", self.fit.imaging_ci.layout.serial_prescan
-            ),
-            serial_overscan=self.get_2d.get(
-                "serial_overscan", self.fit.imaging_ci.layout.serial_overscan
-            ),
-        )
+        return self.get_2d.via_fit_imaging_ci_from(fit=self.fit)
 
     @property
     def extract_line_from(self) -> Callable:
