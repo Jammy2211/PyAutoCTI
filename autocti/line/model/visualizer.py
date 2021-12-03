@@ -1,5 +1,5 @@
-from autocti.line.plot.dataset_line_plotters import DatasetLinePlotter
-from autocti.line.plot.fit_line_plotters import FitDatasetLinePlotter
+import autocti.plot as aplt
+
 from autocti.model.visualizer import Visualizer
 from autocti.model.visualizer import plot_setting
 
@@ -11,7 +11,7 @@ class VisualizerDatasetLine(Visualizer):
 
         mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset_line")
 
-        imaging_ci_plotter = DatasetLinePlotter(
+        imaging_ci_plotter = aplt.DatasetLinePlotter(
             dataset_line=dataset_line,
             mat_plot_1d=mat_plot_1d,
             include_1d=self.include_1d,
@@ -34,7 +34,7 @@ class VisualizerDatasetLine(Visualizer):
 
         mat_plot_1d = self.mat_plot_1d_from(subfolders=f"fit_dataset_line")
 
-        fit_line_plotter = FitDatasetLinePlotter(
+        fit_line_plotter = aplt.FitDatasetLinePlotter(
             fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
         )
 

@@ -78,18 +78,18 @@ class GetVisuals2D(gv.GetVisuals2D):
         """
         visuals_2d_via_fit = super().via_fit_imaging_from(fit=fit)
 
-        parallel_overscan = self.get(
-            "parallel_overscan", fit.imaging_ci.layout.parallel_overscan
-        ),
-        serial_prescan = self.get(
-            "serial_prescan", fit.imaging_ci.layout.serial_prescan
-        ),
-        serial_overscan = self.get(
-            "serial_overscan", fit.imaging_ci.layout.serial_overscan
-        ),
+        parallel_overscan = (
+            self.get("parallel_overscan", fit.imaging_ci.layout.parallel_overscan),
+        )
+        serial_prescan = (
+            self.get("serial_prescan", fit.imaging_ci.layout.serial_prescan),
+        )
+        serial_overscan = (
+            self.get("serial_overscan", fit.imaging_ci.layout.serial_overscan),
+        )
 
         return visuals_2d_via_fit + self.visuals.__class__(
             parallel_overscan=parallel_overscan,
             serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan
+            serial_overscan=serial_overscan,
         )
