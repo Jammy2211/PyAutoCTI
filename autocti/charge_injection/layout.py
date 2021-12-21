@@ -1564,11 +1564,23 @@ class Layout2DCI(AbstractLayout2DCI):
         serial_size = ext_header.get("NAXIS1", default=None)
         parallel_size = ext_header.get("NAXIS2", default=None)
 
-        injection_on = ext_header["INJ_ON"]
-        injection_off = ext_header["INJ_OFF"]
-        injection_total = ext_header["INJ_TOT"]
+        injection_on = ext_header["CI_IJON"]
+        injection_off = ext_header["CI_IJOFF"]
+
+        injection_start = ext_header["CI_VSTAR"]
+        injection_end = ext_header["CI_VEND"]
+
+        injection_total = (injection_end - injection_start) / (
+            injection_on + injection_off
+        )
+
+        import math
+
+        math.floor(injection_total)
 
         layout = Layout2DEuclid.from_fits_header(ext_header=ext_header)
+
+        # TODO : Compute via .fits headers without injction_total.
 
         if do_rotation:
             roe_corner = layout.original_roe_corner
@@ -1586,7 +1598,8 @@ class Layout2DCI(AbstractLayout2DCI):
             roe_corner=roe_corner,
         )
 
-        normalization = ext_header["INJ_NORM"]
+        # The header "CI_IG1" is used as a placeholder for the normalization currently.
+        normalization = ext_header["CI_IG1"]
 
         return cls(
             shape_2d=(parallel_size, serial_size),
@@ -1598,7 +1611,7 @@ class Layout2DCI(AbstractLayout2DCI):
             serial_overscan=layout.serial_overscan,
         )
 
-    def pre_cti_data_from(self, shape_native, pixel_scales, ci_seed=-1):
+    def pre_cti_data_from(self, shape_native, pixel_scales):
         """Use this charge injection layout_ci to generate a pre-cti charge injection image. This is performed by \
         going to its charge injection regions and adding the charge injection normalization value.
 

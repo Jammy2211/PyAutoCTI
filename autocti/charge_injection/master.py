@@ -23,7 +23,6 @@ def master_ci_from(ci_list: List[Array2D]) -> Array2D:
     Returns
     -------
     The estimated master charge injection image.
-
     """
 
     master_ci = sum(ci_list) / len(ci_list)
