@@ -1371,7 +1371,9 @@ class AbstractLayout2DCI(Layout2D):
         for region in self.region_list:
 
             labelsize = rows[1] - rows[0]
-            new_pattern_region_list_ci.append(Region2D(region=(offset, offset + labelsize, x0, x1)))
+            new_pattern_region_list_ci.append(
+                Region2D(region=(offset, offset + labelsize, x0, x1))
+            )
             offset += labelsize
 
         new_layout_ci = deepcopy(self)

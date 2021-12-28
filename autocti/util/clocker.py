@@ -1,3 +1,5 @@
+import numpy as np
+
 from autoarray.structures.arrays.one_d.array_1d import Array1D
 from autoarray.structures.arrays.two_d.array_2d import Array2D
 from autocti import exc
@@ -99,11 +101,13 @@ class Clocker2D(AbstractClocker):
         parallel_charge_injection_mode=False,
         parallel_window_start=0,
         parallel_window_stop=-1,
+        parallel_poisson_traps=False,
         serial_roe=roe.ROE(),
         serial_express=0,
         serial_window_start=0,
         serial_window_stop=-1,
         verbosity=0,
+        poisson_seed=-1,
     ):
         """
         The CTI Clock for arctic clocking.
@@ -130,11 +134,14 @@ class Clocker2D(AbstractClocker):
         self.parallel_charge_injection_mode = parallel_charge_injection_mode
         self.parallel_window_start = parallel_window_start
         self.parallel_window_stop = parallel_window_stop
+        self.parallel_poisson_traps = parallel_poisson_traps
 
         self.serial_roe = serial_roe
         self.serial_express = serial_express
         self.serial_window_start = serial_window_start
         self.serial_window_stop = serial_window_stop
+
+        self.poisson_seed = poisson_seed
 
     def add_cti(
         self,
@@ -144,6 +151,15 @@ class Clocker2D(AbstractClocker):
         serial_ccd=None,
         serial_trap_list=None,
     ):
+
+        if self.parallel_poisson_traps:
+            return self.add_cti_poisson_traps(
+                data=data,
+                parallel_ccd=parallel_ccd,
+                parallel_trap_list=parallel_trap_list,
+                serial_ccd=serial_ccd,
+                serial_trap_list=serial_trap_list
+            )
 
         if not any([parallel_trap_list, serial_trap_list]):
             raise exc.ClockerException(
@@ -233,3 +249,81 @@ class Clocker2D(AbstractClocker):
         return Array2D.manual_mask(
             array=image_cti_removed, mask=data.mask, header=data.header
         ).native
+
+    def add_cti_poisson_traps(
+        self,
+        data,
+        parallel_ccd=None,
+        parallel_trap_list=None,
+        serial_ccd=None,
+        serial_trap_list=None,
+    ):
+
+        if not any([parallel_trap_list, serial_trap_list]):
+            raise exc.ClockerException(
+                "No Trap species (parallel or serial) were passed to the add_cti method"
+            )
+
+        if not any([parallel_ccd, serial_ccd]):
+            raise exc.ClockerException(
+                "No CCD object(parallel or serial) was passed to the add_cti method"
+            )
+
+        parallel_ccd = self.ccd_from(ccd_phase=parallel_ccd)
+
+        try:
+            parallel_offset = data.readout_offsets[0]
+        except AttributeError:
+            parallel_offset = 0
+
+        image_pre_cti = data.native
+        image_post_cti = np.zeros(data.shape_native)
+
+        total_rows = image_post_cti.shape[0]
+        total_columns = image_post_cti.shape[1]
+
+        for column in range(total_columns):
+
+            parallel_trap_poisson_list = [
+                parallel_trap.poisson_density_from(total_pixels=total_rows, seed=self.poisson_seed)
+                for parallel_trap in parallel_trap_list
+            ]
+
+            image_pre_cti_pass = np.zeros(shape=(total_rows, 1))
+            image_pre_cti_pass[:, 0] = image_pre_cti[:, column]
+
+            image_post_cti[:, column] = cti.add_cti(
+                image=image_pre_cti_pass,
+                parallel_ccd=parallel_ccd,
+                parallel_roe=self.parallel_roe,
+                parallel_traps=parallel_trap_poisson_list,
+                parallel_express=self.parallel_express,
+                parallel_offset=parallel_offset,
+                parallel_window_start=self.parallel_window_start,
+                parallel_window_stop=self.parallel_window_stop,
+                verbosity=self.verbosity,
+            )[:, 0]
+
+        serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
+
+        try:
+            serial_offset = data.readout_offsets[1]
+        except AttributeError:
+            serial_offset = 0
+
+        image_post_cti = cti.add_cti(
+            image=image_post_cti,
+            serial_ccd=serial_ccd,
+            serial_roe=self.serial_roe,
+            serial_traps=serial_trap_list,
+            serial_express=self.serial_express,
+            serial_offset=serial_offset,
+            serial_window_start=self.serial_window_start,
+            serial_window_stop=self.serial_window_stop,
+            verbosity=self.verbosity,
+        )
+
+        try:
+            return Array2D.manual_mask(array=image_post_cti, mask=data.mask).native
+        except AttributeError:
+            return image_post_cti

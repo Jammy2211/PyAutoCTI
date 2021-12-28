@@ -115,6 +115,61 @@ class TestClocker:
 
         assert image_via_arctic.flatten() == pytest.approx(image_via_clocker, 1.0e-4)
 
+    def test__add_cti_with_poisson_trap_densities(self):
+
+        arr = np.array(
+            (
+                [
+                    [1.0, 1.0, 1.0, 0.0],
+                    [0.0, 0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0, 0.0],
+                    [0.0, 0.0, 0.0, 0.0],
+                ]
+            )
+        )
+
+        arr = ac.Array2D.manual(array=arr, pixel_scales=1.0).native
+
+        roe = ac.ROE(
+            dwell_times=[1.0],
+            empty_traps_between_columns=True,
+            empty_traps_for_first_transfers=False,
+            force_release_away_from_readout=True,
+            use_integer_express_matrix=False,
+        )
+        ccd = ac.CCDPhase(
+            full_well_depth=1e3, well_notch_depth=0.0, well_fill_power=1.0
+        )
+
+        trap_list = [
+            ac.TrapInstantCapture(density=10.0, release_timescale=-1.0 / np.log(0.5))
+        ]
+
+        clocker = ac.Clocker2D(
+            parallel_poisson_traps=True, poisson_seed=1, parallel_express=3, parallel_roe=roe, serial_express=3, serial_roe=roe
+        )
+
+        image_via_clocker = clocker.add_cti(
+            data=arr,
+            parallel_trap_list=trap_list,
+            parallel_ccd=ccd,
+            serial_trap_list=trap_list,
+            serial_ccd=ccd,
+        )
+
+        print(image_via_clocker)
+
+        assert image_via_clocker[0, 0] == pytest.approx(0.980298, 1.0e-4)
+        assert image_via_clocker[0, 1] == pytest.approx(0.9901042, 1.0e-4)
+        assert image_via_clocker[0, 2] == pytest.approx(0.9901981, 1.0e-4)
+        assert (image_via_clocker[:, 3] > 0.0).all()
+
     def test__raises_exception_if_no_traps_or_ccd_passed(self):
 
         arr = ac.Array2D.manual(
