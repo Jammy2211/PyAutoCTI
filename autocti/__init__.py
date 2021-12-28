@@ -10,6 +10,7 @@ from autoarray.dataset import preprocess
 from autoarray.dataset.imaging import Imaging
 
 from arcticpy.src.roe import ROE
+from arcticpy.src.roe import ROEChargeInjection
 from arcticpy.src.ccd import CCDPhase
 from arcticpy.src.ccd import CCD
 from arcticpy.src.traps import TrapInstantCapture
@@ -25,6 +26,7 @@ from .charge_injection.layout import Extractor2DParallelFrontEdge
 from .charge_injection.layout import Extractor2DParallelTrails
 from .charge_injection.layout import Extractor2DSerialFrontEdge
 from .charge_injection.layout import Extractor2DSerialTrails
+from .charge_injection.fit import FitImagingCI
 from .mask.mask_2d import Mask2D
 from .mask.mask_2d import SettingsMask2D
 from .line.mask_1d import Mask1DLine
