@@ -17,10 +17,6 @@ from arcticpy.src.traps import TrapInstantCapture
 from arcticpy.src.traps import TrapSlowCapture
 from arcticpy.src.traps import TrapInstantCaptureContinuum
 
-from autocti.warm_pixels.lines import Line
-from autocti.warm_pixels.lines import LineCollection
-from autocti.warm_pixels.warm_pixels import find_warm_pixels
-
 from .cosmics.cosmics import CosmicRays
 from .charge_injection.layout import Extractor2DParallelFrontEdge
 from .charge_injection.layout import Extractor2DParallelTrails

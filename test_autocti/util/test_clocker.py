@@ -152,7 +152,12 @@ class TestClocker:
         ]
 
         clocker = ac.Clocker2D(
-            parallel_poisson_traps=True, poisson_seed=1, parallel_express=3, parallel_roe=roe, serial_express=3, serial_roe=roe
+            parallel_poisson_traps=True,
+            poisson_seed=1,
+            parallel_express=3,
+            parallel_roe=roe,
+            serial_express=3,
+            serial_roe=roe,
         )
 
         image_via_clocker = clocker.add_cti(

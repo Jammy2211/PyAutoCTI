@@ -158,7 +158,7 @@ class Clocker2D(AbstractClocker):
                 parallel_ccd=parallel_ccd,
                 parallel_trap_list=parallel_trap_list,
                 serial_ccd=serial_ccd,
-                serial_trap_list=serial_trap_list
+                serial_trap_list=serial_trap_list,
             )
 
         if not any([parallel_trap_list, serial_trap_list]):
@@ -285,7 +285,9 @@ class Clocker2D(AbstractClocker):
         for column in range(total_columns):
 
             parallel_trap_poisson_list = [
-                parallel_trap.poisson_density_from(total_pixels=total_rows, seed=self.poisson_seed)
+                parallel_trap.poisson_density_from(
+                    total_pixels=total_rows, seed=self.poisson_seed
+                )
                 for parallel_trap in parallel_trap_list
             ]
 
