@@ -1,7 +1,7 @@
 from typing import Optional, List
 
 from autofit.non_linear.samples import PDFSamples
-from autofit.mapper.prior_model.collection import CollectionPriorModel as Collection
+from autofit.mapper.prior_model.collection import CollectionPriorModel
 from autofit.mapper.model import ModelInstance
 from autofit.non_linear.abstract_search import Analysis
 from autofit.non_linear.paths.directory import DirectoryPaths
@@ -15,6 +15,8 @@ from autocti.model.result import ResultDataset
 from autocti.charge_injection.model.result import ResultImagingCI
 from autocti.model.settings import SettingsCTI2D
 from autocti.util.clocker import Clocker2D
+
+from autocti import exc
 
 
 class AnalysisImagingCI(Analysis):
@@ -169,31 +171,50 @@ class AnalysisImagingCI(Analysis):
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
 
         visualizer.visualize_imaging_ci(imaging_ci=self.dataset_ci)
-        visualizer.visualize_imaging_ci_lines(
-            imaging_ci=self.dataset_ci, line_region="parallel_front_edge"
-        )
-        visualizer.visualize_imaging_ci_lines(
-            imaging_ci=self.dataset_ci, line_region="parallel_trails"
-        )
 
-        visualizer.visualize_fit_ci(fit=fit, during_analysis=during_analysis)
-        visualizer.visualize_fit_ci_1d_lines(
-            fit=fit, during_analysis=during_analysis, line_region="parallel_front_edge"
-        )
-        visualizer.visualize_fit_ci_1d_lines(
-            fit=fit, during_analysis=during_analysis, line_region="parallel_trails"
-        )
+        try:
+            visualizer.visualize_imaging_ci_lines(
+                imaging_ci=self.dataset_ci, line_region="parallel_front_edge"
+            )
+            visualizer.visualize_imaging_ci_lines(
+                imaging_ci=self.dataset_ci, line_region="parallel_trails"
+            )
 
-        # visualizer.visualize_multiple_fit_cis_subplots(fits=fit)
-        # visualizer.visualize_multiple_fit_cis_subplots_1d_lines(
-        #     fits=fit, line_region="parallel_front_edge"
-        # )
-        # visualizer.visualize_multiple_fit_cis_subplots_1d_lines(
-        #     fits=fit, line_region="parallel_trails"
-        # )
+            visualizer.visualize_fit_ci(fit=fit, during_analysis=during_analysis)
+            visualizer.visualize_fit_ci_1d_lines(
+                fit=fit,
+                during_analysis=during_analysis,
+                line_region="parallel_front_edge",
+            )
+            visualizer.visualize_fit_ci_1d_lines(
+                fit=fit, during_analysis=during_analysis, line_region="parallel_trails"
+            )
+        except exc.RegionException:
+            pass
+
+        try:
+            visualizer.visualize_imaging_ci(imaging_ci=self.dataset_ci)
+            visualizer.visualize_imaging_ci_lines(
+                imaging_ci=self.dataset_ci, line_region="serial_front_edge"
+            )
+            visualizer.visualize_imaging_ci_lines(
+                imaging_ci=self.dataset_ci, line_region="serial_trails"
+            )
+
+            visualizer.visualize_fit_ci(fit=fit, during_analysis=during_analysis)
+            visualizer.visualize_fit_ci_1d_lines(
+                fit=fit,
+                during_analysis=during_analysis,
+                line_region="serial_front_edge",
+            )
+            visualizer.visualize_fit_ci_1d_lines(
+                fit=fit, during_analysis=during_analysis, line_region="serial_trails"
+            )
+        except exc.RegionException:
+            pass
 
     def make_result(
-        self, samples: PDFSamples, model: Collection, search: NonLinearSearch
+        self, samples: PDFSamples, model: CollectionPriorModel, search: NonLinearSearch
     ) -> ResultImagingCI:
         return ResultImagingCI(
             samples=samples, model=model, analysis=self, search=search

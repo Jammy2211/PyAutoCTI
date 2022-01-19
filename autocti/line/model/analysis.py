@@ -1,7 +1,7 @@
 from typing import List
 
 from autofit.non_linear.samples import PDFSamples
-from autofit.mapper.prior_model.collection import CollectionPriorModel as Collection
+from autofit.mapper.prior_model.collection import CollectionPriorModel
 from autofit.mapper.model import ModelInstance
 from autofit.non_linear.abstract_search import Analysis
 from autofit.non_linear.paths.directory import DirectoryPaths
@@ -86,7 +86,7 @@ class AnalysisDatasetLine(Analysis):
         visualizer.visualize_fit_line(fit=fit, during_analysis=during_analysis)
 
     def make_result(
-        self, samples: PDFSamples, model: Collection, search: NonLinearSearch
+        self, samples: PDFSamples, model: CollectionPriorModel, search: NonLinearSearch
     ) -> ResultDatasetLine:
         return ResultDatasetLine(
             samples=samples, model=model, analysis=self, search=search

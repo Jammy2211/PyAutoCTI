@@ -1,7 +1,7 @@
-from autofit.non_linear.result import Result as AfResult
+from autofit.non_linear import result
 
 
-class Result(AfResult):
+class Result(result.Result):
     def __init__(self, samples, model, analysis, search):
         """
         The result of a phase
