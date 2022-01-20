@@ -18,11 +18,11 @@ def test__non_uniform_array_is_correct_with_rotation():
         injection_normalization=50000.0,
     )
 
-    assert array.shape == (2086, 2128)
-    assert array[0, 50] == 0
-    assert array[0, 2099] == 0
-    assert (array[0:200, 51:2099] > 0).all()
-    assert 49000.0 < np.mean(array[0:200, 51:2099]) < 51000.0
+    assert array.shape_native == (2086, 2128)
+    assert array.native[0, 50] == 0
+    assert array.native[0, 2099] == 0
+    assert (array.native[0:200, 51:2099] > 0).all()
+    assert 49000.0 < np.mean(array.native[0:200, 51:2099]) < 51000.0
 
     # top left
 
@@ -34,10 +34,10 @@ def test__non_uniform_array_is_correct_with_rotation():
         injection_normalization=50000.0,
     )
 
-    assert array[1938, 50] == 0
-    assert array[1938, 2099] == 0
-    assert (array[1928:2128, 51:2099] > 0).all()
-    assert 49000.0 < np.mean(array[1928:2128, 51:2099]) < 51000.0
+    assert array.native[1938, 50] == 0
+    assert array.native[1938, 2099] == 0
+    assert (array.native[1928:2128, 51:2099] > 0).all()
+    assert 49000.0 < np.mean(array.native[1928:2128, 51:2099]) < 51000.0
 
     # bottom right
 
@@ -49,11 +49,11 @@ def test__non_uniform_array_is_correct_with_rotation():
         injection_normalization=50000.0,
     )
 
-    assert array.shape == (2086, 2128)
-    assert array[0, 28] == 0
-    assert array[0, 2077] == 0
-    assert (array[0:200, 29:2077] > 0).all()
-    assert 49000.0 < np.mean(array[0:200, 51:2099]) < 51000.0
+    assert array.shape_native == (2086, 2128)
+    assert array.native[0, 28] == 0
+    assert array.native[0, 2077] == 0
+    assert (array.native[0:200, 29:2077] > 0).all()
+    assert 49000.0 < np.mean(array.native[0:200, 51:2099]) < 51000.0
 
     # top right
 
@@ -65,11 +65,11 @@ def test__non_uniform_array_is_correct_with_rotation():
         injection_normalization=50000.0,
     )
 
-    assert array.shape == (2086, 2128)
-    assert array[1938, 28] == 0
-    assert array[1938, 2077] == 0
-    assert (array[1928:2128, 29:2077] > 0).all()
-    assert 49000.0 < np.mean(array[1928:2128, 29:2077]) < 51000.0
+    assert array.shape_native == (2086, 2128)
+    assert array.native[1938, 28] == 0
+    assert array.native[1938, 2077] == 0
+    assert (array.native[1928:2128, 29:2077] > 0).all()
+    assert 49000.0 < np.mean(array.native[1928:2128, 29:2077]) < 51000.0
 
 
 def test__add_cti_to_pre_cti_data():
@@ -99,10 +99,10 @@ def test__add_cti_to_pre_cti_data():
         injection_normalization=50000.0,
     )
 
-    assert array[199, 100] > 0.0
-    assert array[200, 100] == 0.0
+    assert array.native[199, 100] > 0.0
+    assert array.native[200, 100] == 0.0
 
-    pre_cti_data = array[:, 100:101]
+    pre_cti_data = array.native[:, 100:101]
     pre_cti_data.mask = pre_cti_data.mask[:, 100:101]
 
     post_cti_data = ou_sim_ci.add_cti_to_pre_cti_data(
@@ -127,10 +127,10 @@ def test__add_cti_to_pre_cti_data():
         injection_normalization=50000.0,
     )
 
-    assert array[1886, 100] > 0.0
-    assert array[1885, 100] == 0.0
+    assert array.native[1886, 100] > 0.0
+    assert array.native[1885, 100] == 0.0
 
-    pre_cti_data = array[:, 100:101]
+    pre_cti_data = array.native[:, 100:101]
     pre_cti_data.mask = pre_cti_data.mask[:, 100:101]
 
     post_cti_data = ou_sim_ci.add_cti_to_pre_cti_data(
@@ -155,10 +155,10 @@ def test__add_cti_to_pre_cti_data():
         injection_normalization=50000.0,
     )
 
-    assert array[199, 100] > 0.0
-    assert array[200, 100] == 0.0
+    assert array.native[199, 100] > 0.0
+    assert array.native[200, 100] == 0.0
 
-    pre_cti_data = array[:, 100:101]
+    pre_cti_data = array.native[:, 100:101]
     pre_cti_data.mask = pre_cti_data.mask[:, 100:101]
 
     post_cti_data = ou_sim_ci.add_cti_to_pre_cti_data(
@@ -183,10 +183,10 @@ def test__add_cti_to_pre_cti_data():
         injection_normalization=50000.0,
     )
 
-    assert array[1886, 100] > 0.0
-    assert array[1885, 100] == 0.0
+    assert array.native[1886, 100] > 0.0
+    assert array.native[1885, 100] == 0.0
 
-    pre_cti_data = array[:, 100:101]
+    pre_cti_data = array.native[:, 100:101]
     pre_cti_data.mask = pre_cti_data.mask[:, 100:101]
 
     post_cti_data = ou_sim_ci.add_cti_to_pre_cti_data(

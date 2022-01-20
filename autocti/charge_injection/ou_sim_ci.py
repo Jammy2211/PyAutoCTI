@@ -1,5 +1,9 @@
+import numpy as np
+from typing import List, Union
+
 from autoarray.instruments import euclid
 from autoarray.layout import layout_util
+from autoarray.structures.arrays.two_d.array_2d import Array2D
 
 from arcticpy.src import ccd
 from arcticpy.src import traps
@@ -69,18 +73,18 @@ def quadrant_id_from(iquad: int) -> str:
 
 def charge_injection_array_from(
     iquad: int,
-    injection_normalization,
-    injection_total=5,
-    injection_on=200,
-    injection_off=200,
-    parallel_size=2086,
-    serial_size=2128,
-    serial_prescan_size=51,
-    serial_overscan_size=29,
-    pixel_scales=0.1,
-    use_non_uniform_pattern=True,
-    ci_seed=-1,
-):
+    injection_normalization : float,
+    injection_total : int=5,
+    injection_on : int=200,
+    injection_off:int=200,
+    parallel_size:int=2086,
+    serial_size:int=2128,
+    serial_prescan_size:int=51,
+    serial_overscan_size:int=29,
+    pixel_scales:float=0.1,
+    use_non_uniform_pattern:bool=True,
+    ci_seed:int=-1,
+) -> Union[np.ndarray, Array2D]:
     """
     Returns a charge injection line image suitable for OU-SIM to run through the ElVIS simulator.
 
@@ -176,19 +180,19 @@ def charge_injection_array_from(
     works correctly.
     """
     return layout_util.rotate_array_via_roe_corner_from(
-        array=pre_cti_data, roe_corner=roe_corner
+        array=pre_cti_data.native, roe_corner=roe_corner
     )
 
 
 def add_cti_to_pre_cti_data(
-    pre_cti_data,
+    pre_cti_data : Union[np.ndarray, Array2D],
     iquad: int,
-    clocker,
-    parallel_trap_list,
-    parallel_ccd,
-    serial_trap_list,
-    serial_ccd,
-):
+    clocker : Clocker2D,
+    parallel_trap_list : List[traps.AbstractTrap],
+    parallel_ccd : ccd.CCDPhase,
+    serial_trap_list: List[traps.AbstractTrap],
+    serial_ccd : ccd.CCDPhase,
+) -> Union[np.ndarray, Array2D]:
 
     quadrant_id = quadrant_id_from(iquad=iquad)
 
