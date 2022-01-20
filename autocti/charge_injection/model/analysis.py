@@ -189,7 +189,7 @@ class AnalysisImagingCI(Analysis):
             visualizer.visualize_fit_ci_1d_lines(
                 fit=fit, during_analysis=during_analysis, line_region="parallel_trails"
             )
-        except exc.RegionException:
+        except (exc.RegionException, TypeError):
             pass
 
         try:
@@ -210,7 +210,7 @@ class AnalysisImagingCI(Analysis):
             visualizer.visualize_fit_ci_1d_lines(
                 fit=fit, during_analysis=during_analysis, line_region="serial_trails"
             )
-        except exc.RegionException:
+        except (exc.RegionException, TypeError):
             pass
 
     def make_result(
