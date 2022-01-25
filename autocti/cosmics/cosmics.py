@@ -1,37 +1,45 @@
-"""
-@file python/ELViS/CR.py
-@date 07/13/16
-@author user
-"""
-
-__author__ = "hudelot"
-
-import sys
-import os
-
 import astropy.io.fits as pyfits
 import numpy as np
 import logging
-from autocti.cosmics import fitslib
+from typing import Tuple
 
-# import scipy
-from scipy.interpolate import InterpolatedUnivariateSpline, interp1d
+from scipy.interpolate import interp1d
 
 
-class CosmicRays:
-    """ Handle cosmic rays simulator """
+class SimulatorCosmicRayMap:
+    def __init__(
+        self,
+        shape_native: Tuple[int, int],
+        lengths: np.ndarray,
+        distances: np.ndarray,
+        flux_scaling: float = 1.0,
+        seed=-1,
+    ):
+        """
+        Returns a map of cosmic rays.
 
-    def __init__(self, shape, cr_fluxscaling, seed=-1):
-        self.image = None
+        Adapted from the OU-SIM ELVIS Simulator in Euclid, originally written by Patrick Hudelot.
 
-        dir_path = os.path.dirname(os.path.realpath(__file__))
+        Parameters
+        ----------
+        shape_native
+            The 2D shape of the cosmic ray map, corresponding to the image the cosmic arrays are to be added to.
+        flux_scaling
+            A factor which scales the overall normalization of the cosmic rays.
+        settings_dict
+            A dictionary of all settings that control the behaviour of the cosmic ray simulator.
+        seed
+            Random number seed, set to positive value for reproduceable cosmic ray maps.
+        """
 
-        self.cr_length_file = os.path.join(dir_path, "crlength_v2.fits")
-        self.cr_distance_file = os.path.join(dir_path, "crdist.fits")
-        self.cr = None
-        self.nx = shape[1]
-        self.ny = shape[0]
-        self.cr_fluxscaling = cr_fluxscaling
+        self.shape_native = shape_native
+
+        self.lengths = lengths
+        self.distances = distances
+
+        self.settings_dict = {}
+        self.flux_scaling = flux_scaling
+
         if seed == -1:
             seed = np.random.randint(
                 0, 1e9
@@ -40,62 +48,66 @@ class CosmicRays:
 
         self.log = logging.getLogger(__file__)
 
-    def set_ifiles(self):
+    @classmethod
+    def from_fits(
+        cls,
+        length_file: str,
+        distance_file: str,
+        shape_native: Tuple[int, int],
+        flux_scaling: float = 1.0,
+        seed=-1,
+    ) -> "SimulatorCosmicRayMap":
+        """
 
-        # Check if files are ASCII or FITS
-        if fitslib.isfits(self.cr_length_file):
-            try:
-                data = pyfits.getdata(self.cr_length_file, extname="DATA")
-            except KeyError:
-                self.log.error(
-                    "No DATA extention in FITS file : %s " % self.cr_length_file
-                )
-                sys.exit(1)
-            crLengths = np.array(data.tolist())
-        else:
-            crLengths = np.loadtxt(self.cr_length_file)
+        Parameters
+        ----------
+        length_file
+            A .fits table describing the lengths properties of the cosmic rays that are simulated.
+        distance_file
+            A .fits table describing the distance properties of the cosmic rays that are simulated.
+        shape_native
+            The 2D shape of the cosmic ray map, corresponding to the image the cosmic arrays are to be added to.
+        flux_scaling
+            A factor which scales the overall normalization of the cosmic rays.
+        """
 
-        if fitslib.isfits(self.cr_distance_file):
-            try:
-                data = pyfits.getdata(self.cr_distance_file, extname="DATA")
-            except KeyError:
-                self.log.error(
-                    "No DATA extention in FITS file : %s " % self.cr_distance_file
-                )
-                sys.exit(1)
-            crDists = np.array(data.tolist())
-        else:
-            crDists = np.loadtxt(self.cr_distance_file)
+        lengths = pyfits.getdata(length_file, extname="DATA")
+        lengths = np.array(lengths.tolist())
 
-        # Read CR informations (distribution functions)
-        self.cr = dict(
-            cr_u=crLengths[:, 0],
-            cr_cdf=crLengths[:, 1],
-            cr_cdfn=np.shape(crLengths)[0],
-            cr_v=crDists[:, 0],
-            cr_cde=crDists[:, 1],
-            cr_cden=np.shape(crDists)[0],
+        distances = pyfits.getdata(distance_file, extname="DATA")
+        distances = np.array(distances.tolist())
+
+        return SimulatorCosmicRayMap(
+            shape_native=shape_native,
+            lengths=lengths,
+            distances=distances,
+            flux_scaling=flux_scaling,
+            seed=seed,
         )
 
-    def cosmicRayIntercepts(self, lum, x0, y0, l, phi, fscale):
+    def intercepts_from(self, luminosities, x0, y0, lengths, angles, flux_scaling):
         """
         Derive cosmic ray streak intercept points.
 
-        :param lum: luminosities of the cosmic ray tracks
-        :param x0: central positions of the cosmic ray tracks in x-direction
-        :param y0: central positions of the cosmic ray tracks in y-direction
-        :param l: lengths of the cosmic ray tracks
-        :param phi: orientation angles of the cosmic ray tracks
-
-        :return: map
-        :rtype: nd-arrays
+        Parameters
+        ----------
+        luminosities
+            The luminosities of the cosmic ray tracks.
+        x0
+            Central positions of the cosmic ray tracks in x-direction.
+        y0
+            Central positions of the cosmic ray tracks in y-direction.
+        lengths
+            The lengths of the cosmic ray tracks.
+        angles
+            The orientation angles of the cosmic ray tracks.
         """
         # create empty arrays
-        crImage = np.zeros((self.ny, self.nx), dtype=np.float64)
+        image = np.zeros((self.shape_native[0], self.shape_native[1]), dtype=np.float64)
 
         # x and y shifts
-        dx = l * np.cos(phi) / 2.0  # beware! 0<phi< pi, dx < 0
-        dy = l * np.sin(phi) / 2.0
+        dx = lengths * np.cos(angles) / 2.0  # beware! 0<phi< pi, dx < 0
+        dy = lengths * np.sin(angles) / 2.0
         mskdx = np.abs(dx) < 1e-8
         mskdy = np.abs(dy) < 1e-8
         dx[mskdx] = 0.0
@@ -103,30 +115,31 @@ class CosmicRays:
 
         # pixels in x-direction
         ilo = np.round(x0.copy() - dx)
-        msk = ilo < 0.0
-        ilo[msk] = 0
+        mask = ilo < 0.0
+        ilo[mask] = 0
         ilo = ilo.astype(np.int)
 
         ihi = np.round(x0.copy() + dx)
-        msk = ihi > self.nx
-        ihi[msk] = self.nx
+        mask = ihi > self.shape_native[1]
+        ihi[mask] = self.shape_native[1]
         ihi = ihi.astype(np.int)
 
         # pixels in y-directions
         jlo = np.round(y0.copy() - dy)
-        msk = jlo < 0.0
-        jlo[msk] = 0
+        mask = jlo < 0.0
+        jlo[mask] = 0
         jlo = jlo.astype(np.int)
 
         jhi = np.round(y0.copy() + dy)
-        msk = jhi > self.ny
-        jhi[msk] = self.ny
+        mask = jhi > self.shape_native[0]
+        jhi[mask] = self.shape_native[0]
         jhi = jhi.astype(np.int)
 
         offending_delta = 1.0
 
         # loop over the individual events
-        for i, luminosity in enumerate(lum):
+        for i, luminosity in enumerate(luminosities):
+
             n = 0  # count the intercepts
 
             u = []
@@ -173,7 +186,7 @@ class CosmicRays:
             if n < 1:
                 xc = int(np.floor(x0[i]))
                 yc = int(np.floor(y0[i]))
-                crImage[yc, xc] += luminosity * fscale
+                image[yc, xc] += luminosity * flux_scaling
 
             # Find the arguments that sort the intersections along the track
             u = np.asarray(u)
@@ -192,126 +205,91 @@ class CosmicRays:
                 cx = int(1 + np.floor((x[j + 1] + x[j]) / 2.0))
                 cy = int(1 + np.floor((y[j + 1] + y[j]) / 2.0))
 
-                if 0 <= cx < self.nx and 0 <= cy < self.ny:
-                    crImage[cy, cx] += w * luminosity * fscale
+                if 0 <= cx < self.shape_native[1] and 0 <= cy < self.shape_native[0]:
+                    image[cy, cx] += w * luminosity * flux_scaling
 
-        return crImage
+        return image
 
-    def _drawSingleEvent(self, limit=1000, cr_n=1):
-        """ Generate a bunch of cosmic ray events and return a cosmic ray map
-        limit : limiting energy for the cosmic ray event
-        cr_n : number of events to include
+    def cosmic_ray_map_from(self, cover_fraction=1.4, limit=1000):
+        """ 
+        Return a cosmic ray, where cosmic rays are generated using the lengths and distance of the class instance.
 
-        TODO : Decide if needed !
+
+        Parameters
+        ----------
+        limit 
+            The limiting energy for the cosmic ray event.
+        cover_fraction 
+            The covering fraction of cosmic rays over the total number of pixels (in percent) normalized for a 5
+            65s exposure time.
         """
-
-        # random variable for each event (for cosmic length)
-        luck = np.random.rand(int(np.floor(cr_n)))
-
-        # draw the length of the tracks
-        ius = InterpolatedUnivariateSpline(self.cr["cr_cdf"], self.cr["cr_u"])
-        self.cr["cr_l"] = ius(luck)
-
-        # set the energy directly to the limit
-        self.cr["cr_e"] = np.asarray([limit] * cr_n)
-
-        # Choose the properties such as positions and an angle from a random Uniform dist
-        cr_x = self.nx * np.random.rand(int(np.floor(cr_n)))
-        cr_y = self.ny * np.random.rand(int(np.floor(cr_n)))
-        cr_phi = np.pi * np.random.rand(int(np.floor(cr_n)))
-
-        # find the intercepts
-        CCD_cr = self.cosmicRayIntercepts(
-            self.cr["cr_e"], cr_x, cr_y, self.cr["cr_l"], cr_phi, self.cr_fluxscaling
-        )
-
-        # count the covering factor
-        area_cr = np.count_nonzero(CCD_cr)
-        self.log.info(
-            "The cosmic ray covering factor is %i pixels i.e. %.3f per cent"
-            % (area_cr, 100.0 * area_cr / (self.nx * self.ny))
-        )
-
-        return CCD_cr
-
-    def drawEventsToCoveringFactor(self, coveringFraction=1.4, limit=1000, nx=0, ny=0):
-        """ Generate a bunch of cosmic ray events and return a cosmic ray map
-            :param limit: limiting energy for the cosmic ray event
-            :param coveringFraction : covering fraction of cr over the total number of px (in percent) normalixzed for a 565s
-                                exposure time
-            :param nx: x size of the map
-            :param ny: y size of the map
-            :return map, length, energy: map of cosmic rays, list of CR length, list of CR energies
-        """
-
-        if nx != 0:
-            self.nx = nx
-        if ny != 0:
-            self.ny = ny
 
         # Prepare the CR map
-        CCD_cr = np.zeros((self.ny, self.nx))
+        cosmic_ray_map = np.zeros((self.shape_native[0], self.shape_native[1]))
 
         # how many events to draw at once, too large number leads to exceeding the covering fraction
 
-        cdf = self.cr["cr_cdf"]
-        ucr = self.cr["cr_u"]
-        aproxpdf = (cdf[1:] - cdf[0:-1]) / (ucr[1:] - ucr[0:-1])
-        averlength = (aproxpdf * ucr[1:]).sum() / aproxpdf.sum()
-        cr_tot_guess = coveringFraction / 100.0 * self.nx * self.ny / averlength
+        cdf = self.lengths[:, 1]
+        ucr = self.lengths[:, 0]
+        approx_pdf = (cdf[1:] - cdf[0:-1]) / (ucr[1:] - ucr[0:-1])
+        average_length = (approx_pdf * ucr[1:]).sum() / approx_pdf.sum()
+        total_guess = (
+            cover_fraction
+            / 100.0
+            * self.shape_native[1]
+            * self.shape_native[0]
+            / average_length
+        )
 
         # allocating for a max. 5% error in cover. fraction, aprox.
         # Notice that the minimum number of events will be one...
-        cr_n = max(int(cr_tot_guess * 0.05), 1)
+        cr_n = max(int(total_guess * 0.05), 1)
 
         covering = 0.0
         lengths = []
         energies = []
-        cr_tot = 0
+        total_cosmics = 0
 
-        while covering < coveringFraction:
+        while covering < cover_fraction:
 
             # pseudo-random numbers taken from a uniform distribution between 0 and 1
             luck = np.random.rand(cr_n)
 
             # draw the length of the tracks
-            ius = interp1d(self.cr["cr_cdf"], self.cr["cr_u"], kind="slinear")
-            self.cr["cr_l"] = ius(luck)
+            ius = interp1d(self.lengths[:, 1], self.lengths[:, 0], kind="slinear")
+            length = ius(luck)
 
             if limit is None:
-                ius = interp1d(self.cr["cr_cde"], self.cr["cr_v"], kind="slinear")
-                self.cr["cr_e"] = ius(luck)
+                ius = interp1d(
+                    self.distances[:, 1], self.distances[:, 0], kind="slinear"
+                )
+                energy = ius(luck)
             else:
                 # set the energy directly to the limit
-                self.cr["cr_e"] = np.asarray([limit])
+                energy = np.asarray([limit])
 
-            lengths += self.cr["cr_l"].tolist()
-            energies += self.cr["cr_e"].tolist()
+            lengths += length.tolist()
+            energies += energy.tolist()
 
             # Choose the properties such as positions and an angle from a random Uniform dist
-            cr_x = self.nx * np.random.rand(int(np.floor(cr_n)))
-            cr_y = self.ny * np.random.rand(int(np.floor(cr_n)))
-            cr_phi = np.pi * np.random.rand(int(np.floor(cr_n)))
+            x = self.shape_native[1] * np.random.rand(int(np.floor(cr_n)))
+            y = self.shape_native[0] * np.random.rand(int(np.floor(cr_n)))
+            angle = np.pi * np.random.rand(int(np.floor(cr_n)))
 
             # find the intercepts
-            CCD_cr += self.cosmicRayIntercepts(
-                self.cr["cr_e"],
-                cr_x,
-                cr_y,
-                self.cr["cr_l"],
-                cr_phi,
-                self.cr_fluxscaling,
+            cosmic_ray_map += self.intercepts_from(
+                energy, x, y, length, angle, self.flux_scaling
             )
 
             # count the covering factor
-            area_cr = np.count_nonzero(CCD_cr)
-            covering = 100.0 * area_cr / (self.nx * self.ny)
+            area = np.count_nonzero(cosmic_ray_map)
+            covering = 100.0 * area / (self.shape_native[1] * self.shape_native[0])
 
-            cr_tot += cr_n
+            total_cosmics += cr_n
             text = (
                 "The cosmic ray covering factor is %i pixels i.e. %.3f per cent (total number of cr : %i)"
-                % (area_cr, covering, cr_tot)
+                % (area, covering, total_cosmics)
             )
             self.log.info(text)
 
-        return CCD_cr
+        return cosmic_ray_map

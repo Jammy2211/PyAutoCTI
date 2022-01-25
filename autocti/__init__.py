@@ -17,7 +17,7 @@ from arcticpy.src.traps import TrapInstantCapture
 from arcticpy.src.traps import TrapSlowCapture
 from arcticpy.src.traps import TrapInstantCaptureContinuum
 
-from .cosmics.cosmics import CosmicRays
+from .cosmics.cosmics import SimulatorCosmicRayMap
 from .charge_injection.layout import Extractor2DParallelFrontEdge
 from .charge_injection.layout import Extractor2DParallelTrails
 from .charge_injection.layout import Extractor2DSerialFrontEdge

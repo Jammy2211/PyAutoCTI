@@ -282,6 +282,8 @@ class Clocker2D(AbstractClocker):
         total_rows = image_post_cti.shape[0]
         total_columns = image_post_cti.shape[1]
 
+        parallel_trap_column_list = []
+
         for column in range(total_columns):
 
             parallel_trap_poisson_list = [
@@ -290,6 +292,8 @@ class Clocker2D(AbstractClocker):
                 )
                 for parallel_trap in parallel_trap_list
             ]
+
+            parallel_trap_column_list.append(parallel_trap_poisson_list)
 
             image_pre_cti_pass = np.zeros(shape=(total_rows, 1))
             image_pre_cti_pass[:, 0] = image_pre_cti[:, column]
@@ -305,6 +309,8 @@ class Clocker2D(AbstractClocker):
                 parallel_window_stop=self.parallel_window_stop,
                 verbosity=self.verbosity,
             )[:, 0]
+
+        self.parallel_trap_column_list = parallel_trap_column_list
 
         serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
 

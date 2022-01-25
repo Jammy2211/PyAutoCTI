@@ -1,7 +1,0 @@
-######### Cosmic rays ##########
-
-CR_COVERINGFACTOR       1.4                     # Covering factor (normalized to 565s exposure time)
-CR_FLUXSCALING		1.0			# Flux scaling of the CR distribution
-CR_LENGTHS_FILE         DEFAULT_DIR/crlength_v2.fits
-CR_DISTANCE_FILE        DEFAULT_DIR/crdist.fits
-CR_FILE                 NONE
