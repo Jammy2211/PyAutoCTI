@@ -14,7 +14,7 @@ class SimulatorCosmicRayMap:
         lengths: np.ndarray,
         distances: np.ndarray,
         flux_scaling: float = 1.0,
-        pixel_scale:float=0.1,
+        pixel_scale: float = 0.1,
         seed=-1,
     ):
         """
@@ -119,7 +119,9 @@ class SimulatorCosmicRayMap:
         lengths = pyfits.getdata(path.join(dir_path, "cr_lengths.fits"), extname="DATA")
         lengths = np.array(lengths.tolist())
 
-        distances = pyfits.getdata(path.join(dir_path, "cr_distances.fits"), extname="DATA")
+        distances = pyfits.getdata(
+            path.join(dir_path, "cr_distances.fits"), extname="DATA"
+        )
         distances = np.array(distances.tolist())
 
         return SimulatorCosmicRayMap(
@@ -256,7 +258,9 @@ class SimulatorCosmicRayMap:
 
         return image
 
-    def cosmic_ray_map_from(self, cover_fraction:float=1.4, limit:float=1000.0) -> aa.Array2D:
+    def cosmic_ray_map_from(
+        self, cover_fraction: float = 1.4, limit: float = 1000.0
+    ) -> aa.Array2D:
         """ 
         Return a cosmic ray, where cosmic rays are generated using the lengths and distance of the class instance.
 
@@ -333,4 +337,6 @@ class SimulatorCosmicRayMap:
 
             total_cosmics += cr_n
 
-        return aa.Array2D.manual_native(array=cosmic_ray_map, pixel_scales=self.pixel_scale)
+        return aa.Array2D.manual_native(
+            array=cosmic_ray_map, pixel_scales=self.pixel_scale
+        )

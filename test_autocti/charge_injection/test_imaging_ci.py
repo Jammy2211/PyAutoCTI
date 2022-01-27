@@ -452,7 +452,7 @@ class TestSimulatorImagingCI:
 
         simulator = ac.ci.SimulatorImagingCI(pixel_scales=1.0)
 
-        cosmic_ray_map = np.zeros((5, 5))
+        cosmic_ray_map = ac.Array2D.zeros(shape_native=(5, 5), pixel_scales=0.1).native
         cosmic_ray_map[2, 2] = 100.0
 
         imaging = simulator.from_layout(
@@ -496,7 +496,7 @@ class TestSimulatorImagingCI:
             pixel_scales=1.0, read_noise=4.0, noise_seed=1
         )
 
-        cosmic_ray_map = np.zeros((5, 5))
+        cosmic_ray_map = ac.Array2D.zeros(shape_native=(5, 5), pixel_scales=0.1).native
         cosmic_ray_map[2, 2] = 100.0
 
         imaging = simulator.from_layout(
@@ -538,7 +538,7 @@ class TestSimulatorImagingCI:
             pixel_scales=1.0, read_noise=4.0, noise_seed=1
         )
 
-        cosmic_ray_map = np.zeros((5, 5))
+        cosmic_ray_map = ac.Array2D.zeros(shape_native=(5, 5), pixel_scales=0.1).native
         cosmic_ray_map[2, 2] = 100.0
 
         imaging = simulator.from_layout(
