@@ -57,20 +57,20 @@ class AnalysisImagingCI(Analysis):
         hyper_noise_scalars = self.hyper_noise_scalars_from_instance(instance=instance)
 
         if instance.cti.parallel_traps is not None:
-            parallel_traps = list(instance.cti.parallel_traps)
+            parallel_trap_list = list(instance.cti.parallel_traps)
         else:
-            parallel_traps = None
+            parallel_trap_list = None
 
         if instance.cti.serial_traps is not None:
-            serial_traps = list(instance.cti.serial_traps)
+            serial_trap_list = list(instance.cti.serial_traps)
         else:
-            serial_traps = None
+            serial_trap_list = None
 
         post_cti_data = self.clocker.add_cti(
             data=self.dataset_ci.pre_cti_data,
-            parallel_trap_list=parallel_traps,
+            parallel_trap_list=parallel_trap_list,
             parallel_ccd=instance.cti.parallel_ccd,
-            serial_trap_list=serial_traps,
+            serial_trap_list=serial_trap_list,
             serial_ccd=instance.cti.serial_ccd,
         )
 

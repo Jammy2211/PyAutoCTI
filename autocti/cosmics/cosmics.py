@@ -1,9 +1,10 @@
 import astropy.io.fits as pyfits
 import numpy as np
-import logging
+from os import path
+from scipy.interpolate import interp1d
 from typing import Tuple
 
-from scipy.interpolate import interp1d
+import autoarray as aa
 
 
 class SimulatorCosmicRayMap:
@@ -13,6 +14,7 @@ class SimulatorCosmicRayMap:
         lengths: np.ndarray,
         distances: np.ndarray,
         flux_scaling: float = 1.0,
+        pixel_scale:float=0.1,
         seed=-1,
     ):
         """
@@ -40,13 +42,13 @@ class SimulatorCosmicRayMap:
         self.settings_dict = {}
         self.flux_scaling = flux_scaling
 
+        self.pixel_scale = pixel_scale
+
         if seed == -1:
             seed = np.random.randint(
                 0, 1e9
             )  # Use one seed, so all regions have identical column non-uniformity.
         np.random.seed(seed)
-
-        self.log = logging.getLogger(__file__)
 
     @classmethod
     def from_fits(
@@ -55,9 +57,11 @@ class SimulatorCosmicRayMap:
         distance_file: str,
         shape_native: Tuple[int, int],
         flux_scaling: float = 1.0,
+        pixel_scale: float = 0.1,
         seed=-1,
     ) -> "SimulatorCosmicRayMap":
         """
+        Creates a cosmic ray simulator where the length and distance arrays are loaded from user supplied .fits files.
 
         Parameters
         ----------
@@ -82,6 +86,48 @@ class SimulatorCosmicRayMap:
             lengths=lengths,
             distances=distances,
             flux_scaling=flux_scaling,
+            pixel_scale=pixel_scale,
+            seed=seed,
+        )
+
+    @classmethod
+    def defaults(
+        cls,
+        shape_native: Tuple[int, int],
+        flux_scaling: float = 1.0,
+        pixel_scale: float = 0.1,
+        seed=-1,
+    ) -> "SimulatorCosmicRayMap":
+        """
+        Creates a cosmic ray simulator where the length and distance arrays are loaded from the default files stored
+        on the `PyAutoCTI` repository in `autocti.cosmics`.
+
+        Parameters
+        ----------
+        length_file
+            A .fits table describing the lengths properties of the cosmic rays that are simulated.
+        distance_file
+            A .fits table describing the distance properties of the cosmic rays that are simulated.
+        shape_native
+            The 2D shape of the cosmic ray map, corresponding to the image the cosmic arrays are to be added to.
+        flux_scaling
+            A factor which scales the overall normalization of the cosmic rays.
+        """
+
+        dir_path = path.dirname(path.realpath(__file__))
+
+        lengths = pyfits.getdata(path.join(dir_path, "cr_lengths.fits"), extname="DATA")
+        lengths = np.array(lengths.tolist())
+
+        distances = pyfits.getdata(path.join(dir_path, "cr_distances.fits"), extname="DATA")
+        distances = np.array(distances.tolist())
+
+        return SimulatorCosmicRayMap(
+            shape_native=shape_native,
+            lengths=lengths,
+            distances=distances,
+            flux_scaling=flux_scaling,
+            pixel_scale=pixel_scale,
             seed=seed,
         )
 
@@ -210,7 +256,7 @@ class SimulatorCosmicRayMap:
 
         return image
 
-    def cosmic_ray_map_from(self, cover_fraction=1.4, limit=1000):
+    def cosmic_ray_map_from(self, cover_fraction:float=1.4, limit:float=1000.0) -> aa.Array2D:
         """ 
         Return a cosmic ray, where cosmic rays are generated using the lengths and distance of the class instance.
 
@@ -286,10 +332,5 @@ class SimulatorCosmicRayMap:
             covering = 100.0 * area / (self.shape_native[1] * self.shape_native[0])
 
             total_cosmics += cr_n
-            text = (
-                "The cosmic ray covering factor is %i pixels i.e. %.3f per cent (total number of cr : %i)"
-                % (area, covering, total_cosmics)
-            )
-            self.log.info(text)
 
-        return cosmic_ray_map
+        return aa.Array2D.manual_native(array=cosmic_ray_map, pixel_scales=self.pixel_scale)

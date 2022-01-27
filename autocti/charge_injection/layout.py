@@ -1733,7 +1733,7 @@ class Layout2DCINonUniform(AbstractLayout2DCI):
 
         return ci_region
 
-    def pre_cti_data_from(self, shape_native, pixel_scales, ci_seed=-1):
+    def pre_cti_data_from(self, shape_native, pixel_scales, ci_seed=-1) -> Array2D:
         """Use this charge injection layout_ci to generate a pre-cti charge injection image. This is performed by going \
         to its charge injection regions and adding its non-uniform charge distribution.
 

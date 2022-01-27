@@ -381,7 +381,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         parallel_ccd: Optional[CCDPhase] = None,
         serial_trap_list: Optional[List[AbstractTrap]] = None,
         serial_ccd: Optional[CCDPhase] = None,
-        cosmic_ray_map: Optional[Union[np.ndarray, Array2D]] = None,
+        cosmic_ray_map: Optional[Array2D] = None,
         name: Optional[str] = None,
     ) -> ImagingCI:
         """Simulate a charge injection image, including effects like noises.
@@ -410,7 +410,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
             pre_cti_data = layout.pre_cti_data_from(
                 shape_native=layout.shape_2d, pixel_scales=self.pixel_scales
             )
-        elif isinstance(layout, Layout2DCINonUniform):
+        else:
             pre_cti_data = layout.pre_cti_data_from(
                 shape_native=layout.shape_2d,
                 ci_seed=self.ci_seed,
@@ -438,15 +438,17 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         parallel_ccd: Optional[CCDPhase] = None,
         serial_trap_list: Optional[List[AbstractTrap]] = None,
         serial_ccd: Optional[CCDPhase] = None,
-        cosmic_ray_map: Optional[Union[np.ndarray, Array2D]] = None,
+        cosmic_ray_map: Optional[Array2D] = None,
         name: Optional[str] = None,
     ) -> ImagingCI:
 
+        pre_cti_data = pre_cti_data.native
+
         if cosmic_ray_map is not None:
-            pre_cti_data += cosmic_ray_map
+            pre_cti_data += cosmic_ray_map.native
 
         post_cti_data = clocker.add_cti(
-            data=pre_cti_data.native,
+            data=pre_cti_data,
             parallel_trap_list=parallel_trap_list,
             parallel_ccd=parallel_ccd,
             serial_trap_list=serial_trap_list,
@@ -454,7 +456,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         )
 
         if cosmic_ray_map is not None:
-            pre_cti_data -= cosmic_ray_map
+            pre_cti_data -= cosmic_ray_map.native
 
         return self.from_post_cti_data(
             post_cti_data=post_cti_data,
@@ -469,7 +471,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         post_cti_data: Array2D,
         pre_cti_data: Array2D,
         layout: Union[Layout2DCI, Layout2DCINonUniform],
-        cosmic_ray_map: Optional[Union[np.ndarray, Array2D]] = None,
+        cosmic_ray_map: Optional[Array2D] = None,
         name: Optional[str] = None,
     ) -> ImagingCI:
 
@@ -490,12 +492,6 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
                 shape_native=layout.shape_2d,
                 pixel_scales=self.pixel_scales,
             ).native
-
-        if cosmic_ray_map is not None:
-
-            cosmic_ray_map = Array2D.manual(
-                array=cosmic_ray_map, pixel_scales=self.pixel_scales
-            )
 
         return ImagingCI(
             image=Array2D.manual(array=ci_image.native, pixel_scales=self.pixel_scales),
