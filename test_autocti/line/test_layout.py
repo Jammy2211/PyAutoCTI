@@ -25,33 +25,33 @@ def make_masked_array(array):
 class TestAbstractExtractor:
     def test__total_pixels_minimum(self):
 
-        layout = ac.Extractor1DFrontEdge(region_list=[(1, 2)])
+        layout = ac.Extractor1DFPR(region_list=[(1, 2)])
 
         assert layout.total_pixels_min == 1
 
-        layout = ac.Extractor1DFrontEdge(region_list=[(1, 3)])
+        layout = ac.Extractor1DFPR(region_list=[(1, 3)])
 
         assert layout.total_pixels_min == 2
 
-        layout = ac.Extractor1DFrontEdge(region_list=[(1, 3), (0, 5)])
+        layout = ac.Extractor1DFPR(region_list=[(1, 3), (0, 5)])
 
         assert layout.total_pixels_min == 2
 
-        layout = ac.Extractor1DFrontEdge(region_list=[(1, 3), (4, 5)])
+        layout = ac.Extractor1DFPR(region_list=[(1, 3), (4, 5)])
 
         assert layout.total_pixels_min == 1
 
     def test__total_pixel_spacing_min(self):
 
-        layout = ac.Extractor1DFrontEdge(region_list=[(1, 2)])
+        layout = ac.Extractor1DFPR(region_list=[(1, 2)])
 
         assert layout.total_pixels_min == 1
 
 
-class TestExtractorFrontEdge:
+class TestExtractorFPR:
     def test__array_1d_list_from(self, array, masked_array):
 
-        extractor = ac.Extractor1DFrontEdge(region_list=[(1, 4)])
+        extractor = ac.Extractor1DFPR(region_list=[(1, 4)])
 
         front_edge_list = extractor.array_1d_list_from(array=array, pixels=(0, 1))
         assert (front_edge_list[0] == np.array([1.0])).all()
@@ -59,7 +59,7 @@ class TestExtractorFrontEdge:
         front_edge = extractor.array_1d_list_from(array=array, pixels=(2, 3))
         assert (front_edge[0] == np.array([3.0])).all()
 
-        extractor = ac.Extractor1DFrontEdge(region_list=[(1, 4), (5, 8)])
+        extractor = ac.Extractor1DFPR(region_list=[(1, 4), (5, 8)])
 
         front_edge_list = extractor.array_1d_list_from(array=array, pixels=(0, 1))
         assert (front_edge_list[0] == np.array([[1.0]])).all()
@@ -81,7 +81,7 @@ class TestExtractorFrontEdge:
 
     def test__stacked_array_1d_from(self, array, masked_array):
 
-        extractor = ac.Extractor1DFrontEdge(region_list=[(1, 4), (5, 8)])
+        extractor = ac.Extractor1DFPR(region_list=[(1, 4), (5, 8)])
 
         stacked_front_edges = extractor.stacked_array_1d_from(
             array=array, pixels=(0, 3)
@@ -89,7 +89,7 @@ class TestExtractorFrontEdge:
 
         assert (stacked_front_edges == np.array([3.0, 4.0, 5.0])).all()
 
-        extractor = ac.Extractor1DFrontEdge(region_list=[(1, 3), (5, 8)])
+        extractor = ac.Extractor1DFPR(region_list=[(1, 3), (5, 8)])
 
         stacked_front_edges = extractor.stacked_array_1d_from(
             array=array, pixels=(0, 2)
@@ -105,10 +105,10 @@ class TestExtractorFrontEdge:
         assert (stacked_front_edges.mask == np.ma.array([False, False])).all()
 
 
-class TestExtractorTrails:
+class TestExtractorEPER:
     def test__array_1d_list_from(self, array, masked_array):
 
-        extractor = ac.Extractor1DTrails(region_list=[(1, 3)])
+        extractor = ac.Extractor1DEPER(region_list=[(1, 3)])
 
         trails_list = extractor.array_1d_list_from(array=array, pixels=(0, 1))
         assert (trails_list == np.array([3.0])).all()
@@ -119,7 +119,7 @@ class TestExtractorTrails:
         trails_list = extractor.array_1d_list_from(array=array, pixels=(1, 4))
         assert (trails_list == np.array([4.0, 5.0, 6.0])).all()
 
-        extractor = ac.Extractor1DTrails(region_list=[(1, 3), (4, 6)])
+        extractor = ac.Extractor1DEPER(region_list=[(1, 3), (4, 6)])
 
         trails_list = extractor.array_1d_list_from(array=array, pixels=(0, 1))
         assert (trails_list[0] == np.array([3.0])).all()
@@ -137,7 +137,7 @@ class TestExtractorTrails:
 
     def test__stacked_array_1d_from(self, array, masked_array):
 
-        extractor = ac.Extractor1DTrails(region_list=[(1, 3), (5, 7)])
+        extractor = ac.Extractor1DEPER(region_list=[(1, 3), (5, 7)])
 
         stacked_trails = extractor.stacked_array_1d_from(array=array, pixels=(0, 2))
 

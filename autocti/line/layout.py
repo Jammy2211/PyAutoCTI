@@ -18,7 +18,7 @@ class Extractor1D:
         return np.min([region.total_pixels for region in self.region_list])
 
 
-class Extractor1DFrontEdge(Extractor1D):
+class Extractor1DFPR(Extractor1D):
     def array_1d_list_from(self, array: Array1D, pixels):
         """
         Extract a list of the front edges of a 1D line array.
@@ -99,7 +99,7 @@ class Extractor1DFrontEdge(Extractor1D):
         return new_array
 
 
-class Extractor1DTrails(Extractor1D):
+class Extractor1DEPER(Extractor1D):
     def array_1d_list_from(self, array: Array1D, pixels):
         """
         Extract the parallel trails of a charge injection array.
@@ -268,8 +268,8 @@ class AbstractLayout1DLine(Layout1D):
                     "The charge injection layout_ci regions are bigger than the image image_shape"
                 )
 
-        self.extractor_front_edge = Extractor1DFrontEdge(region_list=region_list)
-        self.extractor_trails = Extractor1DTrails(region_list=region_list)
+        self.extractor_front_edge = Extractor1DFPR(region_list=region_list)
+        self.extractor_trails = Extractor1DEPER(region_list=region_list)
 
         super().__init__(shape_1d=shape_1d, prescan=prescan, overscan=overscan)
 
