@@ -70,19 +70,3 @@ class Extractor2DSerialEPER(Extractor2D):
     ) -> np.ndarray:
         trails_stacked_array = self.stacked_array_2d_from(array=array, pixels=pixels)
         return np.ma.mean(np.ma.asarray(trails_stacked_array), axis=0)
-
-    def add_to_array(
-        self, new_array: aa.Array2D, array: aa.Array2D, pixels: Tuple[int, int]
-    ):
-
-        region_list = [
-            region.serial_trailing_region_from(pixels=pixels)
-            for region in self.region_list
-        ]
-
-        array_2d_list = self.array_2d_list_from(array=array, pixels=pixels)
-
-        for arr, region in zip(array_2d_list, region_list):
-            new_array[region.y0 : region.y1, region.x0 : region.x1] += arr
-
-        return new_array

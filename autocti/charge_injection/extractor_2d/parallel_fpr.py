@@ -114,32 +114,3 @@ class Extractor2DParallelFPR(Extractor2D):
         """
         front_stacked_array = self.stacked_array_2d_from(array=array, pixels=pixels)
         return np.ma.mean(np.ma.asarray(front_stacked_array), axis=1)
-
-    def add_to_array(
-        self, new_array: aa.Array2D, array: aa.Array2D, pixels: Tuple[int, int]
-    ) -> aa.Array2D:
-        """
-        Extracts the parallel FPRs from a charge injection image and adds them to a new image.
-
-        Parameters
-        ----------
-        new_array
-            The 2D array which the extracted parallel FPRs are added to.
-        array
-            The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted.
-        pixels
-            The row pixel index which determines the region of the FPR (e.g. `pixels=(0, 3)` will compute the region
-            corresponding to the 1st, 2nd and 3rd FPR rows).
-        """
-
-        region_list = [
-            region.parallel_front_region_from(pixels=pixels)
-            for region in self.region_list
-        ]
-
-        array_2d_list = self.array_2d_list_from(array=array, pixels=pixels)
-
-        for arr, region in zip(array_2d_list, region_list):
-            new_array[region.y0 : region.y1, region.x0 : region.x1] += arr
-
-        return new_array

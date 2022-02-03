@@ -52,3 +52,29 @@ class Extractor2D:
             np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
             for region in self.region_list_from(pixels=pixels)
         ]
+
+    def add_to_array(
+        self, new_array: aa.Array2D, array: aa.Array2D, pixels: Tuple[int, int]
+    ) -> aa.Array2D:
+        """
+        Extracts the parallel FPRs from a charge injection image and adds them to a new image.
+
+        Parameters
+        ----------
+        new_array
+            The 2D array which the extracted parallel FPRs are added to.
+        array
+            The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted.
+        pixels
+            The row pixel index which determines the region of the FPR (e.g. `pixels=(0, 3)` will compute the region
+            corresponding to the 1st, 2nd and 3rd FPR rows).
+        """
+
+        region_list = self.region_list_from(pixels=pixels)
+
+        array_2d_list = self.array_2d_list_from(array=array, pixels=pixels)
+
+        for arr, region in zip(array_2d_list, region_list):
+            new_array[region.y0 : region.y1, region.x0 : region.x1] += arr
+
+        return new_array
