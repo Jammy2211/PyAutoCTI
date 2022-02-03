@@ -5,10 +5,10 @@ from typing import List, Tuple
 import autoarray as aa
 
 from autocti import exc
-from autocti.charge_injection.extractor import Extractor2DParallelFPR
-from autocti.charge_injection.extractor import Extractor2DParallelEPER
-from autocti.charge_injection.extractor import Extractor2DSerialFPR
-from autocti.charge_injection.extractor import Extractor2DSerialEPER
+from autocti.charge_injection.extractor_2d.parallel_fpr import Extractor2DParallelFPR
+from autocti.charge_injection.extractor_2d.parallel_eper import Extractor2DParallelEPER
+from autocti.charge_injection.extractor_2d.serial_fpr import Extractor2DSerialFPR
+from autocti.charge_injection.extractor_2d.serial_eper import Extractor2DSerialEPER
 from autocti.charge_injection.mask_2d import Mask2DCI
 
 
@@ -949,7 +949,8 @@ class AbstractLayout2DCI(aa.Layout2D):
 
         if line_region == "parallel_front_edge":
             return self.extractor_parallel_front_edge.binned_array_1d_from(
-                array=array, pixels=(0, self.extractor_parallel_front_edge.total_rows_min)
+                array=array,
+                pixels=(0, self.extractor_parallel_front_edge.total_rows_min),
             )
         elif line_region == "parallel_epers":
             return self.extractor_parallel_epers.binned_array_1d_from(
