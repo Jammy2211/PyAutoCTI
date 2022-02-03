@@ -7,12 +7,17 @@ from autocti.charge_injection.extractor_2d.abstract import Extractor2D
 
 
 class Extractor2DParallelFPR(Extractor2D):
-    def array_2d_list_from(
-        self, array: aa.Array2D, pixels: Tuple[int, int]
-    ) -> List[aa.Array2D]:
+    def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
         """
-        Extract the parallel FPR of every charge injection region on the charge injection image and return as a list
-        of 2D arrays.
+        Returns a list of the 2D parallel FPR regions given the `Extractor`'s list of charge injection regions, where
+        a 2D region is defined following the conventio:
+
+        (top-row, bottom-row, left-column, right-column) = (y0, y1, x0, x1)
+
+        For parallel FPR's the charge spans all columns of the charge injection region, thus the coordinates x0 and x1
+        do not change. y0 and y1 are updated based on the `pixels` input.
+
+         scans of a charge injection array.
 
         The diagram below illustrates the extraction for `pixels=(0, 1)`:
 
@@ -37,23 +42,26 @@ class Extractor2DParallelFPR(Extractor2D):
         []     [=====================]
                <---------Ser--------
 
-        The extracted arrays keep the first FPR of each charge injection region:
+        The extracted regions correspond to the first parallel FPR all charge injection regions:
+
+        region_list[0] = [0, 1, 3, 21] (serial prescan is 3 pixels)
+        region_list[1] = [3, 4, 3, 21] (serial prescan is 3 pixels)
+
+        For `pixels=(0,1)` the extracted arrays returned via the `array_2d_list_from()` function keep the first
+        parallel FPR of each charge injection region:
 
         array_2d_list[0] = [c0c0c0cc0c0c0c0c0c0c0]
-        array_2d_list[0] = [1c1c1c1c1c1c1c1c1c1c1]
+        array_2d_list[1] = [1c1c1c1c1c1c1c1c1c1c1]
 
         Parameters
-        ------------
-        array
-            The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted.
+        ----------
         pixels
-            The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd FPR rows)
+            The row pixel index which determines the region of the FPR (e.g. `pixels=(0, 3)` will compute the region
+            corresponding to the 1st, 2nd and 3rd FPR rows).
         """
-        fpr_region_list = self.region_list_from(rows=pixels)
-
         return [
-            np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
-            for region in fpr_region_list
+            region.parallel_front_region_from(pixels=pixels)
+            for region in self.region_list
         ]
 
     def stacked_array_2d_from(
@@ -106,59 +114,6 @@ class Extractor2DParallelFPR(Extractor2D):
         """
         front_stacked_array = self.stacked_array_2d_from(array=array, pixels=pixels)
         return np.ma.mean(np.ma.asarray(front_stacked_array), axis=1)
-
-    def region_list_from(self, rows):
-        """
-        Returns a list of the 2D parallel FPR regions given the `Extractor`'s list of charge injection regions, where
-        a 2D region is defined following the conventio:
-
-        (top-row, bottom-row, left-column, right-column) = (y0, y1, x0, x1)
-
-        For parallel FPR's the charge spans all columns of the charge injection region, thus the coordinates x0 and x1
-        do not change. y0 and y1 are updated based on the `pixels` input.
-
-         scans of a charge injection array.
-
-        The diagram below illustrates the extraction for `pixels=(0, 1)`:
-
-        [] = read-out electronics
-        [==========] = read-out register
-        [..........] = serial prescan
-        [pppppppppp] = parallel overscan
-        [ssssssssss] = serial overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
-        [tttttttttt] = parallel / serial charge injection region trail
-
-               [ppppppppppppppppppppp]
-               [ppppppppppppppppppppp]
-           [...][ttttttttttttttttttttt][sss]
-           [...][c1c1cc1c1cc1cc1ccc1cc][sss]
-        |  [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
-        |  [...][ttttttttttttttttttttt][sss]    | Direction
-       Par [...][ttttttttttttttttttttt][sss]    | of
-        |  [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
-       \/  [...][cc0ccc0cccc0cccc0cccc][sss]    \/
-
-        []     [=====================]
-               <---------Ser--------
-
-        The extracted regions correspond to the first FPR all charge injection region.
-
-        region_list[0] = [0, 1, 3, 21] (serial prescan is 3 pixels)
-        region_list[1] = [3, 4, 3, 21] (serial prescan is 3 pixels)
-
-        Parameters
-        ----------
-        pixels
-            The row pixel index which determines the region of the FPR (e.g. `pixels=(0, 3)` will compute the region
-            corresponding to the 1st, 2nd and 3rd FPR rows).
-        """
-        return list(
-            map(
-                lambda ci_region: ci_region.parallel_front_region_from(pixels=rows),
-                self.region_list,
-            )
-        )
 
     def add_to_array(
         self, new_array: aa.Array2D, array: aa.Array2D, pixels: Tuple[int, int]

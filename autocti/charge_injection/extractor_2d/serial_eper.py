@@ -7,144 +7,80 @@ from autocti.charge_injection.extractor_2d.abstract import Extractor2D
 
 
 class Extractor2DSerialEPER(Extractor2D):
-    def array_2d_list_from(self, array: aa.Array2D, columns):
+    def region_list_from(self, pixels: Tuple[int, int]):
         """
-        Extract a list of the serial trails of a charge injection array.
+        Extract the serial EPERs of every charge injection region on the charge injection image and return as a list
+        of 2D arrays.
 
-        The diagram below illustrates the arrays that is extracted from a array for columnss=(0, 3):
+        The diagram below illustrates the extraction for `pixels=(0, 1)`:
 
-        ---KEY---
-        ---------
-
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
-        [xxxxxxxxxx]
-        [tttttttttt] = parallel / serial charge injection region trail ((0 / 1 indicates ci_region index)
-
-        P = Parallel Direction      S = Serial Direction
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = parallel overscan
+        [ssssssssss] = serial overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [tttttttttt] = parallel / serial charge injection region trail
 
                [ppppppppppppppppppppp]
                [ppppppppppppppppppppp]
-          [...][ttttttttttttttttttttt][sss]
-          [...][c1c1cc1c1cc1cc1ccc1cc][st1]
-        | [...][1c1c1cc1c1cc1ccc1cc1c][ts0]    |
-        | [...][ttttttttttttttttttttt][sss]    | Direction
-        P [...][ttttttttttttttttttttt][sss]    | of
-        | [...][0ccc0cccc0cccc0cccc0c][st1]    | clocking
-          [...][cc0ccc0cccc0cccc0cccc][ts0]    |
+           [...][ttttttttttttttttttttt][sss]
+           [...][c1c1cc1c1cc1cc1ccc1cc][st1]
+        |  [...][1c1c1cc1c1cc1ccc1cc1c][ts0]    |
+        |  [...][ttttttttttttttttttttt][sss]    | Direction
+       Par [...][ttttttttttttttttttttt][sss]    | of
+        |  [...][0ccc0cccc0cccc0cccc0c][st1]    | clocking
+       \/  [...][cc0ccc0cccc0cccc0cccc][ts0]   \/
 
         []     [=====================]
-               <---------S----------
+               <---------Ser--------
 
-        The extracted array keeps just the serial front edges of all charge injection scans.
+        The extracted regions correspond to the first serial EPER all charge injection regions:
 
-        list index 0:
+        region_list[0] = [0, 2, 22, 225 (serial prescan is 3 pixels)
+        region_list[1] = [4, 6, 22, 25] (serial prescan is 3 pixels)
 
-        [st0]
+        For `pixels=(0,1)` the extracted arrays returned via the `array_2d_list_from()` function keep the first
+        serial EPER of each charge injection region:
 
-        list index 1:
-
-        [st1]
-
-        Parameters
-        ------------
-        array
-        columns
-            The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd columns)
-        """
-        trails_region_list = self.region_list_from(columns=columns)
-        trails_arrays = list(
-            map(lambda region: array.native[region.slice], trails_region_list)
-        )
-        trails_masks = list(
-            map(lambda region: array.mask[region.slice], trails_region_list)
-        )
-        trails_arrays = list(
-            map(
-                lambda trails_array, front_mask: np.ma.array(
-                    trails_array, mask=front_mask
-                ),
-                trails_arrays,
-                trails_masks,
-            )
-        )
-        return trails_arrays
-
-    def stacked_array_2d_from(self, array: aa.Array2D, columns: Tuple[int, int]):
-        front_arrays = self.array_2d_list_from(array=array, columns=columns)
-        return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
-
-    def binned_array_1d_from(self, array: aa.Array2D, columns: Tuple[int, int]):
-        trails_stacked_array = self.stacked_array_2d_from(array=array, columns=columns)
-        return np.ma.mean(np.ma.asarray(trails_stacked_array), axis=0)
-
-    def region_list_from(self, columns):
-        """
-        Returns a list of the serial trails scans of a charge injection array.
-
-        The diagram below illustrates the region is calculated from a array for columnss=(0, 4):
-
-        ---KEY---
-        ---------
-
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci_region index)
-        [xxxxxxxxxx]
-        [tttttttttt] = parallel / serial charge injection region trail ((0 / 1 indicates ci_region index)
-
-        P = Parallel Direction      S = Serial Direction
-
-               [ppppppppppppppppppppp]
-               [ppppppppppppppppppppp]
-          [...][ttttttttttttttttttttt][sss]
-          [...][c1c1cc1c1cc1cc1ccc1cc][st1]
-        | [...][1c1c1cc1c1cc1ccc1cc1c][ts0]    |
-        | [...][ttttttttttttttttttttt][sss]    | Direction
-        P [...][ttttttttttttttttttttt][sss]    | of
-        | [...][0ccc0cccc0cccc0cccc0c][st1]    | clocking
-          [...][cc0ccc0cccc0cccc0cccc][ts0]    |
-
-        []     [=====================]
-               <---------S----------
-
-        The extracted array keeps just the serial front edges of all charge injection scans.
-
-        list index 0:
-
-        [0, 2, 22, 225 (serial prescan is 3 pixels)
-
-        list index 1:
-
-        [4, 6, 22, 25] (serial prescan is 3 pixels)
+        array_2d_list[0] = [st0]
+        array_2d_list[1] = [st1]
 
         Parameters
-        ------------
-        arrays
-        columns
+        ----------
+        pixels
             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd columns)
         """
 
         return list(
             map(
-                lambda ci_region: ci_region.serial_trailing_region_from(columns),
+                lambda ci_region: ci_region.serial_trailing_region_from(pixels),
                 self.region_list,
             )
         )
 
-    def add_to_array(self, new_array, array, columns):
+    def stacked_array_2d_from(
+        self, array: aa.Array2D, pixels: Tuple[int, int]
+    ) -> np.ndarray:
+        front_arrays = self.array_2d_list_from(array=array, pixels=pixels)
+        return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
+
+    def binned_array_1d_from(
+        self, array: aa.Array2D, pixels: Tuple[int, int]
+    ) -> np.ndarray:
+        trails_stacked_array = self.stacked_array_2d_from(array=array, pixels=pixels)
+        return np.ma.mean(np.ma.asarray(trails_stacked_array), axis=0)
+
+    def add_to_array(
+        self, new_array: aa.Array2D, array: aa.Array2D, pixels: Tuple[int, int]
+    ):
 
         region_list = [
-            region.serial_trailing_region_from(pixels=columns)
+            region.serial_trailing_region_from(pixels=pixels)
             for region in self.region_list
         ]
 
-        array_2d_list = self.array_2d_list_from(array=array, columns=columns)
+        array_2d_list = self.array_2d_list_from(array=array, pixels=pixels)
 
         for arr, region in zip(array_2d_list, region_list):
             new_array[region.y0 : region.y1, region.x0 : region.x1] += arr

@@ -378,7 +378,7 @@ class AbstractLayout2DCI(aa.Layout2D):
         if trails_rows is not None:
 
             new_array = self.extractor_parallel_epers.add_to_array(
-                new_array=new_array, array=array, rows=trails_rows
+                new_array=new_array, array=array, pixels=trails_rows
             )
 
         return new_array
@@ -742,13 +742,13 @@ class AbstractLayout2DCI(aa.Layout2D):
         if front_edge_columns is not None:
 
             new_array = self.extractor_serial_front_edge.add_to_array(
-                new_array=new_array, array=array, columns=front_edge_columns
+                new_array=new_array, array=array, pixels=front_edge_columns
             )
 
         if trails_columns is not None:
 
             new_array = self.extractor_serial_trails.add_to_array(
-                new_array=new_array, array=array, columns=trails_columns
+                new_array=new_array, array=array, pixels=trails_columns
             )
 
         return new_array
@@ -954,16 +954,16 @@ class AbstractLayout2DCI(aa.Layout2D):
             )
         elif line_region == "parallel_epers":
             return self.extractor_parallel_epers.binned_array_1d_from(
-                array=array, rows=(0, self.smallest_parallel_epers_rows_to_array_edge)
+                array=array, pixels=(0, self.smallest_parallel_epers_rows_to_array_edge)
             )
         elif line_region == "serial_front_edge":
             return self.extractor_serial_front_edge.binned_array_1d_from(
                 array=array,
-                columns=(0, self.extractor_serial_front_edge.total_columns_min),
+                pixels=(0, self.extractor_serial_front_edge.total_columns_min),
             )
         elif line_region == "serial_trails":
             return self.extractor_serial_trails.binned_array_1d_from(
-                array=array, columns=(0, self.serial_trails_columns)
+                array=array, pixels=(0, self.serial_trails_columns)
             )
         else:
             raise exc.PlottingException(

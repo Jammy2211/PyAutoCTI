@@ -32,3 +32,23 @@ class Extractor2D:
         The number of columns between the read-out electronics and the charge injection region closest to them.
         """
         return np.min([region.total_columns for region in self.region_list])
+
+    def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
+        raise NotImplementedError
+
+    def array_2d_list_from(
+        self, array: aa.Array2D, pixels: Tuple[int, int]
+    ) -> List[aa.Array2D]:
+        """
+        Extract a specific region from every charge injection region on the charge injection image and return as a list
+        of 2D arrays.
+
+        For example, this might extract the parallel EPERs of every charge injection region.
+
+        The `region_2d_list_from()` of each `Extractor` class describes the exact extraction performed for each
+        extractor when this function is called..
+        """
+        return [
+            np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
+            for region in self.region_list_from(pixels=pixels)
+        ]

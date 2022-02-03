@@ -63,7 +63,7 @@ class Mask2DCI(Mask2D):
     ):
 
         front_edge_regions = layout.extractor_parallel_front_edge.region_list_from(
-            rows=settings.parallel_front_edge_rows
+            pixels=settings.parallel_front_edge_rows
         )
         mask = np.full(layout.shape_2d, False)
 
@@ -81,7 +81,7 @@ class Mask2DCI(Mask2D):
     ):
 
         trails_regions = layout.extractor_parallel_epers.region_list_from(
-            rows=settings.parallel_epers_rows
+            pixels=settings.parallel_epers_rows
         )
 
         mask = np.full(layout.shape_2d, False)
@@ -100,7 +100,7 @@ class Mask2DCI(Mask2D):
     ):
 
         front_edge_regions = layout.extractor_serial_front_edge.region_list_from(
-            columns=settings.serial_front_edge_columns
+            pixels=settings.serial_front_edge_columns
         )
         mask = np.full(layout.shape_2d, False)
 
@@ -118,7 +118,7 @@ class Mask2DCI(Mask2D):
     ):
 
         trails_regions = layout.extractor_serial_trails.region_list_from(
-            columns=settings.serial_trails_columns
+            pixels=settings.serial_trails_columns
         )
         mask = np.full(layout.shape_2d, False)
 
