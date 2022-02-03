@@ -1,6 +1,6 @@
 from copy import deepcopy
 import numpy as np
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 import autoarray as aa
 
@@ -17,14 +17,14 @@ class AbstractLayout2DCI(aa.Layout2D):
         self,
         shape_2d: Tuple[int, int],
         normalization,
-        region_list: List[aa.Region2D],
+        region_list: aa.type.Region2DList,
         original_roe_corner: Tuple[int, int] = (1, 0),
         parallel_overscan: Tuple[int, int, int, int] = None,
         serial_prescan: Tuple[int, int, int, int] = None,
         serial_overscan: Tuple[int, int, int, int] = None,
     ):
         """
-        Abstract base class for a charge injection layout, which defines the regions charge injections appears
+        Abstract base class for a charge injection layout, which defines the regions charge injections appear
         on charge-injection imaging alongside other properties.
 
         Parameters
@@ -75,27 +75,26 @@ class AbstractLayout2DCI(aa.Layout2D):
 
         self.normalization = normalization
 
-    def after_extraction_from(
-        self, extraction_region: Tuple[int, int, int, int]
+    def layout_extracted_from(
+        self, extraction_region: aa.type.Region2DLike
     ) -> "AbstractLayout2DCI":
         """
-        The charge injection region after an extraction is performed on an associated charge injection image, where
-        the extraction is defined by a region of pixel coordinates (top-row, bottom-row, left-column, right-column)
+        The charge injection layout after an extraction is performed on its associated charge injection image, where
+        the extraction is defined by a region of pixel coordinates 
+        
+        (top-row, bottom-row, left-column, right-column) = (y0, y1, x0, x1)
 
         For example, if a charge injection region occupies the pixels (0, 10, 0, 5) on a 100 x 100 charge injection
         image, and the first 5 columns of this charge injection image are extracted to create a 100 x 5 image, the
-         new charge injection region will be (0, 20, 0, 5).
+        new charge injection region will be (0, 20, 0, 5).
 
         Parameters
         ----------
         extraction_region
-
-        Returns
-        -------
-
+            The (y0, y1, x0, x1) pixel coordinates defining the region which the layout is extracted from.
         """
 
-        layout = super().after_extraction_from(extraction_region=extraction_region)
+        layout = super().layout_extracted_from(extraction_region=extraction_region)
 
         region_list = [
             aa.util.layout.region_after_extraction(

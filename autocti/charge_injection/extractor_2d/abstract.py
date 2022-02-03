@@ -5,7 +5,7 @@ import autoarray as aa
 
 
 class Extractor2D:
-    def __init__(self, region_list: aa.type.Region2DLike):
+    def __init__(self, region_list: aa.type.Region2DList):
         """
         Abstract class containing methods for extracting regions from a 2D charge injection image.
 
