@@ -7,6 +7,15 @@ from autocti.charge_injection.extractor_2d.abstract import Extractor2D
 
 
 class Extractor2DSerialFPR(Extractor2D):
+    @property
+    def binning_axis(self) -> int:
+        """
+        The axis over which binning is performed to turn a 2D serial FPR into a 1D FPR.
+
+        For a serial extractor `axis=0` such that binning is performed over the columns containing the FPR.
+        """
+        return 0
+
     def region_list_from(self, pixels: Tuple[int, int]):
         """
         Extract the serial FPR of every charge injection region on the charge injection image and return as a list
@@ -47,23 +56,12 @@ class Extractor2DSerialFPR(Extractor2D):
         array_2d_list[1] =[1c1c]
 
         Parameters
-        ------------
-        arrays
+        ----------
         pixels
             The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
             columns)
         """
-        return list(
-            map(
-                lambda ci_region: ci_region.serial_front_region_from(pixels),
-                self.region_list,
-            )
-        )
-
-    def stacked_array_2d_from(self, array: aa.Array2D, pixels: Tuple[int, int]):
-        front_arrays = self.array_2d_list_from(array=array, pixels=pixels)
-        return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
-
-    def binned_array_1d_from(self, array: aa.Array2D, pixels: Tuple[int, int]):
-        front_stacked_array = self.stacked_array_2d_from(array=array, pixels=pixels)
-        return np.ma.mean(np.ma.asarray(front_stacked_array), axis=0)
+        return [
+            region.serial_front_region_from(pixels=pixels)
+            for region in self.region_list
+        ]

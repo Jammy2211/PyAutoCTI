@@ -7,6 +7,15 @@ from autocti.charge_injection.extractor_2d.abstract import Extractor2D
 
 
 class Extractor2DParallelFPR(Extractor2D):
+    @property
+    def binning_axis(self) -> int:
+        """
+        The axis over which binning is performed to turn a 2D parallel FPR into a 1D FPR.
+
+        For a parallel extractor `axis=1` such that binning is performed over the rows containing the FPR.
+        """
+        return 1
+
     def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
         """
         Returns a list of the 2D parallel FPR regions given the `Extractor`'s list of charge injection regions, where
@@ -63,54 +72,3 @@ class Extractor2DParallelFPR(Extractor2D):
             region.parallel_front_region_from(pixels=pixels)
             for region in self.region_list
         ]
-
-    def stacked_array_2d_from(
-        self, array: aa.Array2D, pixels: Tuple[int, int]
-    ) -> np.ndarray:
-        """
-        Extract the parallel FPR of every charge injection region on the charge injection image and stack them by
-        taking their mean.
-
-        This returns the 2D average FPR of all of the charge injection regions, which for certain CCD charge injection
-        electronics one may expect to be similar.
-
-        For fits to charge injection data this function is also used to create images like the stacked 2D residuals,
-        which therefore quantify the goodness-of-fit of a CTI model.
-
-        Parameters
-        ------------
-        array
-            The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted and
-            stacked.
-        pixels
-            The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
-            FPR rows)
-        """
-        fpr_array_list = self.array_2d_list_from(array=array, pixels=pixels)
-        return np.ma.mean(np.ma.asarray(fpr_array_list), axis=0)
-
-    def binned_array_1d_from(
-        self, array: aa.Array2D, pixels: Tuple[int, int]
-    ) -> np.ndarray:
-        """
-        Extract the parallel FPR of every charge injection region on the charge injection image, stack them by taking
-        their mean and then bin them up to a 1D FPR by taking the mean across the serial direction..
-
-        This returns the 1D average FPR of all of the charge injection regions, which for a perfectly uniform CCD
-        charge injection electronics therefore bins up to remove noise. For non-uniform injections this will provide
-        an average of the FPR.
-
-        For fits to charge injection data this function is also used to create images like the stacked 1D residuals,
-        which therefore quantify the goodness-of-fit of a CTI model.
-
-        Parameters
-        ------------
-        array
-            The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted and
-            stacked.
-        pixels
-            The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
-            FPR rows)
-        """
-        front_stacked_array = self.stacked_array_2d_from(array=array, pixels=pixels)
-        return np.ma.mean(np.ma.asarray(front_stacked_array), axis=1)

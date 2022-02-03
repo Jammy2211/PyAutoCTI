@@ -7,6 +7,15 @@ from autocti.charge_injection.extractor_2d.abstract import Extractor2D
 
 
 class Extractor2DParallelEPER(Extractor2D):
+    @property
+    def binning_axis(self) -> int:
+        """
+        The axis over which binning is performed to turn a 2D parallel EPER into a 1D EPER.
+
+        For a parallel extractor `axis=1` such that binning is performed over the rows containing the EPER.
+        """
+        return 1
+
     def region_list_from(self, pixels: Tuple[int, int]):
         """
         Extract the parallel EPERs of every charge injection region on the charge injection image and return as a list
@@ -51,23 +60,7 @@ class Extractor2DParallelEPER(Extractor2D):
         pixels
             The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
-        return list(
-            map(
-                lambda ci_region: ci_region.parallel_trailing_region_from(
-                    pixels=pixels
-                ),
-                self.region_list,
-            )
-        )
-
-    def stacked_array_2d_from(
-        self, array: aa.Array2D, pixels: Tuple[int, int]
-    ) -> np.ndarray:
-        trails_arrays = self.array_2d_list_from(array=array, pixels=pixels)
-        return np.ma.mean(np.ma.asarray(trails_arrays), axis=0)
-
-    def binned_array_1d_from(
-        self, array: aa.Array2D, pixels: Tuple[int, int]
-    ) -> np.ndarray:
-        trails_stacked_array = self.stacked_array_2d_from(array=array, pixels=pixels)
-        return np.ma.mean(np.ma.asarray(trails_stacked_array), axis=1)
+        return [
+            region.parallel_trailing_region_from(pixels=pixels)
+            for region in self.region_list
+        ]
