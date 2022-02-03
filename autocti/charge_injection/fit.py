@@ -68,8 +68,8 @@ class FitImagingCI(FitImaging):
         return self.layout.array_2d_of_regions_from(array=self.chi_squared_map)
 
     @property
-    def chi_squared_map_of_parallel_trails(self):
-        return self.layout.array_2d_of_parallel_trails_from(array=self.chi_squared_map)
+    def chi_squared_map_of_parallel_epers(self):
+        return self.layout.array_2d_of_parallel_epers_from(array=self.chi_squared_map)
 
     @property
     def chi_squared_map_of_serial_trails(self):

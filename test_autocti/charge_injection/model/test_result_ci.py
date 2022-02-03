@@ -52,7 +52,7 @@ class TestResultImagingCI:
         noise_scaling_map_list_list_of_regions_ci = [
             ac.Array2D.ones(shape_native=(7, 7), pixel_scales=1.0)
         ]
-        noise_scaling_map_list_list_of_parallel_trails = [
+        noise_scaling_map_list_list_of_parallel_epers = [
             ac.Array2D.full(fill_value=2.0, shape_native=(7, 7), pixel_scales=1.0)
         ]
         noise_scaling_map_list_list_of_serial_trails = [
@@ -64,7 +64,7 @@ class TestResultImagingCI:
 
         imaging_ci_7x7.noise_scaling_map_list = [
             noise_scaling_map_list_list_of_regions_ci[0],
-            noise_scaling_map_list_list_of_parallel_trails[0],
+            noise_scaling_map_list_list_of_parallel_epers[0],
             noise_scaling_map_list_list_of_serial_trails[0],
             noise_scaling_map_list_list_of_serial_overscan_no_trails[0],
         ]
@@ -86,8 +86,8 @@ class TestResultImagingCI:
         assert result.noise_scaling_map_of_regions_ci == pytest.approx(
             fit_analysis.chi_squared_map_of_regions_ci, 1.0e-2
         )
-        assert result.noise_scaling_map_of_parallel_trails == pytest.approx(
-            fit_analysis.chi_squared_map_of_parallel_trails, 1.0e-2
+        assert result.noise_scaling_map_of_parallel_epers == pytest.approx(
+            fit_analysis.chi_squared_map_of_parallel_epers, 1.0e-2
         )
         assert result.noise_scaling_map_of_serial_trails == pytest.approx(
             fit_analysis.chi_squared_map_of_serial_trails, 1.0e-2
@@ -99,7 +99,7 @@ class TestResultImagingCI:
         assert result.noise_scaling_map_of_regions_ci[1, 1] == pytest.approx(
             18.16, 1.0e-1
         )
-        assert result.noise_scaling_map_of_parallel_trails[1, 1] == pytest.approx(
+        assert result.noise_scaling_map_of_parallel_epers[1, 1] == pytest.approx(
             0.0, 1.0e-4
         )
         assert result.noise_scaling_map_of_serial_trails[1, 1] == pytest.approx(
@@ -120,7 +120,7 @@ class TestResultImagingCI:
             hyper_noise=af.Model(
                 ac.ci.HyperCINoiseCollection,
                 regions_ci=ac.ci.HyperCINoiseScalar(scale_factor=1.0),
-                parallel_trails=ac.ci.HyperCINoiseScalar(scale_factor=1.0),
+                parallel_epers=ac.ci.HyperCINoiseScalar(scale_factor=1.0),
                 serial_trails=ac.ci.HyperCINoiseScalar(scale_factor=1.0),
                 serial_overscan_no_trails=ac.ci.HyperCINoiseScalar(scale_factor=1.0),
             ),
@@ -133,8 +133,8 @@ class TestResultImagingCI:
         assert result.noise_scaling_map_of_regions_ci != pytest.approx(
             fit_analysis.chi_squared_map_of_regions_ci, 1.0e-2
         )
-        assert result.noise_scaling_map_of_parallel_trails != pytest.approx(
-            fit_analysis.chi_squared_map_of_parallel_trails, 1.0e-2
+        assert result.noise_scaling_map_of_parallel_epers != pytest.approx(
+            fit_analysis.chi_squared_map_of_parallel_epers, 1.0e-2
         )
         assert result.noise_scaling_map_of_serial_trails != pytest.approx(
             fit_analysis.chi_squared_map_of_serial_trails, 1.0e-2
@@ -170,7 +170,7 @@ class TestResultImagingCI:
 
         assert (
             result.noise_scaling_map_list[1]
-            == result.noise_scaling_map_of_parallel_trails
+            == result.noise_scaling_map_of_parallel_epers
         ).all()
 
         assert (

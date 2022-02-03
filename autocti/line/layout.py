@@ -80,15 +80,14 @@ class Extractor1DFPR(Extractor1D):
         """
         return list(
             map(
-                lambda region: region.front_edge_region_from(pixels=pixels),
-                self.region_list,
+                lambda region: region.front_region_from(pixels=pixels), self.region_list
             )
         )
 
     def add_to_array(self, new_array, array, pixels):
 
         region_list = [
-            region.front_edge_region_from(pixels=pixels) for region in self.region_list
+            region.front_region_from(pixels=pixels) for region in self.region_list
         ]
 
         array_1d_list = self.array_1d_list_from(array=array, pixels=pixels)
@@ -223,7 +222,7 @@ class Extractor1DEPER(Extractor1D):
 
         return list(
             map(
-                lambda region: region.trails_region_from(pixels=pixels),
+                lambda region: region.trailing_region_from(pixels=pixels),
                 self.region_list,
             )
         )
@@ -231,7 +230,7 @@ class Extractor1DEPER(Extractor1D):
     def add_to_array(self, new_array, array, pixels):
 
         region_list = [
-            region.trails_region_from(pixels=pixels) for region in self.region_list
+            region.trailing_region_from(pixels=pixels) for region in self.region_list
         ]
 
         array_1d_list = self.array_1d_list_from(array=array, pixels=pixels)
@@ -289,9 +288,9 @@ class AbstractLayout1DLine(Layout1D):
     @property
     def smallest_trails_pixels_to_array_edge(self):
 
-        rows_between_regions = self.pixels_between_regions
-        rows_between_regions.append(self.trail_size_to_array_edge)
-        return np.min(rows_between_regions)
+        pixels_between_regions = self.pixels_between_regions
+        pixels_between_regions.append(self.trail_size_to_array_edge)
+        return np.min(pixels_between_regions)
 
     def array_1d_of_regions_from(self, array: Array1D) -> Array1D:
         """
@@ -463,10 +462,10 @@ class AbstractLayout1DLine(Layout1D):
 
         return array_1d_trails
 
-    def array_1d_of_edges_and_trails_from(
+    def array_1d_of_edges_and_epers_from(
         self,
         array: Array1D,
-        front_edge_rows: Tuple[int, int] = None,
+        fpr_range: Tuple[int, int] = None,
         trails_rows: Tuple[int, int] = None,
     ) -> Array1D:
         """
@@ -475,11 +474,11 @@ class AbstractLayout1DLine(Layout1D):
 
         One can specify the range of rows that are extracted, for example:
 
-        front_edge_rows = (0, 1) will extract just the first leading front edge row.
-        front_edge_rows = (0, 2) will extract the leading two front edge rows.
+        fpr_range = (0, 1) will extract just the first leading front edge row.
+        fpr_range = (0, 2) will extract the leading two front edge rows.
         trails_rows = (0, 1) will extract the first row of trails closest to the charge injection region.
 
-        The diagram below illustrates the arrays that are extracted from the input array for `front_edge_rows=(0,1)`
+        The diagram below illustrates the arrays that are extracted from the input array for `fpr_range=(0,1)`
         and `trails_rows=(0,1)`:
 
         ---KEY---
@@ -524,28 +523,26 @@ class AbstractLayout1DLine(Layout1D):
 
         Parameters
         ------------
-        front_edge_rows
+        fpr_range
             The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows).
         trails_rows
             The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
-        array_1d_of_edges_and_trails = array.native.copy() * 0.0
+        array_1d_of_edges_and_epers = array.native.copy() * 0.0
 
-        if front_edge_rows is not None:
+        if fpr_range is not None:
 
-            array_1d_of_edges_and_trails = self.extractor_front_edge.add_to_array(
-                new_array=array_1d_of_edges_and_trails,
-                array=array,
-                pixels=front_edge_rows,
+            array_1d_of_edges_and_epers = self.extractor_front_edge.add_to_array(
+                new_array=array_1d_of_edges_and_epers, array=array, pixels=fpr_range
             )
 
         if trails_rows is not None:
 
-            array_1d_of_edges_and_trails = self.extractor_trails.add_to_array(
-                new_array=array_1d_of_edges_and_trails, array=array, pixels=trails_rows
+            array_1d_of_edges_and_epers = self.extractor_trails.add_to_array(
+                new_array=array_1d_of_edges_and_epers, array=array, pixels=trails_rows
             )
 
-        return array_1d_of_edges_and_trails
+        return array_1d_of_edges_and_epers
 
     def extract_line_from(self, array: Array1D, line_region: str):
 

@@ -205,7 +205,9 @@ class ImagingCI(Imaging):
             pre_cti_data=self.layout.array_2d_for_parallel_calibration_from(
                 array=self.pre_cti_data, columns=columns
             ),
-            layout=self.layout.after_extraction(extraction_region=extraction_region),
+            layout=self.layout.after_extraction_from(
+                extraction_region=extraction_region
+            ),
             cosmic_ray_map=cosmic_ray_map,
             noise_scaling_map_list=noise_scaling_map_list,
         )

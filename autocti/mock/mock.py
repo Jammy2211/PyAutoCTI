@@ -19,7 +19,7 @@ class MockResult(mock.MockResult):
         mask=None,
         model_image=None,
         noise_scaling_map_list_list_of_regions_ci=None,
-        noise_scaling_map_list_list_of_parallel_trails=None,
+        noise_scaling_map_list_list_of_parallel_epers=None,
         noise_scaling_map_list_list_of_serial_trails=None,
         noise_scaling_map_list_list_of_serial_overscan_no_trails=None,
         use_as_hyper_dataset=False,
@@ -42,8 +42,8 @@ class MockResult(mock.MockResult):
         self.noise_scaling_map_list_list_of_regions_ci = (
             noise_scaling_map_list_list_of_regions_ci
         )
-        self.noise_scaling_map_list_list_of_parallel_trails = (
-            noise_scaling_map_list_list_of_parallel_trails
+        self.noise_scaling_map_list_list_of_parallel_epers = (
+            noise_scaling_map_list_list_of_parallel_epers
         )
         self.noise_scaling_map_list_list_of_serial_trails = (
             noise_scaling_map_list_list_of_serial_trails
@@ -70,7 +70,7 @@ class MockResults(ResultsCollection):
         mask=None,
         model_image=None,
         noise_scaling_map_list_list_of_regions_ci=None,
-        noise_scaling_map_list_list_of_parallel_trails=None,
+        noise_scaling_map_list_list_of_parallel_epers=None,
         noise_scaling_map_list_list_of_serial_trails=None,
         noise_scaling_map_list_list_of_serial_overscan_no_trails=None,
         use_as_hyper_dataset=False,
@@ -91,7 +91,7 @@ class MockResults(ResultsCollection):
             mask=mask,
             model_image=model_image,
             noise_scaling_map_list_list_of_regions_ci=noise_scaling_map_list_list_of_regions_ci,
-            noise_scaling_map_list_list_of_parallel_trails=noise_scaling_map_list_list_of_parallel_trails,
+            noise_scaling_map_list_list_of_parallel_epers=noise_scaling_map_list_list_of_parallel_epers,
             noise_scaling_map_list_list_of_serial_trails=noise_scaling_map_list_list_of_serial_trails,
             noise_scaling_map_list_list_of_serial_overscan_no_trails=noise_scaling_map_list_list_of_serial_overscan_no_trails,
             use_as_hyper_dataset=use_as_hyper_dataset,
@@ -179,7 +179,7 @@ class MockCIFrame(object):
     ):
         return np.array([1.0, 1.0, 2.0, 2.0])
 
-    def parallel_trails_line_binned_over_columns_from_frame(
+    def parallel_epers_line_binned_over_columns_from_frame(
         self, array, rows=None, mask=None
     ):
         return np.array([1.0, 1.0, 2.0, 2.0])

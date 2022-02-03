@@ -155,7 +155,7 @@ class ImagingCIPlotter(Plotter):
         Plots the individual attributes of the plotter's `ImagingCI` object in 1D.
         
         These 1D plots correspond to a region in 2D on the charge injection image, which is binned up over the parallel
-        or serial direction to produce a 1D plot. For example, for the input `line_region=parallel_front_edge`, this 
+        or serial direction to produce a 1D plot. For example, for the input `line_region=parallel_front_edge`, this
         function extracts the FPR over each charge injection region and bins such that the 1D plot shows the FPR
         in the parallel direction.
 
@@ -166,7 +166,7 @@ class ImagingCIPlotter(Plotter):
         ----------
         line_region
             The region on the charge injection image where data is extracted and binned over the parallel or serial
-            direction {"parallel_front_edge", "parallel_trails", "serial_front_edge", "serial_trails"}
+            direction {"parallel_front_edge", "parallel_epers", "serial_front_edge", "serial_trails"}
         image
             Whether or not to make a 1D plot (via `plot`) of the image data extracted and binned over the line region.
         noise_map
@@ -329,7 +329,7 @@ class ImagingCIPlotter(Plotter):
         ----------
         line_region
             The region on the charge injection image where data is extracted and binned over the parallel or serial
-            direction {"parallel_front_edge", "parallel_trails", "serial_front_edge", "serial_trails"}
+            direction {"parallel_front_edge", "parallel_epers", "serial_front_edge", "serial_trails"}
         """
 
         self.open_subplot_figure(number_subplots=4)

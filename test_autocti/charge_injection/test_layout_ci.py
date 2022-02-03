@@ -58,19 +58,19 @@ class TestAbstractLayout2DCI:
             shape_2d=(5, 5), normalization=1.0, region_list=[(1, 2, 1, 2)]
         )
 
-        assert layout.rows_between_regions == []
+        assert layout.pixels_between_regions == []
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(5, 5), normalization=1.0, region_list=[(1, 2, 1, 2), (3, 4, 3, 4)]
         )
 
-        assert layout.rows_between_regions == [1]
+        assert layout.pixels_between_regions == [1]
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(5, 5), normalization=1.0, region_list=[(1, 2, 1, 2), (4, 5, 3, 4)]
         )
 
-        assert layout.rows_between_regions == [2]
+        assert layout.pixels_between_regions == [2]
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(10, 10),
@@ -78,7 +78,7 @@ class TestAbstractLayout2DCI:
             region_list=[(1, 2, 1, 2), (4, 5, 3, 4), (8, 9, 3, 4)],
         )
 
-        assert layout.rows_between_regions == [2, 3]
+        assert layout.pixels_between_regions == [2, 3]
 
     def test__serial_trails_columns(self, layout_ci_7x7):
 
@@ -104,7 +104,7 @@ class TestAbstractLayout2DCI:
 
         assert layout.serial_trails_columns == 50
 
-    def test__parallel_trail_size_to_array_edge(self):
+    def test__parallel_eper_size_to_array_edge(self):
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(5, 100),
@@ -112,7 +112,7 @@ class TestAbstractLayout2DCI:
             region_list=[ac.Region2D(region=(0, 3, 0, 3))],
         )
 
-        assert layout.parallel_trail_size_to_array_edge == 2
+        assert layout.parallel_eper_size_to_array_edge == 2
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(7, 100),
@@ -120,7 +120,7 @@ class TestAbstractLayout2DCI:
             region_list=[ac.Region2D(region=(0, 3, 0, 3))],
         )
 
-        assert layout.parallel_trail_size_to_array_edge == 4
+        assert layout.parallel_eper_size_to_array_edge == 4
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(15, 100),
@@ -132,7 +132,7 @@ class TestAbstractLayout2DCI:
             ],
         )
 
-        assert layout.parallel_trail_size_to_array_edge == 1
+        assert layout.parallel_eper_size_to_array_edge == 1
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(20, 100),
@@ -144,7 +144,7 @@ class TestAbstractLayout2DCI:
             ],
         )
 
-        assert layout.parallel_trail_size_to_array_edge == 6
+        assert layout.parallel_eper_size_to_array_edge == 6
 
     def test__with_extracted_regions__region_list_are_extracted_correctly(self):
 
@@ -295,7 +295,7 @@ class TestAbstractLayout2DCI:
             )
         ).all()
 
-    def test__array_2d_of_parallel_trails_from(self):
+    def test__array_2d_of_parallel_epers_from(self):
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(5, 3),
@@ -316,7 +316,7 @@ class TestAbstractLayout2DCI:
             pixel_scales=1.0,
         )
 
-        array_extracted = layout.array_2d_of_parallel_trails_from(array=array)
+        array_extracted = layout.array_2d_of_parallel_epers_from(array=array)
 
         assert (
             array_extracted
@@ -339,7 +339,7 @@ class TestAbstractLayout2DCI:
             serial_overscan=(0, 1, 0, 1),
         )
 
-        array_extracted = layout.array_2d_of_parallel_trails_from(array=array)
+        array_extracted = layout.array_2d_of_parallel_epers_from(array=array)
 
         assert (
             array_extracted.native
@@ -354,7 +354,7 @@ class TestAbstractLayout2DCI:
             )
         ).all()
 
-    def test__array_2d_of_parallel_edges_and_trails_from(self):
+    def test__array_2d_of_parallel_fprs_and_epers_from(self):
 
         parallel_array = ac.Array2D.manual(
             array=[
@@ -376,8 +376,8 @@ class TestAbstractLayout2DCI:
             shape_2d=(10, 3), normalization=10.0, region_list=[(0, 4, 0, 3)]
         )
 
-        new_array = layout.array_2d_of_parallel_edges_and_trails_from(
-            array=parallel_array, front_edge_rows=(0, 2), trails_rows=(0, 2)
+        new_array = layout.array_2d_of_parallel_fprs_and_epers_from(
+            array=parallel_array, fpr_range=(0, 2), trails_rows=(0, 2)
         )
 
         assert (
@@ -404,8 +404,8 @@ class TestAbstractLayout2DCI:
             region_list=[(0, 1, 0, 3), (3, 4, 0, 3)],
         )
 
-        new_array = layout.array_2d_of_parallel_edges_and_trails_from(
-            array=parallel_array, front_edge_rows=(0, 1), trails_rows=(0, 1)
+        new_array = layout.array_2d_of_parallel_fprs_and_epers_from(
+            array=parallel_array, fpr_range=(0, 1), trails_rows=(0, 1)
         )
 
         assert (
@@ -636,7 +636,7 @@ class TestAbstractLayout2DCI:
             )
         ).all()
 
-    def test__array_2d_of_serial_edges_and_trails_array(self):
+    def test__array_2d_of_serial_edges_and_epers_array(self):
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(3, 4), normalization=10.0, region_list=[(0, 3, 0, 3)]
@@ -647,7 +647,7 @@ class TestAbstractLayout2DCI:
             pixel_scales=1.0,
         )
 
-        new_array = layout.array_2d_of_serial_edges_and_trails_array(
+        new_array = layout.array_2d_of_serial_edges_and_epers_array(
             array=array, front_edge_columns=(0, 1)
         )
 
@@ -658,7 +658,7 @@ class TestAbstractLayout2DCI:
             )
         ).all()
 
-        new_array = layout.array_2d_of_serial_edges_and_trails_array(
+        new_array = layout.array_2d_of_serial_edges_and_epers_array(
             array=array, front_edge_columns=(0, 2)
         )
 
@@ -673,7 +673,7 @@ class TestAbstractLayout2DCI:
             shape_2d=(3, 4), normalization=10.0, region_list=[(0, 3, 0, 2)]
         )
 
-        new_array = layout.array_2d_of_serial_edges_and_trails_array(
+        new_array = layout.array_2d_of_serial_edges_and_epers_array(
             array=array, trails_columns=(0, 1)
         )
 
@@ -684,7 +684,7 @@ class TestAbstractLayout2DCI:
             )
         ).all()
 
-        new_array = layout.array_2d_of_serial_edges_and_trails_array(
+        new_array = layout.array_2d_of_serial_edges_and_epers_array(
             array=array, trails_columns=(0, 2)
         )
 
@@ -710,7 +710,7 @@ class TestAbstractLayout2DCI:
             pixel_scales=1.0,
         )
 
-        new_array = layout.array_2d_of_serial_edges_and_trails_array(
+        new_array = layout.array_2d_of_serial_edges_and_epers_array(
             array=array, front_edge_columns=(0, 1), trails_columns=(0, 1)
         )
 
@@ -987,7 +987,7 @@ class TestAbstractLayout2DCI:
         assert extracted_layout.serial_prescan == (0, 2, 0, 1)
         assert extracted_layout.serial_overscan == (0, 2, 3, 4)
 
-    def test__smallest_parallel_trails_rows_to_frame_edge(self,):
+    def test__smallest_parallel_epers_rows_to_frame_edge(self,):
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(10, 5),
@@ -995,7 +995,7 @@ class TestAbstractLayout2DCI:
             region_list=[(0, 3, 0, 3), (5, 7, 0, 3)],
         )
 
-        assert layout.smallest_parallel_trails_rows_to_array_edge == 2
+        assert layout.smallest_parallel_epers_rows_to_array_edge == 2
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(8, 5),
@@ -1003,7 +1003,7 @@ class TestAbstractLayout2DCI:
             region_list=[(0, 3, 0, 3), (5, 7, 0, 3)],
         )
 
-        assert layout.smallest_parallel_trails_rows_to_array_edge == 1
+        assert layout.smallest_parallel_epers_rows_to_array_edge == 1
 
 
 class TestLayout2DCI:

@@ -270,14 +270,14 @@ class TestAbstractLayout1DLine:
 
         assert (array_extracted.native == np.array([0.0, 1.0, 0.0, 3.0])).all()
 
-    def test__array_1d_of_edges_and_trails_from(self, array):
+    def test__array_1d_of_edges_and_epers_from(self, array):
 
         layout = ac.Layout1DLine(
             shape_1d=(10,), normalization=10.0, region_list=[(0, 4)]
         )
 
-        extracted_array = layout.array_1d_of_edges_and_trails_from(
-            array=array, front_edge_rows=(0, 2), trails_rows=(0, 2)
+        extracted_array = layout.array_1d_of_edges_and_epers_from(
+            array=array, fpr_range=(0, 2), trails_rows=(0, 2)
         )
 
         assert (
@@ -289,8 +289,8 @@ class TestAbstractLayout1DLine:
             shape_1d=(10,), normalization=10.0, region_list=[(0, 1), (3, 4)]
         )
 
-        extracted_array = layout.array_1d_of_edges_and_trails_from(
-            array=array, front_edge_rows=(0, 1), trails_rows=(0, 1)
+        extracted_array = layout.array_1d_of_edges_and_epers_from(
+            array=array, fpr_range=(0, 1), trails_rows=(0, 1)
         )
 
         assert (

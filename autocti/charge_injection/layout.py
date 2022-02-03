@@ -1,6 +1,6 @@
 from copy import deepcopy
 import numpy as np
-from typing import Tuple
+from typing import List, Tuple
 
 import autoarray as aa
 
@@ -15,25 +15,38 @@ from autocti.charge_injection.mask_2d import Mask2DCI
 class AbstractLayout2DCI(aa.Layout2D):
     def __init__(
         self,
-        shape_2d,
+        shape_2d: Tuple[int, int],
         normalization,
-        region_list,
-        original_roe_corner=(1, 0),
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
+        region_list: List[aa.Region2D],
+        original_roe_corner: Tuple[int, int] = (1, 0),
+        parallel_overscan: Tuple[int, int, int, int] = None,
+        serial_prescan: Tuple[int, int, int, int] = None,
+        serial_overscan: Tuple[int, int, int, int] = None,
     ):
         """
-        Abstract base class for a charge injection layout_ci, which defines the regions charge injections appears \
-         on a charge-injection array, the input normalization and other properties.
+        Abstract base class for a charge injection layout, which defines the regions charge injections appears
+        on charge-injection imaging alongside other properties.
 
         Parameters
         -----------
-        normalization
-            The normalization of the charge injection lines.
-        region_list: [(int,)]
-            A list of the integer coordinates specifying the corners of each charge injection region \
-            (top-row, bottom-row, left-column, right-column).
+        shape_2d
+            The two dimensional shape of the charge injection imaging, corresponding to the number of rows (pixels
+            in parallel direction) and columns (pixels in serial direction).
+        region_list
+            Integer pixel coordinates specifying the corners of each charge injection region (top-row, bottom-row,
+            left-column, right-column).
+        original_roe_corner
+            The original read-out electronics corner of the charge injeciton imaging, which is internally rotated to a
+            common orientation in **PyAutoCTI**.
+        parallel_overscan
+            Integer pixel coordinates specifying the corners of the parallel overscan (top-row, bottom-row,
+            left-column, right-column).
+        serial_prescan
+            Integer pixel coordinates specifying the corners of the serial prescan (top-row, bottom-row,
+            left-column, right-column).
+        serial_overscan
+            Integer pixel coordinates specifying the corners of the serial overscan (top-row, bottom-row,
+            left-column, right-column).
         """
 
         self.region_list = list(map(aa.Region2D, region_list))
@@ -48,9 +61,7 @@ class AbstractLayout2DCI(aa.Layout2D):
         self.extractor_parallel_front_edge = Extractor2DParallelFPR(
             region_list=region_list
         )
-        self.extractor_parallel_trails = Extractor2DParallelEPER(
-            region_list=region_list
-        )
+        self.extractor_parallel_epers = Extractor2DParallelEPER(region_list=region_list)
         self.extractor_serial_front_edge = Extractor2DSerialFPR(region_list=region_list)
         self.extractor_serial_trails = Extractor2DSerialEPER(region_list=region_list)
 
@@ -64,9 +75,27 @@ class AbstractLayout2DCI(aa.Layout2D):
 
         self.normalization = normalization
 
-    def after_extraction(self, extraction_region):
+    def after_extraction_from(
+        self, extraction_region: Tuple[int, int, int, int]
+    ) -> "AbstractLayout2DCI":
+        """
+        The charge injection region after an extraction is performed on an associated charge injection image, where
+        the extraction is defined by a region of pixel coordinates (top-row, bottom-row, left-column, right-column)
 
-        layout = super().after_extraction(extraction_region=extraction_region)
+        For example, if a charge injection region occupies the pixels (0, 10, 0, 5) on a 100 x 100 charge injection
+        image, and the first 5 columns of this charge injection image are extracted to create a 100 x 5 image, the
+         new charge injection region will be (0, 20, 0, 5).
+
+        Parameters
+        ----------
+        extraction_region
+
+        Returns
+        -------
+
+        """
+
+        layout = super().after_extraction_from(extraction_region=extraction_region)
 
         region_list = [
             aa.util.layout.region_after_extraction(
@@ -86,22 +115,22 @@ class AbstractLayout2DCI(aa.Layout2D):
         )
 
     @property
-    def rows_between_regions(self):
+    def pixels_between_regions(self) -> List[int]:
         return [
             self.region_list[i + 1].y0 - self.region_list[i].y1
             for i in range(len(self.region_list) - 1)
         ]
 
     @property
-    def parallel_trail_size_to_array_edge(self):
+    def parallel_eper_size_to_array_edge(self):
         return self.shape_2d[0] - np.max([region.y1 for region in self.region_list])
 
     @property
-    def smallest_parallel_trails_rows_to_array_edge(self):
+    def smallest_parallel_epers_rows_to_array_edge(self):
 
-        rows_between_regions = self.rows_between_regions
-        rows_between_regions.append(self.parallel_trail_size_to_array_edge)
-        return np.min(rows_between_regions)
+        pixels_between_regions = self.pixels_between_regions
+        pixels_between_regions.append(self.parallel_eper_size_to_array_edge)
+        return np.min(pixels_between_regions)
 
     def array_2d_of_regions_from(self, array: aa.Array2D) -> aa.Array2D:
         """
@@ -214,7 +243,7 @@ class AbstractLayout2DCI(aa.Layout2D):
 
         return non_regions_ci_array
 
-    def array_2d_of_parallel_trails_from(self, array: aa.Array2D) -> aa.Array2D:
+    def array_2d_of_parallel_epers_from(self, array: aa.Array2D) -> aa.Array2D:
         """
         Extract all of the data values in an input `array2D` that do not overlap the charge injection regions or the
         serial prescan / serial overscan regions.
@@ -272,10 +301,10 @@ class AbstractLayout2DCI(aa.Layout2D):
 
         return parallel_array
 
-    def array_2d_of_parallel_edges_and_trails_from(
+    def array_2d_of_parallel_fprs_and_epers_from(
         self,
         array: aa.Array2D,
-        front_edge_rows: Tuple[int, int] = None,
+        fpr_range: Tuple[int, int] = None,
         trails_rows: Tuple[int, int] = None,
     ) -> aa.Array2D:
         """
@@ -284,11 +313,11 @@ class AbstractLayout2DCI(aa.Layout2D):
 
         One can specify the range of rows that are extracted, for example:
 
-        front_edge_rows = (0, 1) will extract just the first leading front edge row.
-        front_edge_rows = (0, 2) will extract the leading two front edge rows.
+        fpr_range = (0, 1) will extract just the first leading front edge row.
+        fpr_range = (0, 2) will extract the leading two front edge rows.
         trails_rows = (0, 1) will extract the first row of trails closest to the charge injection region.
 
-        The diagram below illustrates the arrays that are extracted from the input array for `front_edge_rows=(0,1)`
+        The diagram below illustrates the arrays that are extracted from the input array for `fpr_range=(0,1)`
         and `trails_rows=(0,1)`:
 
         ---KEY---
@@ -333,22 +362,22 @@ class AbstractLayout2DCI(aa.Layout2D):
 
         Parameters
         ------------
-        front_edge_rows
+        fpr_range
             The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows).
         trails_rows
             The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
         new_array = array.native.copy() * 0.0
 
-        if front_edge_rows is not None:
+        if fpr_range is not None:
 
             new_array = self.extractor_parallel_front_edge.add_to_array(
-                new_array=new_array, array=array, rows=front_edge_rows
+                new_array=new_array, array=array, pixels=fpr_range
             )
 
         if trails_rows is not None:
 
-            new_array = self.extractor_parallel_trails.add_to_array(
+            new_array = self.extractor_parallel_epers.add_to_array(
                 new_array=new_array, array=array, rows=trails_rows
             )
 
@@ -402,8 +431,8 @@ class AbstractLayout2DCI(aa.Layout2D):
         []     [=====================]
                <---------S----------
         """
-        return self.region_list[0].parallel_side_nearest_read_out_region_from(
-            shape_2d=self.shape_2d, columns=columns
+        return self.region_list[0].serial_towards_roe_full_region_from(
+            shape_2d=self.shape_2d, pixels=columns
         )
 
     def array_2d_for_parallel_calibration_from(
@@ -521,10 +550,8 @@ class AbstractLayout2DCI(aa.Layout2D):
         return self.with_extracted_regions(extraction_region=extraction_region)
 
     def mask_for_parallel_calibration_from(self, mask, columns):
-        extraction_region = self.region_list[
-            0
-        ].parallel_side_nearest_read_out_region_from(
-            shape_2d=self.shape_2d, columns=columns
+        extraction_region = self.region_list[0].serial_towards_roe_full_region_from(
+            shape_2d=self.shape_2d, pixels=columns
         )
         return Mask2DCI(
             mask=mask[extraction_region.slice], pixel_scales=mask.pixel_scales
@@ -576,7 +603,7 @@ class AbstractLayout2DCI(aa.Layout2D):
         []     [=====================]
                <---------S----------
         """
-        array = self.array_2d_of_serial_edges_and_trails_array(
+        array = self.array_2d_of_serial_edges_and_epers_array(
             array=array, trails_columns=(0, self.serial_overscan.total_columns)
         )
         return array
@@ -634,7 +661,7 @@ class AbstractLayout2DCI(aa.Layout2D):
 
         trails_region_list = list(
             map(
-                lambda ci_region: ci_region.serial_trails_region_from(
+                lambda ci_region: ci_region.serial_trailing_region_from(
                     (0, self.serial_overscan.total_columns)
                 ),
                 self.region_list,
@@ -646,7 +673,7 @@ class AbstractLayout2DCI(aa.Layout2D):
 
         return new_array
 
-    def array_2d_of_serial_edges_and_trails_array(
+    def array_2d_of_serial_edges_and_epers_array(
         self, array: aa.Array2D, front_edge_columns=None, trails_columns=None
     ):
         """
@@ -733,7 +760,7 @@ class AbstractLayout2DCI(aa.Layout2D):
 
         calibration_region_list = list(
             map(
-                lambda ci_region: ci_region.serial_entire_rows_of_region_from(
+                lambda ci_region: ci_region.parallel_full_region_from(
                     shape_2d=self.shape_2d
                 ),
                 self.region_list,
@@ -881,7 +908,7 @@ class AbstractLayout2DCI(aa.Layout2D):
 
         calibration_region_list = list(
             map(
-                lambda ci_region: ci_region.serial_entire_rows_of_region_from(
+                lambda ci_region: ci_region.parallel_full_region_from(
                     shape_2d=self.shape_2d
                 ),
                 self.region_list,
@@ -922,11 +949,11 @@ class AbstractLayout2DCI(aa.Layout2D):
 
         if line_region == "parallel_front_edge":
             return self.extractor_parallel_front_edge.binned_array_1d_from(
-                array=array, rows=(0, self.extractor_parallel_front_edge.total_rows_min)
+                array=array, pixels=(0, self.extractor_parallel_front_edge.total_rows_min)
             )
-        elif line_region == "parallel_trails":
-            return self.extractor_parallel_trails.binned_array_1d_from(
-                array=array, rows=(0, self.smallest_parallel_trails_rows_to_array_edge)
+        elif line_region == "parallel_epers":
+            return self.extractor_parallel_epers.binned_array_1d_from(
+                array=array, rows=(0, self.smallest_parallel_epers_rows_to_array_edge)
             )
         elif line_region == "serial_front_edge":
             return self.extractor_serial_front_edge.binned_array_1d_from(

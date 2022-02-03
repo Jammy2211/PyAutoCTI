@@ -6,20 +6,20 @@ class SettingsMask2DCI:
     def __init__(
         self,
         parallel_front_edge_rows=None,
-        parallel_trails_rows=None,
+        parallel_epers_rows=None,
         serial_front_edge_columns=None,
         serial_trails_columns=None,
     ):
 
         self.parallel_front_edge_rows = parallel_front_edge_rows
-        self.parallel_trails_rows = parallel_trails_rows
+        self.parallel_epers_rows = parallel_epers_rows
         self.serial_front_edge_columns = serial_front_edge_columns
         self.serial_trails_columns = serial_trails_columns
 
 
 class Mask2DCI(Mask2D):
     @classmethod
-    def masked_front_edges_and_trails_from_layout(
+    def masked_front_edges_and_epers_from_layout(
         cls, mask, layout, settings, pixel_scales
     ):
 
@@ -31,13 +31,13 @@ class Mask2DCI(Mask2D):
 
             mask = mask + parallel_front_edge_mask
 
-        if settings.parallel_trails_rows is not None:
+        if settings.parallel_epers_rows is not None:
 
-            parallel_trails_mask = cls.masked_parallel_trails_from_layout(
+            parallel_epers_mask = cls.masked_parallel_epers_from_layout(
                 layout=layout, settings=settings, pixel_scales=pixel_scales
             )
 
-            mask = mask + parallel_trails_mask
+            mask = mask + parallel_epers_mask
 
         if settings.serial_front_edge_columns is not None:
 
@@ -76,12 +76,12 @@ class Mask2DCI(Mask2D):
         return Mask2DCI(mask=mask.astype("bool"), pixel_scales=pixel_scales)
 
     @classmethod
-    def masked_parallel_trails_from_layout(
+    def masked_parallel_epers_from_layout(
         cls, layout, settings, pixel_scales, invert=False
     ):
 
-        trails_regions = layout.extractor_parallel_trails.region_list_from(
-            rows=settings.parallel_trails_rows
+        trails_regions = layout.extractor_parallel_epers.region_list_from(
+            rows=settings.parallel_epers_rows
         )
 
         mask = np.full(layout.shape_2d, False)

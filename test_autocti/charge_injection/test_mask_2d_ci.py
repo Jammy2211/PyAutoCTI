@@ -104,15 +104,15 @@ class TestMask2DCI:
             )
         ).all()
 
-    def test__masked_parallel_trails_from_layout(self):
+    def test__masked_parallel_epers_from_layout(self):
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(10, 3), normalization=1.0, region_list=[(1, 4, 0, 3)]
         )
 
-        mask = ac.ci.Mask2DCI.masked_parallel_trails_from_layout(
+        mask = ac.ci.Mask2DCI.masked_parallel_epers_from_layout(
             layout=layout,
-            settings=ac.ci.SettingsMask2DCI(parallel_trails_rows=(0, 4)),
+            settings=ac.ci.SettingsMask2DCI(parallel_epers_rows=(0, 4)),
             pixel_scales=0.1,
         )
 
@@ -140,9 +140,9 @@ class TestMask2DCI:
             shape_2d=(10, 3), normalization=1.0, region_list=[(1, 4, 0, 3)]
         )
 
-        mask = ac.ci.Mask2DCI.masked_parallel_trails_from_layout(
+        mask = ac.ci.Mask2DCI.masked_parallel_epers_from_layout(
             layout=layout,
-            settings=ac.ci.SettingsMask2DCI(parallel_trails_rows=(0, 4)),
+            settings=ac.ci.SettingsMask2DCI(parallel_epers_rows=(0, 4)),
             pixel_scales=0.1,
             invert=True,
         )
@@ -173,9 +173,9 @@ class TestMask2DCI:
             region_list=[(1, 4, 0, 1), (1, 4, 2, 3)],
         )
 
-        mask = ac.ci.Mask2DCI.masked_parallel_trails_from_layout(
+        mask = ac.ci.Mask2DCI.masked_parallel_epers_from_layout(
             layout=layout,
-            settings=ac.ci.SettingsMask2DCI(parallel_trails_rows=(0, 4)),
+            settings=ac.ci.SettingsMask2DCI(parallel_epers_rows=(0, 4)),
             pixel_scales=0.1,
         )
 
@@ -398,7 +398,7 @@ class TestMask2DCI:
             )
         ).all()
 
-    def test__masked_front_edges_and_trails_from_layout(self, imaging_ci_7x7):
+    def test__masked_front_edges_and_epers_from_layout(self, imaging_ci_7x7):
 
         unmasked = ac.ci.Mask2DCI.unmasked(
             shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
@@ -408,7 +408,7 @@ class TestMask2DCI:
             shape_2d=(7, 7), normalization=1.0, region_list=[(1, 5, 1, 5)]
         )
 
-        mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_layout(
+        mask = ac.ci.Mask2DCI.masked_front_edges_and_epers_from_layout(
             layout=layout,
             mask=unmasked,
             settings=ac.ci.SettingsMask2DCI(parallel_front_edge_rows=(0, 1)),
@@ -430,10 +430,10 @@ class TestMask2DCI:
             )
         ).all()
 
-        mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_layout(
+        mask = ac.ci.Mask2DCI.masked_front_edges_and_epers_from_layout(
             layout=layout,
             mask=unmasked,
-            settings=ac.ci.SettingsMask2DCI(parallel_trails_rows=(0, 1)),
+            settings=ac.ci.SettingsMask2DCI(parallel_epers_rows=(0, 1)),
             pixel_scales=0.1,
         )
 
@@ -452,7 +452,7 @@ class TestMask2DCI:
             )
         ).all()
 
-        mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_layout(
+        mask = ac.ci.Mask2DCI.masked_front_edges_and_epers_from_layout(
             layout=layout,
             mask=unmasked,
             settings=ac.ci.SettingsMask2DCI(serial_front_edge_columns=(0, 1)),
@@ -474,7 +474,7 @@ class TestMask2DCI:
             )
         ).all()
 
-        mask = ac.ci.Mask2DCI.masked_front_edges_and_trails_from_layout(
+        mask = ac.ci.Mask2DCI.masked_front_edges_and_epers_from_layout(
             layout=layout,
             mask=unmasked,
             settings=ac.ci.SettingsMask2DCI(serial_trails_columns=(0, 1)),

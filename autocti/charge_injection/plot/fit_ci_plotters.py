@@ -169,7 +169,7 @@ class FitImagingCIPlotter(Plotter):
         ----------
         line_region
             The region on the charge injection image where data is extracted and binned over the parallel or serial
-            direction {"parallel_front_edge", "parallel_trails", "serial_front_edge", "serial_trails"}
+            direction {"parallel_front_edge", "parallel_epers", "serial_front_edge", "serial_trails"}
         image
             Whether or not to make a 1D plot (via `plot`) of the image data extracted and binned over the line region.
         noise_map
@@ -410,7 +410,7 @@ class FitImagingCIPlotter(Plotter):
         ----------
         line_region
             The region on the charge injection image where data is extracted and binned over the parallel or serial
-            direction {"parallel_front_edge", "parallel_trails", "serial_front_edge", "serial_trails"}
+            direction {"parallel_front_edge", "parallel_epers", "serial_front_edge", "serial_trails"}
         """
 
         self.open_subplot_figure(number_subplots=6)

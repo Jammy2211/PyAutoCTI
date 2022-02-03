@@ -407,7 +407,7 @@ class TestChiSquaredMapsOfRegions:
         fit = ac.ci.FitImagingCI(dataset=masked_imaging, post_cti_data=pre_cti_data)
 
         assert (
-            fit.chi_squared_map_of_parallel_trails == np.array([[0.0, 0.0], [4.0, 0.0]])
+            fit.chi_squared_map_of_parallel_epers == np.array([[0.0, 0.0], [4.0, 0.0]])
         ).all()
 
     def test__chi_squared_map_of_serial_trails__extracts_correctly_from_chi_squard_map(

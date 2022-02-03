@@ -12,7 +12,7 @@ class SettingsMask1DLine:
 
 class Mask1DLine(aa.Mask1D):
     @classmethod
-    def masked_front_edges_and_trails_from_layout(
+    def masked_front_edges_and_epers_from_layout(
         cls, mask, layout, settings, pixel_scales
     ):
 

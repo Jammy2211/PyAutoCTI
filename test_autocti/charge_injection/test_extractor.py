@@ -117,31 +117,31 @@ class TestExtractorParallelFPR:
         extractor = ac.Extractor2DParallelFPR(region_list=[(1, 4, 0, 3)])
 
         front_edge_list = extractor.array_2d_list_from(
-            array=parallel_array, rows=(0, 1)
+            array=parallel_array, pixels=(0, 1)
         )
         assert (front_edge_list[0] == np.array([[1.0, 1.0, 1.0]])).all()
 
         front_edge_list = extractor.array_2d_list_from(
-            array=parallel_array, rows=(2, 3)
+            array=parallel_array, pixels=(2, 3)
         )
         assert (front_edge_list[0] == np.array([[3.0, 3.0, 3.0]])).all()
 
         extractor = ac.Extractor2DParallelFPR(region_list=[(1, 4, 0, 3), (5, 8, 0, 3)])
 
         front_edge_list = extractor.array_2d_list_from(
-            array=parallel_array, rows=(0, 1)
+            array=parallel_array, pixels=(0, 1)
         )
         assert (front_edge_list[0] == np.array([[1.0, 1.0, 1.0]])).all()
         assert (front_edge_list[1] == np.array([[5.0, 5.0, 5.0]])).all()
 
         front_edge_list = extractor.array_2d_list_from(
-            array=parallel_array, rows=(2, 3)
+            array=parallel_array, pixels=(2, 3)
         )
         assert (front_edge_list[0] == np.array([[3.0, 3.0, 3.0]])).all()
         assert (front_edge_list[1] == np.array([[7.0, 7.0, 7.0]])).all()
 
         front_edge_list = extractor.array_2d_list_from(
-            array=parallel_array, rows=(0, 3)
+            array=parallel_array, pixels=(0, 3)
         )
         assert (
             front_edge_list[0]
@@ -153,7 +153,7 @@ class TestExtractorParallelFPR:
         ).all()
 
         front_edge_list = extractor.array_2d_list_from(
-            array=parallel_masked_array, rows=(0, 3)
+            array=parallel_masked_array, pixels=(0, 3)
         )
 
         assert (
@@ -175,7 +175,7 @@ class TestExtractorParallelFPR:
         extractor = ac.Extractor2DParallelFPR(region_list=[(1, 4, 0, 3), (5, 8, 0, 3)])
 
         stacked_front_edge_list = extractor.stacked_array_2d_from(
-            array=parallel_array, rows=(0, 3)
+            array=parallel_array, pixels=(0, 3)
         )
 
         assert (
@@ -186,7 +186,7 @@ class TestExtractorParallelFPR:
         extractor = ac.Extractor2DParallelFPR(region_list=[(1, 3, 0, 3), (5, 8, 0, 3)])
 
         stacked_front_edge_list = extractor.stacked_array_2d_from(
-            array=parallel_array, rows=(0, 2)
+            array=parallel_array, pixels=(0, 2)
         )
 
         assert (
@@ -194,7 +194,7 @@ class TestExtractorParallelFPR:
         ).all()
 
         stacked_front_edge_list = extractor.stacked_array_2d_from(
-            array=parallel_masked_array, rows=(0, 3)
+            array=parallel_masked_array, pixels=(0, 3)
         )
 
         assert (
@@ -213,7 +213,7 @@ class TestExtractorParallelFPR:
         extractor = ac.Extractor2DParallelFPR(region_list=[(1, 3, 0, 3), (5, 8, 0, 3)])
 
         front_edge_line = extractor.binned_array_1d_from(
-            array=parallel_array, rows=(0, 3)
+            array=parallel_array, pixels=(0, 3)
         )
 
         assert (front_edge_line == np.array([3.0, 4.0, 5.0])).all()
@@ -221,13 +221,13 @@ class TestExtractorParallelFPR:
         extractor = ac.Extractor2DParallelFPR(region_list=[(1, 3, 0, 3), (5, 8, 0, 3)])
 
         front_edge_line = extractor.binned_array_1d_from(
-            array=parallel_array, rows=(0, 2)
+            array=parallel_array, pixels=(0, 2)
         )
 
         assert (front_edge_line == np.array([3.0, 4.0])).all()
 
         front_edge_line = extractor.binned_array_1d_from(
-            array=parallel_masked_array, rows=(0, 3)
+            array=parallel_masked_array, pixels=(0, 3)
         )
 
         assert (front_edge_line == np.array([9.0 / 3.0, 14.0 / 3.0, 5.0])).all()

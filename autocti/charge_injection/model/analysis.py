@@ -97,7 +97,7 @@ class AnalysisImagingCI(Analysis):
                 None,
                 [
                     instance.hyper_noise.regions_ci,
-                    instance.hyper_noise.parallel_trails,
+                    instance.hyper_noise.parallel_epers,
                     instance.hyper_noise.serial_trails,
                     instance.hyper_noise.serial_overscan_no_trails,
                 ],
@@ -177,7 +177,7 @@ class AnalysisImagingCI(Analysis):
                 imaging_ci=self.dataset_ci, line_region="parallel_front_edge"
             )
             visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.dataset_ci, line_region="parallel_trails"
+                imaging_ci=self.dataset_ci, line_region="parallel_epers"
             )
 
             visualizer.visualize_fit_ci(fit=fit, during_analysis=during_analysis)
@@ -187,7 +187,7 @@ class AnalysisImagingCI(Analysis):
                 line_region="parallel_front_edge",
             )
             visualizer.visualize_fit_ci_1d_lines(
-                fit=fit, during_analysis=during_analysis, line_region="parallel_trails"
+                fit=fit, during_analysis=during_analysis, line_region="parallel_epers"
             )
         except (exc.RegionException, TypeError):
             pass

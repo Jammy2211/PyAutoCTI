@@ -21,9 +21,9 @@ class ResultImagingCI(ResultDataset):
         )
 
     @property
-    def noise_scaling_map_of_parallel_trails(self):
+    def noise_scaling_map_of_parallel_epers(self):
         return (
-            self.max_log_likelihood_full_fit_no_hyper_scaling.chi_squared_map_of_parallel_trails
+            self.max_log_likelihood_full_fit_no_hyper_scaling.chi_squared_map_of_parallel_epers
         )
 
     @property
@@ -43,7 +43,7 @@ class ResultImagingCI(ResultDataset):
 
         return [
             self.noise_scaling_map_of_regions_ci,
-            self.noise_scaling_map_of_parallel_trails,
+            self.noise_scaling_map_of_parallel_epers,
             self.noise_scaling_map_of_serial_trails,
             self.noise_scaling_map_of_serial_overscan_no_trails,
         ]
