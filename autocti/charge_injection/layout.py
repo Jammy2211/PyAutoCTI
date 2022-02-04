@@ -115,39 +115,52 @@ class AbstractLayout2DCI(aa.Layout2D):
 
     @property
     def pixels_between_regions(self) -> List[int]:
+        """
+        Returns a list where each entry is the number of pixels a charge injection region and its neighboring
+        charge injection region.
+        """
         return [
             self.region_list[i + 1].y0 - self.region_list[i].y1
             for i in range(len(self.region_list) - 1)
         ]
 
     @property
-    def parallel_eper_size_to_array_edge(self):
+    def parallel_rows_to_array_edge(self) -> int:
+        """
+        The number of pixels from the edge of the parallel EPERs to the edge of the array.
+
+        This is the number of pixels from the last charge injection FPR edge to the read out register and electronics
+        and will include the parallel overscan if the CCD has one.
+        """
         return self.shape_2d[0] - np.max([region.y1 for region in self.region_list])
 
     @property
-    def smallest_parallel_epers_rows_to_array_edge(self):
-
+    def smallest_parallel_rows_between_ci_regions(self) -> int:
+        """
+        The smallest number of pixels between any two charge injection regions, or the distance of the last
+        charge injection region to the edge of the charge injeciton image (e.g. in the direction away from the
+        readout register and electronics).
+        """
         pixels_between_regions = self.pixels_between_regions
-        pixels_between_regions.append(self.parallel_eper_size_to_array_edge)
+        pixels_between_regions.append(self.parallel_rows_to_array_edge)
         return np.min(pixels_between_regions)
 
     def array_2d_of_regions_from(self, array: aa.Array2D) -> aa.Array2D:
         """
-        Extract all of the charge-injection regions from an input `array2D` object and returns them as a new `array2D`
-        object where these extracted regions are included and all other entries are zeros.
+        Extract all of the charge-injection regions from an input `Array2D` object and returns them as a new `Array2D`
+        where these extracted regions are included and all other entries are zeros.
 
-        The diagram below illustrates the regions that are extracted from the input array:
+        The dimensions of the input array therefore do not change (unlike other `Layout2DCI` methods).
 
-        ---KEY---
-        ---------
+        The diagram below illustrates the extraction:
 
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
-        [xxxxxxxxxx]
-
-        P = Parallel Direction      S = Serial Direction
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = parallel overscan
+        [ssssssssss] = serial overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [tttttttttt] = parallel / serial charge injection region trail
 
                [ppppppppppppppppppppp]
                [ppppppppppppppppppppp]
@@ -157,12 +170,12 @@ class AbstractLayout2DCI(aa.Layout2D):
         | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
         P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
         | [...][ccccccccccccccccccccc][sss]    | clocking
-          [...][ccccccccccccccccccccc][sss]    |
+       \/  [...][ccccccccccccccccccccc][sss]   \/
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
 
-        The extracted array keeps just the charge injection region and replaces all other values with 0s:
+        The extracted array keeps just the charge injection region, all other values become 0:
 
                [000000000000000000000]
                [000000000000000000000]
@@ -172,11 +185,10 @@ class AbstractLayout2DCI(aa.Layout2D):
         | [000][000000000000000000000][000]    | Direction
         P [000][000000000000000000000][000]    | of
         | [000][ccccccccccccccccccccc][000]    | clocking
-          [000][ccccccccccccccccccccc][000]    |
+       \/ [000][ccccccccccccccccccccc][000]   \/
 
         []     [=====================]
-               <---------S----------
-
+               <--------Ser---------
         """
 
         new_array = array.native.copy() * 0.0
@@ -188,22 +200,24 @@ class AbstractLayout2DCI(aa.Layout2D):
 
     def array_2d_of_non_regions_from(self, array: aa.Array2D) -> aa.Array2D:
         """
-        Extract all of the data values in an input `array2D` that do not overlap the charge injection regions. This
-        includes many areas of the image (e.g. the serial prescan, serial overscan) but is typically used to extract
-        a `array2D` that contains the parallel trails that follow the charge-injection regions.
+        Extract all of the areas of an `Array2D` that are not within any of the layout's charge-injection regions
+        and return them as a new `Array2D` where these extracted regions are included and the charge injection regions
+        are zeros
 
-        The diagram below illustrates the `array2D` that is extracted from the input array:
+        The extracted array therefore includes all EPER trails and other regions of the image which may contain
+        signal but are not in the FPR.
 
-        ---KEY---
-        ---------
+        The dimensions of the input array therefore do not change (unlike other `Layout2DCI` methods).
 
-        [] = read-out electronics   [==========] = read-out register
+        The diagram below illustrates the extraction:
 
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
-        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
-
-        P = Parallel Direction      S = Serial Direction
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = parallel overscan
+        [ssssssssss] = serial overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [tttttttttt] = parallel / serial charge injection region trail
 
                [tptpptptptpptpptpptpt]
                [tptptptpptpttptptptpt]
@@ -211,15 +225,14 @@ class AbstractLayout2DCI(aa.Layout2D):
           [...][ccccccccccccccccccccc][sss]
         | [...][ccccccccccccccccccccc][sss]    |
         | [...][ttttttttttttttttttttt][sss]    | Direction
-        P [...][ttttttttttttttttttttt][sss]    | of
+       Par[...][ttttttttttttttttttttt][sss]    | of
         | [...][ccccccccccccccccccccc][sss]    | clocking
-          [...][ccccccccccccccccccccc][sss]    |
+        \/ [...][ccccccccccccccccccccc][sss]   \/
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
 
-        The extracted array keeps just the trails following all charge injection scans and replaces all other
-        values with 0s:
+        The extracted array keeps everything except the charge injection  region,which become 0s:
 
                [tptpptptptpptpptpptpt]
                [tptptptpptpttptptptpt]
@@ -227,12 +240,12 @@ class AbstractLayout2DCI(aa.Layout2D):
           [000][000000000000000000000][000]
         | [000][000000000000000000000][000]    |
         | [000][ttttttttttttttttttttt][000]    | Direction
-        P [000][ttttttttttttttttttttt][000]    | of
+       Par[000][ttttttttttttttttttttt][000]    | of
         | [000][000000000000000000000][000]    | clocking
-          [000][000000000000000000000][000]    |
+          [000][000000000000000000000][000]   \/
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
         """
 
         non_regions_ci_array = array.native.copy()
@@ -244,24 +257,21 @@ class AbstractLayout2DCI(aa.Layout2D):
 
     def array_2d_of_parallel_epers_from(self, array: aa.Array2D) -> aa.Array2D:
         """
-        Extract all of the data values in an input `array2D` that do not overlap the charge injection regions or the
-        serial prescan / serial overscan regions.
+        Extract all of the areas of an `Array2D` that contain the parallel EPERs and return them as a new `Array2D`
+        where these extracted regions are included and everything else (e.g. the charge injection regions, serial
+        EPERs) are zeros.
 
-        This  extracts a `array2D` that contains only regions of the data where there are parallel trails (e.g. those
-        that follow the charge-injection regions).
+        The dimensions of the input array therefore do not change (unlike other `Layout2DCI` methods).
 
-        The diagram below illustrates the `array2D` that is extracted from the input array:
+        The diagram below illustrates the extraction:
 
-        ---KEY---
-        ---------
-
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
-        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
-
-        P = Parallel Direction      S = Serial Direction
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = parallel overscan
+        [ssssssssss] = serial overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [tttttttttt] = parallel / serial charge injection region trail
 
                [tptpptptptpptpptpptpt]
                [tptptptpptpttptptptpt]
@@ -269,15 +279,14 @@ class AbstractLayout2DCI(aa.Layout2D):
           [...][ccccccccccccccccccccc][sss]
         | [...][ccccccccccccccccccccc][sss]    |
         | [...][ttttttttttttttttttttt][sss]    | Direction
-        P [...][ttttttttttttttttttttt][sss]    | of
+       Par[...][ttttttttttttttttttttt][sss]    | of
         | [...][ccccccccccccccccccccc][sss]    | clocking
-          [...][ccccccccccccccccccccc][sss]    |
+       \/ [...][ccccccccccccccccccccc][sss]   \/
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
 
-        The extracted array keeps just the trails following all charge injection scans and replaces all other
-        values with 0s:
+        The extracted array keeps only the parallel EPERs, everything else become 0s:
 
                [tptpptptptpptpptpptpt]
                [tptptptpptpttptptptpt]
@@ -285,12 +294,12 @@ class AbstractLayout2DCI(aa.Layout2D):
           [000][000000000000000000000][000]
         | [000][000000000000000000000][000]    |
         | [000][ttttttttttttttttttttt][000]    | Direction
-        P [000][ttttttttttttttttttttt][000]    | of
+       Par[000][ttttttttttttttttttttt][000]    | of
         | [000][000000000000000000000][000]    | clocking
-          [000][000000000000000000000][000]    |
+       \/ [000][000000000000000000000][000]   \/
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
         """
 
         parallel_array = self.array_2d_of_non_regions_from(array=array)
@@ -341,7 +350,7 @@ class AbstractLayout2DCI(aa.Layout2D):
           [...][ccccccccccccccccccccc][sss]    |
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
 
         The extracted array keeps just the leading edges and trails following all charge injection scans and
         replaces all other values with 0s:
@@ -357,7 +366,7 @@ class AbstractLayout2DCI(aa.Layout2D):
           [000][ccccccccccccccccccccc][000]    |
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
 
         Parameters
         ------------
@@ -412,7 +421,7 @@ class AbstractLayout2DCI(aa.Layout2D):
           [...][ccccccccccccccccccccc][sss]    |
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
 
         The extracted array keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
@@ -428,7 +437,7 @@ class AbstractLayout2DCI(aa.Layout2D):
                [ccc]                           |
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
         """
         return self.region_list[0].serial_towards_roe_full_region_from(
             shape_2d=self.shape_2d, pixels=columns
@@ -466,7 +475,7 @@ class AbstractLayout2DCI(aa.Layout2D):
           [...][ccccccccccccccccccccc][sss]    |
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
 
         The extracted array keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
@@ -482,7 +491,7 @@ class AbstractLayout2DCI(aa.Layout2D):
                [ccc]                           |
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
         """
         extraction_region = self.extraction_region_for_parallel_calibration_from(
             columns=columns
@@ -523,7 +532,7 @@ class AbstractLayout2DCI(aa.Layout2D):
           [...][ccccccccccccccccccccc][sss]    |
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
 
         The extracted array keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
@@ -539,7 +548,7 @@ class AbstractLayout2DCI(aa.Layout2D):
                [ccc]                           |
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
         """
 
         extraction_region = self.extraction_region_for_parallel_calibration_from(
@@ -584,7 +593,7 @@ class AbstractLayout2DCI(aa.Layout2D):
           [...][ccccccccccccccccccccc][sts]    |
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
 
         The extracted array keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
@@ -600,7 +609,7 @@ class AbstractLayout2DCI(aa.Layout2D):
           [000][000000000000000000000][sts]    |
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
         """
         array = self.array_2d_of_serial_edges_and_epers_array(
             array=array, trails_columns=(0, self.serial_overscan.total_columns)
@@ -636,7 +645,7 @@ class AbstractLayout2DCI(aa.Layout2D):
           [...][ccccccccccccccccccccc][sts]    |
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
 
         The extracted array keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
@@ -652,7 +661,7 @@ class AbstractLayout2DCI(aa.Layout2D):
           [000][000000000000000000000][000]    |
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
         """
         new_array = array.native.copy() * 0.0
 
@@ -710,7 +719,7 @@ class AbstractLayout2DCI(aa.Layout2D):
           [...][ccccccccccccccccccccc][tst]    |
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
 
         The extracted array keeps just the leading edge and trails following all charge injection scans and
         replaces all other values with 0s:
@@ -726,7 +735,7 @@ class AbstractLayout2DCI(aa.Layout2D):
           [000][cc0000000000000000000][st0]    |
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
 
         Parameters
         ------------
@@ -835,7 +844,7 @@ class AbstractLayout2DCI(aa.Layout2D):
           [...][ccccccccccccccccccccc][sts]    |
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
 
         The extracted array keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
@@ -847,7 +856,7 @@ class AbstractLayout2DCI(aa.Layout2D):
                [cccccccccccccccc][tst]         |
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
         """
         calibration_images = self.array_2d_list_for_serial_calibration(array=array)
         calibration_images = list(
@@ -890,7 +899,7 @@ class AbstractLayout2DCI(aa.Layout2D):
           [...][ccccccccccccccccccccc][sts]    |
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
 
         The extracted array keeps just the trails following all charge injection scans and replaces all other
         values with 0s:
@@ -902,7 +911,7 @@ class AbstractLayout2DCI(aa.Layout2D):
                [cccccccccccccccc][tst]         |
 
         []     [=====================]
-               <---------S----------
+               <--------Ser---------
         """
 
         calibration_region_list = list(
@@ -953,7 +962,7 @@ class AbstractLayout2DCI(aa.Layout2D):
             )
         elif line_region == "parallel_epers":
             return self.extractor_parallel_epers.binned_array_1d_from(
-                array=array, pixels=(0, self.smallest_parallel_epers_rows_to_array_edge)
+                array=array, pixels=(0, self.smallest_parallel_rows_between_ci_regions)
             )
         elif line_region == "serial_front_edge":
             return self.extractor_serial_front_edge.binned_array_1d_from(

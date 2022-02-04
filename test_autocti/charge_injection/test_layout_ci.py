@@ -112,7 +112,7 @@ class TestAbstractLayout2DCI:
             region_list=[ac.Region2D(region=(0, 3, 0, 3))],
         )
 
-        assert layout.parallel_eper_size_to_array_edge == 2
+        assert layout.parallel_rows_to_array_edge == 2
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(7, 100),
@@ -120,7 +120,7 @@ class TestAbstractLayout2DCI:
             region_list=[ac.Region2D(region=(0, 3, 0, 3))],
         )
 
-        assert layout.parallel_eper_size_to_array_edge == 4
+        assert layout.parallel_rows_to_array_edge == 4
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(15, 100),
@@ -132,7 +132,7 @@ class TestAbstractLayout2DCI:
             ],
         )
 
-        assert layout.parallel_eper_size_to_array_edge == 1
+        assert layout.parallel_rows_to_array_edge == 1
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(20, 100),
@@ -144,7 +144,7 @@ class TestAbstractLayout2DCI:
             ],
         )
 
-        assert layout.parallel_eper_size_to_array_edge == 6
+        assert layout.parallel_rows_to_array_edge == 6
 
     def test__with_extracted_regions__region_list_are_extracted_correctly(self):
 
@@ -995,7 +995,7 @@ class TestAbstractLayout2DCI:
             region_list=[(0, 3, 0, 3), (5, 7, 0, 3)],
         )
 
-        assert layout.smallest_parallel_epers_rows_to_array_edge == 2
+        assert layout.smallest_parallel_rows_between_ci_regions == 2
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(8, 5),
@@ -1003,7 +1003,7 @@ class TestAbstractLayout2DCI:
             region_list=[(0, 3, 0, 3), (5, 7, 0, 3)],
         )
 
-        assert layout.smallest_parallel_epers_rows_to_array_edge == 1
+        assert layout.smallest_parallel_rows_between_ci_regions == 1
 
 
 class TestLayout2DCI:

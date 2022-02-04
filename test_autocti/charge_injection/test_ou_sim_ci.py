@@ -74,9 +74,7 @@ def test__non_uniform_array_is_correct_with_rotation():
 
 def test__add_cti_to_pre_cti_data():
 
-    clocker = Clocker2D(
-        parallel_express=2, parallel_charge_injection_mode=True, serial_express=2
-    )
+    clocker = Clocker2D(parallel_express=2, serial_express=2)
 
     parallel_trap_list = [
         traps.TrapInstantCapture(density=0.13, release_timescale=1.25)
