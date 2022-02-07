@@ -91,7 +91,7 @@ class TestAbstractLayout2DCI:
             parallel_overscan=ac.Region2D((0, 1, 0, 1)),
         )
 
-        assert layout.serial_trails_columns == 10
+        assert layout.serial_eper_pixels == 10
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(50, 50),
@@ -102,7 +102,7 @@ class TestAbstractLayout2DCI:
             parallel_overscan=ac.Region2D((0, 1, 0, 1)),
         )
 
-        assert layout.serial_trails_columns == 50
+        assert layout.serial_eper_pixels == 50
 
     def test__parallel_eper_size_to_array_edge(self):
 

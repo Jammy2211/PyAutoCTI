@@ -41,8 +41,8 @@ from .model.model_util import CTI1D
 from .model.model_util import CTI2D
 from .model.settings import SettingsCTI1D
 from .model.settings import SettingsCTI2D
-from .util.clocker import Clocker1D
-from .util.clocker import Clocker2D
+from .clocker.one_d import Clocker1D
+from .clocker.two_d import Clocker2D
 from . import util
 from . import plot
 

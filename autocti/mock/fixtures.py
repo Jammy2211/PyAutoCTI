@@ -17,8 +17,8 @@ from autocti.line.layout import Layout1DLine
 from autocti import charge_injection as ci
 from autocti.charge_injection.model.analysis import AnalysisImagingCI
 from autocti.mask.mask_2d import Mask2D
-from autocti.util.clocker import Clocker1D
-from autocti.util.clocker import Clocker2D
+from autocti.clocker.one_d import Clocker1D
+from autocti.clocker.two_d import Clocker2D
 from autocti.model.model_util import CTI2D
 
 import numpy as np

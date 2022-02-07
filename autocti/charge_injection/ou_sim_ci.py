@@ -7,7 +7,7 @@ from autoarray.structures.arrays.two_d.array_2d import Array2D
 
 from arcticpy.src import ccd
 from arcticpy.src import traps
-from autocti.util.clocker import Clocker2D
+from autocti.clocker.two_d import Clocker2D
 
 from autocti.charge_injection.layout import Layout2DCI
 from autocti.charge_injection.layout import Layout2DCINonUniform

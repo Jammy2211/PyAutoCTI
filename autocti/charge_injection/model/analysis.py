@@ -14,7 +14,7 @@ from autocti.charge_injection.model.visualizer import VisualizerImagingCI
 from autocti.model.result import ResultDataset
 from autocti.charge_injection.model.result import ResultImagingCI
 from autocti.model.settings import SettingsCTI2D
-from autocti.util.clocker import Clocker2D
+from autocti.clocker.two_d import Clocker2D
 
 from autocti import exc
 

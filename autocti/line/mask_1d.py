@@ -12,9 +12,7 @@ class SettingsMask1DLine:
 
 class Mask1DLine(aa.Mask1D):
     @classmethod
-    def masked_front_edges_and_epers_from_layout(
-        cls, mask, layout, settings, pixel_scales
-    ):
+    def masked_fprs_and_epers_from(cls, mask, layout, settings, pixel_scales):
 
         if settings.front_edge_pixels is not None:
 

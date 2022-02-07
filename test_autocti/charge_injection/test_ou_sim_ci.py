@@ -1,7 +1,7 @@
 import numpy as np
 from autocti.charge_injection import ou_sim_ci
 
-from autocti.util.clocker import Clocker2D
+from autocti.clocker.two_d import Clocker2D
 from arcticpy.src import ccd
 from arcticpy.src import traps
 

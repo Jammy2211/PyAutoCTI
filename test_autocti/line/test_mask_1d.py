@@ -92,7 +92,7 @@ def test__masked_front_edges_and_epers_from_layout():
 
     layout = ac.Layout1DLine(shape_1d=(5,), normalization=1.0, region_list=[(1, 3)])
 
-    mask = ac.Mask1DLine.masked_front_edges_and_epers_from_layout(
+    mask = ac.Mask1DLine.masked_fprs_and_epers_from(
         mask=unmasked,
         layout=layout,
         settings=ac.SettingsMask1DLine(front_edge_pixels=(1, 2), trails_pixels=(0, 1)),

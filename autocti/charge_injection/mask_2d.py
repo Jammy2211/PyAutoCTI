@@ -1,73 +1,85 @@
 import numpy as np
+from typing import Tuple
+
+import autoarray as aa
+
 from autocti.mask.mask_2d import Mask2D
 
 
 class SettingsMask2DCI:
     def __init__(
         self,
-        parallel_front_edge_rows=None,
-        parallel_epers_rows=None,
-        serial_front_edge_columns=None,
-        serial_trails_columns=None,
+        parallel_fpr_pixels: Tuple[int, int] = None,
+        parallel_epers_pixels: Tuple[int, int] = None,
+        serial_fpr_pixels: Tuple[int, int] = None,
+        serial_eper_pixels: Tuple[int, int] = None,
     ):
 
-        self.parallel_front_edge_rows = parallel_front_edge_rows
-        self.parallel_epers_rows = parallel_epers_rows
-        self.serial_front_edge_columns = serial_front_edge_columns
-        self.serial_trails_columns = serial_trails_columns
+        self.parallel_fpr_pixels = parallel_fpr_pixels
+        self.parallel_epers_pixels = parallel_epers_pixels
+        self.serial_fpr_pixels = serial_fpr_pixels
+        self.serial_eper_pixels = serial_eper_pixels
 
 
 class Mask2DCI(Mask2D):
     @classmethod
-    def masked_front_edges_and_epers_from_layout(
-        cls, mask, layout, settings, pixel_scales
-    ):
+    def masked_fprs_and_epers_from(
+        cls,
+        mask: "Mask2D",
+        layout: "AbstractLayout2DCI",
+        settings: "SettingsMask2DCI",
+        pixel_scales: aa.type.PixelScales,
+    ) -> "Mask2DCI":
 
-        if settings.parallel_front_edge_rows is not None:
+        if settings.parallel_fpr_pixels is not None:
 
-            parallel_front_edge_mask = cls.masked_parallel_front_edge_from_layout(
+            parallel_fpr_mask = cls.masked_parallel_fpr_from(
                 layout=layout, settings=settings, pixel_scales=pixel_scales
             )
 
-            mask = mask + parallel_front_edge_mask
+            mask = mask + parallel_fpr_mask
 
-        if settings.parallel_epers_rows is not None:
+        if settings.parallel_epers_pixels is not None:
 
-            parallel_epers_mask = cls.masked_parallel_epers_from_layout(
+            parallel_epers_mask = cls.masked_parallel_epers_from(
                 layout=layout, settings=settings, pixel_scales=pixel_scales
             )
 
             mask = mask + parallel_epers_mask
 
-        if settings.serial_front_edge_columns is not None:
+        if settings.serial_fpr_pixels is not None:
 
-            serial_front_edge_mask = cls.masked_serial_front_edge_from_layout(
+            serial_fpr_mask = cls.masked_serial_fpr_from(
                 layout=layout, settings=settings, pixel_scales=pixel_scales
             )
 
-            mask = mask + serial_front_edge_mask
+            mask = mask + serial_fpr_mask
 
-        if settings.serial_trails_columns is not None:
+        if settings.serial_eper_pixels is not None:
 
-            serial_trails_mask = cls.masked_serial_trails_from_layout(
+            serial_eper_mask = cls.masked_serial_epers_from(
                 layout=layout, settings=settings, pixel_scales=pixel_scales
             )
 
-            mask = mask + serial_trails_mask
+            mask = mask + serial_eper_mask
 
         return mask
 
     @classmethod
-    def masked_parallel_front_edge_from_layout(
-        cls, layout, settings, pixel_scales, invert=False
-    ):
+    def masked_parallel_fpr_from(
+        cls,
+        layout: "AbstractLayout2DCI",
+        settings: "SettingsMask2DCI",
+        pixel_scales: aa.type.PixelScales,
+        invert: bool = False,
+    ) -> "Mask2DCI":
 
-        front_edge_regions = layout.extractor_parallel_front_edge.region_list_from(
-            pixels=settings.parallel_front_edge_rows
+        fpr_regions = layout.extractor_parallel_fpr.region_list_from(
+            pixels=settings.parallel_fpr_pixels
         )
         mask = np.full(layout.shape_2d, False)
 
-        for region in front_edge_regions:
+        for region in fpr_regions:
             mask[region.y0 : region.y1, region.x0 : region.x1] = True
 
         if invert:
@@ -76,17 +88,21 @@ class Mask2DCI(Mask2D):
         return Mask2DCI(mask=mask.astype("bool"), pixel_scales=pixel_scales)
 
     @classmethod
-    def masked_parallel_epers_from_layout(
-        cls, layout, settings, pixel_scales, invert=False
-    ):
+    def masked_parallel_epers_from(
+        cls,
+        layout: "AbstractLayout2DCI",
+        settings: "SettingsMask2DCI",
+        pixel_scales: aa.type.PixelScales,
+        invert: bool = False,
+    ) -> "Mask2DCI":
 
-        trails_regions = layout.extractor_parallel_epers.region_list_from(
-            pixels=settings.parallel_epers_rows
+        eper_regions = layout.extractor_parallel_eper.region_list_from(
+            pixels=settings.parallel_epers_pixels
         )
 
         mask = np.full(layout.shape_2d, False)
 
-        for region in trails_regions:
+        for region in eper_regions:
             mask[region.y0 : region.y1, region.x0 : region.x1] = True
 
         if invert:
@@ -95,16 +111,20 @@ class Mask2DCI(Mask2D):
         return Mask2DCI(mask=mask.astype("bool"), pixel_scales=pixel_scales)
 
     @classmethod
-    def masked_serial_front_edge_from_layout(
-        cls, layout, settings, pixel_scales, invert=False
-    ):
+    def masked_serial_fpr_from(
+        cls,
+        layout: "AbstractLayout2DCI",
+        settings: "SettingsMask2DCI",
+        pixel_scales: aa.type.PixelScales,
+        invert: bool = False,
+    ) -> "Mask2DCI":
 
-        front_edge_regions = layout.extractor_serial_front_edge.region_list_from(
-            pixels=settings.serial_front_edge_columns
+        fpr_regions = layout.extractor_serial_fpr.region_list_from(
+            pixels=settings.serial_fpr_pixels
         )
         mask = np.full(layout.shape_2d, False)
 
-        for region in front_edge_regions:
+        for region in fpr_regions:
             mask[region.y0 : region.y1, region.x0 : region.x1] = True
 
         if invert:
@@ -113,16 +133,20 @@ class Mask2DCI(Mask2D):
         return Mask2DCI(mask=mask.astype("bool"), pixel_scales=pixel_scales)
 
     @classmethod
-    def masked_serial_trails_from_layout(
-        cls, layout, settings, pixel_scales, invert=False
-    ):
+    def masked_serial_epers_from(
+        cls,
+        layout: "AbstractLayout2DCI",
+        settings: "SettingsMask2DCI",
+        pixel_scales: aa.type.PixelScales,
+        invert: bool = False,
+    ) -> "Mask2DCI":
 
-        trails_regions = layout.extractor_serial_trails.region_list_from(
-            pixels=settings.serial_trails_columns
+        eper_regions = layout.extractor_serial_eper.region_list_from(
+            pixels=settings.serial_eper_pixels
         )
         mask = np.full(layout.shape_2d, False)
 
-        for region in trails_regions:
+        for region in eper_regions:
             mask[region.y0 : region.y1, region.x0 : region.x1] = True
 
         if invert:

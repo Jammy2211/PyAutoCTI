@@ -17,7 +17,7 @@ class TestResultImagingCI:
 
         masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
         masked_imaging_ci = masked_imaging_ci.apply_settings(
-            settings=ac.ci.SettingsImagingCI(parallel_columns=(0, 1))
+            settings=ac.ci.SettingsImagingCI(parallel_pixels=(0, 1))
         )
 
         analysis = ac.AnalysisImagingCI(

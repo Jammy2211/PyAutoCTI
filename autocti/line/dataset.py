@@ -12,7 +12,7 @@ from autoarray.dataset import preprocess
 from autoarray.structures.arrays.one_d.array_1d import array_1d_util
 
 from autocti.line.layout import Layout1DLine
-from autocti.util.clocker import Clocker1D
+from autocti.clocker.one_d import Clocker1D
 
 from autocti import exc
 

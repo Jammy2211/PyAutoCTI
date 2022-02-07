@@ -13,7 +13,7 @@ from autocti.line.model.visualizer import VisualizerDatasetLine
 from autocti.model.result import ResultDataset
 from autocti.line.model.result import ResultDatasetLine
 from autocti.model.settings import SettingsCTI1D
-from autocti.util.clocker import Clocker1D
+from autocti.clocker.one_d import Clocker1D
 
 
 class AnalysisDatasetLine(Analysis):

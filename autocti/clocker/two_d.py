@@ -3,175 +3,15 @@ import numpy as np
 from typing import List, Optional, Tuple
 
 import autoarray as aa
+
+from autocti.clocker.abstract import AbstractClocker
+
 from autocti import exc
 
 from arcticpy.src import cti
-from arcticpy.src.ccd import CCD
 from arcticpy.src.ccd import CCDPhase
 from arcticpy.src.roe import ROE
 from arcticpy.src.traps import AbstractTrap
-
-
-class AbstractClocker:
-    def __init__(self, iterations: int = 1, verbosity: int = 0):
-        """
-        An abstract clocker, which wraps the c++ arctic CTI clocking algorithm in **PyAutoCTI**.
-
-        Parameters
-        ----------
-        iterations
-            The number of iterations used to correct CTI from an image.
-        verbosity
-            Whether to silence print statements and output from the c++ arctic call.
-        """
-
-        self.iterations = iterations
-        self.verbosity = verbosity
-
-    def ccd_from(self, ccd_phase: CCDPhase) -> CCD:
-        """
-        Returns a `CCD` object from a `CCDPhase` object.
-
-        The `CCDPhase` describes the volume-filling behaviour of the CCD and is therefore used as a model-component
-        in CTI calibration. To call arctic it needs converting to a `CCD` object.
-
-        Parameters
-        ----------
-        ccd_phase
-            The ccd phase describing the volume-filling behaviour of the CCD.
-
-        Returns
-        -------
-        A `CCD` object based on the input phase which is passed to the c++ arctic.
-        """
-        if ccd_phase is not None:
-            return CCD(phases=[ccd_phase], fraction_of_traps_per_phase=[1.0])
-
-    def check_traps(
-        self,
-        trap_list_0: Optional[List[AbstractTrap]],
-        trap_list_1: Optional[List[AbstractTrap]] = None,
-    ):
-        """
-        Checks that there are trap species passed to the clocking algorithm and raises an exception if not.
-
-        Parameters
-        ----------
-        trap_list
-            A list of the trap species on the CCD which capture and release electrons during clock to as to add CTI.
-        """
-        if not any([trap_list_0, trap_list_1]):
-            raise exc.ClockerException(
-                "No Trap species were passed to the add_cti method"
-            )
-
-    def check_ccd(self, ccd_list: List[CCDPhase]):
-        """
-        Checks that there are trap species passed to the clocking algorithm and raises an exception if not.
-
-        Parameters
-        ----------
-        ccd_list
-            The ccd phase settings describing the volume-filling behaviour of the CCD which characterises the capture
-            and release of electrons and therefore CTI.
-        """
-        if not any(ccd_list):
-            raise exc.ClockerException("No CCD object was passed to the add_cti method")
-
-
-class Clocker1D(AbstractClocker):
-    def __init__(
-        self,
-        iterations: int = 1,
-        roe: ROE = ROE(),
-        express: int = 0,
-        window_start: int = 0,
-        window_stop: int = -1,
-        verbosity: int = 0,
-    ):
-        """
-        Performs clocking of a 1D signal via the c++ arctic algorithm.
-
-        This corresponds to a single row or column of a CCD in the parallel or serial direction. Given the notion of
-        parallel and serial are not relevent in 1D, these prefixes are dropped from parameters (unlike the `Clocker2D`)
-        object.
-
-        Parameters
-        ----------
-        iterations
-            The number of iterations used to correct CTI from an image.
-        roe
-            Contains parameters describing the read-out electronics of the CCD (e.g. CCD dwell times, charge injection
-            clocking, etc.).
-        express
-            An integer factor describing how pixel-to-pixel transfers are combined into single transfers for
-            efficiency (see: https://academic.oup.com/mnras/article/401/1/371/1006825).
-        window_start
-            The pixel index of the input image where arCTIc clocking begins, for example if `window_start=10` the
-            first 10 pixels are omitted and not clocked.
-        window_start
-            The pixel index of the input image where arCTIc clocking ends, for example if `window_start=20` any
-            pixels after the 20th pixel are omitted and not clocked.
-        verbosity
-            Whether to silence print statements and output from the c++ arctic call.
-        """
-
-        super().__init__(iterations=iterations, verbosity=verbosity)
-
-        self.roe = roe
-        self.express = express
-        self.window_start = window_start
-        self.window_stop = window_stop
-
-    def add_cti(
-        self,
-        data: aa.Array1D,
-        ccd: Optional[CCDPhase] = None,
-        trap_list: Optional[List[AbstractTrap]] = None,
-    ) -> aa.Array1D:
-        """
-        Add CTI to a 1D dataset by passing it from the c++ arctic clocking algorithm.
-
-        The c++ arctic wrapper takes as input a 2D ndarray, therefore this function converts the input 1D data to
-        a 2D ndarray where the second dimension is 1, passes this from arctic and then flattens the 2D ndarray that
-        is returned by to a 1D `Array1D` object with the input data's dimensions.
-
-        Parameters
-        ----------
-        data
-            The 1D data that is clocked via arctic and has CTI added to it.
-        ccd
-            The ccd phase settings describing the volume-filling behaviour of the CCD which characterises the capture
-            and release of electrons and therefore CTI.
-        trap_list
-            A list of the trap species on the CCD which capture and release electrons during clock to as to add CTI.
-        """
-        self.check_traps(trap_list_0=trap_list)
-        self.check_ccd(ccd_list=[ccd])
-
-        image_pre_cti_2d = aa.Array2D.zeros(
-            shape_native=(data.shape_native[0], 1), pixel_scales=data.pixel_scales
-        ).native
-
-        image_pre_cti_2d[:, 0] = data
-
-        ccd = self.ccd_from(ccd_phase=ccd)
-
-        image_post_cti = cti.add_cti(
-            image=image_pre_cti_2d,
-            parallel_ccd=ccd,
-            parallel_roe=self.roe,
-            parallel_traps=trap_list,
-            parallel_express=self.express,
-            parallel_offset=data.readout_offsets[0],
-            parallel_window_start=self.window_start,
-            parallel_window_stop=self.window_stop,
-            verbosity=self.verbosity,
-        )
-
-        return aa.Array1D.manual_native(
-            array=image_post_cti.flatten(), pixel_scales=data.pixel_scales
-        )
 
 
 class Clocker2D(AbstractClocker):
@@ -188,6 +28,7 @@ class Clocker2D(AbstractClocker):
         serial_express: int = 0,
         serial_window_start: int = 0,
         serial_window_stop: int = -1,
+        serial_fast_pixels: Optional[Tuple[int, int]] = None,
         verbosity: int = 0,
         poisson_seed: int = -1,
     ):
@@ -215,6 +56,10 @@ class Clocker2D(AbstractClocker):
         parallel_poisson_traps
             If `True`, the density of every trap species (which in the `Trap` objects is defined as the mean density
             of that species) are drawn from a Poisson distribution for every column of data.
+        parallel_fast_pixels
+            If input, parallel CTI is added via arctic efficiently by calling arctic once and mapping the 1D output over
+            the full 2D image. This requires every column in the image has the same signal (such that each column gives
+            an identical arctic output).
         serial_roe
             Contains parameters describing the read-out electronics of the CCD (e.g. CCD dwell times, charge injection
             clocking, etc.) for clocking in the serial direction.
@@ -226,7 +71,11 @@ class Clocker2D(AbstractClocker):
             if `window_start=10` the first 10 pixels are omitted and not clocked.
         serial_window_start
             The pixel index of the input image where serial arCTIc clocking ends, for example if `window_start=20`
-            any pixels after the 20th pixel are omitted and not clocked.            
+            any pixels after the 20th pixel are omitted and not clocked.
+        serial_fast_pixels
+            If input, serial CTI is added via arctic efficiently by calling arctic once and mapping the 1D output over
+            the full 2D image. This requires every row in the image has the same signal (such that each column gives
+            an identical arctic output).
         verbosity
             Whether to silence print statements and output from the c++ arctic call.
         poisson_seed
@@ -246,6 +95,7 @@ class Clocker2D(AbstractClocker):
         self.serial_express = serial_express
         self.serial_window_start = serial_window_start
         self.serial_window_stop = serial_window_stop
+        self.serial_fast_pixels = serial_fast_pixels
 
         self.poisson_seed = poisson_seed
 
@@ -277,14 +127,14 @@ class Clocker2D(AbstractClocker):
             The ccd phase settings describing the volume-filling behaviour of the CCD which characterises the capture
             and release of electrons and therefore CTI for clocking in the parallel direction.
         parallel_trap_list
-            A list of the parallel trap species on the CCD which capture and release electrons during parallel clocking 
+            A list of the parallel trap species on the CCD which capture and release electrons during parallel clocking
             which adds CTI.
         serial_ccd
             The ccd phase settings describing the volume-filling behaviour of the CCD which characterises the capture
             and release of electrons and therefore CTI for clocking in the serial direction.
         serial_trap_list
-            A list of the serial trap species on the CCD which capture and release electrons during serial clocking 
-            which adds CTI.            
+            A list of the serial trap species on the CCD which capture and release electrons during serial clocking
+            which adds CTI.
         """
 
         if self.parallel_poisson_traps:
@@ -301,6 +151,11 @@ class Clocker2D(AbstractClocker):
                 data=data,
                 parallel_ccd=parallel_ccd,
                 parallel_trap_list=parallel_trap_list,
+            )
+
+        if self.serial_fast_pixels is not None:
+            return self.add_cti_serial_fast(
+                data=data, serial_ccd=serial_ccd, serial_trap_list=serial_trap_list
             )
 
         self.check_traps(trap_list_0=parallel_trap_list, trap_list_1=serial_trap_list)
@@ -459,15 +314,17 @@ class Clocker2D(AbstractClocker):
             or np.any(image_pre_cti[:, end_column:]) != 0
         ):
             raise exc.ClockerException(
-                "Cannot use fast Clocker2D in parallel when there are non-zero entries outside the columns defined by"
-                "the `parallel_fast_pixels` tuple."
+                "Clocker2D parallel fast check failed -- "
+                "there are non-zero entries outside the columns "
+                "defined by the `parallel_fast_pixels` tuple."
             )
 
         if np.any(image_pre_cti[:, start_column] != image_pre_cti[:, end_column - 1]):
 
             raise exc.ClockerException(
-                "Cannot use fast Clocker2D in parallel when there are non-zero entries outside the columns defined by"
-                "the `parallel_fast_pixels` tuple."
+                "Clocker2D parallel fast check failed -- "
+                "the first and last column have different"
+                "pixel values."
             )
 
     def add_cti_parallel_fast(
@@ -501,6 +358,9 @@ class Clocker2D(AbstractClocker):
         parallel_trap_list
             A list of the parallel trap species on the CCD which capture and release electrons during parallel clocking
             which adds CTI.
+        perform_checks
+            Check that it is value for the input data to use the fast clocking speed up (e.g. all columns are identical
+            and all entries outside this region are zero).
         """
 
         image_pre_cti = data.native
@@ -532,6 +392,74 @@ class Clocker2D(AbstractClocker):
         ] = image_post_cti_pass
 
         return image_post_cti
+
+    # def add_cti_serial_fast(
+    #     self,
+    #     data: aa.Array2D,
+    #     serial_ccd: Optional[CCDPhase] = None,
+    #     serial_trap_list: Optional[List[AbstractTrap]] = None,
+    #     perform_checks: bool = True,
+    # ):
+    #     """
+    #     Add CTI to a 2D dataset by passing it to the c++ arctic clocking algorithm.
+    #
+    #     Clocking is performed towards the readout register and electronics, with parallel CTI added first followed
+    #     by serial CTI. If both parallel and serial CTI are added, serial CTI is added and the post-CTI image
+    #     (therefore including trailing after serial clocking) is used to perform serial clocking and add serial CTI.
+    #
+    #     For 2D images where the same signal is repeated over all columns (e.g. uniform charge injection imaging)
+    #     the CTI added to each row via arctic is identical. Therefore, this function speeds up CTI addition by
+    #     only a single column to arcitc once and copying the output column the NumPy array to construct the the final
+    #     post-cti image.
+    #
+    #     This only works for serial CTI when parallel CTI is omitted.
+    #
+    #     By default, checks are performed which ensure that the input data fits the criteria for this speed up.
+    #
+    #     Parameters
+    #     ----------
+    #     data
+    #         The 1D data that is clocked via arctic and has CTI added to it.
+    #     serial_ccd
+    #         The ccd phase settings describing the volume-filling behaviour of the CCD which characterises the capture
+    #         and release of electrons and therefore CTI for clocking in the serial direction.
+    #     serial_trap_list
+    #         A list of the serial trap species on the CCD which capture and release electrons during serial clocking
+    #         which adds CTI.
+    #     perform_checks
+    #         Check that it is value for the input data to use the fast clocking speed up (e.g. all columns are identical
+    #         and all entries outside this region are zero).
+    #     """
+    #
+    #     image_pre_cti = data.native
+    #     # if perform_checks:
+    #     #     self._check_serial_fast(image_pre_cti=image_pre_cti)
+    #
+    #     self.check_traps(trap_list_0=serial_trap_list)
+    #     self.check_ccd(ccd_list=[serial_ccd])
+    #
+    #     serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
+    #
+    #     image_pre_cti_pass = np.zeros(shape=(data.shape[0], 1))
+    #     image_pre_cti_pass[:, 0] = image_pre_cti[:, self.serial_fast_pixels[0]]
+    #
+    #     image_post_cti_pass = cti.add_cti(
+    #         image=image_pre_cti_pass,
+    #         serial_ccd=serial_ccd,
+    #         serial_roe=self.serial_roe,
+    #         serial_traps=serial_trap_list,
+    #         serial_express=self.serial_express,
+    #         serial_offset=0,
+    #         verbosity=self.verbosity,
+    #     )
+    #
+    #     image_post_cti = copy.copy(data.native)
+    #
+    #     image_post_cti[
+    #         :, self.serial_fast_pixels[0] : self.serial_fast_pixels[1]
+    #     ] = image_post_cti_pass
+    #
+    #     return image_post_cti
 
     def remove_cti(
         self,

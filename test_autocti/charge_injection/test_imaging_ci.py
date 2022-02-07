@@ -14,40 +14,40 @@ test_data_path = path.join(
 class TestSettingsImagingCI:
     def test__modify_via_fit_type(self):
 
-        settings = ac.ci.SettingsImagingCI(parallel_columns=None, serial_rows=None)
+        settings = ac.ci.SettingsImagingCI(parallel_pixels=None, serial_pixels=None)
         settings = settings.modify_via_fit_type(
             is_parallel_fit=False, is_serial_fit=False
         )
-        assert settings.parallel_columns is None
-        assert settings.serial_rows is None
+        assert settings.parallel_pixels is None
+        assert settings.serial_pixels is None
 
-        settings = ac.ci.SettingsImagingCI(parallel_columns=1, serial_rows=1)
+        settings = ac.ci.SettingsImagingCI(parallel_pixels=1, serial_pixels=1)
         settings = settings.modify_via_fit_type(
             is_parallel_fit=False, is_serial_fit=False
         )
-        assert settings.parallel_columns == 1
-        assert settings.serial_rows == 1
+        assert settings.parallel_pixels == 1
+        assert settings.serial_pixels == 1
 
-        settings = ac.ci.SettingsImagingCI(parallel_columns=1, serial_rows=1)
+        settings = ac.ci.SettingsImagingCI(parallel_pixels=1, serial_pixels=1)
         settings = settings.modify_via_fit_type(
             is_parallel_fit=True, is_serial_fit=False
         )
-        assert settings.parallel_columns == 1
-        assert settings.serial_rows is None
+        assert settings.parallel_pixels == 1
+        assert settings.serial_pixels is None
 
-        settings = ac.ci.SettingsImagingCI(parallel_columns=1, serial_rows=1)
+        settings = ac.ci.SettingsImagingCI(parallel_pixels=1, serial_pixels=1)
         settings = settings.modify_via_fit_type(
             is_parallel_fit=False, is_serial_fit=True
         )
-        assert settings.parallel_columns is None
-        assert settings.serial_rows == 1
+        assert settings.parallel_pixels is None
+        assert settings.serial_pixels == 1
 
-        settings = ac.ci.SettingsImagingCI(parallel_columns=1, serial_rows=1)
+        settings = ac.ci.SettingsImagingCI(parallel_pixels=1, serial_pixels=1)
         settings = settings.modify_via_fit_type(
             is_parallel_fit=True, is_serial_fit=True
         )
-        assert settings.parallel_columns is None
-        assert settings.serial_rows is None
+        assert settings.parallel_pixels is None
+        assert settings.serial_pixels is None
 
 
 class TestImagingCI:
@@ -285,7 +285,7 @@ class TestApplySettings:
 
         masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask)
         masked_imaging_ci = masked_imaging_ci.apply_settings(
-            settings=ac.ci.SettingsImagingCI(parallel_columns=(1, 3))
+            settings=ac.ci.SettingsImagingCI(parallel_pixels=(1, 3))
         )
 
         mask = ac.Mask2D.unmasked(shape_native=(7, 2), pixel_scales=1.0)
@@ -334,7 +334,7 @@ class TestApplySettings:
 
         masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask)
         masked_imaging_ci = masked_imaging_ci.apply_settings(
-            settings=ac.ci.SettingsImagingCI(serial_rows=(0, 1))
+            settings=ac.ci.SettingsImagingCI(serial_pixels=(0, 1))
         )
 
         mask = ac.Mask2D.unmasked(shape_native=(1, 7), pixel_scales=1.0)

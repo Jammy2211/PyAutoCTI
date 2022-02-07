@@ -19,9 +19,9 @@ class AbstractLayout2DCI(aa.Layout2D):
         normalization,
         region_list: aa.type.Region2DList,
         original_roe_corner: Tuple[int, int] = (1, 0),
-        parallel_overscan: Tuple[int, int, int, int] = None,
-        serial_prescan: Tuple[int, int, int, int] = None,
-        serial_overscan: Tuple[int, int, int, int] = None,
+        parallel_overscan: aa.type.Region2DLike = None,
+        serial_prescan: aa.type.Region2DLike = None,
+        serial_overscan: aa.type.Region2DLike = None,
     ):
         """
         Abstract base class for a charge injection layout, which defines the regions charge injections appear
@@ -58,12 +58,10 @@ class AbstractLayout2DCI(aa.Layout2D):
                     "The charge injection layout_ci regions are bigger than the image image_shape"
                 )
 
-        self.extractor_parallel_front_edge = Extractor2DParallelFPR(
-            region_list=region_list
-        )
-        self.extractor_parallel_epers = Extractor2DParallelEPER(region_list=region_list)
-        self.extractor_serial_front_edge = Extractor2DSerialFPR(region_list=region_list)
-        self.extractor_serial_trails = Extractor2DSerialEPER(region_list=region_list)
+        self.extractor_parallel_fpr = Extractor2DParallelFPR(region_list=region_list)
+        self.extractor_parallel_eper = Extractor2DParallelEPER(region_list=region_list)
+        self.extractor_serial_fpr = Extractor2DSerialFPR(region_list=region_list)
+        self.extractor_serial_eper = Extractor2DSerialEPER(region_list=region_list)
 
         super().__init__(
             shape_2d=shape_2d,
@@ -379,13 +377,13 @@ class AbstractLayout2DCI(aa.Layout2D):
 
         if fpr_range is not None:
 
-            new_array = self.extractor_parallel_front_edge.add_to_array(
+            new_array = self.extractor_parallel_fpr.add_to_array(
                 new_array=new_array, array=array, pixels=fpr_range
             )
 
         if trails_rows is not None:
 
-            new_array = self.extractor_parallel_epers.add_to_array(
+            new_array = self.extractor_parallel_eper.add_to_array(
                 new_array=new_array, array=array, pixels=trails_rows
             )
 
@@ -749,13 +747,13 @@ class AbstractLayout2DCI(aa.Layout2D):
 
         if front_edge_columns is not None:
 
-            new_array = self.extractor_serial_front_edge.add_to_array(
+            new_array = self.extractor_serial_fpr.add_to_array(
                 new_array=new_array, array=array, pixels=front_edge_columns
             )
 
         if trails_columns is not None:
 
-            new_array = self.extractor_serial_trails.add_to_array(
+            new_array = self.extractor_serial_eper.add_to_array(
                 new_array=new_array, array=array, pixels=trails_columns
             )
 
@@ -956,22 +954,20 @@ class AbstractLayout2DCI(aa.Layout2D):
     def extract_line_from(self, array: aa.Array2D, line_region: str) -> aa.Array1D:
 
         if line_region == "parallel_front_edge":
-            return self.extractor_parallel_front_edge.binned_array_1d_from(
-                array=array,
-                pixels=(0, self.extractor_parallel_front_edge.total_rows_min),
+            return self.extractor_parallel_fpr.binned_array_1d_from(
+                array=array, pixels=(0, self.extractor_parallel_fpr.total_rows_min)
             )
         elif line_region == "parallel_epers":
-            return self.extractor_parallel_epers.binned_array_1d_from(
+            return self.extractor_parallel_eper.binned_array_1d_from(
                 array=array, pixels=(0, self.smallest_parallel_rows_between_ci_regions)
             )
         elif line_region == "serial_front_edge":
-            return self.extractor_serial_front_edge.binned_array_1d_from(
-                array=array,
-                pixels=(0, self.extractor_serial_front_edge.total_columns_min),
+            return self.extractor_serial_fpr.binned_array_1d_from(
+                array=array, pixels=(0, self.extractor_serial_fpr.total_columns_min)
             )
         elif line_region == "serial_trails":
-            return self.extractor_serial_trails.binned_array_1d_from(
-                array=array, pixels=(0, self.serial_trails_columns)
+            return self.extractor_serial_eper.binned_array_1d_from(
+                array=array, pixels=(0, self.serial_eper_pixels)
             )
         else:
             raise exc.PlottingException(

@@ -12,32 +12,36 @@ from autoarray.dataset.imaging import AbstractSimulatorImaging
 from autocti.charge_injection.layout import Layout2DCI
 from autocti.charge_injection.layout import Layout2DCINonUniform
 from autocti.mask import mask_2d
-from autocti.util.clocker import Clocker2D
+from autocti.clocker.two_d import Clocker2D
 from autocti import exc
 
 from typing import Union, Optional, List, Tuple
 
 
 class SettingsImagingCI(SettingsImaging):
-    def __init__(self, parallel_columns=None, serial_rows=None):
+    def __init__(
+        self,
+        parallel_pixels: Tuple[int, int] = None,
+        serial_pixels: Tuple[int, int] = None,
+    ):
 
         super().__init__()
 
-        self.parallel_columns = parallel_columns
-        self.serial_rows = serial_rows
+        self.parallel_pixels = parallel_pixels
+        self.serial_pixels = serial_pixels
 
     def modify_via_fit_type(self, is_parallel_fit, is_serial_fit):
         """
         Modify the settings based on the type of fit being performed where:
 
-        - If the fit is a parallel only fit (is_parallel_fit=True, is_serial_fit=False) the serial_rows are set to None
+        - If the fit is a parallel only fit (is_parallel_fit=True, is_serial_fit=False) the serial_pixels are set to None
           and all other settings remain the same.
 
-        - If the fit is a serial only fit (is_parallel_fit=False, is_serial_fit=True) the parallel_columns are set to
+        - If the fit is a serial only fit (is_parallel_fit=False, is_serial_fit=True) the parallel_pixels are set to
           None and all other settings remain the same.
 
-        - If the fit is a parallel and serial fit (is_parallel_fit=True, is_serial_fit=True) the *parallel_columns* and
-          *serial_rows* are set to None and all other settings remain the same.
+        - If the fit is a parallel and serial fit (is_parallel_fit=True, is_serial_fit=True) the *parallel_pixels* and
+          *serial_pixels* are set to None and all other settings remain the same.
 
          These settings reflect the appropriate way to extract the charge injection imaging data for fits which use a
          parallel only CTI model, serial only CTI model or fit both.
@@ -53,10 +57,10 @@ class SettingsImagingCI(SettingsImaging):
         settings = copy.copy(self)
 
         if is_parallel_fit:
-            settings.serial_rows = None
+            settings.serial_pixels = None
 
         if is_serial_fit:
-            settings.parallel_columns = None
+            settings.parallel_pixels = None
 
         return settings
 
@@ -131,24 +135,24 @@ class ImagingCI(Imaging):
 
     def apply_settings(self, settings: SettingsImagingCI):
 
-        if settings.parallel_columns is not None:
+        if settings.parallel_pixels is not None:
 
             imaging = self.parallel_calibration_imaging_from(
-                columns=settings.parallel_columns
+                columns=settings.parallel_pixels
             )
 
             mask = self.layout.mask_for_parallel_calibration_from(
-                mask=self.mask, columns=settings.parallel_columns
+                mask=self.mask, columns=settings.parallel_pixels
             )
 
-        elif settings.serial_rows is not None:
+        elif settings.serial_pixels is not None:
 
             imaging = self.serial_calibration_imaging_for_rows(
-                rows=settings.serial_rows
+                rows=settings.serial_pixels
             )
 
             mask = self.layout.mask_for_serial_calibration_from(
-                mask=self.mask, rows=settings.serial_rows
+                mask=self.mask, rows=settings.serial_pixels
             )
 
         else:
