@@ -12,4 +12,3 @@ from .imaging import SimulatorImagingCI
 from .mask_2d import SettingsMask2DCI
 from .mask_2d import Mask2DCI
 from .layout import Layout2DCI
-from .layout import Layout2DCINonUniform

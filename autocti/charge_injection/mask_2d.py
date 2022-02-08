@@ -26,7 +26,7 @@ class Mask2DCI(Mask2D):
     def masked_fprs_and_epers_from(
         cls,
         mask: "Mask2D",
-        layout: "AbstractLayout2DCI",
+        layout: "Layout2DCI",
         settings: "SettingsMask2DCI",
         pixel_scales: aa.type.PixelScales,
     ) -> "Mask2DCI":
@@ -68,7 +68,7 @@ class Mask2DCI(Mask2D):
     @classmethod
     def masked_parallel_fpr_from(
         cls,
-        layout: "AbstractLayout2DCI",
+        layout: "Layout2DCI",
         settings: "SettingsMask2DCI",
         pixel_scales: aa.type.PixelScales,
         invert: bool = False,
@@ -90,7 +90,7 @@ class Mask2DCI(Mask2D):
     @classmethod
     def masked_parallel_epers_from(
         cls,
-        layout: "AbstractLayout2DCI",
+        layout: "Layout2DCI",
         settings: "SettingsMask2DCI",
         pixel_scales: aa.type.PixelScales,
         invert: bool = False,
@@ -113,7 +113,7 @@ class Mask2DCI(Mask2D):
     @classmethod
     def masked_serial_fpr_from(
         cls,
-        layout: "AbstractLayout2DCI",
+        layout: "Layout2DCI",
         settings: "SettingsMask2DCI",
         pixel_scales: aa.type.PixelScales,
         invert: bool = False,
@@ -135,7 +135,7 @@ class Mask2DCI(Mask2D):
     @classmethod
     def masked_serial_epers_from(
         cls,
-        layout: "AbstractLayout2DCI",
+        layout: "Layout2DCI",
         settings: "SettingsMask2DCI",
         pixel_scales: aa.type.PixelScales,
         invert: bool = False,

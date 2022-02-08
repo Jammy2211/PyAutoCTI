@@ -54,17 +54,19 @@ class AnalysisImagingCI(Analysis):
             serial_traps=instance.cti.serial_traps,
         )
 
-        hyper_noise_scalars = self.hyper_noise_scalars_from_instance(instance=instance)
+        hyper_noise_scalars = self.hyper_noise_scalars_from(instance=instance)
 
-        if instance.cti.parallel_traps is not None:
-            parallel_trap_list = list(instance.cti.parallel_traps)
-        else:
-            parallel_trap_list = None
+        parallel_trap_list = (
+            list(instance.cti.parallel_traps)
+            if instance.cti.parallel_traps is not None
+            else None
+        )
 
-        if instance.cti.serial_traps is not None:
-            serial_trap_list = list(instance.cti.serial_traps)
-        else:
-            serial_trap_list = None
+        serial_trap_list = (
+            list(instance.cti.serial_traps)
+            if instance.cti.serial_traps is not None
+            else None
+        )
 
         post_cti_data = self.clocker.add_cti(
             data=self.dataset_ci.pre_cti_data,
@@ -82,7 +84,7 @@ class AnalysisImagingCI(Analysis):
 
         return fit.log_likelihood
 
-    def hyper_noise_scalars_from_instance(
+    def hyper_noise_scalars_from(
         self, instance: ModelInstance, hyper_noise_scale: bool = True
     ) -> Optional[List[HyperCINoiseScalar]]:
 
@@ -114,7 +116,7 @@ class AnalysisImagingCI(Analysis):
         hyper_noise_scale: bool = True,
     ) -> FitImagingCI:
 
-        hyper_noise_scalars = self.hyper_noise_scalars_from_instance(
+        hyper_noise_scalars = self.hyper_noise_scalars_from(
             instance=instance, hyper_noise_scale=hyper_noise_scale
         )
 

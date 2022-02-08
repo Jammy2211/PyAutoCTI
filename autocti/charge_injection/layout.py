@@ -1,6 +1,7 @@
 from copy import deepcopy
+import math
 import numpy as np
-from typing import List, Tuple, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import autoarray as aa
 
@@ -12,16 +13,16 @@ from autocti.charge_injection.extractor_2d.serial_eper import Extractor2DSerialE
 from autocti.charge_injection.mask_2d import Mask2DCI
 
 
-class AbstractLayout2DCI(aa.Layout2D):
+class Layout2DCI(aa.Layout2D):
     def __init__(
         self,
         shape_2d: Tuple[int, int],
-        normalization,
         region_list: aa.type.Region2DList,
         original_roe_corner: Tuple[int, int] = (1, 0),
-        parallel_overscan: aa.type.Region2DLike = None,
-        serial_prescan: aa.type.Region2DLike = None,
-        serial_overscan: aa.type.Region2DLike = None,
+        parallel_overscan: Optional[aa.type.Region2DLike] = None,
+        serial_prescan: Optional[aa.type.Region2DLike] = None,
+        serial_overscan: Optional[aa.type.Region2DLike] = None,
+        electronics: Optional["ElectronicsCI"] = None,
     ):
         """
         Abstract base class for a charge injection layout, which defines the regions charge injections appear
@@ -63,6 +64,8 @@ class AbstractLayout2DCI(aa.Layout2D):
         self.extractor_serial_fpr = Extractor2DSerialFPR(region_list=region_list)
         self.extractor_serial_eper = Extractor2DSerialEPER(region_list=region_list)
 
+        self.electronics = electronics
+
         super().__init__(
             shape_2d=shape_2d,
             original_roe_corner=original_roe_corner,
@@ -71,11 +74,9 @@ class AbstractLayout2DCI(aa.Layout2D):
             serial_overscan=serial_overscan,
         )
 
-        self.normalization = normalization
-
     def layout_extracted_from(
         self, extraction_region: aa.type.Region2DLike
-    ) -> "AbstractLayout2DCI":
+    ) -> "Layout2DCI":
         """
         The charge injection layout after an extraction is performed on its associated charge injection image, where
         the extraction is defined by a region of pixel coordinates 
@@ -104,7 +105,6 @@ class AbstractLayout2DCI(aa.Layout2D):
         return self.__class__(
             original_roe_corner=self.original_roe_corner,
             shape_2d=self.shape_2d,
-            normalization=self.normalization,
             region_list=region_list,
             parallel_overscan=layout.parallel_overscan,
             serial_prescan=layout.serial_prescan,
@@ -974,13 +974,6 @@ class AbstractLayout2DCI(aa.Layout2D):
                 "The line region specified for the plotting of a line was invalid"
             )
 
-
-class Layout2DCI(AbstractLayout2DCI):
-    """
-    A uniform charge injection layout_ci, which is defined by the regions it appears on the charge injection \
-    array and its normalization.
-    """
-
     @classmethod
     def from_euclid_fits_header(cls, ext_header, do_rotation):
 
@@ -989,23 +982,9 @@ class Layout2DCI(AbstractLayout2DCI):
         serial_size = ext_header.get("NAXIS1", default=None)
         parallel_size = ext_header.get("NAXIS2", default=None)
 
-        injection_on = ext_header["CI_IJON"]
-        injection_off = ext_header["CI_IJOFF"]
-
-        injection_start = ext_header["CI_VSTAR"]
-        injection_end = ext_header["CI_VEND"]
-
-        injection_total = (injection_end - injection_start) / (
-            injection_on + injection_off
-        )
-
-        import math
-
-        math.floor(injection_total)
+        electronics = ElectronicsCI.from_ext_header(ext_header=ext_header)
 
         layout = aa.euclid.Layout2DEuclid.from_fits_header(ext_header=ext_header)
-
-        # TODO : Compute via .fits headers without injction_total.
 
         if do_rotation:
             roe_corner = layout.original_roe_corner
@@ -1017,198 +996,131 @@ class Layout2DCI(AbstractLayout2DCI):
             serial_overscan_size=serial_overscan_size,
             serial_size=serial_size,
             parallel_size=parallel_size,
-            injection_on=injection_on,
-            injection_off=injection_off,
-            injection_total=injection_total,
+            injection_on=electronics.injection_on,
+            injection_off=electronics.injection_off,
+            injection_total=electronics.injection_total,
             roe_corner=roe_corner,
         )
 
-        # The header "CI_IG1" is used as a placeholder for the normalization currently.
-        normalization = ext_header["CI_IG1"]
-
         return cls(
             shape_2d=(parallel_size, serial_size),
-            normalization=normalization,
             region_list=region_ci_list,
             original_roe_corner=layout.original_roe_corner,
             parallel_overscan=layout.parallel_overscan,
             serial_prescan=layout.serial_prescan,
             serial_overscan=layout.serial_overscan,
+            electronics=electronics,
         )
 
-    def pre_cti_data_from(self, shape_native, pixel_scales):
-        """Use this charge injection layout_ci to generate a pre-cti charge injection image. This is performed by \
-        going to its charge injection regions and adding the charge injection normalization value.
 
-        Parameters
-        -----------
-        shape_native
-            The image_shape of the pre_cti_datas to be created.
-        """
-
-        pre_cti_data = np.zeros(shape_native)
-
-        for region in self.region_list:
-            pre_cti_data[region.slice] += self.normalization
-
-        return aa.Array2D.manual(array=pre_cti_data, pixel_scales=pixel_scales)
-
-
-class Layout2DCINonUniform(AbstractLayout2DCI):
+class ElectronicsCI:
     def __init__(
         self,
-        shape_2d,
-        normalization,
-        region_list,
-        row_slope,
-        column_sigma=None,
-        maximum_normalization=np.inf,
-        parallel_overscan=None,
-        serial_prescan=None,
-        serial_overscan=None,
+        injection_on: Optional[int] = None,
+        injection_off: Optional[int] = None,
+        injection_start: Optional[int] = None,
+        injection_end: Optional[int] = None,
+        ig_1: Optional[float] = None,
+        ig_2: Optional[float] = None,
     ):
-        """A non-uniform charge injection layout_ci, which is defined by the regions it appears on a charge injection
-        array and its average normalization.
+        """
+        Stores the electronics parameters contained for a charge injection line image, with this class currently
+        specific to those in Euclid.
 
-        Non-uniformity across the columns of a charge injection layout_ci is due to spikes / drops in the current that
-        injects the charge. This is a noisy process, leading to non-uniformity with no regularity / smoothness. Thus,
-        it cannot be modeled with an analytic profile, and must be assumed as prior-knowledge about the charge
-        injection electronics or estimated from the observed charge injection ci_data.
+        These are extracted from the .fits file header of a charge injection image, with the original .fits
+        headers included in the `as_ext_header_dict` property.
 
-        Non-uniformity across the rows of a charge injection layout_ci is due to a drop-off in voltage in the current.
-        Therefore, it appears smooth and be modeled as an analytic function, which this code assumes is a
-        power-law with slope row_slope.
+        The `injection_on` and `injection_off` parameters determine the number of pixels the charge injection is
+        held on and then off for. The `v_start` and `v_end` parameters define the pixels where the charge injection
+        starts and ends.
+
+        For example, take a CCD which has 1820 rows of pixels, where:
+
+        - `injection_on=100`
+        - `injection_off=200`
+        - `v_start=10`
+        - `v_end`=1810
+
+        Starting from row 10, for every 300 rows of pixels there first 100 pixels will contain charge injection and
+        the remaining 200 rows will not (they will contain EPER trails). This pattern will be repeated 6 times over
+        the next 1800 pixels of the CCD with the charge injection ending at 1810.
+
+        NOTE: The charge injection electrons have the following four parameters:
+
+        VSTART_CHJ_INJ
+        VEND_CHJ_INJ
+        VSTART
+        VEND
+
+        I do not yet know which of these maps to which fits header. I am currently assuming all 4 correspond to
+        `v_start` and `v_end`, albeit their functionality is not used specifically.
 
         Parameters
-        -----------
-        normalization
-            The normalization of the charge injection region.
-        region_list : [(int,)]
-            A list of the integer coordinates specifying the corners of each charge injection region
-            (top-row, bottom-row, left-column, right-column).
-        row_slope
-            The power-law slope of non-uniformity in the row charge injection profile.
+        ----------
+        injection_on
+            The number of rows of pixels the charge injection is held on for per charge injection region.
+        injection_off
+            The number of rows of pixels the charge injection is held off for per charge injection region.
+        injection_start
+            The pixel row where the charge injection begins.
+        injection_end
+            The pixel row where the charge injection ends.
+        ig_1
+            The voltage of injection gate 1.
+        ig_2
+            The voltage of injection gate 2.
         """
+        self.injection_on = injection_on
+        self.injection_off = injection_off
+        self.injection_start = injection_start
+        self.injection_end = injection_end
+        self.ig_1 = ig_1
+        self.ig_2 = ig_2
 
-        super().__init__(
-            shape_2d=shape_2d,
-            normalization=normalization,
-            region_list=region_list,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+    @classmethod
+    def from_ext_header(cls, ext_header: Dict) -> "ElectronicsCI":
+        """
+        Creates the charge injection electronics from a Euclid charge injection imaging .fits header.
+
+        Parameters
+        ----------
+        ext_header
+            The .fits header dictionary of a Euclid charge injection image.
+        """
+        injection_on = ext_header["CI_IJON"]
+        injection_off = ext_header["CI_IJOFF"]
+        injection_start = ext_header["CI_VSTAR"]
+        injection_end = ext_header["CI_VEND"]
+
+        return ElectronicsCI(
+            injection_on=injection_on,
+            injection_off=injection_off,
+            injection_start=injection_start,
+            injection_end=injection_end,
         )
 
-        self.row_slope = row_slope
-        self.column_sigma = column_sigma
-        self.maximum_normalization = maximum_normalization
-
-    def region_ci_from(self, region_dimensions, ci_seed):
-        """Generate the non-uniform charge distribution of a charge injection region. This includes non-uniformity \
-        across both the rows and columns of the charge injection region.
-
-        Before adding non-uniformity to the rows and columns, we assume an input charge injection level \
-        (e.g. the average current being injected). We then simulator non-uniformity in this region.
-
-        Non-uniformity in the columns is caused by sharp peaks and troughs in the input charge current. To simulator  \
-        this, we change the normalization of each column by drawing its normalization value from a Gaussian \
-        distribution which has a mean of the input normalization and standard deviation *column_sigma*. The seed \
-        of the random number generator ensures that the non-uniform charge injection update_via_regions of each pre_cti_datas \
-        are identical.
-
-        Non-uniformity in the rows is caused by the charge smoothly decreasing as the injection is switched off. To \
-        simulator this, we assume the charge level as a function of row number is not flat but defined by a \
-        power-law with slope *row_slope*.
-
-        Non-uniform charge injection images are generated using the function *simulate_pre_cti*, which uses this \
-        function.
-
-        Parameters
-        -----------
-        maximum_normalization
-        column_sigma
-        region_dimensions
-            The size of the non-uniform charge injection region.
-        ci_seed : int
-            Input seed for the random number generator to give reproducible results.
+    @property
+    def as_ext_header_dict(self) -> Dict:
         """
-
-        np.random.seed(ci_seed)
-
-        ci_rows = region_dimensions[0]
-        ci_columns = region_dimensions[1]
-        ci_region = np.zeros(region_dimensions)
-
-        for column_number in range(ci_columns):
-
-            column_normalization = 0
-            while (
-                column_normalization <= 0
-                or column_normalization >= self.maximum_normalization
-            ):
-                column_normalization = np.random.normal(
-                    self.normalization, self.column_sigma
-                )
-
-            ci_region[0:ci_rows, column_number] = self.generate_column(
-                size=ci_rows, normalization=column_normalization
-            )
-
-        return ci_region
-
-    def pre_cti_data_from(self, shape_native, pixel_scales, ci_seed=-1) -> aa.Array2D:
-        """Use this charge injection layout_ci to generate a pre-cti charge injection image. This is performed by going \
-        to its charge injection regions and adding its non-uniform charge distribution.
-
-        For one column of a non-uniform charge injection pre_cti_datas, it is assumed that each non-uniform charge \
-        injection region has the same overall normalization value (after drawing this value randomly from a Gaussian \
-        distribution). Physically, this is true provided the spikes / troughs in the current that cause \
-        non-uniformity occur in an identical fashion for the generation of each charge injection region.
-
-        Parameters
-        -----------
-        column_sigma
-        shape_native
-            The image_shape of the pre_cti_datas to be created.
-        maximum_normalization
-
-        ci_seed : int
-            Input ci_seed for the random number generator to give reproducible results. A new ci_seed is always used for each \
-            pre_cti_datas, ensuring each non-uniform ci_region has the same column non-uniformity layout_ci.
+        Returns the charge injection electronics as a dictionary which is representative of the parameter values
+        stored in a Euclid charge injection .fits image.
         """
+        return {
+            "CI_IJON": self.injection_on,
+            "CI_IJOFF": self.injection_off,
+            "CI_VSTAR": self.injection_start,
+            "CI_VEND": self.injection_end,
+        }
 
-        pre_cti_data = np.zeros(shape_native)
-
-        if ci_seed == -1:
-            ci_seed = np.random.randint(
-                0, int(1e9)
-            )  # Use one ci_seed, so all regions have identical column
-            # non-uniformity.
-
-        for region in self.region_list:
-            pre_cti_data[region.slice] += self.region_ci_from(
-                region_dimensions=region.shape, ci_seed=ci_seed
-            )
-
-        try:
-            return aa.Array2D.manual(array=pre_cti_data, pixel_scales=pixel_scales)
-        except KeyError:
-            return pre_cti_data
-
-    def generate_column(self, size, normalization):
-        """Generate a column of non-uniform charge, including row non-uniformity.
-
-        The pixel-numbering used to generate non-uniformity across the charge injection rows runs from 1 -> size
-
-        Parameters
-        -----------
-        size : int
-            The size of the non-uniform column of charge
-        normalization
-            The input normalization of the column's charge e.g. the level of charge injected.
-
+    @property
+    def injection_total(self) -> int:
         """
-        return normalization * (np.arange(1, size + 1)) ** self.row_slope
+        The total number of charge injection regions for these electronics settings.
+        """
+        return math.floor(
+            (self.injection_end - self.injection_start)
+            / (self.injection_on + self.injection_off)
+        )
 
 
 def region_list_ci_from(

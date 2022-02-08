@@ -10,7 +10,6 @@ from arcticpy.src import traps
 from autocti.clocker.two_d import Clocker2D
 
 from autocti.charge_injection.layout import Layout2DCI
-from autocti.charge_injection.layout import Layout2DCINonUniform
 
 from autocti.charge_injection.layout import region_list_ci_from
 
@@ -143,30 +142,29 @@ def charge_injection_array_from(
     )
 
     """
-    Use the charge injection normalization_list and regions to create `Layout2DCINonUniform` of every image we'll simulate.
+    Use the charge injection normalization_list and regions to create `Layout2DCI` of every image we'll simulate.
     """
-    if use_non_uniform_pattern:
-        layout = Layout2DCINonUniform(
-            shape_2d=shape_native,
-            normalization=injection_normalization,
-            region_list=regions_ci,
-            row_slope=0.0,
-            column_sigma=100.0,
-            maximum_normalization=84700,
-        )
-    else:
-        layout = Layout2DCI(
-            shape_2d=shape_native,
-            normalization=injection_normalization,
-            region_list=regions_ci,
-        )
+    layout = Layout2DCI(shape_2d=shape_native, region_list=regions_ci)
 
     """
     Create every pre-cti charge injection image using each `Layout2DCI`
     """
-    pre_cti_data = layout.pre_cti_data_from(
-        shape_native=shape_native, pixel_scales=pixel_scales, ci_seed=ci_seed
-    )
+    if use_non_uniform_pattern:
+        pre_cti_data = layout.pre_cti_data_non_uniform_from(
+            shape_native=shape_native,
+            pixel_scales=pixel_scales,
+            normalization=injection_normalization,
+            row_slope=0.0,
+            column_sigma=100.0,
+            max_normalization=84700,
+            ci_seed=ci_seed,
+        )
+    else:
+        pre_cti_data = layout.pre_cti_data_uniform_from(
+            shape_native=shape_native,
+            pixel_scales=pixel_scales,
+            normalization=injection_normalization,
+        )
 
     """
     The OU-SIM parameter iquad defines the quadrant_id of the data (e.g. "E", "F", "G" or "H").

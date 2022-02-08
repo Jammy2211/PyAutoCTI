@@ -140,7 +140,6 @@ def make_dataset_line_7():
 def make_layout_ci_7x7():
     return ci.Layout2DCI(
         shape_2d=(7, 7),
-        normalization=10.0,
         region_list=[(1, 5, 1, 5)],
         original_roe_corner=(1, 0),
         serial_overscan=(0, 6, 6, 7),

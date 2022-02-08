@@ -11,9 +11,7 @@ class MockPattern(object):
 class TestMask2DCI:
     def test__masked_parallel_front_edge_from_layout(self):
 
-        layout = ac.ci.Layout2DCI(
-            shape_2d=(10, 3), normalization=1.0, region_list=[(1, 4, 0, 3)]
-        )
+        layout = ac.ci.Layout2DCI(shape_2d=(10, 3), region_list=[(1, 4, 0, 3)])
 
         mask = ac.ci.Mask2DCI.masked_parallel_fpr_from(
             layout=layout,
@@ -41,9 +39,7 @@ class TestMask2DCI:
             )
         ).all()
 
-        layout = ac.ci.Layout2DCI(
-            shape_2d=(10, 3), normalization=1.0, region_list=[(1, 4, 0, 3)]
-        )
+        layout = ac.ci.Layout2DCI(shape_2d=(10, 3), region_list=[(1, 4, 0, 3)])
 
         mask = ac.ci.Mask2DCI.masked_parallel_fpr_from(
             layout=layout,
@@ -73,9 +69,7 @@ class TestMask2DCI:
         ).all()
 
         layout = ac.ci.Layout2DCI(
-            shape_2d=(10, 3),
-            normalization=1.0,
-            region_list=[(1, 4, 0, 1), (1, 4, 2, 3)],
+            shape_2d=(10, 3), region_list=[(1, 4, 0, 1), (1, 4, 2, 3)]
         )
 
         mask = ac.ci.Mask2DCI.masked_parallel_fpr_from(
@@ -106,9 +100,7 @@ class TestMask2DCI:
 
     def test__masked_parallel_epers_from_layout(self):
 
-        layout = ac.ci.Layout2DCI(
-            shape_2d=(10, 3), normalization=1.0, region_list=[(1, 4, 0, 3)]
-        )
+        layout = ac.ci.Layout2DCI(shape_2d=(10, 3), region_list=[(1, 4, 0, 3)])
 
         mask = ac.ci.Mask2DCI.masked_parallel_epers_from(
             layout=layout,
@@ -136,9 +128,7 @@ class TestMask2DCI:
             )
         ).all()
 
-        layout = ac.ci.Layout2DCI(
-            shape_2d=(10, 3), normalization=1.0, region_list=[(1, 4, 0, 3)]
-        )
+        layout = ac.ci.Layout2DCI(shape_2d=(10, 3), region_list=[(1, 4, 0, 3)])
 
         mask = ac.ci.Mask2DCI.masked_parallel_epers_from(
             layout=layout,
@@ -168,9 +158,7 @@ class TestMask2DCI:
         ).all()
 
         layout = ac.ci.Layout2DCI(
-            shape_2d=(10, 3),
-            normalization=1.0,
-            region_list=[(1, 4, 0, 1), (1, 4, 2, 3)],
+            shape_2d=(10, 3), region_list=[(1, 4, 0, 1), (1, 4, 2, 3)]
         )
 
         mask = ac.ci.Mask2DCI.masked_parallel_epers_from(
@@ -201,9 +189,7 @@ class TestMask2DCI:
 
     def test__masked_serial_front_edge_from_layout(self):
 
-        layout = ac.ci.Layout2DCI(
-            shape_2d=(3, 10), normalization=1.0, region_list=[(0, 3, 1, 4)]
-        )
+        layout = ac.ci.Layout2DCI(shape_2d=(3, 10), region_list=[(0, 3, 1, 4)])
 
         mask = ac.ci.Mask2DCI.masked_serial_fpr_from(
             layout=layout,
@@ -257,9 +243,7 @@ class TestMask2DCI:
             )
         ).all()
 
-        layout = ac.ci.Layout2DCI(
-            shape_2d=(3, 10), normalization=1.0, region_list=[(0, 3, 1, 4)]
-        )
+        layout = ac.ci.Layout2DCI(shape_2d=(3, 10), region_list=[(0, 3, 1, 4)])
 
         mask = ac.ci.Mask2DCI.masked_serial_fpr_from(
             layout=layout,
@@ -282,9 +266,7 @@ class TestMask2DCI:
         ).all()
 
         layout = ac.ci.Layout2DCI(
-            shape_2d=(3, 10),
-            normalization=1.0,
-            region_list=[(0, 1, 1, 4), (2, 3, 1, 4)],
+            shape_2d=(3, 10), region_list=[(0, 1, 1, 4), (2, 3, 1, 4)]
         )
 
         mask = ac.ci.Mask2DCI.masked_serial_fpr_from(
@@ -319,9 +301,7 @@ class TestMask2DCI:
 
     def test__masked_serial_trails_from_layout(self):
 
-        layout = ac.ci.Layout2DCI(
-            shape_2d=(3, 10), normalization=1.0, region_list=[(0, 3, 1, 4)]
-        )
+        layout = ac.ci.Layout2DCI(shape_2d=(3, 10), region_list=[(0, 3, 1, 4)])
 
         mask = ac.ci.Mask2DCI.masked_serial_epers_from(
             layout=layout,
@@ -363,9 +343,7 @@ class TestMask2DCI:
         ).all()
 
         layout = ac.ci.Layout2DCI(
-            shape_2d=(3, 10),
-            normalization=1.0,
-            region_list=[(0, 1, 1, 4), (2, 3, 1, 4)],
+            shape_2d=(3, 10), region_list=[(0, 1, 1, 4), (2, 3, 1, 4)]
         )
 
         mask = ac.ci.Mask2DCI.masked_serial_epers_from(
@@ -404,9 +382,7 @@ class TestMask2DCI:
             shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
         )
 
-        layout = ac.ci.Layout2DCI(
-            shape_2d=(7, 7), normalization=1.0, region_list=[(1, 5, 1, 5)]
-        )
+        layout = ac.ci.Layout2DCI(shape_2d=(7, 7), region_list=[(1, 5, 1, 5)])
 
         mask = ac.ci.Mask2DCI.masked_fprs_and_epers_from(
             layout=layout,

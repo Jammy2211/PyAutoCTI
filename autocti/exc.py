@@ -10,6 +10,10 @@ class PatternLineException(Exception):
     pass
 
 
+class ImagingCIException(Exception):
+    pass
+
+
 class LayoutException(Exception):
     pass
 
