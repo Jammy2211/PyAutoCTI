@@ -301,32 +301,6 @@ class Clocker2D(AbstractClocker):
         except AttributeError:
             return image_post_cti
 
-    def _check_parallel_fast(self, image_pre_cti: aa.Array2D):
-        """
-        Checks the input 2D image to make sure it fits criteria that makes the parallel fast speed up valid
-        (see `add_cti_parallel_fast()`.
-        """
-        start_column = self.parallel_fast_pixels[0]
-        end_column = self.parallel_fast_pixels[1]
-
-        if (
-            np.any(image_pre_cti[:, 0:start_column]) != 0
-            or np.any(image_pre_cti[:, end_column:]) != 0
-        ):
-            raise exc.ClockerException(
-                "Clocker2D parallel fast check failed -- "
-                "there are non-zero entries outside the columns "
-                "defined by the `parallel_fast_pixels` tuple."
-            )
-
-        if np.any(image_pre_cti[:, start_column] != image_pre_cti[:, end_column - 1]):
-
-            raise exc.ClockerException(
-                "Clocker2D parallel fast check failed -- "
-                "the first and last column have different"
-                "pixel values."
-            )
-
     def add_cti_parallel_fast(
         self,
         data: aa.Array2D,
@@ -393,73 +367,73 @@ class Clocker2D(AbstractClocker):
 
         return image_post_cti
 
-    # def add_cti_serial_fast(
-    #     self,
-    #     data: aa.Array2D,
-    #     serial_ccd: Optional[CCDPhase] = None,
-    #     serial_trap_list: Optional[List[AbstractTrap]] = None,
-    #     perform_checks: bool = True,
-    # ):
-    #     """
-    #     Add CTI to a 2D dataset by passing it to the c++ arctic clocking algorithm.
-    #
-    #     Clocking is performed towards the readout register and electronics, with parallel CTI added first followed
-    #     by serial CTI. If both parallel and serial CTI are added, serial CTI is added and the post-CTI image
-    #     (therefore including trailing after serial clocking) is used to perform serial clocking and add serial CTI.
-    #
-    #     For 2D images where the same signal is repeated over all columns (e.g. uniform charge injection imaging)
-    #     the CTI added to each row via arctic is identical. Therefore, this function speeds up CTI addition by
-    #     only a single column to arcitc once and copying the output column the NumPy array to construct the the final
-    #     post-cti image.
-    #
-    #     This only works for serial CTI when parallel CTI is omitted.
-    #
-    #     By default, checks are performed which ensure that the input data fits the criteria for this speed up.
-    #
-    #     Parameters
-    #     ----------
-    #     data
-    #         The 1D data that is clocked via arctic and has CTI added to it.
-    #     serial_ccd
-    #         The ccd phase settings describing the volume-filling behaviour of the CCD which characterises the capture
-    #         and release of electrons and therefore CTI for clocking in the serial direction.
-    #     serial_trap_list
-    #         A list of the serial trap species on the CCD which capture and release electrons during serial clocking
-    #         which adds CTI.
-    #     perform_checks
-    #         Check that it is value for the input data to use the fast clocking speed up (e.g. all columns are identical
-    #         and all entries outside this region are zero).
-    #     """
-    #
-    #     image_pre_cti = data.native
-    #     # if perform_checks:
-    #     #     self._check_serial_fast(image_pre_cti=image_pre_cti)
-    #
-    #     self.check_traps(trap_list_0=serial_trap_list)
-    #     self.check_ccd(ccd_list=[serial_ccd])
-    #
-    #     serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
-    #
-    #     image_pre_cti_pass = np.zeros(shape=(data.shape[0], 1))
-    #     image_pre_cti_pass[:, 0] = image_pre_cti[:, self.serial_fast_pixels[0]]
-    #
-    #     image_post_cti_pass = cti.add_cti(
-    #         image=image_pre_cti_pass,
-    #         serial_ccd=serial_ccd,
-    #         serial_roe=self.serial_roe,
-    #         serial_traps=serial_trap_list,
-    #         serial_express=self.serial_express,
-    #         serial_offset=0,
-    #         verbosity=self.verbosity,
-    #     )
-    #
-    #     image_post_cti = copy.copy(data.native)
-    #
-    #     image_post_cti[
-    #         :, self.serial_fast_pixels[0] : self.serial_fast_pixels[1]
-    #     ] = image_post_cti_pass
-    #
-    #     return image_post_cti
+    def add_cti_serial_fast(
+        self,
+        data: aa.Array2D,
+        serial_ccd: Optional[CCDPhase] = None,
+        serial_trap_list: Optional[List[AbstractTrap]] = None,
+        perform_checks: bool = True,
+    ):
+        """
+        Add CTI to a 2D dataset by passing it to the c++ arctic clocking algorithm.
+
+        Clocking is performed towards the readout register and electronics, with parallel CTI added first followed
+        by serial CTI. If both parallel and serial CTI are added, serial CTI is added and the post-CTI image
+        (therefore including trailing after serial clocking) is used to perform serial clocking and add serial CTI.
+
+        For 2D images where the same signal is repeated over all columns (e.g. uniform charge injection imaging)
+        the CTI added to each row via arctic is identical. Therefore, this function speeds up CTI addition by
+        only a single column to arcitc once and copying the output column the NumPy array to construct the the final
+        post-cti image.
+
+        This only works for serial CTI when parallel CTI is omitted.
+
+        By default, checks are performed which ensure that the input data fits the criteria for this speed up.
+
+        Parameters
+        ----------
+        data
+            The 1D data that is clocked via arctic and has CTI added to it.
+        serial_ccd
+            The ccd phase settings describing the volume-filling behaviour of the CCD which characterises the capture
+            and release of electrons and therefore CTI for clocking in the serial direction.
+        serial_trap_list
+            A list of the serial trap species on the CCD which capture and release electrons during serial clocking
+            which adds CTI.
+        perform_checks
+            Check that it is value for the input data to use the fast clocking speed up (e.g. all columns are identical
+            and all entries outside this region are zero).
+        """
+
+        image_pre_cti = data.native
+        if perform_checks:
+            self._check_serial_fast(image_pre_cti=image_pre_cti)
+
+        self.check_traps(trap_list_0=serial_trap_list)
+        self.check_ccd(ccd_list=[serial_ccd])
+
+        serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
+
+        image_pre_cti_pass = np.zeros(shape=(1, data.shape[1]))
+        image_pre_cti_pass[0, :] = image_pre_cti[self.serial_fast_pixels[0], :]
+
+        image_post_cti_pass = cti.add_cti(
+            image=image_pre_cti_pass,
+            serial_ccd=serial_ccd,
+            serial_roe=self.serial_roe,
+            serial_traps=serial_trap_list,
+            serial_express=self.serial_express,
+            serial_offset=0,
+            verbosity=self.verbosity,
+        )
+
+        image_post_cti = copy.copy(data.native)
+
+        image_post_cti[
+            self.serial_fast_pixels[0] : self.serial_fast_pixels[1], :
+        ] = image_post_cti_pass
+
+        return image_post_cti
 
     def remove_cti(
         self,
@@ -523,3 +497,55 @@ class Clocker2D(AbstractClocker):
         return aa.Array2D.manual_mask(
             array=image_cti_removed, mask=data.mask, header=data.header
         ).native
+
+    def _check_parallel_fast(self, image_pre_cti: aa.Array2D):
+        """
+        Checks the input 2D image to make sure it fits criteria that makes the parallel fast speed up valid
+        (see `add_cti_parallel_fast()`.
+        """
+        start_column = self.parallel_fast_pixels[0]
+        end_column = self.parallel_fast_pixels[1]
+
+        if (
+            np.any(image_pre_cti[:, 0:start_column]) != 0
+            or np.any(image_pre_cti[:, end_column:]) != 0
+        ):
+            raise exc.ClockerException(
+                "Clocker2D parallel fast check failed -- "
+                "there are non-zero entries outside the columns "
+                "defined by the `parallel_fast_pixels` tuple."
+            )
+
+        if np.any(image_pre_cti[:, start_column] != image_pre_cti[:, end_column - 1]):
+
+            raise exc.ClockerException(
+                "Clocker2D parallel fast check failed -- "
+                "the first and last column have different"
+                "pixel values."
+            )
+
+    def _check_serial_fast(self, image_pre_cti: aa.Array2D):
+        """
+        Checks the input 2D image to make sure it fits criteria that makes the serial fast speed up valid
+        (see `add_cti_parallel_fast()`.
+        """
+        start_row = self.serial_fast_pixels[0]
+        end_row = self.serial_fast_pixels[1]
+
+        if (
+            np.any(image_pre_cti[0:start_row, :]) != 0
+            or np.any(image_pre_cti[end_row:, :]) != 0
+        ):
+            raise exc.ClockerException(
+                "Clocker2D serial fast check failed -- "
+                "there are non-zero entries outside the rows "
+                "defined by the `serial_fast_pixels` tuple."
+            )
+
+        if np.any(image_pre_cti[start_row, :] != image_pre_cti[end_row - 1, :]):
+
+            raise exc.ClockerException(
+                "Clocker2D serial fast check failed -- "
+                "the first and last rows have different"
+                "pixel values."
+            )

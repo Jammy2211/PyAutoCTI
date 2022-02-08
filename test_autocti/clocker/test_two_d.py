@@ -124,7 +124,7 @@ def test__add_cti_with_poisson_trap_densities():
     assert (image_via_clocker[:, 3] > 0.0).all()
 
 
-def test__add_cti_fast_parallel():
+def test__add_cti_parallel_fast():
 
     arr = np.array(
         (
@@ -166,7 +166,7 @@ def test__add_cti_fast_parallel():
     assert image_via_clocker == pytest.approx(image_via_clocker_fast, 1.0e-6)
 
 
-def test__add_cti_fast_parallel__raises_exception_if_nonzero_outside_tuple():
+def test__add_cti_parallel_fast__raises_exception_if_nonzero_outside_tuple():
 
     ccd = ac.CCDPhase(full_well_depth=1e3, well_notch_depth=0.0, well_fill_power=1.0)
 
@@ -246,7 +246,7 @@ def test__add_cti_fast_parallel__raises_exception_if_nonzero_outside_tuple():
         clocker.add_cti(data=arr, parallel_trap_list=trap_list, parallel_ccd=ccd)
 
 
-def test__add_cti_serial_parallel():
+def test__add_cti_serial_fast():
 
     arr = np.array(
         (
@@ -273,8 +273,6 @@ def test__add_cti_serial_parallel():
         data=arr, serial_trap_list=trap_list, serial_ccd=ccd
     )
 
-    print(image_via_clocker)
-
     clocker = ac.Clocker2D(serial_fast_pixels=(1, 3))
 
     image_via_clocker_fast = clocker.add_cti(
@@ -282,6 +280,68 @@ def test__add_cti_serial_parallel():
     )
 
     assert image_via_clocker == pytest.approx(image_via_clocker_fast, 1.0e-6)
+
+
+def test__add_cti_serial_fast__raises_exception_if_nonzero_outside_tuple():
+
+    ccd = ac.CCDPhase(full_well_depth=1e3, well_notch_depth=0.0, well_fill_power=1.0)
+
+    trap_list = [
+        ac.TrapInstantCapture(density=10.0, release_timescale=-1.0 / np.log(0.5))
+    ]
+
+    clocker = ac.Clocker2D(serial_fast_pixels=(1, 3))
+
+    arr = np.array(
+        (
+            [
+                [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            ]
+        )
+    )
+
+    arr = ac.Array2D.manual(array=arr, pixel_scales=1.0).native
+
+    with pytest.raises(exc.ClockerException):
+
+        clocker.add_cti(data=arr, serial_trap_list=trap_list, serial_ccd=ccd)
+
+    arr = np.array(
+        (
+            [
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
+            ]
+        )
+    )
+
+    arr = ac.Array2D.manual(array=arr, pixel_scales=1.0).native
+
+    with pytest.raises(exc.ClockerException):
+
+        clocker.add_cti(data=arr, serial_trap_list=trap_list, serial_ccd=ccd)
+
+    arr = np.array(
+        (
+            [
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 1.0, 1.0, 1.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            ]
+        )
+    )
+
+    arr = ac.Array2D.manual(array=arr, pixel_scales=1.0).native
+
+    with pytest.raises(exc.ClockerException):
+
+        clocker.add_cti(data=arr, serial_trap_list=trap_list, serial_ccd=ccd)
 
 
 def test__raises_exception_if_no_traps_or_ccd_passed():
