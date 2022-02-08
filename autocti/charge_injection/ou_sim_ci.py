@@ -10,6 +10,7 @@ from arcticpy.src import traps
 from autocti.clocker.two_d import Clocker2D
 
 from autocti.charge_injection.layout import Layout2DCI
+from autocti.charge_injection.imaging import SimulatorImagingCI
 
 from autocti.charge_injection.layout import region_list_ci_from
 
@@ -147,11 +148,15 @@ def charge_injection_array_from(
     layout = Layout2DCI(shape_2d=shape_native, region_list=regions_ci)
 
     """
+    The simulator object creates simulations of charge injeciton imaging.
+    """
+    """
     Create every pre-cti charge injection image using each `Layout2DCI`
     """
     if use_non_uniform_pattern:
-        pre_cti_data = layout.pre_cti_data_non_uniform_from(
-            shape_native=shape_native,
+
+        simulator = SimulatorImagingCI(
+            is_non_uniform=True,
             pixel_scales=pixel_scales,
             normalization=injection_normalization,
             row_slope=0.0,
@@ -159,12 +164,17 @@ def charge_injection_array_from(
             max_normalization=84700,
             ci_seed=ci_seed,
         )
+
+        pre_cti_data = simulator.pre_cti_data_non_uniform_from(layout=layout)
     else:
-        pre_cti_data = layout.pre_cti_data_uniform_from(
-            shape_native=shape_native,
+
+        simulator = SimulatorImagingCI(
+            is_non_uniform=False,
             pixel_scales=pixel_scales,
             normalization=injection_normalization,
         )
+
+        pre_cti_data = simulator.pre_cti_data_uniform_from(layout=layout)
 
     """
     The OU-SIM parameter iquad defines the quadrant_id of the data (e.g. "E", "F", "G" or "H").

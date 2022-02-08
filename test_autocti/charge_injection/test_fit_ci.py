@@ -354,9 +354,7 @@ class TestChiSquaredMapsOfRegions:
         self,
     ):
 
-        layout = ac.ci.Layout2DCI(
-            shape_2d=(2, 2), region_list=[(0, 1, 0, 1)], normalization=1.0
-        )
+        layout = ac.ci.Layout2DCI(shape_2d=(2, 2), region_list=[(0, 1, 0, 1)])
 
         image = 3.0 * ac.Array2D.ones(shape_native=(2, 2), pixel_scales=1.0)
         noise_map = ac.Array2D.ones(shape_native=(2, 2), pixel_scales=1.0)
@@ -385,7 +383,6 @@ class TestChiSquaredMapsOfRegions:
         layout = ac.ci.Layout2DCI(
             shape_2d=(2, 2),
             region_list=[(0, 1, 0, 1)],
-            normalization=1.0,
             serial_prescan=(1, 2, 1, 2),
             serial_overscan=(0, 1, 1, 2),
         )
@@ -415,10 +412,7 @@ class TestChiSquaredMapsOfRegions:
     ):
 
         layout = ac.ci.Layout2DCI(
-            shape_2d=(2, 2),
-            region_list=[(0, 2, 0, 1)],
-            normalization=1.0,
-            serial_overscan=(1, 2, 0, 2),
+            shape_2d=(2, 2), region_list=[(0, 2, 0, 1)], serial_overscan=(1, 2, 0, 2)
         )
 
         image = 3.0 * ac.Array2D.ones(shape_native=(2, 2), pixel_scales=1.0)
@@ -445,10 +439,7 @@ class TestChiSquaredMapsOfRegions:
         self,
     ):
         layout = ac.ci.Layout2DCI(
-            shape_2d=(2, 2),
-            region_list=[(0, 1, 0, 1)],
-            normalization=1.0,
-            serial_overscan=(0, 2, 1, 2),
+            shape_2d=(2, 2), region_list=[(0, 1, 0, 1)], serial_overscan=(0, 2, 1, 2)
         )
 
         image = 3.0 * ac.Array2D.ones(shape_native=(2, 2), pixel_scales=1.0)
