@@ -350,7 +350,6 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         pixel_scales: aa.type.PixelScales,
         normalization: float,
         max_normalization: float = np.inf,
-        is_non_uniform: bool = True,
         column_sigma: Optional[float] = None,
         row_slope: Optional[float] = 0.0,
         read_noise: Optional[float] = None,
@@ -378,7 +377,6 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
 
         self.normalization = normalization
         self.max_normalization = max_normalization
-        self.is_non_uniform = is_non_uniform
         self.column_sigma = column_sigma
         self.row_slope = row_slope
 
@@ -557,7 +555,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
             Seed for the read-noises added to the image.
         """
 
-        if self.is_non_uniform:
+        if self.column_sigma is not None:
             pre_cti_data = self.pre_cti_data_non_uniform_from(layout=layout)
         else:
             pre_cti_data = self.pre_cti_data_uniform_from(layout=layout)

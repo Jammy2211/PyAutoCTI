@@ -156,7 +156,6 @@ def charge_injection_array_from(
     if use_non_uniform_pattern:
 
         simulator = SimulatorImagingCI(
-            is_non_uniform=True,
             pixel_scales=pixel_scales,
             normalization=injection_normalization,
             row_slope=0.0,
@@ -169,9 +168,7 @@ def charge_injection_array_from(
     else:
 
         simulator = SimulatorImagingCI(
-            is_non_uniform=False,
-            pixel_scales=pixel_scales,
-            normalization=injection_normalization,
+            pixel_scales=pixel_scales, normalization=injection_normalization
         )
 
         pre_cti_data = simulator.pre_cti_data_uniform_from(layout=layout)

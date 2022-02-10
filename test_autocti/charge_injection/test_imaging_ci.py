@@ -354,9 +354,7 @@ class TestApplySettings:
 class TestSimulatorImagingCI:
     def test__pre_cti_data_from(self):
 
-        simulator = ac.ci.SimulatorImagingCI(
-            is_non_uniform=False, normalization=30.0, pixel_scales=1.0
-        )
+        simulator = ac.ci.SimulatorImagingCI(normalization=30.0, pixel_scales=1.0)
 
         layout = ac.ci.Layout2DCI(
             shape_2d=(4, 3), region_list=[(0, 3, 0, 2), (2, 3, 2, 3)]
@@ -379,7 +377,6 @@ class TestSimulatorImagingCI:
     def test__region_ci_from(self):
 
         simulator = ac.ci.SimulatorImagingCI(
-            is_non_uniform=True,
             pixel_scales=1.0,
             normalization=100.0,
             row_slope=0.0,
@@ -399,7 +396,6 @@ class TestSimulatorImagingCI:
         ).all()
 
         simulator = ac.ci.SimulatorImagingCI(
-            is_non_uniform=True,
             pixel_scales=1.0,
             normalization=100.0,
             row_slope=0.0,
@@ -419,7 +415,6 @@ class TestSimulatorImagingCI:
         ).all()
 
         simulator = ac.ci.SimulatorImagingCI(
-            is_non_uniform=True,
             pixel_scales=1.0,
             normalization=100.0,
             row_slope=-0.01,
@@ -439,7 +434,6 @@ class TestSimulatorImagingCI:
         ).all()
 
         simulator = ac.ci.SimulatorImagingCI(
-            is_non_uniform=True,
             pixel_scales=1.0,
             normalization=100.0,
             row_slope=-0.01,
@@ -459,7 +453,6 @@ class TestSimulatorImagingCI:
         ).all()
 
         simulator = ac.ci.SimulatorImagingCI(
-            is_non_uniform=True,
             pixel_scales=1.0,
             normalization=100.0,
             row_slope=0.0,
@@ -475,20 +468,14 @@ class TestSimulatorImagingCI:
 
     def test__pre_cti_data_from__compare_uniform_to_non_uniform(self):
 
-        simulator = ac.ci.SimulatorImagingCI(
-            pixel_scales=1.0, is_non_uniform=False, normalization=10.0
-        )
+        simulator = ac.ci.SimulatorImagingCI(pixel_scales=1.0, normalization=10.0)
 
         layout = ac.ci.Layout2DCI(shape_2d=(5, 5), region_list=[(2, 4, 0, 5)])
 
         pre_cti_data_0 = simulator.pre_cti_data_uniform_from(layout=layout)
 
         simulator = ac.ci.SimulatorImagingCI(
-            is_non_uniform=True,
-            pixel_scales=1.0,
-            normalization=10.0,
-            row_slope=0.0,
-            column_sigma=0.0,
+            pixel_scales=1.0, normalization=10.0, row_slope=0.0, column_sigma=0.0
         )
 
         pre_cti_data_1 = simulator.pre_cti_data_non_uniform_from(layout=layout)
@@ -499,7 +486,6 @@ class TestSimulatorImagingCI:
 
         simulator = ac.ci.SimulatorImagingCI(
             pixel_scales=1.0,
-            is_non_uniform=True,
             normalization=100.0,
             row_slope=0.0,
             column_sigma=1.0,
@@ -527,7 +513,6 @@ class TestSimulatorImagingCI:
 
         simulator = ac.ci.SimulatorImagingCI(
             pixel_scales=1.0,
-            is_non_uniform=True,
             normalization=100.0,
             row_slope=0.0,
             column_sigma=1.0,
@@ -557,7 +542,6 @@ class TestSimulatorImagingCI:
 
         simulator = ac.ci.SimulatorImagingCI(
             pixel_scales=1.0,
-            is_non_uniform=True,
             normalization=100.0,
             row_slope=0.0,
             column_sigma=100.0,
@@ -577,11 +561,7 @@ class TestSimulatorImagingCI:
     def test__pre_cti_data_from__non_uniformity_in_rows(self):
 
         simulator = ac.ci.SimulatorImagingCI(
-            pixel_scales=1.0,
-            is_non_uniform=True,
-            normalization=100.0,
-            row_slope=-0.01,
-            column_sigma=0.0,
+            pixel_scales=1.0, normalization=100.0, row_slope=-0.01, column_sigma=0.0
         )
 
         layout = ac.ci.Layout2DCI(shape_2d=(5, 5), region_list=[(0, 3, 0, 3)])
@@ -604,11 +584,7 @@ class TestSimulatorImagingCI:
         ).all()
 
         simulator = ac.ci.SimulatorImagingCI(
-            pixel_scales=1.0,
-            is_non_uniform=True,
-            normalization=100.0,
-            row_slope=-0.01,
-            column_sigma=0.0,
+            pixel_scales=1.0, normalization=100.0, row_slope=-0.01, column_sigma=0.0
         )
 
         layout = ac.ci.Layout2DCI(
@@ -634,7 +610,6 @@ class TestSimulatorImagingCI:
 
         simulator = ac.ci.SimulatorImagingCI(
             pixel_scales=1.0,
-            is_non_uniform=True,
             normalization=100.0,
             row_slope=-0.01,
             column_sigma=1.0,
@@ -664,7 +639,6 @@ class TestSimulatorImagingCI:
 
         simulator = ac.ci.SimulatorImagingCI(
             pixel_scales=1.0,
-            is_non_uniform=True,
             normalization=100.0,
             row_slope=-0.01,
             column_sigma=1.0,
@@ -694,9 +668,7 @@ class TestSimulatorImagingCI:
             serial_overscan=ac.Region2D((1, 2, 1, 2)),
         )
 
-        simulator = ac.ci.SimulatorImagingCI(
-            is_non_uniform=False, normalization=10.0, pixel_scales=1.0
-        )
+        simulator = ac.ci.SimulatorImagingCI(normalization=10.0, pixel_scales=1.0)
 
         imaging = simulator.from_layout(
             layout=layout,
@@ -721,11 +693,7 @@ class TestSimulatorImagingCI:
         )
 
         simulator = ac.ci.SimulatorImagingCI(
-            pixel_scales=1.0,
-            is_non_uniform=False,
-            normalization=10.0,
-            read_noise=1.0,
-            noise_seed=1,
+            pixel_scales=1.0, normalization=10.0, read_noise=1.0, noise_seed=1
         )
 
         imaging = simulator.from_layout(
@@ -761,9 +729,7 @@ class TestSimulatorImagingCI:
             serial_overscan=ac.Region2D((1, 2, 1, 2)),
         )
 
-        simulator = ac.ci.SimulatorImagingCI(
-            pixel_scales=1.0, is_non_uniform=False, normalization=10.0
-        )
+        simulator = ac.ci.SimulatorImagingCI(pixel_scales=1.0, normalization=10.0)
 
         cosmic_ray_map = ac.Array2D.zeros(shape_native=(5, 5), pixel_scales=0.1).native
         cosmic_ray_map[2, 2] = 100.0
@@ -805,11 +771,7 @@ class TestSimulatorImagingCI:
         )
 
         simulator = ac.ci.SimulatorImagingCI(
-            pixel_scales=1.0,
-            is_non_uniform=False,
-            normalization=1.0,
-            read_noise=4.0,
-            noise_seed=1,
+            pixel_scales=1.0, normalization=1.0, read_noise=4.0, noise_seed=1
         )
 
         cosmic_ray_map = ac.Array2D.zeros(shape_native=(5, 5), pixel_scales=0.1).native
@@ -848,11 +810,7 @@ class TestSimulatorImagingCI:
         )
 
         simulator = ac.ci.SimulatorImagingCI(
-            pixel_scales=1.0,
-            is_non_uniform=False,
-            normalization=1.0,
-            read_noise=4.0,
-            noise_seed=1,
+            pixel_scales=1.0, normalization=1.0, read_noise=4.0, noise_seed=1
         )
 
         cosmic_ray_map = ac.Array2D.zeros(shape_native=(5, 5), pixel_scales=0.1).native
