@@ -53,7 +53,7 @@ def test__rows_between_region_list():
     assert layout.pixels_between_regions == [2, 3]
 
 
-def test__serial_trails_columns(layout_ci_7x7):
+def test__serial_trails_pixels(layout_ci_7x7):
 
     layout = ac.ci.Layout2DCI(
         shape_2d=(10, 10),
@@ -313,7 +313,7 @@ def test__array_2d_of_parallel_fprs_and_epers_from():
     layout = ac.ci.Layout2DCI(shape_2d=(10, 3), region_list=[(0, 4, 0, 3)])
 
     new_array = layout.array_2d_of_parallel_fprs_and_epers_from(
-        array=parallel_array, fpr_range=(0, 2), trails_rows=(0, 2)
+        array=parallel_array, fpr_pixels=(0, 2), trails_pixels=(0, 2)
     )
 
     assert (
@@ -339,7 +339,7 @@ def test__array_2d_of_parallel_fprs_and_epers_from():
     )
 
     new_array = layout.array_2d_of_parallel_fprs_and_epers_from(
-        array=parallel_array, fpr_range=(0, 1), trails_rows=(0, 1)
+        array=parallel_array, fpr_pixels=(0, 1), trails_pixels=(0, 1)
     )
 
     assert (
@@ -439,7 +439,7 @@ def test__extracted_layout_2d_for_parallel_calibration_from():
     assert extracted_layout.region_list == [(0, 5, 0, 2)]
 
 
-def test__array_2d_of_serial_trails_from():
+def test__array_2d_of_serial_epers_from():
 
     layout = ac.ci.Layout2DCI(
         shape_2d=(4, 3), region_list=[(0, 4, 0, 2)], serial_overscan=(0, 4, 2, 3)
@@ -450,7 +450,7 @@ def test__array_2d_of_serial_trails_from():
         pixel_scales=1.0,
     )
 
-    new_array = layout.array_2d_of_serial_trails_from(array=array)
+    new_array = layout.array_2d_of_serial_epers_from(array=array)
 
     assert (
         new_array
@@ -473,7 +473,7 @@ def test__array_2d_of_serial_trails_from():
         pixel_scales=1.0,
     )
 
-    new_array = layout.array_2d_of_serial_trails_from(array=array)
+    new_array = layout.array_2d_of_serial_epers_from(array=array)
 
     assert (
         new_array
@@ -488,7 +488,7 @@ def test__array_2d_of_serial_trails_from():
     ).all()
 
 
-def test__array_2d_of_serial_overscan_above_trails_from():
+def test__array_2d_of_serial_overscan_above_epers_from():
     layout = ac.ci.Layout2DCI(
         shape_2d=(5, 4),
         region_list=[(1, 2, 1, 3), (3, 4, 1, 3)],
@@ -507,7 +507,7 @@ def test__array_2d_of_serial_overscan_above_trails_from():
         pixel_scales=1.0,
     )
 
-    new_array = layout.array_2d_of_serial_overscan_above_trails_from(array=array)
+    new_array = layout.array_2d_of_serial_overscan_above_epers_from(array=array)
 
     assert (
         new_array
@@ -538,7 +538,7 @@ def test__array_2d_of_serial_overscan_above_trails_from():
         pixel_scales=1.0,
     )
 
-    new_array = layout.array_2d_of_serial_overscan_above_trails_from(array=array)
+    new_array = layout.array_2d_of_serial_overscan_above_epers_from(array=array)
 
     assert (
         new_array
@@ -553,7 +553,7 @@ def test__array_2d_of_serial_overscan_above_trails_from():
     ).all()
 
 
-def test__array_2d_of_serial_edges_and_epers_array():
+def test__array_2d_of_serial_fprs_and_epers_array():
 
     layout = ac.ci.Layout2DCI(shape_2d=(3, 4), region_list=[(0, 3, 0, 3)])
 
@@ -562,8 +562,8 @@ def test__array_2d_of_serial_edges_and_epers_array():
         pixel_scales=1.0,
     )
 
-    new_array = layout.array_2d_of_serial_edges_and_epers_array(
-        array=array, front_edge_columns=(0, 1)
+    new_array = layout.array_2d_of_serial_fprs_and_epers_array(
+        array=array, fpr_pixels=(0, 1)
     )
 
     assert (
@@ -571,8 +571,8 @@ def test__array_2d_of_serial_edges_and_epers_array():
         == np.array([[0.0, 0.0, 0.0, 0.0], [4.0, 0.0, 0.0, 0.0], [8.0, 0.0, 0.0, 0.0]])
     ).all()
 
-    new_array = layout.array_2d_of_serial_edges_and_epers_array(
-        array=array, front_edge_columns=(0, 2)
+    new_array = layout.array_2d_of_serial_fprs_and_epers_array(
+        array=array, fpr_pixels=(0, 2)
     )
 
     assert (
@@ -582,8 +582,8 @@ def test__array_2d_of_serial_edges_and_epers_array():
 
     layout = ac.ci.Layout2DCI(shape_2d=(3, 4), region_list=[(0, 3, 0, 2)])
 
-    new_array = layout.array_2d_of_serial_edges_and_epers_array(
-        array=array, trails_columns=(0, 1)
+    new_array = layout.array_2d_of_serial_fprs_and_epers_array(
+        array=array, trails_pixels=(0, 1)
     )
 
     assert (
@@ -591,8 +591,8 @@ def test__array_2d_of_serial_edges_and_epers_array():
         == np.array([[0.0, 0.0, 2.0, 0.0], [0.0, 0.0, 6.0, 0.0], [0.0, 0.0, 10.0, 0.0]])
     ).all()
 
-    new_array = layout.array_2d_of_serial_edges_and_epers_array(
-        array=array, trails_columns=(0, 2)
+    new_array = layout.array_2d_of_serial_fprs_and_epers_array(
+        array=array, trails_pixels=(0, 2)
     )
 
     assert (
@@ -613,8 +613,8 @@ def test__array_2d_of_serial_edges_and_epers_array():
         pixel_scales=1.0,
     )
 
-    new_array = layout.array_2d_of_serial_edges_and_epers_array(
-        array=array, front_edge_columns=(0, 1), trails_columns=(0, 1)
+    new_array = layout.array_2d_of_serial_fprs_and_epers_array(
+        array=array, fpr_pixels=(0, 1), trails_pixels=(0, 1)
     )
 
     assert (

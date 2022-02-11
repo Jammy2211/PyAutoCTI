@@ -25,8 +25,9 @@ class Layout2DCI(aa.Layout2D):
         electronics: Optional["ElectronicsCI"] = None,
     ):
         """
-        Abstract base class for a charge injection layout, which defines the regions charge injections appear
-        on charge-injection imaging alongside other properties.
+        A charge injection layout, which defines the regions charge injections appear on a charge injection image.
+
+        It also contains over regions of the image, for example the serial prescan, overscan and paralle overscan.
 
         Parameters
         -----------
@@ -48,6 +49,8 @@ class Layout2DCI(aa.Layout2D):
         serial_overscan
             Integer pixel coordinates specifying the corners of the serial overscan (top-row, bottom-row,
             left-column, right-column).
+        electronics
+            The charge injection electronics parameters of the image (e.g. the IG1 and IG2 voltages).
         """
 
         self.region_list = list(map(aa.Region2D, region_list))
@@ -166,7 +169,7 @@ class Layout2DCI(aa.Layout2D):
           [...][ccccccccccccccccccccc][sss]
         | [...][ccccccccccccccccccccc][sss]    |
         | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
-        P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
+      Par [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
         | [...][ccccccccccccccccccccc][sss]    | clocking
        \/  [...][ccccccccccccccccccccc][sss]   \/
 
@@ -181,7 +184,7 @@ class Layout2DCI(aa.Layout2D):
           [000][ccccccccccccccccccccc][000]
         | [000][ccccccccccccccccccccc][000]    |
         | [000][000000000000000000000][000]    | Direction
-        P [000][000000000000000000000][000]    | of
+       Par[000][000000000000000000000][000]    | of
         | [000][ccccccccccccccccccccc][000]    | clocking
        \/ [000][ccccccccccccccccccccc][000]   \/
 
@@ -310,8 +313,8 @@ class Layout2DCI(aa.Layout2D):
     def array_2d_of_parallel_fprs_and_epers_from(
         self,
         array: aa.Array2D,
-        fpr_range: Tuple[int, int] = None,
-        trails_rows: Tuple[int, int] = None,
+        fpr_pixels: Tuple[int, int] = None,
+        trails_pixels: Tuple[int, int] = None,
     ) -> aa.Array2D:
         """
         Extract all of the data values in an input `array2D` corresponding to the parallel front edges and trails of
@@ -319,23 +322,22 @@ class Layout2DCI(aa.Layout2D):
 
         One can specify the range of rows that are extracted, for example:
 
-        fpr_range = (0, 1) will extract just the first leading front edge row.
-        fpr_range = (0, 2) will extract the leading two front edge rows.
-        trails_rows = (0, 1) will extract the first row of trails closest to the charge injection region.
+        fpr_pixels = (0, 1) will extract just the first leading front edge row.
+        fpr_pixels = (0, 2) will extract the leading two front edge rows.
+        trails_pixels = (0, 1) will extract the first row of trails closest to the charge injection region.
 
-        The diagram below illustrates the arrays that are extracted from the input array for `fpr_range=(0,1)`
-        and `trails_rows=(0,1)`:
+        The diagram below illustrates the arrays that are extracted from the input array for `fpr_pixels=(0,1)`
+        and `trails_pixels=(0,1)`:
 
-        ---KEY---
-        ---------
+        The diagram below illustrates the extraction:
 
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
-        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
-
-        P = Parallel Direction      S = Serial Direction
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = parallel overscan
+        [ssssssssss] = serial overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [tttttttttt] = parallel / serial charge injection region trail
 
                [tptpptptptpptpptpptpt]
                [tptptptpptpttptptptpt]
@@ -368,28 +370,30 @@ class Layout2DCI(aa.Layout2D):
 
         Parameters
         ------------
-        fpr_range
+        fpr_pixels
             The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows).
-        trails_rows
+        trails_pixels
             The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
         new_array = array.native.copy() * 0.0
 
-        if fpr_range is not None:
+        if fpr_pixels is not None:
 
             new_array = self.extractor_parallel_fpr.add_to_array(
-                new_array=new_array, array=array, pixels=fpr_range
+                new_array=new_array, array=array, pixels=fpr_pixels
             )
 
-        if trails_rows is not None:
+        if trails_pixels is not None:
 
             new_array = self.extractor_parallel_eper.add_to_array(
-                new_array=new_array, array=array, pixels=trails_rows
+                new_array=new_array, array=array, pixels=trails_pixels
             )
 
         return new_array
 
-    def extraction_region_for_parallel_calibration_from(self, columns: Tuple[int, int]):
+    def extraction_region_for_parallel_calibration_from(
+        self, columns: Tuple[int, int]
+    ) -> aa.type.Region2DLike:
         """
         Extract a parallel calibration array from an input array, where this array contains a sub-set of the input
         array which is specifically used for only parallel CTI calibration. This array is simply a specified number
@@ -397,16 +401,13 @@ class Layout2DCI(aa.Layout2D):
 
         The diagram below illustrates the arrays that is extracted from a array with columns=(0, 3):
 
-        ---KEY---
-        ---------
-
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
-        [xxxxxxxxxx]                [tttttttttt] = parallel / parallel charge injection region trail
-
-        P = Parallel Direction      S = Serial Direction
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = parallel overscan
+        [ssssssssss] = serial overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [tttttttttt] = parallel / serial charge injection region trail
 
                [ptptptptptptptptptptp]
                [tptptptptptptptptptpt]
@@ -416,7 +417,7 @@ class Layout2DCI(aa.Layout2D):
         | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
         P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
         | [...][ccccccccccccccccccccc][sss]    | clocking
-          [...][ccccccccccccccccccccc][sss]    |
+        \/[...][ccccccccccccccccccccc][sss]   \/
 
         []     [=====================]
                <--------Ser---------
@@ -430,7 +431,7 @@ class Layout2DCI(aa.Layout2D):
                [ccc]
         |      [ccc]                           |
         |      [xxx]                           | Direction
-        P      [xxx]                           | of
+       Par     [xxx]                           | of
         |      [ccc]                           | clocking
                [ccc]                           |
 
@@ -443,7 +444,7 @@ class Layout2DCI(aa.Layout2D):
 
     def array_2d_for_parallel_calibration_from(
         self, array: aa.Array2D, columns: Tuple[int, int]
-    ):
+    ) -> aa.Array2D:
         """
         Extract a parallel calibration array from an input array, where this array contains a sub-set of the input
         array which is specifically used for only parallel CTI calibration. This array is simply a specified number
@@ -451,16 +452,13 @@ class Layout2DCI(aa.Layout2D):
 
         The diagram below illustrates the arrays that is extracted from a array with columns=(0, 3):
 
-        ---KEY---
-        ---------
-
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
-        [xxxxxxxxxx]                [tttttttttt] = parallel / parallel charge injection region trail
-
-        P = Parallel Direction      S = Serial Direction
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = parallel overscan
+        [ssssssssss] = serial overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [tttttttttt] = parallel / serial charge injection region trail
 
                [ptptptptptptptptptptp]
                [tptptptptptptptptptpt]
@@ -470,7 +468,7 @@ class Layout2DCI(aa.Layout2D):
         | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
         P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
         | [...][ccccccccccccccccccccc][sss]    | clocking
-          [...][ccccccccccccccccccccc][sss]    |
+        \/[...][ccccccccccccccccccccc][sss]   \/
 
         []     [=====================]
                <--------Ser---------
@@ -486,7 +484,7 @@ class Layout2DCI(aa.Layout2D):
         |      [xxx]                           | Direction
         P      [xxx]                           | of
         |      [ccc]                           | clocking
-               [ccc]                           |
+        \/     [ccc]                          \/
 
         []     [=====================]
                <--------Ser---------
@@ -500,7 +498,9 @@ class Layout2DCI(aa.Layout2D):
             pixel_scales=array.pixel_scales,
         )
 
-    def extracted_layout_for_parallel_calibration_from(self, columns: Tuple[int, int]):
+    def extracted_layout_for_parallel_calibration_from(
+        self, columns: Tuple[int, int]
+    ) -> "Layout2DCI":
         """
         Extract a parallel calibration array from an input array, where this array contains a sub-set of the input
         array which is specifically used for only parallel CTI calibration. This array is simply a specified number
@@ -508,16 +508,13 @@ class Layout2DCI(aa.Layout2D):
 
         The diagram below illustrates the arrays that is extracted from a array with columns=(0, 3):
 
-        ---KEY---
-        ---------
-
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
-        [xxxxxxxxxx]                [tttttttttt] = parallel / parallel charge injection region trail
-
-        P = Parallel Direction      S = Serial Direction
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = parallel overscan
+        [ssssssssss] = serial overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [tttttttttt] = parallel / serial charge injection region trail
 
                [ptptptptptptptptptptp]
                [tptptptptptptptptptpt]
@@ -527,7 +524,7 @@ class Layout2DCI(aa.Layout2D):
         | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
         P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
         | [...][ccccccccccccccccccccc][sss]    | clocking
-          [...][ccccccccccccccccccccc][sss]    |
+        \/[...][ccccccccccccccccccccc][sss]    \/
 
         []     [=====================]
                <--------Ser---------
@@ -543,7 +540,7 @@ class Layout2DCI(aa.Layout2D):
         |      [xxx]                           | Direction
         P      [xxx]                           | of
         |      [ccc]                           | clocking
-               [ccc]                           |
+        \/     [ccc]                           \/
 
         []     [=====================]
                <--------Ser---------
@@ -555,7 +552,14 @@ class Layout2DCI(aa.Layout2D):
 
         return self.with_extracted_regions(extraction_region=extraction_region)
 
-    def mask_for_parallel_calibration_from(self, mask, columns):
+    def mask_for_parallel_calibration_from(
+        self, mask: aa.Mask2D, columns: Tuple[int, int]
+    ) -> "Mask2DCI":
+        """
+        Extract a mask to go with a parallel calibration array from an input mask.
+
+        The parallel calibration array is described in the function `array_2d_for_parallel_calibration_from()`.
+        """
         extraction_region = self.region_list[0].serial_towards_roe_full_region_from(
             shape_2d=self.shape_2d, pixels=columns
         )
@@ -563,22 +567,20 @@ class Layout2DCI(aa.Layout2D):
             mask=mask[extraction_region.slice], pixel_scales=mask.pixel_scales
         )
 
-    def array_2d_of_serial_trails_from(self, array: aa.Array2D):
-        """Extract an arrays of all of the serial trails in the serial overscan region, that are to the side of a
+    def array_2d_of_serial_epers_from(self, array: aa.Array2D) -> aa.Array2D:
+        """
+        Extract an arrays of all of the serial EPERs in the serial overscan region, that are to the side of a
         charge-injection scans from a charge injection array.
 
         The diagram below illustrates the arrays that is extracted from a array:
 
-        ---KEY---
-        ---------
-
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
-        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
-
-        P = Parallel Direction      S = Serial Direction
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = parallel overscan
+        [ssssssssss] = serial overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [tttttttttt] = parallel / serial charge injection region trail
 
                [ppppppppppppppppppppp]
                [ppppppppppppppppppppp]
@@ -588,7 +590,7 @@ class Layout2DCI(aa.Layout2D):
         | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
         P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
         | [...][ccccccccccccccccccccc][tst]    | clocking
-          [...][ccccccccccccccccccccc][sts]    |
+        \/[...][ccccccccccccccccccccc][sts]    \/
 
         []     [=====================]
                <--------Ser---------
@@ -609,28 +611,27 @@ class Layout2DCI(aa.Layout2D):
         []     [=====================]
                <--------Ser---------
         """
-        array = self.array_2d_of_serial_edges_and_epers_array(
-            array=array, trails_columns=(0, self.serial_overscan.total_columns)
+        array = self.array_2d_of_serial_fprs_and_epers_array(
+            array=array, trails_pixels=(0, self.serial_overscan.total_columns)
         )
         return array
 
-    def array_2d_of_serial_overscan_above_trails_from(self, array: aa.Array2D):
+    def array_2d_of_serial_overscan_above_epers_from(
+        self, array: aa.Array2D
+    ) -> aa.Array2D:
         """
-        Extract an arrays of all of the scans of the serial overscan that don't contain trails from a
-        charge injection region (i.e. are not to the side of one).
+        Extract an array of the region above the EPER trails of the serial overscan.
 
-        The diagram below illustrates the arrays that is extracted from a array:
+        This region does not contain signal from either parallel or serial EPERs, however it may have a faint signal
+        from charge that is trailed from the parallel EPER's in the serial direction during serial clocking.
 
-        ---KEY---
-        ---------
-
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
-        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
-
-        P = Parallel Direction      S = Serial Direction
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = parallel overscan
+        [ssssssssss] = serial overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [tttttttttt] = parallel / serial charge injection region trail
 
                [ppppppppppppppppppppp]
                [ppppppppppppppppppppp]
@@ -679,32 +680,29 @@ class Layout2DCI(aa.Layout2D):
 
         return new_array
 
-    def array_2d_of_serial_edges_and_epers_array(
-        self, array: aa.Array2D, front_edge_columns=None, trails_columns=None
-    ):
+    def array_2d_of_serial_fprs_and_epers_array(
+        self, array: aa.Array2D, fpr_pixels=None, trails_pixels=None
+    ) -> aa.Array2D:
         """
-        Extract an arrays of all of the serial front edges and trails of each the charge-injection scans from
-        a charge injection array.
+        Extract an array of all of the serial FPRs and EPERs of each the charge-injection scans from a charge
+        injection array.
 
         One can specify the range of columns that are extracted, for example:
 
-        front_edge_columns = (0, 1) will extract just the leading front edge column.
-        front_edge_columns = (0, 2) will extract the leading two front edge columns.
-        trails_columns = (0, 1) will extract the first column of trails closest to the charge injection region.
+        fpr_pixels = (0, 1) will extract just the leading front edge column.
+        fpr_pixels = (0, 2) will extract the leading two front edge columns.
+        trails_pixels = (0, 1) will extract the first column of trails closest to the charge injection region.
 
-        The diagram below illustrates the arrays that is extracted from a array for front_edge_columns=(0,2) and
-        trails_columns=(0,2):
+        The diagram below illustrates the arrays that is extracted from a array for `fpr_pixels=(0,2)` and
+        `trails_pixels=(0,2)`:
 
-        ---KEY---
-        ---------
-
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
-        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
-
-        P = Parallel Direction      S = Serial Direction
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = parallel overscan
+        [ssssssssss] = serial overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [tttttttttt] = parallel / serial charge injection region trail
 
                [ppppppppppppppppppppp]
                [ppppppppppppppppppppp]
@@ -738,30 +736,30 @@ class Layout2DCI(aa.Layout2D):
         Parameters
         ------------
         array
-        front_edge_columns
+        fpr_pixels
             The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd rows)
-        trails_columns
+        trails_pixels
             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
         new_array = array.native.copy() * 0.0
 
-        if front_edge_columns is not None:
+        if fpr_pixels is not None:
 
             new_array = self.extractor_serial_fpr.add_to_array(
-                new_array=new_array, array=array, pixels=front_edge_columns
+                new_array=new_array, array=array, pixels=fpr_pixels
             )
 
-        if trails_columns is not None:
+        if trails_pixels is not None:
 
             new_array = self.extractor_serial_eper.add_to_array(
-                new_array=new_array, array=array, pixels=trails_columns
+                new_array=new_array, array=array, pixels=trails_pixels
             )
 
         return new_array
 
     def array_2d_list_for_serial_calibration(self, array: aa.Array2D):
         """
-        Extract each charge injection region image for the serial calibration arrays above.
+        Extract each charge injection region image for the serial calibration arrays when creating the
         """
 
         calibration_region_list = list(
@@ -812,7 +810,7 @@ class Layout2DCI(aa.Layout2D):
 
     def array_2d_for_serial_calibration_from(
         self, array: aa.Array2D, rows: Tuple[int, int]
-    ):
+    ) -> aa.Array2D:
         """
         Extract a serial calibration array from a charge injection array, where this arrays is a sub-set of the
         array which can be used for serial-only calibration. Specifically, this array is all charge injection
@@ -820,16 +818,13 @@ class Layout2DCI(aa.Layout2D):
 
         The diagram below illustrates the arrays that is extracted from a array with column=5:
 
-        ---KEY---
-        ---------
-
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
-        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
-
-        P = Parallel Direction      S = Serial Direction
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = parallel overscan
+        [ssssssssss] = serial overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [tttttttttt] = parallel / serial charge injection region trail
 
                [ppppppppppppppppppppp]
                [pppppppppppppppppppp ]
@@ -867,7 +862,9 @@ class Layout2DCI(aa.Layout2D):
             array=new_array, header=array.header, pixel_scales=array.pixel_scales
         )
 
-    def mask_for_serial_calibration_from(self, mask, rows: Tuple[int, int]):
+    def mask_for_serial_calibration_from(
+        self, mask: aa.Mask2D, rows: Tuple[int, int]
+    ) -> Mask2DCI:
         """
         Extract a serial calibration array from a charge injection array, where this arrays is a sub-set of the
         array which can be used for serial-only calibration. Specifically, this array is all charge injection
@@ -932,7 +929,9 @@ class Layout2DCI(aa.Layout2D):
             pixel_scales=mask.pixel_scales,
         )
 
-    def with_extracted_regions(self, extraction_region):
+    def with_extracted_regions(
+        self, extraction_region: aa.type.Region2DLike
+    ) -> "Layout2DCI":
 
         layout = deepcopy(self)
 

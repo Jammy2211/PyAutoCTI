@@ -27,8 +27,8 @@ from .mask.mask_2d import Mask2D
 from .mask.mask_2d import SettingsMask2D
 from .line.mask_1d import Mask1DLine
 from .line.mask_1d import SettingsMask1DLine
-from .line.layout import Extractor1DFPR
-from .line.layout import Extractor1DEPER
+from .line.extractor_1d.fpr import Extractor1DFPR
+from .line.extractor_1d.eper import Extractor1DEPER
 from .line.layout import Layout1DLine
 from .line.dataset import SettingsDatasetLine
 from .line.dataset import DatasetLine

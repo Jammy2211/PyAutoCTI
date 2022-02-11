@@ -73,11 +73,11 @@ class FitImagingCI(FitImaging):
 
     @property
     def chi_squared_map_of_serial_trails(self):
-        return self.layout.array_2d_of_serial_trails_from(array=self.chi_squared_map)
+        return self.layout.array_2d_of_serial_epers_from(array=self.chi_squared_map)
 
     @property
     def chi_squared_map_of_serial_overscan_no_trails(self):
-        return self.layout.array_2d_of_serial_overscan_above_trails_from(
+        return self.layout.array_2d_of_serial_overscan_above_epers_from(
             array=self.chi_squared_map
         )
 

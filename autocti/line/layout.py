@@ -1,249 +1,22 @@
 import numpy as np
 from typing import Tuple
 
-from autoarray.structures.arrays.one_d.array_1d import Array1D
-from autoarray.layout.region import Region1D
-from autoarray.layout.layout import Layout1D
+import autoarray as aa
+
+from autocti.line.extractor_1d.fpr import Extractor1DFPR
+from autocti.line.extractor_1d.eper import Extractor1DEPER
 
 from autocti import exc
 
 
-class Extractor1D:
-    def __init__(self, region_list):
-
-        self.region_list = list(map(Region1D, region_list))
-
-    @property
-    def total_pixels_min(self):
-        return np.min([region.total_pixels for region in self.region_list])
-
-
-class Extractor1DFPR(Extractor1D):
-    def array_1d_list_from(self, array: Array1D, pixels):
-        """
-        Extract a list of the front edges of a 1D line array.
-
-        The diagram below illustrates the arrays that is extracted from a array for pixels=(0, 1):
-
-        -> Direction of Clocking
-
-        [fffcccccccccccttt]
-
-        The extracted array keeps just the front edges corresponding to the `f` entries.
-        Parameters
-        ------------
-        array
-            A 1D array of data containing a CTI line.
-        pixels
-            The row indexes to extract the front edge between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
-        """
-        front_region_list = self.region_list_from(pixels=pixels)
-        front_array_list = list(
-            map(lambda region: array.native[region.slice], front_region_list)
-        )
-        front_mask_list = list(
-            map(lambda region: array.mask[region.slice], front_region_list)
-        )
-        front_array_list = list(
-            map(
-                lambda front_array, front_mask: np.ma.array(
-                    front_array, mask=front_mask
-                ),
-                front_array_list,
-                front_mask_list,
-            )
-        )
-        return front_array_list
-
-    def stacked_array_1d_from(self, array: Array1D, pixels):
-        front_arrays = self.array_1d_list_from(array=array, pixels=pixels)
-        return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
-
-    def region_list_from(self, pixels):
-        """
-        Calculate a list of the front edge regions of a line dataset
-
-        The diagram below illustrates the region that calculated from a array for pixels=(0, 1):
-
-        -> Direction of Clocking
-
-        [fffcccccccccccttt]
-
-        The extracted array keeps just the front edges of all regions.
-
-        Parameters
-        ------------
-        array
-            A 1D array of data containing a CTI line.
-        pixels
-            The row indexes to extract the front edge between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
-        """
-        return list(
-            map(
-                lambda region: region.front_region_from(pixels=pixels), self.region_list
-            )
-        )
-
-    def add_to_array(self, new_array, array, pixels):
-
-        region_list = [
-            region.front_region_from(pixels=pixels) for region in self.region_list
-        ]
-
-        array_1d_list = self.array_1d_list_from(array=array, pixels=pixels)
-
-        for arr, region in zip(array_1d_list, region_list):
-            new_array[region.x0 : region.x1] += arr
-
-        return new_array
-
-
-class Extractor1DEPER(Extractor1D):
-    def array_1d_list_from(self, array: Array1D, pixels):
-        """
-        Extract the parallel trails of a charge injection array.
-
-
-        The diagram below illustrates the arrays that is extracted from a array for pixels=(0, 1):
-
-        ---KEY---
-        ---------
-
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci region index)
-        [xxxxxxxxxx]
-        [t#t#t#t#t#] = parallel / serial charge injection region trail (0 / 1 indicates ci region index)
-
-        P = Parallel Direction      S = Serial Direction
-
-               [ppppppppppppppppppppp]
-               [ppppppppppppppppppppp]
-          [...][t1t1t1t1t1t1t1t1t1t1t][sss]
-          [...][c1c1cc1c1cc1cc1ccc1cc][sss]
-        | [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
-        | [...][t0t0t0t0t0t0t0t0t0t0t][sss]    | Direction
-        P [...][0t0t0t0t0t0t0t0t0t0t0][sss]    | of
-        | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
-          [...][cc0ccc0cccc0cccc0cccc][sss]    |
-
-        []     [=====================]
-               <---------S----------
-
-        The extracted array keeps just the trails following all charge injection scans:
-
-        list index 0:
-
-        [t0t0t0tt0t0t0t0t0t0t0]
-
-        list index 1:
-
-        [1t1t1t1t1t1t1t1t1t1t1]
-
-        Parameters
-        ------------
-        array
-        pixels
-            The row indexes to extract the trails between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
-        """
-
-        trails_region_list = self.region_list_from(pixels=pixels)
-        trails_arrays = list(
-            map(lambda region: array.native[region.slice], trails_region_list)
-        )
-        trails_masks = list(
-            map(lambda region: array.mask[region.slice], trails_region_list)
-        )
-        trails_arrays = list(
-            map(
-                lambda trails_array, front_mask: np.ma.array(
-                    trails_array, mask=front_mask
-                ),
-                trails_arrays,
-                trails_masks,
-            )
-        )
-        return trails_arrays
-
-    def stacked_array_1d_from(self, array: Array1D, pixels):
-        trails_arrays = self.array_1d_list_from(array=array, pixels=pixels)
-        return np.ma.mean(np.ma.asarray(trails_arrays), axis=0)
-
-    def region_list_from(self, pixels):
-        """
-        Returns the parallel scans of a charge injection array.
-
-            The diagram below illustrates the region that is calculated from a array for pixels=(0, 1):
-
-            ---KEY---
-            ---------
-
-            [] = read-out electronics   [==========] = read-out register
-
-            [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-            [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan
-            [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci region index)
-            [xxxxxxxxxx]
-            [t#t#t#t#t#] = parallel / serial charge injection region trail (0 / 1 indicates ci region index)
-
-            P = Parallel Direction      S = Serial Direction
-
-                   [ppppppppppppppppppppp]
-                   [ppppppppppppppppppppp]
-              [...][t1t1t1t1t1t1t1t1t1t1t][sss]
-              [...][c1c1cc1c1cc1cc1ccc1cc][sss]
-            | [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
-            | [...][t0t0t0t0t0t0t0t0t0t0t][sss]    | Direction
-            P [...][0t0t0t0t0t0t0t0t0t0t0][sss]    | of
-            | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
-              [...][cc0ccc0cccc0cccc0cccc][sss]    |
-
-            []     [=====================]
-                   <---------S----------
-
-            The extracted array keeps just the trails following all charge injection scans:
-
-            list index 0:
-
-            [2, 4, 3, 21] (serial prescan is 3 pixels)
-
-            list index 1:
-
-            [6, 7, 3, 21] (serial prescan is 3 pixels)
-
-            Parameters
-            ------------
-            arrays
-            pixels
-                The row indexes to extract the trails between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
-        """
-
-        return list(
-            map(
-                lambda region: region.trailing_region_from(pixels=pixels),
-                self.region_list,
-            )
-        )
-
-    def add_to_array(self, new_array, array, pixels):
-
-        region_list = [
-            region.trailing_region_from(pixels=pixels) for region in self.region_list
-        ]
-
-        array_1d_list = self.array_1d_list_from(array=array, pixels=pixels)
-
-        for arr, region in zip(array_1d_list, region_list):
-            new_array[region.x0 : region.x1] += arr
-
-        return new_array
-
-
-class AbstractLayout1DLine(Layout1D):
+class AbstractLayout1DLine(aa.Layout1D):
     def __init__(
-        self, shape_1d, normalization, region_list, prescan=None, overscan=None
+        self,
+        shape_1d: Tuple[int],
+        normalization,
+        region_list,
+        prescan=None,
+        overscan=None,
     ):
         """
         Abstract base class for a charge injection layout_ci, which defines the regions charge injections appears \
@@ -258,7 +31,7 @@ class AbstractLayout1DLine(Layout1D):
             (top-row, bottom-row, left-column, right-column).
         """
 
-        self.region_list = list(map(Region1D, region_list))
+        self.region_list = list(map(aa.Region1D, region_list))
 
         for region in self.region_list:
 
@@ -292,7 +65,7 @@ class AbstractLayout1DLine(Layout1D):
         pixels_between_regions.append(self.trail_size_to_array_edge)
         return np.min(pixels_between_regions)
 
-    def array_1d_of_regions_from(self, array: Array1D) -> Array1D:
+    def array_1d_of_regions_from(self, array: aa.Array1D) -> aa.Array1D:
         """
         Extract all of the charge-injection regions from an input `array1D` object and returns them as a new `array1D`
         object where these extracted regions are included and all other entries are zeros.
@@ -348,7 +121,7 @@ class AbstractLayout1DLine(Layout1D):
 
         return array_1d_of_regions
 
-    def array_1d_of_non_regions_from(self, array: Array1D) -> Array1D:
+    def array_1d_of_non_regions_from(self, array: aa.Array1D) -> aa.Array1D:
         """
         Extract all of the data values in an input `array1D` that do not overlap the charge injection regions. This
         includes many areas of the image (e.g. the serial prescan, serial overscan) but is typically used to extract
@@ -404,7 +177,7 @@ class AbstractLayout1DLine(Layout1D):
 
         return array_1d_non_regions_ci
 
-    def array_1d_of_trails_from(self, array: Array1D) -> Array1D:
+    def array_1d_of_trails_from(self, array: aa.Array1D) -> aa.Array1D:
         """
         Extract all of the data values in an input `array1D` that do not overlap the charge injection regions or the
         serial prescan / serial overscan regions.
@@ -464,22 +237,22 @@ class AbstractLayout1DLine(Layout1D):
 
     def array_1d_of_edges_and_epers_from(
         self,
-        array: Array1D,
-        fpr_range: Tuple[int, int] = None,
-        trails_rows: Tuple[int, int] = None,
-    ) -> Array1D:
+        array: aa.Array1D,
+        fpr_pixels: Tuple[int, int] = None,
+        trails_pixels: Tuple[int, int] = None,
+    ) -> aa.Array1D:
         """
         Extract all of the data values in an input `array1D` corresponding to the parallel front edges and trails of
         each the charge-injection region.
 
         One can specify the range of rows that are extracted, for example:
 
-        fpr_range = (0, 1) will extract just the first leading front edge row.
-        fpr_range = (0, 2) will extract the leading two front edge rows.
-        trails_rows = (0, 1) will extract the first row of trails closest to the charge injection region.
+        fpr_pixels = (0, 1) will extract just the first leading front edge row.
+        fpr_pixels = (0, 2) will extract the leading two front edge rows.
+        trails_pixels = (0, 1) will extract the first row of trails closest to the charge injection region.
 
-        The diagram below illustrates the arrays that are extracted from the input array for `fpr_range=(0,1)`
-        and `trails_rows=(0,1)`:
+        The diagram below illustrates the arrays that are extracted from the input array for `fpr_pixels=(0,1)`
+        and `trails_pixels=(0,1)`:
 
         ---KEY---
         ---------
@@ -523,28 +296,28 @@ class AbstractLayout1DLine(Layout1D):
 
         Parameters
         ------------
-        fpr_range
+        fpr_pixels
             The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows).
-        trails_rows
+        trails_pixels
             The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
         array_1d_of_edges_and_epers = array.native.copy() * 0.0
 
-        if fpr_range is not None:
+        if fpr_pixels is not None:
 
             array_1d_of_edges_and_epers = self.extractor_front_edge.add_to_array(
-                new_array=array_1d_of_edges_and_epers, array=array, pixels=fpr_range
+                new_array=array_1d_of_edges_and_epers, array=array, pixels=fpr_pixels
             )
 
-        if trails_rows is not None:
+        if trails_pixels is not None:
 
             array_1d_of_edges_and_epers = self.extractor_trails.add_to_array(
-                new_array=array_1d_of_edges_and_epers, array=array, pixels=trails_rows
+                new_array=array_1d_of_edges_and_epers, array=array, pixels=trails_pixels
             )
 
         return array_1d_of_edges_and_epers
 
-    def extract_line_from(self, array: Array1D, line_region: str):
+    def extract_line_from(self, array: aa.Array1D, line_region: str):
 
         if line_region == "front_edge":
             return self.extractor_front_edge.stacked_array_1d_from(
@@ -581,4 +354,4 @@ class Layout1DLine(AbstractLayout1DLine):
         for region in self.region_list:
             pre_cti_data[region.slice] += self.normalization
 
-        return Array1D.manual_native(array=pre_cti_data, pixel_scales=pixel_scales)
+        return aa.Array1D.manual_native(array=pre_cti_data, pixel_scales=pixel_scales)
