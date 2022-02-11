@@ -54,8 +54,15 @@ class Extractor2D:
 
         For example, this might extract the parallel EPERs of every charge injection region.
 
-        The `region_2d_list_from()` of each `Extractor` class describes the exact extraction performed for each
-        extractor when this function is called..
+        The `region_2d_list_from()` of each `Extractor2D` class describes the exact extraction performed for each
+        extractor when this function is called.
+
+        Parameters
+        ----------
+        array
+            The array from which the regions are extracted and put into the returned list of rrays.
+        pixels
+            The integer range of pixels between which the extraction is performed.
         """
         return [
             np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
@@ -118,14 +125,14 @@ class Extractor2D:
         self, new_array: aa.Array2D, array: aa.Array2D, pixels: Tuple[int, int]
     ) -> aa.Array2D:
         """
-        Extracts the parallel FPRs from a charge injection image and adds them to a new image.
+        Extracts the region (e.g. the parallel FPRs) from a charge injection image and adds them to a new image.
 
         Parameters
         ----------
         new_array
             The 2D array which the extracted parallel FPRs are added to.
         array
-            The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted.
+            The 2D array which contains the charge injection image from which the parallel FPRs are extracted.
         pixels
             The row pixel index which determines the region of the FPR (e.g. `pixels=(0, 3)` will compute the region
             corresponding to the 1st, 2nd and 3rd FPR rows).
