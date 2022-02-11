@@ -104,11 +104,7 @@ def make_imaging_7x7_frame():
 
 def make_layout_7():
     return Layout1DLine(
-        shape_1d=(7,),
-        normalization=10.0,
-        region_list=[(1, 5)],
-        prescan=(0, 1),
-        overscan=(6, 7),
+        shape_1d=(7,), region_list=[(1, 5)], prescan=(0, 1), overscan=(6, 7)
     )
 
 

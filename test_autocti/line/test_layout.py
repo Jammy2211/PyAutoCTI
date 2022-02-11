@@ -6,21 +6,16 @@ from autocti import exc
 
 def test__trail_size_to_array_edge():
 
-    layout = ac.Layout1DLine(
-        shape_1d=(5,), normalization=1.0, region_list=[ac.Region1D(region=(0, 3))]
-    )
+    layout = ac.Layout1DLine(shape_1d=(5,), region_list=[ac.Region1D(region=(0, 3))])
 
     assert layout.trail_size_to_array_edge == 2
 
-    layout = ac.Layout1DLine(
-        shape_1d=(7,), normalization=1.0, region_list=[ac.Region1D(region=(0, 3))]
-    )
+    layout = ac.Layout1DLine(shape_1d=(7,), region_list=[ac.Region1D(region=(0, 3))])
 
     assert layout.trail_size_to_array_edge == 4
 
     layout = ac.Layout1DLine(
         shape_1d=(15,),
-        normalization=1.0,
         region_list=[
             ac.Region1D(region=(0, 2)),
             ac.Region1D(region=(5, 8)),
@@ -32,7 +27,6 @@ def test__trail_size_to_array_edge():
 
     layout = ac.Layout1DLine(
         shape_1d=(20,),
-        normalization=1.0,
         region_list=[
             ac.Region1D(region=(0, 2)),
             ac.Region1D(region=(5, 8)),
@@ -45,7 +39,7 @@ def test__trail_size_to_array_edge():
 
 def test__array_1d_of_regions_from():
 
-    layout = ac.Layout1DLine(shape_1d=(5,), normalization=10.0, region_list=[(0, 3)])
+    layout = ac.Layout1DLine(shape_1d=(5,), region_list=[(0, 3)])
 
     array = ac.Array1D.manual_native(array=[0.0, 1.0, 2.0, 3.0], pixel_scales=1.0)
 
@@ -53,9 +47,7 @@ def test__array_1d_of_regions_from():
 
     assert (array_extracted == np.array([0.0, 1.0, 2.0, 0.0])).all()
 
-    layout = ac.Layout1DLine(
-        shape_1d=(5,), normalization=10.0, region_list=[(0, 1), (2, 3)]
-    )
+    layout = ac.Layout1DLine(shape_1d=(5,), region_list=[(0, 1), (2, 3)])
 
     array_extracted = layout.array_1d_of_regions_from(array=array)
 
@@ -64,7 +56,7 @@ def test__array_1d_of_regions_from():
 
 def test__array_1d_of_non_regions_from():
 
-    layout = ac.Layout1DLine(shape_1d=(5,), normalization=10.0, region_list=[(0, 3)])
+    layout = ac.Layout1DLine(shape_1d=(5,), region_list=[(0, 3)])
 
     array = ac.Array1D.manual_native(array=[0.0, 1.0, 2.0, 3.0], pixel_scales=1.0)
 
@@ -72,9 +64,7 @@ def test__array_1d_of_non_regions_from():
 
     assert (array_extracted == np.array([0.0, 0.0, 0.0, 3.0])).all()
 
-    layout = ac.Layout1DLine(
-        shape_1d=(5,), normalization=10.0, region_list=[(0, 1), (3, 4)]
-    )
+    layout = ac.Layout1DLine(shape_1d=(5,), region_list=[(0, 1), (3, 4)])
 
     array_extracted = layout.array_1d_of_non_regions_from(array=array)
 
@@ -84,11 +74,7 @@ def test__array_1d_of_non_regions_from():
 def test__array_1d_of_trails_from():
 
     layout = ac.Layout1DLine(
-        shape_1d=(4,),
-        normalization=10.0,
-        region_list=[(0, 2)],
-        prescan=(0, 1),
-        overscan=(0, 1),
+        shape_1d=(4,), region_list=[(0, 2)], prescan=(0, 1), overscan=(0, 1)
     )
 
     array = ac.Array1D.manual_native(array=[0.0, 1.0, 2.0, 3.0], pixel_scales=1.0)
@@ -98,11 +84,7 @@ def test__array_1d_of_trails_from():
     assert (array_extracted == np.array([0.0, 0.0, 2.0, 3.0])).all()
 
     layout = ac.Layout1DLine(
-        shape_1d=(5,),
-        normalization=10.0,
-        region_list=[(0, 2)],
-        prescan=(2, 3),
-        overscan=(3, 4),
+        shape_1d=(5,), region_list=[(0, 2)], prescan=(2, 3), overscan=(3, 4)
     )
 
     array_extracted = layout.array_1d_of_trails_from(array=array)
@@ -110,11 +92,7 @@ def test__array_1d_of_trails_from():
     assert (array_extracted == np.array([0.0, 0.0, 0.0, 0.0])).all()
 
     layout = ac.Layout1DLine(
-        shape_1d=(4,),
-        normalization=10.0,
-        region_list=[(0, 1), (2, 3)],
-        prescan=(2, 3),
-        overscan=(2, 3),
+        shape_1d=(4,), region_list=[(0, 1), (2, 3)], prescan=(2, 3), overscan=(2, 3)
     )
 
     array_extracted = layout.array_1d_of_trails_from(array=array)
@@ -124,7 +102,7 @@ def test__array_1d_of_trails_from():
 
 def test__array_1d_of_edges_and_epers_from(array):
 
-    layout = ac.Layout1DLine(shape_1d=(10,), normalization=10.0, region_list=[(0, 4)])
+    layout = ac.Layout1DLine(shape_1d=(10,), region_list=[(0, 4)])
 
     extracted_array = layout.array_1d_of_edges_and_epers_from(
         array=array, fpr_pixels=(0, 2), trails_pixels=(0, 2)
@@ -134,9 +112,7 @@ def test__array_1d_of_edges_and_epers_from(array):
         extracted_array == np.array([0.0, 1.0, 0.0, 0.0, 4.0, 5.0, 0.0, 0.0, 0.0, 0.0])
     ).all()
 
-    layout = ac.Layout1DLine(
-        shape_1d=(10,), normalization=10.0, region_list=[(0, 1), (3, 4)]
-    )
+    layout = ac.Layout1DLine(shape_1d=(10,), region_list=[(0, 1), (3, 4)])
 
     extracted_array = layout.array_1d_of_edges_and_epers_from(
         array=array, fpr_pixels=(0, 1), trails_pixels=(0, 1)
@@ -145,12 +121,3 @@ def test__array_1d_of_edges_and_epers_from(array):
     assert (
         extracted_array == np.array([0.0, 1.0, 0.0, 3.0, 4.0, 0.0, 0.0, 0.0, 0.0, 0.0])
     ).all()
-
-
-def test__pre_cti_data_from():
-
-    layout = ac.Layout1DLine(shape_1d=(5,), normalization=10.0, region_list=[(0, 2)])
-
-    pre_cti_data = layout.pre_cti_data_from(shape_native=(3,), pixel_scales=1.0)
-
-    assert (pre_cti_data.native == np.array([10.0, 10.0, 0.0])).all()

@@ -10,7 +10,7 @@ class MockPattern(object):
 
 def test__masked_front_edge_from_layout():
 
-    layout = ac.Layout1DLine(shape_1d=(5,), normalization=1.0, region_list=[(1, 4)])
+    layout = ac.Layout1DLine(shape_1d=(5,), region_list=[(1, 4)])
 
     mask = ac.Mask1DLine.masked_front_edge_from_layout(
         layout=layout,
@@ -22,9 +22,7 @@ def test__masked_front_edge_from_layout():
 
     assert (mask == np.array([False, True, True, False, False])).all()
 
-    layout = ac.Layout1DLine(
-        shape_1d=(9,), normalization=1.0, region_list=[(1, 4), (6, 9)]
-    )
+    layout = ac.Layout1DLine(shape_1d=(9,), region_list=[(1, 4), (6, 9)])
 
     mask = ac.Mask1DLine.masked_front_edge_from_layout(
         layout=layout,
@@ -41,7 +39,7 @@ def test__masked_front_edge_from_layout():
 
 def test__masked_trails_from_layout():
 
-    layout = ac.Layout1DLine(shape_1d=(5,), normalization=1.0, region_list=[(1, 3)])
+    layout = ac.Layout1DLine(shape_1d=(5,), region_list=[(1, 3)])
 
     mask = ac.Mask1DLine.masked_trails_from_layout(
         layout=layout,
@@ -53,9 +51,7 @@ def test__masked_trails_from_layout():
 
     assert (mask == np.array([False, False, False, True, True])).all()
 
-    layout = ac.Layout1DLine(
-        shape_1d=(12,), normalization=1.0, region_list=[(1, 4), (7, 9)]
-    )
+    layout = ac.Layout1DLine(shape_1d=(12,), region_list=[(1, 4), (7, 9)])
 
     mask = ac.Mask1DLine.masked_trails_from_layout(
         layout=layout,
@@ -90,7 +86,7 @@ def test__masked_front_edges_and_epers_from_layout():
 
     unmasked = ac.Mask1DLine.unmasked(shape_slim=(5,), pixel_scales=1.0)
 
-    layout = ac.Layout1DLine(shape_1d=(5,), normalization=1.0, region_list=[(1, 3)])
+    layout = ac.Layout1DLine(shape_1d=(5,), region_list=[(1, 3)])
 
     mask = ac.Mask1DLine.masked_fprs_and_epers_from(
         mask=unmasked,

@@ -9,23 +9,14 @@ from autocti.line.extractor_1d.eper import Extractor1DEPER
 from autocti import exc
 
 
-class AbstractLayout1DLine(aa.Layout1D):
-    def __init__(
-        self,
-        shape_1d: Tuple[int],
-        normalization,
-        region_list,
-        prescan=None,
-        overscan=None,
-    ):
+class Layout1DLine(aa.Layout1D):
+    def __init__(self, shape_1d: Tuple[int], region_list, prescan=None, overscan=None):
         """
         Abstract base class for a charge injection layout_ci, which defines the regions charge injections appears \
          on a charge-injection array, the input normalization and other properties.
 
         Parameters
         -----------
-        normalization
-            The normalization of the charge injection lines.
         region_list: [(int,)]
             A list of the integer coordinates specifying the corners of each charge injection region \
             (top-row, bottom-row, left-column, right-column).
@@ -44,8 +35,6 @@ class AbstractLayout1DLine(aa.Layout1D):
         self.extractor_trails = Extractor1DEPER(region_list=region_list)
 
         super().__init__(shape_1d=shape_1d, prescan=prescan, overscan=overscan)
-
-        self.normalization = normalization
 
     @property
     def pixels_between_regions(self):
@@ -331,27 +320,3 @@ class AbstractLayout1DLine(aa.Layout1D):
             raise exc.PlottingException(
                 "The line region specified for the plotting of a line was invalid"
             )
-
-
-class Layout1DLine(AbstractLayout1DLine):
-    """
-    A uniform charge injection layout_ci, which is defined by the regions it appears on the charge injection \
-    array and its normalization.
-    """
-
-    def pre_cti_data_from(self, shape_native: Tuple[int,], pixel_scales):
-        """Use this charge injection layout_ci to generate a pre-cti charge injection image. This is performed by \
-        going to its charge injection regions and adding the charge injection normalization value.
-
-        Parameters
-        -----------
-        shape_native
-            The image_shape of the pre_cti_datas to be created.
-        """
-
-        pre_cti_data = np.zeros(shape_native)
-
-        for region in self.region_list:
-            pre_cti_data[region.slice] += self.normalization
-
-        return aa.Array1D.manual_native(array=pre_cti_data, pixel_scales=pixel_scales)

@@ -4,12 +4,11 @@ from typing import Union, Optional, List, Tuple
 from arcticpy.src.ccd import CCDPhase
 from arcticpy.src.traps import AbstractTrap
 
-from autoarray.mask import mask_1d
+import autoarray as aa
+
 from autoarray.dataset import abstract_dataset
-from autoarray.structures.arrays.one_d.array_1d import Array1D
 from autoarray.dataset.imaging import AbstractSimulatorImaging
 from autoarray.dataset import preprocess
-from autoarray.structures.arrays.one_d.array_1d import array_1d_util
 
 from autocti.line.layout import Layout1DLine
 from autocti.clocker.one_d import Clocker1D
@@ -25,9 +24,9 @@ class SettingsDatasetLine(abstract_dataset.AbstractSettingsDataset):
 class DatasetLine(abstract_dataset.AbstractDataset):
     def __init__(
         self,
-        data: Array1D,
-        noise_map: Array1D,
-        pre_cti_data: Array1D,
+        data: aa.Array1D,
+        noise_map: aa.Array1D,
+        pre_cti_data: aa.Array1D,
         layout: Layout1DLine,
         settings: SettingsDatasetLine = SettingsDatasetLine(),
     ):
@@ -39,10 +38,10 @@ class DatasetLine(abstract_dataset.AbstractDataset):
         self.pre_cti_data = pre_cti_data
         self.layout = layout
 
-    def apply_mask(self, mask: mask_1d.Mask1D) -> "DatasetLine":
+    def apply_mask(self, mask: aa.Mask1D) -> "DatasetLine":
 
-        data = Array1D.manual_mask(array=self.data, mask=mask).native
-        noise_map = Array1D.manual_mask(
+        data = aa.Array1D.manual_mask(array=self.data, mask=mask).native
+        noise_map = aa.Array1D.manual_mask(
             array=self.noise_map.astype("float"), mask=mask
         ).native
 
@@ -69,38 +68,34 @@ class DatasetLine(abstract_dataset.AbstractDataset):
         noise_map_from_single_value=None,
         pre_cti_data_path=None,
         pre_cti_data_hdu=0,
+        pre_cti_data=None,
     ):
 
-        data = Array1D.from_fits(
+        data = aa.Array1D.from_fits(
             file_path=data_path, hdu=data_hdu, pixel_scales=pixel_scales
         )
 
         if noise_map_path is not None:
-            noise_map = array_1d_util.numpy_array_1d_via_fits_from(
+            noise_map = aa.util.array_1d.numpy_array_1d_via_fits_from(
                 file_path=noise_map_path, hdu=noise_map_hdu
             )
         else:
             noise_map = np.ones(data.shape_native) * noise_map_from_single_value
 
-        noise_map = Array1D.manual_native(array=noise_map, pixel_scales=pixel_scales)
+        noise_map = aa.Array1D.manual_native(array=noise_map, pixel_scales=pixel_scales)
 
-        if pre_cti_data_path is not None:
-            pre_cti_data = Array1D.from_fits(
+        if pre_cti_data_path is not None and pre_cti_data is None:
+            pre_cti_data = aa.Array1D.from_fits(
                 file_path=pre_cti_data_path,
                 hdu=pre_cti_data_hdu,
                 pixel_scales=pixel_scales,
             )
         else:
-            if isinstance(layout, Layout1DLine):
-                pre_cti_data = layout.pre_cti_data_from(
-                    shape_native=data.shape_native, pixel_scales=pixel_scales
-                )
-            else:
-                raise exc.LayoutException(
-                    "Cannot estimate pre_cti_data data from non-uniform charge injectiono pattern"
-                )
+            raise exc.LayoutException(
+                "Cannot estimate pre_cti_data data from non-uniform charge injectiono pattern"
+            )
 
-        pre_cti_data = Array1D.manual_native(
+        pre_cti_data = aa.Array1D.manual_native(
             array=pre_cti_data.native, pixel_scales=pixel_scales
         )
 
@@ -123,6 +118,7 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
     def __init__(
         self,
         pixel_scales: Union[float, Tuple[float]],
+        normalization: float,
         read_noise: Optional[float] = None,
         add_poisson_noise: bool = False,
         noise_if_add_noise_false: float = 0.1,
@@ -146,6 +142,26 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
         )
 
         self.pixel_scales = pixel_scales
+        self.normalization = normalization
+
+    def pre_cti_data_from(
+        self, layout: Layout1DLine, pixel_scales: aa.type.PixelScales
+    ) -> aa.Array1D:
+        """Use this charge injection layout_ci to generate a pre-cti charge injection image. This is performed by \
+        going to its charge injection regions and adding the charge injection normalization value.
+
+        Parameters
+        -----------
+        shape_native
+            The image_shape of the pre_cti_datas to be created.
+        """
+
+        pre_cti_data = np.zeros(layout.shape_1d)
+
+        for region in layout.region_list:
+            pre_cti_data[region.slice] += self.normalization
+
+        return aa.Array1D.manual_native(array=pre_cti_data, pixel_scales=pixel_scales)
 
     def from_layout(
         self,
@@ -176,8 +192,8 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
             Seed for the read-noises added to the data.
         """
 
-        pre_cti_data = layout.pre_cti_data_from(
-            shape_native=layout.shape_1d, pixel_scales=self.pixel_scales
+        pre_cti_data = self.pre_cti_data_from(
+            layout=layout, pixel_scales=self.pixel_scales
         )
 
         return self.from_pre_cti_data(
@@ -190,7 +206,7 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
 
     def from_pre_cti_data(
         self,
-        pre_cti_data: Array1D,
+        pre_cti_data: aa.Array1D,
         layout: Layout1DLine,
         clocker: Clocker1D,
         trap_list: Optional[List[AbstractTrap]] = None,
@@ -206,7 +222,7 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
         )
 
     def from_post_cti_data(
-        self, post_cti_data: Array1D, pre_cti_data: Array1D, layout: Layout1DLine
+        self, post_cti_data: aa.Array1D, pre_cti_data: aa.Array1D, layout: Layout1DLine
     ) -> DatasetLine:
 
         if self.read_noise is not None:
@@ -215,26 +231,26 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
             )
             noise_map = (
                 self.read_noise
-                * Array1D.ones(
+                * aa.Array1D.ones(
                     shape_native=layout.shape_1d, pixel_scales=self.pixel_scales
                 ).native
             )
         else:
             data = post_cti_data
-            noise_map = Array1D.full(
+            noise_map = aa.Array1D.full(
                 fill_value=self.noise_if_add_noise_false,
                 shape_native=layout.shape_1d,
                 pixel_scales=self.pixel_scales,
             ).native
 
         return DatasetLine(
-            data=Array1D.manual_native(
+            data=aa.Array1D.manual_native(
                 array=data.native, pixel_scales=self.pixel_scales
             ),
-            noise_map=Array1D.manual_native(
+            noise_map=aa.Array1D.manual_native(
                 array=noise_map, pixel_scales=self.pixel_scales
             ),
-            pre_cti_data=Array1D.manual_native(
+            pre_cti_data=aa.Array1D.manual_native(
                 array=pre_cti_data.native, pixel_scales=self.pixel_scales
             ),
             layout=layout,

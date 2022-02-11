@@ -148,9 +148,7 @@ class TestDatasetLine:
 
         create_fits(fits_path=fits_path)
 
-        layout_ci = ac.Layout1DLine(
-            shape_1d=(7,), region_list=[(0, 7)], normalization=10.0
-        )
+        layout_ci = ac.Layout1DLine(shape_1d=(7,), region_list=[(0, 7)])
 
         imaging = ac.DatasetLine.from_fits(
             pixel_scales=1.0,
@@ -159,11 +157,13 @@ class TestDatasetLine:
             data_hdu=0,
             noise_map_path=path.join(fits_path, "3_twos.fits"),
             noise_map_hdu=0,
+            pre_cti_data_path=path.join(fits_path, "3_threes.fits"),
+            pre_cti_data_hdu=0,
         )
 
         assert (imaging.data.native == np.ones((7,))).all()
         assert (imaging.noise_map.native == 2.0 * np.ones((7,))).all()
-        assert (imaging.pre_cti_data.native == 10.0 * np.ones((7,))).all()
+        assert (imaging.pre_cti_data.native == 3.0 * np.ones((7,))).all()
 
         assert imaging.layout == layout_ci
 
@@ -220,11 +220,11 @@ class TestSimulatorDatasetLine:
         self, clocker_1d, traps_x2, ccd
     ):
 
-        layout = ac.Layout1DLine(
-            shape_1d=(5,), normalization=10.0, region_list=[(0, 5)]
-        )
+        layout = ac.Layout1DLine(shape_1d=(5,), region_list=[(0, 5)])
 
-        simulator = ac.SimulatorDatasetLine(pixel_scales=1.0, add_poisson_noise=False)
+        simulator = ac.SimulatorDatasetLine(
+            pixel_scales=1.0, normalization=10.0, add_poisson_noise=False
+        )
 
         dataset_line = simulator.from_layout(
             layout=layout, clocker=clocker_1d, trap_list=traps_x2, ccd=ccd
@@ -237,12 +237,14 @@ class TestSimulatorDatasetLine:
 
     def test__include_read_noise__is_added_after_cti(self, clocker_1d, traps_x2, ccd):
 
-        layout = ac.Layout1DLine(
-            shape_1d=(5,), normalization=10.0, region_list=[(0, 5)]
-        )
+        layout = ac.Layout1DLine(shape_1d=(5,), region_list=[(0, 5)])
 
         simulator = ac.SimulatorDatasetLine(
-            pixel_scales=1.0, read_noise=1.0, add_poisson_noise=False, noise_seed=1
+            pixel_scales=1.0,
+            normalization=10.0,
+            read_noise=1.0,
+            add_poisson_noise=False,
+            noise_seed=1,
         )
 
         dataset_line = simulator.from_layout(
@@ -256,21 +258,35 @@ class TestSimulatorDatasetLine:
         )
         assert dataset_line.layout == layout
 
+    def test__pre_cti_data_from(self):
+
+        simulator = ac.SimulatorDatasetLine(normalization=10.0, pixel_scales=1.0)
+
+        layout = ac.Layout1DLine(shape_1d=(3,), region_list=[(0, 2)])
+
+        pre_cti_data = simulator.pre_cti_data_from(layout=layout, pixel_scales=1.0)
+
+        print(pre_cti_data)
+
+        assert (pre_cti_data.native == np.array([10.0, 10.0, 0.0])).all()
+
     def test__from_pre_cti_data(self, clocker_1d, traps_x2, ccd):
 
-        layout = ac.Layout1DLine(
-            shape_1d=(5,), normalization=10.0, region_list=[(0, 5)]
-        )
+        layout = ac.Layout1DLine(shape_1d=(5,), region_list=[(0, 5)])
 
         simulator = ac.SimulatorDatasetLine(
-            pixel_scales=1.0, read_noise=4.0, add_poisson_noise=False, noise_seed=1
+            pixel_scales=1.0,
+            normalization=10.0,
+            read_noise=4.0,
+            add_poisson_noise=False,
+            noise_seed=1,
         )
 
         dataset_line = simulator.from_layout(
             layout=layout, clocker=clocker_1d, trap_list=traps_x2, ccd=ccd
         )
 
-        pre_cti_data = layout.pre_cti_data_from(shape_native=(5,), pixel_scales=1.0)
+        pre_cti_data = simulator.pre_cti_data_from(layout=layout, pixel_scales=1.0)
 
         dataset_line_via_pre_cti_data = simulator.from_pre_cti_data(
             pre_cti_data=pre_cti_data.native,
@@ -288,19 +304,21 @@ class TestSimulatorDatasetLine:
 
     def test__from_post_cti_data(self, clocker_1d, traps_x2, ccd):
 
-        layout = ac.Layout1DLine(
-            shape_1d=(5,), normalization=10.0, region_list=[(0, 5)]
-        )
+        layout = ac.Layout1DLine(shape_1d=(5,), region_list=[(0, 5)])
         simulator = ac.SimulatorDatasetLine(
-            pixel_scales=1.0, read_noise=4.0, add_poisson_noise=False, noise_seed=1
+            pixel_scales=1.0,
+            normalization=10.0,
+            read_noise=4.0,
+            add_poisson_noise=False,
+            noise_seed=1,
         )
 
         dataset_line = simulator.from_layout(
             layout=layout, clocker=clocker_1d, trap_list=traps_x2, ccd=ccd
         )
 
-        pre_cti_data = layout.pre_cti_data_from(
-            shape_native=(5,), pixel_scales=1.0
+        pre_cti_data = simulator.pre_cti_data_from(
+            layout=layout, pixel_scales=1.0
         ).native
 
         post_cti_data = clocker_1d.add_cti(
