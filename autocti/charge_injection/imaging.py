@@ -138,7 +138,7 @@ class ImagingCI(aa.Imaging):
                 columns=settings.parallel_pixels
             )
 
-            mask = self.layout.mask_for_parallel_calibration_from(
+            mask = self.layout.parallel_calibration_mask_from(
                 mask=self.mask, columns=settings.parallel_pixels
             )
 
@@ -148,7 +148,7 @@ class ImagingCI(aa.Imaging):
                 rows=settings.serial_pixels
             )
 
-            mask = self.layout.mask_for_serial_calibration_from(
+            mask = self.layout.serial_calibration_mask_from(
                 mask=self.mask, rows=settings.serial_pixels
             )
 
@@ -172,7 +172,7 @@ class ImagingCI(aa.Imaging):
         """
 
         cosmic_ray_map = (
-            self.layout.array_2d_for_parallel_calibration_from(
+            self.layout.parallel_calibration_array_2d_from(
                 array=self.cosmic_ray_map, columns=columns
             )
             if self.cosmic_ray_map is not None
@@ -182,7 +182,7 @@ class ImagingCI(aa.Imaging):
         if self.noise_scaling_map_list is not None:
 
             noise_scaling_map_list = [
-                self.layout.array_2d_for_parallel_calibration_from(
+                self.layout.parallel_calibration_array_2d_from(
                     array=noise_scaling_map, columns=columns
                 )
                 for noise_scaling_map in self.noise_scaling_map_list
@@ -192,18 +192,18 @@ class ImagingCI(aa.Imaging):
 
             noise_scaling_map_list = None
 
-        extraction_region = self.layout.extraction_region_for_parallel_calibration_from(
+        extraction_region = self.layout.parallel_calibration_extraction_region_from(
             columns=columns
         )
 
         return ImagingCI(
-            image=self.layout.array_2d_for_parallel_calibration_from(
+            image=self.layout.parallel_calibration_array_2d_from(
                 array=self.image, columns=columns
             ),
-            noise_map=self.layout.array_2d_for_parallel_calibration_from(
+            noise_map=self.layout.parallel_calibration_array_2d_from(
                 array=self.noise_map, columns=columns
             ),
-            pre_cti_data=self.layout.array_2d_for_parallel_calibration_from(
+            pre_cti_data=self.layout.parallel_calibration_array_2d_from(
                 array=self.pre_cti_data, columns=columns
             ),
             layout=self.layout.layout_extracted_from(
@@ -219,7 +219,7 @@ class ImagingCI(aa.Imaging):
         """
 
         cosmic_ray_map = (
-            self.layout.array_2d_for_serial_calibration_from(
+            self.layout.serial_calibration_array_2d_from(
                 array=self.cosmic_ray_map, rows=rows
             )
             if self.cosmic_ray_map is not None
@@ -229,7 +229,7 @@ class ImagingCI(aa.Imaging):
         if self.noise_scaling_map_list is not None:
 
             noise_scaling_map_list = [
-                self.layout.array_2d_for_serial_calibration_from(
+                self.layout.serial_calibration_array_2d_from(
                     array=noise_scaling_map, rows=rows
                 )
                 for noise_scaling_map in self.noise_scaling_map_list
@@ -239,19 +239,19 @@ class ImagingCI(aa.Imaging):
 
             noise_scaling_map_list = None
 
-        image = self.layout.array_2d_for_serial_calibration_from(
+        image = self.layout.serial_calibration_array_2d_from(
             array=self.image, rows=rows
         )
 
         return ImagingCI(
             image=image,
-            noise_map=self.layout.array_2d_for_serial_calibration_from(
+            noise_map=self.layout.serial_calibration_array_2d_from(
                 array=self.noise_map, rows=rows
             ),
-            pre_cti_data=self.layout.array_2d_for_serial_calibration_from(
+            pre_cti_data=self.layout.serial_calibration_array_2d_from(
                 array=self.pre_cti_data, rows=rows
             ),
-            layout=self.layout.extracted_layout_for_serial_calibration_from(
+            layout=self.layout.serial_calibration_extracted_layout_from(
                 new_shape_2d=image.shape, rows=rows
             ),
             cosmic_ray_map=cosmic_ray_map,

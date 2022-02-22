@@ -146,7 +146,7 @@ class Layout2DCI(aa.Layout2D):
         pixels_between_regions.append(self.parallel_rows_to_array_edge)
         return np.min(pixels_between_regions)
 
-    def array_2d_of_regions_from(self, array: aa.Array2D) -> aa.Array2D:
+    def regions_array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
         """
         Extract all of the charge-injection regions from an input `Array2D` object and returns them as a new `Array2D`
         where these extracted regions are included and all other entries are zeros.
@@ -199,7 +199,7 @@ class Layout2DCI(aa.Layout2D):
 
         return new_array
 
-    def array_2d_of_non_regions_from(self, array: aa.Array2D) -> aa.Array2D:
+    def non_regions_array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
         """
         Extract all of the areas of an `Array2D` that are not within any of the layout's charge-injection regions
         and return them as a new `Array2D` where these extracted regions are included and the charge injection regions
@@ -256,7 +256,7 @@ class Layout2DCI(aa.Layout2D):
 
         return non_regions_ci_array
 
-    def array_2d_of_parallel_epers_from(self, array: aa.Array2D) -> aa.Array2D:
+    def parallel_epers_array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
         """
         Extract all of the areas of an `Array2D` that contain the parallel EPERs and return them as a new `Array2D`
         where these extracted regions are included and everything else (e.g. the charge injection regions, serial
@@ -303,14 +303,14 @@ class Layout2DCI(aa.Layout2D):
                <--------Ser---------
         """
 
-        parallel_array = self.array_2d_of_non_regions_from(array=array)
+        parallel_array = self.non_regions_array_2d_from(array=array)
 
         parallel_array.native[self.serial_prescan.slice] = 0.0
         parallel_array.native[self.serial_overscan.slice] = 0.0
 
         return parallel_array
 
-    def array_2d_of_parallel_fprs_and_epers_from(
+    def parallel_fprs_and_epers_array_2d_from(
         self,
         array: aa.Array2D,
         fpr_pixels: Tuple[int, int] = None,
@@ -391,7 +391,7 @@ class Layout2DCI(aa.Layout2D):
 
         return new_array
 
-    def extraction_region_for_parallel_calibration_from(
+    def parallel_calibration_extraction_region_from(
         self, columns: Tuple[int, int]
     ) -> aa.type.Region2DLike:
         """
@@ -442,7 +442,7 @@ class Layout2DCI(aa.Layout2D):
             shape_2d=self.shape_2d, pixels=columns
         )
 
-    def array_2d_for_parallel_calibration_from(
+    def parallel_calibration_array_2d_from(
         self, array: aa.Array2D, columns: Tuple[int, int]
     ) -> aa.Array2D:
         """
@@ -489,7 +489,7 @@ class Layout2DCI(aa.Layout2D):
         []     [=====================]
                <--------Ser---------
         """
-        extraction_region = self.extraction_region_for_parallel_calibration_from(
+        extraction_region = self.parallel_calibration_extraction_region_from(
             columns=columns
         )
         return aa.Array2D.manual_native(
@@ -498,7 +498,7 @@ class Layout2DCI(aa.Layout2D):
             pixel_scales=array.pixel_scales,
         )
 
-    def extracted_layout_for_parallel_calibration_from(
+    def parallel_calibration_extracted_layout_from(
         self, columns: Tuple[int, int]
     ) -> "Layout2DCI":
         """
@@ -546,19 +546,19 @@ class Layout2DCI(aa.Layout2D):
                <--------Ser---------
         """
 
-        extraction_region = self.extraction_region_for_parallel_calibration_from(
+        extraction_region = self.parallel_calibration_extraction_region_from(
             columns=columns
         )
 
         return self.with_extracted_regions(extraction_region=extraction_region)
 
-    def mask_for_parallel_calibration_from(
+    def parallel_calibration_mask_from(
         self, mask: aa.Mask2D, columns: Tuple[int, int]
     ) -> "Mask2DCI":
         """
         Extract a mask to go with a parallel calibration array from an input mask.
 
-        The parallel calibration array is described in the function `array_2d_for_parallel_calibration_from()`.
+        The parallel calibration array is described in the function `parallel_calibration_array_2d_from()`.
         """
         extraction_region = self.region_list[0].serial_towards_roe_full_region_from(
             shape_2d=self.shape_2d, pixels=columns
@@ -567,7 +567,7 @@ class Layout2DCI(aa.Layout2D):
             mask=mask[extraction_region.slice], pixel_scales=mask.pixel_scales
         )
 
-    def array_2d_of_serial_epers_from(self, array: aa.Array2D) -> aa.Array2D:
+    def serial_epers_array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
         """
         Extract an arrays of all of the serial EPERs in the serial overscan region, that are to the side of a
         charge-injection scans from a charge injection array.
@@ -611,12 +611,12 @@ class Layout2DCI(aa.Layout2D):
         []     [=====================]
                <--------Ser---------
         """
-        array = self.array_2d_of_serial_fprs_and_epers_array(
+        array = self.serial_fprs_and_epers_array_2d_from(
             array=array, trails_pixels=(0, self.serial_overscan.total_columns)
         )
         return array
 
-    def array_2d_of_serial_overscan_above_epers_from(
+    def serial_overscan_above_epers_array_2d_from(
         self, array: aa.Array2D
     ) -> aa.Array2D:
         """
@@ -680,7 +680,7 @@ class Layout2DCI(aa.Layout2D):
 
         return new_array
 
-    def array_2d_of_serial_fprs_and_epers_array(
+    def serial_fprs_and_epers_array_2d_from(
         self, array: aa.Array2D, fpr_pixels=None, trails_pixels=None
     ) -> aa.Array2D:
         """
@@ -757,7 +757,7 @@ class Layout2DCI(aa.Layout2D):
 
         return new_array
 
-    def array_2d_list_for_serial_calibration(self, array: aa.Array2D):
+    def serial_calibration_array_2d_list_from(self, array: aa.Array2D):
         """
         Extract each charge injection region image for the serial calibration arrays when creating the
         """
@@ -774,7 +774,7 @@ class Layout2DCI(aa.Layout2D):
             map(lambda region: array.native[region.slice], calibration_region_list)
         )
 
-    def extracted_layout_for_serial_calibration_from(self, new_shape_2d, rows):
+    def serial_calibration_extracted_layout_from(self, new_shape_2d, rows):
 
         serial_prescan = (
             (0, new_shape_2d[0], self.serial_prescan[2], self.serial_prescan[3])
@@ -808,7 +808,7 @@ class Layout2DCI(aa.Layout2D):
 
         return new_layout_ci
 
-    def array_2d_for_serial_calibration_from(
+    def serial_calibration_array_2d_from(
         self, array: aa.Array2D, rows: Tuple[int, int]
     ) -> aa.Array2D:
         """
@@ -851,7 +851,7 @@ class Layout2DCI(aa.Layout2D):
         []     [=====================]
                <--------Ser---------
         """
-        calibration_images = self.array_2d_list_for_serial_calibration(array=array)
+        calibration_images = self.serial_calibration_array_2d_list_from(array=array)
         calibration_images = list(
             map(lambda image: image[rows[0] : rows[1], :], calibration_images)
         )
@@ -862,7 +862,7 @@ class Layout2DCI(aa.Layout2D):
             array=new_array, header=array.header, pixel_scales=array.pixel_scales
         )
 
-    def mask_for_serial_calibration_from(
+    def serial_calibration_mask_from(
         self, mask: aa.Mask2D, rows: Tuple[int, int]
     ) -> Mask2DCI:
         """

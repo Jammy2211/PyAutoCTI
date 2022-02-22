@@ -1,7 +1,8 @@
+import numpy as np
+from typing import Optional, List
+
 from arcticpy.src import ccd
 from arcticpy.src import traps
-
-from typing import Optional, List
 
 
 class CTI1D:
@@ -28,6 +29,27 @@ class CTI2D:
         self.parallel_ccd = parallel_ccd
         self.serial_traps = serial_traps
         self.serial_ccd = serial_ccd
+
+    @property
+    def trap_list(self) -> List[traps.AbstractTrap]:
+        """
+        Combine the parallel and serial trap lists to make an overall list of traps in the model.
+
+        This is not a straight forward list addition, because **PyAutoFit** model's store the `parallel_traps` and
+        `serial_traps` entries as a `ModelInstance`. This object does not allow for straight forward list addition.
+
+        Returns
+        -------
+
+        """
+        parallel_traps = self.parallel_traps or []
+        serial_traps = self.serial_traps or []
+
+        return [trap for trap in parallel_traps] + [trap for trap in serial_traps]
+
+    @property
+    def delta_ellipticity(self):
+        return sum([trap.delta_ellipticity for trap in self.trap_list])
 
 
 def is_parallel_fit(model):

@@ -152,7 +152,7 @@ def test__with_extracted_regions__region_list_are_extracted_correctly():
     assert layout_extracted.region_list == None
 
 
-def test__array_2d_of_regions_from():
+def test__regions_array_2d_from():
 
     layout = ac.ci.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 3, 0, 3)])
 
@@ -161,7 +161,7 @@ def test__array_2d_of_regions_from():
         pixel_scales=1.0,
     )
 
-    array_extracted = layout.array_2d_of_regions_from(array=array)
+    array_extracted = layout.regions_array_2d_from(array=array)
 
     assert (
         array_extracted
@@ -177,7 +177,7 @@ def test__array_2d_of_regions_from():
         pixel_scales=1.0,
     )
 
-    array_extracted = layout.array_2d_of_regions_from(array=array)
+    array_extracted = layout.regions_array_2d_from(array=array)
 
     assert (
         array_extracted
@@ -187,7 +187,7 @@ def test__array_2d_of_regions_from():
     ).all()
 
 
-def test__array_2d_of_non_regions_from():
+def test__non_regions_array_2d_from():
 
     layout = ac.ci.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 3, 0, 3)])
 
@@ -196,7 +196,7 @@ def test__array_2d_of_non_regions_from():
         pixel_scales=1.0,
     )
 
-    array_extracted = layout.array_2d_of_non_regions_from(array=array)
+    array_extracted = layout.non_regions_array_2d_from(array=array)
 
     assert (
         array_extracted
@@ -218,7 +218,7 @@ def test__array_2d_of_non_regions_from():
         pixel_scales=1.0,
     )
 
-    array_extracted = layout.array_2d_of_non_regions_from(array=array)
+    array_extracted = layout.non_regions_array_2d_from(array=array)
 
     assert (
         array_extracted
@@ -234,7 +234,7 @@ def test__array_2d_of_non_regions_from():
     ).all()
 
 
-def test__array_2d_of_parallel_epers_from():
+def test__parallel_epers_array_2d_from():
 
     layout = ac.ci.Layout2DCI(
         shape_2d=(5, 3),
@@ -254,7 +254,7 @@ def test__array_2d_of_parallel_epers_from():
         pixel_scales=1.0,
     )
 
-    array_extracted = layout.array_2d_of_parallel_epers_from(array=array)
+    array_extracted = layout.parallel_epers_array_2d_from(array=array)
 
     assert (
         array_extracted
@@ -276,7 +276,7 @@ def test__array_2d_of_parallel_epers_from():
         serial_overscan=(0, 1, 0, 1),
     )
 
-    array_extracted = layout.array_2d_of_parallel_epers_from(array=array)
+    array_extracted = layout.parallel_epers_array_2d_from(array=array)
 
     assert (
         array_extracted.native
@@ -292,7 +292,7 @@ def test__array_2d_of_parallel_epers_from():
     ).all()
 
 
-def test__array_2d_of_parallel_fprs_and_epers_from():
+def test__parallel_fprs_and_epers_array_2d_from():
 
     parallel_array = ac.Array2D.manual(
         array=[
@@ -312,7 +312,7 @@ def test__array_2d_of_parallel_fprs_and_epers_from():
 
     layout = ac.ci.Layout2DCI(shape_2d=(10, 3), region_list=[(0, 4, 0, 3)])
 
-    new_array = layout.array_2d_of_parallel_fprs_and_epers_from(
+    new_array = layout.parallel_fprs_and_epers_array_2d_from(
         array=parallel_array, fpr_pixels=(0, 2), trails_pixels=(0, 2)
     )
 
@@ -338,7 +338,7 @@ def test__array_2d_of_parallel_fprs_and_epers_from():
         shape_2d=(10, 3), region_list=[(0, 1, 0, 3), (3, 4, 0, 3)]
     )
 
-    new_array = layout.array_2d_of_parallel_fprs_and_epers_from(
+    new_array = layout.parallel_fprs_and_epers_array_2d_from(
         array=parallel_array, fpr_pixels=(0, 1), trails_pixels=(0, 1)
     )
 
@@ -361,7 +361,7 @@ def test__array_2d_of_parallel_fprs_and_epers_from():
     ).all()
 
 
-def test__array_2d_for_parallel_calibration_from():
+def test__parallel_calibration_array_2d_from():
 
     layout = ac.ci.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 3, 0, 3)])
 
@@ -376,7 +376,7 @@ def test__array_2d_for_parallel_calibration_from():
         pixel_scales=1.0,
     )
 
-    extracted_array = layout.array_2d_for_parallel_calibration_from(
+    extracted_array = layout.parallel_calibration_array_2d_from(
         array=array, columns=(0, 1)
     )
 
@@ -384,7 +384,7 @@ def test__array_2d_for_parallel_calibration_from():
 
     layout = ac.ci.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 5, 0, 3)])
 
-    extracted_array = layout.array_2d_for_parallel_calibration_from(
+    extracted_array = layout.parallel_calibration_array_2d_from(
         array=array, columns=(1, 3)
     )
 
@@ -394,7 +394,7 @@ def test__array_2d_for_parallel_calibration_from():
     ).all()
 
 
-def test__mask_for_parallel_calibration_from():
+def test__parallel_calibration_mask_from():
 
     layout = ac.ci.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 5, 0, 3)])
 
@@ -402,7 +402,7 @@ def test__mask_for_parallel_calibration_from():
 
     mask[0, 1] = True
 
-    extracted_mask = layout.mask_for_parallel_calibration_from(
+    extracted_mask = layout.parallel_calibration_mask_from(
         mask=mask, columns=(1, 3)
     )
 
@@ -424,7 +424,7 @@ def test__extracted_layout_2d_for_parallel_calibration_from():
 
     layout = ac.ci.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 3, 0, 3)])
 
-    extracted_layout = layout.extracted_layout_for_parallel_calibration_from(
+    extracted_layout = layout.parallel_calibration_extracted_layout_from(
         columns=(0, 1)
     )
 
@@ -432,14 +432,14 @@ def test__extracted_layout_2d_for_parallel_calibration_from():
 
     layout = ac.ci.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 5, 0, 3)])
 
-    extracted_layout = layout.extracted_layout_for_parallel_calibration_from(
+    extracted_layout = layout.parallel_calibration_extracted_layout_from(
         columns=(1, 3)
     )
 
     assert extracted_layout.region_list == [(0, 5, 0, 2)]
 
 
-def test__array_2d_of_serial_epers_from():
+def test__serial_epers_array_2d_from():
 
     layout = ac.ci.Layout2DCI(
         shape_2d=(4, 3), region_list=[(0, 4, 0, 2)], serial_overscan=(0, 4, 2, 3)
@@ -450,7 +450,7 @@ def test__array_2d_of_serial_epers_from():
         pixel_scales=1.0,
     )
 
-    new_array = layout.array_2d_of_serial_epers_from(array=array)
+    new_array = layout.serial_epers_array_2d_from(array=array)
 
     assert (
         new_array
@@ -473,7 +473,7 @@ def test__array_2d_of_serial_epers_from():
         pixel_scales=1.0,
     )
 
-    new_array = layout.array_2d_of_serial_epers_from(array=array)
+    new_array = layout.serial_epers_array_2d_from(array=array)
 
     assert (
         new_array
@@ -488,7 +488,7 @@ def test__array_2d_of_serial_epers_from():
     ).all()
 
 
-def test__array_2d_of_serial_overscan_above_epers_from():
+def test__serial_overscan_above_epers_array_2d_from():
     layout = ac.ci.Layout2DCI(
         shape_2d=(5, 4),
         region_list=[(1, 2, 1, 3), (3, 4, 1, 3)],
@@ -507,7 +507,7 @@ def test__array_2d_of_serial_overscan_above_epers_from():
         pixel_scales=1.0,
     )
 
-    new_array = layout.array_2d_of_serial_overscan_above_epers_from(array=array)
+    new_array = layout.serial_overscan_above_epers_array_2d_from(array=array)
 
     assert (
         new_array
@@ -538,7 +538,7 @@ def test__array_2d_of_serial_overscan_above_epers_from():
         pixel_scales=1.0,
     )
 
-    new_array = layout.array_2d_of_serial_overscan_above_epers_from(array=array)
+    new_array = layout.serial_overscan_above_epers_array_2d_from(array=array)
 
     assert (
         new_array
@@ -553,7 +553,7 @@ def test__array_2d_of_serial_overscan_above_epers_from():
     ).all()
 
 
-def test__array_2d_of_serial_fprs_and_epers_array():
+def test__serial_fprs_and_epers_array_2d_from():
 
     layout = ac.ci.Layout2DCI(shape_2d=(3, 4), region_list=[(0, 3, 0, 3)])
 
@@ -562,7 +562,7 @@ def test__array_2d_of_serial_fprs_and_epers_array():
         pixel_scales=1.0,
     )
 
-    new_array = layout.array_2d_of_serial_fprs_and_epers_array(
+    new_array = layout.serial_fprs_and_epers_array_2d_from(
         array=array, fpr_pixels=(0, 1)
     )
 
@@ -571,7 +571,7 @@ def test__array_2d_of_serial_fprs_and_epers_array():
         == np.array([[0.0, 0.0, 0.0, 0.0], [4.0, 0.0, 0.0, 0.0], [8.0, 0.0, 0.0, 0.0]])
     ).all()
 
-    new_array = layout.array_2d_of_serial_fprs_and_epers_array(
+    new_array = layout.serial_fprs_and_epers_array_2d_from(
         array=array, fpr_pixels=(0, 2)
     )
 
@@ -582,7 +582,7 @@ def test__array_2d_of_serial_fprs_and_epers_array():
 
     layout = ac.ci.Layout2DCI(shape_2d=(3, 4), region_list=[(0, 3, 0, 2)])
 
-    new_array = layout.array_2d_of_serial_fprs_and_epers_array(
+    new_array = layout.serial_fprs_and_epers_array_2d_from(
         array=array, trails_pixels=(0, 1)
     )
 
@@ -591,7 +591,7 @@ def test__array_2d_of_serial_fprs_and_epers_array():
         == np.array([[0.0, 0.0, 2.0, 0.0], [0.0, 0.0, 6.0, 0.0], [0.0, 0.0, 10.0, 0.0]])
     ).all()
 
-    new_array = layout.array_2d_of_serial_fprs_and_epers_array(
+    new_array = layout.serial_fprs_and_epers_array_2d_from(
         array=array, trails_pixels=(0, 2)
     )
 
@@ -613,7 +613,7 @@ def test__array_2d_of_serial_fprs_and_epers_array():
         pixel_scales=1.0,
     )
 
-    new_array = layout.array_2d_of_serial_fprs_and_epers_array(
+    new_array = layout.serial_fprs_and_epers_array_2d_from(
         array=array, fpr_pixels=(0, 1), trails_pixels=(0, 1)
     )
 
@@ -629,7 +629,7 @@ def test__array_2d_of_serial_fprs_and_epers_array():
     ).all()
 
 
-def test__array_2d_list_for_serial_calibration():
+def test__serial_calibration_array_2d_list_from():
 
     layout = ac.ci.Layout2DCI(shape_2d=(3, 5), region_list=[(0, 3, 0, 5)])
 
@@ -642,7 +642,7 @@ def test__array_2d_list_for_serial_calibration():
         pixel_scales=1.0,
     )
 
-    serial_region = layout.array_2d_list_for_serial_calibration(array=array)
+    serial_region = layout.serial_calibration_array_2d_list_from(array=array)
 
     assert (
         serial_region[0]
@@ -657,13 +657,13 @@ def test__array_2d_list_for_serial_calibration():
 
     layout = ac.ci.Layout2DCI(shape_2d=(3, 5), region_list=[(0, 1, 1, 4), (2, 3, 1, 4)])
 
-    serial_region = layout.array_2d_list_for_serial_calibration(array=array)
+    serial_region = layout.serial_calibration_array_2d_list_from(array=array)
 
     assert (serial_region[0] == np.array([[0.0, 1.0, 2.0, 2.0, 2.0]])).all()
     assert (serial_region[1] == np.array([[0.0, 1.0, 2.0, 4.0, 4.0]])).all()
 
 
-def test__array_2d_for_serial_calibration_from():
+def test__serial_calibration_array_2d_from():
 
     layout = ac.ci.Layout2DCI(
         shape_2d=(3, 5), region_list=[(0, 3, 1, 5)], serial_prescan=(0, 3, 0, 1)
@@ -678,7 +678,7 @@ def test__array_2d_for_serial_calibration_from():
         pixel_scales=1.0,
     )
 
-    new_array = layout.array_2d_for_serial_calibration_from(array=array, rows=(0, 3))
+    new_array = layout.serial_calibration_array_2d_from(array=array, rows=(0, 3))
 
     assert (
         new_array.native
@@ -700,7 +700,7 @@ def test__array_2d_for_serial_calibration_from():
         serial_overscan=(0, 3, 3, 4),
     )
 
-    new_array = layout.array_2d_for_serial_calibration_from(array=array, rows=(0, 2))
+    new_array = layout.serial_calibration_array_2d_from(array=array, rows=(0, 2))
 
     assert (
         new_array.native
@@ -725,7 +725,7 @@ def test__array_2d_for_serial_calibration_from():
         serial_overscan=(0, 3, 3, 4),
     )
 
-    new_array = layout.array_2d_for_serial_calibration_from(array=array, rows=(0, 1))
+    new_array = layout.serial_calibration_array_2d_from(array=array, rows=(0, 1))
 
     assert (
         new_array.native
@@ -752,7 +752,7 @@ def test__array_2d_for_serial_calibration_from():
         pixel_scales=1.0,
     )
 
-    new_array = layout.array_2d_for_serial_calibration_from(array=array, rows=(1, 2))
+    new_array = layout.serial_calibration_array_2d_from(array=array, rows=(1, 2))
 
     assert (
         new_array.native
@@ -771,7 +771,7 @@ def test__maks_for_serial_calibration_from():
     mask[1, 1] = True
     mask[4, 3] = True
 
-    serial_frame = layout.mask_for_serial_calibration_from(mask=mask, rows=(1, 2))
+    serial_frame = layout.serial_calibration_mask_from(mask=mask, rows=(1, 2))
 
     assert (
         serial_frame
@@ -781,13 +781,13 @@ def test__maks_for_serial_calibration_from():
     ).all()
 
 
-def test__extracted_layout_for_serial_calibration_from():
+def test__serial_calibration_extracted_layout_from():
 
     layout = ac.ci.Layout2DCI(
         shape_2d=(3, 5), region_list=[(0, 3, 1, 5)], serial_prescan=(0, 3, 0, 1)
     )
 
-    extracted_layout = layout.extracted_layout_for_serial_calibration_from(
+    extracted_layout = layout.serial_calibration_extracted_layout_from(
         new_shape_2d=(3, 5), rows=(0, 3)
     )
 
@@ -804,7 +804,7 @@ def test__extracted_layout_for_serial_calibration_from():
         serial_overscan=(0, 3, 3, 4),
     )
 
-    extracted_layout = layout.extracted_layout_for_serial_calibration_from(
+    extracted_layout = layout.serial_calibration_extracted_layout_from(
         new_shape_2d=(2, 5), rows=(0, 2)
     )
 
@@ -830,7 +830,7 @@ def test__extracted_layout_for_serial_calibration_from():
         serial_overscan=(0, 3, 3, 4),
     )
 
-    extracted_layout = layout.extracted_layout_for_serial_calibration_from(
+    extracted_layout = layout.serial_calibration_extracted_layout_from(
         new_shape_2d=(2, 5), rows=(0, 1)
     )
 
@@ -858,7 +858,7 @@ def test__extracted_layout_for_serial_calibration_from():
         pixel_scales=1.0,
     )
 
-    extracted_layout = layout.extracted_layout_for_serial_calibration_from(
+    extracted_layout = layout.serial_calibration_extracted_layout_from(
         new_shape_2d=(2, 5), rows=(1, 2)
     )
 

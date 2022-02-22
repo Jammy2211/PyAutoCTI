@@ -146,3 +146,4 @@ class Extractor2D:
             new_array[region.y0 : region.y1, region.x0 : region.x1] += arr
 
         return new_array
+
