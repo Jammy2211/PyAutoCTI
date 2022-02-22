@@ -483,7 +483,9 @@ class Clocker2D(AbstractClocker):
         serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
 
         if self.euclid_orientation_hack:
-            data = self._flip_for_euclid_hack(data=data, row_index=data.header.row_index)
+            data = self._flip_for_euclid_hack(
+                data=data, row_index=data.header.row_index
+            )
 
         image_cti_removed = cti.remove_cti(
             image=data,
@@ -505,7 +507,9 @@ class Clocker2D(AbstractClocker):
         )
 
         if self.euclid_orientation_hack:
-            image_cti_removed = self._flip_for_euclid_hack(data=image_cti_removed, row_index=data.header.row_index)
+            image_cti_removed = self._flip_for_euclid_hack(
+                data=image_cti_removed, row_index=data.header.row_index
+            )
 
         return aa.Array2D.manual_mask(
             array=image_cti_removed, mask=data.mask, header=data.header

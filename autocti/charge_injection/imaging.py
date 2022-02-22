@@ -148,7 +148,7 @@ class ImagingCI(aa.Imaging):
                 rows=settings.serial_pixels
             )
 
-            mask = self.layout.serial_calibration_mask_from(
+            mask = self.layout.extractor_serial_calibration.mask_2d_from(
                 mask=self.mask, rows=settings.serial_pixels
             )
 
@@ -219,7 +219,7 @@ class ImagingCI(aa.Imaging):
         """
 
         cosmic_ray_map = (
-            self.layout.serial_calibration_array_2d_from(
+            self.layout.extractor_serial_calibration.array_2d_from(
                 array=self.cosmic_ray_map, rows=rows
             )
             if self.cosmic_ray_map is not None
@@ -229,7 +229,7 @@ class ImagingCI(aa.Imaging):
         if self.noise_scaling_map_list is not None:
 
             noise_scaling_map_list = [
-                self.layout.serial_calibration_array_2d_from(
+                self.layout.extractor_serial_calibration.array_2d_from(
                     array=noise_scaling_map, rows=rows
                 )
                 for noise_scaling_map in self.noise_scaling_map_list
@@ -239,20 +239,20 @@ class ImagingCI(aa.Imaging):
 
             noise_scaling_map_list = None
 
-        image = self.layout.serial_calibration_array_2d_from(
+        image = self.layout.extractor_serial_calibration.array_2d_from(
             array=self.image, rows=rows
         )
 
         return ImagingCI(
             image=image,
-            noise_map=self.layout.serial_calibration_array_2d_from(
+            noise_map=self.layout.extractor_serial_calibration.array_2d_from(
                 array=self.noise_map, rows=rows
             ),
-            pre_cti_data=self.layout.serial_calibration_array_2d_from(
+            pre_cti_data=self.layout.extractor_serial_calibration.array_2d_from(
                 array=self.pre_cti_data, rows=rows
             ),
-            layout=self.layout.serial_calibration_extracted_layout_from(
-                new_shape_2d=image.shape, rows=rows
+            layout=self.layout.extractor_serial_calibration.extracted_layout_from(
+                layout=self.layout, new_shape_2d=image.shape, rows=rows
             ),
             cosmic_ray_map=cosmic_ray_map,
             noise_scaling_map_list=noise_scaling_map_list,
