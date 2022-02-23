@@ -51,33 +51,6 @@ class TestSettingsImagingCI:
 
 
 class TestImagingCI:
-    def test__parallel_calibration_imaging_ci_from(self, imaging_ci_7x7):
-
-        # The ci layout starts at column 1, so the left most column is removed below
-
-        parallel_calibration_imaging = imaging_ci_7x7.parallel_calibration_imaging_from(
-            columns=(0, 6)
-        )
-
-        assert (
-            parallel_calibration_imaging.image.native
-            == imaging_ci_7x7.image.native[:, 1:7]
-        ).all()
-        assert (
-            parallel_calibration_imaging.noise_map.native
-            == imaging_ci_7x7.noise_map.native[:, 1:7]
-        ).all()
-        assert (
-            parallel_calibration_imaging.pre_cti_data.native
-            == imaging_ci_7x7.pre_cti_data.native[:, 1:7]
-        ).all()
-        assert (
-            parallel_calibration_imaging.cosmic_ray_map.native
-            == imaging_ci_7x7.cosmic_ray_map.native[:, 1:7]
-        ).all()
-
-        assert parallel_calibration_imaging.layout.region_list == [(1, 5, 0, 4)]
-
     def test__serial_calibration_imaging_ci_from_rows(self, imaging_ci_7x7):
 
         # The ci layout spans 2 rows, so two rows are extracted

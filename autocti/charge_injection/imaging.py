@@ -134,8 +134,8 @@ class ImagingCI(aa.Imaging):
 
         if settings.parallel_pixels is not None:
 
-            imaging = self.parallel_calibration_imaging_from(
-                columns=settings.parallel_pixels
+            imaging = self.layout.extract_parallel_calibration.imaging_ci_from(
+                imaging_ci=self, columns=settings.parallel_pixels
             )
 
             mask = self.layout.extract_parallel_calibration.mask_2d_from(
@@ -165,53 +165,6 @@ class ImagingCI(aa.Imaging):
     @property
     def mask(self):
         return self.image.mask
-
-    def parallel_calibration_imaging_from(self, columns):
-        """
-        Returnss a function to extract a parallel section for given columns
-        """
-
-        cosmic_ray_map = (
-            self.layout.extract_parallel_calibration.array_2d_from(
-                array=self.cosmic_ray_map, columns=columns
-            )
-            if self.cosmic_ray_map is not None
-            else None
-        )
-
-        if self.noise_scaling_map_list is not None:
-
-            noise_scaling_map_list = [
-                self.layout.extract_parallel_calibration.array_2d_from(
-                    array=noise_scaling_map, columns=columns
-                )
-                for noise_scaling_map in self.noise_scaling_map_list
-            ]
-
-        else:
-
-            noise_scaling_map_list = None
-
-        extraction_region = self.layout.extract_parallel_calibration.extraction_region_from(
-            columns=columns
-        )
-
-        return ImagingCI(
-            image=self.layout.extract_parallel_calibration.array_2d_from(
-                array=self.image, columns=columns
-            ),
-            noise_map=self.layout.extract_parallel_calibration.array_2d_from(
-                array=self.noise_map, columns=columns
-            ),
-            pre_cti_data=self.layout.extract_parallel_calibration.array_2d_from(
-                array=self.pre_cti_data, columns=columns
-            ),
-            layout=self.layout.layout_extracted_from(
-                extraction_region=extraction_region
-            ),
-            cosmic_ray_map=cosmic_ray_map,
-            noise_scaling_map_list=noise_scaling_map_list,
-        )
 
     def serial_calibration_imaging_for_rows(self, rows):
         """
