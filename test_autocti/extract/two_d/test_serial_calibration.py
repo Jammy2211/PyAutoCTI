@@ -244,3 +244,37 @@ def test__extracted_layout_from():
     assert extracted_layout.parallel_overscan == None
     assert extracted_layout.serial_prescan == (0, 2, 0, 1)
     assert extracted_layout.serial_overscan == (0, 2, 3, 4)
+
+
+def test__imaging_ci_from(imaging_ci_7x7):
+
+    # The ci layout spans 2 rows, so two rows are extracted
+
+    extract = ac.Extract2DSerialCalibration(
+        shape_2d=imaging_ci_7x7.shape_native,
+        region_list=imaging_ci_7x7.layout.region_list,
+        serial_prescan=imaging_ci_7x7.layout.serial_prescan,
+        serial_overscan=imaging_ci_7x7.layout.serial_overscan,
+    )
+
+    serial_calibration_imaging = extract.imaging_ci_from(
+        imaging_ci=imaging_ci_7x7, rows=(0, 2)
+    )
+
+    assert (
+        serial_calibration_imaging.image.native == imaging_ci_7x7.image.native[0:2, :]
+    ).all()
+    assert (
+        serial_calibration_imaging.noise_map.native
+        == imaging_ci_7x7.noise_map.native[0:2, :]
+    ).all()
+    assert (
+        serial_calibration_imaging.pre_cti_data.native
+        == imaging_ci_7x7.pre_cti_data.native[0:2, :]
+    ).all()
+    assert (
+        serial_calibration_imaging.cosmic_ray_map.native
+        == imaging_ci_7x7.cosmic_ray_map.native[1:3, :]
+    ).all()
+
+    assert serial_calibration_imaging.layout.region_list == [(0, 2, 1, 5)]

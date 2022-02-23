@@ -51,33 +51,6 @@ class TestSettingsImagingCI:
 
 
 class TestImagingCI:
-    def test__serial_calibration_imaging_ci_from_rows(self, imaging_ci_7x7):
-
-        # The ci layout spans 2 rows, so two rows are extracted
-
-        serial_calibration_imaging = imaging_ci_7x7.serial_calibration_imaging_for_rows(
-            rows=(0, 2)
-        )
-
-        assert (
-            serial_calibration_imaging.image.native
-            == imaging_ci_7x7.image.native[0:2, :]
-        ).all()
-        assert (
-            serial_calibration_imaging.noise_map.native
-            == imaging_ci_7x7.noise_map.native[0:2, :]
-        ).all()
-        assert (
-            serial_calibration_imaging.pre_cti_data.native
-            == imaging_ci_7x7.pre_cti_data.native[0:2, :]
-        ).all()
-        assert (
-            serial_calibration_imaging.cosmic_ray_map.native
-            == imaging_ci_7x7.cosmic_ray_map.native[1:3, :]
-        ).all()
-
-        assert serial_calibration_imaging.layout.region_list == [(0, 2, 1, 5)]
-
     def test__from_fits__load_all_data_components__has_correct_attributes(
         self, layout_ci_7x7
     ):

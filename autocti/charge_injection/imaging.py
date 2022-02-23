@@ -144,8 +144,8 @@ class ImagingCI(aa.Imaging):
 
         elif settings.serial_pixels is not None:
 
-            imaging = self.serial_calibration_imaging_for_rows(
-                rows=settings.serial_pixels
+            imaging = self.layout.extract_serial_calibration.imaging_ci_from(
+                imaging_ci=self, rows=settings.serial_pixels
             )
 
             mask = self.layout.extract_serial_calibration.mask_2d_from(
@@ -165,51 +165,6 @@ class ImagingCI(aa.Imaging):
     @property
     def mask(self):
         return self.image.mask
-
-    def serial_calibration_imaging_for_rows(self, rows):
-        """
-        Returnss a function to extract a serial section for given rows
-        """
-
-        cosmic_ray_map = (
-            self.layout.extract_serial_calibration.array_2d_from(
-                array=self.cosmic_ray_map, rows=rows
-            )
-            if self.cosmic_ray_map is not None
-            else None
-        )
-
-        if self.noise_scaling_map_list is not None:
-
-            noise_scaling_map_list = [
-                self.layout.extract_serial_calibration.array_2d_from(
-                    array=noise_scaling_map, rows=rows
-                )
-                for noise_scaling_map in self.noise_scaling_map_list
-            ]
-
-        else:
-
-            noise_scaling_map_list = None
-
-        image = self.layout.extract_serial_calibration.array_2d_from(
-            array=self.image, rows=rows
-        )
-
-        return ImagingCI(
-            image=image,
-            noise_map=self.layout.extract_serial_calibration.array_2d_from(
-                array=self.noise_map, rows=rows
-            ),
-            pre_cti_data=self.layout.extract_serial_calibration.array_2d_from(
-                array=self.pre_cti_data, rows=rows
-            ),
-            layout=self.layout.extract_serial_calibration.extracted_layout_from(
-                layout=self.layout, new_shape_2d=image.shape, rows=rows
-            ),
-            cosmic_ray_map=cosmic_ray_map,
-            noise_scaling_map_list=noise_scaling_map_list,
-        )
 
     @classmethod
     def from_fits(
