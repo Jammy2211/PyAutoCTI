@@ -1,18 +1,15 @@
-import numpy as np
-from typing import List, Tuple
+from typing import Tuple
 
-import autoarray as aa
-
-from autocti.charge_injection.extractor_2d.abstract import Extractor2D
+from autocti.extract.two_d.abstract import Extract2D
 
 
-class Extractor2DSerialFPR(Extractor2D):
+class Extract2DSerialFPR(Extract2D):
     @property
     def binning_axis(self) -> int:
         """
         The axis over which binning is performed to turn a 2D serial FPR into a 1D FPR.
 
-        For a serial extractor `axis=0` such that binning is performed over the columns containing the FPR.
+        For a serial extract `axis=0` such that binning is performed over the columns containing the FPR.
         """
         return 0
 

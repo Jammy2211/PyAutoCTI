@@ -74,7 +74,7 @@ class Mask2DCI(Mask2D):
         invert: bool = False,
     ) -> "Mask2DCI":
 
-        fpr_regions = layout.extractor_parallel_fpr.region_list_from(
+        fpr_regions = layout.extract_parallel_fpr.region_list_from(
             pixels=settings.parallel_fpr_pixels
         )
         mask = np.full(layout.shape_2d, False)
@@ -96,7 +96,7 @@ class Mask2DCI(Mask2D):
         invert: bool = False,
     ) -> "Mask2DCI":
 
-        eper_regions = layout.extractor_parallel_eper.region_list_from(
+        eper_regions = layout.extract_parallel_eper.region_list_from(
             pixels=settings.parallel_epers_pixels
         )
 
@@ -119,7 +119,7 @@ class Mask2DCI(Mask2D):
         invert: bool = False,
     ) -> "Mask2DCI":
 
-        fpr_regions = layout.extractor_serial_fpr.region_list_from(
+        fpr_regions = layout.extract_serial_fpr.region_list_from(
             pixels=settings.serial_fpr_pixels
         )
         mask = np.full(layout.shape_2d, False)
@@ -141,7 +141,7 @@ class Mask2DCI(Mask2D):
         invert: bool = False,
     ) -> "Mask2DCI":
 
-        eper_regions = layout.extractor_serial_eper.region_list_from(
+        eper_regions = layout.extract_serial_eper.region_list_from(
             pixels=settings.serial_eper_pixels
         )
         mask = np.full(layout.shape_2d, False)

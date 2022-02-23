@@ -1,24 +1,23 @@
-import numpy as np
 from typing import List, Tuple
 
 import autoarray as aa
 
-from autocti.charge_injection.extractor_2d.abstract import Extractor2D
+from autocti.extract.two_d.abstract import Extract2D
 
 
-class Extractor2DParallelFPR(Extractor2D):
+class Extract2DParallelFPR(Extract2D):
     @property
     def binning_axis(self) -> int:
         """
         The axis over which binning is performed to turn a 2D parallel FPR into a 1D FPR.
 
-        For a parallel extractor `axis=1` such that binning is performed over the rows containing the FPR.
+        For a parallel extract `axis=1` such that binning is performed over the rows containing the FPR.
         """
         return 1
 
     def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
         """
-        Returns a list of the 2D parallel FPR regions given the `Extractor`'s list of charge injection regions, where
+        Returns a list of the 2D parallel FPR regions given the `Extract`'s list of charge injection regions, where
         a 2D region is defined following the conventio:
 
         (top-row, bottom-row, left-column, right-column) = (y0, y1, x0, x1)

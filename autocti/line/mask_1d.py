@@ -37,7 +37,7 @@ class Mask1DLine(aa.Mask1D):
         cls, layout, settings, pixel_scales, invert=False
     ):
 
-        front_edge_regions = layout.extractor_front_edge.region_list_from(
+        front_edge_regions = layout.extract_front_edge.region_list_from(
             pixels=settings.front_edge_pixels
         )
         mask = np.full(layout.shape_1d, False)
@@ -53,7 +53,7 @@ class Mask1DLine(aa.Mask1D):
     @classmethod
     def masked_trails_from_layout(cls, layout, settings, pixel_scales, invert=False):
 
-        trails_regions = layout.extractor_trails.region_list_from(
+        trails_regions = layout.extract_trails.region_list_from(
             pixels=settings.trails_pixels
         )
 

@@ -4,7 +4,7 @@ import autocti as ac
 
 def test__array_2d_from():
 
-    extractor = ac.Extractor2DParallelCalibration(
+    extract = ac.Extract2DParallelCalibration(
         shape_2d=(5, 3), region_list=[(0, 3, 0, 3)]
     )
 
@@ -19,15 +19,15 @@ def test__array_2d_from():
         pixel_scales=1.0,
     )
 
-    extracted_array = extractor.array_2d_from(array=array, columns=(0, 1))
+    extracted_array = extract.array_2d_from(array=array, columns=(0, 1))
 
     assert (extracted_array == np.array([[0.0], [0.0], [0.0], [0.0], [0.0]])).all()
 
-    extractor = ac.Extractor2DParallelCalibration(
+    extract = ac.Extract2DParallelCalibration(
         shape_2d=(5, 3), region_list=[(0, 5, 0, 3)]
     )
 
-    extracted_array = extractor.array_2d_from(array=array, columns=(1, 3))
+    extracted_array = extract.array_2d_from(array=array, columns=(1, 3))
 
     assert (
         extracted_array.native
@@ -37,7 +37,7 @@ def test__array_2d_from():
 
 def test__mask_2d_from():
 
-    extractor = ac.Extractor2DParallelCalibration(
+    extract = ac.Extract2DParallelCalibration(
         shape_2d=(5, 3), region_list=[(0, 5, 0, 3)]
     )
 
@@ -45,7 +45,7 @@ def test__mask_2d_from():
 
     mask[0, 1] = True
 
-    extracted_mask = extractor.mask_2d_from(mask=mask, columns=(1, 3))
+    extracted_mask = extract.mask_2d_from(mask=mask, columns=(1, 3))
 
     assert (
         extracted_mask
@@ -61,28 +61,28 @@ def test__mask_2d_from():
     ).all()
 
 
-def test__extracted_extractor_2d_from():
+def test__extracted_layout_from():
 
-    extractor = ac.Extractor2DParallelCalibration(
+    extract = ac.Extract2DParallelCalibration(
         shape_2d=(5, 3), region_list=[(0, 3, 0, 3)]
     )
 
     layout = ac.ci.Layout2DCI(
-        shape_2d=extractor.shape_2d, region_list=extractor.region_list
+        shape_2d=extract.shape_2d, region_list=extract.region_list
     )
 
-    extracted_extractor = extractor.extracted_layout_from(layout=layout, columns=(0, 1))
+    extracted_extract = extract.extracted_layout_from(layout=layout, columns=(0, 1))
 
-    assert extracted_extractor.region_list == [(0, 3, 0, 1)]
+    assert extracted_extract.region_list == [(0, 3, 0, 1)]
 
-    extractor = ac.Extractor2DParallelCalibration(
+    extract = ac.Extract2DParallelCalibration(
         shape_2d=(5, 3), region_list=[(0, 5, 0, 3)]
     )
 
     layout = ac.ci.Layout2DCI(
-        shape_2d=extractor.shape_2d, region_list=extractor.region_list
+        shape_2d=extract.shape_2d, region_list=extract.region_list
     )
 
-    extracted_extractor = extractor.extracted_layout_from(layout=layout, columns=(1, 3))
+    extracted_extract = extract.extracted_layout_from(layout=layout, columns=(1, 3))
 
-    assert extracted_extractor.region_list == [(0, 5, 0, 2)]
+    assert extracted_extract.region_list == [(0, 5, 0, 2)]

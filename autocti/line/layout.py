@@ -3,8 +3,8 @@ from typing import Tuple
 
 import autoarray as aa
 
-from autocti.line.extractor_1d.fpr import Extractor1DFPR
-from autocti.line.extractor_1d.eper import Extractor1DEPER
+from autocti.extract.one_d.fpr import Extract1DFPR
+from autocti.extract.one_d.eper import Extract1DEPER
 
 from autocti import exc
 
@@ -31,8 +31,8 @@ class Layout1DLine(aa.Layout1D):
                     "The charge injection layout_ci regions are bigger than the image image_shape"
                 )
 
-        self.extractor_front_edge = Extractor1DFPR(region_list=region_list)
-        self.extractor_trails = Extractor1DEPER(region_list=region_list)
+        self.extract_front_edge = Extract1DFPR(region_list=region_list)
+        self.extract_trails = Extract1DEPER(region_list=region_list)
 
         super().__init__(shape_1d=shape_1d, prescan=prescan, overscan=overscan)
 
@@ -294,13 +294,13 @@ class Layout1DLine(aa.Layout1D):
 
         if fpr_pixels is not None:
 
-            array_1d_of_edges_and_epers = self.extractor_front_edge.add_to_array(
+            array_1d_of_edges_and_epers = self.extract_front_edge.add_to_array(
                 new_array=array_1d_of_edges_and_epers, array=array, pixels=fpr_pixels
             )
 
         if trails_pixels is not None:
 
-            array_1d_of_edges_and_epers = self.extractor_trails.add_to_array(
+            array_1d_of_edges_and_epers = self.extract_trails.add_to_array(
                 new_array=array_1d_of_edges_and_epers, array=array, pixels=trails_pixels
             )
 
@@ -309,11 +309,11 @@ class Layout1DLine(aa.Layout1D):
     def extract_line_from(self, array: aa.Array1D, line_region: str):
 
         if line_region == "front_edge":
-            return self.extractor_front_edge.stacked_array_1d_from(
-                array=array, pixels=(0, self.extractor_front_edge.total_pixels_min)
+            return self.extract_front_edge.stacked_array_1d_from(
+                array=array, pixels=(0, self.extract_front_edge.total_pixels_min)
             )
         elif line_region == "trails":
-            return self.extractor_trails.stacked_array_1d_from(
+            return self.extract_trails.stacked_array_1d_from(
                 array=array, pixels=(0, self.smallest_trails_pixels_to_array_edge)
             )
         else:

@@ -4,7 +4,7 @@ from typing import List, Tuple, Union
 import autoarray as aa
 
 
-class Extractor2D:
+class Extract2D:
     def __init__(self, region_list: aa.type.Region2DList):
         """
         Abstract class containing methods for extracting regions from a 2D charge injection image.
@@ -38,7 +38,7 @@ class Extractor2D:
         """
         The axis over which binning is performed to turn a 2D FPR into a 1D FPR.
 
-        For a parallel extractor `axis=1` such that binning is performed over the rows containing the FPR.
+        For a parallel extract `axis=1` such that binning is performed over the rows containing the FPR.
         """
         raise NotImplementedError
 
@@ -54,8 +54,8 @@ class Extractor2D:
 
         For example, this might extract the parallel EPERs of every charge injection region.
 
-        The `region_2d_list_from()` of each `Extractor2D` class describes the exact extraction performed for each
-        extractor when this function is called.
+        The `region_2d_list_from()` of each `Extract2D` class describes the exact extraction performed for each
+        extract when this function is called.
 
         Parameters
         ----------

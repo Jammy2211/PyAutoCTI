@@ -4,7 +4,7 @@ from typing import List, Tuple
 import autoarray as aa
 
 
-class Extractor1D:
+class Extract1D:
     def __init__(self, region_list: aa.type.Region1DList):
         """
         Abstract class containing methods for extracting regions from a 1D line dataset which contains some sort of
@@ -37,8 +37,8 @@ class Extractor1D:
 
         For example, this might extract the EPERs trailing every signal.
 
-        The `region_1d_list_from()` of each `Extractor1D` class describes the exact extraction performed for each
-        extractor when this function is called.
+        The `region_1d_list_from()` of each `Extract1D` class describes the exact extraction performed for each
+        extract when this function is called.
 
         Parameters
         ----------

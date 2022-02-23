@@ -4,50 +4,50 @@ import autocti as ac
 
 
 def test__array_2d_list_from(serial_array, serial_masked_array):
-    extractor = ac.Extractor2DSerialFPR(region_list=[(0, 3, 1, 4)])
+    extract = ac.Extract2DSerialFPR(region_list=[(0, 3, 1, 4)])
 
-    front_edge = extractor.array_2d_list_from(array=serial_array, pixels=(0, 1))
+    front_edge = extract.array_2d_list_from(array=serial_array, pixels=(0, 1))
 
     assert (front_edge == np.array([[1.0], [1.0], [1.0]])).all()
 
-    front_edge = extractor.array_2d_list_from(array=serial_array, pixels=(1, 2))
+    front_edge = extract.array_2d_list_from(array=serial_array, pixels=(1, 2))
 
     assert (front_edge == np.array([[2.0], [2.0], [2.0]])).all()
 
-    front_edge = extractor.array_2d_list_from(array=serial_array, pixels=(2, 3))
+    front_edge = extract.array_2d_list_from(array=serial_array, pixels=(2, 3))
 
     assert (front_edge == np.array([[3.0], [3.0], [3.0]])).all()
 
-    extractor = ac.Extractor2DSerialFPR(region_list=[(0, 3, 1, 5)])
+    extract = ac.Extract2DSerialFPR(region_list=[(0, 3, 1, 5)])
 
-    front_edge = extractor.array_2d_list_from(array=serial_array, pixels=(0, 2))
+    front_edge = extract.array_2d_list_from(array=serial_array, pixels=(0, 2))
 
     assert (front_edge == np.array([[1.0, 2.0], [1.0, 2.0], [1.0, 2.0]])).all()
 
-    front_edge = extractor.array_2d_list_from(array=serial_array, pixels=(1, 4))
+    front_edge = extract.array_2d_list_from(array=serial_array, pixels=(1, 4))
 
     assert (
         front_edge == np.array([[2.0, 3.0, 4.0], [2.0, 3.0, 4.0], [2.0, 3.0, 4.0]])
     ).all()
 
-    extractor = ac.Extractor2DSerialFPR(region_list=[(0, 3, 1, 4), (0, 3, 5, 8)])
+    extract = ac.Extract2DSerialFPR(region_list=[(0, 3, 1, 4), (0, 3, 5, 8)])
 
-    front_edge_list = extractor.array_2d_list_from(array=serial_array, pixels=(0, 1))
+    front_edge_list = extract.array_2d_list_from(array=serial_array, pixels=(0, 1))
 
     assert (front_edge_list[0] == np.array([[1.0], [1.0], [1.0]])).all()
     assert (front_edge_list[1] == np.array([[5.0], [5.0], [5.0]])).all()
 
-    front_edge_list = extractor.array_2d_list_from(array=serial_array, pixels=(1, 2))
+    front_edge_list = extract.array_2d_list_from(array=serial_array, pixels=(1, 2))
 
     assert (front_edge_list[0] == np.array([[2.0], [2.0], [2.0]])).all()
     assert (front_edge_list[1] == np.array([[6.0], [6.0], [6.0]])).all()
 
-    front_edge_list = extractor.array_2d_list_from(array=serial_array, pixels=(2, 3))
+    front_edge_list = extract.array_2d_list_from(array=serial_array, pixels=(2, 3))
 
     assert (front_edge_list[0] == np.array([[3.0], [3.0], [3.0]])).all()
     assert (front_edge_list[1] == np.array([[7.0], [7.0], [7.0]])).all()
 
-    front_edge_list = extractor.array_2d_list_from(array=serial_array, pixels=(0, 3))
+    front_edge_list = extract.array_2d_list_from(array=serial_array, pixels=(0, 3))
 
     assert (
         front_edge_list[0]
@@ -59,7 +59,7 @@ def test__array_2d_list_from(serial_array, serial_masked_array):
         == np.array([[5.0, 6.0, 7.0], [5.0, 6.0, 7.0], [5.0, 6.0, 7.0]])
     ).all()
 
-    front_edge_list = extractor.array_2d_list_from(
+    front_edge_list = extract.array_2d_list_from(
         array=serial_masked_array, pixels=(0, 3)
     )
 
@@ -77,9 +77,9 @@ def test__array_2d_list_from(serial_array, serial_masked_array):
 
 
 def test__stacked_array_2d_from(serial_array, serial_masked_array):
-    extractor = ac.Extractor2DSerialFPR(region_list=[(0, 3, 1, 4), (0, 3, 5, 8)])
+    extract = ac.Extract2DSerialFPR(region_list=[(0, 3, 1, 4), (0, 3, 5, 8)])
 
-    stacked_front_edge_list = extractor.stacked_array_2d_from(
+    stacked_front_edge_list = extract.stacked_array_2d_from(
         array=serial_array, pixels=(0, 3)
     )
 
@@ -96,7 +96,7 @@ def test__stacked_array_2d_from(serial_array, serial_masked_array):
         == np.array([[3.0, 4.0, 5.0], [3.0, 4.0, 5.0], [3.0, 4.0, 5.0]])
     ).all()
 
-    stacked_front_edge_list = extractor.stacked_array_2d_from(
+    stacked_front_edge_list = extract.stacked_array_2d_from(
         array=serial_masked_array, pixels=(0, 3)
     )
 
@@ -113,13 +113,13 @@ def test__stacked_array_2d_from(serial_array, serial_masked_array):
 
 
 def test__binned_array_1d_from(serial_array, serial_masked_array):
-    extractor = ac.Extractor2DSerialFPR(region_list=[(0, 3, 1, 4), (0, 3, 5, 8)])
+    extract = ac.Extract2DSerialFPR(region_list=[(0, 3, 1, 4), (0, 3, 5, 8)])
 
-    front_edge_line = extractor.binned_array_1d_from(array=serial_array, pixels=(0, 3))
+    front_edge_line = extract.binned_array_1d_from(array=serial_array, pixels=(0, 3))
 
     assert (front_edge_line == np.array([3.0, 4.0, 5.0])).all()
 
-    front_edge_line = extractor.binned_array_1d_from(
+    front_edge_line = extract.binned_array_1d_from(
         array=serial_masked_array, pixels=(0, 3)
     )
 

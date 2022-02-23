@@ -1,21 +1,36 @@
 from copy import deepcopy
-import math
-import numpy as np
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Tuple
 
 import autoarray as aa
 
-from autocti import exc
-from autocti.charge_injection.extractor_2d.parallel_fpr import Extractor2DParallelFPR
-from autocti.charge_injection.extractor_2d.parallel_eper import Extractor2DParallelEPER
-from autocti.charge_injection.extractor_2d.serial_fpr import Extractor2DSerialFPR
-from autocti.charge_injection.extractor_2d.serial_eper import Extractor2DSerialEPER
 from autocti.charge_injection.mask_2d import Mask2DCI
 
 
-class Extractor2DParallelCalibration:
-    def __init__(self, shape_2d, region_list):
+class Extract2DParallelCalibration:
+    def __init__(self, shape_2d: Tuple[int, int], region_list: aa.type.Region2DList):
+        """
+        Class containing methods for extracting a parallel calibration dataset from a 2D CTI calibration dataset.
 
+        The parallel calibration region is the region of a dataset that is necessary for fitting a parallel-only CTI
+        model. For example, for charge injection imaging, parallel EPERs form only in columns of the CCD where charge
+        is injected, the serial prescan and overscan have no signal. The parallel calibration dataset therefore
+        extracts only these columns.
+
+        A subset of the parallel calibration data may also be extracted (e.g. only the first row of every charge region)
+        for fast initial CTI modeling.
+
+        This uses the `region_list`, which contains the regions with charge (e.g. the charge injection regions) in
+        pixel coordinates.
+
+        Parameters
+        ----------
+        shape_2d
+            The two dimensional shape of the charge injection imaging, corresponding to the number of rows (pixels
+            in parallel direction) and columns (pixels in serial direction).
+        region_list
+            Integer pixel coordinates specifying the corners of each charge region (top-row, bottom-row,
+            left-column, right-column).
+        """
         self.shape_2d = shape_2d
         self.region_list = list(map(aa.Region2D, region_list))
 

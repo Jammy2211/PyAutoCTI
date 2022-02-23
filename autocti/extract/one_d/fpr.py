@@ -3,10 +3,10 @@ from typing import List, Tuple
 
 import autoarray as aa
 
-from autocti.line.extractor_1d.abstract import Extractor1D
+from autocti.extract.one_d.abstract import Extract1D
 
 
-class Extractor1DFPR(Extractor1D):
+class Extract1DFPR(Extract1D):
     def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region1D]:
         """
         Calculate a list of the front edge regions of a line dataset

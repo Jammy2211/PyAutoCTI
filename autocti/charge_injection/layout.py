@@ -6,16 +6,12 @@ from typing import Dict, List, Optional, Tuple
 import autoarray as aa
 
 from autocti import exc
-from autocti.charge_injection.extractor_2d.parallel_fpr import Extractor2DParallelFPR
-from autocti.charge_injection.extractor_2d.parallel_eper import Extractor2DParallelEPER
-from autocti.charge_injection.extractor_2d.serial_fpr import Extractor2DSerialFPR
-from autocti.charge_injection.extractor_2d.serial_eper import Extractor2DSerialEPER
-from autocti.charge_injection.extractor_2d.parallel_calibration import (
-    Extractor2DParallelCalibration,
-)
-from autocti.charge_injection.extractor_2d.serial_calibration import (
-    Extractor2DSerialCalibration,
-)
+from autocti.extract.two_d.parallel_fpr import Extract2DParallelFPR
+from autocti.extract.two_d.parallel_eper import Extract2DParallelEPER
+from autocti.extract.two_d.serial_fpr import Extract2DSerialFPR
+from autocti.extract.two_d.serial_eper import Extract2DSerialEPER
+from autocti.extract.two_d.parallel_calibration import Extract2DParallelCalibration
+from autocti.extract.two_d.serial_calibration import Extract2DSerialCalibration
 
 
 class Layout2DCI(aa.Layout2D):
@@ -67,19 +63,19 @@ class Layout2DCI(aa.Layout2D):
                     "The charge injection layout_ci regions are bigger than the image image_shape"
                 )
 
-        self.extractor_parallel_fpr = Extractor2DParallelFPR(region_list=region_list)
-        self.extractor_parallel_eper = Extractor2DParallelEPER(region_list=region_list)
-        self.extractor_serial_fpr = Extractor2DSerialFPR(region_list=region_list)
-        self.extractor_serial_eper = Extractor2DSerialEPER(region_list=region_list)
+        self.extract_parallel_fpr = Extract2DParallelFPR(region_list=region_list)
+        self.extract_parallel_eper = Extract2DParallelEPER(region_list=region_list)
+        self.extract_serial_fpr = Extract2DSerialFPR(region_list=region_list)
+        self.extract_serial_eper = Extract2DSerialEPER(region_list=region_list)
 
-        self.extractor_serial_calibration = Extractor2DSerialCalibration(
+        self.extract_serial_calibration = Extract2DSerialCalibration(
             shape_2d=shape_2d,
             region_list=region_list,
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
         )
 
-        self.extractor_parallel_calibration = Extractor2DParallelCalibration(
+        self.extract_parallel_calibration = Extract2DParallelCalibration(
             shape_2d=shape_2d, region_list=region_list
         )
 
@@ -395,13 +391,13 @@ class Layout2DCI(aa.Layout2D):
 
         if fpr_pixels is not None:
 
-            new_array = self.extractor_parallel_fpr.add_to_array(
+            new_array = self.extract_parallel_fpr.add_to_array(
                 new_array=new_array, array=array, pixels=fpr_pixels
             )
 
         if trails_pixels is not None:
 
-            new_array = self.extractor_parallel_eper.add_to_array(
+            new_array = self.extract_parallel_eper.add_to_array(
                 new_array=new_array, array=array, pixels=trails_pixels
             )
 
@@ -585,13 +581,13 @@ class Layout2DCI(aa.Layout2D):
 
         if fpr_pixels is not None:
 
-            new_array = self.extractor_serial_fpr.add_to_array(
+            new_array = self.extract_serial_fpr.add_to_array(
                 new_array=new_array, array=array, pixels=fpr_pixels
             )
 
         if trails_pixels is not None:
 
-            new_array = self.extractor_serial_eper.add_to_array(
+            new_array = self.extract_serial_eper.add_to_array(
                 new_array=new_array, array=array, pixels=trails_pixels
             )
 
@@ -621,19 +617,19 @@ class Layout2DCI(aa.Layout2D):
     def extract_line_from(self, array: aa.Array2D, line_region: str) -> aa.Array1D:
 
         if line_region == "parallel_front_edge":
-            return self.extractor_parallel_fpr.binned_array_1d_from(
-                array=array, pixels=(0, self.extractor_parallel_fpr.total_rows_min)
+            return self.extract_parallel_fpr.binned_array_1d_from(
+                array=array, pixels=(0, self.extract_parallel_fpr.total_rows_min)
             )
         elif line_region == "parallel_epers":
-            return self.extractor_parallel_eper.binned_array_1d_from(
+            return self.extract_parallel_eper.binned_array_1d_from(
                 array=array, pixels=(0, self.smallest_parallel_rows_between_ci_regions)
             )
         elif line_region == "serial_front_edge":
-            return self.extractor_serial_fpr.binned_array_1d_from(
-                array=array, pixels=(0, self.extractor_serial_fpr.total_columns_min)
+            return self.extract_serial_fpr.binned_array_1d_from(
+                array=array, pixels=(0, self.extract_serial_fpr.total_columns_min)
             )
         elif line_region == "serial_trails":
-            return self.extractor_serial_eper.binned_array_1d_from(
+            return self.extract_serial_eper.binned_array_1d_from(
                 array=array, pixels=(0, self.serial_eper_pixels)
             )
         else:

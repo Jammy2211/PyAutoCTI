@@ -1,27 +1,49 @@
 from copy import deepcopy
-import math
 import numpy as np
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Optional, Tuple
 
 import autoarray as aa
 
-from autocti import exc
-from autocti.charge_injection.extractor_2d.parallel_fpr import Extractor2DParallelFPR
-from autocti.charge_injection.extractor_2d.parallel_eper import Extractor2DParallelEPER
-from autocti.charge_injection.extractor_2d.serial_fpr import Extractor2DSerialFPR
-from autocti.charge_injection.extractor_2d.serial_eper import Extractor2DSerialEPER
 from autocti.charge_injection.mask_2d import Mask2DCI
 
 
-class Extractor2DSerialCalibration:
+class Extract2DSerialCalibration:
     def __init__(
         self,
-        shape_2d,
-        region_list,
+        shape_2d: Tuple[int, int],
+        region_list: aa.type.Region2DList,
         serial_prescan: Optional[aa.type.Region2DLike] = None,
         serial_overscan: Optional[aa.type.Region2DLike] = None,
     ):
+        """
+        Class containing methods for extracting a serial calibration dataset from a 2D CTI calibration dataset.
 
+        The serial calibration region is the region of a dataset that is necessary for fitting a serial-only CTI
+        model. For example, for charge injection imaging, serial EPERs form only in rows of the CCD where charge
+        is injected and the regions in between have no signal. The serial calibration dataset therefore extracts only
+        these rows.
+
+        A subset of the serial calibration data may also be extracted (e.g. only the first row of every charge region)
+        for fast initial CTI modeling.
+
+        This uses the `region_list`, which contains the regions with charge (e.g. the charge injection regions) in
+        pixel coordinates.
+
+        Parameters
+        ----------
+        shape_2d
+            The two dimensional shape of the charge injection imaging, corresponding to the number of rows (pixels
+            in parallel direction) and columns (pixels in serial direction).
+        region_list
+            Integer pixel coordinates specifying the corners of each charge region (top-row, bottom-row,
+            left-column, right-column).
+        serial_prescan
+            Integer pixel coordinates specifying the corners of the serial prescan (top-row, bottom-row,
+            left-column, right-column).
+        serial_overscan
+            Integer pixel coordinates specifying the corners of the serial overscan (top-row, bottom-row,
+            left-column, right-column).
+        """
         self.shape_2d = shape_2d
         self.region_list = list(map(aa.Region2D, region_list))
         self.serial_prescan = serial_prescan

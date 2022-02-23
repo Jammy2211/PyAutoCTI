@@ -2,6 +2,8 @@ from os import path
 import pytest
 from matplotlib import pyplot
 
+import autocti as ac
+
 from autofit import conf
 
 from autocti.mock import fixtures
@@ -124,6 +126,13 @@ def make_fit_line_7():
 
 
 ### FRAMES ###
+
+
+@pytest.fixture(name="array")
+def make_array():
+    return ac.Array1D.manual_native(
+        array=[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0], pixel_scales=1.0
+    )
 
 
 @pytest.fixture(name="image_7x7_native")

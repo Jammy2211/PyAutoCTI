@@ -1,18 +1,15 @@
-import numpy as np
-from typing import List, Tuple
+from typing import Tuple
 
-import autoarray as aa
-
-from autocti.charge_injection.extractor_2d.abstract import Extractor2D
+from autocti.extract.two_d.abstract import Extract2D
 
 
-class Extractor2DParallelEPER(Extractor2D):
+class Extract2DParallelEPER(Extract2D):
     @property
     def binning_axis(self) -> int:
         """
         The axis over which binning is performed to turn a 2D parallel EPER into a 1D EPER.
 
-        For a parallel extractor `axis=1` such that binning is performed over the rows containing the EPER.
+        For a parallel extract `axis=1` such that binning is performed over the rows containing the EPER.
         """
         return 1
 
