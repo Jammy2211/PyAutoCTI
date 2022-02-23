@@ -22,6 +22,7 @@ from .charge_injection.layout import Extractor2DParallelFPR
 from .charge_injection.layout import Extractor2DParallelEPER
 from .charge_injection.layout import Extractor2DSerialFPR
 from .charge_injection.layout import Extractor2DSerialEPER
+from .charge_injection.layout import Extractor2DParallelCalibration
 from .charge_injection.layout import Extractor2DSerialCalibration
 from .charge_injection.fit import FitImagingCI
 from .mask.mask_2d import Mask2D
