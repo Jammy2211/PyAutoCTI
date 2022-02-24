@@ -415,3 +415,67 @@ class Extract2DMisc(Extract2D):
             )
 
         return new_array
+
+    def serial_overscan_above_epers_array_2d_from(
+        self, array: aa.Array2D
+    ) -> aa.Array2D:
+        """
+        Extract an array of the region above the EPER trails of the serial overscan.
+
+        This region does not contain signal from either parallel or serial EPERs, however it may have a faint signal
+        from charge that is trailed from the parallel EPER's in the serial direction during serial clocking.
+
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = parallel overscan
+        [ssssssssss] = serial overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [tttttttttt] = parallel / serial charge injection region trail
+
+               [ppppppppppppppppppppp]
+               [ppppppppppppppppppppp]
+          [...][xxxxxxxxxxxxxxxxxxxxx][sss]
+          [...][ccccccccccccccccccccc][tst]
+        | [...][ccccccccccccccccccccc][sts]    |
+        | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
+        P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
+        | [...][ccccccccccccccccccccc][tst]    | clocking
+          [...][ccccccccccccccccccccc][sts]    |
+
+        []     [=====================]
+               <--------Ser---------
+
+        The extracted array keeps just the trails following all charge injection scans and replaces all other
+        values with 0s:
+
+               [000000000000000000000]
+               [000000000000000000000]
+          [000][000000000000000000000][sss]
+          [000][000000000000000000000][000]
+        | [000][000000000000000000000][000]    |
+        | [000][000000000000000000000][sss]    | Direction
+        P [000][000000000000000000000][sss]    | of
+        | [000][000000000000000000000][000]    | clocking
+          [000][000000000000000000000][000]    |
+
+        []     [=====================]
+               <--------Ser---------
+        """
+        new_array = array.native.copy() * 0.0
+
+        new_array[self.serial_overscan.slice] = array.native[self.serial_overscan.slice]
+
+        trails_region_list = list(
+            map(
+                lambda ci_region: ci_region.serial_trailing_region_from(
+                    (0, self.serial_overscan.total_columns)
+                ),
+                self.region_list,
+            )
+        )
+
+        for region in trails_region_list:
+            new_array[region.slice] = 0
+
+        return new_array
