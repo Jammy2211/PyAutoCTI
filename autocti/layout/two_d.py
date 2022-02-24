@@ -10,13 +10,13 @@ from autocti import exc
 
 class Layout2D(aa.Layout2D):
     def __init__(
-            self,
-            shape_2d: Tuple[int, int],
-            region_list: aa.type.Region2DList,
-            original_roe_corner: Tuple[int, int] = (1, 0),
-            parallel_overscan: Optional[aa.type.Region2DLike] = None,
-            serial_prescan: Optional[aa.type.Region2DLike] = None,
-            serial_overscan: Optional[aa.type.Region2DLike] = None,
+        self,
+        shape_2d: Tuple[int, int],
+        region_list: aa.type.Region2DList,
+        original_roe_corner: Tuple[int, int] = (1, 0),
+        parallel_overscan: Optional[aa.type.Region2DLike] = None,
+        serial_prescan: Optional[aa.type.Region2DLike] = None,
+        serial_overscan: Optional[aa.type.Region2DLike] = None,
     ):
         """
         A charge injection layout, which defines the regions charge injections appear on a charge injection image.
@@ -97,7 +97,7 @@ class Layout2D(aa.Layout2D):
         )
 
     def layout_extracted_from(
-            self, extraction_region: aa.type.Region2DLike
+        self, extraction_region: aa.type.Region2DLike
     ) -> "Layout2D":
         """
         The charge injection layout after an extraction is performed on its associated charge injection image, where
@@ -166,7 +166,7 @@ class Layout2D(aa.Layout2D):
         return np.min(pixels_between_regions)
 
     def with_extracted_regions(
-            self, extraction_region: aa.type.Region2DLike
+        self, extraction_region: aa.type.Region2DLike
     ) -> "Layout2D":
 
         layout = deepcopy(self)
@@ -208,4 +208,3 @@ class Layout2D(aa.Layout2D):
             raise exc.PlottingException(
                 "The line region specified for the plotting of a line was invalid"
             )
-

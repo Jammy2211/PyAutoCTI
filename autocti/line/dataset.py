@@ -10,7 +10,7 @@ from autoarray.dataset import abstract_dataset
 from autoarray.dataset.imaging import AbstractSimulatorImaging
 from autoarray.dataset import preprocess
 
-from autocti.line.layout import Layout1DLine
+from autocti.layout.one_d import Layout1DLine
 from autocti.clocker.one_d import Clocker1D
 
 from autocti import exc

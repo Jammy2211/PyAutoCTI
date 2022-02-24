@@ -161,4 +161,3 @@ def test__smallest_parallel_epers_rows_to_frame_edge():
     layout = ac.ci.Layout2DCI(shape_2d=(8, 5), region_list=[(0, 3, 0, 3), (5, 7, 0, 3)])
 
     assert layout.smallest_parallel_rows_between_ci_regions == 1
-
