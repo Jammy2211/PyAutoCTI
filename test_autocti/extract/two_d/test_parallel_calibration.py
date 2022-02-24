@@ -41,7 +41,7 @@ def test__mask_2d_from():
         shape_2d=(5, 3), region_list=[(0, 5, 0, 3)]
     )
 
-    mask = ac.ci.Mask2DCI.unmasked(shape_native=(5, 3), pixel_scales=1.0)
+    mask = ac.Mask2D.unmasked(shape_native=(5, 3), pixel_scales=1.0)
 
     mask[0, 1] = True
 

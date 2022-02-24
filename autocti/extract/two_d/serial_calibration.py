@@ -4,7 +4,7 @@ from typing import Optional, Tuple
 
 import autoarray as aa
 
-from autocti.charge_injection.mask_2d import Mask2DCI
+from autocti.mask.mask_2d import Mask2D
 
 
 class Extract2DSerialCalibration:
@@ -152,7 +152,7 @@ class Extract2DSerialCalibration:
             array=new_array, header=array.header, pixel_scales=array.pixel_scales
         )
 
-    def mask_2d_from(self, mask: aa.Mask2D, rows: Tuple[int, int]) -> Mask2DCI:
+    def mask_2d_from(self, mask: aa.Mask2D, rows: Tuple[int, int]) -> Mask2D:
         """
         Extract a serial calibration array from a charge injection array, where this arrays is a sub-set of the
         array which can be used for serial-only calibration. Specifically, this array is all charge injection
@@ -212,7 +212,7 @@ class Extract2DSerialCalibration:
         calibration_masks = list(
             map(lambda mask: mask[rows[0] : rows[1], :], calibration_masks)
         )
-        return Mask2DCI(
+        return Mask2D(
             mask=np.concatenate(calibration_masks, axis=0),
             pixel_scales=mask.pixel_scales,
         )

@@ -1,19 +1,29 @@
 import numpy as np
+from typing import Tuple
+
+import autoarray as aa
 
 from autoarray.mask.mask_2d import AbstractMask2D
-from autoarray.layout.region import Region2D
-from autoarray.geometry import geometry_util
-from autoarray.structures.arrays.two_d import array_2d_util
+
 from autoarray import exc
 
 
 class SettingsMask2D:
     def __init__(
         self,
-        cosmic_ray_parallel_buffer=10,
-        cosmic_ray_serial_buffer=10,
-        cosmic_ray_diagonal_buffer=3,
+        parallel_fpr_pixels: Tuple[int, int] = None,
+        parallel_epers_pixels: Tuple[int, int] = None,
+        serial_fpr_pixels: Tuple[int, int] = None,
+        serial_eper_pixels: Tuple[int, int] = None,
+        cosmic_ray_parallel_buffer: int = 10,
+        cosmic_ray_serial_buffer: int = 10,
+        cosmic_ray_diagonal_buffer: int = 3,
     ):
+
+        self.parallel_fpr_pixels = parallel_fpr_pixels
+        self.parallel_epers_pixels = parallel_epers_pixels
+        self.serial_fpr_pixels = serial_fpr_pixels
+        self.serial_eper_pixels = serial_eper_pixels
 
         self.cosmic_ray_parallel_buffer = cosmic_ray_parallel_buffer
         self.cosmic_ray_serial_buffer = cosmic_ray_serial_buffer
@@ -51,7 +61,9 @@ class Mask2D(AbstractMask2D):
         if invert:
             mask = np.invert(mask)
 
-        pixel_scales = geometry_util.convert_pixel_scales_2d(pixel_scales=pixel_scales)
+        pixel_scales = aa.util.geometry.convert_pixel_scales_2d(
+            pixel_scales=pixel_scales
+        )
 
         if len(mask.shape) != 2:
             raise exc.MaskException("The input mask is not a two dimensional array")
@@ -88,7 +100,7 @@ class Mask2D(AbstractMask2D):
 
         mask = cls.unmasked(shape_native=shape_native, pixel_scales=pixel_scales)
         masked_regions = list(
-            map(lambda region: Region2D(region=region), masked_regions)
+            map(lambda region: aa.Region2D(region=region), masked_regions)
         )
         for region in masked_regions:
             mask[region.y0 : region.y1, region.x0 : region.x1] = True
@@ -159,7 +171,7 @@ class Mask2D(AbstractMask2D):
                 pixel_scales = (float(pixel_scales), float(pixel_scales))
 
         mask = cls.manual(
-            mask=array_2d_util.numpy_array_2d_via_fits_from(
+            mask=aa.util.array_2d.numpy_array_2d_via_fits_from(
                 file_path=file_path, hdu=hdu
             ),
             pixel_scales=pixel_scales,
@@ -170,3 +182,135 @@ class Mask2D(AbstractMask2D):
             mask = mask.resized_mask_from(new_shape=resized_mask_shape)
 
         return mask
+
+    @classmethod
+    def masked_fprs_and_epers_from(
+        cls,
+        mask: "Mask2D",
+        layout: "Layout2D",
+        settings: "SettingsMask2D",
+        pixel_scales: aa.type.PixelScales,
+    ) -> "Mask2D":
+
+        if settings.parallel_fpr_pixels is not None:
+
+            parallel_fpr_mask = cls.masked_parallel_fpr_from(
+                layout=layout, settings=settings, pixel_scales=pixel_scales
+            )
+
+            mask = mask + parallel_fpr_mask
+
+        if settings.parallel_epers_pixels is not None:
+
+            parallel_epers_mask = cls.masked_parallel_epers_from(
+                layout=layout, settings=settings, pixel_scales=pixel_scales
+            )
+
+            mask = mask + parallel_epers_mask
+
+        if settings.serial_fpr_pixels is not None:
+
+            serial_fpr_mask = cls.masked_serial_fpr_from(
+                layout=layout, settings=settings, pixel_scales=pixel_scales
+            )
+
+            mask = mask + serial_fpr_mask
+
+        if settings.serial_eper_pixels is not None:
+
+            serial_eper_mask = cls.masked_serial_epers_from(
+                layout=layout, settings=settings, pixel_scales=pixel_scales
+            )
+
+            mask = mask + serial_eper_mask
+
+        return mask
+
+    @classmethod
+    def masked_parallel_fpr_from(
+        cls,
+        layout: "Layout2D",
+        settings: "SettingsMask2D",
+        pixel_scales: aa.type.PixelScales,
+        invert: bool = False,
+    ) -> "Mask2D":
+
+        fpr_regions = layout.extract_parallel_fpr.region_list_from(
+            pixels=settings.parallel_fpr_pixels
+        )
+        mask = np.full(layout.shape_2d, False)
+
+        for region in fpr_regions:
+            mask[region.y0 : region.y1, region.x0 : region.x1] = True
+
+        if invert:
+            mask = np.invert(mask)
+
+        return Mask2D(mask=mask.astype("bool"), pixel_scales=pixel_scales)
+
+    @classmethod
+    def masked_parallel_epers_from(
+        cls,
+        layout: "Layout2D",
+        settings: "SettingsMask2D",
+        pixel_scales: aa.type.PixelScales,
+        invert: bool = False,
+    ) -> "Mask2D":
+
+        eper_regions = layout.extract_parallel_eper.region_list_from(
+            pixels=settings.parallel_epers_pixels
+        )
+
+        mask = np.full(layout.shape_2d, False)
+
+        for region in eper_regions:
+            mask[region.y0 : region.y1, region.x0 : region.x1] = True
+
+        if invert:
+            mask = np.invert(mask)
+
+        return Mask2D(mask=mask.astype("bool"), pixel_scales=pixel_scales)
+
+    @classmethod
+    def masked_serial_fpr_from(
+        cls,
+        layout: "Layout2D",
+        settings: "SettingsMask2D",
+        pixel_scales: aa.type.PixelScales,
+        invert: bool = False,
+    ) -> "Mask2D":
+
+        fpr_regions = layout.extract_serial_fpr.region_list_from(
+            pixels=settings.serial_fpr_pixels
+        )
+        mask = np.full(layout.shape_2d, False)
+
+        for region in fpr_regions:
+            mask[region.y0 : region.y1, region.x0 : region.x1] = True
+
+        if invert:
+            mask = np.invert(mask)
+
+        return Mask2D(mask=mask.astype("bool"), pixel_scales=pixel_scales)
+
+    @classmethod
+    def masked_serial_epers_from(
+        cls,
+        layout: "Layout2D",
+        settings: "SettingsMask2D",
+        pixel_scales: aa.type.PixelScales,
+        invert: bool = False,
+    ) -> "Mask2D":
+
+        eper_regions = layout.extract_serial_eper.region_list_from(
+            pixels=settings.serial_eper_pixels
+        )
+        mask = np.full(layout.shape_2d, False)
+
+        for region in eper_regions:
+            mask[region.y0 : region.y1, region.x0 : region.x1] = True
+
+        if invert:
+            mask = np.invert(mask)
+
+        return Mask2D(mask=mask.astype("bool"), pixel_scales=pixel_scales)

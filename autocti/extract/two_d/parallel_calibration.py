@@ -3,7 +3,7 @@ from typing import Tuple
 
 import autoarray as aa
 
-from autocti.charge_injection.mask_2d import Mask2DCI
+from autocti.mask.mask_2d import Mask2D
 
 
 class Extract2DParallelCalibration:
@@ -135,7 +135,7 @@ class Extract2DParallelCalibration:
             pixel_scales=array.pixel_scales,
         )
 
-    def mask_2d_from(self, mask: aa.Mask2D, columns: Tuple[int, int]) -> "Mask2DCI":
+    def mask_2d_from(self, mask: aa.Mask2D, columns: Tuple[int, int]) -> "Mask2D":
         """
         Extract a mask to go with a parallel calibration array from an input mask.
 
@@ -144,7 +144,7 @@ class Extract2DParallelCalibration:
         extraction_region = self.region_list[0].serial_towards_roe_full_region_from(
             shape_2d=self.shape_2d, pixels=columns
         )
-        return Mask2DCI(
+        return Mask2D(
             mask=mask[extraction_region.slice], pixel_scales=mask.pixel_scales
         )
 

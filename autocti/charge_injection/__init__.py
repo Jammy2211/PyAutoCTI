@@ -9,6 +9,4 @@ from .imaging import ImagingCI
 from .imaging import SettingsImagingCI
 from .imaging import ImagingCI
 from .imaging import SimulatorImagingCI
-from .mask_2d import SettingsMask2DCI
-from .mask_2d import Mask2DCI
 from .layout import Layout2DCI
