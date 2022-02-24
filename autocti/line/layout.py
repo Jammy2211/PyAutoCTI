@@ -20,7 +20,7 @@ class Layout1DLine(aa.Layout1D):
 
         Parameters
         -----------
-        region_list: [(int,)]
+        region_list
             A list of the integer coordinates specifying the corners of each charge injection region \
             (top-row, bottom-row, left-column, right-column).
         """
