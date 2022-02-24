@@ -18,12 +18,13 @@ from arcticpy.src.traps import TrapSlowCapture
 from arcticpy.src.traps import TrapInstantCaptureContinuum
 
 from .cosmics.cosmics import SimulatorCosmicRayMap
-from .charge_injection.layout import Extract2DParallelFPR
-from .charge_injection.layout import Extract2DParallelEPER
-from .charge_injection.layout import Extract2DSerialFPR
-from .charge_injection.layout import Extract2DSerialEPER
-from .charge_injection.layout import Extract2DParallelCalibration
-from .charge_injection.layout import Extract2DSerialCalibration
+from .extract.two_d.parallel_fpr import Extract2DParallelFPR
+from .extract.two_d.parallel_eper import Extract2DParallelEPER
+from .extract.two_d.serial_fpr import Extract2DSerialFPR
+from .extract.two_d.serial_eper import Extract2DSerialEPER
+from .extract.two_d.parallel_calibration import Extract2DParallelCalibration
+from .extract.two_d.serial_calibration import Extract2DSerialCalibration
+from .extract.two_d.misc import Extract2DMisc
 from .charge_injection.fit import FitImagingCI
 from .mask.mask_2d import Mask2D
 from .mask.mask_2d import SettingsMask2D

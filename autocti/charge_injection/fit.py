@@ -65,7 +65,9 @@ class FitImagingCI(FitImaging):
 
     @property
     def chi_squared_map_of_regions_ci(self):
-        return self.layout.regions_array_2d_from(array=self.chi_squared_map)
+        return self.layout.extract_misc.regions_array_2d_from(
+            array=self.chi_squared_map
+        )
 
     @property
     def chi_squared_map_of_parallel_epers(self):
