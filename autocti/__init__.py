@@ -32,6 +32,7 @@ from .line.mask_1d import Mask1DLine
 from .line.mask_1d import SettingsMask1DLine
 from .extract.one_d.fpr import Extract1DFPR
 from .extract.one_d.eper import Extract1DEPER
+from .extract.one_d.misc import Extract1DMisc
 from .line.layout import Layout1DLine
 from .line.dataset import SettingsDatasetLine
 from .line.dataset import DatasetLine
