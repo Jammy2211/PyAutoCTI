@@ -1,17 +1,13 @@
 from typing import Tuple
 
-from autocti.extract.one_d.abstract import Extract1D
+from autocti.extract.one_d.fpr import Extract1DFPR
+from autocti.extract.one_d.eper import Extract1DEPER
 
 import autoarray as aa
 
 
-class Extract1DMisc(Extract1D):
-    def __init__(
-        self,
-        region_list: aa.type.Region1DList,
-        prescan: aa.type.Region1DLike = None,
-        overscan: aa.type.Region1DLike = None,
-    ):
+class Extract1DMaster:
+    def __init__(self, fpr: Extract1DFPR, eper: Extract1DEPER):
         """
         Abstract class containing methods for extracting regions from a 1D line dataset which contains some sort of
         original signal whose profile before CTI is known (e.g. warm pixel, charge injection).
@@ -23,22 +19,60 @@ class Extract1DMisc(Extract1D):
         region_list
             Integer pixel coordinates specifying the corners of signal (x0, x1).
         """
-        super().__init__(region_list=region_list)
 
-        from autocti.extract.one_d.fpr import Extract1DFPR
-        from autocti.extract.one_d.eper import Extract1DEPER
+        self.fpr = fpr
+        self.eper = eper
 
-        self.extract_fpr = Extract1DFPR(region_list=region_list)
-        self.extract_eper = Extract1DEPER(region_list=region_list)
+    @classmethod
+    def from_region_list(
+        cls,
+        region_list,
+        prescan: aa.type.Region1DLike = None,
+        overscan: aa.type.Region1DLike = None,
+    ):
+        """
+        Creates the `Extract2DMaster` class from a region list which specifies where the known inject charge of
+        the CTI calibration data is.
 
-        if isinstance(prescan, tuple):
-            prescan = aa.Region1D(region=prescan)
+        This may also include other regions on the CCD like the overscans and prescans.
 
-        if isinstance(overscan, tuple):
-            overscan = aa.Region1D(region=overscan)
+        Parameters
+        ----------
+        shape_2d
+            The two dimensional shape of the charge injection imaging, corresponding to the number of rows (pixels
+            in parallel direction) and columns (pixels in serial direction).
+        region_list
+            Integer pixel coordinates specifying the corners of each charge injection region (top-row, bottom-row,
+            left-column, right-column).
+        parallel_overscan
+            Integer pixel coordinates specifying the corners of the parallel overscan (top-row, bottom-row,
+            left-column, right-column).
+        serial_prescan
+            Integer pixel coordinates specifying the corners of the serial prescan (top-row, bottom-row,
+            left-column, right-column).
+        serial_overscan
+            Integer pixel coordinates specifying the corners of the serial overscan (top-row, bottom-row,
+            left-column, right-column).
+        """
 
-        self.prescan = prescan
-        self.overscan = overscan
+        fpr = Extract1DFPR(region_list=region_list, prescan=prescan, overscan=overscan)
+        eper = Extract1DEPER(
+            region_list=region_list, prescan=prescan, overscan=overscan
+        )
+
+        return Extract1DMaster(fpr=fpr, eper=eper)
+
+    @property
+    def region_list(self):
+        return self.fpr.region_list
+
+    @property
+    def prescan(self):
+        return self.fpr.prescan
+
+    @property
+    def overscan(self):
+        return self.fpr.overscan
 
     def regions_array_1d_from(self, array: aa.Array1D) -> aa.Array1D:
         """
@@ -222,13 +256,13 @@ class Extract1DMisc(Extract1D):
 
         if fpr_pixels is not None:
 
-            array_1d_of_edges_and_epers = self.extract_fpr.add_to_array(
+            array_1d_of_edges_and_epers = self.fpr.add_to_array(
                 new_array=array_1d_of_edges_and_epers, array=array, pixels=fpr_pixels
             )
 
         if trails_pixels is not None:
 
-            array_1d_of_edges_and_epers = self.extract_eper.add_to_array(
+            array_1d_of_edges_and_epers = self.eper.add_to_array(
                 new_array=array_1d_of_edges_and_epers, array=array, pixels=trails_pixels
             )
 

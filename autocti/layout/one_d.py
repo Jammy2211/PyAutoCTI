@@ -34,11 +34,11 @@ class Layout1D(aa.Layout1D):
                     "The charge injection layout_ci regions are bigger than the image image_shape"
                 )
 
-        from autocti.extract.one_d.fpr import Extract1DFPR
-        from autocti.extract.one_d.eper import Extract1DEPER
+        from autocti.extract.one_d.master import Extract1DMaster
 
-        self.extract_fpr = Extract1DFPR(region_list=region_list)
-        self.extract_eper = Extract1DEPER(region_list=region_list)
+        self.extract = Extract1DMaster.from_region_list(
+            region_list=region_list, prescan=prescan, overscan=overscan
+        )
 
         super().__init__(shape_1d=shape_1d, prescan=prescan, overscan=overscan)
 
@@ -63,11 +63,11 @@ class Layout1D(aa.Layout1D):
     def extract_line_from(self, array: aa.Array1D, line_region: str):
 
         if line_region == "front_edge":
-            return self.extract_fpr.stacked_array_1d_from(
-                array=array, pixels=(0, self.extract_fpr.total_pixels_min)
+            return self.extract.fpr.stacked_array_1d_from(
+                array=array, pixels=(0, self.extract.fpr.total_pixels_min)
             )
         elif line_region == "trails":
-            return self.extract_eper.stacked_array_1d_from(
+            return self.extract.eper.stacked_array_1d_from(
                 array=array, pixels=(0, self.smallest_trails_pixels_to_array_edge)
             )
         else:

@@ -50,7 +50,7 @@ class Mask1D(aa.Mask1D):
         invert: bool = False,
     ) -> "Mask1D":
 
-        fpr_regions = layout.extract_fpr.region_list_from(pixels=settings.fpr_pixels)
+        fpr_regions = layout.extract.fpr.region_list_from(pixels=settings.fpr_pixels)
 
         mask = np.full(layout.shape_1d, False)
 
@@ -71,7 +71,7 @@ class Mask1D(aa.Mask1D):
         invert: bool = False,
     ) -> "Mask1D":
 
-        eper_regions = layout.extract_eper.region_list_from(pixels=settings.eper_pixels)
+        eper_regions = layout.extract.eper.region_list_from(pixels=settings.eper_pixels)
 
         mask = np.full(layout.shape_1d, False)
 
