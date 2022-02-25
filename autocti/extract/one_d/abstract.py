@@ -5,7 +5,12 @@ import autoarray as aa
 
 
 class Extract1D:
-    def __init__(self, region_list: aa.type.Region1DList):
+    def __init__(
+        self,
+        region_list: aa.type.Region1DList,
+        prescan: aa.type.Region1DLike = None,
+        overscan: aa.type.Region1DLike = None,
+    ):
         """
         Abstract class containing methods for extracting regions from a 1D line dataset which contains some sort of
         original signal whose profile before CTI is known (e.g. warm pixel, charge injection).
@@ -18,6 +23,15 @@ class Extract1D:
             Integer pixel coordinates specifying the corners of signal (x0, x1).
         """
         self.region_list = list(map(aa.Region1D, region_list))
+
+        if isinstance(prescan, tuple):
+            prescan = aa.Region1D(region=prescan)
+
+        if isinstance(overscan, tuple):
+            overscan = aa.Region1D(region=overscan)
+
+        self.prescan = prescan
+        self.overscan = overscan
 
     @property
     def total_pixels_min(self) -> int:

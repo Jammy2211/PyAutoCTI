@@ -33,7 +33,8 @@ class SettingsMask2D:
 class Mask2D(AbstractMask2D):
     @classmethod
     def manual(cls, mask, pixel_scales, origin=(0.0, 0.0), invert=False):
-        """Create a Mask2D (see *Mask2D.__new__*) by inputting the array values in 2D, for example:
+        """
+        Create a Mask2D (see *Mask2D.__new__*) by inputting the array values in 2D, for example:
 
         mask=np.array([[False, False],
                        [True, False]])

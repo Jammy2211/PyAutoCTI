@@ -45,3 +45,28 @@ def test__stacked_array_1d_from(array, masked_array):
 
     assert (stacked_trails == np.array([5.0, 4.0])).all()
     assert (stacked_trails.mask == np.array([False, False])).all()
+
+
+def test__array_1d_from():
+
+    extract = ac.Extract1DEPER(region_list=[(0, 2)], prescan=(0, 1), overscan=(0, 1))
+
+    array = ac.Array1D.manual_native(array=[0.0, 1.0, 2.0, 3.0], pixel_scales=1.0)
+
+    array_extracted = extract.array_1d_from(array=array)
+
+    assert (array_extracted == np.array([0.0, 0.0, 2.0, 3.0])).all()
+
+    extract = ac.Extract1DEPER(region_list=[(0, 2)], prescan=(2, 3), overscan=(3, 4))
+
+    array_extracted = extract.array_1d_from(array=array)
+
+    assert (array_extracted == np.array([0.0, 0.0, 0.0, 0.0])).all()
+
+    extract = ac.Extract1DEPER(
+        region_list=[(0, 1), (2, 3)], prescan=(2, 3), overscan=(2, 3)
+    )
+
+    array_extracted = extract.array_1d_from(array=array)
+
+    assert (array_extracted.native == np.array([0.0, 1.0, 0.0, 3.0])).all()

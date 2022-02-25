@@ -28,8 +28,8 @@ class Extract1DMisc(Extract1D):
         from autocti.extract.one_d.fpr import Extract1DFPR
         from autocti.extract.one_d.eper import Extract1DEPER
 
-        self.extract_front_edge = Extract1DFPR(region_list=region_list)
-        self.extract_trails = Extract1DEPER(region_list=region_list)
+        self.extract_fpr = Extract1DFPR(region_list=region_list)
+        self.extract_eper = Extract1DEPER(region_list=region_list)
 
         if isinstance(prescan, tuple):
             prescan = aa.Region1D(region=prescan)
@@ -40,7 +40,7 @@ class Extract1DMisc(Extract1D):
         self.prescan = prescan
         self.overscan = overscan
 
-    def array_1d_of_regions_from(self, array: aa.Array1D) -> aa.Array1D:
+    def regions_array_1d_from(self, array: aa.Array1D) -> aa.Array1D:
         """
         Extract all of the charge-injection regions from an input `array1D` object and returns them as a new `array1D`
         object where these extracted regions are included and all other entries are zeros.
@@ -96,7 +96,7 @@ class Extract1DMisc(Extract1D):
 
         return array_1d_of_regions
 
-    def array_1d_of_non_regions_from(self, array: aa.Array1D) -> aa.Array1D:
+    def non_regions_array_1d_from(self, array: aa.Array1D) -> aa.Array1D:
         """
         Extract all of the data values in an input `array1D` that do not overlap the charge injection regions. This
         includes many areas of the image (e.g. the serial prescan, serial overscan) but is typically used to extract
@@ -151,64 +151,6 @@ class Extract1DMisc(Extract1D):
             array_1d_non_regions_ci[region.slice] = 0.0
 
         return array_1d_non_regions_ci
-
-    def array_1d_of_trails_from(self, array: aa.Array1D) -> aa.Array1D:
-        """
-        Extract all of the data values in an input `array1D` that do not overlap the charge injection regions or the
-        serial prescan / serial overscan regions.
-
-        This  extracts a `array1D` that contains only regions of the data where there are parallel trails (e.g. those
-        that follow the charge-injection regions).
-
-        The diagram below illustrates the `array1D` that is extracted from the input array:
-
-        ---KEY---
-        ---------
-
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
-        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
-
-        P = Parallel Direction      S = Serial Direction
-
-               [tptpptptptpptpptpptpt]
-               [tptptptpptpttptptptpt]
-          [...][ttttttttttttttttttttt][sss]
-          [...][ccccccccccccccccccccc][sss]
-        | [...][ccccccccccccccccccccc][sss]    |
-        | [...][ttttttttttttttttttttt][sss]    | Direction
-        P [...][ttttttttttttttttttttt][sss]    | of
-        | [...][ccccccccccccccccccccc][sss]    | clocking
-          [...][ccccccccccccccccccccc][sss]    |
-
-        []     [=====================]
-               <---------S----------
-
-        The extracted array keeps just the trails following all charge injection scans and replaces all other
-        values with 0s:
-
-               [tptpptptptpptpptpptpt]
-               [tptptptpptpttptptptpt]
-          [000][ttttttttttttttttttttt][000]
-          [000][000000000000000000000][000]
-        | [000][000000000000000000000][000]    |
-        | [000][ttttttttttttttttttttt][000]    | Direction
-        P [000][ttttttttttttttttttttt][000]    | of
-        | [000][000000000000000000000][000]    | clocking
-          [000][000000000000000000000][000]    |
-
-        []     [=====================]
-               <---------S----------
-        """
-
-        array_1d_trails = self.array_1d_of_non_regions_from(array=array)
-
-        array_1d_trails.native[self.prescan.slice] = 0.0
-        array_1d_trails.native[self.overscan.slice] = 0.0
-
-        return array_1d_trails
 
     def array_1d_of_edges_and_epers_from(
         self,
@@ -280,13 +222,13 @@ class Extract1DMisc(Extract1D):
 
         if fpr_pixels is not None:
 
-            array_1d_of_edges_and_epers = self.extract_front_edge.add_to_array(
+            array_1d_of_edges_and_epers = self.extract_fpr.add_to_array(
                 new_array=array_1d_of_edges_and_epers, array=array, pixels=fpr_pixels
             )
 
         if trails_pixels is not None:
 
-            array_1d_of_edges_and_epers = self.extract_trails.add_to_array(
+            array_1d_of_edges_and_epers = self.extract_eper.add_to_array(
                 new_array=array_1d_of_edges_and_epers, array=array, pixels=trails_pixels
             )
 

@@ -62,3 +62,64 @@ class Extract1DEPER(Extract1D):
                 self.region_list,
             )
         )
+
+    def array_1d_from(self, array: aa.Array1D) -> aa.Array1D:
+        """
+        Extract all of the data values in an input `array1D` that do not overlap the charge injection regions or the
+        serial prescan / serial overscan regions.
+
+        This  extracts a `array1D` that contains only regions of the data where there are parallel trails (e.g. those
+        that follow the charge-injection regions).
+
+        The diagram below illustrates the `array1D` that is extracted from the input array:
+
+        ---KEY---
+        ---------
+
+        [] = read-out electronics   [==========] = read-out register
+
+        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
+        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
+        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
+
+        P = Parallel Direction      S = Serial Direction
+
+               [tptpptptptpptpptpptpt]
+               [tptptptpptpttptptptpt]
+          [...][ttttttttttttttttttttt][sss]
+          [...][ccccccccccccccccccccc][sss]
+        | [...][ccccccccccccccccccccc][sss]    |
+        | [...][ttttttttttttttttttttt][sss]    | Direction
+        P [...][ttttttttttttttttttttt][sss]    | of
+        | [...][ccccccccccccccccccccc][sss]    | clocking
+          [...][ccccccccccccccccccccc][sss]    |
+
+        []     [=====================]
+               <---------S----------
+
+        The extracted array keeps just the trails following all charge injection scans and replaces all other
+        values with 0s:
+
+               [tptpptptptpptpptpptpt]
+               [tptptptpptpttptptptpt]
+          [000][ttttttttttttttttttttt][000]
+          [000][000000000000000000000][000]
+        | [000][000000000000000000000][000]    |
+        | [000][ttttttttttttttttttttt][000]    | Direction
+        P [000][ttttttttttttttttttttt][000]    | of
+        | [000][000000000000000000000][000]    | clocking
+          [000][000000000000000000000][000]    |
+
+        []     [=====================]
+               <---------S----------
+        """
+
+        array_1d_epers = array.native.copy()
+
+        for region in self.region_list:
+            array_1d_epers[region.slice] = 0.0
+
+        array_1d_epers.native[self.prescan.slice] = 0.0
+        array_1d_epers.native[self.overscan.slice] = 0.0
+
+        return array_1d_epers
