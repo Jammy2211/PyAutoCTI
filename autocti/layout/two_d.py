@@ -81,7 +81,9 @@ class Layout2D(aa.Layout2D):
             serial_overscan=self.serial_overscan,
         )
         self.extract_serial_fpr = Extract2DSerialFPR(region_list=region_list)
-        self.extract_serial_eper = Extract2DSerialEPER(region_list=region_list)
+        self.extract_serial_eper = Extract2DSerialEPER(
+            region_list=region_list, serial_overscan=self.serial_overscan
+        )
 
         self.extract_serial_calibration = Extract2DSerialCalibration(
             shape_2d=shape_2d,

@@ -1,9 +1,34 @@
-from typing import Tuple
+from typing import Optional, Tuple
+
+import autoarray as aa
 
 from autocti.extract.two_d.abstract import Extract2D
 
 
 class Extract2DSerialEPER(Extract2D):
+    def __init__(
+        self,
+        region_list: aa.type.Region2DList,
+        serial_overscan: Optional[aa.type.Region2DLike] = None,
+    ):
+        """
+        Abstract class containing methods for extracting regions from a 2D charge injection image.
+
+        This uses the `region_list`, which contains the charge injection regions in pixel coordinates.
+
+        Parameters
+        ----------
+        region_list
+            Integer pixel coordinates specifying the corners of each charge injection region (top-row, bottom-row,
+            left-column, right-column).
+        """
+        super().__init__(region_list=region_list)
+
+        if isinstance(serial_overscan, tuple):
+            serial_overscan = aa.Region2D(region=serial_overscan)
+
+        self.serial_overscan = serial_overscan
+
     @property
     def binning_axis(self) -> int:
         """
@@ -61,3 +86,56 @@ class Extract2DSerialEPER(Extract2D):
             region.serial_trailing_region_from(pixels=pixels)
             for region in self.region_list
         ]
+
+    def array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
+        """
+        Extract an arrays of all of the serial EPERs in the serial overscan region, that are to the side of a
+        charge-injection scans from a charge injection array.
+
+        The diagram below illustrates the arrays that is extracted from a array:
+
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = parallel overscan
+        [ssssssssss] = serial overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [tttttttttt] = parallel / serial charge injection region trail
+
+               [ppppppppppppppppppppp]
+               [ppppppppppppppppppppp]
+          [...][xxxxxxxxxxxxxxxxxxxxx][sss]
+          [...][ccccccccccccccccccccc][tst]
+        | [...][ccccccccccccccccccccc][sts]    |
+        | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
+        P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
+        | [...][ccccccccccccccccccccc][tst]    | clocking
+        \/[...][ccccccccccccccccccccc][sts]    \/
+
+        []     [=====================]
+               <--------Ser---------
+
+        The extracted array keeps just the trails following all charge injection scans and replaces all other
+        values with 0s:
+
+               [000000000000000000000]
+               [000000000000000000000]
+          [000][000000000000000000000][000]
+          [000][000000000000000000000][tst]
+        | [000][000000000000000000000][sts]    |
+        | [000][000000000000000000000][000]    | Direction
+        P [000][000000000000000000000][000]    | of
+        | [000][000000000000000000000][tst]    | clocking
+          [000][000000000000000000000][sts]    |
+
+        []     [=====================]
+               <--------Ser---------
+        """
+
+        serial_array = array.native.copy() * 0.0
+
+        return self.add_to_array(
+            new_array=serial_array,
+            array=array,
+            pixels=(0, self.serial_overscan.total_columns),
+        )

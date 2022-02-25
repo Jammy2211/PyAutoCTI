@@ -236,55 +236,6 @@ class Extract2DMisc(Extract2D):
 
         return new_array
 
-    def serial_epers_array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
-        """
-        Extract an arrays of all of the serial EPERs in the serial overscan region, that are to the side of a
-        charge-injection scans from a charge injection array.
-
-        The diagram below illustrates the arrays that is extracted from a array:
-
-        [] = read-out electronics
-        [==========] = read-out register
-        [..........] = serial prescan
-        [pppppppppp] = parallel overscan
-        [ssssssssss] = serial overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
-        [tttttttttt] = parallel / serial charge injection region trail
-
-               [ppppppppppppppppppppp]
-               [ppppppppppppppppppppp]
-          [...][xxxxxxxxxxxxxxxxxxxxx][sss]
-          [...][ccccccccccccccccccccc][tst]
-        | [...][ccccccccccccccccccccc][sts]    |
-        | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
-        P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
-        | [...][ccccccccccccccccccccc][tst]    | clocking
-        \/[...][ccccccccccccccccccccc][sts]    \/
-
-        []     [=====================]
-               <--------Ser---------
-
-        The extracted array keeps just the trails following all charge injection scans and replaces all other
-        values with 0s:
-
-               [000000000000000000000]
-               [000000000000000000000]
-          [000][000000000000000000000][000]
-          [000][000000000000000000000][tst]
-        | [000][000000000000000000000][sts]    |
-        | [000][000000000000000000000][000]    | Direction
-        P [000][000000000000000000000][000]    | of
-        | [000][000000000000000000000][tst]    | clocking
-          [000][000000000000000000000][sts]    |
-
-        []     [=====================]
-               <--------Ser---------
-        """
-        array = self.serial_fprs_and_epers_array_2d_from(
-            array=array, trails_pixels=(0, self.serial_overscan.total_columns)
-        )
-        return array
-
     def serial_fprs_and_epers_array_2d_from(
         self, array: aa.Array2D, fpr_pixels=None, trails_pixels=None
     ) -> aa.Array2D:

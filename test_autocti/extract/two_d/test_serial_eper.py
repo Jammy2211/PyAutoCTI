@@ -97,3 +97,52 @@ def test__binned_array_1d_from(serial_array, serial_masked_array):
     trails_line = extract.binned_array_1d_from(array=serial_masked_array, pixels=(0, 2))
 
     assert (trails_line == np.array([6.0, 23.0 / 3.0])).all()
+
+
+def test__array_2d_from():
+
+    extract = ac.Extract2DSerialEPER(
+        region_list=[(0, 4, 0, 2)], serial_overscan=(0, 4, 2, 3)
+    )
+
+    array = ac.Array2D.manual(
+        array=[[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]],
+        pixel_scales=1.0,
+    )
+
+    new_array = extract.array_2d_from(array=array)
+
+    assert (
+        new_array
+        == np.array(
+            [[0.0, 0.0, 2.0], [0.0, 0.0, 5.0], [0.0, 0.0, 8.0], [0.0, 0.0, 11.0]]
+        )
+    ).all()
+
+    extract = ac.Extract2DSerialEPER(
+        region_list=[(0, 4, 0, 2)], serial_overscan=(0, 4, 2, 4)
+    )
+
+    array = ac.Array2D.manual(
+        array=[
+            [0.0, 1.0, 2.0, 0.5],
+            [3.0, 4.0, 5.0, 0.5],
+            [6.0, 7.0, 8.0, 0.5],
+            [9.0, 10.0, 11.0, 0.5],
+        ],
+        pixel_scales=1.0,
+    )
+
+    new_array = extract.array_2d_from(array=array)
+
+    assert (
+        new_array
+        == np.array(
+            [
+                [0.0, 0.0, 2.0, 0.5],
+                [0.0, 0.0, 5.0, 0.5],
+                [0.0, 0.0, 8.0, 0.5],
+                [0.0, 0.0, 11.0, 0.5],
+            ]
+        )
+    ).all()

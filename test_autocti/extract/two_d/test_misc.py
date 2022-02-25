@@ -151,51 +151,6 @@ def test__parallel_fprs_and_epers_array_2d_from():
     ).all()
 
 
-def test__serial_epers_array_2d_from():
-
-    extract = ac.Extract2DMisc(region_list=[(0, 4, 0, 2)], serial_overscan=(0, 4, 2, 3))
-
-    array = ac.Array2D.manual(
-        array=[[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]],
-        pixel_scales=1.0,
-    )
-
-    new_array = extract.serial_epers_array_2d_from(array=array)
-
-    assert (
-        new_array
-        == np.array(
-            [[0.0, 0.0, 2.0], [0.0, 0.0, 5.0], [0.0, 0.0, 8.0], [0.0, 0.0, 11.0]]
-        )
-    ).all()
-
-    extract = ac.Extract2DMisc(region_list=[(0, 4, 0, 2)], serial_overscan=(0, 4, 2, 4))
-
-    array = ac.Array2D.manual(
-        array=[
-            [0.0, 1.0, 2.0, 0.5],
-            [3.0, 4.0, 5.0, 0.5],
-            [6.0, 7.0, 8.0, 0.5],
-            [9.0, 10.0, 11.0, 0.5],
-        ],
-        pixel_scales=1.0,
-    )
-
-    new_array = extract.serial_epers_array_2d_from(array=array)
-
-    assert (
-        new_array
-        == np.array(
-            [
-                [0.0, 0.0, 2.0, 0.5],
-                [0.0, 0.0, 5.0, 0.5],
-                [0.0, 0.0, 8.0, 0.5],
-                [0.0, 0.0, 11.0, 0.5],
-            ]
-        )
-    ).all()
-
-
 def test__serial_fprs_and_epers_array_2d_from():
 
     extract = ac.Extract2DMisc(region_list=[(0, 3, 0, 3)])
