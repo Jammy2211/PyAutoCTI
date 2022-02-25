@@ -225,7 +225,7 @@ class Extract2DSerialCalibration:
         from autocti.charge_injection.imaging import ImagingCI
 
         cosmic_ray_map = (
-            imaging_ci.layout.extract_serial_calibration.array_2d_from(
+            imaging_ci.layout.extract.serial_calibration.array_2d_from(
                 array=imaging_ci.cosmic_ray_map, rows=rows
             )
             if imaging_ci.cosmic_ray_map is not None
@@ -235,7 +235,7 @@ class Extract2DSerialCalibration:
         if imaging_ci.noise_scaling_map_list is not None:
 
             noise_scaling_map_list = [
-                imaging_ci.layout.extract_serial_calibration.array_2d_from(
+                imaging_ci.layout.extract.serial_calibration.array_2d_from(
                     array=noise_scaling_map, rows=rows
                 )
                 for noise_scaling_map in imaging_ci.noise_scaling_map_list
@@ -245,19 +245,19 @@ class Extract2DSerialCalibration:
 
             noise_scaling_map_list = None
 
-        image = imaging_ci.layout.extract_serial_calibration.array_2d_from(
+        image = imaging_ci.layout.extract.serial_calibration.array_2d_from(
             array=imaging_ci.image, rows=rows
         )
 
         return ImagingCI(
             image=image,
-            noise_map=imaging_ci.layout.extract_serial_calibration.array_2d_from(
+            noise_map=imaging_ci.layout.extract.serial_calibration.array_2d_from(
                 array=imaging_ci.noise_map, rows=rows
             ),
-            pre_cti_data=imaging_ci.layout.extract_serial_calibration.array_2d_from(
+            pre_cti_data=imaging_ci.layout.extract.serial_calibration.array_2d_from(
                 array=imaging_ci.pre_cti_data, rows=rows
             ),
-            layout=imaging_ci.layout.extract_serial_calibration.extracted_layout_from(
+            layout=imaging_ci.layout.extract.serial_calibration.extracted_layout_from(
                 layout=imaging_ci.layout, new_shape_2d=image.shape, rows=rows
             ),
             cosmic_ray_map=cosmic_ray_map,

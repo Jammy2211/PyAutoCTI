@@ -134,21 +134,21 @@ class ImagingCI(aa.Imaging):
 
         if settings.parallel_pixels is not None:
 
-            imaging = self.layout.extract_parallel_calibration.imaging_ci_from(
+            imaging = self.layout.extract.parallel_calibration.imaging_ci_from(
                 imaging_ci=self, columns=settings.parallel_pixels
             )
 
-            mask = self.layout.extract_parallel_calibration.mask_2d_from(
+            mask = self.layout.extract.parallel_calibration.mask_2d_from(
                 mask=self.mask, columns=settings.parallel_pixels
             )
 
         elif settings.serial_pixels is not None:
 
-            imaging = self.layout.extract_serial_calibration.imaging_ci_from(
+            imaging = self.layout.extract.serial_calibration.imaging_ci_from(
                 imaging_ci=self, rows=settings.serial_pixels
             )
 
-            mask = self.layout.extract_serial_calibration.mask_2d_from(
+            mask = self.layout.extract.serial_calibration.mask_2d_from(
                 mask=self.mask, rows=settings.serial_pixels
             )
 

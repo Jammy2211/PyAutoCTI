@@ -24,7 +24,7 @@ from .extract.two_d.serial_fpr import Extract2DSerialFPR
 from .extract.two_d.serial_eper import Extract2DSerialEPER
 from .extract.two_d.parallel_calibration import Extract2DParallelCalibration
 from .extract.two_d.serial_calibration import Extract2DSerialCalibration
-from .extract.two_d.misc import Extract2DMisc
+from .extract.two_d.master import Extract2DMaster
 from .charge_injection.fit import FitImagingCI
 from .mask.mask_2d import Mask2D
 from .mask.mask_2d import SettingsMask2D

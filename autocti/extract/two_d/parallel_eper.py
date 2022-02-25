@@ -6,35 +6,6 @@ from autocti.extract.two_d.abstract import Extract2D
 
 
 class Extract2DParallelEPER(Extract2D):
-    def __init__(
-        self,
-        region_list: aa.type.Region2DList,
-        serial_prescan: Optional[aa.type.Region2DLike] = None,
-        serial_overscan: Optional[aa.type.Region2DLike] = None,
-    ):
-        """
-        Abstract class containing methods for extracting regions from a 2D charge injection image.
-
-        This uses the `region_list`, which contains the charge injection regions in pixel coordinates.
-
-        Parameters
-        ----------
-        region_list
-            Integer pixel coordinates specifying the corners of each charge injection region (top-row, bottom-row,
-            left-column, right-column).
-        """
-
-        super().__init__(region_list=region_list)
-
-        if isinstance(serial_prescan, tuple):
-            serial_prescan = aa.Region2D(region=serial_prescan)
-
-        if isinstance(serial_overscan, tuple):
-            serial_overscan = aa.Region2D(region=serial_overscan)
-
-        self.serial_prescan = serial_prescan
-        self.serial_overscan = serial_overscan
-
     @property
     def binning_axis(self) -> int:
         """

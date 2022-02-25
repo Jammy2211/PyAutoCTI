@@ -47,15 +47,7 @@ class Layout2D(aa.Layout2D):
             The charge injection electronics parameters of the image (e.g. the IG1 and IG2 voltages).
         """
 
-        from autocti.extract.two_d.parallel_fpr import Extract2DParallelFPR
-        from autocti.extract.two_d.parallel_eper import Extract2DParallelEPER
-        from autocti.extract.two_d.serial_fpr import Extract2DSerialFPR
-        from autocti.extract.two_d.serial_eper import Extract2DSerialEPER
-        from autocti.extract.two_d.parallel_calibration import (
-            Extract2DParallelCalibration,
-        )
-        from autocti.extract.two_d.serial_calibration import Extract2DSerialCalibration
-        from autocti.extract.two_d.misc import Extract2DMisc
+        from autocti.extract.two_d.master import Extract2DMaster
 
         self.region_list = list(map(aa.Region2D, region_list))
 
@@ -74,30 +66,10 @@ class Layout2D(aa.Layout2D):
             serial_overscan=serial_overscan,
         )
 
-        self.extract_parallel_fpr = Extract2DParallelFPR(region_list=region_list)
-        self.extract_parallel_eper = Extract2DParallelEPER(
-            region_list=region_list,
-            serial_prescan=self.serial_prescan,
-            serial_overscan=self.serial_overscan,
-        )
-        self.extract_serial_fpr = Extract2DSerialFPR(region_list=region_list)
-        self.extract_serial_eper = Extract2DSerialEPER(
-            region_list=region_list, serial_overscan=self.serial_overscan
-        )
-
-        self.extract_serial_calibration = Extract2DSerialCalibration(
+        self.extract = Extract2DMaster.from_region_list(
             shape_2d=shape_2d,
             region_list=region_list,
-            serial_prescan=self.serial_prescan,
-            serial_overscan=self.serial_overscan,
-        )
-
-        self.extract_parallel_calibration = Extract2DParallelCalibration(
-            shape_2d=shape_2d, region_list=region_list
-        )
-
-        self.extract_misc = Extract2DMisc(
-            region_list=region_list,
+            parallel_overscan=self.parallel_overscan,
             serial_prescan=self.serial_prescan,
             serial_overscan=self.serial_overscan,
         )
@@ -195,19 +167,19 @@ class Layout2D(aa.Layout2D):
     def extract_line_from(self, array: aa.Array2D, line_region: str) -> aa.Array1D:
 
         if line_region == "parallel_front_edge":
-            return self.extract_parallel_fpr.binned_array_1d_from(
-                array=array, pixels=(0, self.extract_parallel_fpr.total_rows_min)
+            return self.extract.parallel_fpr.binned_array_1d_from(
+                array=array, pixels=(0, self.extract.parallel_fpr.total_rows_min)
             )
         elif line_region == "parallel_epers":
-            return self.extract_parallel_eper.binned_array_1d_from(
+            return self.extract.parallel_eper.binned_array_1d_from(
                 array=array, pixels=(0, self.smallest_parallel_rows_between_ci_regions)
             )
         elif line_region == "serial_front_edge":
-            return self.extract_serial_fpr.binned_array_1d_from(
-                array=array, pixels=(0, self.extract_serial_fpr.total_columns_min)
+            return self.extract.serial_fpr.binned_array_1d_from(
+                array=array, pixels=(0, self.extract.serial_fpr.total_columns_min)
             )
         elif line_region == "serial_trails":
-            return self.extract_serial_eper.binned_array_1d_from(
+            return self.extract.serial_eper.binned_array_1d_from(
                 array=array, pixels=(0, self.serial_eper_pixels)
             )
         else:

@@ -4,7 +4,7 @@ import autocti as ac
 
 def test__regions_array_2d_from():
 
-    extract = ac.Extract2DMisc(region_list=[(0, 3, 0, 3)])
+    extract = ac.Extract2DMaster.from_region_list(region_list=[(0, 3, 0, 3)])
 
     array = ac.Array2D.manual(
         array=[[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]],
@@ -20,7 +20,9 @@ def test__regions_array_2d_from():
         )
     ).all()
 
-    extract = ac.Extract2DMisc(region_list=[(0, 1, 1, 2), (2, 3, 1, 3)])
+    extract = ac.Extract2DMaster.from_region_list(
+        region_list=[(0, 1, 1, 2), (2, 3, 1, 3)]
+    )
 
     array = ac.Array2D.manual(
         array=[[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]],
@@ -39,7 +41,7 @@ def test__regions_array_2d_from():
 
 def test__non_regions_array_2d_from():
 
-    extract = ac.Extract2DMisc(region_list=[(0, 3, 0, 3)])
+    extract = ac.Extract2DMaster.from_region_list(region_list=[(0, 3, 0, 3)])
 
     array = ac.Array2D.manual(
         array=[[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]],
@@ -55,7 +57,9 @@ def test__non_regions_array_2d_from():
         )
     ).all()
 
-    extract = ac.Extract2DMisc(region_list=[(0, 1, 0, 3), (3, 4, 0, 3)])
+    extract = ac.Extract2DMaster.from_region_list(
+        region_list=[(0, 1, 0, 3), (3, 4, 0, 3)]
+    )
 
     array = ac.Array2D.manual(
         array=[
@@ -102,7 +106,7 @@ def test__parallel_fprs_and_epers_array_2d_from():
         pixel_scales=1.0,
     )
 
-    extract = ac.Extract2DMisc(region_list=[(0, 4, 0, 3)])
+    extract = ac.Extract2DMaster.from_region_list(region_list=[(0, 4, 0, 3)])
 
     new_array = extract.parallel_fprs_and_epers_array_2d_from(
         array=parallel_array, fpr_pixels=(0, 2), trails_pixels=(0, 2)
@@ -126,7 +130,9 @@ def test__parallel_fprs_and_epers_array_2d_from():
         )
     ).all()
 
-    extract = ac.Extract2DMisc(region_list=[(0, 1, 0, 3), (3, 4, 0, 3)])
+    extract = ac.Extract2DMaster.from_region_list(
+        region_list=[(0, 1, 0, 3), (3, 4, 0, 3)]
+    )
 
     new_array = extract.parallel_fprs_and_epers_array_2d_from(
         array=parallel_array, fpr_pixels=(0, 1), trails_pixels=(0, 1)
@@ -153,7 +159,7 @@ def test__parallel_fprs_and_epers_array_2d_from():
 
 def test__serial_fprs_and_epers_array_2d_from():
 
-    extract = ac.Extract2DMisc(region_list=[(0, 3, 0, 3)])
+    extract = ac.Extract2DMaster.from_region_list(region_list=[(0, 3, 0, 3)])
 
     array = ac.Array2D.manual(
         array=[[0.0, 1.0, 2.0, 3.0], [4.0, 5.0, 6.0, 7.0], [8.0, 9.0, 10.0, 11.0]],
@@ -178,7 +184,7 @@ def test__serial_fprs_and_epers_array_2d_from():
         == np.array([[0.0, 1.0, 0.0, 0.0], [4.0, 5.0, 0.0, 0.0], [8.0, 9.0, 0.0, 0.0]])
     ).all()
 
-    extract = ac.Extract2DMisc(region_list=[(0, 3, 0, 2)])
+    extract = ac.Extract2DMaster.from_region_list(region_list=[(0, 3, 0, 2)])
 
     new_array = extract.serial_fprs_and_epers_array_2d_from(
         array=array, trails_pixels=(0, 1)
@@ -200,7 +206,9 @@ def test__serial_fprs_and_epers_array_2d_from():
         )
     ).all()
 
-    extract = ac.Extract2DMisc(region_list=[(0, 3, 0, 1), (0, 3, 3, 4)])
+    extract = ac.Extract2DMaster.from_region_list(
+        region_list=[(0, 3, 0, 1), (0, 3, 3, 4)]
+    )
 
     array = ac.Array2D.manual(
         array=[
@@ -228,7 +236,7 @@ def test__serial_fprs_and_epers_array_2d_from():
 
 
 def test__serial_overscan_above_epers_array_2d_from():
-    extract = ac.Extract2DMisc(
+    extract = ac.Extract2DMaster.from_region_list(
         region_list=[(1, 2, 1, 3), (3, 4, 1, 3)],
         serial_prescan=(0, 5, 0, 1),
         serial_overscan=(0, 5, 3, 4),
@@ -260,7 +268,7 @@ def test__serial_overscan_above_epers_array_2d_from():
         )
     ).all()
 
-    extract = ac.Extract2DMisc(
+    extract = ac.Extract2DMaster.from_region_list(
         region_list=[(0, 1, 0, 2), (2, 3, 0, 2)], serial_overscan=(0, 4, 2, 4)
     )
 

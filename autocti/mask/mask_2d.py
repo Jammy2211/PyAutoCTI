@@ -235,7 +235,7 @@ class Mask2D(AbstractMask2D):
         invert: bool = False,
     ) -> "Mask2D":
 
-        fpr_regions = layout.extract_parallel_fpr.region_list_from(
+        fpr_regions = layout.extract.parallel_fpr.region_list_from(
             pixels=settings.parallel_fpr_pixels
         )
         mask = np.full(layout.shape_2d, False)
@@ -257,7 +257,7 @@ class Mask2D(AbstractMask2D):
         invert: bool = False,
     ) -> "Mask2D":
 
-        eper_regions = layout.extract_parallel_eper.region_list_from(
+        eper_regions = layout.extract.parallel_eper.region_list_from(
             pixels=settings.parallel_epers_pixels
         )
 
@@ -280,7 +280,7 @@ class Mask2D(AbstractMask2D):
         invert: bool = False,
     ) -> "Mask2D":
 
-        fpr_regions = layout.extract_serial_fpr.region_list_from(
+        fpr_regions = layout.extract.serial_fpr.region_list_from(
             pixels=settings.serial_fpr_pixels
         )
         mask = np.full(layout.shape_2d, False)
@@ -302,7 +302,7 @@ class Mask2D(AbstractMask2D):
         invert: bool = False,
     ) -> "Mask2D":
 
-        eper_regions = layout.extract_serial_eper.region_list_from(
+        eper_regions = layout.extract.serial_eper.region_list_from(
             pixels=settings.serial_eper_pixels
         )
         mask = np.full(layout.shape_2d, False)

@@ -231,7 +231,7 @@ class Extract2DParallelCalibration:
         from autocti.charge_injection.imaging import ImagingCI
 
         cosmic_ray_map = (
-            imaging_ci.layout.extract_parallel_calibration.array_2d_from(
+            imaging_ci.layout.extract.parallel_calibration.array_2d_from(
                 array=imaging_ci.cosmic_ray_map, columns=columns
             )
             if imaging_ci.cosmic_ray_map is not None
@@ -241,7 +241,7 @@ class Extract2DParallelCalibration:
         if imaging_ci.noise_scaling_map_list is not None:
 
             noise_scaling_map_list = [
-                imaging_ci.layout.extract_parallel_calibration.array_2d_from(
+                imaging_ci.layout.extract.parallel_calibration.array_2d_from(
                     array=noise_scaling_map, columns=columns
                 )
                 for noise_scaling_map in imaging_ci.noise_scaling_map_list
@@ -251,18 +251,18 @@ class Extract2DParallelCalibration:
 
             noise_scaling_map_list = None
 
-        extraction_region = imaging_ci.layout.extract_parallel_calibration.extraction_region_from(
+        extraction_region = imaging_ci.layout.extract.parallel_calibration.extraction_region_from(
             columns=columns
         )
 
         return ImagingCI(
-            image=imaging_ci.layout.extract_parallel_calibration.array_2d_from(
+            image=imaging_ci.layout.extract.parallel_calibration.array_2d_from(
                 array=imaging_ci.image, columns=columns
             ),
-            noise_map=imaging_ci.layout.extract_parallel_calibration.array_2d_from(
+            noise_map=imaging_ci.layout.extract.parallel_calibration.array_2d_from(
                 array=imaging_ci.noise_map, columns=columns
             ),
-            pre_cti_data=imaging_ci.layout.extract_parallel_calibration.array_2d_from(
+            pre_cti_data=imaging_ci.layout.extract.parallel_calibration.array_2d_from(
                 array=imaging_ci.pre_cti_data, columns=columns
             ),
             layout=imaging_ci.layout.layout_extracted_from(

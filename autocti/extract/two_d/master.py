@@ -2,15 +2,16 @@ from typing import Optional, Tuple
 
 import autoarray as aa
 
-from autocti.extract.two_d.abstract import Extract2D
 
-
-class Extract2DMisc(Extract2D):
+class Extract2DMaster:
     def __init__(
         self,
-        region_list: aa.type.Region2DList,
-        serial_prescan: Optional[aa.type.Region2DLike] = None,
-        serial_overscan: Optional[aa.type.Region2DLike] = None,
+        parallel_fpr,
+        parallel_eper,
+        parallel_calibration,
+        serial_fpr,
+        serial_eper,
+        serial_calibration,
     ):
         """
         Abstract class containing methods for extracting regions from a 2D charge injection image.
@@ -24,26 +25,94 @@ class Extract2DMisc(Extract2D):
             left-column, right-column).
         """
 
-        super().__init__(region_list=region_list)
+        self.parallel_fpr = parallel_fpr
+        self.parallel_eper = parallel_eper
+        self.parallel_calibration = parallel_calibration
+        self.serial_fpr = serial_fpr
+        self.serial_eper = serial_eper
+        self.serial_calibration = serial_calibration
 
-        if isinstance(serial_prescan, tuple):
-            serial_prescan = aa.Region2D(region=serial_prescan)
-
-        if isinstance(serial_overscan, tuple):
-            serial_overscan = aa.Region2D(region=serial_overscan)
-
-        self.serial_prescan = serial_prescan
-        self.serial_overscan = serial_overscan
+    @classmethod
+    def from_region_list(
+        cls,
+        region_list,
+        shape_2d: Optional[Tuple[int, int]] = None,
+        parallel_overscan: Optional[aa.type.Region2DLike] = None,
+        serial_prescan: Optional[aa.type.Region2DLike] = None,
+        serial_overscan: Optional[aa.type.Region2DLike] = None,
+    ):
 
         from autocti.extract.two_d.parallel_fpr import Extract2DParallelFPR
         from autocti.extract.two_d.parallel_eper import Extract2DParallelEPER
         from autocti.extract.two_d.serial_fpr import Extract2DSerialFPR
         from autocti.extract.two_d.serial_eper import Extract2DSerialEPER
+        from autocti.extract.two_d.parallel_calibration import (
+            Extract2DParallelCalibration,
+        )
+        from autocti.extract.two_d.serial_calibration import Extract2DSerialCalibration
 
-        self.extract_parallel_fpr = Extract2DParallelFPR(region_list=region_list)
-        self.extract_parallel_eper = Extract2DParallelEPER(region_list=region_list)
-        self.extract_serial_fpr = Extract2DSerialFPR(region_list=region_list)
-        self.extract_serial_eper = Extract2DSerialEPER(region_list=region_list)
+        parallel_fpr = Extract2DParallelFPR(
+            region_list=region_list,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+        parallel_eper = Extract2DParallelEPER(
+            region_list=region_list,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+        parallel_calibration = Extract2DParallelCalibration(
+            shape_2d=shape_2d, region_list=region_list
+        )
+
+        serial_fpr = Extract2DSerialFPR(
+            region_list=region_list,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+        serial_eper = Extract2DSerialEPER(
+            region_list=region_list,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+        serial_calibration = Extract2DSerialCalibration(
+            shape_2d=shape_2d,
+            region_list=region_list,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
+        return Extract2DMaster(
+            parallel_fpr=parallel_fpr,
+            parallel_eper=parallel_eper,
+            parallel_calibration=parallel_calibration,
+            serial_fpr=serial_fpr,
+            serial_eper=serial_eper,
+            serial_calibration=serial_calibration,
+        )
+
+    @property
+    def region_list(self):
+        return self.parallel_fpr.region_list
+
+    @property
+    def parallel_overscan(self):
+        return self.parallel_fpr.parallel_overscan
+
+    @property
+    def serial_prescan(self):
+        return self.parallel_fpr.serial_prescan
+
+    @property
+    def serial_overscan(self):
+        return self.parallel_fpr.serial_overscan
 
     def regions_array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
         """
@@ -224,13 +293,13 @@ class Extract2DMisc(Extract2D):
 
         if fpr_pixels is not None:
 
-            new_array = self.extract_parallel_fpr.add_to_array(
+            new_array = self.parallel_fpr.add_to_array(
                 new_array=new_array, array=array, pixels=fpr_pixels
             )
 
         if trails_pixels is not None:
 
-            new_array = self.extract_parallel_eper.add_to_array(
+            new_array = self.parallel_eper.add_to_array(
                 new_array=new_array, array=array, pixels=trails_pixels
             )
 
@@ -301,13 +370,13 @@ class Extract2DMisc(Extract2D):
 
         if fpr_pixels is not None:
 
-            new_array = self.extract_serial_fpr.add_to_array(
+            new_array = self.serial_fpr.add_to_array(
                 new_array=new_array, array=array, pixels=fpr_pixels
             )
 
         if trails_pixels is not None:
 
-            new_array = self.extract_serial_eper.add_to_array(
+            new_array = self.serial_eper.add_to_array(
                 new_array=new_array, array=array, pixels=trails_pixels
             )
 

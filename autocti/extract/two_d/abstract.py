@@ -1,11 +1,17 @@
 import numpy as np
-from typing import List, Tuple, Union
+from typing import Optional, List, Tuple, Union
 
 import autoarray as aa
 
 
 class Extract2D:
-    def __init__(self, region_list: aa.type.Region2DList):
+    def __init__(
+        self,
+        region_list: aa.type.Region2DList,
+        parallel_overscan: Optional[aa.type.Region2DLike] = None,
+        serial_prescan: Optional[aa.type.Region2DLike] = None,
+        serial_overscan: Optional[aa.type.Region2DLike] = None,
+    ):
         """
         Abstract class containing methods for extracting regions from a 2D charge injection image.
 
@@ -17,7 +23,24 @@ class Extract2D:
             Integer pixel coordinates specifying the corners of each charge injection region (top-row, bottom-row,
             left-column, right-column).
         """
+
         self.region_list = list(map(aa.Region2D, region_list))
+
+        self.parallel_overscan = (
+            aa.Region2D(region=parallel_overscan)
+            if isinstance(parallel_overscan, tuple)
+            else parallel_overscan
+        )
+        self.serial_prescan = (
+            aa.Region2D(region=serial_prescan)
+            if isinstance(serial_prescan, tuple)
+            else serial_prescan
+        )
+        self.serial_overscan = (
+            aa.Region2D(region=serial_overscan)
+            if isinstance(serial_overscan, tuple)
+            else serial_overscan
+        )
 
     @property
     def total_rows_min(self) -> int:
