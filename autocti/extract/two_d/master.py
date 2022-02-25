@@ -2,27 +2,45 @@ from typing import Optional, Tuple
 
 import autoarray as aa
 
+from autocti.extract.two_d.parallel_fpr import Extract2DParallelFPR
+from autocti.extract.two_d.parallel_eper import Extract2DParallelEPER
+from autocti.extract.two_d.serial_fpr import Extract2DSerialFPR
+from autocti.extract.two_d.serial_eper import Extract2DSerialEPER
+from autocti.extract.two_d.parallel_calibration import Extract2DParallelCalibration
+from autocti.extract.two_d.serial_calibration import Extract2DSerialCalibration
+
 
 class Extract2DMaster:
     def __init__(
         self,
-        parallel_fpr,
-        parallel_eper,
-        parallel_calibration,
-        serial_fpr,
-        serial_eper,
-        serial_calibration,
+        parallel_fpr: Extract2DParallelFPR,
+        parallel_eper: Extract2DParallelEPER,
+        parallel_calibration: Extract2DParallelCalibration,
+        serial_fpr: Extract2DSerialFPR,
+        serial_eper: Extract2DSerialEPER,
+        serial_calibration: Extract2DSerialCalibration,
     ):
         """
-        Abstract class containing methods for extracting regions from a 2D charge injection image.
+        Class which groups all `Extract` classes, which are classes containing methods for extracting specific
+        regions from 2D CTI calibration data (e.g. the FPRs of a charge injection image)
 
-        This uses the `region_list`, which contains the charge injection regions in pixel coordinates.
+        This uses the `region_list`, which contains the regions with input known charge on the CTI calibration
+        data in pixel coordinates.
 
         Parameters
         ----------
-        region_list
-            Integer pixel coordinates specifying the corners of each charge injection region (top-row, bottom-row,
-            left-column, right-column).
+        parallel_fpr
+            Contains methods for extracting the parallel FPRs.
+        parallel_eper
+            Contains methods for extracting the parallel EPERs.
+        parallel_calibration
+            Contains methods for extracting CTI calibration data for parallel-only fits.
+        serial_fpr
+            Contains methods for extracting the serial FPRs.
+        serial_eper
+            Contains methods for extracting the serial EPERs.
+        serial_calibration
+            Contains methods for extracting CTI calibration data for serial-only fits.
         """
 
         self.parallel_fpr = parallel_fpr
@@ -41,16 +59,30 @@ class Extract2DMaster:
         serial_prescan: Optional[aa.type.Region2DLike] = None,
         serial_overscan: Optional[aa.type.Region2DLike] = None,
     ):
+        """
+        Creates the `Extract2DMaster` class from a region list which specifies where the known inject charge of
+        the CTI calibration data is.
 
-        from autocti.extract.two_d.parallel_fpr import Extract2DParallelFPR
-        from autocti.extract.two_d.parallel_eper import Extract2DParallelEPER
-        from autocti.extract.two_d.serial_fpr import Extract2DSerialFPR
-        from autocti.extract.two_d.serial_eper import Extract2DSerialEPER
-        from autocti.extract.two_d.parallel_calibration import (
-            Extract2DParallelCalibration,
-        )
-        from autocti.extract.two_d.serial_calibration import Extract2DSerialCalibration
+        This may also include other regions on the CCD like the overscans and prescans.
 
+        Parameters
+        ----------
+        shape_2d
+            The two dimensional shape of the charge injection imaging, corresponding to the number of rows (pixels
+            in parallel direction) and columns (pixels in serial direction).
+        region_list
+            Integer pixel coordinates specifying the corners of each charge injection region (top-row, bottom-row,
+            left-column, right-column).
+        parallel_overscan
+            Integer pixel coordinates specifying the corners of the parallel overscan (top-row, bottom-row,
+            left-column, right-column).
+        serial_prescan
+            Integer pixel coordinates specifying the corners of the serial prescan (top-row, bottom-row,
+            left-column, right-column).
+        serial_overscan
+            Integer pixel coordinates specifying the corners of the serial overscan (top-row, bottom-row,
+            left-column, right-column).
+        """
         parallel_fpr = Extract2DParallelFPR(
             region_list=region_list,
             parallel_overscan=parallel_overscan,
