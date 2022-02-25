@@ -11,6 +11,10 @@ test_data_path = path.join(
 )
 
 
+# def test__normalization_columns_list():
+#
+
+
 def test__from_fits__load_all_data_components__has_correct_attributes(layout_ci_7x7):
 
     imaging = ac.ci.ImagingCI.from_fits(

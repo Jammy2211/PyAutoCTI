@@ -3,11 +3,6 @@ import numpy as np
 import autocti as ac
 
 
-class MockPattern(object):
-    def __init__(self):
-        pass
-
-
 def test__masked_fpr_from_layout():
 
     layout = ac.Layout1D(shape_1d=(5,), region_list=[(1, 4)])

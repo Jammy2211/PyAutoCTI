@@ -5,6 +5,7 @@ from autofit.non_linear.result import ResultsCollection
 from autofit.mock.mock import MockSamples
 from autofit.mock.mock import MockSearch
 
+
 ### Mock AutoFit ###
 
 
@@ -51,7 +52,6 @@ class MockResult(mock.MockResult):
         self.noise_scaling_map_list_list_of_serial_overscan_no_trails = (
             noise_scaling_map_list_list_of_serial_overscan_no_trails
         )
-        self.hyper_combined = MockHyperCombinedPhase()
         self.use_as_hyper_dataset = use_as_hyper_dataset
 
     @property
@@ -126,98 +126,3 @@ class MockResults(ResultsCollection):
 
     def __len__(self):
         return len(self.__result_list)
-
-
-class MockHyperCombinedPhase:
-    def __init__(self):
-        pass
-
-
-class MockPattern(object):
-    def __init__(self, region_list=None):
-
-        self.normalization = 10
-        self.region_list = region_list
-        self.total_rows = 2
-        self.total_columns = 2
-
-
-class MockGeometry(object):
-    def __init__(self):
-        super(MockGeometry, self).__init__()
-
-
-class MockFrameGeometry(object):
-    def __init__(self, value=1.0):
-        self.value = value
-
-    def add_cti(self, image, cti_params, clocker):
-        return self.value * np.ones((2, 2))
-
-
-class MockCIFrame(object):
-    def __init__(self, value=1.0):
-
-        self.layout_ci = MockPattern()
-        self.frame_geometry = MockFrameGeometry(value=value)
-        self.value = value
-
-    def regions_ci_from_array(self, array):
-        return array[0:2, 0]
-
-    def parallel_non_frame_with_extracted_regions_ci_from_from_frame(self, array):
-        return array[0:2, 1]
-
-    def serial_all_trails_frame_from_frame(self, array):
-        return array[0, 0:2]
-
-    def serial_overscan_no_trails_frame_from_frame(self, array):
-        return array[1, 0:2]
-
-    def parallel_front_edge_line_binned_over_columns_from_frame(
-        self, array, rows=None, mask=None
-    ):
-        return np.array([1.0, 1.0, 2.0, 2.0])
-
-    def parallel_epers_line_binned_over_columns_from_frame(
-        self, array, rows=None, mask=None
-    ):
-        return np.array([1.0, 1.0, 2.0, 2.0])
-
-    def serial_front_edge_line_binned_over_rows_from_frame(
-        self, array, columns=None, mask=None
-    ):
-        return np.array([1.0, 1.0, 2.0, 2.0])
-
-    def serial_trails_line_binned_over_rows_from_frame(
-        self, array, columns=None, mask=None
-    ):
-        return np.array([1.0, 1.0, 2.0, 2.0])
-
-
-class MockCIPreCTI(np.ndarray):
-    def __new__(
-        cls,
-        array,
-        frame_geometry=MockGeometry(),
-        layout_ci=MockPattern(),
-        value=1.0,
-        *args,
-        **kwargs
-    ):
-        ci = np.array(array).view(cls)
-        ci.frame_geometry = frame_geometry
-        ci.layout_ci = layout_ci
-        ci.value = value
-        return ci
-
-    def post_cti_data_from_cti_params_and_settings(self, cti_params, clocker):
-        return self.value * np.ones((2, 2))
-
-
-class MockChInj(np.ndarray):
-    def __new__(cls, array, geometry=None, layout_ci=None, *args, **kwargs):
-        ci = np.array(array).view(cls)
-        ci.frame_geometry = geometry
-        ci.layout_ci = layout_ci
-        return ci

@@ -44,6 +44,13 @@ class ImagingCI(aa.Imaging):
 
         self.imaging_full = self
 
+    @property
+    def mask(self):
+        return self.image.mask
+
+    # @property
+    # def normalization_columns_list(self) -> List:
+
     def apply_mask(self, mask: mask_2d.Mask2D) -> "ImagingCI":
 
         image = aa.Array2D.manual_mask(array=self.image.native, mask=mask)
@@ -109,13 +116,6 @@ class ImagingCI(aa.Imaging):
         imaging.imaging_full = self.imaging_full
 
         return imaging
-
-    @property
-    def mask(self):
-        return self.image.mask
-
-    # @property
-    # def normalization_columns_list(self) -> List:
 
     @classmethod
     def from_fits(
