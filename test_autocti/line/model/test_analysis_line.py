@@ -1,7 +1,9 @@
+import pytest
+
 import autofit as af
 import autocti as ac
-import pytest
-from autocti.mock import mock
+
+from autofit.mock.mock import MockSearch
 from autocti.line.model.result import ResultDatasetLine
 
 
@@ -18,7 +20,7 @@ class TestAnalysisDatasetLine:
             dataset_line=dataset_line_7, clocker=clocker_1d
         )
 
-        search = mock.MockSearch(name="test_search")
+        search = MockSearch(name="test_search")
 
         result = search.fit(model=model, analysis=analysis)
 

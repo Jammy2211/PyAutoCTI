@@ -1,7 +1,8 @@
+import pytest
 import autofit as af
 import autocti as ac
-import pytest
-from autocti.mock import mock
+
+from autofit.mock.mock import MockSearch
 from autocti.charge_injection.model.result import ResultImagingCI
 
 
@@ -18,7 +19,7 @@ class TestAnalysisImagingCI:
             dataset_ci=imaging_ci_7x7, clocker=parallel_clocker_2d
         )
 
-        search = mock.MockSearch(name="test_search")
+        search = MockSearch(name="test_search")
 
         result = search.fit(model=model, analysis=analysis)
 

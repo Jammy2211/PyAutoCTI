@@ -54,9 +54,23 @@ class ImagingCI(aa.Imaging):
 
     @property
     def normalization_columns_list(self) -> List:
+        """
+        The `layout` describes the 2D regions on the data containing charge whose input signal properties are know
+        beforehand (e.g. charge injection imaging).
+
+        However, the exact values may not be known and therefore need to be estimated from the image.
+
+        This function estimates the normalization of every column of data in the 2D regions, by taking the median
+        of each column. If a mask is applied (e.g. to remove cosmic rays) these pixels are omitted from the median.
+
+        Returns
+        -------
+        A list of the normalization of every column of the charge regions
+        """
+        masked_image = np.ma.array(data=self.image, mask=self.image.mask)
 
         return [
-            np.median(self.image[region.y0 : region.y1, column_index])
+            np.ma.median(masked_image[region.y0 : region.y1, column_index])
             for region in self.region_list
             for column_index in range(region.x0, region.x1)
         ]

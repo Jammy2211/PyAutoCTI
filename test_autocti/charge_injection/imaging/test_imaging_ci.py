@@ -14,16 +14,66 @@ test_data_path = path.join(
 def test__normalization_columns_list():
 
     image = ac.Array2D.full(
-        fill_value=1.0, shape_native=(7, 7), pixel_scales=(1.0, 1.0)
+        fill_value=1.0, shape_native=(5, 5), pixel_scales=(1.0, 1.0)
     )
 
-    layout = ac.ci.Layout2DCI(shape_2d=image.shape_native, region_list=[(1, 5, 1, 5)])
+    layout = ac.ci.Layout2DCI(shape_2d=image.shape_native, region_list=[(1, 4, 1, 4)])
 
     imaging = ac.ci.ImagingCI(
         image=image, noise_map=image, pre_cti_data=image, layout=layout
     )
 
-    assert imaging.normalization_columns_list == [1.0, 1.0, 1.0, 1.0]
+    assert imaging.normalization_columns_list == [1.0, 1.0, 1.0]
+
+    image = ac.Array2D.manual_native(
+        array=np.array(
+            [
+                [0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 1.0, 4.0, 7.0, 0.0],
+                [0.0, 2.0, 5.0, 8.0, 0.0],
+                [0.0, 3.0, 6.0, 9.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0],
+            ]
+        ),
+        pixel_scales=(1.0, 1.0),
+    )
+
+    layout = ac.ci.Layout2DCI(shape_2d=image.shape_native, region_list=[(1, 4, 1, 4)])
+
+    imaging = ac.ci.ImagingCI(
+        image=image, noise_map=image, pre_cti_data=image, layout=layout
+    )
+
+    assert imaging.normalization_columns_list == [2.0, 5.0, 8.0]
+
+    layout = ac.ci.Layout2DCI(shape_2d=image.shape_native, region_list=[(2, 4, 1, 4)])
+
+    imaging = ac.ci.ImagingCI(
+        image=image, noise_map=image, pre_cti_data=image, layout=layout
+    )
+
+    assert imaging.normalization_columns_list == [2.5, 5.5, 8.5]
+
+    mask = ac.Mask2D.manual(
+        mask=np.array(
+            [
+                [True, True, True, True, True],
+                [True, True, True, True, True],
+                [True, False, True, False, True],
+                [True, True, False, False, True],
+                [True, True, True, True, True],
+            ]
+        ),
+        pixel_scales=image.pixel_scales,
+    )
+
+    image = image.apply_mask(mask=mask)
+
+    imaging = ac.ci.ImagingCI(
+        image=image, noise_map=image, pre_cti_data=image, layout=layout
+    )
+
+    assert imaging.normalization_columns_list == [2.0, 6.0, 8.5]
 
 
 def test__from_fits__load_all_data_components__has_correct_attributes(layout_ci_7x7):
