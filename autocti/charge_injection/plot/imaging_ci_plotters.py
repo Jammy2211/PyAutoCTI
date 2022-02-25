@@ -6,7 +6,7 @@ from autoarray.plot.mat_wrap.mat_plot import AutoLabels
 from autoarray.dataset.plot.imaging_plotters import ImagingPlotterMeta
 
 from autocti.plot.abstract_plotters import Plotter
-from autocti.charge_injection.imaging import ImagingCI
+from autocti.charge_injection.imaging.imaging import ImagingCI
 
 
 class ImagingCIPlotter(Plotter):

@@ -228,7 +228,7 @@ class Extract2DParallelCalibration:
         Returnss a function to extract a parallel section for given columns
         """
 
-        from autocti.charge_injection.imaging import ImagingCI
+        from autocti.charge_injection.imaging.imaging import ImagingCI
 
         cosmic_ray_map = (
             imaging_ci.layout.extract.parallel_calibration.array_2d_from(

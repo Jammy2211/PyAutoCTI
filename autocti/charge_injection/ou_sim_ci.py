@@ -10,7 +10,7 @@ from arcticpy.src import traps
 from autocti.clocker.two_d import Clocker2D
 
 from autocti.charge_injection.layout import Layout2DCI
-from autocti.charge_injection.imaging import SimulatorImagingCI
+from autocti.charge_injection.imaging.simulator import SimulatorImagingCI
 
 from autocti.charge_injection.layout import region_list_ci_from
 

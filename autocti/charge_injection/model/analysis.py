@@ -7,7 +7,7 @@ from autofit.non_linear.abstract_search import Analysis
 from autofit.non_linear.paths.directory import DirectoryPaths
 from autofit.non_linear.abstract_search import NonLinearSearch
 
-from autocti.charge_injection.imaging import ImagingCI
+from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.charge_injection.fit import FitImagingCI
 from autocti.charge_injection.hyper import HyperCINoiseScalar
 from autocti.charge_injection.model.visualizer import VisualizerImagingCI

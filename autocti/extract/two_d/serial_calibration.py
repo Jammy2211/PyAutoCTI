@@ -222,7 +222,7 @@ class Extract2DSerialCalibration:
         Returnss a function to extract a serial section for given rows
         """
 
-        from autocti.charge_injection.imaging import ImagingCI
+        from autocti.charge_injection.imaging.imaging import ImagingCI
 
         cosmic_ray_map = (
             imaging_ci.layout.extract.serial_calibration.array_2d_from(
