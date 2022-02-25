@@ -1,10 +1,10 @@
-import numpy as np
+from typing import List, Optional
 
 from autofit.mock import mock
 from autofit.non_linear.result import ResultsCollection
-from autofit.mock.mock import MockSamples
-from autofit.mock.mock import MockSearch
 
+import autoarray as aa
+import autocti as ac
 
 ### Mock AutoFit ###
 

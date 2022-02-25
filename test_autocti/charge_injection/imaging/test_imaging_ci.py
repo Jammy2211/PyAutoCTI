@@ -11,8 +11,19 @@ test_data_path = path.join(
 )
 
 
-# def test__normalization_columns_list():
-#
+def test__normalization_columns_list():
+
+    image = ac.Array2D.full(
+        fill_value=1.0, shape_native=(7, 7), pixel_scales=(1.0, 1.0)
+    )
+
+    layout = ac.ci.Layout2DCI(shape_2d=image.shape_native, region_list=[(1, 5, 1, 5)])
+
+    imaging = ac.ci.ImagingCI(
+        image=image, noise_map=image, pre_cti_data=image, layout=layout
+    )
+
+    assert imaging.normalization_columns_list == [1.0, 1.0, 1.0, 1.0]
 
 
 def test__from_fits__load_all_data_components__has_correct_attributes(layout_ci_7x7):

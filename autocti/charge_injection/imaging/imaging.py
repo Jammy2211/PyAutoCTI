@@ -48,8 +48,26 @@ class ImagingCI(aa.Imaging):
     def mask(self):
         return self.image.mask
 
-    # @property
-    # def normalization_columns_list(self) -> List:
+    @property
+    def region_list(self):
+        return self.layout.region_list
+
+    @property
+    def normalization_columns_list(self) -> List:
+
+        normalization_columns_list = []
+
+        for region in self.region_list:
+
+            for column_index in range(region.x0, region.x1):
+
+                normalization = np.median(
+                    self.image[region.y0 : region.y1, column_index]
+                )
+
+                normalization_columns_list.append(normalization)
+
+        return normalization_columns_list
 
     def apply_mask(self, mask: mask_2d.Mask2D) -> "ImagingCI":
 
