@@ -28,12 +28,12 @@ from .extract.two_d.misc import Extract2DMisc
 from .charge_injection.fit import FitImagingCI
 from .mask.mask_2d import Mask2D
 from .mask.mask_2d import SettingsMask2D
-from .line.mask_1d import Mask1DLine
-from .line.mask_1d import SettingsMask1DLine
+from .mask.mask_1d import Mask1D
+from .mask.mask_1d import SettingsMask1D
 from .extract.one_d.fpr import Extract1DFPR
 from .extract.one_d.eper import Extract1DEPER
 from .extract.one_d.misc import Extract1DMisc
-from .layout.one_d import Layout1DLine
+from .layout.one_d import Layout1D
 from .line.dataset import SettingsDatasetLine
 from .line.dataset import DatasetLine
 from .line.dataset import SimulatorDatasetLine

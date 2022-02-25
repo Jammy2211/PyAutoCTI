@@ -13,7 +13,7 @@ from autoarray.structures.arrays.two_d.array_2d import Array2D
 from autoarray.dataset.imaging import Imaging
 
 from autocti.line.dataset import DatasetLine
-from autocti.layout.one_d import Layout1DLine
+from autocti.layout.one_d import Layout1D
 from autocti import charge_injection as ci
 from autocti.charge_injection.model.analysis import AnalysisImagingCI
 from autocti.mask.mask_2d import Mask2D
@@ -103,7 +103,7 @@ def make_imaging_7x7_frame():
 
 
 def make_layout_7():
-    return Layout1DLine(
+    return Layout1D(
         shape_1d=(7,), region_list=[(1, 5)], prescan=(0, 1), overscan=(6, 7)
     )
 

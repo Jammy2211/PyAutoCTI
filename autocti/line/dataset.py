@@ -10,7 +10,7 @@ from autoarray.dataset import abstract_dataset
 from autoarray.dataset.imaging import AbstractSimulatorImaging
 from autoarray.dataset import preprocess
 
-from autocti.layout.one_d import Layout1DLine
+from autocti.layout.one_d import Layout1D
 from autocti.clocker.one_d import Clocker1D
 
 from autocti import exc
@@ -27,7 +27,7 @@ class DatasetLine(abstract_dataset.AbstractDataset):
         data: aa.Array1D,
         noise_map: aa.Array1D,
         pre_cti_data: aa.Array1D,
-        layout: Layout1DLine,
+        layout: Layout1D,
         settings: SettingsDatasetLine = SettingsDatasetLine(),
     ):
 
@@ -145,7 +145,7 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
         self.normalization = normalization
 
     def pre_cti_data_from(
-        self, layout: Layout1DLine, pixel_scales: aa.type.PixelScales
+        self, layout: Layout1D, pixel_scales: aa.type.PixelScales
     ) -> aa.Array1D:
         """Use this charge injection layout_ci to generate a pre-cti charge injection image. This is performed by \
         going to its charge injection regions and adding the charge injection normalization value.
@@ -165,7 +165,7 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
 
     def from_layout(
         self,
-        layout: Layout1DLine,
+        layout: Layout1D,
         clocker: Clocker1D,
         trap_list: Optional[List[AbstractTrap]] = None,
         ccd: Optional[CCDPhase] = None,
@@ -180,7 +180,7 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
         frame_geometry : CIQuadGeometry
             The quadrant geometry of the simulated data, defining where the parallel / serial overscans are and \
             therefore the direction of clocking and rotations before input into the cti algorithm.
-        layout : layout_ci.Layout1DLineSimulate
+        layout : layout_ci.Layout1DSimulate
             The charge injection layout_ci (regions, normalization, etc.) of the charge injection data.
         cti_params : ArcticParams.ArcticParams
             The CTI model parameters (trap density, trap release_timescales etc.).
@@ -207,7 +207,7 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
     def from_pre_cti_data(
         self,
         pre_cti_data: aa.Array1D,
-        layout: Layout1DLine,
+        layout: Layout1D,
         clocker: Clocker1D,
         trap_list: Optional[List[AbstractTrap]] = None,
         ccd: Optional[CCDPhase] = None,
@@ -222,7 +222,7 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
         )
 
     def from_post_cti_data(
-        self, post_cti_data: aa.Array1D, pre_cti_data: aa.Array1D, layout: Layout1DLine
+        self, post_cti_data: aa.Array1D, pre_cti_data: aa.Array1D, layout: Layout1D
     ) -> DatasetLine:
 
         if self.read_noise is not None:

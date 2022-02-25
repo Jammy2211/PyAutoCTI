@@ -1,9 +1,40 @@
-from typing import Tuple
+from typing import Optional, Tuple
+
+import autoarray as aa
 
 from autocti.extract.two_d.abstract import Extract2D
 
 
 class Extract2DParallelEPER(Extract2D):
+    def __init__(
+        self,
+        region_list: aa.type.Region2DList,
+        serial_prescan: Optional[aa.type.Region2DLike] = None,
+        serial_overscan: Optional[aa.type.Region2DLike] = None,
+    ):
+        """
+        Abstract class containing methods for extracting regions from a 2D charge injection image.
+
+        This uses the `region_list`, which contains the charge injection regions in pixel coordinates.
+
+        Parameters
+        ----------
+        region_list
+            Integer pixel coordinates specifying the corners of each charge injection region (top-row, bottom-row,
+            left-column, right-column).
+        """
+
+        super().__init__(region_list=region_list)
+
+        if isinstance(serial_prescan, tuple):
+            serial_prescan = aa.Region2D(region=serial_prescan)
+
+        if isinstance(serial_overscan, tuple):
+            serial_overscan = aa.Region2D(region=serial_overscan)
+
+        self.serial_prescan = serial_prescan
+        self.serial_overscan = serial_overscan
+
     @property
     def binning_axis(self) -> int:
         """
@@ -61,3 +92,61 @@ class Extract2DParallelEPER(Extract2D):
             region.parallel_trailing_region_from(pixels=pixels)
             for region in self.region_list
         ]
+
+    #
+    def array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
+        """
+        Extract all of the areas of an `Array2D` that contain the parallel EPERs and return them as a new `Array2D`
+        where these extracted regions are included and everything else (e.g. the charge injection regions, serial
+        EPERs) are zeros.
+
+        The dimensions of the input array therefore do not change (unlike other `Layout2DCI` methods).
+
+        The diagram below illustrates the extraction:
+
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = parallel overscan
+        [ssssssssss] = serial overscan
+        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [tttttttttt] = parallel / serial charge injection region trail
+
+               [tptpptptptpptpptpptpt]
+               [tptptptpptpttptptptpt]
+          [...][ttttttttttttttttttttt][sss]
+          [...][ccccccccccccccccccccc][sss]
+        | [...][ccccccccccccccccccccc][sss]    |
+        | [...][ttttttttttttttttttttt][sss]    | Direction
+       Par[...][ttttttttttttttttttttt][sss]    | of
+        | [...][ccccccccccccccccccccc][sss]    | clocking
+       \/ [...][ccccccccccccccccccccc][sss]   \/
+
+        []     [=====================]
+               <--------Ser---------
+
+        The extracted array keeps only the parallel EPERs, everything else become 0s:
+
+               [tptpptptptpptpptpptpt]
+               [tptptptpptpttptptptpt]
+          [000][ttttttttttttttttttttt][000]
+          [000][000000000000000000000][000]
+        | [000][000000000000000000000][000]    |
+        | [000][ttttttttttttttttttttt][000]    | Direction
+       Par[000][ttttttttttttttttttttt][000]    | of
+        | [000][000000000000000000000][000]    | clocking
+       \/ [000][000000000000000000000][000]   \/
+
+        []     [=====================]
+               <--------Ser---------
+        """
+
+        parallel_array = array.native.copy()
+
+        for region in self.region_list:
+            parallel_array[region.slice] = 0.0
+
+        parallel_array.native[self.serial_prescan.slice] = 0.0
+        parallel_array.native[self.serial_overscan.slice] = 0.0
+
+        return parallel_array

@@ -155,60 +155,6 @@ class Extract2DMisc(Extract2D):
 
         return non_regions_ci_array
 
-    def parallel_epers_array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
-        """
-        Extract all of the areas of an `Array2D` that contain the parallel EPERs and return them as a new `Array2D`
-        where these extracted regions are included and everything else (e.g. the charge injection regions, serial
-        EPERs) are zeros.
-
-        The dimensions of the input array therefore do not change (unlike other `Layout2DCI` methods).
-
-        The diagram below illustrates the extraction:
-
-        [] = read-out electronics
-        [==========] = read-out register
-        [..........] = serial prescan
-        [pppppppppp] = parallel overscan
-        [ssssssssss] = serial overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
-        [tttttttttt] = parallel / serial charge injection region trail
-
-               [tptpptptptpptpptpptpt]
-               [tptptptpptpttptptptpt]
-          [...][ttttttttttttttttttttt][sss]
-          [...][ccccccccccccccccccccc][sss]
-        | [...][ccccccccccccccccccccc][sss]    |
-        | [...][ttttttttttttttttttttt][sss]    | Direction
-       Par[...][ttttttttttttttttttttt][sss]    | of
-        | [...][ccccccccccccccccccccc][sss]    | clocking
-       \/ [...][ccccccccccccccccccccc][sss]   \/
-
-        []     [=====================]
-               <--------Ser---------
-
-        The extracted array keeps only the parallel EPERs, everything else become 0s:
-
-               [tptpptptptpptpptpptpt]
-               [tptptptpptpttptptptpt]
-          [000][ttttttttttttttttttttt][000]
-          [000][000000000000000000000][000]
-        | [000][000000000000000000000][000]    |
-        | [000][ttttttttttttttttttttt][000]    | Direction
-       Par[000][ttttttttttttttttttttt][000]    | of
-        | [000][000000000000000000000][000]    | clocking
-       \/ [000][000000000000000000000][000]   \/
-
-        []     [=====================]
-               <--------Ser---------
-        """
-
-        parallel_array = self.non_regions_array_2d_from(array=array)
-
-        parallel_array.native[self.serial_prescan.slice] = 0.0
-        parallel_array.native[self.serial_overscan.slice] = 0.0
-
-        return parallel_array
-
     def parallel_fprs_and_epers_array_2d_from(
         self,
         array: aa.Array2D,

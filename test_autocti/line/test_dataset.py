@@ -148,7 +148,7 @@ class TestDatasetLine:
 
         create_fits(fits_path=fits_path)
 
-        layout_ci = ac.Layout1DLine(shape_1d=(7,), region_list=[(0, 7)])
+        layout_ci = ac.Layout1D(shape_1d=(7,), region_list=[(0, 7)])
 
         imaging = ac.DatasetLine.from_fits(
             pixel_scales=1.0,
@@ -220,7 +220,7 @@ class TestSimulatorDatasetLine:
         self, clocker_1d, traps_x2, ccd
     ):
 
-        layout = ac.Layout1DLine(shape_1d=(5,), region_list=[(0, 5)])
+        layout = ac.Layout1D(shape_1d=(5,), region_list=[(0, 5)])
 
         simulator = ac.SimulatorDatasetLine(
             pixel_scales=1.0, normalization=10.0, add_poisson_noise=False
@@ -237,7 +237,7 @@ class TestSimulatorDatasetLine:
 
     def test__include_read_noise__is_added_after_cti(self, clocker_1d, traps_x2, ccd):
 
-        layout = ac.Layout1DLine(shape_1d=(5,), region_list=[(0, 5)])
+        layout = ac.Layout1D(shape_1d=(5,), region_list=[(0, 5)])
 
         simulator = ac.SimulatorDatasetLine(
             pixel_scales=1.0,
@@ -262,7 +262,7 @@ class TestSimulatorDatasetLine:
 
         simulator = ac.SimulatorDatasetLine(normalization=10.0, pixel_scales=1.0)
 
-        layout = ac.Layout1DLine(shape_1d=(3,), region_list=[(0, 2)])
+        layout = ac.Layout1D(shape_1d=(3,), region_list=[(0, 2)])
 
         pre_cti_data = simulator.pre_cti_data_from(layout=layout, pixel_scales=1.0)
 
@@ -272,7 +272,7 @@ class TestSimulatorDatasetLine:
 
     def test__from_pre_cti_data(self, clocker_1d, traps_x2, ccd):
 
-        layout = ac.Layout1DLine(shape_1d=(5,), region_list=[(0, 5)])
+        layout = ac.Layout1D(shape_1d=(5,), region_list=[(0, 5)])
 
         simulator = ac.SimulatorDatasetLine(
             pixel_scales=1.0,
@@ -304,7 +304,7 @@ class TestSimulatorDatasetLine:
 
     def test__from_post_cti_data(self, clocker_1d, traps_x2, ccd):
 
-        layout = ac.Layout1DLine(shape_1d=(5,), region_list=[(0, 5)])
+        layout = ac.Layout1D(shape_1d=(5,), region_list=[(0, 5)])
         simulator = ac.SimulatorDatasetLine(
             pixel_scales=1.0,
             normalization=10.0,

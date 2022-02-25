@@ -66,16 +66,28 @@ class Layout2D(aa.Layout2D):
                     "The charge injection layout_ci regions are bigger than the image image_shape"
                 )
 
+        super().__init__(
+            shape_2d=shape_2d,
+            original_roe_corner=original_roe_corner,
+            parallel_overscan=parallel_overscan,
+            serial_prescan=serial_prescan,
+            serial_overscan=serial_overscan,
+        )
+
         self.extract_parallel_fpr = Extract2DParallelFPR(region_list=region_list)
-        self.extract_parallel_eper = Extract2DParallelEPER(region_list=region_list)
+        self.extract_parallel_eper = Extract2DParallelEPER(
+            region_list=region_list,
+            serial_prescan=self.serial_prescan,
+            serial_overscan=self.serial_overscan,
+        )
         self.extract_serial_fpr = Extract2DSerialFPR(region_list=region_list)
         self.extract_serial_eper = Extract2DSerialEPER(region_list=region_list)
 
         self.extract_serial_calibration = Extract2DSerialCalibration(
             shape_2d=shape_2d,
             region_list=region_list,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            serial_prescan=self.serial_prescan,
+            serial_overscan=self.serial_overscan,
         )
 
         self.extract_parallel_calibration = Extract2DParallelCalibration(
@@ -84,16 +96,8 @@ class Layout2D(aa.Layout2D):
 
         self.extract_misc = Extract2DMisc(
             region_list=region_list,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
-        )
-
-        super().__init__(
-            shape_2d=shape_2d,
-            original_roe_corner=original_roe_corner,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+            serial_prescan=self.serial_prescan,
+            serial_overscan=self.serial_overscan,
         )
 
     def layout_extracted_from(

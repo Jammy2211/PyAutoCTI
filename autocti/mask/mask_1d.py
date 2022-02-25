@@ -1,68 +1,84 @@
 import numpy as np
+from typing import Tuple
 
 import autoarray as aa
 
-
-class SettingsMask1DLine:
-    def __init__(self, front_edge_pixels=None, trails_pixels=None):
-
-        self.front_edge_pixels = front_edge_pixels
-        self.trails_pixels = trails_pixels
+from autocti.layout.one_d import Layout1D
 
 
-class Mask1DLine(aa.Mask1D):
+class SettingsMask1D:
+    def __init__(self, fpr_pixels: Tuple[int] = None, eper_pixels: Tuple[int] = None):
+
+        self.fpr_pixels = fpr_pixels
+        self.eper_pixels = eper_pixels
+
+
+class Mask1D(aa.Mask1D):
     @classmethod
-    def masked_fprs_and_epers_from(cls, mask, layout, settings, pixel_scales):
+    def masked_fprs_and_epers_from(
+        cls,
+        mask: "Mask1D",
+        layout: Layout1D,
+        settings: "SettingsMask1D",
+        pixel_scales: aa.type.PixelScales,
+    ) -> "Mask1D":
 
-        if settings.front_edge_pixels is not None:
+        if settings.fpr_pixels is not None:
 
-            front_edge_mask = cls.masked_front_edge_from_layout(
+            fpr_mask = cls.masked_fpr_from_layout(
                 layout=layout, settings=settings, pixel_scales=pixel_scales
             )
 
-            mask = mask + front_edge_mask
+            mask = mask + fpr_mask
 
-        if settings.trails_pixels is not None:
+        if settings.eper_pixels is not None:
 
-            trails_mask = cls.masked_trails_from_layout(
+            eper_mask = cls.masked_epers_from_layout(
                 layout=layout, settings=settings, pixel_scales=pixel_scales
             )
 
-            mask = mask + trails_mask
+            mask = mask + eper_mask
 
         return mask
 
     @classmethod
-    def masked_front_edge_from_layout(
-        cls, layout, settings, pixel_scales, invert=False
-    ):
+    def masked_fpr_from_layout(
+        cls,
+        layout: Layout1D,
+        settings: "SettingsMask1D",
+        pixel_scales: aa.type.PixelScales,
+        invert: bool = False,
+    ) -> "Mask1D":
 
-        front_edge_regions = layout.extract_front_edge.region_list_from(
-            pixels=settings.front_edge_pixels
-        )
+        fpr_regions = layout.extract_fpr.region_list_from(pixels=settings.fpr_pixels)
+
         mask = np.full(layout.shape_1d, False)
 
-        for region in front_edge_regions:
+        for region in fpr_regions:
             mask[region.x0 : region.x1] = True
 
         if invert:
             mask = np.invert(mask)
 
-        return Mask1DLine(mask=mask.astype("bool"), pixel_scales=pixel_scales)
+        return Mask1D(mask=mask.astype("bool"), pixel_scales=pixel_scales)
 
     @classmethod
-    def masked_trails_from_layout(cls, layout, settings, pixel_scales, invert=False):
+    def masked_epers_from_layout(
+        cls,
+        layout: Layout1D,
+        settings: "SettingsMask1D",
+        pixel_scales: aa.type.PixelScales,
+        invert: bool = False,
+    ) -> "Mask1D":
 
-        trails_regions = layout.extract_trails.region_list_from(
-            pixels=settings.trails_pixels
-        )
+        eper_regions = layout.extract_eper.region_list_from(pixels=settings.eper_pixels)
 
         mask = np.full(layout.shape_1d, False)
 
-        for region in trails_regions:
+        for region in eper_regions:
             mask[region.x0 : region.x1] = True
 
         if invert:
             mask = np.invert(mask)
 
-        return Mask1DLine(mask=mask.astype("bool"), pixel_scales=pixel_scales)
+        return Mask1D(mask=mask.astype("bool"), pixel_scales=pixel_scales)

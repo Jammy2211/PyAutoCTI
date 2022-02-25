@@ -6,7 +6,7 @@ import autoarray as aa
 from autocti import exc
 
 
-class Layout1DLine(aa.Layout1D):
+class Layout1D(aa.Layout1D):
     def __init__(
         self,
         shape_1d: Tuple[int],
@@ -37,8 +37,8 @@ class Layout1DLine(aa.Layout1D):
         from autocti.extract.one_d.fpr import Extract1DFPR
         from autocti.extract.one_d.eper import Extract1DEPER
 
-        self.extract_front_edge = Extract1DFPR(region_list=region_list)
-        self.extract_trails = Extract1DEPER(region_list=region_list)
+        self.extract_fpr = Extract1DFPR(region_list=region_list)
+        self.extract_eper = Extract1DEPER(region_list=region_list)
 
         super().__init__(shape_1d=shape_1d, prescan=prescan, overscan=overscan)
 
@@ -63,11 +63,11 @@ class Layout1DLine(aa.Layout1D):
     def extract_line_from(self, array: aa.Array1D, line_region: str):
 
         if line_region == "front_edge":
-            return self.extract_front_edge.stacked_array_1d_from(
-                array=array, pixels=(0, self.extract_front_edge.total_pixels_min)
+            return self.extract_fpr.stacked_array_1d_from(
+                array=array, pixels=(0, self.extract_fpr.total_pixels_min)
             )
         elif line_region == "trails":
-            return self.extract_trails.stacked_array_1d_from(
+            return self.extract_eper.stacked_array_1d_from(
                 array=array, pixels=(0, self.smallest_trails_pixels_to_array_edge)
             )
         else:
