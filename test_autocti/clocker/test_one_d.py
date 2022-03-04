@@ -54,3 +54,9 @@ def test__data_mapped_to_2d_and_then_1d():
     image_via_clocker = clocker_1d.add_cti(data=arr_1d, trap_list=traps, ccd=ccd_phase)
 
     assert image_via_arctic.flatten() == pytest.approx(image_via_clocker, 1.0e-4)
+
+    image_corrected = clocker_1d.remove_cti(
+        data=image_via_clocker, trap_list=traps, ccd=ccd_phase
+    )
+
+    assert (image_corrected[:] > image_via_clocker[:]).all()

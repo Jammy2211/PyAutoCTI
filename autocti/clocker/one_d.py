@@ -103,3 +103,54 @@ class Clocker1D(AbstractClocker):
         return aa.Array1D.manual_native(
             array=image_post_cti.flatten(), pixel_scales=data.pixel_scales
         )
+
+    def remove_cti(
+        self,
+        data: aa.Array1D,
+        ccd: Optional[CCDPhase] = None,
+        trap_list: Optional[List[AbstractTrap]] = None,
+    ) -> aa.Array1D:
+        """
+        Add CTI to a 1D dataset by passing it from the c++ arctic clocking algorithm.
+
+        The c++ arctic wrapper takes as input a 2D ndarray, therefore this function converts the input 1D data to
+        a 2D ndarray where the second dimension is 1, passes this from arctic and then flattens the 2D ndarray that
+        is returned by to a 1D `Array1D` object with the input data's dimensions.
+
+        Parameters
+        ----------
+        data
+            The 1D data that is clocked via arctic and has CTI removeed to it.
+        ccd
+            The ccd phase settings describing the volume-filling behaviour of the CCD which characterises the capture
+            and release of electrons and therefore CTI.
+        trap_list
+            A list of the trap species on the CCD which capture and release electrons during clock to as to remove CTI.
+        """
+        self.check_traps(trap_list_0=trap_list)
+        self.check_ccd(ccd_list=[ccd])
+
+        image_pre_cti_2d = aa.Array2D.zeros(
+            shape_native=(data.shape_native[0], 1), pixel_scales=data.pixel_scales
+        ).native
+
+        image_pre_cti_2d[:, 0] = data
+
+        ccd = self.ccd_from(ccd_phase=ccd)
+
+        image_post_cti = cti.remove_cti(
+            image=image_pre_cti_2d,
+            n_iterations=self.iterations,
+            parallel_ccd=ccd,
+            parallel_roe=self.roe,
+            parallel_traps=trap_list,
+            parallel_express=self.express,
+            parallel_offset=data.readout_offsets[0],
+            parallel_window_start=self.window_start,
+            parallel_window_stop=self.window_stop,
+            verbosity=self.verbosity,
+        )
+
+        return aa.Array1D.manual_native(
+            array=image_post_cti.flatten(), pixel_scales=data.pixel_scales
+        )

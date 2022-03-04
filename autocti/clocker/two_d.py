@@ -144,6 +144,8 @@ class Clocker2D(AbstractClocker):
             which adds CTI.
         """
 
+        data = data.native
+
         if self.parallel_poisson_traps:
             return self.add_cti_poisson_traps(
                 data=data,
