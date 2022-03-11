@@ -2,7 +2,7 @@ A description of the general.ini visualization config.
 
 [general]
 
-    backend : str
+    backend
 
         The matploblib backend used for visualization (see
         https://gist.github.com/CMCDragonkai/4e9464d9f32f5893d837f3de2c43daa4 for a description of backends).
@@ -29,39 +29,39 @@ A description of the general.ini visualization config.
 
 [units]
 
-    int_kpc : bool
+    int_kpc
 
     If True, figures are output in units of kpc, using the lens & source redshifts to convert from arc seconac. If
     False, figures are output in arc-seconac.
 
 [include]
 
-    origin : bool
+    origin
 
         If True, the origin of the coordinate system (e.g. 0.0", 0.0") is plotted on every figure. 
         
         The origin's appearance is specified by the [origin] section of the 'figures.ini' and 'subplots.ini' configs.
 
-    mask : bool
+    mask
 
         If True, the mask used when fitting an image is plotted on every figure. 
         
         The mask's appearance is specified by the [mask] section of the 'figures.ini' and 'subplots.ini' configs.
         
-    grid : bool
+    grid
 
         If True, image-plane grids (e.g. the centres of image pixels) and source-plane grids (e.g. traced pixels) are
         plotted on every figure 
        
         The grid's appearance is specified by the [grid] section of the 'figures.ini' and 'subplots.ini' configs.
         
-    border : bool
+    border
 
         If True, the border of a masked image (defined as the outer edges of its mask) is plotted on every figure 
         
         The border's appearance is specified by the [border] section of the 'figures.ini' and 'subplots.ini' configs.
         
-    critical_curves : bool
+    critical_curves
 
         If True, critical curves are plotted on all image-plane figures which have have mass profile(s) available, such 
         as the images of galaxies, planes, tracers and fits.
@@ -73,7 +73,7 @@ A description of the general.ini visualization config.
         the 'colors' specified in the configs above. By default, this color wheel matches the caustics so that
         critical curves that map to caustics are the same color.
 
-    caustics : bool
+    caustics
 
         If True, casutics are plotted on all image-plane figures which have have mass profile(s) available, such as
         images of galaxies, planes, tracers and fits.
@@ -85,7 +85,7 @@ A description of the general.ini visualization config.
         the 'colors' specified in the configs above. By default, this color wheel matches the critical curves so that
         critical curves that map to caustics are the same color.
         
-    multiple_images : bool
+    multiple_images
 
         If True, the multiple images of the mass model are plotted on all image-plane figures which have a tracer
         available, namely images of tracers and fits.
@@ -93,7 +93,7 @@ A description of the general.ini visualization config.
         The multiple_images appearance is specified by the [multiple_images] section of the 'figures.ini' and
         'subplots.ini' configs.
         
-    light_profile_centres : bool
+    light_profile_centres
 
         If True, the centre of all light profiles are plotted on figures which have have light profile(s) available, 
         such as the images of galaxies, planes, tracers and fits.
@@ -106,7 +106,7 @@ A description of the general.ini visualization config.
         wheel matches the mass profile centres so that light and mass profile centres of the same galaxies are colored
         the same.
         
-    mass_profile_centres : bool
+    mass_profile_centres
 
         If True, the centre of all mass profiles are plotted on figures which have have mass profile(s) available, 
         such as the images of galaxies, planes, tracers and fits.
@@ -119,7 +119,7 @@ A description of the general.ini visualization config.
         wheel matches the light profile centres so that light and mass profile centres of the same galaxies are colored
         the same.
         
-    mapper_source_pixelization_grid : bool
+    mapper_source_pixelization_grid
 
         If True, the inversion's pixelization grid (e.g. the centre of every pixel of the pixelization) is plotted
         on figures of the inversion's reconstructed source.
@@ -127,7 +127,7 @@ A description of the general.ini visualization config.
         The mapper_source_pixelization_grid appearance is specified by the [mapper_source_pixelization_grid] section of
         the 'figures.ini' and 'subplots.ini' configs.
         
-    inversion_grid : bool
+    inversion_grid
 
         If True, the inversion's grid (e.g. the ray-traced grid of image pixels) is plotted on figures of the inversion's 
         reconstructed source.
@@ -135,7 +135,7 @@ A description of the general.ini visualization config.
         The inversion_grid appearance is specified by the [inversion_grid] section of 
         the 'figures.ini' and 'subplots.ini' configs.
 
-    mapper_data_pixelization_grid : bool
+    mapper_data_pixelization_grid
 
         If True, inversion's pixelizaion grid in the image-plane (e.g. the pixels which are traced to form the centre
         of every pixel of the pixelization) is plotted on fit_imaging figures of the image.

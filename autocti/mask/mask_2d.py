@@ -3,7 +3,7 @@ from typing import Tuple
 
 import autoarray as aa
 
-from autoarray.mask.mask_2d import AbstractMask2D
+from autoarray.mask.mask_2d import Mask2D
 
 from autoarray import exc
 
@@ -30,7 +30,7 @@ class SettingsMask2D:
         self.cosmic_ray_diagonal_buffer = cosmic_ray_diagonal_buffer
 
 
-class Mask2D(AbstractMask2D):
+class Mask2D(Mask2D):
     @classmethod
     def manual(cls, mask, pixel_scales, origin=(0.0, 0.0), invert=False):
         """
@@ -44,15 +44,15 @@ class Mask2D(AbstractMask2D):
 
         Parameters
         ----------
-        mask : np.ndarray or list
+        mask
             The bool values of the mask input as an ndarray of shape [total_y_pixels, total_x_pixels ]or a list of
             lists.
-        pixel_scales: (float, float) or float
+        pixel_scales
             The (y,x) scaled units to pixel units conversion factors of every pixel. If this is input as a ``float``,
             it is converted to a (float, float) structure.
         origin : (float, float)
             The (y,x) scaled units origin of the mask's coordinate system.
-        invert : bool
+        invert
             If `True`, the ``bool``'s of the input ``mask`` are inverted, for example `False`'s become `True`
             and visa versa.
         """
@@ -77,15 +77,15 @@ class Mask2D(AbstractMask2D):
 
         Parameters
         ----------
-        mask : np.ndarray or list
+        mask
             The bool values of the mask input as an ndarray of shape [total_y_pixels, total_x_pixels ]or a list of
             lists.
-        pixel_scales: (float, float) or float
+        pixel_scales
             The (y,x) scaled units to pixel units conversion factors of every pixel. If this is input as a ``float``,
             it is converted to a (float, float) structure.
         origin : (float, float)
             The (y,x) scaled units origin of the mask's coordinate system.
-        invert : bool
+        invert
             If `True`, the ``bool``'s of the input ``mask`` are inverted, for example `False`'s become `True`
             and visa versa.
         """
@@ -159,7 +159,7 @@ class Mask2D(AbstractMask2D):
 
         Parameters
         ----------
-        file_path : str
+        file_path
             The full path of the fits file.
         hdu : int
             The HDU number in the fits file containing the image image.

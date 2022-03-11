@@ -1,6 +1,7 @@
 .idea
 .cache
 .pytest_cache
+*.log
 *.pyc
 CTI/
 .env

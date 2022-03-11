@@ -119,7 +119,7 @@ class Extract2D:
 
     def binned_array_1d_from(
         self, array: aa.Array2D, pixels: Tuple[int, int]
-    ) -> np.ndarray:
+    ) -> aa.Array1D:
         """
         Extract a region (e.g. the parallel FPR) of every charge injection region on the charge injection image, stack
         them by taking their mean and then bin them up to a 1D region (e.g. the 1D parallel FPR) by taking the mean
@@ -142,7 +142,12 @@ class Extract2D:
             FPR rows)
         """
         front_stacked_array = self.stacked_array_2d_from(array=array, pixels=pixels)
-        return np.ma.mean(np.ma.asarray(front_stacked_array), axis=self.binning_axis)
+        front_stacked_array = np.ma.mean(
+            np.ma.asarray(front_stacked_array), axis=self.binning_axis
+        )
+        return aa.Array1D.manual_native(
+            array=front_stacked_array, pixel_scales=array.pixel_scale
+        )
 
     def add_to_array(
         self, new_array: aa.Array2D, array: aa.Array2D, pixels: Tuple[int, int]

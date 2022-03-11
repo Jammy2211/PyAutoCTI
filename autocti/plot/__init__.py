@@ -2,6 +2,7 @@ from pkgutil import extend_path
 
 __path__ = extend_path(__path__, __name__)
 
+from autoarray.plot.wrap.wrap_base import Axis
 from autoarray.plot.wrap.wrap_base import Units
 from autoarray.plot.wrap.wrap_base import Figure
 from autoarray.plot.wrap.wrap_base import Cmap

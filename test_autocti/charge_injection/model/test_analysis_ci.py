@@ -2,7 +2,7 @@ import pytest
 import autofit as af
 import autocti as ac
 
-from autofit.mock.mock import MockSearch
+from autofit.non_linear.mock.mock_search import MockSearch
 from autocti.charge_injection.model.result import ResultImagingCI
 
 

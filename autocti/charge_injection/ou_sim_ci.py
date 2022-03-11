@@ -3,7 +3,7 @@ from typing import List, Union
 
 from autoarray.instruments import euclid
 from autoarray.layout import layout_util
-from autoarray.structures.arrays.two_d.array_2d import Array2D
+from autoarray.structures.arrays.uniform_2d import Array2D
 
 from arcticpy.src import ccd
 from arcticpy.src import traps
@@ -81,7 +81,7 @@ def charge_injection_array_from(
     serial_size: int = 2128,
     serial_prescan_size: int = 51,
     serial_overscan_size: int = 29,
-    pixel_scales: float = 0.1,
+    pixel_scales=0.1,
     use_non_uniform_pattern: bool = True,
     ci_seed: int = -1,
 ) -> Union[np.ndarray, Array2D]:
@@ -101,9 +101,9 @@ def charge_injection_array_from(
 
     Parameters
     ----------
-    ccd_id : str
+    ccd_id
         The CCDPhase ID of Euclid (runs 1 through 6)
-    quadrant_id : str
+    quadrant_id
         The quadrant id (E, F, G, H)
     injection_normalization
         The normalization of the charge injection region.

@@ -1,12 +1,5 @@
-from typing import List, Optional
-
-from autofit.mock import mock
+from autofit import mock
 from autofit.non_linear.result import ResultsCollection
-
-import autoarray as aa
-import autocti as ac
-
-### Mock AutoFit ###
 
 
 class MockResult(mock.MockResult):

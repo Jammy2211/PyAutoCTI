@@ -117,14 +117,15 @@ class DatasetLine(abstract_dataset.AbstractDataset):
 class SimulatorDatasetLine(AbstractSimulatorImaging):
     def __init__(
         self,
-        pixel_scales: Union[float, Tuple[float]],
+        pixel_scales: aa.type.PixelScales,
         normalization: float,
         read_noise: Optional[float] = None,
         add_poisson_noise: bool = False,
         noise_if_add_noise_false: float = 0.1,
         noise_seed: int = -1,
     ):
-        """A class representing a Imaging observation, using the shape of the data, the pixel scale,
+        """
+        A class representing a Imaging observation, using the shape of the data, the pixel scale,
         psf, exposure time, etc.
 
         Parameters

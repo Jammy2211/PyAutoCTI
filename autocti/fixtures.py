@@ -2,14 +2,14 @@ from arcticpy.src import traps, ccd, roe
 
 from autofit.mapper.prior_model.prior_model import PriorModel
 from autofit.mapper.prior_model.collection import CollectionPriorModel
-from autofit.mock.mock import MockSamples
+from autofit.non_linear.mock.mock_samples import MockSamples
 
 from autocti.line.fit import FitDatasetLine
 
-from autoarray.mock.fixtures import *
+from autoarray.fixtures import *
 from autoarray.mask.mask_1d import Mask1D
-from autoarray.structures.arrays.one_d.array_1d import Array1D
-from autoarray.structures.arrays.two_d.array_2d import Array2D
+from autoarray.structures.arrays.uniform_1d import Array1D
+from autoarray.structures.arrays.uniform_2d import Array2D
 from autoarray.dataset.imaging import Imaging
 
 from autocti.line.dataset import DatasetLine

@@ -1,9 +1,8 @@
+import pytest
+
 import autofit as af
 import autocti as ac
-import pytest
 from autocti import exc
-from autocti.mock import mock
-from autocti.model import result as res
 
 
 class TestAnalysis:

@@ -35,9 +35,9 @@ class SettingsImagingCI(aa.SettingsImaging):
 
          Parameters
          ----------
-         is_parallel_fit : bool
+         is_parallel_fit
             If True, the CTI model that is used to fit the charge injection data includes a parallel CTI component.
-         is_serial_fit : bool
+         is_serial_fit
             If True, the CTI model that is used to fit the charge injection data includes a serial CTI component.
         """
 

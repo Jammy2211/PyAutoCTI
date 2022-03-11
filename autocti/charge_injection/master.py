@@ -1,6 +1,6 @@
 from typing import List
 
-from autoarray.structures.arrays.two_d.array_2d import Array2D
+from autoarray.structures.arrays.uniform_2d import Array2D
 
 
 def master_ci_from(ci_list: List[Array2D]) -> Array2D:

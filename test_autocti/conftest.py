@@ -6,7 +6,7 @@ import autocti as ac
 
 from autofit import conf
 
-from autocti.mock import fixtures
+from autocti import fixtures
 
 
 class PlotPatch:

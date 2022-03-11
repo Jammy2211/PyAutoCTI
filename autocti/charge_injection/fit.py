@@ -1,12 +1,11 @@
 import numpy as np
 
-from autoarray.fit.fit_data import FitData
-from autoarray.fit.fit_dataset import FitImaging
+import autoarray as aa
 
 from autocti.charge_injection.imaging.imaging import ImagingCI
 
 
-class FitImagingCI(FitImaging):
+class FitImagingCI(aa.FitImaging):
     def __init__(self, dataset: ImagingCI, post_cti_data, hyper_noise_scalars=None):
         """
         Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian
@@ -22,43 +21,36 @@ class FitImagingCI(FitImaging):
             The hyper_ci-parameter(s) which the noise_scaling_map_list_list is multiplied by to scale the noise-map.
         """
 
+        super().__init__(dataset=dataset, use_mask_in_fit=True)
+
+        self.post_cti_data = post_cti_data
         self.hyper_noise_scalars = hyper_noise_scalars
-
-        if hyper_noise_scalars is not None and len(hyper_noise_scalars) > 0:
-
-            self.noise_scaling_map_list = dataset.noise_scaling_map_list
-
-            noise_map = hyper_noise_map_from_noise_map_and_noise_scalings(
-                hyper_noise_scalars=hyper_noise_scalars,
-                noise_scaling_map_list=dataset.noise_scaling_map_list,
-                noise_map=dataset.noise_map,
-            )
-
-        else:
-
-            noise_map = dataset.noise_map
-
-        fit = FitData(
-            data=dataset.data,
-            noise_map=noise_map,
-            model_data=post_cti_data,
-            mask=dataset.mask,
-            use_mask_in_fit=True,
-        )
-
-        super().__init__(dataset=dataset, fit=fit)
+        self.noise_scaling_map_list = dataset.noise_scaling_map_list
 
     @property
-    def imaging_ci(self):
+    def imaging_ci(self) -> ImagingCI:
         return self.dataset
+
+    @property
+    def noise_map(self) -> aa.Array2D:
+
+        if self.hyper_noise_scalars is not None and len(self.hyper_noise_scalars) > 0:
+
+            return hyper_noise_map_from_noise_map_and_noise_scalings(
+                hyper_noise_scalars=self.hyper_noise_scalars,
+                noise_scaling_map_list=self.dataset.noise_scaling_map_list,
+                noise_map=self.dataset.noise_map,
+            )
+
+        return self.dataset.noise_map
+
+    @property
+    def model_data(self) -> aa.Array2D:
+        return self.post_cti_data
 
     @property
     def layout(self):
         return self.imaging_ci.layout
-
-    @property
-    def post_cti_data(self):
-        return self.model_data
 
     @property
     def pre_cti_data(self):

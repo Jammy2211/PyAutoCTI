@@ -1,4 +1,4 @@
-from typing import Optional, Tuple
+from typing import Tuple
 
 import autoarray as aa
 
@@ -64,7 +64,6 @@ class Extract2DParallelEPER(Extract2D):
             for region in self.region_list
         ]
 
-    #
     def array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
         """
         Extract all of the areas of an `Array2D` that contain the parallel EPERs and return them as a new `Array2D`
