@@ -17,7 +17,7 @@ from arcticpy.src.traps import AbstractTrap
 class Clocker2D(AbstractClocker):
     def __init__(
         self,
-        iterations: int = 1,
+        iterations: int = 5,
         parallel_roe: ROE = ROE(),
         parallel_express: int = 0,
         parallel_window_start: int = 0,

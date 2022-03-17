@@ -13,7 +13,7 @@ from arcticpy.src.traps import AbstractTrap
 class Clocker1D(AbstractClocker):
     def __init__(
         self,
-        iterations: int = 1,
+        iterations: int = 5,
         roe: ROE = ROE(),
         express: int = 0,
         window_start: int = 0,
