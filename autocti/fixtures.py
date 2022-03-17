@@ -175,7 +175,7 @@ def make_ci_noise_scaling_map_list_7x7():
 
 def make_fit_line_7():
     return FitDatasetLine(
-        dataset_line=make_dataset_line_7(),
+        dataset=make_dataset_line_7(),
         post_cti_data=make_dataset_line_7().pre_cti_data + 1,
     )
 

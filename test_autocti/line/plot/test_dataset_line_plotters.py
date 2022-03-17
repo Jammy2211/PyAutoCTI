@@ -20,7 +20,7 @@ def make_dataset_line_plotter_setup():
 def test__individual_attributes_are_output(dataset_line_7, plot_path, plot_patch):
 
     dataset_line_plotter = aplt.DatasetLinePlotter(
-        dataset_line=dataset_line_7,
+        dataset=dataset_line_7,
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
     )
 
@@ -46,7 +46,7 @@ def test__individual_attributes_are_output(dataset_line_7, plot_path, plot_patch
 def test__subplot_dataset_line__is_output(dataset_line_7, plot_path, plot_patch):
 
     dataset_line_plotter = aplt.DatasetLinePlotter(
-        dataset_line=dataset_line_7,
+        dataset=dataset_line_7,
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
     )
 

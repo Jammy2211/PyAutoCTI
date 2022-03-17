@@ -3,8 +3,6 @@ from typing import Tuple
 
 import autoarray as aa
 
-from autoarray.mask.mask_2d import Mask2D
-
 from autoarray import exc
 
 
@@ -30,7 +28,7 @@ class SettingsMask2D:
         self.cosmic_ray_diagonal_buffer = cosmic_ray_diagonal_buffer
 
 
-class Mask2D(Mask2D):
+class Mask2D(aa.Mask2D):
     @classmethod
     def manual(cls, mask, pixel_scales, origin=(0.0, 0.0), invert=False):
         """

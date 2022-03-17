@@ -15,7 +15,7 @@ class TestFitDatasetLine:
         ).native
 
         fit = ac.FitDatasetLine(
-            dataset_line=masked_dataset_line_7, post_cti_data=post_cti_data
+            dataset=masked_dataset_line_7, post_cti_data=post_cti_data
         )
 
         residual_map = ac.util.fit.residual_map_with_mask_from(

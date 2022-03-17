@@ -12,9 +12,7 @@ class VisualizerDatasetLine(Visualizer):
         mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset_line")
 
         imaging_ci_plotter = aplt.DatasetLinePlotter(
-            dataset_line=dataset_line,
-            mat_plot_1d=mat_plot_1d,
-            include_1d=self.include_1d,
+            dataset=dataset_line, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
         )
 
         imaging_ci_plotter.figures_1d(

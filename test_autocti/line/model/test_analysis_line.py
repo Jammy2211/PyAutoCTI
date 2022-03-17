@@ -50,7 +50,7 @@ class TestAnalysisDatasetLine:
         )
 
         fit = ac.FitDatasetLine(
-            dataset_line=analysis.dataset_line, post_cti_data=post_cti_data
+            dataset=analysis.dataset_line, post_cti_data=post_cti_data
         )
 
         assert fit.log_likelihood == log_likelihood_via_analysis
@@ -78,9 +78,7 @@ class TestAnalysisDatasetLine:
 
         fit_analysis = analysis.fit_from_instance(instance=instance)
 
-        fit = ac.FitDatasetLine(
-            dataset_line=masked_line_ci, post_cti_data=post_cti_data
-        )
+        fit = ac.FitDatasetLine(dataset=masked_line_ci, post_cti_data=post_cti_data)
 
         assert fit.dataset.data.shape == (7,)
         assert fit_analysis.log_likelihood == pytest.approx(fit.log_likelihood)

@@ -65,7 +65,7 @@ class AnalysisDatasetLine(Analysis):
             data=dataset_line.pre_cti_data, trap_list=traps, ccd=instance.cti.ccd
         )
 
-        return FitDatasetLine(dataset_line=dataset_line, post_cti_data=post_cti_data)
+        return FitDatasetLine(dataset=dataset_line, post_cti_data=post_cti_data)
 
     def fit_from_instance(self, instance: ModelInstance) -> FitDatasetLine:
 

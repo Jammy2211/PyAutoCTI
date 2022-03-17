@@ -42,6 +42,7 @@ from autoarray.plot.mat_wrap.include import Include2D
 from autoarray.plot.mat_wrap.visuals import Visuals2D
 
 from autoarray.structures.plot.structure_plotters import YX1DPlotter
+from autoarray.structures.plot.structure_plotters import YX1DPlotter as Array1DPlotter
 from autoarray.structures.plot.structure_plotters import Array2DPlotter
 from autoarray.plot.multi_plotters import MultiFigurePlotter
 

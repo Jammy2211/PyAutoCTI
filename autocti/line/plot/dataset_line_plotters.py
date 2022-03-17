@@ -11,7 +11,7 @@ from autocti.line.dataset import DatasetLine
 class DatasetLinePlotter(Plotter):
     def __init__(
         self,
-        dataset_line: DatasetLine,
+        dataset: DatasetLine,
         mat_plot_1d: aplt.MatPlot1D = aplt.MatPlot1D(),
         visuals_1d: aplt.Visuals1D = aplt.Visuals1D(),
         include_1d: aplt.Include1D = aplt.Include1D(),
@@ -43,7 +43,7 @@ class DatasetLinePlotter(Plotter):
             mat_plot_1d=mat_plot_1d, include_1d=include_1d, visuals_1d=visuals_1d
         )
 
-        self.dataset_line = dataset_line
+        self.dataset_line = dataset
 
     def get_visuals_1d(self) -> aplt.Visuals1D:
         return self.visuals_1d

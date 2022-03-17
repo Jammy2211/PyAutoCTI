@@ -4,21 +4,19 @@ from autocti.line.dataset import DatasetLine
 
 
 class FitDatasetLine(aa.FitDataset):
-    def __init__(self, dataset_line: DatasetLine, post_cti_data):
-        """Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian
-        framework.
+    def __init__(self, dataset: DatasetLine, post_cti_data):
+        """
+        Fit a 1D CTI dataset with model cti data.
 
         Parameters
         -----------
-        dataset_line
+        dataset
             The charge injection image that is fitted.
         post_cti_data
             The `pre_cti_data` with cti added to it via the clocker and a CTI model.
-        hyper_noise_scalars :
-            The hyper_ci-parameter(s) which the noise_scaling_map_list_list is multiplied by to scale the noise-map.
         """
 
-        super().__init__(dataset=dataset_line)
+        super().__init__(dataset=dataset)
 
         self.post_cti_data = post_cti_data
 
