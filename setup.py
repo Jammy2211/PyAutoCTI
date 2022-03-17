@@ -12,16 +12,22 @@ with open(join(this_dir, "requirements.txt")) as f:
     requirements = f.read().split("\n")
 
 version = environ.get("VERSION", "1.0.dev0")
-requirements.extend([f"autoconf=={version}"])
+requirements.extend(
+    [
+        f"autoconf=={version}",
+        f"autofit=={version}",
+        f"autoarray=={version}",
+    ]
+)
 
 setup(
     name="autocti",
     version=version,
-    description="PyAutoCTI: Automated Charge Transfer Inefficiency Modeling",
+    description="PyAutoCTI: Charge Transfer Inefficiency Modeling",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/jammy2211/PyAutoCTI",
-    author="James Nightingale and Richard Hayes",
+    author="James Nightingale, Richard Massey, Jacob Kegerreis and Richard Hayes",
     author_email="james.w.nightingale@durham.ac.uk",
     include_package_data=True,
     license="MIT License",
@@ -38,6 +44,7 @@ setup(
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
     ],
     keywords="cli",
     packages=find_packages(exclude=["docs"]),
