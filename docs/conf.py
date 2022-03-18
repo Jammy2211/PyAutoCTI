@@ -18,8 +18,7 @@ workspace_path = str(here())
 
 import os
 import sys
-
-# import autocti
+import autocti
 
 sys.path.insert(0, os.path.abspath("."))
 
@@ -28,7 +27,7 @@ sys.path.insert(0, os.path.abspath("."))
 year = datetime.date.today().year
 project = "PyAutoCTI"
 copyright = "2020, James Nightingale, Richard Massey, Jacob Kegerreis, Richard Hayes"
-author = "James Nightingale, Richard Massey, Jacob Kegerreis, Richard Hayes"
+author = "James Nightingale, Richard Hayes"
 
 # The full version, including alpha/beta/rc tags
 release = "2021.10.14.1"
