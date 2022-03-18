@@ -178,18 +178,18 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
         pre_cti_data
         cosmic_ray_map
             The dimensions of the output simulated charge injection data.
-        frame_geometry : CIQuadGeometry
+        frame_geometry
             The quadrant geometry of the simulated data, defining where the parallel / serial overscans are and \
             therefore the direction of clocking and rotations before input into the cti algorithm.
         layout : layout_ci.Layout1DSimulate
             The charge injection layout_ci (regions, normalization, etc.) of the charge injection data.
-        cti_params : ArcticParams.ArcticParams
+        cti_params
             The CTI model parameters (trap density, trap release_timescales etc.).
-        clocker : ArcticSettings.ArcticSettings
+        clocker
             The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
-        read_noise : None or float
+        read_noise
             The FWHM of the Gaussian read-noises added to the data.
-        noise_seed : int
+        noise_seed
             Seed for the read-noises added to the data.
         """
 

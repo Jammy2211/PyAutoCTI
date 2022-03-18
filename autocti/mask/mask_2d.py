@@ -115,11 +115,11 @@ class Mask2D(aa.Mask2D):
         ----------
         cosmic_ray_map : array_2d.Array2D
             2D arrays flagging where cosmic rays on the image.
-        cosmic_ray_parallel_buffer : int
+        cosmic_ray_parallel_buffer
             The number of pixels from each ray pixels are masked in the parallel direction.
-        cosmic_ray_serial_buffer : int
+        cosmic_ray_serial_buffer
             The number of pixels from each ray pixels are masked in the serial direction.
-        cosmic_ray_diagonal_buffer : int
+        cosmic_ray_diagonal_buffer
             The number of pixels from each ray pixels are masked in the digonal up from the parallel + serial direction.
         """
         mask = cls.unmasked(
@@ -159,7 +159,7 @@ class Mask2D(aa.Mask2D):
         ----------
         file_path
             The full path of the fits file.
-        hdu : int
+        hdu
             The HDU number in the fits file containing the image image.
         pixel_scales or (float, float)
             The arc-second to pixel conversion factor of each pixel.

@@ -107,11 +107,11 @@ def charge_injection_array_from(
         The quadrant id (E, F, G, H)
     injection_normalization
         The normalization of the charge injection region.
-    parallel_size : int
+    parallel_size
         The size of the image in the parallel clocking direction (e.g. number of rows).
-    serial_size : int
+    serial_size
         The size of the image in the serial clocking direction (e.g. number of columns).
-    serial_overscan_size : int
+    serial_overscan_size
         The size of the serial overscan
     pixel_scales : (float, float)
         The arc-second to pixel scale conversion factor.

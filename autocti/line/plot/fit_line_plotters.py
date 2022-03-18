@@ -88,7 +88,7 @@ class FitDatasetLinePlotter(Plotter):
 
             self.mat_plot_1d.plot_yx(
                 y=self.fit.data,
-                x=np.arange(len(self.fit.data)),
+                x=self.fit.data.grid_radial,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(title="Image", filename="data"),
             )
@@ -97,7 +97,7 @@ class FitDatasetLinePlotter(Plotter):
 
             self.mat_plot_1d.plot_yx(
                 y=self.fit.noise_map,
-                x=np.arange(len(self.fit.noise_map)),
+                x=self.fit.noise_map.grid_radial,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(title="Noise-Map", filename="noise_map"),
             )
@@ -106,7 +106,7 @@ class FitDatasetLinePlotter(Plotter):
 
             self.mat_plot_1d.plot_yx(
                 y=self.fit.signal_to_noise_map,
-                x=np.arange(len(self.fit.signal_to_noise_map)),
+                x=self.fit.signal_to_noise_map.grid_radial,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="Signal-To-Noise Map", filename="signal_to_noise_map"
@@ -117,7 +117,7 @@ class FitDatasetLinePlotter(Plotter):
 
             self.mat_plot_1d.plot_yx(
                 y=self.fit.residual_map,
-                x=np.arange(len(self.fit.residual_map)),
+                x=self.fit.residual_map.grid_radial,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(title="Residual Map", filename="residual_map"),
             )
@@ -126,7 +126,7 @@ class FitDatasetLinePlotter(Plotter):
 
             self.mat_plot_1d.plot_yx(
                 y=self.fit.normalized_residual_map,
-                x=np.arange(len(self.fit.normalized_residual_map)),
+                x=self.fit.normalized_residual_map.grid_radial,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="Normalized Residual Map", filename="normalized_residual_map"
@@ -137,7 +137,7 @@ class FitDatasetLinePlotter(Plotter):
 
             self.mat_plot_1d.plot_yx(
                 y=self.fit.chi_squared_map,
-                x=np.arange(len(self.fit.chi_squared_map)),
+                x=self.fit.chi_squared_map.grid_radial,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="Chi-Squared Map", filename="chi_squared_map"
@@ -148,7 +148,7 @@ class FitDatasetLinePlotter(Plotter):
 
             self.mat_plot_1d.plot_yx(
                 y=self.fit.pre_cti_data,
-                x=np.arange(len(self.fit.pre_cti_data)),
+                x=self.fit.pre_cti_data.grid_radial,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="CI Pre CTI Image", filename="pre_cti_data"
@@ -159,7 +159,7 @@ class FitDatasetLinePlotter(Plotter):
 
             self.mat_plot_1d.plot_yx(
                 y=self.fit.post_cti_data,
-                x=np.arange(len(self.fit.post_cti_data)),
+                x=self.fit.post_cti_data.grid_radial,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="CI Post CTI Image", filename="post_cti_data"

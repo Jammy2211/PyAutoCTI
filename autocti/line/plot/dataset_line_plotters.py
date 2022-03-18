@@ -49,7 +49,7 @@ class DatasetLinePlotter(Plotter):
         return self.visuals_1d
 
     def figures_1d(
-        self, data=False, noise_map=False, signal_to_noise_map=False, pre_cti_data=False
+        self, data:bool=False, noise_map:bool=False, signal_to_noise_map:bool=False, pre_cti_data:bool=False
     ):
         """
         Plots the individual attributes of the plotter's `DatasetLine` object in 1D.
@@ -73,7 +73,7 @@ class DatasetLinePlotter(Plotter):
 
             self.mat_plot_1d.plot_yx(
                 y=self.dataset_line.data,
-                x=np.arange(len(self.dataset_line.data)),
+                x=self.dataset_line.data.grid_radial,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(title="Line Dataset Line", filename="data"),
             )
@@ -82,7 +82,7 @@ class DatasetLinePlotter(Plotter):
 
             self.mat_plot_1d.plot_yx(
                 y=self.dataset_line.noise_map,
-                x=np.arange(len(self.dataset_line.noise_map)),
+                x=self.dataset_line.noise_map.grid_radial,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="Line Dataset Noise Map", filename="noise_map"
@@ -93,7 +93,7 @@ class DatasetLinePlotter(Plotter):
 
             self.mat_plot_1d.plot_yx(
                 y=self.dataset_line.signal_to_noise_map,
-                x=np.arange(len(self.dataset_line.signal_to_noise_map)),
+                x=self.dataset_line.signal_to_noise_map.grid_radial,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="Line Dataset Signal-To-Noise Map",
@@ -105,7 +105,7 @@ class DatasetLinePlotter(Plotter):
 
             self.mat_plot_1d.plot_yx(
                 y=self.dataset_line.pre_cti_data,
-                x=np.arange(len(self.dataset_line.pre_cti_data)),
+                x=self.dataset_line.pre_cti_data.grid_radial,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="Line Dataset Pre CTI Line", filename="pre_cti_data"

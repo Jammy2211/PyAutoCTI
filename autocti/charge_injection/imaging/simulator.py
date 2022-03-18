@@ -84,7 +84,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         column_sigma
         region_dimensions
             The size of the non-uniform charge injection region.
-        ci_seed : int
+        ci_seed
             Input seed for the random number generator to give reproducible results.
         """
 
@@ -159,7 +159,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
             The image_shape of the pre_cti_datas to be created.
         row_slope
             The power-law slope of non-uniformity in the row charge injection profile.
-        ci_seed : int
+        ci_seed
             Input ci_seed for the random number generator to give reproducible results. A new ci_seed is always used for each \
             pre_cti_datas, ensuring each non-uniform ci_region has the same column non-uniformity layout_ci.
         """
@@ -183,7 +183,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
 
         Parameters
         -----------
-        size : int
+        size
             The size of the non-uniform column of charge
         normalization
             The input normalization of the column's charge e.g. the level of charge injected.
@@ -209,18 +209,18 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         pre_cti_data
         cosmic_ray_map
             The dimensions of the output simulated charge injection image.
-        frame_geometry : CIQuadGeometry
+        frame_geometry
             The quadrant geometry of the simulated image, defining where the parallel / serial overscans are and \
             therefore the direction of clocking and rotations before input into the cti algorithm.
-        layout : layout_ci.Layout2DCISimulate
+        layout
             The charge injection layout_ci (regions, normalization, etc.) of the charge injection image.
-        cti_params : ArcticParams.ArcticParams
+        cti_params
             The CTI model parameters (trap density, trap release_timescales etc.).
-        clocker : ArcticSettings.ArcticSettings
+        clocker
             The settings that control the cti clocking algorithm (e.g. ccd well_depth express option).
-        read_noise : None or float
+        read_noise
             The FWHM of the Gaussian read-noises added to the image.
-        noise_seed : int
+        noise_seed
             Seed for the read-noises added to the image.
         """
 

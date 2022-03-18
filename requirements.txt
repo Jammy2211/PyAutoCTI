@@ -1,4 +1,2 @@
-autofit==2022.02.14.1
-autoarray==2022.02.14.1
 astropy>=3.0.0
 matplotlib>=3.0.3

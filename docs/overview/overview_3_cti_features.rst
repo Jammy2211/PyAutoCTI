@@ -217,10 +217,10 @@ We can illustrate this by comparing the addition of CTI to two 1D datasets with 
     array_1d_plotter = aplt.Array1DPlotter(y=post_cti_data_1d_1)
     array_1d_plotter.figure_1d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_3/normalization_1.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_3/volume_1.png
   :width: 600
   :alt: Alternative text
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_3/normalization_2.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_3/volume_2.png
   :width: 600
   :alt: Alternative text
