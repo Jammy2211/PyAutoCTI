@@ -1,4 +1,4 @@
-.. _overview_5_fitting
+.. _overview_5_fitting:
 
 Fitting
 =======

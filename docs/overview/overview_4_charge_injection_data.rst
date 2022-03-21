@@ -1,4 +1,4 @@
-.. _overview_4_charge_injection_data
+.. _overview_4_charge_injection_data:
 
 Charge Injection Data
 =====================
@@ -90,14 +90,13 @@ The ``ImagingCI`` object has the following three attributes:
 
  - ``image``: the charge injection image which includes FPRs and EPERs due to CTI.
  - ``noise_map``: the noise-map of the charge injection image, which below only consists of read noise of 1 electron.
- - ``pre_cti_data``: an image which estimates what the charge injection image looked like before clocking and therefore
- without CTI.
+ - ``pre_cti_data``: an image which estimates what the charge injection image looked like before clocking and therefore without CTI.
 
 .. code-block:: bash
 
-dataset_label = "overview"
-dataset_type = "uniform"
-dataset_path = path.join("dataset", "imaging_ci", dataset_label, dataset_type)
+    dataset_label = "overview"
+    dataset_type = "uniform"
+    dataset_path = path.join("dataset", "imaging_ci", dataset_label, dataset_type)
 
     imaging_ci = ac.ci.ImagingCI.from_fits(
         image_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
@@ -240,11 +239,9 @@ to calibrate CTI.
 
 More realistic charge injection imaging has many other features, for example:
 
- - The charge injection may show non-uniformity across the columns. This is not a for CTI calibration provided we have
- knowledge about the non-uniformity's appearance during charge injection.
+ - The charge injection may show non-uniformity across the columns. This is not a for CTI calibration provided we have knowledge about the non-uniformity's appearance during charge injection.
 
- - There may be cosmic rays which hit the CCD during data acquisition and are read-out in the data. This is not a
- problem for CTI calibration provided we can detect, flag and mask these cosmic rays.
+ - There may be cosmic rays which hit the CCD during data acquisition and are read-out in the data. This is not a problem for CTI calibration provided we can detect, flag and mask these cosmic rays.
 
 **PyAutoCTI** has built in tools for both these tasks which are illustrated at ?.
 

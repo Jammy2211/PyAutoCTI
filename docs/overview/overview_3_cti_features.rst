@@ -1,4 +1,4 @@
-.. _overview_3_cti_features
+.. _overview_3_cti_features:
 
 CTI Features
 ============
@@ -70,19 +70,15 @@ Upon inspection and comparison of each post-CTI dataset, we can note two differe
 We are going to term these the ``First-Pixel Response (FPR)`` and ``Extended-Pixel Edge Response (EPER)``, because these
 are the names of each effect in the CTI literature:
 
- - ``First-Pixel Response (FPR)``: The 5 pixels in the dataset which originally contained 10.0 electrons have
- different numbers of electrons after CTI is added. The CTI model with a higher density of traps has removed more
- electrons from these pixels.
+ - ``First-Pixel Response (FPR)``: The 5 pixels in the dataset which originally contained 10.0 electrons have different numbers of electrons after CTI is added. The CTI model with a higher density of traps has removed more electrons from these pixels.
 
- Therefore, the region that originally contained a known input number of electrons before CTI is added informs us of
- how many traps are on the CCD. If the density of traps is higher, the FPR loses more electrons.
+Therefore, the region that originally contained a known input number of electrons before CTI is added informs us of
+how many traps are on the CCD. If the density of traps is higher, the FPR loses more electrons.
 
- - ``Extended-Pixel Edge Response (EPER)``: The 10 pixels trailing the 5 FPR pixels now have electrons, due to CTI
- trailing. The CTI model with a higher density has more electrons in the EPER, because it has more traps which capture
- electrons from the FPR and trail them into the EPER.
+ - ``Extended-Pixel Edge Response (EPER)``: The 10 pixels trailing the 5 FPR pixels now have electrons, due to CTI trailing. The CTI model with a higher density has more electrons in the EPER, because it has more traps which capture electrons from the FPR and trail them into the EPER.
 
- Therefore, the region that originally contained no electrons also informs us of how many traps are on the CCD. If the
- density of traps is higher, the EPER gains more electrons.
+Therefore, the region that originally contained no electrons also informs us of how many traps are on the CCD. If the
+density of traps is higher, the EPER gains more electrons.
 
 By simply summing up how many electrons are moved from the FPR into the EPER one can make a pretty accurate estimate
 of the density of traps per pixel (which is the units of ``density`` input into the ``TrapInstantCapture`` objects above).
@@ -131,13 +127,9 @@ Now lets plot the two datasets and compare their appearance.
 
 Lets now again compare the FPR and EPER of these two post-CTI datasets:
 
- - ``FPR``: Although there are small differences, it is difficult to discern anything obvious. This is because both CTI
- models have the same density, and therefore the same number of electrons are captured and removed from the FPR.
+ - ``FPR``: Although there are small differences, it is difficult to discern anything obvious. This is because both CTI models have the same density, and therefore the same number of electrons are captured and removed from the FPR.
 
- - ``EPER``: The trails in the EPER of the two datasets are clearly different, with the CTI model which used the longer
- release time of ``release_timescale=10.0`` producing a longer trail of electrons. The area under both trails are the
- same (because the same number of electrons are captured from the FPR and trailed into the EPER), but their shapes are
- different.
+ - ``EPER``: The trails in the EPER of the two datasets are clearly different, with the CTI model which used the longer release time of ``release_timescale=10.0`` producing a longer trail of electrons. The area under both trails are the same (because the same number of electrons are captured from the FPR and trailed into the EPER), but their shapes are different.
 
 Therefore, the EPER informs us about the release times of the traps in our CTI model.
 
@@ -145,7 +137,7 @@ From solid-state physics, we actually know a lot more about how traps release el
 EPER look suspiciously like a 1D exponential, because they are! Traps release electrons according to an exponential
 probability distribution:
 
- $1 − exp(− (1/τ)$
+$1 − exp(− (1/τ)$
 
 Where τ is the ``release_timescale``. If a trap has a longer release time, it (on average) releases more electrons over a
 wider range of pixels.
@@ -178,8 +170,8 @@ Their dependence is non-linear, and depending on the value of ``well_fill_beta``
 ``density``:
 
  - A pixel with 10 electrons in total (``n_e=10``) has 2 electrons captured (``n_c=2``), a 20% capture rate.
- - The same pixel could have contain 100 electrons (``n_e=100``) but instead have only 5 electrons captured (``n_c=5``), a
- 5% capture rate.
+
+ - The same pixel could have contain 100 electrons (``n_e=100``) but instead have only 5 electrons captured (``n_c=5``), a 5% capture rate.
 
 This behaviour is why CTI is such a challenging phenomenon to calibrate and correct.
 

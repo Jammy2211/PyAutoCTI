@@ -60,14 +60,9 @@ During the CCD clocking process, there are defections and imperfections in the C
 These traps capture electrons and hold them for a certain amount of time. Depending on the length of time they hold the
 electron, one of two things can happen:
 
- - The release time is shorter than the clocking speed of the CCD, such that the electron is released with its original
- group of electrons that are collectively held together in the same electrostatic potential (e.g. they all correspond
- to the same pixel in the image). In this case there is no trailing or smearing.
+ - The release time is shorter than the clocking speed of the CCD, such that the electron is released with its original group of electrons that are collectively held together in the same electrostatic potential (e.g. they all correspond to the same pixel in the image). In this case there is no trailing or smearing.
 
- - The release time is longer than the clocking speed of the CCD. In this case, the electron's original group of
- electrons have already moved on, well away from the electron. This means that when the electron is released, it joins
- a different group of electrons in a preceeeding electrostatic potential (e.g. the electrons appears in a different
- image pixel). Clearly, this is responsible for the trailing effect we've seen in the images above!
+ - The release time is longer than the clocking speed of the CCD. In this case, the electron's original group of electrons have already moved on, well away from the electron. This means that when the electron is released, it joins a different group of electrons in a preceeeding electrostatic potential (e.g. the electrons appears in a different image pixel). Clearly, this is responsible for the trailing effect we've seen in the images above!
 
 The animation below shows the CCD clocking process, but now includes one of these traps:
 

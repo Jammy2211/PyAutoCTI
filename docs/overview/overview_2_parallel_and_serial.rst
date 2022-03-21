@@ -1,4 +1,4 @@
-.. _overview_2_parallel_and_serial
+.. _overview_2_parallel_and_serial:
 
 Parallel and Serial
 ===================
@@ -153,7 +153,7 @@ We can do the exact same for serial clocking and CTI.
 
 Because serial clocking is ~x1000 faster than parallel clocking, this means it is subject to a completely different
 landscape of traps. For this reason, we always define our parallel and serial CTI models separately and it is common
- for them to have different densities. For illustrative purposes, our serial CTI model has two unique trap species.
+for them to have different densities. For illustrative purposes, our serial CTI model has two unique trap species.
 
 The way an electron cloud fills a pixel in the read-out register is different to the main pixels, meaning for serial
 clocking and CTI we also define a unique ``CCDPhase``.

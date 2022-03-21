@@ -1,4 +1,4 @@
-.. _overview_6_cti_calibration
+.. _overview_6_cti_calibration:
 
 CTI Calibration
 ---------------
@@ -95,8 +95,7 @@ These behave analogously to the ``TrapInstantCapture`` and ``CCDPhase`` objects 
 
 In this example we fit a CTI model with:
 
- - One parallel ``TrapInstantCapture``'s which capture electrons during clocking instantly in the parallel direction
- [2 parameters].
+ - One parallel ``TrapInstantCapture``'s which capture electrons during clocking instantly in the parallel direction [2 parameters].
 
  - A simple ``CCD`` volume filling parametrization with fixed notch depth and capacity [1 parameter].
 
@@ -148,11 +147,9 @@ Analysis
 
 By summing this list of analysis objects, we create an overall ``Analysis`` which we can use to fit the CTI model, where:
 
- - The log likelihood function of this summed analysis class is the sum of the log likelihood functions of each
- individual analysis object.
+ - The log likelihood function of this summed analysis class is the sum of the log likelihood functions of each individual analysis object.
 
- - The summing process ensures that tasks such as outputting results to hard-disk, visualization, etc use a
- structure that separates each analysis and therefore each dataset.
+ - The summing process ensures that tasks such as outputting results to hard-disk, visualization, etc use a structure that separates each analysis and therefore each dataset.
 
 .. code-block:: bash
 
