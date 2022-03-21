@@ -1,7 +1,7 @@
 .. _overview_6_cti_calibration:
 
 CTI Calibration
----------------
+===============
 
 In the previous overview, we learnt how to fit a CTI model to a dataset and quantify its goodness-of-fit via a log
 likelihood.
