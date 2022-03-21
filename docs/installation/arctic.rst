@@ -15,3 +15,44 @@ This page gives the installation instructions for **arCTIc**, which are taken fr
 which non of the lead developers currently know how to do. If you think you could help us out please contact us!]
 
 
+MacOS / Linux
+-------------
+
+First, clone the arctic GitHub repository (the ``sudo`` is only required for MacOS and not linux):
+
+.. code-block:: bash
+
+    git clone https://github.com/jkeger/arctic.git
+    cd arctic
+    sudo make all
+
+If you are running Python in conda, add arctic to conda:
+
+[NOTE: Certain versions of conda use the command ``conda develop`` (without a dash) instead of those shown below.]
+
+.. code-block:: bash
+
+    conda-develop arctic
+
+If you are not using conda, add arctic to your ``PYTHONPATH`` environment variable:
+
+.. code-block:: bash
+
+    export PYTHONPATH=$PYTHONPATH:/path/to/arctic
+
+Also add arctic to your ``DYLD_LIBRARY_PATH`` environment variable:
+
+.. code-block:: bash
+
+    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/path/to/arctic
+
+You should now get output from running the following Python code in an Python interpreter:
+
+.. code-block:: bash
+
+    import numpy as np
+    import arcticpy
+
+    arcticpy.add_cti(np.zeros((5,5)))
+
+**arCTIc** is now installed and you can install **PyAutoCTI** via conda or pip.

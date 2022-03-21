@@ -12,7 +12,7 @@ There are three circumstances where these errors arise:
 
 **1) llvmlite and numba are already installed**
 
-In this case, the installation of autocti raises an exception like the one below:
+In this case, the installation of **PyAutoCTI*** raises an exception like the one below:
 
 .. code-block:: bash
 
@@ -26,7 +26,7 @@ This means that ``llvmlite`` and ``numba`` are already installed, which you can 
    pip show llvmlite
    pip show numba
 
-**PyAutoCTI** works fine across many versions of lvvmlite and numba, so you should be ok to circumvent this error by
+**PyAutoCTI** works fine across many versions of llvmlite and numba, so you should be ok to circumvent this error by
 simply not reinstalling these libraries when you install **PyAutoCTI**:
 
 .. code-block:: bash

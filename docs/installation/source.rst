@@ -13,9 +13,7 @@ A large amount of **PyAutoCTI** functionality is contained in its parent project
 
 **PyAutoArray** https://github.com/Jammy2211/PyAutoArray
 
-**PyAutoGalaxy** https://github.com/Jammy2211/PyAutoGalaxy
-
-If you wish to build from source all code used by **PyAutoCTI** you may need to build from source these 3 additional
+If you wish to build from source all code used by **PyAutoCTI** you may need to build from source these 2 additional
 projects. We include below instructions for building just **PyAutoCTI** from source or building all projects.
 
 Building Only PyAutoCTI
@@ -40,7 +38,6 @@ Next, install the **PyAuto** parent projects via pip:
    pip install autoconf
    pip install autofit
    pip install autoarray
-   pip install autogalaxy
 
 Next, install the **PyAutoCTI** dependencies via pip:
 
@@ -63,7 +60,7 @@ If you are using a ``conda`` environment, add the source repository as follows:
 
    conda-develop PyAutoCTI
 
-Alternatively, if you are using a Python environment include the **PyAutoCTI** source repository in your PYTHONPATH
+Alternatively, if you are using a Python environment include the **PyAutoCTI** source repository in your ``PYTHONPATH``
 (noting that you must replace the text ``/path/to`` with the path to the **PyAutoCTI** directory on your computer):
 
 .. code-block:: bash
@@ -93,7 +90,6 @@ First, clone (or fork) all 4 GitHub repositories:
 
     git clone https://github.com/rhayes777/PyAutoFit
     git clone https://github.com/Jammy2211/PyAutoArray
-    git clone https://github.com/Jammy2211/PyAutoGalaxy
     git clone https://github.com/Jammy2211/PyAutoCTI
 
 Next, install **PyAutoConf** via pip:
@@ -108,7 +104,6 @@ Next, install the source build dependencies of each project via pip:
 
    pip install -r PyAutoFit/requirements.txt
    pip install -r PyAutoArray/requirements.txt
-   pip install -r PyAutoGalaxy/requirements.txt
    pip install -r PyAutoCTI/requirements.txt
 
 For unit tests to pass you will also need the following optional requirements:
@@ -125,17 +120,15 @@ If you are using a ``conda`` environment, add each source repository as follows:
 
    conda-develop PyAutoFit
    conda-develop PyAutoArray
-   conda-develop PyAutoGalaxy
    conda-develop PyAutoCTI
 
-Alternatively, if you are using a Python environment include each source repository in your PYTHONPATH
+Alternatively, if you are using a Python environment include each source repository in your ``PYTHONPATH``
 (noting that you must replace the text ``/path/to`` with the path to the each directory on your computer):
 
 .. code-block:: bash
 
    export PYTHONPATH=$PYTHONPATH:/path/to/PyAutoFit
    export PYTHONPATH=$PYTHONPATH:/path/to/PyAutoArray
-   export PYTHONPATH=$PYTHONPATH:/path/to/PyAutoGalaxy
    export PYTHONPATH=$PYTHONPATH:/path/to/PyAutoCTI
 
 Finally, check the unit tests run and pass for each project (you may need to install pytest via ``pip install pytest``):
@@ -145,8 +138,6 @@ Finally, check the unit tests run and pass for each project (you may need to ins
    cd /path/to/PyAutoFit
    python3 -m pytest
    cd ../PyAutoArray
-   python3 -m pytest
-   cd ../PyAutoGalaxy
    python3 -m pytest
    cd ../PyAutoCTI
    python3 -m pytest

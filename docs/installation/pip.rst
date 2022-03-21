@@ -7,7 +7,10 @@ We strongly recommend that you install **PyAutoCTI** in a
 `Python virtual environment <https://www.geeksforgeeks.org/python-virtual-environment/>`_, with the link attached
 describing what a virtual environment is and how to create one.
 
-We upgrade pip to ensure certain libraries install:
+Once you have created your virtual environment you must install **arCTIc** before installing **PyAutoCTI**. The
+installation guide is found at this link.
+
+Once **arCTIc** is installed, we next upgrade pip to ensure certain libraries install:
 
 .. code-block:: bash
 
@@ -27,7 +30,7 @@ You may get warnings which state something like:
 
 .. code-block:: bash
 
-    ERROR: autoarray 2022.2.14.1 has requirement numpy<=1.22.1, but you'll have numpy 1.22.2 which is incompatible.
+    ERROR: autoarray 2022.03.18.2 has requirement numpy<=1.22.1, but you'll have numpy 1.22.2 which is incompatible.
     ERROR: numba 0.53.1 has requirement llvmlite<0.37,>=0.36.0rc1, but you'll have llvmlite 0.38.0 which is incompatible.
 
 If you see these messages, they do not mean that the installation has failed and the instructions below will
@@ -47,16 +50,3 @@ Run the ``welcome.py`` script to get started!
 .. code-block:: bash
 
    python3 welcome.py
-
-For interferometer analysis there are two optional dependencies that must be installed via the commands:
-
-.. code-block:: bash
-
-    pip install pynufft==2020.2.7
-    pip install pylops==1.11.1
-
-**PyAutoCTI** will run without these libraries and it is recommended that you only install them if you intend to
-do interferometer analysis.
-
-If you run interferometer code a message explaining that you need to install these libraries will be printed, therefore
-it is safe not to install them initially.
