@@ -30,7 +30,7 @@ copyright = "2020, James Nightingale, Richard Massey, Jacob Kegerreis, Richard H
 author = "James Nightingale, Richard Hayes"
 
 # The full version, including alpha/beta/rc tags
-release = "2021.10.14.1"
+release = "2022.03.18.2"
 master_doc = "index"
 
 
@@ -102,7 +102,7 @@ html_context = {
     "doc_path": "docs",
     "github_project": "pyautocti",
     "github_repo": "pyautocti",
-    "github_version": "development",
+    "github_version": "master",
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
