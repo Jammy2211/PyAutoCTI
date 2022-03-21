@@ -86,7 +86,7 @@ sphinx_gallery_conf = {
 # a list of builtin themes.
 #
 # html_theme = "sphinx_rtd_theme"
-# html_last_updated_fmt = "%b %d, %Y"
+html_last_updated_fmt = "%b %d, %Y"
 html_title = "PyAutoCTI"
 html_short_title = "PyAutoCTI"
 pygments_style = "default"
