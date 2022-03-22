@@ -87,3 +87,15 @@ charge (e.g.a flow of electrons)!
    overview/overview_4_charge_injection_data
    overview/overview_5_fitting
    overview/overview_6_cti_calibration
+
+.. toctree::
+   :caption: Installation:
+   :maxdepth: 1
+   :hidden:
+
+   installation/overview
+   installation/arctic
+   installation/conda
+   installation/pip
+   installation/source
+   installation/troubleshooting
