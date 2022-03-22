@@ -41,11 +41,11 @@ from .extract.one_d.fpr import Extract1DFPR
 from .extract.one_d.eper import Extract1DEPER
 from .extract.one_d.master import Extract1DMaster
 from .layout.one_d import Layout1D
-from .line.dataset import SettingsDataset1D
-from .line.dataset import Dataset1D
-from .line.dataset import SimulatorDataset1D
-from .line.fit import FitDataset1D
-from .line.model.analysis import AnalysisDataset1D
+from .dataset_1d.dataset_1d.settings import SettingsDataset1D
+from .dataset_1d.dataset_1d.dataset_1d import Dataset1D
+from .dataset_1d.dataset_1d.simulator import SimulatorDataset1D
+from .dataset_1d.fit import FitDataset1D
+from .dataset_1d.model.analysis import AnalysisDataset1D
 from . import charge_injection as ci
 from .charge_injection.model.analysis import AnalysisImagingCI
 from .model.model_util import CTI1D

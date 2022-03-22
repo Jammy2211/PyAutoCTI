@@ -5,7 +5,7 @@ import autoarray.plot as aplt
 from autoarray.plot.mat_wrap.mat_plot import AutoLabels
 
 from autocti.plot.abstract_plotters import Plotter
-from autocti.line.dataset import Dataset1D
+from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
 
 
 class Dataset1DPlotter(Plotter):
@@ -43,7 +43,7 @@ class Dataset1DPlotter(Plotter):
             mat_plot_1d=mat_plot_1d, include_1d=include_1d, visuals_1d=visuals_1d
         )
 
-        self.dataset_line = dataset
+        self.dataset_1d = dataset
 
     def get_visuals_1d(self) -> aplt.Visuals1D:
         return self.visuals_1d
@@ -76,8 +76,8 @@ class Dataset1DPlotter(Plotter):
         if data:
 
             self.mat_plot_1d.plot_yx(
-                y=self.dataset_line.data,
-                x=self.dataset_line.data.grid_radial,
+                y=self.dataset_1d.data,
+                x=self.dataset_1d.data.grid_radial,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(title="Line Dataset Line", filename="data"),
             )
@@ -85,8 +85,8 @@ class Dataset1DPlotter(Plotter):
         if noise_map:
 
             self.mat_plot_1d.plot_yx(
-                y=self.dataset_line.noise_map,
-                x=self.dataset_line.noise_map.grid_radial,
+                y=self.dataset_1d.noise_map,
+                x=self.dataset_1d.noise_map.grid_radial,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="Line Dataset Noise Map", filename="noise_map"
@@ -96,8 +96,8 @@ class Dataset1DPlotter(Plotter):
         if signal_to_noise_map:
 
             self.mat_plot_1d.plot_yx(
-                y=self.dataset_line.signal_to_noise_map,
-                x=self.dataset_line.signal_to_noise_map.grid_radial,
+                y=self.dataset_1d.signal_to_noise_map,
+                x=self.dataset_1d.signal_to_noise_map.grid_radial,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="Line Dataset Signal-To-Noise Map",
@@ -108,8 +108,8 @@ class Dataset1DPlotter(Plotter):
         if pre_cti_data:
 
             self.mat_plot_1d.plot_yx(
-                y=self.dataset_line.pre_cti_data,
-                x=self.dataset_line.pre_cti_data.grid_radial,
+                y=self.dataset_1d.pre_cti_data,
+                x=self.dataset_1d.pre_cti_data.grid_radial,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="Line Dataset Pre CTI Line", filename="pre_cti_data"
@@ -122,7 +122,7 @@ class Dataset1DPlotter(Plotter):
         noise_map=False,
         signal_to_noise_map=False,
         pre_cti_data=False,
-        auto_filename="subplot_dataset_line",
+        auto_filename="subplot_dataset_1d",
     ):
         """
         Plots the individual attributes of the plotter's `Dataset1D` object in 1D on a subplot.
@@ -149,7 +149,7 @@ class Dataset1DPlotter(Plotter):
             auto_labels=AutoLabels(filename=auto_filename),
         )
 
-    def subplot_dataset_line(self):
+    def subplot_dataset_1d(self):
         """
         Standard subplot of the attributes of the plotter's `Dataset1D` object.
         """

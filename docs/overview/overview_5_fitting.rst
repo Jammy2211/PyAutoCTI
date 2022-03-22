@@ -318,7 +318,7 @@ Below we load a 1D dataset which you can imagine corresponds to a single column 
             overscan=overscan,
         )
 
-    dataset_line = ac.Dataset1D.from_fits(
+    dataset_1d = ac.Dataset1D.from_fits(
         data_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
         noise_map_path=path.join(dataset_path, f"noise_map_{int(normalization)}.fits"),
         pre_cti_data_path=path.join(
@@ -333,8 +333,8 @@ injection data.
 
 .. code-block:: bash
 
-    dataset_line_plotter = aplt.Dataset1DPlotter(dataset=dataset_line)
-    dataset_line_plotter.subplot_dataset_line()
+    dataset_1d_plotter = aplt.Dataset1DPlotter(dataset=dataset_1d)
+    dataset_1d_plotter.subplot_dataset_1d()
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_5/data_1d.png
   :width: 600
@@ -349,7 +349,7 @@ We can mask the data to remove the FPR just like we did above.
 .. code-block:: bash
 
     mask = ac.Mask1D.unmasked(
-        shape_slim=dataset_line.shape_slim, pixel_scales=dataset_line.pixel_scales
+        shape_slim=dataset_1d.shape_slim, pixel_scales=dataset_1d.pixel_scales
     )
 
     mask = ac.Mask1D.masked_fprs_and_epers_from(
@@ -374,12 +374,12 @@ Note how visualizing the fit for inspection is a lot easier in 1D than 2D.
     )
 
     post_cti_data = clocker_1d.add_cti(
-        data=dataset_line.pre_cti_data,
+        data=dataset_1d.pre_cti_data,
         trap_list=[parallel_trap],
         ccd=parallel_ccd,
     )
 
-    fit = ac.FitDataset1D(dataset=dataset_line, post_cti_data=post_cti_data)
+    fit = ac.FitDataset1D(dataset=dataset_1d, post_cti_data=post_cti_data)
 
 Plotting the fit shows this model gives a good fit, with minimal residuals.
 

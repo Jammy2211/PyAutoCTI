@@ -115,9 +115,9 @@ def make_pre_cti_data():
     return fixtures.make_pre_cti_data_7()
 
 
-@pytest.fixture(name="dataset_line_7")
-def make_dataset_line_7():
-    return fixtures.make_dataset_line_7()
+@pytest.fixture(name="dataset_1d_7")
+def make_dataset_1d_7():
+    return fixtures.make_dataset_1d_7()
 
 
 @pytest.fixture(name="fit_line_7")

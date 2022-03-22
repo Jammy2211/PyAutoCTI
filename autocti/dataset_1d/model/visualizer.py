@@ -5,14 +5,14 @@ from autocti.model.visualizer import plot_setting
 
 
 class VisualizerDataset1D(Visualizer):
-    def visualize_dataset_line(self, dataset_line):
+    def visualize_dataset_1d(self, dataset_1d):
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset_line")
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset_1d")
 
         imaging_ci_plotter = aplt.Dataset1DPlotter(
-            dataset=dataset_line, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
+            dataset=dataset_1d, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
         )
 
         imaging_ci_plotter.figures_1d(
@@ -24,13 +24,13 @@ class VisualizerDataset1D(Visualizer):
 
         if should_plot("subplot_dataset"):
 
-            imaging_ci_plotter.subplot_dataset_line()
+            imaging_ci_plotter.subplot_dataset_1d()
 
     def visualize_fit_line(self, fit, during_analysis):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"fit_dataset_line")
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"fit_dataset_1d")
 
         fit_line_plotter = aplt.FitDataset1DPlotter(
             fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
@@ -63,4 +63,4 @@ class VisualizerDataset1D(Visualizer):
                 )
 
         if should_plot("subplot_fit"):
-            fit_line_plotter.subplot_fit_dataset_line()
+            fit_line_plotter.subplot_fit_dataset_1d()

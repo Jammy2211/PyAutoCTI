@@ -4,19 +4,19 @@ import autofit as af
 import autocti as ac
 
 from autofit.non_linear.mock.mock_search import MockSearch
-from autocti.line.model.result import ResultDataset1D
+from autocti.dataset_1d.model.result import ResultDataset1D
 
 
 class TestAnalysisDataset1D:
     def test__make_result__result_line_is_returned(
-        self, dataset_line_7, pre_cti_data_7, traps_x1, ccd, clocker_1d
+        self, dataset_1d_7, pre_cti_data_7, traps_x1, ccd, clocker_1d
     ):
         model = af.CollectionPriorModel(
             cti=af.Model(ac.CTI1D, traps=traps_x1, ccd=ccd),
             hyper_noise=af.Model(ac.HyperCINoiseCollection),
         )
 
-        analysis = ac.AnalysisDataset1D(dataset=dataset_line_7, clocker=clocker_1d)
+        analysis = ac.AnalysisDataset1D(dataset=dataset_1d_7, clocker=clocker_1d)
 
         search = MockSearch(name="test_search")
 
@@ -25,7 +25,7 @@ class TestAnalysisDataset1D:
         assert isinstance(result, ResultDataset1D)
 
     def test__log_likelihood_via_analysis__matches_manual_fit(
-        self, dataset_line_7, pre_cti_data_7, traps_x1, ccd, clocker_1d
+        self, dataset_1d_7, pre_cti_data_7, traps_x1, ccd, clocker_1d
     ):
 
         model = af.CollectionPriorModel(
@@ -33,7 +33,7 @@ class TestAnalysisDataset1D:
             hyper_noise=af.Model(ac.HyperCINoiseCollection),
         )
 
-        analysis = ac.AnalysisDataset1D(dataset=dataset_line_7, clocker=clocker_1d)
+        analysis = ac.AnalysisDataset1D(dataset=dataset_1d_7, clocker=clocker_1d)
 
         instance = model.instance_from_unit_vector([])
 
@@ -50,7 +50,7 @@ class TestAnalysisDataset1D:
         assert fit.log_likelihood == log_likelihood_via_analysis
 
     def test__extracted_fits_from_instance_and_line_ci(
-        self, dataset_line_7, mask_1d_7_unmasked, traps_x1, ccd, clocker_1d
+        self, dataset_1d_7, mask_1d_7_unmasked, traps_x1, ccd, clocker_1d
     ):
 
         model = af.CollectionPriorModel(
@@ -58,7 +58,7 @@ class TestAnalysisDataset1D:
             hyper_noise=af.Model(ac.HyperCINoiseCollection),
         )
 
-        masked_line_ci = dataset_line_7.apply_mask(mask=mask_1d_7_unmasked)
+        masked_line_ci = dataset_1d_7.apply_mask(mask=mask_1d_7_unmasked)
 
         post_cti_data = clocker_1d.add_cti(
             data=masked_line_ci.pre_cti_data, trap_list=traps_x1, ccd=ccd

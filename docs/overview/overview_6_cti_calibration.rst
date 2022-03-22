@@ -230,7 +230,7 @@ We can also perform CTI calibration on 1D datasets.
         for normalization in normalization_list
     ]
 
-    dataset_line_list = [
+    dataset_1d_list = [
         ac.Dataset1D.from_fits(
             data_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
             noise_map_path=path.join(dataset_path, f"noise_map_{int(normalization)}.fits"),
@@ -285,8 +285,8 @@ We again sum these analyses objects into a single analysis.
 .. code-block:: bash
 
     analysis_list = [
-        ac.AnalysisDataset1D(dataset_line=dataset_line, clocker=clocker)
-        for dataset_line in dataset_line_list
+        ac.AnalysisDataset1D(dataset_1d=dataset_1d, clocker=clocker)
+        for dataset_1d in dataset_1d_list
     ]
 
     analysis = sum(analysis_list)
@@ -312,7 +312,7 @@ The search returns a result object, which includes:
     for result in result_list:
 
         fit_plotter = aplt.FitDataset1DPlotter(fit=result.max_log_likelihood_fit)
-        fit_plotter.subplot_fit_dataset_line()
+        fit_plotter.subplot_fit_dataset_1d()
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_6/result_1d_ml.png
   :width: 600

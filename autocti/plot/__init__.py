@@ -46,7 +46,7 @@ from autoarray.structures.plot.structure_plotters import YX1DPlotter as Array1DP
 from autoarray.structures.plot.structure_plotters import Array2DPlotter
 from autoarray.plot.multi_plotters import MultiFigurePlotter
 
-from autocti.line.plot.dataset_line_plotters import Dataset1DPlotter
-from autocti.line.plot.fit_line_plotters import FitDataset1DPlotter
+from autocti.dataset_1d.plot.dataset_1d_plotters import Dataset1DPlotter
+from autocti.dataset_1d.plot.fit_plotters import FitDataset1DPlotter
 from autocti.charge_injection.plot.imaging_ci_plotters import ImagingCIPlotter
 from autocti.charge_injection.plot.fit_ci_plotters import FitImagingCIPlotter

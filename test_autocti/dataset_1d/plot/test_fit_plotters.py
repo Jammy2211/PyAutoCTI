@@ -68,5 +68,5 @@ def test__fit_line_subplots_are_output(fit_line_7, plot_path, plot_patch):
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
     )
 
-    fit_ci_plotter.subplot_fit_dataset_line()
-    assert path.join(plot_path, "subplot_fit_dataset_line.png") in plot_patch.paths
+    fit_ci_plotter.subplot_fit_dataset_1d()
+    assert path.join(plot_path, "subplot_fit_dataset_1d.png") in plot_patch.paths

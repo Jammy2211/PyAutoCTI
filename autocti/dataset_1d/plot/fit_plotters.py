@@ -1,11 +1,9 @@
-import numpy as np
-
 import autoarray.plot as aplt
 
 from autoarray.plot.mat_wrap.mat_plot import AutoLabels
 
 from autocti.plot.abstract_plotters import Plotter
-from autocti.line.fit import FitDataset1D
+from autocti.dataset_1d.fit import FitDataset1D
 
 
 class FitDataset1DPlotter(Plotter):
@@ -176,7 +174,7 @@ class FitDataset1DPlotter(Plotter):
         residual_map=False,
         normalized_residual_map=False,
         chi_squared_map=False,
-        auto_filename="subplot_fit_dataset_line",
+        auto_filename="subplot_fit_dataset_1d",
     ):
         """
         Plots the individual attributes of the plotter's `FitDataset1D` object in 1D on a subplot.
@@ -215,7 +213,7 @@ class FitDataset1DPlotter(Plotter):
             auto_labels=AutoLabels(filename=auto_filename),
         )
 
-    def subplot_fit_dataset_line(self):
+    def subplot_fit_dataset_1d(self):
         """
         Standard subplot of the attributes of the plotter's `FitDataset1D` object.
         """

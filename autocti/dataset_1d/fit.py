@@ -1,6 +1,6 @@
 import autoarray as aa
 
-from autocti.line.dataset import Dataset1D
+from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
 
 
 class FitDataset1D(aa.FitDataset):
@@ -21,7 +21,7 @@ class FitDataset1D(aa.FitDataset):
         self.post_cti_data = post_cti_data
 
     @property
-    def dataset_line(self) -> Dataset1D:
+    def dataset_1d(self) -> Dataset1D:
         return self.dataset
 
     @property

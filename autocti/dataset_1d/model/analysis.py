@@ -7,11 +7,11 @@ from autofit.non_linear.abstract_search import Analysis
 from autofit.non_linear.paths.directory import DirectoryPaths
 from autofit.non_linear.abstract_search import NonLinearSearch
 
-from autocti.line.dataset import Dataset1D
-from autocti.line.fit import FitDataset1D
-from autocti.line.model.visualizer import VisualizerDataset1D
+from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
+from autocti.dataset_1d.fit import FitDataset1D
+from autocti.dataset_1d.model.visualizer import VisualizerDataset1D
 from autocti.model.result import ResultDataset
-from autocti.line.model.result import ResultDataset1D
+from autocti.dataset_1d.model.result import ResultDataset1D
 from autocti.model.settings import SettingsCTI1D
 from autocti.clocker.one_d import Clocker1D
 
@@ -81,7 +81,7 @@ class AnalysisDataset1D(Analysis):
 
         visualizer = VisualizerDataset1D(visualize_path=paths.image_path)
 
-        visualizer.visualize_dataset_line(dataset_line=self.dataset)
+        visualizer.visualize_dataset_1d(dataset_1d=self.dataset)
 
         visualizer.visualize_fit_line(fit=fit, during_analysis=during_analysis)
 

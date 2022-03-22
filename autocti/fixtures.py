@@ -102,7 +102,7 @@ def make_pre_cti_data_7():
     return ac.Array1D.full(fill_value=1.0, shape_native=(7,), pixel_scales=1.0)
 
 
-def make_dataset_line_7():
+def make_dataset_1d_7():
 
     return ac.Dataset1D(
         data=make_data_7(),
@@ -159,8 +159,7 @@ def make_ci_noise_scaling_map_list_7x7():
 
 def make_fit_line_7():
     return ac.FitDataset1D(
-        dataset=make_dataset_line_7(),
-        post_cti_data=make_dataset_line_7().pre_cti_data + 1,
+        dataset=make_dataset_1d_7(), post_cti_data=make_dataset_1d_7().pre_cti_data + 1
     )
 
 
