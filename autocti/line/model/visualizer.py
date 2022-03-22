@@ -4,14 +4,14 @@ from autocti.model.visualizer import Visualizer
 from autocti.model.visualizer import plot_setting
 
 
-class VisualizerDatasetLine(Visualizer):
+class VisualizerDataset1D(Visualizer):
     def visualize_dataset_line(self, dataset_line):
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
         mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset_line")
 
-        imaging_ci_plotter = aplt.DatasetLinePlotter(
+        imaging_ci_plotter = aplt.Dataset1DPlotter(
             dataset=dataset_line, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
         )
 
@@ -32,7 +32,7 @@ class VisualizerDatasetLine(Visualizer):
 
         mat_plot_1d = self.mat_plot_1d_from(subfolders=f"fit_dataset_line")
 
-        fit_line_plotter = aplt.FitDatasetLinePlotter(
+        fit_line_plotter = aplt.FitDataset1DPlotter(
             fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
         )
 

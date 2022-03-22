@@ -74,7 +74,7 @@ on a charge injection image.
 
 .. code-block:: bash
 
-    layout = ac.ci.Layout2DCI(
+    layout = ac.Layout2DCI(
         shape_2d=shape_native,
         region_list=regions_list,
         parallel_overscan=parallel_overscan,
@@ -98,7 +98,7 @@ The ``ImagingCI`` object has the following three attributes:
     dataset_type = "uniform"
     dataset_path = path.join("dataset", "imaging_ci", dataset_label, dataset_type)
 
-    imaging_ci = ac.ci.ImagingCI.from_fits(
+    imaging_ci = ac.ImagingCI.from_fits(
         image_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
         noise_map_path=path.join(dataset_path, f"noise_map_{int(normalization)}.fits"),
         pre_cti_data_path=path.join(
@@ -251,7 +251,7 @@ More realistic charge injection imaging has many other features, for example:
     dataset_type = "non_uniform_cosmic_rays"
     dataset_path = path.join("dataset", "imaging_ci", dataset_label, dataset_type)
 
-    imaging_ci = ac.ci.ImagingCI.from_fits(
+    imaging_ci = ac.ImagingCI.from_fits(
         image_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
         noise_map_path=path.join(dataset_path, f"noise_map_{int(normalization)}.fits"),
         pre_cti_data_path=path.join(

@@ -71,14 +71,14 @@ class TestApplyMask:
         assert (masked_dataset_line.pre_cti_data == dataset_line_7.pre_cti_data).all()
 
 
-class TestDatasetLine:
+class TestDataset1D:
     def test__from_fits__load_all_data_components__has_correct_attributes(
         self, layout_7
     ):
 
         create_fits(fits_path=fits_path)
 
-        imaging = ac.DatasetLine.from_fits(
+        imaging = ac.Dataset1D.from_fits(
             pixel_scales=1.0,
             layout=layout_7,
             data_path=path.join(fits_path, "3_ones.fits"),
@@ -103,7 +103,7 @@ class TestDatasetLine:
 
         create_fits(fits_path=fits_path)
 
-        imaging = ac.DatasetLine.from_fits(
+        imaging = ac.Dataset1D.from_fits(
             pixel_scales=1.0,
             layout=layout_7,
             data_path=path.join(fits_path, "3_multiple_hdu.fits"),
@@ -126,7 +126,7 @@ class TestDatasetLine:
 
         create_fits(fits_path=fits_path)
 
-        imaging = ac.DatasetLine.from_fits(
+        imaging = ac.Dataset1D.from_fits(
             pixel_scales=1.0,
             layout=layout_7,
             data_path=path.join(fits_path, "3_ones.fits"),
@@ -150,7 +150,7 @@ class TestDatasetLine:
 
         layout_ci = ac.Layout1D(shape_1d=(7,), region_list=[(0, 7)])
 
-        imaging = ac.DatasetLine.from_fits(
+        imaging = ac.Dataset1D.from_fits(
             pixel_scales=1.0,
             layout=layout_ci,
             data_path=path.join(fits_path, "3_ones.fits"),
@@ -173,7 +173,7 @@ class TestDatasetLine:
 
         create_fits(fits_path=fits_path)
 
-        imaging = ac.DatasetLine.from_fits(
+        imaging = ac.Dataset1D.from_fits(
             pixel_scales=1.0,
             layout=layout_7,
             data_path=path.join(fits_path, "3_ones.fits"),
@@ -197,7 +197,7 @@ class TestDatasetLine:
             pre_cti_data_path=path.join(output_data_dir, "pre_cti_data.fits"),
         )
 
-        imaging = ac.DatasetLine.from_fits(
+        imaging = ac.Dataset1D.from_fits(
             pixel_scales=1.0,
             layout=layout_7,
             data_path=path.join(output_data_dir, "data.fits"),
@@ -215,14 +215,14 @@ class TestDatasetLine:
         clean_fits(fits_path=fits_path)
 
 
-class TestSimulatorDatasetLine:
+class TestSimulatorDataset1D:
     def test__no_instrumental_effects_input__only_cti_simulated(
         self, clocker_1d, traps_x2, ccd
     ):
 
         layout = ac.Layout1D(shape_1d=(5,), region_list=[(0, 5)])
 
-        simulator = ac.SimulatorDatasetLine(
+        simulator = ac.SimulatorDataset1D(
             pixel_scales=1.0, normalization=10.0, add_poisson_noise=False
         )
 
@@ -239,7 +239,7 @@ class TestSimulatorDatasetLine:
 
         layout = ac.Layout1D(shape_1d=(5,), region_list=[(0, 5)])
 
-        simulator = ac.SimulatorDatasetLine(
+        simulator = ac.SimulatorDataset1D(
             pixel_scales=1.0,
             normalization=10.0,
             read_noise=1.0,
@@ -260,7 +260,7 @@ class TestSimulatorDatasetLine:
 
     def test__pre_cti_data_from(self):
 
-        simulator = ac.SimulatorDatasetLine(normalization=10.0, pixel_scales=1.0)
+        simulator = ac.SimulatorDataset1D(normalization=10.0, pixel_scales=1.0)
 
         layout = ac.Layout1D(shape_1d=(3,), region_list=[(0, 2)])
 
@@ -274,7 +274,7 @@ class TestSimulatorDatasetLine:
 
         layout = ac.Layout1D(shape_1d=(5,), region_list=[(0, 5)])
 
-        simulator = ac.SimulatorDatasetLine(
+        simulator = ac.SimulatorDataset1D(
             pixel_scales=1.0,
             normalization=10.0,
             read_noise=4.0,
@@ -305,7 +305,7 @@ class TestSimulatorDatasetLine:
     def test__from_post_cti_data(self, clocker_1d, traps_x2, ccd):
 
         layout = ac.Layout1D(shape_1d=(5,), region_list=[(0, 5)])
-        simulator = ac.SimulatorDatasetLine(
+        simulator = ac.SimulatorDataset1D(
             pixel_scales=1.0,
             normalization=10.0,
             read_noise=4.0,

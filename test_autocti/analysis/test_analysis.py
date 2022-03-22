@@ -20,7 +20,7 @@ class TestAnalysis:
         )
 
         analysis = ac.AnalysisImagingCI(
-            dataset_ci=imaging_ci_7x7,
+            dataset=imaging_ci_7x7,
             clocker=None,
             settings_cti=ac.SettingsCTI2D(parallel_total_density_range=(1.0, 2.0)),
         )
@@ -42,7 +42,7 @@ class TestAnalysis:
         )
 
         analysis = ac.AnalysisImagingCI(
-            dataset_ci=[imaging_ci_7x7],
+            dataset=[imaging_ci_7x7],
             clocker=None,
             settings_cti=ac.SettingsCTI2D(serial_total_density_range=(1.0, 2.0)),
         )

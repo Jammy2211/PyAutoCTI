@@ -1,10 +1,10 @@
 import autoarray as aa
 
-from autocti.line.dataset import DatasetLine
+from autocti.line.dataset import Dataset1D
 
 
-class FitDatasetLine(aa.FitDataset):
-    def __init__(self, dataset: DatasetLine, post_cti_data):
+class FitDataset1D(aa.FitDataset):
+    def __init__(self, dataset: Dataset1D, post_cti_data):
         """
         Fit a 1D CTI dataset with model cti data.
 
@@ -21,7 +21,7 @@ class FitDatasetLine(aa.FitDataset):
         self.post_cti_data = post_cti_data
 
     @property
-    def dataset_line(self) -> DatasetLine:
+    def dataset_line(self) -> Dataset1D:
         return self.dataset
 
     @property

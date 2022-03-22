@@ -17,9 +17,9 @@ def test__normalization_columns_list():
         fill_value=1.0, shape_native=(5, 5), pixel_scales=(1.0, 1.0)
     )
 
-    layout = ac.ci.Layout2DCI(shape_2d=image.shape_native, region_list=[(1, 4, 1, 4)])
+    layout = ac.Layout2DCI(shape_2d=image.shape_native, region_list=[(1, 4, 1, 4)])
 
-    imaging = ac.ci.ImagingCI(
+    imaging = ac.ImagingCI(
         image=image, noise_map=image, pre_cti_data=image, layout=layout
     )
 
@@ -38,17 +38,17 @@ def test__normalization_columns_list():
         pixel_scales=(1.0, 1.0),
     )
 
-    layout = ac.ci.Layout2DCI(shape_2d=image.shape_native, region_list=[(1, 4, 1, 4)])
+    layout = ac.Layout2DCI(shape_2d=image.shape_native, region_list=[(1, 4, 1, 4)])
 
-    imaging = ac.ci.ImagingCI(
+    imaging = ac.ImagingCI(
         image=image, noise_map=image, pre_cti_data=image, layout=layout
     )
 
     assert imaging.normalization_columns_list == [2.0, 5.0, 8.0]
 
-    layout = ac.ci.Layout2DCI(shape_2d=image.shape_native, region_list=[(2, 4, 1, 4)])
+    layout = ac.Layout2DCI(shape_2d=image.shape_native, region_list=[(2, 4, 1, 4)])
 
-    imaging = ac.ci.ImagingCI(
+    imaging = ac.ImagingCI(
         image=image, noise_map=image, pre_cti_data=image, layout=layout
     )
 
@@ -69,7 +69,7 @@ def test__normalization_columns_list():
 
     image = image.apply_mask(mask=mask)
 
-    imaging = ac.ci.ImagingCI(
+    imaging = ac.ImagingCI(
         image=image, noise_map=image, pre_cti_data=image, layout=layout
     )
 
@@ -78,7 +78,7 @@ def test__normalization_columns_list():
 
 def test__from_fits__load_all_data_components__has_correct_attributes(layout_ci_7x7):
 
-    imaging = ac.ci.ImagingCI.from_fits(
+    imaging = ac.ImagingCI.from_fits(
         pixel_scales=1.0,
         layout=layout_ci_7x7,
         image_path=path.join(test_data_path, "3x3_ones.fits"),
@@ -101,7 +101,7 @@ def test__from_fits__load_all_data_components__has_correct_attributes(layout_ci_
 
 def test__from_fits__load_all_image_components__load_from_multi_hdu_fits(layout_ci_7x7):
 
-    imaging = ac.ci.ImagingCI.from_fits(
+    imaging = ac.ImagingCI.from_fits(
         pixel_scales=1.0,
         layout=layout_ci_7x7,
         image_path=path.join(test_data_path, "3x3_multiple_hdu.fits"),
@@ -124,7 +124,7 @@ def test__from_fits__load_all_image_components__load_from_multi_hdu_fits(layout_
 
 def test__from_fits__noise_map_from_single_value(layout_ci_7x7):
 
-    imaging = ac.ci.ImagingCI.from_fits(
+    imaging = ac.ImagingCI.from_fits(
         pixel_scales=1.0,
         layout=layout_ci_7x7,
         image_path=path.join(test_data_path, "3x3_ones.fits"),
@@ -144,7 +144,7 @@ def test__from_fits__noise_map_from_single_value(layout_ci_7x7):
 
 def test__output_to_fits___all_arrays(layout_ci_7x7):
 
-    imaging = ac.ci.ImagingCI.from_fits(
+    imaging = ac.ImagingCI.from_fits(
         pixel_scales=1.0,
         layout=layout_ci_7x7,
         image_path=path.join(test_data_path, "3x3_ones.fits"),
@@ -171,7 +171,7 @@ def test__output_to_fits___all_arrays(layout_ci_7x7):
         cosmic_ray_map_path=path.join(output_data_dir, "cosmic_ray_map.fits"),
     )
 
-    imaging = ac.ci.ImagingCI.from_fits(
+    imaging = ac.ImagingCI.from_fits(
         pixel_scales=1.0,
         layout=layout_ci_7x7,
         image_path=path.join(output_data_dir, "image.fits"),
@@ -231,7 +231,7 @@ def test__apply_settings__include_parallel_columns_extraction(
 
     masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask)
     masked_imaging_ci = masked_imaging_ci.apply_settings(
-        settings=ac.ci.SettingsImagingCI(parallel_pixels=(1, 3))
+        settings=ac.SettingsImagingCI(parallel_pixels=(1, 3))
     )
 
     mask = ac.Mask2D.unmasked(shape_native=(7, 2), pixel_scales=1.0)
@@ -281,7 +281,7 @@ def test__apply_settings__serial_masked_imaging_ci(
 
     masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask)
     masked_imaging_ci = masked_imaging_ci.apply_settings(
-        settings=ac.ci.SettingsImagingCI(serial_pixels=(0, 1))
+        settings=ac.SettingsImagingCI(serial_pixels=(0, 1))
     )
 
     mask = ac.Mask2D.unmasked(shape_native=(1, 7), pixel_scales=1.0)

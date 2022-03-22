@@ -16,19 +16,19 @@ from autocti.clocker.one_d import Clocker1D
 from autocti import exc
 
 
-class SettingsDatasetLine(abstract_dataset.AbstractSettingsDataset):
+class SettingsDataset1D(abstract_dataset.AbstractSettingsDataset):
 
     pass
 
 
-class DatasetLine(abstract_dataset.AbstractDataset):
+class Dataset1D(abstract_dataset.AbstractDataset):
     def __init__(
         self,
         data: aa.Array1D,
         noise_map: aa.Array1D,
         pre_cti_data: aa.Array1D,
         layout: Layout1D,
-        settings: SettingsDatasetLine = SettingsDatasetLine(),
+        settings: SettingsDataset1D = SettingsDataset1D(),
     ):
 
         super().__init__(data=data, noise_map=noise_map, settings=settings)
@@ -38,21 +38,21 @@ class DatasetLine(abstract_dataset.AbstractDataset):
         self.pre_cti_data = pre_cti_data
         self.layout = layout
 
-    def apply_mask(self, mask: aa.Mask1D) -> "DatasetLine":
+    def apply_mask(self, mask: aa.Mask1D) -> "Dataset1D":
 
         data = aa.Array1D.manual_mask(array=self.data, mask=mask).native
         noise_map = aa.Array1D.manual_mask(
             array=self.noise_map.astype("float"), mask=mask
         ).native
 
-        return DatasetLine(
+        return Dataset1D(
             data=data,
             noise_map=noise_map,
             pre_cti_data=self.pre_cti_data,
             layout=self.layout,
         )
 
-    def apply_settings(self, settings: SettingsDatasetLine) -> "DatasetLine":
+    def apply_settings(self, settings: SettingsDataset1D) -> "Dataset1D":
 
         return self
 
@@ -99,7 +99,7 @@ class DatasetLine(abstract_dataset.AbstractDataset):
             array=pre_cti_data.native, pixel_scales=pixel_scales
         )
 
-        return DatasetLine(
+        return Dataset1D(
             data=data, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
         )
 
@@ -114,7 +114,7 @@ class DatasetLine(abstract_dataset.AbstractDataset):
         )
 
 
-class SimulatorDatasetLine(AbstractSimulatorImaging):
+class SimulatorDataset1D(AbstractSimulatorImaging):
     def __init__(
         self,
         pixel_scales: aa.type.PixelScales,
@@ -170,7 +170,7 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
         clocker: Clocker1D,
         trap_list: Optional[List[AbstractTrap]] = None,
         ccd: Optional[CCDPhase] = None,
-    ) -> DatasetLine:
+    ) -> Dataset1D:
         """Simulate a charge injection data, including effects like noises.
 
         Parameters
@@ -212,7 +212,7 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
         clocker: Clocker1D,
         trap_list: Optional[List[AbstractTrap]] = None,
         ccd: Optional[CCDPhase] = None,
-    ) -> DatasetLine:
+    ) -> Dataset1D:
 
         post_cti_data = clocker.add_cti(
             data=pre_cti_data.native, trap_list=trap_list, ccd=ccd
@@ -224,7 +224,7 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
 
     def from_post_cti_data(
         self, post_cti_data: aa.Array1D, pre_cti_data: aa.Array1D, layout: Layout1D
-    ) -> DatasetLine:
+    ) -> Dataset1D:
 
         if self.read_noise is not None:
             data = preprocess.data_with_gaussian_noise_added(
@@ -244,7 +244,7 @@ class SimulatorDatasetLine(AbstractSimulatorImaging):
                 pixel_scales=self.pixel_scales,
             ).native
 
-        return DatasetLine(
+        return Dataset1D(
             data=aa.Array1D.manual_native(
                 array=data.native, pixel_scales=self.pixel_scales
             ),

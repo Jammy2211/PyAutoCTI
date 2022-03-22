@@ -5,19 +5,19 @@ import autoarray.plot as aplt
 from autoarray.plot.mat_wrap.mat_plot import AutoLabels
 
 from autocti.plot.abstract_plotters import Plotter
-from autocti.line.fit import FitDatasetLine
+from autocti.line.fit import FitDataset1D
 
 
-class FitDatasetLinePlotter(Plotter):
+class FitDataset1DPlotter(Plotter):
     def __init__(
         self,
-        fit: FitDatasetLine,
+        fit: FitDataset1D,
         mat_plot_1d: aplt.MatPlot1D = aplt.MatPlot1D(),
         visuals_1d: aplt.Visuals1D = aplt.Visuals1D(),
         include_1d: aplt.Include1D = aplt.Include1D(),
     ):
         """
-        Plots the attributes of `FitDatasetLine` objects using the matplotlib method `line()` and many other matplotlib
+        Plots the attributes of `FitDataset1D` objects using the matplotlib method `line()` and many other matplotlib
         functions which customize the plot's appearance.
 
         The `mat_plot_1d` attribute wraps matplotlib function calls to make the figure. By default, the settings
@@ -60,9 +60,9 @@ class FitDatasetLinePlotter(Plotter):
         chi_squared_map=False,
     ):
         """
-        Plots the individual attributes of the plotter's `FitDatasetLine` object in 1D.
+        Plots the individual attributes of the plotter's `FitDataset1D` object in 1D.
 
-        The API is such that every plottable attribute of the `FitDatasetLine` object is an input parameter of type bool 
+        The API is such that every plottable attribute of the `FitDataset1D` object is an input parameter of type bool
         of the function, which if switched to `True` means that it is plotted.
 
         Parameters
@@ -179,9 +179,9 @@ class FitDatasetLinePlotter(Plotter):
         auto_filename="subplot_fit_dataset_line",
     ):
         """
-        Plots the individual attributes of the plotter's `FitDatasetLine` object in 1D on a subplot.
+        Plots the individual attributes of the plotter's `FitDataset1D` object in 1D on a subplot.
 
-        The API is such that every plottable attribute of the `FitDatasetLine` object is an input parameter of type bool 
+        The API is such that every plottable attribute of the `FitDataset1D` object is an input parameter of type bool
         of the function, which if switched to `True` means that it is included on the subplot.
 
         Parameters
@@ -217,7 +217,7 @@ class FitDatasetLinePlotter(Plotter):
 
     def subplot_fit_dataset_line(self):
         """
-        Standard subplot of the attributes of the plotter's `FitDatasetLine` object.
+        Standard subplot of the attributes of the plotter's `FitDataset1D` object.
         """
         return self.subplot(
             data=True,

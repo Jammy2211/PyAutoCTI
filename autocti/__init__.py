@@ -17,6 +17,13 @@ from arcticpy.src.traps import TrapInstantCapture
 from arcticpy.src.traps import TrapSlowCapture
 from arcticpy.src.traps import TrapInstantCaptureContinuum
 
+from .charge_injection.fit import FitImagingCI
+from .charge_injection.hyper import HyperCINoiseScalar
+from .charge_injection.hyper import HyperCINoiseCollection
+from .charge_injection.imaging.imaging import ImagingCI
+from .charge_injection.imaging.settings import SettingsImagingCI
+from .charge_injection.imaging.simulator import SimulatorImagingCI
+from .charge_injection.layout import Layout2DCI
 from .cosmics.cosmics import SimulatorCosmicRayMap
 from .extract.two_d.parallel_fpr import Extract2DParallelFPR
 from .extract.two_d.parallel_eper import Extract2DParallelEPER
@@ -34,11 +41,11 @@ from .extract.one_d.fpr import Extract1DFPR
 from .extract.one_d.eper import Extract1DEPER
 from .extract.one_d.master import Extract1DMaster
 from .layout.one_d import Layout1D
-from .line.dataset import SettingsDatasetLine
-from .line.dataset import DatasetLine
-from .line.dataset import SimulatorDatasetLine
-from .line.fit import FitDatasetLine
-from .line.model.analysis import AnalysisDatasetLine
+from .line.dataset import SettingsDataset1D
+from .line.dataset import Dataset1D
+from .line.dataset import SimulatorDataset1D
+from .line.fit import FitDataset1D
+from .line.model.analysis import AnalysisDataset1D
 from . import charge_injection as ci
 from .charge_injection.model.analysis import AnalysisImagingCI
 from .model.model_util import CTI1D

@@ -19,7 +19,7 @@ class Result(result.Result):
 class ResultDataset(Result):
     @property
     def max_log_likelihood_fit(self):
-        return self.analysis.fit_from_instance(instance=self.instance)
+        return self.analysis.fit_via_instance_from(instance=self.instance)
 
     @property
     def mask(self):

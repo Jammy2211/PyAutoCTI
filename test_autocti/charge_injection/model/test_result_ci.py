@@ -17,11 +17,11 @@ class TestResultImagingCI:
 
         masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
         masked_imaging_ci = masked_imaging_ci.apply_settings(
-            settings=ac.ci.SettingsImagingCI(parallel_pixels=(0, 1))
+            settings=ac.SettingsImagingCI(parallel_pixels=(0, 1))
         )
 
         analysis = ac.AnalysisImagingCI(
-            dataset_ci=masked_imaging_ci, clocker=parallel_clocker_2d
+            dataset=masked_imaging_ci, clocker=parallel_clocker_2d
         )
 
         result = ResultImagingCI(
@@ -72,10 +72,10 @@ class TestResultImagingCI:
         masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
 
         analysis = ac.AnalysisImagingCI(
-            dataset_ci=masked_imaging_ci_7x7, clocker=parallel_clocker_2d
+            dataset=masked_imaging_ci_7x7, clocker=parallel_clocker_2d
         )
 
-        fit_analysis = analysis.fit_from_instance(
+        fit_analysis = analysis.fit_via_instance_from(
             instance=samples_with_result.max_log_likelihood_instance
         )
 
@@ -118,17 +118,17 @@ class TestResultImagingCI:
                 serial_ccd=ccd,
             ),
             hyper_noise=af.Model(
-                ac.ci.HyperCINoiseCollection,
-                regions_ci=ac.ci.HyperCINoiseScalar(scale_factor=1.0),
-                parallel_epers=ac.ci.HyperCINoiseScalar(scale_factor=1.0),
-                serial_trails=ac.ci.HyperCINoiseScalar(scale_factor=1.0),
-                serial_overscan_no_trails=ac.ci.HyperCINoiseScalar(scale_factor=1.0),
+                ac.HyperCINoiseCollection,
+                regions_ci=ac.HyperCINoiseScalar(scale_factor=1.0),
+                parallel_epers=ac.HyperCINoiseScalar(scale_factor=1.0),
+                serial_trails=ac.HyperCINoiseScalar(scale_factor=1.0),
+                serial_overscan_no_trails=ac.HyperCINoiseScalar(scale_factor=1.0),
             ),
         )
 
         instance = model.instance_from_prior_medians()
 
-        fit_analysis = analysis.fit_from_instance(instance=instance)
+        fit_analysis = analysis.fit_via_instance_from(instance=instance)
 
         assert result.noise_scaling_map_of_regions_ci != pytest.approx(
             fit_analysis.chi_squared_map_of_regions_ci, 1.0e-2
@@ -157,7 +157,7 @@ class TestResultImagingCI:
         masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
 
         analysis = ac.AnalysisImagingCI(
-            dataset_ci=masked_imaging_ci_7x7, clocker=parallel_clocker_2d
+            dataset=masked_imaging_ci_7x7, clocker=parallel_clocker_2d
         )
 
         result = ResultImagingCI(

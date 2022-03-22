@@ -5,19 +5,19 @@ import autoarray.plot as aplt
 from autoarray.plot.mat_wrap.mat_plot import AutoLabels
 
 from autocti.plot.abstract_plotters import Plotter
-from autocti.line.dataset import DatasetLine
+from autocti.line.dataset import Dataset1D
 
 
-class DatasetLinePlotter(Plotter):
+class Dataset1DPlotter(Plotter):
     def __init__(
         self,
-        dataset: DatasetLine,
+        dataset: Dataset1D,
         mat_plot_1d: aplt.MatPlot1D = aplt.MatPlot1D(),
         visuals_1d: aplt.Visuals1D = aplt.Visuals1D(),
         include_1d: aplt.Include1D = aplt.Include1D(),
     ):
         """
-        Plots the attributes of `DatasetLine` objects using the matplotlib method `line()` and many other matplotlib
+        Plots the attributes of `Dataset1D` objects using the matplotlib method `line()` and many other matplotlib
         functions which customize the plot's appearance.
 
         The `mat_plot_1d` attribute wraps matplotlib function calls to make the figure. By default, the settings
@@ -49,10 +49,14 @@ class DatasetLinePlotter(Plotter):
         return self.visuals_1d
 
     def figures_1d(
-        self, data:bool=False, noise_map:bool=False, signal_to_noise_map:bool=False, pre_cti_data:bool=False
+        self,
+        data: bool = False,
+        noise_map: bool = False,
+        signal_to_noise_map: bool = False,
+        pre_cti_data: bool = False,
     ):
         """
-        Plots the individual attributes of the plotter's `DatasetLine` object in 1D.
+        Plots the individual attributes of the plotter's `Dataset1D` object in 1D.
 
         The API is such that every plottable attribute of the `Imaging` object is an input parameter of type bool of
         the function, which if switched to `True` means that it is plotted.
@@ -121,7 +125,7 @@ class DatasetLinePlotter(Plotter):
         auto_filename="subplot_dataset_line",
     ):
         """
-        Plots the individual attributes of the plotter's `DatasetLine` object in 1D on a subplot.
+        Plots the individual attributes of the plotter's `Dataset1D` object in 1D on a subplot.
 
         The API is such that every plottable attribute of the `Imaging` object is an input parameter of type bool of
         the function, which if switched to `True` means that it is included on the subplot.
@@ -147,7 +151,7 @@ class DatasetLinePlotter(Plotter):
 
     def subplot_dataset_line(self):
         """
-        Standard subplot of the attributes of the plotter's `DatasetLine` object.
+        Standard subplot of the attributes of the plotter's `Dataset1D` object.
         """
         self.subplot(
             data=True, noise_map=True, signal_to_noise_map=True, pre_cti_data=True

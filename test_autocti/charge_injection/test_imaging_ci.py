@@ -14,9 +14,9 @@ test_data_path = path.join(
 class TestSimulatorImagingCI:
     def test__pre_cti_data_from(self):
 
-        simulator = ac.ci.SimulatorImagingCI(normalization=30.0, pixel_scales=1.0)
+        simulator = ac.SimulatorImagingCI(normalization=30.0, pixel_scales=1.0)
 
-        layout = ac.ci.Layout2DCI(
+        layout = ac.Layout2DCI(
             shape_2d=(4, 3), region_list=[(0, 3, 0, 2), (2, 3, 2, 3)]
         )
 
@@ -36,7 +36,7 @@ class TestSimulatorImagingCI:
 
     def test__region_ci_from(self):
 
-        simulator = ac.ci.SimulatorImagingCI(
+        simulator = ac.SimulatorImagingCI(
             pixel_scales=1.0,
             normalization=100.0,
             row_slope=0.0,
@@ -44,7 +44,7 @@ class TestSimulatorImagingCI:
             ci_seed=1,
         )
 
-        layout = ac.ci.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 1, 0, 1)])
+        layout = ac.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 1, 0, 1)])
 
         region = simulator.region_ci_from(region_dimensions=(3, 3))
 
@@ -55,7 +55,7 @@ class TestSimulatorImagingCI:
             )
         ).all()
 
-        simulator = ac.ci.SimulatorImagingCI(
+        simulator = ac.SimulatorImagingCI(
             pixel_scales=1.0,
             normalization=100.0,
             row_slope=0.0,
@@ -63,7 +63,7 @@ class TestSimulatorImagingCI:
             ci_seed=1,
         )
 
-        layout = ac.ci.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 1, 0, 1)])
+        layout = ac.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 1, 0, 1)])
 
         region = simulator.region_ci_from(region_dimensions=(3, 3))
 
@@ -74,7 +74,7 @@ class TestSimulatorImagingCI:
             == np.array([[101.6, 99.4, 99.5], [101.6, 99.4, 99.5], [101.6, 99.4, 99.5]])
         ).all()
 
-        simulator = ac.ci.SimulatorImagingCI(
+        simulator = ac.SimulatorImagingCI(
             pixel_scales=1.0,
             normalization=100.0,
             row_slope=-0.01,
@@ -82,7 +82,7 @@ class TestSimulatorImagingCI:
             ci_seed=1,
         )
 
-        layout = ac.ci.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 1, 0, 1)])
+        layout = ac.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 1, 0, 1)])
 
         region = simulator.region_ci_from(region_dimensions=(3, 3))
 
@@ -93,7 +93,7 @@ class TestSimulatorImagingCI:
             == np.array([[100.0, 100.0, 100.0], [99.3, 99.3, 99.3], [98.9, 98.9, 98.9]])
         ).all()
 
-        simulator = ac.ci.SimulatorImagingCI(
+        simulator = ac.SimulatorImagingCI(
             pixel_scales=1.0,
             normalization=100.0,
             row_slope=-0.01,
@@ -101,7 +101,7 @@ class TestSimulatorImagingCI:
             ci_seed=1,
         )
 
-        layout = ac.ci.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 1, 0, 1)])
+        layout = ac.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 1, 0, 1)])
 
         region = simulator.region_ci_from(region_dimensions=(3, 3))
 
@@ -112,7 +112,7 @@ class TestSimulatorImagingCI:
             == np.array([[101.6, 99.4, 99.5], [100.9, 98.7, 98.8], [100.5, 98.3, 98.4]])
         ).all()
 
-        simulator = ac.ci.SimulatorImagingCI(
+        simulator = ac.SimulatorImagingCI(
             pixel_scales=1.0,
             normalization=100.0,
             row_slope=0.0,
@@ -120,7 +120,7 @@ class TestSimulatorImagingCI:
             ci_seed=1,
         )
 
-        layout = ac.ci.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 1, 0, 1)])
+        layout = ac.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 1, 0, 1)])
 
         region = simulator.region_ci_from(region_dimensions=(10, 10))
 
@@ -128,13 +128,13 @@ class TestSimulatorImagingCI:
 
     def test__pre_cti_data_from__compare_uniform_to_non_uniform(self):
 
-        simulator = ac.ci.SimulatorImagingCI(pixel_scales=1.0, normalization=10.0)
+        simulator = ac.SimulatorImagingCI(pixel_scales=1.0, normalization=10.0)
 
-        layout = ac.ci.Layout2DCI(shape_2d=(5, 5), region_list=[(2, 4, 0, 5)])
+        layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(2, 4, 0, 5)])
 
         pre_cti_data_0 = simulator.pre_cti_data_uniform_from(layout=layout)
 
-        simulator = ac.ci.SimulatorImagingCI(
+        simulator = ac.SimulatorImagingCI(
             pixel_scales=1.0, normalization=10.0, row_slope=0.0, column_sigma=0.0
         )
 
@@ -144,7 +144,7 @@ class TestSimulatorImagingCI:
 
     def test__pre_cti_data_from__non_uniformity_in_columns(self):
 
-        simulator = ac.ci.SimulatorImagingCI(
+        simulator = ac.SimulatorImagingCI(
             pixel_scales=1.0,
             normalization=100.0,
             row_slope=0.0,
@@ -152,7 +152,7 @@ class TestSimulatorImagingCI:
             ci_seed=1,
         )
 
-        layout = ac.ci.Layout2DCI(shape_2d=(5, 5), region_list=[(0, 3, 0, 3)])
+        layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(0, 3, 0, 3)])
 
         image = simulator.pre_cti_data_non_uniform_from(layout=layout)
 
@@ -171,7 +171,7 @@ class TestSimulatorImagingCI:
             )
         ).all()
 
-        simulator = ac.ci.SimulatorImagingCI(
+        simulator = ac.SimulatorImagingCI(
             pixel_scales=1.0,
             normalization=100.0,
             row_slope=0.0,
@@ -179,7 +179,7 @@ class TestSimulatorImagingCI:
             ci_seed=1,
         )
 
-        layout = ac.ci.Layout2DCI(
+        layout = ac.Layout2DCI(
             shape_2d=(5, 5), region_list=[(1, 4, 1, 3), (1, 4, 4, 5)]
         )
 
@@ -200,7 +200,7 @@ class TestSimulatorImagingCI:
             )
         ).all()
 
-        simulator = ac.ci.SimulatorImagingCI(
+        simulator = ac.SimulatorImagingCI(
             pixel_scales=1.0,
             normalization=100.0,
             row_slope=0.0,
@@ -209,7 +209,7 @@ class TestSimulatorImagingCI:
             ci_seed=1,
         )
 
-        layout = ac.ci.Layout2DCI(shape_2d=(5, 5), region_list=[(0, 5, 0, 5)])
+        layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(0, 5, 0, 5)])
 
         image = simulator.pre_cti_data_non_uniform_from(layout=layout)
 
@@ -220,11 +220,11 @@ class TestSimulatorImagingCI:
 
     def test__pre_cti_data_from__non_uniformity_in_rows(self):
 
-        simulator = ac.ci.SimulatorImagingCI(
+        simulator = ac.SimulatorImagingCI(
             pixel_scales=1.0, normalization=100.0, row_slope=-0.01, column_sigma=0.0
         )
 
-        layout = ac.ci.Layout2DCI(shape_2d=(5, 5), region_list=[(0, 3, 0, 3)])
+        layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(0, 3, 0, 3)])
 
         image = simulator.pre_cti_data_non_uniform_from(layout=layout)
 
@@ -243,11 +243,11 @@ class TestSimulatorImagingCI:
             )
         ).all()
 
-        simulator = ac.ci.SimulatorImagingCI(
+        simulator = ac.SimulatorImagingCI(
             pixel_scales=1.0, normalization=100.0, row_slope=-0.01, column_sigma=0.0
         )
 
-        layout = ac.ci.Layout2DCI(
+        layout = ac.Layout2DCI(
             shape_2d=(5, 5), region_list=[(1, 5, 1, 4), (0, 5, 4, 5)]
         )
 
@@ -268,7 +268,7 @@ class TestSimulatorImagingCI:
             )
         ).all()
 
-        simulator = ac.ci.SimulatorImagingCI(
+        simulator = ac.SimulatorImagingCI(
             pixel_scales=1.0,
             normalization=100.0,
             row_slope=-0.01,
@@ -276,7 +276,7 @@ class TestSimulatorImagingCI:
             ci_seed=1,
         )
 
-        layout = ac.ci.Layout2DCI(
+        layout = ac.Layout2DCI(
             shape_2d=(5, 5), region_list=[(1, 5, 1, 4), (0, 5, 4, 5)]
         )
 
@@ -297,7 +297,7 @@ class TestSimulatorImagingCI:
             )
         ).all()
 
-        simulator = ac.ci.SimulatorImagingCI(
+        simulator = ac.SimulatorImagingCI(
             pixel_scales=1.0,
             normalization=100.0,
             row_slope=-0.01,
@@ -306,7 +306,7 @@ class TestSimulatorImagingCI:
             ci_seed=1,
         )
 
-        layout = ac.ci.Layout2DCI(
+        layout = ac.Layout2DCI(
             shape_2d=(5, 5), region_list=[(0, 2, 0, 5), (3, 5, 0, 5)]
         )
 
@@ -322,13 +322,13 @@ class TestSimulatorImagingCI:
         self, parallel_clocker_2d, traps_x2, ccd
     ):
 
-        layout = ac.ci.Layout2DCI(
+        layout = ac.Layout2DCI(
             shape_2d=(5, 5),
             region_list=[(0, 1, 0, 5)],
             serial_overscan=ac.Region2D((1, 2, 1, 2)),
         )
 
-        simulator = ac.ci.SimulatorImagingCI(normalization=10.0, pixel_scales=1.0)
+        simulator = ac.SimulatorImagingCI(normalization=10.0, pixel_scales=1.0)
 
         imaging = simulator.from_layout(
             layout=layout,
@@ -346,13 +346,13 @@ class TestSimulatorImagingCI:
         self, parallel_clocker_2d, traps_x2, ccd
     ):
 
-        layout = ac.ci.Layout2DCI(
+        layout = ac.Layout2DCI(
             shape_2d=(3, 3),
             region_list=[(0, 1, 0, 3)],
             serial_overscan=ac.Region2D((1, 2, 1, 2)),
         )
 
-        simulator = ac.ci.SimulatorImagingCI(
+        simulator = ac.SimulatorImagingCI(
             pixel_scales=1.0, normalization=10.0, read_noise=1.0, noise_seed=1
         )
 
@@ -383,13 +383,13 @@ class TestSimulatorImagingCI:
         self, parallel_clocker_2d, traps_x2, ccd
     ):
 
-        layout = ac.ci.Layout2DCI(
+        layout = ac.Layout2DCI(
             shape_2d=(5, 5),
             region_list=[(0, 1, 0, 5)],
             serial_overscan=ac.Region2D((1, 2, 1, 2)),
         )
 
-        simulator = ac.ci.SimulatorImagingCI(pixel_scales=1.0, normalization=10.0)
+        simulator = ac.SimulatorImagingCI(pixel_scales=1.0, normalization=10.0)
 
         cosmic_ray_map = ac.Array2D.zeros(shape_native=(5, 5), pixel_scales=0.1).native
         cosmic_ray_map[2, 2] = 100.0
@@ -424,13 +424,13 @@ class TestSimulatorImagingCI:
 
     def test__from_pre_cti_data(self, parallel_clocker_2d, traps_x2, ccd):
 
-        layout = ac.ci.Layout2DCI(
+        layout = ac.Layout2DCI(
             shape_2d=(5, 5),
             region_list=[(0, 1, 0, 5)],
             serial_overscan=ac.Region2D((1, 2, 1, 2)),
         )
 
-        simulator = ac.ci.SimulatorImagingCI(
+        simulator = ac.SimulatorImagingCI(
             pixel_scales=1.0, normalization=1.0, read_noise=4.0, noise_seed=1
         )
 
@@ -463,13 +463,13 @@ class TestSimulatorImagingCI:
 
     def test__from_post_cti_data(self, parallel_clocker_2d, traps_x2, ccd):
 
-        layout = ac.ci.Layout2DCI(
+        layout = ac.Layout2DCI(
             shape_2d=(5, 5),
             region_list=[(0, 1, 0, 5)],
             serial_overscan=ac.Region2D((1, 2, 1, 2)),
         )
 
-        simulator = ac.ci.SimulatorImagingCI(
+        simulator = ac.SimulatorImagingCI(
             pixel_scales=1.0, normalization=1.0, read_noise=4.0, noise_seed=1
         )
 

@@ -4,13 +4,13 @@ from autocti.model.result import ResultDataset
 class ResultImagingCI(ResultDataset):
     @property
     def max_log_likelihood_full_fit(self):
-        return self.analysis.fit_full_dataset_from_instance(
+        return self.analysis.fit_full_dataset_via_instance_from(
             instance=self.instance, hyper_noise_scale=True
         )
 
     @property
     def max_log_likelihood_full_fit_no_hyper_scaling(self):
-        return self.analysis.fit_full_dataset_from_instance(
+        return self.analysis.fit_full_dataset_via_instance_from(
             instance=self.instance, hyper_noise_scale=False
         )
 

@@ -4,27 +4,25 @@ import autofit as af
 import autocti as ac
 
 from autofit.non_linear.mock.mock_search import MockSearch
-from autocti.line.model.result import ResultDatasetLine
+from autocti.line.model.result import ResultDataset1D
 
 
-class TestAnalysisDatasetLine:
+class TestAnalysisDataset1D:
     def test__make_result__result_line_is_returned(
         self, dataset_line_7, pre_cti_data_7, traps_x1, ccd, clocker_1d
     ):
         model = af.CollectionPriorModel(
             cti=af.Model(ac.CTI1D, traps=traps_x1, ccd=ccd),
-            hyper_noise=af.Model(ac.ci.HyperCINoiseCollection),
+            hyper_noise=af.Model(ac.HyperCINoiseCollection),
         )
 
-        analysis = ac.AnalysisDatasetLine(
-            dataset_line=dataset_line_7, clocker=clocker_1d
-        )
+        analysis = ac.AnalysisDataset1D(dataset=dataset_line_7, clocker=clocker_1d)
 
         search = MockSearch(name="test_search")
 
         result = search.fit(model=model, analysis=analysis)
 
-        assert isinstance(result, ResultDatasetLine)
+        assert isinstance(result, ResultDataset1D)
 
     def test__log_likelihood_via_analysis__matches_manual_fit(
         self, dataset_line_7, pre_cti_data_7, traps_x1, ccd, clocker_1d
@@ -32,12 +30,10 @@ class TestAnalysisDatasetLine:
 
         model = af.CollectionPriorModel(
             cti=af.Model(ac.CTI1D, traps=traps_x1, ccd=ccd),
-            hyper_noise=af.Model(ac.ci.HyperCINoiseCollection),
+            hyper_noise=af.Model(ac.HyperCINoiseCollection),
         )
 
-        analysis = ac.AnalysisDatasetLine(
-            dataset_line=dataset_line_7, clocker=clocker_1d
-        )
+        analysis = ac.AnalysisDataset1D(dataset=dataset_line_7, clocker=clocker_1d)
 
         instance = model.instance_from_unit_vector([])
 
@@ -49,9 +45,7 @@ class TestAnalysisDatasetLine:
             data=pre_cti_data_7.native, trap_list=traps_x1, ccd=ccd
         )
 
-        fit = ac.FitDatasetLine(
-            dataset=analysis.dataset_line, post_cti_data=post_cti_data
-        )
+        fit = ac.FitDataset1D(dataset=analysis.dataset, post_cti_data=post_cti_data)
 
         assert fit.log_likelihood == log_likelihood_via_analysis
 
@@ -61,7 +55,7 @@ class TestAnalysisDatasetLine:
 
         model = af.CollectionPriorModel(
             cti=af.Model(ac.CTI1D, traps=traps_x1, ccd=ccd),
-            hyper_noise=af.Model(ac.ci.HyperCINoiseCollection),
+            hyper_noise=af.Model(ac.HyperCINoiseCollection),
         )
 
         masked_line_ci = dataset_line_7.apply_mask(mask=mask_1d_7_unmasked)
@@ -70,15 +64,13 @@ class TestAnalysisDatasetLine:
             data=masked_line_ci.pre_cti_data, trap_list=traps_x1, ccd=ccd
         )
 
-        analysis = ac.AnalysisDatasetLine(
-            dataset_line=masked_line_ci, clocker=clocker_1d
-        )
+        analysis = ac.AnalysisDataset1D(dataset=masked_line_ci, clocker=clocker_1d)
 
         instance = model.instance_from_unit_vector([])
 
-        fit_analysis = analysis.fit_from_instance(instance=instance)
+        fit_analysis = analysis.fit_via_instance_from(instance=instance)
 
-        fit = ac.FitDatasetLine(dataset=masked_line_ci, post_cti_data=post_cti_data)
+        fit = ac.FitDataset1D(dataset=masked_line_ci, post_cti_data=post_cti_data)
 
         assert fit.dataset.data.shape == (7,)
         assert fit_analysis.log_likelihood == pytest.approx(fit.log_likelihood)

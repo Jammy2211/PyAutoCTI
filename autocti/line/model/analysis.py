@@ -7,19 +7,19 @@ from autofit.non_linear.abstract_search import Analysis
 from autofit.non_linear.paths.directory import DirectoryPaths
 from autofit.non_linear.abstract_search import NonLinearSearch
 
-from autocti.line.dataset import DatasetLine
-from autocti.line.fit import FitDatasetLine
-from autocti.line.model.visualizer import VisualizerDatasetLine
+from autocti.line.dataset import Dataset1D
+from autocti.line.fit import FitDataset1D
+from autocti.line.model.visualizer import VisualizerDataset1D
 from autocti.model.result import ResultDataset
-from autocti.line.model.result import ResultDatasetLine
+from autocti.line.model.result import ResultDataset1D
 from autocti.model.settings import SettingsCTI1D
 from autocti.clocker.one_d import Clocker1D
 
 
-class AnalysisDatasetLine(Analysis):
+class AnalysisDataset1D(Analysis):
     def __init__(
         self,
-        dataset_line: DatasetLine,
+        dataset: Dataset1D,
         clocker: Clocker1D,
         settings_cti: SettingsCTI1D = SettingsCTI1D(),
         results: List[ResultDataset] = None,
@@ -27,7 +27,7 @@ class AnalysisDatasetLine(Analysis):
 
         super().__init__()
 
-        self.dataset_line = dataset_line
+        self.dataset = dataset
         self.clocker = clocker
         self.settings_cti = settings_cti
         self.results = results
@@ -48,13 +48,13 @@ class AnalysisDatasetLine(Analysis):
 
         self.settings_cti.check_total_density_within_range(traps=instance.cti.traps)
 
-        fit = self.fit_from_instance(instance=instance)
+        fit = self.fit_via_instance_from(instance=instance)
 
         return fit.log_likelihood
 
-    def fit_from_instance_and_dataset_line(
-        self, instance: ModelInstance, dataset_line: DatasetLine
-    ) -> FitDatasetLine:
+    def fit_via_instance_and_dataset_from(
+        self, instance: ModelInstance, dataset: Dataset1D
+    ) -> FitDataset1D:
 
         if instance.cti.traps is not None:
             traps = list(instance.cti.traps)
@@ -62,32 +62,32 @@ class AnalysisDatasetLine(Analysis):
             traps = None
 
         post_cti_data = self.clocker.add_cti(
-            data=dataset_line.pre_cti_data, trap_list=traps, ccd=instance.cti.ccd
+            data=dataset.pre_cti_data, trap_list=traps, ccd=instance.cti.ccd
         )
 
-        return FitDatasetLine(dataset=dataset_line, post_cti_data=post_cti_data)
+        return FitDataset1D(dataset=dataset, post_cti_data=post_cti_data)
 
-    def fit_from_instance(self, instance: ModelInstance) -> FitDatasetLine:
+    def fit_via_instance_from(self, instance: ModelInstance) -> FitDataset1D:
 
-        return self.fit_from_instance_and_dataset_line(
-            instance=instance, dataset_line=self.dataset_line
+        return self.fit_via_instance_and_dataset_from(
+            instance=instance, dataset=self.dataset
         )
 
     def visualize(
         self, paths: DirectoryPaths, instance: ModelInstance, during_analysis: bool
     ):
 
-        fit = self.fit_from_instance(instance=instance)
+        fit = self.fit_via_instance_from(instance=instance)
 
-        visualizer = VisualizerDatasetLine(visualize_path=paths.image_path)
+        visualizer = VisualizerDataset1D(visualize_path=paths.image_path)
 
-        visualizer.visualize_dataset_line(dataset_line=self.dataset_line)
+        visualizer.visualize_dataset_line(dataset_line=self.dataset)
 
         visualizer.visualize_fit_line(fit=fit, during_analysis=during_analysis)
 
     def make_result(
         self, samples: PDFSamples, model: CollectionPriorModel, search: NonLinearSearch
-    ) -> ResultDatasetLine:
-        return ResultDatasetLine(
+    ) -> ResultDataset1D:
+        return ResultDataset1D(
             samples=samples, model=model, analysis=self, search=search
         )

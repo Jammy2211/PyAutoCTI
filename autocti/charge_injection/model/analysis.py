@@ -22,7 +22,7 @@ from autocti import exc
 class AnalysisImagingCI(Analysis):
     def __init__(
         self,
-        dataset_ci: ImagingCI,
+        dataset: ImagingCI,
         clocker: Clocker2D,
         settings_cti=SettingsCTI2D(),
         results: List[ResultDataset] = None,
@@ -30,7 +30,7 @@ class AnalysisImagingCI(Analysis):
 
         super().__init__()
 
-        self.dataset_ci = dataset_ci
+        self.dataset = dataset
         self.clocker = clocker
         self.settings_cti = settings_cti
         self.results = results
@@ -69,7 +69,7 @@ class AnalysisImagingCI(Analysis):
         )
 
         post_cti_data = self.clocker.add_cti(
-            data=self.dataset_ci.pre_cti_data,
+            data=self.dataset.pre_cti_data,
             parallel_trap_list=parallel_trap_list,
             parallel_ccd=instance.cti.parallel_ccd,
             serial_trap_list=serial_trap_list,
@@ -77,7 +77,7 @@ class AnalysisImagingCI(Analysis):
         )
 
         fit = FitImagingCI(
-            dataset=self.dataset_ci,
+            dataset=self.dataset,
             post_cti_data=post_cti_data,
             hyper_noise_scalars=hyper_noise_scalars,
         )
@@ -109,7 +109,7 @@ class AnalysisImagingCI(Analysis):
         if hyper_noise_scalars:
             return hyper_noise_scalars
 
-    def fit_from_instance_and_imaging_ci(
+    def fit_via_instance_and_dataset_from(
         self,
         instance: ModelInstance,
         imaging_ci: ImagingCI,
@@ -144,23 +144,23 @@ class AnalysisImagingCI(Analysis):
             hyper_noise_scalars=hyper_noise_scalars,
         )
 
-    def fit_from_instance(
+    def fit_via_instance_from(
         self, instance: ModelInstance, hyper_noise_scale: bool = True
     ) -> FitImagingCI:
 
-        return self.fit_from_instance_and_imaging_ci(
+        return self.fit_via_instance_and_dataset_from(
             instance=instance,
-            imaging_ci=self.dataset_ci,
+            imaging_ci=self.dataset,
             hyper_noise_scale=hyper_noise_scale,
         )
 
-    def fit_full_dataset_from_instance(
+    def fit_full_dataset_via_instance_from(
         self, instance: ModelInstance, hyper_noise_scale: bool = True
     ) -> FitImagingCI:
 
-        return self.fit_from_instance_and_imaging_ci(
+        return self.fit_via_instance_and_dataset_from(
             instance=instance,
-            imaging_ci=self.dataset_ci.imaging_full,
+            imaging_ci=self.dataset.imaging_full,
             hyper_noise_scale=hyper_noise_scale,
         )
 
@@ -168,18 +168,18 @@ class AnalysisImagingCI(Analysis):
         self, paths: DirectoryPaths, instance: ModelInstance, during_analysis: bool
     ):
 
-        fit = self.fit_from_instance(instance=instance)
+        fit = self.fit_via_instance_from(instance=instance)
 
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
 
-        visualizer.visualize_imaging_ci(imaging_ci=self.dataset_ci)
+        visualizer.visualize_imaging_ci(imaging_ci=self.dataset)
 
         try:
             visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.dataset_ci, line_region="parallel_front_edge"
+                imaging_ci=self.dataset, line_region="parallel_front_edge"
             )
             visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.dataset_ci, line_region="parallel_epers"
+                imaging_ci=self.dataset, line_region="parallel_epers"
             )
 
             visualizer.visualize_fit_ci(fit=fit, during_analysis=during_analysis)
@@ -195,12 +195,12 @@ class AnalysisImagingCI(Analysis):
             pass
 
         try:
-            visualizer.visualize_imaging_ci(imaging_ci=self.dataset_ci)
+            visualizer.visualize_imaging_ci(imaging_ci=self.dataset)
             visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.dataset_ci, line_region="serial_front_edge"
+                imaging_ci=self.dataset, line_region="serial_front_edge"
             )
             visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.dataset_ci, line_region="serial_trails"
+                imaging_ci=self.dataset, line_region="serial_trails"
             )
 
             visualizer.visualize_fit_ci(fit=fit, during_analysis=during_analysis)

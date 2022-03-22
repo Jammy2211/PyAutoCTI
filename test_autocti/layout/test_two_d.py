@@ -6,45 +6,45 @@ from autocti import exc
 def test__check_layout_dimensions__layout_has_more_rows_than_image__1_region():
 
     with pytest.raises(exc.LayoutException):
-        ac.ci.Layout2DCI(shape_2d=(2, 6), region_list=([(0, 3, 0, 1)]))
+        ac.Layout2DCI(shape_2d=(2, 6), region_list=([(0, 3, 0, 1)]))
 
     with pytest.raises(exc.LayoutException):
-        ac.ci.Layout2DCI(shape_2d=(6, 2), region_list=([(0, 1, 0, 3)]))
+        ac.Layout2DCI(shape_2d=(6, 2), region_list=([(0, 1, 0, 3)]))
 
     with pytest.raises(exc.LayoutException):
-        ac.ci.Layout2DCI(shape_2d=(2, 6), region_list=([(0, 3, 0, 1), (0, 1, 0, 3)]))
+        ac.Layout2DCI(shape_2d=(2, 6), region_list=([(0, 3, 0, 1), (0, 1, 0, 3)]))
 
     with pytest.raises(exc.LayoutException):
-        ac.ci.Layout2DCI(shape_2d=(6, 2), region_list=([(0, 3, 0, 1), (0, 1, 0, 3)]))
+        ac.Layout2DCI(shape_2d=(6, 2), region_list=([(0, 3, 0, 1), (0, 1, 0, 3)]))
 
     with pytest.raises(exc.RegionException):
-        ac.ci.Layout2DCI(shape_2d=(3, 3), region_list=([(-1, 0, 0, 0)]))
+        ac.Layout2DCI(shape_2d=(3, 3), region_list=([(-1, 0, 0, 0)]))
 
     with pytest.raises(exc.RegionException):
-        ac.ci.Layout2DCI(shape_2d=(3, 3), region_list=([(0, -1, 0, 0)]))
+        ac.Layout2DCI(shape_2d=(3, 3), region_list=([(0, -1, 0, 0)]))
 
     with pytest.raises(exc.RegionException):
-        ac.ci.Layout2DCI(shape_2d=(3, 3), region_list=([(0, 0, -1, 0)]))
+        ac.Layout2DCI(shape_2d=(3, 3), region_list=([(0, 0, -1, 0)]))
 
     with pytest.raises(exc.RegionException):
-        ac.ci.Layout2DCI(shape_2d=(3, 3), region_list=([(0, 0, 0, -1)]))
+        ac.Layout2DCI(shape_2d=(3, 3), region_list=([(0, 0, 0, -1)]))
 
 
 def test__rows_between_region_list():
 
-    layout = ac.ci.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 2, 1, 2)])
+    layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 2, 1, 2)])
 
     assert layout.pixels_between_regions == []
 
-    layout = ac.ci.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 2, 1, 2), (3, 4, 3, 4)])
+    layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 2, 1, 2), (3, 4, 3, 4)])
 
     assert layout.pixels_between_regions == [1]
 
-    layout = ac.ci.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 2, 1, 2), (4, 5, 3, 4)])
+    layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 2, 1, 2), (4, 5, 3, 4)])
 
     assert layout.pixels_between_regions == [2]
 
-    layout = ac.ci.Layout2DCI(
+    layout = ac.Layout2DCI(
         shape_2d=(10, 10), region_list=[(1, 2, 1, 2), (4, 5, 3, 4), (8, 9, 3, 4)]
     )
 
@@ -53,7 +53,7 @@ def test__rows_between_region_list():
 
 def test__serial_trails_pixels(layout_ci_7x7):
 
-    layout = ac.ci.Layout2DCI(
+    layout = ac.Layout2DCI(
         shape_2d=(10, 10),
         region_list=[(1, 2, 1, 2)],
         serial_overscan=ac.Region2D((0, 1, 0, 10)),
@@ -63,7 +63,7 @@ def test__serial_trails_pixels(layout_ci_7x7):
 
     assert layout.serial_eper_pixels == 10
 
-    layout = ac.ci.Layout2DCI(
+    layout = ac.Layout2DCI(
         shape_2d=(50, 50),
         region_list=[(1, 2, 1, 2)],
         serial_overscan=ac.Region2D((0, 1, 0, 50)),
@@ -76,19 +76,19 @@ def test__serial_trails_pixels(layout_ci_7x7):
 
 def test__parallel_eper_size_to_array_edge():
 
-    layout = ac.ci.Layout2DCI(
+    layout = ac.Layout2DCI(
         shape_2d=(5, 100), region_list=[ac.Region2D(region=(0, 3, 0, 3))]
     )
 
     assert layout.parallel_rows_to_array_edge == 2
 
-    layout = ac.ci.Layout2DCI(
+    layout = ac.Layout2DCI(
         shape_2d=(7, 100), region_list=[ac.Region2D(region=(0, 3, 0, 3))]
     )
 
     assert layout.parallel_rows_to_array_edge == 4
 
-    layout = ac.ci.Layout2DCI(
+    layout = ac.Layout2DCI(
         shape_2d=(15, 100),
         region_list=[
             ac.Region2D(region=(0, 2, 0, 3)),
@@ -99,7 +99,7 @@ def test__parallel_eper_size_to_array_edge():
 
     assert layout.parallel_rows_to_array_edge == 1
 
-    layout = ac.ci.Layout2DCI(
+    layout = ac.Layout2DCI(
         shape_2d=(20, 100),
         region_list=[
             ac.Region2D(region=(0, 2, 0, 3)),
@@ -113,7 +113,7 @@ def test__parallel_eper_size_to_array_edge():
 
 def test__with_extracted_regions__region_list_are_extracted_correctly():
 
-    layout = ac.ci.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 2, 0, 2)])
+    layout = ac.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 2, 0, 2)])
 
     layout_extracted = layout.with_extracted_regions(
         extraction_region=ac.Region2D((0, 2, 0, 2))
@@ -127,9 +127,7 @@ def test__with_extracted_regions__region_list_are_extracted_correctly():
 
     assert layout_extracted.region_list == [(0, 1, 0, 1)]
 
-    layout = ac.ci.Layout2DCI(
-        shape_2d=(10, 5), region_list=[(2, 4, 2, 4), (0, 1, 0, 1)]
-    )
+    layout = ac.Layout2DCI(shape_2d=(10, 5), region_list=[(2, 4, 2, 4), (0, 1, 0, 1)])
 
     layout_extracted = layout.with_extracted_regions(
         extraction_region=ac.Region2D((0, 3, 0, 3))
@@ -152,12 +150,10 @@ def test__with_extracted_regions__region_list_are_extracted_correctly():
 
 def test__smallest_parallel_epers_rows_to_frame_edge():
 
-    layout = ac.ci.Layout2DCI(
-        shape_2d=(10, 5), region_list=[(0, 3, 0, 3), (5, 7, 0, 3)]
-    )
+    layout = ac.Layout2DCI(shape_2d=(10, 5), region_list=[(0, 3, 0, 3), (5, 7, 0, 3)])
 
     assert layout.smallest_parallel_rows_between_ci_regions == 2
 
-    layout = ac.ci.Layout2DCI(shape_2d=(8, 5), region_list=[(0, 3, 0, 3), (5, 7, 0, 3)])
+    layout = ac.Layout2DCI(shape_2d=(8, 5), region_list=[(0, 3, 0, 3), (5, 7, 0, 3)])
 
     assert layout.smallest_parallel_rows_between_ci_regions == 1

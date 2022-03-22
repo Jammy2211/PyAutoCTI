@@ -164,7 +164,7 @@ def test__extracted_layout_from():
         shape_2d=(3, 5), region_list=[(0, 3, 1, 5)], serial_prescan=(0, 3, 0, 1)
     )
 
-    layout = ac.ci.Layout2DCI(
+    layout = ac.Layout2DCI(
         shape_2d=extract.shape_2d,
         region_list=extract.region_list,
         serial_prescan=extract.serial_prescan,
@@ -187,7 +187,7 @@ def test__extracted_layout_from():
         serial_overscan=(0, 3, 3, 4),
     )
 
-    layout = ac.ci.Layout2DCI(
+    layout = ac.Layout2DCI(
         shape_2d=extract.shape_2d,
         region_list=extract.region_list,
         serial_prescan=extract.serial_prescan,
@@ -211,7 +211,7 @@ def test__extracted_layout_from():
         serial_overscan=(0, 3, 3, 4),
     )
 
-    layout = ac.ci.Layout2DCI(
+    layout = ac.Layout2DCI(
         shape_2d=extract.shape_2d,
         region_list=extract.region_list,
         serial_prescan=extract.serial_prescan,

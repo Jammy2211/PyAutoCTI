@@ -67,9 +67,7 @@ def test__extracted_layout_from():
         shape_2d=(5, 3), region_list=[(0, 3, 0, 3)]
     )
 
-    layout = ac.ci.Layout2DCI(
-        shape_2d=extract.shape_2d, region_list=extract.region_list
-    )
+    layout = ac.Layout2DCI(shape_2d=extract.shape_2d, region_list=extract.region_list)
 
     extracted_extract = extract.extracted_layout_from(layout=layout, columns=(0, 1))
 
@@ -79,9 +77,7 @@ def test__extracted_layout_from():
         shape_2d=(5, 3), region_list=[(0, 5, 0, 3)]
     )
 
-    layout = ac.ci.Layout2DCI(
-        shape_2d=extract.shape_2d, region_list=extract.region_list
-    )
+    layout = ac.Layout2DCI(shape_2d=extract.shape_2d, region_list=extract.region_list)
 
     extracted_extract = extract.extracted_layout_from(layout=layout, columns=(1, 3))
 

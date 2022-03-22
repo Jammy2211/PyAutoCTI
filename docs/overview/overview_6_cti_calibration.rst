@@ -42,7 +42,7 @@ Note that the ``Region2D`` and ``Layout2DCI`` inputs have been updated to reflec
     total_ci_images = len(normalization_list)
 
     layout_list = [
-        ac.ci.Layout2DCI(
+        ac.Layout2DCI(
             shape_2d=shape_native,
             region_list=regions_list,
             parallel_overscan=parallel_overscan,
@@ -62,7 +62,7 @@ required to calibrate the volume filling behaviour of the CCD.
     dataset_path = path.join("dataset", "imaging_ci", dataset_label, dataset_type)
 
     imaging_ci_list = [
-        ac.ci.ImagingCI.from_fits(
+        ac.ImagingCI.from_fits(
             image_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
             noise_map_path=path.join(dataset_path, f"noise_map_{int(normalization)}.fits"),
             pre_cti_data_path=path.join(
@@ -231,7 +231,7 @@ We can also perform CTI calibration on 1D datasets.
     ]
 
     dataset_line_list = [
-        ac.DatasetLine.from_fits(
+        ac.Dataset1D.from_fits(
             data_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
             noise_map_path=path.join(dataset_path, f"noise_map_{int(normalization)}.fits"),
             pre_cti_data_path=path.join(
@@ -277,7 +277,7 @@ We again use ``dynesty`` (https://github.com/joshspeagle/dynesty) to fit the mod
 
     search = af.DynestyStatic(name="overview_modeling_1d")
 
-We next create a list of ``AnalysisDatasetLine`` objects, which each contain a ``log_likelihood_function`` that the
+We next create a list of ``AnalysisDataset1D`` objects, which each contain a ``log_likelihood_function`` that the
 non-linear search calls to fit the CIT model to the data.
 
 We again sum these analyses objects into a single analysis.
@@ -285,7 +285,7 @@ We again sum these analyses objects into a single analysis.
 .. code-block:: bash
 
     analysis_list = [
-        ac.AnalysisDatasetLine(dataset_line=dataset_line, clocker=clocker)
+        ac.AnalysisDataset1D(dataset_line=dataset_line, clocker=clocker)
         for dataset_line in dataset_line_list
     ]
 
@@ -311,7 +311,7 @@ The search returns a result object, which includes:
 
     for result in result_list:
 
-        fit_plotter = aplt.FitDatasetLinePlotter(fit=result.max_log_likelihood_fit)
+        fit_plotter = aplt.FitDataset1DPlotter(fit=result.max_log_likelihood_fit)
         fit_plotter.subplot_fit_dataset_line()
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_6/result_1d_ml.png

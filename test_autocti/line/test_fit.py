@@ -1,7 +1,7 @@
 import autocti as ac
 
 
-class TestFitDatasetLine:
+class TestFitDataset1D:
     def test__fit_quantities_same_as_calculated_individually(
         self, dataset_line_7, mask_1d_7_unmasked
     ):
@@ -14,7 +14,7 @@ class TestFitDatasetLine:
             pixel_scales=1.0,
         ).native
 
-        fit = ac.FitDatasetLine(
+        fit = ac.FitDataset1D(
             dataset=masked_dataset_line_7, post_cti_data=post_cti_data
         )
 

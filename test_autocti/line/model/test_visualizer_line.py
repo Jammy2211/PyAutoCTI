@@ -3,7 +3,7 @@ import shutil
 from os import path
 
 import pytest
-from autocti.line.model.visualizer import VisualizerDatasetLine
+from autocti.line.model.visualizer import VisualizerDataset1D
 from autoconf import conf
 
 directory = path.dirname(path.abspath(__file__))
@@ -19,7 +19,7 @@ def push_config(plot_path):
     conf.instance.push(path.join(directory, "config"), output_path=plot_path)
 
 
-class TestVisualizerDatasetLine:
+class TestVisualizerDataset1D:
     def test__visualizes_dataset_line_using_configs(
         self, dataset_line_7, plot_path, plot_patch
     ):
@@ -27,7 +27,7 @@ class TestVisualizerDatasetLine:
         if path.exists(plot_path):
             shutil.rmtree(plot_path)
 
-        visualizer = VisualizerDatasetLine(visualize_path=plot_path)
+        visualizer = VisualizerDataset1D(visualize_path=plot_path)
 
         visualizer.visualize_dataset_line(dataset_line=dataset_line_7)
 
@@ -46,7 +46,7 @@ class TestVisualizerDatasetLine:
         if os.path.exists(plot_path):
             shutil.rmtree(plot_path)
 
-        visualizer = VisualizerDatasetLine(visualize_path=plot_path)
+        visualizer = VisualizerDataset1D(visualize_path=plot_path)
 
         visualizer.visualize_fit_line(fit=fit_line_7, during_analysis=True)
 

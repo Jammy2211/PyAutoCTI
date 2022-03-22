@@ -34,7 +34,7 @@ Note that the ``Region2D`` and ``Layout2DCI`` inputs have been updated to reflec
 
     regions_list = [(0, 25, serial_prescan[3], serial_overscan[2])]
 
-    layout = ac.ci.Layout2DCI(
+    layout = ac.Layout2DCI(
         shape_2d=shape_native,
         region_list=regions_list,
         parallel_overscan=parallel_overscan,
@@ -53,7 +53,7 @@ We load a charge injection image with injections of 100e-.
     dataset_type = "calibrate"
     dataset_path = path.join("dataset", "imaging_ci", dataset_label, dataset_type)
 
-    imaging_ci = ac.ci.ImagingCI.from_fits(
+    imaging_ci = ac.ImagingCI.from_fits(
         image_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
         noise_map_path=path.join(dataset_path, f"noise_map_{int(normalization)}.fits"),
         pre_cti_data_path=path.join(
@@ -116,7 +116,7 @@ the dataset to the ``FitImagingCI`` object.
         parallel_ccd=parallel_ccd,
     )
 
-    fit = ac.ci.FitImagingCI(dataset=imaging_ci, post_cti_data=post_cti_image)
+    fit = ac.FitImagingCI(dataset=imaging_ci, post_cti_data=post_cti_image)
 
 From here on, we refer to the ``post_cti_image`` as our ``model_image`` -- it is the image of our CTI model which we are
 comparing to the data to determine whether the CTI model is a good fit.
@@ -196,7 +196,7 @@ data!) to reperform the fit above.
         parallel_ccd=parallel_ccd,
     )
 
-    fit = ac.ci.FitImagingCI(dataset=imaging_ci, post_cti_data=post_cti_image)
+    fit = ac.FitImagingCI(dataset=imaging_ci, post_cti_data=post_cti_image)
 
 The plot of the residuals now shows no significant signal, indicating a good fit.
 
@@ -268,7 +268,7 @@ map are masked and not included in the fit.
 
 .. code-block:: bash
 
-    fit = ac.ci.FitImagingCI(dataset=imaging_ci, post_cti_data=post_cti_image)
+    fit = ac.FitImagingCI(dataset=imaging_ci, post_cti_data=post_cti_image)
 
     fit_plotter = aplt.FitImagingCIPlotter(fit=fit)
     fit_plotter.figures_2d(
@@ -318,7 +318,7 @@ Below we load a 1D dataset which you can imagine corresponds to a single column 
             overscan=overscan,
         )
 
-    dataset_line = ac.DatasetLine.from_fits(
+    dataset_line = ac.Dataset1D.from_fits(
         data_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
         noise_map_path=path.join(dataset_path, f"noise_map_{int(normalization)}.fits"),
         pre_cti_data_path=path.join(
@@ -333,7 +333,7 @@ injection data.
 
 .. code-block:: bash
 
-    dataset_line_plotter = aplt.DatasetLinePlotter(dataset=dataset_line)
+    dataset_line_plotter = aplt.Dataset1DPlotter(dataset=dataset_line)
     dataset_line_plotter.subplot_dataset_line()
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_5/data_1d.png
@@ -359,7 +359,7 @@ We can mask the data to remove the FPR just like we did above.
         settings=ac.SettingsMask1D(fpr_pixels=(0, 25)),
     )
 
-To fit this 1D data we create a 1D clockcer, use this to produce a 1D model image and fit it using a ``FitDatasetLine``
+To fit this 1D data we create a 1D clockcer, use this to produce a 1D model image and fit it using a ``FitDataset1D``
 object.
 
 Note how visualizing the fit for inspection is a lot easier in 1D than 2D.
@@ -379,13 +379,13 @@ Note how visualizing the fit for inspection is a lot easier in 1D than 2D.
         ccd=parallel_ccd,
     )
 
-    fit = ac.FitDatasetLine(dataset=dataset_line, post_cti_data=post_cti_data)
+    fit = ac.FitDataset1D(dataset=dataset_line, post_cti_data=post_cti_data)
 
 Plotting the fit shows this model gives a good fit, with minimal residuals.
 
 .. code-block:: bash
 
-    fit_plotter = aplt.FitDatasetLinePlotter(fit=fit)
+    fit_plotter = aplt.FitDataset1DPlotter(fit=fit)
     fit_plotter.figures_1d(
         residual_map=True, normalized_residual_map=True, chi_squared_map=True
     )

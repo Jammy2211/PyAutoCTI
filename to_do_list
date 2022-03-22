@@ -1,31 +1,21 @@
-- CTI Roadmap - DOCUMENT OF WHAT WE'VE DONE, WHATS NEXT, ETC. Time with new version of arctic.
-- Partricia: Non uniform electron density... new feature for FPR of charge injection of a new effect. Show
-  Richard 'spatial distribution of electrons' slide.
 
-Features:
+__Validation & Verification__
 
-    - Mask1D, Line in AutoArray. CTI specific structures using these, for example with overscan / prescans.
-    - Implement charge injection line data structure, simulators, example model fits.
-    - Implement pipelines + runners for this.
-    - Extend to fitting of CI images.
-    - Redefine conventions so roe_corner=(0,0) is the unrotated case, this may require a flipud to go into
-    EuclidFrame methods (unclear why they are flipped). This is cause arctic clocks towards 0, 0.
-    - Make the input of scans parallel size, overscan etc and derive regions.
+ - Discuss plan with Richard.
+ - Simple simulation of science data (flat?) using correction/
 
-Euclid:
 
-    - Validation of correction.
-    - CTI Issue to do with where results are stored.
-    - Follow up DCQT Data quality flags telecom for PE.
+__DataModel__
 
-VIS Meeting summmay:
+ - Finalize that outputs of calibration run suit Kevin.
+ - Set up XML interface with Kevin.
 
-- Cold calibration campaign, should use charge injection images to develop a model for the charge injection
-  (non uniformity, normalizaton, etc.)
 
- - Also use to develop trap pumping model, can these images help tell us if we can calibrate CTI using these images?
+__Flat Fields__
 
- - Need to write model descriptions on RedMine for Reiko (CTI, charge inj, trap pumping). This is a neat way to start
-   Preparing CI image generation in SIM pipeline. Do we need trap pumping data?
+ - Implement closely following CI.
 
- - Where do we store the CTI calibration data-base? How big wil it be? Will it be distributed?
+
+__Cosmic Ray Flagging__
+
+ - Extend test suite for more realistic data (Non uniform CI, trails).
