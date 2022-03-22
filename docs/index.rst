@@ -99,3 +99,10 @@ charge (e.g.a flow of electrons)!
    installation/pip
    installation/source
    installation/troubleshooting
+
+.. toctree::
+   :caption: Advanced:
+   :maxdepth: 1
+   :hidden:
+
+   advanced/database
