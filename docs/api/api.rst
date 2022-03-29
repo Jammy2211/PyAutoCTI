@@ -31,6 +31,9 @@ Dataset 1D
    Dataset1D
    SettingsDataset1D
    SimulatorDataset1D
+   Layout1D
+   FitDataset1D
+   AnalysisDataset1D
 
 ------------------------
 Charge Injection Imaging
@@ -44,185 +47,72 @@ Charge Injection Imaging
    ImagingCI
    SettingsImagingCI
    SimulatorImagingCI
+   Layout2DCI
+   FitImagingCI
+   AnalysisImagingCI
 
--------
-Fitting
--------
-
-.. autosummary::
-   :toctree: generated/
-
-   FitImaging
-   FitInterferometer
-
----------------------
-Point Source Modeling
----------------------
-
-.. autosummary::
-   :toctree: generated/
-
-   PointDataset
-   PointDict
-   FitPositionsImage
-   FitFluxes
-   PointSolver
-
---------------
-Light Profiles
---------------
-
-.. currentmodule:: autogalaxy.profiles.light_profiles
-
-.. autosummary::
-   :toctree: generated/
-
-   EllGaussian
-   SphGaussian
-   EllSersic
-   SphSersic
-   EllExponential
-   SphExponential
-   EllDevVaucouleurs
-   SphDevVaucouleurs
-   EllSersicCore
-   SphSersicCore
-   EllExponentialCore
-   SphExponentialCore
-   EllChameleon
-   SphChameleon
-   EllEff
-   SphEff
-
--------------
-Mass Profiles
--------------
-
-.. currentmodule:: autogalaxy.profiles.mass_profiles
-
-**Total Mass Profiles:**
-
-.. autosummary::
-   :toctree: generated/
-
-    PointMass
-    EllPowerLawCored
-    SphPowerLawCored
-    EllPowerLawBroken
-    SphPowerLawBroken
-    EllIsothermalCored
-    SphIsothermalCored
-    EllPowerLaw
-    SphPowerLaw
-    EllIsothermal
-    SphIsothermal
-
-**Dark Mass Profiles:**
-
-.. autosummary::
-   :toctree: generated/
-
-    EllNFWGeneralized
-    SphNFWGeneralized
-    SphNFWTruncated
-    SphNFWTruncatedMCRDuffy
-    SphNFWTruncatedMCRLudlow
-    SphNFWTruncatedMCRScatterLudlow
-    EllNFW
-    SphNFW
-    SphNFWMCRDuffy
-    SphNFWMCRLudlow
-    EllNFWMCRScatterLudlow
-    SphNFWMCRScatterLudlow
-    EllNFWMCRLudlow
-    EllNFWGeneralizedMCRLudlow
-
-**Stellar Mass Profiles:**
-
-.. autosummary::
-   :toctree: generated/
-
-    EllGaussian
-    EllSersic
-    SphSersic
-    EllExponential
-    SphExponential
-    EllDevVaucouleurs
-    SphDevVaucouleurs
-    EllSersicRadialGradient
-    SphSersicRadialGradient
-    EllChameleon
-    SphChameleon
-
-**Mass-sheets:**
-
-.. autosummary::
-   :toctree: generated/
-
-   ExternalShear
-   MassSheet
-
--------
-Lensing
--------
+-----
+Traps
+-----
 
 .. currentmodule:: autocti
 
 .. autosummary::
    :toctree: generated/
 
-   Galaxy
-   Plane
-   Tracer
-   SettingsLens
+    TrapInstantCapture
+    TrapSlowCapture
+    TrapInstantCaptureContinuum
 
-----------
-Inversions
-----------
+---
+CCD
+---
 
-.. currentmodule:: autoarray.inversion.pixelizations
+    CCDPhase
 
-**Pixelizations:**
+--------------------------
+Read Out Electronics (ROE)
+--------------------------
 
-.. autosummary::
-   :toctree: generated/
+    ROE
+    ROEChargeInjection
 
-   Rectangular
-   DelaunayMagnification
-   DelaunayBrightnessImage
-   VoronoiMagnification
-   VoronoiBrightnessImage
-   VoronoiNNMagnification
-   VoronoiNNBrightnessImage
+--------
+Clocking
+--------
 
-.. currentmodule:: autoarray.inversion.regularization
+    Clocker1D
+    Clocker2D
+    SimulatorCosmicRayMap
 
-**Regularizations:**
-
-.. autosummary::
-   :toctree: generated/
-
-   Constant
-   ConstantSplit
-   AdaptiveBrightness
-   AdaptiveBrightnessSplit
+------------
+CTI Modeling
+------------
 
 .. currentmodule:: autocti
 
-**LEqs:**
+**Setup:**
 
 .. autosummary::
    :toctree: generated/
 
-   Mapper
+    CTI1D
+    CTI2D
+    SettingsCTI1D
+    SettingsCTI2D
 
-**Settings:**
+**Searches:**
+
+.. currentmodule:: autofit
 
 .. autosummary::
    :toctree: generated/
 
-   SettingsPixelization
-   SettingsInversion
+   DynestyStatic
+   DynestyDynamic
+   Emcee
+   PySwarmsLocal
+   PySwarmsGlobal
 
 -----
 Plots
@@ -236,26 +126,12 @@ Plots
    :toctree: generated/
 
     Array2DPlotter
-    Grid2DPlotter
-    MapperPlotter
+    Array1DPlotter
     YX1DPlotter
-    InversionPlotter
-    ImagingPlotter
-    InterferometerPlotter
-    LightProfilePlotter
-    LightProfilePDFPlotter
-    MassProfilePlotter
-    MassProfilePDFPlotter
-    GalaxyPlotter
-    FitImagingPlotter
-    FitInterferometerPlotter
-    PlanePlotter
-    HyperPlotter
-    FitImagingPlotter
-    FitInterferometerPlotter
-    TracerPlotter
-    MultiFigurePlotter
-    MultiYX1DPlotter
+    Dataset1DPlotter
+    FitDataset1DPlotter
+    ImagingCIPlotter
+    FitImagingCIPlotter
 
 **Search Plotters:**
 
@@ -285,9 +161,9 @@ Plots
 .. autosummary::
    :toctree: generated/
 
+    Axis
     Units
     Figure
-    Axis
     Cmap
     Colorbar
     ColorbarTickParams
@@ -327,33 +203,3 @@ Plots
     ParallelOverscanPlot
     SerialPrescanPlot
     SerialOverscanPlot
-
--------------
-Lens Modeling
--------------
-
-.. currentmodule:: autocti
-
-**Setup:**
-
-.. autosummary::
-   :toctree: generated/
-
-    AnalysisImaging
-    AnalysisInterferometer
-    AnalysisPoint
-    SetupHyper
-    Preloads
-
-**Searches:**
-
-.. currentmodule:: autofit
-
-.. autosummary::
-   :toctree: generated/
-
-   DynestyStatic
-   DynestyDynamic
-   Emcee
-   PySwarmsLocal
-   PySwarmsGlobal

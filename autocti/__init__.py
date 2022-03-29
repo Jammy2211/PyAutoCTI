@@ -13,7 +13,6 @@ from arcticpy.src.roe import ROE
 from arcticpy.src.roe import ROEChargeInjection
 from arcticpy.src.ccd import CCDPhase
 from arcticpy.src.ccd import CCD
-from arcticpy.src.traps import TrapInstantCapture
 from arcticpy.src.traps import TrapSlowCapture
 from arcticpy.src.traps import TrapInstantCaptureContinuum
 
@@ -46,7 +45,6 @@ from .dataset_1d.dataset_1d.dataset_1d import Dataset1D
 from .dataset_1d.dataset_1d.simulator import SimulatorDataset1D
 from .dataset_1d.fit import FitDataset1D
 from .dataset_1d.model.analysis import AnalysisDataset1D
-from . import charge_injection as ci
 from .charge_injection.model.analysis import AnalysisImagingCI
 from .model.model_util import CTI1D
 from .model.model_util import CTI2D
@@ -54,6 +52,7 @@ from .model.settings import SettingsCTI1D
 from .model.settings import SettingsCTI2D
 from .clocker.one_d import Clocker1D
 from .clocker.two_d import Clocker2D
+from .util.traps import TrapInstantCapture
 from . import util
 from . import plot
 

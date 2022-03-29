@@ -16,7 +16,7 @@ class FitDataset1D(aa.FitDataset):
             The `pre_cti_data` with cti added to it via the clocker and a CTI model.
         """
 
-        super().__init__(dataset=dataset)
+        super().__init__(dataset=dataset, use_mask_in_fit=True)
 
         self.post_cti_data = post_cti_data
 

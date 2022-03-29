@@ -104,6 +104,9 @@ The number of free parameters and therefore the dimensionality of non-linear par
 .. code-block:: bash
 
     parallel_trap_0 = af.Model(ac.TrapInstantCapture)
+    parallel_trap_0.density = af.UniformPrior(lower_limit=0.0, upper_limit=20.0)
+    parallel_trap_0.release_timescale = af.UniformPrior(lower_limit=0.0, upper_limit=20.0)
+
     parallel_traps = [parallel_trap_0]
 
     parallel_ccd = af.Model(ac.CCDPhase)
@@ -141,7 +144,7 @@ Analysis
 .. code-block:: bash
 
     analysis_list = [
-        ac.AnalysisImagingCI(dataset_ci=imaging_ci, clocker=clocker)
+        ac.AnalysisImagingCI(dataset_ci=imaging_ci, clocker=clocker_2d)
         for imaging_ci in imaging_ci_list
     ]
 
@@ -179,30 +182,34 @@ Checkout the folder ``autocti_workspace/output/imaging_ci/parallel[x2]`` for liv
 Result
 ------
 
-The search returns a result object, which includes:
+The search returns a result object, which includes the charge injection fit corresponding to the maximum log
+likelihood solution in parameter space for every charge injection dataset.
 
- - The charge injection fit corresponding to the maximum log likelihood solution in parameter space.
+Below, we plot a subplot of the fit for the first dataset which shows a good fit has been inferred.
 
 .. code-block:: bash
 
-    for result in result_list:
+    fit_plotter = aplt.FitImagingCIPlotter(fit=result_list[0].max_log_likelihood_fit)
+    fit_plotter.subplot_fit_ci()
 
-        fit_plotter = aplt.FitImagingCIPlotter(fit=result.max_log_likelihood_fit)
-        fit_plotter.subplot_fit_ci()
-
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_6/result_ml.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_6/fit_2d_100.png
   :width: 600
   :alt: Alternative text
 
-It also contains the maximum likelihood CTI model, allows us to print the best-fit values of the parameters.
+It also contains the maximum likelihood CTI model, which allows us to print the maximum likelihood values of the
+inferred CTI model parameters.
+
+Note how this object uses the same API as the ``Collection`` and ``Model`` we composed above (e.g. the model component
+above was named ``parallel_traps``, which is used below).
 
 .. code-block:: bash
 
-    max_log_likelihood_cti_model = result_list[0].max_log_likelihood_instance.cti
+    cti_model = result_list[0].max_log_likelihood_instance.cti
 
-    print(max_log_likelihood_cti_model.parallel_traps[0].density)
-    print(max_log_likelihood_cti_model.parallel_traps[0].release_timescale)
-    print(max_log_likelihood_cti_model.parallel_ccd.well_fill_power)
+    print(cti_model.parallel_traps[0].density)
+    print(cti_model.parallel_traps[0].release_timescale)
+    print(cti_model.parallel_ccd.well_fill_power)
+
 
 Calibration in 1D
 -----------------
@@ -243,12 +250,12 @@ We can also perform CTI calibration on 1D datasets.
         for layout, normalization in zip(layout_list, normalization_list)
     ]
 
-    clocker = ac.Clocker1D(express=2)
+    clocker_1d = ac.Clocker1D(express=2)
 
 
-We define the ``Clocker`` which models the CCD read-out, including CTI.
+We define the ``Clocker1D``, which models the CCD read-out, including CTI.
 
-For parallel clocking, we use 'charge injection mode' which transfers the charge of every pixel over the full CCD.
+For parallel clocking, we use 'charge injection mode' read-out electronics object. Which transfers the charge of every pixel over the full CCD.
 
 .. code-block:: bash
 
@@ -259,6 +266,9 @@ We again compose a CTI model that we fit to the data using autofit ``Model`` obj
 .. code-block:: bash
 
     trap_0 = af.Model(ac.TrapInstantCapture)
+    trap_0.density = af.UniformPrior(lower_limit=0.0, upper_limit=20.0)
+    trap_0.release_timescale = af.UniformPrior(lower_limit=0.0, upper_limit=50.0)
+
     traps = [trap_0]
 
     ccd = af.Model(ac.CCDPhase)
@@ -285,7 +295,7 @@ We again sum these analyses objects into a single analysis.
 .. code-block:: bash
 
     analysis_list = [
-        ac.AnalysisDataset1D(dataset_1d=dataset_1d, clocker=clocker)
+        ac.AnalysisDataset1D(dataset_1d=dataset_1d, clocker=clocker_1d)
         for dataset_1d in dataset_1d_list
     ]
 
@@ -300,21 +310,21 @@ search to find which models fit the data with the highest likelihood.
 
     result_list = search.fit(model=model, analysis=analysis)
 
-The search returns a result object, which includes:
-
- - The fit corresponding to the maximum log likelihood solution in parameter space.
+The search returns a result object, which again allows us to print the maximum likelihood CTI model and plot the
+maximum likelihood fit.
 
 .. code-block:: bash
 
-    print(result_list[0].max_log_likelihood_instance.cti.traps[0].density)
-    print(result_list[0].max_log_likelihood_instance.cti.ccd.well_fill_power)
+    cti_model = result_list[0].max_log_likelihood_instance.cti
 
-    for result in result_list:
+    print(cti_model.parallel_traps[0].density)
+    print(cti_model.parallel_traps[0].release_timescale)
+    print(cti_model.parallel_ccd.well_fill_power)
 
-        fit_plotter = aplt.FitDataset1DPlotter(fit=result.max_log_likelihood_fit)
-        fit_plotter.subplot_fit_dataset_1d()
+    fit_plotter = aplt.FitDataset1DPlotter(fit=result.max_log_likelihood_fit)
+    fit_plotter.subplot_fit_dataset_1d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_6/result_1d_ml.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_6/fit_1d_100.png
   :width: 600
   :alt: Alternative text
 

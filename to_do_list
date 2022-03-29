@@ -1,3 +1,18 @@
+__TimeEvolution Mock Data Product__
+
+ - Refresh brain on how this works with DataModel.
+ - Write a mock data product (e.g. .json files?) using this format.
+ - Write VIS_CTI program of function which interpolates CTI model.
+
+
+__Time Evolution CTI__
+
+- Write simple example, simulate and fit 10 CI datasets with linear time evolution, recover time evolution.
+- Extend example based on Richard's HST experience.
+- Scope out implementation in Euclid framework.
+
+- Extend to graphical model for PyAutoFit paper.
+
 
 __Validation & Verification__
 

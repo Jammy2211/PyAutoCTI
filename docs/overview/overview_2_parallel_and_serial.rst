@@ -72,7 +72,7 @@ with functionality used by **PyAutoCTI** which is expanded upon elsewhere in the
 
     import autocti as ac
 
-    pre_cti_image_2d = ac.Array2D.manual_native(
+    pre_cti_data_2d = ac.Array2D.manual_native(
         array=[
             [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             [0.0, 10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0],
@@ -94,10 +94,10 @@ with functionality used by **PyAutoCTI** which is expanded upon elsewhere in the
 
     import autocti.plot as aplt
 
-    array_2d_plotter = aplt.Array2DPlotter(array=pre_cti_image_2d)
+    array_2d_plotter = aplt.Array2DPlotter(array=pre_cti_data_2d)
     array_2d_plotter.figure_2d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_2/pre_cti_image_2d.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_2/pre_cti_data_2d.png
   :width: 600
   :alt: Alternative text
 
@@ -130,19 +130,19 @@ CTI in the parallel clocking direction.
 We can now add parallel CTI to our 2D data by passing it through the 2D clocker.
 
 For our 2d ndarray which has shape (10,8) parallel clocking goes upwards towards entries in the
-row pre_cti_image_2d[0, :]. CTI trails should therefore appear at the bottom of the ``pre_cti_image_2d`` after each
+row pre_cti_data_2d[0, :]. CTI trails should therefore appear at the bottom of the ``pre_cti_data_2d`` after each
 block of 10 electrons.
 
 .. code-block:: bash
 
-    post_cti_image_2d = clocker_2d.add_cti(
-        data=pre_cti_image_2d, parallel_trap_list=[parallel_trap], parallel_ccd=parallel_ccd
+    post_cti_data_2d = clocker_2d.add_cti(
+        data=pre_cti_data_2d, parallel_trap_list=[parallel_trap], parallel_ccd=parallel_ccd
     )
 
-    array_2d_plotter = aplt.Array2DPlotter(array=post_cti_image_2d)
+    array_2d_plotter = aplt.Array2DPlotter(array=post_cti_data_2d)
     array_2d_plotter.figure_2d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_2/post_cti_image_2d_parallel.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_2/post_cti_data_2d_parallel.png
   :width: 600
   :alt: Alternative text
 
@@ -170,21 +170,21 @@ clocking and CTI we also define a unique ``CCDPhase``.
 We can now add serial CTI to our 2D data by passing it through the 2D clocker.
 
 For our 2d ndarray which has shape (10,8) serial clocking goes left towards entries in the column
-pre_cti_image_2d[:, 0]. CTI trails should therefore appear at the right of the ``pre_cti_image_2d`` after each
+pre_cti_data_2d[:, 0]. CTI trails should therefore appear at the right of the ``pre_cti_data_2d`` after each
 block of 10 electrons.
 
 .. code-block:: bash
 
-    post_cti_image_2d = clocker_2d.add_cti(
-        data=pre_cti_image_2d,
+    post_cti_data_2d = clocker_2d.add_cti(
+        data=pre_cti_data_2d,
         serial_trap_list=[serial_trap_0, serial_trap_1],
         serial_ccd=serial_ccd,
     )
 
-    array_2d_plotter = aplt.Array2DPlotter(array=post_cti_image_2d)
+    array_2d_plotter = aplt.Array2DPlotter(array=post_cti_data_2d)
     array_2d_plotter.figure_2d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_2/post_cti_image_2d_serial.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_2/post_cti_data_2d_serial.png
   :width: 600
   :alt: Alternative text
 
@@ -201,18 +201,18 @@ parallel CTI trails then trailed during serial clocking.
 
 .. code-block:: bash
 
-    post_cti_image_2d = clocker_2d.add_cti(
-        data=pre_cti_image_2d,
+    post_cti_data_2d = clocker_2d.add_cti(
+        data=pre_cti_data_2d,
         parallel_trap_list=[parallel_trap],
         parallel_ccd=parallel_ccd,
         serial_trap_list=[serial_trap_0, serial_trap_1],
         serial_ccd=serial_ccd,
     )
 
-    array_2d_plotter = aplt.Array2DPlotter(array=post_cti_image_2d)
+    array_2d_plotter = aplt.Array2DPlotter(array=post_cti_data_2d)
     array_2d_plotter.figure_2d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_2/post_cti_image_2d_parallel_serial.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_2/post_cti_data_2d_parallel_serial.png
   :width: 600
   :alt: Alternative text
 
@@ -224,7 +224,7 @@ Correcting CTI in 2D is as easy as it was in 1D, by simply calling the clockers 
 .. code-block:: bash
 
     corrected_cti_image_2d = clocker_2d.remove_cti(
-        data=post_cti_image_2d,
+        data=post_cti_data_2d,
         parallel_trap_list=[parallel_trap],
         parallel_ccd=parallel_ccd,
         serial_trap_list=[serial_trap_0, serial_trap_1],
@@ -234,7 +234,7 @@ Correcting CTI in 2D is as easy as it was in 1D, by simply calling the clockers 
     array_2d_plotter = aplt.Array2DPlotter(array=corrected_cti_image_2d)
     array_2d_plotter.figure_2d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_2/post_cti_image_2d_corrected.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_2/post_cti_data_2d_corrected.png
   :width: 600
   :alt: Alternative text
 
