@@ -191,7 +191,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         """
         return normalization * (np.arange(1, size + 1)) ** row_slope
 
-    def from_layout(
+    def via_layout_from(
         self,
         layout: Layout2DCI,
         clocker: Clocker2D,
@@ -229,7 +229,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         else:
             pre_cti_data = self.pre_cti_data_uniform_from(layout=layout)
 
-        return self.from_pre_cti_data(
+        return self.via_pre_cti_data_from(
             pre_cti_data=pre_cti_data.native,
             layout=layout,
             clocker=clocker,
@@ -241,7 +241,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
             name=name,
         )
 
-    def from_pre_cti_data(
+    def via_pre_cti_data_from(
         self,
         pre_cti_data: aa.Array2D,
         layout: Layout2DCI,
@@ -270,7 +270,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         if cosmic_ray_map is not None:
             pre_cti_data -= cosmic_ray_map.native
 
-        return self.from_post_cti_data(
+        return self.via_post_cti_data_from(
             post_cti_data=post_cti_data,
             pre_cti_data=pre_cti_data,
             layout=layout,
@@ -278,7 +278,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
             name=name,
         )
 
-    def from_post_cti_data(
+    def via_post_cti_data_from(
         self,
         post_cti_data: aa.Array2D,
         pre_cti_data: aa.Array2D,

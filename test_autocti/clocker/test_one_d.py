@@ -2,7 +2,7 @@ import os
 
 import pytest
 import numpy as np
-from arcticpy.src import cti
+from arcticpy.src import cti as arctic
 import autocti as ac
 from autocti import exc
 
@@ -40,7 +40,7 @@ def test__data_mapped_to_2d_and_then_1d():
     ccd = ac.CCD(phases=[ccd_phase], fraction_of_traps_per_phase=[1.0])
     traps = [ac.TrapInstantCapture(10.0, -1.0 / np.log(0.5))]
 
-    image_via_arctic = cti.add_cti(
+    image_via_arctic = arctic.add_cti(
         image=arr_2d,
         parallel_traps=traps,
         parallel_ccd=ccd,
@@ -49,14 +49,14 @@ def test__data_mapped_to_2d_and_then_1d():
         parallel_offset=3,
     )
 
+    cti = ac.CTI1D(trap_list=traps, ccd=ccd_phase)
+
     clocker_1d = ac.Clocker1D(express=3, roe=roe)
 
-    image_via_clocker = clocker_1d.add_cti(data=arr_1d, trap_list=traps, ccd=ccd_phase)
+    image_via_clocker = clocker_1d.add_cti(data=arr_1d, cti=cti)
 
     assert image_via_arctic.flatten() == pytest.approx(image_via_clocker, 1.0e-4)
 
-    image_corrected = clocker_1d.remove_cti(
-        data=image_via_clocker, trap_list=traps, ccd=ccd_phase
-    )
+    image_corrected = clocker_1d.remove_cti(data=image_via_clocker, cti=cti)
 
     assert (image_corrected[:] > image_via_clocker[:]).all()

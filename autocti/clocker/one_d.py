@@ -1,13 +1,10 @@
-from typing import List, Optional
+from arcticpy.src import cti as arctic
+from arcticpy.src.roe import ROE
 
 import autoarray as aa
 
 from autocti.clocker.abstract import AbstractClocker
-
-from arcticpy.src import cti
-from arcticpy.src.ccd import CCDPhase
-from arcticpy.src.roe import ROE
-from arcticpy.src.traps import AbstractTrap
+from autocti.model.model_util import CTI1D
 
 
 class Clocker1D(AbstractClocker):
@@ -54,12 +51,16 @@ class Clocker1D(AbstractClocker):
         self.window_start = window_start
         self.window_stop = window_stop
 
-    def add_cti(
-        self,
-        data: aa.Array1D,
-        ccd: Optional[CCDPhase] = None,
-        trap_list: Optional[List[AbstractTrap]] = None,
-    ) -> aa.Array1D:
+    def traps_ccd_from(self, cti: CTI1D):
+
+        if cti.trap_list is not None:
+            trap_list = list(cti.trap_list)
+        else:
+            trap_list = None
+
+        return trap_list, cti.ccd
+
+    def add_cti(self, data: aa.Array1D, cti: CTI1D) -> aa.Array1D:
         """
         Add CTI to a 1D dataset by passing it from the c++ arctic clocking algorithm.
 
@@ -71,12 +72,13 @@ class Clocker1D(AbstractClocker):
         ----------
         data
             The 1D data that is clocked via arctic and has CTI added to it.
-        ccd
-            The ccd phase settings describing the volume-filling behaviour of the CCD which characterises the capture
-            and release of electrons and therefore CTI.
-        trap_list
-            A list of the trap species on the CCD which capture and release electrons during clock to as to add CTI.
+        cti
+            An object which represents the CTI properties of the clocking, including the trap species which capture
+            and release electrons and the volume-filling behaviour of the CCD.
         """
+
+        trap_list, ccd = self.traps_ccd_from(cti=cti)
+
         self.check_traps(trap_list_0=trap_list)
         self.check_ccd(ccd_list=[ccd])
 
@@ -88,7 +90,7 @@ class Clocker1D(AbstractClocker):
 
         ccd = self.ccd_from(ccd_phase=ccd)
 
-        image_post_cti = cti.add_cti(
+        image_post_cti = arctic.add_cti(
             image=image_pre_cti_2d,
             parallel_ccd=ccd,
             parallel_roe=self.roe,
@@ -104,12 +106,7 @@ class Clocker1D(AbstractClocker):
             array=image_post_cti.flatten(), pixel_scales=data.pixel_scales
         )
 
-    def remove_cti(
-        self,
-        data: aa.Array1D,
-        ccd: Optional[CCDPhase] = None,
-        trap_list: Optional[List[AbstractTrap]] = None,
-    ) -> aa.Array1D:
+    def remove_cti(self, data: aa.Array1D, cti: CTI1D) -> aa.Array1D:
         """
         Add CTI to a 1D dataset by passing it from the c++ arctic clocking algorithm.
 
@@ -121,12 +118,13 @@ class Clocker1D(AbstractClocker):
         ----------
         data
             The 1D data that is clocked via arctic and has CTI removeed to it.
-        ccd
-            The ccd phase settings describing the volume-filling behaviour of the CCD which characterises the capture
-            and release of electrons and therefore CTI.
-        trap_list
-            A list of the trap species on the CCD which capture and release electrons during clock to as to remove CTI.
+        cti
+            An object which represents the CTI properties of the clocking, including the trap species which capture
+            and release electrons and the volume-filling behaviour of the CCD.
         """
+
+        trap_list, ccd = self.traps_ccd_from(cti=cti)
+
         self.check_traps(trap_list_0=trap_list)
         self.check_ccd(ccd_list=[ccd])
 
@@ -138,7 +136,7 @@ class Clocker1D(AbstractClocker):
 
         ccd = self.ccd_from(ccd_phase=ccd)
 
-        image_post_cti = cti.remove_cti(
+        image_post_cti = arctic.remove_cti(
             image=image_pre_cti_2d,
             n_iterations=self.iterations,
             parallel_ccd=ccd,

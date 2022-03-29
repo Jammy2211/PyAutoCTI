@@ -9,7 +9,7 @@ from autoconf.dictable import Dictable
 class CTI1D(Dictable):
     def __init__(
         self,
-        traps: Optional[List[traps.TrapInstantCapture]] = None,
+        trap_list: Optional[List[traps.TrapInstantCapture]] = None,
         ccd: Optional[ccd.CCDPhase] = None,
     ):
         """
@@ -19,13 +19,13 @@ class CTI1D(Dictable):
         
         Parameters
         ----------
-        traps
+        trap_list
             The traps on the dataset that capture and release electrons during clocking.
         ccd
             The CCD volume filling parameterization which dictates how an electron cloud fills pixels and thus
             how it is subject to traps.
         """
-        self.traps = traps
+        self.trap_list = trap_list
         self.ccd = ccd
 
 
