@@ -51,8 +51,10 @@ class Clocker1D(AbstractClocker):
         self.window_start = window_start
         self.window_stop = window_stop
 
-    def traps_ccd_from(self, cti: CTI1D):
-
+    def _traps_ccd_from(self, cti: CTI1D):
+        """
+        Unpack the `CTI1D` object to retries its traps and ccd.
+        """
         if cti.trap_list is not None:
             trap_list = list(cti.trap_list)
         else:
@@ -73,11 +75,11 @@ class Clocker1D(AbstractClocker):
         data
             The 1D data that is clocked via arctic and has CTI added to it.
         cti
-            An object which represents the CTI properties of the clocking, including the trap species which capture
+            An object which represents the CTI properties of 1D clocking, including the trap species which capture
             and release electrons and the volume-filling behaviour of the CCD.
         """
 
-        trap_list, ccd = self.traps_ccd_from(cti=cti)
+        trap_list, ccd = self._traps_ccd_from(cti=cti)
 
         self.check_traps(trap_list_0=trap_list)
         self.check_ccd(ccd_list=[ccd])
@@ -123,7 +125,7 @@ class Clocker1D(AbstractClocker):
             and release electrons and the volume-filling behaviour of the CCD.
         """
 
-        trap_list, ccd = self.traps_ccd_from(cti=cti)
+        trap_list, ccd = self._traps_ccd_from(cti=cti)
 
         self.check_traps(trap_list_0=trap_list)
         self.check_ccd(ccd_list=[ccd])

@@ -204,9 +204,9 @@ def make_samples_with_result():
     model = af.Collection(
         cti=af.Model(
             ac.CTI2D,
-            parallel_traps=[ac.TrapInstantCapture],
+            parallel_trap_list=[ac.TrapInstantCapture],
             parallel_ccd=make_ccd(),
-            serial_traps=[ac.TrapInstantCapture],
+            serial_trap_list=[ac.TrapInstantCapture],
             serial_ccd=make_ccd(),
         )
     )

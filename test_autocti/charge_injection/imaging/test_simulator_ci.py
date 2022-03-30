@@ -311,11 +311,10 @@ def test__no_instrumental_effects_input__only_cti_simulated(
 
     simulator = ac.SimulatorImagingCI(normalization=10.0, pixel_scales=1.0)
 
+    cti = ac.CTI2D(parallel_trap_list=traps_x2, parallel_ccd=ccd)
+
     imaging = simulator.via_layout_from(
-        layout=layout,
-        clocker=parallel_clocker_2d,
-        parallel_trap_list=traps_x2,
-        parallel_ccd=ccd,
+        layout=layout, clocker=parallel_clocker_2d, cti=cti
     )
 
     assert imaging.image[0, 0:5] == pytest.approx(
@@ -336,11 +335,10 @@ def test__include_read_noise__is_added_after_cti(parallel_clocker_2d, traps_x2, 
         pixel_scales=1.0, normalization=10.0, read_noise=1.0, noise_seed=1
     )
 
+    cti = ac.CTI2D(parallel_trap_list=traps_x2, parallel_ccd=ccd)
+
     imaging = simulator.via_layout_from(
-        layout=layout,
-        clocker=parallel_clocker_2d,
-        parallel_trap_list=traps_x2,
-        parallel_ccd=ccd,
+        layout=layout, clocker=parallel_clocker_2d, cti=cti
     )
 
     image_no_noise = simulator.pre_cti_data_uniform_from(layout=layout)
@@ -371,11 +369,12 @@ def test__include_cosmics__is_added_to_image_and_trailed(
     cosmic_ray_map = ac.Array2D.zeros(shape_native=(5, 5), pixel_scales=0.1).native
     cosmic_ray_map[2, 2] = 100.0
 
+    cti = ac.CTI2D(parallel_trap_list=traps_x2, parallel_ccd=ccd)
+
     imaging = simulator.via_layout_from(
         layout=layout,
         clocker=parallel_clocker_2d,
-        parallel_trap_list=traps_x2,
-        parallel_ccd=ccd,
+        cti=cti,
         cosmic_ray_map=cosmic_ray_map,
     )
 
@@ -415,11 +414,12 @@ def test__from_pre_cti_data(parallel_clocker_2d, traps_x2, ccd):
     cosmic_ray_map = ac.Array2D.zeros(shape_native=(5, 5), pixel_scales=0.1).native
     cosmic_ray_map[2, 2] = 100.0
 
+    cti = ac.CTI2D(parallel_trap_list=traps_x2, parallel_ccd=ccd)
+
     imaging = simulator.via_layout_from(
         layout=layout,
         clocker=parallel_clocker_2d,
-        parallel_trap_list=traps_x2,
-        parallel_ccd=ccd,
+        cti=cti,
         cosmic_ray_map=cosmic_ray_map,
     )
 
@@ -429,8 +429,7 @@ def test__from_pre_cti_data(parallel_clocker_2d, traps_x2, ccd):
         pre_cti_data=pre_cti_data.native,
         layout=layout,
         clocker=parallel_clocker_2d,
-        parallel_trap_list=traps_x2,
-        parallel_ccd=ccd,
+        cti=cti,
         cosmic_ray_map=cosmic_ray_map,
     )
 
@@ -455,20 +454,21 @@ def test__from_post_cti_data(parallel_clocker_2d, traps_x2, ccd):
     cosmic_ray_map = ac.Array2D.zeros(shape_native=(5, 5), pixel_scales=0.1).native
     cosmic_ray_map[2, 2] = 100.0
 
+    cti = ac.CTI2D(parallel_trap_list=traps_x2, parallel_ccd=ccd)
+
     imaging = simulator.via_layout_from(
         layout=layout,
         clocker=parallel_clocker_2d,
-        parallel_trap_list=traps_x2,
-        parallel_ccd=ccd,
+        cti=cti,
         cosmic_ray_map=cosmic_ray_map,
     )
 
     pre_cti_data = simulator.pre_cti_data_uniform_from(layout=layout).native
     pre_cti_data += cosmic_ray_map
 
-    post_cti_data = parallel_clocker_2d.add_cti(
-        data=pre_cti_data, parallel_trap_list=traps_x2, parallel_ccd=ccd
-    )
+    cti = ac.CTI2D(parallel_trap_list=traps_x2, parallel_ccd=ccd)
+
+    post_cti_data = parallel_clocker_2d.add_cti(data=pre_cti_data, cti=cti)
 
     pre_cti_data -= cosmic_ray_map
 

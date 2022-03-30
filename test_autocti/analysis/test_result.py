@@ -18,7 +18,9 @@ class TestResult:
             search=None,
         )
 
-        assert isinstance(result.instance.cti.parallel_traps[0], ac.TrapInstantCapture)
+        assert isinstance(
+            result.instance.cti.parallel_trap_list[0], ac.TrapInstantCapture
+        )
         assert isinstance(result.instance.cti.parallel_ccd, ac.CCDPhase)
 
     def test__clocker_passed_as_result_correctly(

@@ -1,17 +1,16 @@
 import copy
 import numpy as np
-from typing import List, Optional, Tuple, Union
+from typing import Optional, Tuple
 
 import autoarray as aa
 
 from autocti.clocker.abstract import AbstractClocker
+from autocti.model.model_util import CTI2D
 
 from autocti import exc
 
-from arcticpy.src import cti
-from arcticpy.src.ccd import CCDPhase
+from arcticpy.src import cti as arctic
 from arcticpy.src.roe import ROE
-from arcticpy.src.traps import AbstractTrap
 
 
 class Clocker2D(AbstractClocker):
@@ -106,14 +105,29 @@ class Clocker2D(AbstractClocker):
 
         self.euclid_orientation_hack = euclid_orientation_hack
 
-    def add_cti(
-        self,
-        data: aa.Array2D,
-        parallel_ccd: Optional[CCDPhase] = None,
-        parallel_trap_list: Optional[List[AbstractTrap]] = None,
-        serial_ccd: Optional[CCDPhase] = None,
-        serial_trap_list: Optional[List[AbstractTrap]] = None,
-    ) -> aa.Array2D:
+    def _parallel_traps_ccd_from(self, cti: CTI2D):
+        """
+        Unpack the `CTI1D` object to retries its traps and ccd.
+        """
+        if cti.parallel_trap_list is not None:
+            trap_list = list(cti.parallel_trap_list)
+        else:
+            trap_list = None
+
+        return trap_list, cti.parallel_ccd
+
+    def _serial_traps_ccd_from(self, cti: CTI2D):
+        """
+        Unpack the `CTI1D` object to retries its traps and ccd.
+        """
+        if cti.serial_trap_list is not None:
+            trap_list = list(cti.serial_trap_list)
+        else:
+            trap_list = None
+
+        return trap_list, cti.serial_ccd
+
+    def add_cti(self, data: aa.Array2D, cti: CTI2D) -> aa.Array2D:
         """
         Add CTI to a 2D dataset by passing it to the c++ arctic clocking algorithm.
 
@@ -130,42 +144,24 @@ class Clocker2D(AbstractClocker):
         ----------
         data
             The 1D data that is clocked via arctic and has CTI added to it.
-        parallel_ccd
-            The ccd phase settings describing the volume-filling behaviour of the CCD which characterises the capture
-            and release of electrons and therefore CTI for clocking in the parallel direction.
-        parallel_trap_list
-            A list of the parallel trap species on the CCD which capture and release electrons during parallel clocking
-            which adds CTI.
-        serial_ccd
-            The ccd phase settings describing the volume-filling behaviour of the CCD which characterises the capture
-            and release of electrons and therefore CTI for clocking in the serial direction.
-        serial_trap_list
-            A list of the serial trap species on the CCD which capture and release electrons during serial clocking
-            which adds CTI.
+        cti
+            An object which represents the CTI properties of 2D clocking, including the trap species which capture
+            and release electrons and the volume-filling behaviour of the CCD for parallel and serial clocking.
         """
 
         data = data.native
 
         if self.parallel_poisson_traps:
-            return self.add_cti_poisson_traps(
-                data=data,
-                parallel_ccd=parallel_ccd,
-                parallel_trap_list=parallel_trap_list,
-                serial_ccd=serial_ccd,
-                serial_trap_list=serial_trap_list,
-            )
+            return self.add_cti_poisson_traps(data=data, cti=cti)
 
         if self.parallel_fast_pixels is not None:
-            return self.add_cti_parallel_fast(
-                data=data,
-                parallel_ccd=parallel_ccd,
-                parallel_trap_list=parallel_trap_list,
-            )
+            return self.add_cti_parallel_fast(data=data, cti=cti)
 
         if self.serial_fast_pixels is not None:
-            return self.add_cti_serial_fast(
-                data=data, serial_ccd=serial_ccd, serial_trap_list=serial_trap_list
-            )
+            return self.add_cti_serial_fast(data=data, cti=cti)
+
+        parallel_trap_list, parallel_ccd = self._parallel_traps_ccd_from(cti=cti)
+        serial_trap_list, serial_ccd = self._serial_traps_ccd_from(cti=cti)
 
         self.check_traps(trap_list_0=parallel_trap_list, trap_list_1=serial_trap_list)
         self.check_ccd(ccd_list=[parallel_ccd, serial_ccd])
@@ -180,7 +176,7 @@ class Clocker2D(AbstractClocker):
             parallel_offset = 0
             serial_offset = 0
 
-        image_post_cti = cti.add_cti(
+        image_post_cti = arctic.add_cti(
             image=data,
             parallel_ccd=parallel_ccd,
             parallel_roe=self.parallel_roe,
@@ -204,14 +200,7 @@ class Clocker2D(AbstractClocker):
         except AttributeError:
             return image_post_cti
 
-    def add_cti_poisson_traps(
-        self,
-        data: aa.Array2D,
-        parallel_ccd: Optional[CCDPhase] = None,
-        parallel_trap_list: Optional[List[AbstractTrap]] = None,
-        serial_ccd: Optional[CCDPhase] = None,
-        serial_trap_list: Optional[List[AbstractTrap]] = None,
-    ) -> aa.Array2D:
+    def add_cti_poisson_traps(self, data: aa.Array2D, cti: CTI2D) -> aa.Array2D:
         """
         Add CTI to a 2D dataset by passing it to the c++ arctic clocking algorithm.
 
@@ -227,19 +216,14 @@ class Clocker2D(AbstractClocker):
         ----------
         data
             The 1D data that is clocked via arctic and has CTI added to it.
-        parallel_ccd
-            The ccd phase settings describing the volume-filling behaviour of the CCD which characterises the capture
-            and release of electrons and therefore CTI for clocking in the parallel direction.
-        parallel_trap_list
-            A list of the parallel trap species on the CCD which capture and release electrons during parallel clocking
-            which adds CTI.
-        serial_ccd
-            The ccd phase settings describing the volume-filling behaviour of the CCD which characterises the capture
-            and release of electrons and therefore CTI for clocking in the serial direction.
-        serial_trap_list
-            A list of the serial trap species on the CCD which capture and release electrons during serial clocking
-            which adds CTI.
+        cti
+            An object which represents the CTI properties of 2D clocking, including the trap species which capture
+            and release electrons and the volume-filling behaviour of the CCD for parallel and serial clocking.
         """
+
+        parallel_trap_list, parallel_ccd = self._parallel_traps_ccd_from(cti=cti)
+        serial_trap_list, serial_ccd = self._serial_traps_ccd_from(cti=cti)
+
         self.check_traps(trap_list_0=parallel_trap_list, trap_list_1=serial_trap_list)
         self.check_ccd(ccd_list=[parallel_ccd, serial_ccd])
 
@@ -272,7 +256,7 @@ class Clocker2D(AbstractClocker):
             image_pre_cti_pass = np.zeros(shape=(total_rows, 1))
             image_pre_cti_pass[:, 0] = image_pre_cti[:, column]
 
-            image_post_cti[:, column] = cti.add_cti(
+            image_post_cti[:, column] = arctic.add_cti(
                 image=image_pre_cti_pass,
                 parallel_ccd=parallel_ccd,
                 parallel_roe=self.parallel_roe,
@@ -293,7 +277,7 @@ class Clocker2D(AbstractClocker):
         except AttributeError:
             serial_offset = 0
 
-        image_post_cti = cti.add_cti(
+        image_post_cti = arctic.add_cti(
             image=image_post_cti,
             serial_ccd=serial_ccd,
             serial_roe=self.serial_roe,
@@ -311,11 +295,7 @@ class Clocker2D(AbstractClocker):
             return image_post_cti
 
     def add_cti_parallel_fast(
-        self,
-        data: aa.Array2D,
-        parallel_ccd: Optional[CCDPhase] = None,
-        parallel_trap_list: Optional[List[AbstractTrap]] = None,
-        perform_checks: bool = True,
+        self, data: aa.Array2D, cti: CTI2D, perform_checks: bool = True
     ):
         """
         Add CTI to a 2D dataset by passing it to the c++ arctic clocking algorithm.
@@ -335,16 +315,15 @@ class Clocker2D(AbstractClocker):
         ----------
         data
             The 1D data that is clocked via arctic and has CTI added to it.
-        parallel_ccd
-            The ccd phase settings describing the volume-filling behaviour of the CCD which characterises the capture
-            and release of electrons and therefore CTI for clocking in the parallel direction.
-        parallel_trap_list
-            A list of the parallel trap species on the CCD which capture and release electrons during parallel clocking
-            which adds CTI.
+        cti
+            An object which represents the CTI properties of 2D clocking, including the trap species which capture
+            and release electrons and the volume-filling behaviour of the CCD for parallel clocking.
         perform_checks
             Check that it is value for the input data to use the fast clocking speed up (e.g. all columns are identical
             and all entries outside this region are zero).
         """
+
+        parallel_trap_list, parallel_ccd = self._parallel_traps_ccd_from(cti=cti)
 
         image_pre_cti = data.native
         if perform_checks:
@@ -358,7 +337,7 @@ class Clocker2D(AbstractClocker):
         image_pre_cti_pass = np.zeros(shape=(data.shape[0], 1))
         image_pre_cti_pass[:, 0] = image_pre_cti[:, self.parallel_fast_pixels[0]]
 
-        image_post_cti_pass = cti.add_cti(
+        image_post_cti_pass = arctic.add_cti(
             image=image_pre_cti_pass,
             parallel_ccd=parallel_ccd,
             parallel_roe=self.parallel_roe,
@@ -377,11 +356,7 @@ class Clocker2D(AbstractClocker):
         return image_post_cti
 
     def add_cti_serial_fast(
-        self,
-        data: aa.Array2D,
-        serial_ccd: Optional[CCDPhase] = None,
-        serial_trap_list: Optional[List[AbstractTrap]] = None,
-        perform_checks: bool = True,
+        self, data: aa.Array2D, cti: CTI2D, perform_checks: bool = True
     ):
         """
         Add CTI to a 2D dataset by passing it to the c++ arctic clocking algorithm.
@@ -403,16 +378,15 @@ class Clocker2D(AbstractClocker):
         ----------
         data
             The 1D data that is clocked via arctic and has CTI added to it.
-        serial_ccd
-            The ccd phase settings describing the volume-filling behaviour of the CCD which characterises the capture
-            and release of electrons and therefore CTI for clocking in the serial direction.
-        serial_trap_list
-            A list of the serial trap species on the CCD which capture and release electrons during serial clocking
-            which adds CTI.
+        cti
+            An object which represents the CTI properties of 2D clocking, including the trap species which capture
+            and release electrons and the volume-filling behaviour of the CCD for serial clocking.
         perform_checks
             Check that it is value for the input data to use the fast clocking speed up (e.g. all columns are identical
             and all entries outside this region are zero).
         """
+
+        serial_trap_list, serial_ccd = self._serial_traps_ccd_from(cti=cti)
 
         image_pre_cti = data.native
         if perform_checks:
@@ -426,7 +400,7 @@ class Clocker2D(AbstractClocker):
         image_pre_cti_pass = np.zeros(shape=(1, data.shape[1]))
         image_pre_cti_pass[0, :] = image_pre_cti[self.serial_fast_pixels[0], :]
 
-        image_post_cti_pass = cti.add_cti(
+        image_post_cti_pass = arctic.add_cti(
             image=image_pre_cti_pass,
             serial_ccd=serial_ccd,
             serial_roe=self.serial_roe,
@@ -444,14 +418,7 @@ class Clocker2D(AbstractClocker):
 
         return image_post_cti
 
-    def remove_cti(
-        self,
-        data: aa.Array2D,
-        parallel_ccd: Optional[CCDPhase] = None,
-        parallel_trap_list: Optional[List[AbstractTrap]] = None,
-        serial_ccd: Optional[CCDPhase] = None,
-        serial_trap_list: Optional[List[AbstractTrap]] = None,
-    ) -> aa.Array2D:
+    def remove_cti(self, data: aa.Array2D, cti: CTI2D) -> aa.Array2D:
         """
         Remove CTI from a 2D dataset by passing it to the c++ arctic clocking algorithm. The removal of CTI is
         performed by adding CTI to the data to understand how electrons are moved on the CCD, and using this
@@ -465,19 +432,14 @@ class Clocker2D(AbstractClocker):
         ----------
         data
             The 1D data that is clocked via arctic and has CTI added to it.
-        parallel_ccd
-            The ccd phase settings describing the volume-filling behaviour of the CCD which characterises the capture
-            and release of electrons and therefore CTI for clocking in the parallel direction.
-        parallel_trap_list
-            A list of the parallel trap species on the CCD which capture and release electrons during parallel clocking
-            which adds CTI.
-        serial_ccd
-            The ccd phase settings describing the volume-filling behaviour of the CCD which characterises the capture
-            and release of electrons and therefore CTI for clocking in the serial direction.
-        serial_trap_list
-            A list of the serial trap species on the CCD which capture and release electrons during serial clocking
-            which adds CTI.
+        cti
+            An object which represents the CTI properties of 2D clocking, including the trap species which capture
+            and release electrons and the volume-filling behaviour of the CCD for parallel and serial clocking.
         """
+
+        parallel_trap_list, parallel_ccd = self._parallel_traps_ccd_from(cti=cti)
+        serial_trap_list, serial_ccd = self._serial_traps_ccd_from(cti=cti)
+
         self.check_traps(trap_list_0=parallel_trap_list, trap_list_1=serial_trap_list)
         self.check_ccd(ccd_list=[parallel_ccd, serial_ccd])
 
@@ -489,7 +451,7 @@ class Clocker2D(AbstractClocker):
                 data=data, row_index=data.header.row_index
             )
 
-        image_cti_removed = cti.remove_cti(
+        image_cti_removed = arctic.remove_cti(
             image=data,
             n_iterations=self.iterations,
             parallel_ccd=parallel_ccd,
