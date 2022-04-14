@@ -2,7 +2,7 @@ import os
 
 import pytest
 import numpy as np
-from arcticpy.src import cti
+from arcticpy.src import cti as arctic
 import autocti as ac
 from autocti import exc
 
@@ -32,7 +32,7 @@ def test__array_with_offset_through_arctic():
     ccd = ac.CCD(phases=[ccd_phase], fraction_of_traps_per_phase=[1.0])
     traps = [ac.TrapInstantCapture(10.0, -1.0 / np.log(0.5))]
 
-    image_via_arctic = cti.add_cti(
+    image_via_arctic = arctic.add_cti(
         image=arr,
         parallel_traps=traps,
         parallel_ccd=ccd,
@@ -43,13 +43,15 @@ def test__array_with_offset_through_arctic():
 
     clocker = ac.Clocker2D(parallel_express=3, parallel_roe=roe)
 
-    image_via_clocker = clocker.add_cti(
-        data=arr, parallel_trap_list=traps, parallel_ccd=ccd_phase
-    )
+    cti = ac.CTI2D(parallel_trap_list=traps, parallel_ccd=ccd_phase)
+
+    image_via_clocker = clocker.add_cti(data=arr, cti=cti)
 
     assert image_via_arctic == pytest.approx(image_via_clocker, 1.0e-4)
 
-    image_via_arctic = cti.add_cti(
+    cti = ac.CTI2D(serial_trap_list=traps, serial_ccd=ccd_phase)
+
+    image_via_arctic = arctic.add_cti(
         image=arr,
         serial_traps=traps,
         serial_ccd=ccd,
@@ -60,9 +62,7 @@ def test__array_with_offset_through_arctic():
 
     clocker = ac.Clocker2D(serial_express=2, serial_roe=roe)
 
-    image_via_clocker = clocker.add_cti(
-        data=arr, serial_trap_list=traps, serial_ccd=ccd_phase
-    )
+    image_via_clocker = clocker.add_cti(data=arr, cti=cti)
 
     assert image_via_arctic == pytest.approx(image_via_clocker, 1.0e-4)
 
@@ -110,13 +110,14 @@ def test__add_cti_with_poisson_trap_densities():
         serial_roe=roe,
     )
 
-    image_via_clocker = clocker.add_cti(
-        data=arr,
+    cti = ac.CTI2D(
         parallel_trap_list=trap_list,
         parallel_ccd=ccd,
         serial_trap_list=trap_list,
         serial_ccd=ccd,
     )
+
+    image_via_clocker = clocker.add_cti(data=arr, cti=cti)
 
     assert image_via_clocker[0, 0] == pytest.approx(0.980298, 1.0e-4)
     assert image_via_clocker[0, 1] == pytest.approx(0.9901042, 1.0e-4)
@@ -153,15 +154,13 @@ def test__add_cti_parallel_fast():
 
     clocker = ac.Clocker2D()
 
-    image_via_clocker = clocker.add_cti(
-        data=arr, parallel_trap_list=trap_list, parallel_ccd=ccd
-    )
+    cti = ac.CTI2D(parallel_trap_list=trap_list, parallel_ccd=ccd)
+
+    image_via_clocker = clocker.add_cti(data=arr, cti=cti)
 
     clocker = ac.Clocker2D(parallel_fast_pixels=(1, 3))
 
-    image_via_clocker_fast = clocker.add_cti(
-        data=arr, parallel_trap_list=trap_list, parallel_ccd=ccd
-    )
+    image_via_clocker_fast = clocker.add_cti(data=arr, cti=cti)
 
     assert image_via_clocker == pytest.approx(image_via_clocker_fast, 1.0e-6)
 
@@ -195,9 +194,11 @@ def test__add_cti_parallel_fast__raises_exception_if_nonzero_outside_tuple():
 
     arr = ac.Array2D.manual(array=arr, pixel_scales=1.0).native
 
+    cti = ac.CTI2D(parallel_trap_list=trap_list, parallel_ccd=ccd)
+
     with pytest.raises(exc.ClockerException):
 
-        clocker.add_cti(data=arr, parallel_trap_list=trap_list, parallel_ccd=ccd)
+        clocker.add_cti(data=arr, cti=cti)
 
     arr = np.array(
         (
@@ -220,7 +221,7 @@ def test__add_cti_parallel_fast__raises_exception_if_nonzero_outside_tuple():
 
     with pytest.raises(exc.ClockerException):
 
-        clocker.add_cti(data=arr, parallel_trap_list=trap_list, parallel_ccd=ccd)
+        clocker.add_cti(data=arr, cti=cti)
 
     arr = np.array(
         (
@@ -243,7 +244,7 @@ def test__add_cti_parallel_fast__raises_exception_if_nonzero_outside_tuple():
 
     with pytest.raises(exc.ClockerException):
 
-        clocker.add_cti(data=arr, parallel_trap_list=trap_list, parallel_ccd=ccd)
+        clocker.add_cti(data=arr, cti=cti)
 
 
 def test__add_cti_serial_fast():
@@ -269,15 +270,13 @@ def test__add_cti_serial_fast():
 
     clocker = ac.Clocker2D()
 
-    image_via_clocker = clocker.add_cti(
-        data=arr, serial_trap_list=trap_list, serial_ccd=ccd
-    )
+    cti = ac.CTI2D(serial_trap_list=trap_list, serial_ccd=ccd)
+
+    image_via_clocker = clocker.add_cti(data=arr, cti=cti)
 
     clocker = ac.Clocker2D(serial_fast_pixels=(1, 3))
 
-    image_via_clocker_fast = clocker.add_cti(
-        data=arr, serial_trap_list=trap_list, serial_ccd=ccd
-    )
+    image_via_clocker_fast = clocker.add_cti(data=arr, cti=cti)
 
     assert image_via_clocker == pytest.approx(image_via_clocker_fast, 1.0e-6)
 
@@ -305,9 +304,11 @@ def test__add_cti_serial_fast__raises_exception_if_nonzero_outside_tuple():
 
     arr = ac.Array2D.manual(array=arr, pixel_scales=1.0).native
 
+    cti = ac.CTI2D(serial_trap_list=trap_list, serial_ccd=ccd)
+
     with pytest.raises(exc.ClockerException):
 
-        clocker.add_cti(data=arr, serial_trap_list=trap_list, serial_ccd=ccd)
+        clocker.add_cti(data=arr, cti=cti)
 
     arr = np.array(
         (
@@ -324,7 +325,7 @@ def test__add_cti_serial_fast__raises_exception_if_nonzero_outside_tuple():
 
     with pytest.raises(exc.ClockerException):
 
-        clocker.add_cti(data=arr, serial_trap_list=trap_list, serial_ccd=ccd)
+        clocker.add_cti(data=arr, cti=cti)
 
     arr = np.array(
         (
@@ -341,7 +342,7 @@ def test__add_cti_serial_fast__raises_exception_if_nonzero_outside_tuple():
 
     with pytest.raises(exc.ClockerException):
 
-        clocker.add_cti(data=arr, serial_trap_list=trap_list, serial_ccd=ccd)
+        clocker.add_cti(data=arr, cti=cti)
 
 
 def test__raises_exception_if_no_traps_or_ccd_passed():
@@ -363,43 +364,45 @@ def test__raises_exception_if_no_traps_or_ccd_passed():
     clocker = ac.Clocker2D(parallel_express=3)
 
     with pytest.raises(exc.ClockerException):
-        clocker.add_cti(data=arr)
+        clocker.add_cti(data=arr, cti=ac.CTI2D(parallel_trap_list=traps))
 
     with pytest.raises(exc.ClockerException):
-        clocker.add_cti(data=arr, parallel_trap_list=traps)
+        clocker.add_cti(data=arr, cti=ac.CTI2D(serial_trap_list=traps))
 
     with pytest.raises(exc.ClockerException):
-        clocker.add_cti(data=arr, serial_trap_list=traps)
+        clocker.add_cti(
+            data=arr, cti=ac.CTI2D(parallel_trap_list=traps, serial_trap_list=traps)
+        )
 
     with pytest.raises(exc.ClockerException):
-        clocker.add_cti(data=arr, parallel_trap_list=traps, serial_trap_list=traps)
+        clocker.add_cti(data=arr, cti=ac.CTI2D(parallel_ccd=ccd_phase))
 
     with pytest.raises(exc.ClockerException):
-        clocker.add_cti(data=arr, parallel_ccd=ccd_phase)
+        clocker.add_cti(data=arr, cti=ac.CTI2D(serial_ccd=ccd_phase))
 
     with pytest.raises(exc.ClockerException):
-        clocker.add_cti(data=arr, serial_ccd=ccd_phase)
+        clocker.add_cti(
+            data=arr, cti=ac.CTI2D(parallel_ccd=ccd_phase, serial_ccd=ccd_phase)
+        )
 
     with pytest.raises(exc.ClockerException):
-        clocker.add_cti(data=arr, parallel_ccd=ccd_phase, serial_ccd=ccd_phase)
+        clocker.remove_cti(data=arr, cti=ac.CTI2D(parallel_trap_list=traps))
 
     with pytest.raises(exc.ClockerException):
-        clocker.remove_cti(data=arr)
+        clocker.remove_cti(data=arr, cti=ac.CTI2D(serial_trap_list=traps))
 
     with pytest.raises(exc.ClockerException):
-        clocker.remove_cti(data=arr, parallel_trap_list=traps)
+        clocker.remove_cti(
+            data=arr, cti=ac.CTI2D(parallel_trap_list=traps, serial_trap_list=traps)
+        )
 
     with pytest.raises(exc.ClockerException):
-        clocker.remove_cti(data=arr, serial_trap_list=traps)
+        clocker.remove_cti(data=arr, cti=ac.CTI2D(parallel_ccd=ccd_phase))
 
     with pytest.raises(exc.ClockerException):
-        clocker.remove_cti(data=arr, parallel_trap_list=traps, serial_trap_list=traps)
+        clocker.remove_cti(data=arr, cti=ac.CTI2D(serial_ccd=ccd_phase))
 
     with pytest.raises(exc.ClockerException):
-        clocker.remove_cti(data=arr, parallel_ccd=ccd_phase)
-
-    with pytest.raises(exc.ClockerException):
-        clocker.remove_cti(data=arr, serial_ccd=ccd_phase)
-
-    with pytest.raises(exc.ClockerException):
-        clocker.remove_cti(data=arr, parallel_ccd=ccd_phase, serial_ccd=ccd_phase)
+        clocker.remove_cti(
+            data=arr, cti=ac.CTI2D(parallel_ccd=ccd_phase, serial_ccd=ccd_phase)
+        )

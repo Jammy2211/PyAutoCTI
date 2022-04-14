@@ -35,17 +35,19 @@ that of the first model.
 .. code-block:: bash
 
     clocker_1d = ac.Clocker1D()
+
     ccd = ac.CCDPhase(well_fill_power=0.58, well_notch_depth=0.0, full_well_depth=200000.0)
 
-    trap_0 = ac.TrapInstantCapture(density=1.0, release_timescale=5.0)
-    post_cti_data_1d_0 = clocker_1d.add_cti(
-        data=pre_cti_data_1d, trap_list=[trap_0], ccd=ccd
-    )
+    trap_0 = ac.TrapInstantCapture(density=250.0, release_timescale=5.0)
+    trap_1 = ac.TrapInstantCapture(density=500.0, release_timescale=5.0)
 
-    trap_1 = ac.TrapInstantCapture(density=2.0, release_timescale=5.0)
-    post_cti_data_1d_1 = clocker_1d.add_cti(
-        data=pre_cti_data_1d, trap_list=[trap_1], ccd=ccd
-    )
+    cti = ac.CTI1D(trap_list=[trap_0], ccd=ccd)
+
+    post_cti_data_1d_0 = clocker_1d.add_cti(data=pre_cti_data_1d, cti=cti)
+
+    cti = ac.CTI1D(trap_list=[trap_1], ccd=ccd)
+
+    post_cti_data_1d_1 = clocker_1d.add_cti(data=pre_cti_data_1d, cti=cti)
 
 Now lets plot the two datasets and compare their appearance.
 
@@ -95,17 +97,19 @@ increasing the ``release_timescale`` of the second CTI model.
 .. code-block:: bash
 
     clocker_1d = ac.Clocker1D()
+
     ccd = ac.CCDPhase(well_fill_power=0.58, well_notch_depth=0.0, full_well_depth=200000.0)
 
-    trap_0 = ac.TrapInstantCapture(density=1.0, release_timescale=5.0)
-    post_cti_data_1d_0 = clocker_1d.add_cti(
-        data=pre_cti_data_1d, trap_list=[trap_0], ccd=ccd
-    )
+    trap_0 = ac.TrapInstantCapture(density=250.0, release_timescale=0.5)
+    trap_1 = ac.TrapInstantCapture(density=250.0, release_timescale=3.0)
 
-    trap_1 = ac.TrapInstantCapture(density=1.0, release_timescale=10.0)
-    post_cti_data_1d_1 = clocker_1d.add_cti(
-        data=pre_cti_data_1d, trap_list=[trap_1], ccd=ccd
-    )
+    cti = ac.CTI1D(trap_list=[trap_0], ccd=ccd)
+
+    post_cti_data_1d_0 = clocker_1d.add_cti(data=pre_cti_data_1d, cti=cti)
+
+    cti = ac.CTI1D(trap_list=[trap_1], ccd=ccd)
+
+    post_cti_data_1d_1 = clocker_1d.add_cti(data=pre_cti_data_1d, cti=cti)
 
 Now lets plot the two datasets and compare their appearance.
 
@@ -185,23 +189,18 @@ We can illustrate this by comparing the addition of CTI to two 1D datasets with 
 
 .. code-block:: bash
 
-    pre_cti_data_1d = ac.Array1D.manual_native(
+    pre_cti_data_1d_0 = ac.Array1D.manual_native(
         array=[10.0, 10.0, 10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         pixel_scales=1.0,
     )
 
-    pre_cti_data_1d = ac.Array1D.manual_native(
+    pre_cti_data_1d_1 = ac.Array1D.manual_native(
         array=[100.0, 100.0, 100.0, 100.0, 100.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         pixel_scales=1.0,
     )
 
-    post_cti_data_1d_0 = clocker_1d.add_cti(
-        data=pre_cti_data_1d, trap_list=[trap_0], ccd=ccd
-    )
-
-    post_cti_data_1d_1 = clocker_1d.add_cti(
-        data=pre_cti_data_1d, trap_list=[trap_0], ccd=ccd
-    )
+    post_cti_data_1d_0 = clocker_1d.add_cti(data=pre_cti_data_1d_0, cti=cti)
+    post_cti_data_1d_1 = clocker_1d.add_cti(data=pre_cti_data_1d_1, cti=cti)
 
     array_1d_plotter = aplt.Array1DPlotter(y=post_cti_data_1d_0)
     array_1d_plotter.figure_1d()

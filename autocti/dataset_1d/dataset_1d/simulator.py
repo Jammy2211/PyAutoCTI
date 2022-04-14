@@ -1,8 +1,5 @@
 import numpy as np
-from typing import Optional, List
-
-from arcticpy.src.ccd import CCDPhase
-from arcticpy.src.traps import AbstractTrap
+from typing import Optional
 
 import autoarray as aa
 
@@ -12,6 +9,7 @@ from autoarray.dataset import preprocess
 from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
 from autocti.layout.one_d import Layout1D
 from autocti.clocker.one_d import Clocker1D
+from autocti.model.model_util import CTI1D
 
 
 class SimulatorDataset1D(AbstractSimulatorImaging):
@@ -64,12 +62,8 @@ class SimulatorDataset1D(AbstractSimulatorImaging):
 
         return aa.Array1D.manual_native(array=pre_cti_data, pixel_scales=pixel_scales)
 
-    def from_layout(
-        self,
-        layout: Layout1D,
-        clocker: Clocker1D,
-        trap_list: Optional[List[AbstractTrap]] = None,
-        ccd: Optional[CCDPhase] = None,
+    def via_layout_from(
+        self, layout: Layout1D, clocker: Clocker1D, cti: CTI1D
     ) -> Dataset1D:
         """Simulate a charge injection data, including effects like noises.
 
@@ -97,32 +91,21 @@ class SimulatorDataset1D(AbstractSimulatorImaging):
             layout=layout, pixel_scales=self.pixel_scales
         )
 
-        return self.from_pre_cti_data(
-            pre_cti_data=pre_cti_data.native,
-            layout=layout,
-            clocker=clocker,
-            trap_list=trap_list,
-            ccd=ccd,
+        return self.via_pre_cti_data_from(
+            pre_cti_data=pre_cti_data.native, layout=layout, clocker=clocker, cti=cti
         )
 
-    def from_pre_cti_data(
-        self,
-        pre_cti_data: aa.Array1D,
-        layout: Layout1D,
-        clocker: Clocker1D,
-        trap_list: Optional[List[AbstractTrap]] = None,
-        ccd: Optional[CCDPhase] = None,
+    def via_pre_cti_data_from(
+        self, pre_cti_data: aa.Array1D, layout: Layout1D, clocker: Clocker1D, cti: CTI1D
     ) -> Dataset1D:
 
-        post_cti_data = clocker.add_cti(
-            data=pre_cti_data.native, trap_list=trap_list, ccd=ccd
-        )
+        post_cti_data = clocker.add_cti(data=pre_cti_data.native, cti=cti)
 
-        return self.from_post_cti_data(
+        return self.via_post_cti_data_from(
             post_cti_data=post_cti_data, pre_cti_data=pre_cti_data, layout=layout
         )
 
-    def from_post_cti_data(
+    def via_post_cti_data_from(
         self, post_cti_data: aa.Array1D, pre_cti_data: aa.Array1D, layout: Layout1D
     ) -> Dataset1D:
 

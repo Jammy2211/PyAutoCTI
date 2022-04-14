@@ -102,6 +102,8 @@ We therefore set up a clocker, traps and a CCD volume filling phase.
         well_fill_power=0.75, well_notch_depth=0.0, full_well_depth=200000.0
     )
 
+    cti = ac.CTI2D(parallel_trap_list=[parallel_trap], parallel_ccd=parallel_ccd)
+
 Charge Injection Fitting
 ------------------------
 
@@ -112,8 +114,7 @@ the dataset to the ``FitImagingCI`` object.
 
     post_cti_image = clocker_2d.add_cti(
         data=imaging_ci.pre_cti_data,
-        parallel_trap_list=[parallel_trap],
-        parallel_ccd=parallel_ccd,
+        cti=cti
     )
 
     fit = ac.FitImagingCI(dataset=imaging_ci, post_cti_data=post_cti_image)
@@ -190,11 +191,7 @@ data!) to reperform the fit above.
         well_fill_power=0.5, well_notch_depth=0.0, full_well_depth=200000.0
     )
 
-    post_cti_image = clocker_2d.add_cti(
-        data=imaging_ci.pre_cti_data,
-        parallel_trap_list=[parallel_trap],
-        parallel_ccd=parallel_ccd,
-    )
+    post_cti_data = clocker_1d.add_cti(data=dataset_1d.pre_cti_data, cti=cti)
 
     fit = ac.FitImagingCI(dataset=imaging_ci, post_cti_data=post_cti_image)
 

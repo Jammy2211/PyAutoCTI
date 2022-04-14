@@ -127,6 +127,12 @@ CTI in the parallel clocking direction.
         well_fill_power=0.58, well_notch_depth=0.0, full_well_depth=200000.0
     )
 
+We group these into a ``CTI2D`` object.
+
+.. code-block:: bash
+
+    cti = ac.CTI2D(parallel_trap_list=[parallel_trap], parallel_ccd=parallel_ccd)
+
 We can now add parallel CTI to our 2D data by passing it through the 2D clocker.
 
 For our 2d ndarray which has shape (10,8) parallel clocking goes upwards towards entries in the
@@ -136,7 +142,7 @@ block of 10 electrons.
 .. code-block:: bash
 
     post_cti_data_2d = clocker_2d.add_cti(
-        data=pre_cti_data_2d, parallel_trap_list=[parallel_trap], parallel_ccd=parallel_ccd
+        data=pre_cti_data_2d, cti=cti
     )
 
     array_2d_plotter = aplt.Array2DPlotter(array=post_cti_data_2d)
@@ -167,6 +173,8 @@ clocking and CTI we also define a unique ``CCDPhase``.
         well_fill_power=0.58, well_notch_depth=0.0, full_well_depth=200000.0
     )
 
+    cti = ac.CTI2D(serial_trap_list=[serial_trap_0, serial_trap_1], serial_ccd=serial_ccd)
+
 We can now add serial CTI to our 2D data by passing it through the 2D clocker.
 
 For our 2d ndarray which has shape (10,8) serial clocking goes left towards entries in the column
@@ -177,8 +185,7 @@ block of 10 electrons.
 
     post_cti_data_2d = clocker_2d.add_cti(
         data=pre_cti_data_2d,
-        serial_trap_list=[serial_trap_0, serial_trap_1],
-        serial_ccd=serial_ccd,
+        cti=cti
     )
 
     array_2d_plotter = aplt.Array2DPlotter(array=post_cti_data_2d)
@@ -201,13 +208,14 @@ parallel CTI trails then trailed during serial clocking.
 
 .. code-block:: bash
 
-    post_cti_data_2d = clocker_2d.add_cti(
-        data=pre_cti_data_2d,
+    cti = ac.CTI2D(
         parallel_trap_list=[parallel_trap],
         parallel_ccd=parallel_ccd,
         serial_trap_list=[serial_trap_0, serial_trap_1],
         serial_ccd=serial_ccd,
     )
+
+    post_cti_data_2d = clocker_2d.add_cti(data=pre_cti_data_2d, cti=cti)
 
     array_2d_plotter = aplt.Array2DPlotter(array=post_cti_data_2d)
     array_2d_plotter.figure_2d()
@@ -223,13 +231,7 @@ Correcting CTI in 2D is as easy as it was in 1D, by simply calling the clockers 
 
 .. code-block:: bash
 
-    corrected_cti_image_2d = clocker_2d.remove_cti(
-        data=post_cti_data_2d,
-        parallel_trap_list=[parallel_trap],
-        parallel_ccd=parallel_ccd,
-        serial_trap_list=[serial_trap_0, serial_trap_1],
-        serial_ccd=serial_ccd,
-    )
+    corrected_cti_image_2d = clocker_2d.remove_cti(data=post_cti_data_2d, cti=cti)
 
     array_2d_plotter = aplt.Array2DPlotter(array=corrected_cti_image_2d)
     array_2d_plotter.figure_2d()

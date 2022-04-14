@@ -8,6 +8,7 @@ from autoarray.structures.arrays.uniform_2d import Array2D
 from arcticpy.src import ccd
 from arcticpy.src import traps
 from autocti.clocker.two_d import Clocker2D
+from autocti.model.model_util import CTI2D
 
 from autocti.charge_injection.layout import Layout2DCI
 from autocti.charge_injection.imaging.simulator import SimulatorImagingCI
@@ -222,13 +223,14 @@ def add_cti_to_pre_cti_data(
         - A simple CCDPhase volume beta parametrization.
     """
 
-    post_cti_data = clocker.add_cti(
-        data=pre_cti_data,
+    cti = CTI2D(
         parallel_trap_list=parallel_trap_list,
         parallel_ccd=parallel_ccd,
         serial_trap_list=serial_trap_list,
         serial_ccd=serial_ccd,
     )
+
+    post_cti_data = clocker.add_cti(data=pre_cti_data, cti=cti)
 
     return layout_util.rotate_array_via_roe_corner_from(
         array=post_cti_data, roe_corner=roe_corner

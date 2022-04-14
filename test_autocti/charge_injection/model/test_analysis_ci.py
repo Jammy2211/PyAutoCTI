@@ -6,180 +6,170 @@ from autofit.non_linear.mock.mock_search import MockSearch
 from autocti.charge_injection.model.result import ResultImagingCI
 
 
-class TestAnalysisImagingCI:
-    def test__make_result__result_imaging_is_returned(
-        self, imaging_ci_7x7, pre_cti_data_7x7, traps_x1, ccd, parallel_clocker_2d
-    ):
-        model = af.CollectionPriorModel(
-            cti=af.Model(ac.CTI2D, parallel_traps=traps_x1, parallel_ccd=ccd),
-            hyper_noise=af.Model(ac.HyperCINoiseCollection),
-        )
+def test__make_result__result_imaging_is_returned(
+    imaging_ci_7x7, pre_cti_data_7x7, traps_x1, ccd, parallel_clocker_2d
+):
 
-        analysis = ac.AnalysisImagingCI(
-            dataset=imaging_ci_7x7, clocker=parallel_clocker_2d
-        )
+    model = af.CollectionPriorModel(
+        cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
+        hyper_noise=af.Model(ac.HyperCINoiseCollection),
+    )
 
-        search = MockSearch(name="test_search")
+    analysis = ac.AnalysisImagingCI(dataset=imaging_ci_7x7, clocker=parallel_clocker_2d)
 
-        result = search.fit(model=model, analysis=analysis)
+    search = MockSearch(name="test_search")
 
-        assert isinstance(result, ResultImagingCI)
+    result = search.fit(model=model, analysis=analysis)
 
-    def test__log_likelihood_via_analysis__matches_manual_fit(
-        self, imaging_ci_7x7, pre_cti_data_7x7, traps_x1, ccd, parallel_clocker_2d
-    ):
+    assert isinstance(result, ResultImagingCI)
 
-        model = af.CollectionPriorModel(
-            cti=af.Model(ac.CTI2D, parallel_traps=traps_x1, parallel_ccd=ccd),
-            hyper_noise=af.Model(ac.HyperCINoiseCollection),
-        )
 
-        analysis = ac.AnalysisImagingCI(
-            dataset=imaging_ci_7x7, clocker=parallel_clocker_2d
-        )
+def test__log_likelihood_via_analysis__matches_manual_fit(
+    imaging_ci_7x7, pre_cti_data_7x7, traps_x1, ccd, parallel_clocker_2d
+):
 
-        instance = model.instance_from_unit_vector([])
+    model = af.CollectionPriorModel(
+        cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
+        hyper_noise=af.Model(ac.HyperCINoiseCollection),
+    )
 
-        log_likelihood_via_analysis = analysis.log_likelihood_function(
-            instance=instance
-        )
+    analysis = ac.AnalysisImagingCI(dataset=imaging_ci_7x7, clocker=parallel_clocker_2d)
 
-        post_cti_data = parallel_clocker_2d.add_cti(
-            data=pre_cti_data_7x7.native, parallel_trap_list=traps_x1, parallel_ccd=ccd
-        )
+    instance = model.instance_from_unit_vector([])
 
-        fit = ac.FitImagingCI(dataset=analysis.dataset, post_cti_data=post_cti_data)
+    log_likelihood_via_analysis = analysis.log_likelihood_function(instance=instance)
 
-        assert fit.log_likelihood == log_likelihood_via_analysis
+    cti = ac.CTI2D(parallel_trap_list=traps_x1, parallel_ccd=ccd)
 
-    def test__full_and_extracted_fits_from_instance_and_imaging_ci(
-        self, imaging_ci_7x7, mask_2d_7x7_unmasked, traps_x1, ccd, parallel_clocker_2d
-    ):
+    post_cti_data = parallel_clocker_2d.add_cti(data=pre_cti_data_7x7.native, cti=cti)
 
-        model = af.CollectionPriorModel(
-            cti=af.Model(ac.CTI2D, parallel_traps=traps_x1, parallel_ccd=ccd),
-            hyper_noise=af.Model(ac.HyperCINoiseCollection),
-        )
+    fit = ac.FitImagingCI(dataset=analysis.dataset, post_cti_data=post_cti_data)
 
-        masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
-        masked_imaging_ci = masked_imaging_ci.apply_settings(
-            settings=ac.SettingsImagingCI(parallel_pixels=(0, 1))
-        )
+    assert fit.log_likelihood == log_likelihood_via_analysis
 
-        post_cti_data = parallel_clocker_2d.add_cti(
-            data=masked_imaging_ci.pre_cti_data,
-            parallel_trap_list=traps_x1,
-            parallel_ccd=ccd,
-        )
 
-        analysis = ac.AnalysisImagingCI(
-            dataset=masked_imaging_ci, clocker=parallel_clocker_2d
-        )
+def test__full_and_extracted_fits_from_instance_and_imaging_ci(
+    imaging_ci_7x7, mask_2d_7x7_unmasked, traps_x1, ccd, parallel_clocker_2d
+):
 
-        instance = model.instance_from_unit_vector([])
+    model = af.CollectionPriorModel(
+        cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
+        hyper_noise=af.Model(ac.HyperCINoiseCollection),
+    )
 
-        fit_analysis = analysis.fit_via_instance_from(instance=instance)
+    masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
+    masked_imaging_ci = masked_imaging_ci.apply_settings(
+        settings=ac.SettingsImagingCI(parallel_pixels=(0, 1))
+    )
 
-        fit = ac.FitImagingCI(dataset=masked_imaging_ci, post_cti_data=post_cti_data)
+    cti = ac.CTI2D(parallel_trap_list=traps_x1, parallel_ccd=ccd)
 
-        assert fit.image.shape == (7, 1)
-        assert fit_analysis.log_likelihood == pytest.approx(fit.log_likelihood)
+    post_cti_data = parallel_clocker_2d.add_cti(
+        data=masked_imaging_ci.pre_cti_data, cti=cti
+    )
 
-        fit_full_analysis = analysis.fit_full_dataset_via_instance_from(
-            instance=instance
-        )
+    analysis = ac.AnalysisImagingCI(
+        dataset=masked_imaging_ci, clocker=parallel_clocker_2d
+    )
 
-        fit = ac.FitImagingCI(dataset=imaging_ci_7x7, post_cti_data=post_cti_data)
+    instance = model.instance_from_unit_vector([])
 
-        assert fit.image.shape == (7, 7)
-        assert fit_full_analysis.log_likelihood == pytest.approx(fit.log_likelihood)
+    fit_analysis = analysis.fit_via_instance_from(instance=instance)
 
-    def test__extracted_fits_from_instance_and_imaging_ci__include_noise_scaling(
-        self,
-        imaging_ci_7x7,
-        mask_2d_7x7_unmasked,
-        traps_x1,
-        ccd,
-        parallel_clocker_2d,
-        layout_ci_7x7,
-    ):
+    fit = ac.FitImagingCI(dataset=masked_imaging_ci, post_cti_data=post_cti_data)
 
-        model = af.CollectionPriorModel(
-            cti=af.Model(ac.CTI2D, parallel_traps=traps_x1, parallel_ccd=ccd),
-            hyper_noise=af.Model(
-                ac.HyperCINoiseCollection, regions_ci=ac.HyperCINoiseScalar
-            ),
-        )
+    assert fit.image.shape == (7, 1)
+    assert fit_analysis.log_likelihood == pytest.approx(fit.log_likelihood)
 
-        noise_scaling_map_list_list_of_regions_ci = [
-            ac.Array2D.ones(shape_native=(7, 7), pixel_scales=1.0)
-        ]
+    fit_full_analysis = analysis.fit_full_dataset_via_instance_from(instance=instance)
 
-        imaging_ci_7x7.noise_scaling_map_list = [
-            noise_scaling_map_list_list_of_regions_ci[0]
-        ]
+    fit = ac.FitImagingCI(dataset=imaging_ci_7x7, post_cti_data=post_cti_data)
 
-        masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
-        masked_imaging_ci = masked_imaging_ci.apply_settings(
-            settings=ac.SettingsImagingCI(parallel_pixels=(0, 1))
-        )
+    assert fit.image.shape == (7, 7)
+    assert fit_full_analysis.log_likelihood == pytest.approx(fit.log_likelihood)
 
-        analysis = ac.AnalysisImagingCI(
-            dataset=masked_imaging_ci, clocker=parallel_clocker_2d
-        )
 
-        instance = model.instance_from_prior_medians()
+def test__extracted_fits_from_instance_and_imaging_ci__include_noise_scaling(
+    imaging_ci_7x7,
+    mask_2d_7x7_unmasked,
+    traps_x1,
+    ccd,
+    parallel_clocker_2d,
+    layout_ci_7x7,
+):
 
-        fit_analysis = analysis.fit_via_instance_from(
-            instance=instance, hyper_noise_scale=True
-        )
+    model = af.CollectionPriorModel(
+        cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
+        hyper_noise=af.Model(
+            ac.HyperCINoiseCollection, regions_ci=ac.HyperCINoiseScalar
+        ),
+    )
 
-        post_cti_data = parallel_clocker_2d.add_cti(
-            data=masked_imaging_ci.pre_cti_data,
-            parallel_trap_list=traps_x1,
-            parallel_ccd=ccd,
-        )
+    noise_scaling_map_list_list_of_regions_ci = [
+        ac.Array2D.ones(shape_native=(7, 7), pixel_scales=1.0)
+    ]
 
-        fit = ac.FitImagingCI(
-            dataset=masked_imaging_ci,
-            post_cti_data=post_cti_data,
-            hyper_noise_scalars=[instance.hyper_noise.regions_ci],
-        )
+    imaging_ci_7x7.noise_scaling_map_list = [
+        noise_scaling_map_list_list_of_regions_ci[0]
+    ]
 
-        assert fit.image.shape == (7, 1)
-        assert fit.log_likelihood == pytest.approx(fit_analysis.log_likelihood, 1.0e-4)
+    masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
+    masked_imaging_ci = masked_imaging_ci.apply_settings(
+        settings=ac.SettingsImagingCI(parallel_pixels=(0, 1))
+    )
 
-        fit = ac.FitImagingCI(
-            dataset=masked_imaging_ci,
-            post_cti_data=post_cti_data,
-            hyper_noise_scalars=[ac.HyperCINoiseScalar(scale_factor=0.0)],
-        )
+    analysis = ac.AnalysisImagingCI(
+        dataset=masked_imaging_ci, clocker=parallel_clocker_2d
+    )
 
-        assert fit.log_likelihood != pytest.approx(fit_analysis.log_likelihood, 1.0e-4)
+    instance = model.instance_from_prior_medians()
 
-        fit_full_analysis = analysis.fit_full_dataset_via_instance_from(
-            instance=instance, hyper_noise_scale=True
-        )
+    fit_analysis = analysis.fit_via_instance_from(
+        instance=instance, hyper_noise_scale=True
+    )
 
-        masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
+    cti = ac.CTI2D(parallel_trap_list=traps_x1, parallel_ccd=ccd)
 
-        fit = ac.FitImagingCI(
-            dataset=masked_imaging_ci,
-            post_cti_data=post_cti_data,
-            hyper_noise_scalars=[instance.hyper_noise.regions_ci],
-        )
+    post_cti_data = parallel_clocker_2d.add_cti(
+        data=masked_imaging_ci.pre_cti_data, cti=cti
+    )
 
-        assert fit.image.shape == (7, 7)
-        assert fit.log_likelihood == pytest.approx(
-            fit_full_analysis.log_likelihood, 1.0e-4
-        )
+    fit = ac.FitImagingCI(
+        dataset=masked_imaging_ci,
+        post_cti_data=post_cti_data,
+        hyper_noise_scalars=[instance.hyper_noise.regions_ci],
+    )
 
-        fit = ac.FitImagingCI(
-            dataset=masked_imaging_ci,
-            post_cti_data=post_cti_data,
-            hyper_noise_scalars=[ac.HyperCINoiseScalar(scale_factor=0.0)],
-        )
+    assert fit.image.shape == (7, 1)
+    assert fit.log_likelihood == pytest.approx(fit_analysis.log_likelihood, 1.0e-4)
 
-        assert fit.log_likelihood != pytest.approx(
-            fit_full_analysis.log_likelihood, 1.0e-4
-        )
+    fit = ac.FitImagingCI(
+        dataset=masked_imaging_ci,
+        post_cti_data=post_cti_data,
+        hyper_noise_scalars=[ac.HyperCINoiseScalar(scale_factor=0.0)],
+    )
+
+    assert fit.log_likelihood != pytest.approx(fit_analysis.log_likelihood, 1.0e-4)
+
+    fit_full_analysis = analysis.fit_full_dataset_via_instance_from(
+        instance=instance, hyper_noise_scale=True
+    )
+
+    masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
+
+    fit = ac.FitImagingCI(
+        dataset=masked_imaging_ci,
+        post_cti_data=post_cti_data,
+        hyper_noise_scalars=[instance.hyper_noise.regions_ci],
+    )
+
+    assert fit.image.shape == (7, 7)
+    assert fit.log_likelihood == pytest.approx(fit_full_analysis.log_likelihood, 1.0e-4)
+
+    fit = ac.FitImagingCI(
+        dataset=masked_imaging_ci,
+        post_cti_data=post_cti_data,
+        hyper_noise_scalars=[ac.HyperCINoiseScalar(scale_factor=0.0)],
+    )
+
+    assert fit.log_likelihood != pytest.approx(fit_full_analysis.log_likelihood, 1.0e-4)
