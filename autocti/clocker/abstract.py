@@ -3,6 +3,7 @@ import numpy as np
 from typing import List, Optional, Tuple
 
 import autoarray as aa
+from autoconf.dictable import Dictable
 from autocti import exc
 
 from arcticpy.src import cti
@@ -12,7 +13,7 @@ from arcticpy.src.roe import ROE
 from arcticpy.src.traps import AbstractTrap
 
 
-class AbstractClocker:
+class AbstractClocker(Dictable):
     def __init__(self, iterations: int = 1, verbosity: int = 0):
         """
         An abstract clocker, which wraps the c++ arctic CTI clocking algorithm in **PyAutoCTI**.
