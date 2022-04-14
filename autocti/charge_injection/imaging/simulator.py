@@ -1,16 +1,15 @@
 import numpy as np
 
-from arcticpy.src.ccd import CCDPhase
-from arcticpy.src.traps import AbstractTrap
-
 import autoarray as aa
 
 from autoarray.dataset.imaging import AbstractSimulatorImaging
+
 from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.charge_injection.layout import Layout2DCI
 from autocti.clocker.two_d import Clocker2D
+from autocti.model.model_util import CTI2D
 
-from typing import Optional, List
+from typing import Optional
 
 
 class SimulatorImagingCI(AbstractSimulatorImaging):
@@ -191,14 +190,11 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         """
         return normalization * (np.arange(1, size + 1)) ** row_slope
 
-    def from_layout(
+    def via_layout_from(
         self,
         layout: Layout2DCI,
         clocker: Clocker2D,
-        parallel_trap_list: Optional[List[AbstractTrap]] = None,
-        parallel_ccd: Optional[CCDPhase] = None,
-        serial_trap_list: Optional[List[AbstractTrap]] = None,
-        serial_ccd: Optional[CCDPhase] = None,
+        cti: CTI2D,
         cosmic_ray_map: Optional[aa.Array2D] = None,
         name: Optional[str] = None,
     ) -> ImagingCI:
@@ -229,27 +225,21 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         else:
             pre_cti_data = self.pre_cti_data_uniform_from(layout=layout)
 
-        return self.from_pre_cti_data(
+        return self.via_pre_cti_data_from(
             pre_cti_data=pre_cti_data.native,
             layout=layout,
             clocker=clocker,
-            parallel_trap_list=parallel_trap_list,
-            parallel_ccd=parallel_ccd,
-            serial_trap_list=serial_trap_list,
-            serial_ccd=serial_ccd,
+            cti=cti,
             cosmic_ray_map=cosmic_ray_map,
             name=name,
         )
 
-    def from_pre_cti_data(
+    def via_pre_cti_data_from(
         self,
         pre_cti_data: aa.Array2D,
         layout: Layout2DCI,
         clocker: Clocker2D,
-        parallel_trap_list: Optional[List[AbstractTrap]] = None,
-        parallel_ccd: Optional[CCDPhase] = None,
-        serial_trap_list: Optional[List[AbstractTrap]] = None,
-        serial_ccd: Optional[CCDPhase] = None,
+        cti: CTI2D,
         cosmic_ray_map: Optional[aa.Array2D] = None,
         name: Optional[str] = None,
     ) -> ImagingCI:
@@ -259,18 +249,12 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         if cosmic_ray_map is not None:
             pre_cti_data += cosmic_ray_map.native
 
-        post_cti_data = clocker.add_cti(
-            data=pre_cti_data,
-            parallel_trap_list=parallel_trap_list,
-            parallel_ccd=parallel_ccd,
-            serial_trap_list=serial_trap_list,
-            serial_ccd=serial_ccd,
-        )
+        post_cti_data = clocker.add_cti(data=pre_cti_data, cti=cti)
 
         if cosmic_ray_map is not None:
             pre_cti_data -= cosmic_ray_map.native
 
-        return self.from_post_cti_data(
+        return self.via_post_cti_data_from(
             post_cti_data=post_cti_data,
             pre_cti_data=pre_cti_data,
             layout=layout,
@@ -278,7 +262,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
             name=name,
         )
 
-    def from_post_cti_data(
+    def via_post_cti_data_from(
         self,
         post_cti_data: aa.Array2D,
         pre_cti_data: aa.Array2D,

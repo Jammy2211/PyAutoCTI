@@ -46,7 +46,7 @@ class AnalysisDataset1D(Analysis):
             How fit the model is and the model
         """
 
-        self.settings_cti.check_total_density_within_range(traps=instance.cti.traps)
+        self.settings_cti.check_total_density_within_range(traps=instance.cti.trap_list)
 
         fit = self.fit_via_instance_from(instance=instance)
 
@@ -56,13 +56,8 @@ class AnalysisDataset1D(Analysis):
         self, instance: ModelInstance, dataset: Dataset1D
     ) -> FitDataset1D:
 
-        if instance.cti.traps is not None:
-            traps = list(instance.cti.traps)
-        else:
-            traps = None
-
         post_cti_data = self.clocker.add_cti(
-            data=dataset.pre_cti_data, trap_list=traps, ccd=instance.cti.ccd
+            data=dataset.pre_cti_data, cti=instance.cti
         )
 
         return FitDataset1D(dataset=dataset, post_cti_data=post_cti_data)

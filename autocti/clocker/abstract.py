@@ -1,15 +1,11 @@
-import copy
-import numpy as np
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
-import autoarray as aa
 from autoconf.dictable import Dictable
+
 from autocti import exc
 
-from arcticpy.src import cti
 from arcticpy.src.ccd import CCD
 from arcticpy.src.ccd import CCDPhase
-from arcticpy.src.roe import ROE
 from arcticpy.src.traps import AbstractTrap
 
 

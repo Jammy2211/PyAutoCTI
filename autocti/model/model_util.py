@@ -1,33 +1,63 @@
-import numpy as np
 from typing import Optional, List
 
 from arcticpy.src import ccd
 from arcticpy.src import traps
 
+from autoconf.dictable import Dictable
 
-class CTI1D:
+
+class CTI1D(Dictable):
     def __init__(
         self,
-        traps: Optional[List[traps.TrapInstantCapture]] = None,
+        trap_list: Optional[List[traps.AbstractTrap]] = None,
         ccd: Optional[ccd.CCDPhase] = None,
     ):
-
-        self.traps = traps
+        """
+        An object which determines the behaviour of CTI during 1D clocking.
+        
+        This includes the traps that capture and trail electrons and the CCD volume filling behaviour.
+        
+        Parameters
+        ----------
+        trap_list
+            The traps on the dataset that capture and release electrons during clocking.
+        ccd
+            The CCD volume filling parameterization which dictates how an electron cloud fills pixels and thus
+            how it is subject to traps.
+        """
+        self.trap_list = trap_list
         self.ccd = ccd
 
 
-class CTI2D:
+class CTI2D(Dictable):
     def __init__(
         self,
-        parallel_traps: Optional[List[traps.TrapInstantCapture]] = None,
+        parallel_trap_list: Optional[List[traps.AbstractTrap]] = None,
         parallel_ccd: Optional[ccd.CCDPhase] = None,
-        serial_traps: Optional[List[traps.TrapInstantCapture]] = None,
+        serial_trap_list: Optional[List[traps.AbstractTrap]] = None,
         serial_ccd: Optional[ccd.CCDPhase] = None,
     ):
+        """
+        An object which determines the behaviour of CTI during 2D parallel and serial clocking.
 
-        self.parallel_traps = parallel_traps
+        This includes the traps that capture and trail electrons and the CCD volume filling behaviour.
+
+        Parameters
+        ----------
+        parallel_trap_list
+            The traps on the dataset that capture and release electrons during parallel clocking.
+        parallel_ccd
+            The CCD volume filling parameterization which dictates how an electron cloud fills pixel in the parallel
+             direction and thus how it is subject to traps.
+        serial_trap_list
+            The traps on the dataset that capture and release electrons during serial clocking.
+        serial_ccd
+            The CCD volume filling parameterization which dictates how an electron cloud fills pixel in the serial
+             direction and thus how it is subject to traps.             
+        """
+        self.parallel_trap_list = parallel_trap_list
         self.parallel_ccd = parallel_ccd
-        self.serial_traps = serial_traps
+        self.serial_trap_list = serial_trap_list
         self.serial_ccd = serial_ccd
 
     @property
@@ -37,13 +67,9 @@ class CTI2D:
 
         This is not a straight forward list addition, because **PyAutoFit** model's store the `parallel_traps` and
         `serial_traps` entries as a `ModelInstance`. This object does not allow for straight forward list addition.
-
-        Returns
-        -------
-
         """
-        parallel_traps = self.parallel_traps or []
-        serial_traps = self.serial_traps or []
+        parallel_traps = self.parallel_trap_list or []
+        serial_traps = self.serial_trap_list or []
 
         return [trap for trap in parallel_traps] + [trap for trap in serial_traps]
 

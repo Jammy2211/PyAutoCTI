@@ -18,7 +18,9 @@ class TestResult:
             search=None,
         )
 
-        assert isinstance(result.instance.cti.parallel_traps[0], ac.TrapInstantCapture)
+        assert isinstance(
+            result.instance.cti.parallel_trap_list[0], ac.TrapInstantCapture
+        )
         assert isinstance(result.instance.cti.parallel_ccd, ac.CCDPhase)
 
     def test__clocker_passed_as_result_correctly(
@@ -46,7 +48,7 @@ class TestResultDataset:
         ccd,
     ):
         model = af.CollectionPriorModel(
-            cti=af.Model(ac.CTI2D, parallel_traps=traps_x1, parallel_ccd=ccd)
+            cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd)
         )
         result = res.ResultDataset(
             samples=samples_with_result,

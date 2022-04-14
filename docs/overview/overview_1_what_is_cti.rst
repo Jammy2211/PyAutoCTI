@@ -143,13 +143,19 @@ define a ``CCDPhase`` class before we can clock our data using arCTIc.
 
     ccd = ac.CCDPhase(well_fill_power=0.58, well_notch_depth=0.0, full_well_depth=200000.0)
 
+We group these into a ``CTI1D`` object.
+
+.. code-block:: bash
+
+    cti = ac.CTI1D(trap_list=[trap], ccd=ccd)
+
 We can now add CTI to our 1D data by passing it through the 1D clocker.
 
 Note that, in 1D, clocking is to the left of the image.
 
 .. code-block:: bash
 
-    post_cti_data_1d = clocker_1d.add_cti(data=pre_cti_data_1d, trap_list=[trap], ccd=ccd)
+    post_cti_data_1d = clocker_1d.add_cti(data=pre_cti_data_1d, cti=cti)
 
     array_1d_plotter = aplt.Array1DPlotter(y=post_cti_data_1d)
     array_1d_plotter.figure_1d()
@@ -180,9 +186,7 @@ above, alongside the CTI model used to create it.
 
 .. code-block:: bash
 
-    corrected_cti_data_1d = clocker_1d.remove_cti(
-        data=post_cti_data_1d, trap_list=[trap], ccd=ccd
-    )
+    corrected_cti_data_1d = clocker_1d.remove_cti(data=post_cti_data_1d, cti=cti)
 
     array_1d_plotter = aplt.Array1DPlotter(y=corrected_cti_data_1d)
     array_1d_plotter.figure_1d()
