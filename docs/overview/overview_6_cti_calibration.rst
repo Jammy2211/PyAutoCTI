@@ -122,7 +122,7 @@ parameters that represent features in the CCD.
 .. code-block:: bash
 
     model = af.Collection(
-        cti=af.Model(ac.CTI2D, parallel_traps=[parallel_trap_0], parallel_ccd=parallel_ccd)
+        cti=af.Model(ac.CTI2D, parallel_trap_list=[parallel_trap_0], parallel_ccd=parallel_ccd)
     )
 
 Non-linear Search

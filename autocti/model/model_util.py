@@ -9,7 +9,7 @@ from autoconf.dictable import Dictable
 class CTI1D(Dictable):
     def __init__(
         self,
-        trap_list: Optional[List[traps.TrapInstantCapture]] = None,
+        trap_list: Optional[List[traps.AbstractTrap]] = None,
         ccd: Optional[ccd.CCDPhase] = None,
     ):
         """

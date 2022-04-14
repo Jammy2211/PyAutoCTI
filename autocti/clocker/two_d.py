@@ -19,12 +19,14 @@ class Clocker2D(AbstractClocker):
         iterations: int = 5,
         parallel_roe: ROE = ROE(),
         parallel_express: int = 0,
+        parallel_offset: int = 0,
         parallel_window_start: int = 0,
         parallel_window_stop: int = -1,
         parallel_poisson_traps: bool = False,
         parallel_fast_pixels: Optional[Tuple[int, int]] = None,
         serial_roe: ROE = ROE(),
         serial_express: int = 0,
+        serial_offset: int = 0,
         serial_window_start: int = 0,
         serial_window_stop: int = -1,
         serial_fast_pixels: Optional[Tuple[int, int]] = None,
@@ -47,6 +49,9 @@ class Clocker2D(AbstractClocker):
         parallel_express
             An integer factor describing how parallel pixel-to-pixel transfers are combined into single transfers for
             efficiency (see: https://academic.oup.com/mnras/article/401/1/371/1006825).
+        parallel_offset
+            The number of pixels before parallel clocking begins, thereby extending the length over which clocking
+            is performed in the parallel direction and increasing CTI.
         parallel_window_start
             The pixel index of the input image where parallel arCTIc clocking begins, for example
             if `window_start=10` the first 10 pixels are omitted and not clocked.
@@ -66,6 +71,9 @@ class Clocker2D(AbstractClocker):
         serial_express
             An integer factor describing how serial pixel-to-pixel transfers are combined into single transfers for
             efficiency (see: https://academic.oup.com/mnras/article/401/1/371/1006825).
+        serial_offset
+            The number of pixels before serial clocking begins, thereby extending the length over which clocking
+            is performed in the serial direction and increasing CTI.            
         serial_window_start
             The pixel index of the input image where serial arCTIc clocking begins, for example
             if `window_start=10` the first 10 pixels are omitted and not clocked.
@@ -90,6 +98,7 @@ class Clocker2D(AbstractClocker):
 
         self.parallel_roe = parallel_roe
         self.parallel_express = parallel_express
+        self.parallel_offset = parallel_offset
         self.parallel_window_start = parallel_window_start
         self.parallel_window_stop = parallel_window_stop
         self.parallel_poisson_traps = parallel_poisson_traps
@@ -97,6 +106,7 @@ class Clocker2D(AbstractClocker):
 
         self.serial_roe = serial_roe
         self.serial_express = serial_express
+        self.serial_offset = serial_offset
         self.serial_window_start = serial_window_start
         self.serial_window_stop = serial_window_stop
         self.serial_fast_pixels = serial_fast_pixels
@@ -173,8 +183,8 @@ class Clocker2D(AbstractClocker):
             parallel_offset = data.readout_offsets[0]
             serial_offset = data.readout_offsets[1]
         except AttributeError:
-            parallel_offset = 0
-            serial_offset = 0
+            parallel_offset = self.parallel_offset
+            serial_offset = self.serial_offset
 
         image_post_cti = arctic.add_cti(
             image=data,
@@ -232,7 +242,7 @@ class Clocker2D(AbstractClocker):
         try:
             parallel_offset = data.readout_offsets[0]
         except AttributeError:
-            parallel_offset = 0
+            parallel_offset = self.parallel_offset
 
         image_pre_cti = data.native
         image_post_cti = np.zeros(data.shape_native)
@@ -275,7 +285,7 @@ class Clocker2D(AbstractClocker):
         try:
             serial_offset = data.readout_offsets[1]
         except AttributeError:
-            serial_offset = 0
+            serial_offset = self.serial_offset
 
         image_post_cti = arctic.add_cti(
             image=image_post_cti,
@@ -343,7 +353,7 @@ class Clocker2D(AbstractClocker):
             parallel_roe=self.parallel_roe,
             parallel_traps=parallel_trap_list,
             parallel_express=self.parallel_express,
-            parallel_offset=0,
+            parallel_offset=self.parallel_offset,
             verbosity=self.verbosity,
         )
 
@@ -406,7 +416,7 @@ class Clocker2D(AbstractClocker):
             serial_roe=self.serial_roe,
             serial_traps=serial_trap_list,
             serial_express=self.serial_express,
-            serial_offset=0,
+            serial_offset=self.serial_offset,
             verbosity=self.verbosity,
         )
 

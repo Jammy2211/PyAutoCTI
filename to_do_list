@@ -9,9 +9,16 @@ __Time Evolution CTI__
 
 - Write simple example, simulate and fit 10 CI datasets with linear time evolution, recover time evolution.
 - Extend example based on Richard's HST experience.
+- All of the above fit every dataset one-by-one, and perform the estimate of the time evolution model afterwards.
 - Scope out implementation in Euclid framework.
 
-- Extend to graphical model for PyAutoFit paper.
+- Extend to graphical model for PyAutoFit paper (and maybe Euclid).
+- Estimate performance of the one-by-one fits.
+- Compare to fits which fit all datasets simultaneously, allowing for variable density in every dataset but fixed
+release time.
+- Compare to fits which parameterize the variable density as a linear relation across the datasets.
+- Implement this linear relation fit in the graphical modeling framework, so we can fit each dataset one-by-one. NOTE:
+this will use a "global" release time parameter.
 
 
 __Validation & Verification__
