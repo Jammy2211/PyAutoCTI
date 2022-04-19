@@ -73,7 +73,7 @@ def test__individual_1d_of_region_are_output(dataset_1d_7, plot_path, plot_patch
     assert path.join(plot_path, "signal_to_noise_map_fpr.png") not in plot_patch.paths
 
 
-def test__subplot_dataset_1d__is_output(dataset_1d_7, plot_path, plot_patch):
+def test__subplots__output(dataset_1d_7, plot_path, plot_patch):
 
     dataset_1d_plotter = aplt.Dataset1DPlotter(
         dataset=dataset_1d_7,
@@ -82,3 +82,6 @@ def test__subplot_dataset_1d__is_output(dataset_1d_7, plot_path, plot_patch):
 
     dataset_1d_plotter.subplot_dataset_1d()
     assert path.join(plot_path, "subplot_dataset_1d.png") in plot_patch.paths
+
+    dataset_1d_plotter.subplot_1d_of_region(region="fpr")
+    assert path.join(plot_path, "subplot_1d_fpr.png") in plot_patch.paths

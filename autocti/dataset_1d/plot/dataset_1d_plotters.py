@@ -263,3 +263,31 @@ class Dataset1DPlotter(Plotter):
         self.subplot(
             data=True, noise_map=True, signal_to_noise_map=True, pre_cti_data=True
         )
+
+    def subplot_1d_of_region(self, region: str):
+        """
+        Plots the individual attributes of the plotter's `Dataset1D` object in 1D on a subplot.
+
+        These 1D plots correspond to a region in 1D on the dataset, which is binned up to produce a 1D plot.
+
+        For example, for the input `region=fpr`, this function extracts the FPR over each charge region and bins such
+        that the 1D plot shows the average FPR.
+
+        The function plots the data, noise map, pre-cti data and signal to noise map in 1D on the subplot.
+
+        Parameters
+        ----------
+        region
+            The region on the charge injection image where data is extracted and binned over the parallel or serial
+            direction {"parallel_fpr", "parallel_eper", "serial_fpr", "serial_eper"}
+        """
+
+        self.open_subplot_figure(number_subplots=4)
+
+        self.figures_1d_of_region(data=True, region=region)
+        self.figures_1d_of_region(noise_map=True, region=region)
+        self.figures_1d_of_region(pre_cti_data=True, region=region)
+        self.figures_1d_of_region(signal_to_noise_map=True, region=region)
+
+        self.mat_plot_1d.output.subplot_to_figure(auto_filename=f"subplot_1d_{region}")
+        self.close_subplot_figure()

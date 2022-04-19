@@ -88,7 +88,7 @@ def test__individual_1d_of_region_are_output(imaging_ci_7x7, plot_path, plot_pat
     )
 
 
-def test__subplot_of_region_1d__is_output(imaging_ci_7x7, plot_path, plot_patch):
+def test__subplots__output(imaging_ci_7x7, plot_path, plot_patch):
 
     imaging_ci_plotter = aplt.ImagingCIPlotter(
         dataset=imaging_ci_7x7,
