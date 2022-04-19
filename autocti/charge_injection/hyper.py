@@ -26,11 +26,11 @@ class HyperCINoiseCollection:
         self,
         regions_ci: Optional[HyperCINoiseScalar] = None,
         parallel_epers: Optional[HyperCINoiseScalar] = None,
-        serial_trails: Optional[HyperCINoiseScalar] = None,
+        serial_eper: Optional[HyperCINoiseScalar] = None,
         serial_overscan_no_trails: Optional[HyperCINoiseScalar] = None,
     ):
 
         self.regions_ci = regions_ci
         self.parallel_epers = parallel_epers
-        self.serial_trails = serial_trails
+        self.serial_eper = serial_eper
         self.serial_overscan_no_trails = serial_overscan_no_trails

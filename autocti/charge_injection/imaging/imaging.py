@@ -215,10 +215,14 @@ class ImagingCI(aa.Imaging):
     ):
 
         self.image.output_to_fits(file_path=image_path, overwrite=overwrite)
-        self.noise_map.output_to_fits(file_path=noise_map_path, overwrite=overwrite)
-        self.pre_cti_data.output_to_fits(
-            file_path=pre_cti_data_path, overwrite=overwrite
-        )
+
+        if noise_map_path is not None:
+            self.noise_map.output_to_fits(file_path=noise_map_path, overwrite=overwrite)
+
+        if pre_cti_data_path is not None:
+            self.pre_cti_data.output_to_fits(
+                file_path=pre_cti_data_path, overwrite=overwrite
+            )
 
         if self.cosmic_ray_map is not None and cosmic_ray_map_path is not None:
 

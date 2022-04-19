@@ -164,21 +164,21 @@ class Layout2D(aa.Layout2D):
         layout.region_list = extracted_region_list
         return layout
 
-    def extract_line_from(self, array: aa.Array2D, line_region: str) -> aa.Array1D:
+    def extract_region_from(self, array: aa.Array2D, region: str) -> aa.Array1D:
 
-        if line_region == "parallel_front_edge":
+        if region == "parallel_fpr":
             return self.extract.parallel_fpr.binned_array_1d_from(
                 array=array, pixels=(0, self.extract.parallel_fpr.total_rows_min)
             )
-        elif line_region == "parallel_epers":
+        elif region == "parallel_eper":
             return self.extract.parallel_eper.binned_array_1d_from(
                 array=array, pixels=(0, self.smallest_parallel_rows_between_ci_regions)
             )
-        elif line_region == "serial_front_edge":
+        elif region == "serial_fpr":
             return self.extract.serial_fpr.binned_array_1d_from(
                 array=array, pixels=(0, self.extract.serial_fpr.total_columns_min)
             )
-        elif line_region == "serial_trails":
+        elif region == "serial_eper":
             return self.extract.serial_eper.binned_array_1d_from(
                 array=array, pixels=(0, self.serial_eper_pixels)
             )

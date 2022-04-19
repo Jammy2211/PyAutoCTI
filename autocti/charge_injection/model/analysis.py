@@ -84,7 +84,7 @@ class AnalysisImagingCI(Analysis):
                 [
                     instance.hyper_noise.regions_ci,
                     instance.hyper_noise.parallel_epers,
-                    instance.hyper_noise.serial_trails,
+                    instance.hyper_noise.serial_eper,
                     instance.hyper_noise.serial_overscan_no_trails,
                 ],
             )
@@ -146,20 +146,18 @@ class AnalysisImagingCI(Analysis):
 
         try:
             visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.dataset, line_region="parallel_front_edge"
+                imaging_ci=self.dataset, region="parallel_fpr"
             )
             visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.dataset, line_region="parallel_epers"
+                imaging_ci=self.dataset, region="parallel_eper"
             )
 
             visualizer.visualize_fit_ci(fit=fit, during_analysis=during_analysis)
             visualizer.visualize_fit_ci_1d_lines(
-                fit=fit,
-                during_analysis=during_analysis,
-                line_region="parallel_front_edge",
+                fit=fit, during_analysis=during_analysis, region="parallel_fpr"
             )
             visualizer.visualize_fit_ci_1d_lines(
-                fit=fit, during_analysis=during_analysis, line_region="parallel_epers"
+                fit=fit, during_analysis=during_analysis, region="parallel_eper"
             )
         except (exc.RegionException, TypeError):
             pass
@@ -167,20 +165,18 @@ class AnalysisImagingCI(Analysis):
         try:
             visualizer.visualize_imaging_ci(imaging_ci=self.dataset)
             visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.dataset, line_region="serial_front_edge"
+                imaging_ci=self.dataset, region="serial_fpr"
             )
             visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.dataset, line_region="serial_trails"
+                imaging_ci=self.dataset, region="serial_eper"
             )
 
             visualizer.visualize_fit_ci(fit=fit, during_analysis=during_analysis)
             visualizer.visualize_fit_ci_1d_lines(
-                fit=fit,
-                during_analysis=during_analysis,
-                line_region="serial_front_edge",
+                fit=fit, during_analysis=during_analysis, region="serial_fpr"
             )
             visualizer.visualize_fit_ci_1d_lines(
-                fit=fit, during_analysis=during_analysis, line_region="serial_trails"
+                fit=fit, during_analysis=during_analysis, region="serial_eper"
             )
         except (exc.RegionException, TypeError):
             pass

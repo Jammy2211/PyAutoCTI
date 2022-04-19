@@ -111,7 +111,7 @@ def test__noise_scaling_map_list_is_list_of_result__are_correct(
             ac.HyperCINoiseCollection,
             regions_ci=ac.HyperCINoiseScalar(scale_factor=1.0),
             parallel_epers=ac.HyperCINoiseScalar(scale_factor=1.0),
-            serial_trails=ac.HyperCINoiseScalar(scale_factor=1.0),
+            serial_eper=ac.HyperCINoiseScalar(scale_factor=1.0),
             serial_overscan_no_trails=ac.HyperCINoiseScalar(scale_factor=1.0),
         ),
     )

@@ -32,7 +32,7 @@ class VisualizerImagingCI(Visualizer):
 
             imaging_ci_plotter.subplot_imaging_ci()
 
-    def visualize_imaging_ci_lines(self, imaging_ci, line_region):
+    def visualize_imaging_ci_lines(self, imaging_ci, region):
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
@@ -44,10 +44,10 @@ class VisualizerImagingCI(Visualizer):
 
         if should_plot("subplot_dataset"):
 
-            imaging_ci_plotter.subplot_1d_ci_line_region(line_region=line_region)
+            imaging_ci_plotter.subplot_1d_of_region(region=region)
 
-        imaging_ci_plotter.figures_1d_ci_line_region(
-            line_region=line_region,
+        imaging_ci_plotter.figures_1d_of_region(
+            region=region,
             image=should_plot("data"),
             noise_map=should_plot("noise_map"),
             signal_to_noise_map=should_plot("signal_to_noise_map"),
@@ -97,7 +97,7 @@ class VisualizerImagingCI(Visualizer):
         if should_plot("subplot_fit"):
             fit_ci_plotter.subplot_fit_ci()
 
-    def visualize_fit_ci_1d_lines(self, fit, line_region, during_analysis):
+    def visualize_fit_ci_1d_lines(self, fit, region, during_analysis):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
@@ -109,10 +109,10 @@ class VisualizerImagingCI(Visualizer):
 
         if should_plot("subplot_fit"):
 
-            fit_ci_plotter.subplot_1d_ci_line_region(line_region=line_region)
+            fit_ci_plotter.subplot_1d_of_region(region=region)
 
-        fit_ci_plotter.figures_1d_ci_line_region(
-            line_region=line_region,
+        fit_ci_plotter.figures_1d_of_region(
+            region=region,
             image=should_plot("data"),
             noise_map=should_plot("noise_map"),
             signal_to_noise_map=should_plot("signal_to_noise_map"),
@@ -127,8 +127,8 @@ class VisualizerImagingCI(Visualizer):
 
             if should_plot("all_at_end_png"):
 
-                fit_ci_plotter.figures_1d_ci_line_region(
-                    line_region=line_region,
+                fit_ci_plotter.figures_1d_of_region(
+                    region=region,
                     image=True,
                     noise_map=True,
                     signal_to_noise_map=True,
@@ -165,12 +165,12 @@ class VisualizerImagingCI(Visualizer):
                 func_name="figures_2d", figure_name="chi_squared_map"
             )
 
-    def visualize_multiple_fit_cis_subplots_1d_lines(self, fit, line_region):
+    def visualize_multiple_fit_cis_subplots_1d_lines(self, fit, region):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
         mat_plot_1d = self.mat_plot_1d_from(
-            subfolders=f"multiple_fit_cis_1d_line_{line_region}"
+            subfolders=f"multiple_fit_cis_1d_line_{region}"
         )
 
         fit_ci_plotter_list = [
@@ -180,23 +180,23 @@ class VisualizerImagingCI(Visualizer):
 
         if should_plot("subplot_residual_maps"):
             multi_plotter.subplot_of_figure(
-                func_name="figures_1d_ci_line_region",
+                func_name="figures_1d_of_region",
                 figure_name="residual_map",
-                line_region=line_region,
+                region=region,
             )
 
         if should_plot("subplot_normalized_residual_maps"):
             multi_plotter.subplot_of_figure(
-                func_name="figures_1d_ci_line_region",
+                func_name="figures_1d_of_region",
                 figure_name="normalized_residual_map",
-                line_region=line_region,
+                region=region,
             )
 
         if should_plot("subplot_chi_squared_maps"):
             multi_plotter.subplot_of_figure(
-                func_name="figures_1d_ci_line_region",
+                func_name="figures_1d_of_region",
                 figure_name="chi_squared_map",
-                line_region=line_region,
+                region=region,
             )
 
     def visualize_fit_in_fits(self, fit):

@@ -74,19 +74,19 @@ class ImagingCIPlotter(Plotter):
         return self.get_2d.via_mask_from(mask=self.imaging.mask)
 
     @property
-    def extract_line_from(self) -> Callable:
-        return self.imaging.layout.extract_line_from
+    def extract_region_from(self) -> Callable:
+        return self.imaging.layout.extract_region_from
 
     def figures_2d(
         self,
-        image=False,
-        noise_map=False,
-        inverse_noise_map=False,
-        signal_to_noise_map=False,
-        absolute_signal_to_noise_map=False,
-        potential_chi_squared_map=False,
-        pre_cti_data=False,
-        cosmic_ray_map=False,
+        image: bool = False,
+        noise_map: bool = False,
+        inverse_noise_map: bool = False,
+        signal_to_noise_map: bool = False,
+        absolute_signal_to_noise_map: bool = False,
+        potential_chi_squared_map: bool = False,
+        pre_cti_data: bool = False,
+        cosmic_ray_map: bool = False,
     ):
         """
         Plots the individual attributes of the plotter's `ImagingCI` object in 2D.
@@ -143,19 +143,19 @@ class ImagingCIPlotter(Plotter):
                 ),
             )
 
-    def figures_1d_ci_line_region(
+    def figures_1d_of_region(
         self,
-        line_region,
-        image=False,
-        noise_map=False,
-        pre_cti_data=False,
-        signal_to_noise_map=False,
+        region: str,
+        image: bool = False,
+        noise_map: bool = False,
+        pre_cti_data: bool = False,
+        signal_to_noise_map: bool = False,
     ):
         """
         Plots the individual attributes of the plotter's `ImagingCI` object in 1D.
         
         These 1D plots correspond to a region in 2D on the charge injection image, which is binned up over the parallel
-        or serial direction to produce a 1D plot. For example, for the input `line_region=parallel_front_edge`, this
+        or serial direction to produce a 1D plot. For example, for the input `region=parallel_fpr`, this
         function extracts the FPR over each charge injection region and bins such that the 1D plot shows the FPR
         in the parallel direction.
 
@@ -164,9 +164,9 @@ class ImagingCIPlotter(Plotter):
 
         Parameters
         ----------
-        line_region
+        region
             The region on the charge injection image where data is extracted and binned over the parallel or serial
-            direction {"parallel_front_edge", "parallel_epers", "serial_front_edge", "serial_trails"}
+            direction {"parallel_fpr", "parallel_eper", "serial_fpr", "serial_eper"}
         image
             Whether or not to make a 1D plot (via `plot`) of the image data extracted and binned over the line region.
         noise_map
@@ -180,44 +180,40 @@ class ImagingCIPlotter(Plotter):
 
         if image:
 
-            line = self.extract_line_from(
-                array=self.imaging.image, line_region=line_region
-            )
+            line = self.extract_region_from(array=self.imaging.image, region=region)
 
             self.mat_plot_1d.plot_yx(
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title=f"Image Line {line_region}",
+                    title=f"Image Line {region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
-                    filename=f"image_{line_region}",
+                    filename=f"image_{region}",
                 ),
             )
 
         if noise_map:
 
-            line = self.extract_line_from(
-                array=self.imaging.noise_map, line_region=line_region
-            )
+            line = self.extract_region_from(array=self.imaging.noise_map, region=region)
 
             self.mat_plot_1d.plot_yx(
                 y=line,
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"Noise Map Line {line_region}",
+                    title=f"Noise Map Line {region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
-                    filename=f"noise_map_{line_region}",
+                    filename=f"noise_map_{region}",
                 ),
             )
 
         if pre_cti_data:
 
-            line = self.extract_line_from(
-                array=self.imaging.pre_cti_data, line_region=line_region
+            line = self.extract_region_from(
+                array=self.imaging.pre_cti_data, region=region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -225,17 +221,17 @@ class ImagingCIPlotter(Plotter):
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"CI Pre CTI Line {line_region}",
+                    title=f"CI Pre CTI Line {region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
-                    filename=f"pre_cti_data_{line_region}",
+                    filename=f"pre_cti_data_{region}",
                 ),
             )
 
         if signal_to_noise_map:
 
-            line = self.extract_line_from(
-                array=self.imaging.signal_to_noise_map, line_region=line_region
+            line = self.extract_region_from(
+                array=self.imaging.signal_to_noise_map, region=region
             )
 
             self.mat_plot_1d.plot_yx(
@@ -243,10 +239,10 @@ class ImagingCIPlotter(Plotter):
                 x=range(len(line)),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"Signal To Noise Map {line_region}",
+                    title=f"Signal To Noise Map {region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
-                    filename=f"signal_to_noise_map_{line_region}",
+                    filename=f"signal_to_noise_map_{region}",
                 ),
             )
 
@@ -314,12 +310,12 @@ class ImagingCIPlotter(Plotter):
             cosmic_ray_map=True,
         )
 
-    def subplot_1d_ci_line_region(self, line_region):
+    def subplot_1d_of_region(self, region: str):
         """
         Plots the individual attributes of the plotter's `ImagingCI` object in 1D on a subplot.
 
         These 1D plots correspond to a region in 2D on the charge injection image, which is binned up over the parallel
-        or serial direction to produce a 1D plot. For example, for the input `line_region=parallel_front_edge`, this
+        or serial direction to produce a 1D plot. For example, for the input `region=parallel_fpr`, this
         function extracts the FPR over each charge injection region and bins such that the 1D plot shows the FPR
         in the parallel direction.
 
@@ -327,21 +323,19 @@ class ImagingCIPlotter(Plotter):
 
         Parameters
         ----------
-        line_region
+        region
             The region on the charge injection image where data is extracted and binned over the parallel or serial
-            direction {"parallel_front_edge", "parallel_epers", "serial_front_edge", "serial_trails"}
+            direction {"parallel_fpr", "parallel_eper", "serial_fpr", "serial_eper"}
         """
 
         self.open_subplot_figure(number_subplots=4)
 
-        self.figures_1d_ci_line_region(image=True, line_region=line_region)
-        self.figures_1d_ci_line_region(noise_map=True, line_region=line_region)
-        self.figures_1d_ci_line_region(pre_cti_data=True, line_region=line_region)
-        self.figures_1d_ci_line_region(
-            signal_to_noise_map=True, line_region=line_region
-        )
+        self.figures_1d_of_region(image=True, region=region)
+        self.figures_1d_of_region(noise_map=True, region=region)
+        self.figures_1d_of_region(pre_cti_data=True, region=region)
+        self.figures_1d_of_region(signal_to_noise_map=True, region=region)
 
         self.mat_plot_1d.output.subplot_to_figure(
-            auto_filename=f"subplot_1d_ci_{line_region}"
+            auto_filename=f"subplot_1d_ci_{region}"
         )
         self.close_subplot_figure()

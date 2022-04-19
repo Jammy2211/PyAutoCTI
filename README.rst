@@ -99,7 +99,7 @@ CTI can be added to an image as follows:
     )
 
     """
-    The data, traps and CCD properites are combined to clock the pre-CTI data and return the
+    The data, traps and CCD properties are combined to clock the pre-CTI data and return the
     post-CTI data.
     """
     post_cti_data_2d = clocker_2d.add_cti(

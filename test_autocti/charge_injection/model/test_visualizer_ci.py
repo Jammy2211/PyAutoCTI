@@ -52,28 +52,23 @@ class TestVisualizerImagingCI:
         visualizer = VisualizerImagingCI(visualize_path=plot_path)
 
         visualizer.visualize_imaging_ci_lines(
-            imaging_ci=imaging_ci_7x7, line_region="parallel_front_edge"
+            imaging_ci=imaging_ci_7x7, region="parallel_fpr"
         )
 
         plot_path = path.join(plot_path, "imaging_ci")
 
         assert (
-            path.join(plot_path, "subplot_1d_ci_parallel_front_edge.png")
-            in plot_patch.paths
+            path.join(plot_path, "subplot_1d_ci_parallel_fpr.png") in plot_patch.paths
         )
-        assert path.join(plot_path, "image_parallel_front_edge.png") in plot_patch.paths
+        assert path.join(plot_path, "image_parallel_fpr.png") in plot_patch.paths
         assert (
-            path.join(plot_path, "noise_map_parallel_front_edge.png")
+            path.join(plot_path, "noise_map_parallel_fpr.png") not in plot_patch.paths
+        )
+        assert (
+            path.join(plot_path, "signal_to_noise_map_parallel_fpr.png")
             not in plot_patch.paths
         )
-        assert (
-            path.join(plot_path, "signal_to_noise_map_parallel_front_edge.png")
-            not in plot_patch.paths
-        )
-        assert (
-            path.join(plot_path, "pre_cti_data_parallel_front_edge.png")
-            in plot_patch.paths
-        )
+        assert path.join(plot_path, "pre_cti_data_parallel_fpr.png") in plot_patch.paths
 
     def test___visualizes_fit_ci_using_configs(self, fit_ci_7x7, plot_path, plot_patch):
 
@@ -120,83 +115,64 @@ class TestVisualizerImagingCI:
         visualizer = VisualizerImagingCI(visualize_path=plot_path)
 
         visualizer.visualize_fit_ci_1d_lines(
-            fit=fit_ci_7x7, line_region="parallel_front_edge", during_analysis=True
+            fit=fit_ci_7x7, region="parallel_fpr", during_analysis=True
         )
 
         plot_path = path.join(plot_path, "fit_imaging_ci")
 
         assert (
-            path.join(plot_path, "subplot_1d_fit_ci_parallel_front_edge.png")
+            path.join(plot_path, "subplot_1d_fit_ci_parallel_fpr.png")
             in plot_patch.paths
         )
-        assert path.join(plot_path, "image_parallel_front_edge.png") in plot_patch.paths
+        assert path.join(plot_path, "image_parallel_fpr.png") in plot_patch.paths
+        assert path.join(plot_path, "noise_parallel_fpr.png") not in plot_patch.paths
         assert (
-            path.join(plot_path, "noise_parallel_front_edge.png")
+            path.join(plot_path, "signal_to_noise_map_parallel_fpr.png")
+            not in plot_patch.paths
+        )
+        assert path.join(plot_path, "pre_cti_data_parallel_fpr.png") in plot_patch.paths
+        assert (
+            path.join(plot_path, "post_cti_data_parallel_fpr.png") in plot_patch.paths
+        )
+        assert (
+            path.join(plot_path, "residual_map_parallel_fpr.png")
             not in plot_patch.paths
         )
         assert (
-            path.join(plot_path, "signal_to_noise_map_parallel_front_edge.png")
-            not in plot_patch.paths
-        )
-        assert (
-            path.join(plot_path, "pre_cti_data_parallel_front_edge.png")
+            path.join(plot_path, "normalized_residual_map_parallel_fpr.png")
             in plot_patch.paths
         )
         assert (
-            path.join(plot_path, "post_cti_data_parallel_front_edge.png")
-            in plot_patch.paths
-        )
-        assert (
-            path.join(plot_path, "residual_map_parallel_front_edge.png")
-            not in plot_patch.paths
-        )
-        assert (
-            path.join(plot_path, "normalized_residual_map_parallel_front_edge.png")
-            in plot_patch.paths
-        )
-        assert (
-            path.join(plot_path, "chi_squared_map_parallel_front_edge.png")
-            in plot_patch.paths
+            path.join(plot_path, "chi_squared_map_parallel_fpr.png") in plot_patch.paths
         )
 
         plot_patch.paths = []
 
         visualizer.visualize_fit_ci_1d_lines(
-            fit=fit_ci_7x7, line_region="parallel_front_edge", during_analysis=False
+            fit=fit_ci_7x7, region="parallel_fpr", during_analysis=False
         )
 
         assert (
-            path.join(plot_path, "subplot_1d_fit_ci_parallel_front_edge.png")
+            path.join(plot_path, "subplot_1d_fit_ci_parallel_fpr.png")
             in plot_patch.paths
         )
-        assert path.join(plot_path, "image_parallel_front_edge.png") in plot_patch.paths
+        assert path.join(plot_path, "image_parallel_fpr.png") in plot_patch.paths
+        assert path.join(plot_path, "noise_map_parallel_fpr.png") in plot_patch.paths
         assert (
-            path.join(plot_path, "noise_map_parallel_front_edge.png")
+            path.join(plot_path, "signal_to_noise_map_parallel_fpr.png")
             in plot_patch.paths
         )
+        assert path.join(plot_path, "pre_cti_data_parallel_fpr.png") in plot_patch.paths
         assert (
-            path.join(plot_path, "signal_to_noise_map_parallel_front_edge.png")
-            in plot_patch.paths
+            path.join(plot_path, "post_cti_data_parallel_fpr.png") in plot_patch.paths
         )
+        assert path.join(plot_path, "residual_map_parallel_fpr.png") in plot_patch.paths
         assert (
-            path.join(plot_path, "pre_cti_data_parallel_front_edge.png")
-            in plot_patch.paths
-        )
-        assert (
-            path.join(plot_path, "post_cti_data_parallel_front_edge.png")
+            path.join(plot_path, "normalized_residual_map_parallel_fpr.png")
             in plot_patch.paths
         )
         assert (
-            path.join(plot_path, "residual_map_parallel_front_edge.png")
-            in plot_patch.paths
-        )
-        assert (
-            path.join(plot_path, "normalized_residual_map_parallel_front_edge.png")
-            in plot_patch.paths
-        )
-        assert (
-            path.join(plot_path, "chi_squared_map_parallel_front_edge.png")
-            in plot_patch.paths
+            path.join(plot_path, "chi_squared_map_parallel_fpr.png") in plot_patch.paths
         )
 
     # def test__visualize_multiple_fit_cis_subplots(
@@ -232,10 +208,10 @@ class TestVisualizerImagingCI:
     #     visualizer = VisualizerImagingCI(visualize_path=plot_path)
     #
     #     visualizer.visualize_multiple_fit_cis_subplots_1d_lines(
-    #         fits=[fit_ci_7x7, fit_ci_7x7], line_region="parallel_front_edge"
+    #         fits=[fit_ci_7x7, fit_ci_7x7], region="parallel_fpr"
     #     )
     #
-    #     plot_path = path.join(plot_path, "multiple_fit_cis_1d_line_parallel_front_edge")
+    #     plot_path = path.join(plot_path, "multiple_fit_cis_1d_line_parallel_fpr")
     #
     #     assert path.join(plot_path, "subplot_residual_map_list.png") in plot_patch.paths
     #     assert (

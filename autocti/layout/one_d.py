@@ -60,13 +60,13 @@ class Layout1D(aa.Layout1D):
         pixels_between_regions.append(self.trail_size_to_array_edge)
         return np.min(pixels_between_regions)
 
-    def extract_line_from(self, array: aa.Array1D, line_region: str):
+    def extract_region_from(self, array: aa.Array1D, region: str):
 
-        if line_region == "front_edge":
+        if region == "front_edge":
             return self.extract.fpr.stacked_array_1d_from(
                 array=array, pixels=(0, self.extract.fpr.total_pixels_min)
             )
-        elif line_region == "trails":
+        elif region == "trails":
             return self.extract.eper.stacked_array_1d_from(
                 array=array, pixels=(0, self.smallest_trails_pixels_to_array_edge)
             )
