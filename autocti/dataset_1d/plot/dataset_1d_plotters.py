@@ -1,4 +1,5 @@
 import numpy as np
+from typing import Callable
 
 import autoarray.plot as aplt
 
@@ -43,10 +44,18 @@ class Dataset1DPlotter(Plotter):
             mat_plot_1d=mat_plot_1d, include_1d=include_1d, visuals_1d=visuals_1d
         )
 
-        self.dataset_1d = dataset
+        self.dataset = dataset
+
+    @property
+    def dataset_1d(self):
+        return self.dataset
 
     def get_visuals_1d(self) -> aplt.Visuals1D:
         return self.visuals_1d
+
+    @property
+    def extract_region_from(self) -> Callable:
+        return self.dataset.layout.extract_region_from
 
     def figures_1d(
         self,
@@ -113,6 +122,104 @@ class Dataset1DPlotter(Plotter):
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="Dataset 1D Pre CTI Data", filename="pre_cti_data"
+                ),
+            )
+
+    def figures_1d_of_region(
+        self,
+        region: str,
+        data: bool = False,
+        noise_map: bool = False,
+        pre_cti_data: bool = False,
+        signal_to_noise_map: bool = False,
+    ):
+        """
+        Plots the individual attributes of the plotter's `Dataset1D` object in 1D.
+
+        These 1D plots correspond to regions in 1D on the charge injection image, which are binned up to produce a
+         1D plot. 
+         
+         For example, for the input `region=fpr`, this function extracts the FPR over each charge region and bins them 
+        such that the 1D plot shows the average FPR.
+
+        The API is such that every plottable attribute of the `Dataset1D` object is an input parameter of type bool of
+        the function, which if switched to `True` means that it is plotted.
+
+        Parameters
+        ----------
+        region
+            The region on the 1D dataset where data is extracted and binned {fpr", "eper"}
+        image
+            Whether or not to make a 1D plot (via `plot`) of the image data extracted and binned over the region.
+        noise_map
+            Whether or not to make a 1D plot (via `plot`) of the noise-map extracted and binned over the region.
+        pre_cti_data
+            Whether or not to make a 1D plot (via `plot`) of the pre-cti data extracted and binned over the region.        
+        signal_to_noise_map
+            Whether or not to make a 1D plot (via `plot`) of the signal-to-noise map data extracted and binned over 
+            the region.
+        """
+
+        if data:
+
+            y = self.extract_region_from(array=self.dataset.data, region=region)
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                visuals_1d=self.get_visuals_1d(),
+                auto_labels=AutoLabels(
+                    title=f"Image {region}",
+                    ylabel="Image",
+                    xlabel="Pixel No.",
+                    filename=f"data_{region}",
+                ),
+            )
+
+        if noise_map:
+            y = self.extract_region_from(array=self.dataset.noise_map, region=region)
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                visuals_1d=self.visuals_1d,
+                auto_labels=AutoLabels(
+                    title=f"Noise Map {region}",
+                    ylabel="Image",
+                    xlabel="Pixel No.",
+                    filename=f"noise_map_{region}",
+                ),
+            )
+
+        if pre_cti_data:
+            y = self.extract_region_from(array=self.dataset.pre_cti_data, region=region)
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                visuals_1d=self.visuals_1d,
+                auto_labels=AutoLabels(
+                    title=f"CI Pre CTI {region}",
+                    ylabel="Image",
+                    xlabel="Pixel No.",
+                    filename=f"pre_cti_data_{region}",
+                ),
+            )
+
+        if signal_to_noise_map:
+            y = self.extract_region_from(
+                array=self.dataset.signal_to_noise_map, region=region
+            )
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                visuals_1d=self.visuals_1d,
+                auto_labels=AutoLabels(
+                    title=f"Signal To Noise Map {region}",
+                    ylabel="Image",
+                    xlabel="Pixel No.",
+                    filename=f"signal_to_noise_map_{region}",
                 ),
             )
 

@@ -12,7 +12,7 @@ from autocti.charge_injection.imaging.imaging import ImagingCI
 class ImagingCIPlotter(Plotter):
     def __init__(
         self,
-        imaging: ImagingCI,
+        dataset: ImagingCI,
         mat_plot_2d: aplt.MatPlot2D = aplt.MatPlot2D(),
         visuals_2d: aplt.Visuals2D = aplt.Visuals2D(),
         include_2d: aplt.Include2D = aplt.Include2D(),
@@ -34,7 +34,7 @@ class ImagingCIPlotter(Plotter):
 
         Parameters
         ----------
-        imaging
+        dataset
             The charge injection imaging dataset the plotter plots.
         mat_plot_2d
             Contains objects which wrap the matplotlib function calls that make 2D plots.
@@ -57,7 +57,7 @@ class ImagingCIPlotter(Plotter):
         self.include_1d = include_1d
         self.mat_plot_1d = mat_plot_1d
 
-        self.imaging = imaging
+        self.dataset = dataset
 
         self._imaging_meta_plotter = ImagingPlotterMeta(
             imaging=self.imaging,
@@ -66,6 +66,10 @@ class ImagingCIPlotter(Plotter):
             include_2d=self.include_2d,
             visuals_2d=self.visuals_2d,
         )
+
+    @property
+    def imaging(self):
+        return self.dataset
 
     def get_visuals_1d(self):
         return self.visuals_1d

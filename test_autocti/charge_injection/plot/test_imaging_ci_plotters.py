@@ -20,7 +20,7 @@ def make_imaging_ci_plotter_setup():
 def test__individual_attributes_are_output(imaging_ci_7x7, plot_path, plot_patch):
 
     imaging_ci_plotter = aplt.ImagingCIPlotter(
-        imaging=imaging_ci_7x7,
+        dataset=imaging_ci_7x7,
         mat_plot_2d=aplt.MatPlot2D(output=aplt.Output(plot_path, format="png")),
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
     )
@@ -54,7 +54,7 @@ def test__individual_attributes_are_output(imaging_ci_7x7, plot_path, plot_patch
 def test__individual_1d_of_region_are_output(imaging_ci_7x7, plot_path, plot_patch):
 
     imaging_ci_plotter = aplt.ImagingCIPlotter(
-        imaging=imaging_ci_7x7,
+        dataset=imaging_ci_7x7,
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
     )
 
@@ -91,7 +91,7 @@ def test__individual_1d_of_region_are_output(imaging_ci_7x7, plot_path, plot_pat
 def test__subplot_of_region_1d__is_output(imaging_ci_7x7, plot_path, plot_patch):
 
     imaging_ci_plotter = aplt.ImagingCIPlotter(
-        imaging=imaging_ci_7x7,
+        dataset=imaging_ci_7x7,
         mat_plot_2d=aplt.MatPlot2D(output=aplt.Output(plot_path, format="png")),
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
     )

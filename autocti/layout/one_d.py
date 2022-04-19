@@ -62,11 +62,11 @@ class Layout1D(aa.Layout1D):
 
     def extract_region_from(self, array: aa.Array1D, region: str):
 
-        if region == "front_edge":
+        if region == "fpr":
             return self.extract.fpr.stacked_array_1d_from(
                 array=array, pixels=(0, self.extract.fpr.total_pixels_min)
             )
-        elif region == "trails":
+        elif region == "eper":
             return self.extract.eper.stacked_array_1d_from(
                 array=array, pixels=(0, self.smallest_trails_pixels_to_array_edge)
             )

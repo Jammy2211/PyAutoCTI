@@ -14,7 +14,7 @@ class VisualizerImagingCI(Visualizer):
         mat_plot_2d = self.mat_plot_2d_from(subfolders=f"imaging_ci")
 
         imaging_ci_plotter = aplt.ImagingCIPlotter(
-            imaging=imaging_ci, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
+            dataset=imaging_ci, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
         )
 
         imaging_ci_plotter.figures_2d(
@@ -39,7 +39,7 @@ class VisualizerImagingCI(Visualizer):
         mat_plot_1d = self.mat_plot_1d_from(subfolders=f"imaging_ci")
 
         imaging_ci_plotter = aplt.ImagingCIPlotter(
-            imaging=imaging_ci, mat_plot_1d=mat_plot_1d, include_2d=self.include_2d
+            dataset=imaging_ci, mat_plot_1d=mat_plot_1d, include_2d=self.include_2d
         )
 
         if should_plot("subplot_dataset"):
