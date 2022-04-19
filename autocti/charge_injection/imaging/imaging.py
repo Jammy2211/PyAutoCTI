@@ -53,7 +53,7 @@ class ImagingCI(aa.Imaging):
         return self.layout.region_list
 
     @property
-    def normalization_columns_list(self) -> List:
+    def norm_columns_list(self) -> List:
         """
         The `layout` describes the 2D regions on the data containing charge whose input signal properties are know
         beforehand (e.g. charge injection imaging).

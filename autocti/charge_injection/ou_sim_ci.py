@@ -74,7 +74,7 @@ def quadrant_id_from(iquad: int) -> str:
 
 def charge_injection_array_from(
     iquad: int,
-    injection_normalization: float,
+    injection_norm: float,
     injection_total: int = 5,
     injection_on: int = 200,
     injection_off: int = 200,
@@ -158,19 +158,17 @@ def charge_injection_array_from(
 
         simulator = SimulatorImagingCI(
             pixel_scales=pixel_scales,
-            normalization=injection_normalization,
+            norm=injection_norm,
             row_slope=0.0,
             column_sigma=100.0,
-            max_normalization=84700,
+            max_norm=84700,
             ci_seed=ci_seed,
         )
 
         pre_cti_data = simulator.pre_cti_data_non_uniform_from(layout=layout)
     else:
 
-        simulator = SimulatorImagingCI(
-            pixel_scales=pixel_scales, normalization=injection_normalization
-        )
+        simulator = SimulatorImagingCI(pixel_scales=pixel_scales, norm=injection_norm)
 
         pre_cti_data = simulator.pre_cti_data_uniform_from(layout=layout)
 

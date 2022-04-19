@@ -161,7 +161,7 @@ indicating a bad model fit.
 There are single valued floats which quantify the goodness of fit:
 
  - ``chi_squared``: The sum of the ``chi_squared_map``.
- - ``noise_normalization``: The normalizing noise term in the likelihood function
+ - ``noise_normalizationalization``: The normalizing noise term in the likelihood function
     where [Noise_Term] = sum(log(2*pi*[Noise]**2.0)).
 
 An overall goodness-of-fit measurement is provided by the ``log_likelihood``:
@@ -171,7 +171,7 @@ An overall goodness-of-fit measurement is provided by the ``log_likelihood``:
 .. code-block:: bash
 
     print(fit.chi_squared)
-    print(fit.noise_normalization)
+    print(fit.noise_normalizationalization)
     print(fit.log_likelihood)
 
 Good Fit
@@ -405,7 +405,7 @@ and ``log_likelihood``.
 .. code-block:: bash
 
     print(fit.chi_squared)
-    print(fit.noise_normalization)
+    print(fit.noise_normalizationalization)
     print(fit.log_likelihood)
 
 Wrap Up

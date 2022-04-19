@@ -9,7 +9,7 @@ def test__no_instrumental_effects_input__only_cti_simulated(clocker_1d, traps_x2
     layout = ac.Layout1D(shape_1d=(5,), region_list=[(0, 5)])
 
     simulator = ac.SimulatorDataset1D(
-        pixel_scales=1.0, normalization=10.0, add_poisson_noise=False
+        pixel_scales=1.0, norm=10.0, add_poisson_noise=False
     )
 
     cti = ac.CTI1D(trap_list=traps_x2, ccd=ccd)
@@ -28,7 +28,7 @@ def test__include_read_noise__is_added_after_cti(clocker_1d, traps_x2, ccd):
 
     simulator = ac.SimulatorDataset1D(
         pixel_scales=1.0,
-        normalization=10.0,
+        norm=10.0,
         read_noise=1.0,
         add_poisson_noise=False,
         noise_seed=1,
@@ -48,7 +48,7 @@ def test__include_read_noise__is_added_after_cti(clocker_1d, traps_x2, ccd):
 
 def test__pre_cti_data_from():
 
-    simulator = ac.SimulatorDataset1D(normalization=10.0, pixel_scales=1.0)
+    simulator = ac.SimulatorDataset1D(norm=10.0, pixel_scales=1.0)
 
     layout = ac.Layout1D(shape_1d=(3,), region_list=[(0, 2)])
 
@@ -63,7 +63,7 @@ def test__from_pre_cti_data(clocker_1d, traps_x2, ccd):
 
     simulator = ac.SimulatorDataset1D(
         pixel_scales=1.0,
-        normalization=10.0,
+        norm=10.0,
         read_noise=4.0,
         add_poisson_noise=False,
         noise_seed=1,
@@ -89,7 +89,7 @@ def test__from_post_cti_data(clocker_1d, traps_x2, ccd):
     layout = ac.Layout1D(shape_1d=(5,), region_list=[(0, 5)])
     simulator = ac.SimulatorDataset1D(
         pixel_scales=1.0,
-        normalization=10.0,
+        norm=10.0,
         read_noise=4.0,
         add_poisson_noise=False,
         noise_seed=1,

@@ -16,7 +16,7 @@ class SimulatorDataset1D(AbstractSimulatorImaging):
     def __init__(
         self,
         pixel_scales: aa.type.PixelScales,
-        normalization: float,
+        norm: float,
         read_noise: Optional[float] = None,
         add_poisson_noise: bool = False,
         noise_if_add_noise_false: float = 0.1,
@@ -41,7 +41,7 @@ class SimulatorDataset1D(AbstractSimulatorImaging):
         )
 
         self.pixel_scales = pixel_scales
-        self.normalization = normalization
+        self.norm = norm
 
     def pre_cti_data_from(
         self, layout: Layout1D, pixel_scales: aa.type.PixelScales
@@ -58,7 +58,7 @@ class SimulatorDataset1D(AbstractSimulatorImaging):
         pre_cti_data = np.zeros(layout.shape_1d)
 
         for region in layout.region_list:
-            pre_cti_data[region.slice] += self.normalization
+            pre_cti_data[region.slice] += self.norm
 
         return aa.Array1D.manual_native(array=pre_cti_data, pixel_scales=pixel_scales)
 

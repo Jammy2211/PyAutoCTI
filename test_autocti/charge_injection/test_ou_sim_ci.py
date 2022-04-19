@@ -15,7 +15,7 @@ def test__non_uniform_array_is_correct_with_rotation():
         injection_total=5,
         injection_on=200,
         injection_off=200,
-        injection_normalization=50000.0,
+        injection_norm=50000.0,
     )
 
     assert array.shape_native == (2086, 2128)
@@ -31,7 +31,7 @@ def test__non_uniform_array_is_correct_with_rotation():
         injection_total=5,
         injection_on=200,
         injection_off=200,
-        injection_normalization=50000.0,
+        injection_norm=50000.0,
     )
 
     assert array.native[1938, 50] == 0
@@ -46,7 +46,7 @@ def test__non_uniform_array_is_correct_with_rotation():
         injection_total=5,
         injection_on=200,
         injection_off=200,
-        injection_normalization=50000.0,
+        injection_norm=50000.0,
     )
 
     assert array.shape_native == (2086, 2128)
@@ -62,7 +62,7 @@ def test__non_uniform_array_is_correct_with_rotation():
         injection_total=5,
         injection_on=200,
         injection_off=200,
-        injection_normalization=50000.0,
+        injection_norm=50000.0,
     )
 
     assert array.shape_native == (2086, 2128)
@@ -94,7 +94,7 @@ def test__add_cti_to_pre_cti_data():
         injection_total=5,
         injection_on=200,
         injection_off=200,
-        injection_normalization=50000.0,
+        injection_norm=50000.0,
     )
 
     assert array.native[199, 100] > 0.0
@@ -122,7 +122,7 @@ def test__add_cti_to_pre_cti_data():
         injection_total=5,
         injection_on=200,
         injection_off=200,
-        injection_normalization=50000.0,
+        injection_norm=50000.0,
     )
 
     assert array.native[1886, 100] > 0.0
@@ -150,7 +150,7 @@ def test__add_cti_to_pre_cti_data():
         injection_total=5,
         injection_on=200,
         injection_off=200,
-        injection_normalization=50000.0,
+        injection_norm=50000.0,
     )
 
     assert array.native[199, 100] > 0.0
@@ -178,7 +178,7 @@ def test__add_cti_to_pre_cti_data():
         injection_total=5,
         injection_on=200,
         injection_off=200,
-        injection_normalization=50000.0,
+        injection_norm=50000.0,
     )
 
     assert array.native[1886, 100] > 0.0

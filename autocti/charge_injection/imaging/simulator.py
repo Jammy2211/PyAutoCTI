@@ -16,8 +16,8 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
     def __init__(
         self,
         pixel_scales: aa.type.PixelScales,
-        normalization: float,
-        max_normalization: float = np.inf,
+        norm: float,
+        max_norm: float = np.inf,
         column_sigma: Optional[float] = None,
         row_slope: Optional[float] = 0.0,
         read_noise: Optional[float] = None,
@@ -43,8 +43,8 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
 
         self.pixel_scales = pixel_scales
 
-        self.normalization = normalization
-        self.max_normalization = max_normalization
+        self.norm = norm
+        self.max_norm = max_norm
         self.column_sigma = column_sigma
         self.row_slope = row_slope
 
@@ -95,19 +95,12 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
 
         for column_number in range(ci_columns):
 
-            column_normalization = 0
-            while (
-                column_normalization <= 0
-                or column_normalization >= self.max_normalization
-            ):
-                column_normalization = np.random.normal(
-                    self.normalization, self.column_sigma
-                )
+            column_norm = 0
+            while column_norm <= 0 or column_norm >= self.max_norm:
+                column_norm = np.random.normal(self.norm, self.column_sigma)
 
             ci_region[0:ci_rows, column_number] = self.generate_column(
-                size=ci_rows,
-                normalization=column_normalization,
-                row_slope=self.row_slope,
+                size=ci_rows, norm=column_norm, row_slope=self.row_slope
             )
 
         return ci_region
@@ -126,7 +119,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         pre_cti_data = np.zeros(layout.shape_2d)
 
         for region in layout.region_list:
-            pre_cti_data[region.slice] += self.normalization
+            pre_cti_data[region.slice] += self.norm
 
         return aa.Array2D.manual(array=pre_cti_data, pixel_scales=self.pixel_scales)
 
@@ -172,9 +165,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
 
         return aa.Array2D.manual(array=pre_cti_data, pixel_scales=self.pixel_scales)
 
-    def generate_column(
-        self, size: int, normalization: float, row_slope: float
-    ) -> np.ndarray:
+    def generate_column(self, size: int, norm: float, row_slope: float) -> np.ndarray:
         """
         Generate a column of non-uniform charge, including row non-uniformity.
 
@@ -188,7 +179,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
             The input normalization of the column's charge e.g. the level of charge injected.
 
         """
-        return normalization * (np.arange(1, size + 1)) ** row_slope
+        return norm * (np.arange(1, size + 1)) ** row_slope
 
     def via_layout_from(
         self,

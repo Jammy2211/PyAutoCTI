@@ -5,7 +5,7 @@ import autocti as ac
 
 def test__pre_cti_data_from():
 
-    simulator = ac.SimulatorImagingCI(normalization=30.0, pixel_scales=1.0)
+    simulator = ac.SimulatorImagingCI(norm=30.0, pixel_scales=1.0)
 
     layout = ac.Layout2DCI(shape_2d=(4, 3), region_list=[(0, 3, 0, 2), (2, 3, 2, 3)])
 
@@ -22,11 +22,7 @@ def test__pre_cti_data_from():
 def test__region_ci_from():
 
     simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0,
-        normalization=100.0,
-        row_slope=0.0,
-        column_sigma=0.0,
-        ci_seed=1,
+        pixel_scales=1.0, norm=100.0, row_slope=0.0, column_sigma=0.0, ci_seed=1
     )
 
     layout = ac.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 1, 0, 1)])
@@ -41,11 +37,7 @@ def test__region_ci_from():
     ).all()
 
     simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0,
-        normalization=100.0,
-        row_slope=0.0,
-        column_sigma=1.0,
-        ci_seed=1,
+        pixel_scales=1.0, norm=100.0, row_slope=0.0, column_sigma=1.0, ci_seed=1
     )
 
     layout = ac.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 1, 0, 1)])
@@ -60,11 +52,7 @@ def test__region_ci_from():
     ).all()
 
     simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0,
-        normalization=100.0,
-        row_slope=-0.01,
-        column_sigma=0.0,
-        ci_seed=1,
+        pixel_scales=1.0, norm=100.0, row_slope=-0.01, column_sigma=0.0, ci_seed=1
     )
 
     layout = ac.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 1, 0, 1)])
@@ -79,11 +67,7 @@ def test__region_ci_from():
     ).all()
 
     simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0,
-        normalization=100.0,
-        row_slope=-0.01,
-        column_sigma=1.0,
-        ci_seed=1,
+        pixel_scales=1.0, norm=100.0, row_slope=-0.01, column_sigma=1.0, ci_seed=1
     )
 
     layout = ac.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 1, 0, 1)])
@@ -98,11 +82,7 @@ def test__region_ci_from():
     ).all()
 
     simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0,
-        normalization=100.0,
-        row_slope=0.0,
-        column_sigma=100.0,
-        ci_seed=1,
+        pixel_scales=1.0, norm=100.0, row_slope=0.0, column_sigma=100.0, ci_seed=1
     )
 
     layout = ac.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 1, 0, 1)])
@@ -114,14 +94,14 @@ def test__region_ci_from():
 
 def test__pre_cti_data_from__compare_uniform_to_non_uniform():
 
-    simulator = ac.SimulatorImagingCI(pixel_scales=1.0, normalization=10.0)
+    simulator = ac.SimulatorImagingCI(pixel_scales=1.0, norm=10.0)
 
     layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(2, 4, 0, 5)])
 
     pre_cti_data_0 = simulator.pre_cti_data_uniform_from(layout=layout)
 
     simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0, normalization=10.0, row_slope=0.0, column_sigma=0.0
+        pixel_scales=1.0, norm=10.0, row_slope=0.0, column_sigma=0.0
     )
 
     pre_cti_data_1 = simulator.pre_cti_data_non_uniform_from(layout=layout)
@@ -132,11 +112,7 @@ def test__pre_cti_data_from__compare_uniform_to_non_uniform():
 def test__pre_cti_data_from__non_uniformity_in_columns():
 
     simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0,
-        normalization=100.0,
-        row_slope=0.0,
-        column_sigma=1.0,
-        ci_seed=1,
+        pixel_scales=1.0, norm=100.0, row_slope=0.0, column_sigma=1.0, ci_seed=1
     )
 
     layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(0, 3, 0, 3)])
@@ -159,11 +135,7 @@ def test__pre_cti_data_from__non_uniformity_in_columns():
     ).all()
 
     simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0,
-        normalization=100.0,
-        row_slope=0.0,
-        column_sigma=1.0,
-        ci_seed=1,
+        pixel_scales=1.0, norm=100.0, row_slope=0.0, column_sigma=1.0, ci_seed=1
     )
 
     layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 4, 1, 3), (1, 4, 4, 5)])
@@ -187,10 +159,10 @@ def test__pre_cti_data_from__non_uniformity_in_columns():
 
     simulator = ac.SimulatorImagingCI(
         pixel_scales=1.0,
-        normalization=100.0,
+        norm=100.0,
         row_slope=0.0,
         column_sigma=100.0,
-        max_normalization=100.0,
+        max_norm=100.0,
         ci_seed=1,
     )
 
@@ -207,7 +179,7 @@ def test__pre_cti_data_from__non_uniformity_in_columns():
 def test__pre_cti_data_from__non_uniformity_in_rows():
 
     simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0, normalization=100.0, row_slope=-0.01, column_sigma=0.0
+        pixel_scales=1.0, norm=100.0, row_slope=-0.01, column_sigma=0.0
     )
 
     layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(0, 3, 0, 3)])
@@ -230,7 +202,7 @@ def test__pre_cti_data_from__non_uniformity_in_rows():
     ).all()
 
     simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0, normalization=100.0, row_slope=-0.01, column_sigma=0.0
+        pixel_scales=1.0, norm=100.0, row_slope=-0.01, column_sigma=0.0
     )
 
     layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 5, 1, 4), (0, 5, 4, 5)])
@@ -253,11 +225,7 @@ def test__pre_cti_data_from__non_uniformity_in_rows():
     ).all()
 
     simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0,
-        normalization=100.0,
-        row_slope=-0.01,
-        column_sigma=1.0,
-        ci_seed=1,
+        pixel_scales=1.0, norm=100.0, row_slope=-0.01, column_sigma=1.0, ci_seed=1
     )
 
     layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 5, 1, 4), (0, 5, 4, 5)])
@@ -281,7 +249,7 @@ def test__pre_cti_data_from__non_uniformity_in_rows():
 
     simulator = ac.SimulatorImagingCI(
         pixel_scales=1.0,
-        normalization=100.0,
+        norm=100.0,
         row_slope=-0.01,
         column_sigma=1.0,
         read_noise=0.0,
@@ -309,7 +277,7 @@ def test__no_instrumental_effects_input__only_cti_simulated(
         serial_overscan=ac.Region2D((1, 2, 1, 2)),
     )
 
-    simulator = ac.SimulatorImagingCI(normalization=10.0, pixel_scales=1.0)
+    simulator = ac.SimulatorImagingCI(norm=10.0, pixel_scales=1.0)
 
     cti = ac.CTI2D(parallel_trap_list=traps_x2, parallel_ccd=ccd)
 
@@ -332,7 +300,7 @@ def test__include_read_noise__is_added_after_cti(parallel_clocker_2d, traps_x2, 
     )
 
     simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0, normalization=10.0, read_noise=1.0, noise_seed=1
+        pixel_scales=1.0, norm=10.0, read_noise=1.0, noise_seed=1
     )
 
     cti = ac.CTI2D(parallel_trap_list=traps_x2, parallel_ccd=ccd)
@@ -364,7 +332,7 @@ def test__include_cosmics__is_added_to_image_and_trailed(
         serial_overscan=ac.Region2D((1, 2, 1, 2)),
     )
 
-    simulator = ac.SimulatorImagingCI(pixel_scales=1.0, normalization=10.0)
+    simulator = ac.SimulatorImagingCI(pixel_scales=1.0, norm=10.0)
 
     cosmic_ray_map = ac.Array2D.zeros(shape_native=(5, 5), pixel_scales=0.1).native
     cosmic_ray_map[2, 2] = 100.0
@@ -408,7 +376,7 @@ def test__from_pre_cti_data(parallel_clocker_2d, traps_x2, ccd):
     )
 
     simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0, normalization=1.0, read_noise=4.0, noise_seed=1
+        pixel_scales=1.0, norm=1.0, read_noise=4.0, noise_seed=1
     )
 
     cosmic_ray_map = ac.Array2D.zeros(shape_native=(5, 5), pixel_scales=0.1).native
@@ -448,7 +416,7 @@ def test__from_post_cti_data(parallel_clocker_2d, traps_x2, ccd):
     )
 
     simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0, normalization=1.0, read_noise=4.0, noise_seed=1
+        pixel_scales=1.0, norm=1.0, read_noise=4.0, noise_seed=1
     )
 
     cosmic_ray_map = ac.Array2D.zeros(shape_native=(5, 5), pixel_scales=0.1).native

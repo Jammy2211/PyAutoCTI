@@ -180,11 +180,11 @@ class ImagingCIPlotter(Plotter):
 
         if image:
 
-            line = self.extract_region_from(array=self.imaging.image, region=region)
+            y = self.extract_region_from(array=self.imaging.image, region=region)
 
             self.mat_plot_1d.plot_yx(
-                y=line,
-                x=range(len(line)),
+                y=y,
+                x=range(len(y)),
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title=f"Image Line {region}",
@@ -196,11 +196,11 @@ class ImagingCIPlotter(Plotter):
 
         if noise_map:
 
-            line = self.extract_region_from(array=self.imaging.noise_map, region=region)
+            y = self.extract_region_from(array=self.imaging.noise_map, region=region)
 
             self.mat_plot_1d.plot_yx(
-                y=line,
-                x=range(len(line)),
+                y=y,
+                x=range(len(y)),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
                     title=f"Noise Map Line {region}",
@@ -212,13 +212,11 @@ class ImagingCIPlotter(Plotter):
 
         if pre_cti_data:
 
-            line = self.extract_region_from(
-                array=self.imaging.pre_cti_data, region=region
-            )
+            y = self.extract_region_from(array=self.imaging.pre_cti_data, region=region)
 
             self.mat_plot_1d.plot_yx(
-                y=line,
-                x=range(len(line)),
+                y=y,
+                x=range(len(y)),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
                     title=f"CI Pre CTI Line {region}",
@@ -230,13 +228,13 @@ class ImagingCIPlotter(Plotter):
 
         if signal_to_noise_map:
 
-            line = self.extract_region_from(
+            y = self.extract_region_from(
                 array=self.imaging.signal_to_noise_map, region=region
             )
 
             self.mat_plot_1d.plot_yx(
-                y=line,
-                x=range(len(line)),
+                y=y,
+                x=range(len(y)),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
                     title=f"Signal To Noise Map {region}",
