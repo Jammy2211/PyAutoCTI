@@ -171,36 +171,36 @@ class FitImagingCIPlotter(Plotter):
             The region on the charge injection image where data is extracted and binned over the parallel or serial
             direction {"parallel_fpr", "parallel_eper", "serial_fpr", "serial_eper"}
         image
-            Whether or not to make a 1D plot (via `plot`) of the image data extracted and binned over the line region.
+            Whether or not to make a 1D plot (via `plot`) of the image data extracted and binned over the region.
         noise_map
-            Whether or not to make a 1D plot (via `plot`) of the noise-map extracted and binned over the line region.
+            Whether or not to make a 1D plot (via `plot`) of the noise-map extracted and binned over the region.
         signal_to_noise_map
             Whether or not to make a 1D plot (via `plot`) of the signal-to-noise map data extracted and binned over
-            the line region.
+            the region.
         pre_cti_data
-            Whether or not to make a 1D plot (via `plot`) of the pre-cti data extracted and binned over the line region.
+            Whether or not to make a 1D plot (via `plot`) of the pre-cti data extracted and binned over the region.
         post_cti_data
-            Whether or not to make a 1D plot (via `plot`) of the post-cti data extracted and binned over the line
+            Whether or not to make a 1D plot (via `plot`) of the post-cti data extracted and binned over the
             region.
         residual_map
-            Whether or not to make a 1D plot (via `plot`) of the residual map extracted and binned over the line region.
+            Whether or not to make a 1D plot (via `plot`) of the residual map extracted and binned over the region.
         normalized_residual_map
             Whether or not to make a 1D plot (via `plot`) of the normalized residual map extracted and binned over the
-            line region.
+            region.
         chi_squared_map
-            Whether or not to make a 1D plot (via `plot`) of the chi-squared map extracted and binned over the line
+            Whether or not to make a 1D plot (via `plot`) of the chi-squared map extracted and binned over the
             region.
         """
         if image:
 
-            line = self.extract_region_from(array=self.fit.image, region=region)
+            y = self.extract_region_from(array=self.fit.image, region=region)
 
             self.mat_plot_1d.plot_yx(
-                y=line,
-                x=range(len(line)),
+                y=y,
+                x=range(len(y)),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"Image Line {region}",
+                    title=f"Image {region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
                     filename=f"image_{region}",
@@ -209,14 +209,14 @@ class FitImagingCIPlotter(Plotter):
 
         if noise_map:
 
-            line = self.extract_region_from(array=self.fit.image, region=region)
+            y = self.extract_region_from(array=self.fit.image, region=region)
 
             self.mat_plot_1d.plot_yx(
-                y=line,
-                x=range(len(line)),
+                y=y,
+                x=range(len(y)),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"Noise-Map Line {region}",
+                    title=f"Noise-Map {region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
                     filename=f"noise_map_{region}",
@@ -225,16 +225,16 @@ class FitImagingCIPlotter(Plotter):
 
         if signal_to_noise_map:
 
-            line = self.extract_region_from(
+            y = self.extract_region_from(
                 array=self.fit.signal_to_noise_map, region=region
             )
 
             self.mat_plot_1d.plot_yx(
-                y=line,
-                x=range(len(line)),
+                y=y,
+                x=range(len(y)),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"Signal-To-Noise Map Line {region}",
+                    title=f"Signal-To-Noise Map {region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
                     filename=f"signal_to_noise_map_{region}",
@@ -243,14 +243,14 @@ class FitImagingCIPlotter(Plotter):
 
         if pre_cti_data:
 
-            line = self.extract_region_from(array=self.fit.pre_cti_data, region=region)
+            y = self.extract_region_from(array=self.fit.pre_cti_data, region=region)
 
             self.mat_plot_1d.plot_yx(
-                y=line,
-                x=range(len(line)),
+                y=y,
+                x=range(len(y)),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"CI Pre CTI Line {region}",
+                    title=f"CI Pre CTI {region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
                     filename=f"pre_cti_data_{region}",
@@ -259,14 +259,14 @@ class FitImagingCIPlotter(Plotter):
 
         if post_cti_data:
 
-            line = self.extract_region_from(array=self.fit.post_cti_data, region=region)
+            y = self.extract_region_from(array=self.fit.post_cti_data, region=region)
 
             self.mat_plot_1d.plot_yx(
-                y=line,
-                x=range(len(line)),
+                y=y,
+                x=range(len(y)),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"CI Post CTI Line {region}",
+                    title=f"CI Post CTI {region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
                     filename=f"post_cti_data_{region}",
@@ -275,14 +275,14 @@ class FitImagingCIPlotter(Plotter):
 
         if residual_map:
 
-            line = self.extract_region_from(array=self.fit.residual_map, region=region)
+            y = self.extract_region_from(array=self.fit.residual_map, region=region)
 
             self.mat_plot_1d.plot_yx(
-                y=line,
-                x=range(len(line)),
+                y=y,
+                x=range(len(y)),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"Resdial-Map Line {region}",
+                    title=f"Resdial-Map {region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
                     filename=f"residual_map_{region}",
@@ -291,16 +291,16 @@ class FitImagingCIPlotter(Plotter):
 
         if normalized_residual_map:
 
-            line = self.extract_region_from(
+            y = self.extract_region_from(
                 array=self.fit.normalized_residual_map, region=region
             )
 
             self.mat_plot_1d.plot_yx(
-                y=line,
-                x=range(len(line)),
+                y=y,
+                x=range(len(y)),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"Normalized Residual Map Line {region}",
+                    title=f"Normalized Residual Map {region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
                     filename=f"normalized_residual_map_{region}",
@@ -309,16 +309,14 @@ class FitImagingCIPlotter(Plotter):
 
         if chi_squared_map:
 
-            line = self.extract_region_from(
-                array=self.fit.chi_squared_map, region=region
-            )
+            y = self.extract_region_from(array=self.fit.chi_squared_map, region=region)
 
             self.mat_plot_1d.plot_yx(
-                y=line,
-                x=range(len(line)),
+                y=y,
+                x=range(len(y)),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"Chi-Squared Map Line {region}",
+                    title=f"Chi-Squared Map {region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
                     filename=f"chi_squared_map_{region}",

@@ -51,7 +51,7 @@ def test__individual_attributes_are_output(imaging_ci_7x7, plot_path, plot_patch
     assert path.join(plot_path, "signal_to_noise_map.png") not in plot_patch.paths
 
 
-def test__individual_lines_are_output(imaging_ci_7x7, plot_path, plot_patch):
+def test__individual_1d_of_region_are_output(imaging_ci_7x7, plot_path, plot_patch):
 
     imaging_ci_plotter = aplt.ImagingCIPlotter(
         imaging=imaging_ci_7x7,
@@ -88,7 +88,7 @@ def test__individual_lines_are_output(imaging_ci_7x7, plot_path, plot_patch):
     )
 
 
-def test__subplot_ci_lines__is_output(imaging_ci_7x7, plot_path, plot_patch):
+def test__subplot_of_region_1d__is_output(imaging_ci_7x7, plot_path, plot_patch):
 
     imaging_ci_plotter = aplt.ImagingCIPlotter(
         imaging=imaging_ci_7x7,

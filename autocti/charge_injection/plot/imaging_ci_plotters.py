@@ -35,7 +35,7 @@ class ImagingCIPlotter(Plotter):
         Parameters
         ----------
         imaging
-            The charge injection line imaging dataset the plotter plots.
+            The charge injection imaging dataset the plotter plots.
         mat_plot_2d
             Contains objects which wrap the matplotlib function calls that make 2D plots.
         visuals_2d
@@ -168,14 +168,14 @@ class ImagingCIPlotter(Plotter):
             The region on the charge injection image where data is extracted and binned over the parallel or serial
             direction {"parallel_fpr", "parallel_eper", "serial_fpr", "serial_eper"}
         image
-            Whether or not to make a 1D plot (via `plot`) of the image data extracted and binned over the line region.
+            Whether or not to make a 1D plot (via `plot`) of the image data extracted and binned over the region.
         noise_map
-            Whether or not to make a 1D plot (via `plot`) of the noise-map extracted and binned over the line region.
+            Whether or not to make a 1D plot (via `plot`) of the noise-map extracted and binned over the region.
         pre_cti_data
-            Whether or not to make a 1D plot (via `plot`) of the pre-cti data extracted and binned over the line region.        
+            Whether or not to make a 1D plot (via `plot`) of the pre-cti data extracted and binned over the region.        
         signal_to_noise_map
             Whether or not to make a 1D plot (via `plot`) of the signal-to-noise map data extracted and binned over 
-            the line region.
+            the region.
         """
 
         if image:
@@ -187,7 +187,7 @@ class ImagingCIPlotter(Plotter):
                 x=range(len(y)),
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title=f"Image Line {region}",
+                    title=f"Image {region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
                     filename=f"image_{region}",
@@ -203,7 +203,7 @@ class ImagingCIPlotter(Plotter):
                 x=range(len(y)),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"Noise Map Line {region}",
+                    title=f"Noise Map {region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
                     filename=f"noise_map_{region}",
@@ -219,7 +219,7 @@ class ImagingCIPlotter(Plotter):
                 x=range(len(y)),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"CI Pre CTI Line {region}",
+                    title=f"CI Pre CTI {region}",
                     ylabel="Image",
                     xlabel="Pixel No.",
                     filename=f"pre_cti_data_{region}",

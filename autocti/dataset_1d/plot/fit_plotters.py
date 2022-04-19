@@ -29,7 +29,7 @@ class FitDataset1DPlotter(Plotter):
         Parameters
         ----------
         fit
-            The fit to the dataset of lines the plotter plots.
+            The fit to the dataset of a 1D dataset the plotter plots.
         mat_plot_1d
             Contains objects which wrap the matplotlib function calls that make 1D plots.
         visuals_1d

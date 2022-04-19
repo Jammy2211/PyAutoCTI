@@ -30,8 +30,8 @@ class Dataset1DPlotter(Plotter):
 
         Parameters
         ----------
-        imaging
-            The charge injection line imaging dataset the plotter plots.
+        dataset
+            The dataset 1d the plotter plots.
         mat_plot_1d
             Contains objects which wrap the matplotlib function calls that make 1D plots.
         visuals_1d
@@ -79,7 +79,7 @@ class Dataset1DPlotter(Plotter):
                 y=self.dataset_1d.data,
                 x=self.dataset_1d.data.grid_radial,
                 visuals_1d=self.get_visuals_1d(),
-                auto_labels=AutoLabels(title="Line Dataset Line", filename="data"),
+                auto_labels=AutoLabels(title="Dataset 1D Data", filename="data"),
             )
 
         if noise_map:
@@ -89,7 +89,7 @@ class Dataset1DPlotter(Plotter):
                 x=self.dataset_1d.noise_map.grid_radial,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title="Line Dataset Noise Map", filename="noise_map"
+                    title="Dataset 1D Noise Map", filename="noise_map"
                 ),
             )
 
@@ -100,7 +100,7 @@ class Dataset1DPlotter(Plotter):
                 x=self.dataset_1d.signal_to_noise_map.grid_radial,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title="Line Dataset Signal-To-Noise Map",
+                    title="Dataset 1D Signal-To-Noise Map",
                     filename="signal_to_noise_map",
                 ),
             )
@@ -112,7 +112,7 @@ class Dataset1DPlotter(Plotter):
                 x=self.dataset_1d.pre_cti_data.grid_radial,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title="Line Dataset Pre CTI Line", filename="pre_cti_data"
+                    title="Dataset 1D Pre CTI Data", filename="pre_cti_data"
                 ),
             )
 
