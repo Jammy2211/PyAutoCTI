@@ -51,7 +51,7 @@ def test__rows_between_region_list():
     assert layout.pixels_between_regions == [2, 3]
 
 
-def test__serial_trails_pixels(layout_ci_7x7):
+def test__serial_eper_pixels(layout_ci_7x7):
 
     layout = ac.Layout2DCI(
         shape_2d=(10, 10),

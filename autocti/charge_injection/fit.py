@@ -67,7 +67,7 @@ class FitImagingCI(aa.FitImaging):
         )
 
     @property
-    def chi_squared_map_of_serial_trails(self):
+    def chi_squared_map_of_serial_epers(self):
         return self.layout.extract.serial_eper.array_2d_from(array=self.chi_squared_map)
 
     @property

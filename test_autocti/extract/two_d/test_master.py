@@ -109,7 +109,7 @@ def test__parallel_fprs_and_epers_array_2d_from():
     extract = ac.Extract2DMaster.from_region_list(region_list=[(0, 4, 0, 3)])
 
     new_array = extract.parallel_fprs_and_epers_array_2d_from(
-        array=parallel_array, fpr_pixels=(0, 2), trails_pixels=(0, 2)
+        array=parallel_array, fpr_pixels=(0, 2), eper_pixels=(0, 2)
     )
 
     assert (
@@ -135,7 +135,7 @@ def test__parallel_fprs_and_epers_array_2d_from():
     )
 
     new_array = extract.parallel_fprs_and_epers_array_2d_from(
-        array=parallel_array, fpr_pixels=(0, 1), trails_pixels=(0, 1)
+        array=parallel_array, fpr_pixels=(0, 1), eper_pixels=(0, 1)
     )
 
     assert (
@@ -187,7 +187,7 @@ def test__serial_fprs_and_epers_array_2d_from():
     extract = ac.Extract2DMaster.from_region_list(region_list=[(0, 3, 0, 2)])
 
     new_array = extract.serial_fprs_and_epers_array_2d_from(
-        array=array, trails_pixels=(0, 1)
+        array=array, eper_pixels=(0, 1)
     )
 
     assert (
@@ -196,7 +196,7 @@ def test__serial_fprs_and_epers_array_2d_from():
     ).all()
 
     new_array = extract.serial_fprs_and_epers_array_2d_from(
-        array=array, trails_pixels=(0, 2)
+        array=array, eper_pixels=(0, 2)
     )
 
     assert (
@@ -220,7 +220,7 @@ def test__serial_fprs_and_epers_array_2d_from():
     )
 
     new_array = extract.serial_fprs_and_epers_array_2d_from(
-        array=array, fpr_pixels=(0, 1), trails_pixels=(0, 1)
+        array=array, fpr_pixels=(0, 1), eper_pixels=(0, 1)
     )
 
     assert (

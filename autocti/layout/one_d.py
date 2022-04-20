@@ -54,7 +54,7 @@ class Layout1D(aa.Layout1D):
         return self.shape_1d[0] - np.max([region.x1 for region in self.region_list])
 
     @property
-    def smallest_trails_pixels_to_array_edge(self):
+    def smallest_eper_pixels_to_array_edge(self):
 
         pixels_between_regions = self.pixels_between_regions
         pixels_between_regions.append(self.trail_size_to_array_edge)
@@ -68,7 +68,7 @@ class Layout1D(aa.Layout1D):
             )
         elif region == "eper":
             return self.extract.eper.stacked_array_1d_from(
-                array=array, pixels=(0, self.smallest_trails_pixels_to_array_edge)
+                array=array, pixels=(0, self.smallest_eper_pixels_to_array_edge)
             )
         else:
             raise exc.PlottingException(

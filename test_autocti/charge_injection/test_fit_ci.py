@@ -408,7 +408,7 @@ class TestChiSquaredMapsOfRegions:
             fit.chi_squared_map_of_parallel_epers == np.array([[0.0, 0.0], [4.0, 0.0]])
         ).all()
 
-    def test__chi_squared_map_of_serial_trails__extracts_correctly_from_chi_squard_map(
+    def test__chi_squared_map_of_serial_epers__extracts_correctly_from_chi_squard_map(
         self,
     ):
 
@@ -433,10 +433,10 @@ class TestChiSquaredMapsOfRegions:
         fit = ac.FitImagingCI(dataset=masked_imaging, post_cti_data=pre_cti_data)
 
         assert (
-            fit.chi_squared_map_of_serial_trails == np.array([[0.0, 4.0], [0.0, 4.0]])
+            fit.chi_squared_map_of_serial_epers == np.array([[0.0, 4.0], [0.0, 4.0]])
         ).all()
 
-    def test__chi_squared_map_of_overscan_above_serial_trails__extracts_correctly_from_chi_squard_map(
+    def test__chi_squared_map_of_overscan_above_serial_eper__extracts_correctly_from_chi_squard_map(
         self,
     ):
         layout = ac.Layout2DCI(

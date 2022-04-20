@@ -14,7 +14,7 @@ class MockResult(mock.MockResult):
         model_image=None,
         noise_scaling_map_list_list_of_regions_ci=None,
         noise_scaling_map_list_list_of_parallel_epers=None,
-        noise_scaling_map_list_list_of_serial_trails=None,
+        noise_scaling_map_list_list_of_serial_epers=None,
         noise_scaling_map_list_list_of_serial_overscan_no_trails=None,
         use_as_hyper_dataset=False,
     ):
@@ -39,8 +39,8 @@ class MockResult(mock.MockResult):
         self.noise_scaling_map_list_list_of_parallel_epers = (
             noise_scaling_map_list_list_of_parallel_epers
         )
-        self.noise_scaling_map_list_list_of_serial_trails = (
-            noise_scaling_map_list_list_of_serial_trails
+        self.noise_scaling_map_list_list_of_serial_epers = (
+            noise_scaling_map_list_list_of_serial_epers
         )
         self.noise_scaling_map_list_list_of_serial_overscan_no_trails = (
             noise_scaling_map_list_list_of_serial_overscan_no_trails
@@ -64,7 +64,7 @@ class MockResults(ResultsCollection):
         model_image=None,
         noise_scaling_map_list_list_of_regions_ci=None,
         noise_scaling_map_list_list_of_parallel_epers=None,
-        noise_scaling_map_list_list_of_serial_trails=None,
+        noise_scaling_map_list_list_of_serial_epers=None,
         noise_scaling_map_list_list_of_serial_overscan_no_trails=None,
         use_as_hyper_dataset=False,
     ):
@@ -85,7 +85,7 @@ class MockResults(ResultsCollection):
             model_image=model_image,
             noise_scaling_map_list_list_of_regions_ci=noise_scaling_map_list_list_of_regions_ci,
             noise_scaling_map_list_list_of_parallel_epers=noise_scaling_map_list_list_of_parallel_epers,
-            noise_scaling_map_list_list_of_serial_trails=noise_scaling_map_list_list_of_serial_trails,
+            noise_scaling_map_list_list_of_serial_epers=noise_scaling_map_list_list_of_serial_epers,
             noise_scaling_map_list_list_of_serial_overscan_no_trails=noise_scaling_map_list_list_of_serial_overscan_no_trails,
             use_as_hyper_dataset=use_as_hyper_dataset,
         )

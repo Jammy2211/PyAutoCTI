@@ -43,7 +43,7 @@ def test__array_1d_of_edges_and_epers_from(array):
     extract = ac.Extract1DMaster.from_region_list(region_list=[(0, 4)])
 
     extracted_array = extract.array_1d_of_edges_and_epers_from(
-        array=array, fpr_pixels=(0, 2), trails_pixels=(0, 2)
+        array=array, fpr_pixels=(0, 2), eper_pixels=(0, 2)
     )
 
     assert (
@@ -53,7 +53,7 @@ def test__array_1d_of_edges_and_epers_from(array):
     extract = ac.Extract1DMaster.from_region_list(region_list=[(0, 1), (3, 4)])
 
     extracted_array = extract.array_1d_of_edges_and_epers_from(
-        array=array, fpr_pixels=(0, 1), trails_pixels=(0, 1)
+        array=array, fpr_pixels=(0, 1), eper_pixels=(0, 1)
     )
 
     assert (

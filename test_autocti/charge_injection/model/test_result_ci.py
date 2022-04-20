@@ -49,18 +49,18 @@ def test__noise_scaling_map_list_is_list_of_result__are_correct(
     noise_scaling_map_list_list_of_parallel_epers = [
         ac.Array2D.full(fill_value=2.0, shape_native=(7, 7), pixel_scales=1.0)
     ]
-    noise_scaling_map_list_list_of_serial_trails = [
+    noise_scaling_map_list_list_of_serial_eper = [
         ac.Array2D.full(fill_value=3.0, shape_native=(7, 7), pixel_scales=1.0)
     ]
-    noise_scaling_map_list_list_of_serial_overscan_no_trails = [
+    noise_scaling_map_list_list_of_serial_overscan_no_eper = [
         ac.Array2D.full(fill_value=4.0, shape_native=(7, 7), pixel_scales=1.0)
     ]
 
     imaging_ci_7x7.noise_scaling_map_list = [
         noise_scaling_map_list_list_of_regions_ci[0],
         noise_scaling_map_list_list_of_parallel_epers[0],
-        noise_scaling_map_list_list_of_serial_trails[0],
-        noise_scaling_map_list_list_of_serial_overscan_no_trails[0],
+        noise_scaling_map_list_list_of_serial_eper[0],
+        noise_scaling_map_list_list_of_serial_overscan_no_eper[0],
     ]
 
     masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
@@ -83,8 +83,8 @@ def test__noise_scaling_map_list_is_list_of_result__are_correct(
     assert result.noise_scaling_map_of_parallel_epers == pytest.approx(
         fit_analysis.chi_squared_map_of_parallel_epers, 1.0e-2
     )
-    assert result.noise_scaling_map_of_serial_trails == pytest.approx(
-        fit_analysis.chi_squared_map_of_serial_trails, 1.0e-2
+    assert result.noise_scaling_map_of_serial_epers == pytest.approx(
+        fit_analysis.chi_squared_map_of_serial_epers, 1.0e-2
     )
     assert result.noise_scaling_map_of_serial_overscan_no_trails == pytest.approx(
         fit_analysis.chi_squared_map_of_serial_overscan_no_trails, 1.0e-2
@@ -94,7 +94,7 @@ def test__noise_scaling_map_list_is_list_of_result__are_correct(
     assert result.noise_scaling_map_of_parallel_epers[1, 1] == pytest.approx(
         0.0, 1.0e-4
     )
-    assert result.noise_scaling_map_of_serial_trails[1, 1] == pytest.approx(0.0, 1.0e-4)
+    assert result.noise_scaling_map_of_serial_epers[1, 1] == pytest.approx(0.0, 1.0e-4)
     assert result.noise_scaling_map_of_serial_overscan_no_trails[1, 1] == pytest.approx(
         0.0, 1.0e-4
     )
@@ -112,7 +112,7 @@ def test__noise_scaling_map_list_is_list_of_result__are_correct(
             regions_ci=ac.HyperCINoiseScalar(scale_factor=1.0),
             parallel_epers=ac.HyperCINoiseScalar(scale_factor=1.0),
             serial_eper=ac.HyperCINoiseScalar(scale_factor=1.0),
-            serial_overscan_no_trails=ac.HyperCINoiseScalar(scale_factor=1.0),
+            serial_overscan_no_eper=ac.HyperCINoiseScalar(scale_factor=1.0),
         ),
     )
 
@@ -126,8 +126,8 @@ def test__noise_scaling_map_list_is_list_of_result__are_correct(
     assert result.noise_scaling_map_of_parallel_epers != pytest.approx(
         fit_analysis.chi_squared_map_of_parallel_epers, 1.0e-2
     )
-    assert result.noise_scaling_map_of_serial_trails != pytest.approx(
-        fit_analysis.chi_squared_map_of_serial_trails, 1.0e-2
+    assert result.noise_scaling_map_of_serial_epers != pytest.approx(
+        fit_analysis.chi_squared_map_of_serial_epers, 1.0e-2
     )
     assert result.noise_scaling_map_of_serial_overscan_no_trails != pytest.approx(
         fit_analysis.chi_squared_map_of_serial_overscan_no_trails, 1.0e-2
@@ -163,7 +163,7 @@ def test__noise_scaling_map_list_is_setup_correctly(
     ).all()
 
     assert (
-        result.noise_scaling_map_list[2] == result.noise_scaling_map_of_serial_trails
+        result.noise_scaling_map_list[2] == result.noise_scaling_map_of_serial_epers
     ).all()
 
     assert (

@@ -190,7 +190,7 @@ class Extract1DMaster:
         self,
         array: aa.Array1D,
         fpr_pixels: Tuple[int, int] = None,
-        trails_pixels: Tuple[int, int] = None,
+        eper_pixels: Tuple[int, int] = None,
     ) -> aa.Array1D:
         """
         Extract all of the data values in an input `array1D` corresponding to the parallel front edges and trails of
@@ -260,10 +260,10 @@ class Extract1DMaster:
                 new_array=array_1d_of_edges_and_epers, array=array, pixels=fpr_pixels
             )
 
-        if trails_pixels is not None:
+        if eper_pixels is not None:
 
             array_1d_of_edges_and_epers = self.eper.add_to_array(
-                new_array=array_1d_of_edges_and_epers, array=array, pixels=trails_pixels
+                new_array=array_1d_of_edges_and_epers, array=array, pixels=eper_pixels
             )
 
         return array_1d_of_edges_and_epers

@@ -27,6 +27,7 @@ from .charge_injection.imaging.settings import SettingsImagingCI
 from .charge_injection.imaging.simulator import SimulatorImagingCI
 from .charge_injection.layout import Layout2DCI
 from .cosmics.cosmics import SimulatorCosmicRayMap
+from .extract.two_d.parallel_overscan import Extract2DParallelOverscan
 from .extract.two_d.parallel_fpr import Extract2DParallelFPR
 from .extract.two_d.parallel_eper import Extract2DParallelEPER
 from .extract.two_d.serial_fpr import Extract2DSerialFPR

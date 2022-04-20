@@ -184,8 +184,8 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
     def via_layout_from(
         self,
         layout: Layout2DCI,
-        clocker: Clocker2D,
-        cti: CTI2D,
+        clocker: Optional[Clocker2D],
+        cti: Optional[CTI2D],
         cosmic_ray_map: Optional[aa.Array2D] = None,
         name: Optional[str] = None,
     ) -> ImagingCI:
@@ -229,8 +229,8 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         self,
         pre_cti_data: aa.Array2D,
         layout: Layout2DCI,
-        clocker: Clocker2D,
-        cti: CTI2D,
+        clocker: Optional[Clocker2D],
+        cti: Optional[CTI2D],
         cosmic_ray_map: Optional[aa.Array2D] = None,
         name: Optional[str] = None,
     ) -> ImagingCI:
@@ -240,7 +240,10 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         if cosmic_ray_map is not None:
             pre_cti_data += cosmic_ray_map.native
 
-        post_cti_data = clocker.add_cti(data=pre_cti_data, cti=cti)
+        if cti is not None:
+            post_cti_data = clocker.add_cti(data=pre_cti_data, cti=cti)
+        else:
+            post_cti_data = pre_cti_data
 
         if cosmic_ray_map is not None:
             pre_cti_data -= cosmic_ray_map.native

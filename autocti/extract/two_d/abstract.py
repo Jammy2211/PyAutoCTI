@@ -7,7 +7,7 @@ import autoarray as aa
 class Extract2D:
     def __init__(
         self,
-        region_list: aa.type.Region2DList,
+        region_list: Optional[aa.type.Region2DList] = None,
         parallel_overscan: Optional[aa.type.Region2DLike] = None,
         serial_prescan: Optional[aa.type.Region2DLike] = None,
         serial_overscan: Optional[aa.type.Region2DLike] = None,
@@ -24,7 +24,9 @@ class Extract2D:
             left-column, right-column).
         """
 
-        self.region_list = list(map(aa.Region2D, region_list))
+        self.region_list = (
+            list(map(aa.Region2D, region_list)) if region_list is not None else None
+        )
 
         self.parallel_overscan = (
             aa.Region2D(region=parallel_overscan)
@@ -87,9 +89,18 @@ class Extract2D:
         pixels
             The integer range of pixels between which the extraction is performed.
         """
-        return [
-            np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
+        arr_list = [
+            array.native[region.slice]
             for region in self.region_list_from(pixels=pixels)
+        ]
+
+        mask_2d_list = [
+            array.mask[region.slice] for region in self.region_list_from(pixels=pixels)
+        ]
+
+        return [
+            aa.Array2D.manual_mask(array=arr, mask=mask_2d).native
+            for arr, mask_2d in zip(arr_list, mask_2d_list)
         ]
 
     def stacked_array_2d_from(
@@ -114,8 +125,22 @@ class Extract2D:
             The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
             FPR rows)
         """
-        fpr_array_list = self.array_2d_list_from(array=array, pixels=pixels)
-        return np.ma.mean(np.ma.asarray(fpr_array_list), axis=0)
+
+        arr_list = [
+            np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
+            for region in self.region_list_from(pixels=pixels)
+        ]
+
+        stacked_array_2d = np.ma.mean(np.ma.asarray(arr_list), axis=0)
+
+        mask_2d_list = [
+            array.mask[region.slice] for region in self.region_list_from(pixels=pixels)
+        ]
+
+        return aa.Array2D.manual_mask(
+            array=np.asarray(stacked_array_2d.data),
+            mask=sum(mask_2d_list) == len(mask_2d_list),
+        ).native
 
     def binned_array_1d_from(
         self, array: aa.Array2D, pixels: Tuple[int, int]
@@ -141,12 +166,18 @@ class Extract2D:
             The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
             FPR rows)
         """
-        front_stacked_array = self.stacked_array_2d_from(array=array, pixels=pixels)
-        front_stacked_array = np.ma.mean(
-            np.ma.asarray(front_stacked_array), axis=self.binning_axis
+
+        arr_list = [
+            np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
+            for region in self.region_list_from(pixels=pixels)
+        ]
+
+        stacked_array_2d = np.ma.mean(np.ma.asarray(arr_list), axis=0)
+        binned_array_1d = np.ma.mean(
+            np.ma.asarray(stacked_array_2d), axis=self.binning_axis
         )
         return aa.Array1D.manual_native(
-            array=front_stacked_array, pixel_scales=array.pixel_scale
+            array=binned_array_1d, pixel_scales=array.pixel_scale
         )
 
     def add_to_array(

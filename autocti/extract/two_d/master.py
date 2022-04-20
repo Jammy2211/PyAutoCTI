@@ -260,7 +260,7 @@ class Extract2DMaster:
         self,
         array: aa.Array2D,
         fpr_pixels: Tuple[int, int] = None,
-        trails_pixels: Tuple[int, int] = None,
+        eper_pixels: Tuple[int, int] = None,
     ) -> aa.Array2D:
         """
         Extract all of the data values in an input `array2D` corresponding to the parallel front edges and trails of
@@ -329,16 +329,16 @@ class Extract2DMaster:
                 new_array=new_array, array=array, pixels=fpr_pixels
             )
 
-        if trails_pixels is not None:
+        if eper_pixels is not None:
 
             new_array = self.parallel_eper.add_to_array(
-                new_array=new_array, array=array, pixels=trails_pixels
+                new_array=new_array, array=array, pixels=eper_pixels
             )
 
         return new_array
 
     def serial_fprs_and_epers_array_2d_from(
-        self, array: aa.Array2D, fpr_pixels=None, trails_pixels=None
+        self, array: aa.Array2D, fpr_pixels=None, eper_pixels=None
     ) -> aa.Array2D:
         """
         Extract an array of all of the serial FPRs and EPERs of each the charge-injection scans from a charge
@@ -406,10 +406,10 @@ class Extract2DMaster:
                 new_array=new_array, array=array, pixels=fpr_pixels
             )
 
-        if trails_pixels is not None:
+        if eper_pixels is not None:
 
             new_array = self.serial_eper.add_to_array(
-                new_array=new_array, array=array, pixels=trails_pixels
+                new_array=new_array, array=array, pixels=eper_pixels
             )
 
         return new_array
