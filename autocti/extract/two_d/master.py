@@ -2,8 +2,10 @@ from typing import Optional, Tuple
 
 import autoarray as aa
 
+from autocti.extract.two_d.parallel_overscan import Extract2DParallelOverscan
 from autocti.extract.two_d.parallel_fpr import Extract2DParallelFPR
 from autocti.extract.two_d.parallel_eper import Extract2DParallelEPER
+from autocti.extract.two_d.serial_overscan import Extract2DSerialOverscan
 from autocti.extract.two_d.serial_fpr import Extract2DSerialFPR
 from autocti.extract.two_d.serial_eper import Extract2DSerialEPER
 from autocti.extract.two_d.parallel_calibration import Extract2DParallelCalibration
@@ -13,9 +15,11 @@ from autocti.extract.two_d.serial_calibration import Extract2DSerialCalibration
 class Extract2DMaster:
     def __init__(
         self,
+        parallel_overscan: Extract2DParallelOverscan,
         parallel_fpr: Extract2DParallelFPR,
         parallel_eper: Extract2DParallelEPER,
         parallel_calibration: Extract2DParallelCalibration,
+        serial_overscan: Extract2DSerialOverscan,
         serial_fpr: Extract2DSerialFPR,
         serial_eper: Extract2DSerialEPER,
         serial_calibration: Extract2DSerialCalibration,
@@ -43,9 +47,11 @@ class Extract2DMaster:
             Contains methods for extracting CTI calibration data for serial-only fits.
         """
 
+        self.parallel_overscan = parallel_overscan
         self.parallel_fpr = parallel_fpr
         self.parallel_eper = parallel_eper
         self.parallel_calibration = parallel_calibration
+        self.serial_overscan = serial_overscan
         self.serial_fpr = serial_fpr
         self.serial_eper = serial_eper
         self.serial_calibration = serial_calibration
@@ -83,6 +89,7 @@ class Extract2DMaster:
             Integer pixel coordinates specifying the corners of the serial overscan (top-row, bottom-row,
             left-column, right-column).
         """
+
         parallel_fpr = Extract2DParallelFPR(
             region_list=region_list,
             parallel_overscan=parallel_overscan,
@@ -121,10 +128,17 @@ class Extract2DMaster:
             serial_overscan=serial_overscan,
         )
 
+        parallel_overscan = Extract2DParallelOverscan(
+            parallel_overscan=parallel_overscan
+        )
+        serial_overscan = Extract2DSerialOverscan(serial_overscan=serial_overscan)
+
         return Extract2DMaster(
+            parallel_overscan=parallel_overscan,
             parallel_fpr=parallel_fpr,
             parallel_eper=parallel_eper,
             parallel_calibration=parallel_calibration,
+            serial_overscan=serial_overscan,
             serial_fpr=serial_fpr,
             serial_eper=serial_eper,
             serial_calibration=serial_calibration,
@@ -133,18 +147,6 @@ class Extract2DMaster:
     @property
     def region_list(self):
         return self.parallel_fpr.region_list
-
-    @property
-    def parallel_overscan(self):
-        return self.parallel_fpr.parallel_overscan
-
-    @property
-    def serial_prescan(self):
-        return self.parallel_fpr.serial_prescan
-
-    @property
-    def serial_overscan(self):
-        return self.parallel_fpr.serial_overscan
 
     def regions_array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
         """
@@ -460,14 +462,16 @@ class Extract2DMaster:
         []     [=====================]
                <--------Ser---------
         """
+        serial_overscan = self.serial_overscan.serial_overscan
+
         new_array = array.native.copy() * 0.0
 
-        new_array[self.serial_overscan.slice] = array.native[self.serial_overscan.slice]
+        new_array[serial_overscan.slice] = array.native[serial_overscan.slice]
 
         trails_region_list = list(
             map(
                 lambda ci_region: ci_region.serial_trailing_region_from(
-                    (0, self.serial_overscan.total_columns)
+                    (0, serial_overscan.total_columns)
                 ),
                 self.region_list,
             )
