@@ -2,6 +2,7 @@ import numpy as np
 from typing import List, Tuple
 
 import autoarray as aa
+import autocti as ac
 
 from autocti.extract.two_d.abstract import Extract2D
 
@@ -25,6 +26,9 @@ class MockExtract2D(Extract2D):
             region.parallel_front_region_from(pixels=pixels)
             for region in self.region_list
         ]
+
+    def binned_region_1d_from(self, pixels: Tuple[int, int]) -> aa.Region1D:
+        return ac.util.extract_2d.binned_region_1d_fpr_from(pixels=pixels)
 
 
 def test__array_2d_list_from(parallel_array, parallel_masked_array):
@@ -174,8 +178,13 @@ def test__total_columns_minimum():
     assert extract.total_columns_min == 1
 
 
-# def test__dataset_1d_from(imaging_ci_7x7):
-#
-#     extract = MockExtract2D(region_list=[(0, 1, 1, 2)])
-#
-#     dataset_1d = extract.dataset_1d_from(dataset_2d=imaging_ci_7x7)
+def test__dataset_1d_from(imaging_ci_7x7):
+
+    extract = MockExtract2D(region_list=[(0, 1, 1, 2)])
+
+    dataset_1d = extract.dataset_1d_from(dataset_2d=imaging_ci_7x7, pixels=(0, 2))
+
+    assert (dataset_1d.data == np.array([1.0, 1.0])).all()
+    assert (dataset_1d.noise_map == np.array([2.0, 2.0])).all()
+    assert (dataset_1d.pre_cti_data == np.array([10.0, 10.0])).all()
+    assert dataset_1d.layout.region_list == [(0, 2)]

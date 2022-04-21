@@ -5,6 +5,7 @@ import autoarray as aa
 
 from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
+from autocti.layout.one_d import Layout1D
 
 
 class Extract2D:
@@ -183,6 +184,9 @@ class Extract2D:
             array=binned_array_1d, pixel_scales=array.pixel_scale
         )
 
+    def binned_region_1d_from(self, pixels: Tuple[int, int]) -> aa.Region1D:
+        raise NotImplementedError
+
     def add_to_array(
         self, new_array: aa.Array2D, array: aa.Array2D, pixels: Tuple[int, int]
     ) -> aa.Array2D:
@@ -221,8 +225,15 @@ class Extract2D:
             array=dataset_2d.pre_cti_data, pixels=pixels
         )
 
+        binned_region_1d = self.binned_region_1d_from(pixels=pixels)
+
+        layout_1d = Layout1D(
+            shape_1d=binned_data_1d.shape_native, region_list=[binned_region_1d]
+        )
+
         return Dataset1D(
             data=binned_data_1d,
             noise_map=binned_noise_map_1d,
             pre_cti_data=binned_pre_cti_data_1d,
+            layout=layout_1d,
         )
