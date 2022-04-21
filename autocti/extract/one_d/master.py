@@ -1,5 +1,6 @@
 from typing import Tuple
 
+from autocti.extract.one_d.overscan import Extract1DOverscan
 from autocti.extract.one_d.fpr import Extract1DFPR
 from autocti.extract.one_d.eper import Extract1DEPER
 
@@ -7,7 +8,7 @@ import autoarray as aa
 
 
 class Extract1DMaster:
-    def __init__(self, fpr: Extract1DFPR, eper: Extract1DEPER):
+    def __init__(self, overscan:Extract1DOverscan, fpr: Extract1DFPR, eper: Extract1DEPER):
         """
         Abstract class containing methods for extracting regions from a 1D line dataset which contains some sort of
         original signal whose profile before CTI is known (e.g. warm pixel, charge injection).
@@ -20,6 +21,7 @@ class Extract1DMaster:
             Integer pixel coordinates specifying the corners of signal (x0, x1).
         """
 
+        self.overscan = overscan
         self.fpr = fpr
         self.eper = eper
 
@@ -60,19 +62,13 @@ class Extract1DMaster:
             region_list=region_list, prescan=prescan, overscan=overscan
         )
 
-        return Extract1DMaster(fpr=fpr, eper=eper)
+        overscan = Extract1DOverscan(overscan=overscan)
+
+        return Extract1DMaster(fpr=fpr, eper=eper, overscan=overscan)
 
     @property
     def region_list(self):
         return self.fpr.region_list
-
-    @property
-    def prescan(self):
-        return self.fpr.prescan
-
-    @property
-    def overscan(self):
-        return self.fpr.overscan
 
     def regions_array_1d_from(self, array: aa.Array1D) -> aa.Array1D:
         """
