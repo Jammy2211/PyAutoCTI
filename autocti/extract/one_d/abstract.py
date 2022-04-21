@@ -1,5 +1,5 @@
 import numpy as np
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import autoarray as aa
 
@@ -7,9 +7,9 @@ import autoarray as aa
 class Extract1D:
     def __init__(
         self,
-        region_list: aa.type.Region1DList,
-        prescan: aa.type.Region1DLike = None,
-        overscan: aa.type.Region1DLike = None,
+        region_list: Optional[aa.type.Region1DList] = None,
+        prescan: Optional[aa.type.Region1DLike] = None,
+        overscan: Optional[aa.type.Region1DLike] = None,
     ):
         """
         Abstract class containing methods for extracting regions from a 1D line dataset which contains some sort of
@@ -22,7 +22,9 @@ class Extract1D:
         region_list
             Integer pixel coordinates specifying the corners of signal (x0, x1).
         """
-        self.region_list = list(map(aa.Region1D, region_list))
+        self.region_list = (
+            list(map(aa.Region1D, region_list)) if region_list is not None else None
+        )
 
         if isinstance(prescan, tuple):
             prescan = aa.Region1D(region=prescan)
@@ -61,6 +63,21 @@ class Extract1D:
         pixels
             The integer range of pixels between which the extraction is performed.
         """
+
+        arr_list = [
+            array.native[region.slice]
+            for region in self.region_list_from(pixels=pixels)
+        ]
+
+        mask_1d_list = [
+            array.mask[region.slice] for region in self.region_list_from(pixels=pixels)
+        ]
+
+        return [
+            aa.Array1D.manual_mask(array=arr, mask=mask_1d).native
+            for arr, mask_1d in zip(arr_list, mask_1d_list)
+        ]
+
         return [
             np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
             for region in self.region_list_from(pixels=pixels)
@@ -87,8 +104,22 @@ class Extract1D:
             The pixel index to extract the region between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
             FPR rows)
         """
-        front_arrays = self.array_1d_list_from(array=array, pixels=pixels)
-        return np.ma.mean(np.ma.asarray(front_arrays), axis=0)
+
+        arr_list = [
+            np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
+            for region in self.region_list_from(pixels=pixels)
+        ]
+
+        stacked_array_1d = np.ma.mean(np.ma.asarray(arr_list), axis=0)
+
+        mask_1d_list = [
+            array.mask[region.slice] for region in self.region_list_from(pixels=pixels)
+        ]
+
+        return aa.Array1D.manual_mask(
+            array=np.asarray(stacked_array_1d.data),
+            mask=sum(mask_1d_list) == len(mask_1d_list),
+        ).native
 
     def add_to_array(
         self, new_array: aa.Array1D, array: aa.Array1D, pixels: Tuple[int, int]

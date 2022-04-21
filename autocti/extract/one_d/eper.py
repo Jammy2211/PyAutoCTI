@@ -9,51 +9,14 @@ from autocti.extract.one_d.abstract import Extract1D
 class Extract1DEPER(Extract1D):
     def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region1D]:
         """
-        Returns the parallel scans of a charge injection array.
+        Returns a list of the (x0, x1) regions containing the EPERs of a 1D CTI dataset.
 
-            The diagram below illustrates the region that is calculated from a array for pixels=(0, 1):
+        These are used for extracting the EPER regions of 1D data.
 
-            ---KEY---
-            ---------
-
-            [] = read-out electronics   [==========] = read-out register
-
-            [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-            [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan
-            [c#cc#c#c#c] = charge injection region (0 / 1 indicates ci region index)
-            [xxxxxxxxxx]
-            [t#t#t#t#t#] = parallel / serial charge injection region trail (0 / 1 indicates ci region index)
-
-            P = Parallel Direction      S = Serial Direction
-
-                   [ppppppppppppppppppppp]
-                   [ppppppppppppppppppppp]
-              [...][t1t1t1t1t1t1t1t1t1t1t][sss]
-              [...][c1c1cc1c1cc1cc1ccc1cc][sss]
-            | [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
-            | [...][t0t0t0t0t0t0t0t0t0t0t][sss]    | Direction
-            P [...][0t0t0t0t0t0t0t0t0t0t0][sss]    | of
-            | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
-              [...][cc0ccc0cccc0cccc0cccc][sss]    |
-
-            []     [=====================]
-                   <---------S----------
-
-            The extracted array keeps just the trails following all charge injection scans:
-
-            list index 0:
-
-            [2, 4, 3, 21] (serial prescan is 3 pixels)
-
-            list index 1:
-
-            [6, 7, 3, 21] (serial prescan is 3 pixels)
-
-            Parameters
-            ------------
-            arrays
-            pixels
-                The row indexes to extract the trails between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
+        Parameters
+        ------------
+        pixels
+            The row indexes to extract the trails between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
         """
 
         return list(
@@ -65,53 +28,11 @@ class Extract1DEPER(Extract1D):
 
     def array_1d_from(self, array: aa.Array1D) -> aa.Array1D:
         """
-        Extract all of the data values in an input `array1D` that do not overlap the charge injection regions or the
-        serial prescan / serial overscan regions.
+        Extract all of the data values in an input `array1D` that do not overlap the charge regions or the
+        prescan / overscan regions.
 
         This  extracts a `array1D` that contains only regions of the data where there are parallel trails (e.g. those
         that follow the charge-injection regions).
-
-        The diagram below illustrates the `array1D` that is extracted from the input array:
-
-        ---KEY---
-        ---------
-
-        [] = read-out electronics   [==========] = read-out register
-
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
-        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
-
-        P = Parallel Direction      S = Serial Direction
-
-               [tptpptptptpptpptpptpt]
-               [tptptptpptpttptptptpt]
-          [...][ttttttttttttttttttttt][sss]
-          [...][ccccccccccccccccccccc][sss]
-        | [...][ccccccccccccccccccccc][sss]    |
-        | [...][ttttttttttttttttttttt][sss]    | Direction
-        P [...][ttttttttttttttttttttt][sss]    | of
-        | [...][ccccccccccccccccccccc][sss]    | clocking
-          [...][ccccccccccccccccccccc][sss]    |
-
-        []     [=====================]
-               <---------S----------
-
-        The extracted array keeps just the trails following all charge injection scans and replaces all other
-        values with 0s:
-
-               [tptpptptptpptpptpptpt]
-               [tptptptpptpttptptptpt]
-          [000][ttttttttttttttttttttt][000]
-          [000][000000000000000000000][000]
-        | [000][000000000000000000000][000]    |
-        | [000][ttttttttttttttttttttt][000]    | Direction
-        P [000][ttttttttttttttttttttt][000]    | of
-        | [000][000000000000000000000][000]    | clocking
-          [000][000000000000000000000][000]    |
-
-        []     [=====================]
-               <---------S----------
         """
 
         array_1d_epers = array.native.copy()

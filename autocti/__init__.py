@@ -41,6 +41,7 @@ from .mask.mask_2d import Mask2D
 from .mask.mask_2d import SettingsMask2D
 from .mask.mask_1d import Mask1D
 from .mask.mask_1d import SettingsMask1D
+from .extract.one_d.overscan import Extract1DOverscan
 from .extract.one_d.fpr import Extract1DFPR
 from .extract.one_d.eper import Extract1DEPER
 from .extract.one_d.master import Extract1DMaster

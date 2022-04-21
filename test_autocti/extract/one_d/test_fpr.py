@@ -1,7 +1,6 @@
 import numpy as np
-import pytest
+
 import autocti as ac
-from autocti import exc
 
 
 def test__array_1d_list_from(array, masked_array):
