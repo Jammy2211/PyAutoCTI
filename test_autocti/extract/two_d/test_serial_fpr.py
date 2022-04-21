@@ -73,7 +73,7 @@ def test__array_2d_list_from(serial_array, serial_masked_array):
 def test__stacked_array_2d_from(serial_array, serial_masked_array):
     extract = ac.Extract2DSerialFPR(region_list=[(0, 3, 1, 4), (0, 3, 5, 8)])
 
-    stacked_fpr_list = extract.stacked_array_2d_from(array=serial_array, pixels=(0, 3))
+    stacked_fpr = extract.stacked_array_2d_from(array=serial_array, pixels=(0, 3))
 
     # [[1.0, 2.0, 3.0],
     #  [1.0, 2.0, 3.0],
@@ -84,8 +84,7 @@ def test__stacked_array_2d_from(serial_array, serial_masked_array):
     #  [5.0, 6.0, 7.0]]
 
     assert (
-        stacked_fpr_list
-        == np.array([[3.0, 4.0, 5.0], [3.0, 4.0, 5.0], [3.0, 4.0, 5.0]])
+        stacked_fpr == np.array([[3.0, 4.0, 5.0], [3.0, 4.0, 5.0], [3.0, 4.0, 5.0]])
     ).all()
 
     stacked_fpr = extract.stacked_array_2d_from(

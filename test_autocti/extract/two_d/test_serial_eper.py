@@ -9,24 +9,24 @@ def test__array_2d_list_from(serial_array, serial_masked_array):
 
     eper_list = extract.array_2d_list_from(array=serial_array, pixels=(0, 1))
 
-    assert (eper_list == np.array([[4.0], [4.0], [4.0]])).all()
+    assert (eper_list[0] == np.array([[4.0], [4.0], [4.0]])).all()
 
     eper_list = extract.array_2d_list_from(array=serial_array, pixels=(1, 2))
 
-    assert (eper_list == np.array([[5.0], [5.0], [5.0]])).all()
+    assert (eper_list[0] == np.array([[5.0], [5.0], [5.0]])).all()
 
     eper_list = extract.array_2d_list_from(array=serial_array, pixels=(2, 3))
 
-    assert (eper_list == np.array([[6.0], [6.0], [6.0]])).all()
+    assert (eper_list[0] == np.array([[6.0], [6.0], [6.0]])).all()
 
     eper_list = extract.array_2d_list_from(array=serial_array, pixels=(0, 2))
 
-    assert (eper_list == np.array([[4.0, 5.0], [4.0, 5.0], [4.0, 5.0]])).all()
+    assert (eper_list[0] == np.array([[4.0, 5.0], [4.0, 5.0], [4.0, 5.0]])).all()
 
     eper_list = extract.array_2d_list_from(array=serial_array, pixels=(1, 4))
 
     assert (
-        eper_list == np.array([[5.0, 6.0, 7.0], [5.0, 6.0, 7.0], [5.0, 6.0, 7.0]])
+        eper_list[0] == np.array([[5.0, 6.0, 7.0], [5.0, 6.0, 7.0], [5.0, 6.0, 7.0]])
     ).all()
 
     extract = ac.Extract2DSerialEPER(region_list=[(0, 3, 1, 4), (0, 3, 5, 8)])

@@ -30,6 +30,7 @@ from .cosmics.cosmics import SimulatorCosmicRayMap
 from .extract.two_d.parallel_overscan import Extract2DParallelOverscan
 from .extract.two_d.parallel_fpr import Extract2DParallelFPR
 from .extract.two_d.parallel_eper import Extract2DParallelEPER
+from .extract.two_d.serial_overscan import Extract2DSerialOverscan
 from .extract.two_d.serial_fpr import Extract2DSerialFPR
 from .extract.two_d.serial_eper import Extract2DSerialEPER
 from .extract.two_d.parallel_calibration import Extract2DParallelCalibration
