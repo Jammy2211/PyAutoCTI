@@ -57,6 +57,27 @@ def test__region_list_from__via_array_2d_list_from(
     ).all()
 
 
+def test__binned_region_1d_from():
+
+    extract = ac.Extract2DParallelEPER(region_list=[(1, 3, 0, 3)])
+
+    region_1d_list = extract.binned_region_1d_from(pixels=(0, 1))
+
+    assert region_1d_list == None
+
+    region_1d_list = extract.binned_region_1d_from(pixels=(-1, 1))
+
+    assert region_1d_list == (0, 1)
+
+    region_1d_list = extract.binned_region_1d_from(pixels=(-7, 18))
+
+    assert region_1d_list == (0, 7)
+
+    region_1d_list = extract.binned_region_1d_from(pixels=(-3, -1))
+
+    assert region_1d_list == (0, 2)
+
+
 def test__array_2d_from():
 
     extract = ac.Extract2DParallelEPER(

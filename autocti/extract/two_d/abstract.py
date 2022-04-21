@@ -166,8 +166,8 @@ class Extract2D:
             The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted and
             stacked.
         pixels
-            The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
-            FPR rows)
+            The column / row pixel index to extract the region (e.g. FPR, EPER) between (e.g. `pixels=(0, 3)` extracts
+            the 1st, 2nd and 3rd columns / rows)
         """
 
         arr_list = [

@@ -64,6 +64,32 @@ class Extract2DParallelEPER(Extract2D):
             for region in self.region_list
         ]
 
+    def binned_region_1d_from(self, pixels: Tuple[int, int]) -> aa.Region1D:
+        """
+        The `Extract` objects allow one to extract a `Dataset1D` from a 2D CTI dataset, which is used to perform
+        CTI modeling in 1D.
+
+        This is performed by binning up the data via the `binned_array_1d_from` function.
+
+        In order to create the 1D dataset a `Layout1D` is required, which requires the `region_list` containing the
+        charge regions on the 1D dataset (e.g. where the FPR appears in 1D after binning).
+
+        The function returns the this region list if the 1D dataset is extracted from the parallel EPERs. The
+        charge region is only included if there are negative entries in the `pixels` tuple, meaning that pixels
+        before the EPERs (e.g. the FPR) are extracted.
+
+        Parameters
+        ----------
+        pixels
+            The row pixel index to extract the EPERs between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd EPER
+            rows)
+        """
+        if pixels[0] >= 0:
+            return None
+        elif pixels[1] >= 0:
+            return aa.Region1D(region=(0, -pixels[0]))
+        return aa.Region1D(region=(0, pixels[1] - pixels[0]))
+
     def array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
         """
         Extract all of the areas of an `Array2D` that contain the parallel EPERs and return them as a new `Array2D`
