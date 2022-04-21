@@ -4,6 +4,8 @@ import autoarray as aa
 
 from autocti.extract.two_d.abstract import Extract2D
 
+from autocti.extract.two_d import extract_2d_util
+
 
 class Extract2DSerialFPR(Extract2D):
     @property
@@ -78,7 +80,7 @@ class Extract2DSerialFPR(Extract2D):
         In order to create the 1D dataset a `Layout1D` is required, which requires the `region_list` containing the
         charge regions on the 1D dataset (e.g. where the FPR appears in 1D after binning).
 
-        The function returns the this region list if the 1D dataset is extracted from the serial FPRs. This is
+        The function returns the this region if the 1D dataset is extracted from the serial FPRs. This is
         the full range of the `pixels` tuple, unless negative entries are included, meaning that pixels
         before the FPRs are also extracted.
 
@@ -88,8 +90,4 @@ class Extract2DSerialFPR(Extract2D):
             The column pixel index to extract the FPRs between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd FPR
             columns)
         """
-        if pixels[0] <= 0 and pixels[1] <= 0:
-            return None
-        elif pixels[0] >= 0:
-            return aa.Region1D(region=(0, pixels[1]))
-        return aa.Region1D(region=(abs(pixels[0]), pixels[1] + abs(pixels[0])))
+        return extract_2d_util.binned_region_1d_fpr_from(pixels=pixels)

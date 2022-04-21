@@ -4,6 +4,8 @@ import autoarray as aa
 
 from autocti.extract.two_d.abstract import Extract2D
 
+from autocti.extract.two_d import extract_2d_util
+
 
 class Extract2DSerialEPER(Extract2D):
     @property
@@ -77,7 +79,7 @@ class Extract2DSerialEPER(Extract2D):
         In order to create the 1D dataset a `Layout1D` is required, which requires the `region_list` containing the
         charge regions on the 1D dataset (e.g. where the FPR appears in 1D after binning).
 
-        The function returns the this region list if the 1D dataset is extracted from theserial EPERs. The
+        The function returns the this region if the 1D dataset is extracted from theserial EPERs. The
         charge region is only included if there are negative entries in the `pixels` tuple, meaning that pixels
         before the EPERs (e.g. the FPR) are extracted.
 
@@ -87,11 +89,7 @@ class Extract2DSerialEPER(Extract2D):
             The column pixel index to extract the EPERs between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd EPER
             columns)
         """
-        if pixels[0] >= 0:
-            return None
-        elif pixels[1] >= 0:
-            return aa.Region1D(region=(0, -pixels[0]))
-        return aa.Region1D(region=(0, pixels[1] - pixels[0]))
+        return extract_2d_util.binned_region_1d_eper_from(pixels=pixels)
 
     def array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
         """
