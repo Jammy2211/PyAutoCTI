@@ -72,6 +72,9 @@ class Extract2DParallelEPER(Extract2D):
 
         The dimensions of the input array therefore do not change (unlike other `Layout2DCI` methods).
 
+        Negative pixel values are supported to the `pixels` tuple, whereby rows in front of the parallel EPERs (e.g.
+        the FPR) are also extracted.
+
         The diagram below illustrates the extraction:
 
         [] = read-out electronics

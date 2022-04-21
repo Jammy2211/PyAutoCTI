@@ -13,6 +13,9 @@ class Extract1DOverscan(Extract1D):
 
         These are used for extracting the overscan regions of 1D data.
 
+        Negative pixel values are supported to the `pixels` tuple, whereby pixels in front of the FPRs  are also
+        extracted.
+
         Parameters
         ------------
         pixels

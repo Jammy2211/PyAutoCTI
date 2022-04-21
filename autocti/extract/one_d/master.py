@@ -8,7 +8,9 @@ import autoarray as aa
 
 
 class Extract1DMaster:
-    def __init__(self, overscan:Extract1DOverscan, fpr: Extract1DFPR, eper: Extract1DEPER):
+    def __init__(
+        self, overscan: Extract1DOverscan, fpr: Extract1DFPR, eper: Extract1DEPER
+    ):
         """
         Abstract class containing methods for extracting regions from a 1D line dataset which contains some sort of
         original signal whose profile before CTI is known (e.g. warm pixel, charge injection).

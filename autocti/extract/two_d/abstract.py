@@ -3,6 +3,9 @@ from typing import Optional, List, Tuple, Union
 
 import autoarray as aa
 
+from autocti.charge_injection.imaging.imaging import ImagingCI
+from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
+
 
 class Extract2D:
     def __init__(
@@ -205,3 +208,21 @@ class Extract2D:
             new_array[region.y0 : region.y1, region.x0 : region.x1] += arr
 
         return new_array
+
+    def dataset_1d_from(
+        self, dataset_2d: ImagingCI, pixels: Tuple[int, int]
+    ) -> Dataset1D:
+
+        binned_data_1d = self.binned_array_1d_from(array=dataset_2d.data, pixels=pixels)
+        binned_noise_map_1d = self.binned_array_1d_from(
+            array=dataset_2d.noise_map, pixels=pixels
+        )
+        binned_pre_cti_data_1d = self.binned_array_1d_from(
+            array=dataset_2d.pre_cti_data, pixels=pixels
+        )
+
+        return Dataset1D(
+            data=binned_data_1d,
+            noise_map=binned_noise_map_1d,
+            pre_cti_data=binned_pre_cti_data_1d,
+        )

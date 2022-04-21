@@ -13,6 +13,9 @@ class Extract1DEPER(Extract1D):
 
         These are used for extracting the EPER regions of 1D data.
 
+        Negative pixel values are supported to the `pixels` tuple, whereby pixels in front of the EPERs (e.g.
+        the FPR) are also extracted.
+
         Parameters
         ------------
         pixels

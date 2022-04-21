@@ -3,7 +3,9 @@ import numpy as np
 import autocti as ac
 
 
-def test__array_2d_list_from(parallel_array, parallel_masked_array):
+def test__region_list_from__via_array_2d_list_from(
+    parallel_array, parallel_masked_array
+):
     extract = ac.Extract2DParallelEPER(region_list=[(1, 3, 0, 3)])
 
     eper_list = extract.array_2d_list_from(array=parallel_array, pixels=(0, 1))
@@ -14,6 +16,9 @@ def test__array_2d_list_from(parallel_array, parallel_masked_array):
 
     eper_list = extract.array_2d_list_from(array=parallel_array, pixels=(0, 2))
     assert (eper_list == np.array([[3.0, 3.0, 3.0], [4.0, 4.0, 4.0]])).all()
+
+    eper_list = extract.array_2d_list_from(array=parallel_array, pixels=(-1, 1))
+    assert (eper_list == np.array([[2.0, 2.0, 2.0], [3.0, 3.0, 3.0]])).all()
 
     eper_list = extract.array_2d_list_from(array=parallel_array, pixels=(1, 3))
     assert (eper_list == np.array([[4.0, 4.0, 4.0], [5.0, 5.0, 5.0]])).all()
@@ -50,35 +55,6 @@ def test__array_2d_list_from(parallel_array, parallel_masked_array):
     assert (
         eper_list[1].mask == np.array([[False, False, False], [True, False, False]])
     ).all()
-
-
-def test__stacked_array_2d_from(parallel_array, parallel_masked_array):
-    extract = ac.Extract2DParallelEPER(region_list=[(1, 3, 0, 3), (4, 6, 0, 3)])
-
-    stacked_eper = extract.stacked_array_2d_from(array=parallel_array, pixels=(0, 2))
-
-    assert (stacked_eper == np.array([[4.5, 4.5, 4.5], [5.5, 5.5, 5.5]])).all()
-
-    stacked_eper = extract.stacked_array_2d_from(
-        array=parallel_masked_array, pixels=(0, 2)
-    )
-
-    assert (stacked_eper == np.array([[4.5, 4.5, 6.0], [4.0, 5.5, 5.5]])).all()
-    assert (
-        stacked_eper.mask == np.array([[False, False, False], [False, False, False]])
-    ).all()
-
-
-def test__binned_array_1d_from(parallel_array, parallel_masked_array):
-    extract = ac.Extract2DParallelEPER(region_list=[(1, 3, 0, 3), (4, 6, 0, 3)])
-
-    eper_line = extract.binned_array_1d_from(array=parallel_array, pixels=(0, 2))
-
-    assert (eper_line == np.array([4.5, 5.5])).all()
-
-    eper_line = extract.binned_array_1d_from(array=parallel_masked_array, pixels=(0, 2))
-
-    assert (eper_line == np.array([5.0, 5.0])).all()
 
 
 def test__array_2d_from():

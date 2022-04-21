@@ -20,6 +20,9 @@ class Extract2DSerialEPER(Extract2D):
         Extract the serial EPERs of every charge injection region on the charge injection image and return as a list
         of 2D arrays.
 
+        Negative pixel values are supported to the `pixels` tuple, whereby columns in front of the serial EPERs
+        (e.g. the FPRs) are also extracted.
+
         The diagram below illustrates the extraction for `pixels=(0, 1)`:
 
         [] = read-out electronics

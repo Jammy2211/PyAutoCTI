@@ -25,7 +25,8 @@ class Extract2DParallelFPR(Extract2D):
         For parallel FPR's the charge spans all columns of the charge injection region, thus the coordinates x0 and x1
         do not change. y0 and y1 are updated based on the `pixels` input.
 
-         scans of a charge injection array.
+        Negative pixel values are supported to the `pixels` tuple, whereby rows in front of the parallel FPRs are
+        also extracted.
 
         The diagram below illustrates the extraction for `pixels=(0, 1)`:
 

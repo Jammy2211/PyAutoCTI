@@ -3,7 +3,7 @@ import numpy as np
 import autocti as ac
 
 
-def test__array_1d_list_from(array, masked_array):
+def test__region_list_from__viaarray_1d_list_from(array, masked_array):
 
     extract = ac.Extract1DEPER(region_list=[(1, 3)])
 
@@ -15,6 +15,9 @@ def test__array_1d_list_from(array, masked_array):
 
     eper_list = extract.array_1d_list_from(array=array, pixels=(1, 4))
     assert (eper_list == np.array([4.0, 5.0, 6.0])).all()
+
+    eper_list = extract.array_1d_list_from(array=array, pixels=(-1, 1))
+    assert (eper_list == np.array([2.0, 3.0])).all()
 
     extract = ac.Extract1DEPER(region_list=[(1, 3), (4, 6)])
 
@@ -31,20 +34,6 @@ def test__array_1d_list_from(array, masked_array):
     assert (eper_list[0].mask == np.array([False, False])).all()
 
     assert (eper_list[1].mask == np.array([False, False])).all()
-
-
-def test__stacked_array_1d_from(array, masked_array):
-
-    extract = ac.Extract1DEPER(region_list=[(1, 3), (5, 7)])
-
-    stacked_eper = extract.stacked_array_1d_from(array=array, pixels=(0, 2))
-
-    assert (stacked_eper == np.array([5.0, 6.0])).all()
-
-    stacked_eper = extract.stacked_array_1d_from(array=masked_array, pixels=(0, 2))
-
-    assert (stacked_eper == np.array([5.0, 4.0])).all()
-    assert (stacked_eper.mask == np.array([False, False])).all()
 
 
 def test__array_1d_from():

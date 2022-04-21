@@ -1,4 +1,3 @@
-import numpy as np
 from typing import List, Tuple
 
 import autoarray as aa
@@ -12,6 +11,9 @@ class Extract1DFPR(Extract1D):
         Returns a list of the (x0, x1) regions containing the FPRs of a 1D CTI dataset.
 
         These are used for extracting the FPR regions of 1D data.
+
+        Negative pixel values are supported to the `pixels` tuple, whereby pixels in front of the FPRs  are also
+        extracted.
 
         Parameters
         ------------

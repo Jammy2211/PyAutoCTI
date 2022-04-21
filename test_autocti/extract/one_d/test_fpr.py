@@ -3,7 +3,7 @@ import numpy as np
 import autocti as ac
 
 
-def test__array_1d_list_from(array, masked_array):
+def test__region_list_from__via_array_1d_list_from(array, masked_array):
 
     extract = ac.Extract1DFPR(region_list=[(1, 4)])
 
@@ -12,6 +12,9 @@ def test__array_1d_list_from(array, masked_array):
 
     fpr = extract.array_1d_list_from(array=array, pixels=(2, 3))
     assert (fpr[0] == np.array([3.0])).all()
+
+    fpr = extract.array_1d_list_from(array=array, pixels=(-1, 1))
+    assert (fpr[0] == np.array([0.0, 1.0])).all()
 
     extract = ac.Extract1DFPR(region_list=[(1, 4), (5, 8)])
 
@@ -30,23 +33,3 @@ def test__array_1d_list_from(array, masked_array):
     fpr_list = extract.array_1d_list_from(array=masked_array, pixels=(0, 3))
 
     assert (fpr_list[0].mask == np.array([False, True, False])).all()
-
-
-def test__stacked_array_1d_from(array, masked_array):
-
-    extract = ac.Extract1DFPR(region_list=[(1, 4), (5, 8)])
-
-    stacked_fprs = extract.stacked_array_1d_from(array=array, pixels=(0, 3))
-
-    assert (stacked_fprs == np.array([3.0, 4.0, 5.0])).all()
-
-    extract = ac.Extract1DFPR(region_list=[(1, 3), (5, 8)])
-
-    stacked_fprs = extract.stacked_array_1d_from(array=array, pixels=(0, 2))
-
-    assert (stacked_fprs == np.array([3.0, 4.0])).all()
-
-    stacked_fprs = extract.stacked_array_1d_from(array=masked_array, pixels=(0, 2))
-
-    assert (stacked_fprs == np.ma.array([1.0, 6.0])).all()
-    assert (stacked_fprs.mask == np.ma.array([False, False])).all()

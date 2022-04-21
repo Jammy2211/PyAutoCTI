@@ -18,6 +18,9 @@ class Extract2DSerialFPR(Extract2D):
         Extract the serial FPR of every charge injection region on the charge injection image and return as a list
         of 2D arrays.
 
+        Negative pixel values are supported to the `pixels` tuple, whereby columns in front of the serial FPRs (e.g.
+        the serial prescan) are also extracted.
+
         The diagram below illustrates the extraction for `pixels=(0, 1)`:
 
         [] = read-out electronics
