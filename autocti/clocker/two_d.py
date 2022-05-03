@@ -9,9 +9,11 @@ from autocti.model.model_util import CTI2D
 
 from autocti import exc
 
-from arcticpy.src import cti as arctic
-from arcticpy.src.roe import ROE
-
+try:
+    from arcticpy.src import cti as arctic
+    from arcticpy.src.roe import ROE
+except ModuleNotFoundError:
+    pass
 
 class Clocker2D(AbstractClocker):
     def __init__(

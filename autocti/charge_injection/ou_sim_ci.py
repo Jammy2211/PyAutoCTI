@@ -5,8 +5,12 @@ from autoarray.instruments import euclid
 from autoarray.layout import layout_util
 from autoarray.structures.arrays.uniform_2d import Array2D
 
-from arcticpy.src import ccd
-from arcticpy.src import traps
+try:
+    from arcticpy.src import ccd
+    from arcticpy.src import traps
+except ModuleNotFoundError:
+    pass
+
 from autocti.clocker.two_d import Clocker2D
 from autocti.model.model_util import CTI2D
 

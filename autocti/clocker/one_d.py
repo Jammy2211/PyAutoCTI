@@ -1,5 +1,8 @@
-from arcticpy.src import cti as arctic
-from arcticpy.src.roe import ROE
+try:
+    from arcticpy.src import cti as arctic
+    from arcticpy.src.roe import ROE
+except ModuleNotFoundError:
+    pass
 
 import autoarray as aa
 
