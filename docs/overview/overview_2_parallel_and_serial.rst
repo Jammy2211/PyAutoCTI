@@ -68,7 +68,7 @@ This uses an ``Array2D`` object, which is a class representing a 2D data structu
 ``Array1D`` objected used in the previous overview. It again inherits from a numpy ndarray and is extended
 with functionality used by **PyAutoCTI** which is expanded upon elsewhere in the workspace.
 
-.. code-block:: bash
+.. code-block:: python
 
     import autocti as ac
 
@@ -90,7 +90,7 @@ with functionality used by **PyAutoCTI** which is expanded upon elsewhere in the
 
 **PyAutoCTI** has a built in visualization library for plotting 2D data (amongst many other things)!
 
-.. code-block:: bash
+.. code-block:: python
 
     import autocti.plot as aplt
 
@@ -104,7 +104,7 @@ with functionality used by **PyAutoCTI** which is expanded upon elsewhere in the
 To model the CCD clocking process, including CTI, we create a **PyAutoCTI** ``Clocker2D`` object, which calls arCTIc
 via a Python wrapper.
 
-.. code-block:: bash
+.. code-block:: python
 
     clocker_2d = ac.Clocker2D()
 
@@ -120,7 +120,7 @@ electron cloud fills pixels.
 You'll note that the variables below use the prefix ``parallel_``, which indicates that this is only accounting for
 CTI in the parallel clocking direction.
 
-.. code-block:: bash
+.. code-block:: python
 
     parallel_trap = ac.TrapInstantCapture(density=1.0, release_timescale=5.0)
     parallel_ccd = ac.CCDPhase(
@@ -129,7 +129,7 @@ CTI in the parallel clocking direction.
 
 We group these into a ``CTI2D`` object.
 
-.. code-block:: bash
+.. code-block:: python
 
     cti = ac.CTI2D(parallel_trap_list=[parallel_trap], parallel_ccd=parallel_ccd)
 
@@ -139,7 +139,7 @@ For our 2d ndarray which has shape (10,8) parallel clocking goes upwards towards
 row pre_cti_data_2d[0, :]. CTI trails should therefore appear at the bottom of the ``pre_cti_data_2d`` after each
 block of 10 electrons.
 
-.. code-block:: bash
+.. code-block:: python
 
     post_cti_data_2d = clocker_2d.add_cti(
         data=pre_cti_data_2d, cti=cti
@@ -164,7 +164,7 @@ for them to have different densities. For illustrative purposes, our serial CTI 
 The way an electron cloud fills a pixel in the read-out register is different to the main pixels, meaning for serial
 clocking and CTI we also define a unique ``CCDPhase``.
 
-.. code-block:: bash
+.. code-block:: python
 
     serial_trap_0 = ac.TrapInstantCapture(density=2.0, release_timescale=2.0)
     serial_trap_1 = ac.TrapInstantCapture(density=4.0, release_timescale=10.0)
@@ -181,7 +181,7 @@ For our 2d ndarray which has shape (10,8) serial clocking goes left towards entr
 pre_cti_data_2d[:, 0]. CTI trails should therefore appear at the right of the ``pre_cti_data_2d`` after each
 block of 10 electrons.
 
-.. code-block:: bash
+.. code-block:: python
 
     post_cti_data_2d = clocker_2d.add_cti(
         data=pre_cti_data_2d,
@@ -206,7 +206,7 @@ image produced after parallel clocking. This is the same order of events as occu
 This means we expect to a small number of electrons trailed into the corner of our post-cti image, which are the
 parallel CTI trails then trailed during serial clocking.
 
-.. code-block:: bash
+.. code-block:: python
 
     cti = ac.CTI2D(
         parallel_trap_list=[parallel_trap],
@@ -229,7 +229,7 @@ Correcting CTI
 
 Correcting CTI in 2D is as easy as it was in 1D, by simply calling the clockers ``remove_cti()`` method.
 
-.. code-block:: bash
+.. code-block:: python
 
     corrected_cti_image_2d = clocker_2d.remove_cti(data=post_cti_data_2d, cti=cti)
 

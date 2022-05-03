@@ -71,15 +71,20 @@ charge (e.g.a flow of electrons)!
 
 Now, lets quickly show how we can model CTI using **PyAutoCTI**.
 
+To use **PyAutoCTI** we first import autocti and the plot module.
+
+.. code-block:: python
+
+    import autocti as ac
+    import autocti.plot as aplt
+
 Firstly, lets create a simple 1D dataset, which could correspond to a column of data in a 2D image like those shown
 above. For simplicity, this data is 5 pixels each containing 100 electrons with 10 empty pixels trailing them.
 
 The ``Array1D`` object is a class representing a 1D data structure. It inherits from a numpy ndarray but is extended
 with functionality used by **PyAutoCTI** which is expanded upon elsewhere in the workspace.
 
-.. code-block:: bash
-
-    import autocti as ac
+.. code-block:: python
 
     pre_cti_data_1d = ac.Array1D.manual_native(
         array=[10.0, 10.0, 10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -91,9 +96,7 @@ with functionality used by **PyAutoCTI** which is expanded upon elsewhere in the
 (The ``aplt.Title()`` object below wraps the ``matplotlib`` method ``plt.title()`` -- the **PyAutoCTI** visualization
 library has numerous wrappers like this which will crop up throughout the overview tutorials).
 
-.. code-block:: bash
-
-    import autocti.plot as aplt
+.. code-block:: python
 
     array_1d_plotter = aplt.Array1DPlotter(y=pre_cti_data_1d)
     array_1d_plotter.figure_1d()
@@ -114,7 +117,7 @@ page (https://github.com/jkeger/arctic). **PyAutoCTI** uses arCTIc's built-in Py
 In **PyAutoCTI** we call arCTIc via a ``Clocker`` object, which is a Python class that wraps arCTIc. This class has
 many optional inputs that customize how clocking is performed, but we'll omit these for now to keep things simple.
 
-.. code-block:: bash
+.. code-block:: python
 
     clocker_1d = ac.Clocker1D()
 
@@ -131,7 +134,7 @@ The number of these traps our 1D data encounters is set via the ``density`` para
 defines how long, on average, each trap holds an electron for (we discuss what units these parameters are in and
 therefore what they physically mean elsewhere in the workspace).
 
-.. code-block:: bash
+.. code-block:: python
 
     trap = ac.TrapInstantCapture(density=1.0, release_timescale=5.0)
 
@@ -139,13 +142,13 @@ CTI also depends on the physical properties of the CCD, and how each group of el
 interacts with the silicon lattice. We'll describe this in more detail elsewhere, but it does mean we need to also
 define a ``CCDPhase`` class before we can clock our data using arCTIc.
 
-.. code-block:: bash
+.. code-block:: python
 
     ccd = ac.CCDPhase(well_fill_power=0.58, well_notch_depth=0.0, full_well_depth=200000.0)
 
 We group these into a ``CTI1D`` object.
 
-.. code-block:: bash
+.. code-block:: python
 
     cti = ac.CTI1D(trap_list=[trap], ccd=ccd)
 
@@ -153,7 +156,7 @@ We can now add CTI to our 1D data by passing it through the 1D clocker.
 
 Note that, in 1D, clocking is to the left of the image.
 
-.. code-block:: bash
+.. code-block:: python
 
     post_cti_data_1d = clocker_1d.add_cti(data=pre_cti_data_1d, cti=cti)
 
@@ -184,7 +187,7 @@ Fortunately, arCTIc can also correct CTI. To do this, we simply pass it the data
 ought to include CTI) and the CTI model we will use to correct it. We will use the data with CTI we just created
 above, alongside the CTI model used to create it.
 
-.. code-block:: bash
+.. code-block:: python
 
     corrected_cti_data_1d = clocker_1d.remove_cti(data=post_cti_data_1d, cti=cti)
 

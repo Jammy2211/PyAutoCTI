@@ -24,7 +24,7 @@ overview.
 
 Note that the ``Region2D`` and ``Layout2DCI`` inputs have been updated to reflect the 30 x 30 shape of the dataset.
 
-.. code-block:: bash
+.. code-block:: python
 
     shape_native = (30, 30)
 
@@ -45,7 +45,7 @@ Note that the ``Region2D`` and ``Layout2DCI`` inputs have been updated to reflec
 We load a charge injection image with injections of 100e-.
 
 
-.. code-block:: bash
+.. code-block:: python
 
     normalization = 100
 
@@ -71,7 +71,7 @@ each image) and a single EPER (with trails appearing at the bottom of the image)
 We will fit only a parallel CTI model for simplicity in this overview, but extending this to also include serial
 CTI is straightforward.
 
-.. code-block:: bash
+.. code-block:: python
 
     imaging_ci_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci)
     imaging_ci_plotter.figures_2d(image=True, pre_cti_data=True)
@@ -93,7 +93,7 @@ We therefore need to assume a parallel CTI which we fit to the data.
 
 We therefore set up a clocker, traps and a CCD volume filling phase.
 
-.. code-block:: bash
+.. code-block:: python
 
     clocker_2d = ac.Clocker2D()
 
@@ -110,7 +110,7 @@ Charge Injection Fitting
 To fit the CTI model to our charge injection imaging we create a ``post_cti_image`` via the clocker and pass it with
 the dataset to the ``FitImagingCI`` object.
 
-.. code-block:: bash
+.. code-block:: python
 
     post_cti_image = clocker_2d.add_cti(
         data=imaging_ci.pre_cti_data,
@@ -125,7 +125,7 @@ comparing to the data to determine whether the CTI model is a good fit.
 The ``FitImagingCI`` object contains both these terms as properties, however they both correspond to the same 2D numpy
 array.
 
-.. code-block:: bash
+.. code-block:: python
 
     print(fit.post_cti_data.native[0, 0])
     print(fit.model_image.native[0, 0])
@@ -139,7 +139,7 @@ The ``FitImagingCI`` contains the following NumPy arrays as properties which qua
 We can plot these via a ``FitImagingCIPlotter`` and see that the residuals and other quantities are significant,
 indicating a bad model fit.
 
-.. code-block:: bash
+.. code-block:: python
 
     fit_plotter = aplt.FitImagingCIPlotter(fit=fit)
     fit_plotter.figures_2d(
@@ -168,7 +168,7 @@ An overall goodness-of-fit measurement is provided by the ``log_likelihood``:
 
  - ``log_likelihood``: The log likelihood value of the fit where [LogLikelihood] = -0.5*[Chi_Squared_Term + Noise_Term].
 
-.. code-block:: bash
+.. code-block:: python
 
     print(fit.chi_squared)
     print(fit.noise_normalizationalization)
@@ -182,7 +182,7 @@ The significant residuals indicate the model-fit above is bad.
 Below, we use the "correct" CTI model (which we know because it is the model we used to simulate this charge injection
 data!) to reperform the fit above.
 
-.. code-block:: bash
+.. code-block:: python
 
     parallel_trap_0 = ac.TrapInstantCapture(density=10.0, release_timescale=5.0)
     parallel_trap_list = [parallel_trap_0]
@@ -197,7 +197,7 @@ data!) to reperform the fit above.
 
 The plot of the residuals now shows no significant signal, indicating a good fit.
 
-.. code-block:: bash
+.. code-block:: python
 
     fit_plotter = aplt.FitImagingCIPlotter(fit=fit)
     fit_plotter.figures_2d(
@@ -222,7 +222,7 @@ good fit.
 You should keep the quantity the ``log_likelihood`` in mind as it will be key when we discuss how CTI calibration is
 performed.
 
-.. code-block:: bash
+.. code-block:: python
 
     print(fit.log_likelihood)
 
@@ -234,7 +234,7 @@ We may want to fit charge injection data but mask regions of the data such that 
 **PyAutoCTI** has built in tools for masking. For example, below, we create a mask which removes all 25 pixels
 containing the parallel FPR.
 
-.. code-block:: bash
+.. code-block:: python
 
     mask = ac.Mask2D.unmasked(
         shape_native=imaging_ci.shape_native, pixel_scales=imaging_ci.pixel_scales
@@ -249,7 +249,7 @@ containing the parallel FPR.
 
 If we apply this mask to the charge injection imaging and plot it, the parallel FPR is remove from the plotted figure.
 
-.. code-block:: bash
+.. code-block:: python
 
     imaging_ci = imaging_ci.apply_mask(mask=mask)
 
@@ -263,7 +263,7 @@ If we apply this mask to the charge injection imaging and plot it, the parallel 
 If we repeat the fit above using this masked imaging we see that the residuals, normalized residuals and chi-squared
 map are masked and not included in the fit.
 
-.. code-block:: bash
+.. code-block:: python
 
     fit = ac.FitImagingCI(dataset=imaging_ci, post_cti_data=post_cti_image)
 
@@ -286,7 +286,7 @@ map are masked and not included in the fit.
 
 Furthermore, the ``log_likelihood`` value changes, because the parallel FPR pixels are not used when computing its value.
 
-.. code-block:: bash
+.. code-block:: python
 
     print(fit.log_likelihood)
 
@@ -297,7 +297,7 @@ In previous tutorials, we illustrated CTI using 1D datasets which contained an F
 
 Below we load a 1D dataset which you can imagine corresponds to a single column of a charge injection image:
 
-.. code-block:: bash
+.. code-block:: python
 
     shape_native = (30,)
 
@@ -328,7 +328,7 @@ Below we load a 1D dataset which you can imagine corresponds to a single column 
 When we plot the dataset we see it has an FPR of 25 pixels and an EPER of 5 trailling pixels, just like the charge
 injection data.
 
-.. code-block:: bash
+.. code-block:: python
 
     dataset_1d_plotter = aplt.Dataset1DPlotter(dataset=dataset_1d)
     dataset_1d_plotter.subplot_dataset_1d()
@@ -343,7 +343,7 @@ injection data.
 
 We can mask the data to remove the FPR just like we did above.
 
-.. code-block:: bash
+.. code-block:: python
 
     mask = ac.Mask1D.unmasked(
         shape_slim=dataset_1d.shape_slim, pixel_scales=dataset_1d.pixel_scales
@@ -361,7 +361,7 @@ object.
 
 Note how visualizing the fit for inspection is a lot easier in 1D than 2D.
 
-.. code-block:: bash
+.. code-block:: python
 
     clocker_1d = ac.Clocker1D(express=2, roe=ac.ROEChargeInjection())
 
@@ -380,7 +380,7 @@ Note how visualizing the fit for inspection is a lot easier in 1D than 2D.
 
 Plotting the fit shows this model gives a good fit, with minimal residuals.
 
-.. code-block:: bash
+.. code-block:: python
 
     fit_plotter = aplt.FitDataset1DPlotter(fit=fit)
     fit_plotter.figures_1d(
@@ -402,7 +402,7 @@ Plotting the fit shows this model gives a good fit, with minimal residuals.
 The fit has all the same figures of merit as the charge injection fit, for example, the ``chi_squared``
 and ``log_likelihood``.
 
-.. code-block:: bash
+.. code-block:: python
 
     print(fit.chi_squared)
     print(fit.noise_normalizationalization)

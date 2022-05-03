@@ -21,7 +21,7 @@ model-fits (e.g., which fit a certain CTI model or dataset) can be loaded.
 To make it so that results are output to an .sqlite database we simply open a database session and pass this session
 to the non-linear search:
 
-.. code-block:: bash
+.. code-block:: python
 
     session = af.db.open_database("database.sqlite")
 
@@ -36,7 +36,7 @@ unique identifier and not be distinguishable by the database.
 We can overcome this by using the name of the dataset as the ``unique_tag`` passed to the search, which is used
 alongside the model and search to create the unique identifier:
 
-.. code-block:: bash
+.. code-block:: python
 
     session = af.db.open_database("database.sqlite")
 
@@ -51,7 +51,7 @@ Lets suppose that we have performed 100 model-fits to 100 CTI datasets, and when
 to write to the ``.sqlite`` database file. We can load these results in a Python script or Jupyter notebook using
 the ``Aggregator``:
 
-.. code-block:: bash
+.. code-block:: python
 
     agg = Aggregator.from_database("path/to/output/database.sqlite")
 
@@ -60,7 +60,7 @@ object of all 100 model-fits, which contains information on the best-fit model, 
 
 Below, we use the samples generator to create a list of the maximum log likelihood of every model-fit and print it:
 
-.. code-block:: bash
+.. code-block:: python
 
     for samples in agg.values("samples"):
 
@@ -72,7 +72,7 @@ are used, ensuring that when we are manipulating large sets of results we do not
 
 We can iterate over the samples to print the maximum log likelihood CTI model of every fit:
 
-.. code-block:: bash
+.. code-block:: python
 
     for samps in agg.values("samples"):
 
@@ -89,7 +89,7 @@ Below, we query based on the model fitted. For example, we can load all results 
 parallel CTI model (note that when we performed the model fit, we composed the CTI model using the string ``cti``
 which has a parallel trap list named ``parallel_traps``):
 
-.. code-block:: bash
+.. code-block:: python
 
     cti = agg.model.cti
     agg_query = agg.query(cti.parallel_traps[0] == ac.TrapInstantCapture)
@@ -99,7 +99,7 @@ which has a parallel trap list named ``parallel_traps``):
 Queries using the results of model-fitting are also supported. Below, we query the database to find all fits where the
 inferred value of the ``density`` for the ``TrapInstantCapture`` is above 1.0:
 
-.. code-block:: bash
+.. code-block:: python
 
     cti = agg.model.cti
     agg_query = agg.query(cti.parallel_traps[0].density > 1.0)
@@ -109,21 +109,21 @@ results which fitted an ``TrapInstantCapture`` AND (using the & symbol) inferred
 
 The OR logical clause is also supported via the symbol |.
 
-.. code-block:: bash
+.. code-block:: python
 
     cti = agg.model.cti
     agg_query = agg.query((cti.parallel_traps[0] == ac.TrapInstantCapture) & (cti.parallel_traps[0].density > 1.0))
 
 We can query using the ``unique_tag`` to load the model-fit to a specific dataset:
 
-.. code-block:: bash
+.. code-block:: python
 
     agg_query = agg.query(agg.unique_tag == "example_dataset_0")
 
 An ``info`` dictionary can be passed into a model-fit, which contains information on the model-fit. The example below
 creates an ``info`` dictionary which is passed to the model-fit, which is then loaded via the database.
 
-.. code-block:: bash
+.. code-block:: python
 
     info = {"example_key": "example_value"}
 

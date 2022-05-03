@@ -27,7 +27,7 @@ overview.
 
 Note that the ``Region2D`` and ``Layout2DCI`` inputs have been updated to reflect the 30 x 30 shape of the dataset.
 
-.. code-block:: bash
+.. code-block:: python
 
     shape_native = (30, 30)
 
@@ -55,7 +55,7 @@ Note that the ``Region2D`` and ``Layout2DCI`` inputs have been updated to reflec
 We load each charge injection image, with injections of 100e-, 1000e- and 10000e- so that we have the information
 required to calibrate the volume filling behaviour of the CCD.
 
-.. code-block:: bash
+.. code-block:: python
 
     dataset_label = "overview"
     dataset_type = "calibrate"
@@ -81,7 +81,7 @@ We define the ``Clocker`` which models the CCD read-out, including CTI.
 
 For parallel clocking, we use 'charge injection mode' which transfers the charge of every pixel over the full CCD.
 
-.. code-block:: bash
+.. code-block:: python
 
     clocker = ac.Clocker2D(parallel_express=2, parallel_roe=ac.ROEChargeInjection())
 
@@ -101,7 +101,7 @@ In this example we fit a CTI model with:
 
 The number of free parameters and therefore the dimensionality of non-linear parameter space is N=3.
 
-.. code-block:: bash
+.. code-block:: python
 
     parallel_trap_0 = af.Model(ac.TrapInstantCapture)
     parallel_trap_0.density = af.UniformPrior(lower_limit=0.0, upper_limit=20.0)
@@ -119,7 +119,7 @@ The ``CTI2D`` object can be easily extended to contain model components for seri
 object can be extended to contain other components of a model other than just the CTI model, for example nuisance
 parameters that represent features in the CCD.
 
-.. code-block:: bash
+.. code-block:: python
 
     model = af.Collection(
         cti=af.Model(ac.CTI2D, parallel_trap_list=[parallel_trap_0], parallel_ccd=parallel_ccd)
@@ -134,14 +134,14 @@ that best-fit our data.
 In this example we use ``dynesty`` (https://github.com/joshspeagle/dynesty), a nested sampling algorithm that is
 very effective at lens modeling.
 
-.. code-block:: bash
+.. code-block:: python
 
     search = af.DynestyStatic(name="overview_modeling_2d")
 
 Analysis
 --------
 
-.. code-block:: bash
+.. code-block:: python
 
     analysis_list = [
         ac.AnalysisImagingCI(dataset_ci=imaging_ci, clocker=clocker_2d)
@@ -154,14 +154,14 @@ By summing this list of analysis objects, we create an overall ``Analysis`` whic
 
  - The summing process ensures that tasks such as outputting results to hard-disk, visualization, etc use a structure that separates each analysis and therefore each dataset.
 
-.. code-block:: bash
+.. code-block:: python
 
     analysis = sum(analysis_list)
 
 We can parallelize the likelihood function of these analysis classes, whereby each evaluation is performed on a
 different CPU.
 
-.. code-block:: bash
+.. code-block:: python
 
     analysis.n_cores = 2
 
@@ -175,7 +175,7 @@ All results are written to hard disk, including on-the-fly results and visualiza
 
 Checkout the folder ``autocti_workspace/output/imaging_ci/parallel[x2]`` for live outputs of the results of the fit!
 
-.. code-block:: bash
+.. code-block:: python
 
     result_list = search.fit(model=model, analysis=analysis)
 
@@ -187,7 +187,7 @@ likelihood solution in parameter space for every charge injection dataset.
 
 Below, we plot a subplot of the fit for the first dataset which shows a good fit has been inferred.
 
-.. code-block:: bash
+.. code-block:: python
 
     fit_plotter = aplt.FitImagingCIPlotter(fit=result_list[0].max_log_likelihood_fit)
     fit_plotter.subplot_fit_ci()
@@ -202,7 +202,7 @@ inferred CTI model parameters.
 Note how this object uses the same API as the ``Collection`` and ``Model`` we composed above (e.g. the model component
 above was named ``parallel_traps``, which is used below).
 
-.. code-block:: bash
+.. code-block:: python
 
     cti_model = result_list[0].max_log_likelihood_instance.cti
 
@@ -216,7 +216,7 @@ Calibration in 1D
 
 We can also perform CTI calibration on 1D datasets.
 
-.. code-block:: bash
+.. code-block:: python
 
     shape_native = (30,)
 
@@ -257,13 +257,13 @@ We define the ``Clocker1D``, which models the CCD read-out, including CTI.
 
 For parallel clocking, we use 'charge injection mode' read-out electronics object. Which transfers the charge of every pixel over the full CCD.
 
-.. code-block:: bash
+.. code-block:: python
 
     clocker_1d = ac.Clocker1D(express=2, roe=ac.ROEChargeInjection())
 
 We again compose a CTI model that we fit to the data using autofit ``Model`` objects.
 
-.. code-block:: bash
+.. code-block:: python
 
     trap_0 = af.Model(ac.TrapInstantCapture)
     trap_0.density = af.UniformPrior(lower_limit=0.0, upper_limit=20.0)
@@ -277,13 +277,13 @@ We again compose a CTI model that we fit to the data using autofit ``Model`` obj
 
 We combine the trap and CCD models above into a ``CTI1D`` and ``Collection`` object, which is the model we will fit.
 
-.. code-block:: bash
+.. code-block:: python
 
     model = af.Collection(cti=af.Model(ac.CTI1D, traps=traps, ccd=ccd))
 
 We again use ``dynesty`` (https://github.com/joshspeagle/dynesty) to fit the model.
 
-.. code-block:: bash
+.. code-block:: python
 
     search = af.DynestyStatic(name="overview_modeling_1d")
 
@@ -292,7 +292,7 @@ non-linear search calls to fit the CIT model to the data.
 
 We again sum these analyses objects into a single analysis.
 
-.. code-block:: bash
+.. code-block:: python
 
     analysis_list = [
         ac.AnalysisDataset1D(dataset_1d=dataset_1d, clocker=clocker_1d)
@@ -306,14 +306,14 @@ We again sum these analyses objects into a single analysis.
 We can now begin the model-fit by passing the model and analysis object to the search, which performs a non-linear
 search to find which models fit the data with the highest likelihood.
 
-.. code-block:: bash
+.. code-block:: python
 
     result_list = search.fit(model=model, analysis=analysis)
 
 The search returns a result object, which again allows us to print the maximum likelihood CTI model and plot the
 maximum likelihood fit.
 
-.. code-block:: bash
+.. code-block:: python
 
     cti_model = result_list[0].max_log_likelihood_instance.cti
 

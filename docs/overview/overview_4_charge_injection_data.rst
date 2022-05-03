@@ -29,7 +29,7 @@ Before loading the data we must to define various properties of our charge injec
 Lets begin by defining the 2D ``shape_native`` of our charge injection image, which as discussed in overview 2
 has ``2046 + 20 = 2066`` rows of pixels and ``51 + 2048 + 29 = 2128`` columns of pixels.
 
-.. code-block:: bash
+.. code-block:: python
 
     shape_native = (2066, 2128)
 
@@ -41,7 +41,7 @@ coordinates.
 For example, as shown on the schematic, the parallel overscan is at the bottom of the image and its region spans
 the pixel coordinates ``y0 -> y1 = 2108 -> 2128`` and ``x0 -> x1 = 51 -> 2099``.
 
-.. code-block:: bash
+.. code-block:: python
 
     parallel_overscan = ac.Region2D((2108, 2128, 51, 2099))
     serial_prescan = ac.Region2D((0, 2128, 0, 51))
@@ -50,7 +50,7 @@ the pixel coordinates ``y0 -> y1 = 2108 -> 2128`` and ``x0 -> x1 = 51 -> 2099``.
 We also need to specify the 2D region of every charge injection region (e.g. the pixel coordinates where the
 charge is injected).
 
-.. code-block:: bash
+.. code-block:: python
 
     regions_list = [
         (100, 300, serial_prescan[3], serial_overscan[2]),
@@ -65,14 +65,14 @@ injection imaging dataset.
 
 In this example, we will only inspect one charge injection image with a normalization of 100 electrons.
 
-.. code-block:: bash
+.. code-block:: python
 
     normalization = 100
 
 We now create a charge injection ``Layout2DCI`` object which uses the above variables to describe the different regions
 on a charge injection image.
 
-.. code-block:: bash
+.. code-block:: python
 
     layout = ac.Layout2DCI(
         shape_2d=shape_native,
@@ -92,7 +92,7 @@ The ``ImagingCI`` object has the following three attributes:
  - ``noise_map``: the noise-map of the charge injection image, which below only consists of read noise of 1 electron.
  - ``pre_cti_data``: an image which estimates what the charge injection image looked like before clocking and therefore without CTI.
 
-.. code-block:: bash
+.. code-block:: python
 
     dataset_label = "overview"
     dataset_type = "uniform"
@@ -110,7 +110,7 @@ The ``ImagingCI`` object has the following three attributes:
 
 We can plot the charge injection imaging using a ``ImagingCI`` object.
 
-.. code-block:: bash
+.. code-block:: python
 
     imaging_ci_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci)
     imaging_ci_plotter.figures_2d(image=True)
@@ -130,7 +130,7 @@ We can zoom in on one of these regions and change the color scheme to properly h
 (**PyAutoCTI** has a built-in visualization library which wraps matplotlib, which is documented in the
 ``autocti_workspace/*/plots`` package).
 
-.. code-block:: bash
+.. code-block:: python
 
     mat_plot_2d = aplt.MatPlot2D(
         axis=aplt.Axis(extent=[-106.0, -96.0, 88.0, 98.0]),
@@ -146,7 +146,7 @@ We can zoom in on one of these regions and change the color scheme to properly h
 
 We can do the same to highlight the EPERs.
 
-.. code-block:: bash
+.. code-block:: python
 
     mat_plot_2d = aplt.MatPlot2D(
         axis=aplt.Axis(extent=[96.0, 106.0, 68.0, 78.0]),
@@ -165,7 +165,7 @@ The ``LayoutCI`` object we defined above is contained in the ``ImagingCI`` objec
 The layout allows us to extract regions of interest in the data, for example a 1D array of the first 10 pixels of
 every parallel EPERs binned together.
 
-.. code-block:: bash
+.. code-block:: python
 
     parallel_eper_1d = layout.extract.parallel_eper.binned_array_1d_from(
         array=imaging_ci.image, pixels=(0, 10)
@@ -180,7 +180,7 @@ every parallel EPERs binned together.
 
 The layout can extract all the regions of interest of the data.
 
-.. code-block:: bash
+.. code-block:: python
 
     parallel_fpr_1d = layout.extract.parallel_fpr.binned_array_1d_from(
         array=imaging_ci.image, pixels=(0, 10)
@@ -218,7 +218,7 @@ and EPERs.
 The other key piece of information is an understanding of what the data looked like before clocking and CTI, which is
 contained in the ``pre_cti_data``.
 
-.. code-block:: bash
+.. code-block:: python
 
     imaging_ci_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci, mat_plot_2d=mat_plot_2d)
     imaging_ci_plotter.figures_2d(pre_cti_data=True)
@@ -245,7 +245,7 @@ More realistic charge injection imaging has many other features, for example:
 
 **PyAutoCTI** has built in tools for both these tasks which are illustrated at ?.
 
-.. code-block:: bash
+.. code-block:: python
 
     dataset_label = "overview"
     dataset_type = "non_uniform_cosmic_rays"

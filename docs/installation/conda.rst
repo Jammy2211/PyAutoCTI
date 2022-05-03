@@ -37,7 +37,7 @@ see `here <https://pyautocti.readthedocs.io/en/latest/installation/troubleshooti
 
 .. code-block:: bash
 
-    pip install autocti==2022.03.18.2
+    pip install autocti==2022.05.02.1
 
 You may get warnings which state something like:
 

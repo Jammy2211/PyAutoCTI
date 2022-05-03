@@ -17,7 +17,7 @@ To begin, we'll think about CTI calibration in 1D, before extending this to 2D.
 
 Lets recreate our simple 1D dataset.
 
-.. code-block:: bash
+.. code-block:: python
 
     import autocti as ac
 
@@ -32,7 +32,7 @@ Density Estimate
 We are now going to add CTI to this data using two CTI models, where the trap density of the second model is double
 that of the first model.
 
-.. code-block:: bash
+.. code-block:: python
 
     clocker_1d = ac.Clocker1D()
 
@@ -51,7 +51,7 @@ that of the first model.
 
 Now lets plot the two datasets and compare their appearance.
 
-.. code-block:: bash
+.. code-block:: python
 
     array_1d_plotter = aplt.Array1DPlotter(y=post_cti_data_1d_0)
     array_1d_plotter.figure_1d()
@@ -94,7 +94,7 @@ Release Time Estimate
 We now again add CTI to the pre-CTI data using two CTI models, but instead using the same density for each and
 increasing the ``release_timescale`` of the second CTI model.
 
-.. code-block:: bash
+.. code-block:: python
 
     clocker_1d = ac.Clocker1D()
 
@@ -113,7 +113,7 @@ increasing the ``release_timescale`` of the second CTI model.
 
 Now lets plot the two datasets and compare their appearance.
 
-.. code-block:: bash
+.. code-block:: python
 
     array_1d_plotter = aplt.Array1DPlotter(y=post_cti_data_1d_0)
     array_1d_plotter.figure_1d()
@@ -187,7 +187,7 @@ calibrate the ``well_fill_power``.
 
 We can illustrate this by comparing the addition of CTI to two 1D datasets with 10 electrons and 100 electrons:
 
-.. code-block:: bash
+.. code-block:: python
 
     pre_cti_data_1d_0 = ac.Array1D.manual_native(
         array=[10.0, 10.0, 10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
