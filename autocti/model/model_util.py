@@ -1,15 +1,23 @@
 from typing import Optional, List
 
-try:
-    from arcticpy.src import ccd
-    from arcticpy.src import traps
-except ModuleNotFoundError:
-    pass
+from arcticpy.src import ccd
+from arcticpy.src import traps
 
 from autoconf.dictable import Dictable
 
 
-class CTI1D(Dictable):
+class AbstractCTI():
+
+    @property
+    def trap_list(self):
+        raise NotImplementedError
+
+    @property
+    def delta_ellipticity(self):
+        return sum([trap.delta_ellipticity for trap in self.trap_list])
+
+
+class CTI1D(AbstractCTI, Dictable):
     def __init__(
         self,
         trap_list: Optional[List[traps.AbstractTrap]] = None,
@@ -28,11 +36,14 @@ class CTI1D(Dictable):
             The CCD volume filling parameterization which dictates how an electron cloud fills pixels and thus
             how it is subject to traps.
         """
-        self.trap_list = trap_list
+        self._trap_list = trap_list
         self.ccd = ccd
 
+    @property
+    def trap_list(self):
+        return self._trap_list
 
-class CTI2D(Dictable):
+class CTI2D(AbstractCTI, Dictable):
     def __init__(
         self,
         parallel_trap_list: Optional[List[traps.AbstractTrap]] = None,
@@ -75,11 +86,6 @@ class CTI2D(Dictable):
         serial_traps = self.serial_trap_list or []
 
         return [trap for trap in parallel_traps] + [trap for trap in serial_traps]
-
-    @property
-    def delta_ellipticity(self):
-        return sum([trap.delta_ellipticity for trap in self.trap_list])
-
 
 def is_parallel_fit(model):
     if model.parallel_ccd is not None and model.serial_ccd is None:

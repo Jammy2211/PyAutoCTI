@@ -38,7 +38,7 @@ def test__array_with_offset_through_arctic():
         parallel_ccd=ccd,
         parallel_roe=roe,
         parallel_express=3,
-        parallel_offset=3,
+        parallel_window_offset=3,
     )
 
     clocker = ac.Clocker2D(parallel_express=3, parallel_roe=roe)
@@ -57,7 +57,7 @@ def test__array_with_offset_through_arctic():
         serial_ccd=ccd,
         serial_roe=roe,
         serial_express=2,
-        serial_offset=5,
+        serial_window_offset=5,
     )
 
     clocker = ac.Clocker2D(serial_express=2, serial_roe=roe)

@@ -9,11 +9,9 @@ from autocti.model.model_util import CTI2D
 
 from autocti import exc
 
-try:
-    from arcticpy.src import cti as arctic
-    from arcticpy.src.roe import ROE
-except ModuleNotFoundError:
-    pass
+from arcticpy.src import cti as arctic
+from arcticpy.src.roe import ROE
+
 
 class Clocker2D(AbstractClocker):
     def __init__(
@@ -21,16 +19,24 @@ class Clocker2D(AbstractClocker):
         iterations: int = 5,
         parallel_roe: ROE = ROE(),
         parallel_express: int = 0,
-        parallel_offset: int = 0,
+        parallel_window_offset: int = 0,
         parallel_window_start: int = 0,
         parallel_window_stop: int = -1,
+        parallel_time_start=0,
+        parallel_time_stop=-1,
+        parallel_prune_n_electrons=1e-18,
+        parallel_prune_frequency=20,
         parallel_poisson_traps: bool = False,
         parallel_fast_pixels: Optional[Tuple[int, int]] = None,
         serial_roe: ROE = ROE(),
         serial_express: int = 0,
-        serial_offset: int = 0,
+        serial_window_offset: int = 0,
         serial_window_start: int = 0,
         serial_window_stop: int = -1,
+        serial_time_start=0,
+        serial_time_stop=-1,
+        serial_prune_n_electrons=1e-18,
+        serial_prune_frequency=20,
         serial_fast_pixels: Optional[Tuple[int, int]] = None,
         verbosity: int = 0,
         poisson_seed: int = -1,
@@ -51,7 +57,7 @@ class Clocker2D(AbstractClocker):
         parallel_express
             An integer factor describing how parallel pixel-to-pixel transfers are combined into single transfers for
             efficiency (see: https://academic.oup.com/mnras/article/401/1/371/1006825).
-        parallel_offset
+        parallel_window_offset
             The number of pixels before parallel clocking begins, thereby extending the length over which clocking
             is performed in the parallel direction and increasing CTI.
         parallel_window_start
@@ -73,7 +79,7 @@ class Clocker2D(AbstractClocker):
         serial_express
             An integer factor describing how serial pixel-to-pixel transfers are combined into single transfers for
             efficiency (see: https://academic.oup.com/mnras/article/401/1/371/1006825).
-        serial_offset
+        serial_window_offset
             The number of pixels before serial clocking begins, thereby extending the length over which clocking
             is performed in the serial direction and increasing CTI.            
         serial_window_start
@@ -100,17 +106,25 @@ class Clocker2D(AbstractClocker):
 
         self.parallel_roe = parallel_roe
         self.parallel_express = parallel_express
-        self.parallel_offset = parallel_offset
+        self.parallel_window_offset = parallel_window_offset
         self.parallel_window_start = parallel_window_start
         self.parallel_window_stop = parallel_window_stop
+        self.parallel_time_start = parallel_time_start
+        self.parallel_time_stop = parallel_time_stop
+        self.parallel_prune_n_electrons = parallel_prune_n_electrons
+        self.parallel_prune_frequency = parallel_prune_frequency
         self.parallel_poisson_traps = parallel_poisson_traps
         self.parallel_fast_pixels = parallel_fast_pixels
 
         self.serial_roe = serial_roe
         self.serial_express = serial_express
-        self.serial_offset = serial_offset
+        self.serial_window_offset = serial_window_offset
         self.serial_window_start = serial_window_start
         self.serial_window_stop = serial_window_stop
+        self.serial_time_start = serial_time_start
+        self.serial_time_stop = serial_time_stop
+        self.serial_prune_n_electrons = serial_prune_n_electrons
+        self.serial_prune_frequency = serial_prune_frequency
         self.serial_fast_pixels = serial_fast_pixels
 
         self.poisson_seed = poisson_seed
@@ -182,11 +196,11 @@ class Clocker2D(AbstractClocker):
         serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
 
         try:
-            parallel_offset = data.readout_offsets[0]
-            serial_offset = data.readout_offsets[1]
+            parallel_window_offset = data.readout_offsets[0]
+            serial_window_offset = data.readout_offsets[1]
         except AttributeError:
-            parallel_offset = self.parallel_offset
-            serial_offset = self.serial_offset
+            parallel_window_offset = self.parallel_window_offset
+            serial_window_offset = self.serial_window_offset
 
         image_post_cti = arctic.add_cti(
             image=data,
@@ -194,16 +208,24 @@ class Clocker2D(AbstractClocker):
             parallel_roe=self.parallel_roe,
             parallel_traps=parallel_trap_list,
             parallel_express=self.parallel_express,
-            parallel_offset=parallel_offset,
+            parallel_window_offset=parallel_window_offset,
             parallel_window_start=self.parallel_window_start,
             parallel_window_stop=self.parallel_window_stop,
+            parallel_time_start=self.parallel_time_start,
+            parallel_time_stop=self.parallel_time_stop,
+            parallel_prune_n_electrons=self.parallel_prune_n_electrons,
+            parallel_prune_frequency=self.parallel_prune_frequency,
             serial_ccd=serial_ccd,
             serial_roe=self.serial_roe,
             serial_traps=serial_trap_list,
             serial_express=self.serial_express,
-            serial_offset=serial_offset,
+            serial_window_offset=serial_window_offset,
             serial_window_start=self.serial_window_start,
             serial_window_stop=self.serial_window_stop,
+            serial_time_start=self.serial_time_start,
+            serial_time_stop=self.serial_time_stop,
+            serial_prune_n_electrons=self.serial_prune_n_electrons,
+            serial_prune_frequency=self.serial_prune_frequency,
             verbosity=self.verbosity,
         )
 
@@ -242,9 +264,9 @@ class Clocker2D(AbstractClocker):
         parallel_ccd = self.ccd_from(ccd_phase=parallel_ccd)
 
         try:
-            parallel_offset = data.readout_offsets[0]
+            parallel_window_offset = data.readout_offsets[0]
         except AttributeError:
-            parallel_offset = self.parallel_offset
+            parallel_window_offset = self.parallel_window_offset
 
         image_pre_cti = data.native
         image_post_cti = np.zeros(data.shape_native)
@@ -274,7 +296,7 @@ class Clocker2D(AbstractClocker):
                 parallel_roe=self.parallel_roe,
                 parallel_traps=parallel_trap_poisson_list,
                 parallel_express=self.parallel_express,
-                parallel_offset=parallel_offset,
+                parallel_window_offset=parallel_window_offset,
                 parallel_window_start=self.parallel_window_start,
                 parallel_window_stop=self.parallel_window_stop,
                 verbosity=self.verbosity,
@@ -285,9 +307,9 @@ class Clocker2D(AbstractClocker):
         serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
 
         try:
-            serial_offset = data.readout_offsets[1]
+            serial_window_offset = data.readout_offsets[1]
         except AttributeError:
-            serial_offset = self.serial_offset
+            serial_window_offset = self.serial_window_offset
 
         image_post_cti = arctic.add_cti(
             image=image_post_cti,
@@ -295,9 +317,13 @@ class Clocker2D(AbstractClocker):
             serial_roe=self.serial_roe,
             serial_traps=serial_trap_list,
             serial_express=self.serial_express,
-            serial_offset=serial_offset,
+            serial_window_offset=serial_window_offset,
             serial_window_start=self.serial_window_start,
             serial_window_stop=self.serial_window_stop,
+            serial_time_start=self.serial_time_start,
+            serial_time_stop=self.serial_time_stop,
+            serial_prune_n_electrons=self.serial_prune_n_electrons,
+            serial_prune_frequency=self.serial_prune_frequency,
             verbosity=self.verbosity,
         )
 
@@ -355,7 +381,11 @@ class Clocker2D(AbstractClocker):
             parallel_roe=self.parallel_roe,
             parallel_traps=parallel_trap_list,
             parallel_express=self.parallel_express,
-            parallel_offset=self.parallel_offset,
+            parallel_window_offset=self.parallel_window_offset,
+            parallel_time_start=self.parallel_time_start,
+            parallel_time_stop=self.parallel_time_stop,
+            parallel_prune_n_electrons=self.parallel_prune_n_electrons,
+            parallel_prune_frequency=self.parallel_prune_frequency,
             verbosity=self.verbosity,
         )
 
@@ -418,7 +448,11 @@ class Clocker2D(AbstractClocker):
             serial_roe=self.serial_roe,
             serial_traps=serial_trap_list,
             serial_express=self.serial_express,
-            serial_offset=self.serial_offset,
+            serial_window_offset=self.serial_window_offset,
+            serial_time_start=self.serial_time_start,
+            serial_time_stop=self.serial_time_stop,
+            serial_prune_n_electrons=self.serial_prune_n_electrons,
+            serial_prune_frequency=self.serial_prune_frequency,
             verbosity=self.verbosity,
         )
 
@@ -470,16 +504,24 @@ class Clocker2D(AbstractClocker):
             parallel_roe=self.parallel_roe,
             parallel_traps=parallel_trap_list,
             parallel_express=self.parallel_express,
-            parallel_offset=data.readout_offsets[0],
+            parallel_window_offset=data.readout_offsets[0],
             parallel_window_start=self.parallel_window_start,
             parallel_window_stop=self.parallel_window_stop,
+            parallel_time_start=self.parallel_time_start,
+            parallel_time_stop=self.parallel_time_stop,
+            parallel_prune_n_electrons=self.parallel_prune_n_electrons,
+            parallel_prune_frequency=self.parallel_prune_frequency,
             serial_ccd=serial_ccd,
             serial_roe=self.serial_roe,
             serial_traps=serial_trap_list,
             serial_express=self.serial_express,
-            serial_offset=data.readout_offsets[1],
+            serial_window_offset=data.readout_offsets[1],
             serial_window_start=self.serial_window_start,
             serial_window_stop=self.serial_window_stop,
+            serial_time_start=self.serial_time_start,
+            serial_time_stop=self.serial_time_stop,
+            serial_prune_n_electrons=self.serial_prune_n_electrons,
+            serial_prune_frequency=self.serial_prune_frequency,
         )
 
         if self.euclid_orientation_hack:

@@ -38,6 +38,15 @@ def test__trap_list():
 
 def test__delta_ellipticity():
 
+    trap_list = [
+        ac.TrapInstantCapture(density=1.0, release_timescale=2.0),
+        ac.TrapInstantCapture(density=2.0, release_timescale=4.0),
+    ]
+
+    cti = ac.CTI1D(trap_list=trap_list)
+
+    assert cti.delta_ellipticity == pytest.approx(4.0 * 0.57029, 1.0e-4)
+
     parallel_trap_list = [
         ac.TrapInstantCapture(density=1.0, release_timescale=2.0),
         ac.TrapInstantCapture(density=2.0, release_timescale=4.0),

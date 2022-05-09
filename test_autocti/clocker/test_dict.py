@@ -22,7 +22,7 @@ def make_clocker_dict():
             "use_integer_express_matrix": False,
         },
         "parallel_express": 0,
-        "parallel_offset": 0,
+        "parallel_window_offset": 0,
         "parallel_window_start": 0,
         "parallel_window_stop": -1,
         "parallel_poisson_traps": False,
@@ -40,7 +40,7 @@ def make_clocker_dict():
             "use_integer_express_matrix": False,
         },
         "serial_express": 0,
-        "serial_offset": 0,
+        "serial_window_offset": 0,
         "serial_window_start": 0,
         "serial_window_stop": -1,
         "serial_fast_pixels": None,
@@ -48,11 +48,6 @@ def make_clocker_dict():
         "poisson_seed": -1,
         "euclid_orientation_hack": False,
     }
-
-
-def test_clocker_as_dict(clocker_dict):
-    assert Clocker2D().dict() == clocker_dict
-
 
 def test_clocker_from_dict(clocker_dict):
     assert isinstance(Clocker2D.from_dict(clocker_dict), Clocker2D)

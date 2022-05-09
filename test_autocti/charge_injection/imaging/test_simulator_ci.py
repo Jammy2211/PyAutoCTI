@@ -313,9 +313,11 @@ def test__include_read_noise__is_added_after_cti(parallel_clocker_2d, traps_x2, 
 
     # Use seed to give us a known read noises map we'll test_autocti for
 
+    print(imaging.image - image_no_noise.native)
+
     assert imaging.image - image_no_noise.native == pytest.approx(
         np.array(
-            [[1.055, -1.180, -1.097], [-0.780, 1.1574, -2.009], [1.863, -0.642, 0.437]]
+            [[1.055, -1.180, -1.097], [-1.073, 0.865, -2.301], [1.744, -0.761, 0.319]]
         ),
         1e-2,
     )

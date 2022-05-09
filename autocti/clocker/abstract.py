@@ -4,12 +4,10 @@ from autoconf.dictable import Dictable
 
 from autocti import exc
 
-try:
-    from arcticpy.src.ccd import CCD
-    from arcticpy.src.ccd import CCDPhase
-    from arcticpy.src.traps import AbstractTrap
-except ModuleNotFoundError:
-    pass
+from arcticpy.src.ccd import CCD
+from arcticpy.src.ccd import CCDPhase
+from arcticpy.src.traps import AbstractTrap
+
 
 class AbstractClocker(Dictable):
     def __init__(self, iterations: int = 1, verbosity: int = 0):

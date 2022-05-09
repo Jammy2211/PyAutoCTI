@@ -1,8 +1,5 @@
-try:
-    from arcticpy.src import cti as arctic
-    from arcticpy.src.roe import ROE
-except ModuleNotFoundError:
-    pass
+from arcticpy.src import cti as arctic
+from arcticpy.src.roe import ROE
 
 import autoarray as aa
 
@@ -18,6 +15,10 @@ class Clocker1D(AbstractClocker):
         express: int = 0,
         window_start: int = 0,
         window_stop: int = -1,
+        time_start=0,
+        time_stop=-1,
+        prune_n_electrons=1e-18, 
+        prune_frequency=20,
         verbosity: int = 0,
     ):
         """
@@ -53,6 +54,10 @@ class Clocker1D(AbstractClocker):
         self.express = express
         self.window_start = window_start
         self.window_stop = window_stop
+        self.time_start = time_start
+        self.time_stop = time_stop
+        self.prune_n_electrons = prune_n_electrons
+        self.prune_frequency = prune_frequency
 
     def _traps_ccd_from(self, cti: CTI1D):
         """
@@ -101,9 +106,13 @@ class Clocker1D(AbstractClocker):
             parallel_roe=self.roe,
             parallel_traps=trap_list,
             parallel_express=self.express,
-            parallel_offset=data.readout_offsets[0],
+            parallel_window_offset=data.readout_offsets[0],
             parallel_window_start=self.window_start,
             parallel_window_stop=self.window_stop,
+            parallel_time_start=self.time_start,
+            parallel_time_stop=self.time_stop,
+            parallel_prune_n_electrons=self.prune_n_electrons,
+            parallel_prune_frequency=self.prune_frequency,
             verbosity=self.verbosity,
         )
 
@@ -148,9 +157,13 @@ class Clocker1D(AbstractClocker):
             parallel_roe=self.roe,
             parallel_traps=trap_list,
             parallel_express=self.express,
-            parallel_offset=data.readout_offsets[0],
+            parallel_window_offset=data.readout_offsets[0],
             parallel_window_start=self.window_start,
             parallel_window_stop=self.window_stop,
+            parallel_time_start=self.time_start,
+            parallel_time_stop=self.time_stop,
+            parallel_prune_n_electrons=self.prune_n_electrons,
+            parallel_prune_frequency=self.prune_frequency,
             verbosity=self.verbosity,
         )
 

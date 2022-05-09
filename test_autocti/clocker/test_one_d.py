@@ -46,7 +46,7 @@ def test__data_mapped_to_2d_and_then_1d():
         parallel_ccd=ccd,
         parallel_roe=roe,
         parallel_express=3,
-        parallel_offset=3,
+        parallel_window_offset=3,
     )
 
     cti = ac.CTI1D(trap_list=traps, ccd=ccd_phase)

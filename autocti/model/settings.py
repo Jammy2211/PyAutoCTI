@@ -1,10 +1,6 @@
 from typing import List, Tuple
 
-try:
-    from arcticpy.src.traps import AbstractTrap
-except ModuleNotFoundError:
-    pass
-
+from arcticpy.src.traps import AbstractTrap
 from autocti import exc
 
 
