@@ -17,7 +17,7 @@ class Clocker1D(AbstractClocker):
         window_stop: int = -1,
         time_start=0,
         time_stop=-1,
-        prune_n_electrons=1e-18, 
+        prune_n_electrons=1e-18,
         prune_frequency=20,
         verbosity: int = 0,
     ):

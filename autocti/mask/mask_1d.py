@@ -8,7 +8,9 @@ from autocti.layout.one_d import Layout1D
 
 class SettingsMask1D:
     def __init__(
-        self, fpr_pixels: Optional[Tuple[int, int]] = None, eper_pixels: Optional[Tuple[int, int]] = None
+        self,
+        fpr_pixels: Optional[Tuple[int, int]] = None,
+        eper_pixels: Optional[Tuple[int, int]] = None,
     ):
 
         self.fpr_pixels = fpr_pixels

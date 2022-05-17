@@ -6,8 +6,7 @@ from arcticpy.src import traps
 from autoconf.dictable import Dictable
 
 
-class AbstractCTI():
-
+class AbstractCTI:
     @property
     def trap_list(self):
         raise NotImplementedError
@@ -42,6 +41,7 @@ class CTI1D(AbstractCTI, Dictable):
     @property
     def trap_list(self):
         return self._trap_list
+
 
 class CTI2D(AbstractCTI, Dictable):
     def __init__(
@@ -86,6 +86,7 @@ class CTI2D(AbstractCTI, Dictable):
         serial_traps = self.serial_trap_list or []
 
         return [trap for trap in parallel_traps] + [trap for trap in serial_traps]
+
 
 def is_parallel_fit(model):
     if model.parallel_ccd is not None and model.serial_ccd is None:

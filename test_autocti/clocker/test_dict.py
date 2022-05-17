@@ -49,6 +49,7 @@ def make_clocker_dict():
         "euclid_orientation_hack": False,
     }
 
+
 def test_clocker_from_dict(clocker_dict):
     assert isinstance(Clocker2D.from_dict(clocker_dict), Clocker2D)
 
