@@ -551,7 +551,7 @@ class Clocker2D(AbstractClocker):
                 "defined by the `parallel_fast_pixels` tuple."
             )
 
-        if np.any(image_pre_cti[:, start_column] != image_pre_cti[:, end_column - 1]):
+        if np.any(image_pre_cti[:, start_column] - image_pre_cti[:, end_column - 1] > 1e-8):
 
             raise exc.ClockerException(
                 "Clocker2D parallel fast check failed -- "
@@ -577,7 +577,7 @@ class Clocker2D(AbstractClocker):
                 "defined by the `serial_fast_pixels` tuple."
             )
 
-        if np.any(image_pre_cti[start_row, :] != image_pre_cti[end_row - 1, :]):
+        if np.any(image_pre_cti[start_row, :] - image_pre_cti[end_row - 1, :] > 1.0e-8):
 
             raise exc.ClockerException(
                 "Clocker2D serial fast check failed -- "
