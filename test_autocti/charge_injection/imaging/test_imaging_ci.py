@@ -318,3 +318,12 @@ def test__apply_settings__serial_masked_imaging_ci(
     assert masked_imaging_ci.noise_scaling_map_list[1] == pytest.approx(
         noise_scaling_map_1, 1.0e-4
     )
+
+
+def test__set_noise_scaling_map_list(imaging_ci_7x7, ci_noise_scaling_map_list_7x7):
+
+    imaging_ci_7x7.noise_scaling_map_list = None
+
+    imaging_ci_7x7.set_noise_scaling_map_list(noise_scaling_map_list=ci_noise_scaling_map_list_7x7)
+
+    assert (imaging_ci_7x7.noise_scaling_map_list[0] == ci_noise_scaling_map_list_7x7[0].native).all()
