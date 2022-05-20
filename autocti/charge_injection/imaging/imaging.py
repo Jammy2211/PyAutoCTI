@@ -141,7 +141,9 @@ class ImagingCI(aa.Imaging):
 
         return imaging
 
-    def set_noise_scaling_map_list(self, noise_scaling_map_list: List[aa.Array2D] = None):
+    def set_noise_scaling_map_list(
+        self, noise_scaling_map_list: List[aa.Array2D] = None
+    ):
 
         noise_scaling_map_list = [
             noise_scaling_map.native for noise_scaling_map in noise_scaling_map_list

@@ -11,14 +11,11 @@ class HyperCINoiseScalar(float):
         """
         float.__init__(scale_factor)
 
-    def scaled_noise_map_from_noise_scaling(self, noise_scaling):
+    def scaled_noise_map_from(self, noise_scaling):
         """
         Returns the scaled noises map, by multiplying the noises-scaling image by the hyper_ci-parameter factor.
         """
         return self * noise_scaling
-
-    def __repr__(self):
-        return "Noise Scale Factor: {}".format(self) + "\n"
 
 
 class HyperCINoiseCollection:

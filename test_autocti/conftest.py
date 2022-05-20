@@ -199,9 +199,9 @@ def make_imaging_ci_7x7():
 ### CHARGE INJECTION FITS ###
 
 
-@pytest.fixture(name="hyper_noise_scalars")
-def make_hyper_noise_scalars():
-    return fixtures.make_hyper_noise_scalars()
+@pytest.fixture(name="hyper_noise_scalar_list")
+def make_hyper_noise_scalar_list():
+    return fixtures.make_hyper_noise_scalar_list()
 
 
 @pytest.fixture(name="fit_ci_7x7")

@@ -118,6 +118,38 @@ def test__stacked_array_2d_from(parallel_array, parallel_masked_array):
     ).all()
 
 
+def test__stacked_array_2d_total_pixels_from(parallel_array, parallel_masked_array):
+    extract = MockExtract2D(region_list=[(1, 4, 0, 3), (5, 8, 0, 3)])
+
+    stacked_total_pixels = extract.stacked_array_2d_total_pixels_from(
+        array=parallel_array, pixels=(0, 3)
+    )
+
+    assert (stacked_total_pixels == np.array([[2, 2, 2], [2, 2, 2], [2, 2, 2]])).all()
+
+    stacked_total_pixels = extract.stacked_array_2d_total_pixels_from(
+        array=parallel_array, pixels=(-1, 1)
+    )
+
+    assert (stacked_total_pixels == np.array([[2, 2, 2], [2, 2, 2]])).all()
+
+    extract = MockExtract2D(region_list=[(1, 3, 0, 3), (5, 8, 0, 3)])
+
+    stacked_total_pixels = extract.stacked_array_2d_total_pixels_from(
+        array=parallel_masked_array, pixels=(0, 3)
+    )
+
+    assert (
+        stacked_total_pixels == np.ma.array([[2, 2, 2], [2, 1, 2], [1, 2, 1]])
+    ).all()
+    assert (
+        stacked_total_pixels.mask
+        == np.ma.array(
+            [[False, False, False], [False, False, False], [False, False, False]]
+        )
+    ).all()
+
+
 def test__binned_array_1d_from(parallel_array, parallel_masked_array):
     extract = MockExtract2D(region_list=[(1, 3, 0, 3), (5, 8, 0, 3)])
 
@@ -138,6 +170,31 @@ def test__binned_array_1d_from(parallel_array, parallel_masked_array):
     fpr_line = extract.binned_array_1d_from(array=parallel_masked_array, pixels=(0, 3))
 
     assert (fpr_line == np.array([9.0 / 3.0, 14.0 / 3.0, 5.0])).all()
+
+
+def test__binned_array_1d_total_pixels_from(parallel_array, parallel_masked_array):
+
+    extract = MockExtract2D(region_list=[(1, 3, 0, 3), (5, 8, 0, 3)])
+
+    binned_array_total_pixels_1d = extract.binned_array_1d_total_pixels_from(
+        array=parallel_array, pixels=(0, 3)
+    )
+
+    assert (binned_array_total_pixels_1d == np.array([6, 6, 6])).all()
+
+    binned_array_total_pixels_1d = extract.binned_array_1d_total_pixels_from(
+        array=parallel_array, pixels=(-1, 1)
+    )
+
+    assert (binned_array_total_pixels_1d == np.array([6, 6])).all()
+
+    extract = MockExtract2D(region_list=[(1, 3, 0, 3), (5, 8, 0, 3)])
+
+    binned_array_total_pixels_1d = extract.binned_array_1d_total_pixels_from(
+        array=parallel_masked_array, pixels=(0, 3)
+    )
+
+    assert (binned_array_total_pixels_1d == np.array([6, 5, 4])).all()
 
 
 def test__total_rows_minimum():
@@ -181,6 +238,8 @@ def test__total_columns_minimum():
 def test__dataset_1d_from(imaging_ci_7x7):
 
     extract = MockExtract2D(region_list=[(0, 1, 1, 2)])
+
+    print(imaging_ci_7x7.noise_map.shape_native)
 
     dataset_1d = extract.dataset_1d_from(dataset_2d=imaging_ci_7x7, pixels=(0, 2))
 

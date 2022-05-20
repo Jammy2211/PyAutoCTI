@@ -146,6 +146,37 @@ class Extract2D:
             mask=sum(mask_2d_list) == len(mask_2d_list),
         ).native
 
+    def stacked_array_2d_total_pixels_from(
+        self, array: aa.Array2D, pixels: Tuple[int, int]
+    ) -> np.ndarray:
+        """
+        The function `stacked_array_2d_from` extracts a region (e.g. the parallel FPR) of every charge injection
+        region on the charge injection image and stacks them by taking their mean.
+
+        If the data being stacked is a noise-map, we need to know how many pixels were used in the stacking of every
+        final pixel on the stacked 2d array in order to compute the new noise map via quadrature.
+
+        Parameters
+        ------------
+        array
+            The 2D array which contains the charge injection image from which the regions (e.g. the parallel FPRs)
+            are extracted and stacked.
+        pixels
+            The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
+            FPR rows)
+        """
+
+        mask_2d_list = [
+            array.mask[region.slice] for region in self.region_list_from(pixels=pixels)
+        ]
+
+        arr_total_pixels = sum([np.invert(mask_2d) for mask_2d in mask_2d_list])
+
+        return aa.Array2D.manual_mask(
+            array=np.asarray(arr_total_pixels),
+            mask=sum(mask_2d_list) == len(mask_2d_list),
+        ).native
+
     def binned_array_1d_from(
         self, array: aa.Array2D, pixels: Tuple[int, int]
     ) -> aa.Array1D:
@@ -184,6 +215,42 @@ class Extract2D:
             array=binned_array_1d, pixel_scales=array.pixel_scale
         )
 
+    def binned_array_1d_total_pixels_from(
+        self, array: aa.Array2D, pixels: Tuple[int, int]
+    ) -> aa.Array1D:
+        """
+        The function `binned_array_1d_from` extracts a region (e.g. the parallel FPR) of every charge injection region
+        on the charge injection image, stacks them by taking their mean and then bin them up to a 1D region
+        (e.g. the 1D parallel FPR) by taking the mean across the direction opposite to clocking (e.g. bin over the
+        serial direction for a parallel FPR).
+
+        If the data being stacked is a noise-map, we need to know how many pixels were used in the stacking of every
+        final pixel on the binned 1D array in order to compute the new noise map via quadrature.
+
+        Parameters
+        ------------
+        array
+            The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted and
+            stacked.
+        pixels
+            The column / row pixel index to extract the region (e.g. FPR, EPER) between (e.g. `pixels=(0, 3)` extracts
+            the 1st, 2nd and 3rd columns / rows)
+        """
+
+        mask_2d_list = [
+            array.mask[region.slice] for region in self.region_list_from(pixels=pixels)
+        ]
+
+        arr_total_pixels = sum([np.invert(mask_2d) for mask_2d in mask_2d_list])
+
+        binned_total_pixels = np.ma.sum(
+            np.ma.asarray(arr_total_pixels), axis=self.binning_axis
+        )
+
+        return aa.Array1D.manual_native(
+            array=binned_total_pixels, pixel_scales=array.pixel_scale
+        )
+
     def binned_region_1d_from(self, pixels: Tuple[int, int]) -> aa.Region1D:
         raise NotImplementedError
 
@@ -218,9 +285,13 @@ class Extract2D:
     ) -> Dataset1D:
 
         binned_data_1d = self.binned_array_1d_from(array=dataset_2d.data, pixels=pixels)
+
         binned_noise_map_1d = self.binned_array_1d_from(
             array=dataset_2d.noise_map, pixels=pixels
         )
+
+        binned_noise_map_1d /= dataset_2d.noise_map.shape_native[self.binning_axis]
+
         binned_pre_cti_data_1d = self.binned_array_1d_from(
             array=dataset_2d.pre_cti_data, pixels=pixels
         )

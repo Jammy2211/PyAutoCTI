@@ -1,4 +1,6 @@
+import copy
 import numpy as np
+
 
 import autoarray as aa
 
@@ -6,7 +8,7 @@ from autocti.charge_injection.imaging.imaging import ImagingCI
 
 
 class FitImagingCI(aa.FitImaging):
-    def __init__(self, dataset: ImagingCI, post_cti_data, hyper_noise_scalars=None):
+    def __init__(self, dataset: ImagingCI, post_cti_data, hyper_noise_scalar_list=None):
         """
         Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian
         framework.
@@ -17,14 +19,14 @@ class FitImagingCI(aa.FitImaging):
             The charge injection image that is fitted.
         post_cti_data
             The `pre_cti_data` with cti added to it via the clocker and a CTI model.
-        hyper_noise_scalars :
+        hyper_noise_scalar_list :
             The hyper_ci-parameter(s) which the noise_scaling_map_list_list is multiplied by to scale the noise-map.
         """
 
         super().__init__(dataset=dataset, use_mask_in_fit=True)
 
         self.post_cti_data = post_cti_data
-        self.hyper_noise_scalars = hyper_noise_scalars
+        self.hyper_noise_scalar_list = hyper_noise_scalar_list
         self.noise_scaling_map_list = dataset.noise_scaling_map_list
 
     @property
@@ -34,10 +36,13 @@ class FitImagingCI(aa.FitImaging):
     @property
     def noise_map(self) -> aa.Array2D:
 
-        if self.hyper_noise_scalars is not None and len(self.hyper_noise_scalars) > 0:
+        if (
+            self.hyper_noise_scalar_list is not None
+            and len(self.hyper_noise_scalar_list) > 0
+        ):
 
-            return hyper_noise_map_from_noise_map_and_noise_scalings(
-                hyper_noise_scalars=self.hyper_noise_scalars,
+            return hyper_noise_map_from(
+                hyper_noise_scalar_list=self.hyper_noise_scalar_list,
                 noise_scaling_map_list=self.dataset.noise_scaling_map_list,
                 noise_map=self.dataset.noise_map,
             )
@@ -77,27 +82,27 @@ class FitImagingCI(aa.FitImaging):
         )
 
 
-def hyper_noise_map_from_noise_map_and_noise_scalings(
-    hyper_noise_scalars, noise_scaling_map_list, noise_map
-):
+def hyper_noise_map_from(hyper_noise_scalar_list, noise_scaling_map_list, noise_map):
     """For a noise-map, use the model hyper noise and noise-scaling maps to compute a scaled noise-map.
 
     Parameters
     -----------
-    hyper_noise_scalars
+    hyper_noise_scalar_list
     noise_scaling_map_list
     noise_map : imaging.NoiseMap or ndarray
         An arrays describing the RMS standard deviation error in each pixel, preferably in units of electrons per
         second.
     """
-    hyper_noise_maps = list(
-        map(
-            lambda hyper_noise_scalar, noise_scaling_map: hyper_noise_scalar.scaled_noise_map_from_noise_scaling(
-                noise_scaling_map
-            ),
-            hyper_noise_scalars,
-            noise_scaling_map_list,
-        )
-    )
 
-    return np.add(noise_map, sum(hyper_noise_maps))
+    noise_map = copy.copy(noise_map)
+
+    for hyper_noise_scalar, noise_scaling_map in zip(
+        hyper_noise_scalar_list, noise_scaling_map_list
+    ):
+
+        if hyper_noise_scalar is not None:
+            noise_map += hyper_noise_scalar.scaled_noise_map_from(
+                noise_scaling=noise_scaling_map
+            )
+
+    return noise_map

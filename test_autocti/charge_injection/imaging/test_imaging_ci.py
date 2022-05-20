@@ -324,6 +324,11 @@ def test__set_noise_scaling_map_list(imaging_ci_7x7, ci_noise_scaling_map_list_7
 
     imaging_ci_7x7.noise_scaling_map_list = None
 
-    imaging_ci_7x7.set_noise_scaling_map_list(noise_scaling_map_list=ci_noise_scaling_map_list_7x7)
+    imaging_ci_7x7.set_noise_scaling_map_list(
+        noise_scaling_map_list=ci_noise_scaling_map_list_7x7
+    )
 
-    assert (imaging_ci_7x7.noise_scaling_map_list[0] == ci_noise_scaling_map_list_7x7[0].native).all()
+    assert (
+        imaging_ci_7x7.noise_scaling_map_list[0]
+        == ci_noise_scaling_map_list_7x7[0].native
+    ).all()
