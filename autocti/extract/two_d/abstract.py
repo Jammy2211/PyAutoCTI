@@ -290,7 +290,11 @@ class Extract2D:
             array=dataset_2d.noise_map, pixels=pixels
         )
 
-        binned_noise_map_1d /= dataset_2d.noise_map.shape_native[self.binning_axis]
+        binned_noise_map_1d_total_pixels = self.binned_array_1d_total_pixels_from(
+            array=dataset_2d.noise_map, pixels=pixels
+        )
+
+        binned_noise_map_1d /= np.sqrt(binned_noise_map_1d_total_pixels)
 
         binned_pre_cti_data_1d = self.binned_array_1d_from(
             array=dataset_2d.pre_cti_data, pixels=pixels
