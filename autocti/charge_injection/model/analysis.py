@@ -11,10 +11,11 @@ from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.charge_injection.fit import FitImagingCI
 from autocti.charge_injection.hyper import HyperCINoiseScalar
 from autocti.charge_injection.model.visualizer import VisualizerImagingCI
-from autocti.model.result import ResultDataset
 from autocti.charge_injection.model.result import ResultImagingCI
-from autocti.model.settings import SettingsCTI2D
 from autocti.clocker.two_d import Clocker2D
+from autocti.model.result import ResultDataset
+from autocti.model.settings import SettingsCTI2D
+from autocti.preloads import Preloads
 
 from autocti import exc
 
@@ -34,6 +35,19 @@ class AnalysisImagingCI(Analysis):
         self.clocker = clocker
         self.settings_cti = settings_cti
         self.results = results
+
+        self.preloads = Preloads()
+
+        if self.clocker.parallel_fast_mode:
+
+            parallel_fast_index_list, parallel_fast_column_lists = clocker.parallel_fast_indexes_from(
+                data=dataset.pre_cti_data
+            )
+
+            self.preloads = Preloads(
+                parallel_fast_index_list=parallel_fast_index_list,
+                parallel_fast_column_lists=parallel_fast_column_lists,
+            )
 
     def log_likelihood_function(self, instance: ModelInstance) -> float:
         """
@@ -57,7 +71,7 @@ class AnalysisImagingCI(Analysis):
         hyper_noise_scalar_list = self.hyper_noise_scalar_list_from(instance=instance)
 
         post_cti_data = self.clocker.add_cti(
-            data=self.dataset.pre_cti_data, cti=instance.cti
+            data=self.dataset.pre_cti_data, cti=instance.cti, preloads=self.preloads
         )
 
         fit = FitImagingCI(
@@ -112,7 +126,7 @@ class AnalysisImagingCI(Analysis):
         )
 
         post_cti_data = self.clocker.add_cti(
-            data=imaging_ci.pre_cti_data, cti=instance.cti
+            data=imaging_ci.pre_cti_data, cti=instance.cti, preloads=self.preloads
         )
 
         return FitImagingCI(

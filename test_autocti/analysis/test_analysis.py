@@ -20,7 +20,7 @@ def test__parallel_and_serial_checks_raise_exception(imaging_ci_7x7):
 
     analysis = ac.AnalysisImagingCI(
         dataset=imaging_ci_7x7,
-        clocker=None,
+        clocker=ac.Clocker2D(),
         settings_cti=ac.SettingsCTI2D(parallel_total_density_range=(1.0, 2.0)),
     )
 
@@ -42,7 +42,7 @@ def test__parallel_and_serial_checks_raise_exception(imaging_ci_7x7):
 
     analysis = ac.AnalysisImagingCI(
         dataset=[imaging_ci_7x7],
-        clocker=None,
+        clocker=ac.Clocker2D(),
         settings_cti=ac.SettingsCTI2D(serial_total_density_range=(1.0, 2.0)),
     )
 

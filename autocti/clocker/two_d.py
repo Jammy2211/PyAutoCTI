@@ -6,6 +6,7 @@ import autoarray as aa
 
 from autocti.clocker.abstract import AbstractClocker
 from autocti.model.model_util import CTI2D
+from autocti.preloads import Preloads
 
 from autocti import exc
 
@@ -154,7 +155,9 @@ class Clocker2D(AbstractClocker):
 
         return trap_list, cti.serial_ccd
 
-    def add_cti(self, data: aa.Array2D, cti: CTI2D) -> aa.Array2D:
+    def add_cti(
+        self, data: aa.Array2D, cti: CTI2D, preloads: Optional[Preloads] = Preloads()
+    ) -> aa.Array2D:
         """
         Add CTI to a 2D dataset by passing it to the c++ arctic clocking algorithm.
 
@@ -182,7 +185,7 @@ class Clocker2D(AbstractClocker):
             return self.add_cti_poisson_traps(data=data, cti=cti)
 
         if self.parallel_fast_mode:
-            return self.add_cti_parallel_fast(data=data, cti=cti)
+            return self.add_cti_parallel_fast(data=data, cti=cti, preloads=preloads)
 
         if self.serial_fast_pixels is not None:
             return self.add_cti_serial_fast(data=data, cti=cti)
@@ -334,6 +337,22 @@ class Clocker2D(AbstractClocker):
             return image_post_cti
 
     def parallel_fast_indexes_from(self, data: aa.Array2D):
+        """
+        For 2D images where the same signal is repeated over many columns (e.g. uniform charge injection imaging)
+        the CTI added to each column via arctic is identical. Therefore, this function speeds up CTI addition by
+        extracting all identical columns, adding CTI via arcitc to only these columns and copying the output columns
+        to construct the the final post-cti image.
+
+        This function inspects the input image and extracts the column indexes of every unique column, alongside
+        a list which maps this unique column to all other columns it is identical too. These are used in the function
+        `add_cti_parallel_fast` to create the extracted image that is passed to arctic and to rebuild the final
+        post CTI image.
+
+        Parameters
+        ----------
+        data
+            The 1D data that is clocked via arctic and has CTI added to it.
+        """
 
         parallel_fast_index_list = []
         parallel_fast_column_lists = []
@@ -371,7 +390,9 @@ class Clocker2D(AbstractClocker):
 
         return parallel_fast_index_list, parallel_fast_column_lists
 
-    def add_cti_parallel_fast(self, data: aa.Array2D, cti: CTI2D):
+    def add_cti_parallel_fast(
+        self, data: aa.Array2D, cti: CTI2D, preloads: Preloads = Preloads()
+    ):
         """
         Add CTI to a 2D dataset by passing it to the c++ arctic clocking algorithm.
 
@@ -379,12 +400,10 @@ class Clocker2D(AbstractClocker):
         by serial CTI. If both parallel and serial CTI are added, parallel CTI is added and the post-CTI image
         (therefore including trailing after parallel clocking) is used to perform serial clocking and add serial CTI.
 
-        For 2D images where the same signal is repeated over all columns (e.g. uniform charge injection imaging)
+        For 2D images where the same signal is repeated over many columns (e.g. uniform charge injection imaging)
         the CTI added to each column via arctic is identical. Therefore, this function speeds up CTI addition by
-        only a single column to arcitc once and copying the output column the NumPy array to construct the the final
-        post-cti image.
-
-        By default, checks are performed which ensure that the input data fits the criteria for this speed up.
+        extracting all identical columns, adding CTI via arcitc to only these columns and copying the output columns
+        to construct the the final post-cti image.
 
         Parameters
         ----------
@@ -407,9 +426,13 @@ class Clocker2D(AbstractClocker):
 
         parallel_ccd = self.ccd_from(ccd_phase=parallel_ccd)
 
-        fast_index_list, fast_column_lists = self.parallel_fast_indexes_from(
-            data=image_pre_cti
-        )
+        if preloads.parallel_fast_index_list is None:
+            fast_index_list, fast_column_lists = self.parallel_fast_indexes_from(
+                data=image_pre_cti
+            )
+        else:
+            fast_index_list = preloads.parallel_fast_index_list
+            fast_column_lists = preloads.parallel_fast_column_lists
 
         image_pre_cti_pass = np.zeros(shape=(data.shape[0], len(fast_index_list)))
         for i, fast_index in enumerate(fast_index_list):
@@ -436,7 +459,7 @@ class Clocker2D(AbstractClocker):
 
                 image_post_cti[:, fast_column] = image_post_cti_pass[:, i]
 
-        return image_post_cti
+        return aa.Array2D.manual_mask(array=image_post_cti, mask=data.mask).native
 
     def add_cti_serial_fast(
         self, data: aa.Array2D, cti: CTI2D, perform_checks: bool = True
