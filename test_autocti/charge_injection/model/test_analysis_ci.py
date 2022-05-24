@@ -1,3 +1,4 @@
+import copy
 import pytest
 import autofit as af
 import autocti as ac
@@ -46,6 +47,29 @@ def test__log_likelihood_via_analysis__matches_manual_fit(
     fit = ac.FitImagingCI(dataset=analysis.dataset, post_cti_data=post_cti_data)
 
     assert fit.log_likelihood == log_likelihood_via_analysis
+
+
+def test__log_likelihood_via_analysis__fast_settings_same_as_default(
+    imaging_ci_7x7, pre_cti_data_7x7, traps_x1, ccd, parallel_clocker_2d
+):
+
+    model = af.CollectionPriorModel(
+        cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
+        hyper_noise=af.Model(ac.HyperCINoiseCollection),
+    )
+
+    analysis = ac.AnalysisImagingCI(dataset=imaging_ci_7x7, clocker=parallel_clocker_2d)
+
+    instance = model.instance_from_unit_vector([])
+
+    log_likelihood_via_default = analysis.log_likelihood_function(instance=instance)
+
+    parallel_clocker_2d = copy.copy(parallel_clocker_2d)
+    parallel_clocker_2d.parallel_fast_mode = True
+
+    log_likelihood_via_fast = analysis.log_likelihood_function(instance=instance)
+
+    assert log_likelihood_via_fast == log_likelihood_via_fast
 
 
 def test__full_and_extracted_fits_from_instance_and_imaging_ci(
