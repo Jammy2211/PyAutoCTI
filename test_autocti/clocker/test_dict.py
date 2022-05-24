@@ -43,7 +43,7 @@ def make_clocker_dict():
         "serial_window_offset": 0,
         "serial_window_start": 0,
         "serial_window_stop": -1,
-        "serial_fast_pixels": None,
+        "serial_fast_mode": False,
         "verbosity": 0,
         "poisson_seed": -1,
         "euclid_orientation_hack": False,

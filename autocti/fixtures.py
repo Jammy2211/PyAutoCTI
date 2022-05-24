@@ -44,6 +44,14 @@ def make_serial_clocker_2d():
     return ac.Clocker2D(serial_express=2)
 
 
+def make_parallel_serial_clocker_2d():
+    return ac.Clocker2D(
+        parallel_express=2,
+        parallel_roe=ac.ROE(empty_traps_for_first_transfers=True),
+        serial_express=2,
+    )
+
+
 ### MASK ###
 
 

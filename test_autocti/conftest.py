@@ -79,6 +79,11 @@ def make_serial_clocker():
     return fixtures.make_serial_clocker_2d()
 
 
+@pytest.fixture(name="parallel_serial_clocker_2d")
+def make_parallel_serial_clocker():
+    return fixtures.make_parallel_serial_clocker_2d()
+
+
 ### MASK ###
 
 

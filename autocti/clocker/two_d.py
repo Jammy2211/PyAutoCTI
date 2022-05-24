@@ -26,7 +26,7 @@ class Clocker2D(AbstractClocker):
         parallel_time_start=0,
         parallel_time_stop=-1,
         parallel_prune_n_electrons=1e-18,
-        parallel_prune_frequency=20,
+        parallel_prune_frequency=0,
         parallel_poisson_traps: bool = False,
         parallel_fast_mode: Optional[bool] = False,
         serial_roe: ROE = ROE(),
@@ -37,7 +37,7 @@ class Clocker2D(AbstractClocker):
         serial_time_start=0,
         serial_time_stop=-1,
         serial_prune_n_electrons=1e-18,
-        serial_prune_frequency=20,
+        serial_prune_frequency=0,
         serial_fast_mode: Optional[bool] = None,
         verbosity: int = 0,
         poisson_seed: int = -1,
@@ -187,8 +187,8 @@ class Clocker2D(AbstractClocker):
         if self.parallel_fast_mode:
             return self.add_cti_parallel_fast(data=data, cti=cti, preloads=preloads)
 
-        if self.serial_fast_mode is not None:
-            return self.add_cti_serial_fast(data=data, cti=cti)
+        if self.serial_fast_mode:
+            return self.add_cti_serial_fast(data=data, cti=cti, preloads=preloads)
 
         parallel_trap_list, parallel_ccd = self._parallel_traps_ccd_from(cti=cti)
         serial_trap_list, serial_ccd = self._serial_traps_ccd_from(cti=cti)
@@ -473,6 +473,8 @@ class Clocker2D(AbstractClocker):
             for fast_column in fast_column_list:
 
                 image_post_cti[:, fast_column] = image_post_cti_pass[:, i]
+
+        return image_post_cti
 
         return aa.Array2D.manual_mask(array=image_post_cti, mask=data.mask).native
 
