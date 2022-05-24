@@ -125,7 +125,7 @@ def test__add_cti_with_poisson_trap_densities():
     assert (image_via_clocker[:, 3] > 0.0).all()
 
 
-def test__parallel_fast_indexes():
+def test_fast_indexes_from():
     arr = np.array(
         (
             [
@@ -147,10 +147,38 @@ def test__parallel_fast_indexes():
 
     clocker = ac.Clocker2D()
 
-    fast_index_list, fast_column_lists = clocker.parallel_fast_indexes_from(data=arr)
+    fast_index_list, fast_column_lists = clocker.fast_indexes_from(
+        data=arr, for_parallel=True
+    )
 
     assert fast_index_list == [0, 1, 5, 6]
     assert fast_column_lists == [[0, 3, 4], [1, 2, 7], [5], [6]]
+
+    arr = np.array(
+        (
+            [
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0],
+                [0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            ]
+        )
+    )
+
+    arr = ac.Array2D.manual(array=arr, pixel_scales=1.0).native
+
+    clocker = ac.Clocker2D()
+
+    fast_index_list, fast_row_lists = clocker.fast_indexes_from(
+        data=arr, for_parallel=False
+    )
+
+    assert fast_index_list == [0, 1, 5, 6]
+    assert fast_row_lists == [[0, 3, 4], [1, 2, 7], [5], [6]]
 
 
 def test__add_cti_parallel_fast():
@@ -202,6 +230,10 @@ def test__add_cti_serial_fast():
                 [0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
                 [0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
                 [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
+                [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 2.0, 2.0, 2.0],
+                [0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             ]
         )
     )
@@ -220,75 +252,11 @@ def test__add_cti_serial_fast():
 
     image_via_clocker = clocker.add_cti(data=arr, cti=cti)
 
-    clocker = ac.Clocker2D(serial_fast_pixels=(1, 3))
+    clocker = ac.Clocker2D(serial_fast_mode=True)
 
     image_via_clocker_fast = clocker.add_cti(data=arr, cti=cti)
 
     assert image_via_clocker == pytest.approx(image_via_clocker_fast, 1.0e-6)
-
-
-def test__add_cti_serial_fast__raises_exception_if_nonzero_outside_tuple():
-
-    ccd = ac.CCDPhase(full_well_depth=1e3, well_notch_depth=0.0, well_fill_power=1.0)
-
-    trap_list = [
-        ac.TrapInstantCapture(density=10.0, release_timescale=-1.0 / np.log(0.5))
-    ]
-
-    clocker = ac.Clocker2D(serial_fast_pixels=(1, 3))
-
-    arr = np.array(
-        (
-            [
-                [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
-                [0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                [0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-            ]
-        )
-    )
-
-    arr = ac.Array2D.manual(array=arr, pixel_scales=1.0).native
-
-    cti = ac.CTI2D(serial_trap_list=trap_list, serial_ccd=ccd)
-
-    with pytest.raises(exc.ClockerException):
-
-        clocker.add_cti(data=arr, cti=cti)
-
-    arr = np.array(
-        (
-            [
-                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                [0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                [0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0],
-            ]
-        )
-    )
-
-    arr = ac.Array2D.manual(array=arr, pixel_scales=1.0).native
-
-    with pytest.raises(exc.ClockerException):
-
-        clocker.add_cti(data=arr, cti=cti)
-
-    arr = np.array(
-        (
-            [
-                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                [0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                [0.0, 1.0, 1.0, 1.0, 2.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-                [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-            ]
-        )
-    )
-
-    arr = ac.Array2D.manual(array=arr, pixel_scales=1.0).native
-
-    with pytest.raises(exc.ClockerException):
-
-        clocker.add_cti(data=arr, cti=cti)
 
 
 def test__raises_exception_if_no_traps_or_ccd_passed():

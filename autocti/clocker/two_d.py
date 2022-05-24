@@ -38,7 +38,7 @@ class Clocker2D(AbstractClocker):
         serial_time_stop=-1,
         serial_prune_n_electrons=1e-18,
         serial_prune_frequency=20,
-        serial_fast_pixels: Optional[Tuple[int, int]] = None,
+        serial_fast_mode: Optional[bool] = None,
         verbosity: int = 0,
         poisson_seed: int = -1,
         euclid_orientation_hack: bool = False,
@@ -90,7 +90,7 @@ class Clocker2D(AbstractClocker):
         serial_window_start
             The pixel index of the input image where serial arCTIc clocking ends, for example if `window_start=20`
             any pixels after the 20th pixel are omitted and not clocked.
-        serial_fast_pixels
+        serial_fast_mode
             If input, serial CTI is added via arctic efficiently by calling arctic once and mapping the 1D output over
             the full 2D image. This requires every row in the image has the same signal (such that each column gives
             an identical arctic output).
@@ -127,7 +127,7 @@ class Clocker2D(AbstractClocker):
         self.serial_time_stop = serial_time_stop
         self.serial_prune_n_electrons = serial_prune_n_electrons
         self.serial_prune_frequency = serial_prune_frequency
-        self.serial_fast_pixels = serial_fast_pixels
+        self.serial_fast_mode = serial_fast_mode
 
         self.poisson_seed = poisson_seed
 
@@ -187,7 +187,7 @@ class Clocker2D(AbstractClocker):
         if self.parallel_fast_mode:
             return self.add_cti_parallel_fast(data=data, cti=cti, preloads=preloads)
 
-        if self.serial_fast_pixels is not None:
+        if self.serial_fast_mode is not None:
             return self.add_cti_serial_fast(data=data, cti=cti)
 
         parallel_trap_list, parallel_ccd = self._parallel_traps_ccd_from(cti=cti)
@@ -336,17 +336,20 @@ class Clocker2D(AbstractClocker):
         except AttributeError:
             return image_post_cti
 
-    def parallel_fast_indexes_from(self, data: aa.Array2D):
+    def fast_indexes_from(self, data: aa.Array2D, for_parallel: bool):
         """
         For 2D images where the same signal is repeated over many columns (e.g. uniform charge injection imaging)
-        the CTI added to each column via arctic is identical. Therefore, this function speeds up CTI addition by
-        extracting all identical columns, adding CTI via arcitc to only these columns and copying the output columns
-        to construct the the final post-cti image.
+        the CTI added to each column for parallel CTI via arctic is identical. The same is true of serial CTI
+        addition, where many rows of data are repeated.
 
-        This function inspects the input image and extracts the column indexes of every unique column, alongside
-        a list which maps this unique column to all other columns it is identical too. These are used in the function
-        `add_cti_parallel_fast` to create the extracted image that is passed to arctic and to rebuild the final
-        post CTI image.
+        Therefore, this function speeds up CTI addition via arCTIc by extracting all identical columns (for parallel
+        clocking) or rows (for serial clocking), adding CTI via arcitc to only these extracted stripes and copying the
+        output stripes to construct the the final post-cti image.
+
+        This function inspects the input image and extracts the indexes of every unique stripe, alongside
+        a list which maps this unique stripe to all other stripes it is identical to. These are used in the functions
+        `add_cti_parallel_fast` and `add_cti_serial_fast` to create the extracted image that is passed to arctic and
+        rebuild the final post CTI image.
 
         Parameters
         ----------
@@ -354,28 +357,40 @@ class Clocker2D(AbstractClocker):
             The 1D data that is clocked via arctic and has CTI added to it.
         """
 
-        parallel_fast_index_list = []
-        parallel_fast_column_lists = []
+        if for_parallel:
+            total_stripes = data.shape[1]
+        else:
+            total_stripes = data.shape[0]
 
-        unchecked_list = range(0, data.shape[1])
+        fast_index_list = []
+        fast_column_lists = []
 
-        for column_index in range(data.shape[1]):
+        unchecked_list = range(0, total_stripes)
+
+        for stripe_index in range(total_stripes):
 
             paired = False
 
             pair_list = []
             unchecked_list_new = []
 
-            if column_index in unchecked_list:
+            if stripe_index in unchecked_list:
 
                 for pair_index in unchecked_list:
 
-                    residual_map = np.abs(data[:, column_index] - data[:, pair_index])
+                    if for_parallel:
+                        residual_map = np.abs(
+                            data[:, stripe_index] - data[:, pair_index]
+                        )
+                    else:
+                        residual_map = np.abs(
+                            data[stripe_index, :] - data[pair_index, :]
+                        )
 
                     if np.all(residual_map < 1.0e-8):
 
                         if not paired:
-                            parallel_fast_index_list.append(column_index)
+                            fast_index_list.append(stripe_index)
 
                         paired = True
 
@@ -385,10 +400,10 @@ class Clocker2D(AbstractClocker):
 
                         unchecked_list_new.append(pair_index)
 
-                parallel_fast_column_lists.append(pair_list)
+                fast_column_lists.append(pair_list)
                 unchecked_list = unchecked_list_new
 
-        return parallel_fast_index_list, parallel_fast_column_lists
+        return fast_index_list, fast_column_lists
 
     def add_cti_parallel_fast(
         self, data: aa.Array2D, cti: CTI2D, preloads: Preloads = Preloads()
@@ -427,8 +442,8 @@ class Clocker2D(AbstractClocker):
         parallel_ccd = self.ccd_from(ccd_phase=parallel_ccd)
 
         if preloads.parallel_fast_index_list is None:
-            fast_index_list, fast_column_lists = self.parallel_fast_indexes_from(
-                data=image_pre_cti
+            fast_index_list, fast_column_lists = self.fast_indexes_from(
+                data=image_pre_cti, for_parallel=True
             )
         else:
             fast_index_list = preloads.parallel_fast_index_list
@@ -462,7 +477,7 @@ class Clocker2D(AbstractClocker):
         return aa.Array2D.manual_mask(array=image_post_cti, mask=data.mask).native
 
     def add_cti_serial_fast(
-        self, data: aa.Array2D, cti: CTI2D, perform_checks: bool = True
+        self, data: aa.Array2D, cti: CTI2D, preloads: Preloads = Preloads()
     ):
         """
         Add CTI to a 2D dataset by passing it to the c++ arctic clocking algorithm.
@@ -495,16 +510,25 @@ class Clocker2D(AbstractClocker):
         serial_trap_list, serial_ccd = self._serial_traps_ccd_from(cti=cti)
 
         image_pre_cti = data.native
-        if perform_checks:
-            self._check_serial_fast(image_pre_cti=image_pre_cti)
 
         self.check_traps(trap_list_0=serial_trap_list)
         self.check_ccd(ccd_list=[serial_ccd])
 
         serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
 
-        image_pre_cti_pass = np.zeros(shape=(1, data.shape[1]))
-        image_pre_cti_pass[0, :] = image_pre_cti[self.serial_fast_pixels[0], :]
+        if preloads.serial_fast_index_list is None:
+            fast_index_list, fast_row_lists = self.fast_indexes_from(
+                data=image_pre_cti, for_parallel=False
+            )
+        else:
+            fast_index_list = preloads.serial_fast_index_list
+            fast_row_lists = preloads.serial_fast_row_lists
+
+        image_pre_cti_pass = np.zeros(shape=(len(fast_index_list), data.shape[1]))
+        for i, fast_index in enumerate(fast_index_list):
+            image_pre_cti_pass[i, :] = image_pre_cti[fast_index, :]
+
+        print(image_pre_cti_pass)
 
         image_post_cti_pass = arctic.add_cti(
             image=image_pre_cti_pass,
@@ -520,13 +544,14 @@ class Clocker2D(AbstractClocker):
             verbosity=self.verbosity,
         )
 
-        image_post_cti = copy.copy(data.native)
+        image_post_cti = np.zeros(shape=data.shape_native)
 
-        image_post_cti[
-            self.serial_fast_pixels[0] : self.serial_fast_pixels[1], :
-        ] = image_post_cti_pass
+        for i, fast_row_list in enumerate(fast_row_lists):
+            for fast_row in fast_row_list:
 
-        return image_post_cti
+                image_post_cti[fast_row, :] = image_post_cti_pass[i, :]
+
+        return aa.Array2D.manual_mask(array=image_post_cti, mask=data.mask).native
 
     def remove_cti(self, data: aa.Array2D, cti: CTI2D) -> aa.Array2D:
         """
@@ -596,34 +621,6 @@ class Clocker2D(AbstractClocker):
         return aa.Array2D.manual_mask(
             array=image_cti_removed, mask=data.mask, header=data.header
         ).native
-
-    def _check_serial_fast(self, image_pre_cti: aa.Array2D):
-        """
-        Checks the input 2D image to make sure it fits criteria that makes the serial fast speed up valid
-        (see `add_cti_parallel_fast()`.
-        """
-        start_row = self.serial_fast_pixels[0]
-        end_row = self.serial_fast_pixels[1]
-
-        if (
-            np.any(image_pre_cti[0:start_row, :]) != 0
-            or np.any(image_pre_cti[end_row:, :]) != 0
-        ):
-            raise exc.ClockerException(
-                "Clocker2D serial fast check failed -- "
-                "there are non-zero entries outside the rows "
-                "defined by the `serial_fast_pixels` tuple."
-            )
-
-        if np.any(
-            abs(image_pre_cti[start_row, :] - image_pre_cti[end_row - 1, :]) > 1.0e-8
-        ):
-
-            raise exc.ClockerException(
-                "Clocker2D serial fast check failed -- "
-                "the first and last rows have different"
-                "pixel values."
-            )
 
     def _flip_for_euclid_hack(self, data, row_index):
 
