@@ -26,7 +26,7 @@ def make_clocker_dict():
         "parallel_window_start": 0,
         "parallel_window_stop": -1,
         "parallel_poisson_traps": False,
-        "parallel_fast_pixels": None,
+        "parallel_fast_mode": False,
         "serial_roe": {
             "type": "arcticpy.src.roe.ROE",
             "dwell_times": {
