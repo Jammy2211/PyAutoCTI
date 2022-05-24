@@ -528,8 +528,6 @@ class Clocker2D(AbstractClocker):
         for i, fast_index in enumerate(fast_index_list):
             image_pre_cti_pass[i, :] = image_pre_cti[fast_index, :]
 
-        print(image_pre_cti_pass)
-
         image_post_cti_pass = arctic.add_cti(
             image=image_pre_cti_pass,
             serial_ccd=serial_ccd,

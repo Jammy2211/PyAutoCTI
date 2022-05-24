@@ -38,16 +38,30 @@ class AnalysisImagingCI(Analysis):
 
         self.preloads = Preloads()
 
+        parallel_fast_index_list = None
+        parallel_fast_column_lists = None
+
+        serial_fast_index_list = None
+        serial_fast_row_lists = None
+
         if self.clocker.parallel_fast_mode:
 
-            parallel_fast_index_list, parallel_fast_column_lists = clocker.parallel_fast_indexes_from(
-                data=dataset.pre_cti_data
+            parallel_fast_index_list, parallel_fast_column_lists = clocker.fast_indexes_from(
+                data=dataset.pre_cti_data, for_parallel=True
             )
 
-            self.preloads = Preloads(
-                parallel_fast_index_list=parallel_fast_index_list,
-                parallel_fast_column_lists=parallel_fast_column_lists,
+        if not self.clocker.parallel_fast_mode and self.clocker.serial_fast_mode:
+
+            serial_fast_index_list, serial_fast_row_lists = clocker.fast_indexes_from(
+                data=dataset.pre_cti_data, for_parallel=False
             )
+
+        self.preloads = Preloads(
+            parallel_fast_index_list=parallel_fast_index_list,
+            parallel_fast_column_lists=parallel_fast_column_lists,
+            serial_fast_index_list=serial_fast_index_list,
+            serial_fast_row_lists=serial_fast_row_lists,
+        )
 
     def log_likelihood_function(self, instance: ModelInstance) -> float:
         """

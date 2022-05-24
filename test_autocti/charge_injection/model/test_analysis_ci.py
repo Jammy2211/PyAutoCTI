@@ -50,7 +50,12 @@ def test__log_likelihood_via_analysis__matches_manual_fit(
 
 
 def test__log_likelihood_via_analysis__fast_settings_same_as_default(
-    imaging_ci_7x7, pre_cti_data_7x7, traps_x1, ccd, parallel_clocker_2d
+    imaging_ci_7x7,
+    pre_cti_data_7x7,
+    traps_x1,
+    ccd,
+    parallel_clocker_2d,
+    serial_clocker_2d,
 ):
 
     model = af.CollectionPriorModel(
@@ -67,9 +72,35 @@ def test__log_likelihood_via_analysis__fast_settings_same_as_default(
     parallel_clocker_2d = copy.copy(parallel_clocker_2d)
     parallel_clocker_2d.parallel_fast_mode = True
 
+    analysis = ac.AnalysisImagingCI(dataset=imaging_ci_7x7, clocker=parallel_clocker_2d)
+
     log_likelihood_via_fast = analysis.log_likelihood_function(instance=instance)
 
-    assert log_likelihood_via_fast == log_likelihood_via_fast
+    assert log_likelihood_via_fast == log_likelihood_via_default
+    assert analysis.preloads.parallel_fast_index_list is not None
+    assert analysis.preloads.parallel_fast_column_lists is not None
+
+    model = af.CollectionPriorModel(
+        cti=af.Model(ac.CTI2D, serial_trap_list=traps_x1, serial_ccd=ccd),
+        hyper_noise=af.Model(ac.HyperCINoiseCollection),
+    )
+
+    analysis = ac.AnalysisImagingCI(dataset=imaging_ci_7x7, clocker=serial_clocker_2d)
+
+    instance = model.instance_from_unit_vector([])
+
+    log_likelihood_via_default = analysis.log_likelihood_function(instance=instance)
+
+    serial_clocker_2d = copy.copy(serial_clocker_2d)
+    serial_clocker_2d.serial_fast_mode = True
+
+    analysis = ac.AnalysisImagingCI(dataset=imaging_ci_7x7, clocker=serial_clocker_2d)
+
+    log_likelihood_via_fast = analysis.log_likelihood_function(instance=instance)
+
+    assert log_likelihood_via_fast == log_likelihood_via_default
+    assert analysis.preloads.serial_fast_index_list is not None
+    assert analysis.preloads.serial_fast_row_lists is not None
 
 
 def test__full_and_extracted_fits_from_instance_and_imaging_ci(
