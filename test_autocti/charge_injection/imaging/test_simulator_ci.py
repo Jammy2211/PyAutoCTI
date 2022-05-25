@@ -25,9 +25,11 @@ def test__region_ci_from():
         pixel_scales=1.0, norm=100.0, row_slope=0.0, column_sigma=0.0, ci_seed=1
     )
 
-    layout = ac.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 1, 0, 1)])
+    column_norm_list = simulator.column_norm_list_from(total_columns=3)
 
-    region = simulator.region_ci_from(region_dimensions=(3, 3))
+    region = simulator.region_ci_from(
+        region_dimensions=(3, 3), column_norm_list=column_norm_list
+    )
 
     assert (
         region
@@ -40,9 +42,11 @@ def test__region_ci_from():
         pixel_scales=1.0, norm=100.0, row_slope=0.0, column_sigma=1.0, ci_seed=1
     )
 
-    layout = ac.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 1, 0, 1)])
+    column_norm_list = simulator.column_norm_list_from(total_columns=3)
 
-    region = simulator.region_ci_from(region_dimensions=(3, 3))
+    region = simulator.region_ci_from(
+        region_dimensions=(3, 3), column_norm_list=column_norm_list
+    )
 
     region = np.round(region, 1)
 
@@ -55,9 +59,11 @@ def test__region_ci_from():
         pixel_scales=1.0, norm=100.0, row_slope=-0.01, column_sigma=0.0, ci_seed=1
     )
 
-    layout = ac.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 1, 0, 1)])
+    column_norm_list = simulator.column_norm_list_from(total_columns=3)
 
-    region = simulator.region_ci_from(region_dimensions=(3, 3))
+    region = simulator.region_ci_from(
+        region_dimensions=(3, 3), column_norm_list=column_norm_list
+    )
 
     region = np.round(region, 1)
 
@@ -70,9 +76,11 @@ def test__region_ci_from():
         pixel_scales=1.0, norm=100.0, row_slope=-0.01, column_sigma=1.0, ci_seed=1
     )
 
-    layout = ac.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 1, 0, 1)])
+    column_norm_list = simulator.column_norm_list_from(total_columns=3)
 
-    region = simulator.region_ci_from(region_dimensions=(3, 3))
+    region = simulator.region_ci_from(
+        region_dimensions=(3, 3), column_norm_list=column_norm_list
+    )
 
     region = np.round(region, 1)
 
@@ -85,11 +93,40 @@ def test__region_ci_from():
         pixel_scales=1.0, norm=100.0, row_slope=0.0, column_sigma=100.0, ci_seed=1
     )
 
-    layout = ac.Layout2DCI(shape_2d=(5, 3), region_list=[(0, 1, 0, 1)])
+    column_norm_list = simulator.column_norm_list_from(total_columns=10)
 
-    region = simulator.region_ci_from(region_dimensions=(10, 10))
+    region = simulator.region_ci_from(
+        region_dimensions=(10, 10), column_norm_list=column_norm_list
+    )
 
     assert (region > 0).all()
+
+
+def test__region_ci_from__include_non_uniform_norm_limit():
+
+    simulator = ac.SimulatorImagingCI(
+        pixel_scales=1.0,
+        norm=100.0,
+        row_slope=0.0,
+        column_sigma=1.0,
+        non_uniform_norm_limit=2,
+        ci_seed=4,
+    )
+
+    column_norm_list = simulator.column_norm_list_with_limit_from(total_columns=3)
+
+    region = simulator.region_ci_from(
+        region_dimensions=(3, 3), column_norm_list=column_norm_list
+    )
+
+    region = np.round(region, 1)
+
+    assert (
+        region
+        == np.array(
+            [[100.5, 100.1, 100.5], [100.5, 100.1, 100.5], [100.5, 100.1, 100.5]]
+        )
+    ).all()
 
 
 def test__pre_cti_data_from__compare_uniform_to_non_uniform():

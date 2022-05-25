@@ -1,4 +1,5 @@
 import numpy as np
+from typing import List, Tuple
 
 import autoarray as aa
 
@@ -20,6 +21,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         max_norm: float = np.inf,
         column_sigma: Optional[float] = None,
         row_slope: Optional[float] = 0.0,
+        non_uniform_norm_limit=None,
         read_noise: Optional[float] = None,
         noise_if_add_noise_false: float = 0.1,
         noise_seed: int = -1,
@@ -47,17 +49,54 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         self.max_norm = max_norm
         self.column_sigma = column_sigma
         self.row_slope = row_slope
+        self.non_uniform_norm_limit = non_uniform_norm_limit
 
         self.ci_seed = ci_seed
 
     @property
-    def _ci_seed(self):
+    def _ci_seed(self) -> int:
 
         if self.ci_seed == -1:
             return np.random.randint(0, int(1e9))
         return self.ci_seed
 
-    def region_ci_from(self, region_dimensions):
+    def column_norm_list_from(self, total_columns: int) -> List[float]:
+
+        np.random.seed(self._ci_seed)
+
+        column_norm_list = []
+
+        for column_number in range(total_columns):
+
+            column_norm = 0
+
+            while column_norm <= 0 or column_norm >= self.max_norm:
+
+                column_norm = np.random.normal(self.norm, self.column_sigma)
+
+            column_norm_list.append(column_norm)
+
+        return column_norm_list
+
+    def column_norm_list_with_limit_from(self, total_columns: int) -> List[float]:
+
+        column_norm_list = self.column_norm_list_from(
+            total_columns=self.non_uniform_norm_limit
+        )
+
+        column_norm_limited_list = []
+
+        for i in range(total_columns):
+
+            column_norm = np.random.choice(column_norm_list)
+
+            column_norm_limited_list.append(column_norm)
+
+        return column_norm_limited_list
+
+    def region_ci_from(
+        self, region_dimensions: Tuple[int, int], column_norm_list: List[float]
+    ) -> np.ndarray:
         """Generate the non-uniform charge distribution of a charge injection region. This includes non-uniformity \
         across both the rows and columns of the charge injection region.
 
@@ -87,25 +126,18 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
             Input seed for the random number generator to give reproducible results.
         """
 
-        np.random.seed(self._ci_seed)
-
         ci_rows = region_dimensions[0]
-        ci_columns = region_dimensions[1]
         ci_region = np.zeros(region_dimensions)
 
-        for column_number in range(ci_columns):
+        for column_index, column_norm in enumerate(column_norm_list):
 
-            column_norm = 0
-            while column_norm <= 0 or column_norm >= self.max_norm:
-                column_norm = np.random.normal(self.norm, self.column_sigma)
-
-            ci_region[0:ci_rows, column_number] = self.generate_column(
+            ci_region[0:ci_rows, column_index] = self.generate_column(
                 size=ci_rows, norm=column_norm, row_slope=self.row_slope
             )
 
         return ci_region
 
-    def pre_cti_data_uniform_from(self, layout: Layout2DCI):
+    def pre_cti_data_uniform_from(self, layout: Layout2DCI) -> aa.Array2D:
         """
         Use this charge injection layout_ci to generate a pre-cti charge injection image. This is performed by \
         going to its charge injection regions and adding the charge injection normalization value.
@@ -159,8 +191,18 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         pre_cti_data = np.zeros(layout.shape_2d)
 
         for region in layout.region_list:
+
+            if self.non_uniform_norm_limit is None:
+                column_norm_list = self.column_norm_list_from(
+                    total_columns=region.total_columns
+                )
+            else:
+                column_norm_list = self.column_norm_list_with_limit_from(
+                    total_columns=region.total_columns
+                )
+
             pre_cti_data[region.slice] += self.region_ci_from(
-                region_dimensions=region.shape
+                region_dimensions=region.shape, column_norm_list=column_norm_list
             )
 
         return aa.Array2D.manual(array=pre_cti_data, pixel_scales=self.pixel_scales)
@@ -269,6 +311,11 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
             ci_image = aa.preprocess.data_with_gaussian_noise_added(
                 data=post_cti_data, sigma=self.read_noise, seed=self.noise_seed
             )
+
+            ci_image = aa.Array2D.manual_native(
+                array=ci_image, pixel_scales=self.pixel_scales
+            )
+
             ci_noise_map = (
                 self.read_noise
                 * aa.Array2D.ones(
