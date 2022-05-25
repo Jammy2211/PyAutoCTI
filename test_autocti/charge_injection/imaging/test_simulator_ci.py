@@ -172,7 +172,7 @@ def test__pre_cti_data_from__non_uniformity_in_columns():
     ).all()
 
     simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0, norm=100.0, row_slope=0.0, column_sigma=1.0, ci_seed=1
+        pixel_scales=1.0, norm=100.0, row_slope=0.0, column_sigma=1.0, ci_seed=3
     )
 
     layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 4, 1, 3), (1, 4, 4, 5)])
@@ -180,6 +180,9 @@ def test__pre_cti_data_from__non_uniformity_in_columns():
     image = simulator.pre_cti_data_non_uniform_from(layout=layout)
 
     image[:] = np.round(image[:], 1)
+
+    print(image.native)
+    stop
 
     assert (
         image.native
