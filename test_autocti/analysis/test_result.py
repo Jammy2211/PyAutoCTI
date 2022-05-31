@@ -12,10 +12,7 @@ class TestResult:
     ):
 
         result = res.Result(
-            samples=samples_with_result,
-            analysis=analysis_imaging_ci_7x7,
-            model=None,
-            search=None,
+            samples=samples_with_result, analysis=analysis_imaging_ci_7x7, model=None
         )
 
         assert isinstance(
@@ -28,10 +25,7 @@ class TestResult:
     ):
 
         result = res.Result(
-            samples=samples_with_result,
-            analysis=analysis_imaging_ci_7x7,
-            model=None,
-            search=None,
+            samples=samples_with_result, analysis=analysis_imaging_ci_7x7, model=None
         )
 
         assert isinstance(result.clocker, ac.Clocker2D)
@@ -51,10 +45,7 @@ class TestResultDataset:
             cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd)
         )
         result = res.ResultDataset(
-            samples=samples_with_result,
-            analysis=analysis_imaging_ci_7x7,
-            model=model,
-            search=None,
+            samples=samples_with_result, analysis=analysis_imaging_ci_7x7, model=model
         )
 
         assert (result.mask == np.full(fill_value=False, shape=(7, 7))).all()

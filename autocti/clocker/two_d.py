@@ -474,8 +474,6 @@ class Clocker2D(AbstractClocker):
 
                 image_post_cti[:, fast_column] = image_post_cti_pass[:, i]
 
-        return image_post_cti
-
         return aa.Array2D.manual_mask(array=image_post_cti, mask=data.mask).native
 
     def add_cti_serial_fast(

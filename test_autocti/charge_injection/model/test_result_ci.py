@@ -19,9 +19,7 @@ def test__fits_to_extracted_and_full_datasets_available(
         dataset=masked_imaging_ci, clocker=parallel_clocker_2d
     )
 
-    result = ResultImagingCI(
-        samples=samples_with_result, analysis=analysis, model=None, search=None
-    )
+    result = ResultImagingCI(samples=samples_with_result, analysis=analysis, model=None)
 
     assert (
         result.max_log_likelihood_fit.mask == np.full(fill_value=False, shape=(7, 1))
@@ -73,9 +71,7 @@ def test__noise_scaling_map_list_is_list_of_result__are_correct(
         instance=samples_with_result.max_log_likelihood_instance
     )
 
-    result = ResultImagingCI(
-        samples=samples_with_result, analysis=analysis, model=None, search=None
-    )
+    result = ResultImagingCI(samples=samples_with_result, analysis=analysis, model=None)
 
     assert result.noise_scaling_map_of_regions_ci == pytest.approx(
         fit_analysis.chi_squared_map_of_regions_ci, 1.0e-2
@@ -150,9 +146,7 @@ def test__noise_scaling_map_list_is_setup_correctly(
         dataset=masked_imaging_ci_7x7, clocker=parallel_clocker_2d
     )
 
-    result = ResultImagingCI(
-        samples=samples_with_result, analysis=analysis, model=None, search=None
-    )
+    result = ResultImagingCI(samples=samples_with_result, analysis=analysis, model=None)
 
     assert (
         result.noise_scaling_map_list[0] == result.noise_scaling_map_of_regions_ci

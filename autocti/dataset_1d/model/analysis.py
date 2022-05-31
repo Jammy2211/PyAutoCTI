@@ -81,8 +81,11 @@ class AnalysisDataset1D(Analysis):
         visualizer.visualize_fit_line(fit=fit, during_analysis=during_analysis)
 
     def make_result(
-        self, samples: PDFSamples, model: CollectionPriorModel, search: NonLinearSearch
+        self,
+        samples: PDFSamples,
+        model: CollectionPriorModel,
+        sigma=1.0,
+        use_errors=True,
+        use_widths=False,
     ) -> ResultDataset1D:
-        return ResultDataset1D(
-            samples=samples, model=model, analysis=self, search=search
-        )
+        return ResultDataset1D(samples=samples, model=model, analysis=self)

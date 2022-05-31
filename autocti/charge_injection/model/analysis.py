@@ -217,8 +217,11 @@ class AnalysisImagingCI(Analysis):
             pass
 
     def make_result(
-        self, samples: PDFSamples, model: CollectionPriorModel, search: NonLinearSearch
+        self,
+        samples: PDFSamples,
+        model: CollectionPriorModel,
+        sigma=1.0,
+        use_errors=True,
+        use_widths=False,
     ) -> ResultImagingCI:
-        return ResultImagingCI(
-            samples=samples, model=model, analysis=self, search=search
-        )
+        return ResultImagingCI(samples=samples, model=model, analysis=self)
