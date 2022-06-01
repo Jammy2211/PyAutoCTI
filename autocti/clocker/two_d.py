@@ -474,6 +474,30 @@ class Clocker2D(AbstractClocker):
 
                 image_post_cti[:, fast_column] = image_post_cti_pass[:, i]
 
+        if cti.serial_trap_list is None:
+            return aa.Array2D.manual_mask(array=image_post_cti, mask=data.mask).native
+
+        serial_trap_list, serial_ccd = self._serial_traps_ccd_from(cti=cti)
+
+        self.check_traps(trap_list_0=serial_trap_list)
+        self.check_ccd(ccd_list=[serial_ccd])
+
+        serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
+
+        image_post_cti = arctic.add_cti(
+            image=image_post_cti,
+            serial_ccd=serial_ccd,
+            serial_roe=self.serial_roe,
+            serial_traps=serial_trap_list,
+            serial_express=self.serial_express,
+            serial_window_offset=self.serial_window_offset,
+            serial_time_start=self.serial_time_start,
+            serial_time_stop=self.serial_time_stop,
+            serial_prune_n_electrons=self.serial_prune_n_electrons,
+            serial_prune_frequency=self.serial_prune_frequency,
+            verbosity=self.verbosity,
+        )
+
         return aa.Array2D.manual_mask(array=image_post_cti, mask=data.mask).native
 
     def add_cti_serial_fast(

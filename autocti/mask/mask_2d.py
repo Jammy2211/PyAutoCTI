@@ -133,17 +133,28 @@ class Mask2D(aa.Mask2D):
             for x in range(mask.shape[1]):
                 if cosmic_ray_mask[y, x]:
 
-                    y1 = int(y + 1)
                     x0 = int(x)
 
-                    y0 = int(y - settings.cosmic_ray_parallel_buffer)
+                    y0 = y
+                    y1 = y + 1 + settings.cosmic_ray_parallel_buffer
+
+                    y1 = mask.shape[0] if y1 > mask.shape[0] else y1
+
                     mask[y0:y1, x] = True
 
                     x1 = int(x + 1 + settings.cosmic_ray_serial_buffer)
+
+                    x1 = mask.shape[1] if x1 > mask.shape[1] else x1
+
                     mask[y, x0:x1] = True
 
-                    y0 = int(y - settings.cosmic_ray_diagonal_buffer)
+                    y0 = y
+                    y1 = y + 1 + settings.cosmic_ray_diagonal_buffer
                     x1 = int(x + 1 + settings.cosmic_ray_diagonal_buffer)
+
+                    y1 = mask.shape[0] if y1 > mask.shape[0] else y1
+                    x1 = mask.shape[1] if x1 > mask.shape[1] else x1
+
                     mask[y0:y1, x0:x1] = True
 
         return mask

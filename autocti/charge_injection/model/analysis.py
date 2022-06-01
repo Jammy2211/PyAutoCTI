@@ -1,5 +1,8 @@
 from typing import Optional, List
 
+from arcticpy.src import ccd
+from arcticpy.src import traps
+
 from autofit.non_linear.samples import PDFSamples
 from autofit.mapper.prior_model.collection import CollectionPriorModel
 from autofit.mapper.model import ModelInstance
@@ -14,6 +17,7 @@ from autocti.charge_injection.model.visualizer import VisualizerImagingCI
 from autocti.charge_injection.model.result import ResultImagingCI
 from autocti.clocker.two_d import Clocker2D
 from autocti.model.result import ResultDataset
+from autocti.model.model_util import CTI2D
 from autocti.model.settings import SettingsCTI2D
 from autocti.preloads import Preloads
 
@@ -44,16 +48,23 @@ class AnalysisImagingCI(Analysis):
         serial_fast_index_list = None
         serial_fast_row_lists = None
 
-        if self.clocker.parallel_fast_mode:
+        if self.clocker.parallel_fast_mode and not self.clocker.serial_fast_mode:
 
             parallel_fast_index_list, parallel_fast_column_lists = clocker.fast_indexes_from(
                 data=dataset.pre_cti_data, for_parallel=True
             )
 
-        if not self.clocker.parallel_fast_mode and self.clocker.serial_fast_mode:
+        elif not self.clocker.parallel_fast_mode and self.clocker.serial_fast_mode:
 
             serial_fast_index_list, serial_fast_row_lists = clocker.fast_indexes_from(
                 data=dataset.pre_cti_data, for_parallel=False
+            )
+
+        elif self.clocker.parallel_fast_mode and self.clocker.serial_fast_mode:
+
+            raise exc.ClockerException(
+                "Both parallel fast model and serial fast mode cannot be turned on.\n"
+                "Only switch on parallel fast mode for parallel + serial clocking."
             )
 
         self.preloads = Preloads(

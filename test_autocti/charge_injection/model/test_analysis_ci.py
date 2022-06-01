@@ -126,7 +126,6 @@ def test__log_likelihood_via_analysis__fast_settings_same_as_default(
 
     parallel_serial_clocker_2d = copy.copy(parallel_serial_clocker_2d)
     parallel_serial_clocker_2d.parallel_fast_mode = True
-    parallel_serial_clocker_2d.serial_fast_mode = True
 
     analysis = ac.AnalysisImagingCI(
         dataset=imaging_ci_7x7, clocker=parallel_serial_clocker_2d

@@ -153,7 +153,7 @@ def test__cosmic_ray_mask_included_in_total_mask():
     ).all()
 
     cosmic_ray_map = ac.Array2D.manual(
-        array=[[False, False, False], [False, False, False], [False, True, False]],
+        array=[[False, True, False], [False, False, False], [False, False, False]],
         pixel_scales=1.0,
     )
 
@@ -193,9 +193,9 @@ def test__cosmic_ray_mask_included_in_total_mask():
     cosmic_ray_map = ac.Array2D.manual(
         array=[
             [False, False, False, False],
-            [False, False, False, False],
-            [False, False, False, False],
             [False, True, False, False],
+            [False, False, False, False],
+            [False, False, False, False],
         ],
         pixel_scales=1.0,
     )
