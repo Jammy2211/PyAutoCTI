@@ -27,6 +27,7 @@ def test__injection_normalization_lists_from(parallel_array, parallel_masked_arr
     injection_normalization_lists = extract.injection_normalization_lists_from(
         array=parallel_array, pixels=(0, 3)
     )
+
     assert injection_normalization_lists[0] == [2.0, 2.0, 2.0]
     assert injection_normalization_lists[1] == [6.0, 6.0, 6.0]
 
