@@ -13,7 +13,7 @@ from autocti.model.model_util import CTI2D
 from autocti.charge_injection.layout import Layout2DCI
 from autocti.charge_injection.imaging.simulator import SimulatorImagingCI
 
-from autocti.charge_injection.layout import region_list_ci_from
+from autocti.charge_injection import ci_util
 
 """
 Note on the rotations of arrays:
@@ -132,7 +132,7 @@ def charge_injection_array_from(
     corresponds to quadrant E which is never rotated.
     """
 
-    regions_ci = region_list_ci_from(
+    regions_ci = ci_util.region_list_ci_via_electronics_from(
         injection_on=injection_on,
         injection_off=injection_off,
         injection_total=injection_total,

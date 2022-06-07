@@ -19,116 +19,6 @@ def test__pre_cti_data_from():
     ).all()
 
 
-def test__region_ci_from():
-
-    simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0, norm=100.0, row_slope=0.0, column_sigma=0.0, ci_seed=1
-    )
-
-    column_norm_list = simulator.column_norm_list_from(total_columns=3)
-
-    region = simulator.region_ci_from(
-        region_dimensions=(3, 3), column_norm_list=column_norm_list
-    )
-
-    assert (
-        region
-        == np.array(
-            [[100.0, 100.0, 100.0], [100.0, 100.0, 100.0], [100.0, 100.0, 100.0]]
-        )
-    ).all()
-
-    simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0, norm=100.0, row_slope=0.0, column_sigma=1.0, ci_seed=1
-    )
-
-    column_norm_list = simulator.column_norm_list_from(total_columns=3)
-
-    region = simulator.region_ci_from(
-        region_dimensions=(3, 3), column_norm_list=column_norm_list
-    )
-
-    region = np.round(region, 1)
-
-    assert (
-        region
-        == np.array([[101.6, 99.4, 99.5], [101.6, 99.4, 99.5], [101.6, 99.4, 99.5]])
-    ).all()
-
-    simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0, norm=100.0, row_slope=-0.01, column_sigma=0.0, ci_seed=1
-    )
-
-    column_norm_list = simulator.column_norm_list_from(total_columns=3)
-
-    region = simulator.region_ci_from(
-        region_dimensions=(3, 3), column_norm_list=column_norm_list
-    )
-
-    region = np.round(region, 1)
-
-    assert (
-        region
-        == np.array([[100.0, 100.0, 100.0], [99.3, 99.3, 99.3], [98.9, 98.9, 98.9]])
-    ).all()
-
-    simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0, norm=100.0, row_slope=-0.01, column_sigma=1.0, ci_seed=1
-    )
-
-    column_norm_list = simulator.column_norm_list_from(total_columns=3)
-
-    region = simulator.region_ci_from(
-        region_dimensions=(3, 3), column_norm_list=column_norm_list
-    )
-
-    region = np.round(region, 1)
-
-    assert (
-        region
-        == np.array([[101.6, 99.4, 99.5], [100.9, 98.7, 98.8], [100.5, 98.3, 98.4]])
-    ).all()
-
-    simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0, norm=100.0, row_slope=0.0, column_sigma=100.0, ci_seed=1
-    )
-
-    column_norm_list = simulator.column_norm_list_from(total_columns=10)
-
-    region = simulator.region_ci_from(
-        region_dimensions=(10, 10), column_norm_list=column_norm_list
-    )
-
-    assert (region > 0).all()
-
-
-def test__region_ci_from__include_non_uniform_norm_limit():
-
-    simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0,
-        norm=100.0,
-        row_slope=0.0,
-        column_sigma=1.0,
-        non_uniform_norm_limit=2,
-        ci_seed=4,
-    )
-
-    column_norm_list = simulator.column_norm_list_with_limit_from(total_columns=3)
-
-    region = simulator.region_ci_from(
-        region_dimensions=(3, 3), column_norm_list=column_norm_list
-    )
-
-    region = np.round(region, 1)
-
-    assert (
-        region
-        == np.array(
-            [[100.5, 100.1, 100.5], [100.5, 100.1, 100.5], [100.5, 100.1, 100.5]]
-        )
-    ).all()
-
-
 def test__pre_cti_data_from__compare_uniform_to_non_uniform():
 
     simulator = ac.SimulatorImagingCI(pixel_scales=1.0, norm=10.0)
@@ -175,7 +65,7 @@ def test__pre_cti_data_from__non_uniformity_in_columns():
         pixel_scales=1.0, norm=100.0, row_slope=0.0, column_sigma=1.0, ci_seed=1
     )
 
-    layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 4, 1, 3), (1, 4, 4, 5)])
+    layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 2, 1, 3), (3, 4, 1, 3)])
 
     image = simulator.pre_cti_data_non_uniform_from(layout=layout)
 
@@ -186,9 +76,9 @@ def test__pre_cti_data_from__non_uniformity_in_columns():
         == np.array(
             [
                 [0.0, 0.0, 0.0, 0.0, 0.0],
-                [0.0, 101.6, 99.4, 0.0, 101.6],
-                [0.0, 101.6, 99.4, 0.0, 101.6],
-                [0.0, 101.6, 99.4, 0.0, 101.6],
+                [0.0, 101.6, 99.4, 0.0, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 101.6, 99.4, 0.0, 0.0],
                 [0.0, 0.0, 0.0, 0.0, 0.0],
             ]
         )
@@ -242,44 +132,23 @@ def test__pre_cti_data_from__non_uniformity_in_rows():
         pixel_scales=1.0, norm=100.0, row_slope=-0.01, column_sigma=0.0
     )
 
-    layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 5, 1, 4), (0, 5, 4, 5)])
+    layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(0, 2, 1, 4), (3, 5, 1, 4)])
 
     image = simulator.pre_cti_data_non_uniform_from(layout=layout)
 
     image[:] = np.round(image[:], 1)
 
-    assert (
-        image.native
-        == np.array(
-            [
-                [0.0, 0.0, 0.0, 0.0, 100.0],
-                [0.0, 100.0, 100.0, 100.0, 99.3],
-                [0.0, 99.3, 99.3, 99.3, 98.9],
-                [0.0, 98.9, 98.9, 98.9, 98.6],
-                [0.0, 98.6, 98.6, 98.6, 98.4],
-            ]
-        )
-    ).all()
-
-    simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0, norm=100.0, row_slope=-0.01, column_sigma=1.0, ci_seed=1
-    )
-
-    layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 5, 1, 4), (0, 5, 4, 5)])
-
-    image = simulator.pre_cti_data_non_uniform_from(layout=layout)
-
-    image[:] = np.round(image[:], 1)
+    print(image.native)
 
     assert (
         image.native
         == np.array(
             [
-                [0.0, 0.0, 0.0, 0.0, 101.6],
-                [0.0, 101.6, 99.4, 99.5, 100.9],
-                [0.0, 100.9, 98.7, 98.8, 100.5],
-                [0.0, 100.5, 98.3, 98.4, 100.2],
-                [0.0, 100.2, 98.0, 98.1, 100.0],
+                [0.0, 100.0, 100.0, 100.0, 0.0],
+                [0.0, 99.3, 99.3, 99.3, 0.0],
+                [0.0, 0.0, 0.0, 0.0, 0.0],
+                [0.0, 100.0, 100.0, 100.0, 0.0],
+                [0.0, 99.3, 99.3, 99.3, 0.0],
             ]
         )
     ).all()
@@ -298,8 +167,6 @@ def test__pre_cti_data_from__non_uniformity_in_rows():
     image = simulator.pre_cti_data_non_uniform_from(layout=layout)
 
     image[:] = np.round(image[:], 1)
-
-    print(image.native)
 
     assert (image.native[0:2, 0:5] == image.native[3:5, 0:5]).all()
 

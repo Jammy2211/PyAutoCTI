@@ -10,6 +10,7 @@ from autoarray.layout import layout_util as layout
 from autoarray.fit import fit_util as fit
 from autocti.model import model_util as model
 from autocti.extract.two_d import extract_2d_util as extract_2d
+from autocti.charge_injection import ci_util as ci
 
 from pkgutil import extend_path
 

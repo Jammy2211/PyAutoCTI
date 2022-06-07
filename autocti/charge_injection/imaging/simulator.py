@@ -10,6 +10,8 @@ from autocti.charge_injection.layout import Layout2DCI
 from autocti.clocker.two_d import Clocker2D
 from autocti.model.model_util import CTI2D
 
+from autocti.charge_injection import ci_util
+
 from typing import Optional
 
 
@@ -94,49 +96,6 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
 
         return column_norm_limited_list
 
-    def region_ci_from(
-        self, region_dimensions: Tuple[int, int], column_norm_list: List[float]
-    ) -> np.ndarray:
-        """Generate the non-uniform charge distribution of a charge injection region. This includes non-uniformity \
-        across both the rows and columns of the charge injection region.
-
-        Before adding non-uniformity to the rows and columns, we assume an input charge injection level \
-        (e.g. the average current being injected). We then simulator non-uniformity in this region.
-
-        Non-uniformity in the columns is caused by sharp peaks and troughs in the input charge current. To simulator  \
-        this, we change the normalization of each column by drawing its normalization value from a Gaussian \
-        distribution which has a mean of the input normalization and standard deviation *column_sigma*. The seed \
-        of the random number generator ensures that the non-uniform charge injection update_via_regions of each pre_cti_datas \
-        are identical.
-
-        Non-uniformity in the rows is caused by the charge smoothly decreasing as the injection is switched off. To \
-        simulator this, we assume the charge level as a function of row number is not flat but defined by a \
-        power-law with slope *row_slope*.
-
-        Non-uniform charge injection images are generated using the function *simulate_pre_cti*, which uses this \
-        function.
-
-        Parameters
-        -----------
-        max_normalization
-        column_sigma
-        region_dimensions
-            The size of the non-uniform charge injection region.
-        ci_seed
-            Input seed for the random number generator to give reproducible results.
-        """
-
-        ci_rows = region_dimensions[0]
-        ci_region = np.zeros(region_dimensions)
-
-        for column_index, column_norm in enumerate(column_norm_list):
-
-            ci_region[0:ci_rows, column_index] = self.generate_column(
-                size=ci_rows, norm=column_norm, row_slope=self.row_slope
-            )
-
-        return ci_region
-
     def pre_cti_data_uniform_from(self, layout: Layout2DCI) -> aa.Array2D:
         """
         Use this charge injection layout_ci to generate a pre-cti charge injection image. This is performed by \
@@ -147,35 +106,23 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         shape_native
             The image_shape of the pre_cti_datas to be created.
         """
-
-        pre_cti_data = np.zeros(layout.shape_2d)
-
-        for region in layout.region_list:
-            pre_cti_data[region.slice] += self.norm
-
-        return aa.Array2D.manual(array=pre_cti_data, pixel_scales=self.pixel_scales)
+        return layout.pre_cti_data_uniform_from(
+            norm=self.norm, pixel_scales=self.pixel_scales
+        )
 
     def pre_cti_data_non_uniform_from(self, layout: Layout2DCI) -> aa.Array2D:
         """
-        Use this charge injection layout_ci to generate a pre-cti charge injection image. This is performed by going \
-        to its charge injection regions and adding its non-uniform charge distribution.
+        Use this charge injection layout to generate a pre-cti charge injection image. This is performed by going
+        to its charge injection regions and adding an input normalization value to each column, which are
+        passed in as a list.
 
-        For one column of a non-uniform charge injection pre_cti_datas, it is assumed that each non-uniform charge \
-        injection region has the same overall normalization value (after drawing this value randomly from a Gaussian \
-        distribution). Physically, this is true provided the spikes / troughs in the current that cause \
-        non-uniformity occur in an identical fashion for the generation of each charge injection region.
-
-        A non-uniform charge injection layout_ci, which is defined by the regions it appears on a charge injection
-        array and its average normalization.
-
-        Non-uniformity across the columns of a charge injection layout_ci is due to spikes / drops in the current that
-        injects the charge. This is a noisy process, leading to non-uniformity with no regularity / smoothness. Thus,
-        it cannot be modeled with an analytic profile, and must be assumed as prior-knowledge about the charge
-        injection electronics or estimated from the observed charge injection ci_data.
+        For one column of a non-uniform charge injection pre-cti image, this function assumes that each non-uniform
+        charge  injection region has the same overall normalization value. This assumes the spikes / troughs in the
+        injection current that cause non-uniformity occur in an identical fashion for each charge injection region.
 
         Non-uniformity across the rows of a charge injection layout_ci is due to a drop-off in voltage in the current.
         Therefore, it appears smooth and be modeled as an analytic function, which this code assumes is a
-        power-law with slope row_slope.
+        power-law with slope `row_slope`.
 
         Parameters
         -----------
@@ -188,8 +135,6 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
             pre_cti_datas, ensuring each non-uniform ci_region has the same column non-uniformity layout_ci.
         """
 
-        pre_cti_data = np.zeros(layout.shape_2d)
-
         for region in layout.region_list:
 
             if self.non_uniform_norm_limit is None:
@@ -201,27 +146,11 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
                     total_columns=region.total_columns
                 )
 
-            pre_cti_data[region.slice] += self.region_ci_from(
-                region_dimensions=region.shape, column_norm_list=column_norm_list
-            )
-
-        return aa.Array2D.manual(array=pre_cti_data, pixel_scales=self.pixel_scales)
-
-    def generate_column(self, size: int, norm: float, row_slope: float) -> np.ndarray:
-        """
-        Generate a column of non-uniform charge, including row non-uniformity.
-
-        The pixel-numbering used to generate non-uniformity across the charge injection rows runs from 1 -> size
-
-        Parameters
-        -----------
-        size
-            The size of the non-uniform column of charge
-        normalization
-            The input normalization of the column's charge e.g. the level of charge injected.
-
-        """
-        return norm * (np.arange(1, size + 1)) ** row_slope
+        return layout.pre_cti_data_non_uniform_from(
+            column_norm_list=column_norm_list,
+            pixel_scales=self.pixel_scales,
+            row_slope=self.row_slope,
+        )
 
     def via_layout_from(
         self,
