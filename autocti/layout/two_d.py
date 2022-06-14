@@ -66,7 +66,7 @@ class Layout2D(aa.Layout2D):
             serial_overscan=serial_overscan,
         )
 
-        self.extract = Extract2DMaster.from_region_list(
+        self.extract = Extract2DMaster(
             shape_2d=shape_2d,
             region_list=region_list,
             parallel_overscan=self.parallel_overscan,

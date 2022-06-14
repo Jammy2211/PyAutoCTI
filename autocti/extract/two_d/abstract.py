@@ -206,7 +206,6 @@ class Extract2D:
             np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
             for region in self.region_list_from(pixels=pixels)
         ]
-
         stacked_array_2d = np.ma.mean(np.ma.asarray(arr_list), axis=0)
         binned_array_1d = np.ma.mean(
             np.ma.asarray(stacked_array_2d), axis=self.binning_axis

@@ -15,50 +15,6 @@ from autocti.extract.two_d.serial_calibration import Extract2DSerialCalibration
 class Extract2DMaster:
     def __init__(
         self,
-        parallel_overscan: Extract2DParallelOverscan,
-        parallel_fpr: Extract2DParallelFPR,
-        parallel_eper: Extract2DParallelEPER,
-        parallel_calibration: Extract2DParallelCalibration,
-        serial_overscan: Extract2DSerialOverscan,
-        serial_fpr: Extract2DSerialFPR,
-        serial_eper: Extract2DSerialEPER,
-        serial_calibration: Extract2DSerialCalibration,
-    ):
-        """
-        Class which groups all `Extract` classes, which are classes containing methods for extracting specific
-        regions from 2D CTI calibration data (e.g. the FPRs of a charge injection image)
-
-        This uses the `region_list`, which contains the regions with input known charge on the CTI calibration
-        data in pixel coordinates.
-
-        Parameters
-        ----------
-        parallel_fpr
-            Contains methods for extracting the parallel FPRs.
-        parallel_eper
-            Contains methods for extracting the parallel EPERs.
-        parallel_calibration
-            Contains methods for extracting CTI calibration data for parallel-only fits.
-        serial_fpr
-            Contains methods for extracting the serial FPRs.
-        serial_eper
-            Contains methods for extracting the serial EPERs.
-        serial_calibration
-            Contains methods for extracting CTI calibration data for serial-only fits.
-        """
-
-        self.parallel_overscan = parallel_overscan
-        self.parallel_fpr = parallel_fpr
-        self.parallel_eper = parallel_eper
-        self.parallel_calibration = parallel_calibration
-        self.serial_overscan = serial_overscan
-        self.serial_fpr = serial_fpr
-        self.serial_eper = serial_eper
-        self.serial_calibration = serial_calibration
-
-    @classmethod
-    def from_region_list(
-        cls,
         region_list,
         shape_2d: Optional[Tuple[int, int]] = None,
         parallel_overscan: Optional[aa.type.Region2DLike] = None,
@@ -66,10 +22,11 @@ class Extract2DMaster:
         serial_overscan: Optional[aa.type.Region2DLike] = None,
     ):
         """
-        Creates the `Extract2DMaster` class from a region list which specifies where the known inject charge of
-        the CTI calibration data is.
+        Class which groups all `Extract` classes, which are classes containing methods for extracting specific
+        regions from 2D CTI calibration data (e.g. the FPRs of a charge injection image)
 
-        This may also include other regions on the CCD like the overscans and prescans.
+        This uses the `region_list`, which contains the regions with input known charge on the CTI calibration
+        data in pixel coordinates.
 
         Parameters
         ----------
@@ -90,63 +47,73 @@ class Extract2DMaster:
             left-column, right-column).
         """
 
-        parallel_fpr = Extract2DParallelFPR(
-            region_list=region_list,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
+        self.region_list = (
+            list(map(aa.Region2D, region_list)) if region_list is not None else None
         )
 
-        parallel_eper = Extract2DParallelEPER(
-            region_list=region_list,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
-        )
+        self.shape_2d = shape_2d
+        self._parallel_overscan = parallel_overscan
+        self._serial_prescan = serial_prescan
+        self._serial_overscan = serial_overscan
 
-        parallel_calibration = Extract2DParallelCalibration(
-            shape_2d=shape_2d, region_list=region_list
-        )
-
-        serial_fpr = Extract2DSerialFPR(
-            region_list=region_list,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
-        )
-        serial_eper = Extract2DSerialEPER(
-            region_list=region_list,
-            parallel_overscan=parallel_overscan,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
-        )
-
-        serial_calibration = Extract2DSerialCalibration(
-            shape_2d=shape_2d,
-            region_list=region_list,
-            serial_prescan=serial_prescan,
-            serial_overscan=serial_overscan,
-        )
-
-        parallel_overscan = Extract2DParallelOverscan(
-            parallel_overscan=parallel_overscan
-        )
-        serial_overscan = Extract2DSerialOverscan(serial_overscan=serial_overscan)
-
-        return Extract2DMaster(
-            parallel_overscan=parallel_overscan,
-            parallel_fpr=parallel_fpr,
-            parallel_eper=parallel_eper,
-            parallel_calibration=parallel_calibration,
-            serial_overscan=serial_overscan,
-            serial_fpr=serial_fpr,
-            serial_eper=serial_eper,
-            serial_calibration=serial_calibration,
+    @property
+    def parallel_fpr(self):
+        return Extract2DParallelFPR(
+            region_list=self.region_list,
+            parallel_overscan=self._parallel_overscan,
+            serial_prescan=self._serial_prescan,
+            serial_overscan=self._serial_overscan,
         )
 
     @property
-    def region_list(self):
-        return self.parallel_fpr.region_list
+    def parallel_eper(self):
+        return Extract2DParallelEPER(
+            region_list=self.region_list,
+            parallel_overscan=self._parallel_overscan,
+            serial_prescan=self._serial_prescan,
+            serial_overscan=self._serial_overscan,
+        )
+
+    @property
+    def parallel_calibration(self):
+        return Extract2DParallelCalibration(
+            shape_2d=self.shape_2d, region_list=self.region_list
+        )
+
+    @property
+    def serial_fpr(self):
+        return Extract2DSerialFPR(
+            region_list=self.region_list,
+            parallel_overscan=self._parallel_overscan,
+            serial_prescan=self._serial_prescan,
+            serial_overscan=self._serial_overscan,
+        )
+
+    @property
+    def serial_eper(self):
+        return Extract2DSerialEPER(
+            region_list=self.region_list,
+            parallel_overscan=self._parallel_overscan,
+            serial_prescan=self._serial_prescan,
+            serial_overscan=self._serial_overscan,
+        )
+
+    @property
+    def serial_calibration(self):
+        return Extract2DSerialCalibration(
+            shape_2d=self.shape_2d,
+            region_list=self.region_list,
+            serial_prescan=self._serial_prescan,
+            serial_overscan=self._serial_overscan,
+        )
+
+    @property
+    def parallel_overscan(self):
+        return Extract2DParallelOverscan(parallel_overscan=self._parallel_overscan)
+
+    @property
+    def serial_overscan(self):
+        return Extract2DSerialOverscan(serial_overscan=self._serial_overscan)
 
     def regions_array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
         """

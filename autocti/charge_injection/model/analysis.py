@@ -205,7 +205,7 @@ class AnalysisImagingCI(Analysis):
             visualizer.visualize_fit_ci_1d_lines(
                 fit=fit, during_analysis=during_analysis, region="parallel_eper"
             )
-        except (exc.RegionException, TypeError):
+        except (exc.RegionException, TypeError, ValueError):
             pass
 
         try:
@@ -224,7 +224,7 @@ class AnalysisImagingCI(Analysis):
             visualizer.visualize_fit_ci_1d_lines(
                 fit=fit, during_analysis=during_analysis, region="serial_eper"
             )
-        except (exc.RegionException, TypeError):
+        except (exc.RegionException, TypeError, ValueError):
             pass
 
     def make_result(
