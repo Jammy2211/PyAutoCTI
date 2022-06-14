@@ -58,6 +58,19 @@ class Layout2DCI(Layout2D):
 
         self.electronics = electronics
 
+    @property
+    def extract(self) -> "Extract2DMasterCI":
+
+        from autocti.charge_injection.extract.master import Extract2DMasterCI
+
+        return Extract2DMasterCI(
+            shape_2d=self.shape_2d,
+            region_list=self.region_list,
+            parallel_overscan=self.parallel_overscan,
+            serial_prescan=self.serial_prescan,
+            serial_overscan=self.serial_overscan,
+        )
+
     @classmethod
     def from_euclid_fits_header(cls, ext_header, do_rotation):
 

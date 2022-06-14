@@ -36,7 +36,7 @@ class Layout1D(aa.Layout1D):
 
         from autocti.extract.one_d.master import Extract1DMaster
 
-        self.extract = Extract1DMaster.from_region_list(
+        self.extract = Extract1DMaster(
             region_list=region_list, prescan=prescan, overscan=overscan
         )
 

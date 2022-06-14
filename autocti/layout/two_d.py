@@ -47,8 +47,6 @@ class Layout2D(aa.Layout2D):
             The charge injection electronics parameters of the image (e.g. the IG1 and IG2 voltages).
         """
 
-        from autocti.extract.two_d.master import Extract2DMaster
-
         self.region_list = list(map(aa.Region2D, region_list))
 
         for region in self.region_list:
@@ -66,9 +64,14 @@ class Layout2D(aa.Layout2D):
             serial_overscan=serial_overscan,
         )
 
-        self.extract = Extract2DMaster(
-            shape_2d=shape_2d,
-            region_list=region_list,
+    @property
+    def extract(self):
+
+        from autocti.extract.two_d.master import Extract2DMaster
+
+        return Extract2DMaster(
+            shape_2d=self.shape_2d,
+            region_list=self.region_list,
             parallel_overscan=self.parallel_overscan,
             serial_prescan=self.serial_prescan,
             serial_overscan=self.serial_overscan,

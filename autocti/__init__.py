@@ -56,7 +56,7 @@ from .dataset_1d.dataset_1d.simulator import SimulatorDataset1D
 from .dataset_1d.fit import FitDataset1D
 from .dataset_1d.model.analysis import AnalysisDataset1D
 from .charge_injection.model.analysis import AnalysisImagingCI
-from .charge_injection.extract_fpr import Extract2DParallelFPRCI
+from .charge_injection.extract.parallel_fpr import Extract2DParallelFPRCI
 from .model.model_util import CTI1D
 from .model.model_util import CTI2D
 from .model.settings import SettingsCTI1D
