@@ -9,7 +9,10 @@ import autoarray as aa
 
 class Extract1DMaster:
     def __init__(
-        self, overscan: Extract1DOverscan, fpr: Extract1DFPR, eper: Extract1DEPER
+        self,
+        region_list,
+        prescan: aa.type.Region1DLike = None,
+        overscan: aa.type.Region1DLike = None,
     ):
         """
         Abstract class containing methods for extracting regions from a 1D line dataset which contains some sort of
@@ -21,56 +24,34 @@ class Extract1DMaster:
         ----------
         region_list
             Integer pixel coordinates specifying the corners of signal (x0, x1).
+        prescan
+            Integer pixel coordinates specifying the corners of the prescan (x0, x1).
+        overscan
+            Integer pixel coordinates specifying the corners of the overscan (x0, x1).
         """
 
-        self.overscan = overscan
-        self.fpr = fpr
-        self.eper = eper
-
-    @classmethod
-    def from_region_list(
-        cls,
-        region_list,
-        prescan: aa.type.Region1DLike = None,
-        overscan: aa.type.Region1DLike = None,
-    ):
-        """
-        Creates the `Extract2DMaster` class from a region list which specifies where the known inject charge of
-        the CTI calibration data is.
-
-        This may also include other regions on the CCD like the overscans and prescans.
-
-        Parameters
-        ----------
-        shape_2d
-            The two dimensional shape of the charge injection imaging, corresponding to the number of rows (pixels
-            in parallel direction) and columns (pixels in serial direction).
-        region_list
-            Integer pixel coordinates specifying the corners of each charge injection region (top-row, bottom-row,
-            left-column, right-column).
-        parallel_overscan
-            Integer pixel coordinates specifying the corners of the parallel overscan (top-row, bottom-row,
-            left-column, right-column).
-        serial_prescan
-            Integer pixel coordinates specifying the corners of the serial prescan (top-row, bottom-row,
-            left-column, right-column).
-        serial_overscan
-            Integer pixel coordinates specifying the corners of the serial overscan (top-row, bottom-row,
-            left-column, right-column).
-        """
-
-        fpr = Extract1DFPR(region_list=region_list, prescan=prescan, overscan=overscan)
-        eper = Extract1DEPER(
-            region_list=region_list, prescan=prescan, overscan=overscan
+        self.region_list = (
+            list(map(aa.Region1D, region_list)) if region_list is not None else None
         )
 
-        overscan = Extract1DOverscan(overscan=overscan)
-
-        return Extract1DMaster(fpr=fpr, eper=eper, overscan=overscan)
+        self._prescan = prescan
+        self._overscan = overscan
 
     @property
-    def region_list(self):
-        return self.fpr.region_list
+    def fpr(self):
+        return Extract1DFPR(
+            region_list=self.region_list, prescan=self._prescan, overscan=self._overscan
+        )
+
+    @property
+    def eper(self):
+        return Extract1DEPER(
+            region_list=self.region_list, prescan=self._prescan, overscan=self._overscan
+        )
+
+    @property
+    def overscan(self):
+        return Extract1DOverscan(overscan=self._overscan)
 
     def regions_array_1d_from(self, array: aa.Array1D) -> aa.Array1D:
         """
