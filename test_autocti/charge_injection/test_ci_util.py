@@ -6,7 +6,7 @@ import autocti as ac
 def test__region_ci_from():
 
     region = ac.util.ci.region_ci_from(
-        region_dimensions=(3, 3), column_norm_list=[90.0, 100.0, 110.0]
+        region_dimensions=(3, 3), injection_norm_list=[90.0, 100.0, 110.0]
     )
 
     assert (
@@ -16,7 +16,7 @@ def test__region_ci_from():
 
     region = ac.util.ci.region_ci_from(
         region_dimensions=(10, 10),
-        column_norm_list=[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 1.0],
+        injection_norm_list=[1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 1.0],
     )
 
     assert (region > 0).all()

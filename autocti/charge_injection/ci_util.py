@@ -25,7 +25,7 @@ def generate_column(size: int, norm: float, row_slope: float) -> np.ndarray:
 
 def region_ci_from(
     region_dimensions: Tuple[int, int],
-    column_norm_list: List[float],
+    injection_norm_list: List[float],
     row_slope: Optional[float] = 0.0,
 ) -> np.ndarray:
     """
@@ -35,10 +35,10 @@ def region_ci_from(
     ci_rows = region_dimensions[0]
     ci_region = np.zeros(region_dimensions)
 
-    for column_index, column_norm in enumerate(column_norm_list):
+    for column_index, injection_norm in enumerate(injection_norm_list):
 
         ci_region[0:ci_rows, column_index] = generate_column(
-            size=ci_rows, norm=column_norm, row_slope=row_slope
+            size=ci_rows, norm=injection_norm, row_slope=row_slope
         )
 
     return ci_region

@@ -133,18 +133,18 @@ def test__simulate_and_extract_non_uniform_normalizations():
         clocker=clocker_2d, layout=layout_ci, cti=cti_2d
     )
 
-    injection_normalization_list = imaging_ci.layout.extract.parallel_fpr.injection_normalization_list_from(
+    injection_norm_list = imaging_ci.layout.extract.parallel_fpr.injection_norm_list_from(
         array=imaging_ci.image, pixels=(120, 150)
     )
 
-    assert injection_normalization_list[0] == pytest.approx(116.23434, 1.0e-2)
-    assert injection_normalization_list[1] == pytest.approx(93.8824, 1.0e-2)
-    assert injection_normalization_list[2] == pytest.approx(94.7182, 1.0e-2)
+    assert injection_norm_list[0] == pytest.approx(116.23434, 1.0e-2)
+    assert injection_norm_list[1] == pytest.approx(93.8824, 1.0e-2)
+    assert injection_norm_list[2] == pytest.approx(94.7182, 1.0e-2)
 
-    injection_normalization_lists = imaging_ci.layout.extract.parallel_fpr.injection_normalization_lists_from(
+    injection_norm_lists = imaging_ci.layout.extract.parallel_fpr.injection_norm_lists_from(
         array=imaging_ci.image, pixels=(120, 150)
     )
 
-    assert injection_normalization_lists[0][0] == pytest.approx(116.23434, 1.0e-2)
-    assert injection_normalization_lists[0][1] == pytest.approx(93.8824, 1.0e-2)
-    assert injection_normalization_lists[1][0] == pytest.approx(116.2434536, 1.0e-2)
+    assert injection_norm_lists[0][0] == pytest.approx(116.23434, 1.0e-2)
+    assert injection_norm_lists[0][1] == pytest.approx(93.8824, 1.0e-2)
+    assert injection_norm_lists[1][0] == pytest.approx(116.2434536, 1.0e-2)

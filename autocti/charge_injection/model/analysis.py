@@ -1,14 +1,10 @@
 from typing import Optional, List
 
-from arcticpy.src import ccd
-from arcticpy.src import traps
-
 from autofit.non_linear.samples import PDFSamples
 from autofit.mapper.prior_model.collection import CollectionPriorModel
 from autofit.mapper.model import ModelInstance
 from autofit.non_linear.abstract_search import Analysis
 from autofit.non_linear.paths.directory import DirectoryPaths
-from autofit.non_linear.abstract_search import NonLinearSearch
 
 from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.charge_injection.fit import FitImagingCI
@@ -16,8 +12,6 @@ from autocti.charge_injection.hyper import HyperCINoiseScalar
 from autocti.charge_injection.model.visualizer import VisualizerImagingCI
 from autocti.charge_injection.model.result import ResultImagingCI
 from autocti.clocker.two_d import Clocker2D
-from autocti.model.result import ResultDataset
-from autocti.model.model_util import CTI2D
 from autocti.model.settings import SettingsCTI2D
 from autocti.preloads import Preloads
 
@@ -30,7 +24,6 @@ class AnalysisImagingCI(Analysis):
         dataset: ImagingCI,
         clocker: Clocker2D,
         settings_cti=SettingsCTI2D(),
-        results: List[ResultDataset] = None,
     ):
 
         super().__init__()
@@ -38,7 +31,6 @@ class AnalysisImagingCI(Analysis):
         self.dataset = dataset
         self.clocker = clocker
         self.settings_cti = settings_cti
-        self.results = results
 
         self.preloads = Preloads()
 

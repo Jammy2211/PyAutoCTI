@@ -12,7 +12,7 @@ class Extract2DParallelFPRCI(Extract2DParallelFPR):
     charge injection data's charge injectionr regions and estimates the properties of the charge injection.
     """
 
-    def injection_normalization_lists_from(
+    def injection_norm_lists_from(
         self, array: aa.Array2D, pixels: Tuple[int, int]
     ) -> List[List]:
         """
@@ -29,7 +29,7 @@ class Extract2DParallelFPRCI(Extract2DParallelFPR):
         list contains 3 lists each of which give estimates of the charge injection normalization in a given charge
         injection region. Thd size of the inner list is therefore the number of charge injection columns.
 
-        The function `injection_normalization_list_from` performs the median over all charge injection region in each
+        The function `injection_norm_list_from` performs the median over all charge injection region in each
         column and thus estimates a single injection normalization per column. Which function one uses depends on the
         properties of the charge injection on the instrumentation.
 
@@ -42,7 +42,7 @@ class Extract2DParallelFPRCI(Extract2DParallelFPR):
             FPR rows). To remove the 10 leading pixels which have lost electrons due to CTI, an input such
             as `pixels=(10, 30)` would be used.
         """
-        injection_normalization_lists = []
+        injection_norm_lists = []
 
         arr_list = [
             np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
@@ -55,15 +55,15 @@ class Extract2DParallelFPRCI(Extract2DParallelFPR):
 
             for column_index in range(array_2d.shape[1]):
 
-                injection_normalization = float(np.ma.median(array_2d[:, column_index]))
+                injection_norm = float(np.ma.median(array_2d[:, column_index]))
 
-                injection_of_array_list.append(injection_normalization)
+                injection_of_array_list.append(injection_norm)
 
-            injection_normalization_lists.append(injection_of_array_list)
+            injection_norm_lists.append(injection_of_array_list)
 
-        return injection_normalization_lists
+        return injection_norm_lists
 
-    def injection_normalization_list_from(
+    def injection_norm_list_from(
         self, array: aa.Array2D, pixels: Tuple[int, int]
     ) -> List[List]:
         """
@@ -81,7 +81,7 @@ class Extract2DParallelFPRCI(Extract2DParallelFPR):
         estimates the charge injection normalization of a given charge injection region. The size of this list
         is therefore the number of charge injection columns.
 
-        The function `injection_normalization_lists_from` performs the median over each individual charge injection
+        The function `injection_norm_lists_from` performs the median over each individual charge injection
         region in each column. It therefore estimates multiple injection normalizations per column. for each individual
         charge region. Which function one uses depends on the properties of the charge injection on the instrumentation.
 
@@ -94,7 +94,7 @@ class Extract2DParallelFPRCI(Extract2DParallelFPR):
             FPR rows). To remove the 10 leading pixels which have lost electrons due to CTI, an input such
             as `pixels=(10, 30)` would be used.
         """
-        injection_normalization_list = []
+        injection_norm_list = []
 
         arr_list = [
             np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
@@ -110,6 +110,6 @@ class Extract2DParallelFPRCI(Extract2DParallelFPR):
                 else:
                     arr = np.concatenate((arr[:], array_2d[:, column_index]))
 
-            injection_normalization_list.append(float(np.ma.median(arr)))
+            injection_norm_list.append(float(np.ma.median(arr)))
 
-        return injection_normalization_list
+        return injection_norm_list

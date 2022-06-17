@@ -136,7 +136,7 @@ class Layout2DCI(Layout2D):
 
     def pre_cti_data_non_uniform_from(
         self,
-        column_norm_list: List[float],
+        injection_norm_list: List[float],
         pixel_scales: aa.type.PixelScales,
         row_slope: Optional[float] = 0.0,
     ) -> aa.Array2D:
@@ -170,7 +170,7 @@ class Layout2DCI(Layout2D):
 
             pre_cti_data[region.slice] += ci_util.region_ci_from(
                 region_dimensions=region.shape,
-                column_norm_list=column_norm_list,
+                injection_norm_list=injection_norm_list,
                 row_slope=row_slope,
             )
 
@@ -178,7 +178,7 @@ class Layout2DCI(Layout2D):
 
     def pre_cti_data_non_uniform_via_lists_from(
         self,
-        column_norm_lists: List[List[float]],
+        injection_norm_lists: List[List[float]],
         pixel_scales: aa.type.PixelScales,
         row_slope: Optional[float] = 0.0,
     ) -> aa.Array2D:
@@ -188,7 +188,7 @@ class Layout2DCI(Layout2D):
         passed in as a list.
 
         For one column of a non-uniform charge injection pre-cti image, this function assumes that each non-uniform
-        charge injection region can have a different normalization value. The normalizztion values `column_norm_lists`
+        charge injection region can have a different normalization value. The normalizztion values `injection_norm_lists`
         are passed as a list of lists so that the normalization of each injection in each region can be specified.
 
         Non-uniformity across the rows of a charge injection layout_ci is due to a drop-off in voltage in the current.
@@ -212,7 +212,7 @@ class Layout2DCI(Layout2D):
 
             pre_cti_data[region.slice] += ci_util.region_ci_from(
                 region_dimensions=region.shape,
-                column_norm_list=column_norm_lists[region_index],
+                injection_norm_list=injection_norm_lists[region_index],
                 row_slope=row_slope,
             )
 

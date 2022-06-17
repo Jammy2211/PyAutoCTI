@@ -1,9 +1,9 @@
+from autocti.charge_injection.fit import FitImagingCI
 from autocti.model.result import ResultDataset
-
 
 class ResultImagingCI(ResultDataset):
     @property
-    def max_log_likelihood_full_fit(self):
+    def max_log_likelihood_full_fit(self) -> FitImagingCI:
         return self.analysis.fit_full_dataset_via_instance_from(
             instance=self.instance, hyper_noise_scale=True
         )

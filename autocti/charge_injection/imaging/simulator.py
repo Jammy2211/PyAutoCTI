@@ -62,39 +62,39 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
             return np.random.randint(0, int(1e9))
         return self.ci_seed
 
-    def column_norm_list_from(self, total_columns: int) -> List[float]:
+    def injection_norm_list_from(self, total_columns: int) -> List[float]:
 
         np.random.seed(self._ci_seed)
 
-        column_norm_list = []
+        injection_norm_list = []
 
         for column_number in range(total_columns):
 
-            column_norm = 0
+            injection_norm = 0
 
-            while column_norm <= 0 or column_norm >= self.max_norm:
+            while injection_norm <= 0 or injection_norm >= self.max_norm:
 
-                column_norm = np.random.normal(self.norm, self.column_sigma)
+                injection_norm = np.random.normal(self.norm, self.column_sigma)
 
-            column_norm_list.append(column_norm)
+            injection_norm_list.append(injection_norm)
 
-        return column_norm_list
+        return injection_norm_list
 
-    def column_norm_list_with_limit_from(self, total_columns: int) -> List[float]:
+    def injection_norm_list_with_limit_from(self, total_columns: int) -> List[float]:
 
-        column_norm_list = self.column_norm_list_from(
+        injection_norm_list = self.injection_norm_list_from(
             total_columns=self.non_uniform_norm_limit
         )
 
-        column_norm_limited_list = []
+        injection_norm_limited_list = []
 
         for i in range(total_columns):
 
-            column_norm = np.random.choice(column_norm_list)
+            injection_norm = np.random.choice(injection_norm_list)
 
-            column_norm_limited_list.append(column_norm)
+            injection_norm_limited_list.append(injection_norm)
 
-        return column_norm_limited_list
+        return injection_norm_limited_list
 
     def pre_cti_data_uniform_from(self, layout: Layout2DCI) -> aa.Array2D:
         """
@@ -138,16 +138,16 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         for region in layout.region_list:
 
             if self.non_uniform_norm_limit is None:
-                column_norm_list = self.column_norm_list_from(
+                injection_norm_list = self.injection_norm_list_from(
                     total_columns=region.total_columns
                 )
             else:
-                column_norm_list = self.column_norm_list_with_limit_from(
+                injection_norm_list = self.injection_norm_list_with_limit_from(
                     total_columns=region.total_columns
                 )
 
         return layout.pre_cti_data_non_uniform_from(
-            column_norm_list=column_norm_list,
+            injection_norm_list=injection_norm_list,
             pixel_scales=self.pixel_scales,
             row_slope=self.row_slope,
         )
