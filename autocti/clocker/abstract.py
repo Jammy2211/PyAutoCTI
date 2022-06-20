@@ -48,8 +48,8 @@ class AbstractClocker(Dictable):
 
     def check_traps(
         self,
-        trap_list_0: Optional[List[AbstractTrap]],
-        trap_list_1: Optional[List[AbstractTrap]] = None,
+        trap_list_0: Optional[List["AbstractTrap"]],
+        trap_list_1: Optional[List["AbstractTrap"]] = None,
     ):
         """
         Checks that there are trap species passed to the clocking algorithm and raises an exception if not.
