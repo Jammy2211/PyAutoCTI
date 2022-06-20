@@ -75,34 +75,3 @@ Charge Transfer
 We can now understand why CTI is called Charge Transfer Inefficiency: it is simply the inefficient transfer of
 charge (e.g.a flow of electrons)!
 
-
-.. toctree::
-   :caption: Overview:
-   :maxdepth: 1
-   :hidden:
-
-   overview/overview_1_what_is_cti
-   overview/overview_2_parallel_and_serial
-   overview/overview_3_cti_features
-   overview/overview_4_charge_injection_data
-   overview/overview_5_fitting
-   overview/overview_6_cti_calibration
-
-.. toctree::
-   :caption: Installation:
-   :maxdepth: 1
-   :hidden:
-
-   installation/overview
-   installation/arctic
-   installation/conda
-   installation/pip
-   installation/source
-   installation/troubleshooting
-
-.. toctree::
-   :caption: Advanced:
-   :maxdepth: 1
-   :hidden:
-
-   advanced/database
