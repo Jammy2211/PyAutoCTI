@@ -22,7 +22,7 @@ class AbstractCTI:
 class CTI1D(AbstractCTI, Dictable):
     def __init__(
         self,
-        trap_list: Optional[List[traps.AbstractTrap]] = None,
+        trap_list: Optional[List["traps.AbstractTrap"]] = None,
         ccd: Optional["ccd.CCDPhase"] = None,
     ):
         """
@@ -78,7 +78,7 @@ class CTI2D(AbstractCTI, Dictable):
         self.serial_ccd = serial_ccd
 
     @property
-    def trap_list(self) -> List[traps.AbstractTrap]:
+    def trap_list(self) -> List["traps.AbstractTrap"]:
         """
         Combine the parallel and serial trap lists to make an overall list of traps in the model.
 
