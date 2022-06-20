@@ -125,6 +125,31 @@ parameters that represent features in the CCD.
         cti=af.Model(ac.CTI2D, parallel_trap_list=[parallel_trap_0], parallel_ccd=parallel_ccd)
     )
 
+Printing the ``info`` attribute of the model shows us this is the model we are fitting, and shows us the free
+parameters and their priors:
+
+.. code-block:: python
+
+    print(model.info)
+
+This gives the following output:
+
+.. code-block:: bash
+
+    cti
+        trap_list
+            0
+                density                              UniformPrior, lower_limit = 0.0, upper_limit = 10.0
+                release_timescale                    UniformPrior, lower_limit = 0.0, upper_limit = 50.0
+            1
+                density                              UniformPrior, lower_limit = 0.0, upper_limit = 10.0
+                release_timescale                    UniformPrior, lower_limit = 0.0, upper_limit = 50.0
+        ccd
+            full_well_depth                          200000.0
+            well_notch_depth                         0.0
+            well_fill_power                          UniformPrior, lower_limit = 0.0, upper_limit = 1.0
+
+
 Non-linear Search
 -----------------
 
@@ -173,8 +198,6 @@ search to find which models fit the data with the highest likelihood.
 
 All results are written to hard disk, including on-the-fly results and visualization of the best fit model!
 
-Checkout the folder ``autocti_workspace/output/imaging_ci/parallel[x2]`` for live outputs of the results of the fit!
-
 .. code-block:: python
 
     result_list = search.fit(model=model, analysis=analysis)
@@ -184,6 +207,75 @@ Result
 
 The search returns a result object, which includes the charge injection fit corresponding to the maximum log
 likelihood solution in parameter space for every charge injection dataset.
+
+The ``info`` attribute can be printed to give the results in a readable format:
+
+.. code-block:: python
+
+    print(result_list.info)
+
+This gives the following output:
+
+.. code-block:: bash
+
+    Bayesian Evidence                                4125.33026253
+    Maximum Log Likelihood                           4165.57074867
+    Maximum Log Posterior                            4165.57074867
+
+    model   CollectionPriorModel (N=5)
+        cti CTI1D (N=5)
+            trap_list                                CollectionPriorModel (N=4)
+                0                                    TrapInstantCapture (N=2)
+                1                                    TrapInstantCapture (N=2)
+            ccd                                      CCDPhase (N=1)
+
+    Maximum Log Likelihood Model:
+
+    cti
+        trap_list
+            0
+                density                              0.130
+                release_timescale                    1.246
+            1
+                density                              0.251
+                release_timescale                    4.401
+        ccd
+            well_fill_power                          0.580
+
+
+    Summary (3.0 sigma limits):
+
+    cti
+        trap_list
+            0
+                density                              0.13 (0.13, 0.13)
+                release_timescale                    1.25 (1.23, 1.26)
+            1
+                density                              0.25 (0.25, 0.25)
+                release_timescale                    4.40 (4.37, 4.43)
+        ccd
+            well_fill_power                          0.58 (0.58, 0.58)
+
+
+    Summary (1.0 sigma limits):
+
+    cti
+        trap_list
+            0
+                density                              0.13 (0.13, 0.13)
+                release_timescale                    1.25 (1.24, 1.25)
+            1
+                density                              0.25 (0.25, 0.25)
+                release_timescale                    4.40 (4.39, 4.41)
+        ccd
+            well_fill_power                          0.58 (0.58, 0.58)
+
+    instances
+
+    cti
+        ccd
+            full_well_depth                          200000.0
+            well_notch_depth                         0.0
 
 Below, we plot a subplot of the fit for the first dataset which shows a good fit has been inferred.
 
