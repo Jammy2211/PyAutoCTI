@@ -27,7 +27,7 @@ class AbstractClocker(Dictable):
         self.iterations = iterations
         self.verbosity = verbosity
 
-    def ccd_from(self, ccd_phase: CCDPhase) -> CCD:
+    def ccd_from(self, ccd_phase: "CCDPhase") -> "CCD":
         """
         Returns a `CCD` object from a `CCDPhase` object.
 
@@ -64,7 +64,7 @@ class AbstractClocker(Dictable):
                 "No Trap species were passed to the add_cti method"
             )
 
-    def check_ccd(self, ccd_list: List[CCDPhase]):
+    def check_ccd(self, ccd_list: List["CCDPhase"]):
         """
         Checks that there are trap species passed to the clocking algorithm and raises an exception if not.
 

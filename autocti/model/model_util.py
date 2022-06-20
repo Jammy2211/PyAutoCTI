@@ -23,7 +23,7 @@ class CTI1D(AbstractCTI, Dictable):
     def __init__(
         self,
         trap_list: Optional[List[traps.AbstractTrap]] = None,
-        ccd: Optional[ccd.CCDPhase] = None,
+        ccd: Optional["ccd.CCDPhase"] = None,
     ):
         """
         An object which determines the behaviour of CTI during 1D clocking.
@@ -49,10 +49,10 @@ class CTI1D(AbstractCTI, Dictable):
 class CTI2D(AbstractCTI, Dictable):
     def __init__(
         self,
-        parallel_trap_list: Optional[List[traps.AbstractTrap]] = None,
-        parallel_ccd: Optional[ccd.CCDPhase] = None,
-        serial_trap_list: Optional[List[traps.AbstractTrap]] = None,
-        serial_ccd: Optional[ccd.CCDPhase] = None,
+        parallel_trap_list: Optional[List["traps.AbstractTrap"]] = None,
+        parallel_ccd: Optional["ccd.CCDPhase"] = None,
+        serial_trap_list: Optional[List["traps.AbstractTrap"]] = None,
+        serial_ccd: Optional["ccd.CCDPhase"] = None,
     ):
         """
         An object which determines the behaviour of CTI during 2D parallel and serial clocking.

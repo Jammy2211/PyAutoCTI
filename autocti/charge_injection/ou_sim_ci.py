@@ -196,10 +196,10 @@ def add_cti_to_pre_cti_data(
     pre_cti_data: Union[np.ndarray, Array2D],
     iquad: int,
     clocker: Clocker2D,
-    parallel_trap_list: List[traps.AbstractTrap],
-    parallel_ccd: ccd.CCDPhase,
-    serial_trap_list: List[traps.AbstractTrap],
-    serial_ccd: ccd.CCDPhase,
+    parallel_trap_list: List["traps.AbstractTrap"],
+    parallel_ccd: "ccd.CCDPhase",
+    serial_trap_list: List["traps.AbstractTrap"],
+    serial_ccd: "ccd.CCDPhase",
 ) -> Union[np.ndarray, Array2D]:
 
     quadrant_id = quadrant_id_from(iquad=iquad)

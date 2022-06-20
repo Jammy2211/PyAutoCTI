@@ -1,3 +1,5 @@
+from typing import Optional
+
 try:
     from arcticpy.src import cti as arctic
     from arcticpy.src.roe import ROE
@@ -14,7 +16,7 @@ class Clocker1D(AbstractClocker):
     def __init__(
         self,
         iterations: int = 5,
-        roe: ROE = ROE(),
+        roe: Optional["ROE"] = None,
         express: int = 0,
         window_start: int = 0,
         window_stop: int = -1,
@@ -53,7 +55,7 @@ class Clocker1D(AbstractClocker):
 
         super().__init__(iterations=iterations, verbosity=verbosity)
 
-        self.roe = roe
+        self.roe = roe or ROE()
         self.express = express
         self.window_start = window_start
         self.window_stop = window_stop

@@ -20,7 +20,7 @@ class Clocker2D(AbstractClocker):
     def __init__(
         self,
         iterations: int = 5,
-        parallel_roe: ROE = ROE(),
+        parallel_roe: Optional["ROE"] = None,
         parallel_express: int = 0,
         parallel_window_offset: int = 0,
         parallel_window_start: int = 0,
@@ -31,7 +31,7 @@ class Clocker2D(AbstractClocker):
         parallel_prune_frequency=0,
         parallel_poisson_traps: bool = False,
         parallel_fast_mode: Optional[bool] = False,
-        serial_roe: ROE = ROE(),
+        serial_roe: Optional["ROE"] = None,
         serial_express: int = 0,
         serial_window_offset: int = 0,
         serial_window_start: int = 0,
@@ -108,7 +108,7 @@ class Clocker2D(AbstractClocker):
 
         super().__init__(iterations=iterations, verbosity=verbosity)
 
-        self.parallel_roe = parallel_roe
+        self.parallel_roe = parallel_roe or ROE()
         self.parallel_express = parallel_express
         self.parallel_window_offset = parallel_window_offset
         self.parallel_window_start = parallel_window_start
@@ -120,7 +120,7 @@ class Clocker2D(AbstractClocker):
         self.parallel_poisson_traps = parallel_poisson_traps
         self.parallel_fast_mode = parallel_fast_mode
 
-        self.serial_roe = serial_roe
+        self.serial_roe = serial_roe or ROE()
         self.serial_express = serial_express
         self.serial_window_offset = serial_window_offset
         self.serial_window_start = serial_window_start
