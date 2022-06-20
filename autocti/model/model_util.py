@@ -1,7 +1,10 @@
 from typing import Optional, List
 
-from arcticpy.src import ccd
-from arcticpy.src import traps
+try:
+    from arcticpy.src import ccd
+    from arcticpy.src import traps
+except ModuleNotFoundError:
+    pass
 
 from autoconf.dictable import Dictable
 

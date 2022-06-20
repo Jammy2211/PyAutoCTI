@@ -1,6 +1,4 @@
 import datetime
-from typing import Any, Dict
-
 # Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full
@@ -28,7 +26,7 @@ sys.path.insert(0, os.path.abspath("."))
 
 year = datetime.date.today().year
 project = "PyAutoCTI"
-copyright = "2020, James Nightingale, Richard Hayes"
+copyright = "2022, James Nightingale, Richard Hayes"
 author = "James Nightingale, Richard Hayes"
 
 # The full version, including alpha/beta/rc tags
@@ -58,7 +56,9 @@ templates_path = ["_templates"]
 
 # -- Options for extlinks ----------------------------------------------------
 
-extlinks = {"pypi": ("https://pypi.org/project/%s/", "")}
+extlinks = {
+    "pypi": ("https://pypi.org/project/%s/", "")
+}
 
 # -- Options for intersphinx -------------------------------------------------
 
@@ -73,7 +73,10 @@ todo_include_todos = True
 
 # -- Options for Markdown files ----------------------------------------------
 
-myst_enable_extensions = ["colon_fence", "deflist"]
+myst_enable_extensions = [
+    "colon_fence",
+    "deflist"
+]
 myst_heading_anchors = 3
 
 autosummary_generate = True

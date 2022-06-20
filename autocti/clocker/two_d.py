@@ -2,6 +2,12 @@ import copy
 import numpy as np
 from typing import Optional, Tuple
 
+try:
+    from arcticpy.src import cti as arctic
+    from arcticpy.src.roe import ROE
+except ModuleNotFoundError:
+    pass
+
 import autoarray as aa
 
 from autocti.clocker.abstract import AbstractClocker
@@ -9,10 +15,6 @@ from autocti.model.model_util import CTI2D
 from autocti.preloads import Preloads
 
 from autocti import exc
-
-from arcticpy.src import cti as arctic
-from arcticpy.src.roe import ROE
-
 
 class Clocker2D(AbstractClocker):
     def __init__(
