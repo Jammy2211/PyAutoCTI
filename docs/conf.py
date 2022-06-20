@@ -96,31 +96,31 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # -- Options for HTML output -------------------------------------------------
 
 html_theme = "furo"
-html_title = "PyAutoCTI"
-html_short_title = "PyAutoCTI"
-html_permalinks_icon = "<span>#</span>"
-html_last_updated_fmt = "%b %d, %Y"
-
-html_show_sourcelink = False
-html_show_sphinx = True
-html_show_copyright = True
-
-# pygments_style = "sphinx"
-# pygments_dark_style = "monokai"
-add_function_parentheses = False
-
-html_context = {
-    "menu_links_name": "Repository",
-    "doc_path": "docs",
-    "github_project": "pyautocti",
-    "github_repo": "pyautocti",
-    "github_version": "master",
-}
-language = "en"
-
-html_static_path = ["_static"]
-html_css_files = ["pied-piper-admonition.css"]
-
-from sphinx.builders.html import StandaloneHTMLBuilder
-
-StandaloneHTMLBuilder.supported_image_types = ["image/gif", "image/png", "image/jpeg"]
+# html_title = "PyAutoCTI"
+# html_short_title = "PyAutoCTI"
+# html_permalinks_icon = "<span>#</span>"
+# html_last_updated_fmt = "%b %d, %Y"
+#
+# html_show_sourcelink = False
+# html_show_sphinx = True
+# html_show_copyright = True
+#
+# # pygments_style = "sphinx"
+# # pygments_dark_style = "monokai"
+# add_function_parentheses = False
+#
+# html_context = {
+#     "menu_links_name": "Repository",
+#     "doc_path": "docs",
+#     "github_project": "pyautocti",
+#     "github_repo": "pyautocti",
+#     "github_version": "master",
+# }
+# language = "en"
+#
+# html_static_path = ["_static"]
+# html_css_files = ["pied-piper-admonition.css"]
+#
+# from sphinx.builders.html import StandaloneHTMLBuilder
+#
+# StandaloneHTMLBuilder.supported_image_types = ["image/gif", "image/png", "image/jpeg"]
