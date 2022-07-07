@@ -423,4 +423,4 @@ maximum likelihood fit.
 Wrap Up
 -------
 
-A full overview of the CTI results is given at ``autocti_workspace/notebooks/results``.
+A full overview of the CTI results is given at ``autocti_workspace/*/results``.
