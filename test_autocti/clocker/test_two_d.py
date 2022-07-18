@@ -2,8 +2,11 @@ import os
 
 import pytest
 import numpy as np
-from arcticpy.src import cti as arctic
+
+from arcticpy import add_cti
+
 import autocti as ac
+
 from autocti import exc
 
 path = "{}/".format(os.path.dirname(os.path.realpath(__file__)))
@@ -32,7 +35,7 @@ def test__array_with_offset_through_arctic():
     ccd = ac.CCD(phases=[ccd_phase], fraction_of_traps_per_phase=[1.0])
     traps = [ac.TrapInstantCapture(10.0, -1.0 / np.log(0.5))]
 
-    image_via_arctic = arctic.add_cti(
+    image_via_arctic = add_cti(
         image=arr,
         parallel_traps=traps,
         parallel_ccd=ccd,
@@ -51,7 +54,7 @@ def test__array_with_offset_through_arctic():
 
     cti = ac.CTI2D(serial_trap_list=traps, serial_ccd=ccd_phase)
 
-    image_via_arctic = arctic.add_cti(
+    image_via_arctic = add_cti(
         image=arr,
         serial_traps=traps,
         serial_ccd=ccd,
