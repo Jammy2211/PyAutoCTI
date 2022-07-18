@@ -188,7 +188,7 @@ different CPU.
 
 .. code-block:: python
 
-    analysis.n_cores = 2
+    analysis.n_cores = 1
 
 Model-Fit
 ---------
@@ -393,7 +393,7 @@ We again sum these analyses objects into a single analysis.
 
     analysis = sum(analysis_list)
 
-    analysis.n_cores = 2
+    analysis.n_cores = 1
 
 We can now begin the model-fit by passing the model and analysis object to the search, which performs a non-linear
 search to find which models fit the data with the highest likelihood.

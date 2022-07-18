@@ -1,5 +1,5 @@
 ---
-title: "`PyAutoCTI`: Open-Source Multiwavelength Galaxy Structure & Morphology"
+title: "`PyAutoCTI`: Open-Source Charge Transfer Inefficiency Calibration"
 tags:
   - astronomy
   - instrumentation
@@ -65,28 +65,27 @@ If this time is longer than the time taken to move a cloud of electrons to the n
 released back into its original charge cloud, but to a subsequent one: creating a characteristic 'trailing' or 'smearing' 
 effect behind sources in the image. 
 
-![An example of CTI calibration performed using `PyAutoCTI`. The figure shows CTI calibration data which includes cosmic rays (left panel); the CTI model data inferred by fitting this data (middle panel) and the data corrected for CTI using this model (right panel) .\label{figure:example1}](hstcombined.png)
+![A typical, raw HST ACS / WFC image, in units of electrons. This 30" x 15" (600 x 300 pixels) region contains warm pixels, with an example warm pixel towards the right zoomed in on. This reveals CTI trailing behind (above) the warm pixel, which `PyAutoCTI` can fit to calibrate CTI.](cti_image.png)
 
-Figure 1 shows an example CTI calibration dataset which is fitted using `PyAutoCTI`. The left panel shows simulated
-charge injection line imaging calibration data, where a row of special pixels have electronically injected a known 
-number of electrons into the CCD before clocking. CTI trails are seen in the parallel clocking direction (downwards)
-and serial clocking direction (rightwards). The charge injection shows some degree of non-uniformity and the data
-includes cosmic rays, systematic effects `PyAutoCTI` accounts for. The middle panel of
-Figure 1 shows a `PyAutoCTI` fit to this data with a CTI model, which accurately reproduces the trails seen in the
-left panel. In the right panel this CTI model is used to accurately correct and remove CTI from the data; this 
-correction would be applied to science imaging. Charge injection data is the primary form of CTI calibration data 
-anticipated to be used for the European Space Agency's Euclid space mission. `PyAutoCTI` began developement for 
-calibrating CTI in the Hubble Space Telescope and therefore has full support for other datasets such as warm pixels [@Massey2010d] .
+Figure 1 shows an example of the CTI calibration data which `PyAutoCTI` was originally developed to fit -- warm 
+pixels in the Hubble Space Telescope [@Massey2010d]. Warm pixels are short circuits in the CCD electrostatic potentials
+used to collect charge, which continuously inject spurious charge into specific pixels. These appear as delta functions
+in the data, with CTI trails appearing in the parallel clocking direction (upwards in Figure 1) next to each warm
+pixel. `PyAutoCTI` has dedicated functionality for modeling 1D calibration datasets such as those extracted from warm 
+pixels. `PyAutoCTI` also supports for 2D calibration datasets, for example charge injection line imaging calibration 
+data, which will be used to calibrate CTI for the European Space Agency's Euclid space mission. After CTI calibration
+has inferred an accurate CTI model, this can be passed to `arCTIc` in order to correct CTI from science imaging data.
+
  
 # Statement of Need
 
 Space based telescopes planned for launch over the coming decades will map out the Universe's dark matter via
 weak gravitational lensing [@Massey2007], make precision detections of exoplanets that are further from Earth than ever
-seen before [@Halverson2016] and ?. For these ambitious projects to be successful they all require CTI is removed
-from science imaging with very stringent requirements, necessitating that CTI calibration provides in-depth knowledge 
-about CTI on every CCD. `PyAutoCTI` ensures that large CTI calibration datasets can be exploited to measure the CTI model 
-over the telescope's life and it provides tools which maximally extract information from these datasets using contemporary 
-Bayesian inference techniques.
+seen before [@Halverson2016] and perform astrometry of moving objects [@Bellini2013]. For these ambitious projects to 
+be successful they all require CTI is removed from science imaging with very stringent requirements, necessitating that 
+CTI calibration provides in-depth knowledge about CTI on every CCD. `PyAutoCTI` ensures that large CTI calibration 
+datasets can be exploited to measure the CTI model over the telescope's life and it provides tools which maximally 
+extract information from these datasets using contemporary Bayesian inference techniques.
 
 # Software API and Features
 
@@ -98,7 +97,7 @@ The `astropy` cosmology module handles unit conversions and calculations are opt
 packages `NumPy` [@numpy] and `numba` [@numba].
 
 To perform model-fitting, `PyAutoCTI` adopts the probabilistic programming  
-language `PyAutoFit` (https://github.com/rhayes777/PyAutoFit). `PyAutoFit` allows users to compose a 
+language `PyAutoFit` (https://github.com/rhayes777/PyAutoFit). `PyAutoFit` allows users to compose a CTI 
 model from `Trap` and `CCD` objects, customize the model parameterization and fit it to data via a 
 non-linear search, for example `dynesty` [@dynesty], `emcee` [@emcee] or `PySwarms` [@pyswarms]. `PyAutoFit`'s 
 graphical modeling framework allows one to fit a temporal model to a suite of CTI calibration data. Using a technique 
