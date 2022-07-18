@@ -13,18 +13,19 @@ import datetime
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 
-import os
-os.system("python3 -m pip install --index-url https://test.pypi.org/simple --extra-index-url https://pypi.org/simple arcticpy")
-
 from pyprojroot import here
 
 workspace_path = str(here())
 
 import os
 import sys
-import autocti
 
 sys.path.insert(0, os.path.abspath("."))
+
+import os
+os.system("python3 -m pip install --index-url https://test.pypi.org/simple --extra-index-url https://pypi.org/simple arcticpy")
+
+import autocti
 
 # -- Project information -----------------------------------------------------
 
