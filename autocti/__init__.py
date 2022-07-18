@@ -9,19 +9,14 @@ from autoarray.instruments import acs
 from autoarray.dataset import preprocess
 from autoarray.dataset.imaging import Imaging
 
-try:
-    from arcticpy.src.roe import ROE
-    from arcticpy.src.roe import ROEChargeInjection
-    from arcticpy.src.ccd import CCD
-
-    from arcticpy.src.ccd import CCDPhase
-    from arcticpy.src.traps import TrapInstantCapture
-    from arcticpy.src.traps import TrapSlowCapture
-    from arcticpy.src.traps import TrapInstantCaptureContinuum
-    from arcticpy.src.traps import TrapSlowCaptureContinuum
-except ModuleNotFoundError:
-    pass
-
+from arcticpy import ROE
+from arcticpy import ROEChargeInjection
+from arcticpy import CCD
+from arcticpy import CCDPhase
+from arcticpy import TrapInstantCapture
+from arcticpy import TrapSlowCapture
+from arcticpy import TrapInstantCaptureContinuum
+from arcticpy import TrapSlowCaptureContinuum
 
 from .charge_injection.fit import FitImagingCI
 from .charge_injection.hyper import HyperCINoiseScalar

@@ -1,10 +1,7 @@
 from typing import Optional, List
 
-try:
-    from arcticpy.src import ccd
-    from arcticpy.src import traps
-except ModuleNotFoundError:
-    pass
+from arcticpy import CCDPhase
+from arcticpy import TrapInstantCapture
 
 from autoconf.dictable import Dictable
 
@@ -22,8 +19,8 @@ class AbstractCTI:
 class CTI1D(AbstractCTI, Dictable):
     def __init__(
         self,
-        trap_list: Optional[List["traps.AbstractTrap"]] = None,
-        ccd: Optional["ccd.CCDPhase"] = None,
+        trap_list: Optional[List[TrapInstantCapture]] = None,
+        ccd: Optional[CCDPhase] = None,
     ):
         """
         An object which determines the behaviour of CTI during 1D clocking.
@@ -49,10 +46,10 @@ class CTI1D(AbstractCTI, Dictable):
 class CTI2D(AbstractCTI, Dictable):
     def __init__(
         self,
-        parallel_trap_list: Optional[List["traps.AbstractTrap"]] = None,
-        parallel_ccd: Optional["ccd.CCDPhase"] = None,
-        serial_trap_list: Optional[List["traps.AbstractTrap"]] = None,
-        serial_ccd: Optional["ccd.CCDPhase"] = None,
+        parallel_trap_list: Optional[List[TrapInstantCapture]] = None,
+        parallel_ccd: Optional[CCDPhase] = None,
+        serial_trap_list: Optional[List[TrapInstantCapture]] = None,
+        serial_ccd: Optional[CCDPhase] = None,
     ):
         """
         An object which determines the behaviour of CTI during 2D parallel and serial clocking.
@@ -78,7 +75,7 @@ class CTI2D(AbstractCTI, Dictable):
         self.serial_ccd = serial_ccd
 
     @property
-    def trap_list(self) -> List["traps.AbstractTrap"]:
+    def trap_list(self) -> List[TrapInstantCapture]:
         """
         Combine the parallel and serial trap lists to make an overall list of traps in the model.
 

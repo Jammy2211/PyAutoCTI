@@ -1,12 +1,9 @@
-import copy
 import numpy as np
-from typing import Optional, Tuple
+from typing import Optional
 
-try:
-    from arcticpy.src import cti as arctic
-    from arcticpy.src.roe import ROE
-except ModuleNotFoundError:
-    pass
+from arcticpy import add_cti
+from arcticpy import remove_cti
+from arcticpy import ROE
 
 import autoarray as aa
 
@@ -14,7 +11,6 @@ from autocti.clocker.abstract import AbstractClocker
 from autocti.model.model_util import CTI2D
 from autocti.preloads import Preloads
 
-from autocti import exc
 
 class Clocker2D(AbstractClocker):
     def __init__(
@@ -208,7 +204,7 @@ class Clocker2D(AbstractClocker):
             parallel_window_offset = self.parallel_window_offset
             serial_window_offset = self.serial_window_offset
 
-        image_post_cti = arctic.add_cti(
+        image_post_cti = add_cti(
             image=data,
             parallel_ccd=parallel_ccd,
             parallel_roe=self.parallel_roe,
@@ -296,7 +292,7 @@ class Clocker2D(AbstractClocker):
             image_pre_cti_pass = np.zeros(shape=(total_rows, 1))
             image_pre_cti_pass[:, 0] = image_pre_cti[:, column]
 
-            image_post_cti[:, column] = arctic.add_cti(
+            image_post_cti[:, column] = add_cti(
                 image=image_pre_cti_pass,
                 parallel_ccd=parallel_ccd,
                 parallel_roe=self.parallel_roe,
@@ -317,7 +313,7 @@ class Clocker2D(AbstractClocker):
         except AttributeError:
             serial_window_offset = self.serial_window_offset
 
-        image_post_cti = arctic.add_cti(
+        image_post_cti = add_cti(
             image=image_post_cti,
             serial_ccd=serial_ccd,
             serial_roe=self.serial_roe,
@@ -455,7 +451,7 @@ class Clocker2D(AbstractClocker):
         for i, fast_index in enumerate(fast_index_list):
             image_pre_cti_pass[:, i] = image_pre_cti[:, fast_index]
 
-        image_post_cti_pass = arctic.add_cti(
+        image_post_cti_pass = add_cti(
             image=image_pre_cti_pass,
             parallel_ccd=parallel_ccd,
             parallel_roe=self.parallel_roe,
@@ -486,7 +482,7 @@ class Clocker2D(AbstractClocker):
 
         serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
 
-        image_post_cti = arctic.add_cti(
+        image_post_cti = add_cti(
             image=image_post_cti,
             serial_ccd=serial_ccd,
             serial_roe=self.serial_roe,
@@ -554,7 +550,7 @@ class Clocker2D(AbstractClocker):
         for i, fast_index in enumerate(fast_index_list):
             image_pre_cti_pass[i, :] = image_pre_cti[fast_index, :]
 
-        image_post_cti_pass = arctic.add_cti(
+        image_post_cti_pass = add_cti(
             image=image_pre_cti_pass,
             serial_ccd=serial_ccd,
             serial_roe=self.serial_roe,
@@ -610,7 +606,7 @@ class Clocker2D(AbstractClocker):
                 data=data, row_index=data.header.row_index
             )
 
-        image_cti_removed = arctic.remove_cti(
+        image_cti_removed = remove_cti(
             image=data,
             n_iterations=self.iterations,
             parallel_ccd=parallel_ccd,

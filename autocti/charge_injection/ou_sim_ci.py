@@ -1,11 +1,8 @@
 import numpy as np
 from typing import List, Union
 
-try:
-    from arcticpy.src import ccd
-    from arcticpy.src import traps
-except ModuleNotFoundError:
-    pass
+from arcticpy import CCDPhase
+from arcticpy import TrapInstantCapture
 
 from autoarray.instruments import euclid
 from autoarray.layout import layout_util
@@ -196,10 +193,10 @@ def add_cti_to_pre_cti_data(
     pre_cti_data: Union[np.ndarray, Array2D],
     iquad: int,
     clocker: Clocker2D,
-    parallel_trap_list: List["traps.AbstractTrap"],
-    parallel_ccd: "ccd.CCDPhase",
-    serial_trap_list: List["traps.AbstractTrap"],
-    serial_ccd: "ccd.CCDPhase",
+    parallel_trap_list: List[TrapInstantCapture],
+    parallel_ccd: CCDPhase,
+    serial_trap_list: List[TrapInstantCapture],
+    serial_ccd: CCDPhase,
 ) -> Union[np.ndarray, Array2D]:
 
     quadrant_id = quadrant_id_from(iquad=iquad)

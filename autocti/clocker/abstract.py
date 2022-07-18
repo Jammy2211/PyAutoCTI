@@ -1,15 +1,13 @@
 from typing import List, Optional
 
-try:
-    from arcticpy.src.ccd import CCD
-    from arcticpy.src.ccd import CCDPhase
-    from arcticpy.src.traps import AbstractTrap
-except ModuleNotFoundError:
-    pass
+from arcticpy import CCD
+from arcticpy import CCDPhase
+from arcticpy import TrapInstantCapture
 
 from autoconf.dictable import Dictable
 
 from autocti import exc
+
 
 class AbstractClocker(Dictable):
     def __init__(self, iterations: int = 1, verbosity: int = 0):
@@ -48,8 +46,8 @@ class AbstractClocker(Dictable):
 
     def check_traps(
         self,
-        trap_list_0: Optional[List["AbstractTrap"]],
-        trap_list_1: Optional[List["AbstractTrap"]] = None,
+        trap_list_0: Optional[List["TrapInstantCapture"]],
+        trap_list_1: Optional[List["TrapInstantCapture"]] = None,
     ):
         """
         Checks that there are trap species passed to the clocking algorithm and raises an exception if not.

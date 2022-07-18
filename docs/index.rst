@@ -97,6 +97,7 @@ charge (e.g.a flow of electrons)!
    installation/arctic
    installation/conda
    installation/pip
+   installation/numba
    installation/source
    installation/troubleshooting
 

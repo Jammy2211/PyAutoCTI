@@ -1,16 +1,13 @@
 from typing import List, Tuple
 
-try:
-    from arcticpy.src.traps import AbstractTrap
-except ModuleNotFoundError:
-    pass
+from arcticpy import TrapInstantCapture
 
 from autocti import exc
 
 
 class AbstractSettingsCTI:
     def check_total_density_within_range_of_traps(
-        self, total_density_range: Tuple[float, float], traps: List["AbstractTrap"]
+        self, total_density_range: Tuple[float, float], traps: List[TrapInstantCapture]
     ):
 
         if total_density_range is not None:

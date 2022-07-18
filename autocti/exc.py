@@ -1,5 +1,5 @@
 from autofit import exc
-from autoarray.exc import ArrayException, MaskException,  RegionException
+from autoarray.exc import ArrayException, MaskException, RegionException
 
 
 class DatasetException(Exception):

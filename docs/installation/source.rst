@@ -45,6 +45,12 @@ Next, install the **PyAutoCTI** dependencies via pip:
 
    pip install -r PyAutoCTI/requirements.txt
 
+Next, install the optional dependency numba via pip  (see `this link <https://pyautocti.readthedocs.io/en/latest/installation/numba.html>`_ for a description of numba):
+
+.. code-block:: bash
+
+    pip install numba
+
 For unit tests to pass you will also need the following optional requirements:
 
 .. code-block:: bash
@@ -105,6 +111,12 @@ Next, install the source build dependencies of each project via pip:
    pip install -r PyAutoFit/requirements.txt
    pip install -r PyAutoArray/requirements.txt
    pip install -r PyAutoCTI/requirements.txt
+
+Next, install the optional dependency numba via pip  (see `this link <https://pyautocti.readthedocs.io/en/latest/installation/numba.html>`_ for a description of numba):
+
+.. code-block:: bash
+
+    pip install numba
 
 For unit tests to pass you will also need the following optional requirements:
 

@@ -20,10 +20,7 @@ from autocti import exc
 
 class AnalysisImagingCI(Analysis):
     def __init__(
-        self,
-        dataset: ImagingCI,
-        clocker: Clocker2D,
-        settings_cti=SettingsCTI2D(),
+        self, dataset: ImagingCI, clocker: Clocker2D, settings_cti=SettingsCTI2D()
     ):
 
         super().__init__()

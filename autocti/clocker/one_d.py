@@ -1,10 +1,9 @@
 from typing import Optional
 
-try:
-    from arcticpy.src import cti as arctic
-    from arcticpy.src.roe import ROE
-except ModuleNotFoundError:
-    pass
+from arcticpy import add_cti
+from arcticpy import remove_cti
+
+from arcticpy import ROE
 
 import autoarray as aa
 
@@ -105,7 +104,7 @@ class Clocker1D(AbstractClocker):
 
         ccd = self.ccd_from(ccd_phase=ccd)
 
-        image_post_cti = arctic.add_cti(
+        image_post_cti = add_cti(
             image=image_pre_cti_2d,
             parallel_ccd=ccd,
             parallel_roe=self.roe,
@@ -155,7 +154,7 @@ class Clocker1D(AbstractClocker):
 
         ccd = self.ccd_from(ccd_phase=ccd)
 
-        image_post_cti = arctic.remove_cti(
+        image_post_cti = remove_cti(
             image=image_pre_cti_2d,
             n_iterations=self.iterations,
             parallel_ccd=ccd,
