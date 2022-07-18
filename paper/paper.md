@@ -21,7 +21,7 @@ authors:
 affiliations:
   - name: Institute for Computational Cosmology, Stockton Rd, Durham DH1 3LE
     index: 1
-  - name: $NASA Ames Research Center, Moffett Field, CA 94035, USA
+  - name: NASA Ames Research Center, Moffett Field, CA 94035, USA
     index: 2
 
 date: 07 July 2022
