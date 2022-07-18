@@ -13,6 +13,9 @@ import datetime
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 
+import os
+os.system("python3 -m pip install --index-url https://test.pypi.org/simple --extra-index-url https://pypi.org/simple arcticpy")
+
 from pyprojroot import here
 
 workspace_path = str(here())
@@ -88,8 +91,6 @@ numpydoc_class_members_toctree = False
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
-
-os.system("python3 -m pip install --index-url https://test.pypi.org/simple --extra-index-url https://pypi.org/simple arcticpy")
 
 # -- Options for HTML output -------------------------------------------------
 
