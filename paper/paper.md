@@ -44,7 +44,7 @@ increased smearing in acquired exposures over the telescope's lifetime.
 with `arCTIc` (`the algorithm for Charge Transfer Inefficiency correction`) the calibrated CTI models can straightforwardly
 be used to correct and remove CTI in every science image taken throughout the telescope's lifetime. Core features 
 include fully automated Bayesian model-fitting of CTI calibration data, support for different calibration
-datasets (e.g. warm pixels used for Hubble Space Telescope calibration [@Massey2010d] [@Massey2010b]) and a database 
+datasets such as warm pixels used for Hubble Space Telescope calibration [@Massey2010d] [@Massey2010b] and a database 
 for building a temporal model of CTI over the telescope's lifetime. The software places a focus on big data analysis, 
 including support for graphical models that simultaneously fits large CTI calibration datasets and an SQLite3 
 database that allows extensive suites of calibration results to be loaded, queried and analysed. 
@@ -65,13 +65,13 @@ If this time is longer than the time taken to move a cloud of electrons to the n
 released back into its original charge cloud, but to a subsequent one: creating a characteristic 'trailing' or 'smearing' 
 effect behind sources in the image. 
 
-![A typical, raw HST ACS / WFC image, in units of electrons. This 30" x 15" (600 x 300 pixels) region contains warm pixels, with an example warm pixel towards the right zoomed in on. This reveals CTI trailing behind (above) the warm pixel, which `PyAutoCTI` can fit to calibrate CTI.](cti_image.png)
+![A typical, raw HST ACS / WFC image, in units of electrons. This 30" x 15" (600 x 300 pixels) region contains warm pixels, with an example warm pixel towards the right zoomed in on. This reveals CTI trailing behind (above) the warm pixel, which `PyAutoCTI` fits to calibrate CTI.](cti_image.png)
 
 Figure 1 shows an example of the CTI calibration data which `PyAutoCTI` was originally developed to fit -- warm 
 pixels in the Hubble Space Telescope [@Massey2010d]. Warm pixels are short circuits in the CCD electrostatic potentials
 used to collect charge, which continuously inject spurious charge into specific pixels. These appear as delta functions
 in the data, with CTI trails appearing in the parallel clocking direction (upwards in Figure 1) next to each warm
-pixel. `PyAutoCTI` has dedicated functionality for modeling 1D calibration datasets such as those extracted from warm 
+pixel. `PyAutoCTI` has dedicated functionality for fitting 1D calibration datasets such as those extracted from warm 
 pixels. `PyAutoCTI` also supports for 2D calibration datasets, for example charge injection line imaging calibration 
 data, which will be used to calibrate CTI for the European Space Agency's Euclid space mission. After CTI calibration
 has inferred an accurate CTI model, this can be passed to `arCTIc` in order to correct CTI from science imaging data.

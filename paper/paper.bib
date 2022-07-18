@@ -675,3 +675,18 @@ archivePrefix = {arXiv},
        adsurl = {https://ui.adsabs.harvard.edu/abs/2013MmSAI..84..140B},
       adsnote = {Provided by the SAO/NASA Astrophysics Data System}
 }
+@article{Vehtari2020,
+abstract = {A common divide-and-conquer approach for Bayesian computation with big data is to partition the data, perform local inference for each piece separately, and combine the results to obtain a global posterior approximation. While being conceptually and computationally appealing, this method involves the problematic need to also split the prior for the local inferences; these weakened priors may not provide enough regularization for each separate computation, thus eliminating one of the key advantages of Bayesian methods. To resolve this dilemma while still retaining the generalizability of the underlying local inference method, we apply the idea of expectation propagation (EP) as a framework for distributed Bayesian inference. The central idea is to iteratively update approximations to the local likelihoods given the state of the other approximations and the prior. The present paper has two roles: we review the steps that are needed to keep EP algorithms numerically stable, and we suggest a general approach, inspired by EP, for approaching data partitioning problems in a way that achieves the computational benefits of parallelism while allowing each local update to make use of relevant information from the other sites. In addition, we demonstrate how the method can be applied in a hierarchical context to make use of partitioning of both data and parameters. The paper describes a general algorithmic framework, rather than a specific algorithm, and presents an example implementation for it.},
+archivePrefix = {arXiv},
+arxivId = {1412.4869},
+author = {Vehtari, Aki and Gelman, Andrew and Sivula, Tuomas and Jyl{\"{a}}nki, Pasi and Tran, Dustin and Sahai, Swupnil and Blomstedt, Paul and Cunningham, John P. and Schiminovich, David and Robert, Christian P.},
+eprint = {1412.4869},
+file = {:C\:/Users/Jammy/Documents/Papers/Stats/Vehtair2020EP.pdf:pdf},
+issn = {15337928},
+journal = {Journal of Machine Learning Research},
+keywords = {Bayesian computation,Data partitioning,Expectation propagation,Hierarchical models,Statistical computing},
+pages = {1--53},
+title = {{Expectation propagation as a way of life: A framework for Bayesian inference on partitioned data}},
+volume = {21},
+year = {2020}
+}
