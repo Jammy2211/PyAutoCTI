@@ -36,9 +36,9 @@ Over the past half a century, space telescopes have given us an extraordinary vi
 the faint spectra of the first galaxies in the Universe [@Dunlop2013] [@Bouwens2015], measuring tiny distortions in
 galaxy shapes due to gravitational lensing [@Massey2007] [@Schrabback2010] and a high precision map of stars within
 the Milky Way [@Brown2018] [@Brown2020]. These observations require a deep understanding of the telescope's
-instrumental characteristics, including the calibration and correction of charge transfer inefficiency (hereafter CTI) [@Massey2010d] [@Massey2014],
-a phenomena where radiation damage to the telescope's charge-coupled device (CCD) sensors leads to gradually
-increased smearing in acquired exposures over the telescope's lifetime.
+instrumental characteristics, including the calibration and correction of charge transfer inefficiency 
+(hereafter CTI) [@Massey2010d] [@Massey2014], a phenomena where radiation damage to the telescope's charge-coupled 
+device (CCD) sensors leads to gradually increased smearing in acquired exposures over the telescope's lifetime.
 
 `PyAutoCTI` is an open-source Python 3.6+ package for the calibration of CTI for space telescopes. By interfacing
 with `arCTIc` (`the algorithm for Charge Transfer Inefficiency correction`) the calibrated CTI models can straightforwardly
@@ -63,18 +63,24 @@ amplifier and read-out electronics that count the number of electrons. The CCD s
 move is built of a silicon lattice. However, defects in the lattice known as 'traps' can temporarily capture electrons. 
 If this time is longer than the time taken to move a cloud of electrons to the next pixel, an electron may not be 
 released back into its original charge cloud, but to a subsequent one: creating a characteristic 'trailing' or 'smearing' 
-effect behind sources in the image. 
+effect behind sources in the image. The CTI properties of a CCD can be calibrated, using image data that has sharp edges
+whose position and flux are known (or can be determined) prior to readout. `PyAutoCTI` fits a CTI model to these sharp
+edges and their preceeding trails which form due to CTI, 
 
-![A typical, raw HST ACS / WFC image, in units of electrons. This 30" x 15" (600 x 300 pixels) region contains warm pixels, with an example warm pixel towards the right zoomed in on. This reveals CTI trailing behind (above) the warm pixel, which `PyAutoCTI` fits to calibrate CTI.](cti_image.png)
+![A typical, raw HST ACS / WFC image, in units of electrons. This 30" x 15" (600 x 300 pixels) region contains warm 
+pixels, with an example warm pixel towards the right zoomed in on. This reveals CTI trailing behind (above) the warm 
+pixel, which `PyAutoCTI` fits to calibrate CTI. This figure is taken from [@Massey2010d] and has been used
+with the author's permission.](cti_image.png)
 
 Figure 1 shows an example of the CTI calibration data which `PyAutoCTI` was originally developed to fit -- warm 
-pixels in the Hubble Space Telescope [@Massey2010d]. Warm pixels are short circuits in the CCD electrostatic potentials
-used to collect charge, which continuously inject spurious charge into specific pixels. These appear as delta functions
-in the data, with CTI trails appearing in the parallel clocking direction (upwards in Figure 1) next to each warm
-pixel. `PyAutoCTI` has dedicated functionality for fitting 1D calibration datasets such as those extracted from warm 
-pixels. `PyAutoCTI` also supports for 2D calibration datasets, for example charge injection line imaging calibration 
-data, which will be used to calibrate CTI for the European Space Agency's Euclid space mission. After CTI calibration
-has inferred an accurate CTI model, this can be passed to `arCTIc` in order to correct CTI from science imaging data.
+pixels in the Hubble Space Telescope [@Massey2010d]. Warm pixels are similar to short circuits in the CCD electrostatic 
+potentials used to collect charge, which continuously inject spurious charge into specific pixels. These should 
+appear as delta functions in the data, with CTI trails appearing in Fig 1 in the parallel clocking direction (upwards in 
+Figure 1) next to each warm pixel. `PyAutoCTI` has dedicated functionality for fitting 1D calibration datasets 
+such as those extracted from warm pixels. `PyAutoCTI` also supports for 2D calibration datasets, for example 
+charge injection line imaging calibration data, which will be used to calibrate CTI for the European Space Agency's 
+Euclid space mission. After CTI calibration has inferred an accurate CTI model, this can be passed to `arCTIc` in 
+order to correct CTI from science imaging data.
 
  
 # Statement of Need
@@ -90,7 +96,7 @@ extract information from these datasets using contemporary Bayesian inference te
 # Software API and Features
 
 At the heart of the `PyAutoCTI` API are `Trap` objects, which represent the populations of traps on a CCD which cause
-CTI. The volume filling behaviour of a CCD is modeled via `CCD` objects, which is combined with traps to compose CTI 
+CTI. The volume filling behaviour of a CCD is modeled via `CCD` objects, which are combined with traps to compose CTI 
 models which add CTI to a mock CTI calibration data via `arCTIc`. `PyAutoCTI` has dedicated objects for specific
 CTI calibration datasets and bespoke tools for visualizing these datasets and masking them before fitting.  
 The `astropy` cosmology module handles unit conversions and calculations are optimized using the 
@@ -141,8 +147,6 @@ without a local `PyAutoCTI` installation.
 
 JWN and RJM are supported by the UK Space Agency, through grant ST/V001582/1, and by InnovateUK through grant TS/V002856/1. 
 RGH is supported by STFC Opportunities grant ST/T002565/1.
-# AA, QH, CSF and SMC are supported by ERC Advanced In-vestigator grant, DMIDAS [GA 786910] and also by the STFCConsolidated 
-# Grant for Astronomy at Durham [grant numbersST/F001166/1, ST/I00162X/1,ST/P000541/1].
 RJM is supported by a Royal Society University Research Fellowship.
 This work used the DiRAC@Durham facility managed by the Institute for Computational Cosmology on behalf of the STFC DiRAC HPC Facility (www.dirac.ac.uk). The equipment was funded by BEIS capital funding via STFC capital grants ST/K00042X/1, ST/P002293/1, ST/R002371/1 and ST/S002502/1, Durham University and STFC operations grant ST/R000832/1. DiRAC is part of the National e-Infrastructure.
 

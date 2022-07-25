@@ -94,7 +94,12 @@ class AnalysisImagingCI(Analysis):
             hyper_noise_scalar_list=hyper_noise_scalar_list,
         )
 
-        return fit.log_likelihood
+
+        logl = fit.log_likelihood
+
+        print(logl)
+
+        return logl
 
     def hyper_noise_scalar_list_from(
         self, instance: ModelInstance, hyper_noise_scale: bool = True
