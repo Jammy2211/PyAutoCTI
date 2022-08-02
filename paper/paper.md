@@ -49,10 +49,11 @@ for building a temporal model of CTI over the telescope's lifetime. The software
 including support for graphical models that simultaneously fits large CTI calibration datasets and an SQLite3 
 database that allows extensive suites of calibration results to be loaded, queried and analysed. 
 Accompanying `PyAutoCTI` is the [autocti workspace](https://github.com/Jammy2211/autocti_workspace), which includes 
-example scripts, datasets and an overview of core `PyAutoCTI` functionality. Readers can  try `PyAutoCTI` right now by 
-going to [the introduction Jupyter notebook on Binder](https://mybinder.org/v2/gh/Jammy2211/autocti_workspace/release) or 
-checkout the [readthedocs](https://pyautocti.readthedocs.io/en/latest/) for a complete overview of `PyAutoCTI`'s 
+example scripts, datasets and an overview of core `PyAutoCTI` functionality. Readers can checkout
+the [readthedocs](https://pyautocti.readthedocs.io/en/latest/) for a complete overview of `PyAutoCTI`'s 
 features.
+
+
 
 # Background
 
@@ -116,7 +117,7 @@ cadence may consist of thousands of datasets.
 
 # Workspace
 
-`PyAutoCTI` is distributed with the [autocti workspace](https://github.com/Jammy2211/autocti_workspace>), which 
+`PyAutoCTI` is distributed with the [autocti workspace](https://github.com/Jammy2211/autocti_workspace), which 
 contains example scripts for modeling and simulating CTI. The workspace is accessible 
 on [Binder](https://mybinder.org/v2/gh/Jammy2211/autocti_workspace/HEAD) and example scripts can therefore be run 
 without a local `PyAutoCTI` installation.
