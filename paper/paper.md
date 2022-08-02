@@ -145,8 +145,7 @@ without a local `PyAutoCTI` installation.
 - `arCTIc` https://github.com/jkeger/arctic [@Massey2014]
 - `C3TM` [@c3tm]
 - `CDM03` [@cdm03]
-- `Pyxel` https://esa.gitlab.io/pyxel/page/introduction/
-- `STScI algorithm` [@Anderson2010] 
+
 
 # Acknowledgements
 
