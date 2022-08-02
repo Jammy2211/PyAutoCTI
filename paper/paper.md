@@ -146,7 +146,7 @@ without a local `PyAutoCTI` installation.
 - `C3TM` [@c3tm]
 - `CDM03` [@cdm03]
 - `Pyxel` https://esa.gitlab.io/pyxel/page/introduction/
-
+- `STScI algorithm` [@Anderson2010] 
 
 # Acknowledgements
 
