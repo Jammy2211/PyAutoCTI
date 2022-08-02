@@ -66,7 +66,7 @@ If this time is longer than the time taken to move a cloud of electrons to the n
 released back into its original charge cloud, but to a subsequent one: creating a characteristic 'trailing' or 'smearing' 
 effect behind sources in the image. The CTI properties of a CCD can be calibrated, using image data that has sharp edges
 whose position and flux are known (or can be determined) prior to readout. `PyAutoCTI` fits a CTI model to these sharp
-edges and their preceeding trails which form due to CTI, 
+edges and their preceeding trails which form due to CTI. 
 
 ![A typical, raw HST ACS / WFC image, in units of electrons. This 30" x 15" (600 x 300 pixels) region contains warm 
 pixels, with an example warm pixel towards the right zoomed in on. This reveals CTI trailing behind (above) the warm 
@@ -143,6 +143,10 @@ without a local `PyAutoCTI` installation.
 # Related Software
 
 - `arCTIc` https://github.com/jkeger/arctic [@Massey2014]
+- `C3TM` [@c3tm]
+- `CDM03` [@cdm03]
+- `Pyxel` https://esa.gitlab.io/pyxel/page/introduction/
+- `STScI algorithm` [@Anderson2010] 
 
 # Acknowledgements
 
