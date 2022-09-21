@@ -102,6 +102,13 @@ charge (e.g.a flow of electrons)!
    installation/troubleshooting
 
 .. toctree::
+   :caption: API Reference:
+   :maxdepth: 1
+   :hidden:
+
+   api/api
+
+.. toctree::
    :caption: Advanced:
    :maxdepth: 1
    :hidden:
