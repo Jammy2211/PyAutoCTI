@@ -2,21 +2,12 @@ from typing import List, Tuple
 
 import autoarray as aa
 
-from autocti.extract.two_d.abstract import Extract2D
+from autocti.extract.two_d.parallel.abstract import Extract2DParallel
 
 from autocti.extract.two_d import extract_2d_util
 
 
-class Extract2DParallelFPR(Extract2D):
-    @property
-    def binning_axis(self) -> int:
-        """
-        The axis over which binning is performed to turn a 2D parallel FPR into a 1D FPR.
-
-        For a parallel extract `axis=1` such that binning is performed over the rows containing the FPR.
-        """
-        return 1
-
+class Extract2DParallelFPR(Extract2DParallel):
     def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
         """
         Returns a list of the 2D parallel FPR regions from the `region_list` containing signal  (e.g. the charge

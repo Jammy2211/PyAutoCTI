@@ -2,21 +2,12 @@ from typing import List, Tuple
 
 import autoarray as aa
 
+from autocti.extract.two_d.parallel.abstract import Extract2DParallel
+
 from autocti.extract.two_d import extract_2d_util
 
-from autocti.extract.two_d.abstract import Extract2D
 
-
-class Extract2DParallelEPER(Extract2D):
-    @property
-    def binning_axis(self) -> int:
-        """
-        The axis over which binning is performed to turn a 2D parallel EPER into a 1D EPER.
-
-        For a parallel extract `axis=1` such that binning is performed over the rows containing the EPER.
-        """
-        return 1
-
+class Extract2DParallelEPER(Extract2DParallel):
     def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
         """
         Returns a list of the 2D parallel EPER regions from the `region_list` containing signal  (e.g. the charge

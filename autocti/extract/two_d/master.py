@@ -2,14 +2,14 @@ from typing import Optional, Tuple
 
 import autoarray as aa
 
-from autocti.extract.two_d.parallel_overscan import Extract2DParallelOverscan
-from autocti.extract.two_d.parallel_fpr import Extract2DParallelFPR
-from autocti.extract.two_d.parallel_eper import Extract2DParallelEPER
-from autocti.extract.two_d.serial_overscan import Extract2DSerialOverscan
-from autocti.extract.two_d.serial_fpr import Extract2DSerialFPR
-from autocti.extract.two_d.serial_eper import Extract2DSerialEPER
-from autocti.extract.two_d.parallel_calibration import Extract2DParallelCalibration
-from autocti.extract.two_d.serial_calibration import Extract2DSerialCalibration
+from autocti.extract.two_d.parallel.overscan import Extract2DParallelOverscan
+from autocti.extract.two_d.parallel.fpr import Extract2DParallelFPR
+from autocti.extract.two_d.parallel.eper import Extract2DParallelEPER
+from autocti.extract.two_d.serial.overscan import Extract2DSerialOverscan
+from autocti.extract.two_d.serial.fpr import Extract2DSerialFPR
+from autocti.extract.two_d.serial.eper import Extract2DSerialEPER
+from autocti.extract.two_d.parallel.calibration import Extract2DParallelCalibration
+from autocti.extract.two_d.serial.calibration import Extract2DSerialCalibration
 
 
 class Extract2DMaster:

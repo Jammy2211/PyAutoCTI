@@ -2,21 +2,12 @@ from typing import Tuple
 
 import autoarray as aa
 
-from autocti.extract.two_d.abstract import Extract2D
+from autocti.extract.two_d.serial.abstract import Extract2DSerial
 
 from autocti.extract.two_d import extract_2d_util
 
 
-class Extract2DSerialFPR(Extract2D):
-    @property
-    def binning_axis(self) -> int:
-        """
-        The axis over which binning is performed to turn a 2D serial FPR into a 1D FPR.
-
-        For a serial extract `axis=0` such that binning is performed over the columns containing the FPR.
-        """
-        return 0
-
+class Extract2DSerialFPR(Extract2DSerial):
     def region_list_from(self, pixels: Tuple[int, int]):
         """
         Returns a list of the 2D serial FPR regions from the `region_list` containing signal  (e.g. the charge

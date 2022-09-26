@@ -2,22 +2,10 @@ from typing import List, Tuple
 
 import autoarray as aa
 
-from autocti.extract.two_d.abstract import Extract2D
-
-from autocti.extract.two_d import extract_2d_util
+from autocti.extract.two_d.serial.abstract import Extract2DSerial
 
 
-class Extract2DSerialPrescan(Extract2D):
-    @property
-    def binning_axis(self) -> int:
-        """
-        The axis over which binning is performed to turn a 2D serial prescan into a 1D array (which likely
-        contains the EPER of the main data).
-
-        For a serial extract `axis=1` such that binning is performed over the rows containing the FPR.
-        """
-        return 0
-
+class Extract2DSerialPrescan(Extract2DSerial):
     def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
         """
         Returns a list containing the 2D serial prescan region, which is simply the parallel overscan input to the

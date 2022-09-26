@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 import autoarray as aa
 
-from autocti.extract.two_d.parallel_fpr import Extract2DParallelFPR
+from autocti.extract.two_d.parallel.fpr import Extract2DParallelFPR
 
 
 class Extract2DParallelFPRCI(Extract2DParallelFPR):

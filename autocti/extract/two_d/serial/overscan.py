@@ -2,34 +2,24 @@ from typing import List, Tuple
 
 import autoarray as aa
 
-from autocti.extract.two_d.abstract import Extract2D
+from autocti.extract.two_d.serial.abstract import Extract2DSerial
 
 from autocti.extract.two_d import extract_2d_util
 
 
-class Extract2DParallelOverscan(Extract2D):
-    @property
-    def binning_axis(self) -> int:
-        """
-        The axis over which binning is performed to turn a 2D parallel overscan into a 1D array (which likely
-        contains the EPER of the main data).
-
-        For a parallel extract `axis=1` such that binning is performed over the rows containing the FPR.
-        """
-        return 1
-
+class Extract2DSerialOverscan(Extract2DSerial):
     def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
         """
-        Returns a list containing the 2D parallel overscan region, which is simply the parallel overscan input to the
+        Returns a list containing the 2D serial verscan region, which is simply the parallel overscan input to the
         object, extracted between two input `pixels` indexes (this is somewhat redundant information, but mimicks
         the `Extract` object API across all other `Extract` objects).
 
         (top-row, bottom-row, left-column, right-column) = (y0, y1, x0, x1)
 
-        The parallel overscan spans all columns of the image, thus the coordinates x0 and x1 do not change. y0 and y1
+        The serial overscan spans all columns of the image, thus the coordinates x0 and x1 do not change. y0 and y1
         are updated based on the `pixels` input.
 
-        Negative pixel values are supported to the `pixels` tuple, whereby rows in front of the parallel overscan are
+        Negative pixel values are supported to the `pixels` tuple, whereby columns in front of the serial overscan are
         also extracted.
 
         The diagram below illustrates the extraction for `pixels=(0, 1)`:
@@ -37,10 +27,10 @@ class Extract2DParallelOverscan(Extract2D):
         [] = read-out electronics
         [==========] = read-out register
         [..........] = serial prescan
-        [pppppppppp] = parallel overscan
+        [pppppppppp] = serial overscan
         [ssssssssss] = serial overscan
         [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
-        [tttttttttt] = parallel / serial charge injection region trail
+        [tttttttttt] = serial / serial charge injection region trail
 
                [ppppppppppppppppppppp]
                [ppppppppppppppppppppp]
@@ -55,29 +45,29 @@ class Extract2DParallelOverscan(Extract2D):
         []     [=====================]
                <---------Ser--------
 
-        The extracted regions correspond to the parallel overscan [ppppppppppppppp] regions.
+        The extracted regions correspond to the serial overscan [sss] regions.
 
         For `pixels=(0,1)` the extracted arrays returned via the `array_2d_list_from()` function keep the first
-        parallel pixels across the rows of the overscan:
+        serial pixels across the columns of the overscan:
 
-        array_2d_list[0] = [ppppppppppppppppppppp]
+        array_2d_list[0] = [s]
 
         Parameters
         ----------
         pixels
-            The row pixel index which determines the region of the overscan (e.g. `pixels=(0, 3)` will compute the
-            region corresponding to the 1st, 2nd and 3rd overscan rows).
+            The column pixel index which determines the region of the overscan (e.g. `pixels=(0, 3)` will compute the
+            region corresponding to the 1st, 2nd and 3rd overscan columns).
         """
-        parallel_overscan_extract = aa.Region2D(
+        serial_overscan_extract = aa.Region2D(
             (
-                self.parallel_overscan.y0 + pixels[0],
-                self.parallel_overscan.y0 + pixels[1],
-                self.parallel_overscan.x0,
-                self.parallel_overscan.x1,
+                self.serial_overscan.y0,
+                self.serial_overscan.y1,
+                self.serial_overscan.x0 + pixels[0],
+                self.serial_overscan.x0 + pixels[1],
             )
         )
 
-        return [parallel_overscan_extract]
+        return [serial_overscan_extract]
 
     def binned_region_1d_from(self, pixels: Tuple[int, int]) -> aa.Region1D:
         """
@@ -89,7 +79,7 @@ class Extract2DParallelOverscan(Extract2D):
         In order to create the 1D dataset a `Layout1D` is required, which requires the `region_list` containing the
         charge regions on the 1D dataset (e.g. where the FPR appears in 1D after binning).
 
-        The function returns the this region if the 1D dataset is extracted from the parallel overscan. This
+        The function returns the this region if the 1D dataset is extracted from the serial overscan. This
         assumes the overscan contains EPER trails and therefore all pixels in front of the overscan act as the
         charge region and therefore FPR. This is the case when science imaging flat field data is used.
 
@@ -99,7 +89,7 @@ class Extract2DParallelOverscan(Extract2D):
         Parameters
         ----------
         pixels
-            The row pixel index to extract the EPERs between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd EPER
-            rows)
+            The column pixel index to extract the FPRs between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd FPR
+            columns)
         """
         return extract_2d_util.binned_region_1d_eper_from(pixels=pixels)
