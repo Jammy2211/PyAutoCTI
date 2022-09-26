@@ -19,8 +19,8 @@ class Extract2DSerialFPR(Extract2D):
 
     def region_list_from(self, pixels: Tuple[int, int]):
         """
-        Extract the serial FPR of every charge injection region on the charge injection image and return as a list
-        of 2D arrays.
+        Extract the serial FPR of every signal region (e.g. the charge injection region of charge injection data) on
+        the CTI calibration data and return as a list of 2D arrays.
 
         Negative pixel values are supported to the `pixels` tuple, whereby columns in front of the serial FPRs (e.g.
         the serial prescan) are also extracted.

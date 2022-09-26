@@ -2,10 +2,22 @@ __Workspace__
 
 - Copy from Bayesian description stuff from HowToFit.
 
+
+__Bugs__
+
+- ImagingCI should not _need_ pre_cti_data (or have bool to turn off the need) because of pre_cti image estimate.
+
+
 __Paper__
 
 - readthedocs.
 - introduction notebook.
+
+
+__Visualization__
+
+- Always use square axis liimits even if extracted data is rectangular.
+
 
 __TimeEvolution Mock Data Product__
 

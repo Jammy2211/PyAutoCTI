@@ -19,8 +19,8 @@ class Extract2DParallelEPER(Extract2D):
 
     def region_list_from(self, pixels: Tuple[int, int]):
         """
-        Extract the parallel EPERs of every charge injection region on the charge injection image and return as a list
-        of 2D arrays.
+        Extract the parallel EPERs of every signal region (e.g. the charge injection region of charge injection data)
+        on the CTI calibration data and return as a list of 2D arrays.
 
         The diagram below illustrates the extraction for `pixels=(0, 1)`:
 
