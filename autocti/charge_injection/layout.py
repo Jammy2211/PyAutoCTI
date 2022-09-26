@@ -59,11 +59,11 @@ class Layout2DCI(Layout2D):
         self.electronics = electronics
 
     @property
-    def extract(self) -> "Extract2DMasterCI":
+    def extract(self) -> "Extract2DMaster":
 
-        from autocti.charge_injection.extract.master import Extract2DMasterCI
+        from autocti.extract.two_d.master import Extract2DMaster
 
-        return Extract2DMasterCI(
+        return Extract2DMaster(
             shape_2d=self.shape_2d,
             region_list=self.region_list,
             parallel_overscan=self.parallel_overscan,

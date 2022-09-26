@@ -62,7 +62,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
             return np.random.randint(0, int(1e9))
         return self.ci_seed
 
-    def injection_norm_list_from(self, total_columns: int) -> List[float]:
+    def median_list_from(self, total_columns: int) -> List[float]:
 
         np.random.seed(self._ci_seed)
 
@@ -82,7 +82,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
 
     def injection_norm_list_with_limit_from(self, total_columns: int) -> List[float]:
 
-        injection_norm_list = self.injection_norm_list_from(
+        injection_norm_list = self.median_list_from(
             total_columns=self.non_uniform_norm_limit
         )
 
@@ -138,7 +138,7 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
         for region in layout.region_list:
 
             if self.non_uniform_norm_limit is None:
-                injection_norm_list = self.injection_norm_list_from(
+                injection_norm_list = self.median_list_from(
                     total_columns=region.total_columns
                 )
             else:
