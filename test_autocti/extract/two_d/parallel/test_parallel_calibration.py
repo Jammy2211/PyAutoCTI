@@ -86,8 +86,6 @@ def test__extracted_layout_from():
 
 def test__imaging_ci_from(imaging_ci_7x7):
 
-    print(imaging_ci_7x7.layout.shape_2d)
-
     # The ci layout starts at column 1, so the left most column is removed below
 
     extract = ac.Extract2DParallelCalibration(
@@ -96,10 +94,8 @@ def test__imaging_ci_from(imaging_ci_7x7):
     )
 
     imaging_ci_parallel_calibration = extract.imaging_ci_from(
-        imaging_ci=imaging_ci_7x7, columns=(1, 3)
+        imaging_ci=imaging_ci_7x7, columns=(0, 6)
     )
-
-    print(imaging_ci_parallel_calibration.layout.shape_2d)
 
     assert (
         imaging_ci_parallel_calibration.image.native
