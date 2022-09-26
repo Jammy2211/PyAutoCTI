@@ -3,7 +3,7 @@ import numpy as np
 import autocti as ac
 
 
-def test__region_list_from__via_array_2d_list_from(serial_array, serial_masked_array):
+def test__region_list_from(serial_array, serial_masked_array):
     extract = ac.Extract2DSerialOverscan(serial_overscan=(0, 3, 1, 4))
 
     overscan_list = extract.array_2d_list_from(array=serial_array, pixels=(0, 1))

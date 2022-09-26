@@ -94,7 +94,6 @@ class AnalysisImagingCI(Analysis):
             hyper_noise_scalar_list=hyper_noise_scalar_list,
         )
 
-
         logl = fit.log_likelihood
 
         return logl

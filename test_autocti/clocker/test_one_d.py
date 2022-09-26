@@ -41,7 +41,7 @@ def test__data_mapped_to_2d_and_then_1d():
     ccd = ac.CCD(phases=[ccd_phase], fraction_of_traps_per_phase=[1.0])
     traps = [ac.TrapInstantCapture(10.0, -1.0 / np.log(0.5))]
 
-    image_via_arctic =add_cti(
+    image_via_arctic = add_cti(
         image=arr_2d,
         parallel_traps=traps,
         parallel_ccd=ccd,

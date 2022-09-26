@@ -102,7 +102,8 @@ def test__imaging_ci_from(imaging_ci_7x7):
     print(imaging_ci_parallel_calibration.layout.shape_2d)
 
     assert (
-        imaging_ci_parallel_calibration.image.native == imaging_ci_7x7.image.native[:, 1:7]
+        imaging_ci_parallel_calibration.image.native
+        == imaging_ci_7x7.image.native[:, 1:7]
     ).all()
     assert (
         imaging_ci_parallel_calibration.noise_map.native

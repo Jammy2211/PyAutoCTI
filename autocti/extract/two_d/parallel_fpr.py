@@ -19,8 +19,13 @@ class Extract2DParallelFPR(Extract2D):
 
     def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
         """
-        Returns a list of the 2D parallel FPR regions given the `Extract`'s list of charge injection regions, where
-        a 2D region is defined following the conventio:
+        Returns a list of the 2D parallel FPR regions from the `region_list` containing signal  (e.g. the charge
+        injection regions of charge injection data), extracted between two input `pixels` indexes.
+
+        Negative pixel values are supported to the `pixels` tuple, whereby columns in front of the parallel FPRs
+        are also extracted.
+
+        A 2D region is defined following the convention:
 
         (top-row, bottom-row, left-column, right-column) = (y0, y1, x0, x1)
 
@@ -37,7 +42,7 @@ class Extract2DParallelFPR(Extract2D):
         [..........] = serial prescan
         [pppppppppp] = parallel overscan
         [ssssssssss] = serial overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
         [tttttttttt] = parallel / serial charge injection region trail
 
                [ppppppppppppppppppppp]

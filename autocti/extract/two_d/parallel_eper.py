@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import List, Tuple
 
 import autoarray as aa
 
@@ -17,10 +17,13 @@ class Extract2DParallelEPER(Extract2D):
         """
         return 1
 
-    def region_list_from(self, pixels: Tuple[int, int]):
+    def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
         """
-        Extract the parallel EPERs of every signal region (e.g. the charge injection region of charge injection data)
-        on the CTI calibration data and return as a list of 2D arrays.
+        Returns a list of the 2D parallel EPER regions from the `region_list` containing signal  (e.g. the charge
+        injection regions of charge injection data), extracted between two input `pixels` indexes.
+
+        Negative pixel values are supported to the `pixels` tuple, whereby columns in front of the parallel EPERs
+        (e.g. the FPRs) are also extracted.
 
         The diagram below illustrates the extraction for `pixels=(0, 1)`:
 
@@ -29,7 +32,7 @@ class Extract2DParallelEPER(Extract2D):
         [..........] = serial prescan
         [pppppppppp] = parallel overscan
         [ssssssssss] = serial overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
         [tttttttttt] = parallel / serial charge injection region trail
 
                [ppppppppppppppppppppp]
@@ -106,7 +109,7 @@ class Extract2DParallelEPER(Extract2D):
         [..........] = serial prescan
         [pppppppppp] = parallel overscan
         [ssssssssss] = serial overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
         [tttttttttt] = parallel / serial charge injection region trail
 
                [tptpptptptpptpptpptpt]

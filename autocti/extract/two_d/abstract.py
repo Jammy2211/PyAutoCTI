@@ -111,8 +111,8 @@ class Extract2D:
         self, array: aa.Array2D, pixels: Tuple[int, int]
     ) -> np.ndarray:
         """
-        Extract a region (e.g. the parallel FPR) of every signal region (e.g. the charge injection region of charge injection data) on the CTI calibration data and
-        stack them by taking their mean.
+        Extract a region (e.g. the parallel FPR) of every signal region (e.g. the charge injection region of charge
+        injection data) on the CTI calibration data and stack them by taking their mean.
 
         This returns the 2D average of the extracted regions (e.g. the parallel FPRs) of all of the charge injection
         regions, which for certain CCD charge injection electronics one may expect to be similar.

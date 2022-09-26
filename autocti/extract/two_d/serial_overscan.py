@@ -20,10 +20,9 @@ class Extract2DSerialOverscan(Extract2D):
 
     def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
         """
-        Returns a list of the 2D serial overscan regions, which is simply the serial overscan input to the
-        object.
-
-        This is so that the extract API can be mimicked across all extractors.
+        Returns a list containing the 2D serial verscan region, which is simply the parallel overscan input to the
+        object, extracted between two input `pixels` indexes (this is somewhat redundant information, but mimicks
+        the `Extract` object API across all other `Extract` objects).
 
         (top-row, bottom-row, left-column, right-column) = (y0, y1, x0, x1)
 
@@ -40,7 +39,7 @@ class Extract2DSerialOverscan(Extract2D):
         [..........] = serial prescan
         [pppppppppp] = serial overscan
         [ssssssssss] = serial overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
         [tttttttttt] = serial / serial charge injection region trail
 
                [ppppppppppppppppppppp]
