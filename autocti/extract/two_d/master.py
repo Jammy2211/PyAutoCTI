@@ -118,7 +118,7 @@ class Extract2DMaster:
 
     @property
     def serial_prescan(self):
-        return Extract2DSerialPrescan(serial_overscan=self._serial_prescan)
+        return Extract2DSerialPrescan(serial_prescan=self._serial_prescan)
 
     def regions_array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
         """
