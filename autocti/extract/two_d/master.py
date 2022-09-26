@@ -6,6 +6,7 @@ from autocti.extract.two_d.parallel.overscan import Extract2DParallelOverscan
 from autocti.extract.two_d.parallel.fpr import Extract2DParallelFPR
 from autocti.extract.two_d.parallel.eper import Extract2DParallelEPER
 from autocti.extract.two_d.serial.overscan import Extract2DSerialOverscan
+from autocti.extract.two_d.serial.prescan import Extract2DSerialPrescan
 from autocti.extract.two_d.serial.fpr import Extract2DSerialFPR
 from autocti.extract.two_d.serial.eper import Extract2DSerialEPER
 from autocti.extract.two_d.parallel.calibration import Extract2DParallelCalibration
@@ -114,6 +115,10 @@ class Extract2DMaster:
     @property
     def serial_overscan(self):
         return Extract2DSerialOverscan(serial_overscan=self._serial_overscan)
+
+    @property
+    def serial_prescan(self):
+        return Extract2DSerialPrescan(serial_overscan=self._serial_prescan)
 
     def regions_array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
         """
