@@ -86,7 +86,7 @@ def test__noise_scaling_map_list_is_list_of_result__are_correct(
         fit_analysis.chi_squared_map_of_serial_overscan_no_trails, 1.0e-2
     )
 
-    assert result.noise_scaling_map_of_regions_ci[1, 1] == pytest.approx(18.16, 1.0e-1)
+    assert result.noise_scaling_map_of_regions_ci[1, 1] == pytest.approx(20.25, 1.0e-1)
     assert result.noise_scaling_map_of_parallel_epers[1, 1] == pytest.approx(
         0.0, 1.0e-4
     )
