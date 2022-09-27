@@ -39,7 +39,6 @@ class Clocker2D(AbstractClocker):
         serial_fast_mode: Optional[bool] = None,
         verbosity: int = 0,
         poisson_seed: int = -1,
-        euclid_orientation_hack: bool = False,
     ):
         """
         Performs clocking of a 2D image via the c++ arctic algorithm.
@@ -96,10 +95,6 @@ class Clocker2D(AbstractClocker):
             Whether to silence print statements and output from the c++ arctic call.
         poisson_seed
             A seed for the random number generator which draws the Poisson trap densities from a Poisson distribution.
-        euclid_orientation_hack
-            At some point in the processing of Euclid CCD's, a bug emerged where the CTI correction is performed in
-            the incorrect direction for any quadrant in the top half (e.g. [1-1] -> [3-3]). This hack rotates
-            the quadrants before correction so that CTI is modeled in the correct direction.
         """
 
         super().__init__(iterations=iterations, verbosity=verbosity)
@@ -128,8 +123,6 @@ class Clocker2D(AbstractClocker):
         self.serial_fast_mode = serial_fast_mode
 
         self.poisson_seed = poisson_seed
-
-        self.euclid_orientation_hack = euclid_orientation_hack
 
     def _parallel_traps_ccd_from(self, cti: CTI2D):
         """
@@ -601,11 +594,6 @@ class Clocker2D(AbstractClocker):
         parallel_ccd = self.ccd_from(ccd_phase=parallel_ccd)
         serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
 
-        if self.euclid_orientation_hack:
-            data = self._flip_for_euclid_hack(
-                data=data, row_index=data.header.row_index
-            )
-
         image_cti_removed = remove_cti(
             image=data,
             n_iterations=self.iterations,
@@ -633,20 +621,6 @@ class Clocker2D(AbstractClocker):
             serial_prune_frequency=self.serial_prune_frequency,
         )
 
-        if self.euclid_orientation_hack:
-            image_cti_removed = self._flip_for_euclid_hack(
-                data=image_cti_removed, row_index=data.header.row_index
-            )
-
         return aa.Array2D.manual_mask(
             array=image_cti_removed, mask=data.mask, header=data.header
         ).native
-
-    def _flip_for_euclid_hack(self, data, row_index):
-
-        if row_index in "123":
-
-            data = np.flipud(data)
-            data = np.fliplr(data)
-
-        return data
