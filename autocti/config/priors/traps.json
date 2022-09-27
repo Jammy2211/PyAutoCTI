@@ -27,30 +27,12 @@
             }
         },
         "fractional_volume_none_exposed": {
-            "type": "Uniform",
-            "lower_limit": 0.0,
-            "upper_limit": 1.0,
-            "width_modifier": {
-                "type": "Relative",
-                "value": 0.5
-            },
-            "gaussian_limits": {
-                "lower": 0.0,
-                "upper": "inf"
-            }
+            "type": "Constant",
+            "value": 0.0
         },
         "fractional_volume_full_exposed": {
-            "type": "Uniform",
-            "lower_limit": 0.0,
-            "upper_limit": 1.0,
-            "width_modifier": {
-                "type": "Relative",
-                "value": 0.5
-            },
-            "gaussian_limits": {
-                "lower": 0.0,
-                "upper": "inf"
-            }
+            "type": "Constant",
+            "value": 0.0
         }
     },
     "TrapInstantCaptureContinuum": {

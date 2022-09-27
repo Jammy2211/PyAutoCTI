@@ -95,11 +95,7 @@ class AnalysisImagingCI(Analysis):
         )
 
 
-        logl = fit.log_likelihood
-
-        print(logl)
-
-        return logl
+        return fit.figure_of_merit
 
     def hyper_noise_scalar_list_from(
         self, instance: ModelInstance, hyper_noise_scale: bool = True
