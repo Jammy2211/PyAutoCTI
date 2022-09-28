@@ -10,7 +10,7 @@ def make_clocker_dict():
         "type": "autocti.clocker.two_d.Clocker2D",
         "iterations": 5,
         "parallel_roe": {
-            "type": "arcticpy.src.roe.ROE",
+            "type": "arcticpy.roe.ROE",
             "dwell_times": {
                 "type": "numpy.ndarray",
                 "array": [1.0],
@@ -28,7 +28,7 @@ def make_clocker_dict():
         "parallel_poisson_traps": False,
         "parallel_fast_mode": False,
         "serial_roe": {
-            "type": "arcticpy.src.roe.ROE",
+            "type": "arcticpy.roe.ROE",
             "dwell_times": {
                 "type": "numpy.ndarray",
                 "array": [1.0],
@@ -46,7 +46,6 @@ def make_clocker_dict():
         "serial_fast_mode": False,
         "verbosity": 0,
         "poisson_seed": -1,
-        "euclid_orientation_hack": False,
     }
 
 

@@ -1,11 +1,10 @@
+import os
 from os import path
 import pytest
 from matplotlib import pyplot
 
 import autocti as ac
-
 from autofit import conf
-
 from autocti import fixtures
 
 
@@ -25,6 +24,15 @@ def make_plot_patch(monkeypatch):
 
 
 directory = path.dirname(path.realpath(__file__))
+
+
+@pytest.fixture(autouse=True, scope="session")
+def remove_logs():
+    yield
+    for d, _, files in os.walk(directory):
+        for file in files:
+            if file.endswith(".log"):
+                os.remove(path.join(d, file))
 
 
 @pytest.fixture(autouse=True)

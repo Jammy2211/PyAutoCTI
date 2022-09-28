@@ -12,6 +12,11 @@ def test__cti_model__creates_correct_model_from_inputs():
         serial_ccd=ac.CCDPhase,
     )
 
+    model.parallel_trap_list[0].fractional_volume_none_exposed = 0.0
+    model.parallel_trap_list[0].fractional_volume_full_exposed = 0.0
+    model.serial_trap_list[0].fractional_volume_none_exposed = 0.0
+    model.serial_trap_list[0].fractional_volume_full_exposed = 0.0
+
     parallel_trap_list = model.parallel_trap_list[0]
     parallel_ccd = model.parallel_ccd
     serial_trap_list = model.serial_trap_list[0]
