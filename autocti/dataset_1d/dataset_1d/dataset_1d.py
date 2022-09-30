@@ -106,6 +106,61 @@ class Dataset1D(abstract_dataset.AbstractDataset):
             pixel_line_dict: dict,
             size: int,
     ) -> "Dataset1D":
+        """
+        Parse a pixel line output from the warm-pixels script.
+
+        Pixel lines are individual or averaged lines found by searching for
+        warm pixels or consistent warm pixels in CCD data. The warm pixel
+        and its are extracted and saved as a JSON which can then be loaded
+        and fit as part of autocti.
+
+        Parameters
+        ----------
+        pixel_line_dict
+            A dictionary describing a pixel line collection.
+
+            e.g.
+            {
+                "location": [
+                    2,
+                    4,
+                ],
+                "flux": 1234.,
+                "data": [
+                    5.0,
+                    3.0,
+                    2.0,
+                    1.0,
+                ],
+                "noise": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0,
+                ]
+            }
+
+            location
+                The location of the warm pixel in (row, column) where row is the
+                distance to the serial register - 1
+            flux
+                The computed flux of the warm pixel prior to CTI
+            data
+                The extracted pixel line. A 1D array where the first entry is
+                the warm pixel (FPR) and the remaining entries are the trail
+                (EPER)
+            noise
+                The noise map for the pixel line.
+        size
+            The size of the CCD. That is, the number of pixels in the parallel
+            direction.
+
+        Returns
+        -------
+            A Dataset1D initialised to represent the pixel line. The pixel line
+            and noise are embedded in Array1Ds of the same size as the array in
+            the parallel direction
+        """
         serial_distance, _ = pixel_line_dict["location"]
 
         def make_array(data):
