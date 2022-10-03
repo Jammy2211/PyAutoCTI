@@ -161,7 +161,7 @@ class Dataset1D(abstract_dataset.AbstractDataset):
             and noise are embedded in Array1Ds of the same size as the array in
             the parallel direction
         """
-        serial_distance, _ = pixel_line_dict["location"]
+        serial_distance, _ = map(int, pixel_line_dict["location"])
 
         def make_array(data):
             array = np.zeros(size)
