@@ -1,9 +1,9 @@
 import numpy as np
 from typing import Optional
 
-from arcticpy import add_cti
-from arcticpy import remove_cti
-from arcticpy import ROE
+from arcticpytest import add_cti
+from arcticpytest import remove_cti
+from arcticpytest import ROE
 
 import autoarray as aa
 

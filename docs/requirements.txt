@@ -4,9 +4,11 @@ matplotlib>=3.0.3
 numpy>=1.18.0
 pyprojroot==0.2.0
 scikit-learn==0.21.3
+arcticpytest==1.2
 autoconf==2022.07.11.1
 autofit==2022.07.11.1
 autoarray==2022.07.11.1
+arcticp
 sphinx==4.0.0
 furo
 myst-parser
