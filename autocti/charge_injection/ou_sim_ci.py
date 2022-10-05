@@ -1,8 +1,8 @@
 import numpy as np
 from typing import List, Union
 
-from arcticpytest import CCDPhase
-from arcticpytest import TrapInstantCapture
+from arcticpy import CCDPhase
+from arcticpy import TrapInstantCapture
 
 from autoarray.instruments import euclid
 from autoarray.layout import layout_util

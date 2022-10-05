@@ -1,6 +1,6 @@
 from typing import List, Tuple
 
-from arcticpytest import TrapInstantCapture
+from arcticpy import TrapInstantCapture
 
 from autocti import exc
 

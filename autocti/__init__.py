@@ -9,14 +9,14 @@ from autoarray.instruments import acs
 from autoarray.dataset import preprocess
 from autoarray.dataset.imaging import Imaging
 
-from arcticpytest import ROE
-from arcticpytest import ROEChargeInjection
-from arcticpytest import CCD
-from arcticpytest import CCDPhase
-from arcticpytest import TrapInstantCapture
-from arcticpytest import TrapSlowCapture
-from arcticpytest import TrapInstantCaptureContinuum
-from arcticpytest import TrapSlowCaptureContinuum
+from arcticpy import ROE
+from arcticpy import ROEChargeInjection
+from arcticpy import CCD
+from arcticpy import CCDPhase
+from arcticpy import TrapInstantCapture
+from arcticpy import TrapSlowCapture
+from arcticpy import TrapInstantCaptureContinuum
+from arcticpy import TrapSlowCaptureContinuum
 
 from .charge_injection.fit import FitImagingCI
 from .charge_injection.hyper import HyperCINoiseScalar

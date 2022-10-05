@@ -1,7 +1,7 @@
 from typing import Optional, List
 
-from arcticpytest import CCDPhase
-from arcticpytest import TrapInstantCapture
+from arcticpy import CCDPhase
+from arcticpy import TrapInstantCapture
 
 from autoconf.dictable import Dictable
 

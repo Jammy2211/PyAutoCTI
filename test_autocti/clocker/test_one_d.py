@@ -3,7 +3,7 @@ import os
 import pytest
 import numpy as np
 
-from arcticpytest import add_cti
+from arcticpy import add_cti
 
 import autocti as ac
 
