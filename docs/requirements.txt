@@ -8,7 +8,6 @@ arcticpytest==1.2
 autoconf==2022.07.11.1
 autofit==2022.07.11.1
 autoarray==2022.07.11.1
-arcticp
 sphinx==4.0.0
 furo
 myst-parser
