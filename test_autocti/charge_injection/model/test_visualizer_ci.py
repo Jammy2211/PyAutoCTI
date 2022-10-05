@@ -14,11 +14,6 @@ def make_visualizer_plotter_setup():
     return path.join("{}".format(directory), "files")
 
 
-@pytest.fixture(autouse=True)
-def push_config(plot_path):
-    conf.instance.push(path.join(directory, "config"), output_path=plot_path)
-
-
 class TestVisualizerImagingCI:
     def test__visualizes_imaging_ci_using_configs(
         self, imaging_ci_7x7, plot_path, plot_patch

@@ -14,11 +14,6 @@ def make_visualizer_plotter_setup():
     return path.join("{}".format(directory), "files")
 
 
-@pytest.fixture(autouse=True)
-def push_config(plot_path):
-    conf.instance.push(path.join(directory, "config"), output_path=plot_path)
-
-
 class TestVisualizerDataset1D:
     def test__visualizes_dataset_1d_using_configs(
         self, dataset_1d_7, plot_path, plot_patch
