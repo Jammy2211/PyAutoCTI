@@ -1,13 +1,13 @@
-astropy>=3.0.0
-numpydoc>=1.0.0
-matplotlib>=3.0.3
-numpy>=1.18.0
-pyprojroot==0.2.0
-scikit-learn==0.21.3
+setuptools_scm==7.0.5
+setuptools >=62
+numpy==1.21
+cython==0.29
 arcticpytest==1.2
 autoconf==2022.07.11.1
 autofit==2022.07.11.1
 autoarray==2022.07.11.1
+numpydoc>=1.0.0
+pyprojroot==0.2.0
 sphinx==4.0.0
 furo
 myst-parser
