@@ -121,23 +121,15 @@ class Dataset1D(abstract_dataset.AbstractDataset):
 
             e.g.
             {
-                "location": [
-                    2,
-                    4,
-                ],
-                "flux": 1234.,
-                "data": [
-                    5.0,
-                    3.0,
-                    2.0,
-                    1.0,
-                ],
-                "noise": [
-                    1.0,
-                    1.0,
-                    1.0,
-                    1.0,
-                ]
+                'data': [1., 4., 5.],
+                'flux': 150,
+                'location': [26, 25],
+                'noise': [2., 3., 4.],
+                'trail': {
+                    'data': [4.0],
+                    'flux': 4.0,
+                    'noise': [4.47213595499958]
+                }
             }
 
             location
@@ -146,11 +138,13 @@ class Dataset1D(abstract_dataset.AbstractDataset):
             flux
                 The computed flux of the warm pixel prior to CTI
             data
-                The extracted pixel line. A 1D array where the first entry is
-                the warm pixel (FPR) and the remaining entries are the trail
-                (EPER)
+                A 1D array in the parallel direction including a warm pixel
             noise
                 The noise map for the pixel line.
+            trail
+                Includes data, flux and noise for just the extracted pixel line.
+                This is a 1D array where the first entry is the warm pixel (FPR)
+                and the remaining entries are the trail (EPER)
         size
             The size of the CCD. That is, the number of pixels in the parallel
             direction.
@@ -168,10 +162,12 @@ class Dataset1D(abstract_dataset.AbstractDataset):
             array[serial_distance: serial_distance + len(data)] = data
             return Array1D.manual_slim(array, pixel_scales=0.1)
 
+        trail = pixel_line_dict["trail"]
+
         return Dataset1D(
-            data=make_array(pixel_line_dict["data"]),
-            noise_map=make_array(pixel_line_dict["noise"]),
-            pre_cti_data=make_array(np.array([pixel_line_dict["flux"]])),
+            data=make_array(trail["data"]),
+            noise_map=make_array(trail["noise"]),
+            pre_cti_data=make_array(np.array([trail["flux"]])),
             layout=Layout1D(
                 shape_1d=(size,),
                 region_list=[Region1D(
