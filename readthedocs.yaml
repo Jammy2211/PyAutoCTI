@@ -9,6 +9,7 @@ sphinx:
   configuration: docs/conf.py
 
 build:
+   image: latest
    apt_packages:
       - libgsl-dev
 
