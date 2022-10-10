@@ -8,6 +8,10 @@ python:
 sphinx:
   configuration: docs/conf.py
 
+build:
+   apt_packages:
+      - libgsl-dev
+
 formats:
   []
 
