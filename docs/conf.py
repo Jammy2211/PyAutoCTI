@@ -15,7 +15,7 @@ import datetime
 
 from pyprojroot import here
 
-# /home/docs/checkouts/readthedocs.org/user_builds/pyautolens/checkouts/latest/docs
+# /home/docs/checkouts/readthedocs.org/user_builds/pyautocti/checkouts/latest/docs
 
 clone_path = str(here())
 
@@ -116,8 +116,8 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # -- Options for HTML output -------------------------------------------------
 
 html_theme = "furo"
-html_title = "PyAutoLens"
-html_short_title = "PyAutoLens"
+html_title = "PyAutoCTI"
+html_short_title = "PyAutoCTI"
 html_permalinks_icon = "<span>#</span>"
 html_last_updated_fmt = "%b %d, %Y"
 
@@ -132,8 +132,8 @@ add_function_parentheses = False
 html_context = {
     "menu_links_name": "Repository",
     "doc_path": "docs",
-    "github_project": "pyautolens",
-    "github_repo": "pyautolens",
+    "github_project": "pyautocti",
+    "github_repo": "pyautocti",
     "github_version": "master",
 }
 language = "en"
