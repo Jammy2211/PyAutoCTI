@@ -91,7 +91,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # -- Options for HTML output -------------------------------------------------
 
-# html_theme = "furo"
+html_theme = "furo"
 html_title = "PyAutoCTI"
 html_short_title = "PyAutoCTI"
 html_permalinks_icon = "<span>#</span>"
