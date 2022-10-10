@@ -6,7 +6,7 @@ API Reference
 Data Structures
 ---------------
 
-.. currentmodule:: autocti
+.. currentmodule:: autolens
 
 .. autosummary::
    :toctree: generated/
@@ -18,6 +18,8 @@ Data Structures
    ValuesIrregular
    Grid1D
    Grid2D
+   Grid2DIterate
+   Grid2DIrregular
 
 ----------
 Dataset 1D
