@@ -6,7 +6,7 @@ API Reference
 Data Structures
 ---------------
 
-.. currentmodule:: autolens
+.. currentmodule:: autocti
 
 .. autosummary::
    :toctree: generated/
