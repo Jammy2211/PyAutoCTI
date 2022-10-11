@@ -36,48 +36,48 @@ class Extract2DParallelCalibration:
 
     def extraction_region_from(self, columns: Tuple[int, int]) -> aa.type.Region2DLike:
         """
-        Extract a parallel calibration array from an input array, where this array contains a sub-set of the input
-        array which is specifically used for only parallel CTI calibration. This array is simply a specified number
-        of columns that are closest to the read-out electronics.
+         Extract a parallel calibration array from an input array, where this array contains a sub-set of the input
+         array which is specifically used for only parallel CTI calibration. This array is simply a specified number
+         of columns that are closest to the read-out electronics.
 
-        The diagram below illustrates the arrays that is extracted from a array with columns=(0, 3):
+         The diagram below illustrates the arrays that is extracted from a array with columns=(0, 3):
 
-        [] = read-out electronics
-        [==========] = read-out register
-        [..........] = serial prescan
-        [pppppppppp] = parallel overscan
-        [ssssssssss] = serial overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
-        [tttttttttt] = parallel / serial charge injection region trail
+         [] = read-out electronics
+         [==========] = read-out register
+         [..........] = serial prescan
+         [pppppppppp] = parallel overscan
+         [ssssssssss] = serial overscan
+         [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
+         [tttttttttt] = parallel / serial charge injection region trail
 
-               [ptptptptptptptptptptp]
-               [tptptptptptptptptptpt]
-          [...][xxxxxxxxxxxxxxxxxxxxx][sss]
-          [...][ccccccccccccccccccccc][sss]
-        | [...][ccccccccccccccccccccc][sts]    |
-        | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
-        P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
-        | [...][ccccccccccccccccccccc][sss]    | clocking
-        \/[...][ccccccccccccccccccccc][sss]   \/
+                [ptptptptptptptptptptp]
+                [tptptptptptptptptptpt]
+           [...][xxxxxxxxxxxxxxxxxxxxx][sss]
+           [...][ccccccccccccccccccccc][sss]
+         | [...][ccccccccccccccccccccc][sts]    |
+         | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
+         P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
+         | [...][ccccccccccccccccccccc][sss]    | clocking
+         \/[...][ccccccccccccccccccccc][sss]   \/
 
-        []     [=====================]
-               <--------Ser---------
+         []     [=====================]
+                <--------Ser---------
 
-        The extracted array keeps just the trails following all charge injection scans and replaces all other
-        values with 0s:
+         The extracted array keeps just the trails following all charge injection scans and replaces all other
+         values with 0s:
 
-               [ptp]
-               [tpt]
-               [xxx]
-               [ccc]
-        |      [ccc]                           |
-        |      [xxx]                           | Direction
-       Par     [xxx]                           | of
-        |      [ccc]                           | clocking
-               [ccc]                           |
+                [ptp]
+                [tpt]
+                [xxx]
+                [ccc]
+         |      [ccc]                           |
+         |      [xxx]                           | Direction
+        Par     [xxx]                           | of
+         |      [ccc]                           | clocking
+                [ccc]                           |
 
-        []     [=====================]
-               <--------Ser---------
+         []     [=====================]
+                <--------Ser---------
         """
         return self.region_list[0].serial_towards_roe_full_region_from(
             shape_2d=self.shape_2d, pixels=columns
@@ -96,7 +96,7 @@ class Extract2DParallelCalibration:
         [..........] = serial prescan
         [pppppppppp] = parallel overscan
         [ssssssssss] = serial overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
         [tttttttttt] = parallel / serial charge injection region trail
 
                [ptptptptptptptptptptp]
@@ -123,7 +123,7 @@ class Extract2DParallelCalibration:
         |      [xxx]                           | Direction
         P      [xxx]                           | of
         |      [ccc]                           | clocking
-        \/     [ccc]                          \/
+        |/     [ccc]                          \/
 
         []     [=====================]
                <--------Ser---------
@@ -161,7 +161,7 @@ class Extract2DParallelCalibration:
         [..........] = serial prescan
         [pppppppppp] = parallel overscan
         [ssssssssss] = serial overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
         [tttttttttt] = parallel / serial charge injection region trail
 
                [ptptptptptptptptptptp]
@@ -188,7 +188,7 @@ class Extract2DParallelCalibration:
         |      [xxx]                           | Direction
         P      [xxx]                           | of
         |      [ccc]                           | clocking
-        \/     [ccc]                           \/
+        |/     [ccc]                           \/
 
         []     [=====================]
                <--------Ser---------
@@ -251,8 +251,10 @@ class Extract2DParallelCalibration:
 
             noise_scaling_map_list = None
 
-        extraction_region = imaging_ci.layout.extract.parallel_calibration.extraction_region_from(
-            columns=columns
+        extraction_region = (
+            imaging_ci.layout.extract.parallel_calibration.extraction_region_from(
+                columns=columns
+            )
         )
 
         return ImagingCI(

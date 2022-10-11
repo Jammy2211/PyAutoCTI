@@ -82,7 +82,7 @@ class Layout2D(aa.Layout2D):
     ) -> "Layout2D":
         """
         The charge injection layout after an extraction is performed on its associated charge injection image, where
-        the extraction is defined by a region of pixel coordinates
+        the extraction is defined by a region of pixel coordinates:
 
         (top-row, bottom-row, left-column, right-column) = (y0, y1, x0, x1)
 

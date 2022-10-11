@@ -137,9 +137,9 @@ class Dataset1DPlotter(Plotter):
         Plots the individual attributes of the plotter's `Dataset1D` object in 1D.
 
         These 1D plots correspond to regions in 1D on the charge injection image, which are binned up to produce a
-         1D plot. 
-         
-         For example, for the input `region=fpr`, this function extracts the FPR over each charge region and bins them 
+         1D plot.
+
+         For example, for the input `region=fpr`, this function extracts the FPR over each charge region and bins them
         such that the 1D plot shows the average FPR.
 
         The API is such that every plottable attribute of the `Dataset1D` object is an input parameter of type bool of
@@ -154,9 +154,9 @@ class Dataset1DPlotter(Plotter):
         noise_map
             Whether or not to make a 1D plot (via `plot`) of the noise-map extracted and binned over the region.
         pre_cti_data
-            Whether or not to make a 1D plot (via `plot`) of the pre-cti data extracted and binned over the region.        
+            Whether or not to make a 1D plot (via `plot`) of the pre-cti data extracted and binned over the region.
         signal_to_noise_map
-            Whether or not to make a 1D plot (via `plot`) of the signal-to-noise map data extracted and binned over 
+            Whether or not to make a 1D plot (via `plot`) of the signal-to-noise map data extracted and binned over
             the region.
         """
 

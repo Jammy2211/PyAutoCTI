@@ -6,7 +6,7 @@ from autocti import Dataset1D
 
 @pytest.fixture(name="flux")
 def make_flux():
-    return 1234.
+    return 1234.0
 
 
 @pytest.fixture(name="pixel_line_dict")
@@ -30,7 +30,7 @@ def make_pixel_line_dict(flux):
             1.0,
             1.0,
             1.0,
-        ]
+        ],
     }
 
 
@@ -48,17 +48,21 @@ def make_dataset_1d(pixel_line_dict, size):
 
 
 def test_parse_data(dataset_1d):
-    assert (dataset_1d.data == Array1D.manual_native(
-        [0., 0., 5., 3., 2., 1., 0., 0., 0., 0.],
-        pixel_scales=0.1
-    )).all()
+    assert (
+        dataset_1d.data
+        == Array1D.manual_native(
+            [0.0, 0.0, 5.0, 3.0, 2.0, 1.0, 0.0, 0.0, 0.0, 0.0], pixel_scales=0.1
+        )
+    ).all()
 
 
 def test_parse_noise(dataset_1d):
-    assert (dataset_1d.noise_map == Array1D.manual_native(
-        [0., 0., 1., 1., 1., 1., 0., 0., 0., 0.],
-        pixel_scales=0.1
-    )).all()
+    assert (
+        dataset_1d.noise_map
+        == Array1D.manual_native(
+            [0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0], pixel_scales=0.1
+        )
+    ).all()
 
 
 @pytest.fixture(name="pre_cti_data")
@@ -67,10 +71,12 @@ def make_pre_cti_data(dataset_1d):
 
 
 def test_pre_cti(pre_cti_data, flux):
-    assert (pre_cti_data == Array1D.manual_native(
-        [0., 0., flux, 0., 0., 0., 0., 0., 0., 0.],
-        pixel_scales=0.1
-    )).all()
+    assert (
+        pre_cti_data
+        == Array1D.manual_native(
+            [0.0, 0.0, flux, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], pixel_scales=0.1
+        )
+    ).all()
 
 
 @pytest.fixture(name="layout")
@@ -83,16 +89,13 @@ def test_layout(layout, size):
 
 
 def test_region(layout, pre_cti_data, flux):
-    region, = layout.region_list
+    (region,) = layout.region_list
     assert pre_cti_data[region.slice] == flux
 
 
 def test_float_location():
     pixel_line_dict = {
-        "location": [
-            13.0,
-            0
-        ],
+        "location": [13.0, 0],
         "date": 2453963.758414352,
         "background": 31.30540652532858,
         "flux": 992.075,
@@ -121,7 +124,7 @@ def test_float_location():
             48.141066131134835,
             47.34273778298907,
             50.227607541836136,
-            47.744377164578616
+            47.744377164578616,
         ],
         "noise": [
             0.5256967407012534,
@@ -148,8 +151,8 @@ def test_float_location():
             0.5610511215490508,
             0.5220946749091355,
             0.7818605598254397,
-            0.558755420934289
-        ]
+            0.558755420934289,
+        ],
     }
     size = 2068
 

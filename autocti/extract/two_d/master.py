@@ -2,14 +2,15 @@ from typing import Optional, Tuple
 
 import autoarray as aa
 
-from autocti.extract.two_d.parallel_overscan import Extract2DParallelOverscan
-from autocti.extract.two_d.parallel_fpr import Extract2DParallelFPR
-from autocti.extract.two_d.parallel_eper import Extract2DParallelEPER
-from autocti.extract.two_d.serial_overscan import Extract2DSerialOverscan
-from autocti.extract.two_d.serial_fpr import Extract2DSerialFPR
-from autocti.extract.two_d.serial_eper import Extract2DSerialEPER
-from autocti.extract.two_d.parallel_calibration import Extract2DParallelCalibration
-from autocti.extract.two_d.serial_calibration import Extract2DSerialCalibration
+from autocti.extract.two_d.parallel.overscan import Extract2DParallelOverscan
+from autocti.extract.two_d.parallel.fpr import Extract2DParallelFPR
+from autocti.extract.two_d.parallel.eper import Extract2DParallelEPER
+from autocti.extract.two_d.serial.overscan import Extract2DSerialOverscan
+from autocti.extract.two_d.serial.prescan import Extract2DSerialPrescan
+from autocti.extract.two_d.serial.fpr import Extract2DSerialFPR
+from autocti.extract.two_d.serial.eper import Extract2DSerialEPER
+from autocti.extract.two_d.parallel.calibration import Extract2DParallelCalibration
+from autocti.extract.two_d.serial.calibration import Extract2DSerialCalibration
 
 
 class Extract2DMaster:
@@ -115,50 +116,54 @@ class Extract2DMaster:
     def serial_overscan(self):
         return Extract2DSerialOverscan(serial_overscan=self._serial_overscan)
 
+    @property
+    def serial_prescan(self):
+        return Extract2DSerialPrescan(serial_prescan=self._serial_prescan)
+
     def regions_array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
         """
-        Extract all of the charge-injection regions from an input `Array2D` object and returns them as a new `Array2D`
-        where these extracted regions are included and all other entries are zeros.
+          Extract all of the charge-injection regions from an input `Array2D` object and returns them as a new `Array2D`
+          where these extracted regions are included and all other entries are zeros.
 
-        The dimensions of the input array therefore do not change (unlike other `Layout2DCI` methods).
+          The dimensions of the input array therefore do not change (unlike other `Layout2DCI` methods).
 
-        The diagram below illustrates the extraction:
+          The diagram below illustrates the extraction:
 
-        [] = read-out electronics
-        [==========] = read-out register
-        [..........] = serial prescan
-        [pppppppppp] = parallel overscan
-        [ssssssssss] = serial overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
-        [tttttttttt] = parallel / serial charge injection region trail
+          [] = read-out electronics
+          [==========] = read-out register
+          [..........] = serial prescan
+          [pppppppppp] = parallel overscan
+          [ssssssssss] = serial overscan
+          [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
+          [tttttttttt] = parallel / serial charge injection region trail
 
-               [ppppppppppppppppppppp]
-               [ppppppppppppppppppppp]
-          [...][xxxxxxxxxxxxxxxxxxxxx][sss]
-          [...][ccccccccccccccccccccc][sss]
-        | [...][ccccccccccccccccccccc][sss]    |
-        | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
-      Par [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
-        | [...][ccccccccccccccccccccc][sss]    | clocking
-       \/  [...][ccccccccccccccccccccc][sss]   \/
+                 [ppppppppppppppppppppp]
+                 [ppppppppppppppppppppp]
+            [...][xxxxxxxxxxxxxxxxxxxxx][sss]
+            [...][ccccccccccccccccccccc][sss]
+          | [...][ccccccccccccccccccccc][sss]    |
+          | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
+        Par [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
+          | [...][ccccccccccccccccccccc][sss]    | clocking
+          /  [...][ccccccccccccccccccccc][sss]   \/
 
-        []     [=====================]
-               <--------Ser---------
+          []     [=====================]
+                 <--------Ser---------
 
-        The extracted array keeps just the charge injection region, all other values become 0:
+          The extracted array keeps just the charge injection region, all other values become 0:
 
-               [000000000000000000000]
-               [000000000000000000000]
-          [000][000000000000000000000][000]
-          [000][ccccccccccccccccccccc][000]
-        | [000][ccccccccccccccccccccc][000]    |
-        | [000][000000000000000000000][000]    | Direction
-       Par[000][000000000000000000000][000]    | of
-        | [000][ccccccccccccccccccccc][000]    | clocking
-       \/ [000][ccccccccccccccccccccc][000]   \/
+                 [000000000000000000000]
+                 [000000000000000000000]
+            [000][000000000000000000000][000]
+            [000][ccccccccccccccccccccc][000]
+          | [000][ccccccccccccccccccccc][000]    |
+          | [000][000000000000000000000][000]    | Direction
+         Par[000][000000000000000000000][000]    | of
+          | [000][ccccccccccccccccccccc][000]    | clocking
+         |/ [000][ccccccccccccccccccccc][000]   \/
 
-        []     [=====================]
-               <--------Ser---------
+          []     [=====================]
+                 <--------Ser---------
         """
 
         new_array = array.native.copy() * 0.0
@@ -170,52 +175,52 @@ class Extract2DMaster:
 
     def non_regions_array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
         """
-        Extract all of the areas of an `Array2D` that are not within any of the layout's charge-injection regions
-        and return them as a new `Array2D` where these extracted regions are included and the charge injection regions
-        are zeros
+         Extract all of the areas of an `Array2D` that are not within any of the layout's charge-injection regions
+         and return them as a new `Array2D` where these extracted regions are included and the charge injection regions
+         are zeros
 
-        The extracted array therefore includes all EPER trails and other regions of the image which may contain
-        signal but are not in the FPR.
+         The extracted array therefore includes all EPER trails and other regions of the image which may contain
+         signal but are not in the FPR.
 
-        The dimensions of the input array therefore do not change (unlike other `Layout2DCI` methods).
+         The dimensions of the input array therefore do not change (unlike other `Layout2DCI` methods).
 
-        The diagram below illustrates the extraction:
+         The diagram below illustrates the extraction:
 
-        [] = read-out electronics
-        [==========] = read-out register
-        [..........] = serial prescan
-        [pppppppppp] = parallel overscan
-        [ssssssssss] = serial overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
-        [tttttttttt] = parallel / serial charge injection region trail
+         [] = read-out electronics
+         [==========] = read-out register
+         [..........] = serial prescan
+         [pppppppppp] = parallel overscan
+         [ssssssssss] = serial overscan
+         [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
+         [tttttttttt] = parallel / serial charge injection region trail
 
-               [tptpptptptpptpptpptpt]
-               [tptptptpptpttptptptpt]
-          [...][ttttttttttttttttttttt][sss]
-          [...][ccccccccccccccccccccc][sss]
-        | [...][ccccccccccccccccccccc][sss]    |
-        | [...][ttttttttttttttttttttt][sss]    | Direction
-       Par[...][ttttttttttttttttttttt][sss]    | of
-        | [...][ccccccccccccccccccccc][sss]    | clocking
-        \/ [...][ccccccccccccccccccccc][sss]   \/
+                [tptpptptptpptpptpptpt]
+                [tptptptpptpttptptptpt]
+           [...][ttttttttttttttttttttt][sss]
+           [...][ccccccccccccccccccccc][sss]
+         | [...][ccccccccccccccccccccc][sss]    |
+         | [...][ttttttttttttttttttttt][sss]    | Direction
+        Par[...][ttttttttttttttttttttt][sss]    | of
+         | [...][ccccccccccccccccccccc][sss]    | clocking
+         |/ [...][ccccccccccccccccccccc][sss]   \/
 
-        []     [=====================]
-               <--------Ser---------
+         []     [=====================]
+                <--------Ser---------
 
-        The extracted array keeps everything except the charge injection  region,which become 0s:
+         The extracted array keeps everything except the charge injection  region,which become 0s:
 
-               [tptpptptptpptpptpptpt]
-               [tptptptpptpttptptptpt]
-          [000][ttttttttttttttttttttt][000]
-          [000][000000000000000000000][000]
-        | [000][000000000000000000000][000]    |
-        | [000][ttttttttttttttttttttt][000]    | Direction
-       Par[000][ttttttttttttttttttttt][000]    | of
-        | [000][000000000000000000000][000]    | clocking
-          [000][000000000000000000000][000]   \/
+                [tptpptptptpptpptpptpt]
+                [tptptptpptpttptptptpt]
+           [000][ttttttttttttttttttttt][000]
+           [000][000000000000000000000][000]
+         | [000][000000000000000000000][000]    |
+         | [000][ttttttttttttttttttttt][000]    | Direction
+        Par[000][ttttttttttttttttttttt][000]    | of
+         | [000][000000000000000000000][000]    | clocking
+           [000][000000000000000000000][000]   \/
 
-        []     [=====================]
-               <--------Ser---------
+         []     [=====================]
+                <--------Ser---------
         """
 
         non_regions_ci_array = array.native.copy()
@@ -251,7 +256,7 @@ class Extract2DMaster:
         [..........] = serial prescan
         [pppppppppp] = parallel overscan
         [ssssssssss] = serial overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
         [tttttttttt] = parallel / serial charge injection region trail
 
                [tptpptptptpptpptpptpt]
@@ -327,7 +332,7 @@ class Extract2DMaster:
         [..........] = serial prescan
         [pppppppppp] = parallel overscan
         [ssssssssss] = serial overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
         [tttttttttt] = parallel / serial charge injection region trail
 
                [ppppppppppppppppppppp]
@@ -397,7 +402,7 @@ class Extract2DMaster:
         [..........] = serial prescan
         [pppppppppp] = parallel overscan
         [ssssssssss] = serial overscan
-        [c#cc#c#c#c] = charge injection region (0 / 1 indicate the region index)
+        [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
         [tttttttttt] = parallel / serial charge injection region trail
 
                [ppppppppppppppppppppp]

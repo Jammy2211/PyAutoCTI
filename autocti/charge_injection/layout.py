@@ -59,11 +59,11 @@ class Layout2DCI(Layout2D):
         self.electronics = electronics
 
     @property
-    def extract(self) -> "Extract2DMasterCI":
+    def extract(self) -> "Extract2DMaster":
 
-        from autocti.charge_injection.extract.master import Extract2DMasterCI
+        from autocti.extract.two_d.master import Extract2DMaster
 
-        return Extract2DMasterCI(
+        return Extract2DMaster(
             shape_2d=self.shape_2d,
             region_list=self.region_list,
             parallel_overscan=self.parallel_overscan,
@@ -113,9 +113,9 @@ class Layout2DCI(Layout2D):
         self, norm: float, pixel_scales: aa.type.PixelScales
     ) -> aa.Array2D:
         """
-        Use this charge injection layout to generate a pre-cti charge injection image. 
-        
-        This is performed by going to its charge injection regions and adding an input charge injection 
+        Use this charge injection layout to generate a pre-cti charge injection image.
+
+        This is performed by going to its charge injection regions and adding an input charge injection
         normalization value.
 
         Parameters

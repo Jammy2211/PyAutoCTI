@@ -93,24 +93,25 @@ def test__imaging_ci_from(imaging_ci_7x7):
         region_list=imaging_ci_7x7.layout.region_list,
     )
 
-    parallel_calibration_imaging = extract.imaging_ci_from(
+    imaging_ci_parallel_calibration = extract.imaging_ci_from(
         imaging_ci=imaging_ci_7x7, columns=(0, 6)
     )
 
     assert (
-        parallel_calibration_imaging.image.native == imaging_ci_7x7.image.native[:, 1:7]
+        imaging_ci_parallel_calibration.image.native
+        == imaging_ci_7x7.image.native[:, 1:7]
     ).all()
     assert (
-        parallel_calibration_imaging.noise_map.native
+        imaging_ci_parallel_calibration.noise_map.native
         == imaging_ci_7x7.noise_map.native[:, 1:7]
     ).all()
     assert (
-        parallel_calibration_imaging.pre_cti_data.native
+        imaging_ci_parallel_calibration.pre_cti_data.native
         == imaging_ci_7x7.pre_cti_data.native[:, 1:7]
     ).all()
     assert (
-        parallel_calibration_imaging.cosmic_ray_map.native
+        imaging_ci_parallel_calibration.cosmic_ray_map.native
         == imaging_ci_7x7.cosmic_ray_map.native[:, 1:7]
     ).all()
 
-    assert parallel_calibration_imaging.layout.region_list == [(1, 5, 0, 4)]
+    assert imaging_ci_parallel_calibration.layout.region_list == [(1, 5, 0, 4)]

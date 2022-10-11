@@ -21,16 +21,16 @@ class FitImagingCIPlotter(Plotter):
         include_1d: aplt.Include1D = aplt.Include1D(),
     ):
         """
-        Plots the attributes of `FitImagingCI` objects using the matplotlib methods `imshow()`, `plot()` and many other 
+        Plots the attributes of `FitImagingCI` objects using the matplotlib methods `imshow()`, `plot()` and many other
         matplotlib functions which customize the plot's appearance.
 
-        The `mat_plot_1d` and `mat_plot_2d` attribute wraps matplotlib function calls to make the figure. By default, 
-        the settings passed to every matplotlib function called are those specified in 
-        the `config/visualize/mat_wrap/*.ini` files, but a user can manually input values into `MatPlot1D` and 
+        The `mat_plot_1d` and `mat_plot_2d` attribute wraps matplotlib function calls to make the figure. By default,
+        the settings passed to every matplotlib function called are those specified in
+        the `config/visualize/mat_wrap/*.ini` files, but a user can manually input values into `MatPlot1D` and
         `MatPlot2D` to customize the figure's appearance.
 
-        Overlaid on the figure are visuals, contained in the `Visuals1D` and `Visuals2D` object. Attributes may be 
-        extracted from the `FitImagingCI` and plotted via the visuals object, if the corresponding entry 
+        Overlaid on the figure are visuals, contained in the `Visuals1D` and `Visuals2D` object. Attributes may be
+        extracted from the `FitImagingCI` and plotted via the visuals object, if the corresponding entry
         is `True` in the `Include1D` and `Include2D` object or the `config/visualize/include.ini` file.
 
         Parameters
@@ -50,7 +50,7 @@ class FitImagingCIPlotter(Plotter):
         visuals_1d
             Contains 1D visuals that can be overlaid on 1D plots.
         include_1d
-            Specifies which attributes of the `ImagingCI` are extracted and plotted as visuals for 1D plots.            
+            Specifies which attributes of the `ImagingCI` are extracted and plotted as visuals for 1D plots.
         """
         super().__init__(
             mat_plot_2d=mat_plot_2d, include_2d=include_2d, visuals_2d=visuals_2d
@@ -91,7 +91,7 @@ class FitImagingCIPlotter(Plotter):
         """
         Plots the individual attributes of the plotter's `FitImagingCI` object in 2D.
 
-        The API is such that every plottable attribute of the `FitImagingCI` object is an input parameter of type bool 
+        The API is such that every plottable attribute of the `FitImagingCI` object is an input parameter of type bool
         of the function, which if switched to `True` means that it is plotted.
 
         Parameters

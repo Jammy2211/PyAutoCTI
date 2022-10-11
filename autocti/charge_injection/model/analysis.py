@@ -39,9 +39,10 @@ class AnalysisImagingCI(Analysis):
 
         if self.clocker.parallel_fast_mode and not self.clocker.serial_fast_mode:
 
-            parallel_fast_index_list, parallel_fast_column_lists = clocker.fast_indexes_from(
-                data=dataset.pre_cti_data, for_parallel=True
-            )
+            (
+                parallel_fast_index_list,
+                parallel_fast_column_lists,
+            ) = clocker.fast_indexes_from(data=dataset.pre_cti_data, for_parallel=True)
 
         elif not self.clocker.parallel_fast_mode and self.clocker.serial_fast_mode:
 
@@ -93,7 +94,6 @@ class AnalysisImagingCI(Analysis):
             post_cti_data=post_cti_data,
             hyper_noise_scalar_list=hyper_noise_scalar_list,
         )
-
 
         return fit.figure_of_merit
 

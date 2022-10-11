@@ -78,7 +78,7 @@ class Extract2D:
         self, array: aa.Array2D, pixels: Tuple[int, int]
     ) -> List[aa.Array2D]:
         """
-        Extract a specific region from every charge injection region on the charge injection image and return as a list
+        Extract a specific region from every signal region (e.g. the charge injection region of charge injection data) on the CTI calibration data and return as a list
         of 2D arrays.
 
         For example, this might extract the parallel EPERs of every charge injection region.
@@ -89,7 +89,7 @@ class Extract2D:
         Parameters
         ----------
         array
-            The array from which the regions are extracted and put into the returned list of rrays.
+            The array from which the regions are extracted and put into the returned list of arrays.
         pixels
             The integer range of pixels between which the extraction is performed.
         """
@@ -111,8 +111,8 @@ class Extract2D:
         self, array: aa.Array2D, pixels: Tuple[int, int]
     ) -> np.ndarray:
         """
-        Extract a region (e.g. the parallel FPR) of every charge injection region on the charge injection image and
-        stack them by taking their mean.
+        Extract a region (e.g. the parallel FPR) of every signal region (e.g. the charge injection region of charge
+        injection data) on the CTI calibration data and stack them by taking their mean.
 
         This returns the 2D average of the extracted regions (e.g. the parallel FPRs) of all of the charge injection
         regions, which for certain CCD charge injection electronics one may expect to be similar.
@@ -181,7 +181,7 @@ class Extract2D:
         self, array: aa.Array2D, pixels: Tuple[int, int]
     ) -> aa.Array1D:
         """
-        Extract a region (e.g. the parallel FPR) of every charge injection region on the charge injection image, stack
+        Extract a region (e.g. the parallel FPR) of every signal region (e.g. the charge injection region of charge injection data) on the CTI calibration data, stack
         them by taking their mean and then bin them up to a 1D region (e.g. the 1D parallel FPR) by taking the mean
         across the direction opposite to clocking (e.g. bin over the serial direction for a parallel FPR).
 

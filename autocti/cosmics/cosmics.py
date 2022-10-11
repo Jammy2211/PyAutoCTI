@@ -261,15 +261,15 @@ class SimulatorCosmicRayMap:
     def cosmic_ray_map_from(
         self, cover_fraction: float = 1.4, limit: float = 1000.0
     ) -> aa.Array2D:
-        """ 
+        """
         Return a cosmic ray, where cosmic rays are generated using the lengths and distance of the class instance.
 
 
         Parameters
         ----------
-        limit 
+        limit
             The limiting energy for the cosmic ray event.
-        cover_fraction 
+        cover_fraction
             The covering fraction of cosmic rays over the total number of pixels (in percent) normalized for a 5
             65s exposure time.
         """

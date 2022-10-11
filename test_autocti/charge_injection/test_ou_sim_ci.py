@@ -75,9 +75,7 @@ def test__add_cti_to_pre_cti_data():
 
     clocker = ac.Clocker2D(parallel_express=2, serial_express=2)
 
-    parallel_trap_list = [
-        ac.TrapInstantCapture(density=0.13, release_timescale=1.25)
-    ]
+    parallel_trap_list = [ac.TrapInstantCapture(density=0.13, release_timescale=1.25)]
     parallel_ccd = ac.CCDPhase(
         well_fill_power=0.8, well_notch_depth=0.0, full_well_depth=84700.0
     )

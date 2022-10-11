@@ -157,7 +157,7 @@ class ImagingCIPlotter(Plotter):
     ):
         """
         Plots the individual attributes of the plotter's `ImagingCI` object in 1D.
-        
+
         These 1D plots correspond to a region in 2D on the charge injection image, which is binned up over the parallel
         or serial direction to produce a 1D plot. For example, for the input `region=parallel_fpr`, this
         function extracts the FPR over each charge injection region and bins such that the 1D plot shows the FPR
@@ -176,9 +176,9 @@ class ImagingCIPlotter(Plotter):
         noise_map
             Whether or not to make a 1D plot (via `plot`) of the noise-map extracted and binned over the region.
         pre_cti_data
-            Whether or not to make a 1D plot (via `plot`) of the pre-cti data extracted and binned over the region.        
+            Whether or not to make a 1D plot (via `plot`) of the pre-cti data extracted and binned over the region.
         signal_to_noise_map
-            Whether or not to make a 1D plot (via `plot`) of the signal-to-noise map data extracted and binned over 
+            Whether or not to make a 1D plot (via `plot`) of the signal-to-noise map data extracted and binned over
             the region.
         """
 

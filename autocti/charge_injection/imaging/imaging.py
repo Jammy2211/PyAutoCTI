@@ -155,8 +155,9 @@ class ImagingCI(aa.Imaging):
     def from_fits(
         cls,
         layout,
-        image_path,
         pixel_scales,
+        image_path=None,
+        image=None,
         image_hdu=0,
         noise_map_path=None,
         noise_map_hdu=0,
@@ -168,9 +169,15 @@ class ImagingCI(aa.Imaging):
         cosmic_ray_map_hdu=0,
     ):
 
-        ci_image = aa.Array2D.from_fits(
-            file_path=image_path, hdu=image_hdu, pixel_scales=pixel_scales
-        )
+        if image_path is not None and image is None:
+
+            ci_image = aa.Array2D.from_fits(
+                file_path=image_path, hdu=image_hdu, pixel_scales=pixel_scales
+            )
+
+        elif image is not None:
+
+            ci_image = image
 
         if noise_map_path is not None:
             ci_noise_map = aa.util.array_2d.numpy_array_2d_via_fits_from(
@@ -187,7 +194,7 @@ class ImagingCI(aa.Imaging):
                 hdu=pre_cti_data_hdu,
                 pixel_scales=pixel_scales,
             )
-        else:
+        elif pre_cti_data is None:
             raise exc.ImagingCIException(
                 "Cannot load pre_cti_data from .fits and pass explicit pre_cti_data."
             )

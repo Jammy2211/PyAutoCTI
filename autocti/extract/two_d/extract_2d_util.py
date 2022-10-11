@@ -39,9 +39,9 @@ def binned_region_1d_eper_from(pixels: Tuple[int, int]) -> aa.Region1D:
     In order to create the 1D dataset a `Layout1D` is required, which requires the `region_list` containing the
     charge regions on the 1D dataset (e.g. where the FPR appears in 1D after binning).
 
-    The function returns the this region if the 1D dataset is extracted from the EPERs. The charge region is only
-    included if there are negative entries in the `pixels` tuple, meaning that pixels before the EPERs (e.g. the FPR)
-    are extracted.
+    The function returns this region if the 1D dataset is extracted from the EPERs. The charge region is only included
+    if there are negative entries in the `pixels` tuple, meaning that pixels before the EPERs (e.g. the FPR) are
+    extracted.
 
     Parameters
     ----------
