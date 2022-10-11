@@ -145,7 +145,7 @@ class Extract2DMaster:
           | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
         Par [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
           | [...][ccccccccccccccccccccc][sss]    | clocking
-         \/  [...][ccccccccccccccccccccc][sss]   \/
+          /  [...][ccccccccccccccccccccc][sss]   \/
 
           []     [=====================]
                  <--------Ser---------
@@ -160,7 +160,7 @@ class Extract2DMaster:
           | [000][000000000000000000000][000]    | Direction
          Par[000][000000000000000000000][000]    | of
           | [000][ccccccccccccccccccccc][000]    | clocking
-         \/ [000][ccccccccccccccccccccc][000]   \/
+         |/ [000][ccccccccccccccccccccc][000]   \/
 
           []     [=====================]
                  <--------Ser---------
@@ -202,7 +202,7 @@ class Extract2DMaster:
          | [...][ttttttttttttttttttttt][sss]    | Direction
         Par[...][ttttttttttttttttttttt][sss]    | of
          | [...][ccccccccccccccccccccc][sss]    | clocking
-         \/ [...][ccccccccccccccccccccc][sss]   \/
+         |/ [...][ccccccccccccccccccccc][sss]   \/
 
          []     [=====================]
                 <--------Ser---------

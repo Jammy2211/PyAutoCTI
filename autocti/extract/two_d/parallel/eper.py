@@ -34,7 +34,7 @@ class Extract2DParallelEPER(Extract2DParallel):
           | [...][t0t0t0t0t0t0t0t0t0t0t][sss]    | Direction
         Par [...][0t0t0t0t0t0t0t0t0t0t0][sss]    | of
           | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
-         \/ [...][cc0ccc0cccc0cccc0cccc][sss]   \/
+         |/ [...][cc0ccc0cccc0cccc0cccc][sss]   \/
 
           []     [=====================]
                  <---------Ser----------
@@ -111,7 +111,7 @@ class Extract2DParallelEPER(Extract2DParallel):
          | [...][ttttttttttttttttttttt][sss]    | Direction
         Par[...][ttttttttttttttttttttt][sss]    | of
          | [...][ccccccccccccccccccccc][sss]    | clocking
-        \/ [...][ccccccccccccccccccccc][sss]   \/
+        |/ [...][ccccccccccccccccccccc][sss]   \/
 
          []     [=====================]
                 <--------Ser---------
@@ -126,7 +126,7 @@ class Extract2DParallelEPER(Extract2DParallel):
          | [000][ttttttttttttttttttttt][000]    | Direction
         Par[000][ttttttttttttttttttttt][000]    | of
          | [000][000000000000000000000][000]    | clocking
-        \/ [000][000000000000000000000][000]   \/
+        |/ [000][000000000000000000000][000]   \/
 
          []     [=====================]
                 <--------Ser---------

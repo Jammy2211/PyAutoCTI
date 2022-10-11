@@ -40,7 +40,7 @@ class Extract2DParallelOverscan(Extract2DParallel):
          |  [...][ttttttttttttttttttttt][sss]    | Direction
         Par [...][ttttttttttttttttttttt][sss]    | of
          |  [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
-        \/  [...][cc0ccc0cccc0cccc0cccc][sss]    \/
+        |/  [...][cc0ccc0cccc0cccc0cccc][sss]    \/
 
          []     [=====================]
                 <---------Ser--------

@@ -34,7 +34,7 @@ class Extract2DSerialEPER(Extract2DSerial):
          |  [...][ttttttttttttttttttttt][sss]    | Direction
         Par [...][ttttttttttttttttttttt][sss]    | of
          |  [...][0ccc0cccc0cccc0cccc0c][st1]    | clocking
-        \/  [...][cc0ccc0cccc0cccc0cccc][ts0]   \/
+        |/  [...][cc0ccc0cccc0cccc0cccc][ts0]   \/
 
          []     [=====================]
                 <---------Ser--------

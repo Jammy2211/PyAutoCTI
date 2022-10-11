@@ -123,7 +123,7 @@ class Extract2DParallelCalibration:
         |      [xxx]                           | Direction
         P      [xxx]                           | of
         |      [ccc]                           | clocking
-        \/     [ccc]                          \/
+        |/     [ccc]                          \/
 
         []     [=====================]
                <--------Ser---------
@@ -188,7 +188,7 @@ class Extract2DParallelCalibration:
         |      [xxx]                           | Direction
         P      [xxx]                           | of
         |      [ccc]                           | clocking
-        \/     [ccc]                           \/
+        |/     [ccc]                           \/
 
         []     [=====================]
                <--------Ser---------

@@ -278,7 +278,7 @@ def make_parallel_array():
 
 
 @pytest.fixture(name="parallel_masked_array")
-def make_parallel_masked_array(parallel_array):  # 1, 2, 3, 5, 6
+def make_parallel_masked_array(parallel_array):
 
     mask = ac.Mask2D.manual(
         mask=[

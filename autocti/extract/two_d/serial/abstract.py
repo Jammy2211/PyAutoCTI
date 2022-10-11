@@ -58,16 +58,11 @@ class Extract2DSerial(Extract2D):
             for region in self.region_list_from(pixels=pixels)
         ]
 
+        arr_stack = np.ma.stack(arr_list)
+
         for row_index in range(arr_list[0].shape[0]):
 
-            for i, array_2d in enumerate(arr_list):
-
-                if i == 0:
-                    arr = array_2d[row_index, :]
-                else:
-                    arr = np.concatenate((arr[:], array_2d[row_index, :]))
-
-            median_list.append(float(np.ma.median(arr)))
+            median_list.append(float(np.ma.median(arr_stack[:, row_index, :])))
 
         return median_list
 

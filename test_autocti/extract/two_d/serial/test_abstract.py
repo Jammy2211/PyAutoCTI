@@ -23,7 +23,7 @@ def test__median_list_from(serial_array, serial_masked_array):
 
     median_list = extract.median_list_from(array=serial_masked_array, pixels=(0, 4))
 
-    assert median_list == [4.5, 2.0]
+    assert median_list == [4.5, 5.0]
 
 
 def test__median_list_of_lists_from(serial_array, serial_masked_array):

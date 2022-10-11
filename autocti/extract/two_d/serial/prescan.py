@@ -38,7 +38,7 @@ class Extract2DSerialPrescan(Extract2DSerial):
          |  [...][ttttttttttttttttttttt][sss]    | Direction
         Par [...][ttttttttttttttttttttt][sss]    | of
          |  [...][0fff0ffff0ffff0ffff0f][sss]    | clocking
-        \/  [...][ff0fff0ffff0ffff0ffff][sss]    \/
+        |/  [...][ff0fff0ffff0ffff0ffff][sss]    \/
 
          []     [=====================]
                 <---------Ser--------
