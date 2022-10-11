@@ -10,51 +10,51 @@ from autocti.extract.two_d import extract_2d_util
 class Extract2DSerialFPR(Extract2DSerial):
     def region_list_from(self, pixels: Tuple[int, int]):
         """
-        Returns a list of the 2D serial FPR regions from the `region_list` containing signal  (e.g. the charge
-        injection regions of charge injection data), extracted between two input `pixels` indexes.
+         Returns a list of the 2D serial FPR regions from the `region_list` containing signal  (e.g. the charge
+         injection regions of charge injection data), extracted between two input `pixels` indexes.
 
-        Negative pixel values are supported to the `pixels` tuple, whereby columns in front of the serial FPRs (e.g.
-        the serial prescan) are also extracted.
+         Negative pixel values are supported to the `pixels` tuple, whereby columns in front of the serial FPRs (e.g.
+         the serial prescan) are also extracted.
 
-        The diagram below illustrates the extraction for `pixels=(0, 1)`:
+         The diagram below illustrates the extraction for `pixels=(0, 1)`:
 
-        [] = read-out electronics
-        [==========] = read-out register
-        [..........] = serial prescan
-        [pppppppppp] = parallel overscan
-        [ssssssssss] = serial overscan
-        [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
-        [tttttttttt] = parallel / serial charge injection region trail
+         [] = read-out electronics
+         [==========] = read-out register
+         [..........] = serial prescan
+         [pppppppppp] = parallel overscan
+         [ssssssssss] = serial overscan
+         [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
+         [tttttttttt] = parallel / serial charge injection region trail
 
-               [ppppppppppppppppppppp]
-               [ppppppppppppppppppppp]
-           [...][ttttttttttttttttttttt][sss]
-           [...][c1c1cc1c1cc1cc1ccc1cc][sss]
-        |  [...][1c1c1cc1c1cc1ccc1cc1c][sss]    |
-        |  [...][ttttttttttttttttttttt][sss]    | Direction
-       Par [...][ttttttttttttttttttttt][sss]    | of
-        |  [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
-       \/  [...][cc0ccc0cccc0cccc0cccc][sss]    \/
+                [ppppppppppppppppppppp]
+                [ppppppppppppppppppppp]
+            [...][ttttttttttttttttttttt][sss]
+            [...][c1c1cc1c1cc1cc1ccc1cc][sss]
+         |  [...][1c1c1cc1c1cc1ccc1cc1c][sss]    |
+         |  [...][ttttttttttttttttttttt][sss]    | Direction
+        Par [...][ttttttttttttttttttttt][sss]    | of
+         |  [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
+        \/  [...][cc0ccc0cccc0cccc0cccc][sss]    \/
 
-        []     [=====================]
-               <---------Ser--------
+         []     [=====================]
+                <---------Ser--------
 
-        The extracted regions correspond to the first serial FPR all charge injection regions:
+         The extracted regions correspond to the first serial FPR all charge injection regions:
 
-        region_list[0] = [0, 2, 3, 21] (serial prescan is 3 pixels)
-        region_list[1] = [4, 6, 3, 21] (serial prescan is 3 pixels)
+         region_list[0] = [0, 2, 3, 21] (serial prescan is 3 pixels)
+         region_list[1] = [4, 6, 3, 21] (serial prescan is 3 pixels)
 
-        For `pixels=(0,1)` the extracted arrays returned via the `array_2d_list_from()` function keep the first
-        serial FPR of each charge injection region:
+         For `pixels=(0,1)` the extracted arrays returned via the `array_2d_list_from()` function keep the first
+         serial FPR of each charge injection region:
 
-        array_2d_list[0] =[c0c0]
-        array_2d_list[1] =[1c1c]
+         array_2d_list[0] =[c0c0]
+         array_2d_list[1] =[1c1c]
 
-        Parameters
-        ----------
-        pixels
-            The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
-            columns)
+         Parameters
+         ----------
+         pixels
+             The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
+             columns)
         """
         return [
             region.serial_front_region_from(pixels=pixels)

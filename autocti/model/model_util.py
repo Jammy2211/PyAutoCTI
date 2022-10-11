@@ -24,9 +24,9 @@ class CTI1D(AbstractCTI, Dictable):
     ):
         """
         An object which determines the behaviour of CTI during 1D clocking.
-        
+
         This includes the traps that capture and trail electrons and the CCD volume filling behaviour.
-        
+
         Parameters
         ----------
         trap_list
@@ -67,7 +67,7 @@ class CTI2D(AbstractCTI, Dictable):
             The traps on the dataset that capture and release electrons during serial clocking.
         serial_ccd
             The CCD volume filling parameterization which dictates how an electron cloud fills pixel in the serial
-             direction and thus how it is subject to traps.             
+             direction and thus how it is subject to traps.
         """
         self.parallel_trap_list = parallel_trap_list
         self.parallel_ccd = parallel_ccd

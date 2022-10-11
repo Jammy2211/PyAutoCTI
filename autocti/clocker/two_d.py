@@ -80,7 +80,7 @@ class Clocker2D(AbstractClocker):
             efficiency (see: https://academic.oup.com/mnras/article/401/1/371/1006825).
         serial_window_offset
             The number of pixels before serial clocking begins, thereby extending the length over which clocking
-            is performed in the serial direction and increasing CTI.            
+            is performed in the serial direction and increasing CTI.
         serial_window_start
             The pixel index of the input image where serial arCTIc clocking begins, for example
             if `window_start=10` the first 10 pixels are omitted and not clocked.

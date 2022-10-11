@@ -113,9 +113,9 @@ class Layout2DCI(Layout2D):
         self, norm: float, pixel_scales: aa.type.PixelScales
     ) -> aa.Array2D:
         """
-        Use this charge injection layout to generate a pre-cti charge injection image. 
-        
-        This is performed by going to its charge injection regions and adding an input charge injection 
+        Use this charge injection layout to generate a pre-cti charge injection image.
+
+        This is performed by going to its charge injection regions and adding an input charge injection
         normalization value.
 
         Parameters
