@@ -15,13 +15,37 @@ import datetime
 
 from pyprojroot import here
 
-workspace_path = str(here())
+# /home/docs/checkouts/readthedocs.org/user_builds/pyautocti/checkouts/latest/docs
+
+clone_path = str(here())
 
 import os
 import sys
-import autocti
 
 sys.path.insert(0, os.path.abspath("."))
+
+def clone_repo(name:str, url:str):
+
+    clone = f"git clone {url}/{name}"
+    os.system(clone)
+    os.system(f"pip install -r {name}/requirements.txt")
+    os.system(f"rm -rf {name}/docs")
+    sys.path.insert(
+        0,
+        os.path.abspath(f"{clone_path}/{name}"),
+    )
+
+clone_repo(name="PyAutoFit", url="https://github.com/rhayes777")
+clone_repo(name="PyAutoArray", url="https://github.com/Jammy2211")
+
+clone_path = os.path.split(clone_path)[0]
+
+sys.path.insert(
+    0,
+    os.path.abspath(clone_path),
+)
+
+import autocti
 
 # -- Project information -----------------------------------------------------
 
@@ -31,7 +55,7 @@ copyright = "2022, James Nightingale, Richard Hayes"
 author = "James Nightingale, Richard Hayes"
 
 # The full version, including alpha/beta/rc tags
-release = "2022.05.02.1"
+release = autocti.__version__
 master_doc = "index"
 
 
@@ -91,7 +115,7 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # -- Options for HTML output -------------------------------------------------
 
-# html_theme = "furo"
+html_theme = "furo"
 html_title = "PyAutoCTI"
 html_short_title = "PyAutoCTI"
 html_permalinks_icon = "<span>#</span>"
@@ -101,8 +125,8 @@ html_show_sourcelink = False
 html_show_sphinx = True
 html_show_copyright = True
 
-# pygments_style = "sphinx"
-# pygments_dark_style = "monokai"
+pygments_style = "sphinx"
+pygments_dark_style = "monokai"
 add_function_parentheses = False
 
 html_context = {
@@ -116,6 +140,20 @@ language = "en"
 
 html_static_path = ["_static"]
 html_css_files = ["pied-piper-admonition.css"]
+
+html_theme_options = {
+    "light_css_variables": {
+        "color-brand-primary": "#7C4DFF",
+        "color-brand-content": "#7C4DFF",
+    }
+}
+
+if "READTHEDOCS" in os.environ:
+    html_theme_options["announcement"] = (
+        "This documentation is hosted on Read the Docs only for testing. Please use "
+        "<a href='https://pradyunsg.me/furo/'>the main documentation</a> instead."
+    )
+
 
 from sphinx.builders.html import StandaloneHTMLBuilder
 

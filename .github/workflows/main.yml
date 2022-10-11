@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8]  # 3.9 not supported on numba as of 2020-02-11
+        python-version: [3.8, 3.9, "3.10"]
     steps:
     - name: Checkout PyAutoConf
       uses: actions/checkout@v2
@@ -62,7 +62,6 @@ jobs:
         pip3 install setuptools
         pip3 install wheel
         pip3 install pytest
-        python3 -m pip install --index-url https://test.pypi.org/simple --extra-index-url https://pypi.org/simple/ arcticpy
         pip3 install -r PyAutoConf/requirements.txt
         pip3 install -r PyAutoFit/requirements.txt
         pip3 install -r PyAutoArray/requirements.txt

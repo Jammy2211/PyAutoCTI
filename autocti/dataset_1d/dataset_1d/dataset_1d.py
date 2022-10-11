@@ -1,23 +1,21 @@
 import numpy as np
 
 import autoarray as aa
-
+from autoarray import Array1D, Region1D
 from autoarray.dataset import abstract_dataset
-
+from autocti import exc
 from autocti.dataset_1d.dataset_1d.settings import SettingsDataset1D
 from autocti.layout.one_d import Layout1D
-
-from autocti import exc
 
 
 class Dataset1D(abstract_dataset.AbstractDataset):
     def __init__(
-        self,
-        data: aa.Array1D,
-        noise_map: aa.Array1D,
-        pre_cti_data: aa.Array1D,
-        layout: Layout1D,
-        settings: SettingsDataset1D = SettingsDataset1D(),
+            self,
+            data: aa.Array1D,
+            noise_map: aa.Array1D,
+            pre_cti_data: aa.Array1D,
+            layout: Layout1D,
+            settings: SettingsDataset1D = SettingsDataset1D(),
     ):
 
         super().__init__(data=data, noise_map=noise_map, settings=settings)
@@ -47,17 +45,17 @@ class Dataset1D(abstract_dataset.AbstractDataset):
 
     @classmethod
     def from_fits(
-        cls,
-        layout,
-        data_path,
-        pixel_scales,
-        data_hdu=0,
-        noise_map_path=None,
-        noise_map_hdu=0,
-        noise_map_from_single_value=None,
-        pre_cti_data_path=None,
-        pre_cti_data_hdu=0,
-        pre_cti_data=None,
+            cls,
+            layout,
+            data_path,
+            pixel_scales,
+            data_hdu=0,
+            noise_map_path=None,
+            noise_map_hdu=0,
+            noise_map_from_single_value=None,
+            pre_cti_data_path=None,
+            pre_cti_data_hdu=0,
+            pre_cti_data=None,
     ):
 
         data = aa.Array1D.from_fits(
@@ -93,11 +91,91 @@ class Dataset1D(abstract_dataset.AbstractDataset):
         )
 
     def output_to_fits(
-        self, data_path, noise_map_path=None, pre_cti_data_path=None, overwrite=False
+            self, data_path, noise_map_path=None, pre_cti_data_path=None, overwrite=False
     ):
 
         self.data.output_to_fits(file_path=data_path, overwrite=overwrite)
         self.noise_map.output_to_fits(file_path=noise_map_path, overwrite=overwrite)
         self.pre_cti_data.output_to_fits(
             file_path=pre_cti_data_path, overwrite=overwrite
+        )
+
+    @classmethod
+    def from_pixel_line_dict(
+            cls,
+            pixel_line_dict: dict,
+            size: int,
+    ) -> "Dataset1D":
+        """
+        Parse a pixel line output from the warm-pixels script.
+
+        Pixel lines are individual or averaged lines found by searching for
+        warm pixels or consistent warm pixels in CCD data. The warm pixel
+        and its are extracted and saved as a JSON which can then be loaded
+        and fit as part of autocti.
+
+        Parameters
+        ----------
+        pixel_line_dict
+            A dictionary describing a pixel line collection.
+
+            e.g.
+            {
+                "location": [
+                    2,
+                    4,
+                ],
+                "flux": 1234.,
+                "data": [
+                    5.0,
+                    3.0,
+                    2.0,
+                    1.0,
+                ],
+                "noise": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0,
+                ]
+            }
+
+            location
+                The location of the warm pixel in (row, column) where row is the
+                distance to the serial register - 1
+            flux
+                The computed flux of the warm pixel prior to CTI
+            data
+                The extracted pixel line. A 1D array where the first entry is
+                the warm pixel (FPR) and the remaining entries are the trail
+                (EPER)
+            noise
+                The noise map for the pixel line.
+        size
+            The size of the CCD. That is, the number of pixels in the parallel
+            direction.
+
+        Returns
+        -------
+            A Dataset1D initialised to represent the pixel line. The pixel line
+            and noise are embedded in Array1Ds of the same size as the array in
+            the parallel direction
+        """
+        serial_distance, _ = map(int, pixel_line_dict["location"])
+
+        def make_array(data):
+            array = np.zeros(size)
+            array[serial_distance: serial_distance + len(data)] = data
+            return Array1D.manual_slim(array, pixel_scales=0.1)
+
+        return Dataset1D(
+            data=make_array(pixel_line_dict["data"]),
+            noise_map=make_array(pixel_line_dict["noise"]),
+            pre_cti_data=make_array(np.array([pixel_line_dict["flux"]])),
+            layout=Layout1D(
+                shape_1d=(size,),
+                region_list=[Region1D(
+                    region=(serial_distance, serial_distance + 1)
+                )]
+            ),
         )
