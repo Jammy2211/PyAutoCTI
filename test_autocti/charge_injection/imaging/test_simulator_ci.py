@@ -138,8 +138,6 @@ def test__pre_cti_data_from__non_uniformity_in_rows():
 
     image[:] = np.round(image[:], 1)
 
-    print(image.native)
-
     assert (
         image.native
         == np.array(
