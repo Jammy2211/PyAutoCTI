@@ -194,10 +194,10 @@ def make_ci_cosmic_ray_map_7x7():
     return fixtures.make_ci_cosmic_ray_map_7x7()
 
 
-@pytest.fixture(name="ci_noise_scaling_map_list_7x7")
-def make_ci_noise_scaling_map_list_7x7():
+@pytest.fixture(name="ci_noise_scaling_map_dict_7x7")
+def make_ci_noise_scaling_map_dict_7x7():
 
-    return fixtures.make_ci_noise_scaling_map_list_7x7()
+    return fixtures.make_ci_noise_scaling_map_dict_7x7()
 
 
 ### CHARGE INJECTION IMAGING ###

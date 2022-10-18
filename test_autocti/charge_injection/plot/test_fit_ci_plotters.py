@@ -138,9 +138,9 @@ def test__fit_ci_subplots_are_output(fit_ci_7x7, plot_path, plot_patch):
         path.join(plot_path, "subplot_1d_fit_ci_parallel_fpr.png") in plot_patch.paths
     )
 
-    fit_ci_plotter.subplot_noise_scaling_map_list()
+    fit_ci_plotter.subplot_noise_scaling_map_dict()
     assert (
-        path.join(plot_path, "subplot_noise_scaling_map_list.png") in plot_patch.paths
+        path.join(plot_path, "subplot_noise_scaling_map_dict.png") in plot_patch.paths
     )
 
 

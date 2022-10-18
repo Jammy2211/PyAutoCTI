@@ -31,7 +31,7 @@ def test__fits_to_extracted_and_full_datasets_available(
     ).all()
 
 
-def test__noise_scaling_map_list_is_list_of_result__are_correct(
+def test__noise_scaling_map_dict_is_list_of_result__are_correct(
     imaging_ci_7x7,
     mask_2d_7x7_unmasked,
     parallel_clocker_2d,
@@ -41,24 +41,24 @@ def test__noise_scaling_map_list_is_list_of_result__are_correct(
     ccd,
 ):
 
-    noise_scaling_map_list_list_of_regions_ci = [
+    noise_scaling_map_dict_list_of_regions_ci = [
         ac.Array2D.ones(shape_native=(7, 7), pixel_scales=1.0)
     ]
-    noise_scaling_map_list_list_of_parallel_epers = [
+    noise_scaling_map_dict_list_of_parallel_epers = [
         ac.Array2D.full(fill_value=2.0, shape_native=(7, 7), pixel_scales=1.0)
     ]
-    noise_scaling_map_list_list_of_serial_eper = [
+    noise_scaling_map_dict_list_of_serial_eper = [
         ac.Array2D.full(fill_value=3.0, shape_native=(7, 7), pixel_scales=1.0)
     ]
-    noise_scaling_map_list_list_of_serial_overscan_no_eper = [
+    noise_scaling_map_dict_list_of_serial_overscan_no_eper = [
         ac.Array2D.full(fill_value=4.0, shape_native=(7, 7), pixel_scales=1.0)
     ]
 
-    imaging_ci_7x7.noise_scaling_map_list = [
-        noise_scaling_map_list_list_of_regions_ci[0],
-        noise_scaling_map_list_list_of_parallel_epers[0],
-        noise_scaling_map_list_list_of_serial_eper[0],
-        noise_scaling_map_list_list_of_serial_overscan_no_eper[0],
+    imaging_ci_7x7.noise_scaling_map_dict = [
+        noise_scaling_map_dict_list_of_regions_ci[0],
+        noise_scaling_map_dict_list_of_parallel_epers[0],
+        noise_scaling_map_dict_list_of_serial_eper[0],
+        noise_scaling_map_dict_list_of_serial_overscan_no_eper[0],
     ]
 
     masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
@@ -73,25 +73,25 @@ def test__noise_scaling_map_list_is_list_of_result__are_correct(
 
     result = ResultImagingCI(samples=samples_with_result, analysis=analysis, model=None)
 
-    assert result.noise_scaling_map_list[0] == pytest.approx(
+    assert result.noise_scaling_map_dict["regions_ci"] == pytest.approx(
         fit_analysis.chi_squared_map_of_regions_ci, 1.0e-2
     )
-    assert result.noise_scaling_map_list[1]  == pytest.approx(
+    assert result.noise_scaling_map_dict["parallel_epers"]  == pytest.approx(
         fit_analysis.chi_squared_map_of_parallel_epers, 1.0e-2
     )
-    assert result.noise_scaling_map_list[2]  == pytest.approx(
+    assert result.noise_scaling_map_dict["serial_epers"]  == pytest.approx(
         fit_analysis.chi_squared_map_of_serial_epers, 1.0e-2
     )
-    assert result.noise_scaling_map_list[3]  == pytest.approx(
+    assert result.noise_scaling_map_dict["serial_overscan_no_trails"]  == pytest.approx(
         fit_analysis.chi_squared_map_of_serial_overscan_no_trails, 1.0e-2
     )
 
-    assert result.noise_scaling_map_list[0][1, 1] == pytest.approx(18.168, 1.0e-1)
-    assert result.noise_scaling_map_list[1] [1, 1] == pytest.approx(
+    assert result.noise_scaling_map_dict["regions_ci"][1, 1] == pytest.approx(18.168, 1.0e-1)
+    assert result.noise_scaling_map_dict["parallel_epers"] [1, 1] == pytest.approx(
         0.0, 1.0e-4
     )
-    assert result.noise_scaling_map_list[2] [1, 1] == pytest.approx(0.0, 1.0e-4)
-    assert result.noise_scaling_map_list[3] [1, 1] == pytest.approx(
+    assert result.noise_scaling_map_dict["serial_epers"] [1, 1] == pytest.approx(0.0, 1.0e-4)
+    assert result.noise_scaling_map_dict["serial_overscan_no_trails"] [1, 1] == pytest.approx(
         0.0, 1.0e-4
     )
 
@@ -116,15 +116,15 @@ def test__noise_scaling_map_list_is_list_of_result__are_correct(
 
     fit_analysis = analysis.fit_via_instance_from(instance=instance)
 
-    assert result.noise_scaling_map_list[0]  != pytest.approx(
+    assert result.noise_scaling_map_dict["regions_ci"]  != pytest.approx(
         fit_analysis.chi_squared_map_of_regions_ci, 1.0e-2
     )
-    assert result.noise_scaling_map_list[1] != pytest.approx(
+    assert result.noise_scaling_map_dict["parallel_epers"] != pytest.approx(
         fit_analysis.chi_squared_map_of_parallel_epers, 1.0e-2
     )
-    assert result.noise_scaling_map_list[2] != pytest.approx(
+    assert result.noise_scaling_map_dict["serial_epers"] != pytest.approx(
         fit_analysis.chi_squared_map_of_serial_epers, 1.0e-2
     )
-    assert result.noise_scaling_map_list[3] != pytest.approx(
+    assert result.noise_scaling_map_dict["serial_overscan_no_trails"] != pytest.approx(
         fit_analysis.chi_squared_map_of_serial_overscan_no_trails, 1.0e-2
     )

@@ -16,11 +16,13 @@ class ResultImagingCI(ResultDataset):
         )
 
     @property
-    def noise_scaling_map_list(self):
+    def noise_scaling_map_dict(self):
 
-        return [
-            self.max_log_likelihood_full_fit_no_hyper_scaling.chi_squared_map_of_regions_ci,
-            self.max_log_likelihood_full_fit_no_hyper_scaling.chi_squared_map_of_parallel_epers,
-            self.max_log_likelihood_full_fit_no_hyper_scaling.chi_squared_map_of_serial_epers,
-            self.max_log_likelihood_full_fit_no_hyper_scaling.chi_squared_map_of_serial_overscan_no_trails,
-        ]
+        fit = self.max_log_likelihood_full_fit_no_hyper_scaling
+
+        return {
+            "regions_ci": fit.chi_squared_map_of_regions_ci,
+            "parallel_epers": fit.chi_squared_map_of_parallel_epers,
+            "serial_epers": fit.chi_squared_map_of_serial_epers,
+            "serial_overscan_no_trails": fit.chi_squared_map_of_serial_overscan_no_trails,
+        }

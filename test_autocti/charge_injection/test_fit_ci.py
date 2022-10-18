@@ -29,7 +29,7 @@ def test__fit_figure_of_merit(imaging_ci_7x7):
 
 def test__hyper_noise_map_from():
     noise_map = ac.Array2D.full(fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0)
-    noise_scaling_map_list = [
+    noise_scaling_map_dict = [
         ac.Array2D.manual(array=[[0.0, 0.0], [0.0, 0.0]], pixel_scales=1.0)
     ]
     hyper_noise_scalar_list = [ac.HyperCINoiseScalar(scale_factor=1.0)]
@@ -37,13 +37,13 @@ def test__hyper_noise_map_from():
     noise_map = hyper_noise_map_from(
         hyper_noise_scalar_list=hyper_noise_scalar_list,
         noise_map=noise_map,
-        noise_scaling_map_list=noise_scaling_map_list,
+        noise_scaling_map_dict=noise_scaling_map_dict,
     )
 
     assert (noise_map.native == (np.array([[2.0, 2.0], [2.0, 2.0]]))).all()
 
     noise_map = ac.Array2D.full(fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0)
-    noise_scaling_map_list = [
+    noise_scaling_map_dict = [
         ac.Array2D.manual(array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0)
     ]
     hyper_noise_scalar_list = [ac.HyperCINoiseScalar(scale_factor=0.0)]
@@ -51,13 +51,13 @@ def test__hyper_noise_map_from():
     noise_map = hyper_noise_map_from(
         hyper_noise_scalar_list=hyper_noise_scalar_list,
         noise_map=noise_map,
-        noise_scaling_map_list=noise_scaling_map_list,
+        noise_scaling_map_dict=noise_scaling_map_dict,
     )
 
     assert (noise_map.native == (np.array([[2.0, 2.0], [2.0, 2.0]]))).all()
 
     noise_map = ac.Array2D.full(fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0)
-    noise_scaling_map_list = [
+    noise_scaling_map_dict = [
         ac.Array2D.manual(array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0)
     ]
     hyper_noise_scalar_list = [ac.HyperCINoiseScalar(scale_factor=1.0)]
@@ -65,13 +65,13 @@ def test__hyper_noise_map_from():
     noise_map = hyper_noise_map_from(
         hyper_noise_scalar_list=hyper_noise_scalar_list,
         noise_map=noise_map,
-        noise_scaling_map_list=noise_scaling_map_list,
+        noise_scaling_map_dict=noise_scaling_map_dict,
     )
 
     assert (noise_map.native == (np.array([[3.0, 4.0], [5.0, 6.0]]))).all()
 
     noise_map = ac.Array2D.full(fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0)
-    noise_scaling_map_list = [
+    noise_scaling_map_dict = [
         ac.Array2D.manual(array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0),
         ac.Array2D.manual(array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0),
     ]
@@ -83,7 +83,7 @@ def test__hyper_noise_map_from():
     noise_map = hyper_noise_map_from(
         hyper_noise_scalar_list=hyper_noise_scalar_list,
         noise_map=noise_map,
-        noise_scaling_map_list=noise_scaling_map_list,
+        noise_scaling_map_dict=noise_scaling_map_dict,
     )
 
     assert (noise_map.native == (np.array([[5.0, 8.0], [11.0, 14.0]]))).all()

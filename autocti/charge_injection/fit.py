@@ -20,14 +20,14 @@ class FitImagingCI(aa.FitImaging):
         post_cti_data
             The `pre_cti_data` with cti added to it via the clocker and a CTI model.
         hyper_noise_scalar_list :
-            The hyper_ci-parameter(s) which the noise_scaling_map_list_list is multiplied by to scale the noise-map.
+            The hyper_ci-parameter(s) which the noise_scaling_map_dict_list is multiplied by to scale the noise-map.
         """
 
         super().__init__(dataset=dataset, use_mask_in_fit=True)
 
         self.post_cti_data = post_cti_data
         self.hyper_noise_scalar_list = hyper_noise_scalar_list
-        self.noise_scaling_map_list = dataset.noise_scaling_map_list
+        self.noise_scaling_map_dict = dataset.noise_scaling_map_dict
 
     @property
     def imaging_ci(self) -> ImagingCI:
@@ -43,7 +43,7 @@ class FitImagingCI(aa.FitImaging):
 
             return hyper_noise_map_from(
                 hyper_noise_scalar_list=self.hyper_noise_scalar_list,
-                noise_scaling_map_list=self.dataset.noise_scaling_map_list,
+                noise_scaling_map_dict=self.dataset.noise_scaling_map_dict,
                 noise_map=self.dataset.noise_map,
             )
 
@@ -82,13 +82,13 @@ class FitImagingCI(aa.FitImaging):
         )
 
 
-def hyper_noise_map_from(hyper_noise_scalar_list, noise_scaling_map_list, noise_map):
+def hyper_noise_map_from(hyper_noise_scalar_list, noise_scaling_map_dict, noise_map):
     """For a noise-map, use the model hyper noise and noise-scaling maps to compute a scaled noise-map.
 
     Parameters
     -----------
     hyper_noise_scalar_list
-    noise_scaling_map_list
+    noise_scaling_map_dict
     noise_map : imaging.NoiseMap or ndarray
         An arrays describing the RMS standard deviation error in each pixel, preferably in units of electrons per
         second.
@@ -97,7 +97,7 @@ def hyper_noise_map_from(hyper_noise_scalar_list, noise_scaling_map_list, noise_
     noise_map = copy.copy(noise_map)
 
     for hyper_noise_scalar, noise_scaling_map in zip(
-        hyper_noise_scalar_list, noise_scaling_map_list
+        hyper_noise_scalar_list, noise_scaling_map_dict
     ):
 
         if hyper_noise_scalar is not None:

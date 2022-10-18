@@ -232,18 +232,18 @@ class Extract2DSerialCalibration:
             else None
         )
 
-        if imaging_ci.noise_scaling_map_list is not None:
+        if imaging_ci.noise_scaling_map_dict is not None:
 
-            noise_scaling_map_list = [
+            noise_scaling_map_dict = [
                 imaging_ci.layout.extract.serial_calibration.array_2d_from(
                     array=noise_scaling_map, rows=rows
                 )
-                for noise_scaling_map in imaging_ci.noise_scaling_map_list
+                for noise_scaling_map in imaging_ci.noise_scaling_map_dict
             ]
 
         else:
 
-            noise_scaling_map_list = None
+            noise_scaling_map_dict = None
 
         image = imaging_ci.layout.extract.serial_calibration.array_2d_from(
             array=imaging_ci.image, rows=rows
@@ -261,5 +261,5 @@ class Extract2DSerialCalibration:
                 layout=imaging_ci.layout, new_shape_2d=image.shape, rows=rows
             ),
             cosmic_ray_map=cosmic_ray_map,
-            noise_scaling_map_list=noise_scaling_map_list,
+            noise_scaling_map_dict=noise_scaling_map_dict,
         )

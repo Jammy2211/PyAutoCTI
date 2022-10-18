@@ -419,22 +419,22 @@ class FitImagingCIPlotter(Plotter):
         )
         self.close_subplot_figure()
 
-    def subplot_noise_scaling_map_list(self):
+    def subplot_noise_scaling_map_dict(self):
         """
         Plots the noise-scaling maps of the plotter's `FitImagingCI` object in 2D on a subplot.
         """
 
-        self.open_subplot_figure(number_subplots=len(self.fit.noise_scaling_map_list))
+        self.open_subplot_figure(number_subplots=len(self.fit.noise_scaling_map_dict))
 
-        for index in range(len(self.fit.noise_scaling_map_list)):
+        for index in range(len(self.fit.noise_scaling_map_dict)):
 
             self.mat_plot_2d.plot_array(
-                array=self.fit.noise_scaling_map_list[index],
+                array=self.fit.noise_scaling_map_dict[index],
                 visuals_2d=self.get_visuals_2d(),
                 auto_labels=AutoLabels(title=f"Noise Scaling Map {index}"),
             )
 
         self.mat_plot_2d.output.subplot_to_figure(
-            auto_filename=f"subplot_noise_scaling_map_list"
+            auto_filename=f"subplot_noise_scaling_map_dict"
         )
         self.mat_plot_2d.figure.close()

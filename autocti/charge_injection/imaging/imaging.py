@@ -18,7 +18,7 @@ class ImagingCI(aa.Imaging):
         pre_cti_data: aa.Array2D,
         layout: Layout2DCI,
         cosmic_ray_map: Optional[aa.Array2D] = None,
-        noise_scaling_map_list: Optional[List[aa.Array2D]] = None,
+        noise_scaling_map_dict: Optional[List[aa.Array2D]] = None,
         name=None,
     ):
 
@@ -33,12 +33,12 @@ class ImagingCI(aa.Imaging):
 
         self.cosmic_ray_map = cosmic_ray_map
 
-        if noise_scaling_map_list is not None:
-            noise_scaling_map_list = [
-                noise_scaling_map.native for noise_scaling_map in noise_scaling_map_list
+        if noise_scaling_map_dict is not None:
+            noise_scaling_map_dict = [
+                noise_scaling_map.native for noise_scaling_map in noise_scaling_map_dict
             ]
 
-        self.noise_scaling_map_list = noise_scaling_map_list
+        self.noise_scaling_map_dict = noise_scaling_map_dict
 
         self.layout = layout
 
@@ -91,14 +91,14 @@ class ImagingCI(aa.Imaging):
 
             cosmic_ray_map = None
 
-        if self.noise_scaling_map_list is not None:
+        if self.noise_scaling_map_dict is not None:
 
-            noise_scaling_map_list = [
+            noise_scaling_map_dict = [
                 aa.Array2D.manual_mask(array=noise_scaling_map.native, mask=mask)
-                for noise_scaling_map in self.noise_scaling_map_list
+                for noise_scaling_map in self.noise_scaling_map_dict
             ]
         else:
-            noise_scaling_map_list = None
+            noise_scaling_map_dict = None
 
         return ImagingCI(
             image=image,
@@ -106,7 +106,7 @@ class ImagingCI(aa.Imaging):
             pre_cti_data=self.pre_cti_data.native,
             layout=self.layout,
             cosmic_ray_map=cosmic_ray_map,
-            noise_scaling_map_list=noise_scaling_map_list,
+            noise_scaling_map_dict=noise_scaling_map_dict,
         )
 
     def apply_settings(self, settings: SettingsImagingCI):
@@ -141,12 +141,12 @@ class ImagingCI(aa.Imaging):
 
         return imaging
 
-    def set_noise_scaling_map_list(
-        self, noise_scaling_map_list: List[aa.Array2D]
+    def set_noise_scaling_map_dict(
+        self, noise_scaling_map_dict: List[aa.Array2D]
     ):
 
-        self.noise_scaling_map_list = [
-            noise_scaling_map.native for noise_scaling_map in noise_scaling_map_list
+        self.noise_scaling_map_dict = [
+            noise_scaling_map.native for noise_scaling_map in noise_scaling_map_dict
         ]
 
     @classmethod
