@@ -142,7 +142,7 @@ class ImagingCI(aa.Imaging):
         return imaging
 
     def set_noise_scaling_map_list(
-        self, noise_scaling_map_list: List[aa.Array2D] = None
+        self, noise_scaling_map_list: List[aa.Array2D]
     ):
 
         noise_scaling_map_list = [
