@@ -240,7 +240,7 @@ containing the parallel FPR.
         shape_native=imaging_ci.shape_native, pixel_scales=imaging_ci.pixel_scales
     )
 
-    mask = ac.Mask2D.masked_fprs_and_epers_from(
+    mask = ac.Mask2D.masked_fpr_and_eper_from(
         mask=mask,
         layout=imaging_ci.layout,
         pixel_scales=imaging_ci.pixel_scales,
@@ -349,7 +349,7 @@ We can mask the data to remove the FPR just like we did above.
         shape_slim=dataset_1d.shape_slim, pixel_scales=dataset_1d.pixel_scales
     )
 
-    mask = ac.Mask1D.masked_fprs_and_epers_from(
+    mask = ac.Mask1D.masked_fpr_and_eper_from(
         mask=mask,
         layout=imaging_ci.layout,
         pixel_scales=imaging_ci.pixel_scales,

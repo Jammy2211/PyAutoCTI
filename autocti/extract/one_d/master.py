@@ -165,7 +165,7 @@ class Extract1DMaster:
 
         return array_1d_non_regions_ci
 
-    def array_1d_of_edges_and_epers_from(
+    def array_1d_of_edges_and_eper_from(
         self,
         array: aa.Array1D,
         fpr_pixels: Tuple[int, int] = None,
@@ -231,18 +231,18 @@ class Extract1DMaster:
         trails_pixels
             The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
-        array_1d_of_edges_and_epers = array.native.copy() * 0.0
+        array_1d_of_edges_and_eper = array.native.copy() * 0.0
 
         if fpr_pixels is not None:
 
-            array_1d_of_edges_and_epers = self.fpr.add_to_array(
-                new_array=array_1d_of_edges_and_epers, array=array, pixels=fpr_pixels
+            array_1d_of_edges_and_eper = self.fpr.add_to_array(
+                new_array=array_1d_of_edges_and_eper, array=array, pixels=fpr_pixels
             )
 
         if eper_pixels is not None:
 
-            array_1d_of_edges_and_epers = self.eper.add_to_array(
-                new_array=array_1d_of_edges_and_epers, array=array, pixels=eper_pixels
+            array_1d_of_edges_and_eper = self.eper.add_to_array(
+                new_array=array_1d_of_edges_and_eper, array=array, pixels=eper_pixels
             )
 
-        return array_1d_of_edges_and_epers
+        return array_1d_of_edges_and_eper

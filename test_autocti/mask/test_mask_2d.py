@@ -339,13 +339,13 @@ def test__masked_parallel_fpr_from():
     ).all()
 
 
-def test__masked_parallel_epers_from():
+def test__masked_parallel_eper_from():
 
     layout = ac.Layout2DCI(shape_2d=(10, 3), region_list=[(1, 4, 0, 3)])
 
-    mask = ac.Mask2D.masked_parallel_epers_from(
+    mask = ac.Mask2D.masked_parallel_eper_from(
         layout=layout,
-        settings=ac.SettingsMask2D(parallel_epers_pixels=(0, 4)),
+        settings=ac.SettingsMask2D(parallel_eper_pixels=(0, 4)),
         pixel_scales=0.1,
     )
 
@@ -371,9 +371,9 @@ def test__masked_parallel_epers_from():
 
     layout = ac.Layout2DCI(shape_2d=(10, 3), region_list=[(1, 4, 0, 3)])
 
-    mask = ac.Mask2D.masked_parallel_epers_from(
+    mask = ac.Mask2D.masked_parallel_eper_from(
         layout=layout,
-        settings=ac.SettingsMask2D(parallel_epers_pixels=(0, 4)),
+        settings=ac.SettingsMask2D(parallel_eper_pixels=(0, 4)),
         pixel_scales=0.1,
         invert=True,
     )
@@ -400,9 +400,9 @@ def test__masked_parallel_epers_from():
 
     layout = ac.Layout2DCI(shape_2d=(10, 3), region_list=[(1, 4, 0, 1), (1, 4, 2, 3)])
 
-    mask = ac.Mask2D.masked_parallel_epers_from(
+    mask = ac.Mask2D.masked_parallel_eper_from(
         layout=layout,
-        settings=ac.SettingsMask2D(parallel_epers_pixels=(0, 4)),
+        settings=ac.SettingsMask2D(parallel_eper_pixels=(0, 4)),
         pixel_scales=0.1,
     )
 
@@ -494,11 +494,11 @@ def test__masked_serial_fpr_from():
     ).all()
 
 
-def test__masked_serial_epers_from():
+def test__masked_serial_eper_from():
 
     layout = ac.Layout2DCI(shape_2d=(3, 10), region_list=[(0, 3, 1, 4)])
 
-    mask = ac.Mask2D.masked_serial_epers_from(
+    mask = ac.Mask2D.masked_serial_eper_from(
         layout=layout,
         settings=ac.SettingsMask2D(serial_eper_pixels=(0, 6)),
         pixel_scales=0.1,
@@ -517,7 +517,7 @@ def test__masked_serial_epers_from():
         )
     ).all()
 
-    mask = ac.Mask2D.masked_serial_epers_from(
+    mask = ac.Mask2D.masked_serial_eper_from(
         layout=layout,
         settings=ac.SettingsMask2D(serial_eper_pixels=(0, 6)),
         pixel_scales=0.1,
@@ -539,7 +539,7 @@ def test__masked_serial_epers_from():
 
     layout = ac.Layout2DCI(shape_2d=(3, 10), region_list=[(0, 1, 1, 4), (2, 3, 1, 4)])
 
-    mask = ac.Mask2D.masked_serial_epers_from(
+    mask = ac.Mask2D.masked_serial_eper_from(
         layout=layout,
         settings=ac.SettingsMask2D(serial_eper_pixels=(0, 6)),
         pixel_scales=0.1,
@@ -559,7 +559,7 @@ def test__masked_serial_epers_from():
     ).all()
 
 
-def test__masked_fprs_and_epers_from(imaging_ci_7x7):
+def test__masked_fpr_and_eper_from(imaging_ci_7x7):
 
     unmasked = ac.Mask2D.unmasked(
         shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
@@ -567,7 +567,7 @@ def test__masked_fprs_and_epers_from(imaging_ci_7x7):
 
     layout = ac.Layout2DCI(shape_2d=(7, 7), region_list=[(1, 5, 1, 5)])
 
-    mask = ac.Mask2D.masked_fprs_and_epers_from(
+    mask = ac.Mask2D.masked_fpr_and_eper_from(
         layout=layout,
         mask=unmasked,
         settings=ac.SettingsMask2D(parallel_fpr_pixels=(0, 1)),
@@ -589,10 +589,10 @@ def test__masked_fprs_and_epers_from(imaging_ci_7x7):
         )
     ).all()
 
-    mask = ac.Mask2D.masked_fprs_and_epers_from(
+    mask = ac.Mask2D.masked_fpr_and_eper_from(
         layout=layout,
         mask=unmasked,
-        settings=ac.SettingsMask2D(parallel_epers_pixels=(0, 1)),
+        settings=ac.SettingsMask2D(parallel_eper_pixels=(0, 1)),
         pixel_scales=0.1,
     )
 
@@ -611,7 +611,7 @@ def test__masked_fprs_and_epers_from(imaging_ci_7x7):
         )
     ).all()
 
-    mask = ac.Mask2D.masked_fprs_and_epers_from(
+    mask = ac.Mask2D.masked_fpr_and_eper_from(
         layout=layout,
         mask=unmasked,
         settings=ac.SettingsMask2D(serial_fpr_pixels=(0, 1)),
@@ -633,7 +633,7 @@ def test__masked_fprs_and_epers_from(imaging_ci_7x7):
         )
     ).all()
 
-    mask = ac.Mask2D.masked_fprs_and_epers_from(
+    mask = ac.Mask2D.masked_fpr_and_eper_from(
         layout=layout,
         mask=unmasked,
         settings=ac.SettingsMask2D(serial_eper_pixels=(0, 1)),

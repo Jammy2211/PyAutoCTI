@@ -52,20 +52,20 @@ def test__stacked_array_1d_from(array, masked_array):
 
     extract = MockExtract1D(region_list=[(1, 4), (5, 8)])
 
-    stacked_fprs = extract.stacked_array_1d_from(array=array, pixels=(0, 3))
+    stacked_fpr = extract.stacked_array_1d_from(array=array, pixels=(0, 3))
 
-    assert (stacked_fprs == np.array([3.0, 4.0, 5.0])).all()
+    assert (stacked_fpr == np.array([3.0, 4.0, 5.0])).all()
 
     extract = MockExtract1D(region_list=[(1, 3), (5, 8)])
 
-    stacked_fprs = extract.stacked_array_1d_from(array=array, pixels=(0, 2))
+    stacked_fpr = extract.stacked_array_1d_from(array=array, pixels=(0, 2))
 
-    assert (stacked_fprs == np.array([3.0, 4.0])).all()
+    assert (stacked_fpr == np.array([3.0, 4.0])).all()
 
-    stacked_fprs = extract.stacked_array_1d_from(array=masked_array, pixels=(0, 2))
+    stacked_fpr = extract.stacked_array_1d_from(array=masked_array, pixels=(0, 2))
 
-    assert (stacked_fprs == np.ma.array([1.0, 6.0])).all()
-    assert (stacked_fprs.mask == np.ma.array([False, False])).all()
+    assert (stacked_fpr == np.ma.array([1.0, 6.0])).all()
+    assert (stacked_fpr.mask == np.ma.array([False, False])).all()
 
 
 def test__total_pixels_minimum():

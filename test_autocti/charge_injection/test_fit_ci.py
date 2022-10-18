@@ -140,11 +140,11 @@ def test__chi_squared_map_of_parallel_non_regions_ci():
     fit = ac.FitImagingCI(dataset=masked_imaging, post_cti_data=pre_cti_data)
 
     assert (
-        fit.chi_squared_map_of_parallel_epers == np.array([[0.0, 0.0], [4.0, 0.0]])
+        fit.chi_squared_map_of_parallel_eper == np.array([[0.0, 0.0], [4.0, 0.0]])
     ).all()
 
 
-def test__chi_squared_map_of_serial_epers():
+def test__chi_squared_map_of_serial_eper():
 
     layout = ac.Layout2DCI(
         shape_2d=(2, 2), region_list=[(0, 2, 0, 1)], serial_overscan=(1, 2, 0, 2)
@@ -167,7 +167,7 @@ def test__chi_squared_map_of_serial_epers():
     fit = ac.FitImagingCI(dataset=masked_imaging, post_cti_data=pre_cti_data)
 
     assert (
-        fit.chi_squared_map_of_serial_epers == np.array([[0.0, 4.0], [0.0, 4.0]])
+        fit.chi_squared_map_of_serial_eper == np.array([[0.0, 4.0], [0.0, 4.0]])
     ).all()
 
 
@@ -193,6 +193,6 @@ def test__chi_squared_map_of_overscan_above_serial_eper():
     fit = ac.FitImagingCI(dataset=masked_imaging, post_cti_data=pre_cti_data)
 
     assert (
-        fit.chi_squared_map_of_serial_overscan_no_epers
+        fit.chi_squared_map_of_serial_overscan_no_eper
         == np.array([[0.0, 0.0], [0.0, 4.0]])
     ).all()

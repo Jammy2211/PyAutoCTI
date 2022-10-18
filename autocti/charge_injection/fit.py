@@ -66,18 +66,18 @@ class FitImagingCI(aa.FitImaging):
         return self.layout.extract.regions_array_2d_from(array=self.chi_squared_map)
 
     @property
-    def chi_squared_map_of_parallel_epers(self):
+    def chi_squared_map_of_parallel_eper(self):
         return self.layout.extract.parallel_eper.array_2d_from(
             array=self.chi_squared_map
         )
 
     @property
-    def chi_squared_map_of_serial_epers(self):
+    def chi_squared_map_of_serial_eper(self):
         return self.layout.extract.serial_eper.array_2d_from(array=self.chi_squared_map)
 
     @property
-    def chi_squared_map_of_serial_overscan_no_epers(self):
-        return self.layout.extract.serial_overscan_above_epers_array_2d_from(
+    def chi_squared_map_of_serial_overscan_no_eper(self):
+        return self.layout.extract.serial_overscan_above_eper_array_2d_from(
             array=self.chi_squared_map
         )
 

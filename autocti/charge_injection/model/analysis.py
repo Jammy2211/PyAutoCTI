@@ -109,9 +109,9 @@ class AnalysisImagingCI(Analysis):
 
         return [
             instance.hyper_noise.regions_ci,
-            instance.hyper_noise.parallel_epers,
+            instance.hyper_noise.parallel_eper,
             instance.hyper_noise.serial_eper,
-            instance.hyper_noise.serial_overscan_no_epers,
+            instance.hyper_noise.serial_overscan_no_eper,
         ]
 
         # hyper_noise_scalar_list = list(
@@ -119,9 +119,9 @@ class AnalysisImagingCI(Analysis):
         #         None,
         #         [
         #             instance.hyper_noise.regions_ci,
-        #             instance.hyper_noise.parallel_epers,
+        #             instance.hyper_noise.parallel_eper,
         #             instance.hyper_noise.serial_eper,
-        #             instance.hyper_noise.serial_overscan_no_epers,
+        #             instance.hyper_noise.serial_overscan_no_eper,
         #         ],
         #     )
         # )

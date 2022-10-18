@@ -230,7 +230,7 @@ class Extract2DMaster:
 
         return non_regions_ci_array
 
-    def parallel_fprs_and_epers_array_2d_from(
+    def parallel_fpr_and_eper_array_2d_from(
         self,
         array: aa.Array2D,
         fpr_pixels: Tuple[int, int] = None,
@@ -311,7 +311,7 @@ class Extract2DMaster:
 
         return new_array
 
-    def serial_fprs_and_epers_array_2d_from(
+    def serial_fpr_and_eper_array_2d_from(
         self, array: aa.Array2D, fpr_pixels=None, eper_pixels=None
     ) -> aa.Array2D:
         """
@@ -388,7 +388,7 @@ class Extract2DMaster:
 
         return new_array
 
-    def serial_overscan_above_epers_array_2d_from(
+    def serial_overscan_above_eper_array_2d_from(
         self, array: aa.Array2D
     ) -> aa.Array2D:
         """

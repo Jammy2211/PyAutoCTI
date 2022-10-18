@@ -19,7 +19,7 @@ class SettingsMask1D:
 
 class Mask1D(aa.Mask1D):
     @classmethod
-    def masked_fprs_and_epers_from(
+    def masked_fpr_and_eper_from(
         cls,
         mask: "Mask1D",
         layout: Layout1D,
@@ -37,7 +37,7 @@ class Mask1D(aa.Mask1D):
 
         if settings.eper_pixels is not None:
 
-            eper_mask = cls.masked_epers_from_layout(
+            eper_mask = cls.masked_eper_from_layout(
                 layout=layout, settings=settings, pixel_scales=pixel_scales
             )
 
@@ -67,7 +67,7 @@ class Mask1D(aa.Mask1D):
         return Mask1D(mask=mask.astype("bool"), pixel_scales=pixel_scales)
 
     @classmethod
-    def masked_epers_from_layout(
+    def masked_eper_from_layout(
         cls,
         layout: Layout1D,
         settings: "SettingsMask1D",

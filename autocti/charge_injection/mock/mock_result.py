@@ -13,9 +13,9 @@ class MockResult(mock.MockResult):
         mask=None,
         model_image=None,
         noise_scaling_map_dict_list_of_regions_ci=None,
-        noise_scaling_map_dict_list_of_parallel_epers=None,
-        noise_scaling_map_dict_list_of_serial_epers=None,
-        noise_scaling_map_dict_list_of_serial_overscan_no_epers=None,
+        noise_scaling_map_dict_list_of_parallel_eper=None,
+        noise_scaling_map_dict_list_of_serial_eper=None,
+        noise_scaling_map_dict_list_of_serial_overscan_no_eper=None,
         use_as_hyper_dataset=False,
     ):
 
@@ -36,14 +36,14 @@ class MockResult(mock.MockResult):
         self.noise_scaling_map_dict_list_of_regions_ci = (
             noise_scaling_map_dict_list_of_regions_ci
         )
-        self.noise_scaling_map_dict_list_of_parallel_epers = (
-            noise_scaling_map_dict_list_of_parallel_epers
+        self.noise_scaling_map_dict_list_of_parallel_eper = (
+            noise_scaling_map_dict_list_of_parallel_eper
         )
-        self.noise_scaling_map_dict_list_of_serial_epers = (
-            noise_scaling_map_dict_list_of_serial_epers
+        self.noise_scaling_map_dict_list_of_serial_eper = (
+            noise_scaling_map_dict_list_of_serial_eper
         )
-        self.noise_scaling_map_dict_list_of_serial_overscan_no_epers = (
-            noise_scaling_map_dict_list_of_serial_overscan_no_epers
+        self.noise_scaling_map_dict_list_of_serial_overscan_no_eper = (
+            noise_scaling_map_dict_list_of_serial_overscan_no_eper
         )
         self.use_as_hyper_dataset = use_as_hyper_dataset
 
@@ -63,9 +63,9 @@ class MockResults(ResultsCollection):
         mask=None,
         model_image=None,
         noise_scaling_map_dict_list_of_regions_ci=None,
-        noise_scaling_map_dict_list_of_parallel_epers=None,
-        noise_scaling_map_dict_list_of_serial_epers=None,
-        noise_scaling_map_dict_list_of_serial_overscan_no_epers=None,
+        noise_scaling_map_dict_list_of_parallel_eper=None,
+        noise_scaling_map_dict_list_of_serial_eper=None,
+        noise_scaling_map_dict_list_of_serial_overscan_no_eper=None,
         use_as_hyper_dataset=False,
     ):
         """
@@ -84,9 +84,9 @@ class MockResults(ResultsCollection):
             mask=mask,
             model_image=model_image,
             noise_scaling_map_dict_list_of_regions_ci=noise_scaling_map_dict_list_of_regions_ci,
-            noise_scaling_map_dict_list_of_parallel_epers=noise_scaling_map_dict_list_of_parallel_epers,
-            noise_scaling_map_dict_list_of_serial_epers=noise_scaling_map_dict_list_of_serial_epers,
-            noise_scaling_map_dict_list_of_serial_overscan_no_epers=noise_scaling_map_dict_list_of_serial_overscan_no_epers,
+            noise_scaling_map_dict_list_of_parallel_eper=noise_scaling_map_dict_list_of_parallel_eper,
+            noise_scaling_map_dict_list_of_serial_eper=noise_scaling_map_dict_list_of_serial_eper,
+            noise_scaling_map_dict_list_of_serial_overscan_no_eper=noise_scaling_map_dict_list_of_serial_overscan_no_eper,
             use_as_hyper_dataset=use_as_hyper_dataset,
         )
 

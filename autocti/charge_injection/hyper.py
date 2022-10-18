@@ -22,24 +22,24 @@ class HyperCINoiseCollection:
     def __init__(
         self,
         regions_ci: Optional[HyperCINoiseScalar] = None,
-        parallel_epers: Optional[HyperCINoiseScalar] = None,
+        parallel_eper: Optional[HyperCINoiseScalar] = None,
         serial_eper: Optional[HyperCINoiseScalar] = None,
-        serial_overscan_no_epers: Optional[HyperCINoiseScalar] = None,
+        serial_overscan_no_eper: Optional[HyperCINoiseScalar] = None,
     ):
 
         self.regions_ci = regions_ci
-        self.parallel_epers = parallel_epers
+        self.parallel_eper = parallel_eper
         self.serial_eper = serial_eper
-        self.serial_overscan_no_epers = serial_overscan_no_epers
+        self.serial_overscan_no_eper = serial_overscan_no_eper
 
     @property
     def as_dict(self):
 
         hyper_dict = {
             "regions_ci" : self.regions_ci,
-            "parallel_epers" : self.parallel_epers,
+            "parallel_eper" : self.parallel_eper,
             "serial_eper" : self.serial_eper,
-            "serial_overscan_no_epers" : self.serial_overscan_no_epers
+            "serial_overscan_no_eper" : self.serial_overscan_no_eper
         }
 
         return {
