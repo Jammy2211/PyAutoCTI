@@ -24,5 +24,5 @@ class ResultImagingCI(ResultDataset):
             "regions_ci": fit.chi_squared_map_of_regions_ci,
             "parallel_epers": fit.chi_squared_map_of_parallel_epers,
             "serial_epers": fit.chi_squared_map_of_serial_epers,
-            "serial_overscan_no_trails": fit.chi_squared_map_of_serial_overscan_no_trails,
+            "serial_overscan_no_epers": fit.chi_squared_map_of_serial_overscan_no_epers,
         }

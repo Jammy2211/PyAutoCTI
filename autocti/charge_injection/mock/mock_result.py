@@ -15,7 +15,7 @@ class MockResult(mock.MockResult):
         noise_scaling_map_dict_list_of_regions_ci=None,
         noise_scaling_map_dict_list_of_parallel_epers=None,
         noise_scaling_map_dict_list_of_serial_epers=None,
-        noise_scaling_map_dict_list_of_serial_overscan_no_trails=None,
+        noise_scaling_map_dict_list_of_serial_overscan_no_epers=None,
         use_as_hyper_dataset=False,
     ):
 
@@ -42,8 +42,8 @@ class MockResult(mock.MockResult):
         self.noise_scaling_map_dict_list_of_serial_epers = (
             noise_scaling_map_dict_list_of_serial_epers
         )
-        self.noise_scaling_map_dict_list_of_serial_overscan_no_trails = (
-            noise_scaling_map_dict_list_of_serial_overscan_no_trails
+        self.noise_scaling_map_dict_list_of_serial_overscan_no_epers = (
+            noise_scaling_map_dict_list_of_serial_overscan_no_epers
         )
         self.use_as_hyper_dataset = use_as_hyper_dataset
 
@@ -65,7 +65,7 @@ class MockResults(ResultsCollection):
         noise_scaling_map_dict_list_of_regions_ci=None,
         noise_scaling_map_dict_list_of_parallel_epers=None,
         noise_scaling_map_dict_list_of_serial_epers=None,
-        noise_scaling_map_dict_list_of_serial_overscan_no_trails=None,
+        noise_scaling_map_dict_list_of_serial_overscan_no_epers=None,
         use_as_hyper_dataset=False,
     ):
         """
@@ -86,7 +86,7 @@ class MockResults(ResultsCollection):
             noise_scaling_map_dict_list_of_regions_ci=noise_scaling_map_dict_list_of_regions_ci,
             noise_scaling_map_dict_list_of_parallel_epers=noise_scaling_map_dict_list_of_parallel_epers,
             noise_scaling_map_dict_list_of_serial_epers=noise_scaling_map_dict_list_of_serial_epers,
-            noise_scaling_map_dict_list_of_serial_overscan_no_trails=noise_scaling_map_dict_list_of_serial_overscan_no_trails,
+            noise_scaling_map_dict_list_of_serial_overscan_no_epers=noise_scaling_map_dict_list_of_serial_overscan_no_epers,
             use_as_hyper_dataset=use_as_hyper_dataset,
         )
 

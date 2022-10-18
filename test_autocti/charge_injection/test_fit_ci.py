@@ -193,6 +193,6 @@ def test__chi_squared_map_of_overscan_above_serial_eper():
     fit = ac.FitImagingCI(dataset=masked_imaging, post_cti_data=pre_cti_data)
 
     assert (
-        fit.chi_squared_map_of_serial_overscan_no_trails
+        fit.chi_squared_map_of_serial_overscan_no_epers
         == np.array([[0.0, 0.0], [0.0, 4.0]])
     ).all()
