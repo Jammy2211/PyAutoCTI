@@ -145,9 +145,9 @@ class ImagingCI(aa.Imaging):
         self, noise_scaling_map_dict: List[aa.Array2D]
     ):
 
-        self.noise_scaling_map_dict = [
-            noise_scaling_map.native for noise_scaling_map in noise_scaling_map_dict
-        ]
+        self.noise_scaling_map_dict = {
+            key: noise_scaling_map.native for key, noise_scaling_map in noise_scaling_map_dict.__iter__()
+        }
 
     @classmethod
     def from_fits(
