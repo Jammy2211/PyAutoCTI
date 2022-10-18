@@ -36,12 +36,10 @@ class HyperCINoiseCollection:
     def as_dict(self):
 
         hyper_dict = {
-            "regions_ci" : self.regions_ci,
-            "parallel_eper" : self.parallel_eper,
-            "serial_eper" : self.serial_eper,
-            "serial_overscan_no_eper" : self.serial_overscan_no_eper
+            "regions_ci": self.regions_ci,
+            "parallel_eper": self.parallel_eper,
+            "serial_eper": self.serial_eper,
+            "serial_overscan_no_eper": self.serial_overscan_no_eper,
         }
 
-        return {
-            key: value for key, value in hyper_dict.items() if value is not None
-        }
+        return {key: value for key, value in hyper_dict.items() if value is not None}

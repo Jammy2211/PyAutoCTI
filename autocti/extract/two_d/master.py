@@ -388,9 +388,7 @@ class Extract2DMaster:
 
         return new_array
 
-    def serial_overscan_above_eper_array_2d_from(
-        self, array: aa.Array2D
-    ) -> aa.Array2D:
+    def serial_overscan_above_eper_array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
         """
         Extract an array of the region above the EPER trails of the serial overscan.
 

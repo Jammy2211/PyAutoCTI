@@ -7,7 +7,7 @@ from autocti.charge_injection.layout import Layout2DCI
 from autocti.mask import mask_2d
 from autocti import exc
 
-from typing import Optional, List
+from typing import Dict, Optional, List
 
 
 class ImagingCI(aa.Imaging):
@@ -18,7 +18,7 @@ class ImagingCI(aa.Imaging):
         pre_cti_data: aa.Array2D,
         layout: Layout2DCI,
         cosmic_ray_map: Optional[aa.Array2D] = None,
-        noise_scaling_map_dict: Optional[List[aa.Array2D]] = None,
+        noise_scaling_map_dict: Optional[Dict] = None,
         name=None,
     ):
 
@@ -34,9 +34,11 @@ class ImagingCI(aa.Imaging):
         self.cosmic_ray_map = cosmic_ray_map
 
         if noise_scaling_map_dict is not None:
-            noise_scaling_map_dict = [
-                noise_scaling_map.native for noise_scaling_map in noise_scaling_map_dict
-            ]
+
+            noise_scaling_map_dict = {
+                key: noise_scaling_map.native
+                for key, noise_scaling_map in noise_scaling_map_dict.items()
+            }
 
         self.noise_scaling_map_dict = noise_scaling_map_dict
 
@@ -93,10 +95,11 @@ class ImagingCI(aa.Imaging):
 
         if self.noise_scaling_map_dict is not None:
 
-            noise_scaling_map_dict = [
-                aa.Array2D.manual_mask(array=noise_scaling_map.native, mask=mask)
-                for noise_scaling_map in self.noise_scaling_map_dict
-            ]
+            noise_scaling_map_dict = {
+                key: aa.Array2D.manual_mask(array=noise_scaling_map.native, mask=mask)
+                for key, noise_scaling_map in self.noise_scaling_map_dict.items()
+            }
+
         else:
             noise_scaling_map_dict = None
 
@@ -141,12 +144,11 @@ class ImagingCI(aa.Imaging):
 
         return imaging
 
-    def set_noise_scaling_map_dict(
-        self, noise_scaling_map_dict: List[aa.Array2D]
-    ):
+    def set_noise_scaling_map_dict(self, noise_scaling_map_dict: Dict):
 
         self.noise_scaling_map_dict = {
-            key: noise_scaling_map.native for key, noise_scaling_map in noise_scaling_map_dict.__iter__()
+            key: noise_scaling_map.native
+            for key, noise_scaling_map in noise_scaling_map_dict.items()
         }
 
     @classmethod

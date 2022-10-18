@@ -156,10 +156,12 @@ def make_ci_cosmic_ray_map_7x7():
 
 def make_ci_noise_scaling_map_dict_7x7():
 
-    return [
-        ac.Array2D.ones(shape_native=(7, 7), pixel_scales=(1.0, 1.0)),
-        ac.Array2D.full(shape_native=(7, 7), fill_value=2.0, pixel_scales=(1.0, 1.0)),
-    ]
+    return {
+        "parallel_eper": ac.Array2D.ones(shape_native=(7, 7), pixel_scales=(1.0, 1.0)),
+        "serial_eper": ac.Array2D.full(
+            shape_native=(7, 7), fill_value=2.0, pixel_scales=(1.0, 1.0)
+        ),
+    }
 
 
 ### LINE DATASET FITS ###
@@ -189,7 +191,7 @@ def make_imaging_ci_7x7():
 ### CHARGE INJECTION FITS ###
 
 
-def make_hyper_noise_scalar_list():
+def make_hyper_noise_scalar_dict():
     return [
         ac.HyperCINoiseScalar(scale_factor=1.0),
         ac.HyperCINoiseScalar(scale_factor=2.0),
@@ -200,7 +202,7 @@ def make_fit_ci_7x7():
     return ac.FitImagingCI(
         dataset=make_imaging_ci_7x7(),
         post_cti_data=make_imaging_ci_7x7().pre_cti_data,
-        hyper_noise_scalar_list=make_hyper_noise_scalar_list(),
+        hyper_noise_scalar_dict=make_hyper_noise_scalar_dict(),
     )
 
 
