@@ -54,12 +54,14 @@ def test__noise_scaling_map_dict_is_list_of_result__are_correct(
         ac.Array2D.full(fill_value=4.0, shape_native=(7, 7), pixel_scales=1.0)
     ]
 
-    imaging_ci_7x7.noise_scaling_map_dict = [
-        noise_scaling_map_dict_list_of_regions_ci[0],
-        noise_scaling_map_dict_list_of_parallel_eper[0],
-        noise_scaling_map_dict_list_of_serial_eper[0],
-        noise_scaling_map_dict_list_of_serial_overscan_no_eper[0],
-    ]
+    imaging_ci_7x7.noise_scaling_map_dict = {
+        "regions_ci": noise_scaling_map_dict_list_of_regions_ci[0],
+        "parallel_eper": noise_scaling_map_dict_list_of_parallel_eper[0],
+        "serial_eper": noise_scaling_map_dict_list_of_serial_eper[0],
+        "serial_overscan_no_eper": noise_scaling_map_dict_list_of_serial_overscan_no_eper[
+            0
+        ],
+    }
 
     masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
 

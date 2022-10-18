@@ -192,10 +192,10 @@ def make_imaging_ci_7x7():
 
 
 def make_hyper_noise_scalar_dict():
-    return [
-        ac.HyperCINoiseScalar(scale_factor=1.0),
-        ac.HyperCINoiseScalar(scale_factor=2.0),
-    ]
+    return {
+        "parallel_eper": ac.HyperCINoiseScalar(scale_factor=1.0),
+        "serial_eper": ac.HyperCINoiseScalar(scale_factor=2.0),
+    }
 
 
 def make_fit_ci_7x7():
@@ -218,7 +218,7 @@ def make_samples_with_result():
             parallel_ccd=make_ccd(),
             serial_trap_list=[ac.TrapInstantCapture],
             serial_ccd=make_ccd(),
-        )
+        ),
     )
 
     instance = model.instance_from_prior_medians()

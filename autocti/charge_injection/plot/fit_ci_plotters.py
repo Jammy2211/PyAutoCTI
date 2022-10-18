@@ -426,12 +426,12 @@ class FitImagingCIPlotter(Plotter):
 
         self.open_subplot_figure(number_subplots=len(self.fit.noise_scaling_map_dict))
 
-        for index in range(len(self.fit.noise_scaling_map_dict)):
+        for key, noise_scaling_map in self.fit.noise_scaling_map_dict.items():
 
             self.mat_plot_2d.plot_array(
-                array=self.fit.noise_scaling_map_dict[index],
+                array=noise_scaling_map,
                 visuals_2d=self.get_visuals_2d(),
-                auto_labels=AutoLabels(title=f"Noise Scaling Map {index}"),
+                auto_labels=AutoLabels(title=f"Noise Scaling Map {key}"),
             )
 
         self.mat_plot_2d.output.subplot_to_figure(

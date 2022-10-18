@@ -95,28 +95,6 @@ class AnalysisImagingCI(Analysis):
 
         return fit.figure_of_merit
 
-    def fit_via_instance_and_dataset_from(
-        self,
-        instance: ModelInstance,
-        imaging_ci: ImagingCI,
-        hyper_noise_scale: bool = True,
-    ) -> FitImagingCI:
-
-        if not hyper_noise_scale:
-            hyper_noise_scalar_dict = None
-        else:
-            hyper_noise_scalar_dict = instance.hyper_noise.as_dict
-
-        post_cti_data = self.clocker.add_cti(
-            data=imaging_ci.pre_cti_data, cti=instance.cti, preloads=self.preloads
-        )
-
-        return FitImagingCI(
-            dataset=imaging_ci,
-            post_cti_data=post_cti_data,
-            hyper_noise_scalar_dict=hyper_noise_scalar_dict,
-        )
-
     def fit_via_instance_from(
         self, instance: ModelInstance, hyper_noise_scale: bool = True
     ) -> FitImagingCI:
@@ -135,6 +113,28 @@ class AnalysisImagingCI(Analysis):
             instance=instance,
             imaging_ci=self.dataset.imaging_full,
             hyper_noise_scale=hyper_noise_scale,
+        )
+
+    def fit_via_instance_and_dataset_from(
+        self,
+        instance: ModelInstance,
+        imaging_ci: ImagingCI,
+        hyper_noise_scale: bool = True,
+    ) -> FitImagingCI:
+
+        hyper_noise_scalar_dict = None
+
+        if hyper_noise_scale and hasattr(instance, "hyper_noise"):
+            hyper_noise_scalar_dict = instance.hyper_noise.as_dict
+
+        post_cti_data = self.clocker.add_cti(
+            data=imaging_ci.pre_cti_data, cti=instance.cti, preloads=self.preloads
+        )
+
+        return FitImagingCI(
+            dataset=imaging_ci,
+            post_cti_data=post_cti_data,
+            hyper_noise_scalar_dict=hyper_noise_scalar_dict,
         )
 
     def visualize(
