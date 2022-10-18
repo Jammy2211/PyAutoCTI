@@ -240,12 +240,12 @@ class Extract2DParallelCalibration:
 
         if imaging_ci.noise_scaling_map_dict is not None:
 
-            noise_scaling_map_dict = [
-                imaging_ci.layout.extract.parallel_calibration.array_2d_from(
+            noise_scaling_map_dict = {
+                key: imaging_ci.layout.extract.parallel_calibration.array_2d_from(
                     array=noise_scaling_map, columns=columns
                 )
-                for noise_scaling_map in imaging_ci.noise_scaling_map_dict
-            ]
+                for key, noise_scaling_map in imaging_ci.noise_scaling_map_dict.items()
+            }
 
         else:
 

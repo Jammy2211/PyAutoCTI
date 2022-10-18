@@ -234,12 +234,12 @@ class Extract2DSerialCalibration:
 
         if imaging_ci.noise_scaling_map_dict is not None:
 
-            noise_scaling_map_dict = [
-                imaging_ci.layout.extract.serial_calibration.array_2d_from(
+            noise_scaling_map_dict = {
+                key: imaging_ci.layout.extract.serial_calibration.array_2d_from(
                     array=noise_scaling_map, rows=rows
                 )
-                for noise_scaling_map in imaging_ci.noise_scaling_map_dict
-            ]
+                for key, noise_scaling_map in imaging_ci.noise_scaling_map_dict.items()
+            }
 
         else:
 

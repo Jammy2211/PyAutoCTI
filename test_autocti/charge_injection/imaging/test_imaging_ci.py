@@ -258,14 +258,14 @@ def test__apply_settings__include_parallel_columns_extraction(
     noise_scaling_map_0 = np.ones((7, 2))
     noise_scaling_map_0[0, 0] = 0.0
 
-    assert masked_imaging_ci.noise_scaling_map_dict[0] == pytest.approx(
+    assert masked_imaging_ci.noise_scaling_map_dict["parallel_eper"] == pytest.approx(
         noise_scaling_map_0, 1.0e-4
     )
 
     noise_scaling_map_1 = 2.0 * np.ones((7, 2))
     noise_scaling_map_1[0, 0] = 0.0
 
-    assert masked_imaging_ci.noise_scaling_map_dict[1] == pytest.approx(
+    assert masked_imaging_ci.noise_scaling_map_dict["serial_eper"] == pytest.approx(
         noise_scaling_map_1, 1.0e-4
     )
 
@@ -308,14 +308,14 @@ def test__apply_settings__serial_masked_imaging_ci(
     noise_scaling_map_0 = np.ones((1, 7))
     noise_scaling_map_0[0, 0] = 0.0
 
-    assert masked_imaging_ci.noise_scaling_map_dict[0] == pytest.approx(
+    assert masked_imaging_ci.noise_scaling_map_dict["parallel_eper"] == pytest.approx(
         noise_scaling_map_0, 1.0e-4
     )
 
     noise_scaling_map_1 = 2.0 * np.ones((1, 7))
     noise_scaling_map_1[0, 0] = 0.0
 
-    assert masked_imaging_ci.noise_scaling_map_dict[1] == pytest.approx(
+    assert masked_imaging_ci.noise_scaling_map_dict["serial_eper"] == pytest.approx(
         noise_scaling_map_1, 1.0e-4
     )
 
@@ -329,6 +329,6 @@ def test__set_noise_scaling_map_dict(imaging_ci_7x7, ci_noise_scaling_map_dict_7
     )
 
     assert (
-        imaging_ci_7x7.noise_scaling_map_dict[0]
-        == ci_noise_scaling_map_dict_7x7[0].native
+        imaging_ci_7x7.noise_scaling_map_dict["parallel_eper"]
+        == ci_noise_scaling_map_dict_7x7["parallel_eper"].native
     ).all()
