@@ -45,6 +45,7 @@ def region_ci_from(
 
 
 def region_list_ci_via_electronics_from(
+    injection_start: int,
     injection_on: int,
     injection_off: int,
     injection_total: int,
@@ -57,15 +58,13 @@ def region_list_ci_via_electronics_from(
 
     region_list_ci = []
 
-    injection_start_count = 0
-
     for index in range(injection_total):
 
         if roe_corner == (0, 0):
 
             ci_region = (
-                parallel_size - (injection_start_count + injection_on),
-                parallel_size - injection_start_count,
+                parallel_size - (injection_start + injection_on),
+                parallel_size - injection_start,
                 serial_prescan_size,
                 serial_size - serial_overscan_size,
             )
@@ -73,8 +72,8 @@ def region_list_ci_via_electronics_from(
         elif roe_corner == (1, 0):
 
             ci_region = (
-                injection_start_count,
-                injection_start_count + injection_on,
+                injection_start,
+                injection_start + injection_on,
                 serial_prescan_size,
                 serial_size - serial_overscan_size,
             )
@@ -82,8 +81,8 @@ def region_list_ci_via_electronics_from(
         elif roe_corner == (0, 1):
 
             ci_region = (
-                parallel_size - (injection_start_count + injection_on),
-                parallel_size - injection_start_count,
+                parallel_size - (injection_start + injection_on),
+                parallel_size - injection_start,
                 serial_overscan_size,
                 serial_size - serial_prescan_size,
             )
@@ -91,14 +90,14 @@ def region_list_ci_via_electronics_from(
         elif roe_corner == (1, 1):
 
             ci_region = (
-                injection_start_count,
-                injection_start_count + injection_on,
+                injection_start,
+                injection_start + injection_on,
                 serial_overscan_size,
                 serial_size - serial_prescan_size,
             )
 
         region_list_ci.append(ci_region)
 
-        injection_start_count += injection_on + injection_off
+        injection_start += injection_on + injection_off
 
     return region_list_ci

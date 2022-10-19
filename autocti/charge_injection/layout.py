@@ -89,13 +89,14 @@ class Layout2DCI(Layout2D):
             roe_corner = (1, 0)
 
         region_ci_list = ci_util.region_list_ci_via_electronics_from(
+            injection_start=electronics.injection_start,
+            injection_on=electronics.injection_on,
+            injection_off=electronics.injection_off,
+            injection_total=electronics.injection_total,
             serial_prescan_size=serial_prescan_size,
             serial_overscan_size=serial_overscan_size,
             serial_size=serial_size,
             parallel_size=parallel_size,
-            injection_on=electronics.injection_on,
-            injection_off=electronics.injection_off,
-            injection_total=electronics.injection_total,
             roe_corner=roe_corner,
         )
 
@@ -323,7 +324,13 @@ class ElectronicsCI:
         """
         The total number of charge injection regions for these electronics settings.
         """
-        return math.floor(
-            (self.injection_end - self.injection_start)
-            / (self.injection_on + self.injection_off)
-        )
+
+        injection_range = self.injection_end - self.injection_start
+
+        for injection_total in range(10):
+
+            total_pixels = math.floor((injection_total+1)*(self.injection_on) + injection_total*self.injection_off)
+
+            if total_pixels > injection_range:
+
+                return injection_total
