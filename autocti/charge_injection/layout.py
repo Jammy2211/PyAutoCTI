@@ -6,6 +6,8 @@ import autoarray as aa
 from autocti.charge_injection import ci_util
 from autocti.layout.two_d import Layout2D
 
+from autoarray.layout import layout_util
+
 
 class Layout2DCI(Layout2D):
     def __init__(
@@ -72,7 +74,7 @@ class Layout2DCI(Layout2D):
         )
 
     @classmethod
-    def from_euclid_fits_header(cls, ext_header, do_rotation):
+    def from_euclid_fits_header(cls, ext_header):
 
         serial_overscan_size = ext_header.get("OVRSCANX", default=None)
         serial_prescan_size = ext_header.get("PRESCANX", default=None)
@@ -83,11 +85,6 @@ class Layout2DCI(Layout2D):
 
         layout = aa.euclid.Layout2DEuclid.from_fits_header(ext_header=ext_header)
 
-        if do_rotation:
-            roe_corner = layout.original_roe_corner
-        else:
-            roe_corner = (1, 0)
-
         region_ci_list = ci_util.region_list_ci_via_electronics_from(
             injection_start=electronics.injection_start,
             injection_on=electronics.injection_on,
@@ -97,8 +94,17 @@ class Layout2DCI(Layout2D):
             serial_overscan_size=serial_overscan_size,
             serial_size=serial_size,
             parallel_size=parallel_size,
-            roe_corner=roe_corner,
+            roe_corner=layout.original_roe_corner,
         )
+
+        region_ci_list = [
+            layout_util.rotate_region_via_roe_corner_from(
+                region=region_ci,
+                shape_native=layout.shape_2d,
+                roe_corner=layout.original_roe_corner,
+            )
+            for region_ci in region_ci_list
+        ]
 
         return cls(
             shape_2d=(parallel_size, serial_size),
@@ -329,7 +335,10 @@ class ElectronicsCI:
 
         for injection_total in range(10):
 
-            total_pixels = math.floor((injection_total+1)*(self.injection_on) + injection_total*self.injection_off)
+            total_pixels = math.floor(
+                (injection_total + 1) * (self.injection_on)
+                + injection_total * self.injection_off
+            )
 
             if total_pixels > injection_range:
 

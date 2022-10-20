@@ -4,8 +4,6 @@ from autoarray.layout.region import Region2D
 from autoarray.structures.arrays.uniform_1d import Array1D
 from autoarray.structures.arrays.uniform_2d import Array2D
 from autoarray.structures.header import Header
-from autoarray.instruments import euclid
-from autoarray.instruments import acs
 from autoarray.dataset import preprocess
 from autoarray.dataset.imaging import Imaging
 
@@ -36,6 +34,8 @@ from .extract.two_d.serial.eper import Extract2DSerialEPER
 from .extract.two_d.parallel.calibration import Extract2DParallelCalibration
 from .extract.two_d.serial.calibration import Extract2DSerialCalibration
 from .extract.two_d.master import Extract2DMaster
+from .instruments import euclid
+from .instruments import acs
 from .charge_injection.fit import FitImagingCI
 from .mask.mask_2d import Mask2D
 from .mask.mask_2d import SettingsMask2D

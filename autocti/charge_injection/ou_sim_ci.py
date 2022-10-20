@@ -4,7 +4,7 @@ from typing import List, Union
 from arcticpy import CCDPhase
 from arcticpy import TrapInstantCapture
 
-from autoarray.instruments import euclid
+from autocti.instruments import euclid
 from autoarray.layout import layout_util
 from autoarray.structures.arrays.uniform_2d import Array2D
 
