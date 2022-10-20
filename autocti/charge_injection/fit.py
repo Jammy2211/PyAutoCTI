@@ -80,7 +80,8 @@ class FitImagingCI(aa.FitImaging):
 
 
 def hyper_noise_map_from(hyper_noise_scalar_dict, noise_scaling_map_dict, noise_map):
-    """For a noise-map, use the model hyper noise and noise-scaling maps to compute a scaled noise-map.
+    """
+    For a noise-map, use the model hyper noise and noise-scaling maps to compute a scaled noise-map.
 
     Parameters
     -----------
@@ -95,9 +96,8 @@ def hyper_noise_map_from(hyper_noise_scalar_dict, noise_scaling_map_dict, noise_
 
     for key, hyper_noise_scalar in hyper_noise_scalar_dict.items():
 
-        if hyper_noise_scalar is not None:
-            noise_map += hyper_noise_scalar.scaled_noise_map_from(
-                noise_scaling=noise_scaling_map_dict[key]
-            )
+        noise_map += hyper_noise_scalar.scaled_noise_map_from(
+            noise_scaling=noise_scaling_map_dict[key]
+        )
 
     return noise_map

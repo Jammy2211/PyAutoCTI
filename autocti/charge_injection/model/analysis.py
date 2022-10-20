@@ -86,9 +86,6 @@ class AnalysisImagingCI(Analysis):
             instance=instance, imaging_ci=self.dataset, hyper_noise_scale=True
         )
 
-        # print(instance.hyper_noise.as_dict)
-        # stop
-
         return fit.figure_of_merit
 
     def fit_via_instance_and_dataset_from(
@@ -106,6 +103,9 @@ class AnalysisImagingCI(Analysis):
         post_cti_data = self.clocker.add_cti(
             data=imaging_ci.pre_cti_data, cti=instance.cti, preloads=self.preloads
         )
+
+        # print(instance.hyper_noise.as_dict)
+        # stop
 
         return FitImagingCI(
             dataset=imaging_ci,
