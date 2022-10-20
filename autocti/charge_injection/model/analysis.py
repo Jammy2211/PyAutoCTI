@@ -8,7 +8,6 @@ from autofit.non_linear.paths.directory import DirectoryPaths
 
 from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.charge_injection.fit import FitImagingCI
-from autocti.charge_injection.hyper import HyperCINoiseScalar
 from autocti.charge_injection.model.visualizer import VisualizerImagingCI
 from autocti.charge_injection.model.result import ResultImagingCI
 from autocti.clocker.two_d import Clocker2D
@@ -83,37 +82,14 @@ class AnalysisImagingCI(Analysis):
             serial_traps=instance.cti.serial_trap_list,
         )
 
-        post_cti_data = self.clocker.add_cti(
-            data=self.dataset.pre_cti_data, cti=instance.cti, preloads=self.preloads
+        fit = self.fit_via_instance_and_dataset_from(
+            instance=instance, imaging_ci=self.dataset, hyper_noise_scale=True
         )
 
-        fit = FitImagingCI(
-            dataset=self.dataset,
-            post_cti_data=post_cti_data,
-            hyper_noise_scalar_dict=instance.hyper_noise.as_dict,
-        )
+        # print(instance.hyper_noise.as_dict)
+        # stop
 
         return fit.figure_of_merit
-
-    def fit_via_instance_from(
-        self, instance: ModelInstance, hyper_noise_scale: bool = True
-    ) -> FitImagingCI:
-
-        return self.fit_via_instance_and_dataset_from(
-            instance=instance,
-            imaging_ci=self.dataset,
-            hyper_noise_scale=hyper_noise_scale,
-        )
-
-    def fit_full_dataset_via_instance_from(
-        self, instance: ModelInstance, hyper_noise_scale: bool = True
-    ) -> FitImagingCI:
-
-        return self.fit_via_instance_and_dataset_from(
-            instance=instance,
-            imaging_ci=self.dataset.imaging_full,
-            hyper_noise_scale=hyper_noise_scale,
-        )
 
     def fit_via_instance_and_dataset_from(
         self,
@@ -135,6 +111,16 @@ class AnalysisImagingCI(Analysis):
             dataset=imaging_ci,
             post_cti_data=post_cti_data,
             hyper_noise_scalar_dict=hyper_noise_scalar_dict,
+        )
+
+    def fit_via_instance_from(
+        self, instance: ModelInstance, hyper_noise_scale: bool = True
+    ) -> FitImagingCI:
+
+        return self.fit_via_instance_and_dataset_from(
+            instance=instance,
+            imaging_ci=self.dataset,
+            hyper_noise_scale=hyper_noise_scale,
         )
 
     def visualize(

@@ -174,7 +174,9 @@ def test__full_and_extracted_fits_from_instance_and_imaging_ci(
     assert fit.image.shape == (7, 1)
     assert fit_analysis.log_likelihood == pytest.approx(fit.log_likelihood)
 
-    fit_full_analysis = analysis.fit_full_dataset_via_instance_from(instance=instance)
+    fit_full_analysis = analysis.fit_via_instance_and_dataset_from(
+        instance=instance, imaging_ci=imaging_ci_7x7.imaging_full
+    )
 
     fit = ac.FitImagingCI(dataset=imaging_ci_7x7, post_cti_data=post_cti_data)
 
@@ -242,8 +244,10 @@ def test__extracted_fits_from_instance_and_imaging_ci__include_noise_scaling(
 
     assert fit.log_likelihood != pytest.approx(fit_analysis.log_likelihood, 1.0e-4)
 
-    fit_full_analysis = analysis.fit_full_dataset_via_instance_from(
-        instance=instance, hyper_noise_scale=True
+    fit_full_analysis = analysis.fit_via_instance_and_dataset_from(
+        instance=instance,
+        imaging_ci=masked_imaging_ci.imaging_full,
+        hyper_noise_scale=True,
     )
 
     masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
