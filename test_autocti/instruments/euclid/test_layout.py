@@ -1,37 +1,7 @@
-import os
-
-import numpy as np
-
 import autocti as ac
 
 
-path = "{}/".format(os.path.dirname(os.path.realpath(__file__)))
-
-
-def test__array__for_four_quadrants__loads_data_and_dimensions(euclid_data):
-
-    euclid_array = ac.euclid.Array2DEuclid.top_left(array_electrons=euclid_data)
-
-    assert euclid_array.shape_native == (2086, 2128)
-    assert (euclid_array.native == np.zeros((2086, 2128))).all()
-
-    euclid_array = ac.euclid.Array2DEuclid.top_right(array_electrons=euclid_data)
-
-    assert euclid_array.shape_native == (2086, 2128)
-    assert (euclid_array.native == np.zeros((2086, 2128))).all()
-
-    euclid_array = ac.euclid.Array2DEuclid.bottom_left(array_electrons=euclid_data)
-
-    assert euclid_array.shape_native == (2086, 2128)
-    assert (euclid_array.native == np.zeros((2086, 2128))).all()
-
-    euclid_array = ac.euclid.Array2DEuclid.bottom_right(array_electrons=euclid_data)
-
-    assert euclid_array.shape_native == (2086, 2128)
-    assert (euclid_array.native == np.zeros((2086, 2128))).all()
-
-
-def test__layout__for_four_quadrants__loads_data_and_dimensions(euclid_data):
+def test__for_four_quadrants__loads_data_and_dimensions(euclid_data):
 
     layout = ac.euclid.Layout2DEuclid.top_left(
         parallel_size=2086,
@@ -146,7 +116,7 @@ def test__layout__for_four_quadrants__loads_data_and_dimensions(euclid_data):
     assert layout.serial_overscan == (0, 2071, 2118, 2128)
 
 
-def test__layout__left_side__chooses_correct_layout_given_input(euclid_data):
+def test__left_side__chooses_correct_layout_given_input(euclid_data):
 
     layout = ac.euclid.Layout2DEuclid.from_ccd_and_quadrant_id(
         ccd_id="text1", quadrant_id="E"
@@ -221,7 +191,7 @@ def test__layout__left_side__chooses_correct_layout_given_input(euclid_data):
     assert layout.original_roe_corner == (0, 0)
 
 
-def test__layout__right_side__chooses_correct_layout_given_input(euclid_data):
+def test__right_side__chooses_correct_layout_given_input(euclid_data):
     layout = ac.euclid.Layout2DEuclid.from_ccd_and_quadrant_id(
         ccd_id="text4", quadrant_id="E"
     )

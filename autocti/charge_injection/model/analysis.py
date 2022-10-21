@@ -104,7 +104,6 @@ class AnalysisImagingCI(Analysis):
             data=imaging_ci.pre_cti_data, cti=instance.cti, preloads=self.preloads
         )
 
-
         return FitImagingCI(
             dataset=imaging_ci,
             post_cti_data=post_cti_data,
