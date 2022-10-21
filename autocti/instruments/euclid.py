@@ -1,3 +1,4 @@
+import numpy as np
 from typing import Dict, Tuple, Optional
 
 from autoarray.structures.header import Header
@@ -146,18 +147,35 @@ class Array2DEuclid(Array2D):
     @classmethod
     def top_left(
         cls,
-        array_electrons,
+        array_electrons : np.ndarray,
         ccd_id: Optional[str] = None,
         quadrant_id: Optional[str] = None,
-    ):
+    ) -> "Array2DEuclid":
         """
-        Load a Euclid quadrant where the ROE are
+        Load a Euclid quadrant where the read out electronics (ROE) are at the top left of the CCD.
 
-        Use an input array of a Euclid quadrant corresponding to the top-left of a Euclid CCD and rotate the quadrant
-        to the correct orientation for arCTIc clocking.
+        The array is loaded and then rotated to ensure that parallel and serial CTI clocking go in the correct
+        direction for arctic clocking.
+
+        ROE's in the `top_left` correspond to 1/4 of the 144 quadrants on a Euclid FPA, specifically:
+
+        - Those in the top half of the FPA (CCDID = 1, 2 or 3) and quadrant id H.
+        - Those in the bottom half of the FPA (CCDID = 4, 5 or 6) and quadrant id F.
+
+        The data is rotated by a flip-up-down, such that the ROE electrons are in the bottom left corner after rotation.
 
         See the docstring of the `Array2DEuclid` class for a complete description of the Euclid FPA, quadrants and
         rotations.
+
+        Parameters
+        ----------
+        array_electrons
+            The array of data (in units of electrons) which has the ROE in the top left and is rotated for arctic
+            clocking.
+        ccd_id
+            The ID of the euclid CCD (1, 2, 3, 4, 5, or 6) indicating which half of the FP the CCD is in.
+        quadrant_id
+            The ID of the quadrant (E, G, F or H).
         """
 
         array_electrons = layout_util.rotate_array_via_roe_corner_from(
@@ -173,16 +191,36 @@ class Array2DEuclid(Array2D):
     @classmethod
     def top_right(
         cls,
-        array_electrons,
+        array_electrons : np.ndarray,
         ccd_id: Optional[str] = None,
         quadrant_id: Optional[str] = None,
-    ):
+    ) -> "Array2DEuclid":
         """
-        Use an input array of a Euclid quadrant corresponding the top-left of a Euclid CCD and rotate the  quadrant to
-        the correct orientation for arCTIc clocking.
+        Load a Euclid quadrant where the read out electronics (ROE) are at the top right of the CCD.
+
+        The array is loaded and then rotated to ensure that parallel and serial CTI clocking go in the correct
+        direction for arctic clocking.
+
+        ROE's in the `top_right` correspond to 1/4 of the 144 quadrants on a Euclid FPA, specifically:
+
+        - Those in the top half of the FPA (CCDID = 1, 2 or 3) and quadrant id G.
+        - Those in the bottom half of the FPA (CCDID = 4, 5 or 6) and quadrant id E.
+
+        The data is rotated by a flip-up-down and flip left-right, such that the ROE electrons are in the bottom left
+        corner after rotation.
 
         See the docstring of the `Array2DEuclid` class for a complete description of the Euclid FPA, quadrants and
         rotations.
+
+        Parameters
+        ----------
+        array_electrons
+            The array of data (in units of electrons) which has the ROE in the top right and is rotated for arctic
+            clocking.
+        ccd_id
+            The ID of the euclid CCD (1, 2, 3, 4, 5, or 6) indicating which half of the FP the CCD is in.
+        quadrant_id
+            The ID of the quadrant (E, G, F or H).
         """
 
         array_electrons = layout_util.rotate_array_via_roe_corner_from(
@@ -198,16 +236,35 @@ class Array2DEuclid(Array2D):
     @classmethod
     def bottom_left(
         cls,
-        array_electrons,
+        array_electrons : np.ndarray,
         ccd_id: Optional[str] = None,
         quadrant_id: Optional[str] = None,
-    ):
+    ) -> "Array2DEuclid":
         """
-        Use an input array of a Euclid quadrant corresponding to the bottom-left of a Euclid CCD and rotate the
-        quadrant to the correct orientation for arCTIc clocking.
+        Load a Euclid quadrant where the read out electronics (ROE) are at the bottom left of the CCD.
+
+        The array is loaded and then rotated to ensure that parallel and serial CTI clocking go in the correct
+        direction for arctic clocking.
+
+        ROE's in the `bottom left` correspond to 1/4 of the 144 quadrants on a Euclid FPA, specifically:
+
+        - Those in the top half of the FPA (CCDID = 1, 2 or 3) and quadrant id E.
+        - Those in the bottom half of the FPA (CCDID = 4, 5 or 6) and quadrant id G.
+
+        No rotation is performed for arCTIc clocking because the code assume the ROE are at the bottom left.
 
         See the docstring of the `Array2DEuclid` class for a complete description of the Euclid FPA, quadrants and
         rotations.
+
+        Parameters
+        ----------
+        array_electrons
+            The array of data (in units of electrons) which has the ROE in the bottom left and is rotated for arctic
+            clocking.
+        ccd_id
+            The ID of the euclid CCD (1, 2, 3, 4, 5, or 6) indicating which half of the FP the CCD is in.
+        quadrant_id
+            The ID of the quadrant (E, G, F or H).
         """
 
         array_electrons = layout_util.rotate_array_via_roe_corner_from(
@@ -223,16 +280,36 @@ class Array2DEuclid(Array2D):
     @classmethod
     def bottom_right(
         cls,
-        array_electrons,
+        array_electrons : np.ndarray,
         ccd_id: Optional[str] = None,
         quadrant_id: Optional[str] = None,
-    ):
+    ) -> "Array2DEuclid":
         """
-        Use an input array of a Euclid quadrant corresponding to the bottom-right of a Euclid CCD and rotate the
-        quadrant to the correct orientation for arCTIc clocking.
+        Load a Euclid quadrant where the read out electronics (ROE) are at the bottom of the CCD.
+
+        The array is loaded and then rotated to ensure that parallel and serial CTI clocking go in the correct
+        direction for arctic clocking.
+
+        ROE's in the `bottom right` correspond to 1/4 of the 144 quadrants on a Euclid FPA, specifically:
+
+        - Those in the top half of the FPA (CCDID = 1, 2 or 3) and quadrant id F.
+        - Those in the bottom half of the FPA (CCDID = 4, 5 or 6) and quadrant id H.
+
+        The data is rotated by a flip left-right, such that the ROE electrons are in the bottom left corner after
+        rotation.
 
         See the docstring of the `Array2DEuclid` class for a complete description of the Euclid FPA, quadrants and
         rotations.
+
+        Parameters
+        ----------
+        array_electrons
+            The array of data (in units of electrons) which has the ROE in the bottom right and is rotated for arctic
+            clocking.
+        ccd_id
+            The ID of the euclid CCD (1, 2, 3, 4, 5, or 6) indicating which half of the FP the CCD is in.
+        quadrant_id
+            The ID of the quadrant (E, G, F or H).
         """
 
         array_electrons = layout_util.rotate_array_via_roe_corner_from(

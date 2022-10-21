@@ -104,8 +104,6 @@ class AnalysisImagingCI(Analysis):
             data=imaging_ci.pre_cti_data, cti=instance.cti, preloads=self.preloads
         )
 
-        # print(instance.hyper_noise.as_dict)
-        # stop
 
         return FitImagingCI(
             dataset=imaging_ci,
