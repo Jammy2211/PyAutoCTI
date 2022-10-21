@@ -238,18 +238,18 @@ class Extract2DParallelCalibration:
             else None
         )
 
-        if imaging_ci.noise_scaling_map_list is not None:
+        if imaging_ci.noise_scaling_map_dict is not None:
 
-            noise_scaling_map_list = [
-                imaging_ci.layout.extract.parallel_calibration.array_2d_from(
+            noise_scaling_map_dict = {
+                key: imaging_ci.layout.extract.parallel_calibration.array_2d_from(
                     array=noise_scaling_map, columns=columns
                 )
-                for noise_scaling_map in imaging_ci.noise_scaling_map_list
-            ]
+                for key, noise_scaling_map in imaging_ci.noise_scaling_map_dict.items()
+            }
 
         else:
 
-            noise_scaling_map_list = None
+            noise_scaling_map_dict = None
 
         extraction_region = (
             imaging_ci.layout.extract.parallel_calibration.extraction_region_from(
@@ -271,5 +271,5 @@ class Extract2DParallelCalibration:
                 extraction_region=extraction_region
             ),
             cosmic_ray_map=cosmic_ray_map,
-            noise_scaling_map_list=noise_scaling_map_list,
+            noise_scaling_map_dict=noise_scaling_map_dict,
         )

@@ -148,7 +148,7 @@ def test__with_extracted_regions__region_list_are_extracted_correctly():
     assert layout_extracted.region_list == None
 
 
-def test__smallest_parallel_epers_rows_to_frame_edge():
+def test__smallest_parallel_eper_rows_to_frame_edge():
 
     layout = ac.Layout2DCI(shape_2d=(10, 5), region_list=[(0, 3, 0, 3), (5, 7, 0, 3)])
 

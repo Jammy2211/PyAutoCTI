@@ -221,7 +221,7 @@ def test__apply_mask__masks_arrays_correctly(imaging_ci_7x7):
 
 
 def test__apply_settings__include_parallel_columns_extraction(
-    imaging_ci_7x7, mask_2d_7x7_unmasked, ci_noise_scaling_map_list_7x7
+    imaging_ci_7x7, mask_2d_7x7_unmasked, ci_noise_scaling_map_dict_7x7
 ):
 
     mask = ac.Mask2D.unmasked(
@@ -258,20 +258,20 @@ def test__apply_settings__include_parallel_columns_extraction(
     noise_scaling_map_0 = np.ones((7, 2))
     noise_scaling_map_0[0, 0] = 0.0
 
-    assert masked_imaging_ci.noise_scaling_map_list[0] == pytest.approx(
+    assert masked_imaging_ci.noise_scaling_map_dict["parallel_eper"] == pytest.approx(
         noise_scaling_map_0, 1.0e-4
     )
 
     noise_scaling_map_1 = 2.0 * np.ones((7, 2))
     noise_scaling_map_1[0, 0] = 0.0
 
-    assert masked_imaging_ci.noise_scaling_map_list[1] == pytest.approx(
+    assert masked_imaging_ci.noise_scaling_map_dict["serial_eper"] == pytest.approx(
         noise_scaling_map_1, 1.0e-4
     )
 
 
 def test__apply_settings__serial_masked_imaging_ci(
-    imaging_ci_7x7, mask_2d_7x7_unmasked, ci_noise_scaling_map_list_7x7
+    imaging_ci_7x7, mask_2d_7x7_unmasked, ci_noise_scaling_map_dict_7x7
 ):
 
     mask = ac.Mask2D.unmasked(
@@ -308,27 +308,27 @@ def test__apply_settings__serial_masked_imaging_ci(
     noise_scaling_map_0 = np.ones((1, 7))
     noise_scaling_map_0[0, 0] = 0.0
 
-    assert masked_imaging_ci.noise_scaling_map_list[0] == pytest.approx(
+    assert masked_imaging_ci.noise_scaling_map_dict["parallel_eper"] == pytest.approx(
         noise_scaling_map_0, 1.0e-4
     )
 
     noise_scaling_map_1 = 2.0 * np.ones((1, 7))
     noise_scaling_map_1[0, 0] = 0.0
 
-    assert masked_imaging_ci.noise_scaling_map_list[1] == pytest.approx(
+    assert masked_imaging_ci.noise_scaling_map_dict["serial_eper"] == pytest.approx(
         noise_scaling_map_1, 1.0e-4
     )
 
 
-def test__set_noise_scaling_map_list(imaging_ci_7x7, ci_noise_scaling_map_list_7x7):
+def test__set_noise_scaling_map_dict(imaging_ci_7x7, ci_noise_scaling_map_dict_7x7):
 
-    imaging_ci_7x7.noise_scaling_map_list = None
+    imaging_ci_7x7.noise_scaling_map_dict = None
 
-    imaging_ci_7x7.set_noise_scaling_map_list(
-        noise_scaling_map_list=ci_noise_scaling_map_list_7x7
+    imaging_ci_7x7.set_noise_scaling_map_dict(
+        noise_scaling_map_dict=ci_noise_scaling_map_dict_7x7
     )
 
     assert (
-        imaging_ci_7x7.noise_scaling_map_list[0]
-        == ci_noise_scaling_map_list_7x7[0].native
+        imaging_ci_7x7.noise_scaling_map_dict["parallel_eper"]
+        == ci_noise_scaling_map_dict_7x7["parallel_eper"].native
     ).all()

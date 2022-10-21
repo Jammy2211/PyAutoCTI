@@ -31,7 +31,7 @@ def test__fits_to_extracted_and_full_datasets_available(
     ).all()
 
 
-def test__noise_scaling_map_list_is_list_of_result__are_correct(
+def test__noise_scaling_map_dict_is_list_of_result__are_correct(
     imaging_ci_7x7,
     mask_2d_7x7_unmasked,
     parallel_clocker_2d,
@@ -41,25 +41,27 @@ def test__noise_scaling_map_list_is_list_of_result__are_correct(
     ccd,
 ):
 
-    noise_scaling_map_list_list_of_regions_ci = [
+    noise_scaling_map_dict_list_of_regions_ci = [
         ac.Array2D.ones(shape_native=(7, 7), pixel_scales=1.0)
     ]
-    noise_scaling_map_list_list_of_parallel_epers = [
+    noise_scaling_map_dict_list_of_parallel_eper = [
         ac.Array2D.full(fill_value=2.0, shape_native=(7, 7), pixel_scales=1.0)
     ]
-    noise_scaling_map_list_list_of_serial_eper = [
+    noise_scaling_map_dict_list_of_serial_eper = [
         ac.Array2D.full(fill_value=3.0, shape_native=(7, 7), pixel_scales=1.0)
     ]
-    noise_scaling_map_list_list_of_serial_overscan_no_eper = [
+    noise_scaling_map_dict_list_of_serial_overscan_no_eper = [
         ac.Array2D.full(fill_value=4.0, shape_native=(7, 7), pixel_scales=1.0)
     ]
 
-    imaging_ci_7x7.noise_scaling_map_list = [
-        noise_scaling_map_list_list_of_regions_ci[0],
-        noise_scaling_map_list_list_of_parallel_epers[0],
-        noise_scaling_map_list_list_of_serial_eper[0],
-        noise_scaling_map_list_list_of_serial_overscan_no_eper[0],
-    ]
+    imaging_ci_7x7.noise_scaling_map_dict = {
+        "regions_ci": noise_scaling_map_dict_list_of_regions_ci[0],
+        "parallel_eper": noise_scaling_map_dict_list_of_parallel_eper[0],
+        "serial_eper": noise_scaling_map_dict_list_of_serial_eper[0],
+        "serial_overscan_no_eper": noise_scaling_map_dict_list_of_serial_overscan_no_eper[
+            0
+        ],
+    }
 
     masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
 
@@ -73,27 +75,31 @@ def test__noise_scaling_map_list_is_list_of_result__are_correct(
 
     result = ResultImagingCI(samples=samples_with_result, analysis=analysis, model=None)
 
-    assert result.noise_scaling_map_of_regions_ci == pytest.approx(
+    assert result.noise_scaling_map_dict["regions_ci"] == pytest.approx(
         fit_analysis.chi_squared_map_of_regions_ci, 1.0e-2
     )
-    assert result.noise_scaling_map_of_parallel_epers == pytest.approx(
-        fit_analysis.chi_squared_map_of_parallel_epers, 1.0e-2
+    assert result.noise_scaling_map_dict["parallel_eper"] == pytest.approx(
+        fit_analysis.chi_squared_map_of_parallel_eper, 1.0e-2
     )
-    assert result.noise_scaling_map_of_serial_epers == pytest.approx(
-        fit_analysis.chi_squared_map_of_serial_epers, 1.0e-2
+    assert result.noise_scaling_map_dict["serial_eper"] == pytest.approx(
+        fit_analysis.chi_squared_map_of_serial_eper, 1.0e-2
     )
-    assert result.noise_scaling_map_of_serial_overscan_no_trails == pytest.approx(
-        fit_analysis.chi_squared_map_of_serial_overscan_no_trails, 1.0e-2
+    assert result.noise_scaling_map_dict["serial_overscan_no_eper"] == pytest.approx(
+        fit_analysis.chi_squared_map_of_serial_overscan_no_eper, 1.0e-2
     )
 
-    assert result.noise_scaling_map_of_regions_ci[1, 1] == pytest.approx(18.168, 1.0e-1)
-    assert result.noise_scaling_map_of_parallel_epers[1, 1] == pytest.approx(
+    assert result.noise_scaling_map_dict["regions_ci"][1, 1] == pytest.approx(
+        18.168, 1.0e-1
+    )
+    assert result.noise_scaling_map_dict["parallel_eper"][1, 1] == pytest.approx(
         0.0, 1.0e-4
     )
-    assert result.noise_scaling_map_of_serial_epers[1, 1] == pytest.approx(0.0, 1.0e-4)
-    assert result.noise_scaling_map_of_serial_overscan_no_trails[1, 1] == pytest.approx(
+    assert result.noise_scaling_map_dict["serial_eper"][1, 1] == pytest.approx(
         0.0, 1.0e-4
     )
+    assert result.noise_scaling_map_dict["serial_overscan_no_eper"][
+        1, 1
+    ] == pytest.approx(0.0, 1.0e-4)
 
     model = af.CollectionPriorModel(
         cti=af.Model(
@@ -106,7 +112,7 @@ def test__noise_scaling_map_list_is_list_of_result__are_correct(
         hyper_noise=af.Model(
             ac.HyperCINoiseCollection,
             regions_ci=ac.HyperCINoiseScalar(scale_factor=1.0),
-            parallel_epers=ac.HyperCINoiseScalar(scale_factor=1.0),
+            parallel_eper=ac.HyperCINoiseScalar(scale_factor=1.0),
             serial_eper=ac.HyperCINoiseScalar(scale_factor=1.0),
             serial_overscan_no_eper=ac.HyperCINoiseScalar(scale_factor=1.0),
         ),
@@ -116,51 +122,15 @@ def test__noise_scaling_map_list_is_list_of_result__are_correct(
 
     fit_analysis = analysis.fit_via_instance_from(instance=instance)
 
-    assert result.noise_scaling_map_of_regions_ci != pytest.approx(
+    assert result.noise_scaling_map_dict["regions_ci"] != pytest.approx(
         fit_analysis.chi_squared_map_of_regions_ci, 1.0e-2
     )
-    assert result.noise_scaling_map_of_parallel_epers != pytest.approx(
-        fit_analysis.chi_squared_map_of_parallel_epers, 1.0e-2
+    assert result.noise_scaling_map_dict["parallel_eper"] != pytest.approx(
+        fit_analysis.chi_squared_map_of_parallel_eper, 1.0e-2
     )
-    assert result.noise_scaling_map_of_serial_epers != pytest.approx(
-        fit_analysis.chi_squared_map_of_serial_epers, 1.0e-2
+    assert result.noise_scaling_map_dict["serial_eper"] != pytest.approx(
+        fit_analysis.chi_squared_map_of_serial_eper, 1.0e-2
     )
-    assert result.noise_scaling_map_of_serial_overscan_no_trails != pytest.approx(
-        fit_analysis.chi_squared_map_of_serial_overscan_no_trails, 1.0e-2
+    assert result.noise_scaling_map_dict["serial_overscan_no_eper"] != pytest.approx(
+        fit_analysis.chi_squared_map_of_serial_overscan_no_eper, 1.0e-2
     )
-
-
-def test__noise_scaling_map_list_is_setup_correctly(
-    imaging_ci_7x7,
-    mask_2d_7x7_unmasked,
-    layout_ci_7x7,
-    parallel_clocker_2d,
-    samples_with_result,
-):
-
-    imaging_ci_7x7.cosmic_ray_map = None
-
-    masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
-
-    analysis = ac.AnalysisImagingCI(
-        dataset=masked_imaging_ci_7x7, clocker=parallel_clocker_2d
-    )
-
-    result = ResultImagingCI(samples=samples_with_result, analysis=analysis, model=None)
-
-    assert (
-        result.noise_scaling_map_list[0] == result.noise_scaling_map_of_regions_ci
-    ).all()
-
-    assert (
-        result.noise_scaling_map_list[1] == result.noise_scaling_map_of_parallel_epers
-    ).all()
-
-    assert (
-        result.noise_scaling_map_list[2] == result.noise_scaling_map_of_serial_epers
-    ).all()
-
-    assert (
-        result.noise_scaling_map_list[3]
-        == result.noise_scaling_map_of_serial_overscan_no_trails
-    ).all()

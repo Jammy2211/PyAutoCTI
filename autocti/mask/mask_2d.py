@@ -10,7 +10,7 @@ class SettingsMask2D:
     def __init__(
         self,
         parallel_fpr_pixels: Tuple[int, int] = None,
-        parallel_epers_pixels: Tuple[int, int] = None,
+        parallel_eper_pixels: Tuple[int, int] = None,
         serial_fpr_pixels: Tuple[int, int] = None,
         serial_eper_pixels: Tuple[int, int] = None,
         cosmic_ray_parallel_buffer: int = 10,
@@ -19,7 +19,7 @@ class SettingsMask2D:
     ):
 
         self.parallel_fpr_pixels = parallel_fpr_pixels
-        self.parallel_epers_pixels = parallel_epers_pixels
+        self.parallel_eper_pixels = parallel_eper_pixels
         self.serial_fpr_pixels = serial_fpr_pixels
         self.serial_eper_pixels = serial_eper_pixels
 
@@ -194,7 +194,7 @@ class Mask2D(aa.Mask2D):
         return mask
 
     @classmethod
-    def masked_fprs_and_epers_from(
+    def masked_fpr_and_eper_from(
         cls,
         mask: "Mask2D",
         layout: "Layout2D",
@@ -210,13 +210,13 @@ class Mask2D(aa.Mask2D):
 
             mask = mask + parallel_fpr_mask
 
-        if settings.parallel_epers_pixels is not None:
+        if settings.parallel_eper_pixels is not None:
 
-            parallel_epers_mask = cls.masked_parallel_epers_from(
+            parallel_eper_mask = cls.masked_parallel_eper_from(
                 layout=layout, settings=settings, pixel_scales=pixel_scales
             )
 
-            mask = mask + parallel_epers_mask
+            mask = mask + parallel_eper_mask
 
         if settings.serial_fpr_pixels is not None:
 
@@ -228,7 +228,7 @@ class Mask2D(aa.Mask2D):
 
         if settings.serial_eper_pixels is not None:
 
-            serial_eper_mask = cls.masked_serial_epers_from(
+            serial_eper_mask = cls.masked_serial_eper_from(
                 layout=layout, settings=settings, pixel_scales=pixel_scales
             )
 
@@ -259,7 +259,7 @@ class Mask2D(aa.Mask2D):
         return Mask2D(mask=mask.astype("bool"), pixel_scales=pixel_scales)
 
     @classmethod
-    def masked_parallel_epers_from(
+    def masked_parallel_eper_from(
         cls,
         layout: "Layout2D",
         settings: "SettingsMask2D",
@@ -268,7 +268,7 @@ class Mask2D(aa.Mask2D):
     ) -> "Mask2D":
 
         eper_regions = layout.extract.parallel_eper.region_list_from(
-            pixels=settings.parallel_epers_pixels
+            pixels=settings.parallel_eper_pixels
         )
 
         mask = np.full(layout.shape_2d, False)
@@ -304,7 +304,7 @@ class Mask2D(aa.Mask2D):
         return Mask2D(mask=mask.astype("bool"), pixel_scales=pixel_scales)
 
     @classmethod
-    def masked_serial_epers_from(
+    def masked_serial_eper_from(
         cls,
         layout: "Layout2D",
         settings: "SettingsMask2D",

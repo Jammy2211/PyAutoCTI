@@ -7,7 +7,7 @@ from autocti.charge_injection.layout import Layout2DCI
 from autocti.mask import mask_2d
 from autocti import exc
 
-from typing import Optional, List
+from typing import Dict, Optional, List
 
 
 class ImagingCI(aa.Imaging):
@@ -18,7 +18,7 @@ class ImagingCI(aa.Imaging):
         pre_cti_data: aa.Array2D,
         layout: Layout2DCI,
         cosmic_ray_map: Optional[aa.Array2D] = None,
-        noise_scaling_map_list: Optional[List[aa.Array2D]] = None,
+        noise_scaling_map_dict: Optional[Dict] = None,
         name=None,
     ):
 
@@ -33,12 +33,14 @@ class ImagingCI(aa.Imaging):
 
         self.cosmic_ray_map = cosmic_ray_map
 
-        if noise_scaling_map_list is not None:
-            noise_scaling_map_list = [
-                noise_scaling_map.native for noise_scaling_map in noise_scaling_map_list
-            ]
+        if noise_scaling_map_dict is not None:
 
-        self.noise_scaling_map_list = noise_scaling_map_list
+            noise_scaling_map_dict = {
+                key: noise_scaling_map.native
+                for key, noise_scaling_map in noise_scaling_map_dict.items()
+            }
+
+        self.noise_scaling_map_dict = noise_scaling_map_dict
 
         self.layout = layout
 
@@ -91,14 +93,15 @@ class ImagingCI(aa.Imaging):
 
             cosmic_ray_map = None
 
-        if self.noise_scaling_map_list is not None:
+        if self.noise_scaling_map_dict is not None:
 
-            noise_scaling_map_list = [
-                aa.Array2D.manual_mask(array=noise_scaling_map.native, mask=mask)
-                for noise_scaling_map in self.noise_scaling_map_list
-            ]
+            noise_scaling_map_dict = {
+                key: aa.Array2D.manual_mask(array=noise_scaling_map.native, mask=mask)
+                for key, noise_scaling_map in self.noise_scaling_map_dict.items()
+            }
+
         else:
-            noise_scaling_map_list = None
+            noise_scaling_map_dict = None
 
         return ImagingCI(
             image=image,
@@ -106,7 +109,7 @@ class ImagingCI(aa.Imaging):
             pre_cti_data=self.pre_cti_data.native,
             layout=self.layout,
             cosmic_ray_map=cosmic_ray_map,
-            noise_scaling_map_list=noise_scaling_map_list,
+            noise_scaling_map_dict=noise_scaling_map_dict,
         )
 
     def apply_settings(self, settings: SettingsImagingCI):
@@ -141,15 +144,12 @@ class ImagingCI(aa.Imaging):
 
         return imaging
 
-    def set_noise_scaling_map_list(
-        self, noise_scaling_map_list: List[aa.Array2D] = None
-    ):
+    def set_noise_scaling_map_dict(self, noise_scaling_map_dict: Dict):
 
-        noise_scaling_map_list = [
-            noise_scaling_map.native for noise_scaling_map in noise_scaling_map_list
-        ]
-
-        self.noise_scaling_map_list = noise_scaling_map_list
+        self.noise_scaling_map_dict = {
+            key: noise_scaling_map.native
+            for key, noise_scaling_map in noise_scaling_map_dict.items()
+        }
 
     @classmethod
     def from_fits(

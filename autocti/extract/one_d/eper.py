@@ -38,12 +38,12 @@ class Extract1DEPER(Extract1D):
         that follow the charge-injection regions).
         """
 
-        array_1d_epers = array.native.copy()
+        array_1d_eper = array.native.copy()
 
         for region in self.region_list:
-            array_1d_epers[region.slice] = 0.0
+            array_1d_eper[region.slice] = 0.0
 
-        array_1d_epers.native[self.prescan.slice] = 0.0
-        array_1d_epers.native[self.overscan.slice] = 0.0
+        array_1d_eper.native[self.prescan.slice] = 0.0
+        array_1d_eper.native[self.overscan.slice] = 0.0
 
-        return array_1d_epers
+        return array_1d_eper

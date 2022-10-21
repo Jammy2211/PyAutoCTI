@@ -8,7 +8,6 @@ from autofit.non_linear.paths.directory import DirectoryPaths
 
 from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.charge_injection.fit import FitImagingCI
-from autocti.charge_injection.hyper import HyperCINoiseScalar
 from autocti.charge_injection.model.visualizer import VisualizerImagingCI
 from autocti.charge_injection.model.result import ResultImagingCI
 from autocti.clocker.two_d import Clocker2D
@@ -83,51 +82,11 @@ class AnalysisImagingCI(Analysis):
             serial_traps=instance.cti.serial_trap_list,
         )
 
-        hyper_noise_scalar_list = self.hyper_noise_scalar_list_from(instance=instance)
-
-        post_cti_data = self.clocker.add_cti(
-            data=self.dataset.pre_cti_data, cti=instance.cti, preloads=self.preloads
-        )
-
-        fit = FitImagingCI(
-            dataset=self.dataset,
-            post_cti_data=post_cti_data,
-            hyper_noise_scalar_list=hyper_noise_scalar_list,
+        fit = self.fit_via_instance_and_dataset_from(
+            instance=instance, imaging_ci=self.dataset, hyper_noise_scale=True
         )
 
         return fit.figure_of_merit
-
-    def hyper_noise_scalar_list_from(
-        self, instance: ModelInstance, hyper_noise_scale: bool = True
-    ) -> Optional[List[HyperCINoiseScalar]]:
-
-        if not hasattr(instance, "hyper_noise"):
-            return None
-
-        if not hyper_noise_scale:
-            return None
-
-        return [
-            instance.hyper_noise.regions_ci,
-            instance.hyper_noise.parallel_epers,
-            instance.hyper_noise.serial_eper,
-            instance.hyper_noise.serial_overscan_no_trails,
-        ]
-
-        # hyper_noise_scalar_list = list(
-        #     filter(
-        #         None,
-        #         [
-        #             instance.hyper_noise.regions_ci,
-        #             instance.hyper_noise.parallel_epers,
-        #             instance.hyper_noise.serial_eper,
-        #             instance.hyper_noise.serial_overscan_no_trails,
-        #         ],
-        #     )
-        # )
-
-        if hyper_noise_scalar_list:
-            return hyper_noise_scalar_list
 
     def fit_via_instance_and_dataset_from(
         self,
@@ -136,18 +95,22 @@ class AnalysisImagingCI(Analysis):
         hyper_noise_scale: bool = True,
     ) -> FitImagingCI:
 
-        hyper_noise_scalar_list = self.hyper_noise_scalar_list_from(
-            instance=instance, hyper_noise_scale=hyper_noise_scale
-        )
+        hyper_noise_scalar_dict = None
+
+        if hyper_noise_scale and hasattr(instance, "hyper_noise"):
+            hyper_noise_scalar_dict = instance.hyper_noise.as_dict
 
         post_cti_data = self.clocker.add_cti(
             data=imaging_ci.pre_cti_data, cti=instance.cti, preloads=self.preloads
         )
 
+        # print(instance.hyper_noise.as_dict)
+        # stop
+
         return FitImagingCI(
             dataset=imaging_ci,
             post_cti_data=post_cti_data,
-            hyper_noise_scalar_list=hyper_noise_scalar_list,
+            hyper_noise_scalar_dict=hyper_noise_scalar_dict,
         )
 
     def fit_via_instance_from(
@@ -157,16 +120,6 @@ class AnalysisImagingCI(Analysis):
         return self.fit_via_instance_and_dataset_from(
             instance=instance,
             imaging_ci=self.dataset,
-            hyper_noise_scale=hyper_noise_scale,
-        )
-
-    def fit_full_dataset_via_instance_from(
-        self, instance: ModelInstance, hyper_noise_scale: bool = True
-    ) -> FitImagingCI:
-
-        return self.fit_via_instance_and_dataset_from(
-            instance=instance,
-            imaging_ci=self.dataset.imaging_full,
             hyper_noise_scale=hyper_noise_scale,
         )
 

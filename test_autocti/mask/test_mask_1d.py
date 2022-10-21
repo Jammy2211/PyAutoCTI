@@ -28,11 +28,11 @@ def test__masked_fpr_from_layout():
     ).all()
 
 
-def test__masked_epers_from_layout():
+def test__masked_eper_from_layout():
 
     layout = ac.Layout1D(shape_1d=(5,), region_list=[(1, 3)])
 
-    mask = ac.Mask1D.masked_epers_from_layout(
+    mask = ac.Mask1D.masked_eper_from_layout(
         layout=layout, settings=ac.SettingsMask1D(eper_pixels=(0, 2)), pixel_scales=0.1
     )
 
@@ -42,7 +42,7 @@ def test__masked_epers_from_layout():
 
     layout = ac.Layout1D(shape_1d=(12,), region_list=[(1, 4), (7, 9)])
 
-    mask = ac.Mask1D.masked_epers_from_layout(
+    mask = ac.Mask1D.masked_eper_from_layout(
         layout=layout, settings=ac.SettingsMask1D(eper_pixels=(1, 3)), pixel_scales=0.1
     )
 
@@ -69,13 +69,13 @@ def test__masked_epers_from_layout():
     ).all()
 
 
-def test__masked_fprs_and_epers_from_layout():
+def test__masked_fpr_and_eper_from_layout():
 
     unmasked = ac.Mask1D.unmasked(shape_slim=(5,), pixel_scales=1.0)
 
     layout = ac.Layout1D(shape_1d=(5,), region_list=[(1, 3)])
 
-    mask = ac.Mask1D.masked_fprs_and_epers_from(
+    mask = ac.Mask1D.masked_fpr_and_eper_from(
         mask=unmasked,
         layout=layout,
         settings=ac.SettingsMask1D(fpr_pixels=(1, 2), eper_pixels=(0, 1)),

@@ -10,7 +10,7 @@ def test__fit_figure_of_merit(imaging_ci_7x7):
     fit = ac.FitImagingCI(
         dataset=imaging_ci_7x7,
         post_cti_data=imaging_ci_7x7.pre_cti_data,
-        hyper_noise_scalar_list=None,
+        hyper_noise_scalar_dict=None,
     )
 
     assert fit.log_likelihood == pytest.approx(-575.11719997, 1e-4)
@@ -18,10 +18,14 @@ def test__fit_figure_of_merit(imaging_ci_7x7):
     hyper_noise_scalar_0 = ac.HyperCINoiseScalar(scale_factor=1.0)
     hyper_noise_scalar_1 = ac.HyperCINoiseScalar(scale_factor=2.0)
 
+    hyper_collection = ac.HyperCINoiseCollection(
+        parallel_eper=hyper_noise_scalar_0, serial_eper=hyper_noise_scalar_1
+    )
+
     fit = ac.FitImagingCI(
         dataset=imaging_ci_7x7,
         post_cti_data=imaging_ci_7x7.pre_cti_data,
-        hyper_noise_scalar_list=[hyper_noise_scalar_0, hyper_noise_scalar_1],
+        hyper_noise_scalar_dict=hyper_collection.as_dict,
     )
 
     assert fit.log_likelihood == pytest.approx(-180.877585, 1.0e-4)
@@ -29,61 +33,72 @@ def test__fit_figure_of_merit(imaging_ci_7x7):
 
 def test__hyper_noise_map_from():
     noise_map = ac.Array2D.full(fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0)
-    noise_scaling_map_list = [
-        ac.Array2D.manual(array=[[0.0, 0.0], [0.0, 0.0]], pixel_scales=1.0)
-    ]
-    hyper_noise_scalar_list = [ac.HyperCINoiseScalar(scale_factor=1.0)]
+    noise_scaling_map_dict = {
+        "parallel_eper": ac.Array2D.manual(
+            array=[[0.0, 0.0], [0.0, 0.0]], pixel_scales=1.0
+        )
+    }
+
+    hyper_noise_scalar_dict = {"parallel_eper": ac.HyperCINoiseScalar(scale_factor=1.0)}
 
     noise_map = hyper_noise_map_from(
-        hyper_noise_scalar_list=hyper_noise_scalar_list,
+        hyper_noise_scalar_dict=hyper_noise_scalar_dict,
         noise_map=noise_map,
-        noise_scaling_map_list=noise_scaling_map_list,
+        noise_scaling_map_dict=noise_scaling_map_dict,
     )
 
     assert (noise_map.native == (np.array([[2.0, 2.0], [2.0, 2.0]]))).all()
 
     noise_map = ac.Array2D.full(fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0)
-    noise_scaling_map_list = [
-        ac.Array2D.manual(array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0)
-    ]
-    hyper_noise_scalar_list = [ac.HyperCINoiseScalar(scale_factor=0.0)]
+    noise_scaling_map_dict = {
+        "parallel_eper": ac.Array2D.manual(
+            array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0
+        )
+    }
+    hyper_noise_scalar_dict = {"parallel_eper": ac.HyperCINoiseScalar(scale_factor=0.0)}
 
     noise_map = hyper_noise_map_from(
-        hyper_noise_scalar_list=hyper_noise_scalar_list,
+        hyper_noise_scalar_dict=hyper_noise_scalar_dict,
         noise_map=noise_map,
-        noise_scaling_map_list=noise_scaling_map_list,
+        noise_scaling_map_dict=noise_scaling_map_dict,
     )
 
     assert (noise_map.native == (np.array([[2.0, 2.0], [2.0, 2.0]]))).all()
 
     noise_map = ac.Array2D.full(fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0)
-    noise_scaling_map_list = [
-        ac.Array2D.manual(array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0)
-    ]
-    hyper_noise_scalar_list = [ac.HyperCINoiseScalar(scale_factor=1.0)]
+    noise_scaling_map_dict = {
+        "parallel_eper": ac.Array2D.manual(
+            array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0
+        )
+    }
+    hyper_noise_scalar_dict = {"parallel_eper": ac.HyperCINoiseScalar(scale_factor=1.0)}
 
     noise_map = hyper_noise_map_from(
-        hyper_noise_scalar_list=hyper_noise_scalar_list,
+        hyper_noise_scalar_dict=hyper_noise_scalar_dict,
         noise_map=noise_map,
-        noise_scaling_map_list=noise_scaling_map_list,
+        noise_scaling_map_dict=noise_scaling_map_dict,
     )
 
     assert (noise_map.native == (np.array([[3.0, 4.0], [5.0, 6.0]]))).all()
 
     noise_map = ac.Array2D.full(fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0)
-    noise_scaling_map_list = [
-        ac.Array2D.manual(array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0),
-        ac.Array2D.manual(array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0),
-    ]
-    hyper_noise_scalar_list = [
-        ac.HyperCINoiseScalar(scale_factor=1.0),
-        ac.HyperCINoiseScalar(scale_factor=2.0),
-    ]
+    noise_scaling_map_dict = {
+        "parallel_eper": ac.Array2D.manual(
+            array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0
+        ),
+        "serial_eper": ac.Array2D.manual(
+            array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0
+        ),
+    }
+    hyper_noise_scalar_dict = {
+        "parallel_eper": ac.HyperCINoiseScalar(scale_factor=1.0),
+        "serial_eper": ac.HyperCINoiseScalar(scale_factor=2.0),
+    }
 
     noise_map = hyper_noise_map_from(
-        hyper_noise_scalar_list=hyper_noise_scalar_list,
+        hyper_noise_scalar_dict=hyper_noise_scalar_dict,
         noise_map=noise_map,
-        noise_scaling_map_list=noise_scaling_map_list,
+        noise_scaling_map_dict=noise_scaling_map_dict,
     )
 
     assert (noise_map.native == (np.array([[5.0, 8.0], [11.0, 14.0]]))).all()
@@ -140,11 +155,11 @@ def test__chi_squared_map_of_parallel_non_regions_ci():
     fit = ac.FitImagingCI(dataset=masked_imaging, post_cti_data=pre_cti_data)
 
     assert (
-        fit.chi_squared_map_of_parallel_epers == np.array([[0.0, 0.0], [4.0, 0.0]])
+        fit.chi_squared_map_of_parallel_eper == np.array([[0.0, 0.0], [4.0, 0.0]])
     ).all()
 
 
-def test__chi_squared_map_of_serial_epers():
+def test__chi_squared_map_of_serial_eper():
 
     layout = ac.Layout2DCI(
         shape_2d=(2, 2), region_list=[(0, 2, 0, 1)], serial_overscan=(1, 2, 0, 2)
@@ -167,7 +182,7 @@ def test__chi_squared_map_of_serial_epers():
     fit = ac.FitImagingCI(dataset=masked_imaging, post_cti_data=pre_cti_data)
 
     assert (
-        fit.chi_squared_map_of_serial_epers == np.array([[0.0, 4.0], [0.0, 4.0]])
+        fit.chi_squared_map_of_serial_eper == np.array([[0.0, 4.0], [0.0, 4.0]])
     ).all()
 
 
@@ -193,6 +208,6 @@ def test__chi_squared_map_of_overscan_above_serial_eper():
     fit = ac.FitImagingCI(dataset=masked_imaging, post_cti_data=pre_cti_data)
 
     assert (
-        fit.chi_squared_map_of_serial_overscan_no_trails
+        fit.chi_squared_map_of_serial_overscan_no_eper
         == np.array([[0.0, 0.0], [0.0, 4.0]])
     ).all()
