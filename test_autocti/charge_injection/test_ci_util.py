@@ -25,6 +25,7 @@ def test__region_ci_from():
 def test__region_list_ci_via_electronics_from():
 
     region_list_ci = ac.util.ci.region_list_ci_via_electronics_from(
+        injection_start=0,
         injection_on=10,
         injection_off=10,
         injection_total=1,
@@ -38,6 +39,7 @@ def test__region_list_ci_via_electronics_from():
     assert region_list_ci == [(0, 10, 1, 9)]
 
     region_list_ci = ac.util.ci.region_list_ci_via_electronics_from(
+        injection_start=0,
         injection_on=10,
         injection_off=10,
         injection_total=2,
@@ -51,6 +53,7 @@ def test__region_list_ci_via_electronics_from():
     assert region_list_ci == [(0, 10, 2, 7), (20, 30, 2, 7)]
 
     region_list_ci = ac.util.ci.region_list_ci_via_electronics_from(
+        injection_start=0,
         injection_on=5,
         injection_off=10,
         injection_total=3,
@@ -64,6 +67,7 @@ def test__region_list_ci_via_electronics_from():
     assert region_list_ci == [(0, 5, 2, 7), (15, 20, 2, 7), (30, 35, 2, 7)]
 
     region_list_ci = ac.util.ci.region_list_ci_via_electronics_from(
+        injection_start=1,
         injection_on=200,
         injection_off=200,
         injection_total=5,
@@ -75,9 +79,9 @@ def test__region_list_ci_via_electronics_from():
     )
 
     assert region_list_ci == [
-        (0, 200, 51, 2099),
-        (400, 600, 51, 2099),
-        (800, 1000, 51, 2099),
-        (1200, 1400, 51, 2099),
-        (1600, 1800, 51, 2099),
+        (1, 201, 51, 2099),
+        (401, 601, 51, 2099),
+        (801, 1001, 51, 2099),
+        (1201, 1401, 51, 2099),
+        (1601, 1801, 51, 2099),
     ]

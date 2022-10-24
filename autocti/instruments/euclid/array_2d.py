@@ -284,7 +284,7 @@ class Array2DEuclid(Array2D):
         quadrant_id: Optional[str] = None,
     ) -> "Array2DEuclid":
         """
-        Load a Euclid quadrant where the read out electronics (ROE) are at the bottom of the CCD.
+        Load a Euclid quadrant where the read out electronics (ROE) are at the bottom right of the CCD.
 
         The array is loaded and then rotated to ensure that parallel and serial CTI clocking go in the correct
         direction for arctic clocking.

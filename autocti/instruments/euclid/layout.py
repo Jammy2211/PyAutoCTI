@@ -37,13 +37,13 @@ class Layout2DEuclid(Layout2D):
     @classmethod
     def from_ccd_and_quadrant_id(
         cls,
-        ccd_id,
-        quadrant_id,
-        parallel_size=2086,
-        serial_size=2128,
-        serial_prescan_size=51,
-        serial_overscan_size=29,
-        parallel_overscan_size=20,
+        ccd_id: str,
+        quadrant_id: str,
+        parallel_size: int = 2086,
+        serial_size: int = 2128,
+        serial_prescan_size: int = 51,
+        serial_overscan_size: int = 29,
+        parallel_overscan_size: int = 20,
     ):
         """
         Use an input array of a Euclid quadrant, its ccd_id and quadrant_id  to rotate the quadrant to
@@ -123,26 +123,41 @@ class Layout2DEuclid(Layout2D):
     @classmethod
     def top_left(
         cls,
-        parallel_size=2086,
-        serial_size=2128,
-        serial_prescan_size=51,
-        serial_overscan_size=29,
-        parallel_overscan_size=20,
+        parallel_size: int = 2086,
+        serial_size: int = 2128,
+        serial_prescan_size: int = 51,
+        serial_overscan_size: int = 29,
+        parallel_overscan_size: int = 20,
     ):
         """
+        Load the layout of a Euclid quadrant where the read out electronics (ROE) are at the top left of the CCD.
 
+        When the corresponding array of data is loaded, it is rotated to ensure that parallel and serial CTI clocking
+        go in the correct direction for arctic clocking.
+
+        This function first species the layout regions on the unrotated image array (e.g. the parallel overscan indexes
+        are defined at the bottom of the data). The layout is updated to account for this rotation (e.g. for
+        a top left CCD the parallel overscan indexes are flipped to the top of the array).
+
+        ROE's in the `top_left` correspond to 1/4 of the 144 quadrants on a Euclid FPA, specifically:
+
+        - Those in the top half of the FPA (CCDID = 1, 2 or 3) and quadrant id H.
+        - Those in the bottom half of the FPA (CCDID = 4, 5 or 6) and quadrant id F.
+
+        The data is rotated by a flip-up-down, such that the ROE electrons are in the bottom left corner after rotation.
+
+        See the docstring of the `Array2DEuclid` class for a complete description of the Euclid FPA, quadrants and
+        rotations.
 
         Parameters
         ----------
-        parallel_size
-        serial_size
-        serial_prescan_size
-        serial_overscan_size
-        parallel_overscan_size
-
-        Returns
-        -------
-
+        array_electrons
+            The array of data (in units of electrons) which has the ROE in the top left and is rotated for arctic
+            clocking.
+        ccd_id
+            The ID of the euclid CCD (1, 2, 3, 4, 5, or 6) indicating which half of the FP the CCD is in.
+        quadrant_id
+            The ID of the quadrant (E, G, F or H).
         """
         if parallel_overscan_size > 0:
 
@@ -182,13 +197,46 @@ class Layout2DEuclid(Layout2D):
     @classmethod
     def top_right(
         cls,
-        parallel_size=2086,
-        serial_size=2128,
-        serial_prescan_size=51,
-        serial_overscan_size=29,
-        parallel_overscan_size=20,
+        parallel_size: int = 2086,
+        serial_size: int = 2128,
+        serial_prescan_size: int = 51,
+        serial_overscan_size: int = 29,
+        parallel_overscan_size: int = 20,
     ):
+        """
+        Load the layout of a Euclid quadrant where the read out electronics (ROE) are at the top right of the CCD.
 
+        When the corresponding array of data is loaded, it is rotated to ensure that parallel and serial CTI clocking
+        go in the correct direction for arctic clocking.
+
+        This function first species the layout regions on the unrotated image array (e.g. the serial prescan indexes
+        are defined on the right-hand size of the data). The layout is updated to account for this rotation (e.g. the
+        serial prescan indexes now become defined on the left-hand side).
+
+        ROE's in the `top_right` correspond to 1/4 of the 144 quadrants on a Euclid FPA, specifically:
+
+        - Those in the top half of the FPA (CCDID = 1, 2 or 3) and quadrant id G.
+        - Those in the bottom half of the FPA (CCDID = 4, 5 or 6) and quadrant id E.
+
+        The data is rotated by a flip-up-down and flip left-right, such that the ROE electrons are in the bottom left
+        corner after rotation.
+
+        See the docstring of the `Array2DEuclid` class for a complete description of the Euclid FPA, quadrants and
+        rotations.
+
+        Parameters
+        ----------
+        parallel_size
+            The size (number of pixels) of the array across the parallel direction.
+        serial_size
+            The size (number of pixels) of the array across the serial direction.
+        serial_prescan_size
+            The size (number of pixels) of the serial prescan.
+        serial_overscan_size
+            The size (number of pixels) of the serial overscan.
+        parallel_overscan_size
+            The size (number of pixels) of the parallel overscan.
+        """
         if parallel_overscan_size > 0:
 
             parallel_overscan = Region2D(
@@ -224,13 +272,45 @@ class Layout2DEuclid(Layout2D):
     @classmethod
     def bottom_left(
         cls,
-        parallel_size=2086,
-        serial_size=2128,
-        serial_prescan_size=51,
-        serial_overscan_size=29,
-        parallel_overscan_size=20,
+        parallel_size: int = 2086,
+        serial_size: int = 2128,
+        serial_prescan_size: int = 51,
+        serial_overscan_size: int = 29,
+        parallel_overscan_size: int = 20,
     ):
+        """
+        Load the layout of a Euclid quadrant where the read out electronics (ROE) are at the bottom left of the CCD.
 
+        When the corresponding array of data is loaded, it is rotated to ensure that parallel and serial CTI clocking
+        go in the correct direction for arctic clocking.
+
+        This function first species the layout regions on the unrotated image array (e.g. the serial prescan indexes
+        are defined on the left-hand size of the data). The layout is updated to account for this rotation (e.g. for
+        a bottom left CCD no rotation is performed, thus the serial prescan indexes stay on the left-hand side).
+
+        ROE's in the `bottom left` correspond to 1/4 of the 144 quadrants on a Euclid FPA, specifically:
+
+        - Those in the top half of the FPA (CCDID = 1, 2 or 3) and quadrant id E.
+        - Those in the bottom half of the FPA (CCDID = 4, 5 or 6) and quadrant id G.
+
+        No rotation is performed for arCTIc clocking because the code assume the ROE are at the bottom left.
+
+        See the docstring of the `Array2DEuclid` class for a complete description of the Euclid FPA, quadrants and
+        rotations.
+
+        Parameters
+        ----------
+        parallel_size
+            The size (number of pixels) of the array across the parallel direction.
+        serial_size
+            The size (number of pixels) of the array across the serial direction.
+        serial_prescan_size
+            The size (number of pixels) of the serial prescan.
+        serial_overscan_size
+            The size (number of pixels) of the serial overscan.
+        parallel_overscan_size
+            The size (number of pixels) of the parallel overscan.
+        """
         if parallel_overscan_size > 0:
 
             parallel_overscan = Region2D(
@@ -269,13 +349,46 @@ class Layout2DEuclid(Layout2D):
     @classmethod
     def bottom_right(
         cls,
-        parallel_size=2086,
-        serial_size=2128,
-        serial_prescan_size=51,
-        serial_overscan_size=29,
-        parallel_overscan_size=20,
+        parallel_size: int = 2086,
+        serial_size: int = 2128,
+        serial_prescan_size: int = 51,
+        serial_overscan_size: int = 29,
+        parallel_overscan_size: int = 20,
     ):
+        """
+        Load the layout of a Euclid quadrant where the read out electronics (ROE) are at the bottom right of the CCD.
 
+        When the corresponding array of data is loaded, it is rotated to ensure that parallel and serial CTI clocking
+        go in the correct direction for arctic clocking.
+
+        This function first species the layout regions on the unrotated image array (e.g. the serial prescan indexes
+        are defined on the right-hand size of the data). The layout is updated to account for this rotation (e.g. the
+        serial prescan indexes now become defined on the left-hand side).
+
+        ROE's in the `bottom right` correspond to 1/4 of the 144 quadrants on a Euclid FPA, specifically:
+
+        - Those in the top half of the FPA (CCDID = 1, 2 or 3) and quadrant id F.
+        - Those in the bottom half of the FPA (CCDID = 4, 5 or 6) and quadrant id H.
+
+        The data and layout coordinates are rotated by a flip left-right, such that the ROE electrons are in the
+        bottom left corner after rotation.
+
+        See the docstring of the `Array2DEuclid` class for a complete description of the Euclid FPA, quadrants and
+        rotations.
+
+        Parameters
+        ----------
+        parallel_size
+            The size (number of pixels) of the array across the parallel direction.
+        serial_size
+            The size (number of pixels) of the array across the serial direction.
+        serial_prescan_size
+            The size (number of pixels) of the serial prescan.
+        serial_overscan_size
+            The size (number of pixels) of the serial overscan.
+        parallel_overscan_size
+            The size (number of pixels) of the parallel overscan.
+        """
         if parallel_overscan_size > 0:
 
             parallel_overscan = Region2D(

@@ -4,7 +4,9 @@ from typing import Dict, List, Optional, Tuple
 import autoarray as aa
 
 from autocti.charge_injection import ci_util
+from autocti.instruments.euclid.layout import Layout2DEuclid
 from autocti.layout.two_d import Layout2D
+
 
 from autoarray.layout import layout_util
 
@@ -83,7 +85,7 @@ class Layout2DCI(Layout2D):
 
         electronics = ElectronicsCI.from_ext_header(ext_header=ext_header)
 
-        layout = aa.euclid.Layout2DEuclid.from_fits_header(ext_header=ext_header)
+        layout = Layout2DEuclid.from_fits_header(ext_header=ext_header)
 
         region_ci_list = ci_util.region_list_ci_via_electronics_from(
             injection_start=electronics.injection_start,
@@ -333,7 +335,7 @@ class ElectronicsCI:
 
         injection_range = self.injection_end - self.injection_start
 
-        for injection_total in range(10):
+        for injection_total in range(50):
 
             total_pixels = math.floor(
                 (injection_total + 1) * (self.injection_on)
