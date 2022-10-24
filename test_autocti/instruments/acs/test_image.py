@@ -439,7 +439,7 @@ def test__output_quadrants_to_fits(acs_ccd):
         "{}".format(path.dirname(path.realpath(__file__))), "files", "output.fits"
     )
 
-    ac.acs.output_quadrants_to_fits(
+    ac.acs.acs_util.output_quadrants_to_fits(
         quadrant_a=quadrant_a,
         quadrant_b=quadrant_b,
         quadrant_c=quadrant_c,

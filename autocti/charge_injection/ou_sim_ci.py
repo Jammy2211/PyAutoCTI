@@ -4,6 +4,8 @@ from typing import List, Union
 from arcticpy import CCDPhase
 from arcticpy import TrapInstantCapture
 
+from autocti.instruments.euclid import euclid_util
+
 from autocti.instruments import euclid
 from autoarray.layout import layout_util
 from autoarray.structures.arrays.uniform_2d import Array2D
@@ -77,6 +79,7 @@ def charge_injection_array_from(
     iquad: int,
     injection_norm: float,
     injection_total: int = 5,
+    injection_start: int = 0,
     injection_on: int = 200,
     injection_off: int = 200,
     parallel_size: int = 2086,
@@ -115,7 +118,7 @@ def charge_injection_array_from(
         The size of the image in the serial clocking direction (e.g. number of columns).
     serial_overscan_size
         The size of the serial overscan
-    pixel_scales : (float, float)
+    pixel_scales
         The arc-second to pixel scale conversion factor.
 
     Returns
@@ -134,6 +137,7 @@ def charge_injection_array_from(
     """
 
     regions_ci = ci_util.region_list_ci_via_electronics_from(
+        injection_start=injection_start,
         injection_on=injection_on,
         injection_off=injection_off,
         injection_total=injection_total,
@@ -162,7 +166,7 @@ def charge_injection_array_from(
             norm=injection_norm,
             row_slope=0.0,
             column_sigma=100.0,
-            max_norm=84700,
+            max_norm=200000,
             ci_seed=ci_seed,
         )
 
@@ -178,7 +182,7 @@ def charge_injection_array_from(
     """
     quadrant_id = quadrant_id_from(iquad=iquad)
 
-    roe_corner = euclid.roe_corner_from(ccd_id="1", quadrant_id=quadrant_id)
+    roe_corner = euclid_util.roe_corner_from(ccd_id="1", quadrant_id=quadrant_id)
 
     """
     The array is rotated back to its original reference frame via the roe_corner, so other OU-Sim processing 
@@ -201,7 +205,7 @@ def add_cti_to_pre_cti_data(
 
     quadrant_id = quadrant_id_from(iquad=iquad)
 
-    roe_corner = euclid.roe_corner_from(ccd_id="1", quadrant_id=quadrant_id)
+    roe_corner = euclid_util.roe_corner_from(ccd_id="1", quadrant_id=quadrant_id)
 
     pre_cti_data = layout_util.rotate_array_via_roe_corner_from(
         array=pre_cti_data, roe_corner=roe_corner
