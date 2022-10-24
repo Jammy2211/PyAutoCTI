@@ -10,7 +10,8 @@ def test__non_uniform_array_is_correct_with_rotation():
     # bottom left
 
     array = ou_sim_ci.charge_injection_array_from(
-        iquad=0,
+        ccd_id="123",
+        quadrant_id="E",
         injection_total=5,
         injection_on=200,
         injection_off=200,
@@ -26,7 +27,8 @@ def test__non_uniform_array_is_correct_with_rotation():
     # top left
 
     array = ou_sim_ci.charge_injection_array_from(
-        iquad=2,
+        ccd_id="123",
+        quadrant_id="H",
         injection_total=5,
         injection_on=200,
         injection_off=200,
@@ -41,7 +43,8 @@ def test__non_uniform_array_is_correct_with_rotation():
     # bottom right
 
     array = ou_sim_ci.charge_injection_array_from(
-        iquad=1,
+        ccd_id="123",
+        quadrant_id="F",
         injection_total=5,
         injection_on=200,
         injection_off=200,
@@ -57,7 +60,8 @@ def test__non_uniform_array_is_correct_with_rotation():
     # top right
 
     array = ou_sim_ci.charge_injection_array_from(
-        iquad=3,
+        ccd_id="123",
+        quadrant_id="G",
         injection_total=5,
         injection_on=200,
         injection_off=200,
@@ -87,7 +91,8 @@ def test__add_cti_to_pre_cti_data():
     # bottom left
 
     array = ou_sim_ci.charge_injection_array_from(
-        iquad=0,
+        ccd_id="123",
+        quadrant_id="E",
         injection_total=5,
         injection_on=200,
         injection_off=200,
@@ -102,7 +107,8 @@ def test__add_cti_to_pre_cti_data():
 
     post_cti_data = ou_sim_ci.add_cti_to_pre_cti_data(
         pre_cti_data=pre_cti_data,
-        iquad=0,
+        ccd_id="123",
+        quadrant_id="E",
         clocker=clocker,
         parallel_trap_list=parallel_trap_list,
         parallel_ccd=parallel_ccd,
@@ -115,7 +121,8 @@ def test__add_cti_to_pre_cti_data():
     # top left
 
     array = ou_sim_ci.charge_injection_array_from(
-        iquad=2,
+        ccd_id="123",
+        quadrant_id="H",
         injection_total=5,
         injection_on=200,
         injection_off=200,
@@ -130,7 +137,8 @@ def test__add_cti_to_pre_cti_data():
 
     post_cti_data = ou_sim_ci.add_cti_to_pre_cti_data(
         pre_cti_data=pre_cti_data,
-        iquad=2,
+        ccd_id="123",
+        quadrant_id="H",
         clocker=clocker,
         parallel_trap_list=parallel_trap_list,
         parallel_ccd=parallel_ccd,
@@ -143,7 +151,8 @@ def test__add_cti_to_pre_cti_data():
     # bottom right
 
     array = ou_sim_ci.charge_injection_array_from(
-        iquad=1,
+        ccd_id="123",
+        quadrant_id="F",
         injection_total=5,
         injection_on=200,
         injection_off=200,
@@ -158,7 +167,8 @@ def test__add_cti_to_pre_cti_data():
 
     post_cti_data = ou_sim_ci.add_cti_to_pre_cti_data(
         pre_cti_data=pre_cti_data,
-        iquad=1,
+        ccd_id="123",
+        quadrant_id="F",
         clocker=clocker,
         parallel_trap_list=parallel_trap_list,
         parallel_ccd=parallel_ccd,
@@ -171,7 +181,8 @@ def test__add_cti_to_pre_cti_data():
     # top right
 
     array = ou_sim_ci.charge_injection_array_from(
-        iquad=3,
+        ccd_id="123",
+        quadrant_id="G",
         injection_total=5,
         injection_on=200,
         injection_off=200,
@@ -186,7 +197,8 @@ def test__add_cti_to_pre_cti_data():
 
     post_cti_data = ou_sim_ci.add_cti_to_pre_cti_data(
         pre_cti_data=pre_cti_data,
-        iquad=3,
+        ccd_id="123",
+        quadrant_id="G",
         clocker=clocker,
         parallel_trap_list=parallel_trap_list,
         parallel_ccd=parallel_ccd,
@@ -195,3 +207,114 @@ def test__add_cti_to_pre_cti_data():
     )
 
     assert post_cti_data[1885, 0] > 0.0
+
+
+def test__tvac_values():
+
+    array = ou_sim_ci.charge_injection_array_from(
+        #   iquad=0,
+        ccd_id="123",
+        quadrant_id="E",
+        injection_total=4,
+        injection_start=16,
+        injection_on=420,
+        injection_off=100,
+        injection_norm=50000.0,
+    )
+
+    tvac_region_1 = ac.Region2D(region=[16, 436, 51, 2099])
+
+    assert (array[tvac_region_1.slice] > 10000).all()
+    assert (array[tvac_region_1.y0 : tvac_region_1.y1, tvac_region_1.x0 - 1] == 0).all()
+    assert (array[tvac_region_1.y0 : tvac_region_1.y1, tvac_region_1.x1] == 0).all()
+    assert (array[tvac_region_1.y0 - 1, tvac_region_1.x0 : tvac_region_1.x1] == 0).all()
+    assert (array[tvac_region_1.y1, tvac_region_1.x0 : tvac_region_1.x1] == 0).all()
+
+    tvac_region_1 = ac.Region2D(region=[536, 956, 51, 2099])
+
+    assert (array[tvac_region_1.slice] > 10000).all()
+    assert (array[tvac_region_1.y0 : tvac_region_1.y1, tvac_region_1.x0 - 1] == 0).all()
+    assert (array[tvac_region_1.y0 : tvac_region_1.y1, tvac_region_1.x1] == 0).all()
+    assert (array[tvac_region_1.y0 - 1, tvac_region_1.x0 : tvac_region_1.x1] == 0).all()
+    assert (array[tvac_region_1.y1, tvac_region_1.x0 : tvac_region_1.x1] == 0).all()
+
+    array = ou_sim_ci.charge_injection_array_from(
+        #   iquad=1,
+        ccd_id="123",
+        quadrant_id="F",
+        injection_total=4,
+        injection_start=16,
+        injection_on=420,
+        injection_off=100,
+        injection_norm=50000.0,
+    )
+
+    tvac_region_1 = ac.Region2D(region=[16, 436, 29, 2077])
+
+    assert (array[tvac_region_1.slice] > 10000).all()
+    assert (array[tvac_region_1.y0 : tvac_region_1.y1, tvac_region_1.x0 - 1] == 0).all()
+    assert (array[tvac_region_1.y0 : tvac_region_1.y1, tvac_region_1.x1] == 0).all()
+    assert (array[tvac_region_1.y0 - 1, tvac_region_1.x0 : tvac_region_1.x1] == 0).all()
+    assert (array[tvac_region_1.y1, tvac_region_1.x0 : tvac_region_1.x1] == 0).all()
+
+    tvac_region_1 = ac.Region2D(region=[536, 956, 29, 2077])
+
+    assert (array[tvac_region_1.slice] > 10000).all()
+    assert (array[tvac_region_1.y0 : tvac_region_1.y1, tvac_region_1.x0 - 1] == 0).all()
+    assert (array[tvac_region_1.y0 : tvac_region_1.y1, tvac_region_1.x1] == 0).all()
+    assert (array[tvac_region_1.y0 - 1, tvac_region_1.x0 : tvac_region_1.x1] == 0).all()
+    assert (array[tvac_region_1.y1, tvac_region_1.x0 : tvac_region_1.x1] == 0).all()
+
+    array = ou_sim_ci.charge_injection_array_from(
+        #  iquad=2,
+        ccd_id="123",
+        quadrant_id="H",
+        injection_total=4,
+        injection_start=16,
+        injection_on=420,
+        injection_off=100,
+        injection_norm=50000.0,
+    )
+
+    tvac_region_1 = ac.Region2D(region=[1650, 2070, 51, 2099])
+
+    assert (array[tvac_region_1.slice] > 10000).all()
+    assert (array[tvac_region_1.y0 : tvac_region_1.y1, tvac_region_1.x0 - 1] == 0).all()
+    assert (array[tvac_region_1.y0 : tvac_region_1.y1, tvac_region_1.x1] == 0).all()
+    assert (array[tvac_region_1.y0 - 1, tvac_region_1.x0 : tvac_region_1.x1] == 0).all()
+    assert (array[tvac_region_1.y1, tvac_region_1.x0 : tvac_region_1.x1] == 0).all()
+
+    tvac_region_1 = ac.Region2D(region=[1130, 1550, 51, 2099])
+
+    assert (array[tvac_region_1.slice] > 10000).all()
+    assert (array[tvac_region_1.y0 : tvac_region_1.y1, tvac_region_1.x0 - 1] == 0).all()
+    assert (array[tvac_region_1.y0 : tvac_region_1.y1, tvac_region_1.x1] == 0).all()
+    assert (array[tvac_region_1.y0 - 1, tvac_region_1.x0 : tvac_region_1.x1] == 0).all()
+    assert (array[tvac_region_1.y1, tvac_region_1.x0 : tvac_region_1.x1] == 0).all()
+
+    array = ou_sim_ci.charge_injection_array_from(
+        #   iquad=3,
+        ccd_id="123",
+        quadrant_id="G",
+        injection_total=4,
+        injection_start=16,
+        injection_on=420,
+        injection_off=100,
+        injection_norm=50000.0,
+    )
+
+    tvac_region_1 = ac.Region2D(region=[1650, 2070, 29, 2077])
+
+    assert (array[tvac_region_1.slice] > 10000).all()
+    assert (array[tvac_region_1.y0 : tvac_region_1.y1, tvac_region_1.x0 - 1] == 0).all()
+    assert (array[tvac_region_1.y0 : tvac_region_1.y1, tvac_region_1.x1] == 0).all()
+    assert (array[tvac_region_1.y0 - 1, tvac_region_1.x0 : tvac_region_1.x1] == 0).all()
+    assert (array[tvac_region_1.y1, tvac_region_1.x0 : tvac_region_1.x1] == 0).all()
+
+    tvac_region_1 = ac.Region2D(region=[1130, 1550, 29, 2077])
+
+    assert (array[tvac_region_1.slice] > 10000).all()
+    assert (array[tvac_region_1.y0 : tvac_region_1.y1, tvac_region_1.x0 - 1] == 0).all()
+    assert (array[tvac_region_1.y0 : tvac_region_1.y1, tvac_region_1.x1] == 0).all()
+    assert (array[tvac_region_1.y0 - 1, tvac_region_1.x0 : tvac_region_1.x1] == 0).all()
+    assert (array[tvac_region_1.y1, tvac_region_1.x0 : tvac_region_1.x1] == 0).all()

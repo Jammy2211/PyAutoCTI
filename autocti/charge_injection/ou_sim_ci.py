@@ -76,7 +76,8 @@ def quadrant_id_from(iquad: int) -> str:
 
 
 def charge_injection_array_from(
-    iquad: int,
+    ccd_id: str,
+    quadrant_id: str,
     injection_norm: float,
     injection_total: int = 5,
     injection_start: int = 0,
@@ -180,9 +181,9 @@ def charge_injection_array_from(
     """
     The OU-SIM parameter iquad defines the quadrant_id of the data (e.g. "E", "F", "G" or "H").
     """
-    quadrant_id = quadrant_id_from(iquad=iquad)
+    # quadrant_id = quadrant_id_from(iquad=iquad)
 
-    roe_corner = euclid_util.roe_corner_from(ccd_id="1", quadrant_id=quadrant_id)
+    roe_corner = euclid_util.roe_corner_from(ccd_id=ccd_id, quadrant_id=quadrant_id)
 
     """
     The array is rotated back to its original reference frame via the roe_corner, so other OU-Sim processing 
@@ -195,7 +196,8 @@ def charge_injection_array_from(
 
 def add_cti_to_pre_cti_data(
     pre_cti_data: Union[np.ndarray, Array2D],
-    iquad: int,
+    ccd_id: str,
+    quadrant_id: str,
     clocker: Clocker2D,
     parallel_trap_list: List[TrapInstantCapture],
     parallel_ccd: CCDPhase,
@@ -203,9 +205,9 @@ def add_cti_to_pre_cti_data(
     serial_ccd: CCDPhase,
 ) -> Union[np.ndarray, Array2D]:
 
-    quadrant_id = quadrant_id_from(iquad=iquad)
+    #  quadrant_id = quadrant_id_from(iquad=iquad)
 
-    roe_corner = euclid_util.roe_corner_from(ccd_id="1", quadrant_id=quadrant_id)
+    roe_corner = euclid_util.roe_corner_from(ccd_id=ccd_id, quadrant_id=quadrant_id)
 
     pre_cti_data = layout_util.rotate_array_via_roe_corner_from(
         array=pre_cti_data, roe_corner=roe_corner

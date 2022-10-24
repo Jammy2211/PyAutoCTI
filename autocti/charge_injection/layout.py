@@ -99,14 +99,14 @@ class Layout2DCI(Layout2D):
             roe_corner=layout.original_roe_corner,
         )
 
-        region_ci_list = [
-            layout_util.rotate_region_via_roe_corner_from(
-                region=region_ci,
-                shape_native=layout.shape_2d,
-                roe_corner=layout.original_roe_corner,
-            )
-            for region_ci in region_ci_list
-        ]
+        # region_ci_list = [
+        #     layout_util.rotate_region_via_roe_corner_from(
+        #         region=region_ci,
+        #         shape_native=layout.shape_2d,
+        #         roe_corner=layout.original_roe_corner,
+        #     )
+        #     for region_ci in region_ci_list
+        # ]
 
         return cls(
             shape_2d=(parallel_size, serial_size),
