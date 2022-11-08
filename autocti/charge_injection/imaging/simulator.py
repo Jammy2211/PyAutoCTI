@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 import autoarray as aa
 
-from autoarray.dataset.imaging import AbstractSimulatorImaging
+from autoarray.dataset.imaging.simulator import AbstractSimulatorImaging
 
 from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.charge_injection.layout import Layout2DCI

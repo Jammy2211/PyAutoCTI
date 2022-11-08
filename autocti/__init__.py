@@ -5,7 +5,7 @@ from autoarray.structures.arrays.uniform_1d import Array1D
 from autoarray.structures.arrays.uniform_2d import Array2D
 from autoarray.structures.header import Header
 from autoarray.dataset import preprocess
-from autoarray.dataset.imaging import Imaging
+from autoarray.dataset.imaging.imaging import Imaging
 
 from arcticpy import ROE
 from arcticpy import ROEChargeInjection

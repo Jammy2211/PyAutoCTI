@@ -3,7 +3,7 @@ from typing import Optional
 
 import autoarray as aa
 
-from autoarray.dataset.imaging import AbstractSimulatorImaging
+from autoarray.dataset.imaging.simulator import AbstractSimulatorImaging
 from autoarray.dataset import preprocess
 
 from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D

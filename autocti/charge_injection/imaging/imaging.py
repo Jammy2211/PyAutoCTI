@@ -22,7 +22,7 @@ class ImagingCI(aa.Imaging):
         name=None,
     ):
 
-        super().__init__(image=image, noise_map=noise_map, name=name)
+        super().__init__(image=image, noise_map=noise_map)
 
         self.data = self.image.native
         self.noise_map = self.noise_map.native
