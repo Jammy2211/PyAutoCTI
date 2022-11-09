@@ -1,3 +1,4 @@
+import copy
 import numpy as np
 import autocti as ac
 
@@ -115,3 +116,21 @@ def test__imaging_ci_from(imaging_ci_7x7):
     ).all()
 
     assert imaging_ci_parallel_calibration.layout.region_list == [(1, 5, 0, 4)]
+
+    mask = ac.Mask2D.unmasked(
+        shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
+    )
+
+    mask[2, 2] = True
+
+    imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask)
+
+    imaging_ci_parallel_calibration = extract.imaging_ci_from(
+        imaging_ci=imaging_ci_7x7, columns=(0, 6)
+    )
+
+    assert imaging_ci_parallel_calibration.image.mask[0,1] == False
+    assert imaging_ci_parallel_calibration.image.mask[2,1] == True
+
+    assert imaging_ci_parallel_calibration.noise_map.mask[0,1] == False
+    assert imaging_ci_parallel_calibration.noise_map.mask[2,1] == True

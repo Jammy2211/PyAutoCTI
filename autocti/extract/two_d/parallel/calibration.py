@@ -129,10 +129,12 @@ class Extract2DParallelCalibration:
                <--------Ser---------
         """
         extraction_region = self.extraction_region_from(columns=columns)
-        return aa.Array2D.manual_native(
+        mask_2d = self.mask_2d_from(mask=array.mask, columns=columns)
+
+        return aa.Array2D.manual_mask(
             array=array.native[extraction_region.slice],
+            mask=mask_2d,
             header=array.header,
-            pixel_scales=array.pixel_scales,
         )
 
     def mask_2d_from(self, mask: aa.Mask2D, columns: Tuple[int, int]) -> "Mask2D":
@@ -141,9 +143,7 @@ class Extract2DParallelCalibration:
 
         The parallel calibration array is described in the function `array_2d_from()`.
         """
-        extraction_region = self.region_list[0].serial_towards_roe_full_region_from(
-            shape_2d=self.shape_2d, pixels=columns
-        )
+        extraction_region = self.extraction_region_from(columns=columns)
         return Mask2D(
             mask=mask[extraction_region.slice], pixel_scales=mask.pixel_scales
         )
@@ -257,7 +257,9 @@ class Extract2DParallelCalibration:
             )
         )
 
-        return ImagingCI(
+        mask = self.mask_2d_from(mask=imaging_ci.mask, columns=columns)
+
+        imaging_ci = ImagingCI(
             image=imaging_ci.layout.extract.parallel_calibration.array_2d_from(
                 array=imaging_ci.image, columns=columns
             ),
@@ -273,3 +275,5 @@ class Extract2DParallelCalibration:
             cosmic_ray_map=cosmic_ray_map,
             noise_scaling_map_dict=noise_scaling_map_dict,
         )
+
+        return imaging_ci.apply_mask(mask=mask)

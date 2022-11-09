@@ -1,14 +1,13 @@
 import numpy as np
 
 import autoarray as aa
-from autoarray import Array1D, Region1D
-from autoarray.dataset import abstract_dataset
+
 from autocti import exc
 from autocti.dataset_1d.dataset_1d.settings import SettingsDataset1D
 from autocti.layout.one_d import Layout1D
 
 
-class Dataset1D(abstract_dataset.AbstractDataset):
+class Dataset1D(aa.AbstractDataset):
     def __init__(
         self,
         data: aa.Array1D,
@@ -166,7 +165,7 @@ class Dataset1D(abstract_dataset.AbstractDataset):
         def make_array(data):
             array = np.zeros(size)
             array[serial_distance : serial_distance + len(data)] = data
-            return Array1D.manual_slim(array, pixel_scales=0.1)
+            return aa.Array1D.manual_slim(array, pixel_scales=0.1)
 
         return Dataset1D(
             data=make_array(pixel_line_dict["data"]),
@@ -174,6 +173,6 @@ class Dataset1D(abstract_dataset.AbstractDataset):
             pre_cti_data=make_array(np.array([pixel_line_dict["flux"]])),
             layout=Layout1D(
                 shape_1d=(size,),
-                region_list=[Region1D(region=(serial_distance, serial_distance + 1))],
+                region_list=[aa.Region1D(region=(serial_distance, serial_distance + 1))],
             ),
         )

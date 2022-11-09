@@ -193,7 +193,6 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
             clocker=clocker,
             cti=cti,
             cosmic_ray_map=cosmic_ray_map,
-            name=name,
         )
 
     def via_pre_cti_data_from(
@@ -224,7 +223,6 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
             pre_cti_data=pre_cti_data,
             layout=layout,
             cosmic_ray_map=cosmic_ray_map,
-            name=name,
         )
 
     def via_post_cti_data_from(
@@ -271,5 +269,4 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
             ),
             cosmic_ray_map=cosmic_ray_map,
             layout=layout,
-            name=name,
         )
