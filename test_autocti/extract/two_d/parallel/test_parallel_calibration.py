@@ -3,6 +3,33 @@ import numpy as np
 import autocti as ac
 
 
+def test__mask_2d_from():
+
+    extract = ac.Extract2DParallelCalibration(
+        shape_2d=(5, 3), region_list=[(0, 5, 0, 3)]
+    )
+
+    mask = ac.Mask2D.unmasked(shape_native=(5, 3), pixel_scales=1.0)
+
+    mask[0, 1] = True
+
+    extracted_mask = extract.mask_2d_from(mask=mask, columns=(1, 3))
+
+    assert (
+        extracted_mask
+        == np.array(
+            [
+                [True, False],
+                [False, False],
+                [False, False],
+                [False, False],
+                [False, False],
+            ]
+        )
+    ).all()
+
+
+
 def test__array_2d_from():
 
     extract = ac.Extract2DParallelCalibration(
@@ -28,37 +55,20 @@ def test__array_2d_from():
         shape_2d=(5, 3), region_list=[(0, 5, 0, 3)]
     )
 
+    mask = ac.Mask2D.unmasked(shape_native=(5, 3), pixel_scales=1.0)
+    mask[0, 1] = True
+
+    array = array.apply_mask(mask=mask)
     extracted_array = extract.array_2d_from(array=array, columns=(1, 3))
+    print(extracted_array.mask)
 
     assert (
         extracted_array.native
-        == np.array([[1.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0]])
+        == np.array([[0.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0], [1.0, 2.0]])
     ).all()
-
-
-def test__mask_2d_from():
-
-    extract = ac.Extract2DParallelCalibration(
-        shape_2d=(5, 3), region_list=[(0, 5, 0, 3)]
-    )
-
-    mask = ac.Mask2D.unmasked(shape_native=(5, 3), pixel_scales=1.0)
-
-    mask[0, 1] = True
-
-    extracted_mask = extract.mask_2d_from(mask=mask, columns=(1, 3))
-
     assert (
-        extracted_mask
-        == np.array(
-            [
-                [True, False],
-                [False, False],
-                [False, False],
-                [False, False],
-                [False, False],
-            ]
-        )
+        extracted_array.mask
+        == np.array([[True, False], [False, False], [False, False], [False, False], [False, False]])
     ).all()
 
 

@@ -83,6 +83,18 @@ class Extract2DParallelCalibration:
             shape_2d=self.shape_2d, pixels=columns
         )
 
+    def mask_2d_from(self, mask: aa.Mask2D, columns: Tuple[int, int]) -> "Mask2D":
+        """
+        Extract a mask to go with a parallel calibration array from an input mask.
+
+        The parallel calibration array is described in the function `array_2d_from()`.
+        """
+        extraction_region = self.extraction_region_from(columns=columns)
+
+        return Mask2D(
+            mask=mask[extraction_region.slice], pixel_scales=mask.pixel_scales
+        )
+
     def array_2d_from(self, array: aa.Array2D, columns: Tuple[int, int]) -> aa.Array2D:
         """
         Extract a parallel calibration array from an input array, where this array contains a sub-set of the input
@@ -135,17 +147,6 @@ class Extract2DParallelCalibration:
             array=array.native[extraction_region.slice],
             mask=mask_2d,
             header=array.header,
-        )
-
-    def mask_2d_from(self, mask: aa.Mask2D, columns: Tuple[int, int]) -> "Mask2D":
-        """
-        Extract a mask to go with a parallel calibration array from an input mask.
-
-        The parallel calibration array is described in the function `array_2d_from()`.
-        """
-        extraction_region = self.extraction_region_from(columns=columns)
-        return Mask2D(
-            mask=mask[extraction_region.slice], pixel_scales=mask.pixel_scales
         )
 
     def extracted_layout_from(self, layout, columns: Tuple[int, int]) -> "Layout2DCI":
