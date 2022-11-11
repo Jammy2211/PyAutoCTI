@@ -1,6 +1,5 @@
-from autoarray.dataset import abstract_dataset
+import autoarray as aa
 
-
-class SettingsDataset1D(abstract_dataset.AbstractSettingsDataset):
+class SettingsDataset1D(aa.AbstractSettingsDataset):
 
     pass

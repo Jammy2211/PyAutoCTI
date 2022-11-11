@@ -1,10 +1,10 @@
 from os import path
 from autoconf import conf
-from autoarray.plot.wrap.wrap_base import Output
-from autoarray.plot.mat_wrap.mat_plot import MatPlot1D
-from autoarray.plot.mat_wrap.mat_plot import MatPlot2D
-from autoarray.plot.mat_wrap.include import Include1D
-from autoarray.plot.mat_wrap.include import Include2D
+from autoarray.plot.wrap.base import Output
+from autoarray.plot.mat_plot.one_d import MatPlot1D
+from autoarray.plot.mat_plot.two_d import MatPlot2D
+from autoarray.plot.include.one_d import Include1D
+from autoarray.plot.include.two_d import Include2D
 
 
 def setting(section, name):

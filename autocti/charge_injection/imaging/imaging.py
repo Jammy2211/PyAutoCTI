@@ -19,7 +19,6 @@ class ImagingCI(aa.Imaging):
         layout: Layout2DCI,
         cosmic_ray_map: Optional[aa.Array2D] = None,
         noise_scaling_map_dict: Optional[Dict] = None,
-        name=None,
     ):
 
         super().__init__(image=image, noise_map=noise_map)

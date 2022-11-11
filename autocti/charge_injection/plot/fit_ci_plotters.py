@@ -3,7 +3,7 @@ from typing import Callable
 import autoarray.plot as aplt
 
 from autoarray.fit.plot.fit_imaging_plotters import FitImagingPlotterMeta
-from autoarray.plot.mat_wrap.mat_plot import AutoLabels
+from autoarray.plot.auto_labels import AutoLabels
 
 from autocti.plot.abstract_plotters import Plotter
 from autocti.charge_injection.fit import FitImagingCI

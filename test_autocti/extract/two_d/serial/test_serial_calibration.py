@@ -38,6 +38,27 @@ def test__array_2d_list_from():
     assert (serial_region[1] == np.array([[0.0, 1.0, 2.0, 4.0, 4.0]])).all()
 
 
+def test__mask_2d_from():
+
+    extract = ac.Extract2DSerialCalibration(
+        shape_2d=(5, 5), region_list=[(0, 2, 1, 4), (3, 5, 1, 4)]
+    )
+
+    mask = ac.Mask2D.unmasked(shape_native=(5, 5), pixel_scales=1.0)
+
+    mask[1, 1] = True
+    mask[4, 3] = True
+
+    serial_frame = extract.mask_2d_from(mask=mask, rows=(1, 2))
+
+    assert (
+        serial_frame
+        == np.array(
+            [[False, True, False, False, False], [False, False, False, True, False]]
+        )
+    ).all()
+
+
 def test__array_2d_from():
 
     extract = ac.Extract2DSerialCalibration(
@@ -135,27 +156,6 @@ def test__array_2d_from():
     ).all()
 
     assert new_array.pixel_scales == (1.0, 1.0)
-
-
-def test__mask_2d_from():
-
-    extract = ac.Extract2DSerialCalibration(
-        shape_2d=(5, 5), region_list=[(0, 2, 1, 4), (3, 5, 1, 4)]
-    )
-
-    mask = ac.Mask2D.unmasked(shape_native=(5, 5), pixel_scales=1.0)
-
-    mask[1, 1] = True
-    mask[4, 3] = True
-
-    serial_frame = extract.mask_2d_from(mask=mask, rows=(1, 2))
-
-    assert (
-        serial_frame
-        == np.array(
-            [[False, True, False, False, False], [False, False, False, True, False]]
-        )
-    ).all()
 
 
 def test__extracted_layout_from():
@@ -278,3 +278,21 @@ def test__imaging_ci_from(imaging_ci_7x7):
     ).all()
 
     assert serial_calibration_imaging.layout.region_list == [(0, 2, 1, 5)]
+
+    mask = ac.Mask2D.unmasked(
+        shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
+    )
+
+    mask[2, 2] = True
+
+    imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask)
+
+    imaging_ci_serial_calibration = extract.imaging_ci_from(
+        imaging_ci=imaging_ci_7x7, rows=(0, 6)
+    )
+
+    assert imaging_ci_serial_calibration.image.mask[2,1] == False
+    assert imaging_ci_serial_calibration.image.mask[1,2] == True
+
+    assert imaging_ci_serial_calibration.noise_map.mask[2,1] == False
+    assert imaging_ci_serial_calibration.noise_map.mask[1,2] == True

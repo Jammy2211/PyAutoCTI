@@ -83,6 +83,18 @@ class Extract2DParallelCalibration:
             shape_2d=self.shape_2d, pixels=columns
         )
 
+    def mask_2d_from(self, mask: aa.Mask2D, columns: Tuple[int, int]) -> "Mask2D":
+        """
+        Extract a mask to go with a parallel calibration array from an input mask.
+
+        The parallel calibration array is described in the function `array_2d_from()`.
+        """
+        extraction_region = self.extraction_region_from(columns=columns)
+
+        return Mask2D(
+            mask=mask[extraction_region.slice], pixel_scales=mask.pixel_scales
+        )
+
     def array_2d_from(self, array: aa.Array2D, columns: Tuple[int, int]) -> aa.Array2D:
         """
         Extract a parallel calibration array from an input array, where this array contains a sub-set of the input
@@ -129,30 +141,19 @@ class Extract2DParallelCalibration:
                <--------Ser---------
         """
         extraction_region = self.extraction_region_from(columns=columns)
-        return aa.Array2D.manual_native(
+        mask_2d = self.mask_2d_from(mask=array.mask, columns=columns)
+
+        return aa.Array2D.manual_mask(
             array=array.native[extraction_region.slice],
+            mask=mask_2d,
             header=array.header,
-            pixel_scales=array.pixel_scales,
-        )
-
-    def mask_2d_from(self, mask: aa.Mask2D, columns: Tuple[int, int]) -> "Mask2D":
-        """
-        Extract a mask to go with a parallel calibration array from an input mask.
-
-        The parallel calibration array is described in the function `array_2d_from()`.
-        """
-        extraction_region = self.region_list[0].serial_towards_roe_full_region_from(
-            shape_2d=self.shape_2d, pixels=columns
-        )
-        return Mask2D(
-            mask=mask[extraction_region.slice], pixel_scales=mask.pixel_scales
         )
 
     def extracted_layout_from(self, layout, columns: Tuple[int, int]) -> "Layout2DCI":
         """
-        Extract a parallel calibration array from an input array, where this array contains a sub-set of the input
-        array which is specifically used for only parallel CTI calibration. This array is simply a specified number
-        of columns that are closest to the read-out electronics.
+        Extract the layout of a parallel calibration array from an input layout, where this layout contains the regions
+        of the input layout which are retained after the parallel CTI calibration array is created. This layout
+        is simply a specified number of columns that are closest to the read-out electronics.
 
         The diagram below illustrates the arrays that is extracted from a array with columns=(0, 3):
 
@@ -257,7 +258,9 @@ class Extract2DParallelCalibration:
             )
         )
 
-        return ImagingCI(
+        mask = self.mask_2d_from(mask=imaging_ci.mask, columns=columns)
+
+        imaging_ci = ImagingCI(
             image=imaging_ci.layout.extract.parallel_calibration.array_2d_from(
                 array=imaging_ci.image, columns=columns
             ),
@@ -273,3 +276,5 @@ class Extract2DParallelCalibration:
             cosmic_ray_map=cosmic_ray_map,
             noise_scaling_map_dict=noise_scaling_map_dict,
         )
+
+        return imaging_ci.apply_mask(mask=mask)

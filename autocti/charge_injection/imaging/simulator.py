@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 import autoarray as aa
 
-from autoarray.dataset.imaging.simulator import AbstractSimulatorImaging
+from autoarray.dataset.imaging.simulator import SimulatorImaging
 
 from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.charge_injection.layout import Layout2DCI
@@ -15,7 +15,7 @@ from autocti.charge_injection import ci_util
 from typing import Optional
 
 
-class SimulatorImagingCI(AbstractSimulatorImaging):
+class SimulatorImagingCI(SimulatorImaging):
     def __init__(
         self,
         pixel_scales: aa.type.PixelScales,
@@ -193,7 +193,6 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
             clocker=clocker,
             cti=cti,
             cosmic_ray_map=cosmic_ray_map,
-            name=name,
         )
 
     def via_pre_cti_data_from(
@@ -224,7 +223,6 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
             pre_cti_data=pre_cti_data,
             layout=layout,
             cosmic_ray_map=cosmic_ray_map,
-            name=name,
         )
 
     def via_post_cti_data_from(
@@ -271,5 +269,4 @@ class SimulatorImagingCI(AbstractSimulatorImaging):
             ),
             cosmic_ray_map=cosmic_ray_map,
             layout=layout,
-            name=name,
         )
