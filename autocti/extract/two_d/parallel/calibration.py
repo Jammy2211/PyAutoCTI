@@ -151,9 +151,9 @@ class Extract2DParallelCalibration:
 
     def extracted_layout_from(self, layout, columns: Tuple[int, int]) -> "Layout2DCI":
         """
-        Extract a parallel calibration array from an input array, where this array contains a sub-set of the input
-        array which is specifically used for only parallel CTI calibration. This array is simply a specified number
-        of columns that are closest to the read-out electronics.
+        Extract the layout of a parallel calibration array from an input layout, where this layout contains the regions
+        of the input layout which are retained after the parallel CTI calibration array is created. This layout
+        is simply a specified number of columns that are closest to the read-out electronics.
 
         The diagram below illustrates the arrays that is extracted from a array with columns=(0, 3):
 

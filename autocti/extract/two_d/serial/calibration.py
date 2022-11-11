@@ -66,92 +66,6 @@ class Extract2DSerialCalibration:
             map(lambda region: array.native[region.slice], calibration_region_list)
         )
 
-    def extracted_layout_from(self, layout, new_shape_2d, rows):
-
-        serial_prescan = (
-            (0, new_shape_2d[0], self.serial_prescan[2], self.serial_prescan[3])
-            if self.serial_prescan is not None
-            else None
-        )
-        serial_overscan = (
-            (0, new_shape_2d[0], self.serial_overscan[2], self.serial_overscan[3])
-            if self.serial_overscan is not None
-            else None
-        )
-
-        x0 = self.region_list[0][2]
-        x1 = self.region_list[0][3]
-        offset = 0
-
-        new_pattern_region_list_ci = []
-
-        for region in self.region_list:
-
-            labelsize = rows[1] - rows[0]
-            new_pattern_region_list_ci.append(
-                aa.Region2D(region=(offset, offset + labelsize, x0, x1))
-            )
-            offset += labelsize
-
-        new_layout = deepcopy(layout)
-        new_layout.region_list = new_pattern_region_list_ci
-        new_layout.serial_prescan = serial_prescan
-        new_layout.serial_overscan = serial_overscan
-
-        return new_layout
-
-    def array_2d_from(self, array: aa.Array2D, rows: Tuple[int, int]) -> aa.Array2D:
-        """
-        Extract a serial calibration array from a charge injection array, where this arrays is a sub-set of the
-        array which can be used for serial-only calibration. Specifically, this array is all charge injection
-        scans and their serial over-scan trails.
-
-        The diagram below illustrates the arrays that is extracted from a array with column=5:
-
-        [] = read-out electronics
-        [==========] = read-out register
-        [..........] = serial prescan
-        [pppppppppp] = parallel overscan
-        [ssssssssss] = serial overscan
-        [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
-        [tttttttttt] = parallel / serial charge injection region trail
-
-               [ppppppppppppppppppppp]
-               [pppppppppppppppppppp ]
-          [...][xxxxxxxxxxxxxxxxxxxxx][sss]
-          [...][ccccccccccccccccccccc][tst]
-        | [...][ccccccccccccccccccccc][sts]    |
-        | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
-        P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
-        | [...][ccccccccccccccccccccc][tst]    | clocking
-          [...][ccccccccccccccccccccc][sts]    |
-
-        []     [=====================]
-               <--------Ser---------
-
-        The extracted array keeps just the trails following all charge injection scans and replaces all other
-        values with 0s:
-
-        |                                      |
-        |      [cccccccccccccccc][tst]         | Direction
-        P      [cccccccccccccccc][tst]         | of
-        |      [cccccccccccccccc][tst]         | clocking
-               [cccccccccccccccc][tst]         |
-
-        []     [=====================]
-               <--------Ser---------
-        """
-        calibration_images = self.array_2d_list_from(array=array)
-        calibration_images = list(
-            map(lambda image: image[rows[0] : rows[1], :], calibration_images)
-        )
-
-        new_array = np.concatenate(calibration_images, axis=0)
-
-        return aa.Array2D.manual(
-            array=new_array, header=array.header, pixel_scales=array.pixel_scales
-        )
-
     def mask_2d_from(self, mask: aa.Mask2D, rows: Tuple[int, int]) -> Mask2D:
         """
         Extract a serial calibration array from a charge injection array, where this arrays is a sub-set of the
@@ -217,6 +131,96 @@ class Extract2DSerialCalibration:
             pixel_scales=mask.pixel_scales,
         )
 
+    def array_2d_from(self, array: aa.Array2D, rows: Tuple[int, int]) -> aa.Array2D:
+        """
+        Extract a serial calibration array from a charge injection array, where this arrays is a sub-set of the
+        array which can be used for serial-only calibration. Specifically, this array is all charge injection
+        scans and their serial over-scan trails.
+
+        The diagram below illustrates the arrays that is extracted from a array with column=5:
+
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = parallel overscan
+        [ssssssssss] = serial overscan
+        [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
+        [tttttttttt] = parallel / serial charge injection region trail
+
+               [ppppppppppppppppppppp]
+               [pppppppppppppppppppp ]
+          [...][xxxxxxxxxxxxxxxxxxxxx][sss]
+          [...][ccccccccccccccccccccc][tst]
+        | [...][ccccccccccccccccccccc][sts]    |
+        | [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | Direction
+        P [...][xxxxxxxxxxxxxxxxxxxxx][sss]    | of
+        | [...][ccccccccccccccccccccc][tst]    | clocking
+          [...][ccccccccccccccccccccc][sts]    |
+
+        []     [=====================]
+               <--------Ser---------
+
+        The extracted array keeps just the trails following all charge injection scans and replaces all other
+        values with 0s:
+
+        |                                      |
+        |      [cccccccccccccccc][tst]         | Direction
+        P      [cccccccccccccccc][tst]         | of
+        |      [cccccccccccccccc][tst]         | clocking
+               [cccccccccccccccc][tst]         |
+
+        []     [=====================]
+               <--------Ser---------
+        """
+        calibration_images = self.array_2d_list_from(array=array)
+        calibration_images = list(
+            map(lambda image: image[rows[0] : rows[1], :], calibration_images)
+        )
+
+        new_array = np.concatenate(calibration_images, axis=0)
+
+        mask_2d = self.mask_2d_from(mask=array.mask, rows=rows)
+
+        return aa.Array2D.manual_mask(
+            array=new_array,
+            mask=mask_2d,
+            header=array.header,
+        )
+
+    def extracted_layout_from(self, layout, new_shape_2d, rows):
+
+        serial_prescan = (
+            (0, new_shape_2d[0], self.serial_prescan[2], self.serial_prescan[3])
+            if self.serial_prescan is not None
+            else None
+        )
+        serial_overscan = (
+            (0, new_shape_2d[0], self.serial_overscan[2], self.serial_overscan[3])
+            if self.serial_overscan is not None
+            else None
+        )
+
+        x0 = self.region_list[0][2]
+        x1 = self.region_list[0][3]
+        offset = 0
+
+        new_pattern_region_list_ci = []
+
+        for region in self.region_list:
+
+            labelsize = rows[1] - rows[0]
+            new_pattern_region_list_ci.append(
+                aa.Region2D(region=(offset, offset + labelsize, x0, x1))
+            )
+            offset += labelsize
+
+        new_layout = deepcopy(layout)
+        new_layout.region_list = new_pattern_region_list_ci
+        new_layout.serial_prescan = serial_prescan
+        new_layout.serial_overscan = serial_overscan
+
+        return new_layout
+
     def imaging_ci_from(self, imaging_ci: "ImagingCI", rows) -> "ImagingCI":
         """
         Returnss a function to extract a serial section for given rows
@@ -249,7 +253,9 @@ class Extract2DSerialCalibration:
             array=imaging_ci.image, rows=rows
         )
 
-        return ImagingCI(
+        mask = self.mask_2d_from(mask=imaging_ci.mask, rows=rows)
+
+        imaging_ci = ImagingCI(
             image=image,
             noise_map=imaging_ci.layout.extract.serial_calibration.array_2d_from(
                 array=imaging_ci.noise_map, rows=rows
@@ -263,3 +269,5 @@ class Extract2DSerialCalibration:
             cosmic_ray_map=cosmic_ray_map,
             noise_scaling_map_dict=noise_scaling_map_dict,
         )
+
+        return imaging_ci.apply_mask(mask=mask)
