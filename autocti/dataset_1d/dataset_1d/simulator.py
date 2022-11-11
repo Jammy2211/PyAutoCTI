@@ -3,7 +3,7 @@ from typing import Optional
 
 import autoarray as aa
 
-from autoarray.dataset.imaging.simulator import AbstractSimulatorImaging
+from autoarray.dataset.imaging.simulator import SimulatorImaging
 from autoarray.dataset import preprocess
 
 from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
@@ -12,7 +12,7 @@ from autocti.clocker.one_d import Clocker1D
 from autocti.model.model_util import CTI1D
 
 
-class SimulatorDataset1D(AbstractSimulatorImaging):
+class SimulatorDataset1D(SimulatorImaging):
     def __init__(
         self,
         pixel_scales: aa.type.PixelScales,

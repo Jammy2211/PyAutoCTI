@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 import autoarray as aa
 
-from autoarray.dataset.imaging.simulator import AbstractSimulatorImaging
+from autoarray.dataset.imaging.simulator import SimulatorImaging
 
 from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.charge_injection.layout import Layout2DCI
@@ -15,7 +15,7 @@ from autocti.charge_injection import ci_util
 from typing import Optional
 
 
-class SimulatorImagingCI(AbstractSimulatorImaging):
+class SimulatorImagingCI(SimulatorImaging):
     def __init__(
         self,
         pixel_scales: aa.type.PixelScales,

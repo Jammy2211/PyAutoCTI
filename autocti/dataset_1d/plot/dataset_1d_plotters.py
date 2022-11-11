@@ -3,7 +3,7 @@ from typing import Callable
 
 import autoarray.plot as aplt
 
-from autoarray.plot.mat_wrap.mat_plot import AutoLabels
+from autoarray.plot.auto_labels import AutoLabels
 
 from autocti.plot.abstract_plotters import Plotter
 from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
