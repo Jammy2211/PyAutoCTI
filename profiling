@@ -1,0 +1,33 @@
+        fom = fit.figure_of_merit
+
+        fit_time = time.time() - start
+
+        if instance.cti.parallel_trap_list is not None:
+
+            print("PARALLEL:")
+
+            for parallel_trap in instance.cti.parallel_trap_list:
+
+                print(f"Density: {parallel_trap.density}")
+                print(f"Timescale: {parallel_trap.release_timescale}")
+
+            print(f"Beta: {instance.cti.parallel_ccd.well_fill_power}")
+
+
+        if instance.cti.serial_trap_list is not None:
+
+            print("SERIAL:")
+
+            for serial_trap in instance.cti.serial_trap_list:
+
+                print(f"Density: {serial_trap.density}")
+                print(f"Timescale: {serial_trap.release_timescale}")
+
+            print(f"Beta: {instance.cti.serial_ccd.well_fill_power}")
+
+
+        print(f"LH: {fom}")
+        print(f"Fit Time: {fit_time}")
+        print()
+
+        return fom
