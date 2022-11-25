@@ -28,7 +28,6 @@ def test__mask_2d_from():
     ).all()
 
 
-
 def test__array_2d_from():
 
     extract = ac.Extract2DParallelCalibration(
@@ -67,7 +66,15 @@ def test__array_2d_from():
     ).all()
     assert (
         extracted_array.mask
-        == np.array([[True, False], [False, False], [False, False], [False, False], [False, False]])
+        == np.array(
+            [
+                [True, False],
+                [False, False],
+                [False, False],
+                [False, False],
+                [False, False],
+            ]
+        )
     ).all()
 
 
@@ -138,8 +145,8 @@ def test__imaging_ci_from(imaging_ci_7x7):
         imaging_ci=imaging_ci_7x7, columns=(0, 6)
     )
 
-    assert imaging_ci_parallel_calibration.image.mask[0,1] == False
-    assert imaging_ci_parallel_calibration.image.mask[2,1] == True
+    assert imaging_ci_parallel_calibration.image.mask[0, 1] == False
+    assert imaging_ci_parallel_calibration.image.mask[2, 1] == True
 
-    assert imaging_ci_parallel_calibration.noise_map.mask[0,1] == False
-    assert imaging_ci_parallel_calibration.noise_map.mask[2,1] == True
+    assert imaging_ci_parallel_calibration.noise_map.mask[0, 1] == False
+    assert imaging_ci_parallel_calibration.noise_map.mask[2, 1] == True

@@ -173,6 +173,8 @@ class Dataset1D(aa.AbstractDataset):
             pre_cti_data=make_array(np.array([pixel_line_dict["flux"]])),
             layout=Layout1D(
                 shape_1d=(size,),
-                region_list=[aa.Region1D(region=(serial_distance, serial_distance + 1))],
+                region_list=[
+                    aa.Region1D(region=(serial_distance, serial_distance + 1))
+                ],
             ),
         )

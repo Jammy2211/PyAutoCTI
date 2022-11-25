@@ -200,7 +200,7 @@ which fits a CTI model to charge injection imaging calibrate data (a form of dat
     The results contain information on the fit, for example the maximum likelihood
     model from the Dynesty parameter space search.
     """
-    print(result.samples.max_log_likelihood_instance)
+    print(result.samples.max_log_likelihood())
 
 Support
 -------

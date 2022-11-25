@@ -16,7 +16,9 @@ def test__norm_columns_list():
     image = ac.Array2D.full(
         fill_value=1.0, shape_native=(5, 5), pixel_scales=(1.0, 1.0)
     )
-    noise_map = ac.Array2D.ones(shape_native=image.shape_native, pixel_scales=image.pixel_scales)
+    noise_map = ac.Array2D.ones(
+        shape_native=image.shape_native, pixel_scales=image.pixel_scales
+    )
 
     layout = ac.Layout2DCI(shape_2d=image.shape_native, region_list=[(1, 4, 1, 4)])
 
@@ -50,7 +52,7 @@ def test__norm_columns_list():
     layout = ac.Layout2DCI(shape_2d=image.shape_native, region_list=[(2, 4, 1, 4)])
 
     imaging = ac.ImagingCI(
-        image=image,  noise_map=noise_map, pre_cti_data=image, layout=layout
+        image=image, noise_map=noise_map, pre_cti_data=image, layout=layout
     )
 
     assert imaging.norm_columns_list == [2.5, 5.5, 8.5]

@@ -70,7 +70,7 @@ def test__noise_scaling_map_dict_is_list_of_result__are_correct(
     )
 
     fit_analysis = analysis.fit_via_instance_from(
-        instance=samples_with_result.max_log_likelihood_instance
+        instance=samples_with_result.max_log_likelihood()
     )
 
     result = ResultImagingCI(samples=samples_with_result, analysis=analysis, model=None)

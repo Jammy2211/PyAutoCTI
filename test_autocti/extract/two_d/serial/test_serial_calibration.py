@@ -291,8 +291,8 @@ def test__imaging_ci_from(imaging_ci_7x7):
         imaging_ci=imaging_ci_7x7, rows=(0, 6)
     )
 
-    assert imaging_ci_serial_calibration.image.mask[2,1] == False
-    assert imaging_ci_serial_calibration.image.mask[1,2] == True
+    assert imaging_ci_serial_calibration.image.mask[2, 1] == False
+    assert imaging_ci_serial_calibration.image.mask[1, 2] == True
 
-    assert imaging_ci_serial_calibration.noise_map.mask[2,1] == False
-    assert imaging_ci_serial_calibration.noise_map.mask[1,2] == True
+    assert imaging_ci_serial_calibration.noise_map.mask[2, 1] == False
+    assert imaging_ci_serial_calibration.noise_map.mask[1, 2] == True

@@ -76,7 +76,7 @@ We can iterate over the samples to print the maximum log likelihood CTI model of
 
     for samps in agg.values("samples"):
 
-        instance = samps.max_log_likelihood_instance
+        instance = samps.max_log_likelihood()
 
         print("Maximum Likelihood Model-fit \n")
         print(instance)

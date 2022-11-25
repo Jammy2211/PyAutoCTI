@@ -1,6 +1,6 @@
 from typing import List
 
-from autofit.non_linear.samples import PDFSamples
+from autofit.non_linear.samples import SamplesPDF
 from autofit.mapper.prior_model.collection import CollectionPriorModel
 from autofit.mapper.model import ModelInstance
 from autofit.non_linear.abstract_search import Analysis
@@ -82,7 +82,7 @@ class AnalysisDataset1D(Analysis):
 
     def make_result(
         self,
-        samples: PDFSamples,
+        samples: SamplesPDF,
         model: CollectionPriorModel,
         sigma=1.0,
         use_errors=True,
