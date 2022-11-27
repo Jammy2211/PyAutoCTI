@@ -45,7 +45,7 @@ the installation has clean dependencies):
 
 .. code-block:: bash
 
-    pip install autocti==2022.07.11.1
+    pip install autocti==2022.7.11.1
 
 You may get warnings which state something like:
 

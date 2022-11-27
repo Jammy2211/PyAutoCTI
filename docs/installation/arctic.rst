@@ -51,8 +51,8 @@ You should now get output from running the following Python code in an Python in
 .. code-block:: bash
 
     import numpy as np
-    import arcticpytest
+    import arcticpy
 
-    arcticpytest.add_cti(np.zeros((5,5)))
+    arcticpy.add_cti(np.zeros((5,5)))
 
 **arCTIc** is now installed and you can install **PyAutoCTI** via conda or pip.
