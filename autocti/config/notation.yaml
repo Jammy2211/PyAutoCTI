@@ -1,0 +1,28 @@
+label:
+  label:
+    density: \rho
+    full_well_depth: h
+    release_timescale: \tau
+    release_timescale_sigma: \sigma
+    scale_factor: \omega
+    well_fill_alpha: \alpha
+    well_fill_gamma: \gamma
+    well_fill_power: \beta
+    well_notch_depth: d
+  superscript:
+    ccdcomplex: ccd
+    ccdphase: ccd
+    hypercinoisescalar: H
+    trapinstantcapture: s
+    trapinstantcapturecontinuum: sc
+label_format:
+  format:
+    density: '{:.2f}'
+    full_well_depth: '{:.2f}'
+    release_timescale: '{:.2f}'
+    release_timescale_sigma: '{:.2f}'
+    scale_factor: '{:.2f}'
+    well_fill_alpha: '{:.2f}'
+    well_fill_gamma: '{:.2f}'
+    well_fill_power: '{:.2f}'
+    well_notch_depth: '{:.2f}'
