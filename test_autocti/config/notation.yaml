@@ -1,0 +1,27 @@
+label:
+  label:
+    scale_factor: \omega
+    trap_density: \rho
+    trap_release_timescale: \tau
+    well_fill_alpha: \alpha
+    well_fill_gamma: \gamma
+    well_fill_power: \beta
+    well_notch_depth: d
+  superscript:
+    CCDPhase: ccd
+    HyperCINoiseScalar: H
+    TrapInstantCapture: t
+label_format:
+  format:
+    angular_diameter_distance_to_earth: '{:.2f}'
+    concentration: '{:.2f}'
+    einstein_mass: '{:.4e}'
+    einstein_radius: '{:.2f}'
+    kpc_per_arcsec: '{:.2f}'
+    luminosity: '{:.4e}'
+    mass: '{:.4e}'
+    mass_at_truncation_radius: '{:.4e}'
+    radius: '{:.2f}'
+    redshift: '{:.2f}'
+    rho: '{:.2f}'
+    sersic_luminosity: '{:.4e}'

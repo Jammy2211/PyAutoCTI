@@ -1,0 +1,48 @@
+interpolate:
+  func:
+    MockInterpolateClass: true
+  func_off:
+    MockInterpolateClass: false
+  ndarray_1d_from_grid:
+    MockGridLikeIteratorObj: true
+    MockInterpolateObj: true
+  ndarray_2d_from_grid:
+    MockGridLikeIteratorObj: true
+    MockInterpolateObj: true
+radial_minimum:
+  radial_minimum:
+    EllipticalBrokenPowerLaw: 1.0e-08
+    EllipticalCoreSersic: 1.0e-08
+    EllipticalCoredIsothermal: 1.0e-08
+    EllipticalCoredPowerLaw: 1.0e-08
+    EllipticalDevVaucouleurs: 1.0e-08
+    EllipticalExponential: 1.0e-08
+    EllipticalGaussian: 1.0e-08
+    EllipticalGeneralizedNFW: 1.0e-08
+    EllipticalIsothermal: 1.0e-08
+    EllipticalMassProfile: 1.0e-08
+    EllipticalNFW: 1.0e-08
+    EllipticalProfile: 1.0e-08
+    EllipticalSersic: 1.0e-08
+    EllipticalSersicRadialGradient: 1.0e-08
+    ExternalShear: 1.0e-08
+    MassSheet: 1.0e-08
+    MockGridRadialMinimum: 2.5
+    PointMass: 0.0
+    PowerLaw: 1.0e-08
+    SphericalBrokenPowerLaw: 1.0e-08
+    SphericalCoreSersic: 1.0e-08
+    SphericalCoredIsothermal: 1.0e-08
+    SphericalCoredPowerLaw: 1.0e-08
+    SphericalDevVaucouleurs: 1.0e-08
+    SphericalExponential: 1.0e-08
+    SphericalGaussian: 1.0e-08
+    SphericalGeneralizedNFW: 1.0e-08
+    SphericalIsothermal: 1.0e-08
+    SphericalNFW: 1.0e-08
+    SphericalPowerLaw: 1.0e-08
+    SphericalSersic: 1.0e-08
+    SphericalSersicRadialGradient: 1.0e-08
+    SphericalTruncatedNFW: 1.0e-08
+    SphericalTruncatedNFWChallenge: 1.0e-08
+    SphericalTruncatedNFWMCR: 1.0e-08

@@ -1,0 +1,58 @@
+TrapInstantCapture:
+  density:
+    gaussian_limits:
+      lower: 0.0
+      upper: inf
+    lower_limit: 0.0
+    type: Uniform
+    upper_limit: 10.0
+    width_modifier:
+      type: Relative
+      value: 0.5
+  fractional_volume_full_exposed:
+    type: Constant
+    value: 0.0
+  fractional_volume_none_exposed:
+    type: Constant
+    value: 0.0
+  release_timescale:
+    gaussian_limits:
+      lower: 0.0
+      upper: inf
+    lower_limit: 0.0
+    type: Uniform
+    upper_limit: 50.0
+    width_modifier:
+      type: Relative
+      value: 0.5
+TrapInstantCaptureContinuum:
+  density:
+    gaussian_limits:
+      lower: 0.0
+      upper: inf
+    lower_limit: 0.0
+    type: Uniform
+    upper_limit: 10.0
+    width_modifier:
+      type: Relative
+      value: 0.5
+  release_timescale:
+    gaussian_limits:
+      lower: 0.0
+      upper: inf
+    lower_limit: 0.0
+    type: Uniform
+    upper_limit: 50.0
+    width_modifier:
+      type: Relative
+      value: 0.5
+  release_timescale_sigma:
+    gaussian_limits:
+      lower: 0.0
+      upper: inf
+    lower_limit: 0.0
+    type: Uniform
+    upper_limit: 1.0
+    width_modifier:
+      type: Relative
+      value: 0.5

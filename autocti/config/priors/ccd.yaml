@@ -1,0 +1,31 @@
+CCDPhase:
+  full_well_depth:
+    gaussian_limits:
+      lower: 0.0
+      upper: 1.0
+    lower_limit: 0.0
+    type: Uniform
+    upper_limit: 84700.0
+    width_modifier:
+      type: Absolute
+      value: 0.2
+  well_fill_power:
+    gaussian_limits:
+      lower: 0.0
+      upper: 1.0
+    lower_limit: 0.0
+    type: Uniform
+    upper_limit: 1.0
+    width_modifier:
+      type: Absolute
+      value: 0.2
+  well_notch_depth:
+    gaussian_limits:
+      lower: 0.0
+      upper: 1.0
+    lower_limit: 0.0
+    type: Uniform
+    upper_limit: 1.0
+    width_modifier:
+      type: Absolute
+      value: 0.2

@@ -3,36 +3,9 @@ general:
     backend: default
     imshow_origin: lower
     zoom_around_mask: false
-  inversion:
-    reconstruction_vmax_factor: 0.5
-  units:
-    in_kpc: false
-    use_scaled: false
 plots:
   dataset:
-    absolute_signal_to_noise_map: false
-    cosmic_ray_map: false
-    data: false
-    inverse_noise_map: false
-    noise_map: false
-    noise_scaling_map_dict: false
-    potential_chi_squared_map: false
     pre_cti_data: false
-    signal_to_noise_map: false
-    subplot_dataset: true
   fit:
-    all_at_end_fits: false
-    all_at_end_png: false
-    chi_squared_map: false
-    data: false
-    noise_map: false
-    noise_scaling_map_dict: false
-    normalized_residual_map: false
     post_cti_data: false
     pre_cti_data: false
-    residual_map: false
-    signal_to_noise_map: false
-    subplot_chi_squared_maps: true
-    subplot_fit: true
-    subplot_normalized_residual_maps: true
-    subplot_residual_maps: true

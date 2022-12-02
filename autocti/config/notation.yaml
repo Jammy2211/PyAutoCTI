@@ -10,11 +10,11 @@ label:
     well_fill_power: \beta
     well_notch_depth: d
   superscript:
-    ccdcomplex: ccd
-    ccdphase: ccd
-    hypercinoisescalar: H
-    trapinstantcapture: s
-    trapinstantcapturecontinuum: sc
+    CCDComplex: CCD
+    CCDPhase: CCD
+    HyperCINoiseScalar: H
+    TrapInstantCapture: s
+    TrapInstantCaptureContinuum: sc
 label_format:
   format:
     density: '{:.2f}'
