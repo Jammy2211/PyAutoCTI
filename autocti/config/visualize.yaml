@@ -5,6 +5,7 @@ general:
     zoom_around_mask: false
 plots:
   dataset:
+    cosmic_ray_map: false
     pre_cti_data: false
   fit:
     post_cti_data: false
