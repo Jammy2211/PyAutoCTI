@@ -335,7 +335,7 @@ class ElectronicsCI:
 
         injection_range = self.injection_end - self.injection_start
 
-        for injection_total in range(50):
+        for injection_total in range(100):
 
             total_pixels = math.floor(
                 (injection_total + 1) * (self.injection_on)

@@ -1,3 +1,4 @@
+import math
 import numpy as np
 from typing import List, Union
 
@@ -6,7 +7,6 @@ from arcticpy import TrapInstantCapture
 
 from autocti.instruments.euclid import euclid_util
 
-from autocti.instruments import euclid
 from autoarray.layout import layout_util
 from autoarray.structures.arrays.uniform_2d import Array2D
 
@@ -74,13 +74,35 @@ def quadrant_id_from(iquad: int) -> str:
     elif iquad == 3:
         return "G"
 
+def injection_total_from(
+    injection_start: int,
+    injection_end: int,
+    injection_on: int ,
+    injection_off: int,
+):
+    """
+    The total number of charge injection regions for these electronics settings.
+    """
+
+    injection_range = injection_end - injection_start
+
+    for injection_total in range(100):
+
+        total_pixels = math.floor(
+            (injection_total + 1) * (injection_on)
+            + injection_total * injection_off
+        )
+
+        if total_pixels > injection_range:
+            return injection_total
+
 
 def charge_injection_array_from(
     ccd_id: str,
     quadrant_id: str,
     injection_norm: float,
-    injection_total: int = 5,
-    injection_start: int = 0,
+    injection_start: int = 16,
+    injection_end: int = 2066,
     injection_on: int = 200,
     injection_off: int = 200,
     parallel_size: int = 2086,
@@ -128,6 +150,13 @@ def charge_injection_array_from(
         The charge injection line image oriented to match a given Euclid quadrant.
     """
     shape_native = (parallel_size, serial_size)
+
+    injection_total = injection_total_from(
+        injection_start=injection_start,
+        injection_end=injection_end,
+        injection_on=injection_on,
+        injection_off=injection_off,
+    )
 
     """
     Specify the charge injection regions on the CCDPhase, which in this case is 5 equally spaced rectangular blocks.
