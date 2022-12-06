@@ -10,12 +10,6 @@ We strongly recommend that you install **PyAutoCTI** in a
 `Python virtual environment <https://www.geeksforgeeks.org/python-virtual-environment/>`_, with the link attached
 describing what a virtual environment is and how to create one.
 
-Once you have created your virtual environment you must install **arCTIc** before installing **PyAutoCTI**.
-
-The installation guide for arCTIc is found at this link.
-
-Once **arCTIc** is installed, we next upgrade pip to ensure certain libraries install:
-
 .. code-block:: bash
 
     pip install --upgrade pip
@@ -25,7 +19,7 @@ the installation has clean dependencies):
 
 .. code-block:: bash
 
-    pip install autocti==2022.7.11.1
+    pip install autocti
 
 You may get warnings which state something like:
 

@@ -30,10 +30,6 @@ Activate the conda environment (you will have to do this every time you want to 
 
     conda activate autocti
 
-Once you have created your conda environment you must install **arCTIc** before installing **PyAutoCTI**.
-
-The installation guide is found at this link.
-
 We upgrade pip to ensure certain libraries install:
 
 .. code-block:: bash
@@ -45,7 +41,7 @@ the installation has clean dependencies):
 
 .. code-block:: bash
 
-    pip install autocti==2022.7.11.1
+    pip install autocti
 
 You may get warnings which state something like:
 

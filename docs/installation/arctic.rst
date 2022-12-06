@@ -9,50 +9,37 @@ alongside **PyAutoCTI**.
 **arCTIc** models the CCD read out process, including the effects of CTI. **PyAutoCTI** wraps the c++ **arCTIc** source code
 via a Cython wrapper, making it straight forward to import and use in **PyAutoCTI**.
 
-This page gives the installation instructions for **arCTIc**, which are taken from its GitHub page (https://github.com/jkeger/arctic).
-
-[A long term goal is for **arCTIc** to be made pip installable when one installs **PyAutoCTI** via pip. This requires clever wrapping of Cython libraries,
-which non of the lead developers currently know how to do. If you think you could help us out please contact us!]
-
-
-MacOS / Linux
--------------
-
-First, clone the arctic GitHub repository (the ``sudo`` is only required for MacOS and not linux):
+**arCTIc** is a requirement of **PyAutoCTI** and should be installed when the following command is run:
 
 .. code-block:: bash
 
-    git clone https://github.com/jkeger/arctic.git
-    cd arctic
-    sudo make all
+    pip install autocti
 
-If you are running Python in conda, add arctic to conda:
-
-[NOTE: Certain versions of conda use the command ``conda develop`` (without a dash) instead of those shown below.]
+You can check that **arCTIc** has been installed via the command:
 
 .. code-block:: bash
 
-    conda-develop arctic
+    pip show arcticpy
 
-If you are not using conda, add arctic to your ``PYTHONPATH`` environment variable:
-
-.. code-block:: bash
-
-    export PYTHONPATH=$PYTHONPATH:/path/to/arctic
-
-Also add arctic to your ``DYLD_LIBRARY_PATH`` environment variable:
+You should get the following text:
 
 .. code-block:: bash
 
-    export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:/path/to/arctic
+    Name: arcticpy
+    Version: 2.1
+    Summary: This is the python module for the arCTIc code
+    Home-page:
+    Author:
+    Author-email: Richard Massey <r.j.massey@durham.ac.uk>
+    License:
+    Location: /mnt/c/Users/Jammy/Code/PyAuto/arctic/python
+    Requires: autoconf, numpy
+    Required-by:
 
-You should now get output from running the following Python code in an Python interpreter:
+If an error is raised when trying to install **arCTIc** you should first try to install it via `pip`:
 
 .. code-block:: bash
 
-    import numpy as np
-    import arcticpy
+    pip install arcticpy
 
-    arcticpy.add_cti(np.zeros((5,5)))
-
-**arCTIc** is now installed and you can install **PyAutoCTI** via conda or pip.
+If the installation does not work, you can follow additional installation instructions for **arCTIc** on its GitHub page (https://github.com/jkeger/arctic).

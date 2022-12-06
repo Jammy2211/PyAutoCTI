@@ -9,12 +9,6 @@ TrapInstantCapture:
     gaussian_limits:
       lower: 0.0
       upper: inf
-  fractional_volume_full_exposed:
-    type: Constant
-    value: 0.0
-  fractional_volume_none_exposed:
-    type: Constant
-    value: 0.0
   release_timescale:
     type: Uniform
     lower_limit: 0.0
@@ -25,6 +19,12 @@ TrapInstantCapture:
     gaussian_limits:
       lower: 0.0
       upper: inf
+  fractional_volume_full_exposed:
+    type: Constant
+    value: 0.0
+  fractional_volume_none_exposed:
+    type: Constant
+    value: 0.0
 TrapInstantCaptureContinuum:
   density:
     type: Uniform
