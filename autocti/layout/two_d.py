@@ -1,7 +1,6 @@
 from copy import deepcopy
-import math
 import numpy as np
-from typing import Dict, List, Optional, Tuple
+from typing import List, Optional, Tuple
 
 import autoarray as aa
 

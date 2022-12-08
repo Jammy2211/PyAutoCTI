@@ -74,10 +74,11 @@ def quadrant_id_from(iquad: int) -> str:
     elif iquad == 3:
         return "G"
 
+
 def injection_total_from(
     injection_start: int,
     injection_end: int,
-    injection_on: int ,
+    injection_on: int,
     injection_off: int,
 ):
     """
@@ -89,8 +90,7 @@ def injection_total_from(
     for injection_total in range(100):
 
         total_pixels = math.floor(
-            (injection_total + 1) * (injection_on)
-            + injection_total * injection_off
+            (injection_total + 1) * (injection_on) + injection_total * injection_off
         )
 
         if total_pixels > injection_range:
