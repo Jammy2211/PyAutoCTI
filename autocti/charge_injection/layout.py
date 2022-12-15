@@ -28,7 +28,7 @@ class Layout2DCI(Layout2D):
         It also contains over regions of the image, for example the serial prescan, overscan and paralle overscan.
 
         Parameters
-        -----------
+        ----------
         shape_2d
             The two dimensional shape of the charge injection imaging, corresponding to the number of rows (pixels
             in parallel direction) and columns (pixels in serial direction).
@@ -128,7 +128,7 @@ class Layout2DCI(Layout2D):
         normalization value.
 
         Parameters
-        -----------
+        ----------
         norm
             The normalization of the charge injection region.
         pixel_scales
@@ -163,7 +163,7 @@ class Layout2DCI(Layout2D):
         power-law with slope `row_slope`.
 
         Parameters
-        -----------
+        ----------
         shape_native
             The image_shape of the pre_cti_datas to be created.
         row_slope
@@ -205,7 +205,7 @@ class Layout2DCI(Layout2D):
         power-law with slope `row_slope`.
 
         Parameters
-        -----------
+        ----------
         shape_native
             The image_shape of the pre_cti_datas to be created.
         row_slope

@@ -1,3 +1,4 @@
+import os
 from typing import List
 
 from autofit.non_linear.samples import SamplesPDF
@@ -5,7 +6,6 @@ from autofit.mapper.prior_model.collection import CollectionPriorModel
 from autofit.mapper.model import ModelInstance
 from autofit.non_linear.abstract_search import Analysis
 from autofit.non_linear.paths.directory import DirectoryPaths
-from autofit.non_linear.abstract_search import NonLinearSearch
 
 from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
 from autocti.dataset_1d.fit import FitDataset1D
@@ -71,6 +71,9 @@ class AnalysisDataset1D(Analysis):
     def visualize(
         self, paths: DirectoryPaths, instance: ModelInstance, during_analysis: bool
     ):
+
+        if os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
+            return
 
         fit = self.fit_via_instance_from(instance=instance)
 

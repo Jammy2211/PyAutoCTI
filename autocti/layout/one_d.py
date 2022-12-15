@@ -19,7 +19,7 @@ class Layout1D(aa.Layout1D):
          on a charge-injection array, the input normalization and other properties.
 
         Parameters
-        -----------
+        ----------
         region_list
             A list of the integer coordinates specifying the corners of each charge injection region \
             (top-row, bottom-row, left-column, right-column).

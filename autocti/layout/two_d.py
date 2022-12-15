@@ -23,7 +23,7 @@ class Layout2D(aa.Layout2D):
         It also contains over regions of the image, for example the serial prescan, overscan and paralle overscan.
 
         Parameters
-        -----------
+        ----------
         shape_2d
             The two dimensional shape of the charge injection imaging, corresponding to the number of rows (pixels
             in parallel direction) and columns (pixels in serial direction).

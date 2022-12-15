@@ -121,7 +121,7 @@ class Extract2D:
         which therefore quantify the goodness-of-fit of a CTI model.
 
         Parameters
-        ------------
+        -----------
         array
             The 2D array which contains the charge injection image from which the regions (e.g. the parallel FPRs)
             are extracted and stacked.
@@ -157,7 +157,7 @@ class Extract2D:
         final pixel on the stacked 2d array in order to compute the new noise map via quadrature.
 
         Parameters
-        ------------
+        -----------
         array
             The 2D array which contains the charge injection image from which the regions (e.g. the parallel FPRs)
             are extracted and stacked.
@@ -193,7 +193,7 @@ class Extract2D:
         which therefore quantify the goodness-of-fit of a CTI model.
 
         Parameters
-        ------------
+        -----------
         array
             The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted and
             stacked.
@@ -227,7 +227,7 @@ class Extract2D:
         final pixel on the binned 1D array in order to compute the new noise map via quadrature.
 
         Parameters
-        ------------
+        -----------
         array
             The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted and
             stacked.

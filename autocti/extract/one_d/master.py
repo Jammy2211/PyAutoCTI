@@ -225,7 +225,7 @@ class Extract1DMaster:
                <---------S----------
 
         Parameters
-        ------------
+        -----------
         fpr_pixels
             The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows).
         trails_pixels

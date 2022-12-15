@@ -50,7 +50,7 @@ class SimulatorDataset1D(SimulatorImaging):
         going to its charge injection regions and adding the charge injection normalization value.
 
         Parameters
-        -----------
+        ----------
         shape_native
             The image_shape of the pre_cti_datas to be created.
         """
@@ -68,7 +68,7 @@ class SimulatorDataset1D(SimulatorImaging):
         """Simulate a charge injection data, including effects like noises.
 
         Parameters
-        -----------
+        ----------
         pre_cti_data
         cosmic_ray_map
             The dimensions of the output simulated charge injection data.

@@ -102,7 +102,7 @@ class SimulatorImagingCI(SimulatorImaging):
         going to its charge injection regions and adding the charge injection normalization value.
 
         Parameters
-        -----------
+        ----------
         shape_native
             The image_shape of the pre_cti_datas to be created.
         """
@@ -125,7 +125,7 @@ class SimulatorImagingCI(SimulatorImaging):
         power-law with slope `row_slope`.
 
         Parameters
-        -----------
+        ----------
         shape_native
             The image_shape of the pre_cti_datas to be created.
         row_slope
@@ -163,7 +163,7 @@ class SimulatorImagingCI(SimulatorImaging):
         """Simulate a charge injection image, including effects like noises.
 
         Parameters
-        -----------
+        ----------
         pre_cti_data
         cosmic_ray_map
             The dimensions of the output simulated charge injection image.

@@ -14,7 +14,7 @@ class FitImagingCI(aa.FitImaging):
         framework.
 
         Parameters
-        -----------
+        ----------
         dataset
             The charge injection image that is fitted.
         post_cti_data

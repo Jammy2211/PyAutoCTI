@@ -1,4 +1,4 @@
-from typing import Optional, List
+import os
 
 from autofit.non_linear.samples import SamplesPDF
 from autofit.mapper.prior_model.collection import CollectionPriorModel
@@ -123,6 +123,9 @@ class AnalysisImagingCI(Analysis):
     def visualize(
         self, paths: DirectoryPaths, instance: ModelInstance, during_analysis: bool
     ):
+
+        if os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
+            return
 
         fit = self.fit_via_instance_from(instance=instance)
 

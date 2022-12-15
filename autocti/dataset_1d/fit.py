@@ -9,7 +9,7 @@ class FitDataset1D(aa.FitDataset):
         Fit a 1D CTI dataset with model cti data.
 
         Parameters
-        -----------
+        ----------
         dataset
             The charge injection image that is fitted.
         post_cti_data
