@@ -116,13 +116,8 @@ class SimulatorCosmicRayMap:
 
         dir_path = path.dirname(path.realpath(__file__))
 
-        lengths = pyfits.getdata(path.join(dir_path, "cr_lengths.fits"), extname="DATA")
-        lengths = np.array(lengths.tolist())
-
-        distances = pyfits.getdata(
-            path.join(dir_path, "cr_distances.fits"), extname="DATA"
-        )
-        distances = np.array(distances.tolist())
+        from autocti.cosmics.cr_lengths import lengths
+        from autocti.cosmics.cr_distances import distances
 
         return SimulatorCosmicRayMap(
             shape_native=shape_native,
