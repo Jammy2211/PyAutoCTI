@@ -1,10 +1,6 @@
 import os
 
-from autofit.non_linear.samples import SamplesPDF
-from autofit.mapper.prior_model.collection import CollectionPriorModel
-from autofit.mapper.model import ModelInstance
-from autofit.non_linear.abstract_search import Analysis
-from autofit.non_linear.paths.directory import DirectoryPaths
+import autofit as af
 
 from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.charge_injection.fit import FitImagingCI
@@ -17,7 +13,7 @@ from autocti.preloads import Preloads
 from autocti import exc
 
 
-class AnalysisImagingCI(Analysis):
+class AnalysisImagingCI(af.Analysis):
     def __init__(
         self, dataset: ImagingCI, clocker: Clocker2D, settings_cti=SettingsCTI2D()
     ):
@@ -63,7 +59,45 @@ class AnalysisImagingCI(Analysis):
             serial_fast_row_lists=serial_fast_row_lists,
         )
 
-    def log_likelihood_function(self, instance: ModelInstance) -> float:
+    def modify_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
+        """
+        PyAutoFit calls this function immediately before the non-linear search begins, therefore it can be used to
+        perform tasks using the final model parameterization.
+
+        This function checks that the hyper-dataset is consistent with previous hyper-datasets if the model-fit is
+        being resumed from a previous run, and it visualizes objects which do not change throughout the model fit
+        like the dataset.
+
+        Parameters
+        ----------
+        paths
+            The PyAutoFit paths object which manages all paths, e.g. where the non-linear search outputs are stored,
+            visualization and the pickled objects used by the aggregator output by this function.
+        model
+            The PyAutoFit model object, which includes model components representing the galaxies that are fitted to
+            the imaging data.
+        """
+
+        super().modify_before_fit(paths=paths, model=model)
+
+        if not paths.is_complete:
+
+            if not os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
+
+                visualizer = VisualizerImaging(visualize_path=paths.image_path)
+
+                visualizer.visualize_imaging(imaging=self.imaging)
+
+                visualizer.visualize_hyper_images(
+                    hyper_galaxy_image_path_dict=self.hyper_galaxy_image_path_dict,
+                    hyper_model_image=self.hyper_model_image,
+                )
+
+            self.set_preloads(paths=paths, model=model)
+
+        return self
+
+    def log_likelihood_function(self, instance: af.ModelInstance) -> float:
         """
         Determine the fitness of a particular model
 
@@ -90,7 +124,7 @@ class AnalysisImagingCI(Analysis):
 
     def fit_via_instance_and_dataset_from(
         self,
-        instance: ModelInstance,
+        instance: af.ModelInstance,
         imaging_ci: ImagingCI,
         hyper_noise_scale: bool = True,
     ) -> FitImagingCI:
@@ -111,7 +145,7 @@ class AnalysisImagingCI(Analysis):
         )
 
     def fit_via_instance_from(
-        self, instance: ModelInstance, hyper_noise_scale: bool = True
+        self, instance: af.ModelInstance, hyper_noise_scale: bool = True
     ) -> FitImagingCI:
 
         return self.fit_via_instance_and_dataset_from(
@@ -121,7 +155,10 @@ class AnalysisImagingCI(Analysis):
         )
 
     def visualize(
-        self, paths: DirectoryPaths, instance: ModelInstance, during_analysis: bool
+        self,
+        paths: af.DirectoryPaths,
+        instance: af.ModelInstance,
+        during_analysis: bool,
     ):
 
         if os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
@@ -172,8 +209,8 @@ class AnalysisImagingCI(Analysis):
 
     def make_result(
         self,
-        samples: SamplesPDF,
-        model: CollectionPriorModel,
+        samples: af.SamplesPDF,
+        model: af.CollectionPriorModel,
         sigma=1.0,
         use_errors=True,
         use_widths=False,
