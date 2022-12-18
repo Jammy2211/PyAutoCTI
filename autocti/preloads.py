@@ -9,6 +9,7 @@ class Preloads:
         parallel_fast_column_lists: Optional[np.ndarray] = None,
         serial_fast_index_list: Optional[np.ndarray] = None,
         serial_fast_row_lists: Optional[np.ndarray] = None,
+        noise_normalization: Optional[float] = None,
     ):
         """
         Class which offers a concise API for settings up the preloads, which before a model-fit are set up via
@@ -36,7 +37,10 @@ class Preloads:
             to arctic.
         serial_fast_row_lists
             The mapping of every repeated row in `serial_fast_index_list`  to all other rows which are identical.
-             This is used to map the reduced arCTIc output to the post-CTI data.
+            This is used to map the reduced arCTIc output to the post-CTI data.
+        noise_normalization
+            The noise normalization term of the log likelihood function evaluated in `Analysis` objects. If the
+            noise-map is fixed, this can be preloaded as it does not change.
 
         Returns
         -------
@@ -47,3 +51,4 @@ class Preloads:
         self.parallel_fast_column_lists = parallel_fast_column_lists
         self.serial_fast_index_list = serial_fast_index_list
         self.serial_fast_row_lists = serial_fast_row_lists
+        self.noise_normalization = noise_normalization

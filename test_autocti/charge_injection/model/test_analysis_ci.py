@@ -7,11 +7,35 @@ from autofit.non_linear.mock.mock_search import MockSearch
 from autocti.charge_injection.model.result import ResultImagingCI
 
 
+def test__modify_before_fit__noise_normalization_preload(
+    imaging_ci_7x7, pre_cti_data_7x7, traps_x1, ccd, parallel_clocker_2d
+):
+
+    model = af.Collection(
+        cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
+    )
+
+    analysis = ac.AnalysisImagingCI(dataset=imaging_ci_7x7, clocker=parallel_clocker_2d)
+    analysis.modify_before_fit(paths=af.DirectoryPaths(), model=model)
+
+    assert analysis.preloads.noise_normalization == pytest.approx(157.984399, 1.0e-4)
+
+    model = af.Collection(
+        cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
+        hyper_noise=af.Model(ac.HyperCINoiseCollection),
+    )
+
+    analysis = ac.AnalysisImagingCI(dataset=imaging_ci_7x7, clocker=parallel_clocker_2d)
+    analysis.modify_before_fit(paths=af.DirectoryPaths(), model=model)
+
+#    assert analysis.preloads.noise_normalization == None
+
+
 def test__make_result__result_imaging_is_returned(
     imaging_ci_7x7, pre_cti_data_7x7, traps_x1, ccd, parallel_clocker_2d
 ):
 
-    model = af.CollectionPriorModel(
+    model = af.Collection(
         cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
         hyper_noise=af.Model(ac.HyperCINoiseCollection),
     )
@@ -29,7 +53,7 @@ def test__log_likelihood_via_analysis__matches_manual_fit(
     imaging_ci_7x7, pre_cti_data_7x7, traps_x1, ccd, parallel_clocker_2d
 ):
 
-    model = af.CollectionPriorModel(
+    model = af.Collection(
         cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
         hyper_noise=af.Model(ac.HyperCINoiseCollection),
     )
@@ -59,7 +83,7 @@ def test__log_likelihood_via_analysis__fast_settings_same_as_default(
     parallel_serial_clocker_2d,
 ):
 
-    model = af.CollectionPriorModel(
+    model = af.Collection(
         cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
         hyper_noise=af.Model(ac.HyperCINoiseCollection),
     )
@@ -82,7 +106,7 @@ def test__log_likelihood_via_analysis__fast_settings_same_as_default(
 
     assert log_likelihood_via_fast == log_likelihood_via_default
 
-    model = af.CollectionPriorModel(
+    model = af.Collection(
         cti=af.Model(ac.CTI2D, serial_trap_list=traps_x1, serial_ccd=ccd),
         hyper_noise=af.Model(ac.HyperCINoiseCollection),
     )
@@ -105,7 +129,7 @@ def test__log_likelihood_via_analysis__fast_settings_same_as_default(
 
     assert log_likelihood_via_fast == log_likelihood_via_default
 
-    model = af.CollectionPriorModel(
+    model = af.Collection(
         cti=af.Model(
             ac.CTI2D,
             parallel_trap_list=traps_x1,
@@ -145,7 +169,7 @@ def test__full_and_extracted_fits_from_instance_and_imaging_ci(
     imaging_ci_7x7, mask_2d_7x7_unmasked, traps_x1, ccd, parallel_clocker_2d
 ):
 
-    model = af.CollectionPriorModel(
+    model = af.Collection(
         cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
         hyper_noise=af.Model(ac.HyperCINoiseCollection),
     )
@@ -193,7 +217,7 @@ def test__extracted_fits_from_instance_and_imaging_ci__include_noise_scaling(
     layout_ci_7x7,
 ):
 
-    model = af.CollectionPriorModel(
+    model = af.Collection(
         cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
         hyper_noise=af.Model(
             ac.HyperCINoiseCollection, regions_ci=ac.HyperCINoiseScalar

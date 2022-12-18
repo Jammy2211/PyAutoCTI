@@ -1,23 +1,21 @@
 import os
 
-from autofit.non_linear.samples import SamplesPDF
-from autofit.mapper.prior_model.collection import CollectionPriorModel
-from autofit.mapper.model import ModelInstance
-from autofit.non_linear.abstract_search import Analysis
-from autofit.non_linear.paths.directory import DirectoryPaths
+import autoarray as aa
+import autofit as af
 
 from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.charge_injection.fit import FitImagingCI
 from autocti.charge_injection.model.visualizer import VisualizerImagingCI
 from autocti.charge_injection.model.result import ResultImagingCI
 from autocti.clocker.two_d import Clocker2D
+from autocti.charge_injection.hyper import HyperCINoiseCollection
 from autocti.model.settings import SettingsCTI2D
 from autocti.preloads import Preloads
 
 from autocti import exc
 
 
-class AnalysisImagingCI(Analysis):
+class AnalysisImagingCI(af.Analysis):
     def __init__(
         self, dataset: ImagingCI, clocker: Clocker2D, settings_cti=SettingsCTI2D()
     ):
@@ -63,7 +61,71 @@ class AnalysisImagingCI(Analysis):
             serial_fast_row_lists=serial_fast_row_lists,
         )
 
-    def log_likelihood_function(self, instance: ModelInstance) -> float:
+    def modify_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
+        """
+        PyAutoFit calls this function immediately before the non-linear search begins, therefore it can be used to
+        perform tasks using the final model parameterization.
+
+        This function:
+
+         1) Visualizes the charge injection imaging dataset, which does not change during the analysis and thus can be
+         done once.
+
+         2) Checks if the noise-map is fixed (it is not if hyper functionality is on), and if it is fixed it
+         sets the noise-normalization to the preloads for computational speed.
+
+        Parameters
+        ----------
+        paths
+            The PyAutoFit paths object which manages all paths, e.g. where the non-linear search outputs are stored,
+            visualization and the pickled objects used by the aggregator output by this function.
+        model
+            The PyAutoFit model object, which includes model components representing the galaxies that are fitted to
+            the imaging data.
+        """
+
+        if not paths.is_complete:
+
+            if not os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
+
+                visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
+
+                visualizer.visualize_imaging_ci(imaging_ci=self.dataset)
+
+                try:
+                    visualizer.visualize_imaging_ci_lines(
+                        imaging_ci=self.dataset, region="parallel_fpr"
+                    )
+                    visualizer.visualize_imaging_ci_lines(
+                        imaging_ci=self.dataset, region="parallel_eper"
+                    )
+
+                except (exc.RegionException, TypeError, ValueError):
+                    pass
+
+                try:
+                    visualizer.visualize_imaging_ci(imaging_ci=self.dataset)
+                    visualizer.visualize_imaging_ci_lines(
+                        imaging_ci=self.dataset, region="serial_fpr"
+                    )
+                    visualizer.visualize_imaging_ci_lines(
+                        imaging_ci=self.dataset, region="serial_eper"
+                    )
+
+                except (exc.RegionException, TypeError, ValueError):
+                    pass
+
+            #     if not model.has(HyperCINoiseCollection):
+
+            noise_normalization = aa.util.fit.noise_normalization_with_mask_from(
+                noise_map=self.dataset.noise_map, mask=self.dataset.mask
+            )
+
+            self.preloads.noise_normalization = noise_normalization
+
+        return self
+
+    def log_likelihood_function(self, instance: af.ModelInstance) -> float:
         """
         Determine the fitness of a particular model
 
@@ -90,7 +152,7 @@ class AnalysisImagingCI(Analysis):
 
     def fit_via_instance_and_dataset_from(
         self,
-        instance: ModelInstance,
+        instance: af.ModelInstance,
         imaging_ci: ImagingCI,
         hyper_noise_scale: bool = True,
     ) -> FitImagingCI:
@@ -108,10 +170,11 @@ class AnalysisImagingCI(Analysis):
             dataset=imaging_ci,
             post_cti_data=post_cti_data,
             hyper_noise_scalar_dict=hyper_noise_scalar_dict,
+            preloads=self.preloads
         )
 
     def fit_via_instance_from(
-        self, instance: ModelInstance, hyper_noise_scale: bool = True
+        self, instance: af.ModelInstance, hyper_noise_scale: bool = True
     ) -> FitImagingCI:
 
         return self.fit_via_instance_and_dataset_from(
@@ -121,7 +184,10 @@ class AnalysisImagingCI(Analysis):
         )
 
     def visualize(
-        self, paths: DirectoryPaths, instance: ModelInstance, during_analysis: bool
+        self,
+        paths: af.DirectoryPaths,
+        instance: af.ModelInstance,
+        during_analysis: bool,
     ):
 
         if os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
@@ -131,16 +197,7 @@ class AnalysisImagingCI(Analysis):
 
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
 
-        visualizer.visualize_imaging_ci(imaging_ci=self.dataset)
-
         try:
-            visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.dataset, region="parallel_fpr"
-            )
-            visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.dataset, region="parallel_eper"
-            )
-
             visualizer.visualize_fit_ci(fit=fit, during_analysis=during_analysis)
             visualizer.visualize_fit_ci_1d_lines(
                 fit=fit, during_analysis=during_analysis, region="parallel_fpr"
@@ -152,14 +209,6 @@ class AnalysisImagingCI(Analysis):
             pass
 
         try:
-            visualizer.visualize_imaging_ci(imaging_ci=self.dataset)
-            visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.dataset, region="serial_fpr"
-            )
-            visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.dataset, region="serial_eper"
-            )
-
             visualizer.visualize_fit_ci(fit=fit, during_analysis=during_analysis)
             visualizer.visualize_fit_ci_1d_lines(
                 fit=fit, during_analysis=during_analysis, region="serial_fpr"
@@ -172,8 +221,8 @@ class AnalysisImagingCI(Analysis):
 
     def make_result(
         self,
-        samples: SamplesPDF,
-        model: CollectionPriorModel,
+        samples: af.SamplesPDF,
+        model: af.CollectionPriorModel,
         sigma=1.0,
         use_errors=True,
         use_widths=False,
