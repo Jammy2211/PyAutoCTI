@@ -1,5 +1,6 @@
 import os
 
+import autoarray as aa
 import autofit as af
 
 from autocti.charge_injection.imaging.imaging import ImagingCI
@@ -7,6 +8,7 @@ from autocti.charge_injection.fit import FitImagingCI
 from autocti.charge_injection.model.visualizer import VisualizerImagingCI
 from autocti.charge_injection.model.result import ResultImagingCI
 from autocti.clocker.two_d import Clocker2D
+from autocti.charge_injection.hyper import HyperCINoiseCollection
 from autocti.model.settings import SettingsCTI2D
 from autocti.preloads import Preloads
 
@@ -113,7 +115,13 @@ class AnalysisImagingCI(af.Analysis):
                 except (exc.RegionException, TypeError, ValueError):
                     pass
 
-            self.set_preloads(paths=paths, model=model)
+            #     if not model.has(HyperCINoiseCollection):
+
+            noise_normalization = aa.util.fit.noise_normalization_with_mask_from(
+                noise_map=self.dataset.noise_map, mask=self.dataset.mask
+            )
+
+            self.preloads.noise_normalization = noise_normalization
 
         return self
 
