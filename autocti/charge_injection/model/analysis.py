@@ -84,14 +84,32 @@ class AnalysisImagingCI(af.Analysis):
 
             if not os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
 
-                visualizer = VisualizerImaging(visualize_path=paths.image_path)
+                visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
 
-                visualizer.visualize_imaging(imaging=self.imaging)
+                visualizer.visualize_imaging_ci(imaging_ci=self.dataset)
 
-                visualizer.visualize_hyper_images(
-                    hyper_galaxy_image_path_dict=self.hyper_galaxy_image_path_dict,
-                    hyper_model_image=self.hyper_model_image,
-                )
+                try:
+                    visualizer.visualize_imaging_ci_lines(
+                        imaging_ci=self.dataset, region="parallel_fpr"
+                    )
+                    visualizer.visualize_imaging_ci_lines(
+                        imaging_ci=self.dataset, region="parallel_eper"
+                    )
+
+                except (exc.RegionException, TypeError, ValueError):
+                    pass
+
+                try:
+                    visualizer.visualize_imaging_ci(imaging_ci=self.dataset)
+                    visualizer.visualize_imaging_ci_lines(
+                        imaging_ci=self.dataset, region="serial_fpr"
+                    )
+                    visualizer.visualize_imaging_ci_lines(
+                        imaging_ci=self.dataset, region="serial_eper"
+                    )
+
+                except (exc.RegionException, TypeError, ValueError):
+                    pass
 
             self.set_preloads(paths=paths, model=model)
 
@@ -168,16 +186,7 @@ class AnalysisImagingCI(af.Analysis):
 
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
 
-        visualizer.visualize_imaging_ci(imaging_ci=self.dataset)
-
         try:
-            visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.dataset, region="parallel_fpr"
-            )
-            visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.dataset, region="parallel_eper"
-            )
-
             visualizer.visualize_fit_ci(fit=fit, during_analysis=during_analysis)
             visualizer.visualize_fit_ci_1d_lines(
                 fit=fit, during_analysis=during_analysis, region="parallel_fpr"
@@ -189,14 +198,6 @@ class AnalysisImagingCI(af.Analysis):
             pass
 
         try:
-            visualizer.visualize_imaging_ci(imaging_ci=self.dataset)
-            visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.dataset, region="serial_fpr"
-            )
-            visualizer.visualize_imaging_ci_lines(
-                imaging_ci=self.dataset, region="serial_eper"
-            )
-
             visualizer.visualize_fit_ci(fit=fit, during_analysis=during_analysis)
             visualizer.visualize_fit_ci_1d_lines(
                 fit=fit, during_analysis=during_analysis, region="serial_fpr"
