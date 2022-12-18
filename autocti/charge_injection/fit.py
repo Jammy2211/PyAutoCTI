@@ -67,6 +67,29 @@ class FitImagingCI(aa.FitImaging):
         return self.dataset.pre_cti_data
 
     @property
+    def chi_squared(self) -> float:
+        """
+        Returns the chi-squared terms of the model data's fit to an dataset, by summing the chi-squared-map.
+
+        If the dataset includes a noise covariance matrix, this is used instead to account for covariance in the
+        goodness-of-fit.
+
+        The standard chi-squared calculation in PyAutoArray computes the `chi-squared` from the `residual_map`
+        and `chi_squared_map`, which requires that the `ndarrays` which are used to do this are created and stored
+        in memory. For charge injection imaging, the large datasets mean this can be computationally slow.
+
+        This function computes the `chi_squared` directly from the data, avoiding the need to store the data in memory
+        and offering faster tune times.
+        """
+
+        return aa.util.fit.chi_squared_with_mask_fast_from(
+            data=self.dataset.data,
+            noise_map=self.noise_map,
+            mask=self.mask,
+            model_data=self.model_data
+        )
+
+    @property
     def noise_normalization(self) -> float:
         """
         Returns the noise-map normalization term of the noise-map, summing the noise_map value in every pixel as:
