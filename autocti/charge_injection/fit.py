@@ -97,8 +97,8 @@ class FitImagingCI(aa.FitImaging):
         [Noise_Term] = sum(log(2*pi*[Noise]**2.0))
         """
 
-        if self.preloads.noise_normalization is not None:
-            return self.preloads.noise_normalization
+     #   if self.preloads.noise_normalization is not None:
+     #       return self.preloads.noise_normalization
 
         return aa.util.fit.noise_normalization_with_mask_from(
             noise_map=self.noise_map, mask=self.mask
