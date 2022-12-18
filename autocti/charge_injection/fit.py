@@ -1,14 +1,21 @@
 import copy
-import numpy as np
+from typing import Dict, Optional
 
 
 import autoarray as aa
 
+from autocti.preloads import Preloads
 from autocti.charge_injection.imaging.imaging import ImagingCI
 
 
 class FitImagingCI(aa.FitImaging):
-    def __init__(self, dataset: ImagingCI, post_cti_data, hyper_noise_scalar_dict=None):
+    def __init__(
+        self,
+        dataset: ImagingCI,
+        post_cti_data: aa.Array2D,
+        hyper_noise_scalar_dict: Optional[Dict] = None,
+        preloads: Preloads = Preloads(),
+    ):
         """
         Fit a charge injection ci_data-set with a model cti image, also scalng the noises within a Bayesian
         framework.
@@ -19,7 +26,7 @@ class FitImagingCI(aa.FitImaging):
             The charge injection image that is fitted.
         post_cti_data
             The `pre_cti_data` with cti added to it via the clocker and a CTI model.
-        hyper_noise_scalar_dict :
+        hyper_noise_scalar_dict
             The hyper_ci-parameter(s) which the noise_scaling_map_dict_list is multiplied by to scale the noise-map.
         """
 
@@ -28,6 +35,7 @@ class FitImagingCI(aa.FitImaging):
         self.post_cti_data = post_cti_data
         self.hyper_noise_scalar_dict = hyper_noise_scalar_dict
         self.noise_scaling_map_dict = dataset.noise_scaling_map_dict
+        self.preloads = preloads
 
     @property
     def imaging_ci(self) -> ImagingCI:
@@ -57,6 +65,21 @@ class FitImagingCI(aa.FitImaging):
     @property
     def pre_cti_data(self):
         return self.dataset.pre_cti_data
+
+    @property
+    def noise_normalization(self) -> float:
+        """
+        Returns the noise-map normalization term of the noise-map, summing the noise_map value in every pixel as:
+
+        [Noise_Term] = sum(log(2*pi*[Noise]**2.0))
+        """
+
+        if self.preloads.noise_normalization is not None:
+            return self.preloads.noise_normalization
+
+        return aa.util.fit.noise_normalization_with_mask_from(
+            noise_map=self.noise_map, mask=self.mask
+        )
 
     @property
     def chi_squared_map_of_regions_ci(self):

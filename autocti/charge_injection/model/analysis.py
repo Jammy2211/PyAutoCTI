@@ -170,6 +170,7 @@ class AnalysisImagingCI(af.Analysis):
             dataset=imaging_ci,
             post_cti_data=post_cti_data,
             hyper_noise_scalar_dict=hyper_noise_scalar_dict,
+            preloads=self.preloads
         )
 
     def fit_via_instance_from(
