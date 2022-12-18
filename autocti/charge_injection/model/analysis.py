@@ -166,21 +166,12 @@ class AnalysisImagingCI(af.Analysis):
             data=imaging_ci.pre_cti_data, cti=instance.cti, preloads=self.preloads
         )
 
-        fit = FitImagingCI(
+        return FitImagingCI(
             dataset=imaging_ci,
             post_cti_data=post_cti_data,
             hyper_noise_scalar_dict=hyper_noise_scalar_dict,
             preloads=self.preloads
         )
-
-        import time
-
-        start = time.time()
-
-        lh = fit.log_likelihood
-
-        print(time.time() - start)
-        return fit
 
     def fit_via_instance_from(
         self, instance: af.ModelInstance, hyper_noise_scale: bool = True

@@ -84,7 +84,7 @@ class FitImagingCI(aa.FitImaging):
 
         return aa.util.fit.chi_squared_with_mask_fast_from(
             data=self.dataset.data,
-            noise_map=self.dataset.noise_map,
+            noise_map=self.noise_map,
             mask=self.mask,
             model_data=self.model_data
         )
