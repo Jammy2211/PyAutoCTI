@@ -64,9 +64,13 @@ class AnalysisImagingCI(af.Analysis):
         PyAutoFit calls this function immediately before the non-linear search begins, therefore it can be used to
         perform tasks using the final model parameterization.
 
-        This function checks that the hyper-dataset is consistent with previous hyper-datasets if the model-fit is
-        being resumed from a previous run, and it visualizes objects which do not change throughout the model fit
-        like the dataset.
+        This function:
+
+         1) Visualizes the charge injection imaging dataset, which does not change during the analysis and thus can be
+         done once.
+
+         2) Checks if the noise-map is fixed (it is not if hyper functionality is on), and if it is fixed it
+         sets the noise-normalization to the preloads for computational speed.
 
         Parameters
         ----------
@@ -77,8 +81,6 @@ class AnalysisImagingCI(af.Analysis):
             The PyAutoFit model object, which includes model components representing the galaxies that are fitted to
             the imaging data.
         """
-
-        super().modify_before_fit(paths=paths, model=model)
 
         if not paths.is_complete:
 
