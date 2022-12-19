@@ -86,6 +86,14 @@ class AnalysisImagingCI(af.Analysis):
 
         if not paths.is_complete:
 
+            if not model.has(HyperCINoiseCollection):
+
+                noise_normalization = aa.util.fit.noise_normalization_with_mask_from(
+                    noise_map=self.dataset.noise_map, mask=self.dataset.mask
+                )
+
+                self.preloads.noise_normalization = noise_normalization
+
             if not os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
 
                 visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
@@ -114,14 +122,6 @@ class AnalysisImagingCI(af.Analysis):
 
                 except (exc.RegionException, TypeError, ValueError):
                     pass
-
-            #     if not model.has(HyperCINoiseCollection):
-
-            noise_normalization = aa.util.fit.noise_normalization_with_mask_from(
-                noise_map=self.dataset.noise_map, mask=self.dataset.mask
-            )
-
-            self.preloads.noise_normalization = noise_normalization
 
         return self
 

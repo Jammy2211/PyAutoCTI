@@ -28,7 +28,7 @@ def test__modify_before_fit__noise_normalization_preload(
     analysis = ac.AnalysisImagingCI(dataset=imaging_ci_7x7, clocker=parallel_clocker_2d)
     analysis.modify_before_fit(paths=af.DirectoryPaths(), model=model)
 
-#    assert analysis.preloads.noise_normalization == None
+    assert analysis.preloads.noise_normalization == None
 
 
 def test__make_result__result_imaging_is_returned(
