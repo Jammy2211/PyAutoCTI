@@ -245,7 +245,7 @@ class AnalysisImagingCI(af.Analysis):
     def make_result(
         self,
         samples: af.SamplesPDF,
-        model: af.CollectionPriorModel,
+        model: af.Collection,
         sigma=1.0,
         use_errors=True,
         use_widths=False,

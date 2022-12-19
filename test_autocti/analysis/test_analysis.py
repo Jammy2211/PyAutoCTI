@@ -7,7 +7,7 @@ from autocti import exc
 
 def test__parallel_and_serial_checks_raise_exception(imaging_ci_7x7):
 
-    model = af.CollectionPriorModel(
+    model = af.Collection(
         cti=af.Model(
             ac.CTI2D,
             parallel_trap_list=[
@@ -29,7 +29,7 @@ def test__parallel_and_serial_checks_raise_exception(imaging_ci_7x7):
     with pytest.raises(exc.PriorException):
         analysis.log_likelihood_function(instance=instance)
 
-    model = af.CollectionPriorModel(
+    model = af.Collection(
         cti=af.Model(
             ac.CTI2D,
             serial_trap_list=[

@@ -41,7 +41,7 @@ class TestResultDataset:
         traps_x1,
         ccd,
     ):
-        model = af.CollectionPriorModel(
+        model = af.Collection(
             cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd)
         )
         result = res.ResultDataset(

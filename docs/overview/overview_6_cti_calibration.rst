@@ -222,9 +222,9 @@ This gives the following output:
     Maximum Log Likelihood                           4165.57074867
     Maximum Log Posterior                            4165.57074867
 
-    model   CollectionPriorModel (N=5)
+    model   Collection (N=5)
         cti CTI1D (N=5)
-            trap_list                                CollectionPriorModel (N=4)
+            trap_list                                Collection (N=4)
                 0                                    TrapInstantCapture (N=2)
                 1                                    TrapInstantCapture (N=2)
             ccd                                      CCDPhase (N=1)

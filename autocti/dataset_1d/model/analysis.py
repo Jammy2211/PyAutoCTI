@@ -2,7 +2,7 @@ import os
 from typing import List
 
 from autofit.non_linear.samples import SamplesPDF
-from autofit.mapper.prior_model.collection import CollectionPriorModel
+from autofit.mapper.prior_model.collection import Collection
 from autofit.mapper.model import ModelInstance
 from autofit.non_linear.abstract_search import Analysis
 from autofit.non_linear.paths.directory import DirectoryPaths
@@ -86,7 +86,7 @@ class AnalysisDataset1D(Analysis):
     def make_result(
         self,
         samples: SamplesPDF,
-        model: CollectionPriorModel,
+        model: Collection,
         sigma=1.0,
         use_errors=True,
         use_widths=False,

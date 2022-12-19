@@ -101,7 +101,7 @@ def test__noise_scaling_map_dict_is_list_of_result__are_correct(
         1, 1
     ] == pytest.approx(0.0, 1.0e-4)
 
-    model = af.CollectionPriorModel(
+    model = af.Collection(
         cti=af.Model(
             ac.CTI2D,
             parallel_trap_list=traps_x1,
