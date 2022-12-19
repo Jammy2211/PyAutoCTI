@@ -1,3 +1,4 @@
+import logging
 import os
 
 import autoarray as aa
@@ -14,6 +15,9 @@ from autocti.preloads import Preloads
 
 from autocti import exc
 
+logger = logging.getLogger(__name__)
+
+logger.setLevel(level="INFO")
 
 class AnalysisImagingCI(af.Analysis):
     def __init__(
@@ -109,6 +113,11 @@ class AnalysisImagingCI(af.Analysis):
                     )
 
                 except (exc.RegionException, TypeError, ValueError):
+
+                    logger.info(
+                        "VISUALIZATION - Could not visualize the ImagingCI 1D parallel_fpr / parallel_eper"
+                    )
+
                     pass
 
                 try:
@@ -118,6 +127,10 @@ class AnalysisImagingCI(af.Analysis):
                     )
                     visualizer.visualize_imaging_ci_lines(
                         imaging_ci=self.dataset, region="serial_eper"
+                    )
+
+                    logger.info(
+                        "VISUALIZATION - Could not visualize the ImagingCI 1D serial_fpr / serial_eper"
                     )
 
                 except (exc.RegionException, TypeError, ValueError):
@@ -206,6 +219,11 @@ class AnalysisImagingCI(af.Analysis):
                 fit=fit, during_analysis=during_analysis, region="parallel_eper"
             )
         except (exc.RegionException, TypeError, ValueError):
+
+            logger.info(
+                "VISUALIZATION - Could not visualize the FitImagingCI 1D parallel_fpr / parallel_eper"
+            )
+
             pass
 
         try:
@@ -217,6 +235,11 @@ class AnalysisImagingCI(af.Analysis):
                 fit=fit, during_analysis=during_analysis, region="serial_eper"
             )
         except (exc.RegionException, TypeError, ValueError):
+
+            logger.info(
+                "VISUALIZATION - Could not visualize the FitImagingCI 1D serial_fpr / serial_eper"
+            )
+
             pass
 
     def make_result(

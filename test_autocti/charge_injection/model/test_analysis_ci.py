@@ -25,6 +25,9 @@ def test__modify_before_fit__noise_normalization_preload(
         hyper_noise=af.Model(ac.HyperCINoiseCollection),
     )
 
+    print(model.has(ac.HyperCINoiseCollection))
+    stop
+
     analysis = ac.AnalysisImagingCI(dataset=imaging_ci_7x7, clocker=parallel_clocker_2d)
     analysis.modify_before_fit(paths=af.DirectoryPaths(), model=model)
 
