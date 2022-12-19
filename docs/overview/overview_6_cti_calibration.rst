@@ -284,7 +284,7 @@ Below, we plot a subplot of the fit for the first dataset which shows a good fit
     fit_plotter = aplt.FitImagingCIPlotter(fit=result_list[0].max_log_likelihood_fit)
     fit_plotter.subplot_fit_ci()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_6/fit_2d_100.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_6/fit_2d_100.png
   :width: 600
   :alt: Alternative text
 
@@ -416,7 +416,7 @@ maximum likelihood fit.
     fit_plotter = aplt.FitDataset1DPlotter(fit=result.max_log_likelihood_fit)
     fit_plotter.subplot_fit_dataset_1d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_6/fit_1d_100.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_6/fit_1d_100.png
   :width: 600
   :alt: Alternative text
 

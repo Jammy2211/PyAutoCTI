@@ -76,11 +76,11 @@ CTI is straightforward.
     imaging_ci_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci)
     imaging_ci_plotter.figures_2d(image=True, pre_cti_data=True)
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_5/image.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/image.png
   :width: 600
   :alt: Alternative text
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_5/pre_cti_data.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/pre_cti_data.png
   :width: 600
   :alt: Alternative text
 
@@ -146,15 +146,15 @@ indicating a bad model fit.
         residual_map=True, normalized_residual_map=True, chi_squared_map=True
     )
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_5/residual_map.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/residual_map.png
   :width: 600
   :alt: Alternative text
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_5/normalized_residual_map.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/normalized_residual_map.png
   :width: 600
   :alt: Alternative text
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_5/chi_squared_map.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/chi_squared_map.png
   :width: 600
   :alt: Alternative text
 
@@ -204,15 +204,15 @@ The plot of the residuals now shows no significant signal, indicating a good fit
         residual_map=True, normalized_residual_map=True, chi_squared_map=True
     )
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_5/residual_map_good.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/residual_map_good.png
   :width: 600
   :alt: Alternative text
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_5/normalized_residual_map_good.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/normalized_residual_map_good.png
   :width: 600
   :alt: Alternative text
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_5/chi_squared_map_good.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/chi_squared_map_good.png
   :width: 600
   :alt: Alternative text
 
@@ -256,7 +256,7 @@ If we apply this mask to the charge injection imaging and plot it, the parallel 
     imaging_ci_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci)
     imaging_ci_plotter.figures_2d(image=True)
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_5/image_masked.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/image_masked.png
   :width: 600
   :alt: Alternative text
 
@@ -272,15 +272,15 @@ map are masked and not included in the fit.
         residual_map=True, normalized_residual_map=True, chi_squared_map=True
     )
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_5/residual_map_masked.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/residual_map_masked.png
   :width: 600
   :alt: Alternative text
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_5/normalized_residual_map_masked.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/normalized_residual_map_masked.png
   :width: 600
   :alt: Alternative text
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_5/chi_squared_map_masked.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/chi_squared_map_masked.png
   :width: 600
   :alt: Alternative text
 
@@ -333,11 +333,11 @@ injection data.
     dataset_1d_plotter = aplt.Dataset1DPlotter(dataset=dataset_1d)
     dataset_1d_plotter.subplot_dataset_1d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_5/data_1d.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/data_1d.png
   :width: 600
   :alt: Alternative text
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_5/pre_cti_data_1d.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/pre_cti_data_1d.png
   :width: 600
   :alt: Alternative text
 
@@ -387,15 +387,15 @@ Plotting the fit shows this model gives a good fit, with minimal residuals.
         residual_map=True, normalized_residual_map=True, chi_squared_map=True
     )
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_5/residual_map_1d.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/residual_map_1d.png
   :width: 600
   :alt: Alternative text
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_5/normalized_residual_map_1d.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/normalized_residual_map_1d.png
   :width: 600
   :alt: Alternative text
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_5/chi_squared_map_1d.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/chi_squared_map_1d.png
   :width: 600
   :alt: Alternative text
 

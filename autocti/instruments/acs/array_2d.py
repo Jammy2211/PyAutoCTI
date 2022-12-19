@@ -21,7 +21,7 @@ class Array2DACS(Array2D):
     """
     An ACS array consists of four quadrants ('A', 'B', 'C', 'D') which have the following layout (which are described
     at the following STScI
-    link https://github.com/spacetelescope/hstcal/blob/master/pkg/acs/calacs/acscte/dopcte-gen2.c#L418).
+    link https://github.com/spacetelescope/hstcal/blob/main/pkg/acs/calacs/acscte/dopcte-gen2.c#L418).
 
        <--------S-----------   ---------S----------->
     [] [========= 2 =========] [========= 3 =========] []          /\
@@ -48,7 +48,7 @@ class Array2DACS(Array2D):
         See the docstring of the `FrameACS` class for a complete description of the HST FPA, quadrants and
         rotations.
 
-        Also see https://github.com/spacetelescope/hstcal/blob/master/pkg/acs/calacs/acscte/dopcte-gen2.c#L418
+        Also see https://github.com/spacetelescope/hstcal/blob/main/pkg/acs/calacs/acscte/dopcte-gen2.c#L418
         """
 
         hdu = acs_util.fits_hdu_via_quadrant_letter_from(
@@ -75,7 +75,7 @@ class Array2DACS(Array2D):
         See the docstring of the `FrameACS` class for a complete description of the HST FPA, quadrants and
         rotations.
 
-        Also see https://github.com/spacetelescope/hstcal/blob/master/pkg/acs/calacs/acscte/dopcte-gen2.c#L418
+        Also see https://github.com/spacetelescope/hstcal/blob/main/pkg/acs/calacs/acscte/dopcte-gen2.c#L418
         """
         if quadrant_letter == "A":
 
@@ -146,7 +146,7 @@ class Array2DACS(Array2D):
         See the docstring of the `FrameACS` class for a complete description of the HST FPA, quadrants and
         rotations.
 
-        Also see https://github.com/spacetelescope/hstcal/blob/master/pkg/acs/calacs/acscte/dopcte-gen2.c#L418
+        Also see https://github.com/spacetelescope/hstcal/blob/main/pkg/acs/calacs/acscte/dopcte-gen2.c#L418
         """
 
         array_electrons = layout_util.rotate_array_via_roe_corner_from(
@@ -192,7 +192,7 @@ class Array2DACS(Array2D):
         See the docstring of the `FrameACS` class for a complete description of the HST FPA, quadrants and
         rotations.
 
-        Also see https://github.com/spacetelescope/hstcal/blob/master/pkg/acs/calacs/acscte/dopcte-gen2.c#L418
+        Also see https://github.com/spacetelescope/hstcal/blob/main/pkg/acs/calacs/acscte/dopcte-gen2.c#L418
         """
 
         array_electrons = layout_util.rotate_array_via_roe_corner_from(
@@ -236,7 +236,7 @@ class Array2DACS(Array2D):
         See the docstring of the `FrameACS` class for a complete description of the HST FPA, quadrants and
         rotations.
 
-        Also see https://github.com/spacetelescope/hstcal/blob/master/pkg/acs/calacs/acscte/dopcte-gen2.c#L418
+        Also see https://github.com/spacetelescope/hstcal/blob/main/pkg/acs/calacs/acscte/dopcte-gen2.c#L418
         """
 
         array_electrons = layout_util.rotate_array_via_roe_corner_from(
@@ -276,7 +276,7 @@ class Array2DACS(Array2D):
         See the docstring of the `FrameACS` class for a complete description of the HST FPA, quadrants and
         rotations.
 
-        Also see https://github.com/spacetelescope/hstcal/blob/master/pkg/acs/calacs/acscte/dopcte-gen2.c#L418
+        Also see https://github.com/spacetelescope/hstcal/blob/main/pkg/acs/calacs/acscte/dopcte-gen2.c#L418
         """
 
         array_electrons = layout_util.rotate_array_via_roe_corner_from(

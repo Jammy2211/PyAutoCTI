@@ -19,7 +19,7 @@ the image below) interspersed around regions with no charge.
 (It turns out that charge injection images are crucial to calibrating CTI -- a process we have to undertake before
 we can correct CTI in data. We cover this in overviews 4 and 5!).
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/ccd_schematic.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/ccd_schematic.png
   :width: 600
   :alt: Alternative text
 
@@ -97,7 +97,7 @@ with functionality used by **PyAutoCTI** which is expanded upon elsewhere in the
     array_2d_plotter = aplt.Array2DPlotter(array=pre_cti_data_2d)
     array_2d_plotter.figure_2d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_2/pre_cti_data_2d.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_2/pre_cti_data_2d.png
   :width: 600
   :alt: Alternative text
 
@@ -148,7 +148,7 @@ block of 10 electrons.
     array_2d_plotter = aplt.Array2DPlotter(array=post_cti_data_2d)
     array_2d_plotter.figure_2d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_2/post_cti_data_2d_parallel.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_2/post_cti_data_2d_parallel.png
   :width: 600
   :alt: Alternative text
 
@@ -191,7 +191,7 @@ block of 10 electrons.
     array_2d_plotter = aplt.Array2DPlotter(array=post_cti_data_2d)
     array_2d_plotter.figure_2d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_2/post_cti_data_2d_serial.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_2/post_cti_data_2d_serial.png
   :width: 600
   :alt: Alternative text
 
@@ -220,7 +220,7 @@ parallel CTI trails then trailed during serial clocking.
     array_2d_plotter = aplt.Array2DPlotter(array=post_cti_data_2d)
     array_2d_plotter.figure_2d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_2/post_cti_data_2d_parallel_serial.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_2/post_cti_data_2d_parallel_serial.png
   :width: 600
   :alt: Alternative text
 
@@ -236,7 +236,7 @@ Correcting CTI in 2D is as easy as it was in 1D, by simply calling the clockers 
     array_2d_plotter = aplt.Array2DPlotter(array=corrected_cti_image_2d)
     array_2d_plotter.figure_2d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_2/post_cti_data_2d_corrected.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_2/post_cti_data_2d_corrected.png
   :width: 600
   :alt: Alternative text
 

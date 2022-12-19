@@ -9,7 +9,7 @@ Coupled Devices (CCDs).
 Lets take a look at a extract of data taken from the Advanced Camera for Surveys (ACS) instrument on board the
 Hubble Space Telescope (this figure is taken from Massey et al 2009 ``https://arxiv.org/abs/1009.4335``):
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/what_is_cti.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/what_is_cti.png
   :width: 600
   :alt: Alternative text
 
@@ -42,7 +42,7 @@ massive over simplification, but in order to understand CTI this process can be 
 
 The animation below shows this process in action:
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/cti.gif
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/cti.gif
   :width: 600
 
 CTI
@@ -60,7 +60,7 @@ electron, one of two things can happen:
 
 The animation below shows the CCD clocking process, but now includes one of these traps:
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/ccd.gif
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/ccd.gif
   :width: 600
 
 Charge Transfer
@@ -101,7 +101,7 @@ library has numerous wrappers like this which will crop up throughout the overvi
     array_1d_plotter = aplt.Array1DPlotter(y=pre_cti_data_1d)
     array_1d_plotter.figure_1d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_1/array_1d.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_1/array_1d.png
   :width: 600
   :alt: Alternative text
 
@@ -163,7 +163,7 @@ Note that, in 1D, clocking is to the left of the image.
     array_1d_plotter = aplt.Array1DPlotter(y=post_cti_data_1d)
     array_1d_plotter.figure_1d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_1/array_1d_with_cti.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_1/array_1d_with_cti.png
   :width: 600
   :alt: Alternative text
 
@@ -194,7 +194,7 @@ above, alongside the CTI model used to create it.
     array_1d_plotter = aplt.Array1DPlotter(y=corrected_cti_data_1d)
     array_1d_plotter.figure_1d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_1/array_1d_cti_corrected.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_1/array_1d_cti_corrected.png
   :width: 600
   :alt: Alternative text
 
@@ -224,7 +224,7 @@ traps. The longer our telescope has been in space, the more radiation will have 
 have formed. The figure below slows the level of CTI in Hubble over the course of its lifetime -- as a function of
 time, CTI increases.
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/cti_time_evolution.gif
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/cti_time_evolution.gif
   :width: 600
 
 Wrap Up

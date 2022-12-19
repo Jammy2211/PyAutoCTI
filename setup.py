@@ -21,7 +21,7 @@ setup(
     version=version,
     description="PyAutoCTI: Charge Transfer Inefficiency Modeling",
     long_description=long_description,
-    long_description_content_type="text/markdown",
+    long_description_content_type="text/x-rst",
     url="https://github.com/jammy2211/PyAutoCTI",
     author="James Nightingale, Richard Massey, Jacob Kegerreis and Richard Hayes",
     author_email="james.w.nightingale@durham.ac.uk",

@@ -41,7 +41,7 @@ class ImageACS(Array2DACS):
         See the docstring of the `FrameACS` class for a complete description of the HST FPA, quadrants and
         rotations.
 
-        Also see https://github.com/spacetelescope/hstcal/blob/master/pkg/acs/calacs/acscte/dopcte-gen2.c#L418
+        Also see https://github.com/spacetelescope/hstcal/blob/main/pkg/acs/calacs/acscte/dopcte-gen2.c#L418
 
         Parameters
         ----------

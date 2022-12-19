@@ -59,11 +59,11 @@ Now lets plot the two datasets and compare their appearance.
     array_1d_plotter = aplt.Array1DPlotter(y=post_cti_data_1d_1)
     array_1d_plotter.figure_1d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_3/density_1.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_3/density_1.png
   :width: 600
   :alt: Alternative text
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_3/density_2.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_3/density_2.png
   :width: 600
   :alt: Alternative text
 
@@ -121,11 +121,11 @@ Now lets plot the two datasets and compare their appearance.
     array_1d_plotter = aplt.Array1DPlotter(y=post_cti_data_1d_1)
     array_1d_plotter.figure_1d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_3/timescale_1.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_3/timescale_1.png
   :width: 600
   :alt: Alternative text
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_3/timescale_2.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_3/timescale_2.png
   :width: 600
   :alt: Alternative text
 
@@ -208,10 +208,10 @@ We can illustrate this by comparing the addition of CTI to two 1D datasets with 
     array_1d_plotter = aplt.Array1DPlotter(y=post_cti_data_1d_1)
     array_1d_plotter.figure_1d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_3/volume_1.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_3/volume_1.png
   :width: 600
   :alt: Alternative text
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/overview_3/volume_2.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_3/volume_2.png
   :width: 600
   :alt: Alternative text

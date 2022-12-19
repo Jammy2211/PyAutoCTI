@@ -7,13 +7,17 @@ PyAutoCTI: Charge Transfer Inefficiency Modeling
 .. |binder| image:: https://mybinder.org/badge_logo.svg
    :target: https://mybinder.org/v2/gh/Jammy2211/autocti_workspace/HEAD
 
+.. |RTD| image:: https://readthedocs.org/projects/pyautocti/badge/?version=latest
+    :target: https://pyautocti.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+
 .. |code-style| image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/psf/black
 
 .. |arXiv| image:: https://img.shields.io/badge/arXiv-1708.07377-blue
     :target: https://arxiv.org/abs/0909.0507
 
-|binder| |code-style| |arXiv|
+|binder| |RTD| |code-style| |arXiv|
 
 `Installation Guide <https://pyautocti.readthedocs.io/en/latest/installation/overview.html>`_ |
 `readthedocs <https://pyautocti.readthedocs.io/en/latest/index.html>`_ |
@@ -22,11 +26,11 @@ PyAutoCTI: Charge Transfer Inefficiency Modeling
 
 Charge Transfer Inefficiency, or CTI for short, is an effect that occurs when acquiring imaging data from
 Charge Coupled Devices (CCDs). Due to radiation damage to the CCD's silicon lattice electrons are read-out inefficiently,
-creating a characterstic trailing or smearing effect.
+creating a characteristic trailing or smearing effect.
 
 Here is an example of CTI in the Hubble space telescope, after decades of radiation damage:
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/what_is_cti.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/what_is_cti.png
   :width: 600
   :alt: Alternative text
 

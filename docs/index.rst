@@ -7,9 +7,8 @@ Coupled Devices (CCDs).
 Lets take a look at a extract of data taken from the Advanced Camera for Surveys (ACS) instrument on board the
 Hubble Space Telescope (this figure is taken from Massey et al 2009 ``https://arxiv.org/abs/1009.4335``):
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/what_is_cti.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/what_is_cti.png
   :width: 600
-  :alt: Alternative text
 
 Trailing
 --------
@@ -48,7 +47,7 @@ massive over simplification, but in order to understand CTI this process can be 
 
 The animation below shows this process in action:
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/cti.gif
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/cti.gif
   :width: 600
 
 CTI
@@ -66,7 +65,7 @@ electron, one of two things can happen:
 
 The animation below shows the CCD clocking process, but now includes one of these traps:
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/master/docs/overview/images/ccd.gif
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/ccd.gif
   :width: 600
 
 Charge Transfer
