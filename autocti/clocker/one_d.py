@@ -15,7 +15,7 @@ class Clocker1D(AbstractClocker):
     def __init__(
         self,
         iterations: int = 5,
-        roe: Optional["ROE"] = None,
+        roe: Optional[ROE] = None,
         express: int = 0,
         window_start: int = 0,
         window_stop: int = -1,

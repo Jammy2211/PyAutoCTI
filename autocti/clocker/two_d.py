@@ -3,6 +3,7 @@ from typing import Optional
 
 from arcticpy import add_cti
 from arcticpy import remove_cti
+
 from arcticpy import ROE
 
 import autoarray as aa
@@ -16,7 +17,7 @@ class Clocker2D(AbstractClocker):
     def __init__(
         self,
         iterations: int = 5,
-        parallel_roe: Optional["ROE"] = None,
+        parallel_roe: Optional[ROE] = None,
         parallel_express: int = 0,
         parallel_window_offset: int = 0,
         parallel_window_start: int = 0,
