@@ -2,24 +2,6 @@
 API Reference
 =============
 
----------------
-Data Structures
----------------
-
-.. currentmodule:: autocti
-
-.. autosummary::
-   :toctree: generated/
-
-   Mask1D
-   Mask2D
-   Array1D
-   Array2D
-   ValuesIrregular
-   Grid1D
-   Grid2D
-   Grid2DIterate
-   Grid2DIrregular
 
 ----------
 Dataset 1D

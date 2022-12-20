@@ -46,8 +46,20 @@ images) and grids of (y,x) Cartesian coordinates.
    :template: custom-class-template.rst
    :recursive:
 
-   Dataset1D
    Mask1D
    Array1D
    ValuesIrregular
    Grid1D
+
+----------
+Dataset 1D
+----------
+
+For 1D datasets.
+
+.. autosummary::
+   :toctree: generated/
+
+   Dataset1D
+   SettingsDataset1D
+   SimulatorDataset1D
