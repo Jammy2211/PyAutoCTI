@@ -3,6 +3,7 @@ from typing import Tuple
 
 import autoarray as aa
 
+from autocti.charge_injection.layout import Layout2DCI
 from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.mask.mask_2d import Mask2D
 
@@ -84,7 +85,7 @@ class Extract2DParallelCalibration:
             shape_2d=self.shape_2d, pixels=columns
         )
 
-    def mask_2d_from(self, mask: aa.Mask2D, columns: Tuple[int, int]) -> "Mask2D":
+    def mask_2d_from(self, mask: aa.Mask2D, columns: Tuple[int, int]) -> Mask2D:
         """
         Extract a mask to go with a parallel calibration array from an input mask.
 
@@ -150,7 +151,7 @@ class Extract2DParallelCalibration:
             header=array.header,
         )
 
-    def extracted_layout_from(self, layout, columns: Tuple[int, int]) -> "Layout2DCI":
+    def extracted_layout_from(self, layout, columns: Tuple[int, int]) -> Layout2DCI:
         """
         Extract the layout of a parallel calibration array from an input layout, where this layout contains the regions
         of the input layout which are retained after the parallel CTI calibration array is created. This layout
@@ -204,7 +205,7 @@ class Extract2DParallelCalibration:
 
     def with_extracted_regions(
         self, layout, extraction_region: aa.type.Region2DLike
-    ) -> "Layout2DCI":
+    ) -> Layout2DCI:
 
         layout = deepcopy(layout)
 

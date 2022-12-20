@@ -28,7 +28,7 @@ class Clocker2D(AbstractClocker):
         parallel_prune_frequency=0,
         parallel_poisson_traps: bool = False,
         parallel_fast_mode: Optional[bool] = False,
-        serial_roe: Optional["ROE"] = None,
+        serial_roe: Optional[ROE] = None,
         serial_express: int = 0,
         serial_window_offset: int = 0,
         serial_window_start: int = 0,
