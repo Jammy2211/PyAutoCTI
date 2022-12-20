@@ -37,7 +37,7 @@ For charge injection datasets taken with a CCD (or similar imaging device).
 1D Data Structures
 ------------------
 
-Two-dimensional data structures store and mask 1D arrays containing data (e.g. 1D CTI datasets
+One-dimensional data structures store and mask 1D arrays containing data (e.g. 1D CTI datasets
 images) and grids of (y,x) Cartesian coordinates.
 
 .. autosummary::
@@ -50,7 +50,6 @@ images) and grids of (y,x) Cartesian coordinates.
    ValuesIrregular
    Grid1D
 
-----------
 Dataset 1D
 ----------
 
