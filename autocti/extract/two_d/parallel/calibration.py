@@ -3,6 +3,7 @@ from typing import Tuple
 
 import autoarray as aa
 
+from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.mask.mask_2d import Mask2D
 
 
@@ -223,8 +224,8 @@ class Extract2DParallelCalibration:
         return layout
 
     def imaging_ci_from(
-        self, imaging_ci: "ImagingCI", columns: Tuple[int, int]
-    ) -> "ImagingCI":
+        self, imaging_ci: ImagingCI, columns: Tuple[int, int]
+    ) -> ImagingCI:
         """
         Returnss a function to extract a parallel section for given columns
         """
