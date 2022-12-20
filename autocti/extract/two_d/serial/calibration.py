@@ -4,6 +4,7 @@ from typing import Optional, Tuple
 
 import autoarray as aa
 
+from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.mask.mask_2d import Mask2D
 
 
@@ -221,7 +222,7 @@ class Extract2DSerialCalibration:
 
         return new_layout
 
-    def imaging_ci_from(self, imaging_ci: "ImagingCI", rows) -> "ImagingCI":
+    def imaging_ci_from(self, imaging_ci: ImagingCI, rows) -> ImagingCI:
         """
         Returnss a function to extract a serial section for given rows
         """

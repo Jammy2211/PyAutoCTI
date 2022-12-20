@@ -5,6 +5,7 @@ import autoarray as aa
 
 from autoarray import exc
 
+from autocti.layout.two_d import Layout2D
 
 class SettingsMask2D:
     def __init__(
@@ -197,7 +198,7 @@ class Mask2D(aa.Mask2D):
     def masked_fpr_and_eper_from(
         cls,
         mask: "Mask2D",
-        layout: "Layout2D",
+        layout: Layout2D,
         settings: "SettingsMask2D",
         pixel_scales: aa.type.PixelScales,
     ) -> "Mask2D":
@@ -239,7 +240,7 @@ class Mask2D(aa.Mask2D):
     @classmethod
     def masked_parallel_fpr_from(
         cls,
-        layout: "Layout2D",
+        layout: Layout2D,
         settings: "SettingsMask2D",
         pixel_scales: aa.type.PixelScales,
         invert: bool = False,
@@ -261,7 +262,7 @@ class Mask2D(aa.Mask2D):
     @classmethod
     def masked_parallel_eper_from(
         cls,
-        layout: "Layout2D",
+        layout: Layout2D,
         settings: "SettingsMask2D",
         pixel_scales: aa.type.PixelScales,
         invert: bool = False,
@@ -284,7 +285,7 @@ class Mask2D(aa.Mask2D):
     @classmethod
     def masked_serial_fpr_from(
         cls,
-        layout: "Layout2D",
+        layout: Layout2D,
         settings: "SettingsMask2D",
         pixel_scales: aa.type.PixelScales,
         invert: bool = False,
@@ -306,7 +307,7 @@ class Mask2D(aa.Mask2D):
     @classmethod
     def masked_serial_eper_from(
         cls,
-        layout: "Layout2D",
+        layout: Layout2D,
         settings: "SettingsMask2D",
         pixel_scales: aa.type.PixelScales,
         invert: bool = False,

@@ -1,14 +1,19 @@
+from __future__ import annotations
 import numpy as np
 import math
-from typing import Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Dict, List, Optional, Tuple
+
+if TYPE_CHECKING:
+    from autocti.extract.two_d.master import Extract2DMaster
+
 import autoarray as aa
 
-from autocti.charge_injection import ci_util
+from autoarray.layout import layout_util
+
 from autocti.instruments.euclid.layout import Layout2DEuclid
 from autocti.layout.two_d import Layout2D
 
-
-from autoarray.layout import layout_util
+from autocti.charge_injection import ci_util
 
 
 class Layout2DCI(Layout2D):
@@ -63,7 +68,7 @@ class Layout2DCI(Layout2D):
         self.electronics = electronics
 
     @property
-    def extract(self) -> "Extract2DMaster":
+    def extract(self) -> Extract2DMaster:
 
         from autocti.extract.two_d.master import Extract2DMaster
 
