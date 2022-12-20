@@ -30,9 +30,9 @@ For charge injection datasets taken with a CCD (or similar imaging device).
    :toctree: generated/
 
    ImagingCI
+   Layout2DCI
    SettingsImagingCI
    SimulatorImagingCI
-   Layout2DCI
 
 1D Data Structures
 ------------------
@@ -60,5 +60,6 @@ For 1D datasets.
    :toctree: generated/
 
    Dataset1D
+   LayoutDataset1D
    SettingsDataset1D
    SimulatorDataset1D

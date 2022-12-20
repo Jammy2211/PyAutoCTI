@@ -3,21 +3,6 @@ API Reference
 =============
 
 
-------------------------
-Charge Injection Imaging
-------------------------
-
-.. currentmodule:: autocti
-
-.. autosummary::
-   :toctree: generated/
-
-   ImagingCI
-   SettingsImagingCI
-   SimulatorImagingCI
-   Layout2DCI
-   FitImagingCI
-   AnalysisImagingCI
 
 -----
 Traps
