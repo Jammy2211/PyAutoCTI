@@ -115,7 +115,12 @@ charge (e.g.a flow of electrons)!
    :maxdepth: 1
    :hidden:
 
-   api/api
+   api/data
+   api/arctic
+   api/clocking
+   api/fitting
+   api/modeling
+   api/plot
 
 .. toctree::
    :caption: Advanced:
