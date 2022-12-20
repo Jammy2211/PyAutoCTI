@@ -21,19 +21,18 @@ grids of (y,x) Cartesian coordinates.
    Grid2DIterate
    Grid2DIrregular
 
-Imaging
--------
+Charge Injection Imaging
+------------------------
 
-For datasets taken with a CCD (or similar imaging device).
+For charge injection datasets taken with a CCD (or similar imaging device).
 
 .. autosummary::
-   :toctree: _autosummary
-   :template: custom-class-template.rst
-   :recursive:
+   :toctree: generated/
 
-   Imaging
-   SettingsImaging
-   SimulatorImaging
+   ImagingCI
+   SettingsImagingCI
+   SimulatorImagingCI
+   Layout2DCI
 
 1D Data Structures
 ------------------

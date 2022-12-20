@@ -3,22 +3,6 @@ API Reference
 =============
 
 
-----------
-Dataset 1D
-----------
-
-.. currentmodule:: autocti
-
-.. autosummary::
-   :toctree: generated/
-
-   Dataset1D
-   SettingsDataset1D
-   SimulatorDataset1D
-   Layout1D
-   FitDataset1D
-   AnalysisDataset1D
-
 ------------------------
 Charge Injection Imaging
 ------------------------
