@@ -19,6 +19,19 @@ It acts as an interface between the data, model and the non-linear search.
    AnalysisImagingCI
    AnalysisDataset1D
 
+.. currentmodule:: autocti
+
+Settings
+--------
+
+Input into an ``Analysis`` class to customize the behaviour of a CTI model-fit performed via a non-linear search.
+
+.. autosummary::
+   :toctree: generated/
+
+    SettingsCTI1D
+    SettingsCTI2D
+
 Non-linear Searches
 -------------------
 
