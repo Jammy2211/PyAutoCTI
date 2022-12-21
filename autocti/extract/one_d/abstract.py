@@ -96,7 +96,7 @@ class Extract1D:
         which therefore quantify the goodness-of-fit of a CTI model.
 
         Parameters
-        -----------
+    ----------
         array
             The 1D array which contains the line dataset from which the regions (e.g. the FPRs) are extracted and
             stacked.

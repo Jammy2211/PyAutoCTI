@@ -73,10 +73,10 @@ class AnalysisImagingCI(af.Analysis):
         This function:
 
          1) Visualizes the charge injection imaging dataset, which does not change during the analysis and thus can be
-         done once.
+            done once.
 
          2) Checks if the noise-map is fixed (it is not if hyper functionality is on), and if it is fixed it
-         sets the noise-normalization to the preloads for computational speed.
+            sets the noise-normalization to the preloads for computational speed.
 
         Parameters
         ----------

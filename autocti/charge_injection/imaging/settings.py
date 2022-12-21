@@ -30,14 +30,14 @@ class SettingsImagingCI(aa.SettingsImaging):
         - If the fit is a parallel and serial fit (is_parallel_fit=True, is_serial_fit=True) the *parallel_pixels* and
           *serial_pixels* are set to None and all other settings remain the same.
 
-         These settings reflect the appropriate way to extract the charge injection imaging data for fits which use a
-         parallel only CTI model, serial only CTI model or fit both.
+        These settings reflect the appropriate way to extract the charge injection imaging data for fits which use a
+        parallel only CTI model, serial only CTI model or fit both.
 
-         Parameters
-         ----------
-         is_parallel_fit
+        Parameters
+        ----------
+        is_parallel_fit
             If True, the CTI model that is used to fit the charge injection data includes a parallel CTI component.
-         is_serial_fit
+        is_serial_fit
             If True, the CTI model that is used to fit the charge injection data includes a serial CTI component.
         """
 

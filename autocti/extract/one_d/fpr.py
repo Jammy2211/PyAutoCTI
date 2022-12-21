@@ -16,7 +16,7 @@ class Extract1DFPR(Extract1D):
         extracted.
 
         Parameters
-        -----------
+    ----------
         pixels
             The row indexes to extract the front edge between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
         """

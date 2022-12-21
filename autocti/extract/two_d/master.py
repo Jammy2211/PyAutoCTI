@@ -289,7 +289,7 @@ class Extract2DMaster:
                <--------Ser---------
 
         Parameters
-        -----------
+    ----------
         fpr_pixels
             The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows).
         trails_pixels
@@ -365,7 +365,7 @@ class Extract2DMaster:
                <--------Ser---------
 
         Parameters
-        -----------
+    ----------
         array
         fpr_pixels
             The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd rows)

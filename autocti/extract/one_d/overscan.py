@@ -17,7 +17,7 @@ class Extract1DOverscan(Extract1D):
         extracted.
 
         Parameters
-        -----------
+    ----------
         pixels
             The row indexes to extract the overscan between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
         """
