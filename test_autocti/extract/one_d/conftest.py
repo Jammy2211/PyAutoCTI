@@ -5,7 +5,7 @@ import autocti as ac
 @pytest.fixture(name="masked_array")
 def make_masked_array(array):
 
-    mask = ac.Mask1D.manual(
+    mask = ac.Mask1D(
         mask=[False, False, True, False, False, True, False, False, True],
         pixel_scales=1.0,
     )

@@ -56,11 +56,11 @@ def make_parallel_serial_clocker_2d():
 
 
 def make_mask_1d_7_unmasked():
-    return ac.Mask1D.unmasked(shape_slim=(7,), pixel_scales=(1.0,))
+    return ac.Mask1D.all_false(shape_slim=(7,), pixel_scales=(1.0,))
 
 
 def make_mask_2d_7x7_unmasked():
-    return ac.Mask2D.unmasked(shape_native=(7, 7), pixel_scales=(1.0, 1.0))
+    return ac.Mask2D.all_false(shape_native=(7, 7), pixel_scales=(1.0, 1.0))
 
 
 ### FRAMES ###

@@ -8,7 +8,7 @@ def test__mask_2d_from():
         shape_2d=(5, 3), region_list=[(0, 5, 0, 3)]
     )
 
-    mask = ac.Mask2D.unmasked(shape_native=(5, 3), pixel_scales=1.0)
+    mask = ac.Mask2D.all_false(shape_native=(5, 3), pixel_scales=1.0)
 
     mask[0, 1] = True
 
@@ -53,7 +53,7 @@ def test__array_2d_from():
         shape_2d=(5, 3), region_list=[(0, 5, 0, 3)]
     )
 
-    mask = ac.Mask2D.unmasked(shape_native=(5, 3), pixel_scales=1.0)
+    mask = ac.Mask2D.all_false(shape_native=(5, 3), pixel_scales=1.0)
     mask[0, 1] = True
 
     array = array.apply_mask(mask=mask)
@@ -133,7 +133,7 @@ def test__imaging_ci_from(imaging_ci_7x7):
 
     assert imaging_ci_parallel_calibration.layout.region_list == [(1, 5, 0, 4)]
 
-    mask = ac.Mask2D.unmasked(
+    mask = ac.Mask2D.all_false(
         shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
     )
 

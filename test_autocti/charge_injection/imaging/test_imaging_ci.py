@@ -57,7 +57,7 @@ def test__norm_columns_list():
 
     assert imaging.norm_columns_list == [2.5, 5.5, 8.5]
 
-    mask = ac.Mask2D.manual(
+    mask = ac.Mask2D(
         mask=np.array(
             [
                 [True, True, True, True, True],
@@ -195,7 +195,7 @@ def test__output_to_fits___all_arrays(layout_ci_7x7):
 
 def test__apply_mask__masks_arrays_correctly(imaging_ci_7x7):
 
-    mask = ac.Mask2D.unmasked(
+    mask = ac.Mask2D.all_false(
         shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
     )
 
@@ -227,7 +227,7 @@ def test__apply_settings__include_parallel_columns_extraction(
     imaging_ci_7x7, mask_2d_7x7_unmasked, ci_noise_scaling_map_dict_7x7
 ):
 
-    mask = ac.Mask2D.unmasked(
+    mask = ac.Mask2D.all_false(
         shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
     )
     mask[0, 2] = True
@@ -237,7 +237,7 @@ def test__apply_settings__include_parallel_columns_extraction(
         settings=ac.SettingsImagingCI(parallel_pixels=(1, 3))
     )
 
-    mask = ac.Mask2D.unmasked(shape_native=(7, 2), pixel_scales=1.0)
+    mask = ac.Mask2D.all_false(shape_native=(7, 2), pixel_scales=1.0)
     mask[0, 0] = True
 
     assert (masked_imaging_ci.mask == mask).all()
@@ -277,7 +277,7 @@ def test__apply_settings__serial_masked_imaging_ci(
     imaging_ci_7x7, mask_2d_7x7_unmasked, ci_noise_scaling_map_dict_7x7
 ):
 
-    mask = ac.Mask2D.unmasked(
+    mask = ac.Mask2D.all_false(
         shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
     )
     mask[1, 0] = True
@@ -287,7 +287,7 @@ def test__apply_settings__serial_masked_imaging_ci(
         settings=ac.SettingsImagingCI(serial_pixels=(0, 1))
     )
 
-    mask = ac.Mask2D.unmasked(shape_native=(1, 7), pixel_scales=1.0)
+    mask = ac.Mask2D.all_false(shape_native=(1, 7), pixel_scales=1.0)
     mask[0, 0] = True
 
     assert (masked_imaging_ci.mask == mask).all()

@@ -44,7 +44,7 @@ def test__mask_2d_from():
         shape_2d=(5, 5), region_list=[(0, 2, 1, 4), (3, 5, 1, 4)]
     )
 
-    mask = ac.Mask2D.unmasked(shape_native=(5, 5), pixel_scales=1.0)
+    mask = ac.Mask2D.all_false(shape_native=(5, 5), pixel_scales=1.0)
 
     mask[1, 1] = True
     mask[4, 3] = True
@@ -279,7 +279,7 @@ def test__imaging_ci_from(imaging_ci_7x7):
 
     assert serial_calibration_imaging.layout.region_list == [(0, 2, 1, 5)]
 
-    mask = ac.Mask2D.unmasked(
+    mask = ac.Mask2D.all_false(
         shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
     )
 

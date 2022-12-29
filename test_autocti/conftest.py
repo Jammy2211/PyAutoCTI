@@ -280,7 +280,7 @@ def make_parallel_array():
 @pytest.fixture(name="parallel_masked_array")
 def make_parallel_masked_array(parallel_array):
 
-    mask = ac.Mask2D.manual(
+    mask = ac.Mask2D(
         mask=[
             [False, False, False],
             [False, False, False],
@@ -314,7 +314,7 @@ def make_serial_array():
 @pytest.fixture(name="serial_masked_array")
 def make_serial_masked_array(serial_array):
 
-    mask = ac.Mask2D.manual(
+    mask = ac.Mask2D(
         mask=[
             [False, False, False, False, False, True, False, False, False, False],
             [False, False, True, False, False, False, True, False, False, False],

@@ -46,7 +46,7 @@ def clean_fits(fits_path):
 
 def test__apply_mask__masks_arrays_correctly(dataset_1d_7):
 
-    mask = ac.Mask1D.unmasked(
+    mask = ac.Mask1D.all_false(
         shape_slim=dataset_1d_7.data.shape_slim,
         pixel_scales=dataset_1d_7.data.pixel_scales,
     )
