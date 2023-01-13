@@ -78,14 +78,14 @@ class ImagingCI(aa.Imaging):
 
     def apply_mask(self, mask: mask_2d.Mask2D) -> "ImagingCI":
 
-        image = aa.Array2D.manual_mask(array=self.image.native, mask=mask)
+        image = aa.Array2D(values=self.image.native, mask=mask)
 
-        noise_map = aa.Array2D.manual_mask(array=self.noise_map.native, mask=mask)
+        noise_map = aa.Array2D(values=self.noise_map.native, mask=mask)
 
         if self.cosmic_ray_map is not None:
 
-            cosmic_ray_map = aa.Array2D.manual_mask(
-                array=self.cosmic_ray_map.native, mask=mask
+            cosmic_ray_map = aa.Array2D(
+            values=self.cosmic_ray_map.native, mask=mask
             )
 
         else:
@@ -95,7 +95,7 @@ class ImagingCI(aa.Imaging):
         if self.noise_scaling_map_dict is not None:
 
             noise_scaling_map_dict = {
-                key: aa.Array2D.manual_mask(array=noise_scaling_map.native, mask=mask)
+                key: aa.Array2D(values=noise_scaling_map.native, mask=mask)
                 for key, noise_scaling_map in self.noise_scaling_map_dict.items()
             }
 
@@ -185,7 +185,7 @@ class ImagingCI(aa.Imaging):
         else:
             ci_noise_map = np.ones(ci_image.shape_native) * noise_map_from_single_value
 
-        ci_noise_map = aa.Array2D.manual(array=ci_noise_map, pixel_scales=pixel_scales)
+        ci_noise_map = aa.Array2D.no_mask(values=ci_noise_map, pixel_scales=pixel_scales)
 
         if pre_cti_data_path is not None and pre_cti_data is None:
             pre_cti_data = aa.Array2D.from_fits(
@@ -198,8 +198,8 @@ class ImagingCI(aa.Imaging):
                 "Cannot load pre_cti_data from .fits and pass explicit pre_cti_data."
             )
 
-        pre_cti_data = aa.Array2D.manual(
-            array=pre_cti_data.native, pixel_scales=pixel_scales
+        pre_cti_data = aa.Array2D.no_mask(
+            values=pre_cti_data.native, pixel_scales=pixel_scales
         )
 
         if cosmic_ray_map_path is not None:

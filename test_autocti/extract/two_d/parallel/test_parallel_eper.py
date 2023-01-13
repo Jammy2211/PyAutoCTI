@@ -86,8 +86,8 @@ def test__array_2d_from():
         serial_overscan=(3, 5, 0, 1),
     )
 
-    array = ac.Array2D.manual(
-        array=[
+    array = ac.Array2D.no_mask(
+        values=[
             [0.0, 1.0, 2.0],
             [3.0, 4.0, 5.0],
             [6.0, 7.0, 8.0],

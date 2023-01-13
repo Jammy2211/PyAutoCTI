@@ -13,7 +13,7 @@ def generate_column(size: int, norm: float, row_slope: float) -> np.ndarray:
     The pixel-numbering used to generate non-uniformity across the charge injection rows runs from 1 -> size
 
     Parameters
-    -----------
+    ----------
     size
         The size of the non-uniform column of charge
     normalization

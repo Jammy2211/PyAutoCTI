@@ -130,7 +130,7 @@ def hyper_noise_map_from(hyper_noise_scalar_dict, noise_scaling_map_dict, noise_
     For a noise-map, use the model hyper noise and noise-scaling maps to compute a scaled noise-map.
 
     Parameters
-    -----------
+    ----------
     hyper_noise_scalar_dict
     noise_scaling_map_dict
     noise_map : imaging.NoiseMap or ndarray

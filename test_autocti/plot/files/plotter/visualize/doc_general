@@ -119,12 +119,12 @@ A description of the general.ini visualization config.
         wheel matches the light profile centres so that light and mass profile centres of the same galaxies are colored
         the same.
         
-    mapper_source_mesh_grid
+    mapper_source_plane_mesh_grid
 
         If True, the inversion's pixelization grid (e.g. the centre of every pixel of the pixelization) is plotted
         on figures of the inversion's reconstructed source.
        
-        The mapper_source_mesh_grid appearance is specified by the [mapper_source_mesh_grid] section of
+        The mapper_source_plane_mesh_grid appearance is specified by the [mapper_source_plane_mesh_grid] section of
         the 'figures.ini' and 'subplots.ini' configs.
         
     inversion_grid
@@ -135,10 +135,10 @@ A description of the general.ini visualization config.
         The inversion_grid appearance is specified by the [inversion_grid] section of 
         the 'figures.ini' and 'subplots.ini' configs.
 
-    mapper_data_mesh_grid
+    mapper_image_plane_mesh_grid
 
         If True, inversion's pixelizaion grid in the image-plane (e.g. the pixels which are traced to form the centre
         of every pixel of the pixelization) is plotted on fit_imaging figures of the image.
        
-        The mapper_source_mesh_grid appearance is specified by the [mapper_source_mesh_grid] section of
+        The mapper_source_plane_mesh_grid appearance is specified by the [mapper_source_plane_mesh_grid] section of
         the 'figures.ini' and 'subplots.ini' configs.

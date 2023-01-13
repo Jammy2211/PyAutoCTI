@@ -6,8 +6,8 @@ def test__array_2d_list_from():
 
     extract = ac.Extract2DSerialCalibration(shape_2d=(3, 5), region_list=[(0, 3, 0, 5)])
 
-    array = ac.Array2D.manual(
-        array=[
+    array = ac.Array2D.no_mask(
+        values=[
             [0.0, 1.0, 2.0, 2.0, 2.0],
             [0.0, 1.0, 2.0, 3.0, 4.0],
             [0.0, 1.0, 2.0, 4.0, 4.0],
@@ -44,7 +44,7 @@ def test__mask_2d_from():
         shape_2d=(5, 5), region_list=[(0, 2, 1, 4), (3, 5, 1, 4)]
     )
 
-    mask = ac.Mask2D.unmasked(shape_native=(5, 5), pixel_scales=1.0)
+    mask = ac.Mask2D.all_false(shape_native=(5, 5), pixel_scales=1.0)
 
     mask[1, 1] = True
     mask[4, 3] = True
@@ -65,8 +65,8 @@ def test__array_2d_from():
         shape_2d=(3, 5), region_list=[(0, 3, 1, 5)], serial_prescan=(0, 3, 0, 1)
     )
 
-    array = ac.Array2D.manual(
-        array=[
+    array = ac.Array2D.no_mask(
+        values=[
             [0.0, 1.0, 2.0, 3.0, 4.0],
             [0.0, 1.0, 2.0, 3.0, 4.0],
             [0.0, 1.0, 2.0, 3.0, 4.0],
@@ -105,8 +105,8 @@ def test__array_2d_from():
 
     assert new_array.pixel_scales == (1.0, 1.0)
 
-    array = ac.Array2D.manual(
-        array=[
+    array = ac.Array2D.no_mask(
+        values=[
             [0.0, 1.0, 2.0, 2.0, 2.0],
             [0.0, 1.0, 3.0, 3.0, 3.0],
             [0.0, 1.0, 4.0, 4.0, 4.0],
@@ -137,8 +137,8 @@ def test__array_2d_from():
         serial_overscan=(0, 3, 3, 4),
     )
 
-    array = ac.Array2D.manual(
-        array=[
+    array = ac.Array2D.no_mask(
+        values=[
             [0.0, 1.0, 2.0, 2.0, 2.0],
             [0.0, 1.0, 3.0, 3.0, 3.0],
             [0.0, 1.0, 4.0, 4.0, 4.0],
@@ -279,7 +279,7 @@ def test__imaging_ci_from(imaging_ci_7x7):
 
     assert serial_calibration_imaging.layout.region_list == [(0, 2, 1, 5)]
 
-    mask = ac.Mask2D.unmasked(
+    mask = ac.Mask2D.all_false(
         shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
     )
 

@@ -14,14 +14,14 @@ test_data_path = path.join(
 
 def test__manual():
 
-    mask = ac.Mask2D.manual(mask=[[False, False], [True, True]], pixel_scales=1.0)
+    mask = ac.Mask2D(mask=[[False, False], [True, True]], pixel_scales=1.0)
 
     assert type(mask) == ac.Mask2D
     assert (mask == np.array([[False, False], [True, True]])).all()
     assert mask.pixel_scales == (1.0, 1.0)
     assert mask.origin == (0.0, 0.0)
 
-    mask = ac.Mask2D.manual(
+    mask = ac.Mask2D(
         mask=[[False, False, True], [True, True, False]],
         pixel_scales=(2.0, 3.0),
         origin=(0.0, 1.0),
@@ -32,7 +32,7 @@ def test__manual():
     assert mask.pixel_scales == (2.0, 3.0)
     assert mask.origin == (0.0, 1.0)
 
-    mask = ac.Mask2D.manual(
+    mask = ac.Mask2D(
         mask=[[False, False, True], [True, True, False]], pixel_scales=1.0, invert=True
     )
 
@@ -44,24 +44,24 @@ def test__mask__input_is_1d_mask__no_shape_native__raises_exception():
 
     with pytest.raises(exc.MaskException):
 
-        ac.Mask2D.manual(mask=[False, False, True], pixel_scales=1.0)
+        ac.Mask2D(mask=[False, False, True], pixel_scales=1.0)
 
     with pytest.raises(exc.MaskException):
 
-        ac.Mask2D.manual(mask=[False, False, True], pixel_scales=False)
+        ac.Mask2D(mask=[False, False, True], pixel_scales=False)
 
     with pytest.raises(exc.MaskException):
 
-        ac.Mask2D.manual(mask=[False, False, True], pixel_scales=1.0)
+        ac.Mask2D(mask=[False, False, True], pixel_scales=1.0)
 
     with pytest.raises(exc.MaskException):
 
-        ac.Mask2D.manual(mask=[False, False, True], pixel_scales=False)
+        ac.Mask2D(mask=[False, False, True], pixel_scales=False)
 
 
 def test__unmasked():
 
-    mask = ac.Mask2D.unmasked(shape_native=(5, 5), pixel_scales=1.0, invert=False)
+    mask = ac.Mask2D.all_false(shape_native=(5, 5), pixel_scales=1.0, invert=False)
 
     assert mask.shape == (5, 5)
     assert (
@@ -77,7 +77,7 @@ def test__unmasked():
         )
     ).all()
 
-    mask = ac.Mask2D.unmasked(
+    mask = ac.Mask2D.all_false(
         shape_native=(3, 3), pixel_scales=(1.5, 1.5), invert=False
     )
 
@@ -92,7 +92,7 @@ def test__unmasked():
     assert mask.pixel_scales == (1.5, 1.5)
     assert mask.origin == (0.0, 0.0)
 
-    mask = ac.Mask2D.unmasked(
+    mask = ac.Mask2D.all_false(
         shape_native=(3, 3), pixel_scales=(2.0, 2.5), invert=True, origin=(1.0, 2.0)
     )
 
@@ -129,8 +129,8 @@ def test__from_masked_regions():
 
 def test__cosmic_ray_mask_included_in_total_mask():
 
-    cosmic_ray_map = ac.Array2D.manual(
-        array=np.array(
+    cosmic_ray_map = ac.Array2D.no_mask(
+        values=np.array(
             [[False, False, False], [False, True, False], [False, False, False]]
         ),
         pixel_scales=1.0,
@@ -152,8 +152,8 @@ def test__cosmic_ray_mask_included_in_total_mask():
         )
     ).all()
 
-    cosmic_ray_map = ac.Array2D.manual(
-        array=[[False, True, False], [False, False, False], [False, False, False]],
+    cosmic_ray_map = ac.Array2D.no_mask(
+        values=[[False, True, False], [False, False, False], [False, False, False]],
         pixel_scales=1.0,
     )
 
@@ -171,8 +171,8 @@ def test__cosmic_ray_mask_included_in_total_mask():
         == np.array([[False, True, False], [False, True, False], [False, True, False]])
     ).all()
 
-    cosmic_ray_map = ac.Array2D.manual(
-        array=[[False, False, False], [True, False, False], [False, False, False]],
+    cosmic_ray_map = ac.Array2D.no_mask(
+        values=[[False, False, False], [True, False, False], [False, False, False]],
         pixel_scales=1.0,
     )
 
@@ -190,8 +190,8 @@ def test__cosmic_ray_mask_included_in_total_mask():
         == np.array([[False, False, False], [True, True, True], [False, False, False]])
     ).all()
 
-    cosmic_ray_map = ac.Array2D.manual(
-        array=[
+    cosmic_ray_map = ac.Array2D.no_mask(
+        values=[
             [False, False, False, False],
             [False, True, False, False],
             [False, False, False, False],
@@ -561,7 +561,7 @@ def test__masked_serial_eper_from():
 
 def test__masked_fpr_and_eper_from(imaging_ci_7x7):
 
-    unmasked = ac.Mask2D.unmasked(
+    unmasked = ac.Mask2D.all_false(
         shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
     )
 

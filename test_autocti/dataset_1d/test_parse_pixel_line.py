@@ -50,7 +50,7 @@ def make_dataset_1d(pixel_line_dict, size):
 def test_parse_data(dataset_1d):
     assert (
         dataset_1d.data
-        == Array1D.manual_native(
+        == Array1D.no_mask(
             [0.0, 0.0, 5.0, 3.0, 2.0, 1.0, 0.0, 0.0, 0.0, 0.0], pixel_scales=0.1
         )
     ).all()
@@ -59,7 +59,7 @@ def test_parse_data(dataset_1d):
 def test_parse_noise(dataset_1d):
     assert (
         dataset_1d.noise_map
-        == Array1D.manual_native(
+        == Array1D.no_mask(
             [0.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0, 0.0, 0.0], pixel_scales=0.1
         )
     ).all()
@@ -73,7 +73,7 @@ def make_pre_cti_data(dataset_1d):
 def test_pre_cti(pre_cti_data, flux):
     assert (
         pre_cti_data
-        == Array1D.manual_native(
+        == Array1D.no_mask(
             [0.0, 0.0, flux, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], pixel_scales=0.1
         )
     ).all()

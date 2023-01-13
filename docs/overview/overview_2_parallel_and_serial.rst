@@ -72,8 +72,8 @@ with functionality used by **PyAutoCTI** which is expanded upon elsewhere in the
 
     import autocti as ac
 
-    pre_cti_data_2d = ac.Array2D.manual_native(
-        array=[
+    pre_cti_data_2d = ac.Array2D.no_mask(
+                values=[
             [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             [0.0, 10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0],
             [0.0, 10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0],

@@ -34,8 +34,8 @@ def test__fit_figure_of_merit(imaging_ci_7x7):
 def test__hyper_noise_map_from():
     noise_map = ac.Array2D.full(fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0)
     noise_scaling_map_dict = {
-        "parallel_eper": ac.Array2D.manual(
-            array=[[0.0, 0.0], [0.0, 0.0]], pixel_scales=1.0
+        "parallel_eper": ac.Array2D.no_mask(
+            values=[[0.0, 0.0], [0.0, 0.0]], pixel_scales=1.0
         )
     }
 
@@ -51,8 +51,8 @@ def test__hyper_noise_map_from():
 
     noise_map = ac.Array2D.full(fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0)
     noise_scaling_map_dict = {
-        "parallel_eper": ac.Array2D.manual(
-            array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0
+        "parallel_eper": ac.Array2D.no_mask(
+            values=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0
         )
     }
     hyper_noise_scalar_dict = {"parallel_eper": ac.HyperCINoiseScalar(scale_factor=0.0)}
@@ -67,8 +67,8 @@ def test__hyper_noise_map_from():
 
     noise_map = ac.Array2D.full(fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0)
     noise_scaling_map_dict = {
-        "parallel_eper": ac.Array2D.manual(
-            array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0
+        "parallel_eper": ac.Array2D.no_mask(
+            values=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0
         )
     }
     hyper_noise_scalar_dict = {"parallel_eper": ac.HyperCINoiseScalar(scale_factor=1.0)}
@@ -83,11 +83,11 @@ def test__hyper_noise_map_from():
 
     noise_map = ac.Array2D.full(fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0)
     noise_scaling_map_dict = {
-        "parallel_eper": ac.Array2D.manual(
-            array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0
+        "parallel_eper": ac.Array2D.no_mask(
+            values=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0
         ),
-        "serial_eper": ac.Array2D.manual(
-            array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0
+        "serial_eper": ac.Array2D.no_mask(
+            values=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0
         ),
     }
     hyper_noise_scalar_dict = {
@@ -118,7 +118,7 @@ def test__chi_squared_map_of_regions_ci():
         image=image, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
     )
 
-    mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
+    mask = ac.Mask2D.all_false(shape_native=(2, 2), pixel_scales=1.0)
 
     masked_imaging = imaging.apply_mask(mask=mask)
 
@@ -148,7 +148,7 @@ def test__chi_squared_map_of_parallel_non_regions_ci():
         image=image, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
     )
 
-    mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
+    mask = ac.Mask2D.all_false(shape_native=(2, 2), pixel_scales=1.0)
 
     masked_imaging = imaging.apply_mask(mask=mask)
 
@@ -175,7 +175,7 @@ def test__chi_squared_map_of_serial_eper():
         image=image, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
     )
 
-    mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
+    mask = ac.Mask2D.all_false(shape_native=(2, 2), pixel_scales=1.0)
 
     masked_imaging = imaging.apply_mask(mask=mask)
 
@@ -201,7 +201,7 @@ def test__chi_squared_map_of_overscan_above_serial_eper():
         image=image, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
     )
 
-    mask = ac.Mask2D.unmasked(shape_native=(2, 2), pixel_scales=1.0)
+    mask = ac.Mask2D.all_false(shape_native=(2, 2), pixel_scales=1.0)
 
     masked_imaging = imaging.apply_mask(mask=mask)
 

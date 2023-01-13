@@ -226,7 +226,7 @@ class Clocker2D(AbstractClocker):
         )
 
         try:
-            return aa.Array2D.manual_mask(array=image_post_cti, mask=data.mask, store_native=True)
+            return aa.Array2D(values=image_post_cti, mask=data.mask, store_native=True, skip_mask=True)
         except AttributeError:
             return image_post_cti
 
@@ -324,7 +324,7 @@ class Clocker2D(AbstractClocker):
         )
 
         try:
-            return aa.Array2D.manual_mask(array=image_post_cti, mask=data.mask, store_native=True)
+            return aa.Array2D(values=image_post_cti, mask=data.mask, store_native=True, skip_mask=True)
         except AttributeError:
             return image_post_cti
 
@@ -467,7 +467,7 @@ class Clocker2D(AbstractClocker):
                 image_post_cti[:, fast_column] = image_post_cti_pass[:, i]
 
         if cti.serial_trap_list is None:
-            return aa.Array2D.manual_mask(array=image_post_cti, mask=data.mask, store_native=True)
+            return aa.Array2D(values=image_post_cti, mask=data.mask, store_native=True, skip_mask=True)
 
         serial_trap_list, serial_ccd = self._serial_traps_ccd_from(cti=cti)
 
@@ -490,7 +490,7 @@ class Clocker2D(AbstractClocker):
             verbosity=self.verbosity,
         )
 
-        return aa.Array2D.manual_mask(array=image_post_cti, mask=data.mask, store_native=True)
+        return aa.Array2D(values=image_post_cti, mask=data.mask, store_native=True, skip_mask=True)
 
     def add_cti_serial_fast(
         self, data: aa.Array2D, cti: CTI2D, preloads: Preloads = Preloads()
@@ -565,7 +565,7 @@ class Clocker2D(AbstractClocker):
 
                 image_post_cti[fast_row, :] = image_post_cti_pass[i, :]
 
-        return aa.Array2D.manual_mask(array=image_post_cti, mask=data.mask, store_native=True)
+        return aa.Array2D(values=image_post_cti, mask=data.mask, store_native=True, skip_mask=True)
 
     def remove_cti(self, data: aa.Array2D, cti: CTI2D) -> aa.Array2D:
         """
@@ -622,6 +622,6 @@ class Clocker2D(AbstractClocker):
             serial_prune_frequency=self.serial_prune_frequency,
         )
 
-        return aa.Array2D.manual_mask(
-            array=image_cti_removed, mask=data.mask, header=data.header, store_native=True
+        return aa.Array2D(
+            values=image_cti_removed, mask=data.mask, header=data.header, store_native=True, skip_mask=True
         )

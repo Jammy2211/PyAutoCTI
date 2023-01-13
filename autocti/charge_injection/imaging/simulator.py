@@ -239,8 +239,8 @@ class SimulatorImagingCI(SimulatorImaging):
                 data=post_cti_data, sigma=self.read_noise, seed=self.noise_seed
             )
 
-            ci_image = aa.Array2D.manual_native(
-                array=ci_image, pixel_scales=self.pixel_scales
+            ci_image = aa.Array2D.no_mask(
+                values=ci_image, pixel_scales=self.pixel_scales
             )
 
             ci_noise_map = (
@@ -258,14 +258,14 @@ class SimulatorImagingCI(SimulatorImaging):
             ).native
 
         return ImagingCI(
-            image=aa.Array2D.manual(
-                array=ci_image.native, pixel_scales=self.pixel_scales
+            image=aa.Array2D.no_mask(
+                values=ci_image.native, pixel_scales=self.pixel_scales
             ),
-            noise_map=aa.Array2D.manual(
-                array=ci_noise_map, pixel_scales=self.pixel_scales
+            noise_map=aa.Array2D.no_mask(
+                values=ci_noise_map, pixel_scales=self.pixel_scales
             ),
-            pre_cti_data=aa.Array2D.manual(
-                array=pre_cti_data.native, pixel_scales=self.pixel_scales
+            pre_cti_data=aa.Array2D.no_mask(
+                values=pre_cti_data.native, pixel_scales=self.pixel_scales
             ),
             cosmic_ray_map=cosmic_ray_map,
             layout=layout,

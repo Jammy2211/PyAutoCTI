@@ -71,7 +71,7 @@ class Mask2D(aa.Mask2D):
         return cls(mask=mask, pixel_scales=pixel_scales, origin=origin)
 
     @classmethod
-    def unmasked(cls, shape_native, pixel_scales, origin=(0.0, 0.0), invert=False):
+    def all_false(cls, shape_native, pixel_scales, origin=(0.0, 0.0), invert=False):
         """Create a mask where all pixels are `False` and therefore unmasked.
 
         Parameters
@@ -98,7 +98,7 @@ class Mask2D(aa.Mask2D):
     @classmethod
     def from_masked_regions(cls, shape_native, pixel_scales, masked_regions):
 
-        mask = cls.unmasked(shape_native=shape_native, pixel_scales=pixel_scales)
+        mask = cls.all_false(shape_native=shape_native, pixel_scales=pixel_scales)
         masked_regions = list(
             map(lambda region: aa.Region2D(region=region), masked_regions)
         )
@@ -123,7 +123,7 @@ class Mask2D(aa.Mask2D):
         cosmic_ray_diagonal_buffer
             The number of pixels from each ray pixels are masked in the digonal up from the parallel + serial direction.
         """
-        mask = cls.unmasked(
+        mask = cls.all_false(
             shape_native=cosmic_ray_map.shape_native,
             pixel_scales=cosmic_ray_map.pixel_scales,
         )
@@ -190,7 +190,7 @@ class Mask2D(aa.Mask2D):
         )
 
         if resized_mask_shape is not None:
-            mask = mask.resized_mask_from(new_shape=resized_mask_shape)
+            mask = mask.derive_mask.resized_from(new_shape=resized_mask_shape)
 
         return mask
 

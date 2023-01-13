@@ -182,8 +182,8 @@ class Extract2DSerialCalibration:
 
         mask_2d = self.mask_2d_from(mask=array.mask, rows=rows)
 
-        return aa.Array2D.manual_mask(
-            array=new_array,
+        return aa.Array2D(
+            values=new_array,
             mask=mask_2d,
             header=array.header,
         )

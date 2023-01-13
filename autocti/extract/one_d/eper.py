@@ -17,7 +17,7 @@ class Extract1DEPER(Extract1D):
         the FPR) are also extracted.
 
         Parameters
-        -----------
+    ----------
         pixels
             The row indexes to extract the trails between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
         """

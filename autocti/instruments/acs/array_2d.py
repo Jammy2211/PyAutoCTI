@@ -177,9 +177,9 @@ class Array2DACS(Array2D):
 
             array_electrons -= bias
 
-            header.bias = Array2DACS.manual_native(array=bias, pixel_scales=0.05)
+            header.bias = Array2DACS.no_mask(values=bias, pixel_scales=0.05)
 
-        return cls.manual(array=array_electrons, header=header, pixel_scales=0.05)
+        return cls.no_mask(values=array_electrons, header=header, pixel_scales=0.05)
 
     @classmethod
     def quadrant_b(
@@ -221,9 +221,9 @@ class Array2DACS(Array2D):
 
             array_electrons -= bias
 
-            header.bias = Array2DACS.manual_native(array=bias, pixel_scales=0.05)
+            header.bias = Array2DACS.no_mask(values=bias, pixel_scales=0.05)
 
-        return cls.manual(array=array_electrons, header=header, pixel_scales=0.05)
+        return cls.no_mask(values=array_electrons, header=header, pixel_scales=0.05)
 
     @classmethod
     def quadrant_c(
@@ -261,9 +261,9 @@ class Array2DACS(Array2D):
 
             array_electrons -= bias
 
-            header.bias = Array2DACS.manual_native(array=bias, pixel_scales=0.05)
+            header.bias = Array2DACS.no_mask(values=bias, pixel_scales=0.05)
 
-        return cls.manual(array=array_electrons, header=header, pixel_scales=0.05)
+        return cls.no_mask(values=array_electrons, header=header, pixel_scales=0.05)
 
     @classmethod
     def quadrant_d(
@@ -300,9 +300,9 @@ class Array2DACS(Array2D):
 
             array_electrons -= bias
 
-            header.bias = Array2DACS.manual_native(array=bias, pixel_scales=0.05)
+            header.bias = Array2DACS.no_mask(values=bias, pixel_scales=0.05)
 
-        return cls.manual(array=array_electrons, header=header, pixel_scales=0.05)
+        return cls.no_mask(values=array_electrons, header=header, pixel_scales=0.05)
 
     def update_fits(self, original_file_path, new_file_path):
         """

@@ -27,6 +27,6 @@ def master_ci_from(ci_list: List[Array2D]) -> Array2D:
 
     master_ci = sum(ci_list) / len(ci_list)
 
-    return Array2D.manual_native(
-        array=master_ci.native, pixel_scales=ci_list[0].pixel_scales
+    return Array2D.no_mask(
+        values=master_ci.native, pixel_scales=ci_list[0].pixel_scales
     )

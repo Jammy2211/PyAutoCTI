@@ -236,7 +236,7 @@ containing the parallel FPR.
 
 .. code-block:: python
 
-    mask = ac.Mask2D.unmasked(
+    mask = ac.Mask2D.all_false(
         shape_native=imaging_ci.shape_native, pixel_scales=imaging_ci.pixel_scales
     )
 
@@ -345,7 +345,7 @@ We can mask the data to remove the FPR just like we did above.
 
 .. code-block:: python
 
-    mask = ac.Mask1D.unmasked(
+    mask = ac.Mask1D.all_false(
         shape_slim=dataset_1d.shape_slim, pixel_scales=dataset_1d.pixel_scales
     )
 

@@ -78,8 +78,8 @@ class Extract2D:
         self, array: aa.Array2D, pixels: Tuple[int, int]
     ) -> List[aa.Array2D]:
         """
-        Extract a specific region from every signal region (e.g. the charge injection region of charge injection data) on the CTI calibration data and return as a list
-        of 2D arrays.
+        Extract a specific region from every signal region (e.g. the charge injection region of charge injection data)
+        on the CTI calibration data and return as a list of 2D arrays.
 
         For example, this might extract the parallel EPERs of every charge injection region.
 
@@ -103,7 +103,7 @@ class Extract2D:
         ]
 
         return [
-            aa.Array2D.manual_mask(array=arr, mask=mask_2d).native
+            aa.Array2D(values=arr, mask=mask_2d).native
             for arr, mask_2d in zip(arr_list, mask_2d_list)
         ]
 
@@ -121,7 +121,7 @@ class Extract2D:
         which therefore quantify the goodness-of-fit of a CTI model.
 
         Parameters
-        -----------
+    ----------
         array
             The 2D array which contains the charge injection image from which the regions (e.g. the parallel FPRs)
             are extracted and stacked.
@@ -141,8 +141,8 @@ class Extract2D:
             array.mask[region.slice] for region in self.region_list_from(pixels=pixels)
         ]
 
-        return aa.Array2D.manual_mask(
-            array=np.asarray(stacked_array_2d.data),
+        return aa.Array2D(
+            values=np.asarray(stacked_array_2d.data),
             mask=sum(mask_2d_list) == len(mask_2d_list),
         ).native
 
@@ -157,7 +157,7 @@ class Extract2D:
         final pixel on the stacked 2d array in order to compute the new noise map via quadrature.
 
         Parameters
-        -----------
+    ----------
         array
             The 2D array which contains the charge injection image from which the regions (e.g. the parallel FPRs)
             are extracted and stacked.
@@ -172,8 +172,8 @@ class Extract2D:
 
         arr_total_pixels = sum([np.invert(mask_2d) for mask_2d in mask_2d_list])
 
-        return aa.Array2D.manual_mask(
-            array=np.asarray(arr_total_pixels),
+        return aa.Array2D(
+            values=np.asarray(arr_total_pixels),
             mask=sum(mask_2d_list) == len(mask_2d_list),
         ).native
 
@@ -193,7 +193,7 @@ class Extract2D:
         which therefore quantify the goodness-of-fit of a CTI model.
 
         Parameters
-        -----------
+    ----------
         array
             The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted and
             stacked.
@@ -210,8 +210,8 @@ class Extract2D:
         binned_array_1d = np.ma.mean(
             np.ma.asarray(stacked_array_2d), axis=self.binning_axis
         )
-        return aa.Array1D.manual_native(
-            array=binned_array_1d, pixel_scales=array.pixel_scale
+        return aa.Array1D.no_mask(
+            values=binned_array_1d, pixel_scales=array.pixel_scale
         )
 
     def binned_array_1d_total_pixels_from(
@@ -227,7 +227,7 @@ class Extract2D:
         final pixel on the binned 1D array in order to compute the new noise map via quadrature.
 
         Parameters
-        -----------
+    ----------
         array
             The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted and
             stacked.
@@ -246,8 +246,8 @@ class Extract2D:
             np.ma.asarray(arr_total_pixels), axis=self.binning_axis
         )
 
-        return aa.Array1D.manual_native(
-            array=binned_total_pixels, pixel_scales=array.pixel_scale
+        return aa.Array1D.no_mask(
+            values=binned_total_pixels, pixel_scales=array.pixel_scale
         )
 
     def binned_region_1d_from(self, pixels: Tuple[int, int]) -> aa.Region1D:

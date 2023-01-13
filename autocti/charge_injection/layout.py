@@ -146,7 +146,7 @@ class Layout2DCI(Layout2D):
         for region in self.region_list:
             pre_cti_data[region.slice] += norm
 
-        return aa.Array2D.manual(array=pre_cti_data, pixel_scales=pixel_scales)
+        return aa.Array2D.no_mask(values=pre_cti_data, pixel_scales=pixel_scales)
 
     def pre_cti_data_non_uniform_from(
         self,
@@ -188,7 +188,7 @@ class Layout2DCI(Layout2D):
                 row_slope=row_slope,
             )
 
-        return aa.Array2D.manual(array=pre_cti_data, pixel_scales=pixel_scales)
+        return aa.Array2D.no_mask(values=pre_cti_data, pixel_scales=pixel_scales)
 
     def pre_cti_data_non_uniform_via_lists_from(
         self,
@@ -230,7 +230,7 @@ class Layout2DCI(Layout2D):
                 row_slope=row_slope,
             )
 
-        return aa.Array2D.manual(array=pre_cti_data, pixel_scales=pixel_scales)
+        return aa.Array2D.no_mask(values=pre_cti_data, pixel_scales=pixel_scales)
 
 
 class ElectronicsCI:
