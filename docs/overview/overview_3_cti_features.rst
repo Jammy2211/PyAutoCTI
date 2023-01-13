@@ -21,8 +21,8 @@ Lets recreate our simple 1D dataset.
 
     import autocti as ac
 
-    pre_cti_data_1d = ac.Array1D.manual_native(
-        array=[10.0, 10.0, 10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    pre_cti_data_1d = ac.Array1D.no_mask(
+                values=[10.0, 10.0, 10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         pixel_scales=1.0,
     )
 
@@ -189,13 +189,13 @@ We can illustrate this by comparing the addition of CTI to two 1D datasets with 
 
 .. code-block:: python
 
-    pre_cti_data_1d_0 = ac.Array1D.manual_native(
-        array=[10.0, 10.0, 10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    pre_cti_data_1d_0 = ac.Array1D.no_mask(
+                values=[10.0, 10.0, 10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         pixel_scales=1.0,
     )
 
-    pre_cti_data_1d_1 = ac.Array1D.manual_native(
-        array=[100.0, 100.0, 100.0, 100.0, 100.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    pre_cti_data_1d_1 = ac.Array1D.no_mask(
+                values=[100.0, 100.0, 100.0, 100.0, 100.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         pixel_scales=1.0,
     )
 

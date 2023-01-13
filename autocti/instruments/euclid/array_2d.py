@@ -163,7 +163,7 @@ class Array2DEuclid(Array2D):
             original_roe_corner=(0, 0), ccd_id=ccd_id, quadrant_id=quadrant_id
         )
 
-        return cls.manual(array=array_electrons, pixel_scales=0.1, header=header)
+        return cls.no_mask(values=array_electrons, pixel_scales=0.1, header=header)
 
     @classmethod
     def top_right(
@@ -208,7 +208,7 @@ class Array2DEuclid(Array2D):
             original_roe_corner=(0, 1), ccd_id=ccd_id, quadrant_id=quadrant_id
         )
 
-        return cls.manual(array=array_electrons, pixel_scales=0.1, header=header)
+        return cls.no_mask(values=array_electrons, pixel_scales=0.1, header=header)
 
     @classmethod
     def bottom_left(
@@ -252,7 +252,7 @@ class Array2DEuclid(Array2D):
             original_roe_corner=(1, 0), ccd_id=ccd_id, quadrant_id=quadrant_id
         )
 
-        return cls.manual(array=array_electrons, pixel_scales=0.1, header=header)
+        return cls.no_mask(values=array_electrons, pixel_scales=0.1, header=header)
 
     @classmethod
     def bottom_right(
@@ -297,4 +297,4 @@ class Array2DEuclid(Array2D):
             original_roe_corner=(1, 1), ccd_id=ccd_id, quadrant_id=quadrant_id
         )
 
-        return cls.manual(array=array_electrons, pixel_scales=0.1, header=header)
+        return cls.no_mask(values=array_electrons, pixel_scales=0.1, header=header)

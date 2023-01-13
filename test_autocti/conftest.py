@@ -143,8 +143,8 @@ def make_fit_line_7():
 
 @pytest.fixture(name="array")
 def make_array():
-    return ac.Array1D.manual_native(
-        array=[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0], pixel_scales=1.0
+    return ac.Array1D.no_mask(
+        values=[0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0], pixel_scales=1.0
     )
 
 
@@ -260,8 +260,8 @@ def make_acs_quadrant():
 
 @pytest.fixture(name="parallel_array")
 def make_parallel_array():
-    return ac.Array2D.manual(
-        array=[
+    return ac.Array2D.no_mask(
+        values=[
             [0.0, 0.0, 0.0],
             [1.0, 1.0, 1.0],  # <- Front edge .
             [2.0, 2.0, 2.0],  # <- Next front edge row.
@@ -296,13 +296,13 @@ def make_parallel_masked_array(parallel_array):
         pixel_scales=1.0,
     )
 
-    return ac.Array2D.manual_mask(array=parallel_array.native, mask=mask)
+    return ac.Array2D(values=parallel_array.native, mask=mask)
 
 
 @pytest.fixture(name="serial_array")
 def make_serial_array():
-    return ac.Array2D.manual(
-        array=[
+    return ac.Array2D.no_mask(
+        values=[
             [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
             [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
             [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0],
@@ -323,4 +323,4 @@ def make_serial_masked_array(serial_array):
         pixel_scales=1.0,
     )
 
-    return ac.Array2D.manual_mask(array=serial_array.native, mask=mask)
+    return ac.Array2D(values=serial_array.native, mask=mask)

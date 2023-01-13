@@ -129,8 +129,8 @@ def test__from_masked_regions():
 
 def test__cosmic_ray_mask_included_in_total_mask():
 
-    cosmic_ray_map = ac.Array2D.manual(
-        array=np.array(
+    cosmic_ray_map = ac.Array2D.no_mask(
+        values=np.array(
             [[False, False, False], [False, True, False], [False, False, False]]
         ),
         pixel_scales=1.0,
@@ -152,8 +152,8 @@ def test__cosmic_ray_mask_included_in_total_mask():
         )
     ).all()
 
-    cosmic_ray_map = ac.Array2D.manual(
-        array=[[False, True, False], [False, False, False], [False, False, False]],
+    cosmic_ray_map = ac.Array2D.no_mask(
+        values=[[False, True, False], [False, False, False], [False, False, False]],
         pixel_scales=1.0,
     )
 
@@ -171,8 +171,8 @@ def test__cosmic_ray_mask_included_in_total_mask():
         == np.array([[False, True, False], [False, True, False], [False, True, False]])
     ).all()
 
-    cosmic_ray_map = ac.Array2D.manual(
-        array=[[False, False, False], [True, False, False], [False, False, False]],
+    cosmic_ray_map = ac.Array2D.no_mask(
+        values=[[False, False, False], [True, False, False], [False, False, False]],
         pixel_scales=1.0,
     )
 
@@ -190,8 +190,8 @@ def test__cosmic_ray_mask_included_in_total_mask():
         == np.array([[False, False, False], [True, True, True], [False, False, False]])
     ).all()
 
-    cosmic_ray_map = ac.Array2D.manual(
-        array=[
+    cosmic_ray_map = ac.Array2D.no_mask(
+        values=[
             [False, False, False, False],
             [False, True, False, False],
             [False, False, False, False],

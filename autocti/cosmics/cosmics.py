@@ -332,6 +332,6 @@ class SimulatorCosmicRayMap:
 
             total_cosmics += cr_n
 
-        return aa.Array2D.manual_native(
-            array=cosmic_ray_map, pixel_scales=self.pixel_scale
+        return aa.Array2D.no_mask(
+            values=cosmic_ray_map, pixel_scales=self.pixel_scale
         )

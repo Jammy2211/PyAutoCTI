@@ -60,7 +60,7 @@ class SimulatorDataset1D(SimulatorImaging):
         for region in layout.region_list:
             pre_cti_data[region.slice] += self.norm
 
-        return aa.Array1D.manual_native(array=pre_cti_data, pixel_scales=pixel_scales)
+        return aa.Array1D.no_mask(values=pre_cti_data, pixel_scales=pixel_scales)
 
     def via_layout_from(
         self, layout: Layout1D, clocker: Clocker1D, cti: CTI1D
@@ -128,14 +128,14 @@ class SimulatorDataset1D(SimulatorImaging):
             ).native
 
         return Dataset1D(
-            data=aa.Array1D.manual_native(
-                array=data.native, pixel_scales=self.pixel_scales
+            data=aa.Array1D.no_mask(
+                values=data.native, pixel_scales=self.pixel_scales
             ),
-            noise_map=aa.Array1D.manual_native(
-                array=noise_map, pixel_scales=self.pixel_scales
+            noise_map=aa.Array1D.no_mask(
+                values=noise_map, pixel_scales=self.pixel_scales
             ),
-            pre_cti_data=aa.Array1D.manual_native(
-                array=pre_cti_data.native, pixel_scales=self.pixel_scales
+            pre_cti_data=aa.Array1D.no_mask(
+                values=pre_cti_data.native, pixel_scales=self.pixel_scales
             ),
             layout=layout,
         )

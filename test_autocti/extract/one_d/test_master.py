@@ -8,7 +8,7 @@ def test__regions_array_1d_from():
 
     extract = ac.Extract1DMaster(region_list=[(0, 3)])
 
-    array = ac.Array1D.manual_native(array=[0.0, 1.0, 2.0, 3.0], pixel_scales=1.0)
+    array = ac.Array1D.no_mask(values=[0.0, 1.0, 2.0, 3.0], pixel_scales=1.0)
 
     array_extracted = extract.regions_array_1d_from(array=array)
 
@@ -25,7 +25,7 @@ def test__non_regions_array_1d_from():
 
     extract = ac.Extract1DMaster(region_list=[(0, 3)])
 
-    array = ac.Array1D.manual_native(array=[0.0, 1.0, 2.0, 3.0], pixel_scales=1.0)
+    array = ac.Array1D.no_mask(values=[0.0, 1.0, 2.0, 3.0], pixel_scales=1.0)
 
     array_extracted = extract.non_regions_array_1d_from(array=array)
 

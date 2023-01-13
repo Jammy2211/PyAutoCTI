@@ -34,8 +34,8 @@ def test__fit_figure_of_merit(imaging_ci_7x7):
 def test__hyper_noise_map_from():
     noise_map = ac.Array2D.full(fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0)
     noise_scaling_map_dict = {
-        "parallel_eper": ac.Array2D.manual(
-            array=[[0.0, 0.0], [0.0, 0.0]], pixel_scales=1.0
+        "parallel_eper": ac.Array2D.no_mask(
+            values=[[0.0, 0.0], [0.0, 0.0]], pixel_scales=1.0
         )
     }
 
@@ -51,8 +51,8 @@ def test__hyper_noise_map_from():
 
     noise_map = ac.Array2D.full(fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0)
     noise_scaling_map_dict = {
-        "parallel_eper": ac.Array2D.manual(
-            array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0
+        "parallel_eper": ac.Array2D.no_mask(
+            values=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0
         )
     }
     hyper_noise_scalar_dict = {"parallel_eper": ac.HyperCINoiseScalar(scale_factor=0.0)}
@@ -67,8 +67,8 @@ def test__hyper_noise_map_from():
 
     noise_map = ac.Array2D.full(fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0)
     noise_scaling_map_dict = {
-        "parallel_eper": ac.Array2D.manual(
-            array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0
+        "parallel_eper": ac.Array2D.no_mask(
+            values=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0
         )
     }
     hyper_noise_scalar_dict = {"parallel_eper": ac.HyperCINoiseScalar(scale_factor=1.0)}
@@ -83,11 +83,11 @@ def test__hyper_noise_map_from():
 
     noise_map = ac.Array2D.full(fill_value=2.0, shape_native=(2, 2), pixel_scales=1.0)
     noise_scaling_map_dict = {
-        "parallel_eper": ac.Array2D.manual(
-            array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0
+        "parallel_eper": ac.Array2D.no_mask(
+            values=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0
         ),
-        "serial_eper": ac.Array2D.manual(
-            array=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0
+        "serial_eper": ac.Array2D.no_mask(
+            values=[[1.0, 2.0], [3.0, 4.0]], pixel_scales=1.0
         ),
     }
     hyper_noise_scalar_dict = {

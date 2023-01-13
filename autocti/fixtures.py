@@ -151,7 +151,7 @@ def make_pre_cti_data_7x7():
 def make_ci_cosmic_ray_map_7x7():
     cosmic_ray_map = np.zeros(shape=(7, 7))
 
-    return ac.Array2D.manual(array=cosmic_ray_map, pixel_scales=(1.0, 1.0))
+    return ac.Array2D.no_mask(values=cosmic_ray_map, pixel_scales=(1.0, 1.0))
 
 
 def make_ci_noise_scaling_map_dict_7x7():

@@ -72,8 +72,8 @@ CTI can be added to an image as follows:
     """
     Define a pre-cti image which **PyAutoCTI** adds CTI to.
     """
-    pre_cti_data_2d = ac.Array2D.manual_native(
-        array=[
+    pre_cti_data_2d = ac.Array2D.no_mask(
+                values=[
             [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
             [0.0, 10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0],
             [0.0, 10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0],

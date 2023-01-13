@@ -47,7 +47,7 @@ images) and grids of (y,x) Cartesian coordinates.
 
    Mask1D
    Array1D
-   ValuesIrregular
+   ArrayIrregular
    Grid1D
 
 Dataset 1D

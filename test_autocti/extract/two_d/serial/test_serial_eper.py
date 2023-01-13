@@ -97,8 +97,8 @@ def test__array_2d_from():
         region_list=[(0, 4, 0, 2)], serial_overscan=(0, 4, 2, 3)
     )
 
-    array = ac.Array2D.manual(
-        array=[[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]],
+    array = ac.Array2D.no_mask(
+        values=[[0.0, 1.0, 2.0], [3.0, 4.0, 5.0], [6.0, 7.0, 8.0], [9.0, 10.0, 11.0]],
         pixel_scales=1.0,
     )
 
@@ -115,8 +115,8 @@ def test__array_2d_from():
         region_list=[(0, 4, 0, 2)], serial_overscan=(0, 4, 2, 4)
     )
 
-    array = ac.Array2D.manual(
-        array=[
+    array = ac.Array2D.no_mask(
+        values=[
             [0.0, 1.0, 2.0, 0.5],
             [3.0, 4.0, 5.0, 0.5],
             [6.0, 7.0, 8.0, 0.5],

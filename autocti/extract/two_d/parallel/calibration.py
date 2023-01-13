@@ -145,8 +145,8 @@ class Extract2DParallelCalibration:
         extraction_region = self.extraction_region_from(columns=columns)
         mask_2d = self.mask_2d_from(mask=array.mask, columns=columns)
 
-        return aa.Array2D.manual_mask(
-            array=array.native[extraction_region.slice],
+        return aa.Array2D(
+            values=array.native[extraction_region.slice],
             mask=mask_2d,
             header=array.header,
         )

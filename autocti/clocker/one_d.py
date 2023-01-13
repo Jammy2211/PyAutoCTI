@@ -120,8 +120,8 @@ class Clocker1D(AbstractClocker):
             verbosity=self.verbosity,
         )
 
-        return aa.Array1D.manual_native(
-            array=image_post_cti.flatten(), pixel_scales=data.pixel_scales
+        return aa.Array1D.no_mask(
+            values=image_post_cti.flatten(), pixel_scales=data.pixel_scales
         )
 
     def remove_cti(self, data: aa.Array1D, cti: CTI1D) -> aa.Array1D:
@@ -171,6 +171,6 @@ class Clocker1D(AbstractClocker):
             verbosity=self.verbosity,
         )
 
-        return aa.Array1D.manual_native(
-            array=image_post_cti.flatten(), pixel_scales=data.pixel_scales
+        return aa.Array1D.no_mask(
+            values=image_post_cti.flatten(), pixel_scales=data.pixel_scales
         )

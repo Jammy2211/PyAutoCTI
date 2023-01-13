@@ -14,8 +14,8 @@ path = "{}/".format(os.path.dirname(os.path.realpath(__file__)))
 
 def test__array_with_offset_through_arctic():
 
-    arr = ac.Array2D.manual(
-        array=[[1.0, 2.0], [3.0, 4.0]],
+    arr = ac.Array2D.no_mask(
+        values=[[1.0, 2.0], [3.0, 4.0]],
         pixel_scales=1.0,
         header=ac.Header(
             header_sci_obj=None, header_hdu_obj=None, readout_offsets=(3, 5)
@@ -89,7 +89,7 @@ def test__add_cti_with_poisson_trap_densities():
         )
     )
 
-    arr = ac.Array2D.manual(array=arr, pixel_scales=1.0).native
+    arr = ac.Array2D.no_mask(values=arr, pixel_scales=1.0).native
 
     roe = ac.ROE(
         dwell_times=[1.0],
@@ -146,7 +146,7 @@ def test_fast_indexes_from():
         )
     )
 
-    arr = ac.Array2D.manual(array=arr, pixel_scales=1.0).native
+    arr = ac.Array2D.no_mask(values=arr, pixel_scales=1.0).native
 
     clocker = ac.Clocker2D()
 
@@ -172,7 +172,7 @@ def test_fast_indexes_from():
         )
     )
 
-    arr = ac.Array2D.manual(array=arr, pixel_scales=1.0).native
+    arr = ac.Array2D.no_mask(values=arr, pixel_scales=1.0).native
 
     clocker = ac.Clocker2D()
 
@@ -203,7 +203,7 @@ def test__add_cti_parallel_fast():
         )
     )
 
-    arr = ac.Array2D.manual(array=arr, pixel_scales=1.0).native
+    arr = ac.Array2D.no_mask(values=arr, pixel_scales=1.0).native
 
     ccd = ac.CCDPhase(full_well_depth=1e3, well_notch_depth=0.0, well_fill_power=1.0)
 
@@ -241,7 +241,7 @@ def test__add_cti_serial_fast():
         )
     )
 
-    arr = ac.Array2D.manual(array=arr, pixel_scales=1.0).native
+    arr = ac.Array2D.no_mask(values=arr, pixel_scales=1.0).native
 
     ccd = ac.CCDPhase(full_well_depth=1e3, well_notch_depth=0.0, well_fill_power=1.0)
 
@@ -264,8 +264,8 @@ def test__add_cti_serial_fast():
 
 def test__raises_exception_if_no_traps_or_ccd_passed():
 
-    arr = ac.Array2D.manual(
-        array=[[1.0, 2.0], [3.0, 4.0]],
+    arr = ac.Array2D.no_mask(
+        values=[[1.0, 2.0], [3.0, 4.0]],
         pixel_scales=1.0,
         header=ac.Header(
             header_sci_obj=None, header_hdu_obj=None, readout_offsets=(3, 5)

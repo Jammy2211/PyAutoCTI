@@ -28,8 +28,8 @@ def test__norm_columns_list():
 
     assert imaging.norm_columns_list == [1.0, 1.0, 1.0]
 
-    image = ac.Array2D.manual_native(
-        array=np.array(
+    image = ac.Array2D.no_mask(
+        values=np.array(
             [
                 [0.0, 0.0, 0.0, 0.0, 0.0],
                 [0.0, 1.0, 4.0, 7.0, 0.0],

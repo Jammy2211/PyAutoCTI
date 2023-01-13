@@ -86,8 +86,8 @@ with functionality used by **PyAutoCTI** which is expanded upon elsewhere in the
 
 .. code-block:: python
 
-    pre_cti_data_1d = ac.Array1D.manual_native(
-        array=[10.0, 10.0, 10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    pre_cti_data_1d = ac.Array1D.no_mask(
+                values=[10.0, 10.0, 10.0, 10.0, 10.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
         pixel_scales=1.0,
     )
 

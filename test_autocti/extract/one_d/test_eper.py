@@ -40,7 +40,7 @@ def test__array_1d_from():
 
     extract = ac.Extract1DEPER(region_list=[(0, 2)], prescan=(0, 1), overscan=(0, 1))
 
-    array = ac.Array1D.manual_native(array=[0.0, 1.0, 2.0, 3.0], pixel_scales=1.0)
+    array = ac.Array1D.no_mask(values=[0.0, 1.0, 2.0, 3.0], pixel_scales=1.0)
 
     array_extracted = extract.array_1d_from(array=array)
 

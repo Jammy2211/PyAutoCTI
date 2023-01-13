@@ -34,8 +34,8 @@ def test__array_2d_from():
         shape_2d=(5, 3), region_list=[(0, 3, 0, 3)]
     )
 
-    array = ac.Array2D.manual(
-        array=[
+    array = ac.Array2D.no_mask(
+        values=[
             [0.0, 1.0, 2.0],
             [0.0, 1.0, 2.0],
             [0.0, 1.0, 2.0],

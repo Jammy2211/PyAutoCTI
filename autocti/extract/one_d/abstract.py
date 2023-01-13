@@ -74,13 +74,8 @@ class Extract1D:
         ]
 
         return [
-            aa.Array1D.manual_mask(array=arr, mask=mask_1d).native
+            aa.Array1D(values=arr, mask=mask_1d).native
             for arr, mask_1d in zip(arr_list, mask_1d_list)
-        ]
-
-        return [
-            np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
-            for region in self.region_list_from(pixels=pixels)
         ]
 
     def stacked_array_1d_from(
@@ -96,7 +91,7 @@ class Extract1D:
         which therefore quantify the goodness-of-fit of a CTI model.
 
         Parameters
-    ----------
+        ----------
         array
             The 1D array which contains the line dataset from which the regions (e.g. the FPRs) are extracted and
             stacked.
@@ -116,8 +111,8 @@ class Extract1D:
             array.mask[region.slice] for region in self.region_list_from(pixels=pixels)
         ]
 
-        return aa.Array1D.manual_mask(
-            array=np.asarray(stacked_array_1d.data),
+        return aa.Array1D(
+            values=np.asarray(stacked_array_1d.data),
             mask=sum(mask_1d_list) == len(mask_1d_list),
         ).native
 

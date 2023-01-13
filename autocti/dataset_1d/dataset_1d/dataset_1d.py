@@ -26,9 +26,9 @@ class Dataset1D(aa.AbstractDataset):
 
     def apply_mask(self, mask: aa.Mask1D) -> "Dataset1D":
 
-        data = aa.Array1D.manual_mask(array=self.data, mask=mask).native
-        noise_map = aa.Array1D.manual_mask(
-            array=self.noise_map.astype("float"), mask=mask
+        data = aa.Array1D(values=self.data, mask=mask).native
+        noise_map = aa.Array1D(
+            values=self.noise_map.astype("float"), mask=mask
         ).native
 
         return Dataset1D(
@@ -64,11 +64,11 @@ class Dataset1D(aa.AbstractDataset):
         if noise_map_path is not None:
             noise_map = aa.util.array_1d.numpy_array_1d_via_fits_from(
                 file_path=noise_map_path, hdu=noise_map_hdu
-            )
+            ).astype("float")
         else:
             noise_map = np.ones(data.shape_native) * noise_map_from_single_value
 
-        noise_map = aa.Array1D.manual_native(array=noise_map, pixel_scales=pixel_scales)
+        noise_map = aa.Array1D.no_mask(values=noise_map, pixel_scales=pixel_scales)
 
         if pre_cti_data_path is not None and pre_cti_data is None:
             pre_cti_data = aa.Array1D.from_fits(
@@ -81,8 +81,8 @@ class Dataset1D(aa.AbstractDataset):
                 "Cannot estimate pre_cti_data data from non-uniform charge injectiono pattern"
             )
 
-        pre_cti_data = aa.Array1D.manual_native(
-            array=pre_cti_data.native, pixel_scales=pixel_scales
+        pre_cti_data = aa.Array1D.no_mask(
+            values=pre_cti_data.native, pixel_scales=pixel_scales
         )
 
         return Dataset1D(
@@ -165,7 +165,7 @@ class Dataset1D(aa.AbstractDataset):
         def make_array(data):
             array = np.zeros(size)
             array[serial_distance : serial_distance + len(data)] = data
-            return aa.Array1D.manual_slim(array, pixel_scales=0.1)
+            return aa.Array1D.no_mask(array, pixel_scales=0.1)
 
         return Dataset1D(
             data=make_array(pixel_line_dict["data"]),
