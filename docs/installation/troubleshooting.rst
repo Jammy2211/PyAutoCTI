@@ -98,7 +98,7 @@ that, when you run an example script, you should run it from the ``autocti_works
 .. code-block:: bash
 
     cd path/to/autocti_workspace (if you are not already in the autocti_workspace).
-    python3 examples/model/beginner/mass_total__source_parametric.py
+    python3 examples/model/beginner/mass_total__source_lp.py
 
 The reasons for this are so that **PyAutoCTI** can:
 

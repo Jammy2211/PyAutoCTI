@@ -171,8 +171,6 @@ class Clocker2D(AbstractClocker):
             and release electrons and the volume-filling behaviour of the CCD for parallel and serial clocking.
         """
 
-        data = data.native
-
         if self.parallel_poisson_traps:
             return self.add_cti_poisson_traps(data=data, cti=cti)
 
@@ -181,6 +179,8 @@ class Clocker2D(AbstractClocker):
 
         if self.serial_fast_mode:
             return self.add_cti_serial_fast(data=data, cti=cti, preloads=preloads)
+
+        data = data.native_skip_mask
 
         parallel_trap_list, parallel_ccd = self._parallel_traps_ccd_from(cti=cti)
         serial_trap_list, serial_ccd = self._serial_traps_ccd_from(cti=cti)
@@ -264,7 +264,7 @@ class Clocker2D(AbstractClocker):
         except AttributeError:
             parallel_window_offset = self.parallel_window_offset
 
-        image_pre_cti = data.native
+        image_pre_cti = data.native_skip_mask
         image_post_cti = np.zeros(data.shape_native)
 
         total_rows = image_post_cti.shape[0]
@@ -426,7 +426,7 @@ class Clocker2D(AbstractClocker):
 
         parallel_trap_list, parallel_ccd = self._parallel_traps_ccd_from(cti=cti)
 
-        image_pre_cti = data.native
+        image_pre_cti = data.native_skip_mask
 
         self.check_traps(trap_list_0=parallel_trap_list)
         self.check_ccd(ccd_list=[parallel_ccd])
@@ -525,7 +525,7 @@ class Clocker2D(AbstractClocker):
 
         serial_trap_list, serial_ccd = self._serial_traps_ccd_from(cti=cti)
 
-        image_pre_cti = data.native
+        image_pre_cti = data.native_skip_mask
 
         self.check_traps(trap_list_0=serial_trap_list)
         self.check_ccd(ccd_list=[serial_ccd])

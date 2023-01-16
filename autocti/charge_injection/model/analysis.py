@@ -98,6 +98,10 @@ class AnalysisImagingCI(af.Analysis):
 
                 self.preloads.noise_normalization = noise_normalization
 
+                logger.info(
+                    "PRELOADS - Noise Normalization preloaded for model-fit (noise-map is fixed)."
+                )
+
             if not os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
 
                 visualizer = VisualizerImagingCI(visualize_path=paths.image_path)

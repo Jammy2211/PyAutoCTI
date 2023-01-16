@@ -166,7 +166,7 @@ class ImagingCI(aa.Imaging):
         pre_cti_data=None,
         cosmic_ray_map_path=None,
         cosmic_ray_map_hdu=0,
-    ):
+    ) -> "ImagingCI":
 
         if image_path is not None and image is None:
 
