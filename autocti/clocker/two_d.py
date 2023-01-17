@@ -441,7 +441,7 @@ class Clocker2D(AbstractClocker):
             fast_index_list = preloads.parallel_fast_index_list
             fast_column_lists = preloads.parallel_fast_column_lists
 
-        image_pre_cti_pass = np.zeros(shape=(data.shape[0], len(fast_index_list)))
+        image_pre_cti_pass = np.zeros(shape=(data.shape_native[0], len(fast_index_list)))
         for i, fast_index in enumerate(fast_index_list):
             image_pre_cti_pass[:, i] = image_pre_cti[:, fast_index]
 
@@ -540,7 +540,7 @@ class Clocker2D(AbstractClocker):
             fast_index_list = preloads.serial_fast_index_list
             fast_row_lists = preloads.serial_fast_row_lists
 
-        image_pre_cti_pass = np.zeros(shape=(len(fast_index_list), data.shape[1]))
+        image_pre_cti_pass = np.zeros(shape=(len(fast_index_list), data.shape_native[1]))
         for i, fast_index in enumerate(fast_index_list):
             image_pre_cti_pass[i, :] = image_pre_cti[fast_index, :]
 
