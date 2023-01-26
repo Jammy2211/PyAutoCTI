@@ -19,6 +19,7 @@ logger = logging.getLogger(__name__)
 
 logger.setLevel(level="INFO")
 
+
 class AnalysisImagingCI(af.Analysis):
     def __init__(
         self, dataset: ImagingCI, clocker: Clocker2D, settings_cti=SettingsCTI2D()
@@ -187,7 +188,7 @@ class AnalysisImagingCI(af.Analysis):
             dataset=imaging_ci,
             post_cti_data=post_cti_data,
             hyper_noise_scalar_dict=hyper_noise_scalar_dict,
-            preloads=self.preloads
+            preloads=self.preloads,
         )
 
     def fit_via_instance_from(

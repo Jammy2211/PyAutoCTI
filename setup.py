@@ -38,7 +38,7 @@ setup(
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
     ],
-    python_requires='>=3.7',
+    python_requires=">=3.7",
     keywords="cli",
     packages=find_packages(exclude=["docs", "test_autocti", "test_autocti*"]),
     install_requires=requirements,

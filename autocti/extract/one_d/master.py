@@ -172,64 +172,64 @@ class Extract1DMaster:
         eper_pixels: Tuple[int, int] = None,
     ) -> aa.Array1D:
         """
-        Extract all of the data values in an input `array1D` corresponding to the parallel front edges and trails of
-        each the charge-injection region.
+            Extract all of the data values in an input `array1D` corresponding to the parallel front edges and trails of
+            each the charge-injection region.
 
-        One can specify the range of rows that are extracted, for example:
+            One can specify the range of rows that are extracted, for example:
 
-        fpr_pixels = (0, 1) will extract just the first leading front edge row.
-        fpr_pixels = (0, 2) will extract the leading two front edge rows.
-        trails_pixels = (0, 1) will extract the first row of trails closest to the charge injection region.
+            fpr_pixels = (0, 1) will extract just the first leading front edge row.
+            fpr_pixels = (0, 2) will extract the leading two front edge rows.
+            trails_pixels = (0, 1) will extract the first row of trails closest to the charge injection region.
 
-        The diagram below illustrates the arrays that are extracted from the input array for `fpr_pixels=(0,1)`
-        and `trails_pixels=(0,1)`:
+            The diagram below illustrates the arrays that are extracted from the input array for `fpr_pixels=(0,1)`
+            and `trails_pixels=(0,1)`:
 
-        ---KEY---
-        ---------
+            ---KEY---
+            ---------
 
-        [] = read-out electronics   [==========] = read-out register
+            [] = read-out electronics   [==========] = read-out register
 
-        [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
-        [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
-        [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
+            [xxxxxxxxxx]                [..........] = serial prescan       [ssssssssss] = serial overscan
+            [xxxxxxxxxx] = CCDPhase panel    [pppppppppp] = parallel overscan    [cccccccccc] = charge injection region
+            [xxxxxxxxxx]                [tttttttttt] = parallel / serial charge injection region trail
 
-        P = Parallel Direction      S = Serial Direction
+            P = Parallel Direction      S = Serial Direction
 
-               [tptpptptptpptpptpptpt]
-               [tptptptpptpttptptptpt]
-          [...][ttttttttttttttttttttt][sss]
-          [...][ccccccccccccccccccccc][sss]
-        | [...][ccccccccccccccccccccc][sss]    |
-        | [...][ttttttttttttttttttttt][sss]    | Direction
-        P [...][ttttttttttttttttttttt][sss]    | of
-        | [...][ccccccccccccccccccccc][sss]    | clocking
-          [...][ccccccccccccccccccccc][sss]    |
+                   [tptpptptptpptpptpptpt]
+                   [tptptptpptpttptptptpt]
+              [...][ttttttttttttttttttttt][sss]
+              [...][ccccccccccccccccccccc][sss]
+            | [...][ccccccccccccccccccccc][sss]    |
+            | [...][ttttttttttttttttttttt][sss]    | Direction
+            P [...][ttttttttttttttttttttt][sss]    | of
+            | [...][ccccccccccccccccccccc][sss]    | clocking
+              [...][ccccccccccccccccccccc][sss]    |
 
-        []     [=====================]
-               <---------S----------
+            []     [=====================]
+                   <---------S----------
 
-        The extracted array keeps just the leading edges and trails following all charge injection scans and
-        replaces all other values with 0s:
+            The extracted array keeps just the leading edges and trails following all charge injection scans and
+            replaces all other values with 0s:
 
-               [000000000000000000000]
-               [000000000000000000000]
-          [000][ttttttttttttttttttttt][000]
-          [000][000000000000000000000][000]
-        | [000][ccccccccccccccccccccc][000]    |
-        | [000][000000000000000000000][000]    | Direction
-        P [000][ttttttttttttttttttttt][000]    | of
-        | [000][000000000000000000000][000]    | clocking
-          [000][ccccccccccccccccccccc][000]    |
+                   [000000000000000000000]
+                   [000000000000000000000]
+              [000][ttttttttttttttttttttt][000]
+              [000][000000000000000000000][000]
+            | [000][ccccccccccccccccccccc][000]    |
+            | [000][000000000000000000000][000]    | Direction
+            P [000][ttttttttttttttttttttt][000]    | of
+            | [000][000000000000000000000][000]    | clocking
+              [000][ccccccccccccccccccccc][000]    |
 
-        []     [=====================]
-               <---------S----------
+            []     [=====================]
+                   <---------S----------
 
-        Parameters
-    ----------
-        fpr_pixels
-            The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows).
-        trails_pixels
-            The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
+            Parameters
+        ----------
+            fpr_pixels
+                The row indexes to extract the front edge between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows).
+            trails_pixels
+                The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
         array_1d_of_edges_and_eper = array.native.copy() * 0.0
 

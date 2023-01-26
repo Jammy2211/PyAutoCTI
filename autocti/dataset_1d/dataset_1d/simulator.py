@@ -128,9 +128,7 @@ class SimulatorDataset1D(SimulatorImaging):
             ).native
 
         return Dataset1D(
-            data=aa.Array1D.no_mask(
-                values=data.native, pixel_scales=self.pixel_scales
-            ),
+            data=aa.Array1D.no_mask(values=data.native, pixel_scales=self.pixel_scales),
             noise_map=aa.Array1D.no_mask(
                 values=noise_map, pixel_scales=self.pixel_scales
             ),

@@ -86,7 +86,7 @@ class FitImagingCI(aa.FitImaging):
             data=self.dataset.data,
             noise_map=self.noise_map,
             mask=self.mask,
-            model_data=self.model_data
+            model_data=self.model_data,
         )
 
     @property
@@ -98,7 +98,7 @@ class FitImagingCI(aa.FitImaging):
         """
 
         if self.preloads.noise_normalization is not None:
-           return self.preloads.noise_normalization
+            return self.preloads.noise_normalization
 
         return aa.util.fit.noise_normalization_with_mask_from(
             noise_map=self.noise_map, mask=self.mask

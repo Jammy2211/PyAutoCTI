@@ -84,9 +84,7 @@ class ImagingCI(aa.Imaging):
 
         if self.cosmic_ray_map is not None:
 
-            cosmic_ray_map = aa.Array2D(
-            values=self.cosmic_ray_map.native, mask=mask
-            )
+            cosmic_ray_map = aa.Array2D(values=self.cosmic_ray_map.native, mask=mask)
 
         else:
 
@@ -185,7 +183,9 @@ class ImagingCI(aa.Imaging):
         else:
             ci_noise_map = np.ones(ci_image.shape_native) * noise_map_from_single_value
 
-        ci_noise_map = aa.Array2D.no_mask(values=ci_noise_map, pixel_scales=pixel_scales)
+        ci_noise_map = aa.Array2D.no_mask(
+            values=ci_noise_map, pixel_scales=pixel_scales
+        )
 
         if pre_cti_data_path is not None and pre_cti_data is None:
             pre_cti_data = aa.Array2D.from_fits(

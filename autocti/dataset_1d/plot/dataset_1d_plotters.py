@@ -132,6 +132,8 @@ class Dataset1DPlotter(Plotter):
         noise_map: bool = False,
         pre_cti_data: bool = False,
         signal_to_noise_map: bool = False,
+        data_with_noise_map : bool = False,
+        data_with_noise_map_logy: bool = False,
     ):
         """
         Plots the individual attributes of the plotter's `Dataset1D` object in 1D.
@@ -169,8 +171,8 @@ class Dataset1DPlotter(Plotter):
                 x=range(len(y)),
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title=f"Image {region}",
-                    ylabel="Image",
+                    title=f"Data 1D {region}",
+                    ylabel="Data (e-)",
                     xlabel="Pixel No.",
                     filename=f"data_{region}",
                 ),
@@ -185,7 +187,7 @@ class Dataset1DPlotter(Plotter):
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
                     title=f"Noise Map {region}",
-                    ylabel="Image",
+                    ylabel="Noise (e-)",
                     xlabel="Pixel No.",
                     filename=f"noise_map_{region}",
                 ),
@@ -200,7 +202,7 @@ class Dataset1DPlotter(Plotter):
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
                     title=f"CI Pre CTI {region}",
-                    ylabel="Image",
+                    ylabel="Pre CTI Data (e-)",
                     xlabel="Pixel No.",
                     filename=f"pre_cti_data_{region}",
                 ),
@@ -217,9 +219,47 @@ class Dataset1DPlotter(Plotter):
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
                     title=f"Signal To Noise Map {region}",
-                    ylabel="Image",
+                    ylabel="Signal To Noise (e-)",
                     xlabel="Pixel No.",
                     filename=f"signal_to_noise_map_{region}",
+                ),
+            )
+
+        if data_with_noise_map:
+
+            y = self.extract_region_from(array=self.dataset.data, region=region)
+            y_errors = self.extract_region_from(array=self.dataset.noise_map, region=region)
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                plot_axis_type_override="errorbar",
+                y_errors=y_errors,
+                visuals_1d=self.get_visuals_1d(),
+                auto_labels=AutoLabels(
+                    title=f"Data 1D With Noise {region}",
+                    ylabel="Data (e-)",
+                    xlabel="Pixel No.",
+                    filename=f"data_with_noise_map_{region}",
+                ),
+            )
+
+        if data_with_noise_map_logy:
+
+            y = self.extract_region_from(array=self.dataset.data, region=region)
+            y_errors = self.extract_region_from(array=self.dataset.noise_map, region=region)
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                plot_axis_type_override="errorbar_logy",
+                y_errors=y_errors,
+                visuals_1d=self.get_visuals_1d(),
+                auto_labels=AutoLabels(
+                    title=f"Data 1D With Noise {region} (log10 y axis)",
+                    ylabel="Data (e-)",
+                    xlabel="Pixel No.",
+                    filename=f"data_with_noise_map_logy_{region}",
                 ),
             )
 

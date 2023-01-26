@@ -9,17 +9,17 @@ from autocti.extract.one_d.abstract import Extract1D
 class Extract1DEPER(Extract1D):
     def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region1D]:
         """
-        Returns a list of the (x0, x1) regions containing the EPERs of a 1D CTI dataset.
+            Returns a list of the (x0, x1) regions containing the EPERs of a 1D CTI dataset.
 
-        These are used for extracting the EPER regions of 1D data.
+            These are used for extracting the EPER regions of 1D data.
 
-        Negative pixel values are supported to the `pixels` tuple, whereby pixels in front of the EPERs (e.g.
-        the FPR) are also extracted.
+            Negative pixel values are supported to the `pixels` tuple, whereby pixels in front of the EPERs (e.g.
+            the FPR) are also extracted.
 
-        Parameters
-    ----------
-        pixels
-            The row indexes to extract the trails between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
+            Parameters
+        ----------
+            pixels
+                The row indexes to extract the trails between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
         """
 
         return list(
