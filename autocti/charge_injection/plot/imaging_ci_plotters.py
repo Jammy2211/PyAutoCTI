@@ -81,6 +81,10 @@ class ImagingCIPlotter(Plotter):
     def extract_region_from(self) -> Callable:
         return self.imaging.layout.extract_region_from
 
+    @property
+    def extract_region_noise_map_from(self) -> Callable:
+        return self.imaging.layout.extract_region_noise_map_from
+
     def figures_2d(
         self,
         image: bool = False,
@@ -259,7 +263,7 @@ class ImagingCIPlotter(Plotter):
         if data_with_noise_map:
 
             y = self.extract_region_from(array=self.dataset.data, region=region)
-            y_errors = self.extract_region_from(array=self.dataset.noise_map, region=region)
+            y_errors = self.extract_region_noise_map_from(array=self.dataset.noise_map, region=region)
 
             self.mat_plot_1d.plot_yx(
                 y=y,
@@ -278,7 +282,7 @@ class ImagingCIPlotter(Plotter):
         if data_with_noise_map_logy:
 
             y = self.extract_region_from(array=self.dataset.data, region=region)
-            y_errors = self.extract_region_from(array=self.dataset.noise_map, region=region)
+            y_errors = self.extract_region_noise_map_from(array=self.dataset.noise_map, region=region)
 
             self.mat_plot_1d.plot_yx(
                 y=y,

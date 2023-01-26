@@ -12,3 +12,5 @@ plots:
   fit:
     post_cti_data: false
     pre_cti_data: false
+    data_with_noise_map_model: true
+    data_with_noise_map_model_logy: true
