@@ -66,21 +66,21 @@ class FitDataset1DPlotter(Plotter):
         Parameters
         ----------
         image
-            Whether or not to make a 1D plot (via `plot`) of the image data.
+            Whether to make a 1D plot (via `plot`) of the image data.
         noise_map
-            Whether or not to make a 1D plot (via `plot`) of the noise map.
+            Whether to make a 1D plot (via `plot`) of the noise map.
         signal_to_noise_map
-            Whether or not to make a 1D plot (via `plot`) of the signal-to-noise map.
+            Whether to make a 1D plot (via `plot`) of the signal-to-noise map.
         pre_cti_data
-            Whether or not to make a 1D plot (via `plot`) of the pre-cti data.
+            Whether to make a 1D plot (via `plot`) of the pre-cti data.
         post_cti_data
-            Whether or not to make a 1D plot (via `plot`) of the post-cti data.
+            Whether to make a 1D plot (via `plot`) of the post-cti data.
         residual_map
-            Whether or not to make a 1D plot (via `plot`) of the residual map.
+            Whether to make a 1D plot (via `plot`) of the residual map.
         normalized_residual_map
-            Whether or not to make a 1D plot (via `plot`) of the normalized residual map.
+            Whether to make a 1D plot (via `plot`) of the normalized residual map.
         chi_squared_map
-            Whether or not to make a 1D plot (via `plot`) of the chi-squared map.
+            Whether to make a 1D plot (via `plot`) of the chi-squared map.
         """
         if data:
 

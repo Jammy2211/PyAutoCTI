@@ -72,14 +72,14 @@ class Dataset1DPlotter(Plotter):
 
         Parameters
         ----------
-        image
-            Whether or not to make a 1D plot (via `plot`) of the data.
+        data
+            Whether to make a 1D plot (via `plot`) of the data.
         noise_map
-            Whether or not to make a 1D plot (via `plot`) of the noise map.
+            Whether to make a 1D plot (via `plot`) of the noise map.
         signal_to_noise_map
-            Whether or not to make a 1D plot (via `plot`) of the signal-to-noise map.
+            Whether to make a 1D plot (via `plot`) of the signal-to-noise map.
         pre_cti_data
-            Whether or not to make a 1D plot (via `plot`) of the pre-cti data.
+            Whether to make a 1D plot (via `plot`) of the pre-cti data.
         """
 
         if data:
@@ -139,9 +139,9 @@ class Dataset1DPlotter(Plotter):
         Plots the individual attributes of the plotter's `Dataset1D` object in 1D.
 
         These 1D plots correspond to regions in 1D on the charge injection image, which are binned up to produce a
-         1D plot.
+        1D plot.
 
-         For example, for the input `region=fpr`, this function extracts the FPR over each charge region and bins them
+        For example, for the input `region=fpr`, this function extracts the FPR over each charge region and bins them
         such that the 1D plot shows the average FPR.
 
         The API is such that every plottable attribute of the `Dataset1D` object is an input parameter of type bool of
@@ -151,15 +151,21 @@ class Dataset1DPlotter(Plotter):
         ----------
         region
             The region on the 1D dataset where data is extracted and binned {fpr", "eper"}
-        image
-            Whether or not to make a 1D plot (via `plot`) of the image data extracted and binned over the region.
+        data
+            Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region.
         noise_map
-            Whether or not to make a 1D plot (via `plot`) of the noise-map extracted and binned over the region.
+            Whether to make a 1D plot (via `plot`) of the noise-map extracted and binned over the region.
         pre_cti_data
-            Whether or not to make a 1D plot (via `plot`) of the pre-cti data extracted and binned over the region.
+            Whether to make a 1D plot (via `plot`) of the pre-cti data extracted and binned over the region.
         signal_to_noise_map
-            Whether or not to make a 1D plot (via `plot`) of the signal-to-noise map data extracted and binned over
+            Whether to make a 1D plot (via `plot`) of the signal-to-noise map data extracted and binned over
             the region.
+        data_with_noise_map
+            Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
+            noise-map values included as error bars.
+        data_with_noise_map_logy
+            Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
+            noise-map values included as error bars and the y-axis on a log10 scale.
         """
 
         if data:
@@ -279,7 +285,7 @@ class Dataset1DPlotter(Plotter):
 
         Parameters
         ----------
-        image
+        data
             Whether or not to include a 1D plot (via `plot`) of the data.
         noise_map
             Whether or not to include a 1D plot (via `plot`) of the noise map.

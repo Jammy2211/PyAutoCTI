@@ -52,6 +52,8 @@ class VisualizerImagingCI(Visualizer):
             noise_map=should_plot("noise_map"),
             signal_to_noise_map=should_plot("signal_to_noise_map"),
             pre_cti_data=should_plot("pre_cti_data"),
+            data_with_noise_map=should_plot("data_with_noise_map"),
+            data_with_noise_map_logy=should_plot("data_with_noise_map_logy"),
         )
 
     def visualize_fit_ci(self, fit, during_analysis):

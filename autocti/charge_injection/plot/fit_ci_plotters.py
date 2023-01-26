@@ -97,21 +97,21 @@ class FitImagingCIPlotter(Plotter):
         Parameters
         ----------
         image
-            Whether or not to make a 2D plot (via `imshow`) of the image data.
+            Whether to make a 2D plot (via `imshow`) of the image data.
         noise_map
-            Whether or not to make a 2D plot (via `imshow`) of the noise map.
+            Whether to make a 2D plot (via `imshow`) of the noise map.
         signal_to_noise_map
-            Whether or not to make a 2D plot (via `imshow`) of the signal-to-noise map.
+            Whether to make a 2D plot (via `imshow`) of the signal-to-noise map.
         pre_cti_data
-            Whether or not to make a 2D plot (via `imshow`) of the pre-cti data.
+            Whether to make a 2D plot (via `imshow`) of the pre-cti data.
         post_cti_data
-            Whether or not to make a 2D plot (via `imshow`) of the post-cti data.
+            Whether to make a 2D plot (via `imshow`) of the post-cti data.
         residual_map
-            Whether or not to make a 2D plot (via `imshow`) of the residual map.
+            Whether to make a 2D plot (via `imshow`) of the residual map.
         normalized_residual_map
-            Whether or not to make a 2D plot (via `imshow`) of the normalized residual map.
+            Whether to make a 2D plot (via `imshow`) of the normalized residual map.
         chi_squared_map
-            Whether or not to make a 2D plot (via `imshow`) of the chi-squared map.
+            Whether to make a 2D plot (via `imshow`) of the chi-squared map.
         """
         self._fit_imaging_meta_plotter.figures_2d(
             image=image,
@@ -171,24 +171,24 @@ class FitImagingCIPlotter(Plotter):
             The region on the charge injection image where data is extracted and binned over the parallel or serial
             direction {"parallel_fpr", "parallel_eper", "serial_fpr", "serial_eper"}
         image
-            Whether or not to make a 1D plot (via `plot`) of the image data extracted and binned over the region.
+            Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region.
         noise_map
-            Whether or not to make a 1D plot (via `plot`) of the noise-map extracted and binned over the region.
+            Whether to make a 1D plot (via `plot`) of the noise-map extracted and binned over the region.
         signal_to_noise_map
-            Whether or not to make a 1D plot (via `plot`) of the signal-to-noise map data extracted and binned over
+            Whether to make a 1D plot (via `plot`) of the signal-to-noise map data extracted and binned over
             the region.
         pre_cti_data
-            Whether or not to make a 1D plot (via `plot`) of the pre-cti data extracted and binned over the region.
+            Whether to make a 1D plot (via `plot`) of the pre-cti data extracted and binned over the region.
         post_cti_data
-            Whether or not to make a 1D plot (via `plot`) of the post-cti data extracted and binned over the
+            Whether to make a 1D plot (via `plot`) of the post-cti data extracted and binned over the
             region.
         residual_map
-            Whether or not to make a 1D plot (via `plot`) of the residual map extracted and binned over the region.
+            Whether to make a 1D plot (via `plot`) of the residual map extracted and binned over the region.
         normalized_residual_map
-            Whether or not to make a 1D plot (via `plot`) of the normalized residual map extracted and binned over the
+            Whether to make a 1D plot (via `plot`) of the normalized residual map extracted and binned over the
             region.
         chi_squared_map
-            Whether or not to make a 1D plot (via `plot`) of the chi-squared map extracted and binned over the
+            Whether to make a 1D plot (via `plot`) of the chi-squared map extracted and binned over the
             region.
         """
         if image:

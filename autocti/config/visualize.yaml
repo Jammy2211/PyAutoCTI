@@ -7,6 +7,8 @@ plots:
   dataset:
     cosmic_ray_map: false
     pre_cti_data: false
+    data_with_noise_map: false
+    data_with_noise_map_logy: false
   fit:
     post_cti_data: false
     pre_cti_data: false
