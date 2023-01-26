@@ -226,7 +226,9 @@ class Clocker2D(AbstractClocker):
         )
 
         try:
-            return aa.Array2D(values=image_post_cti, mask=data.mask, store_native=True, skip_mask=True)
+            return aa.Array2D(
+                values=image_post_cti, mask=data.mask, store_native=True, skip_mask=True
+            )
         except AttributeError:
             return image_post_cti
 
@@ -324,7 +326,9 @@ class Clocker2D(AbstractClocker):
         )
 
         try:
-            return aa.Array2D(values=image_post_cti, mask=data.mask, store_native=True, skip_mask=True)
+            return aa.Array2D(
+                values=image_post_cti, mask=data.mask, store_native=True, skip_mask=True
+            )
         except AttributeError:
             return image_post_cti
 
@@ -441,7 +445,9 @@ class Clocker2D(AbstractClocker):
             fast_index_list = preloads.parallel_fast_index_list
             fast_column_lists = preloads.parallel_fast_column_lists
 
-        image_pre_cti_pass = np.zeros(shape=(data.shape_native[0], len(fast_index_list)))
+        image_pre_cti_pass = np.zeros(
+            shape=(data.shape_native[0], len(fast_index_list))
+        )
         for i, fast_index in enumerate(fast_index_list):
             image_pre_cti_pass[:, i] = image_pre_cti[:, fast_index]
 
@@ -467,7 +473,9 @@ class Clocker2D(AbstractClocker):
                 image_post_cti[:, fast_column] = image_post_cti_pass[:, i]
 
         if cti.serial_trap_list is None:
-            return aa.Array2D(values=image_post_cti, mask=data.mask, store_native=True, skip_mask=True)
+            return aa.Array2D(
+                values=image_post_cti, mask=data.mask, store_native=True, skip_mask=True
+            )
 
         serial_trap_list, serial_ccd = self._serial_traps_ccd_from(cti=cti)
 
@@ -490,7 +498,9 @@ class Clocker2D(AbstractClocker):
             verbosity=self.verbosity,
         )
 
-        return aa.Array2D(values=image_post_cti, mask=data.mask, store_native=True, skip_mask=True)
+        return aa.Array2D(
+            values=image_post_cti, mask=data.mask, store_native=True, skip_mask=True
+        )
 
     def add_cti_serial_fast(
         self, data: aa.Array2D, cti: CTI2D, preloads: Preloads = Preloads()
@@ -540,7 +550,9 @@ class Clocker2D(AbstractClocker):
             fast_index_list = preloads.serial_fast_index_list
             fast_row_lists = preloads.serial_fast_row_lists
 
-        image_pre_cti_pass = np.zeros(shape=(len(fast_index_list), data.shape_native[1]))
+        image_pre_cti_pass = np.zeros(
+            shape=(len(fast_index_list), data.shape_native[1])
+        )
         for i, fast_index in enumerate(fast_index_list):
             image_pre_cti_pass[i, :] = image_pre_cti[fast_index, :]
 
@@ -565,7 +577,9 @@ class Clocker2D(AbstractClocker):
 
                 image_post_cti[fast_row, :] = image_post_cti_pass[i, :]
 
-        return aa.Array2D(values=image_post_cti, mask=data.mask, store_native=True, skip_mask=True)
+        return aa.Array2D(
+            values=image_post_cti, mask=data.mask, store_native=True, skip_mask=True
+        )
 
     def remove_cti(self, data: aa.Array2D, cti: CTI2D) -> aa.Array2D:
         """
@@ -623,5 +637,9 @@ class Clocker2D(AbstractClocker):
         )
 
         return aa.Array2D(
-            values=image_cti_removed, mask=data.mask, header=data.header, store_native=True, skip_mask=True
+            values=image_cti_removed,
+            mask=data.mask,
+            header=data.header,
+            store_native=True,
+            skip_mask=True,
         )

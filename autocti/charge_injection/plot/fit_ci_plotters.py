@@ -77,6 +77,10 @@ class FitImagingCIPlotter(Plotter):
     def extract_region_from(self) -> Callable:
         return self.fit.imaging_ci.layout.extract_region_from
 
+    @property
+    def extract_region_noise_map_from(self) -> Callable:
+        return self.fit.imaging_ci.layout.extract_region_noise_map_from
+
     def figures_2d(
         self,
         image: bool = False,
@@ -97,21 +101,21 @@ class FitImagingCIPlotter(Plotter):
         Parameters
         ----------
         image
-            Whether or not to make a 2D plot (via `imshow`) of the image data.
+            Whether to make a 2D plot (via `imshow`) of the image data.
         noise_map
-            Whether or not to make a 2D plot (via `imshow`) of the noise map.
+            Whether to make a 2D plot (via `imshow`) of the noise map.
         signal_to_noise_map
-            Whether or not to make a 2D plot (via `imshow`) of the signal-to-noise map.
+            Whether to make a 2D plot (via `imshow`) of the signal-to-noise map.
         pre_cti_data
-            Whether or not to make a 2D plot (via `imshow`) of the pre-cti data.
+            Whether to make a 2D plot (via `imshow`) of the pre-cti data.
         post_cti_data
-            Whether or not to make a 2D plot (via `imshow`) of the post-cti data.
+            Whether to make a 2D plot (via `imshow`) of the post-cti data.
         residual_map
-            Whether or not to make a 2D plot (via `imshow`) of the residual map.
+            Whether to make a 2D plot (via `imshow`) of the residual map.
         normalized_residual_map
-            Whether or not to make a 2D plot (via `imshow`) of the normalized residual map.
+            Whether to make a 2D plot (via `imshow`) of the normalized residual map.
         chi_squared_map
-            Whether or not to make a 2D plot (via `imshow`) of the chi-squared map.
+            Whether to make a 2D plot (via `imshow`) of the chi-squared map.
         """
         self._fit_imaging_meta_plotter.figures_2d(
             image=image,
@@ -153,6 +157,8 @@ class FitImagingCIPlotter(Plotter):
         residual_map: bool = False,
         normalized_residual_map: bool = False,
         chi_squared_map: bool = False,
+        data_with_noise_map_model: bool = False,
+        data_with_noise_map_model_logy: bool = False,
     ):
         """
         Plots the individual attributes of the plotter's `FitImagingCI` object in 1D.
@@ -171,25 +177,31 @@ class FitImagingCIPlotter(Plotter):
             The region on the charge injection image where data is extracted and binned over the parallel or serial
             direction {"parallel_fpr", "parallel_eper", "serial_fpr", "serial_eper"}
         image
-            Whether or not to make a 1D plot (via `plot`) of the image data extracted and binned over the region.
+            Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region.
         noise_map
-            Whether or not to make a 1D plot (via `plot`) of the noise-map extracted and binned over the region.
+            Whether to make a 1D plot (via `plot`) of the noise-map extracted and binned over the region.
         signal_to_noise_map
-            Whether or not to make a 1D plot (via `plot`) of the signal-to-noise map data extracted and binned over
+            Whether to make a 1D plot (via `plot`) of the signal-to-noise map data extracted and binned over
             the region.
         pre_cti_data
-            Whether or not to make a 1D plot (via `plot`) of the pre-cti data extracted and binned over the region.
+            Whether to make a 1D plot (via `plot`) of the pre-cti data extracted and binned over the region.
         post_cti_data
-            Whether or not to make a 1D plot (via `plot`) of the post-cti data extracted and binned over the
+            Whether to make a 1D plot (via `plot`) of the post-cti data extracted and binned over the
             region.
         residual_map
-            Whether or not to make a 1D plot (via `plot`) of the residual map extracted and binned over the region.
+            Whether to make a 1D plot (via `plot`) of the residual map extracted and binned over the region.
         normalized_residual_map
-            Whether or not to make a 1D plot (via `plot`) of the normalized residual map extracted and binned over the
+            Whether to make a 1D plot (via `plot`) of the normalized residual map extracted and binned over the
             region.
         chi_squared_map
-            Whether or not to make a 1D plot (via `plot`) of the chi-squared map extracted and binned over the
+            Whether to make a 1D plot (via `plot`) of the chi-squared map extracted and binned over the
             region.
+        data_with_noise_map_model
+            Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
+            noise-map values included as error bars and the model-fit overlaid.
+        data_with_noise_map_model_logy
+            Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
+            noise-map values included as error bars and the y-axis on a log10 scale and the model-fit overlaid.
         """
         if image:
 
@@ -320,6 +332,48 @@ class FitImagingCIPlotter(Plotter):
                     ylabel="Image",
                     xlabel="Pixel No.",
                     filename=f"chi_squared_map_{region}",
+                ),
+            )
+
+        if data_with_noise_map_model:
+
+            y = self.extract_region_from(array=self.fit.data, region=region)
+            y_errors = self.extract_region_noise_map_from(array=self.fit.noise_map, region=region)
+            y_extra = self.extract_region_from(array=self.fit.model_data, region=region)
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                plot_axis_type_override="errorbar",
+                y_errors=y_errors,
+                y_extra=y_extra,
+                visuals_1d=self.visuals_1d,
+                auto_labels=AutoLabels(
+                    title=f"Data 1D With Noise & Model-Fit [{region}]",
+                    ylabel="Data (e-)",
+                    xlabel="Pixel No.",
+                    filename=f"data_with_noise_map_{region}",
+                ),
+            )
+
+        if data_with_noise_map_model_logy:
+
+            y = self.extract_region_from(array=self.fit.data, region=region)
+            y_errors = self.extract_region_noise_map_from(array=self.fit.noise_map, region=region)
+            y_extra = self.extract_region_from(array=self.fit.model_data, region=region)
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                plot_axis_type_override="errorbar_logy",
+                y_errors=y_errors,
+                y_extra=y_extra,
+                visuals_1d=self.visuals_1d,
+                auto_labels=AutoLabels(
+                    title=f"Data 1D With Noise & Model-Fit (log10 y axis) [{region}]",
+                    ylabel="Data (e-)",
+                    xlabel="Pixel No.",
+                    filename=f"data_with_noise_map_logy_{region}",
                 ),
             )
 

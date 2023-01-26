@@ -27,9 +27,7 @@ class Dataset1D(aa.AbstractDataset):
     def apply_mask(self, mask: aa.Mask1D) -> "Dataset1D":
 
         data = aa.Array1D(values=self.data, mask=mask).native
-        noise_map = aa.Array1D(
-            values=self.noise_map.astype("float"), mask=mask
-        ).native
+        noise_map = aa.Array1D(values=self.noise_map.astype("float"), mask=mask).native
 
         return Dataset1D(
             data=data,

@@ -188,3 +188,43 @@ class Layout2D(aa.Layout2D):
             raise exc.PlottingException(
                 "The line region specified for the plotting of a line was invalid"
             )
+
+    def extract_region_noise_map_from(self, array: aa.Array2D, region: str) -> aa.Array1D:
+
+        if region == "parallel_fpr":
+            binned_noise_map_1d = self.extract.parallel_fpr.binned_array_1d_from(
+                array=array, pixels=(0, self.extract.parallel_fpr.total_rows_min)
+            )
+            binned_noise_map_1d_total_pixels = self.extract.parallel_fpr.binned_array_1d_total_pixels_from(
+                array=array, pixels=(0, self.extract.parallel_fpr.total_rows_min)
+            )
+        elif region == "parallel_eper":
+            binned_noise_map_1d = self.extract.parallel_eper.binned_array_1d_from(
+                array=array, pixels=(0, self.smallest_parallel_rows_between_ci_regions)
+            )
+            binned_noise_map_1d_total_pixels = self.extract.parallel_eper.binned_array_1d_total_pixels_from(
+                array=array, pixels=(0, self.smallest_parallel_rows_between_ci_regions)
+            )
+        elif region == "serial_fpr":
+            binned_noise_map_1d = self.extract.serial_fpr.binned_array_1d_from(
+                array=array, pixels=(0, self.extract.serial_fpr.total_columns_min)
+            )
+            binned_noise_map_1d_total_pixels = self.extract.serial_fpr.binned_array_1d_total_pixels_from(
+                array=array, pixels=(0, self.extract.serial_fpr.total_columns_min)
+            )
+        elif region == "serial_eper":
+            binned_noise_map_1d = self.extract.serial_eper.binned_array_1d_from(
+                array=array, pixels=(0, self.serial_eper_pixels)
+            )
+            binned_noise_map_1d_total_pixels = self.extract.serial_eper.binned_array_1d_total_pixels_from(
+                array=array, pixels=(0, self.serial_eper_pixels)
+            )
+        else:
+            raise exc.PlottingException(
+                "The line region specified for the plotting of a line was invalid"
+            )
+
+        binned_noise_map_1d /= np.sqrt(binned_noise_map_1d_total_pixels)
+        
+        return binned_noise_map_1d
+    

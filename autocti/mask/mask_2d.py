@@ -7,6 +7,7 @@ from autoarray import exc
 
 from autocti.layout.two_d import Layout2D
 
+
 class SettingsMask2D:
     def __init__(
         self,
