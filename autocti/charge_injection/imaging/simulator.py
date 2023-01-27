@@ -1,5 +1,6 @@
+import copy
 import numpy as np
-from typing import List, Tuple
+from typing import List
 
 import autoarray as aa
 
@@ -9,8 +10,6 @@ from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.charge_injection.layout import Layout2DCI
 from autocti.clocker.two_d import Clocker2D
 from autocti.model.model_util import CTI2D
-
-from autocti.charge_injection import ci_util
 
 from typing import Optional
 
@@ -158,7 +157,6 @@ class SimulatorImagingCI(SimulatorImaging):
         clocker: Optional[Clocker2D],
         cti: Optional[CTI2D],
         cosmic_ray_map: Optional[aa.Array2D] = None,
-        name: Optional[str] = None,
     ) -> ImagingCI:
         """Simulate a charge injection image, including effects like noises.
 
@@ -202,7 +200,6 @@ class SimulatorImagingCI(SimulatorImaging):
         clocker: Optional[Clocker2D],
         cti: Optional[CTI2D],
         cosmic_ray_map: Optional[aa.Array2D] = None,
-        name: Optional[str] = None,
     ) -> ImagingCI:
 
         pre_cti_data = pre_cti_data.native
@@ -213,7 +210,7 @@ class SimulatorImagingCI(SimulatorImaging):
         if cti is not None:
             post_cti_data = clocker.add_cti(data=pre_cti_data, cti=cti)
         else:
-            post_cti_data = pre_cti_data
+            post_cti_data = copy.copy(pre_cti_data)
 
         if cosmic_ray_map is not None:
             pre_cti_data -= cosmic_ray_map.native
@@ -231,10 +228,10 @@ class SimulatorImagingCI(SimulatorImaging):
         pre_cti_data: aa.Array2D,
         layout: Layout2DCI,
         cosmic_ray_map: Optional[aa.Array2D] = None,
-        name: Optional[str] = None,
     ) -> ImagingCI:
 
         if self.read_noise is not None:
+
             ci_image = aa.preprocess.data_with_gaussian_noise_added(
                 data=post_cti_data, sigma=self.read_noise, seed=self.noise_seed
             )
