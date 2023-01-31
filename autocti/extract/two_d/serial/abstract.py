@@ -16,6 +16,25 @@ class Extract2DSerial(Extract2D):
         """
         return 0
 
+    def _value_list_from(
+        self, array: aa.Array2D, pixels: Tuple[int, int], value_str: str
+    ):
+        median_list = []
+
+        arr_list = [
+            np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
+            for region in self.region_list_from(pixels=pixels)
+        ]
+
+        arr_stack = np.ma.stack(arr_list)
+
+        for row_index in range(arr_list[0].shape[0]):
+
+            if value_str == "median":
+                median_list.append(float(np.ma.median(arr_stack[:, row_index, :])))
+
+        return median_list
+
     def median_list_from(
         self, array: aa.Array2D, pixels: Tuple[int, int]
     ) -> List[float]:
@@ -51,20 +70,33 @@ class Extract2DSerial(Extract2D):
             FPR rows). To remove the 10 leading pixels which have lost electrons due to CTI, an input such
             as `pixels=(10, 30)` would be used.
         """
-        median_list = []
+        return self._value_list_from(array=array, pixels=pixels, value_str="median")
+
+    def _value_list_of_lists_from(
+        self, array: aa.Array2D, pixels: Tuple[int, int], value_str: str
+    ):
+
+        median_lists = []
 
         arr_list = [
             np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
             for region in self.region_list_from(pixels=pixels)
         ]
 
-        arr_stack = np.ma.stack(arr_list)
+        for array_2d in arr_list:
 
-        for row_index in range(arr_list[0].shape[0]):
+            value_list = []
 
-            median_list.append(float(np.ma.median(arr_stack[:, row_index, :])))
+            for row_index in range(array_2d.shape[0]):
 
-        return median_list
+                value = float(np.ma.median(array_2d[row_index, :]))
+
+                if value_str == "median":
+                    value_list.append(value)
+
+            median_lists.append(value_list)
+
+        return median_lists
 
     def median_list_of_lists_from(
         self, array: aa.Array2D, pixels: Tuple[int, int]
@@ -102,23 +134,6 @@ class Extract2DSerial(Extract2D):
             The row pixel index to extract the region between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
             rows of the region).
         """
-        median_lists = []
-
-        arr_list = [
-            np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
-            for region in self.region_list_from(pixels=pixels)
-        ]
-
-        for array_2d in arr_list:
-
-            value_list = []
-
-            for row_index in range(array_2d.shape[0]):
-
-                value = float(np.ma.median(array_2d[row_index, :]))
-
-                value_list.append(value)
-
-            median_lists.append(value_list)
-
-        return median_lists
+        return self._value_list_of_lists_from(
+            array=array, pixels=pixels, value_str="median"
+        )
