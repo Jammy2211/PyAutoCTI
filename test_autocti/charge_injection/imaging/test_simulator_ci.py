@@ -275,6 +275,7 @@ def test__include_cosmics__is_added_to_image_and_trailed(
 
     assert imaging.image[2, 2] > 94.0
 
+
 def test__from_pre_cti_data(parallel_clocker_2d, traps_x2, ccd):
 
     layout = ac.Layout2DCI(

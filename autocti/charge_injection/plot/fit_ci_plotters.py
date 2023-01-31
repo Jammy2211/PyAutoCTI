@@ -338,7 +338,9 @@ class FitImagingCIPlotter(Plotter):
         if data_with_noise_map_model:
 
             y = self.extract_region_from(array=self.fit.data, region=region)
-            y_errors = self.extract_region_noise_map_from(array=self.fit.noise_map, region=region)
+            y_errors = self.extract_region_noise_map_from(
+                array=self.fit.noise_map, region=region
+            )
             y_extra = self.extract_region_from(array=self.fit.model_data, region=region)
 
             self.mat_plot_1d.plot_yx(
@@ -359,7 +361,9 @@ class FitImagingCIPlotter(Plotter):
         if data_with_noise_map_model_logy:
 
             y = self.extract_region_from(array=self.fit.data, region=region)
-            y_errors = self.extract_region_noise_map_from(array=self.fit.noise_map, region=region)
+            y_errors = self.extract_region_noise_map_from(
+                array=self.fit.noise_map, region=region
+            )
             y_extra = self.extract_region_from(array=self.fit.model_data, region=region)
 
             self.mat_plot_1d.plot_yx(
