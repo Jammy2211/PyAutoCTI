@@ -219,8 +219,6 @@ def test__noise_map_non_uniform_via_lists_from():
         read_noise=1.0,
     )
 
-    print(noise_map.native)
-
     assert noise_map.native == pytest.approx(
         np.array(
             [

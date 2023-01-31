@@ -239,27 +239,15 @@ class Layout2DCI(Layout2D):
         read_noise: float = 0.0,
     ) -> aa.Array2D:
         """
-        Use this charge injection layout to generate a pre-cti charge injection image. This is performed by going
-        to its charge injection regions and adding an input normalization value to each column, which are
-        passed in as a list.
+        Use this charge injection layout to generate the noise-map of a charge injection image. This is performed by
+        going to its charge injection regions and adding an input RMS standard deviation value to each column, which
+        are passed in as a list.
 
-        For one column of a non-uniform charge injection pre-cti image, this function assumes that each non-uniform
-        charge injection region has the same overall normalization value. This assumes the spikes / troughs in the
-        injection current that cause non-uniformity occur in an identical fashion for each charge injection region.
+        For one column of a non-uniform charge injection noise-map, this function assumes that each non-uniform
+        charge injection region has the same overall noise value.
 
-        Non-uniformity across the rows of a charge injection layout_ci is due to a drop-off in voltage in the current.
-        Therefore, it appears smooth and be modeled as an analytic function, which this code assumes is a
-        power-law with slope `row_slope`.
-
-        Parameters
-        ----------
-        shape_native
-            The image_shape of the pre_cti_datas to be created.
-        row_slope
-            The power-law slope of non-uniformity in the row charge injection profile.
-        ci_seed
-            Input ci_seed for the random number generator to give reproducible results. A new ci_seed is always used for each \
-            pre_cti_datas, ensuring each non-uniform ci_region has the same column non-uniformity layout_ci.
+        A read-noise can also be be included when creating the noise map, which is added in quadrature to the
+        charge injection noise values.
         """
 
         noise_map = np.full(fill_value=read_noise, shape=self.shape_2d)
@@ -284,27 +272,16 @@ class Layout2DCI(Layout2D):
         read_noise: float = 0.0,
     ) -> aa.Array2D:
         """
-        Use this charge injection layout to generate a pre-cti charge injection image. This is performed by going
-        to its charge injection regions and adding an input normalization value to each column, which are
-        passed in as a list.
+        Use this charge injection layout to generate the noise-map of a charge injection image. This is performed by
+        going to its charge injection regions and adding an input RMS standard deviation value to each column, which
+        are passed in as a list.
 
         For one column of a non-uniform charge injection pre-cti image, this function assumes that each non-uniform
-        charge injection region can have a different normalization value. The normalizztion values `injection_norm_lists`
-        are passed as a list of lists so that the normalization of each injection in each region can be specified.
+        charge injection region can have a different noise value. The alues `injection_std_lists` are passed as a
+        list of lists so that the RMS standard deviation of each injection in each region can be specified.
 
-        Non-uniformity across the rows of a charge injection layout_ci is due to a drop-off in voltage in the current.
-        Therefore, it appears smooth and be modeled as an analytic function, which this code assumes is a
-        power-law with slope `row_slope`.
-
-        Parameters
-        ----------
-        shape_native
-            The image_shape of the pre_cti_datas to be created.
-        row_slope
-            The power-law slope of non-uniformity in the row charge injection profile.
-        ci_seed
-            Input ci_seed for the random number generator to give reproducible results. A new ci_seed is always used for each \
-            pre_cti_datas, ensuring each non-uniform ci_region has the same column non-uniformity layout_ci.
+        A read-noise can also be be included when creating the noise map, which is added in quadrature to the
+        charge injection noise values.
         """
 
         noise_map = np.full(fill_value=read_noise, shape=self.shape_2d)
