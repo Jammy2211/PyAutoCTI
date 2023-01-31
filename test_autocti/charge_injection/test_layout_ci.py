@@ -186,6 +186,60 @@ def test__noise_map_non_uniform_from():
     )
 
 
+def test__noise_map_non_uniform_via_lists_from():
+
+    layout = ac.Layout2DCI(shape_2d=(10, 3), region_list=[(1, 4, 0, 3), (5, 8, 0, 3)])
+
+    noise_map = layout.noise_map_non_uniform_via_lists_from(
+        injection_std_lists=[[2.0, 3.0, 4.0], [5.0, 6.0, 7.0]],
+        pixel_scales=1.0,
+    )
+
+    assert noise_map.native == pytest.approx(
+        np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [2.0, 3.0, 4.0],
+                [2.0, 3.0, 4.0],
+                [2.0, 3.0, 4.0],
+                [0.0, 0.0, 0.0],
+                [5.0, 6.0, 7.0],
+                [5.0, 6.0, 7.0],
+                [5.0, 6.0, 7.0],
+                [0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0],
+            ]
+        ),
+        1.0e-4,
+    )
+
+    noise_map = layout.noise_map_non_uniform_via_lists_from(
+        injection_std_lists=[[2.0, 3.0, 4.0], [5.0, 6.0, 7.0]],
+        pixel_scales=1.0,
+        read_noise=1.0,
+    )
+
+    print(noise_map.native)
+
+    assert noise_map.native == pytest.approx(
+        np.array(
+            [
+                [1.0, 1.0, 1.0],
+                [2.23, 3.16, 4.12],
+                [2.23, 3.16, 4.12],
+                [2.23, 3.16, 4.12],
+                [1.0, 1.0, 1.0],
+                [5.09, 6.08, 7.07],
+                [5.09, 6.08, 7.07],
+                [5.09, 6.08, 7.07],
+                [1.0, 1.0, 1.0],
+                [1.0, 1.0, 1.0],
+            ]
+        ),
+        1.0e-1,
+    )
+
+
 def create_tvac_fits(
     fits_path,
     filename,

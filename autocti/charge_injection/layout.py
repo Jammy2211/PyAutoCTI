@@ -277,6 +277,51 @@ class Layout2DCI(Layout2D):
 
         return aa.Array2D.no_mask(values=noise_map, pixel_scales=pixel_scales)
 
+    def noise_map_non_uniform_via_lists_from(
+        self,
+        injection_std_lists: List[List[float]],
+        pixel_scales: aa.type.PixelScales,
+        read_noise: float = 0.0,
+    ) -> aa.Array2D:
+        """
+        Use this charge injection layout to generate a pre-cti charge injection image. This is performed by going
+        to its charge injection regions and adding an input normalization value to each column, which are
+        passed in as a list.
+
+        For one column of a non-uniform charge injection pre-cti image, this function assumes that each non-uniform
+        charge injection region can have a different normalization value. The normalizztion values `injection_norm_lists`
+        are passed as a list of lists so that the normalization of each injection in each region can be specified.
+
+        Non-uniformity across the rows of a charge injection layout_ci is due to a drop-off in voltage in the current.
+        Therefore, it appears smooth and be modeled as an analytic function, which this code assumes is a
+        power-law with slope `row_slope`.
+
+        Parameters
+        ----------
+        shape_native
+            The image_shape of the pre_cti_datas to be created.
+        row_slope
+            The power-law slope of non-uniformity in the row charge injection profile.
+        ci_seed
+            Input ci_seed for the random number generator to give reproducible results. A new ci_seed is always used for each \
+            pre_cti_datas, ensuring each non-uniform ci_region has the same column non-uniformity layout_ci.
+        """
+
+        noise_map = np.full(fill_value=read_noise, shape=self.shape_2d)
+
+        for region_index, region in enumerate(self.region_list):
+
+            noise_region = ci_util.region_ci_from(
+                region_dimensions=region.shape,
+                injection_norm_list=injection_std_lists[region_index],
+            )
+
+            noise_map[region.slice] = np.sqrt(
+                np.square(read_noise) + np.square(noise_region)
+            )
+
+        return aa.Array2D.no_mask(values=noise_map, pixel_scales=pixel_scales)
+
 
 class ElectronicsCI:
     def __init__(
