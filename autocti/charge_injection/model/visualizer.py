@@ -124,7 +124,9 @@ class VisualizerImagingCI(Visualizer):
             normalized_residual_map=should_plot("normalized_residual_map"),
             chi_squared_map=should_plot("chi_squared_map"),
             data_with_noise_map_model=should_plot("data_with_noise_map_model"),
-            data_with_noise_map_model_logy=should_plot("data_with_noise_map_model_logy"),
+            data_with_noise_map_model_logy=should_plot(
+                "data_with_noise_map_model_logy"
+            ),
         )
 
         if not during_analysis:

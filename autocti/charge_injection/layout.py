@@ -232,6 +232,73 @@ class Layout2DCI(Layout2D):
 
         return aa.Array2D.no_mask(values=pre_cti_data, pixel_scales=pixel_scales)
 
+    def noise_map_non_uniform_from(
+        self,
+        injection_std_list: List[float],
+        pixel_scales: aa.type.PixelScales,
+        read_noise: float = 0.0,
+    ) -> aa.Array2D:
+        """
+        Use this charge injection layout to generate the noise-map of a charge injection image. This is performed by
+        going to its charge injection regions and adding an input RMS standard deviation value to each column, which
+        are passed in as a list.
+
+        For one column of a non-uniform charge injection noise-map, this function assumes that each non-uniform
+        charge injection region has the same overall noise value.
+
+        A read-noise can also be be included when creating the noise map, which is added in quadrature to the
+        charge injection noise values.
+        """
+
+        noise_map = np.full(fill_value=read_noise, shape=self.shape_2d)
+
+        for region in self.region_list:
+
+            noise_region = ci_util.region_ci_from(
+                region_dimensions=region.shape,
+                injection_norm_list=injection_std_list,
+            )
+
+            noise_map[region.slice] = np.sqrt(
+                np.square(read_noise) + np.square(noise_region)
+            )
+
+        return aa.Array2D.no_mask(values=noise_map, pixel_scales=pixel_scales)
+
+    def noise_map_non_uniform_via_lists_from(
+        self,
+        injection_std_lists: List[List[float]],
+        pixel_scales: aa.type.PixelScales,
+        read_noise: float = 0.0,
+    ) -> aa.Array2D:
+        """
+        Use this charge injection layout to generate the noise-map of a charge injection image. This is performed by
+        going to its charge injection regions and adding an input RMS standard deviation value to each column, which
+        are passed in as a list.
+
+        For one column of a non-uniform charge injection pre-cti image, this function assumes that each non-uniform
+        charge injection region can have a different noise value. The alues `injection_std_lists` are passed as a
+        list of lists so that the RMS standard deviation of each injection in each region can be specified.
+
+        A read-noise can also be be included when creating the noise map, which is added in quadrature to the
+        charge injection noise values.
+        """
+
+        noise_map = np.full(fill_value=read_noise, shape=self.shape_2d)
+
+        for region_index, region in enumerate(self.region_list):
+
+            noise_region = ci_util.region_ci_from(
+                region_dimensions=region.shape,
+                injection_norm_list=injection_std_lists[region_index],
+            )
+
+            noise_map[region.slice] = np.sqrt(
+                np.square(read_noise) + np.square(noise_region)
+            )
+
+        return aa.Array2D.no_mask(values=noise_map, pixel_scales=pixel_scales)
+
 
 class ElectronicsCI:
     def __init__(
