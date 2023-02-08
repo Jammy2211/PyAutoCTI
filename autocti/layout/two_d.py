@@ -161,9 +161,7 @@ class Layout2D(aa.Layout2D):
         This can be used to extract the FPR of each charge injection region using a
         number of pixels which does not exceed the size of any.
         """
-        parallel_rows_between_regions = self.parallel_rows_between_regions
-        parallel_rows_between_regions.append(self.parallel_rows_to_array_edge)
-        return np.min(parallel_rows_between_regions)
+        return np.min(self.parallel_rows_within_regions)
 
     def with_extracted_regions(
         self, extraction_region: aa.type.Region2DLike

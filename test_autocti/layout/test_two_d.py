@@ -178,3 +178,24 @@ def test__smallest_parallel_eper_rows_to_frame_edge():
     layout = ac.Layout2DCI(shape_2d=(8, 5), region_list=[(0, 3, 0, 3), (5, 7, 0, 3)])
 
     assert layout.smallest_parallel_rows_between_ci_regions == 1
+
+
+def test__smallest_parallel_rows_within_ci_regions():
+
+    layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 2, 1, 2)])
+
+    assert layout.smallest_parallel_rows_within_ci_regions == 1
+
+    layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 2, 1, 2), (3, 4, 3, 4)])
+
+    assert layout.smallest_parallel_rows_within_ci_regions == 1
+
+    layout = ac.Layout2DCI(shape_2d=(6, 6), region_list=[(1, 2, 1, 2), (4, 6, 3, 4)])
+
+    assert layout.smallest_parallel_rows_within_ci_regions == 1
+
+    layout = ac.Layout2DCI(
+        shape_2d=(10, 10), region_list=[(1, 2, 3, 4), (4, 6, 3, 4), (6, 9, 3, 4)]
+    )
+
+    assert layout.smallest_parallel_rows_within_ci_regions == 1
