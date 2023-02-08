@@ -44,9 +44,7 @@ class Extract2DParallel(Extract2D):
                 np.ma.array(
                     data=array.native[region.slice], mask=array.mask[region.slice]
                 )
-                for region in self.region_list_from(
-                    pixels_from_end=pixels_from_end
-                )
+                for region in self.region_list_from(pixels_from_end=pixels_from_end)
             ]
 
         arr_stack = np.ma.stack(arr_list)
@@ -112,10 +110,12 @@ class Extract2DParallel(Extract2D):
             value_str="median",
         )
 
-    def std_list_from(self, array: aa.Array2D,
-                      pixels: Optional[Tuple[int, int]] = None,
-                      pixels_from_end: Optional[int] = None,
-                      ) -> List[float]:
+    def std_list_from(
+        self,
+        array: aa.Array2D,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
+    ) -> List[float]:
         """
         Returns the standard deviation (sigma) values of the `Extract2D` object's corresponding region, where the
         standard deviation is taken over all columns of the region(s).
@@ -151,17 +151,36 @@ class Extract2DParallel(Extract2D):
             FPR rows). To remove the 10 leading pixels which have lost electrons due to CTI, an input such
             as `pixels=(10, 30)` would be used.
         """
-        return self._value_list_from(array=array, pixels=pixels, pixels_from_end=pixels_from_end, value_str="std")
+        return self._value_list_from(
+            array=array, pixels=pixels, pixels_from_end=pixels_from_end, value_str="std"
+        )
 
     def _value_list_of_lists_from(
-        self, array: aa.Array2D, pixels: Tuple[int, int], value_str: str
+        self,
+        array: aa.Array2D,
+        value_str: str,
+        pixels: Optional[Tuple[int, int]],
+        pixels_from_end: Optional[int],
     ):
         value_lists = []
 
-        arr_list = [
-            np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
-            for region in self.region_list_from(pixels=pixels)
-        ]
+        if pixels_from_end is None:
+
+            arr_list = [
+                np.ma.array(
+                    data=array.native[region.slice], mask=array.mask[region.slice]
+                )
+                for region in self.region_list_from(pixels=pixels)
+            ]
+
+        else:
+
+            arr_list = [
+                np.ma.array(
+                    data=array.native[region.slice], mask=array.mask[region.slice]
+                )
+                for region in self.region_list_from(pixels_from_end=pixels_from_end)
+            ]
 
         for array_2d in arr_list:
 
@@ -181,7 +200,10 @@ class Extract2DParallel(Extract2D):
         return value_lists
 
     def median_list_of_lists_from(
-        self, array: aa.Array2D, pixels: Tuple[int, int]
+        self,
+        array: aa.Array2D,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> List[List]:
         """
         Returns the median values of the `Extract2D` object's corresponding region, where the median is taken over
@@ -217,11 +239,17 @@ class Extract2DParallel(Extract2D):
             rows of the region).
         """
         return self._value_list_of_lists_from(
-            array=array, pixels=pixels, value_str="median"
+            array=array,
+            pixels=pixels,
+            pixels_from_end=pixels_from_end,
+            value_str="median",
         )
 
     def std_list_of_lists_from(
-        self, array: aa.Array2D, pixels: Tuple[int, int]
+        self,
+        array: aa.Array2D,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> List[List]:
         """
         Returns the standard deviation (sigma) values of the `Extract2D` object's corresponding region, where the
@@ -257,5 +285,5 @@ class Extract2DParallel(Extract2D):
             rows of the region).
         """
         return self._value_list_of_lists_from(
-            array=array, pixels=pixels, value_str="std"
+            array=array, pixels=pixels, pixels_from_end=pixels_from_end, value_str="std"
         )

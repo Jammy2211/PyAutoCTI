@@ -9,7 +9,9 @@ from autocti.extract.two_d import extract_2d_util
 
 class Extract2DParallelFPR(Extract2DParallel):
     def region_list_from(
-        self, pixels: Optional[Tuple[int, int]] = None, pixels_from_end: Optional[int] = None
+        self,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> List[aa.Region2D]:
         """
          Returns a list of the 2D parallel FPR regions from the `region_list` containing signal  (e.g. the charge
