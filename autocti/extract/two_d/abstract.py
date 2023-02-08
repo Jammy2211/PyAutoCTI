@@ -111,23 +111,23 @@ class Extract2D:
         self, array: aa.Array2D, pixels: Tuple[int, int]
     ) -> np.ndarray:
         """
-            Extract a region (e.g. the parallel FPR) of every signal region (e.g. the charge injection region of charge
-            injection data) on the CTI calibration data and stack them by taking their mean.
+        Extract a region (e.g. the parallel FPR) of every signal region (e.g. the charge injection region of charge
+        injection data) on the CTI calibration data and stack them by taking their mean.
 
-            This returns the 2D average of the extracted regions (e.g. the parallel FPRs) of all of the charge injection
-            regions, which for certain CCD charge injection electronics one may expect to be similar.
+        This returns the 2D average of the extracted regions (e.g. the parallel FPRs) of all of the charge injection
+        regions, which for certain CCD charge injection electronics one may expect to be similar.
 
-            For fits to charge injection data this function is also used to create images like the stacked 2D residuals,
-            which therefore quantify the goodness-of-fit of a CTI model.
+        For fits to charge injection data this function is also used to create images like the stacked 2D residuals,
+        which therefore quantify the goodness-of-fit of a CTI model.
 
-            Parameters
+        Parameters
         ----------
-            array
-                The 2D array which contains the charge injection image from which the regions (e.g. the parallel FPRs)
-                are extracted and stacked.
-            pixels
-                The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
-                FPR rows)
+        array
+            The 2D array which contains the charge injection image from which the regions (e.g. the parallel FPRs)
+            are extracted and stacked.
+        pixels
+            The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
+            FPR rows)
         """
 
         arr_list = [
@@ -150,20 +150,20 @@ class Extract2D:
         self, array: aa.Array2D, pixels: Tuple[int, int]
     ) -> np.ndarray:
         """
-            The function `stacked_array_2d_from` extracts a region (e.g. the parallel FPR) of every charge injection
-            region on the charge injection image and stacks them by taking their mean.
+        The function `stacked_array_2d_from` extracts a region (e.g. the parallel FPR) of every charge injection
+        region on the charge injection image and stacks them by taking their mean.
 
-            If the data being stacked is a noise-map, we need to know how many pixels were used in the stacking of every
-            final pixel on the stacked 2d array in order to compute the new noise map via quadrature.
+        If the data being stacked is a noise-map, we need to know how many pixels were used in the stacking of every
+        final pixel on the stacked 2d array in order to compute the new noise map via quadrature.
 
-            Parameters
+        Parameters
         ----------
-            array
-                The 2D array which contains the charge injection image from which the regions (e.g. the parallel FPRs)
-                are extracted and stacked.
-            pixels
-                The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
-                FPR rows)
+        array
+            The 2D array which contains the charge injection image from which the regions (e.g. the parallel FPRs)
+            are extracted and stacked.
+        pixels
+            The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
+            FPR rows)
         """
 
         mask_2d_list = [
@@ -181,25 +181,25 @@ class Extract2D:
         self, array: aa.Array2D, pixels: Tuple[int, int]
     ) -> aa.Array1D:
         """
-            Extract a region (e.g. the parallel FPR) of every signal region (e.g. the charge injection region of charge injection data) on the CTI calibration data, stack
-            them by taking their mean and then bin them up to a 1D region (e.g. the 1D parallel FPR) by taking the mean
-            across the direction opposite to clocking (e.g. bin over the serial direction for a parallel FPR).
+        Extract a region (e.g. the parallel FPR) of every signal region (e.g. the charge injection region of charge injection data) on the CTI calibration data, stack
+        them by taking their mean and then bin them up to a 1D region (e.g. the 1D parallel FPR) by taking the mean
+        across the direction opposite to clocking (e.g. bin over the serial direction for a parallel FPR).
 
-            This returns the 1D average region (e.g. of the parallel FPR) of all of the charge injection regions. When
-            binning a uniform charge injection this binning process removes noise to clearly reveal the FPR or EPER.
-            For non-uniform injections this will provide an average FPR or EPER.
+        This returns the 1D average region (e.g. of the parallel FPR) of all of the charge injection regions. When
+        binning a uniform charge injection this binning process removes noise to clearly reveal the FPR or EPER.
+        For non-uniform injections this will provide an average FPR or EPER.
 
-            For fits to charge injection data this function is also used to create images like the stacked 1D residuals,
-            which therefore quantify the goodness-of-fit of a CTI model.
+        For fits to charge injection data this function is also used to create images like the stacked 1D residuals,
+        which therefore quantify the goodness-of-fit of a CTI model.
 
-            Parameters
+        Parameters
         ----------
-            array
-                The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted and
-                stacked.
-            pixels
-                The column / row pixel index to extract the region (e.g. FPR, EPER) between (e.g. `pixels=(0, 3)` extracts
-                the 1st, 2nd and 3rd columns / rows)
+        array
+            The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted and
+            stacked.
+        pixels
+            The column / row pixel index to extract the region (e.g. FPR, EPER) between (e.g. `pixels=(0, 3)` extracts
+            the 1st, 2nd and 3rd columns / rows)
         """
 
         arr_list = [
@@ -218,22 +218,22 @@ class Extract2D:
         self, array: aa.Array2D, pixels: Tuple[int, int]
     ) -> aa.Array1D:
         """
-            The function `binned_array_1d_from` extracts a region (e.g. the parallel FPR) of every charge injection region
-            on the charge injection image, stacks them by taking their mean and then bin them up to a 1D region
-            (e.g. the 1D parallel FPR) by taking the mean across the direction opposite to clocking (e.g. bin over the
-            serial direction for a parallel FPR).
+        The function `binned_array_1d_from` extracts a region (e.g. the parallel FPR) of every charge injection region
+        on the charge injection image, stacks them by taking their mean and then bin them up to a 1D region
+        (e.g. the 1D parallel FPR) by taking the mean across the direction opposite to clocking (e.g. bin over the
+        serial direction for a parallel FPR).
 
-            If the data being stacked is a noise-map, we need to know how many pixels were used in the stacking of every
-            final pixel on the binned 1D array in order to compute the new noise map via quadrature.
+        If the data being stacked is a noise-map, we need to know how many pixels were used in the stacking of every
+        final pixel on the binned 1D array in order to compute the new noise map via quadrature.
 
-            Parameters
+        Parameters
         ----------
-            array
-                The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted and
-                stacked.
-            pixels
-                The column / row pixel index to extract the region (e.g. FPR, EPER) between (e.g. `pixels=(0, 3)` extracts
-                the 1st, 2nd and 3rd columns / rows)
+        array
+            The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted and
+            stacked.
+        pixels
+            The column / row pixel index to extract the region (e.g. FPR, EPER) between (e.g. `pixels=(0, 3)` extracts
+            the 1st, 2nd and 3rd columns / rows)
         """
 
         mask_2d_list = [

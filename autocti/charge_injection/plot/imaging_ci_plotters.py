@@ -263,11 +263,6 @@ class ImagingCIPlotter(Plotter):
 
         if data_with_noise_map:
 
-            # injection_norm_list = self.dataset.layout.extract.parallel_fpr.median_list_from(
-            #     array=data, pixels=(injection_on - 20, injection_on))
-            #
-            # fpr_value = np.mean
-            # )
             y = self.extract_region_from(array=self.dataset.data, region=region)
             y_errors = self.extract_region_noise_map_from(
                 array=self.dataset.noise_map, region=region

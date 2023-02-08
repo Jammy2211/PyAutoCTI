@@ -1,10 +1,12 @@
 import numpy as np
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import autoarray as aa
 
 
 from autocti.extract.two_d.abstract import Extract2D
+
+from autocti import exc
 
 
 class Extract2DParallel(Extract2D):
@@ -18,15 +20,36 @@ class Extract2DParallel(Extract2D):
         return 1
 
     def _value_list_from(
-        self, array: aa.Array2D, pixels: Tuple[int, int], value_str: str
+        self,
+        array: aa.Array2D,
+        value_str: str,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ):
 
         value_list = []
 
-        arr_list = [
-            np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
-            for region in self.region_list_from(pixels=pixels)
-        ]
+        if pixels_from_end is None:
+
+            arr_list = [
+                np.ma.array(
+                    data=array.native[region.slice], mask=array.mask[region.slice]
+                )
+                for region in self.region_list_from(pixels=pixels)
+            ]
+
+        else:
+
+            arr_list = [
+                np.ma.array(
+                    data=array.native[region.slice], mask=array.mask[region.slice]
+                )
+                for region in self.region_list_from(
+                    pixels_from_end=pixels_from_end
+                )
+            ]
+
+            print(arr_list)
 
         arr_stack = np.ma.stack(arr_list)
 
@@ -40,7 +63,10 @@ class Extract2DParallel(Extract2D):
         return value_list
 
     def median_list_from(
-        self, array: aa.Array2D, pixels: Tuple[int, int]
+        self,
+        array: aa.Array2D,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> List[float]:
         """
         Returns the median values of the `Extract2D` object's corresponding region, where the median is taken over
@@ -77,7 +103,12 @@ class Extract2DParallel(Extract2D):
             FPR rows). To remove the 10 leading pixels which have lost electrons due to CTI, an input such
             as `pixels=(10, 30)` would be used.
         """
-        return self._value_list_from(array=array, pixels=pixels, value_str="median")
+        return self._value_list_from(
+            array=array,
+            pixels=pixels,
+            pixels_from_end=pixels_from_end,
+            value_str="median",
+        )
 
     def std_list_from(self, array: aa.Array2D, pixels: Tuple[int, int]) -> List[float]:
         """

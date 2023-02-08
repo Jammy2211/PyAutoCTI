@@ -28,6 +28,32 @@ def test__median_list_from(parallel_array, parallel_masked_array):
     assert median_list == [3.0, 5.0, 5.0]
 
 
+def test__median_list_from__pixels_from_end(parallel_array, parallel_masked_array):
+
+    extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3)])
+
+    # Extracts [1.0, 2.0, 3.0] of every injection in `parallel_array`
+
+    median_list = extract.median_list_from(array=parallel_array, pixels_from_end=1)
+    assert median_list == [3.0, 3.0, 3.0]
+
+    # Reduce pixels to only extract 1.0.
+
+    median_list = extract.median_list_from(array=parallel_array, pixels_from_end=2)
+    assert median_list == [2.5, 2.5, 2.5]
+
+    extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3), (5, 10, 0, 3)])
+    median_list = extract.median_list_from(array=parallel_array, pixels_from_end=3)
+
+    assert median_list == [5.0, 5.0, 5.0]
+
+    median_list = extract.median_list_from(
+        array=parallel_masked_array, pixels_from_end=3
+    )
+
+    assert median_list == [3.0, 7.0, 7.0]
+
+
 def test__median_list_of_lists_from(parallel_array, parallel_masked_array):
 
     extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3)])
