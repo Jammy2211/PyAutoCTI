@@ -125,6 +125,14 @@ class Layout2D(aa.Layout2D):
         ]
 
     @property
+    def pixels_within_regions(self) -> List[int]:
+        """
+        Returns a list where each entry is the number of pixels a charge injection region and its neighboring
+        charge injection region.
+        """
+        return [region.y1 - region.y0 for region in self.region_list]
+
+    @property
     def parallel_rows_to_array_edge(self) -> int:
         """
         The number of pixels from the edge of the parallel EPERs to the edge of the array.
@@ -140,6 +148,18 @@ class Layout2D(aa.Layout2D):
         The smallest number of pixels between any two charge injection regions, or the distance of the last
         charge injection region to the edge of the charge injeciton image (e.g. in the direction away from the
         readout register and electronics).
+        """
+        pixels_between_regions = self.pixels_between_regions
+        pixels_between_regions.append(self.parallel_rows_to_array_edge)
+        return np.min(pixels_between_regions)
+
+    @property
+    def smallest_parallel_rows_within_ci_regions(self) -> int:
+        """
+        The smallest number of pixels within any of the charge injection regions.
+
+        This can be used to extract the FPR of each charge injection region using a
+        number of pixels which does not exceed the size of any.
         """
         pixels_between_regions = self.pixels_between_regions
         pixels_between_regions.append(self.parallel_rows_to_array_edge)

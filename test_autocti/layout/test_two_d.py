@@ -51,6 +51,27 @@ def test__rows_between_region_list():
     assert layout.pixels_between_regions == [2, 3]
 
 
+def test__rows_within_region_list():
+
+    layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 2, 1, 2)])
+
+    assert layout.pixels_within_regions == [1]
+
+    layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 2, 1, 2), (3, 4, 3, 4)])
+
+    assert layout.pixels_within_regions == [1, 1]
+
+    layout = ac.Layout2DCI(shape_2d=(6, 6), region_list=[(1, 2, 1, 2), (4, 6, 3, 4)])
+
+    assert layout.pixels_within_regions == [1, 2]
+
+    layout = ac.Layout2DCI(
+        shape_2d=(10, 10), region_list=[(1, 2, 3, 4), (4, 6, 3, 4), (6, 9, 3, 4)]
+    )
+
+    assert layout.pixels_within_regions == [1, 2, 3]
+
+
 def test__serial_eper_pixels(layout_ci_7x7):
 
     layout = ac.Layout2DCI(
