@@ -114,7 +114,7 @@ class Layout2D(aa.Layout2D):
         )
 
     @property
-    def pixels_between_regions(self) -> List[int]:
+    def parallel_rows_between_regions(self) -> List[int]:
         """
         Returns a list where each entry is the number of pixels a charge injection region and its neighboring
         charge injection region.
@@ -125,7 +125,7 @@ class Layout2D(aa.Layout2D):
         ]
 
     @property
-    def pixels_within_regions(self) -> List[int]:
+    def parallel_rows_within_regions(self) -> List[int]:
         """
         Returns a list where each entry is the number of pixels a charge injection region and its neighboring
         charge injection region.
@@ -149,9 +149,9 @@ class Layout2D(aa.Layout2D):
         charge injection region to the edge of the charge injeciton image (e.g. in the direction away from the
         readout register and electronics).
         """
-        pixels_between_regions = self.pixels_between_regions
-        pixels_between_regions.append(self.parallel_rows_to_array_edge)
-        return np.min(pixels_between_regions)
+        parallel_rows_between_regions = self.parallel_rows_between_regions
+        parallel_rows_between_regions.append(self.parallel_rows_to_array_edge)
+        return np.min(parallel_rows_between_regions)
 
     @property
     def smallest_parallel_rows_within_ci_regions(self) -> int:
@@ -161,9 +161,9 @@ class Layout2D(aa.Layout2D):
         This can be used to extract the FPR of each charge injection region using a
         number of pixels which does not exceed the size of any.
         """
-        pixels_between_regions = self.pixels_between_regions
-        pixels_between_regions.append(self.parallel_rows_to_array_edge)
-        return np.min(pixels_between_regions)
+        parallel_rows_between_regions = self.parallel_rows_between_regions
+        parallel_rows_between_regions.append(self.parallel_rows_to_array_edge)
+        return np.min(parallel_rows_between_regions)
 
     def with_extracted_regions(
         self, extraction_region: aa.type.Region2DLike

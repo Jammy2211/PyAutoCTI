@@ -30,46 +30,46 @@ def test__check_layout_dimensions__layout_has_more_rows_than_image__1_region():
         ac.Layout2DCI(shape_2d=(3, 3), region_list=([(0, 0, 0, -1)]))
 
 
-def test__rows_between_region_list():
+def test__parallel_rows_between_regions():
 
     layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 2, 1, 2)])
 
-    assert layout.pixels_between_regions == []
+    assert layout.parallel_rows_between_regions == []
 
     layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 2, 1, 2), (3, 4, 3, 4)])
 
-    assert layout.pixels_between_regions == [1]
+    assert layout.parallel_rows_between_regions == [1]
 
     layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 2, 1, 2), (4, 5, 3, 4)])
 
-    assert layout.pixels_between_regions == [2]
+    assert layout.parallel_rows_between_regions == [2]
 
     layout = ac.Layout2DCI(
         shape_2d=(10, 10), region_list=[(1, 2, 1, 2), (4, 5, 3, 4), (8, 9, 3, 4)]
     )
 
-    assert layout.pixels_between_regions == [2, 3]
+    assert layout.parallel_rows_between_regions == [2, 3]
 
 
-def test__rows_within_region_list():
+def test__parallel_rows_within_regions():
 
     layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 2, 1, 2)])
 
-    assert layout.pixels_within_regions == [1]
+    assert layout.parallel_rows_within_regions == [1]
 
     layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(1, 2, 1, 2), (3, 4, 3, 4)])
 
-    assert layout.pixels_within_regions == [1, 1]
+    assert layout.parallel_rows_within_regions == [1, 1]
 
     layout = ac.Layout2DCI(shape_2d=(6, 6), region_list=[(1, 2, 1, 2), (4, 6, 3, 4)])
 
-    assert layout.pixels_within_regions == [1, 2]
+    assert layout.parallel_rows_within_regions == [1, 2]
 
     layout = ac.Layout2DCI(
         shape_2d=(10, 10), region_list=[(1, 2, 3, 4), (4, 6, 3, 4), (6, 9, 3, 4)]
     )
 
-    assert layout.pixels_within_regions == [1, 2, 3]
+    assert layout.parallel_rows_within_regions == [1, 2, 3]
 
 
 def test__serial_eper_pixels(layout_ci_7x7):
