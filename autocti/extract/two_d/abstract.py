@@ -71,11 +71,18 @@ class Extract2D:
         """
         raise NotImplementedError
 
-    def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
+    def region_list_from(
+        self,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
+    ) -> List[aa.Region2D]:
         raise NotImplementedError
 
     def array_2d_list_from(
-        self, array: aa.Array2D, pixels: Tuple[int, int]
+        self,
+        array: aa.Array2D,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> List[aa.Array2D]:
         """
         Extract a specific region from every signal region (e.g. the charge injection region of charge injection data)
@@ -95,11 +102,16 @@ class Extract2D:
         """
         arr_list = [
             array.native[region.slice]
-            for region in self.region_list_from(pixels=pixels)
+            for region in self.region_list_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
         ]
 
         mask_2d_list = [
-            array.mask[region.slice] for region in self.region_list_from(pixels=pixels)
+            array.mask[region.slice]
+            for region in self.region_list_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
         ]
 
         return [
