@@ -107,6 +107,25 @@ def test__std_list_from(parallel_array, parallel_masked_array):
     assert std_list == pytest.approx([1.85472, 2.15406, 2.31516], 1.0e-4)
 
 
+def test__std_list_from__pixels_from_end(parallel_array, parallel_masked_array):
+
+    extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3)])
+
+    # Extracts [1.0, 2.0, 3.0] of every injection in `parallel_array`
+
+    std_list = extract.std_list_from(array=parallel_array, pixels_from_end=3)
+    assert std_list == pytest.approx([0.81649, 0.81649, 0.81649], 1.0e-4)
+
+    extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3), (5, 8, 0, 3)])
+
+    std_list = extract.std_list_from(array=parallel_array, pixels_from_end=2)
+
+    assert std_list == pytest.approx([2.0615, 2.0615, 2.0615], 1.0e-4)
+
+    std_list = extract.std_list_from(array=parallel_masked_array, pixels_from_end=2)
+    assert std_list == pytest.approx([1.6996, 1.6996, 2.16024], 1.0e-4)
+
+
 def test__std_list_of_lists_from(parallel_array, parallel_masked_array):
 
     extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3)])
