@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import autoarray as aa
 
@@ -8,7 +8,11 @@ from autocti.extract.two_d import extract_2d_util
 
 
 class Extract2DParallelEPER(Extract2DParallel):
-    def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
+    def region_list_from(
+        self,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
+    ) -> List[aa.Region2D]:
         """
         Returns a list of the 2D parallel EPER regions from the `region_list` containing signal  (e.g. the charge
         injection regions of charge injection data), extracted between two input `pixels` indexes.
@@ -55,10 +59,25 @@ class Extract2DParallelEPER(Extract2DParallel):
         pixels
             The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
         """
-        return [
-            region.parallel_trailing_region_from(pixels=pixels)
-            for region in self.region_list
-        ]
+
+        region_list = []
+
+        for i, region in enumerate(self.region_list):
+
+            if pixels_from_end is not None:
+
+                parallel_row_spaces = self.parallel_rows_between_regions + [
+                    self.parallel_rows_to_array_edge
+                ]
+
+                pixels = (
+                    parallel_row_spaces[i] - pixels_from_end,
+                    parallel_row_spaces[i],
+                )
+
+            region_list.append(region.parallel_trailing_region_from(pixels=pixels))
+
+        return region_list
 
     def binned_region_1d_from(self, pixels: Tuple[int, int]) -> aa.Region1D:
         """

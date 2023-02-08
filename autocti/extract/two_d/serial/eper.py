@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Optional, Tuple
 
 import autoarray as aa
 
@@ -8,7 +8,11 @@ from autocti.extract.two_d import extract_2d_util
 
 
 class Extract2DSerialEPER(Extract2DSerial):
-    def region_list_from(self, pixels: Tuple[int, int]):
+    def region_list_from(
+        self,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
+    ):
         """
          Returns a list of the 2D serial EPER regions from the `region_list` containing signal  (e.g. the charge
          injection regions of charge injection data), extracted between two input `pixels` indexes.

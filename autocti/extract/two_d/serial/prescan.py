@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import autoarray as aa
 
@@ -6,7 +6,11 @@ from autocti.extract.two_d.serial.abstract import Extract2DSerial
 
 
 class Extract2DSerialPrescan(Extract2DSerial):
-    def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
+    def region_list_from(
+        self,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
+    ) -> List[aa.Region2D]:
         """
          Returns a list containing the 2D serial prescan region, which is simply the parallel overscan input to the
          object, extracted between two input `pixels` indexes (this is somewhat redundant information, but mimicks

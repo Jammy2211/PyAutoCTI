@@ -119,10 +119,7 @@ class Layout2D(aa.Layout2D):
         Returns a list where each entry is the number of pixels a charge injection region and its neighboring
         charge injection region.
         """
-        return [
-            self.region_list[i + 1].y0 - self.region_list[i].y1
-            for i in range(len(self.region_list) - 1)
-        ]
+        return self.extract.parallel_fpr.parallel_rows_between_regions
 
     @property
     def parallel_rows_within_regions(self) -> List[int]:
@@ -140,7 +137,7 @@ class Layout2D(aa.Layout2D):
         This is the number of pixels from the last charge injection FPR edge to the read out register and electronics
         and will include the parallel overscan if the CCD has one.
         """
-        return self.shape_2d[0] - np.max([region.y1 for region in self.region_list])
+        return self.extract.parallel_fpr.parallel_rows_to_array_edge
 
     @property
     def smallest_parallel_rows_between_ci_regions(self) -> int:

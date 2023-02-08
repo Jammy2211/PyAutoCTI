@@ -11,6 +11,7 @@ from autocti.layout.one_d import Layout1D
 class Extract2D:
     def __init__(
         self,
+        shape_2d: Optional[Tuple[int, int]] = None,
         region_list: Optional[aa.type.Region2DList] = None,
         parallel_overscan: Optional[aa.type.Region2DLike] = None,
         serial_prescan: Optional[aa.type.Region2DLike] = None,
@@ -27,6 +28,8 @@ class Extract2D:
             Integer pixel coordinates specifying the corners of each charge injection region (top-row, bottom-row,
             left-column, right-column).
         """
+
+        self.shape_2d = shape_2d
 
         self.region_list = (
             list(map(aa.Region2D, region_list)) if region_list is not None else None
@@ -70,6 +73,27 @@ class Extract2D:
         For a parallel extract `axis=1` such that binning is performed over the rows containing the FPR.
         """
         raise NotImplementedError
+
+    @property
+    def parallel_rows_between_regions(self) -> List[int]:
+        """
+        Returns a list where each entry is the number of pixels a charge injection region and its neighboring
+        charge injection region.
+        """
+        return [
+            self.region_list[i + 1].y0 - self.region_list[i].y1
+            for i in range(len(self.region_list) - 1)
+        ]
+
+    @property
+    def parallel_rows_to_array_edge(self) -> int:
+        """
+        The number of pixels from the edge of the parallel EPERs to the edge of the array.
+
+        This is the number of pixels from the last charge injection FPR edge to the read out register and electronics
+        and will include the parallel overscan if the CCD has one.
+        """
+        return self.shape_2d[0] - np.max([region.y1 for region in self.region_list])
 
     def region_list_from(
         self,
