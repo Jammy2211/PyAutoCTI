@@ -60,6 +60,13 @@ class Extract2DSerialPrescan(Extract2DSerial):
              The column pixel index which determines the region of the prescan (e.g. `pixels=(0, 3)` will compute the
              region corresponding to the 1st, 2nd and 3rd prescan columns).
         """
+
+        if pixels_from_end is not None:
+            pixels = (
+                self.serial_prescan.total_columns - pixels_from_end,
+                self.serial_prescan.total_columns,
+            )
+
         serial_prescan_extract = aa.Region2D(
             (
                 self.serial_prescan.y0,
