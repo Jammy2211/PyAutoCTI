@@ -62,6 +62,13 @@ class Extract2DSerialOverscan(Extract2DSerial):
              The column pixel index which determines the region of the overscan (e.g. `pixels=(0, 3)` will compute the
              region corresponding to the 1st, 2nd and 3rd overscan columns).
         """
+
+        if pixels_from_end is not None:
+            pixels = (
+                self.serial_overscan.total_columns - pixels_from_end,
+                self.serial_overscan.total_columns,
+            )
+
         serial_overscan_extract = aa.Region2D(
             (
                 self.serial_overscan.y0,
