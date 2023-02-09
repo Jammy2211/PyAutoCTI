@@ -69,6 +69,10 @@ class Extract2DParallelFPR(Extract2DParallel):
          pixels
              The row pixel index which determines the region of the FPR (e.g. `pixels=(0, 3)` will compute the region
              corresponding to the 1st, 2nd and 3rd FPR rows).
+        pixels_from_end
+            Alternative row pixex index specification, which extracts this number of pixels from the end of
+            the FPR. For example, if each FPR is 100 pixels and `pixels_from_end=10`, the last 10 pixels of each
+            FPR (pixels (90, 100)) are extracted.
         """
         return [
             region.parallel_front_region_from(

@@ -57,7 +57,11 @@ class Extract2DParallelEPER(Extract2DParallel):
         Parameters
         ----------
         pixels
-            The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
+            The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows).
+        pixels_from_end
+            Alternative row pixel index specification, which extracts this number of pixels from the end of
+            the EPER. For example, if each EPER is 100 pixels and `pixels_from_end=10`, the last 10 pixels of each
+            EPER (pixels (90, 100)) are extracted.
         """
 
         region_list = []

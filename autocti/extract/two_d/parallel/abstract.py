@@ -101,7 +101,7 @@ class Extract2DParallel(Extract2D):
         pixels_from_end
             Alternative row pixex index specification, which extracts this number of pixels from the end of
             each region (e.g. FPR / EPER). For example, if each FPR is 100 pixels and `pixels_from_end=10`, the
-            last 10 pixels of each FPR (pixels (90, 100) are extracted.
+            last 10 pixels of each FPR (pixels (90, 100)) are extracted.
         """
         return self._value_list_from(
             array=array,

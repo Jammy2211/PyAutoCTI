@@ -61,6 +61,10 @@ class Extract2DParallelOverscan(Extract2DParallel):
          pixels
              The row pixel index which determines the region of the overscan (e.g. `pixels=(0, 3)` will compute the
              region corresponding to the 1st, 2nd and 3rd overscan rows).
+        pixels_from_end
+            Alternative row pixex index specification, which extracts this number of pixels from the end of
+            the overscan. For example, if the overscan is 100 pixels and `pixels_from_end=10`, the
+            last 10 pixels of the overscan (pixels (90, 100)) are extracted.
         """
 
         if pixels_from_end is not None:
