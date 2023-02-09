@@ -81,3 +81,30 @@ def test__median_list_of_lists_from(serial_array, serial_masked_array):
     )
     assert median_list_of_lists[0] == [1.5, 1.0]
     assert median_list_of_lists[1] == [7.5, 8.0]
+
+
+def test__median_list_of_lists_from__pixels_from_end(serial_array, serial_masked_array):
+
+    extract = ac.Extract2DSerialFPR(region_list=[(0, 3, 0, 5)])
+
+    # Extend pixels to extract [0.0, 1.0, 2.0, 3.0, 4.0]
+
+    median_list_of_lists = extract.median_list_of_lists_from(
+        array=serial_array, pixels_from_end=5
+    )
+    assert median_list_of_lists[0] == [2.0, 2.0, 2.0]
+
+    extract = ac.Extract2DSerialFPR(region_list=[(0, 2, 0, 4), (0, 2, 6, 10)])
+
+    median_list_of_lists = extract.median_list_of_lists_from(
+        array=serial_array, pixels_from_end=4
+    )
+
+    assert median_list_of_lists[0] == [1.5, 1.5]
+    assert median_list_of_lists[1] == [7.5, 7.5]
+
+    median_list_of_lists = extract.median_list_of_lists_from(
+        array=serial_masked_array, pixels_from_end=4
+    )
+    assert median_list_of_lists[0] == [1.5, 1.0]
+    assert median_list_of_lists[1] == [7.5, 8.0]
