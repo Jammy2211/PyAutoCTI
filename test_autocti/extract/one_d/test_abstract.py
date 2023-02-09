@@ -1,5 +1,5 @@
 import numpy as np
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import autoarray as aa
 
@@ -7,14 +7,21 @@ from autocti.extract.one_d.abstract import Extract1D
 
 
 class MockExtract1D(Extract1D):
-    def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
+    def region_list_from(
+        self,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
+    ) -> List[aa.Region2D]:
         """
         To test the `Extract1D` object we use the example of the fpr (which is the method
         used by the `Extract1DFPR` class.
         """
         return list(
             map(
-                lambda region: region.front_region_from(pixels=pixels), self.region_list
+                lambda region: region.front_region_from(
+                    pixels=pixels, pixels_from_end=pixels_from_end
+                ),
+                self.region_list,
             )
         )
 
@@ -66,6 +73,15 @@ def test__stacked_array_1d_from(array, masked_array):
 
     assert (stacked_fpr == np.ma.array([1.0, 6.0])).all()
     assert (stacked_fpr.mask == np.ma.array([False, False])).all()
+
+
+def test__stacked_array_1d_from__pixels_from_end(array, masked_array):
+
+    extract = MockExtract1D(region_list=[(1, 4), (5, 8)])
+
+    stacked_fpr = extract.stacked_array_1d_from(array=array, pixels_from_end=3)
+
+    assert (stacked_fpr == np.array([3.0, 4.0, 5.0])).all()
 
 
 def test__total_pixels_minimum():

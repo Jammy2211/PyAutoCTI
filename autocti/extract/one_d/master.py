@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Optional, Tuple
 
 from autocti.extract.one_d.overscan import Extract1DOverscan
 from autocti.extract.one_d.fpr import Extract1DFPR
@@ -11,8 +11,9 @@ class Extract1DMaster:
     def __init__(
         self,
         region_list,
-        prescan: aa.type.Region1DLike = None,
-        overscan: aa.type.Region1DLike = None,
+        shape_1d: Optional[Tuple[int]] = None,
+        prescan: Optional[aa.type.Region1DLike] = None,
+        overscan: Optional[aa.type.Region1DLike] = None,
     ):
         """
         Abstract class containing methods for extracting regions from a 1D line dataset which contains some sort of
@@ -34,19 +35,27 @@ class Extract1DMaster:
             list(map(aa.Region1D, region_list)) if region_list is not None else None
         )
 
+        self.shape_1d = shape_1d
+
         self._prescan = prescan
         self._overscan = overscan
 
     @property
     def fpr(self):
         return Extract1DFPR(
-            region_list=self.region_list, prescan=self._prescan, overscan=self._overscan
+            shape_1d=self.shape_1d,
+            region_list=self.region_list,
+            prescan=self._prescan,
+            overscan=self._overscan,
         )
 
     @property
     def eper(self):
         return Extract1DEPER(
-            region_list=self.region_list, prescan=self._prescan, overscan=self._overscan
+            shape_1d=self.shape_1d,
+            region_list=self.region_list,
+            prescan=self._prescan,
+            overscan=self._overscan,
         )
 
     @property

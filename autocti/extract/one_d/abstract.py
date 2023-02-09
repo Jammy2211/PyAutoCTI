@@ -106,7 +106,10 @@ class Extract1D:
         ]
 
     def stacked_array_1d_from(
-        self, array: aa.Array1D, pixels: Tuple[int, int]
+        self,
+        array: aa.Array1D,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> aa.Array1D:
         """
         Extract a region (e.g. the FPR) of every region on the line dataset and stack them by taking their mean.
@@ -129,13 +132,18 @@ class Extract1D:
 
         arr_list = [
             np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
-            for region in self.region_list_from(pixels=pixels)
+            for region in self.region_list_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
         ]
 
         stacked_array_1d = np.ma.mean(np.ma.asarray(arr_list), axis=0)
 
         mask_1d_list = [
-            array.mask[region.slice] for region in self.region_list_from(pixels=pixels)
+            array.mask[region.slice]
+            for region in self.region_list_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
         ]
 
         return aa.Array1D(
@@ -144,7 +152,11 @@ class Extract1D:
         ).native
 
     def add_to_array(
-        self, new_array: aa.Array1D, array: aa.Array1D, pixels: Tuple[int, int]
+        self,
+        new_array: aa.Array1D,
+        array: aa.Array1D,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> aa.Array1D:
         """
         Extracts the region (e.g. the FPRs) from the line dataset and adds them to a line dataset.
@@ -159,9 +171,13 @@ class Extract1D:
             The row pixel index which determines the region extracted (e.g. `pixels=(0, 3)` will compute the region
             corresponding to the 1st, 2nd and 3rd pixels).
         """
-        region_list = self.region_list_from(pixels=pixels)
+        region_list = self.region_list_from(
+            pixels=pixels, pixels_from_end=pixels_from_end
+        )
 
-        array_1d_list = self.array_1d_list_from(array=array, pixels=pixels)
+        array_1d_list = self.array_1d_list_from(
+            array=array, pixels=pixels, pixels_from_end=pixels_from_end
+        )
 
         for arr, region in zip(array_1d_list, region_list):
             new_array[region.x0 : region.x1] += arr
