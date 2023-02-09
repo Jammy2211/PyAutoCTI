@@ -44,14 +44,11 @@ class Layout1D(aa.Layout1D):
 
     @property
     def parallel_rows_between_regions(self):
-        return [
-            self.region_list[i + 1].x0 - self.region_list[i].x1
-            for i in range(len(self.region_list) - 1)
-        ]
+        return self.extract.fpr.parallel_rows_between_regions
 
     @property
     def trail_size_to_array_edge(self):
-        return self.shape_1d[0] - np.max([region.x1 for region in self.region_list])
+        return self.extract.fpr.trail_size_to_array_edge
 
     @property
     def smallest_eper_pixels_to_array_edge(self):

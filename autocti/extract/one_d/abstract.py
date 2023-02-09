@@ -7,6 +7,7 @@ import autoarray as aa
 class Extract1D:
     def __init__(
         self,
+        shape_1d: Optional[Tuple[int]] = None,
         region_list: Optional[aa.type.Region1DList] = None,
         prescan: Optional[aa.type.Region1DLike] = None,
         overscan: Optional[aa.type.Region1DLike] = None,
@@ -22,6 +23,9 @@ class Extract1D:
         region_list
             Integer pixel coordinates specifying the corners of signal (x0, x1).
         """
+
+        self.shape_1d = shape_1d
+
         self.region_list = (
             list(map(aa.Region1D, region_list)) if region_list is not None else None
         )
@@ -41,6 +45,17 @@ class Extract1D:
         The number of rows between the read-out electronics and the signal closest to them.
         """
         return np.min([region.total_pixels for region in self.region_list])
+
+    @property
+    def parallel_rows_between_regions(self):
+        return [
+            self.region_list[i + 1].x0 - self.region_list[i].x1
+            for i in range(len(self.region_list) - 1)
+        ]
+
+    @property
+    def trail_size_to_array_edge(self):
+        return self.shape_1d[0] - np.max([region.x1 for region in self.region_list])
 
     def region_list_from(
         self,

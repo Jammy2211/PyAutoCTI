@@ -1,5 +1,5 @@
 import numpy as np
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import autoarray as aa
 
@@ -7,7 +7,11 @@ from autocti.extract.one_d.abstract import Extract1D
 
 
 class Extract1DEPER(Extract1D):
-    def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region1D]:
+    def region_list_from(
+        self,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
+    ) -> List[aa.Region1D]:
         """
             Returns a list of the (x0, x1) regions containing the EPERs of a 1D CTI dataset.
 
@@ -22,12 +26,24 @@ class Extract1DEPER(Extract1D):
                 The row indexes to extract the trails between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
         """
 
-        return list(
-            map(
-                lambda region: region.trailing_region_from(pixels=pixels),
-                self.region_list,
-            )
-        )
+        region_list = []
+
+        for i, region in enumerate(self.region_list):
+
+            if pixels_from_end is not None:
+
+                parallel_row_spaces = self.parallel_rows_between_regions + [
+                    self.trail_size_to_array_edge
+                ]
+
+                pixels = (
+                    parallel_row_spaces[i] - pixels_from_end,
+                    parallel_row_spaces[i],
+                )
+
+            region_list.append(region.trailing_region_from(pixels=pixels))
+
+        return region_list
 
     def array_1d_from(self, array: aa.Array1D) -> aa.Array1D:
         """
