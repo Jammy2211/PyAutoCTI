@@ -62,6 +62,13 @@ class Extract2DParallelOverscan(Extract2DParallel):
              The row pixel index which determines the region of the overscan (e.g. `pixels=(0, 3)` will compute the
              region corresponding to the 1st, 2nd and 3rd overscan rows).
         """
+
+        if pixels_from_end is not None:
+            pixels = (
+                self.parallel_overscan.total_rows - pixels_from_end,
+                self.parallel_overscan.total_rows,
+            )
+
         parallel_overscan_extract = aa.Region2D(
             (
                 self.parallel_overscan.y0 + pixels[0],
