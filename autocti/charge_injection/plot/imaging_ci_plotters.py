@@ -3,6 +3,7 @@ from typing import Callable
 
 import autoarray.plot as aplt
 
+from autoarray.mask.mask_2d import Mask2D
 from autoarray.plot.auto_labels import AutoLabels
 from autoarray.dataset.plot.imaging_plotters import ImagingPlotterMeta
 
@@ -275,7 +276,7 @@ class ImagingCIPlotter(Plotter):
                 y_errors=y_errors,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title=f"Data 1D With Noise {region}",
+                    title=f"Data w/ Noise {region} (FPR = {self.dataset.fpr_value} e-)",
                     ylabel="Data (e-)",
                     xlabel="Pixel No.",
                     filename=f"data_with_noise_map_{region}",
@@ -296,7 +297,7 @@ class ImagingCIPlotter(Plotter):
                 y_errors=y_errors,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title=f"Data 1D With Noise {region} (log10 y axis)",
+                    title=f"Data w/ Noise {region} [log10 y] (FPR = {self.dataset.fpr_value} e-)",
                     ylabel="Data (e-)",
                     xlabel="Pixel No.",
                     filename=f"data_with_noise_map_logy_{region}",
