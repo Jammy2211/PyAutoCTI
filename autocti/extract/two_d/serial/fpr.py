@@ -58,10 +58,16 @@ class Extract2DSerialFPR(Extract2DSerial):
          ----------
          pixels
              The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
-             columns)
+             columns).
+        pixels_from_end
+            Alternative row pixex index specification, which extracts this number of pixels from the end of
+            the FPR. For example, if each FPR is 100 pixels and `pixels_from_end=10`, the last 10 pixels of each
+            FPR (pixels (90, 100)) are extracted.
         """
         return [
-            region.serial_front_region_from(pixels=pixels)
+            region.serial_front_region_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
             for region in self.region_list
         ]
 

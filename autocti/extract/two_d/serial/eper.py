@@ -68,7 +68,7 @@ class Extract2DSerialEPER(Extract2DSerial):
         if pixels_from_end is not None:
             pixels = (
                 self.shape_2d[1] - self.region_list[0].x1 - pixels_from_end,
-                self.shape_2d[1] - self.region_list[0].x1
+                self.shape_2d[1] - self.region_list[0].x1,
             )
         return [
             region.serial_trailing_region_from(pixels=pixels)
