@@ -42,11 +42,18 @@ class Extract1D:
         """
         return np.min([region.total_pixels for region in self.region_list])
 
-    def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
+    def region_list_from(
+        self,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
+    ) -> List[aa.Region2D]:
         raise NotImplementedError
 
     def array_1d_list_from(
-        self, array: aa.Array1D, pixels: Tuple[int, int]
+        self,
+        array: aa.Array1D,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> List[aa.Array1D]:
         """
         Extract a specific region from every region on the line dataset and return as a list of 1D arrays.
@@ -66,11 +73,16 @@ class Extract1D:
 
         arr_list = [
             array.native[region.slice]
-            for region in self.region_list_from(pixels=pixels)
+            for region in self.region_list_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
         ]
 
         mask_1d_list = [
-            array.mask[region.slice] for region in self.region_list_from(pixels=pixels)
+            array.mask[region.slice]
+            for region in self.region_list_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
         ]
 
         return [

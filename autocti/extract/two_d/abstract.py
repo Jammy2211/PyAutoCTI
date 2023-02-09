@@ -144,7 +144,10 @@ class Extract2D:
         ]
 
     def stacked_array_2d_from(
-        self, array: aa.Array2D, pixels: Tuple[int, int]
+        self,
+        array: aa.Array2D,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> np.ndarray:
         """
         Extract a region (e.g. the parallel FPR) of every signal region (e.g. the charge injection region of charge
@@ -168,13 +171,18 @@ class Extract2D:
 
         arr_list = [
             np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
-            for region in self.region_list_from(pixels=pixels)
+            for region in self.region_list_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
         ]
 
         stacked_array_2d = np.ma.mean(np.ma.asarray(arr_list), axis=0)
 
         mask_2d_list = [
-            array.mask[region.slice] for region in self.region_list_from(pixels=pixels)
+            array.mask[region.slice]
+            for region in self.region_list_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
         ]
 
         return aa.Array2D(
@@ -183,7 +191,10 @@ class Extract2D:
         ).native
 
     def stacked_array_2d_total_pixels_from(
-        self, array: aa.Array2D, pixels: Tuple[int, int]
+        self,
+        array: aa.Array2D,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> np.ndarray:
         """
         The function `stacked_array_2d_from` extracts a region (e.g. the parallel FPR) of every charge injection
@@ -203,7 +214,10 @@ class Extract2D:
         """
 
         mask_2d_list = [
-            array.mask[region.slice] for region in self.region_list_from(pixels=pixels)
+            array.mask[region.slice]
+            for region in self.region_list_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
         ]
 
         arr_total_pixels = sum([np.invert(mask_2d) for mask_2d in mask_2d_list])
@@ -214,7 +228,10 @@ class Extract2D:
         ).native
 
     def binned_array_1d_from(
-        self, array: aa.Array2D, pixels: Tuple[int, int]
+        self,
+        array: aa.Array2D,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> aa.Array1D:
         """
         Extract a region (e.g. the parallel FPR) of every signal region (e.g. the charge injection region of charge injection data) on the CTI calibration data, stack
@@ -240,7 +257,9 @@ class Extract2D:
 
         arr_list = [
             np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
-            for region in self.region_list_from(pixels=pixels)
+            for region in self.region_list_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
         ]
         stacked_array_2d = np.ma.mean(np.ma.asarray(arr_list), axis=0)
         binned_array_1d = np.ma.mean(
@@ -251,7 +270,10 @@ class Extract2D:
         )
 
     def binned_array_1d_total_pixels_from(
-        self, array: aa.Array2D, pixels: Tuple[int, int]
+        self,
+        array: aa.Array2D,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> aa.Array1D:
         """
         The function `binned_array_1d_from` extracts a region (e.g. the parallel FPR) of every charge injection region
@@ -273,7 +295,10 @@ class Extract2D:
         """
 
         mask_2d_list = [
-            array.mask[region.slice] for region in self.region_list_from(pixels=pixels)
+            array.mask[region.slice]
+            for region in self.region_list_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
         ]
 
         arr_total_pixels = sum([np.invert(mask_2d) for mask_2d in mask_2d_list])
@@ -286,11 +311,18 @@ class Extract2D:
             values=binned_total_pixels, pixel_scales=array.pixel_scale
         )
 
-    def binned_region_1d_from(self, pixels: Tuple[int, int]) -> aa.Region1D:
+    def binned_region_1d_from(
+        self,
+        pixels: Optional[Tuple[int, int]] = None,
+    ) -> aa.Region1D:
         raise NotImplementedError
 
     def add_to_array(
-        self, new_array: aa.Array2D, array: aa.Array2D, pixels: Tuple[int, int]
+        self,
+        new_array: aa.Array2D,
+        array: aa.Array2D,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> aa.Array2D:
         """
         Extracts the region (e.g. the parallel FPRs) from a charge injection image and adds them to a new image.
@@ -306,9 +338,13 @@ class Extract2D:
             corresponding to the 1st, 2nd and 3rd FPR rows).
         """
 
-        region_list = self.region_list_from(pixels=pixels)
+        region_list = self.region_list_from(
+            pixels=pixels, pixels_from_end=pixels_from_end
+        )
 
-        array_2d_list = self.array_2d_list_from(array=array, pixels=pixels)
+        array_2d_list = self.array_2d_list_from(
+            array=array, pixels=pixels, pixels_from_end=pixels_from_end
+        )
 
         for arr, region in zip(array_2d_list, region_list):
             new_array[region.y0 : region.y1, region.x0 : region.x1] += arr
@@ -316,26 +352,35 @@ class Extract2D:
         return new_array
 
     def dataset_1d_from(
-        self, dataset_2d: ImagingCI, pixels: Tuple[int, int]
+        self,
+        dataset_2d: ImagingCI,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> Dataset1D:
 
-        binned_data_1d = self.binned_array_1d_from(array=dataset_2d.data, pixels=pixels)
+        binned_data_1d = self.binned_array_1d_from(
+            array=dataset_2d.data, pixels=pixels, pixels_from_end=pixels_from_end
+        )
 
         binned_noise_map_1d = self.binned_array_1d_from(
-            array=dataset_2d.noise_map, pixels=pixels
+            array=dataset_2d.noise_map, pixels=pixels, pixels_from_end=pixels_from_end
         )
 
         binned_noise_map_1d_total_pixels = self.binned_array_1d_total_pixels_from(
-            array=dataset_2d.noise_map, pixels=pixels
+            array=dataset_2d.noise_map, pixels=pixels, pixels_from_end=pixels_from_end
         )
 
         binned_noise_map_1d /= np.sqrt(binned_noise_map_1d_total_pixels)
 
         binned_pre_cti_data_1d = self.binned_array_1d_from(
-            array=dataset_2d.pre_cti_data, pixels=pixels
+            array=dataset_2d.pre_cti_data,
+            pixels=pixels,
+            pixels_from_end=pixels_from_end,
         )
 
-        binned_region_1d = self.binned_region_1d_from(pixels=pixels)
+        binned_region_1d = self.binned_region_1d_from(
+            pixels=pixels,
+        )
 
         layout_1d = Layout1D(
             shape_1d=binned_data_1d.shape_native, region_list=[binned_region_1d]
