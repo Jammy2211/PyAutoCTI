@@ -29,23 +29,12 @@ class Extract2DParallel(Extract2D):
 
         value_list = []
 
-        if pixels_from_end is None:
-
-            arr_list = [
-                np.ma.array(
-                    data=array.native[region.slice], mask=array.mask[region.slice]
-                )
-                for region in self.region_list_from(pixels=pixels)
-            ]
-
-        else:
-
-            arr_list = [
-                np.ma.array(
-                    data=array.native[region.slice], mask=array.mask[region.slice]
-                )
-                for region in self.region_list_from(pixels_from_end=pixels_from_end)
-            ]
+        arr_list = [
+            np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
+            for region in self.region_list_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
+        ]
 
         arr_stack = np.ma.stack(arr_list)
 
@@ -164,23 +153,12 @@ class Extract2DParallel(Extract2D):
     ):
         value_lists = []
 
-        if pixels_from_end is None:
-
-            arr_list = [
-                np.ma.array(
-                    data=array.native[region.slice], mask=array.mask[region.slice]
-                )
-                for region in self.region_list_from(pixels=pixels)
-            ]
-
-        else:
-
-            arr_list = [
-                np.ma.array(
-                    data=array.native[region.slice], mask=array.mask[region.slice]
-                )
-                for region in self.region_list_from(pixels_from_end=pixels_from_end)
-            ]
+        arr_list = [
+            np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
+            for region in self.region_list_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
+        ]
 
         for array_2d in arr_list:
 
