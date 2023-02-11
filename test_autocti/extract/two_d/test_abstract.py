@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 from typing import List, Optional, Tuple
 
 import autoarray as aa
@@ -251,3 +252,84 @@ def test__dataset_1d_from(imaging_ci_7x7):
     ).all()
     assert (dataset_1d.pre_cti_data == np.array([10.0, 10.0])).all()
     assert dataset_1d.layout.region_list == [(0, 2)]
+
+
+def test__add_gaussian_noise_to(parallel_array, parallel_masked_array):
+
+    extract = MockExtract2D(region_list=[(1, 4, 0, 3)])
+
+    array_with_noise = extract.add_gaussian_noise_to(
+        array=parallel_array, pixels=(0, 1), noise_value=1.0, noise_seed=1
+    )
+
+    assert array_with_noise == pytest.approx(
+        np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [2.62434, 0.38824, 0.47182],
+                [2.0, 2.0, 2.0],
+                [3.0, 3.0, 3.0],
+                [4.0, 4.0, 4.0],
+                [5.0, 5.0, 5.0],
+                [6.0, 6.0, 6.0],
+                [7.0, 7.0, 7.0],
+                [8.0, 8.0, 8.0],
+                [9.0, 9.0, 9.0],
+            ]
+        ),
+        1.0e-4,
+    )
+
+    extract = MockExtract2D(region_list=[(1, 3, 0, 3), (5, 8, 0, 3)])
+
+    array_with_noise = extract.add_gaussian_noise_to(
+        array=parallel_array, pixels=(0, 1), noise_value=1.0, noise_seed=1
+    )
+
+    print(array_with_noise)
+
+    assert array_with_noise == pytest.approx(
+        np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [2.62434, 0.38824, 0.47182],
+                [2.0, 2.0, 2.0],
+                [3.0, 3.0, 3.0],
+                [4.0, 4.0, 4.0],
+                [6.62434, 4.38824, 4.47182],
+                [6.0, 6.0, 6.0],
+                [7.0, 7.0, 7.0],
+                [8.0, 8.0, 8.0],
+                [9.0, 9.0, 9.0],
+            ]
+        ),
+        1.0e-4,
+    )
+
+    extract = MockExtract2D(region_list=[(1, 3, 0, 3), (5, 8, 0, 3)])
+
+    array_with_noise = extract.add_gaussian_noise_to(
+        array=parallel_array, pixels=(1, 3), noise_value=1.0, noise_seed=1
+    )
+
+    assert array_with_noise == pytest.approx(
+        np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [1.0, 1.0, 1.0],
+                [3.6243, 1.3882, 1.4718],
+                [1.9270, 3.8654, 0.6984],
+                [
+                    4.0,
+                    4.0,
+                    4.0,
+                ],
+                [5.0, 5.0, 5.0],
+                [7.6243, 5.3882, 5.4718],
+                [5.9270, 7.8654, 4.6984],
+                [8.0, 8.0, 8.0],
+                [9.0, 9.0, 9.0],
+            ]
+        ),
+        1.0e-4,
+    )

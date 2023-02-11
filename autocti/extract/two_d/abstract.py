@@ -392,3 +392,45 @@ class Extract2D:
             pre_cti_data=binned_pre_cti_data_1d,
             layout=layout_1d,
         )
+
+    def add_gaussian_noise_to(
+        self,
+        array: aa.Array2D,
+        noise_value: float,
+        noise_seed: int,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
+    ) -> aa.Array2D:
+        """
+        Extracts the region (e.g. the parallel FPRs) from a charge injection image and adds them to a new image.
+
+        Parameters
+        ----------
+        new_array
+            The 2D array which the extracted parallel FPRs are added to.
+        array
+            The 2D array which contains the charge injection image from which the parallel FPRs are extracted.
+        pixels
+            The row pixel index which determines the region of the FPR (e.g. `pixels=(0, 3)` will compute the region
+            corresponding to the 1st, 2nd and 3rd FPR rows).
+        """
+
+        region_list = self.region_list_from(
+            pixels=pixels, pixels_from_end=pixels_from_end
+        )
+
+        array_2d_list = self.array_2d_list_from(
+            array=array, pixels=pixels, pixels_from_end=pixels_from_end
+        )
+
+        array = array.native
+
+        for arr, region in zip(array_2d_list, region_list):
+
+            array[
+                region.y0 : region.y1, region.x0 : region.x1
+            ] = aa.preprocess.data_with_gaussian_noise_added(
+                data=arr, sigma=noise_value, seed=noise_seed
+            )
+
+        return array
