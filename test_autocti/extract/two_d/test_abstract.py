@@ -254,12 +254,12 @@ def test__dataset_1d_from(imaging_ci_7x7):
     assert dataset_1d.layout.region_list == [(0, 2)]
 
 
-def test__add_gaussian_noise_to(parallel_array, parallel_masked_array):
+def test__add_gaussian_noise_to(parallel_array):
 
     extract = MockExtract2D(region_list=[(1, 4, 0, 3)])
 
     array_with_noise = extract.add_gaussian_noise_to(
-        array=parallel_array, pixels=(0, 1), noise_value=1.0, noise_seed=1
+        array=parallel_array, pixels=(0, 1), noise_sigma=1.0, noise_seed=1
     )
 
     assert array_with_noise == pytest.approx(
@@ -283,10 +283,8 @@ def test__add_gaussian_noise_to(parallel_array, parallel_masked_array):
     extract = MockExtract2D(region_list=[(1, 3, 0, 3), (5, 8, 0, 3)])
 
     array_with_noise = extract.add_gaussian_noise_to(
-        array=parallel_array, pixels=(0, 1), noise_value=1.0, noise_seed=1
+        array=parallel_array, pixels=(0, 1), noise_sigma=1.0, noise_seed=1
     )
-
-    print(array_with_noise)
 
     assert array_with_noise == pytest.approx(
         np.array(
@@ -309,7 +307,7 @@ def test__add_gaussian_noise_to(parallel_array, parallel_masked_array):
     extract = MockExtract2D(region_list=[(1, 3, 0, 3), (5, 8, 0, 3)])
 
     array_with_noise = extract.add_gaussian_noise_to(
-        array=parallel_array, pixels=(1, 3), noise_value=1.0, noise_seed=1
+        array=parallel_array, pixels=(1, 3), noise_sigma=1.0, noise_seed=1
     )
 
     assert array_with_noise == pytest.approx(
