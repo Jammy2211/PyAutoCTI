@@ -114,15 +114,20 @@ class Layout2D(aa.Layout2D):
         )
 
     @property
-    def pixels_between_regions(self) -> List[int]:
+    def parallel_rows_between_regions(self) -> List[int]:
         """
         Returns a list where each entry is the number of pixels a charge injection region and its neighboring
         charge injection region.
         """
-        return [
-            self.region_list[i + 1].y0 - self.region_list[i].y1
-            for i in range(len(self.region_list) - 1)
-        ]
+        return self.extract.parallel_fpr.parallel_rows_between_regions
+
+    @property
+    def parallel_rows_within_regions(self) -> List[int]:
+        """
+        Returns a list where each entry is the number of pixels a charge injection region and its neighboring
+        charge injection region.
+        """
+        return [region.y1 - region.y0 for region in self.region_list]
 
     @property
     def parallel_rows_to_array_edge(self) -> int:
@@ -132,7 +137,7 @@ class Layout2D(aa.Layout2D):
         This is the number of pixels from the last charge injection FPR edge to the read out register and electronics
         and will include the parallel overscan if the CCD has one.
         """
-        return self.shape_2d[0] - np.max([region.y1 for region in self.region_list])
+        return self.extract.parallel_fpr.parallel_rows_to_array_edge
 
     @property
     def smallest_parallel_rows_between_ci_regions(self) -> int:
@@ -141,9 +146,19 @@ class Layout2D(aa.Layout2D):
         charge injection region to the edge of the charge injeciton image (e.g. in the direction away from the
         readout register and electronics).
         """
-        pixels_between_regions = self.pixels_between_regions
-        pixels_between_regions.append(self.parallel_rows_to_array_edge)
-        return np.min(pixels_between_regions)
+        parallel_rows_between_regions = self.parallel_rows_between_regions
+        parallel_rows_between_regions.append(self.parallel_rows_to_array_edge)
+        return np.min(parallel_rows_between_regions)
+
+    @property
+    def smallest_parallel_rows_within_ci_regions(self) -> int:
+        """
+        The smallest number of pixels within any of the charge injection regions.
+
+        This can be used to extract the FPR of each charge injection region using a
+        number of pixels which does not exceed the size of any.
+        """
+        return np.min(self.parallel_rows_within_regions)
 
     def with_extracted_regions(
         self, extraction_region: aa.type.Region2DLike

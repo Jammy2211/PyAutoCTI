@@ -19,6 +19,7 @@ class ImagingCI(aa.Imaging):
         layout: Layout2DCI,
         cosmic_ray_map: Optional[aa.Array2D] = None,
         noise_scaling_map_dict: Optional[Dict] = None,
+        fpr_value: Optional[float] = None,
     ):
 
         super().__init__(image=image, noise_map=noise_map)
@@ -42,6 +43,22 @@ class ImagingCI(aa.Imaging):
         self.noise_scaling_map_dict = noise_scaling_map_dict
 
         self.layout = layout
+
+        if fpr_value is None:
+
+            fpr_value = np.round(
+                np.mean(
+                    self.layout.extract.parallel_fpr.median_list_from(
+                        array=self.data,
+                        pixels_from_end=min(
+                            10, self.layout.smallest_parallel_rows_within_ci_regions
+                        ),
+                    )
+                ),
+                2,
+            )
+
+        self.fpr_value = fpr_value
 
         self.imaging_full = self
 
@@ -107,6 +124,7 @@ class ImagingCI(aa.Imaging):
             layout=self.layout,
             cosmic_ray_map=cosmic_ray_map,
             noise_scaling_map_dict=noise_scaling_map_dict,
+            fpr_value=self.fpr_value,
         )
 
     def apply_settings(self, settings: SettingsImagingCI):

@@ -70,6 +70,25 @@ def test__region_list_from__array_2d_list_from(serial_array, serial_masked_array
     ).all()
 
 
+def test__region_list_from__array_2d_list_from__pixels_from_end(
+    serial_array, serial_masked_array
+):
+
+    print(serial_array.shape_native)
+
+    extract = ac.Extract2DSerialEPER(
+        shape_2d=serial_array.shape_native, region_list=[(0, 3, 1, 4)]
+    )
+
+    eper_list = extract.array_2d_list_from(array=serial_array, pixels_from_end=1)
+
+    assert (eper_list[0] == np.array([[9.0], [9.0], [9.0]])).all()
+
+    eper_list = extract.array_2d_list_from(array=serial_array, pixels_from_end=2)
+
+    assert (eper_list[0] == np.array([[8.0, 9.0], [8.0, 9.0], [8.0, 9.0]])).all()
+
+
 def test__binned_region_1d_from():
 
     extract = ac.Extract2DSerialEPER(region_list=[(1, 3, 0, 3)])

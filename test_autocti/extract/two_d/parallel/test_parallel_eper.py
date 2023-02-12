@@ -57,6 +57,37 @@ def test__region_list_from__via_array_2d_list_from(
     ).all()
 
 
+def test__region_list_from__via_array_2d_list_from__pixels_from_end(
+    parallel_array, parallel_masked_array
+):
+    extract = ac.Extract2DParallelEPER(
+        region_list=[(1, 3, 0, 3)], shape_2d=parallel_array.shape_native
+    )
+
+    eper_list = extract.array_2d_list_from(array=parallel_array, pixels_from_end=1)
+    assert (eper_list == np.array([[9.0, 9.0, 9.0]])).all()
+
+    eper_list = extract.array_2d_list_from(array=parallel_array, pixels_from_end=2)
+    assert (eper_list == np.array([[8.0, 8.0, 8.0], [9.0, 9.0, 9.0]])).all()
+
+    extract = ac.Extract2DParallelEPER(
+        region_list=[(1, 3, 0, 3), (4, 6, 0, 3)], shape_2d=parallel_array.shape_native
+    )
+
+    eper_list = extract.array_2d_list_from(array=parallel_array, pixels_from_end=2)
+
+    assert (eper_list[0] == np.array([[2.0, 2.0, 2.0], [3.0, 3.0, 3.0]])).all()
+    assert (eper_list[1] == np.array([[8.0, 8.0, 8.0], [9.0, 9.0, 9.0]])).all()
+
+    eper_list = extract.array_2d_list_from(
+        array=parallel_masked_array, pixels_from_end=2
+    )
+
+    assert (
+        eper_list[0].mask == np.array([[False, True, False], [False, False, True]])
+    ).all()
+
+
 def test__binned_region_1d_from():
 
     extract = ac.Extract2DParallelEPER(region_list=[(1, 3, 0, 3)])

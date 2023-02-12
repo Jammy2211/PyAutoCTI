@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Optional, Tuple
 
 import autoarray as aa
 
@@ -8,7 +8,11 @@ from autocti.extract.two_d import extract_2d_util
 
 
 class Extract2DSerialEPER(Extract2DSerial):
-    def region_list_from(self, pixels: Tuple[int, int]):
+    def region_list_from(
+        self,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
+    ):
         """
          Returns a list of the 2D serial EPER regions from the `region_list` containing signal  (e.g. the charge
          injection regions of charge injection data), extracted between two input `pixels` indexes.
@@ -53,8 +57,19 @@ class Extract2DSerialEPER(Extract2DSerial):
          Parameters
          ----------
          pixels
-             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd columns)
+             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
+             columns).
+        pixels_from_end
+            Alternative row pixel index specification, which extracts this number of pixels from the end of
+            the EPER. For example, if each EPER is 100 pixels and `pixels_from_end=10`, the last 10 pixels of each
+            EPER (pixels (90, 100)) are extracted.
         """
+
+        if pixels_from_end is not None:
+            pixels = (
+                self.shape_2d[1] - self.region_list[0].x1 - pixels_from_end,
+                self.shape_2d[1] - self.region_list[0].x1,
+            )
         return [
             region.serial_trailing_region_from(pixels=pixels)
             for region in self.region_list

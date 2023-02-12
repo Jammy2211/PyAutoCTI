@@ -60,6 +60,7 @@ class Extract2DMaster:
     @property
     def parallel_fpr(self):
         return Extract2DParallelFPR(
+            shape_2d=self.shape_2d,
             region_list=self.region_list,
             parallel_overscan=self._parallel_overscan,
             serial_prescan=self._serial_prescan,
@@ -69,6 +70,7 @@ class Extract2DMaster:
     @property
     def parallel_eper(self):
         return Extract2DParallelEPER(
+            shape_2d=self.shape_2d,
             region_list=self.region_list,
             parallel_overscan=self._parallel_overscan,
             serial_prescan=self._serial_prescan,
@@ -84,6 +86,7 @@ class Extract2DMaster:
     @property
     def serial_fpr(self):
         return Extract2DSerialFPR(
+            shape_2d=self.shape_2d,
             region_list=self.region_list,
             parallel_overscan=self._parallel_overscan,
             serial_prescan=self._serial_prescan,
@@ -93,6 +96,7 @@ class Extract2DMaster:
     @property
     def serial_eper(self):
         return Extract2DSerialEPER(
+            shape_2d=self.shape_2d,
             region_list=self.region_list,
             parallel_overscan=self._parallel_overscan,
             serial_prescan=self._serial_prescan,

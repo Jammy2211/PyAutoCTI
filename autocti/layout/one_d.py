@@ -37,28 +37,28 @@ class Layout1D(aa.Layout1D):
         from autocti.extract.one_d.master import Extract1DMaster
 
         self.extract = Extract1DMaster(
-            region_list=region_list, prescan=prescan, overscan=overscan
+            shape_1d=shape_1d,
+            region_list=region_list,
+            prescan=prescan,
+            overscan=overscan,
         )
 
         super().__init__(shape_1d=shape_1d, prescan=prescan, overscan=overscan)
 
     @property
-    def pixels_between_regions(self):
-        return [
-            self.region_list[i + 1].x0 - self.region_list[i].x1
-            for i in range(len(self.region_list) - 1)
-        ]
+    def parallel_rows_between_regions(self):
+        return self.extract.fpr.parallel_rows_between_regions
 
     @property
     def trail_size_to_array_edge(self):
-        return self.shape_1d[0] - np.max([region.x1 for region in self.region_list])
+        return self.extract.fpr.trail_size_to_array_edge
 
     @property
     def smallest_eper_pixels_to_array_edge(self):
 
-        pixels_between_regions = self.pixels_between_regions
-        pixels_between_regions.append(self.trail_size_to_array_edge)
-        return np.min(pixels_between_regions)
+        parallel_rows_between_regions = self.parallel_rows_between_regions
+        parallel_rows_between_regions.append(self.trail_size_to_array_edge)
+        return np.min(parallel_rows_between_regions)
 
     def extract_region_from(self, array: aa.Array1D, region: str):
 

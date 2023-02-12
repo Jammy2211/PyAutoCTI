@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import autoarray as aa
 
@@ -8,7 +8,11 @@ from autocti.extract.two_d import extract_2d_util
 
 
 class Extract2DParallelOverscan(Extract2DParallel):
-    def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
+    def region_list_from(
+        self,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
+    ) -> List[aa.Region2D]:
         """
          Returns a list containing the 2D parallel overscan region, which is simply the parallel overscan input to the
          object, extracted between two input `pixels` indexes (this is somewhat redundant information, but mimicks
@@ -57,7 +61,18 @@ class Extract2DParallelOverscan(Extract2DParallel):
          pixels
              The row pixel index which determines the region of the overscan (e.g. `pixels=(0, 3)` will compute the
              region corresponding to the 1st, 2nd and 3rd overscan rows).
+        pixels_from_end
+            Alternative row pixex index specification, which extracts this number of pixels from the end of
+            the overscan. For example, if the overscan is 100 pixels and `pixels_from_end=10`, the
+            last 10 pixels of the overscan (pixels (90, 100)) are extracted.
         """
+
+        if pixels_from_end is not None:
+            pixels = (
+                self.parallel_overscan.total_rows - pixels_from_end,
+                self.parallel_overscan.total_rows,
+            )
+
         parallel_overscan_extract = aa.Region2D(
             (
                 self.parallel_overscan.y0 + pixels[0],

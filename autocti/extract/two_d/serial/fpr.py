@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Optional, Tuple
 
 import autoarray as aa
 
@@ -8,7 +8,11 @@ from autocti.extract.two_d import extract_2d_util
 
 
 class Extract2DSerialFPR(Extract2DSerial):
-    def region_list_from(self, pixels: Tuple[int, int]):
+    def region_list_from(
+        self,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
+    ):
         """
          Returns a list of the 2D serial FPR regions from the `region_list` containing signal  (e.g. the charge
          injection regions of charge injection data), extracted between two input `pixels` indexes.
@@ -54,10 +58,16 @@ class Extract2DSerialFPR(Extract2DSerial):
          ----------
          pixels
              The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
-             columns)
+             columns).
+        pixels_from_end
+            Alternative row pixex index specification, which extracts this number of pixels from the end of
+            the FPR. For example, if each FPR is 100 pixels and `pixels_from_end=10`, the last 10 pixels of each
+            FPR (pixels (90, 100)) are extracted.
         """
         return [
-            region.serial_front_region_from(pixels=pixels)
+            region.serial_front_region_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
             for region in self.region_list
         ]
 

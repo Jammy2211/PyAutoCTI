@@ -1,5 +1,5 @@
 import numpy as np
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import autoarray as aa
 import autocti as ac
@@ -17,7 +17,11 @@ class MockExtract2D(Extract2D):
         """
         return 1
 
-    def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
+    def region_list_from(
+        self,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
+    ) -> List[aa.Region2D]:
         """
         To test the `Extract2D` object we use the example of the parallel front edge (which is the method
         used by the `Extract2DParallelFPR` class.

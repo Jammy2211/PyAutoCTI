@@ -323,6 +323,24 @@ def test__apply_settings__serial_masked_imaging_ci(
     )
 
 
+def test__fpr_value():
+
+    image = ac.Array2D.full(
+        fill_value=1.0, shape_native=(5, 5), pixel_scales=(1.0, 1.0)
+    )
+    noise_map = ac.Array2D.ones(
+        shape_native=image.shape_native, pixel_scales=image.pixel_scales
+    )
+
+    layout = ac.Layout2DCI(shape_2d=image.shape_native, region_list=[(1, 4, 1, 4)])
+
+    imaging = ac.ImagingCI(
+        image=image, noise_map=noise_map, pre_cti_data=image, layout=layout
+    )
+
+    assert imaging.fpr_value == pytest.approx(1.0, 1.0e-4)
+
+
 def test__set_noise_scaling_map_dict(imaging_ci_7x7, ci_noise_scaling_map_dict_7x7):
 
     imaging_ci_7x7.noise_scaling_map_dict = None

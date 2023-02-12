@@ -269,6 +269,7 @@ class Extract2DSerialCalibration:
             ),
             cosmic_ray_map=cosmic_ray_map,
             noise_scaling_map_dict=noise_scaling_map_dict,
+            fpr_value=imaging_ci.fpr_value,
         )
 
         return imaging_ci.apply_mask(mask=mask)

@@ -14,6 +14,10 @@ class ImagingCIException(Exception):
     pass
 
 
+class ExtractException(Exception):
+    pass
+
+
 class LayoutException(Exception):
     pass
 

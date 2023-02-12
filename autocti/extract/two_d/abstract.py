@@ -11,6 +11,7 @@ from autocti.layout.one_d import Layout1D
 class Extract2D:
     def __init__(
         self,
+        shape_2d: Optional[Tuple[int, int]] = None,
         region_list: Optional[aa.type.Region2DList] = None,
         parallel_overscan: Optional[aa.type.Region2DLike] = None,
         serial_prescan: Optional[aa.type.Region2DLike] = None,
@@ -27,6 +28,8 @@ class Extract2D:
             Integer pixel coordinates specifying the corners of each charge injection region (top-row, bottom-row,
             left-column, right-column).
         """
+
+        self.shape_2d = shape_2d
 
         self.region_list = (
             list(map(aa.Region2D, region_list)) if region_list is not None else None
@@ -71,11 +74,39 @@ class Extract2D:
         """
         raise NotImplementedError
 
-    def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
+    @property
+    def parallel_rows_between_regions(self) -> List[int]:
+        """
+        Returns a list where each entry is the number of pixels a charge injection region and its neighboring
+        charge injection region.
+        """
+        return [
+            self.region_list[i + 1].y0 - self.region_list[i].y1
+            for i in range(len(self.region_list) - 1)
+        ]
+
+    @property
+    def parallel_rows_to_array_edge(self) -> int:
+        """
+        The number of pixels from the edge of the parallel EPERs to the edge of the array.
+
+        This is the number of pixels from the last charge injection FPR edge to the read out register and electronics
+        and will include the parallel overscan if the CCD has one.
+        """
+        return self.shape_2d[0] - np.max([region.y1 for region in self.region_list])
+
+    def region_list_from(
+        self,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
+    ) -> List[aa.Region2D]:
         raise NotImplementedError
 
     def array_2d_list_from(
-        self, array: aa.Array2D, pixels: Tuple[int, int]
+        self,
+        array: aa.Array2D,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> List[aa.Array2D]:
         """
         Extract a specific region from every signal region (e.g. the charge injection region of charge injection data)
@@ -95,11 +126,16 @@ class Extract2D:
         """
         arr_list = [
             array.native[region.slice]
-            for region in self.region_list_from(pixels=pixels)
+            for region in self.region_list_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
         ]
 
         mask_2d_list = [
-            array.mask[region.slice] for region in self.region_list_from(pixels=pixels)
+            array.mask[region.slice]
+            for region in self.region_list_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
         ]
 
         return [
@@ -108,37 +144,45 @@ class Extract2D:
         ]
 
     def stacked_array_2d_from(
-        self, array: aa.Array2D, pixels: Tuple[int, int]
+        self,
+        array: aa.Array2D,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> np.ndarray:
         """
-            Extract a region (e.g. the parallel FPR) of every signal region (e.g. the charge injection region of charge
-            injection data) on the CTI calibration data and stack them by taking their mean.
+        Extract a region (e.g. the parallel FPR) of every signal region (e.g. the charge injection region of charge
+        injection data) on the CTI calibration data and stack them by taking their mean.
 
-            This returns the 2D average of the extracted regions (e.g. the parallel FPRs) of all of the charge injection
-            regions, which for certain CCD charge injection electronics one may expect to be similar.
+        This returns the 2D average of the extracted regions (e.g. the parallel FPRs) of all of the charge injection
+        regions, which for certain CCD charge injection electronics one may expect to be similar.
 
-            For fits to charge injection data this function is also used to create images like the stacked 2D residuals,
-            which therefore quantify the goodness-of-fit of a CTI model.
+        For fits to charge injection data this function is also used to create images like the stacked 2D residuals,
+        which therefore quantify the goodness-of-fit of a CTI model.
 
-            Parameters
+        Parameters
         ----------
-            array
-                The 2D array which contains the charge injection image from which the regions (e.g. the parallel FPRs)
-                are extracted and stacked.
-            pixels
-                The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
-                FPR rows)
+        array
+            The 2D array which contains the charge injection image from which the regions (e.g. the parallel FPRs)
+            are extracted and stacked.
+        pixels
+            The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
+            FPR rows)
         """
 
         arr_list = [
             np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
-            for region in self.region_list_from(pixels=pixels)
+            for region in self.region_list_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
         ]
 
         stacked_array_2d = np.ma.mean(np.ma.asarray(arr_list), axis=0)
 
         mask_2d_list = [
-            array.mask[region.slice] for region in self.region_list_from(pixels=pixels)
+            array.mask[region.slice]
+            for region in self.region_list_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
         ]
 
         return aa.Array2D(
@@ -147,27 +191,33 @@ class Extract2D:
         ).native
 
     def stacked_array_2d_total_pixels_from(
-        self, array: aa.Array2D, pixels: Tuple[int, int]
+        self,
+        array: aa.Array2D,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> np.ndarray:
         """
-            The function `stacked_array_2d_from` extracts a region (e.g. the parallel FPR) of every charge injection
-            region on the charge injection image and stacks them by taking their mean.
+        The function `stacked_array_2d_from` extracts a region (e.g. the parallel FPR) of every charge injection
+        region on the charge injection image and stacks them by taking their mean.
 
-            If the data being stacked is a noise-map, we need to know how many pixels were used in the stacking of every
-            final pixel on the stacked 2d array in order to compute the new noise map via quadrature.
+        If the data being stacked is a noise-map, we need to know how many pixels were used in the stacking of every
+        final pixel on the stacked 2d array in order to compute the new noise map via quadrature.
 
-            Parameters
+        Parameters
         ----------
-            array
-                The 2D array which contains the charge injection image from which the regions (e.g. the parallel FPRs)
-                are extracted and stacked.
-            pixels
-                The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
-                FPR rows)
+        array
+            The 2D array which contains the charge injection image from which the regions (e.g. the parallel FPRs)
+            are extracted and stacked.
+        pixels
+            The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
+            FPR rows)
         """
 
         mask_2d_list = [
-            array.mask[region.slice] for region in self.region_list_from(pixels=pixels)
+            array.mask[region.slice]
+            for region in self.region_list_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
         ]
 
         arr_total_pixels = sum([np.invert(mask_2d) for mask_2d in mask_2d_list])
@@ -178,33 +228,38 @@ class Extract2D:
         ).native
 
     def binned_array_1d_from(
-        self, array: aa.Array2D, pixels: Tuple[int, int]
+        self,
+        array: aa.Array2D,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> aa.Array1D:
         """
-            Extract a region (e.g. the parallel FPR) of every signal region (e.g. the charge injection region of charge injection data) on the CTI calibration data, stack
-            them by taking their mean and then bin them up to a 1D region (e.g. the 1D parallel FPR) by taking the mean
-            across the direction opposite to clocking (e.g. bin over the serial direction for a parallel FPR).
+        Extract a region (e.g. the parallel FPR) of every signal region (e.g. the charge injection region of charge injection data) on the CTI calibration data, stack
+        them by taking their mean and then bin them up to a 1D region (e.g. the 1D parallel FPR) by taking the mean
+        across the direction opposite to clocking (e.g. bin over the serial direction for a parallel FPR).
 
-            This returns the 1D average region (e.g. of the parallel FPR) of all of the charge injection regions. When
-            binning a uniform charge injection this binning process removes noise to clearly reveal the FPR or EPER.
-            For non-uniform injections this will provide an average FPR or EPER.
+        This returns the 1D average region (e.g. of the parallel FPR) of all of the charge injection regions. When
+        binning a uniform charge injection this binning process removes noise to clearly reveal the FPR or EPER.
+        For non-uniform injections this will provide an average FPR or EPER.
 
-            For fits to charge injection data this function is also used to create images like the stacked 1D residuals,
-            which therefore quantify the goodness-of-fit of a CTI model.
+        For fits to charge injection data this function is also used to create images like the stacked 1D residuals,
+        which therefore quantify the goodness-of-fit of a CTI model.
 
-            Parameters
+        Parameters
         ----------
-            array
-                The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted and
-                stacked.
-            pixels
-                The column / row pixel index to extract the region (e.g. FPR, EPER) between (e.g. `pixels=(0, 3)` extracts
-                the 1st, 2nd and 3rd columns / rows)
+        array
+            The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted and
+            stacked.
+        pixels
+            The column / row pixel index to extract the region (e.g. FPR, EPER) between (e.g. `pixels=(0, 3)` extracts
+            the 1st, 2nd and 3rd columns / rows)
         """
 
         arr_list = [
             np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
-            for region in self.region_list_from(pixels=pixels)
+            for region in self.region_list_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
         ]
         stacked_array_2d = np.ma.mean(np.ma.asarray(arr_list), axis=0)
         binned_array_1d = np.ma.mean(
@@ -215,29 +270,35 @@ class Extract2D:
         )
 
     def binned_array_1d_total_pixels_from(
-        self, array: aa.Array2D, pixels: Tuple[int, int]
+        self,
+        array: aa.Array2D,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> aa.Array1D:
         """
-            The function `binned_array_1d_from` extracts a region (e.g. the parallel FPR) of every charge injection region
-            on the charge injection image, stacks them by taking their mean and then bin them up to a 1D region
-            (e.g. the 1D parallel FPR) by taking the mean across the direction opposite to clocking (e.g. bin over the
-            serial direction for a parallel FPR).
+        The function `binned_array_1d_from` extracts a region (e.g. the parallel FPR) of every charge injection region
+        on the charge injection image, stacks them by taking their mean and then bin them up to a 1D region
+        (e.g. the 1D parallel FPR) by taking the mean across the direction opposite to clocking (e.g. bin over the
+        serial direction for a parallel FPR).
 
-            If the data being stacked is a noise-map, we need to know how many pixels were used in the stacking of every
-            final pixel on the binned 1D array in order to compute the new noise map via quadrature.
+        If the data being stacked is a noise-map, we need to know how many pixels were used in the stacking of every
+        final pixel on the binned 1D array in order to compute the new noise map via quadrature.
 
-            Parameters
+        Parameters
         ----------
-            array
-                The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted and
-                stacked.
-            pixels
-                The column / row pixel index to extract the region (e.g. FPR, EPER) between (e.g. `pixels=(0, 3)` extracts
-                the 1st, 2nd and 3rd columns / rows)
+        array
+            The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted and
+            stacked.
+        pixels
+            The column / row pixel index to extract the region (e.g. FPR, EPER) between (e.g. `pixels=(0, 3)` extracts
+            the 1st, 2nd and 3rd columns / rows)
         """
 
         mask_2d_list = [
-            array.mask[region.slice] for region in self.region_list_from(pixels=pixels)
+            array.mask[region.slice]
+            for region in self.region_list_from(
+                pixels=pixels, pixels_from_end=pixels_from_end
+            )
         ]
 
         arr_total_pixels = sum([np.invert(mask_2d) for mask_2d in mask_2d_list])
@@ -250,11 +311,18 @@ class Extract2D:
             values=binned_total_pixels, pixel_scales=array.pixel_scale
         )
 
-    def binned_region_1d_from(self, pixels: Tuple[int, int]) -> aa.Region1D:
+    def binned_region_1d_from(
+        self,
+        pixels: Optional[Tuple[int, int]] = None,
+    ) -> aa.Region1D:
         raise NotImplementedError
 
     def add_to_array(
-        self, new_array: aa.Array2D, array: aa.Array2D, pixels: Tuple[int, int]
+        self,
+        new_array: aa.Array2D,
+        array: aa.Array2D,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> aa.Array2D:
         """
         Extracts the region (e.g. the parallel FPRs) from a charge injection image and adds them to a new image.
@@ -270,9 +338,13 @@ class Extract2D:
             corresponding to the 1st, 2nd and 3rd FPR rows).
         """
 
-        region_list = self.region_list_from(pixels=pixels)
+        region_list = self.region_list_from(
+            pixels=pixels, pixels_from_end=pixels_from_end
+        )
 
-        array_2d_list = self.array_2d_list_from(array=array, pixels=pixels)
+        array_2d_list = self.array_2d_list_from(
+            array=array, pixels=pixels, pixels_from_end=pixels_from_end
+        )
 
         for arr, region in zip(array_2d_list, region_list):
             new_array[region.y0 : region.y1, region.x0 : region.x1] += arr
@@ -280,26 +352,35 @@ class Extract2D:
         return new_array
 
     def dataset_1d_from(
-        self, dataset_2d: ImagingCI, pixels: Tuple[int, int]
+        self,
+        dataset_2d: ImagingCI,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
     ) -> Dataset1D:
 
-        binned_data_1d = self.binned_array_1d_from(array=dataset_2d.data, pixels=pixels)
+        binned_data_1d = self.binned_array_1d_from(
+            array=dataset_2d.data, pixels=pixels, pixels_from_end=pixels_from_end
+        )
 
         binned_noise_map_1d = self.binned_array_1d_from(
-            array=dataset_2d.noise_map, pixels=pixels
+            array=dataset_2d.noise_map, pixels=pixels, pixels_from_end=pixels_from_end
         )
 
         binned_noise_map_1d_total_pixels = self.binned_array_1d_total_pixels_from(
-            array=dataset_2d.noise_map, pixels=pixels
+            array=dataset_2d.noise_map, pixels=pixels, pixels_from_end=pixels_from_end
         )
 
         binned_noise_map_1d /= np.sqrt(binned_noise_map_1d_total_pixels)
 
         binned_pre_cti_data_1d = self.binned_array_1d_from(
-            array=dataset_2d.pre_cti_data, pixels=pixels
+            array=dataset_2d.pre_cti_data,
+            pixels=pixels,
+            pixels_from_end=pixels_from_end,
         )
 
-        binned_region_1d = self.binned_region_1d_from(pixels=pixels)
+        binned_region_1d = self.binned_region_1d_from(
+            pixels=pixels,
+        )
 
         layout_1d = Layout1D(
             shape_1d=binned_data_1d.shape_native, region_list=[binned_region_1d]

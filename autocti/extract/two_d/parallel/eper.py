@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import autoarray as aa
 
@@ -8,57 +8,80 @@ from autocti.extract.two_d import extract_2d_util
 
 
 class Extract2DParallelEPER(Extract2DParallel):
-    def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
+    def region_list_from(
+        self,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
+    ) -> List[aa.Region2D]:
         """
-          Returns a list of the 2D parallel EPER regions from the `region_list` containing signal  (e.g. the charge
-          injection regions of charge injection data), extracted between two input `pixels` indexes.
+        Returns a list of the 2D parallel EPER regions from the `region_list` containing signal  (e.g. the charge
+        injection regions of charge injection data), extracted between two input `pixels` indexes.
 
-          Negative pixel values are supported to the `pixels` tuple, whereby columns in front of the parallel EPERs
-          (e.g. the FPRs) are also extracted.
+        Negative pixel values are supported to the `pixels` tuple, whereby columns in front of the parallel EPERs
+        (e.g. the FPRs) are also extracted.
 
-          The diagram below illustrates the extraction for `pixels=(0, 1)`:
+        The diagram below illustrates the extraction for `pixels=(0, 1)`:
 
-          [] = read-out electronics
-          [==========] = read-out register
-          [..........] = serial prescan
-          [pppppppppp] = parallel overscan
-          [ssssssssss] = serial overscan
-          [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
-          [tttttttttt] = parallel / serial charge injection region trail
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = parallel overscan
+        [ssssssssss] = serial overscan
+        [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
+        [tttttttttt] = parallel / serial charge injection region trail
 
-                 [ppppppppppppppppppppp]
-                 [ppppppppppppppppppppp]
-            [...][t1t1t1t1t1t1t1t1t1t1t][sss]
-            [...][c1c1cc1c1cc1cc1ccc1cc][sss]
-          | [...][1c1c1cc1c1cc1ccc1cc1c][sss]     |
-          | [...][t0t0t0t0t0t0t0t0t0t0t][sss]    | Direction
+               [ppppppppppppppppppppp]
+               [ppppppppppppppppppppp]
+          [...][t1t1t1t1t1t1t1t1t1t1t][sss]
+          [...][c1c1cc1c1cc1cc1ccc1cc][sss]
+        | [...][1c1c1cc1c1cc1ccc1cc1c][sss]     |
+        | [...][t0t0t0t0t0t0t0t0t0t0t][sss]    | Direction
         Par [...][0t0t0t0t0t0t0t0t0t0t0][sss]    | of
-          | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
+        | [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
          |/ [...][cc0ccc0cccc0cccc0cccc][sss]   \/
 
-          []     [=====================]
-                 <---------Ser----------
+        []     [=====================]
+               <---------Ser----------
 
-          The extracted regions correspond to the first parallel EPER all charge injection regions:
+        The extracted regions correspond to the first parallel EPER all charge injection regions:
 
-          region_list[0] = [2, 4, 3, 21] (serial prescan is 3 pixels)
-          region_list[1] = [6, 7, 3, 21] (serial prescan is 3 pixels)
+        region_list[0] = [2, 4, 3, 21] (serial prescan is 3 pixels)
+        region_list[1] = [6, 7, 3, 21] (serial prescan is 3 pixels)
 
-          For `pixels=(0,1)` the extracted arrays returned via the `array_2d_list_from()` function keep the first
-          parallel EPER of each charge injection region:
+        For `pixels=(0,1)` the extracted arrays returned via the `array_2d_list_from()` function keep the first
+        parallel EPER of each charge injection region:
 
-          array_2d_list[0] = [t0t0t0tt0t0t0t0t0t0t0]
-          array_2d_list[1] = [1t1t1t1t1t1t1t1t1t1t1]
+        array_2d_list[0] = [t0t0t0tt0t0t0t0t0t0t0]
+        array_2d_list[1] = [1t1t1t1t1t1t1t1t1t1t1]
 
-          Parameters
-          ----------
-          pixels
-              The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows)
+        Parameters
+        ----------
+        pixels
+            The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows).
+        pixels_from_end
+            Alternative row pixel index specification, which extracts this number of pixels from the end of
+            the EPER. For example, if each EPER is 100 pixels and `pixels_from_end=10`, the last 10 pixels of each
+            EPER (pixels (90, 100)) are extracted.
         """
-        return [
-            region.parallel_trailing_region_from(pixels=pixels)
-            for region in self.region_list
-        ]
+
+        region_list = []
+
+        for i, region in enumerate(self.region_list):
+
+            if pixels_from_end is not None:
+
+                parallel_row_spaces = self.parallel_rows_between_regions + [
+                    self.parallel_rows_to_array_edge
+                ]
+
+                pixels = (
+                    parallel_row_spaces[i] - pixels_from_end,
+                    parallel_row_spaces[i],
+                )
+
+            region_list.append(region.parallel_trailing_region_from(pixels=pixels))
+
+        return region_list
 
     def binned_region_1d_from(self, pixels: Tuple[int, int]) -> aa.Region1D:
         """
@@ -77,8 +100,8 @@ class Extract2DParallelEPER(Extract2DParallel):
         Parameters
         ----------
         pixels
-            The row pixel index to extract the EPERs between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd EPER
-            rows)
+          The row pixel index to extract the EPERs between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd EPER
+          rows)
         """
         return extract_2d_util.binned_region_1d_eper_from(pixels=pixels)
 
@@ -103,10 +126,10 @@ class Extract2DParallelEPER(Extract2DParallel):
          [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
          [tttttttttt] = parallel / serial charge injection region trail
 
-                [tptpptptptpptpptpptpt]
-                [tptptptpptpttptptptpt]
-           [...][ttttttttttttttttttttt][sss]
-           [...][ccccccccccccccccccccc][sss]
+              [tptpptptptpptpptpptpt]
+              [tptptptpptpttptptptpt]
+         [...][ttttttttttttttttttttt][sss]
+         [...][ccccccccccccccccccccc][sss]
          | [...][ccccccccccccccccccccc][sss]    |
          | [...][ttttttttttttttttttttt][sss]    | Direction
         Par[...][ttttttttttttttttttttt][sss]    | of
@@ -114,14 +137,14 @@ class Extract2DParallelEPER(Extract2DParallel):
         |/ [...][ccccccccccccccccccccc][sss]   \/
 
          []     [=====================]
-                <--------Ser---------
+              <--------Ser---------
 
          The extracted array keeps only the parallel EPERs, everything else become 0s:
 
-                [tptpptptptpptpptpptpt]
-                [tptptptpptpttptptptpt]
-           [000][ttttttttttttttttttttt][000]
-           [000][000000000000000000000][000]
+              [tptpptptptpptpptpptpt]
+              [tptptptpptpttptptptpt]
+         [000][ttttttttttttttttttttt][000]
+         [000][000000000000000000000][000]
          | [000][000000000000000000000][000]    |
          | [000][ttttttttttttttttttttt][000]    | Direction
         Par[000][ttttttttttttttttttttt][000]    | of
@@ -129,7 +152,7 @@ class Extract2DParallelEPER(Extract2DParallel):
         |/ [000][000000000000000000000][000]   \/
 
          []     [=====================]
-                <--------Ser---------
+              <--------Ser---------
         """
 
         parallel_array = array.native.copy()

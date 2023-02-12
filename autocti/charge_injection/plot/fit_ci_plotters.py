@@ -1,3 +1,4 @@
+import numpy as np
 from typing import Callable
 
 import autoarray.plot as aplt
@@ -351,7 +352,7 @@ class FitImagingCIPlotter(Plotter):
                 y_extra=y_extra,
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"Data 1D With Noise & Model-Fit [{region}]",
+                    title=f"Data w/ Noise {region} (FPR = {self.fit.dataset.fpr_value} e-)",
                     ylabel="Data (e-)",
                     xlabel="Pixel No.",
                     filename=f"data_with_noise_map_{region}",
@@ -374,7 +375,7 @@ class FitImagingCIPlotter(Plotter):
                 y_extra=y_extra,
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"Data 1D With Noise & Model-Fit (log10 y axis) [{region}]",
+                    title=f"Data w/ Noise {region} [log10 y] (FPR = {self.fit.dataset.fpr_value} e-)",
                     ylabel="Data (e-)",
                     xlabel="Pixel No.",
                     filename=f"data_with_noise_map_logy_{region}",

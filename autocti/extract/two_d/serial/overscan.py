@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import autoarray as aa
 
@@ -8,7 +8,11 @@ from autocti.extract.two_d import extract_2d_util
 
 
 class Extract2DSerialOverscan(Extract2DSerial):
-    def region_list_from(self, pixels: Tuple[int, int]) -> List[aa.Region2D]:
+    def region_list_from(
+        self,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
+    ) -> List[aa.Region2D]:
         """
          Returns a list containing the 2D serial verscan region, which is simply the parallel overscan input to the
          object, extracted between two input `pixels` indexes (this is somewhat redundant information, but mimicks
@@ -58,6 +62,13 @@ class Extract2DSerialOverscan(Extract2DSerial):
              The column pixel index which determines the region of the overscan (e.g. `pixels=(0, 3)` will compute the
              region corresponding to the 1st, 2nd and 3rd overscan columns).
         """
+
+        if pixels_from_end is not None:
+            pixels = (
+                self.serial_overscan.total_columns - pixels_from_end,
+                self.serial_overscan.total_columns,
+            )
+
         serial_overscan_extract = aa.Region2D(
             (
                 self.serial_overscan.y0,
