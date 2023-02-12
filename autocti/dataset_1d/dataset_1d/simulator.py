@@ -19,6 +19,7 @@ class SimulatorDataset1D(SimulatorImaging):
         norm: float,
         read_noise: Optional[float] = None,
         add_poisson_noise: bool = False,
+        charge_noise: Optional[float] = None,
         noise_if_add_noise_false: float = 0.1,
         noise_seed: int = -1,
     ):
@@ -42,6 +43,7 @@ class SimulatorDataset1D(SimulatorImaging):
 
         self.pixel_scales = pixel_scales
         self.norm = norm
+        self.charge_noise = charge_noise
 
     def pre_cti_data_from(
         self, layout: Layout1D, pixel_scales: aa.type.PixelScales
@@ -98,6 +100,15 @@ class SimulatorDataset1D(SimulatorImaging):
     def via_pre_cti_data_from(
         self, pre_cti_data: aa.Array1D, layout: Layout1D, clocker: Clocker1D, cti: CTI1D
     ) -> Dataset1D:
+
+        if self.charge_noise is not None:
+
+            pre_cti_data = layout.extract.fpr.add_gaussian_noise_to(
+                array=pre_cti_data,
+                noise_sigma=self.charge_noise,
+                noise_seed=self.noise_seed,
+                pixels_from_end=layout.extract.fpr.total_pixels_min,
+            )
 
         post_cti_data = clocker.add_cti(data=pre_cti_data.native, cti=cti)
 

@@ -24,6 +24,7 @@ class SimulatorImagingCI(SimulatorImaging):
         row_slope: Optional[float] = 0.0,
         non_uniform_norm_limit=None,
         read_noise: Optional[float] = None,
+        charge_noise: Optional[float] = None,
         noise_if_add_noise_false: float = 0.1,
         noise_seed: int = -1,
         ci_seed: int = -1,
@@ -51,6 +52,7 @@ class SimulatorImagingCI(SimulatorImaging):
         self.column_sigma = column_sigma
         self.row_slope = row_slope
         self.non_uniform_norm_limit = non_uniform_norm_limit
+        self.charge_noise = charge_noise
 
         self.ci_seed = ci_seed
 
@@ -206,6 +208,15 @@ class SimulatorImagingCI(SimulatorImaging):
 
         if cosmic_ray_map is not None:
             pre_cti_data += cosmic_ray_map.native
+
+        if self.charge_noise is not None:
+
+            pre_cti_data = layout.extract.parallel_fpr.add_gaussian_noise_to(
+                array=pre_cti_data,
+                noise_sigma=self.charge_noise,
+                noise_seed=self.noise_seed,
+                pixels_from_end=layout.extract.parallel_fpr.total_rows_min,
+            )
 
         if cti is not None:
             post_cti_data = clocker.add_cti(data=pre_cti_data, cti=cti)

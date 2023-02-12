@@ -123,6 +123,10 @@ class Extract2D:
             The array from which the regions are extracted and put into the returned list of arrays.
         pixels
             The integer range of pixels between which the extraction is performed.
+        pixels_from_end
+            Alternative row pixex index specification, which extracts this number of pixels from the end of
+            each region (e.g. FPR / EPER). For example, if each FPR is 100 pixels and `pixels_from_end=10`, the
+            last 10 pixels of each FPR (pixels (90, 100)) are extracted.
         """
         arr_list = [
             array.native[region.slice]
@@ -166,7 +170,11 @@ class Extract2D:
             are extracted and stacked.
         pixels
             The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
-            FPR rows)
+            FPR rows).
+        pixels_from_end
+            Alternative row pixex index specification, which extracts this number of pixels from the end of
+            each region (e.g. FPR / EPER). For example, if each FPR is 100 pixels and `pixels_from_end=10`, the
+            last 10 pixels of each FPR (pixels (90, 100)) are extracted.
         """
 
         arr_list = [
@@ -210,7 +218,11 @@ class Extract2D:
             are extracted and stacked.
         pixels
             The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
-            FPR rows)
+            FPR rows).
+        pixels_from_end
+            Alternative row pixex index specification, which extracts this number of pixels from the end of
+            each region (e.g. FPR / EPER). For example, if each FPR is 100 pixels and `pixels_from_end=10`, the
+            last 10 pixels of each FPR (pixels (90, 100)) are extracted.
         """
 
         mask_2d_list = [
@@ -234,9 +246,10 @@ class Extract2D:
         pixels_from_end: Optional[int] = None,
     ) -> aa.Array1D:
         """
-        Extract a region (e.g. the parallel FPR) of every signal region (e.g. the charge injection region of charge injection data) on the CTI calibration data, stack
-        them by taking their mean and then bin them up to a 1D region (e.g. the 1D parallel FPR) by taking the mean
-        across the direction opposite to clocking (e.g. bin over the serial direction for a parallel FPR).
+        Extract a region (e.g. the parallel FPR) of every signal region (e.g. the charge injection region of
+        charge injection data) on the CTI calibration data, stack them by taking their mean and then bin them up to
+        a 1D region (e.g. the 1D parallel FPR) by taking the mean across the direction opposite to
+        clocking (e.g. bin over the serial direction for a parallel FPR).
 
         This returns the 1D average region (e.g. of the parallel FPR) of all of the charge injection regions. When
         binning a uniform charge injection this binning process removes noise to clearly reveal the FPR or EPER.
@@ -252,7 +265,11 @@ class Extract2D:
             stacked.
         pixels
             The column / row pixel index to extract the region (e.g. FPR, EPER) between (e.g. `pixels=(0, 3)` extracts
-            the 1st, 2nd and 3rd columns / rows)
+            the 1st, 2nd and 3rd columns / rows).
+        pixels_from_end
+            Alternative row pixex index specification, which extracts this number of pixels from the end of
+            each region (e.g. FPR / EPER). For example, if each FPR is 100 pixels and `pixels_from_end=10`, the
+            last 10 pixels of each FPR (pixels (90, 100)) are extracted.
         """
 
         arr_list = [
@@ -291,7 +308,11 @@ class Extract2D:
             stacked.
         pixels
             The column / row pixel index to extract the region (e.g. FPR, EPER) between (e.g. `pixels=(0, 3)` extracts
-            the 1st, 2nd and 3rd columns / rows)
+            the 1st, 2nd and 3rd columns / rows).
+        pixels_from_end
+            Alternative row pixex index specification, which extracts this number of pixels from the end of
+            each region (e.g. FPR / EPER). For example, if each FPR is 100 pixels and `pixels_from_end=10`, the
+            last 10 pixels of each FPR (pixels (90, 100)) are extracted.
         """
 
         mask_2d_list = [
@@ -336,6 +357,10 @@ class Extract2D:
         pixels
             The row pixel index which determines the region of the FPR (e.g. `pixels=(0, 3)` will compute the region
             corresponding to the 1st, 2nd and 3rd FPR rows).
+        pixels_from_end
+            Alternative row pixex index specification, which extracts this number of pixels from the end of
+            each region (e.g. FPR / EPER). For example, if each FPR is 100 pixels and `pixels_from_end=10`, the
+            last 10 pixels of each FPR (pixels (90, 100)) are extracted.
         """
 
         region_list = self.region_list_from(
@@ -392,3 +417,52 @@ class Extract2D:
             pre_cti_data=binned_pre_cti_data_1d,
             layout=layout_1d,
         )
+
+    def add_gaussian_noise_to(
+        self,
+        array: aa.Array2D,
+        noise_sigma: float,
+        noise_seed: int = -1,
+        pixels: Optional[Tuple[int, int]] = None,
+        pixels_from_end: Optional[int] = None,
+    ) -> aa.Array2D:
+        """
+        Adds Gaussian noise of an input sigma value to the regions of the `Extract` object and returns the overall
+        input array with this noise added.
+
+        Parameters
+        ----------
+        array
+            The 2D array which contains the charge injection where regions of Gaussian noise is added.
+        noise_sigma
+            The sigma value (standard deviation) of the Gaussian from which noise values are drann.
+        noise_seed
+            The seed of the random number generator, used for the random noises maps.
+        pixels
+            The row pixel index which determines the region of the FPR (e.g. `pixels=(0, 3)` will compute the region
+            corresponding to the 1st, 2nd and 3rd FPR rows).
+        pixels_from_end
+            Alternative row pixex index specification, which extracts this number of pixels from the end of
+            each region (e.g. FPR / EPER). For example, if each FPR is 100 pixels and `pixels_from_end=10`, the
+            last 10 pixels of each FPR (pixels (90, 100)) are extracted.
+        """
+
+        region_list = self.region_list_from(
+            pixels=pixels, pixels_from_end=pixels_from_end
+        )
+
+        array_2d_list = self.array_2d_list_from(
+            array=array, pixels=pixels, pixels_from_end=pixels_from_end
+        )
+
+        array = array.native
+
+        for arr, region in zip(array_2d_list, region_list):
+
+            array[
+                region.y0 : region.y1, region.x0 : region.x1
+            ] = aa.preprocess.data_with_gaussian_noise_added(
+                data=arr, sigma=noise_sigma, seed=noise_seed
+            )
+
+        return array

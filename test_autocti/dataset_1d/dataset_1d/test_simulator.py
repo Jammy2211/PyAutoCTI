@@ -22,6 +22,32 @@ def test__no_instrumental_effects_input__only_cti_simulated(clocker_1d, traps_x2
     assert dataset_1d.layout == layout
 
 
+def test__include_charge_noise__is_added_before_cti(clocker_1d, traps_x2, ccd):
+
+    layout = ac.Layout1D(shape_1d=(5,), region_list=[(0, 3)])
+
+    simulator = ac.SimulatorDataset1D(
+        pixel_scales=1.0,
+        norm=10.0,
+        charge_noise=1.0,
+        add_poisson_noise=False,
+        noise_seed=1,
+    )
+
+    cti = ac.CTI1D(trap_list=traps_x2, ccd=ccd)
+
+    dataset_1d = simulator.via_layout_from(layout=layout, clocker=clocker_1d, cti=cti)
+
+    print(dataset_1d.data)
+
+    # Use seed to give us a known read noises map we'll test_autocti for
+
+    assert dataset_1d.data == pytest.approx(
+        np.array([11.01064, 9.4526, 9.4990, 1.0969, 0.59858]), 1e-2
+    )
+    assert dataset_1d.layout == layout
+
+
 def test__include_read_noise__is_added_after_cti(clocker_1d, traps_x2, ccd):
 
     layout = ac.Layout1D(shape_1d=(5,), region_list=[(0, 5)])

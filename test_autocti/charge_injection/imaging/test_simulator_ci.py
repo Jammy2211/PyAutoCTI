@@ -193,6 +193,33 @@ def test__no_instrumental_effects_input__only_cti_simulated(
     assert imaging.layout == layout
 
 
+def test__include_charge_noise__is_added_before_cti(parallel_clocker_2d, traps_x2, ccd):
+
+    layout = ac.Layout2DCI(
+        shape_2d=(3, 3),
+        region_list=[(0, 1, 0, 3)],
+        serial_overscan=ac.Region2D((1, 2, 1, 2)),
+    )
+
+    simulator = ac.SimulatorImagingCI(
+        pixel_scales=1.0, norm=10.0, charge_noise=1.0, noise_seed=1
+    )
+
+    cti = ac.CTI2D(parallel_trap_list=traps_x2, parallel_ccd=ccd)
+
+    imaging = simulator.via_layout_from(
+        layout=layout, clocker=parallel_clocker_2d, cti=cti
+    )
+
+    image_no_noise = simulator.pre_cti_data_uniform_from(layout=layout)
+
+    assert imaging.image - image_no_noise.native == pytest.approx(
+        np.array([[1.01064, -1.1632, -1.08214], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]),
+        1e-1,
+    )
+    assert imaging.layout == layout
+
+
 def test__include_read_noise__is_added_after_cti(parallel_clocker_2d, traps_x2, ccd):
 
     layout = ac.Layout2DCI(
@@ -213,13 +240,13 @@ def test__include_read_noise__is_added_after_cti(parallel_clocker_2d, traps_x2, 
 
     image_no_noise = simulator.pre_cti_data_uniform_from(layout=layout)
 
-    # assert imaging.image - image_no_noise.native == pytest.approx(
-    #     np.array(
-    #         [[1.055, -1.180, -1.097], [-1.073, 0.865, -2.301], [1.744, -0.761, 0.319]]
-    #     ),
-    #     1e-1,
-    # )
-    # assert imaging.layout == layout
+    assert imaging.image - image_no_noise.native == pytest.approx(
+        np.array(
+            [[1.055, -1.180, -1.097], [-1.073, 0.865, -2.301], [1.744, -0.761, 0.319]]
+        ),
+        1e-1,
+    )
+    assert imaging.layout == layout
 
 
 def test__include_cosmics__is_added_to_image_and_trailed(

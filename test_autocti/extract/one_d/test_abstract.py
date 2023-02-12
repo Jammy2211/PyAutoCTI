@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 from typing import List, Optional, Tuple
 
 import autoarray as aa
@@ -106,3 +107,52 @@ def test__total_pixel_spacing_min():
     layout = MockExtract1D(region_list=[(1, 2)])
 
     assert layout.total_pixels_min == 1
+
+
+def test__add_gaussian_noise_to(array):
+
+    extract = MockExtract1D(region_list=[(1, 4)])
+
+    array_with_noise = extract.add_gaussian_noise_to(
+        array=array, noise_sigma=1.0, noise_seed=1, pixels=(0, 1)
+    )
+    assert array_with_noise == pytest.approx(
+        np.array(
+            [
+                0.0,
+                2.62434,
+                2.0,
+                3.0,
+                4.0,
+                5.0,
+                6.0,
+                7.0,
+                8.0,
+                9.0,
+            ]
+        ),
+        1.0e-4,
+    )
+
+    extract = MockExtract1D(region_list=[(1, 4), (5, 8)])
+
+    array_with_noise = extract.add_gaussian_noise_to(
+        array=array, noise_sigma=1.0, noise_seed=1, pixels=(1, 3)
+    )
+    assert array_with_noise == pytest.approx(
+        np.array(
+            [
+                0.0,
+                1.0,
+                3.6243,
+                2.3882,
+                4.0,
+                5.0,
+                7.6243,
+                6.3882,
+                8.0,
+                9.0,
+            ]
+        ),
+        1.0e-4,
+    )
