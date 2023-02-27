@@ -2,7 +2,7 @@ CCDPhase:
   full_well_depth:
     type: Uniform
     lower_limit: 0.0
-    upper_limit: 84700.0
+    upper_limit: 200000.0
     width_modifier:
       type: Absolute
       value: 0.2
@@ -29,3 +29,6 @@ CCDPhase:
     gaussian_limits:
       lower: 0.0
       upper: 1.0
+  first_electron_fill:
+    type: Constant
+    value: 0.0

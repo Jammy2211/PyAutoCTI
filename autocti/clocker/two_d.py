@@ -38,6 +38,8 @@ class Clocker2D(AbstractClocker):
         serial_prune_n_electrons=1e-18,
         serial_prune_frequency=0,
         serial_fast_mode: Optional[bool] = None,
+        allow_negative_pixels=1,
+        pixel_bounce=None,
         verbosity: int = 0,
         poisson_seed: int = -1,
     ):
@@ -92,6 +94,9 @@ class Clocker2D(AbstractClocker):
             If input, serial CTI is added via arctic efficiently by calling arctic once and mapping the 1D output over
             the full 2D image. This requires every row in the image has the same signal (such that each column gives
             an identical arctic output).
+        allow_negative_pixels
+            If True, negative electrons in a pixel are allowed and modeled via arCTIc, if Falss they are explicitly
+            not allowed.
         verbosity
             Whether to silence print statements and output from the c++ arctic call.
         poisson_seed
@@ -122,6 +127,9 @@ class Clocker2D(AbstractClocker):
         self.serial_prune_n_electrons = serial_prune_n_electrons
         self.serial_prune_frequency = serial_prune_frequency
         self.serial_fast_mode = serial_fast_mode
+
+        self.allow_negative_pixels = allow_negative_pixels
+        self.pixel_bounce = pixel_bounce
 
         self.poisson_seed = poisson_seed
 
@@ -222,6 +230,8 @@ class Clocker2D(AbstractClocker):
             serial_time_stop=self.serial_time_stop,
             serial_prune_n_electrons=self.serial_prune_n_electrons,
             serial_prune_frequency=self.serial_prune_frequency,
+            allow_negative_pixels=self.allow_negative_pixels,
+            pixel_bounce=self.pixel_bounce,
             verbosity=self.verbosity,
         )
 
@@ -297,6 +307,8 @@ class Clocker2D(AbstractClocker):
                 parallel_window_offset=parallel_window_offset,
                 parallel_window_start=self.parallel_window_start,
                 parallel_window_stop=self.parallel_window_stop,
+                allow_negative_pixels=self.allow_negative_pixels,
+                pixel_bounce=self.pixel_bounce,
                 verbosity=self.verbosity,
             )[:, 0]
 
@@ -322,6 +334,8 @@ class Clocker2D(AbstractClocker):
             serial_time_stop=self.serial_time_stop,
             serial_prune_n_electrons=self.serial_prune_n_electrons,
             serial_prune_frequency=self.serial_prune_frequency,
+            allow_negative_pixels=self.allow_negative_pixels,
+            pixel_bounce=self.pixel_bounce,
             verbosity=self.verbosity,
         )
 
@@ -462,6 +476,8 @@ class Clocker2D(AbstractClocker):
             parallel_time_stop=self.parallel_time_stop,
             parallel_prune_n_electrons=self.parallel_prune_n_electrons,
             parallel_prune_frequency=self.parallel_prune_frequency,
+            allow_negative_pixels=self.allow_negative_pixels,
+            pixel_bounce=self.pixel_bounce,
             verbosity=self.verbosity,
         )
 
@@ -495,6 +511,8 @@ class Clocker2D(AbstractClocker):
             serial_time_stop=self.serial_time_stop,
             serial_prune_n_electrons=self.serial_prune_n_electrons,
             serial_prune_frequency=self.serial_prune_frequency,
+            allow_negative_pixels=self.allow_negative_pixels,
+            pixel_bounce=self.pixel_bounce,
             verbosity=self.verbosity,
         )
 
@@ -567,6 +585,8 @@ class Clocker2D(AbstractClocker):
             serial_time_stop=self.serial_time_stop,
             serial_prune_n_electrons=self.serial_prune_n_electrons,
             serial_prune_frequency=self.serial_prune_frequency,
+            allow_negative_pixels=self.allow_negative_pixels,
+            pixel_bounce=self.pixel_bounce,
             verbosity=self.verbosity,
         )
 
@@ -634,6 +654,8 @@ class Clocker2D(AbstractClocker):
             serial_time_stop=self.serial_time_stop,
             serial_prune_n_electrons=self.serial_prune_n_electrons,
             serial_prune_frequency=self.serial_prune_frequency,
+            allow_negative_pixels=self.allow_negative_pixels,
+            pixel_bounce=self.pixel_bounce,
         )
 
         return aa.Array2D(
