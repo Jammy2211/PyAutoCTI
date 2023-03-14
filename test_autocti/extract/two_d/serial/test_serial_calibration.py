@@ -15,10 +15,10 @@ def test__array_2d_list_from():
         pixel_scales=1.0,
     )
 
-    serial_region = extract.array_2d_list_from(array=array)
+    array_2d_list = extract.array_2d_list_from(array=array)
 
     assert (
-        serial_region[0]
+        array_2d_list[0]
         == np.array(
             [
                 [0.0, 1.0, 2.0, 2.0, 2.0],
@@ -32,10 +32,10 @@ def test__array_2d_list_from():
         shape_2d=(3, 5), region_list=[(0, 1, 1, 4), (2, 3, 1, 4)]
     )
 
-    serial_region = extract.array_2d_list_from(array=array)
+    array_2d_list = extract.array_2d_list_from(array=array)
 
-    assert (serial_region[0] == np.array([[0.0, 1.0, 2.0, 2.0, 2.0]])).all()
-    assert (serial_region[1] == np.array([[0.0, 1.0, 2.0, 4.0, 4.0]])).all()
+    assert (array_2d_list[0] == np.array([[0.0, 1.0, 2.0, 2.0, 2.0]])).all()
+    assert (array_2d_list[1] == np.array([[0.0, 1.0, 2.0, 4.0, 4.0]])).all()
 
 
 def test__mask_2d_from():
@@ -49,10 +49,10 @@ def test__mask_2d_from():
     mask[1, 1] = True
     mask[4, 3] = True
 
-    serial_frame = extract.mask_2d_from(mask=mask, rows=(1, 2))
+    mask_2d = extract.mask_2d_from(mask=mask, rows=(1, 2))
 
     assert (
-        serial_frame
+        mask_2d
         == np.array(
             [[False, True, False, False, False], [False, False, False, True, False]]
         )
@@ -74,10 +74,10 @@ def test__array_2d_from():
         pixel_scales=1.0,
     )
 
-    new_array = extract.array_2d_from(array=array, rows=(0, 3))
+    array_2d = extract.array_2d_from(array=array, rows=(0, 3))
 
     assert (
-        new_array.native
+        array_2d.native
         == np.array(
             [
                 [0.0, 1.0, 2.0, 3.0, 4.0],
@@ -87,7 +87,7 @@ def test__array_2d_from():
         )
     ).all()
 
-    assert new_array.pixel_scales == (1.0, 1.0)
+    assert array_2d.pixel_scales == (1.0, 1.0)
 
     extract = ac.Extract2DSerialCalibration(
         shape_2d=(3, 5),
@@ -96,14 +96,14 @@ def test__array_2d_from():
         serial_overscan=(0, 3, 3, 4),
     )
 
-    new_array = extract.array_2d_from(array=array, rows=(0, 2))
+    array_2d = extract.array_2d_from(array=array, rows=(0, 2))
 
     assert (
-        new_array.native
+        array_2d.native
         == np.array([[0.0, 1.0, 2.0, 3.0, 4.0], [0.0, 1.0, 2.0, 3.0, 4.0]])
     ).all()
 
-    assert new_array.pixel_scales == (1.0, 1.0)
+    assert array_2d.pixel_scales == (1.0, 1.0)
 
     array = ac.Array2D.no_mask(
         values=[
@@ -121,14 +121,14 @@ def test__array_2d_from():
         serial_overscan=(0, 3, 3, 4),
     )
 
-    new_array = extract.array_2d_from(array=array, rows=(0, 1))
+    array_2d = extract.array_2d_from(array=array, rows=(0, 1))
 
     assert (
-        new_array.native
+        array_2d.native
         == np.array([[0.0, 1.0, 2.0, 2.0, 2.0], [0.0, 1.0, 4.0, 4.0, 4.0]])
     ).all()
 
-    assert new_array.pixel_scales == (1.0, 1.0)
+    assert array_2d.pixel_scales == (1.0, 1.0)
 
     extract = ac.Extract2DSerialCalibration(
         shape_2d=(5, 5),
@@ -148,14 +148,14 @@ def test__array_2d_from():
         pixel_scales=1.0,
     )
 
-    new_array = extract.array_2d_from(array=array, rows=(1, 2))
+    array_2d = extract.array_2d_from(array=array, rows=(1, 2))
 
     assert (
-        new_array.native
+        array_2d.native
         == np.array([[0.0, 1.0, 3.0, 3.0, 3.0], [0.0, 1.0, 6.0, 6.0, 6.0]])
     ).all()
 
-    assert new_array.pixel_scales == (1.0, 1.0)
+    assert array_2d.pixel_scales == (1.0, 1.0)
 
 
 def test__extracted_layout_from():
@@ -257,27 +257,20 @@ def test__imaging_ci_from(imaging_ci_7x7):
         serial_overscan=imaging_ci_7x7.layout.serial_overscan,
     )
 
-    serial_calibration_imaging = extract.imaging_ci_from(
-        imaging_ci=imaging_ci_7x7, rows=(0, 2)
-    )
+    imaging_ci = extract.imaging_ci_from(imaging_ci=imaging_ci_7x7, rows=(0, 2))
 
+    assert (imaging_ci.image.native == imaging_ci_7x7.image.native[0:2, :]).all()
     assert (
-        serial_calibration_imaging.image.native == imaging_ci_7x7.image.native[0:2, :]
+        imaging_ci.noise_map.native == imaging_ci_7x7.noise_map.native[0:2, :]
     ).all()
     assert (
-        serial_calibration_imaging.noise_map.native
-        == imaging_ci_7x7.noise_map.native[0:2, :]
+        imaging_ci.pre_cti_data.native == imaging_ci_7x7.pre_cti_data.native[0:2, :]
     ).all()
     assert (
-        serial_calibration_imaging.pre_cti_data.native
-        == imaging_ci_7x7.pre_cti_data.native[0:2, :]
-    ).all()
-    assert (
-        serial_calibration_imaging.cosmic_ray_map.native
-        == imaging_ci_7x7.cosmic_ray_map.native[1:3, :]
+        imaging_ci.cosmic_ray_map.native == imaging_ci_7x7.cosmic_ray_map.native[1:3, :]
     ).all()
 
-    assert serial_calibration_imaging.layout.region_list == [(0, 2, 1, 5)]
+    assert imaging_ci.layout.region_list == [(0, 2, 1, 5)]
 
     mask = ac.Mask2D.all_false(
         shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
@@ -287,12 +280,10 @@ def test__imaging_ci_from(imaging_ci_7x7):
 
     imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask)
 
-    imaging_ci_serial_calibration = extract.imaging_ci_from(
-        imaging_ci=imaging_ci_7x7, rows=(0, 6)
-    )
+    imaging_ci = extract.imaging_ci_from(imaging_ci=imaging_ci_7x7, rows=(0, 6))
 
-    assert imaging_ci_serial_calibration.image.mask[2, 1] == False
-    assert imaging_ci_serial_calibration.image.mask[1, 2] == True
+    assert imaging_ci.image.mask[2, 1] == False
+    assert imaging_ci.image.mask[1, 2] == True
 
-    assert imaging_ci_serial_calibration.noise_map.mask[2, 1] == False
-    assert imaging_ci_serial_calibration.noise_map.mask[1, 2] == True
+    assert imaging_ci.noise_map.mask[2, 1] == False
+    assert imaging_ci.noise_map.mask[1, 2] == True

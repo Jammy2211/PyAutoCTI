@@ -68,7 +68,6 @@ class Clocker1D(AbstractClocker):
         self.allow_negative_pixels = allow_negative_pixels
         self.pixel_bounce = pixel_bounce
 
-
     def _traps_ccd_from(self, cti: CTI1D):
         """
         Unpack the `CTI1D` object to retries its traps and ccd.

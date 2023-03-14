@@ -17,7 +17,7 @@ class Extract2DSerialFPR(Extract2DSerial):
          Returns a list of the 2D serial FPR regions from the `region_list` containing signal  (e.g. the charge
          injection regions of charge injection data), extracted between two input `pixels` indexes.
 
-         Negative pixel values are supported to the `pixels` tuple, whereby columns in front of the serial FPRs (e.g.
+         Negative pixel values can be input into the `pixels` tuple, whereby columns in front of the serial FPRs (e.g.
          the serial prescan) are also extracted.
 
          The diagram below illustrates the extraction for `pixels=(0, 1)`:

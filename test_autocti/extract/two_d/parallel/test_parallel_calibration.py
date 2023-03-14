@@ -86,9 +86,9 @@ def test__extracted_layout_from():
 
     layout = ac.Layout2DCI(shape_2d=extract.shape_2d, region_list=extract.region_list)
 
-    extracted_extract = extract.extracted_layout_from(layout=layout, columns=(0, 1))
+    extracted_layout = extract.extracted_layout_from(layout=layout, columns=(0, 1))
 
-    assert extracted_extract.region_list == [(0, 3, 0, 1)]
+    assert extracted_layout.region_list == [(0, 3, 0, 1)]
 
     extract = ac.Extract2DParallelCalibration(
         shape_2d=(5, 3), region_list=[(0, 5, 0, 3)]
@@ -96,9 +96,9 @@ def test__extracted_layout_from():
 
     layout = ac.Layout2DCI(shape_2d=extract.shape_2d, region_list=extract.region_list)
 
-    extracted_extract = extract.extracted_layout_from(layout=layout, columns=(1, 3))
+    extracted_layout = extract.extracted_layout_from(layout=layout, columns=(1, 3))
 
-    assert extracted_extract.region_list == [(0, 5, 0, 2)]
+    assert extracted_layout.region_list == [(0, 5, 0, 2)]
 
 
 def test__imaging_ci_from(imaging_ci_7x7):
@@ -110,28 +110,20 @@ def test__imaging_ci_from(imaging_ci_7x7):
         region_list=imaging_ci_7x7.layout.region_list,
     )
 
-    imaging_ci_parallel_calibration = extract.imaging_ci_from(
-        imaging_ci=imaging_ci_7x7, columns=(0, 6)
-    )
+    imaging_ci = extract.imaging_ci_from(imaging_ci=imaging_ci_7x7, columns=(0, 6))
 
+    assert (imaging_ci.image.native == imaging_ci_7x7.image.native[:, 1:7]).all()
     assert (
-        imaging_ci_parallel_calibration.image.native
-        == imaging_ci_7x7.image.native[:, 1:7]
+        imaging_ci.noise_map.native == imaging_ci_7x7.noise_map.native[:, 1:7]
     ).all()
     assert (
-        imaging_ci_parallel_calibration.noise_map.native
-        == imaging_ci_7x7.noise_map.native[:, 1:7]
+        imaging_ci.pre_cti_data.native == imaging_ci_7x7.pre_cti_data.native[:, 1:7]
     ).all()
     assert (
-        imaging_ci_parallel_calibration.pre_cti_data.native
-        == imaging_ci_7x7.pre_cti_data.native[:, 1:7]
-    ).all()
-    assert (
-        imaging_ci_parallel_calibration.cosmic_ray_map.native
-        == imaging_ci_7x7.cosmic_ray_map.native[:, 1:7]
+        imaging_ci.cosmic_ray_map.native == imaging_ci_7x7.cosmic_ray_map.native[:, 1:7]
     ).all()
 
-    assert imaging_ci_parallel_calibration.layout.region_list == [(1, 5, 0, 4)]
+    assert imaging_ci.layout.region_list == [(1, 5, 0, 4)]
 
     mask = ac.Mask2D.all_false(
         shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
@@ -141,12 +133,10 @@ def test__imaging_ci_from(imaging_ci_7x7):
 
     imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask)
 
-    imaging_ci_parallel_calibration = extract.imaging_ci_from(
-        imaging_ci=imaging_ci_7x7, columns=(0, 6)
-    )
+    imaging_ci = extract.imaging_ci_from(imaging_ci=imaging_ci_7x7, columns=(0, 6))
 
-    assert imaging_ci_parallel_calibration.image.mask[0, 1] == False
-    assert imaging_ci_parallel_calibration.image.mask[2, 1] == True
+    assert imaging_ci.image.mask[0, 1] == False
+    assert imaging_ci.image.mask[2, 1] == True
 
-    assert imaging_ci_parallel_calibration.noise_map.mask[0, 1] == False
-    assert imaging_ci_parallel_calibration.noise_map.mask[2, 1] == True
+    assert imaging_ci.noise_map.mask[0, 1] == False
+    assert imaging_ci.noise_map.mask[2, 1] == True

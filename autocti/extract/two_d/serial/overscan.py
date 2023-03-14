@@ -23,7 +23,7 @@ class Extract2DSerialOverscan(Extract2DSerial):
          The serial overscan spans all columns of the image, thus the coordinates x0 and x1 do not change. y0 and y1
          are updated based on the `pixels` input.
 
-         Negative pixel values are supported to the `pixels` tuple, whereby columns in front of the serial overscan are
+         Negative pixel values can be input into the `pixels` tuple, whereby columns in front of the serial overscan are
          also extracted.
 
          The diagram below illustrates the extraction for `pixels=(0, 1)`:
