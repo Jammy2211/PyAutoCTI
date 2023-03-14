@@ -70,20 +70,20 @@ class Extract2DParallelPedestal(Extract2DParallel):
 
         if pixels_from_end is not None:
             pixels = (
-                self.parallel_overscan.total_rows - pixels_from_end,
-                self.parallel_overscan.total_rows,
+                self.pedestal.total_rows - pixels_from_end,
+                self.pedestal.total_rows,
             )
 
-        parallel_overscan_extract = aa.Region2D(
+        pedestal_extract = aa.Region2D(
             (
-                self.parallel_overscan.y0 + pixels[0],
-                self.parallel_overscan.y0 + pixels[1],
-                self.parallel_overscan.x0,
-                self.parallel_overscan.x1,
+                self.pedestal.y0 + pixels[0],
+                self.pedestal.y0 + pixels[1],
+                self.pedestal.x0,
+                self.pedestal.x1,
             )
         )
 
-        return [parallel_overscan_extract]
+        return [pedestal_extract]
 
     def binned_region_1d_from(self, pixels: Tuple[int, int]) -> aa.Region1D:
         """
