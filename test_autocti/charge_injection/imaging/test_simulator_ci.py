@@ -202,7 +202,7 @@ def test__include_charge_noise__is_added_before_cti(parallel_clocker_2d, traps_x
     )
 
     simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0, norm=10.0, charge_noise=1.0, noise_seed=1
+        pixel_scales=1.0, norm=10.0, charge_noise=1.0, noise_seed=1, ci_seed=1
     )
 
     cti = ac.CTI2D(parallel_trap_list=traps_x2, parallel_ccd=ccd)

@@ -23,6 +23,8 @@ class Clocker1D(AbstractClocker):
         time_stop=-1,
         prune_n_electrons=1e-18,
         prune_frequency=20,
+        allow_negative_pixels=1,
+        pixel_bounce=None,
         verbosity: int = 0,
     ):
         """
@@ -62,6 +64,10 @@ class Clocker1D(AbstractClocker):
         self.time_stop = time_stop
         self.prune_n_electrons = prune_n_electrons
         self.prune_frequency = prune_frequency
+
+        self.allow_negative_pixels = allow_negative_pixels
+        self.pixel_bounce = pixel_bounce
+
 
     def _traps_ccd_from(self, cti: CTI1D):
         """
@@ -117,6 +123,8 @@ class Clocker1D(AbstractClocker):
             parallel_time_stop=self.time_stop,
             parallel_prune_n_electrons=self.prune_n_electrons,
             parallel_prune_frequency=self.prune_frequency,
+            allow_negative_pixels=self.allow_negative_pixels,
+            pixel_bounce=self.pixel_bounce,
             verbosity=self.verbosity,
         )
 
@@ -168,6 +176,8 @@ class Clocker1D(AbstractClocker):
             parallel_time_stop=self.time_stop,
             parallel_prune_n_electrons=self.prune_n_electrons,
             parallel_prune_frequency=self.prune_frequency,
+            allow_negative_pixels=self.allow_negative_pixels,
+            pixel_bounce=self.pixel_bounce,
             verbosity=self.verbosity,
         )
 
