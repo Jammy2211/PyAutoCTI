@@ -39,42 +39,46 @@ class MockExtract2D(Extract2D):
 def test__array_2d_list_from(parallel_array, parallel_masked_array):
     extract = MockExtract2D(region_list=[(1, 4, 0, 3)])
 
-    fpr_list = extract.array_2d_list_from(array=parallel_array, pixels=(0, 1))
-    assert (fpr_list[0] == np.array([[1.0, 1.0, 1.0]])).all()
+    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels=(0, 1))
+    assert (array_2d_list[0] == np.array([[1.0, 1.0, 1.0]])).all()
 
-    fpr_list = extract.array_2d_list_from(array=parallel_array, pixels=(2, 3))
-    assert (fpr_list[0] == np.array([[3.0, 3.0, 3.0]])).all()
+    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels=(2, 3))
+    assert (array_2d_list[0] == np.array([[3.0, 3.0, 3.0]])).all()
 
-    fpr_list = extract.array_2d_list_from(array=parallel_array, pixels=(-1, 1))
-    assert (fpr_list[0] == np.array([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]])).all()
+    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels=(-1, 1))
+    assert (array_2d_list[0] == np.array([[0.0, 0.0, 0.0], [1.0, 1.0, 1.0]])).all()
 
     extract = MockExtract2D(region_list=[(1, 4, 0, 3), (5, 8, 0, 3)])
 
-    fpr_list = extract.array_2d_list_from(array=parallel_array, pixels=(0, 1))
-    assert (fpr_list[0] == np.array([[1.0, 1.0, 1.0]])).all()
-    assert (fpr_list[1] == np.array([[5.0, 5.0, 5.0]])).all()
+    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels=(0, 1))
+    assert (array_2d_list[0] == np.array([[1.0, 1.0, 1.0]])).all()
+    assert (array_2d_list[1] == np.array([[5.0, 5.0, 5.0]])).all()
 
-    fpr_list = extract.array_2d_list_from(array=parallel_array, pixels=(2, 3))
-    assert (fpr_list[0] == np.array([[3.0, 3.0, 3.0]])).all()
-    assert (fpr_list[1] == np.array([[7.0, 7.0, 7.0]])).all()
+    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels=(2, 3))
+    assert (array_2d_list[0] == np.array([[3.0, 3.0, 3.0]])).all()
+    assert (array_2d_list[1] == np.array([[7.0, 7.0, 7.0]])).all()
 
-    fpr_list = extract.array_2d_list_from(array=parallel_array, pixels=(0, 3))
+    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels=(0, 3))
     assert (
-        fpr_list[0] == np.array([[1.0, 1.0, 1.0], [2.0, 2.0, 2.0], [3.0, 3.0, 3.0]])
+        array_2d_list[0]
+        == np.array([[1.0, 1.0, 1.0], [2.0, 2.0, 2.0], [3.0, 3.0, 3.0]])
     ).all()
     assert (
-        fpr_list[1] == np.array([[5.0, 5.0, 5.0], [6.0, 6.0, 6.0], [7.0, 7.0, 7.0]])
+        array_2d_list[1]
+        == np.array([[5.0, 5.0, 5.0], [6.0, 6.0, 6.0], [7.0, 7.0, 7.0]])
     ).all()
 
-    fpr_list = extract.array_2d_list_from(array=parallel_masked_array, pixels=(0, 3))
+    array_2d_list = extract.array_2d_list_from(
+        array=parallel_masked_array, pixels=(0, 3)
+    )
 
     assert (
-        fpr_list[0].mask
+        array_2d_list[0].mask
         == np.array([[False, False, False], [False, True, False], [False, False, True]])
     ).all()
 
     assert (
-        fpr_list[1].mask
+        array_2d_list[1].mask
         == np.array(
             [[False, False, False], [False, False, False], [True, False, False]]
         )
@@ -84,39 +88,39 @@ def test__array_2d_list_from(parallel_array, parallel_masked_array):
 def test__stacked_array_2d_from(parallel_array, parallel_masked_array):
     extract = MockExtract2D(region_list=[(1, 4, 0, 3), (5, 8, 0, 3)])
 
-    stacked_fpr_list = extract.stacked_array_2d_from(
+    stacked_array_2d = extract.stacked_array_2d_from(
         array=parallel_array, pixels=(0, 3)
     )
 
     assert (
-        stacked_fpr_list
+        stacked_array_2d
         == np.array([[3.0, 3.0, 3.0], [4.0, 4.0, 4.0], [5.0, 5.0, 5.0]])
     ).all()
 
-    stacked_fpr_list = extract.stacked_array_2d_from(
+    stacked_array_2d = extract.stacked_array_2d_from(
         array=parallel_array, pixels=(-1, 1)
     )
 
-    assert (stacked_fpr_list == np.array([[2.0, 2.0, 2.0], [3.0, 3.0, 3.0]])).all()
+    assert (stacked_array_2d == np.array([[2.0, 2.0, 2.0], [3.0, 3.0, 3.0]])).all()
 
     extract = MockExtract2D(region_list=[(1, 3, 0, 3), (5, 8, 0, 3)])
 
-    stacked_fpr_list = extract.stacked_array_2d_from(
+    stacked_array_2d = extract.stacked_array_2d_from(
         array=parallel_array, pixels=(0, 2)
     )
 
-    assert (stacked_fpr_list == np.array([[3.0, 3.0, 3.0], [4.0, 4.0, 4.0]])).all()
+    assert (stacked_array_2d == np.array([[3.0, 3.0, 3.0], [4.0, 4.0, 4.0]])).all()
 
-    stacked_fpr_list = extract.stacked_array_2d_from(
+    stacked_array_2d = extract.stacked_array_2d_from(
         array=parallel_masked_array, pixels=(0, 3)
     )
 
     assert (
-        stacked_fpr_list
+        stacked_array_2d
         == np.ma.array([[3.0, 3.0, 3.0], [4.0, 6.0, 4.0], [3.0, 5.0, 7.0]])
     ).all()
     assert (
-        stacked_fpr_list.mask
+        stacked_array_2d.mask
         == np.ma.array(
             [[False, False, False], [False, False, False], [False, False, False]]
         )
@@ -158,48 +162,50 @@ def test__stacked_array_2d_total_pixels_from(parallel_array, parallel_masked_arr
 def test__binned_array_1d_from(parallel_array, parallel_masked_array):
     extract = MockExtract2D(region_list=[(1, 3, 0, 3), (5, 8, 0, 3)])
 
-    fpr_line = extract.binned_array_1d_from(array=parallel_array, pixels=(0, 3))
+    binned_array_1d = extract.binned_array_1d_from(array=parallel_array, pixels=(0, 3))
 
-    assert (fpr_line == np.array([3.0, 4.0, 5.0])).all()
+    assert (binned_array_1d == np.array([3.0, 4.0, 5.0])).all()
 
-    fpr_line = extract.binned_array_1d_from(array=parallel_array, pixels=(-1, 1))
+    binned_array_1d = extract.binned_array_1d_from(array=parallel_array, pixels=(-1, 1))
 
-    assert (fpr_line == np.array([2.0, 3.0])).all()
+    assert (binned_array_1d == np.array([2.0, 3.0])).all()
 
     extract = MockExtract2D(region_list=[(1, 3, 0, 3), (5, 8, 0, 3)])
 
-    fpr_line = extract.binned_array_1d_from(array=parallel_array, pixels=(0, 2))
+    binned_array_1d = extract.binned_array_1d_from(array=parallel_array, pixels=(0, 2))
 
-    assert (fpr_line == np.array([3.0, 4.0])).all()
+    assert (binned_array_1d == np.array([3.0, 4.0])).all()
 
-    fpr_line = extract.binned_array_1d_from(array=parallel_masked_array, pixels=(0, 3))
+    binned_array_1d = extract.binned_array_1d_from(
+        array=parallel_masked_array, pixels=(0, 3)
+    )
 
-    assert (fpr_line == np.array([9.0 / 3.0, 14.0 / 3.0, 5.0])).all()
+    assert (binned_array_1d == np.array([9.0 / 3.0, 14.0 / 3.0, 5.0])).all()
 
 
 def test__binned_array_1d_total_pixels_from(parallel_array, parallel_masked_array):
 
     extract = MockExtract2D(region_list=[(1, 3, 0, 3), (5, 8, 0, 3)])
 
-    binned_array_total_pixels_1d = extract.binned_array_1d_total_pixels_from(
+    binned_array_1d_total_pixels = extract.binned_array_1d_total_pixels_from(
         array=parallel_array, pixels=(0, 3)
     )
 
-    assert (binned_array_total_pixels_1d == np.array([6, 6, 6])).all()
+    assert (binned_array_1d_total_pixels == np.array([6, 6, 6])).all()
 
-    binned_array_total_pixels_1d = extract.binned_array_1d_total_pixels_from(
+    binned_array_1d_total_pixels = extract.binned_array_1d_total_pixels_from(
         array=parallel_array, pixels=(-1, 1)
     )
 
-    assert (binned_array_total_pixels_1d == np.array([6, 6])).all()
+    assert (binned_array_1d_total_pixels == np.array([6, 6])).all()
 
     extract = MockExtract2D(region_list=[(1, 3, 0, 3), (5, 8, 0, 3)])
 
-    binned_array_total_pixels_1d = extract.binned_array_1d_total_pixels_from(
+    binned_array_1d_total_pixels = extract.binned_array_1d_total_pixels_from(
         array=parallel_masked_array, pixels=(0, 3)
     )
 
-    assert (binned_array_total_pixels_1d == np.array([6, 5, 4])).all()
+    assert (binned_array_1d_total_pixels == np.array([6, 5, 4])).all()
 
 
 def test__total_rows_minimum():
