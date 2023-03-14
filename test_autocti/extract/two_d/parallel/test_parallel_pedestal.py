@@ -3,7 +3,7 @@ import numpy as np
 import autocti as ac
 
 
-def test_region_list_from__via_array_2d_list_from(
+def test__region_list_from__via_array_2d_list_from(
     parallel_array, parallel_masked_array
 ):
 
@@ -32,7 +32,7 @@ def test_region_list_from__via_array_2d_list_from(
     assert (array_2d_list[0].mask == np.array([[True], [False]])).all()
 
 
-def test_region_list_from__via_array_2d_list_from__pixels_from_end(
+def test__region_list_from__via_array_2d_list_from__pixels_from_end(
     parallel_array, parallel_masked_array
 ):
 
@@ -52,7 +52,4 @@ def test_region_list_from__via_array_2d_list_from__pixels_from_end(
         array=parallel_masked_array, pixels_from_end=2
     )
 
-    assert (
-        array_2d_list[0].mask
-        == np.array([[False], [False]])
-    ).all()
+    assert (array_2d_list[0].mask == np.array([[False], [False]])).all()

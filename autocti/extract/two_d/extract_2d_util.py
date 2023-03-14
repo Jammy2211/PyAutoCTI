@@ -31,7 +31,7 @@ def binned_region_1d_fpr_from(pixels: Tuple[int, int]) -> aa.Region1D:
 
 def binned_region_1d_eper_from(pixels: Tuple[int, int]) -> aa.Region1D:
     """
-    The `Extract` objects allow one to extract a `Dataset1D` from a 2D CTI dataset, which is used to perform
+    `Extract` objects extract arrays and other values from a 2D CTI dataset, which is used to perform
     CTI modeling in 1D.
 
     This is performed by binning up the data via the `binned_array_1d_from` function.

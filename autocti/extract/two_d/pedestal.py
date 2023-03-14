@@ -84,28 +84,3 @@ class Extract2DParallelPedestal(Extract2DParallel):
         )
 
         return [pedestal_extract]
-
-    def binned_region_1d_from(self, pixels: Tuple[int, int]) -> aa.Region1D:
-        """
-        The `Extract` objects allow one to extract a `Dataset1D` from a 2D CTI dataset, which is used to perform
-        CTI modeling in 1D.
-
-        This is performed by binning up the data via the `binned_array_1d_from` function.
-
-        In order to create the 1D dataset a `Layout1D` is required, which requires the `region_list` containing the
-        charge regions on the 1D dataset (e.g. where the FPR appears in 1D after binning).
-
-        The function returns the this region if the 1D dataset is extracted from the parallel overscan. This
-        assumes the overscan contains EPER trails and therefore all pixels in front of the overscan act as the
-        charge region and therefore FPR. This is the case when science imaging flat field data is used.
-
-        The charge region is therefore only included if there are negative entries in the `pixels` tuple, meaning that
-        pixels before the overscan (e.g. the FPR) are extracted.
-
-        Parameters
-        ----------
-        pixels
-            The row pixel index to extract the EPERs between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd EPER
-            rows)
-        """
-        return extract_2d_util.binned_region_1d_eper_from(pixels=pixels)
