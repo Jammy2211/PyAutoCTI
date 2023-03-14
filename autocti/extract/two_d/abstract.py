@@ -52,6 +52,20 @@ class Extract2D:
         )
 
     @property
+    def pedestal(self) -> aa.Region2D:
+        """
+        The region of the charge injection image containing the pedestal.
+        """
+        return aa.Region2D(
+            region=(
+                self.parallel_overscan.y0,
+                self.shape_2d[0],
+                self.serial_overscan.x0,
+                self.shape_2d[1],
+            )
+        )
+
+    @property
     def total_rows_min(self) -> int:
         """
         The number of rows between the read-out electronics and the charge injection region closest to them.

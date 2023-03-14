@@ -337,3 +337,30 @@ def test__add_gaussian_noise_to(parallel_array):
         ),
         1.0e-4,
     )
+
+
+def test__pedestal():
+
+    extract = MockExtract2D(
+        shape_2d=(5, 5),
+        parallel_overscan=(4, 5, 0, 4),
+        serial_overscan=(0, 4, 4, 5),
+    )
+
+    assert extract.pedestal == (4, 5, 4, 5)
+
+    extract = MockExtract2D(
+        shape_2d=(6, 8),
+        parallel_overscan=(5, 6, 0, 4),
+        serial_overscan=(0, 6, 6, 8),
+    )
+
+    assert extract.pedestal == (5, 6, 6, 8)
+
+    extract = MockExtract2D(
+        shape_2d=(10, 7),
+        parallel_overscan=(7, 10, 1, 5),
+        serial_overscan=(0, 7, 5, 7),
+    )
+
+    assert extract.pedestal == (7, 10, 5, 7)
