@@ -5,10 +5,12 @@ import autoarray as aa
 from autocti.extract.two_d.parallel.overscan import Extract2DParallelOverscan
 from autocti.extract.two_d.parallel.fpr import Extract2DParallelFPR
 from autocti.extract.two_d.parallel.eper import Extract2DParallelEPER
+from autocti.extract.two_d.parallel.pedestal import Extract2DParallelPedestal
 from autocti.extract.two_d.serial.overscan import Extract2DSerialOverscan
 from autocti.extract.two_d.serial.prescan import Extract2DSerialPrescan
 from autocti.extract.two_d.serial.fpr import Extract2DSerialFPR
 from autocti.extract.two_d.serial.eper import Extract2DSerialEPER
+from autocti.extract.two_d.serial.overscan_no_eper import Extract2DSerialOverscanNoEPER
 from autocti.extract.two_d.parallel.calibration import Extract2DParallelCalibration
 from autocti.extract.two_d.serial.calibration import Extract2DSerialCalibration
 
@@ -78,6 +80,20 @@ class Extract2DMaster:
         )
 
     @property
+    def parallel_pedestal(self):
+        return Extract2DParallelPedestal(
+            shape_2d=self.shape_2d,
+            region_list=self.region_list,
+            parallel_overscan=self._parallel_overscan,
+            serial_prescan=self._serial_prescan,
+            serial_overscan=self._serial_overscan,
+        )
+
+    @property
+    def parallel_overscan(self):
+        return Extract2DParallelOverscan(parallel_overscan=self._parallel_overscan)
+
+    @property
     def parallel_calibration(self):
         return Extract2DParallelCalibration(
             shape_2d=self.shape_2d, region_list=self.region_list
@@ -113,16 +129,22 @@ class Extract2DMaster:
         )
 
     @property
-    def parallel_overscan(self):
-        return Extract2DParallelOverscan(parallel_overscan=self._parallel_overscan)
+    def serial_prescan(self):
+        return Extract2DSerialPrescan(serial_prescan=self._serial_prescan)
 
     @property
     def serial_overscan(self):
         return Extract2DSerialOverscan(serial_overscan=self._serial_overscan)
 
     @property
-    def serial_prescan(self):
-        return Extract2DSerialPrescan(serial_prescan=self._serial_prescan)
+    def serial_overscan_no_eper(self):
+        return Extract2DSerialOverscanNoEPER(
+            shape_2d=self.shape_2d,
+            region_list=self.region_list,
+            parallel_overscan=self._parallel_overscan,
+            serial_prescan=self._serial_prescan,
+            serial_overscan=self._serial_overscan,
+        )
 
     def regions_array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
         """
