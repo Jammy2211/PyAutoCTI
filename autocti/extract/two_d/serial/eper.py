@@ -142,10 +142,10 @@ class Extract2DSerialEPER(Extract2DSerial):
                <--------Ser---------
         """
 
-        serial_array = array.native.copy() * 0.0
+        array_2d = array.native.copy() * 0.0
 
         return self.add_to_array(
-            new_array=serial_array,
+            new_array=array_2d,
             array=array,
             pixels=(0, self.serial_overscan.total_columns),
         )

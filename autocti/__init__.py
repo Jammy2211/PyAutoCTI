@@ -27,7 +27,7 @@ from .cosmics.cosmics import SimulatorCosmicRayMap
 from .extract.two_d.parallel.overscan import Extract2DParallelOverscan
 from .extract.two_d.parallel.fpr import Extract2DParallelFPR
 from .extract.two_d.parallel.eper import Extract2DParallelEPER
-from .extract.two_d.pedestal import Extract2DParallelPedestal
+from .extract.two_d.parallel.pedestal import Extract2DParallelPedestal
 from .extract.two_d.serial.prescan import Extract2DSerialPrescan
 from .extract.two_d.serial.overscan import Extract2DSerialOverscan
 from .extract.two_d.serial.fpr import Extract2DSerialFPR

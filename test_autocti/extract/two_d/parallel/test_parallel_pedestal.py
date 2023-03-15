@@ -27,8 +27,6 @@ def test__region_list_from__via_array_2d_list_from(
         array=parallel_masked_array, pixels=(-5, -3)
     )
 
-    print(array_2d_list[0].mask)
-
     assert (array_2d_list[0].mask == np.array([[True], [False]])).all()
 
 
@@ -53,3 +51,40 @@ def test__region_list_from__via_array_2d_list_from__pixels_from_end(
     )
 
     assert (array_2d_list[0].mask == np.array([[False], [False]])).all()
+
+
+def test__array_2d_from():
+
+    array = ac.Array2D.no_mask(
+        values=[
+            [0.0, 1.0, 2.0],
+            [3.0, 4.0, 5.0],
+            [6.0, 7.0, 8.0],
+            [9.0, 10.0, 11.0],
+            [12.0, 13.0, 14.0],
+        ],
+        pixel_scales=1.0,
+    )
+
+    extract = ac.Extract2DParallelPedestal(
+        shape_2d=array.shape_native,
+        parallel_overscan=(3, 5, 0, 1),
+        serial_overscan=(0, 3, 1, 3),
+    )
+
+    array_2d = extract.array_2d_from(array=array)
+
+    print(array_2d.native)
+
+    assert (
+        array_2d.native
+        == np.array(
+            [
+                [0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0],
+                [0.0, 0.0, 0.0],
+                [0.0, 10.0, 11.0],
+                [0.0, 13.0, 14.0],
+            ]
+        )
+    ).all()

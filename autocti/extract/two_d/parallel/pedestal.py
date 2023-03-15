@@ -84,3 +84,58 @@ class Extract2DParallelPedestal(Extract2DParallel):
         )
 
         return [pedestal_extract]
+
+    def array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
+        """
+        Extract from an `Array2D` the parallel EPERs and return them as a new `Array2D` where everything else (e.g.
+        the charge injection regions, serial EPERs) are zeros.
+
+        The dimensions of the input array therefore do not change (unlike other `Layout2DCI` methods).
+
+        Negative pixel values can be input into the `pixels` tuple, whereby rows in front of the parallel EPERs (e.g.
+        the FPR) are also extracted.
+
+        The diagram below illustrates the extraction:
+
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = parallel overscan
+        [ssssssssss] = serial overscan
+        [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
+        [tttttttttt] = parallel / serial charge injection region trail
+
+             [tptpptptptpptpptpptpt]
+             [tptptptpptpttptptptpt]
+        [...][ttttttttttttttttttttt][sss]
+        [...][ccccccccccccccccccccc][sss]
+        | [...][ccccccccccccccccccccc][sss]    |
+        | [...][ttttttttttttttttttttt][sss]    | Direction
+        Par[...][ttttttttttttttttttttt][sss]    | of
+        | [...][ccccccccccccccccccccc][sss]    | clocking
+        |/ [...][ccccccccccccccccccccc][sss]   \/
+
+        []     [=====================]
+             <--------Ser---------
+
+        The extracted array keeps only the parallel EPERs, everything else become 0s:
+
+             [tptpptptptpptpptpptpt]
+             [tptptptpptpttptptptpt]
+          [000][ttttttttttttttttttttt][000]
+          [000][000000000000000000000][000]
+        | [000][000000000000000000000][000]    |
+        | [000][ttttttttttttttttttttt][000]    | Direction
+        Par[000][ttttttttttttttttttttt][000]    | of
+        | [000][000000000000000000000][000]    | clocking
+        |/ [000][000000000000000000000][000]   \/
+
+        []     [=====================]
+             <--------Ser---------
+        """
+
+        array_2d = array.native.copy() * 0.0
+
+        return self.add_to_array(
+            new_array=array_2d, array=array, pixels=(0, self.pedestal.total_rows)
+        )

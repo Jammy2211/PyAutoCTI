@@ -92,27 +92,6 @@ def test__region_list_from__via_array_2d_list_from__pixels_from_end(
     ).all()
 
 
-def test__binned_region_1d_from():
-
-    extract = ac.Extract2DParallelEPER(region_list=[(1, 3, 0, 3)])
-
-    binned_region_1d = extract.binned_region_1d_from(pixels=(0, 1))
-
-    assert binned_region_1d == None
-
-    binned_region_1d = extract.binned_region_1d_from(pixels=(-1, 1))
-
-    assert binned_region_1d == (0, 1)
-
-    binned_region_1d = extract.binned_region_1d_from(pixels=(-7, 18))
-
-    assert binned_region_1d == (0, 7)
-
-    binned_region_1d = extract.binned_region_1d_from(pixels=(-3, -1))
-
-    assert binned_region_1d == (0, 2)
-
-
 def test__array_2d_from():
 
     extract = ac.Extract2DParallelEPER(
@@ -132,10 +111,10 @@ def test__array_2d_from():
         pixel_scales=1.0,
     )
 
-    array_2d_from = extract.array_2d_from(array=array)
+    array_2d = extract.array_2d_from(array=array)
 
     assert (
-        array_2d_from
+        array_2d
         == np.array(
             [
                 [0.0, 0.0, 0.0],
@@ -153,10 +132,10 @@ def test__array_2d_from():
         serial_overscan=(0, 1, 0, 1),
     )
 
-    array_2d_from = extract.array_2d_from(array=array)
+    array_2d = extract.array_2d_from(array=array)
 
     assert (
-        array_2d_from.native
+        array_2d.native
         == np.array(
             [
                 [0.0, 0.0, 0.0],
@@ -167,3 +146,24 @@ def test__array_2d_from():
             ]
         )
     ).all()
+
+
+def test__binned_region_1d_from():
+
+    extract = ac.Extract2DParallelEPER(region_list=[(1, 3, 0, 3)])
+
+    binned_region_1d = extract.binned_region_1d_from(pixels=(0, 1))
+
+    assert binned_region_1d == None
+
+    binned_region_1d = extract.binned_region_1d_from(pixels=(-1, 1))
+
+    assert binned_region_1d == (0, 1)
+
+    binned_region_1d = extract.binned_region_1d_from(pixels=(-7, 18))
+
+    assert binned_region_1d == (0, 7)
+
+    binned_region_1d = extract.binned_region_1d_from(pixels=(-3, -1))
+
+    assert binned_region_1d == (0, 2)
