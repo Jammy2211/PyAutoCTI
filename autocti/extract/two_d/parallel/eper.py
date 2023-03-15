@@ -18,7 +18,7 @@ class Extract2DParallelEPER(Extract2DParallel):
         injection regions of charge injection data), extracted between two input `pixels` indexes.
 
         Negative pixel values can be input into the `pixels` tuple, whereby columns in front of the parallel EPERs
-        (e.g. the FPRs) are also extracted.
+        (e.g. the FPRs) are extracted.
 
         The diagram below illustrates the extraction for `pixels=(0, 1)`:
 
@@ -88,10 +88,10 @@ class Extract2DParallelEPER(Extract2DParallel):
         Extract from an `Array2D` the parallel EPERs and return them as a new `Array2D` where everything else (e.g.
         the charge injection regions, serial EPERs) are zeros.
 
-        The dimensions of the input array therefore do not change (unlike other `Layout2DCI` methods).
+        The dimensions of the input array therefore do not change (unlike other ``Extract`` methods).
 
         Negative pixel values can be input into the `pixels` tuple, whereby rows in front of the parallel EPERs (e.g.
-        the FPR) are also extracted.
+        the FPR) are extracted.
 
         The diagram below illustrates the extraction:
 

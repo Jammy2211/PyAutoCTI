@@ -18,7 +18,7 @@ class Extract2DParallelFPR(Extract2DParallel):
          injection regions of charge injection data), extracted between two input `pixels` indexes.
 
          Negative pixel values can be input into the `pixels` tuple, whereby columns in front of the parallel FPRs
-         are also extracted.
+         are extracted.
 
          A 2D region is defined following the convention:
 
@@ -93,7 +93,7 @@ class Extract2DParallelFPR(Extract2DParallel):
 
         The function returns the this region if the 1D dataset is extracted from the parallel FPRs. This is
         the full range of the `pixels` tuple, unless negative entries are included, meaning that pixels
-        before the FPRs are also extracted.
+        before the FPRs are extracted.
 
         Parameters
         ----------

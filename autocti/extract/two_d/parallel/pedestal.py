@@ -33,7 +33,7 @@ class Extract2DParallelPedestal(Extract2DParallel):
         [..........] = serial prescan
         [pppppppppp] = parallel overscan
         [ssssssssss] = serial overscan
-        [pepepepepe[ = pedestal
+        [pepepepepe] = pedestal
         [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
         [tttttttttt] = parallel / serial charge injection region trail
 
@@ -87,13 +87,13 @@ class Extract2DParallelPedestal(Extract2DParallel):
 
     def array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
         """
-        Extract from an `Array2D` the parallel EPERs and return them as a new `Array2D` where everything else (e.g.
+        Extract from an `Array2D` the pedestal and return it as a new `Array2D` where everything else (e.g.
         the charge injection regions, serial EPERs) are zeros.
 
-        The dimensions of the input array therefore do not change (unlike other `Layout2DCI` methods).
+        The dimensions of the input array therefore do not change (unlike other ``Extract`` methods).
 
-        Negative pixel values can be input into the `pixels` tuple, whereby rows in front of the parallel EPERs (e.g.
-        the FPR) are also extracted.
+        Negative pixel values can be input into the `pixels` tuple, whereby rows in front of the parallel pedestal (e.g.
+        the serial EPERs) are extracted.
 
         The diagram below illustrates the extraction:
 
@@ -102,11 +102,12 @@ class Extract2DParallelPedestal(Extract2DParallel):
         [..........] = serial prescan
         [pppppppppp] = parallel overscan
         [ssssssssss] = serial overscan
+        [pepepepepe] = pedestal
         [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
         [tttttttttt] = parallel / serial charge injection region trail
 
-             [tptpptptptpptpptpptpt]
-             [tptptptpptpttptptptpt]
+             [tptpptptptpptpptpptpt][pepe]
+             [tptptptpptpttptptptpt][pepe]
         [...][ttttttttttttttttttttt][sss]
         [...][ccccccccccccccccccccc][sss]
         | [...][ccccccccccccccccccccc][sss]    |
@@ -118,15 +119,15 @@ class Extract2DParallelPedestal(Extract2DParallel):
         []     [=====================]
              <--------Ser---------
 
-        The extracted array keeps only the parallel EPERs, everything else become 0s:
+        The extracted array keeps only the pedestal, everything else become 0s:
 
-             [tptpptptptpptpptpptpt]
-             [tptptptpptpttptptptpt]
-          [000][ttttttttttttttttttttt][000]
+              [0000000000000000000000][pepe]
+              [0000000000000000000000][pepe]
+          [000][000000000000000000000][000]
           [000][000000000000000000000][000]
         | [000][000000000000000000000][000]    |
-        | [000][ttttttttttttttttttttt][000]    | Direction
-        Par[000][ttttttttttttttttttttt][000]    | of
+        | [000][000000000000000000000][000]    | Direction
+        Par[000][00000000000000000000][000]    | of
         | [000][000000000000000000000][000]    | clocking
         |/ [000][000000000000000000000][000]   \/
 

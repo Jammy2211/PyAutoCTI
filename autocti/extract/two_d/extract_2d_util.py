@@ -14,7 +14,7 @@ def binned_region_1d_fpr_from(pixels: Tuple[int, int]) -> aa.Region1D:
     charge regions on the 1D dataset (e.g. where the FPR appears in 1D after binning).
 
     The function returns the this region if the 1D dataset is extracted from the FPRs. This is the full range of
-    the `pixels` tuple, unless negative entries are included, meaning that pixels before the FPRs are also extracted.
+    the `pixels` tuple, unless negative entries are included, meaning that pixels before the FPRs are extracted.
 
     Parameters
     ----------

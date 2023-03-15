@@ -18,7 +18,7 @@ class Extract2DSerialEPER(Extract2DSerial):
          injection regions of charge injection data), extracted between two input `pixels` indexes.
 
          Negative pixel values can be input into the `pixels` tuple, whereby columns in front of the serial EPERs
-         (e.g. the FPRs) are also extracted.
+         (e.g. the FPRs) are extracted.
 
          The diagram below illustrates the extraction for `pixels=(0, 1)`:
 

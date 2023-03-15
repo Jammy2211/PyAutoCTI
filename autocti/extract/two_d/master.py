@@ -129,7 +129,7 @@ class Extract2DMaster:
           Extract all of the charge-injection regions from an input `Array2D` object and returns them as a new `Array2D`
           where these extracted regions are included and all other entries are zeros.
 
-          The dimensions of the input array therefore do not change (unlike other `Layout2DCI` methods).
+          The dimensions of the input array therefore do not change (unlike other ``Extract`` methods).
 
           The diagram below illustrates the extraction:
 
@@ -186,7 +186,7 @@ class Extract2DMaster:
          The extracted array therefore includes all EPER trails and other regions of the image which may contain
          signal but are not in the FPR.
 
-         The dimensions of the input array therefore do not change (unlike other `Layout2DCI` methods).
+         The dimensions of the input array therefore do not change (unlike other ``Extract`` methods).
 
          The diagram below illustrates the extraction:
 
