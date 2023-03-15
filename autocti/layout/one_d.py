@@ -3,6 +3,7 @@ from typing import Tuple
 
 import autoarray as aa
 
+from autocti.extract.settings import SettingsExtract
 from autocti import exc
 
 
@@ -64,11 +65,15 @@ class Layout1D(aa.Layout1D):
 
         if region == "fpr":
             return self.extract.fpr.stacked_array_1d_from(
-                array=array, pixels=(0, self.extract.fpr.total_pixels_min)
+                array=array,
+                settings=SettingsExtract(pixels=(0, self.extract.fpr.total_pixels_min)),
             )
         elif region == "eper":
             return self.extract.eper.stacked_array_1d_from(
-                array=array, pixels=(0, self.smallest_eper_pixels_to_array_edge)
+                array=array,
+                settings=SettingsExtract(
+                    pixels=(0, self.smallest_eper_pixels_to_array_edge)
+                ),
             )
         else:
             raise exc.PlottingException(

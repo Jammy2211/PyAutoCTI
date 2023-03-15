@@ -3,16 +3,13 @@ from typing import List, Optional, Tuple
 import autoarray as aa
 
 from autocti.extract.two_d.serial.abstract import Extract2DSerial
+from autocti.extract.settings import SettingsExtract
 
 from autocti.extract.two_d import extract_2d_util
 
 
 class Extract2DSerialOverscan(Extract2DSerial):
-    def region_list_from(
-        self,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
-    ) -> List[aa.Region2D]:
+    def region_list_from(self, settings: SettingsExtract) -> List[aa.Region2D]:
         """
         Returns a list of the 2D serial overscan region for extraction, which is the serial overscan input to the
         object, between two input `pixels` indexes (this is somewhat redundant information, but mimicks
@@ -58,14 +55,16 @@ class Extract2DSerialOverscan(Extract2DSerial):
 
         Parameters
         ----------
-        pixels
-            The column pixel index which determines the region of the overscan (e.g. `pixels=(0, 3)` will compute the
-            region corresponding to the 1st, 2nd and 3rd overscan columns).
+        settings
+            The settings used to extract the serial region overscan from, which for example include the `pixels`
+            tuple specifying the range of pixel columns they are extracted between.
         """
 
-        if pixels_from_end is not None:
+        pixels = settings.pixels
+
+        if settings.pixels_from_end is not None:
             pixels = (
-                self.serial_overscan.total_columns - pixels_from_end,
+                self.serial_overscan.total_columns - settings.pixels_from_end,
                 self.serial_overscan.total_columns,
             )
 
@@ -80,7 +79,7 @@ class Extract2DSerialOverscan(Extract2DSerial):
 
         return [serial_overscan_extract]
 
-    def binned_region_1d_from(self, pixels: Tuple[int, int]) -> aa.Region1D:
+    def binned_region_1d_from(self, settings: SettingsExtract) -> aa.Region1D:
         """
         The `Extract` objects allow one to extract a `Dataset1D` from a 2D CTI dataset, which is used to perform
         CTI modeling in 1D.
@@ -99,8 +98,8 @@ class Extract2DSerialOverscan(Extract2DSerial):
 
         Parameters
         ----------
-        pixels
-            The column pixel index to extract the FPRs between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd FPR
-            columns)
+        settings
+            The settings used to extract the serial region overscan from, which for example include the `pixels`
+            tuple specifying the range of pixel columns they are extracted between.
         """
-        return extract_2d_util.binned_region_1d_eper_from(pixels=pixels)
+        return extract_2d_util.binned_region_1d_eper_from(pixels=settings.pixels)

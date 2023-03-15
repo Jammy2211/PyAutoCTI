@@ -13,18 +13,24 @@ def test__region_list_from__via_array_2d_list_from(
         serial_overscan=(0, 8, 2, 3),
     )
 
-    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels=(0, 1))
+    array_2d_list = extract.array_2d_list_from(
+        array=parallel_array, settings=ac.SettingsExtract(pixels=(0, 1))
+    )
     assert (array_2d_list[0] == np.array([[8.0]])).all()
 
-    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels=(0, 2))
+    array_2d_list = extract.array_2d_list_from(
+        array=parallel_array, settings=ac.SettingsExtract(pixels=(0, 2))
+    )
     print(array_2d_list)
     assert (array_2d_list[0] == np.array([[8.0], [9.0]])).all()
 
-    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels=(-1, 1))
+    array_2d_list = extract.array_2d_list_from(
+        array=parallel_array, settings=ac.SettingsExtract(pixels=(-1, 1))
+    )
     assert (array_2d_list[0] == np.array([[7.0], [8.0]])).all()
 
     array_2d_list = extract.array_2d_list_from(
-        array=parallel_masked_array, pixels=(-5, -3)
+        array=parallel_masked_array, settings=ac.SettingsExtract(pixels=(-5, -3))
     )
 
     assert (array_2d_list[0].mask == np.array([[True], [False]])).all()
@@ -40,14 +46,18 @@ def test__region_list_from__via_array_2d_list_from__pixels_from_end(
         serial_overscan=(0, 8, 2, 3),
     )
 
-    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels_from_end=1)
+    array_2d_list = extract.array_2d_list_from(
+        array=parallel_array, settings=ac.SettingsExtract(pixels_from_end=1)
+    )
     assert (array_2d_list[0] == np.array([[9.0]])).all()
 
-    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels_from_end=2)
+    array_2d_list = extract.array_2d_list_from(
+        array=parallel_array, settings=ac.SettingsExtract(pixels_from_end=2)
+    )
     assert (array_2d_list[0] == np.array([[8.0], [9.0]])).all()
 
     array_2d_list = extract.array_2d_list_from(
-        array=parallel_masked_array, pixels_from_end=2
+        array=parallel_masked_array, settings=ac.SettingsExtract(pixels_from_end=2)
     )
 
     assert (array_2d_list[0].mask == np.array([[False], [False]])).all()

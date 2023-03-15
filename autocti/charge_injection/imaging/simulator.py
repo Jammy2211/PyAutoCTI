@@ -9,6 +9,7 @@ from autoarray.dataset.imaging.simulator import SimulatorImaging
 from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.charge_injection.layout import Layout2DCI
 from autocti.clocker.two_d import Clocker2D
+from autocti.extract.settings import SettingsExtract
 from autocti.model.model_util import CTI2D
 
 from typing import Optional
@@ -215,7 +216,9 @@ class SimulatorImagingCI(SimulatorImaging):
                 array=pre_cti_data,
                 noise_sigma=self.charge_noise,
                 noise_seed=self.noise_seed,
-                pixels_from_end=layout.extract.parallel_fpr.total_rows_min,
+                settings=SettingsExtract(
+                    pixels_from_end=layout.extract.parallel_fpr.total_rows_min
+                ),
             )
 
         if cti is not None:

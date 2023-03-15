@@ -2,6 +2,7 @@ from typing import Optional, Tuple
 
 import autoarray as aa
 
+from autocti.extract.settings import SettingsExtract
 from autocti.extract.two_d.parallel.overscan import Extract2DParallelOverscan
 from autocti.extract.two_d.parallel.fpr import Extract2DParallelFPR
 from autocti.extract.two_d.parallel.eper import Extract2DParallelEPER
@@ -326,13 +327,17 @@ class Extract2DMaster:
         if fpr_pixels is not None:
 
             new_array = self.parallel_fpr.add_to_array(
-                new_array=new_array, array=array, pixels=fpr_pixels
+                new_array=new_array,
+                array=array,
+                settings=SettingsExtract(pixels=fpr_pixels),
             )
 
         if eper_pixels is not None:
 
             new_array = self.parallel_eper.add_to_array(
-                new_array=new_array, array=array, pixels=eper_pixels
+                new_array=new_array,
+                array=array,
+                settings=SettingsExtract(pixels=eper_pixels),
             )
 
         return new_array
@@ -403,13 +408,17 @@ class Extract2DMaster:
         if fpr_pixels is not None:
 
             new_array = self.serial_fpr.add_to_array(
-                new_array=new_array, array=array, pixels=fpr_pixels
+                new_array=new_array,
+                array=array,
+                settings=SettingsExtract(pixels=fpr_pixels),
             )
 
         if eper_pixels is not None:
 
             new_array = self.serial_eper.add_to_array(
-                new_array=new_array, array=array, pixels=eper_pixels
+                new_array=new_array,
+                array=array,
+                settings=SettingsExtract(pixels=eper_pixels),
             )
 
         return new_array

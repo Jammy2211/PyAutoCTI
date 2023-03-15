@@ -4,6 +4,7 @@ import autoarray as aa
 
 from autocti.charge_injection.imaging.settings import SettingsImagingCI
 from autocti.charge_injection.layout import Layout2DCI
+from autocti.extract.settings import SettingsExtract
 from autocti.mask import mask_2d
 from autocti import exc
 
@@ -50,8 +51,10 @@ class ImagingCI(aa.Imaging):
                 np.mean(
                     self.layout.extract.parallel_fpr.median_list_from(
                         array=self.data,
-                        pixels_from_end=min(
-                            10, self.layout.smallest_parallel_rows_within_ci_regions
+                        settings=SettingsExtract(
+                            pixels_from_end=min(
+                                10, self.layout.smallest_parallel_rows_within_ci_regions
+                            )
                         ),
                     )
                 ),

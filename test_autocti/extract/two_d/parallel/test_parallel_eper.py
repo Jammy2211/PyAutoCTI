@@ -8,37 +8,55 @@ def test__region_list_from__via_array_2d_list_from(
 ):
     extract = ac.Extract2DParallelEPER(region_list=[(1, 3, 0, 3)])
 
-    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels=(0, 1))
+    array_2d_list = extract.array_2d_list_from(
+        array=parallel_array, settings=ac.SettingsExtract(pixels=(0, 1))
+    )
     assert (array_2d_list == np.array([[3.0, 3.0, 3.0]])).all()
 
-    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels=(2, 3))
+    array_2d_list = extract.array_2d_list_from(
+        array=parallel_array, settings=ac.SettingsExtract(pixels=(2, 3))
+    )
     assert (array_2d_list == np.array([[5.0, 5.0, 5.0]])).all()
 
-    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels=(0, 2))
+    array_2d_list = extract.array_2d_list_from(
+        array=parallel_array, settings=ac.SettingsExtract(pixels=(0, 2))
+    )
     assert (array_2d_list == np.array([[3.0, 3.0, 3.0], [4.0, 4.0, 4.0]])).all()
 
-    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels=(-1, 1))
+    array_2d_list = extract.array_2d_list_from(
+        array=parallel_array, settings=ac.SettingsExtract(pixels=(-1, 1))
+    )
     assert (array_2d_list == np.array([[2.0, 2.0, 2.0], [3.0, 3.0, 3.0]])).all()
 
-    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels=(1, 3))
+    array_2d_list = extract.array_2d_list_from(
+        array=parallel_array, settings=ac.SettingsExtract(pixels=(1, 3))
+    )
     assert (array_2d_list == np.array([[4.0, 4.0, 4.0], [5.0, 5.0, 5.0]])).all()
 
-    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels=(1, 4))
+    array_2d_list = extract.array_2d_list_from(
+        array=parallel_array, settings=ac.SettingsExtract(pixels=(1, 4))
+    )
     assert (
         array_2d_list == np.array([[4.0, 4.0, 4.0], [5.0, 5.0, 5.0], [6.0, 6.0, 6.0]])
     ).all()
 
     extract = ac.Extract2DParallelEPER(region_list=[(1, 3, 0, 3), (4, 6, 0, 3)])
 
-    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels=(0, 1))
+    array_2d_list = extract.array_2d_list_from(
+        array=parallel_array, settings=ac.SettingsExtract(pixels=(0, 1))
+    )
     assert (array_2d_list[0] == np.array([[3.0, 3.0, 3.0]])).all()
     assert (array_2d_list[1] == np.array([[6.0, 6.0, 6.0]])).all()
 
-    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels=(0, 2))
+    array_2d_list = extract.array_2d_list_from(
+        array=parallel_array, settings=ac.SettingsExtract(pixels=(0, 2))
+    )
     assert (array_2d_list[0] == np.array([[3.0, 3.0, 3.0], [4.0, 4.0, 4.0]])).all()
     assert (array_2d_list[1] == np.array([[6.0, 6.0, 6.0], [7.0, 7.0, 7.0]])).all()
 
-    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels=(1, 4))
+    array_2d_list = extract.array_2d_list_from(
+        array=parallel_array, settings=ac.SettingsExtract(pixels=(1, 4))
+    )
     assert (
         array_2d_list[0]
         == np.array([[4.0, 4.0, 4.0], [5.0, 5.0, 5.0], [6.0, 6.0, 6.0]])
@@ -49,7 +67,7 @@ def test__region_list_from__via_array_2d_list_from(
     ).all()
 
     array_2d_list = extract.array_2d_list_from(
-        array=parallel_masked_array, pixels=(0, 2)
+        array=parallel_masked_array, settings=ac.SettingsExtract(pixels=(0, 2))
     )
 
     assert (
@@ -68,23 +86,29 @@ def test__region_list_from__via_array_2d_list_from__pixels_from_end(
         region_list=[(1, 3, 0, 3)], shape_2d=parallel_array.shape_native
     )
 
-    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels_from_end=1)
+    array_2d_list = extract.array_2d_list_from(
+        array=parallel_array, settings=ac.SettingsExtract(pixels_from_end=1)
+    )
     assert (array_2d_list == np.array([[9.0, 9.0, 9.0]])).all()
 
-    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels_from_end=2)
+    array_2d_list = extract.array_2d_list_from(
+        array=parallel_array, settings=ac.SettingsExtract(pixels_from_end=2)
+    )
     assert (array_2d_list == np.array([[8.0, 8.0, 8.0], [9.0, 9.0, 9.0]])).all()
 
     extract = ac.Extract2DParallelEPER(
         region_list=[(1, 3, 0, 3), (4, 6, 0, 3)], shape_2d=parallel_array.shape_native
     )
 
-    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels_from_end=2)
+    array_2d_list = extract.array_2d_list_from(
+        array=parallel_array, settings=ac.SettingsExtract(pixels_from_end=2)
+    )
 
     assert (array_2d_list[0] == np.array([[2.0, 2.0, 2.0], [3.0, 3.0, 3.0]])).all()
     assert (array_2d_list[1] == np.array([[8.0, 8.0, 8.0], [9.0, 9.0, 9.0]])).all()
 
     array_2d_list = extract.array_2d_list_from(
-        array=parallel_masked_array, pixels_from_end=2
+        array=parallel_masked_array, settings=ac.SettingsExtract(pixels_from_end=2)
     )
 
     assert (
@@ -99,7 +123,9 @@ def test__region_list_from__via_array_2d_list_from__pixels_from_end_minus_1_spec
         region_list=[(1, 3, 0, 3)], shape_2d=parallel_array.shape_native
     )
 
-    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels_from_end=-1)
+    array_2d_list = extract.array_2d_list_from(
+        array=parallel_array, settings=ac.SettingsExtract(pixels_from_end=-1)
+    )
     assert (
         array_2d_list
         == np.array(
@@ -119,7 +145,9 @@ def test__region_list_from__via_array_2d_list_from__pixels_from_end_minus_1_spec
         region_list=[(1, 3, 0, 3), (4, 6, 0, 3)], shape_2d=parallel_array.shape_native
     )
 
-    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels_from_end=-1)
+    array_2d_list = extract.array_2d_list_from(
+        array=parallel_array, settings=ac.SettingsExtract(pixels_from_end=-1)
+    )
 
     assert (
         array_2d_list[0]
@@ -203,18 +231,26 @@ def test__binned_region_1d_from():
 
     extract = ac.Extract2DParallelEPER(region_list=[(1, 3, 0, 3)])
 
-    binned_region_1d = extract.binned_region_1d_from(pixels=(0, 1))
+    binned_region_1d = extract.binned_region_1d_from(
+        settings=ac.SettingsExtract(pixels=(0, 1))
+    )
 
     assert binned_region_1d == None
 
-    binned_region_1d = extract.binned_region_1d_from(pixels=(-1, 1))
+    binned_region_1d = extract.binned_region_1d_from(
+        settings=ac.SettingsExtract(pixels=(-1, 1))
+    )
 
     assert binned_region_1d == (0, 1)
 
-    binned_region_1d = extract.binned_region_1d_from(pixels=(-7, 18))
+    binned_region_1d = extract.binned_region_1d_from(
+        settings=ac.SettingsExtract(pixels=(-7, 18))
+    )
 
     assert binned_region_1d == (0, 7)
 
-    binned_region_1d = extract.binned_region_1d_from(pixels=(-3, -1))
+    binned_region_1d = extract.binned_region_1d_from(
+        settings=ac.SettingsExtract(pixels=(-3, -1))
+    )
 
     assert binned_region_1d == (0, 2)

@@ -4,6 +4,8 @@ from typing import List, Optional, Tuple
 
 import autoarray as aa
 
+from autocti.extract.settings import SettingsExtract
+
 
 class Extract1D:
     def __init__(
@@ -58,18 +60,11 @@ class Extract1D:
     def trail_size_to_array_edge(self):
         return self.shape_1d[0] - np.max([region.x1 for region in self.region_list])
 
-    def region_list_from(
-        self,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
-    ) -> List[aa.Region2D]:
+    def region_list_from(self, settings: SettingsExtract) -> List[aa.Region2D]:
         raise NotImplementedError
 
     def array_1d_list_from(
-        self,
-        array: aa.Array1D,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
+        self, array: aa.Array1D, settings: SettingsExtract
     ) -> List[aa.Array1D]:
         """
         Extract a specific region from every region on the line dataset and return as a list of 1D arrays.
@@ -89,16 +84,12 @@ class Extract1D:
 
         arr_list = [
             array.native[region.slice]
-            for region in self.region_list_from(
-                pixels=pixels, pixels_from_end=pixels_from_end
-            )
+            for region in self.region_list_from(settings=settings)
         ]
 
         mask_1d_list = [
             array.mask[region.slice]
-            for region in self.region_list_from(
-                pixels=pixels, pixels_from_end=pixels_from_end
-            )
+            for region in self.region_list_from(settings=settings)
         ]
 
         return [
@@ -107,10 +98,7 @@ class Extract1D:
         ]
 
     def stacked_array_1d_from(
-        self,
-        array: aa.Array1D,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
+        self, array: aa.Array1D, settings: SettingsExtract
     ) -> aa.Array1D:
         """
         Extract a region (e.g. the FPR) of every region on the line dataset and stack them by taking their mean.
@@ -133,18 +121,14 @@ class Extract1D:
 
         arr_list = [
             np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
-            for region in self.region_list_from(
-                pixels=pixels, pixels_from_end=pixels_from_end
-            )
+            for region in self.region_list_from(settings=settings)
         ]
 
         stacked_array_1d = np.ma.mean(np.ma.asarray(arr_list), axis=0)
 
         mask_1d_list = [
             array.mask[region.slice]
-            for region in self.region_list_from(
-                pixels=pixels, pixels_from_end=pixels_from_end
-            )
+            for region in self.region_list_from(settings=settings)
         ]
 
         return aa.Array1D(
@@ -153,11 +137,7 @@ class Extract1D:
         ).native
 
     def add_to_array(
-        self,
-        new_array: aa.Array1D,
-        array: aa.Array1D,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
+        self, new_array: aa.Array1D, array: aa.Array1D, settings: SettingsExtract
     ) -> aa.Array1D:
         """
         Extracts the region (e.g. the FPRs) from the line dataset and adds them to a line dataset.
@@ -172,13 +152,9 @@ class Extract1D:
             The row pixel index which determines the region extracted (e.g. `pixels=(0, 3)` will compute the region
             corresponding to the 1st, 2nd and 3rd pixels).
         """
-        region_list = self.region_list_from(
-            pixels=pixels, pixels_from_end=pixels_from_end
-        )
+        region_list = self.region_list_from(settings=settings)
 
-        array_1d_list = self.array_1d_list_from(
-            array=array, pixels=pixels, pixels_from_end=pixels_from_end
-        )
+        array_1d_list = self.array_1d_list_from(array=array, settings=settings)
 
         for arr, region in zip(array_1d_list, region_list):
             new_array[region.x0 : region.x1] += arr
@@ -188,10 +164,9 @@ class Extract1D:
     def add_gaussian_noise_to(
         self,
         array: aa.Array1D,
+        settings: SettingsExtract,
         noise_sigma: float,
         noise_seed: int = -1,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
     ) -> aa.Array2D:
         """
         Adds Gaussian noise of an input sigma value to the regions of the `Extract` object and returns the overall
@@ -214,13 +189,9 @@ class Extract1D:
             last 10 pixels of each FPR (pixels (90, 100)) are extracted.
         """
 
-        region_list = self.region_list_from(
-            pixels=pixels, pixels_from_end=pixels_from_end
-        )
+        region_list = self.region_list_from(settings=settings)
 
-        array_1d_list = self.array_1d_list_from(
-            array=array, pixels=pixels, pixels_from_end=pixels_from_end
-        )
+        array_1d_list = self.array_1d_list_from(array=array, settings=settings)
 
         array = copy.copy(array.native)
 

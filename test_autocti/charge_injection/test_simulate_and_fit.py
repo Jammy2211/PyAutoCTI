@@ -134,7 +134,7 @@ def test__simulate_and_extract_non_uniform_normalizations():
     )
 
     injection_norm_list = imaging_ci.layout.extract.parallel_fpr.median_list_from(
-        array=imaging_ci.image, pixels=(120, 150)
+        array=imaging_ci.image, settings=ac.SettingsExtract(pixels=(120, 150))
     )
 
     assert injection_norm_list[0] == pytest.approx(116.23434, 1.0e-2)
@@ -143,7 +143,7 @@ def test__simulate_and_extract_non_uniform_normalizations():
 
     injection_norm_lists = (
         imaging_ci.layout.extract.parallel_fpr.median_list_of_lists_from(
-            array=imaging_ci.image, pixels=(120, 150)
+            array=imaging_ci.image, settings=ac.SettingsExtract(pixels=(120, 150))
         )
     )
 

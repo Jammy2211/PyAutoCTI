@@ -3,8 +3,8 @@ from typing import List, Optional, Tuple
 
 import autoarray as aa
 
-
 from autocti.extract.two_d.abstract import Extract2D
+from autocti.extract.settings import SettingsExtract
 
 from autocti import exc
 
@@ -20,20 +20,14 @@ class Extract2DParallel(Extract2D):
         return 1
 
     def _value_list_from(
-        self,
-        array: aa.Array2D,
-        value_str: str,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
+        self, array: aa.Array2D, value_str: str, settings: SettingsExtract
     ):
 
         value_list = []
 
         arr_list = [
             np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
-            for region in self.region_list_from(
-                pixels=pixels, pixels_from_end=pixels_from_end
-            )
+            for region in self.region_list_from(settings=settings)
         ]
 
         arr_stack = np.ma.stack(arr_list)
@@ -48,10 +42,7 @@ class Extract2DParallel(Extract2D):
         return value_list
 
     def median_list_from(
-        self,
-        array: aa.Array2D,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
+        self, array: aa.Array2D, settings: SettingsExtract
     ) -> List[float]:
         """
         Returns the median values of the `Extract2D` object's corresponding region, where the median is taken over
@@ -81,29 +72,18 @@ class Extract2DParallel(Extract2D):
 
         Parameters
         ----------
-        array
-            The charge injection image from which the charge injection normalizations are estimated.
-        pixels
-            The row pixel index to extract the region (e.g. FPR / EPER) between. For example, `pixels=(0, 3)`
-            extracts the 1st, 2nd and 3rd FPR / EPER rows). To remove the 10 leading pixels which have lost electrons
-            due to CTI, `pixels=(10, 30)` would be used.
-        pixels_from_end
-            Alternative row pixex index specification, which extracts this number of pixels from the end of
-            each region (e.g. FPR / EPER). For example, if each FPR is 100 pixels and `pixels_from_end=10`, the
-            last 10 pixels of each FPR (pixels (90, 100)) are extracted.
+        settings
+           The settings used to extract the parallel region (e.g. the EPERs), which for example include the `pixels`
+           tuple specifying the range of pixel rows they are extracted between.
         """
         return self._value_list_from(
             array=array,
-            pixels=pixels,
-            pixels_from_end=pixels_from_end,
+            settings=settings,
             value_str="median",
         )
 
     def std_list_from(
-        self,
-        array: aa.Array2D,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
+        self, array: aa.Array2D, settings: SettingsExtract
     ) -> List[float]:
         """
         Returns the standard deviation (sigma) values of the `Extract2D` object's corresponding region, where the
@@ -133,31 +113,23 @@ class Extract2DParallel(Extract2D):
 
         Parameters
         ----------
-        array
-            The charge injection image from which the charge injection standard deviations / noise are estimated.
-        pixels
-            The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
-            FPR rows). To remove the 10 leading pixels which have lost electrons due to CTI, an input such
-            as `pixels=(10, 30)` would be used.
+        settings
+           The settings used to extract the parallel region (e.g. the EPERs), which for example include the `pixels`
+           tuple specifying the range of pixel rows they are extracted between.
         """
-        return self._value_list_from(
-            array=array, pixels=pixels, pixels_from_end=pixels_from_end, value_str="std"
-        )
+        return self._value_list_from(array=array, settings=settings, value_str="std")
 
     def _value_list_of_lists_from(
         self,
         array: aa.Array2D,
+        settings: SettingsExtract,
         value_str: str,
-        pixels: Optional[Tuple[int, int]],
-        pixels_from_end: Optional[int],
     ):
         value_lists = []
 
         arr_list = [
             np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
-            for region in self.region_list_from(
-                pixels=pixels, pixels_from_end=pixels_from_end
-            )
+            for region in self.region_list_from(settings=settings)
         ]
 
         for array_2d in arr_list:
@@ -178,10 +150,7 @@ class Extract2DParallel(Extract2D):
         return value_lists
 
     def median_list_of_lists_from(
-        self,
-        array: aa.Array2D,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
+        self, array: aa.Array2D, settings: SettingsExtract
     ) -> List[List]:
         """
         Returns the median values of the `Extract2D` object's corresponding region, where the median is taken over
@@ -210,24 +179,18 @@ class Extract2DParallel(Extract2D):
 
         Parameters
         ----------
-        array
-            The data from which the median values are estimated.
-        pixels
-            The row pixel index to extract the region between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
-            rows of the region).
+        settings
+           The settings used to extract the parallel region (e.g. the EPERs), which for example include the `pixels`
+           tuple specifying the range of pixel rows they are extracted between.
         """
         return self._value_list_of_lists_from(
             array=array,
-            pixels=pixels,
-            pixels_from_end=pixels_from_end,
+            settings=settings,
             value_str="median",
         )
 
     def std_list_of_lists_from(
-        self,
-        array: aa.Array2D,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
+        self, array: aa.Array2D, settings: SettingsExtract
     ) -> List[List]:
         """
         Returns the standard deviation (sigma) values of the `Extract2D` object's corresponding region, where the
@@ -256,12 +219,10 @@ class Extract2DParallel(Extract2D):
 
         Parameters
         ----------
-        array
-            The data from which the standard deviation values are estimated.
-        pixels
-            The row pixel index to extract the region between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
-            rows of the region).
+        settings
+           The settings used to extract the parallel region (e.g. the EPERs), which for example include the `pixels`
+           tuple specifying the range of pixel rows they are extracted between.
         """
         return self._value_list_of_lists_from(
-            array=array, pixels=pixels, pixels_from_end=pixels_from_end, value_str="std"
+            array=array, settings=settings, value_str="std"
         )

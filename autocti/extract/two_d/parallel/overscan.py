@@ -3,73 +3,68 @@ from typing import List, Optional, Tuple
 import autoarray as aa
 
 from autocti.extract.two_d.parallel.abstract import Extract2DParallel
+from autocti.extract.settings import SettingsExtract
 
 from autocti.extract.two_d import extract_2d_util
 
 
 class Extract2DParallelOverscan(Extract2DParallel):
-    def region_list_from(
-        self,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
-    ) -> List[aa.Region2D]:
+    def region_list_from(self, settings: SettingsExtract) -> List[aa.Region2D]:
         """
-         Returns a list of the 2D parallel overscan region, which is simply the parallel overscan input to the
-         object, between two input `pixels` indexes (this is somewhat redundant information, but mimicks
-         the `Extract` object API across all other `Extract` objects).
+        Returns a list of the 2D parallel overscan region, which is simply the parallel overscan input to the
+        object, between two input `pixels` indexes (this is somewhat redundant information, but mimicks
+        the `Extract` object API across all other `Extract` objects).
 
-         (top-row, bottom-row, left-column, right-column) = (y0, y1, x0, x1)
+        (top-row, bottom-row, left-column, right-column) = (y0, y1, x0, x1)
 
-         The parallel overscan spans all columns of the image, thus the coordinates x0 and x1 do not change. y0 and y1
-         are updated based on the `pixels` input.
+        The parallel overscan spans all columns of the image, thus the coordinates x0 and x1 do not change. y0 and y1
+        are updated based on the `pixels` input.
 
-         Negative pixel values can be input into the `pixels` tuple, whereby rows in front of the parallel overscan are
-         also extracted.
+        Negative pixel values can be input into the `pixels` tuple, whereby rows in front of the parallel overscan are
+        also extracted.
 
-         The diagram below illustrates the extraction for `pixels=(0, 1)`:
+        The diagram below illustrates the extraction for `pixels=(0, 1)`:
 
-         [] = read-out electronics
-         [==========] = read-out register
-         [..........] = serial prescan
-         [pppppppppp] = parallel overscan
-         [ssssssssss] = serial overscan
-         [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
-         [tttttttttt] = parallel / serial charge injection region trail
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = parallel overscan
+        [ssssssssss] = serial overscan
+        [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
+        [tttttttttt] = parallel / serial charge injection region trail
 
-                [ppppppppppppppppppppp]
-                [ppppppppppppppppppppp]
-            [...][ttttttttttttttttttttt][sss]
-            [...][c1c1cc1c1cc1cc1ccc1cc][sss]
-         |  [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
-         |  [...][ttttttttttttttttttttt][sss]    | Direction
+               [ppppppppppppppppppppp]
+               [ppppppppppppppppppppp]
+           [...][ttttttttttttttttttttt][sss]
+           [...][c1c1cc1c1cc1cc1ccc1cc][sss]
+        |  [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
+        |  [...][ttttttttttttttttttttt][sss]    | Direction
         Par [...][ttttttttttttttttttttt][sss]    | of
-         |  [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
+        |  [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
         |/  [...][cc0ccc0cccc0cccc0cccc][sss]    \/
 
-         []     [=====================]
-                <---------Ser--------
+        []     [=====================]
+               <---------Ser--------
 
-         The extracted regions correspond to the parallel overscan [ppppppppppppppp] regions.
+        The extracted regions correspond to the parallel overscan [ppppppppppppppp] regions.
 
-         For `pixels=(0,1)` the extracted arrays returned via the `array_2d_list_from()` function keep the first
-         parallel pixels across the rows of the overscan:
+        For `pixels=(0,1)` the extracted arrays returned via the `array_2d_list_from()` function keep the first
+        parallel pixels across the rows of the overscan:
 
-         array_2d_list[0] = [ppppppppppppppppppppp]
+        array_2d_list[0] = [ppppppppppppppppppppp]
 
-         Parameters
-         ----------
-         pixels
-             The row pixel index which determines the region of the overscan (e.g. `pixels=(0, 3)` will compute the
-             region corresponding to the 1st, 2nd and 3rd overscan rows).
-        pixels_from_end
-            Alternative row pixex index specification, which extracts this number of pixels from the end of
-            the overscan. For example, if the overscan is 100 pixels and `pixels_from_end=10`, the
-            last 10 pixels of the overscan (pixels (90, 100)) are extracted.
+        Parameters
+        ----------
+        settings
+           The settings used to extract the parallel overscan, which for example include the `pixels` tuple specifying the
+           range of pixel rows they are extracted between.
         """
 
-        if pixels_from_end is not None:
+        pixels = settings.pixels
+
+        if settings.pixels_from_end is not None:
             pixels = (
-                self.parallel_overscan.total_rows - pixels_from_end,
+                self.parallel_overscan.total_rows - settings.pixels_from_end,
                 self.parallel_overscan.total_rows,
             )
 
@@ -84,7 +79,7 @@ class Extract2DParallelOverscan(Extract2DParallel):
 
         return [parallel_overscan_extract]
 
-    def binned_region_1d_from(self, pixels: Tuple[int, int]) -> aa.Region1D:
+    def binned_region_1d_from(self, settings: SettingsExtract) -> aa.Region1D:
         """
         The `Extract` objects allow one to extract a `Dataset1D` from a 2D CTI dataset, which is used to perform
         CTI modeling in 1D.
@@ -103,8 +98,8 @@ class Extract2DParallelOverscan(Extract2DParallel):
 
         Parameters
         ----------
-        pixels
-            The row pixel index to extract the EPERs between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd EPER
-            rows)
+        settings
+           The settings used to extract the parallel overscan, which for example include the `pixels` tuple specifying the
+           range of pixel rows they are extracted between.
         """
-        return extract_2d_util.binned_region_1d_eper_from(pixels=pixels)
+        return extract_2d_util.binned_region_1d_eper_from(pixels=settings.pixels)

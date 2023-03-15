@@ -4,6 +4,7 @@ from typing import List, Optional, Tuple
 import autoarray as aa
 
 from autocti.extract.two_d.abstract import Extract2D
+from autocti.extract.settings import SettingsExtract
 
 
 class Extract2DSerial(Extract2D):
@@ -17,19 +18,13 @@ class Extract2DSerial(Extract2D):
         return 0
 
     def _value_list_from(
-        self,
-        array: aa.Array2D,
-        value_str: str,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
+        self, array: aa.Array2D, value_str: str, settings: SettingsExtract
     ):
         median_list = []
 
         arr_list = [
             np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
-            for region in self.region_list_from(
-                pixels=pixels, pixels_from_end=pixels_from_end
-            )
+            for region in self.region_list_from(settings=settings)
         ]
 
         arr_stack = np.ma.stack(arr_list)
@@ -42,10 +37,7 @@ class Extract2DSerial(Extract2D):
         return median_list
 
     def median_list_from(
-        self,
-        array: aa.Array2D,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
+        self, array: aa.Array2D, settings: SettingsExtract
     ) -> List[float]:
         """
         Returns the median values of the `Extract2D` object's corresponding region, where the median is taken over
@@ -72,39 +64,25 @@ class Extract2DSerial(Extract2D):
 
         Parameters
         ----------
-        array
-            The charge injection image from which the charge injection normalizations are estimated.
-        pixels
-            The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
-            FPR rows). To remove the 10 leading pixels which have lost electrons due to CTI, an input such
-            as `pixels=(10, 30)` would be used.
-        pixels_from_end
-            Alternative row pixex index specification, which extracts this number of pixels from the end of
-            each region (e.g. FPR / EPER). For example, if each FPR is 100 pixels and `pixels_from_end=10`, the
-            last 10 pixels of each FPR (pixels (90, 100)) are extracted.
+        settings
+           The settings used to extract the serial region (e.g. the EPERs), which for example include the `pixels`
+           tuple specifying the range of pixel columns they are extracted between.
         """
         return self._value_list_from(
             array=array,
             value_str="median",
-            pixels=pixels,
-            pixels_from_end=pixels_from_end,
+            settings=settings,
         )
 
     def _value_list_of_lists_from(
-        self,
-        array: aa.Array2D,
-        value_str: str,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
+        self, array: aa.Array2D, value_str: str, settings: SettingsExtract
     ):
 
         median_lists = []
 
         arr_list = [
             np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
-            for region in self.region_list_from(
-                pixels=pixels, pixels_from_end=pixels_from_end
-            )
+            for region in self.region_list_from(settings=settings)
         ]
 
         for array_2d in arr_list:
@@ -123,10 +101,7 @@ class Extract2DSerial(Extract2D):
         return median_lists
 
     def median_list_of_lists_from(
-        self,
-        array: aa.Array2D,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
+        self, array: aa.Array2D, settings: SettingsExtract
     ) -> List[List]:
         """
         Returns the median values of the `Extract2D` object's corresponding region, where the median is taken over
@@ -155,19 +130,12 @@ class Extract2DSerial(Extract2D):
 
         Parameters
         ----------
-        array
-            The data from which the median values are estimated.
-        pixels
-            The row pixel index to extract the region between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
-            rows of the region).
-        pixels_from_end
-            Alternative row pixex index specification, which extracts this number of pixels from the end of
-            each region (e.g. FPR / EPER). For example, if each FPR is 100 pixels and `pixels_from_end=10`, the
-            last 10 pixels of each FPR (pixels (90, 100)) are extracted.
+        settings
+           The settings used to extract the serial region (e.g. the EPERs), which for example include the `pixels`
+           tuple specifying the range of pixel columns they are extracted between.
         """
         return self._value_list_of_lists_from(
             array=array,
             value_str="median",
-            pixels=pixels,
-            pixels_from_end=pixels_from_end,
+            settings=settings,
         )

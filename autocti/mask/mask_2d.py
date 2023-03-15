@@ -5,6 +5,7 @@ import autoarray as aa
 
 from autoarray import exc
 
+from autocti.extract.settings import SettingsExtract
 from autocti.layout.two_d import Layout2D
 
 
@@ -248,7 +249,7 @@ class Mask2D(aa.Mask2D):
     ) -> "Mask2D":
 
         fpr_regions = layout.extract.parallel_fpr.region_list_from(
-            pixels=settings.parallel_fpr_pixels
+            settings=SettingsExtract(pixels=settings.parallel_fpr_pixels)
         )
         mask = np.full(layout.shape_2d, False)
 
@@ -270,7 +271,7 @@ class Mask2D(aa.Mask2D):
     ) -> "Mask2D":
 
         eper_regions = layout.extract.parallel_eper.region_list_from(
-            pixels=settings.parallel_eper_pixels
+            settings=SettingsExtract(pixels=settings.parallel_eper_pixels)
         )
 
         mask = np.full(layout.shape_2d, False)
@@ -293,7 +294,7 @@ class Mask2D(aa.Mask2D):
     ) -> "Mask2D":
 
         fpr_regions = layout.extract.serial_fpr.region_list_from(
-            pixels=settings.serial_fpr_pixels
+            settings=SettingsExtract(pixels=settings.serial_fpr_pixels)
         )
         mask = np.full(layout.shape_2d, False)
 
@@ -315,7 +316,7 @@ class Mask2D(aa.Mask2D):
     ) -> "Mask2D":
 
         eper_regions = layout.extract.serial_eper.region_list_from(
-            pixels=settings.serial_eper_pixels
+            settings=SettingsExtract(pixels=settings.serial_eper_pixels)
         )
         mask = np.full(layout.shape_2d, False)
 

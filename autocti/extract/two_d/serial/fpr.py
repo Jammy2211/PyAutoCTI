@@ -3,75 +3,68 @@ from typing import Optional, Tuple
 import autoarray as aa
 
 from autocti.extract.two_d.serial.abstract import Extract2DSerial
+from autocti.extract.settings import SettingsExtract
 
 from autocti.extract.two_d import extract_2d_util
 
 
 class Extract2DSerialFPR(Extract2DSerial):
-    def region_list_from(
-        self,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
-    ):
+    def region_list_from(self, settings: SettingsExtract):
         """
-         Returns a list of the 2D serial FPR regions from the `region_list` containing signal  (e.g. the charge
-         injection regions of charge injection data), between two input `pixels` indexes.
+        Returns a list of the 2D serial FPR regions from the `region_list` containing signal  (e.g. the charge
+        injection regions of charge injection data), between two input `pixels` indexes.
 
-         Negative pixel values can be input into the `pixels` tuple, whereby columns in front of the serial FPRs (e.g.
-         the serial prescan) are extracted.
+        Negative pixel values can be input into the `pixels` tuple, whereby columns in front of the serial FPRs (e.g.
+        the serial prescan) are extracted.
 
-         The diagram below illustrates the extraction for `pixels=(0, 1)`:
+        The diagram below illustrates the extraction for `pixels=(0, 1)`:
 
-         [] = read-out electronics
-         [==========] = read-out register
-         [..........] = serial prescan
-         [pppppppppp] = parallel overscan
-         [ssssssssss] = serial overscan
-         [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
-         [tttttttttt] = parallel / serial charge injection region trail
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = parallel overscan
+        [ssssssssss] = serial overscan
+        [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
+        [tttttttttt] = parallel / serial charge injection region trail
 
-                [ppppppppppppppppppppp]
-                [ppppppppppppppppppppp]
-            [...][ttttttttttttttttttttt][sss]
-            [...][c1c1cc1c1cc1cc1ccc1cc][sss]
-         |  [...][1c1c1cc1c1cc1ccc1cc1c][sss]    |
-         |  [...][ttttttttttttttttttttt][sss]    | Direction
+               [ppppppppppppppppppppp]
+               [ppppppppppppppppppppp]
+           [...][ttttttttttttttttttttt][sss]
+           [...][c1c1cc1c1cc1cc1ccc1cc][sss]
+        |  [...][1c1c1cc1c1cc1ccc1cc1c][sss]    |
+        |  [...][ttttttttttttttttttttt][sss]    | Direction
         Par [...][ttttttttttttttttttttt][sss]    | of
-         |  [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
+        |  [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
         |/  [...][cc0ccc0cccc0cccc0cccc][sss]    \/
 
-         []     [=====================]
-                <---------Ser--------
+        []     [=====================]
+               <---------Ser--------
 
-         The extracted regions correspond to the first serial FPR all charge injection regions:
+        The extracted regions correspond to the first serial FPR all charge injection regions:
 
-         region_list[0] = [0, 2, 3, 21] (serial prescan is 3 pixels)
-         region_list[1] = [4, 6, 3, 21] (serial prescan is 3 pixels)
+        region_list[0] = [0, 2, 3, 21] (serial prescan is 3 pixels)
+        region_list[1] = [4, 6, 3, 21] (serial prescan is 3 pixels)
 
-         For `pixels=(0,1)` the extracted arrays returned via the `array_2d_list_from()` function keep the first
-         serial FPR of each charge injection region:
+        For `pixels=(0,1)` the extracted arrays returned via the `array_2d_list_from()` function keep the first
+        serial FPR of each charge injection region:
 
-         array_2d_list[0] =[c0c0]
-         array_2d_list[1] =[1c1c]
+        array_2d_list[0] =[c0c0]
+        array_2d_list[1] =[1c1c]
 
-         Parameters
-         ----------
-         pixels
-             The column indexes to extract the front edge between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
-             columns).
-        pixels_from_end
-            Alternative row pixex index specification, which extracts this number of pixels from the end of
-            the FPR. For example, if each FPR is 100 pixels and `pixels_from_end=10`, the last 10 pixels of each
-            FPR (pixels (90, 100)) are extracted.
+        Parameters
+        ----------
+        settings
+            The settings used to extract the serial region FPRs from, which for example include the `pixels`
+            tuple specifying the range of pixel columns they are extracted between.
         """
         return [
             region.serial_front_region_from(
-                pixels=pixels, pixels_from_end=pixels_from_end
+                pixels=settings.pixels, pixels_from_end=settings.pixels_from_end
             )
             for region in self.region_list
         ]
 
-    def binned_region_1d_from(self, pixels: Tuple[int, int]) -> aa.Region1D:
+    def binned_region_1d_from(self, settings: SettingsExtract) -> aa.Region1D:
         """
         The `Extract` objects allow one to extract a `Dataset1D` from a 2D CTI dataset, which is used to perform
         CTI modeling in 1D.
@@ -87,8 +80,8 @@ class Extract2DSerialFPR(Extract2DSerial):
 
         Parameters
         ----------
-        pixels
-            The column pixel index to extract the FPRs between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd FPR
-            columns)
+        settings
+            The settings used to extract the serial region FPRs from, which for example include the `pixels`
+            tuple specifying the range of pixel columns they are extracted between.
         """
-        return extract_2d_util.binned_region_1d_fpr_from(pixels=pixels)
+        return extract_2d_util.binned_region_1d_fpr_from(pixels=settings.pixels)

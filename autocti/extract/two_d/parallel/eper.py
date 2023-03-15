@@ -3,16 +3,13 @@ from typing import List, Optional, Tuple
 import autoarray as aa
 
 from autocti.extract.two_d.parallel.abstract import Extract2DParallel
+from autocti.extract.settings import SettingsExtract
 
 from autocti.extract.two_d import extract_2d_util
 
 
 class Extract2DParallelEPER(Extract2DParallel):
-    def region_list_from(
-        self,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
-    ) -> List[aa.Region2D]:
+    def region_list_from(self, settings: SettingsExtract) -> List[aa.Region2D]:
         """
         Returns a list of the 2D parallel EPER regions from the `region_list` containing signal (e.g. the charge
         injection regions of charge injection data), between two input `pixels` indexes.
@@ -60,17 +57,16 @@ class Extract2DParallelEPER(Extract2DParallel):
 
         Parameters
         ----------
-        pixels
-           The row indexes to extract the trails between (e.g. rows(0, 3) extracts the 1st, 2nd and 3rd rows).
-        pixels_from_end
-           Alternative row pixel index specification, which extracts this number of pixels from the end of
-           the EPER. For example, if each EPER is 100 pixels and `pixels_from_end=10`, the last 10 pixels of each
-           EPER (pixels (90, 100)) are extracted.
+        settings
+           The settings used to extract the parallel EPERs, which for example include the `pixels` tuple specifying the
+           range of pixel rows they are extracted between.
         """
+
+        pixels = settings.pixels
 
         region_list = []
 
-        if pixels_from_end is not None:
+        if settings.pixels_from_end is not None:
 
             parallel_row_spaces = self.parallel_rows_between_regions + [
                 self.parallel_rows_to_array_edge
@@ -78,9 +74,9 @@ class Extract2DParallelEPER(Extract2DParallel):
 
         for i, region in enumerate(self.region_list):
 
-            if pixels_from_end is not None:
+            if settings.pixels_from_end is not None:
 
-                if pixels_from_end == -1:
+                if settings.pixels_from_end == -1:
 
                     pixels = (
                         0,
@@ -90,7 +86,7 @@ class Extract2DParallelEPER(Extract2DParallel):
                 else:
 
                     pixels = (
-                        parallel_row_spaces[i] - pixels_from_end,
+                        parallel_row_spaces[i] - settings.pixels_from_end,
                         parallel_row_spaces[i],
                     )
 
@@ -157,7 +153,7 @@ class Extract2DParallelEPER(Extract2DParallel):
 
         return array_2d
 
-    def binned_region_1d_from(self, pixels: Tuple[int, int]) -> aa.Region1D:
+    def binned_region_1d_from(self, settings: SettingsExtract) -> aa.Region1D:
         """
         The `Extract` objects allow one to extract a `Dataset1D` from a 2D CTI dataset, which is used to perform
         CTI modeling in 1D.
@@ -173,8 +169,8 @@ class Extract2DParallelEPER(Extract2DParallel):
 
         Parameters
         ----------
-        pixels
-             The row pixel index to extract the EPERs between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd EPER
-             rows)
+        settings
+           The settings used to extract the parallel EPERs, which for example include the `pixels` tuple specifying the
+           range of pixel rows they are extracted between.
         """
-        return extract_2d_util.binned_region_1d_eper_from(pixels=pixels)
+        return extract_2d_util.binned_region_1d_eper_from(pixels=settings.pixels)

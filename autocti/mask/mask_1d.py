@@ -4,6 +4,7 @@ from typing import Optional, Tuple
 import autoarray as aa
 
 from autocti.layout.one_d import Layout1D
+from autocti.extract.settings import SettingsExtract
 
 
 class SettingsMask1D:
@@ -54,7 +55,9 @@ class Mask1D(aa.Mask1D):
         invert: bool = False,
     ) -> "Mask1D":
 
-        fpr_regions = layout.extract.fpr.region_list_from(pixels=settings.fpr_pixels)
+        fpr_regions = layout.extract.fpr.region_list_from(
+            settings=SettingsExtract(pixels=settings.fpr_pixels)
+        )
 
         mask = np.full(layout.shape_1d, False)
 
@@ -75,7 +78,9 @@ class Mask1D(aa.Mask1D):
         invert: bool = False,
     ) -> "Mask1D":
 
-        eper_regions = layout.extract.eper.region_list_from(pixels=settings.eper_pixels)
+        eper_regions = layout.extract.eper.region_list_from(
+            settings=SettingsExtract(pixels=settings.eper_pixels)
+        )
 
         mask = np.full(layout.shape_1d, False)
 

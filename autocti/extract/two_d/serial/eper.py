@@ -3,16 +3,13 @@ from typing import Optional, Tuple
 import autoarray as aa
 
 from autocti.extract.two_d.serial.abstract import Extract2DSerial
+from autocti.extract.settings import SettingsExtract
 
 from autocti.extract.two_d import extract_2d_util
 
 
 class Extract2DSerialEPER(Extract2DSerial):
-    def region_list_from(
-        self,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
-    ):
+    def region_list_from(self, settings: SettingsExtract):
         """
          Returns a list of the 2D serial EPER regions from the `region_list` containing signal  (e.g. the charge
          injection regions of charge injection data), between two input `pixels` indexes.
@@ -56,46 +53,22 @@ class Extract2DSerialEPER(Extract2DSerial):
 
          Parameters
          ----------
-         pixels
-             The column indexes to extract the trails between (e.g. columns(0, 3) extracts the 1st, 2nd and 3rd
-             columns).
-        pixels_from_end
-            Alternative row pixel index specification, which extracts this number of pixels from the end of
-            the EPER. For example, if each EPER is 100 pixels and `pixels_from_end=10`, the last 10 pixels of each
-            EPER (pixels (90, 100)) are extracted.
+        settings
+           The settings used to extract the serial region EPERs from, which for example include the `pixels`
+           tuple specifying the range of pixel columns they are extracted between.
         """
 
-        if pixels_from_end is not None:
+        pixels = settings.pixels
+
+        if settings.pixels_from_end is not None:
             pixels = (
-                self.shape_2d[1] - self.region_list[0].x1 - pixels_from_end,
+                self.shape_2d[1] - self.region_list[0].x1 - settings.pixels_from_end,
                 self.shape_2d[1] - self.region_list[0].x1,
             )
         return [
             region.serial_trailing_region_from(pixels=pixels)
             for region in self.region_list
         ]
-
-    def binned_region_1d_from(self, pixels: Tuple[int, int]) -> aa.Region1D:
-        """
-        The `Extract` objects allow one to extract a `Dataset1D` from a 2D CTI dataset, which is used to perform
-        CTI modeling in 1D.
-
-        This is performed by binning up the data via the `binned_array_1d_from` function.
-
-        In order to create the 1D dataset a `Layout1D` is required, which requires the `region_list` containing the
-        charge regions on the 1D dataset (e.g. where the FPR appears in 1D after binning).
-
-        The function returns the this region if the 1D dataset is extracted from theserial EPERs. The
-        charge region is only included if there are negative entries in the `pixels` tuple, meaning that pixels
-        before the EPERs (e.g. the FPR) are extracted.
-
-        Parameters
-        ----------
-        pixels
-            The column pixel index to extract the EPERs between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd EPER
-            columns)
-        """
-        return extract_2d_util.binned_region_1d_eper_from(pixels=pixels)
 
     def array_2d_from(self, array: aa.Array2D) -> aa.Array2D:
         """
@@ -147,5 +120,27 @@ class Extract2DSerialEPER(Extract2DSerial):
         return self.add_to_array(
             new_array=array_2d,
             array=array,
-            pixels=(0, self.serial_overscan.total_columns),
+            settings=SettingsExtract(pixels=(0, self.serial_overscan.total_columns)),
         )
+
+    def binned_region_1d_from(self, settings: SettingsExtract) -> aa.Region1D:
+        """
+        The `Extract` objects allow one to extract a `Dataset1D` from a 2D CTI dataset, which is used to perform
+        CTI modeling in 1D.
+
+        This is performed by binning up the data via the `binned_array_1d_from` function.
+
+        In order to create the 1D dataset a `Layout1D` is required, which requires the `region_list` containing the
+        charge regions on the 1D dataset (e.g. where the FPR appears in 1D after binning).
+
+        The function returns the this region if the 1D dataset is extracted from theserial EPERs. The
+        charge region is only included if there are negative entries in the `pixels` tuple, meaning that pixels
+        before the EPERs (e.g. the FPR) are extracted.
+
+        Parameters
+        ----------
+        settings
+           The settings used to extract the serial region EPERs from, which for example include the `pixels`
+           tuple specifying the range of pixel columns they are extracted between.
+        """
+        return extract_2d_util.binned_region_1d_eper_from(pixels=settings.pixels)

@@ -1,18 +1,13 @@
-from typing import List, Optional, Tuple
+from typing import List
 
 import autoarray as aa
 
 from autocti.extract.two_d.parallel.abstract import Extract2DParallel
-
-from autocti.extract.two_d import extract_2d_util
+from autocti.extract.settings import SettingsExtract
 
 
 class Extract2DParallelPedestal(Extract2DParallel):
-    def region_list_from(
-        self,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
-    ) -> List[aa.Region2D]:
+    def region_list_from(self, settings: SettingsExtract) -> List[aa.Region2D]:
         """
         Returns a list of the 2D pedestral region, which is in the corner of the CCD and extracted using
         the coordinates of the parallel and serial overscan regions.
@@ -59,18 +54,15 @@ class Extract2DParallelPedestal(Extract2DParallel):
 
          Parameters
          ----------
-         pixels
-             The row pixel index which determines the region of the overscan (e.g. `pixels=(0, 3)` will compute the
-             region corresponding to the 1st, 2nd and 3rd overscan rows).
-         pixels_from_end
-             Alternative row pixex index specification, which extracts this number of pixels from the end of
-             the overscan. For example, if the overscan is 100 pixels and `pixels_from_end=10`, the
-             last 10 pixels of the overscan (pixels (90, 100)) are extracted.
+        settings
+           The settings used to extract the parallel pedestal, which for example include the `pixels` tuple specifying the
+           range of pixel rows they are extracted between.
         """
+        pixels = settings.pixels
 
-        if pixels_from_end is not None:
+        if settings.pixels_from_end is not None:
             pixels = (
-                self.pedestal.total_rows - pixels_from_end,
+                self.pedestal.total_rows - settings.pixels_from_end,
                 self.pedestal.total_rows,
             )
 
@@ -138,5 +130,7 @@ class Extract2DParallelPedestal(Extract2DParallel):
         array_2d = array.native.copy() * 0.0
 
         return self.add_to_array(
-            new_array=array_2d, array=array, pixels=(0, self.pedestal.total_rows)
+            new_array=array_2d,
+            array=array,
+            settings=SettingsExtract(pixels=(0, self.pedestal.total_rows)),
         )

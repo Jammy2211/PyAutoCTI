@@ -4,14 +4,11 @@ from typing import List, Optional, Tuple
 import autoarray as aa
 
 from autocti.extract.one_d.abstract import Extract1D
+from autocti.extract.settings import SettingsExtract
 
 
 class Extract1DOverscan(Extract1D):
-    def region_list_from(
-        self,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
-    ) -> List[aa.Region1D]:
+    def region_list_from(self, settings: SettingsExtract) -> List[aa.Region1D]:
         """
         Returns a list of the (x0, x1) regions containing the overscan of a 1D CTI dataset.
 
@@ -26,9 +23,11 @@ class Extract1DOverscan(Extract1D):
             The row indexes to extract the overscan between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
         """
 
-        if pixels_from_end is not None:
+        pixels = settings.pixels
+
+        if settings.pixels_from_end is not None:
             pixels = (
-                self.overscan.total_pixels - pixels_from_end,
+                self.overscan.total_pixels - settings.pixels_from_end,
                 self.overscan.total_pixels,
             )
 

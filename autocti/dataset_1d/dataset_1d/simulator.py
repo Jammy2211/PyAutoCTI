@@ -7,6 +7,7 @@ from autoarray.dataset.imaging.simulator import SimulatorImaging
 from autoarray.dataset import preprocess
 
 from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
+from autocti.extract.settings import SettingsExtract
 from autocti.layout.one_d import Layout1D
 from autocti.clocker.one_d import Clocker1D
 from autocti.model.model_util import CTI1D
@@ -107,7 +108,9 @@ class SimulatorDataset1D(SimulatorImaging):
                 array=pre_cti_data,
                 noise_sigma=self.charge_noise,
                 noise_seed=self.noise_seed,
-                pixels_from_end=layout.extract.fpr.total_pixels_min,
+                settings=SettingsExtract(
+                    pixels_from_end=layout.extract.fpr.total_pixels_min
+                ),
             )
 
         post_cti_data = clocker.add_cti(data=pre_cti_data.native, cti=cti)

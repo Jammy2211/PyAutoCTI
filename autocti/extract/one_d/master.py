@@ -3,6 +3,7 @@ from typing import Optional, Tuple
 from autocti.extract.one_d.overscan import Extract1DOverscan
 from autocti.extract.one_d.fpr import Extract1DFPR
 from autocti.extract.one_d.eper import Extract1DEPER
+from autocti.extract.settings import SettingsExtract
 
 import autoarray as aa
 
@@ -245,13 +246,17 @@ class Extract1DMaster:
         if fpr_pixels is not None:
 
             array_1d_of_edges_and_eper = self.fpr.add_to_array(
-                new_array=array_1d_of_edges_and_eper, array=array, pixels=fpr_pixels
+                new_array=array_1d_of_edges_and_eper,
+                array=array,
+                settings=SettingsExtract(pixels=fpr_pixels),
             )
 
         if eper_pixels is not None:
 
             array_1d_of_edges_and_eper = self.eper.add_to_array(
-                new_array=array_1d_of_edges_and_eper, array=array, pixels=eper_pixels
+                new_array=array_1d_of_edges_and_eper,
+                array=array,
+                settings=SettingsExtract(pixels=eper_pixels),
             )
 
         return array_1d_of_edges_and_eper

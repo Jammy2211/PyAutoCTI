@@ -4,14 +4,11 @@ import autoarray as aa
 
 from autocti.extract.two_d.parallel.eper import Extract2DParallelEPER
 from autocti.extract.two_d.serial.abstract import Extract2DSerial
+from autocti.extract.settings import SettingsExtract
 
 
 class Extract2DSerialOverscanNoEPER(Extract2DSerial):
-    def region_list_from(
-        self,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
-    ) -> List[aa.Region2D]:
+    def region_list_from(self, settings: SettingsExtract) -> List[aa.Region2D]:
         """
         Returns a list of the 2D serial overscan regions without EPER trails, between two input `pixels` indexes.
 
@@ -56,14 +53,16 @@ class Extract2DSerialOverscanNoEPER(Extract2DSerial):
 
         Parameters
         ----------
-        pixels
-            The column pixel index which determines the region of the overscan without serial EPERs
-            (e.g. `pixels=(0, 3)` will compute the region corresponding to the 1st, 2nd and 3rd overscan columns).
+        settings
+            The settings used to extract the serial overscan region without EPERs from, which for example include
+            the `pixels`  tuple specifying the range of pixel columns they are extracted between.
         """
 
-        if pixels_from_end is not None:
+        pixels = settings.pixels
+
+        if settings.pixels_from_end is not None:
             pixels = (
-                self.serial_overscan.total_columns - pixels_from_end,
+                self.serial_overscan.total_columns - settings.pixels_from_end,
                 self.serial_overscan.total_columns,
             )
 
@@ -76,7 +75,7 @@ class Extract2DSerialOverscanNoEPER(Extract2DSerial):
         )
 
         parallel_eper_region_list = extract_parallel_eper.region_list_from(
-            pixels_from_end=-1
+            settings=SettingsExtract(pixels_from_end=-1)
         )
 
         region_list = []

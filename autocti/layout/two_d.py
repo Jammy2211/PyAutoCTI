@@ -4,6 +4,8 @@ from typing import List, Optional, Tuple
 
 import autoarray as aa
 
+from autocti.extract.settings import SettingsExtract
+
 from autocti import exc
 
 
@@ -185,19 +187,29 @@ class Layout2D(aa.Layout2D):
 
         if region == "parallel_fpr":
             return self.extract.parallel_fpr.binned_array_1d_from(
-                array=array, pixels=(0, self.extract.parallel_fpr.total_rows_min)
+                array=array,
+                settings=SettingsExtract(
+                    pixels=(0, self.extract.parallel_fpr.total_rows_min)
+                ),
             )
         elif region == "parallel_eper":
             return self.extract.parallel_eper.binned_array_1d_from(
-                array=array, pixels=(0, self.smallest_parallel_rows_between_ci_regions)
+                array=array,
+                settings=SettingsExtract(
+                    pixels=(0, self.smallest_parallel_rows_between_ci_regions)
+                ),
             )
         elif region == "serial_fpr":
             return self.extract.serial_fpr.binned_array_1d_from(
-                array=array, pixels=(0, self.extract.serial_fpr.total_columns_min)
+                array=array,
+                settings=SettingsExtract(
+                    pixels=(0, self.extract.serial_fpr.total_columns_min)
+                ),
             )
         elif region == "serial_eper":
             return self.extract.serial_eper.binned_array_1d_from(
-                array=array, pixels=(0, self.serial_eper_pixels)
+                array=array,
+                settings=SettingsExtract(pixels=(0, self.serial_eper_pixels)),
             )
         else:
             raise exc.PlottingException(
@@ -210,21 +222,32 @@ class Layout2D(aa.Layout2D):
 
         if region == "parallel_fpr":
             binned_noise_map_1d = self.extract.parallel_fpr.binned_array_1d_from(
-                array=array, pixels=(0, self.extract.parallel_fpr.total_rows_min)
+                array=array,
+                settings=SettingsExtract(
+                    pixels=(0, self.extract.parallel_fpr.total_rows_min)
+                ),
             )
             binned_noise_map_1d_total_pixels = (
                 self.extract.parallel_fpr.binned_array_1d_total_pixels_from(
-                    array=array, pixels=(0, self.extract.parallel_fpr.total_rows_min)
+                    array=array,
+                    settings=SettingsExtract(
+                        pixels=(0, self.extract.parallel_fpr.total_rows_min)
+                    ),
                 )
             )
         elif region == "parallel_eper":
             binned_noise_map_1d = self.extract.parallel_eper.binned_array_1d_from(
-                array=array, pixels=(0, self.smallest_parallel_rows_between_ci_regions)
+                array=array,
+                settings=SettingsExtract(
+                    pixels=(0, self.smallest_parallel_rows_between_ci_regions)
+                ),
             )
             binned_noise_map_1d_total_pixels = (
                 self.extract.parallel_eper.binned_array_1d_total_pixels_from(
                     array=array,
-                    pixels=(0, self.smallest_parallel_rows_between_ci_regions),
+                    settings=SettingsExtract(
+                        pixels=(0, self.smallest_parallel_rows_between_ci_regions),
+                    ),
                 )
             )
         elif region == "serial_fpr":
@@ -233,7 +256,10 @@ class Layout2D(aa.Layout2D):
             )
             binned_noise_map_1d_total_pixels = (
                 self.extract.serial_fpr.binned_array_1d_total_pixels_from(
-                    array=array, pixels=(0, self.extract.serial_fpr.total_columns_min)
+                    array=array,
+                    settings=SettingsExtract(
+                        pixels=(0, self.extract.serial_fpr.total_columns_min)
+                    ),
                 )
             )
         elif region == "serial_eper":
@@ -242,7 +268,8 @@ class Layout2D(aa.Layout2D):
             )
             binned_noise_map_1d_total_pixels = (
                 self.extract.serial_eper.binned_array_1d_total_pixels_from(
-                    array=array, pixels=(0, self.serial_eper_pixels)
+                    array=array,
+                    settings=SettingsExtract(pixels=(0, self.serial_eper_pixels)),
                 )
             )
         else:

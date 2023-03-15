@@ -1,7 +1,5 @@
 import numpy as np
-import pytest
 import autocti as ac
-from autocti import exc
 
 
 def test__regions_array_1d_from():

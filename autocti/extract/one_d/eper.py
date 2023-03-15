@@ -4,40 +4,39 @@ from typing import List, Optional, Tuple
 import autoarray as aa
 
 from autocti.extract.one_d.abstract import Extract1D
+from autocti.extract.settings import SettingsExtract
 
 
 class Extract1DEPER(Extract1D):
-    def region_list_from(
-        self,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
-    ) -> List[aa.Region1D]:
+    def region_list_from(self, settings: SettingsExtract) -> List[aa.Region1D]:
         """
-            Returns a list of the (x0, x1) regions containing the EPERs of a 1D CTI dataset.
+        Returns a list of the (x0, x1) regions containing the EPERs of a 1D CTI dataset.
 
-            These are used for extracting the EPER regions of 1D data.
+        These are used for extracting the EPER regions of 1D data.
 
-            Negative pixel values can be input into the `pixels` tuple, whereby pixels in front of the EPERs (e.g.
-            the FPR) are extracted.
+        Negative pixel values can be input into the `pixels` tuple, whereby pixels in front of the EPERs (e.g.
+        the FPR) are extracted.
 
-            Parameters
+        Parameters
         ----------
-            pixels
-                The row indexes to extract the trails between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
+        pixels
+            The row indexes to extract the trails between (e.g. pixels(0, 3) extracts the 1st, 2nd and 3rd pixels)
         """
+
+        pixels = settings.pixels
 
         region_list = []
 
         for i, region in enumerate(self.region_list):
 
-            if pixels_from_end is not None:
+            if settings.pixels_from_end is not None:
 
                 parallel_row_spaces = self.parallel_rows_between_regions + [
                     self.trail_size_to_array_edge
                 ]
 
                 pixels = (
-                    parallel_row_spaces[i] - pixels_from_end,
+                    parallel_row_spaces[i] - settings.pixels_from_end,
                     parallel_row_spaces[i],
                 )
 

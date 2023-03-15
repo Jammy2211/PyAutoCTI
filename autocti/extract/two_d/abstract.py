@@ -5,6 +5,7 @@ import autoarray as aa
 
 from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
+from autocti.extract.settings import SettingsExtract
 from autocti.layout.one_d import Layout1D
 
 
@@ -109,19 +110,11 @@ class Extract2D:
         """
         return self.shape_2d[0] - np.max([region.y1 for region in self.region_list])
 
-    def region_list_from(
-        self,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
-    ) -> List[aa.Region2D]:
+    def region_list_from(self, settings: SettingsExtract) -> List[aa.Region2D]:
         raise NotImplementedError
 
     def array_2d_list_from(
-        self,
-        array: aa.Array2D,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
-        force_same_row_size: bool = False,
+        self, array: aa.Array2D, settings: SettingsExtract
     ) -> List[aa.Array2D]:
         """
         Extract a specific region from every signal region (e.g. the charge injection region of charge injection data)
@@ -136,30 +129,14 @@ class Extract2D:
         ----------
         array
             The array from which the regions are extracted and put into the returned list of arrays.
-        pixels
-            The integer range of pixels between which the extraction is performed.
-        pixels_from_end
-            Alternative row pixex index specification, which extracts this number of pixels from the end of
-            each region (e.g. FPR / EPER). For example, if each FPR is 100 pixels and `pixels_from_end=10`, the
-            last 10 pixels of each FPR (pixels (90, 100)) are extracted.
+        settings
+           The settings used to extract the serial region (e.g. the EPERs), which for example include the `pixels`
+           tuple specifying the range of pixel columns they are extracted between.
         """
-        region_list = self.region_list_from(
-            pixels=pixels, pixels_from_end=pixels_from_end
-        )
-
-        if force_same_row_size:
-
-            row_size = np.min([region.total_rows for region in region_list])
-
-            region_list = [
-                aa.Region2D(
-                    region=(region.y0, region.y0 + row_size, region.x0, region.x1)
-                )
-                for region in region_list
-            ]
+        region_list = self.region_list_from(settings=settings)
+        region_list = settings.region_list_from(region_list=region_list)
 
         arr_list = [array.native[region.slice] for region in region_list]
-
         mask_2d_list = [array.mask[region.slice] for region in region_list]
 
         return [
@@ -168,10 +145,7 @@ class Extract2D:
         ]
 
     def stacked_array_2d_from(
-        self,
-        array: aa.Array2D,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
+        self, array: aa.Array2D, settings: SettingsExtract
     ) -> np.ndarray:
         """
         Extract a region (e.g. the parallel FPR) of every signal region (e.g. the charge injection region of charge
@@ -188,29 +162,21 @@ class Extract2D:
         array
             The 2D array which contains the charge injection image from which the regions (e.g. the parallel FPRs)
             are extracted and stacked.
-        pixels
-            The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
-            FPR rows).
-        pixels_from_end
-            Alternative row pixex index specification, which extracts this number of pixels from the end of
-            each region (e.g. FPR / EPER). For example, if each FPR is 100 pixels and `pixels_from_end=10`, the
-            last 10 pixels of each FPR (pixels (90, 100)) are extracted.
+        settings
+           The settings used to extract the serial region (e.g. the EPERs), which for example include the `pixels`
+           tuple specifying the range of pixel columns they are extracted between.
         """
 
         arr_list = [
             np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
-            for region in self.region_list_from(
-                pixels=pixels, pixels_from_end=pixels_from_end
-            )
+            for region in self.region_list_from(settings=settings)
         ]
 
         stacked_array_2d = np.ma.mean(np.ma.asarray(arr_list), axis=0)
 
         mask_2d_list = [
             array.mask[region.slice]
-            for region in self.region_list_from(
-                pixels=pixels, pixels_from_end=pixels_from_end
-            )
+            for region in self.region_list_from(settings=settings)
         ]
 
         return aa.Array2D(
@@ -219,10 +185,7 @@ class Extract2D:
         ).native
 
     def stacked_array_2d_total_pixels_from(
-        self,
-        array: aa.Array2D,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
+        self, array: aa.Array2D, settings: SettingsExtract
     ) -> np.ndarray:
         """
         The function `stacked_array_2d_from` extracts a region (e.g. the parallel FPR) of every charge injection
@@ -236,20 +199,14 @@ class Extract2D:
         array
             The 2D array which contains the charge injection image from which the regions (e.g. the parallel FPRs)
             are extracted and stacked.
-        pixels
-            The row pixel index to extract the FPR between (e.g. `pixels=(0, 3)` extracts the 1st, 2nd and 3rd
-            FPR rows).
-        pixels_from_end
-            Alternative row pixex index specification, which extracts this number of pixels from the end of
-            each region (e.g. FPR / EPER). For example, if each FPR is 100 pixels and `pixels_from_end=10`, the
-            last 10 pixels of each FPR (pixels (90, 100)) are extracted.
+        settings
+           The settings used to extract the serial region (e.g. the EPERs), which for example include the `pixels`
+           tuple specifying the range of pixel columns they are extracted between.
         """
 
         mask_2d_list = [
             array.mask[region.slice]
-            for region in self.region_list_from(
-                pixels=pixels, pixels_from_end=pixels_from_end
-            )
+            for region in self.region_list_from(settings=settings)
         ]
 
         arr_total_pixels = sum([np.invert(mask_2d) for mask_2d in mask_2d_list])
@@ -260,10 +217,7 @@ class Extract2D:
         ).native
 
     def binned_array_1d_from(
-        self,
-        array: aa.Array2D,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
+        self, array: aa.Array2D, settings: SettingsExtract
     ) -> aa.Array1D:
         """
         Extract a region (e.g. the parallel FPR) of every signal region (e.g. the charge injection region of
@@ -283,20 +237,17 @@ class Extract2D:
         array
             The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted and
             stacked.
-        pixels
-            The column / row pixel index to extract the region (e.g. FPR, EPER) between (e.g. `pixels=(0, 3)` extracts
-            the 1st, 2nd and 3rd columns / rows).
-        pixels_from_end
-            Alternative row pixex index specification, which extracts this number of pixels from the end of
-            each region (e.g. FPR / EPER). For example, if each FPR is 100 pixels and `pixels_from_end=10`, the
-            last 10 pixels of each FPR (pixels (90, 100)) are extracted.
+        settings
+           The settings used to extract the serial region (e.g. the EPERs), which for example include the `pixels`
+           tuple specifying the range of pixel columns they are extracted between.
         """
+
+        region_list = self.region_list_from(settings=settings)
+        region_list = settings.region_list_from(region_list=region_list)
 
         arr_list = [
             np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
-            for region in self.region_list_from(
-                pixels=pixels, pixels_from_end=pixels_from_end
-            )
+            for region in region_list
         ]
         stacked_array_2d = np.ma.mean(np.ma.asarray(arr_list), axis=0)
         binned_array_1d = np.ma.mean(
@@ -307,10 +258,7 @@ class Extract2D:
         )
 
     def binned_array_1d_total_pixels_from(
-        self,
-        array: aa.Array2D,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
+        self, array: aa.Array2D, settings: SettingsExtract
     ) -> aa.Array1D:
         """
         The function `binned_array_1d_from` extracts a region (e.g. the parallel FPR) of every charge injection region
@@ -326,20 +274,14 @@ class Extract2D:
         array
             The 2D array which contains the charge injeciton image from which the parallel FPRs are extracted and
             stacked.
-        pixels
-            The column / row pixel index to extract the region (e.g. FPR, EPER) between (e.g. `pixels=(0, 3)` extracts
-            the 1st, 2nd and 3rd columns / rows).
-        pixels_from_end
-            Alternative row pixex index specification, which extracts this number of pixels from the end of
-            each region (e.g. FPR / EPER). For example, if each FPR is 100 pixels and `pixels_from_end=10`, the
-            last 10 pixels of each FPR (pixels (90, 100)) are extracted.
+        settings
+           The settings used to extract the serial region (e.g. the EPERs), which for example include the `pixels`
+           tuple specifying the range of pixel columns they are extracted between.
         """
 
         mask_2d_list = [
             array.mask[region.slice]
-            for region in self.region_list_from(
-                pixels=pixels, pixels_from_end=pixels_from_end
-            )
+            for region in self.region_list_from(settings=settings)
         ]
 
         arr_total_pixels = sum([np.invert(mask_2d) for mask_2d in mask_2d_list])
@@ -352,18 +294,11 @@ class Extract2D:
             values=binned_total_pixels, pixel_scales=array.pixel_scale
         )
 
-    def binned_region_1d_from(
-        self,
-        pixels: Optional[Tuple[int, int]] = None,
-    ) -> aa.Region1D:
+    def binned_region_1d_from(self, settings: SettingsExtract) -> aa.Region1D:
         raise NotImplementedError
 
     def add_to_array(
-        self,
-        new_array: aa.Array2D,
-        array: aa.Array2D,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
+        self, new_array: aa.Array2D, array: aa.Array2D, settings: SettingsExtract
     ) -> aa.Array2D:
         """
         Extracts the region (e.g. the parallel FPRs) from a charge injection image and adds them to a new image.
@@ -374,22 +309,14 @@ class Extract2D:
             The 2D array which the extracted parallel FPRs are added to.
         array
             The 2D array which contains the charge injection image from which the parallel FPRs are extracted.
-        pixels
-            The row pixel index which determines the region of the FPR (e.g. `pixels=(0, 3)` will compute the region
-            corresponding to the 1st, 2nd and 3rd FPR rows).
-        pixels_from_end
-            Alternative row pixex index specification, which extracts this number of pixels from the end of
-            each region (e.g. FPR / EPER). For example, if each FPR is 100 pixels and `pixels_from_end=10`, the
-            last 10 pixels of each FPR (pixels (90, 100)) are extracted.
+        settings
+           The settings used to extract the serial region (e.g. the EPERs), which for example include the `pixels`
+           tuple specifying the range of pixel columns they are extracted between.
         """
 
-        region_list = self.region_list_from(
-            pixels=pixels, pixels_from_end=pixels_from_end
-        )
+        region_list = self.region_list_from(settings=settings)
 
-        array_2d_list = self.array_2d_list_from(
-            array=array, pixels=pixels, pixels_from_end=pixels_from_end
-        )
+        array_2d_list = self.array_2d_list_from(array=array, settings=settings)
 
         for arr, region in zip(array_2d_list, region_list):
             new_array[region.y0 : region.y1, region.x0 : region.x1] += arr
@@ -397,35 +324,29 @@ class Extract2D:
         return new_array
 
     def dataset_1d_from(
-        self,
-        dataset_2d: ImagingCI,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
+        self, dataset_2d: ImagingCI, settings: SettingsExtract
     ) -> Dataset1D:
 
         binned_data_1d = self.binned_array_1d_from(
-            array=dataset_2d.data, pixels=pixels, pixels_from_end=pixels_from_end
+            array=dataset_2d.data, settings=settings
         )
 
         binned_noise_map_1d = self.binned_array_1d_from(
-            array=dataset_2d.noise_map, pixels=pixels, pixels_from_end=pixels_from_end
+            array=dataset_2d.noise_map, settings=settings
         )
 
         binned_noise_map_1d_total_pixels = self.binned_array_1d_total_pixels_from(
-            array=dataset_2d.noise_map, pixels=pixels, pixels_from_end=pixels_from_end
+            array=dataset_2d.noise_map, settings=settings
         )
 
         binned_noise_map_1d /= np.sqrt(binned_noise_map_1d_total_pixels)
 
         binned_pre_cti_data_1d = self.binned_array_1d_from(
             array=dataset_2d.pre_cti_data,
-            pixels=pixels,
-            pixels_from_end=pixels_from_end,
+            settings=settings,
         )
 
-        binned_region_1d = self.binned_region_1d_from(
-            pixels=pixels,
-        )
+        binned_region_1d = self.binned_region_1d_from(settings=settings)
 
         layout_1d = Layout1D(
             shape_1d=binned_data_1d.shape_native, region_list=[binned_region_1d]
@@ -441,10 +362,9 @@ class Extract2D:
     def add_gaussian_noise_to(
         self,
         array: aa.Array2D,
+        settings: SettingsExtract,
         noise_sigma: float,
         noise_seed: int = -1,
-        pixels: Optional[Tuple[int, int]] = None,
-        pixels_from_end: Optional[int] = None,
     ) -> aa.Array2D:
         """
         Adds Gaussian noise of an input sigma value to the regions of the `Extract` object and returns the overall
@@ -454,26 +374,18 @@ class Extract2D:
         ----------
         array
             The 2D array which contains the charge injection where regions of Gaussian noise is added.
+        settings
+           The settings used to extract the serial region (e.g. the EPERs), which for example include the `pixels`
+           tuple specifying the range of pixel columns they are extracted between.
         noise_sigma
             The sigma value (standard deviation) of the Gaussian from which noise values are drann.
         noise_seed
             The seed of the random number generator, used for the random noises maps.
-        pixels
-            The row pixel index which determines the region of the FPR (e.g. `pixels=(0, 3)` will compute the region
-            corresponding to the 1st, 2nd and 3rd FPR rows).
-        pixels_from_end
-            Alternative row pixex index specification, which extracts this number of pixels from the end of
-            each region (e.g. FPR / EPER). For example, if each FPR is 100 pixels and `pixels_from_end=10`, the
-            last 10 pixels of each FPR (pixels (90, 100)) are extracted.
         """
 
-        region_list = self.region_list_from(
-            pixels=pixels, pixels_from_end=pixels_from_end
-        )
+        region_list = self.region_list_from(settings=settings)
 
-        array_2d_list = self.array_2d_list_from(
-            array=array, pixels=pixels, pixels_from_end=pixels_from_end
-        )
+        array_2d_list = self.array_2d_list_from(array=array, settings=settings)
 
         array = array.native
 
