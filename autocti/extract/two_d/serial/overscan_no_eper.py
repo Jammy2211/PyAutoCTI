@@ -5,15 +5,12 @@ import autoarray as aa
 from autocti.extract.two_d.parallel.eper import Extract2DParallelEPER
 from autocti.extract.two_d.serial.abstract import Extract2DSerial
 
-from autocti.extract.two_d import extract_2d_util
-
 
 class Extract2DSerialOverscanNoEPER(Extract2DSerial):
     def region_list_from(
         self,
         pixels: Optional[Tuple[int, int]] = None,
         pixels_from_end: Optional[int] = None,
-        force_same_row_size : bool = False,
     ) -> List[aa.Region2D]:
         """
         Returns a list of the 2D serial overscan regions without EPER trails, between two input `pixels` indexes.

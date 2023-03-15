@@ -43,7 +43,6 @@ def test__region_list_from(serial_array, serial_masked_array):
     assert (array_2d_list[1] == np.array([[5.0, 15.0], [6.0, 16.0]])).all()
 
 
-
 def test__region_list_from__pixels_from_end(serial_array, serial_masked_array):
 
     extract = ac.Extract2DSerialOverscanNoEPER(

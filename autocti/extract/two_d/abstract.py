@@ -121,6 +121,7 @@ class Extract2D:
         array: aa.Array2D,
         pixels: Optional[Tuple[int, int]] = None,
         pixels_from_end: Optional[int] = None,
+        force_same_row_size: bool = False,
     ) -> List[aa.Array2D]:
         """
         Extract a specific region from every signal region (e.g. the charge injection region of charge injection data)
@@ -142,19 +143,24 @@ class Extract2D:
             each region (e.g. FPR / EPER). For example, if each FPR is 100 pixels and `pixels_from_end=10`, the
             last 10 pixels of each FPR (pixels (90, 100)) are extracted.
         """
-        arr_list = [
-            array.native[region.slice]
-            for region in self.region_list_from(
-                pixels=pixels, pixels_from_end=pixels_from_end
-            )
-        ]
+        region_list = self.region_list_from(
+            pixels=pixels, pixels_from_end=pixels_from_end
+        )
 
-        mask_2d_list = [
-            array.mask[region.slice]
-            for region in self.region_list_from(
-                pixels=pixels, pixels_from_end=pixels_from_end
-            )
-        ]
+        if force_same_row_size:
+
+            row_size = np.min([region.total_rows for region in region_list])
+
+            region_list = [
+                aa.Region2D(
+                    region=(region.y0, region.y0 + row_size, region.x0, region.x1)
+                )
+                for region in region_list
+            ]
+
+        arr_list = [array.native[region.slice] for region in region_list]
+
+        mask_2d_list = [array.mask[region.slice] for region in region_list]
 
         return [
             aa.Array2D(values=arr, mask=mask_2d).native

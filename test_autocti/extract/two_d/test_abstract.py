@@ -85,6 +85,34 @@ def test__array_2d_list_from(parallel_array, parallel_masked_array):
     ).all()
 
 
+def test__array_2d_list_from__force_rows_same_size():
+
+    serial_array = ac.Array2D.no_mask(
+        values=[
+            [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 1.0, 11.0, 21.0],
+            [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 2.0, 12.0, 22.0],
+            [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 3.0, 13.0, 23.0],
+            [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 4.0, 14.0, 24.0],
+            [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 5.0, 15.0, 25.0],
+            [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 6.0, 16.0, 26.0],
+        ],
+        pixel_scales=1.0,
+    )
+
+    extract = ac.Extract2DSerialOverscanNoEPER(
+        shape_2d=serial_array.shape_native,
+        region_list=[(0, 1, 0, 7), (2, 4, 0, 7)],
+        serial_overscan=(0, 5, 7, 10),
+    )
+
+    array_2d_list = extract.array_2d_list_from(
+        array=serial_array, pixels=(0, 2), force_same_row_size=True
+    )
+
+    assert (array_2d_list[0] == np.array([[2.0, 12.0]])).all()
+    assert (array_2d_list[1] == np.array([[5.0, 15.0]])).all()
+
+
 def test__stacked_array_2d_from(parallel_array, parallel_masked_array):
     extract = MockExtract2D(region_list=[(1, 4, 0, 3), (5, 8, 0, 3)])
 
