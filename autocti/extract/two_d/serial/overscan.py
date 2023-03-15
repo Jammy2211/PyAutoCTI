@@ -14,53 +14,53 @@ class Extract2DSerialOverscan(Extract2DSerial):
         pixels_from_end: Optional[int] = None,
     ) -> List[aa.Region2D]:
         """
-         Returns a list containing the 2D serial verscan region, which is simply the parallel overscan input to the
-         object, extracted between two input `pixels` indexes (this is somewhat redundant information, but mimicks
-         the `Extract` object API across all other `Extract` objects).
+        Returns a list of the 2D serial overscan region for extraction, which is the serial overscan input to the
+        object, between two input `pixels` indexes (this is somewhat redundant information, but mimicks
+        the `Extract` object API across all other `Extract` objects).
 
-         (top-row, bottom-row, left-column, right-column) = (y0, y1, x0, x1)
+        (top-row, bottom-row, left-column, right-column) = (y0, y1, x0, x1)
 
-         The serial overscan spans all columns of the image, thus the coordinates x0 and x1 do not change. y0 and y1
-         are updated based on the `pixels` input.
+        The serial overscan spans all columns of the image, thus the coordinates x0 and x1 do not change. y0 and y1
+        are updated based on the `pixels` input.
 
-         Negative pixel values can be input into the `pixels` tuple, whereby columns in front of the serial overscan are
-         also extracted.
+        Negative pixel values can be input into the `pixels` tuple, whereby columns in front of the serial overscan are
+        also extracted.
 
-         The diagram below illustrates the extraction for `pixels=(0, 1)`:
+        The diagram below illustrates the extraction for `pixels=(0, 1)`:
 
-         [] = read-out electronics
-         [==========] = read-out register
-         [..........] = serial prescan
-         [pppppppppp] = serial overscan
-         [ssssssssss] = serial overscan
-         [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
-         [tttttttttt] = serial / serial charge injection region trail
+        [] = read-out electronics
+        [==========] = read-out register
+        [..........] = serial prescan
+        [pppppppppp] = serial overscan
+        [ssssssssss] = serial overscan
+        [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
+        [tttttttttt] = serial / serial charge injection region trail
 
-                [ppppppppppppppppppppp]
-                [ppppppppppppppppppppp]
-            [...][ttttttttttttttttttttt][sss]
-            [...][c1c1cc1c1cc1cc1ccc1cc][sss]
-         |  [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
-         |  [...][ttttttttttttttttttttt][sss]    | Direction
+               [ppppppppppppppppppppp]
+               [ppppppppppppppppppppp]
+           [...][ttttttttttttttttttttt][sss]
+           [...][c1c1cc1c1cc1cc1ccc1cc][sss]
+        |  [...][1c1c1cc1c1cc1ccc1cc1][sss]    |
+        |  [...][ttttttttttttttttttttt][sss]    | Direction
         Par [...][ttttttttttttttttttttt][sss]    | of
-         |  [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
+        |  [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
         |/  [...][cc0ccc0cccc0cccc0cccc][sss]    \/
 
-         []     [=====================]
-                <---------Ser--------
+        []     [=====================]
+               <---------Ser--------
 
-         The extracted regions correspond to the serial overscan [sss] regions.
+        The extracted regions correspond to the serial overscan [sss] regions.
 
-         For `pixels=(0,1)` the extracted arrays returned via the `array_2d_list_from()` function keep the first
-         serial pixels across the columns of the overscan:
+        For `pixels=(0,1)` the extracted arrays returned via the `array_2d_list_from()` function keep the first
+        serial pixels across the columns of the overscan:
 
-         array_2d_list[0] = [s]
+        array_2d_list[0] = [s]
 
-         Parameters
-         ----------
-         pixels
-             The column pixel index which determines the region of the overscan (e.g. `pixels=(0, 3)` will compute the
-             region corresponding to the 1st, 2nd and 3rd overscan columns).
+        Parameters
+        ----------
+        pixels
+            The column pixel index which determines the region of the overscan (e.g. `pixels=(0, 3)` will compute the
+            region corresponding to the 1st, 2nd and 3rd overscan columns).
         """
 
         if pixels_from_end is not None:

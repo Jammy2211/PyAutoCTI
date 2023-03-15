@@ -14,7 +14,7 @@ class Extract2DParallelPedestal(Extract2DParallel):
         pixels_from_end: Optional[int] = None,
     ) -> List[aa.Region2D]:
         """
-        Returns a list containing the 2D pedestral region, which is in the corner of the CCD and extracted using
+        Returns a list of the 2D pedestral region, which is in the corner of the CCD and extracted using
         the coordinates of the parallel and serial overscan regions.
 
         (top-row, bottom-row, left-column, right-column) = (y0, y1, x0, x1)

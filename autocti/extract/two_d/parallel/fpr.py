@@ -15,7 +15,7 @@ class Extract2DParallelFPR(Extract2DParallel):
     ) -> List[aa.Region2D]:
         """
          Returns a list of the 2D parallel FPR regions from the `region_list` containing signal  (e.g. the charge
-         injection regions of charge injection data), extracted between two input `pixels` indexes.
+         injection regions of charge injection data), between two input `pixels` indexes.
 
          Negative pixel values can be input into the `pixels` tuple, whereby columns in front of the parallel FPRs
          are extracted.

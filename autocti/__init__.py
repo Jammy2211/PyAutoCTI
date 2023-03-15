@@ -30,6 +30,7 @@ from .extract.two_d.parallel.eper import Extract2DParallelEPER
 from .extract.two_d.parallel.pedestal import Extract2DParallelPedestal
 from .extract.two_d.serial.prescan import Extract2DSerialPrescan
 from .extract.two_d.serial.overscan import Extract2DSerialOverscan
+from .extract.two_d.serial.overscan_no_eper import Extract2DSerialOverscanNoEPER
 from .extract.two_d.serial.fpr import Extract2DSerialFPR
 from .extract.two_d.serial.eper import Extract2DSerialEPER
 from .extract.two_d.parallel.calibration import Extract2DParallelCalibration

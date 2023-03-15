@@ -14,11 +14,15 @@ class Extract2DParallelEPER(Extract2DParallel):
         pixels_from_end: Optional[int] = None,
     ) -> List[aa.Region2D]:
         """
-        Returns a list of the 2D parallel EPER regions from the `region_list` containing signal  (e.g. the charge
-        injection regions of charge injection data), extracted between two input `pixels` indexes.
+        Returns a list of the 2D parallel EPER regions from the `region_list` containing signal (e.g. the charge
+        injection regions of charge injection data), between two input `pixels` indexes.
 
         Negative pixel values can be input into the `pixels` tuple, whereby columns in front of the parallel EPERs
         (e.g. the FPRs) are extracted.
+
+        The method includes a unique behaviour overide, where if `pixels_from_end=-1` is input the method will return
+        the region lists containg the full parallel EPER regions after each charge injection block (accounting for
+        the possibility that charge injection regions are not spaced uniformly).
 
         The diagram below illustrates the extraction for `pixels=(0, 1)`:
 
@@ -66,18 +70,29 @@ class Extract2DParallelEPER(Extract2DParallel):
 
         region_list = []
 
+        if pixels_from_end is not None:
+
+            parallel_row_spaces = self.parallel_rows_between_regions + [
+                self.parallel_rows_to_array_edge
+            ]
+
         for i, region in enumerate(self.region_list):
 
             if pixels_from_end is not None:
 
-                parallel_row_spaces = self.parallel_rows_between_regions + [
-                    self.parallel_rows_to_array_edge
-                ]
+                if pixels_from_end == -1:
 
-                pixels = (
-                    parallel_row_spaces[i] - pixels_from_end,
-                    parallel_row_spaces[i],
-                )
+                    pixels = (
+                        0,
+                        parallel_row_spaces[i],
+                    )
+
+                else:
+
+                    pixels = (
+                        parallel_row_spaces[i] - pixels_from_end,
+                        parallel_row_spaces[i],
+                    )
 
             region_list.append(region.parallel_trailing_region_from(pixels=pixels))
 

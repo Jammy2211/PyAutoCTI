@@ -12,8 +12,8 @@ class Extract2DSerialPrescan(Extract2DSerial):
         pixels_from_end: Optional[int] = None,
     ) -> List[aa.Region2D]:
         """
-         Returns a list containing the 2D serial prescan region, which is simply the parallel overscan input to the
-         object, extracted between two input `pixels` indexes (this is somewhat redundant information, but mimicks
+         Returns a list of the 2D serial prescan region, which is simply the parallel overscan input to the
+         object, between two input `pixels` indexes (this is somewhat redundant information, but mimicks
          the `Extract` object API across all other `Extract` objects).
 
          (top-row, bottom-row, left-column, right-column) = (y0, y1, x0, x1)

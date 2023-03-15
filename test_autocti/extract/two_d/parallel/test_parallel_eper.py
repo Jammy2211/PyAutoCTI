@@ -92,6 +92,57 @@ def test__region_list_from__via_array_2d_list_from__pixels_from_end(
     ).all()
 
 
+def test__region_list_from__via_array_2d_list_from__pixels_from_end_minus_1_special_case__extracts_complete_arrays_of_full_eper_region(
+    parallel_array, parallel_masked_array
+):
+    extract = ac.Extract2DParallelEPER(
+        region_list=[(1, 3, 0, 3)], shape_2d=parallel_array.shape_native
+    )
+
+    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels_from_end=-1)
+    assert (
+        array_2d_list
+        == np.array(
+            [
+                [3.0, 3.0, 3.0],
+                [4.0, 4.0, 4.0],
+                [5.0, 5.0, 5.0],
+                [6.0, 6.0, 6.0],
+                [7.0, 7.0, 7.0],
+                [8.0, 8.0, 8.0],
+                [9.0, 9.0, 9.0],
+            ]
+        )
+    ).all()
+
+    extract = ac.Extract2DParallelEPER(
+        region_list=[(1, 3, 0, 3), (4, 6, 0, 3)], shape_2d=parallel_array.shape_native
+    )
+
+    array_2d_list = extract.array_2d_list_from(array=parallel_array, pixels_from_end=-1)
+
+    assert (
+        array_2d_list[0]
+        == np.array(
+            [
+                [3.0, 3.0, 3.0],
+            ]
+        )
+    ).all()
+
+    assert (
+        array_2d_list[1]
+        == np.array(
+            [
+                [6.0, 6.0, 6.0],
+                [7.0, 7.0, 7.0],
+                [8.0, 8.0, 8.0],
+                [9.0, 9.0, 9.0],
+            ]
+        )
+    ).all()
+
+
 def test__array_2d_from():
 
     extract = ac.Extract2DParallelEPER(
