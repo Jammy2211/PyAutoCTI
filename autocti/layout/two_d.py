@@ -252,7 +252,7 @@ class Layout2D(aa.Layout2D):
             )
         elif region == "serial_fpr":
             binned_noise_map_1d = self.extract.serial_fpr.binned_array_1d_from(
-                array=array, pixels=(0, self.extract.serial_fpr.total_columns_min)
+                array=array, settings=SettingsExtract(pixels=(0, self.extract.serial_fpr.total_columns_min))
             )
             binned_noise_map_1d_total_pixels = (
                 self.extract.serial_fpr.binned_array_1d_total_pixels_from(
@@ -264,7 +264,7 @@ class Layout2D(aa.Layout2D):
             )
         elif region == "serial_eper":
             binned_noise_map_1d = self.extract.serial_eper.binned_array_1d_from(
-                array=array, pixels=(0, self.serial_eper_pixels)
+                array=array, settings=SettingsExtract(pixels=(0, self.serial_eper_pixels))
             )
             binned_noise_map_1d_total_pixels = (
                 self.extract.serial_eper.binned_array_1d_total_pixels_from(

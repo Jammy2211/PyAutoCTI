@@ -1,1 +1,1 @@
-arcticpy==2.1
+arcticpy==2.2
