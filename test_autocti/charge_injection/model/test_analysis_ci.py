@@ -169,6 +169,8 @@ def test__full_and_extracted_fits_from_instance_and_imaging_ci(
     imaging_ci_7x7, mask_2d_7x7_unmasked, traps_x1, ccd, parallel_clocker_2d
 ):
 
+    imaging_ci_full = copy.deepcopy(imaging_ci_7x7)
+
     model = af.Collection(
         cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
         hyper_noise=af.Model(ac.HyperCINoiseCollection),
@@ -186,7 +188,9 @@ def test__full_and_extracted_fits_from_instance_and_imaging_ci(
     )
 
     analysis = ac.AnalysisImagingCI(
-        dataset=masked_imaging_ci, clocker=parallel_clocker_2d
+        dataset=masked_imaging_ci,
+        clocker=parallel_clocker_2d,
+        dataset_full=imaging_ci_full,
     )
 
     instance = model.instance_from_unit_vector([])
@@ -199,7 +203,7 @@ def test__full_and_extracted_fits_from_instance_and_imaging_ci(
     assert fit_analysis.log_likelihood == pytest.approx(fit.log_likelihood)
 
     fit_full_analysis = analysis.fit_via_instance_and_dataset_from(
-        instance=instance, imaging_ci=imaging_ci_7x7.imaging_full
+        instance=instance, imaging_ci=imaging_ci_full
     )
 
     fit = ac.FitImagingCI(dataset=imaging_ci_7x7, post_cti_data=post_cti_data)
@@ -225,8 +229,10 @@ def test__extracted_fits_from_instance_and_imaging_ci__include_noise_scaling(
     )
 
     imaging_ci_7x7.noise_scaling_map_dict = {
-        "regions_ci": ac.Array2D.ones(shape_native=(7, 7), pixel_scales=1.0)
+        "regions_ci": ac.Array2D.ones(shape_native=(7, 7), pixel_scales=1.0).native
     }
+
+    imaging_ci_full = copy.deepcopy(imaging_ci_7x7)
 
     masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
     masked_imaging_ci = masked_imaging_ci.apply_settings(
@@ -270,7 +276,7 @@ def test__extracted_fits_from_instance_and_imaging_ci__include_noise_scaling(
 
     fit_full_analysis = analysis.fit_via_instance_and_dataset_from(
         instance=instance,
-        imaging_ci=masked_imaging_ci.imaging_full,
+        imaging_ci=imaging_ci_full,
         hyper_noise_scale=True,
     )
 

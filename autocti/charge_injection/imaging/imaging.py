@@ -1,3 +1,4 @@
+import copy
 import numpy as np
 
 import autoarray as aa
@@ -63,8 +64,6 @@ class ImagingCI(aa.Imaging):
 
         self.fpr_value = fpr_value
 
-        self.imaging_full = self
-
     @property
     def mask(self):
         return self.image.mask
@@ -99,7 +98,6 @@ class ImagingCI(aa.Imaging):
     def apply_mask(self, mask: mask_2d.Mask2D) -> "ImagingCI":
 
         image = aa.Array2D(values=self.image.native, mask=mask)
-
         noise_map = aa.Array2D(values=self.noise_map.native, mask=mask)
 
         if self.cosmic_ray_map is not None:
@@ -157,8 +155,6 @@ class ImagingCI(aa.Imaging):
             return self
 
         imaging = imaging.apply_mask(mask=mask)
-
-        imaging.imaging_full = self.imaging_full
 
         return imaging
 

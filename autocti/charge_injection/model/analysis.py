@@ -1,5 +1,6 @@
 import logging
 import os
+from typing import List, Optional
 
 import autoarray as aa
 import autofit as af
@@ -22,7 +23,11 @@ logger.setLevel(level="INFO")
 
 class AnalysisImagingCI(af.Analysis):
     def __init__(
-        self, dataset: ImagingCI, clocker: Clocker2D, settings_cti=SettingsCTI2D()
+        self,
+        dataset: ImagingCI,
+        clocker: Clocker2D,
+        settings_cti: SettingsCTI2D = SettingsCTI2D(),
+        dataset_full: Optional[ImagingCI] = None,
     ):
 
         super().__init__()
@@ -30,6 +35,7 @@ class AnalysisImagingCI(af.Analysis):
         self.dataset = dataset
         self.clocker = clocker
         self.settings_cti = settings_cti
+        self.dataset_full = dataset_full
 
         self.preloads = Preloads()
 
@@ -65,6 +71,10 @@ class AnalysisImagingCI(af.Analysis):
             serial_fast_index_list=serial_fast_index_list,
             serial_fast_row_lists=serial_fast_row_lists,
         )
+
+    @property
+    def region_list(self) -> List:
+        return ["parallel_fpr", "parallel_eper", "serial_fpr", "serial_eper"]
 
     def modify_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
         """
@@ -108,38 +118,20 @@ class AnalysisImagingCI(af.Analysis):
                 visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
 
                 visualizer.visualize_imaging_ci(imaging_ci=self.dataset)
+                visualizer.visualize_imaging_ci_regions(
+                    imaging_ci=self.dataset, region_list=self.region_list
+                )
 
-                try:
-                    visualizer.visualize_imaging_ci_lines(
-                        imaging_ci=self.dataset, region="parallel_fpr"
+                if self.dataset_full is not None:
+
+                    visualizer.visualize_imaging_ci(
+                        imaging_ci=self.dataset_full, folder_suffix="_full"
                     )
-                    visualizer.visualize_imaging_ci_lines(
-                        imaging_ci=self.dataset, region="parallel_eper"
+                    visualizer.visualize_imaging_ci_regions(
+                        imaging_ci=self.dataset_full,
+                        region_list=self.region_list,
+                        folder_suffix="_full",
                     )
-
-                except (exc.RegionException, TypeError, ValueError):
-
-                    logger.info(
-                        "VISUALIZATION - Could not visualize the ImagingCI 1D parallel_fpr / parallel_eper"
-                    )
-
-                    pass
-
-                try:
-                    visualizer.visualize_imaging_ci(imaging_ci=self.dataset)
-                    visualizer.visualize_imaging_ci_lines(
-                        imaging_ci=self.dataset, region="serial_fpr"
-                    )
-                    visualizer.visualize_imaging_ci_lines(
-                        imaging_ci=self.dataset, region="serial_eper"
-                    )
-
-                    logger.info(
-                        "VISUALIZATION - Could not visualize the ImagingCI 1D serial_fpr / serial_eper"
-                    )
-
-                except (exc.RegionException, TypeError, ValueError):
-                    pass
 
         return self
 
@@ -214,38 +206,26 @@ class AnalysisImagingCI(af.Analysis):
         fit = self.fit_via_instance_from(instance=instance)
 
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
+        visualizer.visualize_fit_ci(fit=fit, during_analysis=during_analysis)
+        visualizer.visualize_fit_ci_1d_regions(
+            fit=fit, during_analysis=during_analysis, region_list=self.region_list
+        )
 
-        try:
-            visualizer.visualize_fit_ci(fit=fit, during_analysis=during_analysis)
-            visualizer.visualize_fit_ci_1d_lines(
-                fit=fit, during_analysis=during_analysis, region="parallel_fpr"
-            )
-            visualizer.visualize_fit_ci_1d_lines(
-                fit=fit, during_analysis=during_analysis, region="parallel_eper"
-            )
-        except (exc.RegionException, TypeError, ValueError):
+        if self.dataset_full is not None:
 
-            logger.info(
-                "VISUALIZATION - Could not visualize the FitImagingCI 1D parallel_fpr / parallel_eper"
+            fit_full = self.fit_via_instance_and_dataset_from(
+                instance=instance, imaging_ci=self.dataset_full
             )
 
-            pass
-
-        try:
-            visualizer.visualize_fit_ci(fit=fit, during_analysis=during_analysis)
-            visualizer.visualize_fit_ci_1d_lines(
-                fit=fit, during_analysis=during_analysis, region="serial_fpr"
+            visualizer.visualize_fit_ci(
+                fit=fit_full, during_analysis=during_analysis, folder_suffix="_full"
             )
-            visualizer.visualize_fit_ci_1d_lines(
-                fit=fit, during_analysis=during_analysis, region="serial_eper"
+            visualizer.visualize_fit_ci_1d_regions(
+                fit=fit_full,
+                during_analysis=during_analysis,
+                region_list=self.region_list,
+                folder_suffix="_full",
             )
-        except (exc.RegionException, TypeError, ValueError):
-
-            logger.info(
-                "VISUALIZATION - Could not visualize the FitImagingCI 1D serial_fpr / serial_eper"
-            )
-
-            pass
 
     def make_result(
         self,

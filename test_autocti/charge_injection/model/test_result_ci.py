@@ -1,14 +1,17 @@
+import copy
+import numpy as np
+import pytest
+
 import autofit as af
 import autocti as ac
 from autocti.charge_injection.model.result import ResultImagingCI
-
-import numpy as np
-import pytest
 
 
 def test__fits_to_extracted_and_full_datasets_available(
     imaging_ci_7x7, mask_2d_7x7_unmasked, parallel_clocker_2d, samples_with_result
 ):
+
+    imaging_ci_full = copy.deepcopy(imaging_ci_7x7)
 
     masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
     masked_imaging_ci = masked_imaging_ci.apply_settings(
@@ -16,10 +19,14 @@ def test__fits_to_extracted_and_full_datasets_available(
     )
 
     analysis = ac.AnalysisImagingCI(
-        dataset=masked_imaging_ci, clocker=parallel_clocker_2d
+        dataset=masked_imaging_ci,
+        clocker=parallel_clocker_2d,
+        dataset_full=imaging_ci_full,
     )
 
-    result = ResultImagingCI(samples=samples_with_result, analysis=analysis, model=None)
+    result = ac.ResultImagingCI(
+        samples=samples_with_result, analysis=analysis, model=None
+    )
 
     assert (
         result.max_log_likelihood_fit.mask == np.full(fill_value=False, shape=(7, 1))
@@ -63,17 +70,23 @@ def test__noise_scaling_map_dict_is_list_of_result__are_correct(
         ],
     }
 
+    imaging_ci_full = copy.deepcopy(imaging_ci_7x7)
+
     masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
 
     analysis = ac.AnalysisImagingCI(
-        dataset=masked_imaging_ci_7x7, clocker=parallel_clocker_2d
+        dataset=masked_imaging_ci_7x7,
+        clocker=parallel_clocker_2d,
+        dataset_full=imaging_ci_full,
     )
 
     fit_analysis = analysis.fit_via_instance_from(
         instance=samples_with_result.max_log_likelihood()
     )
 
-    result = ResultImagingCI(samples=samples_with_result, analysis=analysis, model=None)
+    result = ac.ResultImagingCI(
+        samples=samples_with_result, analysis=analysis, model=None
+    )
 
     assert result.noise_scaling_map_dict["regions_ci"] == pytest.approx(
         fit_analysis.chi_squared_map_of_regions_ci, 1.0e-2
