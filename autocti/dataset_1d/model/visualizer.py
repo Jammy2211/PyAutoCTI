@@ -5,11 +5,11 @@ from autocti.model.visualizer import plot_setting
 
 
 class VisualizerDataset1D(Visualizer):
-    def visualize_dataset_1d(self, dataset_1d):
+    def visualize_dataset_1d(self, dataset_1d, folder_suffix=""):
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset_1d")
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset_1d{folder_suffix}")
 
         imaging_ci_plotter = aplt.Dataset1DPlotter(
             dataset=dataset_1d, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
@@ -26,11 +26,11 @@ class VisualizerDataset1D(Visualizer):
 
             imaging_ci_plotter.subplot_dataset_1d()
 
-    def visualize_fit_line(self, fit, during_analysis):
+    def visualize_fit_line(self, fit, during_analysis, folder_suffix=""):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"fit_dataset_1d")
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"fit_dataset_1d{folder_suffix}")
 
         fit_line_plotter = aplt.FitDataset1DPlotter(
             fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
