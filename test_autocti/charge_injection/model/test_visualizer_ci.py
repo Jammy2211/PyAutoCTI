@@ -35,7 +35,7 @@ def test__visualizes_imaging_ci_using_configs(imaging_ci_7x7, plot_path, plot_pa
     assert path.join(plot_path, "cosmic_ray_map.png") in plot_patch.paths
 
 
-def test__visualizes_imaging_ci_lines_using_configs(
+def test__visualizes_imaging_ci_regions_using_configs(
     imaging_ci_7x7, plot_path, plot_patch
 ):
 
@@ -96,7 +96,7 @@ def test___visualizes_fit_ci_using_configs(fit_ci_7x7, plot_path, plot_patch):
     assert path.join(plot_path, "chi_squared_map.png") in plot_patch.paths
 
 
-def test___visualizes_fit_ci_lines_using_configs(fit_ci_7x7, plot_path, plot_patch):
+def test___visualizes_fit_ci_regions_using_configs(fit_ci_7x7, plot_path, plot_patch):
 
     if os.path.exists(plot_path):
         shutil.rmtree(plot_path)
@@ -171,4 +171,24 @@ def test__visualize_fit_ci_combined(fit_ci_7x7, plot_path, plot_patch):
     )
     assert (
         path.join(plot_path, "subplot_chi_squared_map_list.png") not in plot_patch.paths
+    )
+
+def test__visualize_fit_ci_regions_combined(fit_ci_7x7, plot_path, plot_patch):
+
+    if os.path.exists(plot_path):
+        shutil.rmtree(plot_path)
+
+    visualizer = VisualizerImagingCI(visualize_path=plot_path)
+
+    visualizer.visualize_fit_ci_1d_regions_combined(
+        fit_list=[fit_ci_7x7, fit_ci_7x7], region_list=["parallel_fpr"], during_analysis=True
+    )
+
+    plot_path = path.join(plot_path, "fit_imaging_ci_combined")
+
+    assert (
+        path.join(plot_path, "subplot_data_with_noise_map_model_parallel_fpr_list.png") in plot_patch.paths
+    )
+    assert (
+        path.join(plot_path, "subplot_data_with_noise_map_model_logy_parallel_fpr_list.png") not in plot_patch.paths
     )
