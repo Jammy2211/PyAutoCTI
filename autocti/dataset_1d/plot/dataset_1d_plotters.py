@@ -211,6 +211,8 @@ class Dataset1DPlotter(Plotter):
 
     def subplot(
         self,
+        data_with_noise_map: bool = False,
+        data_with_noise_map_logy: bool = False,
         data=False,
         noise_map=False,
         signal_to_noise_map=False,
@@ -240,6 +242,8 @@ class Dataset1DPlotter(Plotter):
         suffix = f"_{region}" if region is not None else ""
 
         self._subplot_custom_plot(
+            data_with_noise_map=data_with_noise_map,
+            data_with_noise_map_logy=data_with_noise_map_logy,
             data=data,
             noise_map=noise_map,
             signal_to_noise_map=signal_to_noise_map,
@@ -254,7 +258,7 @@ class Dataset1DPlotter(Plotter):
         """
         self.subplot(
             region=region,
-            data=True,
+            data_with_noise_map=True,
             noise_map=True,
             signal_to_noise_map=True,
             pre_cti_data=True,

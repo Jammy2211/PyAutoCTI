@@ -1,3 +1,5 @@
+from typing import Callable, Optional
+
 import autoarray.plot as aplt
 
 from autoarray.plot.auto_labels import AutoLabels
@@ -46,16 +48,23 @@ class FitDataset1DPlotter(Plotter):
     def get_visuals_1d(self) -> aplt.Visuals1D:
         return self.visuals_1d
 
+    @property
+    def extract_region_from(self) -> Callable:
+        return self.fit.dataset.layout.extract_region_from
+
     def figures_1d(
         self,
-        data=False,
-        noise_map=False,
-        signal_to_noise_map=False,
-        pre_cti_data=False,
-        post_cti_data=False,
-        residual_map=False,
-        normalized_residual_map=False,
-        chi_squared_map=False,
+        region: Optional[str] = None,
+        data_with_noise_map: bool = False,
+        data_with_noise_map_logy: bool = False,
+        data: bool = False,
+        noise_map: bool = False,
+        signal_to_noise_map: bool = False,
+        pre_cti_data: bool = False,
+        post_cti_data: bool = False,
+        residual_map: bool = False,
+        normalized_residual_map: bool = False,
+        chi_squared_map: bool = False,
     ):
         """
         Plots the individual attributes of the plotter's `FitDataset1D` object in 1D.
@@ -65,7 +74,15 @@ class FitDataset1DPlotter(Plotter):
 
         Parameters
         ----------
-        image
+        region
+            The region on the 1D dataset where data is extracted and binned {fpr", "eper"}
+        data_with_noise_map
+            Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
+            noise-map values included as error bars.
+        data_with_noise_map_logy
+            Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
+            noise-map values included as error bars and the y-axis on a log10 scale.
+        data
             Whether to make a 1D plot (via `plot`) of the image data.
         noise_map
             Whether to make a 1D plot (via `plot`) of the noise map.
@@ -82,99 +99,191 @@ class FitDataset1DPlotter(Plotter):
         chi_squared_map
             Whether to make a 1D plot (via `plot`) of the chi-squared map.
         """
-        if data:
+
+        suffix = f"_{region}" if region is not None else ""
+
+        if data_with_noise_map:
+
+            y = self.extract_region_from(array=self.fit.data, region=region)
+            y_errors = self.extract_region_from(
+                array=self.fit.noise_map, region=region
+            )
 
             self.mat_plot_1d.plot_yx(
-                y=self.fit.data,
-                x=self.fit.data.grid_radial,
+                y=y,
+                x=range(len(y)),
+                plot_axis_type_override="errorbar",
+                y_errors=y_errors,
                 visuals_1d=self.get_visuals_1d(),
-                auto_labels=AutoLabels(title="Image", filename="data"),
+                auto_labels=AutoLabels(
+                    title=f"Data 1D With Noise {region}",
+                    ylabel="Data (e-)",
+                    xlabel="Pixel No.",
+                    filename=f"data_with_noise_map{suffix}",
+                ),
+            )
+
+        if data_with_noise_map_logy:
+
+            y = self.extract_region_from(array=self.fit.data, region=region)
+            y_errors = self.extract_region_from(
+                array=self.fit.noise_map, region=region
+            )
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                plot_axis_type_override="errorbar_logy",
+                y_errors=y_errors,
+                visuals_1d=self.get_visuals_1d(),
+                auto_labels=AutoLabels(
+                    title=f"Data 1D With Noise {region} (log10 y axis)",
+                    ylabel="Data (e-)",
+                    xlabel="Pixel No.",
+                    filename=f"data_with_noise_map_logy{suffix}",
+                ),
+            )
+
+        if data:
+
+            y = self.extract_region_from(array=self.fit.data, region=region)
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                visuals_1d=self.get_visuals_1d(),
+                auto_labels=AutoLabels(
+                    title="Image",
+                    ylabel="Data (e-)",
+                    xlabel="Pixel No.",
+                    filename=f"data{suffix}",
+                ),
             )
 
         if noise_map:
 
+            y = self.extract_region_from(array=self.fit.noise_map, region=region)
+
             self.mat_plot_1d.plot_yx(
-                y=self.fit.noise_map,
-                x=self.fit.noise_map.grid_radial,
+                y=y,
+                x=range(len(y)),
                 visuals_1d=self.get_visuals_1d(),
-                auto_labels=AutoLabels(title="Noise-Map", filename="noise_map"),
+                auto_labels=AutoLabels(
+                    title="Noise-Map",
+                    ylabel="Data (e-)",
+                    xlabel="Pixel No.",
+                    filename=f"noise_map{suffix}",
+                ),
             )
 
         if signal_to_noise_map:
 
+            y = self.extract_region_from(array=self.fit.signal_to_noise_map, region=region)
+
             self.mat_plot_1d.plot_yx(
-                y=self.fit.signal_to_noise_map,
-                x=self.fit.signal_to_noise_map.grid_radial,
+                y=y,
+                x=range(len(y)),
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title="Signal-To-Noise Map", filename="signal_to_noise_map"
+                    title="Signal-To-Noise Map",
+                    ylabel="Data (e-)",
+                    xlabel="Pixel No.",
+                    filename=f"signal_to_noise_map{suffix}",
                 ),
             )
 
         if residual_map:
 
+            y = self.extract_region_from(array=self.fit.residual_map, region=region)
+
             self.mat_plot_1d.plot_yx(
-                y=self.fit.residual_map,
-                x=self.fit.residual_map.grid_radial,
+                y=y,
+                x=range(len(y)),
                 visuals_1d=self.get_visuals_1d(),
-                auto_labels=AutoLabels(title="Residual Map", filename="residual_map"),
+                auto_labels=AutoLabels(
+                    title="Residual Map",
+                    ylabel="Data (e-)",
+                    xlabel="Pixel No.",
+                    filename=f"residual_map{suffix}",
+                ),
             )
 
         if normalized_residual_map:
 
+            y = self.extract_region_from(array=self.fit.normalized_residual_map, region=region)
+
             self.mat_plot_1d.plot_yx(
-                y=self.fit.normalized_residual_map,
-                x=self.fit.normalized_residual_map.grid_radial,
+                y=y,
+                x=range(len(y)),
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title="Normalized Residual Map", filename="normalized_residual_map"
+                    title="Normalized Residual Map",
+                    ylabel="Data (e-)",
+                    xlabel="Pixel No.",
+                    filename=f"normalized_residual_map{suffix}",
                 ),
             )
 
         if chi_squared_map:
 
+            y = self.extract_region_from(array=self.fit.chi_squared_map, region=region)
+
             self.mat_plot_1d.plot_yx(
-                y=self.fit.chi_squared_map,
-                x=self.fit.chi_squared_map.grid_radial,
+                y=y,
+                x=range(len(y)),
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title="Chi-Squared Map", filename="chi_squared_map"
+                    title="Chi-Squared Map",
+                    ylabel="Data (e-)",
+                    xlabel="Pixel No.",
+                    filename=f"chi_squared_map{suffix}",
                 ),
             )
 
         if pre_cti_data:
 
+            y = self.extract_region_from(array=self.fit.pre_cti_data, region=region)
+
             self.mat_plot_1d.plot_yx(
-                y=self.fit.pre_cti_data,
-                x=self.fit.pre_cti_data.grid_radial,
+                y=y,
+                x=range(len(y)),
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title="CI Pre CTI Image", filename="pre_cti_data"
+                    title="CI Pre CTI Image",
+                    ylabel="Data (e-)",
+                    xlabel="Pixel No.",
+                    filename=f"pre_cti_data{suffix}",
                 ),
             )
 
         if post_cti_data:
 
+            y = self.extract_region_from(array=self.fit.post_cti_data, region=region)
+
             self.mat_plot_1d.plot_yx(
-                y=self.fit.post_cti_data,
-                x=self.fit.post_cti_data.grid_radial,
+                y=y,
+                x=range(len(y)),
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title="CI Post CTI Image", filename="post_cti_data"
+                    title="CI Post CTI Image",
+                    ylabel="Data (e-)",
+                    xlabel="Pixel No.",
+                    filename=f"post_cti_data{suffix}",
                 ),
             )
 
     def subplot(
         self,
-        data=False,
-        noise_map=False,
-        signal_to_noise_map=False,
-        pre_cti_data=False,
-        post_cti_data=False,
-        residual_map=False,
-        normalized_residual_map=False,
-        chi_squared_map=False,
+        data: bool = False,
+        noise_map: bool = False,
+        signal_to_noise_map: bool = False,
+        pre_cti_data: bool = False,
+        post_cti_data: bool = False,
+        residual_map: bool = False,
+        normalized_residual_map: bool = False,
+        chi_squared_map: bool = False,
         auto_filename="subplot_fit_dataset_1d",
+        **kwargs,
     ):
         """
         Plots the individual attributes of the plotter's `FitDataset1D` object in 1D on a subplot.
@@ -201,6 +310,11 @@ class FitDataset1DPlotter(Plotter):
         chi_squared_map
             Whether or not to include a 1D plot (via `plot`) of the chi-squared map.
         """
+
+        region = kwargs.get("region", None)
+        suffix = f"_{region}" if region is not None else ""
+
+
         self._subplot_custom_plot(
             data=data,
             noise_map=noise_map,
@@ -210,15 +324,18 @@ class FitDataset1DPlotter(Plotter):
             residual_map=residual_map,
             normalized_residual_map=normalized_residual_map,
             chi_squared_map=chi_squared_map,
-            auto_labels=AutoLabels(filename=auto_filename),
+            auto_labels=AutoLabels(
+                ylabel="Data (e-)", xlabel="Pixel No.", filename=f"{auto_filename}{suffix}"
+            ),
         )
 
-    def subplot_fit_dataset_1d(self):
+    def subplot_fit_dataset_1d(self, region: Optional[str] = None):
         """
         Standard subplot of the attributes of the plotter's `FitDataset1D` object.
         """
         return self.subplot(
-            data=True,
+            region=region,
+            data_with_noise_map=True,
             signal_to_noise_map=True,
             pre_cti_data=True,
             post_cti_data=True,
