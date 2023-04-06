@@ -58,9 +58,9 @@ class VisualizerImagingCI(Visualizer):
 
                 if should_plot("subplot_dataset"):
 
-                    imaging_ci_plotter.subplot_1d_of_region(region=region)
+                    imaging_ci_plotter.subplot_1d(region=region)
 
-                imaging_ci_plotter.figures_1d_of_region(
+                imaging_ci_plotter.figures_1d(
                     region=region,
                     image=should_plot("data"),
                     noise_map=should_plot("noise_map"),
@@ -137,9 +137,9 @@ class VisualizerImagingCI(Visualizer):
 
                 if should_plot("subplot_fit"):
 
-                    fit_ci_plotter.subplot_1d_of_region(region=region)
+                    fit_ci_plotter.subplot_1d(region=region)
 
-                fit_ci_plotter.figures_1d_of_region(
+                fit_ci_plotter.figures_1d(
                     region=region,
                     image=should_plot("data"),
                     noise_map=should_plot("noise_map"),
@@ -159,7 +159,7 @@ class VisualizerImagingCI(Visualizer):
 
                     if should_plot("all_at_end_png"):
 
-                        fit_ci_plotter.figures_1d_of_region(
+                        fit_ci_plotter.figures_1d(
                             region=region,
                             image=True,
                             noise_map=True,
@@ -234,7 +234,7 @@ class VisualizerImagingCI(Visualizer):
 
                 if should_plot("subplot_data_with_noise_map_model"):
                     multi_plotter.subplot_of_figure(
-                        func_name="figures_1d_of_region",
+                        func_name="figures_1d",
                         figure_name="data_with_noise_map_model",
                         region=region,
                         filename_suffix=f"_{region}",
@@ -242,7 +242,7 @@ class VisualizerImagingCI(Visualizer):
 
                 if should_plot("subplot_data_with_noise_map_model_logy"):
                     multi_plotter.subplot_of_figure(
-                        func_name="figures_1d_of_region",
+                        func_name="figures_1d",
                         figure_name="data_with_noise_map_model_logy",
                         region=region,
                         filename_suffix=f"_{region}",
@@ -250,7 +250,7 @@ class VisualizerImagingCI(Visualizer):
 
                 if should_plot("subplot_residual_maps"):
                     multi_plotter.subplot_of_figure(
-                        func_name="figures_1d_of_region",
+                        func_name="figures_1d",
                         figure_name="residual_map",
                         region=region,
                         filename_suffix=f"_{region}",
@@ -258,7 +258,7 @@ class VisualizerImagingCI(Visualizer):
 
                 if should_plot("subplot_normalized_residual_maps"):
                     multi_plotter.subplot_of_figure(
-                        func_name="figures_1d_of_region",
+                        func_name="figures_1d",
                         figure_name="normalized_residual_map",
                         region=region,
                         filename_suffix=f"_{region}",
@@ -266,7 +266,7 @@ class VisualizerImagingCI(Visualizer):
 
                 if should_plot("subplot_chi_squared_maps"):
                     multi_plotter.subplot_of_figure(
-                        func_name="figures_1d_of_region",
+                        func_name="figures_1d",
                         figure_name="chi_squared_map",
                         region=region,
                         filename_suffix=f"_{region}",

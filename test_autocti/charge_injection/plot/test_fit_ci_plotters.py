@@ -72,7 +72,7 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
     )
 
-    fit_ci_plotter.figures_1d_of_region(
+    fit_ci_plotter.figures_1d(
         region="parallel_fpr",
         image=True,
         noise_map=True,
@@ -100,7 +100,7 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
 
     plot_patch.paths = []
 
-    fit_ci_plotter.figures_1d_of_region(
+    fit_ci_plotter.figures_1d(
         region="parallel_fpr",
         image=True,
         noise_map=False,
@@ -133,7 +133,7 @@ def test__fit_ci_subplots_are_output(fit_ci_7x7, plot_path, plot_patch):
     fit_ci_plotter.subplot_fit_ci()
     assert path.join(plot_path, "subplot_fit_ci.png") in plot_patch.paths
 
-    fit_ci_plotter.subplot_1d_of_region(region="parallel_fpr")
+    fit_ci_plotter.subplot_1d(region="parallel_fpr")
     assert (
         path.join(plot_path, "subplot_1d_fit_ci_parallel_fpr.png") in plot_patch.paths
     )

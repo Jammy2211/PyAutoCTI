@@ -105,9 +105,7 @@ class FitDataset1DPlotter(Plotter):
         if data_with_noise_map:
 
             y = self.extract_region_from(array=self.fit.data, region=region)
-            y_errors = self.extract_region_from(
-                array=self.fit.noise_map, region=region
-            )
+            y_errors = self.extract_region_from(array=self.fit.noise_map, region=region)
 
             self.mat_plot_1d.plot_yx(
                 y=y,
@@ -126,9 +124,7 @@ class FitDataset1DPlotter(Plotter):
         if data_with_noise_map_logy:
 
             y = self.extract_region_from(array=self.fit.data, region=region)
-            y_errors = self.extract_region_from(
-                array=self.fit.noise_map, region=region
-            )
+            y_errors = self.extract_region_from(array=self.fit.noise_map, region=region)
 
             self.mat_plot_1d.plot_yx(
                 y=y,
@@ -178,7 +174,9 @@ class FitDataset1DPlotter(Plotter):
 
         if signal_to_noise_map:
 
-            y = self.extract_region_from(array=self.fit.signal_to_noise_map, region=region)
+            y = self.extract_region_from(
+                array=self.fit.signal_to_noise_map, region=region
+            )
 
             self.mat_plot_1d.plot_yx(
                 y=y,
@@ -210,7 +208,9 @@ class FitDataset1DPlotter(Plotter):
 
         if normalized_residual_map:
 
-            y = self.extract_region_from(array=self.fit.normalized_residual_map, region=region)
+            y = self.extract_region_from(
+                array=self.fit.normalized_residual_map, region=region
+            )
 
             self.mat_plot_1d.plot_yx(
                 y=y,
@@ -314,7 +314,6 @@ class FitDataset1DPlotter(Plotter):
         region = kwargs.get("region", None)
         suffix = f"_{region}" if region is not None else ""
 
-
         self._subplot_custom_plot(
             data=data,
             noise_map=noise_map,
@@ -325,7 +324,9 @@ class FitDataset1DPlotter(Plotter):
             normalized_residual_map=normalized_residual_map,
             chi_squared_map=chi_squared_map,
             auto_labels=AutoLabels(
-                ylabel="Data (e-)", xlabel="Pixel No.", filename=f"{auto_filename}{suffix}"
+                ylabel="Data (e-)",
+                xlabel="Pixel No.",
+                filename=f"{auto_filename}{suffix}",
             ),
         )
 

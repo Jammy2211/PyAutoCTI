@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Callable
+from typing import Callable, Optional
 
 import autoarray.plot as aplt
 
@@ -153,23 +153,26 @@ class ImagingCIPlotter(Plotter):
                 ),
             )
 
-    def figures_1d_of_region(
+    def figures_1d(
         self,
         region: str,
+        data_with_noise_map: bool = False,
+        data_with_noise_map_logy: bool = False,
         image: bool = False,
         noise_map: bool = False,
         pre_cti_data: bool = False,
         signal_to_noise_map: bool = False,
-        data_with_noise_map: bool = False,
-        data_with_noise_map_logy: bool = False,
     ):
         """
-        Plots the individual attributes of the plotter's `ImagingCI` object in 1D.
+        Plots the individual attributes of the plotter's `ImagingCI` object in 2D.
 
-        These 1D plots correspond to a region in 2D on the charge injection image, which is binned up over the parallel
-        or serial direction to produce a 1D plot. For example, for the input `region=parallel_fpr`, this
-        function extracts the FPR over each charge injection region and bins such that the 1D plot shows the FPR
-        in the parallel direction.
+        The API is such that every plottable attribute of the `Imaging` object is an input parameter of type bool of
+        the function, which if switched to `True` means that it is plotted.
+
+        if a `region` string is input, the 1D plots correspond to a region in 2D on the charge injection image, which
+        is binned up over the parallel or serial direction to produce a 1D plot. For example, for the
+        input `region=parallel_fpr`, this function extracts the FPR over each charge injection region and bins such
+        that the 1D plot shows the FPR in the parallel direction.
 
         The API is such that every plottable attribute of the `Imaging` object is an input parameter of type bool of
         the function, which if switched to `True` means that it is plotted.
@@ -179,6 +182,12 @@ class ImagingCIPlotter(Plotter):
         region
             The region on the charge injection image where data is extracted and binned over the parallel or serial
             direction {"parallel_fpr", "parallel_eper", "serial_fpr", "serial_eper"}
+        data_with_noise_map
+            Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
+            noise-map values included as error bars.
+        data_with_noise_map_logy
+            Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
+            noise-map values included as error bars and the y-axis on a log10 scale.
         image
             Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region.
         noise_map
@@ -188,12 +197,6 @@ class ImagingCIPlotter(Plotter):
         signal_to_noise_map
             Whether to make a 1D plot (via `plot`) of the signal-to-noise map data extracted and binned over
             the region.
-        data_with_noise_map
-            Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
-            noise-map values included as error bars.
-        data_with_noise_map_logy
-            Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
-            noise-map values included as error bars and the y-axis on a log10 scale.
         """
 
         if image:
@@ -368,7 +371,7 @@ class ImagingCIPlotter(Plotter):
             cosmic_ray_map=True,
         )
 
-    def subplot_1d_of_region(self, region: str):
+    def subplot_1d(self, region: str):
         """
         Plots the individual attributes of the plotter's `ImagingCI` object in 1D on a subplot.
 
@@ -388,10 +391,10 @@ class ImagingCIPlotter(Plotter):
 
         self.open_subplot_figure(number_subplots=4)
 
-        self.figures_1d_of_region(image=True, region=region)
-        self.figures_1d_of_region(noise_map=True, region=region)
-        self.figures_1d_of_region(pre_cti_data=True, region=region)
-        self.figures_1d_of_region(signal_to_noise_map=True, region=region)
+        self.figures_1d(data_with_noise_map=True, region=region)
+        self.figures_1d(noise_map=True, region=region)
+        self.figures_1d(pre_cti_data=True, region=region)
+        self.figures_1d(signal_to_noise_map=True, region=region)
 
         self.mat_plot_1d.output.subplot_to_figure(
             auto_filename=f"subplot_1d_ci_{region}"

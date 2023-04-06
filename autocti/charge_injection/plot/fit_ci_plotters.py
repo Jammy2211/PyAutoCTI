@@ -147,7 +147,7 @@ class FitImagingCIPlotter(Plotter):
                 ),
             )
 
-    def figures_1d_of_region(
+    def figures_1d(
         self,
         region,
         image: bool = False,
@@ -446,7 +446,7 @@ class FitImagingCIPlotter(Plotter):
             chi_squared_map=True,
         )
 
-    def subplot_1d_of_region(self, region: str):
+    def subplot_1d(self, region: str):
         """
         Plots the individual attributes of the plotter's `FitImagingCI` object in 1D on a subplot.
 
@@ -466,12 +466,12 @@ class FitImagingCIPlotter(Plotter):
 
         self.open_subplot_figure(number_subplots=6)
 
-        self.figures_1d_of_region(image=True, region=region)
-        self.figures_1d_of_region(signal_to_noise_map=True, region=region)
-        self.figures_1d_of_region(pre_cti_data=True, region=region)
-        self.figures_1d_of_region(post_cti_data=True, region=region)
-        self.figures_1d_of_region(normalized_residual_map=True, region=region)
-        self.figures_1d_of_region(chi_squared_map=True, region=region)
+        self.figures_1d(data_with_noise_map_model=True, region=region)
+        self.figures_1d(signal_to_noise_map=True, region=region)
+        self.figures_1d(pre_cti_data=True, region=region)
+        self.figures_1d(post_cti_data=True, region=region)
+        self.figures_1d(normalized_residual_map=True, region=region)
+        self.figures_1d(chi_squared_map=True, region=region)
 
         self.mat_plot_1d.output.subplot_to_figure(
             auto_filename=f"subplot_1d_fit_ci_{region}"
