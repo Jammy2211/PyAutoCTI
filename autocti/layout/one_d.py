@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Tuple
+from typing import Optional, Tuple
 
 import autoarray as aa
 
@@ -61,7 +61,10 @@ class Layout1D(aa.Layout1D):
         parallel_rows_between_regions.append(self.trail_size_to_array_edge)
         return np.min(parallel_rows_between_regions)
 
-    def extract_region_from(self, array: aa.Array1D, region: str):
+    def extract_region_from(self, array: aa.Array1D, region: Optional):
+
+        if region is None:
+            return array
 
         if region == "fpr":
             return self.extract.fpr.stacked_array_1d_from(

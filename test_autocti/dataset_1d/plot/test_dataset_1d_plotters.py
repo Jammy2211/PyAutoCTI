@@ -50,7 +50,7 @@ def test__individual_1d_of_region_are_output(dataset_1d_7, plot_path, plot_patch
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
     )
 
-    imaging_ci_plotter.figures_1d_of_region(
+    imaging_ci_plotter.figures_1d(
         region="fpr",
         data=True,
         noise_map=True,
@@ -65,7 +65,7 @@ def test__individual_1d_of_region_are_output(dataset_1d_7, plot_path, plot_patch
 
     plot_patch.paths = []
 
-    imaging_ci_plotter.figures_1d_of_region(region="fpr", data=True, pre_cti_data=True)
+    imaging_ci_plotter.figures_1d(region="fpr", data=True, pre_cti_data=True)
 
     assert path.join(plot_path, "data_fpr.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map_fpr.png") not in plot_patch.paths
@@ -83,5 +83,5 @@ def test__subplots__output(dataset_1d_7, plot_path, plot_patch):
     dataset_1d_plotter.subplot_dataset_1d()
     assert path.join(plot_path, "subplot_dataset_1d.png") in plot_patch.paths
 
-    dataset_1d_plotter.subplot_1d_of_region(region="fpr")
-    assert path.join(plot_path, "subplot_1d_fpr.png") in plot_patch.paths
+    dataset_1d_plotter.subplot_dataset_1d(region="fpr")
+    assert path.join(plot_path, "subplot_dataset_1d_fpr.png") in plot_patch.paths
