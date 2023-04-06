@@ -167,7 +167,7 @@ def make_ci_noise_scaling_map_dict_7x7():
 ### LINE DATASET FITS ###
 
 
-def make_fit_line_7():
+def make_fit_1d_7():
     return ac.FitDataset1D(
         dataset=make_dataset_1d_7(), post_cti_data=make_dataset_1d_7().pre_cti_data + 1
     )

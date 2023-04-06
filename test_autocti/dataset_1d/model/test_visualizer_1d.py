@@ -30,14 +30,14 @@ def test__visualizes_dataset_1d_using_configs(dataset_1d_7, plot_path, plot_patc
     assert path.join(plot_path, "noise_map.png") not in plot_patch.paths
 
 
-def test___visualizes_fit_line_using_configs(fit_line_7, plot_path, plot_patch):
+def test___visualizes_fit_1d_using_configs(fit_1d_7, plot_path, plot_patch):
 
     if os.path.exists(plot_path):
         shutil.rmtree(plot_path)
 
     visualizer = VisualizerDataset1D(visualize_path=plot_path)
 
-    visualizer.visualize_fit_line(fit=fit_line_7, during_analysis=True)
+    visualizer.visualize_fit_1d(fit=fit_1d_7, during_analysis=True)
 
     plot_path = path.join(plot_path, "fit_dataset_1d")
 
@@ -47,7 +47,7 @@ def test___visualizes_fit_line_using_configs(fit_line_7, plot_path, plot_patch):
 
     plot_patch.paths = []
 
-    visualizer.visualize_fit_line(fit=fit_line_7, during_analysis=False)
+    visualizer.visualize_fit_1d(fit=fit_1d_7, during_analysis=False)
 
     assert path.join(plot_path, "subplot_fit_dataset_1d.png") in plot_patch.paths
     assert path.join(plot_path, "data.png") in plot_patch.paths

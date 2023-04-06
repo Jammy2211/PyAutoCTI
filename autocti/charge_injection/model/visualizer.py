@@ -1,6 +1,6 @@
 import logging
 
-from autoarray.plot.multi_plotters import MultiFigurePlotter
+import autoarray.plot as aplt
 
 import autocti.plot as aplt
 
@@ -193,7 +193,7 @@ class VisualizerImagingCI(Visualizer):
             )
             for fit in fit_list
         ]
-        multi_plotter = MultiFigurePlotter(plotter_list=fit_ci_plotter_list)
+        multi_plotter = aplt.MultiFigurePlotter(plotter_list=fit_ci_plotter_list)
 
         if should_plot("subplot_residual_maps"):
             multi_plotter.subplot_of_figure(
@@ -226,7 +226,7 @@ class VisualizerImagingCI(Visualizer):
             )
             for fit in fit_list
         ]
-        multi_plotter = MultiFigurePlotter(plotter_list=fit_ci_plotter_list)
+        multi_plotter = aplt.MultiFigurePlotter(plotter_list=fit_ci_plotter_list)
 
         for region in region_list:
 

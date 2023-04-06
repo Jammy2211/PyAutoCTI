@@ -110,13 +110,13 @@ class AnalysisDataset1D(af.Analysis):
         visualizer = VisualizerDataset1D(visualize_path=paths.image_path)
 
         fit = self.fit_via_instance_from(instance=instance)
-        visualizer.visualize_fit_line(fit=fit, during_analysis=during_analysis)
+        visualizer.visualize_fit_1d(fit=fit, during_analysis=during_analysis)
 
         if self.dataset_full is not None:
             fit = self.fit_via_instance_and_dataset_from(
                 instance=instance, dataset=self.dataset_full
             )
-            visualizer.visualize_fit_line(fit=fit, during_analysis=during_analysis)
+            visualizer.visualize_fit_1d(fit=fit, during_analysis=during_analysis)
 
     def make_result(
         self,

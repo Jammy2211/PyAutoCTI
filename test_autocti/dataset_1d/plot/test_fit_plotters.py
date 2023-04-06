@@ -13,11 +13,11 @@ def make_fit_ci_plotter_setup():
 
 
 def test__individual_attribute_plots__all_plot_correctly(
-    fit_line_7, plot_path, plot_patch
+    fit_1d_7, plot_path, plot_patch
 ):
 
     fit_ci_plotter = aplt.FitDataset1DPlotter(
-        fit=fit_line_7,
+        fit=fit_1d_7,
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
     )
 
@@ -61,10 +61,10 @@ def test__individual_attribute_plots__all_plot_correctly(
     assert path.join(plot_path, "chi_squared_map.png") in plot_patch.paths
 
 
-def test__fit_line_subplots_are_output(fit_line_7, plot_path, plot_patch):
+def test__fit_1d_subplots_are_output(fit_1d_7, plot_path, plot_patch):
 
     fit_ci_plotter = aplt.FitDataset1DPlotter(
-        fit=fit_line_7,
+        fit=fit_1d_7,
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
     )
 
