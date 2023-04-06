@@ -177,14 +177,21 @@ class VisualizerImagingCI(Visualizer):
                     f"VISUALIZATION - Could not visualize the ImagingCI 1D {region}"
                 )
 
-    def visualize_multiple_fit_cis_subplots(self, fit):
+    def visualize_fit_ci_combined(
+        self, fit_list, during_analysis, folder_suffix: str = ""
+    ):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
-        mat_plot_2d = self.mat_plot_2d_from(subfolders="multiple_fit_cis")
+        mat_plot_2d = self.mat_plot_2d_from(
+            subfolders=f"fit_imaging_ci_combined{folder_suffix}"
+        )
 
         fit_ci_plotter_list = [
-            aplt.FitImagingCIPlotter(fit=fit, mat_plot_2d=mat_plot_2d) for fit in fit
+            aplt.FitImagingCIPlotter(
+                fit=fit, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
+            )
+            for fit in fit_list
         ]
         multi_plotter = MultiFigurePlotter(plotter_list=fit_ci_plotter_list)
 
@@ -203,39 +210,73 @@ class VisualizerImagingCI(Visualizer):
                 func_name="figures_2d", figure_name="chi_squared_map"
             )
 
-    def visualize_multiple_fit_cis_subplots_1d_lines(self, fit, region):
+    def visualize_fit_ci_1d_regions_combined(
+        self, fit_list, region_list, during_analysis, folder_suffix: str = ""
+    ):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
         mat_plot_1d = self.mat_plot_1d_from(
-            subfolders=f"multiple_fit_cis_1d_line_{region}"
+            subfolders=f"fit_imaging_ci_combined{folder_suffix}"
         )
 
         fit_ci_plotter_list = [
-            aplt.FitImagingCIPlotter(fit=fit, mat_plot_1d=mat_plot_1d) for fit in fit
+            aplt.FitImagingCIPlotter(
+                fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
+            )
+            for fit in fit_list
         ]
         multi_plotter = MultiFigurePlotter(plotter_list=fit_ci_plotter_list)
 
-        if should_plot("subplot_residual_maps"):
-            multi_plotter.subplot_of_figure(
-                func_name="figures_1d_of_region",
-                figure_name="residual_map",
-                region=region,
-            )
+        for region in region_list:
 
-        if should_plot("subplot_normalized_residual_maps"):
-            multi_plotter.subplot_of_figure(
-                func_name="figures_1d_of_region",
-                figure_name="normalized_residual_map",
-                region=region,
-            )
+            try:
 
-        if should_plot("subplot_chi_squared_maps"):
-            multi_plotter.subplot_of_figure(
-                func_name="figures_1d_of_region",
-                figure_name="chi_squared_map",
-                region=region,
-            )
+                if should_plot("subplot_data_with_noise_map_model"):
+                    multi_plotter.subplot_of_figure(
+                        func_name="figures_1d_of_region",
+                        figure_name="data_with_noise_map_model",
+                        region=region,
+                        filename_suffix=f"_{region}",
+                    )
+
+                if should_plot("subplot_data_with_noise_map_model_logy"):
+                    multi_plotter.subplot_of_figure(
+                        func_name="figures_1d_of_region",
+                        figure_name="data_with_noise_map_model_logy",
+                        region=region,
+                        filename_suffix=f"_{region}",
+                    )
+
+                if should_plot("subplot_residual_maps"):
+                    multi_plotter.subplot_of_figure(
+                        func_name="figures_1d_of_region",
+                        figure_name="residual_map",
+                        region=region,
+                        filename_suffix=f"_{region}",
+                    )
+
+                if should_plot("subplot_normalized_residual_maps"):
+                    multi_plotter.subplot_of_figure(
+                        func_name="figures_1d_of_region",
+                        figure_name="normalized_residual_map",
+                        region=region,
+                        filename_suffix=f"_{region}",
+                    )
+
+                if should_plot("subplot_chi_squared_maps"):
+                    multi_plotter.subplot_of_figure(
+                        func_name="figures_1d_of_region",
+                        figure_name="chi_squared_map",
+                        region=region,
+                        filename_suffix=f"_{region}",
+                    )
+
+            except (exc.RegionException, TypeError, ValueError):
+
+                logger.info(
+                    f"VISUALIZATION - Could not visualize the ImagingCI 1D {region}"
+                )
 
     def visualize_fit_in_fits(self, fit):
 

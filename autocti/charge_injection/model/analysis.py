@@ -227,6 +227,26 @@ class AnalysisImagingCI(af.Analysis):
                 folder_suffix="_full",
             )
 
+    def visualize_combined(
+        self,
+        analyses: List["AnalysisImagingCI"],
+        paths: af.DirectoryPaths,
+        instance: af.ModelInstance,
+        during_analysis: bool,
+    ):
+
+        fit_list = [
+            analysis.fit_via_instance_from(instance=instance) for analysis in analyses
+        ]
+
+        visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
+        visualizer.visualize_fit_ci_combined(fit_list=fit_list)
+        visualizer.visualize_fit_ci_1d_regions_combined(
+            fit_list=fit_list,
+            region_list=self.region_list,
+            during_analysis=during_analysis,
+        )
+
     def make_result(
         self,
         samples: af.SamplesPDF,

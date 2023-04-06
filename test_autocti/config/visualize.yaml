@@ -14,6 +14,8 @@ plots:
     all_at_end_fits: false
     all_at_end_png: true
     chi_squared_map: true
+    subplot_data_with_noise_map_model: true
+    subplot_data_with_noise_map_model_logy: false
     data: true
     noise_map: false
     noise_scaling_map_dict: false
@@ -22,10 +24,10 @@ plots:
     pre_cti_data: true
     residual_map: false
     signal_to_noise_map: false
-    subplot_chi_squared_maps: false
     subplot_fit: true
-    subplot_normalized_residual_maps: true
     subplot_residual_maps: true
+    subplot_normalized_residual_maps: true
+    subplot_chi_squared_maps: false
   other:
     stochastic_histogram: false
   positions:

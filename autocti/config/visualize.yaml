@@ -10,7 +10,12 @@ plots:
     data_with_noise_map: false
     data_with_noise_map_logy: false
   fit:
-    post_cti_data: false
-    pre_cti_data: false
     data_with_noise_map_model: true
     data_with_noise_map_model_logy: true
+    subplot_data_with_noise_map_model: true
+    subplot_data_with_noise_map_model_logy: true
+    post_cti_data: false
+    pre_cti_data: false
+    subplot_residual_maps: false
+    subplot_normalized_residual_maps: false
+    subplot_chi_squared_maps: false

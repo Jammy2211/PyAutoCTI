@@ -149,3 +149,26 @@ def test___visualizes_fit_ci_lines_using_configs(fit_ci_7x7, plot_path, plot_pat
         in plot_patch.paths
     )
     assert path.join(plot_path, "chi_squared_map_parallel_fpr.png") in plot_patch.paths
+
+
+def test__visualize_fit_ci_combined(fit_ci_7x7, plot_path, plot_patch):
+
+    if os.path.exists(plot_path):
+        shutil.rmtree(plot_path)
+
+    visualizer = VisualizerImagingCI(visualize_path=plot_path)
+
+    visualizer.visualize_fit_ci_combined(
+        fit_list=[fit_ci_7x7, fit_ci_7x7], during_analysis=True
+    )
+
+    plot_path = path.join(plot_path, "fit_imaging_ci_combined")
+
+    assert path.join(plot_path, "subplot_residual_map_list.png") in plot_patch.paths
+    assert (
+        path.join(plot_path, "subplot_normalized_residual_map_list.png")
+        in plot_patch.paths
+    )
+    assert (
+        path.join(plot_path, "subplot_chi_squared_map_list.png") not in plot_patch.paths
+    )
