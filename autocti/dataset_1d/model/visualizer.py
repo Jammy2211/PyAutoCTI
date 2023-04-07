@@ -1,8 +1,14 @@
+import logging
+
 import autocti.plot as aplt
 
 from autocti.model.visualizer import Visualizer
 from autocti.model.visualizer import plot_setting
 from autocti import exc
+
+logger = logging.getLogger(__name__)
+
+logger.setLevel(level="INFO")
 
 
 class VisualizerDataset1D(Visualizer):
@@ -59,7 +65,7 @@ class VisualizerDataset1D(Visualizer):
             except (exc.RegionException, TypeError, ValueError):
 
                 logger.info(
-                    f"VISUALIZATION - Could not visualize the ImagingCI 1D {region}"
+                    f"VISUALIZATION - Could not visualize the Dataset1D {region}"
                 )
 
     def visualize_fit_1d(self, fit, during_analysis, folder_suffix=""):
@@ -102,6 +108,45 @@ class VisualizerDataset1D(Visualizer):
 
         if should_plot("subplot_fit"):
             fit_1d_plotter.subplot_fit_dataset_1d()
+
+    def visualize_fit_1d_regions(
+        self, fit, region_list, during_analysis, folder_suffix=""
+    ):
+        def should_plot(name):
+            return plot_setting(section="fit", name=name)
+
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"fit_dataset_1d{folder_suffix}")
+
+        fit_1d_plotter = aplt.FitDataset1DPlotter(
+            fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
+        )
+
+        for region in region_list:
+
+            try:
+
+                if should_plot("subplot_fit"):
+                    fit_1d_plotter.subplot_fit_dataset_1d(region=region)
+
+                fit_1d_plotter.figures_1d(
+                    region=region,
+                    data_with_noise_map=should_plot("data_with_noise_map"),
+                    data_with_noise_map_logy=should_plot("data_with_noise_map_logy"),
+                    data=should_plot("data"),
+                    noise_map=should_plot("noise_map"),
+                    signal_to_noise_map=should_plot("signal_to_noise_map"),
+                    pre_cti_data=should_plot("pre_cti_data"),
+                    post_cti_data=should_plot("post_cti_data"),
+                    residual_map=should_plot("residual_map"),
+                    normalized_residual_map=should_plot("normalized_residual_map"),
+                    chi_squared_map=should_plot("chi_squared_map"),
+                )
+
+            except (exc.RegionException, TypeError, ValueError):
+
+                logger.info(
+                    f"VISUALIZATION - Could not visualize the Dataset1D {region}"
+                )
 
     def visualize_fit_1d_combined(self, fit_list, during_analysis, folder_suffix=""):
         def should_plot(name):

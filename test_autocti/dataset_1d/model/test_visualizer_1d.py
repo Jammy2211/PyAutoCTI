@@ -74,6 +74,24 @@ def test__visualize_fit_1d__uses_configs(fit_1d_7, plot_path, plot_patch):
     assert path.join(plot_path, "noise_map.png") in plot_patch.paths
 
 
+def test__visualize_fit_1d_region__uses_configs(fit_1d_7, plot_path, plot_patch):
+
+    if os.path.exists(plot_path):
+        shutil.rmtree(plot_path)
+
+    visualizer = VisualizerDataset1D(visualize_path=plot_path)
+
+    visualizer.visualize_fit_1d_regions(
+        fit=fit_1d_7, region_list=["fpr"], during_analysis=True
+    )
+
+    plot_path = path.join(plot_path, "fit_dataset_1d")
+
+    assert path.join(plot_path, "subplot_fit_dataset_1d_fpr.png") in plot_patch.paths
+    assert path.join(plot_path, "data_fpr.png") in plot_patch.paths
+    assert path.join(plot_path, "noise_map_fpr.png") not in plot_patch.paths
+
+
 def test__visualize_fit_ci_combined(fit_1d_7, plot_path, plot_patch):
 
     if os.path.exists(plot_path):
