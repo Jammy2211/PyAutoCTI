@@ -188,3 +188,71 @@ class VisualizerDataset1D(Visualizer):
             multi_plotter.subplot_of_figure(
                 func_name="figures_1d", figure_name="chi_squared_map"
             )
+
+    def visualize_fit_1d_region_combined(
+        self, fit_list, region_list, during_analysis, folder_suffix=""
+    ):
+        def should_plot(name):
+            return plot_setting(section="fit", name=name)
+
+        mat_plot_1d = self.mat_plot_1d_from(
+            subfolders=f"fit_dataset_1d_combined{folder_suffix}"
+        )
+
+        fit_1d_plotter_list = [
+            aplt.FitDataset1DPlotter(
+                fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
+            )
+            for fit in fit_list
+        ]
+        multi_plotter = aplt.MultiFigurePlotter(plotter_list=fit_1d_plotter_list)
+
+        for region in region_list:
+
+            try:
+
+                if should_plot("data_with_noise_map"):
+                    multi_plotter.subplot_of_figure(
+                        func_name="figures_1d",
+                        figure_name="data_with_noise_map",
+                        region=region,
+                        filename_suffix=f"_{region}",
+                    )
+
+                if should_plot("data_with_noise_map_logy"):
+                    multi_plotter.subplot_of_figure(
+                        func_name="figures_1d",
+                        figure_name="data_with_noise_map_logy",
+                        region=region,
+                        filename_suffix=f"_{region}",
+                    )
+
+                if should_plot("residual_map"):
+                    multi_plotter.subplot_of_figure(
+                        func_name="figures_1d",
+                        figure_name="residual_map",
+                        region=region,
+                        filename_suffix=f"_{region}",
+                    )
+
+                if should_plot("normalized_residual_map"):
+                    multi_plotter.subplot_of_figure(
+                        func_name="figures_1d",
+                        figure_name="normalized_residual_map",
+                        region=region,
+                        filename_suffix=f"_{region}",
+                    )
+
+                if should_plot("chi_squared_map"):
+                    multi_plotter.subplot_of_figure(
+                        func_name="figures_1d",
+                        figure_name="chi_squared_map",
+                        region=region,
+                        filename_suffix=f"_{region}",
+                    )
+
+            except (exc.RegionException, TypeError, ValueError):
+
+                logger.info(
+                    f"VISUALIZATION - Could not visualize the Dataset1D {region}"
+                )

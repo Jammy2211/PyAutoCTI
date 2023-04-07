@@ -109,3 +109,23 @@ def test__visualize_fit_ci_combined(fit_1d_7, plot_path, plot_patch):
     assert (
         path.join(plot_path, "subplot_chi_squared_map_list.png") not in plot_patch.paths
     )
+
+
+def test__visualize_fit_ci_region_combined(fit_1d_7, plot_path, plot_patch):
+
+    if os.path.exists(plot_path):
+        shutil.rmtree(plot_path)
+
+    visualizer = VisualizerDataset1D(visualize_path=plot_path)
+
+    visualizer.visualize_fit_1d_region_combined(
+        fit_list=[fit_1d_7, fit_1d_7], region_list=["fpr"], during_analysis=True
+    )
+
+    plot_path = path.join(plot_path, "fit_dataset_1d_combined")
+
+    assert path.join(plot_path, "subplot_residual_map_fpr_list.png") in plot_patch.paths
+    assert (
+        path.join(plot_path, "subplot_chi_squared_map_fpr_list.png")
+        not in plot_patch.paths
+    )
