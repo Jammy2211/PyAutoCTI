@@ -25,6 +25,10 @@ class VisualizerImagingCI(Visualizer):
             dataset=imaging_ci, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
         )
 
+        if should_plot("subplot_dataset"):
+
+            imaging_ci_plotter.subplot_imaging_ci()
+
         imaging_ci_plotter.figures_2d(
             data=should_plot("data"),
             noise_map=should_plot("noise_map"),
@@ -35,10 +39,6 @@ class VisualizerImagingCI(Visualizer):
             pre_cti_data=should_plot("pre_cti_data"),
             cosmic_ray_map=should_plot("cosmic_ray_map"),
         )
-
-        if should_plot("subplot_dataset"):
-
-            imaging_ci_plotter.subplot_imaging_ci()
 
     def visualize_imaging_ci_regions(
         self, imaging_ci, region_list, folder_suffix: str = ""

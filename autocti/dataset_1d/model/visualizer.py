@@ -2,6 +2,7 @@ import autocti.plot as aplt
 
 from autocti.model.visualizer import Visualizer
 from autocti.model.visualizer import plot_setting
+from autocti import exc
 
 
 class VisualizerDataset1D(Visualizer):
@@ -15,16 +16,51 @@ class VisualizerDataset1D(Visualizer):
             dataset=dataset_1d, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
         )
 
+        if should_plot("subplot_dataset"):
+
+            imaging_ci_plotter.subplot_dataset_1d()
+
         imaging_ci_plotter.figures_1d(
+            data_with_noise_map=should_plot("data_with_noise_map"),
+            data_with_noise_map_logy=should_plot("data_with_noise_map_logy"),
             data=should_plot("data"),
             noise_map=should_plot("noise_map"),
             signal_to_noise_map=should_plot("signal_to_noise_map"),
             pre_cti_data=should_plot("pre_cti_data"),
         )
 
-        if should_plot("subplot_dataset"):
+    def visualize_dataset_1d_regions(self, dataset_1d, region_list, folder_suffix=""):
+        def should_plot(name):
+            return plot_setting(section="dataset", name=name)
 
-            imaging_ci_plotter.subplot_dataset_1d()
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset_1d{folder_suffix}")
+
+        imaging_ci_plotter = aplt.Dataset1DPlotter(
+            dataset=dataset_1d, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
+        )
+
+        for region in region_list:
+
+            try:
+
+                if should_plot("subplot_dataset"):
+                    imaging_ci_plotter.subplot_dataset_1d(region=region)
+
+                imaging_ci_plotter.figures_1d(
+                    region=region,
+                    data_with_noise_map=should_plot("data_with_noise_map"),
+                    data_with_noise_map_logy=should_plot("data_with_noise_map_logy"),
+                    data=should_plot("data"),
+                    noise_map=should_plot("noise_map"),
+                    signal_to_noise_map=should_plot("signal_to_noise_map"),
+                    pre_cti_data=should_plot("pre_cti_data"),
+                )
+
+            except (exc.RegionException, TypeError, ValueError):
+
+                logger.info(
+                    f"VISUALIZATION - Could not visualize the ImagingCI 1D {region}"
+                )
 
     def visualize_fit_1d(self, fit, during_analysis, folder_suffix=""):
         def should_plot(name):
