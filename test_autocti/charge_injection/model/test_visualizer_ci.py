@@ -143,12 +143,10 @@ def test__visualize_fit_ci_regions_combined(fit_ci_7x7, plot_path, plot_patch):
     plot_path = path.join(plot_path, "fit_imaging_ci_combined")
 
     assert (
-        path.join(plot_path, "subplot_data_with_noise_map_model_parallel_fpr_list.png")
+        path.join(plot_path, "subplot_data_with_noise_map_parallel_fpr_list.png")
         in plot_patch.paths
     )
     assert (
-        path.join(
-            plot_path, "subplot_data_with_noise_map_model_logy_parallel_fpr_list.png"
-        )
+        path.join(plot_path, "subplot_data_with_noise_map_logy_parallel_fpr_list.png")
         not in plot_patch.paths
     )

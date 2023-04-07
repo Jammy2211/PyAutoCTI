@@ -118,6 +118,30 @@ class AnalysisDataset1D(af.Analysis):
             )
             visualizer.visualize_fit_1d(fit=fit, during_analysis=during_analysis)
 
+    def visualize_combined(
+        self,
+        analyses: List["AnalysisDataset1D"],
+        paths: af.DirectoryPaths,
+        instance: af.ModelInstance,
+        during_analysis: bool,
+    ):
+
+        fit_list = [
+            analysis.fit_via_instance_from(instance=instance) for analysis in analyses
+        ]
+
+        visualizer = VisualizerDataset1D(visualize_path=paths.image_path)
+        visualizer.visualize_fit_1d_combined(
+            fit_list=fit_list, during_analysis=during_analysis
+        )
+
+        stop
+        # visualizer.visualize_fit_ci_1d_regions_combined(
+        #     fit_list=fit_list,
+        #     region_list=self.region_list,
+        #     during_analysis=during_analysis,
+        # )
+
     def make_result(
         self,
         samples: af.SamplesPDF,

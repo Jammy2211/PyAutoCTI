@@ -99,7 +99,7 @@ The ``ImagingCI`` object has the following three attributes:
     dataset_path = path.join("dataset", "imaging_ci", dataset_label, dataset_type)
 
     imaging_ci = ac.ImagingCI.from_fits(
-        image_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
+        data_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
         noise_map_path=path.join(dataset_path, f"noise_map_{int(normalization)}.fits"),
         pre_cti_data_path=path.join(
             dataset_path, f"pre_cti_data_{int(normalization)}.fits"
@@ -113,7 +113,7 @@ We can plot the charge injection imaging using a ``ImagingCI`` object.
 .. code-block:: python
 
     imaging_ci_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci)
-    imaging_ci_plotter.figures_2d(image=True)
+    imaging_ci_plotter.figures_2d(data=True)
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/imaging_ci.png
   :width: 600
@@ -138,7 +138,7 @@ We can zoom in on one of these regions and change the color scheme to properly h
     )
 
     imaging_ci_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci, mat_plot_2d=mat_plot_2d)
-    imaging_ci_plotter.figures_2d(image=True)
+    imaging_ci_plotter.figures_2d(data=True)
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/imaging_ci_fpr.png
   :width: 600
@@ -154,7 +154,7 @@ We can do the same to highlight the EPERs.
     )
 
     imaging_ci_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci, mat_plot_2d=mat_plot_2d)
-    imaging_ci_plotter.figures_2d(image=True)
+    imaging_ci_plotter.figures_2d(data=True)
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/imaging_ci_eper.png
   :width: 600
@@ -252,7 +252,7 @@ More realistic charge injection imaging has many other features, for example:
     dataset_path = path.join("dataset", "imaging_ci", dataset_label, dataset_type)
 
     imaging_ci = ac.ImagingCI.from_fits(
-        image_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
+        data_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
         noise_map_path=path.join(dataset_path, f"noise_map_{int(normalization)}.fits"),
         pre_cti_data_path=path.join(
             dataset_path, f"pre_cti_data_{int(normalization)}.fits"

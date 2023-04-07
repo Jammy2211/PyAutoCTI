@@ -269,7 +269,7 @@ class SimulatorImagingCI(SimulatorImaging):
             ).native
 
         return ImagingCI(
-            image=aa.Array2D.no_mask(
+            data=aa.Array2D.no_mask(
                 values=ci_image.native, pixel_scales=self.pixel_scales
             ),
             noise_map=aa.Array2D.no_mask(

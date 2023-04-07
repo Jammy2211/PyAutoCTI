@@ -54,7 +54,7 @@ We load a charge injection image with injections of 100e-.
     dataset_path = path.join("dataset", "imaging_ci", dataset_label, dataset_type)
 
     imaging_ci = ac.ImagingCI.from_fits(
-        image_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
+        data_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
         noise_map_path=path.join(dataset_path, f"noise_map_{int(normalization)}.fits"),
         pre_cti_data_path=path.join(
             dataset_path, f"pre_cti_data_{int(normalization)}.fits"
@@ -254,7 +254,7 @@ If we apply this mask to the charge injection imaging and plot it, the parallel 
     imaging_ci = imaging_ci.apply_mask(mask=mask)
 
     imaging_ci_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci)
-    imaging_ci_plotter.figures_2d(image=True)
+    imaging_ci_plotter.figures_2d(data=True)
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/image_masked.png
   :width: 600

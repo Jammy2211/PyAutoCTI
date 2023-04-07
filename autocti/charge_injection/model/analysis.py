@@ -240,7 +240,9 @@ class AnalysisImagingCI(af.Analysis):
         ]
 
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
-        visualizer.visualize_fit_ci_combined(fit_list=fit_list)
+        visualizer.visualize_fit_ci_combined(
+            fit_list=fit_list, during_analysis=during_analysis
+        )
         visualizer.visualize_fit_ci_1d_regions_combined(
             fit_list=fit_list,
             region_list=self.region_list,

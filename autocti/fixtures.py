@@ -83,7 +83,7 @@ def make_noise_map_7x7_native():
 
 def make_imaging_7x7_frame():
     return ac.Imaging(
-        image=make_image_7x7_native(),
+        data=make_image_7x7_native(),
         noise_map=make_noise_map_7x7_native(),
         name="mock_imaging_7x7_frame",
     )
@@ -179,7 +179,7 @@ def make_fit_1d_7():
 def make_imaging_ci_7x7():
 
     return ac.ImagingCI(
-        image=make_ci_image_7x7(),
+        data=make_ci_image_7x7(),
         noise_map=make_ci_noise_map_7x7(),
         pre_cti_data=make_pre_cti_data_7x7(),
         cosmic_ray_map=make_ci_cosmic_ray_map_7x7(),

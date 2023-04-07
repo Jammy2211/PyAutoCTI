@@ -1,9 +1,7 @@
-import numpy as np
-from typing import Callable, Optional
+from typing import Callable
 
 import autoarray.plot as aplt
 
-from autoarray.mask.mask_2d import Mask2D
 from autoarray.plot.auto_labels import AutoLabels
 from autoarray.dataset.plot.imaging_plotters import ImagingPlotterMeta
 
@@ -89,7 +87,7 @@ class ImagingCIPlotter(Plotter):
 
     def figures_2d(
         self,
-        image: bool = False,
+        data: bool = False,
         noise_map: bool = False,
         inverse_noise_map: bool = False,
         signal_to_noise_map: bool = False,
@@ -106,7 +104,7 @@ class ImagingCIPlotter(Plotter):
 
         Parameters
         ----------
-        image
+        data
             Whether to make a 2D plot (via `imshow`) of the image data.
         noise_map
             Whether to make a 2D plot (via `imshow`) of the noise map.
@@ -125,7 +123,7 @@ class ImagingCIPlotter(Plotter):
         """
 
         self._imaging_meta_plotter.figures_2d(
-            image=image,
+            data=data,
             noise_map=noise_map,
             inverse_noise_map=inverse_noise_map,
             signal_to_noise_map=signal_to_noise_map,
@@ -158,7 +156,7 @@ class ImagingCIPlotter(Plotter):
         region: str,
         data_with_noise_map: bool = False,
         data_with_noise_map_logy: bool = False,
-        image: bool = False,
+        data: bool = False,
         noise_map: bool = False,
         pre_cti_data: bool = False,
         signal_to_noise_map: bool = False,
@@ -188,7 +186,7 @@ class ImagingCIPlotter(Plotter):
         data_with_noise_map_logy
             Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
             noise-map values included as error bars and the y-axis on a log10 scale.
-        image
+        data
             Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region.
         noise_map
             Whether to make a 1D plot (via `plot`) of the noise-map extracted and binned over the region.
@@ -199,7 +197,7 @@ class ImagingCIPlotter(Plotter):
             the region.
         """
 
-        if image:
+        if data:
 
             y = self.extract_region_from(array=self.imaging.image, region=region)
 
@@ -309,14 +307,14 @@ class ImagingCIPlotter(Plotter):
 
     def subplot(
         self,
-        image=False,
-        noise_map=False,
-        inverse_noise_map=False,
-        signal_to_noise_map=False,
-        absolute_signal_to_noise_map=False,
-        potential_chi_squared_map=False,
-        pre_cti_data=False,
-        cosmic_ray_map=False,
+        data: bool = False,
+        noise_map: bool = False,
+        inverse_noise_map: bool = False,
+        signal_to_noise_map: bool = False,
+        absolute_signal_to_noise_map: bool = False,
+        potential_chi_squared_map: bool = False,
+        pre_cti_data: bool = False,
+        cosmic_ray_map: bool = False,
         auto_filename="subplot_imaging_ci",
     ):
         """
@@ -327,7 +325,7 @@ class ImagingCIPlotter(Plotter):
 
         Parameters
         ----------
-        image
+        data
             Whether or not to include a 2D plot (via `imshow`) of the image data.
         noise_map
             Whether or not to include a 2D plot (via `imshow`) of the noise map.
@@ -347,7 +345,7 @@ class ImagingCIPlotter(Plotter):
             The default filename of the output subplot if written to hard-disk.
         """
         self._subplot_custom_plot(
-            image=image,
+            data=data,
             noise_map=noise_map,
             signal_to_noise_map=signal_to_noise_map,
             inverse_noise_map=inverse_noise_map,
@@ -363,7 +361,7 @@ class ImagingCIPlotter(Plotter):
         Standard subplot of the attributes of the plotter's `ImagingCI` object.
         """
         self.subplot(
-            image=True,
+            data=True,
             noise_map=True,
             signal_to_noise_map=True,
             pre_cti_data=True,

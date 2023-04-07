@@ -26,7 +26,7 @@ class VisualizerImagingCI(Visualizer):
         )
 
         imaging_ci_plotter.figures_2d(
-            image=should_plot("data"),
+            data=should_plot("data"),
             noise_map=should_plot("noise_map"),
             inverse_noise_map=should_plot("inverse_noise_map"),
             signal_to_noise_map=should_plot("signal_to_noise_map"),
@@ -62,7 +62,7 @@ class VisualizerImagingCI(Visualizer):
 
                 imaging_ci_plotter.figures_1d(
                     region=region,
-                    image=should_plot("data"),
+                    data=should_plot("data"),
                     noise_map=should_plot("noise_map"),
                     signal_to_noise_map=should_plot("signal_to_noise_map"),
                     pre_cti_data=should_plot("pre_cti_data"),
@@ -87,7 +87,7 @@ class VisualizerImagingCI(Visualizer):
         )
 
         fit_ci_plotter.figures_2d(
-            image=should_plot("data"),
+            data=should_plot("data"),
             noise_map=should_plot("noise_map"),
             signal_to_noise_map=should_plot("signal_to_noise_map"),
             pre_cti_data=should_plot("pre_cti_data"),
@@ -102,7 +102,7 @@ class VisualizerImagingCI(Visualizer):
             if should_plot("all_at_end_png"):
 
                 fit_ci_plotter.figures_2d(
-                    image=True,
+                    data=True,
                     noise_map=True,
                     signal_to_noise_map=True,
                     pre_cti_data=True,
@@ -141,7 +141,7 @@ class VisualizerImagingCI(Visualizer):
 
                 fit_ci_plotter.figures_1d(
                     region=region,
-                    image=should_plot("data"),
+                    data=should_plot("data"),
                     noise_map=should_plot("noise_map"),
                     signal_to_noise_map=should_plot("signal_to_noise_map"),
                     pre_cti_data=should_plot("pre_cti_data"),
@@ -149,10 +149,8 @@ class VisualizerImagingCI(Visualizer):
                     residual_map=should_plot("residual_map"),
                     normalized_residual_map=should_plot("normalized_residual_map"),
                     chi_squared_map=should_plot("chi_squared_map"),
-                    data_with_noise_map_model=should_plot("data_with_noise_map_model"),
-                    data_with_noise_map_model_logy=should_plot(
-                        "data_with_noise_map_model_logy"
-                    ),
+                    data_with_noise_map=should_plot("data_with_noise_map"),
+                    data_with_noise_map_logy=should_plot("data_with_noise_map_logy"),
                 )
 
                 if not during_analysis:
@@ -161,7 +159,7 @@ class VisualizerImagingCI(Visualizer):
 
                         fit_ci_plotter.figures_1d(
                             region=region,
-                            image=True,
+                            data=True,
                             noise_map=True,
                             signal_to_noise_map=True,
                             pre_cti_data=True,
@@ -195,17 +193,17 @@ class VisualizerImagingCI(Visualizer):
         ]
         multi_plotter = aplt.MultiFigurePlotter(plotter_list=fit_ci_plotter_list)
 
-        if should_plot("subplot_residual_maps"):
+        if should_plot("residual_map"):
             multi_plotter.subplot_of_figure(
                 func_name="figures_2d", figure_name="residual_map"
             )
 
-        if should_plot("subplot_normalized_residual_maps"):
+        if should_plot("normalized_residual_map"):
             multi_plotter.subplot_of_figure(
                 func_name="figures_2d", figure_name="normalized_residual_map"
             )
 
-        if should_plot("subplot_chi_squared_maps"):
+        if should_plot("chi_squared_map"):
             multi_plotter.subplot_of_figure(
                 func_name="figures_2d", figure_name="chi_squared_map"
             )
@@ -232,23 +230,23 @@ class VisualizerImagingCI(Visualizer):
 
             try:
 
-                if should_plot("subplot_data_with_noise_map_model"):
+                if should_plot("data_with_noise_map"):
                     multi_plotter.subplot_of_figure(
                         func_name="figures_1d",
-                        figure_name="data_with_noise_map_model",
+                        figure_name="data_with_noise_map",
                         region=region,
                         filename_suffix=f"_{region}",
                     )
 
-                if should_plot("subplot_data_with_noise_map_model_logy"):
+                if should_plot("data_with_noise_map_logy"):
                     multi_plotter.subplot_of_figure(
                         func_name="figures_1d",
-                        figure_name="data_with_noise_map_model_logy",
+                        figure_name="data_with_noise_map_logy",
                         region=region,
                         filename_suffix=f"_{region}",
                     )
 
-                if should_plot("subplot_residual_maps"):
+                if should_plot("residual_map"):
                     multi_plotter.subplot_of_figure(
                         func_name="figures_1d",
                         figure_name="residual_map",
@@ -256,7 +254,7 @@ class VisualizerImagingCI(Visualizer):
                         filename_suffix=f"_{region}",
                     )
 
-                if should_plot("subplot_normalized_residual_maps"):
+                if should_plot("normalized_residual_map"):
                     multi_plotter.subplot_of_figure(
                         func_name="figures_1d",
                         figure_name="normalized_residual_map",
@@ -264,7 +262,7 @@ class VisualizerImagingCI(Visualizer):
                         filename_suffix=f"_{region}",
                     )
 
-                if should_plot("subplot_chi_squared_maps"):
+                if should_plot("chi_squared_map"):
                     multi_plotter.subplot_of_figure(
                         func_name="figures_1d",
                         figure_name="chi_squared_map",
@@ -287,7 +285,7 @@ class VisualizerImagingCI(Visualizer):
         )
 
         fit_ci_plotter.figures_2d(
-            image=True,
+            data=True,
             noise_map=True,
             signal_to_noise_map=True,
             pre_cti_data=True,

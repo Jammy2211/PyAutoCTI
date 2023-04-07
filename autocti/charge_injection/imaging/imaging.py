@@ -15,7 +15,7 @@ from typing import Dict, Optional, List
 class ImagingCI(aa.Imaging):
     def __init__(
         self,
-        image: aa.Array2D,
+        data: aa.Array2D,
         noise_map: aa.Array2D,
         pre_cti_data: aa.Array2D,
         layout: Layout2DCI,
@@ -24,7 +24,7 @@ class ImagingCI(aa.Imaging):
         fpr_value: Optional[float] = None,
     ):
 
-        super().__init__(image=image, noise_map=noise_map)
+        super().__init__(data=data, noise_map=noise_map)
 
         self.data = self.image.native
         self.noise_map = self.noise_map.native
@@ -119,7 +119,7 @@ class ImagingCI(aa.Imaging):
             noise_scaling_map_dict = None
 
         return ImagingCI(
-            image=image,
+            data=image,
             noise_map=noise_map,
             pre_cti_data=self.pre_cti_data.native,
             layout=self.layout,
@@ -170,9 +170,9 @@ class ImagingCI(aa.Imaging):
         cls,
         layout,
         pixel_scales,
-        image_path=None,
+        data_path=None,
         image=None,
-        image_hdu=0,
+        data_hdu=0,
         noise_map_path=None,
         noise_map_hdu=0,
         noise_map_from_single_value=None,
@@ -183,10 +183,10 @@ class ImagingCI(aa.Imaging):
         cosmic_ray_map_hdu=0,
     ) -> "ImagingCI":
 
-        if image_path is not None and image is None:
+        if data_path is not None and image is None:
 
             ci_image = aa.Array2D.from_fits(
-                file_path=image_path, hdu=image_hdu, pixel_scales=pixel_scales
+                file_path=data_path, hdu=data_hdu, pixel_scales=pixel_scales
             )
 
         elif image is not None:
@@ -231,7 +231,7 @@ class ImagingCI(aa.Imaging):
             cosmic_ray_map = None
 
         return ImagingCI(
-            image=ci_image,
+            data=ci_image,
             noise_map=ci_noise_map,
             pre_cti_data=pre_cti_data,
             cosmic_ray_map=cosmic_ray_map,
@@ -240,14 +240,14 @@ class ImagingCI(aa.Imaging):
 
     def output_to_fits(
         self,
-        image_path,
+        data_path,
         noise_map_path=None,
         pre_cti_data_path=None,
         cosmic_ray_map_path=None,
         overwrite=False,
     ):
 
-        self.image.output_to_fits(file_path=image_path, overwrite=overwrite)
+        self.image.output_to_fits(file_path=data_path, overwrite=overwrite)
 
         if noise_map_path is not None:
             self.noise_map.output_to_fits(file_path=noise_map_path, overwrite=overwrite)

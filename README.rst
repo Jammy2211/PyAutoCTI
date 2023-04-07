@@ -159,7 +159,7 @@ which fits a CTI model to charge injection imaging calibrate data (a form of dat
     Load the charge injection image from fits.
     """
     imaging_ci = ac.ImagingCI.from_fits(
-        image_path=path.join(dataset_path, f"data.fits"),
+        data_path=path.join(dataset_path, f"data.fits"),
         noise_map_path=path.join(dataset_path, f"noise_map.fits"),
         pre_cti_data_path=path.join(dataset_path, f"pre_cti_data.fits"),
         layout=layout,

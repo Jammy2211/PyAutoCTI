@@ -23,7 +23,7 @@ def test__norm_columns_list():
     layout = ac.Layout2DCI(shape_2d=image.shape_native, region_list=[(1, 4, 1, 4)])
 
     imaging = ac.ImagingCI(
-        image=image, noise_map=noise_map, pre_cti_data=image, layout=layout
+        data=image, noise_map=noise_map, pre_cti_data=image, layout=layout
     )
 
     assert imaging.norm_columns_list == [1.0, 1.0, 1.0]
@@ -44,7 +44,7 @@ def test__norm_columns_list():
     layout = ac.Layout2DCI(shape_2d=image.shape_native, region_list=[(1, 4, 1, 4)])
 
     imaging = ac.ImagingCI(
-        image=image, noise_map=noise_map, pre_cti_data=image, layout=layout
+        data=image, noise_map=noise_map, pre_cti_data=image, layout=layout
     )
 
     assert imaging.norm_columns_list == [2.0, 5.0, 8.0]
@@ -52,7 +52,7 @@ def test__norm_columns_list():
     layout = ac.Layout2DCI(shape_2d=image.shape_native, region_list=[(2, 4, 1, 4)])
 
     imaging = ac.ImagingCI(
-        image=image, noise_map=noise_map, pre_cti_data=image, layout=layout
+        data=image, noise_map=noise_map, pre_cti_data=image, layout=layout
     )
 
     assert imaging.norm_columns_list == [2.5, 5.5, 8.5]
@@ -73,7 +73,7 @@ def test__norm_columns_list():
     image = image.apply_mask(mask=mask)
 
     imaging = ac.ImagingCI(
-        image=image, noise_map=noise_map, pre_cti_data=image, layout=layout
+        data=image, noise_map=noise_map, pre_cti_data=image, layout=layout
     )
 
     assert imaging.norm_columns_list == [2.0, 6.0, 8.5]
@@ -84,8 +84,8 @@ def test__from_fits__load_all_data_components__has_correct_attributes(layout_ci_
     imaging = ac.ImagingCI.from_fits(
         pixel_scales=1.0,
         layout=layout_ci_7x7,
-        image_path=path.join(test_data_path, "3x3_ones.fits"),
-        image_hdu=0,
+        data_path=path.join(test_data_path, "3x3_ones.fits"),
+        data_hdu=0,
         noise_map_path=path.join(test_data_path, "3x3_twos.fits"),
         noise_map_hdu=0,
         pre_cti_data_path=path.join(test_data_path, "3x3_threes.fits"),
@@ -107,8 +107,8 @@ def test__from_fits__load_all_image_components__load_from_multi_hdu_fits(layout_
     imaging = ac.ImagingCI.from_fits(
         pixel_scales=1.0,
         layout=layout_ci_7x7,
-        image_path=path.join(test_data_path, "3x3_multiple_hdu.fits"),
-        image_hdu=0,
+        data_path=path.join(test_data_path, "3x3_multiple_hdu.fits"),
+        data_hdu=0,
         noise_map_path=path.join(test_data_path, "3x3_multiple_hdu.fits"),
         noise_map_hdu=1,
         pre_cti_data_path=path.join(test_data_path, "3x3_multiple_hdu.fits"),
@@ -130,8 +130,8 @@ def test__from_fits__noise_map_from_single_value(layout_ci_7x7):
     imaging = ac.ImagingCI.from_fits(
         pixel_scales=1.0,
         layout=layout_ci_7x7,
-        image_path=path.join(test_data_path, "3x3_ones.fits"),
-        image_hdu=0,
+        data_path=path.join(test_data_path, "3x3_ones.fits"),
+        data_hdu=0,
         noise_map_from_single_value=10.0,
         pre_cti_data_path=path.join(test_data_path, "3x3_threes.fits"),
         pre_cti_data_hdu=0,
@@ -150,8 +150,8 @@ def test__output_to_fits___all_arrays(layout_ci_7x7):
     imaging = ac.ImagingCI.from_fits(
         pixel_scales=1.0,
         layout=layout_ci_7x7,
-        image_path=path.join(test_data_path, "3x3_ones.fits"),
-        image_hdu=0,
+        data_path=path.join(test_data_path, "3x3_ones.fits"),
+        data_hdu=0,
         noise_map_path=path.join(test_data_path, "3x3_twos.fits"),
         noise_map_hdu=0,
         pre_cti_data_path=path.join(test_data_path, "3x3_threes.fits"),
@@ -168,7 +168,7 @@ def test__output_to_fits___all_arrays(layout_ci_7x7):
     os.makedirs(output_data_dir)
 
     imaging.output_to_fits(
-        image_path=path.join(output_data_dir, "image.fits"),
+        data_path=path.join(output_data_dir, "image.fits"),
         noise_map_path=path.join(output_data_dir, "noise_map.fits"),
         pre_cti_data_path=path.join(output_data_dir, "pre_cti_data.fits"),
         cosmic_ray_map_path=path.join(output_data_dir, "cosmic_ray_map.fits"),
@@ -177,8 +177,8 @@ def test__output_to_fits___all_arrays(layout_ci_7x7):
     imaging = ac.ImagingCI.from_fits(
         pixel_scales=1.0,
         layout=layout_ci_7x7,
-        image_path=path.join(output_data_dir, "image.fits"),
-        image_hdu=0,
+        data_path=path.join(output_data_dir, "image.fits"),
+        data_hdu=0,
         noise_map_path=path.join(output_data_dir, "noise_map.fits"),
         noise_map_hdu=0,
         pre_cti_data_path=path.join(output_data_dir, "pre_cti_data.fits"),
@@ -335,7 +335,7 @@ def test__fpr_value():
     layout = ac.Layout2DCI(shape_2d=image.shape_native, region_list=[(1, 4, 1, 4)])
 
     imaging = ac.ImagingCI(
-        image=image, noise_map=noise_map, pre_cti_data=image, layout=layout
+        data=image, noise_map=noise_map, pre_cti_data=image, layout=layout
     )
 
     assert imaging.fpr_value == pytest.approx(1.0, 1.0e-4)

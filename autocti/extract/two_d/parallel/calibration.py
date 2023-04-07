@@ -263,7 +263,7 @@ class Extract2DParallelCalibration:
         mask = self.mask_2d_from(mask=imaging_ci.mask, columns=columns)
 
         imaging_ci = ImagingCI(
-            image=imaging_ci.layout.extract.parallel_calibration.array_2d_from(
+            data=imaging_ci.layout.extract.parallel_calibration.array_2d_from(
                 array=imaging_ci.image, columns=columns
             ),
             noise_map=imaging_ci.layout.extract.parallel_calibration.array_2d_from(

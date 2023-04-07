@@ -30,7 +30,7 @@ def test__figures_2d__individual_attributes_are_output(
     imaging_ci_7x7.cosmic_ray_map[0, 0] = 1.0
 
     imaging_ci_plotter.figures_2d(
-        image=True,
+        data=True,
         noise_map=True,
         pre_cti_data=True,
         signal_to_noise_map=True,
@@ -45,7 +45,7 @@ def test__figures_2d__individual_attributes_are_output(
 
     plot_patch.paths = []
 
-    imaging_ci_plotter.figures_2d(image=True, pre_cti_data=True)
+    imaging_ci_plotter.figures_2d(data=True, pre_cti_data=True)
 
     assert path.join(plot_path, "image_2d.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map.png") not in plot_patch.paths
@@ -64,7 +64,7 @@ def test__figures_1d__individual_1d_of_region_are_output(
 
     imaging_ci_plotter.figures_1d(
         region="parallel_fpr",
-        image=True,
+        data=True,
         noise_map=True,
         pre_cti_data=True,
         signal_to_noise_map=True,
@@ -79,7 +79,7 @@ def test__figures_1d__individual_1d_of_region_are_output(
 
     plot_patch.paths = []
 
-    imaging_ci_plotter.figures_1d(region="parallel_fpr", image=True, pre_cti_data=True)
+    imaging_ci_plotter.figures_1d(region="parallel_fpr", data=True, pre_cti_data=True)
 
     assert path.join(plot_path, "image_parallel_fpr.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map_parallel_fpr.png") not in plot_patch.paths

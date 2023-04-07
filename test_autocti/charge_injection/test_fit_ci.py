@@ -115,7 +115,7 @@ def test__chi_squared_map_of_regions_ci():
     ).native
 
     imaging = ac.ImagingCI(
-        image=image, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
+        data=image, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
     )
 
     mask = ac.Mask2D.all_false(shape_native=(2, 2), pixel_scales=1.0)
@@ -145,7 +145,7 @@ def test__chi_squared_map_of_parallel_non_regions_ci():
     ).native
 
     imaging = ac.ImagingCI(
-        image=image, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
+        data=image, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
     )
 
     mask = ac.Mask2D.all_false(shape_native=(2, 2), pixel_scales=1.0)
@@ -172,7 +172,7 @@ def test__chi_squared_map_of_serial_eper():
     ).native
 
     imaging = ac.ImagingCI(
-        image=image, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
+        data=image, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
     )
 
     mask = ac.Mask2D.all_false(shape_native=(2, 2), pixel_scales=1.0)
@@ -198,7 +198,7 @@ def test__chi_squared_map_of_overscan_above_serial_eper():
     ).native
 
     imaging = ac.ImagingCI(
-        image=image, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
+        data=image, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
     )
 
     mask = ac.Mask2D.all_false(shape_native=(2, 2), pixel_scales=1.0)

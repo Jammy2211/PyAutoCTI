@@ -257,7 +257,7 @@ class Extract2DSerialCalibration:
         mask = self.mask_2d_from(mask=imaging_ci.mask, rows=rows)
 
         imaging_ci = ImagingCI(
-            image=image,
+            data=image,
             noise_map=imaging_ci.layout.extract.serial_calibration.array_2d_from(
                 array=imaging_ci.noise_map, rows=rows
             ),

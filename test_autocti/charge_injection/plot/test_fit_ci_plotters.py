@@ -23,7 +23,7 @@ def test__individual_attribute_plots__all_plot_correctly(
     )
 
     fit_ci_plotter.figures_2d(
-        image=True,
+        data=True,
         noise_map=True,
         signal_to_noise_map=True,
         pre_cti_data=True,
@@ -45,7 +45,7 @@ def test__individual_attribute_plots__all_plot_correctly(
     plot_patch.paths = []
 
     fit_ci_plotter.figures_2d(
-        image=True,
+        data=True,
         noise_map=False,
         signal_to_noise_map=False,
         pre_cti_data=True,
@@ -74,7 +74,7 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
 
     fit_ci_plotter.figures_1d(
         region="parallel_fpr",
-        image=True,
+        data=True,
         noise_map=True,
         signal_to_noise_map=True,
         pre_cti_data=True,
@@ -102,7 +102,7 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
 
     fit_ci_plotter.figures_1d(
         region="parallel_fpr",
-        image=True,
+        data=True,
         noise_map=False,
         signal_to_noise_map=False,
         pre_cti_data=True,

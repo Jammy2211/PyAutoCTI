@@ -84,7 +84,7 @@ class FitImagingCIPlotter(Plotter):
 
     def figures_2d(
         self,
-        image: bool = False,
+        data: bool = False,
         noise_map: bool = False,
         signal_to_noise_map: bool = False,
         pre_cti_data: bool = False,
@@ -101,7 +101,7 @@ class FitImagingCIPlotter(Plotter):
 
         Parameters
         ----------
-        image
+        data
             Whether to make a 2D plot (via `imshow`) of the image data.
         noise_map
             Whether to make a 2D plot (via `imshow`) of the noise map.
@@ -119,7 +119,7 @@ class FitImagingCIPlotter(Plotter):
             Whether to make a 2D plot (via `imshow`) of the chi-squared map.
         """
         self._fit_imaging_meta_plotter.figures_2d(
-            image=image,
+            data=data,
             noise_map=noise_map,
             signal_to_noise_map=signal_to_noise_map,
             residual_map=residual_map,
@@ -150,7 +150,7 @@ class FitImagingCIPlotter(Plotter):
     def figures_1d(
         self,
         region,
-        image: bool = False,
+        data: bool = False,
         noise_map: bool = False,
         signal_to_noise_map: bool = False,
         pre_cti_data: bool = False,
@@ -158,8 +158,8 @@ class FitImagingCIPlotter(Plotter):
         residual_map: bool = False,
         normalized_residual_map: bool = False,
         chi_squared_map: bool = False,
-        data_with_noise_map_model: bool = False,
-        data_with_noise_map_model_logy: bool = False,
+        data_with_noise_map: bool = False,
+        data_with_noise_map_logy: bool = False,
     ):
         """
         Plots the individual attributes of the plotter's `FitImagingCI` object in 1D.
@@ -177,7 +177,7 @@ class FitImagingCIPlotter(Plotter):
         region
             The region on the charge injection image where data is extracted and binned over the parallel or serial
             direction {"parallel_fpr", "parallel_eper", "serial_fpr", "serial_eper"}
-        image
+        data
             Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region.
         noise_map
             Whether to make a 1D plot (via `plot`) of the noise-map extracted and binned over the region.
@@ -197,14 +197,14 @@ class FitImagingCIPlotter(Plotter):
         chi_squared_map
             Whether to make a 1D plot (via `plot`) of the chi-squared map extracted and binned over the
             region.
-        data_with_noise_map_model
+        data_with_noise_map
             Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
             noise-map values included as error bars and the model-fit overlaid.
-        data_with_noise_map_model_logy
+        data_with_noise_map_logy
             Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
             noise-map values included as error bars and the y-axis on a log10 scale and the model-fit overlaid.
         """
-        if image:
+        if data:
 
             y = self.extract_region_from(array=self.fit.image, region=region)
 
@@ -336,7 +336,7 @@ class FitImagingCIPlotter(Plotter):
                 ),
             )
 
-        if data_with_noise_map_model:
+        if data_with_noise_map:
 
             y = self.extract_region_from(array=self.fit.data, region=region)
             y_errors = self.extract_region_noise_map_from(
@@ -359,7 +359,7 @@ class FitImagingCIPlotter(Plotter):
                 ),
             )
 
-        if data_with_noise_map_model_logy:
+        if data_with_noise_map_logy:
 
             y = self.extract_region_from(array=self.fit.data, region=region)
             y_errors = self.extract_region_noise_map_from(
@@ -384,7 +384,7 @@ class FitImagingCIPlotter(Plotter):
 
     def subplot(
         self,
-        image: bool = False,
+        data: bool = False,
         noise_map: bool = False,
         signal_to_noise_map: bool = False,
         pre_cti_data: bool = False,
@@ -402,7 +402,7 @@ class FitImagingCIPlotter(Plotter):
 
         Parameters
         ----------
-        image
+        data
             Whether or not to include a 2D plot (via `imshow`) of the image data.
         noise_map
             Whether or not to include a 2D plot (via `imshow`) noise map.
@@ -422,7 +422,7 @@ class FitImagingCIPlotter(Plotter):
             The default filename of the output subplot if written to hard-disk.
         """
         self._subplot_custom_plot(
-            image=image,
+            data=data,
             noise_map=noise_map,
             signal_to_noise_map=signal_to_noise_map,
             pre_cti_data=pre_cti_data,
@@ -438,7 +438,7 @@ class FitImagingCIPlotter(Plotter):
         Standard subplot of the attributes of the plotter's `FitImaging` object.
         """
         return self.subplot(
-            image=True,
+            data=True,
             signal_to_noise_map=True,
             pre_cti_data=True,
             post_cti_data=True,
@@ -466,7 +466,7 @@ class FitImagingCIPlotter(Plotter):
 
         self.open_subplot_figure(number_subplots=6)
 
-        self.figures_1d(data_with_noise_map_model=True, region=region)
+        self.figures_1d(data_with_noise_map=True, region=region)
         self.figures_1d(signal_to_noise_map=True, region=region)
         self.figures_1d(pre_cti_data=True, region=region)
         self.figures_1d(post_cti_data=True, region=region)

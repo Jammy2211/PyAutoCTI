@@ -63,7 +63,7 @@ required to calibrate the volume filling behaviour of the CCD.
 
     imaging_ci_list = [
         ac.ImagingCI.from_fits(
-            image_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
+            data_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
             noise_map_path=path.join(dataset_path, f"noise_map_{int(normalization)}.fits"),
             pre_cti_data_path=path.join(
                 dataset_path, f"pre_cti_data_{int(normalization)}.fits"
