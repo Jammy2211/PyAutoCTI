@@ -225,12 +225,13 @@ class AnalysisImagingCI(af.Analysis):
         if os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
             return
 
-        fit = self.fit_via_instance_from(instance=instance)
+        fit = self.fit_via_instance_from(instance=instance)                
+        region_list = self.region_list_from(model=instance)
 
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
         visualizer.visualize_fit_ci(fit=fit, during_analysis=during_analysis)
         visualizer.visualize_fit_ci_1d_regions(
-            fit=fit, during_analysis=during_analysis, region_list=self.region_list
+            fit=fit, during_analysis=during_analysis, region_list=region_list
         )
 
         if self.dataset_full is not None:
@@ -245,7 +246,7 @@ class AnalysisImagingCI(af.Analysis):
             visualizer.visualize_fit_ci_1d_regions(
                 fit=fit_full,
                 during_analysis=during_analysis,
-                region_list=self.region_list,
+                region_list=region_list,
                 folder_suffix="_full",
             )
 
@@ -260,6 +261,7 @@ class AnalysisImagingCI(af.Analysis):
         fit_list = [
             analysis.fit_via_instance_from(instance=instance) for analysis in analyses
         ]
+        region_list = self.region_list_from(model=instance)
 
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
         visualizer.visualize_fit_ci_combined(
@@ -267,7 +269,7 @@ class AnalysisImagingCI(af.Analysis):
         )
         visualizer.visualize_fit_ci_1d_regions_combined(
             fit_list=fit_list,
-            region_list=self.region_list,
+            region_list=region_list,
             during_analysis=during_analysis,
         )
 
