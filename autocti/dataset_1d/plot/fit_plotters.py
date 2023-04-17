@@ -99,11 +99,12 @@ class FitDataset1DPlotter(Plotter):
 
         suffix = f"_{region}" if region is not None else ""
 
+        y_errors = self.extract_region_from(array=self.fit.noise_map, region=region)
+        y_extra = self.extract_region_from(array=self.fit.model_data, region=region)
+
         if data:
 
             y = self.extract_region_from(array=self.fit.data, region=region)
-            y_errors = self.extract_region_from(array=self.fit.noise_map, region=region)
-            y_extra = self.extract_region_from(array=self.fit.model_data, region=region)
 
             self.mat_plot_1d.plot_yx(
                 y=y,
@@ -113,7 +114,7 @@ class FitDataset1DPlotter(Plotter):
                 y_extra=y_extra,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title=f"Data 1D With Noise {region}",
+                    title=f"Data 1D {region}",
                     ylabel="Data (e-)",
                     xlabel="Pixel No.",
                     filename=f"data{suffix}",
@@ -123,8 +124,6 @@ class FitDataset1DPlotter(Plotter):
         if data_logy:
 
             y = self.extract_region_from(array=self.fit.data, region=region)
-            y_errors = self.extract_region_from(array=self.fit.noise_map, region=region)
-            y_extra = self.extract_region_from(array=self.fit.model_data, region=region)
 
             self.mat_plot_1d.plot_yx(
                 y=y,
@@ -134,7 +133,7 @@ class FitDataset1DPlotter(Plotter):
                 y_extra=y_extra,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title=f"Data 1D With Noise {region} (log10 y axis)",
+                    title=f"Data 1D {region} (log10 y axis)",
                     ylabel="Data (e-)",
                     xlabel="Pixel No.",
                     filename=f"data_logy{suffix}",
@@ -182,10 +181,12 @@ class FitDataset1DPlotter(Plotter):
             self.mat_plot_1d.plot_yx(
                 y=y,
                 x=range(len(y)),
+                plot_axis_type_override="errorbar",
+                y_errors=y_errors,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title="Residual Map",
-                    ylabel="Data (e-)",
+                    title=f"Residual Map 1D {region}",
+                    ylabel="Residuals (e-)",
                     xlabel="Pixel No.",
                     filename=f"residual_map{suffix}",
                 ),

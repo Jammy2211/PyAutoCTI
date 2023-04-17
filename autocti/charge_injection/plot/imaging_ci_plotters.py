@@ -208,7 +208,7 @@ class ImagingCIPlotter(Plotter):
                 y_errors=y_errors,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title=f"Data w/ Noise {region} (FPR = {self.dataset.fpr_value} e-)",
+                    title=f"Data {region} (FPR = {self.dataset.fpr_value} e-)",
                     ylabel="Data (e-)",
                     xlabel="Pixel No.",
                     filename=f"data_{region}",
@@ -229,7 +229,7 @@ class ImagingCIPlotter(Plotter):
                 y_errors=y_errors,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title=f"Data w/ Noise {region} [log10 y] (FPR = {self.dataset.fpr_value} e-)",
+                    title=f"Data {region} [log10 y] (FPR = {self.dataset.fpr_value} e-)",
                     ylabel="Data (e-)",
                     xlabel="Pixel No.",
                     filename=f"data_logy_{region}",

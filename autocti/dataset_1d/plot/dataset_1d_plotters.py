@@ -115,7 +115,7 @@ class Dataset1DPlotter(Plotter):
                 y_errors=y_errors,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title=f"Data 1D With Noise {region}",
+                    title=f"Data 1D {region}",
                     ylabel="Data (e-)",
                     xlabel="Pixel No.",
                     filename=f"data{suffix}",
@@ -136,7 +136,7 @@ class Dataset1DPlotter(Plotter):
                 y_errors=y_errors,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title=f"Data 1D With Noise {region} (log10 y axis)",
+                    title=f"Data 1D {region} (log10 y axis)",
                     ylabel="Data (e-)",
                     xlabel="Pixel No.",
                     filename=f"data_logy{suffix}",

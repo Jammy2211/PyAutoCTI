@@ -204,13 +204,13 @@ class FitImagingCIPlotter(Plotter):
             region.
         """
 
-        if data:
+        y = self.extract_region_from(array=self.fit.data, region=region)
+        y_errors = self.extract_region_noise_map_from(
+            array=self.fit.noise_map, region=region
+        )
+        y_extra = self.extract_region_from(array=self.fit.model_data, region=region)
 
-            y = self.extract_region_from(array=self.fit.data, region=region)
-            y_errors = self.extract_region_noise_map_from(
-                array=self.fit.noise_map, region=region
-            )
-            y_extra = self.extract_region_from(array=self.fit.model_data, region=region)
+        if data:
 
             self.mat_plot_1d.plot_yx(
                 y=y,
@@ -220,7 +220,7 @@ class FitImagingCIPlotter(Plotter):
                 y_extra=y_extra,
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"Data w/ Noise {region} (FPR = {self.fit.dataset.fpr_value} e-)",
+                    title=f"Data {region} (FPR = {self.fit.dataset.fpr_value} e-)",
                     ylabel="Data (e-)",
                     xlabel="Pixel No.",
                     filename=f"data_{region}",
@@ -228,12 +228,6 @@ class FitImagingCIPlotter(Plotter):
             )
 
         if data_logy:
-
-            y = self.extract_region_from(array=self.fit.data, region=region)
-            y_errors = self.extract_region_noise_map_from(
-                array=self.fit.noise_map, region=region
-            )
-            y_extra = self.extract_region_from(array=self.fit.model_data, region=region)
 
             self.mat_plot_1d.plot_yx(
                 y=y,
@@ -243,7 +237,7 @@ class FitImagingCIPlotter(Plotter):
                 y_extra=y_extra,
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"Data w/ Noise {region} [log10 y] (FPR = {self.fit.dataset.fpr_value} e-)",
+                    title=f"Data {region} [log10 y] (FPR = {self.fit.dataset.fpr_value} e-)",
                     ylabel="Data (e-)",
                     xlabel="Pixel No.",
                     filename=f"data_logy_{region}",
@@ -323,10 +317,12 @@ class FitImagingCIPlotter(Plotter):
             self.mat_plot_1d.plot_yx(
                 y=y,
                 x=range(len(y)),
+                plot_axis_type_override="errorbar",
+                y_errors=y_errors,
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"Resdial-Map {region}",
-                    ylabel="Image",
+                    title=f"Residual Map {region} (FPR = {self.fit.dataset.fpr_value} e-)",
+                    ylabel="Residuals (e-)",
                     xlabel="Pixel No.",
                     filename=f"residual_map_{region}",
                 ),
