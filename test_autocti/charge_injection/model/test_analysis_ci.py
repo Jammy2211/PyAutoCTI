@@ -31,6 +31,34 @@ def test__modify_before_fit__noise_normalization_preload(
     assert analysis.preloads.noise_normalization == None
 
 
+def test__region_list_from(
+    imaging_ci_7x7, pre_cti_data_7x7, traps_x1, ccd, parallel_clocker_2d
+):
+
+    analysis = ac.AnalysisImagingCI(dataset=imaging_ci_7x7, clocker=parallel_clocker_2d)
+
+    model = af.Collection(
+        cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
+    )
+
+    region_list = analysis.region_list_from(model=model)    
+    assert region_list == ["parallel_fpr", "parallel_eper"]
+
+    model = af.Collection(
+        cti=af.Model(ac.CTI2D, serial_trap_list=traps_x1, serial_ccd=ccd),
+    )
+
+    region_list = analysis.region_list_from(model=model)    
+    assert region_list == ["serial_fpr", "serial_eper"]
+
+    model = af.Collection(
+        cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd, serial_trap_list=traps_x1, serial_ccd=ccd),
+    )
+
+    region_list = analysis.region_list_from(model=model)
+    assert region_list == ["parallel_fpr", "parallel_eper","serial_fpr", "serial_eper"]
+
+
 def test__make_result__result_imaging_is_returned(
     imaging_ci_7x7, pre_cti_data_7x7, traps_x1, ccd, parallel_clocker_2d
 ):

@@ -106,12 +106,14 @@ class FitDataset1DPlotter(Plotter):
 
             y = self.extract_region_from(array=self.fit.data, region=region)
             y_errors = self.extract_region_from(array=self.fit.noise_map, region=region)
+            y_extra = self.extract_region_from(array=self.fit.model_data, region=region)
 
             self.mat_plot_1d.plot_yx(
                 y=y,
                 x=range(len(y)),
                 plot_axis_type_override="errorbar",
                 y_errors=y_errors,
+                y_extra=y_extra,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title=f"Data 1D With Noise {region}",
@@ -125,12 +127,14 @@ class FitDataset1DPlotter(Plotter):
 
             y = self.extract_region_from(array=self.fit.data, region=region)
             y_errors = self.extract_region_from(array=self.fit.noise_map, region=region)
+            y_extra = self.extract_region_from(array=self.fit.model_data, region=region)
 
             self.mat_plot_1d.plot_yx(
                 y=y,
                 x=range(len(y)),
                 plot_axis_type_override="errorbar_logy",
                 y_errors=y_errors,
+                y_extra=y_extra,
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title=f"Data 1D With Noise {region} (log10 y axis)",

@@ -72,8 +72,28 @@ class AnalysisImagingCI(af.Analysis):
             serial_fast_row_lists=serial_fast_row_lists,
         )
 
-    @property
-    def region_list(self) -> List:
+    def region_list_from(self, model: af.Collection) -> List:
+        """
+        Inspects the CTI model and determines which regions are fitted for and therefore should be visualized.
+
+        For example, if the model only includes parallel CTI, the serial regions are not fitted for and thus are not
+        visualized.
+
+        Parameters
+        ----------
+        model
+            The CTI model, composed via PyAutoFit, which represents the parallel and serial CTI model compoenents
+            fitted for by the non-linear search.
+
+        Returns
+        -------
+        A list of the regions fitted for by the model and therefore visualized.
+
+        """
+        if model.cti.serial_ccd is None:
+            return ["parallel_fpr", "parallel_eper"]
+        elif model.cti.parallel_ccd is None:
+            return ["serial_fpr", "serial_eper"]
         return ["parallel_fpr", "parallel_eper", "serial_fpr", "serial_eper"]
 
     def modify_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
@@ -116,10 +136,12 @@ class AnalysisImagingCI(af.Analysis):
             if not os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
 
                 visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
+                
+                region_list = self.region_list_from(model=model)
 
                 visualizer.visualize_imaging_ci(imaging_ci=self.dataset)
                 visualizer.visualize_imaging_ci_regions(
-                    imaging_ci=self.dataset, region_list=self.region_list
+                    imaging_ci=self.dataset, region_list=region_list
                 )
 
                 if self.dataset_full is not None:
@@ -129,7 +151,7 @@ class AnalysisImagingCI(af.Analysis):
                     )
                     visualizer.visualize_imaging_ci_regions(
                         imaging_ci=self.dataset_full,
-                        region_list=self.region_list,
+                        region_list=region_list,
                         folder_suffix="_full",
                     )
 
@@ -203,12 +225,13 @@ class AnalysisImagingCI(af.Analysis):
         if os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
             return
 
-        fit = self.fit_via_instance_from(instance=instance)
+        fit = self.fit_via_instance_from(instance=instance)                
+        region_list = self.region_list_from(model=instance)
 
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
         visualizer.visualize_fit_ci(fit=fit, during_analysis=during_analysis)
         visualizer.visualize_fit_ci_1d_regions(
-            fit=fit, during_analysis=during_analysis, region_list=self.region_list
+            fit=fit, during_analysis=during_analysis, region_list=region_list
         )
 
         if self.dataset_full is not None:
@@ -223,7 +246,7 @@ class AnalysisImagingCI(af.Analysis):
             visualizer.visualize_fit_ci_1d_regions(
                 fit=fit_full,
                 during_analysis=during_analysis,
-                region_list=self.region_list,
+                region_list=region_list,
                 folder_suffix="_full",
             )
 
@@ -238,6 +261,7 @@ class AnalysisImagingCI(af.Analysis):
         fit_list = [
             analysis.fit_via_instance_from(instance=instance) for analysis in analyses
         ]
+        region_list = self.region_list_from(model=instance)
 
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
         visualizer.visualize_fit_ci_combined(
@@ -245,7 +269,7 @@ class AnalysisImagingCI(af.Analysis):
         )
         visualizer.visualize_fit_ci_1d_regions_combined(
             fit_list=fit_list,
-            region_list=self.region_list,
+            region_list=region_list,
             during_analysis=during_analysis,
         )
 
