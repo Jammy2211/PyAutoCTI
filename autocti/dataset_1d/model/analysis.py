@@ -28,6 +28,10 @@ class AnalysisDataset1D(af.Analysis):
         self.settings_cti = settings_cti
         self.dataset_full = dataset_full
 
+    @property
+    def region_list(self) -> List:
+        return ["fpr", "eper"]
+
     def modify_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
         """
         PyAutoFit calls this function immediately before the non-linear search begins, therefore it can be used to
@@ -111,12 +115,18 @@ class AnalysisDataset1D(af.Analysis):
 
         fit = self.fit_via_instance_from(instance=instance)
         visualizer.visualize_fit_1d(fit=fit, during_analysis=during_analysis)
+        visualizer.visualize_fit_1d_regions(
+            fit=fit, region_list=self.region_list, during_analysis=during_analysis
+        )
 
         if self.dataset_full is not None:
             fit = self.fit_via_instance_and_dataset_from(
                 instance=instance, dataset=self.dataset_full
             )
             visualizer.visualize_fit_1d(fit=fit, during_analysis=during_analysis)
+            visualizer.visualize_fit_1d_regions(
+                fit=fit, region_list=self.region_list, during_analysis=during_analysis
+            )
 
     def visualize_combined(
         self,
@@ -134,13 +144,29 @@ class AnalysisDataset1D(af.Analysis):
         visualizer.visualize_fit_1d_combined(
             fit_list=fit_list, during_analysis=during_analysis
         )
+        visualizer.visualize_fit_1d_region_combined(
+            fit_list=fit_list,
+            region_list=self.region_list,
+            during_analysis=during_analysis,
+        )
 
-        stop
-        # visualizer.visualize_fit_ci_1d_regions_combined(
-        #     fit_list=fit_list,
-        #     region_list=self.region_list,
-        #     during_analysis=during_analysis,
-        # )
+        if self.dataset_full is not None:
+
+            fit_list = [
+                analysis.fit_via_instance_and_dataset_from(
+                    instance=instance, dataset=analysis.dataset_full
+                )
+                for analysis in analyses
+            ]
+
+            visualizer.visualize_fit_1d_combined(
+                fit_list=fit_list, during_analysis=during_analysis
+            )
+            visualizer.visualize_fit_1d_region_combined(
+                fit_list=fit_list,
+                region_list=self.region_list,
+                during_analysis=during_analysis,
+            )
 
     def make_result(
         self,

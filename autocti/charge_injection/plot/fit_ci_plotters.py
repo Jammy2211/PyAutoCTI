@@ -150,6 +150,8 @@ class FitImagingCIPlotter(Plotter):
     def figures_1d(
         self,
         region,
+        data_with_noise_map: bool = False,
+        data_with_noise_map_logy: bool = False,
         data: bool = False,
         noise_map: bool = False,
         signal_to_noise_map: bool = False,
@@ -158,8 +160,6 @@ class FitImagingCIPlotter(Plotter):
         residual_map: bool = False,
         normalized_residual_map: bool = False,
         chi_squared_map: bool = False,
-        data_with_noise_map: bool = False,
-        data_with_noise_map_logy: bool = False,
     ):
         """
         Plots the individual attributes of the plotter's `FitImagingCI` object in 1D.
@@ -176,7 +176,13 @@ class FitImagingCIPlotter(Plotter):
         ----------
         region
             The region on the charge injection image where data is extracted and binned over the parallel or serial
-            direction {"parallel_fpr", "parallel_eper", "serial_fpr", "serial_eper"}
+            direction {"parallel_fpr", "parallel_eper", "serial_fpr", "serial_eper"}.
+        data_with_noise_map
+            Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
+            noise-map values included as error bars and the model-fit overlaid.
+        data_with_noise_map_logy
+            Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
+            noise-map values included as error bars and the y-axis on a log10 scale and the model-fit overlaid.
         data
             Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region.
         noise_map
@@ -197,13 +203,54 @@ class FitImagingCIPlotter(Plotter):
         chi_squared_map
             Whether to make a 1D plot (via `plot`) of the chi-squared map extracted and binned over the
             region.
-        data_with_noise_map
-            Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
-            noise-map values included as error bars and the model-fit overlaid.
-        data_with_noise_map_logy
-            Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
-            noise-map values included as error bars and the y-axis on a log10 scale and the model-fit overlaid.
         """
+
+        if data_with_noise_map:
+
+            y = self.extract_region_from(array=self.fit.data, region=region)
+            y_errors = self.extract_region_noise_map_from(
+                array=self.fit.noise_map, region=region
+            )
+            y_extra = self.extract_region_from(array=self.fit.model_data, region=region)
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                plot_axis_type_override="errorbar",
+                y_errors=y_errors,
+                y_extra=y_extra,
+                visuals_1d=self.visuals_1d,
+                auto_labels=AutoLabels(
+                    title=f"Data w/ Noise {region} (FPR = {self.fit.dataset.fpr_value} e-)",
+                    ylabel="Data (e-)",
+                    xlabel="Pixel No.",
+                    filename=f"data_with_noise_map_{region}",
+                ),
+            )
+
+        if data_with_noise_map_logy:
+
+            y = self.extract_region_from(array=self.fit.data, region=region)
+            y_errors = self.extract_region_noise_map_from(
+                array=self.fit.noise_map, region=region
+            )
+            y_extra = self.extract_region_from(array=self.fit.model_data, region=region)
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                plot_axis_type_override="errorbar_logy",
+                y_errors=y_errors,
+                y_extra=y_extra,
+                visuals_1d=self.visuals_1d,
+                auto_labels=AutoLabels(
+                    title=f"Data w/ Noise {region} [log10 y] (FPR = {self.fit.dataset.fpr_value} e-)",
+                    ylabel="Data (e-)",
+                    xlabel="Pixel No.",
+                    filename=f"data_with_noise_map_logy_{region}",
+                ),
+            )
+
         if data:
 
             y = self.extract_region_from(array=self.fit.image, region=region)
@@ -333,52 +380,6 @@ class FitImagingCIPlotter(Plotter):
                     ylabel="Image",
                     xlabel="Pixel No.",
                     filename=f"chi_squared_map_{region}",
-                ),
-            )
-
-        if data_with_noise_map:
-
-            y = self.extract_region_from(array=self.fit.data, region=region)
-            y_errors = self.extract_region_noise_map_from(
-                array=self.fit.noise_map, region=region
-            )
-            y_extra = self.extract_region_from(array=self.fit.model_data, region=region)
-
-            self.mat_plot_1d.plot_yx(
-                y=y,
-                x=range(len(y)),
-                plot_axis_type_override="errorbar",
-                y_errors=y_errors,
-                y_extra=y_extra,
-                visuals_1d=self.visuals_1d,
-                auto_labels=AutoLabels(
-                    title=f"Data w/ Noise {region} (FPR = {self.fit.dataset.fpr_value} e-)",
-                    ylabel="Data (e-)",
-                    xlabel="Pixel No.",
-                    filename=f"data_with_noise_map_{region}",
-                ),
-            )
-
-        if data_with_noise_map_logy:
-
-            y = self.extract_region_from(array=self.fit.data, region=region)
-            y_errors = self.extract_region_noise_map_from(
-                array=self.fit.noise_map, region=region
-            )
-            y_extra = self.extract_region_from(array=self.fit.model_data, region=region)
-
-            self.mat_plot_1d.plot_yx(
-                y=y,
-                x=range(len(y)),
-                plot_axis_type_override="errorbar_logy",
-                y_errors=y_errors,
-                y_extra=y_extra,
-                visuals_1d=self.visuals_1d,
-                auto_labels=AutoLabels(
-                    title=f"Data w/ Noise {region} [log10 y] (FPR = {self.fit.dataset.fpr_value} e-)",
-                    ylabel="Data (e-)",
-                    xlabel="Pixel No.",
-                    filename=f"data_with_noise_map_logy_{region}",
                 ),
             )
 
