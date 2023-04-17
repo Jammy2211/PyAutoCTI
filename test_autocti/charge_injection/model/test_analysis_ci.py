@@ -41,22 +41,28 @@ def test__region_list_from(
         cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
     )
 
-    region_list = analysis.region_list_from(model=model)    
+    region_list = analysis.region_list_from(model=model)
     assert region_list == ["parallel_fpr", "parallel_eper"]
 
     model = af.Collection(
         cti=af.Model(ac.CTI2D, serial_trap_list=traps_x1, serial_ccd=ccd),
     )
 
-    region_list = analysis.region_list_from(model=model)    
+    region_list = analysis.region_list_from(model=model)
     assert region_list == ["serial_fpr", "serial_eper"]
 
     model = af.Collection(
-        cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd, serial_trap_list=traps_x1, serial_ccd=ccd),
+        cti=af.Model(
+            ac.CTI2D,
+            parallel_trap_list=traps_x1,
+            parallel_ccd=ccd,
+            serial_trap_list=traps_x1,
+            serial_ccd=ccd,
+        ),
     )
 
     region_list = analysis.region_list_from(model=model)
-    assert region_list == ["parallel_fpr", "parallel_eper","serial_fpr", "serial_eper"]
+    assert region_list == ["parallel_fpr", "parallel_eper", "serial_fpr", "serial_eper"]
 
 
 def test__make_result__result_imaging_is_returned(

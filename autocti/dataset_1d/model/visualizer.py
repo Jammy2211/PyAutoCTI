@@ -27,9 +27,8 @@ class VisualizerDataset1D(Visualizer):
             imaging_ci_plotter.subplot_dataset_1d()
 
         imaging_ci_plotter.figures_1d(
-            data_with_noise_map=should_plot("data_with_noise_map"),
-            data_with_noise_map_logy=should_plot("data_with_noise_map_logy"),
             data=should_plot("data"),
+            data_logy=should_plot("data_logy"),
             noise_map=should_plot("noise_map"),
             signal_to_noise_map=should_plot("signal_to_noise_map"),
             pre_cti_data=should_plot("pre_cti_data"),
@@ -54,9 +53,8 @@ class VisualizerDataset1D(Visualizer):
 
                 imaging_ci_plotter.figures_1d(
                     region=region,
-                    data_with_noise_map=should_plot("data_with_noise_map"),
-                    data_with_noise_map_logy=should_plot("data_with_noise_map_logy"),
                     data=should_plot("data"),
+                    data_logy=should_plot("data_logy"),
                     noise_map=should_plot("noise_map"),
                     signal_to_noise_map=should_plot("signal_to_noise_map"),
                     pre_cti_data=should_plot("pre_cti_data"),
@@ -79,9 +77,8 @@ class VisualizerDataset1D(Visualizer):
         )
 
         fit_1d_plotter.figures_1d(
-            data_with_noise_map=should_plot("data_with_noise_map"),
-            data_with_noise_map_logy=should_plot("data_with_noise_map_logy"),
             data=should_plot("data"),
+            data_logy=should_plot("data_logy"),
             noise_map=should_plot("noise_map"),
             signal_to_noise_map=should_plot("signal_to_noise_map"),
             pre_cti_data=should_plot("pre_cti_data"),
@@ -130,9 +127,8 @@ class VisualizerDataset1D(Visualizer):
 
                 fit_1d_plotter.figures_1d(
                     region=region,
-                    data_with_noise_map=should_plot("data_with_noise_map"),
-                    data_with_noise_map_logy=should_plot("data_with_noise_map_logy"),
                     data=should_plot("data"),
+                    data_logy=should_plot("data_logy"),
                     noise_map=should_plot("noise_map"),
                     signal_to_noise_map=should_plot("signal_to_noise_map"),
                     pre_cti_data=should_plot("pre_cti_data"),
@@ -164,14 +160,12 @@ class VisualizerDataset1D(Visualizer):
         ]
         multi_plotter = aplt.MultiFigurePlotter(plotter_list=fit_1d_plotter_list)
 
-        if should_plot("data_with_noise_map"):
-            multi_plotter.subplot_of_figure(
-                func_name="figures_1d", figure_name="data_with_noise_map"
-            )
+        if should_plot("data"):
+            multi_plotter.subplot_of_figure(func_name="figures_1d", figure_name="data")
 
-        if should_plot("data_with_noise_map_logy"):
+        if should_plot("data_logy"):
             multi_plotter.subplot_of_figure(
-                func_name="figures_1d", figure_name="data_with_noise_map_logy"
+                func_name="figures_1d", figure_name="data_logy"
             )
 
         if should_plot("residual_map"):
@@ -211,18 +205,18 @@ class VisualizerDataset1D(Visualizer):
 
             try:
 
-                if should_plot("data_with_noise_map"):
+                if should_plot("data"):
                     multi_plotter.subplot_of_figure(
                         func_name="figures_1d",
-                        figure_name="data_with_noise_map",
+                        figure_name="data",
                         region=region,
                         filename_suffix=f"_{region}",
                     )
 
-                if should_plot("data_with_noise_map_logy"):
+                if should_plot("data_logy"):
                     multi_plotter.subplot_of_figure(
                         func_name="figures_1d",
-                        figure_name="data_with_noise_map_logy",
+                        figure_name="data_logy",
                         region=region,
                         filename_suffix=f"_{region}",
                     )

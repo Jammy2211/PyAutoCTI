@@ -150,9 +150,8 @@ class FitImagingCIPlotter(Plotter):
     def figures_1d(
         self,
         region,
-        data_with_noise_map: bool = False,
-        data_with_noise_map_logy: bool = False,
         data: bool = False,
+        data_logy: bool = False,
         noise_map: bool = False,
         signal_to_noise_map: bool = False,
         pre_cti_data: bool = False,
@@ -177,10 +176,10 @@ class FitImagingCIPlotter(Plotter):
         region
             The region on the charge injection image where data is extracted and binned over the parallel or serial
             direction {"parallel_fpr", "parallel_eper", "serial_fpr", "serial_eper"}.
-        data_with_noise_map
+        data
             Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
             noise-map values included as error bars and the model-fit overlaid.
-        data_with_noise_map_logy
+        data_logy
             Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
             noise-map values included as error bars and the y-axis on a log10 scale and the model-fit overlaid.
         data
@@ -205,7 +204,7 @@ class FitImagingCIPlotter(Plotter):
             region.
         """
 
-        if data_with_noise_map:
+        if data:
 
             y = self.extract_region_from(array=self.fit.data, region=region)
             y_errors = self.extract_region_noise_map_from(
@@ -224,11 +223,11 @@ class FitImagingCIPlotter(Plotter):
                     title=f"Data w/ Noise {region} (FPR = {self.fit.dataset.fpr_value} e-)",
                     ylabel="Data (e-)",
                     xlabel="Pixel No.",
-                    filename=f"data_with_noise_map_{region}",
+                    filename=f"data_{region}",
                 ),
             )
 
-        if data_with_noise_map_logy:
+        if data_logy:
 
             y = self.extract_region_from(array=self.fit.data, region=region)
             y_errors = self.extract_region_noise_map_from(
@@ -247,23 +246,7 @@ class FitImagingCIPlotter(Plotter):
                     title=f"Data w/ Noise {region} [log10 y] (FPR = {self.fit.dataset.fpr_value} e-)",
                     ylabel="Data (e-)",
                     xlabel="Pixel No.",
-                    filename=f"data_with_noise_map_logy_{region}",
-                ),
-            )
-
-        if data:
-
-            y = self.extract_region_from(array=self.fit.image, region=region)
-
-            self.mat_plot_1d.plot_yx(
-                y=y,
-                x=range(len(y)),
-                visuals_1d=self.visuals_1d,
-                auto_labels=AutoLabels(
-                    title=f"Image {region}",
-                    ylabel="Image",
-                    xlabel="Pixel No.",
-                    filename=f"image_{region}",
+                    filename=f"data_logy_{region}",
                 ),
             )
 
@@ -467,7 +450,7 @@ class FitImagingCIPlotter(Plotter):
 
         self.open_subplot_figure(number_subplots=6)
 
-        self.figures_1d(data_with_noise_map=True, region=region)
+        self.figures_1d(data=True, region=region)
         self.figures_1d(signal_to_noise_map=True, region=region)
         self.figures_1d(pre_cti_data=True, region=region)
         self.figures_1d(post_cti_data=True, region=region)

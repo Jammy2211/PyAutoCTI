@@ -63,11 +63,10 @@ class VisualizerImagingCI(Visualizer):
                 imaging_ci_plotter.figures_1d(
                     region=region,
                     data=should_plot("data"),
+                    data_logy=should_plot("data_logy"),
                     noise_map=should_plot("noise_map"),
                     signal_to_noise_map=should_plot("signal_to_noise_map"),
                     pre_cti_data=should_plot("pre_cti_data"),
-                    data_with_noise_map=should_plot("data_with_noise_map"),
-                    data_with_noise_map_logy=should_plot("data_with_noise_map_logy"),
                 )
 
             except (exc.RegionException, TypeError, ValueError):
@@ -142,6 +141,7 @@ class VisualizerImagingCI(Visualizer):
                 fit_ci_plotter.figures_1d(
                     region=region,
                     data=should_plot("data"),
+                    data_logy=should_plot("data_logy"),
                     noise_map=should_plot("noise_map"),
                     signal_to_noise_map=should_plot("signal_to_noise_map"),
                     pre_cti_data=should_plot("pre_cti_data"),
@@ -149,8 +149,6 @@ class VisualizerImagingCI(Visualizer):
                     residual_map=should_plot("residual_map"),
                     normalized_residual_map=should_plot("normalized_residual_map"),
                     chi_squared_map=should_plot("chi_squared_map"),
-                    data_with_noise_map=should_plot("data_with_noise_map"),
-                    data_with_noise_map_logy=should_plot("data_with_noise_map_logy"),
                 )
 
                 if not during_analysis:
@@ -230,18 +228,18 @@ class VisualizerImagingCI(Visualizer):
 
             try:
 
-                if should_plot("data_with_noise_map"):
+                if should_plot("data"):
                     multi_plotter.subplot_of_figure(
                         func_name="figures_1d",
-                        figure_name="data_with_noise_map",
+                        figure_name="data",
                         region=region,
                         filename_suffix=f"_{region}",
                     )
 
-                if should_plot("data_with_noise_map_logy"):
+                if should_plot("data_logy"):
                     multi_plotter.subplot_of_figure(
                         func_name="figures_1d",
-                        figure_name="data_with_noise_map_logy",
+                        figure_name="data_logy",
                         region=region,
                         filename_suffix=f"_{region}",
                     )

@@ -136,7 +136,7 @@ class AnalysisImagingCI(af.Analysis):
             if not os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
 
                 visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
-                
+
                 region_list = self.region_list_from(model=model)
 
                 visualizer.visualize_imaging_ci(imaging_ci=self.dataset)
@@ -225,7 +225,7 @@ class AnalysisImagingCI(af.Analysis):
         if os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
             return
 
-        fit = self.fit_via_instance_from(instance=instance)                
+        fit = self.fit_via_instance_from(instance=instance)
         region_list = self.region_list_from(model=instance)
 
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)

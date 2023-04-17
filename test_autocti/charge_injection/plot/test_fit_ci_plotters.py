@@ -33,7 +33,7 @@ def test__individual_attribute_plots__all_plot_correctly(
         chi_squared_map=True,
     )
 
-    assert path.join(plot_path, "image_2d.png") in plot_patch.paths
+    assert path.join(plot_path, "data.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map.png") in plot_patch.paths
     assert path.join(plot_path, "signal_to_noise_map.png") in plot_patch.paths
     assert path.join(plot_path, "pre_cti_data.png") in plot_patch.paths
@@ -53,7 +53,7 @@ def test__individual_attribute_plots__all_plot_correctly(
         chi_squared_map=True,
     )
 
-    assert path.join(plot_path, "image_2d.png") in plot_patch.paths
+    assert path.join(plot_path, "data.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map.png") not in plot_patch.paths
     assert path.join(plot_path, "signal_to_noise_map.png") not in plot_patch.paths
     assert path.join(plot_path, "pre_cti_data.png") in plot_patch.paths
@@ -84,7 +84,7 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
         chi_squared_map=True,
     )
 
-    assert path.join(plot_path, "image_parallel_fpr.png") in plot_patch.paths
+    assert path.join(plot_path, "data_parallel_fpr.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map_parallel_fpr.png") in plot_patch.paths
     assert (
         path.join(plot_path, "signal_to_noise_map_parallel_fpr.png") in plot_patch.paths
@@ -110,7 +110,7 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
         chi_squared_map=True,
     )
 
-    assert path.join(plot_path, "image_parallel_fpr.png") in plot_patch.paths
+    assert path.join(plot_path, "data_parallel_fpr.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map_parallel_fpr.png") not in plot_patch.paths
     assert (
         path.join(plot_path, "signal_to_noise_map_parallel_fpr.png")
