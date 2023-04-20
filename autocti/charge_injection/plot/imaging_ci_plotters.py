@@ -210,7 +210,7 @@ class ImagingCIPlotter(Plotter):
                 text_manual_dict_y=self.text_manual_dict_y_from(region=region),
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title=f"Data {region} (FPR = {self.dataset.fpr_value} e-)",
+                    title=f"Data {region}",
                     ylabel="Data (e-)",
                     filename=f"data_{region}",
                 ),
@@ -232,7 +232,7 @@ class ImagingCIPlotter(Plotter):
                 text_manual_dict_y=self.text_manual_dict_y_from(region=region),
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title=f"Data {region} [log10 y] (FPR = {self.dataset.fpr_value} e-)",
+                    title=f"Data {region} [log10 y]",
                     ylabel="Data (e-)",
                     filename=f"data_logy_{region}",
                 ),

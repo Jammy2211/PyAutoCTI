@@ -44,4 +44,4 @@ class Plotter(AbstractPlotter):
 
         if region is None or "eper" in region:
             return 0.94
-        return 0.44
+        return 0.34
