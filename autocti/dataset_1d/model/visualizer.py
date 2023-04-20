@@ -84,6 +84,7 @@ class VisualizerDataset1D(Visualizer):
             pre_cti_data=should_plot("pre_cti_data"),
             post_cti_data=should_plot("post_cti_data"),
             residual_map=should_plot("residual_map"),
+            residual_map_logy=should_plot("residual_map_logy"),
             normalized_residual_map=should_plot("normalized_residual_map"),
             chi_squared_map=should_plot("chi_squared_map"),
         )
@@ -99,6 +100,7 @@ class VisualizerDataset1D(Visualizer):
                     pre_cti_data=True,
                     post_cti_data=True,
                     residual_map=True,
+                    residual_map_logy=True,
                     normalized_residual_map=True,
                     chi_squared_map=True,
                 )
@@ -134,6 +136,7 @@ class VisualizerDataset1D(Visualizer):
                     pre_cti_data=should_plot("pre_cti_data"),
                     post_cti_data=should_plot("post_cti_data"),
                     residual_map=should_plot("residual_map"),
+                    residual_map_logy=should_plot("residual_map_logy"),
                     normalized_residual_map=should_plot("normalized_residual_map"),
                     chi_squared_map=should_plot("chi_squared_map"),
                 )
@@ -171,6 +174,11 @@ class VisualizerDataset1D(Visualizer):
         if should_plot("residual_map"):
             multi_plotter.subplot_of_figure(
                 func_name="figures_1d", figure_name="residual_map"
+            )
+
+        if should_plot("residual_map_logy"):
+            multi_plotter.subplot_of_figure(
+                func_name="figures_1d", figure_name="residual_map_logy"
             )
 
         if should_plot("normalized_residual_map"):
@@ -225,6 +233,14 @@ class VisualizerDataset1D(Visualizer):
                     multi_plotter.subplot_of_figure(
                         func_name="figures_1d",
                         figure_name="residual_map",
+                        region=region,
+                        filename_suffix=f"_{region}",
+                    )
+
+                if should_plot("residual_map_logy"):
+                    multi_plotter.subplot_of_figure(
+                        func_name="figures_1d",
+                        figure_name="residual_map_logy",
                         region=region,
                         filename_suffix=f"_{region}",
                     )

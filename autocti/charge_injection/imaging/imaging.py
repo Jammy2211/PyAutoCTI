@@ -1,5 +1,5 @@
-import copy
 import numpy as np
+from typing import Optional, List, Dict
 
 import autoarray as aa
 
@@ -8,8 +8,6 @@ from autocti.charge_injection.layout import Layout2DCI
 from autocti.extract.settings import SettingsExtract
 from autocti.mask import mask_2d
 from autocti import exc
-
-from typing import Dict, Optional, List
 
 
 class ImagingCI(aa.Imaging):
@@ -22,6 +20,7 @@ class ImagingCI(aa.Imaging):
         cosmic_ray_map: Optional[aa.Array2D] = None,
         noise_scaling_map_dict: Optional[Dict] = None,
         fpr_value: Optional[float] = None,
+        settings_dict: Optional[Dict] = None,
     ):
 
         super().__init__(data=data, noise_map=noise_map)
@@ -63,6 +62,7 @@ class ImagingCI(aa.Imaging):
             )
 
         self.fpr_value = fpr_value
+        self.settings_dict = settings_dict
 
     @property
     def mask(self):
@@ -126,6 +126,7 @@ class ImagingCI(aa.Imaging):
             cosmic_ray_map=cosmic_ray_map,
             noise_scaling_map_dict=noise_scaling_map_dict,
             fpr_value=self.fpr_value,
+            settings_dict=self.settings_dict,
         )
 
     def apply_settings(self, settings: SettingsImagingCI):
@@ -181,6 +182,7 @@ class ImagingCI(aa.Imaging):
         pre_cti_data=None,
         cosmic_ray_map_path=None,
         cosmic_ray_map_hdu=0,
+        settings_dict: Optional[Dict] = None,
     ) -> "ImagingCI":
 
         if data_path is not None and image is None:
@@ -236,6 +238,7 @@ class ImagingCI(aa.Imaging):
             pre_cti_data=pre_cti_data,
             cosmic_ray_map=cosmic_ray_map,
             layout=layout,
+            settings_dict=settings_dict,
         )
 
     def output_to_fits(

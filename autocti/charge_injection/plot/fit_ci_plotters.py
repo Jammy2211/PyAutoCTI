@@ -157,6 +157,7 @@ class FitImagingCIPlotter(Plotter):
         pre_cti_data: bool = False,
         post_cti_data: bool = False,
         residual_map: bool = False,
+        residual_map_logy: bool = False,
         normalized_residual_map: bool = False,
         chi_squared_map: bool = False,
     ):
@@ -195,7 +196,11 @@ class FitImagingCIPlotter(Plotter):
             Whether to make a 1D plot (via `plot`) of the post-cti data extracted and binned over the
             region.
         residual_map
-            Whether to make a 1D plot (via `plot`) of the residual map extracted and binned over the region.
+            Whether to make a 1D plot (via `plot`) of the residual map extracted and binned over the region, with the
+            noise-map values included as error bars and the model-fit overlaid.
+        residual_map_logy
+            Whether to make a 1D plot (via `plot`) of the residual map extracted and binned over the region, with the
+            noise-map values included as error bars and the y-axis on a log10 scale and the model-fit overlaid.
         normalized_residual_map
             Whether to make a 1D plot (via `plot`) of the normalized residual map extracted and binned over the
             region.
@@ -218,11 +223,12 @@ class FitImagingCIPlotter(Plotter):
                 plot_axis_type_override="errorbar",
                 y_errors=y_errors,
                 y_extra=y_extra,
+                text_manual_dict=self.text_manual_dict_from(region=region),
+                text_manual_dict_y=self.text_manual_dict_y_from(region=region),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"Data {region} (FPR = {self.fit.dataset.fpr_value} e-)",
+                    title=f"Data {region}",
                     ylabel="Data (e-)",
-                    xlabel="Pixel No.",
                     filename=f"data_{region}",
                 ),
             )
@@ -235,11 +241,12 @@ class FitImagingCIPlotter(Plotter):
                 plot_axis_type_override="errorbar_logy",
                 y_errors=y_errors,
                 y_extra=y_extra,
+                text_manual_dict=self.text_manual_dict_from(region=region),
+                text_manual_dict_y=self.text_manual_dict_y_from(region=region),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"Data {region} [log10 y] (FPR = {self.fit.dataset.fpr_value} e-)",
-                    ylabel="Data (e-)",
-                    xlabel="Pixel No.",
+                    title=f"Data {region}",
+                    ylabel="Log10[Data (e-)]",
                     filename=f"data_logy_{region}",
                 ),
             )
@@ -255,7 +262,6 @@ class FitImagingCIPlotter(Plotter):
                 auto_labels=AutoLabels(
                     title=f"Noise-Map {region}",
                     ylabel="Image",
-                    xlabel="Pixel No.",
                     filename=f"noise_map_{region}",
                 ),
             )
@@ -273,7 +279,6 @@ class FitImagingCIPlotter(Plotter):
                 auto_labels=AutoLabels(
                     title=f"Signal-To-Noise Map {region}",
                     ylabel="Image",
-                    xlabel="Pixel No.",
                     filename=f"signal_to_noise_map_{region}",
                 ),
             )
@@ -289,7 +294,6 @@ class FitImagingCIPlotter(Plotter):
                 auto_labels=AutoLabels(
                     title=f"CI Pre CTI {region}",
                     ylabel="Image",
-                    xlabel="Pixel No.",
                     filename=f"pre_cti_data_{region}",
                 ),
             )
@@ -305,7 +309,6 @@ class FitImagingCIPlotter(Plotter):
                 auto_labels=AutoLabels(
                     title=f"CI Post CTI {region}",
                     ylabel="Image",
-                    xlabel="Pixel No.",
                     filename=f"post_cti_data_{region}",
                 ),
             )
@@ -319,12 +322,34 @@ class FitImagingCIPlotter(Plotter):
                 x=range(len(y)),
                 plot_axis_type_override="errorbar",
                 y_errors=y_errors,
+                y_extra=np.zeros(shape=y.shape),
+                text_manual_dict=self.text_manual_dict_from(region=region),
+                text_manual_dict_y=self.text_manual_dict_y_from(region=region),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"Residual Map {region} (FPR = {self.fit.dataset.fpr_value} e-)",
+                    title=f"Residual Map {region}",
                     ylabel="Residuals (e-)",
-                    xlabel="Pixel No.",
                     filename=f"residual_map_{region}",
+                ),
+            )
+
+        if residual_map_logy:
+
+            y = self.extract_region_from(array=self.fit.residual_map, region=region)
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                plot_axis_type_override="errorbar_logy",
+                y_errors=y_errors,
+                y_extra=1.0001 * np.zeros(shape=y.shape),
+                text_manual_dict=self.text_manual_dict_from(region=region),
+                text_manual_dict_y=self.text_manual_dict_y_from(region=region),
+                visuals_1d=self.visuals_1d,
+                auto_labels=AutoLabels(
+                    title=f"Residual Map {region}",
+                    ylabel="Log10[Residuals (e-)]",
+                    filename=f"residual_map_logy_{region}",
                 ),
             )
 
@@ -341,7 +366,6 @@ class FitImagingCIPlotter(Plotter):
                 auto_labels=AutoLabels(
                     title=f"Normalized Residual Map {region}",
                     ylabel="Image",
-                    xlabel="Pixel No.",
                     filename=f"normalized_residual_map_{region}",
                 ),
             )
@@ -357,7 +381,6 @@ class FitImagingCIPlotter(Plotter):
                 auto_labels=AutoLabels(
                     title=f"Chi-Squared Map {region}",
                     ylabel="Image",
-                    xlabel="Pixel No.",
                     filename=f"chi_squared_map_{region}",
                 ),
             )

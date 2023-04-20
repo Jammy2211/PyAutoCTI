@@ -1,4 +1,5 @@
 import numpy as np
+from typing import Optional, Dict
 
 import autoarray as aa
 
@@ -15,6 +16,7 @@ class Dataset1D(aa.AbstractDataset):
         pre_cti_data: aa.Array1D,
         layout: Layout1D,
         settings: SettingsDataset1D = SettingsDataset1D(),
+        settings_dict: Optional[Dict] = None,
     ):
 
         super().__init__(data=data, noise_map=noise_map, settings=settings)
@@ -23,6 +25,7 @@ class Dataset1D(aa.AbstractDataset):
         self.noise_map = noise_map
         self.pre_cti_data = pre_cti_data
         self.layout = layout
+        self.settings_dict = settings_dict
 
     def apply_mask(self, mask: aa.Mask1D) -> "Dataset1D":
 
@@ -34,6 +37,7 @@ class Dataset1D(aa.AbstractDataset):
             noise_map=noise_map,
             pre_cti_data=self.pre_cti_data,
             layout=self.layout,
+            settings_dict=self.settings_dict,
         )
 
     def apply_settings(self, settings: SettingsDataset1D) -> "Dataset1D":
@@ -53,6 +57,7 @@ class Dataset1D(aa.AbstractDataset):
         pre_cti_data_path=None,
         pre_cti_data_hdu=0,
         pre_cti_data=None,
+        settings_dict: Optional[Dict] = None,
     ):
 
         data = aa.Array1D.from_fits(
@@ -84,7 +89,11 @@ class Dataset1D(aa.AbstractDataset):
         )
 
         return Dataset1D(
-            data=data, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
+            data=data,
+            noise_map=noise_map,
+            pre_cti_data=pre_cti_data,
+            layout=layout,
+            settings_dict=settings_dict,
         )
 
     def output_to_fits(

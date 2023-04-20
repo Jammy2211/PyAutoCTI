@@ -206,11 +206,12 @@ class ImagingCIPlotter(Plotter):
                 x=range(len(y)),
                 plot_axis_type_override="errorbar",
                 y_errors=y_errors,
+                text_manual_dict=self.text_manual_dict_from(region=region),
+                text_manual_dict_y=self.text_manual_dict_y_from(region=region),
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title=f"Data {region} (FPR = {self.dataset.fpr_value} e-)",
                     ylabel="Data (e-)",
-                    xlabel="Pixel No.",
                     filename=f"data_{region}",
                 ),
             )
@@ -227,11 +228,12 @@ class ImagingCIPlotter(Plotter):
                 x=range(len(y)),
                 plot_axis_type_override="errorbar_logy",
                 y_errors=y_errors,
+                text_manual_dict=self.text_manual_dict_from(region=region),
+                text_manual_dict_y=self.text_manual_dict_y_from(region=region),
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title=f"Data {region} [log10 y] (FPR = {self.dataset.fpr_value} e-)",
                     ylabel="Data (e-)",
-                    xlabel="Pixel No.",
                     filename=f"data_logy_{region}",
                 ),
             )
@@ -247,7 +249,6 @@ class ImagingCIPlotter(Plotter):
                 auto_labels=AutoLabels(
                     title=f"Noise Map {region}",
                     ylabel="Noise (e-)",
-                    xlabel="Pixel No.",
                     filename=f"noise_map_{region}",
                 ),
             )
@@ -263,7 +264,6 @@ class ImagingCIPlotter(Plotter):
                 auto_labels=AutoLabels(
                     title=f"CI Pre CTI {region}",
                     ylabel="Pre CTI Data (e-)",
-                    xlabel="Pixel No.",
                     filename=f"pre_cti_data_{region}",
                 ),
             )
@@ -281,7 +281,6 @@ class ImagingCIPlotter(Plotter):
                 auto_labels=AutoLabels(
                     title=f"Signal To Noise Map {region}",
                     ylabel="Signal To Noise (e-)",
-                    xlabel="Pixel No.",
                     filename=f"signal_to_noise_map_{region}",
                 ),
             )

@@ -114,10 +114,10 @@ class Dataset1DPlotter(Plotter):
                 plot_axis_type_override="errorbar",
                 y_errors=y_errors,
                 visuals_1d=self.get_visuals_1d(),
+                text_manual_dict=self.dataset.settings_dict,
                 auto_labels=AutoLabels(
                     title=f"Data 1D {region}",
                     ylabel="Data (e-)",
-                    xlabel="Pixel No.",
                     filename=f"data{suffix}",
                 ),
             )
@@ -135,10 +135,10 @@ class Dataset1DPlotter(Plotter):
                 plot_axis_type_override="errorbar_logy",
                 y_errors=y_errors,
                 visuals_1d=self.get_visuals_1d(),
+                text_manual_dict=self.dataset.settings_dict,
                 auto_labels=AutoLabels(
                     title=f"Data 1D {region} (log10 y axis)",
                     ylabel="Data (e-)",
-                    xlabel="Pixel No.",
                     filename=f"data_logy{suffix}",
                 ),
             )
@@ -153,7 +153,6 @@ class Dataset1DPlotter(Plotter):
                 auto_labels=AutoLabels(
                     title=f"Noise Map {region}",
                     ylabel="Noise (e-)",
-                    xlabel="Pixel No.",
                     filename=f"noise_map{suffix}",
                 ),
             )
@@ -168,7 +167,6 @@ class Dataset1DPlotter(Plotter):
                 auto_labels=AutoLabels(
                     title=f"CI Pre CTI {region}",
                     ylabel="Pre CTI Data (e-)",
-                    xlabel="Pixel No.",
                     filename=f"pre_cti_data{suffix}",
                 ),
             )
@@ -185,7 +183,6 @@ class Dataset1DPlotter(Plotter):
                 auto_labels=AutoLabels(
                     title=f"Signal To Noise Map {region}",
                     ylabel="Signal To Noise (e-)",
-                    xlabel="Pixel No.",
                     filename=f"signal_to_noise_map{suffix}",
                 ),
             )

@@ -15,21 +15,21 @@ logger.setLevel(level="INFO")
 
 
 class VisualizerImagingCI(Visualizer):
-    def visualize_imaging_ci(self, imaging_ci, folder_suffix: str = ""):
+    def visualize_dataset(self, dataset, folder_suffix: str = ""):
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
-        mat_plot_2d = self.mat_plot_2d_from(subfolders=f"imaging_ci{folder_suffix}")
+        mat_plot_2d = self.mat_plot_2d_from(subfolders=f"dataset{folder_suffix}")
 
-        imaging_ci_plotter = aplt.ImagingCIPlotter(
-            dataset=imaging_ci, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
+        dataset_plotter = aplt.ImagingCIPlotter(
+            dataset=dataset, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
         )
 
         if should_plot("subplot_dataset"):
 
-            imaging_ci_plotter.subplot_imaging_ci()
+            dataset_plotter.subplot_imaging_ci()
 
-        imaging_ci_plotter.figures_2d(
+        dataset_plotter.figures_2d(
             data=should_plot("data"),
             noise_map=should_plot("noise_map"),
             inverse_noise_map=should_plot("inverse_noise_map"),
@@ -40,16 +40,14 @@ class VisualizerImagingCI(Visualizer):
             cosmic_ray_map=should_plot("cosmic_ray_map"),
         )
 
-    def visualize_imaging_ci_regions(
-        self, imaging_ci, region_list, folder_suffix: str = ""
-    ):
+    def visualize_dataset_regions(self, dataset, region_list, folder_suffix: str = ""):
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"imaging_ci{folder_suffix}")
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset{folder_suffix}")
 
-        imaging_ci_plotter = aplt.ImagingCIPlotter(
-            dataset=imaging_ci, mat_plot_1d=mat_plot_1d, include_2d=self.include_2d
+        dataset_plotter = aplt.ImagingCIPlotter(
+            dataset=dataset, mat_plot_1d=mat_plot_1d, include_2d=self.include_2d
         )
 
         for region in region_list:
@@ -58,9 +56,9 @@ class VisualizerImagingCI(Visualizer):
 
                 if should_plot("subplot_dataset"):
 
-                    imaging_ci_plotter.subplot_1d(region=region)
+                    dataset_plotter.subplot_1d(region=region)
 
-                imaging_ci_plotter.figures_1d(
+                dataset_plotter.figures_1d(
                     region=region,
                     data=should_plot("data"),
                     data_logy=should_plot("data_logy"),
@@ -75,11 +73,75 @@ class VisualizerImagingCI(Visualizer):
                     f"VISUALIZATION - Could not visualize the ImagingCI 1D {region}"
                 )
 
-    def visualize_fit_ci(self, fit, during_analysis, folder_suffix: str = ""):
+    def visualize_dataset_combined(self, dataset_list, folder_suffix: str = ""):
+        def should_plot(name):
+            return plot_setting(section="dataset", name=name)
+
+        mat_plot_2d = self.mat_plot_2d_from(
+            subfolders=f"dataset_combined{folder_suffix}"
+        )
+
+        dataset_plotter_list = [
+            aplt.ImagingCIPlotter(
+                dataset=dataset, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
+            )
+            for dataset in dataset_list
+        ]
+        multi_plotter = aplt.MultiFigurePlotter(plotter_list=dataset_plotter_list)
+
+        if should_plot("subplot_dataset"):
+
+            multi_plotter.subplot_of_figure(func_name="figures_2d", figure_name="data")
+
+    def visualize_dataset_regions_combined(
+        self, dataset_list, region_list, folder_suffix: str = ""
+    ):
+        def should_plot(name):
+            return plot_setting(section="dataset", name=name)
+
+        mat_plot_1d = self.mat_plot_1d_from(
+            subfolders=f"dataset_combined{folder_suffix}"
+        )
+
+        dataset_plotter_list = [
+            aplt.ImagingCIPlotter(
+                dataset=dataset, mat_plot_2d=mat_plot_1d, include_1d=self.include_1d
+            )
+            for dataset in dataset_list
+        ]
+        multi_plotter = aplt.MultiFigurePlotter(plotter_list=dataset_plotter_list)
+
+        for region in region_list:
+
+            try:
+
+                if should_plot("data"):
+                    multi_plotter.subplot_of_figure(
+                        func_name="figures_1d",
+                        figure_name="data",
+                        region=region,
+                        filename_suffix=f"_{region}",
+                    )
+
+                if should_plot("data_logy"):
+                    multi_plotter.subplot_of_figure(
+                        func_name="figures_1d",
+                        figure_name="data_logy",
+                        region=region,
+                        filename_suffix=f"_{region}",
+                    )
+
+            except (exc.RegionException, TypeError, ValueError):
+
+                logger.info(
+                    f"VISUALIZATION - Could not visualize the ImagingCI 1D {region}"
+                )
+
+    def visualize_fit(self, fit, during_analysis, folder_suffix: str = ""):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
-        mat_plot_2d = self.mat_plot_2d_from(subfolders=f"fit_imaging_ci{folder_suffix}")
+        mat_plot_2d = self.mat_plot_2d_from(subfolders=f"fit_dataset{folder_suffix}")
 
         fit_ci_plotter = aplt.FitImagingCIPlotter(
             fit=fit, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
@@ -118,13 +180,13 @@ class VisualizerImagingCI(Visualizer):
         if should_plot("subplot_fit"):
             fit_ci_plotter.subplot_fit_ci()
 
-    def visualize_fit_ci_1d_regions(
+    def visualize_fit_1d_regions(
         self, fit, region_list, during_analysis, folder_suffix: str = ""
     ):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"fit_imaging_ci{folder_suffix}")
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"fit_dataset{folder_suffix}")
 
         fit_ci_plotter = aplt.FitImagingCIPlotter(
             fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
@@ -147,6 +209,7 @@ class VisualizerImagingCI(Visualizer):
                     pre_cti_data=should_plot("pre_cti_data"),
                     post_cti_data=should_plot("post_cti_data"),
                     residual_map=should_plot("residual_map"),
+                    residual_map_logy=should_plot("residual_map_logy"),
                     normalized_residual_map=should_plot("normalized_residual_map"),
                     chi_squared_map=should_plot("chi_squared_map"),
                 )
@@ -163,6 +226,7 @@ class VisualizerImagingCI(Visualizer):
                             pre_cti_data=True,
                             post_cti_data=True,
                             residual_map=True,
+                            residual_map_logy=True,
                             normalized_residual_map=True,
                             chi_squared_map=True,
                         )
@@ -173,14 +237,14 @@ class VisualizerImagingCI(Visualizer):
                     f"VISUALIZATION - Could not visualize the ImagingCI 1D {region}"
                 )
 
-    def visualize_fit_ci_combined(
+    def visualize_fit_combined(
         self, fit_list, during_analysis, folder_suffix: str = ""
     ):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
         mat_plot_2d = self.mat_plot_2d_from(
-            subfolders=f"fit_imaging_ci_combined{folder_suffix}"
+            subfolders=f"fit_dataset_combined{folder_suffix}"
         )
 
         fit_ci_plotter_list = [
@@ -206,14 +270,14 @@ class VisualizerImagingCI(Visualizer):
                 func_name="figures_2d", figure_name="chi_squared_map"
             )
 
-    def visualize_fit_ci_1d_regions_combined(
+    def visualize_fit_1d_regions_combined(
         self, fit_list, region_list, during_analysis, folder_suffix: str = ""
     ):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
         mat_plot_1d = self.mat_plot_1d_from(
-            subfolders=f"fit_imaging_ci_combined{folder_suffix}"
+            subfolders=f"fit_dataset_combined{folder_suffix}"
         )
 
         fit_ci_plotter_list = [
@@ -248,6 +312,14 @@ class VisualizerImagingCI(Visualizer):
                     multi_plotter.subplot_of_figure(
                         func_name="figures_1d",
                         figure_name="residual_map",
+                        region=region,
+                        filename_suffix=f"_{region}",
+                    )
+
+                if should_plot("residual_map_logy"):
+                    multi_plotter.subplot_of_figure(
+                        func_name="figures_1d",
+                        figure_name="residual_map_logy",
                         region=region,
                         filename_suffix=f"_{region}",
                     )

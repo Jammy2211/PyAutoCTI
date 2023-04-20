@@ -1,3 +1,4 @@
+import copy
 from os import path
 import pytest
 from autocti import plot as aplt

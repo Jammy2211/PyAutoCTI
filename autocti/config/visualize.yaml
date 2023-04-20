@@ -5,12 +5,14 @@ general:
     zoom_around_mask: false
 plots:
   dataset:
+    data: true
+    data_logy: true
     cosmic_ray_map: false
     pre_cti_data: false
-    data: false
-    data_logy: false
   fit:
     data: true
     data_logy: true
+    residual_map: true
+    residual_map_logy: true
     post_cti_data: false
     pre_cti_data: false
