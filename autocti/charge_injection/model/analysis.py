@@ -2,6 +2,8 @@ import logging
 import os
 from typing import List, Optional
 
+from autoconf import conf
+
 import autoarray as aa
 import autofit as af
 
@@ -203,6 +205,9 @@ class AnalysisImagingCI(af.Analysis):
 
         region_list = self.region_list_from(model=model)
 
+        if conf.instance["visualize"]["plots"]["dataset"]["fpr_non_uniformity"]:
+            region_list += ["fpr_non_uniformity"]
+
         visualizer.visualize_dataset(dataset=self.dataset)
         visualizer.visualize_dataset_regions(
             dataset=self.dataset, region_list=region_list
@@ -229,6 +234,9 @@ class AnalysisImagingCI(af.Analysis):
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
 
         region_list = self.region_list_from(model=model)
+
+        if conf.instance["visualize"]["plots"]["dataset"]["fpr_non_uniformity"]:
+            region_list += ["fpr_non_uniformity"]
 
         dataset_list = [analysis.dataset for analysis in analyses]
 

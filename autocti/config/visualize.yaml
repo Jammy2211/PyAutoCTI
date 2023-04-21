@@ -9,6 +9,7 @@ plots:
     data_logy: true
     cosmic_ray_map: false
     pre_cti_data: false
+    fpr_non_uniformity: false
   fit:
     data: true
     data_logy: true

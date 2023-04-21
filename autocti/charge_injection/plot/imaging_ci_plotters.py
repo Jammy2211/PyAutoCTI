@@ -89,10 +89,7 @@ class ImagingCIPlotter(Plotter):
         self,
         data: bool = False,
         noise_map: bool = False,
-        inverse_noise_map: bool = False,
         signal_to_noise_map: bool = False,
-        absolute_signal_to_noise_map: bool = False,
-        potential_chi_squared_map: bool = False,
         pre_cti_data: bool = False,
         cosmic_ray_map: bool = False,
     ):
@@ -108,14 +105,8 @@ class ImagingCIPlotter(Plotter):
             Whether to make a 2D plot (via `imshow`) of the image data.
         noise_map
             Whether to make a 2D plot (via `imshow`) of the noise map.
-        inverse_noise_map
-            Whether to make a 2D plot (via `imshow`) of the inverse noise map.
         signal_to_noise_map
             Whether to make a 2D plot (via `imshow`) of the signal-to-noise map.
-        absolute_signal_to_noise_map
-            Whether to make a 2D plot (via `imshow`) of the absolute signal to noise map.
-        potential_chi_squared_map
-            Whether to make a 2D plot (via `imshow`) of the potential chi squared map.
         pre_cti_data
             Whether to make a 2D plot (via `imshow`) of the pre-cti data.
         cosmic_ray_map
@@ -125,10 +116,7 @@ class ImagingCIPlotter(Plotter):
         self._imaging_meta_plotter.figures_2d(
             data=data,
             noise_map=noise_map,
-            inverse_noise_map=inverse_noise_map,
             signal_to_noise_map=signal_to_noise_map,
-            absolute_signal_to_noise_map=absolute_signal_to_noise_map,
-            potential_chi_squared_map=potential_chi_squared_map,
         )
 
         if pre_cti_data:
@@ -194,6 +182,11 @@ class ImagingCIPlotter(Plotter):
             the region.
         """
 
+        if region == "fpr_non_uniformity":
+            ls_errorbar = "-"
+        else:
+            ls_errorbar = ""
+
         if data:
 
             y = self.extract_region_from(array=self.dataset.data, region=region)
@@ -206,12 +199,13 @@ class ImagingCIPlotter(Plotter):
                 x=range(len(y)),
                 plot_axis_type_override="errorbar",
                 y_errors=y_errors,
+                ls_errorbar=ls_errorbar,
                 text_manual_dict=self.text_manual_dict_from(region=region),
                 text_manual_dict_y=self.text_manual_dict_y_from(region=region),
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title=f"Data {region}",
-                    ylabel="Data (e-)",
+                    yunit="e-",
                     filename=f"data_{region}",
                 ),
             )
@@ -233,7 +227,7 @@ class ImagingCIPlotter(Plotter):
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title=f"Data {region} [log10 y]",
-                    ylabel="Data (e-)",
+                    yunit="e-",
                     filename=f"data_logy_{region}",
                 ),
             )
@@ -263,7 +257,7 @@ class ImagingCIPlotter(Plotter):
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
                     title=f"CI Pre CTI {region}",
-                    ylabel="Pre CTI Data (e-)",
+                    yunit="e-",
                     filename=f"pre_cti_data_{region}",
                 ),
             )
@@ -289,10 +283,7 @@ class ImagingCIPlotter(Plotter):
         self,
         data: bool = False,
         noise_map: bool = False,
-        inverse_noise_map: bool = False,
         signal_to_noise_map: bool = False,
-        absolute_signal_to_noise_map: bool = False,
-        potential_chi_squared_map: bool = False,
         pre_cti_data: bool = False,
         cosmic_ray_map: bool = False,
         auto_filename="subplot_imaging_ci",
@@ -309,14 +300,8 @@ class ImagingCIPlotter(Plotter):
             Whether or not to include a 2D plot (via `imshow`) of the image data.
         noise_map
             Whether or not to include a 2D plot (via `imshow`) of the noise map.
-        inverse_noise_map
-            Whether or not to include a 2D plot (via `imshow`) of the inverse noise map.
         signal_to_noise_map
             Whether or not to include a 2D plot (via `imshow`) of the signal-to-noise map.
-        absolute_signal_to_noise_map
-            Whether or not to include a 2D plot (via `imshow`) of the absolute signal to noise map.
-        potential_chi_squared_map
-            Whether or not to include a 2D plot (via `imshow`) of the potential chi squared map.
         pre_cti_data
             Whether or not to include a 2D plot (via `imshow`) of the pre-cti data.
         cosmic_ray_map
@@ -328,9 +313,6 @@ class ImagingCIPlotter(Plotter):
             data=data,
             noise_map=noise_map,
             signal_to_noise_map=signal_to_noise_map,
-            inverse_noise_map=inverse_noise_map,
-            absolute_signal_to_noise_map=absolute_signal_to_noise_map,
-            potential_chi_squared_map=potential_chi_squared_map,
             pre_cti_data=pre_cti_data,
             cosmic_ray_map=cosmic_ray_map,
             auto_labels=AutoLabels(filename=auto_filename),
@@ -345,7 +327,6 @@ class ImagingCIPlotter(Plotter):
             noise_map=True,
             signal_to_noise_map=True,
             pre_cti_data=True,
-            inverse_noise_map=True,
             cosmic_ray_map=True,
         )
 

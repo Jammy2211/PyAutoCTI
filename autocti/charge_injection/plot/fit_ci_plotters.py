@@ -228,7 +228,7 @@ class FitImagingCIPlotter(Plotter):
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
                     title=f"Data {region}",
-                    ylabel="Data (e-)",
+                    yunit="e-",
                     filename=f"data_{region}",
                 ),
             )
@@ -246,7 +246,7 @@ class FitImagingCIPlotter(Plotter):
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
                     title=f"Data {region}",
-                    ylabel="Log10[Data (e-)]",
+                    yunit="e-",
                     filename=f"data_logy_{region}",
                 ),
             )

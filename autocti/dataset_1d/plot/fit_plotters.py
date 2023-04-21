@@ -123,7 +123,7 @@ class FitDataset1DPlotter(Plotter):
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title=f"Data 1D {region}",
-                    ylabel="Data (e-)",
+                    yunit="e-",
                     filename=f"data{suffix}",
                 ),
             )
@@ -143,7 +143,7 @@ class FitDataset1DPlotter(Plotter):
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title=f"Data 1D {region}",
-                    ylabel="Log10[Data (e-)]",
+                    yunit="e-",
                     filename=f"data_logy{suffix}",
                 ),
             )
@@ -158,7 +158,7 @@ class FitDataset1DPlotter(Plotter):
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="Noise-Map",
-                    ylabel="Data (e-)",
+                    yunit="e-",
                     filename=f"noise_map{suffix}",
                 ),
             )
@@ -175,7 +175,7 @@ class FitDataset1DPlotter(Plotter):
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="Signal-To-Noise Map",
-                    ylabel="Data (e-)",
+                    yunit="e-",
                     filename=f"signal_to_noise_map{suffix}",
                 ),
             )
@@ -232,7 +232,7 @@ class FitDataset1DPlotter(Plotter):
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="Normalized Residual Map",
-                    ylabel="Data (e-)",
+                    yunit="e-",
                     filename=f"normalized_residual_map{suffix}",
                 ),
             )
@@ -247,7 +247,7 @@ class FitDataset1DPlotter(Plotter):
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="Chi-Squared Map",
-                    ylabel="Data (e-)",
+                    yunit="e-",
                     filename=f"chi_squared_map{suffix}",
                 ),
             )
@@ -262,7 +262,7 @@ class FitDataset1DPlotter(Plotter):
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="CI Pre CTI Image",
-                    ylabel="Data (e-)",
+                    yunit="e-",
                     filename=f"pre_cti_data{suffix}",
                 ),
             )
@@ -277,7 +277,7 @@ class FitDataset1DPlotter(Plotter):
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
                     title="CI Post CTI Image",
-                    ylabel="Data (e-)",
+                    yunit="e-",
                     filename=f"post_cti_data{suffix}",
                 ),
             )
@@ -335,7 +335,7 @@ class FitDataset1DPlotter(Plotter):
             normalized_residual_map=normalized_residual_map,
             chi_squared_map=chi_squared_map,
             auto_labels=AutoLabels(
-                ylabel="Data (e-)",
+                yunit="e-",
                 xlabel="Pixel No.",
                 filename=f"{auto_filename}{suffix}",
             ),

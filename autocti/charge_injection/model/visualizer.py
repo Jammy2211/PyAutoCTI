@@ -32,10 +32,7 @@ class VisualizerImagingCI(Visualizer):
         dataset_plotter.figures_2d(
             data=should_plot("data"),
             noise_map=should_plot("noise_map"),
-            inverse_noise_map=should_plot("inverse_noise_map"),
             signal_to_noise_map=should_plot("signal_to_noise_map"),
-            absolute_signal_to_noise_map=should_plot("absolute_signal_to_noise_map"),
-            potential_chi_squared_map=should_plot("potential_chi_squared_map"),
             pre_cti_data=should_plot("pre_cti_data"),
             cosmic_ray_map=should_plot("cosmic_ray_map"),
         )

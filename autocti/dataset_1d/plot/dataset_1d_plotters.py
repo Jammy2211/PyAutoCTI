@@ -117,7 +117,7 @@ class Dataset1DPlotter(Plotter):
                 text_manual_dict=self.dataset.settings_dict,
                 auto_labels=AutoLabels(
                     title=f"Data 1D {region}",
-                    ylabel="Data (e-)",
+                    yunit="e-",
                     filename=f"data{suffix}",
                 ),
             )
@@ -138,7 +138,7 @@ class Dataset1DPlotter(Plotter):
                 text_manual_dict=self.dataset.settings_dict,
                 auto_labels=AutoLabels(
                     title=f"Data 1D {region} (log10 y axis)",
-                    ylabel="Data (e-)",
+                    yunit="e-",
                     filename=f"data_logy{suffix}",
                 ),
             )
@@ -166,7 +166,7 @@ class Dataset1DPlotter(Plotter):
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
                     title=f"CI Pre CTI {region}",
-                    ylabel="Pre CTI Data (e-)",
+                    yunit="e-",
                     filename=f"pre_cti_data{suffix}",
                 ),
             )

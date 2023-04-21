@@ -2,13 +2,10 @@ plots:
   dataset:
     data: true
     data_logy: false
-    absolute_signal_to_noise_map: false
     cosmic_ray_map: true
     data: true
-    inverse_noise_map: false
     noise_map: false
     noise_scaling_map_dict: false
-    potential_chi_squared_map: Fals
     pre_cti_data: true
     signal_to_noise_map: false
     subplot_dataset: true
