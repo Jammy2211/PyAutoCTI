@@ -15,7 +15,6 @@ plots:
     chi_squared_map: false
     data: true
     data_logy: false
-    data: true
     noise_map: false
     noise_scaling_map_dict: false
     normalized_residual_map: true
