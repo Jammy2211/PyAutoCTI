@@ -29,7 +29,6 @@ class Layout1D(aa.Layout1D):
         self.region_list = list(map(aa.Region1D, region_list))
 
         for region in self.region_list:
-
             if region.x1 > shape_1d[0]:
                 raise exc.LayoutException(
                     "The charge injection layout_ci regions are bigger than the image image_shape"
@@ -56,13 +55,11 @@ class Layout1D(aa.Layout1D):
 
     @property
     def smallest_eper_pixels_to_array_edge(self):
-
         parallel_rows_between_regions = self.parallel_rows_between_regions
         parallel_rows_between_regions.append(self.trail_size_to_array_edge)
         return np.min(parallel_rows_between_regions)
 
     def extract_region_from(self, array: aa.Array1D, region: Optional):
-
         if region is None:
             return array
 

@@ -10,7 +10,6 @@ class TestResult:
     def test__result_contains_instance_with_cti_model(
         self, analysis_imaging_ci_7x7, samples_with_result
     ):
-
         result = res.Result(
             samples=samples_with_result, analysis=analysis_imaging_ci_7x7, model=None
         )
@@ -23,7 +22,6 @@ class TestResult:
     def test__clocker_passed_as_result_correctly(
         self, analysis_imaging_ci_7x7, samples_with_result, parallel_clocker_2d
     ):
-
         result = res.Result(
             samples=samples_with_result, analysis=analysis_imaging_ci_7x7, model=None
         )

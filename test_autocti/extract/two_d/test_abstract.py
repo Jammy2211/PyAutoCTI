@@ -94,7 +94,6 @@ def test__array_2d_list_from(parallel_array, parallel_masked_array):
 
 
 def test__array_2d_list_from__force_rows_same_size():
-
     serial_array = ac.Array2D.no_mask(
         values=[
             [0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 1.0, 11.0, 21.0],
@@ -227,7 +226,6 @@ def test__binned_array_1d_from(parallel_array, parallel_masked_array):
 
 
 def test__binned_array_1d_total_pixels_from(parallel_array, parallel_masked_array):
-
     extract = MockExtract2D(region_list=[(1, 3, 0, 3), (5, 8, 0, 3)])
 
     binned_array_1d_total_pixels = extract.binned_array_1d_total_pixels_from(
@@ -252,7 +250,6 @@ def test__binned_array_1d_total_pixels_from(parallel_array, parallel_masked_arra
 
 
 def test__total_rows_minimum():
-
     extract = MockExtract2D(region_list=[(1, 2, 0, 1)])
 
     assert extract.total_rows_min == 1
@@ -271,7 +268,6 @@ def test__total_rows_minimum():
 
 
 def test__total_columns_minimum():
-
     extract = MockExtract2D(region_list=[(0, 1, 1, 2)])
 
     assert extract.total_columns_min == 1
@@ -290,7 +286,6 @@ def test__total_columns_minimum():
 
 
 def test__dataset_1d_from(imaging_ci_7x7):
-
     extract = MockExtract2D(region_list=[(0, 3, 1, 3)])
 
     dataset_1d = extract.dataset_1d_from(
@@ -306,7 +301,6 @@ def test__dataset_1d_from(imaging_ci_7x7):
 
 
 def test__add_gaussian_noise_to(parallel_array):
-
     extract = MockExtract2D(region_list=[(1, 4, 0, 3)])
 
     array_with_noise = extract.add_gaussian_noise_to(
@@ -394,7 +388,6 @@ def test__add_gaussian_noise_to(parallel_array):
 
 
 def test__pedestal():
-
     extract = MockExtract2D(
         shape_2d=(5, 5),
         parallel_overscan=(4, 5, 0, 4),

@@ -3,7 +3,6 @@ import autocti as ac
 
 
 def test__cti_model__creates_correct_model_from_inputs():
-
     model = af.Model(
         ac.CTI2D,
         parallel_trap_list=[ac.TrapInstantCapture],
@@ -50,7 +49,6 @@ def test__cti_model__creates_correct_model_from_inputs():
 
 
 def test__recognises_type_of_fit_from_model():
-
     model = af.Model(
         ac.CTI2D, parallel_trap_list=[ac.TrapInstantCapture], parallel_ccd=ac.CCDPhase
     )

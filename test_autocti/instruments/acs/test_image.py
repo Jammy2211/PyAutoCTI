@@ -12,7 +12,6 @@ import autocti as ac
 def create_acs_fits(
     fits_path, acs_ccd, acs_ccd_0, acs_ccd_1, units, bias_file_path=None
 ):
-
     if path.exists(fits_path):
         shutil.rmtree(fits_path)
 
@@ -60,7 +59,6 @@ def create_acs_fits(
 
 
 def create_acs_bias_fits(fits_path, bias_ccd, bias_ccd_0, bias_ccd_1):
-
     hdu_list = fits.HDUList()
 
     hdu_list.append(fits.ImageHDU(bias_ccd))
@@ -78,7 +76,6 @@ def create_acs_bias_fits(fits_path, bias_ccd, bias_ccd_0, bias_ccd_1):
 
 
 def test__from_fits__reads_header_from_header_correctly(acs_ccd):
-
     fits_path = path.join(
         "{}".format(path.dirname(path.realpath(__file__))), "files", "acs"
     )
@@ -111,7 +108,6 @@ def test__from_fits__reads_header_from_header_correctly(acs_ccd):
 def test__from_fits__in_counts__uses_fits_header_correctly_converts_and_picks_correct_quadrant(
     acs_ccd,
 ):
-
     fits_path = path.join(
         "{}".format(path.dirname(path.realpath(__file__))), "files", "acs"
     )
@@ -191,7 +187,6 @@ def test__from_fits__in_counts__uses_fits_header_correctly_converts_and_picks_co
 def test__from_fits__in_counts_per_second__uses_fits_header_correctly_converts_and_picks_correct_quadrant(
     acs_ccd,
 ):
-
     fits_path = path.join(
         "{}".format(path.dirname(path.realpath(__file__))), "files", "acs"
     )
@@ -268,7 +263,6 @@ def test__from_fits__in_counts_per_second__uses_fits_header_correctly_converts_a
 
 
 def test__from_fits__in_counts__uses_bias_prescan_correctly(acs_ccd):
-
     fits_path = path.join(
         "{}".format(path.dirname(path.realpath(__file__))), "files", "acs"
     )
@@ -333,7 +327,6 @@ def test__from_fits__in_counts__uses_bias_prescan_correctly(acs_ccd):
 
 
 def test__from_fits__in_counts__uses_bias_file_subtraction_correctly(acs_ccd):
-
     fits_path = path.join(
         "{}".format(path.dirname(path.realpath(__file__))), "files", "acs"
     )
@@ -407,7 +400,6 @@ def test__from_fits__in_counts__uses_bias_file_subtraction_correctly(acs_ccd):
 
 
 def test__output_quadrants_to_fits(acs_ccd):
-
     fits_path = path.join(
         "{}".format(path.dirname(path.realpath(__file__))), "files", "acs"
     )

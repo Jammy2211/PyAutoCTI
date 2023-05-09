@@ -13,7 +13,6 @@ logger.setLevel("INFO")
 
 
 def fits_hdu_via_quadrant_letter_from(quadrant_letter):
-
     if quadrant_letter == "D" or quadrant_letter == "C":
         return 1
     elif quadrant_letter == "B" or quadrant_letter == "A":
@@ -23,7 +22,6 @@ def fits_hdu_via_quadrant_letter_from(quadrant_letter):
 
 
 def array_eps_to_counts(array_eps, bscale, bzero):
-
     if bscale is None:
         raise exc.ArrayException(
             "Cannot convert a Frame2D to units COUNTS without a bscale attribute (bscale = None)."
@@ -91,7 +89,6 @@ def output_quadrants_to_fits(
     header_d=None,
     overwrite: bool = False,
 ):
-
     file_dir = os.path.split(file_path)[0]
 
     if not os.path.exists(file_dir):
@@ -175,7 +172,6 @@ def output_quadrants_to_fits(
 def quadrant_convert_to_original(
     quadrant, roe_corner, header, use_flipud=False, use_calibrated_gain=True
 ):
-
     if header.bias is not None:
         quadrant += header.bias.native
 

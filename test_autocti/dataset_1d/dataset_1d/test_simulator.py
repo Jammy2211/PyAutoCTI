@@ -5,7 +5,6 @@ import autocti as ac
 
 
 def test__no_instrumental_effects_input__only_cti_simulated(clocker_1d, traps_x2, ccd):
-
     layout = ac.Layout1D(shape_1d=(5,), region_list=[(0, 5)])
 
     simulator = ac.SimulatorDataset1D(
@@ -23,7 +22,6 @@ def test__no_instrumental_effects_input__only_cti_simulated(clocker_1d, traps_x2
 
 
 def test__include_charge_noise__is_added_before_cti(clocker_1d, traps_x2, ccd):
-
     layout = ac.Layout1D(shape_1d=(5,), region_list=[(0, 3)])
 
     simulator = ac.SimulatorDataset1D(
@@ -49,7 +47,6 @@ def test__include_charge_noise__is_added_before_cti(clocker_1d, traps_x2, ccd):
 
 
 def test__include_read_noise__is_added_after_cti(clocker_1d, traps_x2, ccd):
-
     layout = ac.Layout1D(shape_1d=(5,), region_list=[(0, 5)])
 
     simulator = ac.SimulatorDataset1D(
@@ -73,7 +70,6 @@ def test__include_read_noise__is_added_after_cti(clocker_1d, traps_x2, ccd):
 
 
 def test__pre_cti_data_from():
-
     simulator = ac.SimulatorDataset1D(norm=10.0, pixel_scales=1.0)
 
     layout = ac.Layout1D(shape_1d=(3,), region_list=[(0, 2)])
@@ -84,7 +80,6 @@ def test__pre_cti_data_from():
 
 
 def test__from_pre_cti_data(clocker_1d, traps_x2, ccd):
-
     layout = ac.Layout1D(shape_1d=(5,), region_list=[(0, 5)])
 
     simulator = ac.SimulatorDataset1D(
@@ -111,7 +106,6 @@ def test__from_pre_cti_data(clocker_1d, traps_x2, ccd):
 
 
 def test__from_post_cti_data(clocker_1d, traps_x2, ccd):
-
     layout = ac.Layout1D(shape_1d=(5,), region_list=[(0, 5)])
     simulator = ac.SimulatorDataset1D(
         pixel_scales=1.0,

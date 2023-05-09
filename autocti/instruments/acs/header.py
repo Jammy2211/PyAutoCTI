@@ -21,7 +21,6 @@ class HeaderACS(Header):
         bias=None,
         bias_serial_prescan_column=None,
     ):
-
         super().__init__(header_sci_obj=header_sci_obj, header_hdu_obj=header_hdu_obj)
 
         self.bias = bias
@@ -43,7 +42,6 @@ class HeaderACS(Header):
 
     @property
     def calibrated_gain(self):
-
         if round(self.gain) == 1:
             calibrated_gain = [0.99989998, 0.97210002, 1.01070000, 1.01800000]
         elif round(self.gain) == 2:
@@ -78,7 +76,6 @@ class HeaderACS(Header):
         )
 
     def array_original_to_electrons(self, array, use_calibrated_gain):
-
         if self.original_units in "COUNTS":
             array = (array * self.bscale) + self.bzero
         elif self.original_units in "CPS":
@@ -90,7 +87,6 @@ class HeaderACS(Header):
             return array * self.gain
 
     def array_electrons_to_original(self, array, use_calibrated_gain):
-
         if use_calibrated_gain:
             array /= self.calibrated_gain
         else:

@@ -20,7 +20,6 @@ def make_imaging_ci_plotter_setup():
 def test__figures_2d__individual_attributes_are_output(
     imaging_ci_7x7, plot_path, plot_patch
 ):
-
     imaging_ci_plotter = aplt.ImagingCIPlotter(
         dataset=imaging_ci_7x7,
         mat_plot_2d=aplt.MatPlot2D(output=aplt.Output(plot_path, format="png")),
@@ -56,7 +55,6 @@ def test__figures_2d__individual_attributes_are_output(
 def test__figures_1d__individual_1d_of_region_are_output(
     imaging_ci_7x7, plot_path, plot_patch
 ):
-
     imaging_ci_plotter = aplt.ImagingCIPlotter(
         dataset=imaging_ci_7x7,
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
@@ -91,15 +89,14 @@ def test__figures_1d__individual_1d_of_region_are_output(
 
 
 def test__subplots__output(imaging_ci_7x7, plot_path, plot_patch):
-
     imaging_ci_plotter = aplt.ImagingCIPlotter(
         dataset=imaging_ci_7x7,
         mat_plot_2d=aplt.MatPlot2D(output=aplt.Output(plot_path, format="png")),
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
     )
 
-    imaging_ci_plotter.subplot_imaging_ci()
-    assert path.join(plot_path, "subplot_imaging_ci.png") in plot_patch.paths
+    imaging_ci_plotter.subplot_dataset()
+    assert path.join(plot_path, "subplot_dataset.png") in plot_patch.paths
 
     imaging_ci_plotter.subplot_1d(region="parallel_fpr")
     assert path.join(plot_path, "subplot_1d_ci_parallel_fpr.png") in plot_patch.paths

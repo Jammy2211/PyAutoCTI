@@ -4,7 +4,6 @@ import autocti as ac
 
 
 def test__from_ccd__chooses_correct_array_given_quadrant_letter(acs_ccd):
-
     array = ac.acs.Array2DACS.from_ccd(array_electrons=acs_ccd, quadrant_letter="B")
 
     assert array.shape_native == (2068, 2072)
@@ -23,7 +22,6 @@ def test__from_ccd__chooses_correct_array_given_quadrant_letter(acs_ccd):
 
 
 def test__conversions_to_counts_and_counts_per_second_use_correct_values():
-
     header_sci_obj = {"EXPTIME": 1.0}
     header_hdu_obj = {"BSCALE": 1.0, "BZERO": 0.0}
 

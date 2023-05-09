@@ -12,7 +12,6 @@ test_data_path = path.join(
 
 
 def test__norm_columns_list():
-
     image = ac.Array2D.full(
         fill_value=1.0, shape_native=(5, 5), pixel_scales=(1.0, 1.0)
     )
@@ -80,7 +79,6 @@ def test__norm_columns_list():
 
 
 def test__from_fits__load_all_data_components__has_correct_attributes(layout_ci_7x7):
-
     imaging = ac.ImagingCI.from_fits(
         pixel_scales=1.0,
         layout=layout_ci_7x7,
@@ -103,7 +101,6 @@ def test__from_fits__load_all_data_components__has_correct_attributes(layout_ci_
 
 
 def test__from_fits__load_all_image_components__load_from_multi_hdu_fits(layout_ci_7x7):
-
     imaging = ac.ImagingCI.from_fits(
         pixel_scales=1.0,
         layout=layout_ci_7x7,
@@ -126,7 +123,6 @@ def test__from_fits__load_all_image_components__load_from_multi_hdu_fits(layout_
 
 
 def test__from_fits__noise_map_from_single_value(layout_ci_7x7):
-
     imaging = ac.ImagingCI.from_fits(
         pixel_scales=1.0,
         layout=layout_ci_7x7,
@@ -146,7 +142,6 @@ def test__from_fits__noise_map_from_single_value(layout_ci_7x7):
 
 
 def test__output_to_fits___all_arrays(layout_ci_7x7):
-
     imaging = ac.ImagingCI.from_fits(
         pixel_scales=1.0,
         layout=layout_ci_7x7,
@@ -168,7 +163,7 @@ def test__output_to_fits___all_arrays(layout_ci_7x7):
     os.makedirs(output_data_dir)
 
     imaging.output_to_fits(
-        data_path=path.join(output_data_dir, "image.fits"),
+        data_path=path.join(output_data_dir, "data.fits"),
         noise_map_path=path.join(output_data_dir, "noise_map.fits"),
         pre_cti_data_path=path.join(output_data_dir, "pre_cti_data.fits"),
         cosmic_ray_map_path=path.join(output_data_dir, "cosmic_ray_map.fits"),
@@ -177,7 +172,7 @@ def test__output_to_fits___all_arrays(layout_ci_7x7):
     imaging = ac.ImagingCI.from_fits(
         pixel_scales=1.0,
         layout=layout_ci_7x7,
-        data_path=path.join(output_data_dir, "image.fits"),
+        data_path=path.join(output_data_dir, "data.fits"),
         data_hdu=0,
         noise_map_path=path.join(output_data_dir, "noise_map.fits"),
         noise_map_hdu=0,
@@ -194,7 +189,6 @@ def test__output_to_fits___all_arrays(layout_ci_7x7):
 
 
 def test__apply_mask__masks_arrays_correctly(imaging_ci_7x7):
-
     mask = ac.Mask2D.all_false(
         shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
     )
@@ -226,7 +220,6 @@ def test__apply_mask__masks_arrays_correctly(imaging_ci_7x7):
 def test__apply_settings__include_parallel_columns_extraction(
     imaging_ci_7x7, mask_2d_7x7_unmasked, ci_noise_scaling_map_dict_7x7
 ):
-
     mask = ac.Mask2D.all_false(
         shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
     )
@@ -276,7 +269,6 @@ def test__apply_settings__include_parallel_columns_extraction(
 def test__apply_settings__serial_masked_imaging_ci(
     imaging_ci_7x7, mask_2d_7x7_unmasked, ci_noise_scaling_map_dict_7x7
 ):
-
     mask = ac.Mask2D.all_false(
         shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
     )
@@ -324,7 +316,6 @@ def test__apply_settings__serial_masked_imaging_ci(
 
 
 def test__fpr_value():
-
     image = ac.Array2D.full(
         fill_value=1.0, shape_native=(5, 5), pixel_scales=(1.0, 1.0)
     )
@@ -342,7 +333,6 @@ def test__fpr_value():
 
 
 def test__set_noise_scaling_map_dict(imaging_ci_7x7, ci_noise_scaling_map_dict_7x7):
-
     imaging_ci_7x7.noise_scaling_map_dict = None
 
     imaging_ci_7x7.set_noise_scaling_map_dict(

@@ -13,7 +13,6 @@ class HeaderEuclid(Header):
         ccd_id: Optional[str] = None,
         quadrant_id: Optional[str] = None,
     ):
-
         super().__init__(
             header_sci_obj=header_sci_obj,
             header_hdu_obj=header_hdu_obj,

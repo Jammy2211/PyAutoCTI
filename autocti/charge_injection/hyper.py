@@ -26,7 +26,6 @@ class HyperCINoiseCollection:
         serial_eper: Optional[HyperCINoiseScalar] = None,
         serial_overscan_no_eper: Optional[HyperCINoiseScalar] = None,
     ):
-
         self.regions_ci = regions_ci
         self.parallel_eper = parallel_eper
         self.serial_eper = serial_eper
@@ -34,7 +33,6 @@ class HyperCINoiseCollection:
 
     @property
     def as_dict(self):
-
         hyper_dict = {
             "regions_ci": self.regions_ci,
             "parallel_eper": self.parallel_eper,

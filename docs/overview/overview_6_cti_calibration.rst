@@ -282,7 +282,7 @@ Below, we plot a subplot of the fit for the first dataset which shows a good fit
 .. code-block:: python
 
     fit_plotter = aplt.FitImagingCIPlotter(fit=result_list[0].max_log_likelihood_fit)
-    fit_plotter.subplot_fit_ci()
+    fit_plotter.subplot_fit()
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_6/fit_2d_100.png
   :width: 600
@@ -414,7 +414,7 @@ maximum likelihood fit.
     print(cti_model.parallel_ccd.well_fill_power)
 
     fit_plotter = aplt.FitDataset1DPlotter(fit=result.max_log_likelihood_fit)
-    fit_plotter.subplot_fit_dataset_1d()
+    fit_plotter.subplot_fit()
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_6/fit_1d_100.png
   :width: 600

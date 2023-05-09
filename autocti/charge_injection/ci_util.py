@@ -36,7 +36,6 @@ def region_ci_from(
     ci_region = np.zeros(region_dimensions)
 
     for column_index, injection_norm in enumerate(injection_norm_list):
-
         ci_region[0:ci_rows, column_index] = generate_column(
             size=ci_rows, norm=injection_norm, row_slope=row_slope
         )
@@ -55,13 +54,10 @@ def region_list_ci_via_electronics_from(
     serial_overscan_size: int,
     roe_corner: Tuple[int, int],
 ):
-
     region_list_ci = []
 
     for index in range(injection_total):
-
         if roe_corner == (0, 0):
-
             ci_region = (
                 parallel_size - (injection_start + injection_on),
                 parallel_size - injection_start,
@@ -70,7 +66,6 @@ def region_list_ci_via_electronics_from(
             )
 
         elif roe_corner == (1, 0):
-
             ci_region = (
                 injection_start,
                 injection_start + injection_on,
@@ -79,7 +74,6 @@ def region_list_ci_via_electronics_from(
             )
 
         elif roe_corner == (0, 1):
-
             ci_region = (
                 parallel_size - (injection_start + injection_on),
                 parallel_size - injection_start,
@@ -88,7 +82,6 @@ def region_list_ci_via_electronics_from(
             )
 
         elif roe_corner == (1, 1):
-
             ci_region = (
                 injection_start,
                 injection_start + injection_on,

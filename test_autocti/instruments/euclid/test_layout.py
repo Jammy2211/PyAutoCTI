@@ -2,7 +2,6 @@ import autocti as ac
 
 
 def test__for_four_quadrants__loads_data_and_dimensions(euclid_data):
-
     layout = ac.euclid.Layout2DEuclid.top_left(
         parallel_size=2086,
         serial_size=2128,
@@ -117,7 +116,6 @@ def test__for_four_quadrants__loads_data_and_dimensions(euclid_data):
 
 
 def test__left_side__chooses_correct_layout_given_input(euclid_data):
-
     layout = ac.euclid.Layout2DEuclid.from_ccd_and_quadrant_id(
         ccd_id="text1", quadrant_id="E"
     )

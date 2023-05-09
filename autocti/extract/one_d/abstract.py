@@ -196,7 +196,6 @@ class Extract1D:
         array = copy.copy(array.native)
 
         for arr, region in zip(array_1d_list, region_list):
-
             array[region.x0 : region.x1] = aa.preprocess.data_with_gaussian_noise_added(
                 data=arr, sigma=noise_sigma, seed=noise_seed
             )

@@ -9,7 +9,6 @@ import autocti as ac
 
 
 def test__pre_cti_data_uniform_from():
-
     layout = ac.Layout2DCI(shape_2d=(4, 3), region_list=[(0, 1, 0, 2), (2, 3, 0, 2)])
 
     pre_cti_data = layout.pre_cti_data_uniform_from(norm=30.0, pixel_scales=1.0)
@@ -23,7 +22,6 @@ def test__pre_cti_data_uniform_from():
 
 
 def test__pre_cti_data_non_uniform_from():
-
     layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(0, 3, 0, 3)])
 
     image = layout.pre_cti_data_non_uniform_from(
@@ -81,7 +79,6 @@ def test__pre_cti_data_non_uniform_from():
 
 
 def test__pre_cti_data_from__compare_uniform_to_non_uniform():
-
     layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(2, 4, 0, 2)])
 
     pre_cti_data_0 = layout.pre_cti_data_uniform_from(norm=30.0, pixel_scales=1.0)
@@ -94,7 +91,6 @@ def test__pre_cti_data_from__compare_uniform_to_non_uniform():
 
 
 def test__pre_cti_data_non_uniform_via_lists_from():
-
     layout = ac.Layout2DCI(shape_2d=(10, 3), region_list=[(1, 4, 0, 3), (5, 8, 0, 3)])
 
     pre_cti_data = layout.pre_cti_data_non_uniform_via_lists_from(
@@ -147,7 +143,6 @@ def test__pre_cti_data_non_uniform_via_lists_from():
 
 
 def test__noise_map_non_uniform_from():
-
     layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(0, 3, 0, 3)])
 
     noise_map = layout.noise_map_non_uniform_from(
@@ -187,7 +182,6 @@ def test__noise_map_non_uniform_from():
 
 
 def test__noise_map_non_uniform_via_lists_from():
-
     layout = ac.Layout2DCI(shape_2d=(10, 3), region_list=[(1, 4, 0, 3), (5, 8, 0, 3)])
 
     noise_map = layout.noise_map_non_uniform_via_lists_from(
@@ -243,7 +237,6 @@ def create_tvac_fits(
     filename,
     tvac_arr,
 ):
-
     if path.exists(fits_path):
         shutil.rmtree(fits_path)
 
@@ -281,7 +274,6 @@ def create_tvac_fits(
 
 
 def test__tvac_example():
-
     fits_path = path.join(
         "{}".format(path.dirname(path.realpath(__file__))), "files", "acs"
     )
@@ -320,7 +312,6 @@ def test__tvac_example():
     assert layout_2d.region_list[3] == (1576, 1996, 51, 2099)
 
     for region in layout_2d.region_list:
-
         tvac_region = ac.Region2D(region=region)
 
         assert (image_ci.native[tvac_region.slice] == 10000).all()

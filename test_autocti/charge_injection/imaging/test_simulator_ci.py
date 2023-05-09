@@ -4,7 +4,6 @@ import autocti as ac
 
 
 def test__pre_cti_data_from():
-
     simulator = ac.SimulatorImagingCI(norm=30.0, pixel_scales=1.0)
 
     layout = ac.Layout2DCI(shape_2d=(4, 3), region_list=[(0, 3, 0, 2), (2, 3, 2, 3)])
@@ -20,7 +19,6 @@ def test__pre_cti_data_from():
 
 
 def test__pre_cti_data_from__compare_uniform_to_non_uniform():
-
     simulator = ac.SimulatorImagingCI(pixel_scales=1.0, norm=10.0)
 
     layout = ac.Layout2DCI(shape_2d=(5, 5), region_list=[(2, 4, 0, 5)])
@@ -37,7 +35,6 @@ def test__pre_cti_data_from__compare_uniform_to_non_uniform():
 
 
 def test__pre_cti_data_from__non_uniformity_in_columns():
-
     simulator = ac.SimulatorImagingCI(
         pixel_scales=1.0, norm=100.0, row_slope=0.0, column_sigma=1.0, ci_seed=1
     )
@@ -104,7 +101,6 @@ def test__pre_cti_data_from__non_uniformity_in_columns():
 
 
 def test__pre_cti_data_from__non_uniformity_in_rows():
-
     simulator = ac.SimulatorImagingCI(
         pixel_scales=1.0, norm=100.0, row_slope=-0.01, column_sigma=0.0
     )
@@ -172,7 +168,6 @@ def test__pre_cti_data_from__non_uniformity_in_rows():
 def test__no_instrumental_effects_input__only_cti_simulated(
     parallel_clocker_2d, traps_x2, ccd
 ):
-
     layout = ac.Layout2DCI(
         shape_2d=(5, 5),
         region_list=[(0, 1, 0, 5)],
@@ -194,7 +189,6 @@ def test__no_instrumental_effects_input__only_cti_simulated(
 
 
 def test__include_charge_noise__is_added_before_cti(parallel_clocker_2d, traps_x2, ccd):
-
     layout = ac.Layout2DCI(
         shape_2d=(3, 3),
         region_list=[(0, 1, 0, 3)],
@@ -221,7 +215,6 @@ def test__include_charge_noise__is_added_before_cti(parallel_clocker_2d, traps_x
 
 
 def test__include_read_noise__is_added_after_cti(parallel_clocker_2d, traps_x2, ccd):
-
     layout = ac.Layout2DCI(
         shape_2d=(3, 3),
         region_list=[(0, 1, 0, 3)],
@@ -252,7 +245,6 @@ def test__include_read_noise__is_added_after_cti(parallel_clocker_2d, traps_x2, 
 def test__include_cosmics__is_added_to_image_and_trailed(
     parallel_clocker_2d, traps_x2, ccd
 ):
-
     layout = ac.Layout2DCI(
         shape_2d=(5, 5),
         region_list=[(0, 1, 0, 5)],
@@ -304,7 +296,6 @@ def test__include_cosmics__is_added_to_image_and_trailed(
 
 
 def test__from_pre_cti_data(parallel_clocker_2d, traps_x2, ccd):
-
     layout = ac.Layout2DCI(
         shape_2d=(5, 5),
         region_list=[(0, 1, 0, 5)],
@@ -344,7 +335,6 @@ def test__from_pre_cti_data(parallel_clocker_2d, traps_x2, ccd):
 
 
 def test__from_post_cti_data(parallel_clocker_2d, traps_x2, ccd):
-
     layout = ac.Layout2DCI(
         shape_2d=(5, 5),
         region_list=[(0, 1, 0, 5)],

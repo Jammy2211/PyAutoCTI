@@ -100,9 +100,9 @@ class Dataset1DPlotter(Plotter):
         """
 
         suffix = f"_{region}" if region is not None else ""
+        title_str = self.title_str_from(region=region)
 
         if data:
-
             y = self.extract_region_from(array=self.dataset.data, region=region)
             y_errors = self.extract_region_from(
                 array=self.dataset.noise_map, region=region
@@ -114,16 +114,16 @@ class Dataset1DPlotter(Plotter):
                 plot_axis_type_override="errorbar",
                 y_errors=y_errors,
                 visuals_1d=self.get_visuals_1d(),
-                text_manual_dict=self.dataset.settings_dict,
+                text_manual_dict=self.text_manual_dict_from(region=region),
+                text_manual_dict_y=self.text_manual_dict_y_from(region=region),
                 auto_labels=AutoLabels(
-                    title=f"Data 1D {region}",
+                    title=f"Data 1D {title_str}",
                     yunit="e-",
                     filename=f"data{suffix}",
                 ),
             )
 
         if data_logy:
-
             y = self.extract_region_from(array=self.dataset.data, region=region)
             y_errors = self.extract_region_from(
                 array=self.dataset.noise_map, region=region
@@ -135,9 +135,10 @@ class Dataset1DPlotter(Plotter):
                 plot_axis_type_override="errorbar_logy",
                 y_errors=y_errors,
                 visuals_1d=self.get_visuals_1d(),
-                text_manual_dict=self.dataset.settings_dict,
+                text_manual_dict=self.text_manual_dict_from(region=region),
+                text_manual_dict_y=self.text_manual_dict_y_from(region=region),
                 auto_labels=AutoLabels(
-                    title=f"Data 1D {region} (log10 y axis)",
+                    title=f"Data 1D {title_str} [log10]",
                     yunit="e-",
                     filename=f"data_logy{suffix}",
                 ),
@@ -151,8 +152,8 @@ class Dataset1DPlotter(Plotter):
                 x=range(len(y)),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"Noise Map {region}",
-                    ylabel="Noise (e-)",
+                    title=f"Noise Map {title_str}",
+                    yunit="e-",
                     filename=f"noise_map{suffix}",
                 ),
             )
@@ -165,13 +166,14 @@ class Dataset1DPlotter(Plotter):
                 x=range(len(y)),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"CI Pre CTI {region}",
+                    title=f"CI Pre CTI {title_str}",
                     yunit="e-",
                     filename=f"pre_cti_data{suffix}",
                 ),
             )
 
         if signal_to_noise_map:
+
             y = self.extract_region_from(
                 array=self.dataset.signal_to_noise_map, region=region
             )
@@ -181,8 +183,8 @@ class Dataset1DPlotter(Plotter):
                 x=range(len(y)),
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
-                    title=f"Signal To Noise Map {region}",
-                    ylabel="Signal To Noise (e-)",
+                    title=f"Signal To Noise Map {title_str}",
+                    yunit="",
                     filename=f"signal_to_noise_map{suffix}",
                 ),
             )
@@ -194,7 +196,7 @@ class Dataset1DPlotter(Plotter):
         noise_map=False,
         signal_to_noise_map=False,
         pre_cti_data=False,
-        auto_filename="subplot_dataset_1d",
+        auto_filename="subplot_dataset",
         **kwargs,
     ):
         """
@@ -212,11 +214,11 @@ class Dataset1DPlotter(Plotter):
             Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
             noise-map values included as error bars and the y-axis on a log10 scale.
         noise_map
-            Whether or not to include a 1D plot (via `plot`) of the noise map.
+            Whether to include a 1D plot (via `plot`) of the noise map.
         signal_to_noise_map
-            Whether or not to include a 1D plot (via `plot`) of the signal-to-noise map.
+            Whether to include a 1D plot (via `plot`) of the signal-to-noise map.
         pre_cti_data
-            Whether or not to include a 1D plot (via `plot`) of the pre-cti data.
+            Whether to include a 1D plot (via `plot`) of the pre-cti data.
         """
 
         region = kwargs.get("region", None)
@@ -232,7 +234,7 @@ class Dataset1DPlotter(Plotter):
             **kwargs,
         )
 
-    def subplot_dataset_1d(self, region: Optional[str] = None):
+    def subplot_dataset(self, region: Optional[str] = None):
         """
         Standard subplot of the attributes of the plotter's `Dataset1D` object.
         """

@@ -189,7 +189,6 @@ class Extract2DSerialCalibration:
         )
 
     def extracted_layout_from(self, layout, new_shape_2d, rows):
-
         serial_prescan = (
             (0, new_shape_2d[0], self.serial_prescan[2], self.serial_prescan[3])
             if self.serial_prescan is not None
@@ -208,7 +207,6 @@ class Extract2DSerialCalibration:
         new_pattern_region_list_ci = []
 
         for region in self.region_list:
-
             labelsize = rows[1] - rows[0]
             new_pattern_region_list_ci.append(
                 aa.Region2D(region=(offset, offset + labelsize, x0, x1))
@@ -238,7 +236,6 @@ class Extract2DSerialCalibration:
         )
 
         if imaging_ci.noise_scaling_map_dict is not None:
-
             noise_scaling_map_dict = {
                 key: imaging_ci.layout.extract.serial_calibration.array_2d_from(
                     array=noise_scaling_map, rows=rows
@@ -247,7 +244,6 @@ class Extract2DSerialCalibration:
             }
 
         else:
-
             noise_scaling_map_dict = None
 
         image = imaging_ci.layout.extract.serial_calibration.array_2d_from(

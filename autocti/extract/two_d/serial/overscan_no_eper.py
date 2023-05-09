@@ -81,7 +81,6 @@ class Extract2DSerialOverscanNoEPER(Extract2DSerial):
         region_list = []
 
         for i, region in enumerate(self.region_list):
-
             region_list.append(
                 aa.Region2D(
                     (

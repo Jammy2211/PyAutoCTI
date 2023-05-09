@@ -4,7 +4,6 @@ import autocti as ac
 
 
 def test__region_list_from__via_array_1d_list_from(array, masked_array):
-
     extract = ac.Extract1DEPER(region_list=[(1, 3)])
 
     eper_list = extract.array_1d_list_from(
@@ -53,7 +52,6 @@ def test__region_list_from__via_array_1d_list_from(array, masked_array):
 def test__region_list_from__via_array_1d_list_from__pixels_from_end(
     array, masked_array
 ):
-
     extract = ac.Extract1DEPER(shape_1d=array.shape_native, region_list=[(1, 3)])
 
     eper_list = extract.array_1d_list_from(
@@ -85,7 +83,6 @@ def test__region_list_from__via_array_1d_list_from__pixels_from_end(
 
 
 def test__array_1d_from():
-
     extract = ac.Extract1DEPER(region_list=[(0, 2)], prescan=(0, 1), overscan=(0, 1))
 
     array = ac.Array1D.no_mask(values=[0.0, 1.0, 2.0, 3.0], pixel_scales=1.0)

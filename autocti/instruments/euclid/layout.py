@@ -160,7 +160,6 @@ class Layout2DEuclid(Layout2D):
             The ID of the quadrant (E, G, F or H).
         """
         if parallel_overscan_size > 0:
-
             parallel_overscan = Region2D(
                 (
                     0,
@@ -171,7 +170,6 @@ class Layout2DEuclid(Layout2D):
             )
 
         else:
-
             parallel_overscan = None
 
         serial_prescan = Region2D((0, parallel_size, 0, serial_prescan_size))
@@ -238,7 +236,6 @@ class Layout2DEuclid(Layout2D):
             The size (number of pixels) of the parallel overscan.
         """
         if parallel_overscan_size > 0:
-
             parallel_overscan = Region2D(
                 (
                     0,
@@ -249,7 +246,6 @@ class Layout2DEuclid(Layout2D):
             )
 
         else:
-
             parallel_overscan = None
 
         serial_prescan = Region2D(
@@ -312,7 +308,6 @@ class Layout2DEuclid(Layout2D):
             The size (number of pixels) of the parallel overscan.
         """
         if parallel_overscan_size > 0:
-
             parallel_overscan = Region2D(
                 (
                     parallel_size - parallel_overscan_size,
@@ -323,7 +318,6 @@ class Layout2DEuclid(Layout2D):
             )
 
         else:
-
             parallel_overscan = None
 
         serial_prescan = Region2D((0, parallel_size, 0, serial_prescan_size))
@@ -390,7 +384,6 @@ class Layout2DEuclid(Layout2D):
             The size (number of pixels) of the parallel overscan.
         """
         if parallel_overscan_size > 0:
-
             parallel_overscan = Region2D(
                 (
                     parallel_size - parallel_overscan_size,
@@ -401,7 +394,6 @@ class Layout2DEuclid(Layout2D):
             )
 
         else:
-
             parallel_overscan = None
 
         serial_prescan = Region2D(

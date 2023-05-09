@@ -3,7 +3,6 @@ import autocti as ac
 
 
 def test__regions_array_2d_from():
-
     extract = ac.Extract2DMaster(region_list=[(0, 3, 0, 3)])
 
     array = ac.Array2D.no_mask(
@@ -38,7 +37,6 @@ def test__regions_array_2d_from():
 
 
 def test__non_regions_array_2d_from():
-
     extract = ac.Extract2DMaster(region_list=[(0, 3, 0, 3)])
 
     array = ac.Array2D.no_mask(
@@ -85,7 +83,6 @@ def test__non_regions_array_2d_from():
 
 
 def test__parallel_fpr_and_eper_array_2d_from():
-
     parallel_array = ac.Array2D.no_mask(
         values=[
             [0.0, 0.0, 0.0],
@@ -152,7 +149,6 @@ def test__parallel_fpr_and_eper_array_2d_from():
 
 
 def test__serial_fpr_and_eper_array_2d_from():
-
     extract = ac.Extract2DMaster(region_list=[(0, 3, 0, 3)])
 
     array = ac.Array2D.no_mask(

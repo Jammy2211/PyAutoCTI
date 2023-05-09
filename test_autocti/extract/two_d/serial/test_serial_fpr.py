@@ -156,7 +156,6 @@ def test__region_list_from__array_2d_list_from__pixels_from_end(
 
 
 def test__binned_region_1d_from():
-
     extract = ac.Extract2DSerialFPR(region_list=[(1, 3, 0, 3)])
 
     binned_region_1d_list = extract.binned_region_1d_from(

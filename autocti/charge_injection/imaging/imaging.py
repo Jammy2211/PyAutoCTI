@@ -22,7 +22,6 @@ class ImagingCI(aa.Imaging):
         fpr_value: Optional[float] = None,
         settings_dict: Optional[Dict] = None,
     ):
-
         super().__init__(data=data, noise_map=noise_map)
 
         self.data = self.image.native
@@ -35,7 +34,6 @@ class ImagingCI(aa.Imaging):
         self.cosmic_ray_map = cosmic_ray_map
 
         if noise_scaling_map_dict is not None:
-
             noise_scaling_map_dict = {
                 key: noise_scaling_map.native
                 for key, noise_scaling_map in noise_scaling_map_dict.items()
@@ -46,7 +44,6 @@ class ImagingCI(aa.Imaging):
         self.layout = layout
 
         if fpr_value is None:
-
             fpr_value = np.round(
                 np.mean(
                     self.layout.extract.parallel_fpr.median_list_from(
@@ -96,20 +93,16 @@ class ImagingCI(aa.Imaging):
         ]
 
     def apply_mask(self, mask: mask_2d.Mask2D) -> "ImagingCI":
-
         image = aa.Array2D(values=self.image.native, mask=mask)
         noise_map = aa.Array2D(values=self.noise_map.native, mask=mask)
 
         if self.cosmic_ray_map is not None:
-
             cosmic_ray_map = aa.Array2D(values=self.cosmic_ray_map.native, mask=mask)
 
         else:
-
             cosmic_ray_map = None
 
         if self.noise_scaling_map_dict is not None:
-
             noise_scaling_map_dict = {
                 key: aa.Array2D(values=noise_scaling_map.native, mask=mask)
                 for key, noise_scaling_map in self.noise_scaling_map_dict.items()
@@ -130,9 +123,7 @@ class ImagingCI(aa.Imaging):
         )
 
     def apply_settings(self, settings: SettingsImagingCI):
-
         if settings.parallel_pixels is not None:
-
             imaging = self.layout.extract.parallel_calibration.imaging_ci_from(
                 imaging_ci=self, columns=settings.parallel_pixels
             )
@@ -142,7 +133,6 @@ class ImagingCI(aa.Imaging):
             )
 
         elif settings.serial_pixels is not None:
-
             imaging = self.layout.extract.serial_calibration.imaging_ci_from(
                 imaging_ci=self, rows=settings.serial_pixels
             )
@@ -152,7 +142,6 @@ class ImagingCI(aa.Imaging):
             )
 
         else:
-
             return self
 
         imaging = imaging.apply_mask(mask=mask)
@@ -160,7 +149,6 @@ class ImagingCI(aa.Imaging):
         return imaging
 
     def set_noise_scaling_map_dict(self, noise_scaling_map_dict: Dict):
-
         self.noise_scaling_map_dict = {
             key: noise_scaling_map.native
             for key, noise_scaling_map in noise_scaling_map_dict.items()
@@ -184,15 +172,12 @@ class ImagingCI(aa.Imaging):
         cosmic_ray_map_hdu=0,
         settings_dict: Optional[Dict] = None,
     ) -> "ImagingCI":
-
         if data_path is not None and image is None:
-
             ci_image = aa.Array2D.from_fits(
                 file_path=data_path, hdu=data_hdu, pixel_scales=pixel_scales
             )
 
         elif image is not None:
-
             ci_image = image
 
         if noise_map_path is not None:
@@ -222,7 +207,6 @@ class ImagingCI(aa.Imaging):
         )
 
         if cosmic_ray_map_path is not None:
-
             cosmic_ray_map = aa.Array2D.from_fits(
                 file_path=cosmic_ray_map_path,
                 hdu=cosmic_ray_map_hdu,
@@ -249,7 +233,6 @@ class ImagingCI(aa.Imaging):
         cosmic_ray_map_path=None,
         overwrite=False,
     ):
-
         self.image.output_to_fits(file_path=data_path, overwrite=overwrite)
 
         if noise_map_path is not None:
@@ -261,7 +244,6 @@ class ImagingCI(aa.Imaging):
             )
 
         if self.cosmic_ray_map is not None and cosmic_ray_map_path is not None:
-
             self.cosmic_ray_map.output_to_fits(
                 file_path=cosmic_ray_map_path, overwrite=overwrite
             )

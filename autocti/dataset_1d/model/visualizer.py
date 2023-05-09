@@ -12,21 +12,20 @@ logger.setLevel(level="INFO")
 
 
 class VisualizerDataset1D(Visualizer):
-    def visualize_dataset_1d(self, dataset_1d, folder_suffix=""):
+    def visualize_dataset(self, dataset, folder_suffix=""):
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
         mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset_1d{folder_suffix}")
 
-        imaging_ci_plotter = aplt.Dataset1DPlotter(
-            dataset=dataset_1d, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
+        dataset_plotter = aplt.Dataset1DPlotter(
+            dataset=dataset, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
         )
 
         if should_plot("subplot_dataset"):
+            dataset_plotter.subplot_dataset()
 
-            imaging_ci_plotter.subplot_dataset_1d()
-
-        imaging_ci_plotter.figures_1d(
+        dataset_plotter.figures_1d(
             data=should_plot("data"),
             data_logy=should_plot("data_logy"),
             noise_map=should_plot("noise_map"),
@@ -34,24 +33,22 @@ class VisualizerDataset1D(Visualizer):
             pre_cti_data=should_plot("pre_cti_data"),
         )
 
-    def visualize_dataset_1d_regions(self, dataset_1d, region_list, folder_suffix=""):
+    def visualize_dataset_regions(self, dataset, region_list, folder_suffix=""):
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
         mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset_1d{folder_suffix}")
 
-        imaging_ci_plotter = aplt.Dataset1DPlotter(
-            dataset=dataset_1d, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
+        dataset_plotter = aplt.Dataset1DPlotter(
+            dataset=dataset, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
         )
 
         for region in region_list:
-
             try:
-
                 if should_plot("subplot_dataset"):
-                    imaging_ci_plotter.subplot_dataset_1d(region=region)
+                    dataset_plotter.subplot_dataset(region=region)
 
-                imaging_ci_plotter.figures_1d(
+                dataset_plotter.figures_1d(
                     region=region,
                     data=should_plot("data"),
                     data_logy=should_plot("data_logy"),
@@ -61,12 +58,58 @@ class VisualizerDataset1D(Visualizer):
                 )
 
             except (exc.RegionException, TypeError, ValueError):
-
                 logger.info(
                     f"VISUALIZATION - Could not visualize the Dataset1D {region}"
                 )
 
-    def visualize_fit_1d(self, fit, during_analysis, folder_suffix=""):
+    def visualize_dataset_combined(self, dataset_list, folder_suffix=""):
+        def should_plot(name):
+            return plot_setting(section="dataset", name=name)
+
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset_1d{folder_suffix}")
+
+        dataset_plotter_list = [aplt.Dataset1DPlotter(
+            dataset=dataset, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
+        ) for dataset in dataset_list]
+        multi_plotter = aplt.MultiFigurePlotter(plotter_list=dataset_plotter_list)
+
+        if should_plot("subplot_dataset"):
+            multi_plotter.subplot_of_figure(func_name="figures_1d", figure_name="data")
+
+    def visualize_dataset_regions_combined(self, dataset_list, region_list, folder_suffix=""):
+        def should_plot(name):
+            return plot_setting(section="dataset", name=name)
+
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset_1d{folder_suffix}")
+
+        dataset_plotter_list = [aplt.Dataset1DPlotter(
+            dataset=dataset, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
+        ) for dataset in dataset_list]
+        multi_plotter = aplt.MultiFigurePlotter(plotter_list=dataset_plotter_list)
+
+        for region in region_list:
+            try:
+                if should_plot("data"):
+                    multi_plotter.subplot_of_figure(
+                        func_name="figures_1d",
+                        figure_name="data",
+                        region=region,
+                        filename_suffix=f"_{region}",
+                    )
+
+                if should_plot("data_logy"):
+                    multi_plotter.subplot_of_figure(
+                        func_name="figures_1d",
+                        figure_name="data_logy",
+                        region=region,
+                        filename_suffix=f"_{region}",
+                    )
+            except (exc.RegionException, TypeError, ValueError):
+                logger.info(
+                    f"VISUALIZATION - Could not visualize the Dataset1D {region}"
+                )
+
+    def visualize_fit(self, fit, during_analysis, folder_suffix=""):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
@@ -90,9 +133,7 @@ class VisualizerDataset1D(Visualizer):
         )
 
         if not during_analysis:
-
             if should_plot("all_at_end_png"):
-
                 fit_1d_plotter.figures_1d(
                     data=True,
                     noise_map=True,
@@ -106,9 +147,9 @@ class VisualizerDataset1D(Visualizer):
                 )
 
         if should_plot("subplot_fit"):
-            fit_1d_plotter.subplot_fit_dataset_1d()
+            fit_1d_plotter.subplot_fit()
 
-    def visualize_fit_1d_regions(
+    def visualize_fit_regions(
         self, fit, region_list, during_analysis, folder_suffix=""
     ):
         def should_plot(name):
@@ -121,11 +162,9 @@ class VisualizerDataset1D(Visualizer):
         )
 
         for region in region_list:
-
             try:
-
                 if should_plot("subplot_fit"):
-                    fit_1d_plotter.subplot_fit_dataset_1d(region=region)
+                    fit_1d_plotter.subplot_fit(region=region)
 
                 fit_1d_plotter.figures_1d(
                     region=region,
@@ -142,12 +181,11 @@ class VisualizerDataset1D(Visualizer):
                 )
 
             except (exc.RegionException, TypeError, ValueError):
-
                 logger.info(
                     f"VISUALIZATION - Could not visualize the Dataset1D {region}"
                 )
 
-    def visualize_fit_1d_combined(self, fit_list, during_analysis, folder_suffix=""):
+    def visualize_fit_combined(self, fit_list, during_analysis, folder_suffix=""):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
@@ -155,13 +193,13 @@ class VisualizerDataset1D(Visualizer):
             subfolders=f"fit_dataset_1d_combined{folder_suffix}"
         )
 
-        fit_1d_plotter_list = [
+        fit_plotter_list = [
             aplt.FitDataset1DPlotter(
                 fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
             )
             for fit in fit_list
         ]
-        multi_plotter = aplt.MultiFigurePlotter(plotter_list=fit_1d_plotter_list)
+        multi_plotter = aplt.MultiFigurePlotter(plotter_list=fit_plotter_list)
 
         if should_plot("data"):
             multi_plotter.subplot_of_figure(func_name="figures_1d", figure_name="data")
@@ -191,7 +229,7 @@ class VisualizerDataset1D(Visualizer):
                 func_name="figures_1d", figure_name="chi_squared_map"
             )
 
-    def visualize_fit_1d_region_combined(
+    def visualize_fit_region_combined(
         self, fit_list, region_list, during_analysis, folder_suffix=""
     ):
         def should_plot(name):
@@ -210,9 +248,7 @@ class VisualizerDataset1D(Visualizer):
         multi_plotter = aplt.MultiFigurePlotter(plotter_list=fit_1d_plotter_list)
 
         for region in region_list:
-
             try:
-
                 if should_plot("data"):
                     multi_plotter.subplot_of_figure(
                         func_name="figures_1d",
@@ -262,7 +298,6 @@ class VisualizerDataset1D(Visualizer):
                     )
 
             except (exc.RegionException, TypeError, ValueError):
-
                 logger.info(
                     f"VISUALIZATION - Could not visualize the Dataset1D {region}"
                 )

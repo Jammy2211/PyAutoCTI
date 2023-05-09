@@ -31,7 +31,6 @@ class AnalysisImagingCI(af.Analysis):
         settings_cti: SettingsCTI2D = SettingsCTI2D(),
         dataset_full: Optional[ImagingCI] = None,
     ):
-
         super().__init__()
 
         self.dataset = dataset
@@ -48,20 +47,17 @@ class AnalysisImagingCI(af.Analysis):
         serial_fast_row_lists = None
 
         if self.clocker.parallel_fast_mode and not self.clocker.serial_fast_mode:
-
             (
                 parallel_fast_index_list,
                 parallel_fast_column_lists,
             ) = clocker.fast_indexes_from(data=dataset.pre_cti_data, for_parallel=True)
 
         elif not self.clocker.parallel_fast_mode and self.clocker.serial_fast_mode:
-
             serial_fast_index_list, serial_fast_row_lists = clocker.fast_indexes_from(
                 data=dataset.pre_cti_data, for_parallel=False
             )
 
         elif self.clocker.parallel_fast_mode and self.clocker.serial_fast_mode:
-
             raise exc.ClockerException(
                 "Both parallel fast model and serial fast mode cannot be turned on.\n"
                 "Only switch on parallel fast mode for parallel + serial clocking."
@@ -125,7 +121,6 @@ class AnalysisImagingCI(af.Analysis):
             return self
 
         if not model.has(HyperCINoiseCollection):
-
             noise_normalization = aa.util.fit.noise_normalization_with_mask_from(
                 noise_map=self.dataset.noise_map, mask=self.dataset.mask
             )
@@ -169,7 +164,6 @@ class AnalysisImagingCI(af.Analysis):
         imaging_ci: ImagingCI,
         hyper_noise_scale: bool = True,
     ) -> FitImagingCI:
-
         hyper_noise_scalar_dict = None
 
         if hyper_noise_scale and hasattr(instance, "hyper_noise"):
@@ -189,7 +183,6 @@ class AnalysisImagingCI(af.Analysis):
     def fit_via_instance_from(
         self, instance: af.ModelInstance, hyper_noise_scale: bool = True
     ) -> FitImagingCI:
-
         return self.fit_via_instance_and_dataset_from(
             instance=instance,
             imaging_ci=self.dataset,
@@ -198,7 +191,7 @@ class AnalysisImagingCI(af.Analysis):
 
     def visualize_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
 
-        if paths.is_complete or os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
+        if not self.should_visualize(paths=paths):
             return
 
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
@@ -214,7 +207,6 @@ class AnalysisImagingCI(af.Analysis):
         )
 
         if self.dataset_full is not None:
-
             visualizer.visualize_dataset(
                 dataset=self.dataset_full, folder_suffix="_full"
             )
@@ -228,7 +220,10 @@ class AnalysisImagingCI(af.Analysis):
         self, analyses, paths: af.DirectoryPaths, model: af.Collection
     ):
 
-        if paths.is_complete or os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
+        if not self.should_visualize(paths=paths):
+            return
+
+        if analyses is None:
             return
 
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
@@ -249,7 +244,6 @@ class AnalysisImagingCI(af.Analysis):
         )
 
         if self.dataset_full is not None:
-
             dataset_full_list = [analysis.dataset_full for analysis in analyses]
 
             visualizer.visualize_dataset_combined(
@@ -268,7 +262,7 @@ class AnalysisImagingCI(af.Analysis):
         during_analysis: bool,
     ):
 
-        if os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
+        if not self.should_visualize(paths=paths):
             return
 
         fit = self.fit_via_instance_from(instance=instance)
@@ -281,7 +275,6 @@ class AnalysisImagingCI(af.Analysis):
         )
 
         if self.dataset_full is not None:
-
             fit_full = self.fit_via_instance_and_dataset_from(
                 instance=instance, imaging_ci=self.dataset_full
             )
@@ -304,6 +297,9 @@ class AnalysisImagingCI(af.Analysis):
         during_analysis: bool,
     ):
 
+        if not self.should_visualize(paths=paths):
+            return
+
         fit_list = [
             analysis.fit_via_instance_from(instance=instance) for analysis in analyses
         ]
@@ -320,7 +316,6 @@ class AnalysisImagingCI(af.Analysis):
         )
 
         if self.dataset_full is not None:
-
             fit_list_full = [
                 analysis.fit_via_instance_and_dataset_from(
                     instance=instance, imaging_ci=analysis.dataset_full

@@ -182,7 +182,6 @@ class SimulatorCosmicRayMap:
 
         # loop over the individual events
         for i, luminosity in enumerate(luminosities):
-
             n = 0  # count the intercepts
 
             u = []
@@ -296,7 +295,6 @@ class SimulatorCosmicRayMap:
         total_cosmics = 0
 
         while covering < cover_fraction:
-
             # pseudo-random numbers taken from a uniform distribution between 0 and 1
             luck = np.random.rand(cr_n)
 

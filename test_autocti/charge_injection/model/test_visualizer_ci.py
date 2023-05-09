@@ -14,7 +14,6 @@ def make_visualizer_plotter_setup():
 
 
 def test__visualizes_dataset__uses_configs(imaging_ci_7x7, plot_path, plot_patch):
-
     if path.exists(plot_path):
         shutil.rmtree(plot_path)
 
@@ -26,7 +25,7 @@ def test__visualizes_dataset__uses_configs(imaging_ci_7x7, plot_path, plot_patch
 
     plot_path = path.join(plot_path, "dataset")
 
-    assert path.join(plot_path, "subplot_imaging_ci.png") in plot_patch.paths
+    assert path.join(plot_path, "subplot_dataset.png") in plot_patch.paths
     assert path.join(plot_path, "data.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map.png") not in plot_patch.paths
 
@@ -34,7 +33,6 @@ def test__visualizes_dataset__uses_configs(imaging_ci_7x7, plot_path, plot_patch
 def test__visualizes_dataset_regions__uses_configs(
     imaging_ci_7x7, plot_path, plot_patch
 ):
-
     if os.path.exists(plot_path):
         shutil.rmtree(plot_path)
 
@@ -52,7 +50,6 @@ def test__visualizes_dataset_regions__uses_configs(
 
 
 def test___visualizes_fit_ci__uses_configs(fit_ci_7x7, plot_path, plot_patch):
-
     if os.path.exists(plot_path):
         shutil.rmtree(plot_path)
 
@@ -62,7 +59,7 @@ def test___visualizes_fit_ci__uses_configs(fit_ci_7x7, plot_path, plot_patch):
 
     plot_path = path.join(plot_path, "fit_dataset")
 
-    assert path.join(plot_path, "subplot_fit_ci.png") in plot_patch.paths
+    assert path.join(plot_path, "subplot_fit.png") in plot_patch.paths
     assert path.join(plot_path, "data.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map.png") not in plot_patch.paths
 
@@ -70,13 +67,12 @@ def test___visualizes_fit_ci__uses_configs(fit_ci_7x7, plot_path, plot_patch):
 
     visualizer.visualize_fit(fit=fit_ci_7x7, during_analysis=False)
 
-    assert path.join(plot_path, "subplot_fit_ci.png") in plot_patch.paths
+    assert path.join(plot_path, "subplot_fit.png") in plot_patch.paths
     assert path.join(plot_path, "data.png") in plot_patch.paths
     assert path.join(plot_path, "noise_map.png") in plot_patch.paths
 
 
 def test___visualizes_fit_ci_regions__uses_configs(fit_ci_7x7, plot_path, plot_patch):
-
     if os.path.exists(plot_path):
         shutil.rmtree(plot_path)
 
@@ -108,7 +104,6 @@ def test___visualizes_fit_ci_regions__uses_configs(fit_ci_7x7, plot_path, plot_p
 
 
 def test__visualize_fit_combined(fit_ci_7x7, plot_path, plot_patch):
-
     if os.path.exists(plot_path):
         shutil.rmtree(plot_path)
 
@@ -127,7 +122,6 @@ def test__visualize_fit_combined(fit_ci_7x7, plot_path, plot_patch):
 
 
 def test__visualize_fit_regions_combined(fit_ci_7x7, plot_path, plot_patch):
-
     if os.path.exists(plot_path):
         shutil.rmtree(plot_path)
 

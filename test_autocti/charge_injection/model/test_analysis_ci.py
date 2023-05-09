@@ -10,7 +10,6 @@ from autocti.charge_injection.model.result import ResultImagingCI
 def test__modify_before_fit__noise_normalization_preload(
     imaging_ci_7x7, pre_cti_data_7x7, traps_x1, ccd, parallel_clocker_2d
 ):
-
     model = af.Collection(
         cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
     )
@@ -34,7 +33,6 @@ def test__modify_before_fit__noise_normalization_preload(
 def test__region_list_from(
     imaging_ci_7x7, pre_cti_data_7x7, traps_x1, ccd, parallel_clocker_2d
 ):
-
     analysis = ac.AnalysisImagingCI(dataset=imaging_ci_7x7, clocker=parallel_clocker_2d)
 
     model = af.Collection(
@@ -68,7 +66,6 @@ def test__region_list_from(
 def test__make_result__result_imaging_is_returned(
     imaging_ci_7x7, pre_cti_data_7x7, traps_x1, ccd, parallel_clocker_2d
 ):
-
     model = af.Collection(
         cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
         hyper_noise=af.Model(ac.HyperCINoiseCollection),
@@ -86,7 +83,6 @@ def test__make_result__result_imaging_is_returned(
 def test__log_likelihood_via_analysis__matches_manual_fit(
     imaging_ci_7x7, pre_cti_data_7x7, traps_x1, ccd, parallel_clocker_2d
 ):
-
     model = af.Collection(
         cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
         hyper_noise=af.Model(ac.HyperCINoiseCollection),
@@ -116,7 +112,6 @@ def test__log_likelihood_via_analysis__fast_settings_same_as_default(
     serial_clocker_2d,
     parallel_serial_clocker_2d,
 ):
-
     model = af.Collection(
         cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
         hyper_noise=af.Model(ac.HyperCINoiseCollection),
@@ -202,7 +197,6 @@ def test__log_likelihood_via_analysis__fast_settings_same_as_default(
 def test__full_and_extracted_fits_from_instance_and_imaging_ci(
     imaging_ci_7x7, mask_2d_7x7_unmasked, traps_x1, ccd, parallel_clocker_2d
 ):
-
     imaging_ci_full = copy.deepcopy(imaging_ci_7x7)
 
     model = af.Collection(
@@ -254,7 +248,6 @@ def test__extracted_fits_from_instance_and_imaging_ci__include_noise_scaling(
     parallel_clocker_2d,
     layout_ci_7x7,
 ):
-
     model = af.Collection(
         cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
         hyper_noise=af.Model(

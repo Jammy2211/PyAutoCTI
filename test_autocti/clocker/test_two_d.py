@@ -13,7 +13,6 @@ path = "{}/".format(os.path.dirname(os.path.realpath(__file__)))
 
 
 def test__array_with_offset_through_arctic():
-
     arr = ac.Array2D.no_mask(
         values=[[1.0, 2.0], [3.0, 4.0]],
         pixel_scales=1.0,
@@ -71,7 +70,6 @@ def test__array_with_offset_through_arctic():
 
 
 def test__add_cti_with_poisson_trap_densities():
-
     arr = np.array(
         (
             [
@@ -185,7 +183,6 @@ def test_fast_indexes_from():
 
 
 def test__add_cti_parallel_fast():
-
     arr = np.array(
         (
             [
@@ -225,7 +222,6 @@ def test__add_cti_parallel_fast():
 
 
 def test__add_cti_serial_fast():
-
     arr = np.array(
         (
             [
@@ -263,7 +259,6 @@ def test__add_cti_serial_fast():
 
 
 def test__raises_exception_if_no_traps_or_ccd_passed():
-
     arr = ac.Array2D.no_mask(
         values=[[1.0, 2.0], [3.0, 4.0]],
         pixel_scales=1.0,

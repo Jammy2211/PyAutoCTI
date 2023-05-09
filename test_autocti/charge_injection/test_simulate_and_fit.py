@@ -4,7 +4,6 @@ import autocti as ac
 
 
 def test__simulate_and_fit_non_uniform():
-
     shape_native = (500, 100)
 
     parallel_overscan = ac.Region2D((480, 500, 5, 95))
@@ -79,7 +78,6 @@ def test__simulate_and_fit_non_uniform():
 
 
 def test__simulate_and_extract_non_uniform_normalizations():
-
     shape_native = (500, 100)
 
     parallel_overscan = ac.Region2D((480, 500, 5, 95))

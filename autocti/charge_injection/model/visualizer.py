@@ -26,8 +26,7 @@ class VisualizerImagingCI(Visualizer):
         )
 
         if should_plot("subplot_dataset"):
-
-            dataset_plotter.subplot_imaging_ci()
+            dataset_plotter.subplot_dataset()
 
         dataset_plotter.figures_2d(
             data=should_plot("data"),
@@ -48,11 +47,8 @@ class VisualizerImagingCI(Visualizer):
         )
 
         for region in region_list:
-
             try:
-
                 if should_plot("subplot_dataset"):
-
                     dataset_plotter.subplot_1d(region=region)
 
                 dataset_plotter.figures_1d(
@@ -65,7 +61,6 @@ class VisualizerImagingCI(Visualizer):
                 )
 
             except (exc.RegionException, TypeError, ValueError):
-
                 logger.info(
                     f"VISUALIZATION - Could not visualize the ImagingCI 1D {region}"
                 )
@@ -87,7 +82,6 @@ class VisualizerImagingCI(Visualizer):
         multi_plotter = aplt.MultiFigurePlotter(plotter_list=dataset_plotter_list)
 
         if should_plot("subplot_dataset"):
-
             multi_plotter.subplot_of_figure(func_name="figures_2d", figure_name="data")
 
     def visualize_dataset_regions_combined(
@@ -109,9 +103,7 @@ class VisualizerImagingCI(Visualizer):
         multi_plotter = aplt.MultiFigurePlotter(plotter_list=dataset_plotter_list)
 
         for region in region_list:
-
             try:
-
                 if should_plot("data"):
                     multi_plotter.subplot_of_figure(
                         func_name="figures_1d",
@@ -129,7 +121,6 @@ class VisualizerImagingCI(Visualizer):
                     )
 
             except (exc.RegionException, TypeError, ValueError):
-
                 logger.info(
                     f"VISUALIZATION - Could not visualize the ImagingCI 1D {region}"
                 )
@@ -156,9 +147,7 @@ class VisualizerImagingCI(Visualizer):
         )
 
         if not during_analysis:
-
             if should_plot("all_at_end_png"):
-
                 fit_ci_plotter.figures_2d(
                     data=True,
                     noise_map=True,
@@ -171,11 +160,10 @@ class VisualizerImagingCI(Visualizer):
                 )
 
             if should_plot("all_at_end_fits"):
-
                 self.visualize_fit_in_fits(fit=fit)
 
         if should_plot("subplot_fit"):
-            fit_ci_plotter.subplot_fit_ci()
+            fit_ci_plotter.subplot_fit()
 
     def visualize_fit_1d_regions(
         self, fit, region_list, during_analysis, folder_suffix: str = ""
@@ -190,11 +178,8 @@ class VisualizerImagingCI(Visualizer):
         )
 
         for region in region_list:
-
             try:
-
                 if should_plot("subplot_fit"):
-
                     fit_ci_plotter.subplot_1d(region=region)
 
                 fit_ci_plotter.figures_1d(
@@ -212,9 +197,7 @@ class VisualizerImagingCI(Visualizer):
                 )
 
                 if not during_analysis:
-
                     if should_plot("all_at_end_png"):
-
                         fit_ci_plotter.figures_1d(
                             region=region,
                             data=True,
@@ -229,7 +212,6 @@ class VisualizerImagingCI(Visualizer):
                         )
 
             except (exc.RegionException, TypeError, ValueError):
-
                 logger.info(
                     f"VISUALIZATION - Could not visualize the ImagingCI 1D {region}"
                 )
@@ -286,9 +268,7 @@ class VisualizerImagingCI(Visualizer):
         multi_plotter = aplt.MultiFigurePlotter(plotter_list=fit_ci_plotter_list)
 
         for region in region_list:
-
             try:
-
                 if should_plot("data"):
                     multi_plotter.subplot_of_figure(
                         func_name="figures_1d",
@@ -338,13 +318,11 @@ class VisualizerImagingCI(Visualizer):
                     )
 
             except (exc.RegionException, TypeError, ValueError):
-
                 logger.info(
                     f"VISUALIZATION - Could not visualize the ImagingCI 1D {region}"
                 )
 
     def visualize_fit_in_fits(self, fit):
-
         mat_plot_2d = self.mat_plot_2d_from(subfolders="fit_imaging/fit", format="fit")
 
         fit_ci_plotter = aplt.FitImagingCIPlotter(

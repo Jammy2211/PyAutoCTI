@@ -101,9 +101,7 @@ class SimulatorDataset1D(SimulatorImaging):
     def via_pre_cti_data_from(
         self, pre_cti_data: aa.Array1D, layout: Layout1D, clocker: Clocker1D, cti: CTI1D
     ) -> Dataset1D:
-
         if self.charge_noise is not None:
-
             pre_cti_data = layout.extract.fpr.add_gaussian_noise_to(
                 array=pre_cti_data,
                 noise_sigma=self.charge_noise,
@@ -122,7 +120,6 @@ class SimulatorDataset1D(SimulatorImaging):
     def via_post_cti_data_from(
         self, post_cti_data: aa.Array1D, pre_cti_data: aa.Array1D, layout: Layout1D
     ) -> Dataset1D:
-
         if self.read_noise is not None:
             data = preprocess.data_with_gaussian_noise_added(
                 data=post_cti_data, sigma=self.read_noise, seed=self.noise_seed

@@ -172,7 +172,6 @@ def test__region_list_from__via_array_2d_list_from__pixels_from_end_minus_1_spec
 
 
 def test__array_2d_from():
-
     extract = ac.Extract2DParallelEPER(
         region_list=[(0, 3, 0, 3)],
         serial_prescan=(3, 5, 2, 3),
@@ -228,7 +227,6 @@ def test__array_2d_from():
 
 
 def test__binned_region_1d_from():
-
     extract = ac.Extract2DParallelEPER(region_list=[(1, 3, 0, 3)])
 
     binned_region_1d = extract.binned_region_1d_from(

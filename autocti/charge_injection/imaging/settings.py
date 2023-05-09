@@ -11,7 +11,6 @@ class SettingsImagingCI(aa.SettingsImaging):
         parallel_pixels: Tuple[int, int] = None,
         serial_pixels: Tuple[int, int] = None,
     ):
-
         super().__init__()
 
         self.parallel_pixels = parallel_pixels

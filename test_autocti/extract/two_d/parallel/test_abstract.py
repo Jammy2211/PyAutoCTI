@@ -5,7 +5,6 @@ import autocti as ac
 
 
 def test__median_list_from(parallel_array, parallel_masked_array):
-
     extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3)])
 
     # Extracts [1.0, 2.0, 3.0] of every injection in `parallel_array`
@@ -37,7 +36,6 @@ def test__median_list_from(parallel_array, parallel_masked_array):
 
 
 def test__median_list_from__pixels_from_end(parallel_array, parallel_masked_array):
-
     extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3)])
 
     # Extracts [1.0, 2.0, 3.0] of every injection in `parallel_array`
@@ -69,7 +67,6 @@ def test__median_list_from__pixels_from_end(parallel_array, parallel_masked_arra
 
 
 def test__median_list_of_lists_from(parallel_array, parallel_masked_array):
-
     extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3)])
 
     # Extracts [1.0, 2.0, 3.0] of every injection in `parallel_array`
@@ -105,7 +102,6 @@ def test__median_list_of_lists_from(parallel_array, parallel_masked_array):
 def test__median_list_of_lists_from__pixels_from_end(
     parallel_array, parallel_masked_array
 ):
-
     extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3)])
 
     # Extracts [1.0, 2.0, 3.0] of every injection in `parallel_array`
@@ -139,7 +135,6 @@ def test__median_list_of_lists_from__pixels_from_end(
 
 
 def test__std_list_from(parallel_array, parallel_masked_array):
-
     extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3)])
 
     # Extracts [1.0, 2.0, 3.0] of every injection in `parallel_array`
@@ -164,7 +159,6 @@ def test__std_list_from(parallel_array, parallel_masked_array):
 
 
 def test__std_list_from__pixels_from_end(parallel_array, parallel_masked_array):
-
     extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3)])
 
     # Extracts [1.0, 2.0, 3.0] of every injection in `parallel_array`
@@ -189,7 +183,6 @@ def test__std_list_from__pixels_from_end(parallel_array, parallel_masked_array):
 
 
 def test__std_list_of_lists_from(parallel_array, parallel_masked_array):
-
     extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3)])
 
     # Extracts [1.0, 2.0, 3.0] of every injection in `parallel_array`
@@ -217,7 +210,6 @@ def test__std_list_of_lists_from(parallel_array, parallel_masked_array):
 def test__std_list_of_lists_from__pixels_from_end(
     parallel_array, parallel_masked_array
 ):
-
     extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3)])
 
     # Extracts [1.0, 2.0, 3.0] of every injection in `parallel_array`
@@ -240,3 +232,55 @@ def test__std_list_of_lists_from__pixels_from_end(
     )
     assert std_list_of_lists[0] == pytest.approx([0.81649, 1.0, 0.5], 1.0e-4)
     assert std_list_of_lists[1] == pytest.approx([0.5, 0.81649, 0.81649], 1.0e-4)
+
+
+def test__median_list_of_lists_via_array_list_from(
+    parallel_array, parallel_masked_array
+):
+    array_0 = ac.Array2D.no_mask(
+        [
+            [0.0, 0.0, 0.0],
+            [1.0, 3.0, 1.0],
+            [1.0, 3.0, 1.0],
+            [1.0, 3.0, 1.0],
+            [0.0, 0.0, 0.0],
+            [5.0, 5.0, 5.0],
+            [5.0, 5.0, 5.0],
+            [0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+        ],
+        pixel_scales=1.0,
+    )
+
+    array_1 = ac.Array2D.no_mask(
+        [
+            [0.0, 0.0, 0.0],
+            [2.0, 2.0, 2.0],
+            [2.0, 2.0, 2.0],
+            [2.0, 2.0, 2.0],
+            [0.0, 0.0, 0.0],
+            [6.0, 6.0, 4.0],
+            [6.0, 6.0, 6.0],
+            [0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+            [0.0, 0.0, 0.0],
+        ],
+        pixel_scales=1.0,
+    )
+
+    extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3), (5, 7, 0, 3)])
+
+    median_list_of_lists = extract.median_list_of_lists_via_array_list_from(
+        array_list=[array_0, array_1], settings=ac.SettingsExtract(pixels=(0, 3))
+    )
+    assert median_list_of_lists[0] == [1.5, 2.5, 1.5]
+    assert median_list_of_lists[1] == [5.5, 5.5, 4.5]
+
+    extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3), (5, 8, 0, 3)])
+
+    median_list_of_lists = extract.median_list_of_lists_via_array_list_from(
+        array_list=[array_0, array_1], settings=ac.SettingsExtract(pixels_from_end=2)
+    )
+    assert median_list_of_lists[0] == [1.5, 2.5, 1.5]
+    assert median_list_of_lists[1] == [5.5, 5.5, 4.5]

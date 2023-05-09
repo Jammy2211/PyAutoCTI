@@ -285,7 +285,6 @@ class Clocker2D(AbstractClocker):
         parallel_trap_column_list = []
 
         for column in range(total_columns):
-
             parallel_trap_poisson_list = [
                 parallel_trap.poisson_density_from(
                     total_pixels=total_rows, seed=self.poisson_seed
@@ -354,7 +353,7 @@ class Clocker2D(AbstractClocker):
 
         Therefore, this function speeds up CTI addition via arCTIc by extracting all identical columns (for parallel
         clocking) or rows (for serial clocking), adding CTI via arcitc to only these extracted stripes and copying the
-        output stripes to construct the the final post-cti image.
+        output stripes to construct the final post-cti image.
 
         This function inspects the input image and extracts the indexes of every unique stripe, alongside
         a list which maps this unique stripe to all other stripes it is identical to. These are used in the functions
@@ -378,16 +377,13 @@ class Clocker2D(AbstractClocker):
         unchecked_list = range(0, total_stripes)
 
         for stripe_index in range(total_stripes):
-
             paired = False
 
             pair_list = []
             unchecked_list_new = []
 
             if stripe_index in unchecked_list:
-
                 for pair_index in unchecked_list:
-
                     if for_parallel:
                         residual_map = np.abs(
                             data[:, stripe_index] - data[:, pair_index]
@@ -398,7 +394,6 @@ class Clocker2D(AbstractClocker):
                         )
 
                     if np.all(residual_map < 1.0e-8):
-
                         if not paired:
                             fast_index_list.append(stripe_index)
 
@@ -407,7 +402,6 @@ class Clocker2D(AbstractClocker):
                         pair_list.append(pair_index)
 
                     else:
-
                         unchecked_list_new.append(pair_index)
 
                 fast_column_lists.append(pair_list)
@@ -428,7 +422,7 @@ class Clocker2D(AbstractClocker):
         For 2D images where the same signal is repeated over many columns (e.g. uniform charge injection imaging)
         the CTI added to each column via arctic is identical. Therefore, this function speeds up CTI addition by
         extracting all identical columns, adding CTI via arcitc to only these columns and copying the output columns
-        to construct the the final post-cti image.
+        to construct the final post-cti image.
 
         Parameters
         ----------
@@ -485,7 +479,6 @@ class Clocker2D(AbstractClocker):
 
         for i, fast_column_list in enumerate(fast_column_lists):
             for fast_column in fast_column_list:
-
                 image_post_cti[:, fast_column] = image_post_cti_pass[:, i]
 
         if cti.serial_trap_list is None:
@@ -532,7 +525,7 @@ class Clocker2D(AbstractClocker):
 
         For 2D images where the same signal is repeated over all columns (e.g. uniform charge injection imaging)
         the CTI added to each row via arctic is identical. Therefore, this function speeds up CTI addition by
-        only a single column to arcitc once and copying the output column the NumPy array to construct the the final
+        only a single column to arcitc once and copying the output column the NumPy array to construct the final
         post-cti image.
 
         This only works for serial CTI when parallel CTI is omitted.
@@ -594,7 +587,6 @@ class Clocker2D(AbstractClocker):
 
         for i, fast_row_list in enumerate(fast_row_lists):
             for fast_row in fast_row_list:
-
                 image_post_cti[fast_row, :] = image_post_cti_pass[i, :]
 
         return aa.Array2D(

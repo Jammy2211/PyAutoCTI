@@ -69,7 +69,6 @@ class Layout2DCI(Layout2D):
 
     @property
     def extract(self) -> Extract2DMaster:
-
         from autocti.extract.two_d.master import Extract2DMaster
 
         return Extract2DMaster(
@@ -82,7 +81,6 @@ class Layout2DCI(Layout2D):
 
     @classmethod
     def from_euclid_fits_header(cls, ext_header):
-
         serial_overscan_size = ext_header.get("OVRSCANX", default=None)
         serial_prescan_size = ext_header.get("PRESCANX", default=None)
         serial_size = ext_header.get("NAXIS1", default=None)
@@ -181,7 +179,6 @@ class Layout2DCI(Layout2D):
         pre_cti_data = np.zeros(self.shape_2d)
 
         for region in self.region_list:
-
             pre_cti_data[region.slice] += ci_util.region_ci_from(
                 region_dimensions=region.shape,
                 injection_norm_list=injection_norm_list,
@@ -223,7 +220,6 @@ class Layout2DCI(Layout2D):
         pre_cti_data = np.zeros(self.shape_2d)
 
         for region_index, region in enumerate(self.region_list):
-
             pre_cti_data[region.slice] += ci_util.region_ci_from(
                 region_dimensions=region.shape,
                 injection_norm_list=injection_norm_lists[region_index],
@@ -253,7 +249,6 @@ class Layout2DCI(Layout2D):
         noise_map = np.full(fill_value=read_noise, shape=self.shape_2d)
 
         for region in self.region_list:
-
             noise_region = ci_util.region_ci_from(
                 region_dimensions=region.shape,
                 injection_norm_list=injection_std_list,
@@ -287,7 +282,6 @@ class Layout2DCI(Layout2D):
         noise_map = np.full(fill_value=read_noise, shape=self.shape_2d)
 
         for region_index, region in enumerate(self.region_list):
-
             noise_region = ci_util.region_ci_from(
                 region_dimensions=region.shape,
                 injection_norm_list=injection_std_lists[region_index],
@@ -408,12 +402,10 @@ class ElectronicsCI:
         injection_range = self.injection_end - self.injection_start
 
         for injection_total in range(100):
-
             total_pixels = math.floor(
                 (injection_total + 1) * (self.injection_on)
                 + injection_total * self.injection_off
             )
 
             if total_pixels > injection_range:
-
                 return injection_total

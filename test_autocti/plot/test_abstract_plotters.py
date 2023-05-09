@@ -14,7 +14,6 @@ def make_fit_ci_plotter_setup():
 
 
 def test__text_manual_dict(fit_ci_7x7):
-
     fit_ci_7x7 = copy.deepcopy(fit_ci_7x7)
     fit_ci_7x7.dataset.settings_dict = {"hello": 2.0, "hi": 3.0}
 

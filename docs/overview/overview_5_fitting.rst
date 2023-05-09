@@ -331,7 +331,7 @@ injection data.
 .. code-block:: python
 
     dataset_1d_plotter = aplt.Dataset1DPlotter(dataset=dataset_1d)
-    dataset_1d_plotter.subplot_dataset_1d()
+    dataset_1d_plotter.subplot_dataset()
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/data_1d.png
   :width: 600
