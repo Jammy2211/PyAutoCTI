@@ -126,14 +126,18 @@ class AnalysisDataset1D(af.Analysis):
 
         visualizer = VisualizerDataset1D(visualize_path=paths.image_path)
         visualizer.visualize_dataset(dataset=self.dataset)
-        visualizer.visualize_dataset_regions(dataset=self.dataset, region_list=region_list)
+        visualizer.visualize_dataset_regions(
+            dataset=self.dataset, region_list=region_list
+        )
 
         if self.dataset_full is not None:
             visualizer.visualize_dataset(
                 dataset=self.dataset_full, folder_suffix="_full"
             )
             visualizer.visualize_dataset_regions(
-                dataset=self.dataset_full, region_list=region_list, folder_suffix="_full"
+                dataset=self.dataset_full,
+                region_list=region_list,
+                folder_suffix="_full",
             )
 
     def visualize_before_fit_combined(

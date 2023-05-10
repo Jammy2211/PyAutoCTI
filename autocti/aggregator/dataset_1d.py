@@ -19,6 +19,8 @@ def _dataset_1d_from(fit: af.Fit, settings_dataset: Optional[SettingsDataset1D] 
     ----------
     fit
         A PyAutoFit aggregator's SearchOutput object containing the generators of the results of model-fits.
+    settings_dataset
+        The settings of the `Dataset1D` object fitted by the non-linear search.
     """
 
     dataset = fit.value(name="dataset")
@@ -45,8 +47,8 @@ class Dataset1DAgg:
 
         Parameters
         ----------
-        aggregator
-            A PyAutoFit aggregator object containing the results of model-fits.
+        settings_dataset
+            The settings of the `Dataset1D` object fitted by the non-linear search.
         """
 
         func = partial(_dataset_1d_from, settings_dataset=settings_dataset)

@@ -190,7 +190,6 @@ class AnalysisImagingCI(af.Analysis):
         )
 
     def visualize_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
-
         if not self.should_visualize(paths=paths):
             return
 
@@ -219,7 +218,6 @@ class AnalysisImagingCI(af.Analysis):
     def visualize_before_fit_combined(
         self, analyses, paths: af.DirectoryPaths, model: af.Collection
     ):
-
         if not self.should_visualize(paths=paths):
             return
 
@@ -261,7 +259,6 @@ class AnalysisImagingCI(af.Analysis):
         instance: af.ModelInstance,
         during_analysis: bool,
     ):
-
         if not self.should_visualize(paths=paths):
             return
 
@@ -296,7 +293,6 @@ class AnalysisImagingCI(af.Analysis):
         instance: af.ModelInstance,
         during_analysis: bool,
     ):
-
         if not self.should_visualize(paths=paths):
             return
 

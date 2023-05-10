@@ -1,10 +1,11 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from functools import partial
-from typing import TYPE_CHECKING, List, Generator
+from typing import TYPE_CHECKING, List, Generator, Union
 
 if TYPE_CHECKING:
-    from autogalaxy.galaxy.galaxy import Galaxy
+    from autocti.model.model_util import CTI1D
+    from autocti.model.model_util import CTI2D
 
 import autofit as af
 
@@ -25,17 +26,17 @@ class AbstractAgg(ABC):
         self.aggregator = aggregator
 
     @abstractmethod
-    def make_object_for_gen(self, fit: af.Fit, galaxies: List[Galaxy]) -> object:
+    def make_object_for_gen(self, fit: af.Fit, cti: Union[CTI1D, CTI2D]) -> object:
         """
         For example, in the `PlaneAgg` object, this function is overwritten such that it creates a `Plane` from a
-        `ModelInstance` that contains the galaxies of a sample from a non-linear search.
+        `ModelInstance` that contains the cti of a sample from a non-linear search.
 
         Parameters
         ----------
         fit
             A PyAutoFit database Fit object containing the generators of the results of model-fits.
-        galaxies
-            A list of galaxies corresponding to a sample of a non-linear search and model-fit.
+        cti
+            A list of cti corresponding to a sample of a non-linear search and model-fit.
 
         Returns
         -------
@@ -55,7 +56,7 @@ class AbstractAgg(ABC):
         """
 
         def func_gen(fit: af.Fit) -> Generator:
-            return self.make_object_for_gen(fit=fit, galaxies=fit.instance.galaxies)
+            return self.make_object_for_gen(fit=fit, cti=fit.instance.cti)
 
         return self.aggregator.map(func=func_gen)
 
@@ -117,7 +118,7 @@ class AbstractAgg(ABC):
                     instance = sample.instance_for_model(model=samples.model)
 
                     all_above_weight_list.append(
-                        self.make_object_for_gen(fit=fit, galaxies=instance.galaxies)
+                        self.make_object_for_gen(fit=fit, cti=instance.cti)
                     )
 
             return all_above_weight_list
@@ -152,7 +153,7 @@ class AbstractAgg(ABC):
             return [
                 self.make_object_for_gen(
                     fit=fit,
-                    galaxies=samples.draw_randomly_via_pdf().galaxies,
+                    cti=samples.draw_randomly_via_pdf().cti,
                 )
                 for i in range(total_samples)
             ]

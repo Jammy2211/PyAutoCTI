@@ -33,13 +33,14 @@ def _cti_from(fit: af.Fit) -> Union[CTI1D, CTI2D]:
 
     return fit.instance.cti
 
+
 class CTIAgg(AbstractAgg):
     """
     Wraps a PyAutoFit aggregator in order to create generators of ctis corresponding to the results of a non-linear
     search model-fit.
     """
 
-    def make_object_for_gen(self, fit, clocker) -> Union[CTI1D, CTI2D]:
+    def make_object_for_gen(self, fit, cti: Union[CTI1D, CTI2D]) -> Union[CTI1D, CTI2D]:
         """
         Creates a `CTI` object from a `ModelInstance` that contains the clocker of a sample from a non-linear
         search.
@@ -48,8 +49,8 @@ class CTIAgg(AbstractAgg):
         ----------
         fit
             A PyAutoFit database Fit object containing the generators of the results of model-fits.
-        clocker
-            The CTI arctic clocker used by the non-linear search and model-fit.
+        cti
+            A CTI model corresponding to a sample of the non-linear search.
 
         Returns
         -------

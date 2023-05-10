@@ -18,23 +18,17 @@ def clean(database_file, result_path):
 
 @pytest.fixture(name="model_1d")
 def make_model():
-
     trap_0 = af.Model(ac.TrapInstantCapture)
 
     trap_list = [trap_0]
 
     ccd = af.Model(ac.CCDPhase)
 
-    return af.Collection(
-        cti=af.Model(
-            ac.CTI1D, trap_list=trap_list, ccd=ccd
-        )
-    )
+    return af.Collection(cti=af.Model(ac.CTI1D, trap_list=trap_list, ccd=ccd))
 
 
 @pytest.fixture(name="samples_1d")
 def make_samples(model_1d):
-
     trap_0 = ac.TrapInstantCapture(density=0.1, release_timescale=1.0)
     ccd = ac.CCDPhase()
 

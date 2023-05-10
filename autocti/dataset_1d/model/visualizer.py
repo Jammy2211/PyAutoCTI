@@ -68,23 +68,31 @@ class VisualizerDataset1D(Visualizer):
 
         mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset_1d{folder_suffix}")
 
-        dataset_plotter_list = [aplt.Dataset1DPlotter(
-            dataset=dataset, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
-        ) for dataset in dataset_list]
+        dataset_plotter_list = [
+            aplt.Dataset1DPlotter(
+                dataset=dataset, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
+            )
+            for dataset in dataset_list
+        ]
         multi_plotter = aplt.MultiFigurePlotter(plotter_list=dataset_plotter_list)
 
         if should_plot("subplot_dataset"):
             multi_plotter.subplot_of_figure(func_name="figures_1d", figure_name="data")
 
-    def visualize_dataset_regions_combined(self, dataset_list, region_list, folder_suffix=""):
+    def visualize_dataset_regions_combined(
+        self, dataset_list, region_list, folder_suffix=""
+    ):
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
         mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset_1d{folder_suffix}")
 
-        dataset_plotter_list = [aplt.Dataset1DPlotter(
-            dataset=dataset, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
-        ) for dataset in dataset_list]
+        dataset_plotter_list = [
+            aplt.Dataset1DPlotter(
+                dataset=dataset, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
+            )
+            for dataset in dataset_list
+        ]
         multi_plotter = aplt.MultiFigurePlotter(plotter_list=dataset_plotter_list)
 
         for region in region_list:

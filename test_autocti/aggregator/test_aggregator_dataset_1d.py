@@ -7,8 +7,7 @@ import autocti as ac
 from test_autogalaxy.aggregator.conftest import clean
 
 
-def test__dataset_gen_from(dataset_1d_7, mask_1d_7_unmasked, clocker_1d, samples_1d, model_1d):
-
+def test__dataset_gen_from(dataset_1d_7, clocker_1d, samples_1d, model_1d):
     path_prefix = "aggregator_dataset_gen"
 
     database_file = path.join(conf.instance.output_path, "dataset.sqlite")
@@ -16,12 +15,10 @@ def test__dataset_gen_from(dataset_1d_7, mask_1d_7_unmasked, clocker_1d, samples
 
     clean(database_file=database_file, result_path=result_path)
 
-    masked_dataset_1d_7 = dataset_1d_7.apply_mask(mask=mask_1d_7_unmasked)
-
     search = ac.m.MockSearch(samples=samples_1d)
     search.paths = af.DirectoryPaths(path_prefix=path_prefix)
 
-    analysis = ac.AnalysisDataset1D(dataset=masked_dataset_1d_7, clocker=clocker_1d)
+    analysis = ac.AnalysisDataset1D(dataset=dataset_1d_7, clocker=clocker_1d)
 
     search.fit(model=model_1d, analysis=analysis)
 
@@ -32,8 +29,7 @@ def test__dataset_gen_from(dataset_1d_7, mask_1d_7_unmasked, clocker_1d, samples
     dataset_gen = dataset_agg.dataset_gen_from()
 
     for dataset in dataset_gen:
-
-        assert (dataset.data == masked_dataset_1d_7.data).all()
+        assert (dataset.data == dataset_1d_7.data).all()
 
     clean(database_file=database_file, result_path=result_path)
 

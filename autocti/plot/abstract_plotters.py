@@ -17,8 +17,7 @@ class Plotter(AbstractPlotter):
     def get_2d(self):
         return GetVisuals2D(visuals=self.visuals_2d, include=self.include_2d)
 
-    def title_str_from(self, region : str) -> str:
-
+    def title_str_from(self, region: str) -> str:
         if region is None:
             return ""
         elif region == "fpr":

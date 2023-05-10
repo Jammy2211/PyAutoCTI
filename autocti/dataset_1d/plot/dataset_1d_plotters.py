@@ -173,7 +173,6 @@ class Dataset1DPlotter(Plotter):
             )
 
         if signal_to_noise_map:
-
             y = self.extract_region_from(
                 array=self.dataset.signal_to_noise_map, region=region
             )
