@@ -66,6 +66,7 @@ from .clocker.two_d import Clocker2D
 from . import aggregator as agg
 from . import util
 from . import plot
+from . import mock as m  # noqa
 
 from autoconf import conf
 
