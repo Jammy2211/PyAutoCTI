@@ -31,7 +31,7 @@ def _cti_from(fit: af.Fit) -> Union[CTI1D, CTI2D]:
         The cti computed via an instance of clocker.
     """
 
-    return fit.instance.cti
+    return fit.instance
 
 
 class CTIAgg(AbstractAgg):

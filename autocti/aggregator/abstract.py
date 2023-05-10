@@ -1,9 +1,10 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
 from functools import partial
-from typing import TYPE_CHECKING, List, Generator, Union
+from typing import TYPE_CHECKING, List, Generator, Optional, Union
 
 if TYPE_CHECKING:
+    from autocti.clocker.abstract import AbstractClocker
     from autocti.model.model_util import CTI1D
     from autocti.model.model_util import CTI2D
 
@@ -11,7 +12,9 @@ import autofit as af
 
 
 class AbstractAgg(ABC):
-    def __init__(self, aggregator: af.Aggregator):
+    def __init__(
+        self, aggregator: af.Aggregator, clocker: Optional[AbstractClocker] = None
+    ):
         """
         An abstract aggregator wrapper, which makes it straight forward to compute generators of objects from specific
         samples of a non-linear search.
@@ -22,8 +25,12 @@ class AbstractAgg(ABC):
         ----------
         aggregator
             An PyAutoFit aggregator containing the results of non-linear searches performed by PyAutoFit.
+        clocker
+            The CTI arctic clocker used by aggregator's instances. If None is input, the clocker used by the
+            non-linear search and model-fit is used.
         """
         self.aggregator = aggregator
+        self.clocker = clocker
 
     @abstractmethod
     def make_object_for_gen(self, fit: af.Fit, cti: Union[CTI1D, CTI2D]) -> object:

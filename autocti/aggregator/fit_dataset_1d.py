@@ -1,13 +1,13 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, List, Union
+from typing import TYPE_CHECKING, Optional, Union
 
 if TYPE_CHECKING:
+    from autocti.clocker.abstract import AbstractClocker
     from autocti.model.model_util import CTI1D
     from autocti.model.model_util import CTI2D
     from autocti.dataset_1d.fit import FitDataset1D
 
 import autofit as af
-import autoarray as aa
 
 from autocti.aggregator.abstract import AbstractAgg
 from autocti.aggregator.dataset_1d import _dataset_1d_from
@@ -53,6 +53,7 @@ class FitDataset1DAgg(AbstractAgg):
     def __init__(
         self,
         aggregator: af.Aggregator,
+        clocker: Optional[AbstractClocker] = None,
         settings_dataset: Optional[SettingsDataset1D] = None,
     ):
         """
@@ -61,10 +62,13 @@ class FitDataset1DAgg(AbstractAgg):
 
         Parameters
         ----------
+        clocker
+            The CTI arctic clocker used by aggregator's instances. If None is input, the clocker used by the
+            non-linear search and model-fit is used.
         settings_dataset
             The settings of the `Dataset1D` object fitted by the non-linear search.
         """
-        super().__init__(aggregator=aggregator)
+        super().__init__(aggregator=aggregator, clocker=clocker)
 
         self.settings_dataset = settings_dataset
 
