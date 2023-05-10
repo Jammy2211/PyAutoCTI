@@ -7,7 +7,7 @@ import autocti as ac
 from test_autogalaxy.aggregator.conftest import clean
 
 
-def test__dataset_generator_from_aggregator(dataset_1d_7, mask_1d_7_unmasked, clocker_1d, samples_1d, model_1d):
+def test__dataset_gen_from(dataset_1d_7, mask_1d_7_unmasked, clocker_1d, samples_1d, model_1d):
 
     path_prefix = "aggregator_dataset_gen"
 
@@ -36,3 +36,21 @@ def test__dataset_generator_from_aggregator(dataset_1d_7, mask_1d_7_unmasked, cl
         assert (dataset.data == masked_dataset_1d_7.data).all()
 
     clean(database_file=database_file, result_path=result_path)
+
+    # analysis_list = [analysis, analysis]
+    #
+    # analysis = sum(analysis_list)
+    #
+    # search.fit(model=model_1d, analysis=analysis)
+    #
+    # agg = af.Aggregator.from_database(filename=database_file)
+    # agg.add_directory(directory=result_path)
+    #
+    # dataset_agg = ac.agg.Dataset1DAgg(aggregator=agg)
+    # dataset_gen = dataset_agg.dataset_gen_from()
+    #
+    # print(list(dataset_gen))
+    # print(list(dataset_gen))
+    # print(list(dataset_gen))
+    # print(list(dataset_gen))
+    # aaaa
