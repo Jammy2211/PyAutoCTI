@@ -63,8 +63,10 @@ from .model.settings import SettingsCTI1D
 from .model.settings import SettingsCTI2D
 from .clocker.one_d import Clocker1D
 from .clocker.two_d import Clocker2D
+from . import aggregator as agg
 from . import util
 from . import plot
+from . import mock as m  # noqa
 
 from autoconf import conf
 

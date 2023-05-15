@@ -27,7 +27,7 @@ the `config directory of the workspace <https://github.com/Jammy2211/autocti_wor
 Config
 ------
 
-Here, you'll find the configuration files used by **PyAutoCTI** which customize:
+Here, you'll find the configuration files which customize:
 
     - The default settings used by every non-linear search.
     - Visualization, including the backend used by *matplotlib*.

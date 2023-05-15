@@ -37,9 +37,7 @@ def test__visualize_dataset_1d_region__uses_configs(
 
     visualizer = VisualizerDataset1D(visualize_path=plot_path)
 
-    visualizer.visualize_dataset_regions(
-        dataset=dataset_1d_7, region_list=["fpr"]
-    )
+    visualizer.visualize_dataset_regions(dataset=dataset_1d_7, region_list=["fpr"])
 
     plot_path = path.join(plot_path, "dataset_1d")
 

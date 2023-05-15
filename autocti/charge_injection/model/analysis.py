@@ -189,8 +189,37 @@ class AnalysisImagingCI(af.Analysis):
             hyper_noise_scale=hyper_noise_scale,
         )
 
-    def visualize_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
+    def save_attributes_for_aggregator(self, paths: af.DirectoryPaths):
+        """
+        Before the model-fit via the non-linear search begins, this routine saves attributes of the `Analysis` object
+        to the `pickles` folder such that they can be loaded after the analysis using PyAutoFit's database and
+        aggregator tools.
 
+        For this analysis the following are output:
+
+        - The 2D charge injection dataset.
+        - The clocker used for modeling / clocking CTI.
+        - The settings used for modeling / clocking CTI.
+        - The full 1D dataset (e.g. unmasked, used for visualizariton).
+
+        It is common for these attributes to be loaded by many of the template aggregator functions given in the
+        `aggregator` modules. For example, when using the database tools to reperform a fit, this will by default
+        load the dataset, settings and other attributes necessary to perform a fit using the attributes output by
+        this function.
+
+        Parameters
+        ----------
+        paths
+            The PyAutoFit paths object which manages all paths, e.g. where the non-linear search outputs are stored,
+            visualization,and the pickled objects used by the aggregator output by this function.
+        """
+        paths.save_object("dataset", self.dataset)
+        paths.save_object("clocker", self.clocker)
+        paths.save_object("settings_cti", self.settings_cti)
+        if self.dataset_full is not None:
+            paths.save_object("dataset_full", self.dataset_full)
+
+    def visualize_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
         if not self.should_visualize(paths=paths):
             return
 
@@ -219,7 +248,6 @@ class AnalysisImagingCI(af.Analysis):
     def visualize_before_fit_combined(
         self, analyses, paths: af.DirectoryPaths, model: af.Collection
     ):
-
         if not self.should_visualize(paths=paths):
             return
 
@@ -261,7 +289,6 @@ class AnalysisImagingCI(af.Analysis):
         instance: af.ModelInstance,
         during_analysis: bool,
     ):
-
         if not self.should_visualize(paths=paths):
             return
 
@@ -296,7 +323,6 @@ class AnalysisImagingCI(af.Analysis):
         instance: af.ModelInstance,
         during_analysis: bool,
     ):
-
         if not self.should_visualize(paths=paths):
             return
 

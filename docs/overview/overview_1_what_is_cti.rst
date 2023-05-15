@@ -82,7 +82,7 @@ Firstly, lets create a simple 1D dataset, which could correspond to a column of 
 above. For simplicity, this data is 5 pixels each containing 100 electrons with 10 empty pixels trailing them.
 
 The ``Array1D`` object is a class representing a 1D data structure. It inherits from a numpy ndarray but is extended
-with functionality used by **PyAutoCTI** which is expanded upon elsewhere in the workspace.
+with functionality which is expanded upon elsewhere in the workspace.
 
 .. code-block:: python
 

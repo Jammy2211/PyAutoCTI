@@ -13,7 +13,7 @@ A large amount of **PyAutoCTI** functionality is contained in its parent project
 
 **PyAutoArray** https://github.com/Jammy2211/PyAutoArray
 
-If you wish to build from source all code used by **PyAutoCTI** you may need to build from source these 2 additional
+If you wish to build from source all code you may need to build from source these 2 additional
 projects. We include below instructions for building just **PyAutoCTI** from source or building all projects.
 
 Building Only PyAutoCTI
