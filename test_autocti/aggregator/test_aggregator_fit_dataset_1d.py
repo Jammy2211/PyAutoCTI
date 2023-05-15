@@ -36,10 +36,12 @@ def test__fit_dataset_1d_randomly_drawn_via_pdf_gen_from(
     i = 0
 
     for fit_dataset_1d_gen in fit_dataset_1d_pdf_gen:
-        for fit_dataset_1d in fit_dataset_1d_gen:
+        for fit_dataset_1d_list in fit_dataset_1d_gen:
+            print(fit_dataset_1d_list)
             i += 1
 
-            assert fit_dataset_1d.post_cti_data[0] == pytest.approx(1.0, 1.0e-4)
+
+            assert fit_dataset_1d_list[0].post_cti_data[0] == pytest.approx(1.0, 1.0e-4)
 
     assert i == 2
 
@@ -74,7 +76,7 @@ def test__fit_dataset_1d_all_above_weight_gen(
     i = 0
 
     for fit_dataset_1d_gen in fit_dataset_1d_pdf_gen:
-        for fit_dataset_1d in fit_dataset_1d_gen:
+        for fit_dataset_1d_list in fit_dataset_1d_gen:
             i += 1
 
     assert i == 2

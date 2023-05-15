@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, List, Optional, Union
 
 if TYPE_CHECKING:
     from autocti.clocker.abstract import AbstractClocker
@@ -10,15 +10,16 @@ if TYPE_CHECKING:
 import autofit as af
 
 from autocti.aggregator.abstract import AbstractAgg
-from autocti.aggregator.dataset_1d import _dataset_1d_from
+from autocti.aggregator.dataset_1d import _dataset_1d_list_from
 from autocti.dataset_1d.dataset_1d.settings import SettingsDataset1D
 
 
-def _fit_dataset_1d_from(
+def _fit_dataset_1d_list_from(
     fit: af.Fit,
     cti: Union[CTI1D, CTI2D],
+    clocker: Optional[AbstractClocker] = None,
     settings_dataset: Optional[SettingsDataset1D] = None,
-) -> FitDataset1D:
+) -> List[FitDataset1D]:
     """
     Returns a `FitDataset1D` object from a PyAutoFit database `Fit` object and an instance of galaxies from a non-linear
     search model-fit.
@@ -38,15 +39,23 @@ def _fit_dataset_1d_from(
 
     from autocti.dataset_1d.fit import FitDataset1D
 
-    dataset_1d = _dataset_1d_from(fit=fit, settings_dataset=settings_dataset)
+    dataset_1d_list = _dataset_1d_list_from(fit=fit, settings_dataset=settings_dataset)
 
-    clocker = fit.value(name="clocker")
-    post_cti_data = clocker.add_cti(data=dataset_1d.data, cti=cti)
+    clocker_list = [fit.value(name="clocker")]
+    if clocker_list[0] is None:
+        clocker_list = fit.child_values(name="clocker")
 
-    return FitDataset1D(
-        dataset=dataset_1d,
-        post_cti_data=post_cti_data,
-    )
+    post_cti_data_list = [
+        clocker.add_cti(data=dataset_1d.data, cti=cti) for dataset_1d, clocker in zip(dataset_1d_list, clocker_list)
+    ]
+
+    return [
+        FitDataset1D(
+            dataset=dataset_1d,
+            post_cti_data=post_cti_data,
+        )
+        for dataset_1d, post_cti_data in zip(dataset_1d_list, post_cti_data_list)
+    ]
 
 
 class FitDataset1DAgg(AbstractAgg):
@@ -72,7 +81,7 @@ class FitDataset1DAgg(AbstractAgg):
 
         self.settings_dataset = settings_dataset
 
-    def make_object_for_gen(self, fit, cti: Union[CTI1D, CTI2D]) -> FitDataset1D:
+    def object_via_gen_from(self, fit, cti: Union[CTI1D, CTI2D]) -> FitDataset1D:
         """
         Creates a `FitDataset1D` object from a `ModelInstance` that contains the galaxies of a sample from a non-linear
         search.
@@ -87,8 +96,9 @@ class FitDataset1DAgg(AbstractAgg):
         FitDataset1D
             A fit to dataset_1d data whose galaxies are a sample of a PyAutoFit non-linear search.
         """
-        return _fit_dataset_1d_from(
+        return _fit_dataset_1d_list_from(
             fit=fit,
             cti=cti,
+            clocker=self.clocker,
             settings_dataset=self.settings_dataset,
         )

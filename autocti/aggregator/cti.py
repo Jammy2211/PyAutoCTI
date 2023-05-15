@@ -40,7 +40,7 @@ class CTIAgg(AbstractAgg):
     search model-fit.
     """
 
-    def make_object_for_gen(self, fit, cti: Union[CTI1D, CTI2D]) -> Union[CTI1D, CTI2D]:
+    def object_via_gen_from(self, fit, cti: Union[CTI1D, CTI2D]) -> Union[CTI1D, CTI2D]:
         """
         Creates a `CTI` object from a `ModelInstance` that contains the clocker of a sample from a non-linear
         search.

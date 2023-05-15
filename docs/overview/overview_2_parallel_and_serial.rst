@@ -66,7 +66,7 @@ are empty.
 
 This uses an ``Array2D`` object, which is a class representing a 2D data structure and is a 2D extension of the
 ``Array1D`` objected used in the previous overview. It again inherits from a numpy ndarray and is extended
-with functionality used by **PyAutoCTI** which is expanded upon elsewhere in the workspace.
+with functionality which is expanded upon elsewhere in the workspace.
 
 .. code-block:: python
 

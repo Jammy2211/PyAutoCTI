@@ -10,7 +10,7 @@ We are now in a position to perform CTI calibration, that is determine the best-
 dataset. This requires us to perform model-fitting, whereby we use a non-linear search algorithm to fit the
 model to the data.
 
-CTI modeling with **PyAutoCTI** uses the probabilistic programming language
+CTI modelingtick_maker.min_value uses the probabilistic programming language
 `PyAutoFit <https://github.com/rhayes777/PyAutoFit>`_, an open-source Python framework that allows complex model
 fitting techniques to be straightforwardly integrated into scientific modeling software. Check it out if you
 are interested in developing your own software to perform advanced model-fitting!
@@ -39,7 +39,7 @@ Note that the ``Region2D`` and ``Layout2DCI`` inputs have been updated to reflec
 
     normalization_list = [100, 1000.0, 10000.0]
 
-    total_ci_images = len(normalization_list)
+    total_datasets = len(normalization_list)
 
     layout_list = [
         ac.Layout2DCI(
@@ -49,7 +49,7 @@ Note that the ``Region2D`` and ``Layout2DCI`` inputs have been updated to reflec
             serial_prescan=serial_prescan,
             serial_overscan=serial_overscan,
         )
-        for i in range(total_ci_images)
+        for i in range(total_datasets)
     ]
 
 We load each charge injection image, with injections of 100e-, 1000e- and 10000e- so that we have the information

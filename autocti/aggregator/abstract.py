@@ -33,7 +33,7 @@ class AbstractAgg(ABC):
         self.clocker = clocker
 
     @abstractmethod
-    def make_object_for_gen(self, fit: af.Fit, cti: Union[CTI1D, CTI2D]) -> object:
+    def object_via_gen_from(self, fit: af.Fit, cti: Union[CTI1D, CTI2D]) -> object:
         """
         For example, in the `PlaneAgg` object, this function is overwritten such that it creates a `Plane` from a
         `ModelInstance` that contains the cti of a sample from a non-linear search.
@@ -63,7 +63,7 @@ class AbstractAgg(ABC):
         """
 
         def func_gen(fit: af.Fit) -> Generator:
-            return self.make_object_for_gen(fit=fit, cti=fit.instance.cti)
+            return self.object_via_gen_from(fit=fit, cti=fit.instance.cti)
 
         return self.aggregator.map(func=func_gen)
 
@@ -125,7 +125,7 @@ class AbstractAgg(ABC):
                     instance = sample.instance_for_model(model=samples.model)
 
                     all_above_weight_list.append(
-                        self.make_object_for_gen(fit=fit, cti=instance.cti)
+                        self.object_via_gen_from(fit=fit, cti=instance.cti)
                     )
 
             return all_above_weight_list
@@ -158,7 +158,7 @@ class AbstractAgg(ABC):
             samples = fit.value(name="samples")
 
             return [
-                self.make_object_for_gen(
+                self.object_via_gen_from(
                     fit=fit,
                     cti=samples.draw_randomly_via_pdf().cti,
                 )

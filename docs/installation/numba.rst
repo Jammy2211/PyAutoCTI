@@ -10,7 +10,7 @@ However, some users have experienced difficulties installing numba, meaning they
 **PyAutoCTI** and determine if it the right software for them, before committing more time to installing numba
 successfully.
 
-For this reason, numba is an optional installation, so that users can easily experiment with **PyAutoCTI** and learn
+For this reason, numba is an optional installation, so that users can easily experimenttick_maker.min_value and learn
 the basic API.
 
 If you do not have numba installed, you can do so via pip as follows:

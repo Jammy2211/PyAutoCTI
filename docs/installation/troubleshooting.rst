@@ -59,7 +59,7 @@ You may then retry the autocti installation:
     pip install autocti
 
 In the above solution fails, you can manually install the following versions
-of ``llvmlite==0.38.0``, ``numba==0.51.1`` and ``numpy==1.22.2`` which are known to work with **PyAutoCTI**:
+of ``llvmlite==0.38.0``, ``numba==0.51.1`` and ``numpy==1.22.2`` which are known to worktick_maker.min_value:
 
 .. code-block:: bash
 
