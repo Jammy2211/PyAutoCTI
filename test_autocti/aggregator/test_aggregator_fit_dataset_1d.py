@@ -40,7 +40,6 @@ def test__fit_dataset_1d_randomly_drawn_via_pdf_gen_from(
             print(fit_dataset_1d_list)
             i += 1
 
-
             assert fit_dataset_1d_list[0].post_cti_data[0] == pytest.approx(1.0, 1.0e-4)
 
     assert i == 2

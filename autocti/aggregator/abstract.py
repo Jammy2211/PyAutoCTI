@@ -13,7 +13,9 @@ import autofit as af
 
 class AbstractAgg(ABC):
     def __init__(
-        self, aggregator: af.Aggregator, clocker: Optional[AbstractClocker] = None
+        self,
+        aggregator: af.Aggregator,
+        clocker_list: Optional[List[AbstractClocker]] = None,
     ):
         """
         An abstract aggregator wrapper, which makes it straight forward to compute generators of objects from specific
@@ -30,7 +32,7 @@ class AbstractAgg(ABC):
             non-linear search and model-fit is used.
         """
         self.aggregator = aggregator
-        self.clocker = clocker
+        self.clocker_list = clocker_list
 
     @abstractmethod
     def object_via_gen_from(self, fit: af.Fit, cti: Union[CTI1D, CTI2D]) -> object:
