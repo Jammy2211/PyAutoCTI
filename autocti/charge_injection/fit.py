@@ -43,9 +43,7 @@ class FitImagingCI(aa.FitImaging):
 
     @property
     def noise_map(self) -> aa.Array2D:
-
         if self.hyper_noise_scalar_dict is not None:
-
             return hyper_noise_map_from(
                 hyper_noise_scalar_dict=self.hyper_noise_scalar_dict,
                 noise_scaling_map_dict=self.noise_scaling_map_dict,
@@ -141,7 +139,6 @@ def hyper_noise_map_from(hyper_noise_scalar_dict, noise_scaling_map_dict, noise_
     noise_map = copy.copy(noise_map)
 
     for key, hyper_noise_scalar in hyper_noise_scalar_dict.items():
-
         noise_map += hyper_noise_scalar.scaled_noise_map_from(
             noise_scaling=noise_scaling_map_dict[key]
         )

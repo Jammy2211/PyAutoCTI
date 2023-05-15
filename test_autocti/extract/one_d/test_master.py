@@ -3,7 +3,6 @@ import autocti as ac
 
 
 def test__regions_array_1d_from():
-
     extract = ac.Extract1DMaster(region_list=[(0, 3)])
 
     array = ac.Array1D.no_mask(values=[0.0, 1.0, 2.0, 3.0], pixel_scales=1.0)
@@ -20,7 +19,6 @@ def test__regions_array_1d_from():
 
 
 def test__non_regions_array_1d_from():
-
     extract = ac.Extract1DMaster(region_list=[(0, 3)])
 
     array = ac.Array1D.no_mask(values=[0.0, 1.0, 2.0, 3.0], pixel_scales=1.0)
@@ -37,7 +35,6 @@ def test__non_regions_array_1d_from():
 
 
 def test__array_1d_of_edges_and_eper_from(array):
-
     extract = ac.Extract1DMaster(region_list=[(0, 4)])
 
     extracted_array = extract.array_1d_of_edges_and_eper_from(

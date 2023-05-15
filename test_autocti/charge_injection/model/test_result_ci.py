@@ -10,7 +10,6 @@ from autocti.charge_injection.model.result import ResultImagingCI
 def test__fits_to_extracted_and_full_datasets_available(
     imaging_ci_7x7, mask_2d_7x7_unmasked, parallel_clocker_2d, samples_with_result
 ):
-
     imaging_ci_full = copy.deepcopy(imaging_ci_7x7)
 
     masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
@@ -47,7 +46,6 @@ def test__noise_scaling_map_dict_is_list_of_result__are_correct(
     traps_x1,
     ccd,
 ):
-
     noise_scaling_map_dict_list_of_regions_ci = [
         ac.Array2D.ones(shape_native=(7, 7), pixel_scales=1.0)
     ]

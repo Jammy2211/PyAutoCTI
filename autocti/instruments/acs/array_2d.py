@@ -78,7 +78,6 @@ class Array2DACS(Array2D):
         Also see https://github.com/spacetelescope/hstcal/blob/main/pkg/acs/calacs/acscte/dopcte-gen2.c#L418
         """
         if quadrant_letter == "A":
-
             array_electrons = array_electrons[0:2068, 0:2072]
             roe_corner = (1, 0)
             use_flipud = True
@@ -87,7 +86,6 @@ class Array2DACS(Array2D):
                 bias = bias[0:2068, 0:2072]
 
         elif quadrant_letter == "B":
-
             array_electrons = array_electrons[0:2068, 2072:4144]
             roe_corner = (1, 1)
             use_flipud = True
@@ -96,7 +94,6 @@ class Array2DACS(Array2D):
                 bias = bias[0:2068, 2072:4144]
 
         elif quadrant_letter == "C":
-
             array_electrons = array_electrons[0:2068, 0:2072]
 
             roe_corner = (1, 0)
@@ -106,7 +103,6 @@ class Array2DACS(Array2D):
                 bias = bias[0:2068, 0:2072]
 
         elif quadrant_letter == "D":
-
             array_electrons = array_electrons[0:2068, 2072:4144]
 
             roe_corner = (1, 1)
@@ -157,7 +153,6 @@ class Array2DACS(Array2D):
             array_electrons = np.flipud(array_electrons)
 
         if bias_subtract_via_prescan:
-
             bias_serial_prescan_value = acs_util.prescan_fitted_bias_column(
                 array_electrons[:, 18:24]
             )
@@ -167,7 +162,6 @@ class Array2DACS(Array2D):
             header.bias_serial_prescan_column = bias_serial_prescan_value
 
         if bias is not None:
-
             bias = layout_util.rotate_array_via_roe_corner_from(
                 array=bias, roe_corner=roe_corner
             )
@@ -202,7 +196,6 @@ class Array2DACS(Array2D):
         array_electrons = np.flipud(array_electrons)
 
         if bias_subtract_via_prescan:
-
             bias_serial_prescan_value = acs_util.prescan_fitted_bias_column(
                 array_electrons[:, 18:24]
             )
@@ -212,7 +205,6 @@ class Array2DACS(Array2D):
             header.bias_serial_prescan_column = bias_serial_prescan_value
 
         if bias is not None:
-
             bias = layout_util.rotate_array_via_roe_corner_from(
                 array=bias, roe_corner=(1, 1)
             )
@@ -244,7 +236,6 @@ class Array2DACS(Array2D):
         )
 
         if bias_subtract_via_prescan:
-
             bias_serial_prescan_value = acs_util.prescan_fitted_bias_column(
                 array_electrons[:, 18:24]
             )
@@ -254,7 +245,6 @@ class Array2DACS(Array2D):
             header.bias_serial_prescan_column = bias_serial_prescan_value
 
         if bias is not None:
-
             bias = layout_util.rotate_array_via_roe_corner_from(
                 array=bias, roe_corner=(1, 0)
             )
@@ -293,7 +283,6 @@ class Array2DACS(Array2D):
             header.bias_serial_prescan_column = bias_serial_prescan_value
 
         if bias is not None:
-
             bias = layout_util.rotate_array_via_roe_corner_from(
                 array=bias, roe_corner=(1, 1)
             )
@@ -318,11 +307,9 @@ class Array2DACS(Array2D):
         new_file_dir = os.path.split(new_file_path)[0]
 
         if not os.path.exists(new_file_dir):
-
             os.makedirs(new_file_dir)
 
         if not os.path.exists(new_file_path):
-
             shutil.copy(original_file_path, new_file_path)
 
         hdulist = fits.open(new_file_path)

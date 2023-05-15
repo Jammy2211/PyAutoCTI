@@ -20,7 +20,6 @@ class SettingsMask2D:
         cosmic_ray_serial_buffer: int = 10,
         cosmic_ray_diagonal_buffer: int = 3,
     ):
-
         self.parallel_fpr_pixels = parallel_fpr_pixels
         self.parallel_eper_pixels = parallel_eper_pixels
         self.serial_fpr_pixels = serial_fpr_pixels
@@ -99,7 +98,6 @@ class Mask2D(aa.Mask2D):
 
     @classmethod
     def from_masked_regions(cls, shape_native, pixel_scales, masked_regions):
-
         mask = cls.all_false(shape_native=shape_native, pixel_scales=pixel_scales)
         masked_regions = list(
             map(lambda region: aa.Region2D(region=region), masked_regions)
@@ -135,7 +133,6 @@ class Mask2D(aa.Mask2D):
         for y in range(mask.shape[0]):
             for x in range(mask.shape[1]):
                 if cosmic_ray_mask[y, x]:
-
                     x0 = int(x)
 
                     y0 = y
@@ -204,9 +201,7 @@ class Mask2D(aa.Mask2D):
         settings: "SettingsMask2D",
         pixel_scales: aa.type.PixelScales,
     ) -> "Mask2D":
-
         if settings.parallel_fpr_pixels is not None:
-
             parallel_fpr_mask = cls.masked_parallel_fpr_from(
                 layout=layout, settings=settings, pixel_scales=pixel_scales
             )
@@ -214,7 +209,6 @@ class Mask2D(aa.Mask2D):
             mask = mask + parallel_fpr_mask
 
         if settings.parallel_eper_pixels is not None:
-
             parallel_eper_mask = cls.masked_parallel_eper_from(
                 layout=layout, settings=settings, pixel_scales=pixel_scales
             )
@@ -222,7 +216,6 @@ class Mask2D(aa.Mask2D):
             mask = mask + parallel_eper_mask
 
         if settings.serial_fpr_pixels is not None:
-
             serial_fpr_mask = cls.masked_serial_fpr_from(
                 layout=layout, settings=settings, pixel_scales=pixel_scales
             )
@@ -230,7 +223,6 @@ class Mask2D(aa.Mask2D):
             mask = mask + serial_fpr_mask
 
         if settings.serial_eper_pixels is not None:
-
             serial_eper_mask = cls.masked_serial_eper_from(
                 layout=layout, settings=settings, pixel_scales=pixel_scales
             )
@@ -247,7 +239,6 @@ class Mask2D(aa.Mask2D):
         pixel_scales: aa.type.PixelScales,
         invert: bool = False,
     ) -> "Mask2D":
-
         fpr_regions = layout.extract.parallel_fpr.region_list_from(
             settings=SettingsExtract(pixels=settings.parallel_fpr_pixels)
         )
@@ -269,7 +260,6 @@ class Mask2D(aa.Mask2D):
         pixel_scales: aa.type.PixelScales,
         invert: bool = False,
     ) -> "Mask2D":
-
         eper_regions = layout.extract.parallel_eper.region_list_from(
             settings=SettingsExtract(pixels=settings.parallel_eper_pixels)
         )
@@ -292,7 +282,6 @@ class Mask2D(aa.Mask2D):
         pixel_scales: aa.type.PixelScales,
         invert: bool = False,
     ) -> "Mask2D":
-
         fpr_regions = layout.extract.serial_fpr.region_list_from(
             settings=SettingsExtract(pixels=settings.serial_fpr_pixels)
         )
@@ -314,7 +303,6 @@ class Mask2D(aa.Mask2D):
         pixel_scales: aa.type.PixelScales,
         invert: bool = False,
     ) -> "Mask2D":
-
         eper_regions = layout.extract.serial_eper.region_list_from(
             settings=SettingsExtract(pixels=settings.serial_eper_pixels)
         )

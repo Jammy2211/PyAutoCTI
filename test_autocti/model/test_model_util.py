@@ -5,7 +5,6 @@ import autocti as ac
 
 
 def test__trap_list():
-
     parallel_trap_list = [
         ac.TrapInstantCapture(density=1.0),
         ac.TrapInstantCapture(density=2.0),
@@ -37,7 +36,6 @@ def test__trap_list():
 
 
 def test__delta_ellipticity():
-
     trap_list = [
         ac.TrapInstantCapture(density=1.0, release_timescale=2.0),
         ac.TrapInstantCapture(density=2.0, release_timescale=4.0),
@@ -73,7 +71,6 @@ def test__delta_ellipticity():
 
 
 def test__dictable():
-
     json_file = path.join(
         "{}".format(path.dirname(path.realpath(__file__))), "files", "tracer.json"
     )

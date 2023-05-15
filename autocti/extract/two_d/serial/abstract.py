@@ -30,7 +30,6 @@ class Extract2DSerial(Extract2D):
         arr_stack = np.ma.stack(arr_list)
 
         for row_index in range(arr_list[0].shape[0]):
-
             if value_str == "median":
                 median_list.append(float(np.ma.median(arr_stack[:, row_index, :])))
 
@@ -77,7 +76,6 @@ class Extract2DSerial(Extract2D):
     def _value_list_of_lists_from(
         self, array: aa.Array2D, value_str: str, settings: SettingsExtract
     ):
-
         median_lists = []
 
         arr_list = [
@@ -86,11 +84,9 @@ class Extract2DSerial(Extract2D):
         ]
 
         for array_2d in arr_list:
-
             value_list = []
 
             for row_index in range(array_2d.shape[0]):
-
                 value = float(np.ma.median(array_2d[row_index, :]))
 
                 if value_str == "median":

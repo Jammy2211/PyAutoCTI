@@ -13,7 +13,6 @@ class SettingsMask1D:
         fpr_pixels: Optional[Tuple[int, int]] = None,
         eper_pixels: Optional[Tuple[int, int]] = None,
     ):
-
         self.fpr_pixels = fpr_pixels
         self.eper_pixels = eper_pixels
 
@@ -27,9 +26,7 @@ class Mask1D(aa.Mask1D):
         settings: "SettingsMask1D",
         pixel_scales: aa.type.PixelScales,
     ) -> "Mask1D":
-
         if settings.fpr_pixels is not None:
-
             fpr_mask = cls.masked_fpr_from_layout(
                 layout=layout, settings=settings, pixel_scales=pixel_scales
             )
@@ -37,7 +34,6 @@ class Mask1D(aa.Mask1D):
             mask = mask + fpr_mask
 
         if settings.eper_pixels is not None:
-
             eper_mask = cls.masked_eper_from_layout(
                 layout=layout, settings=settings, pixel_scales=pixel_scales
             )
@@ -54,7 +50,6 @@ class Mask1D(aa.Mask1D):
         pixel_scales: aa.type.PixelScales,
         invert: bool = False,
     ) -> "Mask1D":
-
         fpr_regions = layout.extract.fpr.region_list_from(
             settings=SettingsExtract(pixels=settings.fpr_pixels)
         )
@@ -77,7 +72,6 @@ class Mask1D(aa.Mask1D):
         pixel_scales: aa.type.PixelScales,
         invert: bool = False,
     ) -> "Mask1D":
-
         eper_regions = layout.extract.eper.region_list_from(
             settings=SettingsExtract(pixels=settings.eper_pixels)
         )

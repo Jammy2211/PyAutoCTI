@@ -114,7 +114,6 @@ class Extract1DMaster:
         array_1d_of_regions = array.native.copy() * 0.0
 
         for region in self.region_list:
-
             array_1d_of_regions[region.slice] += array.native[region.slice]
 
         return array_1d_of_regions
@@ -244,7 +243,6 @@ class Extract1DMaster:
         array_1d_of_edges_and_eper = array.native.copy() * 0.0
 
         if fpr_pixels is not None:
-
             array_1d_of_edges_and_eper = self.fpr.add_to_array(
                 new_array=array_1d_of_edges_and_eper,
                 array=array,
@@ -252,7 +250,6 @@ class Extract1DMaster:
             )
 
         if eper_pixels is not None:
-
             array_1d_of_edges_and_eper = self.eper.add_to_array(
                 new_array=array_1d_of_edges_and_eper,
                 array=array,

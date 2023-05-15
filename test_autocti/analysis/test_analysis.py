@@ -6,7 +6,6 @@ from autocti import exc
 
 
 def test__parallel_and_serial_checks_raise_exception(imaging_ci_7x7):
-
     model = af.Collection(
         cti=af.Model(
             ac.CTI2D,

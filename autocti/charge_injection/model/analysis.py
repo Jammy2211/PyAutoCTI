@@ -2,6 +2,8 @@ import logging
 import os
 from typing import List, Optional
 
+from autoconf import conf
+
 import autoarray as aa
 import autofit as af
 
@@ -29,7 +31,6 @@ class AnalysisImagingCI(af.Analysis):
         settings_cti: SettingsCTI2D = SettingsCTI2D(),
         dataset_full: Optional[ImagingCI] = None,
     ):
-
         super().__init__()
 
         self.dataset = dataset
@@ -46,20 +47,17 @@ class AnalysisImagingCI(af.Analysis):
         serial_fast_row_lists = None
 
         if self.clocker.parallel_fast_mode and not self.clocker.serial_fast_mode:
-
             (
                 parallel_fast_index_list,
                 parallel_fast_column_lists,
             ) = clocker.fast_indexes_from(data=dataset.pre_cti_data, for_parallel=True)
 
         elif not self.clocker.parallel_fast_mode and self.clocker.serial_fast_mode:
-
             serial_fast_index_list, serial_fast_row_lists = clocker.fast_indexes_from(
                 data=dataset.pre_cti_data, for_parallel=False
             )
 
         elif self.clocker.parallel_fast_mode and self.clocker.serial_fast_mode:
-
             raise exc.ClockerException(
                 "Both parallel fast model and serial fast mode cannot be turned on.\n"
                 "Only switch on parallel fast mode for parallel + serial clocking."
@@ -119,41 +117,19 @@ class AnalysisImagingCI(af.Analysis):
             the imaging data.
         """
 
-        if not paths.is_complete:
+        if paths.is_complete:
+            return self
 
-            if not model.has(HyperCINoiseCollection):
+        if not model.has(HyperCINoiseCollection):
+            noise_normalization = aa.util.fit.noise_normalization_with_mask_from(
+                noise_map=self.dataset.noise_map, mask=self.dataset.mask
+            )
 
-                noise_normalization = aa.util.fit.noise_normalization_with_mask_from(
-                    noise_map=self.dataset.noise_map, mask=self.dataset.mask
-                )
+            self.preloads.noise_normalization = noise_normalization
 
-                self.preloads.noise_normalization = noise_normalization
-
-                logger.info(
-                    "PRELOADS - Noise Normalization preloaded for model-fit (noise-map is fixed)."
-                )
-
-            if not os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
-
-                visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
-                
-                region_list = self.region_list_from(model=model)
-
-                visualizer.visualize_imaging_ci(imaging_ci=self.dataset)
-                visualizer.visualize_imaging_ci_regions(
-                    imaging_ci=self.dataset, region_list=region_list
-                )
-
-                if self.dataset_full is not None:
-
-                    visualizer.visualize_imaging_ci(
-                        imaging_ci=self.dataset_full, folder_suffix="_full"
-                    )
-                    visualizer.visualize_imaging_ci_regions(
-                        imaging_ci=self.dataset_full,
-                        region_list=region_list,
-                        folder_suffix="_full",
-                    )
+            logger.info(
+                "PRELOADS - Noise Normalization preloaded for model-fit (noise-map is fixed)."
+            )
 
         return self
 
@@ -188,7 +164,6 @@ class AnalysisImagingCI(af.Analysis):
         imaging_ci: ImagingCI,
         hyper_noise_scale: bool = True,
     ) -> FitImagingCI:
-
         hyper_noise_scalar_dict = None
 
         if hyper_noise_scale and hasattr(instance, "hyper_noise"):
@@ -208,12 +183,77 @@ class AnalysisImagingCI(af.Analysis):
     def fit_via_instance_from(
         self, instance: af.ModelInstance, hyper_noise_scale: bool = True
     ) -> FitImagingCI:
-
         return self.fit_via_instance_and_dataset_from(
             instance=instance,
             imaging_ci=self.dataset,
             hyper_noise_scale=hyper_noise_scale,
         )
+
+    def visualize_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
+
+        if not self.should_visualize(paths=paths):
+            return
+
+        visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
+
+        region_list = self.region_list_from(model=model)
+
+        if conf.instance["visualize"]["plots"]["dataset"]["fpr_non_uniformity"]:
+            region_list += ["fpr_non_uniformity"]
+
+        visualizer.visualize_dataset(dataset=self.dataset)
+        visualizer.visualize_dataset_regions(
+            dataset=self.dataset, region_list=region_list
+        )
+
+        if self.dataset_full is not None:
+            visualizer.visualize_dataset(
+                dataset=self.dataset_full, folder_suffix="_full"
+            )
+            visualizer.visualize_dataset_regions(
+                dataset=self.dataset_full,
+                region_list=region_list,
+                folder_suffix="_full",
+            )
+
+    def visualize_before_fit_combined(
+        self, analyses, paths: af.DirectoryPaths, model: af.Collection
+    ):
+
+        if not self.should_visualize(paths=paths):
+            return
+
+        if analyses is None:
+            return
+
+        visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
+
+        region_list = self.region_list_from(model=model)
+
+        if conf.instance["visualize"]["plots"]["dataset"]["fpr_non_uniformity"]:
+            region_list += ["fpr_non_uniformity"]
+
+        dataset_list = [analysis.dataset for analysis in analyses]
+
+        visualizer.visualize_dataset_combined(
+            dataset_list=dataset_list,
+        )
+        visualizer.visualize_dataset_regions_combined(
+            dataset_list=dataset_list,
+            region_list=region_list,
+        )
+
+        if self.dataset_full is not None:
+            dataset_full_list = [analysis.dataset_full for analysis in analyses]
+
+            visualizer.visualize_dataset_combined(
+                dataset_list=dataset_full_list, folder_suffix="_full"
+            )
+            visualizer.visualize_dataset_regions_combined(
+                dataset_list=dataset_full_list,
+                region_list=region_list,
+                folder_suffix="_full",
+            )
 
     def visualize(
         self,
@@ -222,28 +262,27 @@ class AnalysisImagingCI(af.Analysis):
         during_analysis: bool,
     ):
 
-        if os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
+        if not self.should_visualize(paths=paths):
             return
 
-        fit = self.fit_via_instance_from(instance=instance)                
+        fit = self.fit_via_instance_from(instance=instance)
         region_list = self.region_list_from(model=instance)
 
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
-        visualizer.visualize_fit_ci(fit=fit, during_analysis=during_analysis)
-        visualizer.visualize_fit_ci_1d_regions(
+        visualizer.visualize_fit(fit=fit, during_analysis=during_analysis)
+        visualizer.visualize_fit_1d_regions(
             fit=fit, during_analysis=during_analysis, region_list=region_list
         )
 
         if self.dataset_full is not None:
-
             fit_full = self.fit_via_instance_and_dataset_from(
                 instance=instance, imaging_ci=self.dataset_full
             )
 
-            visualizer.visualize_fit_ci(
+            visualizer.visualize_fit(
                 fit=fit_full, during_analysis=during_analysis, folder_suffix="_full"
             )
-            visualizer.visualize_fit_ci_1d_regions(
+            visualizer.visualize_fit_1d_regions(
                 fit=fit_full,
                 during_analysis=during_analysis,
                 region_list=region_list,
@@ -258,20 +297,43 @@ class AnalysisImagingCI(af.Analysis):
         during_analysis: bool,
     ):
 
+        if not self.should_visualize(paths=paths):
+            return
+
         fit_list = [
             analysis.fit_via_instance_from(instance=instance) for analysis in analyses
         ]
         region_list = self.region_list_from(model=instance)
 
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
-        visualizer.visualize_fit_ci_combined(
+        visualizer.visualize_fit_combined(
             fit_list=fit_list, during_analysis=during_analysis
         )
-        visualizer.visualize_fit_ci_1d_regions_combined(
+        visualizer.visualize_fit_1d_regions_combined(
             fit_list=fit_list,
             region_list=region_list,
             during_analysis=during_analysis,
         )
+
+        if self.dataset_full is not None:
+            fit_list_full = [
+                analysis.fit_via_instance_and_dataset_from(
+                    instance=instance, imaging_ci=analysis.dataset_full
+                )
+                for analysis in analyses
+            ]
+
+            visualizer.visualize_fit_combined(
+                fit_list=fit_list_full,
+                during_analysis=during_analysis,
+                folder_suffix="_full",
+            )
+            visualizer.visualize_fit_1d_regions_combined(
+                fit_list=fit_list_full,
+                region_list=region_list,
+                during_analysis=during_analysis,
+                folder_suffix="_full",
+            )
 
     def make_result(
         self,

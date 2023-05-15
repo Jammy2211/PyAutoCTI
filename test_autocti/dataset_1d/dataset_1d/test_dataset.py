@@ -13,7 +13,6 @@ fits_path = path.join(
 
 
 def create_fits(fits_path, shape_1d=(7,)):
-
     if path.exists(fits_path):
         shutil.rmtree(fits_path)
 
@@ -39,13 +38,11 @@ def create_fits(fits_path, shape_1d=(7,)):
 
 
 def clean_fits(fits_path):
-
     if path.exists(fits_path):
         shutil.rmtree(fits_path)
 
 
 def test__apply_mask__masks_arrays_correctly(dataset_1d_7):
-
     mask = ac.Mask1D.all_false(
         shape_slim=dataset_1d_7.data.shape_slim,
         pixel_scales=dataset_1d_7.data.pixel_scales,
@@ -71,7 +68,6 @@ def test__apply_mask__masks_arrays_correctly(dataset_1d_7):
 
 
 def test__from_fits__load_all_data_components__has_correct_attributes(layout_7):
-
     create_fits(fits_path=fits_path)
 
     imaging = ac.Dataset1D.from_fits(
@@ -95,7 +91,6 @@ def test__from_fits__load_all_data_components__has_correct_attributes(layout_7):
 
 
 def test__from_fits__load_all_data_components__load_from_multi_hdu_fits(layout_7):
-
     create_fits(fits_path=fits_path)
 
     imaging = ac.Dataset1D.from_fits(
@@ -119,7 +114,6 @@ def test__from_fits__load_all_data_components__load_from_multi_hdu_fits(layout_7
 
 
 def test__from_fits__noise_map_from_single_value(layout_7):
-
     create_fits(fits_path=fits_path)
 
     imaging = ac.Dataset1D.from_fits(
@@ -142,7 +136,6 @@ def test__from_fits__noise_map_from_single_value(layout_7):
 
 
 def test__from_fits__load_pre_cti_data_data_from_the_layout_ci_and_data():
-
     create_fits(fits_path=fits_path)
 
     layout_ci = ac.Layout1D(shape_1d=(7,), region_list=[(0, 7)])
@@ -168,7 +161,6 @@ def test__from_fits__load_pre_cti_data_data_from_the_layout_ci_and_data():
 
 
 def test__output_to_fits___all_arrays(layout_7):
-
     create_fits(fits_path=fits_path)
 
     imaging = ac.Dataset1D.from_fits(

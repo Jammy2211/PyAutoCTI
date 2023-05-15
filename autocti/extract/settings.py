@@ -35,9 +35,7 @@ class SettingsExtract:
         self.force_same_row_size = force_same_row_size
 
     def region_list_from(self, region_list: List[aa.Region2D]) -> List[aa.Region2D]:
-
         if self.force_same_row_size:
-
             row_size = np.min([region.total_rows for region in region_list])
 
             region_list = [

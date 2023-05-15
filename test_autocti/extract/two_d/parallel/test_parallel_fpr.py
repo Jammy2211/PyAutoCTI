@@ -69,7 +69,6 @@ def test__region_list_from__via_array_2d_list_from(
 def test__region_list_from__via_array_2d_list_from__pixels_from_end(
     parallel_array, parallel_masked_array
 ):
-
     extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3)], shape_2d=(5, 5))
 
     array_2d_list = extract.array_2d_list_from(
@@ -114,7 +113,6 @@ def test__region_list_from__via_array_2d_list_from__pixels_from_end(
 
 
 def test__binned_region_1d_from():
-
     extract = ac.Extract2DParallelFPR(region_list=[(1, 3, 0, 3)])
 
     binned_region_1d = extract.binned_region_1d_from(

@@ -93,9 +93,7 @@ class ImageACS(Array2DACS):
         )
 
         if bias_subtract_via_bias_file:
-
             if bias_file_path is None:
-
                 file_dir = os.path.split(file_path)[0]
                 bias_file_path = path.join(file_dir, header.bias_file)
 
@@ -118,13 +116,11 @@ class ImageACS(Array2DACS):
             )
 
             if bias_header.original_units != "COUNTS":
-
                 raise exc.ArrayException("Cannot use bias frame not in counts.")
 
             bias = bias * bias_header.calibrated_gain
 
         else:
-
             bias = None
 
         return cls.from_ccd(

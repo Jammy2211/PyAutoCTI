@@ -48,7 +48,7 @@ def quadrant_id_from(iquad: int) -> str:
     """
     The ELVIS simulator uses the `iquad` parameter to determine how images are rotated before clocking via arctic.
 
-    This script converts this parameter to the the `quadrant_id` used by PyAutoCTI, which in turn gives the appropriate
+    This script converts this parameter to the `quadrant_id` used by PyAutoCTI, which in turn gives the appropriate
     `roe_corner` for rotation.
 
     The mapping of `iquad` to `quadrant_id` does not depend on the CCD id, because ELVIS has already performed
@@ -88,7 +88,6 @@ def injection_total_from(
     injection_range = injection_end - injection_start
 
     for injection_total in range(100):
-
         total_pixels = math.floor(
             (injection_total + 1) * (injection_on) + injection_total * injection_off
         )
@@ -190,7 +189,6 @@ def charge_injection_array_from(
     Create every pre-cti charge injection image using each `Layout2DCI`
     """
     if use_non_uniform_pattern:
-
         simulator = SimulatorImagingCI(
             pixel_scales=pixel_scales,
             norm=injection_norm,
@@ -202,7 +200,6 @@ def charge_injection_array_from(
 
         pre_cti_data = simulator.pre_cti_data_non_uniform_from(layout=layout)
     else:
-
         simulator = SimulatorImagingCI(pixel_scales=pixel_scales, norm=injection_norm)
 
         pre_cti_data = simulator.pre_cti_data_uniform_from(layout=layout)
@@ -233,7 +230,6 @@ def add_cti_to_pre_cti_data(
     serial_trap_list: List[TrapInstantCapture],
     serial_ccd: CCDPhase,
 ) -> Union[np.ndarray, Array2D]:
-
     #  quadrant_id = quadrant_id_from(iquad=iquad)
 
     roe_corner = euclid_util.roe_corner_from(ccd_id=ccd_id, quadrant_id=quadrant_id)

@@ -3,7 +3,6 @@ import autocti as ac
 
 
 def test__mask_2d_from():
-
     extract = ac.Extract2DParallelCalibration(
         shape_2d=(5, 3), region_list=[(0, 5, 0, 3)]
     )
@@ -29,7 +28,6 @@ def test__mask_2d_from():
 
 
 def test__array_2d_from():
-
     extract = ac.Extract2DParallelCalibration(
         shape_2d=(5, 3), region_list=[(0, 3, 0, 3)]
     )
@@ -79,7 +77,6 @@ def test__array_2d_from():
 
 
 def test__extracted_layout_from():
-
     extract = ac.Extract2DParallelCalibration(
         shape_2d=(5, 3), region_list=[(0, 3, 0, 3)]
     )
@@ -102,7 +99,6 @@ def test__extracted_layout_from():
 
 
 def test__imaging_ci_from(imaging_ci_7x7):
-
     # The ci layout starts at column 1, so the left most column is removed below
 
     extract = ac.Extract2DParallelCalibration(

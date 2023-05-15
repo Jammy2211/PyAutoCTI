@@ -6,7 +6,6 @@ from autocti.charge_injection import ou_sim_ci
 
 
 def test__non_uniform_array_is_correct_with_rotation():
-
     # bottom left
 
     array = ou_sim_ci.charge_injection_array_from(
@@ -80,7 +79,6 @@ def test__non_uniform_array_is_correct_with_rotation():
 
 
 def test__add_cti_to_pre_cti_data():
-
     clocker = ac.Clocker2D(parallel_express=2, serial_express=2)
 
     parallel_trap_list = [ac.TrapInstantCapture(density=0.13, release_timescale=1.25)]
@@ -218,7 +216,6 @@ def test__add_cti_to_pre_cti_data():
 
 
 def test__tvac_values():
-
     array = ou_sim_ci.charge_injection_array_from(
         #   iquad=0,
         ccd_id="123",

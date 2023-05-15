@@ -67,24 +67,19 @@ class Extract2DParallelEPER(Extract2DParallel):
         region_list = []
 
         if settings.pixels_from_end is not None:
-
             parallel_row_spaces = self.parallel_rows_between_regions + [
                 self.parallel_rows_to_array_edge
             ]
 
         for i, region in enumerate(self.region_list):
-
             if settings.pixels_from_end is not None:
-
                 if settings.pixels_from_end == -1:
-
                     pixels = (
                         0,
                         parallel_row_spaces[i],
                     )
 
                 else:
-
                     pixels = (
                         parallel_row_spaces[i] - settings.pixels_from_end,
                         parallel_row_spaces[i],

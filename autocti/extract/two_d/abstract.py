@@ -249,6 +249,7 @@ class Extract2D:
             np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
             for region in region_list
         ]
+
         stacked_array_2d = np.ma.mean(np.ma.asarray(arr_list), axis=0)
         binned_array_1d = np.ma.mean(
             np.ma.asarray(stacked_array_2d), axis=self.binning_axis
@@ -326,7 +327,6 @@ class Extract2D:
     def dataset_1d_from(
         self, dataset_2d: ImagingCI, settings: SettingsExtract
     ) -> Dataset1D:
-
         binned_data_1d = self.binned_array_1d_from(
             array=dataset_2d.data, settings=settings
         )
@@ -390,7 +390,6 @@ class Extract2D:
         array = array.native
 
         for arr, region in zip(array_2d_list, region_list):
-
             array[
                 region.y0 : region.y1, region.x0 : region.x1
             ] = aa.preprocess.data_with_gaussian_noise_added(

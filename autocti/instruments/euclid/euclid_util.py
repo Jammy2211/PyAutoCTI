@@ -1,5 +1,4 @@
 def roe_corner_from(ccd_id, quadrant_id):
-
     row_index = ccd_id[-1]
 
     if (row_index in "123") and (quadrant_id == "E"):

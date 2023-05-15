@@ -3,7 +3,6 @@ import autocti as ac
 
 
 def test__array_2d_list_from():
-
     extract = ac.Extract2DSerialCalibration(shape_2d=(3, 5), region_list=[(0, 3, 0, 5)])
 
     array = ac.Array2D.no_mask(
@@ -39,7 +38,6 @@ def test__array_2d_list_from():
 
 
 def test__mask_2d_from():
-
     extract = ac.Extract2DSerialCalibration(
         shape_2d=(5, 5), region_list=[(0, 2, 1, 4), (3, 5, 1, 4)]
     )
@@ -60,7 +58,6 @@ def test__mask_2d_from():
 
 
 def test__array_2d_from():
-
     extract = ac.Extract2DSerialCalibration(
         shape_2d=(3, 5), region_list=[(0, 3, 1, 5)], serial_prescan=(0, 3, 0, 1)
     )
@@ -159,7 +156,6 @@ def test__array_2d_from():
 
 
 def test__extracted_layout_from():
-
     extract = ac.Extract2DSerialCalibration(
         shape_2d=(3, 5), region_list=[(0, 3, 1, 5)], serial_prescan=(0, 3, 0, 1)
     )
@@ -247,7 +243,6 @@ def test__extracted_layout_from():
 
 
 def test__imaging_ci_from(imaging_ci_7x7):
-
     # The ci layout spans 2 rows, so two rows are extracted
 
     extract = ac.Extract2DSerialCalibration(

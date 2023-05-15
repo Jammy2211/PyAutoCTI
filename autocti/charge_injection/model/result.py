@@ -21,7 +21,6 @@ class ResultImagingCI(ResultDataset):
 
     @property
     def noise_scaling_map_dict(self):
-
         fit = self.max_log_likelihood_full_fit_no_hyper_scaling
 
         return {

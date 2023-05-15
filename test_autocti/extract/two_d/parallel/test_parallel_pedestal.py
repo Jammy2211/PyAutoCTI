@@ -6,7 +6,6 @@ import autocti as ac
 def test__region_list_from__via_array_2d_list_from(
     parallel_array, parallel_masked_array
 ):
-
     extract = ac.Extract2DParallelPedestal(
         shape_2d=parallel_array.shape_native,
         parallel_overscan=(8, 10, 0, 2),
@@ -39,7 +38,6 @@ def test__region_list_from__via_array_2d_list_from(
 def test__region_list_from__via_array_2d_list_from__pixels_from_end(
     parallel_array, parallel_masked_array
 ):
-
     extract = ac.Extract2DParallelPedestal(
         shape_2d=parallel_array.shape_native,
         parallel_overscan=(8, 10, 0, 2),
@@ -64,7 +62,6 @@ def test__region_list_from__via_array_2d_list_from__pixels_from_end(
 
 
 def test__array_2d_from():
-
     array = ac.Array2D.no_mask(
         values=[
             [0.0, 1.0, 2.0],

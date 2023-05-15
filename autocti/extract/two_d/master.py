@@ -325,7 +325,6 @@ class Extract2DMaster:
         new_array = array.native.copy() * 0.0
 
         if fpr_pixels is not None:
-
             new_array = self.parallel_fpr.add_to_array(
                 new_array=new_array,
                 array=array,
@@ -333,7 +332,6 @@ class Extract2DMaster:
             )
 
         if eper_pixels is not None:
-
             new_array = self.parallel_eper.add_to_array(
                 new_array=new_array,
                 array=array,
@@ -406,7 +404,6 @@ class Extract2DMaster:
         new_array = array.native.copy() * 0.0
 
         if fpr_pixels is not None:
-
             new_array = self.serial_fpr.add_to_array(
                 new_array=new_array,
                 array=array,
@@ -414,7 +411,6 @@ class Extract2DMaster:
             )
 
         if eper_pixels is not None:
-
             new_array = self.serial_eper.add_to_array(
                 new_array=new_array,
                 array=array,

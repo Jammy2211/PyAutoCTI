@@ -6,7 +6,6 @@ from autocti.charge_injection.fit import hyper_noise_map_from
 
 
 def test__fit_figure_of_merit(imaging_ci_7x7):
-
     fit = ac.FitImagingCI(
         dataset=imaging_ci_7x7,
         post_cti_data=imaging_ci_7x7.pre_cti_data,
@@ -105,7 +104,6 @@ def test__hyper_noise_map_from():
 
 
 def test__chi_squared_map_of_regions_ci():
-
     layout = ac.Layout2DCI(shape_2d=(2, 2), region_list=[(0, 1, 0, 1)])
 
     image = 3.0 * ac.Array2D.ones(shape_native=(2, 2), pixel_scales=1.0)
@@ -130,7 +128,6 @@ def test__chi_squared_map_of_regions_ci():
 
 
 def test__chi_squared_map_of_parallel_non_regions_ci():
-
     layout = ac.Layout2DCI(
         shape_2d=(2, 2),
         region_list=[(0, 1, 0, 1)],
@@ -160,7 +157,6 @@ def test__chi_squared_map_of_parallel_non_regions_ci():
 
 
 def test__chi_squared_map_of_serial_eper():
-
     layout = ac.Layout2DCI(
         shape_2d=(2, 2), region_list=[(0, 2, 0, 1)], serial_overscan=(1, 2, 0, 2)
     )

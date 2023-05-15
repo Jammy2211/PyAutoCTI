@@ -20,7 +20,6 @@ class AnalysisDataset1D(af.Analysis):
         settings_cti: SettingsCTI1D = SettingsCTI1D(),
         dataset_full: Optional[Dataset1D] = None,
     ):
-
         super().__init__()
 
         self.dataset = dataset
@@ -28,8 +27,7 @@ class AnalysisDataset1D(af.Analysis):
         self.settings_cti = settings_cti
         self.dataset_full = dataset_full
 
-    @property
-    def region_list(self) -> List:
+    def region_list_from(self) -> List:
         return ["fpr", "eper"]
 
     def modify_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
@@ -50,18 +48,9 @@ class AnalysisDataset1D(af.Analysis):
             The PyAutoFit model object, which includes model components representing the galaxies that are fitted to
             the imaging data.
         """
-        if not paths.is_complete:
 
-            if not os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
-
-                visualizer = VisualizerDataset1D(visualize_path=paths.image_path)
-                visualizer.visualize_dataset_1d(dataset_1d=self.dataset)
-
-                if self.dataset_full is not None:
-
-                    visualizer.visualize_dataset_1d(
-                        dataset_1d=self.dataset_full, folder_suffix="_full"
-                    )
+        if paths.is_complete:
+            return self
 
         return self
 
@@ -88,7 +77,6 @@ class AnalysisDataset1D(af.Analysis):
     def fit_via_instance_and_dataset_from(
         self, instance: af.ModelInstance, dataset: Dataset1D
     ) -> FitDataset1D:
-
         post_cti_data = self.clocker.add_cti(
             data=dataset.pre_cti_data, cti=instance.cti
         )
@@ -96,10 +84,62 @@ class AnalysisDataset1D(af.Analysis):
         return FitDataset1D(dataset=dataset, post_cti_data=post_cti_data)
 
     def fit_via_instance_from(self, instance: af.ModelInstance) -> FitDataset1D:
-
         return self.fit_via_instance_and_dataset_from(
             instance=instance, dataset=self.dataset
         )
+
+    def visualize_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
+        if not self.should_visualize(paths=paths):
+            return
+
+        region_list = self.region_list_from()
+
+        visualizer = VisualizerDataset1D(visualize_path=paths.image_path)
+        visualizer.visualize_dataset(dataset=self.dataset)
+        visualizer.visualize_dataset_regions(dataset=self.dataset, region_list=region_list)
+
+        if self.dataset_full is not None:
+            visualizer.visualize_dataset(
+                dataset=self.dataset_full, folder_suffix="_full"
+            )
+            visualizer.visualize_dataset_regions(
+                dataset=self.dataset_full, region_list=region_list, folder_suffix="_full"
+            )
+
+    def visualize_before_fit_combined(
+        self, analyses, paths: af.DirectoryPaths, model: af.Collection
+    ):
+        if not self.should_visualize(paths=paths):
+            return
+
+        if analyses is None:
+            return
+
+        visualizer = VisualizerDataset1D(visualize_path=paths.image_path)
+
+        region_list = self.region_list_from()
+
+        dataset_list = [analysis.dataset for analysis in analyses]
+
+        visualizer.visualize_dataset_combined(
+            dataset_list=dataset_list,
+        )
+        visualizer.visualize_dataset_regions_combined(
+            dataset_list=dataset_list,
+            region_list=region_list,
+        )
+
+        if self.dataset_full is not None:
+            dataset_full_list = [analysis.dataset_full for analysis in analyses]
+
+            visualizer.visualize_dataset_combined(
+                dataset_list=dataset_full_list, folder_suffix="_full"
+            )
+            visualizer.visualize_dataset_regions_combined(
+                dataset_list=dataset_full_list,
+                region_list=region_list,
+                folder_suffix="_full",
+            )
 
     def visualize(
         self,
@@ -107,25 +147,26 @@ class AnalysisDataset1D(af.Analysis):
         instance: af.ModelInstance,
         during_analysis: bool,
     ):
-
-        if os.environ.get("PYAUTOFIT_TEST_MODE") == "1":
+        if not self.should_visualize(paths=paths):
             return
+
+        region_list = self.region_list_from()
 
         visualizer = VisualizerDataset1D(visualize_path=paths.image_path)
 
         fit = self.fit_via_instance_from(instance=instance)
-        visualizer.visualize_fit_1d(fit=fit, during_analysis=during_analysis)
-        visualizer.visualize_fit_1d_regions(
-            fit=fit, region_list=self.region_list, during_analysis=during_analysis
+        visualizer.visualize_fit(fit=fit, during_analysis=during_analysis)
+        visualizer.visualize_fit_regions(
+            fit=fit, region_list=region_list, during_analysis=during_analysis
         )
 
         if self.dataset_full is not None:
             fit = self.fit_via_instance_and_dataset_from(
                 instance=instance, dataset=self.dataset_full
             )
-            visualizer.visualize_fit_1d(fit=fit, during_analysis=during_analysis)
-            visualizer.visualize_fit_1d_regions(
-                fit=fit, region_list=self.region_list, during_analysis=during_analysis
+            visualizer.visualize_fit(fit=fit, during_analysis=during_analysis)
+            visualizer.visualize_fit_regions(
+                fit=fit, region_list=region_list, during_analysis=during_analysis
             )
 
     def visualize_combined(
@@ -135,23 +176,29 @@ class AnalysisDataset1D(af.Analysis):
         instance: af.ModelInstance,
         during_analysis: bool,
     ):
+        if not self.should_visualize(paths=paths):
+            return
+
+        if analyses is None:
+            return
 
         fit_list = [
             analysis.fit_via_instance_from(instance=instance) for analysis in analyses
         ]
 
+        region_list = self.region_list_from()
+
         visualizer = VisualizerDataset1D(visualize_path=paths.image_path)
-        visualizer.visualize_fit_1d_combined(
+        visualizer.visualize_fit_combined(
             fit_list=fit_list, during_analysis=during_analysis
         )
-        visualizer.visualize_fit_1d_region_combined(
+        visualizer.visualize_fit_region_combined(
             fit_list=fit_list,
-            region_list=self.region_list,
+            region_list=region_list,
             during_analysis=during_analysis,
         )
 
         if self.dataset_full is not None:
-
             fit_list = [
                 analysis.fit_via_instance_and_dataset_from(
                     instance=instance, dataset=analysis.dataset_full
@@ -159,12 +206,12 @@ class AnalysisDataset1D(af.Analysis):
                 for analysis in analyses
             ]
 
-            visualizer.visualize_fit_1d_combined(
+            visualizer.visualize_fit_combined(
                 fit_list=fit_list, during_analysis=during_analysis
             )
-            visualizer.visualize_fit_1d_region_combined(
+            visualizer.visualize_fit_region_combined(
                 fit_list=fit_list,
-                region_list=self.region_list,
+                region_list=region_list,
                 during_analysis=during_analysis,
             )
 

@@ -6,7 +6,6 @@ import pytest
 
 class TestSettingsCTI1D:
     def test__density_checks_raise_exception(self):
-
         settings = ac.SettingsCTI1D(total_density_range=(1.0, 2.0))
 
         traps = [
@@ -24,7 +23,6 @@ class TestSettingsCTI1D:
 
 class TestSettingsCTI2D:
     def test__parallel_and_serial_checks_raise_exception(self):
-
         settings = ac.SettingsCTI2D(parallel_total_density_range=(1.0, 2.0))
 
         parallel_traps = [

@@ -4,7 +4,6 @@ import autocti as ac
 
 
 def test__region_list_from(serial_array, serial_masked_array):
-
     extract = ac.Extract2DSerialOverscanNoEPER(
         shape_2d=serial_array.shape_native,
         region_list=[(0, 1, 0, 8)],
@@ -50,7 +49,6 @@ def test__region_list_from(serial_array, serial_masked_array):
 
 
 def test__region_list_from__pixels_from_end(serial_array, serial_masked_array):
-
     extract = ac.Extract2DSerialOverscanNoEPER(
         shape_2d=serial_array.shape_native,
         region_list=[(0, 1, 0, 8)],

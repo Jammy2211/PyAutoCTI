@@ -206,7 +206,6 @@ class Extract2DParallelCalibration:
     def with_extracted_regions(
         self, layout, extraction_region: aa.type.Region2DLike
     ) -> Layout2DCI:
-
         layout = deepcopy(layout)
 
         extracted_region_list = list(
@@ -242,7 +241,6 @@ class Extract2DParallelCalibration:
         )
 
         if imaging_ci.noise_scaling_map_dict is not None:
-
             noise_scaling_map_dict = {
                 key: imaging_ci.layout.extract.parallel_calibration.array_2d_from(
                     array=noise_scaling_map, columns=columns
@@ -251,7 +249,6 @@ class Extract2DParallelCalibration:
             }
 
         else:
-
             noise_scaling_map_dict = None
 
         extraction_region = (
@@ -278,6 +275,7 @@ class Extract2DParallelCalibration:
             cosmic_ray_map=cosmic_ray_map,
             noise_scaling_map_dict=noise_scaling_map_dict,
             fpr_value=imaging_ci.fpr_value,
+            settings_dict=imaging_ci.settings_dict,
         )
 
         return imaging_ci.apply_mask(mask=mask)

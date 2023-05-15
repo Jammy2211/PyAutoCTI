@@ -13,7 +13,6 @@ test_data_path = path.join(
 
 
 def test__manual():
-
     mask = ac.Mask2D(mask=[[False, False], [True, True]], pixel_scales=1.0)
 
     assert type(mask) == ac.Mask2D
@@ -41,26 +40,20 @@ def test__manual():
 
 
 def test__mask__input_is_1d_mask__no_shape_native__raises_exception():
-
     with pytest.raises(exc.MaskException):
-
         ac.Mask2D(mask=[False, False, True], pixel_scales=1.0)
 
     with pytest.raises(exc.MaskException):
-
         ac.Mask2D(mask=[False, False, True], pixel_scales=False)
 
     with pytest.raises(exc.MaskException):
-
         ac.Mask2D(mask=[False, False, True], pixel_scales=1.0)
 
     with pytest.raises(exc.MaskException):
-
         ac.Mask2D(mask=[False, False, True], pixel_scales=False)
 
 
 def test__unmasked():
-
     mask = ac.Mask2D.all_false(shape_native=(5, 5), pixel_scales=1.0, invert=False)
 
     assert mask.shape == (5, 5)
@@ -106,7 +99,6 @@ def test__unmasked():
 
 
 def test__from_masked_regions():
-
     mask = ac.Mask2D.from_masked_regions(
         shape_native=(3, 3), masked_regions=[(0, 3, 2, 3)], pixel_scales=1.0
     )
@@ -128,7 +120,6 @@ def test__from_masked_regions():
 
 
 def test__cosmic_ray_mask_included_in_total_mask():
-
     cosmic_ray_map = ac.Array2D.no_mask(
         values=np.array(
             [[False, False, False], [False, True, False], [False, False, False]]
@@ -223,7 +214,6 @@ def test__cosmic_ray_mask_included_in_total_mask():
 
 
 def test__load_and_output_mask_to_fits():
-
     mask = ac.Mask2D.from_fits(
         file_path=path.join(test_data_path, "3x3_ones.fits"),
         hdu=0,
@@ -252,7 +242,6 @@ def test__load_and_output_mask_to_fits():
 
 
 def test__masked_parallel_fpr_from():
-
     layout = ac.Layout2DCI(shape_2d=(10, 3), region_list=[(1, 4, 0, 3)])
 
     mask = ac.Mask2D.masked_parallel_fpr_from(
@@ -340,7 +329,6 @@ def test__masked_parallel_fpr_from():
 
 
 def test__masked_parallel_eper_from():
-
     layout = ac.Layout2DCI(shape_2d=(10, 3), region_list=[(1, 4, 0, 3)])
 
     mask = ac.Mask2D.masked_parallel_eper_from(
@@ -428,7 +416,6 @@ def test__masked_parallel_eper_from():
 
 
 def test__masked_serial_fpr_from():
-
     layout = ac.Layout2DCI(shape_2d=(3, 10), region_list=[(0, 3, 1, 4)])
 
     mask = ac.Mask2D.masked_serial_fpr_from(
@@ -495,7 +482,6 @@ def test__masked_serial_fpr_from():
 
 
 def test__masked_serial_eper_from():
-
     layout = ac.Layout2DCI(shape_2d=(3, 10), region_list=[(0, 3, 1, 4)])
 
     mask = ac.Mask2D.masked_serial_eper_from(
@@ -560,7 +546,6 @@ def test__masked_serial_eper_from():
 
 
 def test__masked_fpr_and_eper_from(imaging_ci_7x7):
-
     unmasked = ac.Mask2D.all_false(
         shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
     )

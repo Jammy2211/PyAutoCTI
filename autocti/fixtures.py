@@ -111,7 +111,6 @@ def make_pre_cti_data_7():
 
 
 def make_dataset_1d_7():
-
     return ac.Dataset1D(
         data=make_data_7(),
         noise_map=make_noise_map_7(),
@@ -155,7 +154,6 @@ def make_ci_cosmic_ray_map_7x7():
 
 
 def make_ci_noise_scaling_map_dict_7x7():
-
     return {
         "parallel_eper": ac.Array2D.ones(shape_native=(7, 7), pixel_scales=(1.0, 1.0)),
         "serial_eper": ac.Array2D.full(
@@ -177,7 +175,6 @@ def make_fit_1d_7():
 
 
 def make_imaging_ci_7x7():
-
     return ac.ImagingCI(
         data=make_ci_image_7x7(),
         noise_map=make_ci_noise_map_7x7(),
@@ -210,7 +207,6 @@ def make_fit_ci_7x7():
 
 
 def make_samples_with_result():
-
     model = af.Collection(
         cti=af.Model(
             ac.CTI2D,

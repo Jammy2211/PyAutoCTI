@@ -7,7 +7,6 @@ from autocti.charge_injection.master import master_ci_from
 
 
 def test__master_ci_from():
-
     ci_0 = ac.Array2D.no_mask(values=[[1.0, 1.0], [2.0, 2.0]], pixel_scales=1.0)
     ci_1 = ac.Array2D.no_mask(values=[[2.0, 2.0], [4.0, 4.0]], pixel_scales=1.0)
 

@@ -5,14 +5,15 @@ general:
     zoom_around_mask: false
 plots:
   dataset:
+    data: true
+    data_logy: true
     cosmic_ray_map: false
     pre_cti_data: false
-    data_with_noise_map: false
-    data_with_noise_map_logy: false
+    fpr_non_uniformity: false
   fit:
-    data_with_noise_map: true
-    data_with_noise_map_logy: true
-    data_with_noise_map: true
-    data_with_noise_map_logy: true
+    data: true
+    data_logy: true
+    residual_map: true
+    residual_map_logy: true
     post_cti_data: false
     pre_cti_data: false

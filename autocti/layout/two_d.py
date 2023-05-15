@@ -51,7 +51,6 @@ class Layout2D(aa.Layout2D):
         self.region_list = list(map(aa.Region2D, region_list))
 
         for region in self.region_list:
-
             if region.y1 > shape_2d[0] or region.x1 > shape_2d[1]:
                 raise exc.LayoutException(
                     "The charge injection layout_ci regions are bigger than the image image_shape"
@@ -67,7 +66,6 @@ class Layout2D(aa.Layout2D):
 
     @property
     def extract(self):
-
         from autocti.extract.two_d.master import Extract2DMaster
 
         return Extract2DMaster(
@@ -165,7 +163,6 @@ class Layout2D(aa.Layout2D):
     def with_extracted_regions(
         self, extraction_region: aa.type.Region2DLike
     ) -> "Layout2D":
-
         layout = deepcopy(self)
 
         extracted_region_list = list(
@@ -184,7 +181,6 @@ class Layout2D(aa.Layout2D):
         return layout
 
     def extract_region_from(self, array: aa.Array2D, region: str) -> aa.Array1D:
-
         if region == "parallel_fpr":
             return self.extract.parallel_fpr.binned_array_1d_from(
                 array=array,
@@ -199,7 +195,7 @@ class Layout2D(aa.Layout2D):
                     pixels=(0, self.smallest_parallel_rows_between_ci_regions)
                 ),
             )
-        elif region == "serial_fpr":
+        elif region == "serial_fpr" or "fpr_non_uniformity":
             return self.extract.serial_fpr.binned_array_1d_from(
                 array=array,
                 settings=SettingsExtract(
@@ -219,7 +215,6 @@ class Layout2D(aa.Layout2D):
     def extract_region_noise_map_from(
         self, array: aa.Array2D, region: str
     ) -> aa.Array1D:
-
         if region == "parallel_fpr":
             binned_noise_map_1d = self.extract.parallel_fpr.binned_array_1d_from(
                 array=array,
@@ -250,7 +245,7 @@ class Layout2D(aa.Layout2D):
                     ),
                 )
             )
-        elif region == "serial_fpr":
+        elif region == "serial_fpr" or "fpr_non_uniformity":
             binned_noise_map_1d = self.extract.serial_fpr.binned_array_1d_from(
                 array=array,
                 settings=SettingsExtract(

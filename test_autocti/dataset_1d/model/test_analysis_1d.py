@@ -27,7 +27,6 @@ def test__make_result__result_line_is_returned(
 def test__log_likelihood_via_analysis__matches_manual_fit(
     dataset_1d_7, pre_cti_data_7, traps_x1, ccd, clocker_1d
 ):
-
     model = af.Collection(
         cti=af.Model(ac.CTI1D, trap_list=traps_x1, ccd=ccd),
         hyper_noise=af.Model(ac.HyperCINoiseCollection),
@@ -51,7 +50,6 @@ def test__log_likelihood_via_analysis__matches_manual_fit(
 def test__extracted_fits_from_instance_and_line_ci(
     dataset_1d_7, mask_1d_7_unmasked, traps_x1, ccd, clocker_1d
 ):
-
     model = af.Collection(
         cti=af.Model(ac.CTI1D, trap_list=traps_x1, ccd=ccd),
         hyper_noise=af.Model(ac.HyperCINoiseCollection),

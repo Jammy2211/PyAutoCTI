@@ -18,7 +18,6 @@ class MockResult(mock.MockResult):
         noise_scaling_map_dict_list_of_serial_overscan_no_eper=None,
         use_as_hyper_dataset=False,
     ):
-
         super().__init__(
             samples=samples,
             instance=instance,

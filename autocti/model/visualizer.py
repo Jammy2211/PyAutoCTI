@@ -17,7 +17,6 @@ def plot_setting(section, name):
 
 class Visualizer:
     def __init__(self, visualize_path):
-
         self.visualize_path = visualize_path
 
         self.include_1d = Include1D()

@@ -4,7 +4,6 @@ import autocti as ac
 
 
 def test__region_ci_from():
-
     region = ac.util.ci.region_ci_from(
         region_dimensions=(3, 3), injection_norm_list=[90.0, 100.0, 110.0]
     )
@@ -23,7 +22,6 @@ def test__region_ci_from():
 
 
 def test__region_list_ci_via_electronics_from():
-
     region_list_ci = ac.util.ci.region_list_ci_via_electronics_from(
         injection_start=0,
         injection_on=10,

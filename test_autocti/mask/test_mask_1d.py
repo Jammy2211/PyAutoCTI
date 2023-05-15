@@ -4,7 +4,6 @@ import autocti as ac
 
 
 def test__masked_fpr_from_layout():
-
     layout = ac.Layout1D(shape_1d=(5,), region_list=[(1, 4)])
 
     mask = ac.Mask1D.masked_fpr_from_layout(
@@ -29,7 +28,6 @@ def test__masked_fpr_from_layout():
 
 
 def test__masked_eper_from_layout():
-
     layout = ac.Layout1D(shape_1d=(5,), region_list=[(1, 3)])
 
     mask = ac.Mask1D.masked_eper_from_layout(
@@ -70,7 +68,6 @@ def test__masked_eper_from_layout():
 
 
 def test__masked_fpr_and_eper_from_layout():
-
     unmasked = ac.Mask1D.all_false(shape_slim=(5,), pixel_scales=1.0)
 
     layout = ac.Layout1D(shape_1d=(5,), region_list=[(1, 3)])

@@ -11,7 +11,6 @@ path = "{}/".format(os.path.dirname(os.path.realpath(__file__)))
 
 
 def test__data_mapped_to_2d_and_then_1d():
-
     arr_1d = ac.Array1D.no_mask(
         values=[1.0, 2.0, 3.0, 4.0],
         pixel_scales=1.0,

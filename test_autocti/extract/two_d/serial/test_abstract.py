@@ -2,7 +2,6 @@ import autocti as ac
 
 
 def test__median_list_from(serial_array, serial_masked_array):
-
     extract = ac.Extract2DSerialFPR(region_list=[(0, 3, 0, 5)])
 
     # Extracts [0.0, 1.0, 2.0] of every injection in `serial_array` and takes median over these values.
@@ -35,7 +34,6 @@ def test__median_list_from(serial_array, serial_masked_array):
 
 
 def test__median_list_from__pixels_from_end(serial_array, serial_masked_array):
-
     extract = ac.Extract2DSerialFPR(
         shape_2d=serial_array.shape_native, region_list=[(0, 3, 0, 5)]
     )
@@ -64,7 +62,6 @@ def test__median_list_from__pixels_from_end(serial_array, serial_masked_array):
 
 
 def test__median_list_of_lists_from(serial_array, serial_masked_array):
-
     extract = ac.Extract2DSerialFPR(region_list=[(0, 3, 0, 5)])
 
     # Extracts [0.0, 1.0, 2.0] of every injection in `serial_array` and takes median over these values.
@@ -98,7 +95,6 @@ def test__median_list_of_lists_from(serial_array, serial_masked_array):
 
 
 def test__median_list_of_lists_from__pixels_from_end(serial_array, serial_masked_array):
-
     extract = ac.Extract2DSerialFPR(region_list=[(0, 3, 0, 5)])
 
     # Extend pixels to extract [0.0, 1.0, 2.0, 3.0, 4.0]

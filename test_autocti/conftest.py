@@ -37,7 +37,6 @@ def remove_logs():
 
 @pytest.fixture(autouse=True)
 def set_config_path(request):
-
     conf.instance.push(
         new_path=path.join(directory, "config"),
         output_path=path.join(directory, "output"),
@@ -196,7 +195,6 @@ def make_ci_cosmic_ray_map_7x7():
 
 @pytest.fixture(name="ci_noise_scaling_map_dict_7x7")
 def make_ci_noise_scaling_map_dict_7x7():
-
     return fixtures.make_ci_noise_scaling_map_dict_7x7()
 
 
@@ -205,7 +203,6 @@ def make_ci_noise_scaling_map_dict_7x7():
 
 @pytest.fixture(name="imaging_ci_7x7")
 def make_imaging_ci_7x7():
-
     return fixtures.make_imaging_ci_7x7()
 
 
@@ -279,7 +276,6 @@ def make_parallel_array():
 
 @pytest.fixture(name="parallel_masked_array")
 def make_parallel_masked_array(parallel_array):
-
     mask = ac.Mask2D(
         mask=[
             [False, False, False],
@@ -313,7 +309,6 @@ def make_serial_array():
 
 @pytest.fixture(name="serial_masked_array")
 def make_serial_masked_array(serial_array):
-
     mask = ac.Mask2D(
         mask=[
             [False, False, False, False, False, True, False, False, False, False],

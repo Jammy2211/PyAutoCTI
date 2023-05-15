@@ -4,7 +4,6 @@ import autocti as ac
 def test__fit_quantities_same_as_calculated_individually(
     dataset_1d_7, mask_1d_7_unmasked
 ):
-
     masked_dataset_1d_7 = dataset_1d_7.apply_mask(mask=mask_1d_7_unmasked)
 
     post_cti_data = ac.Array1D.full(

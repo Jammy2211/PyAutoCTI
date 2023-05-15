@@ -4,7 +4,6 @@ import autocti as ac
 
 
 def test__region_list_from__array_2d_list_from(serial_array, serial_masked_array):
-
     extract = ac.Extract2DSerialEPER(region_list=[(0, 3, 1, 4)])
 
     array_2d_list = extract.array_2d_list_from(
@@ -98,7 +97,6 @@ def test__region_list_from__array_2d_list_from(serial_array, serial_masked_array
 def test__region_list_from__array_2d_list_from__pixels_from_end(
     serial_array, serial_masked_array
 ):
-
     extract = ac.Extract2DSerialEPER(
         shape_2d=serial_array.shape_native, region_list=[(0, 3, 1, 4)]
     )
@@ -117,7 +115,6 @@ def test__region_list_from__array_2d_list_from__pixels_from_end(
 
 
 def test__array_2d_from():
-
     extract = ac.Extract2DSerialEPER(
         region_list=[(0, 4, 0, 2)], serial_overscan=(0, 4, 2, 3)
     )
@@ -166,7 +163,6 @@ def test__array_2d_from():
 
 
 def test__binned_region_1d_from():
-
     extract = ac.Extract2DSerialEPER(region_list=[(1, 3, 0, 3)])
 
     binned_region_1d_list = extract.binned_region_1d_from(

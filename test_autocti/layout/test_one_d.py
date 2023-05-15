@@ -5,7 +5,6 @@ from autocti import exc
 
 
 def test__trail_size_to_array_edge():
-
     layout = ac.Layout1D(shape_1d=(5,), region_list=[ac.Region1D(region=(0, 3))])
 
     assert layout.trail_size_to_array_edge == 2

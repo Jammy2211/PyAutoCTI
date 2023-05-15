@@ -2,7 +2,6 @@ import autocti as ac
 
 
 def test__settings_ci__modify_via_fit_type():
-
     settings = ac.SettingsImagingCI(parallel_pixels=None, serial_pixels=None)
     settings = settings.modify_via_fit_type(is_parallel_fit=False, is_serial_fit=False)
 

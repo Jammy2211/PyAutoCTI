@@ -1,14 +1,11 @@
 plots:
   dataset:
-    data_with_noise_map: true
-    data_with_noise_map_logy: false
-    absolute_signal_to_noise_map: false
+    data: true
+    data_logy: false
     cosmic_ray_map: true
     data: true
-    inverse_noise_map: false
     noise_map: false
     noise_scaling_map_dict: false
-    potential_chi_squared_map: Fals
     pre_cti_data: true
     signal_to_noise_map: false
     subplot_dataset: true
@@ -16,9 +13,8 @@ plots:
     all_at_end_fits: false
     all_at_end_png: true
     chi_squared_map: false
-    data_with_noise_map: true
-    data_with_noise_map_logy: false
     data: true
+    data_logy: false
     noise_map: false
     noise_scaling_map_dict: false
     normalized_residual_map: true

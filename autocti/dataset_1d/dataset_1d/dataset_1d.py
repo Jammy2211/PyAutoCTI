@@ -1,9 +1,11 @@
 import numpy as np
+from typing import Optional, Dict
 
 import autoarray as aa
 
 from autocti import exc
 from autocti.dataset_1d.dataset_1d.settings import SettingsDataset1D
+from autocti.extract.settings import SettingsExtract
 from autocti.layout.one_d import Layout1D
 
 
@@ -14,9 +16,10 @@ class Dataset1D(aa.AbstractDataset):
         noise_map: aa.Array1D,
         pre_cti_data: aa.Array1D,
         layout: Layout1D,
+        fpr_value: Optional[float] = None,
         settings: SettingsDataset1D = SettingsDataset1D(),
+        settings_dict: Optional[Dict] = None,
     ):
-
         super().__init__(data=data, noise_map=noise_map, settings=settings)
 
         self.data = data
@@ -24,8 +27,26 @@ class Dataset1D(aa.AbstractDataset):
         self.pre_cti_data = pre_cti_data
         self.layout = layout
 
-    def apply_mask(self, mask: aa.Mask1D) -> "Dataset1D":
+        if fpr_value is None:
+            fpr_value = np.round(
+                np.median(
+                    self.layout.extract.fpr.stacked_array_1d_from(
+                        array=self.data,
+                        settings=SettingsExtract(
+                            pixels_from_end=min(
+                                5, self.layout.extract.fpr.total_pixels_min
+                            )
+                        ),
+                    )
+                ),
+                2,
+            )
 
+        self.fpr_value = fpr_value
+
+        self.settings_dict = settings_dict
+
+    def apply_mask(self, mask: aa.Mask1D) -> "Dataset1D":
         data = aa.Array1D(values=self.data, mask=mask).native
         noise_map = aa.Array1D(values=self.noise_map.astype("float"), mask=mask).native
 
@@ -34,10 +55,11 @@ class Dataset1D(aa.AbstractDataset):
             noise_map=noise_map,
             pre_cti_data=self.pre_cti_data,
             layout=self.layout,
+            fpr_value=self.fpr_value,
+            settings_dict=self.settings_dict,
         )
 
     def apply_settings(self, settings: SettingsDataset1D) -> "Dataset1D":
-
         return self
 
     @classmethod
@@ -53,8 +75,8 @@ class Dataset1D(aa.AbstractDataset):
         pre_cti_data_path=None,
         pre_cti_data_hdu=0,
         pre_cti_data=None,
+        settings_dict: Optional[Dict] = None,
     ):
-
         data = aa.Array1D.from_fits(
             file_path=data_path, hdu=data_hdu, pixel_scales=pixel_scales
         )
@@ -84,13 +106,16 @@ class Dataset1D(aa.AbstractDataset):
         )
 
         return Dataset1D(
-            data=data, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
+            data=data,
+            noise_map=noise_map,
+            pre_cti_data=pre_cti_data,
+            layout=layout,
+            settings_dict=settings_dict,
         )
 
     def output_to_fits(
         self, data_path, noise_map_path=None, pre_cti_data_path=None, overwrite=False
     ):
-
         self.data.output_to_fits(file_path=data_path, overwrite=overwrite)
         self.noise_map.output_to_fits(file_path=noise_map_path, overwrite=overwrite)
         self.pre_cti_data.output_to_fits(

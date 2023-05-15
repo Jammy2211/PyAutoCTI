@@ -18,7 +18,6 @@ def make_dataset_1d_plotter_setup():
 
 
 def test__individual_attributes_are_output(dataset_1d_7, plot_path, plot_patch):
-
     dataset_1d_plotter = aplt.Dataset1DPlotter(
         dataset=dataset_1d_7,
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
@@ -44,7 +43,6 @@ def test__individual_attributes_are_output(dataset_1d_7, plot_path, plot_patch):
 
 
 def test__individual_1d_of_region_are_output(dataset_1d_7, plot_path, plot_patch):
-
     imaging_ci_plotter = aplt.Dataset1DPlotter(
         dataset=dataset_1d_7,
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
@@ -74,14 +72,13 @@ def test__individual_1d_of_region_are_output(dataset_1d_7, plot_path, plot_patch
 
 
 def test__subplots__output(dataset_1d_7, plot_path, plot_patch):
-
     dataset_1d_plotter = aplt.Dataset1DPlotter(
         dataset=dataset_1d_7,
         mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
     )
 
-    dataset_1d_plotter.subplot_dataset_1d()
-    assert path.join(plot_path, "subplot_dataset_1d.png") in plot_patch.paths
+    dataset_1d_plotter.subplot_dataset()
+    assert path.join(plot_path, "subplot_dataset.png") in plot_patch.paths
 
-    dataset_1d_plotter.subplot_dataset_1d(region="fpr")
-    assert path.join(plot_path, "subplot_dataset_1d_fpr.png") in plot_patch.paths
+    dataset_1d_plotter.subplot_dataset(region="fpr")
+    assert path.join(plot_path, "subplot_dataset_fpr.png") in plot_patch.paths

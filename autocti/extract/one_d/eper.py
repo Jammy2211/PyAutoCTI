@@ -28,9 +28,7 @@ class Extract1DEPER(Extract1D):
         region_list = []
 
         for i, region in enumerate(self.region_list):
-
             if settings.pixels_from_end is not None:
-
                 parallel_row_spaces = self.parallel_rows_between_regions + [
                     self.trail_size_to_array_edge
                 ]

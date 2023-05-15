@@ -22,7 +22,6 @@ def test__noise_scaling_map_has_values__scaled_noise_is_baseline_noise_plus_valu
 
 
 def test__collection__as_dict():
-
     regions_ci = ac.HyperCINoiseScalar(scale_factor=10.0)
     serial_eper = ac.HyperCINoiseScalar(scale_factor=20.0)
 

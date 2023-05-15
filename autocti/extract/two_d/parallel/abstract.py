@@ -22,7 +22,6 @@ class Extract2DParallel(Extract2D):
     def _value_list_from(
         self, array: aa.Array2D, value_str: str, settings: SettingsExtract
     ):
-
         value_list = []
 
         arr_list = [
@@ -33,7 +32,6 @@ class Extract2DParallel(Extract2D):
         arr_stack = np.ma.stack(arr_list)
 
         for column_index in range(arr_list[0].shape[1]):
-
             if value_str == "median":
                 value_list.append(float(np.ma.median(arr_stack[:, :, column_index])))
             elif value_str == "std":
@@ -133,11 +131,9 @@ class Extract2DParallel(Extract2D):
         ]
 
         for array_2d in arr_list:
-
             value_list = []
 
             for column_index in range(array_2d.shape[1]):
-
                 if value_str == "median":
                     value = float(np.ma.median(array_2d[:, column_index]))
                 elif value_str == "std":
@@ -225,4 +221,64 @@ class Extract2DParallel(Extract2D):
         """
         return self._value_list_of_lists_from(
             array=array, settings=settings, value_str="std"
+        )
+
+    def _value_list_of_lists_via_array_list_from(
+        self,
+        array_list: List[aa.Array2D],
+        settings: SettingsExtract,
+        value_str: str,
+    ):
+        value_lists = [
+            self._value_list_of_lists_from(
+                array=array, settings=settings, value_str=value_str
+            )
+            for array in array_list
+        ]
+
+        value_lists = np.asarray(value_lists)
+
+        if value_str == "median":
+            return np.median(value_lists, axis=0).tolist()
+        elif value_str == "std":
+            return np.std(value_lists, axis=0).tolist()
+
+    def median_list_of_lists_via_array_list_from(
+        self, array_list: List[aa.Array2D], settings: SettingsExtract
+    ) -> List[List]:
+        """
+        Returns the median values of the `Extract2D` object's corresponding region, where the median is taken over
+        all column(s) of every individual region.
+
+        To describe this function we will use the example of estimating the median of the charge lines in charge
+        injection data, by taking the median over every individual column of charge injection (e.g. aligned with the
+        FPR).
+
+        The inner regions of the FPR of each charge injection line informs us of the injected level of
+        charge for that injection.
+
+        By taking the median of values of the charge injection regions (after accounting for those which have had
+        electrons captured and relocated due to CTI), we can therefore estimate the input charge injection
+        normalization.
+
+        This function does this for every column of every individual charge injection for every charge injection region.
+
+        For example, if there are 3 charge injection regions, this function returns a list of lists where the outer
+        list contains 3 lists each of which give estimates of the charge injection normalization in a given charge
+        injection region. Thd size of the inner list is therefore the number of charge injection columns.
+
+        The function `median_list_from` performs the median over all charge injection region in each
+        column and thus estimates a single injection normalization per column. Which function one uses depends on the
+        properties of the charge injection on the instrumentation.
+
+        Parameters
+        ----------
+        settings
+           The settings used to extract the parallel region (e.g. the EPERs), which for example include the `pixels`
+           tuple specifying the range of pixel rows they are extracted between.
+        """
+        return self._value_list_of_lists_via_array_list_from(
+            array_list=array_list,
+            settings=settings,
+            value_str="median",
         )

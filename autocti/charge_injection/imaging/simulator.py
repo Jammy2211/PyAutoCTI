@@ -59,23 +59,19 @@ class SimulatorImagingCI(SimulatorImaging):
 
     @property
     def _ci_seed(self) -> int:
-
         if self.ci_seed == -1:
             return np.random.randint(0, int(1e9))
         return self.ci_seed
 
     def median_list_from(self, total_columns: int) -> List[float]:
-
         np.random.seed(self._ci_seed)
 
         injection_norm_list = []
 
         for column_number in range(total_columns):
-
             injection_norm = 0
 
             while injection_norm <= 0 or injection_norm >= self.max_norm:
-
                 injection_norm = np.random.normal(self.norm, self.column_sigma)
 
             injection_norm_list.append(injection_norm)
@@ -83,7 +79,6 @@ class SimulatorImagingCI(SimulatorImaging):
         return injection_norm_list
 
     def injection_norm_list_with_limit_from(self, total_columns: int) -> List[float]:
-
         injection_norm_list = self.median_list_from(
             total_columns=self.non_uniform_norm_limit
         )
@@ -91,7 +86,6 @@ class SimulatorImagingCI(SimulatorImaging):
         injection_norm_limited_list = []
 
         for i in range(total_columns):
-
             injection_norm = np.random.choice(injection_norm_list)
 
             injection_norm_limited_list.append(injection_norm)
@@ -138,7 +132,6 @@ class SimulatorImagingCI(SimulatorImaging):
         """
 
         for region in layout.region_list:
-
             if self.non_uniform_norm_limit is None:
                 injection_norm_list = self.median_list_from(
                     total_columns=region.total_columns
@@ -204,14 +197,12 @@ class SimulatorImagingCI(SimulatorImaging):
         cti: Optional[CTI2D],
         cosmic_ray_map: Optional[aa.Array2D] = None,
     ) -> ImagingCI:
-
         pre_cti_data = pre_cti_data.native
 
         if cosmic_ray_map is not None:
             pre_cti_data += cosmic_ray_map.native
 
         if self.charge_noise is not None:
-
             pre_cti_data = layout.extract.parallel_fpr.add_gaussian_noise_to(
                 array=pre_cti_data,
                 noise_sigma=self.charge_noise,
@@ -243,9 +234,7 @@ class SimulatorImagingCI(SimulatorImaging):
         layout: Layout2DCI,
         cosmic_ray_map: Optional[aa.Array2D] = None,
     ) -> ImagingCI:
-
         if self.read_noise is not None:
-
             ci_image = aa.preprocess.data_with_gaussian_noise_added(
                 data=post_cti_data, sigma=self.read_noise, seed=self.noise_seed
             )

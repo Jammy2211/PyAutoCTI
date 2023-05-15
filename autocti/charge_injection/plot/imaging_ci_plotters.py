@@ -60,7 +60,7 @@ class ImagingCIPlotter(Plotter):
         self.dataset = dataset
 
         self._imaging_meta_plotter = ImagingPlotterMeta(
-            imaging=self.imaging,
+            dataset=self.imaging,
             get_visuals_2d=self.get_visuals_2d,
             mat_plot_2d=self.mat_plot_2d,
             include_2d=self.include_2d,
@@ -89,10 +89,7 @@ class ImagingCIPlotter(Plotter):
         self,
         data: bool = False,
         noise_map: bool = False,
-        inverse_noise_map: bool = False,
         signal_to_noise_map: bool = False,
-        absolute_signal_to_noise_map: bool = False,
-        potential_chi_squared_map: bool = False,
         pre_cti_data: bool = False,
         cosmic_ray_map: bool = False,
     ):
@@ -108,14 +105,8 @@ class ImagingCIPlotter(Plotter):
             Whether to make a 2D plot (via `imshow`) of the image data.
         noise_map
             Whether to make a 2D plot (via `imshow`) of the noise map.
-        inverse_noise_map
-            Whether to make a 2D plot (via `imshow`) of the inverse noise map.
         signal_to_noise_map
             Whether to make a 2D plot (via `imshow`) of the signal-to-noise map.
-        absolute_signal_to_noise_map
-            Whether to make a 2D plot (via `imshow`) of the absolute signal to noise map.
-        potential_chi_squared_map
-            Whether to make a 2D plot (via `imshow`) of the potential chi squared map.
         pre_cti_data
             Whether to make a 2D plot (via `imshow`) of the pre-cti data.
         cosmic_ray_map
@@ -125,14 +116,10 @@ class ImagingCIPlotter(Plotter):
         self._imaging_meta_plotter.figures_2d(
             data=data,
             noise_map=noise_map,
-            inverse_noise_map=inverse_noise_map,
             signal_to_noise_map=signal_to_noise_map,
-            absolute_signal_to_noise_map=absolute_signal_to_noise_map,
-            potential_chi_squared_map=potential_chi_squared_map,
         )
 
         if pre_cti_data:
-
             self.mat_plot_2d.plot_array(
                 array=self.imaging.pre_cti_data,
                 visuals_2d=self.get_visuals_2d(),
@@ -142,7 +129,6 @@ class ImagingCIPlotter(Plotter):
             )
 
         if cosmic_ray_map:
-
             self.mat_plot_2d.plot_array(
                 array=self.imaging.cosmic_ray_map,
                 visuals_2d=self.get_visuals_2d(),
@@ -154,9 +140,8 @@ class ImagingCIPlotter(Plotter):
     def figures_1d(
         self,
         region: str,
-        data_with_noise_map: bool = False,
-        data_with_noise_map_logy: bool = False,
         data: bool = False,
+        data_logy: bool = False,
         noise_map: bool = False,
         pre_cti_data: bool = False,
         signal_to_noise_map: bool = False,
@@ -180,14 +165,12 @@ class ImagingCIPlotter(Plotter):
         region
             The region on the charge injection image where data is extracted and binned over the parallel or serial
             direction {"parallel_fpr", "parallel_eper", "serial_fpr", "serial_eper"}
-        data_with_noise_map
+        data
             Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
             noise-map values included as error bars.
-        data_with_noise_map_logy
+        data_logy
             Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region, with the
             noise-map values included as error bars and the y-axis on a log10 scale.
-        data
-            Whether to make a 1D plot (via `plot`) of the image data extracted and binned over the region.
         noise_map
             Whether to make a 1D plot (via `plot`) of the noise-map extracted and binned over the region.
         pre_cti_data
@@ -197,74 +180,14 @@ class ImagingCIPlotter(Plotter):
             the region.
         """
 
+        if region == "fpr_non_uniformity":
+            ls_errorbar = "-"
+        else:
+            ls_errorbar = ""
+
+        title_str = self.title_str_from(region=region)
+
         if data:
-
-            y = self.extract_region_from(array=self.imaging.image, region=region)
-
-            self.mat_plot_1d.plot_yx(
-                y=y,
-                x=range(len(y)),
-                visuals_1d=self.get_visuals_1d(),
-                auto_labels=AutoLabels(
-                    title=f"Data {region}",
-                    ylabel="Data (e-)",
-                    xlabel="Pixel No.",
-                    filename=f"image_{region}",
-                ),
-            )
-
-        if noise_map:
-
-            y = self.extract_region_from(array=self.imaging.noise_map, region=region)
-
-            self.mat_plot_1d.plot_yx(
-                y=y,
-                x=range(len(y)),
-                visuals_1d=self.visuals_1d,
-                auto_labels=AutoLabels(
-                    title=f"Noise Map {region}",
-                    ylabel="Noise (e-)",
-                    xlabel="Pixel No.",
-                    filename=f"noise_map_{region}",
-                ),
-            )
-
-        if pre_cti_data:
-
-            y = self.extract_region_from(array=self.imaging.pre_cti_data, region=region)
-
-            self.mat_plot_1d.plot_yx(
-                y=y,
-                x=range(len(y)),
-                visuals_1d=self.visuals_1d,
-                auto_labels=AutoLabels(
-                    title=f"CI Pre CTI {region}",
-                    ylabel="Pre CTI Data (e-)",
-                    xlabel="Pixel No.",
-                    filename=f"pre_cti_data_{region}",
-                ),
-            )
-
-        if signal_to_noise_map:
-
-            y = self.extract_region_from(
-                array=self.imaging.signal_to_noise_map, region=region
-            )
-
-            self.mat_plot_1d.plot_yx(
-                y=y,
-                x=range(len(y)),
-                visuals_1d=self.visuals_1d,
-                auto_labels=AutoLabels(
-                    title=f"Signal To Noise Map {region}",
-                    ylabel="Signal To Noise (e-)",
-                    xlabel="Pixel No.",
-                    filename=f"signal_to_noise_map_{region}",
-                ),
-            )
-
-        if data_with_noise_map:
-
             y = self.extract_region_from(array=self.dataset.data, region=region)
             y_errors = self.extract_region_noise_map_from(
                 array=self.dataset.noise_map, region=region
@@ -275,17 +198,18 @@ class ImagingCIPlotter(Plotter):
                 x=range(len(y)),
                 plot_axis_type_override="errorbar",
                 y_errors=y_errors,
+                ls_errorbar=ls_errorbar,
+                text_manual_dict=self.text_manual_dict_from(region=region),
+                text_manual_dict_y=self.text_manual_dict_y_from(region=region),
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title=f"Data w/ Noise {region} (FPR = {self.dataset.fpr_value} e-)",
-                    ylabel="Data (e-)",
-                    xlabel="Pixel No.",
-                    filename=f"data_with_noise_map_{region}",
+                    title=f"Data {title_str}",
+                    yunit="e-",
+                    filename=f"data_{region}",
                 ),
             )
 
-        if data_with_noise_map_logy:
-
+        if data_logy:
             y = self.extract_region_from(array=self.dataset.data, region=region)
             y_errors = self.extract_region_noise_map_from(
                 array=self.dataset.noise_map, region=region
@@ -296,12 +220,57 @@ class ImagingCIPlotter(Plotter):
                 x=range(len(y)),
                 plot_axis_type_override="errorbar_logy",
                 y_errors=y_errors,
+                text_manual_dict=self.text_manual_dict_from(region=region),
+                text_manual_dict_y=self.text_manual_dict_y_from(region=region),
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title=f"Data w/ Noise {region} [log10 y] (FPR = {self.dataset.fpr_value} e-)",
-                    ylabel="Data (e-)",
-                    xlabel="Pixel No.",
-                    filename=f"data_with_noise_map_logy_{region}",
+                    title=f"Data {title_str} [log10 y]",
+                    yunit="e-",
+                    filename=f"data_logy_{region}",
+                ),
+            )
+
+        if noise_map:
+            y = self.extract_region_from(array=self.imaging.noise_map, region=region)
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                visuals_1d=self.visuals_1d,
+                auto_labels=AutoLabels(
+                    title=f"Noise Map {title_str}",
+                    ylabel="Noise (e-)",
+                    filename=f"noise_map_{region}",
+                ),
+            )
+
+        if pre_cti_data:
+            y = self.extract_region_from(array=self.imaging.pre_cti_data, region=region)
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                visuals_1d=self.visuals_1d,
+                auto_labels=AutoLabels(
+                    title=f"CI Pre CTI {title_str}",
+                    yunit="e-",
+                    filename=f"pre_cti_data_{region}",
+                ),
+            )
+
+        if signal_to_noise_map:
+            y = self.extract_region_from(
+                array=self.imaging.signal_to_noise_map, region=region
+            )
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                visuals_1d=self.visuals_1d,
+                auto_labels=AutoLabels(
+                    title=f"Signal To Noise Map {title_str}",
+                    ylabel="Signal To Noise (e-)",
+                    filename=f"signal_to_noise_map_{region}",
                 ),
             )
 
@@ -309,13 +278,10 @@ class ImagingCIPlotter(Plotter):
         self,
         data: bool = False,
         noise_map: bool = False,
-        inverse_noise_map: bool = False,
         signal_to_noise_map: bool = False,
-        absolute_signal_to_noise_map: bool = False,
-        potential_chi_squared_map: bool = False,
         pre_cti_data: bool = False,
         cosmic_ray_map: bool = False,
-        auto_filename="subplot_imaging_ci",
+        auto_filename="subplot_dataset",
     ):
         """
         Plots the individual attributes of the plotter's `ImagingCI` object in 2D on a subplot.
@@ -326,21 +292,15 @@ class ImagingCIPlotter(Plotter):
         Parameters
         ----------
         data
-            Whether or not to include a 2D plot (via `imshow`) of the image data.
+            Whether to include a 2D plot (via `imshow`) of the image data.
         noise_map
-            Whether or not to include a 2D plot (via `imshow`) of the noise map.
-        inverse_noise_map
-            Whether or not to include a 2D plot (via `imshow`) of the inverse noise map.
+            Whether to include a 2D plot (via `imshow`) of the noise map.
         signal_to_noise_map
-            Whether or not to include a 2D plot (via `imshow`) of the signal-to-noise map.
-        absolute_signal_to_noise_map
-            Whether or not to include a 2D plot (via `imshow`) of the absolute signal to noise map.
-        potential_chi_squared_map
-            Whether or not to include a 2D plot (via `imshow`) of the potential chi squared map.
+            Whether to include a 2D plot (via `imshow`) of the signal-to-noise map.
         pre_cti_data
-            Whether or not to include a 2D plot (via `imshow`) of the pre-cti data.
+            Whether to include a 2D plot (via `imshow`) of the pre-cti data.
         cosmic_ray_map
-            Whether or not to include a 2D plot (via `imshow`) of the cosmic ray map.
+            Whether to include a 2D plot (via `imshow`) of the cosmic ray map.
         auto_filename
             The default filename of the output subplot if written to hard-disk.
         """
@@ -348,15 +308,12 @@ class ImagingCIPlotter(Plotter):
             data=data,
             noise_map=noise_map,
             signal_to_noise_map=signal_to_noise_map,
-            inverse_noise_map=inverse_noise_map,
-            absolute_signal_to_noise_map=absolute_signal_to_noise_map,
-            potential_chi_squared_map=potential_chi_squared_map,
             pre_cti_data=pre_cti_data,
             cosmic_ray_map=cosmic_ray_map,
             auto_labels=AutoLabels(filename=auto_filename),
         )
 
-    def subplot_imaging_ci(self):
+    def subplot_dataset(self):
         """
         Standard subplot of the attributes of the plotter's `ImagingCI` object.
         """
@@ -365,7 +322,6 @@ class ImagingCIPlotter(Plotter):
             noise_map=True,
             signal_to_noise_map=True,
             pre_cti_data=True,
-            inverse_noise_map=True,
             cosmic_ray_map=True,
         )
 
@@ -389,7 +345,7 @@ class ImagingCIPlotter(Plotter):
 
         self.open_subplot_figure(number_subplots=4)
 
-        self.figures_1d(data_with_noise_map=True, region=region)
+        self.figures_1d(data=True, region=region)
         self.figures_1d(noise_map=True, region=region)
         self.figures_1d(pre_cti_data=True, region=region)
         self.figures_1d(signal_to_noise_map=True, region=region)

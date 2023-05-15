@@ -28,7 +28,6 @@ class MockExtract1D(Extract1D):
 
 
 def test__array_1d_list_from(array, masked_array):
-
     extract = MockExtract1D(region_list=[(1, 4)])
 
     fpr_list = extract.array_1d_list_from(
@@ -69,7 +68,6 @@ def test__array_1d_list_from(array, masked_array):
 
 
 def test__stacked_array_1d_from(array, masked_array):
-
     extract = MockExtract1D(region_list=[(1, 4), (5, 8)])
 
     stacked_fpr = extract.stacked_array_1d_from(
@@ -95,7 +93,6 @@ def test__stacked_array_1d_from(array, masked_array):
 
 
 def test__stacked_array_1d_from__pixels_from_end(array, masked_array):
-
     extract = MockExtract1D(region_list=[(1, 4), (5, 8)])
 
     stacked_fpr = extract.stacked_array_1d_from(
@@ -130,7 +127,6 @@ def test__total_pixel_spacing_min():
 
 
 def test__add_gaussian_noise_to(array):
-
     extract = MockExtract1D(region_list=[(1, 4)])
 
     array_with_noise = extract.add_gaussian_noise_to(

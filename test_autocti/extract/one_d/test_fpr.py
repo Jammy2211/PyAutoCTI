@@ -4,7 +4,6 @@ import autocti as ac
 
 
 def test__region_list_from__via_array_1d_list_from(array, masked_array):
-
     extract = ac.Extract1DFPR(region_list=[(1, 4)])
 
     fpr_list = extract.array_1d_list_from(
@@ -52,7 +51,6 @@ def test__region_list_from__via_array_1d_list_from(array, masked_array):
 def test__region_list_from__via_array_1d_list_from__pixels_from_end(
     array, masked_array
 ):
-
     extract = ac.Extract1DFPR(region_list=[(1, 4)])
 
     fpr = extract.array_1d_list_from(

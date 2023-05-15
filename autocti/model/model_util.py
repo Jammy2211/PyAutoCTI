@@ -87,6 +87,7 @@ class CTI2D(AbstractCTI, Dictable):
 
         return [trap for trap in parallel_traps] + [trap for trap in serial_traps]
 
+
 def is_parallel_fit(model):
     if model.parallel_ccd is not None and model.serial_ccd is None:
         return True
