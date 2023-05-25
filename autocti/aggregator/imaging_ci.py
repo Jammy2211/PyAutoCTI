@@ -3,9 +3,7 @@ from functools import partial
 import autofit as af
 
 
-def _imaging_ci_list_from(
-    fit: af.Fit,
-):
+def _imaging_ci_list_from(fit: af.Fit, use_dataset_full: bool = False):
     """
     Returns a `ImagingCI` object from an aggregator's `SearchOutput` class, which we call an 'agg_obj' to describe
     that it acts as the aggregator object for one result in the `Aggregator`. This uses the aggregator's generator
@@ -18,18 +16,27 @@ def _imaging_ci_list_from(
     ----------
     fit
         A PyAutoFit aggregator's SearchOutput object containing the generators of the results of model-fits.
+    use_dataset_full
+        If True, the full dataset is used to create the dataset list, else the masked dataset is used. This is used
+        when trying to plot regions of the dataset that are masked out (e.g. the FPR).
     """
 
-    dataset_list = [fit.value(name="dataset")]
+    name = "dataset"
+
+    if use_dataset_full:
+        name = "dataset_full"
+
+    dataset_list = [fit.value(name=name)]
     if dataset_list[0] is None:
-        dataset_list = fit.child_values(name="dataset")
+        dataset_list = fit.child_values(name=name)
 
     return dataset_list
 
 
 class ImagingCIAgg:
-    def __init__(self, aggregator: af.Aggregator):
+    def __init__(self, aggregator: af.Aggregator, use_dataset_full: bool = False):
         self.aggregator = aggregator
+        self.use_dataset_full = use_dataset_full
 
     def dataset_list_gen_from(
         self,
@@ -48,5 +55,5 @@ class ImagingCIAgg:
             The settings of the `ImagingCI` object fitted by the non-linear search.
         """
 
-        func = partial(_imaging_ci_list_from)
+        func = partial(_imaging_ci_list_from, use_dataset_full=self.use_dataset_full)
         return self.aggregator.map(func=func)

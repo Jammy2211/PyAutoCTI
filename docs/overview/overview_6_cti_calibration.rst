@@ -315,14 +315,14 @@ We can also perform CTI calibration on 1D datasets.
     prescan = ac.Region1D((0, 1))
     overscan = ac.Region1D((25, 30))
 
-    region_1d_list = [(1, 25)]
+    region_list = [(1, 25)]
 
     normalization_list = [100.0, 1000.0, 10000.0]
 
     layout_list = [
         ac.Layout1D(
             shape_1d=shape_native,
-            region_list=region_1d_list,
+            region_list=region_list,
             prescan=prescan,
             overscan=overscan,
         )

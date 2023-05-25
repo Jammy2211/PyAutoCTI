@@ -15,6 +15,7 @@ class AbstractAgg(ABC):
     def __init__(
         self,
         aggregator: af.Aggregator,
+        use_dataset_full: bool = False,
         clocker_list: Optional[List[AbstractClocker]] = None,
     ):
         """
@@ -32,6 +33,7 @@ class AbstractAgg(ABC):
             non-linear search and model-fit is used.
         """
         self.aggregator = aggregator
+        self.use_dataset_full = use_dataset_full
         self.clocker_list = clocker_list
 
     @abstractmethod

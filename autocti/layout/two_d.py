@@ -195,7 +195,7 @@ class Layout2D(aa.Layout2D):
                     pixels=(0, self.smallest_parallel_rows_between_ci_regions)
                 ),
             )
-        elif region == "serial_fpr" or "fpr_non_uniformity":
+        elif region == "serial_fpr" or region == "fpr_non_uniformity":
             return self.extract.serial_fpr.binned_array_1d_from(
                 array=array,
                 settings=SettingsExtract(
@@ -245,7 +245,7 @@ class Layout2D(aa.Layout2D):
                     ),
                 )
             )
-        elif region == "serial_fpr" or "fpr_non_uniformity":
+        elif region == "serial_fpr" or region == "fpr_non_uniformity":
             binned_noise_map_1d = self.extract.serial_fpr.binned_array_1d_from(
                 array=array,
                 settings=SettingsExtract(

@@ -283,4 +283,11 @@ def test__median_list_of_lists_via_array_list_from(
         array_list=[array_0, array_1], settings=ac.SettingsExtract(pixels_from_end=2)
     )
     assert median_list_of_lists[0] == [1.5, 2.5, 1.5]
-    assert median_list_of_lists[1] == [5.5, 5.5, 4.5]
+
+    # This result is quite confusing, basically the median of each FPR is taken first, followed by the median
+    # of the medians of each FPR.
+
+    # So, to get 2.75, we take the median of 0.0 and 5.0 = 2.5, the median of 0.0 and 6.0 = 3.0
+    # and then the median of 2.5 and 3.0 = 2.75.
+
+    assert median_list_of_lists[1] == [2.75, 2.75, 2.75]

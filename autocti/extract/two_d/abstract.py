@@ -122,7 +122,7 @@ class Extract2D:
 
         For example, this might extract the parallel EPERs of every charge injection region.
 
-        The `region_2d_list_from()` of each `Extract2D` class describes the exact extraction performed for each
+        The `region_list_from()` of each `Extract2D` class describes the exact extraction performed for each
         extract when this function is called.
 
         Parameters

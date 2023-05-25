@@ -304,13 +304,13 @@ Below we load a 1D dataset which you can imagine corresponds to a single column 
     prescan = ac.Region1D((0, 1))
     overscan = ac.Region1D((25, 30))
 
-    region_1d_list = [(1, 25)]
+    region_list = [(1, 25)]
 
     normalization = 100
 
     layout = ac.Layout1D(
             shape_1d=shape_native,
-            region_list=region_1d_list,
+            region_list=region_list,
             prescan=prescan,
             overscan=overscan,
         )

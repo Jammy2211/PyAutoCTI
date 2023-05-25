@@ -71,7 +71,7 @@ class Extract1D:
 
         For example, this might extract the EPERs trailing every signal.
 
-        The `region_1d_list_from()` of each `Extract1D` class describes the exact extraction performed for each
+        The `region_list_from()` of each `Extract1D` class describes the exact extraction performed for each
         extract when this function is called.
 
         Parameters

@@ -16,6 +16,7 @@ from autocti.aggregator.imaging_ci import _imaging_ci_list_from
 def _fit_imaging_ci_list_from(
     fit: af.Fit,
     cti: Union[CTI1D, CTI2D],
+    use_dataset_full: bool = False,
     clocker_list: Optional[AbstractClocker] = None,
 ) -> List[FitImagingCI]:
     """
@@ -37,7 +38,7 @@ def _fit_imaging_ci_list_from(
 
     from autocti.charge_injection.fit import FitImagingCI
 
-    imaging_ci_list = _imaging_ci_list_from(fit=fit)
+    imaging_ci_list = _imaging_ci_list_from(fit=fit, use_dataset_full=use_dataset_full)
 
     if clocker_list is None:
         clocker_list = [fit.value(name="clocker")]
@@ -62,6 +63,7 @@ class FitImagingCIAgg(AbstractAgg):
     def __init__(
         self,
         aggregator: af.Aggregator,
+        use_dataset_full: bool = False,
         clocker_list: Optional[List[AbstractClocker]] = None,
     ):
         """
@@ -76,7 +78,11 @@ class FitImagingCIAgg(AbstractAgg):
         settings_dataset
             The settings of the `ImagingCI` object fitted by the non-linear search.
         """
-        super().__init__(aggregator=aggregator, clocker_list=clocker_list)
+        super().__init__(
+            aggregator=aggregator,
+            use_dataset_full=use_dataset_full,
+            clocker_list=clocker_list,
+        )
 
     def object_via_gen_from(self, fit, cti: Union[CTI1D, CTI2D]) -> FitImagingCI:
         """
@@ -96,5 +102,6 @@ class FitImagingCIAgg(AbstractAgg):
         return _fit_imaging_ci_list_from(
             fit=fit,
             cti=cti,
+            use_dataset_full=self.use_dataset_full,
             clocker_list=self.clocker_list,
         )

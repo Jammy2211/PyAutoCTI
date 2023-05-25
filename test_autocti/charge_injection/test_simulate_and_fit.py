@@ -10,7 +10,7 @@ def test__simulate_and_fit_non_uniform():
     serial_prescan = ac.Region2D((0, 500, 0, 5))
     serial_overscan = ac.Region2D((0, 80, 95, 100))
 
-    region_2d_list = [
+    region_list = [
         (0, 150, serial_prescan[3], serial_overscan[2]),
         (200, 450, serial_prescan[3], serial_overscan[2]),
     ]
@@ -22,7 +22,7 @@ def test__simulate_and_fit_non_uniform():
 
     layout_ci = ac.Layout2DCI(
         shape_2d=shape_native,
-        region_list=region_2d_list,
+        region_list=region_list,
         parallel_overscan=parallel_overscan,
         serial_prescan=serial_prescan,
         serial_overscan=serial_overscan,
@@ -84,7 +84,7 @@ def test__simulate_and_extract_non_uniform_normalizations():
     serial_prescan = ac.Region2D((0, 500, 0, 5))
     serial_overscan = ac.Region2D((0, 80, 95, 100))
 
-    region_2d_list = [
+    region_list = [
         (0, 150, serial_prescan[3], serial_overscan[2]),
         (200, 450, serial_prescan[3], serial_overscan[2]),
     ]
@@ -96,7 +96,7 @@ def test__simulate_and_extract_non_uniform_normalizations():
 
     layout_ci = ac.Layout2DCI(
         shape_2d=shape_native,
-        region_list=region_2d_list,
+        region_list=region_list,
         parallel_overscan=parallel_overscan,
         serial_prescan=serial_prescan,
         serial_overscan=serial_overscan,

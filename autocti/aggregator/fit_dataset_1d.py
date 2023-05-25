@@ -16,6 +16,7 @@ from autocti.aggregator.dataset_1d import _dataset_1d_list_from
 def _fit_dataset_1d_list_from(
     fit: af.Fit,
     cti: Union[CTI1D, CTI2D],
+    use_dataset_full: bool = False,
     clocker_list: Optional[AbstractClocker] = None,
 ) -> List[FitDataset1D]:
     """
@@ -26,6 +27,9 @@ def _fit_dataset_1d_list_from(
     ----------
     fit
         A PyAutoFit database Fit object containing the generators of the results of model-fits.
+    use_dataset_full
+        If True, the full dataset is used to create the dataset list, else the masked dataset is used. This is used
+        when trying to plot regions of the dataset that are masked out (e.g. the FPR).
     settings_dataset
         The settings of the `Dataset1D` object fitted by the non-linear search.
 
@@ -37,7 +41,7 @@ def _fit_dataset_1d_list_from(
 
     from autocti.dataset_1d.fit import FitDataset1D
 
-    dataset_1d_list = _dataset_1d_list_from(fit=fit)
+    dataset_1d_list = _dataset_1d_list_from(fit=fit, use_dataset_full=use_dataset_full)
 
     if clocker_list is None:
         clocker_list = [fit.value(name="clocker")]
@@ -45,7 +49,7 @@ def _fit_dataset_1d_list_from(
             clocker_list = fit.child_values(name="clocker")
 
     post_cti_data_list = [
-        clocker.add_cti(data=dataset_1d.data, cti=cti)
+        clocker.add_cti(data=dataset_1d.pre_cti_data, cti=cti)
         for dataset_1d, clocker in zip(dataset_1d_list, clocker_list)
     ]
 
@@ -62,6 +66,7 @@ class FitDataset1DAgg(AbstractAgg):
     def __init__(
         self,
         aggregator: af.Aggregator,
+        use_dataset_full: bool = False,
         clocker_list: Optional[List[AbstractClocker]] = None,
     ):
         """
@@ -70,13 +75,18 @@ class FitDataset1DAgg(AbstractAgg):
 
         Parameters
         ----------
-        clocker
+        use_dataset_full
+            If True, the full dataset is used to create the dataset list, else the masked dataset is used. This is used
+            when trying to plot regions of the dataset that are masked out (e.g. the FPR).
+        clocker_list
             The CTI arctic clocker used by aggregator's instances. If None is input, the clocker used by the
             non-linear search and model-fit is used.
-        settings_dataset
-            The settings of the `Dataset1D` object fitted by the non-linear search.
         """
-        super().__init__(aggregator=aggregator, clocker_list=clocker_list)
+        super().__init__(
+            aggregator=aggregator,
+            use_dataset_full=use_dataset_full,
+            clocker_list=clocker_list,
+        )
 
     def object_via_gen_from(self, fit, cti: Union[CTI1D, CTI2D]) -> FitDataset1D:
         """
@@ -96,5 +106,6 @@ class FitDataset1DAgg(AbstractAgg):
         return _fit_dataset_1d_list_from(
             fit=fit,
             cti=cti,
+            use_dataset_full=self.use_dataset_full,
             clocker_list=self.clocker_list,
         )

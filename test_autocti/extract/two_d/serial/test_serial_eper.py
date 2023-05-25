@@ -165,26 +165,26 @@ def test__array_2d_from():
 def test__binned_region_1d_from():
     extract = ac.Extract2DSerialEPER(region_list=[(1, 3, 0, 3)])
 
-    binned_region_1d_list = extract.binned_region_1d_from(
+    binned_region_list = extract.binned_region_1d_from(
         settings=ac.SettingsExtract(pixels=(0, 1))
     )
 
-    assert binned_region_1d_list == None
+    assert binned_region_list == None
 
-    binned_region_1d_list = extract.binned_region_1d_from(
+    binned_region_list = extract.binned_region_1d_from(
         settings=ac.SettingsExtract(pixels=(-1, 1))
     )
 
-    assert binned_region_1d_list == (0, 1)
+    assert binned_region_list == (0, 1)
 
-    binned_region_1d_list = extract.binned_region_1d_from(
+    binned_region_list = extract.binned_region_1d_from(
         settings=ac.SettingsExtract(pixels=(-7, 18))
     )
 
-    assert binned_region_1d_list == (0, 7)
+    assert binned_region_list == (0, 7)
 
-    binned_region_1d_list = extract.binned_region_1d_from(
+    binned_region_list = extract.binned_region_1d_from(
         settings=ac.SettingsExtract(pixels=(-3, -1))
     )
 
-    assert binned_region_1d_list == (0, 2)
+    assert binned_region_list == (0, 2)
