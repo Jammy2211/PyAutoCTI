@@ -131,11 +131,11 @@ class VisualizerImagingCI(Visualizer):
 
         mat_plot_2d = self.mat_plot_2d_from(subfolders=f"fit_dataset{folder_suffix}")
 
-        fit_ci_plotter = aplt.FitImagingCIPlotter(
+        fit_plotter = aplt.FitImagingCIPlotter(
             fit=fit, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
         )
 
-        fit_ci_plotter.figures_2d(
+        fit_plotter.figures_2d(
             data=should_plot("data"),
             noise_map=should_plot("noise_map"),
             signal_to_noise_map=should_plot("signal_to_noise_map"),
@@ -148,7 +148,7 @@ class VisualizerImagingCI(Visualizer):
 
         if not during_analysis:
             if should_plot("all_at_end_png"):
-                fit_ci_plotter.figures_2d(
+                fit_plotter.figures_2d(
                     data=True,
                     noise_map=True,
                     signal_to_noise_map=True,
@@ -163,7 +163,7 @@ class VisualizerImagingCI(Visualizer):
                 self.visualize_fit_in_fits(fit=fit)
 
         if should_plot("subplot_fit"):
-            fit_ci_plotter.subplot_fit()
+            fit_plotter.subplot_fit()
 
     def visualize_fit_1d_regions(
         self, fit, region_list, during_analysis, folder_suffix: str = ""
@@ -173,16 +173,16 @@ class VisualizerImagingCI(Visualizer):
 
         mat_plot_1d = self.mat_plot_1d_from(subfolders=f"fit_dataset{folder_suffix}")
 
-        fit_ci_plotter = aplt.FitImagingCIPlotter(
+        fit_plotter = aplt.FitImagingCIPlotter(
             fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
         )
 
         for region in region_list:
             try:
                 if should_plot("subplot_fit"):
-                    fit_ci_plotter.subplot_1d(region=region)
+                    fit_plotter.subplot_1d(region=region)
 
-                fit_ci_plotter.figures_1d(
+                fit_plotter.figures_1d(
                     region=region,
                     data=should_plot("data"),
                     data_logy=should_plot("data_logy"),
@@ -198,7 +198,7 @@ class VisualizerImagingCI(Visualizer):
 
                 if not during_analysis:
                     if should_plot("all_at_end_png"):
-                        fit_ci_plotter.figures_1d(
+                        fit_plotter.figures_1d(
                             region=region,
                             data=True,
                             noise_map=True,
@@ -226,13 +226,13 @@ class VisualizerImagingCI(Visualizer):
             subfolders=f"fit_dataset_combined{folder_suffix}"
         )
 
-        fit_ci_plotter_list = [
+        fit_plotter_list = [
             aplt.FitImagingCIPlotter(
                 fit=fit, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
             )
             for fit in fit_list
         ]
-        multi_plotter = aplt.MultiFigurePlotter(plotter_list=fit_ci_plotter_list)
+        multi_plotter = aplt.MultiFigurePlotter(plotter_list=fit_plotter_list)
 
         if should_plot("residual_map"):
             multi_plotter.subplot_of_figure(
@@ -259,13 +259,13 @@ class VisualizerImagingCI(Visualizer):
             subfolders=f"fit_dataset_combined{folder_suffix}"
         )
 
-        fit_ci_plotter_list = [
+        fit_plotter_list = [
             aplt.FitImagingCIPlotter(
                 fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
             )
             for fit in fit_list
         ]
-        multi_plotter = aplt.MultiFigurePlotter(plotter_list=fit_ci_plotter_list)
+        multi_plotter = aplt.MultiFigurePlotter(plotter_list=fit_plotter_list)
 
         for region in region_list:
             try:
@@ -325,11 +325,11 @@ class VisualizerImagingCI(Visualizer):
     def visualize_fit_in_fits(self, fit):
         mat_plot_2d = self.mat_plot_2d_from(subfolders="fit_imaging/fit", format="fit")
 
-        fit_ci_plotter = aplt.FitImagingCIPlotter(
+        fit_plotter = aplt.FitImagingCIPlotter(
             fit=fit, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
         )
 
-        fit_ci_plotter.figures_2d(
+        fit_plotter.figures_2d(
             data=True,
             noise_map=True,
             signal_to_noise_map=True,

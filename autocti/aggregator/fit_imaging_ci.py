@@ -46,16 +46,16 @@ def _fit_imaging_ci_list_from(
             clocker_list = fit.child_values(name="clocker")
 
     post_cti_data_list = [
-        clocker.add_cti(data=imaging_ci.data, cti=cti)
-        for imaging_ci, clocker in zip(imaging_ci_list, clocker_list)
+        clocker.add_cti(data=dataset.data, cti=cti)
+        for dataset, clocker in zip(imaging_ci_list, clocker_list)
     ]
 
     return [
         FitImagingCI(
-            dataset=imaging_ci,
+            dataset=dataset,
             post_cti_data=post_cti_data,
         )
-        for imaging_ci, post_cti_data in zip(imaging_ci_list, post_cti_data_list)
+        for dataset, post_cti_data in zip(imaging_ci_list, post_cti_data_list)
     ]
 
 

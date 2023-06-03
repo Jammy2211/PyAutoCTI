@@ -224,7 +224,7 @@ class Extract2DParallelCalibration:
         return layout
 
     def imaging_ci_from(
-        self, imaging_ci: ImagingCI, columns: Tuple[int, int]
+        self, dataset: ImagingCI, columns: Tuple[int, int]
     ) -> ImagingCI:
         """
         Returnss a function to extract a parallel section for given columns
@@ -233,49 +233,49 @@ class Extract2DParallelCalibration:
         from autocti.charge_injection.imaging.imaging import ImagingCI
 
         cosmic_ray_map = (
-            imaging_ci.layout.extract.parallel_calibration.array_2d_from(
-                array=imaging_ci.cosmic_ray_map, columns=columns
+            dataset.layout.extract.parallel_calibration.array_2d_from(
+                array=dataset.cosmic_ray_map, columns=columns
             )
-            if imaging_ci.cosmic_ray_map is not None
+            if dataset.cosmic_ray_map is not None
             else None
         )
 
-        if imaging_ci.noise_scaling_map_dict is not None:
+        if dataset.noise_scaling_map_dict is not None:
             noise_scaling_map_dict = {
-                key: imaging_ci.layout.extract.parallel_calibration.array_2d_from(
+                key: dataset.layout.extract.parallel_calibration.array_2d_from(
                     array=noise_scaling_map, columns=columns
                 )
-                for key, noise_scaling_map in imaging_ci.noise_scaling_map_dict.items()
+                for key, noise_scaling_map in dataset.noise_scaling_map_dict.items()
             }
 
         else:
             noise_scaling_map_dict = None
 
         extraction_region = (
-            imaging_ci.layout.extract.parallel_calibration.extraction_region_from(
+            dataset.layout.extract.parallel_calibration.extraction_region_from(
                 columns=columns
             )
         )
 
-        mask = self.mask_2d_from(mask=imaging_ci.mask, columns=columns)
+        mask = self.mask_2d_from(mask=dataset.mask, columns=columns)
 
-        imaging_ci = ImagingCI(
-            data=imaging_ci.layout.extract.parallel_calibration.array_2d_from(
-                array=imaging_ci.image, columns=columns
+        dataset = ImagingCI(
+            data=dataset.layout.extract.parallel_calibration.array_2d_from(
+                array=dataset.data, columns=columns
             ),
-            noise_map=imaging_ci.layout.extract.parallel_calibration.array_2d_from(
-                array=imaging_ci.noise_map, columns=columns
+            noise_map=dataset.layout.extract.parallel_calibration.array_2d_from(
+                array=dataset.noise_map, columns=columns
             ),
-            pre_cti_data=imaging_ci.layout.extract.parallel_calibration.array_2d_from(
-                array=imaging_ci.pre_cti_data, columns=columns
+            pre_cti_data=dataset.layout.extract.parallel_calibration.array_2d_from(
+                array=dataset.pre_cti_data, columns=columns
             ),
-            layout=imaging_ci.layout.layout_extracted_from(
+            layout=dataset.layout.layout_extracted_from(
                 extraction_region=extraction_region
             ),
             cosmic_ray_map=cosmic_ray_map,
             noise_scaling_map_dict=noise_scaling_map_dict,
-            fpr_value=imaging_ci.fpr_value,
-            settings_dict=imaging_ci.settings_dict,
+            fpr_value=dataset.fpr_value,
+            settings_dict=dataset.settings_dict,
         )
 
-        return imaging_ci.apply_mask(mask=mask)
+        return dataset.apply_mask(mask=mask)

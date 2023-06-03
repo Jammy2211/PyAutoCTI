@@ -58,7 +58,7 @@ class FitImagingCI(aa.FitImaging):
 
     @property
     def layout(self):
-        return self.imaging_ci.layout
+        return self.dataset.layout
 
     @property
     def pre_cti_data(self):

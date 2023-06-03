@@ -16,7 +16,7 @@ class VisualizerDataset1D(Visualizer):
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset_1d{folder_suffix}")
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset{folder_suffix}")
 
         dataset_plotter = aplt.Dataset1DPlotter(
             dataset=dataset, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
@@ -37,7 +37,7 @@ class VisualizerDataset1D(Visualizer):
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset_1d{folder_suffix}")
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset{folder_suffix}")
 
         dataset_plotter = aplt.Dataset1DPlotter(
             dataset=dataset, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
@@ -66,7 +66,7 @@ class VisualizerDataset1D(Visualizer):
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset_1d{folder_suffix}")
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset{folder_suffix}")
 
         dataset_plotter_list = [
             aplt.Dataset1DPlotter(
@@ -85,7 +85,7 @@ class VisualizerDataset1D(Visualizer):
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset_1d{folder_suffix}")
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset{folder_suffix}")
 
         dataset_plotter_list = [
             aplt.Dataset1DPlotter(
@@ -121,13 +121,13 @@ class VisualizerDataset1D(Visualizer):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"fit_dataset_1d{folder_suffix}")
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"fit_dataset{folder_suffix}")
 
-        fit_1d_plotter = aplt.FitDataset1DPlotter(
+        fit_plotter = aplt.FitDataset1DPlotter(
             fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
         )
 
-        fit_1d_plotter.figures_1d(
+        fit_plotter.figures_1d(
             data=should_plot("data"),
             data_logy=should_plot("data_logy"),
             noise_map=should_plot("noise_map"),
@@ -142,7 +142,7 @@ class VisualizerDataset1D(Visualizer):
 
         if not during_analysis:
             if should_plot("all_at_end_png"):
-                fit_1d_plotter.figures_1d(
+                fit_plotter.figures_1d(
                     data=True,
                     noise_map=True,
                     signal_to_noise_map=True,
@@ -155,7 +155,7 @@ class VisualizerDataset1D(Visualizer):
                 )
 
         if should_plot("subplot_fit"):
-            fit_1d_plotter.subplot_fit()
+            fit_plotter.subplot_fit()
 
     def visualize_fit_regions(
         self, fit, region_list, during_analysis, folder_suffix=""
@@ -163,18 +163,18 @@ class VisualizerDataset1D(Visualizer):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"fit_dataset_1d{folder_suffix}")
+        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"fit_dataset{folder_suffix}")
 
-        fit_1d_plotter = aplt.FitDataset1DPlotter(
+        fit_plotter = aplt.FitDataset1DPlotter(
             fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
         )
 
         for region in region_list:
             try:
                 if should_plot("subplot_fit"):
-                    fit_1d_plotter.subplot_fit(region=region)
+                    fit_plotter.subplot_fit(region=region)
 
-                fit_1d_plotter.figures_1d(
+                fit_plotter.figures_1d(
                     region=region,
                     data=should_plot("data"),
                     data_logy=should_plot("data_logy"),
@@ -198,7 +198,7 @@ class VisualizerDataset1D(Visualizer):
             return plot_setting(section="fit", name=name)
 
         mat_plot_1d = self.mat_plot_1d_from(
-            subfolders=f"fit_dataset_1d_combined{folder_suffix}"
+            subfolders=f"fit_dataset_combined{folder_suffix}"
         )
 
         fit_plotter_list = [
@@ -244,16 +244,16 @@ class VisualizerDataset1D(Visualizer):
             return plot_setting(section="fit", name=name)
 
         mat_plot_1d = self.mat_plot_1d_from(
-            subfolders=f"fit_dataset_1d_combined{folder_suffix}"
+            subfolders=f"fit_dataset_combined{folder_suffix}"
         )
 
-        fit_1d_plotter_list = [
+        fit_plotter_list = [
             aplt.FitDataset1DPlotter(
                 fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
             )
             for fit in fit_list
         ]
-        multi_plotter = aplt.MultiFigurePlotter(plotter_list=fit_1d_plotter_list)
+        multi_plotter = aplt.MultiFigurePlotter(plotter_list=fit_plotter_list)
 
         for region in region_list:
             try:

@@ -158,7 +158,7 @@ which fits a CTI model to charge injection imaging calibrate data (a form of dat
     """
     Load the charge injection image from fits.
     """
-    imaging_ci = ac.ImagingCI.from_fits(
+    dataset = ac.ImagingCI.from_fits(
         data_path=path.join(dataset_path, f"data.fits"),
         noise_map_path=path.join(dataset_path, f"noise_map.fits"),
         pre_cti_data_path=path.join(dataset_path, f"pre_cti_data.fits"),
@@ -198,7 +198,7 @@ which fits a CTI model to charge injection imaging calibrate data (a form of dat
     We next set up the `Analysis`, which contains the `log likelihood function` that the
     non-linear search calls to fit the cti model to the data.
     """
-    analysis = ac.AnalysisImagingCI(dataset=imaging_ci, clocker=clocker_2d)
+    analysis = ac.AnalysisImagingCI(dataset=dataset, clocker=clocker_2d)
 
     """
     To perform the model-fit we pass the model and analysis to the search's fit method. This will

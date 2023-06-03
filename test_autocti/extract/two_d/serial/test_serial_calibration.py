@@ -252,20 +252,18 @@ def test__imaging_ci_from(imaging_ci_7x7):
         serial_overscan=imaging_ci_7x7.layout.serial_overscan,
     )
 
-    imaging_ci = extract.imaging_ci_from(imaging_ci=imaging_ci_7x7, rows=(0, 2))
+    dataset = extract.imaging_ci_from(dataset=imaging_ci_7x7, rows=(0, 2))
 
-    assert (imaging_ci.image.native == imaging_ci_7x7.image.native[0:2, :]).all()
+    assert (dataset.data.native == imaging_ci_7x7.image.native[0:2, :]).all()
+    assert (dataset.noise_map.native == imaging_ci_7x7.noise_map.native[0:2, :]).all()
     assert (
-        imaging_ci.noise_map.native == imaging_ci_7x7.noise_map.native[0:2, :]
+        dataset.pre_cti_data.native == imaging_ci_7x7.pre_cti_data.native[0:2, :]
     ).all()
     assert (
-        imaging_ci.pre_cti_data.native == imaging_ci_7x7.pre_cti_data.native[0:2, :]
-    ).all()
-    assert (
-        imaging_ci.cosmic_ray_map.native == imaging_ci_7x7.cosmic_ray_map.native[1:3, :]
+        dataset.cosmic_ray_map.native == imaging_ci_7x7.cosmic_ray_map.native[1:3, :]
     ).all()
 
-    assert imaging_ci.layout.region_list == [(0, 2, 1, 5)]
+    assert dataset.layout.region_list == [(0, 2, 1, 5)]
 
     mask = ac.Mask2D.all_false(
         shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
@@ -275,10 +273,10 @@ def test__imaging_ci_from(imaging_ci_7x7):
 
     imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask)
 
-    imaging_ci = extract.imaging_ci_from(imaging_ci=imaging_ci_7x7, rows=(0, 6))
+    dataset = extract.imaging_ci_from(dataset=imaging_ci_7x7, rows=(0, 6))
 
-    assert imaging_ci.image.mask[2, 1] == False
-    assert imaging_ci.image.mask[1, 2] == True
+    assert dataset.data.mask[2, 1] == False
+    assert dataset.data.mask[1, 2] == True
 
-    assert imaging_ci.noise_map.mask[2, 1] == False
-    assert imaging_ci.noise_map.mask[1, 2] == True
+    assert dataset.noise_map.mask[2, 1] == False
+    assert dataset.noise_map.mask[1, 2] == True

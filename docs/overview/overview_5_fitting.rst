@@ -53,7 +53,7 @@ We load a charge injection image with injections of 100e-.
     dataset_type = "calibrate"
     dataset_path = path.join("dataset", "imaging_ci", dataset_label, dataset_type)
 
-    imaging_ci = ac.ImagingCI.from_fits(
+    dataset = ac.ImagingCI.from_fits(
         data_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
         noise_map_path=path.join(dataset_path, f"noise_map_{int(normalization)}.fits"),
         pre_cti_data_path=path.join(
@@ -73,8 +73,8 @@ CTI is straightforward.
 
 .. code-block:: python
 
-    imaging_ci_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci)
-    imaging_ci_plotter.figures_2d(image=True, pre_cti_data=True)
+    dataset_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci)
+    dataset_plotter.figures_2d(image=True, pre_cti_data=True)
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/image.png
   :width: 600
@@ -113,11 +113,11 @@ the dataset to the ``FitImagingCI`` object.
 .. code-block:: python
 
     post_cti_image = clocker_2d.add_cti(
-        data=imaging_ci.pre_cti_data,
+        data=dataset.pre_cti_data,
         cti=cti
     )
 
-    fit = ac.FitImagingCI(dataset=imaging_ci, post_cti_data=post_cti_image)
+    fit = ac.FitImagingCI(dataset=dataset, post_cti_data=post_cti_image)
 
 From here on, we refer to the ``post_cti_image`` as our ``model_image`` -- it is the image of our CTI model which we are
 comparing to the data to determine whether the CTI model is a good fit.
@@ -191,9 +191,9 @@ data!) to reperform the fit above.
         well_fill_power=0.5, well_notch_depth=0.0, full_well_depth=200000.0
     )
 
-    post_cti_data = clocker_1d.add_cti(data=dataset_1d.pre_cti_data, cti=cti)
+    post_cti_data = clocker_1d.add_cti(data=dataset.pre_cti_data, cti=cti)
 
-    fit = ac.FitImagingCI(dataset=imaging_ci, post_cti_data=post_cti_image)
+    fit = ac.FitImagingCI(dataset=dataset, post_cti_data=post_cti_image)
 
 The plot of the residuals now shows no significant signal, indicating a good fit.
 
@@ -237,13 +237,13 @@ containing the parallel FPR.
 .. code-block:: python
 
     mask = ac.Mask2D.all_false(
-        shape_native=imaging_ci.shape_native, pixel_scales=imaging_ci.pixel_scales
+        shape_native=dataset.shape_native, pixel_scales=dataset.pixel_scales
     )
 
     mask = ac.Mask2D.masked_fpr_and_eper_from(
         mask=mask,
-        layout=imaging_ci.layout,
-        pixel_scales=imaging_ci.pixel_scales,
+        layout=dataset.layout,
+        pixel_scales=dataset.pixel_scales,
         settings=ac.SettingsMask2D(parallel_fpr_pixels=(0, 25)),
     )
 
@@ -251,10 +251,10 @@ If we apply this mask to the charge injection imaging and plot it, the parallel 
 
 .. code-block:: python
 
-    imaging_ci = imaging_ci.apply_mask(mask=mask)
+    dataset = dataset.apply_mask(mask=mask)
 
-    imaging_ci_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci)
-    imaging_ci_plotter.figures_2d(data=True)
+    dataset_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci)
+    dataset_plotter.figures_2d(data=True)
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/image_masked.png
   :width: 600
@@ -265,7 +265,7 @@ map are masked and not included in the fit.
 
 .. code-block:: python
 
-    fit = ac.FitImagingCI(dataset=imaging_ci, post_cti_data=post_cti_image)
+    fit = ac.FitImagingCI(dataset=dataset, post_cti_data=post_cti_image)
 
     fit_plotter = aplt.FitImagingCIPlotter(fit=fit)
     fit_plotter.figures_2d(
@@ -315,7 +315,7 @@ Below we load a 1D dataset which you can imagine corresponds to a single column 
             overscan=overscan,
         )
 
-    dataset_1d = ac.Dataset1D.from_fits(
+    dataset = ac.Dataset1D.from_fits(
         data_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
         noise_map_path=path.join(dataset_path, f"noise_map_{int(normalization)}.fits"),
         pre_cti_data_path=path.join(
@@ -330,8 +330,8 @@ injection data.
 
 .. code-block:: python
 
-    dataset_1d_plotter = aplt.Dataset1DPlotter(dataset=dataset_1d)
-    dataset_1d_plotter.subplot_dataset()
+    dataset_plotter = aplt.Dataset1DPlotter(dataset=dataset)
+    dataset_plotter.subplot_dataset()
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/data_1d.png
   :width: 600
@@ -351,8 +351,8 @@ We can mask the data to remove the FPR just like we did above.
 
     mask = ac.Mask1D.masked_fpr_and_eper_from(
         mask=mask,
-        layout=imaging_ci.layout,
-        pixel_scales=imaging_ci.pixel_scales,
+        layout=dataset.layout,
+        pixel_scales=dataset.pixel_scales,
         settings=ac.SettingsMask1D(fpr_pixels=(0, 25)),
     )
 
@@ -371,12 +371,12 @@ Note how visualizing the fit for inspection is a lot easier in 1D than 2D.
     )
 
     post_cti_data = clocker_1d.add_cti(
-        data=dataset_1d.pre_cti_data,
+        data=dataset.pre_cti_data,
         trap_list=[parallel_trap],
         ccd=parallel_ccd,
     )
 
-    fit = ac.FitDataset1D(dataset=dataset_1d, post_cti_data=post_cti_data)
+    fit = ac.FitDataset1D(dataset=dataset, post_cti_data=post_cti_data)
 
 Plotting the fit shows this model gives a good fit, with minimal residuals.
 

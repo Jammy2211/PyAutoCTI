@@ -170,7 +170,7 @@ Analysis
 
     analysis_list = [
         ac.AnalysisImagingCI(dataset_ci=imaging_ci, clocker=clocker_2d)
-        for imaging_ci in imaging_ci_list
+        for dataset in imaging_ci_list
     ]
 
 By summing this list of analysis objects, we create an overall ``Analysis`` which we can use to fit the CTI model, where:
@@ -329,7 +329,7 @@ We can also perform CTI calibration on 1D datasets.
         for normalization in normalization_list
     ]
 
-    dataset_1d_list = [
+    dataset_list = [
         ac.Dataset1D.from_fits(
             data_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
             noise_map_path=path.join(dataset_path, f"noise_map_{int(normalization)}.fits"),
@@ -388,7 +388,7 @@ We again sum these analyses objects into a single analysis.
 
     analysis_list = [
         ac.AnalysisDataset1D(dataset_1d=dataset_1d, clocker=clocker_1d)
-        for dataset_1d in dataset_1d_list
+        for dataset in dataset_list
     ]
 
     analysis = sum(analysis_list)

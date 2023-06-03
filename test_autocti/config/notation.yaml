@@ -19,6 +19,7 @@ label_format:
     einstein_radius: '{:.2f}'
     kpc_per_arcsec: '{:.2f}'
     luminosity: '{:.4e}'
+    m: '{:.1f}'
     mass: '{:.4e}'
     mass_at_truncation_radius: '{:.4e}'
     radius: '{:.2f}'

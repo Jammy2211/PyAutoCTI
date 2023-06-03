@@ -124,8 +124,8 @@ class ImagingCI(aa.Imaging):
 
     def apply_settings(self, settings: SettingsImagingCI):
         if settings.parallel_pixels is not None:
-            imaging = self.layout.extract.parallel_calibration.imaging_ci_from(
-                imaging_ci=self, columns=settings.parallel_pixels
+            dataset = self.layout.extract.parallel_calibration.imaging_ci_from(
+                dataset=self, columns=settings.parallel_pixels
             )
 
             mask = self.layout.extract.parallel_calibration.mask_2d_from(
@@ -133,8 +133,8 @@ class ImagingCI(aa.Imaging):
             )
 
         elif settings.serial_pixels is not None:
-            imaging = self.layout.extract.serial_calibration.imaging_ci_from(
-                imaging_ci=self, rows=settings.serial_pixels
+            dataset = self.layout.extract.serial_calibration.imaging_ci_from(
+                dataset=self, rows=settings.serial_pixels
             )
 
             mask = self.layout.extract.serial_calibration.mask_2d_from(
@@ -144,9 +144,9 @@ class ImagingCI(aa.Imaging):
         else:
             return self
 
-        imaging = imaging.apply_mask(mask=mask)
+        dataset = dataset.apply_mask(mask=mask)
 
-        return imaging
+        return dataset
 
     def set_noise_scaling_map_dict(self, noise_scaling_map_dict: Dict):
         self.noise_scaling_map_dict = {

@@ -54,7 +54,10 @@ class FitImagingCIPlotter(Plotter):
             Specifies which attributes of the `ImagingCI` are extracted and plotted as visuals for 1D plots.
         """
         super().__init__(
-            mat_plot_2d=mat_plot_2d, include_2d=include_2d, visuals_2d=visuals_2d
+            dataset=fit.dataset,
+            mat_plot_2d=mat_plot_2d,
+            include_2d=include_2d,
+            visuals_2d=visuals_2d,
         )
 
         self.visuals_1d = visuals_1d
@@ -76,11 +79,11 @@ class FitImagingCIPlotter(Plotter):
 
     @property
     def extract_region_from(self) -> Callable:
-        return self.fit.imaging_ci.layout.extract_region_from
+        return self.fit.dataset.layout.extract_region_from
 
     @property
     def extract_region_noise_map_from(self) -> Callable:
-        return self.fit.imaging_ci.layout.extract_region_noise_map_from
+        return self.fit.dataset.layout.extract_region_noise_map_from
 
     def figures_2d(
         self,

@@ -106,20 +106,18 @@ def test__imaging_ci_from(imaging_ci_7x7):
         region_list=imaging_ci_7x7.layout.region_list,
     )
 
-    imaging_ci = extract.imaging_ci_from(imaging_ci=imaging_ci_7x7, columns=(0, 6))
+    dataset = extract.imaging_ci_from(dataset=imaging_ci_7x7, columns=(0, 6))
 
-    assert (imaging_ci.image.native == imaging_ci_7x7.image.native[:, 1:7]).all()
+    assert (dataset.data.native == imaging_ci_7x7.image.native[:, 1:7]).all()
+    assert (dataset.noise_map.native == imaging_ci_7x7.noise_map.native[:, 1:7]).all()
     assert (
-        imaging_ci.noise_map.native == imaging_ci_7x7.noise_map.native[:, 1:7]
+        dataset.pre_cti_data.native == imaging_ci_7x7.pre_cti_data.native[:, 1:7]
     ).all()
     assert (
-        imaging_ci.pre_cti_data.native == imaging_ci_7x7.pre_cti_data.native[:, 1:7]
-    ).all()
-    assert (
-        imaging_ci.cosmic_ray_map.native == imaging_ci_7x7.cosmic_ray_map.native[:, 1:7]
+        dataset.cosmic_ray_map.native == imaging_ci_7x7.cosmic_ray_map.native[:, 1:7]
     ).all()
 
-    assert imaging_ci.layout.region_list == [(1, 5, 0, 4)]
+    assert dataset.layout.region_list == [(1, 5, 0, 4)]
 
     mask = ac.Mask2D.all_false(
         shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0
@@ -129,10 +127,10 @@ def test__imaging_ci_from(imaging_ci_7x7):
 
     imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask)
 
-    imaging_ci = extract.imaging_ci_from(imaging_ci=imaging_ci_7x7, columns=(0, 6))
+    dataset = extract.imaging_ci_from(dataset=imaging_ci_7x7, columns=(0, 6))
 
-    assert imaging_ci.image.mask[0, 1] == False
-    assert imaging_ci.image.mask[2, 1] == True
+    assert dataset.data.mask[0, 1] == False
+    assert dataset.data.mask[2, 1] == True
 
-    assert imaging_ci.noise_map.mask[0, 1] == False
-    assert imaging_ci.noise_map.mask[2, 1] == True
+    assert dataset.noise_map.mask[0, 1] == False
+    assert dataset.noise_map.mask[2, 1] == True

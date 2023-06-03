@@ -54,13 +54,13 @@ class GetVisuals2D(aplt.GetVisuals2D):
         visuals_2d_via_fit = super().via_fit_imaging_from(fit=fit)
 
         parallel_overscan = (
-            self.get("parallel_overscan", fit.imaging_ci.layout.parallel_overscan),
+            self.get("parallel_overscan", fit.dataset.layout.parallel_overscan),
         )
         serial_prescan = (
-            self.get("serial_prescan", fit.imaging_ci.layout.serial_prescan),
+            self.get("serial_prescan", fit.dataset.layout.serial_prescan),
         )
         serial_overscan = (
-            self.get("serial_overscan", fit.imaging_ci.layout.serial_overscan),
+            self.get("serial_overscan", fit.dataset.layout.serial_overscan),
         )
 
         return visuals_2d_via_fit + self.visuals.__class__(

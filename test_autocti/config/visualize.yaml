@@ -3,7 +3,6 @@ plots:
     data: true
     data_logy: false
     cosmic_ray_map: true
-    data: true
     noise_map: false
     noise_scaling_map_dict: false
     pre_cti_data: true

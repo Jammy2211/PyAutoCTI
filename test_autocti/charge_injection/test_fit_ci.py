@@ -112,15 +112,15 @@ def test__chi_squared_map_of_regions_ci():
         fill_value=1.0, shape_native=(2, 2), pixel_scales=1.0
     ).native
 
-    imaging = ac.ImagingCI(
+    dataset = ac.ImagingCI(
         data=image, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
     )
 
     mask = ac.Mask2D.all_false(shape_native=(2, 2), pixel_scales=1.0)
 
-    masked_imaging = imaging.apply_mask(mask=mask)
+    masked_dataset = dataset.apply_mask(mask=mask)
 
-    fit = ac.FitImagingCI(dataset=masked_imaging, post_cti_data=pre_cti_data)
+    fit = ac.FitImagingCI(dataset=masked_dataset, post_cti_data=pre_cti_data)
 
     assert (
         fit.chi_squared_map_of_regions_ci == np.array([[4.0, 0.0], [0.0, 0.0]])
@@ -141,15 +141,15 @@ def test__chi_squared_map_of_parallel_non_regions_ci():
         fill_value=1.0, shape_native=(2, 2), pixel_scales=1.0
     ).native
 
-    imaging = ac.ImagingCI(
+    dataset = ac.ImagingCI(
         data=image, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
     )
 
     mask = ac.Mask2D.all_false(shape_native=(2, 2), pixel_scales=1.0)
 
-    masked_imaging = imaging.apply_mask(mask=mask)
+    masked_dataset = dataset.apply_mask(mask=mask)
 
-    fit = ac.FitImagingCI(dataset=masked_imaging, post_cti_data=pre_cti_data)
+    fit = ac.FitImagingCI(dataset=masked_dataset, post_cti_data=pre_cti_data)
 
     assert (
         fit.chi_squared_map_of_parallel_eper == np.array([[0.0, 0.0], [4.0, 0.0]])
@@ -167,15 +167,15 @@ def test__chi_squared_map_of_serial_eper():
         fill_value=1.0, shape_native=(2, 2), pixel_scales=1.0
     ).native
 
-    imaging = ac.ImagingCI(
+    dataset = ac.ImagingCI(
         data=image, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
     )
 
     mask = ac.Mask2D.all_false(shape_native=(2, 2), pixel_scales=1.0)
 
-    masked_imaging = imaging.apply_mask(mask=mask)
+    masked_dataset = dataset.apply_mask(mask=mask)
 
-    fit = ac.FitImagingCI(dataset=masked_imaging, post_cti_data=pre_cti_data)
+    fit = ac.FitImagingCI(dataset=masked_dataset, post_cti_data=pre_cti_data)
 
     assert (
         fit.chi_squared_map_of_serial_eper == np.array([[0.0, 4.0], [0.0, 4.0]])
@@ -193,15 +193,15 @@ def test__chi_squared_map_of_overscan_above_serial_eper():
         fill_value=1.0, shape_native=(2, 2), pixel_scales=1.0
     ).native
 
-    imaging = ac.ImagingCI(
+    dataset = ac.ImagingCI(
         data=image, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
     )
 
     mask = ac.Mask2D.all_false(shape_native=(2, 2), pixel_scales=1.0)
 
-    masked_imaging = imaging.apply_mask(mask=mask)
+    masked_dataset = dataset.apply_mask(mask=mask)
 
-    fit = ac.FitImagingCI(dataset=masked_imaging, post_cti_data=pre_cti_data)
+    fit = ac.FitImagingCI(dataset=masked_dataset, post_cti_data=pre_cti_data)
 
     assert (
         fit.chi_squared_map_of_serial_overscan_no_eper

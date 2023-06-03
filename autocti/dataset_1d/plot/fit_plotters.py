@@ -43,7 +43,10 @@ class FitDataset1DPlotter(Plotter):
         self.fit = fit
 
         super().__init__(
-            mat_plot_1d=mat_plot_1d, include_1d=include_1d, visuals_1d=visuals_1d
+            dataset=fit.dataset,
+            mat_plot_1d=mat_plot_1d,
+            include_1d=include_1d,
+            visuals_1d=visuals_1d,
         )
 
     def get_visuals_1d(self) -> aplt.Visuals1D:

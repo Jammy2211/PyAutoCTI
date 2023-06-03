@@ -178,14 +178,14 @@ def test__no_instrumental_effects_input__only_cti_simulated(
 
     cti = ac.CTI2D(parallel_trap_list=traps_x2, parallel_ccd=ccd)
 
-    imaging = simulator.via_layout_from(
+    dataset = simulator.via_layout_from(
         layout=layout, clocker=parallel_clocker_2d, cti=cti
     )
 
-    assert imaging.image[0, 0:5] == pytest.approx(
+    assert dataset.data[0, 0:5] == pytest.approx(
         np.array([9.43, 9.43, 9.43, 9.43, 9.43]), 1e-1
     )
-    assert imaging.layout == layout
+    assert dataset.layout == layout
 
 
 def test__include_charge_noise__is_added_before_cti(parallel_clocker_2d, traps_x2, ccd):
@@ -201,17 +201,17 @@ def test__include_charge_noise__is_added_before_cti(parallel_clocker_2d, traps_x
 
     cti = ac.CTI2D(parallel_trap_list=traps_x2, parallel_ccd=ccd)
 
-    imaging = simulator.via_layout_from(
+    dataset = simulator.via_layout_from(
         layout=layout, clocker=parallel_clocker_2d, cti=cti
     )
 
     image_no_noise = simulator.pre_cti_data_uniform_from(layout=layout)
 
-    assert imaging.image - image_no_noise.native == pytest.approx(
+    assert dataset.data - image_no_noise.native == pytest.approx(
         np.array([[1.01064, -1.1632, -1.08214], [0.0, 0.0, 0.0], [0.0, 0.0, 0.0]]),
         1e-1,
     )
-    assert imaging.layout == layout
+    assert dataset.layout == layout
 
 
 def test__include_read_noise__is_added_after_cti(parallel_clocker_2d, traps_x2, ccd):
@@ -227,19 +227,19 @@ def test__include_read_noise__is_added_after_cti(parallel_clocker_2d, traps_x2, 
 
     cti = ac.CTI2D(parallel_trap_list=traps_x2, parallel_ccd=ccd)
 
-    imaging = simulator.via_layout_from(
+    dataset = simulator.via_layout_from(
         layout=layout, clocker=parallel_clocker_2d, cti=cti
     )
 
     image_no_noise = simulator.pre_cti_data_uniform_from(layout=layout)
 
-    assert imaging.image - image_no_noise.native == pytest.approx(
+    assert dataset.data - image_no_noise.native == pytest.approx(
         np.array(
             [[1.055, -1.180, -1.097], [-1.073, 0.865, -2.301], [1.744, -0.761, 0.319]]
         ),
         1e-1,
     )
-    assert imaging.layout == layout
+    assert dataset.layout == layout
 
 
 def test__include_cosmics__is_added_to_image_and_trailed(
@@ -258,21 +258,21 @@ def test__include_cosmics__is_added_to_image_and_trailed(
 
     cti = ac.CTI2D(parallel_trap_list=traps_x2, parallel_ccd=ccd)
 
-    imaging = simulator.via_layout_from(
+    dataset = simulator.via_layout_from(
         layout=layout,
         clocker=parallel_clocker_2d,
         cti=cti,
         cosmic_ray_map=cosmic_ray_map,
     )
 
-    assert imaging.image[0, 0:5] == pytest.approx(
+    assert dataset.data[0, 0:5] == pytest.approx(
         np.array([9.43, 9.43, 9.43, 9.43, 9.43]), 1e-1
     )
-    assert 0.0 < imaging.image[1, 1] < 100.0
-    assert imaging.image[2, 2] > 94.0
-    assert (imaging.image[1, 1:4] > 0.0).all()
+    assert 0.0 < dataset.data[1, 1] < 100.0
+    assert dataset.data[2, 2] > 94.0
+    assert (dataset.data[1, 1:4] > 0.0).all()
     assert (
-        imaging.cosmic_ray_map
+        dataset.cosmic_ray_map
         == np.array(
             [
                 [0.0, 0.0, 0.0, 0.0, 0.0],
@@ -283,16 +283,16 @@ def test__include_cosmics__is_added_to_image_and_trailed(
             ]
         )
     ).all()
-    assert imaging.layout == layout
+    assert dataset.layout == layout
 
-    imaging = simulator.via_layout_from(
+    dataset = simulator.via_layout_from(
         layout=layout,
         clocker=None,
         cti=None,
         cosmic_ray_map=cosmic_ray_map,
     )
 
-    assert imaging.image[2, 2] > 94.0
+    assert dataset.data[2, 2] > 94.0
 
 
 def test__from_pre_cti_data(parallel_clocker_2d, traps_x2, ccd):
@@ -311,7 +311,7 @@ def test__from_pre_cti_data(parallel_clocker_2d, traps_x2, ccd):
 
     cti = ac.CTI2D(parallel_trap_list=traps_x2, parallel_ccd=ccd)
 
-    imaging = simulator.via_layout_from(
+    dataset = simulator.via_layout_from(
         layout=layout,
         clocker=parallel_clocker_2d,
         cti=cti,
@@ -320,7 +320,7 @@ def test__from_pre_cti_data(parallel_clocker_2d, traps_x2, ccd):
 
     pre_cti_data = simulator.pre_cti_data_uniform_from(layout=layout)
 
-    imaging_via_pre_cti_data = simulator.via_pre_cti_data_from(
+    dataset_via = simulator.via_pre_cti_data_from(
         pre_cti_data=pre_cti_data.native,
         layout=layout,
         clocker=parallel_clocker_2d,
@@ -328,10 +328,10 @@ def test__from_pre_cti_data(parallel_clocker_2d, traps_x2, ccd):
         cosmic_ray_map=cosmic_ray_map,
     )
 
-    assert (imaging.image == imaging_via_pre_cti_data.image).all()
-    assert (imaging.noise_map == imaging_via_pre_cti_data.noise_map).all()
-    assert (imaging.pre_cti_data == imaging_via_pre_cti_data.pre_cti_data).all()
-    assert (imaging.cosmic_ray_map == imaging_via_pre_cti_data.cosmic_ray_map).all()
+    assert (dataset.data == dataset_via.image).all()
+    assert (dataset.noise_map == dataset_via.noise_map).all()
+    assert (dataset.pre_cti_data == dataset_via.pre_cti_data).all()
+    assert (dataset.cosmic_ray_map == dataset_via.cosmic_ray_map).all()
 
 
 def test__from_post_cti_data(parallel_clocker_2d, traps_x2, ccd):
@@ -350,7 +350,7 @@ def test__from_post_cti_data(parallel_clocker_2d, traps_x2, ccd):
 
     cti = ac.CTI2D(parallel_trap_list=traps_x2, parallel_ccd=ccd)
 
-    imaging = simulator.via_layout_from(
+    dataset = simulator.via_layout_from(
         layout=layout,
         clocker=parallel_clocker_2d,
         cti=cti,
@@ -366,14 +366,14 @@ def test__from_post_cti_data(parallel_clocker_2d, traps_x2, ccd):
 
     pre_cti_data -= cosmic_ray_map
 
-    imaging_via_post_cti_data = simulator.via_post_cti_data_from(
+    dataset_via = simulator.via_post_cti_data_from(
         post_cti_data=post_cti_data,
         pre_cti_data=pre_cti_data.native,
         layout=layout,
         cosmic_ray_map=cosmic_ray_map,
     )
 
-    assert (imaging.image == imaging_via_post_cti_data.image).all()
-    assert (imaging.noise_map == imaging_via_post_cti_data.noise_map).all()
-    assert (imaging.pre_cti_data == imaging_via_post_cti_data.pre_cti_data).all()
-    assert (imaging.cosmic_ray_map == imaging_via_post_cti_data.cosmic_ray_map).all()
+    assert (dataset.data == dataset_via.image).all()
+    assert (dataset.noise_map == dataset_via.noise_map).all()
+    assert (dataset.pre_cti_data == dataset_via.pre_cti_data).all()
+    assert (dataset.cosmic_ray_map == dataset_via.cosmic_ray_map).all()

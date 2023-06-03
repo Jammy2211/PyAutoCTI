@@ -12,13 +12,13 @@ def test__fits_to_extracted_and_full_datasets_available(
 ):
     imaging_ci_full = copy.deepcopy(imaging_ci_7x7)
 
-    masked_imaging_ci = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
-    masked_imaging_ci = masked_imaging_ci.apply_settings(
+    masked_dataset = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7_unmasked)
+    masked_dataset = masked_dataset.apply_settings(
         settings=ac.SettingsImagingCI(parallel_pixels=(0, 1))
     )
 
     analysis = ac.AnalysisImagingCI(
-        dataset=masked_imaging_ci,
+        dataset=masked_dataset,
         clocker=parallel_clocker_2d,
         dataset_full=imaging_ci_full,
     )

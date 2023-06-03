@@ -288,16 +288,14 @@ def test__total_columns_minimum():
 def test__dataset_1d_from(imaging_ci_7x7):
     extract = MockExtract2D(region_list=[(0, 3, 1, 3)])
 
-    dataset_1d = extract.dataset_1d_from(
+    dataset = extract.dataset_1d_from(
         dataset_2d=imaging_ci_7x7, settings=ac.SettingsExtract(pixels=(0, 2))
     )
 
-    assert (dataset_1d.data == np.array([1.0, 1.0])).all()
-    assert (
-        dataset_1d.noise_map == np.array([2.0 / np.sqrt(2), 2.0 / np.sqrt(2)])
-    ).all()
-    assert (dataset_1d.pre_cti_data == np.array([10.0, 10.0])).all()
-    assert dataset_1d.layout.region_list == [(0, 2)]
+    assert (dataset.data == np.array([1.0, 1.0])).all()
+    assert (dataset.noise_map == np.array([2.0 / np.sqrt(2), 2.0 / np.sqrt(2)])).all()
+    assert (dataset.pre_cti_data == np.array([10.0, 10.0])).all()
+    assert dataset.layout.region_list == [(0, 2)]
 
 
 def test__add_gaussian_noise_to(parallel_array):

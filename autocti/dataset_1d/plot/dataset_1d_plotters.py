@@ -40,14 +40,11 @@ class Dataset1DPlotter(Plotter):
             Specifies which attributes of the `ImagingCI` are extracted and plotted as visuals for 1D plots.
         """
         super().__init__(
-            mat_plot_1d=mat_plot_1d, include_1d=include_1d, visuals_1d=visuals_1d
+            dataset=dataset,
+            mat_plot_1d=mat_plot_1d,
+            include_1d=include_1d,
+            visuals_1d=visuals_1d,
         )
-
-        self.dataset = dataset
-
-    @property
-    def dataset_1d(self):
-        return self.dataset
 
     def get_visuals_1d(self) -> aplt.Visuals1D:
         return self.visuals_1d

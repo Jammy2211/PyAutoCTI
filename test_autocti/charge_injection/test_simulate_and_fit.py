@@ -65,13 +65,13 @@ def test__simulate_and_fit_non_uniform():
         max_norm=200000.0,
     )
 
-    imaging_ci = simulator.via_layout_from(
+    dataset = simulator.via_layout_from(
         clocker=clocker_2d, layout=layout_ci, cti=cti_2d
     )
 
-    post_cti_data_2d = clocker_2d.add_cti(data=imaging_ci.pre_cti_data, cti=cti_2d)
+    post_cti_data_2d = clocker_2d.add_cti(data=dataset.pre_cti_data, cti=cti_2d)
 
-    fit = ac.FitImagingCI(dataset=imaging_ci, post_cti_data=post_cti_data_2d)
+    fit = ac.FitImagingCI(dataset=dataset, post_cti_data=post_cti_data_2d)
 
     assert fit.chi_squared_map == pytest.approx(0.0, 1.0e-4)
     assert fit.figure_of_merit == pytest.approx(69182.327989468, 1.0e-4)
@@ -127,12 +127,12 @@ def test__simulate_and_extract_non_uniform_normalizations():
         ci_seed=1,
     )
 
-    imaging_ci = simulator.via_layout_from(
+    dataset = simulator.via_layout_from(
         clocker=clocker_2d, layout=layout_ci, cti=cti_2d
     )
 
-    injection_norm_list = imaging_ci.layout.extract.parallel_fpr.median_list_from(
-        array=imaging_ci.image, settings=ac.SettingsExtract(pixels=(120, 150))
+    injection_norm_list = dataset.layout.extract.parallel_fpr.median_list_from(
+        array=dataset.data, settings=ac.SettingsExtract(pixels=(120, 150))
     )
 
     assert injection_norm_list[0] == pytest.approx(116.23434, 1.0e-2)
@@ -140,8 +140,8 @@ def test__simulate_and_extract_non_uniform_normalizations():
     assert injection_norm_list[2] == pytest.approx(94.7182, 1.0e-2)
 
     injection_norm_lists = (
-        imaging_ci.layout.extract.parallel_fpr.median_list_of_lists_from(
-            array=imaging_ci.image, settings=ac.SettingsExtract(pixels=(120, 150))
+        dataset.layout.extract.parallel_fpr.median_list_of_lists_from(
+            array=dataset.data, settings=ac.SettingsExtract(pixels=(120, 150))
         )
     )
 

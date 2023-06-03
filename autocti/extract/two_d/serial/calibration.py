@@ -220,7 +220,7 @@ class Extract2DSerialCalibration:
 
         return new_layout
 
-    def imaging_ci_from(self, imaging_ci: ImagingCI, rows) -> ImagingCI:
+    def imaging_ci_from(self, dataset: ImagingCI, rows) -> ImagingCI:
         """
         Returnss a function to extract a serial section for given rows
         """
@@ -228,45 +228,45 @@ class Extract2DSerialCalibration:
         from autocti.charge_injection.imaging.imaging import ImagingCI
 
         cosmic_ray_map = (
-            imaging_ci.layout.extract.serial_calibration.array_2d_from(
-                array=imaging_ci.cosmic_ray_map, rows=rows
+            dataset.layout.extract.serial_calibration.array_2d_from(
+                array=dataset.cosmic_ray_map, rows=rows
             )
-            if imaging_ci.cosmic_ray_map is not None
+            if dataset.cosmic_ray_map is not None
             else None
         )
 
-        if imaging_ci.noise_scaling_map_dict is not None:
+        if dataset.noise_scaling_map_dict is not None:
             noise_scaling_map_dict = {
-                key: imaging_ci.layout.extract.serial_calibration.array_2d_from(
+                key: dataset.layout.extract.serial_calibration.array_2d_from(
                     array=noise_scaling_map, rows=rows
                 )
-                for key, noise_scaling_map in imaging_ci.noise_scaling_map_dict.items()
+                for key, noise_scaling_map in dataset.noise_scaling_map_dict.items()
             }
 
         else:
             noise_scaling_map_dict = None
 
-        image = imaging_ci.layout.extract.serial_calibration.array_2d_from(
-            array=imaging_ci.image, rows=rows
+        image = dataset.layout.extract.serial_calibration.array_2d_from(
+            array=dataset.data, rows=rows
         )
 
-        mask = self.mask_2d_from(mask=imaging_ci.mask, rows=rows)
+        mask = self.mask_2d_from(mask=dataset.mask, rows=rows)
 
-        imaging_ci = ImagingCI(
+        dataset = ImagingCI(
             data=image,
-            noise_map=imaging_ci.layout.extract.serial_calibration.array_2d_from(
-                array=imaging_ci.noise_map, rows=rows
+            noise_map=dataset.layout.extract.serial_calibration.array_2d_from(
+                array=dataset.noise_map, rows=rows
             ),
-            pre_cti_data=imaging_ci.layout.extract.serial_calibration.array_2d_from(
-                array=imaging_ci.pre_cti_data, rows=rows
+            pre_cti_data=dataset.layout.extract.serial_calibration.array_2d_from(
+                array=dataset.pre_cti_data, rows=rows
             ),
-            layout=imaging_ci.layout.extract.serial_calibration.extracted_layout_from(
-                layout=imaging_ci.layout, new_shape_2d=image.shape, rows=rows
+            layout=dataset.layout.extract.serial_calibration.extracted_layout_from(
+                layout=dataset.layout, new_shape_2d=image.shape, rows=rows
             ),
             cosmic_ray_map=cosmic_ray_map,
             noise_scaling_map_dict=noise_scaling_map_dict,
-            fpr_value=imaging_ci.fpr_value,
-            settings_dict=imaging_ci.settings_dict,
+            fpr_value=dataset.fpr_value,
+            settings_dict=dataset.settings_dict,
         )
 
-        return imaging_ci.apply_mask(mask=mask)
+        return dataset.apply_mask(mask=mask)

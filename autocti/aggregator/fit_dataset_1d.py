@@ -41,7 +41,7 @@ def _fit_dataset_1d_list_from(
 
     from autocti.dataset_1d.fit import FitDataset1D
 
-    dataset_1d_list = _dataset_1d_list_from(fit=fit, use_dataset_full=use_dataset_full)
+    dataset_list = _dataset_1d_list_from(fit=fit, use_dataset_full=use_dataset_full)
 
     if clocker_list is None:
         clocker_list = [fit.value(name="clocker")]
@@ -49,16 +49,16 @@ def _fit_dataset_1d_list_from(
             clocker_list = fit.child_values(name="clocker")
 
     post_cti_data_list = [
-        clocker.add_cti(data=dataset_1d.pre_cti_data, cti=cti)
-        for dataset_1d, clocker in zip(dataset_1d_list, clocker_list)
+        clocker.add_cti(data=dataset.pre_cti_data, cti=cti)
+        for dataset, clocker in zip(dataset_list, clocker_list)
     ]
 
     return [
         FitDataset1D(
-            dataset=dataset_1d,
+            dataset=dataset,
             post_cti_data=post_cti_data,
         )
-        for dataset_1d, post_cti_data in zip(dataset_1d_list, post_cti_data_list)
+        for dataset, post_cti_data in zip(dataset_list, post_cti_data_list)
     ]
 
 

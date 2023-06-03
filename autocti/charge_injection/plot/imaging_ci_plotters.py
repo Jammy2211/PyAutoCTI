@@ -50,40 +50,37 @@ class ImagingCIPlotter(Plotter):
             Specifies which attributes of the `ImagingCI` are extracted and plotted as visuals for 1D plots.
         """
         super().__init__(
-            mat_plot_2d=mat_plot_2d, include_2d=include_2d, visuals_2d=visuals_2d
+            dataset=dataset,
+            mat_plot_2d=mat_plot_2d,
+            include_2d=include_2d,
+            visuals_2d=visuals_2d,
         )
 
         self.visuals_1d = visuals_1d
         self.include_1d = include_1d
         self.mat_plot_1d = mat_plot_1d
 
-        self.dataset = dataset
-
         self._imaging_meta_plotter = ImagingPlotterMeta(
-            dataset=self.imaging,
+            dataset=self.dataset,
             get_visuals_2d=self.get_visuals_2d,
             mat_plot_2d=self.mat_plot_2d,
             include_2d=self.include_2d,
             visuals_2d=self.visuals_2d,
         )
 
-    @property
-    def imaging(self):
-        return self.dataset
-
     def get_visuals_1d(self):
         return self.visuals_1d
 
     def get_visuals_2d(self):
-        return self.get_2d.via_mask_from(mask=self.imaging.mask)
+        return self.get_2d.via_mask_from(mask=self.dataset.mask)
 
     @property
     def extract_region_from(self) -> Callable:
-        return self.imaging.layout.extract_region_from
+        return self.dataset.layout.extract_region_from
 
     @property
     def extract_region_noise_map_from(self) -> Callable:
-        return self.imaging.layout.extract_region_noise_map_from
+        return self.dataset.layout.extract_region_noise_map_from
 
     def figures_2d(
         self,
@@ -121,7 +118,7 @@ class ImagingCIPlotter(Plotter):
 
         if pre_cti_data:
             self.mat_plot_2d.plot_array(
-                array=self.imaging.pre_cti_data,
+                array=self.dataset.pre_cti_data,
                 visuals_2d=self.get_visuals_2d(),
                 auto_labels=AutoLabels(
                     title="CI Pre CTI Image", filename="pre_cti_data"
@@ -130,7 +127,7 @@ class ImagingCIPlotter(Plotter):
 
         if cosmic_ray_map:
             self.mat_plot_2d.plot_array(
-                array=self.imaging.cosmic_ray_map,
+                array=self.dataset.cosmic_ray_map,
                 visuals_2d=self.get_visuals_2d(),
                 auto_labels=AutoLabels(
                     title="Cosmic Ray Map", filename="cosmic_ray_map"
@@ -231,7 +228,7 @@ class ImagingCIPlotter(Plotter):
             )
 
         if noise_map:
-            y = self.extract_region_from(array=self.imaging.noise_map, region=region)
+            y = self.extract_region_from(array=self.dataset.noise_map, region=region)
 
             self.mat_plot_1d.plot_yx(
                 y=y,
@@ -245,7 +242,7 @@ class ImagingCIPlotter(Plotter):
             )
 
         if pre_cti_data:
-            y = self.extract_region_from(array=self.imaging.pre_cti_data, region=region)
+            y = self.extract_region_from(array=self.dataset.pre_cti_data, region=region)
 
             self.mat_plot_1d.plot_yx(
                 y=y,
@@ -260,7 +257,7 @@ class ImagingCIPlotter(Plotter):
 
         if signal_to_noise_map:
             y = self.extract_region_from(
-                array=self.imaging.signal_to_noise_map, region=region
+                array=self.dataset.signal_to_noise_map, region=region
             )
 
             self.mat_plot_1d.plot_yx(

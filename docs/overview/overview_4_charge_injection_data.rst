@@ -98,7 +98,7 @@ The ``ImagingCI`` object has the following three attributes:
     dataset_type = "uniform"
     dataset_path = path.join("dataset", "imaging_ci", dataset_label, dataset_type)
 
-    imaging_ci = ac.ImagingCI.from_fits(
+    dataset = ac.ImagingCI.from_fits(
         data_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
         noise_map_path=path.join(dataset_path, f"noise_map_{int(normalization)}.fits"),
         pre_cti_data_path=path.join(
@@ -112,8 +112,8 @@ We can plot the charge injection imaging using a ``ImagingCI`` object.
 
 .. code-block:: python
 
-    imaging_ci_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci)
-    imaging_ci_plotter.figures_2d(data=True)
+    dataset_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci)
+    dataset_plotter.figures_2d(data=True)
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/imaging_ci.png
   :width: 600
@@ -137,8 +137,8 @@ We can zoom in on one of these regions and change the color scheme to properly h
         cmap=aplt.Cmap(vmin=0.0, vmax=100.0),
     )
 
-    imaging_ci_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci, mat_plot_2d=mat_plot_2d)
-    imaging_ci_plotter.figures_2d(data=True)
+    dataset_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci, mat_plot_2d=mat_plot_2d)
+    dataset_plotter.figures_2d(data=True)
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/imaging_ci_fpr.png
   :width: 600
@@ -153,8 +153,8 @@ We can do the same to highlight the EPERs.
         cmap=aplt.Cmap(vmin=0.0, vmax=10.0),
     )
 
-    imaging_ci_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci, mat_plot_2d=mat_plot_2d)
-    imaging_ci_plotter.figures_2d(data=True)
+    dataset_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci, mat_plot_2d=mat_plot_2d)
+    dataset_plotter.figures_2d(data=True)
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/imaging_ci_eper.png
   :width: 600
@@ -168,7 +168,7 @@ every parallel EPERs binned together.
 .. code-block:: python
 
     parallel_eper_1d = layout.extract.parallel_eper.binned_array_1d_from(
-        array=imaging_ci.image, pixels=(0, 10)
+        array=dataset.data, pixels=(0, 10)
     )
 
     array_1d_plotter = aplt.Array1DPlotter(y=parallel_eper_1d)
@@ -183,19 +183,19 @@ The layout can extract all the regions of interest of the data.
 .. code-block:: python
 
     parallel_fpr_1d = layout.extract.parallel_fpr.binned_array_1d_from(
-        array=imaging_ci.image, pixels=(0, 10)
+        array=dataset.data, pixels=(0, 10)
     )
     array_1d_plotter = aplt.Array1DPlotter(y=parallel_fpr_1d)
     array_1d_plotter.figure_1d()
 
     serial_eper_1d = layout.extract.serial_eper.binned_array_1d_from(
-        array=imaging_ci.image, pixels=(0, 10)
+        array=dataset.data, pixels=(0, 10)
     )
     array_1d_plotter = aplt.Array1DPlotter(y=serial_eper_1d)
     array_1d_plotter.figure_1d()
 
     serial_fpr_1d = layout.extract.serial_fpr.binned_array_1d_from(
-        array=imaging_ci.image, pixels=(0, 10)
+        array=dataset.data, pixels=(0, 10)
     )
     array_1d_plotter = aplt.Array1DPlotter(y=serial_fpr_1d)
     array_1d_plotter.figure_1d()
@@ -220,8 +220,8 @@ contained in the ``pre_cti_data``.
 
 .. code-block:: python
 
-    imaging_ci_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci, mat_plot_2d=mat_plot_2d)
-    imaging_ci_plotter.figures_2d(pre_cti_data=True)
+    dataset_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci, mat_plot_2d=mat_plot_2d)
+    dataset_plotter.figures_2d(pre_cti_data=True)
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/pre_cti_data.png
   :width: 600
@@ -251,7 +251,7 @@ More realistic charge injection imaging has many other features, for example:
     dataset_type = "non_uniform_cosmic_rays"
     dataset_path = path.join("dataset", "imaging_ci", dataset_label, dataset_type)
 
-    imaging_ci = ac.ImagingCI.from_fits(
+    dataset = ac.ImagingCI.from_fits(
         data_path=path.join(dataset_path, f"data_{int(normalization)}.fits"),
         noise_map_path=path.join(dataset_path, f"noise_map_{int(normalization)}.fits"),
         pre_cti_data_path=path.join(
@@ -261,8 +261,8 @@ More realistic charge injection imaging has many other features, for example:
         pixel_scales=0.1,
     )
 
-    imaging_ci_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci)
-    imaging_ci_plotter.figures_2d(image=True, pre_cti_data=True)
+    dataset_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci)
+    dataset_plotter.figures_2d(image=True, pre_cti_data=True)
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/imaging_ci_non_uniform_cosmic_rays.png
   :width: 600

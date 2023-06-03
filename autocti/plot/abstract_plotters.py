@@ -2,6 +2,8 @@ from autoarray.plot.wrap.base.abstract import set_backend
 
 set_backend()
 
+import autoarray.plot as aplt
+
 from autoarray.plot.abstract_plotters import AbstractPlotter
 
 from autocti.plot.get_visuals.one_d import GetVisuals1D
@@ -9,6 +11,27 @@ from autocti.plot.get_visuals.two_d import GetVisuals2D
 
 
 class Plotter(AbstractPlotter):
+    def __init__(
+        self,
+        dataset,
+        mat_plot_2d: aplt.MatPlot2D = None,
+        visuals_2d: aplt.Visuals2D = None,
+        include_2d: aplt.Include2D = None,
+        mat_plot_1d: aplt.MatPlot1D = None,
+        visuals_1d: aplt.Visuals1D = None,
+        include_1d: aplt.Include1D = None,
+    ):
+        self.dataset = dataset
+
+        super().__init__(
+            mat_plot_2d=mat_plot_2d,
+            visuals_2d=visuals_2d,
+            include_2d=include_2d,
+            mat_plot_1d=mat_plot_1d,
+            visuals_1d=visuals_1d,
+            include_1d=include_1d,
+        )
+
     @property
     def get_1d(self):
         return GetVisuals1D(visuals=self.visuals_1d, include=self.include_1d)
@@ -18,29 +41,33 @@ class Plotter(AbstractPlotter):
         return GetVisuals2D(visuals=self.visuals_2d, include=self.include_2d)
 
     def title_str_from(self, region: str) -> str:
+        if self.dataset.settings_dict is not None:
+            ccd_str = self.dataset.settings_dict.get("CCD")
+        else:
+            ccd_str = None
+
         if region is None:
-            return ""
+            title_str = ""
         elif region == "fpr":
-            return "FPR"
+            title_str = "FPR"
         elif region == "eper":
-            return "EPER"
+            title_str = "EPER"
         elif region == "parallel_fpr":
-            return "Parallel FPR"
+            title_str = "Parallel FPR"
         elif region == "parallel_eper":
-            return "Parallel EPER"
+            title_str = "Parallel EPER"
         elif region == "serial_fpr":
-            return "Serial FPR"
+            title_str = "Serial FPR"
         elif region == "serial_eper":
-            return "Serial EPER"
+            title_str = "Serial EPER"
+
+        if ccd_str is None:
+            return title_str
+        return f"{ccd_str} {title_str}"
 
     def text_manual_dict_from(self, region: str):
         try:
-            dataset = self.dataset
-        except AttributeError:
-            dataset = self.fit.dataset
-
-        try:
-            fpr_value = dataset.fpr_value
+            fpr_value = self.dataset.fpr_value
         except AttributeError:
             fpr_value = None
 
@@ -48,11 +75,11 @@ class Plotter(AbstractPlotter):
 
         if region is not None:
             if fpr_value is not None and "eper" in region:
-                fpr_dict = {"FPR (e-)": dataset.fpr_value}
+                fpr_dict = {"FPR (e-)": self.dataset.fpr_value}
                 text_manual_dict = {**text_manual_dict, **fpr_dict}
 
-        if dataset.settings_dict is not None:
-            text_manual_dict = {**text_manual_dict, **dataset.settings_dict}
+        if self.dataset.settings_dict is not None:
+            text_manual_dict = {**text_manual_dict, **self.dataset.settings_dict}
 
         return text_manual_dict
 

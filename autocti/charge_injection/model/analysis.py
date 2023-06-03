@@ -153,7 +153,7 @@ class AnalysisImagingCI(af.Analysis):
         )
 
         fit = self.fit_via_instance_and_dataset_from(
-            instance=instance, imaging_ci=self.dataset, hyper_noise_scale=True
+            instance=instance, dataset=self.dataset, hyper_noise_scale=True
         )
 
         return fit.figure_of_merit
@@ -161,7 +161,7 @@ class AnalysisImagingCI(af.Analysis):
     def fit_via_instance_and_dataset_from(
         self,
         instance: af.ModelInstance,
-        imaging_ci: ImagingCI,
+        dataset: ImagingCI,
         hyper_noise_scale: bool = True,
     ) -> FitImagingCI:
         hyper_noise_scalar_dict = None
@@ -170,11 +170,11 @@ class AnalysisImagingCI(af.Analysis):
             hyper_noise_scalar_dict = instance.hyper_noise.as_dict
 
         post_cti_data = self.clocker.add_cti(
-            data=imaging_ci.pre_cti_data, cti=instance.cti, preloads=self.preloads
+            data=dataset.pre_cti_data, cti=instance.cti, preloads=self.preloads
         )
 
         return FitImagingCI(
-            dataset=imaging_ci,
+            dataset=dataset,
             post_cti_data=post_cti_data,
             hyper_noise_scalar_dict=hyper_noise_scalar_dict,
             preloads=self.preloads,
@@ -185,7 +185,7 @@ class AnalysisImagingCI(af.Analysis):
     ) -> FitImagingCI:
         return self.fit_via_instance_and_dataset_from(
             instance=instance,
-            imaging_ci=self.dataset,
+            dataset=self.dataset,
             hyper_noise_scale=hyper_noise_scale,
         )
 
@@ -302,7 +302,7 @@ class AnalysisImagingCI(af.Analysis):
 
         if self.dataset_full is not None:
             fit_full = self.fit_via_instance_and_dataset_from(
-                instance=instance, imaging_ci=self.dataset_full
+                instance=instance, dataset=self.dataset_full
             )
 
             visualizer.visualize_fit(
@@ -343,7 +343,7 @@ class AnalysisImagingCI(af.Analysis):
         if self.dataset_full is not None:
             fit_list_full = [
                 analysis.fit_via_instance_and_dataset_from(
-                    instance=instance, imaging_ci=analysis.dataset_full
+                    instance=instance, dataset=analysis.dataset_full
                 )
                 for analysis in analyses
             ]

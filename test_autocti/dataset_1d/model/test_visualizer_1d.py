@@ -22,7 +22,7 @@ def test__visualize_dataset_1d__uses_configs(dataset_1d_7, plot_path, plot_patch
 
     visualizer.visualize_dataset(dataset=dataset_1d_7)
 
-    plot_path = path.join(plot_path, "dataset_1d")
+    plot_path = path.join(plot_path, "dataset")
 
     assert path.join(plot_path, "subplot_dataset.png") in plot_patch.paths
     assert path.join(plot_path, "data.png") in plot_patch.paths
@@ -39,7 +39,7 @@ def test__visualize_dataset_1d_region__uses_configs(
 
     visualizer.visualize_dataset_regions(dataset=dataset_1d_7, region_list=["fpr"])
 
-    plot_path = path.join(plot_path, "dataset_1d")
+    plot_path = path.join(plot_path, "dataset")
 
     assert path.join(plot_path, "subplot_dataset_fpr.png") in plot_patch.paths
     assert path.join(plot_path, "data_fpr.png") in plot_patch.paths
@@ -54,7 +54,7 @@ def test__visualize_fit_1d__uses_configs(fit_1d_7, plot_path, plot_patch):
 
     visualizer.visualize_fit(fit=fit_1d_7, during_analysis=True)
 
-    plot_path = path.join(plot_path, "fit_dataset_1d")
+    plot_path = path.join(plot_path, "fit_dataset")
 
     assert path.join(plot_path, "subplot_fit.png") in plot_patch.paths
     assert path.join(plot_path, "data.png") in plot_patch.paths
@@ -79,7 +79,7 @@ def test__visualize_fit_1d_region__uses_configs(fit_1d_7, plot_path, plot_patch)
         fit=fit_1d_7, region_list=["fpr"], during_analysis=True
     )
 
-    plot_path = path.join(plot_path, "fit_dataset_1d")
+    plot_path = path.join(plot_path, "fit_dataset")
 
     assert path.join(plot_path, "subplot_fit_fpr.png") in plot_patch.paths
     assert path.join(plot_path, "data_fpr.png") in plot_patch.paths
@@ -96,7 +96,7 @@ def test__visualize_fit_combined(fit_1d_7, plot_path, plot_patch):
         fit_list=[fit_1d_7, fit_1d_7], during_analysis=True
     )
 
-    plot_path = path.join(plot_path, "fit_dataset_1d_combined")
+    plot_path = path.join(plot_path, "fit_dataset_combined")
 
     assert path.join(plot_path, "subplot_residual_map_list.png") in plot_patch.paths
     assert (
@@ -114,7 +114,7 @@ def test__visualize_fit_region_combined(fit_1d_7, plot_path, plot_patch):
         fit_list=[fit_1d_7, fit_1d_7], region_list=["fpr"], during_analysis=True
     )
 
-    plot_path = path.join(plot_path, "fit_dataset_1d_combined")
+    plot_path = path.join(plot_path, "fit_dataset_combined")
 
     assert path.join(plot_path, "subplot_residual_map_fpr_list.png") in plot_patch.paths
     assert (
