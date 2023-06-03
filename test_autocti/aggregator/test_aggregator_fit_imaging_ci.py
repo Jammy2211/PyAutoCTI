@@ -5,7 +5,7 @@ from autoconf import conf
 import autofit as af
 import autocti as ac
 
-from test_autogalaxy.aggregator.conftest import clean
+from test_autocti.aggregator.conftest import clean
 
 
 def test__fit_imaging_ci_randomly_drawn_via_pdf_gen_from(

@@ -4,7 +4,7 @@ from autoconf import conf
 import autofit as af
 import autocti as ac
 
-from test_autogalaxy.aggregator.conftest import clean
+from test_autocti.aggregator.conftest import clean
 
 
 def test__dataset_gen_from(imaging_ci_7x7, parallel_clocker_2d, samples_2d, model_2d):

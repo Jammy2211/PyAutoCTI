@@ -4,7 +4,7 @@ from autoconf import conf
 import autofit as af
 import autocti as ac
 
-from test_autogalaxy.aggregator.conftest import clean
+from test_autocti.aggregator.conftest import clean
 
 
 def test__dataset_gen_from(dataset_1d_7, clocker_1d, samples_1d, model_1d):
