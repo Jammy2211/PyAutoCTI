@@ -56,7 +56,7 @@ The following links are useful for new starters:
 
 - `The PyAutoCTI readthedocs <https://pyautocti.readthedocs.io/en/latest>`_, which includes `an installation guide <https://pyautocti.readthedocs.io/en/latest/installation/overview.html>`_ and an overview of **PyAutoCTI**'s core features.
 
-- `The autocti_workspace GitHub repository <https://github.com/Jammy2211/autocti_workspace>`_, which includes example scripts and the `HowToCTI Jupyter notebook tutorials <https://github.com/Jammy2211/autocti_workspace/tree/master/notebooks/howtocti>`_ which give new users a step-by-step introduction to **PyAutoCTI**.
+- `The autocti_workspace GitHub repository <https://github.com/Jammy2211/autocti_workspace>`_, which includes example scripts.
 
 API Overview
 ------------
