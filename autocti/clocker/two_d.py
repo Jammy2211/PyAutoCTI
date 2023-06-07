@@ -206,6 +206,7 @@ class Clocker2D(AbstractClocker):
             parallel_window_offset = self.parallel_window_offset
             serial_window_offset = self.serial_window_offset
 
+
         image_post_cti = add_cti(
             image=data,
             parallel_ccd=parallel_ccd,
@@ -470,7 +471,7 @@ class Clocker2D(AbstractClocker):
             parallel_time_stop=self.parallel_time_stop,
             parallel_prune_n_electrons=self.parallel_prune_n_electrons,
             parallel_prune_frequency=self.parallel_prune_frequency,
-            allow_negative_pixels=self.allow_negative_pixels,
+         #   allow_negative_pixels=self.allow_negative_pixels,
             pixel_bounce=self.pixel_bounce,
             verbosity=self.verbosity,
         )
@@ -504,7 +505,7 @@ class Clocker2D(AbstractClocker):
             serial_time_stop=self.serial_time_stop,
             serial_prune_n_electrons=self.serial_prune_n_electrons,
             serial_prune_frequency=self.serial_prune_frequency,
-            allow_negative_pixels=self.allow_negative_pixels,
+         #   allow_negative_pixels=self.allow_negative_pixels,
             pixel_bounce=self.pixel_bounce,
             verbosity=self.verbosity,
         )
