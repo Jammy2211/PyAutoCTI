@@ -4,9 +4,6 @@ PyAutoCTI: Charge Transfer Inefficiency Modeling
 .. |nbsp| unicode:: 0xA0
     :trim:
 
-.. |binder| image:: https://mybinder.org/badge_logo.svg
-   :target: https://mybinder.org/v2/gh/Jammy2211/autocti_workspace/HEAD
-
 .. |RTD| image:: https://readthedocs.org/projects/pyautocti/badge/?version=latest
     :target: https://pyautocti.readthedocs.io/en/latest/?badge=latest
     :alt: Documentation Status
@@ -23,11 +20,10 @@ PyAutoCTI: Charge Transfer Inefficiency Modeling
 .. |arXiv| image:: https://img.shields.io/badge/arXiv-1708.07377-blue
     :target: https://arxiv.org/abs/0909.0507
 
-|binder| |RTD| |Tests| |Build| |code-style| |arXiv|
+|RTD| |Tests| |Build| |code-style| |arXiv|
 
 `Installation Guide <https://pyautocti.readthedocs.io/en/latest/installation/overview.html>`_ |
 `readthedocs <https://pyautocti.readthedocs.io/en/latest/index.html>`_ |
-`Introduction on Binder <https://mybinder.org/v2/gh/Jammy2211/autocti_workspace/release?filepath=introduction.ipynb>`_ |
 `What is CTI? <https://pyautocti.readthedocs.io/en/latest/overview/overview_1_what_is_cti.html>`_
 
 Charge Transfer Inefficiency, or CTI for short, is an effect that occurs when acquiring imaging data from
@@ -51,8 +47,6 @@ Getting Started
 ---------------
 
 The following links are useful for new starters:
-
-- `The introduction Jupyter Notebook on Binder <https://mybinder.org/v2/gh/Jammy2211/autocti_workspace/release?filepath=introduction.ipynb>`_, where you can try **PyAutoCTI** in a web browser (without installation).
 
 - `The PyAutoCTI readthedocs <https://pyautocti.readthedocs.io/en/latest>`_, which includes `an installation guide <https://pyautocti.readthedocs.io/en/latest/installation/overview.html>`_ and an overview of **PyAutoCTI**'s core features.
 
