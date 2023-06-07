@@ -47,7 +47,7 @@ massive over simplification, but in order to understand CTI this process can be 
 
 The animation below shows this process in action:
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/cti.gif
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/ccd.gif
   :width: 600
 
 CTI
@@ -65,8 +65,9 @@ electron, one of two things can happen:
 
 The animation below shows the CCD clocking process, but now includes one of these traps:
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/ccd.gif
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/cti.gif
   :width: 600
+
 
 Charge Transfer
 ---------------

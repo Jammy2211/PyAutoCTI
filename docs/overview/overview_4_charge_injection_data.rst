@@ -112,7 +112,7 @@ We can plot the charge injection imaging using a ``ImagingCI`` object.
 
 .. code-block:: python
 
-    dataset_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci)
+    dataset_plotter = aplt.ImagingCIPlotter(dataset=imaging_ci)
     dataset_plotter.figures_2d(data=True)
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/imaging_ci.png
@@ -137,7 +137,7 @@ We can zoom in on one of these regions and change the color scheme to properly h
         cmap=aplt.Cmap(vmin=0.0, vmax=100.0),
     )
 
-    dataset_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci, mat_plot_2d=mat_plot_2d)
+    dataset_plotter = aplt.ImagingCIPlotter(dataset=imaging_ci, mat_plot_2d=mat_plot_2d)
     dataset_plotter.figures_2d(data=True)
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/imaging_ci_fpr.png
@@ -153,7 +153,7 @@ We can do the same to highlight the EPERs.
         cmap=aplt.Cmap(vmin=0.0, vmax=10.0),
     )
 
-    dataset_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci, mat_plot_2d=mat_plot_2d)
+    dataset_plotter = aplt.ImagingCIPlotter(dataset=imaging_ci, mat_plot_2d=mat_plot_2d)
     dataset_plotter.figures_2d(data=True)
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/imaging_ci_eper.png
@@ -174,7 +174,7 @@ every parallel EPERs binned together.
     array_1d_plotter = aplt.Array1DPlotter(y=parallel_eper_1d)
     array_1d_plotter.figure_1d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/parallel_eper_binned.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/binned_parallel_eper.png
   :width: 600
   :alt: Alternative text
 
@@ -200,15 +200,15 @@ The layout can extract all the regions of interest of the data.
     array_1d_plotter = aplt.Array1DPlotter(y=serial_fpr_1d)
     array_1d_plotter.figure_1d()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/parallel_fpr_binned.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/binned_parallel_fpr.png
   :width: 600
   :alt: Alternative text
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/serial_eper_binned.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/binned_serial_eper.png
   :width: 600
   :alt: Alternative text
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/serial_fpr_binned.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/binned_serial_fpr.png
   :width: 600
   :alt: Alternative text
 
@@ -220,7 +220,7 @@ contained in the ``pre_cti_data``.
 
 .. code-block:: python
 
-    dataset_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci, mat_plot_2d=mat_plot_2d)
+    dataset_plotter = aplt.ImagingCIPlotter(dataset=imaging_ci, mat_plot_2d=mat_plot_2d)
     dataset_plotter.figures_2d(pre_cti_data=True)
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/pre_cti_data.png
@@ -261,8 +261,8 @@ More realistic charge injection imaging has many other features, for example:
         pixel_scales=0.1,
     )
 
-    dataset_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci)
-    dataset_plotter.figures_2d(image=True, pre_cti_data=True)
+    dataset_plotter = aplt.ImagingCIPlotter(dataset=imaging_ci)
+    dataset_plotter.figures_2d(data=True, pre_cti_data=True)
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_4/imaging_ci_non_uniform_cosmic_rays.png
   :width: 600

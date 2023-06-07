@@ -73,16 +73,8 @@ CTI is straightforward.
 
 .. code-block:: python
 
-    dataset_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci)
-    dataset_plotter.figures_2d(image=True, pre_cti_data=True)
-
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/image.png
-  :width: 600
-  :alt: Alternative text
-
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/pre_cti_data.png
-  :width: 600
-  :alt: Alternative text
+    dataset_plotter = aplt.ImagingCIPlotter(dataset=imaging_ci)
+    dataset_plotter.figures_2d(data=True, pre_cti_data=True)
 
 CTI Model
 ---------
@@ -253,7 +245,7 @@ If we apply this mask to the charge injection imaging and plot it, the parallel 
 
     dataset = dataset.apply_mask(mask=mask)
 
-    dataset_plotter = aplt.ImagingCIPlotter(imaging=imaging_ci)
+    dataset_plotter = aplt.ImagingCIPlotter(dataset=imaging_ci)
     dataset_plotter.figures_2d(data=True)
 
 .. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/image_masked.png

@@ -151,13 +151,6 @@ html_theme_options = {
     }
 }
 
-if "READTHEDOCS" in os.environ:
-    html_theme_options["announcement"] = (
-        "This documentation is hosted on Read the Docs only for testing. Please use "
-        "<a href='https://pradyunsg.me/furo/'>the main documentation</a> instead."
-    )
-
-
 from sphinx.builders.html import StandaloneHTMLBuilder
 
 StandaloneHTMLBuilder.supported_image_types = ["image/gif", "image/png", "image/jpeg"]

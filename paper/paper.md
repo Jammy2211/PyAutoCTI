@@ -40,7 +40,7 @@ instrumental characteristics, including the calibration and correction of charge
 (hereafter CTI) [@Massey2010d] [@Massey2014], a phenomena where radiation damage to the telescope's charge-coupled 
 device (CCD) sensors leads to gradually increased smearing in acquired exposures over the telescope's lifetime.
 
-`PyAutoCTI` is an open-source Python 3.8+ package for the calibration of CTI for space telescopes. By interfacing
+`PyAutoCTI` is an open-source Python 3.8 - 3.10 package for the calibration of CTI for space telescopes. By interfacing
 with `arCTIc` (`the algorithm for Charge Transfer Inefficiency correction`) the calibrated CTI models can straightforwardly
 be used to correct and remove CTI in every science image taken throughout the telescope's lifetime. Core features 
 include fully automated Bayesian model-fitting of CTI calibration data, support for different calibration
@@ -127,7 +127,7 @@ without a local `PyAutoCTI` installation.
 
 # Software Citations
 
-`PyAutoCTI` is written in Python 3.8+ [@python] and uses the following software packages:
+`PyAutoCTI` is written in Python 3.8 - 3.10 [@python] and uses the following software packages:
 
 - `Astropy` [@astropy1] [@astropy2]
 - `corner.py` [@corner]

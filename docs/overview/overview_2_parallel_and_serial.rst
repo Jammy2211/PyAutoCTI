@@ -34,25 +34,26 @@ potential in the CCD, and therefore read out together in the same pixel after cl
 
 Clocking and read-out of a 2D image extends the 1D description above as follows:
 
- 1) An entire row of 2066 electrons are shifted, all at once, by adjusting the electrostatic potential in every pixel
- simultaneously. In the diagram above this shift is in the upwards direction.
+ 1) An entire row of electrons over 2066 pixels are shifted, all at once, by adjusting the electrostatic potential in
+    every pixel simultaneously. In the diagram above this shift is in the upwards direction.
 
  2) These electrons enter the special row of pixels shown at the top of the schematic, called the 'read-out register',
- where they are held in place with a special row of electrostatic potentials. This is called '**parallel** clocking'.
+    where they are held in place with a special row of electrostatic potentials. This is called '**parallel** clocking'.
 
  3) At the far end of the read-out register are the read-out electronics. This was seen in the 1D animations in the
- previous overview and is located at the top-left of the schematic above. The 2066 electrons, now located in the
- read-out register, are clocked towards read out electronics and converted from an analogue to digital signal.
- This is called '**serial** clocking.
+    previous overview and is located at the top-left of the schematic above. The electrons in this row of 2066 pixels,
+    read-out register, are clocked towards read out electronics and converted from an analogue to digital signal.
+    This is called '**serial** clocking.
 
- 3) After all 2066 electrons are read out, the read-out register is now empty and the next row of 2066 electrons are
- shifted into it.
+ 3) After the electrons in these 2066 pixels are read out, the read-out register is now empty and the next row of
+    electrons are shifted into it.
 
- 4) This process is repeated until all 2128 columns of electrons have been read-out and converted to a digital signal.
+ 4) This process is repeated until the electrons in all 2128 columns of pixels have been read-out and converted to a
+    digital signal.
 
-In the example above, serial clocking has to shift 2066 electrons, one pixel at a time, into the read out electronics.
-For every 2066 shifts, parallel clocking has to move only a single row of electrons (all at once) into the read out
-register.
+In the example above, serial clocking has to shift electrons over 2066 pixels, one pixel at a time, into the read out
+electronics. For every 2066 shifts, parallel clocking has to move only a single row of electrons (all at once) into
+the read out register.
 
 Serial clocking is therefore much faster than parallel clocking, in the example above around ~2000 times faster.
 Keep this in mind!
@@ -114,7 +115,7 @@ CTI Model (Parallel)
 We again need to define our CTI model, that is the number of traps our 2D data encounters when we pass it through the
 clocker and replicate the CCD clocking process.
 
-We will again use a trap which captures electrons instantaneously and define the ccd's phase describing how the
+We will again use a trap which captures electrons instantaneously and define the CCD's phase describing how the
 electron cloud fills pixels.
 
 You'll note that the variables below use the prefix ``parallel_``, which indicates that this is only accounting for

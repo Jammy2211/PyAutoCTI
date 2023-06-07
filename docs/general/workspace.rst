@@ -18,7 +18,7 @@ New users should begin by checking out the following parts of the workspace.
 Scripts / Notebooks
 -------------------
 
-There are numerous example describing how to perform ctiing calculations, cti modeling, and many other
+There are numerous example describing how to perform ctiing calculations, CTI modeling, and many other
 **PyAutoCTI** features. All examples are provided as Python scripts and Jupyter notebooks.
 
 Descriptions of every configuration file and their input parameters are provided in the ``README.rst`` in
@@ -31,8 +31,8 @@ Here, you'll find the configuration files which customize:
 
     - The default settings used by every non-linear search.
     - Visualization, including the backend used by *matplotlib*.
-    - The priors and notation configs associated with the light and mass profiles used for cti modeling.
-    - The behaviour of different (y,x) Cartesian grids used to perform cti calculations.
+    - The priors and notation configs associated with the light and mass profiles used for CTI modeling.
+    - The behaviour of different (y,x) Cartesian grids used to perform CTI calculations.
     - The general.ini config which customizes other aspects of **PyAutoCTI**.
 
 Checkout the `configuration <https://pyautocti.readthedocs.io/en/latest/general/installation.html#installation-with-pip>`_
@@ -41,17 +41,10 @@ section of the readthedocs for a complete description of every configuration fil
 Dataset
 -------
 
-Contains the dataset's used to perform cti modeling. Example datasets using simulators included with the workspace
+Contains the dataset's used to perform CTI modeling. Example datasets using simulators included with the workspace
 are included here by default.
 
 Output
 ------
 
-The folder where cti modeling results are stored.
-
-SLaM
-----
-
-Advanced cti modeling pipelines that use the Source, Light and Mass (SLaM) approach to cti modeling.
-
-See `here <https://pyautocti.readthedocs.io/en/latest/advanced/slam.html>`_ for an overview.
+The folder where CTI modeling results are stored.
