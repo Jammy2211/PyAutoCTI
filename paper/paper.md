@@ -92,7 +92,10 @@ seen before [@Halverson2016] and perform astrometry of moving objects [@Bellini2
 be successful they all require CTI is removed from science imaging with very stringent requirements, necessitating that 
 CTI calibration provides in-depth knowledge about CTI on every CCD. `PyAutoCTI` ensures that large CTI calibration 
 datasets can be exploited to measure the CTI model over the telescope's life and it provides tools which maximally 
-extract information from these datasets using contemporary Bayesian inference techniques.
+extract information from these datasets using contemporary Bayesian inference techniques. The intended audience for
+`PyAutoCTI` is therefore the astronomical community, including instrument scientists, who are responsible for 
+maintaining the calibration of space telescopes and the scientific community, who can use `PyAutoCTI` to perform
+CTI calculations for their science data.
 
 # Software API and Features
 
@@ -146,7 +149,7 @@ without a local `PyAutoCTI` installation.
 - `C3TM` [@c3tm]
 - `CDM03` [@cdm03]
 - `Pyxel` https://esa.gitlab.io/pyxel/page/introduction/
-- `STScI algorithm` [@Anderson2010] 
+- `STScI algorithm` [@Anderson2010] [@Anderson2018] [@Anderson2021]
 
 # Acknowledgements
 
