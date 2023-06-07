@@ -47,11 +47,13 @@ You may get warnings which state something like:
 
 .. code-block:: bash
 
-    ERROR: autoarray 2022.2.14.1 has requirement numpy<=1.22.1, but you'll have numpy 1.22.2 which is incompatible.
+    ERROR: autoarray 2023.7.7.2 has requirement numpy<=1.22.1, but you'll have numpy 1.22.2 which is incompatible.
     ERROR: numba 0.53.1 has requirement llvmlite<0.37,>=0.36.0rc1, but you'll have llvmlite 0.38.0 which is incompatible.
 
 If you see these messages, they do not mean that the installation has failed and the instructions below will
 identify clearly if the installation is a success.
+
+If there is an error (e.g. issues with installing GSL) check out the `troubleshooting section <https://pyautocti.readthedocs.io/en/latest/installation/troubleshooting.html>`_.
 
 Numba
 -----
@@ -59,11 +61,11 @@ Numba
 Numba (https://numba.pydata.org)  is an optional library which makes **PyAutoCTI** run a lot faster, which we
 strongly recommend users have installed.
 
-You can install numba via the following command:
+You can install numba (versions above 0.56.4 are not supported) via the following command:
 
 .. code-block:: bash
 
-    pip install numba
+    pip install numba==0.56.4
 
 Some users have experienced difficulties installing numba, which is why it is an optional library. If your
 installation is not successful, you can use **PyAutoCTI** without it installed for now, to familiarize yourself
