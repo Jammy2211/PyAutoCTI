@@ -248,7 +248,7 @@ If we apply this mask to the charge injection imaging and plot it, the parallel 
     dataset_plotter = aplt.ImagingCIPlotter(dataset=imaging_ci)
     dataset_plotter.figures_2d(data=True)
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/image_masked.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/ci_image_masked.png
   :width: 600
   :alt: Alternative text
 
@@ -325,11 +325,7 @@ injection data.
     dataset_plotter = aplt.Dataset1DPlotter(dataset=dataset)
     dataset_plotter.subplot_dataset()
 
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/data_1d.png
-  :width: 600
-  :alt: Alternative text
-
-.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/pre_cti_data_1d.png
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/dataset_1d.png
   :width: 600
   :alt: Alternative text
 
