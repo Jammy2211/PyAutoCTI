@@ -264,7 +264,6 @@ class Clocker2D(AbstractClocker):
                 verbosity=self.verbosity,
             )
 
-
         try:
             return aa.Array2D(
                 values=image_post_cti, mask=data.mask, store_native=True, skip_mask=True

@@ -134,9 +134,7 @@ class FitImagingCIPlotter(Plotter):
             self.mat_plot_2d.plot_array(
                 array=self.fit.pre_cti_data,
                 visuals_2d=self.get_visuals_2d(),
-                auto_labels=AutoLabels(
-                    title="CI Pre CTI Image", filename="pre_cti_data"
-                ),
+                auto_labels=AutoLabels(title="Pre CTI Data", filename="pre_cti_data"),
             )
 
         if post_cti_data:

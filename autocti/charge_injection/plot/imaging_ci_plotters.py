@@ -110,10 +110,13 @@ class ImagingCIPlotter(Plotter):
             Whether to make a 2D plot (via `imshow`) of the cosmic ray map.
         """
 
+        title_str = self.title_str_2d_from()
+
         self._imaging_meta_plotter.figures_2d(
             data=data,
             noise_map=noise_map,
             signal_to_noise_map=signal_to_noise_map,
+            title_str=title_str,
         )
 
         if pre_cti_data:
@@ -121,7 +124,7 @@ class ImagingCIPlotter(Plotter):
                 array=self.dataset.pre_cti_data,
                 visuals_2d=self.get_visuals_2d(),
                 auto_labels=AutoLabels(
-                    title="CI Pre CTI Image", filename="pre_cti_data"
+                    title=title_str or f"Pre CTI Data", filename="pre_cti_data"
                 ),
             )
 
@@ -130,7 +133,7 @@ class ImagingCIPlotter(Plotter):
                 array=self.dataset.cosmic_ray_map,
                 visuals_2d=self.get_visuals_2d(),
                 auto_labels=AutoLabels(
-                    title="Cosmic Ray Map", filename="cosmic_ray_map"
+                    title=title_str or f"Cosmic Ray Map", filename="cosmic_ray_map"
                 ),
             )
 

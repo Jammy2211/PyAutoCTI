@@ -92,6 +92,20 @@ class ImagingCI(aa.Imaging):
             for column_index in range(region.x0, region.x1)
         ]
 
+    @property
+    def pre_cti_data_residual_map(self) -> aa.Array2D:
+        """
+        The residuals of the data and the pre CTI data.
+
+        This is used to assess whether the pre CTI data has been estimated accurately (e.g. from the FPR of the
+        data) and includes e specific set of visualization functions.
+
+        Returns
+        -------
+        The residual map of the data and pre CTI data.
+        """
+        return self.data - self.pre_cti_data
+
     def apply_mask(self, mask: mask_2d.Mask2D) -> "ImagingCI":
         image = aa.Array2D(values=self.image.native, mask=mask)
         noise_map = aa.Array2D(values=self.noise_map.native, mask=mask)

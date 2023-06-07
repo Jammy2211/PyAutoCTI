@@ -12,22 +12,20 @@ test_data_path = path.join(
 
 
 def test__norm_columns_list():
-    image = ac.Array2D.full(
-        fill_value=1.0, shape_native=(5, 5), pixel_scales=(1.0, 1.0)
-    )
+    data = ac.Array2D.full(fill_value=1.0, shape_native=(5, 5), pixel_scales=(1.0, 1.0))
     noise_map = ac.Array2D.ones(
-        shape_native=image.shape_native, pixel_scales=image.pixel_scales
+        shape_native=data.shape_native, pixel_scales=data.pixel_scales
     )
 
-    layout = ac.Layout2DCI(shape_2d=image.shape_native, region_list=[(1, 4, 1, 4)])
+    layout = ac.Layout2DCI(shape_2d=data.shape_native, region_list=[(1, 4, 1, 4)])
 
     dataset = ac.ImagingCI(
-        data=image, noise_map=noise_map, pre_cti_data=image, layout=layout
+        data=data, noise_map=noise_map, pre_cti_data=data, layout=layout
     )
 
     assert dataset.norm_columns_list == [1.0, 1.0, 1.0]
 
-    image = ac.Array2D.no_mask(
+    data = ac.Array2D.no_mask(
         values=np.array(
             [
                 [0.0, 0.0, 0.0, 0.0, 0.0],
@@ -40,18 +38,18 @@ def test__norm_columns_list():
         pixel_scales=(1.0, 1.0),
     )
 
-    layout = ac.Layout2DCI(shape_2d=image.shape_native, region_list=[(1, 4, 1, 4)])
+    layout = ac.Layout2DCI(shape_2d=data.shape_native, region_list=[(1, 4, 1, 4)])
 
     dataset = ac.ImagingCI(
-        data=image, noise_map=noise_map, pre_cti_data=image, layout=layout
+        data=data, noise_map=noise_map, pre_cti_data=data, layout=layout
     )
 
     assert dataset.norm_columns_list == [2.0, 5.0, 8.0]
 
-    layout = ac.Layout2DCI(shape_2d=image.shape_native, region_list=[(2, 4, 1, 4)])
+    layout = ac.Layout2DCI(shape_2d=data.shape_native, region_list=[(2, 4, 1, 4)])
 
     dataset = ac.ImagingCI(
-        data=image, noise_map=noise_map, pre_cti_data=image, layout=layout
+        data=data, noise_map=noise_map, pre_cti_data=data, layout=layout
     )
 
     assert dataset.norm_columns_list == [2.5, 5.5, 8.5]
@@ -66,16 +64,41 @@ def test__norm_columns_list():
                 [True, True, True, True, True],
             ]
         ),
-        pixel_scales=image.pixel_scales,
+        pixel_scales=data.pixel_scales,
     )
 
-    image = image.apply_mask(mask=mask)
+    data = data.apply_mask(mask=mask)
 
     dataset = ac.ImagingCI(
-        data=image, noise_map=noise_map, pre_cti_data=image, layout=layout
+        data=data, noise_map=noise_map, pre_cti_data=data, layout=layout
     )
 
     assert dataset.norm_columns_list == [2.0, 6.0, 8.5]
+
+
+def test__pre_cti_data_residual_map():
+    data = ac.Array2D.full(fill_value=1.0, shape_native=(5, 5), pixel_scales=(1.0, 1.0))
+    noise_map = ac.Array2D.ones(
+        shape_native=data.shape_native, pixel_scales=data.pixel_scales
+    )
+
+    pre_cti_data = ac.Array2D.full(
+        fill_value=0.75, shape_native=(5, 5), pixel_scales=(1.0, 1.0)
+    )
+
+    layout = ac.Layout2DCI(shape_2d=data.shape_native, region_list=[(1, 4, 1, 4)])
+
+    dataset = ac.ImagingCI(
+        data=data, noise_map=noise_map, pre_cti_data=pre_cti_data, layout=layout
+    )
+
+    pre_cti_data_residual_map = ac.Array2D.full(
+        fill_value=0.25, shape_native=(5, 5), pixel_scales=(1.0, 1.0)
+    )
+
+    assert dataset.pre_cti_data_residual_map.native == pytest.approx(
+        pre_cti_data_residual_map.native, 1.0e-4
+    )
 
 
 def test__from_fits__load_all_data_components__has_correct_attributes(layout_ci_7x7):
@@ -199,7 +222,7 @@ def test__apply_mask__masks_arrays_correctly(imaging_ci_7x7):
 
     assert (masked_dataset.mask == mask).all()
 
-    masked_image = imaging_ci_7x7.image
+    masked_image = imaging_ci_7x7.data
     masked_image[0, 0] = 0.0
 
     assert (masked_dataset.data == masked_image).all()
@@ -235,10 +258,10 @@ def test__apply_settings__include_parallel_columns_extraction(
 
     assert (masked_dataset.mask == mask).all()
 
-    image = np.ones((7, 2))
-    image[0, 0] = 0.0
+    data = np.ones((7, 2))
+    data[0, 0] = 0.0
 
-    assert masked_dataset.data == pytest.approx(image, 1.0e-4)
+    assert masked_dataset.data == pytest.approx(data, 1.0e-4)
 
     noise_map = 2.0 * np.ones((7, 2))
     noise_map[0, 0] = 0.0
@@ -284,10 +307,10 @@ def test__apply_settings__serial_masked_imaging_ci(
 
     assert (masked_dataset.mask == mask).all()
 
-    image = np.ones((1, 7))
-    image[0, 0] = 0.0
+    data = np.ones((1, 7))
+    data[0, 0] = 0.0
 
-    assert masked_dataset.data == pytest.approx(image, 1.0e-4)
+    assert masked_dataset.data == pytest.approx(data, 1.0e-4)
 
     noise_map = 2.0 * np.ones((1, 7))
     noise_map[0, 0] = 0.0
@@ -316,17 +339,15 @@ def test__apply_settings__serial_masked_imaging_ci(
 
 
 def test__fpr_value():
-    image = ac.Array2D.full(
-        fill_value=1.0, shape_native=(5, 5), pixel_scales=(1.0, 1.0)
-    )
+    data = ac.Array2D.full(fill_value=1.0, shape_native=(5, 5), pixel_scales=(1.0, 1.0))
     noise_map = ac.Array2D.ones(
-        shape_native=image.shape_native, pixel_scales=image.pixel_scales
+        shape_native=data.shape_native, pixel_scales=data.pixel_scales
     )
 
-    layout = ac.Layout2DCI(shape_2d=image.shape_native, region_list=[(1, 4, 1, 4)])
+    layout = ac.Layout2DCI(shape_2d=data.shape_native, region_list=[(1, 4, 1, 4)])
 
     dataset = ac.ImagingCI(
-        data=image, noise_map=noise_map, pre_cti_data=image, layout=layout
+        data=data, noise_map=noise_map, pre_cti_data=data, layout=layout
     )
 
     assert dataset.fpr_value == pytest.approx(1.0, 1.0e-4)

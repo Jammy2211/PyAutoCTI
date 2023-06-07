@@ -1,3 +1,5 @@
+from typing import Optional
+
 from autoarray.plot.wrap.base.abstract import set_backend
 
 set_backend()
@@ -40,7 +42,7 @@ class Plotter(AbstractPlotter):
     def get_2d(self):
         return GetVisuals2D(visuals=self.visuals_2d, include=self.include_2d)
 
-    def title_str_from(self, region: str) -> str:
+    def title_str_from(self, region: Optional[str]) -> str:
         if self.dataset.settings_dict is not None:
             ccd_str = self.dataset.settings_dict.get("CCD")
         else:
@@ -64,6 +66,15 @@ class Plotter(AbstractPlotter):
         if ccd_str is None:
             return title_str
         return f"{ccd_str} {title_str}"
+
+    def title_str_2d_from(self) -> Optional[str]:
+        if self.dataset.settings_dict is not None:
+            ccd_str = self.dataset.settings_dict.get("CCD")
+            ig1_str = self.dataset.settings_dict.get("CI_IG1")
+            ig2_str = self.dataset.settings_dict.get("CI_IG2")
+            id_delay_str = self.dataset.settings_dict.get("CI_IDDLY")
+
+            return f"{ccd_str} IG1={ig1_str} IG2={ig2_str} IDD={id_delay_str}"
 
     def text_manual_dict_from(self, region: str):
         try:

@@ -19,10 +19,10 @@ class VisualizerImagingCI(Visualizer):
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
-        mat_plot_2d = self.mat_plot_2d_from(subfolders=f"dataset{folder_suffix}")
+        mat_plot = self.mat_plot_2d_from(subfolders=f"dataset{folder_suffix}")
 
         dataset_plotter = aplt.ImagingCIPlotter(
-            dataset=dataset, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
+            dataset=dataset, mat_plot_2d=mat_plot, include_2d=self.include_2d
         )
 
         if should_plot("subplot_dataset"):
@@ -40,10 +40,10 @@ class VisualizerImagingCI(Visualizer):
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset{folder_suffix}")
+        mat_plot = self.mat_plot_1d_from(subfolders=f"dataset{folder_suffix}")
 
         dataset_plotter = aplt.ImagingCIPlotter(
-            dataset=dataset, mat_plot_1d=mat_plot_1d, include_2d=self.include_2d
+            dataset=dataset, mat_plot_1d=mat_plot, include_2d=self.include_2d
         )
 
         for region in region_list:
@@ -69,13 +69,11 @@ class VisualizerImagingCI(Visualizer):
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
-        mat_plot_2d = self.mat_plot_2d_from(
-            subfolders=f"dataset_combined{folder_suffix}"
-        )
+        mat_plot = self.mat_plot_2d_from(subfolders=f"dataset_combined{folder_suffix}")
 
         dataset_plotter_list = [
             aplt.ImagingCIPlotter(
-                dataset=dataset, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
+                dataset=dataset, mat_plot_2d=mat_plot, include_2d=self.include_2d
             )
             for dataset in dataset_list
         ]
@@ -129,10 +127,10 @@ class VisualizerImagingCI(Visualizer):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
-        mat_plot_2d = self.mat_plot_2d_from(subfolders=f"fit_dataset{folder_suffix}")
+        mat_plot = self.mat_plot_2d_from(subfolders=f"fit_dataset{folder_suffix}")
 
         fit_plotter = aplt.FitImagingCIPlotter(
-            fit=fit, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
+            fit=fit, mat_plot_2d=mat_plot, include_2d=self.include_2d
         )
 
         fit_plotter.figures_2d(
@@ -171,10 +169,10 @@ class VisualizerImagingCI(Visualizer):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"fit_dataset{folder_suffix}")
+        mat_plot = self.mat_plot_1d_from(subfolders=f"fit_dataset{folder_suffix}")
 
         fit_plotter = aplt.FitImagingCIPlotter(
-            fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
+            fit=fit, mat_plot_1d=mat_plot, include_1d=self.include_1d
         )
 
         for region in region_list:
@@ -222,13 +220,13 @@ class VisualizerImagingCI(Visualizer):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
-        mat_plot_2d = self.mat_plot_2d_from(
+        mat_plot = self.mat_plot_2d_from(
             subfolders=f"fit_dataset_combined{folder_suffix}"
         )
 
         fit_plotter_list = [
             aplt.FitImagingCIPlotter(
-                fit=fit, mat_plot_2d=mat_plot_2d, include_2d=self.include_2d
+                fit=fit, mat_plot_2d=mat_plot, include_2d=self.include_2d
             )
             for fit in fit_list
         ]
@@ -255,13 +253,13 @@ class VisualizerImagingCI(Visualizer):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 
-        mat_plot_1d = self.mat_plot_1d_from(
+        mat_plot = self.mat_plot_1d_from(
             subfolders=f"fit_dataset_combined{folder_suffix}"
         )
 
         fit_plotter_list = [
             aplt.FitImagingCIPlotter(
-                fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
+                fit=fit, mat_plot_1d=mat_plot, include_1d=self.include_1d
             )
             for fit in fit_list
         ]

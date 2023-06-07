@@ -256,7 +256,7 @@ class FitDataset1DPlotter(Plotter):
                 x=range(len(y)),
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title="CI Pre CTI Image",
+                    title="Pre CTI Data",
                     yunit="e-",
                     filename=f"pre_cti_data{suffix}",
                 ),
