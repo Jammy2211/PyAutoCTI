@@ -206,35 +206,64 @@ class Clocker2D(AbstractClocker):
             parallel_window_offset = self.parallel_window_offset
             serial_window_offset = self.serial_window_offset
 
+        try:
+            image_post_cti = add_cti(
+                image=data,
+                parallel_ccd=parallel_ccd,
+                parallel_roe=self.parallel_roe,
+                parallel_traps=parallel_trap_list,
+                parallel_express=self.parallel_express,
+                parallel_window_offset=parallel_window_offset,
+                parallel_window_start=self.parallel_window_start,
+                parallel_window_stop=self.parallel_window_stop,
+                parallel_time_start=self.parallel_time_start,
+                parallel_time_stop=self.parallel_time_stop,
+                parallel_prune_n_electrons=self.parallel_prune_n_electrons,
+                parallel_prune_frequency=self.parallel_prune_frequency,
+                serial_ccd=serial_ccd,
+                serial_roe=self.serial_roe,
+                serial_traps=serial_trap_list,
+                serial_express=self.serial_express,
+                serial_window_offset=serial_window_offset,
+                serial_window_start=self.serial_window_start,
+                serial_window_stop=self.serial_window_stop,
+                serial_time_start=self.serial_time_start,
+                serial_time_stop=self.serial_time_stop,
+                serial_prune_n_electrons=self.serial_prune_n_electrons,
+                serial_prune_frequency=self.serial_prune_frequency,
+                allow_negative_pixels=self.allow_negative_pixels,
+                pixel_bounce=self.pixel_bounce,
+                verbosity=self.verbosity,
+            )
+        except TypeError:
+            image_post_cti = add_cti(
+                image=data,
+                parallel_ccd=parallel_ccd,
+                parallel_roe=self.parallel_roe,
+                parallel_traps=parallel_trap_list,
+                parallel_express=self.parallel_express,
+                parallel_window_offset=parallel_window_offset,
+                parallel_window_start=self.parallel_window_start,
+                parallel_window_stop=self.parallel_window_stop,
+                parallel_time_start=self.parallel_time_start,
+                parallel_time_stop=self.parallel_time_stop,
+                parallel_prune_n_electrons=self.parallel_prune_n_electrons,
+                parallel_prune_frequency=self.parallel_prune_frequency,
+                serial_ccd=serial_ccd,
+                serial_roe=self.serial_roe,
+                serial_traps=serial_trap_list,
+                serial_express=self.serial_express,
+                serial_window_offset=serial_window_offset,
+                serial_window_start=self.serial_window_start,
+                serial_window_stop=self.serial_window_stop,
+                serial_time_start=self.serial_time_start,
+                serial_time_stop=self.serial_time_stop,
+                serial_prune_n_electrons=self.serial_prune_n_electrons,
+                serial_prune_frequency=self.serial_prune_frequency,
+                pixel_bounce=self.pixel_bounce,
+                verbosity=self.verbosity,
+            )
 
-        image_post_cti = add_cti(
-            image=data,
-            parallel_ccd=parallel_ccd,
-            parallel_roe=self.parallel_roe,
-            parallel_traps=parallel_trap_list,
-            parallel_express=self.parallel_express,
-            parallel_window_offset=parallel_window_offset,
-            parallel_window_start=self.parallel_window_start,
-            parallel_window_stop=self.parallel_window_stop,
-            parallel_time_start=self.parallel_time_start,
-            parallel_time_stop=self.parallel_time_stop,
-            parallel_prune_n_electrons=self.parallel_prune_n_electrons,
-            parallel_prune_frequency=self.parallel_prune_frequency,
-            serial_ccd=serial_ccd,
-            serial_roe=self.serial_roe,
-            serial_traps=serial_trap_list,
-            serial_express=self.serial_express,
-            serial_window_offset=serial_window_offset,
-            serial_window_start=self.serial_window_start,
-            serial_window_stop=self.serial_window_stop,
-            serial_time_start=self.serial_time_start,
-            serial_time_stop=self.serial_time_stop,
-            serial_prune_n_electrons=self.serial_prune_n_electrons,
-            serial_prune_frequency=self.serial_prune_frequency,
-            allow_negative_pixels=self.allow_negative_pixels,
-            pixel_bounce=self.pixel_bounce,
-            verbosity=self.verbosity,
-        )
 
         try:
             return aa.Array2D(
@@ -298,19 +327,33 @@ class Clocker2D(AbstractClocker):
             image_pre_cti_pass = np.zeros(shape=(total_rows, 1))
             image_pre_cti_pass[:, 0] = image_pre_cti[:, column]
 
-            image_post_cti[:, column] = add_cti(
-                image=image_pre_cti_pass,
-                parallel_ccd=parallel_ccd,
-                parallel_roe=self.parallel_roe,
-                parallel_traps=parallel_trap_poisson_list,
-                parallel_express=self.parallel_express,
-                parallel_window_offset=parallel_window_offset,
-                parallel_window_start=self.parallel_window_start,
-                parallel_window_stop=self.parallel_window_stop,
-                allow_negative_pixels=self.allow_negative_pixels,
-                pixel_bounce=self.pixel_bounce,
-                verbosity=self.verbosity,
-            )[:, 0]
+            try:
+                image_post_cti[:, column] = add_cti(
+                    image=image_pre_cti_pass,
+                    parallel_ccd=parallel_ccd,
+                    parallel_roe=self.parallel_roe,
+                    parallel_traps=parallel_trap_poisson_list,
+                    parallel_express=self.parallel_express,
+                    parallel_window_offset=parallel_window_offset,
+                    parallel_window_start=self.parallel_window_start,
+                    parallel_window_stop=self.parallel_window_stop,
+                    allow_negative_pixels=self.allow_negative_pixels,
+                    pixel_bounce=self.pixel_bounce,
+                    verbosity=self.verbosity,
+                )[:, 0]
+            except TypeError:
+                image_post_cti[:, column] = add_cti(
+                    image=image_pre_cti_pass,
+                    parallel_ccd=parallel_ccd,
+                    parallel_roe=self.parallel_roe,
+                    parallel_traps=parallel_trap_poisson_list,
+                    parallel_express=self.parallel_express,
+                    parallel_window_offset=parallel_window_offset,
+                    parallel_window_start=self.parallel_window_start,
+                    parallel_window_stop=self.parallel_window_stop,
+                    pixel_bounce=self.pixel_bounce,
+                    verbosity=self.verbosity,
+                )[:, 0]
 
         self.parallel_trap_column_list = parallel_trap_column_list
 
@@ -321,23 +364,41 @@ class Clocker2D(AbstractClocker):
         except AttributeError:
             serial_window_offset = self.serial_window_offset
 
-        image_post_cti = add_cti(
-            image=image_post_cti,
-            serial_ccd=serial_ccd,
-            serial_roe=self.serial_roe,
-            serial_traps=serial_trap_list,
-            serial_express=self.serial_express,
-            serial_window_offset=serial_window_offset,
-            serial_window_start=self.serial_window_start,
-            serial_window_stop=self.serial_window_stop,
-            serial_time_start=self.serial_time_start,
-            serial_time_stop=self.serial_time_stop,
-            serial_prune_n_electrons=self.serial_prune_n_electrons,
-            serial_prune_frequency=self.serial_prune_frequency,
-            allow_negative_pixels=self.allow_negative_pixels,
-            pixel_bounce=self.pixel_bounce,
-            verbosity=self.verbosity,
-        )
+        try:
+            image_post_cti = add_cti(
+                image=image_post_cti,
+                serial_ccd=serial_ccd,
+                serial_roe=self.serial_roe,
+                serial_traps=serial_trap_list,
+                serial_express=self.serial_express,
+                serial_window_offset=serial_window_offset,
+                serial_window_start=self.serial_window_start,
+                serial_window_stop=self.serial_window_stop,
+                serial_time_start=self.serial_time_start,
+                serial_time_stop=self.serial_time_stop,
+                serial_prune_n_electrons=self.serial_prune_n_electrons,
+                serial_prune_frequency=self.serial_prune_frequency,
+                allow_negative_pixels=self.allow_negative_pixels,
+                pixel_bounce=self.pixel_bounce,
+                verbosity=self.verbosity,
+            )
+        except TypeError:
+            image_post_cti = add_cti(
+                image=image_post_cti,
+                serial_ccd=serial_ccd,
+                serial_roe=self.serial_roe,
+                serial_traps=serial_trap_list,
+                serial_express=self.serial_express,
+                serial_window_offset=serial_window_offset,
+                serial_window_start=self.serial_window_start,
+                serial_window_stop=self.serial_window_stop,
+                serial_time_start=self.serial_time_start,
+                serial_time_stop=self.serial_time_stop,
+                serial_prune_n_electrons=self.serial_prune_n_electrons,
+                serial_prune_frequency=self.serial_prune_frequency,
+                pixel_bounce=self.pixel_bounce,
+                verbosity=self.verbosity,
+            )
 
         try:
             return aa.Array2D(
@@ -460,21 +521,37 @@ class Clocker2D(AbstractClocker):
         for i, fast_index in enumerate(fast_index_list):
             image_pre_cti_pass[:, i] = image_pre_cti[:, fast_index]
 
-        image_post_cti_pass = add_cti(
-            image=image_pre_cti_pass,
-            parallel_ccd=parallel_ccd,
-            parallel_roe=self.parallel_roe,
-            parallel_traps=parallel_trap_list,
-            parallel_express=self.parallel_express,
-            parallel_window_offset=self.parallel_window_offset,
-            parallel_time_start=self.parallel_time_start,
-            parallel_time_stop=self.parallel_time_stop,
-            parallel_prune_n_electrons=self.parallel_prune_n_electrons,
-            parallel_prune_frequency=self.parallel_prune_frequency,
-         #   allow_negative_pixels=self.allow_negative_pixels,
-            pixel_bounce=self.pixel_bounce,
-            verbosity=self.verbosity,
-        )
+        try:
+            image_post_cti_pass = add_cti(
+                image=image_pre_cti_pass,
+                parallel_ccd=parallel_ccd,
+                parallel_roe=self.parallel_roe,
+                parallel_traps=parallel_trap_list,
+                parallel_express=self.parallel_express,
+                parallel_window_offset=self.parallel_window_offset,
+                parallel_time_start=self.parallel_time_start,
+                parallel_time_stop=self.parallel_time_stop,
+                parallel_prune_n_electrons=self.parallel_prune_n_electrons,
+                parallel_prune_frequency=self.parallel_prune_frequency,
+                allow_negative_pixels=self.allow_negative_pixels,
+                pixel_bounce=self.pixel_bounce,
+                verbosity=self.verbosity,
+            )
+        except TypeError:
+            image_post_cti_pass = add_cti(
+                image=image_pre_cti_pass,
+                parallel_ccd=parallel_ccd,
+                parallel_roe=self.parallel_roe,
+                parallel_traps=parallel_trap_list,
+                parallel_express=self.parallel_express,
+                parallel_window_offset=self.parallel_window_offset,
+                parallel_time_start=self.parallel_time_start,
+                parallel_time_stop=self.parallel_time_stop,
+                parallel_prune_n_electrons=self.parallel_prune_n_electrons,
+                parallel_prune_frequency=self.parallel_prune_frequency,
+                pixel_bounce=self.pixel_bounce,
+                verbosity=self.verbosity,
+            )
 
         image_post_cti = np.zeros(shape=data.shape_native)
 
@@ -494,21 +571,37 @@ class Clocker2D(AbstractClocker):
 
         serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
 
-        image_post_cti = add_cti(
-            image=image_post_cti,
-            serial_ccd=serial_ccd,
-            serial_roe=self.serial_roe,
-            serial_traps=serial_trap_list,
-            serial_express=self.serial_express,
-            serial_window_offset=self.serial_window_offset,
-            serial_time_start=self.serial_time_start,
-            serial_time_stop=self.serial_time_stop,
-            serial_prune_n_electrons=self.serial_prune_n_electrons,
-            serial_prune_frequency=self.serial_prune_frequency,
-         #   allow_negative_pixels=self.allow_negative_pixels,
-            pixel_bounce=self.pixel_bounce,
-            verbosity=self.verbosity,
-        )
+        try:
+            image_post_cti = add_cti(
+                image=image_post_cti,
+                serial_ccd=serial_ccd,
+                serial_roe=self.serial_roe,
+                serial_traps=serial_trap_list,
+                serial_express=self.serial_express,
+                serial_window_offset=self.serial_window_offset,
+                serial_time_start=self.serial_time_start,
+                serial_time_stop=self.serial_time_stop,
+                serial_prune_n_electrons=self.serial_prune_n_electrons,
+                serial_prune_frequency=self.serial_prune_frequency,
+                allow_negative_pixels=self.allow_negative_pixels,
+                pixel_bounce=self.pixel_bounce,
+                verbosity=self.verbosity,
+            )
+        except TypeError:
+            image_post_cti = add_cti(
+                image=image_post_cti,
+                serial_ccd=serial_ccd,
+                serial_roe=self.serial_roe,
+                serial_traps=serial_trap_list,
+                serial_express=self.serial_express,
+                serial_window_offset=self.serial_window_offset,
+                serial_time_start=self.serial_time_start,
+                serial_time_stop=self.serial_time_stop,
+                serial_prune_n_electrons=self.serial_prune_n_electrons,
+                serial_prune_frequency=self.serial_prune_frequency,
+                pixel_bounce=self.pixel_bounce,
+                verbosity=self.verbosity,
+            )
 
         return aa.Array2D(
             values=image_post_cti, mask=data.mask, store_native=True, skip_mask=True
@@ -568,21 +661,37 @@ class Clocker2D(AbstractClocker):
         for i, fast_index in enumerate(fast_index_list):
             image_pre_cti_pass[i, :] = image_pre_cti[fast_index, :]
 
-        image_post_cti_pass = add_cti(
-            image=image_pre_cti_pass,
-            serial_ccd=serial_ccd,
-            serial_roe=self.serial_roe,
-            serial_traps=serial_trap_list,
-            serial_express=self.serial_express,
-            serial_window_offset=self.serial_window_offset,
-            serial_time_start=self.serial_time_start,
-            serial_time_stop=self.serial_time_stop,
-            serial_prune_n_electrons=self.serial_prune_n_electrons,
-            serial_prune_frequency=self.serial_prune_frequency,
-            allow_negative_pixels=self.allow_negative_pixels,
-            pixel_bounce=self.pixel_bounce,
-            verbosity=self.verbosity,
-        )
+        try:
+            image_post_cti_pass = add_cti(
+                image=image_pre_cti_pass,
+                serial_ccd=serial_ccd,
+                serial_roe=self.serial_roe,
+                serial_traps=serial_trap_list,
+                serial_express=self.serial_express,
+                serial_window_offset=self.serial_window_offset,
+                serial_time_start=self.serial_time_start,
+                serial_time_stop=self.serial_time_stop,
+                serial_prune_n_electrons=self.serial_prune_n_electrons,
+                serial_prune_frequency=self.serial_prune_frequency,
+                allow_negative_pixels=self.allow_negative_pixels,
+                pixel_bounce=self.pixel_bounce,
+                verbosity=self.verbosity,
+            )
+        except TypeError:
+            image_post_cti_pass = add_cti(
+                image=image_pre_cti_pass,
+                serial_ccd=serial_ccd,
+                serial_roe=self.serial_roe,
+                serial_traps=serial_trap_list,
+                serial_express=self.serial_express,
+                serial_window_offset=self.serial_window_offset,
+                serial_time_start=self.serial_time_start,
+                serial_time_stop=self.serial_time_stop,
+                serial_prune_n_electrons=self.serial_prune_n_electrons,
+                serial_prune_frequency=self.serial_prune_frequency,
+                pixel_bounce=self.pixel_bounce,
+                verbosity=self.verbosity,
+            )
 
         image_post_cti = np.zeros(shape=data.shape_native)
 
@@ -622,34 +731,63 @@ class Clocker2D(AbstractClocker):
         parallel_ccd = self.ccd_from(ccd_phase=parallel_ccd)
         serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
 
-        image_cti_removed = remove_cti(
-            image=data,
-            n_iterations=self.iterations,
-            parallel_ccd=parallel_ccd,
-            parallel_roe=self.parallel_roe,
-            parallel_traps=parallel_trap_list,
-            parallel_express=self.parallel_express,
-            parallel_window_offset=data.readout_offsets[0],
-            parallel_window_start=self.parallel_window_start,
-            parallel_window_stop=self.parallel_window_stop,
-            parallel_time_start=self.parallel_time_start,
-            parallel_time_stop=self.parallel_time_stop,
-            parallel_prune_n_electrons=self.parallel_prune_n_electrons,
-            parallel_prune_frequency=self.parallel_prune_frequency,
-            serial_ccd=serial_ccd,
-            serial_roe=self.serial_roe,
-            serial_traps=serial_trap_list,
-            serial_express=self.serial_express,
-            serial_window_offset=data.readout_offsets[1],
-            serial_window_start=self.serial_window_start,
-            serial_window_stop=self.serial_window_stop,
-            serial_time_start=self.serial_time_start,
-            serial_time_stop=self.serial_time_stop,
-            serial_prune_n_electrons=self.serial_prune_n_electrons,
-            serial_prune_frequency=self.serial_prune_frequency,
-            allow_negative_pixels=self.allow_negative_pixels,
-            pixel_bounce=self.pixel_bounce,
-        )
+        try:
+            image_cti_removed = remove_cti(
+                image=data,
+                n_iterations=self.iterations,
+                parallel_ccd=parallel_ccd,
+                parallel_roe=self.parallel_roe,
+                parallel_traps=parallel_trap_list,
+                parallel_express=self.parallel_express,
+                parallel_window_offset=data.readout_offsets[0],
+                parallel_window_start=self.parallel_window_start,
+                parallel_window_stop=self.parallel_window_stop,
+                parallel_time_start=self.parallel_time_start,
+                parallel_time_stop=self.parallel_time_stop,
+                parallel_prune_n_electrons=self.parallel_prune_n_electrons,
+                parallel_prune_frequency=self.parallel_prune_frequency,
+                serial_ccd=serial_ccd,
+                serial_roe=self.serial_roe,
+                serial_traps=serial_trap_list,
+                serial_express=self.serial_express,
+                serial_window_offset=data.readout_offsets[1],
+                serial_window_start=self.serial_window_start,
+                serial_window_stop=self.serial_window_stop,
+                serial_time_start=self.serial_time_start,
+                serial_time_stop=self.serial_time_stop,
+                serial_prune_n_electrons=self.serial_prune_n_electrons,
+                serial_prune_frequency=self.serial_prune_frequency,
+                allow_negative_pixels=self.allow_negative_pixels,
+                pixel_bounce=self.pixel_bounce,
+            )
+        except TypeError:
+            image_cti_removed = remove_cti(
+                image=data,
+                n_iterations=self.iterations,
+                parallel_ccd=parallel_ccd,
+                parallel_roe=self.parallel_roe,
+                parallel_traps=parallel_trap_list,
+                parallel_express=self.parallel_express,
+                parallel_window_offset=data.readout_offsets[0],
+                parallel_window_start=self.parallel_window_start,
+                parallel_window_stop=self.parallel_window_stop,
+                parallel_time_start=self.parallel_time_start,
+                parallel_time_stop=self.parallel_time_stop,
+                parallel_prune_n_electrons=self.parallel_prune_n_electrons,
+                parallel_prune_frequency=self.parallel_prune_frequency,
+                serial_ccd=serial_ccd,
+                serial_roe=self.serial_roe,
+                serial_traps=serial_trap_list,
+                serial_express=self.serial_express,
+                serial_window_offset=data.readout_offsets[1],
+                serial_window_start=self.serial_window_start,
+                serial_window_stop=self.serial_window_stop,
+                serial_time_start=self.serial_time_start,
+                serial_time_stop=self.serial_time_stop,
+                serial_prune_n_electrons=self.serial_prune_n_electrons,
+                serial_prune_frequency=self.serial_prune_frequency,
+                pixel_bounce=self.pixel_bounce,
+            )
 
         return aa.Array2D(
             values=image_cti_removed,

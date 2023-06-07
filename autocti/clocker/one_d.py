@@ -109,23 +109,41 @@ class Clocker1D(AbstractClocker):
 
         ccd = self.ccd_from(ccd_phase=ccd)
 
-        image_post_cti = add_cti(
-            image=image_pre_cti_2d,
-            parallel_ccd=ccd,
-            parallel_roe=self.roe,
-            parallel_traps=trap_list,
-            parallel_express=self.express,
-            parallel_window_offset=data.readout_offsets[0],
-            parallel_window_start=self.window_start,
-            parallel_window_stop=self.window_stop,
-            parallel_time_start=self.time_start,
-            parallel_time_stop=self.time_stop,
-            parallel_prune_n_electrons=self.prune_n_electrons,
-            parallel_prune_frequency=self.prune_frequency,
-            allow_negative_pixels=self.allow_negative_pixels,
-            pixel_bounce=self.pixel_bounce,
-            verbosity=self.verbosity,
-        )
+        try:
+            image_post_cti = add_cti(
+                image=image_pre_cti_2d,
+                parallel_ccd=ccd,
+                parallel_roe=self.roe,
+                parallel_traps=trap_list,
+                parallel_express=self.express,
+                parallel_window_offset=data.readout_offsets[0],
+                parallel_window_start=self.window_start,
+                parallel_window_stop=self.window_stop,
+                parallel_time_start=self.time_start,
+                parallel_time_stop=self.time_stop,
+                parallel_prune_n_electrons=self.prune_n_electrons,
+                parallel_prune_frequency=self.prune_frequency,
+                allow_negative_pixels=self.allow_negative_pixels,
+                pixel_bounce=self.pixel_bounce,
+                verbosity=self.verbosity,
+            )
+        except TypeError:
+            image_post_cti = add_cti(
+                image=image_pre_cti_2d,
+                parallel_ccd=ccd,
+                parallel_roe=self.roe,
+                parallel_traps=trap_list,
+                parallel_express=self.express,
+                parallel_window_offset=data.readout_offsets[0],
+                parallel_window_start=self.window_start,
+                parallel_window_stop=self.window_stop,
+                parallel_time_start=self.time_start,
+                parallel_time_stop=self.time_stop,
+                parallel_prune_n_electrons=self.prune_n_electrons,
+                parallel_prune_frequency=self.prune_frequency,
+                pixel_bounce=self.pixel_bounce,
+                verbosity=self.verbosity,
+            )
 
         return aa.Array1D.no_mask(
             values=image_post_cti.flatten(), pixel_scales=data.pixel_scales
@@ -161,24 +179,43 @@ class Clocker1D(AbstractClocker):
 
         ccd = self.ccd_from(ccd_phase=ccd)
 
-        image_post_cti = remove_cti(
-            image=image_pre_cti_2d,
-            n_iterations=self.iterations,
-            parallel_ccd=ccd,
-            parallel_roe=self.roe,
-            parallel_traps=trap_list,
-            parallel_express=self.express,
-            parallel_window_offset=data.readout_offsets[0],
-            parallel_window_start=self.window_start,
-            parallel_window_stop=self.window_stop,
-            parallel_time_start=self.time_start,
-            parallel_time_stop=self.time_stop,
-            parallel_prune_n_electrons=self.prune_n_electrons,
-            parallel_prune_frequency=self.prune_frequency,
-            allow_negative_pixels=self.allow_negative_pixels,
-            pixel_bounce=self.pixel_bounce,
-            verbosity=self.verbosity,
-        )
+        try:
+            image_post_cti = remove_cti(
+                image=image_pre_cti_2d,
+                n_iterations=self.iterations,
+                parallel_ccd=ccd,
+                parallel_roe=self.roe,
+                parallel_traps=trap_list,
+                parallel_express=self.express,
+                parallel_window_offset=data.readout_offsets[0],
+                parallel_window_start=self.window_start,
+                parallel_window_stop=self.window_stop,
+                parallel_time_start=self.time_start,
+                parallel_time_stop=self.time_stop,
+                parallel_prune_n_electrons=self.prune_n_electrons,
+                parallel_prune_frequency=self.prune_frequency,
+                allow_negative_pixels=self.allow_negative_pixels,
+                pixel_bounce=self.pixel_bounce,
+                verbosity=self.verbosity,
+            )
+        except TypeError:
+            image_post_cti = remove_cti(
+                image=image_pre_cti_2d,
+                n_iterations=self.iterations,
+                parallel_ccd=ccd,
+                parallel_roe=self.roe,
+                parallel_traps=trap_list,
+                parallel_express=self.express,
+                parallel_window_offset=data.readout_offsets[0],
+                parallel_window_start=self.window_start,
+                parallel_window_stop=self.window_stop,
+                parallel_time_start=self.time_start,
+                parallel_time_stop=self.time_stop,
+                parallel_prune_n_electrons=self.prune_n_electrons,
+                parallel_prune_frequency=self.prune_frequency,
+                pixel_bounce=self.pixel_bounce,
+                verbosity=self.verbosity,
+            )
 
         return aa.Array1D.no_mask(
             values=image_post_cti.flatten(), pixel_scales=data.pixel_scales
