@@ -266,7 +266,7 @@ class AnalysisImagingCI(af.Analysis):
         visualizer.visualize_dataset_combined(
             dataset_list=dataset_list,
         )
-        ggg
+
         visualizer.visualize_dataset_regions_combined(
             dataset_list=dataset_list,
             region_list=region_list,

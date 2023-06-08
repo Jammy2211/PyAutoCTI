@@ -88,6 +88,7 @@ class ImagingCIPlotter(Plotter):
         noise_map: bool = False,
         signal_to_noise_map: bool = False,
         pre_cti_data: bool = False,
+        pre_cti_data_residual_map: bool = False,
         cosmic_ray_map: bool = False,
     ):
         """
@@ -106,6 +107,8 @@ class ImagingCIPlotter(Plotter):
             Whether to make a 2D plot (via `imshow`) of the signal-to-noise map.
         pre_cti_data
             Whether to make a 2D plot (via `imshow`) of the pre-cti data.
+        pre_cti_data_residual_map
+            Whether to make a 2D plot (via `imshow`) of the pre-cti data residual-map.
         cosmic_ray_map
             Whether to make a 2D plot (via `imshow`) of the cosmic ray map.
         """
@@ -125,6 +128,16 @@ class ImagingCIPlotter(Plotter):
                 visuals_2d=self.get_visuals_2d(),
                 auto_labels=AutoLabels(
                     title=title_str or f"Pre CTI Data", filename="pre_cti_data"
+                ),
+            )
+
+        if pre_cti_data_residual_map:
+            self.mat_plot_2d.plot_array(
+                array=self.dataset.pre_cti_data_residual_map,
+                visuals_2d=self.get_visuals_2d(),
+                auto_labels=AutoLabels(
+                    title=title_str or f"Pre CTI Data Residual Map",
+                    filename="pre_cti_data_residual_map",
                 ),
             )
 

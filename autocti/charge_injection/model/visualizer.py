@@ -81,6 +81,11 @@ class VisualizerImagingCI(Visualizer):
 
         if should_plot("subplot_dataset"):
             multi_plotter.subplot_of_figure(func_name="figures_2d", figure_name="data")
+            multi_plotter.subplot_of_figure(func_name="figures_2d", figure_name="noise_map")
+            multi_plotter.subplot_of_figure(func_name="figures_2d", figure_name="signal_to_noise_map")
+            multi_plotter.subplot_of_figure(func_name="figures_2d", figure_name="pre_cti_data")
+            multi_plotter.subplot_of_figure(func_name="figures_2d", figure_name="pre_cti_data_residual_map")
+            multi_plotter.subplot_of_figure(func_name="figures_2d", figure_name="cosmic_ray_map")
 
     def visualize_dataset_regions_combined(
         self, dataset_list, region_list, folder_suffix: str = ""
