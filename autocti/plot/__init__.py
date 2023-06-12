@@ -47,7 +47,9 @@ from autoarray.plot.visuals.two_d import Visuals2D
 from autoarray.structures.plot.structure_plotters import YX1DPlotter
 from autoarray.structures.plot.structure_plotters import YX1DPlotter as Array1DPlotter
 from autoarray.structures.plot.structure_plotters import Array2DPlotter
+
 from autoarray.plot.multi_plotters import MultiFigurePlotter
+from autoarray.plot.multi_plotters import MultiYX1DPlotter
 
 from autocti.dataset_1d.plot.dataset_1d_plotters import Dataset1DPlotter
 from autocti.dataset_1d.plot.fit_plotters import FitDataset1DPlotter

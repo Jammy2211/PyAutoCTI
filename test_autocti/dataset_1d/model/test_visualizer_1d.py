@@ -99,9 +99,7 @@ def test__visualize_fit_combined(fit_1d_7, plot_path, plot_patch):
     plot_path = path.join(plot_path, "fit_dataset_combined")
 
     assert path.join(plot_path, "subplot_residual_map.png") in plot_patch.paths
-    assert (
-        path.join(plot_path, "subplot_chi_squared_map.png") not in plot_patch.paths
-    )
+    assert path.join(plot_path, "subplot_chi_squared_map.png") not in plot_patch.paths
 
 
 def test__visualize_fit_region_combined(fit_1d_7, plot_path, plot_patch):
@@ -118,6 +116,5 @@ def test__visualize_fit_region_combined(fit_1d_7, plot_path, plot_patch):
 
     assert path.join(plot_path, "subplot_residual_map_fpr.png") in plot_patch.paths
     assert (
-        path.join(plot_path, "subplot_chi_squared_map_fpr.png")
-        not in plot_patch.paths
+        path.join(plot_path, "subplot_chi_squared_map_fpr.png") not in plot_patch.paths
     )
