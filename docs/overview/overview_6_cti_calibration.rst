@@ -10,7 +10,7 @@ We are now in a position to perform CTI calibration, that is determine the best-
 dataset. This requires us to perform model-fitting, whereby we use a non-linear search algorithm to fit the
 model to the data.
 
-CTI modelingtick_maker.min_value uses the probabilistic programming language
+CTI modeling uses the probabilistic programming language
 `PyAutoFit <https://github.com/rhayes777/PyAutoFit>`_, an open-source Python framework that allows complex model
 fitting techniques to be straightforwardly integrated into scientific modeling software. Check it out if you
 are interested in developing your own software to perform advanced model-fitting!

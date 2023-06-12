@@ -275,12 +275,15 @@ class AnalysisImagingCI(af.Analysis):
             dataset_full_list = [analysis.dataset_full for analysis in analyses]
 
             visualizer.visualize_dataset_combined(
-                dataset_list=dataset_full_list, folder_suffix="_full"
+                dataset_list=dataset_full_list,
+                folder_suffix="_full",
+                filename_suffix="_full",
             )
             visualizer.visualize_dataset_regions_combined(
                 dataset_list=dataset_full_list,
                 region_list=region_list,
                 folder_suffix="_full",
+                filename_suffix="_full",
             )
 
     def visualize(
