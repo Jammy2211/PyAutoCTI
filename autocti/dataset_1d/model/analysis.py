@@ -119,8 +119,6 @@ class AnalysisDataset1D(af.Analysis):
             paths.save_object("dataset_full", self.dataset_full)
 
     def visualize_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
-        if not self.should_visualize(paths=paths):
-            return
 
         region_list = self.region_list_from()
 
@@ -143,9 +141,6 @@ class AnalysisDataset1D(af.Analysis):
     def visualize_before_fit_combined(
         self, analyses, paths: af.DirectoryPaths, model: af.Collection
     ):
-        if not self.should_visualize(paths=paths):
-            return
-
         if analyses is None:
             return
 
@@ -181,9 +176,6 @@ class AnalysisDataset1D(af.Analysis):
         instance: af.ModelInstance,
         during_analysis: bool,
     ):
-        if not self.should_visualize(paths=paths):
-            return
-
         region_list = self.region_list_from()
 
         visualizer = VisualizerDataset1D(visualize_path=paths.image_path)
@@ -210,8 +202,6 @@ class AnalysisDataset1D(af.Analysis):
         instance: af.ModelInstance,
         during_analysis: bool,
     ):
-        if not self.should_visualize(paths=paths):
-            return
 
         if analyses is None:
             return
