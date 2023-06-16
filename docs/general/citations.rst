@@ -18,3 +18,8 @@ You should also specify the non-linear search(es) you use in your analysis (e.g.
 the main body of text, and delete as appropriate any packages your analysis did not use. The citations.bib file includes
 the citation key for all of these projects.
 
+Dynesty
+-------
+
+If you used the nested sampling algorithm Dynesty, please follow the citation instructions `on the dynesty readthedocs <https://dynesty.readthedocs.io/en/latest/references.html>`_.
+
