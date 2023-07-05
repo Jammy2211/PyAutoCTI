@@ -220,7 +220,6 @@ class AnalysisImagingCI(af.Analysis):
             paths.save_object("dataset_full", self.dataset_full)
 
     def visualize_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
-
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
 
         region_list = self.region_list_from(model=model)
@@ -246,7 +245,6 @@ class AnalysisImagingCI(af.Analysis):
     def visualize_before_fit_combined(
         self, analyses, paths: af.DirectoryPaths, model: af.Collection
     ):
-
         if analyses is None:
             return
 
@@ -288,7 +286,6 @@ class AnalysisImagingCI(af.Analysis):
         instance: af.ModelInstance,
         during_analysis: bool,
     ):
-
         fit = self.fit_via_instance_from(instance=instance)
         region_list = self.region_list_from(model=instance)
 
@@ -320,7 +317,6 @@ class AnalysisImagingCI(af.Analysis):
         instance: af.ModelInstance,
         during_analysis: bool,
     ):
-
         fit_list = [
             analysis.fit_via_instance_from(instance=instance) for analysis in analyses
         ]

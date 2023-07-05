@@ -108,7 +108,7 @@ def test__imaging_ci_from(imaging_ci_7x7):
 
     dataset = extract.imaging_ci_from(dataset=imaging_ci_7x7, columns=(0, 6))
 
-    assert (dataset.data.native == imaging_ci_7x7.image.native[:, 1:7]).all()
+    assert (dataset.data.native == imaging_ci_7x7.data.native[:, 1:7]).all()
     assert (dataset.noise_map.native == imaging_ci_7x7.noise_map.native[:, 1:7]).all()
     assert (
         dataset.pre_cti_data.native == imaging_ci_7x7.pre_cti_data.native[:, 1:7]
