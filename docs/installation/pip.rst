@@ -21,19 +21,18 @@ the installation has clean dependencies):
 
     pip install autocti
 
-You may get warnings which state something like:
+The CTI clocking algorithm, arCTIc, is an optional install, because there are uaes for **PyAutoCTI** that do not
+require it and it can present difficulties to install.
+
+However, for the majority of users arCTIc will be needed, so we recommend you install it now.
 
 .. code-block:: bash
 
-    ERROR: autoarray 2023.7.5.3 has requirement numpy<=1.22.1, but you'll have numpy 1.22.2 which is incompatible.
-    ERROR: numba 0.53.1 has requirement llvmlite<0.37,>=0.36.0rc1, but you'll have llvmlite 0.38.0 which is incompatible.
-
-If you see these messages, they do not mean that the installation has failed and the instructions below will
-identify clearly if the installation is a success.
-
-If this raises no errors **PyAutoCTI** is installed!
+    pip install arcticpy
 
 If there is an error (e.g. issues with installing GSL) check out the `troubleshooting section <https://pyautocti.readthedocs.io/en/latest/installation/troubleshooting.html>`_.
+
+If this raises no errors **PyAutoCTI** is installed!
 
 Numba
 -----

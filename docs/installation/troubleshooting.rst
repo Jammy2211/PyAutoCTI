@@ -9,12 +9,11 @@ GSL
 `arcticpy` depends on the GSL libraries, which can cause installation issues.
 
 If your installation of **PyAutoCTI** fails due to GSL, try installing the following version of arcticpy which does
-not depend on GSL, and then install `autocti` with an ignore on the arcticpy dependency:
+not depend on GSL, after you have installed ``autocti``:
 
 .. code-block:: bash
 
     pip install arcticpy_no_gsl
-    pip install autocti --ignore-installed arcticpy
 
 Current Working Directory
 -------------------------
