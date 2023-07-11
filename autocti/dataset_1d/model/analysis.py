@@ -240,9 +240,8 @@ class AnalysisDataset1D(af.Analysis):
     def make_result(
         self,
         samples: af.SamplesPDF,
-        model: af.Collection,
         sigma=1.0,
         use_errors=True,
         use_widths=False,
     ) -> ResultDataset1D:
-        return ResultDataset1D(samples=samples, model=model, analysis=self)
+        return ResultDataset1D(samples=samples, analysis=self)
