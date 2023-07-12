@@ -219,7 +219,11 @@ def make_samples_with_result():
 
     instance = model.instance_from_prior_medians()
 
-    return MockSamples(max_log_likelihood_instance=instance)
+    return MockSamples(
+        model=model,
+        max_log_likelihood_instance=instance,
+        gaussian_tuples=[(1.0, 2.0)] * model.prior_count
+    )
 
 
 def make_analysis_imaging_ci_7x7():

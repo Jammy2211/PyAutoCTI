@@ -2,11 +2,11 @@ from autofit.non_linear import result
 
 
 class Result(result.Result):
-    def __init__(self, samples, model, analysis):
+    def __init__(self, samples, analysis):
         """
         The result of a phase
         """
-        super().__init__(samples=samples, model=model)
+        super().__init__(samples=samples)
 
         self.analysis = analysis
 
