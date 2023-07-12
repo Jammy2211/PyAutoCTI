@@ -5,45 +5,37 @@ from autocti.model import result as res
 import numpy as np
 import pytest
 
+def test__result_contains_instance_with_cti_model(
+    analysis_imaging_ci_7x7, samples_with_result
+):
+    result = res.Result(
+        samples=samples_with_result, analysis=analysis_imaging_ci_7x7,
+    )
 
-class TestResult:
-    def test__result_contains_instance_with_cti_model(
-        self, analysis_imaging_ci_7x7, samples_with_result
-    ):
-        result = res.Result(
-            samples=samples_with_result, analysis=analysis_imaging_ci_7x7, model=None
-        )
+    assert isinstance(
+        result.instance.cti.parallel_trap_list[0], ac.TrapInstantCapture
+    )
+    assert isinstance(result.instance.cti.parallel_ccd, ac.CCDPhase)
 
-        assert isinstance(
-            result.instance.cti.parallel_trap_list[0], ac.TrapInstantCapture
-        )
-        assert isinstance(result.instance.cti.parallel_ccd, ac.CCDPhase)
+def test__clocker_passed_as_result_correctly(
+    analysis_imaging_ci_7x7, samples_with_result, parallel_clocker_2d
+):
+    result = res.Result(
+        samples=samples_with_result, analysis=analysis_imaging_ci_7x7,
+    )
 
-    def test__clocker_passed_as_result_correctly(
-        self, analysis_imaging_ci_7x7, samples_with_result, parallel_clocker_2d
-    ):
-        result = res.Result(
-            samples=samples_with_result, analysis=analysis_imaging_ci_7x7, model=None
-        )
+    assert isinstance(result.clocker, ac.Clocker2D)
+    assert result.clocker.parallel_express == parallel_clocker_2d.parallel_express
 
-        assert isinstance(result.clocker, ac.Clocker2D)
-        assert result.clocker.parallel_express == parallel_clocker_2d.parallel_express
+def test__masks_available_as_property(
+    analysis_imaging_ci_7x7,
+    samples_with_result,
+    parallel_clocker_2d,
+    traps_x1,
+    ccd,
+):
+    result = res.ResultDataset(
+        samples=samples_with_result, analysis=analysis_imaging_ci_7x7,
+    )
 
-
-class TestResultDataset:
-    def test__masks_available_as_property(
-        self,
-        analysis_imaging_ci_7x7,
-        samples_with_result,
-        parallel_clocker_2d,
-        traps_x1,
-        ccd,
-    ):
-        model = af.Collection(
-            cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd)
-        )
-        result = res.ResultDataset(
-            samples=samples_with_result, analysis=analysis_imaging_ci_7x7, model=model
-        )
-
-        assert (result.mask == np.full(fill_value=False, shape=(7, 7))).all()
+    assert (result.mask == np.full(fill_value=False, shape=(7, 7))).all()
