@@ -189,7 +189,7 @@ class AnalysisImagingCI(af.Analysis):
             hyper_noise_scale=hyper_noise_scale,
         )
 
-    def save_attributes_for_aggregator(self, paths: af.DirectoryPaths):
+    def save_attributes(self, paths: af.DirectoryPaths):
         """
         Before the model-fit via the non-linear search begins, this routine saves attributes of the `Analysis` object
         to the `pickles` folder such that they can be loaded after the analysis using PyAutoFit's database and
@@ -355,8 +355,5 @@ class AnalysisImagingCI(af.Analysis):
     def make_result(
         self,
         samples: af.SamplesPDF,
-        sigma=1.0,
-        use_errors=True,
-        use_widths=False,
     ) -> ResultImagingCI:
         return ResultImagingCI(samples=samples, analysis=self)
