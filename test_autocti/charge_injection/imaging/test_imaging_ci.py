@@ -203,27 +203,6 @@ def test__output_to_fits___all_arrays(imaging_ci_7x7, output_data_dir):
     assert (dataset.cosmic_ray_map.native == 0.0 * np.ones((7, 7))).all()
 
 
-def test__output_to_fits__mask(imaging_ci_7x7, mask_2d_7x7, output_data_dir):
-
-    masked_imaging_ci_7x7 = imaging_ci_7x7.apply_mask(mask=mask_2d_7x7)
-
-    masked_imaging_ci_7x7.output_to_fits(
-        data_path=path.join(output_data_dir, "data.fits"),
-        noise_map_path=path.join(output_data_dir, "noise_map.fits"),
-        mask_path=path.join(output_data_dir, "mask.fits"),
-    )
-
-    data_via_fits = ac.Array2D.from_fits(
-        file_path=path.join(output_data_dir, "data.fits"), pixel_scales=0.1
-    )
-    mask_via_fits = ac.Mask2D.from_fits(
-        file_path=path.join(output_data_dir, "mask.fits"), pixel_scales=0.1
-    )
-
-    assert masked_imaging_ci_7x7.data.native == pytest.approx(data_via_fits.native, 1.0e-4)
-    assert masked_imaging_ci_7x7.mask == pytest.approx(mask_via_fits, 1.0e-4)
-
-
 def test__apply_mask__masks_arrays_correctly(imaging_ci_7x7):
     mask = ac.Mask2D.all_false(
         shape_native=imaging_ci_7x7.shape_native, pixel_scales=1.0

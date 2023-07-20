@@ -154,8 +154,33 @@ class Dataset1D(aa.AbstractDataset):
         )
 
     def output_to_fits(
-        self, data_path, noise_map_path=None, pre_cti_data_path=None, overwrite=False
+        self,
+            data_path: Union[Path, str],
+            noise_map_path: Optional[Union[Path, str]] = None,
+            pre_cti_data_path: Optional[Union[Path, str]] = None,
+            overwrite: bool = False,
     ):
+        """
+        Output the 1D dataset to multiple .fits file.
+
+        For each attribute of the 1D dataset data (e.g. `data`, `noise_map`, `pre_cti_data`) the path to
+        the .fits can be specified, with `hdu=0` assumed automatically.
+
+        If the `data` has been masked, the masked data is output to .fits files. A mask can be separately output to
+        a file `mask.fits` via the `Mask` objects `output_to_fits` method.
+
+        Parameters
+        ----------
+        data_path
+            The path to the data .fits file where the image data is output (e.g. '/path/to/data.fits').
+        noise_map_path
+            The path to the noise_map .fits where the noise_map is output (e.g. '/path/to/noise_map.fits').
+        pre_cti_data_path
+            The path to the pre CTI data .fits file where the pre CTI data is output (e.g. '/path/to/pre_cti_data.fits').
+        overwrite
+            If `True`, the .fits files are overwritten if they already exist, if `False` they are not and an
+            exception is raised.
+        """
         self.data.output_to_fits(file_path=data_path, overwrite=overwrite)
         self.noise_map.output_to_fits(file_path=noise_map_path, overwrite=overwrite)
         self.pre_cti_data.output_to_fits(

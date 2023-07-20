@@ -25,7 +25,7 @@ class ImagingCI(aa.Imaging):
     ):
         super().__init__(data=data, noise_map=noise_map)
 
-        self.data = self.image.native
+        self.data = self.data.native
         self.noise_map = self.noise_map.native
         self.pre_cti_data = pre_cti_data.native
 
@@ -64,7 +64,7 @@ class ImagingCI(aa.Imaging):
 
     @property
     def mask(self):
-        return self.image.mask
+        return self.data.mask
 
     @property
     def region_list(self):
@@ -85,7 +85,7 @@ class ImagingCI(aa.Imaging):
         -------
         A list of the normalization of every column of the charge regions
         """
-        masked_image = np.ma.array(data=self.image, mask=self.image.mask)
+        masked_image = np.ma.array(data=self.data, mask=self.data.mask)
 
         return [
             np.ma.median(masked_image[region.y0 : region.y1, column_index])
@@ -108,7 +108,7 @@ class ImagingCI(aa.Imaging):
         return self.data - self.pre_cti_data
 
     def apply_mask(self, mask: mask_2d.Mask2D) -> "ImagingCI":
-        image = aa.Array2D(values=self.image.native, mask=mask)
+        image = aa.Array2D(values=self.data.native, mask=mask)
         noise_map = aa.Array2D(values=self.noise_map.native, mask=mask)
 
         if self.cosmic_ray_map is not None:
@@ -290,17 +290,16 @@ class ImagingCI(aa.Imaging):
         noise_map_path : Optional[Union[Path, str]] = None,
         pre_cti_data_path : Optional[Union[Path, str]] = None,
         cosmic_ray_map_path : Optional[Union[Path, str]] = None,
-        mask_path: Optional[Union[Path, str]] = None,
         overwrite : bool = False,
     ):
         """
-        Output a charge injection imaging dataset to multiple .fits file.
+        Output the charge injection imaging dataset to multiple .fits file.
 
         For each attribute of the charge injection imaging data (e.g. `data`, `noise_map`, `pre_cti_data`) the path to
         the .fits can be specified, with `hdu=0` assumed automatically.
 
         If the `data` has been masked, the masked data is output to .fits files. A mask can be separately output to
-        a file `mask.fits` by specifying the `mask_path` input.
+        a file `mask.fits` via the `Mask` objects `output_to_fits` method.
 
         Parameters
         ----------
@@ -317,7 +316,7 @@ class ImagingCI(aa.Imaging):
             If `True`, the .fits files are overwritten if they already exist, if `False` they are not and an
             exception is raised.
         """
-        self.image.output_to_fits(file_path=data_path, overwrite=overwrite)
+        self.data.output_to_fits(file_path=data_path, overwrite=overwrite)
 
         if noise_map_path is not None:
             self.noise_map.output_to_fits(file_path=noise_map_path, overwrite=overwrite)
@@ -331,6 +330,3 @@ class ImagingCI(aa.Imaging):
             self.cosmic_ray_map.output_to_fits(
                 file_path=cosmic_ray_map_path, overwrite=overwrite
             )
-
-        if mask_path is not None:
-            self.mask.output_to_fits(file_path=mask_path, overwrite=overwrite)
