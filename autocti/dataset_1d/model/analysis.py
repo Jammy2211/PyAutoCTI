@@ -125,7 +125,9 @@ class AnalysisDataset1D(af.Analysis):
             file_path=dataset_path / "mask.fits"
         )
 
-        paths.save_object("clocker", self.clocker)
+        self.clocker.output_to_json(
+            file_path=paths._files_path / "clocker.json"
+        )
         paths.save_object("settings_cti", self.settings_cti)
         if self.dataset_full is not None:
             paths.save_object("dataset_full", self.dataset_full)
