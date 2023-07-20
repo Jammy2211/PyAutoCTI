@@ -1,5 +1,6 @@
 import numpy as np
-from typing import Optional, Dict
+from pathlib import Path
+from typing import Optional, Dict, Union
 
 import autoarray as aa
 
@@ -65,18 +66,57 @@ class Dataset1D(aa.AbstractDataset):
     @classmethod
     def from_fits(
         cls,
-        layout,
-        data_path,
-        pixel_scales,
-        data_hdu=0,
-        noise_map_path=None,
-        noise_map_hdu=0,
-        noise_map_from_single_value=None,
-        pre_cti_data_path=None,
-        pre_cti_data_hdu=0,
-        pre_cti_data=None,
+        pixel_scales: aa.type.PixelScales,
+        layout : Layout1D,
+        data_path : Optional[Union[Path, str]] = None,
+        data_hdu : int = 0,
+        noise_map_path  : Optional[Union[Path, str]] = None,
+        noise_map_hdu : int = 0,
+        noise_map_from_single_value : float = None,
+        pre_cti_data_path  : Optional[Union[Path, str]] = None,
+        pre_cti_data_hdu : int = 0,
+        pre_cti_data : aa.Array1D = None,
         settings_dict: Optional[Dict] = None,
     ):
+        """
+        Load 1D dataset from multiple .fits file.
+
+        For each attribute of the 1D dataset (e.g. `data`, `noise_map`, `pre_cti_data`) the path to the .fits and
+        the `hdu` containing the data can be specified.
+
+        The `noise_map` assumes the noise value in each `data` value are independent, where these values are the
+        RMS standard deviation error in each pixel.
+
+        If the dataset has a mask associated with it (e.g. in a `mask.fits` file) the file must be loaded separately
+        via the `Mask1D` object and applied to the imaging after loading via fits using the `from_fits` method.
+
+        Parameters
+        ----------
+        pixel_scales
+            The (y,x) arcsecond-to-pixel units conversion factor of every pixel. If this is input as a `float`,
+            it is converted to a (float, float).
+        layout
+            The layout of the 1D dataset, containing information like where the FPR and EPER are located.
+        data_path
+            The path to the data .fits file containing the data (e.g. '/path/to/data.fits').
+        data_hdu
+            The hdu the image data is contained in the .fits file specified by `data_path`.
+        noise_map_path
+            The path to the noise_map .fits file containing the noise_map (e.g. '/path/to/noise_map.fits').
+        noise_map_hdu
+            The hdu the noise map is contained in the .fits file specified by `noise_map_path`.
+        noise_map_from_single_value
+            Creates a `noise_map` of constant values if this is input instead of loading via .fits.
+        pre_cti_data_path
+            The path to the pre CTI data .fits file containing the image data (e.g. '/path/to/pre_cti_data.fits').
+        pre_cti_data_hdu
+            The hdu the pre cti data is contained in the .fits file specified by `pre_cti_data_path`.
+        pre_cti_data
+            Manually input the pre CTI data as an `Array1D` instead of loading it via a .fits file.
+        settings_dict
+            A dictionary of settings associated with the charge injeciton imaging (e.g. voltage settings) which is
+            used for visualization.
+        """
         data = aa.Array1D.from_fits(
             file_path=data_path, hdu=data_hdu, pixel_scales=pixel_scales
         )

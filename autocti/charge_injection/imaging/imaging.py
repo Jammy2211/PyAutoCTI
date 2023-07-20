@@ -194,19 +194,19 @@ class ImagingCI(aa.Imaging):
         the .fits and the `hdu` containing the data can be specified.
 
         The `noise_map` assumes the noise value in each `data` value are independent, where these values are the
-        the RMS standard deviation error in each pixel.
+        RMS standard deviation error in each pixel.
         
         If the dataset has a mask associated with it (e.g. in a `mask.fits` file) the file must be loaded separately
         via the `Mask2D` object and applied to the imaging after loading via fits using the `from_fits` method.
  
         Parameters
         ----------
-        layout
-            The layout of the charge injection, containing information like where the parallel and serial FPR and 
-            EPER are located.
         pixel_scales
             The (y,x) arcsecond-to-pixel units conversion factor of every pixel. If this is input as a `float`,
             it is converted to a (float, float).
+        layout
+            The layout of the charge injection, containing information like where the parallel and serial FPR and
+            EPER are located.
         data_path
             The path to the data .fits file containing the image data (e.g. '/path/to/data.fits').
         data_hdu
