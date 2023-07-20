@@ -108,6 +108,7 @@ def make_mask_2d_7x7_unmasked():
 def make_mask_2d_7x7():
     return fixtures.make_mask_2d_7x7()
 
+
 ### LINES ###
 
 

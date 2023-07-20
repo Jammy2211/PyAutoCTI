@@ -9,9 +9,7 @@ from autocti import exc
 
 class AbstractSettingsCTI(Dictable):
     def check_total_density_within_range_of_traps(
-        self,
-        total_density_range: Tuple[float, float],
-        traps: List[TrapInstantCapture]
+        self, total_density_range: Tuple[float, float], traps: List[TrapInstantCapture]
     ):
         if total_density_range is not None:
             total_density = sum([trap.density for trap in traps])
@@ -25,8 +23,8 @@ class AbstractSettingsCTI(Dictable):
 
 class SettingsCTI1D(AbstractSettingsCTI):
     def __init__(
-            self,
-            total_density_range : Optional[Tuple[float, float]] = None,
+        self,
+        total_density_range: Optional[Tuple[float, float]] = None,
     ):
         """
         Controls the modeling settings of CTI clocking in 1D.
@@ -45,7 +43,7 @@ class SettingsCTI1D(AbstractSettingsCTI):
         """
         self.total_density_range = total_density_range
 
-    def check_total_density_within_range(self, traps : List[TrapInstantCapture]):
+    def check_total_density_within_range(self, traps: List[TrapInstantCapture]):
         """
         Checks that the total density of traps is within the input range.
 
@@ -68,8 +66,8 @@ class SettingsCTI1D(AbstractSettingsCTI):
 class SettingsCTI2D(AbstractSettingsCTI):
     def __init__(
         self,
-        parallel_total_density_range : Optional[Tuple[float, float]] = None,
-        serial_total_density_range  : Optional[Tuple[float, float]] = None
+        parallel_total_density_range: Optional[Tuple[float, float]] = None,
+        serial_total_density_range: Optional[Tuple[float, float]] = None,
     ):
         """
         Controls the modeling settings of CTI clocking in 2D.

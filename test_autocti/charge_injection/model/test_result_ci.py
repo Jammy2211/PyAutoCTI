@@ -24,7 +24,8 @@ def test__fits_to_extracted_and_full_datasets_available(
     )
 
     result = ac.ResultImagingCI(
-        samples=samples_with_result, analysis=analysis,
+        samples=samples_with_result,
+        analysis=analysis,
     )
 
     assert (
@@ -83,7 +84,8 @@ def test__noise_scaling_map_dict_is_list_of_result__are_correct(
     )
 
     result = ac.ResultImagingCI(
-        samples=samples_with_result, analysis=analysis,
+        samples=samples_with_result,
+        analysis=analysis,
     )
 
     assert result.noise_scaling_map_dict["regions_ci"] == pytest.approx(

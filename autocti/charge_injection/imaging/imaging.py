@@ -173,32 +173,32 @@ class ImagingCI(aa.Imaging):
     def from_fits(
         cls,
         pixel_scales: aa.type.PixelScales,
-        layout : Layout2DCI,
-        data_path : Optional[Union[Path, str]] = None,
-        data_hdu : int = 0,
+        layout: Layout2DCI,
+        data_path: Optional[Union[Path, str]] = None,
+        data_hdu: int = 0,
         data: aa.Array2D = None,
-        noise_map_path  : Optional[Union[Path, str]] = None,
-        noise_map_hdu : int = 0,
-        noise_map_from_single_value : float = None,
-        pre_cti_data_path  : Optional[Union[Path, str]] = None,
-        pre_cti_data_hdu : int = 0,
-        pre_cti_data : aa.Array2D = None,
-        cosmic_ray_map_path  : Optional[Union[Path, str]] = None,
-        cosmic_ray_map_hdu : int = 0,
+        noise_map_path: Optional[Union[Path, str]] = None,
+        noise_map_hdu: int = 0,
+        noise_map_from_single_value: float = None,
+        pre_cti_data_path: Optional[Union[Path, str]] = None,
+        pre_cti_data_hdu: int = 0,
+        pre_cti_data: aa.Array2D = None,
+        cosmic_ray_map_path: Optional[Union[Path, str]] = None,
+        cosmic_ray_map_hdu: int = 0,
         settings_dict: Optional[Dict] = None,
     ) -> "ImagingCI":
         """
-        Load charge injection imaging from multiple .fits file. 
-        
-        For each attribute of the charge injection data (e.g. `data`, `noise_map`, `pre_cti_data`) the path to 
+        Load charge injection imaging from multiple .fits file.
+
+        For each attribute of the charge injection data (e.g. `data`, `noise_map`, `pre_cti_data`) the path to
         the .fits and the `hdu` containing the data can be specified.
 
         The `noise_map` assumes the noise value in each `data` value are independent, where these values are the
         RMS standard deviation error in each pixel.
-        
+
         If the dataset has a mask associated with it (e.g. in a `mask.fits` file) the file must be loaded separately
         via the `Mask2D` object and applied to the imaging after loading via fits using the `from_fits` method.
- 
+
         Parameters
         ----------
         pixel_scales
@@ -246,9 +246,7 @@ class ImagingCI(aa.Imaging):
         else:
             noise_map = np.ones(data.shape_native) * noise_map_from_single_value
 
-        noise_map = aa.Array2D.no_mask(
-            values=noise_map, pixel_scales=pixel_scales
-        )
+        noise_map = aa.Array2D.no_mask(values=noise_map, pixel_scales=pixel_scales)
 
         if pre_cti_data_path is not None and pre_cti_data is None:
             pre_cti_data = aa.Array2D.from_fits(
@@ -286,11 +284,11 @@ class ImagingCI(aa.Imaging):
 
     def output_to_fits(
         self,
-        data_path : Union[Path, str],
-        noise_map_path : Optional[Union[Path, str]] = None,
-        pre_cti_data_path : Optional[Union[Path, str]] = None,
-        cosmic_ray_map_path : Optional[Union[Path, str]] = None,
-        overwrite : bool = False,
+        data_path: Union[Path, str],
+        noise_map_path: Optional[Union[Path, str]] = None,
+        pre_cti_data_path: Optional[Union[Path, str]] = None,
+        cosmic_ray_map_path: Optional[Union[Path, str]] = None,
+        overwrite: bool = False,
     ):
         """
         Output the charge injection imaging dataset to multiple .fits file.

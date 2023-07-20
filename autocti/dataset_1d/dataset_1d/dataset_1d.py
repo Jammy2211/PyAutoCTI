@@ -67,15 +67,15 @@ class Dataset1D(aa.AbstractDataset):
     def from_fits(
         cls,
         pixel_scales: aa.type.PixelScales,
-        layout : Layout1D,
-        data_path : Optional[Union[Path, str]] = None,
-        data_hdu : int = 0,
-        noise_map_path  : Optional[Union[Path, str]] = None,
-        noise_map_hdu : int = 0,
-        noise_map_from_single_value : float = None,
-        pre_cti_data_path  : Optional[Union[Path, str]] = None,
-        pre_cti_data_hdu : int = 0,
-        pre_cti_data : aa.Array1D = None,
+        layout: Layout1D,
+        data_path: Optional[Union[Path, str]] = None,
+        data_hdu: int = 0,
+        noise_map_path: Optional[Union[Path, str]] = None,
+        noise_map_hdu: int = 0,
+        noise_map_from_single_value: float = None,
+        pre_cti_data_path: Optional[Union[Path, str]] = None,
+        pre_cti_data_hdu: int = 0,
+        pre_cti_data: aa.Array1D = None,
         settings_dict: Optional[Dict] = None,
     ):
         """
@@ -155,10 +155,10 @@ class Dataset1D(aa.AbstractDataset):
 
     def output_to_fits(
         self,
-            data_path: Union[Path, str],
-            noise_map_path: Optional[Union[Path, str]] = None,
-            pre_cti_data_path: Optional[Union[Path, str]] = None,
-            overwrite: bool = False,
+        data_path: Union[Path, str],
+        noise_map_path: Optional[Union[Path, str]] = None,
+        pre_cti_data_path: Optional[Union[Path, str]] = None,
+        overwrite: bool = False,
     ):
         """
         Output the 1D dataset to multiple .fits file.

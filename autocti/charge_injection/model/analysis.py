@@ -221,17 +221,13 @@ class AnalysisImagingCI(af.Analysis):
             noise_map_path=dataset_path / "noise_map.fits",
             pre_cti_data_path=dataset_path / "pre_cti_data.fits",
             cosmic_ray_map_path=dataset_path / "cosmic_ray_map.fits",
-            overwrite=True
+            overwrite=True,
         )
-
-        self.dataset.mask.output_to_fits(
-            file_path=dataset_path / "mask.fits"
+        self.dataset.mask.output_to_fits(file_path=dataset_path / "mask.fits")
+        self.clocker.output_to_json(file_path=paths._files_path / "clocker.json")
+        self.settings_cti.output_to_json(
+            file_path=paths._files_path / "settings_cti.json"
         )
-
-        self.clocker.output_to_json(
-            file_path=paths._files_path / "clocker.json"
-        )
-        paths.save_object("settings_cti", self.settings_cti)
         if self.dataset_full is not None:
             paths.save_object("dataset_full", self.dataset_full)
 

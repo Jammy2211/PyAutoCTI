@@ -10,9 +10,9 @@ test_data_path = path.join(
     "{}".format(path.dirname(path.realpath(__file__))), "files", "arrays"
 )
 
+
 @pytest.fixture(name="output_data_dir")
 def make_output_data_dir():
-
     output_data_dir = path.join(test_data_path, "output_test")
 
     if path.exists(output_data_dir):
@@ -21,6 +21,7 @@ def make_output_data_dir():
     os.makedirs(output_data_dir)
 
     return output_data_dir
+
 
 def test__norm_columns_list():
     data = ac.Array2D.full(fill_value=1.0, shape_native=(5, 5), pixel_scales=(1.0, 1.0))
@@ -176,7 +177,6 @@ def test__from_fits__noise_map_from_single_value(layout_ci_7x7):
 
 
 def test__output_to_fits___all_arrays(imaging_ci_7x7, output_data_dir):
-
     imaging_ci_7x7.output_to_fits(
         data_path=path.join(output_data_dir, "data.fits"),
         noise_map_path=path.join(output_data_dir, "noise_map.fits"),
