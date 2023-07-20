@@ -290,8 +290,33 @@ class ImagingCI(aa.Imaging):
         noise_map_path : Optional[Union[Path, str]] = None,
         pre_cti_data_path : Optional[Union[Path, str]] = None,
         cosmic_ray_map_path : Optional[Union[Path, str]] = None,
+        mask_path: Optional[Union[Path, str]] = None,
         overwrite : bool = False,
     ):
+        """
+        Output a charge injection imaging dataset to multiple .fits file.
+
+        For each attribute of the charge injection imaging data (e.g. `data`, `noise_map`, `pre_cti_data`) the path to
+        the .fits can be specified, with `hdu=0` assumed automatically.
+
+        If the `data` has been masked, the masked data is output to .fits files. A mask can be separately output to
+        a file `mask.fits` by specifying the `mask_path` input.
+
+        Parameters
+        ----------
+        data_path
+            The path to the data .fits file where the image data is output (e.g. '/path/to/data.fits').
+        noise_map_path
+            The path to the noise_map .fits where the noise_map is output (e.g. '/path/to/noise_map.fits').
+        pre_cti_data_path
+            The path to the pre CTI data .fits file where the pre CTI data is output (e.g. '/path/to/pre_cti_data.fits').
+        cosmic_ray_map_path
+            The path to the cosmic ray map .fits file where the cosmic ray map is
+            output (e.g. '/path/to/cosmic_ray_map.fits').
+        overwrite
+            If `True`, the .fits files are overwritten if they already exist, if `False` they are not and an
+            exception is raised.
+        """
         self.image.output_to_fits(file_path=data_path, overwrite=overwrite)
 
         if noise_map_path is not None:
@@ -306,3 +331,6 @@ class ImagingCI(aa.Imaging):
             self.cosmic_ray_map.output_to_fits(
                 file_path=cosmic_ray_map_path, overwrite=overwrite
             )
+
+        if mask_path is not None:
+            self.mask.output_to_fits(file_path=mask_path, overwrite=overwrite)
