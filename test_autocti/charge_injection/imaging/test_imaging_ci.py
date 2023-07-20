@@ -190,6 +190,7 @@ def test__output_to_fits___all_arrays(layout_ci_7x7):
         noise_map_path=path.join(output_data_dir, "noise_map.fits"),
         pre_cti_data_path=path.join(output_data_dir, "pre_cti_data.fits"),
         cosmic_ray_map_path=path.join(output_data_dir, "cosmic_ray_map.fits"),
+
     )
 
     dataset = ac.ImagingCI.from_fits(
