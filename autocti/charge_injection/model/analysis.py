@@ -214,12 +214,18 @@ class AnalysisImagingCI(af.Analysis):
             visualization,and the pickled objects used by the aggregator output by this function.
         """
 
+        dataset_path = paths._files_path / "dataset"
+
         self.dataset.output_to_fits(
-            data_path=paths._files_path / "data.fits",
-            noise_map_path=paths._files_path / "noise_map.fits",
-            pre_cti_data_path=paths._files_path / "pre_cti_data.fits",
-            cosmic_ray_map_path=paths._files_path / "cosmic_ray_map.fits",
+            data_path=dataset_path / "data.fits",
+            noise_map_path=dataset_path / "noise_map.fits",
+            pre_cti_data_path=dataset_path / "pre_cti_data.fits",
+            cosmic_ray_map_path=dataset_path / "cosmic_ray_map.fits",
             overwrite=True
+        )
+
+        self.dataset.mask.output_to_fits(
+            file_path=dataset_path / "mask.fits"
         )
 
         paths.save_object("clocker", self.clocker)

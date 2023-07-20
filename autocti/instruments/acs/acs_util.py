@@ -2,7 +2,9 @@ from astropy.io import fits
 import copy
 import logging
 import numpy as np
+from pathlib import Path
 import os
+from typing import Union
 
 from autoarray import exc
 from autoarray.layout import layout_util
@@ -78,7 +80,7 @@ def prescan_fitted_bias_column(prescan, n_rows=2048, n_rows_ov=20):
 
 
 def output_quadrants_to_fits(
-    file_path: str,
+    file_path: Union[Path, str],
     quadrant_a,
     quadrant_b,
     quadrant_c,
