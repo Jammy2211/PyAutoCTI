@@ -112,7 +112,19 @@ class AnalysisDataset1D(af.Analysis):
             The PyAutoFit paths object which manages all paths, e.g. where the non-linear search outputs are stored,
             visualization,and the pickled objects used by the aggregator output by this function.
         """
-        paths.save_object("dataset", self.dataset)
+        dataset_path = paths._files_path / "dataset"
+
+        self.dataset.output_to_fits(
+            data_path=dataset_path / "data.fits",
+            noise_map_path=dataset_path / "noise_map.fits",
+            pre_cti_data_path=dataset_path / "pre_cti_data.fits",
+            overwrite=True
+        )
+
+        self.dataset.mask.output_to_fits(
+            file_path=dataset_path / "mask.fits"
+        )
+
         paths.save_object("clocker", self.clocker)
         paths.save_object("settings_cti", self.settings_cti)
         if self.dataset_full is not None:
