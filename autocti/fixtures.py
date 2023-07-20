@@ -1,5 +1,7 @@
 from autofit.non_linear.mock.mock_samples import MockSamples
 
+from autoarray.fixtures import *
+
 import autofit as af
 import autocti as ac
 
