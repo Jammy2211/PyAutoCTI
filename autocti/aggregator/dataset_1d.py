@@ -4,20 +4,20 @@ import autofit as af
 
 def _dataset_1d_list_from(fit: af.Fit, use_dataset_full: bool = False):
     """
-    Returns a `Dataset1D` object from an aggregator's `SearchOutput` class, which we call an 'agg_obj' to describe
-    that it acts as the aggregator object for one result in the `Aggregator`. This uses the aggregator's generator
-    outputs such that the function can use the `Aggregator`'s map function to create a `Dataset1D` generator.
+     Returns a `Dataset1D` object from an aggregator's `SearchOutput` class, which we call an 'agg_obj' to describe
+     that it acts as the aggregator object for one result in the `Aggregator`. This uses the aggregator's generator
+     outputs such that the function can use the `Aggregator`'s map function to create a `Dataset1D` generator.
 
      The `Dataset1D` is created following the same method as the PyAutoCTI `Search` classes, including using the
     `SettingsDataset1D` instance output by the Search to load inputs of the `Dataset1D`.
 
-    Parameters
-    ----------
-    fit
-        A PyAutoFit aggregator's SearchOutput object containing the generators of the results of model-fits.
-    use_dataset_full
-        If True, the full dataset is used to create the dataset list, else the masked dataset is used. This is used
-        when trying to plot regions of the dataset that are masked out (e.g. the FPR).
+     Parameters
+     ----------
+     fit
+         A PyAutoFit aggregator's SearchOutput object containing the generators of the results of model-fits.
+     use_dataset_full
+         If True, the full dataset is used to create the dataset list, else the masked dataset is used. This is used
+         when trying to plot regions of the dataset that are masked out (e.g. the FPR).
     """
 
     name = "dataset"

@@ -31,6 +31,30 @@ class AnalysisImagingCI(af.Analysis):
         settings_cti: SettingsCTI2D = SettingsCTI2D(),
         dataset_full: Optional[ImagingCI] = None,
     ):
+        """
+        Fits a CTI model to a charge injection imaging dataset via a non-linear search.
+
+        The `Analysis` class defines the `log_likelihood_function` which fits the model to the dataset and returns the
+        log likelihood value defining how well the model fitted the data.
+
+        It handles many other tasks, such as visualization, outputting results to hard-disk and storing results in
+        a format that can be loaded after the model-fit is complete.
+
+        This class is used for model-fits which fit a CTI model via a `CTI2D` object to a charge injection
+        imaging dataset.
+
+        Parameters
+        ----------
+        dataset
+            The charge injection dataset that the model is fitted to.
+        clocker
+            The CTI arctic clocker used by the non-linear search and model-fit.
+        settings_cti
+            The settings controlling aspects of the CTI model in this model-fit.
+        dataset_full
+            The full dataset, which is visualized separate from the `dataset` that is fitted, which for example may
+            not have the FPR masked and thus enable visualization of the FPR.
+        """
         super().__init__()
 
         self.dataset = dataset
@@ -96,8 +120,8 @@ class AnalysisImagingCI(af.Analysis):
 
     def modify_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
         """
-        PyAutoFit calls this function immediately before the non-linear search begins, therefore it can be used to
-        perform tasks using the final model parameterization.
+        This function is called immediately before the non-linear search begins and performs final tasks and checks
+        before it begins.
 
         This function:
 
@@ -223,13 +247,25 @@ class AnalysisImagingCI(af.Analysis):
             cosmic_ray_map_path=dataset_path / "cosmic_ray_map.fits",
             overwrite=True,
         )
-        self.dataset.mask.output_to_fits(file_path=dataset_path / "mask.fits")
+        self.dataset.mask.output_to_fits(
+            file_path=dataset_path / "mask.fits", overwrite=True
+        )
+
+        if self.dataset_full is not None:
+            dataset_path = paths._files_path / "dataset_full"
+
+            self.dataset_full.output_to_fits(
+                data_path=dataset_path / "data.fits",
+                noise_map_path=dataset_path / "noise_map.fits",
+                pre_cti_data_path=dataset_path / "pre_cti_data.fits",
+                overwrite=True,
+            )
+            self.dataset_full.mask.output_to_fits(file_path=dataset_path / "mask.fits")
+
         self.clocker.output_to_json(file_path=paths._files_path / "clocker.json")
         self.settings_cti.output_to_json(
             file_path=paths._files_path / "settings_cti.json"
         )
-        if self.dataset_full is not None:
-            paths.save_object("dataset_full", self.dataset_full)
 
     def visualize_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
