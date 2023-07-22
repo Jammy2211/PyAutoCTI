@@ -97,6 +97,15 @@ extract information from these datasets using contemporary Bayesian inference te
 maintaining the calibration of space telescopes and the scientific community, who can use `PyAutoCTI` to perform
 CTI calculations for their science data.
 
+The majority of software packages for CTI, such as `arCTIc`, `C3TM` and `CDM03`, do not perform CTI calibration. They 
+instead model the CCD clocking procedure, including a CTI model describing the traps on a CCD, enabling the addition 
+and correction of CTI to imaging data. `PyAutoCTI` wraps one of these algorithm (specifically `arCTIc`) in order to
+measure the CTI model from calibration data. The open-source software `Pyxel` has a "calibration mode" which also wraps
+these algorithms to perform CTI calibration. However, `Pyxel` is more general purpose and has tools for the entire 
+CCD clocking procedure (e.g. bias, dark frames, flat fields). `PyAutoCTI` is therefore more specialized and
+has a more extensive suite of tools for CTI calibration.
+
+
 # Software API and Features
 
 At the heart of the `PyAutoCTI` API are `Trap` objects, which represent the populations of traps on a CCD which cause
