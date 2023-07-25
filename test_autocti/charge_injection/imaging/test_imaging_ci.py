@@ -11,16 +11,16 @@ test_data_path = path.join(
 )
 
 
-@pytest.fixture(name="output_data_dir")
-def make_output_data_dir():
-    output_data_dir = path.join(test_data_path, "output_test")
+@pytest.fixture(name="test_data_path")
+def make_test_data_path():
+    test_data_path = path.join(test_data_path, "output_test")
 
-    if path.exists(output_data_dir):
-        shutil.rmtree(output_data_dir)
+    if path.exists(test_data_path):
+        shutil.rmtree(test_data_path)
 
-    os.makedirs(output_data_dir)
+    os.makedirs(test_data_path)
 
-    return output_data_dir
+    return test_data_path
 
 
 def test__norm_columns_list():
@@ -176,24 +176,24 @@ def test__from_fits__noise_map_from_single_value(layout_ci_7x7):
     assert dataset.layout == layout_ci_7x7
 
 
-def test__output_to_fits___all_arrays(imaging_ci_7x7, output_data_dir):
+def test__output_to_fits___all_arrays(imaging_ci_7x7, test_data_path):
     imaging_ci_7x7.output_to_fits(
-        data_path=path.join(output_data_dir, "data.fits"),
-        noise_map_path=path.join(output_data_dir, "noise_map.fits"),
-        pre_cti_data_path=path.join(output_data_dir, "pre_cti_data.fits"),
-        cosmic_ray_map_path=path.join(output_data_dir, "cosmic_ray_map.fits"),
+        data_path=path.join(test_data_path, "data.fits"),
+        noise_map_path=path.join(test_data_path, "noise_map.fits"),
+        pre_cti_data_path=path.join(test_data_path, "pre_cti_data.fits"),
+        cosmic_ray_map_path=path.join(test_data_path, "cosmic_ray_map.fits"),
     )
 
     dataset = ac.ImagingCI.from_fits(
         pixel_scales=1.0,
         layout=imaging_ci_7x7.layout,
-        data_path=path.join(output_data_dir, "data.fits"),
+        data_path=path.join(test_data_path, "data.fits"),
         data_hdu=0,
-        noise_map_path=path.join(output_data_dir, "noise_map.fits"),
+        noise_map_path=path.join(test_data_path, "noise_map.fits"),
         noise_map_hdu=0,
-        pre_cti_data_path=path.join(output_data_dir, "pre_cti_data.fits"),
+        pre_cti_data_path=path.join(test_data_path, "pre_cti_data.fits"),
         pre_cti_data_hdu=0,
-        cosmic_ray_map_path=path.join(output_data_dir, "cosmic_ray_map.fits"),
+        cosmic_ray_map_path=path.join(test_data_path, "cosmic_ray_map.fits"),
         cosmic_ray_map_hdu=0,
     )
 

@@ -174,27 +174,27 @@ def test__output_to_fits___all_arrays(layout_7):
         pre_cti_data_hdu=0,
     )
 
-    output_data_dir = path.join(fits_path, "output_test")
+    test_data_path = path.join(fits_path, "output_test")
 
-    if path.exists(output_data_dir):
-        shutil.rmtree(output_data_dir)
+    if path.exists(test_data_path):
+        shutil.rmtree(test_data_path)
 
-    os.makedirs(output_data_dir)
+    os.makedirs(test_data_path)
 
     dataset.output_to_fits(
-        data_path=path.join(output_data_dir, "data.fits"),
-        noise_map_path=path.join(output_data_dir, "noise_map.fits"),
-        pre_cti_data_path=path.join(output_data_dir, "pre_cti_data.fits"),
+        data_path=path.join(test_data_path, "data.fits"),
+        noise_map_path=path.join(test_data_path, "noise_map.fits"),
+        pre_cti_data_path=path.join(test_data_path, "pre_cti_data.fits"),
     )
 
     dataset = ac.Dataset1D.from_fits(
         pixel_scales=1.0,
         layout=layout_7,
-        data_path=path.join(output_data_dir, "data.fits"),
+        data_path=path.join(test_data_path, "data.fits"),
         data_hdu=0,
-        noise_map_path=path.join(output_data_dir, "noise_map.fits"),
+        noise_map_path=path.join(test_data_path, "noise_map.fits"),
         noise_map_hdu=0,
-        pre_cti_data_path=path.join(output_data_dir, "pre_cti_data.fits"),
+        pre_cti_data_path=path.join(test_data_path, "pre_cti_data.fits"),
         pre_cti_data_hdu=0,
     )
 

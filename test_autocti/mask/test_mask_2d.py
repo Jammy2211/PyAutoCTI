@@ -220,17 +220,17 @@ def test__load_and_output_mask_to_fits():
         pixel_scales=(1.0, 1.0),
     )
 
-    output_data_dir = path.join(test_data_path, "output_test")
+    test_data_path = path.join(test_data_path, "output_test")
 
-    if path.exists(output_data_dir):
-        shutil.rmtree(output_data_dir)
+    if path.exists(test_data_path):
+        shutil.rmtree(test_data_path)
 
-    os.makedirs(output_data_dir)
+    os.makedirs(test_data_path)
 
-    mask.output_to_fits(file_path=path.join(output_data_dir, "mask.fits"))
+    mask.output_to_fits(file_path=path.join(test_data_path, "mask.fits"))
 
     mask = ac.Mask2D.from_fits(
-        file_path=path.join(output_data_dir, "mask.fits"),
+        file_path=path.join(test_data_path, "mask.fits"),
         hdu=0,
         pixel_scales=(1.0, 1.0),
         origin=(2.0, 2.0),

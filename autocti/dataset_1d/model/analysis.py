@@ -142,6 +142,9 @@ class AnalysisDataset1D(af.Analysis):
             pre_cti_data_path=dataset_path / "pre_cti_data.fits",
             overwrite=True,
         )
+        self.dataset.layout.output_to_json(
+            file_path=dataset_path / "layout.json",
+        )
         self.dataset.mask.output_to_fits(
             file_path=dataset_path / "mask.fits", overwrite=True
         )
@@ -154,6 +157,9 @@ class AnalysisDataset1D(af.Analysis):
                 noise_map_path=dataset_path / "noise_map.fits",
                 pre_cti_data_path=dataset_path / "pre_cti_data.fits",
                 overwrite=True,
+            )
+            self.dataset_full.layout.output_to_json(
+                file_path=dataset_path / "layout.json",
             )
             self.dataset_full.mask.output_to_fits(
                 file_path=dataset_path / "mask.fits", overwrite=True
