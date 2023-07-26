@@ -20,23 +20,34 @@ def _fit_dataset_1d_list_from(
     clocker_list: Optional[AbstractClocker] = None,
 ) -> List[FitDataset1D]:
     """
-    Returns a `FitDataset1D` object from a PyAutoFit database `Fit` object and an instance of galaxies from a non-linear
-    search model-fit.
+    Returns a list of `FitDataset1D` object from a `PyAutoFit` sqlite database `Fit` object.
+
+    The results of a model-fit can be stored in a sqlite database, including the following attributes of the fit:
+
+    - The masked dataset (e.g. data / noise map / pre cti data) as .fits files (contained in `dataset` folder).
+    - The clocker used to add  CTI in the fit (`dataset/clocker.json`).
+    - The settings used for clocking CIT (contained in `dataset/settings_cti.json`).
+
+    Each individual attribute can be loaded from the database via the `fit.value()` method.
+
+    This method combines all of these attributes and returns a  list of `FitDataset1D` objects, by loading the masked
+    dataset adding CTI to its pre-cti data via the cti model and clocking and fitting the model image to the dataset.
+
+    If multiple `Dataset1D` objects were fitted simultaneously via analysis summing, the `fit.child_values()` method
+    is instead used to load lists of the datasets, perform the fit and return a list of `FitDataset1D` objects.
+
+    If a `dataset_full` is input into the `Analysis` class when a model-fit is performed and therefore accessible
+    to the database, the input `use_dataset_full` can be switched in to fit the full dataset instead.
 
     Parameters
     ----------
     fit
-        A PyAutoFit database Fit object containing the generators of the results of model-fits.
+        A `PyAutoFit` `Fit` object which contains the results of a model-fit as an entry in a sqlite database.
     use_dataset_full
-        If True, the full dataset is used to create the dataset list, else the masked dataset is used. This is used
-        when trying to plot regions of the dataset that are masked out (e.g. the FPR).
-    settings_dataset
-        The settings of the `Dataset1D` object fitted by the non-linear search.
-
-    Returns
-    -------
-    FitDataset1D
-        The fit to the dataset_1d dataset computed via an instance of galaxies.
+        If a `dataset_full` is input into the `Analysis` class when a model-fit is performed and therefore accessible
+        to the database, the input `use_dataset_full` can be switched in to load instead the full `Dataset1D` objects.
+    clocker_list
+        If input, overwrites the clocker used in the fit with a new clocker which is used to perform the fit.
     """
 
     from autocti.dataset_1d.fit import FitDataset1D
@@ -44,8 +55,10 @@ def _fit_dataset_1d_list_from(
     dataset_list = _dataset_1d_list_from(fit=fit, use_dataset_full=use_dataset_full)
 
     if clocker_list is None:
-        clocker_list = [fit.value(name="clocker")]
-        if clocker_list[0] is None:
+
+        if not fit.children:
+            clocker_list = [fit.value(name="clocker")]
+        else:
             clocker_list = fit.child_values(name="clocker")
 
     post_cti_data_list = [
@@ -70,17 +83,43 @@ class FitDataset1DAgg(AbstractAgg):
         clocker_list: Optional[List[AbstractClocker]] = None,
     ):
         """
-        Wraps a PyAutoFit aggregator in order to create generators of fits to dataset_1d data, corresponding to the
-        results of a non-linear search model-fit.
+        Interfaces with an `PyAutoFit` aggregator object to create instances of `Dataset1D` objects from the results
+        of a model-fit.
+
+        The results of a model-fit can be stored in a sqlite database, including the following attributes of the fit:
+
+        - The masked dataset (e.g. data / noise map / pre cti data) as .fits files (contained in `dataset` folder).
+        - The clocker used to add  CTI in the fit (`dataset/clocker.json`).
+        - The settings used for clocking CIT (contained in `dataset/settings_cti.json`).
+
+        The `aggregator` contains the path to each of these files, and they can be loaded individually. This class
+        can load them all at once and create a `FitDataset1D` object via the `_fit_dataset_1d_from` method.
+
+        This class's methods returns generators which create the instances of the `FitDataset1D` objects. This ensures
+        that large sets of results can be efficiently loaded from the hard-disk and do not require storing all
+        `Dataset1D` instances in the memory at once.
+
+        For example, if the `aggregator` contains 3 model-fits, this class can be used to create a generator which
+        creates instances of the corresponding 3 `Dataset1D` objects.
+
+        If multiple `Dataset1D` objects were fitted simultaneously via analysis summing, the `fit.child_values()` method
+        is instead used to load lists of the datasets, perform the fit and return a list of `FitDataset1D` objects.
+
+        If a `dataset_full` is input into the `Analysis` class when a model-fit is performed and therefore accessible
+        to the database, the input `use_dataset_full` can be switched in to fit the full dataset instead.
+
+        This can be done manually, but this object provides a more concise API.
 
         Parameters
         ----------
+        aggregator
+            A `PyAutoFit` aggregator object which can load the results of model-fits.
         use_dataset_full
-            If True, the full dataset is used to create the dataset list, else the masked dataset is used. This is used
-            when trying to plot regions of the dataset that are masked out (e.g. the FPR).
+            If a `dataset_full` is input into the `Analysis` class when a model-fit is performed and therefore
+            accessible to the database, the input `use_dataset_full` can be switched in to load instead the
+            full `Dataset1D` objects.
         clocker_list
-            The CTI arctic clocker used by aggregator's instances. If None is input, the clocker used by the
-            non-linear search and model-fit is used.
+            If input, overwrites the clocker used in the fit with a new clocker which is used to perform the fit.
         """
         super().__init__(
             aggregator=aggregator,
@@ -88,20 +127,21 @@ class FitDataset1DAgg(AbstractAgg):
             clocker_list=clocker_list,
         )
 
-    def object_via_gen_from(self, fit, cti: Union[CTI1D, CTI2D]) -> FitDataset1D:
+    def object_via_gen_from(self, fit, cti: Union[CTI1D, CTI2D]) -> List[FitDataset1D]:
         """
-        Creates a `FitDataset1D` object from a `ModelInstance` that contains the galaxies of a sample from a non-linear
-        search.
+        Returns a generator of `FitDataset1D` objects from an input aggregator.
+
+        See `__init__` for a description of how the `Dataset1D` objects are created by this method.
+
+        If a `dataset_full` is input into the `Analysis` class when a model-fit is performed and therefore accessible
+        to the database, the input `use_dataset_full` can be switched in to fit the full dataset instead.
 
         Parameters
         ----------
         fit
-            A PyAutoFit database Fit object containing the generators of the results of model-fits.
-
-        Returns
-        -------
-        FitDataset1D
-            A fit to dataset_1d data whose galaxies are a sample of a PyAutoFit non-linear search.
+            A `PyAutoFit` `Fit` object which contains the results of a model-fit as an entry in a sqlite database.
+        cti
+            The CTI model used to add CTI to the dataset to perform the fit.
         """
         return _fit_dataset_1d_list_from(
             fit=fit,

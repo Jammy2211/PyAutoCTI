@@ -1,4 +1,5 @@
 from functools import partial
+from typing import List
 
 import autofit as af
 import autoarray as aa
@@ -6,9 +7,9 @@ import autoarray as aa
 from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
 
 
-def _dataset_1d_list_from(fit: af.Fit, use_dataset_full: bool = False):
+def _dataset_1d_list_from(fit: af.Fit, use_dataset_full: bool = False) -> List[Dataset1D]:
     """
-    Returns a `Dataset1D` object from a `PyAutoFit` sqlite database `Fit` object.
+    Returns a list of `Dataset1D` object from a `PyAutoFit` sqlite database `Fit` object.
 
     The results of a model-fit can be stored in a sqlite database, including the following attributes of the fit:
 
