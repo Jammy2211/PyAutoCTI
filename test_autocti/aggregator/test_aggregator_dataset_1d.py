@@ -33,8 +33,8 @@ def test__dataset_gen_from__analysis_has_single_dataset(
     dataset_gen = dataset_agg.dataset_list_gen_from()
 
     for dataset in dataset_gen:
-        assert (dataset.data == dataset_1d_7.data).all()
-        assert dataset.layout.prescan[1] == pytest.approx(
+        assert (dataset[0].data == dataset_1d_7.data).all()
+        assert dataset[0].layout.prescan[1] == pytest.approx(
             dataset_1d_7.layout.prescan[1], 1.0e-4
         )
 
@@ -118,3 +118,4 @@ def test__dataset_gen_from__analysis_use_dataset_full(
         assert dataset_list[1].layout.prescan[1] == pytest.approx(
             dataset_1d_7.layout.prescan[1], 1.0e-4
         )
+

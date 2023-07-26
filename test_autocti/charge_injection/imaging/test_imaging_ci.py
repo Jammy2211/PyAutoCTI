@@ -10,19 +10,6 @@ test_data_path = path.join(
     "{}".format(path.dirname(path.realpath(__file__))), "files", "arrays"
 )
 
-
-@pytest.fixture(name="test_data_path")
-def make_test_data_path():
-    test_data_path = path.join(test_data_path, "output_test")
-
-    if path.exists(test_data_path):
-        shutil.rmtree(test_data_path)
-
-    os.makedirs(test_data_path)
-
-    return test_data_path
-
-
 def test__norm_columns_list():
     data = ac.Array2D.full(fill_value=1.0, shape_native=(5, 5), pixel_scales=(1.0, 1.0))
     noise_map = ac.Array2D.ones(
@@ -176,12 +163,13 @@ def test__from_fits__noise_map_from_single_value(layout_ci_7x7):
     assert dataset.layout == layout_ci_7x7
 
 
-def test__output_to_fits___all_arrays(imaging_ci_7x7, test_data_path):
+def test__output_to_fits___all_arrays(imaging_ci_7x7):
     imaging_ci_7x7.output_to_fits(
         data_path=path.join(test_data_path, "data.fits"),
         noise_map_path=path.join(test_data_path, "noise_map.fits"),
         pre_cti_data_path=path.join(test_data_path, "pre_cti_data.fits"),
         cosmic_ray_map_path=path.join(test_data_path, "cosmic_ray_map.fits"),
+        overwrite=True
     )
 
     dataset = ac.ImagingCI.from_fits(

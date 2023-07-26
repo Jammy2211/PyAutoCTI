@@ -39,14 +39,20 @@ def _dataset_1d_list_from(fit: af.Fit, use_dataset_full: bool = False):
         to the database, the input `use_dataset_full` can be switched in to load instead the full `Dataset1D` objects.
     """
 
-    # TODO : Rich make a really nice API for making this concise...
-
     if use_dataset_full:
         folder = "dataset_full"
     else:
         folder = "dataset"
 
-    if fit.value(name=f"{folder}.data") is not None:
+    if not fit.children:
+        fit_list = [fit]
+    else:
+        fit_list = fit.children
+
+    dataset_list = []
+
+    for fit in fit_list:
+
         layout = fit.value(name=f"{folder}.layout")
 
         data = aa.Array1D.from_primary_hdu(primary_hdu=fit.value(name=f"{folder}.data"))
@@ -66,35 +72,7 @@ def _dataset_1d_list_from(fit: af.Fit, use_dataset_full: bool = False):
             layout=layout,
         )
 
-        dataset = dataset.apply_mask(mask=mask)
-
-        return dataset
-
-    dataset_list = []
-
-    for layout, data, noise_map, pre_cti_data, mask in zip(
-        fit.child_values(name=f"{folder}.layout"),
-        fit.child_values(name=f"{folder}.data"),
-        fit.child_values(name=f"{folder}.noise_map"),
-        fit.child_values(name=f"{folder}.pre_cti_data"),
-        fit.child_values(name=f"{folder}.mask"),
-    ):
-        data = aa.Array1D.from_primary_hdu(primary_hdu=data)
-        noise_map = aa.Array1D.from_primary_hdu(primary_hdu=noise_map)
-        pre_cti_data = aa.Array1D.from_primary_hdu(primary_hdu=pre_cti_data)
-
-        mask = aa.Mask1D.from_primary_hdu(primary_hdu=mask)
-
-        dataset = Dataset1D(
-            data=data,
-            noise_map=noise_map,
-            pre_cti_data=pre_cti_data,
-            layout=layout,
-        )
-
-        dataset = dataset.apply_mask(mask=mask)
-
-        dataset_list.append(dataset)
+        dataset_list.append(dataset.apply_mask(mask=mask))
 
     return dataset_list
 
