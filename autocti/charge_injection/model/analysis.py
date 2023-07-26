@@ -1,5 +1,5 @@
 import logging
-import os
+import json
 from typing import List, Optional
 
 from autoconf import conf
@@ -221,7 +221,8 @@ class AnalysisImagingCI(af.Analysis):
 
         For this analysis the following are output:
 
-        - The 2D charge injection dataset.
+        - The charge injection dataset (data / noise-map / pre cti data / cosmic ray map / layout / settings etc.).
+        - The mask applied to the dataset.
         - The clocker used for modeling / clocking CTI.
         - The settings used for modeling / clocking CTI.
         - The full 1D dataset (e.g. unmasked, used for visualizariton).
@@ -247,6 +248,14 @@ class AnalysisImagingCI(af.Analysis):
             cosmic_ray_map_path=dataset_path / "cosmic_ray_map.fits",
             overwrite=True,
         )
+        self.dataset.layout.output_to_json(
+            file_path=dataset_path / "layout.json",
+        )
+
+        if self.dataset.settings_dict is not None:
+            with open(dataset_path / "dataset.settings_dict.json", "w+") as outfile:
+                json.dump(self.dataset.settings_dict, outfile)
+
         self.dataset.mask.output_to_fits(
             file_path=dataset_path / "mask.fits", overwrite=True
         )
@@ -258,8 +267,18 @@ class AnalysisImagingCI(af.Analysis):
                 data_path=dataset_path / "data.fits",
                 noise_map_path=dataset_path / "noise_map.fits",
                 pre_cti_data_path=dataset_path / "pre_cti_data.fits",
+                cosmic_ray_map_path=dataset_path / "cosmic_ray_map.fits",
                 overwrite=True,
             )
+
+            self.dataset.layout.output_to_json(
+                file_path=dataset_path / "layout.json",
+            )
+
+            if self.dataset.settings_dict is not None:
+                with open(dataset_path / "dataset.settings_dict.json", "w+") as outfile:
+                    json.dump(self.dataset.settings_dict, outfile)
+
             self.dataset_full.mask.output_to_fits(file_path=dataset_path / "mask.fits")
 
         self.clocker.output_to_json(file_path=paths._files_path / "clocker.json")

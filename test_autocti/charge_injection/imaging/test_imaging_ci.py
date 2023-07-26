@@ -10,6 +10,7 @@ test_data_path = path.join(
     "{}".format(path.dirname(path.realpath(__file__))), "files", "arrays"
 )
 
+
 def test__norm_columns_list():
     data = ac.Array2D.full(fill_value=1.0, shape_native=(5, 5), pixel_scales=(1.0, 1.0))
     noise_map = ac.Array2D.ones(
@@ -169,7 +170,7 @@ def test__output_to_fits___all_arrays(imaging_ci_7x7):
         noise_map_path=path.join(test_data_path, "noise_map.fits"),
         pre_cti_data_path=path.join(test_data_path, "pre_cti_data.fits"),
         cosmic_ray_map_path=path.join(test_data_path, "cosmic_ray_map.fits"),
-        overwrite=True
+        overwrite=True,
     )
 
     dataset = ac.ImagingCI.from_fits(

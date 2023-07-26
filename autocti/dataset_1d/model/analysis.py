@@ -118,7 +118,8 @@ class AnalysisDataset1D(af.Analysis):
 
         For this analysis the following are output:
 
-        - The 1D dataset.
+        - The 1D dataset (data / noise-map / pre cti data / layout / settings etc.).
+        - The mask applied to the dataset.
         - The clocker used for modeling / clocking CTI.
         - The settings used for modeling / clocking CTI.
         - The full 1D dataset (e.g. unmasked, used for visualizariton).

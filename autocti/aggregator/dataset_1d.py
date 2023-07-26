@@ -52,7 +52,6 @@ def _dataset_1d_list_from(fit: af.Fit, use_dataset_full: bool = False):
     dataset_list = []
 
     for fit in fit_list:
-
         layout = fit.value(name=f"{folder}.layout")
 
         data = aa.Array1D.from_primary_hdu(primary_hdu=fit.value(name=f"{folder}.data"))
@@ -63,14 +62,14 @@ def _dataset_1d_list_from(fit: af.Fit, use_dataset_full: bool = False):
             primary_hdu=fit.value(name=f"{folder}.pre_cti_data")
         )
 
-        mask = aa.Mask1D.from_primary_hdu(primary_hdu=fit.value(name=f"{folder}.mask"))
-
         dataset = Dataset1D(
             data=data,
             noise_map=noise_map,
             pre_cti_data=pre_cti_data,
             layout=layout,
         )
+
+        mask = aa.Mask1D.from_primary_hdu(primary_hdu=fit.value(name=f"{folder}.mask"))
 
         dataset_list.append(dataset.apply_mask(mask=mask))
 
