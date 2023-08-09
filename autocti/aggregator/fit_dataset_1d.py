@@ -15,7 +15,7 @@ from autocti.aggregator.dataset_1d import _dataset_1d_list_from
 
 def _fit_dataset_1d_list_from(
     fit: af.Fit,
-    cti_list: List[Union[CTI1D, CTI2D]],
+    cti: Union[CTI1D, CTI2D],
     use_dataset_full: bool = False,
     clocker_list: Optional[AbstractClocker] = None,
 ) -> List[FitDataset1D]:
@@ -63,7 +63,7 @@ def _fit_dataset_1d_list_from(
 
     post_cti_data_list = [
         clocker.add_cti(data=dataset.pre_cti_data, cti=cti)
-        for dataset, cti, clocker in zip(dataset_list, cti_list, clocker_list)
+        for dataset, clocker in zip(dataset_list, clocker_list)
     ]
 
     return [
@@ -127,7 +127,7 @@ class FitDataset1DAgg(AbstractAgg):
             clocker_list=clocker_list,
         )
 
-    def object_via_gen_from(self, fit, cti_list: [Union[CTI1D, CTI2D]]) -> List[FitDataset1D]:
+    def object_via_gen_from(self, fit, cti: Union[CTI1D, CTI2D]) -> List[FitDataset1D]:
         """
         Returns a generator of `FitDataset1D` objects from an input aggregator.
 
@@ -140,12 +140,12 @@ class FitDataset1DAgg(AbstractAgg):
         ----------
         fit
             A `PyAutoFit` `Fit` object which contains the results of a model-fit as an entry in a sqlite database.
-        cti_list
+        cti
             The CTI model used to add CTI to the dataset to perform the fit.
         """
         return _fit_dataset_1d_list_from(
             fit=fit,
-            cti_list=cti_list,
+            cti=cti,
             use_dataset_full=self.use_dataset_full,
             clocker_list=self.clocker_list,
         )

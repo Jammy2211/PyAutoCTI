@@ -12,7 +12,7 @@ from autocti.aggregator.abstract import AbstractAgg
 
 logger = logging.getLogger(__name__)
 
-def _cti_from(fit: af.Fit) -> List[Union[CTI1D, CTI2D]]:
+def _cti_from(fit: af.Fit) -> Union[CTI1D, CTI2D]:
     """
     Returns a list of `CTI` objects from a `PyAutoFit` sqlite database `Fit` object.
 
@@ -50,9 +50,7 @@ def _cti_from(fit: af.Fit) -> List[Union[CTI1D, CTI2D]]:
             """
         )
 
-        return [fit.instance] * len(fit.children)
-
-    return [fit.instance]
+    return fit.instance
 
 
 class CTIAgg(AbstractAgg):
@@ -86,7 +84,7 @@ class CTIAgg(AbstractAgg):
         A `PyAutoFit` aggregator object which can load the results of model-fits.
     """
 
-    def object_via_gen_from(self, fit, cti: Union[CTI1D, CTI2D]) -> List[Union[CTI1D, CTI2D]]:
+    def object_via_gen_from(self, fit, cti: Union[CTI1D, CTI2D]) -> Union[CTI1D, CTI2D]:
         """
         Returns a generator of `CTI` objects from an input aggregator.
 
