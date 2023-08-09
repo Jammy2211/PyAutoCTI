@@ -1,33 +1,23 @@
 import copy
-from os import path
 import pytest
 
-from autoconf import conf
-import autofit as af
 import autocti as ac
 
-from test_autocti.aggregator.conftest import clean
+from test_autocti.aggregator.conftest import clean, aggregator_from
 
+database_file = "db_dataset_1d"
 
 def test__dataset_gen_from__analysis_has_single_dataset(
     dataset_1d_7, clocker_1d, samples_1d, model_1d
 ):
-    path_prefix = "aggregator_dataset_1d_gen"
-
-    database_file = path.join(conf.instance.output_path, "dataset.sqlite")
-    result_path = path.join(conf.instance.output_path, path_prefix)
-
-    clean(database_file=database_file, result_path=result_path)
-
-    search = ac.m.MockSearch(samples=samples_1d)
-    search.paths = af.DirectoryPaths(path_prefix=path_prefix)
-
     analysis = ac.AnalysisDataset1D(dataset=dataset_1d_7, clocker=clocker_1d)
 
-    search.fit(model=model_1d, analysis=analysis)
-
-    agg = af.Aggregator.from_database(filename=database_file)
-    agg.add_directory(directory=result_path)
+    agg = aggregator_from(
+        database_file=database_file,
+        analysis=analysis,
+        model=model_1d,
+        samples=samples_1d,
+    )
 
     dataset_agg = ac.agg.Dataset1DAgg(aggregator=agg)
     dataset_gen = dataset_agg.dataset_list_gen_from()
@@ -38,30 +28,21 @@ def test__dataset_gen_from__analysis_has_single_dataset(
             dataset_1d_7.layout.prescan[1], 1.0e-4
         )
 
+    clean(database_file=database_file)
+
 
 def test__dataset_gen_from__analysis_has_multi_dataset(
     dataset_1d_7, clocker_1d, samples_1d, model_1d
 ):
-    path_prefix = "aggregator_dataset_1d_gen"
-
-    database_file = path.join(conf.instance.output_path, "dataset.sqlite")
-    result_path = path.join(conf.instance.output_path, path_prefix)
-
-    clean(database_file=database_file, result_path=result_path)
-
-    search = ac.m.MockSearch(samples=samples_1d)
-    search.paths = af.DirectoryPaths(path_prefix=path_prefix)
 
     analysis = ac.AnalysisDataset1D(dataset=dataset_1d_7, clocker=clocker_1d)
 
-    analysis_list = [analysis, analysis]
-
-    analysis = sum(analysis_list)
-
-    search.fit(model=model_1d, analysis=analysis)
-
-    agg = af.Aggregator.from_database(filename=database_file)
-    agg.add_directory(directory=result_path)
+    agg = aggregator_from(
+        database_file=database_file,
+        analysis=analysis + analysis,
+        model=model_1d,
+        samples=samples_1d,
+    )
 
     dataset_agg = ac.agg.Dataset1DAgg(aggregator=agg, use_dataset_full=False)
     dataset_gen = dataset_agg.dataset_list_gen_from()
@@ -76,19 +57,11 @@ def test__dataset_gen_from__analysis_has_multi_dataset(
             dataset_1d_7.layout.prescan[1], 1.0e-4
         )
 
+    clean(database_file=database_file)
 
 def test__dataset_gen_from__analysis_use_dataset_full(
     dataset_1d_7, clocker_1d, samples_1d, model_1d
 ):
-    path_prefix = "aggregator_dataset_1d_gen"
-
-    database_file = path.join(conf.instance.output_path, "dataset.sqlite")
-    result_path = path.join(conf.instance.output_path, path_prefix)
-
-    clean(database_file=database_file, result_path=result_path)
-
-    search = ac.m.MockSearch(samples=samples_1d)
-    search.paths = af.DirectoryPaths(path_prefix=path_prefix)
 
     dataset_1d_7_full = copy.copy(dataset_1d_7)
     dataset_1d_7_full.data[0] = 100.0
@@ -97,14 +70,12 @@ def test__dataset_gen_from__analysis_use_dataset_full(
         dataset=dataset_1d_7, clocker=clocker_1d, dataset_full=dataset_1d_7_full
     )
 
-    analysis_list = [analysis, analysis]
-
-    analysis = sum(analysis_list)
-
-    search.fit(model=model_1d, analysis=analysis)
-
-    agg = af.Aggregator.from_database(filename=database_file)
-    agg.add_directory(directory=result_path)
+    agg = aggregator_from(
+        database_file=database_file,
+        analysis=analysis + analysis,
+        model=model_1d,
+        samples=samples_1d,
+    )
 
     dataset_agg = ac.agg.Dataset1DAgg(aggregator=agg, use_dataset_full=True)
     dataset_gen = dataset_agg.dataset_list_gen_from()
@@ -118,3 +89,5 @@ def test__dataset_gen_from__analysis_use_dataset_full(
         assert dataset_list[1].layout.prescan[1] == pytest.approx(
             dataset_1d_7.layout.prescan[1], 1.0e-4
         )
+
+    clean(database_file=database_file)
