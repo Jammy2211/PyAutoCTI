@@ -4,12 +4,12 @@ import autocti as ac
 
 from test_autocti.aggregator.conftest import clean, aggregator_from
 
-database_file =  "db_cti_gen"
+database_file = "db_cti_gen"
+
 
 def test__cti_randomly_drawn_via_pdf_gen_from(
     dataset_1d_7, clocker_1d, samples_1d, model_1d
 ):
-
     analysis = ac.AnalysisDataset1D(dataset=dataset_1d_7, clocker=clocker_1d)
 
     agg = aggregator_from(
@@ -36,7 +36,6 @@ def test__cti_randomly_drawn_via_pdf_gen_from(
 
 
 def test__cti_all_above_weight_gen(dataset_1d_7, clocker_1d, samples_1d, model_1d):
-
     analysis = ac.AnalysisDataset1D(dataset=dataset_1d_7, clocker=clocker_1d)
 
     agg = aggregator_from(

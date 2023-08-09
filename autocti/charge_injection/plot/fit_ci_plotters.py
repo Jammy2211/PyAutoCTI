@@ -20,7 +20,7 @@ class FitImagingCIPlotter(Plotter):
         mat_plot_1d: aplt.MatPlot1D = aplt.MatPlot1D(),
         visuals_1d: aplt.Visuals1D = aplt.Visuals1D(),
         include_1d: aplt.Include1D = aplt.Include1D(),
-        residuals_symmetric_cmap: bool = True
+        residuals_symmetric_cmap: bool = True,
     ):
         """
         Plots the attributes of `FitImagingCI` objects using the matplotlib methods `imshow()`, `plot()` and many other
@@ -76,7 +76,7 @@ class FitImagingCIPlotter(Plotter):
             mat_plot_2d=self.mat_plot_2d,
             include_2d=self.include_2d,
             visuals_2d=self.visuals_2d,
-            residuals_symmetric_cmap=residuals_symmetric_cmap
+            residuals_symmetric_cmap=residuals_symmetric_cmap,
         )
 
         self.residuals_symmetric_cmap = residuals_symmetric_cmap

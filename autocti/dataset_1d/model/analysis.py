@@ -174,8 +174,9 @@ class AnalysisDataset1D(af.Analysis):
         )
 
     def in_ascending_fpr_order_from(self, quantity_list, fpr_value_list):
-
-        if not conf.instance["visualize"]["general"]["general"]["subplot_ascending_fpr"]:
+        if not conf.instance["visualize"]["general"]["general"][
+            "subplot_ascending_fpr"
+        ]:
             return quantity_list
 
         indexes = sorted(range(len(fpr_value_list)), key=lambda k: fpr_value_list[k])
@@ -305,7 +306,6 @@ class AnalysisDataset1D(af.Analysis):
         )
 
         if self.dataset_full is not None:
-
             fit_full_list = [
                 analysis.fit_via_instance_and_dataset_from(
                     instance=instance, dataset=analysis.dataset_full

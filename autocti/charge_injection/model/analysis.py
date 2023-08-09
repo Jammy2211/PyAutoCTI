@@ -287,11 +287,14 @@ class AnalysisImagingCI(af.Analysis):
                 with open(dataset_path / "settings_dict.json", "w+") as outfile:
                     json.dump(self.dataset.settings_dict, outfile)
 
-            self.dataset_full.mask.output_to_fits(file_path=dataset_path / "mask.fits", overwrite=True)
+            self.dataset_full.mask.output_to_fits(
+                file_path=dataset_path / "mask.fits", overwrite=True
+            )
 
     def in_ascending_fpr_order_from(self, quantity_list, fpr_value_list):
-
-        if not conf.instance["visualize"]["general"]["general"]["subplot_ascending_fpr"]:
+        if not conf.instance["visualize"]["general"]["general"][
+            "subplot_ascending_fpr"
+        ]:
             return quantity_list
 
         indexes = sorted(range(len(fpr_value_list)), key=lambda k: fpr_value_list[k])
@@ -299,7 +302,6 @@ class AnalysisImagingCI(af.Analysis):
         return [quantity_list[i] for i in indexes]
 
     def visualize_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
-
         if conf.instance["visualize"]["plots"]["combined_only"]:
             return
 
@@ -382,7 +384,6 @@ class AnalysisImagingCI(af.Analysis):
         instance: af.ModelInstance,
         during_analysis: bool,
     ):
-
         if conf.instance["visualize"]["plots"]["combined_only"]:
             return
 
@@ -427,7 +428,7 @@ class AnalysisImagingCI(af.Analysis):
             quantity_list=fit_list,
             fpr_value_list=fpr_value_list,
         )
-        
+
         region_list = self.region_list_from(model=instance)
 
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)

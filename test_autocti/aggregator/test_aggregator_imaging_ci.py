@@ -7,10 +7,10 @@ from test_autocti.aggregator.conftest import clean, aggregator_from
 
 database_file = "db_imaging_ci"
 
+
 def test__dataset_gen_from__analysis_has_single_dataset(
     imaging_ci_7x7, parallel_clocker_2d, samples_2d, model_2d
 ):
-
     analysis = ac.AnalysisImagingCI(dataset=imaging_ci_7x7, clocker=parallel_clocker_2d)
 
     agg = aggregator_from(
@@ -35,7 +35,6 @@ def test__dataset_gen_from__analysis_has_single_dataset(
 def test__dataset_gen_from__analysis_has_multi_dataset(
     imaging_ci_7x7, parallel_clocker_2d, samples_2d, model_2d
 ):
-
     analysis = ac.AnalysisImagingCI(dataset=imaging_ci_7x7, clocker=parallel_clocker_2d)
 
     agg = aggregator_from(
@@ -61,10 +60,10 @@ def test__dataset_gen_from__analysis_has_multi_dataset(
 
     clean(database_file=database_file)
 
+
 def test__dataset_gen_from__analysis_use_dataset_full(
     imaging_ci_7x7, parallel_clocker_2d, samples_2d, model_2d
 ):
-
     imaging_ci_7x7_full = copy.copy(imaging_ci_7x7)
     imaging_ci_7x7_full.data[0] = 100.0
 

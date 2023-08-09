@@ -141,8 +141,9 @@ class ImagingCIPlotter(Plotter):
         cmap_original = self.mat_plot_2d.cmap
 
         if self.residuals_symmetric_cmap:
-
-            symmetric_value = conf.instance["visualize"]["general"]["general"]["symmetric_cmap_value"]
+            symmetric_value = conf.instance["visualize"]["general"]["general"][
+                "symmetric_cmap_value"
+            ]
 
             self.mat_plot_2d.cmap = self.mat_plot_2d.cmap.symmetric_cmap_from(
                 symmetric_value=symmetric_value

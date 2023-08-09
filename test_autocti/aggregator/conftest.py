@@ -10,7 +10,6 @@ from autofit.non_linear.samples import Sample
 
 
 def clean(database_file):
-
     database_sqlite = path.join(conf.instance.output_path, f"{database_file}.sqlite")
 
     if path.exists(database_sqlite):
@@ -21,8 +20,8 @@ def clean(database_file):
     if path.exists(result_path):
         shutil.rmtree(result_path)
 
-def aggregator_from(database_file, analysis, model, samples):
 
+def aggregator_from(database_file, analysis, model, samples):
     result_path = path.join(conf.instance.output_path, database_file)
 
     clean(database_file=database_file)

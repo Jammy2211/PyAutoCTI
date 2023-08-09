@@ -12,6 +12,7 @@ from autocti.aggregator.abstract import AbstractAgg
 
 logger = logging.getLogger(__name__)
 
+
 def _cti_from(fit: af.Fit) -> Union[CTI1D, CTI2D]:
     """
     Returns a list of `CTI` objects from a `PyAutoFit` sqlite database `Fit` object.

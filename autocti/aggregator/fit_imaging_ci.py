@@ -55,7 +55,6 @@ def _fit_imaging_ci_list_from(
     dataset_list = _imaging_ci_list_from(fit=fit, use_dataset_full=use_dataset_full)
 
     if clocker_list is None:
-
         if not fit.children:
             clocker_list = [fit.value(name="clocker")]
         else:

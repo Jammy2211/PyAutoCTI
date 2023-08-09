@@ -7,6 +7,7 @@ from test_autocti.aggregator.conftest import clean, aggregator_from
 
 database_file = "db_dataset_1d"
 
+
 def test__dataset_gen_from__analysis_has_single_dataset(
     dataset_1d_7, clocker_1d, samples_1d, model_1d
 ):
@@ -34,7 +35,6 @@ def test__dataset_gen_from__analysis_has_single_dataset(
 def test__dataset_gen_from__analysis_has_multi_dataset(
     dataset_1d_7, clocker_1d, samples_1d, model_1d
 ):
-
     analysis = ac.AnalysisDataset1D(dataset=dataset_1d_7, clocker=clocker_1d)
 
     agg = aggregator_from(
@@ -59,10 +59,10 @@ def test__dataset_gen_from__analysis_has_multi_dataset(
 
     clean(database_file=database_file)
 
+
 def test__dataset_gen_from__analysis_use_dataset_full(
     dataset_1d_7, clocker_1d, samples_1d, model_1d
 ):
-
     dataset_1d_7_full = copy.copy(dataset_1d_7)
     dataset_1d_7_full.data[0] = 100.0
 

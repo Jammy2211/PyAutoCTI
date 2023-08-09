@@ -7,7 +7,9 @@ import autoarray as aa
 from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
 
 
-def _dataset_1d_list_from(fit: af.Fit, use_dataset_full: bool = False) -> List[Dataset1D]:
+def _dataset_1d_list_from(
+    fit: af.Fit, use_dataset_full: bool = False
+) -> List[Dataset1D]:
     """
     Returns a list of `Dataset1D` object from a `PyAutoFit` sqlite database `Fit` object.
 
