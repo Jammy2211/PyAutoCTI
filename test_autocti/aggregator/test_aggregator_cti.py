@@ -34,10 +34,10 @@ def test__cti_randomly_drawn_via_pdf_gen_from(
     i = 0
 
     for cti_gen in cti_pdf_gen:
-        for cti in cti_gen:
+        for cti_list in cti_gen:
             i += 1
 
-            assert cti.trap_list[0].density == pytest.approx(0.1, 1.0e-4)
+            assert cti_list[0].trap_list[0].density == pytest.approx(0.1, 1.0e-4)
 
     assert i == 2
 
@@ -68,14 +68,14 @@ def test__cti_all_above_weight_gen(dataset_1d_7, clocker_1d, samples_1d, model_1
     i = 0
 
     for cti_gen in cti_pdf_gen:
-        for cti in cti_gen:
+        for cti_list in cti_gen:
             i += 1
 
             if i == 1:
-                assert cti.trap_list[0].density == pytest.approx(0.1, 1.0e-4)
+                assert cti_list[0].trap_list[0].density == pytest.approx(0.1, 1.0e-4)
 
             if i == 2:
-                assert cti.trap_list[0].density == pytest.approx(0.1, 1.0e-4)
+                assert cti_list[0].trap_list[0].density == pytest.approx(0.1, 1.0e-4)
 
     assert i == 2
 

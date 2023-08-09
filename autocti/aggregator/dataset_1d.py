@@ -45,10 +45,7 @@ def _dataset_1d_list_from(fit: af.Fit, use_dataset_full: bool = False) -> List[D
     else:
         folder = "dataset"
 
-    if not fit.children:
-        fit_list = [fit]
-    else:
-        fit_list = fit.children
+    fit_list = [fit] if not fit.children else fit.children
 
     dataset_list = []
 

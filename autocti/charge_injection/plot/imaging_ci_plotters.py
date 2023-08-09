@@ -1,5 +1,7 @@
 from typing import Callable
 
+from autoconf import conf
+
 import autoarray.plot as aplt
 
 from autoarray.plot.auto_labels import AutoLabels
@@ -19,6 +21,7 @@ class ImagingCIPlotter(Plotter):
         mat_plot_1d: aplt.MatPlot1D = aplt.MatPlot1D(),
         visuals_1d: aplt.Visuals1D = aplt.Visuals1D(),
         include_1d: aplt.Include1D = aplt.Include1D(),
+        residuals_symmetric_cmap: bool = True,
     ):
         """
         Plots the attributes of `Imaging` objects using the matplotlib method `imshow()` and many other matplotlib
@@ -48,6 +51,8 @@ class ImagingCIPlotter(Plotter):
             Contains 1D visuals that can be overlaid on 1D plots.
         include_1d
             Specifies which attributes of the `ImagingCI` are extracted and plotted as visuals for 1D plots.
+        residuals_symmetric_cmap
+            If true, the `pre_cti_residual_map` is plotted with a symmetric color map such that `abs(vmin) = abs(vmax)`.
         """
         super().__init__(
             dataset=dataset,
@@ -67,6 +72,8 @@ class ImagingCIPlotter(Plotter):
             include_2d=self.include_2d,
             visuals_2d=self.visuals_2d,
         )
+
+        self.residuals_symmetric_cmap = residuals_symmetric_cmap
 
     def get_visuals_1d(self):
         return self.visuals_1d
@@ -131,6 +138,16 @@ class ImagingCIPlotter(Plotter):
                 ),
             )
 
+        cmap_original = self.mat_plot_2d.cmap
+
+        if self.residuals_symmetric_cmap:
+
+            symmetric_value = conf.instance["visualize"]["general"]["general"]["symmetric_cmap_value"]
+
+            self.mat_plot_2d.cmap = self.mat_plot_2d.cmap.symmetric_cmap_from(
+                symmetric_value=symmetric_value
+            )
+
         if pre_cti_data_residual_map:
             self.mat_plot_2d.plot_array(
                 array=self.dataset.pre_cti_data_residual_map,
@@ -140,6 +157,8 @@ class ImagingCIPlotter(Plotter):
                     filename="pre_cti_data_residual_map",
                 ),
             )
+
+        self.mat_plot_2d.cmap = cmap_original
 
         if cosmic_ray_map:
             self.mat_plot_2d.plot_array(

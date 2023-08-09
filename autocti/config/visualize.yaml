@@ -1,9 +1,12 @@
 general:
   general:
-    backend: default
-    imshow_origin: lower
-    zoom_around_mask: false
+    backend: default                  # The matploblib backend used for visualization. `default` uses the system default, can specifiy specific backend (e.g. TKAgg, Qt5Agg, WXAgg).
+    imshow_origin: upper              # The `origin` input of `imshow`, determining if pixel values are ascending or descending on the y-axis.
+    zoom_around_mask: true            # If True, plots of data structures with a mask automatically zoom in the masked region.
+    symmetric_cmap_value: 100.0       # The vmin and vmax of all pre-cti data residual-maps.
+    subplot_ascending_fpr: true       # If True, subplots showing FPR / EPER trails of many datasets are in ascending order of FPR value.
 plots:
+  combined_only: false
   dataset:
     data: true
     data_logy: true
@@ -17,3 +20,4 @@ plots:
     residual_map_logy: true
     post_cti_data: false
     pre_cti_data: false
+

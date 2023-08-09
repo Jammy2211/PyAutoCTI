@@ -20,6 +20,7 @@ class FitImagingCIPlotter(Plotter):
         mat_plot_1d: aplt.MatPlot1D = aplt.MatPlot1D(),
         visuals_1d: aplt.Visuals1D = aplt.Visuals1D(),
         include_1d: aplt.Include1D = aplt.Include1D(),
+        residuals_symmetric_cmap: bool = True
     ):
         """
         Plots the attributes of `FitImagingCI` objects using the matplotlib methods `imshow()`, `plot()` and many other
@@ -52,6 +53,9 @@ class FitImagingCIPlotter(Plotter):
             Contains 1D visuals that can be overlaid on 1D plots.
         include_1d
             Specifies which attributes of the `ImagingCI` are extracted and plotted as visuals for 1D plots.
+        residuals_symmetric_cmap
+            If true, the `residual_map` and `normalized_residual_map` are plotted with a symmetric color map such
+            that `abs(vmin) = abs(vmax)`.
         """
         super().__init__(
             dataset=fit.dataset,
@@ -72,7 +76,10 @@ class FitImagingCIPlotter(Plotter):
             mat_plot_2d=self.mat_plot_2d,
             include_2d=self.include_2d,
             visuals_2d=self.visuals_2d,
+            residuals_symmetric_cmap=residuals_symmetric_cmap
         )
+
+        self.residuals_symmetric_cmap = residuals_symmetric_cmap
 
     def get_visuals_2d(self):
         return self.get_2d.via_fit_imaging_ci_from(fit=self.fit)

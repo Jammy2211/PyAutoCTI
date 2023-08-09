@@ -328,7 +328,7 @@ def test__from_pre_cti_data(parallel_clocker_2d, traps_x2, ccd):
         cosmic_ray_map=cosmic_ray_map,
     )
 
-    assert (dataset.data == dataset_via.image).all()
+    assert (dataset.data == dataset_via.data).all()
     assert (dataset.noise_map == dataset_via.noise_map).all()
     assert (dataset.pre_cti_data == dataset_via.pre_cti_data).all()
     assert (dataset.cosmic_ray_map == dataset_via.cosmic_ray_map).all()
@@ -373,7 +373,7 @@ def test__from_post_cti_data(parallel_clocker_2d, traps_x2, ccd):
         cosmic_ray_map=cosmic_ray_map,
     )
 
-    assert (dataset.data == dataset_via.image).all()
+    assert (dataset.data == dataset_via.data).all()
     assert (dataset.noise_map == dataset_via.noise_map).all()
     assert (dataset.pre_cti_data == dataset_via.pre_cti_data).all()
     assert (dataset.cosmic_ray_map == dataset_via.cosmic_ray_map).all()

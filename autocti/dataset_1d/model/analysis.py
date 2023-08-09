@@ -1,5 +1,7 @@
 from typing import List, Optional
 
+from autoconf import conf
+
 import autofit as af
 
 from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
@@ -171,6 +173,15 @@ class AnalysisDataset1D(af.Analysis):
             file_path=paths._files_path / "settings_cti.json"
         )
 
+    def in_ascending_fpr_order_from(self, quantity_list, fpr_value_list):
+
+        if not conf.instance["visualize"]["general"]["general"]["subplot_ascending_fpr"]:
+            return quantity_list
+
+        indexes = sorted(range(len(fpr_value_list)), key=lambda k: fpr_value_list[k])
+
+        return [quantity_list[i] for i in indexes]
+
     def visualize_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
         region_list = self.region_list_from()
 
@@ -201,6 +212,14 @@ class AnalysisDataset1D(af.Analysis):
         region_list = self.region_list_from()
 
         dataset_list = [analysis.dataset for analysis in analyses]
+        fpr_value_list = [dataset.fpr_value for dataset in dataset_list]
+
+        dataset_list = self.in_ascending_fpr_order_from(
+            quantity_list=dataset_list,
+            fpr_value_list=fpr_value_list,
+        )
+
+        fpr_value_list = [dataset.fpr_value for dataset in dataset_list]
 
         visualizer.visualize_dataset_combined(
             dataset_list=dataset_list,
@@ -212,6 +231,11 @@ class AnalysisDataset1D(af.Analysis):
 
         if self.dataset_full is not None:
             dataset_full_list = [analysis.dataset_full for analysis in analyses]
+
+            dataset_full_list = self.in_ascending_fpr_order_from(
+                quantity_list=dataset_full_list,
+                fpr_value_list=fpr_value_list,
+            )
 
             visualizer.visualize_dataset_combined(
                 dataset_list=dataset_full_list, folder_suffix="_full"
@@ -261,6 +285,13 @@ class AnalysisDataset1D(af.Analysis):
             analysis.fit_via_instance_from(instance=instance) for analysis in analyses
         ]
 
+        fpr_value_list = [fit.dataset.fpr_value for fit in fit_list]
+
+        fit_list = self.in_ascending_fpr_order_from(
+            quantity_list=fit_list,
+            fpr_value_list=fpr_value_list,
+        )
+
         region_list = self.region_list_from()
 
         visualizer = VisualizerDataset1D(visualize_path=paths.image_path)
@@ -274,18 +305,24 @@ class AnalysisDataset1D(af.Analysis):
         )
 
         if self.dataset_full is not None:
-            fit_list = [
+
+            fit_full_list = [
                 analysis.fit_via_instance_and_dataset_from(
                     instance=instance, dataset=analysis.dataset_full
                 )
                 for analysis in analyses
             ]
 
+            fit_full_list = self.in_ascending_fpr_order_from(
+                quantity_list=fit_full_list,
+                fpr_value_list=fpr_value_list,
+            )
+
             visualizer.visualize_fit_combined(
-                fit_list=fit_list, during_analysis=during_analysis
+                fit_list=fit_full_list, during_analysis=during_analysis
             )
             visualizer.visualize_fit_region_combined(
-                fit_list=fit_list,
+                fit_list=fit_full_list,
                 region_list=region_list,
                 during_analysis=during_analysis,
             )

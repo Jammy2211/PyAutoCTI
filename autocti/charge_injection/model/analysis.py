@@ -239,6 +239,14 @@ class AnalysisImagingCI(af.Analysis):
             visualization,and the pickled objects used by the aggregator output by this function.
         """
 
+        self.clocker.output_to_json(file_path=paths._files_path / "clocker.json")
+        self.settings_cti.output_to_json(
+            file_path=paths._files_path / "settings_cti.json"
+        )
+
+        if conf.instance["visualize"]["plots"]["combined_only"]:
+            return
+
         dataset_path = paths._files_path / "dataset"
 
         self.dataset.output_to_fits(
@@ -253,7 +261,7 @@ class AnalysisImagingCI(af.Analysis):
         )
 
         if self.dataset.settings_dict is not None:
-            with open(dataset_path / "dataset.settings_dict.json", "w+") as outfile:
+            with open(dataset_path / "settings_dict.json", "w+") as outfile:
                 json.dump(self.dataset.settings_dict, outfile)
 
         self.dataset.mask.output_to_fits(
@@ -276,17 +284,25 @@ class AnalysisImagingCI(af.Analysis):
             )
 
             if self.dataset.settings_dict is not None:
-                with open(dataset_path / "dataset.settings_dict.json", "w+") as outfile:
+                with open(dataset_path / "settings_dict.json", "w+") as outfile:
                     json.dump(self.dataset.settings_dict, outfile)
 
-            self.dataset_full.mask.output_to_fits(file_path=dataset_path / "mask.fits")
+            self.dataset_full.mask.output_to_fits(file_path=dataset_path / "mask.fits", overwrite=True)
 
-        self.clocker.output_to_json(file_path=paths._files_path / "clocker.json")
-        self.settings_cti.output_to_json(
-            file_path=paths._files_path / "settings_cti.json"
-        )
+    def in_ascending_fpr_order_from(self, quantity_list, fpr_value_list):
+
+        if not conf.instance["visualize"]["general"]["general"]["subplot_ascending_fpr"]:
+            return quantity_list
+
+        indexes = sorted(range(len(fpr_value_list)), key=lambda k: fpr_value_list[k])
+
+        return [quantity_list[i] for i in indexes]
 
     def visualize_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
+
+        if conf.instance["visualize"]["plots"]["combined_only"]:
+            return
+
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
 
         region_list = self.region_list_from(model=model)
@@ -323,6 +339,14 @@ class AnalysisImagingCI(af.Analysis):
             region_list += ["fpr_non_uniformity"]
 
         dataset_list = [analysis.dataset for analysis in analyses]
+        fpr_value_list = [dataset.fpr_value for dataset in dataset_list]
+
+        dataset_list = self.in_ascending_fpr_order_from(
+            quantity_list=dataset_list,
+            fpr_value_list=fpr_value_list,
+        )
+
+        fpr_value_list = [dataset.fpr_value for dataset in dataset_list]
 
         visualizer.visualize_dataset_combined(
             dataset_list=dataset_list,
@@ -334,6 +358,11 @@ class AnalysisImagingCI(af.Analysis):
         )
         if self.dataset_full is not None:
             dataset_full_list = [analysis.dataset_full for analysis in analyses]
+
+            dataset_full_list = self.in_ascending_fpr_order_from(
+                quantity_list=dataset_full_list,
+                fpr_value_list=fpr_value_list,
+            )
 
             visualizer.visualize_dataset_combined(
                 dataset_list=dataset_full_list,
@@ -353,6 +382,10 @@ class AnalysisImagingCI(af.Analysis):
         instance: af.ModelInstance,
         during_analysis: bool,
     ):
+
+        if conf.instance["visualize"]["plots"]["combined_only"]:
+            return
+
         fit = self.fit_via_instance_from(instance=instance)
         region_list = self.region_list_from(model=instance)
 
@@ -387,6 +420,14 @@ class AnalysisImagingCI(af.Analysis):
         fit_list = [
             analysis.fit_via_instance_from(instance=instance) for analysis in analyses
         ]
+
+        fpr_value_list = [fit.dataset.fpr_value for fit in fit_list]
+
+        fit_full_list = self.in_ascending_fpr_order_from(
+            quantity_list=fit_list,
+            fpr_value_list=fpr_value_list,
+        )
+        
         region_list = self.region_list_from(model=instance)
 
         visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
@@ -400,20 +441,25 @@ class AnalysisImagingCI(af.Analysis):
         )
 
         if self.dataset_full is not None:
-            fit_list_full = [
+            fit_full_list = [
                 analysis.fit_via_instance_and_dataset_from(
                     instance=instance, dataset=analysis.dataset_full
                 )
                 for analysis in analyses
             ]
 
+            fit_full_list = self.in_ascending_fpr_order_from(
+                quantity_list=fit_full_list,
+                fpr_value_list=fpr_value_list,
+            )
+
             visualizer.visualize_fit_combined(
-                fit_list=fit_list_full,
+                fit_list=fit_full_list,
                 during_analysis=during_analysis,
                 folder_suffix="_full",
             )
             visualizer.visualize_fit_1d_regions_combined(
-                fit_list=fit_list_full,
+                fit_list=fit_full_list,
                 region_list=region_list,
                 during_analysis=during_analysis,
                 folder_suffix="_full",
