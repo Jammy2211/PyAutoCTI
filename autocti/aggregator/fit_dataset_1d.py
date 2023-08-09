@@ -131,7 +131,7 @@ class FitDataset1DAgg(AbstractAgg):
         """
         Returns a generator of `FitDataset1D` objects from an input aggregator.
 
-        See `__init__` for a description of how the `Dataset1D` objects are created by this method.
+        See `__init__` for a description of how the `FitDataset1D` objects are created by this method.
 
         If a `dataset_full` is input into the `Analysis` class when a model-fit is performed and therefore accessible
         to the database, the input `use_dataset_full` can be switched in to fit the full dataset instead.
