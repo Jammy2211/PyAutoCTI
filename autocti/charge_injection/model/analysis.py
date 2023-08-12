@@ -348,8 +348,6 @@ class AnalysisImagingCI(af.Analysis):
             fpr_value_list=fpr_value_list,
         )
 
-        fpr_value_list = [dataset.fpr_value for dataset in dataset_list]
-
         visualizer.visualize_dataset_combined(
             dataset_list=dataset_list,
         )
@@ -424,7 +422,7 @@ class AnalysisImagingCI(af.Analysis):
 
         fpr_value_list = [fit.dataset.fpr_value for fit in fit_list]
 
-        fit_full_list = self.in_ascending_fpr_order_from(
+        fit_list = self.in_ascending_fpr_order_from(
             quantity_list=fit_list,
             fpr_value_list=fpr_value_list,
         )

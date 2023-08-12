@@ -220,8 +220,6 @@ class AnalysisDataset1D(af.Analysis):
             fpr_value_list=fpr_value_list,
         )
 
-        fpr_value_list = [dataset.fpr_value for dataset in dataset_list]
-
         visualizer.visualize_dataset_combined(
             dataset_list=dataset_list,
         )
