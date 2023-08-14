@@ -104,6 +104,11 @@ def make_mask_2d_7x7_unmasked():
     return fixtures.make_mask_2d_7x7_unmasked()
 
 
+@pytest.fixture(name="mask_2d_7x7")
+def make_mask_2d_7x7():
+    return fixtures.make_mask_2d_7x7()
+
+
 ### LINES ###
 
 

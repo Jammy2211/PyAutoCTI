@@ -48,8 +48,8 @@ class Mask2D(aa.Mask2D):
             The bool values of the mask input as an ndarray of shape [total_y_pixels, total_x_pixels ]or a list of
             lists.
         pixel_scales
-            The (y,x) scaled units to pixel units conversion factors of every pixel. If this is input as a ``float``,
-            it is converted to a (float, float) structure.
+            The (y,x) arcsecond-to-pixel units conversion factor of every pixel. If this is input as a `float`,
+            it is converted to a (float, float).
         origin : (float, float)
             The (y,x) scaled units origin of the mask's coordinate system.
         invert
@@ -81,8 +81,8 @@ class Mask2D(aa.Mask2D):
             The bool values of the mask input as an ndarray of shape [total_y_pixels, total_x_pixels ]or a list of
             lists.
         pixel_scales
-            The (y,x) scaled units to pixel units conversion factors of every pixel. If this is input as a ``float``,
-            it is converted to a (float, float) structure.
+            The (y,x) arcsecond-to-pixel units conversion factor of every pixel. If this is input as a `float`,
+            it is converted to a (float, float).
         origin : (float, float)
             The (y,x) scaled units origin of the mask's coordinate system.
         invert

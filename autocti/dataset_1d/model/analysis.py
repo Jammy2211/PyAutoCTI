@@ -1,12 +1,12 @@
-import os
 from typing import List, Optional
+
+from autoconf import conf
 
 import autofit as af
 
 from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
 from autocti.dataset_1d.fit import FitDataset1D
 from autocti.dataset_1d.model.visualizer import VisualizerDataset1D
-from autocti.model.result import ResultDataset
 from autocti.dataset_1d.model.result import ResultDataset1D
 from autocti.model.settings import SettingsCTI1D
 from autocti.clocker.one_d import Clocker1D
@@ -20,6 +20,30 @@ class AnalysisDataset1D(af.Analysis):
         settings_cti: SettingsCTI1D = SettingsCTI1D(),
         dataset_full: Optional[Dataset1D] = None,
     ):
+        """
+        Fits a CTI model to a 1D CTI dataset via a non-linear search.
+
+        The `Analysis` class defines the `log_likelihood_function` which fits the model to the dataset and returns the
+        log likelihood value defining how well the model fitted the data.
+
+        It handles many other tasks, such as visualization, outputting results to hard-disk and storing results in
+        a format that can be loaded after the model-fit is complete.
+
+        This class is used for model-fits which fit a CTI model via a `CTI1D` object to a charge injection
+        imaging dataset.
+
+        Parameters
+        ----------
+        dataset
+            The 1D CTI dataset that the model is fitted to.
+        clocker
+            The CTI arctic clocker used by the non-linear search and model-fit.
+        settings_cti
+            The settings controlling aspects of the CTI model in this model-fit.
+        dataset_full
+            The full dataset, which is visualized separate from the `dataset` that is fitted, which for example may
+            not have the FPR masked and thus enable visualization of the FPR.
+        """
         super().__init__()
 
         self.dataset = dataset
@@ -32,8 +56,8 @@ class AnalysisDataset1D(af.Analysis):
 
     def modify_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
         """
-        PyAutoFit calls this function immediately before the non-linear search begins, therefore it can be used to
-        perform tasks using the final model parameterization.
+        This function is called immediately before the non-linear search begins and performs final tasks and checks
+        before it begins.
 
         This function:
 
@@ -88,7 +112,7 @@ class AnalysisDataset1D(af.Analysis):
             instance=instance, dataset=self.dataset
         )
 
-    def save_attributes_for_aggregator(self, paths: af.DirectoryPaths):
+    def save_attributes(self, paths: af.DirectoryPaths):
         """
         Before the model-fit via the non-linear search begins, this routine saves attributes of the `Analysis` object
         to the `pickles` folder such that they can be loaded after the analysis using PyAutoFit's database and
@@ -96,7 +120,8 @@ class AnalysisDataset1D(af.Analysis):
 
         For this analysis the following are output:
 
-        - The 1D dataset.
+        - The 1D dataset (data / noise-map / pre cti data / layout / settings etc.).
+        - The mask applied to the dataset.
         - The clocker used for modeling / clocking CTI.
         - The settings used for modeling / clocking CTI.
         - The full 1D dataset (e.g. unmasked, used for visualizariton).
@@ -112,11 +137,51 @@ class AnalysisDataset1D(af.Analysis):
             The PyAutoFit paths object which manages all paths, e.g. where the non-linear search outputs are stored,
             visualization,and the pickled objects used by the aggregator output by this function.
         """
-        paths.save_object("dataset", self.dataset)
-        paths.save_object("clocker", self.clocker)
-        paths.save_object("settings_cti", self.settings_cti)
+        dataset_path = paths._files_path / "dataset"
+
+        self.dataset.output_to_fits(
+            data_path=dataset_path / "data.fits",
+            noise_map_path=dataset_path / "noise_map.fits",
+            pre_cti_data_path=dataset_path / "pre_cti_data.fits",
+            overwrite=True,
+        )
+        self.dataset.layout.output_to_json(
+            file_path=dataset_path / "layout.json",
+        )
+        self.dataset.mask.output_to_fits(
+            file_path=dataset_path / "mask.fits", overwrite=True
+        )
+
         if self.dataset_full is not None:
-            paths.save_object("dataset_full", self.dataset_full)
+            dataset_path = paths._files_path / "dataset_full"
+
+            self.dataset_full.output_to_fits(
+                data_path=dataset_path / "data.fits",
+                noise_map_path=dataset_path / "noise_map.fits",
+                pre_cti_data_path=dataset_path / "pre_cti_data.fits",
+                overwrite=True,
+            )
+            self.dataset_full.layout.output_to_json(
+                file_path=dataset_path / "layout.json",
+            )
+            self.dataset_full.mask.output_to_fits(
+                file_path=dataset_path / "mask.fits", overwrite=True
+            )
+
+        self.clocker.output_to_json(file_path=paths._files_path / "clocker.json")
+        self.settings_cti.output_to_json(
+            file_path=paths._files_path / "settings_cti.json"
+        )
+
+    def in_ascending_fpr_order_from(self, quantity_list, fpr_value_list):
+        if not conf.instance["visualize"]["general"]["general"][
+            "subplot_ascending_fpr"
+        ]:
+            return quantity_list
+
+        indexes = sorted(range(len(fpr_value_list)), key=lambda k: fpr_value_list[k])
+
+        return [quantity_list[i] for i in indexes]
 
     def visualize_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
         region_list = self.region_list_from()
@@ -148,6 +213,12 @@ class AnalysisDataset1D(af.Analysis):
         region_list = self.region_list_from()
 
         dataset_list = [analysis.dataset for analysis in analyses]
+        fpr_value_list = [dataset.fpr_value for dataset in dataset_list]
+
+        dataset_list = self.in_ascending_fpr_order_from(
+            quantity_list=dataset_list,
+            fpr_value_list=fpr_value_list,
+        )
 
         visualizer.visualize_dataset_combined(
             dataset_list=dataset_list,
@@ -159,6 +230,11 @@ class AnalysisDataset1D(af.Analysis):
 
         if self.dataset_full is not None:
             dataset_full_list = [analysis.dataset_full for analysis in analyses]
+
+            dataset_full_list = self.in_ascending_fpr_order_from(
+                quantity_list=dataset_full_list,
+                fpr_value_list=fpr_value_list,
+            )
 
             visualizer.visualize_dataset_combined(
                 dataset_list=dataset_full_list, folder_suffix="_full"
@@ -208,6 +284,13 @@ class AnalysisDataset1D(af.Analysis):
             analysis.fit_via_instance_from(instance=instance) for analysis in analyses
         ]
 
+        fpr_value_list = [fit.dataset.fpr_value for fit in fit_list]
+
+        fit_list = self.in_ascending_fpr_order_from(
+            quantity_list=fit_list,
+            fpr_value_list=fpr_value_list,
+        )
+
         region_list = self.region_list_from()
 
         visualizer = VisualizerDataset1D(visualize_path=paths.image_path)
@@ -221,18 +304,23 @@ class AnalysisDataset1D(af.Analysis):
         )
 
         if self.dataset_full is not None:
-            fit_list = [
+            fit_full_list = [
                 analysis.fit_via_instance_and_dataset_from(
                     instance=instance, dataset=analysis.dataset_full
                 )
                 for analysis in analyses
             ]
 
+            fit_full_list = self.in_ascending_fpr_order_from(
+                quantity_list=fit_full_list,
+                fpr_value_list=fpr_value_list,
+            )
+
             visualizer.visualize_fit_combined(
-                fit_list=fit_list, during_analysis=during_analysis
+                fit_list=fit_full_list, during_analysis=during_analysis
             )
             visualizer.visualize_fit_region_combined(
-                fit_list=fit_list,
+                fit_list=fit_full_list,
                 region_list=region_list,
                 during_analysis=during_analysis,
             )
@@ -240,8 +328,5 @@ class AnalysisDataset1D(af.Analysis):
     def make_result(
         self,
         samples: af.SamplesPDF,
-        sigma=1.0,
-        use_errors=True,
-        use_widths=False,
     ) -> ResultDataset1D:
         return ResultDataset1D(samples=samples, analysis=self)

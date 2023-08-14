@@ -164,51 +164,32 @@ def test__from_fits__noise_map_from_single_value(layout_ci_7x7):
     assert dataset.layout == layout_ci_7x7
 
 
-def test__output_to_fits___all_arrays(layout_ci_7x7):
-    dataset = ac.ImagingCI.from_fits(
-        pixel_scales=1.0,
-        layout=layout_ci_7x7,
-        data_path=path.join(test_data_path, "3x3_ones.fits"),
-        data_hdu=0,
-        noise_map_path=path.join(test_data_path, "3x3_twos.fits"),
-        noise_map_hdu=0,
-        pre_cti_data_path=path.join(test_data_path, "3x3_threes.fits"),
-        pre_cti_data_hdu=0,
-        cosmic_ray_map_path=path.join(test_data_path, "3x3_fours.fits"),
-        cosmic_ray_map_hdu=0,
-    )
-
-    output_data_dir = path.join(test_data_path, "output_test")
-
-    if path.exists(output_data_dir):
-        shutil.rmtree(output_data_dir)
-
-    os.makedirs(output_data_dir)
-
-    dataset.output_to_fits(
-        data_path=path.join(output_data_dir, "data.fits"),
-        noise_map_path=path.join(output_data_dir, "noise_map.fits"),
-        pre_cti_data_path=path.join(output_data_dir, "pre_cti_data.fits"),
-        cosmic_ray_map_path=path.join(output_data_dir, "cosmic_ray_map.fits"),
+def test__output_to_fits___all_arrays(imaging_ci_7x7):
+    imaging_ci_7x7.output_to_fits(
+        data_path=path.join(test_data_path, "data.fits"),
+        noise_map_path=path.join(test_data_path, "noise_map.fits"),
+        pre_cti_data_path=path.join(test_data_path, "pre_cti_data.fits"),
+        cosmic_ray_map_path=path.join(test_data_path, "cosmic_ray_map.fits"),
+        overwrite=True,
     )
 
     dataset = ac.ImagingCI.from_fits(
         pixel_scales=1.0,
-        layout=layout_ci_7x7,
-        data_path=path.join(output_data_dir, "data.fits"),
+        layout=imaging_ci_7x7.layout,
+        data_path=path.join(test_data_path, "data.fits"),
         data_hdu=0,
-        noise_map_path=path.join(output_data_dir, "noise_map.fits"),
+        noise_map_path=path.join(test_data_path, "noise_map.fits"),
         noise_map_hdu=0,
-        pre_cti_data_path=path.join(output_data_dir, "pre_cti_data.fits"),
+        pre_cti_data_path=path.join(test_data_path, "pre_cti_data.fits"),
         pre_cti_data_hdu=0,
-        cosmic_ray_map_path=path.join(output_data_dir, "cosmic_ray_map.fits"),
+        cosmic_ray_map_path=path.join(test_data_path, "cosmic_ray_map.fits"),
         cosmic_ray_map_hdu=0,
     )
 
-    assert (dataset.data.native == np.ones((3, 3))).all()
-    assert (dataset.noise_map.native == 2.0 * np.ones((3, 3))).all()
-    assert (dataset.pre_cti_data.native == 3.0 * np.ones((3, 3))).all()
-    assert (dataset.cosmic_ray_map.native == 4.0 * np.ones((3, 3))).all()
+    assert (dataset.data.native == np.ones((7, 7))).all()
+    assert (dataset.noise_map.native == 2.0 * np.ones((7, 7))).all()
+    assert (dataset.pre_cti_data.native == 10.0 * np.ones((7, 7))).all()
+    assert (dataset.cosmic_ray_map.native == 0.0 * np.ones((7, 7))).all()
 
 
 def test__apply_mask__masks_arrays_correctly(imaging_ci_7x7):

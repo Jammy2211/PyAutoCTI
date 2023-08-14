@@ -1,5 +1,6 @@
 import numpy as np
-from typing import Optional, List, Dict
+from pathlib import Path
+from typing import Optional, List, Dict, Union
 
 import autoarray as aa
 
@@ -24,7 +25,7 @@ class ImagingCI(aa.Imaging):
     ):
         super().__init__(data=data, noise_map=noise_map)
 
-        self.data = self.image.native
+        self.data = self.data.native
         self.noise_map = self.noise_map.native
         self.pre_cti_data = pre_cti_data.native
 
@@ -63,7 +64,7 @@ class ImagingCI(aa.Imaging):
 
     @property
     def mask(self):
-        return self.image.mask
+        return self.data.mask
 
     @property
     def region_list(self):
@@ -84,7 +85,7 @@ class ImagingCI(aa.Imaging):
         -------
         A list of the normalization of every column of the charge regions
         """
-        masked_image = np.ma.array(data=self.image, mask=self.image.mask)
+        masked_image = np.ma.array(data=self.data, mask=self.data.mask)
 
         return [
             np.ma.median(masked_image[region.y0 : region.y1, column_index])
@@ -107,7 +108,7 @@ class ImagingCI(aa.Imaging):
         return self.data - self.pre_cti_data
 
     def apply_mask(self, mask: mask_2d.Mask2D) -> "ImagingCI":
-        image = aa.Array2D(values=self.image.native, mask=mask)
+        image = aa.Array2D(values=self.data.native, mask=mask)
         noise_map = aa.Array2D(values=self.noise_map.native, mask=mask)
 
         if self.cosmic_ray_map is not None:
@@ -171,39 +172,81 @@ class ImagingCI(aa.Imaging):
     @classmethod
     def from_fits(
         cls,
-        layout,
-        pixel_scales,
-        data_path=None,
-        image=None,
-        data_hdu=0,
-        noise_map_path=None,
-        noise_map_hdu=0,
-        noise_map_from_single_value=None,
-        pre_cti_data_path=None,
-        pre_cti_data_hdu=0,
-        pre_cti_data=None,
-        cosmic_ray_map_path=None,
-        cosmic_ray_map_hdu=0,
+        pixel_scales: aa.type.PixelScales,
+        layout: Layout2DCI,
+        data_path: Optional[Union[Path, str]] = None,
+        data_hdu: int = 0,
+        data: aa.Array2D = None,
+        noise_map_path: Optional[Union[Path, str]] = None,
+        noise_map_hdu: int = 0,
+        noise_map_from_single_value: float = None,
+        pre_cti_data_path: Optional[Union[Path, str]] = None,
+        pre_cti_data_hdu: int = 0,
+        pre_cti_data: aa.Array2D = None,
+        cosmic_ray_map_path: Optional[Union[Path, str]] = None,
+        cosmic_ray_map_hdu: int = 0,
         settings_dict: Optional[Dict] = None,
     ) -> "ImagingCI":
-        if data_path is not None and image is None:
-            ci_image = aa.Array2D.from_fits(
+        """
+        Load charge injection imaging from multiple .fits file.
+
+        For each attribute of the charge injection data (e.g. `data`, `noise_map`, `pre_cti_data`) the path to
+        the .fits and the `hdu` containing the data can be specified.
+
+        The `noise_map` assumes the noise value in each `data` value are independent, where these values are the
+        RMS standard deviation error in each pixel.
+
+        If the dataset has a mask associated with it (e.g. in a `mask.fits` file) the file must be loaded separately
+        via the `Mask2D` object and applied to the imaging after loading via fits using the `from_fits` method.
+
+        Parameters
+        ----------
+        pixel_scales
+            The (y,x) arcsecond-to-pixel units conversion factor of every pixel. If this is input as a `float`,
+            it is converted to a (float, float).
+        layout
+            The layout of the charge injection, containing information like where the parallel and serial FPR and
+            EPER are located.
+        data_path
+            The path to the data .fits file containing the image data (e.g. '/path/to/data.fits').
+        data_hdu
+            The hdu the image data is contained in the .fits file specified by `data_path`.
+        data
+            Manually input the data as an `Array2D` instead of loading it via a .fits file.
+        noise_map_path
+            The path to the noise_map .fits file containing the noise_map (e.g. '/path/to/noise_map.fits').
+        noise_map_hdu
+            The hdu the noise map is contained in the .fits file specified by `noise_map_path`.
+        noise_map_from_single_value
+            Creates a `noise_map` of constant values if this is input instead of loading via .fits.
+        pre_cti_data_path
+            The path to the pre CTI data .fits file containing the image data (e.g. '/path/to/pre_cti_data.fits').
+        pre_cti_data_hdu
+            The hdu the pre cti data is contained in the .fits file specified by `pre_cti_data_path`.
+        pre_cti_data
+            Manually input the pre CTI data as an `Array2D` instead of loading it via a .fits file.
+        cosmic_ray_map_path
+            The path to the cosmic ray map .fits file containing the map of cosmic
+            rays (e.g. '/path/to/cosmic_ray_map.fits').
+        cosmic_ray_map_hdu
+            The hdu the cosmic ray data is contained in the .fits file specified by `cosmic_ray_map_path`.
+        settings_dict
+            A dictionary of settings associated with the charge injeciton imaging (e.g. voltage settings) which is
+            used for visualization.
+        """
+        if data_path is not None and data is None:
+            data = aa.Array2D.from_fits(
                 file_path=data_path, hdu=data_hdu, pixel_scales=pixel_scales
             )
 
-        elif image is not None:
-            ci_image = image
-
         if noise_map_path is not None:
-            ci_noise_map = aa.util.array_2d.numpy_array_2d_via_fits_from(
+            noise_map = aa.util.array_2d.numpy_array_2d_via_fits_from(
                 file_path=noise_map_path, hdu=noise_map_hdu
             )
         else:
-            ci_noise_map = np.ones(ci_image.shape_native) * noise_map_from_single_value
+            noise_map = np.ones(data.shape_native) * noise_map_from_single_value
 
-        ci_noise_map = aa.Array2D.no_mask(
-            values=ci_noise_map, pixel_scales=pixel_scales
-        )
+        noise_map = aa.Array2D.no_mask(values=noise_map, pixel_scales=pixel_scales)
 
         if pre_cti_data_path is not None and pre_cti_data is None:
             pre_cti_data = aa.Array2D.from_fits(
@@ -231,8 +274,8 @@ class ImagingCI(aa.Imaging):
             cosmic_ray_map = None
 
         return ImagingCI(
-            data=ci_image,
-            noise_map=ci_noise_map,
+            data=data,
+            noise_map=noise_map,
             pre_cti_data=pre_cti_data,
             cosmic_ray_map=cosmic_ray_map,
             layout=layout,
@@ -241,13 +284,37 @@ class ImagingCI(aa.Imaging):
 
     def output_to_fits(
         self,
-        data_path,
-        noise_map_path=None,
-        pre_cti_data_path=None,
-        cosmic_ray_map_path=None,
-        overwrite=False,
+        data_path: Union[Path, str],
+        noise_map_path: Optional[Union[Path, str]] = None,
+        pre_cti_data_path: Optional[Union[Path, str]] = None,
+        cosmic_ray_map_path: Optional[Union[Path, str]] = None,
+        overwrite: bool = False,
     ):
-        self.image.output_to_fits(file_path=data_path, overwrite=overwrite)
+        """
+        Output the charge injection imaging dataset to multiple .fits file.
+
+        For each attribute of the charge injection imaging data (e.g. `data`, `noise_map`, `pre_cti_data`) the path to
+        the .fits can be specified, with `hdu=0` assumed automatically.
+
+        If the `data` has been masked, the masked data is output to .fits files. A mask can be separately output to
+        a file `mask.fits` via the `Mask` objects `output_to_fits` method.
+
+        Parameters
+        ----------
+        data_path
+            The path to the data .fits file where the image data is output (e.g. '/path/to/data.fits').
+        noise_map_path
+            The path to the noise_map .fits where the noise_map is output (e.g. '/path/to/noise_map.fits').
+        pre_cti_data_path
+            The path to the pre CTI data .fits file where the pre CTI data is output (e.g. '/path/to/pre_cti_data.fits').
+        cosmic_ray_map_path
+            The path to the cosmic ray map .fits file where the cosmic ray map is
+            output (e.g. '/path/to/cosmic_ray_map.fits').
+        overwrite
+            If `True`, the .fits files are overwritten if they already exist, if `False` they are not and an
+            exception is raised.
+        """
+        self.data.output_to_fits(file_path=data_path, overwrite=overwrite)
 
         if noise_map_path is not None:
             self.noise_map.output_to_fits(file_path=noise_map_path, overwrite=overwrite)

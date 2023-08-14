@@ -1,5 +1,7 @@
 from autofit.non_linear.mock.mock_samples import MockSamples
 
+from autoarray.fixtures import *
+
 import autofit as af
 import autocti as ac
 
@@ -222,7 +224,7 @@ def make_samples_with_result():
     return MockSamples(
         model=model,
         max_log_likelihood_instance=instance,
-        gaussian_tuples=[(1.0, 2.0)] * model.prior_count
+        gaussian_tuples=[(1.0, 2.0)] * model.prior_count,
     )
 
 
