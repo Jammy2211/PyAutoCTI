@@ -105,7 +105,6 @@ these algorithms to perform CTI calibration. However, `Pyxel` is more general pu
 CCD clocking procedure (e.g. bias, dark frames, flat fields). `PyAutoCTI` is therefore more specialized and
 has a more extensive suite of tools for CTI calibration.
 
-
 # Software API and Features
 
 At the heart of the `PyAutoCTI` API are `Trap` objects, which represent the populations of traps on a CCD which cause
