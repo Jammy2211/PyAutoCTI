@@ -99,6 +99,8 @@ class Dataset1DPlotter(Plotter):
         suffix = f"_{region}" if region is not None else ""
         title_str = self.title_str_from(region=region)
 
+        should_plot_zero = self.should_plot_zero_from(region=region)
+
         if data:
             y = self.extract_region_from(array=self.dataset.data, region=region)
             y_errors = self.extract_region_from(
@@ -111,6 +113,7 @@ class Dataset1DPlotter(Plotter):
                 plot_axis_type_override="errorbar",
                 y_errors=y_errors,
                 visuals_1d=self.get_visuals_1d(),
+                should_plot_zero=should_plot_zero,
                 text_manual_dict=self.text_manual_dict_from(region=region),
                 text_manual_dict_y=self.text_manual_dict_y_from(region=region),
                 auto_labels=AutoLabels(

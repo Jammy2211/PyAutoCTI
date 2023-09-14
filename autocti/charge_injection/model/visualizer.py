@@ -158,6 +158,8 @@ class VisualizerImagingCI(Visualizer):
                     f"VISUALIZATION - Could not visualize the ImagingCI 1D {region}"
                 )
 
+
+
     def visualize_fit(self, fit, during_analysis, folder_suffix: str = ""):
         def should_plot(name):
             return plot_setting(section="fit", name=name)

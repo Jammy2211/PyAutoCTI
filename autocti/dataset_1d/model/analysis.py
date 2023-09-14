@@ -137,40 +137,48 @@ class AnalysisDataset1D(af.Analysis):
             The PyAutoFit paths object which manages all paths, e.g. where the non-linear search outputs are stored,
             visualization,and the pickled objects used by the aggregator output by this function.
         """
-        dataset_path = paths._files_path / "dataset"
+        def output_dataset(dataset):
+        
+            paths.save_json(
+                name="data",
+                object_dict=dataset.data,
+                prefix="dataset",
+            )
+            paths.save_json(
+                name="noise_map",
+                object_dict=dataset.noise_map,
+                prefix="dataset",
+            )
+            paths.save_json(
+                name="pre_cti_data",
+                object_dict=dataset.pre_cti_data,
+                prefix="dataset",
+            )
+            paths.save_json(
+                name="layout",
+                object_dict=dataset.layout,
+                prefix="dataset",
+            )
+            paths.save_json(
+                name="mask",
+                object_dict=dataset.mask,
+                prefix="dataset",
+            )
 
-        self.dataset.output_to_fits(
-            data_path=dataset_path / "data.fits",
-            noise_map_path=dataset_path / "noise_map.fits",
-            pre_cti_data_path=dataset_path / "pre_cti_data.fits",
-            overwrite=True,
-        )
-        self.dataset.layout.output_to_json(
-            file_path=dataset_path / "layout.json",
-        )
-        self.dataset.mask.output_to_fits(
-            file_path=dataset_path / "mask.fits", overwrite=True
-        )
+        output_dataset(dataset=self.dataset)
 
         if self.dataset_full is not None:
-            dataset_path = paths._files_path / "dataset_full"
 
-            self.dataset_full.output_to_fits(
-                data_path=dataset_path / "data.fits",
-                noise_map_path=dataset_path / "noise_map.fits",
-                pre_cti_data_path=dataset_path / "pre_cti_data.fits",
-                overwrite=True,
-            )
-            self.dataset_full.layout.output_to_json(
-                file_path=dataset_path / "layout.json",
-            )
-            self.dataset_full.mask.output_to_fits(
-                file_path=dataset_path / "mask.fits", overwrite=True
-            )
+            output_dataset(dataset=self.dataset_full)
 
-        self.clocker.output_to_json(file_path=paths._files_path / "clocker.json")
-        self.settings_cti.output_to_json(
-            file_path=paths._files_path / "settings_cti.json"
+        paths.save_json(
+            name="clocker",
+            object_dict=self.clocker,
+        )
+
+        paths.save_json(
+            name="clocker",
+            object_dict=self.settings_cti,
         )
 
     def in_ascending_fpr_order_from(self, quantity_list, fpr_value_list):

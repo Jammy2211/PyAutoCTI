@@ -3,8 +3,6 @@ from typing import Optional, List
 from arcticpy import CCDPhase
 from arcticpy import TrapInstantCapture
 
-from autoconf.dictable import Dictable
-
 
 class AbstractCTI:
     @property
@@ -16,7 +14,7 @@ class AbstractCTI:
         return sum([trap.delta_ellipticity for trap in self.trap_list])
 
 
-class CTI1D(AbstractCTI, Dictable):
+class CTI1D(AbstractCTI):
     def __init__(
         self,
         trap_list: Optional[List[TrapInstantCapture]] = None,
@@ -43,7 +41,7 @@ class CTI1D(AbstractCTI, Dictable):
         return self._trap_list
 
 
-class CTI2D(AbstractCTI, Dictable):
+class CTI2D(AbstractCTI):
     def __init__(
         self,
         parallel_trap_list: Optional[List[TrapInstantCapture]] = None,

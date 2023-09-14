@@ -356,6 +356,7 @@ class AnalysisImagingCI(af.Analysis):
             dataset_list=dataset_list,
             region_list=region_list,
         )
+
         if self.dataset_full is not None:
             dataset_full_list = [analysis.dataset_full for analysis in analyses]
 

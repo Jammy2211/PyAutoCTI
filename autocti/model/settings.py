@@ -2,12 +2,10 @@ from typing import List, Optional, Tuple
 
 from arcticpy import TrapInstantCapture
 
-from autoconf.dictable import Dictable
-
 from autocti import exc
 
 
-class AbstractSettingsCTI(Dictable):
+class AbstractSettingsCTI:
     def check_total_density_within_range_of_traps(
         self, total_density_range: Tuple[float, float], traps: List[TrapInstantCapture]
     ):
