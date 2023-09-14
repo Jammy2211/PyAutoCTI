@@ -1,6 +1,8 @@
 import pytest
 from os import path
 
+from autoconf.dictable import to_dict, output_to_json, from_json
+
 import autocti as ac
 
 
@@ -97,7 +99,7 @@ def test__dictable():
         serial_ccd=serial_ccd,
     )
 
-    cti.output_to_json(file_path=json_file)
+    output_to_json(obj=cti, file_path=json_file)
 
     cti_from_json = ac.CTI2D.from_json(file_path=json_file)
 

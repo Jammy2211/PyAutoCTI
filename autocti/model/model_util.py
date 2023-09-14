@@ -1,10 +1,17 @@
 from typing import Optional, List
 
+from autoconf.dictable import from_json
+
 from arcticpy import CCDPhase
 from arcticpy import TrapInstantCapture
 
 
 class AbstractCTI:
+
+    @staticmethod
+    def from_json(file_path):
+        return from_json(file_path=file_path)
+
     @property
     def trap_list(self):
         raise NotImplementedError
