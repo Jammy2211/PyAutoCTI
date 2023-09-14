@@ -138,39 +138,39 @@ class AnalysisDataset1D(af.Analysis):
             The PyAutoFit paths object which manages all paths, e.g. where the non-linear search outputs are stored,
             visualization,and the pickled objects used by the aggregator output by this function.
         """
-        def output_dataset(dataset):
+        def output_dataset(dataset, prefix):
         
-            paths.save_json(
+            paths.save_fits(
                 name="data",
-                object_dict=to_dict(dataset.data),
-                prefix="dataset",
+                hdu=dataset.data.hdu_for_output,
+                prefix=prefix,
             )
-            paths.save_json(
+            paths.save_fits(
                 name="noise_map",
-                object_dict=to_dict(dataset.noise_map),
-                prefix="dataset",
+                hdu=dataset.noise_map.hdu_for_output,
+                prefix=prefix,
             )
-            paths.save_json(
+            paths.save_fits(
                 name="pre_cti_data",
-                object_dict=to_dict(dataset.pre_cti_data),
-                prefix="dataset",
+                hdu=dataset.pre_cti_data.hdu_for_output,
+                prefix=prefix,
+            )
+            paths.save_fits(
+                name="mask",
+                hdu=dataset.mask.hdu_for_output,
+                prefix=prefix,
             )
             paths.save_json(
                 name="layout",
                 object_dict=to_dict(dataset.layout),
-                prefix="dataset",
-            )
-            paths.save_json(
-                name="mask",
-                object_dict=to_dict(dataset.mask),
-                prefix="dataset",
+                prefix=prefix,
             )
 
-        output_dataset(dataset=self.dataset)
+        output_dataset(dataset=self.dataset, prefix="dataset")
 
         if self.dataset_full is not None:
 
-            output_dataset(dataset=self.dataset_full)
+            output_dataset(dataset=self.dataset_full, prefix="dataset_full")
 
         paths.save_json(
             name="clocker",
@@ -178,7 +178,7 @@ class AnalysisDataset1D(af.Analysis):
         )
 
         paths.save_json(
-            name="clocker",
+            name="settings_cti",
             object_dict=to_dict(self.settings_cti),
         )
 

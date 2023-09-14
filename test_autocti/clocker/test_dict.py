@@ -1,6 +1,9 @@
 import os
 
 import pytest
+
+from autoconf.dictable import from_dict
+
 from autocti import Clocker2D
 
 
@@ -9,6 +12,7 @@ def make_clocker_dict():
     return {
         "type": "autocti.clocker.two_d.Clocker2D",
         "class_path": "autocti.clocker.two_d.Clocker2D",
+        "arguments": {},
         "iterations": 5,
         "parallel_roe": {
             "type": "arcticpy.roe.ROE",
@@ -51,7 +55,7 @@ def make_clocker_dict():
 
 
 def test_clocker_from_dict(clocker_dict):
-    assert isinstance(Clocker2D.from_dict(clocker_dict), Clocker2D)
+    assert isinstance(from_dict(clocker_dict), Clocker2D)
 
 
 def test_file():

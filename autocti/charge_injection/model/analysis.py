@@ -245,7 +245,7 @@ class AnalysisImagingCI(af.Analysis):
         )
 
         paths.save_json(
-            name="clocker",
+            name="settings_cti",
             object_dict=to_dict(self.settings_cti),
         )
 
@@ -253,32 +253,32 @@ class AnalysisImagingCI(af.Analysis):
         if conf.instance["visualize"]["plots"]["combined_only"]:
             return
 
-        def output_dataset(dataset):
+        def output_dataset(dataset, prefix):
 
             paths.save_fits(
                 name="data",
                 hdu=dataset.data.hdu_for_output,
-                prefix="dataset",
+                prefix=prefix,
             )
             paths.save_fits(
                 name="noise_map",
                 hdu=dataset.noise_map.hdu_for_output,
-                prefix="dataset",
+                prefix=prefix,
             )
             paths.save_fits(
                 name="pre_cti_data",
                 hdu=dataset.pre_cti_data.hdu_for_output,
-                prefix="dataset",
+                prefix=prefix,
             )
             paths.save_json(
                 name="layout",
                 object_dict=to_dict(dataset.layout),
-                prefix="dataset",
+                prefix=prefix,
             )
             paths.save_fits(
                 name="mask",
                 hdu=dataset.mask.hdu_for_output,
-                prefix="dataset",
+                prefix=prefix,
             )
 
             if self.dataset.settings_dict is not None:
@@ -289,10 +289,10 @@ class AnalysisImagingCI(af.Analysis):
                     prefix="dataset",
                 )
 
-        output_dataset(dataset=self.dataset)
+        output_dataset(dataset=self.dataset, prefix="dataset")
 
         if self.dataset_full is not None:
-            output_dataset(dataset=self.dataset_full)
+            output_dataset(dataset=self.dataset_full, prefix="dataset_full")
 
     def in_ascending_fpr_order_from(self, quantity_list, fpr_value_list):
         if not conf.instance["visualize"]["general"]["general"][

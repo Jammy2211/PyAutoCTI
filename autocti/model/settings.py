@@ -24,10 +24,6 @@ class AbstractSettingsCTI:
     def from_json(cls, file_path):
         return from_json(file_path=file_path)
 
-    @classmethod
-    def from_dict(cls, dictionary):
-        return from_dict(dictionary)
-
     def output_to_json(self, file_path):
         output_to_json(obj=self, file_path=file_path)
 
