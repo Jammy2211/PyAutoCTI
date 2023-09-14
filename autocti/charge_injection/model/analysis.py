@@ -1,8 +1,8 @@
 import logging
-import json
 from typing import List, Optional
 
 from autoconf import conf
+from autoconf.dictable import to_dict
 
 import autoarray as aa
 import autofit as af
@@ -241,12 +241,12 @@ class AnalysisImagingCI(af.Analysis):
 
         paths.save_json(
             name="clocker",
-            object_dict=self.clocker,
+            object_dict=to_dict(self.clocker),
         )
 
         paths.save_json(
             name="clocker",
-            object_dict=self.settings_cti,
+            object_dict=to_dict(self.settings_cti),
         )
 
 
@@ -270,9 +270,9 @@ class AnalysisImagingCI(af.Analysis):
                 hdu=dataset.pre_cti_data.hdu_for_output,
                 prefix="dataset",
             )
-            paths.save_fits(
+            paths.save_json(
                 name="layout",
-                hdu=dataset.layout.hdu_for_output,
+                object_dict=to_dict(dataset.layout),
                 prefix="dataset",
             )
             paths.save_fits(

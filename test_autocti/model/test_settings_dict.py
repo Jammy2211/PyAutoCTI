@@ -9,6 +9,7 @@ import autocti as ac
 def make_settings_dict():
     return {
         "type": "autocti.model.settings.SettingsCTI2D",
+        "class_path": "autocti.model.settings.SettingsCTI2D",
         "parallel_total_density_range": None,
         "serial_total_density_range": None,
     }

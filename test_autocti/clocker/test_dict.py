@@ -8,6 +8,7 @@ from autocti import Clocker2D
 def make_clocker_dict():
     return {
         "type": "autocti.clocker.two_d.Clocker2D",
+        "class_path": "autocti.clocker.two_d.Clocker2D",
         "iterations": 5,
         "parallel_roe": {
             "type": "arcticpy.roe.ROE",

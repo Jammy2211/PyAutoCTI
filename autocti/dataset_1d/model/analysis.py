@@ -1,6 +1,7 @@
 from typing import List, Optional
 
 from autoconf import conf
+from autoconf.dictable import to_dict
 
 import autofit as af
 
@@ -141,27 +142,27 @@ class AnalysisDataset1D(af.Analysis):
         
             paths.save_json(
                 name="data",
-                object_dict=dataset.data,
+                object_dict=to_dict(dataset.data),
                 prefix="dataset",
             )
             paths.save_json(
                 name="noise_map",
-                object_dict=dataset.noise_map,
+                object_dict=to_dict(dataset.noise_map),
                 prefix="dataset",
             )
             paths.save_json(
                 name="pre_cti_data",
-                object_dict=dataset.pre_cti_data,
+                object_dict=to_dict(dataset.pre_cti_data),
                 prefix="dataset",
             )
             paths.save_json(
                 name="layout",
-                object_dict=dataset.layout,
+                object_dict=to_dict(dataset.layout),
                 prefix="dataset",
             )
             paths.save_json(
                 name="mask",
-                object_dict=dataset.mask,
+                object_dict=to_dict(dataset.mask),
                 prefix="dataset",
             )
 
@@ -173,12 +174,12 @@ class AnalysisDataset1D(af.Analysis):
 
         paths.save_json(
             name="clocker",
-            object_dict=self.clocker,
+            object_dict=to_dict(self.clocker),
         )
 
         paths.save_json(
             name="clocker",
-            object_dict=self.settings_cti,
+            object_dict=to_dict(self.settings_cti),
         )
 
     def in_ascending_fpr_order_from(self, quantity_list, fpr_value_list):
