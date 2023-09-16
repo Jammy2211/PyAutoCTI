@@ -161,7 +161,7 @@ very effective at lens modeling.
 
 .. code-block:: python
 
-    search = af.DynestyStatic(name="overview_modeling_2d")
+    search = af.Nautilus(name="overview_modeling_2d")
 
 Analysis
 --------
@@ -377,7 +377,7 @@ We again use ``dynesty`` (https://github.com/joshspeagle/dynesty) to fit the mod
 
 .. code-block:: python
 
-    search = af.DynestyStatic(name="overview_modeling_1d")
+    search = af.Nautilus(name="overview_modeling_1d")
 
 We next create a list of ``AnalysisDataset1D`` objects, which each contain a ``log_likelihood_function`` that the
 non-linear search calls to fit the CIT model to the data.
