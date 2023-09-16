@@ -138,8 +138,8 @@ class AnalysisDataset1D(af.Analysis):
             The PyAutoFit paths object which manages all paths, e.g. where the non-linear search outputs are stored,
             visualization,and the pickled objects used by the aggregator output by this function.
         """
+
         def output_dataset(dataset, prefix):
-        
             paths.save_fits(
                 name="data",
                 hdu=dataset.data.hdu_for_output,
@@ -169,7 +169,6 @@ class AnalysisDataset1D(af.Analysis):
         output_dataset(dataset=self.dataset, prefix="dataset")
 
         if self.dataset_full is not None:
-
             output_dataset(dataset=self.dataset_full, prefix="dataset_full")
 
         paths.save_json(

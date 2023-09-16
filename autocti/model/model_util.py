@@ -7,7 +7,6 @@ from arcticpy import TrapInstantCapture
 
 
 class AbstractCTI:
-
     @staticmethod
     def from_json(file_path):
         return from_json(file_path=file_path)

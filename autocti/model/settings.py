@@ -27,6 +27,7 @@ class AbstractSettingsCTI:
     def output_to_json(self, file_path):
         output_to_json(obj=self, file_path=file_path)
 
+
 class SettingsCTI1D(AbstractSettingsCTI):
     def __init__(
         self,

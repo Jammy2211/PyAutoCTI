@@ -54,7 +54,6 @@ def _imaging_ci_list_from(fit: af.Fit, use_dataset_full: bool = False):
     dataset_list = []
 
     for fit in fit_list:
-
         layout = fit.value(name=f"{folder}.layout")
 
         data = aa.Array2D.from_primary_hdu(primary_hdu=fit.value(name=f"{folder}.data"))

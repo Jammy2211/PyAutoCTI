@@ -249,12 +249,10 @@ class AnalysisImagingCI(af.Analysis):
             object_dict=to_dict(self.settings_cti),
         )
 
-
         if conf.instance["visualize"]["plots"]["combined_only"]:
             return
 
         def output_dataset(dataset, prefix):
-
             paths.save_fits(
                 name="data",
                 hdu=dataset.data.hdu_for_output,
@@ -282,7 +280,6 @@ class AnalysisImagingCI(af.Analysis):
             )
 
             if self.dataset.settings_dict is not None:
-
                 paths.save_json(
                     name="settings_dict",
                     object_dict=self.dataset.settings_dict,

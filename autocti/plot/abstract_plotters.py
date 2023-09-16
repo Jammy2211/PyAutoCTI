@@ -100,7 +100,6 @@ class Plotter(AbstractPlotter):
         return 0.34
 
     def should_plot_zero_from(self, region: Optional[str]):
-
         if region is None:
             return False
 
