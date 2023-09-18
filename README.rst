@@ -186,7 +186,7 @@ which fits a CTI model to charge injection imaging calibrate data (a form of dat
     """
     We define the non-linear search used to fit the model to the data (in this case, Dynesty).
     """
-    search = af.DynestyStatic(name="search[example]", nlive=50)
+    search = af.Nautilus(name="search[example]", n_live=50)
 
     """
     We next set up the `Analysis`, which contains the `log likelihood function` that the

@@ -2,12 +2,12 @@ from typing import List, Optional, Tuple
 
 from arcticpy import TrapInstantCapture
 
-from autoconf.dictable import Dictable
+from autoconf.dictable import from_dict, from_json, output_to_json
 
 from autocti import exc
 
 
-class AbstractSettingsCTI(Dictable):
+class AbstractSettingsCTI:
     def check_total_density_within_range_of_traps(
         self, total_density_range: Tuple[float, float], traps: List[TrapInstantCapture]
     ):
@@ -19,6 +19,13 @@ class AbstractSettingsCTI(Dictable):
                 or total_density > total_density_range[1]
             ):
                 raise exc.PriorException
+
+    @classmethod
+    def from_json(cls, file_path):
+        return from_json(file_path=file_path)
+
+    def output_to_json(self, file_path):
+        output_to_json(obj=self, file_path=file_path)
 
 
 class SettingsCTI1D(AbstractSettingsCTI):

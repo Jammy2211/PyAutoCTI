@@ -218,6 +218,8 @@ class ImagingCIPlotter(Plotter):
         else:
             ls_errorbar = ""
 
+        should_plot_zero = self.should_plot_zero_from(region=region)
+
         title_str = self.title_str_from(region=region)
 
         if data:
@@ -232,6 +234,7 @@ class ImagingCIPlotter(Plotter):
                 plot_axis_type_override="errorbar",
                 y_errors=y_errors,
                 ls_errorbar=ls_errorbar,
+                should_plot_zero=should_plot_zero,
                 text_manual_dict=self.text_manual_dict_from(region=region),
                 text_manual_dict_y=self.text_manual_dict_y_from(region=region),
                 visuals_1d=self.get_visuals_1d(),

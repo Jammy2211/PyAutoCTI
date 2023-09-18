@@ -112,6 +112,8 @@ class FitDataset1DPlotter(Plotter):
         y_errors = self.extract_region_from(array=self.fit.noise_map, region=region)
         y_extra = self.extract_region_from(array=self.fit.model_data, region=region)
 
+        should_plot_zero = self.should_plot_zero_from(region=region)
+
         if data:
             y = self.extract_region_from(array=self.fit.data, region=region)
 
@@ -121,6 +123,7 @@ class FitDataset1DPlotter(Plotter):
                 plot_axis_type_override="errorbar",
                 y_errors=y_errors,
                 y_extra=y_extra,
+                should_plot_zero=should_plot_zero,
                 text_manual_dict=self.text_manual_dict_from(region=region),
                 text_manual_dict_y=self.text_manual_dict_y_from(region=region),
                 visuals_1d=self.get_visuals_1d(),
@@ -188,7 +191,7 @@ class FitDataset1DPlotter(Plotter):
                 x=range(len(y)),
                 plot_axis_type_override="errorbar",
                 y_errors=y_errors,
-                y_extra=np.zeros(shape=y.shape),
+                should_plot_zero=should_plot_zero,
                 text_manual_dict=self.text_manual_dict_from(region=region),
                 text_manual_dict_y=self.text_manual_dict_y_from(region=region),
                 visuals_1d=self.get_visuals_1d(),

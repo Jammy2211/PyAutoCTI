@@ -1,8 +1,8 @@
 import logging
-import json
 from typing import List, Optional
 
 from autoconf import conf
+from autoconf.dictable import to_dict
 
 import autoarray as aa
 import autofit as af
@@ -239,57 +239,57 @@ class AnalysisImagingCI(af.Analysis):
             visualization,and the pickled objects used by the aggregator output by this function.
         """
 
-        self.clocker.output_to_json(file_path=paths._files_path / "clocker.json")
-        self.settings_cti.output_to_json(
-            file_path=paths._files_path / "settings_cti.json"
+        paths.save_json(
+            name="clocker",
+            object_dict=to_dict(self.clocker),
+        )
+
+        paths.save_json(
+            name="settings_cti",
+            object_dict=to_dict(self.settings_cti),
         )
 
         if conf.instance["visualize"]["plots"]["combined_only"]:
             return
 
-        dataset_path = paths._files_path / "dataset"
-
-        self.dataset.output_to_fits(
-            data_path=dataset_path / "data.fits",
-            noise_map_path=dataset_path / "noise_map.fits",
-            pre_cti_data_path=dataset_path / "pre_cti_data.fits",
-            cosmic_ray_map_path=dataset_path / "cosmic_ray_map.fits",
-            overwrite=True,
-        )
-        self.dataset.layout.output_to_json(
-            file_path=dataset_path / "layout.json",
-        )
-
-        if self.dataset.settings_dict is not None:
-            with open(dataset_path / "settings_dict.json", "w+") as outfile:
-                json.dump(self.dataset.settings_dict, outfile)
-
-        self.dataset.mask.output_to_fits(
-            file_path=dataset_path / "mask.fits", overwrite=True
-        )
-
-        if self.dataset_full is not None:
-            dataset_path = paths._files_path / "dataset_full"
-
-            self.dataset_full.output_to_fits(
-                data_path=dataset_path / "data.fits",
-                noise_map_path=dataset_path / "noise_map.fits",
-                pre_cti_data_path=dataset_path / "pre_cti_data.fits",
-                cosmic_ray_map_path=dataset_path / "cosmic_ray_map.fits",
-                overwrite=True,
+        def output_dataset(dataset, prefix):
+            paths.save_fits(
+                name="data",
+                hdu=dataset.data.hdu_for_output,
+                prefix=prefix,
             )
-
-            self.dataset.layout.output_to_json(
-                file_path=dataset_path / "layout.json",
+            paths.save_fits(
+                name="noise_map",
+                hdu=dataset.noise_map.hdu_for_output,
+                prefix=prefix,
+            )
+            paths.save_fits(
+                name="pre_cti_data",
+                hdu=dataset.pre_cti_data.hdu_for_output,
+                prefix=prefix,
+            )
+            paths.save_json(
+                name="layout",
+                object_dict=to_dict(dataset.layout),
+                prefix=prefix,
+            )
+            paths.save_fits(
+                name="mask",
+                hdu=dataset.mask.hdu_for_output,
+                prefix=prefix,
             )
 
             if self.dataset.settings_dict is not None:
-                with open(dataset_path / "settings_dict.json", "w+") as outfile:
-                    json.dump(self.dataset.settings_dict, outfile)
+                paths.save_json(
+                    name="settings_dict",
+                    object_dict=self.dataset.settings_dict,
+                    prefix="dataset",
+                )
 
-            self.dataset_full.mask.output_to_fits(
-                file_path=dataset_path / "mask.fits", overwrite=True
-            )
+        output_dataset(dataset=self.dataset, prefix="dataset")
+
+        if self.dataset_full is not None:
+            output_dataset(dataset=self.dataset_full, prefix="dataset_full")
 
     def in_ascending_fpr_order_from(self, quantity_list, fpr_value_list):
         if not conf.instance["visualize"]["general"]["general"][
@@ -356,6 +356,7 @@ class AnalysisImagingCI(af.Analysis):
             dataset_list=dataset_list,
             region_list=region_list,
         )
+
         if self.dataset_full is not None:
             dataset_full_list = [analysis.dataset_full for analysis in analyses]
 

@@ -1,12 +1,16 @@
 from typing import Optional, List
 
+from autoconf.dictable import from_json
+
 from arcticpy import CCDPhase
 from arcticpy import TrapInstantCapture
 
-from autoconf.dictable import Dictable
-
 
 class AbstractCTI:
+    @staticmethod
+    def from_json(file_path):
+        return from_json(file_path=file_path)
+
     @property
     def trap_list(self):
         raise NotImplementedError
@@ -16,7 +20,7 @@ class AbstractCTI:
         return sum([trap.delta_ellipticity for trap in self.trap_list])
 
 
-class CTI1D(AbstractCTI, Dictable):
+class CTI1D(AbstractCTI):
     def __init__(
         self,
         trap_list: Optional[List[TrapInstantCapture]] = None,
@@ -43,7 +47,7 @@ class CTI1D(AbstractCTI, Dictable):
         return self._trap_list
 
 
-class CTI2D(AbstractCTI, Dictable):
+class CTI2D(AbstractCTI):
     def __init__(
         self,
         parallel_trap_list: Optional[List[TrapInstantCapture]] = None,

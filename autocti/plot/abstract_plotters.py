@@ -98,3 +98,12 @@ class Plotter(AbstractPlotter):
         if region is None or "eper" in region:
             return 0.94
         return 0.34
+
+    def should_plot_zero_from(self, region: Optional[str]):
+        if region is None:
+            return False
+
+        if "eper" in region:
+            return True
+
+        return False

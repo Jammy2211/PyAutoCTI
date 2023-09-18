@@ -13,4 +13,4 @@ output:
   log_to_file: false
   model_results_decimal_places: 3
   remove_files: false
-  samples_to_csv: false
+  samples_to_csv: true

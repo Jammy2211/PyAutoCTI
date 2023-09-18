@@ -127,7 +127,7 @@ CTI Model
 We now need to define our CTI model, that is the number of traps our 1D data is going to encounter when we pass it
 through the clocker and replicate the CCD clocking process..
 
-There are many different types of traps one can use do to this. We will use the simplest, a ``TrapInstantCaptrue``,
+There are many different types of traps one can use do to this. We will use the simplest, a ``TrapInstantCapture``,
 which instantaneously captures an electron when it encounters it during CCD clocking.
 
 The number of these traps our 1D data encounters is set via the ``density`` parameter, whereas the ``release_timescale``

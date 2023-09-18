@@ -4,12 +4,12 @@ from arcticpy import CCD
 from arcticpy import CCDPhase
 from arcticpy import TrapInstantCapture
 
-from autoconf.dictable import Dictable
+from autoconf.dictable import from_dict, from_json, output_to_json
 
 from autocti import exc
 
 
-class AbstractClocker(Dictable):
+class AbstractClocker:
     def __init__(self, iterations: int = 1, verbosity: int = 0):
         """
         An abstract clocker, which wraps the c++ arctic CTI clocking algorithm in **PyAutoCTI**.
@@ -74,3 +74,10 @@ class AbstractClocker(Dictable):
         """
         if not any(ccd_list):
             raise exc.ClockerException("No CCD object was passed to the add_cti method")
+
+    @classmethod
+    def from_json(cls, file_path):
+        return from_json(file_path=file_path)
+
+    def output_to_json(self, file_path):
+        output_to_json(obj=self, file_path=file_path)

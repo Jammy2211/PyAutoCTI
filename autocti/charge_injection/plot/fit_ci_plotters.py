@@ -223,6 +223,8 @@ class FitImagingCIPlotter(Plotter):
         )
         y_extra = self.extract_region_from(array=self.fit.model_data, region=region)
 
+        should_plot_zero = self.should_plot_zero_from(region=region)
+
         if data:
             self.mat_plot_1d.plot_yx(
                 y=y,
@@ -230,6 +232,7 @@ class FitImagingCIPlotter(Plotter):
                 plot_axis_type_override="errorbar",
                 y_errors=y_errors,
                 y_extra=y_extra,
+                should_plot_zero=should_plot_zero,
                 text_manual_dict=self.text_manual_dict_from(region=region),
                 text_manual_dict_y=self.text_manual_dict_y_from(region=region),
                 visuals_1d=self.visuals_1d,
@@ -307,6 +310,7 @@ class FitImagingCIPlotter(Plotter):
             self.mat_plot_1d.plot_yx(
                 y=y,
                 x=range(len(y)),
+                should_plot_zero=should_plot_zero,
                 visuals_1d=self.visuals_1d,
                 auto_labels=AutoLabels(
                     title=f"CI Post CTI {title_str}",
@@ -323,7 +327,7 @@ class FitImagingCIPlotter(Plotter):
                 x=range(len(y)),
                 plot_axis_type_override="errorbar",
                 y_errors=y_errors,
-                y_extra=np.zeros(shape=y.shape),
+                should_plot_zero=should_plot_zero,
                 text_manual_dict=self.text_manual_dict_from(region=region),
                 text_manual_dict_y=self.text_manual_dict_y_from(region=region),
                 visuals_1d=self.visuals_1d,
@@ -342,7 +346,6 @@ class FitImagingCIPlotter(Plotter):
                 x=range(len(y)),
                 plot_axis_type_override="errorbar_logy",
                 y_errors=y_errors,
-                y_extra=1.0001 * np.zeros(shape=y.shape),
                 text_manual_dict=self.text_manual_dict_from(region=region),
                 text_manual_dict_y=self.text_manual_dict_y_from(region=region),
                 visuals_1d=self.visuals_1d,
