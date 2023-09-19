@@ -8,11 +8,12 @@ from autocti.extract.settings import SettingsExtract
 from autocti.extract.two_d import extract_2d_util
 
 
-class Extract2DParallelPreFirstFPR(Extract2DParallel):
+class Extract2DParallelPreInjection(Extract2DParallel):
     def region_list_from(self, settings: SettingsExtract) -> List[aa.Region2D]:
         """
-        Returns a list of the 2D parallel regions before the first FPR from the `region_list` containing
-        signal  (e.g. the charge injection regions of charge injection data), between two input `pixels` indexes.
+        Returns a list of the 2D parallel regions before the first injected signal (e.g. before the FPR) from
+        the `region_list` containing signal  (e.g. the charge injection regions of charge injection data), between
+        two input `pixels` indexes.
 
         Negative pixel values can be input into the `pixels` tuple, whereby columns in front of the region in front of
         the parallel FPRs are extracted.
@@ -21,12 +22,13 @@ class Extract2DParallelPreFirstFPR(Extract2DParallel):
 
         (top-row, bottom-row, left-column, right-column) = (y0, y1, x0, x1)
 
-        For the region before the first parallel FPR's the charge spans all columns of the charge injection region,
-        thus the coordinates x0 and x1
-        do not change. y0 and y1 are updated based on the `pixels` input.
+        The pre injection region is defined to contained all pixels before the FPR, but also the same rows of pixels
+        in the serial prescan and overscans. This is because the region is used to estimate and subtract constant
+        background signals across the full CCD (e.g. bias, stray light, etc.). The x0 and x1 coordinates are therefore
+        updated to include the serial prescan and overscan regions.
 
-        Negative pixel values can be input into the `pixels` tuple, whereby rows in front of the parallel FPRs are
-        also extracted.
+        The y0 and y1 coordinates are updated based on the `pixels` input, but also computed based on where the
+        injection occurs (and therefore are before the FPRs).
 
         The diagram below illustrates the extraction for `pixels=(0, 1)`:
 
@@ -37,6 +39,7 @@ class Extract2DParallelPreFirstFPR(Extract2DParallel):
         [ssssssssss] = serial overscan
         [f#ff#f#f#f] = signal region (FPR) (0 / 1 indicate the region index)
         [tttttttttt] = parallel / serial charge injection region trail
+        [ppippippipp] The pre injection region to be extracted
 
                [ppppppppppppppppppppp]
                [ppppppppppppppppppppp]
@@ -47,20 +50,20 @@ class Extract2DParallelPreFirstFPR(Extract2DParallel):
         Par [...][ttttttttttttttttttttt][sss]    | of
         |  [...][0ccc0cccc0cccc0cccc0c][sss]    | clocking
         |/  [...][cc0ccc0cccc0cccc0cccc][sss]    \/
+        |/  [...][ppippippippipppipppip][sss]
 
         []     [=====================]
                <---------Ser--------
 
-        The extracted regions correspond to the first parallel FPR all charge injection regions:
+        The extracted regions correspond to the single region before the first parallel FPR:
 
-        region_list[0] = [0, 1, 3, 21] (serial prescan is 3 pixels)
-        region_list[1] = [3, 4, 3, 21] (serial prescan is 3 pixels)
+        region_list[0] = [0, 4, 0, 1] (serial prescan is 3 pixels)
+        region_list[1] = [0, 4, 0, 1] (serial prescan is 3 pixels)
 
         For `pixels=(0,1)` the extracted arrays returned via the `array_2d_list_from()` function keep the first
         parallel FPR of each charge injection region:
 
-        array_2d_list[0] = [c0c0c0cc0c0c0c0c0c0c0]
-        array_2d_list[1] = [1c1c1c1c1c1c1c1c1c1c1]
+        array_2d_list[0] = [ppippippippipppipppip]
 
         Parameters
         ----------
@@ -68,12 +71,20 @@ class Extract2DParallelPreFirstFPR(Extract2DParallel):
            The settings used to extract the parallel FPRs, which for example include the `pixels` tuple specifying the
            range of pixel rows they are extracted between.
         """
-        return [
-            region.parallel_front_region_from(
-                pixels=settings.pixels, pixels_from_end=settings.pixels_from_end
-            )
-            for region in self.region_list
-        ]
+
+        pixels = settings.pixels
+        pixels_from_end = settings.pixels_from_end
+
+        # if pixels_from_end is not None:
+        #     pixels = (self.total_rows - pixels_from_end, self.total_rows)
+
+        y0_min = min([region.y0 for region in self.region_list])
+
+        y0 = pixels[1]
+
+        print((pixels[0], y0, self.region_list[0].x0, self.region_list[0].x1))
+
+        return [aa.Region2D(region=(0 + pixels[0], y0, self.region_list[0].x0, self.region_list[0].x1))]
 
     def binned_region_1d_from(self, settings: SettingsExtract) -> aa.Region1D:
         """
