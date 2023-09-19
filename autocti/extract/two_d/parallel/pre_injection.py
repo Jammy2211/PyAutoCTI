@@ -8,19 +8,24 @@ from autocti.extract.settings import SettingsExtract
 from autocti.extract.two_d import extract_2d_util
 
 
-class Extract2DParallelOverscan(Extract2DParallel):
+class Extract2DParallelPreFirstFPR(Extract2DParallel):
     def region_list_from(self, settings: SettingsExtract) -> List[aa.Region2D]:
         """
-        Returns a list of the 2D parallel overscan region, which is the parallel overscan input to the
-        object, between two input `pixels` indexes (this is somewhat redundant information, but mimicks
-        the `Extract` object API across all other `Extract` objects).
+        Returns a list of the 2D parallel regions before the first FPR from the `region_list` containing
+        signal  (e.g. the charge injection regions of charge injection data), between two input `pixels` indexes.
+
+        Negative pixel values can be input into the `pixels` tuple, whereby columns in front of the region in front of
+        the parallel FPRs are extracted.
+
+        A 2D region is defined following the convention:
 
         (top-row, bottom-row, left-column, right-column) = (y0, y1, x0, x1)
 
-        The parallel overscan spans all columns of the image, thus the coordinates x0 and x1 do not change. y0 and y1
-        are updated based on the `pixels` input.
+        For the region before the first parallel FPR's the charge spans all columns of the charge injection region,
+        thus the coordinates x0 and x1
+        do not change. y0 and y1 are updated based on the `pixels` input.
 
-        Negative pixel values can be input into the `pixels` tuple, whereby rows in front of the parallel overscan are
+        Negative pixel values can be input into the `pixels` tuple, whereby rows in front of the parallel FPRs are
         also extracted.
 
         The diagram below illustrates the extraction for `pixels=(0, 1)`:
@@ -46,38 +51,29 @@ class Extract2DParallelOverscan(Extract2DParallel):
         []     [=====================]
                <---------Ser--------
 
-        The extracted regions correspond to the parallel overscan [ppppppppppppppp] regions.
+        The extracted regions correspond to the first parallel FPR all charge injection regions:
+
+        region_list[0] = [0, 1, 3, 21] (serial prescan is 3 pixels)
+        region_list[1] = [3, 4, 3, 21] (serial prescan is 3 pixels)
 
         For `pixels=(0,1)` the extracted arrays returned via the `array_2d_list_from()` function keep the first
-        parallel pixels across the rows of the overscan:
+        parallel FPR of each charge injection region:
 
-        array_2d_list[0] = [ppppppppppppppppppppp]
+        array_2d_list[0] = [c0c0c0cc0c0c0c0c0c0c0]
+        array_2d_list[1] = [1c1c1c1c1c1c1c1c1c1c1]
 
         Parameters
         ----------
         settings
-           The settings used to extract the parallel overscan, which for example include the `pixels` tuple specifying the
+           The settings used to extract the parallel FPRs, which for example include the `pixels` tuple specifying the
            range of pixel rows they are extracted between.
         """
-
-        pixels = settings.pixels
-
-        if settings.pixels_from_end is not None:
-            pixels = (
-                self.parallel_overscan.total_rows - settings.pixels_from_end,
-                self.parallel_overscan.total_rows,
+        return [
+            region.parallel_front_region_from(
+                pixels=settings.pixels, pixels_from_end=settings.pixels_from_end
             )
-
-        parallel_overscan_extract = aa.Region2D(
-            (
-                self.parallel_overscan.y0 + pixels[0],
-                self.parallel_overscan.y0 + pixels[1],
-                self.parallel_overscan.x0,
-                self.parallel_overscan.x1,
-            )
-        )
-
-        return [parallel_overscan_extract]
+            for region in self.region_list
+        ]
 
     def binned_region_1d_from(self, settings: SettingsExtract) -> aa.Region1D:
         """
@@ -89,17 +85,14 @@ class Extract2DParallelOverscan(Extract2DParallel):
         In order to create the 1D dataset a `Layout1D` is required, which requires the `region_list` containing the
         charge regions on the 1D dataset (e.g. where the FPR appears in 1D after binning).
 
-        The function returns the this region if the 1D dataset is extracted from the parallel overscan. This
-        assumes the overscan contains EPER trails and therefore all pixels in front of the overscan act as the
-        charge region and therefore FPR. This is the case when science imaging flat field data is used.
-
-        The charge region is therefore only included if there are negative entries in the `pixels` tuple, meaning that
-        pixels before the overscan (e.g. the FPR) are extracted.
+        The function returns the this region if the 1D dataset is extracted from the parallel FPRs. This is
+        the full range of the `pixels` tuple, unless negative entries are included, meaning that pixels
+        before the FPRs are extracted.
 
         Parameters
         ----------
         settings
-           The settings used to extract the parallel overscan, which for example include the `pixels` tuple specifying the
+           The settings used to extract the parallel FPR, which for example include the `pixels` tuple specifying the
            range of pixel rows they are extracted between.
         """
-        return extract_2d_util.binned_region_1d_eper_from(pixels=settings.pixels)
+        return extract_2d_util.binned_region_1d_fpr_from(pixels=settings.pixels)
