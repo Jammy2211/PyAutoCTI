@@ -22,7 +22,7 @@ class Extract2DParallelPreInjection(Extract2DParallel):
 
         (top-row, bottom-row, left-column, right-column) = (y0, y1, x0, x1)
 
-        The pre injection region is defined to contained all pixels before the FPR, but also the same rows of pixels
+        The pre injection region is defined to contain all pixels before the FPR, not including the rows of pixels
         in the serial prescan and overscans. This is because the region is used to estimate and subtract constant
         background signals across the full CCD (e.g. bias, stray light, etc.). The x0 and x1 coordinates are therefore
         updated to include the serial prescan and overscan regions.
@@ -83,28 +83,4 @@ class Extract2DParallelPreInjection(Extract2DParallel):
 
         y0 = pixels[1]
 
-        print((pixels[0], y0, self.region_list[0].x0, self.region_list[0].x1))
-
         return [aa.Region2D(region=(pixels[0], y0, self.region_list[0].x0, self.region_list[0].x1))]
-
-    def binned_region_1d_from(self, settings: SettingsExtract) -> aa.Region1D:
-        """
-        The `Extract` objects allow one to extract a `Dataset1D` from a 2D CTI dataset, which is used to perform
-        CTI modeling in 1D.
-
-        This is performed by binning up the data via the `binned_array_1d_from` function.
-
-        In order to create the 1D dataset a `Layout1D` is required, which requires the `region_list` containing the
-        charge regions on the 1D dataset (e.g. where the FPR appears in 1D after binning).
-
-        The function returns the this region if the 1D dataset is extracted from the parallel FPRs. This is
-        the full range of the `pixels` tuple, unless negative entries are included, meaning that pixels
-        before the FPRs are extracted.
-
-        Parameters
-        ----------
-        settings
-           The settings used to extract the parallel FPR, which for example include the `pixels` tuple specifying the
-           range of pixel rows they are extracted between.
-        """
-        return extract_2d_util.binned_region_1d_fpr_from(pixels=settings.pixels)

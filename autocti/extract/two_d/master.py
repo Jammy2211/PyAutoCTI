@@ -7,6 +7,7 @@ from autocti.extract.two_d.parallel.overscan import Extract2DParallelOverscan
 from autocti.extract.two_d.parallel.fpr import Extract2DParallelFPR
 from autocti.extract.two_d.parallel.eper import Extract2DParallelEPER
 from autocti.extract.two_d.parallel.pedestal import Extract2DParallelPedestal
+from autocti.extract.two_d.parallel.pre_injection import Extract2DParallelPreInjection
 from autocti.extract.two_d.serial.overscan import Extract2DSerialOverscan
 from autocti.extract.two_d.serial.prescan import Extract2DSerialPrescan
 from autocti.extract.two_d.serial.fpr import Extract2DSerialFPR
@@ -83,6 +84,16 @@ class Extract2DMaster:
     @property
     def parallel_pedestal(self):
         return Extract2DParallelPedestal(
+            shape_2d=self.shape_2d,
+            region_list=self.region_list,
+            parallel_overscan=self._parallel_overscan,
+            serial_prescan=self._serial_prescan,
+            serial_overscan=self._serial_overscan,
+        )
+
+    @property
+    def parallel_pre_injection(self):
+        return Extract2DParallelPreInjection(
             shape_2d=self.shape_2d,
             region_list=self.region_list,
             parallel_overscan=self._parallel_overscan,
