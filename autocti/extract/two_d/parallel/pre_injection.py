@@ -76,11 +76,14 @@ class Extract2DParallelPreInjection(Extract2DParallel):
         pixels_from_end = settings.pixels_from_end
 
         if pixels_from_end is not None:
-
             y0_min = min([region.y0 for region in self.region_list])
 
             pixels = (y0_min - pixels_from_end, y0_min)
 
         y0 = pixels[1]
 
-        return [aa.Region2D(region=(pixels[0], y0, self.region_list[0].x0, self.region_list[0].x1))]
+        return [
+            aa.Region2D(
+                region=(pixels[0], y0, self.region_list[0].x0, self.region_list[0].x1)
+            )
+        ]

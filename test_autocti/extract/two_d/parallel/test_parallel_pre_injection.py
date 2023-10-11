@@ -35,14 +35,18 @@ def test__region_list_from__via_array_2d_list_from(
 
     assert (
         array_2d_list[0].mask
-        == np.array([[False, False, False], [False, False, False], [False, True, False]])
+        == np.array(
+            [[False, False, False], [False, False, False], [False, True, False]]
+        )
     ).all()
 
 
 def test__region_list_from__via_array_2d_list_from__pixels_from_end(
     parallel_array, parallel_masked_array
 ):
-    extract = ac.Extract2DParallelPreInjection(region_list=[(2, 4, 0, 3)], shape_2d=(5, 5))
+    extract = ac.Extract2DParallelPreInjection(
+        region_list=[(2, 4, 0, 3)], shape_2d=(5, 5)
+    )
 
     array_2d_list = extract.array_2d_list_from(
         array=parallel_array, settings=ac.SettingsExtract(pixels_from_end=1)
@@ -61,7 +65,4 @@ def test__region_list_from__via_array_2d_list_from__pixels_from_end(
         array=parallel_masked_array, settings=ac.SettingsExtract(pixels_from_end=1)
     )
 
-    assert (
-        array_2d_list[0].mask
-        == np.array([[False, False, False]])
-    ).all()
+    assert (array_2d_list[0].mask == np.array([[False, False, False]])).all()

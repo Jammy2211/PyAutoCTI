@@ -113,6 +113,48 @@ class Extract2D:
     def region_list_from(self, settings: SettingsExtract) -> List[aa.Region2D]:
         raise NotImplementedError
 
+    @property
+    def anti_region_list(self) -> List[aa.Region2D]:
+        """
+        The `region_list` contains the charge injection FPR regions in pixel coordinates.
+
+        The `anti_region_list` contains the regions between the charge injection FPRs in pixel coordinates.
+
+        These predominantly contain the parallel EPERs, but may also contain the region in front of the FPR which do
+        not contain any EPERs because no charge has been injected yet.
+
+        The `anti_region_list` also does not include the serial prescan and serial overscan regions, but does include
+        the parallel overscan region.
+
+        Returns
+        -------
+        The regions in front of and between the charge injection FPRs in pixel coordinates.
+        """
+        anti_region_list = []
+
+        x0 = self.region_list[0].x0
+        x1 = self.region_list[0].x1
+
+        region_pre_fpr = aa.Region2D(region=(0, self.region_list[0].y0, x0, x1))
+
+        anti_region_list.append(region_pre_fpr)
+
+        if len(self.region_list) > 1:
+            for i in range(len(self.region_list) - 1):
+                region_between_fprs = aa.Region2D(
+                    region=(self.region_list[i].y1, self.region_list[i + 1].y0, x0, x1)
+                )
+
+                anti_region_list.append(region_between_fprs)
+
+        region_post_final_fpr = aa.Region2D(
+            region=(self.region_list[-1].y1, self.shape_2d[0], x0, x1)
+        )
+
+        anti_region_list.append(region_post_final_fpr)
+
+        return anti_region_list
+
     def array_2d_list_from(
         self, array: aa.Array2D, settings: SettingsExtract
     ) -> List[aa.Array2D]:
