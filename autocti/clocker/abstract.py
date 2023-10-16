@@ -4,12 +4,10 @@ from arcticpy import CCD
 from arcticpy import CCDPhase
 from arcticpy import TrapInstantCapture
 
-from autoconf.dictable import Dictable
-
 from autocti import exc
 
 
-class AbstractClocker(Dictable):
+class AbstractClocker:
     def __init__(self, iterations: int = 1, verbosity: int = 0):
         """
         An abstract clocker, which wraps the c++ arctic CTI clocking algorithm in **PyAutoCTI**.

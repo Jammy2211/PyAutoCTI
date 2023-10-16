@@ -2,6 +2,7 @@ import pytest
 from os import path
 
 import autocti as ac
+from autoconf.dictable import output_to_json, from_json
 
 
 def test__trap_list():
@@ -97,9 +98,9 @@ def test__dictable():
         serial_ccd=serial_ccd,
     )
 
-    cti.output_to_json(file_path=json_file)
+    output_to_json(cti, file_path=json_file)
 
-    cti_from_json = ac.CTI2D.from_json(file_path=json_file)
+    cti_from_json = from_json(file_path=json_file)
 
     assert cti_from_json.parallel_trap_list[0].density == 1.0
     assert cti_from_json.parallel_trap_list[1].density == 2.0

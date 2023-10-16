@@ -6,6 +6,7 @@ from autoconf import conf
 
 import autoarray as aa
 import autofit as af
+from autoconf.dictable import output_to_json
 
 from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.charge_injection.fit import FitImagingCI
@@ -239,9 +240,9 @@ class AnalysisImagingCI(af.Analysis):
             visualization,and the pickled objects used by the aggregator output by this function.
         """
 
-        self.clocker.output_to_json(file_path=paths._files_path / "clocker.json")
-        self.settings_cti.output_to_json(
-            file_path=paths._files_path / "settings_cti.json"
+        output_to_json(self.clocker, file_path=paths._files_path / "clocker.json")
+        output_to_json(
+            self.settings_cti, file_path=paths._files_path / "settings_cti.json"
         )
 
         if conf.instance["visualize"]["plots"]["combined_only"]:
@@ -256,7 +257,8 @@ class AnalysisImagingCI(af.Analysis):
             cosmic_ray_map_path=dataset_path / "cosmic_ray_map.fits",
             overwrite=True,
         )
-        self.dataset.layout.output_to_json(
+        output_to_json(
+            self.dataset.layout,
             file_path=dataset_path / "layout.json",
         )
 
@@ -279,7 +281,8 @@ class AnalysisImagingCI(af.Analysis):
                 overwrite=True,
             )
 
-            self.dataset.layout.output_to_json(
+            output_to_json(
+                self.dataset.layout,
                 file_path=dataset_path / "layout.json",
             )
 

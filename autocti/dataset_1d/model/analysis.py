@@ -3,6 +3,7 @@ from typing import List, Optional
 from autoconf import conf
 
 import autofit as af
+from autoconf.dictable import output_to_json
 
 from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
 from autocti.dataset_1d.fit import FitDataset1D
@@ -145,7 +146,8 @@ class AnalysisDataset1D(af.Analysis):
             pre_cti_data_path=dataset_path / "pre_cti_data.fits",
             overwrite=True,
         )
-        self.dataset.layout.output_to_json(
+        output_to_json(
+            self.dataset.layout,
             file_path=dataset_path / "layout.json",
         )
         self.dataset.mask.output_to_fits(
@@ -161,16 +163,17 @@ class AnalysisDataset1D(af.Analysis):
                 pre_cti_data_path=dataset_path / "pre_cti_data.fits",
                 overwrite=True,
             )
-            self.dataset_full.layout.output_to_json(
+            output_to_json(
+                self.dataset_full.layout,
                 file_path=dataset_path / "layout.json",
             )
             self.dataset_full.mask.output_to_fits(
                 file_path=dataset_path / "mask.fits", overwrite=True
             )
 
-        self.clocker.output_to_json(file_path=paths._files_path / "clocker.json")
-        self.settings_cti.output_to_json(
-            file_path=paths._files_path / "settings_cti.json"
+        output_to_json(self.clocker, file_path=paths._files_path / "clocker.json")
+        output_to_json(
+            self.settings_cti, file_path=paths._files_path / "settings_cti.json"
         )
 
     def in_ascending_fpr_order_from(self, quantity_list, fpr_value_list):
