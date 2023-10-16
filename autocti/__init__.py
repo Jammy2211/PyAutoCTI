@@ -28,6 +28,7 @@ from .extract.settings import SettingsExtract
 from .extract.two_d.parallel.overscan import Extract2DParallelOverscan
 from .extract.two_d.parallel.fpr import Extract2DParallelFPR
 from .extract.two_d.parallel.eper import Extract2DParallelEPER
+from .extract.two_d.parallel.pre_injection import Extract2DParallelPreInjection
 from .extract.two_d.parallel.pedestal import Extract2DParallelPedestal
 from .extract.two_d.serial.prescan import Extract2DSerialPrescan
 from .extract.two_d.serial.overscan import Extract2DSerialOverscan
@@ -72,4 +73,4 @@ from autoconf import conf
 
 conf.instance.register(__file__)
 
-__version__ = "2023.7.5.2"
+__version__ = "2023.9.18.4"

@@ -5,16 +5,18 @@ import pytest
 from autoconf.dictable import from_dict
 
 import autocti as ac
+from autoconf.dictable import from_dict, output_to_json, from_json
 
 
 @pytest.fixture(name="settings_dict")
 def make_settings_dict():
     return {
-        "type": "autocti.model.settings.SettingsCTI2D",
         "class_path": "autocti.model.settings.SettingsCTI2D",
-        "arguments": {},
-        "parallel_total_density_range": None,
-        "serial_total_density_range": None,
+        "type": "instance",
+        "arguments": {
+            "parallel_total_density_range": None,
+            "serial_total_density_range": None,
+        },
     }
 
 
@@ -24,9 +26,9 @@ def test_settings_from_dict(settings_dict):
 
 def test_file():
     filename = "/tmp/temp.json"
-    ac.SettingsCTI2D().output_to_json(filename)
+    output_to_json(ac.SettingsCTI2D(), filename)
 
     try:
-        assert isinstance(ac.SettingsCTI2D().from_json(filename), ac.SettingsCTI2D)
+        assert isinstance(from_json(filename), ac.SettingsCTI2D)
     finally:
         os.remove(filename)

@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import List
 
 import autoarray as aa
 
@@ -11,7 +11,7 @@ from autocti.extract.two_d import extract_2d_util
 class Extract2DParallelOverscan(Extract2DParallel):
     def region_list_from(self, settings: SettingsExtract) -> List[aa.Region2D]:
         """
-        Returns a list of the 2D parallel overscan region, which is simply the parallel overscan input to the
+        Returns a list of the 2D parallel overscan region, which is the parallel overscan input to the
         object, between two input `pixels` indexes (this is somewhat redundant information, but mimicks
         the `Extract` object API across all other `Extract` objects).
 

@@ -9,7 +9,7 @@ from autocti.extract.settings import SettingsExtract
 class Extract2DSerialPrescan(Extract2DSerial):
     def region_list_from(self, settings: SettingsExtract) -> List[aa.Region2D]:
         """
-        Returns a list of the 2D serial prescan region, which is simply the parallel overscan input to the
+        Returns a list of the 2D serial prescan region, which is the parallel overscan input to the
         object, between two input `pixels` indexes (this is somewhat redundant information, but mimicks
         the `Extract` object API across all other `Extract` objects).
 

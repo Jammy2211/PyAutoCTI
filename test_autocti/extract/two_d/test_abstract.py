@@ -409,3 +409,20 @@ def test__pedestal():
     )
 
     assert extract.pedestal == (7, 10, 5, 7)
+
+
+def test__anti_region_list():
+    extract = MockExtract2D(region_list=[(1, 4, 0, 3)], shape_2d=(5, 3))
+
+    assert extract.anti_region_list == [
+        (0, 1, 0, 3),
+        (4, 5, 0, 3),
+    ]
+
+    extract = MockExtract2D(region_list=[(2, 6, 1, 2), (8, 9, 1, 2)], shape_2d=(10, 3))
+
+    assert extract.anti_region_list == [
+        (0, 2, 1, 2),
+        (6, 8, 1, 2),
+        (9, 10, 1, 2),
+    ]

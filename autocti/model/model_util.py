@@ -93,18 +93,12 @@ class CTI2D(AbstractCTI):
 
 
 def is_parallel_fit(model):
-    if model.parallel_ccd is not None and model.serial_ccd is None:
-        return True
-    return False
+    return model.parallel_ccd is not None and model.serial_ccd is None
 
 
 def is_serial_fit(model):
-    if model.parallel_ccd is None and model.serial_ccd is not None:
-        return True
-    return False
+    return model.parallel_ccd is None and model.serial_ccd is not None
 
 
 def is_parallel_and_serial_fit(model):
-    if model.parallel_ccd is not None and model.serial_ccd is not None:
-        return True
-    return False
+    return model.parallel_ccd is not None and model.serial_ccd is not None

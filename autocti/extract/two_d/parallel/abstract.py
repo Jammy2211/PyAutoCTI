@@ -34,6 +34,8 @@ class Extract2DParallel(Extract2D):
         for column_index in range(arr_list[0].shape[1]):
             if value_str == "median":
                 value_list.append(float(np.ma.median(arr_stack[:, :, column_index])))
+            elif value_str == "mean":
+                value_list.append(float(np.ma.mean(arr_stack[:, :, column_index])))
             elif value_str == "std":
                 value_list.append(float(np.ma.std(arr_stack[:, :, column_index])))
 
@@ -136,6 +138,8 @@ class Extract2DParallel(Extract2D):
             for column_index in range(array_2d.shape[1]):
                 if value_str == "median":
                     value = float(np.ma.median(array_2d[:, column_index]))
+                elif value_str == "mean":
+                    value = float(np.ma.mean(array_2d[:, column_index]))
                 elif value_str == "std":
                     value = float(np.ma.std(array_2d[:, column_index]))
 
