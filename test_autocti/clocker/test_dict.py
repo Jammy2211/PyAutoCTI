@@ -2,9 +2,9 @@ import os
 
 import pytest
 
-from autoconf.dictable import from_dict
-
+from autoconf.dictable import output_to_json, from_dict, from_json
 from autocti import Clocker2D
+
 
 
 @pytest.fixture(name="clocker_dict")
@@ -60,9 +60,9 @@ def test_clocker_from_dict(clocker_dict):
 
 def test_file():
     filename = "/tmp/temp.json"
-    Clocker2D().output_to_json(filename)
+    output_to_json(Clocker2D(), filename)
 
     try:
-        assert isinstance(Clocker2D.from_json(filename), Clocker2D)
+        assert isinstance(from_json(filename), Clocker2D)
     finally:
         os.remove(filename)

@@ -2,7 +2,7 @@ from typing import List, Optional, Tuple
 
 from arcticpy import TrapInstantCapture
 
-from autoconf.dictable import from_dict, from_json, output_to_json
+from autoconf.dictable import from_json, output_to_json
 
 from autocti import exc
 

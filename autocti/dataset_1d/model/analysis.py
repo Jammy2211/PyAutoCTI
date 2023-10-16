@@ -4,6 +4,7 @@ from autoconf import conf
 from autoconf.dictable import to_dict
 
 import autofit as af
+from autoconf.dictable import output_to_json
 
 from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
 from autocti.dataset_1d.fit import FitDataset1D

@@ -6,6 +6,7 @@ from autoconf.dictable import to_dict
 
 import autoarray as aa
 import autofit as af
+from autoconf.dictable import output_to_json
 
 from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.charge_injection.fit import FitImagingCI
