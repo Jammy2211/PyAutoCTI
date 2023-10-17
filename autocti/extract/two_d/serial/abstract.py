@@ -20,20 +20,36 @@ class Extract2DSerial(Extract2D):
     def _value_list_from(
         self, array: aa.Array2D, value_str: str, settings: SettingsExtract
     ):
-        median_list = []
+        value_list = []
 
         arr_list = [
-            np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
+            array.native[region.slice]
             for region in self.region_list_from(settings=settings)
         ]
 
-        arr_stack = np.ma.stack(arr_list)
+        mask_list = [
+            array.mask[region.slice]
+            for region in self.region_list_from(settings=settings)
+        ]
+
+        arr_stack = np.stack(arr_list)
+        mask_stack = np.stack(mask_list)
 
         for row_index in range(arr_list[0].shape[0]):
-            if value_str == "median":
-                median_list.append(float(np.ma.median(arr_stack[:, row_index, :])))
 
-        return median_list
+            arr_extract = arr_stack[:, row_index, :]
+            mask_extract = mask_stack[:, row_index, :]
+
+            arr_unmasked = arr_extract[np.invert(mask_extract)]
+
+            if value_str == "median":
+                value_list.append(float(np.median(arr_unmasked)))
+            elif value_str == "mean":
+                value_list.append(float(np.mean(arr_unmasked)))
+            elif value_str == "std":
+                value_list.append(float(np.std(arr_unmasked)))
+
+        return value_list
 
     def median_list_from(
         self, array: aa.Array2D, settings: SettingsExtract
