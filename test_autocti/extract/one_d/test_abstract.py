@@ -91,6 +91,15 @@ def test__stacked_array_1d_from(array, masked_array):
     assert (stacked_fpr == np.ma.array([1.0, 6.0])).all()
     assert (stacked_fpr.mask == np.ma.array([False, False])).all()
 
+    extract = MockExtract1D(region_list=[(1, 3), (4, 6), (7, 9)])
+
+    stacked_fpr = extract.stacked_array_1d_from(
+        array=masked_array, settings=ac.SettingsExtract(pixels=(0, 2))
+    )
+
+    assert (stacked_fpr == np.ma.array([4.0, 0.0])).all()
+    assert (stacked_fpr.mask == np.ma.array([False, True])).all()
+
 
 def test__stacked_array_1d_from__pixels_from_end(array, masked_array):
     extract = MockExtract1D(region_list=[(1, 4), (5, 8)])

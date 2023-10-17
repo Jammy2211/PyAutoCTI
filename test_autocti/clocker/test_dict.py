@@ -6,7 +6,6 @@ from autoconf.dictable import output_to_json, from_dict, from_json
 from autocti import Clocker2D
 
 
-
 @pytest.fixture(name="clocker_dict")
 def make_clocker_dict():
     return {
