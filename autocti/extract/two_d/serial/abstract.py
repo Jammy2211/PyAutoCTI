@@ -92,25 +92,40 @@ class Extract2DSerial(Extract2D):
     def _value_list_of_lists_from(
         self, array: aa.Array2D, value_str: str, settings: SettingsExtract
     ):
-        median_lists = []
+        value_lists = []
 
         arr_list = [
-            np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
+            array.native[region.slice]
             for region in self.region_list_from(settings=settings)
         ]
 
-        for array_2d in arr_list:
+        mask_list = [
+            array.mask[region.slice]
+            for region in self.region_list_from(settings=settings)
+        ]
+
+        for array_2d, mask in zip(arr_list, mask_list):
             value_list = []
 
             for row_index in range(array_2d.shape[0]):
-                value = float(np.ma.median(array_2d[row_index, :]))
+
+                arr_extract = array_2d[row_index, :]
+                mask_extract = mask[row_index, :]
+
+                arr_unmasked = arr_extract[np.invert(mask_extract)]
 
                 if value_str == "median":
-                    value_list.append(value)
+                    value = float(np.median(arr_unmasked))
+                elif value_str == "mean":
+                    value = float(np.mean(arr_unmasked))
+                elif value_str == "std":
+                    value = float(np.std(arr_unmasked))
 
-            median_lists.append(value_list)
+                value_list.append(value)
 
-        return median_lists
+            value_lists.append(value_list)
+
+        return value_lists
 
     def median_list_of_lists_from(
         self, array: aa.Array2D, settings: SettingsExtract
