@@ -253,5 +253,3 @@ def test__binned_region_1d_from():
     )
 
     assert binned_region_1d == (0, 2)
-
-

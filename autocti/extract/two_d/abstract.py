@@ -209,17 +209,21 @@ class Extract2D:
            tuple specifying the range of pixel columns they are extracted between.
         """
 
-        arr_list = np.asarray([
-            np.array(array.native[region.slice])
-            for region in self.region_list_from(settings=settings)
-        ])
+        arr_list = np.asarray(
+            [
+                np.array(array.native[region.slice])
+                for region in self.region_list_from(settings=settings)
+            ]
+        )
 
         mask_2d_list = [
             array.mask[region.slice]
             for region in self.region_list_from(settings=settings)
         ]
 
-        stacked_array_2d = np.mean(arr_list, axis=0, where=np.invert(np.asarray(mask_2d_list)))
+        stacked_array_2d = np.mean(
+            arr_list, axis=0, where=np.invert(np.asarray(mask_2d_list))
+        )
 
         return aa.Array2D(
             values=np.asarray(stacked_array_2d.data),
@@ -287,20 +291,16 @@ class Extract2D:
         region_list = self.region_list_from(settings=settings)
         region_list = settings.region_list_from(region_list=region_list)
 
-        arr_list = np.asarray([
-            array.native[region.slice]
-            for region in region_list
-        ])
+        arr_list = np.asarray([array.native[region.slice] for region in region_list])
 
-        mask_list = np.asarray([
-            array.mask[region.slice]
-            for region in region_list
-        ])
+        mask_list = np.asarray([array.mask[region.slice] for region in region_list])
 
         stacked_array_2d = np.mean(arr_list, axis=0, where=np.invert(mask_list))
 
         binned_array_1d = np.mean(
-            stacked_array_2d, axis=self.binning_axis, where=np.invert(np.isnan(stacked_array_2d))
+            stacked_array_2d,
+            axis=self.binning_axis,
+            where=np.invert(np.isnan(stacked_array_2d)),
         )
         return aa.Array1D.no_mask(
             values=binned_array_1d, pixel_scales=array.pixel_scale

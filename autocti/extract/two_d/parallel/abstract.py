@@ -38,7 +38,6 @@ class Extract2DParallel(Extract2D):
         mask_stack = np.stack(mask_list)
 
         for column_index in range(arr_list[0].shape[1]):
-
             arr_extract = arr_stack[:, :, column_index]
             mask_extract = mask_stack[:, :, column_index]
 
@@ -153,7 +152,6 @@ class Extract2DParallel(Extract2D):
             value_list = []
 
             for column_index in range(array_2d.shape[1]):
-
                 arr_extract = array_2d[:, column_index]
                 mask_extract = mask[:, column_index]
 

@@ -36,7 +36,6 @@ class Extract2DSerial(Extract2D):
         mask_stack = np.stack(mask_list)
 
         for row_index in range(arr_list[0].shape[0]):
-
             arr_extract = arr_stack[:, row_index, :]
             mask_extract = mask_stack[:, row_index, :]
 
@@ -108,7 +107,6 @@ class Extract2DSerial(Extract2D):
             value_list = []
 
             for row_index in range(array_2d.shape[0]):
-
                 arr_extract = array_2d[row_index, :]
                 mask_extract = mask[row_index, :]
 

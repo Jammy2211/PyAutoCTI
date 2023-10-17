@@ -119,17 +119,21 @@ class Extract1D:
             FPR rows)
         """
 
-        arr_list = np.asarray([
-            np.array(array.native[region.slice])
-            for region in self.region_list_from(settings=settings)
-        ])
+        arr_list = np.asarray(
+            [
+                np.array(array.native[region.slice])
+                for region in self.region_list_from(settings=settings)
+            ]
+        )
 
         mask_1d_list = [
             array.mask[region.slice]
             for region in self.region_list_from(settings=settings)
         ]
 
-        stacked_array_1d = np.mean(np.asarray(arr_list), axis=0, where=np.invert(np.asarray(mask_1d_list)))
+        stacked_array_1d = np.mean(
+            np.asarray(arr_list), axis=0, where=np.invert(np.asarray(mask_1d_list))
+        )
 
         return aa.Array1D(
             values=np.asarray(stacked_array_1d.data),

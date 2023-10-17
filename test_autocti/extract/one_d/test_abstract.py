@@ -100,6 +100,7 @@ def test__stacked_array_1d_from(array, masked_array):
     assert (stacked_fpr == np.ma.array([4.0, 0.0])).all()
     assert (stacked_fpr.mask == np.ma.array([False, True])).all()
 
+
 def test__stacked_array_1d_from__pixels_from_end(array, masked_array):
     extract = MockExtract1D(region_list=[(1, 4), (5, 8)])
 
