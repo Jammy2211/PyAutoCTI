@@ -53,6 +53,13 @@ def test__stacked_array_2d_from():
     assert stacked_array[0] == pytest.approx([5.66666667, 5.66666667, 7.        , 6.66666667, 2.5], 1.0e-4)
     assert stacked_array[1] == pytest.approx([6.5       , 6.66666667, 6.66666667, 0.        , 2.], 1.0e-4)
 
+    stacked_array_2d_total_pixels = extract.stacked_array_2d_total_pixels_from(
+        array=arr,
+        settings=ac.SettingsExtract(pixels=(0, 2))
+    )
+
+    assert stacked_array_2d_total_pixels[0] == pytest.approx([3, 3, 2, 3, 2], 1.0e-4)
+    assert stacked_array_2d_total_pixels[1] == pytest.approx([2, 3, 3, 0, 1], 1.0e-4)
 
 def test__binned_array_1d_from():
     parallel_array = ac.Array2D.no_mask(
@@ -101,3 +108,9 @@ def test__binned_array_1d_from():
     )
 
     assert binned_array_1d == pytest.approx([5.5, 5.45833333], 1.0e-4)
+
+    binned_array_1d_total_pixels = extract.binned_array_1d_total_pixels_from(
+        array=arr, settings=ac.SettingsExtract(pixels=(0, 2))
+    )
+
+    assert binned_array_1d_total_pixels == pytest.approx([13, 9], 1.0e-4)

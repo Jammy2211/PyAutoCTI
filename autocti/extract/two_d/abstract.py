@@ -335,8 +335,8 @@ class Extract2D:
 
         arr_total_pixels = sum([np.invert(mask_2d) for mask_2d in mask_2d_list])
 
-        binned_total_pixels = np.ma.sum(
-            np.ma.asarray(arr_total_pixels), axis=self.binning_axis
+        binned_total_pixels = np.sum(
+            np.asarray(arr_total_pixels), axis=self.binning_axis
         )
 
         return aa.Array1D.no_mask(
