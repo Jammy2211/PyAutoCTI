@@ -26,7 +26,7 @@ to the non-linear search:
     session = af.db.open_database("database.sqlite")
 
     emcee = af.Emcee(
-        session=session,  # This instructs the search to write to the .sqlite database.
+        session=session,  # This can instruct the search to write to the .sqlite database.
     )
 
 When a model-fit is performed, a unique identifier is generated based on the model and non-linear search. However,
@@ -44,7 +44,7 @@ alongside the model and search to create the unique identifier:
 
     emcee = af.Emcee(
         unique_tag=dataset_name,  # This makes the unique identifier use the dataset name
-        session=session,  # This instructs the search to write to the .sqlite database.
+        session=session,  # This can instruct the search to write to the .sqlite database.
     )
 
 Lets suppose that we have performed 100 model-fits to 100 CTI datasets, and when we ran **PyAutoCTI** we told it
