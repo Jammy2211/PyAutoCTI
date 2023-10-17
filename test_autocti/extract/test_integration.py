@@ -165,3 +165,15 @@ def test__abstract___value_list_from():
     )
 
     assert median_list == pytest.approx([6.0, 6.5, 7.0, 7.0, 2.0], 1.0e-4)
+
+    median_list_of_lists = extract._value_list_of_lists_from(
+        array=arr,
+        value_str="median",
+        settings=ac.SettingsExtract(pixels=(0, 2))
+    )
+
+    print(median_list_of_lists)
+
+    assert median_list_of_lists[0] == pytest.approx([3.5, 3.5, 4.0, 7.0, 1.0], 1.0e-4)
+    assert median_list_of_lists[1] == pytest.approx([6.0, 6.5, 6.5, 4.0, 4.0], 1.0e-4)
+    assert median_list_of_lists[2] == pytest.approx([8.5, 8.5, 8.5, 9.0, 2.0], 1.0e-4)
