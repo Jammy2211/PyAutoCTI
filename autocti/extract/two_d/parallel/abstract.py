@@ -53,25 +53,6 @@ class Extract2DParallel(Extract2D):
 
         return value_list
 
-    # value_list = []
-    #
-    # arr_list = [
-    #     np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
-    #     for region in self.region_list_from(settings=settings)
-    # ]
-    #
-    # arr_stack = np.ma.stack(arr_list)
-    #
-    # for column_index in range(arr_list[0].shape[1]):
-    #     if value_str == "median":
-    #         value_list.append(float(np.ma.median(arr_stack[:, :, column_index])))
-    #     elif value_str == "mean":
-    #         value_list.append(float(np.ma.mean(arr_stack[:, :, column_index])))
-    #     elif value_str == "std":
-    #         value_list.append(float(np.ma.std(arr_stack[:, :, column_index])))
-    #
-    # return value_list
-
     def median_list_from(
         self, array: aa.Array2D, settings: SettingsExtract
     ) -> List[float]:

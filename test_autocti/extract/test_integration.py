@@ -164,8 +164,4 @@ def test__abstract___value_list_from():
         settings=ac.SettingsExtract(pixels=(0, 2))
     )
 
-    print(median_list)
-
     assert median_list == pytest.approx([6.0, 6.5, 7.0, 7.0, 2.0], 1.0e-4)
-
-    ddd
