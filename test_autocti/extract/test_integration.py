@@ -168,3 +168,4 @@ def test__serial__value_list_from(serial_masked_array):
     assert np.nan_to_num(median_list_of_lists[0]) == pytest.approx([3.5, 3.5, 3.5, 5.0, 0.0], 1.0e-4)
     assert median_list_of_lists[1] == pytest.approx([6.5, 7.0, 6.0, 6.0, 3.0], 1.0e-4)
     assert np.nan_to_num(median_list_of_lists[2]) == pytest.approx([8.5, 8.5, 8.5, 0.0, 0.0], 1.0e-4)
+
