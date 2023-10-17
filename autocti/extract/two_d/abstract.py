@@ -287,14 +287,20 @@ class Extract2D:
         region_list = self.region_list_from(settings=settings)
         region_list = settings.region_list_from(region_list=region_list)
 
-        arr_list = [
-            np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
+        arr_list = np.asarray([
+            array.native[region.slice]
             for region in region_list
-        ]
+        ])
 
-        stacked_array_2d = np.ma.mean(np.ma.asarray(arr_list), axis=0)
-        binned_array_1d = np.ma.mean(
-            np.ma.asarray(stacked_array_2d), axis=self.binning_axis
+        mask_list = np.asarray([
+            array.mask[region.slice]
+            for region in region_list
+        ])
+
+        stacked_array_2d = np.mean(arr_list, axis=0, where=np.invert(mask_list))
+
+        binned_array_1d = np.mean(
+            stacked_array_2d, axis=self.binning_axis, where=np.invert(np.isnan(stacked_array_2d))
         )
         return aa.Array1D.no_mask(
             values=binned_array_1d, pixel_scales=array.pixel_scale
