@@ -209,17 +209,17 @@ class Extract2D:
            tuple specifying the range of pixel columns they are extracted between.
         """
 
-        arr_list = [
-            np.ma.array(data=array.native[region.slice], mask=array.mask[region.slice])
+        arr_list = np.asarray([
+            np.array(array.native[region.slice])
             for region in self.region_list_from(settings=settings)
-        ]
-
-        stacked_array_2d = np.ma.mean(np.ma.asarray(arr_list), axis=0)
+        ])
 
         mask_2d_list = [
             array.mask[region.slice]
             for region in self.region_list_from(settings=settings)
         ]
+
+        stacked_array_2d = np.mean(arr_list, axis=0, where=np.invert(np.asarray(mask_2d_list)))
 
         return aa.Array2D(
             values=np.asarray(stacked_array_2d.data),

@@ -3,8 +3,58 @@ import pytest
 
 import autocti as ac
 
+def test__stacked_array_2d_from():
+    parallel_array = ac.Array2D.no_mask(
+        values=[
+            [0.0, 0.0, 0.0, 4.0, 5.0],
+            [1.0, 1.0, 1.0, 9.0, 3.0],
+            [2.0, 2.0, 2.0, 8.0, 2.0],
+            [3.0, 3.0, 3.0, 7.0, 1.0],
+            [4.0, 4.0, 4.0, 6.0, 0.0],
+            [5.0, 5.0, 5.0, 5.0, 5.0],
+            [6.0, 6.0, 6.0, 4.0, 4.0],
+            [7.0, 7.0, 7.0, 3.0, 3.0],
+            [8.0, 8.0, 8.0, 9.0, 5.0],
+            [9.0, 9.0, 9.0, 2.0, 2.0],
+        ],
+        pixel_scales=1.0,
+    )
 
-def test__parallel_binned_array_integration_test():
+    mask = ac.Mask2D(
+        mask=[
+            [False, False, False, True, False],
+            [False, False, False, True, True],
+            [False, True, False, False, True],
+            [False, False, True, False, False],
+            [False, False, False, True, True],
+            [False, False, False, True, False],
+            [False, False, False, False, False],
+            [True, False, False, True, True],
+            [False, False, False, False, True],
+            [False, False, False, True, False],
+        ],
+        pixel_scales=1.0,
+    )
+
+    arr = ac.Array2D(values=parallel_array.native, mask=mask)
+
+    extract = ac.Extract2DParallelEPER(
+        region_list=[
+            (1, 3, 0, 5),
+            (4, 6, 0, 5),
+            (7, 8, 0, 5)
+        ])
+
+    stacked_array = extract.stacked_array_2d_from(
+        array=arr,
+        settings=ac.SettingsExtract(pixels=(0, 2))
+    )
+
+    assert stacked_array[0] == pytest.approx([5.66666667, 5.66666667, 7.        , 6.66666667, 2.5], 1.0e-4)
+    assert stacked_array[1] == pytest.approx([6.5       , 6.66666667, 6.66666667, 0.        , 2.], 1.0e-4)
+
+
+def test__binned_array_1d_from():
     parallel_array = ac.Array2D.no_mask(
         values=[
             [0.0, 0.0, 0.0, 4.0, 5.0],
