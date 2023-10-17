@@ -1,4 +1,4 @@
-numba<=0.56.4
+numba
 pyyaml
 arcticpy==2.5
 ultranest==3.6.2
