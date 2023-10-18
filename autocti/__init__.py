@@ -1,3 +1,5 @@
+from autoconf.dictable import from_dict, from_json, output_to_json, to_dict
+
 from autoarray.mask.mask_1d import Mask1D
 from autoarray.layout.region import Region1D
 from autoarray.layout.region import Region2D
