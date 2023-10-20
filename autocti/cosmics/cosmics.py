@@ -160,23 +160,23 @@ class SimulatorCosmicRayMap:
         ilo = np.round(x0.copy() - dx)
         mask = ilo < 0.0
         ilo[mask] = 0
-        ilo = ilo.astype(np.int)
+        ilo = ilo.astype(int)
 
         ihi = np.round(x0.copy() + dx)
         mask = ihi > self.shape_native[1]
         ihi[mask] = self.shape_native[1]
-        ihi = ihi.astype(np.int)
+        ihi = ihi.astype(int)
 
         # pixels in y-directions
         jlo = np.round(y0.copy() - dy)
         mask = jlo < 0.0
         jlo[mask] = 0
-        jlo = jlo.astype(np.int)
+        jlo = jlo.astype(int)
 
         jhi = np.round(y0.copy() + dy)
         mask = jhi > self.shape_native[0]
         jhi[mask] = self.shape_native[0]
-        jhi = jhi.astype(np.int)
+        jhi = jhi.astype(int)
 
         offending_delta = 1.0
 
@@ -299,7 +299,10 @@ class SimulatorCosmicRayMap:
             luck = np.random.rand(cr_n)
 
             # draw the length of the tracks
-            ius = interp1d(self.lengths[:, 1], self.lengths[:, 0], kind="slinear")
+            try:
+                ius = interp1d(self.lengths[:, 1], self.lengths[:, 0], kind="slinear")
+            except ValueError:
+                ius = interp1d(self.lengths[:, 1], self.lengths[:, 0], kind="linear")
             length = ius(luck)
 
             if limit is None:

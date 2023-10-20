@@ -51,7 +51,7 @@ def _cti_from(fit: af.Fit) -> Union[CTI1D, CTI2D]:
             """
         )
 
-    return fit.instance
+    return fit.instance.cti
 
 
 class CTIAgg(AbstractAgg):
