@@ -63,11 +63,11 @@ Numba
 Numba (https://numba.pydata.org)  is an optional library which makes **PyAutoCTI** run a lot faster, which we
 strongly recommend users have installed.
 
-You can install numba (versions above 0.56.4 are not supported) via the following command:
+You can install numba via the following command:
 
 .. code-block:: bash
 
-    pip install numba==0.56.4
+    pip install numba
 
 Some users have experienced difficulties installing numba, which is why it is an optional library. If your
 installation is not successful, you can use **PyAutoCTI** without it installed for now, to familiarize yourself
