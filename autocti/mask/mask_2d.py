@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Tuple
+from typing import List, Tuple
 
 import autoarray as aa
 
@@ -315,3 +315,25 @@ class Mask2D(aa.Mask2D):
             mask = np.invert(mask)
 
         return Mask2D(mask=mask.astype("bool"), pixel_scales=pixel_scales)
+
+    @classmethod
+    def masked_read_noise_persistence_from(
+        cls,
+        layout: Layout2D,
+        row_value_list: List[float],
+        read_noise_persistence_threshold: float,
+        settings: "SettingsMask2D",
+        pixel_scales: aa.type.PixelScales,
+        invert: bool = False,
+    ):
+        mask_row = [
+            row_value > read_noise_persistence_threshold for row_value in row_value_list
+        ]
+
+        mask = np.full(layout.shape_2d, False)
+
+        for y in range(layout.shape_2d[0]):
+            if mask_row[y]:
+                mask[y, :] = True
+
+        return mask
