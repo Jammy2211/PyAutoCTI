@@ -687,3 +687,47 @@ def test__masked_read_noise_persistence_from():
             ]
         )
     ).all()
+
+    mask = ac.Mask2D.masked_read_noise_persistence_from(
+        layout=layout,
+        row_value_list=[1.0, 2.0, 3.0, 4.0, 2.0, 3.5],
+        read_noise_persistence_threshold=3.1,
+        settings=ac.SettingsMask2D(read_noise_persistence_infront_buffer=1),
+        pixel_scales=0.1,
+    )
+
+    assert (
+        mask
+        == np.array(
+            [
+                [False, False],
+                [False, False],
+                [True, True],
+                [True, True],
+                [True, True],
+                [True, True],
+            ]
+        )
+    ).all()
+
+    mask = ac.Mask2D.masked_read_noise_persistence_from(
+        layout=layout,
+        row_value_list=[1.0, 2.0, 3.0, 4.0, 2.0, 3.5],
+        read_noise_persistence_threshold=3.1,
+        settings=ac.SettingsMask2D(read_noise_persistence_behind_buffer=1),
+        pixel_scales=0.1,
+    )
+
+    assert (
+        mask
+        == np.array(
+            [
+                [False, False],
+                [False, False],
+                [False, False],
+                [True, True],
+                [True, True],
+                [True, True],
+            ]
+        )
+    ).all()

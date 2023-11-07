@@ -19,7 +19,49 @@ class SettingsMask2D:
         cosmic_ray_parallel_buffer: int = 10,
         cosmic_ray_serial_buffer: int = 10,
         cosmic_ray_diagonal_buffer: int = 3,
+        read_noise_persistence_infront_buffer: int = 0,
+        read_noise_persistence_behind_buffer: int = 0,
     ):
+        """
+        Settings which customize how the mask is created.
+
+        There are three features whose masking can be customized:
+
+        1) The FPR / EPER masking: the extent of masks on these specific regions of the data (e.g. the
+        length of the FPR mask in pixels).
+
+        2) Cosmic ray masking: buffers around cosmic rays in the parallel and serial directions which mask the CTI
+        trails of these cosmic rays.
+
+        3) Read noise persistence masking: buffers around read noise persistence rows in front and behind the
+        flagged rows containing read noise persistence.
+
+        Parameters
+        ----------
+        parallel_fpr_pixels
+            The integer range of pixels masked in each parallel FPR region, for example `parallel_fpr_pixels=(1,2)`
+            masks just the second row of parallel FPR pixels.
+        parallel_eper_pixels
+            The integer range of pixels masked in each parallel EPER region, for example `parallel_eper_pixels=(1,2)`
+            masks just the second row of parallel EPER pixels.
+        serial_fpr_pixels
+            The integer range of pixels masked in each serial FPR region, for example `serial_fpr_pixels=(1,2)`
+            masks just the second column of serial FPR pixels.
+        serial_eper_pixels
+            The integer range of pixels masked in each serial EPER region, for example `serial_eper_pixels=(1,2)`
+            masks just the second column of serial EPER pixels.
+        cosmic_ray_parallel_buffer
+            The number of pixels masked in the parallel direction behind each cosmic ray, to mask the CTI trail.
+        cosmic_ray_serial_buffer
+            The number of pixels masked in the serial direction behind each cosmic ray, to mask the CTI trail.
+        cosmic_ray_diagonal_buffer
+            The number of pixels masked in the parallel and serial direction behind each cosmic ray, to mask the
+            serial CTI trail or the parallel CTI trail.
+        read_noise_persistence_infront_buffer
+            The number of rows masked in front of each read noise persistence region.
+        read_noise_persistence_behind_buffer
+            The number of rows masked behind each read noise persistence region.
+        """
         self.parallel_fpr_pixels = parallel_fpr_pixels
         self.parallel_eper_pixels = parallel_eper_pixels
         self.serial_fpr_pixels = serial_fpr_pixels
@@ -28,6 +70,11 @@ class SettingsMask2D:
         self.cosmic_ray_parallel_buffer = cosmic_ray_parallel_buffer
         self.cosmic_ray_serial_buffer = cosmic_ray_serial_buffer
         self.cosmic_ray_diagonal_buffer = cosmic_ray_diagonal_buffer
+
+        self.read_noise_persistence_infront_buffer = (
+            read_noise_persistence_infront_buffer
+        )
+        self.read_noise_persistence_behind_buffer = read_noise_persistence_behind_buffer
 
 
 class Mask2D(aa.Mask2D):
@@ -368,7 +415,13 @@ class Mask2D(aa.Mask2D):
 
         for y in range(layout.shape_2d[0]):
             if mask_row[y]:
-                mask[y, :] = True
+                ylow = max(y - settings.read_noise_persistence_infront_buffer, 0)
+                yhigh = min(
+                    y + settings.read_noise_persistence_behind_buffer + 1,
+                    layout.shape_2d[0],
+                )
+
+                mask[ylow:yhigh, :] = True
 
         if invert:
             mask = np.invert(mask)
