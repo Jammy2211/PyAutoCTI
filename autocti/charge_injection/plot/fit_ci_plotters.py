@@ -1,3 +1,4 @@
+import copy
 import numpy as np
 from typing import Callable
 
@@ -8,6 +9,9 @@ from autoarray.plot.auto_labels import AutoLabels
 
 from autocti.plot.abstract_plotters import Plotter
 from autocti.charge_injection.fit import FitImagingCI
+from autocti.extract.settings import SettingsExtract
+
+from autocti import exc
 
 
 class FitImagingCIPlotter(Plotter):
@@ -383,6 +387,135 @@ class FitImagingCIPlotter(Plotter):
                     title=f"Chi-Squared Map {region}",
                     yunit=r"$\chi^2$",
                     filename=f"chi_squared_map_{region}",
+                ),
+            )
+
+    def figures_1d_data_binned(
+        self,
+        rows_fpr: bool = False,
+        rows_no_fpr: bool = False,
+        columns_fpr: bool = False,
+        columns_no_fpr: bool = False,
+    ):
+        """
+        Plots the charge injection data and fit binned over the parallel and serial directions, with and without the
+        FPR regions included.
+
+        Plots binned over rows show the FPR of each injection, so that the FPR can be compared between injections.
+        When the FPR is masked it allows comparison of the parallel EPER of each injection.
+
+        Plots binned over columns shown the charge injection non-uniformity.
+
+        Inaccurate bias subtraction / stray light subtraction and other systematics can produce a gradient over
+        a full image, which these plots often show.
+
+        Parameters
+        ----------
+        columns_fpr
+            Whether to plot the data binned over columns with the FPR regions included.
+        """
+
+        fpr_size = self.dataset.layout.parallel_rows_within_regions[0]
+
+        fpr_mask = self.dataset.layout.extract.parallel_fpr.mask_from(
+            settings=SettingsExtract(pixels=(0, fpr_size)),
+            pixel_scales=self.dataset.pixel_scales,
+        )
+
+        if any(
+            [
+                fpr_size != fpr_size_of_row
+                for fpr_size_of_row in self.dataset.layout.parallel_rows_within_regions
+            ]
+        ):
+            raise exc.PlottingException(
+                "The FPR in this dataset have a variable number of rows. This means that masknig the FPR in the"
+                "figures_1d_data_binned method is not supported."
+            )
+
+        if rows_fpr:
+            data = copy.copy(self.dataset.data)
+            y = data.apply_mask(mask=np.invert(fpr_mask)).binned_across_rows
+
+            model_data = copy.copy(self.fit.model_data)
+            y_extra = model_data.apply_mask(mask=np.invert(fpr_mask)).binned_across_rows
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                y_extra=y_extra,
+                text_manual_dict=self.text_manual_dict_from(),
+                text_manual_dict_y=self.text_manual_dict_y_from(),
+                visuals_1d=self.visuals_1d,
+                auto_labels=AutoLabels(
+                    title=f"Data With FPR Binned Over Rows",
+                    yunit="e-",
+                    filename=f"fit_data_binned_rows_fpr",
+                ),
+            )
+
+        if rows_no_fpr:
+            data = copy.copy(self.dataset.data)
+            y = data.apply_mask(mask=fpr_mask).binned_across_rows
+
+            model_data = copy.copy(self.fit.model_data)
+            y_extra = model_data.apply_mask(mask=fpr_mask).binned_across_rows
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                y_extra=y_extra,
+                text_manual_dict=self.text_manual_dict_from(),
+                text_manual_dict_y=self.text_manual_dict_y_from(),
+                visuals_1d=self.visuals_1d,
+                auto_labels=AutoLabels(
+                    title=f"Data No FPR Binned Over Rows",
+                    yunit="e-",
+                    filename=f"fit_data_binned_rows_no_fpr",
+                ),
+            )
+
+        if columns_fpr:
+            data = copy.copy(self.dataset.data)
+            y = data.apply_mask(mask=np.invert(fpr_mask)).binned_across_columns
+
+            model_data = copy.copy(self.fit.model_data)
+            y_extra = model_data.apply_mask(
+                mask=np.invert(fpr_mask)
+            ).binned_across_columns
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                y_extra=y_extra,
+                text_manual_dict=self.text_manual_dict_from(),
+                text_manual_dict_y=self.text_manual_dict_y_from(),
+                visuals_1d=self.visuals_1d,
+                auto_labels=AutoLabels(
+                    title=f"Data With FPR Binned Over Columns",
+                    yunit="e-",
+                    filename=f"fit_data_binned_columns_fpr",
+                ),
+            )
+
+        if columns_no_fpr:
+            data = copy.copy(self.dataset.data)
+            y = data.apply_mask(mask=fpr_mask).binned_across_columns
+
+            model_data = copy.copy(self.fit.model_data)
+            y_extra = model_data.apply_mask(mask=fpr_mask).binned_across_columns
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                y_extra=y_extra,
+                text_manual_dict=self.text_manual_dict_from(),
+                text_manual_dict_y=self.text_manual_dict_y_from(),
+                visuals_1d=self.visuals_1d,
+                auto_labels=AutoLabels(
+                    title=f"Data No FPR Binned Over Columns",
+                    yunit="e-",
+                    filename=f"fit_data_binned_columns_no_fpr",
                 ),
             )
 

@@ -371,7 +371,7 @@ class ImagingCIPlotter(Plotter):
                 text_manual_dict_y=self.text_manual_dict_y_from(),
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title=f"Data No FPR Binned Over Rows",
+                    title=f"Data With FPR Binned Over Rows",
                     yunit="e-",
                     filename=f"data_binned_rows_fpr",
                 ),
@@ -407,7 +407,7 @@ class ImagingCIPlotter(Plotter):
                 text_manual_dict_y=self.text_manual_dict_y_from(),
                 visuals_1d=self.get_visuals_1d(),
                 auto_labels=AutoLabels(
-                    title=f"Data No FPR Binned Over Columns",
+                    title=f"Data With FPR Binned Over Columns",
                     yunit="e-",
                     filename=f"data_binned_columns_fpr",
                 ),

@@ -121,6 +121,28 @@ def test__individual_line_attriutes_plot__all_plot_correctly_output(
     assert path.join(plot_path, "chi_squared_map_parallel_fpr.png") in plot_patch.paths
 
 
+def test__figures_1d_data_binned(fit_ci_7x7, plot_path, plot_patch):
+    fit_plotter = aplt.FitImagingCIPlotter(
+        fit=fit_ci_7x7,
+        mat_plot_2d=aplt.MatPlot2D(output=aplt.Output(plot_path, format="png")),
+        mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
+    )
+
+    fit_plotter.figures_1d_data_binned(
+        rows_fpr=True,
+        rows_no_fpr=True,
+        columns_fpr=True,
+        columns_no_fpr=True,
+    )
+
+    assert path.join(plot_path, "fit_data_binned_rows_fpr.png") in plot_patch.paths
+    assert path.join(plot_path, "fit_data_binned_rows_no_fpr.png") in plot_patch.paths
+    assert path.join(plot_path, "fit_data_binned_columns_fpr.png") in plot_patch.paths
+    assert (
+        path.join(plot_path, "fit_data_binned_columns_no_fpr.png") in plot_patch.paths
+    )
+
+
 def test__fit_ci_subplots_are_output(fit_ci_7x7, plot_path, plot_patch):
     fit_plotter = aplt.FitImagingCIPlotter(
         fit=fit_ci_7x7,
