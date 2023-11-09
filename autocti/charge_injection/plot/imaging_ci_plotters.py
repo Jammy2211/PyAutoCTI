@@ -359,6 +359,12 @@ class ImagingCIPlotter(Plotter):
             pixel_scales=self.dataset.pixel_scales,
         )
 
+        serial_prescan = self.dataset.layout.extract.serial_prescan.serial_prescan
+        fpr_mask[serial_prescan.y0:serial_prescan.y1, serial_prescan.x0:serial_prescan.x1] = True
+
+        serial_overscan = self.dataset.layout.extract.serial_overscan.serial_overscan
+        fpr_mask[serial_overscan.y0:serial_overscan.y1, serial_overscan.x0:serial_overscan.x1] = True
+
         if rows_fpr:
             data = copy.copy(self.dataset.data)
 
