@@ -76,7 +76,7 @@ class Plotter(AbstractPlotter):
 
             return f"{ccd_str} IG1={ig1_str} IG2={ig2_str} IDD={id_delay_str}"
 
-    def text_manual_dict_from(self, region: str):
+    def text_manual_dict_from(self, region: Optional[str] = None):
         try:
             fpr_value = self.dataset.fpr_value
         except AttributeError:
@@ -94,7 +94,7 @@ class Plotter(AbstractPlotter):
 
         return text_manual_dict
 
-    def text_manual_dict_y_from(self, region: str):
+    def text_manual_dict_y_from(self, region: Optional[str] = None):
         if region is None or "eper" in region:
             return 0.94
         return 0.34

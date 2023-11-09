@@ -9,7 +9,7 @@ from autoarray.dataset.plot.imaging_plotters import ImagingPlotterMeta
 
 from autocti.plot.abstract_plotters import Plotter
 from autocti.charge_injection.imaging.imaging import ImagingCI
-
+from autocti.extract.settings import SettingsExtract
 
 class ImagingCIPlotter(Plotter):
     def __init__(
@@ -180,7 +180,7 @@ class ImagingCIPlotter(Plotter):
         signal_to_noise_map: bool = False,
     ):
         """
-        Plots the individual attributes of the plotter's `ImagingCI` object in 2D.
+        Plots the individual attributes of the plotter's `ImagingCI` object in 1D.
 
         The API is such that every plottable attribute of the `Imaging` object is an input parameter of type bool of
         the function, which if switched to `True` means that it is plotted.
@@ -310,11 +310,51 @@ class ImagingCIPlotter(Plotter):
                 ),
             )
 
-    # def figures_1d_data_binned(
-    #         self,
-    #         columns_fpr : bool = False
-    #     ):
-    #
+    def figures_1d_data_binned(
+            self,
+            columns_fpr : bool = False
+        ):
+        """
+        Plots the charge injection data binned over the parallel and serial directions, with and without the
+        FPR regions included.
+        
+        Plots binned over rows show the FPR of each injection, so that the FPR can be compared between injections.
+        When the FPR is masked it allows comparison of the parallel EPER of each injection.
+
+        Plots binned over columns shown the charge injection non-uniformity.
+
+        Inaccurate bias subtraction / stray light subtraction and other systematics can produce a gradient over
+        a full image, which these plots often show.
+
+        Parameters
+        ----------
+        columns_fpr
+            Whether to plot the data binned over columns with the FPR regions included.
+        """
+
+        if columns_fpr:
+
+            fpr_mask = self.dataset.layout.extract.parallel_fpr.mask_from(
+                settings=SettingsExtract(pixels_from_end=self.dataset.layout.parallel_rows_between_regions[0])
+            )
+
+            data_no_fpr = self.dataset.data.apply_mask(mask=fpr_mask)
+
+            y = data_no_fpr.binned_across_columns
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                text_manual_dict=self.text_manual_dict_from(),
+                text_manual_dict_y=self.text_manual_dict_y_from(),
+                visuals_1d=self.get_visuals_1d(),
+                auto_labels=AutoLabels(
+                    title=f"Data No FPR Binned Over Columns",
+                    yunit="e-",
+                    filename=f"data_binned_columns_fr",
+                ),
+            )
+
 
     def subplot(
         self,
