@@ -102,14 +102,9 @@ def test__figures_1d_data_binned(imaging_ci_7x7, plot_path, plot_patch):
     )
 
     assert path.join(plot_path, "data_binned_rows_fpr.png") in plot_patch.paths
+    assert path.join(plot_path, "data_binned_rows_no_fpr.png") in plot_patch.paths
     assert path.join(plot_path, "data_binned_columns_fpr.png") in plot_patch.paths
-
-    # The FPR mask masks the whole image meaning these are not plotted.
-
-    assert path.join(plot_path, "data_binned_rows_no_fpr.png") not in plot_patch.paths
-    assert (
-        path.join(plot_path, "data_binned_columns_no_fpr.png") not in plot_patch.paths
-    )
+    assert path.join(plot_path, "data_binned_columns_no_fpr.png") in plot_patch.paths
 
 
 def test__subplots__output(imaging_ci_7x7, plot_path, plot_patch):

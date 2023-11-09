@@ -1,3 +1,5 @@
+import copy
+
 import numpy as np
 from typing import Callable
 
@@ -358,9 +360,9 @@ class ImagingCIPlotter(Plotter):
         )
 
         if rows_fpr:
-            y = self.dataset.data.apply_mask(
-                mask=np.invert(fpr_mask)
-            ).binned_across_rows
+            data = copy.copy(self.dataset.data)
+
+            y = data.apply_mask(mask=np.invert(fpr_mask)).binned_across_rows
 
             self.mat_plot_1d.plot_yx(
                 y=y,
@@ -376,7 +378,9 @@ class ImagingCIPlotter(Plotter):
             )
 
         if rows_no_fpr:
-            y = self.dataset.data.apply_mask(mask=fpr_mask).binned_across_rows
+            data = copy.copy(self.dataset.data)
+
+            y = data.apply_mask(mask=fpr_mask).binned_across_rows
 
             self.mat_plot_1d.plot_yx(
                 y=y,
@@ -392,9 +396,9 @@ class ImagingCIPlotter(Plotter):
             )
 
         if columns_fpr:
-            y = self.dataset.data.apply_mask(
-                mask=np.invert(fpr_mask)
-            ).binned_across_columns
+            data = copy.copy(self.dataset.data)
+
+            y = data.apply_mask(mask=np.invert(fpr_mask)).binned_across_columns
 
             self.mat_plot_1d.plot_yx(
                 y=y,
@@ -410,7 +414,9 @@ class ImagingCIPlotter(Plotter):
             )
 
         if columns_no_fpr:
-            y = self.dataset.data.apply_mask(mask=fpr_mask).binned_across_columns
+            data = copy.copy(self.dataset.data)
+
+            y = data.apply_mask(mask=fpr_mask).binned_across_columns
 
             self.mat_plot_1d.plot_yx(
                 y=y,
