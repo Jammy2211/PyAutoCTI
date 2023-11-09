@@ -310,6 +310,12 @@ class ImagingCIPlotter(Plotter):
                 ),
             )
 
+    # def figures_1d_data_binned(
+    #         self,
+    #         columns_fpr : bool = False
+    #     ):
+    #
+
     def subplot(
         self,
         data: bool = False,
