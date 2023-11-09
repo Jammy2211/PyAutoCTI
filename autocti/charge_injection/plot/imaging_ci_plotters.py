@@ -11,6 +11,8 @@ from autocti.plot.abstract_plotters import Plotter
 from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.extract.settings import SettingsExtract
 
+from autocti import exc
+
 class ImagingCIPlotter(Plotter):
     def __init__(
         self,
@@ -317,7 +319,7 @@ class ImagingCIPlotter(Plotter):
         """
         Plots the charge injection data binned over the parallel and serial directions, with and without the
         FPR regions included.
-        
+
         Plots binned over rows show the FPR of each injection, so that the FPR can be compared between injections.
         When the FPR is masked it allows comparison of the parallel EPER of each injection.
 
@@ -332,11 +334,20 @@ class ImagingCIPlotter(Plotter):
             Whether to plot the data binned over columns with the FPR regions included.
         """
 
-        if columns_fpr:
+        fpr_size = self.dataset.layout.parallel_rows_within_regions[0]
 
-            fpr_mask = self.dataset.layout.extract.parallel_fpr.mask_from(
-                settings=SettingsExtract(pixels_from_end=self.dataset.layout.parallel_rows_between_regions[0])
+        if any([fpr_size != fpr_size_of_row for fpr_size_of_row in self.dataset.layout.parallel_rows_within_regions]):
+            raise exc.PlottingException(
+                "The FPR in this dataset have a variable number of rows. This means that masknig the FPR in the"
+                "figures_1d_data_binned method is not supported."
             )
+
+        fpr_mask = self.dataset.layout.extract.parallel_fpr.mask_from(
+            settings=SettingsExtract(pixels_from_end=fpr_size),
+            pixel_scales=self.dataset.pixel_scales,
+        )
+
+        if columns_fpr:
 
             data_no_fpr = self.dataset.data.apply_mask(mask=fpr_mask)
 
@@ -351,7 +362,7 @@ class ImagingCIPlotter(Plotter):
                 auto_labels=AutoLabels(
                     title=f"Data No FPR Binned Over Columns",
                     yunit="e-",
-                    filename=f"data_binned_columns_fr",
+                    filename=f"data_binned_columns_fpr",
                 ),
             )
 
