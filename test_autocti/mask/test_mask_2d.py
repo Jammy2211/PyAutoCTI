@@ -639,3 +639,95 @@ def test__masked_fpr_and_eper_from(imaging_ci_7x7):
             ]
         )
     ).all()
+
+
+def test__masked_read_noise_persistence_from():
+    layout = ac.Layout2DCI(shape_2d=(4, 3), region_list=[(1, 4, 0, 3)])
+
+    mask = ac.Mask2D.masked_read_noise_persistence_from(
+        layout=layout,
+        row_value_list=[1.0, 2.0, 3.0, 4.0],
+        read_noise_persistence_threshold=1.5,
+        settings=ac.SettingsMask2D(),
+        pixel_scales=0.1,
+    )
+
+    assert (
+        mask
+        == np.array(
+            [
+                [False, False, False],
+                [True, True, True],
+                [True, True, True],
+                [True, True, True],
+            ]
+        )
+    ).all()
+
+    layout = ac.Layout2DCI(shape_2d=(6, 2), region_list=[(1, 2, 0, 2)])
+
+    mask = ac.Mask2D.masked_read_noise_persistence_from(
+        layout=layout,
+        row_value_list=[1.0, 2.0, 3.0, 4.0, 2.0, 3.5],
+        read_noise_persistence_threshold=3.1,
+        settings=ac.SettingsMask2D(),
+        pixel_scales=0.1,
+    )
+
+    assert (
+        mask
+        == np.array(
+            [
+                [False, False],
+                [False, False],
+                [False, False],
+                [True, True],
+                [False, False],
+                [True, True],
+            ]
+        )
+    ).all()
+
+    mask = ac.Mask2D.masked_read_noise_persistence_from(
+        layout=layout,
+        row_value_list=[1.0, 2.0, 3.0, 4.0, 2.0, 3.5],
+        read_noise_persistence_threshold=3.1,
+        settings=ac.SettingsMask2D(read_noise_persistence_infront_buffer=1),
+        pixel_scales=0.1,
+    )
+
+    assert (
+        mask
+        == np.array(
+            [
+                [False, False],
+                [False, False],
+                [True, True],
+                [True, True],
+                [True, True],
+                [True, True],
+            ]
+        )
+    ).all()
+
+    mask = ac.Mask2D.masked_read_noise_persistence_from(
+        layout=layout,
+        row_value_list=[1.0, 2.0, 3.0, 4.0, 2.0, 3.5],
+        read_noise_persistence_threshold=3.1,
+        settings=ac.SettingsMask2D(read_noise_persistence_behind_buffer=1),
+        pixel_scales=0.1,
+    )
+
+    assert (
+        mask
+        == np.array(
+            [
+                [False, False],
+                [False, False],
+                [False, False],
+                [True, True],
+                [True, True],
+                [True, True],
+            ]
+        )
+    ).all()

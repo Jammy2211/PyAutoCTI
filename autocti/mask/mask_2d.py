@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Tuple
+from typing import List, Tuple
 
 import autoarray as aa
 
@@ -19,7 +19,49 @@ class SettingsMask2D:
         cosmic_ray_parallel_buffer: int = 10,
         cosmic_ray_serial_buffer: int = 10,
         cosmic_ray_diagonal_buffer: int = 3,
+        read_noise_persistence_infront_buffer: int = 0,
+        read_noise_persistence_behind_buffer: int = 0,
     ):
+        """
+        Settings which customize how the mask is created.
+
+        There are three features whose masking can be customized:
+
+        1) The FPR / EPER masking: the extent of masks on these specific regions of the data (e.g. the
+        length of the FPR mask in pixels).
+
+        2) Cosmic ray masking: buffers around cosmic rays in the parallel and serial directions which mask the CTI
+        trails of these cosmic rays.
+
+        3) Read noise persistence masking: buffers around read noise persistence rows in front and behind the
+        flagged rows containing read noise persistence.
+
+        Parameters
+        ----------
+        parallel_fpr_pixels
+            The integer range of pixels masked in each parallel FPR region, for example `parallel_fpr_pixels=(1,2)`
+            masks just the second row of parallel FPR pixels.
+        parallel_eper_pixels
+            The integer range of pixels masked in each parallel EPER region, for example `parallel_eper_pixels=(1,2)`
+            masks just the second row of parallel EPER pixels.
+        serial_fpr_pixels
+            The integer range of pixels masked in each serial FPR region, for example `serial_fpr_pixels=(1,2)`
+            masks just the second column of serial FPR pixels.
+        serial_eper_pixels
+            The integer range of pixels masked in each serial EPER region, for example `serial_eper_pixels=(1,2)`
+            masks just the second column of serial EPER pixels.
+        cosmic_ray_parallel_buffer
+            The number of pixels masked in the parallel direction behind each cosmic ray, to mask the CTI trail.
+        cosmic_ray_serial_buffer
+            The number of pixels masked in the serial direction behind each cosmic ray, to mask the CTI trail.
+        cosmic_ray_diagonal_buffer
+            The number of pixels masked in the parallel and serial direction behind each cosmic ray, to mask the
+            serial CTI trail or the parallel CTI trail.
+        read_noise_persistence_infront_buffer
+            The number of rows masked in front of each read noise persistence region.
+        read_noise_persistence_behind_buffer
+            The number of rows masked behind each read noise persistence region.
+        """
         self.parallel_fpr_pixels = parallel_fpr_pixels
         self.parallel_eper_pixels = parallel_eper_pixels
         self.serial_fpr_pixels = serial_fpr_pixels
@@ -28,6 +70,11 @@ class SettingsMask2D:
         self.cosmic_ray_parallel_buffer = cosmic_ray_parallel_buffer
         self.cosmic_ray_serial_buffer = cosmic_ray_serial_buffer
         self.cosmic_ray_diagonal_buffer = cosmic_ray_diagonal_buffer
+
+        self.read_noise_persistence_infront_buffer = (
+            read_noise_persistence_infront_buffer
+        )
+        self.read_noise_persistence_behind_buffer = read_noise_persistence_behind_buffer
 
 
 class Mask2D(aa.Mask2D):
@@ -310,6 +357,71 @@ class Mask2D(aa.Mask2D):
 
         for region in eper_regions:
             mask[region.y0 : region.y1, region.x0 : region.x1] = True
+
+        if invert:
+            mask = np.invert(mask)
+
+        return Mask2D(mask=mask.astype("bool"), pixel_scales=pixel_scales)
+
+    @classmethod
+    def masked_read_noise_persistence_from(
+        cls,
+        layout: Layout2D,
+        row_value_list: List[float],
+        read_noise_persistence_threshold: float,
+        settings: "SettingsMask2D",
+        pixel_scales: aa.type.PixelScales,
+        invert: bool = False,
+    ) -> "Mask2D":
+        """
+        Read noise persistence is a feature of CCDs whereby the signal from a high signal pixel (e.g. cosmic ray) can
+        persist into the signal of subsequent rows of pixels.
+
+        This leads to a 'streak' of signal values in the x direction, which typically need to be masked out.
+
+        This function produces a read noise persistence mask from a list of row values, where the values are the
+        average signal in each row of the image after other features (e.g. the charge injection) have been removed.
+
+        All rows with a signal above an input `read_noise_persistence_threshold` are masked out, where this threshold
+        should be estimated from the data itself or based on the CCD's properties.
+
+        Parameters
+        ----------
+        layout
+            The layout of the CCD (where the parallel overscan begins and ends, where the charge injection
+            regions are, etc.).
+        row_value_list
+            The average signal in each row of the image after other features (e.g. the charge injection) have been
+            removed.
+        read_noise_persistence_threshold
+            The threshold above which a row is masked out, assuming that this threshold means that a signal is
+            so bright that it must be due to read noise persistence.
+        settings
+            The settings of the mask (e.g. the number of pixels to mask out).
+        pixel_scales
+            The pixel scales of the CCD in arc-seconds per pixel, which is passed to the mask.
+        invert
+            If `True`, the mask is inverted such that all pixels that are masked are unmasked and visa versa.
+
+        Returns
+        -------
+        The read noise persistence mask.
+        """
+        mask_row = [
+            row_value > read_noise_persistence_threshold for row_value in row_value_list
+        ]
+
+        mask = np.full(layout.shape_2d, False)
+
+        for y in range(layout.shape_2d[0]):
+            if mask_row[y]:
+                ylow = max(y - settings.read_noise_persistence_infront_buffer, 0)
+                yhigh = min(
+                    y + settings.read_noise_persistence_behind_buffer + 1,
+                    layout.shape_2d[0],
+                )
+
+                mask[ylow:yhigh, :] = True
 
         if invert:
             mask = np.invert(mask)
