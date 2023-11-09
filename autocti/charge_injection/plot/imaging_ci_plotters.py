@@ -1,3 +1,4 @@
+import numpy as np
 from typing import Callable
 
 from autoconf import conf
@@ -12,6 +13,7 @@ from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.extract.settings import SettingsExtract
 
 from autocti import exc
+
 
 class ImagingCIPlotter(Plotter):
     def __init__(
@@ -313,9 +315,12 @@ class ImagingCIPlotter(Plotter):
             )
 
     def figures_1d_data_binned(
-            self,
-            columns_fpr : bool = False
-        ):
+        self,
+        rows_fpr: bool = False,
+        rows_no_fpr: bool = False,
+        columns_fpr: bool = False,
+        columns_no_fpr: bool = False,
+    ):
         """
         Plots the charge injection data binned over the parallel and serial directions, with and without the
         FPR regions included.
@@ -336,22 +341,60 @@ class ImagingCIPlotter(Plotter):
 
         fpr_size = self.dataset.layout.parallel_rows_within_regions[0]
 
-        if any([fpr_size != fpr_size_of_row for fpr_size_of_row in self.dataset.layout.parallel_rows_within_regions]):
+        if any(
+            [
+                fpr_size != fpr_size_of_row
+                for fpr_size_of_row in self.dataset.layout.parallel_rows_within_regions
+            ]
+        ):
             raise exc.PlottingException(
                 "The FPR in this dataset have a variable number of rows. This means that masknig the FPR in the"
                 "figures_1d_data_binned method is not supported."
             )
 
         fpr_mask = self.dataset.layout.extract.parallel_fpr.mask_from(
-            settings=SettingsExtract(pixels_from_end=fpr_size),
+            settings=SettingsExtract(pixels=(0, fpr_size)),
             pixel_scales=self.dataset.pixel_scales,
         )
 
+        if rows_fpr:
+            y = self.dataset.data.apply_mask(
+                mask=np.invert(fpr_mask)
+            ).binned_across_rows
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                text_manual_dict=self.text_manual_dict_from(),
+                text_manual_dict_y=self.text_manual_dict_y_from(),
+                visuals_1d=self.get_visuals_1d(),
+                auto_labels=AutoLabels(
+                    title=f"Data No FPR Binned Over Rows",
+                    yunit="e-",
+                    filename=f"data_binned_rows_fpr",
+                ),
+            )
+
+        if rows_no_fpr:
+            y = self.dataset.data.apply_mask(mask=fpr_mask).binned_across_rows
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                text_manual_dict=self.text_manual_dict_from(),
+                text_manual_dict_y=self.text_manual_dict_y_from(),
+                visuals_1d=self.get_visuals_1d(),
+                auto_labels=AutoLabels(
+                    title=f"Data No FPR Binned Over Rows",
+                    yunit="e-",
+                    filename=f"data_binned_rows_no_fpr",
+                ),
+            )
+
         if columns_fpr:
-
-            data_no_fpr = self.dataset.data.apply_mask(mask=fpr_mask)
-
-            y = data_no_fpr.binned_across_columns
+            y = self.dataset.data.apply_mask(
+                mask=np.invert(fpr_mask)
+            ).binned_across_columns
 
             self.mat_plot_1d.plot_yx(
                 y=y,
@@ -366,6 +409,21 @@ class ImagingCIPlotter(Plotter):
                 ),
             )
 
+        if columns_no_fpr:
+            y = self.dataset.data.apply_mask(mask=fpr_mask).binned_across_columns
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                text_manual_dict=self.text_manual_dict_from(),
+                text_manual_dict_y=self.text_manual_dict_y_from(),
+                visuals_1d=self.get_visuals_1d(),
+                auto_labels=AutoLabels(
+                    title=f"Data No FPR Binned Over Columns",
+                    yunit="e-",
+                    filename=f"data_binned_columns_no_fpr",
+                ),
+            )
 
     def subplot(
         self,

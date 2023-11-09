@@ -153,13 +153,13 @@ class VisualizerImagingCI(Visualizer):
                         filename_suffix=f"{filename_suffix}_{region}",
                     )
 
-                multi_plotter.subplot_of_figure(
-                    func_name="figures_1d_data_binned",
-                    figure_name="columns_fpr",
-                    filename_suffix=f"{filename_suffix}",
-                )
-
-                ddd
+                for figure_name in ["columns_fpr"]:
+                    if should_plot(figure_name):
+                        multi_plotter.subplot_of_figure(
+                            func_name="figures_1d_data_binned",
+                            figure_name=figure_name,
+                            filename_suffix=f"{filename_suffix}",
+                        )
 
             except (exc.RegionException, TypeError, ValueError):
                 logger.info(
