@@ -32,6 +32,69 @@ class MockExtract2D(Extract2D):
         return ac.util.extract_2d.binned_region_1d_fpr_from(pixels=settings.pixels)
 
 
+def test__mask_from():
+    extract = MockExtract2D(shape_2d=(5, 3), region_list=[(1, 4, 0, 3)])
+
+    mask = extract.mask_from(
+        settings=ac.SettingsExtract(pixels=(0, 2)), pixel_scales=0.1
+    )
+
+    assert (
+        mask
+        == np.array(
+            [
+                [False, False, False],
+                [True, True, True],
+                [True, True, True],
+                [False, False, False],
+                [False, False, False],
+            ]
+        )
+    ).all()
+    assert mask.pixel_scales == (0.1, 0.1)
+
+    mask = extract.mask_from(
+        settings=ac.SettingsExtract(pixels=(0, 2)), pixel_scales=0.1, invert=True
+    )
+
+    assert (
+        mask
+        == np.array(
+            [
+                [True, True, True],
+                [False, False, False],
+                [False, False, False],
+                [True, True, True],
+                [True, True, True],
+            ]
+        )
+    ).all()
+
+    extract = MockExtract2D(shape_2d=(10, 4), region_list=[(1, 4, 0, 3), (5, 8, 0, 3)])
+
+    mask = extract.mask_from(
+        settings=ac.SettingsExtract(pixels=(0, 3)), pixel_scales=0.1
+    )
+
+    assert (
+        mask
+        == np.array(
+            [
+                [False, False, False, False],
+                [True, True, True, False],
+                [True, True, True, False],
+                [True, True, True, False],
+                [False, False, False, False],
+                [True, True, True, False],
+                [True, True, True, False],
+                [True, True, True, False],
+                [False, False, False, False],
+                [False, False, False, False],
+            ]
+        )
+    ).all()
+
+
 def test__array_2d_list_from(parallel_array, parallel_masked_array):
     extract = MockExtract2D(region_list=[(1, 4, 0, 3)])
 

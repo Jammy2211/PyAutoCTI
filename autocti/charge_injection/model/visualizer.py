@@ -158,6 +158,20 @@ class VisualizerImagingCI(Visualizer):
                     f"VISUALIZATION - Could not visualize the ImagingCI 1D {region}"
                 )
 
+        if folder_suffix == "_full":
+            for figure_name in [
+                "rows_fpr",
+                "rows_no_fpr",
+                "columns_fpr",
+                "columns_no_fpr",
+            ]:
+                if should_plot(figure_name):
+                    multi_plotter.subplot_of_figure(
+                        func_name="figures_1d_data_binned",
+                        figure_name=figure_name,
+                        filename_suffix=f"{filename_suffix}",
+                    )
+
     def visualize_fit(self, fit, during_analysis, folder_suffix: str = ""):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
@@ -354,6 +368,19 @@ class VisualizerImagingCI(Visualizer):
                 logger.info(
                     f"VISUALIZATION - Could not visualize the ImagingCI 1D {region}"
                 )
+
+        if folder_suffix == "_full":
+            for figure_name in [
+                "rows_fpr",
+                "rows_no_fpr",
+                "columns_fpr",
+                "columns_no_fpr",
+            ]:
+                if should_plot(figure_name):
+                    multi_plotter.subplot_of_figure(
+                        func_name="figures_1d_data_binned",
+                        figure_name=figure_name,
+                    )
 
     def visualize_fit_in_fits(self, fit):
         mat_plot_2d = self.mat_plot_2d_from(subfolders="fit_imaging/fit", format="fit")

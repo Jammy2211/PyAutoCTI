@@ -1,3 +1,6 @@
+import copy
+
+import numpy as np
 from typing import Callable
 
 from autoconf import conf
@@ -9,6 +12,9 @@ from autoarray.dataset.plot.imaging_plotters import ImagingPlotterMeta
 
 from autocti.plot.abstract_plotters import Plotter
 from autocti.charge_injection.imaging.imaging import ImagingCI
+from autocti.extract.settings import SettingsExtract
+
+from autocti import exc
 
 
 class ImagingCIPlotter(Plotter):
@@ -180,7 +186,7 @@ class ImagingCIPlotter(Plotter):
         signal_to_noise_map: bool = False,
     ):
         """
-        Plots the individual attributes of the plotter's `ImagingCI` object in 2D.
+        Plots the individual attributes of the plotter's `ImagingCI` object in 1D.
 
         The API is such that every plottable attribute of the `Imaging` object is an input parameter of type bool of
         the function, which if switched to `True` means that it is plotted.
@@ -307,6 +313,132 @@ class ImagingCIPlotter(Plotter):
                     title=f"Signal To Noise Map {title_str}",
                     ylabel="Signal To Noise (e-)",
                     filename=f"signal_to_noise_map_{region}",
+                ),
+            )
+
+    def figures_1d_data_binned(
+        self,
+        rows_fpr: bool = False,
+        rows_no_fpr: bool = False,
+        columns_fpr: bool = False,
+        columns_no_fpr: bool = False,
+    ):
+        """
+        Plots the charge injection data binned over the parallel and serial directions, with and without the
+        FPR regions included.
+
+        Plots binned over rows show the FPR of each injection, so that the FPR can be compared between injections.
+        When the FPR is masked it allows comparison of the parallel EPER of each injection.
+
+        Plots binned over columns shown the charge injection non-uniformity.
+
+        Inaccurate bias subtraction / stray light subtraction and other systematics can produce a gradient over
+        a full image, which these plots often show.
+
+        Parameters
+        ----------
+        columns_fpr
+            Whether to plot the data binned over columns with the FPR regions included.
+        """
+
+        fpr_size = self.dataset.layout.parallel_rows_within_regions[0]
+
+        if any(
+            [
+                fpr_size != fpr_size_of_row
+                for fpr_size_of_row in self.dataset.layout.parallel_rows_within_regions
+            ]
+        ):
+            raise exc.PlottingException(
+                "The FPR in this dataset have a variable number of rows. This means that masknig the FPR in the"
+                "figures_1d_data_binned method is not supported."
+            )
+
+        fpr_mask = self.dataset.layout.extract.parallel_fpr.mask_from(
+            settings=SettingsExtract(pixels=(0, fpr_size)),
+            pixel_scales=self.dataset.pixel_scales,
+        )
+
+        serial_prescan = self.dataset.layout.extract.serial_prescan.serial_prescan
+        fpr_mask[
+            serial_prescan.y0 : serial_prescan.y1, serial_prescan.x0 : serial_prescan.x1
+        ] = True
+
+        serial_overscan = self.dataset.layout.extract.serial_overscan.serial_overscan
+        fpr_mask[
+            serial_overscan.y0 : serial_overscan.y1,
+            serial_overscan.x0 : serial_overscan.x1,
+        ] = True
+
+        if rows_fpr:
+            data = copy.copy(self.dataset.data)
+
+            y = data.apply_mask(mask=np.invert(fpr_mask)).binned_across_rows
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                text_manual_dict=self.text_manual_dict_from(),
+                text_manual_dict_y=self.text_manual_dict_y_from(),
+                visuals_1d=self.get_visuals_1d(),
+                auto_labels=AutoLabels(
+                    title=f"Data With FPR Binned Over Rows",
+                    yunit="e-",
+                    filename=f"data_binned_rows_fpr",
+                ),
+            )
+
+        if rows_no_fpr:
+            data = copy.copy(self.dataset.data)
+
+            y = data.apply_mask(mask=fpr_mask).binned_across_rows
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                text_manual_dict=self.text_manual_dict_from(),
+                text_manual_dict_y=self.text_manual_dict_y_from(),
+                visuals_1d=self.get_visuals_1d(),
+                auto_labels=AutoLabels(
+                    title=f"Data No FPR Binned Over Rows",
+                    yunit="e-",
+                    filename=f"data_binned_rows_no_fpr",
+                ),
+            )
+
+        if columns_fpr:
+            data = copy.copy(self.dataset.data)
+
+            y = data.apply_mask(mask=np.invert(fpr_mask)).binned_across_columns
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                text_manual_dict=self.text_manual_dict_from(),
+                text_manual_dict_y=self.text_manual_dict_y_from(),
+                visuals_1d=self.get_visuals_1d(),
+                auto_labels=AutoLabels(
+                    title=f"Data With FPR Binned Over Columns",
+                    yunit="e-",
+                    filename=f"data_binned_columns_fpr",
+                ),
+            )
+
+        if columns_no_fpr:
+            data = copy.copy(self.dataset.data)
+
+            y = data.apply_mask(mask=fpr_mask).binned_across_columns
+
+            self.mat_plot_1d.plot_yx(
+                y=y,
+                x=range(len(y)),
+                text_manual_dict=self.text_manual_dict_from(),
+                text_manual_dict_y=self.text_manual_dict_y_from(),
+                visuals_1d=self.get_visuals_1d(),
+                auto_labels=AutoLabels(
+                    title=f"Data No FPR Binned Over Columns",
+                    yunit="e-",
+                    filename=f"data_binned_columns_no_fpr",
                 ),
             )
 

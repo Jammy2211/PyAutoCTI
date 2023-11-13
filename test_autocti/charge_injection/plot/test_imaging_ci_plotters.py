@@ -88,6 +88,25 @@ def test__figures_1d__individual_1d_of_region_are_output(
     )
 
 
+def test__figures_1d_data_binned(imaging_ci_7x7, plot_path, plot_patch):
+    dataset_plotter = aplt.ImagingCIPlotter(
+        dataset=imaging_ci_7x7,
+        mat_plot_1d=aplt.MatPlot1D(output=aplt.Output(plot_path, format="png")),
+    )
+
+    dataset_plotter.figures_1d_data_binned(
+        rows_fpr=True,
+        rows_no_fpr=True,
+        columns_fpr=True,
+        columns_no_fpr=True,
+    )
+
+    assert path.join(plot_path, "data_binned_rows_fpr.png") in plot_patch.paths
+    assert path.join(plot_path, "data_binned_rows_no_fpr.png") in plot_patch.paths
+    assert path.join(plot_path, "data_binned_columns_fpr.png") in plot_patch.paths
+    assert path.join(plot_path, "data_binned_columns_no_fpr.png") in plot_patch.paths
+
+
 def test__subplots__output(imaging_ci_7x7, plot_path, plot_patch):
     dataset_plotter = aplt.ImagingCIPlotter(
         dataset=imaging_ci_7x7,

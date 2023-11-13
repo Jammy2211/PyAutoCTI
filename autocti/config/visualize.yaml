@@ -13,6 +13,10 @@ plots:
     cosmic_ray_map: false
     pre_cti_data: false
     fpr_non_uniformity: false
+    rows_fpr: true                          # Plot the data, binned over rows, where only the FPR is visible?
+    rows_no_fpr: true                       # Plot the data, binned over rows, where the FPR is masked?
+    columns_fpr: true                       # Plot the data, binned over columns, where only the FPR is visible?
+    columns_no_fpr: true                    # Plot the data, binned over columns, where the FPR is masked?
   fit:
     data: true
     data_logy: true
@@ -20,4 +24,7 @@ plots:
     residual_map_logy: true
     post_cti_data: false
     pre_cti_data: false
-
+    rows_fpr: true                          # Plot the data, binned over rows, where only the FPR is visible?
+    rows_no_fpr: true                       # Plot the data, binned over rows, where the FPR is masked?
+    columns_fpr: true                       # Plot the data, binned over columns, where only the FPR is visible?
+    columns_no_fpr: true                    # Plot the data, binned over columns, where the FPR is masked?

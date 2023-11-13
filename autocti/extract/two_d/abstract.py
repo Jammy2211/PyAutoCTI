@@ -7,6 +7,7 @@ from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
 from autocti.extract.settings import SettingsExtract
 from autocti.layout.one_d import Layout1D
+from autocti.mask.mask_2d import Mask2D
 
 
 class Extract2D:
@@ -155,6 +156,51 @@ class Extract2D:
 
         return anti_region_list
 
+    def mask_from(
+        self,
+        settings: SettingsExtract,
+        pixel_scales: aa.type.PixelScales,
+        invert: bool = False,
+    ) -> Mask2D:
+        """
+        Extracts a mask from the extraction region of the `Extract` object, where masked values (`True`) are those
+        included within the extraction region.
+
+        For example, for a `Extract2DParallelFPR` object, the mask would have `True` values over pixels that
+        contain the parallel FPR, meaning it can be used to remove the parallel FPR from an image.
+
+        This function uses the same regions used elsewhere through the `Extract` objects for extracting arrays.
+        For example, the regions used to extract and stack arrays are the same used to create this mask.
+
+        This can be customized using the same `SettingsExtract` object and API.
+
+        Parameters
+        ----------
+        settings
+           The settings used to extract the region (e.g. the EPERs), which for example include the `pixels`
+           tuple specifying the range of pixel columns they are extracted between.
+        pixel_scales
+            The pixel scales of the mask, in arc-seconds per pixel.
+        invert
+            If `True`, the mask is inverted such that masked values are `False` and unmasked values are `True`.
+
+        Returns
+        -------
+        The mask of the extraction region, where masked values are those included within the extraction region.
+        """
+
+        region_list = self.region_list_from(settings=settings)
+
+        mask = np.full(fill_value=False, shape=self.shape_2d)
+
+        for region in region_list:
+            mask[region.y0 : region.y1, region.x0 : region.x1] = True
+
+        if invert:
+            mask = np.invert(mask)
+
+        return Mask2D(mask=mask, pixel_scales=pixel_scales)
+
     def array_2d_list_from(
         self, array: aa.Array2D, settings: SettingsExtract
     ) -> List[aa.Array2D]:
@@ -172,7 +218,7 @@ class Extract2D:
         array
             The array from which the regions are extracted and put into the returned list of arrays.
         settings
-           The settings used to extract the serial region (e.g. the EPERs), which for example include the `pixels`
+           The settings used to extract the region (e.g. the EPERs), which for example include the `pixels`
            tuple specifying the range of pixel columns they are extracted between.
         """
         region_list = self.region_list_from(settings=settings)
