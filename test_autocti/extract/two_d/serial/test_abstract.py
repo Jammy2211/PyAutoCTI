@@ -1,6 +1,26 @@
 import autocti as ac
 
 
+def test__row_column_index_list_of_lists_from(serial_array, serial_masked_array):
+    extract = ac.Extract2DSerialFPR(region_list=[(0, 3, 0, 5)])
+
+    # Extracts [0.0, 1.0, 2.0] of every injection in `serial_array` and takes median over these values.
+
+    row_column_index_list_of_lists = extract.row_column_index_list_of_lists_from(
+        settings=ac.SettingsExtract(pixels=(0, 3))
+    )
+    assert row_column_index_list_of_lists[0] == [0, 1, 2]
+
+    extract = ac.Extract2DSerialFPR(region_list=[(0, 2, 0, 4), (0, 2, 6, 10)])
+
+    row_column_index_list_of_lists = extract.row_column_index_list_of_lists_from(
+        settings=ac.SettingsExtract(pixels=(0, 4))
+    )
+
+    assert row_column_index_list_of_lists[0] == [0, 1, 2, 3]
+    assert row_column_index_list_of_lists[1] == [6, 7, 8, 9]
+
+
 def test__median_list_from(serial_array, serial_masked_array):
     extract = ac.Extract2DSerialFPR(region_list=[(0, 3, 0, 5)])
 

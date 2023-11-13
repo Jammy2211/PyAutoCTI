@@ -5,7 +5,6 @@ import autocti as ac
 
 
 def test__row_column_index_list_of_lists_from(parallel_array, parallel_masked_array):
-
     extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3)])
 
     # Extracts [1.0, 2.0, 3.0] of every injection in `parallel_array`

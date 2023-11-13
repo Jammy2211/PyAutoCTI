@@ -19,16 +19,9 @@ class Extract2DParallel(Extract2D):
         """
         return 1
 
-    def row_column_index_list_of_lists_from(
-        self, settings: SettingsExtract
-    ):
+    def row_column_index_list_of_lists_from(self, settings: SettingsExtract):
         """
-        The function `_value_list_of_lists_from` extracts a list of lists of values from a 2D array.
-
-        For parallel regions, this extraction performs binning over the columns of the data.
-
-        For example, a `Extract2DParallelFPR` object, the function extracts a list of lists of parallel FPR values from a
-        2D array. Binning over columns convert this to high signal-to-noise FPRs over the full array.
+        The function `_value_list_of_lists_from` extracts a list of lists of the mean of values from a 2D array.
 
         This function returns the row pixel indexes of the data used to create this list of lists. For example, if
         two FPR regions are extracted from rows 100 -> 300 and 400 -> 600, the returned list of lists would be
@@ -40,7 +33,6 @@ class Extract2DParallel(Extract2D):
             The settings used to extract the parallel data, for example specifying which pixels are used to extract
             the parallel data.
         """
-
         return [
             list(range(region.y0, region.y1))
             for region in self.region_list_from(settings=settings)

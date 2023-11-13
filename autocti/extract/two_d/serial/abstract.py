@@ -17,6 +17,25 @@ class Extract2DSerial(Extract2D):
         """
         return 0
 
+    def row_column_index_list_of_lists_from(self, settings: SettingsExtract):
+        """
+        The function `_value_list_of_lists_from` extracts a list of lists of the mean values from a 2D array.
+
+        This function returns the column pixel indexes of the data used to create this list of lists. For example, if
+        two EPER regions are extracted from columns 200 -> 220, the returned list of lists would be a list of lists,
+        running from 200 -> 220.
+
+        Parameters
+        ----------
+        settings
+            The settings used to extract the dserial ata, for example specifying which pixels are used to extract
+            the serial data.
+        """
+        return [
+            list(range(region.x0, region.x1))
+            for region in self.region_list_from(settings=settings)
+        ]
+
     def _value_list_from(
         self, array: aa.Array2D, value_str: str, settings: SettingsExtract
     ):
