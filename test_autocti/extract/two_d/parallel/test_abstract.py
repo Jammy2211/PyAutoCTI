@@ -4,6 +4,26 @@ import pytest
 import autocti as ac
 
 
+def test__row_column_index_list_of_lists_from(parallel_array, parallel_masked_array):
+    extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3)])
+
+    # Extracts [1.0, 2.0, 3.0] of every injection in `parallel_array`
+
+    median_list_of_lists = extract.row_column_index_list_of_lists_from(
+        settings=ac.SettingsExtract(pixels=(0, 3))
+    )
+    assert median_list_of_lists[0] == [1, 2, 3]
+
+    extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3), (5, 8, 0, 3)])
+
+    median_list_of_lists = extract.row_column_index_list_of_lists_from(
+        settings=ac.SettingsExtract(pixels=(0, 3))
+    )
+
+    assert median_list_of_lists[0] == [1, 2, 3]
+    assert median_list_of_lists[1] == [5, 6, 7]
+
+
 def test__median_list_from(parallel_array, parallel_masked_array):
     extract = ac.Extract2DParallelFPR(region_list=[(1, 4, 0, 3)])
 
