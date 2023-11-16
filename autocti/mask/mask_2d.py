@@ -19,8 +19,8 @@ class SettingsMask2D:
         cosmic_ray_parallel_buffer: int = 10,
         cosmic_ray_serial_buffer: int = 10,
         cosmic_ray_diagonal_buffer: int = 3,
-        read_noise_persistence_infront_buffer: int = 0,
-        read_noise_persistence_behind_buffer: int = 0,
+        readout_persistence_infront_buffer: int = 0,
+        readout_persistence_behind_buffer: int = 0,
     ):
         """
         Settings which customize how the mask is created.
@@ -57,9 +57,9 @@ class SettingsMask2D:
         cosmic_ray_diagonal_buffer
             The number of pixels masked in the parallel and serial direction behind each cosmic ray, to mask the
             serial CTI trail or the parallel CTI trail.
-        read_noise_persistence_infront_buffer
+        readout_persistence_infront_buffer
             The number of rows masked in front of each read noise persistence region.
-        read_noise_persistence_behind_buffer
+        readout_persistence_behind_buffer
             The number of rows masked behind each read noise persistence region.
         """
         self.parallel_fpr_pixels = parallel_fpr_pixels
@@ -71,10 +71,10 @@ class SettingsMask2D:
         self.cosmic_ray_serial_buffer = cosmic_ray_serial_buffer
         self.cosmic_ray_diagonal_buffer = cosmic_ray_diagonal_buffer
 
-        self.read_noise_persistence_infront_buffer = (
-            read_noise_persistence_infront_buffer
+        self.readout_persistence_infront_buffer = (
+            readout_persistence_infront_buffer
         )
-        self.read_noise_persistence_behind_buffer = read_noise_persistence_behind_buffer
+        self.readout_persistence_behind_buffer = readout_persistence_behind_buffer
 
 
 class Mask2D(aa.Mask2D):
@@ -364,11 +364,11 @@ class Mask2D(aa.Mask2D):
         return Mask2D(mask=mask.astype("bool"), pixel_scales=pixel_scales)
 
     @classmethod
-    def masked_read_noise_persistence_from(
+    def masked_readout_persistence_from(
         cls,
         layout: Layout2D,
         row_value_list: List[float],
-        read_noise_persistence_threshold: float,
+        readout_persistence_threshold: float,
         settings: "SettingsMask2D",
         pixel_scales: aa.type.PixelScales,
         invert: bool = False,
@@ -382,7 +382,7 @@ class Mask2D(aa.Mask2D):
         This function produces a read noise persistence mask from a list of row values, where the values are the
         average signal in each row of the image after other features (e.g. the charge injection) have been removed.
 
-        All rows with a signal above an input `read_noise_persistence_threshold` are masked out, where this threshold
+        All rows with a signal above an input `readout_persistence_threshold` are masked out, where this threshold
         should be estimated from the data itself or based on the CCD's properties.
 
         Parameters
@@ -393,7 +393,7 @@ class Mask2D(aa.Mask2D):
         row_value_list
             The average signal in each row of the image after other features (e.g. the charge injection) have been
             removed.
-        read_noise_persistence_threshold
+        readout_persistence_threshold
             The threshold above which a row is masked out, assuming that this threshold means that a signal is
             so bright that it must be due to read noise persistence.
         settings
@@ -408,16 +408,23 @@ class Mask2D(aa.Mask2D):
         The read noise persistence mask.
         """
         mask_row = [
-            row_value > read_noise_persistence_threshold for row_value in row_value_list
+            row_value > readout_persistence_threshold for row_value in row_value_list
         ]
 
         mask = np.full(layout.shape_2d, False)
 
         for y in range(layout.shape_2d[0]):
+
+            row_diff = row_value_list[y] - row_value_list[y+1]
+
+            if row_diff > readout_persistence_threshold:
+
+                mask
+
             if mask_row[y]:
-                ylow = max(y - settings.read_noise_persistence_infront_buffer, 0)
+                ylow = max(y - settings.readout_persistence_infront_buffer, 0)
                 yhigh = min(
-                    y + settings.read_noise_persistence_behind_buffer + 1,
+                    y + settings.readout_persistence_behind_buffer + 1,
                     layout.shape_2d[0],
                 )
 
