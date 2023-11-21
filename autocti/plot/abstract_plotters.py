@@ -11,6 +11,7 @@ from autoarray.plot.abstract_plotters import AbstractPlotter
 from autocti.plot.get_visuals.one_d import GetVisuals1D
 from autocti.plot.get_visuals.two_d import GetVisuals2D
 from autocti.extract.settings import SettingsExtract
+from autocti.mask.mask_2d import Mask2D
 
 from autocti import exc
 
@@ -110,8 +111,14 @@ class Plotter(AbstractPlotter):
 
         return False
 
-    def fpr_mask_from(self):
+    def fpr_mask_from(self) -> Mask2D:
+        """
+        Returns a mask for the FPR of the dataset, where the prescan and overscan regions are also masked.
 
+        This is used for plotting images binned across the rows and columsn (e.g. the parallel and serial direction).
+
+        This mask means these plots can be made without the FP being visible.
+        """
         fpr_size = self.dataset.layout.parallel_rows_within_regions[0]
 
         if any(
