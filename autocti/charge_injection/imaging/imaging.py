@@ -19,6 +19,7 @@ class ImagingCI(aa.Imaging):
         pre_cti_data: aa.Array2D,
         layout: Layout2DCI,
         cosmic_ray_map: Optional[aa.Array2D] = None,
+        mask_persistence = None,
         noise_scaling_map_dict: Optional[Dict] = None,
         fpr_value: Optional[float] = None,
         settings_dict: Optional[Dict] = None,
@@ -33,6 +34,7 @@ class ImagingCI(aa.Imaging):
             cosmic_ray_map = cosmic_ray_map.native
 
         self.cosmic_ray_map = cosmic_ray_map
+        self.mask_persistence = mask_persistence
 
         if noise_scaling_map_dict is not None:
             noise_scaling_map_dict = {
@@ -132,6 +134,7 @@ class ImagingCI(aa.Imaging):
             pre_cti_data=self.pre_cti_data.native,
             layout=self.layout,
             cosmic_ray_map=cosmic_ray_map,
+            mask_persistence=self.mask_persistence,
             noise_scaling_map_dict=noise_scaling_map_dict,
             fpr_value=self.fpr_value,
             settings_dict=self.settings_dict,
