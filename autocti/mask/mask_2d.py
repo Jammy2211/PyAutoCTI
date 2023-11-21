@@ -365,13 +365,13 @@ class Mask2D(aa.Mask2D):
 
     @classmethod
     def masked_readout_persistence_from(
-        cls,
-        layout: Layout2D,
-        row_value_list: List[float],
-        readout_persistence_threshold: float,
-        settings: "SettingsMask2D",
-        pixel_scales: aa.type.PixelScales,
-        invert: bool = False,
+            cls,
+            layout: Layout2D,
+            row_value_list: List[float],
+            readout_persistence_threshold: float,
+            settings: "SettingsMask2D",
+            pixel_scales: aa.type.PixelScales,
+            invert: bool = False,
     ) -> "Mask2D":
         """
         Read noise persistence is a feature of CCDs whereby the signal from a high signal pixel (e.g. cosmic ray) can
@@ -414,13 +414,6 @@ class Mask2D(aa.Mask2D):
         mask = np.full(layout.shape_2d, False)
 
         for y in range(layout.shape_2d[0]):
-
-            row_diff = row_value_list[y] - row_value_list[y+1]
-
-            if row_diff > readout_persistence_threshold:
-
-                mask
-
             if mask_row[y]:
                 ylow = max(y - settings.readout_persistence_infront_buffer, 0)
                 yhigh = min(
