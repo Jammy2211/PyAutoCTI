@@ -418,6 +418,7 @@ class FitImagingCIPlotter(Plotter):
         fpr_mask = self.fpr_mask_from()
 
         if rows_fpr:
+
             data = copy.copy(self.dataset.data)
             y = data.apply_mask(mask=np.invert(fpr_mask)).binned_across_rows
 

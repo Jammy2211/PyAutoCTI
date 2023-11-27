@@ -418,6 +418,10 @@ class AnalysisImagingCI(af.Analysis):
         instance: af.ModelInstance,
         during_analysis: bool,
     ):
+
+        if analyses is None:
+            return
+
         fit_list = [
             analysis.fit_via_instance_from(instance=instance) for analysis in analyses
         ]
