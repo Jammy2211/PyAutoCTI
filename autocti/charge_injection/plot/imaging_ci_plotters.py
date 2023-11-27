@@ -12,9 +12,7 @@ from autoarray.dataset.plot.imaging_plotters import ImagingPlotterMeta
 
 from autocti.plot.abstract_plotters import Plotter
 from autocti.charge_injection.imaging.imaging import ImagingCI
-from autocti.extract.settings import SettingsExtract
 
-from autocti import exc
 
 
 class ImagingCIPlotter(Plotter):
@@ -341,34 +339,7 @@ class ImagingCIPlotter(Plotter):
             Whether to plot the data binned over columns with the FPR regions included.
         """
 
-        fpr_size = self.dataset.layout.parallel_rows_within_regions[0]
-
-        if any(
-            [
-                fpr_size != fpr_size_of_row
-                for fpr_size_of_row in self.dataset.layout.parallel_rows_within_regions
-            ]
-        ):
-            raise exc.PlottingException(
-                "The FPR in this dataset have a variable number of rows. This means that masknig the FPR in the"
-                "figures_1d_data_binned method is not supported."
-            )
-
-        fpr_mask = self.dataset.layout.extract.parallel_fpr.mask_from(
-            settings=SettingsExtract(pixels=(0, fpr_size)),
-            pixel_scales=self.dataset.pixel_scales,
-        )
-
-        serial_prescan = self.dataset.layout.extract.serial_prescan.serial_prescan
-        fpr_mask[
-            serial_prescan.y0 : serial_prescan.y1, serial_prescan.x0 : serial_prescan.x1
-        ] = True
-
-        serial_overscan = self.dataset.layout.extract.serial_overscan.serial_overscan
-        fpr_mask[
-            serial_overscan.y0 : serial_overscan.y1,
-            serial_overscan.x0 : serial_overscan.x1,
-        ] = True
+        fpr_mask = self.fpr_mask_from()
 
         if rows_fpr:
             data = copy.copy(self.dataset.data)
