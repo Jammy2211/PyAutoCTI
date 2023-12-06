@@ -71,9 +71,7 @@ class SettingsMask2D:
         self.cosmic_ray_serial_buffer = cosmic_ray_serial_buffer
         self.cosmic_ray_diagonal_buffer = cosmic_ray_diagonal_buffer
 
-        self.readout_persistence_infront_buffer = (
-            readout_persistence_infront_buffer
-        )
+        self.readout_persistence_infront_buffer = readout_persistence_infront_buffer
         self.readout_persistence_behind_buffer = readout_persistence_behind_buffer
 
 
@@ -365,13 +363,13 @@ class Mask2D(aa.Mask2D):
 
     @classmethod
     def masked_readout_persistence_from(
-            cls,
-            layout: Layout2D,
-            row_value_list: List[float],
-            readout_persistence_threshold: float,
-            settings: "SettingsMask2D",
-            pixel_scales: aa.type.PixelScales,
-            invert: bool = False,
+        cls,
+        layout: Layout2D,
+        row_value_list: List[float],
+        readout_persistence_threshold: float,
+        settings: "SettingsMask2D",
+        pixel_scales: aa.type.PixelScales,
+        invert: bool = False,
     ) -> "Mask2D":
         """
         Read noise persistence is a feature of CCDs whereby the signal from a high signal pixel (e.g. cosmic ray) can

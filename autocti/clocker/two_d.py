@@ -155,7 +155,11 @@ class Clocker2D(AbstractClocker):
         return trap_list, cti.serial_ccd
 
     def add_cti(
-        self, data: aa.Array2D, cti: CTI2D, pixel_bounce_list: Optional[List[PixelBounce]] = None, preloads: Optional[Preloads] = Preloads()
+        self,
+        data: aa.Array2D,
+        cti: CTI2D,
+        pixel_bounce_list: Optional[List[PixelBounce]] = None,
+        preloads: Optional[Preloads] = Preloads(),
     ) -> aa.Array2D:
         """
         Add CTI to a 2D dataset by passing it to the c++ arctic clocking algorithm.
@@ -270,7 +274,12 @@ class Clocker2D(AbstractClocker):
         except AttributeError:
             return image_post_cti
 
-    def add_cti_poisson_traps(self, data: aa.Array2D, cti: CTI2D, pixel_bounce_list: Optional[List[PixelBounce]] = None) -> aa.Array2D:
+    def add_cti_poisson_traps(
+        self,
+        data: aa.Array2D,
+        cti: CTI2D,
+        pixel_bounce_list: Optional[List[PixelBounce]] = None,
+    ) -> aa.Array2D:
         """
         Add CTI to a 2D dataset by passing it to the c++ arctic clocking algorithm.
 
@@ -470,7 +479,11 @@ class Clocker2D(AbstractClocker):
         return fast_index_list, fast_column_lists
 
     def add_cti_parallel_fast(
-        self, data: aa.Array2D, cti: CTI2D, pixel_bounce_list: Optional[List[PixelBounce]] = None, preloads: Preloads = Preloads()
+        self,
+        data: aa.Array2D,
+        cti: CTI2D,
+        pixel_bounce_list: Optional[List[PixelBounce]] = None,
+        preloads: Preloads = Preloads(),
     ):
         """
         Add CTI to a 2D dataset by passing it to the c++ arctic clocking algorithm.
@@ -604,7 +617,11 @@ class Clocker2D(AbstractClocker):
         )
 
     def add_cti_serial_fast(
-        self, data: aa.Array2D, cti: CTI2D, pixel_bounce_list: Optional[List[PixelBounce]] = None, preloads: Preloads = Preloads()
+        self,
+        data: aa.Array2D,
+        cti: CTI2D,
+        pixel_bounce_list: Optional[List[PixelBounce]] = None,
+        preloads: Preloads = Preloads(),
     ):
         """
         Add CTI to a 2D dataset by passing it to the c++ arctic clocking algorithm.
@@ -699,7 +716,12 @@ class Clocker2D(AbstractClocker):
             values=image_post_cti, mask=data.mask, store_native=True, skip_mask=True
         )
 
-    def remove_cti(self, data: aa.Array2D, cti: CTI2D, pixel_bounce_list: Optional[List[PixelBounce]] = None) -> aa.Array2D:
+    def remove_cti(
+        self,
+        data: aa.Array2D,
+        cti: CTI2D,
+        pixel_bounce_list: Optional[List[PixelBounce]] = None,
+    ) -> aa.Array2D:
         """
         Remove CTI from a 2D dataset by passing it to the c++ arctic clocking algorithm. The removal of CTI is
         performed by adding CTI to the data to understand how electrons are moved on the CCD, and using this

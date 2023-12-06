@@ -78,7 +78,12 @@ class Clocker1D(AbstractClocker):
 
         return trap_list, cti.ccd
 
-    def add_cti(self, data: aa.Array1D, cti: CTI1D, pixel_bounce_list: Optional[List[PixelBounce]] = None) -> aa.Array1D:
+    def add_cti(
+        self,
+        data: aa.Array1D,
+        cti: CTI1D,
+        pixel_bounce_list: Optional[List[PixelBounce]] = None,
+    ) -> aa.Array1D:
         """
         Add CTI to a 1D dataset by passing it from the c++ arctic clocking algorithm.
 
@@ -97,8 +102,8 @@ class Clocker1D(AbstractClocker):
 
         trap_list, ccd = self._traps_ccd_from(cti=cti)
 
-        self.check_traps(trap_list_0=trap_list)
-        self.check_ccd(ccd_list=[ccd])
+        self.check_traps(trap_list_0=trap_list, pixel_bounce_list=pixel_bounce_list)
+        self.check_ccd(ccd_list=[ccd], pixel_bounce_list=pixel_bounce_list)
 
         image_pre_cti_2d = aa.Array2D.zeros(
             shape_native=(data.shape_native[0], 1), pixel_scales=data.pixel_scales
@@ -148,7 +153,12 @@ class Clocker1D(AbstractClocker):
             values=image_post_cti.flatten(), pixel_scales=data.pixel_scales
         )
 
-    def remove_cti(self, data: aa.Array1D, cti: CTI1D, pixel_bounce_list: Optional[List[PixelBounce]] = None) -> aa.Array1D:
+    def remove_cti(
+        self,
+        data: aa.Array1D,
+        cti: CTI1D,
+        pixel_bounce_list: Optional[List[PixelBounce]] = None,
+    ) -> aa.Array1D:
         """
         Add CTI to a 1D dataset by passing it from the c++ arctic clocking algorithm.
 
@@ -167,8 +177,8 @@ class Clocker1D(AbstractClocker):
 
         trap_list, ccd = self._traps_ccd_from(cti=cti)
 
-        self.check_traps(trap_list_0=trap_list)
-        self.check_ccd(ccd_list=[ccd])
+        self.check_traps(trap_list_0=trap_list, pixel_bounce_list=pixel_bounce_list)
+        self.check_ccd(ccd_list=[ccd], pixel_bounce_list=pixel_bounce_list)
 
         image_pre_cti_2d = aa.Array2D.zeros(
             shape_native=(data.shape_native[0], 1), pixel_scales=data.pixel_scales

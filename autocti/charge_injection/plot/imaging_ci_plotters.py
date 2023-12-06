@@ -14,7 +14,6 @@ from autocti.plot.abstract_plotters import Plotter
 from autocti.charge_injection.imaging.imaging import ImagingCI
 
 
-
 class ImagingCIPlotter(Plotter):
     def __init__(
         self,

@@ -19,7 +19,7 @@ class ImagingCI(aa.Imaging):
         pre_cti_data: aa.Array2D,
         layout: Layout2DCI,
         cosmic_ray_map: Optional[aa.Array2D] = None,
-        mask_persistence = None,
+        mask_persistence=None,
         noise_scaling_map_dict: Optional[Dict] = None,
         fpr_value: Optional[float] = None,
         settings_dict: Optional[Dict] = None,

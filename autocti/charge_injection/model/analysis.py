@@ -194,19 +194,12 @@ class AnalysisImagingCI(af.Analysis):
         if hyper_noise_scale and hasattr(instance, "hyper_noise"):
             hyper_noise_scalar_dict = instance.hyper_noise.as_dict
 
-        try:
-            self.clocker.pixel_bounce_list = instance.pixel_bounce_list
-        except AttributeError:
-            pass
-
         post_cti_data = self.clocker.add_cti(
-            data=dataset.pre_cti_data, cti=instance.cti, preloads=self.preloads
+            data=dataset.pre_cti_data,
+            cti=instance.cti,
+            pixel_bounce_list=instance.pixel_bounce,
+            preloads=self.preloads,
         )
-
-        try:
-            self.clocker.pixel_bounce_list = None
-        except AttributeError:
-            pass
 
         return FitImagingCI(
             dataset=dataset,
@@ -428,7 +421,6 @@ class AnalysisImagingCI(af.Analysis):
         instance: af.ModelInstance,
         during_analysis: bool,
     ):
-
         if analyses is None:
             return
 
