@@ -196,9 +196,6 @@ class Clocker2D(AbstractClocker):
         parallel_trap_list, parallel_ccd = self._parallel_traps_ccd_from(cti=cti)
         serial_trap_list, serial_ccd = self._serial_traps_ccd_from(cti=cti)
 
-        self.check_traps(trap_list_0=parallel_trap_list, trap_list_1=serial_trap_list)
-        self.check_ccd(ccd_list=[parallel_ccd, serial_ccd])
-
         parallel_ccd = self.ccd_from(ccd_phase=parallel_ccd)
         serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
 
@@ -302,9 +299,6 @@ class Clocker2D(AbstractClocker):
 
         parallel_trap_list, parallel_ccd = self._parallel_traps_ccd_from(cti=cti)
         serial_trap_list, serial_ccd = self._serial_traps_ccd_from(cti=cti)
-
-        self.check_traps(trap_list_0=parallel_trap_list, trap_list_1=serial_trap_list)
-        self.check_ccd(ccd_list=[parallel_ccd, serial_ccd])
 
         parallel_ccd = self.ccd_from(ccd_phase=parallel_ccd)
 
@@ -513,9 +507,6 @@ class Clocker2D(AbstractClocker):
 
         image_pre_cti = data.native_skip_mask
 
-        self.check_traps(trap_list_0=parallel_trap_list)
-        self.check_ccd(ccd_list=[parallel_ccd])
-
         parallel_ccd = self.ccd_from(ccd_phase=parallel_ccd)
 
         if preloads.parallel_fast_index_list is None:
@@ -574,9 +565,6 @@ class Clocker2D(AbstractClocker):
             )
 
         serial_trap_list, serial_ccd = self._serial_traps_ccd_from(cti=cti)
-
-        self.check_traps(trap_list_0=serial_trap_list)
-        self.check_ccd(ccd_list=[serial_ccd])
 
         serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
 
@@ -654,9 +642,6 @@ class Clocker2D(AbstractClocker):
         serial_trap_list, serial_ccd = self._serial_traps_ccd_from(cti=cti)
 
         image_pre_cti = data.native_skip_mask
-
-        self.check_traps(trap_list_0=serial_trap_list)
-        self.check_ccd(ccd_list=[serial_ccd])
 
         serial_ccd = self.ccd_from(ccd_phase=serial_ccd)
 
@@ -742,9 +727,6 @@ class Clocker2D(AbstractClocker):
 
         parallel_trap_list, parallel_ccd = self._parallel_traps_ccd_from(cti=cti)
         serial_trap_list, serial_ccd = self._serial_traps_ccd_from(cti=cti)
-
-        self.check_traps(trap_list_0=parallel_trap_list, trap_list_1=serial_trap_list)
-        self.check_ccd(ccd_list=[parallel_ccd, serial_ccd])
 
         parallel_ccd = self.ccd_from(ccd_phase=parallel_ccd)
         serial_ccd = self.ccd_from(ccd_phase=serial_ccd)

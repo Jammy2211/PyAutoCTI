@@ -181,6 +181,8 @@ class AnalysisImagingCI(af.Analysis):
             instance=instance, dataset=self.dataset, hyper_noise_scale=True
         )
 
+        print(fit.figure_of_merit)
+
         return fit.figure_of_merit
 
     def fit_via_instance_and_dataset_from(
