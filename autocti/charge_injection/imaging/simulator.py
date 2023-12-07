@@ -40,7 +40,6 @@ class SimulatorImagingCI(SimulatorImaging):
         """
 
         super().__init__(
-            read_noise=read_noise,
             exposure_time=1.0,
             noise_if_add_noise_false=noise_if_add_noise_false,
             noise_seed=noise_seed,
@@ -53,6 +52,7 @@ class SimulatorImagingCI(SimulatorImaging):
         self.column_sigma = column_sigma
         self.row_slope = row_slope
         self.non_uniform_norm_limit = non_uniform_norm_limit
+        self.read_noise = read_noise
         self.charge_noise = charge_noise
 
         self.ci_seed = ci_seed

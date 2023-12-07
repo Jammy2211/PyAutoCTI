@@ -82,7 +82,6 @@ class Clocker1D(AbstractClocker):
         self,
         data: aa.Array1D,
         cti: CTI1D,
-        pixel_bounce_list: Optional[List[PixelBounce]] = None,
     ) -> aa.Array1D:
         """
         Add CTI to a 1D dataset by passing it from the c++ arctic clocking algorithm.
@@ -125,7 +124,6 @@ class Clocker1D(AbstractClocker):
                 parallel_prune_n_electrons=self.prune_n_electrons,
                 parallel_prune_frequency=self.prune_frequency,
                 allow_negative_pixels=self.allow_negative_pixels,
-                pixel_bounce_list=pixel_bounce_list,
                 verbosity=self.verbosity,
             )
         except TypeError:
@@ -142,7 +140,6 @@ class Clocker1D(AbstractClocker):
                 parallel_time_stop=self.time_stop,
                 parallel_prune_n_electrons=self.prune_n_electrons,
                 parallel_prune_frequency=self.prune_frequency,
-                pixel_bounce_list=pixel_bounce_list,
                 verbosity=self.verbosity,
             )
 
@@ -154,7 +151,6 @@ class Clocker1D(AbstractClocker):
         self,
         data: aa.Array1D,
         cti: CTI1D,
-        pixel_bounce_list: Optional[List[PixelBounce]] = None,
     ) -> aa.Array1D:
         """
         Add CTI to a 1D dataset by passing it from the c++ arctic clocking algorithm.
@@ -198,7 +194,6 @@ class Clocker1D(AbstractClocker):
                 parallel_prune_n_electrons=self.prune_n_electrons,
                 parallel_prune_frequency=self.prune_frequency,
                 allow_negative_pixels=self.allow_negative_pixels,
-                pixel_bounce_list=pixel_bounce_list,
                 verbosity=self.verbosity,
             )
         except TypeError:
@@ -216,7 +211,6 @@ class Clocker1D(AbstractClocker):
                 parallel_time_stop=self.time_stop,
                 parallel_prune_n_electrons=self.prune_n_electrons,
                 parallel_prune_frequency=self.prune_frequency,
-                pixel_bounce_list=pixel_bounce_list,
                 verbosity=self.verbosity,
             )
 

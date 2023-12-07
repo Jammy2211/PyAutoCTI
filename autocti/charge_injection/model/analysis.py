@@ -113,9 +113,11 @@ class AnalysisImagingCI(af.Analysis):
         A list of the regions fitted for by the model and therefore visualized.
 
         """
-        if model.cti.serial_ccd is None:
+        if model.cti.parallel_ccd is not None and model.cti.serial_ccd is None:
             return ["parallel_fpr", "parallel_eper"]
-        elif model.cti.parallel_ccd is None:
+        elif model.cti.serial_ccd is not None and model.cti.parallel_ccd is None:
+            return ["serial_fpr", "serial_eper"]
+        elif model.cti.pixel_bounce_list is not None:
             return ["serial_fpr", "serial_eper"]
         return ["parallel_fpr", "parallel_eper", "serial_fpr", "serial_eper"]
 
@@ -181,8 +183,6 @@ class AnalysisImagingCI(af.Analysis):
             instance=instance, dataset=self.dataset, hyper_noise_scale=True
         )
 
-        print(fit.figure_of_merit)
-
         return fit.figure_of_merit
 
     def fit_via_instance_and_dataset_from(
@@ -199,7 +199,6 @@ class AnalysisImagingCI(af.Analysis):
         post_cti_data = self.clocker.add_cti(
             data=dataset.pre_cti_data,
             cti=instance.cti,
-            pixel_bounce_list=instance.pixel_bounce,
             preloads=self.preloads,
         )
 

@@ -5,7 +5,6 @@ from arcticpy import add_cti
 from arcticpy import remove_cti
 
 from arcticpy import ROE
-from arcticpy.pixel_bounce import PixelBounce
 
 import autoarray as aa
 
@@ -158,7 +157,6 @@ class Clocker2D(AbstractClocker):
         self,
         data: aa.Array2D,
         cti: CTI2D,
-        pixel_bounce_list: Optional[List[PixelBounce]] = None,
         preloads: Optional[Preloads] = Preloads(),
     ) -> aa.Array2D:
         """
@@ -232,7 +230,7 @@ class Clocker2D(AbstractClocker):
                 serial_prune_n_electrons=self.serial_prune_n_electrons,
                 serial_prune_frequency=self.serial_prune_frequency,
                 allow_negative_pixels=self.allow_negative_pixels,
-                pixel_bounce_list=pixel_bounce_list,
+                pixel_bounce_list=cti.pixel_bounce_list,
                 verbosity=self.verbosity,
             )
         except TypeError:
@@ -260,7 +258,7 @@ class Clocker2D(AbstractClocker):
                 serial_time_stop=self.serial_time_stop,
                 serial_prune_n_electrons=self.serial_prune_n_electrons,
                 serial_prune_frequency=self.serial_prune_frequency,
-                pixel_bounce_list=pixel_bounce_list,
+                pixel_bounce_list=cti.pixel_bounce_list,
                 verbosity=self.verbosity,
             )
 
@@ -275,7 +273,6 @@ class Clocker2D(AbstractClocker):
         self,
         data: aa.Array2D,
         cti: CTI2D,
-        pixel_bounce_list: Optional[List[PixelBounce]] = None,
     ) -> aa.Array2D:
         """
         Add CTI to a 2D dataset by passing it to the c++ arctic clocking algorithm.
@@ -339,7 +336,6 @@ class Clocker2D(AbstractClocker):
                     parallel_window_start=self.parallel_window_start,
                     parallel_window_stop=self.parallel_window_stop,
                     allow_negative_pixels=self.allow_negative_pixels,
-                    pixel_bounce_list=pixel_bounce_list,
                     verbosity=self.verbosity,
                 )[:, 0]
             except TypeError:
@@ -352,7 +348,6 @@ class Clocker2D(AbstractClocker):
                     parallel_window_offset=parallel_window_offset,
                     parallel_window_start=self.parallel_window_start,
                     parallel_window_stop=self.parallel_window_stop,
-                    pixel_bounce_list=pixel_bounce_list,
                     verbosity=self.verbosity,
                 )[:, 0]
 
@@ -380,7 +375,7 @@ class Clocker2D(AbstractClocker):
                 serial_prune_n_electrons=self.serial_prune_n_electrons,
                 serial_prune_frequency=self.serial_prune_frequency,
                 allow_negative_pixels=self.allow_negative_pixels,
-                pixel_bounce_list=pixel_bounce_list,
+                pixel_bounce_list=cti.pixel_bounce_list,
                 verbosity=self.verbosity,
             )
         except TypeError:
@@ -397,7 +392,7 @@ class Clocker2D(AbstractClocker):
                 serial_time_stop=self.serial_time_stop,
                 serial_prune_n_electrons=self.serial_prune_n_electrons,
                 serial_prune_frequency=self.serial_prune_frequency,
-                pixel_bounce_list=pixel_bounce_list,
+                pixel_bounce_list=cti.pixel_bounce_list,
                 verbosity=self.verbosity,
             )
 
@@ -476,7 +471,6 @@ class Clocker2D(AbstractClocker):
         self,
         data: aa.Array2D,
         cti: CTI2D,
-        pixel_bounce_list: Optional[List[PixelBounce]] = None,
         preloads: Preloads = Preloads(),
     ):
         """
@@ -581,7 +575,7 @@ class Clocker2D(AbstractClocker):
                 serial_prune_n_electrons=self.serial_prune_n_electrons,
                 serial_prune_frequency=self.serial_prune_frequency,
                 allow_negative_pixels=self.allow_negative_pixels,
-                pixel_bounce_list=pixel_bounce_list,
+                pixel_bounce_list=cti.pixel_bounce_list,
                 verbosity=self.verbosity,
             )
         except TypeError:
@@ -596,7 +590,7 @@ class Clocker2D(AbstractClocker):
                 serial_time_stop=self.serial_time_stop,
                 serial_prune_n_electrons=self.serial_prune_n_electrons,
                 serial_prune_frequency=self.serial_prune_frequency,
-                pixel_bounce_list=pixel_bounce_list,
+                pixel_bounce_list=cti.pixel_bounce_list,
                 verbosity=self.verbosity,
             )
 
@@ -608,7 +602,6 @@ class Clocker2D(AbstractClocker):
         self,
         data: aa.Array2D,
         cti: CTI2D,
-        pixel_bounce_list: Optional[List[PixelBounce]] = None,
         preloads: Preloads = Preloads(),
     ):
         """
@@ -672,7 +665,7 @@ class Clocker2D(AbstractClocker):
                 serial_prune_n_electrons=self.serial_prune_n_electrons,
                 serial_prune_frequency=self.serial_prune_frequency,
                 allow_negative_pixels=self.allow_negative_pixels,
-                pixel_bounce_list=pixel_bounce_list,
+                pixel_bounce_list=cti.pixel_bounce_list,
                 verbosity=self.verbosity,
             )
         except TypeError:
@@ -687,7 +680,7 @@ class Clocker2D(AbstractClocker):
                 serial_time_stop=self.serial_time_stop,
                 serial_prune_n_electrons=self.serial_prune_n_electrons,
                 serial_prune_frequency=self.serial_prune_frequency,
-                pixel_bounce_list=pixel_bounce_list,
+                pixel_bounce_list=cti.pixel_bounce_list,
                 verbosity=self.verbosity,
             )
 
@@ -705,7 +698,6 @@ class Clocker2D(AbstractClocker):
         self,
         data: aa.Array2D,
         cti: CTI2D,
-        pixel_bounce_list: Optional[List[PixelBounce]] = None,
     ) -> aa.Array2D:
         """
         Remove CTI from a 2D dataset by passing it to the c++ arctic clocking algorithm. The removal of CTI is
@@ -758,7 +750,7 @@ class Clocker2D(AbstractClocker):
                 serial_prune_n_electrons=self.serial_prune_n_electrons,
                 serial_prune_frequency=self.serial_prune_frequency,
                 allow_negative_pixels=self.allow_negative_pixels,
-                pixel_bounce_list=pixel_bounce_list,
+                pixel_bounce_list=cti.pixel_bounce_list,
             )
         except TypeError:
             image_cti_removed = remove_cti(
@@ -786,7 +778,7 @@ class Clocker2D(AbstractClocker):
                 serial_time_stop=self.serial_time_stop,
                 serial_prune_n_electrons=self.serial_prune_n_electrons,
                 serial_prune_frequency=self.serial_prune_frequency,
-                pixel_bounce_list=pixel_bounce_list,
+                pixel_bounce_list=cti.pixel_bounce_list,
             )
 
         return aa.Array2D(

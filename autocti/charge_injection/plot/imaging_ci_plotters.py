@@ -230,7 +230,6 @@ class ImagingCIPlotter(Plotter):
             y_errors = self.extract_region_noise_map_from(
                 array=self.dataset.noise_map, region=region
             )
-
             self.mat_plot_1d.plot_yx(
                 y=y,
                 x=range(len(y)),
