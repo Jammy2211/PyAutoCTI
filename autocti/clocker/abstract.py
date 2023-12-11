@@ -2,6 +2,7 @@ from typing import List, Optional
 
 from arcticpy import CCD
 from arcticpy import CCDPhase
+from arcticpy import PixelBounce
 from arcticpy import TrapInstantCapture
 
 from autoconf.dictable import from_json, output_to_json
@@ -43,37 +44,6 @@ class AbstractClocker:
         """
         if ccd_phase is not None:
             return CCD(phases=[ccd_phase], fraction_of_traps_per_phase=[1.0])
-
-    def check_traps(
-        self,
-        trap_list_0: Optional[List[TrapInstantCapture]],
-        trap_list_1: Optional[List[TrapInstantCapture]] = None,
-    ):
-        """
-        Checks that there are trap species passed to the clocking algorithm and raises an exception if not.
-
-        Parameters
-        ----------
-        trap_list
-            A list of the trap species on the CCD which capture and release electrons during clock to as to add CTI.
-        """
-        if not any([trap_list_0, trap_list_1]):
-            raise exc.ClockerException(
-                "No Trap species were passed to the add_cti method"
-            )
-
-    def check_ccd(self, ccd_list: List[CCDPhase]):
-        """
-        Checks that there are trap species passed to the clocking algorithm and raises an exception if not.
-
-        Parameters
-        ----------
-        ccd_list
-            The ccd phase settings describing the volume-filling behaviour of the CCD which characterises the capture
-            and release of electrons and therefore CTI.
-        """
-        if not any(ccd_list):
-            raise exc.ClockerException("No CCD object was passed to the add_cti method")
 
     @classmethod
     def from_json(cls, file_path):

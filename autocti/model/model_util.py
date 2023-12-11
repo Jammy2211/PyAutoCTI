@@ -3,6 +3,7 @@ from typing import Optional, List
 from autoconf.dictable import from_json
 
 from arcticpy import CCDPhase
+from arcticpy import PixelBounce
 from arcticpy import TrapInstantCapture
 
 
@@ -25,6 +26,7 @@ class CTI1D(AbstractCTI):
         self,
         trap_list: Optional[List[TrapInstantCapture]] = None,
         ccd: Optional[CCDPhase] = None,
+        pixel_bounce_list : Optional[List[PixelBounce]] = None,
     ):
         """
         An object which determines the behaviour of CTI during 1D clocking.
@@ -38,9 +40,12 @@ class CTI1D(AbstractCTI):
         ccd
             The CCD volume filling parameterization which dictates how an electron cloud fills pixels and thus
             how it is subject to traps.
+        pixel_bounce_list
+            List of pixel bounce objects which describe the behaviour of electrons due to electronic pixel bounce.
         """
         self._trap_list = trap_list
         self.ccd = ccd
+        self.pixel_bounce_list = pixel_bounce_list
 
     @property
     def trap_list(self):
@@ -54,6 +59,7 @@ class CTI2D(AbstractCTI):
         parallel_ccd: Optional[CCDPhase] = None,
         serial_trap_list: Optional[List[TrapInstantCapture]] = None,
         serial_ccd: Optional[CCDPhase] = None,
+        pixel_bounce_list : Optional[List[PixelBounce]] = None,
     ):
         """
         An object which determines the behaviour of CTI during 2D parallel and serial clocking.
@@ -72,11 +78,14 @@ class CTI2D(AbstractCTI):
         serial_ccd
             The CCD volume filling parameterization which dictates how an electron cloud fills pixel in the serial
              direction and thus how it is subject to traps.
+        pixel_bounce_list
+            List of pixel bounce objects which describe the behaviour of electrons due to electronic pixel bounce.
         """
         self.parallel_trap_list = parallel_trap_list
         self.parallel_ccd = parallel_ccd
         self.serial_trap_list = serial_trap_list
         self.serial_ccd = serial_ccd
+        self.pixel_bounce_list = pixel_bounce_list
 
     @property
     def trap_list(self) -> List[TrapInstantCapture]:

@@ -1,9 +1,10 @@
-from typing import Optional
+from typing import List, Optional
 
 from arcticpy import add_cti
 from arcticpy import remove_cti
 
 from arcticpy import ROE
+from arcticpy import PixelBounce
 
 import autoarray as aa
 
@@ -24,7 +25,6 @@ class Clocker1D(AbstractClocker):
         prune_n_electrons=1e-18,
         prune_frequency=20,
         allow_negative_pixels=1,
-        pixel_bounce=None,
         verbosity: int = 0,
     ):
         """
@@ -66,7 +66,6 @@ class Clocker1D(AbstractClocker):
         self.prune_frequency = prune_frequency
 
         self.allow_negative_pixels = allow_negative_pixels
-        self.pixel_bounce = pixel_bounce
 
     def _traps_ccd_from(self, cti: CTI1D):
         """
@@ -79,7 +78,11 @@ class Clocker1D(AbstractClocker):
 
         return trap_list, cti.ccd
 
-    def add_cti(self, data: aa.Array1D, cti: CTI1D) -> aa.Array1D:
+    def add_cti(
+        self,
+        data: aa.Array1D,
+        cti: CTI1D,
+    ) -> aa.Array1D:
         """
         Add CTI to a 1D dataset by passing it from the c++ arctic clocking algorithm.
 
@@ -98,9 +101,6 @@ class Clocker1D(AbstractClocker):
 
         trap_list, ccd = self._traps_ccd_from(cti=cti)
 
-        self.check_traps(trap_list_0=trap_list)
-        self.check_ccd(ccd_list=[ccd])
-
         image_pre_cti_2d = aa.Array2D.zeros(
             shape_native=(data.shape_native[0], 1), pixel_scales=data.pixel_scales
         ).native
@@ -124,7 +124,6 @@ class Clocker1D(AbstractClocker):
                 parallel_prune_n_electrons=self.prune_n_electrons,
                 parallel_prune_frequency=self.prune_frequency,
                 allow_negative_pixels=self.allow_negative_pixels,
-                pixel_bounce=self.pixel_bounce,
                 verbosity=self.verbosity,
             )
         except TypeError:
@@ -141,7 +140,6 @@ class Clocker1D(AbstractClocker):
                 parallel_time_stop=self.time_stop,
                 parallel_prune_n_electrons=self.prune_n_electrons,
                 parallel_prune_frequency=self.prune_frequency,
-                pixel_bounce=self.pixel_bounce,
                 verbosity=self.verbosity,
             )
 
@@ -149,7 +147,11 @@ class Clocker1D(AbstractClocker):
             values=image_post_cti.flatten(), pixel_scales=data.pixel_scales
         )
 
-    def remove_cti(self, data: aa.Array1D, cti: CTI1D) -> aa.Array1D:
+    def remove_cti(
+        self,
+        data: aa.Array1D,
+        cti: CTI1D,
+    ) -> aa.Array1D:
         """
         Add CTI to a 1D dataset by passing it from the c++ arctic clocking algorithm.
 
@@ -168,9 +170,6 @@ class Clocker1D(AbstractClocker):
 
         trap_list, ccd = self._traps_ccd_from(cti=cti)
 
-        self.check_traps(trap_list_0=trap_list)
-        self.check_ccd(ccd_list=[ccd])
-
         image_pre_cti_2d = aa.Array2D.zeros(
             shape_native=(data.shape_native[0], 1), pixel_scales=data.pixel_scales
         ).native
@@ -195,7 +194,6 @@ class Clocker1D(AbstractClocker):
                 parallel_prune_n_electrons=self.prune_n_electrons,
                 parallel_prune_frequency=self.prune_frequency,
                 allow_negative_pixels=self.allow_negative_pixels,
-                pixel_bounce=self.pixel_bounce,
                 verbosity=self.verbosity,
             )
         except TypeError:
@@ -213,7 +211,6 @@ class Clocker1D(AbstractClocker):
                 parallel_time_stop=self.time_stop,
                 parallel_prune_n_electrons=self.prune_n_electrons,
                 parallel_prune_frequency=self.prune_frequency,
-                pixel_bounce=self.pixel_bounce,
                 verbosity=self.verbosity,
             )
 

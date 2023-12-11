@@ -15,6 +15,7 @@ from autocti.mask.mask_2d import Mask2D
 
 from autocti import exc
 
+
 class Plotter(AbstractPlotter):
     def __init__(
         self,

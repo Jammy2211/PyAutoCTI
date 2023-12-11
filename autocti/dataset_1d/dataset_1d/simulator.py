@@ -35,7 +35,6 @@ class SimulatorDataset1D(SimulatorImaging):
         """
 
         super().__init__(
-            read_noise=read_noise,
             exposure_time=1.0,
             add_poisson_noise=add_poisson_noise,
             noise_if_add_noise_false=noise_if_add_noise_false,
@@ -43,6 +42,7 @@ class SimulatorDataset1D(SimulatorImaging):
         )
 
         self.pixel_scales = pixel_scales
+        self.read_noise = read_noise
         self.norm = norm
         self.charge_noise = charge_noise
 
