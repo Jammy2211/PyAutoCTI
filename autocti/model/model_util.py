@@ -101,13 +101,3 @@ class CTI2D(AbstractCTI):
         return [trap for trap in parallel_traps] + [trap for trap in serial_traps]
 
 
-def is_parallel_fit(model):
-    return model.parallel_ccd is not None and model.serial_ccd is None
-
-
-def is_serial_fit(model):
-    return model.parallel_ccd is None and model.serial_ccd is not None
-
-
-def is_parallel_and_serial_fit(model):
-    return model.parallel_ccd is not None and model.serial_ccd is not None

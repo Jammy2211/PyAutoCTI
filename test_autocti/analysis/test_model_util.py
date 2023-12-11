@@ -46,33 +46,3 @@ def test__cti_model__creates_correct_model_from_inputs():
     assert instance.serial_ccd.full_well_depth == 0.8
     assert instance.serial_ccd.well_notch_depth == 0.9
     assert instance.serial_ccd.well_fill_power == 1.0
-
-
-def test__recognises_type_of_fit_from_model():
-    model = af.Model(
-        ac.CTI2D, parallel_trap_list=[ac.TrapInstantCapture], parallel_ccd=ac.CCDPhase
-    )
-
-    assert ac.util.model.is_parallel_fit(model=model) is True
-    assert ac.util.model.is_serial_fit(model=model) is False
-    assert ac.util.model.is_parallel_and_serial_fit(model=model) is False
-
-    model = af.Model(
-        ac.CTI2D, serial_trap_list=[ac.TrapInstantCapture], serial_ccd=ac.CCDPhase
-    )
-
-    assert ac.util.model.is_parallel_fit(model=model) is False
-    assert ac.util.model.is_serial_fit(model=model) is True
-    assert ac.util.model.is_parallel_and_serial_fit(model=model) is False
-
-    model = af.Model(
-        ac.CTI2D,
-        parallel_trap_list=[ac.TrapInstantCapture],
-        parallel_ccd=ac.CCDPhase,
-        serial_trap_list=[ac.TrapInstantCapture],
-        serial_ccd=ac.CCDPhase,
-    )
-
-    assert ac.util.model.is_parallel_fit(model=model) is False
-    assert ac.util.model.is_serial_fit(model=model) is False
-    assert ac.util.model.is_parallel_and_serial_fit(model=model) is True
