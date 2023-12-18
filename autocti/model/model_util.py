@@ -13,12 +13,12 @@ class AbstractCTI:
         return from_json(file_path=file_path)
 
     @property
-    def trap_list(self):
+    def trap_all_list(self):
         raise NotImplementedError
 
     @property
     def delta_ellipticity(self):
-        return sum([trap.delta_ellipticity for trap in self.trap_list])
+        return sum([trap.delta_ellipticity for trap in self.trap_all_list])
 
 
 class CTI1D(AbstractCTI):
@@ -26,7 +26,7 @@ class CTI1D(AbstractCTI):
         self,
         trap_list: Optional[List[TrapInstantCapture]] = None,
         ccd: Optional[CCDPhase] = None,
-        pixel_bounce_list : Optional[List[PixelBounce]] = None,
+        pixel_bounce_list: Optional[List[PixelBounce]] = None,
     ):
         """
         An object which determines the behaviour of CTI during 1D clocking.
@@ -43,13 +43,13 @@ class CTI1D(AbstractCTI):
         pixel_bounce_list
             List of pixel bounce objects which describe the behaviour of electrons due to electronic pixel bounce.
         """
-        self._trap_list = trap_list
+        self.trap_list = trap_list
         self.ccd = ccd
         self.pixel_bounce_list = pixel_bounce_list
 
     @property
-    def trap_list(self):
-        return self._trap_list
+    def trap_all_list(self):
+        return self.trap_list
 
 
 class CTI2D(AbstractCTI):
@@ -59,7 +59,7 @@ class CTI2D(AbstractCTI):
         parallel_ccd: Optional[CCDPhase] = None,
         serial_trap_list: Optional[List[TrapInstantCapture]] = None,
         serial_ccd: Optional[CCDPhase] = None,
-        pixel_bounce_list : Optional[List[PixelBounce]] = None,
+        pixel_bounce_list: Optional[List[PixelBounce]] = None,
     ):
         """
         An object which determines the behaviour of CTI during 2D parallel and serial clocking.
@@ -88,7 +88,7 @@ class CTI2D(AbstractCTI):
         self.pixel_bounce_list = pixel_bounce_list
 
     @property
-    def trap_list(self) -> List[TrapInstantCapture]:
+    def trap_all_list(self) -> List[TrapInstantCapture]:
         """
         Combine the parallel and serial trap lists to make an overall list of traps in the model.
 
@@ -99,5 +99,3 @@ class CTI2D(AbstractCTI):
         serial_traps = self.serial_trap_list or []
 
         return [trap for trap in parallel_traps] + [trap for trap in serial_traps]
-
-
