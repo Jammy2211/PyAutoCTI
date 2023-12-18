@@ -5,6 +5,7 @@ from autoarray.layout.region import Region1D
 from autoarray.layout.region import Region2D
 from autoarray.structures.arrays.uniform_1d import Array1D
 from autoarray.structures.arrays.uniform_2d import Array2D
+from autoarray.structures.arrays.irregular import ArrayIrregular
 from autoarray.structures.header import Header
 from autoarray.dataset import preprocess
 from autoarray.dataset.imaging.dataset import Imaging

@@ -1,13 +1,11 @@
 import pytest
 from os import path
 
-from autoconf.dictable import to_dict, output_to_json, from_json
-
 import autocti as ac
 from autoconf.dictable import output_to_json, from_json
 
 
-def test__trap_list():
+def test__trap_all_list():
     parallel_trap_list = [
         ac.TrapInstantCapture(density=1.0),
         ac.TrapInstantCapture(density=2.0),
@@ -15,8 +13,8 @@ def test__trap_list():
 
     cti = ac.CTI2D(parallel_trap_list=parallel_trap_list)
 
-    assert cti.trap_list[0].density == 1.0
-    assert cti.trap_list[1].density == 2.0
+    assert cti.trap_all_list[0].density == 1.0
+    assert cti.trap_all_list[1].density == 2.0
 
     serial_trap_list = [
         ac.TrapInstantCapture(density=3.0),
@@ -25,17 +23,17 @@ def test__trap_list():
 
     cti = ac.CTI2D(serial_trap_list=serial_trap_list)
 
-    assert cti.trap_list[0].density == 3.0
-    assert cti.trap_list[1].density == 4.0
+    assert cti.trap_all_list[0].density == 3.0
+    assert cti.trap_all_list[1].density == 4.0
 
     cti = ac.CTI2D(
         parallel_trap_list=parallel_trap_list, serial_trap_list=serial_trap_list
     )
 
-    assert cti.trap_list[0].density == 1.0
-    assert cti.trap_list[1].density == 2.0
-    assert cti.trap_list[2].density == 3.0
-    assert cti.trap_list[3].density == 4.0
+    assert cti.trap_all_list[0].density == 1.0
+    assert cti.trap_all_list[1].density == 2.0
+    assert cti.trap_all_list[2].density == 3.0
+    assert cti.trap_all_list[3].density == 4.0
 
 
 def test__delta_ellipticity():

@@ -2,6 +2,10 @@ label:
   label:
     density: \rho
     full_well_depth: h
+    gamma: \gamma
+    ka: ka
+    kv: kv
+    omega: \omega
     release_timescale: \tau
     release_timescale_sigma: \sigma
     scale_factor: \omega
@@ -13,12 +17,17 @@ label:
     CCDComplex: CCD
     CCDPhase: CCD
     HyperCINoiseScalar: H
+    PixelBounce: pb
     TrapInstantCapture: s
     TrapInstantCaptureContinuum: sc
 label_format:
   format:
     density: '{:.2f}'
     full_well_depth: '{:.2f}'
+    gamma: '{:.2f}'
+    ka: '{:.2f}'
+    kv: '{:.2f}'
+    omega: '{:.2f}'
     release_timescale: '{:.2f}'
     release_timescale_sigma: '{:.2f}'
     scale_factor: '{:.2f}'
