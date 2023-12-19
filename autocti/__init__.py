@@ -62,6 +62,7 @@ from .dataset_1d.model.analysis import AnalysisDataset1D
 from .dataset_1d.model.result import ResultDataset1D
 from .charge_injection.model.analysis import AnalysisImagingCI
 from .charge_injection.model.result import ResultImagingCI
+from .model.analysis import AnalysisCTI
 from .model.model_util import CTI1D
 from .model.model_util import CTI2D
 from .model.settings import SettingsCTI1D

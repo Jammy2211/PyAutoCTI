@@ -1,5 +1,7 @@
 import copy
+import os
 import pytest
+
 import autofit as af
 import autocti as ac
 

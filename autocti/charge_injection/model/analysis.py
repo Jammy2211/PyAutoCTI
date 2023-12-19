@@ -6,7 +6,6 @@ from autoconf.dictable import to_dict
 
 import autoarray as aa
 import autofit as af
-from autoconf.dictable import output_to_json
 
 from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.charge_injection.fit import FitImagingCI
@@ -14,6 +13,7 @@ from autocti.charge_injection.model.visualizer import VisualizerImagingCI
 from autocti.charge_injection.model.result import ResultImagingCI
 from autocti.clocker.two_d import Clocker2D
 from autocti.charge_injection.hyper import HyperCINoiseCollection
+from autocti.model.analysis import AnalysisCTI
 from autocti.model.settings import SettingsCTI2D
 from autocti.preloads import Preloads
 
@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 logger.setLevel(level="INFO")
 
 
-class AnalysisImagingCI(af.Analysis):
+class AnalysisImagingCI(AnalysisCTI):
     def __init__(
         self,
         dataset: ImagingCI,
@@ -56,12 +56,12 @@ class AnalysisImagingCI(af.Analysis):
             The full dataset, which is visualized separate from the `dataset` that is fitted, which for example may
             not have the FPR masked and thus enable visualization of the FPR.
         """
-        super().__init__()
-
-        self.dataset = dataset
-        self.clocker = clocker
-        self.settings_cti = settings_cti
-        self.dataset_full = dataset_full
+        super().__init__(
+            dataset=dataset,
+            clocker=clocker,
+            settings_cti=settings_cti,
+            dataset_full=dataset_full,
+        )
 
         self.preloads = Preloads()
 
@@ -295,16 +295,6 @@ class AnalysisImagingCI(af.Analysis):
 
         if self.dataset_full is not None:
             output_dataset(dataset=self.dataset_full, prefix="dataset_full")
-
-    def in_ascending_fpr_order_from(self, quantity_list, fpr_value_list):
-        if not conf.instance["visualize"]["general"]["general"][
-            "subplot_ascending_fpr"
-        ]:
-            return quantity_list
-
-        indexes = sorted(range(len(fpr_value_list)), key=lambda k: fpr_value_list[k])
-
-        return [quantity_list[i] for i in indexes]
 
     def visualize_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
         if conf.instance["visualize"]["plots"]["combined_only"]:
