@@ -1,5 +1,5 @@
 numba
 pyyaml
-arcticpy==2.5
+arcticpy==2.6
 ultranest==3.6.2
 
