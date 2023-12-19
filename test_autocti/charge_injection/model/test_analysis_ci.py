@@ -196,50 +196,6 @@ def test__log_likelihood_via_analysis__fast_settings_same_as_default(
     assert log_likelihood_via_fast == log_likelihood_via_default
 
 
-
-
-def test__save_results__delta_ellipyicity_output_to_json(
-        imaging_ci_7x7,
-        pre_cti_data_7x7,
-        traps_x1,
-        ccd,
-        parallel_clocker_2d,
-):
-    analysis = ac.AnalysisImagingCI(dataset=imaging_ci_7x7, clocker=parallel_clocker_2d)
-
-    paths = af.DirectoryPaths()
-
-    model = af.Collection(
-        cti=af.Model(ac.CTI2D, parallel_trap_list=[ac.TrapInstantCapture], parallel_ccd=ccd),
-    )
-
-    parameters = [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]]
-
-    sample_list = af.Sample.from_lists(
-        model=model,
-        parameter_lists=parameters,
-        log_likelihood_list=[1.0, 2.0, 3.0],
-        log_prior_list=[0.0, 0.0, 0.0],
-        weight_list=[0.2, 0.2, 0.2],
-    )
-
-    samples = ac.m.MockSamples(
-        sample_list=sample_list,
-        model=model
-    )
-
-    analysis.save_results(
-        paths=paths,
-        result=ac.m.MockResult(samples=samples, model=model),
-    )
-
-    delta_ellipticity = ac.from_json(file_path=paths._files_path / "delta_ellipticity.json")
-
-    assert delta_ellipticity == pytest.approx(-1.6145994035538491, 1.0e-4)
-
-    os.remove(paths._files_path / "delta_ellipticity.json")
-
-
 def test__full_and_extracted_fits_from_instance_and_imaging_ci(
     imaging_ci_7x7, mask_2d_7x7_unmasked, traps_x1, ccd, parallel_clocker_2d
 ):

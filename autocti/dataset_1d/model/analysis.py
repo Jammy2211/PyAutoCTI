@@ -1,20 +1,19 @@
 from typing import List, Optional
 
-from autoconf import conf
 from autoconf.dictable import to_dict
 
 import autofit as af
-from autoconf.dictable import output_to_json
 
 from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
 from autocti.dataset_1d.fit import FitDataset1D
 from autocti.dataset_1d.model.visualizer import VisualizerDataset1D
 from autocti.dataset_1d.model.result import ResultDataset1D
+from autocti.model.analysis import AnalysisCTI
 from autocti.model.settings import SettingsCTI1D
 from autocti.clocker.one_d import Clocker1D
 
 
-class AnalysisDataset1D(af.Analysis):
+class AnalysisDataset1D(AnalysisCTI):
     def __init__(
         self,
         dataset: Dataset1D,
@@ -46,12 +45,12 @@ class AnalysisDataset1D(af.Analysis):
             The full dataset, which is visualized separate from the `dataset` that is fitted, which for example may
             not have the FPR masked and thus enable visualization of the FPR.
         """
-        super().__init__()
-
-        self.dataset = dataset
-        self.clocker = clocker
-        self.settings_cti = settings_cti
-        self.dataset_full = dataset_full
+        super().__init__(
+            dataset=dataset,
+            clocker=clocker,
+            settings_cti=settings_cti,
+            dataset_full=dataset_full,
+        )
 
     def region_list_from(self) -> List:
         return ["fpr", "eper"]
@@ -181,16 +180,6 @@ class AnalysisDataset1D(af.Analysis):
             name="settings_cti",
             object_dict=to_dict(self.settings_cti),
         )
-
-    def in_ascending_fpr_order_from(self, quantity_list, fpr_value_list):
-        if not conf.instance["visualize"]["general"]["general"][
-            "subplot_ascending_fpr"
-        ]:
-            return quantity_list
-
-        indexes = sorted(range(len(fpr_value_list)), key=lambda k: fpr_value_list[k])
-
-        return [quantity_list[i] for i in indexes]
 
     def visualize_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
         region_list = self.region_list_from()

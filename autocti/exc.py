@@ -1,4 +1,4 @@
-from autofit import exc
+from autofit.exc import *
 from autoarray.exc import ArrayException, MaskException, RegionException
 
 
@@ -30,7 +30,7 @@ class FittingException(Exception):
     pass
 
 
-class PriorException(exc.FitException):
+class PriorException(FitException):
     pass
 
 
