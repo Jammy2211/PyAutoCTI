@@ -80,31 +80,37 @@ class AnalysisCTI(af.Analysis):
         weight_list = []
         delta_ellipticity_list = []
 
-        for sample in result.samples.sample_list:
-            try:
-                instance = sample.instance_for_model(model=result.samples.model)
-            except exc.FitException:
-                continue
+        try:
+            for sample in result.samples.sample_list:
+                try:
+                    instance = sample.instance_for_model(model=result.samples.model)
+                except exc.FitException:
+                    continue
 
-            weight_list.append(sample.weight)
-            delta_ellipticity_list.append(instance.cti.delta_ellipticity)
+                weight_list.append(sample.weight)
+                delta_ellipticity_list.append(instance.cti.delta_ellipticity)
 
-        (
-            median_delta_ellipticity,
-            upper_delta_ellipticity,
-            lower_delta_ellipticity,
-        ) = af.marginalize(
-            parameter_list=delta_ellipticity_list,
-            sigma=2.0,
-            weight_list=weight_list,
-        )
+            (
+                median_delta_ellipticity,
+                upper_delta_ellipticity,
+                lower_delta_ellipticity,
+            ) = af.marginalize(
+                parameter_list=delta_ellipticity_list,
+                sigma=2.0,
+                weight_list=weight_list,
+            )
 
-        delta_ellipticity = (upper_delta_ellipticity - lower_delta_ellipticity) / 2.0
+            delta_ellipticity = (
+                upper_delta_ellipticity - lower_delta_ellipticity
+            ) / 2.0
 
-        output_to_json(
-            obj=delta_ellipticity,
-            file_path=paths._files_path / "delta_ellipticity.json",
-        )
+            output_to_json(
+                obj=delta_ellipticity,
+                file_path=paths._files_path / "delta_ellipticity.json",
+            )
+
+        except AttributeError:
+            pass
 
     def in_ascending_fpr_order_from(self, quantity_list, fpr_value_list):
         if not conf.instance["visualize"]["general"]["general"][
