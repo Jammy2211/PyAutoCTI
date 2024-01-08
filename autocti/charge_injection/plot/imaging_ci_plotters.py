@@ -378,7 +378,7 @@ class ImagingCIPlotter(Plotter):
         if columns_fpr:
             data = copy.copy(self.dataset.data)
 
-            y = data.apply_mask(mask=fpr_mask.invert()).binned_across_columns
+            y = data.apply_mask(mask=fpr_mask).binned_across_columns
 
             self.mat_plot_1d.plot_yx(
                 y=y,
