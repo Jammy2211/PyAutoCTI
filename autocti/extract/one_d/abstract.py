@@ -138,7 +138,10 @@ class Extract1D:
 
         return aa.Array1D(
             values=np.asarray(stacked_array_1d.data),
-            mask=mask_1d_list[0].with_new_array(sum(mask_1d_list) == len(mask_1d_list)),
+            mask=aa.Mask1D(
+                sum(mask_1d_list) == len(mask_1d_list),
+                pixel_scales=mask_1d_list[0].pixel_scales,
+            ),
         ).native
 
     def add_to_array(
