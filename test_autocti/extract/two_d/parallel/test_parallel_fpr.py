@@ -142,14 +142,13 @@ def test__binned_region_1d_from():
 
 
 def test__estimate_capture():
-
     extract = ac.Extract2DParallelFPR(region_list=[(1, 5, 0, 3)], shape_2d=(6, 3))
 
     array = ac.Array2D.no_mask(
         values=[
             [0.0, 0.0, 0.0],
             [1.0, 1.0, 1.0],  # <- Front edge .
-            [3.0, 3.0, 3.0],  # <- Next front edge row.
+            [1.0, 1.0, 1.0],  # <- Next front edge row.
             [3.0, 3.0, 3.0],
             [3.0, 3.0, 3.0],
             [0.0, 0.0, 0.0],
@@ -171,5 +170,26 @@ def test__estimate_capture():
         pixels_from_end=2,
     )
 
-    assert capture == pytest.approx(1.0, 1.0e-4)
+    assert capture == pytest.approx(4.0, 1.0e-4)
 
+    mask = ac.Mask2D(
+        mask=[
+            [False, False, False],
+            [False, False, False],
+            [True, True, True],
+            [False, False, False],
+            [False, False, False],
+            [False, False, False],
+        ],
+        pixel_scales=1.0,
+    )
+
+    masked_array = ac.Array2D(values=array.native, mask=mask)
+
+    capture = extract.capture_estimate_from(
+        array=masked_array,
+        pixels_from_start=2,
+        pixels_from_end=2,
+    )
+
+    assert capture == pytest.approx(2.0, 1.0e-4)
