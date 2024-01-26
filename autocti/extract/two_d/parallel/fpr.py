@@ -1,5 +1,7 @@
 from typing import List
 
+import numpy as np
+
 import autoarray as aa
 
 from autocti.extract.two_d.parallel.abstract import Extract2DParallel
@@ -95,3 +97,52 @@ class Extract2DParallelFPR(Extract2DParallel):
            range of pixel rows they are extracted between.
         """
         return extract_2d_util.binned_region_1d_fpr_from(pixels=settings.pixels)
+
+    def capture_estimate_from(
+        self, array: aa.Array2D, pixels_from_start, pixels_from_end
+    ):
+        """
+        Estimates the total number of electrons captured in each column of the parallel FPRs.
+
+        This is performed by the following steps:
+
+        1) Go to each individual parallel FPR.
+        2) Estimate the injection level by taking the median of the final N pixels (N = `pixels_from_end`).
+        3) Subtracted this estimate from all N pixels at the start of the parallel FPR which will have had electrons
+           captured (N = `pixels_from_start`).
+        4) Sum the difference thereby estimating of the total number of electrons captured in the parallel FPR.
+        5) Return the median of all individual parallel FPR capture estimates.
+
+        This routine acts on every individual parallel FPR because charge injection non-uniformity means that using
+        averages over the full charge injection region will not be accurate.
+
+        The function also omits masked pixels, which are typically due to cosmic rays.
+
+        Parameters
+        ----------
+        array
+            The array contain the charge injection data whose parallel FPRs are used to estimate the capture.
+        pixels_from_start
+            The number of pixels at the start of the parallel FPR which are used to estimate the capture.
+        pixels_from_end
+            The number of pixels at the end of the parallel FPR which are used to estimate the injection level.
+
+        Returns
+        -------
+        An estimate of the total number of electrons captured in each column of the parallel FPRs.
+        """
+        capture_list = []
+
+        for region in self.region_list:
+            for x in range(region.x0, region.x1):
+                fpr = array.native[region.y0 : region.y1, x]
+                mask = np.invert(array.mask[region.y0 : region.y1, x])
+
+                injection_estimate = np.median(fpr[-pixels_from_end:][mask[-pixels_from_end:]])
+                capture_estimate = np.sum(injection_estimate - fpr[0:pixels_from_start][mask[0:pixels_from_start]])
+
+                capture_list.append(
+                    capture_estimate
+                )
+
+        return np.median(capture_list)
