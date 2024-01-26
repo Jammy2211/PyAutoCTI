@@ -9,6 +9,27 @@ from autocti.extract.settings import SettingsExtract
 
 from autocti.extract.two_d import extract_2d_util
 
+@aa.numba_util.jit()
+def capture_estimate_from(array, mask, x0, x1, y0, y1, pixels_from_start, pixels_from_end):
+
+    value_list = []
+
+    for x in range(x0, x1):
+
+        fpr = array[y0: y1, x]
+        mask_ = mask[y0: y1, x]
+
+        if np.sum(mask_):
+
+            injection_estimate = np.median(fpr[-pixels_from_end:][mask_[-pixels_from_end:]])
+            capture_estimate = np.sum(injection_estimate - fpr[0:pixels_from_start][mask_[0:pixels_from_start]])
+
+            value_list.append(
+                capture_estimate
+            )
+
+    return value_list
+
 
 class Extract2DParallelFPR(Extract2DParallel):
     def region_list_from(self, settings: SettingsExtract) -> List[aa.Region2D]:
@@ -134,15 +155,18 @@ class Extract2DParallelFPR(Extract2DParallel):
         capture_list = []
 
         for region in self.region_list:
-            for x in range(region.x0, region.x1):
-                fpr = array.native[region.y0 : region.y1, x]
-                mask = np.invert(array.mask[region.y0 : region.y1, x])
 
-                injection_estimate = np.median(fpr[-pixels_from_end:][mask[-pixels_from_end:]])
-                capture_estimate = np.sum(injection_estimate - fpr[0:pixels_from_start][mask[0:pixels_from_start]])
+            capture_list_ = capture_estimate_from(
+                array=array.native,
+                mask=np.invert(array.mask),
+                x0=int(region.x0),
+                x1=int(region.x1),
+                y0=int(region.y0),
+                y1=int(region.y1),
+                pixels_from_start=pixels_from_start,
+                pixels_from_end=pixels_from_end,
+            )
 
-                capture_list.append(
-                    capture_estimate
-                )
+            capture_list = capture_list + capture_list_
 
         return np.median(capture_list)
