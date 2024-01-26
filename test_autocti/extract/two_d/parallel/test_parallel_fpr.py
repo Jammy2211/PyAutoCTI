@@ -193,3 +193,25 @@ def test__estimate_capture():
     )
 
     assert capture == pytest.approx(2.0, 1.0e-4)
+
+    mask = ac.Mask2D(
+        mask=[
+            [False, False, False],
+            [True, False, False],
+            [True, True, True],
+            [True, False, False],
+            [True, False, False],
+            [False, False, False],
+        ],
+        pixel_scales=1.0,
+    )
+
+    masked_array = ac.Array2D(values=array.native, mask=mask)
+
+    capture = extract.capture_estimate_from(
+        array=masked_array,
+        pixels_from_start=2,
+        pixels_from_end=2,
+    )
+
+    assert capture == pytest.approx(2.0, 1.0e-4)
