@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 import autocti as ac
 
@@ -138,3 +139,37 @@ def test__binned_region_1d_from():
     )
 
     assert binned_region_1d == None
+
+
+def test__estimate_capture():
+
+    extract = ac.Extract2DParallelFPR(region_list=[(1, 5, 0, 3)], shape_2d=(6, 3))
+
+    array = ac.Array2D.no_mask(
+        values=[
+            [0.0, 0.0, 0.0],
+            [1.0, 1.0, 1.0],  # <- Front edge .
+            [3.0, 3.0, 3.0],  # <- Next front edge row.
+            [3.0, 3.0, 3.0],
+            [3.0, 3.0, 3.0],
+            [0.0, 0.0, 0.0],
+        ],
+        pixel_scales=1.0,
+    )
+
+    capture = extract.capture_estimate_from(
+        array=array,
+        pixels_from_start=1,
+        pixels_from_end=1,
+    )
+
+    assert capture == pytest.approx(2.0, 1.0e-4)
+
+    capture = extract.capture_estimate_from(
+        array=array,
+        pixels_from_start=2,
+        pixels_from_end=2,
+    )
+
+    assert capture == pytest.approx(1.0, 1.0e-4)
+

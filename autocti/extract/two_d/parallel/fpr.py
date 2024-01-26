@@ -1,5 +1,7 @@
 from typing import List
 
+import numpy as np
+
 import autoarray as aa
 
 from autocti.extract.two_d.parallel.abstract import Extract2DParallel
@@ -95,3 +97,22 @@ class Extract2DParallelFPR(Extract2DParallel):
            range of pixel rows they are extracted between.
         """
         return extract_2d_util.binned_region_1d_fpr_from(pixels=settings.pixels)
+
+    def capture_estimate_from(self, array: aa.Array2D, pixels_from_start, pixels_from_end):
+
+        capture_list = []
+
+        for region in self.region_list:
+
+            for x in range(region.x0, region.x1):
+
+                fpr = array.native[region.y0:region.y1, x]
+
+                capture_list.append(np.median(fpr[-pixels_from_end:]) - np.median(fpr[0:pixels_from_start]))
+
+        print(capture_list)
+
+        return np.median(capture_list)
+
+
+
