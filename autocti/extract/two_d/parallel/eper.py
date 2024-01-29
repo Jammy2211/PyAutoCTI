@@ -143,8 +143,8 @@ class Extract2DParallelEPER(Extract2DParallel):
         for region in self.region_list:
             array_2d[region.slice] = 0.0
 
-        array_2d.native[self.serial_prescan.slice] = 0.0
-        array_2d.native[self.serial_overscan.slice] = 0.0
+        array_2d[self.serial_overscan.slice] = 0.0
+        array_2d[self.serial_prescan.slice] = 0.0
 
         return array_2d
 

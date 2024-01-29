@@ -1,5 +1,5 @@
 import numpy as np
-from typing import Optional, List, Tuple, Union
+from typing import Optional, List, Tuple
 
 import autoarray as aa
 
@@ -234,7 +234,7 @@ class Extract2D:
 
     def stacked_array_2d_from(
         self, array: aa.Array2D, settings: SettingsExtract
-    ) -> np.ndarray:
+    ) -> aa.Array2D:
         """
         Extract a region (e.g. the parallel FPR) of every signal region (e.g. the charge injection region of charge
         injection data) on the CTI calibration data and stack them by taking their mean.
@@ -273,12 +273,15 @@ class Extract2D:
 
         return aa.Array2D(
             values=np.asarray(stacked_array_2d.data),
-            mask=sum(mask_2d_list) == len(mask_2d_list),
+            mask=Mask2D(
+                sum(mask_2d_list) == len(mask_2d_list),
+                pixel_scales=array.pixel_scale,
+            ),
         ).native
 
     def stacked_array_2d_total_pixels_from(
         self, array: aa.Array2D, settings: SettingsExtract
-    ) -> np.ndarray:
+    ) -> aa.Array2D:
         """
         The function `stacked_array_2d_from` extracts a region (e.g. the parallel FPR) of every charge injection
         region on the charge injection image and stacks them by taking their mean.
@@ -305,7 +308,9 @@ class Extract2D:
 
         return aa.Array2D(
             values=np.asarray(arr_total_pixels),
-            mask=sum(mask_2d_list) == len(mask_2d_list),
+            mask=Mask2D(
+                sum(mask_2d_list) == len(mask_2d_list), pixel_scales=array.pixel_scale
+            ),
         ).native
 
     def binned_array_1d_from(
