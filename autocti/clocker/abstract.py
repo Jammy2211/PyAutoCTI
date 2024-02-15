@@ -1,13 +1,7 @@
-from typing import List, Optional
-
 from arcticpy import CCD
 from arcticpy import CCDPhase
-from arcticpy import PixelBounce
-from arcticpy import TrapInstantCapture
 
 from autoconf.dictable import from_json, output_to_json
-
-from autocti import exc
 
 
 class AbstractClocker:

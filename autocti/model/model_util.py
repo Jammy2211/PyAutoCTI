@@ -1,5 +1,7 @@
 from typing import Optional, List
 
+import autofit as af
+
 from autoconf.dictable import from_json
 
 from arcticpy import CCDPhase
@@ -16,7 +18,7 @@ class AbstractCTI:
     def trap_all_list(self):
         raise NotImplementedError
 
-    @property
+    @af.derived_quantity
     def delta_ellipticity(self):
         return sum([trap.delta_ellipticity for trap in self.trap_all_list])
 
