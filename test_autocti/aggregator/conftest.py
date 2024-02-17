@@ -79,7 +79,7 @@ def make_samples_1d(model_1d):
         model=model_1d,
         sample_list=sample_list,
         max_log_likelihood_instance=cti,
-        gaussian_tuples=[(1.0, 2.0)] * model_1d.prior_count,
+        prior_means=[1.0] * model_1d.prior_count
     )
 
 
@@ -117,5 +117,5 @@ def make_samples_2d(model_2d):
         model=model_2d,
         sample_list=sample_list,
         max_log_likelihood_instance=cti,
-        gaussian_tuples=[(1.0, 2.0)] * model_2d.prior_count,
+        prior_means=[1.0] * model_2d.prior_count
     )
