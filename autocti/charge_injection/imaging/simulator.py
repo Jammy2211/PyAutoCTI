@@ -1,6 +1,6 @@
 import copy
 import numpy as np
-from typing import List
+from typing import List, Tuple
 
 import autoarray as aa
 
@@ -26,6 +26,7 @@ class SimulatorImagingCI(SimulatorImaging):
         non_uniform_norm_limit=None,
         read_noise: Optional[float] = None,
         charge_noise: Optional[float] = None,
+        stray_light : Optional[Tuple[float, float]] = None,
         noise_if_add_noise_false: float = 0.1,
         noise_seed: int = -1,
         ci_seed: int = -1,
@@ -54,6 +55,7 @@ class SimulatorImagingCI(SimulatorImaging):
         self.non_uniform_norm_limit = non_uniform_norm_limit
         self.read_noise = read_noise
         self.charge_noise = charge_noise
+        self.stray_light = stray_light
 
         self.ci_seed = ci_seed
 
@@ -201,6 +203,21 @@ class SimulatorImagingCI(SimulatorImaging):
 
         if cosmic_ray_map is not None:
             pre_cti_data += cosmic_ray_map.native
+
+        if self.stray_light is not None:
+
+            m, c = self.stray_light
+
+            region = layout.extract.parallel_overscan.parallel_overscan
+
+            stray_light = np.array(
+                [m * i + c for i in range(0, region.y1)]
+            )
+
+            print(stray_light)
+
+            pre_cti_data[0: region.y1, region.x0: region.x1] += stray_light[:, None]
+
 
         if self.charge_noise is not None:
             pre_cti_data = layout.extract.parallel_fpr.add_gaussian_noise_to(
