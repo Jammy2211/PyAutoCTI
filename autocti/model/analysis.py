@@ -59,7 +59,7 @@ class AnalysisCTI(af.Analysis):
     def region_list_from(self) -> List:
         raise NotImplementedError
 
-    def save_results(self, paths: af.DirectoryPaths, result: ResultImagingCI):
+    def save_results_combined(self, paths: af.DirectoryPaths, result: ResultImagingCI):
         """
         At the end of a model-fit, this routine saves attributes of the `Analysis` object to the `files`
         folder such that they can be loaded after the analysis using PyAutoFit's database and aggregator tools.
@@ -80,37 +80,31 @@ class AnalysisCTI(af.Analysis):
         weight_list = []
         delta_ellipticity_list = []
 
-        try:
-            for sample in result.samples.sample_list:
-                try:
-                    instance = sample.instance_for_model(model=result.samples.model)
-                except exc.FitException:
-                    continue
+        for sample in result.samples.sample_list:
 
-                weight_list.append(sample.weight)
-                delta_ellipticity_list.append(instance.cti.delta_ellipticity)
+            instance = sample.instance_for_model(model=result.samples.model)
 
-            (
-                median_delta_ellipticity,
-                upper_delta_ellipticity,
-                lower_delta_ellipticity,
-            ) = af.marginalize(
-                parameter_list=delta_ellipticity_list,
-                sigma=2.0,
-                weight_list=weight_list,
-            )
+            weight_list.append(sample.weight)
+            delta_ellipticity_list.append(instance.cti.delta_ellipticity)
 
-            delta_ellipticity = (
-                upper_delta_ellipticity - lower_delta_ellipticity
-            ) / 2.0
+        (
+            median_delta_ellipticity,
+            upper_delta_ellipticity,
+            lower_delta_ellipticity,
+        ) = af.marginalize(
+            parameter_list=delta_ellipticity_list,
+            sigma=2.0,
+            weight_list=weight_list,
+        )
 
-            output_to_json(
-                obj=delta_ellipticity,
-                file_path=paths._files_path / "delta_ellipticity.json",
-            )
+        delta_ellipticity = (
+            upper_delta_ellipticity - lower_delta_ellipticity
+        ) / 2.0
 
-        except AttributeError:
-            pass
+        output_to_json(
+            obj=delta_ellipticity,
+            file_path=paths._files_path / "delta_ellipticity.json",
+        )
 
     def in_ascending_fpr_order_from(self, quantity_list, fpr_value_list):
         if not conf.instance["visualize"]["general"]["general"][

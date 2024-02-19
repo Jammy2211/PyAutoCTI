@@ -224,6 +224,7 @@ def make_samples_with_result():
     return MockSamples(
         model=model,
         max_log_likelihood_instance=instance,
+        prior_means=[1.0] * model.prior_count,
     )
 
 

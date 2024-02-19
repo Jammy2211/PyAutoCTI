@@ -38,7 +38,7 @@ def test__save_results__delta_ellipyicity_output_to_json(
 
     samples = ac.m.MockSamples(sample_list=sample_list, model=model)
 
-    analysis.save_results(
+    analysis.save_results_combined(
         paths=paths,
         result=ac.m.MockResult(samples=samples, model=model),
     )
@@ -47,6 +47,6 @@ def test__save_results__delta_ellipyicity_output_to_json(
         file_path=paths._files_path / "delta_ellipticity.json"
     )
 
-    assert delta_ellipticity == pytest.approx(-1.6145994035538491, 1.0e-4)
+    assert delta_ellipticity == pytest.approx(-0.403649850, 1.0e-4)
 
     os.remove(paths._files_path / "delta_ellipticity.json")

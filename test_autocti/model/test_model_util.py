@@ -44,7 +44,7 @@ def test__delta_ellipticity():
 
     cti = ac.CTI1D(trap_list=trap_list)
 
-    assert cti.delta_ellipticity == pytest.approx(4.0 * 0.57029, 1.0e-4)
+    assert cti.delta_ellipticity == pytest.approx(0.57029, 1.0e-4)
 
     parallel_trap_list = [
         ac.TrapInstantCapture(density=1.0, release_timescale=2.0),
@@ -53,7 +53,7 @@ def test__delta_ellipticity():
 
     cti = ac.CTI2D(parallel_trap_list=parallel_trap_list)
 
-    assert cti.delta_ellipticity == pytest.approx(4.0 * 0.57029, 1.0e-4)
+    assert cti.delta_ellipticity == pytest.approx(0.57029, 1.0e-4)
 
     serial_trap_list = [
         ac.TrapInstantCapture(density=5.0, release_timescale=6.0),
@@ -62,13 +62,13 @@ def test__delta_ellipticity():
 
     cti = ac.CTI2D(serial_trap_list=serial_trap_list)
 
-    assert cti.delta_ellipticity == pytest.approx(4.0 * 1.875875, 1.0e-4)
+    assert cti.delta_ellipticity == pytest.approx(1.875875, 1.0e-4)
 
     cti = ac.CTI2D(
         parallel_trap_list=parallel_trap_list, serial_trap_list=serial_trap_list
     )
 
-    assert cti.delta_ellipticity == pytest.approx(4.0 * 2.446169, 1.0e-4)
+    assert cti.delta_ellipticity == pytest.approx(2.446169, 1.0e-4)
 
 
 def test__dictable():

@@ -27,7 +27,7 @@ class MockResult(mock.MockResult):
         )
 
         self.previous_model = model
-        self.gaussian_tuples = None
+        self.prior_means = None
         self.mask = None
         self.positions = None
         self.mask = mask
