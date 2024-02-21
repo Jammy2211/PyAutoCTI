@@ -398,3 +398,40 @@ def test__from_post_cti_data(parallel_clocker_2d, traps_x2, ccd):
     assert (dataset.noise_map == dataset_via.noise_map).all()
     assert (dataset.pre_cti_data == dataset_via.pre_cti_data).all()
     assert (dataset.cosmic_ray_map == dataset_via.cosmic_ray_map).all()
+
+
+def test__flat_field_mode(parallel_clocker_2d, traps_x2, ccd):
+    layout = ac.Layout2DCI(
+        shape_2d=(5, 5),
+        region_list=[(0, 3, 0, 4)],
+        parallel_overscan=ac.Region2D((4, 5, 0, 4)),
+    )
+
+    simulator = ac.SimulatorImagingCI(
+        pixel_scales=1.0, norm=100.0, read_noise=None, noise_seed=1, flat_field_mode=True
+    )
+
+    cti = ac.CTI2D(parallel_trap_list=traps_x2, parallel_ccd=ccd)
+
+    dataset = simulator.via_layout_from(
+        layout=layout,
+        clocker=parallel_clocker_2d,
+        cti=cti,
+    )
+
+    assert dataset.data[0,0] > 20.0
+    assert dataset.pre_cti_data[0,0] == pytest.approx(100.0, 1.0e-4)
+
+    simulator = ac.SimulatorImagingCI(
+        pixel_scales=1.0, norm=100.0, read_noise=4.0, noise_seed=1, flat_field_mode=True
+    )
+
+    cti = ac.CTI2D(parallel_trap_list=traps_x2, parallel_ccd=ccd)
+
+    dataset = simulator.via_layout_from(
+        layout=layout,
+        clocker=parallel_clocker_2d,
+        cti=cti,
+    )
+
+    assert dataset.noise_map[0,0] == pytest.approx(4.0, 1.0e-4)

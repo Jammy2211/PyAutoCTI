@@ -27,6 +27,7 @@ class SimulatorImagingCI(SimulatorImaging):
         read_noise: Optional[float] = None,
         charge_noise: Optional[float] = None,
         stray_light : Optional[Tuple[float, float]] = None,
+        flat_field_mode : bool = False,
         noise_if_add_noise_false: float = 0.1,
         noise_seed: int = -1,
         ci_seed: int = -1,
@@ -56,6 +57,7 @@ class SimulatorImagingCI(SimulatorImaging):
         self.read_noise = read_noise
         self.charge_noise = charge_noise
         self.stray_light = stray_light
+        self.flat_field_mode = flat_field_mode
 
         self.ci_seed = ci_seed
 
@@ -178,6 +180,15 @@ class SimulatorImagingCI(SimulatorImaging):
             Seed for the read-noises added to the image.
         """
 
+        if self.flat_field_mode:
+
+            return self.via_flat_field_mode(
+                layout=layout,
+                clocker=clocker,
+                cti=cti,
+                cosmic_ray_map=cosmic_ray_map,
+            )
+
         if self.column_sigma is not None:
             pre_cti_data = self.pre_cti_data_non_uniform_from(layout=layout)
         else:
@@ -213,8 +224,6 @@ class SimulatorImagingCI(SimulatorImaging):
             stray_light = np.array(
                 [m * i + c for i in range(0, region.y1)]
             )
-
-            print(stray_light)
 
             pre_cti_data[0: region.y1, region.x0: region.x1] += stray_light[:, None]
 
@@ -286,4 +295,45 @@ class SimulatorImagingCI(SimulatorImaging):
             ),
             cosmic_ray_map=cosmic_ray_map,
             layout=layout,
+        )
+
+    def via_flat_field_mode(
+            self,
+            layout: Layout2DCI,
+            clocker: Optional[Clocker2D],
+            cti: Optional[CTI2D],
+            cosmic_ray_map: Optional[aa.Array2D] = None,
+    ):
+
+        pre_cti_data = np.zeros(layout.shape_2d)
+        pre_cti_data[
+            layout.parallel_overscan.x0: layout.parallel_overscan.x1,
+            0:layout.parallel_overscan.y0
+        ] = self.norm
+
+        pre_cti_data_poisson = np.random.poisson(pre_cti_data, pre_cti_data.shape)
+
+        pre_cti_data_poisson = copy.copy(pre_cti_data_poisson)
+
+        pre_cti_data_poisson = aa.Array2D.no_mask(
+            values=pre_cti_data_poisson, pixel_scales=self.pixel_scales
+        )
+
+        if cosmic_ray_map is not None:
+            pre_cti_data_poisson += cosmic_ray_map.native
+
+        if cti is not None:
+            post_cti_data = clocker.add_cti(data=pre_cti_data_poisson, cti=cti)
+        else:
+            post_cti_data = copy.copy(pre_cti_data)
+
+        pre_cti_data = aa.Array2D.no_mask(
+            values=pre_cti_data, pixel_scales=self.pixel_scales
+        )
+
+        return self.via_post_cti_data_from(
+            post_cti_data=post_cti_data,
+            pre_cti_data=pre_cti_data,
+            layout=layout,
+            cosmic_ray_map=cosmic_ray_map,
         )
