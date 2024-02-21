@@ -307,8 +307,7 @@ class SimulatorImagingCI(SimulatorImaging):
 
         pre_cti_data = np.zeros(layout.shape_2d)
         pre_cti_data[
-            layout.parallel_overscan.x0: layout.parallel_overscan.x1,
-            0:layout.parallel_overscan.y0
+            layout.region_list[0].slice
         ] = self.norm
 
         pre_cti_data_poisson = np.random.poisson(pre_cti_data, pre_cti_data.shape)
