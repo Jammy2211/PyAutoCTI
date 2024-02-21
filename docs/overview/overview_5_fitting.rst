@@ -76,6 +76,14 @@ CTI is straightforward.
     dataset_plotter = aplt.ImagingCIPlotter(dataset=imaging_ci)
     dataset_plotter.figures_2d(data=True, pre_cti_data=True)
 
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/data.png
+  :width: 600
+  :alt: Alternative text
+
+.. image:: https://raw.githubusercontent.com/Jammy2211/PyAutoCTI/main/docs/overview/images/overview_5/pre_cti_data.png
+  :width: 600
+  :alt: Alternative text
+
 CTI Model
 ---------
 
