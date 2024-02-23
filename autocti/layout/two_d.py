@@ -53,7 +53,12 @@ class Layout2D(aa.Layout2D):
         for region in self.region_list:
             if region.y1 > shape_2d[0] or region.x1 > shape_2d[1]:
                 raise exc.LayoutException(
-                    "The charge injection layout_ci regions are bigger than the image image_shape"
+                    f"""
+                    The charge injection layout regions are bigger than the image image_shape
+                    
+                    The shape of the region is: {region}.
+                    The shape of the image is: {shape_2d}.                    
+                    """
                 )
 
         super().__init__(
