@@ -316,7 +316,7 @@ class SimulatorImagingCI(SimulatorImaging):
 
         pre_cti_data_poisson = aa.Array2D.no_mask(
             values=pre_cti_data_poisson, pixel_scales=self.pixel_scales
-        )
+        ).native
 
         if cosmic_ray_map is not None:
             pre_cti_data_poisson += cosmic_ray_map.native
