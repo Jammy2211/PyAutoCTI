@@ -56,8 +56,6 @@ class Layout2DCI(Layout2D):
             The charge injection electronics parameters of the image (e.g. the IG1 and IG2 voltages).
         """
 
-        print(region_list)
-
         super().__init__(
             shape_2d=shape_2d,
             region_list=region_list,

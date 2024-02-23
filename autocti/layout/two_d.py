@@ -48,8 +48,6 @@ class Layout2D(aa.Layout2D):
             The charge injection electronics parameters of the image (e.g. the IG1 and IG2 voltages).
         """
 
-        print(region_list)
-
         self.region_list = list(map(aa.Region2D, region_list))
 
         for region in self.region_list:
