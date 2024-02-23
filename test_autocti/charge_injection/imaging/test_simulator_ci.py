@@ -434,4 +434,5 @@ def test__flat_field_mode(parallel_clocker_2d, traps_x2, ccd):
         cti=cti,
     )
 
-    assert dataset.noise_map[0,0] == pytest.approx(4.0, 1.0e-4)
+    assert dataset.noise_map[0,0] == pytest.approx(11.11607, 1.0e-4)
+    assert dataset.noise_map[4,0] == pytest.approx(4.0, 1.0e-4)

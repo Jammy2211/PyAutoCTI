@@ -269,7 +269,7 @@ class SimulatorImagingCI(SimulatorImaging):
                 values=ci_image, pixel_scales=self.pixel_scales
             )
 
-            ci_noise_map = (
+            noise_map = (
                 self.read_noise
                 * aa.Array2D.ones(
                     shape_native=layout.shape_2d, pixel_scales=self.pixel_scales
@@ -277,7 +277,7 @@ class SimulatorImagingCI(SimulatorImaging):
             )
         else:
             ci_image = post_cti_data
-            ci_noise_map = aa.Array2D.full(
+            noise_map = aa.Array2D.full(
                 fill_value=self.noise_if_add_noise_false,
                 shape_native=layout.shape_2d,
                 pixel_scales=self.pixel_scales,
@@ -288,7 +288,7 @@ class SimulatorImagingCI(SimulatorImaging):
                 values=ci_image.native, pixel_scales=self.pixel_scales
             ),
             noise_map=aa.Array2D.no_mask(
-                values=ci_noise_map, pixel_scales=self.pixel_scales
+                values=noise_map, pixel_scales=self.pixel_scales
             ),
             pre_cti_data=aa.Array2D.no_mask(
                 values=pre_cti_data.native, pixel_scales=self.pixel_scales
@@ -330,9 +330,27 @@ class SimulatorImagingCI(SimulatorImaging):
             values=pre_cti_data, pixel_scales=self.pixel_scales
         )
 
-        return self.via_post_cti_data_from(
+        dataset = self.via_post_cti_data_from(
             post_cti_data=post_cti_data,
             pre_cti_data=pre_cti_data,
             layout=layout,
             cosmic_ray_map=cosmic_ray_map,
         )
+        
+        if self.read_noise is None:
+            read_noise = 0.0
+        else:
+            read_noise = self.read_noise
+
+        noise_map = (
+                read_noise
+                * aa.Array2D.ones(
+            shape_native=layout.shape_2d, pixel_scales=self.pixel_scales
+        ).native
+        )
+
+        noise_map[layout.region_list[0].slice] = np.sqrt(dataset.data[layout.region_list[0].slice] + noise_map[layout.region_list[0].slice])
+
+        dataset.noise_map = noise_map
+
+        return dataset
