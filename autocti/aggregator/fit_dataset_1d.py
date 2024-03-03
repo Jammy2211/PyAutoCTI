@@ -1,21 +1,20 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, List, Optional, Union
+from typing import TYPE_CHECKING, List, Optional
+
+from autocti.aggregator.abstract import AbstractAgg
 
 if TYPE_CHECKING:
     from autocti.clocker.abstract import AbstractClocker
-    from autocti.model.model_util import CTI1D
-    from autocti.model.model_util import CTI2D
     from autocti.dataset_1d.fit import FitDataset1D
 
 import autofit as af
 
-from autocti.aggregator.abstract import AbstractAgg
 from autocti.aggregator.dataset_1d import _dataset_1d_list_from
 
 
 def _fit_dataset_1d_list_from(
     fit: af.Fit,
-    cti: Union[CTI1D, CTI2D],
+    instance: Optional[af.ModelInstance] = None,
     use_dataset_full: bool = False,
     clocker_list: Optional[AbstractClocker] = None,
 ) -> List[FitDataset1D]:
@@ -43,6 +42,9 @@ def _fit_dataset_1d_list_from(
     ----------
     fit
         A `PyAutoFit` `Fit` object which contains the results of a model-fit as an entry in a sqlite database.
+    instance
+        A manual instance that overwrites the max log likelihood instance in fit (e.g. for drawing the instance
+        randomly from the PDF).
     use_dataset_full
         If a `dataset_full` is input into the `Analysis` class when a model-fit is performed and therefore accessible
         to the database, the input `use_dataset_full` can be switched in to load instead the full `Dataset1D` objects.
@@ -59,6 +61,11 @@ def _fit_dataset_1d_list_from(
             clocker_list = [fit.value(name="clocker")]
         else:
             clocker_list = fit.child_values(name="clocker")
+
+    if instance is not None:
+        cti = instance.cti
+    else:
+        cti = fit.instance.cti
 
     post_cti_data_list = [
         clocker.add_cti(data=dataset.pre_cti_data, cti=cti)
@@ -126,7 +133,7 @@ class FitDataset1DAgg(AbstractAgg):
             clocker_list=clocker_list,
         )
 
-    def object_via_gen_from(self, fit, cti: Union[CTI1D, CTI2D]) -> List[FitDataset1D]:
+    def object_via_gen_from(self, fit, instance: Optional[af.ModelInstance] = None) -> List[FitDataset1D]:
         """
         Returns a generator of `FitDataset1D` objects from an input aggregator.
 
@@ -144,7 +151,7 @@ class FitDataset1DAgg(AbstractAgg):
         """
         return _fit_dataset_1d_list_from(
             fit=fit,
-            cti=cti,
+            instance=instance,
             use_dataset_full=self.use_dataset_full,
             clocker_list=self.clocker_list,
         )

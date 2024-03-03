@@ -15,7 +15,7 @@ from autocti.aggregator.imaging_ci import _imaging_ci_list_from
 
 def _fit_imaging_ci_list_from(
     fit: af.Fit,
-    cti: Union[CTI1D, CTI2D],
+    instance: Optional[af.ModelInstance] = None,
     use_dataset_full: bool = False,
     clocker_list: Optional[AbstractClocker] = None,
 ) -> List[FitImagingCI]:
@@ -43,6 +43,9 @@ def _fit_imaging_ci_list_from(
     ----------
     fit
         A `PyAutoFit` `Fit` object which contains the results of a model-fit as an entry in a sqlite database.
+    instance
+        A manual instance that overwrites the max log likelihood instance in fit (e.g. for drawing the instance
+        randomly from the PDF).
     use_dataset_full
         If a `dataset_full` is input into the `Analysis` class when a model-fit is performed and therefore accessible
         to the database, the input `use_dataset_full` can be switched in to load instead the full `ImagingCI` objects.
@@ -59,6 +62,11 @@ def _fit_imaging_ci_list_from(
             clocker_list = [fit.value(name="clocker")]
         else:
             clocker_list = fit.child_values(name="clocker")
+
+    if instance is not None:
+        cti = instance.cti
+    else:
+        cti = fit.instance.cti
 
     post_cti_data_list = [
         clocker.add_cti(data=dataset.pre_cti_data, cti=cti)
@@ -126,7 +134,7 @@ class FitImagingCIAgg(AbstractAgg):
             clocker_list=clocker_list,
         )
 
-    def object_via_gen_from(self, fit, cti: Union[CTI1D, CTI2D]) -> List[FitImagingCI]:
+    def object_via_gen_from(self, fit, instance: Optional[af.ModelInstance] = None) -> List[FitImagingCI]:
         """
         Returns a generator of `FitImagingCI` objects from an input aggregator.
 
@@ -144,7 +152,7 @@ class FitImagingCIAgg(AbstractAgg):
         """
         return _fit_imaging_ci_list_from(
             fit=fit,
-            cti=cti,
+            instance=instance,
             use_dataset_full=self.use_dataset_full,
             clocker_list=self.clocker_list,
         )

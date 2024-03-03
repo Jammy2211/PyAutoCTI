@@ -1,14 +1,14 @@
 from __future__ import annotations
 import logging
-from typing import TYPE_CHECKING, List, Union
+from typing import TYPE_CHECKING, Optional, Union
+
+from autocti.aggregator.abstract import AbstractAgg
 
 if TYPE_CHECKING:
     from autocti.model.model_util import CTI1D
     from autocti.model.model_util import CTI2D
 
 import autofit as af
-
-from autocti.aggregator.abstract import AbstractAgg
 
 logger = logging.getLogger(__name__)
 
@@ -85,7 +85,7 @@ class CTIAgg(AbstractAgg):
         A `PyAutoFit` aggregator object which can load the results of model-fits.
     """
 
-    def object_via_gen_from(self, fit, cti: Union[CTI1D, CTI2D]) -> Union[CTI1D, CTI2D]:
+    def object_via_gen_from(self, fit, instance: Optional[af.ModelInstance] = None) -> Union[CTI1D, CTI2D]:
         """
         Returns a generator of `CTI` objects from an input aggregator.
 
@@ -95,8 +95,9 @@ class CTIAgg(AbstractAgg):
         ----------
         fit
             A `PyAutoFit` `Fit` object which contains the results of a model-fit as an entry in a sqlite database.
-        cti
-            A CTI model corresponding to a sample of the non-linear search.
+        instance
+            A manual instance that overwrites the max log likelihood instance in fit (e.g. for drawing the instance
+            randomly from the PDF).
 
         Returns
         -------
