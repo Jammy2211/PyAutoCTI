@@ -2,7 +2,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Optional, Union
 
-from autocti.aggregator.abstract import AbstractAgg
+from autocti.aggregator.abstract import AggBase
 
 if TYPE_CHECKING:
     from autocti.model.model_util import CTI1D
@@ -54,7 +54,7 @@ def _cti_from(fit: af.Fit) -> Union[CTI1D, CTI2D]:
     return fit.instance.cti
 
 
-class CTIAgg(AbstractAgg):
+class CTIAgg(AggBase):
     """
     Interfaces with an `PyAutoFit` aggregator object to create instances of `CTI` objects from the results
     of a model-fit.

@@ -7,7 +7,7 @@ if TYPE_CHECKING:
 import autofit as af
 
 
-class AbstractAgg(af.AbstractAgg):
+class AggBase(af.AggBase):
     def __init__(
         self,
         aggregator: af.Aggregator,

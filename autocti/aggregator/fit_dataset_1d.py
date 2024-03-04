@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, List, Optional
 
-from autocti.aggregator.abstract import AbstractAgg
+from autocti.aggregator.abstract import AggBase
 
 if TYPE_CHECKING:
     from autocti.clocker.abstract import AbstractClocker
@@ -81,7 +81,7 @@ def _fit_dataset_1d_list_from(
     ]
 
 
-class FitDataset1DAgg(AbstractAgg):
+class FitDataset1DAgg(AggBase):
     def __init__(
         self,
         aggregator: af.Aggregator,

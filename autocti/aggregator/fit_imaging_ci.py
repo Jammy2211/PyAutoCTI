@@ -9,7 +9,7 @@ if TYPE_CHECKING:
 
 import autofit as af
 
-from autocti.aggregator.abstract import AbstractAgg
+from autocti.aggregator.abstract import AggBase
 from autocti.aggregator.imaging_ci import _imaging_ci_list_from
 
 
@@ -82,7 +82,7 @@ def _fit_imaging_ci_list_from(
     ]
 
 
-class FitImagingCIAgg(AbstractAgg):
+class FitImagingCIAgg(AggBase):
     def __init__(
         self,
         aggregator: af.Aggregator,
