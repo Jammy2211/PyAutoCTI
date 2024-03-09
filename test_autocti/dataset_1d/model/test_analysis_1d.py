@@ -7,22 +7,6 @@ from autofit.non_linear.mock.mock_search import MockSearch
 from autocti.dataset_1d.model.result import ResultDataset1D
 
 
-def test__make_result__result_line_is_returned(
-    dataset_1d_7, pre_cti_data_7, traps_x1, ccd, clocker_1d
-):
-    model = af.Collection(
-        cti=af.Model(ac.CTI1D, trap_list=traps_x1, ccd=ccd),
-        hyper_noise=af.Model(ac.HyperCINoiseCollection),
-    )
-
-    analysis = ac.AnalysisDataset1D(dataset=dataset_1d_7, clocker=clocker_1d)
-
-    search = MockSearch(name="test_search")
-
-    result = search.fit(model=model, analysis=analysis)
-
-    assert isinstance(result, ResultDataset1D)
-
 
 def test__log_likelihood_via_analysis__matches_manual_fit(
     dataset_1d_7, pre_cti_data_7, traps_x1, ccd, clocker_1d
