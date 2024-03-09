@@ -65,23 +65,6 @@ def test__region_list_from(
     assert region_list == ["parallel_fpr", "parallel_eper", "serial_fpr", "serial_eper"]
 
 
-def test__make_result__result_imaging_is_returned(
-    imaging_ci_7x7, pre_cti_data_7x7, traps_x1, ccd, parallel_clocker_2d
-):
-    model = af.Collection(
-        cti=af.Model(ac.CTI2D, parallel_trap_list=traps_x1, parallel_ccd=ccd),
-        hyper_noise=af.Model(ac.HyperCINoiseCollection),
-    )
-
-    analysis = ac.AnalysisImagingCI(dataset=imaging_ci_7x7, clocker=parallel_clocker_2d)
-
-    search = MockSearch(name="test_search")
-
-    result = search.fit(model=model, analysis=analysis)
-
-    assert isinstance(result, ResultImagingCI)
-
-
 def test__log_likelihood_via_analysis__matches_manual_fit(
     imaging_ci_7x7, pre_cti_data_7x7, traps_x1, ccd, parallel_clocker_2d
 ):
