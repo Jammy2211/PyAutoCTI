@@ -133,7 +133,9 @@ class FitDataset1DAgg(AggBase):
             clocker_list=clocker_list,
         )
 
-    def object_via_gen_from(self, fit, instance: Optional[af.ModelInstance] = None) -> List[FitDataset1D]:
+    def object_via_gen_from(
+        self, fit, instance: Optional[af.ModelInstance] = None
+    ) -> List[FitDataset1D]:
         """
         Returns a generator of `FitDataset1D` objects from an input aggregator.
 

@@ -223,7 +223,9 @@ def test__include_stray_light__is_added_before_cti(parallel_clocker_2d, traps_x2
     )
 
     simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0, norm=0.0, stray_light=(-0.002, 1.0),
+        pixel_scales=1.0,
+        norm=0.0,
+        stray_light=(-0.002, 1.0),
     )
 
     dataset = simulator.via_layout_from(
@@ -232,7 +234,6 @@ def test__include_stray_light__is_added_before_cti(parallel_clocker_2d, traps_x2
 
     assert dataset.data[0, 0:3] == pytest.approx(1.0, 1.0e-4)
     assert dataset.data[1, 0:3] == pytest.approx(0.998, 1.0e-4)
-
 
 
 def test__include_read_noise__is_added_after_cti(parallel_clocker_2d, traps_x2, ccd):
@@ -408,7 +409,11 @@ def test__flat_field_mode(parallel_clocker_2d, traps_x2, ccd):
     )
 
     simulator = ac.SimulatorImagingCI(
-        pixel_scales=1.0, norm=100.0, read_noise=None, noise_seed=1, flat_field_mode=True
+        pixel_scales=1.0,
+        norm=100.0,
+        read_noise=None,
+        noise_seed=1,
+        flat_field_mode=True,
     )
 
     cti = ac.CTI2D(parallel_trap_list=traps_x2, parallel_ccd=ccd)
@@ -419,8 +424,8 @@ def test__flat_field_mode(parallel_clocker_2d, traps_x2, ccd):
         cti=cti,
     )
 
-    assert dataset.data[0,0] > 20.0
-    assert dataset.pre_cti_data[0,0] == pytest.approx(100.0, 1.0e-4)
+    assert dataset.data[0, 0] > 20.0
+    assert dataset.pre_cti_data[0, 0] == pytest.approx(100.0, 1.0e-4)
 
     simulator = ac.SimulatorImagingCI(
         pixel_scales=1.0, norm=100.0, read_noise=4.0, noise_seed=1, flat_field_mode=True
@@ -434,5 +439,5 @@ def test__flat_field_mode(parallel_clocker_2d, traps_x2, ccd):
         cti=cti,
     )
 
-    assert dataset.noise_map[0,0] == pytest.approx(11.11607, 1.0e-4)
-    assert dataset.noise_map[4,0] == pytest.approx(4.0, 1.0e-4)
+    assert dataset.noise_map[0, 0] == pytest.approx(11.11607, 1.0e-4)
+    assert dataset.noise_map[4, 0] == pytest.approx(4.0, 1.0e-4)

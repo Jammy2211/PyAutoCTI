@@ -134,7 +134,9 @@ class FitImagingCIAgg(AggBase):
             clocker_list=clocker_list,
         )
 
-    def object_via_gen_from(self, fit, instance: Optional[af.ModelInstance] = None) -> List[FitImagingCI]:
+    def object_via_gen_from(
+        self, fit, instance: Optional[af.ModelInstance] = None
+    ) -> List[FitImagingCI]:
         """
         Returns a generator of `FitImagingCI` objects from an input aggregator.
 

@@ -37,7 +37,6 @@ def test__trap_all_list():
 
 
 def test__delta_ellipticity():
-
     # Uncomment once CTI build moves to new arctic
 
     assert True

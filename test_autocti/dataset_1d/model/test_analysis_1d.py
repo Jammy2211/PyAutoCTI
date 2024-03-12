@@ -7,7 +7,6 @@ from autofit.non_linear.mock.mock_search import MockSearch
 from autocti.dataset_1d.model.result import ResultDataset1D
 
 
-
 def test__log_likelihood_via_analysis__matches_manual_fit(
     dataset_1d_7, pre_cti_data_7, traps_x1, ccd, clocker_1d
 ):

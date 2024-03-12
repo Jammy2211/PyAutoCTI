@@ -85,7 +85,9 @@ class CTIAgg(AggBase):
         A `PyAutoFit` aggregator object which can load the results of model-fits.
     """
 
-    def object_via_gen_from(self, fit, instance: Optional[af.ModelInstance] = None) -> Union[CTI1D, CTI2D]:
+    def object_via_gen_from(
+        self, fit, instance: Optional[af.ModelInstance] = None
+    ) -> Union[CTI1D, CTI2D]:
         """
         Returns a generator of `CTI` objects from an input aggregator.
 

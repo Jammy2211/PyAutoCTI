@@ -81,7 +81,6 @@ class AnalysisCTI(af.Analysis):
         delta_ellipticity_list = []
 
         for sample in result.samples.sample_list:
-
             instance = sample.instance_for_model(model=result.samples.model)
 
             weight_list.append(sample.weight)
@@ -97,9 +96,7 @@ class AnalysisCTI(af.Analysis):
             weight_list=weight_list,
         )
 
-        delta_ellipticity = (
-            upper_delta_ellipticity - lower_delta_ellipticity
-        ) / 2.0
+        delta_ellipticity = (upper_delta_ellipticity - lower_delta_ellipticity) / 2.0
 
         output_to_json(
             obj=delta_ellipticity,

@@ -465,6 +465,6 @@ class AnalysisImagingCI(AnalysisCTI):
 
     def make_result(
         self,
-        samples: af.SamplesPDF,
+        samples: af.SamplesPDF, search_internal = None
     ) -> ResultImagingCI:
-        return ResultImagingCI(samples=samples, analysis=self)
+        return ResultImagingCI(samples=samples, analysis=self, search_internal=search_internal)

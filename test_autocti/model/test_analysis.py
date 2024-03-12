@@ -49,6 +49,6 @@ def test__save_results__delta_ellipyicity_output_to_json(
 
     # Uncomment once CTI build moves to new arctic
 
-#    assert delta_ellipticity == pytest.approx(-0.403649850, 1.0e-4)
+    #    assert delta_ellipticity == pytest.approx(-0.403649850, 1.0e-4)
 
     os.remove(paths._files_path / "delta_ellipticity.json")
