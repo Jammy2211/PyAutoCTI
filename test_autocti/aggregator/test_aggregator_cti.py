@@ -12,6 +12,11 @@ def test__cti_randomly_drawn_via_pdf_gen_from(
 ):
     analysis = ac.AnalysisDataset1D(dataset=dataset_1d_7, clocker=clocker_1d)
 
+    def save_results_combined(paths, result):
+        pass
+
+    analysis.save_results_combined = save_results_combined
+
     agg = aggregator_from(
         database_file=database_file,
         analysis=analysis,

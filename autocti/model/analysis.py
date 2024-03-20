@@ -14,8 +14,6 @@ from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
 from autocti.model.settings import SettingsCTI1D
 from autocti.model.settings import SettingsCTI2D
 
-from autocti import exc
-
 
 class AnalysisCTI(af.Analysis):
     def __init__(
