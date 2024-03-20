@@ -18,7 +18,6 @@ class AbstractCTI:
     def trap_all_list(self):
         raise NotImplementedError
 
-    @af.derived_quantity
     def delta_ellipticity(self):
         return sum([trap.delta_ellipticity for trap in self.trap_all_list])
 
