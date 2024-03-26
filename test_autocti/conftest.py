@@ -229,9 +229,9 @@ def make_fit_ci_7x7():
 from autofit.mapper.model import ModelInstance
 
 
-@pytest.fixture(name="samples_with_result")
-def make_samples_with_result():
-    return fixtures.make_samples_with_result()
+@pytest.fixture(name="samples_summary_with_result")
+def make_samples_summary_with_result():
+    return fixtures.make_samples_summary_with_result()
 
 
 @pytest.fixture(name="analysis_imaging_ci_7x7")

@@ -60,10 +60,6 @@ def make_model_1d():
 
 @pytest.fixture(name="samples_1d")
 def make_samples_1d(model_1d):
-    trap_0 = ac.TrapInstantCapture(density=0.1, release_timescale=1.0)
-    ccd = ac.CCDPhase()
-
-    cti = ac.CTI1D(trap_list=[trap_0], ccd=ccd)
 
     parameters = [model_1d.prior_count * [1.0], model_1d.prior_count * [10.0]]
 
@@ -78,7 +74,6 @@ def make_samples_1d(model_1d):
     return ac.m.MockSamples(
         model=model_1d,
         sample_list=sample_list,
-        max_log_likelihood_instance=cti,
         prior_means=[1.0] * model_1d.prior_count,
     )
 
@@ -98,10 +93,6 @@ def make_model_2d():
 
 @pytest.fixture(name="samples_2d")
 def make_samples_2d(model_2d):
-    trap_0 = ac.TrapInstantCapture(density=0.1, release_timescale=1.0)
-    ccd = ac.CCDPhase()
-
-    cti = ac.CTI2D(parallel_trap_list=[trap_0], parallel_ccd=ccd)
 
     parameters = [model_2d.prior_count * [1.0], model_2d.prior_count * [10.0]]
 
@@ -116,6 +107,5 @@ def make_samples_2d(model_2d):
     return ac.m.MockSamples(
         model=model_2d,
         sample_list=sample_list,
-        max_log_likelihood_instance=cti,
         prior_means=[1.0] * model_2d.prior_count,
     )
