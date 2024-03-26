@@ -1,16 +1,14 @@
-import autofit as af
 import autocti as ac
 from autocti.model import result as res
 
 import numpy as np
-import pytest
 
 
 def test__result_contains_instance_with_cti_model(
     analysis_imaging_ci_7x7, samples_summary_with_result
 ):
     result = res.Result(
-        samples=samples_summary_with_result,
+        samples_summary=samples_summary_with_result,
         analysis=analysis_imaging_ci_7x7,
     )
 
@@ -22,7 +20,7 @@ def test__clocker_passed_as_result_correctly(
     analysis_imaging_ci_7x7, samples_summary_with_result, parallel_clocker_2d
 ):
     result = res.Result(
-        samples=samples_summary_with_result,
+        samples_summary=samples_summary_with_result,
         analysis=analysis_imaging_ci_7x7,
     )
 
@@ -38,7 +36,7 @@ def test__masks_available_as_property(
     ccd,
 ):
     result = res.ResultDataset(
-        samples=samples_summary_with_result,
+        samples_summary=samples_summary_with_result,
         analysis=analysis_imaging_ci_7x7,
     )
 

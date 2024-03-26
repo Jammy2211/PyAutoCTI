@@ -2,7 +2,7 @@ from autofit.non_linear import result
 
 
 class Result(result.Result):
-    def __init__(self, samples_summary, paths, samples, analysis, search_internal = None):
+    def __init__(self, samples_summary, paths=None, samples=None, analysis=None, search_internal = None):
         """
         The result of a phase
         """

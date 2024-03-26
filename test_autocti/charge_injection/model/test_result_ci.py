@@ -4,7 +4,6 @@ import pytest
 
 import autofit as af
 import autocti as ac
-from autocti.charge_injection.model.result import ResultImagingCI
 
 
 def test__fits_to_extracted_and_full_datasets_available(
@@ -24,7 +23,7 @@ def test__fits_to_extracted_and_full_datasets_available(
     )
 
     result = ac.ResultImagingCI(
-        samples=samples_summary_with_result,
+        samples_summary=samples_summary_with_result,
         analysis=analysis,
     )
 
@@ -84,7 +83,7 @@ def test__noise_scaling_map_dict_is_list_of_result__are_correct(
     )
 
     result = ac.ResultImagingCI(
-        samples=samples_summary_with_result,
+        samples_summary=samples_summary_with_result,
         analysis=analysis,
     )
 
