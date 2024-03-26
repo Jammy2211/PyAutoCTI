@@ -1,4 +1,4 @@
-from autofit.non_linear.mock.mock_samples import MockSamples
+from autofit.non_linear.mock.mock_samples_summary import MockSamplesSummary
 
 from autoarray.fixtures import *
 
@@ -208,7 +208,7 @@ def make_fit_ci_7x7():
 # ### PHASES ###
 
 
-def make_samples_with_result():
+def make_samples_summary_with_result():
     model = af.Collection(
         cti=af.Model(
             ac.CTI2D,
@@ -221,9 +221,9 @@ def make_samples_with_result():
 
     instance = model.instance_from_prior_medians()
 
-    return MockSamples(
-        model=model,
+    return MockSamplesSummary(
         max_log_likelihood_instance=instance,
+        model=model,
         prior_means=[1.0] * model.prior_count,
     )
 

@@ -8,7 +8,7 @@ from autocti.charge_injection.model.result import ResultImagingCI
 
 
 def test__fits_to_extracted_and_full_datasets_available(
-    imaging_ci_7x7, mask_2d_7x7_unmasked, parallel_clocker_2d, samples_with_result
+    imaging_ci_7x7, mask_2d_7x7_unmasked, parallel_clocker_2d, samples_summary_with_result
 ):
     imaging_ci_full = copy.deepcopy(imaging_ci_7x7)
 
@@ -24,7 +24,7 @@ def test__fits_to_extracted_and_full_datasets_available(
     )
 
     result = ac.ResultImagingCI(
-        samples=samples_with_result,
+        samples=samples_summary_with_result,
         analysis=analysis,
     )
 
@@ -43,7 +43,7 @@ def test__noise_scaling_map_dict_is_list_of_result__are_correct(
     mask_2d_7x7_unmasked,
     parallel_clocker_2d,
     layout_ci_7x7,
-    samples_with_result,
+    samples_summary_with_result,
     traps_x1,
     ccd,
 ):
@@ -80,11 +80,11 @@ def test__noise_scaling_map_dict_is_list_of_result__are_correct(
     )
 
     fit_analysis = analysis.fit_via_instance_from(
-        instance=samples_with_result.max_log_likelihood()
+        instance=samples_summary_with_result.max_log_likelihood()
     )
 
     result = ac.ResultImagingCI(
-        samples=samples_with_result,
+        samples=samples_summary_with_result,
         analysis=analysis,
     )
 
