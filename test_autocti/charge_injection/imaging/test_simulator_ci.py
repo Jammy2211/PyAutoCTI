@@ -239,24 +239,32 @@ def test__include_stray_light__is_added_before_cti(parallel_clocker_2d, traps_x2
 def test__include_readout_persistance__is_added_after_cti(parallel_clocker_2d, traps_x2, ccd):
 
     layout = ac.Layout2DCI(
-        shape_2d=(3, 3),
+        shape_2d=(9, 3),
         region_list=[(0, 1, 0, 3)],
-        parallel_overscan=ac.Region2D((1, 2, 0, 3)),
-        serial_overscan=ac.Region2D((1, 2, 1, 2)),
+        parallel_overscan=ac.Region2D((8, 9, 0, 3)),
+        serial_overscan=ac.Region2D((1, 8, 1, 2)),
     )
 
     simulator = ac.SimulatorImagingCI(
         pixel_scales=1.0,
         norm=0.0,
-        readout_persistance=
+        readout_persistance=ac.ReadoutPersistence(
+            total_rows=2,
+            mean=5.0,
+            sigma=1.0,
+            rows_per_persistence_range=(1, 4),
+            seed=1
+        )
     )
 
     dataset = simulator.via_layout_from(
-        layout=layout, clocker=parallel_clocker_2d, cti=None
+        layout=layout, clocker=parallel_clocker_2d, cti=None,
     )
 
-    assert dataset.data[0, 0:3] == pytest.approx(1.0, 1.0e-4)
-    assert dataset.data[1, 0:3] == pytest.approx(0.998, 1.0e-4)
+    assert dataset.data[1, 5] == pytest.approx(6.62434, 1.0e-4)
+    assert dataset.data[1, 6] == pytest.approx(4.583242, 1.0e-4)
+    assert dataset.data[1, 7] == pytest.approx(4.583242, 1.0e-4)
+    assert dataset.data[1, 8] == pytest.approx(4.583242, 1.0e-4)
 
 
 def test__include_read_noise__is_added_after_cti(parallel_clocker_2d, traps_x2, ccd):

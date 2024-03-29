@@ -20,15 +20,15 @@ class ReadoutPersistence:
         self.seed = seed
 
     def data_with_readout_persistence_from(self, data):
-        
-        if self.seed == -1:
-            seed = np.random.randint(0, int(1e9))
-        else:
-            seed = self.seed
-
-        np.random.seed(seed)
 
         for i in range(self.total_rows):
+
+            if self.seed == -1:
+                seed = np.random.randint(0, int(1e9))
+            else:
+                seed = self.seed + i
+
+            np.random.seed(seed)
 
             row_value = 0.0
 
@@ -36,8 +36,12 @@ class ReadoutPersistence:
                 row_value = np.random.normal(self.mean, self.sigma)
 
             row_index = np.random.randint(0, data.shape[0])
-            row_range = np.random.randint(1, 10)
+            row_range = np.random.randint(self.rows_per_persistence_range[0], self.rows_per_persistence_range[1])
 
-            data[row_index:row_range] += row_value
+            print(row_value)
+            print(row_index)
+            print(row_range)
+
+            data[row_index:row_index+row_range] += row_value
 
         return data
