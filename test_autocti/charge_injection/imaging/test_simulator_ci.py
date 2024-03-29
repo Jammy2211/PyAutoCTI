@@ -236,6 +236,28 @@ def test__include_stray_light__is_added_before_cti(parallel_clocker_2d, traps_x2
     assert dataset.data[1, 0:3] == pytest.approx(0.998, 1.0e-4)
 
 
+def test__include_readout_persistance__is_added_after_cti(parallel_clocker_2d, traps_x2, ccd):
+    layout = ac.Layout2DCI(
+        shape_2d=(3, 3),
+        region_list=[(0, 1, 0, 3)],
+        parallel_overscan=ac.Region2D((1, 2, 0, 3)),
+        serial_overscan=ac.Region2D((1, 2, 1, 2)),
+    )
+
+    simulator = ac.SimulatorImagingCI(
+        pixel_scales=1.0,
+        norm=0.0,
+        stray_light=(-0.002, 1.0),
+    )
+
+    dataset = simulator.via_layout_from(
+        layout=layout, clocker=parallel_clocker_2d, cti=None
+    )
+
+    assert dataset.data[0, 0:3] == pytest.approx(1.0, 1.0e-4)
+    assert dataset.data[1, 0:3] == pytest.approx(0.998, 1.0e-4)
+
+
 def test__include_read_noise__is_added_after_cti(parallel_clocker_2d, traps_x2, ccd):
     layout = ac.Layout2DCI(
         shape_2d=(3, 3),
