@@ -97,7 +97,7 @@ extract information from these datasets using contemporary Bayesian inference te
 maintaining the calibration of space telescopes and the scientific community, who can use `PyAutoCTI` to perform
 CTI calculations for their science data.
 
-The majority of software packages for CTI, such as `arCTIc` [@Massey2014], `C3TM` [@c3tm] and `CDM03`[@cdm03], do not 
+The majority of software packages for CTI, such as `arCTIc` [@Massey2014], `C3TM` [@c3tm] and `CDM03` [@cdm03], do not 
 perform CTI calibration. They  instead model the CCD clocking procedure, including a CTI model describing the traps on 
 a CCD, enabling the addition and correction of CTI to imaging data. `PyAutoCTI` wraps one of these algorithm (specifically `arCTIc`) in order to
 measure the CTI model from calibration data. Hubble Space Telescope CTI calibration uses an algorithm developed by
@@ -117,7 +117,7 @@ packages `NumPy` [@numpy] and `numba` [@numba]. Dependencies also include `sciki
 `scikit-learn` [@scikit-learn] and `Scipy` [@scipy].
 
 To perform model-fitting, `PyAutoCTI` adopts the probabilistic programming  
-language `PyAutoFit` (https://github.com/rhayes777/PyAutoFit). `PyAutoFit` allows users to compose a CTI 
+language `PyAutoFit` (https://github.com/rhayes777/PyAutoFit) [@pyautofit]. `PyAutoFit` allows users to compose a CTI 
 model from `Trap` and `CCD` objects, customize the model parameterization and fit it to data via a 
 non-linear search, for example `dynesty` [@dynesty], `emcee` [@emcee] or `PySwarms` [@pyswarms], with visualization
 performed by `Matplotlib` [@matplotlib] and `corner.py` [@corner]. `PyAutoFit`'s graphical modeling framework allows one to fit a temporal model to a suite of CTI calibration data. Using a technique 
