@@ -60,7 +60,6 @@ def make_model_1d():
 
 @pytest.fixture(name="samples_1d")
 def make_samples_1d(model_1d):
-
     parameters = [model_1d.prior_count * [1.0], model_1d.prior_count * [10.0]]
 
     sample_list = Sample.from_lists(
@@ -93,7 +92,6 @@ def make_model_2d():
 
 @pytest.fixture(name="samples_2d")
 def make_samples_2d(model_2d):
-
     parameters = [model_2d.prior_count * [1.0], model_2d.prior_count * [10.0]]
 
     sample_list = Sample.from_lists(

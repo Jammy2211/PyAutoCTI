@@ -5,7 +5,7 @@ import autoarray as aa
 from typing import Tuple
 
 
-class SettingsImagingCI(aa.SettingsImaging):
+class SettingsImagingCI:
     def __init__(
         self,
         parallel_pixels: Tuple[int, int] = None,

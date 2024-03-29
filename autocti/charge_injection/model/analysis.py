@@ -25,7 +25,6 @@ logger.setLevel(level="INFO")
 
 
 class AnalysisImagingCI(AnalysisCTI):
-
     Result = ResultImagingCI
 
     def __init__(
