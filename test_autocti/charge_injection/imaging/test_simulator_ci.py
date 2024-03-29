@@ -261,10 +261,10 @@ def test__include_readout_persistance__is_added_after_cti(parallel_clocker_2d, t
         layout=layout, clocker=parallel_clocker_2d, cti=None,
     )
 
-    assert dataset.data[1, 5] == pytest.approx(6.62434, 1.0e-4)
-    assert dataset.data[1, 6] == pytest.approx(4.583242, 1.0e-4)
-    assert dataset.data[1, 7] == pytest.approx(4.583242, 1.0e-4)
-    assert dataset.data[1, 8] == pytest.approx(4.583242, 1.0e-4)
+    assert dataset.data[5, :] == pytest.approx(6.62434, 1.0e-4)
+    assert dataset.data[6, :] == pytest.approx(4.583242, 1.0e-4)
+    assert dataset.data[7, :] == pytest.approx(4.583242, 1.0e-4)
+    assert dataset.data[8, :] == pytest.approx(4.583242, 1.0e-4)
 
 
 def test__include_read_noise__is_added_after_cti(parallel_clocker_2d, traps_x2, ccd):
