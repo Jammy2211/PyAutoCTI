@@ -33,18 +33,18 @@ bibliography: paper.bib
 # Summary
 
 Over the past half a century, space telescopes have given us an extraordinary view of the Universe, for example detecting 
-the faint spectra of the first galaxies in the Universe [@Dunlop2013] [@Bouwens2015], measuring tiny distortions in
-galaxy shapes due to gravitational lensing [@Massey2007] [@Schrabback2010] and a high precision map of stars within
-the Milky Way [@Brown2018] [@Brown2020]. These observations require a deep understanding of the telescope's
+the faint spectra of the first galaxies in the Universe [@Dunlop2013; @Bouwens2015], measuring tiny distortions in
+galaxy shapes due to gravitational lensing [@Massey2007; @Schrabback2010] and a high precision map of stars within
+the Milky Way [@Brown2018; @Brown2020]. These observations require a deep understanding of the telescope's
 instrumental characteristics, including the calibration and correction of charge transfer inefficiency 
-(hereafter CTI) [@Massey2010d] [@Massey2014], a phenomena where radiation damage to the telescope's charge-coupled 
+(hereafter CTI) [@Massey2010d; @Massey2014], a phenomena where radiation damage to the telescope's charge-coupled 
 device (CCD) sensors leads to gradually increased smearing in acquired exposures over the telescope's lifetime.
 
-`PyAutoCTI` is an open-source Python 3.8 - 3.11 package for the calibration of CTI for space telescopes. By interfacing
+`PyAutoCTI` is an open-source Python 3.8 - 3.11 [@python] package for the calibration of CTI for space telescopes. By interfacing
 with `arCTIc` (`the algorithm for Charge Transfer Inefficiency correction`) the calibrated CTI models can straightforwardly
 be used to correct and remove CTI in every science image taken throughout the telescope's lifetime. Core features 
 include fully automated Bayesian model-fitting of CTI calibration data, support for different calibration
-datasets such as warm pixels used for Hubble Space Telescope calibration [@Massey2010d] [@Massey2010b] and a database 
+datasets such as warm pixels used for Hubble Space Telescope calibration [@Massey2010d; @Massey2010b] and a database 
 for building a temporal model of CTI over the telescope's lifetime. The software places a focus on big data analysis, 
 including support for graphical models that simultaneously fits large CTI calibration datasets and an SQLite3 
 database that allows extensive suites of calibration results to be loaded, queried and analysed. 
@@ -76,7 +76,7 @@ with the author's permission.](cti_image.png)
 Figure 1 shows an example of the CTI calibration data which `PyAutoCTI` was originally developed to fit -- warm 
 pixels in the Hubble Space Telescope [@Massey2010d]. Warm pixels are similar to short circuits in the CCD electrostatic 
 potentials used to collect charge, which continuously inject spurious charge into specific pixels. These should 
-appear as delta functions in the data, with CTI trails appearing in Fig 1 in the parallel clocking direction (upwards in 
+appear as delta functions in the data, with CTI trails appearing in Figure 1 in the parallel clocking direction (upwards in 
 Figure 1) next to each warm pixel. `PyAutoCTI` has dedicated functionality for fitting 1D calibration datasets 
 such as those extracted from warm pixels. `PyAutoCTI` also supports for 2D calibration datasets, for example 
 charge injection line imaging calibration data, which will be used to calibrate CTI for the European Space Agency's 
@@ -97,10 +97,11 @@ extract information from these datasets using contemporary Bayesian inference te
 maintaining the calibration of space telescopes and the scientific community, who can use `PyAutoCTI` to perform
 CTI calculations for their science data.
 
-The majority of software packages for CTI, such as `arCTIc`, `C3TM` and `CDM03`, do not perform CTI calibration. They 
-instead model the CCD clocking procedure, including a CTI model describing the traps on a CCD, enabling the addition 
-and correction of CTI to imaging data. `PyAutoCTI` wraps one of these algorithm (specifically `arCTIc`) in order to
-measure the CTI model from calibration data. The open-source software `Pyxel` has a "calibration mode" which also wraps
+The majority of software packages for CTI, such as `arCTIc` [@Massey2014], `C3TM` [@c3tm] and `CDM03`[@cdm03], do not 
+perform CTI calibration. They  instead model the CCD clocking procedure, including a CTI model describing the traps on 
+a CCD, enabling the addition and correction of CTI to imaging data. `PyAutoCTI` wraps one of these algorithm (specifically `arCTIc`) in order to
+measure the CTI model from calibration data. Hubble Space Telescope CTI calibration uses an algorithm developed by
+STScI [@Anderson2010; @Anderson2018; @Anderson2021]. The open-source software `Pyxel` (https://esa.gitlab.io/pyxel/page/introduction/) has a "calibration mode" which also wraps
 these algorithms to perform CTI calibration. However, `Pyxel` is more general purpose and has tools for the entire 
 CCD clocking procedure (e.g. bias, dark frames, flat fields). `PyAutoCTI` is therefore more specialized and
 has a more extensive suite of tools for CTI calibration.
@@ -111,14 +112,15 @@ At the heart of the `PyAutoCTI` API are `Trap` objects, which represent the popu
 CTI. The volume filling behaviour of a CCD is modeled via `CCD` objects, which are combined with traps to compose CTI 
 models which add CTI to a mock CTI calibration data via `arCTIc`. `PyAutoCTI` has dedicated objects for specific
 CTI calibration datasets and bespoke tools for visualizing these datasets and masking them before fitting.  
-The `astropy` cosmology module handles unit conversions and calculations are optimized using the 
-packages `NumPy` [@numpy] and `numba` [@numba].
+The `astropy` [@astropy1; @astropy2] cosmology module handles unit conversions and calculations are optimized using the 
+packages `NumPy` [@numpy] and `numba` [@numba]. Dependencies also include `scikit-image` [@scikit-image],
+`scikit-learn` [@scikit-learn] and `Scipy` [@scipy].
 
 To perform model-fitting, `PyAutoCTI` adopts the probabilistic programming  
 language `PyAutoFit` (https://github.com/rhayes777/PyAutoFit). `PyAutoFit` allows users to compose a CTI 
 model from `Trap` and `CCD` objects, customize the model parameterization and fit it to data via a 
-non-linear search, for example `dynesty` [@dynesty], `emcee` [@emcee] or `PySwarms` [@pyswarms]. `PyAutoFit`'s 
-graphical modeling framework allows one to fit a temporal model to a suite of CTI calibration data. Using a technique 
+non-linear search, for example `dynesty` [@dynesty], `emcee` [@emcee] or `PySwarms` [@pyswarms], with visualization
+performed by `Matplotlib` [@matplotlib] and `corner.py` [@corner]. `PyAutoFit`'s graphical modeling framework allows one to fit a temporal model to a suite of CTI calibration data. Using a technique 
 called expectation propagation [@Vehtari2020], the framework fits each dataset one-by-one and combines the results of 
 every fit into a temporal model using a self-consistent Bayesian framework. To ensure the analysis and interpretation of 
 fits to large datasets is feasible, `PyAutoFit`'s database tools write modeling results to a relational database which 
@@ -132,32 +134,6 @@ cadence may consist of thousands of datasets.
 contains example scripts for modeling and simulating CTI. The workspace is accessible 
 on [Binder](https://mybinder.org/v2/gh/Jammy2211/autocti_workspace/HEAD) and example scripts can therefore be run 
 without a local `PyAutoCTI` installation.
-
-# Software Citations
-
-`PyAutoCTI` is written in Python 3.8 - 3.11 [@python] and uses the following software packages:
-
-- `Astropy` [@astropy1] [@astropy2]
-- `corner.py` [@corner]
-- `dynesty` [@dynesty]
-- `emcee` [@emcee]
-- `Matplotlib` [@matplotlib]
-- `numba` [@numba]
-- `NumPy` [@numpy]
-- `PyAutoFit` [@pyautofit]
-- `pyprojroot` (https://github.com/chendaniely/pyprojroot)
-- `PySwarms` [@pyswarms]
-- `scikit-image` [@scikit-image]
-- `scikit-learn` [@scikit-learn]
-- `Scipy` [@scipy]
-
-# Related Software
-
-- `arCTIc` https://github.com/jkeger/arctic [@Massey2014]
-- `C3TM` [@c3tm]
-- `CDM03` [@cdm03]
-- `Pyxel` https://esa.gitlab.io/pyxel/page/introduction/
-- `STScI algorithm` [@Anderson2010] [@Anderson2018] [@Anderson2021]
 
 # Acknowledgements
 
