@@ -325,6 +325,9 @@ class AnalysisDataset1D(AnalysisCTI):
 
     def make_result(
         self,
-        samples: af.SamplesPDF, search_internal = None
+        samples_summary: af.SamplesSummary,
+        paths: af.AbstractPaths,
+        samples: Optional[af.SamplesPDF] = None,
+        search_internal: Optional[object] = None,
     ) -> ResultDataset1D:
-        return ResultDataset1D(samples=samples, analysis=self, search_internal=search_internal)
+        return ResultDataset1D(samples_summary=samples_summary, paths=paths, samples=samples, analysis=self, search_internal=search_internal)

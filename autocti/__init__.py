@@ -45,6 +45,7 @@ from .extract.two_d.master import Extract2DMaster
 from .instruments import euclid
 from .instruments import acs
 from .charge_injection.fit import FitImagingCI
+from .charge_injection.imaging.readout_persistence import ReadoutPersistence
 from .mask.mask_2d import Mask2D
 from .mask.mask_2d import SettingsMask2D
 from .mask.mask_1d import Mask1D
