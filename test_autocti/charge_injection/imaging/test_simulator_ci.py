@@ -237,6 +237,7 @@ def test__include_stray_light__is_added_before_cti(parallel_clocker_2d, traps_x2
 
 
 def test__include_readout_persistance__is_added_after_cti(parallel_clocker_2d, traps_x2, ccd):
+
     layout = ac.Layout2DCI(
         shape_2d=(3, 3),
         region_list=[(0, 1, 0, 3)],
@@ -247,7 +248,7 @@ def test__include_readout_persistance__is_added_after_cti(parallel_clocker_2d, t
     simulator = ac.SimulatorImagingCI(
         pixel_scales=1.0,
         norm=0.0,
-        stray_light=(-0.002, 1.0),
+        readout_persistance=
     )
 
     dataset = simulator.via_layout_from(

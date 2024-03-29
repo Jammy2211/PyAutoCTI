@@ -10,14 +10,23 @@ class ReadoutPersistence:
         mean : Optional[float] = 5.0,
         sigma: Optional[float] = 1.0,
         rows_per_persistence_range: Optional[Tuple[int, int]] =  (1, 10),
+        seed: int = -1,
     ):
 
         self.total_rows = total_rows
         self.mean = mean
         self.sigma = sigma
         self.rows_per_persistence_range = rows_per_persistence_range
+        self.seed = seed
 
     def data_with_readout_persistence_from(self, data):
+        
+        if self.seed == -1:
+            seed = np.random.randint(0, int(1e9))
+        else:
+            seed = self.seed
+
+        np.random.seed(seed)
 
         for i in range(self.total_rows):
 
