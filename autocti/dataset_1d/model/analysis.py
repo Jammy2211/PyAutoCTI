@@ -14,6 +14,9 @@ from autocti.clocker.one_d import Clocker1D
 
 
 class AnalysisDataset1D(AnalysisCTI):
+
+    Result = ResultDataset1D
+
     def __init__(
         self,
         dataset: Dataset1D,
@@ -322,12 +325,3 @@ class AnalysisDataset1D(AnalysisCTI):
                 region_list=region_list,
                 during_analysis=during_analysis,
             )
-
-    def make_result(
-        self,
-        samples_summary: af.SamplesSummary,
-        paths: af.AbstractPaths,
-        samples: Optional[af.SamplesPDF] = None,
-        search_internal: Optional[object] = None,
-    ) -> ResultDataset1D:
-        return ResultDataset1D(samples_summary=samples_summary, paths=paths, samples=samples, analysis=self, search_internal=search_internal)

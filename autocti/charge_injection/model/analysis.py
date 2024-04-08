@@ -25,6 +25,9 @@ logger.setLevel(level="INFO")
 
 
 class AnalysisImagingCI(AnalysisCTI):
+
+    Result = ResultImagingCI
+
     def __init__(
         self,
         dataset: ImagingCI,
@@ -462,12 +465,3 @@ class AnalysisImagingCI(AnalysisCTI):
                 during_analysis=during_analysis,
                 folder_suffix="_full",
             )
-
-    def make_result(
-        self,
-        samples_summary: af.SamplesSummary,
-        paths: af.AbstractPaths,
-        samples: Optional[af.SamplesPDF] = None,
-        search_internal: Optional[object] = None,
-    ) -> ResultImagingCI:
-        return ResultImagingCI(samples_summary=samples_summary, paths=paths, samples=samples, analysis=self, search_internal=search_internal)
