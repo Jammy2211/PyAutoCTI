@@ -7,7 +7,10 @@ import autocti as ac
 
 
 def test__fits_to_extracted_and_full_datasets_available(
-    imaging_ci_7x7, mask_2d_7x7_unmasked, parallel_clocker_2d, samples_summary_with_result
+    imaging_ci_7x7,
+    mask_2d_7x7_unmasked,
+    parallel_clocker_2d,
+    samples_summary_with_result,
 ):
     imaging_ci_full = copy.deepcopy(imaging_ci_7x7)
 

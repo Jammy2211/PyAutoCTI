@@ -5,7 +5,6 @@ from typing import Optional, Dict, Union
 import autoarray as aa
 
 from autocti import exc
-from autocti.dataset_1d.dataset_1d.settings import SettingsDataset1D
 from autocti.extract.settings import SettingsExtract
 from autocti.layout.one_d import Layout1D
 
@@ -18,10 +17,9 @@ class Dataset1D(aa.AbstractDataset):
         pre_cti_data: aa.Array1D,
         layout: Layout1D,
         fpr_value: Optional[float] = None,
-        settings: SettingsDataset1D = SettingsDataset1D(),
         settings_dict: Optional[Dict] = None,
     ):
-        super().__init__(data=data, noise_map=noise_map, settings=settings)
+        super().__init__(data=data, noise_map=noise_map)
 
         self.data = data
         self.noise_map = noise_map
@@ -59,9 +57,6 @@ class Dataset1D(aa.AbstractDataset):
             fpr_value=self.fpr_value,
             settings_dict=self.settings_dict,
         )
-
-    def apply_settings(self, settings: SettingsDataset1D) -> "Dataset1D":
-        return self
 
     @classmethod
     def from_fits(

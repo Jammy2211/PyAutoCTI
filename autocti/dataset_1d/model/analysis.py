@@ -14,7 +14,6 @@ from autocti.clocker.one_d import Clocker1D
 
 
 class AnalysisDataset1D(AnalysisCTI):
-
     Result = ResultDataset1D
 
     def __init__(
