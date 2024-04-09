@@ -28,9 +28,7 @@ def test__dataset_1d(dataset_1d_7, plot_path, plot_patch):
     assert path.join(plot_path, "noise_map.png") not in plot_patch.paths
 
 
-def test__dataset_1d_region(
-    dataset_1d_7, plot_path, plot_patch
-):
+def test__dataset_1d_region(dataset_1d_7, plot_path, plot_patch):
     if path.exists(plot_path):
         shutil.rmtree(plot_path)
 
@@ -74,9 +72,7 @@ def test__fit_1d_region(fit_1d_7, plot_path, plot_patch):
 
     visualizer = PlotterInterfaceDataset1D(image_path=plot_path)
 
-    visualizer.fit_regions(
-        fit=fit_1d_7, region_list=["fpr"], during_analysis=True
-    )
+    visualizer.fit_regions(fit=fit_1d_7, region_list=["fpr"], during_analysis=True)
 
     plot_path = path.join(plot_path, "fit_dataset")
 
@@ -91,9 +87,7 @@ def test__fit_combined(fit_1d_7, plot_path, plot_patch):
 
     visualizer = PlotterInterfaceDataset1D(image_path=plot_path)
 
-    visualizer.fit_combined(
-        fit_list=[fit_1d_7, fit_1d_7], during_analysis=True
-    )
+    visualizer.fit_combined(fit_list=[fit_1d_7, fit_1d_7], during_analysis=True)
 
     plot_path = path.join(plot_path, "fit_dataset_combined")
 

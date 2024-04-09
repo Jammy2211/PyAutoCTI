@@ -3,14 +3,14 @@ from typing import Optional, Tuple
 
 import autoarray as aa
 
-class ReadoutPersistence:
 
+class ReadoutPersistence:
     def __init__(
         self,
         total_rows: Optional[int] = 10,
-        mean : Optional[float] = 5.0,
+        mean: Optional[float] = 5.0,
         sigma: Optional[float] = 1.0,
-        rows_per_persistence_range: Optional[Tuple[int, int]] =  (1, 10),
+        rows_per_persistence_range: Optional[Tuple[int, int]] = (1, 10),
         seed: int = -1,
     ):
         """
@@ -53,7 +53,7 @@ class ReadoutPersistence:
         self.rows_per_persistence_range = rows_per_persistence_range
         self.seed = seed
 
-    def data_with_readout_persistence_from(self, data : aa.Array2D) -> aa.Array2D:
+    def data_with_readout_persistence_from(self, data: aa.Array2D) -> aa.Array2D:
         """
         Returns the input data with readout persistence added to it.
 
@@ -73,7 +73,6 @@ class ReadoutPersistence:
         The input data with readout persistence added to it.
         """
         for i in range(self.total_rows):
-
             if self.seed == -1:
                 seed = np.random.randint(0, int(1e9))
             else:
@@ -87,8 +86,10 @@ class ReadoutPersistence:
                 row_value = np.random.normal(self.mean, self.sigma)
 
             row_index = np.random.randint(0, data.shape[0])
-            row_range = np.random.randint(self.rows_per_persistence_range[0], self.rows_per_persistence_range[1])
+            row_range = np.random.randint(
+                self.rows_per_persistence_range[0], self.rows_per_persistence_range[1]
+            )
 
-            data[row_index:row_index+row_range] += row_value
+            data[row_index : row_index + row_range] += row_value
 
         return data

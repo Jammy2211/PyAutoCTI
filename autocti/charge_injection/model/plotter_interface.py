@@ -263,9 +263,7 @@ class PlotterInterfaceImagingCI(PlotterInterface):
                     f"VISUALIZATION - Could not visualize the ImagingCI 1D {region}"
                 )
 
-    def fit_combined(
-        self, fit_list, during_analysis, folder_suffix: str = ""
-    ):
+    def fit_combined(self, fit_list, during_analysis, folder_suffix: str = ""):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 

@@ -30,17 +30,13 @@ def test__dataset(imaging_ci_7x7, plot_path, plot_patch):
     assert path.join(plot_path, "noise_map.png") not in plot_patch.paths
 
 
-def test__dataset_regions(
-    imaging_ci_7x7, plot_path, plot_patch
-):
+def test__dataset_regions(imaging_ci_7x7, plot_path, plot_patch):
     if os.path.exists(plot_path):
         shutil.rmtree(plot_path)
 
     visualizer = PlotterInterfaceImagingCI(image_path=plot_path)
 
-    visualizer.dataset_regions(
-        dataset=imaging_ci_7x7, region_list=["parallel_fpr"]
-    )
+    visualizer.dataset_regions(dataset=imaging_ci_7x7, region_list=["parallel_fpr"])
 
     plot_path = path.join(plot_path, "dataset")
 
@@ -109,9 +105,7 @@ def test__fit_combined(fit_ci_7x7, plot_path, plot_patch):
 
     visualizer = PlotterInterfaceImagingCI(image_path=plot_path)
 
-    visualizer.fit_combined(
-        fit_list=[fit_ci_7x7, fit_ci_7x7], during_analysis=True
-    )
+    visualizer.fit_combined(fit_list=[fit_ci_7x7, fit_ci_7x7], during_analysis=True)
 
     plot_path = path.join(plot_path, "fit_dataset_combined")
 

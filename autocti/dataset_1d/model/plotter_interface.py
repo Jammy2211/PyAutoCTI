@@ -79,9 +79,7 @@ class PlotterInterfaceDataset1D(PlotterInterface):
         if should_plot("subplot_dataset"):
             multi_plotter.subplot_of_figure(func_name="figures_1d", figure_name="data")
 
-    def dataset_regions_combined(
-        self, dataset_list, region_list, folder_suffix=""
-    ):
+    def dataset_regions_combined(self, dataset_list, region_list, folder_suffix=""):
         def should_plot(name):
             return plot_setting(section="dataset", name=name)
 
@@ -157,9 +155,7 @@ class PlotterInterfaceDataset1D(PlotterInterface):
         if should_plot("subplot_fit"):
             fit_plotter.subplot_fit()
 
-    def fit_regions(
-        self, fit, region_list, during_analysis, folder_suffix=""
-    ):
+    def fit_regions(self, fit, region_list, during_analysis, folder_suffix=""):
         def should_plot(name):
             return plot_setting(section="fit", name=name)
 

@@ -1,9 +1,11 @@
+from autoconf import conf
+
 import autofit as af
 
-from autocti.dataset_1d.model.plotter_interface import PlotterInterfaceDataset1D
+from autocti.charge_injection.model.plotter_interface import PlotterInterfaceImagingCI
 
 
-class VisualizerDataset1D(af.Visualizer):
+class VisualizerImagingCI(af.Visualizer):
     @staticmethod
     def visualize_before_fit(
         analysis,
@@ -25,9 +27,16 @@ class VisualizerDataset1D(af.Visualizer):
             the imaging data.
         """
 
-        region_list = analysis.region_list_from()
+        if conf.instance["visualize"]["plots"]["combined_only"]:
+            return
 
-        visualizer = PlotterInterfaceDataset1D(image_path=paths.image_path)
+        visualizer = PlotterInterfaceImagingCI(image_path=paths.image_path)
+
+        region_list = analysis.region_list_from(model=model)
+
+        if conf.instance["visualize"]["plots"]["dataset"]["fpr_non_uniformity"]:
+            region_list += ["fpr_non_uniformity"]
+
         visualizer.dataset(dataset=analysis.dataset)
         visualizer.dataset_regions(dataset=analysis.dataset, region_list=region_list)
 
@@ -48,9 +57,12 @@ class VisualizerDataset1D(af.Visualizer):
         if analyses is None:
             return
 
-        visualizer = PlotterInterfaceDataset1D(image_path=paths.image_path)
+        visualizer = PlotterInterfaceImagingCI(image_path=paths.image_path)
 
-        region_list = analyses[0].region_list_from()
+        region_list = analyses[0].region_list_from(model=model)
+
+        if conf.instance["visualize"]["plots"]["dataset"]["fpr_non_uniformity"]:
+            region_list += ["fpr_non_uniformity"]
 
         dataset_list = [analysis.dataset for analysis in analyses]
         fpr_value_list = [dataset.fpr_value for dataset in dataset_list]
@@ -63,6 +75,7 @@ class VisualizerDataset1D(af.Visualizer):
         visualizer.dataset_combined(
             dataset_list=dataset_list,
         )
+
         visualizer.dataset_regions_combined(
             dataset_list=dataset_list,
             region_list=region_list,
@@ -77,12 +90,15 @@ class VisualizerDataset1D(af.Visualizer):
             )
 
             visualizer.dataset_combined(
-                dataset_list=dataset_full_list, folder_suffix="_full"
+                dataset_list=dataset_full_list,
+                folder_suffix="_full",
+                filename_suffix="_full",
             )
             visualizer.dataset_regions_combined(
                 dataset_list=dataset_full_list,
                 region_list=region_list,
                 folder_suffix="_full",
+                filename_suffix="_full",
             )
 
     @staticmethod
@@ -112,23 +128,31 @@ class VisualizerDataset1D(af.Visualizer):
             which may change which images are output.
         """
 
-        region_list = analysis.region_list_from()
-
-        visualizer = PlotterInterfaceDataset1D(image_path=paths.image_path)
+        if conf.instance["visualize"]["plots"]["combined_only"]:
+            return
 
         fit = analysis.fit_via_instance_from(instance=instance)
+        region_list = analysis.region_list_from(model=instance)
+
+        visualizer = PlotterInterfaceImagingCI(image_path=paths.image_path)
         visualizer.fit(fit=fit, during_analysis=during_analysis)
-        visualizer.fit_regions(
-            fit=fit, region_list=region_list, during_analysis=during_analysis
+        visualizer.fit_1d_regions(
+            fit=fit, during_analysis=during_analysis, region_list=region_list
         )
 
         if analysis.dataset_full is not None:
-            fit = analysis.fit_via_instance_and_dataset_from(
+            fit_full = analysis.fit_via_instance_and_dataset_from(
                 instance=instance, dataset=analysis.dataset_full
             )
-            visualizer.fit(fit=fit, during_analysis=during_analysis)
-            visualizer.fit_regions(
-                fit=fit, region_list=region_list, during_analysis=during_analysis
+
+            visualizer.fit(
+                fit=fit_full, during_analysis=during_analysis, folder_suffix="_full"
+            )
+            visualizer.fit_1d_regions(
+                fit=fit_full,
+                during_analysis=during_analysis,
+                region_list=region_list,
+                folder_suffix="_full",
             )
 
     @staticmethod
@@ -152,11 +176,11 @@ class VisualizerDataset1D(af.Visualizer):
             fpr_value_list=fpr_value_list,
         )
 
-        region_list = analyses[0].region_list_from()
+        region_list = analyses[0].region_list_from(model=instance)
 
-        visualizer = PlotterInterfaceDataset1D(image_path=paths.image_path)
+        visualizer = PlotterInterfaceImagingCI(image_path=paths.image_path)
         visualizer.fit_combined(fit_list=fit_list, during_analysis=during_analysis)
-        visualizer.fit_region_combined(
+        visualizer.fit_1d_regions_combined(
             fit_list=fit_list,
             region_list=region_list,
             during_analysis=during_analysis,
@@ -176,10 +200,13 @@ class VisualizerDataset1D(af.Visualizer):
             )
 
             visualizer.fit_combined(
-                fit_list=fit_full_list, during_analysis=during_analysis
+                fit_list=fit_full_list,
+                during_analysis=during_analysis,
+                folder_suffix="_full",
             )
-            visualizer.fit_region_combined(
+            visualizer.fit_1d_regions_combined(
                 fit_list=fit_full_list,
                 region_list=region_list,
                 during_analysis=during_analysis,
+                folder_suffix="_full",
             )

@@ -24,14 +24,10 @@ class PlotterInterface:
 
     def mat_plot_1d_from(self, subfolders, format="png"):
         return MatPlot1D(
-            output=Output(
-                path=path.join(self.image_path, subfolders), format=format
-            )
+            output=Output(path=path.join(self.image_path, subfolders), format=format)
         )
 
     def mat_plot_2d_from(self, subfolders, format="png"):
         return MatPlot2D(
-            output=Output(
-                path=path.join(self.image_path, subfolders), format=format
-            )
+            output=Output(path=path.join(self.image_path, subfolders), format=format)
         )
