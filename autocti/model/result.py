@@ -18,9 +18,8 @@ class Result(result.Result):
             paths=paths,
             samples=samples,
             search_internal=search_internal,
+            analysis=analysis,
         )
-
-        self.analysis = analysis
 
     @property
     def clocker(self):
