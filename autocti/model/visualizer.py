@@ -15,9 +15,9 @@ def plot_setting(section, name):
     return setting(section, name)
 
 
-class Visualizer:
-    def __init__(self, visualize_path):
-        self.visualize_path = visualize_path
+class PlotterInterface:
+    def __init__(self, image_path):
+        self.image_path = image_path
 
         self.include_1d = Include1D()
         self.include_2d = Include2D()
@@ -25,13 +25,13 @@ class Visualizer:
     def mat_plot_1d_from(self, subfolders, format="png"):
         return MatPlot1D(
             output=Output(
-                path=path.join(self.visualize_path, subfolders), format=format
+                path=path.join(self.image_path, subfolders), format=format
             )
         )
 
     def mat_plot_2d_from(self, subfolders, format="png"):
         return MatPlot2D(
             output=Output(
-                path=path.join(self.visualize_path, subfolders), format=format
+                path=path.join(self.image_path, subfolders), format=format
             )
         )

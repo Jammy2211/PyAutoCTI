@@ -9,7 +9,7 @@ import autofit as af
 
 from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.charge_injection.fit import FitImagingCI
-from autocti.charge_injection.model.visualizer import VisualizerImagingCI
+from autocti.charge_injection.model.visualizer import PlotterInterfaceImagingCI
 from autocti.charge_injection.model.result import ResultImagingCI
 from autocti.clocker.two_d import Clocker2D
 from autocti.charge_injection.hyper import HyperCINoiseCollection
@@ -302,23 +302,23 @@ class AnalysisImagingCI(AnalysisCTI):
         if conf.instance["visualize"]["plots"]["combined_only"]:
             return
 
-        visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
+        visualizer = PlotterInterfaceImagingCI(image_path=paths.image_path)
 
         region_list = self.region_list_from(model=model)
 
         if conf.instance["visualize"]["plots"]["dataset"]["fpr_non_uniformity"]:
             region_list += ["fpr_non_uniformity"]
 
-        visualizer.visualize_dataset(dataset=self.dataset)
-        visualizer.visualize_dataset_regions(
+        visualizer.dataset(dataset=self.dataset)
+        visualizer.dataset_regions(
             dataset=self.dataset, region_list=region_list
         )
 
         if self.dataset_full is not None:
-            visualizer.visualize_dataset(
+            visualizer.dataset(
                 dataset=self.dataset_full, folder_suffix="_full"
             )
-            visualizer.visualize_dataset_regions(
+            visualizer.dataset_regions(
                 dataset=self.dataset_full,
                 region_list=region_list,
                 folder_suffix="_full",
@@ -330,7 +330,7 @@ class AnalysisImagingCI(AnalysisCTI):
         if analyses is None:
             return
 
-        visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
+        visualizer = PlotterInterfaceImagingCI(image_path=paths.image_path)
 
         region_list = self.region_list_from(model=model)
 
@@ -345,11 +345,11 @@ class AnalysisImagingCI(AnalysisCTI):
             fpr_value_list=fpr_value_list,
         )
 
-        visualizer.visualize_dataset_combined(
+        visualizer.dataset_combined(
             dataset_list=dataset_list,
         )
 
-        visualizer.visualize_dataset_regions_combined(
+        visualizer.dataset_regions_combined(
             dataset_list=dataset_list,
             region_list=region_list,
         )
@@ -362,12 +362,12 @@ class AnalysisImagingCI(AnalysisCTI):
                 fpr_value_list=fpr_value_list,
             )
 
-            visualizer.visualize_dataset_combined(
+            visualizer.dataset_combined(
                 dataset_list=dataset_full_list,
                 folder_suffix="_full",
                 filename_suffix="_full",
             )
-            visualizer.visualize_dataset_regions_combined(
+            visualizer.dataset_regions_combined(
                 dataset_list=dataset_full_list,
                 region_list=region_list,
                 folder_suffix="_full",
@@ -386,9 +386,9 @@ class AnalysisImagingCI(AnalysisCTI):
         fit = self.fit_via_instance_from(instance=instance)
         region_list = self.region_list_from(model=instance)
 
-        visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
-        visualizer.visualize_fit(fit=fit, during_analysis=during_analysis)
-        visualizer.visualize_fit_1d_regions(
+        visualizer = PlotterInterfaceImagingCI(image_path=paths.image_path)
+        visualizer.fit(fit=fit, during_analysis=during_analysis)
+        visualizer.fit_1d_regions(
             fit=fit, during_analysis=during_analysis, region_list=region_list
         )
 
@@ -397,10 +397,10 @@ class AnalysisImagingCI(AnalysisCTI):
                 instance=instance, dataset=self.dataset_full
             )
 
-            visualizer.visualize_fit(
+            visualizer.fit(
                 fit=fit_full, during_analysis=during_analysis, folder_suffix="_full"
             )
-            visualizer.visualize_fit_1d_regions(
+            visualizer.fit_1d_regions(
                 fit=fit_full,
                 during_analysis=during_analysis,
                 region_list=region_list,
@@ -430,11 +430,11 @@ class AnalysisImagingCI(AnalysisCTI):
 
         region_list = self.region_list_from(model=instance)
 
-        visualizer = VisualizerImagingCI(visualize_path=paths.image_path)
-        visualizer.visualize_fit_combined(
+        visualizer = PlotterInterfaceImagingCI(image_path=paths.image_path)
+        visualizer.fit_combined(
             fit_list=fit_list, during_analysis=during_analysis
         )
-        visualizer.visualize_fit_1d_regions_combined(
+        visualizer.fit_1d_regions_combined(
             fit_list=fit_list,
             region_list=region_list,
             during_analysis=during_analysis,
@@ -453,12 +453,12 @@ class AnalysisImagingCI(AnalysisCTI):
                 fpr_value_list=fpr_value_list,
             )
 
-            visualizer.visualize_fit_combined(
+            visualizer.fit_combined(
                 fit_list=fit_full_list,
                 during_analysis=during_analysis,
                 folder_suffix="_full",
             )
-            visualizer.visualize_fit_1d_regions_combined(
+            visualizer.fit_1d_regions_combined(
                 fit_list=fit_full_list,
                 region_list=region_list,
                 during_analysis=during_analysis,

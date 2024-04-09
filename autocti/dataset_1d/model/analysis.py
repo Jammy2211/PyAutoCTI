@@ -6,7 +6,7 @@ import autofit as af
 
 from autocti.dataset_1d.dataset_1d.dataset_1d import Dataset1D
 from autocti.dataset_1d.fit import FitDataset1D
-from autocti.dataset_1d.model.visualizer import VisualizerDataset1D
+from autocti.dataset_1d.model.visualizer import PlotterInterfaceDataset1D
 from autocti.dataset_1d.model.result import ResultDataset1D
 from autocti.model.analysis import AnalysisCTI
 from autocti.model.settings import SettingsCTI1D
@@ -186,17 +186,17 @@ class AnalysisDataset1D(AnalysisCTI):
     def visualize_before_fit(self, paths: af.DirectoryPaths, model: af.Collection):
         region_list = self.region_list_from()
 
-        visualizer = VisualizerDataset1D(visualize_path=paths.image_path)
-        visualizer.visualize_dataset(dataset=self.dataset)
-        visualizer.visualize_dataset_regions(
+        visualizer = PlotterInterfaceDataset1D(image_path=paths.image_path)
+        visualizer.dataset(dataset=self.dataset)
+        visualizer.dataset_regions(
             dataset=self.dataset, region_list=region_list
         )
 
         if self.dataset_full is not None:
-            visualizer.visualize_dataset(
+            visualizer.dataset(
                 dataset=self.dataset_full, folder_suffix="_full"
             )
-            visualizer.visualize_dataset_regions(
+            visualizer.dataset_regions(
                 dataset=self.dataset_full,
                 region_list=region_list,
                 folder_suffix="_full",
@@ -208,7 +208,7 @@ class AnalysisDataset1D(AnalysisCTI):
         if analyses is None:
             return
 
-        visualizer = VisualizerDataset1D(visualize_path=paths.image_path)
+        visualizer = PlotterInterfaceDataset1D(image_path=paths.image_path)
 
         region_list = self.region_list_from()
 
@@ -220,10 +220,10 @@ class AnalysisDataset1D(AnalysisCTI):
             fpr_value_list=fpr_value_list,
         )
 
-        visualizer.visualize_dataset_combined(
+        visualizer.dataset_combined(
             dataset_list=dataset_list,
         )
-        visualizer.visualize_dataset_regions_combined(
+        visualizer.dataset_regions_combined(
             dataset_list=dataset_list,
             region_list=region_list,
         )
@@ -236,10 +236,10 @@ class AnalysisDataset1D(AnalysisCTI):
                 fpr_value_list=fpr_value_list,
             )
 
-            visualizer.visualize_dataset_combined(
+            visualizer.dataset_combined(
                 dataset_list=dataset_full_list, folder_suffix="_full"
             )
-            visualizer.visualize_dataset_regions_combined(
+            visualizer.dataset_regions_combined(
                 dataset_list=dataset_full_list,
                 region_list=region_list,
                 folder_suffix="_full",
@@ -253,11 +253,11 @@ class AnalysisDataset1D(AnalysisCTI):
     ):
         region_list = self.region_list_from()
 
-        visualizer = VisualizerDataset1D(visualize_path=paths.image_path)
+        visualizer = PlotterInterfaceDataset1D(image_path=paths.image_path)
 
         fit = self.fit_via_instance_from(instance=instance)
-        visualizer.visualize_fit(fit=fit, during_analysis=during_analysis)
-        visualizer.visualize_fit_regions(
+        visualizer.fit(fit=fit, during_analysis=during_analysis)
+        visualizer.fit_regions(
             fit=fit, region_list=region_list, during_analysis=during_analysis
         )
 
@@ -265,8 +265,8 @@ class AnalysisDataset1D(AnalysisCTI):
             fit = self.fit_via_instance_and_dataset_from(
                 instance=instance, dataset=self.dataset_full
             )
-            visualizer.visualize_fit(fit=fit, during_analysis=during_analysis)
-            visualizer.visualize_fit_regions(
+            visualizer.fit(fit=fit, during_analysis=during_analysis)
+            visualizer.fit_regions(
                 fit=fit, region_list=region_list, during_analysis=during_analysis
             )
 
@@ -293,11 +293,11 @@ class AnalysisDataset1D(AnalysisCTI):
 
         region_list = self.region_list_from()
 
-        visualizer = VisualizerDataset1D(visualize_path=paths.image_path)
-        visualizer.visualize_fit_combined(
+        visualizer = PlotterInterfaceDataset1D(image_path=paths.image_path)
+        visualizer.fit_combined(
             fit_list=fit_list, during_analysis=during_analysis
         )
-        visualizer.visualize_fit_region_combined(
+        visualizer.fit_region_combined(
             fit_list=fit_list,
             region_list=region_list,
             during_analysis=during_analysis,
@@ -316,10 +316,10 @@ class AnalysisDataset1D(AnalysisCTI):
                 fpr_value_list=fpr_value_list,
             )
 
-            visualizer.visualize_fit_combined(
+            visualizer.fit_combined(
                 fit_list=fit_full_list, during_analysis=during_analysis
             )
-            visualizer.visualize_fit_region_combined(
+            visualizer.fit_region_combined(
                 fit_list=fit_full_list,
                 region_list=region_list,
                 during_analysis=during_analysis,

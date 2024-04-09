@@ -3,7 +3,7 @@ import shutil
 from os import path
 
 import pytest
-from autocti.dataset_1d.model.visualizer import VisualizerDataset1D
+from autocti.dataset_1d.model.visualizer import PlotterInterfaceDataset1D
 from autoconf import conf
 
 directory = path.dirname(path.abspath(__file__))
@@ -18,9 +18,9 @@ def test__visualize_dataset_1d__uses_configs(dataset_1d_7, plot_path, plot_patch
     if path.exists(plot_path):
         shutil.rmtree(plot_path)
 
-    visualizer = VisualizerDataset1D(visualize_path=plot_path)
+    visualizer = PlotterInterfaceDataset1D(image_path=plot_path)
 
-    visualizer.visualize_dataset(dataset=dataset_1d_7)
+    visualizer.dataset(dataset=dataset_1d_7)
 
     plot_path = path.join(plot_path, "dataset")
 
@@ -35,9 +35,9 @@ def test__visualize_dataset_1d_region__uses_configs(
     if path.exists(plot_path):
         shutil.rmtree(plot_path)
 
-    visualizer = VisualizerDataset1D(visualize_path=plot_path)
+    visualizer = PlotterInterfaceDataset1D(image_path=plot_path)
 
-    visualizer.visualize_dataset_regions(dataset=dataset_1d_7, region_list=["fpr"])
+    visualizer.dataset_regions(dataset=dataset_1d_7, region_list=["fpr"])
 
     plot_path = path.join(plot_path, "dataset")
 
@@ -50,9 +50,9 @@ def test__visualize_fit_1d__uses_configs(fit_1d_7, plot_path, plot_patch):
     if os.path.exists(plot_path):
         shutil.rmtree(plot_path)
 
-    visualizer = VisualizerDataset1D(visualize_path=plot_path)
+    visualizer = PlotterInterfaceDataset1D(image_path=plot_path)
 
-    visualizer.visualize_fit(fit=fit_1d_7, during_analysis=True)
+    visualizer.fit(fit=fit_1d_7, during_analysis=True)
 
     plot_path = path.join(plot_path, "fit_dataset")
 
@@ -62,7 +62,7 @@ def test__visualize_fit_1d__uses_configs(fit_1d_7, plot_path, plot_patch):
 
     plot_patch.paths = []
 
-    visualizer.visualize_fit(fit=fit_1d_7, during_analysis=False)
+    visualizer.fit(fit=fit_1d_7, during_analysis=False)
 
     assert path.join(plot_path, "subplot_fit.png") in plot_patch.paths
     assert path.join(plot_path, "data.png") in plot_patch.paths
@@ -73,9 +73,9 @@ def test__visualize_fit_1d_region__uses_configs(fit_1d_7, plot_path, plot_patch)
     if os.path.exists(plot_path):
         shutil.rmtree(plot_path)
 
-    visualizer = VisualizerDataset1D(visualize_path=plot_path)
+    visualizer = PlotterInterfaceDataset1D(image_path=plot_path)
 
-    visualizer.visualize_fit_regions(
+    visualizer.fit_regions(
         fit=fit_1d_7, region_list=["fpr"], during_analysis=True
     )
 
@@ -90,9 +90,9 @@ def test__visualize_fit_combined(fit_1d_7, plot_path, plot_patch):
     if os.path.exists(plot_path):
         shutil.rmtree(plot_path)
 
-    visualizer = VisualizerDataset1D(visualize_path=plot_path)
+    visualizer = PlotterInterfaceDataset1D(image_path=plot_path)
 
-    visualizer.visualize_fit_combined(
+    visualizer.fit_combined(
         fit_list=[fit_1d_7, fit_1d_7], during_analysis=True
     )
 
@@ -106,9 +106,9 @@ def test__visualize_fit_region_combined(fit_1d_7, plot_path, plot_patch):
     if os.path.exists(plot_path):
         shutil.rmtree(plot_path)
 
-    visualizer = VisualizerDataset1D(visualize_path=plot_path)
+    visualizer = PlotterInterfaceDataset1D(image_path=plot_path)
 
-    visualizer.visualize_fit_region_combined(
+    visualizer.fit_region_combined(
         fit_list=[fit_1d_7, fit_1d_7], region_list=["fpr"], during_analysis=True
     )
 
