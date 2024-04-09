@@ -4,7 +4,7 @@ import autoarray.plot as aplt
 
 import autocti.plot as aplt
 
-from autocti.model.visualizer import PlotterInterface
+from autocti.model.plotter_interface import PlotterInterface
 from autocti.model.visualizer import plot_setting
 
 from autocti import exc

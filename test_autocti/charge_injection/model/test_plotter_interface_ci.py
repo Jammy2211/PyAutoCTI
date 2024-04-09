@@ -3,7 +3,7 @@ import shutil
 from os import path
 
 import pytest
-from autocti.charge_injection.model.visualizer import PlotterInterfaceImagingCI
+from autocti.charge_injection.model.plotter_interface import PlotterInterfaceImagingCI
 
 directory = path.dirname(path.abspath(__file__))
 
@@ -13,7 +13,7 @@ def make_visualizer_plotter_setup():
     return path.join("{}".format(directory), "files")
 
 
-def test__visualizes_dataset__uses_configs(imaging_ci_7x7, plot_path, plot_patch):
+def test__dataset(imaging_ci_7x7, plot_path, plot_patch):
     if path.exists(plot_path):
         shutil.rmtree(plot_path)
 
@@ -30,7 +30,7 @@ def test__visualizes_dataset__uses_configs(imaging_ci_7x7, plot_path, plot_patch
     assert path.join(plot_path, "noise_map.png") not in plot_patch.paths
 
 
-def test__visualizes_dataset_regions__uses_configs(
+def test__dataset_regions(
     imaging_ci_7x7, plot_path, plot_patch
 ):
     if os.path.exists(plot_path):
@@ -49,7 +49,7 @@ def test__visualizes_dataset_regions__uses_configs(
     assert path.join(plot_path, "noise_map_parallel_fpr.png") not in plot_patch.paths
 
 
-def test___visualizes_fit_ci__uses_configs(fit_ci_7x7, plot_path, plot_patch):
+def test__fit_ci(fit_ci_7x7, plot_path, plot_patch):
     if os.path.exists(plot_path):
         shutil.rmtree(plot_path)
 
@@ -72,7 +72,7 @@ def test___visualizes_fit_ci__uses_configs(fit_ci_7x7, plot_path, plot_patch):
     assert path.join(plot_path, "noise_map.png") in plot_patch.paths
 
 
-def test___visualizes_fit_ci_regions__uses_configs(fit_ci_7x7, plot_path, plot_patch):
+def test__fit_ci_regions(fit_ci_7x7, plot_path, plot_patch):
     if os.path.exists(plot_path):
         shutil.rmtree(plot_path)
 
@@ -103,7 +103,7 @@ def test___visualizes_fit_ci_regions__uses_configs(fit_ci_7x7, plot_path, plot_p
     assert path.join(plot_path, "noise_map_parallel_fpr.png") not in plot_patch.paths
 
 
-def test__visualize_fit_combined(fit_ci_7x7, plot_path, plot_patch):
+def test__fit_combined(fit_ci_7x7, plot_path, plot_patch):
     if os.path.exists(plot_path):
         shutil.rmtree(plot_path)
 
@@ -119,7 +119,7 @@ def test__visualize_fit_combined(fit_ci_7x7, plot_path, plot_patch):
     assert path.join(plot_path, "subplot_chi_squared_map.png") not in plot_patch.paths
 
 
-def test__visualize_fit_regions_combined(fit_ci_7x7, plot_path, plot_patch):
+def test__fit_regions_combined(fit_ci_7x7, plot_path, plot_patch):
     if os.path.exists(plot_path):
         shutil.rmtree(plot_path)
 

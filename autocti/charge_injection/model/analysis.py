@@ -9,7 +9,7 @@ import autofit as af
 
 from autocti.charge_injection.imaging.imaging import ImagingCI
 from autocti.charge_injection.fit import FitImagingCI
-from autocti.charge_injection.model.visualizer import PlotterInterfaceImagingCI
+from autocti.charge_injection.model.plotter_interface import PlotterInterfaceImagingCI
 from autocti.charge_injection.model.result import ResultImagingCI
 from autocti.clocker.two_d import Clocker2D
 from autocti.charge_injection.hyper import HyperCINoiseCollection
