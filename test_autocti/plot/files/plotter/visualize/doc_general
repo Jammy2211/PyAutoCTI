@@ -23,7 +23,7 @@ A description of the general.ini visualization config.
         The number of new best-fit (e.g. highest log likelihood) models that must be sampled for PyAutoLens to output the
         best-fit as a new set of figure / subplot visualization during a non-linear fit (e.g. on-the-fly).
 
-        The figures are output according to the 'plots.ini' config file.
+        The figures are output according to the 'plots.yaml' config file.
 
         A visualization_interval of -1 turns off on-the-fly visualization.
 
@@ -40,26 +40,26 @@ A description of the general.ini visualization config.
 
         If True, the origin of the coordinate system (e.g. 0.0", 0.0") is plotted on every figure. 
         
-        The origin's appearance is specified by the [origin] section of the 'figures.ini' and 'subplots.ini' configs.
+        The origin's appearance is specified by the [origin] section of the 'figures.ini' and 'subplots.yaml' configs.
 
     mask
 
         If True, the mask used when fitting an image is plotted on every figure. 
         
-        The mask's appearance is specified by the [mask] section of the 'figures.ini' and 'subplots.ini' configs.
+        The mask's appearance is specified by the [mask] section of the 'figures.ini' and 'subplots.yaml' configs.
         
     grid
 
         If True, image-plane grids (e.g. the centres of image pixels) and source-plane grids (e.g. traced pixels) are
         plotted on every figure 
        
-        The grid's appearance is specified by the [grid] section of the 'figures.ini' and 'subplots.ini' configs.
+        The grid's appearance is specified by the [grid] section of the 'figures.ini' and 'subplots.yaml' configs.
         
     border
 
         If True, the border of a masked image (defined as the outer edges of its mask) is plotted on every figure 
         
-        The border's appearance is specified by the [border] section of the 'figures.ini' and 'subplots.ini' configs.
+        The border's appearance is specified by the [border] section of the 'figures.ini' and 'subplots.yaml' configs.
         
     critical_curves
 
@@ -67,7 +67,7 @@ A description of the general.ini visualization config.
         as the images of galaxies, planes, tracers and fits.
 
         The critical curve's appearances are specified by the [critical_curves] section of the 'figures.ini' and
-        'subplots.ini' configs.
+        'subplots.yaml' configs.
 
         If there are multiple critical curves (e.g radial, tangential) each will be colored differently according to
         the 'colors' specified in the configs above. By default, this color wheel matches the caustics so that
@@ -78,7 +78,7 @@ A description of the general.ini visualization config.
         If True, casutics are plotted on all image-plane figures which have have mass profile(s) available, such as
         images of galaxies, planes, tracers and fits.
         
-        Tthe caustics's appearance are specified by the [casutics] section of the 'figures.ini' and 'subplots.ini'
+        Tthe caustics's appearance are specified by the [casutics] section of the 'figures.ini' and 'subplots.yaml'
         configs.
 
         If there are multiple caustics (e.g radial, tangential) each will be colored differently according to
@@ -91,7 +91,7 @@ A description of the general.ini visualization config.
         available, namely images of tracers and fits.
         
         The multiple_images appearance is specified by the [multiple_images] section of the 'figures.ini' and
-        'subplots.ini' configs.
+        'subplots.yaml' configs.
         
     light_profile_centres
 
@@ -99,7 +99,7 @@ A description of the general.ini visualization config.
         such as the images of galaxies, planes, tracers and fits.
         
         The light_profile_centres appearance is specified by the [light_profile_centres] section of the 
-        'figures.ini' and 'subplots.ini' configs.
+        'figures.ini' and 'subplots.yaml' configs.
 
         If there are multiple galaxies with light profiles in a plane or tracer, light profile centres of the same
         galaxy are colored the same according to the 'colors' specified in the configs above. By default, this color
@@ -112,7 +112,7 @@ A description of the general.ini visualization config.
         such as the images of galaxies, planes, tracers and fits.
         
         The mass_profile_centres appearance is specified by the [mass_profile_centres] section of the 
-        'figures.ini' and 'subplots.ini' configs.
+        'figures.ini' and 'subplots.yaml' configs.
 
         If there are multiple galaxies with mass profiles in a plane or tracer, mass profile centres of the same
         galaxy are colored the same according to the 'colors' specified in the configs above. By default, this color
@@ -125,7 +125,7 @@ A description of the general.ini visualization config.
         on figures of the inversion's reconstructed source.
        
         The mapper_source_plane_mesh_grid appearance is specified by the [mapper_source_plane_mesh_grid] section of
-        the 'figures.ini' and 'subplots.ini' configs.
+        the 'figures.ini' and 'subplots.yaml' configs.
         
     inversion_grid
 
@@ -133,7 +133,7 @@ A description of the general.ini visualization config.
         reconstructed source.
        
         The inversion_grid appearance is specified by the [inversion_grid] section of 
-        the 'figures.ini' and 'subplots.ini' configs.
+        the 'figures.ini' and 'subplots.yaml' configs.
 
     mapper_image_plane_mesh_grid
 
@@ -141,4 +141,4 @@ A description of the general.ini visualization config.
         of every pixel of the pixelization) is plotted on fit_imaging figures of the image.
        
         The mapper_source_plane_mesh_grid appearance is specified by the [mapper_source_plane_mesh_grid] section of
-        the 'figures.ini' and 'subplots.ini' configs.
+        the 'figures.ini' and 'subplots.yaml' configs.

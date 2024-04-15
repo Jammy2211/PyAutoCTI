@@ -28,7 +28,7 @@ class SimulatorImagingCI(SimulatorImaging):
         read_noise: Optional[float] = None,
         charge_noise: Optional[float] = None,
         stray_light: Optional[Tuple[float, float]] = None,
-        readout_persistance : Optional[ReadoutPersistence] = None,
+        readout_persistance: Optional[ReadoutPersistence] = None,
         flat_field_mode: bool = False,
         noise_if_add_noise_false: float = 0.1,
         noise_seed: int = -1,
@@ -59,7 +59,7 @@ class SimulatorImagingCI(SimulatorImaging):
         self.read_noise = read_noise
         self.charge_noise = charge_noise
         self.stray_light = stray_light
-        self.readout_persistance =  readout_persistance
+        self.readout_persistance = readout_persistance
         self.flat_field_mode = flat_field_mode
 
         self.ci_seed = ci_seed
@@ -242,7 +242,6 @@ class SimulatorImagingCI(SimulatorImaging):
             post_cti_data = copy.copy(pre_cti_data)
 
         if self.readout_persistance is not None:
-
             post_cti_data = self.readout_persistance.data_with_readout_persistence_from(
                 data=post_cti_data
             )

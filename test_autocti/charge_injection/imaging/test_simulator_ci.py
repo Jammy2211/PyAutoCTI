@@ -236,8 +236,9 @@ def test__include_stray_light__is_added_before_cti(parallel_clocker_2d, traps_x2
     assert dataset.data[1, 0:3] == pytest.approx(0.998, 1.0e-4)
 
 
-def test__include_readout_persistance__is_added_after_cti(parallel_clocker_2d, traps_x2, ccd):
-
+def test__include_readout_persistance__is_added_after_cti(
+    parallel_clocker_2d, traps_x2, ccd
+):
     layout = ac.Layout2DCI(
         shape_2d=(9, 3),
         region_list=[(0, 1, 0, 3)],
@@ -249,16 +250,14 @@ def test__include_readout_persistance__is_added_after_cti(parallel_clocker_2d, t
         pixel_scales=1.0,
         norm=0.0,
         readout_persistance=ac.ReadoutPersistence(
-            total_rows=2,
-            mean=5.0,
-            sigma=1.0,
-            rows_per_persistence_range=(1, 4),
-            seed=1
-        )
+            total_rows=2, mean=5.0, sigma=1.0, rows_per_persistence_range=(1, 4), seed=1
+        ),
     )
 
     dataset = simulator.via_layout_from(
-        layout=layout, clocker=parallel_clocker_2d, cti=None,
+        layout=layout,
+        clocker=parallel_clocker_2d,
+        cti=None,
     )
 
     assert dataset.data[5, :] == pytest.approx(6.62434, 1.0e-4)

@@ -1,311 +1,185 @@
-import logging
+import autofit as af
 
-import autocti.plot as aplt
-
-from autocti.model.visualizer import Visualizer
-from autocti.model.visualizer import plot_setting
-from autocti import exc
-
-logger = logging.getLogger(__name__)
-
-logger.setLevel(level="INFO")
+from autocti.dataset_1d.model.plotter_interface import PlotterInterfaceDataset1D
 
 
-class VisualizerDataset1D(Visualizer):
-    def visualize_dataset(self, dataset, folder_suffix=""):
-        def should_plot(name):
-            return plot_setting(section="dataset", name=name)
-
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset{folder_suffix}")
-
-        dataset_plotter = aplt.Dataset1DPlotter(
-            dataset=dataset, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
-        )
-
-        if should_plot("subplot_dataset"):
-            dataset_plotter.subplot_dataset()
-
-        dataset_plotter.figures_1d(
-            data=should_plot("data"),
-            data_logy=should_plot("data_logy"),
-            noise_map=should_plot("noise_map"),
-            signal_to_noise_map=should_plot("signal_to_noise_map"),
-            pre_cti_data=should_plot("pre_cti_data"),
-        )
-
-    def visualize_dataset_regions(self, dataset, region_list, folder_suffix=""):
-        def should_plot(name):
-            return plot_setting(section="dataset", name=name)
-
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset{folder_suffix}")
-
-        dataset_plotter = aplt.Dataset1DPlotter(
-            dataset=dataset, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
-        )
-
-        for region in region_list:
-            try:
-                if should_plot("subplot_dataset"):
-                    dataset_plotter.subplot_dataset(region=region)
-
-                dataset_plotter.figures_1d(
-                    region=region,
-                    data=should_plot("data"),
-                    data_logy=should_plot("data_logy"),
-                    noise_map=should_plot("noise_map"),
-                    signal_to_noise_map=should_plot("signal_to_noise_map"),
-                    pre_cti_data=should_plot("pre_cti_data"),
-                )
-
-            except (exc.RegionException, TypeError, ValueError):
-                logger.info(
-                    f"VISUALIZATION - Could not visualize the Dataset1D {region}"
-                )
-
-    def visualize_dataset_combined(self, dataset_list, folder_suffix=""):
-        def should_plot(name):
-            return plot_setting(section="dataset", name=name)
-
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset{folder_suffix}")
-
-        dataset_plotter_list = [
-            aplt.Dataset1DPlotter(
-                dataset=dataset, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
-            )
-            for dataset in dataset_list
-        ]
-        multi_plotter = aplt.MultiFigurePlotter(plotter_list=dataset_plotter_list)
-
-        if should_plot("subplot_dataset"):
-            multi_plotter.subplot_of_figure(func_name="figures_1d", figure_name="data")
-
-    def visualize_dataset_regions_combined(
-        self, dataset_list, region_list, folder_suffix=""
+class VisualizerDataset1D(af.Visualizer):
+    @staticmethod
+    def visualize_before_fit(
+        analysis,
+        paths: af.AbstractPaths,
+        model: af.AbstractPriorModel,
     ):
-        def should_plot(name):
-            return plot_setting(section="dataset", name=name)
+        """
+        PyAutoFit calls this function immediately before the non-linear search begins.
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"dataset{folder_suffix}")
+        It visualizes objects which do not change throughout the model fit like the dataset.
 
-        dataset_plotter_list = [
-            aplt.Dataset1DPlotter(
-                dataset=dataset, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
+        Parameters
+        ----------
+        paths
+            The PyAutoFit paths object which manages all paths, e.g. where the non-linear search outputs are stored,
+            visualization and the pickled objects used by the aggregator output by this function.
+        model
+            The PyAutoFit model object, which includes model components representing the galaxies that are fitted to
+            the imaging data.
+        """
+
+        region_list = analysis.region_list_from()
+
+        visualizer = PlotterInterfaceDataset1D(image_path=paths.image_path)
+        visualizer.dataset(dataset=analysis.dataset)
+        visualizer.dataset_regions(dataset=analysis.dataset, region_list=region_list)
+
+        if analysis.dataset_full is not None:
+            visualizer.dataset(dataset=analysis.dataset_full, folder_suffix="_full")
+            visualizer.dataset_regions(
+                dataset=analysis.dataset_full,
+                region_list=region_list,
+                folder_suffix="_full",
             )
-            for dataset in dataset_list
-        ]
-        multi_plotter = aplt.MultiFigurePlotter(plotter_list=dataset_plotter_list)
 
-        for region in region_list:
-            try:
-                if should_plot("data"):
-                    multi_plotter.subplot_of_figure(
-                        func_name="figures_1d",
-                        figure_name="data",
-                        region=region,
-                        filename_suffix=f"_{region}",
-                    )
-
-                if should_plot("data_logy"):
-                    multi_plotter.subplot_of_figure(
-                        func_name="figures_1d",
-                        figure_name="data_logy",
-                        region=region,
-                        filename_suffix=f"_{region}",
-                    )
-            except (exc.RegionException, TypeError, ValueError):
-                logger.info(
-                    f"VISUALIZATION - Could not visualize the Dataset1D {region}"
-                )
-
-    def visualize_fit(self, fit, during_analysis, folder_suffix=""):
-        def should_plot(name):
-            return plot_setting(section="fit", name=name)
-
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"fit_dataset{folder_suffix}")
-
-        fit_plotter = aplt.FitDataset1DPlotter(
-            fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
-        )
-
-        fit_plotter.figures_1d(
-            data=should_plot("data"),
-            data_logy=should_plot("data_logy"),
-            noise_map=should_plot("noise_map"),
-            signal_to_noise_map=should_plot("signal_to_noise_map"),
-            pre_cti_data=should_plot("pre_cti_data"),
-            post_cti_data=should_plot("post_cti_data"),
-            residual_map=should_plot("residual_map"),
-            residual_map_logy=should_plot("residual_map_logy"),
-            normalized_residual_map=should_plot("normalized_residual_map"),
-            chi_squared_map=should_plot("chi_squared_map"),
-        )
-
-        if not during_analysis:
-            if should_plot("all_at_end_png"):
-                fit_plotter.figures_1d(
-                    data=True,
-                    noise_map=True,
-                    signal_to_noise_map=True,
-                    pre_cti_data=True,
-                    post_cti_data=True,
-                    residual_map=True,
-                    residual_map_logy=True,
-                    normalized_residual_map=True,
-                    chi_squared_map=True,
-                )
-
-        if should_plot("subplot_fit"):
-            fit_plotter.subplot_fit()
-
-    def visualize_fit_regions(
-        self, fit, region_list, during_analysis, folder_suffix=""
+    @staticmethod
+    def visualize_before_fit_combined(
+        analyses,
+        paths: af.AbstractPaths,
+        model: af.AbstractPriorModel,
     ):
-        def should_plot(name):
-            return plot_setting(section="fit", name=name)
+        if analyses is None:
+            return
 
-        mat_plot_1d = self.mat_plot_1d_from(subfolders=f"fit_dataset{folder_suffix}")
+        visualizer = PlotterInterfaceDataset1D(image_path=paths.image_path)
 
-        fit_plotter = aplt.FitDataset1DPlotter(
-            fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
+        region_list = analyses[0].region_list_from()
+
+        dataset_list = [analysis.dataset for analysis in analyses]
+        fpr_value_list = [dataset.fpr_value for dataset in dataset_list]
+
+        dataset_list = analyses[0].in_ascending_fpr_order_from(
+            quantity_list=dataset_list,
+            fpr_value_list=fpr_value_list,
         )
 
-        for region in region_list:
-            try:
-                if should_plot("subplot_fit"):
-                    fit_plotter.subplot_fit(region=region)
-
-                fit_plotter.figures_1d(
-                    region=region,
-                    data=should_plot("data"),
-                    data_logy=should_plot("data_logy"),
-                    noise_map=should_plot("noise_map"),
-                    signal_to_noise_map=should_plot("signal_to_noise_map"),
-                    pre_cti_data=should_plot("pre_cti_data"),
-                    post_cti_data=should_plot("post_cti_data"),
-                    residual_map=should_plot("residual_map"),
-                    residual_map_logy=should_plot("residual_map_logy"),
-                    normalized_residual_map=should_plot("normalized_residual_map"),
-                    chi_squared_map=should_plot("chi_squared_map"),
-                )
-
-            except (exc.RegionException, TypeError, ValueError):
-                logger.info(
-                    f"VISUALIZATION - Could not visualize the Dataset1D {region}"
-                )
-
-    def visualize_fit_combined(self, fit_list, during_analysis, folder_suffix=""):
-        def should_plot(name):
-            return plot_setting(section="fit", name=name)
-
-        mat_plot_1d = self.mat_plot_1d_from(
-            subfolders=f"fit_dataset_combined{folder_suffix}"
+        visualizer.dataset_combined(
+            dataset_list=dataset_list,
+        )
+        visualizer.dataset_regions_combined(
+            dataset_list=dataset_list,
+            region_list=region_list,
         )
 
-        fit_plotter_list = [
-            aplt.FitDataset1DPlotter(
-                fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
-            )
-            for fit in fit_list
-        ]
-        multi_plotter = aplt.MultiFigurePlotter(plotter_list=fit_plotter_list)
+        if analyses[0].dataset_full is not None:
+            dataset_full_list = [analysis.dataset_full for analysis in analyses]
 
-        if should_plot("data"):
-            multi_plotter.subplot_of_figure(func_name="figures_1d", figure_name="data")
-
-        if should_plot("data_logy"):
-            multi_plotter.subplot_of_figure(
-                func_name="figures_1d", figure_name="data_logy"
+            dataset_full_list = analyses[0].in_ascending_fpr_order_from(
+                quantity_list=dataset_full_list,
+                fpr_value_list=fpr_value_list,
             )
 
-        if should_plot("residual_map"):
-            multi_plotter.subplot_of_figure(
-                func_name="figures_1d", figure_name="residual_map"
+            visualizer.dataset_combined(
+                dataset_list=dataset_full_list, folder_suffix="_full"
+            )
+            visualizer.dataset_regions_combined(
+                dataset_list=dataset_full_list,
+                region_list=region_list,
+                folder_suffix="_full",
             )
 
-        if should_plot("residual_map_logy"):
-            multi_plotter.subplot_of_figure(
-                func_name="figures_1d", figure_name="residual_map_logy"
-            )
-
-        if should_plot("normalized_residual_map"):
-            multi_plotter.subplot_of_figure(
-                func_name="figures_1d", figure_name="normalized_residual_map"
-            )
-
-        if should_plot("chi_squared_map"):
-            multi_plotter.subplot_of_figure(
-                func_name="figures_1d", figure_name="chi_squared_map"
-            )
-
-    def visualize_fit_region_combined(
-        self, fit_list, region_list, during_analysis, folder_suffix=""
+    @staticmethod
+    def visualize(
+        analysis,
+        paths: af.DirectoryPaths,
+        instance: af.ModelInstance,
+        during_analysis: bool,
     ):
-        def should_plot(name):
-            return plot_setting(section="fit", name=name)
+        """
+        Output images of the maximum log likelihood model inferred by the model-fit. This function is called throughout
+        the non-linear search at regular intervals, and therefore provides on-the-fly visualization of how well the
+        model-fit is going.
 
-        mat_plot_1d = self.mat_plot_1d_from(
-            subfolders=f"fit_dataset_combined{folder_suffix}"
+        The images output by this function are customized using the file `config/visualize/plots.yaml`.
+
+        Parameters
+        ----------
+        paths
+            The PyAutoFit paths object which manages all paths, e.g. where the non-linear search outputs are stored,
+            visualization, and the pickled objects used by the aggregator output by this function.
+        instance
+            An instance of the model that is being fitted to the data by this analysis (whose parameters have been set
+            via a non-linear search).
+        during_analysis
+            If True the visualization is being performed midway through the non-linear search before it is finished,
+            which may change which images are output.
+        """
+
+        region_list = analysis.region_list_from()
+
+        visualizer = PlotterInterfaceDataset1D(image_path=paths.image_path)
+
+        fit = analysis.fit_via_instance_from(instance=instance)
+        visualizer.fit(fit=fit, during_analysis=during_analysis)
+        visualizer.fit_regions(
+            fit=fit, region_list=region_list, during_analysis=during_analysis
         )
 
-        fit_plotter_list = [
-            aplt.FitDataset1DPlotter(
-                fit=fit, mat_plot_1d=mat_plot_1d, include_1d=self.include_1d
+        if analysis.dataset_full is not None:
+            fit = analysis.fit_via_instance_and_dataset_from(
+                instance=instance, dataset=analysis.dataset_full
             )
-            for fit in fit_list
+            visualizer.fit(fit=fit, during_analysis=during_analysis)
+            visualizer.fit_regions(
+                fit=fit, region_list=region_list, during_analysis=during_analysis
+            )
+
+    @staticmethod
+    def visualize_combined(
+        analyses,
+        paths: af.DirectoryPaths,
+        instance: af.ModelInstance,
+        during_analysis: bool,
+    ):
+        if analyses is None:
+            return
+
+        fit_list = [
+            analysis.fit_via_instance_from(instance=instance) for analysis in analyses
         ]
-        multi_plotter = aplt.MultiFigurePlotter(plotter_list=fit_plotter_list)
 
-        for region in region_list:
-            try:
-                if should_plot("data"):
-                    multi_plotter.subplot_of_figure(
-                        func_name="figures_1d",
-                        figure_name="data",
-                        region=region,
-                        filename_suffix=f"_{region}",
-                    )
+        fpr_value_list = [fit.dataset.fpr_value for fit in fit_list]
 
-                if should_plot("data_logy"):
-                    multi_plotter.subplot_of_figure(
-                        func_name="figures_1d",
-                        figure_name="data_logy",
-                        region=region,
-                        filename_suffix=f"_{region}",
-                    )
+        fit_list = analyses[0].in_ascending_fpr_order_from(
+            quantity_list=fit_list,
+            fpr_value_list=fpr_value_list,
+        )
 
-                if should_plot("residual_map"):
-                    multi_plotter.subplot_of_figure(
-                        func_name="figures_1d",
-                        figure_name="residual_map",
-                        region=region,
-                        filename_suffix=f"_{region}",
-                    )
+        region_list = analyses[0].region_list_from()
 
-                if should_plot("residual_map_logy"):
-                    multi_plotter.subplot_of_figure(
-                        func_name="figures_1d",
-                        figure_name="residual_map_logy",
-                        region=region,
-                        filename_suffix=f"_{region}",
-                    )
+        visualizer = PlotterInterfaceDataset1D(image_path=paths.image_path)
+        visualizer.fit_combined(fit_list=fit_list, during_analysis=during_analysis)
+        visualizer.fit_region_combined(
+            fit_list=fit_list,
+            region_list=region_list,
+            during_analysis=during_analysis,
+        )
 
-                if should_plot("normalized_residual_map"):
-                    multi_plotter.subplot_of_figure(
-                        func_name="figures_1d",
-                        figure_name="normalized_residual_map",
-                        region=region,
-                        filename_suffix=f"_{region}",
-                    )
-
-                if should_plot("chi_squared_map"):
-                    multi_plotter.subplot_of_figure(
-                        func_name="figures_1d",
-                        figure_name="chi_squared_map",
-                        region=region,
-                        filename_suffix=f"_{region}",
-                    )
-
-            except (exc.RegionException, TypeError, ValueError):
-                logger.info(
-                    f"VISUALIZATION - Could not visualize the Dataset1D {region}"
+        if analyses[0].dataset_full is not None:
+            fit_full_list = [
+                analysis.fit_via_instance_and_dataset_from(
+                    instance=instance, dataset=analysis.dataset_full
                 )
+                for analysis in analyses
+            ]
+
+            fit_full_list = analyses[0].in_ascending_fpr_order_from(
+                quantity_list=fit_full_list,
+                fpr_value_list=fpr_value_list,
+            )
+
+            visualizer.fit_combined(
+                fit_list=fit_full_list, during_analysis=during_analysis
+            )
+            visualizer.fit_region_combined(
+                fit_list=fit_full_list,
+                region_list=region_list,
+                during_analysis=during_analysis,
+            )
