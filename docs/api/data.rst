@@ -18,7 +18,6 @@ grids of (y,x) Cartesian coordinates.
    Mask2D
    Array2D
    Grid2D
-   Grid2DIterate
    Grid2DIrregular
 
 Charge Injection Imaging
