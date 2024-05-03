@@ -265,7 +265,7 @@ class FitImagingCIPlotter(Plotter):
             )
 
         if noise_map:
-            y = self.extract_region_from(array=self.fit.image, region=region)
+            y = self.extract_region_from(array=self.fit.data, region=region)
 
             self.mat_plot_1d.plot_yx(
                 y=y,
