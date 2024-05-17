@@ -37,7 +37,7 @@ the faint spectra of the first galaxies in the Universe [@Dunlop2013; @Bouwens20
 galaxy shapes due to gravitational lensing [@Massey2007; @Schrabback2010] and a high precision map of stars within
 the Milky Way [@Brown2018; @Brown2020]. These observations require a deep understanding of the telescope's
 instrumental characteristics, including the calibration and correction of charge transfer inefficiency 
-(hereafter CTI) [@Massey2010d; @Massey2014], a phenomena where radiation damage to the telescope's charge-coupled 
+[hereafter CTI, @Massey2010d; @Massey2014], a phenomenon where radiation damage to the telescope's charge-coupled 
 device (CCD) sensors leads to gradually increased smearing in acquired exposures over the telescope's lifetime.
 
 `PyAutoCTI` is an open-source Python 3.8 - 3.11 [@python] package for the calibration of CTI for space telescopes. By interfacing
@@ -49,7 +49,7 @@ for building a temporal model of CTI over the telescope's lifetime. The software
 including support for graphical models that simultaneously fits large CTI calibration datasets and an SQLite3 
 database that allows extensive suites of calibration results to be loaded, queried and analysed. 
 Accompanying `PyAutoCTI` is the [autocti workspace](https://github.com/Jammy2211/autocti_workspace), which includes 
-example scripts, datasets and an overview of core `PyAutoCTI` functionality. Readers can checkout
+example scripts, datasets and an overview of core `PyAutoCTI` functionality. Readers can check out
 the [readthedocs](https://pyautocti.readthedocs.io/en/latest/) for a complete overview of `PyAutoCTI`'s 
 features.
 
@@ -66,7 +66,7 @@ If this time is longer than the time taken to move a cloud of electrons to the n
 released back into its original charge cloud, but to a subsequent one: creating a characteristic 'trailing' or 'smearing' 
 effect behind sources in the image. The CTI properties of a CCD can be calibrated, using image data that has sharp edges
 whose position and flux are known (or can be determined) prior to readout. `PyAutoCTI` fits a CTI model to these sharp
-edges and their preceeding trails which form due to CTI. 
+edges and their preceding trails which form due to CTI. 
 
 ![A typical, raw HST ACS / WFC image, in units of electrons. This 30" x 15" (600 x 300 pixels) region contains warm 
 pixels, with an example warm pixel towards the right zoomed in on. This reveals CTI trailing behind (above) the warm 
@@ -117,7 +117,7 @@ packages `NumPy` [@numpy] and `numba` [@numba]. Dependencies also include `sciki
 `scikit-learn` [@scikit-learn] and `Scipy` [@scipy].
 
 To perform model-fitting, `PyAutoCTI` adopts the probabilistic programming  
-language `PyAutoFit` (https://github.com/rhayes777/PyAutoFit) [@pyautofit]. `PyAutoFit` allows users to compose a CTI 
+language `PyAutoFit`\footnote{https://github.com/rhayes777/PyAutoFit} [@pyautofit]. `PyAutoFit` allows users to compose a CTI 
 model from `Trap` and `CCD` objects, customize the model parameterization and fit it to data via a 
 non-linear search, for example `dynesty` [@dynesty], `emcee` [@emcee] or `PySwarms` [@pyswarms], with visualization
 performed by `Matplotlib` [@matplotlib] and `corner.py` [@corner]. `PyAutoFit`'s graphical modeling framework allows one to fit a temporal model to a suite of CTI calibration data. Using a technique 
