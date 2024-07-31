@@ -49,7 +49,7 @@ by **PyAutoCTI**.
 
    NestPlotter
    MCMCPlotter
-   OptimizePlotter
+   MLEPlotter
 
 Plot Customization [aplt]
 -------------------------
