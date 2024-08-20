@@ -9,6 +9,15 @@ interpolate:
   ndarray_2d_from_grid:
     MockGridLikeIteratorObj: true
     MockInterpolateObj: true
+# Certain light and mass profile calculations become ill defined at (0.0, 0.0) or close to this value. This can lead
+# to numerical issues in the calculation of the profile, for example a np.nan may arise, crashing the code. 
+  
+# To avoid this, we set a minimum value for the radial coordinate of the profile. If the radial coordinate is below 
+# this value, it is rounded up to this value. This ensures that the profile cannot receive a radial coordinate of 0.0.
+
+# For example, if an input grid coordinate has a radial coordinate of 1e-12, for most profiles this will be rounded up
+# to radial_minimum=1e-08. This is a small enough value that it should not impact the results of the profile calculation.
+
 radial_minimum:
   radial_minimum:
     EllipticalBrokenPowerLaw: 1.0e-08
@@ -24,7 +33,7 @@ radial_minimum:
     EllipticalNFW: 1.0e-08
     EllipticalProfile: 1.0e-08
     EllipticalSersic: 1.0e-08
-    EllipticalSersicRadialGradient: 1.0e-08
+    EllipticalSersicGradient: 1.0e-08
     ExternalShear: 1.0e-08
     MassSheet: 1.0e-08
     MockGridRadialMinimum: 2.5
@@ -42,7 +51,7 @@ radial_minimum:
     SphericalNFW: 1.0e-08
     SphericalPowerLaw: 1.0e-08
     SphericalSersic: 1.0e-08
-    SphericalSersicRadialGradient: 1.0e-08
+    SphericalSersicGradient: 1.0e-08
     SphericalTruncatedNFW: 1.0e-08
     SphericalTruncatedNFWChallenge: 1.0e-08
     SphericalTruncatedNFWMCR: 1.0e-08
