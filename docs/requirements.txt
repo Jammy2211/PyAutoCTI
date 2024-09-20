@@ -2,7 +2,7 @@ arcticpy==2.6
 autoconf==2024.5.16.0
 numpydoc>=1.0.0
 pyprojroot==0.2.0
-sphinx==5.2.3
+sphinx
 furo
 myst-parser
 sphinx_copybutton
