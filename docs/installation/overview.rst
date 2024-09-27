@@ -3,7 +3,7 @@
 Overview
 ========
 
-**PyAutoCTI** requires Python 3.9 - 3.11 and support Linux and MacOS operating systems (Windows support is targeted in the future).
+**PyAutoCTI** requires Python 3.9 - 3.12 and support Linux and MacOS operating systems (Windows support is targeted in the future).
 
 To use **PyAutoCTI** the c++ library **arCTIc** (https://github.com/jkeger/arctic) must also be installed. Installation instructions for **arCTIc** can be found both
 on its GitHub page and in the **PyAutoCTI** readthedocs.
