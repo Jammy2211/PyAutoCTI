@@ -74,10 +74,6 @@ class AnalysisCTI(af.Analysis):
         result
             The result of a model fit, including the non-linear search and samples.
         """
-
-        if result.samples is None:
-            return
-
         weight_list = []
         delta_ellipticity_list = []
 
