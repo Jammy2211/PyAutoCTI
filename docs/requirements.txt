@@ -1,5 +1,5 @@
 arcticpy==2.6
-autoconf==2024.9.21.2
+autoconf==2024.11.6.1
 numpydoc>=1.0.0
 pyprojroot==0.2.0
 sphinx

@@ -18,10 +18,10 @@ class VisualizerDataset1D(af.Visualizer):
         Parameters
         ----------
         paths
-            The PyAutoFit paths object which manages all paths, e.g. where the non-linear search outputs are stored,
+            The paths object which manages all paths, e.g. where the non-linear search outputs are stored,
             visualization and the pickled objects used by the aggregator output by this function.
         model
-            The PyAutoFit model object, which includes model components representing the galaxies that are fitted to
+            The model object, which includes model components representing the galaxies that are fitted to
             the imaging data.
         """
 
@@ -48,7 +48,7 @@ class VisualizerDataset1D(af.Visualizer):
         if analyses is None:
             return
 
-        visualizer = PlotterInterfaceDataset1D(image_path=paths.image_path)
+        plotter = PlotterInterfaceDataset1D(image_path=paths.image_path)
 
         region_list = analyses[0].region_list_from()
 
@@ -60,10 +60,10 @@ class VisualizerDataset1D(af.Visualizer):
             fpr_value_list=fpr_value_list,
         )
 
-        visualizer.dataset_combined(
+        plotter.dataset_combined(
             dataset_list=dataset_list,
         )
-        visualizer.dataset_regions_combined(
+        plotter.dataset_regions_combined(
             dataset_list=dataset_list,
             region_list=region_list,
         )
@@ -76,10 +76,10 @@ class VisualizerDataset1D(af.Visualizer):
                 fpr_value_list=fpr_value_list,
             )
 
-            visualizer.dataset_combined(
+            plotter.dataset_combined(
                 dataset_list=dataset_full_list, folder_suffix="_full"
             )
-            visualizer.dataset_regions_combined(
+            plotter.dataset_regions_combined(
                 dataset_list=dataset_full_list,
                 region_list=region_list,
                 folder_suffix="_full",
@@ -102,7 +102,7 @@ class VisualizerDataset1D(af.Visualizer):
         Parameters
         ----------
         paths
-            The PyAutoFit paths object which manages all paths, e.g. where the non-linear search outputs are stored,
+            The paths object which manages all paths, e.g. where the non-linear search outputs are stored,
             visualization, and the pickled objects used by the aggregator output by this function.
         instance
             An instance of the model that is being fitted to the data by this analysis (whose parameters have been set
